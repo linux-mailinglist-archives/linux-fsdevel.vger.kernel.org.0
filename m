@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 851BA26DA29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 13:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784E326DA2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 13:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgIQL3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 07:29:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58984 "EHLO
+        id S1726766AbgIQL31 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 07:29:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbgIQL3D (ORCPT
+        with ESMTP id S1726636AbgIQL3F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:29:03 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC45CC06174A;
-        Thu, 17 Sep 2020 04:28:50 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id a17so1662729wrn.6;
-        Thu, 17 Sep 2020 04:28:50 -0700 (PDT)
+        Thu, 17 Sep 2020 07:29:05 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1228CC061788;
+        Thu, 17 Sep 2020 04:28:54 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id b79so1666035wmb.4;
+        Thu, 17 Sep 2020 04:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6NxjoOjgOUfz73asSaMrUPJ8xzTASv0BQwLmCO1ZT1o=;
-        b=PQTXK58e7Lz0t7w27aiw2XlTYwlX9HneHHPvIzC/HR35tSoN1Py5wrQtuj4IFwrMU6
-         OUcmz+LoJSYbQYHVZDjlD413EnJbThH3lb82XIczhE55KqfdiX5sSjCTKxnG+g+Xb7dJ
-         JkKHC3xF9IMIKL3hP3Oo4DocLLENpEHYpV446NHXgU+UA/dowZLjcu6ernfbjaS/GY3W
-         hpFegsOG2MVYtfmHu80LNlST9KuXtr6R0F5LLBHHCDtwQoywYev4mvkqcHQBIBLuxyQ9
-         g/F4VimQzkQR3dk8Blus9miVUecWDqbKhoAvU2OSRKegsDGiNT+oyjgCm1pnmJvlyHLV
-         8AVg==
+        bh=tzAc/TZ3oJwpBno6ItVxAZugyjGkmQQNpTTtTZujr28=;
+        b=tHM/3YxWbFNOLlldFUFfFi+gSFT1m0J200u6OG/saxzZ+xz/UcOxOyubnuxrAgx6nd
+         snEB5hB6lgIwklsEi0fu8vv9vINMwpS5ehG0e4vgre6i0QhOAWnGMr0ACu7V7ESLAPPY
+         TCh6SbjVjd3OYtNvYqhXYzEFZSMS41zAe7i0EFahWXvNcJzObM9GYgDD4pyRA/w8sCHc
+         HqIAjC9LyzF0hux/tzppZUr7hpyYCPPlms8xfUuv/U3u+/ewIQLbHHaF8jTf1BVU/Atd
+         llRIaoox784fsDUn8WQpmT9lYYXBy/ZUfxl3eNe70Da/6kqY6T/b8yS37fw42D8GiLwK
+         c0EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6NxjoOjgOUfz73asSaMrUPJ8xzTASv0BQwLmCO1ZT1o=;
-        b=DyNzhS7iOXZ2OjaexnRXLQcLS9xcmk6eAz17EKvvwiXE4a3817p3Y205+xRLxHWINZ
-         K+nzbhIg2sM5cF6EFezLYcIuKra+LC93V6prfqHzzNguJEPkK+5zYuVMuvvaLiXaB356
-         Y41Mfo9ylLJAgXjZioZtcWuwdb/7xVMLWIQA2uu+1hA2XVJak6KNSI4CytSCbSgexDSk
-         ibPwM9mtvTrZYiozBqM9geh1CUQtPoGh6ucZb2tffCIYaYeWNx5NxZD3K6LyONABVJjZ
-         yxO4PIIc+ZyhgJlAwclcleGa/DXNmX8p54xWBofk+x0Yz7cVkRT4ZMEy5ILLlTqbckri
-         BvJQ==
-X-Gm-Message-State: AOAM531Q4hbeyX/b8OJ+NAKlkYTG0LM6gc0J2iKkdSK5fdPuhP3eSqlG
-        5GcBH3ca/lm6bgaGmOwaRevh+3OnADA=
-X-Google-Smtp-Source: ABdhPJxS583EJfuS3WHTJRs5d/gyOAmTDKrgCUaiyZxAE6QrXVewdYA9IV4FjkBwxj25jyEJGfnWrQ==
-X-Received: by 2002:a5d:43cb:: with SMTP id v11mr33360405wrr.188.1600342129159;
-        Thu, 17 Sep 2020 04:28:49 -0700 (PDT)
+        bh=tzAc/TZ3oJwpBno6ItVxAZugyjGkmQQNpTTtTZujr28=;
+        b=FXmr/1AHRmiQmFicVvmlYQpZY09Kd6JCky7nQwmFZIXpikizEs+28gsXKIfNoafmGj
+         1Kdp93XZ1I8Chs5sThZTMJprGy9UjvVzjZhaSdmF9ay1iqlOFjZR/wYFOLcAuoHBHWG3
+         RLrd1j/68lq2PEwDoxdb0qYG2ihMFFr80TSNNMtRSargggxOvdG7mOPlL3hm8lK+6J34
+         CxkeILrTnD+g0YobX91RVuORDRYaH7kYMHyNkDR8afVQoI1sH42IWd889Zf3MxoXaBhx
+         vZeUhGp2ApMAjIgxTPEUIT+i5QelNWWUxXXNs3q5yGiBaTf9mGV6zzlYtYzJ+7YoMq5j
+         x/tA==
+X-Gm-Message-State: AOAM530b8MdUZ7kCUwIJuLRjup6anR4nHjC2Dp3DvQ0uIU1yni/PMOCx
+        48J5+MyAzmG6p4VcC5aSypTPmeKcrN6aUw==
+X-Google-Smtp-Source: ABdhPJx6NUTB4Pzaaubhd3MzQe93qr29LMm6Z0uWSfqnBq8cKuKUFYANWGRCzZu4uFlXvoI9ikN4mA==
+X-Received: by 2002:a1c:f214:: with SMTP id s20mr9346267wmc.84.1600342132440;
+        Thu, 17 Sep 2020 04:28:52 -0700 (PDT)
 Received: from vm.nix.is (vm.nix.is. [2a01:4f8:120:2468::2])
-        by smtp.gmail.com with ESMTPSA id t16sm38781127wrm.57.2020.09.17.04.28.48
+        by smtp.gmail.com with ESMTPSA id t16sm38781127wrm.57.2020.09.17.04.28.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:28:48 -0700 (PDT)
+        Thu, 17 Sep 2020 04:28:51 -0700 (PDT)
 From:   =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?= 
         <avarab@gmail.com>
 To:     git@vger.kernel.org
@@ -57,9 +57,9 @@ Cc:     tytso@mit.edu, Junio C Hamano <gitster@pobox.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?= 
         <avarab@gmail.com>
-Subject: [RFC PATCH 0/2] should core.fsyncObjectFiles fsync the dir entry + docs
-Date:   Thu, 17 Sep 2020 13:28:28 +0200
-Message-Id: <20200917112830.26606-1-avarab@gmail.com>
+Subject: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
+Date:   Thu, 17 Sep 2020 13:28:30 +0200
+Message-Id: <20200917112830.26606-3-avarab@gmail.com>
 X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d
 In-Reply-To: <87sgbghdbp.fsf@evledraar.gmail.com>
 References: <87sgbghdbp.fsf@evledraar.gmail.com>
@@ -70,26 +70,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I was re-reading the
-https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/ thread
-today and thought we should at least update the docs, and per my
-earlier E-Mail in
-https://lore.kernel.org/git/87sgbghdbp.fsf@evledraar.gmail.com/
-perhaps the directory entry should also be synced.
+As amusing as Linus's original prose[1] is here it doesn't really explain
+in any detail to the uninitiated why you would or wouldn't enable
+this, and the counter-intuitive reason for why git wouldn't fsync your
+precious data.
 
-I kept linux-fsdevel@vger.kernel.org in the CC, it was in the original
-thread, but more importantly it would be really nice to have people
-who know more about the state of filesystems on Linux and other OS's
-to give 2/2 a read to see how accurate what I put together is.
+So elaborate (a lot) on why this may or may not be needed. This is my
+best-effort attempt to summarize the various points raised in the last
+ML[2] discussion about this.
 
-Ævar Arnfjörð Bjarmason (2):
-  sha1-file: fsync() loose dir entry when core.fsyncObjectFiles
-  core.fsyncObjectFiles: make the docs less flippant
+1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
+    files", 2008-06-18)
+2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
 
+Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
+---
  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-----
- sha1-file.c                   | 19 +++++++++++-----
- 2 files changed, 50 insertions(+), 11 deletions(-)
+ 1 file changed, 36 insertions(+), 6 deletions(-)
 
+diff --git a/Documentation/config/core.txt b/Documentation/config/core.txt
+index 74619a9c03..5b47670c16 100644
+--- a/Documentation/config/core.txt
++++ b/Documentation/config/core.txt
+@@ -548,12 +548,42 @@ core.whitespace::
+   errors. The default tab width is 8. Allowed values are 1 to 63.
+ 
+ core.fsyncObjectFiles::
+-	This boolean will enable 'fsync()' when writing object files.
+-+
+-This is a total waste of time and effort on a filesystem that orders
+-data writes properly, but can be useful for filesystems that do not use
+-journalling (traditional UNIX filesystems) or that only journal metadata
+-and not file contents (OS X's HFS+, or Linux ext3 with "data=writeback").
++	This boolean will enable 'fsync()' when writing loose object
++	files. Both the file itself and its containng directory will
++	be fsynced.
+++
++When git writes data any required object writes will precede the
++corresponding reference update(s). For example, a
++linkgit:git-receive-pack[1] accepting a push might write a pack or
++loose objects (depending on settings such as `transfer.unpackLimit`).
+++
++Therefore on a journaled file system which ensures that data is
++flushed to disk in chronological order an fsync shouldn't be
++needed. The loose objects might be lost with a crash, but so will the
++ref update that would have referenced them. Git's own state in such a
++crash will remain consistent.
+++
++This option exists because that assumption doesn't hold on filesystems
++where the data ordering is not preserved, such as on ext3 and ext4
++with "data=writeback". On such a filesystem the `rename()` that drops
++the new reference in place might be preserved, but the contents or
++directory entry for the loose object(s) might not have been synced to
++disk.
+++
++Enabling this option might slow git down by a lot in some
++cases. E.g. in the case of a naïve bulk import tool which might create
++a million loose objects before a final ref update and `gc`. In other
++more common cases such as on a server being pushed to with default
++`transfer.unpackLimit` settings the difference might not be noticable.
+++
++However, that's highly filesystem-dependent, on some filesystems
++simply calling fsync() might force an unrelated bulk background write
++to be serialized to disk. Such edge cases are the reason this option
++is off by default. That default setting might change in future
++versions.
+++
++In older versions of git only the descriptor for the file itself was
++fsynced, not its directory entry.
+ 
+ core.preloadIndex::
+ 	Enable parallel index preload for operations like 'git diff'
 -- 
 2.28.0.297.g1956fa8f8d
 
