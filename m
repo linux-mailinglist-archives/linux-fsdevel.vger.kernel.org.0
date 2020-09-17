@@ -2,78 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22A6B26DCEC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 15:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE88C26DCD6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 15:31:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbgIQNey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 09:34:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50026 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbgIQNeU (ORCPT
+        id S1727009AbgIQNao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 09:30:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:31338 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727017AbgIQNaE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 09:34:20 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE17C061756;
-        Thu, 17 Sep 2020 06:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+x95TOveSKANVP/4NXP/85j+F/QDHBxfUXKmd3k4IkY=; b=KQDtXc5QckJn09Jm/Ja39DH+Uk
-        xxcqqwltSK9fZ6w7Kd6V1hBp9ikMoXg8gbomb9s7kP2XHhd7lM0naQBMg6RjjPyGlTBnZ9CqAewZP
-        YBMrkVSsWNv4P//FrPhdNdQmWpCFvyupNp/qno+NoxUvgiSbQKqfKolCuygblFt8iWbThqohs3hWl
-        poBHmOUUGUHFooTp12KKoDbiSxegWSjxaxIUxEoacl+BH7Gz+8C5zwbDPN/4KqU33J4uCDwI1dPIK
-        kM4wXFBSnpaxgF4lCFnvHE/xHjx2qEpyzqLl/r7jiVavDy6uIXbji7LU4O0hBDMsY2X8tCbWi4E1Q
-        q9GbsMrQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kItrt-0002Kk-1K; Thu, 17 Sep 2020 13:22:33 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 873F93006D0;
-        Thu, 17 Sep 2020 15:22:30 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 369752BACAEF2; Thu, 17 Sep 2020 15:22:30 +0200 (CEST)
-Date:   Thu, 17 Sep 2020 15:22:30 +0200
-From:   peterz@infradead.org
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Boaz Harrosh <boaz@plexistor.com>,
-        Hou Tao <houtao1@huawei.com>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will@kernel.org>, Dennis Zhou <dennis@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
- read_count
-Message-ID: <20200917132230.GG1362448@hirez.programming.kicks-ass.net>
-References: <20200915140750.137881-1-houtao1@huawei.com>
- <20200915150610.GC2674@hirez.programming.kicks-ass.net>
- <20200915153113.GA6881@redhat.com>
- <20200915155150.GD2674@hirez.programming.kicks-ass.net>
- <20200915160344.GH35926@hirez.programming.kicks-ass.net>
- <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
- <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
- <20200917120132.GA5602@redhat.com>
- <20200917124838.GT5449@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917124838.GT5449@casper.infradead.org>
+        Thu, 17 Sep 2020 09:30:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600349389;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qjkdQTJ/VBG7ZFMg5Nhpzya4K81fiyu8UjZya2led1Q=;
+        b=V5lZC3/t/VHSw6TIrIt2X6QD/sgLQyk6RiZ8PC8zlIS9egEgDe4zyS+1EY3fzLGPlx2jZg
+        oFd7fQKwgckZA7QxZb4zwOloG1Z0VYKvFoqoPQF+TP1wko7vAVxUFBZ2wI3LP9pBnxGnWn
+        SAJIE+khwUpVwTOoa4sQ4S4YJDrOLBw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-579-Q_ysnWYENLK5sfwraF7T4g-1; Thu, 17 Sep 2020 09:27:41 -0400
+X-MC-Unique: Q_ysnWYENLK5sfwraF7T4g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EC33956B35;
+        Thu, 17 Sep 2020 13:27:35 +0000 (UTC)
+Received: from ovpn-66-148.rdu2.redhat.com (ovpn-66-148.rdu2.redhat.com [10.10.66.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 17FB860BEC;
+        Thu, 17 Sep 2020 13:27:28 +0000 (UTC)
+Message-ID: <5d97da4d86db258fdc9b20be3c12588089e17da2.camel@redhat.com>
+Subject: Re: [PATCH v5 0/5] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+From:   Qian Cai <cai@redhat.com>
+To:     Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org
+Date:   Thu, 17 Sep 2020 09:27:27 -0400
+In-Reply-To: <20200916073539.3552-1-rppt@kernel.org>
+References: <20200916073539.3552-1-rppt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 01:48:38PM +0100, Matthew Wilcox wrote:
-> On Thu, Sep 17, 2020 at 02:01:33PM +0200, Oleg Nesterov wrote:
-> > IIUC, file_end_write() was never IRQ safe (at least if !CONFIG_SMP), even
-> > before 8129ed2964 ("change sb_writers to use percpu_rw_semaphore"), but this
-> > doesn't matter...
-> > 
-> > Perhaps we can change aio.c, io_uring.c and fs/overlayfs/file.c to avoid
-> > file_end_write() in IRQ context, but I am not sure it's worth the trouble.
+On Wed, 2020-09-16 at 10:35 +0300, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
 > 
-> If we change bio_endio to invoke the ->bi_end_io callbacks in softirq
-> context instead of hardirq context, we can change the pagecache to take
+> Hi,
+> 
+> This is an implementation of "secret" mappings backed by a file descriptor. 
+> I've dropped the boot time reservation patch for now as it is not strictly
+> required for the basic usage and can be easily added later either with or
+> without CMA.
 
-SoftIRQ context has exactly the same problem vs __this_cpu*().
+On powerpc: https://gitlab.com/cailca/linux-mm/-/blob/master/powerpc.config
+
+There is a compiling warning from the today's linux-next:
+
+<stdin>:1532:2: warning: #warning syscall memfd_secret not implemented [-Wcpp]
+
