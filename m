@@ -2,178 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B27D26D338
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 07:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8621926D333
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 07:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbgIQFro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 01:47:44 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:5028 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726109AbgIQFrn (ORCPT
+        id S1726178AbgIQFq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 01:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbgIQFq0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 01:47:43 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 01:47:42 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1600321662; x=1631857662;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zc28sktHmZGR/538cxHdIG6BpU19Y6P1jMgKf27Avc0=;
-  b=FMXsT4rq3Mt2ZmF2+9fGXwsn5bdDzA46FRQYyG19Q77SHWP/t4P3UPyx
-   o4bQK9UXkFJvLI/MWJDTOHjgfVFf0PL0+W5dXQqj0gVBs+LGVgcIkhH9C
-   dMsY7vPAR9JIGGBRPjVflG9VKl92XraZAsqPFPa3eMK8p0eWFsMODPGtj
-   dGG+TwA8jY3I/zSticZq/i++cAUPETbLgRrsqXZlvgPyZFFzGLVglgZ9Z
-   lmRcOD1FG30+kIUjNrCmDKhResd51BO+1M38X3pBTtt1bUUWCUC8m5lCD
-   gzf+0vdedUd1FnIWRL3ajJRXaGMBOeLwsKPWslJconiBB6I+5ak5Hu+1Q
-   Q==;
-IronPort-SDR: bOOmUpPdFmCmZNdcKMcL+EE+UTtvCTgYOVgLYuvTHBeilm0/fXOS8zd7rNqL0XaFO43/TVUZG2
- FNSi88j9wcq2o7dcc3js4c90afOUAHDiSWnpD0wtnlooiaSkFDqfLboMl8nC0r69tbqBk/HjD1
- T1TT4vSKyW3YliVzyWz2kmAZMNP15hf8v9LJy17B5/m2dk3JZyRx37L4e8FzsuivE8/da6qQNQ
- rEiMFz2cw1+Eb9sZUsEqg1iQgdFCtOM5GxcHCy5EW9bKHRv/stap5jRntddx5snc4brfotqTf2
- 3B4=
-X-IronPort-AV: E=Sophos;i="5.76,435,1592841600"; 
-   d="scan'208";a="257254660"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Sep 2020 13:40:35 +0800
-IronPort-SDR: iGMQI5D8SuAMQzikzJvv9NKU0kILo4vnNvhTUsj2128kschqHBf8uYxsIf+GNMsUbPMput36pR
- 3o8n7++QIhIA==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 22:27:44 -0700
-IronPort-SDR: GllSouYna0iRrnJQgVR5kfO/0Lq0+Wmr5/szIjDz/epSFz/BHY5LlDIRYlxboEyn9L7YNebDI7
- 0a1G9C9uHFnA==
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 16 Sep 2020 22:40:34 -0700
-Received: (nullmailer pid 820317 invoked by uid 1000);
-        Thu, 17 Sep 2020 05:40:33 -0000
-Date:   Thu, 17 Sep 2020 14:40:33 +0900
-From:   Naohiro Aota <Naohiro.Aota@wdc.com>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v7 00/39] btrfs: zoned block device support
-Message-ID: <20200917054033.homtvyj3iffrjile@naota.dhcp.fujisawa.hgst.com>
-References: <20200911123259.3782926-1-naohiro.aota@wdc.com>
- <20200915080927.GF1791@twin.jikos.cz>
- <SN4PR0401MB359839054A125BF64641B4E89B210@SN4PR0401MB3598.namprd04.prod.outlook.com>
+        Thu, 17 Sep 2020 01:46:26 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8320C06174A;
+        Wed, 16 Sep 2020 22:46:24 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id v20so1153977oiv.3;
+        Wed, 16 Sep 2020 22:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=03zgBdOmJo+1h1F3YVTbbY3y6xnSeDHzXEapmphTwIw=;
+        b=bbKl9UWPeRhmTphLackrhk80UEzUzcPTNe72QmMk7/fs5a/LxCxtV+mb6MSWQFVDmC
+         F22yt5hvhiNFb2j/gFnw8yxBQviOrz2mlbiqk83dwMA7AkjqITFQd1eVdq1X39tqelCL
+         VQYLiT8PHgFrLapRSXmMmT+MgfubVdogkhnR8iaU9CBQieW2dO0skkpZLwguhZi/JnBV
+         GroqbGpDUZEjnODXLPHpOPwc0N7/cjNeafIH1QgpKVpeU6uH1eY/RuZkMDyTnjr9U7fb
+         tviHseO3/70GTW4fSLc2vk/vqzCFhAHroNAVb0ANnf+lzN+TxeDA/upoZku1GEWDb8D1
+         7Ugg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=03zgBdOmJo+1h1F3YVTbbY3y6xnSeDHzXEapmphTwIw=;
+        b=R63WZ7Pzj6zQil9s3NhYYqO1MpyQ2wCRpNXtmAfUZv7Q8ehJclRc8if4sCNYjCGUTl
+         tXMclYOKG/ViwaMXgz6qDslAaLv63WPsh5P4zHYzCTT/TLUFnKn3iESbIxtdOr//S5GU
+         Ls8jdSa69Us4+27kpx/EZVHW7NaDytvbT6oKY2Gqf9RtZw0N/dGVJpBWjaGGizFr7TTQ
+         pZ4kNBjCOBdYO3qzMikJZMmSeI7Gml7dAg39opXlTxC13kIN2otPC/Qvhpf0jtCdb/IY
+         7vaAapMgH+2qow6eeHSSRoZLEpC5WOt+Y53kFUJlkYm0wm89+H7M1YJ3bu26VweqRdFX
+         ZwiQ==
+X-Gm-Message-State: AOAM533N2117Cm/diQzdCogRlWEGnMZsD5QYh32kEx86Yt3xaKQJSEJO
+        SapTjwU+UWd4VdK8gPu0SCslKxQc404eIbpUnkA=
+X-Google-Smtp-Source: ABdhPJzQezUvckVK0wvtjtSXJuH78/qLicEZ94e9jzpjFRfX1+eKqEzksVrp0ORp5rdZVfo95r94sEe5o2dL6iEln5E=
+X-Received: by 2002:a54:458f:: with SMTP id z15mr3791761oib.148.1600321584018;
+ Wed, 16 Sep 2020 22:46:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <SN4PR0401MB359839054A125BF64641B4E89B210@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200916073539.3552-1-rppt@kernel.org> <20200916162020.0d68c2bd6711024cfcaa8bd7@linux-foundation.org>
+In-Reply-To: <20200916162020.0d68c2bd6711024cfcaa8bd7@linux-foundation.org>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Thu, 17 Sep 2020 07:46:12 +0200
+Message-ID: <CAKgNAkiSRDoZWKkBLB03X_knOeoeKVTy2oLmMopZ5vK8UZSAPg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mike Rapoport <rppt@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 05:42:50PM +0000, Johannes Thumshirn wrote:
->On 15/09/2020 10:25, David Sterba wrote:
->> On Fri, Sep 11, 2020 at 09:32:20PM +0900, Naohiro Aota wrote:
->>> Changelog
->>> v6:
->>>  - Use bitmap helpers (Johannes)
->>>  - Code cleanup (Johannes)
->>>  - Rebased on kdave/for-5.5
->>>  - Enable the tree-log feature.
->>>  - Treat conventional zones as sequential zones, so we can now allow
->>>    mixed allocation of conventional zone and sequential write required
->>>    zone to construct a block group.
->>>  - Implement log-structured superblock
->>>    - No need for one conventional zone at the beginning of a device.
->>>  - Fix deadlock of direct IO writing
->>>  - Fix building with !CONFIG_BLK_DEV_ZONED (Johannes)
->>>  - Fix leak of zone_info (Johannes)
->>
->> I did a quick check to see if the patchset passes the default VM tests
->> and there's use after free short after the fstests start. No zoned
->> devices or such. I had to fix some conflicts when rebasing on misc-next
->> but I tried to base it on the last iomap-dio patch ("btrfs: switch to
->> iomap for direct IO"), same result so it's something in the zoned
->> patches.
->>
->> The reported pointer 0x6b6b6b6b6d1918eb contains the use-after-free
->> poison (0x6b) (CONFIG_PAGE_POISONING=y).
->>
->> MKFS_OPTIONS  -- -f -K --csum xxhash /dev/vdb
->> MOUNT_OPTIONS -- -o discard /dev/vdb /tmp/scratch
+On Thu, 17 Sep 2020 at 01:20, Andrew Morton <akpm@linux-foundation.org> wrote:
 >
->Hi David,
+> On Wed, 16 Sep 2020 10:35:34 +0300 Mike Rapoport <rppt@kernel.org> wrote:
 >
->Can you check if this on top of the series fixes the issue? According
->to Keith we can't call bio_iovec() from endio() as the iterator is already
->advanced (see req_bio_endio()).
+> > This is an implementation of "secret" mappings backed by a file descriptor.
+> > I've dropped the boot time reservation patch for now as it is not strictly
+> > required for the basic usage and can be easily added later either with or
+> > without CMA.
 >
+> It seems early days for this, especially as regards reviewer buyin.
+> But I'll toss it in there to get it some additional testing.
 >
-
-Thank you for fixing this.
-
->diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
->index bda4e02b5eab..311956697682 100644
->--- a/fs/btrfs/extent_io.c
->+++ b/fs/btrfs/extent_io.c
->@@ -2753,10 +2753,6 @@ static void end_bio_extent_writepage(struct bio *bio)
->        u64 end;
->        struct bvec_iter_all iter_all;
+> A test suite in tools/testging/selftests/ would be helpful, especially
+> for arch maintainers.
 >
->-       btrfs_record_physical_zoned(bio_iovec(bio).bv_page->mapping->host,
->-                                   page_offset(bio_iovec(bio).bv_page) + bio_iovec(bio).bv_offset,
->-                                   bio);
->-
->        ASSERT(!bio_flagged(bio, BIO_CLONED));
->        bio_for_each_segment_all(bvec, bio, iter_all) {
->                struct page *page = bvec->bv_page;
->@@ -2782,6 +2778,7 @@ static void end_bio_extent_writepage(struct bio *bio)
->                start = page_offset(page);
->                end = start + bvec->bv_offset + bvec->bv_len - 1;
->
->+               btrfs_record_physical_zoned(inode, start, bio);
+> I assume that user-facing manpage alterations are planned?
 
-We need to record the physical address only once per an ordered extent.
-So, this should be like:
+I was just about to write a mail into this thread when I saw this :-).
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index c21d1dbe314e..0bbe6e52ea0d 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2748,6 +2748,7 @@ static void end_bio_extent_writepage(struct bio *bio)
-         u64 start;
-         u64 end;
-         struct bvec_iter_all iter_all;
-+       bool first_bvec = true;
+So far, I don't think I saw a manual page patch. Mike, how about it?
 
-         ASSERT(!bio_flagged(bio, BIO_CLONED));
-         bio_for_each_segment_all(bvec, bio, iter_all) {
-@@ -2774,6 +2775,11 @@ static void end_bio_extent_writepage(struct bio *bio)
-                 start = page_offset(page);
-                 end = start + bvec->bv_offset + bvec->bv_len - 1;
+Thanks,
 
-+               if (first_bvec) {
-+                       btrfs_record_physical_zoned(inode, start, bio);
-+                       first_bvec = false;
-+               }
-+
-                 end_extent_writepage(page, error, start, end);
-                 end_page_writeback(page);
-         }
+Michael
 
-
->                end_extent_writepage(page, error, start, end);
->                end_page_writeback(page);
->        }
->diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
->index 576f8e333f16..6fdb21029ea9 100644
->--- a/fs/btrfs/zoned.c
->+++ b/fs/btrfs/zoned.c
->@@ -1086,8 +1086,7 @@ void btrfs_record_physical_zoned(struct inode *inode, u64 file_offset,
-> {
->        struct btrfs_ordered_extent *ordered;
->        struct bio_vec bvec = bio_iovec(bio);
->-       u64 physical = ((u64)bio->bi_iter.bi_sector << SECTOR_SHIFT) +
->-               bvec.bv_offset;
->+       u64 physical = (u64)bio->bi_iter.bi_sector << SECTOR_SHIFT;
->
->        if (bio_op(bio) != REQ_OP_ZONE_APPEND)
->                return;
->
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
