@@ -2,224 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF6B26E7ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 00:05:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBFD326E7E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 00:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbgIQWF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 18:05:29 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44886 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbgIQWF0 (ORCPT
+        id S1726002AbgIQWFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 18:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44968 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbgIQWFV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:05:26 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08HM02qQ048403;
-        Thu, 17 Sep 2020 22:05:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=MQv30HbtHRoUo5Q1tF7Om4fCuOCoNR96uQA4Vl3kIEs=;
- b=jXxxNNQdF84xitF5IAAaff7tl8Q40qfg//sriYTLwDzDGxthR/+YelqxBJnZrGVeU/Zn
- Om0jyue2L01BqlsxYYFD2syey1OAapO1ZXgM3j+huQVcys1AQXtdda4SM3Uo4YR7YlGX
- a+ORVOh2SHTfE5yv15G76kTQuj8rhiEsgdtuUcstC6k5BlL11Mj+weOGAZUZlW5ZVBpK
- 4StrX/TOYdNxop4Sb8rBcK+wlh6hf4ez5TzT4UE6hrpjLkOwzyFLN0ay3bZ/3kAFFz0R
- lhIB314YNOTfxr6qLPN0XjLb0TA8GhUQar0uHCJPzVfRrtN40A7g03qrmFlAQ5Yl7o28 kQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 33gnrrc2ve-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Sep 2020 22:05:03 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08HM0nio174108;
-        Thu, 17 Sep 2020 22:05:03 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 33mega5dks-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Sep 2020 22:05:03 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08HM51Nl000538;
-        Thu, 17 Sep 2020 22:05:01 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Sep 2020 22:05:01 +0000
-Date:   Thu, 17 Sep 2020 15:05:00 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net
-Subject: Re: [PATCH v2 9/9] iomap: Change calling convention for zeroing
-Message-ID: <20200917220500.GR7955@magnolia>
-References: <20200910234707.5504-1-willy@infradead.org>
- <20200910234707.5504-10-willy@infradead.org>
+        Thu, 17 Sep 2020 18:05:21 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77048C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 15:05:21 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id z18so2112831pfg.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 15:05:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RVejrFx8lqGVUKgRhIUmNAugSkLKO3AWaoC/1SxxcL0=;
+        b=gZfnTVPqJkwyJQbCSxJtksOl0Wp3oPCryqhhzYqmD6nXS59iDI+KLW4Fe8f0f8zL3n
+         /elUdPuoSqhgtEl2zfjQjTb/kbloI1vZr9vae5Jthw3imZMzfP9Eia8WaXmx3/Q3AM39
+         b9Swp7NuoP77Vi0xXufmukO6fA00nsfebrOJI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RVejrFx8lqGVUKgRhIUmNAugSkLKO3AWaoC/1SxxcL0=;
+        b=bMs94cWehEhvTJ4a7PJpjEUwnE3ipl45TIL3FTyjVWuax9Evzd3hQxNSdB7Q9sQ0Br
+         UUtxACBN0Q9ePa8RqcSfntxQIryQNQmWzAI5W+U91lPAW1budhq5d1SdA3YyFjf0xh0u
+         JocZUCDlTYPghJ8QrR5bVloG+6DTVqobz7dmVZGHNxo0dxKcrKQWk9WHfzA4Y4fqRs/X
+         SUv/BRFS0TxTm/P1Tl77da5tUORbCV/rmL6DevaPgBz3t42l+9Q9I91YgMhSpXEdLNBy
+         iStnPNrvUKLfvjZy+N/aS89KH875Kxv6riAbU/WZnGDH85ESC+paRwTd6pOgBhWYtpjh
+         s8fQ==
+X-Gm-Message-State: AOAM530EXzMdikVzwsU3IfphS+YCxneTYGybap66d8M+IovUyK7l+Sy4
+        /9BcEIBLCJIX3HcAc1Q3Z1z5nA==
+X-Google-Smtp-Source: ABdhPJxpTQhskINmsg7Ej2h7teJJR0+5sPJiS7FT04TblAYOWkDs4Jwx5Cao9/nMc6ypwIWmOhsmsw==
+X-Received: by 2002:a63:1e0c:: with SMTP id e12mr6153286pge.346.1600380320847;
+        Thu, 17 Sep 2020 15:05:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i9sm611190pfq.53.2020.09.17.15.05.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 15:05:19 -0700 (PDT)
+Date:   Thu, 17 Sep 2020 15:05:18 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     John Wood <john.wood@gmx.com>
+Cc:     Jann Horn <jannh@google.com>, kernel-hardening@lists.openwall.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the
+ fbfam feature
+Message-ID: <202009171504.841FA53@keescook>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <20200910202107.3799376-2-keescook@chromium.org>
+ <202009101615.8566BA3967@keescook>
+ <20200917175146.GB3637@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910234707.5504-10-willy@infradead.org>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9747 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 bulkscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009170162
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9747 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=1
- clxscore=1015 mlxlogscore=999 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009170162
+In-Reply-To: <20200917175146.GB3637@ubuntu>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 12:47:07AM +0100, Matthew Wilcox (Oracle) wrote:
-> Pass the full length to iomap_zero() and dax_iomap_zero(), and have
-> them return how many bytes they actually handled.  This is preparatory
-> work for handling THP, although it looks like DAX could actually take
-> advantage of it if there's a larger contiguous area.
+On Thu, Sep 17, 2020 at 08:40:06PM +0200, John Wood wrote:
+> Hi,
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/dax.c               | 13 ++++++-------
->  fs/iomap/buffered-io.c | 33 +++++++++++++++------------------
->  include/linux/dax.h    |  3 +--
->  3 files changed, 22 insertions(+), 27 deletions(-)
+> On Thu, Sep 10, 2020 at 04:18:08PM -0700, Kees Cook wrote:
+> > On Thu, Sep 10, 2020 at 01:21:02PM -0700, Kees Cook wrote:
+> > > From: John Wood <john.wood@gmx.com>
+> > >
+> > > Add a menu entry under "Security options" to enable the "Fork brute
+> > > force attack mitigation" feature.
+> > >
+> > > Signed-off-by: John Wood <john.wood@gmx.com>
+> > > ---
+> > >  security/Kconfig       |  1 +
+> > >  security/fbfam/Kconfig | 10 ++++++++++
+> > >  2 files changed, 11 insertions(+)
+> > >  create mode 100644 security/fbfam/Kconfig
+> > >
+> > > diff --git a/security/Kconfig b/security/Kconfig
+> > > index 7561f6f99f1d..00a90e25b8d5 100644
+> > > --- a/security/Kconfig
+> > > +++ b/security/Kconfig
+> > > @@ -290,6 +290,7 @@ config LSM
+> > >  	  If unsure, leave this as the default.
+> > >
+> > >  source "security/Kconfig.hardening"
+> > > +source "security/fbfam/Kconfig"
+> >
+> > Given the layout you've chosen and the interface you've got, I think
+> > this should just be treated like a regular LSM.
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 994ab66a9907..6ad346352a8c 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1037,18 +1037,18 @@ static vm_fault_t dax_load_hole(struct xa_state *xas,
->  	return ret;
->  }
->  
-> -int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-> -		   struct iomap *iomap)
-> +s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
->  {
->  	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
->  	pgoff_t pgoff;
->  	long rc, id;
->  	void *kaddr;
->  	bool page_aligned = false;
-> -
-> +	unsigned offset = offset_in_page(pos);
-> +	unsigned size = min_t(u64, PAGE_SIZE - offset, length);
->  
->  	if (IS_ALIGNED(sector << SECTOR_SHIFT, PAGE_SIZE) &&
-> -	    IS_ALIGNED(size, PAGE_SIZE))
-> +	    (size == PAGE_SIZE))
->  		page_aligned = true;
->  
->  	rc = bdev_dax_pgoff(iomap->bdev, sector, PAGE_SIZE, &pgoff);
-> @@ -1058,8 +1058,7 @@ int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
->  	id = dax_read_lock();
->  
->  	if (page_aligned)
-> -		rc = dax_zero_page_range(iomap->dax_dev, pgoff,
-> -					 size >> PAGE_SHIFT);
-> +		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
->  	else
->  		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
->  	if (rc < 0) {
-> @@ -1072,7 +1071,7 @@ int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
->  		dax_flush(iomap->dax_dev, kaddr + offset, size);
->  	}
->  	dax_read_unlock(id);
-> -	return 0;
-> +	return size;
->  }
->  
->  static loff_t
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index cb25a7b70401..3e1eb40a73fd 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -898,11 +898,13 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->  }
->  EXPORT_SYMBOL_GPL(iomap_file_unshare);
->  
-> -static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
-> -		unsigned bytes, struct iomap *iomap, struct iomap *srcmap)
-> +static s64 iomap_zero(struct inode *inode, loff_t pos, u64 length,
-> +		struct iomap *iomap, struct iomap *srcmap)
->  {
->  	struct page *page;
->  	int status;
-> +	unsigned offset = offset_in_page(pos);
-> +	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
->  
->  	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
->  	if (status)
-> @@ -914,38 +916,33 @@ static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
->  	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
->  }
->  
-> -static loff_t
-> -iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
-> +		loff_t length, void *data, struct iomap *iomap,
-
-Any reason not to change @length and the return value to s64?
-
---D
-
-> +		struct iomap *srcmap)
->  {
->  	bool *did_zero = data;
->  	loff_t written = 0;
-> -	int status;
->  
->  	/* already zeroed?  we're done. */
->  	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-> -		return count;
-> +		return length;
->  
->  	do {
-> -		unsigned offset, bytes;
-> -
-> -		offset = offset_in_page(pos);
-> -		bytes = min_t(loff_t, PAGE_SIZE - offset, count);
-> +		s64 bytes;
->  
->  		if (IS_DAX(inode))
-> -			status = dax_iomap_zero(pos, offset, bytes, iomap);
-> +			bytes = dax_iomap_zero(pos, length, iomap);
->  		else
-> -			status = iomap_zero(inode, pos, offset, bytes, iomap,
-> -					srcmap);
-> -		if (status < 0)
-> -			return status;
-> +			bytes = iomap_zero(inode, pos, length, iomap, srcmap);
-> +		if (bytes < 0)
-> +			return bytes;
->  
->  		pos += bytes;
-> -		count -= bytes;
-> +		length -= bytes;
->  		written += bytes;
->  		if (did_zero)
->  			*did_zero = true;
-> -	} while (count > 0);
-> +	} while (length > 0);
->  
->  	return written;
->  }
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 6904d4e0b2e0..951a851a0481 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -214,8 +214,7 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
->  int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
->  int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
->  				      pgoff_t index);
-> -int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-> -			struct iomap *iomap);
-> +s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap);
->  static inline bool dax_mapping(struct address_space *mapping)
->  {
->  	return mapping->host && IS_DAX(mapping->host);
-> -- 
-> 2.28.0
+> Yes, throughout the review it seems the most appropiate is treat
+> this feature as a regular LSM. Thanks.
 > 
+> > >
+> > >  endmenu
+> > >
+> > > diff --git a/security/fbfam/Kconfig b/security/fbfam/Kconfig
+> > > new file mode 100644
+> > > index 000000000000..bbe7f6aad369
+> > > --- /dev/null
+> > > +++ b/security/fbfam/Kconfig
+> > > @@ -0,0 +1,10 @@
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +config FBFAM
+> >
+> > To jump on the bikeshed: how about just calling this
+> > FORK_BRUTE_FORCE_DETECTION or FORK_BRUTE, and the directory could be
+> > "brute", etc. "fbfam" doesn't tell anyone anything.
+> 
+> Understood. But how about use the fbfam abbreviation in the code? Like as
+> function name prefix, struct name prefix, ... It would be better to use a
+> more descriptive name in this scenario? It is not clear to me.
+
+I don't feel too strongly, but I think having the CONFIG roughly match
+the directory name, roughly match the function prefixes should be best.
+Maybe call the directory and function prefix "brute"?
+
+-- 
+Kees Cook
