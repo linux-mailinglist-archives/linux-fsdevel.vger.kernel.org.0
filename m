@@ -2,159 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE3A926E675
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 22:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6514226E6A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 22:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbgIQUQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 16:16:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43187 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726244AbgIQUQP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 16:16:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600373773;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MXMrtVIXv7vKfPd7p1LSXdo7LVXu/sjEd6UvyVDVNLE=;
-        b=Yc5/PMDFqTxieDXIDDg4jjhfp30sO4DDP7kVQDeotLcRsUb2ZZQp4utcuJ4D3lrAhNXYnz
-        DzCdxaCWMeDYDhtgctZKbjqhOsyVn/RIFviEnHN51ljUPUfJxMcL4DfSpF/6St9EmDRnMo
-        Q9QlLRY/oeoOSzKaogvZS6npNKi+2AY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-594-T61x4WaHP0OWgHIEYuZGdA-1; Thu, 17 Sep 2020 16:16:11 -0400
-X-MC-Unique: T61x4WaHP0OWgHIEYuZGdA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D3A688EF01;
-        Thu, 17 Sep 2020 20:16:10 +0000 (UTC)
-Received: from ovpn-66-148.rdu2.redhat.com (ovpn-66-148.rdu2.redhat.com [10.10.66.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D0D655766;
-        Thu, 17 Sep 2020 20:16:09 +0000 (UTC)
-Message-ID: <2c2d3066f721739050de00293ecdba0b6677ee17.camel@redhat.com>
-Subject: Re: slab-out-of-bounds in iov_iter_revert()
-From:   Qian Cai <cai@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     torvalds@linux-foundation.org, vgoyal@redhat.com,
-        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 17 Sep 2020 16:16:08 -0400
-In-Reply-To: <20200917184558.GX3421308@ZenIV.linux.org.uk>
-References: <20200911215903.GA16973@lca.pw>
-         <20200911235511.GB3421308@ZenIV.linux.org.uk>
-         <87ded87d232d9cf87c9c64495bf9190be0e0b6e8.camel@redhat.com>
-         <20200917020440.GQ3421308@ZenIV.linux.org.uk>
-         <20200917021439.GA31009@ZenIV.linux.org.uk>
-         <e815399a4a123aa7cc096a55055f103874db1e75.camel@redhat.com>
-         <20200917164432.GU3421308@ZenIV.linux.org.uk>
-         <c68eb9de3579cb56b8c6559a1e610ade631a9d60.camel@redhat.com>
-         <20200917184558.GX3421308@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        id S1726485AbgIQUWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 16:22:01 -0400
+Received: from bsmtp2.bon.at ([213.33.87.16]:17068 "EHLO bsmtp2.bon.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726333AbgIQUWB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 16:22:01 -0400
+X-Greylist: delayed 406 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 16:22:00 EDT
+Received: from dx.site (unknown [93.83.142.38])
+        by bsmtp2.bon.at (Postfix) with ESMTPSA id 4BspKL2xv0z5tl9;
+        Thu, 17 Sep 2020 22:21:58 +0200 (CEST)
+Received: from [IPv6:::1] (localhost [IPv6:::1])
+        by dx.site (Postfix) with ESMTP id E3EB92100;
+        Thu, 17 Sep 2020 22:21:57 +0200 (CEST)
+Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when
+ core.fsyncObjectFiles
+To:     =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>,
+        git@vger.kernel.org
+Cc:     tytso@mit.edu, Junio C Hamano <gitster@pobox.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <87sgbghdbp.fsf@evledraar.gmail.com>
+ <20200917112830.26606-2-avarab@gmail.com>
+From:   Johannes Sixt <j6t@kdbg.org>
+Message-ID: <64358b70-4fff-5dc8-6e63-2fc916bea6af@kdbg.org>
+Date:   Thu, 17 Sep 2020 22:21:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20200917112830.26606-2-avarab@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-09-17 at 19:45 +0100, Al Viro wrote:
-> On Thu, Sep 17, 2020 at 01:42:44PM -0400, Qian Cai wrote:
-> > > 	How much IO does it take to trigger that on your reproducer?
-> > 
-> > That is something I don't know for sure because it is always reproducible by
-> > running the trinity fuzzer for a few seconds (32 threads). I did another run
-> > below (still with your patch applied) and then tried to capture some logs
-> > here:
-> > 
-> > http://people.redhat.com/qcai/iov_iter_revert/
+Am 17.09.20 um 13:28 schrieb Ævar Arnfjörð Bjarmason:
+> Change the behavior of core.fsyncObjectFiles to also sync the
+> directory entry. I don't have a case where this broke, just going by
+> paranoia and the fsync(2) manual page's guarantees about its behavior.
 > 
-> FWIW, there were several bugs in that patch:
-> 	* 'shortened' possibly left uninitialized
-> 	* possible error returns with reexpand not done
-> 
-> Could you try this instead?
-
-This works fine. Thanks for taking care of this, Al.
-
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
 > ---
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 6611ef3269a8..43c165e796da 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -3091,11 +3091,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter
-> *iter)
->  	ssize_t ret = 0;
->  	struct file *file = iocb->ki_filp;
->  	struct fuse_file *ff = file->private_data;
-> -	bool async_dio = ff->fc->async_dio;
->  	loff_t pos = 0;
->  	struct inode *inode;
->  	loff_t i_size;
-> -	size_t count = iov_iter_count(iter);
-> +	size_t count = iov_iter_count(iter), shortened = 0;
->  	loff_t offset = iocb->ki_pos;
->  	struct fuse_io_priv *io;
->  
-> @@ -3103,17 +3102,9 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter
-> *iter)
->  	inode = file->f_mapping->host;
->  	i_size = i_size_read(inode);
->  
-> -	if ((iov_iter_rw(iter) == READ) && (offset > i_size))
-> +	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
->  		return 0;
->  
-> -	/* optimization for short read */
-> -	if (async_dio && iov_iter_rw(iter) != WRITE && offset + count > i_size)
-> {
-> -		if (offset >= i_size)
-> -			return 0;
-> -		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
-> -		count = iov_iter_count(iter);
-> -	}
-> -
->  	io = kmalloc(sizeof(struct fuse_io_priv), GFP_KERNEL);
->  	if (!io)
->  		return -ENOMEM;
-> @@ -3129,15 +3120,22 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter
-> *iter)
->  	 * By default, we want to optimize all I/Os with async request
->  	 * submission to the client filesystem if supported.
->  	 */
-> -	io->async = async_dio;
-> +	io->async = ff->fc->async_dio;
->  	io->iocb = iocb;
->  	io->blocking = is_sync_kiocb(iocb);
->  
-> +	/* optimization for short read */
-> +	if (io->async && !io->write && offset + count > i_size) {
-> +		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
-> +		shortened = count - iov_iter_count(iter);
-> +		count -= shortened;
-> +	}
-> +
->  	/*
->  	 * We cannot asynchronously extend the size of a file.
->  	 * In such case the aio will behave exactly like sync io.
->  	 */
-> -	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
-> +	if ((offset + count > i_size) && io->write)
->  		io->blocking = true;
->  
->  	if (io->async && io->blocking) {
-> @@ -3155,6 +3153,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter
-> *iter)
->  	} else {
->  		ret = __fuse_direct_read(io, iter, &pos);
->  	}
-> +	iov_iter_reexpand(iter, iov_iter_count(iter) + shortened);
->  
->  	if (io->async) {
->  		bool blocking = io->blocking;
+>  sha1-file.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
 > 
+> diff --git a/sha1-file.c b/sha1-file.c
+> index dd65bd5c68..d286346921 100644
+> --- a/sha1-file.c
+> +++ b/sha1-file.c
+> @@ -1784,10 +1784,14 @@ int hash_object_file(const struct git_hash_algo *algo, const void *buf,
+>  }
+>  
+>  /* Finalize a file on disk, and close it. */
+> -static void close_loose_object(int fd)
+> +static void close_loose_object(int fd, const struct strbuf *dirname)
+>  {
+> -	if (fsync_object_files)
+> +	int dirfd;
+> +	if (fsync_object_files) {
+>  		fsync_or_die(fd, "loose object file");
+> +		dirfd = xopen(dirname->buf, O_RDONLY);
+> +		fsync_or_die(dirfd, "loose object directory");
 
+Did you have the opportunity to verify that this works on Windows?
+Opening a directory with open(2), I mean: It's disallowed according to
+the docs:
+https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/open-wopen?view=vs-2019#return-value
+
+> +	}
+>  	if (close(fd) != 0)
+>  		die_errno(_("error when closing loose object file"));
+>  }
+
+-- Hannes
