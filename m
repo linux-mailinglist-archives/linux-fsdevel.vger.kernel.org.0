@@ -2,164 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3768526D349
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 07:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B27D26D338
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 07:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgIQFxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 01:53:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42622 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726112AbgIQFxp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 01:53:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=cantorsusede;
-        t=1600321040;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=i/IF3vBhE0MNfDnpI+LKOtHPaAvDj1Zmh8eIZNNXgtE=;
-        b=qPN53akcCr37rpzIs5hg1+JmyVKf1Ol1vCTG2BvmW1dz7f7njSTwLFw4YKQ9gAt8ikBTkX
-        RXUs6tMfkMRD8RSgqKiLzw6Q2Y8oTnO+sgSYzt7g08sZWBo1Vi1nnQqXMIBiYVfV4gjinq
-        RgPILzW4OT5zdCKJhTxJP+/Rl+MvyRsDVwl7R6OV+dUH6dM/37yuX1MuKzoy9lNEEzYMKi
-        5Rh56KV0HrB7iWKSxPOkpFpZzBjLfLWdUDB1bVSvO2q8RGZU4/UxWFP+p8/R29J4qUteKX
-        8RPCr/2bIicziWa3Rjaj4PauiddI3Z7CbOG9Fz/5k7rWHUni6BghXhmCD/BJxw==
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 60E33AD12;
-        Thu, 17 Sep 2020 05:37:35 +0000 (UTC)
-Subject: Re: More filesystem need this fix (xfs: use MMAPLOCK around
- filemap_map_pages())
-To:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Qiuyang Sun <sunqiuyang@huawei.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, nborisov@suse.de
-References: <20200623052059.1893966-1-david@fromorbit.com>
- <CAOQ4uxh0dnVXJ9g+5jb3q72RQYYqTLPW_uBqHPKn6AJZ2DNPOQ@mail.gmail.com>
- <20200916155851.GA1572@quack2.suse.cz>
- <20200917014454.GZ12131@dread.disaster.area>
-From:   Nikolay Borisov <nborisov@suse.com>
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <df9eb392-8b86-591a-b1be-535a13b874d9@suse.com>
-Date:   Thu, 17 Sep 2020 08:37:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726193AbgIQFro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 01:47:44 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:5028 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbgIQFrn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 01:47:43 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 01:47:42 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1600321662; x=1631857662;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zc28sktHmZGR/538cxHdIG6BpU19Y6P1jMgKf27Avc0=;
+  b=FMXsT4rq3Mt2ZmF2+9fGXwsn5bdDzA46FRQYyG19Q77SHWP/t4P3UPyx
+   o4bQK9UXkFJvLI/MWJDTOHjgfVFf0PL0+W5dXQqj0gVBs+LGVgcIkhH9C
+   dMsY7vPAR9JIGGBRPjVflG9VKl92XraZAsqPFPa3eMK8p0eWFsMODPGtj
+   dGG+TwA8jY3I/zSticZq/i++cAUPETbLgRrsqXZlvgPyZFFzGLVglgZ9Z
+   lmRcOD1FG30+kIUjNrCmDKhResd51BO+1M38X3pBTtt1bUUWCUC8m5lCD
+   gzf+0vdedUd1FnIWRL3ajJRXaGMBOeLwsKPWslJconiBB6I+5ak5Hu+1Q
+   Q==;
+IronPort-SDR: bOOmUpPdFmCmZNdcKMcL+EE+UTtvCTgYOVgLYuvTHBeilm0/fXOS8zd7rNqL0XaFO43/TVUZG2
+ FNSi88j9wcq2o7dcc3js4c90afOUAHDiSWnpD0wtnlooiaSkFDqfLboMl8nC0r69tbqBk/HjD1
+ T1TT4vSKyW3YliVzyWz2kmAZMNP15hf8v9LJy17B5/m2dk3JZyRx37L4e8FzsuivE8/da6qQNQ
+ rEiMFz2cw1+Eb9sZUsEqg1iQgdFCtOM5GxcHCy5EW9bKHRv/stap5jRntddx5snc4brfotqTf2
+ 3B4=
+X-IronPort-AV: E=Sophos;i="5.76,435,1592841600"; 
+   d="scan'208";a="257254660"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Sep 2020 13:40:35 +0800
+IronPort-SDR: iGMQI5D8SuAMQzikzJvv9NKU0kILo4vnNvhTUsj2128kschqHBf8uYxsIf+GNMsUbPMput36pR
+ 3o8n7++QIhIA==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 22:27:44 -0700
+IronPort-SDR: GllSouYna0iRrnJQgVR5kfO/0Lq0+Wmr5/szIjDz/epSFz/BHY5LlDIRYlxboEyn9L7YNebDI7
+ 0a1G9C9uHFnA==
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip01.wdc.com with SMTP; 16 Sep 2020 22:40:34 -0700
+Received: (nullmailer pid 820317 invoked by uid 1000);
+        Thu, 17 Sep 2020 05:40:33 -0000
+Date:   Thu, 17 Sep 2020 14:40:33 +0900
+From:   Naohiro Aota <Naohiro.Aota@wdc.com>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc:     "dsterba@suse.cz" <dsterba@suse.cz>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v7 00/39] btrfs: zoned block device support
+Message-ID: <20200917054033.homtvyj3iffrjile@naota.dhcp.fujisawa.hgst.com>
+References: <20200911123259.3782926-1-naohiro.aota@wdc.com>
+ <20200915080927.GF1791@twin.jikos.cz>
+ <SN4PR0401MB359839054A125BF64641B4E89B210@SN4PR0401MB3598.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20200917014454.GZ12131@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <SN4PR0401MB359839054A125BF64641B4E89B210@SN4PR0401MB3598.namprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Sep 16, 2020 at 05:42:50PM +0000, Johannes Thumshirn wrote:
+>On 15/09/2020 10:25, David Sterba wrote:
+>> On Fri, Sep 11, 2020 at 09:32:20PM +0900, Naohiro Aota wrote:
+>>> Changelog
+>>> v6:
+>>>  - Use bitmap helpers (Johannes)
+>>>  - Code cleanup (Johannes)
+>>>  - Rebased on kdave/for-5.5
+>>>  - Enable the tree-log feature.
+>>>  - Treat conventional zones as sequential zones, so we can now allow
+>>>    mixed allocation of conventional zone and sequential write required
+>>>    zone to construct a block group.
+>>>  - Implement log-structured superblock
+>>>    - No need for one conventional zone at the beginning of a device.
+>>>  - Fix deadlock of direct IO writing
+>>>  - Fix building with !CONFIG_BLK_DEV_ZONED (Johannes)
+>>>  - Fix leak of zone_info (Johannes)
+>>
+>> I did a quick check to see if the patchset passes the default VM tests
+>> and there's use after free short after the fstests start. No zoned
+>> devices or such. I had to fix some conflicts when rebasing on misc-next
+>> but I tried to base it on the last iomap-dio patch ("btrfs: switch to
+>> iomap for direct IO"), same result so it's something in the zoned
+>> patches.
+>>
+>> The reported pointer 0x6b6b6b6b6d1918eb contains the use-after-free
+>> poison (0x6b) (CONFIG_PAGE_POISONING=y).
+>>
+>> MKFS_OPTIONS  -- -f -K --csum xxhash /dev/vdb
+>> MOUNT_OPTIONS -- -o discard /dev/vdb /tmp/scratch
+>
+>Hi David,
+>
+>Can you check if this on top of the series fixes the issue? According
+>to Keith we can't call bio_iovec() from endio() as the iterator is already
+>advanced (see req_bio_endio()).
+>
+>
+
+Thank you for fixing this.
+
+>diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+>index bda4e02b5eab..311956697682 100644
+>--- a/fs/btrfs/extent_io.c
+>+++ b/fs/btrfs/extent_io.c
+>@@ -2753,10 +2753,6 @@ static void end_bio_extent_writepage(struct bio *bio)
+>        u64 end;
+>        struct bvec_iter_all iter_all;
+>
+>-       btrfs_record_physical_zoned(bio_iovec(bio).bv_page->mapping->host,
+>-                                   page_offset(bio_iovec(bio).bv_page) + bio_iovec(bio).bv_offset,
+>-                                   bio);
+>-
+>        ASSERT(!bio_flagged(bio, BIO_CLONED));
+>        bio_for_each_segment_all(bvec, bio, iter_all) {
+>                struct page *page = bvec->bv_page;
+>@@ -2782,6 +2778,7 @@ static void end_bio_extent_writepage(struct bio *bio)
+>                start = page_offset(page);
+>                end = start + bvec->bv_offset + bvec->bv_len - 1;
+>
+>+               btrfs_record_physical_zoned(inode, start, bio);
+
+We need to record the physical address only once per an ordered extent.
+So, this should be like:
+
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index c21d1dbe314e..0bbe6e52ea0d 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2748,6 +2748,7 @@ static void end_bio_extent_writepage(struct bio *bio)
+         u64 start;
+         u64 end;
+         struct bvec_iter_all iter_all;
++       bool first_bvec = true;
+
+         ASSERT(!bio_flagged(bio, BIO_CLONED));
+         bio_for_each_segment_all(bvec, bio, iter_all) {
+@@ -2774,6 +2775,11 @@ static void end_bio_extent_writepage(struct bio *bio)
+                 start = page_offset(page);
+                 end = start + bvec->bv_offset + bvec->bv_len - 1;
+
++               if (first_bvec) {
++                       btrfs_record_physical_zoned(inode, start, bio);
++                       first_bvec = false;
++               }
++
+                 end_extent_writepage(page, error, start, end);
+                 end_page_writeback(page);
+         }
 
 
-On 17.09.20 г. 4:44 ч., Dave Chinner wrote:
-> On Wed, Sep 16, 2020 at 05:58:51PM +0200, Jan Kara wrote:
->> On Sat 12-09-20 09:19:11, Amir Goldstein wrote:
->>> On Tue, Jun 23, 2020 at 8:21 AM Dave Chinner <david@fromorbit.com> wrote:
-
-<snip>
-
-> 
-> So....
-> 
-> P0					p1
-> 
-> hole punch starts
->   takes XFS_MMAPLOCK_EXCL
->   truncate_pagecache_range()
->     unmap_mapping_range(start, end)
->       <clears ptes>
-> 					<read fault>
-> 					do_fault_around()
-> 					  ->map_pages
-> 					    filemap_map_pages()
-> 					      page mapping valid,
-> 					      page is up to date
-> 					      maps PTEs
-> 					<fault done>
->     truncate_inode_pages_range()
->       truncate_cleanup_page(page)
->         invalidates page
->       delete_from_page_cache_batch(page)
->         frees page
-> 					<pte now points to a freed page>
-> 
-> That doesn't seem good to me.
-> 
-> Sure, maybe the page hasn't been freed back to the free lists
-> because of elevated refcounts. But it's been released by the
-> filesystem and not longer in the page cache so nothing good can come
-> of this situation...
-> 
-> AFAICT, this race condition exists for the truncate case as well
-> as filemap_map_pages() doesn't have a "page beyond inode size" check
-> in it. 
-
-(It's not relevant to the discussion at hand but for the sake of
-completeness):
-
-It does have a check:
-
- max_idx = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE);
- if (page->index >= max_idx)
-      goto unlock;
-
-
-<snip>
+>                end_extent_writepage(page, error, start, end);
+>                end_page_writeback(page);
+>        }
+>diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+>index 576f8e333f16..6fdb21029ea9 100644
+>--- a/fs/btrfs/zoned.c
+>+++ b/fs/btrfs/zoned.c
+>@@ -1086,8 +1086,7 @@ void btrfs_record_physical_zoned(struct inode *inode, u64 file_offset,
+> {
+>        struct btrfs_ordered_extent *ordered;
+>        struct bio_vec bvec = bio_iovec(bio);
+>-       u64 physical = ((u64)bio->bi_iter.bi_sector << SECTOR_SHIFT) +
+>-               bvec.bv_offset;
+>+       u64 physical = (u64)bio->bi_iter.bi_sector << SECTOR_SHIFT;
+>
+>        if (bio_op(bio) != REQ_OP_ZONE_APPEND)
+>                return;
+>
