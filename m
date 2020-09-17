@@ -2,99 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9369F26D177
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 05:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC9226D1C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 05:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbgIQDJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 23:09:49 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:32918 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726007AbgIQDJt (ORCPT
+        id S1726064AbgIQDaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 23:30:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbgIQDaY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 23:09:49 -0400
-Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E2FAB3AA31D;
-        Thu, 17 Sep 2020 13:09:43 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kIkIo-00015p-TR; Thu, 17 Sep 2020 13:09:42 +1000
-Date:   Thu, 17 Sep 2020 13:09:42 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        David Sterba <dsterba@suse.com>,
-        "linux-btrfs @ vger . kernel . org" <linux-btrfs@vger.kernel.org>,
-        Filipe Manana <fdmanana@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context
-Message-ID: <20200917030942.GU12096@dread.disaster.area>
-References: <20200901130644.12655-1-johannes.thumshirn@wdc.com>
- <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
- <20200903163236.GA26043@lst.de>
- <20200907000432.GM12096@dread.disaster.area>
- <20200915214853.iurg43dt52h5z2gp@fiona>
+        Wed, 16 Sep 2020 23:30:24 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64ED7C06174A;
+        Wed, 16 Sep 2020 20:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=ZfJS/f94/KKMV+Mccd9pRniL7TH36xiMBW1d5y04Aj8=; b=EX0cU1ou1P3jaAsaDLeoOiLSqS
+        mpJxcZClyN7A/RxlPuDO+uLp/wWLe8+zS3tZhZ6gSYArpXlRnCCZqieAvt0KZy9UpEqn+NwzdV1+Z
+        7q71orzFU1qK9I2vlfUUB0OlhaJAej5di8m2n493sVqTnPyqSQKoW5HSFq3nH3/cUDZhJjUPF5rlU
+        J0h7/9LgDSD8rQI1Q6gBl6AfrL3YbkqezqoXnB5w9r+sj/MuHiIQfCeM0U9ldilA32SFxAValxk/H
+        9XKnI0m4GYu/NSW4qXaPK+UhPQxpEM8Dl/XD2xnLOSuR/4bbTTiRH3DI40oBgw9sjwwNaARQE3imp
+        NoOd9b/w==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIkcn-0007dR-B9; Thu, 17 Sep 2020 03:30:21 +0000
+Date:   Thu, 17 Sep 2020 04:30:21 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-btrfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Qu Wenruo <wqu@suse.com>
+Subject: THP support for btrfs
+Message-ID: <20200917033021.GR5449@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200915214853.iurg43dt52h5z2gp@fiona>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=XJ9OtjpE c=1 sm=1 tr=0 cx=a_idp_d
-        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
-        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
-        a=n9nB9iI-1VlEs8jUNu4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 04:48:53PM -0500, Goldwyn Rodrigues wrote:
-> On 10:04 07/09, Dave Chinner wrote:
-> > On Thu, Sep 03, 2020 at 06:32:36PM +0200, Christoph Hellwig wrote:
-> > > We could trivially do something like this to allow the file system
-> > > to call iomap_dio_complete without i_rwsem:
-> > 
-> > That just exposes another deadlock vector:
-> > 
-> > P0			P1
-> > inode_lock()		fallocate(FALLOC_FL_ZERO_RANGE)
-> > __iomap_dio_rw()	inode_lock()
-> > 			<block>
-> > <submits IO>
-> > <completes IO>
-> > inode_unlock()
-> > 			<gets inode_lock()>
-> > 			inode_dio_wait()
-> > iomap_dio_complete()
-> >   generic_write_sync()
-> >     btrfs_file_fsync()
-> >       inode_lock()
-> >       <deadlock>
-> 
-> Can inode_dio_end() be called before generic_write_sync(), as it is done
-> in fs/direct-io.c:dio_complete()?
+I was pointed at the patches posted this week for sub-page support in
+btrfs, and I thought it might be a good idea to mention that THP support
+is going to hit many of the same issues as sub-PAGE_SIZE blocks, so if
+you're thinking about sub-page block sizes, it might be a good idea to
+add THP support at the same time, or at least be aware of it when you're
+working on those patches to make THP work in the future.
 
-Don't think so.  inode_dio_wait() is supposed to indicate that all
-DIO is complete, and having the "make it stable" parts of an O_DSYNC
-DIO still running after inode_dio_wait() returns means that we still
-have DIO running....
+While the patches have not entirely landed yet, complete (in that it
+passes xfstests on my laptop) support is available here:
+http://git.infradead.org/users/willy/pagecache.git
 
-For some filesystems, ensuring the DIO data is stable may involve
-flushing other data (perhaps we did EOF zeroing before the file
-extending DIO) and/or metadata to the log, so we need to guarantee
-these DIO related operations are complete and stable before we say
-the DIO is done.
+About 40 of the 100 patches are in Andrew Morton's tree or the iomap
+tree waiting for the next merge window, and I'd like to get the rest
+upstream in the merge window after that.  About 20-25 of the patches are
+to iomap/xfs and the rest are generic MM/FS support.
 
-> Christoph's solution is a clean approach and would prefer to use it as
-> the final solution.
+The first difference you'll see after setting the flag indicating
+that your filesystem supports THPs is transparent huge pages being
+passed to ->readahead().  You should submit I/Os to read every byte
+in those pages, not just the first PAGE_SIZE bytes ;-)  Likewise, when
+writepages/writepage is called, you'll want to write back every dirty
+byte in that page, not just the first PAGE_SIZE bytes.
 
-/me shrugs
+If there's a page error (I strongly recommend error injection), you'll
+also see these pages being passed to ->readpage and ->write_begin
+without being PageUptodate, and again, you'll have to handle reads
+for the parts of the page which are not Uptodate.
 
-Christoph's solution simply means you can't use inode_dio_wait() in
-the filesystem. btrfs would need its own DIO barrier....
+You'll have to handle invalidatepage being called from the truncate /
+page split path.
 
-Cheers,
+page_mkwrite can be called with a tail page.  You should be sure to mark
+the entire page as dirty (we only track dirty state on a per-THP basis,
+not per-subpage basis).
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+---
+
+I see btrfs is switching to iomap for the directIO path.  Has any
+consideration been given to switching to iomap for the buffered I/O path?
+Or is that just too much work?
