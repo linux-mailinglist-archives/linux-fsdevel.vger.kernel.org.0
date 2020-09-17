@@ -2,97 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2227026D983
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 12:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB53E26D99D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 12:55:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbgIQKt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 06:49:28 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:38009 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726731AbgIQKtI (ORCPT
+        id S1726703AbgIQKwK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 06:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbgIQKv7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:49:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600339741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1AILeBfCeAXslU5j6k+yENWo8hu+Ro9QzlEjIRtqFLo=;
-        b=V8iTTETT8YqoRyIGO5hd/SiQyVR1cFYXeVHHq0SBZSOPQ5UkbuEx0bs6SfaS3k8TFieWPP
-        nPL8alRGnmNtX4s/l7flnmB66UDzPqT1lyAt6AyXgi6JgYOiCD5PjO710YBIqCq/917kl+
-        gi2P0YNB3fqzV47OhO4YiDdZ/tq9m84=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-366-m_IOLND_OrKpG5ScXjMk3w-1; Thu, 17 Sep 2020 06:42:24 -0400
-X-MC-Unique: m_IOLND_OrKpG5ScXjMk3w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A9BD1007472;
-        Thu, 17 Sep 2020 10:42:22 +0000 (UTC)
-Received: from bfoster (ovpn-113-130.rdu2.redhat.com [10.10.113.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24BC619646;
-        Thu, 17 Sep 2020 10:42:21 +0000 (UTC)
-Date:   Thu, 17 Sep 2020 06:42:19 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        minlei@redhat.com
-Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
-Message-ID: <20200917104219.GA1811187@bfoster>
-References: <20200822131312.GA17997@infradead.org>
- <20200824142823.GA295033@bfoster>
- <20200824150417.GA12258@infradead.org>
- <20200824154841.GB295033@bfoster>
- <20200825004203.GJ12131@dread.disaster.area>
- <20200825144917.GA321765@bfoster>
- <20200916001242.GE7955@magnolia>
- <20200916084510.GA30815@infradead.org>
- <20200916130714.GA1681377@bfoster>
- <20200917080455.GY26262@infradead.org>
+        Thu, 17 Sep 2020 06:51:59 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106DCC061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 03:51:47 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id nw23so2629660ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 03:51:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RGELJOdeW4b71Bd2hOfjUNQx1LOgRfzHQbemIj8oBT0=;
+        b=O0TtsmLM1mEFIkrW6anX3vSM03iH1kz/jz/9BRDaIXPnsJg4HNTPwrPH4S6h6v+QxH
+         fo3b8B+eccCAlrXekzTvJqfBUJuYybnyedE9Wy9kbhmxLRc/11586mNEUSmOQHqYDEAK
+         nl0xhJ3jWt3e9gODjq5Bwm9y12LpEoA/KHf1Egr2NupjbXOqGFf/r5r2GumD2Tc1Nm0v
+         ECojT+VG2co/i0QGYzk4xjMUpNSHcROAkpbT/B/99nZwOcYcMjLZBo76NdBhz9fkwMCJ
+         9Z0ofblkD/ibR0p1939tW5trBtib1MJ64i+b3Ftxgph6z5pGoUswJBsy/bZW+JI81ZEq
+         fXOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RGELJOdeW4b71Bd2hOfjUNQx1LOgRfzHQbemIj8oBT0=;
+        b=dkKrlgsbVYkBg9lJjXi3MPw5T0g3d626Cd9blYGOMez6q6vFLl+YAKq+ITnEe1wTJl
+         EZwPhqbyla//J8Oki0FQSiQeXO6s8gNsGJvnW0uYxXB1j9adKQojcgVrz1Vn6ATPUNQy
+         G+wuRs78NgIaL4x3Ou2ot7yoykpSaKb1nqJsPMZ4RqR0xwmj4KxnT1FyAlhnOZPb87iu
+         t6lCsDBQj6wArKnOeNXHU+gdZjIhA6Ft3EYZo7/+PvpUTYdrZa35rK1qqVPWbTDTlmj+
+         Q8oo7P2FK9zT9Nsu1+N7zmXVRuvGGE5oqKAui5+Z6y/Q/u+zFuMZdG0mmPngd6blxMgZ
+         Nn0A==
+X-Gm-Message-State: AOAM5306hoqqjNHJy/O54B0PtVFgft/ipYn+W+DEF4D8yNE1F1miYulN
+        7oAMMVdNXnVpV9k3nsQyAJP0tw==
+X-Google-Smtp-Source: ABdhPJzJfw93qfgF7JBy0y8RzBEbFoASNUOTDTI5xFQKbX5C9c6f9EmP5lkwoB3UUsK73XcUntjoWw==
+X-Received: by 2002:a17:906:724b:: with SMTP id n11mr30523847ejk.328.1600339906107;
+        Thu, 17 Sep 2020 03:51:46 -0700 (PDT)
+Received: from ?IPv6:2a02:587:d40:1d00:c424:9586:23a2:8162? ([2a02:587:d40:1d00:c424:9586:23a2:8162])
+        by smtp.gmail.com with ESMTPSA id x6sm14706311ejf.59.2020.09.17.03.51.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Sep 2020 03:51:45 -0700 (PDT)
+Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
+ read_count
+To:     Hou Tao <houtao1@huawei.com>, peterz@infradead.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+References: <20200915140750.137881-1-houtao1@huawei.com>
+ <20200915150610.GC2674@hirez.programming.kicks-ass.net>
+ <20200915153113.GA6881@redhat.com>
+ <20200915155150.GD2674@hirez.programming.kicks-ass.net>
+ <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+ <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Message-ID: <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
+Date:   Thu, 17 Sep 2020 13:51:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917080455.GY26262@infradead.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 09:04:55AM +0100, Christoph Hellwig wrote:
-> On Wed, Sep 16, 2020 at 09:07:14AM -0400, Brian Foster wrote:
-> > Dave described the main purpose earlier in this thread [1]. The initial
-> > motivation is that we've had downstream reports of soft lockup problems
-> > in writeback bio completion down in the bio -> bvec loop of
-> > iomap_finish_ioend() that has to finish writeback on each individual
-> > page of insanely large bios and/or chains. We've also had an upstream
-> > reports of a similar problem on linux-xfs [2].
-> > 
-> > The magic number itself was just pulled out of a hat. I picked it
-> > because it seemed conservative enough to still allow large contiguous
-> > bios (1GB w/ 4k pages) while hopefully preventing I/O completion
-> > problems, but was hoping for some feedback on that bit if the general
-> > approach was acceptable. I was also waiting for some feedback on either
-> > of the two users who reported the problem but I don't think I've heard
-> > back on that yet...
+On 16/09/2020 15:32, Hou Tao wrote:
+<>
+> However the performance degradation is huge under aarch64 (4 sockets, 24 core per sockets): nearly 60% lost.
 > 
-> I think the saner answer is to always run large completions in the
-> workqueue, and add a bunch of cond_resched() calls, rather than
-> arbitrarily breaking up the I/O size.
+> v4.19.111
+> no writer, reader cn                               | 24        | 48        | 72        | 96
+> the rate of down_read/up_read per second           | 166129572 | 166064100 | 165963448 | 165203565
+> the rate of down_read/up_read per second (patched) |  63863506 |  63842132 |  63757267 |  63514920
 > 
 
-That wouldn't address the latency concern Dave brought up. That said, I
-have no issue with this as a targeted solution for the softlockup issue.
-iomap_finish_ioend[s]() is common code for both the workqueue and
-->bi_end_io() contexts so that would require either some kind of context
-detection (and my understanding is in_atomic() is unreliable/frowned
-upon) or a new "atomic" parameter through iomap_finish_ioend[s]() to
-indicate whether it's safe to reschedule. Preference?
+I believe perhaps Peter Z's suggestion of an additional
+percpu_down_read_irqsafe() API and let only those in IRQ users pay the 
+penalty.
 
-Brian
+Peter Z wrote:
+> My leading alternative was adding: percpu_down_read_irqsafe() /
+> percpu_up_read_irqsafe(), which use local_irq_save() instead of
+> preempt_disable().
 
+Thanks
+Boaz
