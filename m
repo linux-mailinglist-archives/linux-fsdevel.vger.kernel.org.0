@@ -2,117 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B1326E585
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 21:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB12026E5F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 21:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbgIQTy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 15:54:26 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:50985 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbgIQQNm (ORCPT
+        id S1726650AbgIQT6a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 15:58:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbgIQT57 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:13:42 -0400
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 5D832860D0;
-        Thu, 17 Sep 2020 11:37:22 -0400 (EDT)
-        (envelope-from junio@pobox.com)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:references:date:in-reply-to:message-id:mime-version
-        :content-type:content-transfer-encoding; s=sasl; bh=Lxzw5WFIugjz
-        eOQETyxd5CJ+OYM=; b=lR5qdwpFfgWTUFbHLJhVSHrc015u/wT5QL1Dyf9EI6sL
-        B8jjRvF/VVi0/3BYUq/0Mpz2eURjvVENw2+SenImD7nC1EvB3gkAy9GRMKLntbrj
-        +dwDvnpes4I+lAzTK7oQSgAo58kT5xHnOrr9jpySEYPtBYEwcsxE9qRXcgSNris=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=from:to:cc
-        :subject:references:date:in-reply-to:message-id:mime-version
-        :content-type:content-transfer-encoding; q=dns; s=sasl; b=rFT7ZS
-        IX+2H1I08dS2j+3e4vzd8Ox/aqf47R5oUK0e4dDdvT0OkY2Hic6Sbft6GTn/VCbt
-        dsnrLk11eMkzSoodlZ4zIvhqSmjN0+KrgOXG9gGgSeEyoIGy9QqkOdY4AK0gGxO2
-        ey5CAe2vMRddrKiOWqOhsE7+Orgy5YaVBzcsg=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 54C41860CE;
-        Thu, 17 Sep 2020 11:37:22 -0400 (EDT)
-        (envelope-from junio@pobox.com)
-Received: from pobox.com (unknown [34.75.7.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id A9A4D860CB;
-        Thu, 17 Sep 2020 11:37:21 -0400 (EDT)
-        (envelope-from junio@pobox.com)
-From:   Junio C Hamano <gitster@pobox.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jeff King <peff@peff.net>,
-        =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>,
-        git@vger.kernel.org, tytso@mit.edu,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when
- core.fsyncObjectFiles
-References: <87sgbghdbp.fsf@evledraar.gmail.com>
-        <20200917112830.26606-2-avarab@gmail.com>
-        <20200917140912.GA27653@lst.de>
-        <20200917145523.GB3076467@coredump.intra.peff.net>
-        <20200917145653.GA30972@lst.de>
-Date:   Thu, 17 Sep 2020 08:37:19 -0700
-In-Reply-To: <20200917145653.GA30972@lst.de> (Christoph Hellwig's message of
-        "Thu, 17 Sep 2020 16:56:53 +0200")
-Message-ID: <xmqqzh5os9cg.fsf@gitster.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 17 Sep 2020 15:57:59 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63723C061225
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 12:47:37 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id k25so3068496ljg.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 12:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qwB5yamo/VQg9lGW1D6zAt8KwlMkbf+/RiRqSyfA74s=;
+        b=hHGYORd3WT/upNR5+53j3xigCR+oA1RiSdZA/E4QxMevzXDwYfmnVsbMBtuzpjYDqs
+         SJuNY7erG1NyJuWM+SXV+V0yVUnm8MKV+IbcdX0/iaj4iAM8utlAB/fq3BI5UlzERQhR
+         Wy3RP+/XFCSTW3CViq8mrFjvl+YoOtxmAsQmY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qwB5yamo/VQg9lGW1D6zAt8KwlMkbf+/RiRqSyfA74s=;
+        b=Ja15xZRl1SlraPVXaePdtL04hJ4rdmRuU1hcL285P21ZB/s4754DomF5pbZ9Fcz6pl
+         iGVXHmIp/zAuRvUwL5TgiGEut3rFRSrSmoHtFETn25uH2PcQb+aG6N8iqZJsh49gHAja
+         rAkLDTM+L2Sw3kC+5q7PnC5NYlIS0nP2jKPvsg0v511iJCC+YmYsXc4rQ8c9kF9ESLIy
+         n1ibVr1E4fjI+wYvWIn7vY3yesvaKtYK4mUwAGhsE4MAM59vEIXJMfG/h3RfHHfHD1zC
+         bjQDncMg2ZfB6UETlE/xMWYM+5fStIPnsIsPVF/0LsTgmPhgtC6Qw1JCUswfF7BhndmB
+         70rQ==
+X-Gm-Message-State: AOAM531nrBtLF/9JB1Jk8gOiLwQe2acf+29HNmrdDGlIFqSJ/OGb00Pb
+        XYEkQ6HITKz/RMTRL7YjpgJyACNXKenI0w==
+X-Google-Smtp-Source: ABdhPJxh/hQTXhcwa6ky5hNup4dqzRXYlbPqAehpPYPVy8zZSrkgxQkj0TyhsNIHppSnCeyjp0a6LA==
+X-Received: by 2002:a2e:a304:: with SMTP id l4mr10976618lje.35.1600372054989;
+        Thu, 17 Sep 2020 12:47:34 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id j12sm105373lfj.5.2020.09.17.12.47.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Sep 2020 12:47:33 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id a22so3037285ljp.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 12:47:33 -0700 (PDT)
+X-Received: by 2002:a2e:994a:: with SMTP id r10mr8323841ljj.102.1600372052998;
+ Thu, 17 Sep 2020 12:47:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-X-Pobox-Relay-ID: AD5B3C8E-F8FB-11EA-8212-01D9BED8090B-77302942!pb-smtp1.pobox.com
-Content-Transfer-Encoding: quoted-printable
+References: <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
+ <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+ <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com>
+ <20200917182314.GU5449@casper.infradead.org> <CAHk-=wj6g2y2Z3cGzHBMoeLx-mfG0Md_2wMVwx=+g_e-xDNTbw@mail.gmail.com>
+ <20200917185049.GV5449@casper.infradead.org> <CAHk-=wj6Ha=cNU4kL3z661CV+c2x2=DKzPrfH=XujMa378NhWQ@mail.gmail.com>
+ <20200917192707.GW5449@casper.infradead.org>
+In-Reply-To: <20200917192707.GW5449@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 17 Sep 2020 12:47:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjp+KiZE2EM=f8Z1J_wmZSoq0MVZTJi=bMSXmfZ7Gx76w@mail.gmail.com>
+Message-ID: <CAHk-=wjp+KiZE2EM=f8Z1J_wmZSoq0MVZTJi=bMSXmfZ7Gx76w@mail.gmail.com>
+Subject: Re: Kernel Benchmarking
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Michael Larabel <Michael@michaellarabel.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Ted Ts'o" <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> writes:
-
-> On Thu, Sep 17, 2020 at 10:55:23AM -0400, Jeff King wrote:
->> On Thu, Sep 17, 2020 at 04:09:12PM +0200, Christoph Hellwig wrote:
->>=20
->> > On Thu, Sep 17, 2020 at 01:28:29PM +0200, =C3=86var Arnfj=C3=B6r=C3=B0=
- Bjarmason wrote:
->> > > Change the behavior of core.fsyncObjectFiles to also sync the
->> > > directory entry. I don't have a case where this broke, just going =
-by
->> > > paranoia and the fsync(2) manual page's guarantees about its behav=
-ior.
->> >=20
->> > It is not just paranoia, but indeed what is required from the standa=
-rds
->> > POV.  At least for many Linux file systems your second fsync will be
->> > very cheap (basically a NULL syscall) as the log has alredy been for=
-ced
->> > all the way by the first one, but you can't rely on that.
->>=20
->> Is it sufficient to fsync() just the surrounding directory? I.e., if I
->> do:
->>=20
->>   mkdir("a");
->>   mkdir("a/b");
->>   open("a/b/c", O_WRONLY);
->>=20
->> is it enough to fsync() a descriptor pointing to "a/b", or should I
->> also do "a"?
+On Thu, Sep 17, 2020 at 12:27 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> You need to fsync both to be fully compliant, even if just fsyncing b
-> will work for most but not all file systems.  The good news is that
-> for those common file systems the extra fsync of a is almost free.
+> Ah, I see what you mean.  Hold the i_mmap_rwsem for write across,
+> basically, the entirety of truncate_inode_pages_range().
 
-Back to =C3=86var's patch, when creating a new loose object, we do these
-things:
+I really suspect that will be entirely unacceptable for latency
+reasons, but who knows. In practice, nobody actually truncates a file
+_while_ it's mapped, that's just crazy talk.
 
- 1. create temporary file and write the compressed contents to it
-    while computing its object name
+But almost every time I go "nobody actually does this", I tend to be
+surprised by just how crazy some loads are, and it turns out that
+_somebody_ does it, and has a really good reason for doing odd things,
+and has been doing it for years because it worked really well and
+solved some odd problem.
 
- 2. create the fan-out directory under .git/objects/ if needed
+So the "hold it for the entirety of truncate_inode_pages_range()"
+thing seems to be a really simple approach, and nice and clean, but it
+makes me go "*somebody* is going to do bad things and complain about
+page fault latencies".
 
- 3. mv temporary file to its final name
-
-and the patch adds open+fsync+close on the fan-out directory.  In
-the above exchange with Peff, we learned that open+fsync+close needs
-to be done on .git/objects if we created the fan-out directory, too.
-
-Am I reading the above correctly?
-
-Thanks.
+              Linus
