@@ -2,172 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA19026E00F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 17:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FD3026E029
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 18:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbgIQPvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 11:51:36 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55182 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbgIQPvA (ORCPT
+        id S1728266AbgIQQA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 12:00:27 -0400
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:58777 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbgIQP7t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 11:51:00 -0400
-Received: from [192.168.254.38] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B4CB020B7178;
-        Thu, 17 Sep 2020 08:36:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B4CB020B7178
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600356964;
-        bh=QO+LfG0Faopxheg2cutvYRBT+pPhms6wveYLa1LgL+U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BFLuqVFA/BDQQm7DZtjpCvIA39dAw9ux6L9xLBXRs6zIIXnRN+iAbXLuSLqhrzA+k
-         BG7bFfSeOzurlviYcp2xoC7KmQR6uPkch48sGL+8ZSgMbTtNqSk+vcT3F4zKwn48wg
-         Rw5oLxGtZN7S6/Kam+IanR5OdBOQIIId/5GCFEoU=
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
-Date:   Thu, 17 Sep 2020 10:36:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 17 Sep 2020 11:59:49 -0400
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 5662C8EAB0;
+        Thu, 17 Sep 2020 11:43:53 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
+        :subject:references:date:in-reply-to:message-id:mime-version
+        :content-type:content-transfer-encoding; s=sasl; bh=ThOe4CcASo94
+        4ApxOjMRu2wzhfw=; b=mQinyBIYtS0Yu/YwtfsIoqs4VO6jWk/5gN0ml/K3Xf5v
+        L8j9soAfZqpYq5VGbpAvSu+PnhX8ODO+98GtTSbeZB7V8SLQt3rzuJ+TVde8TMDr
+        w9VTcWa0yluodu2ZmYKInJTASbHX/tKKwBOYknnNSqN3NsvOpal813TQSmOuUt0=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=from:to:cc
+        :subject:references:date:in-reply-to:message-id:mime-version
+        :content-type:content-transfer-encoding; q=dns; s=sasl; b=iuyskV
+        wcFJuDjdwAI0acni7ulYe5VW3453jRe4u9x/ySMANM3Co6VEy1MKXorYBp9/buFV
+        L4o72iFd7rlI13eQ6OaBeyS6ZXKgzZ8g0rwcu6WI1g5xTz6B+w2aRB3xTp2MSbi1
+        IAsjohhxKuhSDgfwN++HzxWrjiqXM0P7e26AQ=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 4CD948EAAF;
+        Thu, 17 Sep 2020 11:43:53 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+Received: from pobox.com (unknown [34.75.7.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id B541C8EAAE;
+        Thu, 17 Sep 2020 11:43:52 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+From:   Junio C Hamano <gitster@pobox.com>
+To:     =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+Cc:     git@vger.kernel.org, tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
+References: <87sgbghdbp.fsf@evledraar.gmail.com>
+        <20200917112830.26606-3-avarab@gmail.com>
+Date:   Thu, 17 Sep 2020 08:43:51 -0700
+In-Reply-To: <20200917112830.26606-3-avarab@gmail.com> (=?utf-8?B?IsOGdmFy?=
+ =?utf-8?B?IEFybmZqw7Zyw7A=?=
+        Bjarmason"'s message of "Thu, 17 Sep 2020 13:28:30 +0200")
+Message-ID: <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <87v9gdz01h.fsf@mid.deneb.enyo.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Pobox-Relay-ID: 96709180-F8FC-11EA-A482-2F5D23BA3BAF-77302942!pb-smtp2.pobox.com
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+=C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason  <avarab@gmail.com> writes:
+
+> As amusing as Linus's original prose[1] is here it doesn't really expla=
+in
+> in any detail to the uninitiated why you would or wouldn't enable
+> this, and the counter-intuitive reason for why git wouldn't fsync your
+> precious data.
+>
+> So elaborate (a lot) on why this may or may not be needed. This is my
+> best-effort attempt to summarize the various points raised in the last
+> ML[2] discussion about this.
+>
+> 1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
+>     files", 2008-06-18)
+> 2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
+>
+> Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.com=
+>
+> ---
+>  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-----
+>  1 file changed, 36 insertions(+), 6 deletions(-)
+
+When I saw the subject in my mailbox, I expected to see that you
+would resurrect Christoph's updated text in [*1*], but you wrote a
+whole lot more ;-) And they are quite informative to help readers to
+understand what the option does.  I am not sure if the understanding
+directly help readers to decide if it is appropriate for their own
+repositories, though X-<.
 
 
-On 9/16/20 8:04 PM, Florian Weimer wrote:
-> * madvenka:
-> 
->> Examples of trampolines
->> =======================
->>
->> libffi (A Portable Foreign Function Interface Library):
->>
->> libffi allows a user to define functions with an arbitrary list of
->> arguments and return value through a feature called "Closures".
->> Closures use trampolines to jump to ABI handlers that handle calling
->> conventions and call a target function. libffi is used by a lot
->> of different applications. To name a few:
->>
->> 	- Python
->> 	- Java
->> 	- Javascript
->> 	- Ruby FFI
->> 	- Lisp
->> 	- Objective C
-> 
-> libffi does not actually need this.  It currently collocates
-> trampolines and the data they need on the same page, but that's
-> actually unecessary.  It's possible to avoid doing this just by
-> changing libffi, without any kernel changes.
-> 
-> I think this has already been done for the iOS port.
-> 
+Thanks.
 
-The trampoline table that has been implemented for the iOS port (MACH)
-is based on PC-relative data referencing. That is, the code and data
-are placed in adjacent pages so that the code can access the data using
-an address relative to the current PC.
+[Reference]
 
-This is an ISA feature that is not supported on all architectures.
+*1* https://public-inbox.org/git/20180117193510.GA30657@lst.de/
 
-Now, if it is a performance feature, we can include some architectures
-and exclude others. But this is a security feature. IMO, we cannot
-exclude any architecture even if it is a legacy one as long as Linux
-is running on the architecture. So, we need a solution that does
-not assume any specific ISA feature.
-
->> The code for trampoline X in the trampoline table is:
->>
->> 	load	&code_table[X], code_reg
->> 	load	(code_reg), code_reg
->> 	load	&data_table[X], data_reg
->> 	load	(data_reg), data_reg
->> 	jump	code_reg
->>
->> The addresses &code_table[X] and &data_table[X] are baked into the
->> trampoline code. So, PC-relative data references are not needed. The user
->> can modify code_table[X] and data_table[X] dynamically.
-> 
-> You can put this code into the libffi shared object and map it from
-> there, just like the rest of the libffi code.  To get more
-> trampolines, you can map the page containing the trampolines multiple
-> times, each instance preceded by a separate data page with the control
-> information.
-> 
-
-If you put the code in the libffi shared object, how do you pass data to
-the code at runtime? If the code we are talking about is a function, then
-there is an ABI defined way to pass data to the function. But if the
-code we are talking about is some arbitrary code such as a trampoline,
-there is no ABI defined way to pass data to it except in a couple of
-platforms such as HP PA-RISC that have support for function descriptors
-in the ABI itself.
-
-As mentioned before, if the ISA supports PC-relative data references
-(e.g., X86 64-bit platforms support RIP-relative data references)
-then we can pass data to that code by placing the code and data in
-adjacent pages. So, you can implement the trampoline table for X64.
-i386 does not support it.
-
-
-> I think the previous patch submission has also resulted in several
-> comments along those lines, so I'm not sure why you are reposting
-> this.
-
-IIRC, I have answered all of those comments by mentioning the point
-that we need to support all architectures without requiring special
-ISA features. Taking the kernel's help in this is one solution.
-
-
-> 
->> libffi
->> ======
->>
->> I have implemented my solution for libffi and provided the changes for
->> X86 and ARM, 32-bit and 64-bit. Here is the reference patch:
->>
->> http://linux.microsoft.com/~madvenka/libffi/libffi.v2.txt
-> 
-> The URL does not appear to work, I get a 403 error.
-
-I apologize for that. That site is supposed to be accessible publicly.
-I will contact the administrator and get this resolved.
-
-Sorry for the annoyance.
-
-> 
->> If the trampfd patchset gets accepted, I will send the libffi changes
->> to the maintainers for a review. BTW, I have also successfully executed
->> the libffi self tests.
-> 
-> I have not seen your libffi changes, but I expect that the complexity
-> is about the same as a userspace-only solution.
-> 
-> 
-
-I agree. The complexity is about the same. But the support is for all
-architectures. Once the common code is in place, the changes for each
-architecture are trivial.
-
-Madhavan
-
-> Cc:ing libffi upstream for awareness.  The start of the thread is
-> here:
-> 
-> <https://lore.kernel.org/linux-api/20200916150826.5990-1-madvenka@linux.microsoft.com/>
-> 
+>
+> diff --git a/Documentation/config/core.txt b/Documentation/config/core.=
+txt
+> index 74619a9c03..5b47670c16 100644
+> --- a/Documentation/config/core.txt
+> +++ b/Documentation/config/core.txt
+> @@ -548,12 +548,42 @@ core.whitespace::
+>    errors. The default tab width is 8. Allowed values are 1 to 63.
+> =20
+>  core.fsyncObjectFiles::
+> -	This boolean will enable 'fsync()' when writing object files.
+> -+
+> -This is a total waste of time and effort on a filesystem that orders
+> -data writes properly, but can be useful for filesystems that do not us=
+e
+> -journalling (traditional UNIX filesystems) or that only journal metada=
+ta
+> -and not file contents (OS X's HFS+, or Linux ext3 with "data=3Dwriteba=
+ck").
+> +	This boolean will enable 'fsync()' when writing loose object
+> +	files. Both the file itself and its containng directory will
+> +	be fsynced.
+> ++
+> +When git writes data any required object writes will precede the
+> +corresponding reference update(s). For example, a
+> +linkgit:git-receive-pack[1] accepting a push might write a pack or
+> +loose objects (depending on settings such as `transfer.unpackLimit`).
+> ++
+> +Therefore on a journaled file system which ensures that data is
+> +flushed to disk in chronological order an fsync shouldn't be
+> +needed. The loose objects might be lost with a crash, but so will the
+> +ref update that would have referenced them. Git's own state in such a
+> +crash will remain consistent.
+> ++
+> +This option exists because that assumption doesn't hold on filesystems
+> +where the data ordering is not preserved, such as on ext3 and ext4
+> +with "data=3Dwriteback". On such a filesystem the `rename()` that drop=
+s
+> +the new reference in place might be preserved, but the contents or
+> +directory entry for the loose object(s) might not have been synced to
+> +disk.
+> ++
+> +Enabling this option might slow git down by a lot in some
+> +cases. E.g. in the case of a na=C3=AFve bulk import tool which might c=
+reate
+> +a million loose objects before a final ref update and `gc`. In other
+> +more common cases such as on a server being pushed to with default
+> +`transfer.unpackLimit` settings the difference might not be noticable.
+> ++
+> +However, that's highly filesystem-dependent, on some filesystems
+> +simply calling fsync() might force an unrelated bulk background write
+> +to be serialized to disk. Such edge cases are the reason this option
+> +is off by default. That default setting might change in future
+> +versions.
+> ++
+> +In older versions of git only the descriptor for the file itself was
+> +fsynced, not its directory entry.
+> =20
+>  core.preloadIndex::
+>  	Enable parallel index preload for operations like 'git diff'
