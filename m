@@ -2,99 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB53E26D99D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 12:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C82426D9DA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 13:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbgIQKwK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 06:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
+        id S1726596AbgIQLHS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 07:07:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbgIQKv7 (ORCPT
+        with ESMTP id S1726348AbgIQLHA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 06:51:59 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 106DCC061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 03:51:47 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id nw23so2629660ejb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 03:51:47 -0700 (PDT)
+        Thu, 17 Sep 2020 07:07:00 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E227C061756;
+        Thu, 17 Sep 2020 04:06:53 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id n22so2088498edt.4;
+        Thu, 17 Sep 2020 04:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RGELJOdeW4b71Bd2hOfjUNQx1LOgRfzHQbemIj8oBT0=;
-        b=O0TtsmLM1mEFIkrW6anX3vSM03iH1kz/jz/9BRDaIXPnsJg4HNTPwrPH4S6h6v+QxH
-         fo3b8B+eccCAlrXekzTvJqfBUJuYybnyedE9Wy9kbhmxLRc/11586mNEUSmOQHqYDEAK
-         nl0xhJ3jWt3e9gODjq5Bwm9y12LpEoA/KHf1Egr2NupjbXOqGFf/r5r2GumD2Tc1Nm0v
-         ECojT+VG2co/i0QGYzk4xjMUpNSHcROAkpbT/B/99nZwOcYcMjLZBo76NdBhz9fkwMCJ
-         9Z0ofblkD/ibR0p1939tW5trBtib1MJ64i+b3Ftxgph6z5pGoUswJBsy/bZW+JI81ZEq
-         fXOA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:references:user-agent:in-reply-to:date
+         :message-id:mime-version;
+        bh=v0u7ygrgenEjZHhKX1lpXgtS3ObFogYyT8UMBJrndes=;
+        b=jpanmoKPu9aTVh3AwDyhPH+TBrBhsrmal2yFj6onbmiOzXe9h+9S4xAsJk0NzoN3Tw
+         1BL0iFq5zhVrG+sjhF2yhm1+vIiNpp8R0kfvjAokgHQDs/zkDoJUQf45TKh/7nHY4QUo
+         3YEF7e1JMfZ80L/VmZ4MGIjAoG0KvDQvGTlPpbTsbsvDTHRL+kY0L4NymlJRx8v4DhX5
+         dtM58BLxOYB7VG25gScAMxOA2Yer/H5b5k6u8KMid4jFV5OgBgQOkykriAUu0htGPYlU
+         gz7dE3cR3Jtmkp7vtKDOC1bAHtBQf9o5y5FaU7aSaTOacNFsAIvuXR0mJ5GeHo+pHhfv
+         3jPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RGELJOdeW4b71Bd2hOfjUNQx1LOgRfzHQbemIj8oBT0=;
-        b=dkKrlgsbVYkBg9lJjXi3MPw5T0g3d626Cd9blYGOMez6q6vFLl+YAKq+ITnEe1wTJl
-         EZwPhqbyla//J8Oki0FQSiQeXO6s8gNsGJvnW0uYxXB1j9adKQojcgVrz1Vn6ATPUNQy
-         G+wuRs78NgIaL4x3Ou2ot7yoykpSaKb1nqJsPMZ4RqR0xwmj4KxnT1FyAlhnOZPb87iu
-         t6lCsDBQj6wArKnOeNXHU+gdZjIhA6Ft3EYZo7/+PvpUTYdrZa35rK1qqVPWbTDTlmj+
-         Q8oo7P2FK9zT9Nsu1+N7zmXVRuvGGE5oqKAui5+Z6y/Q/u+zFuMZdG0mmPngd6blxMgZ
-         Nn0A==
-X-Gm-Message-State: AOAM5306hoqqjNHJy/O54B0PtVFgft/ipYn+W+DEF4D8yNE1F1miYulN
-        7oAMMVdNXnVpV9k3nsQyAJP0tw==
-X-Google-Smtp-Source: ABdhPJzJfw93qfgF7JBy0y8RzBEbFoASNUOTDTI5xFQKbX5C9c6f9EmP5lkwoB3UUsK73XcUntjoWw==
-X-Received: by 2002:a17:906:724b:: with SMTP id n11mr30523847ejk.328.1600339906107;
-        Thu, 17 Sep 2020 03:51:46 -0700 (PDT)
-Received: from ?IPv6:2a02:587:d40:1d00:c424:9586:23a2:8162? ([2a02:587:d40:1d00:c424:9586:23a2:8162])
-        by smtp.gmail.com with ESMTPSA id x6sm14706311ejf.59.2020.09.17.03.51.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 03:51:45 -0700 (PDT)
-Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
- read_count
-To:     Hou Tao <houtao1@huawei.com>, peterz@infradead.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
-References: <20200915140750.137881-1-houtao1@huawei.com>
- <20200915150610.GC2674@hirez.programming.kicks-ass.net>
- <20200915153113.GA6881@redhat.com>
- <20200915155150.GD2674@hirez.programming.kicks-ass.net>
- <20200915160344.GH35926@hirez.programming.kicks-ass.net>
- <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
-From:   Boaz Harrosh <boaz@plexistor.com>
-Message-ID: <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
-Date:   Thu, 17 Sep 2020 13:51:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        h=x-gm-message-state:from:to:cc:subject:references:user-agent
+         :in-reply-to:date:message-id:mime-version;
+        bh=v0u7ygrgenEjZHhKX1lpXgtS3ObFogYyT8UMBJrndes=;
+        b=CHwpvJ6BDAhZH0LqgOgOGCWpNQduddJgXnrTSNMI5wQ0TaVBGP7ay15hLyahJ1KiBZ
+         UlcY623B/PT2AmrvhA7AV1mwq/amtVVduuo/m2w2e1BtpghEOhRgDxomhnUghWTWZ4Se
+         kJzkikP4bmUPjx50rKjvnXVNGqcARzto1Nr+GevYxCHACS2uw9+alCuQ3/iKKncuuOM8
+         1StOvOMAcvCPlubIpsddrsu39KNLF+wvV29cHlFMaKt+9hQk4BjFFuzTmP9bktvbY034
+         KW2mtBWZpxJMRWvuPZpkoSwd83XTSAjRTRtLPa3Tsk6z1fdhNHKXsTYFSBQ5/kvpxj0Q
+         aKIQ==
+X-Gm-Message-State: AOAM5310veboXfmohNaDzM1Q9AoDeguK100XRU2Udv3CNjqlPCA/huB/
+        5Ro0peZGeYAzLtTf04t8igA=
+X-Google-Smtp-Source: ABdhPJzeFMn/Iha6vazPITmi4y4AlPzANsJXKvJ/BnXRVZswgRxgdEvD3S/RL1DtHgtsntf+cyGk6A==
+X-Received: by 2002:a05:6402:c15:: with SMTP id co21mr31418801edb.268.1600340811946;
+        Thu, 17 Sep 2020 04:06:51 -0700 (PDT)
+Received: from evledraar (dhcp-077-248-252-018.chello.nl. [77.248.252.18])
+        by smtp.gmail.com with ESMTPSA id c22sm16235140edr.70.2020.09.17.04.06.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 04:06:50 -0700 (PDT)
+From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Junio C Hamano <gitster@pobox.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Git Mailing List <git@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jacob Vosmaer <jacob@gitlab.com>
+Subject: Re: [PATCH] enable core.fsyncObjectFiles by default
+References: <20180117184828.31816-1-hch@lst.de> <xmqqd128s3wf.fsf@gitster.mtv.corp.google.com> <87h8rki2iu.fsf@evledraar.gmail.com> <CA+55aFzJ2QO0MH3vgbUd8X-dzg_65A-jKmEBMSVt8ST2bpmzSQ@mail.gmail.com> <20180117235220.GD6948@thunk.org>
+User-agent: Debian GNU/Linux bullseye/sid; Emacs 26.3; mu4e 1.4.13
+In-reply-to: <20180117235220.GD6948@thunk.org>
+Date:   Thu, 17 Sep 2020 13:06:50 +0200
+Message-ID: <87sgbghdbp.fsf@evledraar.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 16/09/2020 15:32, Hou Tao wrote:
-<>
-> However the performance degradation is huge under aarch64 (4 sockets, 24 core per sockets): nearly 60% lost.
-> 
-> v4.19.111
-> no writer, reader cn                               | 24        | 48        | 72        | 96
-> the rate of down_read/up_read per second           | 166129572 | 166064100 | 165963448 | 165203565
-> the rate of down_read/up_read per second (patched) |  63863506 |  63842132 |  63757267 |  63514920
-> 
 
-I believe perhaps Peter Z's suggestion of an additional
-percpu_down_read_irqsafe() API and let only those in IRQ users pay the 
-penalty.
+On Thu, Jan 18 2018, Theodore Ts'o wrote:
 
-Peter Z wrote:
-> My leading alternative was adding: percpu_down_read_irqsafe() /
-> percpu_up_read_irqsafe(), which use local_irq_save() instead of
-> preempt_disable().
+> On Wed, Jan 17, 2018 at 02:07:22PM -0800, Linus Torvalds wrote:
+>> 
+>> Now re-do the test while another process writes to a totally unrelated
+>> a huge file (say, do a ISO file copy or something).
+>> 
+>> That was the thing that several filesystems get completely and
+>> horribly wrong. Generally _particularly_ the logging filesystems that
+>> don't even need the fsync, because they use a single log for
+>> everything (so fsync serializes all the writes, not just the writes to
+>> the one file it's fsync'ing).
+>
+> Well, let's be fair; this is something *ext3* got wrong, and it was
+> the default file system back them.  All of the modern file systems now
+> do delayed allocation, which means that an fsync of one file doesn't
+> actually imply an fsync of another file.  Hence...
+>
+>> The original git design was very much to write each object file
+>> without any syncing, because they don't matter since a new object file
+>> - by definition - isn't really reachable. Then sync before writing the
+>> index file or a new ref.
+>
+> This isn't really safe any more.  Yes, there's a single log.  But
+> files which are subject to delayed allocation are in the page cache,
+> and just because you fsync the index file doesn't mean that the object
+> file is now written to disk.  It was true for ext3, but it's not true
+> for ext4, xfs, btrfs, etc.
+>
+> The good news is that if you have another process downloading a huge
+> ISO image, the fsync of the index file won't force the ISO file to be
+> written out.  The bad news is that it won't force out the other git
+> object files, either.
+>
+> Now, there is a potential downside of fsync'ing each object file, and
+> that is the cost of doing a CACHE FLUSH on a HDD is non-trivial, and
+> even on a SSD, it's not optimal to call CACHE FLUSH thousands of times
+> in a second.  So if you are creating thousands of tiny files, and you
+> fsync each one, each fsync(2) call is a serializing instruction, which
+> means it won't return until that one file is written to disk.  If you
+> are writing lots of small files, and you are using a HDD, you'll be
+> bottlenecked to around 30 files per second on a 5400 RPM HDD, and this
+> is true regardless of what file system you use, because the bottle
+> neck is the CACHE FLUSH operation, and how you organize the metadata
+> and how you do the block allocation, is largely lost in the noise
+> compared to the CACHE FLUSH command, which serializes everything.
+>
+> There are solutions to this; you could simply not call fsync(2) a
+> thousand times, and instead write a pack file, and call fsync once on
+> the pack file.  That's probably the smartest approach.
+>
+> You could also create a thousand threads, and call fsync(2) on those
+> thousand threads at roughly the same time.  Or you could use a
+> bleeding edge kernel with the latest AIO patch, and use the newly
+> added IOCB_CMD_FSYNC support.
+>
+> But I'd simply recommend writing a pack and fsync'ing the pack,
+> instead of trying to write a gazillion object files.  (git-repack -A,
+> I'm looking at you....)
+>
+> 					- Ted
 
-Thanks
-Boaz
+[I didn't find an ideal message to reply to in this thread, but this
+seemed to probably be the best]
+
+Just an update on this since I went back and looked at this thread,
+GitLab about ~1yr ago turned on core.fsyncObjectFiles=true by
+default.
+
+The reason is detailed in [1], tl;dr: empty loose object file issue on
+ext4 allegedly caused by a lack of core.fsyncObjectFiles=true, but I
+didn't do any root cause analysis. Just noting it here for for future
+reference.
+
+1. https://gitlab.com/gitlab-org/gitlab-foss/-/issues/51680#note_180508774
