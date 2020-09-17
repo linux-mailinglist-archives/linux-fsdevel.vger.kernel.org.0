@@ -2,101 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D467326E277
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 19:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 889D726E2B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 19:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgIQRcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 13:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbgIQRcX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 13:32:23 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90C8C061756;
-        Thu, 17 Sep 2020 10:30:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=aWpQMjG3K8ZDoYTgVEFk+u0gKdJASH29rDnXXsv40lc=; b=Dm9rJToEv5QoeUIJDeph7dhbur
-        gwoCjoXk9z1ys8KpcSBYDLqMT1Nf9EFz+Di0leYbFE5iZpQ2FsehXcNytcb7rtXI7r1VnUrM1hLma
-        dGJif67i/BDBbYjrRBKTuAnyU02ItS4wtrrKv/t2uYMMnOm6P3bfZfKMgoZJ3Fmsso+OPYh+4ZoG8
-        9mHzNkUPE7tykFIPua0nL8LW2g1A6Pv5FYGycK9iZvU5oO08nVV8vnAeCt2ymhT2e4mWjJ692JRDZ
-        cmweQaexCBfUhP/AjFVJul91JZlvLR6EYZF2uPkEpjjGUADqOOrFSX8ODkTr1ziOMsyYRLd5xDLHC
-        MDtCfFdQ==;
-Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kIxjT-0002bF-Rq; Thu, 17 Sep 2020 17:30:08 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-pm@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org
-Subject: [PATCH 14/14] block: mark blkdev_get static
-Date:   Thu, 17 Sep 2020 18:57:20 +0200
-Message-Id: <20200917165720.3285256-15-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200917165720.3285256-1-hch@lst.de>
-References: <20200917165720.3285256-1-hch@lst.de>
+        id S1726645AbgIQRmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 13:42:47 -0400
+Received: from mout.gmx.net ([212.227.17.22]:34289 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbgIQRlF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 13:41:05 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 13:40:46 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1600364424;
+        bh=AtpaLz5T0doiwW45rKTXhN9OPitxExJgCcjhtNz0x98=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=AZ54eguBjBVpgfrIyJQ0SsL2DbHWtMwIHELHexCYssWjgRYBO475Odahy/r27XRnm
+         Ko3nlAolpxQqLoaPfZuDLPzAu76osTD6vmmgZAWj8rrYTPHYfElYy3nzEOB3yom1u1
+         pU/Ymjp7/OXsClocPacrbIv2nF3gNU9P0nV5ZqbI=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MOA3F-1k7jNd13M1-00OYlk; Thu, 17
+ Sep 2020 19:32:28 +0200
+Date:   Thu, 17 Sep 2020 19:32:09 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the
+ fbfam feature
+Message-ID: <20200917173209.GA3637@ubuntu>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <20200910202107.3799376-2-keescook@chromium.org>
+ <CAG48ez1V=oVczCCSuRaWX=bbN2cOi0Y9q48=e-Fuhg7mwMOi0A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez1V=oVczCCSuRaWX=bbN2cOi0Y9q48=e-Fuhg7mwMOi0A@mail.gmail.com>
+X-Provags-ID: V03:K1:R5ZkovHXd6oUrfcKmVNF76tjDIn4TAPnGKJDjlfIyNZe9chhDUt
+ Esh/G27SFDsxpGe3eTJoHTkEtlKWjMzGSWaf4NY77J0KknyMS4Kn3FifB6lpQ9wSsgJm6aR
+ GWM1FOcKZJ7nuqitu7T9wYT0c/x3o41HPECfOOo6S21tnSwhYbEzXGPZ8NK/o/DFW7XB3Cr
+ jdRHD05vg7a/XdyN7NGVA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/6CMB5QJPcI=:X8wmKlFpZ253znFDwPLRvb
+ YlZ/RdCI9xCVOBo9khl6lMLnAtBDlf5hMUNoOiyWZOv1J4QhAiinM2EoW6kY+qc8hjBJl2874
+ 9bMUGQjsWdx4JH9U5brc4MuC19cin2DtZ29eZvfSI96b/elLNnR9aTov1mQB/C5Eimqy4fn+3
+ 9Nf5mi/WXSFRHDUYdkLT8IszB7q6thtLFe2tvdQdPiPTRvVggd2/V0NX3n/t8N7/R+eCLy7lo
+ 68v/prC3P0LDKQ+MsH3wLOPe1kT9PYMxyCYZsb5EN5iD67JB+g8PBu+1B0UA4Z048/10ti3SE
+ WBTOV59GkNvF1RMmhH7mB7wW8J3GsMXdEfsTvEl98flGZc8dVunjEYCs8SNhdYTyUtklweh1b
+ tSLoGPdXya8K0TH79aqwk++pYYNHLo9XWonep/6IkJBZCb32iDfJvruIeklbxHTtLgwJzuPpG
+ 86NTtzC11WP5tG+UpwhgE1A6XzX0ItSGweTHyBkR20t1yP05fmU48TuhjvwJDnZzLxx+W9CKg
+ 0ZmvuiW7I6Jrx5Vu26y4FLlWxROQn+C96iSZDx9M9G/hYncOeeY13LyUbh5wAVg1cblVy4QLD
+ iQzVNhCq0J/ncRiijX1j7rDxLIFiwFZ5SI36ewts0CarJmfwiFE7lzIi+Xwg/+PeLHK8nnNLu
+ DkN1N0tORU5izm1eHOOKBV208HzG4zOw/uTKyxEcsncBin1AKCVMaBFTJjV5WEKxvNjxU97mi
+ zkLokRyZdGski1EAt1kPj3oG3AM2QZ7YRa6PeSsWKIPFqL4YeHgAxowfhHzQfNAAYTRFz6geZ
+ Bn/7XX6nPF7sxU3E5mzUu643lR3FWnXR4STPrrP/P25HBZ6IYiQjGUzd11xrNx78P7H0yPm9S
+ x9ii8+mMdTo+hTZ8ThfI2h5HyP40BIL2lFq5V7wafb8nRnoiq2Sdu3EvAhe8PRiReC8A8T7ci
+ wSQf+RvoGk8M9D8n1TF4g5icDvjJsssP8O5usLHZAIIfum5N/qwYm0dRHsaGDwcEnS7lr2CY9
+ BUJxYj5K3maLD/TaiF4AOmUIqZ+8pL7UAzpKTFkXA+JqapWjrdFAlftP2UPCet8sAsd4M6WSX
+ qS7gKahFwtQGMhnhzlsB2FF+5OciezSR/rQWZE6EoMRN6hqTok023YEUIjq28NmnUzBCwhjcy
+ LEuRV4FCDPe0Y7DnC/SknZzc5eO758PryvZxDUo87FL3KE6/El5axTRhxOkyWI2+ou/MBoEqs
+ DhSvYP2Mo0rcNzsdPPid0MuNieSbeSjCHLNBOaQ==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are no users outside the core block code left now.
+On Thu, Sep 10, 2020 at 11:21:58PM +0200, Jann Horn wrote:
+> On Thu, Sep 10, 2020 at 10:21 PM Kees Cook <keescook@chromium.org> wrote=
+:
+> > From: John Wood <john.wood@gmx.com>
+> >
+> > Add a menu entry under "Security options" to enable the "Fork brute
+> > force attack mitigation" feature.
+> [...]
+> > +config FBFAM
+>
+> Please give this a more descriptive name than FBFAM. Some name where,
+> if a random kernel developer sees an "#ifdef" with that name in some
+> random piece of kernel code, they immediately have a rough idea for
+> what kind of feature this is.
+>
+> Perhaps something like THROTTLE_FORK_CRASHES. Or something else that
+> is equally descriptive.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/block_dev.c         | 3 +--
- include/linux/blkdev.h | 1 -
- 2 files changed, 1 insertion(+), 3 deletions(-)
+Ok, understood. This will be fixed for the next version. Thanks.
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 2898d69be6b3e4..6b9d19ffa5af7b 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1616,7 +1616,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, void *holder,
-  * RETURNS:
-  * 0 on success, -errno on failure.
-  */
--int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
-+static int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
- {
- 	int ret, perm = 0;
- 
-@@ -1637,7 +1637,6 @@ int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder)
- 	bdput(bdev);
- 	return ret;
- }
--EXPORT_SYMBOL(blkdev_get);
- 
- /**
-  * blkdev_get_by_path - open a block device by name
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 5bd96fbab9b4c8..14117995091224 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1975,7 +1975,6 @@ void blkdev_show(struct seq_file *seqf, off_t offset);
- #define BLKDEV_MAJOR_MAX	0
- #endif
- 
--int blkdev_get(struct block_device *bdev, fmode_t mode, void *holder);
- struct block_device *blkdev_get_by_path(const char *path, fmode_t mode,
- 		void *holder);
- struct block_device *blkdev_get_by_dev(dev_t dev, fmode_t mode, void *holder);
--- 
-2.28.0
+> > +       bool "Fork brute force attack mitigation"
+> > +       default n
+>
+> "default n" is superfluous and should AFAIK be omitted.
 
+Ok. I will remove it. Thanks.
+
+> > +       help
+> > +         This is a user defense that detects any fork brute force att=
+ack
+> > +         based on the application's crashing rate. When this measure =
+is
+> > +         triggered the fork system call is blocked.
+>
+> This help text claims that the mitigation will block fork(), but patch
+> 6/6 actually kills the process hierarchy.
+
+Sorry, it's a mistake. It was the first idea but finally the implementatio=
+n
+changed and this description not was modified. Apologies. It will be fixed
+for the next version.
+
+Thanks,
+John Wood
