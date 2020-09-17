@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FC326E7D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 00:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD04726E7E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 00:03:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgIQWDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 18:03:01 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43092 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbgIQWDB (ORCPT
+        id S1726281AbgIQWD2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 18:03:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39650 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgIQWD2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:03:01 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08HLxlad048011;
-        Thu, 17 Sep 2020 22:02:44 GMT
+        Thu, 17 Sep 2020 18:03:28 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08HM0RLa036949;
+        Thu, 17 Sep 2020 22:03:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2020-01-29;
- bh=x216MVKnAlycli97LKmjwosRBbLRqZxgIH7eOh8qQw8=;
- b=XSUpyYcXNrdeBd45Gyrs/kMNpXyHcC1ocmQM/kKh4ZiKFWs1SjR7rnetYswZ4D46vQAc
- ILLcQHpiaKuKHVKZf1FJOuYnRzZNDlCoiJ2B7/oLdza1i+CHgc2iNNYnc3+LKucR/+oR
- U/q/Om7SeD7E4BPUY+gBnDnWiohDJmPOQQfcqBomUr1zqgbrn3BLsOWMxvRHxNh11VeO
- SBxkPM/arf4WZupsaxkj7qjSycV2ce1kJBGwGJZi6u8JED3LsrRr2g/wh/egHCR7Ykm9
- kmfIPgmtK8qPvdlmN2cVBNQD2ldZns1ikeW00BRVW/2vVdI6+mgR37Owl9sttLlOhWnV Tg== 
+ bh=jBOs08fQ0aQajU7zanwF1NyRNVYjyzYAbb9zEtpUEyE=;
+ b=SRIaL7J/BNv3CAl6ags9fcIkcrLYqZXj1saMadB+oY51263oJHkY31pz6BMPUTtl2cxS
+ 4Nx3ePVSGLkZyldcZ3ODH+82LbBaPvR3mGftfKV6iy/tcdV5e8Cdvir8wS0c2b5VOP5q
+ 92nAVqG+z/x23c2SWJhDku7Su/8n2dDuLgTbwPRjjNm56d2/GKslqWovHSqSDm+gIn8Y
+ ioiUHW0VB/lU+BHyFUktnqogPv4RJnkJrVpp4ELLkF2A20uG4/ZbWo3AKE20dtfIVYdZ
+ gfGP8TIYk5kx9pPbpWGZKxv0d/j8oZvFkdEL286t6RDKAclQtlJ5oCRKBAX5C9B+vf0t hw== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 33gnrrc2nx-1
+        by userp2120.oracle.com with ESMTP id 33j91dwp3v-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 17 Sep 2020 22:02:43 +0000
+        Thu, 17 Sep 2020 22:03:12 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08HM1Zmu079441;
-        Thu, 17 Sep 2020 22:02:43 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 33h88ck8hg-1
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08HM1a6s079549;
+        Thu, 17 Sep 2020 22:03:11 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 33h88ck9fk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Sep 2020 22:02:43 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08HM2eCZ030627;
-        Thu, 17 Sep 2020 22:02:40 GMT
+        Thu, 17 Sep 2020 22:03:11 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08HM39vk006929;
+        Thu, 17 Sep 2020 22:03:10 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 17 Sep 2020 22:02:40 +0000
-Date:   Thu, 17 Sep 2020 15:02:38 -0700
+        with ESMTP ; Thu, 17 Sep 2020 22:03:09 +0000
+Date:   Thu, 17 Sep 2020 15:03:06 -0700
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -50,119 +50,121 @@ Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Dave Kleikamp <shaggy@kernel.org>,
         jfs-discussion@lists.sourceforge.net,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 7/9] iomap: Convert write_count to write_bytes_pending
-Message-ID: <20200917220238.GP7955@magnolia>
+Subject: Re: [PATCH v2 8/9] iomap: Convert iomap_write_end types
+Message-ID: <20200917220306.GQ7955@magnolia>
 References: <20200910234707.5504-1-willy@infradead.org>
- <20200910234707.5504-8-willy@infradead.org>
+ <20200910234707.5504-9-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910234707.5504-8-willy@infradead.org>
+In-Reply-To: <20200910234707.5504-9-willy@infradead.org>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9747 signatures=668679
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 adultscore=0
  suspectscore=1 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
  definitions=main-2009170162
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9747 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=1
- clxscore=1015 mlxlogscore=999 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=1 mlxlogscore=999
+ clxscore=1015 adultscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2006250000 definitions=main-2009170162
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 12:47:05AM +0100, Matthew Wilcox (Oracle) wrote:
-> Instead of counting bio segments, count the number of bytes submitted.
-> This insulates us from the block layer's definition of what a 'same page'
-> is, which is not necessarily clear once THPs are involved.
+On Fri, Sep 11, 2020 at 12:47:06AM +0100, Matthew Wilcox (Oracle) wrote:
+> iomap_write_end cannot return an error, so switch it to return
+> size_t instead of int and remove the error checking from the callers.
+> Also convert the arguments to size_t from unsigned int, in case anyone
+> ever wants to support a page size larger than 2GB.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Looks ok,
+LGTM
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
 --D
 
 > ---
->  fs/iomap/buffered-io.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
+>  fs/iomap/buffered-io.c | 31 ++++++++++++-------------------
+>  1 file changed, 12 insertions(+), 19 deletions(-)
 > 
 > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 1cf976a8e55c..64a5cb383f30 100644
+> index 64a5cb383f30..cb25a7b70401 100644
 > --- a/fs/iomap/buffered-io.c
 > +++ b/fs/iomap/buffered-io.c
-> @@ -27,7 +27,7 @@
->   */
->  struct iomap_page {
->  	atomic_t		read_bytes_pending;
-> -	atomic_t		write_count;
-> +	atomic_t		write_bytes_pending;
->  	spinlock_t		uptodate_lock;
->  	unsigned long		uptodate[];
->  };
-> @@ -73,7 +73,7 @@ iomap_page_release(struct page *page)
->  	if (!iop)
->  		return;
->  	WARN_ON_ONCE(atomic_read(&iop->read_bytes_pending));
-> -	WARN_ON_ONCE(atomic_read(&iop->write_count));
-> +	WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
->  	WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
->  			PageUptodate(page));
->  	kfree(iop);
-> @@ -1047,7 +1047,7 @@ EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
+> @@ -663,9 +663,8 @@ iomap_set_page_dirty(struct page *page)
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_set_page_dirty);
 >  
->  static void
->  iomap_finish_page_writeback(struct inode *inode, struct page *page,
-> -		int error)
-> +		int error, unsigned int len)
+> -static int
+> -__iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+> -		unsigned copied, struct page *page)
+> +static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+> +		size_t copied, struct page *page)
 >  {
->  	struct iomap_page *iop = to_iomap_page(page);
+>  	flush_dcache_page(page);
 >  
-> @@ -1057,9 +1057,9 @@ iomap_finish_page_writeback(struct inode *inode, struct page *page,
->  	}
->  
->  	WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
-> -	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) <= 0);
-> +	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) <= 0);
->  
-> -	if (!iop || atomic_dec_and_test(&iop->write_count))
-> +	if (!iop || atomic_sub_and_test(len, &iop->write_bytes_pending))
->  		end_page_writeback(page);
+> @@ -687,9 +686,8 @@ __iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+>  	return copied;
 >  }
 >  
-> @@ -1093,7 +1093,8 @@ iomap_finish_ioend(struct iomap_ioend *ioend, int error)
+> -static int
+> -iomap_write_end_inline(struct inode *inode, struct page *page,
+> -		struct iomap *iomap, loff_t pos, unsigned copied)
+> +static size_t iomap_write_end_inline(struct inode *inode, struct page *page,
+> +		struct iomap *iomap, loff_t pos, size_t copied)
+>  {
+>  	void *addr;
 >  
->  		/* walk each page on bio, ending page IO on them */
->  		bio_for_each_segment_all(bv, bio, iter_all)
-> -			iomap_finish_page_writeback(inode, bv->bv_page, error);
-> +			iomap_finish_page_writeback(inode, bv->bv_page, error,
-> +					bv->bv_len);
->  		bio_put(bio);
->  	}
->  	/* The ioend has been freed by bio_put() */
-> @@ -1309,8 +1310,8 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
+> @@ -705,13 +703,14 @@ iomap_write_end_inline(struct inode *inode, struct page *page,
+>  	return copied;
+>  }
 >  
->  	merged = __bio_try_merge_page(wpc->ioend->io_bio, page, len, poff,
->  			&same_page);
-> -	if (iop && !same_page)
-> -		atomic_inc(&iop->write_count);
-> +	if (iop)
-> +		atomic_add(len, &iop->write_bytes_pending);
+> -static int
+> -iomap_write_end(struct inode *inode, loff_t pos, unsigned len, unsigned copied,
+> -		struct page *page, struct iomap *iomap, struct iomap *srcmap)
+> +/* Returns the number of bytes copied.  May be 0.  Cannot be an errno. */
+> +static size_t iomap_write_end(struct inode *inode, loff_t pos, size_t len,
+> +		size_t copied, struct page *page, struct iomap *iomap,
+> +		struct iomap *srcmap)
+>  {
+>  	const struct iomap_page_ops *page_ops = iomap->page_ops;
+>  	loff_t old_size = inode->i_size;
+> -	int ret;
+> +	size_t ret;
 >  
->  	if (!merged) {
->  		if (bio_full(wpc->ioend->io_bio, len)) {
-> @@ -1353,7 +1354,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	LIST_HEAD(submit_list);
+>  	if (srcmap->type == IOMAP_INLINE) {
+>  		ret = iomap_write_end_inline(inode, page, iomap, pos, copied);
+> @@ -790,11 +789,8 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
 >  
->  	WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
-> -	WARN_ON_ONCE(iop && atomic_read(&iop->write_count) != 0);
-> +	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
+>  		copied = iov_iter_copy_from_user_atomic(page, i, offset, bytes);
 >  
->  	/*
->  	 * Walk through the page to find areas to write back. If we run off the
+> -		status = iomap_write_end(inode, pos, bytes, copied, page, iomap,
+> +		copied = iomap_write_end(inode, pos, bytes, copied, page, iomap,
+>  				srcmap);
+> -		if (unlikely(status < 0))
+> -			break;
+> -		copied = status;
+>  
+>  		cond_resched();
+>  
+> @@ -868,11 +864,8 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  
+>  		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
+>  				srcmap);
+> -		if (unlikely(status <= 0)) {
+> -			if (WARN_ON_ONCE(status == 0))
+> -				return -EIO;
+> -			return status;
+> -		}
+> +		if (WARN_ON_ONCE(status == 0))
+> +			return -EIO;
+>  
+>  		cond_resched();
+>  
 > -- 
 > 2.28.0
 > 
