@@ -2,72 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7222C26E566
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 21:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B1326E585
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 21:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbgIQPNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 11:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37392 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727926AbgIQPL0 (ORCPT
+        id S1726397AbgIQTy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 15:54:26 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:50985 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbgIQQNm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 11:11:26 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45DFC061352;
-        Thu, 17 Sep 2020 08:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=8Z59nl1ynYz7T8ZQQZFooEYzqOOLn6C4o6AlvTemzR0=; b=ZwdX53dghWPKXi4Rjx3Lj7vsSt
-        VelfrbZiXezTGtoteiLyh5dCyQ1ailxO3l/o2S64HU8kJGyS51nzejMxg75SZwmgxeYsjrxlLJ4IK
-        Pmkx1/NY5xtil421XUChskrxZKWwpeTkaAqC/hBmUOluMQq/C1i43VmFv6b9PRKlhY4ZhUEM7afEC
-        qe+7yqIUGZIpxp4n/YCB6crwYH5t6fyWFNmCSQjr5uYIvzd7Ukxu4/f1U2+E+w4M8CstfyWNLo+hz
-        xlYh7wPJtQqM1pYoiETsP2BQp9KyuJBErnDKrqdSOOqoa26HKmMxWosGkyvlSsIamje9UpiSCcDVk
-        radcDH5w==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kIvYj-0001Q6-TE; Thu, 17 Sep 2020 15:10:53 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, v9fs-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 08/13] fuse: Tell the VFS that readpage was synchronous
-Date:   Thu, 17 Sep 2020 16:10:45 +0100
-Message-Id: <20200917151050.5363-9-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20200917151050.5363-1-willy@infradead.org>
-References: <20200917151050.5363-1-willy@infradead.org>
+        Thu, 17 Sep 2020 12:13:42 -0400
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 5D832860D0;
+        Thu, 17 Sep 2020 11:37:22 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
+        :subject:references:date:in-reply-to:message-id:mime-version
+        :content-type:content-transfer-encoding; s=sasl; bh=Lxzw5WFIugjz
+        eOQETyxd5CJ+OYM=; b=lR5qdwpFfgWTUFbHLJhVSHrc015u/wT5QL1Dyf9EI6sL
+        B8jjRvF/VVi0/3BYUq/0Mpz2eURjvVENw2+SenImD7nC1EvB3gkAy9GRMKLntbrj
+        +dwDvnpes4I+lAzTK7oQSgAo58kT5xHnOrr9jpySEYPtBYEwcsxE9qRXcgSNris=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=from:to:cc
+        :subject:references:date:in-reply-to:message-id:mime-version
+        :content-type:content-transfer-encoding; q=dns; s=sasl; b=rFT7ZS
+        IX+2H1I08dS2j+3e4vzd8Ox/aqf47R5oUK0e4dDdvT0OkY2Hic6Sbft6GTn/VCbt
+        dsnrLk11eMkzSoodlZ4zIvhqSmjN0+KrgOXG9gGgSeEyoIGy9QqkOdY4AK0gGxO2
+        ey5CAe2vMRddrKiOWqOhsE7+Orgy5YaVBzcsg=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 54C41860CE;
+        Thu, 17 Sep 2020 11:37:22 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+Received: from pobox.com (unknown [34.75.7.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id A9A4D860CB;
+        Thu, 17 Sep 2020 11:37:21 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+From:   Junio C Hamano <gitster@pobox.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jeff King <peff@peff.net>,
+        =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>,
+        git@vger.kernel.org, tytso@mit.edu,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when
+ core.fsyncObjectFiles
+References: <87sgbghdbp.fsf@evledraar.gmail.com>
+        <20200917112830.26606-2-avarab@gmail.com>
+        <20200917140912.GA27653@lst.de>
+        <20200917145523.GB3076467@coredump.intra.peff.net>
+        <20200917145653.GA30972@lst.de>
+Date:   Thu, 17 Sep 2020 08:37:19 -0700
+In-Reply-To: <20200917145653.GA30972@lst.de> (Christoph Hellwig's message of
+        "Thu, 17 Sep 2020 16:56:53 +0200")
+Message-ID: <xmqqzh5os9cg.fsf@gitster.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+X-Pobox-Relay-ID: AD5B3C8E-F8FB-11EA-8212-01D9BED8090B-77302942!pb-smtp1.pobox.com
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The fuse readpage implementation was already synchronous, so use
-AOP_UPDATED_PAGE to avoid cycling the page lock.
+Christoph Hellwig <hch@lst.de> writes:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/fuse/file.c | 2 ++
- 1 file changed, 2 insertions(+)
+> On Thu, Sep 17, 2020 at 10:55:23AM -0400, Jeff King wrote:
+>> On Thu, Sep 17, 2020 at 04:09:12PM +0200, Christoph Hellwig wrote:
+>>=20
+>> > On Thu, Sep 17, 2020 at 01:28:29PM +0200, =C3=86var Arnfj=C3=B6r=C3=B0=
+ Bjarmason wrote:
+>> > > Change the behavior of core.fsyncObjectFiles to also sync the
+>> > > directory entry. I don't have a case where this broke, just going =
+by
+>> > > paranoia and the fsync(2) manual page's guarantees about its behav=
+ior.
+>> >=20
+>> > It is not just paranoia, but indeed what is required from the standa=
+rds
+>> > POV.  At least for many Linux file systems your second fsync will be
+>> > very cheap (basically a NULL syscall) as the log has alredy been for=
+ced
+>> > all the way by the first one, but you can't rely on that.
+>>=20
+>> Is it sufficient to fsync() just the surrounding directory? I.e., if I
+>> do:
+>>=20
+>>   mkdir("a");
+>>   mkdir("a/b");
+>>   open("a/b/c", O_WRONLY);
+>>=20
+>> is it enough to fsync() a descriptor pointing to "a/b", or should I
+>> also do "a"?
+>
+> You need to fsync both to be fully compliant, even if just fsyncing b
+> will work for most but not all file systems.  The good news is that
+> for those common file systems the extra fsync of a is almost free.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 6611ef3269a8..7aa5626bc582 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -850,6 +850,8 @@ static int fuse_readpage(struct file *file, struct page *page)
- 
- 	err = fuse_do_readpage(file, page);
- 	fuse_invalidate_atime(inode);
-+	if (!err)
-+		return AOP_UPDATED_PAGE;
-  out:
- 	unlock_page(page);
- 	return err;
--- 
-2.28.0
+Back to =C3=86var's patch, when creating a new loose object, we do these
+things:
 
+ 1. create temporary file and write the compressed contents to it
+    while computing its object name
+
+ 2. create the fan-out directory under .git/objects/ if needed
+
+ 3. mv temporary file to its final name
+
+and the patch adds open+fsync+close on the fan-out directory.  In
+the above exchange with Peff, we learned that open+fsync+close needs
+to be done on .git/objects if we created the fan-out directory, too.
+
+Am I reading the above correctly?
+
+Thanks.
