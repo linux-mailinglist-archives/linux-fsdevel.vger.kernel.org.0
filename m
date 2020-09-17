@@ -2,144 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B48E026DA53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 13:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B2B26DB56
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 14:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgIQLfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 07:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58986 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbgIQL3D (ORCPT
+        id S1726657AbgIQMTa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 08:19:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:33187 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726850AbgIQMSN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:29:03 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D434C061756;
-        Thu, 17 Sep 2020 04:28:52 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id k15so1656992wrn.10;
-        Thu, 17 Sep 2020 04:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=acFTRgOXeFja9i45UMq28ZzX4PNnH17O4fPIQK3On2o=;
-        b=IFMRz2U5ZEnUCHO8HMxvr8xMuOEpnPrDzMBpzwh36C8oSu4fa3BxXDbe+WmkYCF7XV
-         GhqjVdql38wwMxwW9kIrRNdaZLgcP52j7fSwBjJTMBPdjDErqEnEN7yGD2XSRh+jxaSC
-         1ITCM4CJYT9dR+oUcQm65AwbG9GkGeapaGpHiLMIvd21g1k8glqZbJONqP8/6oaBW6oC
-         JJ9aG03WoVhsVbIqturgOftvSmqr96hn0kEBm4q+6fIHmviIrLpdQ50zDt7hY4TtvxVJ
-         2daizVQgeoMCXNbKqCikdMxQpi25IEEQmMwfLNEra8uJhAmXjGR1oieAkqhLdmHbjWNz
-         Xd5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=acFTRgOXeFja9i45UMq28ZzX4PNnH17O4fPIQK3On2o=;
-        b=W0sH/beI5shQzqy+sloSvD4mnR7RTwY/LGy9YFLZ2PcJ5t3D1pal3nHw74opXsKGeu
-         KYQYr2r8tCSW0nY8EvLepTwnlylqnUzrYtAiOUkzcHXsytHDuDhcUUcnNRS8AG5NdmMU
-         cL/6Kop3t69b9q7j+zhz6ZBjg8D1oZarf1UpTTJHlODl/rAn6bPzaIjLfpyc3jYNpBLM
-         O9X5629/Y3sj7jfEd3XNRVC/YP2R9pVUHBRqOMkRoyt0mwAdNQdDzgH2ISahmZJbEa4P
-         tt24FsHI3ijyIGAsKQol0Hu7GL1sy2HFE8dxfh06BmO7scwowofks4PCorI2fcZIvTtj
-         bMNg==
-X-Gm-Message-State: AOAM533XeFq11N9CC0+wtjOIzVRmdRrTAD+YaZjgLlLN1qBjhs3q3HK7
-        S7OHw1fo4YmDwmPe0kuiHJ3GWe94w0w6Nw==
-X-Google-Smtp-Source: ABdhPJyUoKvCAKe8Xv3aMoEG0zbKwplmFjcxsRm83Q1ufq7tW1FBWBCHA6p6gfj7jPnmyK/xWLQ4EQ==
-X-Received: by 2002:a05:6000:12c3:: with SMTP id l3mr33482360wrx.164.1600342130926;
-        Thu, 17 Sep 2020 04:28:50 -0700 (PDT)
-Received: from vm.nix.is (vm.nix.is. [2a01:4f8:120:2468::2])
-        by smtp.gmail.com with ESMTPSA id t16sm38781127wrm.57.2020.09.17.04.28.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:28:50 -0700 (PDT)
-From:   =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?= 
-        <avarab@gmail.com>
-To:     git@vger.kernel.org
-Cc:     tytso@mit.edu, Junio C Hamano <gitster@pobox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?= 
-        <avarab@gmail.com>
-Subject: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when core.fsyncObjectFiles
-Date:   Thu, 17 Sep 2020 13:28:29 +0200
-Message-Id: <20200917112830.26606-2-avarab@gmail.com>
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d
-In-Reply-To: <87sgbghdbp.fsf@evledraar.gmail.com>
-References: <87sgbghdbp.fsf@evledraar.gmail.com>
+        Thu, 17 Sep 2020 08:18:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600345092;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=N5pwbMLEsViJmn+EwXFmMFAOXinBm5HFZNemqmzs6bE=;
+        b=dKNmdrQ1EKo2n+K7d2Ay5fNNtPS2vBGltVwuFHcYJ8PtNi7rfQLAa9c6wrzP5B429t174j
+        i9QIg723DxfRWLp/+fFW/6C56DQ0WLyGNRr0utyVkkBE4LW+guGPC7Br45k0Ols1EFDb+x
+        2LSSFIAg5Aj85ymev2umWuJRJSGeBtA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-391-rkJLU2RJMSmNxZKHK4MfIQ-1; Thu, 17 Sep 2020 08:01:38 -0400
+X-MC-Unique: rkJLU2RJMSmNxZKHK4MfIQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0DE9C802B79;
+        Thu, 17 Sep 2020 12:01:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6886075132;
+        Thu, 17 Sep 2020 12:01:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 17 Sep 2020 14:01:36 +0200 (CEST)
+Date:   Thu, 17 Sep 2020 14:01:33 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Boaz Harrosh <boaz@plexistor.com>
+Cc:     Hou Tao <houtao1@huawei.com>, peterz@infradead.org,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
+ read_count
+Message-ID: <20200917120132.GA5602@redhat.com>
+References: <20200915140750.137881-1-houtao1@huawei.com>
+ <20200915150610.GC2674@hirez.programming.kicks-ass.net>
+ <20200915153113.GA6881@redhat.com>
+ <20200915155150.GD2674@hirez.programming.kicks-ass.net>
+ <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+ <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+ <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change the behavior of core.fsyncObjectFiles to also sync the
-directory entry. I don't have a case where this broke, just going by
-paranoia and the fsync(2) manual page's guarantees about its behavior.
+On 09/17, Boaz Harrosh wrote:
+>
+> On 16/09/2020 15:32, Hou Tao wrote:
+> <>
+> >However the performance degradation is huge under aarch64 (4 sockets, 24 core per sockets): nearly 60% lost.
+> >
+> >v4.19.111
+> >no writer, reader cn                               | 24        | 48        | 72        | 96
+> >the rate of down_read/up_read per second           | 166129572 | 166064100 | 165963448 | 165203565
+> >the rate of down_read/up_read per second (patched) |  63863506 |  63842132 |  63757267 |  63514920
+> >
+>
+> I believe perhaps Peter Z's suggestion of an additional
+> percpu_down_read_irqsafe() API and let only those in IRQ users pay the
+> penalty.
+>
+> Peter Z wrote:
+> >My leading alternative was adding: percpu_down_read_irqsafe() /
+> >percpu_up_read_irqsafe(), which use local_irq_save() instead of
+> >preempt_disable().
 
-Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
----
- sha1-file.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+This means that __sb_start/end_write() and probably more users in fs/super.c
+will have to use this API, not good.
 
-diff --git a/sha1-file.c b/sha1-file.c
-index dd65bd5c68..d286346921 100644
---- a/sha1-file.c
-+++ b/sha1-file.c
-@@ -1784,10 +1784,14 @@ int hash_object_file(const struct git_hash_algo *algo, const void *buf,
- }
- 
- /* Finalize a file on disk, and close it. */
--static void close_loose_object(int fd)
-+static void close_loose_object(int fd, const struct strbuf *dirname)
- {
--	if (fsync_object_files)
-+	int dirfd;
-+	if (fsync_object_files) {
- 		fsync_or_die(fd, "loose object file");
-+		dirfd = xopen(dirname->buf, O_RDONLY);
-+		fsync_or_die(dirfd, "loose object directory");
-+	}
- 	if (close(fd) != 0)
- 		die_errno(_("error when closing loose object file"));
- }
-@@ -1808,12 +1812,15 @@ static inline int directory_size(const char *filename)
-  * We want to avoid cross-directory filename renames, because those
-  * can have problems on various filesystems (FAT, NFS, Coda).
-  */
--static int create_tmpfile(struct strbuf *tmp, const char *filename)
-+static int create_tmpfile(struct strbuf *tmp,
-+			  const char *filename,
-+			  struct strbuf *dirname)
- {
- 	int fd, dirlen = directory_size(filename);
- 
- 	strbuf_reset(tmp);
- 	strbuf_add(tmp, filename, dirlen);
-+	strbuf_add(dirname, filename, dirlen);
- 	strbuf_addstr(tmp, "tmp_obj_XXXXXX");
- 	fd = git_mkstemp_mode(tmp->buf, 0444);
- 	if (fd < 0 && dirlen && errno == ENOENT) {
-@@ -1848,10 +1855,11 @@ static int write_loose_object(const struct object_id *oid, char *hdr,
- 	struct object_id parano_oid;
- 	static struct strbuf tmp_file = STRBUF_INIT;
- 	static struct strbuf filename = STRBUF_INIT;
-+	static struct strbuf dirname = STRBUF_INIT;
- 
- 	loose_object_path(the_repository, &filename, oid);
- 
--	fd = create_tmpfile(&tmp_file, filename.buf);
-+	fd = create_tmpfile(&tmp_file, filename.buf, &dirname);
- 	if (fd < 0) {
- 		if (errno == EACCES)
- 			return error(_("insufficient permission for adding an object to repository database %s"), get_object_directory());
-@@ -1897,7 +1905,8 @@ static int write_loose_object(const struct object_id *oid, char *hdr,
- 		die(_("confused by unstable object source data for %s"),
- 		    oid_to_hex(oid));
- 
--	close_loose_object(fd);
-+	close_loose_object(fd, &dirname);
-+	strbuf_release(&dirname);
- 
- 	if (mtime) {
- 		struct utimbuf utb;
--- 
-2.28.0.297.g1956fa8f8d
+IIUC, file_end_write() was never IRQ safe (at least if !CONFIG_SMP), even
+before 8129ed2964 ("change sb_writers to use percpu_rw_semaphore"), but this
+doesn't matter...
+
+Perhaps we can change aio.c, io_uring.c and fs/overlayfs/file.c to avoid
+file_end_write() in IRQ context, but I am not sure it's worth the trouble.
+
+Oleg.
 
