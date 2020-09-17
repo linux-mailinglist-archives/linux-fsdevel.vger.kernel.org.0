@@ -2,81 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC9226D1C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 05:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 342CA26D20F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 06:07:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726064AbgIQDaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 23:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
+        id S1726126AbgIQEHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 00:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbgIQDaY (ORCPT
+        with ESMTP id S1725858AbgIQEHV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 23:30:24 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64ED7C06174A;
-        Wed, 16 Sep 2020 20:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=ZfJS/f94/KKMV+Mccd9pRniL7TH36xiMBW1d5y04Aj8=; b=EX0cU1ou1P3jaAsaDLeoOiLSqS
-        mpJxcZClyN7A/RxlPuDO+uLp/wWLe8+zS3tZhZ6gSYArpXlRnCCZqieAvt0KZy9UpEqn+NwzdV1+Z
-        7q71orzFU1qK9I2vlfUUB0OlhaJAej5di8m2n493sVqTnPyqSQKoW5HSFq3nH3/cUDZhJjUPF5rlU
-        J0h7/9LgDSD8rQI1Q6gBl6AfrL3YbkqezqoXnB5w9r+sj/MuHiIQfCeM0U9ldilA32SFxAValxk/H
-        9XKnI0m4GYu/NSW4qXaPK+UhPQxpEM8Dl/XD2xnLOSuR/4bbTTiRH3DI40oBgw9sjwwNaARQE3imp
-        NoOd9b/w==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kIkcn-0007dR-B9; Thu, 17 Sep 2020 03:30:21 +0000
-Date:   Thu, 17 Sep 2020 04:30:21 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-btrfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Qu Wenruo <wqu@suse.com>
-Subject: THP support for btrfs
-Message-ID: <20200917033021.GR5449@casper.infradead.org>
+        Thu, 17 Sep 2020 00:07:21 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E903C06174A;
+        Wed, 16 Sep 2020 21:07:20 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIlCW-000B12-0O; Thu, 17 Sep 2020 04:07:16 +0000
+Date:   Thu, 17 Sep 2020 05:07:15 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Rich Felker <dalias@libc.org>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] vfs: block chmod of symlinks
+Message-ID: <20200917040715.GS3421308@ZenIV.linux.org.uk>
+References: <20200916002157.GO3265@brightrain.aerifal.cx>
+ <20200916002253.GP3265@brightrain.aerifal.cx>
+ <20200916062553.GB27867@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20200916062553.GB27867@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I was pointed at the patches posted this week for sub-page support in
-btrfs, and I thought it might be a good idea to mention that THP support
-is going to hit many of the same issues as sub-PAGE_SIZE blocks, so if
-you're thinking about sub-page block sizes, it might be a good idea to
-add THP support at the same time, or at least be aware of it when you're
-working on those patches to make THP work in the future.
+On Wed, Sep 16, 2020 at 07:25:53AM +0100, Christoph Hellwig wrote:
+> On Tue, Sep 15, 2020 at 08:22:54PM -0400, Rich Felker wrote:
+> > It was discovered while implementing userspace emulation of fchmodat
+> > AT_SYMLINK_NOFOLLOW (using O_PATH and procfs magic symlinks; otherwise
+> > it's not possible to target symlinks with chmod operations) that some
+> > filesystems erroneously allow access mode of symlinks to be changed,
+> > but return failure with EOPNOTSUPP (see glibc issue #14578 and commit
+> > a492b1e5ef). This inconsistency is non-conforming and wrong, and the
+> > consensus seems to be that it was unintentional to allow link modes to
+> > be changed in the first place.
+> > 
+> > Signed-off-by: Rich Felker <dalias@libc.org>
+> > ---
+> >  fs/open.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/fs/open.c b/fs/open.c
+> > index 9af548fb841b..cdb7964aaa6e 100644
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -570,6 +570,12 @@ int chmod_common(const struct path *path, umode_t mode)
+> >  	struct iattr newattrs;
+> >  	int error;
+> >  
+> > +	/* Block chmod from getting to fs layer. Ideally the fs would either
+> > +	 * allow it or fail with EOPNOTSUPP, but some are buggy and return
+> > +	 * an error but change the mode, which is non-conforming and wrong. */
+> > +	if (S_ISLNK(inode->i_mode))
+> > +		return -EOPNOTSUPP;
+> 
+> Our usualy place for this would be setattr_prepare.  Also the comment
+> style is off, and I don't think we should talk about buggy file systems
+> here, but a policy to not allow the chmod.  I also suspect the right
+> error value is EINVAL - EOPNOTSUPP isn't really used in normal posix
+> file system interfaces.
 
-While the patches have not entirely landed yet, complete (in that it
-passes xfstests on my laptop) support is available here:
-http://git.infradead.org/users/willy/pagecache.git
+Er...   Wasn't that an ACL-related crap?  XFS calling posix_acl_chmod()
+after it has committed to i_mode change, propagating the error to
+caller of ->notify_change(), IIRC...
 
-About 40 of the 100 patches are in Andrew Morton's tree or the iomap
-tree waiting for the next merge window, and I'd like to get the rest
-upstream in the merge window after that.  About 20-25 of the patches are
-to iomap/xfs and the rest are generic MM/FS support.
-
-The first difference you'll see after setting the flag indicating
-that your filesystem supports THPs is transparent huge pages being
-passed to ->readahead().  You should submit I/Os to read every byte
-in those pages, not just the first PAGE_SIZE bytes ;-)  Likewise, when
-writepages/writepage is called, you'll want to write back every dirty
-byte in that page, not just the first PAGE_SIZE bytes.
-
-If there's a page error (I strongly recommend error injection), you'll
-also see these pages being passed to ->readpage and ->write_begin
-without being PageUptodate, and again, you'll have to handle reads
-for the parts of the page which are not Uptodate.
-
-You'll have to handle invalidatepage being called from the truncate /
-page split path.
-
-page_mkwrite can be called with a tail page.  You should be sure to mark
-the entire page as dirty (we only track dirty state on a per-THP basis,
-not per-subpage basis).
-
----
-
-I see btrfs is switching to iomap for the directIO path.  Has any
-consideration been given to switching to iomap for the buffered I/O path?
-Or is that just too much work?
+Put it another way, why do we want
+        if (!inode->i_op->set_acl)
+                return -EOPNOTSUPP;
+in posix_acl_chmod(), when we have
+        if (!IS_POSIXACL(inode))
+                return 0;
+right next to it?  If nothing else, make that
+	if (!IS_POSIXACL(inode) || !inode->i_op->get_acl)
+		return 0;	// piss off - nothing to adjust here
