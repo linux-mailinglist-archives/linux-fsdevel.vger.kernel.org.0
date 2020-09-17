@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 784E326DA2D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 13:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B48E026DA53
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 13:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbgIQL31 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 07:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58994 "EHLO
+        id S1726853AbgIQLfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 07:35:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbgIQL3F (ORCPT
+        with ESMTP id S1726820AbgIQL3D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 07:29:05 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1228CC061788;
-        Thu, 17 Sep 2020 04:28:54 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id b79so1666035wmb.4;
-        Thu, 17 Sep 2020 04:28:53 -0700 (PDT)
+        Thu, 17 Sep 2020 07:29:03 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D434C061756;
+        Thu, 17 Sep 2020 04:28:52 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id k15so1656992wrn.10;
+        Thu, 17 Sep 2020 04:28:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tzAc/TZ3oJwpBno6ItVxAZugyjGkmQQNpTTtTZujr28=;
-        b=tHM/3YxWbFNOLlldFUFfFi+gSFT1m0J200u6OG/saxzZ+xz/UcOxOyubnuxrAgx6nd
-         snEB5hB6lgIwklsEi0fu8vv9vINMwpS5ehG0e4vgre6i0QhOAWnGMr0ACu7V7ESLAPPY
-         TCh6SbjVjd3OYtNvYqhXYzEFZSMS41zAe7i0EFahWXvNcJzObM9GYgDD4pyRA/w8sCHc
-         HqIAjC9LyzF0hux/tzppZUr7hpyYCPPlms8xfUuv/U3u+/ewIQLbHHaF8jTf1BVU/Atd
-         llRIaoox784fsDUn8WQpmT9lYYXBy/ZUfxl3eNe70Da/6kqY6T/b8yS37fw42D8GiLwK
-         c0EA==
+        bh=acFTRgOXeFja9i45UMq28ZzX4PNnH17O4fPIQK3On2o=;
+        b=IFMRz2U5ZEnUCHO8HMxvr8xMuOEpnPrDzMBpzwh36C8oSu4fa3BxXDbe+WmkYCF7XV
+         GhqjVdql38wwMxwW9kIrRNdaZLgcP52j7fSwBjJTMBPdjDErqEnEN7yGD2XSRh+jxaSC
+         1ITCM4CJYT9dR+oUcQm65AwbG9GkGeapaGpHiLMIvd21g1k8glqZbJONqP8/6oaBW6oC
+         JJ9aG03WoVhsVbIqturgOftvSmqr96hn0kEBm4q+6fIHmviIrLpdQ50zDt7hY4TtvxVJ
+         2daizVQgeoMCXNbKqCikdMxQpi25IEEQmMwfLNEra8uJhAmXjGR1oieAkqhLdmHbjWNz
+         Xd5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tzAc/TZ3oJwpBno6ItVxAZugyjGkmQQNpTTtTZujr28=;
-        b=FXmr/1AHRmiQmFicVvmlYQpZY09Kd6JCky7nQwmFZIXpikizEs+28gsXKIfNoafmGj
-         1Kdp93XZ1I8Chs5sThZTMJprGy9UjvVzjZhaSdmF9ay1iqlOFjZR/wYFOLcAuoHBHWG3
-         RLrd1j/68lq2PEwDoxdb0qYG2ihMFFr80TSNNMtRSargggxOvdG7mOPlL3hm8lK+6J34
-         CxkeILrTnD+g0YobX91RVuORDRYaH7kYMHyNkDR8afVQoI1sH42IWd889Zf3MxoXaBhx
-         vZeUhGp2ApMAjIgxTPEUIT+i5QelNWWUxXXNs3q5yGiBaTf9mGV6zzlYtYzJ+7YoMq5j
-         x/tA==
-X-Gm-Message-State: AOAM530b8MdUZ7kCUwIJuLRjup6anR4nHjC2Dp3DvQ0uIU1yni/PMOCx
-        48J5+MyAzmG6p4VcC5aSypTPmeKcrN6aUw==
-X-Google-Smtp-Source: ABdhPJx6NUTB4Pzaaubhd3MzQe93qr29LMm6Z0uWSfqnBq8cKuKUFYANWGRCzZu4uFlXvoI9ikN4mA==
-X-Received: by 2002:a1c:f214:: with SMTP id s20mr9346267wmc.84.1600342132440;
-        Thu, 17 Sep 2020 04:28:52 -0700 (PDT)
+        bh=acFTRgOXeFja9i45UMq28ZzX4PNnH17O4fPIQK3On2o=;
+        b=W0sH/beI5shQzqy+sloSvD4mnR7RTwY/LGy9YFLZ2PcJ5t3D1pal3nHw74opXsKGeu
+         KYQYr2r8tCSW0nY8EvLepTwnlylqnUzrYtAiOUkzcHXsytHDuDhcUUcnNRS8AG5NdmMU
+         cL/6Kop3t69b9q7j+zhz6ZBjg8D1oZarf1UpTTJHlODl/rAn6bPzaIjLfpyc3jYNpBLM
+         O9X5629/Y3sj7jfEd3XNRVC/YP2R9pVUHBRqOMkRoyt0mwAdNQdDzgH2ISahmZJbEa4P
+         tt24FsHI3ijyIGAsKQol0Hu7GL1sy2HFE8dxfh06BmO7scwowofks4PCorI2fcZIvTtj
+         bMNg==
+X-Gm-Message-State: AOAM533XeFq11N9CC0+wtjOIzVRmdRrTAD+YaZjgLlLN1qBjhs3q3HK7
+        S7OHw1fo4YmDwmPe0kuiHJ3GWe94w0w6Nw==
+X-Google-Smtp-Source: ABdhPJyUoKvCAKe8Xv3aMoEG0zbKwplmFjcxsRm83Q1ufq7tW1FBWBCHA6p6gfj7jPnmyK/xWLQ4EQ==
+X-Received: by 2002:a05:6000:12c3:: with SMTP id l3mr33482360wrx.164.1600342130926;
+        Thu, 17 Sep 2020 04:28:50 -0700 (PDT)
 Received: from vm.nix.is (vm.nix.is. [2a01:4f8:120:2468::2])
-        by smtp.gmail.com with ESMTPSA id t16sm38781127wrm.57.2020.09.17.04.28.51
+        by smtp.gmail.com with ESMTPSA id t16sm38781127wrm.57.2020.09.17.04.28.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 04:28:51 -0700 (PDT)
+        Thu, 17 Sep 2020 04:28:50 -0700 (PDT)
 From:   =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?= 
         <avarab@gmail.com>
 To:     git@vger.kernel.org
@@ -57,9 +57,9 @@ Cc:     tytso@mit.edu, Junio C Hamano <gitster@pobox.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         =?UTF-8?q?=C3=86var=20Arnfj=C3=B6r=C3=B0=20Bjarmason?= 
         <avarab@gmail.com>
-Subject: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
-Date:   Thu, 17 Sep 2020 13:28:30 +0200
-Message-Id: <20200917112830.26606-3-avarab@gmail.com>
+Subject: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when core.fsyncObjectFiles
+Date:   Thu, 17 Sep 2020 13:28:29 +0200
+Message-Id: <20200917112830.26606-2-avarab@gmail.com>
 X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d
 In-Reply-To: <87sgbghdbp.fsf@evledraar.gmail.com>
 References: <87sgbghdbp.fsf@evledraar.gmail.com>
@@ -70,77 +70,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As amusing as Linus's original prose[1] is here it doesn't really explain
-in any detail to the uninitiated why you would or wouldn't enable
-this, and the counter-intuitive reason for why git wouldn't fsync your
-precious data.
-
-So elaborate (a lot) on why this may or may not be needed. This is my
-best-effort attempt to summarize the various points raised in the last
-ML[2] discussion about this.
-
-1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
-    files", 2008-06-18)
-2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
+Change the behavior of core.fsyncObjectFiles to also sync the
+directory entry. I don't have a case where this broke, just going by
+paranoia and the fsync(2) manual page's guarantees about its behavior.
 
 Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
 ---
- Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-----
- 1 file changed, 36 insertions(+), 6 deletions(-)
+ sha1-file.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/config/core.txt b/Documentation/config/core.txt
-index 74619a9c03..5b47670c16 100644
---- a/Documentation/config/core.txt
-+++ b/Documentation/config/core.txt
-@@ -548,12 +548,42 @@ core.whitespace::
-   errors. The default tab width is 8. Allowed values are 1 to 63.
+diff --git a/sha1-file.c b/sha1-file.c
+index dd65bd5c68..d286346921 100644
+--- a/sha1-file.c
++++ b/sha1-file.c
+@@ -1784,10 +1784,14 @@ int hash_object_file(const struct git_hash_algo *algo, const void *buf,
+ }
  
- core.fsyncObjectFiles::
--	This boolean will enable 'fsync()' when writing object files.
--+
--This is a total waste of time and effort on a filesystem that orders
--data writes properly, but can be useful for filesystems that do not use
--journalling (traditional UNIX filesystems) or that only journal metadata
--and not file contents (OS X's HFS+, or Linux ext3 with "data=writeback").
-+	This boolean will enable 'fsync()' when writing loose object
-+	files. Both the file itself and its containng directory will
-+	be fsynced.
-++
-+When git writes data any required object writes will precede the
-+corresponding reference update(s). For example, a
-+linkgit:git-receive-pack[1] accepting a push might write a pack or
-+loose objects (depending on settings such as `transfer.unpackLimit`).
-++
-+Therefore on a journaled file system which ensures that data is
-+flushed to disk in chronological order an fsync shouldn't be
-+needed. The loose objects might be lost with a crash, but so will the
-+ref update that would have referenced them. Git's own state in such a
-+crash will remain consistent.
-++
-+This option exists because that assumption doesn't hold on filesystems
-+where the data ordering is not preserved, such as on ext3 and ext4
-+with "data=writeback". On such a filesystem the `rename()` that drops
-+the new reference in place might be preserved, but the contents or
-+directory entry for the loose object(s) might not have been synced to
-+disk.
-++
-+Enabling this option might slow git down by a lot in some
-+cases. E.g. in the case of a naïve bulk import tool which might create
-+a million loose objects before a final ref update and `gc`. In other
-+more common cases such as on a server being pushed to with default
-+`transfer.unpackLimit` settings the difference might not be noticable.
-++
-+However, that's highly filesystem-dependent, on some filesystems
-+simply calling fsync() might force an unrelated bulk background write
-+to be serialized to disk. Such edge cases are the reason this option
-+is off by default. That default setting might change in future
-+versions.
-++
-+In older versions of git only the descriptor for the file itself was
-+fsynced, not its directory entry.
+ /* Finalize a file on disk, and close it. */
+-static void close_loose_object(int fd)
++static void close_loose_object(int fd, const struct strbuf *dirname)
+ {
+-	if (fsync_object_files)
++	int dirfd;
++	if (fsync_object_files) {
+ 		fsync_or_die(fd, "loose object file");
++		dirfd = xopen(dirname->buf, O_RDONLY);
++		fsync_or_die(dirfd, "loose object directory");
++	}
+ 	if (close(fd) != 0)
+ 		die_errno(_("error when closing loose object file"));
+ }
+@@ -1808,12 +1812,15 @@ static inline int directory_size(const char *filename)
+  * We want to avoid cross-directory filename renames, because those
+  * can have problems on various filesystems (FAT, NFS, Coda).
+  */
+-static int create_tmpfile(struct strbuf *tmp, const char *filename)
++static int create_tmpfile(struct strbuf *tmp,
++			  const char *filename,
++			  struct strbuf *dirname)
+ {
+ 	int fd, dirlen = directory_size(filename);
  
- core.preloadIndex::
- 	Enable parallel index preload for operations like 'git diff'
+ 	strbuf_reset(tmp);
+ 	strbuf_add(tmp, filename, dirlen);
++	strbuf_add(dirname, filename, dirlen);
+ 	strbuf_addstr(tmp, "tmp_obj_XXXXXX");
+ 	fd = git_mkstemp_mode(tmp->buf, 0444);
+ 	if (fd < 0 && dirlen && errno == ENOENT) {
+@@ -1848,10 +1855,11 @@ static int write_loose_object(const struct object_id *oid, char *hdr,
+ 	struct object_id parano_oid;
+ 	static struct strbuf tmp_file = STRBUF_INIT;
+ 	static struct strbuf filename = STRBUF_INIT;
++	static struct strbuf dirname = STRBUF_INIT;
+ 
+ 	loose_object_path(the_repository, &filename, oid);
+ 
+-	fd = create_tmpfile(&tmp_file, filename.buf);
++	fd = create_tmpfile(&tmp_file, filename.buf, &dirname);
+ 	if (fd < 0) {
+ 		if (errno == EACCES)
+ 			return error(_("insufficient permission for adding an object to repository database %s"), get_object_directory());
+@@ -1897,7 +1905,8 @@ static int write_loose_object(const struct object_id *oid, char *hdr,
+ 		die(_("confused by unstable object source data for %s"),
+ 		    oid_to_hex(oid));
+ 
+-	close_loose_object(fd);
++	close_loose_object(fd, &dirname);
++	strbuf_release(&dirname);
+ 
+ 	if (mtime) {
+ 		struct utimbuf utb;
 -- 
 2.28.0.297.g1956fa8f8d
 
