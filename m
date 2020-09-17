@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF4F26D7CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 11:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD7126D7E1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 11:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbgIQJhB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 05:37:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47054 "EHLO mx2.suse.de"
+        id S1726492AbgIQJlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 05:41:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49702 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbgIQJhA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 05:37:00 -0400
+        id S1726200AbgIQJlU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 05:41:20 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 87C08AC61;
-        Thu, 17 Sep 2020 09:37:29 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id B6C92AFE5;
+        Thu, 17 Sep 2020 09:41:47 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 554E71E12E1; Thu, 17 Sep 2020 11:36:55 +0200 (CEST)
-Date:   Thu, 17 Sep 2020 11:36:55 +0200
+        id B26A41E12E1; Thu, 17 Sep 2020 11:41:13 +0200 (CEST)
+Date:   Thu, 17 Sep 2020 11:41:13 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
@@ -30,97 +30,63 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         cgroups@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH 07/12] bdi: remove BDI_CAP_CGROUP_WRITEBACK
-Message-ID: <20200917093655.GG7347@quack2.suse.cz>
+Subject: Re: [PATCH 01/12] fs: remove the unused SB_I_MULTIROOT flag
+Message-ID: <20200917094113.GH7347@quack2.suse.cz>
 References: <20200910144833.742260-1-hch@lst.de>
- <20200910144833.742260-8-hch@lst.de>
+ <20200910144833.742260-2-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910144833.742260-8-hch@lst.de>
+In-Reply-To: <20200910144833.742260-2-hch@lst.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 10-09-20 16:48:27, Christoph Hellwig wrote:
-> Just checking SB_I_CGROUPWB for cgroup writeback support is enough.
-> Either the file system allocates its own bdi (e.g. btrfs), in which case
-> it is known to support cgroup writeback, or the bdi comes from the block
-> layer, which always supports cgroup writeback.
+On Thu 10-09-20 16:48:21, Christoph Hellwig wrote:
+> The last user of SB_I_MULTIROOT is disappeared with commit f2aedb713c28
+> ("NFS: Add fs_context support.")
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Makes sense. You can add:
+Nice. You can add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
-
 > ---
->  block/blk-core.c            | 1 -
->  fs/btrfs/disk-io.c          | 1 -
->  include/linux/backing-dev.h | 8 +++-----
->  3 files changed, 3 insertions(+), 7 deletions(-)
+>  fs/namei.c         | 4 ++--
+>  include/linux/fs.h | 1 -
+>  2 files changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index 18c092f8d69175..d81ee511ec8b01 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -538,7 +538,6 @@ struct request_queue *blk_alloc_queue(int node_id)
->  	if (!q->stats)
->  		goto fail_stats;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index e99e2a9da0f7de..f1eb8ccd2be958 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -568,8 +568,8 @@ static bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
+>  {
+>  	struct super_block *sb = mnt->mnt_sb;
 >  
-> -	q->backing_dev_info->capabilities = BDI_CAP_CGROUP_WRITEBACK;
->  	q->node = node_id;
+> -	/* Bind mounts and multi-root filesystems can have disconnected paths */
+> -	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
+> +	/* Bind mounts can have disconnected paths */
+> +	if (mnt->mnt_root == sb->s_root)
+>  		return true;
 >  
->  	atomic_set(&q->nr_active_requests_shared_sbitmap, 0);
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 047934cea25efa..e24927bddd5829 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3091,7 +3091,6 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
->  		goto fail_sb_buffer;
->  	}
+>  	return is_subdir(dentry, mnt->mnt_root);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 7519ae003a082c..fbd74df5ce5f34 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1385,7 +1385,6 @@ extern int send_sigurg(struct fown_struct *fown);
+>  #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
+>  #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
+>  #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
+> -#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
 >  
-> -	sb->s_bdi->capabilities |= BDI_CAP_CGROUP_WRITEBACK;
->  	sb->s_bdi->ra_pages *= btrfs_super_num_devices(disk_super);
->  	sb->s_bdi->ra_pages = max(sb->s_bdi->ra_pages, SZ_4M / PAGE_SIZE);
->  
-> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> index 0b06b2d26c9aa3..52583b6f2ea05d 100644
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -123,7 +123,6 @@ int bdi_set_max_ratio(struct backing_dev_info *bdi, unsigned int max_ratio);
->   * BDI_CAP_NO_ACCT_WB:     Don't automatically account writeback pages
->   * BDI_CAP_STRICTLIMIT:    Keep number of dirty pages below bdi threshold.
->   *
-> - * BDI_CAP_CGROUP_WRITEBACK: Supports cgroup-aware writeback.
->   * BDI_CAP_SYNCHRONOUS_IO: Device is so fast that asynchronous IO would be
->   *			   inefficient.
->   */
-> @@ -233,9 +232,9 @@ int inode_congested(struct inode *inode, int cong_bits);
->   * inode_cgwb_enabled - test whether cgroup writeback is enabled on an inode
->   * @inode: inode of interest
->   *
-> - * cgroup writeback requires support from both the bdi and filesystem.
-> - * Also, both memcg and iocg have to be on the default hierarchy.  Test
-> - * whether all conditions are met.
-> + * Cgroup writeback requires support from the filesystem.  Also, both memcg and
-> + * iocg have to be on the default hierarchy.  Test whether all conditions are
-> + * met.
->   *
->   * Note that the test result may change dynamically on the same inode
->   * depending on how memcg and iocg are configured.
-> @@ -247,7 +246,6 @@ static inline bool inode_cgwb_enabled(struct inode *inode)
->  	return cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
->  		cgroup_subsys_on_dfl(io_cgrp_subsys) &&
->  		bdi_cap_account_dirty(bdi) &&
-> -		(bdi->capabilities & BDI_CAP_CGROUP_WRITEBACK) &&
->  		(inode->i_sb->s_iflags & SB_I_CGROUPWB);
->  }
->  
+>  /* sb->s_iflags to limit user namespace mounts */
+>  #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
 > -- 
 > 2.28.0
 > 
