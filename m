@@ -2,108 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5AAB26E396
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 20:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEB526E471
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 20:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgIQSag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 14:30:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40142 "EHLO
+        id S1728538AbgIQQpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 12:45:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbgIQSad (ORCPT
+        with ESMTP id S1728602AbgIQQoo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 14:30:33 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B26C061788
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 11:30:21 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id r24so2898825ljm.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 11:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=htmK6gOJ2PblkerFMS2g+5We3gbrehQll78mnvL0XTY=;
-        b=bjCkIwlaKtFZnJKWxQwHG7krU4xU2kE4K4vgQFa/oFfQVRJ/3qfz1JYpMMpaX6cbRg
-         p6kg57+rvSdzB7ybG9pBz31lLvN8toNTqeOWNKMpnRcB3IO0IOcF7cLQUAbzOcGfoBUy
-         mUtJelB0pqUiZn7tHT612RpImUbAXNGTBchE8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=htmK6gOJ2PblkerFMS2g+5We3gbrehQll78mnvL0XTY=;
-        b=EZIbIkeSR0KUI2xM85TqqIHcUjtZ+L9lZmVQdEIBV8c7o5bdxFFDO50AB0dyRWEeKC
-         R9J2lU6ThBZraXgM9lT6YZnFQxBCKRiONonZPCSqBALEeADSghK5c0TLihNXZW5actL7
-         sw1lNME/0Wx9G61LYIxYHnA7EtrsZN5FDOfVblkfRXIci8izaipqJDSLFWE2dg4YWnWc
-         hGTON3v5tvsOBcWqQSC9rc9sbCCY5qucNQUPoUMxvBYkY2yRumgBIAixwz+xwHEy2xD5
-         dYOi/UKCQHlDn42wOvd6ydHv/RYPRIOUPr1QBTqQbyAAJdSf9dpccrQEdU1hg5+z1xAQ
-         D3Mw==
-X-Gm-Message-State: AOAM533GoMJxrkI1M4/wxhWRdaGlKM93YYtNQXCneCtM7IDjNgr9iWWh
-        mz0nqS/NHvD0WRKojnSLakZMbWqhuBPqKQ==
-X-Google-Smtp-Source: ABdhPJyoJTiBiY6rqEESOhYGlTw6r08pergIpzN+AsMqs3LfFz0+cfB7IVYl67Foprn0/JCfK8HIdg==
-X-Received: by 2002:a2e:9ad9:: with SMTP id p25mr9610704ljj.256.1600367418255;
-        Thu, 17 Sep 2020 11:30:18 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id w12sm64354lfk.193.2020.09.17.11.30.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 11:30:17 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id s205so2885646lja.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 11:30:16 -0700 (PDT)
-X-Received: by 2002:a05:651c:32e:: with SMTP id b14mr9863684ljp.314.1600367416426;
- Thu, 17 Sep 2020 11:30:16 -0700 (PDT)
+        Thu, 17 Sep 2020 12:44:44 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A69C06174A;
+        Thu, 17 Sep 2020 09:44:43 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIx1M-000VUC-TD; Thu, 17 Sep 2020 16:44:33 +0000
+Date:   Thu, 17 Sep 2020 17:44:32 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Qian Cai <cai@redhat.com>
+Cc:     torvalds@linux-foundation.org, vgoyal@redhat.com,
+        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: slab-out-of-bounds in iov_iter_revert()
+Message-ID: <20200917164432.GU3421308@ZenIV.linux.org.uk>
+References: <20200911215903.GA16973@lca.pw>
+ <20200911235511.GB3421308@ZenIV.linux.org.uk>
+ <87ded87d232d9cf87c9c64495bf9190be0e0b6e8.camel@redhat.com>
+ <20200917020440.GQ3421308@ZenIV.linux.org.uk>
+ <20200917021439.GA31009@ZenIV.linux.org.uk>
+ <e815399a4a123aa7cc096a55055f103874db1e75.camel@redhat.com>
 MIME-Version: 1.0
-References: <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com>
- <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
- <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
- <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com> <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
- <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
- <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com> <20200917182314.GU5449@casper.infradead.org>
-In-Reply-To: <20200917182314.GU5449@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 17 Sep 2020 11:30:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj6g2y2Z3cGzHBMoeLx-mfG0Md_2wMVwx=+g_e-xDNTbw@mail.gmail.com>
-Message-ID: <CAHk-=wj6g2y2Z3cGzHBMoeLx-mfG0Md_2wMVwx=+g_e-xDNTbw@mail.gmail.com>
-Subject: Re: Kernel Benchmarking
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Michael Larabel <Michael@michaellarabel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Ted Ts'o" <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e815399a4a123aa7cc096a55055f103874db1e75.camel@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 11:23 AM Matthew Wilcox <willy@infradead.org> wrote:
->
->             Something like taking
-> the i_mmap_lock_read(file->f_mapping) in filemap_fault, then adding a
-> new VM_FAULT_I_MMAP_LOCKED bit so that do_read_fault() and friends add:
->
->         if (ret & VM_FAULT_I_MMAP_LOCKED)
->                 i_mmap_unlock_read(vmf->vma->vm_file->f_mapping);
->         else
->                 unlock_page(page);
->
-> ... want me to turn that into a real patch?
+On Thu, Sep 17, 2020 at 10:10:27AM -0400, Qian Cai wrote:
 
-I can't guarantee it's the right model - it does worry me how many
-places we might get that i_mmap_rwlock, and how long we migth hold it
-for writing, and what deadlocks it might cause when we take it for
-reading in the page fault path.
+> [   81.942909]  generic_file_read_iter+0x23b/0x4b0
+> [   81.942918]  fuse_file_read_iter+0x280/0x4e0 [fuse]
+> [   81.942931]  ? fuse_direct_IO+0xd30/0xd30 [fuse]
+> [   81.942949]  ? _raw_spin_lock_irqsave+0x80/0xe0
+> [   81.942957]  ? timerqueue_add+0x15e/0x280
+> [   81.942960]  ? _raw_spin_lock_irqsave+0x80/0xe0
+> [   81.942966]  new_sync_read+0x3b7/0x620
+> [   81.942968]  ? __ia32_sys_llseek+0x2e0/0x2e0
 
-But I think it might be very interesting as a benchmark patch and a
-trial balloon. Maybe it "just works".
+Interesting...  Basic logics in there:
+	->direct_IO() might consume more (on iov_iter_get_pages()
+and friends) than it actually reads.  We want to revert the
+excess.  Suppose by the time we call ->direct_IO() we had
+N bytes already consumed and C bytes left.  We expect that
+after ->direct_IO() returns K, we have C' bytes left, N + (C - C')
+consumed and N + K out of those actually read.  So we revert by
+C - K - C'.  You end up trying to revert beyond the beginning.
 
-I would _love_ for the page lock itself to be only (or at least
-_mainly_) about the actual IO synchronization on the page.
+	Use of iov_iter_truncate() is problematic here, since it
+changes the amount of data left without having consumed anything.
+Basically, it changes the position of end, and the logics in the
+caller expects that to remain unchanged.  iov_iter_reexpand() use
+should restore the position of end.
 
-That was the origin of it, the whole "protect all the complex state of
-a page" behavior kind of grew over time, since it was the only
-per-page lock we had.
-
-              Linus
+	How much IO does it take to trigger that on your reproducer?
