@@ -2,80 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8AF26DEA0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 16:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C287826DECB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 16:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgIQOqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 10:46:01 -0400
-Received: from verein.lst.de ([213.95.11.211]:56536 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727526AbgIQOY7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 10:24:59 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0339868BEB; Thu, 17 Sep 2020 16:12:58 +0200 (CEST)
-Date:   Thu, 17 Sep 2020 16:12:57 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     =?iso-8859-1?Q?=C6var_Arnfj=F6r=F0?= Bjarmason <avarab@gmail.com>
-Cc:     git@vger.kernel.org, tytso@mit.edu,
-        Junio C Hamano <gitster@pobox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less
- flippant
-Message-ID: <20200917141257.GB27653@lst.de>
-References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-3-avarab@gmail.com>
+        id S1727666AbgIQOw7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 10:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33724 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbgIQOtY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 10:49:24 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06854C06174A;
+        Thu, 17 Sep 2020 07:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=r6XGbhkzldwBJ9zbZcUG3CmtGLSS9SRTWvvxIUYsiWw=; b=u5AXJ9qOmy9oveddJWSUS6AkdN
+        HTLBxtBBnUbdLyOLCh38/tVeqla5BwBRjLWIJ5YKzeBApwbBZCO/P+YC6CQU9PY0ikP7StLyoFcFq
+        6sR8dt4Mw1xym36Oi5bpSPG4r/XLs4CqPHBws1IV48wJwwKrBhOYze8ZYQh+1bn9Aa9ZcgytUgfh4
+        r3aoE8tGeEJB4z0qHfgIXkpb4Z9r33qyXkHaD3t+IDsSP/RNBsaYy+yL+klKTn9G/QL0m3DC4yGFZ
+        ec1mMgCNkY3VBuDYQN+5vP//SnX7hAVnBGazq2OxvFS43ve6Vdrq1dvz8CAEi+VL4ln5pBXmJ1syi
+        zmv8GMXA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIvCe-0008CS-42; Thu, 17 Sep 2020 14:48:04 +0000
+Date:   Thu, 17 Sep 2020 15:48:04 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        minlei@redhat.com
+Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
+Message-ID: <20200917144804.GA31389@infradead.org>
+References: <20200824142823.GA295033@bfoster>
+ <20200824150417.GA12258@infradead.org>
+ <20200824154841.GB295033@bfoster>
+ <20200825004203.GJ12131@dread.disaster.area>
+ <20200825144917.GA321765@bfoster>
+ <20200916001242.GE7955@magnolia>
+ <20200916084510.GA30815@infradead.org>
+ <20200916130714.GA1681377@bfoster>
+ <20200917080455.GY26262@infradead.org>
+ <20200917104219.GA1811187@bfoster>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200917112830.26606-3-avarab@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200917104219.GA1811187@bfoster>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->  core.fsyncObjectFiles::
-> +	This boolean will enable 'fsync()' when writing loose object
-> +	files. Both the file itself and its containng directory will
-> +	be fsynced.
-> ++
-> +When git writes data any required object writes will precede the
-> +corresponding reference update(s). For example, a
-> +linkgit:git-receive-pack[1] accepting a push might write a pack or
-> +loose objects (depending on settings such as `transfer.unpackLimit`).
-> ++
-> +Therefore on a journaled file system which ensures that data is
-> +flushed to disk in chronological order an fsync shouldn't be
-> +needed. The loose objects might be lost with a crash, but so will the
-> +ref update that would have referenced them. Git's own state in such a
-> +crash will remain consistent.
+On Thu, Sep 17, 2020 at 06:42:19AM -0400, Brian Foster wrote:
+> That wouldn't address the latency concern Dave brought up. That said, I
+> have no issue with this as a targeted solution for the softlockup issue.
+> iomap_finish_ioend[s]() is common code for both the workqueue and
+> ->bi_end_io() contexts so that would require either some kind of context
+> detection (and my understanding is in_atomic() is unreliable/frowned
+> upon) or a new "atomic" parameter through iomap_finish_ioend[s]() to
+> indicate whether it's safe to reschedule. Preference?
 
-While this is much better than what we had before I'm not sure it is
-all that useful.  The only file system I know of that actually had the
-above behavior was ext3, and the fact that it always wrote back that
-way made it a complete performance desaster.  So even mentioning this
-here will probably create a lot more confusion than actually clearing
-things up.
+True, it would not help with latency.  But then again the latency
+should be controlled by the writeback code not doing giant writebacks
+to start with, shouldn't it?
 
-> ++
-> +This option exists because that assumption doesn't hold on filesystems
-> +where the data ordering is not preserved, such as on ext3 and ext4
-> +with "data=writeback". On such a filesystem the `rename()` that drops
-> +the new reference in place might be preserved, but the contents or
-> +directory entry for the loose object(s) might not have been synced to
-> +disk.
-
-As well as just about any other file system.  Which is another argument
-on why it needs to be on by default.  Every time I install a new
-development system (aka one that often crashes) and forget to enable
-the option I keep corrupting my git repos.  And that is with at least
-btrfs, ext4 and xfs as it is pretty much by design.
-
-> +However, that's highly filesystem-dependent, on some filesystems
-> +simply calling fsync() might force an unrelated bulk background write
-> +to be serialized to disk. Such edge cases are the reason this option
-> +is off by default. That default setting might change in future
-> +versions.
-
-Again the only "some file system" that was widely used that did this
-was ext3.  And ext3 has long been removed from the Linux kernel..
+Any XFS/iomap specific limit also would not help with the block layer
+merging bios.
