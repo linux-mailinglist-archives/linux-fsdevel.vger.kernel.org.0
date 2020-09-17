@@ -2,126 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F383526E4CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 20:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE35226E459
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 20:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbgIQS6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 14:58:34 -0400
-Received: from brightrain.aerifal.cx ([216.12.86.13]:54464 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726629AbgIQS6M (ORCPT
+        id S1726475AbgIQSpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 14:45:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24460 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726427AbgIQSpq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 14:58:12 -0400
-Date:   Thu, 17 Sep 2020 14:42:46 -0400
-From:   Rich Felker <dalias@libc.org>
+        Thu, 17 Sep 2020 14:45:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600368345;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L8gcGmqClvD9NFWKHbVnJbSGJrEsu3J52I1o2pikmbo=;
+        b=UoG5pve0Ppe19i4lN7lLQ2Rjyrv3IoPz3xukTZOinlFRepuFvSyxJIScmBalTwuDqW3eLg
+        E1ZGsNfV/QK9cWtlE9W/3uQSXCINvgrwDKmTOI3+zdxAgsevCkVrkS4v/jjju4iAyxKcDi
+        ZxcdQuUAlnBkTKaPAMaeZ4+xgktNExo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-269-zMNHokvrMHa2Lpz-8Z2UDg-1; Thu, 17 Sep 2020 14:45:43 -0400
+X-MC-Unique: zMNHokvrMHa2Lpz-8Z2UDg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C56BE802B56;
+        Thu, 17 Sep 2020 18:45:41 +0000 (UTC)
+Received: from ovpn-66-148.rdu2.redhat.com (ovpn-66-148.rdu2.redhat.com [10.10.66.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FA215DA30;
+        Thu, 17 Sep 2020 18:45:41 +0000 (UTC)
+Message-ID: <afcea1c4d35a99b271622b34364a479dfda9dab2.camel@redhat.com>
+Subject: Re: slab-out-of-bounds in iov_iter_revert()
+From:   Qian Cai <cai@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] vfs: block chmod of symlinks
-Message-ID: <20200917184245.GW3265@brightrain.aerifal.cx>
-References: <20200916002157.GO3265@brightrain.aerifal.cx>
- <20200916002253.GP3265@brightrain.aerifal.cx>
- <20200916062553.GB27867@infradead.org>
- <20200917040715.GS3421308@ZenIV.linux.org.uk>
- <20200917041503.GT3421308@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917041503.GT3421308@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Cc:     torvalds@linux-foundation.org, vgoyal@redhat.com,
+        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 17 Sep 2020 14:45:40 -0400
+In-Reply-To: <20200917164432.GU3421308@ZenIV.linux.org.uk>
+References: <20200911215903.GA16973@lca.pw>
+         <20200911235511.GB3421308@ZenIV.linux.org.uk>
+         <87ded87d232d9cf87c9c64495bf9190be0e0b6e8.camel@redhat.com>
+         <20200917020440.GQ3421308@ZenIV.linux.org.uk>
+         <20200917021439.GA31009@ZenIV.linux.org.uk>
+         <e815399a4a123aa7cc096a55055f103874db1e75.camel@redhat.com>
+         <20200917164432.GU3421308@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 05:15:03AM +0100, Al Viro wrote:
-> On Thu, Sep 17, 2020 at 05:07:15AM +0100, Al Viro wrote:
-> > On Wed, Sep 16, 2020 at 07:25:53AM +0100, Christoph Hellwig wrote:
-> > > On Tue, Sep 15, 2020 at 08:22:54PM -0400, Rich Felker wrote:
-> > > > It was discovered while implementing userspace emulation of fchmodat
-> > > > AT_SYMLINK_NOFOLLOW (using O_PATH and procfs magic symlinks; otherwise
-> > > > it's not possible to target symlinks with chmod operations) that some
-> > > > filesystems erroneously allow access mode of symlinks to be changed,
-> > > > but return failure with EOPNOTSUPP (see glibc issue #14578 and commit
-> > > > a492b1e5ef). This inconsistency is non-conforming and wrong, and the
-> > > > consensus seems to be that it was unintentional to allow link modes to
-> > > > be changed in the first place.
-> > > > 
-> > > > Signed-off-by: Rich Felker <dalias@libc.org>
-> > > > ---
-> > > >  fs/open.c | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > > 
-> > > > diff --git a/fs/open.c b/fs/open.c
-> > > > index 9af548fb841b..cdb7964aaa6e 100644
-> > > > --- a/fs/open.c
-> > > > +++ b/fs/open.c
-> > > > @@ -570,6 +570,12 @@ int chmod_common(const struct path *path, umode_t mode)
-> > > >  	struct iattr newattrs;
-> > > >  	int error;
-> > > >  
-> > > > +	/* Block chmod from getting to fs layer. Ideally the fs would either
-> > > > +	 * allow it or fail with EOPNOTSUPP, but some are buggy and return
-> > > > +	 * an error but change the mode, which is non-conforming and wrong. */
-> > > > +	if (S_ISLNK(inode->i_mode))
-> > > > +		return -EOPNOTSUPP;
-> > > 
-> > > Our usualy place for this would be setattr_prepare.  Also the comment
-> > > style is off, and I don't think we should talk about buggy file systems
-> > > here, but a policy to not allow the chmod.  I also suspect the right
-> > > error value is EINVAL - EOPNOTSUPP isn't really used in normal posix
-> > > file system interfaces.
-> > 
-> > Er...   Wasn't that an ACL-related crap?  XFS calling posix_acl_chmod()
-> > after it has committed to i_mode change, propagating the error to
-> > caller of ->notify_change(), IIRC...
-> > 
-> > Put it another way, why do we want
-> >         if (!inode->i_op->set_acl)
-> >                 return -EOPNOTSUPP;
-> > in posix_acl_chmod(), when we have
-> >         if (!IS_POSIXACL(inode))
-> >                 return 0;
-> > right next to it?  If nothing else, make that
-> > 	if (!IS_POSIXACL(inode) || !inode->i_op->get_acl)
-> > 		return 0;	// piss off - nothing to adjust here
+On Thu, 2020-09-17 at 17:44 +0100, Al Viro wrote:
+> On Thu, Sep 17, 2020 at 10:10:27AM -0400, Qian Cai wrote:
 > 
-> Arrgh...  That'd break shmem and similar filesystems...  Still, it
-> feels like we should _not_ bother in cases when there's no ACL
-> for that sucker; after all, if get_acl() returns NULL, we quietly
-> return 0 and that's it.
+> > [   81.942909]  generic_file_read_iter+0x23b/0x4b0
+> > [   81.942918]  fuse_file_read_iter+0x280/0x4e0 [fuse]
+> > [   81.942931]  ? fuse_direct_IO+0xd30/0xd30 [fuse]
+> > [   81.942949]  ? _raw_spin_lock_irqsave+0x80/0xe0
+> > [   81.942957]  ? timerqueue_add+0x15e/0x280
+> > [   81.942960]  ? _raw_spin_lock_irqsave+0x80/0xe0
+> > [   81.942966]  new_sync_read+0x3b7/0x620
+> > [   81.942968]  ? __ia32_sys_llseek+0x2e0/0x2e0
 > 
-> How about something like this instead?
+> Interesting...  Basic logics in there:
+> 	->direct_IO() might consume more (on iov_iter_get_pages()
+> and friends) than it actually reads.  We want to revert the
+> excess.  Suppose by the time we call ->direct_IO() we had
+> N bytes already consumed and C bytes left.  We expect that
+> after ->direct_IO() returns K, we have C' bytes left, N + (C - C')
+> consumed and N + K out of those actually read.  So we revert by
+> C - K - C'.  You end up trying to revert beyond the beginning.
 > 
-> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-> index 95882b3f5f62..2339160fabab 100644
-> --- a/fs/posix_acl.c
-> +++ b/fs/posix_acl.c
-> @@ -559,8 +559,6 @@ posix_acl_chmod(struct inode *inode, umode_t mode)
->  
->  	if (!IS_POSIXACL(inode))
->  		return 0;
-> -	if (!inode->i_op->set_acl)
-> -		return -EOPNOTSUPP;
->  
->  	acl = get_acl(inode, ACL_TYPE_ACCESS);
->  	if (IS_ERR_OR_NULL(acl)) {
-> @@ -569,6 +567,10 @@ posix_acl_chmod(struct inode *inode, umode_t mode)
->  		return PTR_ERR(acl);
->  	}
->  
-> +	if (!inode->i_op->set_acl) {
-> +		posix_acl_release(acl);
-> +		return -EOPNOTSUPP;
-> +	}
->  	ret = __posix_acl_chmod(&acl, GFP_KERNEL, mode);
->  	if (ret)
->  		return ret;
+> 	Use of iov_iter_truncate() is problematic here, since it
+> changes the amount of data left without having consumed anything.
+> Basically, it changes the position of end, and the logics in the
+> caller expects that to remain unchanged.  iov_iter_reexpand() use
+> should restore the position of end.
+> 
+> 	How much IO does it take to trigger that on your reproducer?
 
-Does this make chmod of links behave consistently (either succeeding
-with return value 0, or returning -EOPNOTSUPP without doing anything)
-for all filesystems? I'm fine with (and would probably prefer) this
-fix if it's a complete one. If this goes in I think my patch 1/2 can
-just be dropped and patch 2/2 behaves as intended; does that sound
-correct to you?
+I can even reproduce this with a single child of the trinity:
 
-Rich
+https://people.redhat.com/qcai/iov_iter_revert/single/
+
+[   77.841021] BUG: KASAN: stack-out-of-bounds in iov_iter_revert+0x693/0x8c0
+[   77.842055] Read of size 8 at addr ffff8886efe47d98 by task trinity-c0/1449
+
