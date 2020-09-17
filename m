@@ -2,176 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6E926D147
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 04:37:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FB8926D171
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 05:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbgIQChu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 22:37:50 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:47931 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726047AbgIQChs (ORCPT
+        id S1726134AbgIQDIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 23:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37884 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbgIQDIL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 22:37:48 -0400
-Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2EBC38270C7;
-        Thu, 17 Sep 2020 12:37:44 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kIjnq-00011T-Rc; Thu, 17 Sep 2020 12:37:42 +1000
-Date:   Thu, 17 Sep 2020 12:37:42 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] Remove shrinker's nr_deferred
-Message-ID: <20200917023742.GT12096@dread.disaster.area>
-References: <20200916185823.5347-1-shy828301@gmail.com>
+        Wed, 16 Sep 2020 23:08:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3599EC061354;
+        Wed, 16 Sep 2020 20:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uMnEgq9vaCRYsRSBlvAbbXAo3XKw/rA3rHucz8CqYPs=; b=tsk5XKZMdogbEKddhS+kYKFpSD
+        tILj0/PIxWt27O5LKM5LnkW0dVmd2e+wSOuIwwD/69G1QTC0K9EZq/JtTGUiu5IJQdbq8E5/9vX/5
+        Z4nAYPlyd3jGV/ixISlEA7eQg04hLVeQo8y8AyhP2/sQczxD/DKca/SQK0h1Xz+cidtDCb3TKeHWI
+        NcAVLTA5afy+MX63+apM1DVpm5l3NmZAKe8s8l+9gymmzr2KzdJ5+DL8szLk64FlPa77tf4peRqyT
+        mFvJ+NQZGfSNvdy7S+pd84wgCtbEXDVhZpnujB3NB666Vc8G8mRJzth09++ywm/yC2Qk8joI2zn7U
+        G9IawJkw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIkAY-0006Co-3p; Thu, 17 Sep 2020 03:01:10 +0000
+Date:   Thu, 17 Sep 2020 04:01:10 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Qiuyang Sun <sunqiuyang@huawei.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, nborisov@suse.de
+Subject: Re: More filesystem need this fix (xfs: use MMAPLOCK around
+ filemap_map_pages())
+Message-ID: <20200917030110.GP5449@casper.infradead.org>
+References: <20200623052059.1893966-1-david@fromorbit.com>
+ <CAOQ4uxh0dnVXJ9g+5jb3q72RQYYqTLPW_uBqHPKn6AJZ2DNPOQ@mail.gmail.com>
+ <20200916155851.GA1572@quack2.suse.cz>
+ <20200917014454.GZ12131@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200916185823.5347-1-shy828301@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=XJ9OtjpE c=1 sm=1 tr=0 cx=a_idp_d
-        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
-        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=Q-JY_qLZEkq_jSbg818A:9 a=_x8q4c4buY6SSWo_:21 a=-F0HHi-jCq9ankDh:21
-        a=CjuIK1q_8ugA:10 a=-RoEEKskQ1sA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200917014454.GZ12131@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 11:58:21AM -0700, Yang Shi wrote:
+On Thu, Sep 17, 2020 at 11:44:54AM +1000, Dave Chinner wrote:
+> So....
 > 
-> Recently huge amount one-off slab drop was seen on some vfs metadata heavy workloads,
-> it turned out there were huge amount accumulated nr_deferred objects seen by the
-> shrinker.
+> P0					p1
 > 
-> I managed to reproduce this problem with kernel build workload plus negative dentry
-> generator.
+> hole punch starts
+>   takes XFS_MMAPLOCK_EXCL
+>   truncate_pagecache_range()
+
+... locks page ...
+
+>     unmap_mapping_range(start, end)
+>       <clears ptes>
+> 					<read fault>
+> 					do_fault_around()
+> 					  ->map_pages
+> 					    filemap_map_pages()
+
+... trylock page fails ...
+
+> 					      page mapping valid,
+> 					      page is up to date
+> 					      maps PTEs
+> 					<fault done>
+>     truncate_inode_pages_range()
+>       truncate_cleanup_page(page)
+>         invalidates page
+>       delete_from_page_cache_batch(page)
+>         frees page
+> 					<pte now points to a freed page>
 > 
-> First step, run the below kernel build test script:
+> That doesn't seem good to me.
 > 
-> NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+> Sure, maybe the page hasn't been freed back to the free lists
+> because of elevated refcounts. But it's been released by the
+> filesystem and not longer in the page cache so nothing good can come
+> of this situation...
 > 
-> cd /root/Buildarea/linux-stable
+> AFAICT, this race condition exists for the truncate case as well
+> as filemap_map_pages() doesn't have a "page beyond inode size" check
+> in it. However, exposure here is very limited in the truncate case
+> because truncate_setsize()->truncate_pagecache() zaps the PTEs
+> again after invalidating the page cache.
 > 
-> for i in `seq 1500`; do
->         cgcreate -g memory:kern_build
->         echo 4G > /sys/fs/cgroup/memory/kern_build/memory.limit_in_bytes
+> Either way, adding the XFS_MMAPLOCK_SHARED around
+> filemap_map_pages() avoids the race condition for fallocate and
+> truncate operations for XFS...
 > 
->         echo 3 > /proc/sys/vm/drop_caches
->         cgexec -g memory:kern_build make clean > /dev/null 2>&1
->         cgexec -g memory:kern_build make -j$NR_CPUS > /dev/null 2>&1
+> > As such it is a rather
+> > different beast compared to the fault handler from fs POV and does not need
+> > protection from hole punching (current serialization on page lock and
+> > checking of page->mapping is enough).
+> > That being said I agree this is subtle and the moment someone adds e.g. a
+> > readahead call into filemap_map_pages() we have a real problem. I'm not
+> > sure how to prevent this risk...
 > 
->         cgdelete -g memory:kern_build
-> done
+> Subtle, yes. So subtle, in fact, I fail to see any reason why the
+> above race cannot occur as there's no obvious serialisation in the
+> page cache between PTE zapping and page invalidation to prevent a
+> fault from coming in an re-establishing the PTEs before invalidation
+> occurs.
 > 
-> That would generate huge amount deferred objects due to __GFP_NOFS allocations.
+> Cheers,
 > 
-> Then run the below negative dentry generator script:
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
 > 
-> NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
-> 
-> mkdir /sys/fs/cgroup/memory/test
-> echo $$ > /sys/fs/cgroup/memory/test/tasks
-> 
-> for i in `seq $NR_CPUS`; do
->         while true; do
->                 FILE=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64`
->                 cat $FILE 2>/dev/null
->         done &
-> done
-> 
-> Then kswapd will shrink half of dentry cache in just one loop as the below tracing result
-> showed:
-> 
-> 	kswapd0-475   [028] .... 305968.252561: mm_shrink_slab_start: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0
-> objects to shrink 4994376020 gfp_flags GFP_KERNEL cache items 93689873 delta 45746 total_scan 46844936 priority 12
-> 	kswapd0-475   [021] .... 306013.099399: mm_shrink_slab_end: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0 unused
-> scan count 4994376020 new scan count 4947576838 total_scan 8 last shrinker return val 46844928
-
-
-You have 93M dentries and inodes in the cache, and the reclaim delta is 45746,
-which is totally sane for a priority 12 reclaim priority. SO you've
-basically had to do a couple of million GFP_NOFS direct reclaim
-passes that were unable to reclaim anything to get to a point
-where the deferred reclaim would up to 4.9 -billion- objects.
-
-Basically, you would up the deferred work so far that it got out of
-control before a GFP_KERNEL reclaim context could do anything to
-bring it under control.
-
-However, removing defered work is not the solution. If we don't
-defer some of this reclaim work, then filesystem intensive workloads
--cannot reclaim memory from their own caches- when they need memory.
-And when those caches largely dominate the used memory in the
-machine, this will grind the filesystem workload to a halt.. Hence
-this deferral mechanism is actually critical to keeping the
-filesystem caches balanced with the rest of the system.
-
-The behaviour you see is the windup clamping code triggering:
-
-        /*
-         * We need to avoid excessive windup on filesystem shrinkers
-         * due to large numbers of GFP_NOFS allocations causing the
-         * shrinkers to return -1 all the time. This results in a large
-         * nr being built up so when a shrink that can do some work
-         * comes along it empties the entire cache due to nr >>>
-         * freeable. This is bad for sustaining a working set in
-         * memory.
-         *
-         * Hence only allow the shrinker to scan the entire cache when
-         * a large delta change is calculated directly.
-         */
-        if (delta < freeable / 4)
-                total_scan = min(total_scan, freeable / 2);
-
-It clamps the worst case freeing to half the cache, and that is
-exactly what you are seeing. This, unfortunately, won't be enough to
-fix the windup problem once it's spiralled out of control. It's
-fairly rare for this to happen - it takes effort to find an adverse
-workload that will cause windup like this.
-
-So, with all that said, a year ago I actually fixed this problem
-as part of some work I did to provide non-blocking inode reclaim
-infrastructure in the shrinker for XFS inode reclaim.
-See this patch:
-
-https://lore.kernel.org/linux-xfs/20191031234618.15403-13-david@fromorbit.com/
-
-It did two things. First it ensured all the deferred work was done
-by kswapd so that some poor direct reclaim victim didn't hit a
-massive reclaim latency spike because of windup. Secondly, it
-clamped the maximum windup to the maximum single pass reclaim scan
-limit, which is (freeable * 2) objects.
-
-Finally it also changed the amount of deferred work a single kswapd
-pass did to be directly proportional to the reclaim priority. Hence
-as we get closer to OOM, kswapd tries much harder to get the
-deferred work backlog down to zero. This means that a single, low
-priority reclaim pass will never reclaim half the cache - only
-sustained memory pressure and _reclaim priority windup_ will do
-that.
-
-You probably want to look at all the shrinker infrastructure patches
-in that series as the deferred work tracking and accounting changes
-span a few patches in the series:
-
-https://lore.kernel.org/linux-xfs/20191031234618.15403-1-david@fromorbit.com/
-
-Unfortunately, none of the MM developers showed any interest in
-these patches, so when I found a different solution to the XFS
-problem it got dropped on the ground.
-
-> So why do we have to still keep it around? 
-
-Because we need a feedback mechanism to allow us to maintain control
-of the size of filesystem caches that grow via GFP_NOFS allocations.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
