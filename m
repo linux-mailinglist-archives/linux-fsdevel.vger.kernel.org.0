@@ -2,211 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33C9326F54D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 07:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B939C26F548
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 07:07:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbgIRFJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 01:09:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63670 "EHLO
+        id S1726298AbgIRFGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 01:06:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57816 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726126AbgIRFJF (ORCPT
+        by vger.kernel.org with ESMTP id S1726265AbgIRFGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 01:09:05 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08I51mRR135967;
-        Fri, 18 Sep 2020 01:09:00 -0400
+        Fri, 18 Sep 2020 01:06:52 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08I52qrq136666;
+        Fri, 18 Sep 2020 01:06:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=kux50PGtBlRry0m2L8U0dh/ano+EFsjjRDmFGJCo9gU=;
- b=dImclmEPrEuTF8dNosE0wSCedfuV6H2/L0dLJXzNVSMGhS0+XPNb5Ix4R3kpFfcwKHQE
- J7PMOGxOWC6Q6NRoO/zazh4i6P6TVAhz5VjBa+znUPqxsif4lWDpPNxbMUSRBuzqyYPd
- 71OzAiqD553HItvT985zZQpH0tjhHNts3SOnJuWsDtdExEe8t3iUhM0rsYLgJ8Vqo2WN
- kXEcdFkgbPl+R/RXmgM7ZaCIBJm1GlyeVhdVbZJYCLGl2a8uzcBnM7z8NYOjFarU+LYQ
- 7vY4fxq884rAhLKky1OoJgwtAYzRbc3Elm7Y2d/aBhHmzYyKY8N7/ne6TschxNrwctQt 4Q== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33mn791n1h-2
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=aKg0rRpn9njQPxYxFBecnCKsQMQFOguGyx4Y1/cCL74=;
+ b=rUpM6aUuGV3UKhj/sl3flKUz1qEJc+kvH2+as2RXThLYf9T9oU6srdZOSqsvaQVk6vuL
+ 3hksfZ7UbluL+llDsf7G3YXDs/7vumPjfygeF9pWhg+FQsktvcw6DObJ6SPpvAdhclqb
+ 2lo5U4KwU0DXwV/oXaXCzQeF2tYIteW4Z4cxoZIFbmS/pOgs5aOxwfPdyFG5SG0AQ5s6
+ dI+vg9MYWw23FOUJZTZ0ilHbGDEIUW6Tv4AoYZpSXqjB33FdvnP+JKeAatN+VgELRl6N
+ QLmKUE+7upocs5IRbAs5o48br7iEpQZmhrM6C9akbk+CcTe9oE/n6mH5E3wBmh9WswcV xQ== 
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33mp96r87n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Sep 2020 01:09:00 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08I4vXEx019953;
-        Fri, 18 Sep 2020 05:06:42 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma05fra.de.ibm.com with ESMTP id 33k6f2hemn-1
+        Fri, 18 Sep 2020 01:06:46 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08I4w3V7024700;
+        Fri, 18 Sep 2020 05:06:43 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 33k9geancy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Sep 2020 05:06:42 +0000
+        Fri, 18 Sep 2020 05:06:43 +0000
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08I56dRh28639632
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08I557UD30998972
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Sep 2020 05:06:39 GMT
+        Fri, 18 Sep 2020 05:05:07 GMT
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3F85A405F;
-        Fri, 18 Sep 2020 05:06:39 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 7442BA405C;
+        Fri, 18 Sep 2020 05:06:41 +0000 (GMT)
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 447FBA405C;
-        Fri, 18 Sep 2020 05:06:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 05033A4054;
+        Fri, 18 Sep 2020 05:06:40 +0000 (GMT)
 Received: from riteshh-domain.ibmuc.com (unknown [9.199.45.180])
         by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Sep 2020 05:06:38 +0000 (GMT)
+        Fri, 18 Sep 2020 05:06:39 +0000 (GMT)
 From:   Ritesh Harjani <riteshh@linux.ibm.com>
 To:     linux-ext4@vger.kernel.org
 Cc:     tytso@mit.edu, jack@suse.cz, dan.j.williams@intel.com,
         anju@linux.vnet.ibm.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Ritesh Harjani <riteshh@linux.ibm.com>
-Subject: [PATCHv3 0/1] Optimize ext4 file overwrites - perf improvement
-Date:   Fri, 18 Sep 2020 10:36:34 +0530
-Message-Id: <cover.1600401668.git.riteshh@linux.ibm.com>
+Subject: [PATCHv3 1/1] ext4: Optimize file overwrites
+Date:   Fri, 18 Sep 2020 10:36:35 +0530
+Message-Id: <88e795d8a4d5cd22165c7ebe857ba91d68d8813e.1600401668.git.riteshh@linux.ibm.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <cover.1600401668.git.riteshh@linux.ibm.com>
+References: <cover.1600401668.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-09-18_02:2020-09-16,2020-09-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=792
- priorityscore=1501 bulkscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009180037
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ phishscore=0 mlxlogscore=607 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=1 clxscore=1015 priorityscore=1501 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009180037
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+In case if the file already has underlying blocks/extents allocated
+then we don't need to start a journal txn and can directly return
+the underlying mapping. Currently ext4_iomap_begin() is used by
+both DAX & DIO path. We can check if the write request is an
+overwrite & then directly return the mapping information.
 
-v2 -> v3
-1. Switched to suggested approach from Jan to make the approach general
-for all file writes rather than only for DAX.
-(So as of now both DAX & DIO should benefit from this as both uses the same
-iomap path. Although note that I only tested performance improvement for DAX)
+This could give a significant perf boost for multi-threaded writes
+specially random overwrites.
+On PPC64 VM with simulated pmem(DAX) device, ~10x perf improvement
+could be seen in random writes (overwrite). Also bcoz this optimizes
+away the spinlock contention during jbd2 slab cache allocation
+(jbd2_journal_handle). On x86 VM, ~2x perf improvement was observed.
 
-Gave a run on xfstests with -g quick,dax and didn't observe any new
-issues with this patch.
-
-In case of file writes, currently we start a journal txn irrespective of whether
-it's an overwrite or not. In case of an overwrite we don't need to start a
-jbd2 txn since the blocks are already allocated.
-So this patch optimizes away the txn start in case of file (DAX/DIO) overwrites.
-This could significantly boost performance for multi-threaded writes
-specially random writes (overwrite).
-Fio script used to collect perf numbers is mentioned below.
-
-Below numbers were calculated on a QEMU setup on ppc64 box with simulated
-pmem (fsdax) device. 
-
-Didn't observe any new failures with this patch in xfstests "-g quick,dax"
-
-Performance numbers with different threads - (~10x improvement)
-==========================================
-
-vanilla_kernel(kIOPS) (randomwrite)
- 60 +-+------+-------+--------+--------+--------+-------+------+-+   
-     |        +       +        +        +**      +       +        |   
-  55 +-+                                 **                     +-+   
-     |                          **       **                       |   
-     |                          **       **                       |   
-  50 +-+                        **       **                     +-+   
-     |                          **       **                       |   
-  45 +-+                        **       **                     +-+   
-     |                          **       **                       |   
-     |                          **       **                       |   
-  40 +-+                        **       **                     +-+   
-     |                          **       **                       |   
-  35 +-+               **       **       **                     +-+   
-     |                 **       **       **               **      |   
-     |                 **       **       **      **       **      |   
-  30 +-+      **       **       **       **      **       **    +-+   
-     |        **      +**      +**      +**      **      +**      |   
-  25 +-+------**------+**------+**------+**------**------+**----+-+   
-              1       2        4        8       12      16            
-                                     Threads                                   
-patched_kernel(kIOPS) (randomwrite)
-  600 +-+-----+--------+--------+-------+--------+-------+------+-+   
-      |       +        +        +       +        +       +**      |   
-      |                                                   **      |   
-  500 +-+                                                 **    +-+   
-      |                                                   **      |   
-      |                                           **      **      |   
-  400 +-+                                         **      **    +-+   
-      |                                           **      **      |   
-  300 +-+                                **       **      **    +-+   
-      |                                  **       **      **      |   
-      |                                  **       **      **      |   
-  200 +-+                                **       **      **    +-+   
-      |                         **       **       **      **      |   
-      |                         **       **       **      **      |   
-  100 +-+               **      **       **       **      **    +-+   
-      |                 **      **       **       **      **      |   
-      |       +**      +**      **      +**      +**     +**      |   
-    0 +-+-----+**------+**------**------+**------+**-----+**----+-+   
-              1        2        4       8       12      16            
-                                    Threads                                   
-fio script
-==========
-[global]
-rw=randwrite
-norandommap=1
-invalidate=0
-bs=4k
-numjobs=16 		--> changed this for different thread options
-time_based=1
-ramp_time=30
-runtime=60
-group_reporting=1
-ioengine=psync
-direct=1
-size=16G
-filename=file1.0.0:file1.0.1:file1.0.2:file1.0.3:file1.0.4:file1.0.5:file1.0.6:file1.0.7:file1.0.8:file1.0.9:file1.0.10:file1.0.11:file1.0.12:file1.0.13:file1.0.14:file1.0.15:file1.0.16:file1.0.17:file1.0.18:file1.0.19:file1.0.20:file1.0.21:file1.0.22:file1.0.23:file1.0.24:file1.0.25:file1.0.26:file1.0.27:file1.0.28:file1.0.29:file1.0.30:file1.0.31
-file_service_type=random
-nrfiles=32
-directory=/mnt/
-
-[name]
-directory=/mnt/
-direct=1
-
-NOTE:
-======
-1. Looking at ~10x perf delta, I probed a bit deeper to understand what's causing
-this scalability problem. It seems when we are starting a jbd2 txn then slab
-alloc code is observing some serious contention around spinlock.
-
-I think that the spinlock contention problem in slab alloc path could be optimized
-on PPC in general, will look into it seperately. But I could still see the
-perf improvement of close to ~2x on QEMU setup on x86 with simulated pmem device
-with the patched_kernel v/s vanilla_kernel with same fio workload.
-
-perf report from vanilla_kernel (this is not seen with patched kernel) (ppc64)
-=======================================================================
-
-  47.86%  fio              [kernel.vmlinux]            [k] do_raw_spin_lock
-             |
-             ---do_raw_spin_lock
-                |
-                |--19.43%--_raw_spin_lock
-                |          |
-                |           --19.31%--0
-                |                     |
-                |                     |--9.77%--deactivate_slab.isra.61
-                |                     |          ___slab_alloc
-                |                     |          __slab_alloc
-                |                     |          kmem_cache_alloc
-                |                     |          jbd2__journal_start
-                |                     |          __ext4_journal_start_sb
-<...>
-
-2. This problem was reported by Dan Williams at [1]
-
-Links
-======
-[1]: https://lore.kernel.org/linux-ext4/20190802144304.GP25064@quack2.suse.cz/T/
-[v2]: https://lkml.org/lkml/2020/8/22/123
-
-Ritesh Harjani (1):
-  ext4: Optimize file overwrites
-
+Reported-by: Dan Williams <dan.j.williams@intel.com>
+Suggested-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
  fs/ext4/inode.c | 18 +++++++++++++++---
  1 file changed, 15 insertions(+), 3 deletions(-)
 
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 10dd470876b3..6eae17758ece 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3437,14 +3437,26 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
+ 			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
+ 
+-	if (flags & IOMAP_WRITE)
++	if (flags & IOMAP_WRITE) {
++		/*
++		 * We check here if the blocks are already allocated, then we
++		 * don't need to start a journal txn and we can directly return
++		 * the mapping information. This could boost performance
++		 * especially in multi-threaded overwrite requests.
++		 */
++		if (offset + length <= i_size_read(inode)) {
++			ret = ext4_map_blocks(NULL, inode, &map, 0);
++			if (ret > 0 && (map.m_flags & EXT4_MAP_MAPPED))
++				goto out;
++		}
+ 		ret = ext4_iomap_alloc(inode, &map, flags);
+-	else
++	} else {
+ 		ret = ext4_map_blocks(NULL, inode, &map, 0);
++	}
+ 
+ 	if (ret < 0)
+ 		return ret;
+-
++out:
+ 	ext4_set_iomap(inode, iomap, &map, offset, length);
+ 
+ 	return 0;
 -- 
 2.26.2
 
