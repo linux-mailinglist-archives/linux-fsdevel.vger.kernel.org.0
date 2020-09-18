@@ -2,84 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D2227022E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 18:30:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03BEE270239
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 18:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbgIRQ3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 12:29:54 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:53499 "EHLO
+        id S1726623AbgIRQbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 12:31:02 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:53561 "EHLO
         relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726253AbgIRQ3i (ORCPT
+        by vger.kernel.org with ESMTP id S1726370AbgIRQbB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 12:29:38 -0400
-X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Sep 2020 12:29:36 EDT
+        Fri, 18 Sep 2020 12:31:01 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 13FFE822EC;
-        Fri, 18 Sep 2020 19:29:35 +0300 (MSK)
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 334B382192;
+        Fri, 18 Sep 2020 19:24:10 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1600446575;
-        bh=3JQT+w9/Hsgc+km87u8z17muCt7VlyH5lVmvIBMEwMk=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=qusXzOEfnkBwmhOqSMWKkUHHm5C0fhsnDuHsMi0emaW72b662oBL2sXTF1dhnC/0+
-         NM3zIDsfH91GwrXZCXkfrsPVniCMl4R/rt5TyZNh7szKLmyCq4NQhrmDK9Am0jO9te
-         0/+Tbsb1TgDTrCmott5VLLoHHEqS7MEK3pa6jJe8=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
+        d=paragon-software.com; s=mail; t=1600446250;
+        bh=KTo6qcfWf2FpfyVioS35OK2q7XzQo532xJhM+9428NU=;
+        h=From:To:CC:Subject:Date;
+        b=DdlPzKD6K9maqMW7Bm0mNecEuT8w+0oaNDBILeq+EX0zgbfo4bheFNLBl9tOQGXFP
+         zbOZajuJQph8O2krmB4Mmx75emKHIxgJuGRyOujm2hMO8gtAx3rlvkym8/9V02gt9c
+         vAN0T59tF1pKCyzOJzFPMKqyI+pFe1MRqSx9c3H8=
+Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 18 Sep 2020 19:29:34 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Fri, 18 Sep 2020 19:29:34 +0300
+ 15.1.1847.3; Fri, 18 Sep 2020 19:24:09 +0300
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     Joe Perches <joe@perches.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pali@kernel.org" <pali@kernel.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mark@harmstone.com" <mark@harmstone.com>,
-        "nborisov@suse.com" <nborisov@suse.com>
-Subject: RE: [PATCH v5 03/10] fs/ntfs3: Add bitmap
-Thread-Topic: [PATCH v5 03/10] fs/ntfs3: Add bitmap
-Thread-Index: AQHWiEVLqTuLvbWOTEKMmELjfZa26KlmuM8AgAfn8LA=
-Date:   Fri, 18 Sep 2020 16:29:34 +0000
-Message-ID: <5b2fbfee0a9d4ee59c0e624844560413@paragon-software.com>
-References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
-         <20200911141018.2457639-4-almaz.alexandrovich@paragon-software.com>
- <d1dc86f2792d3e64d1281fc2b5fddaca5fa17b5a.camel@perches.com>
-In-Reply-To: <d1dc86f2792d3e64d1281fc2b5fddaca5fa17b5a.camel@perches.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
+        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
+        <mark@harmstone.com>, <nborisov@suse.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v6 00/10] NTFS read-write driver GPL implementation by Paragon Software
+Date:   Fri, 18 Sep 2020 19:21:54 +0300
+Message-ID: <20200918162204.3706029-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.30.114.105]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogSm9lIFBlcmNoZXMgPGpvZUBwZXJjaGVzLmNvbT4NClNlbnQ6IFN1bmRheSwgU2VwdGVt
-YmVyIDEzLCAyMDIwIDk6NDQgUE0NCj4gDQo+IE9uIEZyaSwgMjAyMC0wOS0xMSBhdCAxNzoxMCAr
-MDMwMCwgS29uc3RhbnRpbiBLb21hcm92IHdyb3RlOg0KPiA+IFRoaXMgYWRkcyBiaXRtYXANCj4g
-DQo+ICQgbWFrZSBmcy9udGZzMy8NCj4gICBTWU5DICAgIGluY2x1ZGUvY29uZmlnL2F1dG8uY29u
-Zi5jbWQNCj4gICBDQUxMICAgIHNjcmlwdHMvY2hlY2tzeXNjYWxscy5zaA0KPiAgIENBTEwgICAg
-c2NyaXB0cy9hdG9taWMvY2hlY2stYXRvbWljcy5zaA0KPiAgIERFU0NFTkQgIG9ianRvb2wNCj4g
-ICBDQyAgICAgIGZzL250ZnMzL2JpdGZ1bmMubw0KPiAgIENDICAgICAgZnMvbnRmczMvYml0bWFw
-Lm8NCj4gZnMvbnRmczMvYml0bWFwLmM6IEluIGZ1bmN0aW9uIOKAmHduZF9yZXNjYW7igJk6DQo+
-IGZzL250ZnMzL2JpdG1hcC5jOjU1Njo0OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2Yg
-ZnVuY3Rpb24g4oCYcGFnZV9jYWNoZV9yZWFkYWhlYWRfdW5ib3VuZGVk4oCZOyBkaWQgeW91IG1l
-YW4NCj4g4oCYcGFnZV9jYWNoZV9yYV91bmJvdW5kZWTigJk/IFstV2Vycm9yPWltcGxpY2l0LWZ1
-bmN0aW9uLWRlY2xhcmF0aW9uXQ0KPiAgIDU1NiB8ICAgIHBhZ2VfY2FjaGVfcmVhZGFoZWFkX3Vu
-Ym91bmRlZCgNCj4gICAgICAgfCAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCj4g
-ICAgICAgfCAgICBwYWdlX2NhY2hlX3JhX3VuYm91bmRlZA0KPiBjYzE6IHNvbWUgd2FybmluZ3Mg
-YmVpbmcgdHJlYXRlZCBhcyBlcnJvcnMNCj4gbWFrZVsyXTogKioqIFtzY3JpcHRzL01ha2VmaWxl
-LmJ1aWxkOjI4MzogZnMvbnRmczMvYml0bWFwLm9dIEVycm9yIDENCj4gbWFrZVsxXTogKioqIFtz
-Y3JpcHRzL01ha2VmaWxlLmJ1aWxkOjUwMDogZnMvbnRmczNdIEVycm9yIDINCj4gbWFrZTogKioq
-IFtNYWtlZmlsZToxNzkyOiBmc10gRXJyb3IgMg0KPiANCkhpIEpvZSEgRG9lc24ndCBzZWVtIHRv
-IGJlIGFuIGlzc3VlIGZvciA1LjlfcmM1LiBXaGljaCByZXBvIHNob3VsZCd2ZQ0KYmVlbiB1c2Vk
-IHRvIHJlcHJvZHVjZT8NCg0KVGhhbmtzLg0K
+This patch adds NTFS Read-Write driver to fs/ntfs3.
+
+Having decades of expertise in commercial file systems development and huge
+test coverage, we at Paragon Software GmbH want to make our contribution to
+the Open Source Community by providing implementation of NTFS Read-Write
+driver for the Linux Kernel.
+
+This is fully functional NTFS Read-Write driver. Current version works with
+NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
+
+We plan to support this version after the codebase once merged, and add new
+features and fix bugs. For example, full journaling support over JBD will be
+added in later updates.
+
+v2:
+ - patch splitted to chunks (file-wise)
+ - build issues fixed
+ - sparse and checkpatch.pl errors fixed
+ - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+ - cosmetics + code cleanup
+
+v3:
+ - added acl, noatime, no_acs_rules, prealloc mount options
+ - added fiemap support
+ - fixed encodings support
+ - removed typedefs
+ - adapted Kernel-way logging mechanisms
+ - fixed typos and corner-case issues
+
+v4:
+ - atomic_open() refactored
+ - code style updated
+ - bugfixes
+
+v5:
+- nls/nls_alt mount options added
+- Unicode conversion fixes
+- Improved very fragmented files operations
+- logging cosmetics
+
+v6:
+- Security Descriptors processing changed
+  added system.ntfs_security xattr to set
+  SD
+- atomic_open() optimized
+- cosmetics
+
+Konstantin Komarov (10):
+  fs/ntfs3: Add headers and misc files
+  fs/ntfs3: Add initialization of super block
+  fs/ntfs3: Add bitmap
+  fs/ntfs3: Add file operations and implementation
+  fs/ntfs3: Add attrib operations
+  fs/ntfs3: Add compression
+  fs/ntfs3: Add NTFS journal
+  fs/ntfs3: Add Kconfig, Makefile and doc
+  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+  fs/ntfs3: Add MAINTAINERS
+
+ Documentation/filesystems/ntfs3.rst |  107 +
+ MAINTAINERS                         |    7 +
+ fs/Kconfig                          |    1 +
+ fs/ntfs3/Kconfig                    |   23 +
+ fs/ntfs3/Makefile                   |   11 +
+ fs/ntfs3/attrib.c                   | 1312 +++++++
+ fs/ntfs3/attrlist.c                 |  462 +++
+ fs/ntfs3/bitfunc.c                  |  137 +
+ fs/ntfs3/bitmap.c                   | 1520 ++++++++
+ fs/ntfs3/debug.h                    |   59 +
+ fs/ntfs3/dir.c                      |  607 ++++
+ fs/ntfs3/file.c                     | 1217 +++++++
+ fs/ntfs3/frecord.c                  | 2388 ++++++++++++
+ fs/ntfs3/fslog.c                    | 5222 +++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2201 +++++++++++
+ fs/ntfs3/index.c                    | 2639 ++++++++++++++
+ fs/ntfs3/inode.c                    | 1998 ++++++++++
+ fs/ntfs3/lznt.c                     |  452 +++
+ fs/ntfs3/namei.c                    |  577 +++
+ fs/ntfs3/ntfs.h                     | 1256 +++++++
+ fs/ntfs3/ntfs_fs.h                  | 1000 +++++
+ fs/ntfs3/record.c                   |  612 ++++
+ fs/ntfs3/run.c                      | 1156 ++++++
+ fs/ntfs3/super.c                    | 1430 ++++++++
+ fs/ntfs3/upcase.c                   |   78 +
+ fs/ntfs3/xattr.c                    | 1041 ++++++
+ 26 files changed, 27513 insertions(+)
+ create mode 100644 Documentation/filesystems/ntfs3.rst
+ create mode 100644 fs/ntfs3/Kconfig
+ create mode 100644 fs/ntfs3/Makefile
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/bitfunc.c
+ create mode 100644 fs/ntfs3/bitmap.c
+ create mode 100644 fs/ntfs3/debug.h
+ create mode 100644 fs/ntfs3/dir.c
+ create mode 100644 fs/ntfs3/file.c
+ create mode 100644 fs/ntfs3/frecord.c
+ create mode 100644 fs/ntfs3/fslog.c
+ create mode 100644 fs/ntfs3/fsntfs.c
+ create mode 100644 fs/ntfs3/index.c
+ create mode 100644 fs/ntfs3/inode.c
+ create mode 100644 fs/ntfs3/lznt.c
+ create mode 100644 fs/ntfs3/namei.c
+ create mode 100644 fs/ntfs3/ntfs.h
+ create mode 100644 fs/ntfs3/ntfs_fs.h
+ create mode 100644 fs/ntfs3/record.c
+ create mode 100644 fs/ntfs3/run.c
+ create mode 100644 fs/ntfs3/super.c
+ create mode 100644 fs/ntfs3/upcase.c
+ create mode 100644 fs/ntfs3/xattr.c
+
+-- 
+2.25.4
+
