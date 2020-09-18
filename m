@@ -2,141 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C14E26F1B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E18B126F3F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 05:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbgIRCx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 22:53:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728008AbgIRCxU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:53:20 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90179C06174A;
-        Thu, 17 Sep 2020 19:53:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=S3/Z7/x6FQqQyTB2gJXO/B/sEOpSZljXP0R2mH4sHsc=; b=RiwR/i03CBwdiaqObxjh7F8aUr
-        BI6OVET1ILTLzF3YjvCZPHg9h1vBbXIUi8bPwXUpH2s0qy3wrMvBSxI45RE4LAv28xeaT+RZmW6js
-        XjlxukU/QUGo2cWtq5w2LO5G7kRZvZMafkO9PAhP6fP6NifotnAuONaXVzwXaChdHToN6FX2ePBbD
-        F17wo3XY4S01yfIPEHDA6XP3MtedUN+Oas1PCdTJiw14ompEJ8oKzEY3Sb/Ybc4FnSQkkoWqBcfag
-        TN+56ZMbGCvAxEpWFjguANID71IHWt6MecjXIPNyiRAui7+Oyz6uTm4P9iyRdEN4hOauGS1Qxkcoa
-        PdRiWuag==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kJ6WS-0005Yv-Mv; Fri, 18 Sep 2020 02:53:18 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Jiri Kosina <trivial@kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH TRIVIAL] fs/eventpoll.c: fix "Returns" kernel-doc formatting
-Message-ID: <12a6fd7c-87f4-7773-9e03-9677986a76d4@infradead.org>
-Date:   Thu, 17 Sep 2020 19:53:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726691AbgIRCCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 22:02:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47190 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726682AbgIRCCM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:02:12 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E848235F8;
+        Fri, 18 Sep 2020 02:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600394532;
+        bh=K4nUaNmLvBiaHjCXtJrH4Xt4KeHX2wQF+A7iBLMQEo4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xmPxTWLOzdN/DZOTBh8yGY6PAxc+Out6lzfUKlvEglLnrFGzKqm8T22PaAN4UzOMo
+         tOsWqrbR/9yXRTyX3iHslQHSClBrfE2ts+Dlyg036cDLry0qZi62ZtgMbJTLGFWvdQ
+         704M5zLTJyyHeL8cEkid+ELUTtjPtRkP7e02yEos=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 051/330] fix dget_parent() fastpath race
+Date:   Thu, 17 Sep 2020 21:56:31 -0400
+Message-Id: <20200918020110.2063155-51-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
+References: <20200918020110.2063155-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Fix some kernel-doc formatting in fs/eventpoll.c for "Returns:":
+[ Upstream commit e84009336711d2bba885fc9cea66348ddfce3758 ]
 
-- use "Returns:" without another "Returns" after it;
-- make multi-line Returns: indentation consistent;
-- add a ':' after "Returns" in a few places;
+We are overoptimistic about taking the fast path there; seeing
+the same value in ->d_parent after having grabbed a reference
+to that parent does *not* mean that it has remained our parent
+all along.
 
+That wouldn't be a big deal (in the end it is our parent and
+we have grabbed the reference we are about to return), but...
+the situation with barriers is messed up.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Jiri Kosina <trivial@kernel.org>
+We might have hit the following sequence:
+
+d is a dentry of /tmp/a/b
+CPU1:					CPU2:
+parent = d->d_parent (i.e. dentry of /tmp/a)
+					rename /tmp/a/b to /tmp/b
+					rmdir /tmp/a, making its dentry negative
+grab reference to parent,
+end up with cached parent->d_inode (NULL)
+					mkdir /tmp/a, rename /tmp/b to /tmp/a/b
+recheck d->d_parent, which is back to original
+decide that everything's fine and return the reference we'd got.
+
+The trouble is, caller (on CPU1) will observe dget_parent()
+returning an apparently negative dentry.  It actually is positive,
+but CPU1 has stale ->d_inode cached.
+
+Use d->d_seq to see if it has been moved instead of rechecking ->d_parent.
+NOTE: we are *NOT* going to retry on any kind of ->d_seq mismatch;
+we just go into the slow path in such case.  We don't wait for ->d_seq
+to become even either - again, if we are racing with renames, we
+can bloody well go to slow path anyway.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/eventpoll.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/dcache.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- linux-next-20200917.orig/fs/eventpoll.c
-+++ linux-next-20200917/fs/eventpoll.c
-@@ -371,7 +371,7 @@ static void ep_nested_calls_init(struct
-  *
-  * @ep: Pointer to the eventpoll context.
-  *
-- * Returns: Returns a value different than zero if ready events are available,
-+ * Returns: a value different than zero if ready events are available,
-  *          or zero otherwise.
-  */
- static inline int ep_events_available(struct eventpoll *ep)
-@@ -472,7 +472,7 @@ static inline void ep_set_busy_poll_napi
-  * @cookie: Cookie to be used to identify this nested call.
-  * @ctx: This instance context.
-  *
-- * Returns: Returns the code returned by the @nproc callback, or -1 if
-+ * Returns: the code returned by the @nproc callback, or -1 if
-  *          the maximum recursion limit has been exceeded.
-  */
- static int ep_call_nested(struct nested_calls *ncalls,
-@@ -1123,8 +1123,8 @@ struct file *get_epoll_tfile_raw_ptr(str
-  *        direction i.e. either to the tail either to the head, otherwise
-  *        concurrent access will corrupt the list.
-  *
-- * Returns %false if element has been already added to the list, %true
-- * otherwise.
-+ * Returns: %false if element has been already added to the list, %true
-+ *          otherwise.
-  */
- static inline bool list_add_tail_lockless(struct list_head *new,
- 					  struct list_head *head)
-@@ -1165,7 +1165,7 @@ static inline bool list_add_tail_lockles
-  * Chains a new epi entry to the tail of the ep->ovflist in a lockless way,
-  * i.e. multiple CPUs are allowed to call this function concurrently.
-  *
-- * Returns %false if epi element has been already chained, %true otherwise.
-+ * Returns: %false if epi element has been already chained, %true otherwise.
-  */
- static inline bool chain_epi_lockless(struct epitem *epi)
+diff --git a/fs/dcache.c b/fs/dcache.c
+index e88cf0554e659..b2a7f1765f0b1 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -903,17 +903,19 @@ struct dentry *dget_parent(struct dentry *dentry)
  {
-@@ -1428,7 +1428,7 @@ static int reverse_path_check_proc(void
-  *                      paths such that we will spend all our time waking up
-  *                      eventpoll objects.
-  *
-- * Returns: Returns zero if the proposed links don't create too many paths,
-+ * Returns: zero if the proposed links don't create too many paths,
-  *	    -1 otherwise.
-  */
- static int reverse_path_check(void)
-@@ -1814,7 +1814,7 @@ static inline struct timespec64 ep_set_m
-  *           until at least one event has been retrieved (or an error
-  *           occurred).
-  *
-- * Returns: Returns the number of ready events which have been fetched, or an
-+ * Returns: the number of ready events which have been fetched, or an
-  *          error code, in case of error.
-  */
- static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-@@ -1959,7 +1959,7 @@ send_events:
-  *          data structure pointer.
-  * @call_nests: Current dept of the @ep_call_nested() call stack.
-  *
-- * Returns: Returns zero if adding the epoll @file inside current epoll
-+ * Returns: zero if adding the epoll @file inside current epoll
-  *          structure @ep does not violate the constraints, or -1 otherwise.
-  */
- static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
-@@ -2014,7 +2014,7 @@ static int ep_loop_check_proc(void *priv
-  * @ep: Pointer to the epoll private data structure.
-  * @file: Pointer to the epoll file to be checked.
-  *
-- * Returns: Returns zero if adding the epoll @file inside current epoll
-+ * Returns: zero if adding the epoll @file inside current epoll
-  *          structure @ep does not violate the constraints, or -1 otherwise.
-  */
- static int ep_loop_check(struct eventpoll *ep, struct file *file)
+ 	int gotref;
+ 	struct dentry *ret;
++	unsigned seq;
+ 
+ 	/*
+ 	 * Do optimistic parent lookup without any
+ 	 * locking.
+ 	 */
+ 	rcu_read_lock();
++	seq = raw_seqcount_begin(&dentry->d_seq);
+ 	ret = READ_ONCE(dentry->d_parent);
+ 	gotref = lockref_get_not_zero(&ret->d_lockref);
+ 	rcu_read_unlock();
+ 	if (likely(gotref)) {
+-		if (likely(ret == READ_ONCE(dentry->d_parent)))
++		if (!read_seqcount_retry(&dentry->d_seq, seq))
+ 			return ret;
+ 		dput(ret);
+ 	}
+-- 
+2.25.1
 
