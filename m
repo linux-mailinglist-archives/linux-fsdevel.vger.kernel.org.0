@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E76526EE03
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE1426ED71
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgIRCZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 22:25:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45804 "EHLO mail.kernel.org"
+        id S1729713AbgIRCUz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 22:20:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729360AbgIRCQP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:16:15 -0400
+        id S1729249AbgIRCRj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:17:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F82523A1B;
-        Fri, 18 Sep 2020 02:16:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65309239A1;
+        Fri, 18 Sep 2020 02:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600395374;
-        bh=w5zD4/sYD58ge472newQ2R18n1rHD8DTbl5gRg+y7TI=;
+        s=default; t=1600395458;
+        bh=Jahdm4xMGPlEmC2nqoU6EoQ5t9b52s1eHlmXkV9EV9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nJsCzQ0+w9/ohX/fpQg6W8aTjSE99cTgr/m0orUYOS3+yraoHWxqrtOins1zLON9u
-         +UYTmZeI0NoU1d4tGeFD/TuRFI7UarG4uEw+IrkbhH+IrKtYu+KyYz+Q0YZ6P6qBf7
-         zU4W5mGTk2bvkGCtJHn2DrlF+CTJkGau3aaS5bdo=
+        b=wQKQA/Phcu3FIwtSunjDdVBd0S4Wy3Vla3K9IAhn1aVk+t+hzZ2KMkyL+ar2W5I+A
+         wqdrQ+5zNmhWR43Mvp1VE6yM3XN0wHbqprHLiX7ouYzZ7ECTn79qmm3cXJSe7ijyjh
+         rJdOV/cpqhlKcjOlmQsy3Kabl9V9po69jElAJDeo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Douglas Anderson <dianders@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 66/90] bdev: Reduce time holding bd_mutex in sync in blkdev_close()
-Date:   Thu, 17 Sep 2020 22:14:31 -0400
-Message-Id: <20200918021455.2067301-66-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 44/64] bdev: Reduce time holding bd_mutex in sync in blkdev_close()
+Date:   Thu, 17 Sep 2020 22:16:23 -0400
+Message-Id: <20200918021643.2067895-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918021455.2067301-1-sashal@kernel.org>
-References: <20200918021455.2067301-1-sashal@kernel.org>
+In-Reply-To: <20200918021643.2067895-1-sashal@kernel.org>
+References: <20200918021643.2067895-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -141,10 +141,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+)
 
 diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 06f7cbe201326..98b37e77683d3 100644
+index b2ebfd96785b7..a71d442ef7d0e 100644
 --- a/fs/block_dev.c
 +++ b/fs/block_dev.c
-@@ -1586,6 +1586,16 @@ static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part)
+@@ -1515,6 +1515,16 @@ static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part)
  	struct gendisk *disk = bdev->bd_disk;
  	struct block_device *victim = NULL;
  
