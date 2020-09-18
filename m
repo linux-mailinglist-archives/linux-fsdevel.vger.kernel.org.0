@@ -2,275 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C5426EF38
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C14E26F1B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:53:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbgIRCd4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 22:33:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58234 "EHLO
+        id S1728383AbgIRCx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 22:53:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbgIRCdp (ORCPT
+        with ESMTP id S1728008AbgIRCxU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:33:45 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC23EC06174A;
-        Thu, 17 Sep 2020 19:33:44 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id 34so2534911pgo.13;
-        Thu, 17 Sep 2020 19:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=suK0G2trm9D602pCdUsLsVHojuwWM7nIh79zVPBNDl4=;
-        b=mYBjjf3sRIy05H7e2G2FiL/eiE5LV7m6M9LRP+S7mGaqsnGAvis7g5l1lzJxezibpL
-         kAuWyEi6OtlFMAlCvvvtAIm/sC1G9mgr9VUVhKvCXNIKavrLtMKT5gLeB1jF6fFw/xLK
-         SK/UKu55QB6tdmKQ4qmy5e2hPkOB+9SBGYOEY13PrJetYoUcQuBNXzT2fzYarHJwuriL
-         /725h72htgOLolN7TJeAvetm091FB2N+jxJi1N8rJn+jJuFoU6D21zu2R+3NJn64Bn3Y
-         UMDKfDwa0mjtCWkce8Bq36YvCeSiQ+0Urp0dFg/FQwNECJ30eEAKXukJOsF1fQ4obzXe
-         AZtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=suK0G2trm9D602pCdUsLsVHojuwWM7nIh79zVPBNDl4=;
-        b=l05xQR61+ZahQZgyaREeTvnnY+8+Bb7UpyQqOzZVyAUMDRHkfwhHlL0l0xJa7fGDOM
-         VH5jdtR3smJsLtzFfydFwfBYERSjbUJa3VMHeT1Kcz2dQHvUKZxfK7KnsN3iyxvwU1Pd
-         v1vVpcC5rF9H/MRRlca07COh62GnklbWY/tOwnz4MD1fBb2FKgUIKNc1/sstCOo1N5VH
-         fjdBO7AvNPkaDYgTo2uqb1+sKGwvlwN6M0MXg2xylXofsVEyXJyqQS4J/Y/6AVuP2ZE3
-         +4iH48+uOixor/LCw/Y/aNqAAO5fbcIF3hesH/uJHgymMoXvZ6IjJL1eOB5SQf8QnTSv
-         3dSw==
-X-Gm-Message-State: AOAM533RtqaPpJZRjJRlLBI6Ro6Ty4vBCnE9TEcJQIzQR4iluflk3Nme
-        unOJKbodHl0gauQ65bGI1KE=
-X-Google-Smtp-Source: ABdhPJzaY4AS6NArJaCofEldBXMt9oWuanAO7TZ1eWFUL090/Hs9+8fA4UgUwdbccBYh00IRYqpOWA==
-X-Received: by 2002:a05:6a00:84e:b029:142:2501:35e1 with SMTP id q14-20020a056a00084eb0290142250135e1mr13985494pfk.65.1600396424193;
-        Thu, 17 Sep 2020 19:33:44 -0700 (PDT)
-Received: from dc803.localdomain (FL1-111-169-191-163.hyg.mesh.ad.jp. [111.169.191.163])
-        by smtp.gmail.com with ESMTPSA id i9sm1027248pfq.53.2020.09.17.19.33.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2020 19:33:43 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] exfat: aggregate dir-entry updates into __exfat_write_inode().
-Date:   Fri, 18 Sep 2020 11:33:38 +0900
-Message-Id: <20200918023339.17597-1-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 17 Sep 2020 22:53:20 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90179C06174A;
+        Thu, 17 Sep 2020 19:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=S3/Z7/x6FQqQyTB2gJXO/B/sEOpSZljXP0R2mH4sHsc=; b=RiwR/i03CBwdiaqObxjh7F8aUr
+        BI6OVET1ILTLzF3YjvCZPHg9h1vBbXIUi8bPwXUpH2s0qy3wrMvBSxI45RE4LAv28xeaT+RZmW6js
+        XjlxukU/QUGo2cWtq5w2LO5G7kRZvZMafkO9PAhP6fP6NifotnAuONaXVzwXaChdHToN6FX2ePBbD
+        F17wo3XY4S01yfIPEHDA6XP3MtedUN+Oas1PCdTJiw14ompEJ8oKzEY3Sb/Ybc4FnSQkkoWqBcfag
+        TN+56ZMbGCvAxEpWFjguANID71IHWt6MecjXIPNyiRAui7+Oyz6uTm4P9iyRdEN4hOauGS1Qxkcoa
+        PdRiWuag==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJ6WS-0005Yv-Mv; Fri, 18 Sep 2020 02:53:18 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Jiri Kosina <trivial@kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH TRIVIAL] fs/eventpoll.c: fix "Returns" kernel-doc formatting
+Message-ID: <12a6fd7c-87f4-7773-9e03-9677986a76d4@infradead.org>
+Date:   Thu, 17 Sep 2020 19:53:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following function writes the updated inode information as dir-entry
-by themselves.
- - __exfat_truncate()
- - exfat_map_cluster()
- - exfat_find_empty_entry()
-Aggregate these writes into __exfat_write_inode().
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Also, in __exfat_write_inode(), rename 'on_disk_size' to 'filesize' and
-add adjustment when filesize is 0.
+Fix some kernel-doc formatting in fs/eventpoll.c for "Returns:":
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+- use "Returns:" without another "Returns" after it;
+- make multi-line Returns: indentation consistent;
+- add a ':' after "Returns" in a few places;
+
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Jiri Kosina <trivial@kernel.org>
 ---
- fs/exfat/file.c  | 49 +++++-------------------------------------------
- fs/exfat/inode.c | 42 +++++++++++------------------------------
- fs/exfat/namei.c | 26 +++++--------------------
- 3 files changed, 21 insertions(+), 96 deletions(-)
+ fs/eventpoll.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index dcc99349b816..d5b026183387 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -100,7 +100,7 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
- 	struct super_block *sb = inode->i_sb;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
--	int evict = (ei->dir.dir == DIR_DELETED) ? 1 : 0;
-+	int ret;
- 
- 	/* check if the given file ID is opened */
- 	if (ei->type != TYPE_FILE && ei->type != TYPE_DIR)
-@@ -150,49 +150,10 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
- 		ei->attr |= ATTR_ARCHIVE;
- 
- 	/* update the directory entry */
--	if (!evict) {
--		struct timespec64 ts;
--		struct exfat_dentry *ep, *ep2;
--		struct exfat_entry_set_cache *es;
--		int err;
--
--		es = exfat_get_dentry_set(sb, &(ei->dir), ei->entry,
--				ES_ALL_ENTRIES);
--		if (!es)
--			return -EIO;
--		ep = exfat_get_dentry_cached(es, 0);
--		ep2 = exfat_get_dentry_cached(es, 1);
--
--		ts = current_time(inode);
--		exfat_set_entry_time(sbi, &ts,
--				&ep->dentry.file.modify_tz,
--				&ep->dentry.file.modify_time,
--				&ep->dentry.file.modify_date,
--				&ep->dentry.file.modify_time_cs);
--		ep->dentry.file.attr = cpu_to_le16(ei->attr);
--
--		/* File size should be zero if there is no cluster allocated */
--		if (ei->start_clu == EXFAT_EOF_CLUSTER) {
--			ep2->dentry.stream.valid_size = 0;
--			ep2->dentry.stream.size = 0;
--		} else {
--			ep2->dentry.stream.valid_size = cpu_to_le64(new_size);
--			ep2->dentry.stream.size = ep2->dentry.stream.valid_size;
--		}
--
--		if (new_size == 0) {
--			/* Any directory can not be truncated to zero */
--			WARN_ON(ei->type != TYPE_FILE);
--
--			ep2->dentry.stream.flags = ALLOC_FAT_CHAIN;
--			ep2->dentry.stream.start_clu = EXFAT_FREE_CLUSTER;
--		}
--
--		exfat_update_dir_chksum_with_entry_set(es);
--		err = exfat_free_dentry_set(es, inode_needs_sync(inode));
--		if (err)
--			return err;
--	}
-+	inode->i_mtime = current_time(inode);
-+	ret = exfat_update_inode(inode);
-+	if (ret)
-+		return ret;
- 
- 	/* cut off from the FAT chain */
- 	if (ei->flags == ALLOC_FAT_CHAIN && last_clu != EXFAT_FREE_CLUSTER &&
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index f307019afe88..3df80740529d 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -19,7 +19,7 @@
- 
- static int __exfat_write_inode(struct inode *inode, int sync)
+--- linux-next-20200917.orig/fs/eventpoll.c
++++ linux-next-20200917/fs/eventpoll.c
+@@ -371,7 +371,7 @@ static void ep_nested_calls_init(struct
+  *
+  * @ep: Pointer to the eventpoll context.
+  *
+- * Returns: Returns a value different than zero if ready events are available,
++ * Returns: a value different than zero if ready events are available,
+  *          or zero otherwise.
+  */
+ static inline int ep_events_available(struct eventpoll *ep)
+@@ -472,7 +472,7 @@ static inline void ep_set_busy_poll_napi
+  * @cookie: Cookie to be used to identify this nested call.
+  * @ctx: This instance context.
+  *
+- * Returns: Returns the code returned by the @nproc callback, or -1 if
++ * Returns: the code returned by the @nproc callback, or -1 if
+  *          the maximum recursion limit has been exceeded.
+  */
+ static int ep_call_nested(struct nested_calls *ncalls,
+@@ -1123,8 +1123,8 @@ struct file *get_epoll_tfile_raw_ptr(str
+  *        direction i.e. either to the tail either to the head, otherwise
+  *        concurrent access will corrupt the list.
+  *
+- * Returns %false if element has been already added to the list, %true
+- * otherwise.
++ * Returns: %false if element has been already added to the list, %true
++ *          otherwise.
+  */
+ static inline bool list_add_tail_lockless(struct list_head *new,
+ 					  struct list_head *head)
+@@ -1165,7 +1165,7 @@ static inline bool list_add_tail_lockles
+  * Chains a new epi entry to the tail of the ep->ovflist in a lockless way,
+  * i.e. multiple CPUs are allowed to call this function concurrently.
+  *
+- * Returns %false if epi element has been already chained, %true otherwise.
++ * Returns: %false if epi element has been already chained, %true otherwise.
+  */
+ static inline bool chain_epi_lockless(struct epitem *epi)
  {
--	unsigned long long on_disk_size;
-+	unsigned long long filesize;
- 	struct exfat_dentry *ep, *ep2;
- 	struct exfat_entry_set_cache *es = NULL;
- 	struct super_block *sb = inode->i_sb;
-@@ -68,13 +68,14 @@ static int __exfat_write_inode(struct inode *inode, int sync)
- 			NULL);
- 
- 	/* File size should be zero if there is no cluster allocated */
--	on_disk_size = i_size_read(inode);
--
-+	filesize = i_size_read(inode);
- 	if (ei->start_clu == EXFAT_EOF_CLUSTER)
--		on_disk_size = 0;
-+		filesize = 0;
- 
--	ep2->dentry.stream.valid_size = cpu_to_le64(on_disk_size);
-+	ep2->dentry.stream.valid_size = cpu_to_le64(filesize);
- 	ep2->dentry.stream.size = ep2->dentry.stream.valid_size;
-+	ep2->dentry.stream.flags = filesize ? ei->flags : ALLOC_FAT_CHAIN;
-+	ep2->dentry.stream.start_clu = filesize ? ei->start_clu : EXFAT_FREE_CLUSTER;
- 
- 	exfat_update_dir_chksum_with_entry_set(es);
- 	return exfat_free_dentry_set(es, sync);
-@@ -223,32 +224,11 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
- 		num_clusters += num_to_be_allocated;
- 		*clu = new_clu.dir;
- 
--		if (ei->dir.dir != DIR_DELETED && modified) {
--			struct exfat_dentry *ep;
--			struct exfat_entry_set_cache *es;
--			int err;
--
--			es = exfat_get_dentry_set(sb, &(ei->dir), ei->entry,
--				ES_ALL_ENTRIES);
--			if (!es)
--				return -EIO;
--			/* get stream entry */
--			ep = exfat_get_dentry_cached(es, 1);
--
--			/* update directory entry */
--			ep->dentry.stream.flags = ei->flags;
--			ep->dentry.stream.start_clu =
--				cpu_to_le32(ei->start_clu);
--			ep->dentry.stream.valid_size =
--				cpu_to_le64(i_size_read(inode));
--			ep->dentry.stream.size =
--				ep->dentry.stream.valid_size;
--
--			exfat_update_dir_chksum_with_entry_set(es);
--			err = exfat_free_dentry_set(es, inode_needs_sync(inode));
--			if (err)
--				return err;
--		} /* end of if != DIR_DELETED */
-+		if (modified) {
-+			ret = exfat_update_inode(inode);
-+			if (ret)
-+				return ret;
-+		}
- 
- 		inode->i_blocks +=
- 			num_to_be_allocated << sbi->sect_per_clus_bits;
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 4febff3541a9..903ad6ca53a2 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -306,10 +306,8 @@ static int exfat_find_empty_entry(struct inode *inode,
- {
- 	int dentry;
- 	unsigned int ret, last_clu;
--	sector_t sector;
- 	loff_t size = 0;
- 	struct exfat_chain clu;
--	struct exfat_dentry *ep = NULL;
- 	struct super_block *sb = inode->i_sb;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct exfat_inode_info *ei = EXFAT_I(inode);
-@@ -375,31 +373,17 @@ static int exfat_find_empty_entry(struct inode *inode,
- 		p_dir->size++;
- 		size = EXFAT_CLU_TO_B(p_dir->size, sbi);
- 
--		/* update the directory entry */
--		if (p_dir->dir != sbi->root_dir) {
--			struct buffer_head *bh;
--
--			ep = exfat_get_dentry(sb,
--				&(ei->dir), ei->entry + 1, &bh, &sector);
--			if (!ep)
--				return -EIO;
--
--			ep->dentry.stream.valid_size = cpu_to_le64(size);
--			ep->dentry.stream.size = ep->dentry.stream.valid_size;
--			ep->dentry.stream.flags = p_dir->flags;
--			exfat_update_bh(bh, IS_DIRSYNC(inode));
--			brelse(bh);
--			if (exfat_update_dir_chksum(inode, &(ei->dir),
--			    ei->entry))
--				return -EIO;
--		}
--
- 		/* directory inode should be updated in here */
- 		i_size_write(inode, size);
- 		EXFAT_I(inode)->i_size_ondisk += sbi->cluster_size;
- 		EXFAT_I(inode)->i_size_aligned += sbi->cluster_size;
- 		EXFAT_I(inode)->flags = p_dir->flags;
- 		inode->i_blocks += 1 << sbi->sect_per_clus_bits;
-+
-+		/* update the directory entry */
-+		ret = exfat_update_inode(inode);
-+		if (ret)
-+			return ret;
- 	}
- 
- 	return dentry;
--- 
-2.25.1
+@@ -1428,7 +1428,7 @@ static int reverse_path_check_proc(void
+  *                      paths such that we will spend all our time waking up
+  *                      eventpoll objects.
+  *
+- * Returns: Returns zero if the proposed links don't create too many paths,
++ * Returns: zero if the proposed links don't create too many paths,
+  *	    -1 otherwise.
+  */
+ static int reverse_path_check(void)
+@@ -1814,7 +1814,7 @@ static inline struct timespec64 ep_set_m
+  *           until at least one event has been retrieved (or an error
+  *           occurred).
+  *
+- * Returns: Returns the number of ready events which have been fetched, or an
++ * Returns: the number of ready events which have been fetched, or an
+  *          error code, in case of error.
+  */
+ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+@@ -1959,7 +1959,7 @@ send_events:
+  *          data structure pointer.
+  * @call_nests: Current dept of the @ep_call_nested() call stack.
+  *
+- * Returns: Returns zero if adding the epoll @file inside current epoll
++ * Returns: zero if adding the epoll @file inside current epoll
+  *          structure @ep does not violate the constraints, or -1 otherwise.
+  */
+ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
+@@ -2014,7 +2014,7 @@ static int ep_loop_check_proc(void *priv
+  * @ep: Pointer to the epoll private data structure.
+  * @file: Pointer to the epoll file to be checked.
+  *
+- * Returns: Returns zero if adding the epoll @file inside current epoll
++ * Returns: zero if adding the epoll @file inside current epoll
+  *          structure @ep does not violate the constraints, or -1 otherwise.
+  */
+ static int ep_loop_check(struct eventpoll *ep, struct file *file)
 
