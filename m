@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C27542703F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 20:27:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3991270427
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 20:33:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbgIRS1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 14:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36164 "EHLO
+        id S1726343AbgIRSct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 14:32:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbgIRS1i (ORCPT
+        with ESMTP id S1726156AbgIRScs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 14:27:38 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2080C0613CE;
-        Fri, 18 Sep 2020 11:27:37 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id e16so6574836wrm.2;
-        Fri, 18 Sep 2020 11:27:37 -0700 (PDT)
+        Fri, 18 Sep 2020 14:32:48 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4CE3C0613CE;
+        Fri, 18 Sep 2020 11:32:47 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id e17so6207553wme.0;
+        Fri, 18 Sep 2020 11:32:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:cc:references:from:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=vE4lUTeeTkU9TRLwV/NlCsazhtaTJdpkeN8PtvQ0Bas=;
-        b=W6z3L5TNvkL41/HHIkMOosVOSceqriNqL+k6rW6IcL7b8yeNH7zH0KlQP59M6PNX9t
-         WpC6cTzQEnAwjUcuuhVSB2+9BnYl3ItLz5ZzSHtVEGEelOOR3vsoNGirgvCVZ5eESRM+
-         HjbwnIlRl5Yd/eo7W6+8/xAoT3Y/9sAauKSCH2iLfX+aKbCwaAyrHwH8ciJLMeWfSXkr
-         w6PuvYz/uUr4ZjAtijA2xEl61KKs4/cM2sAAJEVHJgOLeVmlWnFPGr1wa+xXkKWpHGRb
-         TQlzStO1VXz5cgD0gQWAttWYx0QF1MwF014Q5b2HDP0O5Ja7NTMWRwb8pUV6ETAocfvB
-         NmdA==
+        bh=VkDJFdAxd0aelGNa3gWzSCahShItwGf5SyK423SY7LU=;
+        b=bzXhAPszHgnjtFoWa6qM/uVxTCUnyW01y3Wr3oBnw0ixfTv4NZrksFfpCr0EjL+QkH
+         ybN1Ejqiarw/ea6c5X8EAV1+dIURKfjOMXQYkRUN9ai39ayDdwOx7BXF/Co/v/020607
+         du16DckyBKEao5PugS72XbdZrvqSzCwobtUr5uQ7M2yhQNKVx2dbafWNGVerdWBihRY+
+         78lKamf63WFsN6LklJZ914JDGMVeP68Pn8m/Tl52yFvoNtQED+Unu3N1PPsT0+IAkwfm
+         3mnGKmcU5Jivi28zXO94m403xg0r+k0kCctNIK7nl0ajbhvSguHmgv4vuufB1TkB97cC
+         mLrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-transfer-encoding:content-language;
-        bh=vE4lUTeeTkU9TRLwV/NlCsazhtaTJdpkeN8PtvQ0Bas=;
-        b=VaVp/v+9RX3AKs/zGNPLmquHwyhadro8lbDH7HmQhGZ/7g0GZx5zMidHCqdAkxxVl2
-         kSNfKVeCHk0AMkDn2yTMVJgOAF9uKnebtLykgmBLtf5K6e43L+QJam1MrIQLPAqneuOb
-         l0dMqYby1ZLuS1mx0D0CkA/NkLmIO9XU2Cy9wgNOGnm109XRjYXTH8Fuq67RZP5Julax
-         fjf9ze98hWQUg/Y1RrWXQMPy+VDT6RS2Szg/dThLc053GZMsyye8Ecpv5AiMH2IIdd3J
-         GljZzXVPzifkytmbjJkIFfdTGIflhK/3XkFEE3h8SJyYnxN2WwaiJMGwITLHEUaHVilx
-         lYmA==
-X-Gm-Message-State: AOAM532h/1aKRZrrHO0pVjSb25bZKnxu9KtfQO7J8DuAnY9JNy+nBx6i
-        YOQ7HrAC4Qt8K6BI4agcNmFOR7ixvdzZAg==
-X-Google-Smtp-Source: ABdhPJzFG0EZDaWHYUNppJ2jfxXITVZNcxtK6i4UFiXs5KGe2mqqhghalGILcHLP4/rlZj7A047tbQ==
-X-Received: by 2002:adf:f890:: with SMTP id u16mr37531808wrp.183.1600453656035;
-        Fri, 18 Sep 2020 11:27:36 -0700 (PDT)
+        bh=VkDJFdAxd0aelGNa3gWzSCahShItwGf5SyK423SY7LU=;
+        b=kuvDBt2NMwSMzrLYe7myIuPd7jivAwu9XYCPer305Pa7F6bt/W82AuAs89KKUkew6k
+         qEydu8ivcE/gto0/6RPSQft1vFNpnNu0yvnPSWhC/JKE5Ke5pVeydfwhqcSzovoZPOoE
+         +HwFQb/k3siTpgJHEAuHcUqfMnUvH5INjTWhdFFo9mFyQtszZLk87x8xkP6O3LE4Ai5Y
+         nAsK1zd+50qFjFLPD3LEKtJi0hqXIUS3srFZ3pqwULl5PAfKDiFO7xxaZvtceCubmqik
+         Ar2yljPbDGQI3Fpev7YNgAeSy09x5xj53byddswQqqewWXINh2i7g7z4DTCEkodEbPdk
+         O4Kw==
+X-Gm-Message-State: AOAM530ithFy45FHnaGL0N6IQMMlElwjZ8aVUkrUp8u0xdTNn9eqkmsi
+        pHwm3e/00htCqoIO8DrzCgw=
+X-Google-Smtp-Source: ABdhPJwStbAGHUGOTX/xxoXB17YIcn9Q0xxPPgfD1SfGjNWvLvN/ik47PhMBIE/M9jS4Gf61SbCSEw==
+X-Received: by 2002:a1c:ed09:: with SMTP id l9mr17054361wmh.89.1600453965167;
+        Fri, 18 Sep 2020 11:32:45 -0700 (PDT)
 Received: from ?IPv6:2a02:8010:64ea:0:fad1:11ff:fead:57db? ([2a02:8010:64ea:0:fad1:11ff:fead:57db])
-        by smtp.googlemail.com with ESMTPSA id r14sm6337578wrn.56.2020.09.18.11.27.31
+        by smtp.googlemail.com with ESMTPSA id i3sm6500540wrs.4.2020.09.18.11.32.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Sep 2020 11:27:35 -0700 (PDT)
-Subject: Re: [PATCH v6 05/10] fs/ntfs3: Add attrib operations
+        Fri, 18 Sep 2020 11:32:44 -0700 (PDT)
+Subject: Re: [PATCH v6 02/10] fs/ntfs3: Add initialization of super block
 To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         linux-fsdevel@vger.kernel.org
 Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
@@ -58,7 +58,7 @@ Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
         nborisov@suse.com
 References: <20200918162204.3706029-1-almaz.alexandrovich@paragon-software.com>
- <20200918162204.3706029-6-almaz.alexandrovich@paragon-software.com>
+ <20200918162204.3706029-3-almaz.alexandrovich@paragon-software.com>
 From:   Mark Harmstone <mark@harmstone.com>
 Autocrypt: addr=mark@harmstone.com; keydata=
  mQENBFp/GMsBCACtFsuHZqHWpHtHuFkNZhMpiZMChyou4X8Ueur3XyF8KM2j6TKkZ5M/72qT
@@ -90,12 +90,12 @@ Autocrypt: addr=mark@harmstone.com; keydata=
  Btwr/O+CwVVqWRzKDQgVo4t1xk2ts1F0R1uHHLsX7mIgfXBYdo/y4UgFBAJH5NYUcBR+QQcO
  gUUZeF2MC9i0oUaHJOIuuN2q+m9eMpnJdxVKAUQcZxDDvNjZwZh+ejsgG4Ejd2XR/T0yXFoR
  /dLFIhf2zxRylN1xq27M9P2t1xfQFocuYToPsVk=
-Message-ID: <fd0d9b84-8018-3f6d-0b3d-03c35b1db7f2@harmstone.com>
-Date:   Fri, 18 Sep 2020 19:27:30 +0100
+Message-ID: <84bdf20d-6d0e-8075-bf29-651ed946c4bd@harmstone.com>
+Date:   Fri, 18 Sep 2020 19:32:42 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200918162204.3706029-6-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20200918162204.3706029-3-almaz.alexandrovich@paragon-software.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -103,1354 +103,2241 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Could I suggest that system.ntfs_security be renamed to security.NTACL? That's
-what WinBtrfs uses, and it means you'd be able to create a working Btrfs copy
-of a Windows installation just by using rsync. IIRC Samba also understands
-xattrs called security.NTACL, when you've put it in the right mode.
-
-Quite apart from anything else, it's an NT security descriptor, not specifically
-NTFS - I'm fairly sure ReFS uses the same format (for what it's worth).
+Nit-picking a little, but I think S-1-5-7 "Anonymous" would be a better choice
+for your default SD's owner and group. It implies then to Windows users that
+Linux hasn't tried to do any uid <-> SID mapping.
 
 On 18/9/20 5:21 pm, Konstantin Komarov wrote:
-> This adds attrib operations
+> This adds initialization of super block
 >
 > Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 > ---
->  fs/ntfs3/attrib.c   | 1312 +++++++++++++++++++++++++++++++++++++++++++
->  fs/ntfs3/attrlist.c |  462 +++++++++++++++
->  fs/ntfs3/xattr.c    | 1041 ++++++++++++++++++++++++++++++++++
->  3 files changed, 2815 insertions(+)
->  create mode 100644 fs/ntfs3/attrib.c
->  create mode 100644 fs/ntfs3/attrlist.c
->  create mode 100644 fs/ntfs3/xattr.c
+>  fs/ntfs3/fsntfs.c | 2201 +++++++++++++++++++++++++++++++++++++
+>  fs/ntfs3/index.c  | 2639 +++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ntfs3/inode.c  | 1998 ++++++++++++++++++++++++++++++++++
+>  fs/ntfs3/super.c  | 1430 ++++++++++++++++++++++++
+>  4 files changed, 8268 insertions(+)
+>  create mode 100644 fs/ntfs3/fsntfs.c
+>  create mode 100644 fs/ntfs3/index.c
+>  create mode 100644 fs/ntfs3/inode.c
+>  create mode 100644 fs/ntfs3/super.c
 >
-> diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+> diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
 > new file mode 100644
-> index 000000000000..f616027cba38
+> index 000000000000..1e8fc4cea23a
 > --- /dev/null
-> +++ b/fs/ntfs3/attrib.c
-> @@ -0,0 +1,1312 @@
+> +++ b/fs/ntfs3/fsntfs.c
+> @@ -0,0 +1,2201 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + *  linux/fs/ntfs3/attrib.c
+> + *  linux/fs/ntfs3/fsntfs.c
 > + *
 > + * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
 > + *
-> + * TODO: merge attr_set_size/attr_data_get_block/attr_allocate_frame?
 > + */
 > +
 > +#include <linux/blkdev.h>
 > +#include <linux/buffer_head.h>
 > +#include <linux/fs.h>
-> +#include <linux/hash.h>
 > +#include <linux/nls.h>
-> +#include <linux/ratelimit.h>
 > +#include <linux/sched/signal.h>
-> +#include <linux/slab.h>
 > +
 > +#include "debug.h"
 > +#include "ntfs.h"
 > +#include "ntfs_fs.h"
 > +
+> +const struct cpu_str NAME_MFT = { 4, 0, { '$', 'M', 'F', 'T' } };
+> +const struct cpu_str NAME_MIRROR = { 8,
+> +				     0,
+> +				     { '$', 'M', 'F', 'T', 'M', 'i', 'r',
+> +				       'r' } };
+> +const struct cpu_str NAME_LOGFILE = { 8,
+> +				      0,
+> +				      { '$', 'L', 'o', 'g', 'F', 'i', 'l',
+> +					'e' } };
+> +const struct cpu_str NAME_VOLUME = { 7,
+> +				     0,
+> +				     { '$', 'V', 'o', 'l', 'u', 'm', 'e' } };
+> +const struct cpu_str NAME_ATTRDEF = { 8,
+> +				      0,
+> +				      { '$', 'A', 't', 't', 'r', 'D', 'e',
+> +					'f' } };
+> +const struct cpu_str NAME_ROOT = { 1, 0, { '.' } };
+> +const struct cpu_str NAME_BITMAP = { 7,
+> +				     0,
+> +				     { '$', 'B', 'i', 't', 'm', 'a', 'p' } };
+> +const struct cpu_str NAME_BOOT = { 5, 0, { '$', 'B', 'o', 'o', 't' } };
+> +const struct cpu_str NAME_BADCLUS = { 8,
+> +				      0,
+> +				      { '$', 'B', 'a', 'd', 'C', 'l', 'u',
+> +					's' } };
+> +const struct cpu_str NAME_QUOTA = { 6, 0, { '$', 'Q', 'u', 'o', 't', 'a' } };
+> +const struct cpu_str NAME_SECURE = { 7,
+> +				     0,
+> +				     { '$', 'S', 'e', 'c', 'u', 'r', 'e' } };
+> +const struct cpu_str NAME_UPCASE = { 7,
+> +				     0,
+> +				     { '$', 'U', 'p', 'C', 'a', 's', 'e' } };
+> +const struct cpu_str NAME_EXTEND = { 7,
+> +				     0,
+> +				     { '$', 'E', 'x', 't', 'e', 'n', 'd' } };
+> +const struct cpu_str NAME_OBJID = { 6, 0, { '$', 'O', 'b', 'j', 'I', 'd' } };
+> +const struct cpu_str NAME_REPARSE = { 8,
+> +				      0,
+> +				      { '$', 'R', 'e', 'p', 'a', 'r', 's',
+> +					'e' } };
+> +const struct cpu_str NAME_USNJRNL = { 8,
+> +				      0,
+> +				      { '$', 'U', 's', 'n', 'J', 'r', 'n',
+> +					'l' } };
+> +const __le16 BAD_NAME[4] = { cpu_to_le16('$'), cpu_to_le16('B'),
+> +			     cpu_to_le16('a'), cpu_to_le16('d') };
+> +const __le16 I30_NAME[4] = { cpu_to_le16('$'), cpu_to_le16('I'),
+> +			     cpu_to_le16('3'), cpu_to_le16('0') };
+> +const __le16 SII_NAME[4] = { cpu_to_le16('$'), cpu_to_le16('S'),
+> +			     cpu_to_le16('I'), cpu_to_le16('I') };
+> +const __le16 SDH_NAME[4] = { cpu_to_le16('$'), cpu_to_le16('S'),
+> +			     cpu_to_le16('D'), cpu_to_le16('H') };
+> +const __le16 SDS_NAME[4] = { cpu_to_le16('$'), cpu_to_le16('S'),
+> +			     cpu_to_le16('D'), cpu_to_le16('S') };
+> +const __le16 SO_NAME[2] = { cpu_to_le16('$'), cpu_to_le16('O') };
+> +const __le16 SQ_NAME[2] = { cpu_to_le16('$'), cpu_to_le16('Q') };
+> +const __le16 SR_NAME[2] = { cpu_to_le16('$'), cpu_to_le16('R') };
+> +//const __le16 EFS_NAME[4] = { '$', 'E', 'F', 'S' };
+> +
+> +//const __le16 WOF_NAME[17] = { 'W', 'o', 'f', 'C', 'o', 'm', 'p', 'r', 'e',
+> +//			      'S', 'S', 'e', 'd', 'D', 'a', 't', 'a' };
+> +//const __le16 J_NAME[2] = { '$', 'J' };
+> +//const __le16 MAX_NAME[4] = { '$', 'M', 'a', 'x' };
+> +
 > +/*
-> + * You can set external NTFS_MIN_LOG2_OF_CLUMP/NTFS_MAX_LOG2_OF_CLUMP to manage
-> + * preallocate algorithm
-> + */
-> +#ifndef NTFS_MIN_LOG2_OF_CLUMP
-> +#define NTFS_MIN_LOG2_OF_CLUMP 16
-> +#endif
-> +
-> +#ifndef NTFS_MAX_LOG2_OF_CLUMP
-> +#define NTFS_MAX_LOG2_OF_CLUMP 26
-> +#endif
-> +
-> +// 16M
-> +#define NTFS_CLUMP_MIN (1 << (NTFS_MIN_LOG2_OF_CLUMP + 8))
-> +// 16G
-> +#define NTFS_CLUMP_MAX (1ull << (NTFS_MAX_LOG2_OF_CLUMP + 8))
-> +
-> +/*
-> + * get_pre_allocated
+> + * ntfs_fix_pre_write
 > + *
+> + * inserts fixups into 'rhdr' before writing to disk
 > + */
-> +static inline u64 get_pre_allocated(u64 size)
+> +bool ntfs_fix_pre_write(struct NTFS_RECORD_HEADER *rhdr, size_t bytes)
 > +{
-> +	u32 clump;
-> +	u8 align_shift;
-> +	u64 ret;
+> +	u16 *fixup, *ptr;
+> +	u16 sample;
+> +	u16 fo = le16_to_cpu(rhdr->fix_off);
+> +	u16 fn = le16_to_cpu(rhdr->fix_num);
 > +
-> +	if (size <= NTFS_CLUMP_MIN) {
-> +		clump = 1 << NTFS_MIN_LOG2_OF_CLUMP;
-> +		align_shift = NTFS_MIN_LOG2_OF_CLUMP;
-> +	} else if (size >= NTFS_CLUMP_MAX) {
-> +		clump = 1 << NTFS_MAX_LOG2_OF_CLUMP;
-> +		align_shift = NTFS_MAX_LOG2_OF_CLUMP;
-> +	} else {
-> +		align_shift = NTFS_MIN_LOG2_OF_CLUMP - 1 +
-> +			      __ffs(size >> (8 + NTFS_MIN_LOG2_OF_CLUMP));
-> +		clump = 1u << align_shift;
+> +	if ((fo & 1) || fo + fn * sizeof(short) > SECTOR_SIZE || !fn-- ||
+> +	    fn * SECTOR_SIZE > bytes) {
+> +		return false;
 > +	}
 > +
-> +	ret = (((size + clump - 1) >> align_shift)) << align_shift;
+> +	/* Get fixup pointer */
+> +	fixup = Add2Ptr(rhdr, fo);
+> +
+> +	if (*fixup >= 0x7FFF)
+> +		*fixup = 1;
+> +	else
+> +		*fixup += 1;
+> +
+> +	sample = *fixup;
+> +
+> +	ptr = Add2Ptr(rhdr, SECTOR_SIZE - sizeof(short));
+> +
+> +	while (fn--) {
+> +		*++fixup = *ptr;
+> +		*ptr = sample;
+> +		ptr += SECTOR_SIZE / sizeof(short);
+> +	}
+> +	return true;
+> +}
+> +
+> +/*
+> + * ntfs_fix_post_read
+> + *
+> + * remove fixups after reading from disk
+> + * Returns < 0 if error, 0 if ok, 1 if need to update fixups
+> + */
+> +int ntfs_fix_post_read(struct NTFS_RECORD_HEADER *rhdr, size_t bytes,
+> +		       bool simple)
+> +{
+> +	int ret;
+> +	u16 *fixup, *ptr;
+> +	u16 sample, fo, fn;
+> +
+> +	fo = le16_to_cpu(rhdr->fix_off);
+> +	fn = simple ? ((bytes >> SECTOR_SHIFT) + 1) :
+> +		      le16_to_cpu(rhdr->fix_num);
+> +
+> +	/* Check errors */
+> +	if ((fo & 1) || fo + fn * sizeof(short) > SECTOR_SIZE || !fn-- ||
+> +	    fn * SECTOR_SIZE > bytes) {
+> +		return -EINVAL; /* native chkntfs returns ok! */
+> +	}
+> +
+> +	/* Get fixup pointer */
+> +	fixup = Add2Ptr(rhdr, fo);
+> +	sample = *fixup;
+> +	ptr = Add2Ptr(rhdr, SECTOR_SIZE - sizeof(short));
+> +	ret = 0;
+> +
+> +	while (fn--) {
+> +		/* Test current word */
+> +		if (*ptr != sample)
+> +			ret = 1;
+> +
+> +		/* Replace fixup */
+> +		*ptr = *++fixup;
+> +		ptr += SECTOR_SIZE / sizeof(short);
+> +	}
 > +
 > +	return ret;
 > +}
 > +
 > +/*
-> + * attr_must_be_resident
+> + * ntfs_extend_init
 > + *
-> + * returns true if attribute must be resident
+> + * loads $Extend file
 > + */
-> +static inline bool attr_must_be_resident(struct ntfs_sb_info *sbi,
-> +					 enum ATTR_TYPE type)
-> +{
-> +	const struct ATTR_DEF_ENTRY *de;
-> +
-> +	switch (type) {
-> +	case ATTR_STD:
-> +	case ATTR_NAME:
-> +	case ATTR_ID:
-> +	case ATTR_LABEL:
-> +	case ATTR_VOL_INFO:
-> +	case ATTR_ROOT:
-> +	case ATTR_EA_INFO:
-> +		return true;
-> +	default:
-> +		de = ntfs_query_def(sbi, type);
-> +		if (de && (de->flags & NTFS_ATTR_MUST_BE_RESIDENT))
-> +			return true;
-> +		return false;
-> +	}
-> +}
-> +
-> +/*
-> + * attr_load_runs
-> + *
-> + * load all runs stored in 'attr'
-> + */
-> +int attr_load_runs(struct ATTRIB *attr, struct ntfs_inode *ni,
-> +		   struct runs_tree *run)
+> +int ntfs_extend_init(struct ntfs_sb_info *sbi)
 > +{
 > +	int err;
-> +	CLST svcn = le64_to_cpu(attr->nres.svcn);
-> +	CLST evcn = le64_to_cpu(attr->nres.evcn);
-> +	u32 asize;
-> +	u16 run_off;
+> +	struct super_block *sb = sbi->sb;
+> +	struct inode *inode, *inode2;
+> +	struct MFT_REF ref;
 > +
-> +	if (svcn >= evcn + 1 || run_is_mapped_full(run, svcn, evcn))
+> +	if (sbi->volume.major_ver < 3) {
+> +		ntfs_notice(sb, "Skip $Extend 'cause NTFS version");
 > +		return 0;
+> +	}
 > +
-> +	asize = le32_to_cpu(attr->size);
-> +	run_off = le16_to_cpu(attr->nres.run_off);
-> +	err = run_unpack_ex(run, ni->mi.sbi, ni->mi.rno, svcn, evcn,
-> +			    Add2Ptr(attr, run_off), asize - run_off);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * int run_deallocate_ex
-> + *
-> + * Deallocate clusters
-> + */
-> +static int run_deallocate_ex(struct ntfs_sb_info *sbi, struct runs_tree *run,
-> +			     CLST vcn, CLST len, CLST *done, bool trim)
-> +{
-> +	int err = 0;
-> +	CLST vcn0 = vcn, lcn, clen, dn = 0;
-> +	size_t idx;
-> +
-> +	if (!len)
+> +	ref.low = cpu_to_le32(MFT_REC_EXTEND);
+> +	ref.high = 0;
+> +	ref.seq = cpu_to_le16(MFT_REC_EXTEND);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_EXTEND);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $Extend.");
+> +		inode = NULL;
 > +		goto out;
+> +	}
 > +
-> +	if (!run_lookup_entry(run, vcn, &lcn, &clen, &idx)) {
-> +failed:
-> +		run_truncate(run, vcn0);
+> +	/* if ntfs_iget5 reads from disk it never returns bad inode */
+> +	if (!S_ISDIR(inode->i_mode)) {
 > +		err = -EINVAL;
 > +		goto out;
 > +	}
 > +
-> +	for (;;) {
-> +		if (clen > len)
-> +			clen = len;
-> +
-> +		if (!clen) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		if (lcn != SPARSE_LCN) {
-> +			mark_as_free_ex(sbi, lcn, clen, trim);
-> +			dn += clen;
-> +		}
-> +
-> +		len -= clen;
-> +		if (!len)
-> +			break;
-> +
-> +		if (!run_get_entry(run, ++idx, &vcn, &lcn, &clen)) {
-> +			// save memory - don't load entire run
-> +			goto failed;
+> +	/* Try to find $ObjId */
+> +	inode2 = dir_search_u(inode, &NAME_OBJID, NULL);
+> +	if (inode2 && !IS_ERR(inode2)) {
+> +		if (is_bad_inode(inode2)) {
+> +			iput(inode2);
+> +		} else {
+> +			sbi->objid.ni = ntfs_i(inode2);
+> +			sbi->objid_no = inode2->i_ino;
 > +		}
 > +	}
 > +
-> +out:
-> +	if (done)
-> +		*done = dn;
-> +
-> +	return err;
-> +}
-> +
-> +/*
-> + * attr_allocate_clusters
-> + *
-> + * find free space, mark it as used and store in 'run'
-> + */
-> +int attr_allocate_clusters(struct ntfs_sb_info *sbi, struct runs_tree *run,
-> +			   CLST vcn, CLST lcn, CLST len, CLST *pre_alloc,
-> +			   enum ALLOCATE_OPT opt, CLST *alen, const size_t fr,
-> +			   CLST *new_lcn)
-> +{
-> +	int err;
-> +	CLST flen, vcn0 = vcn, pre = pre_alloc ? *pre_alloc : 0;
-> +	struct wnd_bitmap *wnd = &sbi->used.bitmap;
-> +	size_t cnt = run->count;
-> +
-> +	for (;;) {
-> +		err = ntfs_look_for_free_space(sbi, lcn, len + pre, &lcn, &flen,
-> +					       opt);
-> +
-> +		if (err == -ENOSPC && pre) {
-> +			pre = 0;
-> +			if (*pre_alloc)
-> +				*pre_alloc = 0;
-> +			continue;
-> +		}
-> +
-> +		if (err)
-> +			goto out;
-> +
-> +		if (new_lcn && vcn == vcn0)
-> +			*new_lcn = lcn;
-> +
-> +		/* Add new fragment into run storage */
-> +		if (!run_add_entry(run, vcn, lcn, flen)) {
-> +			down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
-> +			wnd_set_free(wnd, lcn, flen);
-> +			up_write(&wnd->rw_lock);
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
-> +
-> +		vcn += flen;
-> +
-> +		if (flen >= len || opt == ALLOCATE_MFT ||
-> +		    (fr && run->count - cnt >= fr)) {
-> +			*alen = vcn - vcn0;
-> +			return 0;
-> +		}
-> +
-> +		len -= flen;
+> +	/* Try to find $Quota */
+> +	inode2 = dir_search_u(inode, &NAME_QUOTA, NULL);
+> +	if (inode2 && !IS_ERR(inode2)) {
+> +		sbi->quota_no = inode2->i_ino;
+> +		iput(inode2);
 > +	}
 > +
-> +out:
-> +	/* undo */
-> +	run_deallocate_ex(sbi, run, vcn0, vcn - vcn0, NULL, false);
-> +	run_truncate(run, vcn0);
+> +	/* Try to find $Reparse */
+> +	inode2 = dir_search_u(inode, &NAME_REPARSE, NULL);
+> +	if (inode2 && !IS_ERR(inode2)) {
+> +		sbi->reparse.ni = ntfs_i(inode2);
+> +		sbi->reparse_no = inode2->i_ino;
+> +	}
 > +
+> +	/* Try to find $UsnJrnl */
+> +	inode2 = dir_search_u(inode, &NAME_USNJRNL, NULL);
+> +	if (inode2 && !IS_ERR(inode2)) {
+> +		sbi->usn_jrnl_no = inode2->i_ino;
+> +		iput(inode2);
+> +	}
+> +
+> +	err = 0;
+> +out:
+> +	iput(inode);
 > +	return err;
 > +}
 > +
-> +/*
-> + * attr_set_size_res
-> + *
-> + * helper for attr_set_size
-> + */
-> +static int attr_set_size_res(struct ntfs_inode *ni, struct ATTRIB *attr,
-> +			     struct ATTR_LIST_ENTRY *le, struct mft_inode *mi,
-> +			     u64 new_size, struct runs_tree *run,
-> +			     struct ATTRIB **ins_attr)
+> +int ntfs_loadlog_and_replay(struct ntfs_inode *ni, struct ntfs_sb_info *sbi)
 > +{
 > +	int err = 0;
-> +	struct ntfs_sb_info *sbi = mi->sbi;
-> +	struct MFT_REC *rec = mi->mrec;
-> +	u32 used = le32_to_cpu(rec->used);
-> +	u32 asize = le32_to_cpu(attr->size);
-> +	u32 aoff = PtrOffset(rec, attr);
-> +	u32 rsize = le32_to_cpu(attr->res.data_size);
-> +	u32 tail = used - aoff - asize;
-> +	char *next = Add2Ptr(attr, asize);
-> +	int dsize = QuadAlign(new_size) - QuadAlign(rsize);
-> +	CLST len, alen;
-> +	struct ATTRIB *attr_s = NULL;
-> +	bool is_ext;
+> +	struct super_block *sb = sbi->sb;
+> +	struct inode *inode;
+> +	struct MFT_REF ref;
+> +	u32 idx;
+> +	CLST lcn, len;
 > +
-> +	if (dsize < 0) {
-> +		memmove(next + dsize, next, tail);
-> +	} else if (dsize > 0) {
-> +		if (used + dsize > sbi->max_bytes_per_attr)
-> +			goto resident2nonresident;
+> +	inode = &ni->vfs_inode;
 > +
-> +		memmove(next + dsize, next, tail);
-> +		memset(next, 0, dsize);
+> +	/* Check for 4GB */
+> +	if (inode->i_size >= 0x100000000ull) {
+> +		ntfs_err(sb, "$LogFile is too big");
+> +		err = -EINVAL;
+> +		goto out;
 > +	}
 > +
-> +	rec->used = cpu_to_le32(used + dsize);
-> +	attr->size = cpu_to_le32(asize + dsize);
-> +	attr->res.data_size = cpu_to_le32(new_size);
-> +	mi->dirty = true;
-> +	*ins_attr = attr;
+> +	sbi->flags |= NTFS_FLAGS_LOG_REPLAYING;
 > +
-> +	return 0;
+> +	ref.low = cpu_to_le32(MFT_REC_MFT);
+> +	ref.high = 0;
+> +	ref.seq = cpu_to_le16(1);
 > +
-> +resident2nonresident:
-> +	len = bytes_to_cluster(sbi, rsize);
+> +	inode = ntfs_iget5(sb, &ref, NULL);
 > +
-> +	run_init(run);
+> +	if (IS_ERR(inode))
+> +		inode = NULL;
 > +
-> +	is_ext = is_attr_ext(attr);
+> +	if (!inode) {
+> +		/* Try to use mft copy */
+> +		u64 t64 = sbi->mft.lbo;
 > +
-> +	if (!len) {
-> +		alen = 0;
-> +	} else if (is_ext) {
-> +		if (!run_add_entry(run, 0, SPARSE_LCN, len)) {
-> +			err = -ENOMEM;
+> +		sbi->mft.lbo = sbi->mft.lbo2;
+> +		inode = ntfs_iget5(sb, &ref, NULL);
+> +		sbi->mft.lbo = t64;
+> +		if (IS_ERR(inode))
+> +			inode = NULL;
+> +	}
+> +
+> +	if (!inode) {
+> +		err = -EINVAL;
+> +		ntfs_err(sb, "Failed to load $MFT.");
+> +		goto out;
+> +	}
+> +
+> +	sbi->mft.ni = ntfs_i(inode);
+> +
+> +	err = ni_load_all_mi(sbi->mft.ni);
+> +	if (!err)
+> +		err = log_replay(ni);
+> +
+> +	iput(inode);
+> +	sbi->mft.ni = NULL;
+> +
+> +	sync_blockdev(sb->s_bdev);
+> +	invalidate_bdev(sb->s_bdev);
+> +
+> +	/* reinit MFT */
+> +	if (sbi->flags & NTFS_FLAGS_NEED_REPLAY) {
+> +		err = 0;
+> +		goto out;
+> +	}
+> +
+> +	if (sb_rdonly(sb))
+> +		goto out;
+> +
+> +	idx = 0;
+> +	while (run_get_entry(&ni->file.run, idx++, NULL, &lcn, &len)) {
+> +		u64 lbo = (u64)lcn << sbi->cluster_bits;
+> +		u64 bytes = (u64)len << sbi->cluster_bits;
+> +
+> +		err = ntfs_sb_write(sb, lbo, bytes, NULL, 0);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +out:
+> +	sbi->flags &= ~NTFS_FLAGS_LOG_REPLAYING;
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * ntfs_query_def
+> + *
+> + * returns current ATTR_DEF_ENTRY for given attribute type
+> + */
+> +const struct ATTR_DEF_ENTRY *ntfs_query_def(struct ntfs_sb_info *sbi,
+> +					    enum ATTR_TYPE type)
+> +{
+> +	int type_in = le32_to_cpu(type);
+> +	size_t min_idx = 0;
+> +	size_t max_idx = sbi->def_entries - 1;
+> +
+> +	while (min_idx <= max_idx) {
+> +		size_t i = min_idx + ((max_idx - min_idx) >> 1);
+> +		const struct ATTR_DEF_ENTRY *entry = sbi->def_table + i;
+> +		int diff = le32_to_cpu(entry->type) - type_in;
+> +
+> +		if (!diff)
+> +			return entry;
+> +		if (diff < 0)
+> +			min_idx = i + 1;
+> +		else if (i)
+> +			max_idx = i - 1;
+> +		else
+> +			return NULL;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +/*
+> + * ntfs_look_for_free_space
+> + *
+> + * looks for a free space in bitmap
+> + */
+> +int ntfs_look_for_free_space(struct ntfs_sb_info *sbi, CLST lcn, CLST len,
+> +			     CLST *new_lcn, CLST *new_len,
+> +			     enum ALLOCATE_OPT opt)
+> +{
+> +	int err;
+> +	struct super_block *sb = sbi->sb;
+> +	size_t a_lcn, zlen, zeroes, zlcn, zlen2, ztrim, new_zlen;
+> +	struct wnd_bitmap *wnd = &sbi->used.bitmap;
+> +
+> +	down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
+> +	if (opt & ALLOCATE_MFT) {
+> +		CLST alen;
+> +
+> +		zlen = wnd_zone_len(wnd);
+> +
+> +		if (!zlen) {
+> +			err = ntfs_refresh_zone(sbi);
+> +			if (err)
+> +				goto out;
+> +
+> +			zlen = wnd_zone_len(wnd);
+> +
+> +			if (!zlen) {
+> +				ntfs_err(sbi->sb,
+> +					 "no free space to extend mft");
+> +				err = -ENOSPC;
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		lcn = wnd_zone_bit(wnd);
+> +		alen = zlen > len ? len : zlen;
+> +
+> +		wnd_zone_set(wnd, lcn + alen, zlen - alen);
+> +
+> +		err = wnd_set_used(wnd, lcn, alen);
+> +		if (err)
+> +			goto out;
+> +
+> +		*new_lcn = lcn;
+> +		*new_len = alen;
+> +		goto ok;
+> +	}
+> +
+> +	/*
+> +	 * 'Cause cluster 0 is always used this value means that we should use
+> +	 * cached value of 'next_free_lcn' to improve performance
+> +	 */
+> +	if (!lcn)
+> +		lcn = sbi->used.next_free_lcn;
+> +
+> +	if (lcn >= wnd->nbits)
+> +		lcn = 0;
+> +
+> +	*new_len = wnd_find(wnd, len, lcn, BITMAP_FIND_MARK_AS_USED, &a_lcn);
+> +	if (*new_len) {
+> +		*new_lcn = a_lcn;
+> +		goto ok;
+> +	}
+> +
+> +	/* Try to use clusters from MftZone */
+> +	zlen = wnd_zone_len(wnd);
+> +	zeroes = wnd_zeroes(wnd);
+> +
+> +	/* Check too big request */
+> +	if (len > zeroes + zlen)
+> +		goto no_space;
+> +
+> +	if (zlen <= NTFS_MIN_MFT_ZONE)
+> +		goto no_space;
+> +
+> +	/* How many clusters to cat from zone */
+> +	zlcn = wnd_zone_bit(wnd);
+> +	zlen2 = zlen >> 1;
+> +	ztrim = len > zlen ? zlen : (len > zlen2 ? len : zlen2);
+> +	new_zlen = zlen - ztrim;
+> +
+> +	if (new_zlen < NTFS_MIN_MFT_ZONE) {
+> +		new_zlen = NTFS_MIN_MFT_ZONE;
+> +		if (new_zlen > zlen)
+> +			new_zlen = zlen;
+> +	}
+> +
+> +	wnd_zone_set(wnd, zlcn, new_zlen);
+> +
+> +	/* allocate continues clusters */
+> +	*new_len =
+> +		wnd_find(wnd, len, 0,
+> +			 BITMAP_FIND_MARK_AS_USED | BITMAP_FIND_FULL, &a_lcn);
+> +	if (*new_len) {
+> +		*new_lcn = a_lcn;
+> +		goto ok;
+> +	}
+> +
+> +no_space:
+> +	up_write(&wnd->rw_lock);
+> +
+> +	return -ENOSPC;
+> +
+> +ok:
+> +	err = 0;
+> +
+> +	ntfs_unmap_meta(sb, *new_lcn, *new_len);
+> +
+> +	if (opt & ALLOCATE_MFT)
+> +		goto out;
+> +
+> +	/* Set hint for next requests */
+> +	sbi->used.next_free_lcn = *new_lcn + *new_len;
+> +
+> +out:
+> +	up_write(&wnd->rw_lock);
+> +	return err;
+> +}
+> +
+> +/*
+> + * ntfs_extend_mft
+> + *
+> + * allocates additional MFT records
+> + * sbi->mft.bitmap is locked for write
+> + *
+> + * NOTE: recursive:
+> + *	ntfs_look_free_mft ->
+> + *	ntfs_extend_mft ->
+> + *	attr_set_size ->
+> + *	ni_insert_nonresident ->
+> + *	ni_insert_attr ->
+> + *	ni_ins_attr_ext ->
+> + *	ntfs_look_free_mft ->
+> + *	ntfs_extend_mft
+> + * To avoid recursive always allocate space for two new mft records
+> + * see attrib.c: "at least two mft to avoid recursive loop"
+> + */
+> +static int ntfs_extend_mft(struct ntfs_sb_info *sbi)
+> +{
+> +	int err;
+> +	struct ntfs_inode *ni = sbi->mft.ni;
+> +	size_t new_mft_total;
+> +	u64 new_mft_bytes, new_bitmap_bytes;
+> +	struct ATTRIB *attr;
+> +	struct wnd_bitmap *wnd = &sbi->mft.bitmap;
+> +
+> +	new_mft_total = (wnd->nbits + MFT_INCREASE_CHUNK + 127) & (CLST)~127;
+> +	new_mft_bytes = (u64)new_mft_total << sbi->record_bits;
+> +
+> +	/* Step 1: Resize $MFT::DATA */
+> +	down_write(&ni->file.run_lock);
+> +	err = attr_set_size(ni, ATTR_DATA, NULL, 0, &ni->file.run,
+> +			    new_mft_bytes, NULL, false, &attr);
+> +
+> +	if (err) {
+> +		up_write(&ni->file.run_lock);
+> +		goto out;
+> +	}
+> +
+> +	attr->nres.valid_size = attr->nres.data_size;
+> +	new_mft_total = le64_to_cpu(attr->nres.alloc_size) >> sbi->record_bits;
+> +	ni->mi.dirty = true;
+> +
+> +	/* Step 2: Resize $MFT::BITMAP */
+> +	new_bitmap_bytes = bitmap_size(new_mft_total);
+> +
+> +	err = attr_set_size(ni, ATTR_BITMAP, NULL, 0, &sbi->mft.bitmap.run,
+> +			    new_bitmap_bytes, &new_bitmap_bytes, true, NULL);
+> +
+> +	/* Refresh Mft Zone if necessary */
+> +	down_write_nested(&sbi->used.bitmap.rw_lock, BITMAP_MUTEX_CLUSTERS);
+> +
+> +	ntfs_refresh_zone(sbi);
+> +
+> +	up_write(&sbi->used.bitmap.rw_lock);
+> +	up_write(&ni->file.run_lock);
+> +
+> +	if (err)
+> +		goto out;
+> +
+> +	err = wnd_extend(wnd, new_mft_total);
+> +
+> +	if (err)
+> +		goto out;
+> +
+> +	ntfs_clear_mft_tail(sbi, sbi->mft.used, new_mft_total);
+> +
+> +	err = _ni_write_inode(&ni->vfs_inode, 0);
+> +out:
+> +	return err;
+> +}
+> +
+> +/*
+> + * ntfs_look_free_mft
+> + *
+> + * looks for a free MFT record
+> + */
+> +int ntfs_look_free_mft(struct ntfs_sb_info *sbi, CLST *rno, bool mft,
+> +		       struct ntfs_inode *ni, struct mft_inode **mi)
+> +{
+> +	int err = 0;
+> +	size_t zbit, zlen, from, to, fr;
+> +	size_t mft_total;
+> +	struct MFT_REF ref;
+> +	struct super_block *sb = sbi->sb;
+> +	struct wnd_bitmap *wnd = &sbi->mft.bitmap;
+> +	u32 ir;
+> +
+> +	static_assert(sizeof(sbi->mft.reserved_bitmap) * 8 >=
+> +		      MFT_REC_FREE - MFT_REC_RESERVED);
+> +
+> +	if (!mft)
+> +		down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_MFT);
+> +
+> +	zlen = wnd_zone_len(wnd);
+> +
+> +	/* Always reserve space for MFT */
+> +	if (zlen) {
+> +		if (mft) {
+> +			zbit = wnd_zone_bit(wnd);
+> +			*rno = zbit;
+> +			wnd_zone_set(wnd, zbit + 1, zlen - 1);
+> +		}
+> +		goto found;
+> +	}
+> +
+> +	/* No MFT zone. find the nearest to '0' free MFT */
+> +	if (!wnd_find(wnd, 1, MFT_REC_FREE, 0, &zbit)) {
+> +		/* Resize MFT */
+> +		mft_total = wnd->nbits;
+> +
+> +		err = ntfs_extend_mft(sbi);
+> +		if (!err) {
+> +			zbit = mft_total;
+> +			goto reserve_mft;
+> +		}
+> +
+> +		if (!mft || MFT_REC_FREE == sbi->mft.next_reserved)
+> +			goto out;
+> +
+> +		err = 0;
+> +
+> +		/*
+> +		 * Look for free record reserved area [11-16) ==
+> +		 * [MFT_REC_RESERVED, MFT_REC_FREE ) MFT bitmap always
+> +		 * marks it as used
+> +		 */
+> +		if (!sbi->mft.reserved_bitmap) {
+> +			/* Once per session create internal bitmap for 5 bits */
+> +			sbi->mft.reserved_bitmap = 0xFF;
+> +
+> +			ref.high = 0;
+> +			for (ir = MFT_REC_RESERVED; ir < MFT_REC_FREE; ir++) {
+> +				struct inode *i;
+> +				struct ntfs_inode *ni;
+> +				struct MFT_REC *mrec;
+> +
+> +				ref.low = cpu_to_le32(ir);
+> +				ref.seq = cpu_to_le16(ir);
+> +
+> +				i = ntfs_iget5(sb, &ref, NULL);
+> +				if (IS_ERR(i)) {
+> +next:
+> +					ntfs_notice(
+> +						sb,
+> +						"Invalid reserved record %x",
+> +						ref.low);
+> +					continue;
+> +				}
+> +				if (is_bad_inode(i)) {
+> +					iput(i);
+> +					goto next;
+> +				}
+> +
+> +				ni = ntfs_i(i);
+> +
+> +				mrec = ni->mi.mrec;
+> +
+> +				if (!is_rec_base(mrec))
+> +					goto next;
+> +
+> +				if (mrec->hard_links)
+> +					goto next;
+> +
+> +				if (!ni_std(ni))
+> +					goto next;
+> +
+> +				if (ni_find_attr(ni, NULL, NULL, ATTR_NAME,
+> +						 NULL, 0, NULL, NULL))
+> +					goto next;
+> +
+> +				__clear_bit(ir - MFT_REC_RESERVED,
+> +					    &sbi->mft.reserved_bitmap);
+> +			}
+> +		}
+> +
+> +		/* Scan 5 bits for zero. Bit 0 == MFT_REC_RESERVED */
+> +		zbit = find_next_zero_bit(&sbi->mft.reserved_bitmap,
+> +					  MFT_REC_FREE, MFT_REC_RESERVED);
+> +		if (zbit >= MFT_REC_FREE) {
+> +			sbi->mft.next_reserved = MFT_REC_FREE;
 > +			goto out;
 > +		}
-> +		alen = len;
-> +	} else {
-> +		err = attr_allocate_clusters(sbi, run, 0, 0, len, NULL,
-> +					     ALLOCATE_DEF, &alen, 0, NULL);
-> +		if (err)
-> +			goto out;
 > +
-> +		err = ntfs_sb_write_run(sbi, run, 0, resident_data(attr),
-> +					rsize);
-> +		if (err)
-> +			goto out;
+> +		zlen = 1;
+> +		sbi->mft.next_reserved = zbit;
+> +	} else {
+> +reserve_mft:
+> +		zlen = zbit == MFT_REC_FREE ? (MFT_REC_USER - MFT_REC_FREE) : 4;
+> +		if (zbit + zlen > wnd->nbits)
+> +			zlen = wnd->nbits - zbit;
+> +
+> +		while (zlen > 1 && !wnd_is_free(wnd, zbit, zlen))
+> +			zlen -= 1;
+> +
+> +		/* [zbit, zbit + zlen) will be used for Mft itself */
+> +		from = sbi->mft.used;
+> +		if (from < zbit)
+> +			from = zbit;
+> +		to = zbit + zlen;
+> +		if (from < to) {
+> +			ntfs_clear_mft_tail(sbi, from, to);
+> +			sbi->mft.used = to;
+> +		}
 > +	}
 > +
-> +	attr_s = ntfs_memdup(attr, asize);
-> +	if (!attr_s) {
+> +	if (mft) {
+> +		*rno = zbit;
+> +		zbit += 1;
+> +		zlen -= 1;
+> +	}
+> +
+> +	wnd_zone_set(wnd, zbit, zlen);
+> +
+> +found:
+> +	if (!mft) {
+> +		/* The request to get record for general purpose */
+> +		if (sbi->mft.next_free < MFT_REC_USER)
+> +			sbi->mft.next_free = MFT_REC_USER;
+> +
+> +		for (;;) {
+> +			if (sbi->mft.next_free >= sbi->mft.bitmap.nbits) {
+> +			} else if (!wnd_find(wnd, 1, MFT_REC_USER, 0, &fr)) {
+> +				sbi->mft.next_free = sbi->mft.bitmap.nbits;
+> +			} else {
+> +				*rno = fr;
+> +				sbi->mft.next_free = *rno + 1;
+> +				break;
+> +			}
+> +
+> +			err = ntfs_extend_mft(sbi);
+> +			if (err)
+> +				goto out;
+> +		}
+> +	}
+> +
+> +	if (ni && !ni_add_subrecord(ni, *rno, mi)) {
 > +		err = -ENOMEM;
 > +		goto out;
 > +	}
 > +
-> +	/*verify(mi_remove_attr(mi, attr));*/
-> +	used -= asize;
-> +	memmove(attr, Add2Ptr(attr, asize), used - aoff);
-> +	rec->used = cpu_to_le32(used);
-> +	mi->dirty = true;
-> +	if (le)
-> +		al_remove_le(ni, le);
-> +
-> +	err = ni_insert_nonresident(ni, attr_s->type, attr_name(attr_s),
-> +				    attr_s->name_len, run, 0, alen,
-> +				    attr_s->flags, &attr, NULL);
-> +	if (err)
-> +		goto out;
-> +
-> +	ntfs_free(attr_s);
-> +	attr->nres.data_size = cpu_to_le64(rsize);
-> +	attr->nres.valid_size = attr->nres.data_size;
-> +
-> +	*ins_attr = attr;
-> +
-> +	if (attr_s->type == ATTR_DATA && !attr_s->name_len &&
-> +	    run == &ni->file.run) {
-> +		ni->ni_flags &= ~NI_FLAG_RESIDENT;
-> +	}
-> +
-> +	/* Resident attribute becomes non resident */
-> +	return 0;
+> +	/* We have found a record that are not reserved for next MFT */
+> +	if (*rno >= MFT_REC_FREE)
+> +		wnd_set_used(wnd, *rno, 1);
+> +	else if (*rno >= MFT_REC_RESERVED && sbi->mft.reserved_bitmap_inited)
+> +		__set_bit(*rno - MFT_REC_RESERVED, &sbi->mft.reserved_bitmap);
 > +
 > +out:
-> +	/* undo: do not trim new allocated clusters */
-> +	run_deallocate(sbi, run, false);
-> +	run_close(run);
-> +
-> +	if (attr_s) {
-> +		memmove(next, Add2Ptr(rec, aoff), used - aoff);
-> +		memcpy(Add2Ptr(rec, aoff), attr_s, asize);
-> +		rec->used = cpu_to_le32(used + asize);
-> +		mi->dirty = true;
-> +		ntfs_free(attr_s);
-> +		/*reinsert le*/
-> +	}
+> +	if (!mft)
+> +		up_write(&wnd->rw_lock);
 > +
 > +	return err;
 > +}
 > +
 > +/*
-> + * attr_set_size
+> + * ntfs_mark_rec_free
 > + *
-> + * change the size of attribute
-> + * Extend:
-> + *   - sparse/compressed: no allocated clusters
-> + *   - normal: append allocated and preallocated new clusters
-> + * Shrink:
-> + *   - no deallocate if keep_prealloc is set
+> + * marks record as free
 > + */
-> +int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
-> +		  const __le16 *name, u8 name_len, struct runs_tree *run,
-> +		  u64 new_size, const u64 *new_valid, bool keep_prealloc,
-> +		  struct ATTRIB **ret)
+> +void ntfs_mark_rec_free(struct ntfs_sb_info *sbi, CLST rno)
 > +{
-> +	int err = 0;
-> +	struct ntfs_sb_info *sbi = ni->mi.sbi;
-> +	u8 cluster_bits = sbi->cluster_bits;
-> +	bool is_mft =
-> +		ni->mi.rno == MFT_REC_MFT && type == ATTR_DATA && !name_len;
-> +	u64 old_valid, old_size, old_alloc, new_alloc, new_alloc_tmp;
-> +	struct ATTRIB *attr, *attr_b;
-> +	struct ATTR_LIST_ENTRY *le, *le_b;
-> +	struct mft_inode *mi, *mi_b;
-> +	CLST alen, vcn, lcn, new_alen, old_alen, svcn, evcn;
-> +	CLST next_svcn, pre_alloc = -1, done = 0;
-> +	bool is_ext;
-> +	u32 align;
-> +	struct MFT_REC *rec;
+> +	struct wnd_bitmap *wnd = &sbi->mft.bitmap;
 > +
-> +again:
-> +	le_b = NULL;
-> +	attr_b = ni_find_attr(ni, NULL, &le_b, type, name, name_len, NULL,
-> +			      &mi_b);
-> +	if (!attr_b) {
-> +		err = -ENOENT;
+> +	down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_MFT);
+> +	if (rno >= wnd->nbits)
 > +		goto out;
+> +
+> +	if (rno >= MFT_REC_FREE) {
+> +		if (!wnd_is_used(wnd, rno, 1))
+> +			ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
+> +		else
+> +			wnd_set_free(wnd, rno, 1);
+> +	} else if (rno >= MFT_REC_RESERVED && sbi->mft.reserved_bitmap_inited) {
+> +		__clear_bit(rno - MFT_REC_RESERVED, &sbi->mft.reserved_bitmap);
 > +	}
 > +
-> +	if (!attr_b->non_res) {
-> +		err = attr_set_size_res(ni, attr_b, le_b, mi_b, new_size, run,
-> +					&attr_b);
-> +		if (err || !attr_b->non_res)
+> +	if (rno < wnd_zone_bit(wnd))
+> +		wnd_zone_set(wnd, rno, 1);
+> +	else if (rno < sbi->mft.next_free && rno >= MFT_REC_USER)
+> +		sbi->mft.next_free = rno;
+> +
+> +out:
+> +	up_write(&wnd->rw_lock);
+> +}
+> +
+> +/*
+> + * ntfs_clear_mft_tail
+> + *
+> + * formats empty records [from, to)
+> + * sbi->mft.bitmap is locked for write
+> + */
+> +int ntfs_clear_mft_tail(struct ntfs_sb_info *sbi, size_t from, size_t to)
+> +{
+> +	int err;
+> +	u32 rs;
+> +	u64 vbo;
+> +	struct runs_tree *run;
+> +	struct ntfs_inode *ni;
+> +
+> +	if (from >= to)
+> +		return 0;
+> +
+> +	rs = sbi->record_size;
+> +	ni = sbi->mft.ni;
+> +	run = &ni->file.run;
+> +
+> +	down_read(&ni->file.run_lock);
+> +	vbo = (u64)from * rs;
+> +	for (; from < to; from++, vbo += rs) {
+> +		struct ntfs_buffers nb;
+> +
+> +		err = ntfs_get_bh(sbi, run, vbo, rs, &nb);
+> +		if (err)
 > +			goto out;
 > +
-> +		/* layout of records may be changed, so do a full search */
-> +		goto again;
+> +		err = ntfs_write_bh(sbi, &sbi->new_rec->rhdr, &nb, 0);
+> +		nb_put(&nb);
+> +		if (err)
+> +			goto out;
 > +	}
 > +
-> +	is_ext = is_attr_ext(attr_b);
+> +out:
+> +	sbi->mft.used = from;
+> +	up_read(&ni->file.run_lock);
+> +	return err;
+> +}
 > +
-> +again_1:
+> +/*
+> + * ntfs_refresh_zone
+> + *
+> + * refreshes Mft zone
+> + * sbi->used.bitmap is locked for rw
+> + * sbi->mft.bitmap is locked for write
+> + * sbi->mft.ni->file.run_lock for write
+> + */
+> +int ntfs_refresh_zone(struct ntfs_sb_info *sbi)
+> +{
+> +	CLST zone_limit, zone_max, lcn, vcn, len;
+> +	size_t lcn_s, zlen;
+> +	struct wnd_bitmap *wnd = &sbi->used.bitmap;
+> +	struct ntfs_inode *ni = sbi->mft.ni;
 > +
-> +	if (is_ext) {
-> +		align = 1u << (attr_b->nres.c_unit + cluster_bits);
-> +		if (is_attr_sparsed(attr_b))
-> +			keep_prealloc = false;
-> +	} else {
-> +		align = sbi->cluster_size;
+> +	/* Do not change anything unless we have non empty Mft zone */
+> +	if (wnd_zone_len(wnd))
+> +		return 0;
+> +
+> +	/*
+> +	 * Compute the mft zone at two steps
+> +	 * It would be nice if we are able to allocate
+> +	 * 1/8 of total clusters for MFT but not more then 512 MB
+> +	 */
+> +	zone_limit = (512 * 1024 * 1024) >> sbi->cluster_bits;
+> +	zone_max = wnd->nbits >> 3;
+> +	if (zone_max > zone_limit)
+> +		zone_max = zone_limit;
+> +
+> +	vcn = bytes_to_cluster(sbi,
+> +			       (u64)sbi->mft.bitmap.nbits << sbi->record_bits);
+> +
+> +	if (!run_lookup_entry(&ni->file.run, vcn - 1, &lcn, &len, NULL))
+> +		lcn = SPARSE_LCN;
+> +
+> +	/* We should always find Last Lcn for MFT */
+> +	if (lcn == SPARSE_LCN)
+> +		return -EINVAL;
+> +
+> +	lcn_s = lcn + 1;
+> +
+> +	/* Try to allocate clusters after last MFT run */
+> +	zlen = wnd_find(wnd, zone_max, lcn_s, 0, &lcn_s);
+> +	if (!zlen) {
+> +		ntfs_notice(sbi->sb, "MftZone: unavailable");
+> +		return 0;
 > +	}
 > +
-> +	old_valid = le64_to_cpu(attr_b->nres.valid_size);
-> +	old_size = le64_to_cpu(attr_b->nres.data_size);
-> +	old_alloc = le64_to_cpu(attr_b->nres.alloc_size);
-> +	old_alen = old_alloc >> cluster_bits;
+> +	/* Truncate too large zone */
+> +	wnd_zone_set(wnd, lcn_s, zlen);
 > +
-> +	new_alloc = (new_size + align - 1) & ~(u64)(align - 1);
-> +	new_alen = new_alloc >> cluster_bits;
+> +	return 0;
+> +}
 > +
-> +	if (keep_prealloc && is_ext)
-> +		keep_prealloc = false;
+> +/*
+> + * ntfs_update_mftmirr
+> + *
+> + * updates $MFTMirr data
+> + */
+> +int ntfs_update_mftmirr(struct ntfs_sb_info *sbi, int wait)
+> +{
+> +	int err;
+> +	struct super_block *sb = sbi->sb;
+> +	u32 blocksize = sb->s_blocksize;
+> +	sector_t block1, block2;
+> +	u32 bytes;
 > +
-> +	if (keep_prealloc && new_size < old_size) {
-> +		attr_b->nres.data_size = cpu_to_le64(new_size);
-> +		mi_b->dirty = true;
-> +		goto ok;
+> +	if (!(sbi->flags & NTFS_FLAGS_MFTMIRR))
+> +		return 0;
+> +
+> +	err = 0;
+> +	bytes = sbi->mft.recs_mirr << sbi->record_bits;
+> +	block1 = sbi->mft.lbo >> sb->s_blocksize_bits;
+> +	block2 = sbi->mft.lbo2 >> sb->s_blocksize_bits;
+> +
+> +	for (; bytes >= blocksize; bytes -= blocksize) {
+> +		struct buffer_head *bh1, *bh2;
+> +
+> +		bh1 = sb_bread(sb, block1++);
+> +		if (!bh1) {
+> +			err = -EIO;
+> +			goto out;
+> +		}
+> +
+> +		bh2 = sb_getblk(sb, block2++);
+> +		if (!bh2) {
+> +			put_bh(bh1);
+> +			err = -EIO;
+> +			goto out;
+> +		}
+> +
+> +		if (buffer_locked(bh2))
+> +			__wait_on_buffer(bh2);
+> +
+> +		lock_buffer(bh2);
+> +		memcpy(bh2->b_data, bh1->b_data, blocksize);
+> +		set_buffer_uptodate(bh2);
+> +		mark_buffer_dirty(bh2);
+> +		unlock_buffer(bh2);
+> +
+> +		put_bh(bh1);
+> +		bh1 = NULL;
+> +
+> +		if (wait)
+> +			err = sync_dirty_buffer(bh2);
+> +
+> +		put_bh(bh2);
+> +		if (err)
+> +			goto out;
 > +	}
 > +
-> +	vcn = old_alen - 1;
+> +	sbi->flags &= ~NTFS_FLAGS_MFTMIRR;
 > +
-> +	svcn = le64_to_cpu(attr_b->nres.svcn);
-> +	evcn = le64_to_cpu(attr_b->nres.evcn);
+> +out:
+> +	return err;
+> +}
 > +
-> +	if (svcn <= vcn && vcn <= evcn) {
-> +		attr = attr_b;
-> +		le = le_b;
-> +		mi = mi_b;
-> +	} else if (!le_b) {
+> +/*
+> + * ntfs_set_state
+> + *
+> + * mount: ntfs_set_state(NTFS_DIRTY_DIRTY)
+> + * umount: ntfs_set_state(NTFS_DIRTY_CLEAR)
+> + * ntfs error: ntfs_set_state(NTFS_DIRTY_ERROR)
+> + */
+> +int ntfs_set_state(struct ntfs_sb_info *sbi, enum NTFS_DIRTY_FLAGS dirty)
+> +{
+> +	int err;
+> +	struct ATTRIB *attr;
+> +	struct VOLUME_INFO *info;
+> +	struct mft_inode *mi;
+> +	struct ntfs_inode *ni;
+> +
+> +	/*
+> +	 * do not change state if fs was real_dirty
+> +	 * do not change state if fs already dirty(clear)
+> +	 * do not change any thing if mounted read only
+> +	 */
+> +	if (sbi->volume.real_dirty || sb_rdonly(sbi->sb))
+> +		return 0;
+> +
+> +	/* Check cached value */
+> +	if ((dirty == NTFS_DIRTY_CLEAR ? 0 : VOLUME_FLAG_DIRTY) ==
+> +	    (sbi->volume.flags & VOLUME_FLAG_DIRTY))
+> +		return 0;
+> +
+> +	ni = sbi->volume.ni;
+> +	if (!ni)
+> +		return -EINVAL;
+> +
+> +	inode_lock(&ni->vfs_inode);
+> +
+> +	attr = ni_find_attr(ni, NULL, NULL, ATTR_VOL_INFO, NULL, 0, NULL, &mi);
+> +	if (!attr) {
 > +		err = -EINVAL;
 > +		goto out;
-> +	} else {
-> +		le = le_b;
-> +		attr = ni_find_attr(ni, attr_b, &le, type, name, name_len, &vcn,
-> +				    &mi);
-> +		if (!attr) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +next_le_1:
-> +		svcn = le64_to_cpu(attr->nres.svcn);
-> +		evcn = le64_to_cpu(attr->nres.evcn);
 > +	}
 > +
-> +next_le:
-> +	rec = mi->mrec;
-> +
-> +	err = attr_load_runs(attr, ni, run);
-> +	if (err)
+> +	info = resident_data_ex(attr, SIZEOF_ATTRIBUTE_VOLUME_INFO);
+> +	if (!info) {
+> +		err = -EINVAL;
 > +		goto out;
+> +	}
 > +
-> +	if (new_size > old_size) {
-> +		CLST to_allocate;
-> +		size_t free;
+> +	switch (dirty) {
+> +	case NTFS_DIRTY_ERROR:
+> +		ntfs_notice(sbi->sb, "Mark volume as dirty due to NTFS errors");
+> +		sbi->volume.real_dirty = true;
+> +		fallthrough;
+> +	case NTFS_DIRTY_DIRTY:
+> +		info->flags |= VOLUME_FLAG_DIRTY;
+> +		break;
+> +	case NTFS_DIRTY_CLEAR:
+> +		info->flags &= ~VOLUME_FLAG_DIRTY;
+> +		break;
+> +	}
+> +	/* cache current volume flags*/
+> +	sbi->volume.flags = info->flags;
+> +	mi->dirty = true;
+> +	err = 0;
 > +
-> +		if (new_alloc <= old_alloc) {
-> +			attr_b->nres.data_size = cpu_to_le64(new_size);
-> +			mi_b->dirty = true;
-> +			goto ok;
-> +		}
+> +out:
+> +	inode_unlock(&ni->vfs_inode);
+> +	if (err)
+> +		return err;
 > +
-> +		to_allocate = new_alen - old_alen;
-> +add_alloc_in_same_attr_seg:
-> +		lcn = 0;
-> +		if (is_mft) {
-> +			/* mft allocates clusters from mftzone */
-> +			pre_alloc = 0;
-> +		} else if (is_ext) {
-> +			/* no preallocate for sparse/compress */
-> +			pre_alloc = 0;
-> +		} else if (pre_alloc == -1) {
-> +			pre_alloc = 0;
-> +			if (type == ATTR_DATA && !name_len &&
-> +			    sbi->options.prealloc) {
-> +				CLST new_alen2 = bytes_to_cluster(
-> +					sbi, get_pre_allocated(new_size));
-> +				pre_alloc = new_alen2 - new_alen;
+> +	mark_inode_dirty(&ni->vfs_inode);
+> +	/*verify(!ntfs_update_mftmirr()); */
+> +	err = sync_inode_metadata(&ni->vfs_inode, 1);
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * security_hash
+> + *
+> + * calculates a hash of security descriptor
+> + */
+> +static inline __le32 security_hash(const void *sd, size_t bytes)
+> +{
+> +	u32 hash = 0;
+> +	const __le32 *ptr = sd;
+> +
+> +	bytes >>= 2;
+> +	while (bytes--)
+> +		hash = ((hash >> 0x1D) | (hash << 3)) + le32_to_cpu(*ptr++);
+> +	return cpu_to_le32(hash);
+> +}
+> +
+> +int ntfs_sb_read(struct super_block *sb, u64 lbo, size_t bytes, void *buffer)
+> +{
+> +	struct block_device *bdev = sb->s_bdev;
+> +	u32 blocksize = sb->s_blocksize;
+> +	u64 block = lbo >> sb->s_blocksize_bits;
+> +	u32 off = lbo & (blocksize - 1);
+> +	u32 op = blocksize - off;
+> +
+> +	for (; bytes; block += 1, off = 0, op = blocksize) {
+> +		struct buffer_head *bh = __bread(bdev, block, blocksize);
+> +
+> +		if (!bh)
+> +			return -EIO;
+> +
+> +		if (op > bytes)
+> +			op = bytes;
+> +
+> +		memcpy(buffer, bh->b_data + off, op);
+> +
+> +		put_bh(bh);
+> +
+> +		bytes -= op;
+> +		buffer = Add2Ptr(buffer, op);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int ntfs_sb_write(struct super_block *sb, u64 lbo, size_t bytes,
+> +		  const void *buf, int wait)
+> +{
+> +	u32 blocksize = sb->s_blocksize;
+> +	struct block_device *bdev = sb->s_bdev;
+> +	sector_t block = lbo >> sb->s_blocksize_bits;
+> +	u32 off = lbo & (blocksize - 1);
+> +	u32 op = blocksize - off;
+> +	struct buffer_head *bh;
+> +
+> +	if (!wait && (sb->s_flags & SB_SYNCHRONOUS))
+> +		wait = 1;
+> +
+> +	for (; bytes; block += 1, off = 0, op = blocksize) {
+> +		if (op > bytes)
+> +			op = bytes;
+> +
+> +		if (op < blocksize) {
+> +			bh = __bread(bdev, block, blocksize);
+> +			if (!bh) {
+> +				ntfs_err(sb, "failed to read block %llx",
+> +					 (u64)block);
+> +				return -EIO;
 > +			}
-> +
-> +			/* Get the last lcn to allocate from */
-> +			if (old_alen &&
-> +			    !run_lookup_entry(run, vcn, &lcn, NULL, NULL)) {
-> +				lcn = SPARSE_LCN;
-> +			}
-> +
-> +			if (lcn == SPARSE_LCN)
-> +				lcn = 0;
-> +			else if (lcn)
-> +				lcn += 1;
-> +
-> +			free = wnd_zeroes(&sbi->used.bitmap);
-> +			if (to_allocate > free) {
-> +				err = -ENOSPC;
-> +				goto out;
-> +			}
-> +
-> +			if (pre_alloc && to_allocate + pre_alloc > free)
-> +				pre_alloc = 0;
-> +		}
-> +
-> +		vcn = old_alen;
-> +
-> +		if (is_ext) {
-> +			if (!run_add_entry(run, vcn, SPARSE_LCN, to_allocate)) {
-> +				err = -ENOMEM;
-> +				goto out;
-> +			}
-> +			alen = to_allocate;
 > +		} else {
-> +			/* ~3 bytes per fragment */
-> +			err = attr_allocate_clusters(
-> +				sbi, run, vcn, lcn, to_allocate, &pre_alloc,
-> +				is_mft ? ALLOCATE_MFT : 0, &alen,
-> +				is_mft ? 0 :
-> +					 (sbi->record_size -
-> +					  le32_to_cpu(rec->used) + 8) /
-> +							 3 +
-> +						 1,
-> +				NULL);
-> +			if (err)
-> +				goto out;
+> +			bh = __getblk(bdev, block, blocksize);
+> +			if (!bh)
+> +				return -ENOMEM;
 > +		}
 > +
-> +		done += alen;
-> +		vcn += alen;
-> +		if (to_allocate > alen)
-> +			to_allocate -= alen;
-> +		else
-> +			to_allocate = 0;
+> +		if (buffer_locked(bh))
+> +			__wait_on_buffer(bh);
 > +
-> +pack_runs:
-> +		err = mi_pack_runs(mi, attr, run, vcn - svcn);
+> +		lock_buffer(bh);
+> +		if (buf) {
+> +			memcpy(bh->b_data + off, buf, op);
+> +			buf = Add2Ptr(buf, op);
+> +		} else {
+> +			memset(bh->b_data + off, -1, op);
+> +		}
+> +
+> +		set_buffer_uptodate(bh);
+> +		mark_buffer_dirty(bh);
+> +		unlock_buffer(bh);
+> +
+> +		if (wait) {
+> +			int err = sync_dirty_buffer(bh);
+> +
+> +			if (err) {
+> +				ntfs_err(
+> +					sb,
+> +					"failed to sync buffer at block %llx, error %d",
+> +					(u64)block, err);
+> +				put_bh(bh);
+> +				return err;
+> +			}
+> +		}
+> +
+> +		put_bh(bh);
+> +
+> +		bytes -= op;
+> +	}
+> +	return 0;
+> +}
+> +
+> +int ntfs_sb_write_run(struct ntfs_sb_info *sbi, struct runs_tree *run, u64 vbo,
+> +		      const void *buf, size_t bytes)
+> +{
+> +	struct super_block *sb = sbi->sb;
+> +	u8 cluster_bits = sbi->cluster_bits;
+> +	u32 off = vbo & sbi->cluster_mask;
+> +	CLST lcn, clen;
+> +	u64 lbo, len;
+> +	size_t idx;
+> +
+> +	if (!run_lookup_entry(run, vbo >> cluster_bits, &lcn, &clen, &idx))
+> +		return -ENOENT;
+> +
+> +	if (lcn == SPARSE_LCN)
+> +		return -EINVAL;
+> +
+> +	lbo = ((u64)lcn << cluster_bits) + off;
+> +	len = ((u64)clen << cluster_bits) - off;
+> +
+> +	for (;;) {
+> +		u32 op = len < bytes ? len : bytes;
+> +		int err = ntfs_sb_write(sb, lbo, op, buf, 0);
+> +
 > +		if (err)
-> +			goto out;
+> +			return err;
 > +
-> +		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-> +		new_alloc_tmp = (u64)next_svcn << cluster_bits;
-> +		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
-> +		mi_b->dirty = true;
+> +		bytes -= op;
+> +		if (!bytes)
+> +			break;
 > +
-> +		if (next_svcn >= vcn && !to_allocate) {
-> +			/* Normal way. update attribute and exit */
-> +			attr_b->nres.data_size = cpu_to_le64(new_size);
-> +			goto ok;
-> +		}
+> +		if (!run_get_entry(run, ++idx, NULL, &lcn, &clen))
+> +			return -ENOENT;
 > +
-> +		/* at least two mft to avoid recursive loop*/
-> +		if (is_mft && next_svcn == vcn &&
-> +		    ((u64)done << sbi->cluster_bits) >= 2 * sbi->record_size) {
-> +			new_size = new_alloc_tmp;
-> +			attr_b->nres.data_size = attr_b->nres.alloc_size;
-> +			goto ok;
-> +		}
+> +		if (lcn == SPARSE_LCN)
+> +			return -EINVAL;
 > +
-> +		if (le32_to_cpu(rec->used) < sbi->record_size) {
-> +			old_alen = next_svcn;
-> +			evcn = old_alen - 1;
-> +			goto add_alloc_in_same_attr_seg;
-> +		}
+> +		if (buf)
+> +			buf = Add2Ptr(buf, op);
 > +
-> +		if (type == ATTR_LIST) {
-> +			err = ni_expand_list(ni);
-> +			if (err)
-> +				goto out;
-> +			if (next_svcn < vcn)
-> +				goto pack_runs;
+> +		lbo = ((u64)lcn << cluster_bits) + off;
+> +		len = ((u64)clen << cluster_bits) - off;
+> +	}
 > +
-> +			/* layout of records is changed */
-> +			goto again;
-> +		}
+> +	return 0;
+> +}
 > +
-> +		if (!ni->attr_list.size) {
-> +			err = ni_create_attr_list(ni);
-> +			if (err)
-> +				goto out;
-> +			/* layout of records is changed */
-> +		}
+> +struct buffer_head *ntfs_bread_run(struct ntfs_sb_info *sbi,
+> +				   struct runs_tree *run, u64 vbo)
+> +{
+> +	struct super_block *sb = sbi->sb;
+> +	u8 cluster_bits = sbi->cluster_bits;
+> +	CLST lcn;
+> +	u64 lbo;
 > +
-> +		if (next_svcn >= vcn) {
-> +			/* this is mft data, repeat */
-> +			goto again;
-> +		}
+> +	if (!run_lookup_entry(run, vbo >> cluster_bits, &lcn, NULL, NULL))
+> +		return ERR_PTR(-ENOENT);
 > +
-> +		/* insert new attribute segment */
-> +		err = ni_insert_nonresident(ni, type, name, name_len, run,
-> +					    next_svcn, vcn - next_svcn,
-> +					    attr_b->flags, &attr, &mi);
-> +		if (err)
-> +			goto out;
+> +	lbo = ((u64)lcn << cluster_bits) + (vbo & sbi->cluster_mask);
 > +
-> +		if (!is_mft)
-> +			run_truncate_head(run, evcn + 1);
+> +	return ntfs_bread(sb, lbo >> sb->s_blocksize_bits);
+> +}
 > +
-> +		svcn = le64_to_cpu(attr->nres.svcn);
-> +		evcn = le64_to_cpu(attr->nres.evcn);
+> +int ntfs_read_run_nb(struct ntfs_sb_info *sbi, struct runs_tree *run, u64 vbo,
+> +		     void *buf, u32 bytes, struct ntfs_buffers *nb)
+> +{
+> +	int err;
+> +	struct super_block *sb = sbi->sb;
+> +	u32 blocksize = sb->s_blocksize;
+> +	u8 cluster_bits = sbi->cluster_bits;
+> +	u32 off = vbo & sbi->cluster_mask;
+> +	u32 nbh = 0;
+> +	CLST lcn, clen;
+> +	u64 lbo, len;
+> +	size_t idx;
+> +	struct buffer_head *bh;
 > +
-> +		le_b = NULL;
-> +		/* layout of records maybe changed */
-> +		/* find base attribute to update*/
-> +		attr_b = ni_find_attr(ni, NULL, &le_b, type, name, name_len,
-> +				      NULL, &mi_b);
-> +		if (!attr_b) {
+> +	if (!run) {
+> +		/* first reading of $Volume + $MFTMirr + $LogFile goes here*/
+> +		if (vbo > MFT_REC_VOL * sbi->record_size) {
 > +			err = -ENOENT;
 > +			goto out;
 > +		}
 > +
-> +		attr_b->nres.alloc_size = cpu_to_le64((u64)vcn << cluster_bits);
-> +		attr_b->nres.data_size = attr_b->nres.alloc_size;
-> +		attr_b->nres.valid_size = attr_b->nres.alloc_size;
-> +		mi_b->dirty = true;
-> +		goto again_1;
+> +		/* use absolute boot's 'MFTCluster' to read record */
+> +		lbo = vbo + sbi->mft.lbo;
+> +		len = sbi->record_size;
+> +	} else if (!run_lookup_entry(run, vbo >> cluster_bits, &lcn, &clen,
+> +				     &idx)) {
+> +		err = -ENOENT;
+> +		goto out;
+> +	} else {
+> +		if (lcn == SPARSE_LCN) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		lbo = ((u64)lcn << cluster_bits) + off;
+> +		len = ((u64)clen << cluster_bits) - off;
 > +	}
 > +
-> +	if (new_size != old_size ||
-> +	    (new_alloc != old_alloc && !keep_prealloc)) {
-> +		vcn = max(svcn, new_alen);
-> +		new_alloc_tmp = (u64)vcn << cluster_bits;
+> +	off = lbo & (blocksize - 1);
+> +	if (nb) {
+> +		nb->off = off;
+> +		nb->bytes = bytes;
+> +	}
 > +
-> +		err = run_deallocate_ex(sbi, run, vcn, evcn - vcn + 1, &alen,
-> +					true);
-> +		if (err)
-> +			goto out;
+> +	for (;;) {
+> +		u32 len32 = len >= bytes ? bytes : len;
+> +		sector_t block = lbo >> sb->s_blocksize_bits;
 > +
-> +		run_truncate(run, vcn);
+> +		do {
+> +			u32 op = blocksize - off;
 > +
-> +		if (vcn > svcn) {
-> +			err = mi_pack_runs(mi, attr, run, vcn - svcn);
-> +			if (err < 0)
+> +			if (op > len32)
+> +				op = len32;
+> +
+> +			bh = ntfs_bread(sb, block);
+> +			if (!bh) {
+> +				err = -EIO;
 > +				goto out;
-> +		} else if (le && le->vcn) {
-> +			u16 le_sz = le16_to_cpu(le->size);
+> +			}
 > +
-> +			/*
-> +			 * NOTE: list entries for one attribute are always
-> +			 * the same size. We deal with last entry (vcn==0)
-> +			 * and it is not first in entries array
-> +			 * (list entry for std attribute always first)
-> +			 * So it is safe to step back
-> +			 */
-> +			mi_remove_attr(mi, attr);
+> +			if (buf) {
+> +				memcpy(buf, bh->b_data + off, op);
+> +				buf = Add2Ptr(buf, op);
+> +			}
 > +
-> +			if (!al_remove_le(ni, le)) {
+> +			if (!nb) {
+> +				put_bh(bh);
+> +			} else if (nbh >= ARRAY_SIZE(nb->bh)) {
+> +				err = -EINVAL;
+> +				goto out;
+> +			} else {
+> +				nb->bh[nbh++] = bh;
+> +				nb->nbufs = nbh;
+> +			}
+> +
+> +			bytes -= op;
+> +			if (!bytes)
+> +				return 0;
+> +			len32 -= op;
+> +			block += 1;
+> +			off = 0;
+> +
+> +		} while (len32);
+> +
+> +		if (!run_get_entry(run, ++idx, NULL, &lcn, &clen)) {
+> +			err = -ENOENT;
+> +			goto out;
+> +		}
+> +
+> +		if (lcn == SPARSE_LCN) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		lbo = ((u64)lcn << cluster_bits);
+> +		len = ((u64)clen << cluster_bits);
+> +	}
+> +
+> +out:
+> +	if (!nbh)
+> +		return err;
+> +
+> +	while (nbh) {
+> +		put_bh(nb->bh[--nbh]);
+> +		nb->bh[nbh] = NULL;
+> +	}
+> +
+> +	nb->nbufs = 0;
+> +	return err;
+> +}
+> +
+> +/* Returns < 0 if error, 0 if ok, 1 if need to update fixups */
+> +int ntfs_read_bh(struct ntfs_sb_info *sbi, struct runs_tree *run, u64 vbo,
+> +		 struct NTFS_RECORD_HEADER *rhdr, u32 bytes,
+> +		 struct ntfs_buffers *nb)
+> +{
+> +	int err = ntfs_read_run_nb(sbi, run, vbo, rhdr, bytes, nb);
+> +
+> +	if (err)
+> +		return err;
+> +	return ntfs_fix_post_read(rhdr, nb->bytes, true);
+> +}
+> +
+> +int ntfs_get_bh(struct ntfs_sb_info *sbi, struct runs_tree *run, u64 vbo,
+> +		u32 bytes, struct ntfs_buffers *nb)
+> +{
+> +	int err = 0;
+> +	struct super_block *sb = sbi->sb;
+> +	u32 blocksize = sb->s_blocksize;
+> +	u8 cluster_bits = sbi->cluster_bits;
+> +	u32 off;
+> +	u32 nbh = 0;
+> +	CLST lcn, clen;
+> +	u64 lbo, len;
+> +	size_t idx;
+> +
+> +	nb->bytes = bytes;
+> +
+> +	if (!run_lookup_entry(run, vbo >> cluster_bits, &lcn, &clen, &idx)) {
+> +		err = -ENOENT;
+> +		goto out;
+> +	}
+> +
+> +	off = vbo & sbi->cluster_mask;
+> +	lbo = ((u64)lcn << cluster_bits) + off;
+> +	len = ((u64)clen << cluster_bits) - off;
+> +
+> +	nb->off = off = lbo & (blocksize - 1);
+> +
+> +	for (;;) {
+> +		u32 len32 = len < bytes ? len : bytes;
+> +		sector_t block = lbo >> sb->s_blocksize_bits;
+> +
+> +		do {
+> +			u32 op;
+> +			struct buffer_head *bh;
+> +
+> +			if (nbh >= ARRAY_SIZE(nb->bh)) {
 > +				err = -EINVAL;
 > +				goto out;
 > +			}
 > +
-> +			le = (struct ATTR_LIST_ENTRY *)((u8 *)le - le_sz);
-> +		} else {
-> +			attr->nres.evcn = cpu_to_le64((u64)vcn - 1);
-> +			mi->dirty = true;
-> +		}
+> +			op = blocksize - off;
+> +			if (op > len32)
+> +				op = len32;
 > +
-> +		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
+> +			if (op == blocksize) {
+> +				bh = sb_getblk(sb, block);
+> +				if (!bh) {
+> +					err = -ENOMEM;
+> +					goto out;
+> +				}
+> +				if (buffer_locked(bh))
+> +					__wait_on_buffer(bh);
+> +				set_buffer_uptodate(bh);
+> +			} else {
+> +				bh = ntfs_bread(sb, block);
+> +				if (!bh) {
+> +					err = -EIO;
+> +					goto out;
+> +				}
+> +			}
 > +
-> +		if (vcn == new_alen) {
-> +			attr_b->nres.data_size = cpu_to_le64(new_size);
-> +			if (new_size < old_valid)
-> +				attr_b->nres.valid_size =
-> +					attr_b->nres.data_size;
-> +		} else {
-> +			if (new_alloc_tmp <=
-> +			    le64_to_cpu(attr_b->nres.data_size))
-> +				attr_b->nres.data_size =
-> +					attr_b->nres.alloc_size;
-> +			if (new_alloc_tmp <
-> +			    le64_to_cpu(attr_b->nres.valid_size))
-> +				attr_b->nres.valid_size =
-> +					attr_b->nres.alloc_size;
-> +		}
+> +			nb->bh[nbh++] = bh;
+> +			bytes -= op;
+> +			if (!bytes) {
+> +				nb->nbufs = nbh;
+> +				return 0;
+> +			}
 > +
-> +		if (is_ext)
-> +			le64_sub_cpu(&attr_b->nres.total_size,
-> +				     ((u64)alen << cluster_bits));
+> +			block += 1;
+> +			len32 -= op;
+> +			off = 0;
+> +		} while (len32);
 > +
-> +		mi_b->dirty = true;
-> +
-> +		if (new_alloc_tmp <= new_alloc)
-> +			goto ok;
-> +
-> +		old_size = new_alloc_tmp;
-> +		vcn = svcn - 1;
-> +
-> +		if (le == le_b) {
-> +			attr = attr_b;
-> +			mi = mi_b;
-> +			evcn = svcn - 1;
-> +			svcn = 0;
-> +			goto next_le;
-> +		}
-> +
-> +		if (le->type != type || le->name_len != name_len ||
-> +		    memcmp(le_name(le), name, name_len * sizeof(short))) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		err = ni_load_mi(ni, le, &mi);
-> +		if (err)
-> +			goto out;
-> +
-> +		attr = mi_find_attr(mi, NULL, type, name, name_len, &le->id);
-> +		if (!attr) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +		goto next_le_1;
-> +	}
-> +
-> +ok:
-> +	if (new_valid) {
-> +		__le64 valid = cpu_to_le64(min(*new_valid, new_size));
-> +
-> +		if (attr_b->nres.valid_size != valid) {
-> +			attr_b->nres.valid_size = valid;
-> +			mi_b->dirty = true;
-> +		}
-> +	}
-> +
-> +out:
-> +	if (!err && attr_b && ret)
-> +		*ret = attr_b;
-> +
-> +	/* update inode_set_bytes*/
-> +	if (!err && attr_b && attr_b->non_res &&
-> +	    ((type == ATTR_DATA && !name_len) ||
-> +	     (type == ATTR_ALLOC && name == I30_NAME))) {
-> +		bool dirty = false;
-> +
-> +		if (ni->vfs_inode.i_size != new_size) {
-> +			ni->vfs_inode.i_size = new_size;
-> +			dirty = true;
-> +		}
-> +
-> +		new_alloc = le64_to_cpu(attr_b->nres.alloc_size);
-> +		if (inode_get_bytes(&ni->vfs_inode) != new_alloc) {
-> +			inode_set_bytes(&ni->vfs_inode, new_alloc);
-> +			dirty = true;
-> +		}
-> +
-> +		if (dirty) {
-> +			ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-> +			mark_inode_dirty(&ni->vfs_inode);
-> +		}
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +int attr_data_get_block(struct ntfs_inode *ni, CLST vcn, CLST clen, CLST *lcn,
-> +			CLST *len, bool *new)
-> +{
-> +	int err = 0;
-> +	struct runs_tree *run = &ni->file.run;
-> +	struct ntfs_sb_info *sbi;
-> +	u8 cluster_bits;
-> +	struct ATTRIB *attr, *attr_b;
-> +	struct ATTR_LIST_ENTRY *le, *le_b;
-> +	struct mft_inode *mi, *mi_b;
-> +	CLST hint, svcn, to_alloc, evcn1, new_evcn1, next_svcn;
-> +	u64 new_size, total_size;
-> +	u32 clst_per_frame;
-> +	bool ok;
-> +
-> +	if (new)
-> +		*new = false;
-> +
-> +	down_read(&ni->file.run_lock);
-> +	ok = run_lookup_entry(run, vcn, lcn, len, NULL);
-> +	up_read(&ni->file.run_lock);
-> +
-> +	if (ok && (*lcn != SPARSE_LCN || !new)) {
-> +		/* normal way */
-> +		return 0;
-> +	}
-> +
-> +	if (!clen)
-> +		clen = 1;
-> +
-> +	if (ok && clen > *len)
-> +		clen = *len;
-> +
-> +	sbi = ni->mi.sbi;
-> +	cluster_bits = sbi->cluster_bits;
-> +	new_size = ((u64)vcn + clen) << cluster_bits;
-> +
-> +	ni_lock(ni);
-> +	down_write(&ni->file.run_lock);
-> +
-> +again:
-> +	le_b = NULL;
-> +	attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL, &mi_b);
-> +	if (!attr_b) {
-> +		err = -ENOENT;
-> +		goto out;
-> +	}
-> +
-> +	if (!attr_b->non_res) {
-> +		if (!new) {
-> +			*lcn = RESIDENT_LCN;
-> +			goto out;
-> +		}
-> +
-> +		err = attr_set_size_res(ni, attr_b, le_b, mi_b, new_size, run,
-> +					&attr_b);
-> +		if (err)
-> +			goto out;
-> +
-> +		if (!attr_b->non_res) {
-> +			/* Resident attribute still resident */
-> +			*lcn = RESIDENT_LCN;
-> +			goto out;
-> +		}
-> +
-> +		/* Resident attribute becomes non resident */
-> +		goto again;
-> +	}
-> +
-> +	clst_per_frame = 1u << attr_b->nres.c_unit;
-> +	to_alloc = (clen + clst_per_frame - 1) & ~(clst_per_frame - 1);
-> +
-> +	svcn = le64_to_cpu(attr_b->nres.svcn);
-> +	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
-> +
-> +	attr = attr_b;
-> +	le = le_b;
-> +	mi = mi_b;
-> +
-> +	if (le_b && (vcn < svcn || evcn1 <= vcn)) {
-> +		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
-> +				    &mi);
-> +		if (!attr) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +		svcn = le64_to_cpu(attr->nres.svcn);
-> +		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
-> +	}
-> +
-> +	err = attr_load_runs(attr, ni, run);
-> +	if (err)
-> +		goto out;
-> +
-> +	if (!ok) {
-> +		ok = run_lookup_entry(run, vcn, lcn, len, NULL);
-> +		if (ok && (*lcn != SPARSE_LCN || !new)) {
-> +			/* normal way */
-> +			err = 0;
-> +			goto out;
-> +		}
-> +
-> +		if (!ok && !new) {
-> +			*len = 0;
-> +			err = 0;
-> +			goto out;
-> +		}
-> +
-> +		if (ok && clen > *len) {
-> +			clen = *len;
-> +			new_size = ((u64)vcn + clen) << cluster_bits;
-> +			to_alloc = (clen + clst_per_frame - 1) &
-> +				   ~(clst_per_frame - 1);
-> +		}
-> +	}
-> +
-> +	if (!is_attr_ext(attr_b)) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	/* Get the last lcn to allocate from */
-> +	hint = 0;
-> +
-> +	if (vcn > evcn1) {
-> +		if (!run_add_entry(run, evcn1, SPARSE_LCN, vcn - evcn1)) {
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
-> +	} else if (vcn && !run_lookup_entry(run, vcn - 1, &hint, NULL, NULL)) {
-> +		hint = -1;
-> +	}
-> +
-> +	err = attr_allocate_clusters(
-> +		sbi, run, vcn, hint + 1, to_alloc, NULL, 0, len,
-> +		(sbi->record_size - le32_to_cpu(mi->mrec->used) + 8) / 3 + 1,
-> +		lcn);
-> +	if (err)
-> +		goto out;
-> +	*new = true;
-> +
-> +	new_evcn1 = vcn + *len;
-> +	if (new_evcn1 < evcn1)
-> +		new_evcn1 = evcn1;
-> +
-> +	total_size = le64_to_cpu(attr_b->nres.total_size) +
-> +		     ((u64)*len << cluster_bits);
-> +
-> +repack:
-> +
-> +	err = mi_pack_runs(mi, attr, run, new_evcn1 - svcn);
-> +	if (err < 0)
-> +		goto out;
-> +
-> +	attr_b->nres.total_size = cpu_to_le64(total_size);
-> +	inode_set_bytes(&ni->vfs_inode, total_size);
-> +
-> +	mi_b->dirty = true;
-> +	ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-> +	mark_inode_dirty(&ni->vfs_inode);
-> +
-> +	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-> +	if (next_svcn >= evcn1) {
-> +		/* Normal way. update attribute and exit */
-> +		goto out;
-> +	}
-> +
-> +	if (!ni->attr_list.le) {
-> +		err = ni_create_attr_list(ni);
-> +		if (err)
-> +			goto out;
-> +		/* layout of records is changed */
-> +		le_b = NULL;
-> +		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
-> +				      &mi_b);
-> +		if (!attr_b) {
+> +		if (!run_get_entry(run, ++idx, NULL, &lcn, &clen)) {
 > +			err = -ENOENT;
 > +			goto out;
 > +		}
 > +
-> +		attr = attr_b;
-> +		le = le_b;
-> +		mi = mi_b;
-> +		goto repack;
+> +		lbo = ((u64)lcn << cluster_bits);
+> +		len = ((u64)clen << cluster_bits);
 > +	}
 > +
-> +	/* Estimate next attribute */
-> +	attr = ni_find_attr(ni, attr, &le, ATTR_DATA, NULL, 0, &evcn1, &mi);
+> +out:
+> +	while (nbh) {
+> +		put_bh(nb->bh[--nbh]);
+> +		nb->bh[nbh] = NULL;
+> +	}
 > +
-> +	if (attr && le32_to_cpu(mi->mrec->used) + 8 <= sbi->record_size) {
-> +		svcn = next_svcn;
-> +		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
+> +	nb->nbufs = 0;
 > +
-> +		err = attr_load_runs(attr, ni, run);
-> +		if (err)
-> +			goto out;
+> +	return err;
+> +}
 > +
-> +		attr->nres.svcn = cpu_to_le64(svcn);
-> +		err = mi_pack_runs(mi, attr, run, evcn1 - svcn);
-> +		if (err < 0)
-> +			goto out;
+> +int ntfs_write_bh(struct ntfs_sb_info *sbi, struct NTFS_RECORD_HEADER *rhdr,
+> +		  struct ntfs_buffers *nb, int sync)
+> +{
+> +	int err = 0;
+> +	struct super_block *sb = sbi->sb;
+> +	u32 block_size = sb->s_blocksize;
+> +	u32 bytes = nb->bytes;
+> +	u32 off = nb->off;
+> +	u16 fo = le16_to_cpu(rhdr->fix_off);
+> +	u16 fn = le16_to_cpu(rhdr->fix_num);
+> +	u32 idx;
+> +	__le16 *fixup;
+> +	__le16 sample;
 > +
-> +		le->vcn = cpu_to_le64(svcn);
-> +		ni->attr_list.dirty = true;
+> +	if ((fo & 1) || fo + fn * sizeof(short) > SECTOR_SIZE || !fn-- ||
+> +	    fn * SECTOR_SIZE > bytes) {
+> +		return -EINVAL;
+> +	}
 > +
-> +		mi->dirty = true;
+> +	for (idx = 0; bytes && idx < nb->nbufs; idx += 1, off = 0) {
+> +		u32 op = block_size - off;
+> +		char *bh_data;
+> +		struct buffer_head *bh = nb->bh[idx];
+> +		__le16 *ptr, *end_data;
 > +
-> +		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
+> +		if (op > bytes)
+> +			op = bytes;
 > +
-> +		if (next_svcn >= evcn1) {
-> +			/* Normal way. update attribute and exit */
-> +			goto out;
+> +		if (buffer_locked(bh))
+> +			__wait_on_buffer(bh);
+> +
+> +		lock_buffer(nb->bh[idx]);
+> +
+> +		bh_data = bh->b_data + off;
+> +		end_data = Add2Ptr(bh_data, op);
+> +		memcpy(bh_data, rhdr, op);
+> +
+> +		if (!idx) {
+> +			u16 t16;
+> +
+> +			fixup = Add2Ptr(bh_data, fo);
+> +			sample = *fixup;
+> +			t16 = le16_to_cpu(sample);
+> +			if (t16 >= 0x7FFF) {
+> +				sample = *fixup = cpu_to_le16(1);
+> +			} else {
+> +				sample = cpu_to_le16(t16 + 1);
+> +				*fixup = sample;
+> +			}
+> +
+> +			*(__le16 *)Add2Ptr(rhdr, fo) = sample;
 > +		}
+> +
+> +		ptr = Add2Ptr(bh_data, SECTOR_SIZE - sizeof(short));
+> +
+> +		do {
+> +			*++fixup = *ptr;
+> +			*ptr = sample;
+> +			ptr += SECTOR_SIZE / sizeof(short);
+> +		} while (ptr < end_data);
+> +
+> +		set_buffer_uptodate(bh);
+> +		mark_buffer_dirty(bh);
+> +		unlock_buffer(bh);
+> +
+> +		if (sync) {
+> +			int err2 = sync_dirty_buffer(bh);
+> +
+> +			if (!err && err2)
+> +				err = err2;
+> +		}
+> +
+> +		bytes -= op;
+> +		rhdr = Add2Ptr(rhdr, op);
 > +	}
 > +
-> +	err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run, next_svcn,
-> +				    evcn1 - next_svcn, attr_b->flags, &attr,
-> +				    &mi);
+> +	return err;
+> +}
+> +
+> +int ntfs_vbo_to_lbo(struct ntfs_sb_info *sbi, struct runs_tree *run, u64 vbo,
+> +		    u64 *lbo, u64 *bytes)
+> +{
+> +	u32 off;
+> +	CLST lcn, len;
+> +	u8 cluster_bits = sbi->cluster_bits;
+> +
+> +	if (!run_lookup_entry(run, vbo >> cluster_bits, &lcn, &len, NULL))
+> +		return -ENOENT;
+> +
+> +	off = vbo & sbi->cluster_mask;
+> +	*lbo = lcn == SPARSE_LCN ? -1 : (((u64)lcn << cluster_bits) + off);
+> +	*bytes = ((u64)len << cluster_bits) - off;
+> +
+> +	return 0;
+> +}
+> +
+> +struct ntfs_inode *ntfs_new_inode(struct ntfs_sb_info *sbi, CLST rno, bool dir)
+> +{
+> +	int err = 0;
+> +	struct super_block *sb = sbi->sb;
+> +	struct inode *inode = new_inode(sb);
+> +	struct ntfs_inode *ni;
+> +
+> +	if (!inode)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	err = mi_format_new(&ni->mi, sbi, rno, dir ? RECORD_FLAG_DIR : 0,
+> +			    false);
 > +	if (err)
 > +		goto out;
 > +
-> +	run_truncate_head(run, vcn);
+> +	inode->i_ino = rno;
+> +	if (insert_inode_locked(inode) < 0) {
+> +		err = -EIO;
+> +		goto out;
+> +	}
 > +
 > +out:
-> +	up_write(&ni->file.run_lock);
-> +	ni_unlock(ni);
+> +	if (err) {
+> +		iput(inode);
+> +		ni = ERR_PTR(err);
+> +	}
+> +	return ni;
+> +}
+> +
+> +/*
+> + * O:BAG:BAD:(A;OICI;FA;;;WD)
+> + * owner S-1-5-32-544 (Administrators)
+> + * group S-1-5-32-544 (Administrators)
+> + * ACE: allow S-1-1-0 (Everyone) with FILE_ALL_ACCESS
+> + */
+> +const u8 s_default_security[] __aligned(8) = {
+> +	0x01, 0x00, 0x04, 0x80, 0x30, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
+> +	0x00, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x02, 0x00, 0x1C, 0x00,
+> +	0x01, 0x00, 0x00, 0x00, 0x00, 0x03, 0x14, 0x00, 0xFF, 0x01, 0x1F, 0x00,
+> +	0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+> +	0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x20, 0x00, 0x00, 0x00,
+> +	0x20, 0x02, 0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05,
+> +	0x20, 0x00, 0x00, 0x00, 0x20, 0x02, 0x00, 0x00,
+> +};
+> +
+> +static_assert(sizeof(s_default_security) == 0x50);
+> +
+> +/*
+> + * ntfs_security_init
+> + *
+> + * loads and parse $Secure
+> + */
+> +int ntfs_security_init(struct ntfs_sb_info *sbi)
+> +{
+> +	int err;
+> +	struct super_block *sb = sbi->sb;
+> +	struct inode *inode;
+> +	struct ntfs_inode *ni;
+> +	struct MFT_REF ref;
+> +	struct ATTRIB *attr;
+> +	struct ATTR_LIST_ENTRY *le;
+> +	u64 sds_size;
+> +	size_t cnt, off;
+> +	struct NTFS_DE *ne;
+> +	struct NTFS_DE_SII *sii_e;
+> +	struct ntfs_fnd *fnd_sii = NULL;
+> +	const struct INDEX_ROOT *root_sii;
+> +	const struct INDEX_ROOT *root_sdh;
+> +	struct ntfs_index *indx_sdh = &sbi->security.index_sdh;
+> +	struct ntfs_index *indx_sii = &sbi->security.index_sii;
+> +
+> +	ref.low = cpu_to_le32(MFT_REC_SECURE);
+> +	ref.high = 0;
+> +	ref.seq = cpu_to_le16(MFT_REC_SECURE);
+> +
+> +	inode = ntfs_iget5(sb, &ref, &NAME_SECURE);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $Secure.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	le = NULL;
+> +
+> +	attr = ni_find_attr(ni, NULL, &le, ATTR_ROOT, SDH_NAME,
+> +			    ARRAY_SIZE(SDH_NAME), NULL, NULL);
+> +	if (!attr) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	root_sdh = resident_data(attr);
+> +	if (root_sdh->type != ATTR_ZERO ||
+> +	    root_sdh->rule != NTFS_COLLATION_TYPE_SECURITY_HASH) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = indx_init(indx_sdh, sbi, attr, INDEX_MUTEX_SDH);
+> +	if (err)
+> +		goto out;
+> +
+> +	attr = ni_find_attr(ni, attr, &le, ATTR_ROOT, SII_NAME,
+> +			    ARRAY_SIZE(SII_NAME), NULL, NULL);
+> +	if (!attr) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	root_sii = resident_data(attr);
+> +	if (root_sii->type != ATTR_ZERO ||
+> +	    root_sii->rule != NTFS_COLLATION_TYPE_UINT) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = indx_init(indx_sii, sbi, attr, INDEX_MUTEX_SII);
+> +	if (err)
+> +		goto out;
+> +
+> +	fnd_sii = fnd_get(indx_sii);
+> +	if (!fnd_sii) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	sds_size = inode->i_size;
+> +
+> +	/* Find the last valid Id */
+> +	sbi->security.next_id = SECURITY_ID_FIRST;
+> +	/* Always write new security at the end of bucket */
+> +	sbi->security.next_off =
+> +		Quad2Align(sds_size - SecurityDescriptorsBlockSize);
+> +
+> +	cnt = 0;
+> +	off = 0;
+> +	ne = NULL;
+> +
+> +	for (;;) {
+> +		u32 next_id;
+> +
+> +		err = indx_find_raw(indx_sii, ni, root_sii, &ne, &off, fnd_sii);
+> +		if (err || !ne)
+> +			break;
+> +
+> +		sii_e = (struct NTFS_DE_SII *)ne;
+> +		if (le16_to_cpu(ne->View.data_size) < SIZEOF_SECURITY_HDR)
+> +			continue;
+> +
+> +		next_id = le32_to_cpu(sii_e->sec_id) + 1;
+> +		if (next_id >= sbi->security.next_id)
+> +			sbi->security.next_id = next_id;
+> +
+> +		cnt += 1;
+> +	}
+> +
+> +	sbi->security.ni = ni;
+> +	inode = NULL;
+> +out:
+> +	iput(inode);
+> +	fnd_put(fnd_sii);
 > +
 > +	return err;
 > +}
 > +
 > +/*
-> + * attr_load_runs_vcn
+> + * ntfs_get_security_by_id
 > + *
-> + * load runs with vcn
+> + * reads security descriptor by id
 > + */
-> +int attr_load_runs_vcn(struct ntfs_inode *ni, enum ATTR_TYPE type,
-> +		       const __le16 *name, u8 name_len, struct runs_tree *run,
-> +		       CLST vcn)
+> +int ntfs_get_security_by_id(struct ntfs_sb_info *sbi, __le32 security_id,
+> +			    void **sd, size_t *size)
 > +{
-> +	struct ATTRIB *attr;
 > +	int err;
-> +	CLST svcn, evcn;
-> +	u16 ro;
+> +	int diff;
+> +	struct ntfs_inode *ni = sbi->security.ni;
+> +	struct ntfs_index *indx = &sbi->security.index_sii;
+> +	void *p = NULL;
+> +	struct NTFS_DE_SII *sii_e;
+> +	struct ntfs_fnd *fnd_sii;
+> +	struct SECURITY_HDR d_security;
+> +	const struct INDEX_ROOT *root_sii;
+> +	u32 t32;
 > +
-> +	attr = ni_find_attr(ni, NULL, NULL, type, name, name_len, &vcn, NULL);
-> +	if (!attr)
-> +		return -ENOENT;
+> +	*sd = NULL;
 > +
-> +	svcn = le64_to_cpu(attr->nres.svcn);
-> +	evcn = le64_to_cpu(attr->nres.evcn);
+> +	inode_lock_shared(&ni->vfs_inode);
 > +
-> +	if (evcn < vcn || vcn < svcn)
-> +		return -EINVAL;
+> +	fnd_sii = fnd_get(indx);
+> +	if (!fnd_sii) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
 > +
-> +	ro = le16_to_cpu(attr->nres.run_off);
-> +	err = run_unpack_ex(run, ni->mi.sbi, ni->mi.rno, svcn, evcn,
-> +			    Add2Ptr(attr, ro), le32_to_cpu(attr->size) - ro);
-> +	if (err < 0)
-> +		return err;
-> +	return 0;
+> +	root_sii = indx_get_root(indx, ni, NULL, NULL);
+> +	if (!root_sii) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Try to find this SECURITY descriptor in SII indexes */
+> +	err = indx_find(indx, ni, root_sii, &security_id, sizeof(security_id),
+> +			NULL, &diff, (struct NTFS_DE **)&sii_e, fnd_sii);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (diff)
+> +		goto out;
+> +
+> +	t32 = le32_to_cpu(sii_e->sec_hdr.size);
+> +	if (t32 < SIZEOF_SECURITY_HDR) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (t32 > SIZEOF_SECURITY_HDR + 0x10000) {
+> +		/*
+> +		 * looks like too big security. 0x10000 - is arbitrary big number
+> +		 */
+> +		err = -EFBIG;
+> +		goto out;
+> +	}
+> +
+> +	*size = t32 - SIZEOF_SECURITY_HDR;
+> +
+> +	p = ntfs_alloc(*size, 0);
+> +	if (!p) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	err = ntfs_read_run_nb(sbi, &ni->file.run,
+> +			       le64_to_cpu(sii_e->sec_hdr.off), &d_security,
+> +			       sizeof(d_security), NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (memcmp(&d_security, &sii_e->sec_hdr, SIZEOF_SECURITY_HDR)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = ntfs_read_run_nb(sbi, &ni->file.run,
+> +			       le64_to_cpu(sii_e->sec_hdr.off) +
+> +				       SIZEOF_SECURITY_HDR,
+> +			       p, *size, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	*sd = p;
+> +	p = NULL;
+> +
+> +out:
+> +	ntfs_free(p);
+> +	fnd_put(fnd_sii);
+> +	inode_unlock_shared(&ni->vfs_inode);
+> +
+> +	return err;
 > +}
 > +
 > +/*
-> + * attr_is_frame_compressed
+> + * ntfs_insert_security
 > + *
-> + * This function is used to detect compressed frame
+> + * inserts security descriptor into $Secure::SDS
+> + *
+> + * SECURITY Descriptor Stream data is organized into chunks of 256K bytes
+> + * and it contains a mirror copy of each security descriptor.  When writing
+> + * to a security descriptor at location X, another copy will be written at
+> + * location (X+256K).
+> + * When writing a security descriptor that will cross the 256K boundary,
+> + * the pointer will be advanced by 256K to skip
+> + * over the mirror portion.
 > + */
-> +int attr_is_frame_compressed(struct ntfs_inode *ni, struct ATTRIB *attr,
-> +			     CLST frame, CLST *clst_data, bool *is_compr)
+> +int ntfs_insert_security(struct ntfs_sb_info *sbi, const void *sd, u32 size_sd,
+> +			 __le32 *security_id, bool *inserted)
 > +{
-> +	int err;
-> +	u32 clst_frame;
-> +	CLST len, lcn, vcn, alen, slen, vcn1;
-> +	size_t idx;
-> +	struct runs_tree *run;
+> +	int err, diff;
+> +	struct ntfs_inode *ni = sbi->security.ni;
+> +	struct ntfs_index *indx_sdh = &sbi->security.index_sdh;
+> +	struct ntfs_index *indx_sii = &sbi->security.index_sii;
+> +	struct NTFS_DE_SDH *e;
+> +	struct NTFS_DE_SDH sdh_e;
+> +	struct NTFS_DE_SII sii_e;
+> +	struct SECURITY_HDR *d_security;
+> +	u32 new_sec_size = size_sd + SIZEOF_SECURITY_HDR;
+> +	u32 aligned_sec_size = Quad2Align(new_sec_size);
+> +	struct SECURITY_KEY hash_key;
+> +	struct ntfs_fnd *fnd_sdh = NULL;
+> +	const struct INDEX_ROOT *root_sdh;
+> +	const struct INDEX_ROOT *root_sii;
+> +	u64 mirr_off, new_sds_size;
+> +	u32 next, left;
 > +
-> +	*clst_data = 0;
-> +	*is_compr = false;
+> +	static_assert((1 << Log2OfSecurityDescriptorsBlockSize) ==
+> +		      SecurityDescriptorsBlockSize);
 > +
-> +	if (!is_attr_compressed(attr))
-> +		return 0;
+> +	hash_key.hash = security_hash(sd, size_sd);
+> +	hash_key.sec_id = SECURITY_ID_INVALID;
 > +
-> +	if (!attr->non_res)
-> +		return 0;
+> +	if (inserted)
+> +		*inserted = false;
+> +	*security_id = SECURITY_ID_INVALID;
 > +
-> +	clst_frame = 1u << attr->nres.c_unit;
-> +	vcn = frame * clst_frame;
-> +	run = &ni->file.run;
+> +	/* Allocate a temporal buffer*/
+> +	d_security = ntfs_alloc(aligned_sec_size, 1);
+> +	if (!d_security)
+> +		return -ENOMEM;
 > +
-> +	if (!run_lookup_entry(run, vcn, &lcn, &len, &idx)) {
-> +		err = attr_load_runs_vcn(ni, attr->type, attr_name(attr),
-> +					 attr->name_len, run, vcn);
-> +		if (err)
-> +			return err;
+> +	inode_lock(&ni->vfs_inode);
 > +
-> +		if (!run_lookup_entry(run, vcn, &lcn, &len, &idx))
-> +			return -ENOENT;
+> +	fnd_sdh = fnd_get(indx_sdh);
+> +	if (!fnd_sdh) {
+> +		err = -ENOMEM;
+> +		goto out;
 > +	}
 > +
-> +	if (lcn == SPARSE_LCN) {
-> +		/* The frame is sparsed if "clst_frame" clusters are sparsed */
-> +		*is_compr = true;
-> +		return 0;
+> +	root_sdh = indx_get_root(indx_sdh, ni, NULL, NULL);
+> +	if (!root_sdh) {
+> +		err = -EINVAL;
+> +		goto out;
 > +	}
 > +
-> +	if (len >= clst_frame) {
-> +		/*
-> +		 * The frame is not compressed 'cause
-> +		 * it does not contain any sparse clusters
-> +		 */
-> +		*clst_data = clst_frame;
-> +		return 0;
+> +	root_sii = indx_get_root(indx_sii, ni, NULL, NULL);
+> +	if (!root_sii) {
+> +		err = -EINVAL;
+> +		goto out;
 > +	}
-> +
-> +	alen = bytes_to_cluster(ni->mi.sbi, le64_to_cpu(attr->nres.alloc_size));
-> +	slen = 0;
-> +	*clst_data = len;
 > +
 > +	/*
-> +	 * The frame is compressed if *clst_data + slen >= clst_frame
-> +	 * Check next fragments
+> +	 * Check if such security already exists
+> +	 * use "SDH" and hash -> to get the offset in "SDS"
 > +	 */
-> +	while ((vcn += len) < alen) {
-> +		vcn1 = vcn;
+> +	err = indx_find(indx_sdh, ni, root_sdh, &hash_key, sizeof(hash_key),
+> +			&d_security->key.sec_id, &diff, (struct NTFS_DE **)&e,
+> +			fnd_sdh);
+> +	if (err)
+> +		goto out;
 > +
-> +		if (!run_get_entry(run, ++idx, &vcn, &lcn, &len) ||
-> +		    vcn1 != vcn) {
-> +			err = attr_load_runs_vcn(ni, attr->type,
-> +						 attr_name(attr),
-> +						 attr->name_len, run, vcn1);
+> +	while (e) {
+> +		if (le32_to_cpu(e->sec_hdr.size) == new_sec_size) {
+> +			err = ntfs_read_run_nb(sbi, &ni->file.run,
+> +					       le64_to_cpu(e->sec_hdr.off),
+> +					       d_security, new_sec_size, NULL);
 > +			if (err)
-> +				return err;
-> +			vcn = vcn1;
+> +				goto out;
 > +
-> +			if (!run_lookup_entry(run, vcn, &lcn, &len, &idx))
-> +				return -ENOENT;
+> +			if (le32_to_cpu(d_security->size) == new_sec_size &&
+> +			    d_security->key.hash == hash_key.hash &&
+> +			    !memcmp(d_security + 1, sd, size_sd)) {
+> +				*security_id = d_security->key.sec_id;
+> +				/*such security already exists*/
+> +				err = 0;
+> +				goto out;
+> +			}
 > +		}
 > +
-> +		if (lcn == SPARSE_LCN) {
-> +			slen += len;
-> +		} else {
-> +			if (slen) {
-> +				/*
-> +				 * data_clusters + sparse_clusters =
-> +				 * not enough for frame
-> +				 */
-> +				return -EINVAL;
-> +			}
-> +			*clst_data += len;
-> +		}
+> +		err = indx_find_sort(indx_sdh, ni, root_sdh,
+> +				     (struct NTFS_DE **)&e, fnd_sdh);
+> +		if (err)
+> +			goto out;
 > +
-> +		if (*clst_data + slen >= clst_frame) {
-> +			if (!slen) {
-> +				/*
-> +				 * There is no sparsed clusters in this frame
-> +				 * So it is not compressed
-> +				 */
-> +				*clst_data = clst_frame;
-> +			} else {
-> +				*is_compr = *clst_data < clst_frame;
-> +			}
+> +		if (!e || e->key.hash != hash_key.hash)
 > +			break;
+> +	}
+> +
+> +	/* Zero unused space */
+> +	next = sbi->security.next_off & (SecurityDescriptorsBlockSize - 1);
+> +	left = SecurityDescriptorsBlockSize - next;
+> +
+> +	/* Zero gap until SecurityDescriptorsBlockSize */
+> +	if (left < new_sec_size) {
+> +		/* zero "left" bytes from sbi->security.next_off */
+> +		sbi->security.next_off += SecurityDescriptorsBlockSize + left;
+> +	}
+> +
+> +	/* Zero tail of previous security */
+> +	//used = ni->vfs_inode.i_size & (SecurityDescriptorsBlockSize - 1);
+> +
+> +	/*
+> +	 * Example:
+> +	 * 0x40438 == ni->vfs_inode.i_size
+> +	 * 0x00440 == sbi->security.next_off
+> +	 * need to zero [0x438-0x440)
+> +	 * if (next > used) {
+> +	 *  u32 tozero = next - used;
+> +	 *  zero "tozero" bytes from sbi->security.next_off - tozero
+> +	 */
+> +
+> +	/* format new security descriptor */
+> +	d_security->key.hash = hash_key.hash;
+> +	d_security->key.sec_id = cpu_to_le32(sbi->security.next_id);
+> +	d_security->off = cpu_to_le64(sbi->security.next_off);
+> +	d_security->size = cpu_to_le32(new_sec_size);
+> +	memcpy(d_security + 1, sd, size_sd);
+> +
+> +	/* Write main SDS bucket */
+> +	err = ntfs_sb_write_run(sbi, &ni->file.run, sbi->security.next_off,
+> +				d_security, aligned_sec_size);
+> +
+> +	if (err)
+> +		goto out;
+> +
+> +	mirr_off = sbi->security.next_off + SecurityDescriptorsBlockSize;
+> +	new_sds_size = mirr_off + aligned_sec_size;
+> +
+> +	if (new_sds_size > ni->vfs_inode.i_size) {
+> +		err = attr_set_size(ni, ATTR_DATA, SDS_NAME,
+> +				    ARRAY_SIZE(SDS_NAME), &ni->file.run,
+> +				    new_sds_size, &new_sds_size, false, NULL);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +	/* Write copy SDS bucket */
+> +	err = ntfs_sb_write_run(sbi, &ni->file.run, mirr_off, d_security,
+> +				aligned_sec_size);
+> +	if (err)
+> +		goto out;
+> +
+> +	/* Fill SII entry */
+> +	sii_e.de.View.data_off =
+> +		cpu_to_le16(offsetof(struct NTFS_DE_SII, sec_hdr));
+> +	sii_e.de.View.data_size = cpu_to_le16(SIZEOF_SECURITY_HDR);
+> +	sii_e.de.View.Res = 0; //??
+> +	sii_e.de.size = cpu_to_le16(SIZEOF_SII_DIRENTRY);
+> +	sii_e.de.key_size = cpu_to_le16(sizeof(d_security->key.sec_id));
+> +	sii_e.de.flags = 0;
+> +	sii_e.de.res = 0;
+> +	sii_e.sec_id = d_security->key.sec_id;
+> +	memcpy(&sii_e.sec_hdr, d_security, SIZEOF_SECURITY_HDR);
+> +
+> +	err = indx_insert_entry(indx_sii, ni, &sii_e.de, NULL, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	/* Fill SDH entry */
+> +	sdh_e.de.View.data_off =
+> +		cpu_to_le16(offsetof(struct NTFS_DE_SDH, sec_hdr));
+> +	sdh_e.de.View.data_size = cpu_to_le16(SIZEOF_SECURITY_HDR);
+> +	sdh_e.de.View.Res = 0;
+> +	sdh_e.de.size = cpu_to_le16(SIZEOF_SDH_DIRENTRY);
+> +	sdh_e.de.key_size = cpu_to_le16(sizeof(sdh_e.key));
+> +	sdh_e.de.flags = 0;
+> +	sdh_e.de.res = 0;
+> +	sdh_e.key.hash = d_security->key.hash;
+> +	sdh_e.key.sec_id = d_security->key.sec_id;
+> +	memcpy(&sdh_e.sec_hdr, d_security, SIZEOF_SECURITY_HDR);
+> +	sdh_e.magic[0] = cpu_to_le16('I');
+> +	sdh_e.magic[1] = cpu_to_le16('I');
+> +
+> +	fnd_clear(fnd_sdh);
+> +	err = indx_insert_entry(indx_sdh, ni, &sdh_e.de, (void *)(size_t)1,
+> +				fnd_sdh);
+> +	if (err)
+> +		goto out;
+> +
+> +	*security_id = d_security->key.sec_id;
+> +	if (inserted)
+> +		*inserted = true;
+> +
+> +	/* Update Id and offset for next descriptor */
+> +	sbi->security.next_id += 1;
+> +	sbi->security.next_off += aligned_sec_size;
+> +
+> +out:
+> +	fnd_put(fnd_sdh);
+> +	inode_unlock(&ni->vfs_inode);
+> +	ntfs_free(d_security);
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * ntfs_reparse_init
+> + *
+> + * loads and parse $Extend/$Reparse
+> + */
+> +int ntfs_reparse_init(struct ntfs_sb_info *sbi)
+> +{
+> +	int err;
+> +	struct ntfs_inode *ni = sbi->reparse.ni;
+> +	struct ntfs_index *indx = &sbi->reparse.index_r;
+> +	struct ATTRIB *attr;
+> +	struct ATTR_LIST_ENTRY *le;
+> +	const struct INDEX_ROOT *root_r;
+> +
+> +	if (!ni)
+> +		return 0;
+> +
+> +	le = NULL;
+> +	attr = ni_find_attr(ni, NULL, &le, ATTR_ROOT, SR_NAME,
+> +			    ARRAY_SIZE(SR_NAME), NULL, NULL);
+> +	if (!attr) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	root_r = resident_data(attr);
+> +	if (root_r->type != ATTR_ZERO ||
+> +	    root_r->rule != NTFS_COLLATION_TYPE_UINTS) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = indx_init(indx, sbi, attr, INDEX_MUTEX_SR);
+> +	if (err)
+> +		goto out;
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +/*
+> + * ntfs_objid_init
+> + *
+> + * loads and parse $Extend/$ObjId
+> + */
+> +int ntfs_objid_init(struct ntfs_sb_info *sbi)
+> +{
+> +	int err;
+> +	struct ntfs_inode *ni = sbi->objid.ni;
+> +	struct ntfs_index *indx = &sbi->objid.index_o;
+> +	struct ATTRIB *attr;
+> +	struct ATTR_LIST_ENTRY *le;
+> +	const struct INDEX_ROOT *root;
+> +
+> +	if (!ni)
+> +		return 0;
+> +
+> +	le = NULL;
+> +	attr = ni_find_attr(ni, NULL, &le, ATTR_ROOT, SO_NAME,
+> +			    ARRAY_SIZE(SO_NAME), NULL, NULL);
+> +	if (!attr) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	root = resident_data(attr);
+> +	if (root->type != ATTR_ZERO ||
+> +	    root->rule != NTFS_COLLATION_TYPE_UINTS) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = indx_init(indx, sbi, attr, INDEX_MUTEX_SO);
+> +	if (err)
+> +		goto out;
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +int ntfs_objid_remove(struct ntfs_sb_info *sbi, struct GUID *guid)
+> +{
+> +	int err;
+> +	struct ntfs_inode *ni = sbi->objid.ni;
+> +	struct ntfs_index *indx = &sbi->objid.index_o;
+> +
+> +	if (!ni)
+> +		return -EINVAL;
+> +
+> +	inode_lock(&ni->vfs_inode);
+> +
+> +	err = indx_delete_entry(indx, ni, guid, sizeof(*guid), NULL);
+> +
+> +	inode_unlock(&ni->vfs_inode);
+> +
+> +	return err;
+> +}
+> +
+> +int ntfs_insert_reparse(struct ntfs_sb_info *sbi, __le32 rtag,
+> +			const struct MFT_REF *ref)
+> +{
+> +	int err;
+> +	struct ntfs_inode *ni = sbi->reparse.ni;
+> +	struct ntfs_index *indx = &sbi->reparse.index_r;
+> +	struct NTFS_DE_R re;
+> +
+> +	if (!ni)
+> +		return -EINVAL;
+> +
+> +	memset(&re, 0, sizeof(re));
+> +
+> +	re.Key.ReparseTag = rtag;
+> +	memcpy(&re.Key.ref, ref, sizeof(*ref));
+> +
+> +	re.de.View.data_off = cpu_to_le16(offsetof(struct NTFS_DE_R, Key));
+> +	re.de.size = cpu_to_le16(QuadAlign(SIZEOF_R_DIRENTRY));
+> +	re.de.key_size = cpu_to_le16(sizeof(re.Key));
+> +
+> +	inode_lock(&ni->vfs_inode);
+> +
+> +	err = indx_insert_entry(indx, ni, &re.de, NULL, NULL);
+> +
+> +	inode_unlock(&ni->vfs_inode);
+> +
+> +	return err;
+> +}
+> +
+> +int ntfs_remove_reparse(struct ntfs_sb_info *sbi, __le32 rtag,
+> +			const struct MFT_REF *ref)
+> +{
+> +	int err;
+> +	struct ntfs_inode *ni = sbi->reparse.ni;
+> +	struct ntfs_index *indx = &sbi->reparse.index_r;
+> +	struct REPARSE_KEY rkey;
+> +	int diff;
+> +	struct NTFS_DE_R *re;
+> +	struct ntfs_fnd *fnd = NULL;
+> +	struct INDEX_ROOT *root_r;
+> +
+> +	if (!ni)
+> +		return -EINVAL;
+> +
+> +	rkey.ReparseTag = rtag;
+> +	rkey.ref = *ref;
+> +
+> +	inode_lock(&ni->vfs_inode);
+> +
+> +	if (rtag) {
+> +		err = indx_delete_entry(indx, ni, &rkey, sizeof(rkey), NULL);
+> +		goto out1;
+> +	}
+> +
+> +	fnd = fnd_get(indx);
+> +	if (!fnd) {
+> +		err = -ENOMEM;
+> +		goto out1;
+> +	}
+> +
+> +	root_r = indx_get_root(indx, ni, NULL, NULL);
+> +	if (!root_r) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	err = indx_find(indx, ni, root_r, &rkey, sizeof(rkey), NULL, &diff,
+> +			(struct NTFS_DE **)&re, fnd);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (memcmp(&re->Key.ref, ref, sizeof(*ref)))
+> +		goto out;
+> +
+> +	memcpy(&rkey, &re->Key, sizeof(rkey));
+> +
+> +	fnd_put(fnd);
+> +	fnd = NULL;
+> +
+> +	err = indx_delete_entry(indx, ni, &rkey, sizeof(rkey), NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +out:
+> +	fnd_put(fnd);
+> +
+> +out1:
+> +	inode_unlock(&ni->vfs_inode);
+> +
+> +	return err;
+> +}
+> +
+> +static inline void ntfs_unmap_and_discard(struct ntfs_sb_info *sbi, CLST lcn,
+> +					  CLST len)
+> +{
+> +	ntfs_unmap_meta(sbi->sb, lcn, len);
+> +	ntfs_discard(sbi, lcn, len);
+> +}
+> +
+> +void mark_as_free_ex(struct ntfs_sb_info *sbi, CLST lcn, CLST len, bool trim)
+> +{
+> +	CLST end, i;
+> +	struct wnd_bitmap *wnd = &sbi->used.bitmap;
+> +
+> +	down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
+> +	if (!wnd_is_used(wnd, lcn, len)) {
+> +		ntfs_set_state(sbi, NTFS_DIRTY_ERROR);
+> +
+> +		end = lcn + len;
+> +		len = 0;
+> +		for (i = lcn; i < end; i++) {
+> +			if (wnd_is_used(wnd, i, 1)) {
+> +				if (!len)
+> +					lcn = i;
+> +				len += 1;
+> +				continue;
+> +			}
+> +
+> +			if (!len)
+> +				continue;
+> +
+> +			if (trim)
+> +				ntfs_unmap_and_discard(sbi, lcn, len);
+> +
+> +			wnd_set_free(wnd, lcn, len);
+> +			len = 0;
 > +		}
+> +
+> +		if (!len)
+> +			goto out;
+> +	}
+> +
+> +	if (trim)
+> +		ntfs_unmap_and_discard(sbi, lcn, len);
+> +	wnd_set_free(wnd, lcn, len);
+> +
+> +out:
+> +	up_write(&wnd->rw_lock);
+> +}
+> +
+> +/*
+> + * run_deallocate
+> + *
+> + * deallocate clusters
+> + */
+> +int run_deallocate(struct ntfs_sb_info *sbi, struct runs_tree *run, bool trim)
+> +{
+> +	CLST lcn, len;
+> +	size_t idx = 0;
+> +
+> +	while (run_get_entry(run, idx++, NULL, &lcn, &len)) {
+> +		if (lcn == SPARSE_LCN)
+> +			continue;
+> +
+> +		mark_as_free_ex(sbi, lcn, len, trim);
 > +	}
 > +
 > +	return 0;
 > +}
-> +
-> +/*
-> + * attr_allocate_frame
-> + *
-> + * allocate/free clusters for 'frame'
-> + */
-> +int attr_allocate_frame(struct ntfs_inode *ni, CLST frame, size_t compr_size,
-> +			u64 new_valid)
-> +{
-> +	int err = 0;
-> +	struct runs_tree *run = &ni->file.run;
-> +	struct ntfs_sb_info *sbi = ni->mi.sbi;
-> +	struct ATTRIB *attr, *attr_b;
-> +	struct ATTR_LIST_ENTRY *le, *le_b;
-> +	struct mft_inode *mi, *mi_b;
-> +	CLST svcn, evcn1, next_svcn, lcn, len;
-> +	CLST vcn, clst_data;
-> +	u64 total_size, valid_size, data_size;
-> +	bool is_compr;
-> +
-> +	le_b = NULL;
-> +	attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL, &mi_b);
-> +	if (!attr_b)
-> +		return -ENOENT;
-> +
-> +	if (!is_attr_ext(attr_b))
-> +		return -EINVAL;
-> +
-> +	vcn = frame << NTFS_LZNT_CUNIT;
-> +	total_size = le64_to_cpu(attr_b->nres.total_size);
-> +
-> +	svcn = le64_to_cpu(attr_b->nres.svcn);
-> +	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
-> +	data_size = le64_to_cpu(attr_b->nres.data_size);
-> +
-> +	if (svcn <= vcn && vcn < evcn1) {
-> +		attr = attr_b;
-> +		le = le_b;
-> +		mi = mi_b;
-> +	} else if (!le_b) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	} else {
-> +		le = le_b;
-> +		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
-> +				    &mi);
-> +		if (!attr) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +		svcn = le64_to_cpu(attr->nres.svcn);
-> +		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
-> +	}
-> +
-> +	err = attr_load_runs(attr, ni, run);
-> +	if (err)
-> +		goto out;
-> +
-> +	err = attr_is_frame_compressed(ni, attr_b, frame, &clst_data,
-> +				       &is_compr);
-> +	if (err)
-> +		goto out;
-> +
-> +	total_size -= (u64)clst_data << sbi->cluster_bits;
-> +
-> +	len = bytes_to_cluster(sbi, compr_size);
-> +
-> +	if (len == clst_data)
-> +		goto out;
-> +
-> +	if (len < clst_data) {
-> +		err = run_deallocate_ex(sbi, run, vcn + len, clst_data - len,
-> +					NULL, true);
-> +		if (err)
-> +			goto out;
-> +
-> +		if (!run_add_entry(run, vcn + len, SPARSE_LCN,
-> +				   clst_data - len)) {
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
-> +	} else {
-> +		CLST alen, hint;
-> +		/* Get the last lcn to allocate from */
-> +		if (vcn + clst_data &&
-> +		    !run_lookup_entry(run, vcn + clst_data - 1, &hint, NULL,
-> +				      NULL)) {
-> +			hint = -1;
-> +		}
-> +
-> +		err = attr_allocate_clusters(sbi, run, vcn + clst_data,
-> +					     hint + 1, len - clst_data, NULL, 0,
-> +					     &alen, 0, &lcn);
-> +		if (err)
-> +			goto out;
-> +	}
-> +
-> +	total_size += (u64)len << sbi->cluster_bits;
-> +
-> +repack:
-> +	err = mi_pack_runs(mi, attr, run, evcn1 - svcn);
-> +	if (err < 0)
-> +		goto out;
-> +
-> +	attr_b->nres.total_size = cpu_to_le64(total_size);
-> +	inode_set_bytes(&ni->vfs_inode, total_size);
-> +
-> +	mi_b->dirty = true;
-> +	mark_inode_dirty(&ni->vfs_inode);
-> +
-> +	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-> +
-> +	if (next_svcn >= evcn1) {
-> +		/* Normal way. update attribute and exit */
-> +		goto out;
-> +	}
-> +
-> +	if (!ni->attr_list.size) {
-> +		err = ni_create_attr_list(ni);
-> +		if (err)
-> +			goto out;
-> +		/* layout of records is changed */
-> +		le_b = NULL;
-> +		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
-> +				      &mi_b);
-> +		if (!attr_b) {
-> +			err = -ENOENT;
-> +			goto out;
-> +		}
-> +
-> +		attr = attr_b;
-> +		le = le_b;
-> +		mi = mi_b;
-> +		goto repack;
-> +	}
-> +
-> +	/* Estimate next attribute */
-> +	attr = ni_find_attr(ni, attr, &le, ATTR_DATA, NULL, 0, &evcn1, &mi);
-> +
-> +	if (attr && le32_to_cpu(mi->mrec->used) + 8 <= sbi->record_size) {
-> +		svcn = next_svcn;
-> +		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
-> +
-> +		err = attr_load_runs(attr, ni, run);
-> +		if (err)
-> +			goto out;
-> +
-> +		attr->nres.svcn = cpu_to_le64(svcn);
-> +		err = mi_pack_runs(mi, attr, run, evcn1 - svcn);
-> +		if (err < 0)
-> +			goto out;
-> +
-> +		le->vcn = cpu_to_le64(svcn);
-> +		ni->attr_list.dirty = true;
-> +		mi->dirty = true;
-> +
-> +		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-> +
-> +		if (next_svcn >= evcn1) {
-> +			/* Normal way. update attribute and exit */
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run, next_svcn,
-> +				    evcn1 - next_svcn, attr_b->flags, &attr,
-> +				    &mi);
-> +	if (err)
-> +		goto out;
-> +
-> +	run_truncate_head(run, vcn);
-> +
-> +out:
-> +	if (new_valid > data_size)
-> +		new_valid = data_size;
-> +
-> +	valid_size = le64_to_cpu(attr_b->nres.valid_size);
-> +	if (new_valid != valid_size) {
-> +		attr_b->nres.valid_size = cpu_to_le64(valid_size);
-> +		mi_b->dirty = true;
-> +	}
-> +
-> +	return err;
-> +}
-> diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
+> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
 > new file mode 100644
-> index 000000000000..3739572a4eca
+> index 000000000000..d7633d69b714
 > --- /dev/null
-> +++ b/fs/ntfs3/attrlist.c
-> @@ -0,0 +1,462 @@
+> +++ b/fs/ntfs3/index.c
+> @@ -0,0 +1,2639 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + *  linux/fs/ntfs3/attrib.c
+> + *  linux/fs/ntfs3/index.c
 > + *
 > + * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
 > + *
@@ -1466,459 +2353,2636 @@ On 18/9/20 5:21 pm, Konstantin Komarov wrote:
 > +#include "ntfs.h"
 > +#include "ntfs_fs.h"
 > +
-> +/* Returns true if le is valid */
-> +static inline bool al_is_valid_le(const struct ntfs_inode *ni,
-> +				  struct ATTR_LIST_ENTRY *le)
+> +static const struct INDEX_NAMES {
+> +	const __le16 *name;
+> +	u8 name_len;
+> +} s_index_names[INDEX_MUTEX_TOTAL] = {
+> +	{ I30_NAME, ARRAY_SIZE(I30_NAME) }, { SII_NAME, ARRAY_SIZE(SII_NAME) },
+> +	{ SDH_NAME, ARRAY_SIZE(SDH_NAME) }, { SO_NAME, ARRAY_SIZE(SO_NAME) },
+> +	{ SQ_NAME, ARRAY_SIZE(SQ_NAME) },   { SR_NAME, ARRAY_SIZE(SR_NAME) },
+> +};
+> +
+> +static int cmp_fnames(const struct ATTR_FILE_NAME *f1, size_t l1,
+> +		      const struct ATTR_FILE_NAME *f2, size_t l2,
+> +		      const struct ntfs_sb_info *sbi)
 > +{
-> +	if (!le || !ni->attr_list.le || !ni->attr_list.size)
-> +		return false;
-> +
-> +	return PtrOffset(ni->attr_list.le, le) + le16_to_cpu(le->size) <=
-> +	       ni->attr_list.size;
-> +}
-> +
-> +void al_destroy(struct ntfs_inode *ni)
-> +{
-> +	run_close(&ni->attr_list.run);
-> +	ntfs_free(ni->attr_list.le);
-> +	ni->attr_list.le = NULL;
-> +	ni->attr_list.size = 0;
-> +	ni->attr_list.dirty = false;
-> +}
-> +
-> +/*
-> + * ntfs_load_attr_list
-> + *
-> + * This method makes sure that the ATTRIB list, if present,
-> + * has been properly set up.
-> + */
-> +int ntfs_load_attr_list(struct ntfs_inode *ni, struct ATTRIB *attr)
-> +{
-> +	int err;
-> +	size_t lsize;
-> +	void *le = NULL;
-> +
-> +	if (ni->attr_list.size)
-> +		return 0;
-> +
-> +	if (!attr->non_res) {
-> +		lsize = le32_to_cpu(attr->res.data_size);
-> +		le = ntfs_alloc(al_aligned(lsize), 0);
-> +		if (!le) {
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
-> +		memcpy(le, resident_data(attr), lsize);
-> +	} else if (attr->nres.svcn) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	} else {
-> +		u16 run_off = le16_to_cpu(attr->nres.run_off);
-> +
-> +		lsize = le64_to_cpu(attr->nres.data_size);
-> +
-> +		run_init(&ni->attr_list.run);
-> +
-> +		err = run_unpack_ex(&ni->attr_list.run, ni->mi.sbi, ni->mi.rno,
-> +				    0, le64_to_cpu(attr->nres.evcn),
-> +				    Add2Ptr(attr, run_off),
-> +				    le32_to_cpu(attr->size) - run_off);
-> +		if (err < 0)
-> +			goto out;
-> +
-> +		le = ntfs_alloc(al_aligned(lsize), 0);
-> +		if (!le) {
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
-> +
-> +		err = ntfs_read_run_nb(ni->mi.sbi, &ni->attr_list.run, 0, le,
-> +				       lsize, NULL);
-> +		if (err)
-> +			goto out;
-> +	}
-> +
-> +	ni->attr_list.size = lsize;
-> +	ni->attr_list.le = le;
-> +
-> +	return 0;
-> +
-> +out:
-> +	ni->attr_list.le = le;
-> +	al_destroy(ni);
-> +
-> +	return err;
-> +}
-> +
-> +/*
-> + * al_enumerate
-> + *
-> + * Returns the next list le
-> + * if le is NULL then returns the first le
-> + */
-> +struct ATTR_LIST_ENTRY *al_enumerate(struct ntfs_inode *ni,
-> +				     struct ATTR_LIST_ENTRY *le)
-> +{
-> +	size_t off;
-> +	u16 sz;
-> +
-> +	if (!le) {
-> +		le = ni->attr_list.le;
-> +	} else {
-> +		sz = le16_to_cpu(le->size);
-> +		if (sz < sizeof(struct ATTR_LIST_ENTRY)) {
-> +			/* Impossible 'cause we should not return such le */
-> +			return NULL;
-> +		}
-> +		le = Add2Ptr(le, sz);
-> +	}
-> +
-> +	/* Check boundary */
-> +	off = PtrOffset(ni->attr_list.le, le);
-> +	if (off + sizeof(struct ATTR_LIST_ENTRY) > ni->attr_list.size) {
-> +		// The regular end of list
-> +		return NULL;
-> +	}
-> +
-> +	sz = le16_to_cpu(le->size);
-> +
-> +	/* Check le for errors */
-> +	if (sz < sizeof(struct ATTR_LIST_ENTRY) ||
-> +	    off + sz > ni->attr_list.size ||
-> +	    sz < le->name_off + le->name_len * sizeof(short)) {
-> +		return NULL;
-> +	}
-> +
-> +	return le;
-> +}
-> +
-> +/*
-> + * al_find_le
-> + *
-> + * finds the first le in the list which matches type, name and vcn
-> + * Returns NULL if not found
-> + */
-> +struct ATTR_LIST_ENTRY *al_find_le(struct ntfs_inode *ni,
-> +				   struct ATTR_LIST_ENTRY *le,
-> +				   const struct ATTRIB *attr)
-> +{
-> +	CLST svcn = attr_svcn(attr);
-> +
-> +	return al_find_ex(ni, le, attr->type, attr_name(attr), attr->name_len,
-> +			  &svcn);
-> +}
-> +
-> +/*
-> + * al_find_ex
-> + *
-> + * finds the first le in the list which matches type, name and vcn
-> + * Returns NULL if not found
-> + */
-> +struct ATTR_LIST_ENTRY *al_find_ex(struct ntfs_inode *ni,
-> +				   struct ATTR_LIST_ENTRY *le,
-> +				   enum ATTR_TYPE type, const __le16 *name,
-> +				   u8 name_len, const CLST *vcn)
-> +{
-> +	struct ATTR_LIST_ENTRY *ret = NULL;
-> +	u32 type_in = le32_to_cpu(type);
-> +
-> +	while ((le = al_enumerate(ni, le))) {
-> +		u64 le_vcn;
-> +		int diff;
-> +
-> +		/* List entries are sorted by type, name and vcn */
-> +		diff = le32_to_cpu(le->type) - type_in;
-> +		if (diff < 0)
-> +			continue;
-> +
-> +		if (diff > 0)
-> +			return ret;
-> +
-> +		if (le->name_len != name_len)
-> +			continue;
-> +
-> +		if (name_len &&
-> +		    memcmp(le_name(le), name, name_len * sizeof(short)))
-> +			continue;
-> +
-> +		if (!vcn)
-> +			return le;
-> +
-> +		le_vcn = le64_to_cpu(le->vcn);
-> +		if (*vcn == le_vcn)
-> +			return le;
-> +
-> +		if (*vcn < le_vcn)
-> +			return ret;
-> +
-> +		ret = le;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * al_find_le_to_insert
-> + *
-> + * finds the first list entry which matches type, name and vcn
-> + * Returns NULL if not found
-> + */
-> +static struct ATTR_LIST_ENTRY *
-> +al_find_le_to_insert(struct ntfs_inode *ni, enum ATTR_TYPE type,
-> +		     const __le16 *name, u8 name_len, const CLST *vcn)
-> +{
-> +	struct ATTR_LIST_ENTRY *le = NULL, *prev;
-> +	u32 type_in = le32_to_cpu(type);
 > +	int diff;
+> +	u16 fsize2;
 > +
-> +	/* List entries are sorted by type, name, vcn */
-> +next:
-> +	le = al_enumerate(ni, prev = le);
-> +	if (!le)
-> +		goto out;
-> +	diff = le32_to_cpu(le->type) - type_in;
-> +	if (diff < 0)
-> +		goto next;
-> +	if (diff > 0)
-> +		goto out;
+> +	if (l2 <= offsetof(struct ATTR_FILE_NAME, name))
+> +		return -1;
 > +
-> +	if (ntfs_cmp_names(name, name_len, le_name(le), le->name_len, NULL) > 0)
-> +		goto next;
+> +	fsize2 = fname_full_size(f2);
+> +	if (l2 < fsize2)
+> +		return -1;
 > +
-> +	if (!vcn || *vcn > le64_to_cpu(le->vcn))
-> +		goto next;
+> +	if (!l1) {
+> +		const struct cpu_str *s1 = (struct cpu_str *)f1;
+> +		const struct le_str *s2 = (struct le_str *)&f2->name_len;
 > +
-> +out:
-> +	if (!le)
-> +		le = prev ? Add2Ptr(prev, le16_to_cpu(prev->size)) :
-> +			    ni->attr_list.le;
+> +		diff = ntfs_cmp_names_cpu(s1, s2, sbi->upcase);
 > +
-> +	return le;
-> +}
+> +		if (diff)
+> +			return diff;
 > +
-> +/*
-> + * al_add_le
-> + *
-> + * adds an "attribute list entry" to the list.
-> + */
-> +int al_add_le(struct ntfs_inode *ni, enum ATTR_TYPE type, const __le16 *name,
-> +	      u8 name_len, CLST svcn, __le16 id, const struct MFT_REF *ref,
-> +	      struct ATTR_LIST_ENTRY **new_le)
-> +{
-> +	int err;
-> +	struct ATTRIB *attr;
-> +	struct ATTR_LIST_ENTRY *le;
-> +	size_t off;
-> +	u16 sz;
-> +	size_t asize, new_asize;
-> +	u64 new_size;
-> +	typeof(ni->attr_list) *al = &ni->attr_list;
+> +		/*
+> +		 * If names are equal (case insensitive)
+> +		 * try to compare it case sensitive
+> +		 */
+> +		if (/*sbi->options.nocase || */ f2->type == FILE_NAME_DOS)
+> +			return 0;
+> +
+> +		return ntfs_cmp_names_cpu(s1, s2, NULL);
+> +	}
+> +
+> +	diff = ntfs_cmp_names(f1->name, f1->name_len, f2->name, f2->name_len,
+> +			      sbi->upcase);
+> +
+> +	if (diff)
+> +		return diff;
 > +
 > +	/*
-> +	 * Compute the size of the new le and the new length of the
-> +	 * list with al le added.
+> +	 * If names are equal (case insensitive)
+> +	 * try to compare it case sensitive
 > +	 */
-> +	sz = le_size(name_len);
-> +	new_size = al->size + sz;
-> +	asize = al_aligned(al->size);
-> +	new_asize = al_aligned(new_size);
+> +	if (/*sbi->options.nocase || */ f2->type == FILE_NAME_DOS)
+> +		return 0;
 > +
-> +	/* Scan forward to the point at which the new le should be inserted. */
-> +	le = al_find_le_to_insert(ni, type, name, name_len, &svcn);
-> +	off = PtrOffset(al->le, le);
+> +	return ntfs_cmp_names(f1->name, f1->name_len, f2->name, f2->name_len,
+> +			      NULL);
+> +}
 > +
-> +	if (new_size > asize) {
-> +		void *ptr = ntfs_alloc(new_asize, 0);
+> +static int cmp_uint(const u32 *k1, size_t l1, const u32 *k2, size_t l2,
+> +		    const void *p)
+> +{
+> +	if (l2 < sizeof(u32))
+> +		return -1;
 > +
-> +		if (!ptr)
-> +			return -ENOMEM;
+> +	if (*k1 < *k2)
+> +		return -1;
+> +	if (*k1 > *k2)
+> +		return 1;
+> +	return 0;
+> +}
 > +
-> +		memcpy(ptr, al->le, off);
-> +		memcpy(Add2Ptr(ptr, off + sz), le, al->size - off);
-> +		le = Add2Ptr(ptr, off);
-> +		ntfs_free(al->le);
-> +		al->le = ptr;
-> +	} else {
-> +		memmove(Add2Ptr(le, sz), le, al->size - off);
+> +static int cmp_sdh(const struct SECURITY_KEY *k1, size_t l1,
+> +		   const struct SECURITY_KEY *k2, size_t l2, const void *p)
+> +{
+> +	u32 t1, t2;
+> +
+> +	if (l2 < sizeof(struct SECURITY_KEY))
+> +		return -1;
+> +
+> +	t1 = le32_to_cpu(k1->hash);
+> +	t2 = le32_to_cpu(k2->hash);
+> +
+> +	/* First value is a hash value itself */
+> +	if (t1 < t2)
+> +		return -1;
+> +	if (t1 > t2)
+> +		return 1;
+> +
+> +	/* Second value is security Id */
+> +	if (p) {
+> +		t1 = le32_to_cpu(k1->sec_id);
+> +		t2 = le32_to_cpu(k2->sec_id);
+> +		if (t1 < t2)
+> +			return -1;
+> +		if (t1 > t2)
+> +			return 1;
 > +	}
 > +
-> +	al->size = new_size;
+> +	return 0;
+> +}
 > +
-> +	le->type = type;
-> +	le->size = cpu_to_le16(sz);
-> +	le->name_len = name_len;
-> +	le->name_off = offsetof(struct ATTR_LIST_ENTRY, name);
-> +	le->vcn = cpu_to_le64(svcn);
-> +	le->ref = *ref;
-> +	le->id = id;
-> +	memcpy(le->name, name, sizeof(short) * name_len);
+> +static int cmp_uints(const __le32 *k1, size_t l1, const __le32 *k2, size_t l2,
+> +		     const void *p)
+> +{
+> +	size_t count;
 > +
-> +	al->dirty = true;
+> +	if (l2 < sizeof(int))
+> +		return -1;
 > +
-> +	err = attr_set_size(ni, ATTR_LIST, NULL, 0, &al->run, new_size,
-> +			    &new_size, true, &attr);
+> +	for (count = min(l1, l2) >> 2; count > 0; --count, ++k1, ++k2) {
+> +		u32 t1 = le32_to_cpu(*k1);
+> +		u32 t2 = le32_to_cpu(*k2);
+> +
+> +		if (t1 > t2)
+> +			return 1;
+> +		if (t1 < t2)
+> +			return -1;
+> +	}
+> +
+> +	if (l1 > l2)
+> +		return 1;
+> +	if (l1 < l2)
+> +		return -1;
+> +
+> +	return 0;
+> +}
+> +
+> +static inline NTFS_CMP_FUNC get_cmp_func(const struct INDEX_ROOT *root)
+> +{
+> +	switch (root->type) {
+> +	case ATTR_NAME:
+> +		if (root->rule == NTFS_COLLATION_TYPE_FILENAME)
+> +			return (NTFS_CMP_FUNC)&cmp_fnames;
+> +		break;
+> +	case ATTR_ZERO:
+> +		switch (root->rule) {
+> +		case NTFS_COLLATION_TYPE_UINT:
+> +			return (NTFS_CMP_FUNC)&cmp_uint;
+> +		case NTFS_COLLATION_TYPE_SECURITY_HASH:
+> +			return (NTFS_CMP_FUNC)&cmp_sdh;
+> +		case NTFS_COLLATION_TYPE_UINTS:
+> +			return (NTFS_CMP_FUNC)&cmp_uints;
+> +		default:
+> +			break;
+> +		}
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +struct bmp_buf {
+> +	struct ATTRIB *b;
+> +	struct mft_inode *mi;
+> +	struct buffer_head *bh;
+> +	ulong *buf;
+> +	size_t bit;
+> +	u32 nbits;
+> +	u64 new_valid;
+> +};
+> +
+> +static int bmp_buf_get(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		       size_t bit, struct bmp_buf *bbuf)
+> +{
+> +	struct ATTRIB *b;
+> +	size_t data_size, valid_size, vbo, off = bit >> 3;
+> +	struct ntfs_sb_info *sbi = ni->mi.sbi;
+> +	CLST vcn = off >> sbi->cluster_bits;
+> +	struct ATTR_LIST_ENTRY *le = NULL;
+> +	struct buffer_head *bh;
+> +	struct super_block *sb;
+> +	u32 blocksize;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +
+> +	bbuf->bh = NULL;
+> +
+> +	b = ni_find_attr(ni, NULL, &le, ATTR_BITMAP, in->name, in->name_len,
+> +			 &vcn, &bbuf->mi);
+> +	bbuf->b = b;
+> +	if (!b)
+> +		return -EINVAL;
+> +
+> +	if (!b->non_res) {
+> +		data_size = le32_to_cpu(b->res.data_size);
+> +
+> +		if (off >= data_size)
+> +			return -EINVAL;
+> +
+> +		bbuf->buf = (ulong *)resident_data(b);
+> +		bbuf->bit = 0;
+> +		bbuf->nbits = data_size * 8;
+> +
+> +		return 0;
+> +	}
+> +
+> +	data_size = le64_to_cpu(b->nres.data_size);
+> +	if (off >= data_size) {
+> +		WARN_ON(1);
+> +		return -EINVAL;
+> +	}
+> +
+> +	valid_size = le64_to_cpu(b->nres.valid_size);
+> +
+> +	bh = ntfs_bread_run(sbi, &indx->bitmap_run, off);
+> +	if (!bh)
+> +		return -EIO;
+> +
+> +	if (IS_ERR(bh))
+> +		return PTR_ERR(bh);
+> +
+> +	bbuf->bh = bh;
+> +
+> +	if (buffer_locked(bh))
+> +		__wait_on_buffer(bh);
+> +
+> +	lock_buffer(bh);
+> +
+> +	sb = sbi->sb;
+> +	blocksize = sb->s_blocksize;
+> +
+> +	vbo = off & ~(size_t)sbi->block_mask;
+> +
+> +	bbuf->new_valid = vbo + blocksize;
+> +	if (bbuf->new_valid <= valid_size)
+> +		bbuf->new_valid = 0;
+> +	else if (bbuf->new_valid > data_size)
+> +		bbuf->new_valid = data_size;
+> +
+> +	if (vbo >= valid_size) {
+> +		memset(bh->b_data, 0, blocksize);
+> +	} else if (vbo + blocksize > valid_size) {
+> +		u32 voff = valid_size & sbi->block_mask;
+> +
+> +		memset(bh->b_data + voff, 0, blocksize - voff);
+> +	}
+> +
+> +	bbuf->buf = (ulong *)bh->b_data;
+> +	bbuf->bit = 8 * (off & ~(size_t)sbi->block_mask);
+> +	bbuf->nbits = 8 * blocksize;
+> +
+> +	return 0;
+> +}
+> +
+> +static void bmp_buf_put(struct bmp_buf *bbuf, bool dirty)
+> +{
+> +	struct buffer_head *bh = bbuf->bh;
+> +	struct ATTRIB *b = bbuf->b;
+> +
+> +	if (!bh) {
+> +		if (b && !b->non_res && dirty)
+> +			bbuf->mi->dirty = true;
+> +		return;
+> +	}
+> +
+> +	if (!dirty)
+> +		goto out;
+> +
+> +	if (bbuf->new_valid) {
+> +		b->nres.valid_size = cpu_to_le64(bbuf->new_valid);
+> +		bbuf->mi->dirty = true;
+> +	}
+> +
+> +	set_buffer_uptodate(bh);
+> +	mark_buffer_dirty(bh);
+> +
+> +out:
+> +	unlock_buffer(bh);
+> +	put_bh(bh);
+> +}
+> +
+> +/*
+> + * indx_mark_used
+> + *
+> + * marks the bit 'bit' as used
+> + */
+> +static int indx_mark_used(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +			  size_t bit)
+> +{
+> +	int err;
+> +	struct bmp_buf bbuf;
+> +
+> +	err = bmp_buf_get(indx, ni, bit, &bbuf);
 > +	if (err)
 > +		return err;
 > +
-> +	if (attr && attr->non_res) {
-> +		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
-> +					al->size);
+> +	__set_bit(bit - bbuf.bit, bbuf.buf);
+> +
+> +	bmp_buf_put(&bbuf, true);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * indx_mark_free
+> + *
+> + * the bit 'bit' as free
+> + */
+> +static int indx_mark_free(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +			  size_t bit)
+> +{
+> +	int err;
+> +	struct bmp_buf bbuf;
+> +
+> +	err = bmp_buf_get(indx, ni, bit, &bbuf);
+> +	if (err)
+> +		return err;
+> +
+> +	__clear_bit(bit - bbuf.bit, bbuf.buf);
+> +
+> +	bmp_buf_put(&bbuf, true);
+> +
+> +	return 0;
+> +}
+> +
+> +static int scan_nres_bitmap(struct ntfs_sb_info *sbi, struct ATTRIB *bitmap,
+> +			    struct runs_tree *run, size_t from,
+> +			    bool (*fn)(const ulong *buf, u32 bit, u32 bits,
+> +				       size_t *ret),
+> +			    size_t *ret)
+> +{
+> +	struct super_block *sb = sbi->sb;
+> +	u32 nbits = sb->s_blocksize * 8;
+> +	u32 blocksize = sb->s_blocksize;
+> +	u64 valid_size = le64_to_cpu(bitmap->nres.valid_size);
+> +	u64 data_size = le64_to_cpu(bitmap->nres.data_size);
+> +	sector_t eblock = bytes_to_block(sb, data_size);
+> +	size_t vbo = from >> 3;
+> +	sector_t blk = (vbo & sbi->cluster_mask) >> sb->s_blocksize_bits;
+> +	sector_t vblock = vbo >> sb->s_blocksize_bits;
+> +	sector_t blen, block;
+> +	CLST lcn, len;
+> +	size_t idx;
+> +	struct buffer_head *bh;
+> +
+> +	*ret = MINUS_ONE_T;
+> +
+> +	if (vblock >= eblock)
+> +		return 0;
+> +
+> +	from &= nbits - 1;
+> +
+> +	if (!run_lookup_entry(run, vbo >> sbi->cluster_bits, &lcn, &len,
+> +			      &idx)) {
+> +		return -ENOENT;
+> +	}
+> +
+> +	blen = (sector_t)len * sbi->blocks_per_cluster;
+> +	block = (sector_t)lcn * sbi->blocks_per_cluster;
+> +
+> +next_run:
+> +	for (; blk < blen; blk++, from = 0) {
+> +		bool ok;
+> +
+> +		bh = ntfs_bread(sb, block + blk);
+> +		if (!bh)
+> +			return -EIO;
+> +
+> +		vbo = (u64)vblock << sb->s_blocksize_bits;
+> +		if (vbo >= valid_size) {
+> +			memset(bh->b_data, 0, blocksize);
+> +		} else if (vbo + blocksize > valid_size) {
+> +			u32 voff = valid_size & sbi->block_mask;
+> +
+> +			memset(bh->b_data + voff, 0, blocksize - voff);
+> +		}
+> +
+> +		if (vbo + blocksize > data_size)
+> +			nbits = 8 * (data_size - vbo);
+> +
+> +		ok = nbits > from ?
+> +			     (*fn)((ulong *)bh->b_data, from, nbits, ret) :
+> +			     false;
+> +		put_bh(bh);
+> +
+> +		if (ok) {
+> +			*ret += 8 * vbo;
+> +			return 0;
+> +		}
+> +
+> +		if (++vblock >= eblock) {
+> +			*ret = MINUS_ONE_T;
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	if (!run_get_entry(run, ++idx, NULL, &lcn, &len))
+> +		return -ENOENT;
+> +
+> +	blk = 0;
+> +	blen = (sector_t)len * sbi->blocks_per_cluster;
+> +	block = (sector_t)lcn * sbi->blocks_per_cluster;
+> +	goto next_run;
+> +}
+> +
+> +static bool scan_for_free(const ulong *buf, u32 bit, u32 bits, size_t *ret)
+> +{
+> +	size_t pos = find_next_zero_bit(buf, bits, bit);
+> +
+> +	if (pos >= bits)
+> +		return false;
+> +	*ret = pos;
+> +	return true;
+> +}
+> +
+> +/*
+> + * indx_find_free
+> + *
+> + * looks for free bit
+> + * returns -1 if no free bits
+> + */
+> +static int indx_find_free(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +			  size_t *bit, struct ATTRIB **bitmap)
+> +{
+> +	struct ATTRIB *b;
+> +	struct ATTR_LIST_ENTRY *le = NULL;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +
+> +	b = ni_find_attr(ni, NULL, &le, ATTR_BITMAP, in->name, in->name_len,
+> +			 NULL, NULL);
+> +
+> +	if (!b)
+> +		return -ENOENT;
+> +
+> +	*bitmap = b;
+> +	*bit = MINUS_ONE_T;
+> +
+> +	if (!b->non_res) {
+> +		u32 nbits = 8 * le32_to_cpu(b->res.data_size);
+> +		size_t pos = find_next_zero_bit(resident_data(b), nbits, 0);
+> +
+> +		if (pos < nbits)
+> +			*bit = pos;
+> +	} else {
+> +		int err = scan_nres_bitmap(ni->mi.sbi, b, &indx->bitmap_run, 0,
+> +					   &scan_for_free, bit);
+> +
 > +		if (err)
 > +			return err;
 > +	}
 > +
-> +	al->dirty = false;
-> +	*new_le = le;
+> +	return 0;
+> +}
+> +
+> +static bool scan_for_used(const ulong *buf, u32 bit, u32 bits, size_t *ret)
+> +{
+> +	size_t pos = find_next_bit(buf, bits, bit);
+> +
+> +	if (pos >= bits)
+> +		return false;
+> +	*ret = pos;
+> +	return true;
+> +}
+> +
+> +/*
+> + * indx_used_bit
+> + *
+> + * looks for used bit
+> + * returns MINUS_ONE_T if no used bits
+> + */
+> +int indx_used_bit(struct ntfs_index *indx, struct ntfs_inode *ni, size_t *bit)
+> +{
+> +	struct ATTRIB *b;
+> +	struct ATTR_LIST_ENTRY *le = NULL;
+> +	size_t from = *bit;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +
+> +	b = ni_find_attr(ni, NULL, &le, ATTR_BITMAP, in->name, in->name_len,
+> +			 NULL, NULL);
+> +
+> +	if (!b)
+> +		return -ENOENT;
+> +
+> +	*bit = MINUS_ONE_T;
+> +
+> +	if (!b->non_res) {
+> +		u32 nbits = le32_to_cpu(b->res.data_size) * 8;
+> +		size_t pos = find_next_bit(resident_data(b), nbits, from);
+> +
+> +		if (pos < nbits)
+> +			*bit = pos;
+> +	} else {
+> +		int err = scan_nres_bitmap(ni->mi.sbi, b, &indx->bitmap_run,
+> +					   from, &scan_for_used, bit);
+> +		if (err)
+> +			return err;
+> +	}
 > +
 > +	return 0;
 > +}
 > +
 > +/*
-> + * al_remove_le
+> + * hdr_find_split
 > + *
-> + * removes 'le' from attribute list
+> + * finds a point at which the index allocation buffer would like to
+> + * be split.
+> + * NOTE: This function should never return 'END' entry NULL returns on error
 > + */
-> +bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le)
+> +static inline const struct NTFS_DE *hdr_find_split(const struct INDEX_HDR *hdr)
 > +{
-> +	u16 size;
-> +	size_t off;
-> +	typeof(ni->attr_list) *al = &ni->attr_list;
+> +	size_t o;
+> +	const struct NTFS_DE *e = hdr_first_de(hdr);
+> +	u32 used_2 = le32_to_cpu(hdr->used) >> 1;
+> +	u16 esize = le16_to_cpu(e->size);
 > +
-> +	if (!al_is_valid_le(ni, le))
-> +		return false;
+> +	if (!e || de_is_last(e))
+> +		return NULL;
 > +
-> +	/* Save on stack the size of le */
-> +	size = le16_to_cpu(le->size);
-> +	off = PtrOffset(al->le, le);
+> +	for (o = le32_to_cpu(hdr->de_off) + esize; o < used_2; o += esize) {
+> +		const struct NTFS_DE *p = e;
 > +
-> +	memmove(le, Add2Ptr(le, size), al->size - (off + size));
+> +		e = Add2Ptr(hdr, o);
 > +
-> +	al->size -= size;
-> +	al->dirty = true;
+> +		/* We must not return END entry */
+> +		if (de_is_last(e))
+> +			return p;
 > +
-> +	return true;
+> +		esize = le16_to_cpu(e->size);
+> +	}
+> +
+> +	return e;
 > +}
 > +
 > +/*
-> + * al_delete_le
+> + * hdr_insert_head
 > + *
-> + * deletes from the list the first le which matches its parameters.
+> + * inserts some entries at the beginning of the buffer.
+> + * It is used to insert entries into a newly-created buffer.
 > + */
-> +bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
-> +		  const __le16 *name, size_t name_len,
-> +		  const struct MFT_REF *ref)
+> +static inline const struct NTFS_DE *
+> +hdr_insert_head(struct INDEX_HDR *hdr, const void *ins, u32 ins_bytes)
 > +{
-> +	u16 size;
-> +	struct ATTR_LIST_ENTRY *le;
-> +	size_t off;
-> +	typeof(ni->attr_list) *al = &ni->attr_list;
+> +	u32 to_move;
+> +	struct NTFS_DE *e = hdr_first_de(hdr);
+> +	u32 used = le32_to_cpu(hdr->used);
 > +
-> +	/* Scan forward to the first le that matches the input */
-> +	le = al_find_ex(ni, NULL, type, name, name_len, &vcn);
-> +	if (!le)
-> +		return false;
+> +	if (!e)
+> +		return NULL;
 > +
-> +	off = PtrOffset(al->le, le);
+> +	/* Now we just make room for the inserted entries and jam it in. */
+> +	to_move = used - le32_to_cpu(hdr->de_off);
+> +	memmove(Add2Ptr(e, ins_bytes), e, to_move);
+> +	memcpy(e, ins, ins_bytes);
+> +	hdr->used = cpu_to_le32(used + ins_bytes);
 > +
-> +	if (!ref)
-> +		goto del;
+> +	return e;
+> +}
+> +
+> +void fnd_clear(struct ntfs_fnd *fnd)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < fnd->level; i++) {
+> +		struct indx_node *n = fnd->nodes[i];
+> +
+> +		if (!n)
+> +			continue;
+> +
+> +		put_indx_node(n);
+> +		fnd->nodes[i] = NULL;
+> +	}
+> +	fnd->level = 0;
+> +	fnd->root_de = NULL;
+> +}
+> +
+> +static int fnd_push(struct ntfs_fnd *fnd, struct indx_node *n,
+> +		    struct NTFS_DE *e)
+> +{
+> +	int i;
+> +
+> +	i = fnd->level;
+> +	if (i < 0 || i >= ARRAY_SIZE(fnd->nodes))
+> +		return -EINVAL;
+> +	fnd->nodes[i] = n;
+> +	fnd->de[i] = e;
+> +	fnd->level += 1;
+> +	return 0;
+> +}
+> +
+> +static struct indx_node *fnd_pop(struct ntfs_fnd *fnd)
+> +{
+> +	struct indx_node *n;
+> +	int i = fnd->level;
+> +
+> +	i -= 1;
+> +	n = fnd->nodes[i];
+> +	fnd->nodes[i] = NULL;
+> +	fnd->level = i;
+> +
+> +	return n;
+> +}
+> +
+> +static bool fnd_is_empty(struct ntfs_fnd *fnd)
+> +{
+> +	if (!fnd->level)
+> +		return !fnd->root_de;
+> +
+> +	return !fnd->de[fnd->level - 1];
+> +}
+> +
+> +struct ntfs_fnd *fnd_get(struct ntfs_index *indx)
+> +{
+> +	struct ntfs_fnd *fnd = ntfs_alloc(sizeof(struct ntfs_fnd), 1);
+> +
+> +	if (!fnd)
+> +		return NULL;
+> +
+> +	return fnd;
+> +}
+> +
+> +void fnd_put(struct ntfs_fnd *fnd)
+> +{
+> +	if (!fnd)
+> +		return;
+> +	fnd_clear(fnd);
+> +	ntfs_free(fnd);
+> +}
+> +
+> +/*
+> + * hdr_find_e
+> + *
+> + * locates an entry the index buffer.
+> + * If no matching entry is found, it returns the first entry which is greater
+> + * than the desired entry If the search key is greater than all the entries the
+> + * buffer, it returns the 'end' entry. This function does a binary search of the
+> + * current index buffer, for the first entry that is <= to the search value
+> + * Returns NULL if error
+> + */
+> +static struct NTFS_DE *hdr_find_e(const struct ntfs_index *indx,
+> +				  const struct INDEX_HDR *hdr, const void *key,
+> +				  size_t key_len, const void *ctx, int *diff)
+> +{
+> +	struct NTFS_DE *e;
+> +	NTFS_CMP_FUNC cmp = indx->cmp;
+> +	u32 e_size, e_key_len;
+> +	u32 end = le32_to_cpu(hdr->used);
+> +	u32 off = le32_to_cpu(hdr->de_off);
+> +
+> +#ifdef NTFS3_INDEX_BINARY_SEARCH
+> +	int max_idx = 0, fnd, min_idx;
+> +	int nslots = 64;
+> +	u16 *offs;
+> +
+> +	if (end > 0x10000)
+> +		goto next;
+> +
+> +	offs = ntfs_alloc(sizeof(u16) * nslots, 0);
+> +	if (!offs)
+> +		goto next;
+> +
+> +	/* use binary search algorithm */
+> +next1:
+> +	if (off + sizeof(struct NTFS_DE) > end) {
+> +		e = NULL;
+> +		goto out1;
+> +	}
+> +	e = Add2Ptr(hdr, off);
+> +	e_size = le16_to_cpu(e->size);
+> +
+> +	if (e_size < sizeof(struct NTFS_DE) || off + e_size > end) {
+> +		e = NULL;
+> +		goto out1;
+> +	}
+> +
+> +	if (max_idx >= nslots) {
+> +		u16 *ptr;
+> +		int new_slots = QuadAlign(2 * nslots);
+> +
+> +		ptr = ntfs_alloc(sizeof(u16) * new_slots, 0);
+> +		if (ptr)
+> +			memcpy(ptr, offs, sizeof(u16) * max_idx);
+> +		ntfs_free(offs);
+> +		offs = ptr;
+> +		nslots = new_slots;
+> +		if (!ptr)
+> +			goto next;
+> +	}
+> +
+> +	/* Store entry table */
+> +	offs[max_idx] = off;
+> +
+> +	if (!de_is_last(e)) {
+> +		off += e_size;
+> +		max_idx += 1;
+> +		goto next1;
+> +	}
 > +
 > +	/*
-> +	 * The caller specified a segment reference, so we have to
-> +	 * scan through the matching entries until we find that segment
-> +	 * reference or we run of matching entries.
+> +	 * Table of pointers is created
+> +	 * Use binary search to find entry that is <= to the search value
 > +	 */
+> +	fnd = -1;
+> +	min_idx = 0;
+> +
+> +	while (min_idx <= max_idx) {
+> +		int mid_idx = min_idx + ((max_idx - min_idx) >> 1);
+> +		int diff2;
+> +
+> +		e = Add2Ptr(hdr, offs[mid_idx]);
+> +
+> +		e_key_len = le16_to_cpu(e->key_size);
+> +
+> +		diff2 = (*cmp)(key, key_len, e + 1, e_key_len, ctx);
+> +
+> +		if (!diff2) {
+> +			*diff = 0;
+> +			goto out1;
+> +		}
+> +
+> +		if (diff2 < 0) {
+> +			max_idx = mid_idx - 1;
+> +			fnd = mid_idx;
+> +			if (!fnd)
+> +				break;
+> +		} else {
+> +			min_idx = mid_idx + 1;
+> +		}
+> +	}
+> +
+> +	if (fnd == -1) {
+> +		e = NULL;
+> +		goto out1;
+> +	}
+> +
+> +	*diff = -1;
+> +	e = Add2Ptr(hdr, offs[fnd]);
+> +
+> +out1:
+> +	ntfs_free(offs);
+> +
+> +	return e;
+> +#endif
+> +
 > +next:
-> +	if (off + sizeof(struct ATTR_LIST_ENTRY) > al->size)
-> +		goto del;
-> +	if (le->type != type)
-> +		goto del;
-> +	if (le->name_len != name_len)
-> +		goto del;
-> +	if (name_len &&
-> +	    memcmp(name, Add2Ptr(le, le->name_off), name_len * sizeof(short)))
-> +		goto del;
-> +	if (le64_to_cpu(le->vcn) != vcn)
-> +		goto del;
-> +	if (!memcmp(ref, &le->ref, sizeof(*ref)))
-> +		goto del;
-> +
-> +	off += le16_to_cpu(le->size);
-> +	le = Add2Ptr(al->le, off);
-> +	goto next;
-> +
-> +del:
 > +	/*
-> +	 * If we've gone off the end of the list, or if the type, name,
-> +	 * and vcn don't match, then we don't have any matching records.
+> +	 * Entries index are sorted
+> +	 * Enumerate all entries until we find entry that is <= to the search value
 > +	 */
-> +	if (off >= al->size)
-> +		return false;
-> +	if (le->type != type)
-> +		return false;
-> +	if (le->name_len != name_len)
-> +		return false;
-> +	if (name_len &&
-> +	    memcmp(name, Add2Ptr(le, le->name_off), name_len * sizeof(short)))
-> +		return false;
-> +	if (le64_to_cpu(le->vcn) != vcn)
-> +		return false;
+> +	if (off + sizeof(struct NTFS_DE) > end)
+> +		return NULL;
 > +
-> +	/* Save on stack the size of le */
-> +	size = le16_to_cpu(le->size);
-> +	/* Delete the le. */
-> +	memmove(le, Add2Ptr(le, size), al->size - (off + size));
+> +	e = Add2Ptr(hdr, off);
+> +	e_size = le16_to_cpu(e->size);
 > +
-> +	al->size -= size;
-> +	al->dirty = true;
-> +	return true;
+> +	if (e_size < sizeof(struct NTFS_DE) || off + e_size > end)
+> +		return NULL;
+> +
+> +	off += e_size;
+> +
+> +	e_key_len = le16_to_cpu(e->key_size);
+> +
+> +	*diff = (*cmp)(key, key_len, e + 1, e_key_len, ctx);
+> +	if (!*diff)
+> +		return e;
+> +
+> +	if (*diff <= 0)
+> +		return e;
+> +
+> +	if (de_is_last(e)) {
+> +		*diff = 1;
+> +		return e;
+> +	}
+> +	goto next;
 > +}
 > +
 > +/*
-> + * al_update
+> + * hdr_insert_de
 > + *
-> + *
+> + * inserts an index entry into the buffer.
+> + * 'before' should be a pointer previously returned from hdr_find_e
 > + */
-> +int al_update(struct ntfs_inode *ni)
+> +static struct NTFS_DE *hdr_insert_de(const struct ntfs_index *indx,
+> +				     struct INDEX_HDR *hdr,
+> +				     const struct NTFS_DE *de,
+> +				     struct NTFS_DE *before, const void *ctx)
+> +{
+> +	int diff;
+> +	size_t off = PtrOffset(hdr, before);
+> +	u32 used = le32_to_cpu(hdr->used);
+> +	u32 total = le32_to_cpu(hdr->total);
+> +	u16 de_size = le16_to_cpu(de->size);
+> +
+> +	/* First, check to see if there's enough room */
+> +	if (used + de_size > total)
+> +		return NULL;
+> +
+> +	/* We know there's enough space, so we know we'll succeed. */
+> +	if (before) {
+> +		/* Check that before is inside Index */
+> +		if (off >= used || off < le32_to_cpu(hdr->de_off) ||
+> +		    off + le16_to_cpu(before->size) > total) {
+> +			return NULL;
+> +		}
+> +		goto ok;
+> +	}
+> +	/* No insert point is applied. Get it manually */
+> +	before = hdr_find_e(indx, hdr, de + 1, le16_to_cpu(de->key_size), ctx,
+> +			    &diff);
+> +	if (!before)
+> +		return NULL;
+> +	off = PtrOffset(hdr, before);
+> +
+> +ok:
+> +	/* Now we just make room for the entry and jam it in. */
+> +	memmove(Add2Ptr(before, de_size), before, used - off);
+> +
+> +	hdr->used = cpu_to_le32(used + de_size);
+> +	memcpy(before, de, de_size);
+> +
+> +	return before;
+> +}
+> +
+> +/*
+> + * hdr_delete_de
+> + *
+> + * removes an entry from the index buffer
+> + */
+> +static inline struct NTFS_DE *hdr_delete_de(struct INDEX_HDR *hdr,
+> +					    struct NTFS_DE *re)
+> +{
+> +	u32 used = le32_to_cpu(hdr->used);
+> +	u16 esize = le16_to_cpu(re->size);
+> +	u32 off = PtrOffset(hdr, re);
+> +	int bytes = used - (off + esize);
+> +
+> +	if (off >= used || esize < sizeof(struct NTFS_DE) ||
+> +	    bytes < sizeof(struct NTFS_DE))
+> +		return NULL;
+> +
+> +	hdr->used = cpu_to_le32(used - esize);
+> +	memmove(re, Add2Ptr(re, esize), bytes);
+> +
+> +	return re;
+> +}
+> +
+> +void indx_clear(struct ntfs_index *indx)
+> +{
+> +	run_close(&indx->alloc_run);
+> +	run_close(&indx->bitmap_run);
+> +}
+> +
+> +int indx_init(struct ntfs_index *indx, struct ntfs_sb_info *sbi,
+> +	      const struct ATTRIB *attr, enum index_mutex_classed type)
+> +{
+> +	u32 t32;
+> +	const struct INDEX_ROOT *root = resident_data(attr);
+> +
+> +	/* Check root fields */
+> +	if (!root->index_block_clst)
+> +		return -EINVAL;
+> +
+> +	indx->type = type;
+> +	indx->idx2vbn_bits = __ffs(root->index_block_clst);
+> +
+> +	t32 = le32_to_cpu(root->index_block_size);
+> +	indx->index_bits = blksize_bits(t32);
+> +
+> +	/* Check index record size */
+> +	if (t32 < sbi->cluster_size) {
+> +		/* index record is smaller than a cluster, use 512 blocks */
+> +		if (t32 != root->index_block_clst * SECTOR_SIZE)
+> +			return -EINVAL;
+> +
+> +		/* Check alignment to a cluster */
+> +		if ((sbi->cluster_size >> SECTOR_SHIFT) &
+> +		    (root->index_block_clst - 1)) {
+> +			return -EINVAL;
+> +		}
+> +
+> +		indx->vbn2vbo_bits = SECTOR_SHIFT;
+> +	} else {
+> +		/* index record must be a multiple of cluster size */
+> +		if (t32 != root->index_block_clst << sbi->cluster_bits)
+> +			return -EINVAL;
+> +
+> +		indx->vbn2vbo_bits = sbi->cluster_bits;
+> +	}
+> +
+> +	indx->cmp = get_cmp_func(root);
+> +
+> +	return indx->cmp ? 0 : -EINVAL;
+> +}
+> +
+> +static struct indx_node *indx_new(struct ntfs_index *indx,
+> +				  struct ntfs_inode *ni, CLST vbn,
+> +				  const __le64 *sub_vbn)
 > +{
 > +	int err;
-> +	struct ntfs_sb_info *sbi = ni->mi.sbi;
-> +	struct ATTRIB *attr;
-> +	typeof(ni->attr_list) *al = &ni->attr_list;
+> +	struct NTFS_DE *e;
+> +	struct indx_node *r;
+> +	struct INDEX_HDR *hdr;
+> +	struct INDEX_BUFFER *index;
+> +	u64 vbo = (u64)vbn << indx->vbn2vbo_bits;
+> +	u32 bytes = 1u << indx->index_bits;
+> +	u16 fn;
+> +	u32 eo;
 > +
-> +	if (!al->dirty)
-> +		return 0;
+> +	r = ntfs_alloc(sizeof(struct indx_node), 1);
+> +	if (!r)
+> +		return ERR_PTR(-ENOMEM);
 > +
-> +	err = attr_set_size(ni, ATTR_LIST, NULL, 0, &al->run, al->size, NULL,
-> +			    false, &attr);
+> +	index = ntfs_alloc(bytes, 1);
+> +	if (!index) {
+> +		ntfs_free(r);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	err = ntfs_get_bh(ni->mi.sbi, &indx->alloc_run, vbo, bytes, &r->nb);
+> +
+> +	if (err) {
+> +		ntfs_free(index);
+> +		ntfs_free(r);
+> +		return ERR_PTR(err);
+> +	}
+> +
+> +	/* Create header */
+> +	index->rhdr.sign = NTFS_INDX_SIGNATURE;
+> +	index->rhdr.fix_off = cpu_to_le16(sizeof(struct INDEX_BUFFER)); // 0x28
+> +	fn = (bytes >> SECTOR_SHIFT) + 1; // 9
+> +	index->rhdr.fix_num = cpu_to_le16(fn);
+> +	index->vbn = cpu_to_le64(vbn);
+> +	hdr = &index->ihdr;
+> +	eo = QuadAlign(sizeof(struct INDEX_BUFFER) + fn * sizeof(short));
+> +	hdr->de_off = cpu_to_le32(eo);
+> +
+> +	e = Add2Ptr(hdr, eo);
+> +
+> +	if (sub_vbn) {
+> +		e->flags = NTFS_IE_LAST | NTFS_IE_HAS_SUBNODES;
+> +		e->size = cpu_to_le16(sizeof(struct NTFS_DE) + sizeof(u64));
+> +		hdr->used =
+> +			cpu_to_le32(eo + sizeof(struct NTFS_DE) + sizeof(u64));
+> +		de_set_vbn_le(e, *sub_vbn);
+> +		hdr->flags = 1;
+> +	} else {
+> +		e->size = cpu_to_le16(sizeof(struct NTFS_DE));
+> +		hdr->used = cpu_to_le32(eo + sizeof(struct NTFS_DE));
+> +		e->flags = NTFS_IE_LAST;
+> +	}
+> +
+> +	hdr->total = cpu_to_le32(bytes - offsetof(struct INDEX_BUFFER, ihdr));
+> +
+> +	r->index = index;
+> +	return r;
+> +}
+> +
+> +struct INDEX_ROOT *indx_get_root(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +				 struct ATTRIB **attr, struct mft_inode **mi)
+> +{
+> +	struct ATTR_LIST_ENTRY *le = NULL;
+> +	struct ATTRIB *a;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +
+> +	a = ni_find_attr(ni, NULL, &le, ATTR_ROOT, in->name, in->name_len, NULL,
+> +			 mi);
+> +	if (!a)
+> +		return NULL;
+> +
+> +	if (attr)
+> +		*attr = a;
+> +
+> +	return resident_data_ex(a, sizeof(struct INDEX_ROOT));
+> +}
+> +
+> +static int indx_write(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		      struct indx_node *node, int sync)
+> +{
+> +	struct INDEX_BUFFER *ib = node->index;
+> +
+> +	return ntfs_write_bh(ni->mi.sbi, &ib->rhdr, &node->nb, sync);
+> +}
+> +
+> +int indx_read(struct ntfs_index *indx, struct ntfs_inode *ni, CLST vbn,
+> +	      struct indx_node **node)
+> +{
+> +	int err;
+> +	struct INDEX_BUFFER *ib;
+> +	u64 vbo = (u64)vbn << indx->vbn2vbo_bits;
+> +	u32 bytes = 1u << indx->index_bits;
+> +	struct indx_node *in = *node;
+> +	const struct INDEX_NAMES *name;
+> +
+> +	if (!in) {
+> +		in = ntfs_alloc(sizeof(struct indx_node), 1);
+> +		if (!in)
+> +			return -ENOMEM;
+> +	} else {
+> +		nb_put(&in->nb);
+> +	}
+> +
+> +	ib = in->index;
+> +	if (!ib) {
+> +		ib = ntfs_alloc(bytes, 0);
+> +		if (!ib) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	err = ntfs_read_bh(ni->mi.sbi, &indx->alloc_run, vbo, &ib->rhdr, bytes,
+> +			   &in->nb);
+> +
+> +	if (!err)
+> +		goto ok;
+> +
+> +	if (err == 1)
+> +		goto ok;
+> +
+> +	if (err != -ENOENT)
+> +		goto out;
+> +
+> +	name = &s_index_names[indx->type];
+> +	err = attr_load_runs_vcn(ni, ATTR_ALLOC, name->name, name->name_len,
+> +				 &indx->alloc_run,
+> +				 vbo >> ni->mi.sbi->cluster_bits);
 > +	if (err)
 > +		goto out;
 > +
-> +	if (!attr->non_res)
-> +		memcpy(resident_data(attr), al->le, al->size);
-> +	else {
-> +		err = ntfs_sb_write_run(sbi, &al->run, 0, al->le, al->size);
+> +	err = ntfs_read_bh(ni->mi.sbi, &indx->alloc_run, vbo, &ib->rhdr, bytes,
+> +			   &in->nb);
+> +	if (err == 1)
+> +		goto ok;
+> +
+> +	if (err)
+> +		goto out;
+> +
+> +ok:
+> +	if (err == 1) {
+> +		ntfs_write_bh(ni->mi.sbi, &ib->rhdr, &in->nb, 0);
+> +		err = 0;
+> +	}
+> +
+> +	in->index = ib;
+> +	*node = in;
+> +
+> +out:
+> +	if (ib != in->index)
+> +		ntfs_free(ib);
+> +
+> +	if (*node != in) {
+> +		nb_put(&in->nb);
+> +		ntfs_free(in);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_find
+> + *
+> + * scans NTFS directory for given entry
+> + */
+> +int indx_find(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +	      const struct INDEX_ROOT *root, const void *key, size_t key_len,
+> +	      const void *ctx, int *diff, struct NTFS_DE **entry,
+> +	      struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	struct NTFS_DE *e;
+> +	const struct INDEX_HDR *hdr;
+> +	struct indx_node *node;
+> +
+> +	if (!root)
+> +		root = indx_get_root(&ni->dir, ni, NULL, NULL);
+> +
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	hdr = &root->ihdr;
+> +
+> +	/* Check cache */
+> +	e = fnd->level ? fnd->de[fnd->level - 1] : fnd->root_de;
+> +	if (e && !de_is_last(e) &&
+> +	    !(*indx->cmp)(key, key_len, e + 1, le16_to_cpu(e->key_size), ctx)) {
+> +		*entry = e;
+> +		*diff = 0;
+> +		return 0;
+> +	}
+> +
+> +	/* Soft finder reset */
+> +	fnd_clear(fnd);
+> +
+> +	/* Lookup entry that is <= to the search value */
+> +	e = hdr_find_e(indx, hdr, key, key_len, ctx, diff);
+> +	if (!e)
+> +		return -EINVAL;
+> +
+> +	if (fnd)
+> +		fnd->root_de = e;
+> +
+> +	err = 0;
+> +
+> +	for (;;) {
+> +		node = NULL;
+> +		if (*diff >= 0 || !de_has_vcn_ex(e)) {
+> +			*entry = e;
+> +			goto out;
+> +		}
+> +
+> +		/* Read next level. */
+> +		err = indx_read(indx, ni, de_get_vbn(e), &node);
 > +		if (err)
 > +			goto out;
 > +
-> +		attr->nres.valid_size = attr->nres.data_size;
-> +	}
+> +		/* Lookup entry that is <= to the search value */
+> +		e = hdr_find_e(indx, &node->index->ihdr, key, key_len, ctx,
+> +			       diff);
+> +		if (!e) {
+> +			err = -EINVAL;
+> +			put_indx_node(node);
+> +			goto out;
+> +		}
 > +
-> +	ni->mi.dirty = true;
-> +	al->dirty = false;
+> +		fnd_push(fnd, node, e);
+> +	}
 > +
 > +out:
 > +	return err;
 > +}
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+> +
+> +int indx_find_sort(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		   const struct INDEX_ROOT *root, struct NTFS_DE **entry,
+> +		   struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	struct indx_node *n = NULL;
+> +	struct NTFS_DE *e;
+> +	size_t iter = 0;
+> +	int level = fnd->level;
+> +
+> +	if (!*entry) {
+> +		/* Start find */
+> +		e = hdr_first_de(&root->ihdr);
+> +		if (!e)
+> +			return 0;
+> +		fnd_clear(fnd);
+> +		fnd->root_de = e;
+> +	} else if (!level) {
+> +		if (de_is_last(fnd->root_de)) {
+> +			*entry = NULL;
+> +			return 0;
+> +		}
+> +
+> +		e = hdr_next_de(&root->ihdr, fnd->root_de);
+> +		if (!e)
+> +			return -EINVAL;
+> +		fnd->root_de = e;
+> +	} else {
+> +		n = fnd->nodes[level - 1];
+> +		e = fnd->de[level - 1];
+> +
+> +		if (de_is_last(e))
+> +			goto pop_level;
+> +
+> +		e = hdr_next_de(&n->index->ihdr, e);
+> +		if (!e)
+> +			return -EINVAL;
+> +
+> +		fnd->de[level - 1] = e;
+> +	}
+> +
+> +	/* Just to avoid tree cycle */
+> +next_iter:
+> +	if (iter++ >= 1000)
+> +		return -EINVAL;
+> +
+> +	while (de_has_vcn_ex(e)) {
+> +		if (le16_to_cpu(e->size) <
+> +		    sizeof(struct NTFS_DE) + sizeof(u64)) {
+> +			if (n) {
+> +				fnd_pop(fnd);
+> +				ntfs_free(n);
+> +			}
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* Read next level */
+> +		err = indx_read(indx, ni, de_get_vbn(e), &n);
+> +		if (err)
+> +			return err;
+> +
+> +		/* Try next level */
+> +		e = hdr_first_de(&n->index->ihdr);
+> +		if (!e) {
+> +			ntfs_free(n);
+> +			return -EINVAL;
+> +		}
+> +
+> +		fnd_push(fnd, n, e);
+> +	}
+> +
+> +	if (le16_to_cpu(e->size) > sizeof(struct NTFS_DE)) {
+> +		*entry = e;
+> +		return 0;
+> +	}
+> +
+> +pop_level:
+> +	for (;;) {
+> +		if (!de_is_last(e))
+> +			goto next_iter;
+> +
+> +		/* Pop one level */
+> +		if (n) {
+> +			fnd_pop(fnd);
+> +			ntfs_free(n);
+> +		}
+> +
+> +		level = fnd->level;
+> +
+> +		if (level) {
+> +			n = fnd->nodes[level - 1];
+> +			e = fnd->de[level - 1];
+> +		} else if (fnd->root_de) {
+> +			n = NULL;
+> +			e = fnd->root_de;
+> +			fnd->root_de = NULL;
+> +		} else {
+> +			*entry = NULL;
+> +			return 0;
+> +		}
+> +
+> +		if (le16_to_cpu(e->size) > sizeof(struct NTFS_DE)) {
+> +			*entry = e;
+> +			if (!fnd->root_de)
+> +				fnd->root_de = e;
+> +			return 0;
+> +		}
+> +	}
+> +}
+> +
+> +int indx_find_raw(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		  const struct INDEX_ROOT *root, struct NTFS_DE **entry,
+> +		  size_t *off, struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	struct indx_node *n = NULL;
+> +	struct NTFS_DE *e = NULL;
+> +	struct NTFS_DE *e2;
+> +	size_t bit;
+> +	CLST next_used_vbn;
+> +	CLST next_vbn;
+> +	u32 record_size = ni->mi.sbi->record_size;
+> +
+> +	/* Use non sorted algorithm */
+> +	if (!*entry) {
+> +		/* This is the first call */
+> +		e = hdr_first_de(&root->ihdr);
+> +		if (!e)
+> +			return 0;
+> +		fnd_clear(fnd);
+> +		fnd->root_de = e;
+> +
+> +		/* The first call with setup of initial element */
+> +		if (*off >= record_size) {
+> +			next_vbn = (((*off - record_size) >> indx->index_bits))
+> +				   << indx->idx2vbn_bits;
+> +			/* jump inside cycle 'for'*/
+> +			goto next;
+> +		}
+> +
+> +		/* Start enumeration from root */
+> +		*off = 0;
+> +	} else if (!fnd->root_de)
+> +		return -EINVAL;
+> +
+> +	for (;;) {
+> +		/* Check if current entry can be used */
+> +		if (e && le16_to_cpu(e->size) > sizeof(struct NTFS_DE))
+> +			goto ok;
+> +
+> +		if (!fnd->level) {
+> +			/* Continue to enumerate root */
+> +			if (!de_is_last(fnd->root_de)) {
+> +				e = hdr_next_de(&root->ihdr, fnd->root_de);
+> +				if (!e)
+> +					return -EINVAL;
+> +				fnd->root_de = e;
+> +				continue;
+> +			}
+> +
+> +			/* Start to enumerate indexes from 0 */
+> +			next_vbn = 0;
+> +		} else {
+> +			/* Continue to enumerate indexes */
+> +			e2 = fnd->de[fnd->level - 1];
+> +
+> +			n = fnd->nodes[fnd->level - 1];
+> +
+> +			if (!de_is_last(e2)) {
+> +				e = hdr_next_de(&n->index->ihdr, e2);
+> +				if (!e)
+> +					return -EINVAL;
+> +				fnd->de[fnd->level - 1] = e;
+> +				continue;
+> +			}
+> +
+> +			/* Continue with next index */
+> +			next_vbn = le64_to_cpu(n->index->vbn) +
+> +				   root->index_block_clst;
+> +		}
+> +
+> +next:
+> +		/* Release current index */
+> +		if (n) {
+> +			fnd_pop(fnd);
+> +			put_indx_node(n);
+> +			n = NULL;
+> +		}
+> +
+> +		/* Skip all free indexes */
+> +		bit = next_vbn >> indx->idx2vbn_bits;
+> +		err = indx_used_bit(indx, ni, &bit);
+> +		if (err == -ENOENT || bit == MINUS_ONE_T) {
+> +			/* No used indexes */
+> +			*entry = NULL;
+> +			return 0;
+> +		}
+> +
+> +		next_used_vbn = bit << indx->idx2vbn_bits;
+> +
+> +		/* Read buffer into memory */
+> +		err = indx_read(indx, ni, next_used_vbn, &n);
+> +		if (err)
+> +			return err;
+> +
+> +		e = hdr_first_de(&n->index->ihdr);
+> +		fnd_push(fnd, n, e);
+> +		if (!e)
+> +			return -EINVAL;
+> +	}
+> +
+> +ok:
+> +	/* return offset to restore enumerator if necessary */
+> +	if (!n) {
+> +		/* 'e' points in root */
+> +		*off = PtrOffset(&root->ihdr, e);
+> +	} else {
+> +		/* 'e' points in index */
+> +		*off = (le64_to_cpu(n->index->vbn) << indx->vbn2vbo_bits) +
+> +		       record_size + PtrOffset(&n->index->ihdr, e);
+> +	}
+> +
+> +	*entry = e;
+> +	return 0;
+> +}
+> +
+> +/*
+> + * indx_create_allocate
+> + *
+> + * create "Allocation + Bitmap" attributes
+> + */
+> +static int indx_create_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +				CLST *vbn)
+> +{
+> +	int err = -ENOMEM;
+> +	struct ntfs_sb_info *sbi = ni->mi.sbi;
+> +	struct ATTRIB *bitmap;
+> +	struct ATTRIB *alloc;
+> +	u32 alloc_size = ntfs_up_cluster(sbi, 1u << indx->index_bits);
+> +	CLST len = alloc_size >> sbi->cluster_bits;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +	CLST alen;
+> +	struct runs_tree run;
+> +
+> +	run_init(&run);
+> +
+> +	err = attr_allocate_clusters(sbi, &run, 0, 0, len, NULL, 0, &alen, 0,
+> +				     NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	err = ni_insert_nonresident(ni, ATTR_ALLOC, in->name, in->name_len,
+> +				    &run, 0, len, 0, &alloc, NULL);
+> +	if (err)
+> +		goto out1;
+> +
+> +	err = ni_insert_resident(ni, QuadAlign(1), ATTR_BITMAP, in->name,
+> +				 in->name_len, &bitmap, NULL);
+> +	if (err)
+> +		goto out2;
+> +
+> +	memcpy(&indx->alloc_run, &run, sizeof(run));
+> +
+> +	*vbn = 0;
+> +
+> +	if (in->name == I30_NAME)
+> +		ni->vfs_inode.i_size = alloc_size;
+> +
+> +	return 0;
+> +
+> +out2:
+> +	mi_remove_attr(&ni->mi, alloc);
+> +
+> +out1:
+> +	run_deallocate(sbi, &run, false);
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_add_allocate
+> + *
+> + * add clusters to index
+> + */
+> +static int indx_add_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +			     CLST *vbn)
+> +{
+> +	int err;
+> +	size_t bit;
+> +	u64 data_size, alloc_size;
+> +	u64 bpb, vbpb;
+> +	struct ATTRIB *bmp, *alloc;
+> +	struct mft_inode *mi;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +
+> +	err = indx_find_free(indx, ni, &bit, &bmp);
+> +	if (err)
+> +		goto out1;
+> +
+> +	if (bit != MINUS_ONE_T) {
+> +		bmp = NULL;
+> +	} else {
+> +		if (bmp->non_res) {
+> +			bpb = le64_to_cpu(bmp->nres.data_size);
+> +			vbpb = le64_to_cpu(bmp->nres.valid_size);
+> +		} else {
+> +			bpb = vbpb = le32_to_cpu(bmp->res.data_size);
+> +		}
+> +
+> +		/* Increase bitmap */
+> +		err = attr_set_size(ni, ATTR_BITMAP, in->name, in->name_len,
+> +				    &indx->bitmap_run, QuadAlign(bpb + 8), NULL,
+> +				    true, NULL);
+> +		if (err)
+> +			goto out1;
+> +
+> +		bit = bpb << 3;
+> +	}
+> +
+> +	alloc = ni_find_attr(ni, NULL, NULL, ATTR_ALLOC, in->name, in->name_len,
+> +			     NULL, &mi);
+> +	if (!alloc) {
+> +		if (bmp)
+> +			goto out2;
+> +		goto out1;
+> +	}
+> +
+> +	data_size = (u64)(bit + 1) << indx->index_bits;
+> +	alloc_size = ntfs_up_cluster(ni->mi.sbi, data_size);
+> +
+> +	if (alloc_size > le64_to_cpu(alloc->nres.alloc_size)) {
+> +		/* Increase allocation */
+> +		err = attr_set_size(ni, ATTR_ALLOC, in->name, in->name_len,
+> +				    &indx->alloc_run, alloc_size, &alloc_size,
+> +				    true, NULL);
+> +		if (err) {
+> +			if (bmp)
+> +				goto out2;
+> +			goto out1;
+> +		}
+> +
+> +		if (in->name == I30_NAME)
+> +			ni->vfs_inode.i_size = alloc_size;
+> +	} else if (data_size > le64_to_cpu(alloc->nres.data_size)) {
+> +		alloc->nres.data_size = alloc->nres.valid_size =
+> +			cpu_to_le64(data_size);
+> +		mi->dirty = true;
+> +	}
+> +
+> +	*vbn = bit << indx->idx2vbn_bits;
+> +
+> +	return 0;
+> +
+> +out2:
+> +	/* Ops (no space?) */
+> +	attr_set_size(ni, ATTR_BITMAP, in->name, in->name_len,
+> +		      &indx->bitmap_run, bpb, &vbpb, false, NULL);
+> +
+> +out1:
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_insert_into_root
+> + *
+> + * attempts to insert an entry into the index root
+> + * If necessary, it will twiddle the index b-tree.
+> + */
+> +static int indx_insert_into_root(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +				 const struct NTFS_DE *new_de,
+> +				 struct NTFS_DE *root_de, const void *ctx,
+> +				 struct ntfs_fnd *fnd)
+> +{
+> +	int err = 0;
+> +	struct NTFS_DE *e, *e0, *re;
+> +	struct mft_inode *mi;
+> +	struct ATTRIB *attr;
+> +	struct MFT_REC *rec;
+> +	struct INDEX_HDR *hdr;
+> +	struct indx_node *n;
+> +	CLST new_vbn;
+> +	__le64 *sub_vbn, t_vbn;
+> +	u16 new_de_size;
+> +	u32 hdr_used, hdr_total, asize, tail, used, aoff, to_move;
+> +	u32 root_size, new_root_size;
+> +	struct ntfs_sb_info *sbi;
+> +	char *next;
+> +	int ds_root;
+> +	struct INDEX_ROOT *root, *a_root = NULL;
+> +
+> +	/* Get the record this root placed in */
+> +	root = indx_get_root(indx, ni, &attr, &mi);
+> +	if (!root)
+> +		goto out;
+> +
+> +	/*
+> +	 * Try easy case:
+> +	 * hdr_insert_de will succeed if there's room the root for the new entry.
+> +	 */
+> +	hdr = &root->ihdr;
+> +	sbi = ni->mi.sbi;
+> +	rec = mi->mrec;
+> +	aoff = PtrOffset(rec, attr);
+> +	used = le32_to_cpu(rec->used);
+> +	new_de_size = le16_to_cpu(new_de->size);
+> +	hdr_used = le32_to_cpu(hdr->used);
+> +	hdr_total = le32_to_cpu(hdr->total);
+> +	asize = le32_to_cpu(attr->size);
+> +	next = Add2Ptr(attr, asize);
+> +	tail = used - aoff - asize;
+> +	root_size = le32_to_cpu(attr->res.data_size);
+> +
+> +	ds_root = new_de_size + hdr_used - hdr_total;
+> +
+> +	if (used + ds_root < sbi->max_bytes_per_attr) {
+> +		/* make a room for new elements */
+> +		memmove(next + ds_root, next, used - aoff - asize);
+> +		hdr->total = cpu_to_le32(hdr_total + ds_root);
+> +		e = hdr_insert_de(indx, hdr, new_de, root_de, ctx);
+> +		WARN_ON(!e);
+> +		fnd_clear(fnd);
+> +		fnd->root_de = e;
+> +		attr->size = cpu_to_le32(asize + ds_root);
+> +		attr->res.data_size = cpu_to_le32(root_size + ds_root);
+> +		rec->used = cpu_to_le32(used + ds_root);
+> +
+> +		return 0;
+> +	}
+> +
+> +	/* Make a copy of root attribute to restore if error */
+> +	a_root = ntfs_memdup(attr, asize);
+> +	if (!a_root) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	/* copy all the non-end entries from the index root to the new buffer.*/
+> +	to_move = 0;
+> +	e0 = hdr_first_de(hdr);
+> +
+> +	/* Calculate the size to copy */
+> +	for (e = e0;; e = hdr_next_de(hdr, e)) {
+> +		if (!e) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		if (de_is_last(e))
+> +			break;
+> +		to_move += le16_to_cpu(e->size);
+> +	}
+> +
+> +	n = NULL;
+> +	if (!to_move) {
+> +		re = NULL;
+> +	} else {
+> +		re = ntfs_memdup(e0, to_move);
+> +		if (!re) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	sub_vbn = NULL;
+> +	if (de_has_vcn(e)) {
+> +		t_vbn = de_get_vbn_le(e);
+> +		sub_vbn = &t_vbn;
+> +	}
+> +
+> +	new_root_size = sizeof(struct INDEX_ROOT) + sizeof(struct NTFS_DE) +
+> +			sizeof(u64);
+> +	ds_root = new_root_size - root_size;
+> +
+> +	if (ds_root > 0 && used + ds_root > sbi->max_bytes_per_attr) {
+> +		/* make root external */
+> +		err = -EOPNOTSUPP;
+> +		goto out;
+> +	}
+> +
+> +	if (ds_root) {
+> +		memmove(next + ds_root, next, tail);
+> +		used += ds_root;
+> +		asize += ds_root;
+> +		rec->used = cpu_to_le32(used);
+> +		attr->size = cpu_to_le32(asize);
+> +		attr->res.data_size = cpu_to_le32(new_root_size);
+> +		mi->dirty = true;
+> +	}
+> +
+> +	/* Fill first entry (vcn will be set later) */
+> +	e = (struct NTFS_DE *)(root + 1);
+> +	memset(e, 0, sizeof(struct NTFS_DE));
+> +	e->size = cpu_to_le16(sizeof(struct NTFS_DE) + sizeof(u64));
+> +	e->flags = NTFS_IE_HAS_SUBNODES | NTFS_IE_LAST;
+> +
+> +	hdr->flags = 1;
+> +	hdr->used = hdr->total =
+> +		cpu_to_le32(new_root_size - offsetof(struct INDEX_ROOT, ihdr));
+> +
+> +	fnd->root_de = hdr_first_de(hdr);
+> +
+> +	/* Create alloc and bitmap attributes (if not) */
+> +	if (run_is_empty(&indx->alloc_run)) {
+> +		err = indx_create_allocate(indx, ni, &new_vbn);
+> +		if (err) {
+> +			/* restore root after 'indx_create_allocate' */
+> +			memmove(next - ds_root, next, tail);
+> +			used -= ds_root;
+> +			rec->used = cpu_to_le32(used);
+> +			memcpy(attr, a_root, asize);
+> +			goto out1;
+> +		}
+> +	} else {
+> +		err = indx_add_allocate(indx, ni, &new_vbn);
+> +		if (err)
+> +			goto out1;
+> +	}
+> +
+> +	root = indx_get_root(indx, ni, &attr, &mi);
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out1;
+> +	}
+> +
+> +	e = (struct NTFS_DE *)(root + 1);
+> +	*(__le64 *)(e + 1) = cpu_to_le64(new_vbn);
+> +
+> +	/* now we can create/format the new buffer and copy the entries into */
+> +	n = indx_new(indx, ni, new_vbn, sub_vbn);
+> +	if (IS_ERR(n)) {
+> +		err = PTR_ERR(n);
+> +		goto out1;
+> +	}
+> +
+> +	hdr = &n->index->ihdr;
+> +	hdr_used = le32_to_cpu(hdr->used);
+> +	hdr_total = le32_to_cpu(hdr->total);
+> +
+> +	/* Copy root entries into new buffer */
+> +	hdr_insert_head(hdr, re, to_move);
+> +
+> +	/* Update bitmap attribute */
+> +	indx_mark_used(indx, ni, new_vbn >> indx->idx2vbn_bits);
+> +
+> +	/* Check if we can insert new entry new index buffer */
+> +	if (hdr_used + new_de_size > hdr_total) {
+> +		/*
+> +		 * This occurs if mft record is the same or bigger than index
+> +		 * buffer. Move all root new index and have no space to add
+> +		 * new entry classic case when mft record is 1K and index
+> +		 * buffer 4K the problem should not occurs
+> +		 */
+> +		ntfs_free(re);
+> +		indx_write(indx, ni, n, 0);
+> +
+> +		put_indx_node(n);
+> +		fnd_clear(fnd);
+> +		err = indx_insert_entry(indx, ni, new_de, ctx, fnd);
+> +		goto out;
+> +	}
+> +
+> +	/*
+> +	 * Now root is a parent for new index buffer
+> +	 * Insert NewEntry a new buffer
+> +	 */
+> +	e = hdr_insert_de(indx, hdr, new_de, NULL, ctx);
+> +	if (!e) {
+> +		err = -EINVAL;
+> +		goto out1;
+> +	}
+> +	fnd_push(fnd, n, e);
+> +
+> +	/* Just write updates index into disk */
+> +	indx_write(indx, ni, n, 0);
+> +
+> +	n = NULL;
+> +
+> +out1:
+> +	ntfs_free(re);
+> +	if (n)
+> +		put_indx_node(n);
+> +
+> +out:
+> +	ntfs_free(a_root);
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_insert_into_buffer
+> + *
+> + * attempts to insert an entry into an Index Allocation Buffer.
+> + * If necessary, it will split the buffer.
+> + */
+> +static int
+> +indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +			struct INDEX_ROOT *root, const struct NTFS_DE *new_de,
+> +			const void *ctx, int level, struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	const struct NTFS_DE *sp;
+> +	struct NTFS_DE *e, *de_t, *up_e = NULL;
+> +	struct indx_node *n2 = NULL;
+> +	struct indx_node *n1 = fnd->nodes[level];
+> +	struct INDEX_HDR *hdr1 = &n1->index->ihdr;
+> +	struct INDEX_HDR *hdr2;
+> +	u32 to_copy, used;
+> +	CLST new_vbn;
+> +	__le64 t_vbn, *sub_vbn;
+> +	u16 sp_size;
+> +
+> +	/* Try the most easy case */
+> +	e = fnd->level - 1 == level ? fnd->de[level] : NULL;
+> +	e = hdr_insert_de(indx, hdr1, new_de, e, ctx);
+> +	fnd->de[level] = e;
+> +	if (e) {
+> +		/* Just write updated index into disk */
+> +		indx_write(indx, ni, n1, 0);
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * No space to insert into buffer. Split it.
+> +	 * To split we:
+> +	 *  - Save split point ('cause index buffers will be changed)
+> +	 * - Allocate NewBuffer and copy all entries <= sp into new buffer
+> +	 * - Remove all entries (sp including) from TargetBuffer
+> +	 * - Insert NewEntry into left or right buffer (depending on sp <=>
+> +	 *     NewEntry)
+> +	 * - Insert sp into parent buffer (or root)
+> +	 * - Make sp a parent for new buffer
+> +	 */
+> +	sp = hdr_find_split(hdr1);
+> +	if (!sp)
+> +		return -EINVAL;
+> +
+> +	sp_size = le16_to_cpu(sp->size);
+> +	up_e = ntfs_alloc(sp_size + sizeof(u64), 0);
+> +	if (!up_e)
+> +		return -ENOMEM;
+> +	memcpy(up_e, sp, sp_size);
+> +
+> +	if (!hdr1->flags) {
+> +		up_e->flags |= NTFS_IE_HAS_SUBNODES;
+> +		up_e->size = cpu_to_le16(sp_size + sizeof(u64));
+> +		sub_vbn = NULL;
+> +	} else {
+> +		t_vbn = de_get_vbn_le(up_e);
+> +		sub_vbn = &t_vbn;
+> +	}
+> +
+> +	/* Allocate on disk a new index allocation buffer. */
+> +	err = indx_add_allocate(indx, ni, &new_vbn);
+> +	if (err)
+> +		goto out;
+> +
+> +	/* Allocate and format memory a new index buffer */
+> +	n2 = indx_new(indx, ni, new_vbn, sub_vbn);
+> +	if (IS_ERR(n2)) {
+> +		err = PTR_ERR(n2);
+> +		goto out;
+> +	}
+> +
+> +	hdr2 = &n2->index->ihdr;
+> +
+> +	/* Make sp a parent for new buffer */
+> +	de_set_vbn(up_e, new_vbn);
+> +
+> +	/* copy all the entries <= sp into the new buffer. */
+> +	de_t = hdr_first_de(hdr1);
+> +	to_copy = PtrOffset(de_t, sp);
+> +	hdr_insert_head(hdr2, de_t, to_copy);
+> +
+> +	/* remove all entries (sp including) from hdr1 */
+> +	used = le32_to_cpu(hdr1->used) - to_copy - sp_size;
+> +	memmove(de_t, Add2Ptr(sp, sp_size), used - le32_to_cpu(hdr1->de_off));
+> +	hdr1->used = cpu_to_le32(used);
+> +
+> +	/* Insert new entry into left or right buffer (depending on sp <=> new_de) */
+> +	hdr_insert_de(indx,
+> +		      (*indx->cmp)(new_de + 1, le16_to_cpu(new_de->key_size),
+> +				   up_e + 1, le16_to_cpu(up_e->key_size),
+> +				   ctx) < 0 ?
+> +			      hdr2 :
+> +			      hdr1,
+> +		      new_de, NULL, ctx);
+> +
+> +	indx_mark_used(indx, ni, new_vbn >> indx->idx2vbn_bits);
+> +
+> +	indx_write(indx, ni, n1, 0);
+> +	indx_write(indx, ni, n2, 0);
+> +
+> +	put_indx_node(n2);
+> +
+> +	/*
+> +	 * we've finished splitting everybody, so we are ready to
+> +	 * insert the promoted entry into the parent.
+> +	 */
+> +	if (!level) {
+> +		/* Insert in root */
+> +		err = indx_insert_into_root(indx, ni, up_e, NULL, ctx, fnd);
+> +		if (err)
+> +			goto out;
+> +	} else {
+> +		/*
+> +		 * The target buffer's parent is another index buffer
+> +		 * TODO: Remove recursion
+> +		 */
+> +		err = indx_insert_into_buffer(indx, ni, root, up_e, ctx,
+> +					      level - 1, fnd);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +out:
+> +	ntfs_free(up_e);
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_insert_entry
+> + *
+> + * inserts new entry into index
+> + */
+> +int indx_insert_entry(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		      const struct NTFS_DE *new_de, const void *ctx,
+> +		      struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	int diff;
+> +	struct NTFS_DE *e;
+> +	struct ntfs_fnd *fnd_a = NULL;
+> +	struct INDEX_ROOT *root;
+> +
+> +	if (!fnd) {
+> +		fnd_a = fnd_get(indx);
+> +		if (!fnd_a) {
+> +			err = -ENOMEM;
+> +			goto out1;
+> +		}
+> +		fnd = fnd_a;
+> +	}
+> +
+> +	root = indx_get_root(indx, ni, NULL, NULL);
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (fnd_is_empty(fnd)) {
+> +		/* Find the spot the tree where we want to insert the new entry. */
+> +		err = indx_find(indx, ni, root, new_de + 1,
+> +				le16_to_cpu(new_de->key_size), ctx, &diff, &e,
+> +				fnd);
+> +		if (err)
+> +			goto out;
+> +
+> +		if (!diff) {
+> +			err = -EEXIST;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	if (!fnd->level) {
+> +		/* The root is also a leaf, so we'll insert the new entry into it. */
+> +		err = indx_insert_into_root(indx, ni, new_de, fnd->root_de, ctx,
+> +					    fnd);
+> +		if (err)
+> +			goto out;
+> +	} else {
+> +		/* found a leaf buffer, so we'll insert the new entry into it.*/
+> +		err = indx_insert_into_buffer(indx, ni, root, new_de, ctx,
+> +					      fnd->level - 1, fnd);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +out:
+> +	indx->changed = true;
+> +	fnd_put(fnd_a);
+> +out1:
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_find_buffer
+> + *
+> + * locates a buffer the tree.
+> + */
+> +static struct indx_node *indx_find_buffer(struct ntfs_index *indx,
+> +					  struct ntfs_inode *ni,
+> +					  const struct INDEX_ROOT *root,
+> +					  __le64 vbn, struct indx_node *n)
+> +{
+> +	int err;
+> +	const struct NTFS_DE *e;
+> +	struct indx_node *r;
+> +	const struct INDEX_HDR *hdr = n ? &n->index->ihdr : &root->ihdr;
+> +
+> +	/* Step 1: Scan one level */
+> +	for (e = hdr_first_de(hdr);; e = hdr_next_de(hdr, e)) {
+> +		if (!e)
+> +			return ERR_PTR(-EINVAL);
+> +
+> +		if (de_has_vcn(e) && vbn == de_get_vbn_le(e))
+> +			return n;
+> +
+> +		if (de_is_last(e))
+> +			break;
+> +	}
+> +
+> +	/* Step2: Do recursion */
+> +	e = Add2Ptr(hdr, le32_to_cpu(hdr->de_off));
+> +	for (;;) {
+> +		if (de_has_vcn_ex(e)) {
+> +			err = indx_read(indx, ni, de_get_vbn(e), &n);
+> +			if (err)
+> +				return ERR_PTR(err);
+> +
+> +			r = indx_find_buffer(indx, ni, root, vbn, n);
+> +			if (r)
+> +				return r;
+> +		}
+> +
+> +		if (de_is_last(e))
+> +			break;
+> +
+> +		e = Add2Ptr(e, le16_to_cpu(e->size));
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +/*
+> + * indx_shrink
+> + *
+> + * deallocates unused tail indexes
+> + */
+> +static int indx_shrink(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		       size_t bit)
+> +{
+> +	int err = 0;
+> +	u64 bpb, new_alloc;
+> +	size_t nbits;
+> +	struct ATTRIB *b;
+> +	struct ATTR_LIST_ENTRY *le = NULL;
+> +	const struct INDEX_NAMES *in = &s_index_names[indx->type];
+> +
+> +	b = ni_find_attr(ni, NULL, &le, ATTR_BITMAP, in->name, in->name_len,
+> +			 NULL, NULL);
+> +
+> +	if (!b)
+> +		return -ENOENT;
+> +
+> +	if (!b->non_res) {
+> +		unsigned long pos;
+> +		const unsigned long *bm = resident_data(b);
+> +
+> +		nbits = le32_to_cpu(b->res.data_size) * 8;
+> +
+> +		if (bit >= nbits)
+> +			return 0;
+> +
+> +		pos = find_next_bit(bm, nbits, bit);
+> +		if (pos < nbits)
+> +			return 0;
+> +	} else {
+> +		size_t used = MINUS_ONE_T;
+> +
+> +		nbits = le64_to_cpu(b->nres.data_size) * 8;
+> +
+> +		if (bit >= nbits)
+> +			return 0;
+> +
+> +		err = scan_nres_bitmap(ni->mi.sbi, b, &indx->bitmap_run, bit,
+> +				       &scan_for_used, &used);
+> +		if (err)
+> +			return err;
+> +
+> +		if (used != MINUS_ONE_T)
+> +			return 0;
+> +	}
+> +
+> +	new_alloc = (u64)bit << indx->index_bits;
+> +
+> +	err = attr_set_size(ni, ATTR_ALLOC, in->name, in->name_len,
+> +			    &indx->alloc_run, new_alloc, &new_alloc, false,
+> +			    NULL);
+> +	if (err)
+> +		return err;
+> +
+> +	if (in->name == I30_NAME)
+> +		ni->vfs_inode.i_size = new_alloc;
+> +
+> +	bpb = bitmap_size(bit);
+> +	if (bpb * 8 == nbits)
+> +		return 0;
+> +
+> +	err = attr_set_size(ni, ATTR_BITMAP, in->name, in->name_len,
+> +			    &indx->bitmap_run, bpb, &bpb, false, NULL);
+> +
+> +	return err;
+> +}
+> +
+> +static int indx_free_children(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +			      const struct NTFS_DE *e, bool trim)
+> +{
+> +	int err;
+> +	struct indx_node *n;
+> +	struct INDEX_HDR *hdr;
+> +	CLST vbn = de_get_vbn(e);
+> +	size_t i;
+> +
+> +	err = indx_read(indx, ni, vbn, &n);
+> +	if (err)
+> +		return err;
+> +
+> +	hdr = &n->index->ihdr;
+> +	/* First, recurse into the children, if any.*/
+> +	if (hdr_has_subnode(hdr)) {
+> +		for (e = hdr_first_de(hdr); e; e = hdr_next_de(hdr, e)) {
+> +			indx_free_children(indx, ni, e, false);
+> +			if (de_is_last(e))
+> +				break;
+> +		}
+> +	}
+> +
+> +	put_indx_node(n);
+> +
+> +	i = vbn >> indx->idx2vbn_bits;
+> +	/* We've gotten rid of the children; add this buffer to the free list. */
+> +	indx_mark_free(indx, ni, i);
+> +
+> +	if (!trim)
+> +		return 0;
+> +
+> +	/*
+> +	 * If there are no used indexes after current free index
+> +	 * then we can truncate allocation and bitmap
+> +	 * Use bitmap to estimate the case
+> +	 */
+> +	indx_shrink(indx, ni, i + 1);
+> +	return 0;
+> +}
+> +
+> +/*
+> + * indx_get_entry_to_replace
+> + *
+> + * finds a replacement entry for a deleted entry
+> + * always returns a node entry:
+> + * NTFS_IE_HAS_SUBNODES is set the flags and the size includes the sub_vcn
+> + */
+> +static int indx_get_entry_to_replace(struct ntfs_index *indx,
+> +				     struct ntfs_inode *ni,
+> +				     const struct NTFS_DE *de_next,
+> +				     struct NTFS_DE **de_to_replace,
+> +				     struct ntfs_fnd *fnd)
+> +{
+> +	int err;
+> +	int level = -1;
+> +	CLST vbn;
+> +	struct NTFS_DE *e, *te, *re;
+> +	struct indx_node *n;
+> +	struct INDEX_BUFFER *ib;
+> +
+> +	*de_to_replace = NULL;
+> +
+> +	/* Find first leaf entry down from de_next */
+> +	vbn = de_get_vbn(de_next);
+> +	for (;;) {
+> +		n = NULL;
+> +		err = indx_read(indx, ni, vbn, &n);
+> +		if (err)
+> +			goto out;
+> +
+> +		e = hdr_first_de(&n->index->ihdr);
+> +		fnd_push(fnd, n, e);
+> +
+> +		if (!de_is_last(e)) {
+> +			/*
+> +			 * This buffer is non-empty, so its first entry could be used as the
+> +			 * replacement entry.
+> +			 */
+> +			level = fnd->level - 1;
+> +		}
+> +
+> +		if (!de_has_vcn(e))
+> +			break;
+> +
+> +		/* This buffer is a node. Continue to go down */
+> +		vbn = de_get_vbn(e);
+> +	}
+> +
+> +	if (level == -1)
+> +		goto out;
+> +
+> +	n = fnd->nodes[level];
+> +	te = hdr_first_de(&n->index->ihdr);
+> +	/* Copy the candidate entry into the replacement entry buffer. */
+> +	re = ntfs_alloc(le16_to_cpu(te->size) + sizeof(u64), 0);
+> +	if (!re) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	*de_to_replace = re;
+> +	memcpy(re, te, le16_to_cpu(te->size));
+> +
+> +	if (!de_has_vcn(re)) {
+> +		/*
+> +		 * The replacement entry we found doesn't have a sub_vcn. increase its size
+> +		 * to hold one.
+> +		 */
+> +		le16_add_cpu(&re->size, sizeof(u64));
+> +		re->flags |= NTFS_IE_HAS_SUBNODES;
+> +	} else {
+> +		/*
+> +		 * The replacement entry we found was a node entry, which means that all
+> +		 * its child buffers are empty. Return them to the free pool.
+> +		 */
+> +		indx_free_children(indx, ni, te, true);
+> +	}
+> +
+> +	/*
+> +	 * Expunge the replacement entry from its former location,
+> +	 * and then write that buffer.
+> +	 */
+> +	ib = n->index;
+> +	e = hdr_delete_de(&ib->ihdr, te);
+> +
+> +	fnd->de[level] = e;
+> +	indx_write(indx, ni, n, 0);
+> +
+> +	/* Check to see if this action created an empty leaf. */
+> +	if (ib_is_leaf(ib) && ib_is_empty(ib))
+> +		return 0;
+> +
+> +out:
+> +	fnd_clear(fnd);
+> +
+> +	return err;
+> +}
+> +
+> +/*
+> + * indx_delete_entry
+> + *
+> + * deletes an entry from the index.
+> + */
+> +int indx_delete_entry(struct ntfs_index *indx, struct ntfs_inode *ni,
+> +		      const void *key, u32 key_len, const void *ctx)
+> +{
+> +	int err, diff;
+> +	struct INDEX_ROOT *root;
+> +	struct INDEX_HDR *hdr;
+> +	struct ntfs_fnd *fnd, *fnd2;
+> +	struct INDEX_BUFFER *ib;
+> +	struct NTFS_DE *e, *re, *next, *prev, *me;
+> +	struct indx_node *n, *n2d = NULL;
+> +	__le64 sub_vbn;
+> +	int level, level2;
+> +	struct ATTRIB *attr;
+> +	struct mft_inode *mi;
+> +	u32 e_size, root_size, new_root_size;
+> +	size_t trim_bit;
+> +	const struct INDEX_NAMES *in;
+> +
+> +	fnd = fnd_get(indx);
+> +	if (!fnd) {
+> +		err = -ENOMEM;
+> +		goto out2;
+> +	}
+> +
+> +	fnd2 = fnd_get(NULL);
+> +	if (!fnd2) {
+> +		err = -ENOMEM;
+> +		goto out1;
+> +	}
+> +
+> +	root = indx_get_root(indx, ni, &attr, &mi);
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Locate the entry to remove. */
+> +	err = indx_find(indx, ni, root, key, key_len, ctx, &diff, &e, fnd);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (!e || diff) {
+> +		err = -ENOENT;
+> +		goto out;
+> +	}
+> +
+> +	level = fnd->level;
+> +
+> +	if (level) {
+> +		n = fnd->nodes[level - 1];
+> +		e = fnd->de[level - 1];
+> +		ib = n->index;
+> +		hdr = &ib->ihdr;
+> +	} else {
+> +		hdr = &root->ihdr;
+> +		e = fnd->root_de;
+> +		n = NULL;
+> +	}
+> +
+> +	e_size = le16_to_cpu(e->size);
+> +
+> +	if (!de_has_vcn_ex(e)) {
+> +		/* The entry to delete is a leaf, so we can just rip it out */
+> +		hdr_delete_de(hdr, e);
+> +
+> +		if (!level) {
+> +			hdr->total = hdr->used;
+> +
+> +			/* Shrink resident root attribute */
+> +			mi_resize_attr(mi, attr, 0 - e_size);
+> +			goto out;
+> +		}
+> +
+> +		indx_write(indx, ni, n, 0);
+> +
+> +		/*
+> +		 * Check to see if removing that entry made
+> +		 * the leaf empty.
+> +		 */
+> +		if (ib_is_leaf(ib) && ib_is_empty(ib)) {
+> +			fnd_pop(fnd);
+> +			fnd_push(fnd2, n, e);
+> +		}
+> +	} else {
+> +		/*
+> +		 * The entry we wish to delete is a node buffer, so we
+> +		 * have to find a replacement for it.
+> +		 */
+> +		next = de_get_next(e);
+> +
+> +		err = indx_get_entry_to_replace(indx, ni, next, &re, fnd2);
+> +		if (err)
+> +			goto out;
+> +
+> +		if (re) {
+> +			de_set_vbn_le(re, de_get_vbn_le(e));
+> +			hdr_delete_de(hdr, e);
+> +
+> +			err = level ? indx_insert_into_buffer(indx, ni, root,
+> +							      re, ctx,
+> +							      fnd->level - 1,
+> +							      fnd) :
+> +				      indx_insert_into_root(indx, ni, re, e,
+> +							    ctx, fnd);
+> +			ntfs_free(re);
+> +
+> +			if (err)
+> +				goto out;
+> +		} else {
+> +			/*
+> +			 * There is no replacement for the current entry.
+> +			 * This means that the subtree rooted at its node is empty,
+> +			 * and can be deleted, which turn means that the node can
+> +			 * just inherit the deleted entry sub_vcn
+> +			 */
+> +			indx_free_children(indx, ni, next, true);
+> +
+> +			de_set_vbn_le(next, de_get_vbn_le(e));
+> +			hdr_delete_de(hdr, e);
+> +			if (level) {
+> +				indx_write(indx, ni, n, 0);
+> +			} else {
+> +				hdr->total = hdr->used;
+> +
+> +				/* Shrink resident root attribute */
+> +				mi_resize_attr(mi, attr, 0 - e_size);
+> +			}
+> +		}
+> +	}
+> +
+> +	/* Delete a branch of tree */
+> +	if (!fnd2 || !fnd2->level)
+> +		goto out;
+> +
+> +	/* Reinit root 'cause it can be changed */
+> +	root = indx_get_root(indx, ni, &attr, &mi);
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	n2d = NULL;
+> +	sub_vbn = fnd2->nodes[0]->index->vbn;
+> +	level2 = 0;
+> +	level = fnd->level;
+> +
+> +	hdr = level ? &fnd->nodes[level - 1]->index->ihdr : &root->ihdr;
+> +
+> +	/* Scan current level */
+> +	for (e = hdr_first_de(hdr);; e = hdr_next_de(hdr, e)) {
+> +		if (!e) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		if (de_has_vcn(e) && sub_vbn == de_get_vbn_le(e))
+> +			break;
+> +
+> +		if (de_is_last(e)) {
+> +			e = NULL;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!e) {
+> +		/* Do slow search from root */
+> +		struct indx_node *in;
+> +
+> +		fnd_clear(fnd);
+> +
+> +		in = indx_find_buffer(indx, ni, root, sub_vbn, NULL);
+> +		if (IS_ERR(in)) {
+> +			err = PTR_ERR(in);
+> +			goto out;
+> +		}
+> +
+> +		if (in)
+> +			fnd_push(fnd, in, NULL);
+> +	}
+> +
+> +	/* Merge fnd2 -> fnd */
+> +	for (level = 0; level < fnd2->level; level++) {
+> +		fnd_push(fnd, fnd2->nodes[level], fnd2->de[level]);
+> +		fnd2->nodes[level] = NULL;
+> +	}
+> +	fnd2->level = 0;
+> +
+> +	hdr = NULL;
+> +	for (level = fnd->level; level; level--) {
+> +		struct indx_node *in = fnd->nodes[level - 1];
+> +
+> +		ib = in->index;
+> +		if (ib_is_empty(ib)) {
+> +			sub_vbn = ib->vbn;
+> +		} else {
+> +			hdr = &ib->ihdr;
+> +			n2d = in;
+> +			level2 = level;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!hdr)
+> +		hdr = &root->ihdr;
+> +
+> +	e = hdr_first_de(hdr);
+> +	if (!e) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (hdr != &root->ihdr || !de_is_last(e)) {
+> +		prev = NULL;
+> +		while (!de_is_last(e)) {
+> +			if (de_has_vcn(e) && sub_vbn == de_get_vbn_le(e))
+> +				break;
+> +			prev = e;
+> +			e = hdr_next_de(hdr, e);
+> +			if (!e) {
+> +				err = -EINVAL;
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		if (sub_vbn != de_get_vbn_le(e)) {
+> +			/*
+> +			 * Didn't find the parent entry, although this buffer is the parent trail.
+> +			 * Something is corrupt.
+> +			 */
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		if (de_is_last(e)) {
+> +			/*
+> +			 * Since we can't remove the end entry, we'll remove its
+> +			 * predecessor instead. This means we have to transfer the
+> +			 * predecessor's sub_vcn to the end entry.
+> +			 * Note: that this index block is not empty, so the
+> +			 * predecessor must exist
+> +			 */
+> +			if (!prev) {
+> +				err = -EINVAL;
+> +				goto out;
+> +			}
+> +
+> +			if (de_has_vcn(prev)) {
+> +				de_set_vbn_le(e, de_get_vbn_le(prev));
+> +			} else if (de_has_vcn(e)) {
+> +				le16_sub_cpu(&e->size, sizeof(u64));
+> +				e->flags &= ~NTFS_IE_HAS_SUBNODES;
+> +				le32_sub_cpu(&hdr->used, sizeof(u64));
+> +			}
+> +			e = prev;
+> +		}
+> +
+> +		/*
+> +		 * Copy the current entry into a temporary buffer (stripping off its
+> +		 * down-pointer, if any) and delete it from the current buffer or root,
+> +		 * as appropriate.
+> +		 */
+> +		e_size = le16_to_cpu(e->size);
+> +		me = ntfs_memdup(e, e_size);
+> +		if (!me) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +
+> +		if (de_has_vcn(me)) {
+> +			me->flags &= ~NTFS_IE_HAS_SUBNODES;
+> +			le16_sub_cpu(&me->size, sizeof(u64));
+> +		}
+> +
+> +		hdr_delete_de(hdr, e);
+> +
+> +		if (hdr == &root->ihdr) {
+> +			level = 0;
+> +			hdr->total = hdr->used;
+> +
+> +			/* Shrink resident root attribute */
+> +			mi_resize_attr(mi, attr, 0 - e_size);
+> +		} else {
+> +			indx_write(indx, ni, n2d, 0);
+> +			level = level2;
+> +		}
+> +
+> +		/* Mark unused buffers as free */
+> +		trim_bit = -1;
+> +		for (; level < fnd->level; level++) {
+> +			ib = fnd->nodes[level]->index;
+> +			if (ib_is_empty(ib)) {
+> +				size_t k = le64_to_cpu(ib->vbn) >>
+> +					   indx->idx2vbn_bits;
+> +
+> +				indx_mark_free(indx, ni, k);
+> +				if (k < trim_bit)
+> +					trim_bit = k;
+> +			}
+> +		}
+> +
+> +		fnd_clear(fnd);
+> +		/*fnd->root_de = NULL;*/
+> +
+> +		/*
+> +		 * Re-insert the entry into the tree.
+> +		 * Find the spot the tree where we want to insert the new entry.
+> +		 */
+> +		err = indx_insert_entry(indx, ni, me, ctx, fnd);
+> +		ntfs_free(me);
+> +		if (err)
+> +			goto out;
+> +
+> +		if (trim_bit != -1)
+> +			indx_shrink(indx, ni, trim_bit);
+> +	} else {
+> +		/*
+> +		 * This tree needs to be collapsed down to an empty root.
+> +		 * Recreate the index root as an empty leaf and free all the bits the
+> +		 * index allocation bitmap.
+> +		 */
+> +		fnd_clear(fnd);
+> +		fnd_clear(fnd2);
+> +
+> +		in = &s_index_names[indx->type];
+> +
+> +		err = attr_set_size(ni, ATTR_ALLOC, in->name, in->name_len,
+> +				    &indx->alloc_run, 0, NULL, false, NULL);
+> +		err = ni_remove_attr(ni, ATTR_ALLOC, in->name, in->name_len,
+> +				     false, NULL);
+> +		run_close(&indx->alloc_run);
+> +
+> +		err = attr_set_size(ni, ATTR_BITMAP, in->name, in->name_len,
+> +				    &indx->bitmap_run, 0, NULL, false, NULL);
+> +		err = ni_remove_attr(ni, ATTR_BITMAP, in->name, in->name_len,
+> +				     false, NULL);
+> +		run_close(&indx->bitmap_run);
+> +
+> +		root = indx_get_root(indx, ni, &attr, &mi);
+> +		if (!root) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		root_size = le32_to_cpu(attr->res.data_size);
+> +		new_root_size =
+> +			sizeof(struct INDEX_ROOT) + sizeof(struct NTFS_DE);
+> +
+> +		if (new_root_size != root_size &&
+> +		    !mi_resize_attr(mi, attr, new_root_size - root_size)) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		/* Fill first entry */
+> +		e = (struct NTFS_DE *)(root + 1);
+> +		e->ref.low = 0;
+> +		e->ref.high = 0;
+> +		e->ref.seq = 0;
+> +		e->size = cpu_to_le16(sizeof(struct NTFS_DE));
+> +		e->flags = NTFS_IE_LAST; // 0x02
+> +		e->key_size = 0;
+> +		e->res = 0;
+> +
+> +		hdr = &root->ihdr;
+> +		hdr->flags = 0;
+> +		hdr->used = hdr->total = cpu_to_le32(
+> +			new_root_size - offsetof(struct INDEX_ROOT, ihdr));
+> +		mi->dirty = true;
+> +
+> +		if (in->name == I30_NAME)
+> +			ni->vfs_inode.i_size = 0;
+> +	}
+> +
+> +out:
+> +	fnd_put(fnd2);
+> +out1:
+> +	indx->changed = true;
+> +	fnd_put(fnd);
+> +
+> +out2:
+> +	return err;
+> +}
+> +
+> +int indx_update_dup(struct ntfs_inode *ni, struct ntfs_sb_info *sbi,
+> +		    const struct ATTR_FILE_NAME *fname,
+> +		    const struct NTFS_DUP_INFO *dup, int sync)
+> +{
+> +	int err, diff;
+> +	struct NTFS_DE *e = NULL;
+> +	struct ATTR_FILE_NAME *e_fname;
+> +	struct ntfs_fnd *fnd;
+> +	struct INDEX_ROOT *root;
+> +	struct mft_inode *mi;
+> +	struct ntfs_index *indx = &ni->dir;
+> +
+> +	fnd = fnd_get(indx);
+> +	if (!fnd) {
+> +		err = -ENOMEM;
+> +		goto out1;
+> +	}
+> +
+> +	root = indx_get_root(indx, ni, NULL, &mi);
+> +	if (!root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Find entries tree and on disk */
+> +	err = indx_find(indx, ni, root, fname, fname_full_size(fname), sbi,
+> +			&diff, &e, fnd);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (!e) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (diff) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	e_fname = (struct ATTR_FILE_NAME *)(e + 1);
+> +
+> +	if (!memcmp(&e_fname->dup, dup, sizeof(*dup))) {
+> +		/* nothing to update in index! Try to avoid this call */
+> +		goto out;
+> +	}
+> +
+> +	memcpy(&e_fname->dup, dup, sizeof(*dup));
+> +
+> +	if (fnd->level) {
+> +		err = indx_write(indx, ni, fnd->nodes[fnd->level - 1], sync);
+> +	} else if (sync) {
+> +		mi->dirty = true;
+> +		err = mi_write(mi, 1);
+> +	} else {
+> +		mi->dirty = true;
+> +		mark_inode_dirty(&ni->vfs_inode);
+> +	}
+> +
+> +out:
+> +	fnd_put(fnd);
+> +
+> +out1:
+> +	return err;
+> +}
+> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
 > new file mode 100644
-> index 000000000000..382994c2c340
+> index 000000000000..5de85b7f909d
 > --- /dev/null
-> +++ b/fs/ntfs3/xattr.c
-> @@ -0,0 +1,1041 @@
+> +++ b/fs/ntfs3/inode.c
+> @@ -0,0 +1,1998 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + *  linux/fs/ntfs3/xattr.c
+> + *  linux/fs/ntfs3/inode.c
 > + *
 > + * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
 > + *
@@ -1927,1035 +4991,3428 @@ On 18/9/20 5:21 pm, Konstantin Komarov wrote:
 > +#include <linux/blkdev.h>
 > +#include <linux/buffer_head.h>
 > +#include <linux/fs.h>
+> +#include <linux/iversion.h>
+> +#include <linux/mpage.h>
 > +#include <linux/nls.h>
-> +#include <linux/posix_acl.h>
-> +#include <linux/posix_acl_xattr.h>
-> +#include <linux/xattr.h>
+> +#include <linux/uio.h>
+> +#include <linux/version.h>
+> +#include <linux/writeback.h>
 > +
 > +#include "debug.h"
 > +#include "ntfs.h"
 > +#include "ntfs_fs.h"
 > +
-> +#define SYSTEM_DOS_ATTRIB "system.dos_attrib"
-> +#define SYSTEM_NTFS_ATTRIB "system.ntfs_attrib"
-> +#define SYSTEM_NTFS_SECURITY "system.ntfs_security"
-> +#define USER_DOSATTRIB "user.DOSATTRIB"
-> +
-> +static inline size_t unpacked_ea_size(const struct EA_FULL *ea)
-> +{
-> +	return !ea->size ? DwordAlign(offsetof(struct EA_FULL, name) + 1 +
-> +				      ea->name_len + le16_to_cpu(ea->elength)) :
-> +			   le32_to_cpu(ea->size);
-> +}
-> +
-> +static inline size_t packed_ea_size(const struct EA_FULL *ea)
-> +{
-> +	return offsetof(struct EA_FULL, name) + 1 -
-> +	       offsetof(struct EA_FULL, flags) + ea->name_len +
-> +	       le16_to_cpu(ea->elength);
-> +}
-> +
 > +/*
-> + * find_ea
+> + * ntfs_read_mft
 > + *
-> + * assume there is at least one xattr in the list
+> + * reads record and parses MFT
 > + */
-> +static inline bool find_ea(const struct EA_FULL *ea_all, u32 bytes,
-> +			   const char *name, u8 name_len, u32 *off)
+> +static struct inode *ntfs_read_mft(struct inode *inode,
+> +				   const struct cpu_str *name,
+> +				   const struct MFT_REF *ref)
 > +{
-> +	*off = 0;
-> +
-> +	if (!ea_all || !bytes)
-> +		return false;
-> +
-> +	for (;;) {
-> +		const struct EA_FULL *ea = Add2Ptr(ea_all, *off);
-> +		u32 next_off = *off + unpacked_ea_size(ea);
-> +
-> +		if (next_off > bytes)
-> +			return false;
-> +
-> +		if (ea->name_len == name_len &&
-> +		    !memcmp(ea->name, name, name_len))
-> +			return true;
-> +
-> +		*off = next_off;
-> +		if (next_off >= bytes)
-> +			return false;
-> +	}
-> +}
-> +
-> +/*
-> + * ntfs_read_ea
-> + *
-> + * reads all extended attributes
-> + * ea - new allocated memory
-> + * info - pointer into resident data
-> + */
-> +static int ntfs_read_ea(struct ntfs_inode *ni, struct EA_FULL **ea,
-> +			size_t add_bytes, const struct EA_INFO **info)
-> +{
-> +	int err;
-> +	struct ATTR_LIST_ENTRY *le = NULL;
-> +	struct ATTRIB *attr_info, *attr_ea;
-> +	void *ea_p;
-> +	u32 size;
-> +
-> +	static_assert(le32_to_cpu(ATTR_EA_INFO) < le32_to_cpu(ATTR_EA));
-> +
-> +	*ea = NULL;
-> +	*info = NULL;
-> +
-> +	attr_info =
-> +		ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, NULL);
-> +	attr_ea =
-> +		ni_find_attr(ni, attr_info, &le, ATTR_EA, NULL, 0, NULL, NULL);
-> +
-> +	if (!attr_ea || !attr_info)
-> +		return 0;
-> +
-> +	*info = resident_data_ex(attr_info, sizeof(struct EA_INFO));
-> +	if (!*info)
-> +		return -EINVAL;
-> +
-> +	/* Check Ea limit */
-> +	size = le32_to_cpu((*info)->size);
-> +	if (size > MAX_EA_DATA_SIZE || size + add_bytes > MAX_EA_DATA_SIZE)
-> +		return -EINVAL;
-> +
-> +	/* Allocate memory for packed Ea */
-> +	ea_p = ntfs_alloc(size + add_bytes, 0);
-> +	if (!ea_p)
-> +		return -ENOMEM;
-> +
-> +	if (attr_ea->non_res) {
-> +		struct runs_tree run;
-> +
-> +		run_init(&run);
-> +
-> +		err = attr_load_runs(attr_ea, ni, &run);
-> +		if (!err)
-> +			err = ntfs_read_run_nb(ni->mi.sbi, &run, 0, ea_p, size,
-> +					       NULL);
-> +		run_close(&run);
-> +
-> +		if (err)
-> +			goto out;
-> +	} else {
-> +		void *p = resident_data_ex(attr_ea, size);
-> +
-> +		if (!p) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +		memcpy(ea_p, p, size);
-> +	}
-> +
-> +	memset(Add2Ptr(ea_p, size), 0, add_bytes);
-> +	*ea = ea_p;
-> +	return 0;
-> +
-> +out:
-> +	ntfs_free(ea_p);
-> +	*ea = NULL;
-> +	return err;
-> +}
-> +
-> +/*
-> + * ntfs_listxattr_hlp
-> + *
-> + * copy a list of xattrs names into the buffer
-> + * provided, or compute the buffer size required
-> + */
-> +static int ntfs_listxattr_hlp(struct ntfs_inode *ni, char *buffer,
-> +			      size_t bytes_per_buffer, size_t *bytes)
-> +{
-> +	const struct EA_INFO *info;
-> +	struct EA_FULL *ea_all = NULL;
-> +	const struct EA_FULL *ea;
-> +	u32 off, size;
-> +	int err;
-> +
-> +	*bytes = 0;
-> +
-> +	err = ntfs_read_ea(ni, &ea_all, 0, &info);
-> +	if (err)
-> +		return err;
-> +
-> +	if (!info || !ea_all)
-> +		return 0;
-> +
-> +	size = le32_to_cpu(info->size);
-> +
-> +	/* Enumerate all xattrs */
-> +	for (off = 0; off < size; off += unpacked_ea_size(ea)) {
-> +		ea = Add2Ptr(ea_all, off);
-> +
-> +		if (buffer) {
-> +			if (*bytes + ea->name_len + 1 > bytes_per_buffer) {
-> +				err = -ERANGE;
-> +				goto out;
-> +			}
-> +
-> +			memcpy(buffer + *bytes, ea->name, ea->name_len);
-> +			buffer[*bytes + ea->name_len] = 0;
-> +		}
-> +
-> +		*bytes += ea->name_len + 1;
-> +	}
-> +
-> +out:
-> +	ntfs_free(ea_all);
-> +	return err;
-> +}
-> +
-> +/*
-> + * ntfs_get_ea
-> + *
-> + * reads xattr
-> + */
-> +static int ntfs_get_ea(struct ntfs_inode *ni, const char *name, size_t name_len,
-> +		       void *buffer, size_t bytes_per_buffer, u32 *len)
-> +{
-> +	const struct EA_INFO *info;
-> +	struct EA_FULL *ea_all = NULL;
-> +	const struct EA_FULL *ea;
-> +	u32 off;
-> +	int err;
-> +
-> +	*len = 0;
-> +
-> +	if (name_len > 255) {
-> +		err = -ENAMETOOLONG;
-> +		goto out;
-> +	}
-> +
-> +	err = ntfs_read_ea(ni, &ea_all, 0, &info);
-> +	if (err)
-> +		goto out;
-> +
-> +	if (!info)
-> +		goto out;
-> +
-> +	/* Enumerate all xattrs */
-> +	if (!find_ea(ea_all, le32_to_cpu(info->size), name, name_len, &off)) {
-> +		err = -ENODATA;
-> +		goto out;
-> +	}
-> +	ea = Add2Ptr(ea_all, off);
-> +
-> +	*len = le16_to_cpu(ea->elength);
-> +	if (!buffer) {
-> +		err = 0;
-> +		goto out;
-> +	}
-> +
-> +	if (*len > bytes_per_buffer) {
-> +		err = -ERANGE;
-> +		goto out;
-> +	}
-> +	memcpy(buffer, ea->name + ea->name_len + 1, *len);
-> +	err = 0;
-> +
-> +out:
-> +	ntfs_free(ea_all);
-> +
-> +	return err;
-> +}
-> +
-> +static noinline int ntfs_getxattr_hlp(struct inode *inode, const char *name,
-> +				      void *value, size_t size,
-> +				      size_t *required)
-> +{
-> +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	int err;
-> +	u32 len;
-> +
-> +	if (!(ni->ni_flags & NI_FLAG_EA))
-> +		return -ENODATA;
-> +
-> +	if (!required)
-> +		ni_lock(ni);
-> +
-> +	err = ntfs_get_ea(ni, name, strlen(name), value, size, &len);
-> +	if (!err)
-> +		err = len;
-> +	else if (-ERANGE == err && required)
-> +		*required = len;
-> +
-> +	if (!required)
-> +		ni_unlock(ni);
-> +
-> +	return err;
-> +}
-> +
-> +static noinline int ntfs_set_ea(struct inode *inode, const char *name,
-> +				const void *value, size_t val_size, int flags,
-> +				int locked)
-> +{
-> +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	struct ntfs_sb_info *sbi = ni->mi.sbi;
-> +	int err;
-> +	struct EA_INFO ea_info;
-> +	const struct EA_INFO *info;
-> +	struct EA_FULL *new_ea;
-> +	struct EA_FULL *ea_all = NULL;
-> +	size_t name_len, add;
-> +	u32 off, size;
-> +	__le16 size_pack;
-> +	struct ATTRIB *attr;
-> +	struct ATTR_LIST_ENTRY *le;
-> +	struct mft_inode *mi;
-> +	struct runs_tree ea_run;
-> +	u64 new_sz;
-> +	void *p;
-> +
-> +	if (!locked)
-> +		ni_lock(ni);
-> +
-> +	run_init(&ea_run);
-> +	name_len = strlen(name);
-> +
-> +	if (name_len > 255) {
-> +		err = -ENAMETOOLONG;
-> +		goto out;
-> +	}
-> +
-> +	add = DwordAlign(offsetof(struct EA_FULL, name) + 1 + name_len +
-> +			 val_size);
-> +
-> +	err = ntfs_read_ea(ni, &ea_all, add, &info);
-> +	if (err)
-> +		goto out;
-> +
-> +	if (!info) {
-> +		memset(&ea_info, 0, sizeof(ea_info));
-> +		size = 0;
-> +		size_pack = 0;
-> +	} else {
-> +		memcpy(&ea_info, info, sizeof(ea_info));
-> +		size = le32_to_cpu(ea_info.size);
-> +		size_pack = ea_info.size_pack;
-> +	}
-> +
-> +	if (info && find_ea(ea_all, size, name, name_len, &off)) {
-> +		struct EA_FULL *ea;
-> +		size_t ea_sz;
-> +
-> +		if (flags & XATTR_CREATE) {
-> +			err = -EEXIST;
-> +			goto out;
-> +		}
-> +
-> +		/* Remove current xattr */
-> +		ea = Add2Ptr(ea_all, off);
-> +		if (ea->flags & FILE_NEED_EA)
-> +			le16_add_cpu(&ea_info.count, -1);
-> +
-> +		ea_sz = unpacked_ea_size(ea);
-> +
-> +		le16_add_cpu(&ea_info.size_pack, 0 - packed_ea_size(ea));
-> +
-> +		memmove(ea, Add2Ptr(ea, ea_sz), size - off - ea_sz);
-> +
-> +		size -= ea_sz;
-> +		memset(Add2Ptr(ea_all, size), 0, ea_sz);
-> +
-> +		ea_info.size = cpu_to_le32(size);
-> +
-> +		if ((flags & XATTR_REPLACE) && !val_size)
-> +			goto update_ea;
-> +	} else {
-> +		if (flags & XATTR_REPLACE) {
-> +			err = -ENODATA;
-> +			goto out;
-> +		}
-> +
-> +		if (!ea_all) {
-> +			ea_all = ntfs_alloc(add, 1);
-> +			if (!ea_all) {
-> +				err = -ENOMEM;
-> +				goto out;
-> +			}
-> +		}
-> +	}
-> +
-> +	/* append new xattr */
-> +	new_ea = Add2Ptr(ea_all, size);
-> +	new_ea->size = cpu_to_le32(add);
-> +	new_ea->flags = 0;
-> +	new_ea->name_len = name_len;
-> +	new_ea->elength = cpu_to_le16(val_size);
-> +	memcpy(new_ea->name, name, name_len);
-> +	new_ea->name[name_len] = 0;
-> +	memcpy(new_ea->name + name_len + 1, value, val_size);
-> +
-> +	le16_add_cpu(&ea_info.size_pack, packed_ea_size(new_ea));
-> +	size += add;
-> +	ea_info.size = cpu_to_le32(size);
-> +
-> +update_ea:
-> +
-> +	if (!info) {
-> +		/* Create xattr */
-> +		if (!size) {
-> +			err = 0;
-> +			goto out;
-> +		}
-> +
-> +		err = ni_insert_resident(ni, sizeof(struct EA_INFO),
-> +					 ATTR_EA_INFO, NULL, 0, NULL, NULL);
-> +		if (err)
-> +			goto out;
-> +
-> +		err = ni_insert_resident(ni, 0, ATTR_EA, NULL, 0, NULL, NULL);
-> +		if (err)
-> +			goto out;
-> +	}
-> +
-> +	new_sz = size;
-> +	err = attr_set_size(ni, ATTR_EA, NULL, 0, &ea_run, new_sz, &new_sz,
-> +			    false, NULL);
-> +	if (err)
-> +		goto out;
-> +
-> +	le = NULL;
-> +	attr = ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, &mi);
-> +	if (!attr) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (!size) {
-> +		/* delete xattr, ATTR_EA_INFO */
-> +		err = ni_remove_attr_le(ni, attr, le);
-> +		if (err)
-> +			goto out;
-> +	} else {
-> +		p = resident_data_ex(attr, sizeof(struct EA_INFO));
-> +		if (!p) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +		memcpy(p, &ea_info, sizeof(struct EA_INFO));
-> +		mi->dirty = true;
-> +	}
-> +
-> +	le = NULL;
-> +	attr = ni_find_attr(ni, NULL, &le, ATTR_EA, NULL, 0, NULL, &mi);
-> +	if (!attr) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	if (!size) {
-> +		/* delete xattr, ATTR_EA */
-> +		err = ni_remove_attr_le(ni, attr, le);
-> +		if (err)
-> +			goto out;
-> +	} else if (attr->non_res) {
-> +		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size);
-> +		if (err)
-> +			goto out;
-> +	} else {
-> +		p = resident_data_ex(attr, size);
-> +		if (!p) {
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +		memcpy(p, ea_all, size);
-> +		mi->dirty = true;
-> +	}
-> +
-> +	if (ea_info.size_pack != size_pack)
-> +		ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-> +	mark_inode_dirty(&ni->vfs_inode);
-> +
-> +	/* Check if we delete the last xattr */
-> +	if (val_size || flags != XATTR_REPLACE ||
-> +	    ntfs_listxattr_hlp(ni, NULL, 0, &val_size) || val_size) {
-> +		ni->ni_flags |= NI_FLAG_EA;
-> +	} else {
-> +		ni->ni_flags &= ~NI_FLAG_EA;
-> +	}
-> +
-> +out:
-> +	if (!locked)
-> +		ni_unlock(ni);
-> +
-> +	run_close(&ea_run);
-> +	ntfs_free(ea_all);
-> +
-> +	return err;
-> +}
-> +
-> +static inline void ntfs_posix_acl_release(struct posix_acl *acl)
-> +{
-> +	if (acl && refcount_dec_and_test(&acl->a_refcount))
-> +		kfree(acl);
-> +}
-> +
-> +static struct posix_acl *ntfs_get_acl_ex(struct inode *inode, int type,
-> +					 int locked)
-> +{
-> +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	const char *name;
-> +	struct posix_acl *acl;
-> +	size_t req;
-> +	int err;
-> +	void *buf;
-> +
-> +	buf = __getname();
-> +	if (!buf)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	/* Possible values of 'type' was already checked above */
-> +	name = type == ACL_TYPE_ACCESS ? XATTR_NAME_POSIX_ACL_ACCESS :
-> +					 XATTR_NAME_POSIX_ACL_DEFAULT;
-> +
-> +	if (!locked)
-> +		ni_lock(ni);
-> +
-> +	err = ntfs_getxattr_hlp(inode, name, buf, PATH_MAX, &req);
-> +
-> +	if (!locked)
-> +		ni_unlock(ni);
-> +
-> +	/* Translate extended attribute to acl */
-> +	if (err > 0) {
-> +		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
-> +		if (!IS_ERR(acl))
-> +			set_cached_acl(inode, type, acl);
-> +	} else {
-> +		acl = err == -ENODATA ? NULL : ERR_PTR(err);
-> +	}
-> +
-> +	__putname(buf);
-> +
-> +	return acl;
-> +}
-> +
-> +/*
-> + * ntfs_get_acl
-> + *
-> + * inode_operations::get_acl
-> + */
-> +struct posix_acl *ntfs_get_acl(struct inode *inode, int type)
-> +{
-> +	return ntfs_get_acl_ex(inode, type, 0);
-> +}
-> +
-> +static noinline int ntfs_set_acl_ex(struct inode *inode, struct posix_acl *acl,
-> +				    int type, int locked)
-> +{
-> +	const char *name;
-> +	size_t size;
-> +	void *value = NULL;
 > +	int err = 0;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	struct super_block *sb = inode->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	mode_t mode = 0;
+> +	struct ATTR_STD_INFO5 *std5 = NULL;
+> +	struct ATTR_LIST_ENTRY *le;
+> +	struct ATTRIB *attr;
+> +	bool is_match = false;
+> +	bool is_root = false;
+> +	bool is_dir;
+> +	unsigned long ino = inode->i_ino;
+> +	u32 rp_fa = 0, asize, t32;
+> +	u16 roff, rsize, names = 0;
+> +	const struct ATTR_FILE_NAME *fname = NULL;
+> +	const struct INDEX_ROOT *root;
+> +	struct REPARSE_DATA_BUFFER rp; // 0x18 bytes
+> +	u64 t64;
+> +	struct MFT_REC *rec;
+> +	struct runs_tree *run;
 > +
-> +	if (S_ISLNK(inode->i_mode))
-> +		return -EOPNOTSUPP;
+> +	inode->i_op = NULL;
 > +
-> +	switch (type) {
-> +	case ACL_TYPE_ACCESS:
-> +		if (acl) {
-> +			umode_t mode = inode->i_mode;
+> +	err = mi_init(&ni->mi, sbi, ino);
+> +	if (err)
+> +		goto out;
 > +
-> +			err = posix_acl_equiv_mode(acl, &mode);
-> +			if (err < 0)
-> +				return err;
+> +	if (!sbi->mft.ni && ino == MFT_REC_MFT && !sb->s_root) {
+> +		t64 = sbi->mft.lbo >> sbi->cluster_bits;
+> +		t32 = bytes_to_cluster(sbi, MFT_REC_VOL * sbi->record_size);
+> +		sbi->mft.ni = ni;
+> +		init_rwsem(&ni->file.run_lock);
 > +
-> +			if (inode->i_mode != mode) {
-> +				inode->i_mode = mode;
-> +				mark_inode_dirty(inode);
-> +			}
-> +
-> +			if (!err) {
-> +				/*
-> +				 * acl can be exactly represented in the
-> +				 * traditional file mode permission bits
-> +				 */
-> +				acl = NULL;
-> +				goto out;
-> +			}
+> +		if (!run_add_entry(&ni->file.run, 0, t64, t32)) {
+> +			err = -ENOMEM;
+> +			goto out;
 > +		}
-> +		name = XATTR_NAME_POSIX_ACL_ACCESS;
+> +	}
+> +
+> +	err = mi_read(&ni->mi, ino == MFT_REC_MFT);
+> +
+> +	if (err)
+> +		goto out;
+> +
+> +	rec = ni->mi.mrec;
+> +
+> +	if (sbi->flags & NTFS_FLAGS_LOG_REPLAYING) {
+> +		;
+> +	} else if (ref->seq != rec->seq) {
+> +		err = -EINVAL;
+> +		ntfs_err(sb, "MFT: r=%lx, expect seq=%x instead of %x!", ino,
+> +			 le16_to_cpu(ref->seq), le16_to_cpu(rec->seq));
+> +		goto out;
+> +	} else if (!is_rec_inuse(rec)) {
+> +		err = -EINVAL;
+> +		ntfs_err(sb, "Inode r=%x is not in use!", (u32)ino);
+> +		goto out;
+> +	}
+> +
+> +	if (le32_to_cpu(rec->total) != sbi->record_size) {
+> +		// bad inode?
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (!is_rec_base(rec))
+> +		goto Ok;
+> +
+> +	/* record should contain $I30 root */
+> +	is_dir = rec->flags & RECORD_FLAG_DIR;
+> +
+> +	inode->i_generation = le16_to_cpu(rec->seq);
+> +
+> +	/* Enumerate all struct Attributes MFT */
+> +	le = NULL;
+> +	attr = NULL;
+> +
+> +	/*
+> +	 * to reduce tab pressure use goto instead of
+> +	 * while( (attr = ni_enum_attr_ex(ni, attr, &le) ))
+> +	 */
+> +next_attr:
+> +	run = NULL;
+> +	err = -EINVAL;
+> +	attr = ni_enum_attr_ex(ni, attr, &le);
+> +	if (!attr)
+> +		goto end_enum;
+> +
+> +	if (le && le->vcn) {
+> +		/* This is non primary attribute segment. Ignore if not MFT */
+> +		if (ino != MFT_REC_MFT || attr->type != ATTR_DATA)
+> +			goto next_attr;
+> +
+> +		run = &ni->file.run;
+> +		asize = le32_to_cpu(attr->size);
+> +		goto attr_unpack_run;
+> +	}
+> +
+> +	roff = attr->non_res ? 0 : le16_to_cpu(attr->res.data_off);
+> +	rsize = attr->non_res ? 0 : le32_to_cpu(attr->res.data_size);
+> +	asize = le32_to_cpu(attr->size);
+> +
+> +	switch (attr->type) {
+> +	case ATTR_STD:
+> +		if (attr->non_res ||
+> +		    asize < sizeof(struct ATTR_STD_INFO) + roff ||
+> +		    rsize < sizeof(struct ATTR_STD_INFO))
+> +			goto out;
+> +
+> +		if (std5)
+> +			goto next_attr;
+> +
+> +		std5 = Add2Ptr(attr, roff);
+> +
+> +#ifdef STATX_BTIME
+> +		nt2kernel(std5->cr_time, &ni->i_crtime);
+> +#endif
+> +		nt2kernel(std5->a_time, &inode->i_atime);
+> +		nt2kernel(std5->c_time, &inode->i_ctime);
+> +		nt2kernel(std5->m_time, &inode->i_mtime);
+> +
+> +		ni->std_fa = std5->fa;
+> +
+> +		if (asize >= sizeof(struct ATTR_STD_INFO5) + roff &&
+> +		    rsize >= sizeof(struct ATTR_STD_INFO5))
+> +			ni->std_security_id = std5->security_id;
+> +		goto next_attr;
+> +
+> +	case ATTR_LIST:
+> +		if (attr->name_len || le || ino == MFT_REC_LOG)
+> +			goto out;
+> +
+> +		err = ntfs_load_attr_list(ni, attr);
+> +		if (err)
+> +			goto out;
+> +
+> +		le = NULL;
+> +		attr = NULL;
+> +		goto next_attr;
+> +
+> +	case ATTR_NAME:
+> +		if (attr->non_res || asize < SIZEOF_ATTRIBUTE_FILENAME + roff ||
+> +		    rsize < SIZEOF_ATTRIBUTE_FILENAME)
+> +			goto out;
+> +
+> +		fname = Add2Ptr(attr, roff);
+> +		if (fname->type == FILE_NAME_DOS)
+> +			goto next_attr;
+> +
+> +		names += 1;
+> +		if (name && name->len == fname->name_len &&
+> +		    !ntfs_cmp_names_cpu(name, (struct le_str *)&fname->name_len,
+> +					NULL))
+> +			is_match = true;
+> +
+> +		goto next_attr;
+> +
+> +	case ATTR_DATA:
+> +		if (is_dir) {
+> +			/* ignore data attribute in dir record */
+> +			goto next_attr;
+> +		}
+> +
+> +		if (ino == MFT_REC_BADCLUST && !attr->non_res)
+> +			goto next_attr;
+> +
+> +		if (attr->name_len &&
+> +		    ((ino != MFT_REC_BADCLUST || !attr->non_res ||
+> +		      attr->name_len != ARRAY_SIZE(BAD_NAME) ||
+> +		      memcmp(attr_name(attr), BAD_NAME, sizeof(BAD_NAME))) &&
+> +		     (ino != MFT_REC_SECURE || !attr->non_res ||
+> +		      attr->name_len != ARRAY_SIZE(SDS_NAME) ||
+> +		      memcmp(attr_name(attr), SDS_NAME, sizeof(SDS_NAME))))) {
+> +			/* file contains stream attribute. ignore it */
+> +			goto next_attr;
+> +		}
+> +
+> +		if (is_attr_sparsed(attr))
+> +			ni->std_fa |= FILE_ATTRIBUTE_SPARSE_FILE;
+> +		else
+> +			ni->std_fa &= ~FILE_ATTRIBUTE_SPARSE_FILE;
+> +
+> +		if (is_attr_compressed(attr))
+> +			ni->std_fa |= FILE_ATTRIBUTE_COMPRESSED;
+> +		else
+> +			ni->std_fa &= ~FILE_ATTRIBUTE_COMPRESSED;
+> +
+> +		if (is_attr_encrypted(attr))
+> +			ni->std_fa |= FILE_ATTRIBUTE_ENCRYPTED;
+> +		else
+> +			ni->std_fa &= ~FILE_ATTRIBUTE_ENCRYPTED;
+> +
+> +		if (!attr->non_res) {
+> +			ni->i_valid = inode->i_size = rsize;
+> +			inode_set_bytes(inode, rsize);
+> +			t32 = asize;
+> +		} else {
+> +			t32 = le16_to_cpu(attr->nres.run_off);
+> +		}
+> +
+> +		mode = S_IFREG | (0777 & sbi->options.fs_fmask_inv);
+> +
+> +		if (!attr->non_res) {
+> +			ni->ni_flags |= NI_FLAG_RESIDENT;
+> +			goto next_attr;
+> +		}
+> +
+> +		inode_set_bytes(inode, attr_ondisk_size(attr));
+> +
+> +		ni->i_valid = le64_to_cpu(attr->nres.valid_size);
+> +		inode->i_size = le64_to_cpu(attr->nres.data_size);
+> +		if (!attr->nres.alloc_size)
+> +			goto next_attr;
+> +
+> +		run = ino == MFT_REC_BITMAP ? &sbi->used.bitmap.run :
+> +					      &ni->file.run;
 > +		break;
 > +
-> +	case ACL_TYPE_DEFAULT:
-> +		if (!S_ISDIR(inode->i_mode))
-> +			return acl ? -EACCES : 0;
-> +		name = XATTR_NAME_POSIX_ACL_DEFAULT;
+> +	case ATTR_ROOT:
+> +		if (attr->non_res)
+> +			goto out;
+> +
+> +		root = Add2Ptr(attr, roff);
+> +		is_root = true;
+> +
+> +		if (attr->name_len != ARRAY_SIZE(I30_NAME) ||
+> +		    memcmp(attr_name(attr), I30_NAME, sizeof(I30_NAME)))
+> +			goto next_attr;
+> +
+> +		if (root->type != ATTR_NAME ||
+> +		    root->rule != NTFS_COLLATION_TYPE_FILENAME)
+> +			goto out;
+> +
+> +		if (!is_dir)
+> +			goto next_attr;
+> +
+> +		ni->ni_flags |= NI_FLAG_DIR;
+> +
+> +		err = indx_init(&ni->dir, sbi, attr, INDEX_MUTEX_I30);
+> +		if (err)
+> +			goto out;
+> +
+> +		mode = sb->s_root ?
+> +			       (S_IFDIR | (0777 & sbi->options.fs_dmask_inv)) :
+> +			       (S_IFDIR | 0777);
+> +		goto next_attr;
+> +
+> +	case ATTR_ALLOC:
+> +		if (!is_root || attr->name_len != ARRAY_SIZE(I30_NAME) ||
+> +		    memcmp(attr_name(attr), I30_NAME, sizeof(I30_NAME)))
+> +			goto next_attr;
+> +
+> +		inode->i_size = le64_to_cpu(attr->nres.data_size);
+> +		ni->i_valid = le64_to_cpu(attr->nres.valid_size);
+> +		inode_set_bytes(inode, le64_to_cpu(attr->nres.alloc_size));
+> +
+> +		run = &ni->dir.alloc_run;
 > +		break;
+> +
+> +	case ATTR_BITMAP:
+> +		if (ino == MFT_REC_MFT) {
+> +			if (!attr->non_res)
+> +				goto out;
+> +#ifndef NTFS3_64BIT_CLUSTER
+> +			/* 0x20000000 = 2^32 / 8 */
+> +			if (le64_to_cpu(attr->nres.alloc_size) >= 0x20000000)
+> +				goto out;
+> +#endif
+> +			run = &sbi->mft.bitmap.run;
+> +			break;
+> +		} else if (is_dir && attr->name_len == ARRAY_SIZE(I30_NAME) &&
+> +			   !memcmp(attr_name(attr), I30_NAME,
+> +				   sizeof(I30_NAME)) &&
+> +			   attr->non_res) {
+> +			run = &ni->dir.bitmap_run;
+> +			break;
+> +		}
+> +		goto next_attr;
+> +
+> +	case ATTR_REPARSE:
+> +		if (attr->name_len)
+> +			goto next_attr;
+> +
+> +		rp_fa = ni_parse_reparse(ni, attr, &rp);
+> +		switch (rp_fa) {
+> +		case REPARSE_LINK:
+> +			if (!attr->non_res) {
+> +				inode->i_size = rsize;
+> +				inode_set_bytes(inode, rsize);
+> +				t32 = asize;
+> +			} else {
+> +				inode->i_size =
+> +					le64_to_cpu(attr->nres.data_size);
+> +				t32 = le16_to_cpu(attr->nres.run_off);
+> +			}
+> +
+> +			/* Looks like normal symlink */
+> +			ni->i_valid = inode->i_size;
+> +
+> +			/* Clear directory bit */
+> +			if (ni->ni_flags & NI_FLAG_DIR) {
+> +				indx_clear(&ni->dir);
+> +				memset(&ni->dir, 0, sizeof(ni->dir));
+> +				ni->ni_flags &= ~NI_FLAG_DIR;
+> +			} else {
+> +				run_close(&ni->file.run);
+> +			}
+> +			mode = S_IFLNK | 0777;
+> +			is_dir = false;
+> +			if (attr->non_res) {
+> +				run = &ni->file.run;
+> +				goto attr_unpack_run; // double break
+> +			}
+> +			break;
+> +
+> +		case REPARSE_COMPRESSED:
+> +			break;
+> +
+> +		case REPARSE_DEDUPLICATED:
+> +			break;
+> +		}
+> +		goto next_attr;
+> +
+> +	case ATTR_EA_INFO:
+> +		if (!attr->name_len &&
+> +		    resident_data_ex(attr, sizeof(struct EA_INFO)))
+> +			ni->ni_flags |= NI_FLAG_EA;
+> +		goto next_attr;
 > +
 > +	default:
-> +		return -EINVAL;
+> +		goto next_attr;
 > +	}
 > +
-> +	if (!acl)
+> +attr_unpack_run:
+> +	roff = le16_to_cpu(attr->nres.run_off);
+> +
+> +	err = run_unpack_ex(run, sbi, ino, le64_to_cpu(attr->nres.svcn),
+> +			    le64_to_cpu(attr->nres.evcn), Add2Ptr(attr, roff),
+> +			    asize - roff);
+> +	if (err < 0)
+> +		goto out;
+> +	err = 0;
+> +	goto next_attr;
+> +
+> +end_enum:
+> +
+> +	if (!std5)
 > +		goto out;
 > +
-> +	size = posix_acl_xattr_size(acl->a_count);
-> +	value = ntfs_alloc(size, 0);
-> +	if (!value)
-> +		return -ENOMEM;
-> +
-> +	err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
-> +	if (err)
+> +	if (!is_match && name) {
+> +		/* reuse rec as buffer for ascii name */
+> +		err = -ENOENT;
 > +		goto out;
+> +	}
 > +
-> +	err = ntfs_set_ea(inode, name, value, size, 0, locked);
-> +	if (err)
+> +	if (std5->fa & FILE_ATTRIBUTE_READONLY)
+> +		mode &= ~0222;
+> +
+> +	/* Setup 'uid' and 'gid' */
+> +	inode->i_uid = sbi->options.fs_uid;
+> +	inode->i_gid = sbi->options.fs_gid;
+> +
+> +	if (!names) {
+> +		err = -EINVAL;
 > +		goto out;
+> +	}
+> +
+> +	if (S_ISDIR(mode)) {
+> +		ni->std_fa |= FILE_ATTRIBUTE_DIRECTORY;
+> +
+> +		/*
+> +		 * dot and dot-dot should be included in count but was not
+> +		 * included in enumeration.
+> +		 * Usually a hard links to directories are disabled
+> +		 */
+> +		set_nlink(inode, 1);
+> +		inode->i_op = &ntfs_dir_inode_operations;
+> +		inode->i_fop = &ntfs_dir_operations;
+> +		ni->i_valid = 0;
+> +	} else if (S_ISLNK(mode)) {
+> +		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
+> +		inode->i_op = &ntfs_link_inode_operations;
+> +		inode->i_fop = NULL;
+> +		inode_nohighmem(inode); // ??
+> +		set_nlink(inode, names);
+> +	} else if (S_ISREG(mode)) {
+> +		ni->std_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
+> +
+> +		set_nlink(inode, names);
+> +
+> +		inode->i_op = &ntfs_file_inode_operations;
+> +		inode->i_fop = &ntfs_file_operations;
+> +		inode->i_mapping->a_ops =
+> +			is_compressed(ni) ? &ntfs_aops_cmpr : &ntfs_aops;
+> +
+> +		if (ino != MFT_REC_MFT)
+> +			init_rwsem(&ni->file.run_lock);
+> +	} else if (fname && fname->home.low == cpu_to_le32(MFT_REC_EXTEND) &&
+> +		   fname->home.seq == cpu_to_le16(MFT_REC_EXTEND)) {
+> +		/* Records in $Extend are not a files or general directories */
+> +	} else {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if ((sbi->options.sys_immutable &&
+> +	     (std5->fa & FILE_ATTRIBUTE_SYSTEM)) &&
+> +	    !S_ISFIFO(mode) && !S_ISSOCK(mode) && !S_ISLNK(mode)) {
+> +		inode->i_flags |= S_IMMUTABLE;
+> +	} else {
+> +		inode->i_flags &= ~S_IMMUTABLE;
+> +	}
+> +
+> +	inode->i_mode = mode;
+> +
+> +Ok:
+> +	if (ino == MFT_REC_MFT && !sb->s_root)
+> +		sbi->mft.ni = NULL;
+> +
+> +	unlock_new_inode(inode);
+> +
+> +	return inode;
 > +
 > +out:
-> +	if (!err)
-> +		set_cached_acl(inode, type, acl);
+> +	if (ino == MFT_REC_MFT && !sb->s_root)
+> +		sbi->mft.ni = NULL;
 > +
-> +	kfree(value);
+> +	iget_failed(inode);
 > +
-> +	return err;
+> +	return ERR_PTR(err);
 > +}
 > +
-> +/*
-> + * ntfs_set_acl
-> + *
-> + * inode_operations::set_acl
-> + */
-> +int ntfs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
+> +/* returns 1 if match */
+> +static int ntfs_test_inode(struct inode *inode, const struct MFT_REF *ref)
 > +{
-> +	return ntfs_set_acl_ex(inode, acl, type, 0);
+> +	return ino_get(ref) == inode->i_ino;
 > +}
 > +
-> +static int ntfs_xattr_get_acl(struct inode *inode, int type, void *buffer,
-> +			      size_t size)
+> +static int ntfs_set_inode(struct inode *inode, const struct MFT_REF *ref)
 > +{
-> +	struct super_block *sb = inode->i_sb;
-> +	struct posix_acl *acl;
-> +	int err;
+> +	inode->i_ino = ino_get(ref);
 > +
-> +	if (!(sb->s_flags & SB_POSIXACL))
-> +		return -EOPNOTSUPP;
-> +
-> +	acl = ntfs_get_acl(inode, type);
-> +	if (IS_ERR(acl))
-> +		return PTR_ERR(acl);
-> +
-> +	if (!acl)
-> +		return -ENODATA;
-> +
-> +	err = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
-> +	ntfs_posix_acl_release(acl);
-> +
-> +	return err;
+> +	return 0;
 > +}
 > +
-> +static int ntfs_xattr_set_acl(struct inode *inode, int type, const void *value,
-> +			      size_t size)
+> +struct inode *ntfs_iget5(struct super_block *sb, const struct MFT_REF *ref,
+> +			 const struct cpu_str *name)
 > +{
-> +	struct super_block *sb = inode->i_sb;
-> +	struct posix_acl *acl;
-> +	int err;
+> +	struct inode *inode;
 > +
-> +	if (!(sb->s_flags & SB_POSIXACL))
-> +		return -EOPNOTSUPP;
+> +	inode = iget5_locked(sb, ino_get(ref),
+> +			     (int (*)(struct inode *, void *))ntfs_test_inode,
+> +			     (int (*)(struct inode *, void *))ntfs_set_inode,
+> +			     (void *)ref);
+> +	if (unlikely(!inode))
+> +		return ERR_PTR(-ENOMEM);
 > +
-> +	if (!inode_owner_or_capable(inode))
-> +		return -EPERM;
+> +	/* If this is a freshly allocated inode, need to read it now. */
+> +	if (inode->i_state & I_NEW)
+> +		inode = ntfs_read_mft(inode, name, ref);
+> +	else if (ref->seq != ntfs_i(inode)->mi.mrec->seq)
+> +		make_bad_inode(inode);
 > +
-> +	if (!value)
-> +		return 0;
-> +
-> +	acl = posix_acl_from_xattr(&init_user_ns, value, size);
-> +	if (IS_ERR(acl))
-> +		return PTR_ERR(acl);
-> +
-> +	if (acl) {
-> +		err = posix_acl_valid(sb->s_user_ns, acl);
-> +		if (err)
-> +			goto release_and_out;
-> +	}
-> +
-> +	err = ntfs_set_acl(inode, acl, type);
-> +
-> +release_and_out:
-> +	ntfs_posix_acl_release(acl);
-> +	return err;
+> +	return inode;
 > +}
 > +
-> +/*
-> + * ntfs_acl_chmod
-> + *
-> + * helper for 'ntfs_setattr'
-> + */
-> +int ntfs_acl_chmod(struct inode *inode)
-> +{
-> +	struct super_block *sb = inode->i_sb;
-> +	int err;
+> +enum get_block_ctx {
+> +	GET_BLOCK_GENERAL = 0,
+> +	GET_BLOCK_WRITE_BEGIN = 1,
+> +	GET_BLOCK_DIRECT_IO_R = 2,
+> +	GET_BLOCK_DIRECT_IO_W = 3,
+> +	GET_BLOCK_BMAP = 4,
+> +};
 > +
-> +	if (!(sb->s_flags & SB_POSIXACL))
-> +		return 0;
-> +
-> +	if (S_ISLNK(inode->i_mode))
-> +		return -EOPNOTSUPP;
-> +
-> +	err = posix_acl_chmod(inode, inode->i_mode);
-> +
-> +	return err;
-> +}
-> +
-> +/*
-> + * ntfs_permission
-> + *
-> + * inode_operations::permission
-> + */
-> +int ntfs_permission(struct inode *inode, int mask)
+> +static noinline int ntfs_get_block_vbo(struct inode *inode, u64 vbo,
+> +				       struct buffer_head *bh, int create,
+> +				       enum get_block_ctx ctx)
 > +{
 > +	struct super_block *sb = inode->i_sb;
 > +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	u64 bytes, lbo;
+> +	u32 off;
 > +	int err;
+> +	CLST vcn, lcn, len;
+> +	u8 cluster_bits = sbi->cluster_bits;
+> +	bool new;
 > +
-> +	if (sbi->options.no_acs_rules) {
-> +		/* "no access rules" mode - allow all changes */
+> +	/*clear previous state*/
+> +	clear_buffer_new(bh);
+> +	clear_buffer_uptodate(bh);
+> +
+> +	/* direct write uses 'create=0'*/
+> +	if (!create && vbo >= ni->i_valid)
 > +		return 0;
+> +
+> +	if (vbo >= inode->i_size)
+> +		return 0;
+> +
+> +	vcn = vbo >> cluster_bits;
+> +	off = vbo & sbi->cluster_mask;
+> +	new = false;
+> +
+> +	err = attr_data_get_block(ni, vcn, 1, &lcn, &len, create ? &new : NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (!len)
+> +		return 0;
+> +
+> +	bytes = ((u64)len << cluster_bits) - off;
+> +
+> +	if (lcn == SPARSE_LCN) {
+> +		if (!create) {
+> +			if (bh->b_size > bytes)
+> +				bh->b_size = bytes;
+> +
+> +			return 0;
+> +		}
+> +		WARN_ON(1);
 > +	}
 > +
-> +	err = generic_permission(inode, mask);
+> +	WARN_ON(lcn == RESIDENT_LCN);
 > +
+> +	if (new) {
+> +		u32 allocated = len * sbi->cluster_size;
+> +
+> +		set_buffer_new(bh);
+> +		if (allocated > sb->s_blocksize)
+> +			ntfs_sparse_cluster(inode, bh->b_page,
+> +					    (loff_t)vcn << sbi->cluster_bits,
+> +					    allocated);
+> +	}
+> +
+> +	lbo = ((u64)lcn << cluster_bits) + off;
+> +
+> +	set_buffer_mapped(bh);
+> +	bh->b_bdev = sb->s_bdev;
+> +	bh->b_blocknr = lbo >> sb->s_blocksize_bits;
+> +
+> +	if (ctx == GET_BLOCK_DIRECT_IO_W) {
+> +		/*ntfs_direct_IO will update ni->i_valid */
+> +		if (vbo >= ni->i_valid)
+> +			set_buffer_new(bh);
+> +	} else if (create && ctx == GET_BLOCK_WRITE_BEGIN &&
+> +		   vbo + bh->b_size > ni->i_valid) {
+> +		u32 voff = ni->i_valid > vbo ? (ni->i_valid - vbo) : 0;
+> +		struct page *page = bh->b_page;
+> +
+> +		off = bh_offset(bh);
+> +		zero_user_segment(page, off + voff, off + bh->b_size);
+> +		set_buffer_uptodate(bh);
+> +		ni->i_valid = vbo + bh->b_size;
+> +
+> +		/* ntfs_write_end will update ni->i_valid*/
+> +	} else if (create) {
+> +		/*normal write*/
+> +		if (vbo >= ni->i_valid) {
+> +			set_buffer_new(bh);
+> +			if (bytes > bh->b_size)
+> +				bytes = bh->b_size;
+> +			ni->i_valid = vbo + bytes;
+> +			mark_inode_dirty(inode);
+> +		}
+> +	} else if (vbo >= ni->i_valid) {
+> +		/* read out of valid data*/
+> +		/* should never be here 'cause already checked */
+> +		clear_buffer_mapped(bh);
+> +	} else if (vbo + bytes <= ni->i_valid) {
+> +		/* normal read */
+> +	} else {
+> +		/* here: vbo <= ni->i_valid && ni->i_valid < vbo + bytes */
+> +		u64 valid_up =
+> +			(ni->i_valid + PAGE_SIZE - 1) & ~(u64)(PAGE_SIZE - 1);
+> +
+> +		bytes = valid_up - vbo;
+> +		if (bytes < sb->s_blocksize)
+> +			bytes = sb->s_blocksize;
+> +	}
+> +
+> +	if (bh->b_size > bytes)
+> +		bh->b_size = bytes;
+> +
+> +#ifndef __LP64__
+> +	if (ctx == GET_BLOCK_DIRECT_IO_W || ctx == GET_BLOCK_DIRECT_IO_R) {
+> +		static_assert(sizeof(size_t) < sizeof(loff_t));
+> +		if (bytes > 0x40000000u)
+> +			bh->b_size = 0x40000000u;
+> +	}
+> +#endif
+> +
+> +	return 0;
+> +
+> +out:
 > +	return err;
 > +}
 > +
-> +/*
-> + * ntfs_listxattr
-> + *
-> + * inode_operations::listxattr
-> + */
-> +ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size)
+> +/*ntfs_readpage*/
+> +/*ntfs_readpages*/
+> +/*ntfs_writepage*/
+> +/*ntfs_writepages*/
+> +/*ntfs_block_truncate_page*/
+> +int ntfs_get_block(struct inode *inode, sector_t vbn,
+> +		   struct buffer_head *bh_result, int create)
 > +{
-> +	struct inode *inode = d_inode(dentry);
+> +	return ntfs_get_block_vbo(inode, (u64)vbn << inode->i_blkbits,
+> +				  bh_result, create, GET_BLOCK_GENERAL);
+> +}
+> +
+> +/*ntfs_bmap*/
+> +static int ntfs_get_block_bmap(struct inode *inode, sector_t vsn,
+> +			       struct buffer_head *bh_result, int create)
+> +{
+> +	return ntfs_get_block_vbo(inode,
+> +				  (u64)vsn << inode->i_sb->s_blocksize_bits,
+> +				  bh_result, create, GET_BLOCK_BMAP);
+> +}
+> +
+> +static sector_t ntfs_bmap(struct address_space *mapping, sector_t block)
+> +{
+> +	return generic_block_bmap(mapping, block, ntfs_get_block_bmap);
+> +}
+> +
+> +int ntfs_readpage(struct file *file, struct page *page)
+> +{
+> +	int err;
+> +	struct address_space *mapping = page->mapping;
+> +	struct inode *inode = mapping->host;
 > +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	ssize_t ret = -1;
+> +	u64 vbo = (u64)page->index << PAGE_SHIFT;
+> +	u64 valid;
+> +	struct ATTRIB *attr;
+> +	const char *data;
+> +	u32 data_size;
+> +
+> +	if (ni_has_resident_data(ni)) {
+> +		ni_lock(ni);
+> +
+> +		if (!ni_has_resident_data(ni)) {
+> +			ni_unlock(ni);
+> +		} else {
+> +			attr = ni_find_attr(ni, NULL, NULL, ATTR_DATA, NULL, 0,
+> +					    NULL, NULL);
+> +			if (!attr) {
+> +				err = -EINVAL;
+> +				ni_unlock(ni);
+> +				unlock_page(page);
+> +				goto out;
+> +			}
+> +
+> +			WARN_ON(attr->non_res);
+> +
+> +			vbo = page->index << PAGE_SHIFT;
+> +			data = resident_data(attr);
+> +			data_size = le32_to_cpu(attr->res.data_size);
+> +
+> +			if (vbo < data_size) {
+> +				void *kaddr = kmap_atomic(page);
+> +
+> +				err = data_size - vbo;
+> +				if (err > PAGE_SIZE)
+> +					err = PAGE_SIZE;
+> +
+> +				memcpy(kaddr, data + vbo, err);
+> +				flush_dcache_page(page);
+> +				kunmap_atomic(kaddr);
+> +				zero_user_segment(page, err, PAGE_SIZE);
+> +				SetPageUptodate(page);
+> +			} else if (!PageUptodate(page)) {
+> +				zero_user_segment(page, 0, PAGE_SIZE);
+> +				SetPageUptodate(page);
+> +			}
+> +
+> +			ni_unlock(ni);
+> +			unlock_page(page);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	if (is_compressed(ni)) {
+> +		ni_lock(ni);
+> +		err = ni_readpage_cmpr(ni, page);
+> +		ni_unlock(ni);
+> +		return err;
+> +	}
+> +
+> +	/* normal + sparse files */
+> +	err = mpage_readpage(page, ntfs_get_block);
+> +	if (err)
+> +		goto out;
+> +
+> +	valid = ni->i_valid;
+> +	if (vbo < valid && valid < vbo + PAGE_SIZE) {
+> +		if (PageLocked(page))
+> +			wait_on_page_bit(page, PG_locked);
+> +		if (PageError(page)) {
+> +			ntfs_inode_warn(inode, "file garbage at 0x%llx", valid);
+> +			goto out;
+> +		}
+> +		zero_user_segment(page, valid & (PAGE_SIZE - 1), PAGE_SIZE);
+> +	}
+> +
+> +out:
+> +	return err;
+> +}
+> +
+> +static void ntfs_readahead(struct readahead_control *rac)
+> +{
+> +	struct address_space *mapping = rac->mapping;
+> +	struct inode *inode = mapping->host;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	u64 valid;
+> +	loff_t pos;
+> +
+> +	if (ni_has_resident_data(ni))
+> +		return;
+> +
+> +	WARN_ON(is_compressed(ni));
+> +
+> +	valid = ni->i_valid;
+> +	pos = readahead_pos(rac);
+> +
+> +	if (pos <= valid && valid < pos + readahead_length(rac))
+> +		return;
+> +
+> +	mpage_readahead(rac, ntfs_get_block);
+> +}
+> +
+> +/*ntfs_direct_IO*/
+> +static int ntfs_get_block_direct_IO_R(struct inode *inode, sector_t iblock,
+> +				      struct buffer_head *bh_result, int create)
+> +{
+> +	return ntfs_get_block_vbo(inode, (u64)iblock << inode->i_blkbits,
+> +				  bh_result, create, GET_BLOCK_DIRECT_IO_R);
+> +}
+> +
+> +static int ntfs_get_block_direct_IO_W(struct inode *inode, sector_t iblock,
+> +				      struct buffer_head *bh_result, int create)
+> +{
+> +	return ntfs_get_block_vbo(inode, (u64)iblock << inode->i_blkbits,
+> +				  bh_result, create, GET_BLOCK_DIRECT_IO_W);
+> +}
+> +
+> +static void ntfs_write_failed(struct address_space *mapping, loff_t to)
+> +{
+> +	struct inode *inode = mapping->host;
+> +
+> +	if (to > inode->i_size) {
+> +		truncate_pagecache(inode, inode->i_size);
+> +		ntfs_truncate_blocks(inode, inode->i_size);
+> +	}
+> +}
+> +
+> +static ssize_t ntfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+> +{
+> +	struct file *file = iocb->ki_filp;
+> +	struct address_space *mapping = file->f_mapping;
+> +	struct inode *inode = mapping->host;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	size_t count = iov_iter_count(iter);
+> +	loff_t vbo = iocb->ki_pos;
+> +	loff_t end = vbo + count;
+> +	int wr = iov_iter_rw(iter) & WRITE;
+> +	const struct iovec *iov = iter->iov;
+> +	unsigned long nr_segs = iter->nr_segs;
+> +	loff_t valid;
+> +	ssize_t ret;
+> +
+> +	ret = blockdev_direct_IO(iocb, inode, iter,
+> +				 wr ? ntfs_get_block_direct_IO_W :
+> +				      ntfs_get_block_direct_IO_R);
+> +	valid = ni->i_valid;
+> +	if (wr) {
+> +		if (ret < 0)
+> +			ntfs_write_failed(mapping, end);
+> +		if (ret <= 0)
+> +			goto out;
+> +
+> +		vbo += ret;
+> +		if (vbo > valid && !S_ISBLK(inode->i_mode)) {
+> +			ni->i_valid = vbo;
+> +			mark_inode_dirty(inode);
+> +		}
+> +	} else if (vbo < valid && valid < end) {
+> +		/* fix page */
+> +		unsigned long uaddr = ~0ul;
+> +		struct page *page;
+> +		long i, npages;
+> +		size_t dvbo = valid - vbo;
+> +		size_t off = 0;
+> +
+> +		/*Find user address*/
+> +		for (i = 0; i < nr_segs; i++) {
+> +			if (off <= dvbo && dvbo < off + iov[i].iov_len) {
+> +				uaddr = (unsigned long)iov[i].iov_base + dvbo -
+> +					off;
+> +				break;
+> +			}
+> +			off += iov[i].iov_len;
+> +		}
+> +
+> +		if (uaddr == ~0ul)
+> +			goto fix_error;
+> +
+> +		npages = get_user_pages_unlocked(uaddr, 1, &page, FOLL_WRITE);
+> +
+> +		if (npages <= 0)
+> +			goto fix_error;
+> +
+> +		zero_user_segment(page, valid & (PAGE_SIZE - 1), PAGE_SIZE);
+> +		put_page(page);
+> +	}
+> +
+> +out:
+> +	return ret;
+> +fix_error:
+> +	ntfs_inode_warn(inode, "file garbage at 0x%llx", valid);
+> +	goto out;
+> +}
+> +
+> +int ntfs_set_size(struct inode *inode, u64 new_size)
+> +{
+> +	struct super_block *sb = inode->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
 > +	int err;
 > +
-> +	if (!(ni->ni_flags & NI_FLAG_EA)) {
-> +		ret = 0;
+> +	/* Check for maximum file size */
+> +	if (is_sparsed(ni) || is_compressed(ni)) {
+> +		if (new_size > sbi->maxbytes_sparse) {
+> +			err = -EFBIG;
+> +			goto out;
+> +		}
+> +	} else if (new_size > sbi->maxbytes) {
+> +		err = -EFBIG;
 > +		goto out;
 > +	}
 > +
 > +	ni_lock(ni);
+> +	down_write(&ni->file.run_lock);
 > +
-> +	err = ntfs_listxattr_hlp(ni, buffer, size, (size_t *)&ret);
+> +	err = attr_set_size(ni, ATTR_DATA, NULL, 0, &ni->file.run, new_size,
+> +			    &ni->i_valid, true, NULL);
 > +
+> +	up_write(&ni->file.run_lock);
 > +	ni_unlock(ni);
 > +
-> +	if (err)
-> +		ret = err;
+> +	mark_inode_dirty(inode);
+> +
 > +out:
+> +	return err;
+> +}
+> +
+> +static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
+> +{
+> +	return block_write_full_page(page, ntfs_get_block, wbc);
+> +}
+> +
+> +static int ntfs_writepage_cmpr(struct page *page, struct writeback_control *wbc)
+> +{
+> +	int err;
+> +	struct address_space *mapping = page->mapping;
+> +	struct inode *inode = mapping->host;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	int sync = wbc->sync_mode == WB_SYNC_ALL;
+> +
+> +	if (current->flags & PF_MEMALLOC) {
+> +redirty:
+> +		redirty_page_for_writepage(wbc, page);
+> +		unlock_page(page);
+> +		return 0;
+> +	}
+> +
+> +	if (sync)
+> +		ni_lock(ni);
+> +	else if (!ni_trylock(ni))
+> +		goto redirty;
+> +
+> +	err = ni_writepage_cmpr(page, sync);
+> +	ni_unlock(ni);
+> +
+> +	return err;
+> +}
+> +
+> +static int ntfs_writepages(struct address_space *mapping,
+> +			   struct writeback_control *wbc)
+> +{
+> +	return mpage_writepages(mapping, wbc, ntfs_get_block);
+> +}
+> +
+> +/*ntfs_write_begin*/
+> +static int ntfs_get_block_write_begin(struct inode *inode, sector_t vbn,
+> +				      struct buffer_head *bh_result, int create)
+> +{
+> +	return ntfs_get_block_vbo(inode, (u64)vbn << inode->i_blkbits,
+> +				  bh_result, create, GET_BLOCK_WRITE_BEGIN);
+> +}
+> +
+> +static int ntfs_write_begin(struct file *file, struct address_space *mapping,
+> +			    loff_t pos, u32 len, u32 flags, struct page **pagep,
+> +			    void **fsdata)
+> +{
+> +	int err;
+> +
+> +	*pagep = NULL;
+> +
+> +	err = block_write_begin(mapping, pos, len, flags, pagep,
+> +				ntfs_get_block_write_begin);
+> +	if (err < 0)
+> +		ntfs_write_failed(mapping, pos + len);
+> +
+> +	return err;
+> +}
+> +
+> +/* address_space_operations::write_end */
+> +static int ntfs_write_end(struct file *file, struct address_space *mapping,
+> +			  loff_t pos, u32 len, u32 copied, struct page *page,
+> +			  void *fsdata)
+> +
+> +{
+> +	struct inode *inode = mapping->host;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	u64 valid = ni->i_valid;
+> +	int err;
+> +
+> +	err = generic_write_end(file, mapping, pos, len, copied, page, fsdata);
+> +
+> +	if (err < len)
+> +		ntfs_write_failed(mapping, pos + len);
+> +	if (err >= 0) {
+> +		bool dirty = false;
+> +
+> +		if (!(ni->std_fa & FILE_ATTRIBUTE_ARCHIVE)) {
+> +			inode->i_ctime = inode->i_mtime = current_time(inode);
+> +			ni->std_fa |= FILE_ATTRIBUTE_ARCHIVE;
+> +			dirty = true;
+> +		}
+> +
+> +		if (valid != ni->i_valid) {
+> +			/* ni->i_valid is changed in ntfs_get_block_vbo */
+> +			dirty = true;
+> +		}
+> +
+> +		if (dirty)
+> +			mark_inode_dirty(inode);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +int reset_log_file(struct inode *inode)
+> +{
+> +	int err;
+> +	loff_t pos = 0;
+> +	u32 log_size = inode->i_size;
+> +	struct address_space *mapping = inode->i_mapping;
+> +
+> +	for (;;) {
+> +		u32 len;
+> +		void *kaddr;
+> +		struct page *page;
+> +
+> +		len = pos + PAGE_SIZE > log_size ? (log_size - pos) : PAGE_SIZE;
+> +
+> +		err = block_write_begin(mapping, pos, len, 0, &page,
+> +					ntfs_get_block_write_begin);
+> +		if (err)
+> +			goto out;
+> +
+> +		kaddr = kmap_atomic(page);
+> +		memset(kaddr, -1, len);
+> +		kunmap_atomic(kaddr);
+> +		flush_dcache_page(page);
+> +
+> +		err = block_write_end(NULL, mapping, pos, len, len, page, NULL);
+> +		if (err < 0)
+> +			goto out;
+> +		pos += len;
+> +
+> +		if (pos >= log_size)
+> +			break;
+> +		balance_dirty_pages_ratelimited(mapping);
+> +	}
+> +out:
+> +	mark_inode_dirty_sync(inode);
+> +
+> +	return err;
+> +}
+> +
+> +int ntfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+> +{
+> +	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC) ||
+> +	    sb_rdonly(inode->i_sb))
+> +		return 0;
+> +
+> +	return _ni_write_inode(inode, wbc->sync_mode == WB_SYNC_ALL);
+> +}
+> +
+> +int ntfs_sync_inode(struct inode *inode)
+> +{
+> +	return _ni_write_inode(inode, 1);
+> +}
+> +
+> +/*
+> + * helper function for ntfs_flush_inodes.  This writes both the inode
+> + * and the file data blocks, waiting for in flight data blocks before
+> + * the start of the call.  It does not wait for any io started
+> + * during the call
+> + */
+> +static int writeback_inode(struct inode *inode)
+> +{
+> +	int ret = sync_inode_metadata(inode, 0);
+> +
+> +	if (!ret)
+> +		ret = filemap_fdatawrite(inode->i_mapping);
+> +	return ret;
+> +}
+> +
+> +/*
+> + * write data and metadata corresponding to i1 and i2.  The io is
+> + * started but we do not wait for any of it to finish.
+> + *
+> + * filemap_flush is used for the block device, so if there is a dirty
+> + * page for a block already in flight, we will not wait and start the
+> + * io over again
+> + */
+> +int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
+> +		      struct inode *i2)
+> +{
+> +	int ret = 0;
+> +
+> +	if (i1)
+> +		ret = writeback_inode(i1);
+> +	if (!ret && i2)
+> +		ret = writeback_inode(i2);
+> +	if (!ret)
+> +		ret = filemap_flush(sb->s_bdev->bd_inode->i_mapping);
+> +	return ret;
+> +}
+> +
+> +int inode_write_data(struct inode *inode, const void *data, size_t bytes)
+> +{
+> +	pgoff_t idx;
+> +
+> +	/* Write non resident data */
+> +	for (idx = 0; bytes; idx++) {
+> +		size_t op = bytes > PAGE_SIZE ? PAGE_SIZE : bytes;
+> +		struct page *page = ntfs_map_page(inode->i_mapping, idx);
+> +
+> +		if (IS_ERR(page))
+> +			return PTR_ERR(page);
+> +
+> +		lock_page(page);
+> +		WARN_ON(!PageUptodate(page));
+> +		ClearPageUptodate(page);
+> +
+> +		memcpy(page_address(page), data, op);
+> +
+> +		flush_dcache_page(page);
+> +		SetPageUptodate(page);
+> +		unlock_page(page);
+> +
+> +		ntfs_unmap_page(page);
+> +
+> +		bytes -= op;
+> +		data = Add2Ptr(data, PAGE_SIZE);
+> +	}
+> +	return 0;
+> +}
+> +
+> +int ntfs_create_inode(struct inode *dir, struct dentry *dentry,
+> +		      const struct cpu_str *uni, struct file *file,
+> +		      umode_t mode, dev_t dev, const char *symname,
+> +		      unsigned int size, int excl, struct ntfs_fnd *fnd,
+> +		      struct inode **new_inode)
+> +{
+> +	int err;
+> +	struct super_block *sb = dir->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	const struct qstr *name = &dentry->d_name;
+> +	CLST ino = 0;
+> +	struct ntfs_inode *dir_ni = ntfs_i(dir);
+> +	struct ntfs_inode *ni = NULL;
+> +	struct inode *inode = NULL;
+> +	struct ATTRIB *attr;
+> +	struct ATTR_STD_INFO5 *std5;
+> +	struct ATTR_FILE_NAME *fname;
+> +	struct MFT_REC *rec;
+> +	u32 asize, dsize, sd_size;
+> +	enum FILE_ATTRIBUTE fa;
+> +	__le32 security_id = SECURITY_ID_INVALID;
+> +	CLST vcn;
+> +	const void *sd;
+> +	u16 t16, nsize = 0, aid = 0;
+> +	struct INDEX_ROOT *root, *dir_root;
+> +	struct NTFS_DE *e, *new_de = NULL;
+> +	struct REPARSE_DATA_BUFFER *rp = NULL;
+> +	typeof(rp->SymbolicLink2ReparseBuffer) *rb;
+> +	__le16 *rp_name;
+> +	bool is_dir = S_ISDIR(mode);
+> +	bool rp_inserted = false;
+> +	bool is_sp = S_ISCHR(mode) || S_ISBLK(mode) || S_ISFIFO(mode) ||
+> +		     S_ISSOCK(mode);
+> +
+> +	if (is_sp)
+> +		return -EOPNOTSUPP;
+> +
+> +	dir_root = indx_get_root(&dir_ni->dir, dir_ni, NULL, NULL);
+> +	if (!dir_root)
+> +		return -EINVAL;
+> +
+> +	fa = (is_dir ? (dir_ni->std_fa | FILE_ATTRIBUTE_DIRECTORY) :
+> +		       S_ISLNK(mode) ?
+> +		       FILE_ATTRIBUTE_REPARSE_POINT :
+> +		       sbi->options.sparse ?
+> +		       FILE_ATTRIBUTE_SPARSE_FILE :
+> +		       (dir_ni->std_fa & FILE_ATTRIBUTE_COMPRESSED) ?
+> +		       FILE_ATTRIBUTE_COMPRESSED :
+> +		       0) |
+> +	     FILE_ATTRIBUTE_ARCHIVE;
+> +
+> +	if (!(mode & 0222)) {
+> +		mode &= ~0222;
+> +		fa |= FILE_ATTRIBUTE_READONLY;
+> +	}
+> +
+> +	new_de = __getname();
+> +	if (!new_de) {
+> +		err = -ENOMEM;
+> +		goto out1;
+> +	}
+> +
+> +	/*mark rw ntfs as dirty. it will be cleared at umount*/
+> +	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
+> +
+> +	/* Step 1: allocate and fill new mft record */
+> +	err = ntfs_look_free_mft(sbi, &ino, false, NULL, NULL);
+> +	if (err)
+> +		goto out2;
+> +
+> +	ni = ntfs_new_inode(sbi, ino, is_dir);
+> +	if (IS_ERR(ni)) {
+> +		err = PTR_ERR(ni);
+> +		ni = NULL;
+> +		goto out3;
+> +	}
+> +	inode = &ni->vfs_inode;
+> +
+> +	inode->i_atime = inode->i_mtime = inode->i_ctime = ni->i_crtime =
+> +		current_time(inode);
+> +
+> +	rec = ni->mi.mrec;
+> +	rec->hard_links = cpu_to_le16(1);
+> +	attr = Add2Ptr(rec, le16_to_cpu(rec->attr_off));
+> +
+> +	/* Get default security id */
+> +	sd = s_default_security;
+> +	sd_size = sizeof(s_default_security);
+> +
+> +	if (is_ntfs3(sbi)) {
+> +		security_id = dir_ni->std_security_id;
+> +		if (le32_to_cpu(security_id) < SECURITY_ID_FIRST) {
+> +			security_id = sbi->security.def_security_id;
+> +
+> +			if (security_id == SECURITY_ID_INVALID &&
+> +			    !ntfs_insert_security(sbi, sd, sd_size,
+> +						  &security_id, NULL))
+> +				sbi->security.def_security_id = security_id;
+> +		}
+> +	}
+> +
+> +	/* Insert standard info */
+> +	std5 = Add2Ptr(attr, SIZEOF_RESIDENT);
+> +
+> +	if (security_id == SECURITY_ID_INVALID) {
+> +		dsize = sizeof(struct ATTR_STD_INFO);
+> +	} else {
+> +		dsize = sizeof(struct ATTR_STD_INFO5);
+> +		std5->security_id = security_id;
+> +		ni->std_security_id = security_id;
+> +	}
+> +	asize = SIZEOF_RESIDENT + dsize;
+> +
+> +	attr->type = ATTR_STD;
+> +	attr->size = cpu_to_le32(asize);
+> +	attr->id = cpu_to_le16(aid++);
+> +	attr->res.data_off = SIZEOF_RESIDENT_LE;
+> +	attr->res.data_size = cpu_to_le32(dsize);
+> +
+> +	std5->cr_time = std5->m_time = std5->c_time = std5->a_time =
+> +		kernel2nt(&inode->i_atime);
+> +
+> +	ni->std_fa = fa;
+> +	std5->fa = fa;
+> +
+> +	attr = Add2Ptr(attr, asize);
+> +
+> +	/* Insert file name */
+> +	err = fill_name_de(sbi, new_de, name, uni);
+> +	if (err)
+> +		goto out4;
+> +
+> +	fname = (struct ATTR_FILE_NAME *)(new_de + 1);
+> +
+> +	new_de->ref.low = cpu_to_le32(ino);
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +	new_de->ref.high = cpu_to_le16(ino >> 32);
+> +	fname->home.high = cpu_to_le16(dir->i_ino >> 32);
+> +#endif
+> +	new_de->ref.seq = rec->seq;
+> +
+> +	fname->home.low = cpu_to_le32(dir->i_ino & 0xffffffff);
+> +	fname->home.seq = dir_ni->mi.mrec->seq;
+> +
+> +	fname->dup.cr_time = fname->dup.m_time = fname->dup.c_time =
+> +		fname->dup.a_time = std5->cr_time;
+> +	fname->dup.alloc_size = fname->dup.data_size = 0;
+> +	fname->dup.fa = std5->fa;
+> +	fname->dup.ea_size = fname->dup.reparse = 0;
+> +
+> +	dsize = le16_to_cpu(new_de->key_size);
+> +	asize = QuadAlign(SIZEOF_RESIDENT + dsize);
+> +
+> +	attr->type = ATTR_NAME;
+> +	attr->size = cpu_to_le32(asize);
+> +	attr->res.data_off = SIZEOF_RESIDENT_LE;
+> +	attr->res.flags = RESIDENT_FLAG_INDEXED;
+> +	attr->id = cpu_to_le16(aid++);
+> +	attr->res.data_size = cpu_to_le32(dsize);
+> +	memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), fname, dsize);
+> +
+> +	attr = Add2Ptr(attr, asize);
+> +
+> +	if (security_id == SECURITY_ID_INVALID) {
+> +		/* Insert security attribute */
+> +		asize = SIZEOF_RESIDENT + QuadAlign(sd_size);
+> +
+> +		attr->type = ATTR_SECURE;
+> +		attr->size = cpu_to_le32(asize);
+> +		attr->id = cpu_to_le16(aid++);
+> +		attr->res.data_off = SIZEOF_RESIDENT_LE;
+> +		attr->res.data_size = cpu_to_le32(sd_size);
+> +		memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), sd, sd_size);
+> +
+> +		attr = Add2Ptr(attr, asize);
+> +	}
+> +
+> +	if (is_dir) {
+> +		/* Create root of directory */
+> +		dsize = sizeof(struct INDEX_ROOT) + sizeof(struct NTFS_DE);
+> +		asize = sizeof(I30_NAME) + SIZEOF_RESIDENT + dsize;
+> +
+> +		attr->type = ATTR_ROOT;
+> +		attr->size = cpu_to_le32(asize);
+> +		attr->id = cpu_to_le16(aid++);
+> +
+> +		attr->name_len = ARRAY_SIZE(I30_NAME);
+> +		attr->name_off = SIZEOF_RESIDENT_LE;
+> +		attr->res.data_off =
+> +			cpu_to_le16(sizeof(I30_NAME) + SIZEOF_RESIDENT);
+> +		attr->res.data_size = cpu_to_le32(dsize);
+> +		memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), I30_NAME,
+> +		       sizeof(I30_NAME));
+> +
+> +		root = Add2Ptr(attr, sizeof(I30_NAME) + SIZEOF_RESIDENT);
+> +		memcpy(root, dir_root, offsetof(struct INDEX_ROOT, ihdr));
+> +		root->ihdr.de_off =
+> +			cpu_to_le32(sizeof(struct INDEX_HDR)); // 0x10
+> +		root->ihdr.used = cpu_to_le32(sizeof(struct INDEX_HDR) +
+> +					      sizeof(struct NTFS_DE));
+> +		root->ihdr.total = root->ihdr.used;
+> +
+> +		e = Add2Ptr(root, sizeof(struct INDEX_ROOT));
+> +		e->size = cpu_to_le16(sizeof(struct NTFS_DE));
+> +		e->flags = NTFS_IE_LAST;
+> +
+> +		ni->ni_flags |= NI_FLAG_DIR;
+> +
+> +		err = indx_init(&ni->dir, sbi, attr, INDEX_MUTEX_I30);
+> +		if (err)
+> +			goto out4;
+> +	} else if (S_ISLNK(mode)) {
+> +		/* Create symlink */
+> +		dsize = 0;
+> +		asize = SIZEOF_RESIDENT;
+> +
+> +		/* insert empty ATTR_DATA */
+> +		attr->type = ATTR_DATA;
+> +		attr->size = cpu_to_le32(SIZEOF_RESIDENT);
+> +		attr->id = cpu_to_le16(aid++);
+> +		attr->name_off = SIZEOF_RESIDENT_LE;
+> +		attr->res.data_off = SIZEOF_RESIDENT_LE;
+> +
+> +		attr = Add2Ptr(attr, asize);
+> +
+> +		/*
+> +		 * Insert ATTR_REPARSE
+> +		 * Assume each symbol is coded at most with 2 utf16 and zero
+> +		 */
+> +		rp = ntfs_alloc(ntfs_reparse_bytes(2 * size + 2), 1);
+> +		if (!rp) {
+> +			err = -ENOMEM;
+> +			goto out4;
+> +		}
+> +		rb = &rp->SymbolicLink2ReparseBuffer;
+> +		rp_name = rb->PathBuffer;
+> +
+> +		/* Convert link name to utf16 */
+> +		err = ntfs_nls_to_utf16(sbi, symname, size,
+> +					(struct cpu_str *)(rp_name - 1),
+> +					2 * size, UTF16_LITTLE_ENDIAN);
+> +		if (err < 0)
+> +			goto out4;
+> +
+> +		/* err = the length of unicode name of symlink */
+> +		nsize = ntfs_reparse_bytes(err);
+> +
+> +		if (nsize > sbi->reparse.max_size) {
+> +			err = -EFBIG;
+> +			goto out4;
+> +		}
+> +
+> +		rp->ReparseTag = IO_REPARSE_TAG_SYMLINK;
+> +		rp->ReparseDataLength = cpu_to_le16(
+> +			(nsize - offsetof(struct REPARSE_DATA_BUFFER,
+> +					  SymbolicLink2ReparseBuffer)));
+> +		rb = &rp->SymbolicLink2ReparseBuffer;
+> +		rb->SubstituteNameOffset = cpu_to_le16(sizeof(short) * err);
+> +		rb->SubstituteNameLength = cpu_to_le16(sizeof(short) * err + 8);
+> +		rb->PrintNameLength = rb->SubstituteNameOffset;
+> +		rb->Flags = 0;
+> +
+> +		memmove(rp_name + err + 4, rp_name, sizeof(short) * err);
+> +
+> +		rp_name += err;
+> +		rp_name[0] = cpu_to_le16('\\');
+> +		rp_name[1] = cpu_to_le16('?');
+> +		rp_name[2] = cpu_to_le16('?');
+> +		rp_name[3] = cpu_to_le16('\\');
+> +
+> +		attr->type = ATTR_REPARSE;
+> +		attr->id = cpu_to_le16(aid++);
+> +
+> +		/* resident or non resident? */
+> +		asize = QuadAlign(SIZEOF_RESIDENT + nsize);
+> +		t16 = PtrOffset(rec, attr);
+> +
+> +		if (asize + t16 + 8 > sbi->record_size) {
+> +			CLST alen;
+> +			CLST clst = bytes_to_cluster(sbi, nsize);
+> +
+> +			/* bytes per runs */
+> +			t16 = sbi->record_size - t16 - SIZEOF_NONRESIDENT;
+> +
+> +			attr->non_res = 1;
+> +			attr->nres.evcn = cpu_to_le64(clst - 1);
+> +			attr->name_off = SIZEOF_NONRESIDENT_LE;
+> +			attr->nres.run_off = attr->name_off;
+> +			attr->nres.data_size = cpu_to_le64(nsize);
+> +			attr->nres.valid_size = attr->nres.data_size;
+> +			attr->nres.alloc_size =
+> +				cpu_to_le64(ntfs_up_cluster(sbi, nsize));
+> +
+> +			err = attr_allocate_clusters(sbi, &ni->file.run, 0, 0,
+> +						     clst, NULL, 0, &alen, 0,
+> +						     NULL);
+> +			if (err)
+> +				goto out5;
+> +
+> +			err = run_pack(&ni->file.run, 0, clst,
+> +				       Add2Ptr(attr, SIZEOF_NONRESIDENT), t16,
+> +				       &vcn);
+> +			if (err < 0)
+> +				goto out5;
+> +
+> +			if (vcn != clst) {
+> +				err = -EINVAL;
+> +				goto out5;
+> +			}
+> +
+> +			asize = SIZEOF_NONRESIDENT + QuadAlign(err);
+> +			inode->i_size = nsize;
+> +		} else {
+> +			attr->res.data_off = SIZEOF_RESIDENT_LE;
+> +			attr->res.data_size = cpu_to_le32(nsize);
+> +			memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), rp, nsize);
+> +			inode->i_size = nsize;
+> +			nsize = 0;
+> +		}
+> +
+> +		attr->size = cpu_to_le32(asize);
+> +
+> +		err = ntfs_insert_reparse(sbi, IO_REPARSE_TAG_SYMLINK,
+> +					  &new_de->ref);
+> +		if (err)
+> +			goto out5;
+> +
+> +		rp_inserted = true;
+> +	} else {
+> +		attr->type = ATTR_DATA;
+> +		attr->id = cpu_to_le16(aid++);
+> +		/* Create non resident data attribute */
+> +		attr->non_res = 1;
+> +		attr->nres.evcn = cpu_to_le64(-1ll);
+> +		if (fa & FILE_ATTRIBUTE_SPARSE_FILE) {
+> +			attr->size = cpu_to_le32(SIZEOF_NONRESIDENT_EX + 8);
+> +			attr->name_off = SIZEOF_NONRESIDENT_EX_LE;
+> +			attr->flags = ATTR_FLAG_SPARSED;
+> +			asize = SIZEOF_NONRESIDENT_EX + 8;
+> +		} else if (fa & FILE_ATTRIBUTE_COMPRESSED) {
+> +			attr->size = cpu_to_le32(SIZEOF_NONRESIDENT_EX + 8);
+> +			attr->name_off = SIZEOF_NONRESIDENT_EX_LE;
+> +			attr->flags = ATTR_FLAG_COMPRESSED;
+> +			attr->nres.c_unit = COMPRESSION_UNIT;
+> +			asize = SIZEOF_NONRESIDENT_EX + 8;
+> +		} else {
+> +			attr->size = cpu_to_le32(SIZEOF_NONRESIDENT + 8);
+> +			attr->name_off = SIZEOF_NONRESIDENT_LE;
+> +			asize = SIZEOF_NONRESIDENT + 8;
+> +		}
+> +		attr->nres.run_off = attr->name_off;
+> +	}
+> +
+> +	attr = Add2Ptr(attr, asize);
+> +	attr->type = ATTR_END;
+> +
+> +	rec->used = cpu_to_le32(PtrOffset(rec, attr) + 8);
+> +	rec->next_attr_id = cpu_to_le16(aid);
+> +
+> +	/* Step 2: Add new name in index */
+> +	err = indx_insert_entry(&dir_ni->dir, dir_ni, new_de, sbi, fnd);
+> +	if (err)
+> +		goto out6;
+> +
+> +	/* Update current directory record */
+> +	mark_inode_dirty(dir);
+> +
+> +	/* Fill vfs inode fields */
+> +	inode->i_uid = sbi->options.uid ? sbi->options.fs_uid : current_fsuid();
+> +	inode->i_gid =
+> +		sbi->options.gid ?
+> +			sbi->options.fs_gid :
+> +			(dir->i_mode & S_ISGID) ? dir->i_gid : current_fsgid();
+> +	inode->i_generation = le16_to_cpu(rec->seq);
+> +
+> +	dir->i_mtime = dir->i_ctime = inode->i_atime;
+> +
+> +	if (is_dir) {
+> +		if (dir->i_mode & S_ISGID)
+> +			mode |= S_ISGID;
+> +		inode->i_op = &ntfs_dir_inode_operations;
+> +		inode->i_fop = &ntfs_dir_operations;
+> +	} else if (S_ISLNK(mode)) {
+> +		inode->i_op = &ntfs_link_inode_operations;
+> +		inode->i_fop = NULL;
+> +		inode->i_mapping->a_ops = &ntfs_aops;
+> +	} else {
+> +		inode->i_op = &ntfs_file_inode_operations;
+> +		inode->i_fop = &ntfs_file_operations;
+> +		inode->i_mapping->a_ops =
+> +			is_compressed(ni) ? &ntfs_aops_cmpr : &ntfs_aops;
+> +		init_rwsem(&ni->file.run_lock);
+> +	}
+> +
+> +	inode->i_mode = mode;
+> +
+> +	if (!S_ISLNK(mode) && (sb->s_flags & SB_POSIXACL)) {
+> +		err = ntfs_init_acl(inode, dir);
+> +		if (err)
+> +			goto out6;
+> +	}
+> +
+> +	/* call 'd_instantiate' after inode->i_op is set */
+> +	d_instantiate(dentry, inode);
+> +
+> +	/* Write non resident data */
+> +	if (nsize) {
+> +		err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rp, nsize);
+> +		if (err)
+> +			goto out7;
+> +	}
+> +
+> +#ifdef NTFS_COUNT_CONTAINED
+> +	if (S_ISDIR(mode))
+> +		inc_nlink(dir);
+> +#endif
+> +	if (file) {
+> +		if (is_dir)
+> +			err = finish_no_open(file, NULL);
+> +		else
+> +			err = finish_open(file, dentry, ntfs_file_open);
+> +
+> +		if (err)
+> +			goto out7;
+> +		file->f_mode |= FMODE_CREATED;
+> +	}
+> +
+> +	/* normal exit */
+> +	mark_inode_dirty(inode);
+> +	mark_inode_dirty(dir);
+> +	goto out2;
+> +
+> +out7:
+> +
+> +	/* undo 'indx_insert_entry' */
+> +	indx_delete_entry(&dir_ni->dir, dir_ni, new_de + 1,
+> +			  le16_to_cpu(new_de->key_size), sbi);
+> +out6:
+> +	if (rp_inserted)
+> +		ntfs_remove_reparse(sbi, IO_REPARSE_TAG_SYMLINK, &new_de->ref);
+> +
+> +out5:
+> +	if (is_dir || run_is_empty(&ni->file.run))
+> +		goto out4;
+> +
+> +	run_deallocate(sbi, &ni->file.run, false);
+> +
+> +out4:
+> +	clear_rec_inuse(rec);
+> +	clear_nlink(inode);
+> +	ni->mi.dirty = false;
+> +	discard_new_inode(inode);
+> +out3:
+> +	ntfs_mark_rec_free(sbi, ino);
+> +
+> +out2:
+> +	__putname(new_de);
+> +	ntfs_free(rp);
+> +
+> +out1:
+> +	if (err)
+> +		return err;
+> +
+> +	unlock_new_inode(inode);
+> +
+> +	*new_inode = inode;
+> +	return 0;
+> +}
+> +
+> +int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+> +{
+> +	int err;
+> +	struct inode *dir = d_inode(dentry->d_parent);
+> +	struct ntfs_inode *dir_ni = ntfs_i(dir);
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	struct super_block *sb = inode->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	const struct qstr *name = &dentry->d_name;
+> +	struct NTFS_DE *new_de = NULL;
+> +	struct ATTR_FILE_NAME *fname;
+> +	struct ATTRIB *attr;
+> +	u16 key_size;
+> +	struct INDEX_ROOT *dir_root;
+> +
+> +	dir_root = indx_get_root(&dir_ni->dir, dir_ni, NULL, NULL);
+> +	if (!dir_root)
+> +		return -EINVAL;
+> +
+> +	new_de = __getname();
+> +	if (!new_de)
+> +		return -ENOMEM;
+> +
+> +	/*mark rw ntfs as dirty. it will be cleared at umount*/
+> +	ntfs_set_state(ni->mi.sbi, NTFS_DIRTY_DIRTY);
+> +
+> +	// Insert file name
+> +	err = fill_name_de(sbi, new_de, name, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	key_size = le16_to_cpu(new_de->key_size);
+> +	fname = (struct ATTR_FILE_NAME *)(new_de + 1);
+> +
+> +	err = ni_insert_resident(ni, key_size, ATTR_NAME, NULL, 0, &attr, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	new_de->ref.low = cpu_to_le32(inode->i_ino);
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +	new_de->ref.high = cpu_to_le16(inode->i_ino >> 32);
+> +	fname->home.high = cpu_to_le16(dir->i_ino >> 32);
+> +#endif
+> +	new_de->ref.seq = ni->mi.mrec->seq;
+> +
+> +	fname->home.low = cpu_to_le32(dir->i_ino & 0xffffffff);
+> +	fname->home.seq = dir_ni->mi.mrec->seq;
+> +
+> +	fname->dup.cr_time = fname->dup.m_time = fname->dup.c_time =
+> +		fname->dup.a_time = kernel2nt(&inode->i_ctime);
+> +	fname->dup.alloc_size = fname->dup.data_size = 0;
+> +	fname->dup.fa = ni->std_fa;
+> +	fname->dup.ea_size = fname->dup.reparse = 0;
+> +
+> +	memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), fname, key_size);
+> +
+> +	err = indx_insert_entry(&dir_ni->dir, dir_ni, new_de, sbi, NULL);
+> +	if (err)
+> +		goto out;
+> +
+> +	le16_add_cpu(&ni->mi.mrec->hard_links, 1);
+> +	ni->mi.dirty = true;
+> +
+> +out:
+> +	__putname(new_de);
+> +	return err;
+> +}
+> +
+> +/*
+> + * ntfs_unlink_inode
+> + *
+> + * inode_operations::unlink
+> + * inode_operations::rmdir
+> + */
+> +int ntfs_unlink_inode(struct inode *dir, const struct dentry *dentry)
+> +{
+> +	int err;
+> +	struct super_block *sb = dir->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct inode *inode = d_inode(dentry);
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	const struct qstr *name = &dentry->d_name;
+> +	struct ntfs_inode *dir_ni = ntfs_i(dir);
+> +	struct ntfs_index *indx = &dir_ni->dir;
+> +	struct cpu_str *uni = NULL;
+> +	struct ATTR_FILE_NAME *fname;
+> +	u8 name_type;
+> +	struct ATTR_LIST_ENTRY *le;
+> +	struct MFT_REF ref;
+> +	bool is_dir = S_ISDIR(inode->i_mode);
+> +	struct INDEX_ROOT *dir_root;
+> +
+> +	dir_root = indx_get_root(indx, dir_ni, NULL, NULL);
+> +	if (!dir_root)
+> +		return -EINVAL;
+> +
+> +	ni_lock(ni);
+> +
+> +	if (is_dir && !dir_is_empty(inode)) {
+> +		err = -ENOTEMPTY;
+> +		goto out1;
+> +	}
+> +
+> +	if (ntfs_is_meta_file(sbi, inode->i_ino)) {
+> +		err = -EINVAL;
+> +		goto out1;
+> +	}
+> +
+> +	uni = __getname();
+> +	if (!uni) {
+> +		err = -ENOMEM;
+> +		goto out1;
+> +	}
+> +
+> +	/* Convert input string to unicode */
+> +	err = ntfs_nls_to_utf16(sbi, name->name, name->len, uni, NTFS_NAME_LEN,
+> +				UTF16_HOST_ENDIAN);
+> +	if (err < 0)
+> +		goto out4;
+> +
+> +	le = NULL;
+> +
+> +	/*mark rw ntfs as dirty. it will be cleared at umount*/
+> +	ntfs_set_state(sbi, NTFS_DIRTY_DIRTY);
+> +
+> +	/* find name in record */
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +	ref.low = cpu_to_le32(dir->i_ino & 0xffffffff);
+> +	ref.high = cpu_to_le16(dir->i_ino >> 32);
+> +#else
+> +	ref.low = cpu_to_le32(dir->i_ino & 0xffffffff);
+> +	ref.high = 0;
+> +#endif
+> +	ref.seq = dir_ni->mi.mrec->seq;
+> +
+> +	fname = ni_fname_name(ni, uni, &ref, &le);
+> +	if (!fname) {
+> +		err = -ENOENT;
+> +		goto out3;
+> +	}
+> +
+> +	name_type = paired_name(fname->type);
+> +
+> +	err = indx_delete_entry(indx, dir_ni, fname, fname_full_size(fname),
+> +				sbi);
+> +	if (err)
+> +		goto out4;
+> +
+> +	/* Then remove name from mft */
+> +	ni_remove_attr_le(ni, attr_from_name(fname), le);
+> +
+> +	le16_add_cpu(&ni->mi.mrec->hard_links, -1);
+> +	ni->mi.dirty = true;
+> +
+> +	if (name_type != FILE_NAME_POSIX) {
+> +		/* Now we should delete name by type */
+> +		fname = ni_fname_type(ni, name_type, &le);
+> +		if (fname) {
+> +			err = indx_delete_entry(indx, dir_ni, fname,
+> +						fname_full_size(fname), sbi);
+> +			if (err)
+> +				goto out4;
+> +
+> +			ni_remove_attr_le(ni, attr_from_name(fname), le);
+> +
+> +			le16_add_cpu(&ni->mi.mrec->hard_links, -1);
+> +		}
+> +	}
+> +
+> +out4:
+> +	switch (err) {
+> +	case 0:
+> +		drop_nlink(inode);
+> +	case -ENOTEMPTY:
+> +	case -ENOSPC:
+> +	case -EROFS:
+> +		break;
+> +	default:
+> +		make_bad_inode(inode);
+> +	}
+> +
+> +	dir->i_mtime = dir->i_ctime = current_time(dir);
+> +	mark_inode_dirty(dir);
+> +	inode->i_ctime = dir->i_ctime;
+> +	if (inode->i_nlink)
+> +		mark_inode_dirty(inode);
+> +
+> +#ifdef NTFS_COUNT_CONTAINED
+> +	if (is_dir) {
+> +		clear_nlink(inode);
+> +		drop_nlink(dir);
+> +		mark_inode_dirty(dir);
+> +	}
+> +#endif
+> +
+> +out3:
+> +	__putname(uni);
+> +out1:
+> +	ni_unlock(ni);
+> +	return err;
+> +}
+> +
+> +void ntfs_evict_inode(struct inode *inode)
+> +{
+> +	truncate_inode_pages_final(&inode->i_data);
+> +
+> +	if (inode->i_nlink)
+> +		_ni_write_inode(inode, inode_needs_sync(inode));
+> +
+> +	invalidate_inode_buffers(inode);
+> +	clear_inode(inode);
+> +
+> +	ni_clear(ntfs_i(inode));
+> +}
+> +
+> +static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
+> +				      int buflen)
+> +{
+> +	int err = 0;
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +	struct super_block *sb = inode->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	u64 i_size = inode->i_size;
+> +	u16 nlen = 0;
+> +	void *to_free = NULL;
+> +	struct REPARSE_DATA_BUFFER *rp;
+> +	struct le_str *uni;
+> +	struct ATTRIB *attr;
+> +
+> +	/* Reparse data present. Try to parse it */
+> +	static_assert(!offsetof(struct REPARSE_DATA_BUFFER, ReparseTag));
+> +	static_assert(sizeof(u32) == sizeof(rp->ReparseTag));
+> +
+> +	*buffer = 0;
+> +
+> +	/* Read into temporal buffer */
+> +	if (i_size > sbi->reparse.max_size || i_size <= sizeof(u32)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	attr = ni_find_attr(ni, NULL, NULL, ATTR_REPARSE, NULL, 0, NULL, NULL);
+> +	if (!attr) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	if (!attr->non_res) {
+> +		rp = resident_data_ex(attr, i_size);
+> +		if (!rp) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +	} else {
+> +		rp = ntfs_alloc(i_size, 0);
+> +		if (!rp) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +		to_free = rp;
+> +		err = ntfs_read_run_nb(sbi, &ni->file.run, 0, rp, i_size, NULL);
+> +		if (err)
+> +			goto out;
+> +	}
+> +
+> +	err = -EINVAL;
+> +
+> +	/* Microsoft Tag */
+> +	switch (rp->ReparseTag) {
+> +	case IO_REPARSE_TAG_MICROSOFT | IO_REPARSE_TAG_SYMBOLIC_LINK:
+> +		/* Symbolic link */
+> +		/* Can we use 'Rp->SymbolicLinkReparseBuffer.PrintNameLength'? */
+> +		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
+> +				       SymbolicLinkReparseBuffer.PathBuffer))
+> +			goto out;
+> +		uni = Add2Ptr(rp,
+> +			      offsetof(struct REPARSE_DATA_BUFFER,
+> +				       SymbolicLinkReparseBuffer.PathBuffer) +
+> +				      le16_to_cpu(rp->SymbolicLinkReparseBuffer
+> +							  .PrintNameOffset) -
+> +				      2);
+> +		nlen = le16_to_cpu(
+> +			rp->SymbolicLinkReparseBuffer.PrintNameLength);
+> +		break;
+> +
+> +	case IO_REPARSE_TAG_MOUNT_POINT:
+> +		/* Mount points and junctions */
+> +		/* Can we use 'Rp->MountPointReparseBuffer.PrintNameLength'? */
+> +		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
+> +				       MountPointReparseBuffer.PathBuffer))
+> +			goto out;
+> +		uni = Add2Ptr(rp,
+> +			      offsetof(struct REPARSE_DATA_BUFFER,
+> +				       MountPointReparseBuffer.PathBuffer) +
+> +				      le16_to_cpu(rp->MountPointReparseBuffer
+> +							  .PrintNameOffset) -
+> +				      2);
+> +		nlen = le16_to_cpu(rp->MountPointReparseBuffer.PrintNameLength);
+> +		break;
+> +
+> +	case IO_REPARSE_TAG_SYMLINK:
+> +		/* FolderSymbolicLink */
+> +		/* Can we use 'Rp->SymbolicLink2ReparseBuffer.PrintNameLength'? */
+> +		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
+> +				       SymbolicLink2ReparseBuffer.PathBuffer))
+> +			goto out;
+> +		uni = Add2Ptr(rp,
+> +			      offsetof(struct REPARSE_DATA_BUFFER,
+> +				       SymbolicLink2ReparseBuffer.PathBuffer) +
+> +				      le16_to_cpu(rp->SymbolicLink2ReparseBuffer
+> +							  .PrintNameOffset) -
+> +				      2);
+> +		nlen = le16_to_cpu(
+> +			rp->SymbolicLink2ReparseBuffer.PrintNameLength);
+> +		break;
+> +
+> +	case IO_REPARSE_TAG_CLOUD:
+> +	case IO_REPARSE_TAG_CLOUD_1:
+> +	case IO_REPARSE_TAG_CLOUD_2:
+> +	case IO_REPARSE_TAG_CLOUD_3:
+> +	case IO_REPARSE_TAG_CLOUD_4:
+> +	case IO_REPARSE_TAG_CLOUD_5:
+> +	case IO_REPARSE_TAG_CLOUD_6:
+> +	case IO_REPARSE_TAG_CLOUD_7:
+> +	case IO_REPARSE_TAG_CLOUD_8:
+> +	case IO_REPARSE_TAG_CLOUD_9:
+> +	case IO_REPARSE_TAG_CLOUD_A:
+> +	case IO_REPARSE_TAG_CLOUD_B:
+> +	case IO_REPARSE_TAG_CLOUD_C:
+> +	case IO_REPARSE_TAG_CLOUD_D:
+> +	case IO_REPARSE_TAG_CLOUD_E:
+> +	case IO_REPARSE_TAG_CLOUD_F:
+> +		err = sizeof("OneDrive") - 1;
+> +		if (err > buflen)
+> +			err = buflen;
+> +		memcpy(buffer, "OneDrive", err);
+> +		goto out;
+> +
+> +	default:
+> +		if (IsReparseTagMicrosoft(rp->ReparseTag))
+> +			goto out;
+> +		if (!IsReparseTagNameSurrogate(rp->ReparseTag) ||
+> +		    i_size <= sizeof(struct REPARSE_POINT)) {
+> +			goto out;
+> +		}
+> +
+> +		/* Users tag */
+> +		uni = Add2Ptr(rp, sizeof(struct REPARSE_POINT) - 2);
+> +		nlen = le16_to_cpu(
+> +			       ((struct REPARSE_POINT *)rp)->ReparseDataLength) -
+> +		       sizeof(struct REPARSE_POINT);
+> +	}
+> +
+> +	/* Convert nlen from bytes to UNICODE chars */
+> +	nlen >>= 1;
+> +
+> +	/* Check that name is available */
+> +	if (!nlen || &uni->name[nlen] > (__le16 *)Add2Ptr(rp, i_size))
+> +		goto out;
+> +
+> +	/* If name is already zero terminated then truncate it now */
+> +	if (!uni->name[nlen - 1])
+> +		nlen -= 1;
+> +	uni->len = nlen;
+> +
+> +	err = ntfs_utf16_to_nls(sbi, uni, buffer, buflen);
+> +
+> +	if (err < 0)
+> +		goto out;
+> +
+> +	/* Always set last zero */
+> +	buffer[err] = 0;
+> +
+> +out:
+> +	ntfs_free(to_free);
+> +
+> +	return err;
+> +}
+> +
+> +static const char *ntfs_get_link(struct dentry *de, struct inode *inode,
+> +				 struct delayed_call *done)
+> +{
+> +	int err;
+> +	char *ret;
+> +
+> +	if (!de)
+> +		return ERR_PTR(-ECHILD);
+> +
+> +	ret = kmalloc(PAGE_SIZE, GFP_NOFS);
+> +	if (!ret)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	err = ntfs_readlink_hlp(inode, ret, PAGE_SIZE);
+> +	if (err < 0) {
+> +		kfree(ret);
+> +		return ERR_PTR(err);
+> +	}
+> +
+> +	set_delayed_call(done, kfree_link, ret);
 > +
 > +	return ret;
 > +}
 > +
-> +static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
-> +			 struct inode *inode, const char *name, void *buffer,
-> +			 size_t size)
-> +{
-> +	int err;
-> +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	size_t name_len = strlen(name);
-> +
-> +	/* Dispatch request */
-> +	if (name_len == sizeof(SYSTEM_DOS_ATTRIB) - 1 &&
-> +	    !memcmp(name, SYSTEM_DOS_ATTRIB, sizeof(SYSTEM_DOS_ATTRIB))) {
-> +		/* system.dos_attrib */
-> +		if (!buffer) {
-> +			err = sizeof(u8);
-> +		} else if (size < sizeof(u8)) {
-> +			err = -ENODATA;
-> +		} else {
-> +			err = sizeof(u8);
-> +			*(u8 *)buffer = le32_to_cpu(ni->std_fa);
-> +		}
-> +		goto out;
-> +	}
-> +
-> +	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB) - 1 &&
-> +	    !memcmp(name, SYSTEM_NTFS_ATTRIB, sizeof(SYSTEM_NTFS_ATTRIB))) {
-> +		/* system.ntfs_attrib */
-> +		if (!buffer) {
-> +			err = sizeof(u32);
-> +		} else if (size < sizeof(u32)) {
-> +			err = -ENODATA;
-> +		} else {
-> +			err = sizeof(u32);
-> +			*(u32 *)buffer = le32_to_cpu(ni->std_fa);
-> +		}
-> +		goto out;
-> +	}
-> +
-> +	if (name_len == sizeof(USER_DOSATTRIB) - 1 &&
-> +	    !memcmp(name, USER_DOSATTRIB, sizeof(USER_DOSATTRIB))) {
-> +		/* user.DOSATTRIB */
-> +		if (!buffer) {
-> +			err = 5;
-> +		} else if (size < 5) {
-> +			err = -ENODATA;
-> +		} else {
-> +			err = sprintf((char *)buffer, "0x%x",
-> +				      le32_to_cpu(ni->std_fa) & 0xff) +
-> +			      1;
-> +		}
-> +		goto out;
-> +	}
-> +
-> +	if (name_len == sizeof(SYSTEM_NTFS_SECURITY) - 1 &&
-> +	    !memcmp(name, SYSTEM_NTFS_SECURITY, sizeof(SYSTEM_NTFS_SECURITY))) {
-> +		/* system.ntfs_security*/
-> +		void *sd = NULL;
-> +		size_t sd_size = 0;
-> +
-> +		if (!is_ntfs3(ni->mi.sbi)) {
-> +			/* we should get nt4 security */
-> +			err = -EINVAL;
-> +			goto out;
-> +		} else if (le32_to_cpu(ni->std_security_id) <
-> +			   SECURITY_ID_FIRST) {
-> +			err = -ENOENT;
-> +			goto out;
-> +		}
-> +
-> +		err = ntfs_get_security_by_id(ni->mi.sbi, ni->std_security_id,
-> +					      &sd, &sd_size);
-> +		if (err)
-> +			goto out;
-> +
-> +		if (!buffer) {
-> +			err = sd_size;
-> +		} else if (size < sd_size) {
-> +			err = -ENODATA;
-> +		} else {
-> +			err = sd_size;
-> +			memcpy(buffer, sd, sd_size);
-> +		}
-> +		ntfs_free(sd);
-> +		goto out;
-> +	}
-> +
-> +	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
-> +	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
-> +		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
-> +	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
-> +	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
-> +		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
-> +		err = ntfs_xattr_get_acl(
-> +			inode,
-> +			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 ?
-> +				ACL_TYPE_ACCESS :
-> +				ACL_TYPE_DEFAULT,
-> +			buffer, size);
-> +	} else {
-> +		err = ntfs_getxattr_hlp(inode, name, buffer, size, NULL);
-> +	}
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +/*
-> + * ntfs_setxattr
-> + *
-> + * inode_operations::setxattr
-> + */
-> +static noinline int ntfs_setxattr(const struct xattr_handler *handler,
-> +				  struct dentry *de, struct inode *inode,
-> +				  const char *name, const void *value,
-> +				  size_t size, int flags)
-> +{
-> +	int err = -EINVAL;
-> +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	size_t name_len = strlen(name);
-> +	u32 attrib = 0; /* not necessary just to suppress warnings */
-> +	__le32 new_fa;
-> +
-> +	/* Dispatch request */
-> +	if (name_len == sizeof(SYSTEM_DOS_ATTRIB) - 1 &&
-> +	    !memcmp(name, SYSTEM_DOS_ATTRIB, sizeof(SYSTEM_DOS_ATTRIB))) {
-> +		if (sizeof(u8) != size)
-> +			goto out;
-> +		attrib = *(u8 *)value;
-> +		goto set_dos_attr;
-> +	}
-> +
-> +	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB) - 1 &&
-> +	    !memcmp(name, SYSTEM_NTFS_ATTRIB, sizeof(SYSTEM_NTFS_ATTRIB))) {
-> +		if (sizeof(u32) != size)
-> +			goto out;
-> +		attrib = *(u32 *)value;
-> +		goto set_dos_attr;
-> +	}
-> +
-> +	if (name_len == sizeof(USER_DOSATTRIB) - 1 &&
-> +	    !memcmp(name, USER_DOSATTRIB, sizeof(USER_DOSATTRIB))) {
-> +		if (size < 4 || ((char *)value)[size - 1])
-> +			goto out;
-> +
-> +		/*
-> +		 * The input value must be string in form 0x%x with last zero
-> +		 * This means that the 'size' must be 4, 5, ...
-> +		 *  E.g: 0x1 - 4 bytes, 0x20 - 5 bytes
-> +		 */
-> +		if (sscanf((char *)value, "0x%x", &attrib) != 1)
-> +			goto out;
-> +
-> +set_dos_attr:
-> +		if (!value)
-> +			goto out;
-> +
-> +		/*
-> +		 * Thanks Mark Harmstone:
-> +		 * keep directory bit consistency
-> +		 */
-> +		new_fa = cpu_to_le32(attrib);
-> +		if (S_ISDIR(inode->i_mode))
-> +			new_fa |= FILE_ATTRIBUTE_DIRECTORY;
-> +		else
-> +			new_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
-> +
-> +		if (ni->std_fa != new_fa) {
-> +			ni->std_fa = new_fa;
-> +			/* std attribute always in primary record */
-> +			ni->mi.dirty = true;
-> +			mark_inode_dirty(inode);
-> +		}
-> +		err = 0;
-> +
-> +		goto out;
-> +	}
-> +
-> +	if (name_len == sizeof(SYSTEM_NTFS_SECURITY) - 1 &&
-> +	    !memcmp(name, SYSTEM_NTFS_SECURITY, sizeof(SYSTEM_NTFS_SECURITY))) {
-> +		/* system.ntfs_security*/
-> +		__le32 security_id;
-> +		bool inserted;
-> +		struct ATTR_STD_INFO5 *std;
-> +
-> +		if (!is_ntfs3(ni->mi.sbi)) {
-> +			/*
-> +			 * we should replace ATTR_SECURE
-> +			 * Skip this way cause it is nt4 feature
-> +			 */
-> +			err = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		err = ntfs_insert_security(ni->mi.sbi, value, size,
-> +					   &security_id, &inserted);
-> +		if (err)
-> +			goto out;
-> +
-> +		ni_lock(ni);
-> +		std = ni_std5(ni);
-> +		if (!std) {
-> +			err = -EINVAL;
-> +		} else if (std->security_id != security_id) {
-> +			std->security_id = ni->std_security_id = security_id;
-> +			/* std attribute always in primary record */
-> +			ni->mi.dirty = true;
-> +			mark_inode_dirty(&ni->vfs_inode);
-> +		}
-> +		ni_unlock(ni);
-> +		goto out;
-> +	}
-> +
-> +	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
-> +	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
-> +		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
-> +	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
-> +	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
-> +		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
-> +		err = ntfs_xattr_set_acl(
-> +			inode,
-> +			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 ?
-> +				ACL_TYPE_ACCESS :
-> +				ACL_TYPE_DEFAULT,
-> +			value, size);
-> +	} else {
-> +		err = ntfs_set_ea(inode, name, value, size, flags, 0);
-> +	}
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +/*
-> + * Initialize the ACLs of a new inode. Called from ntfs_create_inode.
-> + */
-> +int ntfs_init_acl(struct inode *inode, struct inode *dir)
-> +{
-> +	struct posix_acl *default_acl, *acl;
-> +	int err;
-> +
-> +	/*
-> +	 * TODO refactoring lock
-> +	 * ni_lock(dir) ... -> posix_acl_create(dir,...) -> ntfs_get_acl -> ni_lock(dir)
-> +	 */
-> +	inode->i_default_acl = NULL;
-> +
-> +	default_acl = ntfs_get_acl_ex(dir, ACL_TYPE_DEFAULT, 1);
-> +
-> +	if (!default_acl || default_acl == ERR_PTR(-EOPNOTSUPP)) {
-> +		inode->i_mode &= ~current_umask();
-> +		err = 0;
-> +		goto out;
-> +	}
-> +
-> +	if (IS_ERR(default_acl)) {
-> +		err = PTR_ERR(default_acl);
-> +		goto out;
-> +	}
-> +
-> +	acl = default_acl;
-> +	err = __posix_acl_create(&acl, GFP_NOFS, &inode->i_mode);
-> +	if (err < 0)
-> +		goto out1;
-> +	if (!err) {
-> +		posix_acl_release(acl);
-> +		acl = NULL;
-> +	}
-> +
-> +	if (!S_ISDIR(inode->i_mode)) {
-> +		posix_acl_release(default_acl);
-> +		default_acl = NULL;
-> +	}
-> +
-> +	if (default_acl)
-> +		err = ntfs_set_acl_ex(inode, default_acl, ACL_TYPE_DEFAULT, 1);
-> +
-> +	if (!acl)
-> +		inode->i_acl = NULL;
-> +	else if (!err)
-> +		err = ntfs_set_acl_ex(inode, acl, ACL_TYPE_ACCESS, 1);
-> +
-> +	posix_acl_release(acl);
-> +out1:
-> +	posix_acl_release(default_acl);
-> +
-> +out:
-> +	return err;
-> +}
-> +
-> +static bool ntfs_xattr_user_list(struct dentry *dentry)
-> +{
-> +	return 1;
-> +}
-> +
-> +static const struct xattr_handler ntfs_xattr_handler = {
-> +	.prefix = "",
-> +	.get = ntfs_getxattr,
-> +	.set = ntfs_setxattr,
-> +	.list = ntfs_xattr_user_list,
+> +const struct inode_operations ntfs_link_inode_operations = {
+> +	.get_link = ntfs_get_link,
+> +	.setattr = ntfs_setattr,
+> +	.listxattr = ntfs_listxattr,
+> +	.permission = ntfs_permission,
+> +	.get_acl = ntfs_get_acl,
+> +	.set_acl = ntfs_set_acl,
 > +};
 > +
-> +const struct xattr_handler *ntfs_xattr_handlers[] = { &ntfs_xattr_handler,
-> +						      NULL };
+> +const struct address_space_operations ntfs_aops = { .readpage = ntfs_readpage,
+> +						    .readahead = ntfs_readahead,
+> +						    .writepage = ntfs_writepage,
+> +						    .writepages =
+> +							    ntfs_writepages,
+> +						    .write_begin =
+> +							    ntfs_write_begin,
+> +						    .write_end = ntfs_write_end,
+> +						    .direct_IO = ntfs_direct_IO,
+> +						    .bmap = ntfs_bmap };
+> +
+> +const struct address_space_operations ntfs_aops_cmpr = {
+> +	.readpage = ntfs_readpage,
+> +	.writepage = ntfs_writepage_cmpr,
+> +	.set_page_dirty = __set_page_dirty_nobuffers,
+> +};
+> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+> new file mode 100644
+> index 000000000000..14915398dd74
+> --- /dev/null
+> +++ b/fs/ntfs3/super.c
+> @@ -0,0 +1,1430 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  linux/fs/ntfs3/super.c
+> + *
+> + * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
+> + *
+> + *
+> + *                 terminology
+> + *
+> + * vcn - virtual cluster number - offset inside the file in clusters
+> + * vbo - virtual byte offset    - offset inside the file in bytes
+> + * lcn - logical cluster number - 0 based cluster in clusters heap
+> + * lbo - logical byte offset    - absolute position inside volume
+> + *
+> + */
+> +
+> +#include <linux/backing-dev.h>
+> +#include <linux/blkdev.h>
+> +#include <linux/buffer_head.h>
+> +#include <linux/exportfs.h>
+> +#include <linux/fs.h>
+> +#include <linux/iversion.h>
+> +#include <linux/module.h>
+> +#include <linux/nls.h>
+> +#include <linux/parser.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/statfs.h>
+> +
+> +#include "debug.h"
+> +#include "ntfs.h"
+> +#include "ntfs_fs.h"
+> +
+> +#ifdef CONFIG_PRINTK
+> +/*
+> + * Trace warnings/notices/errors
+> + * Thanks Joe Perches <joe@perches.com> for implementation
+> + */
+> +void ntfs_printk(const struct super_block *sb, const char *fmt, ...)
+> +{
+> +	struct va_format vaf;
+> +	va_list args;
+> +	int level;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +
+> +	/*should we use different ratelimits for warnings/notices/errors? */
+> +	if (!___ratelimit(&sbi->msg_ratelimit, "ntfs3"))
+> +		return;
+> +
+> +	va_start(args, fmt);
+> +
+> +	level = printk_get_level(fmt);
+> +	vaf.fmt = printk_skip_level(fmt);
+> +	vaf.va = &args;
+> +	printk("%c%cntfs3: %s: %pV\n", KERN_SOH_ASCII, level, sb->s_id, &vaf);
+> +
+> +	va_end(args);
+> +}
+> +
+> +/* print warnings/notices/errors about inode using name or inode number */
+> +void ntfs_inode_printk(struct inode *inode, const char *fmt, ...)
+> +{
+> +	struct super_block *sb = inode->i_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct dentry *dentry;
+> +	char *name;
+> +	va_list args;
+> +	struct va_format vaf;
+> +	int level;
+> +	/*not necessary to print full inode name. just for information */
+> +	const u32 name_len = 63;
+> +
+> +	if (!___ratelimit(&sbi->msg_ratelimit, "ntfs3"))
+> +		return;
+> +
+> +	name = ntfs_alloc(name_len + 1, 0);
+> +	if (!name)
+> +		return;
+> +
+> +	dentry = d_find_alias(inode);
+> +	if (dentry) {
+> +		/*we can get the name of inode*/
+> +		spin_lock(&dentry->d_lock);
+> +		snprintf(name, name_len, "%s", dentry->d_name.name);
+> +		spin_unlock(&dentry->d_lock);
+> +		dput(dentry);
+> +		name[name_len] = 0; /* to be sure*/
+> +	} else {
+> +		/*use inode number as inode info*/
+> +		snprintf(name, name_len, "ino=%lx", inode->i_ino);
+> +	}
+> +
+> +	va_start(args, fmt);
+> +
+> +	level = printk_get_level(fmt);
+> +	vaf.fmt = printk_skip_level(fmt);
+> +	vaf.va = &args;
+> +
+> +	printk("%c%cntfs3: %s: %s %pV\n", KERN_SOH_ASCII, level, sb->s_id, name,
+> +	       &vaf);
+> +
+> +	va_end(args);
+> +
+> +	ntfs_free(name);
+> +}
+> +#endif
+> +
+> +/*
+> + * Shared memory struct.
+> + *
+> + * on-disk ntfs's upcase table is created by ntfs formater
+> + * 'upcase' table is 128K bytes of memory
+> + * we should read it into memory when mounting
+> + * Several ntfs volumes likely use the same 'upcase' table
+> + * It is good idea to share in-memory 'upcase' table between different volumes
+> + * Unfortunately winxp/vista/win7 use different upcase tables
+> + */
+> +static DEFINE_SPINLOCK(s_shared_lock);
+> +
+> +static struct {
+> +	void *ptr;
+> +	u32 len;
+> +	int cnt;
+> +} s_shared[8];
+> +
+> +/*
+> + * ntfs_set_shared
+> + *
+> + * Returns 'ptr' if pointer was saved in shared memory
+> + * Returns NULL if pointer was not shared
+> + */
+> +void *ntfs_set_shared(void *ptr, u32 bytes)
+> +{
+> +	void *ret = NULL;
+> +	int i, j = -1;
+> +
+> +	spin_lock(&s_shared_lock);
+> +	for (i = 0; i < ARRAY_SIZE(s_shared); i++) {
+> +		if (!s_shared[i].cnt) {
+> +			j = i;
+> +		} else if (bytes == s_shared[i].len &&
+> +			   !memcmp(s_shared[i].ptr, ptr, bytes)) {
+> +			s_shared[i].cnt += 1;
+> +			ret = s_shared[i].ptr;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!ret && j != -1) {
+> +		s_shared[j].ptr = ptr;
+> +		s_shared[j].len = bytes;
+> +		s_shared[j].cnt = 1;
+> +		ret = ptr;
+> +	}
+> +	spin_unlock(&s_shared_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * ntfs_put_shared
+> + *
+> + * Returns 'ptr' if pointer is not shared anymore
+> + * Returns NULL if pointer is still shared
+> + */
+> +void *ntfs_put_shared(void *ptr)
+> +{
+> +	void *ret = ptr;
+> +	int i;
+> +
+> +	spin_lock(&s_shared_lock);
+> +	for (i = 0; i < ARRAY_SIZE(s_shared); i++) {
+> +		if (s_shared[i].cnt && s_shared[i].ptr == ptr) {
+> +			if (--s_shared[i].cnt)
+> +				ret = NULL;
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&s_shared_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int ntfs_remount(struct super_block *sb, int *flags, char *data)
+> +{
+> +	*flags |= SB_NODIRATIME | SB_NOATIME;
+> +	sync_filesystem(sb);
+> +	return 0;
+> +}
+> +
+> +static struct kmem_cache *ntfs_inode_cachep;
+> +
+> +static struct inode *ntfs_alloc_inode(struct super_block *sb)
+> +{
+> +	struct ntfs_inode *ni = kmem_cache_alloc(ntfs_inode_cachep, GFP_NOFS);
+> +
+> +	if (!ni)
+> +		return NULL;
+> +
+> +	memset(ni, 0, offsetof(struct ntfs_inode, vfs_inode));
+> +
+> +	mutex_init(&ni->ni_lock);
+> +
+> +	return &ni->vfs_inode;
+> +}
+> +
+> +static void ntfs_i_callback(struct rcu_head *head)
+> +{
+> +	struct inode *inode = container_of(head, struct inode, i_rcu);
+> +	struct ntfs_inode *ni = ntfs_i(inode);
+> +
+> +	mutex_destroy(&ni->ni_lock);
+> +
+> +	kmem_cache_free(ntfs_inode_cachep, ni);
+> +}
+> +
+> +static void ntfs_destroy_inode(struct inode *inode)
+> +{
+> +	call_rcu(&inode->i_rcu, ntfs_i_callback);
+> +}
+> +
+> +static void init_once(void *foo)
+> +{
+> +	struct ntfs_inode *ni = foo;
+> +
+> +	inode_init_once(&ni->vfs_inode);
+> +}
+> +
+> +/* noinline to reduce binary size*/
+> +static noinline void put_ntfs(struct ntfs_sb_info *sbi)
+> +{
+> +	ntfs_free(sbi->new_rec);
+> +	ntfs_free(ntfs_put_shared(sbi->upcase));
+> +	ntfs_free(sbi->def_table);
+> +
+> +	wnd_close(&sbi->mft.bitmap);
+> +	wnd_close(&sbi->used.bitmap);
+> +
+> +	if (sbi->mft.ni)
+> +		iput(&sbi->mft.ni->vfs_inode);
+> +
+> +	if (sbi->security.ni)
+> +		iput(&sbi->security.ni->vfs_inode);
+> +
+> +	if (sbi->reparse.ni)
+> +		iput(&sbi->reparse.ni->vfs_inode);
+> +
+> +	if (sbi->objid.ni)
+> +		iput(&sbi->objid.ni->vfs_inode);
+> +
+> +	if (sbi->volume.ni)
+> +		iput(&sbi->volume.ni->vfs_inode);
+> +
+> +	ntfs_update_mftmirr(sbi, 0);
+> +
+> +	indx_clear(&sbi->security.index_sii);
+> +	indx_clear(&sbi->security.index_sdh);
+> +	indx_clear(&sbi->reparse.index_r);
+> +	indx_clear(&sbi->objid.index_o);
+> +	ntfs_free(sbi->compress.frame_unc);
+> +	ntfs_free(sbi->compress.ctx);
+> +
+> +	unload_nls(sbi->nls[0]);
+> +	unload_nls(sbi->nls[1]);
+> +
+> +	ntfs_free(sbi);
+> +}
+> +
+> +static void ntfs_put_super(struct super_block *sb)
+> +{
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +
+> +	/*mark rw ntfs as clear, if possible*/
+> +	ntfs_set_state(sbi, NTFS_DIRTY_CLEAR);
+> +
+> +	put_ntfs(sbi);
+> +
+> +	sync_blockdev(sb->s_bdev);
+> +}
+> +
+> +static int ntfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> +{
+> +	struct super_block *sb = dentry->d_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct wnd_bitmap *wnd = &sbi->used.bitmap;
+> +
+> +	buf->f_type = sb->s_magic;
+> +	buf->f_bsize = sbi->cluster_size;
+> +	buf->f_blocks = wnd->nbits;
+> +
+> +	buf->f_bfree = buf->f_bavail = wnd_zeroes(wnd);
+> +	buf->f_fsid.val[0] = (u32)sbi->volume.ser_num;
+> +	buf->f_fsid.val[1] = (u32)(sbi->volume.ser_num >> 32);
+> +	buf->f_namelen = NTFS_NAME_LEN;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ntfs_show_options(struct seq_file *m, struct dentry *root)
+> +{
+> +	struct super_block *sb = root->d_sb;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct mount_options *opts = &sbi->options;
+> +
+> +	if (opts->uid)
+> +		seq_printf(m, ",uid=%u",
+> +			   from_kuid_munged(&init_user_ns, opts->fs_uid));
+> +	if (opts->gid)
+> +		seq_printf(m, ",gid=%u",
+> +			   from_kgid_munged(&init_user_ns, opts->fs_gid));
+> +	if (opts->fmask)
+> +		seq_printf(m, ",fmask=%04o", ~opts->fs_fmask_inv);
+> +	if (opts->dmask)
+> +		seq_printf(m, ",dmask=%04o", ~opts->fs_dmask_inv);
+> +	if (sbi->nls[0])
+> +		seq_printf(m, ",nls=%s", sbi->nls[0]->charset);
+> +	else
+> +		seq_puts(m, ",nls=utf8");
+> +	if (sbi->nls[1])
+> +		seq_printf(m, ",nls_alt=%s", sbi->nls[1]->charset);
+> +	if (opts->sys_immutable)
+> +		seq_puts(m, ",sys_immutable");
+> +	if (opts->discard)
+> +		seq_puts(m, ",discard");
+> +	if (opts->sparse)
+> +		seq_puts(m, ",sparse");
+> +	if (opts->showmeta)
+> +		seq_puts(m, ",showmeta");
+> +	if (opts->nohidden)
+> +		seq_puts(m, ",nohidden");
+> +	if (opts->force)
+> +		seq_puts(m, ",force");
+> +	if (opts->no_acs_rules)
+> +		seq_puts(m, ",no_acs_rules");
+> +	if (opts->prealloc)
+> +		seq_puts(m, ",prealloc");
+> +	if (sb->s_flags & SB_POSIXACL)
+> +		seq_puts(m, ",acl");
+> +	if (sb->s_flags & SB_NOATIME)
+> +		seq_puts(m, ",noatime");
+> +
+> +	return 0;
+> +}
+> +
+> +/*super_operations::sync_fs*/
+> +static int ntfs_sync_fs(struct super_block *sb, int wait)
+> +{
+> +	int err = 0, err2;
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct ntfs_inode *ni;
+> +	struct inode *inode;
+> +
+> +	ni = sbi->security.ni;
+> +	if (ni) {
+> +		inode = &ni->vfs_inode;
+> +		err2 = _ni_write_inode(inode, wait);
+> +		if (err2 && !err)
+> +			err = err2;
+> +	}
+> +
+> +	ni = sbi->objid.ni;
+> +	if (ni) {
+> +		inode = &ni->vfs_inode;
+> +		err2 = _ni_write_inode(inode, wait);
+> +		if (err2 && !err)
+> +			err = err2;
+> +	}
+> +
+> +	ni = sbi->reparse.ni;
+> +	if (ni) {
+> +		inode = &ni->vfs_inode;
+> +		err2 = _ni_write_inode(inode, wait);
+> +		if (err2 && !err)
+> +			err = err2;
+> +	}
+> +
+> +	if (!err)
+> +		ntfs_set_state(sbi, NTFS_DIRTY_CLEAR);
+> +
+> +	ntfs_update_mftmirr(sbi, wait);
+> +
+> +	return err;
+> +}
+> +
+> +static const struct super_operations ntfs_sops = {
+> +	.alloc_inode = ntfs_alloc_inode,
+> +	.destroy_inode = ntfs_destroy_inode,
+> +	.evict_inode = ntfs_evict_inode,
+> +	.put_super = ntfs_put_super,
+> +	.statfs = ntfs_statfs,
+> +	.show_options = ntfs_show_options,
+> +	.sync_fs = ntfs_sync_fs,
+> +	.remount_fs = ntfs_remount,
+> +	.write_inode = ntfs_write_inode,
+> +};
+> +
+> +static struct inode *ntfs_export_get_inode(struct super_block *sb, u64 ino,
+> +					   u32 generation)
+> +{
+> +	struct MFT_REF ref;
+> +	struct inode *inode;
+> +
+> +	ref.low = cpu_to_le32(ino);
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +	ref.high = cpu_to_le16(ino >> 32);
+> +#else
+> +	ref.high = 0;
+> +#endif
+> +	ref.seq = cpu_to_le16(generation);
+> +
+> +	inode = ntfs_iget5(sb, &ref, NULL);
+> +	if (!IS_ERR(inode) && is_bad_inode(inode)) {
+> +		iput(inode);
+> +		inode = ERR_PTR(-ESTALE);
+> +	}
+> +
+> +	return inode;
+> +}
+> +
+> +static struct dentry *ntfs_fh_to_dentry(struct super_block *sb, struct fid *fid,
+> +					int fh_len, int fh_type)
+> +{
+> +	return generic_fh_to_dentry(sb, fid, fh_len, fh_type,
+> +				    ntfs_export_get_inode);
+> +}
+> +
+> +static struct dentry *ntfs_fh_to_parent(struct super_block *sb, struct fid *fid,
+> +					int fh_len, int fh_type)
+> +{
+> +	return generic_fh_to_parent(sb, fid, fh_len, fh_type,
+> +				    ntfs_export_get_inode);
+> +}
+> +
+> +/* TODO: == ntfs_sync_inode */
+> +static int ntfs_nfs_commit_metadata(struct inode *inode)
+> +{
+> +	return _ni_write_inode(inode, 1);
+> +}
+> +
+> +static const struct export_operations ntfs_export_ops = {
+> +	.fh_to_dentry = ntfs_fh_to_dentry,
+> +	.fh_to_parent = ntfs_fh_to_parent,
+> +	.get_parent = ntfs_get_parent,
+> +	.commit_metadata = ntfs_nfs_commit_metadata,
+> +};
+> +
+> +/* Returns Gb,Mb to print with "%u.%02u Gb" */
+> +static u32 format_size_gb(const u64 bytes, u32 *mb)
+> +{
+> +	/* Do simple right 30 bit shift of 64 bit value */
+> +	u64 kbytes = bytes >> 10;
+> +	u32 kbytes32 = (u32)kbytes;
+> +
+> +	*mb = (100 * (kbytes32 & 0xfffff) + 0x7ffff) >> 20;
+> +	if (*mb >= 100)
+> +		*mb = 99;
+> +
+> +	return (kbytes32 >> 20) | (((u32)(kbytes >> 32)) << 12);
+> +}
+> +
+> +static u32 true_sectors_per_clst(const struct NTFS_BOOT *boot)
+> +{
+> +	return boot->sectors_per_clusters <= 0x80 ?
+> +		       boot->sectors_per_clusters :
+> +		       (1u << (0 - boot->sectors_per_clusters));
+> +}
+> +
+> +/* inits internal info from on-disk boot sector*/
+> +static int ntfs_init_from_boot(struct super_block *sb, u32 sector_size,
+> +			       u64 dev_size)
+> +{
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	int err;
+> +	u32 mb, gb, boot_sector_size, sct_per_clst, record_size;
+> +	u64 sectors, clusters, fs_size, mlcn, mlcn2;
+> +	struct NTFS_BOOT *boot;
+> +	struct buffer_head *bh;
+> +	struct MFT_REC *rec;
+> +	u16 fn, ao;
+> +
+> +	sbi->volume.blocks = dev_size >> PAGE_SHIFT;
+> +
+> +	bh = ntfs_bread(sb, 0);
+> +	if (!bh)
+> +		return -EIO;
+> +
+> +	err = -EINVAL;
+> +	boot = (struct NTFS_BOOT *)bh->b_data;
+> +
+> +	if (memcmp(boot->system_id, "NTFS    ", sizeof("NTFS    ") - 1))
+> +		goto out;
+> +
+> +	/* 0x55AA is not mandaroty. Thanks Maxim Suhanov*/
+> +	/*if (0x55 != boot->boot_magic[0] || 0xAA != boot->boot_magic[1])
+> +	 *	goto out;
+> +	 */
+> +
+> +	boot_sector_size = (u32)boot->bytes_per_sector[1] << 8;
+> +	if (boot->bytes_per_sector[0] || boot_sector_size < SECTOR_SIZE ||
+> +	    !is_power_of2(boot_sector_size)) {
+> +		goto out;
+> +	}
+> +
+> +	sct_per_clst = true_sectors_per_clst(boot);
+> +	if (!is_power_of2(sct_per_clst))
+> +		goto out;
+> +
+> +	mlcn = le64_to_cpu(boot->mft_clst);
+> +	mlcn2 = le64_to_cpu(boot->mft2_clst);
+> +	sectors = le64_to_cpu(boot->sectors_per_volume);
+> +
+> +	if (mlcn * sct_per_clst >= sectors)
+> +		goto out;
+> +
+> +	if (mlcn2 * sct_per_clst >= sectors)
+> +		goto out;
+> +
+> +	/* Check MFT record size */
+> +	if ((boot->record_size < 0 &&
+> +	     SECTOR_SIZE > (2U << (-boot->record_size))) ||
+> +	    (boot->record_size >= 0 && !is_power_of2(boot->record_size))) {
+> +		goto out;
+> +	}
+> +
+> +	/* Check index record size */
+> +	if ((boot->index_size < 0 &&
+> +	     SECTOR_SIZE > (2U << (-boot->index_size))) ||
+> +	    (boot->index_size >= 0 && !is_power_of2(boot->index_size))) {
+> +		goto out;
+> +	}
+> +
+> +	sbi->sector_size = boot_sector_size;
+> +	sbi->sector_bits = blksize_bits(boot_sector_size);
+> +	fs_size = (sectors + 1) << sbi->sector_bits;
+> +
+> +	gb = format_size_gb(fs_size, &mb);
+> +
+> +	/*
+> +	 * - Volume formatted and mounted with the same sector size
+> +	 * - Volume formatted 4K and mounted as 512
+> +	 * - Volume formatted 512 and mounted as 4K
+> +	 */
+> +	if (sbi->sector_size != sector_size) {
+> +		ntfs_warn(sb,
+> +			  "Different NTFS' sector size and media sector size");
+> +		dev_size += sector_size - 1;
+> +	}
+> +
+> +	sbi->cluster_size = boot_sector_size * sct_per_clst;
+> +	sbi->cluster_bits = blksize_bits(sbi->cluster_size);
+> +
+> +	sbi->mft.lbo = mlcn << sbi->cluster_bits;
+> +	sbi->mft.lbo2 = mlcn2 << sbi->cluster_bits;
+> +
+> +	if (sbi->cluster_size < sbi->sector_size)
+> +		goto out;
+> +
+> +	sbi->cluster_mask = sbi->cluster_size - 1;
+> +	sbi->cluster_mask_inv = ~(u64)sbi->cluster_mask;
+> +	sbi->record_size = record_size = boot->record_size < 0 ?
+> +						 1 << (-boot->record_size) :
+> +						 (u32)boot->record_size
+> +							 << sbi->cluster_bits;
+> +
+> +	if (record_size > MAXIMUM_BYTES_PER_MFT)
+> +		goto out;
+> +
+> +	sbi->record_bits = blksize_bits(record_size);
+> +	sbi->attr_size_tr = (5 * record_size >> 4); // ~320 bytes
+> +
+> +	sbi->max_bytes_per_attr =
+> +		record_size - QuadAlign(MFTRECORD_FIXUP_OFFSET_1) -
+> +		QuadAlign(((record_size >> SECTOR_SHIFT) * sizeof(short))) -
+> +		QuadAlign(sizeof(enum ATTR_TYPE));
+> +
+> +	sbi->index_size = boot->index_size < 0 ?
+> +				  1u << (-boot->index_size) :
+> +				  (u32)boot->index_size << sbi->cluster_bits;
+> +
+> +	sbi->volume.ser_num = le64_to_cpu(boot->serial_num);
+> +	sbi->volume.size = sectors << sbi->sector_bits;
+> +
+> +	/* warning if RAW volume */
+> +	if (dev_size < fs_size) {
+> +		u32 mb0, gb0;
+> +
+> +		gb0 = format_size_gb(dev_size, &mb0);
+> +		ntfs_warn(
+> +			sb,
+> +			"RAW NTFS volume: Filesystem size %u.%02u Gb > volume size %u.%02u Gb. Mount in read-only",
+> +			gb, mb, gb0, mb0);
+> +		sb->s_flags |= SB_RDONLY;
+> +	}
+> +
+> +	clusters = sbi->volume.size >> sbi->cluster_bits;
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +#if BITS_PER_LONG < 64
+> +#error "NTFS3_64BIT_CLUSTER incompatible in 32 bit OS"
+> +#endif
+> +#else
+> +	/* 32 bits per cluster */
+> +	if (clusters >> 32) {
+> +		ntfs_notice(
+> +			sb,
+> +			"NTFS %u.%02u Gb is too big to use 32 bits per cluster",
+> +			gb, mb);
+> +		goto out;
+> +	}
+> +#endif
+> +
+> +	sbi->used.bitmap.nbits = clusters;
+> +
+> +	rec = ntfs_alloc(record_size, 1);
+> +	if (!rec) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	sbi->new_rec = rec;
+> +	rec->rhdr.sign = NTFS_FILE_SIGNATURE;
+> +	rec->rhdr.fix_off = cpu_to_le16(MFTRECORD_FIXUP_OFFSET_1);
+> +	fn = (sbi->record_size >> SECTOR_SHIFT) + 1;
+> +	rec->rhdr.fix_num = cpu_to_le16(fn);
+> +	ao = QuadAlign(MFTRECORD_FIXUP_OFFSET_1 + sizeof(short) * fn);
+> +	rec->attr_off = cpu_to_le16(ao);
+> +	rec->used = cpu_to_le32(ao + QuadAlign(sizeof(enum ATTR_TYPE)));
+> +	rec->total = cpu_to_le32(sbi->record_size);
+> +	((struct ATTRIB *)Add2Ptr(rec, ao))->type = ATTR_END;
+> +
+> +	if (sbi->cluster_size < PAGE_SIZE)
+> +		sb_set_blocksize(sb, sbi->cluster_size);
+> +
+> +	sbi->block_mask = sb->s_blocksize - 1;
+> +	sbi->blocks_per_cluster = sbi->cluster_size >> sb->s_blocksize_bits;
+> +	sbi->volume.blocks = sbi->volume.size >> sb->s_blocksize_bits;
+> +
+> +	/* Maximum size for normal files */
+> +	sbi->maxbytes = (clusters << sbi->cluster_bits) - 1;
+> +
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +	if (clusters >= (1ull << (64 - sbi->cluster_bits)))
+> +		sbi->maxbytes = -1;
+> +	sbi->maxbytes_sparse = -1;
+> +#else
+> +	/* Maximum size for sparse file */
+> +	sbi->maxbytes_sparse = (1ull << (sbi->cluster_bits + 32)) - 1;
+> +#endif
+> +
+> +	err = 0;
+> +
+> +out:
+> +	brelse(bh);
+> +
+> +	return err;
+> +}
+> +
+> +enum Opt {
+> +	Opt_uid,
+> +	Opt_gid,
+> +	Opt_umask,
+> +	Opt_dmask,
+> +	Opt_fmask,
+> +	Opt_immutable,
+> +	Opt_discard,
+> +	Opt_force,
+> +	Opt_sparse,
+> +	Opt_nohidden,
+> +	Opt_showmeta,
+> +	Opt_acl,
+> +	Opt_noatime,
+> +	Opt_nls,
+> +	Opt_nls_alt,
+> +	Opt_prealloc,
+> +	Opt_no_acs_rules,
+> +	Opt_err,
+> +};
+> +
+> +static const match_table_t fat_tokens = { { Opt_uid, "uid=%u" },
+> +					  { Opt_gid, "gid=%u" },
+> +					  { Opt_umask, "umask=%o" },
+> +					  { Opt_dmask, "dmask=%o" },
+> +					  { Opt_fmask, "fmask=%o" },
+> +					  { Opt_immutable, "sys_immutable" },
+> +					  { Opt_discard, "discard" },
+> +					  { Opt_force, "force" },
+> +					  { Opt_sparse, "sparse" },
+> +					  { Opt_nohidden, "nohidden" },
+> +					  { Opt_acl, "acl" },
+> +					  { Opt_noatime, "noatime" },
+> +					  { Opt_showmeta, "showmeta" },
+> +					  { Opt_nls, "nls=%s" },
+> +					  { Opt_nls_alt, "nls_alt=%s" },
+> +					  { Opt_prealloc, "prealloc" },
+> +					  { Opt_no_acs_rules, "no_acs_rules" },
+> +					  { Opt_err, NULL } };
+> +
+> +static noinline int ntfs_parse_options(struct super_block *sb, char *options,
+> +				       int silent, struct mount_options *opts)
+> +{
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	char *p;
+> +	substring_t args[MAX_OPT_ARGS];
+> +	int i, option;
+> +	char nls_name[2][30];
+> +
+> +	opts->fs_uid = current_uid();
+> +	opts->fs_gid = current_gid();
+> +	opts->fs_fmask_inv = opts->fs_dmask_inv = ~current_umask();
+> +	nls_name[0][0] = 0;
+> +	nls_name[1][0] = 0;
+> +
+> +	if (!options)
+> +		goto out;
+> +
+> +	while ((p = strsep(&options, ","))) {
+> +		int token;
+> +
+> +		if (!*p)
+> +			continue;
+> +
+> +		token = match_token(p, fat_tokens, args);
+> +		switch (token) {
+> +		case Opt_immutable:
+> +			opts->sys_immutable = 1;
+> +			break;
+> +		case Opt_uid:
+> +			if (match_int(&args[0], &option))
+> +				return -EINVAL;
+> +			opts->fs_uid = make_kuid(current_user_ns(), option);
+> +			if (!uid_valid(opts->fs_uid))
+> +				return -EINVAL;
+> +			opts->uid = 1;
+> +			break;
+> +		case Opt_gid:
+> +			if (match_int(&args[0], &option))
+> +				return -EINVAL;
+> +			opts->fs_gid = make_kgid(current_user_ns(), option);
+> +			if (!gid_valid(opts->fs_gid))
+> +				return -EINVAL;
+> +			opts->gid = 1;
+> +			break;
+> +		case Opt_umask:
+> +			if (match_octal(&args[0], &option))
+> +				return -EINVAL;
+> +			opts->fs_fmask_inv = opts->fs_dmask_inv = ~option;
+> +			opts->fmask = opts->dmask = 1;
+> +			break;
+> +		case Opt_dmask:
+> +			if (match_octal(&args[0], &option))
+> +				return -EINVAL;
+> +			opts->fs_dmask_inv = ~option;
+> +			opts->dmask = 1;
+> +			break;
+> +		case Opt_fmask:
+> +			if (match_octal(&args[0], &option))
+> +				return -EINVAL;
+> +			opts->fs_fmask_inv = ~option;
+> +			opts->fmask = 1;
+> +			break;
+> +		case Opt_discard:
+> +			opts->discard = 1;
+> +			break;
+> +		case Opt_force:
+> +			opts->force = 1;
+> +			break;
+> +		case Opt_sparse:
+> +			opts->sparse = 1;
+> +			break;
+> +		case Opt_nohidden:
+> +			opts->nohidden = 1;
+> +			break;
+> +		case Opt_acl:
+> +			sb->s_flags |= SB_POSIXACL;
+> +			break;
+> +		case Opt_noatime:
+> +			sb->s_flags |= SB_NOATIME;
+> +			break;
+> +		case Opt_showmeta:
+> +			opts->showmeta = 1;
+> +			break;
+> +		case Opt_nls:
+> +		case Opt_nls_alt:
+> +			match_strlcpy(nls_name[token == Opt_nls_alt], &args[0],
+> +				      sizeof(nls_name[0]));
+> +			break;
+> +		case Opt_prealloc:
+> +			opts->prealloc = 1;
+> +			break;
+> +		case Opt_no_acs_rules:
+> +			opts->no_acs_rules = 1;
+> +			break;
+> +		default:
+> +			if (!silent)
+> +				ntfs_err(
+> +					sb,
+> +					"Unrecognized mount option \"%s\" or missing value",
+> +					p);
+> +			//return -EINVAL;
+> +		}
+> +	}
+> +
+> +out:
+> +
+> +	for (i = 0; i < ARRAY_SIZE(sbi->nls); i++) {
+> +		struct nls_table *nls;
+> +
+> +		if (nls_name[i][0]) {
+> +			nls = load_nls(nls_name[i]);
+> +			if (!nls) {
+> +				ntfs_err(sb, "failed to load \"%s\"",
+> +					 nls_name[i]);
+> +				return -EINVAL;
+> +			}
+> +		} else {
+> +			nls = load_nls_default();
+> +			if (!nls) {
+> +				ntfs_err(sb, "failed to load default nls");
+> +				return -EINVAL;
+> +			}
+> +		}
+> +
+> +		sbi->nls[i] = nls;
+> +	}
+> +
+> +	/* unload alternative nls if it equals primary one */
+> +	if (!strcmp(sbi->nls[0]->charset, sbi->nls[1]->charset)) {
+> +		unload_nls(sbi->nls[1]);
+> +		sbi->nls[1] = NULL;
+> +	}
+> +
+> +	if (!strcmp(sbi->nls[0]->charset, "utf8")) {
+> +		/*use utf16s_to_utf8s/utf8s_to_utf16s instead of nls*/
+> +		unload_nls(sbi->nls[0]);
+> +		sbi->nls[0] = NULL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/* try to mount*/
+> +static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
+> +{
+> +	int err;
+> +	struct ntfs_sb_info *sbi;
+> +	struct block_device *bdev = sb->s_bdev;
+> +	struct inode *bd_inode = bdev->bd_inode;
+> +	struct request_queue *rq = bdev_get_queue(bdev);
+> +	struct inode *inode = NULL;
+> +	struct ntfs_inode *ni;
+> +	size_t i, tt;
+> +	CLST vcn, lcn, len;
+> +	struct ATTRIB *attr;
+> +	const struct VOLUME_INFO *info;
+> +	u32 idx, done, bytes;
+> +	struct ATTR_DEF_ENTRY *t;
+> +	u16 *upcase = NULL;
+> +	u16 *shared;
+> +	bool is_ro;
+> +	struct MFT_REF ref;
+> +
+> +	ref.high = 0;
+> +
+> +	sbi = ntfs_alloc(sizeof(struct ntfs_sb_info), true);
+> +	if (!sbi)
+> +		return -ENOMEM;
+> +
+> +	sb->s_fs_info = sbi;
+> +	sbi->sb = sb;
+> +	sb->s_flags |= SB_NODIRATIME;
+> +	sb->s_magic = 0x337366746e; // "ntfs3"
+> +	sb->s_op = &ntfs_sops;
+> +	sb->s_export_op = &ntfs_export_ops;
+> +	sb->s_time_gran = NTFS_TIME_GRAN; // 100 nsec
+> +	sb->s_xattr = ntfs_xattr_handlers;
+> +	sb->s_maxbytes = MAX_LFS_FILESIZE;
+> +
+> +	ratelimit_state_init(&sbi->msg_ratelimit, DEFAULT_RATELIMIT_INTERVAL,
+> +			     DEFAULT_RATELIMIT_BURST);
+> +
+> +	err = ntfs_parse_options(sb, data, silent, &sbi->options);
+> +	if (err)
+> +		goto out;
+> +
+> +	if (!rq || !blk_queue_discard(rq) || !rq->limits.discard_granularity) {
+> +		;
+> +	} else {
+> +		sbi->discard_granularity = rq->limits.discard_granularity;
+> +		sbi->discard_granularity_mask_inv =
+> +			~(u64)(sbi->discard_granularity - 1);
+> +	}
+> +
+> +	sb_set_blocksize(sb, PAGE_SIZE);
+> +
+> +	/* parse boot */
+> +	err = ntfs_init_from_boot(sb, rq ? queue_logical_block_size(rq) : 512,
+> +				  bd_inode->i_size);
+> +	if (err)
+> +		goto out;
+> +
+> +	spin_lock_init(&sbi->compress.lock);
+> +	if (sbi->cluster_size <= NTFS_LZNT_MAX_CLUSTER) {
+> +		sbi->compress.frame_unc =
+> +			ntfs_alloc(sbi->cluster_size << NTFS_LZNT_CUNIT, 0);
+> +		if (!sbi->compress.frame_unc) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +
+> +		sbi->compress.ctx = get_compression_ctx(true);
+> +		if (!sbi->compress.ctx) {
+> +			err = -ENOMEM;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Load $Volume. This should be done before $LogFile
+> +	 * 'cause 'sbi->volume.ni' is used 'ntfs_set_state'
+> +	 */
+> +	ref.low = cpu_to_le32(MFT_REC_VOL);
+> +	ref.seq = cpu_to_le16(MFT_REC_VOL);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_VOLUME);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $Volume.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	/* Load and save label (not necessary) */
+> +	attr = ni_find_attr(ni, NULL, NULL, ATTR_LABEL, NULL, 0, NULL, NULL);
+> +
+> +	if (!attr) {
+> +		;
+> +	} else if (!attr->non_res && !is_attr_ext(attr)) {
+> +		/* $AttrDef allows labels to be up to 128 symbols */
+> +		err = utf16s_to_utf8s(resident_data(attr),
+> +				      le32_to_cpu(attr->res.data_size) >> 1,
+> +				      UTF16_LITTLE_ENDIAN, sbi->volume.label,
+> +				      sizeof(sbi->volume.label));
+> +		if (err < 0)
+> +			sbi->volume.label[0] = 0;
+> +	} else {
+> +		/* should we break mounting here? */
+> +		//err = -EINVAL;
+> +		//goto out;
+> +	}
+> +
+> +	attr = ni_find_attr(ni, attr, NULL, ATTR_VOL_INFO, NULL, 0, NULL, NULL);
+> +	if (!attr || is_attr_ext(attr)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	info = resident_data_ex(attr, SIZEOF_ATTRIBUTE_VOLUME_INFO);
+> +	if (!info) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	sbi->volume.major_ver = info->major_ver;
+> +	sbi->volume.minor_ver = info->minor_ver;
+> +	sbi->volume.flags = info->flags;
+> +
+> +	sbi->volume.ni = ni;
+> +	inode = NULL;
+> +
+> +	/* Load $MFTMirr to estimate recs_mirr */
+> +	ref.low = cpu_to_le32(MFT_REC_MIRR);
+> +	ref.seq = cpu_to_le16(MFT_REC_MIRR);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_MIRROR);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $MFTMirr.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	sbi->mft.recs_mirr =
+> +		ntfs_up_cluster(sbi, inode->i_size) >> sbi->record_bits;
+> +
+> +	iput(inode);
+> +
+> +	/* Load $LogFile to replay */
+> +	ref.low = cpu_to_le32(MFT_REC_LOG);
+> +	ref.seq = cpu_to_le16(MFT_REC_LOG);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_LOGFILE);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $LogFile.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	err = ntfs_loadlog_and_replay(ni, sbi);
+> +	if (err)
+> +		goto out;
+> +
+> +	iput(inode);
+> +	inode = NULL;
+> +
+> +	is_ro = sb_rdonly(sbi->sb);
+> +
+> +	if (sbi->flags & NTFS_FLAGS_NEED_REPLAY) {
+> +		if (!is_ro) {
+> +			ntfs_warn(sb,
+> +				  "failed to replay log file. Can't mount rw!");
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +	} else if (sbi->volume.flags & VOLUME_FLAG_DIRTY) {
+> +		if (!is_ro && !sbi->options.force) {
+> +			ntfs_warn(
+> +				sb,
+> +				"volume is dirty and \"force\" flag is not set!");
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	/* Load $MFT */
+> +	ref.low = cpu_to_le32(MFT_REC_MFT);
+> +	ref.seq = cpu_to_le16(1);
+> +
+> +	inode = ntfs_iget5(sb, &ref, &NAME_MFT);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $MFT.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	sbi->mft.used = ni->i_valid >> sbi->record_bits;
+> +	tt = inode->i_size >> sbi->record_bits;
+> +	sbi->mft.next_free = MFT_REC_USER;
+> +
+> +	err = wnd_init(&sbi->mft.bitmap, sb, tt);
+> +	if (err)
+> +		goto out;
+> +
+> +	err = ni_load_all_mi(ni);
+> +	if (err)
+> +		goto out;
+> +
+> +	sbi->mft.ni = ni;
+> +
+> +	/* Load $BadClus */
+> +	ref.low = cpu_to_le32(MFT_REC_BADCLUST);
+> +	ref.seq = cpu_to_le16(MFT_REC_BADCLUST);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_BADCLUS);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $BadClus.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	for (i = 0; run_get_entry(&ni->file.run, i, &vcn, &lcn, &len); i++) {
+> +		if (lcn == SPARSE_LCN)
+> +			continue;
+> +
+> +		if (!sbi->bad_clusters)
+> +			ntfs_notice(sb, "Volume contains bad blocks");
+> +
+> +		sbi->bad_clusters += len;
+> +	}
+> +
+> +	iput(inode);
+> +
+> +	/* Load $Bitmap */
+> +	ref.low = cpu_to_le32(MFT_REC_BITMAP);
+> +	ref.seq = cpu_to_le16(MFT_REC_BITMAP);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_BITMAP);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $Bitmap.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +#ifndef NTFS3_64BIT_CLUSTER
+> +	if (inode->i_size >> 32) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +#endif
+> +
+> +	/* Check bitmap boundary */
+> +	tt = sbi->used.bitmap.nbits;
+> +	if (inode->i_size < bitmap_size(tt)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Not necessary */
+> +	sbi->used.bitmap.set_tail = true;
+> +	err = wnd_init(&sbi->used.bitmap, sbi->sb, tt);
+> +	if (err)
+> +		goto out;
+> +
+> +	iput(inode);
+> +
+> +	/* Compute the mft zone */
+> +	err = ntfs_refresh_zone(sbi);
+> +	if (err)
+> +		goto out;
+> +
+> +	/* Load $AttrDef */
+> +	ref.low = cpu_to_le32(MFT_REC_ATTR);
+> +	ref.seq = cpu_to_le16(MFT_REC_ATTR);
+> +	inode = ntfs_iget5(sbi->sb, &ref, &NAME_ATTRDEF);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $AttrDef -> %d", err);
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	if (inode->i_size < sizeof(struct ATTR_DEF_ENTRY)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +	bytes = inode->i_size;
+> +	sbi->def_table = t = ntfs_alloc(bytes, 0);
+> +	if (!t) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	for (done = idx = 0; done < bytes; done += PAGE_SIZE, idx++) {
+> +		unsigned long tail = bytes - done;
+> +		struct page *page = ntfs_map_page(inode->i_mapping, idx);
+> +
+> +		if (IS_ERR(page)) {
+> +			err = PTR_ERR(page);
+> +			goto out;
+> +		}
+> +		memcpy(Add2Ptr(t, done), page_address(page),
+> +		       min(PAGE_SIZE, tail));
+> +		ntfs_unmap_page(page);
+> +
+> +		if (!idx && ATTR_STD != t->type) {
+> +			err = -EINVAL;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	t += 1;
+> +	sbi->def_entries = 1;
+> +	done = sizeof(struct ATTR_DEF_ENTRY);
+> +	sbi->reparse.max_size = MAXIMUM_REPARSE_DATA_BUFFER_SIZE;
+> +
+> +	while (done + sizeof(struct ATTR_DEF_ENTRY) <= bytes) {
+> +		u32 t32 = le32_to_cpu(t->type);
+> +
+> +		if ((t32 & 0xF) || le32_to_cpu(t[-1].type) >= t32)
+> +			break;
+> +
+> +		if (t->type == ATTR_REPARSE)
+> +			sbi->reparse.max_size = le64_to_cpu(t->max_sz);
+> +
+> +		done += sizeof(struct ATTR_DEF_ENTRY);
+> +		t += 1;
+> +		sbi->def_entries += 1;
+> +	}
+> +	iput(inode);
+> +
+> +	/* Load $UpCase */
+> +	ref.low = cpu_to_le32(MFT_REC_UPCASE);
+> +	ref.seq = cpu_to_le16(MFT_REC_UPCASE);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_UPCASE);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load $LogFile.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	if (inode->i_size != 0x10000 * sizeof(short)) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	page_cache_readahead_unbounded(inode->i_mapping, NULL, 0,
+> +				       0x10000 * sizeof(short) / PAGE_SIZE, 0);
+> +
+> +	sbi->upcase = upcase = ntfs_alloc(0x10000 * sizeof(short), 0);
+> +	if (!upcase) {
+> +		err = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	for (idx = 0; idx < (0x10000 * sizeof(short) >> PAGE_SHIFT); idx++) {
+> +		const u16 *src;
+> +		u16 *dst = Add2Ptr(upcase, idx << PAGE_SHIFT);
+> +		struct page *page = ntfs_map_page(inode->i_mapping, idx);
+> +
+> +		if (IS_ERR(page)) {
+> +			err = PTR_ERR(page);
+> +			goto out;
+> +		}
+> +
+> +		src = page_address(page);
+> +
+> +#ifdef __BIG_ENDIAN
+> +		for (i = 0; i < PAGE_SIZE / sizeof(u16); i++)
+> +			*dst++ = le16_to_cpu(*src++);
+> +#else
+> +		memcpy(dst, src, PAGE_SIZE);
+> +#endif
+> +		ntfs_unmap_page(page);
+> +	}
+> +
+> +	shared = ntfs_set_shared(upcase, 0x10000 * sizeof(short));
+> +	if (shared && upcase != shared) {
+> +		sbi->upcase = shared;
+> +		ntfs_free(upcase);
+> +	}
+> +
+> +	iput(inode);
+> +	inode = NULL;
+> +
+> +	if (is_ntfs3(sbi)) {
+> +		/* Load $Secure */
+> +		err = ntfs_security_init(sbi);
+> +		if (err)
+> +			goto out;
+> +
+> +		/* Load $Extend */
+> +		err = ntfs_extend_init(sbi);
+> +		if (err)
+> +			goto load_root;
+> +
+> +		/* Load $Extend\$Reparse */
+> +		err = ntfs_reparse_init(sbi);
+> +		if (err)
+> +			goto load_root;
+> +
+> +		/* Load $Extend\$ObjId */
+> +		err = ntfs_objid_init(sbi);
+> +		if (err)
+> +			goto load_root;
+> +	}
+> +
+> +load_root:
+> +
+> +	/* Load root */
+> +	ref.low = cpu_to_le32(MFT_REC_ROOT);
+> +	ref.seq = cpu_to_le16(MFT_REC_ROOT);
+> +	inode = ntfs_iget5(sb, &ref, &NAME_ROOT);
+> +	if (IS_ERR(inode)) {
+> +		err = PTR_ERR(inode);
+> +		ntfs_err(sb, "Failed to load root.");
+> +		inode = NULL;
+> +		goto out;
+> +	}
+> +
+> +	ni = ntfs_i(inode);
+> +
+> +	sb->s_root = d_make_root(inode);
+> +
+> +	if (!sb->s_root) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	return 0;
+> +
+> +out:
+> +	iput(inode);
+> +
+> +	if (sb->s_root) {
+> +		d_drop(sb->s_root);
+> +		sb->s_root = NULL;
+> +	}
+> +
+> +	put_ntfs(sbi);
+> +
+> +	sb->s_fs_info = NULL;
+> +	return err;
+> +}
+> +
+> +void ntfs_unmap_meta(struct super_block *sb, CLST lcn, CLST len)
+> +{
+> +	struct ntfs_sb_info *sbi = sb->s_fs_info;
+> +	struct block_device *bdev = sb->s_bdev;
+> +	sector_t devblock = (u64)lcn * sbi->blocks_per_cluster;
+> +	unsigned long blocks = (u64)len * sbi->blocks_per_cluster;
+> +	unsigned long cnt = 0;
+> +	unsigned long limit = global_zone_page_state(NR_FREE_PAGES)
+> +			      << (PAGE_SHIFT - sb->s_blocksize_bits);
+> +
+> +	if (limit >= 0x2000)
+> +		limit -= 0x1000;
+> +	else if (limit < 32)
+> +		limit = 32;
+> +	else
+> +		limit >>= 1;
+> +
+> +	while (blocks--) {
+> +		clean_bdev_aliases(bdev, devblock++, 1);
+> +		if (cnt++ >= limit) {
+> +			sync_blockdev(bdev);
+> +			cnt = 0;
+> +		}
+> +	}
+> +}
+> +
+> +/*
+> + * ntfs_discard
+> + *
+> + * issue a discard request (trim for SSD)
+> + */
+> +int ntfs_discard(struct ntfs_sb_info *sbi, CLST lcn, CLST len)
+> +{
+> +	int err;
+> +	u64 lbo, bytes, start, end;
+> +	struct super_block *sb;
+> +
+> +	if (sbi->used.next_free_lcn == lcn + len)
+> +		sbi->used.next_free_lcn = lcn;
+> +
+> +	if (sbi->flags & NTFS_FLAGS_NODISCARD)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (!sbi->options.discard)
+> +		return -EOPNOTSUPP;
+> +
+> +	lbo = (u64)lcn << sbi->cluster_bits;
+> +	bytes = (u64)len << sbi->cluster_bits;
+> +
+> +	/* Align up 'start' on discard_granularity */
+> +	start = (lbo + sbi->discard_granularity - 1) &
+> +		sbi->discard_granularity_mask_inv;
+> +	/* Align down 'end' on discard_granularity */
+> +	end = (lbo + bytes) & sbi->discard_granularity_mask_inv;
+> +
+> +	sb = sbi->sb;
+> +	if (start >= end)
+> +		return 0;
+> +
+> +	err = blkdev_issue_discard(sb->s_bdev, start >> 9, (end - start) >> 9,
+> +				   GFP_NOFS, 0);
+> +
+> +	if (err == -EOPNOTSUPP)
+> +		sbi->flags |= NTFS_FLAGS_NODISCARD;
+> +
+> +	return err;
+> +}
+> +
+> +static struct dentry *ntfs_mount(struct file_system_type *fs_type, int flags,
+> +				 const char *dev_name, void *data)
+> +{
+> +	return mount_bdev(fs_type, flags, dev_name, data, ntfs_fill_super);
+> +}
+> +
+> +static struct file_system_type ntfs_fs_type = {
+> +	.owner = THIS_MODULE,
+> +	.name = "ntfs3",
+> +	.mount = ntfs_mount,
+> +	.kill_sb = kill_block_super,
+> +	.fs_flags = FS_REQUIRES_DEV,
+> +};
+> +
+> +static int __init init_ntfs_fs(void)
+> +{
+> +	int err;
+> +
+> +#ifdef NTFS3_INDEX_BINARY_SEARCH
+> +	pr_notice("ntfs3: +index binary search");
+> +#endif
+> +
+> +#ifdef NTFS3_CHECK_FREE_CLST
+> +	pr_notice("ntfs3: +check free clusters");
+> +#endif
+> +
+> +#if NTFS_LINK_MAX < 0xffff
+> +	pr_notice("ntfs3: max link count %u", NTFS_LINK_MAX);
+> +#endif
+> +
+> +#ifdef NTFS3_64BIT_CLUSTER
+> +	pr_notice("ntfs3: 64 bits per cluster");
+> +#else
+> +	pr_notice("ntfs3: 32 bits per cluster");
+> +#endif
+> +
+> +	ntfs_inode_cachep = kmem_cache_create(
+> +		"ntfs_inode_cache", sizeof(struct ntfs_inode), 0,
+> +		(SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT),
+> +		init_once);
+> +	if (!ntfs_inode_cachep) {
+> +		err = -ENOMEM;
+> +		goto failed;
+> +	}
+> +
+> +	err = register_filesystem(&ntfs_fs_type);
+> +	if (!err)
+> +		return 0;
+> +
+> +failed:
+> +	return err;
+> +}
+> +
+> +static void __exit exit_ntfs_fs(void)
+> +{
+> +	if (ntfs_inode_cachep) {
+> +		rcu_barrier();
+> +		kmem_cache_destroy(ntfs_inode_cachep);
+> +	}
+> +
+> +	unregister_filesystem(&ntfs_fs_type);
+> +}
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("ntfs3 filesystem");
+> +MODULE_AUTHOR("Konstantin Komarov");
+> +MODULE_ALIAS_FS("ntfs3");
+> +
+> +module_init(init_ntfs_fs) module_exit(exit_ntfs_fs)
 
 
