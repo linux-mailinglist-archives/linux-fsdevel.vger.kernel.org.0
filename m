@@ -2,150 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BBDD26EAB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 03:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A108A26EB73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:06:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbgIRBxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 21:53:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51928 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbgIRBxy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 21:53:54 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111BFC06174A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 18:53:54 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id o8so5896865ejb.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 18:53:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GC2uboF6NMZuC9/ZByaXp1KFBIoZjwLF73X8h59tMWs=;
-        b=0n1kgcoBcO/MRG9AAQs28nlby+4uxxdWNINGwW2Okw2teha+5tUcRRM1S51DHvxjbe
-         R8Cq+ItKHDbs5yC2r01vwPHgrzycwMkOBbRrsESuJbMdrF8xDKW+v6w7S1lQVw6CX4P9
-         M9/7dgueosqWOddYA7f6ndQv2GVxNDfUmiVHE9QYX1uxi2bJty6xyL5m9lsyI5Tr0Ip5
-         vxRKjnhcKMG6MwVZlo/19T+6Z8bhvWhZgkjv7bAiYeodgKLsWm9r4VxuokZiIFVcibHq
-         AM6HBNJxSr8ACewbKnPZO1qmqRKpaxVJT1GKpdKqb7WgNxAmeZKt4bXcW8QyoirezqiZ
-         fWug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GC2uboF6NMZuC9/ZByaXp1KFBIoZjwLF73X8h59tMWs=;
-        b=PP1Q/8VaGHixwVbz0PaJ2fiqGNq3WM/QXkByhrh2DN3f8zd6XW6JLcXAhnMgt8A+HD
-         MaOCBdDM8Zt0fT561UI7mRK0vO7q1GNxND8AhxI6RVdSG1hp5hmcKFeA/VSmjC6VI75d
-         NI2BsCHVz6yEstAht5TRI6cRZsoYbJcIuMjeuIIip1miwu/2mooDTFz3OAzDxpicVhtT
-         Dtxjk85ZVl20d/7xPeuaaBH/PW1AXZ8JyqC+yb0s2H5Q2wNOPPfvyR+YftmAoeJRI8FZ
-         mRAw/pvzcEawlZa4M463HnvnMz/3LashqWkWrhS8rTQ++cg44us1litSL6LDy5ZseGaB
-         Y7Aw==
-X-Gm-Message-State: AOAM531UDJa+5I7DPsANttQkcRobaVdA1JsZF0/Ex/ZMubPoJhMyg72h
-        WbAm3V8MSLCD7LQU7RFDk1tCzDiiN5K8/lrfVPYcfA==
-X-Google-Smtp-Source: ABdhPJy7DFdMdaS97xMoxRqS6WmXgsRrt5dbwajDW1OzguEa9uaz85Fv52jSvKPNcbb4yTlLVhfIEfhmycxKE179n6U=
-X-Received: by 2002:a17:906:8143:: with SMTP id z3mr33115785ejw.323.1600394032604;
- Thu, 17 Sep 2020 18:53:52 -0700 (PDT)
+        id S1727487AbgIRCFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 22:05:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbgIRCFP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:05:15 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61A35235FD;
+        Fri, 18 Sep 2020 02:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600394714;
+        bh=aC34lfr0Fi9mkJJwoCdKx6IE4zyPCFiUN3gsaeBnzdw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wBibIB31UtISGyxMoxCRIXhPwrWQTHAYAluGG4ieWHApUnyv1SyQd8aBkdVgUK++i
+         DNH2+ZAq8SUXLmB8iAo6x+4l2TG/J01Slhy5/reCNtHdONWoEd4U6xUlNBVtRRLTX/
+         IzBLQCpLifW5EbjSjeaf9dRmYSd2F1Hx3AEn464g=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 198/330] exec: Add exec_update_mutex to replace cred_guard_mutex
+Date:   Thu, 17 Sep 2020 21:58:58 -0400
+Message-Id: <20200918020110.2063155-198-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
+References: <20200918020110.2063155-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com>
- <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
- <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com>
- <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
- <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com>
- <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com> <alpine.LRH.2.02.2009161451140.21915@file01.intranet.prod.int.rdu2.redhat.com>
-In-Reply-To: <alpine.LRH.2.02.2009161451140.21915@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 17 Sep 2020 18:53:41 -0700
-Message-ID: <CAPcyv4gFz6vBVVp_aiX4i2rL+8fps3gTQGj5cYw8QESCf7=DfQ@mail.gmail.com>
-Subject: Re: [PATCH] pmem: fix __copy_user_flushcache
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 11:57 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
->
->
->
-> On Wed, 16 Sep 2020, Dan Williams wrote:
->
-> > On Wed, Sep 16, 2020 at 10:24 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> > >
-> > >
-> > >
-> > > On Wed, 16 Sep 2020, Dan Williams wrote:
-> > >
-> > > > On Wed, Sep 16, 2020 at 3:57 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > I'm submitting this patch that adds the required exports (so that we could
-> > > > > use __copy_from_user_flushcache on x86, arm64 and powerpc). Please, queue
-> > > > > it for the next merge window.
-> > > >
-> > > > Why? This should go with the first user, and it's not clear that it
-> > > > needs to be relative to the current dax_operations export scheme.
-> > >
-> > > Before nvfs gets included in the kernel, I need to distribute it as a
-> > > module. So, it would make my maintenance easier. But if you don't want to
-> > > export it now, no problem, I can just copy __copy_user_flushcache from the
-> > > kernel to the module.
-> >
-> > That sounds a better plan than exporting symbols with no in-kernel consumer.
->
-> BTW, this function is buggy. Here I'm submitting the patch.
->
->
->
-> From: Mikulas Patocka <mpatocka@redhat.com>
->
-> If we copy less than 8 bytes and if the destination crosses a cache line,
-> __copy_user_flushcache would invalidate only the first cache line. This
-> patch makes it invalidate the second cache line as well.
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Good catch.
+[ Upstream commit eea9673250db4e854e9998ef9da6d4584857f0ea ]
 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Cc: stable@vger.kernel.org
->
-> ---
->  arch/x86/lib/usercopy_64.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Index: linux-2.6/arch/x86/lib/usercopy_64.c
-> ===================================================================
-> --- linux-2.6.orig/arch/x86/lib/usercopy_64.c   2020-09-05 10:01:27.000000000 +0200
-> +++ linux-2.6/arch/x86/lib/usercopy_64.c        2020-09-16 20:48:31.000000000 +0200
-> @@ -120,7 +120,7 @@ long __copy_user_flushcache(void *dst, c
->          */
->         if (size < 8) {
->                 if (!IS_ALIGNED(dest, 4) || size != 4)
-> -                       clean_cache_range(dst, 1);
-> +                       clean_cache_range(dst, size);
->         } else {
->                 if (!IS_ALIGNED(dest, 8)) {
->                         dest = ALIGN(dest, boot_cpu_data.x86_clflush_size);
->
+The cred_guard_mutex is problematic as it is held over possibly
+indefinite waits for userspace.  The possible indefinite waits for
+userspace that I have identified are: The cred_guard_mutex is held in
+PTRACE_EVENT_EXIT waiting for the tracer.  The cred_guard_mutex is
+held over "put_user(0, tsk->clear_child_tid)" in exit_mm().  The
+cred_guard_mutex is held over "get_user(futex_offset, ...")  in
+exit_robust_list.  The cred_guard_mutex held over copy_strings.
 
-You can add:
+The functions get_user and put_user can trigger a page fault which can
+potentially wait indefinitely in the case of userfaultfd or if
+userspace implements part of the page fault path.
 
-Fixes: 0aed55af8834 ("x86, uaccess: introduce
-copy_from_iter_flushcache for pmem / cache-bypass operations")
-Reviewed-by: Dan Williams <dan.j.wiilliams@intel.com>
+In any of those cases the userspace process that the kernel is waiting
+for might make a different system call that winds up taking the
+cred_guard_mutex and result in deadlock.
+
+Holding a mutex over any of those possibly indefinite waits for
+userspace does not appear necessary.  Add exec_update_mutex that will
+just cover updating the process during exec where the permissions and
+the objects pointed to by the task struct may be out of sync.
+
+The plan is to switch the users of cred_guard_mutex to
+exec_update_mutex one by one.  This lets us move forward while still
+being careful and not introducing any regressions.
+
+Link: https://lore.kernel.org/lkml/20160921152946.GA24210@dhcp22.suse.cz/
+Link: https://lore.kernel.org/lkml/AM6PR03MB5170B06F3A2B75EFB98D071AE4E60@AM6PR03MB5170.eurprd03.prod.outlook.com/
+Link: https://lore.kernel.org/linux-fsdevel/20161102181806.GB1112@redhat.com/
+Link: https://lore.kernel.org/lkml/20160923095031.GA14923@redhat.com/
+Link: https://lore.kernel.org/lkml/20170213141452.GA30203@redhat.com/
+Ref: 45c1a159b85b ("Add PTRACE_O_TRACEVFORKDONE and PTRACE_O_TRACEEXIT facilities.")
+Ref: 456f17cd1a28 ("[PATCH] user-vm-unlock-2.5.31-A2")
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/exec.c                    | 22 +++++++++++++++++++---
+ include/linux/binfmts.h      |  8 +++++++-
+ include/linux/sched/signal.h |  9 ++++++++-
+ init/init_task.c             |  1 +
+ kernel/fork.c                |  1 +
+ 5 files changed, 36 insertions(+), 5 deletions(-)
+
+diff --git a/fs/exec.c b/fs/exec.c
+index d62cd1d71098f..de833553ae27d 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1007,16 +1007,26 @@ ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
+ }
+ EXPORT_SYMBOL(read_code);
+ 
++/*
++ * Maps the mm_struct mm into the current task struct.
++ * On success, this function returns with the mutex
++ * exec_update_mutex locked.
++ */
+ static int exec_mmap(struct mm_struct *mm)
+ {
+ 	struct task_struct *tsk;
+ 	struct mm_struct *old_mm, *active_mm;
++	int ret;
+ 
+ 	/* Notify parent that we're no longer interested in the old VM */
+ 	tsk = current;
+ 	old_mm = current->mm;
+ 	exec_mm_release(tsk, old_mm);
+ 
++	ret = mutex_lock_killable(&tsk->signal->exec_update_mutex);
++	if (ret)
++		return ret;
++
+ 	if (old_mm) {
+ 		sync_mm_rss(old_mm);
+ 		/*
+@@ -1028,9 +1038,11 @@ static int exec_mmap(struct mm_struct *mm)
+ 		down_read(&old_mm->mmap_sem);
+ 		if (unlikely(old_mm->core_state)) {
+ 			up_read(&old_mm->mmap_sem);
++			mutex_unlock(&tsk->signal->exec_update_mutex);
+ 			return -EINTR;
+ 		}
+ 	}
++
+ 	task_lock(tsk);
+ 	active_mm = tsk->active_mm;
+ 	membarrier_exec_mmap(mm);
+@@ -1285,11 +1297,12 @@ int flush_old_exec(struct linux_binprm * bprm)
+ 		goto out;
+ 
+ 	/*
+-	 * After clearing bprm->mm (to mark that current is using the
+-	 * prepared mm now), we have nothing left of the original
++	 * After setting bprm->called_exec_mmap (to mark that current is
++	 * using the prepared mm now), we have nothing left of the original
+ 	 * process. If anything from here on returns an error, the check
+ 	 * in search_binary_handler() will SEGV current.
+ 	 */
++	bprm->called_exec_mmap = 1;
+ 	bprm->mm = NULL;
+ 
+ 	set_fs(USER_DS);
+@@ -1423,6 +1436,8 @@ static void free_bprm(struct linux_binprm *bprm)
+ {
+ 	free_arg_pages(bprm);
+ 	if (bprm->cred) {
++		if (bprm->called_exec_mmap)
++			mutex_unlock(&current->signal->exec_update_mutex);
+ 		mutex_unlock(&current->signal->cred_guard_mutex);
+ 		abort_creds(bprm->cred);
+ 	}
+@@ -1472,6 +1487,7 @@ void install_exec_creds(struct linux_binprm *bprm)
+ 	 * credentials; any time after this it may be unlocked.
+ 	 */
+ 	security_bprm_committed_creds(bprm);
++	mutex_unlock(&current->signal->exec_update_mutex);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ }
+ EXPORT_SYMBOL(install_exec_creds);
+@@ -1663,7 +1679,7 @@ int search_binary_handler(struct linux_binprm *bprm)
+ 
+ 		read_lock(&binfmt_lock);
+ 		put_binfmt(fmt);
+-		if (retval < 0 && !bprm->mm) {
++		if (retval < 0 && bprm->called_exec_mmap) {
+ 			/* we got to flush_old_exec() and failed after it */
+ 			read_unlock(&binfmt_lock);
+ 			force_sigsegv(SIGSEGV);
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index b40fc633f3be6..a345d9fed3d8d 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -44,7 +44,13 @@ struct linux_binprm {
+ 		 * exec has happened. Used to sanitize execution environment
+ 		 * and to set AT_SECURE auxv for glibc.
+ 		 */
+-		secureexec:1;
++		secureexec:1,
++		/*
++		 * Set by flush_old_exec, when exec_mmap has been called.
++		 * This is past the point of no return, when the
++		 * exec_update_mutex has been taken.
++		 */
++		called_exec_mmap:1;
+ #ifdef __alpha__
+ 	unsigned int taso:1;
+ #endif
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 88050259c466e..a29df79540ce6 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -224,7 +224,14 @@ struct signal_struct {
+ 
+ 	struct mutex cred_guard_mutex;	/* guard against foreign influences on
+ 					 * credential calculations
+-					 * (notably. ptrace) */
++					 * (notably. ptrace)
++					 * Deprecated do not use in new code.
++					 * Use exec_update_mutex instead.
++					 */
++	struct mutex exec_update_mutex;	/* Held while task_struct is being
++					 * updated during exec, and may have
++					 * inconsistent permissions.
++					 */
+ } __randomize_layout;
+ 
+ /*
+diff --git a/init/init_task.c b/init/init_task.c
+index 9e5cbe5eab7b1..bd403ed3e4184 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -26,6 +26,7 @@ static struct signal_struct init_signals = {
+ 	.multiprocess	= HLIST_HEAD_INIT,
+ 	.rlim		= INIT_RLIMITS,
+ 	.cred_guard_mutex = __MUTEX_INITIALIZER(init_signals.cred_guard_mutex),
++	.exec_update_mutex = __MUTEX_INITIALIZER(init_signals.exec_update_mutex),
+ #ifdef CONFIG_POSIX_TIMERS
+ 	.posix_timers = LIST_HEAD_INIT(init_signals.posix_timers),
+ 	.cputimer	= {
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 9180f4416dbab..cfdc57658ad88 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1586,6 +1586,7 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
+ 	sig->oom_score_adj_min = current->signal->oom_score_adj_min;
+ 
+ 	mutex_init(&sig->cred_guard_mutex);
++	mutex_init(&sig->exec_update_mutex);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
+
