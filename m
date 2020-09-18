@@ -2,79 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF91926FC80
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 14:31:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6DBE26FCBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 14:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbgIRMam (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 08:30:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbgIRMam (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 08:30:42 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40856C06174A;
-        Fri, 18 Sep 2020 05:30:42 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 58A7FC01D; Fri, 18 Sep 2020 14:30:40 +0200 (CEST)
-Date:   Fri, 18 Sep 2020 14:30:25 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>, ecryptfs@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-mtd@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-Subject: Re: [V9fs-developer] [PATCH 02/13] 9p: Tell the VFS that readpage
- was synchronous
-Message-ID: <20200918123025.GA735@nautica>
+        id S1726174AbgIRMlm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 08:41:42 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13261 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726121AbgIRMll (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Sep 2020 08:41:41 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AA5805EAE49D8C5F1B8D;
+        Fri, 18 Sep 2020 20:41:38 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Fri, 18 Sep 2020
+ 20:41:34 +0800
+From:   Wang Hai <wanghai38@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] fs/nsfs.c: Fix 'ns_common' kernel-doc warning in nsfs.c
+Date:   Fri, 18 Sep 2020 20:38:42 +0800
+Message-ID: <20200918123842.73010-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200918111916.GA32101@casper.infradead.org>
- <20200917151050.5363-3-willy@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.113.133]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox (Oracle) wrote on Thu, Sep 17, 2020:
-> The 9p readpage implementation was already synchronous, so use
-> AOP_UPDATED_PAGE to avoid cycling the page lock.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Fixes the following W=1 kernel build warning(s):
 
-Acked-by: Dominique Martinet <asmadeus@codewreck.org>
+fs/nsfs.c:264: warning: Excess function parameter 'ns_common' description in 'ns_match'
 
-(I assume it'll be merged together with the rest)
+Rename ns_common to ns.
 
-> > What I'm curious about is the page used to be both unlocked and put, but
-> > now isn't either and the return value hasn't changed for the caller to
-> > make a difference on write_begin / I don't see any code change in the
-> > vfs  to handle that.
-> > What did I miss?
-> 
-> The page cache is kind of subtle.  The grab_cache_page_write_begin()
-> will return a Locked page with an increased refcount.  If it's Uptodate,
-> that's exactly what we want, and we return it.  If we have to read the
-> page, readpage used to unlock the page before returning, and rather than
-> re-lock it, we would drop the reference to the page and look it up again.
-> It's possible that after dropping the lock on that page that the page
-> was replaced in the page cache and so we'd get a different page.
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ fs/nsfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for the explanation, I didn't realize the page already is
-gotten/locked at the PageUptodate goto out.
-
-> Anyway, now (unless fscache is involved), v9fs_fid_readpage will return
-> the page without unlocking it.  So we don't need to do the dance of
-> dropping the lock, putting the refcount and looking the page back up
-> again.  We can just return the page.  The VFS doesn't need a special
-> return code because nothing has changed from the VFS's point of view --
-> it asked you to get a page and you got the page.
-
-Yes, looks good to me.
-
-Cheers,
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 800c1d0eb0d0..fffc5206a23a 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -254,7 +254,7 @@ struct file *proc_ns_fget(int fd)
+ 
+ /**
+  * ns_match() - Returns true if current namespace matches dev/ino provided.
+- * @ns_common: current ns
++ * @ns: current ns
+  * @dev: dev_t from nsfs that will be matched against current nsfs
+  * @ino: ino_t from nsfs that will be matched against current nsfs
+  *
 -- 
-Dominique
+2.17.1
+
