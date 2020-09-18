@@ -2,86 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D392327026B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 18:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAA232702A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 18:54:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbgIRQnM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 12:43:12 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:48158 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725955AbgIRQnL (ORCPT
+        id S1726314AbgIRQyj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 12:54:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50134 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbgIRQyi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 12:43:11 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 2751C1EBC;
-        Fri, 18 Sep 2020 19:43:09 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1600447389;
-        bh=zq4p8PFtXbU0e2VdNB8JbzfwLEWp0E+KlnB2hEMOgds=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=JCVAVrO+kllqXzhjYJ/x1g8f5wA8TKZzGCCB0SJ7UEm7bt7kDF1jg1AVi80aojMlK
-         /eMw2ZdvMWoq9Tf8G5YwjI94woGfxV+zCQh6IfadixHpQjS7LXqH0zUE+YQO2SZUge
-         MZHJt3N9WbzBEYUoA+ZZ+bZ/GQweXkDkjGLWMS+s=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 18 Sep 2020 19:43:08 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Fri, 18 Sep 2020 19:43:08 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     Mark Harmstone <mark@harmstone.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        Fri, 18 Sep 2020 12:54:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4959C0613CE;
+        Fri, 18 Sep 2020 09:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=U2yqhATh469FbDly7syN3rKKW+iwO250g/2CjxLDmtI=; b=ROme0mFVxDZSgrRNFEFIxL6/8A
+        ArTRK20g+7K9Q9tXa/G//66RDG5jyFigLCIC0vnwXnR2CCwrmkNsxe26BmRESCL6ws/6ikSZSk65+
+        zHvCeNSY73SiJoz1Co26kx/fJc/htbLneezbnG/fmEJj7xhQqkirjT0RkCvNTi/c6qAYE7+ZHulq+
+        DRqOCjQB5V8+AywJpvea7dUu2QnbfavNyNn6d3CYko2wqZMYEJ+KEnZrL5z92t2bdLoXm7Q1KM40e
+        M2Egh54rCd8iTHrbkEayA8TkVBrUIk2ilqg1wbhhqOtEsmM1u991O82Rqk8ZFDaQN6UpshtdIRwMP
+        GSyXr9BA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJJec-00083C-PC; Fri, 18 Sep 2020 16:54:34 +0000
+Date:   Fri, 18 Sep 2020 17:54:34 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     Joe Perches <joe@perches.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "pali@kernel.org" <pali@kernel.org>,
         "dsterba@suse.cz" <dsterba@suse.cz>,
         "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
         "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "joe@perches.com" <joe@perches.com>,
+        "mark@harmstone.com" <mark@harmstone.com>,
         "nborisov@suse.com" <nborisov@suse.com>
-Subject: RE: [PATCH v5 02/10] fs/ntfs3: Add initialization of super block
-Thread-Topic: [PATCH v5 02/10] fs/ntfs3: Add initialization of super block
-Thread-Index: AQHWiEVL7N48ZH2GnEynjuLUaLiYualjdFUAgAsvsbA=
-Date:   Fri, 18 Sep 2020 16:43:08 +0000
-Message-ID: <57419fb6b3764ed3bc7b0c3d284e9407@paragon-software.com>
+Subject: Re: [PATCH v5 03/10] fs/ntfs3: Add bitmap
+Message-ID: <20200918165434.GG32101@casper.infradead.org>
 References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
- <20200911141018.2457639-3-almaz.alexandrovich@paragon-software.com>
- <2011cd8c-7dc4-b2e7-114b-d5647336ec92@harmstone.com>
-In-Reply-To: <2011cd8c-7dc4-b2e7-114b-d5647336ec92@harmstone.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <20200911141018.2457639-4-almaz.alexandrovich@paragon-software.com>
+ <d1dc86f2792d3e64d1281fc2b5fddaca5fa17b5a.camel@perches.com>
+ <20200914023845.GJ6583@casper.infradead.org>
+ <1cb55e79c5a54feb82cf4850486890df@paragon-software.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cb55e79c5a54feb82cf4850486890df@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTWFyayBIYXJtc3RvbmUgPG1hcmsuaGFybXN0b25lQGdtYWlsLmNvbT4gT24gQmVoYWxm
-IE9mIE1hcmsgSGFybXN0b25lDQpTZW50OiBGcmlkYXksIFNlcHRlbWJlciAxMSwgMjAyMCA3OjUw
-IFBNDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjUgMDIvMTBdIGZzL250ZnMzOiBBZGQgaW5pdGlh
-bGl6YXRpb24gb2Ygc3VwZXIgYmxvY2sNCj4gDQo+IEFsc28sIEkgdGhpbmsgaXQgd291bGQgYmUg
-YSBnb29kIGlkZWEgaWYgeW91ICphcmUqIGdvaW5nIHRvIGhhdmUgc3RhdGljIFNEcywgdG8NCj4g
-YWxsb2NhdGUgdGhlbSBkeW5hbWljYWxseSByYXRoZXIgdGhhbiB1c2luZyBhIGJsb2IuIFRoZSBi
-bG9icycgY29udGVudHMgZG9uJ3QNCj4gbWF0Y2ggeW91ciBjb21tZW50cywNCg0KSGkgTWFyayEg
-Rml4ZWQgdGhlIGNvbW1lbnQgdGhpbmcuIENoZWNrIG91dCB0aGUgVjYuDQpWNiBhbHNvIGludHJv
-ZHVjZXMgdGhlIHN5c3RlbS5udGZzX3NlY3VyaXR5IHhhdHRyLg0KDQo+YW5kIGl0J2QgaGF2ZSBi
-ZWVuIHBpY2tlZCB1cCBpZiB5b3UnZCBkb25lIHRoYXQhDQo+IA0KPiBzX2Rpcl9zZWN1cml0eSB0
-cmFuc2xhdGVzIHRvOg0KPiBvd25lciBTLTEtNS0zMi01NDQgKEFkbWluaXN0cmF0b3JzKQ0KPiBn
-cm91cCBTLTEtNS0zMi01NDQgKEFkbWluaXN0cmF0b3JzKQ0KPiBBQ0U6IGFsbG93IFMtMS0xLTAg
-KEV2ZXJ5b25lKSB3aXRoIEZJTEVfQUxMX0FDQ0VTUw0KPiANCj4gc19maWxlX3NlY3VyaXR5IHRy
-YW5zbGF0ZXMgdG86DQo+IG93bmVyIFMtMS0xLTAgKEV2ZXJ5b25lKQ0KPiBncm91cCBTLTEtNS0y
-MS0xOTg3OTMyMTg3LTQxNTU1NDA2MzctMzk0NDQ5Nzc4NS01MTMgKHlvdXIgcGVyc29uYWwgU0lE
-PyEpDQo+IEFDRTogYWxsb3cgUy0xLTEtMCAoRXZlcnlvbmUpIHdpdGggRklMRV9BTExfQUNDRVNT
-DQo+IA0KPiANCj4gT24gMTEvOS8yMCAzOjEwIHBtLCBLb25zdGFudGluIEtvbWFyb3Ygd3JvdGU6
-DQo+ID4gVGhpcyBhZGRzIGluaXRpYWxpemF0aW9uIG9mIHN1cGVyIGJsb2NrDQo+ID4NCltdDQo+
-ID4gK30NCj4gPiArDQo+ID4gK01PRFVMRV9MSUNFTlNFKCJHUEwiKTsNCj4gPiArTU9EVUxFX0RF
-U0NSSVBUSU9OKCJudGZzMyBmaWxlc3lzdGVtIik7DQo+ID4gK01PRFVMRV9BVVRIT1IoIktvbnN0
-YW50aW4gS29tYXJvdiIpOw0KPiA+ICtNT0RVTEVfQUxJQVNfRlMoIm50ZnMzIik7DQo+ID4gKw0K
-PiA+ICttb2R1bGVfaW5pdChpbml0X250ZnNfZnMpIG1vZHVsZV9leGl0KGV4aXRfbnRmc19mcykN
-Cj4gDQoNClRoYW5rcw0K
+On Fri, Sep 18, 2020 at 04:35:11PM +0000, Konstantin Komarov wrote:
+> > That was only just renamed.  More concerningly, the documentation is
+> > quite unambiguous:
+> > 
+> >  * This function is for filesystems to call when they want to start
+> >  * readahead beyond a file's stated i_size.  This is almost certainly
+> >  * not the function you want to call.  Use page_cache_async_readahead()
+> >  * or page_cache_sync_readahead() instead.
+> 
+> Hi Matthew! it's not so clear for us by several reasons (please correct
+> if this is wrong):
+> page_cache_sync_readahead() seems applicable as a replacement, but
+> it doesn't seem to be reasonable as readahead in this case gives perf
+> improvement because of it's async nature. The 'async' function is incompatible
+> replacement based on the arguments list.
+
+I think the naming has confused you (so I need to clarify the docs).
+The sync function is to be called when you need the page which is being
+read, and you might want to take the opportunity to read more pages.
+The async version is to be called when the page you need is in cache,
+but you've noticed that you're getting towards the end of the readahead
+window.  Neither version waits for I/O to complete; you have to wait for
+the page to become unlocked and then you can check PageUptodate.
+
+Looking at what you're doing, you don't have a file_ra_state because
+you're just trying to readahead fs metadata, right?  I think you want
+to call force_page_cache_readahead(mapping, NULL, start, nr_pages);
+The prototype for it is in mm/internal.h, but I think moving it to
+include/linux/pagemap.h is justifiable.
