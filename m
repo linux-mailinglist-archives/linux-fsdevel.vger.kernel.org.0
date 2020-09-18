@@ -2,165 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0B426EF04
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D1F26EF25
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 04:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbgIRCcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 22:32:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbgIRCOG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:14:06 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A47E2395C;
-        Fri, 18 Sep 2020 02:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600395245;
-        bh=HaEK1ZZTGTBuHSHIFKqcYdSkijCp6uuTml9ia6HnfMs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LR2jFMeOjbx3ioK+z9gLsxwYMGS+DrZdrF+Bs7OXp4KjSCj+GUi6RML4Bur8wyPkQ
-         wEW1SsMqx6+uZIqn1yggPMlTcE7VaS63oyPtck2gOBmf43Vl03owpJT3xlFfrDX04k
-         BLklMQzRaZlIjaSBGvYoljV3aXXLmkRqi0wGGJD8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 088/127] bdev: Reduce time holding bd_mutex in sync in blkdev_close()
-Date:   Thu, 17 Sep 2020 22:11:41 -0400
-Message-Id: <20200918021220.2066485-88-sashal@kernel.org>
+        id S1729131AbgIRCdg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 22:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbgIRCde (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 22:33:34 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36860C06174A;
+        Thu, 17 Sep 2020 19:33:34 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id k14so2540931pgi.9;
+        Thu, 17 Sep 2020 19:33:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SAjLi3yUqHgXThWcwyho1+FN4wJQjNNxkWi1m1khT3o=;
+        b=Kw4W+7IlKeNZM2TbJMi9lO/DJParnQeRhblrtS0q/hOjO5/j71ENbOLdNRPlaiQ2r7
+         aZyYgiPNAuxbpLBERU9xxTe4gy8htq/XFvWd5yj+a1kS6InpqiKyirWIeYIZhXxWiclU
+         3I6mw04Ip+7oaof0MjqanIeB4CdN/aHvUUi3XqVxgsnk61SXya/xTzJASDKX1ecCfP8N
+         p7HGq94yjcrQfEg/grCe3LrnvGvumG9q9kawAirPcgp+icIvP7VY13MeMzuVJ5WoQaf1
+         A9c/Kdj4jdKObxgbQML+WfBiNROxncgfTjVqfRjxp8GNDvPoUYVhUUNSQcHJ6ydopk4R
+         Jw3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SAjLi3yUqHgXThWcwyho1+FN4wJQjNNxkWi1m1khT3o=;
+        b=lR+mGPBOe8lRS0n9pCJUK/03zMqE9EVgxQQvK/+F3ttVu3scHG1ivjq5AAtZK7c0sV
+         zAIy5hStYpGCdqSYDp9oCad6qLk5+BLSqAcEK83pbMFJDLSvD5Mv7HeFSCc0aQQG1Opd
+         SNMCFxPBdDgdwwsdhuaZLitZ0F68gKflOsx07rw2W3TTyvSWkj23fF9gpoZS5ohrBHxD
+         M9fxPAwA/gQnAfA2yPlw5o+3zx4lobZ76VVONqhcf3F5Ch/AF05n4B/CpgjAodTewpca
+         w0rp8t9XtNwQXGPZ5aJP0ptaQT96xFiPqXG6shwgw7/NmBfuFC1BIPnVf+mem8HOY/vq
+         Fc/A==
+X-Gm-Message-State: AOAM532kcf8fRA7h0v+JR21ZJTifOILLdocWnpbn2+AcU0P89EvK2ePe
+        eZBAM/p19rSpJI9XM0WFTBM=
+X-Google-Smtp-Source: ABdhPJwUw4SJOlSmnwccvoDAnD7+vGYn/P4Uh6UP+RoWeK+g+zO0ISI9NEhaEDkG84C++IuyOfb/rg==
+X-Received: by 2002:a62:8c88:0:b029:13e:d13d:a08b with SMTP id m130-20020a628c880000b029013ed13da08bmr29878986pfd.34.1600396413693;
+        Thu, 17 Sep 2020 19:33:33 -0700 (PDT)
+Received: from dc803.localdomain (FL1-111-169-191-163.hyg.mesh.ad.jp. [111.169.191.163])
+        by smtp.gmail.com with ESMTPSA id p11sm945198pjz.44.2020.09.17.19.33.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Sep 2020 19:33:33 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] exfat: add exfat_update_inode()
+Date:   Fri, 18 Sep 2020 11:33:27 +0900
+Message-Id: <20200918023328.17528-1-kohada.t2@gmail.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918021220.2066485-1-sashal@kernel.org>
-References: <20200918021220.2066485-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+Integrate exfat_sync_inode() and mark_inode_dirty() as exfat_update_inode()
+Also, return the result of _exfat_write_inode () when sync is specified.
 
-[ Upstream commit b849dd84b6ccfe32622988b79b7b073861fcf9f7 ]
-
-While trying to "dd" to the block device for a USB stick, I
-encountered a hung task warning (blocked for > 120 seconds).  I
-managed to come up with an easy way to reproduce this on my system
-(where /dev/sdb is the block device for my USB stick) with:
-
-  while true; do dd if=/dev/zero of=/dev/sdb bs=4M; done
-
-With my reproduction here are the relevant bits from the hung task
-detector:
-
- INFO: task udevd:294 blocked for more than 122 seconds.
- ...
- udevd           D    0   294      1 0x00400008
- Call trace:
-  ...
-  mutex_lock_nested+0x40/0x50
-  __blkdev_get+0x7c/0x3d4
-  blkdev_get+0x118/0x138
-  blkdev_open+0x94/0xa8
-  do_dentry_open+0x268/0x3a0
-  vfs_open+0x34/0x40
-  path_openat+0x39c/0xdf4
-  do_filp_open+0x90/0x10c
-  do_sys_open+0x150/0x3c8
-  ...
-
- ...
- Showing all locks held in the system:
- ...
- 1 lock held by dd/2798:
-  #0: ffffff814ac1a3b8 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x50/0x204
- ...
- dd              D    0  2798   2764 0x00400208
- Call trace:
-  ...
-  schedule+0x8c/0xbc
-  io_schedule+0x1c/0x40
-  wait_on_page_bit_common+0x238/0x338
-  __lock_page+0x5c/0x68
-  write_cache_pages+0x194/0x500
-  generic_writepages+0x64/0xa4
-  blkdev_writepages+0x24/0x30
-  do_writepages+0x48/0xa8
-  __filemap_fdatawrite_range+0xac/0xd8
-  filemap_write_and_wait+0x30/0x84
-  __blkdev_put+0x88/0x204
-  blkdev_put+0xc4/0xe4
-  blkdev_close+0x28/0x38
-  __fput+0xe0/0x238
-  ____fput+0x1c/0x28
-  task_work_run+0xb0/0xe4
-  do_notify_resume+0xfc0/0x14bc
-  work_pending+0x8/0x14
-
-The problem appears related to the fact that my USB disk is terribly
-slow and that I have a lot of RAM in my system to cache things.
-Specifically my writes seem to be happening at ~15 MB/s and I've got
-~4 GB of RAM in my system that can be used for buffering.  To write 4
-GB of buffer to disk thus takes ~4000 MB / ~15 MB/s = ~267 seconds.
-
-The 267 second number is a problem because in __blkdev_put() we call
-sync_blockdev() while holding the bd_mutex.  Any other callers who
-want the bd_mutex will be blocked for the whole time.
-
-The problem is made worse because I believe blkdev_put() specifically
-tells other tasks (namely udev) to go try to access the device at right
-around the same time we're going to hold the mutex for a long time.
-
-Putting some traces around this (after disabling the hung task detector),
-I could confirm:
- dd:    437.608600: __blkdev_put() right before sync_blockdev() for sdb
- udevd: 437.623901: blkdev_open() right before blkdev_get() for sdb
- dd:    661.468451: __blkdev_put() right after sync_blockdev() for sdb
- udevd: 663.820426: blkdev_open() right after blkdev_get() for sdb
-
-A simple fix for this is to realize that sync_blockdev() works fine if
-you're not holding the mutex.  Also, it's not the end of the world if
-you sync a little early (though it can have performance impacts).
-Thus we can make a guess that we're going to need to do the sync and
-then do it without holding the mutex.  We still do one last sync with
-the mutex but it should be much, much faster.
-
-With this, my hung task warnings for my test case are gone.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 ---
- fs/block_dev.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/exfat/exfat_fs.h |  2 +-
+ fs/exfat/file.c     |  5 +----
+ fs/exfat/inode.c    |  9 +++++++--
+ fs/exfat/namei.c    | 35 +++++++----------------------------
+ 4 files changed, 16 insertions(+), 35 deletions(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 77ce77a283247..23fb999b49e15 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -1777,6 +1777,16 @@ static void __blkdev_put(struct block_device *bdev, fmode_t mode, int for_part)
- 	struct gendisk *disk = bdev->bd_disk;
- 	struct block_device *victim = NULL;
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 44dc04520175..3152c01e47ed 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -467,7 +467,7 @@ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir);
  
-+	/*
-+	 * Sync early if it looks like we're the last one.  If someone else
-+	 * opens the block device between now and the decrement of bd_openers
-+	 * then we did a sync that we didn't need to, but that's not the end
-+	 * of the world and we want to avoid long (could be several minute)
-+	 * syncs while holding the mutex.
-+	 */
-+	if (bdev->bd_openers == 1)
-+		sync_blockdev(bdev);
+ /* inode.c */
+ extern const struct inode_operations exfat_file_inode_operations;
+-void exfat_sync_inode(struct inode *inode);
++int exfat_update_inode(struct inode *inode);
+ struct inode *exfat_build_inode(struct super_block *sb,
+ 		struct exfat_dir_entry *info, loff_t i_pos);
+ void exfat_hash_inode(struct inode *inode, loff_t i_pos);
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index 4831a39632a1..dcc99349b816 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -247,10 +247,7 @@ void exfat_truncate(struct inode *inode, loff_t size)
+ 		goto write_size;
+ 
+ 	inode->i_ctime = inode->i_mtime = current_time(inode);
+-	if (IS_DIRSYNC(inode))
+-		exfat_sync_inode(inode);
+-	else
+-		mark_inode_dirty(inode);
++	exfat_update_inode(inode);
+ 
+ 	inode->i_blocks = ((i_size_read(inode) + (sbi->cluster_size - 1)) &
+ 			~(sbi->cluster_size - 1)) >> inode->i_blkbits;
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 7f90204adef5..f307019afe88 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -91,10 +91,15 @@ int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	return ret;
+ }
+ 
+-void exfat_sync_inode(struct inode *inode)
++int exfat_update_inode(struct inode *inode)
+ {
+ 	lockdep_assert_held(&EXFAT_SB(inode->i_sb)->s_lock);
+-	__exfat_write_inode(inode, 1);
 +
- 	mutex_lock_nested(&bdev->bd_mutex, for_part);
- 	if (for_part)
- 		bdev->bd_part_count--;
++	if (IS_DIRSYNC(inode))
++		return __exfat_write_inode(inode, 1);
++
++	mark_inode_dirty(inode);
++	return 0;
+ }
+ 
+ /*
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index b966b9120c9c..4febff3541a9 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -571,10 +571,7 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 
+ 	inode_inc_iversion(dir);
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
+-	if (IS_DIRSYNC(dir))
+-		exfat_sync_inode(dir);
+-	else
+-		mark_inode_dirty(dir);
++	exfat_update_inode(dir);
+ 
+ 	i_pos = exfat_make_i_pos(&info);
+ 	inode = exfat_build_inode(sb, &info, i_pos);
+@@ -822,10 +819,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
+ 	inode_inc_iversion(dir);
+ 	dir->i_mtime = dir->i_atime = current_time(dir);
+ 	exfat_truncate_atime(&dir->i_atime);
+-	if (IS_DIRSYNC(dir))
+-		exfat_sync_inode(dir);
+-	else
+-		mark_inode_dirty(dir);
++	exfat_update_inode(dir);
+ 
+ 	clear_nlink(inode);
+ 	inode->i_mtime = inode->i_atime = current_time(inode);
+@@ -856,10 +850,7 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 
+ 	inode_inc_iversion(dir);
+ 	dir->i_ctime = dir->i_mtime = current_time(dir);
+-	if (IS_DIRSYNC(dir))
+-		exfat_sync_inode(dir);
+-	else
+-		mark_inode_dirty(dir);
++	exfat_update_inode(dir);
+ 	inc_nlink(dir);
+ 
+ 	i_pos = exfat_make_i_pos(&info);
+@@ -986,10 +977,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
+ 	inode_inc_iversion(dir);
+ 	dir->i_mtime = dir->i_atime = current_time(dir);
+ 	exfat_truncate_atime(&dir->i_atime);
+-	if (IS_DIRSYNC(dir))
+-		exfat_sync_inode(dir);
+-	else
+-		mark_inode_dirty(dir);
++	exfat_update_inode(dir);
+ 	drop_nlink(dir);
+ 
+ 	clear_nlink(inode);
+@@ -1362,19 +1350,13 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	new_dir->i_ctime = new_dir->i_mtime = new_dir->i_atime =
+ 		EXFAT_I(new_dir)->i_crtime = current_time(new_dir);
+ 	exfat_truncate_atime(&new_dir->i_atime);
+-	if (IS_DIRSYNC(new_dir))
+-		exfat_sync_inode(new_dir);
+-	else
+-		mark_inode_dirty(new_dir);
++	exfat_update_inode(new_dir);
+ 
+ 	i_pos = ((loff_t)EXFAT_I(old_inode)->dir.dir << 32) |
+ 		(EXFAT_I(old_inode)->entry & 0xffffffff);
+ 	exfat_unhash_inode(old_inode);
+ 	exfat_hash_inode(old_inode, i_pos);
+-	if (IS_DIRSYNC(new_dir))
+-		exfat_sync_inode(old_inode);
+-	else
+-		mark_inode_dirty(old_inode);
++	exfat_update_inode(old_inode);
+ 
+ 	if (S_ISDIR(old_inode->i_mode) && old_dir != new_dir) {
+ 		drop_nlink(old_dir);
+@@ -1384,10 +1366,7 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	inode_inc_iversion(old_dir);
+ 	old_dir->i_ctime = old_dir->i_mtime = current_time(old_dir);
+-	if (IS_DIRSYNC(old_dir))
+-		exfat_sync_inode(old_dir);
+-	else
+-		mark_inode_dirty(old_dir);
++	exfat_update_inode(old_dir);
+ 
+ 	if (new_inode) {
+ 		exfat_unhash_inode(new_inode);
 -- 
 2.25.1
 
