@@ -2,119 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8351C26F8B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 10:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C9426F8EB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 11:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbgIRIw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 04:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbgIRIw6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 04:52:58 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8562C06174A;
-        Fri, 18 Sep 2020 01:52:57 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id n25so4442122ljj.4;
-        Fri, 18 Sep 2020 01:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=asjClMEVQUugwRnuiCaRpILyUTB6qCyLua353zU0XaA=;
-        b=W/z/lqMIRm38/rH5hoC1y6v6zRQO1N/LODV5dyUEiJu3Z0Ysqlp/3+8L1e9rLDMk2m
-         sBItJh8qIyGYm03eIK0hTdBoxXVBw4cghdDiPSwhWAZoWgfzs33gNea15pJClLwx2PyP
-         hHZXDHkjh03U3WZVcKBTqEHufGASOVouVB4m7BE5RIoKEh2joN3kIYcDTDJq0Chrbk2i
-         J/NdgDEshJe1yWvUgaAnM4jfYus4kL1oPcAFg4fuHOSe5l7mwswJJ6COScNBGhNcGGPN
-         q/gR4vXJlWd2ZXlKnLgsRNsC12UFA86our5/zZc8O5yxXBZ6W0BJN8M0aPB9fejtttXs
-         Ecww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=asjClMEVQUugwRnuiCaRpILyUTB6qCyLua353zU0XaA=;
-        b=bPGMdLSNGpN+eR9u0Fl1QDq/0v79LoG8B97Tw1jVC8CNpOvFs8jWZuY4atGcXXcyfe
-         s+OFC8sn/4DOnzifzBczsa9rC7ZwEf7pMNEbAN545w2VVBbQbqwPGMPw2t4clTNFPw5I
-         eQFp30PFhmnGQGoa0vKzhwfFyH1HhmjcEdSXBonhaAF8IrA82MvORwueUdl9vvZKpt+4
-         YY47lzll5sQ8CMO78s7UKjRthA9CvUd9hfOmHfZzOaxIZwHekwL0HnjFhhv0xEAnO32k
-         H8XAs3VNwCgraBWmrfu1RUgQoavdjfXdg8P0DEen5FuWug1pLvdKHJbrmIibj1Oxp8hh
-         hStg==
-X-Gm-Message-State: AOAM531X8clfpj3CiIKTNYJmczYVSI3k8dz6gF1VICKfVCd9QRKmjQNq
-        xV7PQ9i9jXLH3TM78Jk8AEo1eJ2NV4BV+A==
-X-Google-Smtp-Source: ABdhPJy1RlFuj0xDkan2bS2ZV4OPmRHWdA9YyD0WopBAfX+NGu2O9O4BkfmuLbcTQkb9zURbzOO0Aw==
-X-Received: by 2002:a2e:a48c:: with SMTP id h12mr12544381lji.221.1600419176113;
-        Fri, 18 Sep 2020 01:52:56 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:44fb:767f:35b0:3244:6cdc:c4a2? ([2a00:1fa0:44fb:767f:35b0:3244:6cdc:c4a2])
-        by smtp.gmail.com with ESMTPSA id u1sm459692lfu.24.2020.09.18.01.52.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Sep 2020 01:52:55 -0700 (PDT)
-Subject: Re: [PATCH 02/14] block: switch register_disk to use
- blkdev_get_by_dev
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Josef Bacik <josef@toxicpanda.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Stefan Haberland <sth@linux.ibm.com>,
-        Jan Hoeppner <hoeppner@linux.ibm.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        linux-pm@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org
-References: <20200917165720.3285256-1-hch@lst.de>
- <20200917165720.3285256-3-hch@lst.de>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <091931b1-eb9c-e45e-c9e8-501554618508@gmail.com>
-Date:   Fri, 18 Sep 2020 11:52:39 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726200AbgIRJHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 05:07:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38864 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbgIRJHF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Sep 2020 05:07:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id EA1ECAE09;
+        Fri, 18 Sep 2020 09:07:36 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7145D1E12E1; Fri, 18 Sep 2020 11:07:02 +0200 (CEST)
+Date:   Fri, 18 Sep 2020 11:07:02 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Boaz Harrosh <boaz@plexistor.com>, Hou Tao <houtao1@huawei.com>,
+        peterz@infradead.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
+ read_count
+Message-ID: <20200918090702.GB18920@quack2.suse.cz>
+References: <20200915140750.137881-1-houtao1@huawei.com>
+ <20200915150610.GC2674@hirez.programming.kicks-ass.net>
+ <20200915153113.GA6881@redhat.com>
+ <20200915155150.GD2674@hirez.programming.kicks-ass.net>
+ <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+ <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+ <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
+ <20200917120132.GA5602@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200917165720.3285256-3-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200917120132.GA5602@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello!
-
-On 17.09.2020 19:57, Christoph Hellwig wrote:
-
-> Use blkdev_get_by_dev instead of open coding it using bdget_disk +
-> blkdev_get.
-
-    I don't see where you are removing bdget_disk() call (situated just before
-the below code?)...
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   block/genhd.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
+On Thu 17-09-20 14:01:33, Oleg Nesterov wrote:
+> On 09/17, Boaz Harrosh wrote:
+> >
+> > On 16/09/2020 15:32, Hou Tao wrote:
+> > <>
+> > >However the performance degradation is huge under aarch64 (4 sockets, 24 core per sockets): nearly 60% lost.
+> > >
+> > >v4.19.111
+> > >no writer, reader cn                               | 24        | 48        | 72        | 96
+> > >the rate of down_read/up_read per second           | 166129572 | 166064100 | 165963448 | 165203565
+> > >the rate of down_read/up_read per second (patched) |  63863506 |  63842132 |  63757267 |  63514920
+> > >
+> >
+> > I believe perhaps Peter Z's suggestion of an additional
+> > percpu_down_read_irqsafe() API and let only those in IRQ users pay the
+> > penalty.
+> >
+> > Peter Z wrote:
+> > >My leading alternative was adding: percpu_down_read_irqsafe() /
+> > >percpu_up_read_irqsafe(), which use local_irq_save() instead of
+> > >preempt_disable().
 > 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 7b56203c90a303..f778716fac6cde 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -732,10 +732,9 @@ static void register_disk(struct device *parent, struct gendisk *disk,
->   		goto exit;
->   
->   	set_bit(GD_NEED_PART_SCAN, &disk->state);
-> -	err = blkdev_get(bdev, FMODE_READ, NULL);
-> -	if (err < 0)
-> -		goto exit;
-> -	blkdev_put(bdev, FMODE_READ);
-> +	bdev = blkdev_get_by_dev(disk_devt(disk), FMODE_READ, NULL);
-> +	if (!IS_ERR(bdev))
-> +		blkdev_put(bdev, FMODE_READ);
->   
->   exit:
->   	/* announce disk after possible partitions are created */
+> This means that __sb_start/end_write() and probably more users in fs/super.c
+> will have to use this API, not good.
+> 
+> IIUC, file_end_write() was never IRQ safe (at least if !CONFIG_SMP), even
+> before 8129ed2964 ("change sb_writers to use percpu_rw_semaphore"), but this
+> doesn't matter...
+> 
+> Perhaps we can change aio.c, io_uring.c and fs/overlayfs/file.c to avoid
+> file_end_write() in IRQ context, but I am not sure it's worth the trouble.
 
-MBR, Sergei
+Well, that would be IMO rather difficult. We need to do file_end_write()
+after the IO has completed so if we don't want to do it in IRQ context,
+we'd have to queue a work to a workqueue or something like that. And that's
+going to be expensive compared to pure per-cpu inc/dec...
+
+If people really wanted to avoid irq-safe inc/dec for archs where it is
+more expensive, one idea I had was that we could add 'read_count_in_irq' to
+percpu_rw_semaphore. So callers in normal context would use read_count and
+callers in irq context would use read_count_in_irq. And the writer side
+would sum over both but we don't care about performance of that one much.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
