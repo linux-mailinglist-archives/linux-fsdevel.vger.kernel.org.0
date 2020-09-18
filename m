@@ -2,70 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3101426FDEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 15:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A7E26FE6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 15:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgIRNNV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 09:13:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39982 "EHLO mx2.suse.de"
+        id S1726406AbgIRN0i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 09:26:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56530 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbgIRNNT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 09:13:19 -0400
+        id S1726130AbgIRN0i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 18 Sep 2020 09:26:38 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2A077ABF4;
-        Fri, 18 Sep 2020 13:13:52 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 5FF75B03F;
+        Fri, 18 Sep 2020 13:27:10 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id ABB001E12E1; Fri, 18 Sep 2020 15:13:17 +0200 (CEST)
-Date:   Fri, 18 Sep 2020 15:13:17 +0200
+        id A45CC1E12E1; Fri, 18 Sep 2020 15:26:35 +0200 (CEST)
+Date:   Fri, 18 Sep 2020 15:26:35 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: the "read" syscall sees partial effects of the "write" syscall
-Message-ID: <20200918131317.GH18920@quack2.suse.cz>
-References: <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
- <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com>
- <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
- <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com>
- <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com>
- <alpine.LRH.2.02.2009161451140.21915@file01.intranet.prod.int.rdu2.redhat.com>
- <CAPcyv4gFz6vBVVp_aiX4i2rL+8fps3gTQGj5cYw8QESCf7=DfQ@mail.gmail.com>
- <alpine.LRH.2.02.2009180509370.19302@file01.intranet.prod.int.rdu2.redhat.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     peterz@infradead.org, Jan Kara <jack@suse.cz>,
+        Boaz Harrosh <boaz@plexistor.com>,
+        Hou Tao <houtao1@huawei.com>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
+ read_count
+Message-ID: <20200918132635.GI18920@quack2.suse.cz>
+References: <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+ <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+ <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
+ <20200917120132.GA5602@redhat.com>
+ <20200918090702.GB18920@quack2.suse.cz>
+ <20200918100112.GN1362448@hirez.programming.kicks-ass.net>
+ <20200918101216.GL35926@hirez.programming.kicks-ass.net>
+ <20200918104824.GA23469@redhat.com>
+ <20200918110310.GO1362448@hirez.programming.kicks-ass.net>
+ <20200918130914.GA26777@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.2009180509370.19302@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <20200918130914.GA26777@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 18-09-20 08:25:28, Mikulas Patocka wrote:
-> I'd like to ask about this problem: when we write to a file, the kernel 
-> takes the write inode lock. When we read from a file, no lock is taken - 
-> thus the read syscall can read data that are halfway modified by the write 
-> syscall.
+On Fri 18-09-20 15:09:14, Oleg Nesterov wrote:
+> On 09/18, Peter Zijlstra wrote:
+> > > But again, do we really want this?
+> >
+> > I like the two counters better, avoids atomics entirely, some archs
+> > hare horridly expensive atomics (*cough* power *cough*).
 > 
-> The standard specifies the effects of the write syscall are atomic - see 
-> this:
-> https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html#tag_15_09_07
+> I meant... do we really want to introduce percpu_up_read_irqsafe() ?
+> 
+> Perhaps we can live with the fix from Hou? At least until we find a
+> "real" performance regression.
 
-Yes, but no Linux filesystem (except for XFS AFAIK) follows the POSIX spec
-in this regard. Mostly because the mixed read-write performance sucks when
-you follow it (not that it would absolutely have to suck - you can use
-clever locking with range locks but nobody does it currently). In practice,
-the read-write atomicity works on Linux only on per-page basis for buffered
-IO.
+I can say that for users of percpu rwsem in filesystems the cost of atomic
+inc/dec is unlikely to matter. The lock hold times there are long enough
+that it would be just lost in the noise.
+
+For other stuff using them like get_online_cpus() or get_online_mems() I'm
+not so sure...
 
 								Honza
 
