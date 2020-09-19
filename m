@@ -2,134 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B15270EA6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 16:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F447270EB3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 16:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbgISOyR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Sep 2020 10:54:17 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:50994 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726496AbgISOyQ (ORCPT
+        id S1726491AbgISO4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Sep 2020 10:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56880 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbgISO4i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Sep 2020 10:54:16 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-123-Q8cAoOVtN9-3ia4vwC15wg-1; Sat, 19 Sep 2020 15:53:09 +0100
-X-MC-Unique: Q8cAoOVtN9-3ia4vwC15wg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sat, 19 Sep 2020 15:53:08 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sat, 19 Sep 2020 15:53:08 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Al Viro' <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Thread-Topic: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Thread-Index: AQHWjcPPLxbJUITJXkeWJwtHmAdwxKlwCErw
-Date:   Sat, 19 Sep 2020 14:53:08 +0000
-Message-ID: <6d064d8688324279af89152a8da22d69@AcuMS.aculab.com>
-References: <20200918124533.3487701-1-hch@lst.de>
- <20200918124533.3487701-2-hch@lst.de>
- <20200918134012.GY3421308@ZenIV.linux.org.uk> <20200918134406.GA17064@lst.de>
- <20200918135822.GZ3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200918135822.GZ3421308@ZenIV.linux.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Sat, 19 Sep 2020 10:56:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02892C0613CE
+        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Sep 2020 07:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=muCeaXErgBPq8JfjyaQkOcFShJLp/WM6/g6JcY9o8j0=; b=sofiqr02xsgoK7+f69IYgl5cad
+        0t74mGnWlGxwc2JLzb1ylB75lhOrHQ0Jqj0yZ01xM5QpCZZ9RQnvXy3XEPuizBuD6hoMDEAxy0mEF
+        IVPSfoEh1rmyMxtM4EwzeabDiQnr8dcxs2ZrtVJ2/DCsUA7a+MGPq4tHUCI3cP3IvXX7M9lQo/3nH
+        vQDMM0BQc4qjLv0MgJV3I+4OeXdUVu7/buw8tR1rQ+orSWLKZAETxPpcUj1fZwaziycOSGcR3zryi
+        CC2PNUGO8yjdw2tGr2Ow+xuHgLI/SBcoJgE3mLsTTRlLeT1Fi7kB8/qA8oo8TYKTN0ePexI3PXlBe
+        4CxvYlIA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJeHw-0007Eq-Kq; Sat, 19 Sep 2020 14:56:32 +0000
+Date:   Sat, 19 Sep 2020 15:56:32 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Shijie Luo <luoshijie1@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        lihaotian9@huawei.com, lutianxiong@huawei.com, jack@suse.cz,
+        linfeilong@huawei.com
+Subject: Re: [PATCH RESEND] fs: fix race condition oops between destroy_inode
+ and writeback_sb_inodes
+Message-ID: <20200919145632.GM32101@casper.infradead.org>
+References: <20200919093923.19016-1-luoshijie1@huawei.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200919093923.19016-1-luoshijie1@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro
-> Sent: 18 September 2020 14:58
+On Sat, Sep 19, 2020 at 05:39:23AM -0400, Shijie Luo wrote:
+> There is a race condition between destroy_inode and writeback_sb_inodes,
+> thread-1                                    thread-2
+> wb_workfn
+>   writeback_inodes_wb
+>     __writeback_inodes_wb
+>       writeback_sb_inodes
+>         wbc_attach_and_unlock_inode
+> 					iget_locked
+>                                           destroy_inode
+>                                             inode_detach_wb
+>                                               inode->i_wb = NULL;
 > 
-> On Fri, Sep 18, 2020 at 03:44:06PM +0200, Christoph Hellwig wrote:
-> > On Fri, Sep 18, 2020 at 02:40:12PM +0100, Al Viro wrote:
-> > > >  	/* Vector 0x110 is LINUX_32BIT_SYSCALL_TRAP */
-> > > > -	return pt_regs_trap_type(current_pt_regs()) == 0x110;
-> > > > +	return pt_regs_trap_type(current_pt_regs()) == 0x110 ||
-> > > > +		(current->flags & PF_FORCE_COMPAT);
-> > >
-> > > Can't say I like that approach ;-/  Reasoning about the behaviour is much
-> > > harder when it's controlled like that - witness set_fs() shite...
-> >
-> > I don't particularly like it either.  But do you have a better idea
-> > how to deal with io_uring vs compat tasks?
+>         inode_to_wb_and_lock_list
+>           locked_inode_to_wb_and_lock_list
+>             wb_get
+>               oops
 > 
-> <wry> git rm fs/io_uring.c would make a good starting point </wry>
-> Yes, I know it's not going to happen, but one can dream...
+> so destroy inode after adding I_FREEING to inode state and the I_SYNC state
+>  being cleared.
+> 
+> Reported-by: Tianxiong Lu <lutianxiong@huawei.com>
+> Signed-off-by: Shijie Luo <luoshijie1@huawei.com>
+> Signed-off-by: Haotian Li <lihaotian9@huawei.com>
+> ---
+>  fs/inode.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 72c4c347afb7..b28a2a9e15d5 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1148,10 +1148,17 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
+>  		struct inode *new = alloc_inode(sb);
+>  
+>  		if (new) {
+> +			spin_lock(&new->i_lock);
+>  			new->i_state = 0;
+> +			spin_unlock(&new->i_lock);
 
-Maybe the io_uring code needs some changes to make it vaguely safe.
-- No support for 32-bit compat mixed working (or at all?).
-  Plausibly a special worker could do 32bit work.
-- ring structure (I'm assuming mapped by mmap()) never mapped
-  in more than one process (not cloned by fork()).
-- No implicit handover of files to another process.
-  Would need an munmap, handover, mmap sequence.
+This part is unnecessary.  We just allocated 'new' two lines above;
+nobody else can see 'new' yet.  We make it visible with hlist_add_head_rcu()
+which uses rcu_assign_pointer() whch contains a memory barrier, so it's
+impossible for another CPU to see a stale i_state.
 
-In any case the io_ring rather abuses the import_iovec() interface.
+>  			inode = inode_insert5(new, hashval, test, set, data);
+> -			if (unlikely(inode != new))
+> +			if (unlikely(inode != new)) {
+> +				spin_lock(&new->i_lock);
+> +				new->i_state |= I_FREEING;
+> +				spin_unlock(&new->i_lock);
+> +				inode_wait_for_writeback(new);
+>  				destroy_inode(new);
 
-The canonical sequence is (types from memory):
-	struct iovec cache[8], *iov = cache;
-	struct iter iter;
-	...
-	rval = import_iovec(..., &iov, 8, &iter);
-	// Do read/write user using 'iter'
-	free(iov);
+This doesn't make sense either.  If an inode is returned here which is not
+'new', then adding 'new' to the hash failed, and new was never visible
+to another CPU.
 
-I don't think there is any strict requirement that iter.iov
-is set to either 'cache' or 'iov' (it probably must point
-into one of them.)
-But the io_uring code will make that assumption because the
-actual copies can be done much later and it doesn't save 'iter'.
-It gets itself in a right mess because it doesn't separate
-the 'address I need to free' from 'the iov[] for any transfers'.
+> @@ -1218,6 +1225,11 @@ struct inode *iget_locked(struct super_block *sb, unsigned long ino)
+>  		 * allocated.
+>  		 */
+>  		spin_unlock(&inode_hash_lock);
+> +
+> +		spin_lock(&inode->i_lock);
+> +		inode->i_state |= I_FREEING;
+> +		spin_unlock(&inode->i_lock);
+> +		inode_wait_for_writeback(inode);
+>  		destroy_inode(inode);
 
-io_uring is also the only code that relies on import_iovec()
-returning the iter.count on success.
-It would be much better to have:
-	iov = import_iovec(..., &cache, ...);
-	free(iov);
-and use ERR_PTR() et al for error detectoion.
+Again, this doesn't make sense.  This is also a codepath which failed to
+make 'inode' visible to any other thread.
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+I don't understand how this patch could fix anything.
