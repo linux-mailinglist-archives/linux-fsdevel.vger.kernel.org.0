@@ -2,99 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE7727085D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 23:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2973D270959
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 02:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbgIRVfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Sep 2020 17:35:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37182 "EHLO
+        id S1726134AbgISAKv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Sep 2020 20:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbgIRVfP (ORCPT
+        with ESMTP id S1726054AbgISAKv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Sep 2020 17:35:15 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E025C0613CE
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Sep 2020 14:35:15 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id fa1so3859630pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Sep 2020 14:35:15 -0700 (PDT)
+        Fri, 18 Sep 2020 20:10:51 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA5EC0613CE;
+        Fri, 18 Sep 2020 17:10:51 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id k25so6454741ljk.0;
+        Fri, 18 Sep 2020 17:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OsXO9Vng0uZ8zdPlCQEPUkvMN685QAvewZuZv3id6Vk=;
-        b=Qm/FmtT5Dnyrxf4BCgQpgqbDw7sS/zTtWsVgCPYD/Z8fGcfQ5xbRlGReuouD+SHCd9
-         dZJK4vmeSlLB9LbvCFrufdgXKAOEcR0Sj+Z6M4GjiMmOMsAqZazgwvwTj14O7ZQgEo98
-         fFyktTytinUg2oHTwmTXsDyGhM3irl/3gs0Oc=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dESGYbnfg7wQ4Z2+mdwlRJpxrBgQFzID5ccxYF3X5U0=;
+        b=RBva7VcRX7O/kEvKZNDT0CqRALPY8292/hmUqYscH0QmEeo1gQEcDL0zF+AbqAXGGR
+         Y2d++cg0mVY2SOyOZfJ8t2LZQZRz1YlDe79xqcCf0Gh+6rhqqsIj8eHM8XJAP8fN+CRT
+         xq4FEaG1qVkgvcKXKRkoVEvqLTocw4Q1zxkEnP98UNWJODPkpShSbLVsFRjKzOJTVNdA
+         oabZcP29m8FtqJBuA1xHeVil5/9Z+XAGFIb7TcQtjhnUFiv78f6SWtkVDqw4bNzuqlK0
+         uineKtoRhaVEYmocI08pmESxMC5ikiTwfjreg5HynFJSykF4IL8b3P2eIufUS6HnvFwI
+         BPrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OsXO9Vng0uZ8zdPlCQEPUkvMN685QAvewZuZv3id6Vk=;
-        b=McwkZTtQcOvqe5JmFYxFVmtSK621TgpIpcRb/gkFbBU9QQpGBcasynO/OLm2O+SxWM
-         CVdF6+JYOlCLWirOdU/Q+4DABQeKgdcTa2bMD7/sosaJrWog3FaLnw5iyfUWvkAPPfrq
-         c0UGT8weH5UlVYBtaLFwecUz7lq4UVICLNXuv4p2G2ClvLhzMdCEr3lZoHyclz2inZMV
-         embKpjMpY3soQsySm+3NjOKUqPgoPrEoXBtPj0jbbBlvkryC8wpwa9pZ3ZCF6/Y/JZEp
-         lrlDjhVmZ7rfudXQfuYkyraiCgoVgbpRrVux3qeQTCB5lnt7pX8WH14u79esdNh6p2Ji
-         0Feg==
-X-Gm-Message-State: AOAM533jZh3YPPtxrrXW/BiA5jjETV0iWDqdgFA0bvlAx/LygmD0bZav
-        MM7hPPlNSspjW0F+GKsRLEGsrg==
-X-Google-Smtp-Source: ABdhPJyK4NrndRd3u8+tWx5b+nRCti5n/xaxbJJsCKhy+21AIJjWUWUQo+BNLBjVu3tDwrR5itradw==
-X-Received: by 2002:a17:90a:156:: with SMTP id z22mr14965929pje.140.1600464914535;
-        Fri, 18 Sep 2020 14:35:14 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f19sm4097785pfj.25.2020.09.18.14.35.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dESGYbnfg7wQ4Z2+mdwlRJpxrBgQFzID5ccxYF3X5U0=;
+        b=C7D9PD834wJ677APgiTYGlA41L7H+FpZH5jO9XGFEdRGQI7stv/sjuz2kV7XONjfSh
+         GtD9TjucKRSt+Ip3tx4BYv1A07O2TbMOCSxy/tj29BDMtALMNvyoOpNhW3pJrTEBt0Sx
+         ImXmNYjhKU307N5cGZgmdNrDOCYKcx5JfOchhLOsKvs0AR5Dh508qVdF6w9Nn9OWQdiL
+         yysCD+3CsndYHV2pqIu4vmgzjxv+bf5qQPk0PK/FuGyqNW2RgJ26J/E9W2PtZmpuQZ1v
+         JOph6Q5hU2olwx5l+p7em4HwJIJiJt/Kz0puKBZO9KhN90jpSaWKAgKVllo6ZCS2lGMw
+         JgmQ==
+X-Gm-Message-State: AOAM532IQzLr1yUZOa2gpKi1j6F79QaHwXUdW3Qqg9OYYdoUpIjGnCv6
+        YAqswfniKT7lvj1JkuYhQj2Qzy/ck3o=
+X-Google-Smtp-Source: ABdhPJwU/xG13KtB/wenP6ov2aCDN9xIdgYiffJ0dh7QiB9V4mFL1Mg9WtyrLUlUetxhNBHXgjqz3g==
+X-Received: by 2002:a2e:6d01:: with SMTP id i1mr13116898ljc.181.1600474249240;
+        Fri, 18 Sep 2020 17:10:49 -0700 (PDT)
+Received: from localhost.localdomain (188.147.112.12.nat.umts.dynamic.t-mobile.pl. [188.147.112.12])
+        by smtp.gmail.com with ESMTPSA id j127sm915054lfd.6.2020.09.18.17.10.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Sep 2020 14:35:13 -0700 (PDT)
-Date:   Fri, 18 Sep 2020 14:35:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     John Wood <john.wood@gmx.com>
-Cc:     kernel-hardening@lists.openwall.com, Jann Horn <jannh@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH 6/6] security/fbfam: Mitigate a fork brute force
- attack
-Message-ID: <202009181433.EAF237C36@keescook>
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-7-keescook@chromium.org>
- <202009101649.2A0BF95@keescook>
- <20200918152116.GB3229@ubuntu>
+        Fri, 18 Sep 2020 17:10:48 -0700 (PDT)
+From:   mateusznosek0@gmail.com
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Nosek <mateusznosek0@gmail.com>, viro@zeniv.linux.org.uk
+Subject: [PATCH] fs/open.c: micro-optimization by avoiding branch on common path
+Date:   Sat, 19 Sep 2020 02:10:21 +0200
+Message-Id: <20200919001021.21690-1-mateusznosek0@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200918152116.GB3229@ubuntu>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 18, 2020 at 06:02:16PM +0200, John Wood wrote:
-> On Thu, Sep 10, 2020 at 04:56:19PM -0700, Kees Cook wrote:
-> > On Thu, Sep 10, 2020 at 01:21:07PM -0700, Kees Cook wrote:
-> > > +		pr_warn("fbfam: Offending process with PID %d killed\n",
-> > > +			p->pid);
-> >
-> > I'd make this ratelimited (along with Jann's suggestions).
-> 
-> Sorry, but I don't understand what you mean with "make this ratelimited".
-> A clarification would be greatly appreciated.
+From: Mateusz Nosek <mateusznosek0@gmail.com>
 
-Ah! Yes, sorry for not being more clear. There are ratelimit helpers for
-the pr_*() family of functions, e.g.:
+If file is a directory it is surely not regular. Therefore, if 'S_ISREG'
+check returns false one can be sure that vfs_truncate must returns with
+error. Introduced patch refactors code to avoid one branch in 'likely'
+control flow path. Moreover, it marks the proper check with 'unlikely'
+macro to improve both branch prediction and readability. Changes were
+tested with gcc 8.3.0 on x86 architecture and it is confirmed that
+slightly better assembly is generated.
 
-	pr_warn_ratelimited("brute: Offending process with PID...
+Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
+---
+ fs/open.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/fs/open.c b/fs/open.c
+index 9af548fb841b..69658ea27530 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -74,10 +74,12 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 	inode = path->dentry->d_inode;
+ 
+ 	/* For directories it's -EISDIR, for other non-regulars - -EINVAL */
+-	if (S_ISDIR(inode->i_mode))
+-		return -EISDIR;
+-	if (!S_ISREG(inode->i_mode))
+-		return -EINVAL;
++	if (unlikely(!S_ISREG(inode->i_mode))) {
++		if (S_ISDIR(inode->i_mode))
++			return -EISDIR;
++		else
++			return -EINVAL;
++	}
+ 
+ 	error = mnt_want_write(path->mnt);
+ 	if (error)
 -- 
-Kees Cook
+2.20.1
+
