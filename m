@@ -2,97 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F7F9270EA1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 16:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B15270EA6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 16:54:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgISOoY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Sep 2020 10:44:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726312AbgISOoY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Sep 2020 10:44:24 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B8912098B;
-        Sat, 19 Sep 2020 14:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600526663;
-        bh=Bxl5ZkjXMp2TPSkn3hGdRJLWXUhCroTIN94qZJ785hM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HvAmBzz4j84+nW2I/6iTGG7u+tu/+fVFlTymgUy9x48ZHF94OcJYcK3VRxYLyYTyb
-         gLdVK3Jz7CFYgGvvk2LFTH6hxIvgXGihiig+gwgxNnILZPGg1qc84/ZJiaXzrUMjzZ
-         9BfhiCQpyntL37/8AEdpoY9xJH4Lfe+mv81k+IoQ=
-Date:   Sat, 19 Sep 2020 16:44:51 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Anant Thazhemadam <anant.thazhemadam@gmail.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+4191a44ad556eacc1a7a@syzkaller.appspotmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Linux-kernel-mentees] [PATCH] fs: fix KMSAN uninit-value bug by
- initializing nd in do_file_open_root
-Message-ID: <20200919144451.GF2712238@kroah.com>
-References: <20200916052657.18683-1-anant.thazhemadam@gmail.com>
- <20200916054157.GC825@sol.localdomain>
- <20200917002238.GO3421308@ZenIV.linux.org.uk>
+        id S1726540AbgISOyR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Sep 2020 10:54:17 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:50994 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726496AbgISOyQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 19 Sep 2020 10:54:16 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-123-Q8cAoOVtN9-3ia4vwC15wg-1; Sat, 19 Sep 2020 15:53:09 +0100
+X-MC-Unique: Q8cAoOVtN9-3ia4vwC15wg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sat, 19 Sep 2020 15:53:08 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sat, 19 Sep 2020 15:53:08 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Al Viro' <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Thread-Topic: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Thread-Index: AQHWjcPPLxbJUITJXkeWJwtHmAdwxKlwCErw
+Date:   Sat, 19 Sep 2020 14:53:08 +0000
+Message-ID: <6d064d8688324279af89152a8da22d69@AcuMS.aculab.com>
+References: <20200918124533.3487701-1-hch@lst.de>
+ <20200918124533.3487701-2-hch@lst.de>
+ <20200918134012.GY3421308@ZenIV.linux.org.uk> <20200918134406.GA17064@lst.de>
+ <20200918135822.GZ3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200918135822.GZ3421308@ZenIV.linux.org.uk>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917002238.GO3421308@ZenIV.linux.org.uk>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 01:22:38AM +0100, Al Viro wrote:
-> On Tue, Sep 15, 2020 at 10:41:57PM -0700, Eric Biggers wrote:
+From: Al Viro
+> Sent: 18 September 2020 14:58
 > 
-> > Looking at the actual KMSAN report, it looks like it's nameidata::dir_mode or
-> > nameidata::dir_uid that is uninitialized.  You need to figure out the correct
-> > solution, not just blindly initialize with zeroes -- that could hide a bug.
-> > Is there a bug that is preventing these fields from being initialized to the
-> > correct values, are these fields being used when they shouldn't be, etc...
+> On Fri, Sep 18, 2020 at 03:44:06PM +0200, Christoph Hellwig wrote:
+> > On Fri, Sep 18, 2020 at 02:40:12PM +0100, Al Viro wrote:
+> > > >  	/* Vector 0x110 is LINUX_32BIT_SYSCALL_TRAP */
+> > > > -	return pt_regs_trap_type(current_pt_regs()) == 0x110;
+> > > > +	return pt_regs_trap_type(current_pt_regs()) == 0x110 ||
+> > > > +		(current->flags & PF_FORCE_COMPAT);
+> > >
+> > > Can't say I like that approach ;-/  Reasoning about the behaviour is much
+> > > harder when it's controlled like that - witness set_fs() shite...
+> >
+> > I don't particularly like it either.  But do you have a better idea
+> > how to deal with io_uring vs compat tasks?
 > 
-> False positive, and this is the wrong place to shut it up.
-> 
-> ->dir_uid and ->dir_mode are set when link_path_walk() resolves the pathname
-> to directory + final component.  They are used when deciding whether to reject
-> a trailing symlink (on fs.protected_symlinks setups) and whether to allow
-> creation in sticky directories (on fs.protected_regular and fs.protected_fifos
-> setups).  Both operations really need the results of successful link_path_walk().
-> 
-> I don't see how that could be not a false positive.  If we hit the use in
-> may_create_in_sticky(), we'd need the combination of
-> 	* pathname that consists only of slashes (or it will be initialized)
-> 	* LAST_NORM in nd->last_type, which is flat-out impossible, since
-> we are left with LAST_ROOT for such pathnames.  The same goes for
-> may_follow_link() use - we need WALK_TRAILING in flags to hit it in the
-> first place, which can come from two sources -
->         return walk_component(nd, WALK_TRAILING);
-> in lookup_last() (and walk_component() won't go anywhere near the
-> call chain leading to may_follow_link() without LAST_NORM in nd->last_type)
-> and
->         res = step_into(nd, WALK_TRAILING, dentry, inode, seq);
-> in open_last_lookups(), which also won't go anywhere near that line without
-> LAST_NORM in the nd->last_type.
-> 
-> IOW, unless we manage to call that without having called link_path_walk()
-> at all or after link_path_walk() returning an error, we shouldn't hit
-> that.  And if we *do* go there without link_path_walk() or with an error
-> from link_path_walk(), we have a much worse problem.
-> 
-> I want to see the details of reproducer.  If it's for real, we have a much
-> more serious problem; if it's a false positive, the right place to deal
-> with it would be elsewhere (perhaps on return from link_path_walk() with
-> a slashes-only pathname), but in any case it should only be done after we
-> manage to understand what's going on.
+> <wry> git rm fs/io_uring.c would make a good starting point </wry>
+> Yes, I know it's not going to happen, but one can dream...
 
-Reproducer is pretty simple:
-	https://syzkaller.appspot.com/text?tag=ReproC&x=13974b2f100000
+Maybe the io_uring code needs some changes to make it vaguely safe.
+- No support for 32-bit compat mixed working (or at all?).
+  Plausibly a special worker could do 32bit work.
+- ring structure (I'm assuming mapped by mmap()) never mapped
+  in more than one process (not cloned by fork()).
+- No implicit handover of files to another process.
+  Would need an munmap, handover, mmap sequence.
 
-Now if that is actually valid or not, I don't know...
+In any case the io_ring rather abuses the import_iovec() interface.
 
-thanks,
+The canonical sequence is (types from memory):
+	struct iovec cache[8], *iov = cache;
+	struct iter iter;
+	...
+	rval = import_iovec(..., &iov, 8, &iter);
+	// Do read/write user using 'iter'
+	free(iov);
 
-greg k-h
+I don't think there is any strict requirement that iter.iov
+is set to either 'cache' or 'iov' (it probably must point
+into one of them.)
+But the io_uring code will make that assumption because the
+actual copies can be done much later and it doesn't save 'iter'.
+It gets itself in a right mess because it doesn't separate
+the 'address I need to free' from 'the iov[] for any transfers'.
+
+io_uring is also the only code that relies on import_iovec()
+returning the iter.count on success.
+It would be much better to have:
+	iov = import_iovec(..., &cache, ...);
+	free(iov);
+and use ERR_PTR() et al for error detectoion.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
