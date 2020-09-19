@@ -2,101 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B56B271071
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 22:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0970D27109A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 23:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgISURq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Sep 2020 16:17:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbgISURq (ORCPT
+        id S1726702AbgISVQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Sep 2020 17:16:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:35227 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgISVQc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Sep 2020 16:17:46 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15035C0613CE;
-        Sat, 19 Sep 2020 13:17:46 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id k8so5734093pfk.2;
-        Sat, 19 Sep 2020 13:17:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=nufqMxRxzBynEUzPSmKE11m5kNg4+eB3mixf5Nnih4E=;
-        b=dswyVVpWzVbiP2kS5AD/QD8cHzI45lM/MxkySFRQSVYmP2C8cVcZnsoIUHMkeP0p6/
-         NlTrTAXVIQGKSljeVEQhU+rnZwZ3C/3m2dB4u56v+olo8gfT5B9MdaXdKTVwCBBXSfso
-         d5Z4wDdJJBRlamEyPm/YjKSiZ8yioEkioxLfq+AigV1SPZ/xhfZr0jOIVyYzat9wDWYC
-         51w3q3tm5bQ7RG8qzu+7WpdTHbkb0eyDyFpKSEapx3qUPx39/PPaLOEEJuICYPy02oWM
-         UnjgNwiJitmwsUd5YiujlNl9YLxZIOY8BPW9NDqyDoHD3//eqchZuhpJIFz3Tx97SysN
-         eKpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=nufqMxRxzBynEUzPSmKE11m5kNg4+eB3mixf5Nnih4E=;
-        b=L7q3f+lVdQWz5koVnjAq++F2J045zwW+UsnLWFb2cdoChW+tdV9g2b7PeM4nG+OdqA
-         0WVyNt7Ssad8I2VFRgattaVfuMbenElb2M/sCD7nL/F96amVb413wNm0LVg/aVRVtUU1
-         pJhuXPep9Adfd/UPkSyAFUUqyHmERBVH/MoZ627oVBdLRoPIOjJTP5AROPohdLhWq8D0
-         drNLTPK3ipjC+bjKsOcI9iPWCfeWK5ba9KM4y1uKhNWoorlh0+nSnJTfGNUURNObHY68
-         /zRSynaIk22FZq1M0hk3hR5CqAuDxCv5uoUn0AXQ3JsRylWCgjvE5HZhEwGZCu/7XY9s
-         UNyQ==
-X-Gm-Message-State: AOAM532ORsq3/aD383vrB/oD9QGONCSOLttvFL78oT3KQyns55nMvScT
-        i3nsadjXVV57YNGdX8ndoPEmRmUWhO3FMTvfj+A=
-X-Google-Smtp-Source: ABdhPJwmaLvMmQ0FhJwwhvT/7QRl99Kv7dcwIDpJdJkJ/7+mObcFcvLUIlKkLC9FIB3sn+NWTWMmwg==
-X-Received: by 2002:aa7:8aca:0:b029:13e:d13d:a07d with SMTP id b10-20020aa78aca0000b029013ed13da07dmr37930221pfd.20.1600546664624;
-        Sat, 19 Sep 2020 13:17:44 -0700 (PDT)
-Received: from [192.168.0.104] ([49.207.212.24])
-        by smtp.gmail.com with ESMTPSA id d20sm6371822pjv.39.2020.09.19.13.17.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Sep 2020 13:17:43 -0700 (PDT)
-Subject: Re: [Linux-kernel-mentees] [PATCH] fs: fix KMSAN uninit-value bug by
- initializing nd in do_file_open_root
-From:   Anant Thazhemadam <anant.thazhemadam@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+4191a44ad556eacc1a7a@syzkaller.appspotmail.com,
-        linux-kernel@vger.kernel.org
-References: <20200916052657.18683-1-anant.thazhemadam@gmail.com>
- <20200916054157.GC825@sol.localdomain>
- <20200917002238.GO3421308@ZenIV.linux.org.uk>
- <20200919144451.GF2712238@kroah.com>
- <20200919161727.GG3421308@ZenIV.linux.org.uk>
- <20200919165558.GH3421308@ZenIV.linux.org.uk>
- <26d881e5-f68a-b3b7-4cb0-04a3c6c384ac@gmail.com>
-Message-ID: <e8b218d4-e64a-ac0a-ea53-567d07a58f42@gmail.com>
-Date:   Sun, 20 Sep 2020 01:47:39 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.2.2
+        Sat, 19 Sep 2020 17:16:32 -0400
+Received: from mail-qk1-f169.google.com ([209.85.222.169]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MKbc4-1k3BIm3TWm-00L0SP; Sat, 19 Sep 2020 23:16:29 +0200
+Received: by mail-qk1-f169.google.com with SMTP id v123so10707353qkd.9;
+        Sat, 19 Sep 2020 14:16:27 -0700 (PDT)
+X-Gm-Message-State: AOAM531+emzl8B3DqL41Bk83MYXpOUqzqfDVocNDlNc7kY058mjTM2a4
+        CmAubHAtnd4y0KjZA2ijcOrze8TZs8thcCm6Bsc=
+X-Google-Smtp-Source: ABdhPJzEvevcaGdjT3rDawI+GUfFFyk1d/TYHLiGAQUL5WydIguceSQ8UIqVNU/fh2JOVxE549L743HO0rSqi5ww2Ew=
+X-Received: by 2002:a37:5d8:: with SMTP id 207mr40303905qkf.352.1600550186478;
+ Sat, 19 Sep 2020 14:16:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <26d881e5-f68a-b3b7-4cb0-04a3c6c384ac@gmail.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200918124533.3487701-1-hch@lst.de> <20200918124533.3487701-2-hch@lst.de>
+ <20200918134012.GY3421308@ZenIV.linux.org.uk> <20200918134406.GA17064@lst.de>
+ <20200918135822.GZ3421308@ZenIV.linux.org.uk> <20200918151615.GA23432@lst.de> <CALCETrW=BzodXeTAjSvpCoUQoL+MKaKPEeSTRWnB=-C9jMotbQ@mail.gmail.com>
+In-Reply-To: <CALCETrW=BzodXeTAjSvpCoUQoL+MKaKPEeSTRWnB=-C9jMotbQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 19 Sep 2020 23:16:10 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2Mi+1yttyGk4k7HxRVrMtmFqJewouVhynqUL0PJycmog@mail.gmail.com>
+Message-ID: <CAK8P3a2Mi+1yttyGk4k7HxRVrMtmFqJewouVhynqUL0PJycmog@mail.gmail.com>
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Network Development <netdev@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:wnNAt0YQaQqE+S7E2jXWhut4vc34wb69sEYYMS2LRgo37wnXoFa
+ U5jNY34Mhb6zCLv7UZrXPhqOwTPEKPsdRpRBIsvUzI4lCW8zNqTUwVGGBSMe9Sn/rqP+0Hc
+ ZE2V2uxGuYnfv74AcslE8K94pghU8VDghg11No6WQ4CDmZQjGTkgwAwxRTd79ToUMk2jbhY
+ GAHuppk5TR0x8YjxOHq4w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sCszT6SAIfU=:EMbLDFo/4IQYxLPBQi+idh
+ b6TytVGhby0fIjgUjRLtGhNalYCQqk0iEjqjSgeP94XpxR9jGaqDAi1Y0Gb7/bSKG2rXCgoHb
+ Z80PODNcCqbXF9+DPY1M/dBSDA5WoqExxfMy34LEfOCijEHlQC1fgWoKJN+l9eS0XzuFzSLOQ
+ yPa4Q5en6gDbFGquLyeS0PP9fr9c0co9EcOvX0Un9vPckFT23e2cxKfuzJ8WVC4zFscR8dA3L
+ MTJ7XiQLdddcaDSNzS+2SC4v2pUdXTjHjSTdTWboqKbPnr16LNoZ11YSxAOXZN8UghZLxs8p2
+ RuTiyjItuzhEhNkPbbQmJJ9+aHAcQgVHg6Jy2nKsUA+d54zxL2f4XolSOVcKSktt/a+pggVYn
+ 36dCvpjFvkbouzb/D9GOvY3Rs6Yu7rFIjjy9Nz0bxaox2iRB9lswOkbrQBfEuDbBizwWp4xLO
+ nVphyraUcdFX0eqhlEICFjqe5GFTy3hHDfNgnadgMIIY1j0vBUXzZqcPXlp3ja1EmtwumlpGK
+ K+VcW/HaKszRxVibxSKg8aObdVYiYIkK2uXoxcQ2jUHetnZlWR7bifWQmPrRndlCG1xY3sYd0
+ Nq7pPhdm9mNCuy5pmZITSDP2d3RpX92bo14P6qA7ms9a3PTfrrOC9HjQAiBXlpjn5cMHGU331
+ 1Cu0H/rzXbq2dK8QgF+X0qIkU/IcqX5nN/ZsuRF6BWFDJRQoGTDVB2qIa8xk/AZVSsGFMZ9Sz
+ XtuObu2/qhC1DdRkg3oWrPs1udblQvJZH9D911HFE7TrE9cCuc/X+ezFIwxec/yr2ZvhSl/fX
+ WyPaO4XwWbnjQeuaaWmPic1FLY0vdTePBjBHJjlO7kq3bre409ZX7yzUcZ4eezydOp4oRcd
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Sep 19, 2020 at 6:21 PM Andy Lutomirski <luto@kernel.org> wrote:
+> On Fri, Sep 18, 2020 at 8:16 AM Christoph Hellwig <hch@lst.de> wrote:
+> > On Fri, Sep 18, 2020 at 02:58:22PM +0100, Al Viro wrote:
+> > > Said that, why not provide a variant that would take an explicit
+> > > "is it compat" argument and use it there?  And have the normal
+> > > one pass in_compat_syscall() to that...
+> >
+> > That would help to not introduce a regression with this series yes.
+> > But it wouldn't fix existing bugs when io_uring is used to access
+> > read or write methods that use in_compat_syscall().  One example that
+> > I recently ran into is drivers/scsi/sg.c.
 
-On 19-09-2020 17:03, Anant Thazhemadam wrote:
-> On 19-09-2020 22:25, Al Viro wrote:
->> On Sat, Sep 19, 2020 at 05:17:27PM +0100, Al Viro wrote:
->>
->>> Lovely...  That would get an empty path and non-directory for a starting
->>> point, but it should end up with LAST_ROOT in nd->last_type.  Which should
->>> not be able to reach the readers of those fields...  Which kernel had
->>> that been on?
->> Yecchhh...  I see what's going on; I suspect that this ought to be enough.
->> Folks, could somebody test it on the original reproducer setup?
-> Sure. I can do that.
+Ah, so reading /dev/input/event* would suffer from the same issue,
+and that one would in fact be broken by your patch in the hypothetical
+case that someone tried to use io_uring to read /dev/input/event on x32...
 
-Looks like this patch actually fixes this bug.
-I made syzbot test the patch, and no issues were triggered!
+For reference, I checked the socket timestamp handling that has a
+number of corner cases with time32/time64 formats in compat mode,
+but none of those appear to be affected by the problem.
 
-Note:    syzbot tested the patch with the KMSAN kernel, which
-was recently rebased on v5.9-rc4.
+> Aside from the potentially nasty use of per-task variables, one thing
+> I don't like about PF_FORCE_COMPAT is that it's one-way.  If we're
+> going to have a generic mechanism for this, shouldn't we allow a full
+> override of the syscall arch instead of just allowing forcing compat
+> so that a compat syscall can do a non-compat operation?
 
-Thanks,
-Anant
+The only reason it's needed here is that the caller is in a kernel
+thread rather than a system call. Are there any possible scenarios
+where one would actually need the opposite?
 
+       Arnd
