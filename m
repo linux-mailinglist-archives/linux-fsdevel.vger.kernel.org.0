@@ -2,93 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5B2F270FB4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 19:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0526270FB2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Sep 2020 19:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbgISRD4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Sep 2020 13:03:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48424 "EHLO
+        id S1726567AbgISRDR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Sep 2020 13:03:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbgISRD4 (ORCPT
+        with ESMTP id S1726434AbgISRDQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Sep 2020 13:03:56 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F29C0613CE;
-        Sat, 19 Sep 2020 10:03:55 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id f2so5400519pgd.3;
-        Sat, 19 Sep 2020 10:03:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=0w8QbwM4kvqqRSaS1CHSdmOE6xRTZzX0zjgQjqhKDF0=;
-        b=qx/oIGreK31Y6ETNGs/oln3jQ0qx9pvT8TBNtkNN19nR4lNugF6enbJTX4d0iWk7Ms
-         dPvb2UoEnAjmBcHnjynt8u7rFvxEUYM3+iEvgVwr2hW4PEgfdCu1B4Ueribxo7hfy9SR
-         HnxwBFa3s3kdu2CiWYcABCW2IhFzbwWQnn0JYqZkYaAcmN7HE2HNDH4aKDaE+K2S+zoK
-         geUinYva8s+J8N2Yib7FDRNdPTOa27AUEEechVAdPKMaqQQM5wT36mRuNmS81b6PtfYf
-         E1S5hl4+R68/og0k0Jn8qnZaNcYUvKHb3FYR4lJ/3N9LJwURlyGGCZrFxrGePMyc1ALN
-         enZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=0w8QbwM4kvqqRSaS1CHSdmOE6xRTZzX0zjgQjqhKDF0=;
-        b=kdXhIIXGcktMgfaIpywEzk1Xzye4wbANOuqZ5cnR63ybeqEAHKLOPNLS2v47fTv8xx
-         H52hgKPJdqXCrCgreliLCp39Bbvd/5L+wv88ywi96Y2/R/LFXK4sLVYNT+k874w+wdX7
-         qvLaOAu6HCyvYG5DzlKCq0kNB6SreoSiJUUs0Bb+4gqCiva0icFOiCtdokv/gu7fPQhx
-         Icm965zMMc1VyRnm1DkqI9kFRt+7UoVzb7WV8v2KqSb/5qZMhaOIuMKC5bsAM9asXiU0
-         zicd2/dqqgbHjv0R21/c5vg+/HPN2npM/wnJarLAWB4t+nZywsap4VoeVKOHeq6fvCqE
-         0pWw==
-X-Gm-Message-State: AOAM5300OYSLhkZsZt0OVr+7iRFS3mdzzWExyAsjrGrZ0tkIAja3I3sf
-        mIn28sUiXHA/eXXiNjad4cT76anQgmrt90C4a/U=
-X-Google-Smtp-Source: ABdhPJxexXsrnXptAxi5so8K363t5vhAMff8n1qfJ44WUX0aS/CL9GTAnnqtJntEjZjKUhVbBRFdjg==
-X-Received: by 2002:a63:485c:: with SMTP id x28mr31998096pgk.289.1600535034888;
-        Sat, 19 Sep 2020 10:03:54 -0700 (PDT)
-Received: from [192.168.0.104] ([49.207.212.24])
-        by smtp.gmail.com with ESMTPSA id k28sm6958398pfh.196.2020.09.19.10.03.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Sep 2020 10:03:54 -0700 (PDT)
-Subject: Re: [Linux-kernel-mentees] [PATCH] fs: fix KMSAN uninit-value bug by
- initializing nd in do_file_open_root
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+4191a44ad556eacc1a7a@syzkaller.appspotmail.com,
-        linux-kernel@vger.kernel.org
-References: <20200916052657.18683-1-anant.thazhemadam@gmail.com>
- <20200916054157.GC825@sol.localdomain>
- <20200917002238.GO3421308@ZenIV.linux.org.uk>
- <20200919144451.GF2712238@kroah.com>
- <20200919161727.GG3421308@ZenIV.linux.org.uk>
- <20200919165558.GH3421308@ZenIV.linux.org.uk>
-From:   Anant Thazhemadam <anant.thazhemadam@gmail.com>
-Message-ID: <26d881e5-f68a-b3b7-4cb0-04a3c6c384ac@gmail.com>
-Date:   Sat, 19 Sep 2020 17:03:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.2.2
+        Sat, 19 Sep 2020 13:03:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7504CC0613CE;
+        Sat, 19 Sep 2020 10:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7K524fAR5E8RPb4YZ8gfAgOST1hNthb7Q6TYSOdLEWM=; b=I9SyxsBjIuKE8VjClV7wfiwGKx
+        ukpIt2y5GhZy6hrkvXdcxniXSXe/eiESVdjiQwZ9kQXujauA22qL7/t0q6vOUQSRLnpcfSOAw399N
+        x2NBhUFY+qsB+UTiAy7FaUIKiK2tUu2QFV8aIlMf1fphsAKUsYqEPjtHaxkEW5g6hja1X4AAO55Dx
+        LkL+NxxBvwWJWMVO5ncqXYrcH0Q2k7hVdbr1hQJ1HCjyzbTN3KQ10H8fa+uz0WQWwCPsS966Z0DrR
+        an66n1b/pd3J3j69L1/XkQiQR5F0m4Zcol4jym/GfdqOSh6oRcQDhu+CNki4PJqxH79Oblfbm1MDJ
+        odWchhNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJgGY-0006GI-RP; Sat, 19 Sep 2020 17:03:14 +0000
+Date:   Sat, 19 Sep 2020 18:03:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 16/13] iomap: Make readpage synchronous
+Message-ID: <20200919170314.GO32101@casper.infradead.org>
+References: <20200917151050.5363-1-willy@infradead.org>
+ <20200917225647.26481-1-willy@infradead.org>
+ <20200917225647.26481-3-willy@infradead.org>
+ <20200919063908.GH13501@infradead.org>
+ <20200919064308.GA16257@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200919165558.GH3421308@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200919064308.GA16257@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Sep 19, 2020 at 07:43:08AM +0100, Christoph Hellwig wrote:
+> On Sat, Sep 19, 2020 at 07:39:08AM +0100, Christoph Hellwig wrote:
+> > I think just adding the completion and status to struct
+> > iomap_readpage_ctx would be a lot easier to follow, at the cost
+> > of bloating the structure a bit for the readahead case.  If we
+> > are realy concerned about that, the completion could be directly
+> > on the iomap_readpage stack and we'd pass a pointer.
+> 
+> Anbother option would be to chain the bios and use submit_bio_wait.
+> That would take care of the completion and the status propagation
+> withour extra fields and extra code in iomap.
 
-On 19-09-2020 22:25, Al Viro wrote:
-> On Sat, Sep 19, 2020 at 05:17:27PM +0100, Al Viro wrote:
->
->> Lovely...  That would get an empty path and non-directory for a starting
->> point, but it should end up with LAST_ROOT in nd->last_type.  Which should
->> not be able to reach the readers of those fields...  Which kernel had
->> that been on?
-> Yecchhh...  I see what's going on; I suspect that this ought to be enough.
-> Folks, could somebody test it on the original reproducer setup?
+But it wouldn't let us mark some blocks on the page as Uptodate, would it?
+As I read the code, chaining two BIOs together will call the parent's
+bi_end_io only once both the child and the parent BIOs have completed,
+but at the point the parent's bi_end_io is called, the child bio has
+already been put and we can't iterate over its bio_vec.
 
-Sure. I can do that.
-
-Thanks,
-Anant
+Maybe I misread the code; bio chaining does not seem to be well
+documented.
