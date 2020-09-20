@@ -2,48 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8666271637
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 19:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83A60271661
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 19:40:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbgITROb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Sep 2020 13:14:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43318 "EHLO
+        id S1726342AbgITRkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Sep 2020 13:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgITROa (ORCPT
+        with ESMTP id S1726037AbgITRkq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Sep 2020 13:14:30 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBEFC061755;
-        Sun, 20 Sep 2020 10:14:30 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id 95so2984354ota.13;
-        Sun, 20 Sep 2020 10:14:30 -0700 (PDT)
+        Sun, 20 Sep 2020 13:40:46 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2149C061755
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 10:40:45 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id k25so9213271ljk.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 10:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=CvggMFTs+vEMiZp1aSJhey+Z0FQFMf9GP9Mj4SPXr1s=;
-        b=YE4LW7cpVdCUnM3X1iKZjTJA+vOjEcSB/TjLpILOqIP9onpcvGWukJ4LA3M0IlxIZm
-         w4egKax85tTabDq5J1hfPWlRuQr1vqOC8vdYcAPXPhZoafrvF1ZctQFUe1YcrNUwrY5G
-         OAlK5K/UtdpYIgsUvtMeOqlktTSBWjTzOegLvR47WP8ZAwOc+YvLeJ4K4KpblhMFUoJH
-         VHsxlow4RnZi63FiX4zKcMTcmJK8Z8mZk2ArnQpPJag2KK1Lin4xYWV4R3pN5JDvVaSG
-         xE8wWSqf9vGALgaz+nfghz/gj8I2zLeBJtBvAEHHstP9oIJpxcC4kq3IjvpBnr5/uTcz
-         zOIg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uosIaBfV8EILtqdKcJPwj9HQb4A+VUO2Ewb4BaoQ+yc=;
+        b=GfS5aOwn7LnsYjlq8ck/DWbIdmlsRpcSpOmdiIHC+5vGmwNGjEb7dgIf0616LI+MFq
+         IzQ7ctWVYZSvUI2Oag3HJz7ppBoiq4raHZQ/7jdS5lOz7/UxHgYeuF+yk2+Daig3mZHU
+         uWr8ivc3CGxTUYaPyKfmqP7L+BimX1U7H11g4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=CvggMFTs+vEMiZp1aSJhey+Z0FQFMf9GP9Mj4SPXr1s=;
-        b=tohyTHSvQHLSRsJSSm4oW/TfBouSO2HsdSOnsRJ8+CCqGLKUOA9B2PvkGCyHdnbVhV
-         HPDfepgtDRDyDFZ3GmCqpY+2nakCO1I6Vm23n8ZKPzILpU4XeB+FKWJfndqPDoceln2u
-         fDfz/ckBRGP4cpAWiHZeiJ7stpVaDYkohDIvhxpb7JVQie7Lb4LuPOSy83qM3Lx5gzda
-         OMyKkj+BKcpb0Fn0Ev1oDnwffWXK2pO6WRlsIEHrkucvKyKfgZrNwdHlRpN/xcSvf/AA
-         R8mk3p1hb7EvXCLyRGnd8qIPwFRCIeSGJiaYzEMuYnf9LhUIoI5hAXpPM/q5s9Avkp5w
-         AU7Q==
-X-Gm-Message-State: AOAM533O61cKktdIpuX5u6wk4UHiVEIP5VdwPi9nqBZkEwSDO0Mvba8V
-        y8hrBhHRMPmbiipI6abxlQDwvIKfgitxEXST9Zc=
-X-Google-Smtp-Source: ABdhPJxGlMMNoAOMtsyXjzvMLS7FKZ9Jo95Ty/3sTkwTGDBVWFKP3yxSf+Y0VJ41rRf3alIyfQrApz5yk9NKi1e6ilc=
-X-Received: by 2002:a05:6830:13da:: with SMTP id e26mr30715689otq.28.1600622069312;
- Sun, 20 Sep 2020 10:14:29 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uosIaBfV8EILtqdKcJPwj9HQb4A+VUO2Ewb4BaoQ+yc=;
+        b=sBiM2zEcnMu1gnnTq7ivAzsH4NPKW8rzHaDoQ71EOt6jdXDQBUlYaPCVXxwPVEj2XU
+         ESRm/+YyknAKGMeaa9uitxCOTmeBjdyC1J1gU0b7kUq9lzOEbC7Q/e9RCp2Y/TwTVb+8
+         dfaM1I9V8YOTR587nRYuZ8bTjsRnlmHHY5hXEVzO3MhuqjHBkSc3SOpAzVWDN+MBKXpl
+         Xw7THY0ZsG4yez+BDf5OvZiGMnozoHKMaqS6AWsJrTFgdnrHs9WeTX9WuDFqQEZ2fvLv
+         Um1p+5VF2ryLUCWGbO/y1V43TidryPFUmOQw+bz+Y3avoomcAhk+GlAOA5URuSTGTaf/
+         eFIw==
+X-Gm-Message-State: AOAM532Gmm4WobbbrjNKR2SleJ+e+ya41Qke+Iqoclf5Ry1tzVh0xqWS
+        0puHboIWpeECMXXdrchHpt6iqd5eV2U0wQ==
+X-Google-Smtp-Source: ABdhPJzeeS3saRt4cDORpVhG1ZR9UJNhd7t7yingxDYeTN/9+A4yRCqCaYWCwdTBf5npDIGtpufSjw==
+X-Received: by 2002:a2e:8993:: with SMTP id c19mr16019234lji.264.1600623643669;
+        Sun, 20 Sep 2020 10:40:43 -0700 (PDT)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id b14sm1904485lfo.257.2020.09.20.10.40.42
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Sep 2020 10:40:42 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id z19so11521783lfr.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 10:40:42 -0700 (PDT)
+X-Received: by 2002:ac2:4ec7:: with SMTP id p7mr12576982lfr.352.1600623642270;
+ Sun, 20 Sep 2020 10:40:42 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
  <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
@@ -54,14 +60,15 @@ References: <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
  <20200917192707.GW5449@casper.infradead.org> <CAHk-=wjp+KiZE2EM=f8Z1J_wmZSoq0MVZTJi=bMSXmfZ7Gx76w@mail.gmail.com>
  <CA+icZUWVRordvPzJ=pYnQb1HiPFGxL6Acunkjfwx5YtgUw+wuA@mail.gmail.com>
  <CA+icZUUUkuV-sSEtb6F5Gk=yJ0efKUzEfE-_ko_b8BE3C7PTvQ@mail.gmail.com>
- <CA+icZUWoktdNKpdgBiojy=ofXhHP+y6Y4tPWm1Y3n4Yi_adjPQ@mail.gmail.com> <CAHk-=wi9x33YvO_=5VOXiNDg7yQU5D5MHReqUNzFrJ9azNx3hg@mail.gmail.com>
-In-Reply-To: <CAHk-=wi9x33YvO_=5VOXiNDg7yQU5D5MHReqUNzFrJ9azNx3hg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sun, 20 Sep 2020 19:14:17 +0200
-Message-ID: <CA+icZUW=2aaM1X1dfhEbB74pLXekCULXCkU2s7J=qVHHXjxJdQ@mail.gmail.com>
+ <CA+icZUWoktdNKpdgBiojy=ofXhHP+y6Y4tPWm1Y3n4Yi_adjPQ@mail.gmail.com>
+ <CAHk-=wi9x33YvO_=5VOXiNDg7yQU5D5MHReqUNzFrJ9azNx3hg@mail.gmail.com> <CA+icZUW=2aaM1X1dfhEbB74pLXekCULXCkU2s7J=qVHHXjxJdQ@mail.gmail.com>
+In-Reply-To: <CA+icZUW=2aaM1X1dfhEbB74pLXekCULXCkU2s7J=qVHHXjxJdQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 20 Sep 2020 10:40:26 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgfWh-b7AHT6TDF2ekq01zFFnzwDUkjNM02hXxN__rTRA@mail.gmail.com>
+Message-ID: <CAHk-=wgfWh-b7AHT6TDF2ekq01zFFnzwDUkjNM02hXxN__rTRA@mail.gmail.com>
 Subject: Re: Kernel Benchmarking
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+To:     Sedat Dilek <sedat.dilek@gmail.com>
 Cc:     Matthew Wilcox <willy@infradead.org>,
         Michael Larabel <Michael@michaellarabel.com>,
         Matthieu Baerts <matthieu.baerts@tessares.net>,
@@ -76,23 +83,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 20, 2020 at 7:06 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sun, Sep 20, 2020 at 10:14 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
 >
-> On Fri, Sep 18, 2020 at 1:25 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> >
-> > do you want me to send a patch for the above typos or do you want to
-> > do that yourself?
->
-> I was about to do it myself, and then I noticed this email of yours
-> and I went "heck yeah, let Sedat send me a patch and get all the glory
-> for it".
->
+> You had the glory of writing the patch :-).
 
-A few minutes ago I logged into my machine and read this.
+Your loss. I know it must hurt to not get the glory of authorship.
 
-You had the glory of writing the patch :-).
-
-Of course, I can send a patch if you desire.
-
-- Sedat -
+             Linus
