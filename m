@@ -2,248 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4AF527134A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 11:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D158B2714B7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 15:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgITJ7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Sep 2020 05:59:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33682 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbgITJ7j (ORCPT
+        id S1726430AbgITN4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Sep 2020 09:56:10 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:46411 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbgITN4J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Sep 2020 05:59:39 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8618C061755
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 02:59:38 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id u3so5410201pjr.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 02:59:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bsQK8LpuxrhLjsMMeuAwU+LPx3UZkeZ5l4b7tYvmwRw=;
-        b=uf2OGboFLy/L86Po2Es5Zv7ilwDEHjiD68HdWMnC+2TTVeQq6+3TpQ8S4hx54ztRz6
-         byRNGnVskkzKHg8WColeN7JdIRLxsd260424uAjNg9dOsUdX7kTpbuuiWjtlFCdyXxxB
-         d6Ubn2mPsUlkDVPO/GCNxHunwKCXPScicvQszzSzCGq2eusF2u40NN0hrA9iqGzwzBvv
-         oAM9YZQQn1IcETFhLtCe6kJ90ZtQoanr/NjfI2jG1VGZLhviiFKwbdZuJZbY3VsavHer
-         xv1SnI9UsEv6Mwwu8/vVj4sP5FTPPSnySzsOPSPXrzB8ga5sgjTi1RXltGX/o1IXvm50
-         RBzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bsQK8LpuxrhLjsMMeuAwU+LPx3UZkeZ5l4b7tYvmwRw=;
-        b=sEgMVv9e9Z8VWfaZtGDbwJGq9+mzUZroO7cBW9BBqocpVrykgCC5QgKyqEUejSK8kz
-         LMl8hM20guYbxgW+67TQjCKp0dITRNZerw6cE+pXkFRFCz9P4H0uS3kSVkPdxOzlljPk
-         sibLBd83ZxWEHwXGPipN4C7dc1HN+PH1rTycEc7ec+gFmxhb8amkSLopvOxAFviHy8GB
-         eHbEu24LGar058Bi+no6NiivfajFoUVQqXZF/vn8n3PDNT40KyNxdLI02LTXxkxeEtUq
-         Ws0dt7J3Pdv1rqksRPl2TD9lTtgyNv0yHt3ZXfrKHoH52qnQsg49eNw7JilaS1WZseJw
-         crbQ==
-X-Gm-Message-State: AOAM532nSG8VAavtLQ4kmP3twK3WiBX6X8wRm7NRBAF6B+D4CxmXAgBD
-        U+e/CgAkLnWEduweFKSUrDcQed33bvREpMusjgaQ0w==
-X-Google-Smtp-Source: ABdhPJyLB6JeulC3J3qt+PdRVgQHD1bgo33KeQ7Z9TGvBKZsB/ZmYNsfj5G5KTW1QcP1SkVeA5KsxqzEv001KyERvQA=
-X-Received: by 2002:a17:90a:bc8d:: with SMTP id x13mr20950424pjr.229.1600595978266;
- Sun, 20 Sep 2020 02:59:38 -0700 (PDT)
+        Sun, 20 Sep 2020 09:56:09 -0400
+Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MMoOy-1k1Dwv2q28-00Ijbf; Sun, 20 Sep 2020 15:56:05 +0200
+Received: by mail-qk1-f179.google.com with SMTP id w16so12205786qkj.7;
+        Sun, 20 Sep 2020 06:56:04 -0700 (PDT)
+X-Gm-Message-State: AOAM533+Tg7GsRoHCgP40ir59ld5C/1Vm0N7+PC3SG26gIqEIleq3ONH
+        fksm3LFFVG+V0/cydp/yoybdjQO0QWCzFdtRnVg=
+X-Google-Smtp-Source: ABdhPJwjhkL3KLtOGKzNMPo/as4noBlQ9Jb8z4PXaKINeNIOOA3tWOtTq+bHeowiwT9kTTVa6K2ILOsBaWuTHLMSx30=
+X-Received: by 2002:a37:a495:: with SMTP id n143mr41151530qke.394.1600610163343;
+ Sun, 20 Sep 2020 06:56:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200915125947.26204-1-songmuchun@bytedance.com> <20200915125947.26204-22-songmuchun@bytedance.com>
-In-Reply-To: <20200915125947.26204-22-songmuchun@bytedance.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Sun, 20 Sep 2020 17:59:01 +0800
-Message-ID: <CAMZfGtWXr0A3ymf_trBmUggRudbZbhfwNCJWSHZdkK9JeBY1fg@mail.gmail.com>
-Subject: Re: [RFC PATCH 21/24] mm/hugetlb: Merge pte to huge pmd only for
- gigantic page
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>
-Cc:     linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel@vger.kernel.org
+References: <20200918124533.3487701-1-hch@lst.de> <20200918124533.3487701-2-hch@lst.de>
+ <20200918134012.GY3421308@ZenIV.linux.org.uk> <20200918134406.GA17064@lst.de>
+ <20200918135822.GZ3421308@ZenIV.linux.org.uk> <20200918151615.GA23432@lst.de> <20200919220920.GI3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200919220920.GI3421308@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 20 Sep 2020 15:55:47 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3QApj3isPu3TkLahArsfb5jaABb7DJ7EKMxey1T1YPbA@mail.gmail.com>
+Message-ID: <CAK8P3a3QApj3isPu3TkLahArsfb5jaABb7DJ7EKMxey1T1YPbA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Networking <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:DEeFGJUPrk6u/LSjSFLEBpcAP+oeK32PoUjTZYC6fPIs6n+k1mv
+ XDMz6XlgCh1Nyx4j17+27me+L64NgDjpVdd7dXJCFrjon/aTAyIu+oh95nm9X9KaWl6wa9w
+ jNEmllGRXAiSS7LrTZQ8rS4tQWtbNU8yEqoB7YoTh84C0NTdLZyWEaqn7c0+w0xlPbaxYu4
+ ur3P1v08FrYIfJVpNVfUg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6mkBVY6Bong=:SqXPt0trLeYLMHgx1cvXuJ
+ U5p4iiPSwCCzF8iboycWFBfO05sNkLPSd9pwnBrqqztOBcPkNasCWa49qwp+g4/XCsXhPAeIp
+ ZEo2wIs2JuHkQHCsr1J07cwiEuu+Jpl8XT2iP7S5i5y3yZeYsvvpW+zjEoGvo0lUUzt50b+DF
+ d+etXRDTAS4MI0KZwR66GwCASGNxKnFcidiAQ7uHqKF4jBCdVZRVVC3unjWR/zDQrf1UsSGl5
+ yiA+FMkQ1meD61zxEhK4DYTj39EHaC1fCYgevYfr50bwM5KeXfxunkJdrXZB40zmP6hwiP8U7
+ ZAYUI2x6IdnJZ7j005UTxSUKkFfiSfHKfIcRoNLVxmyXZFSZpZv1lHhqR5Lc7mlnrYMV7yfwX
+ jEWPWgGYdVS/0Pqp4mDctdka7FBBmnDQpnQCFWndo9r29o5kZmF/0FWZTAYaiXIc1zXQ0CNGs
+ ITo99AkK8c2i8ikDCjq3PgczN6CdTTM3aiqzqHKeSvyXfbkvI1hCX/5ydNZHKVZf8msKr2S8H
+ vq/kWx12tz5+znGWLFrLlf7992gz4tbGhg+ohl2KdxHhWBaLbGq7B7TrxKF2dX7bnaN+L5Zp/
+ vJ8JYq605hJO1se4r8NW3ew1++WG531E7DL/6Lx0YnzfRjxiToXb8Pg4KnyC0djlxEMEwUAlv
+ CmSJKACAV0HY6EMSYJ8+oWpo6MOxbBfBPrBaLdo9nEybAZsqUhO7gMBhw4FLPWxPNJ4TahNDG
+ ZB13aOM7zMIaLy9bXTcJUkAShP8ZyjBNl+F3C7ClxLkP593ksjcwF70rTpIg8nnqaoxY/0Dee
+ smdON9VOaGsvyMjHBc085FK8V3s316O5YhVW2qcAg2UzaNBdL/34eax1MABsisTpCdIrIGW
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 9:03 PM Muchun Song <songmuchun@bytedance.com> wrote:
+On Sun, Sep 20, 2020 at 12:09 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Fri, Sep 18, 2020 at 05:16:15PM +0200, Christoph Hellwig wrote:
+> > On Fri, Sep 18, 2020 at 02:58:22PM +0100, Al Viro wrote:
+> > > Said that, why not provide a variant that would take an explicit
+> > > "is it compat" argument and use it there?  And have the normal
+> > > one pass in_compat_syscall() to that...
+> >
+> > That would help to not introduce a regression with this series yes.
+> > But it wouldn't fix existing bugs when io_uring is used to access
+> > read or write methods that use in_compat_syscall().  One example that
+> > I recently ran into is drivers/scsi/sg.c.
 >
-> Merge pte to huge pmd if it has ever been split. Now only support
-> gigantic page which's vmemmap pages size is an integer multiple of
-> PMD_SIZE. This is the simplest case to handle.
->
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->  include/linux/hugetlb.h |   7 +++
->  mm/hugetlb.c            | 104 +++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 109 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index e3aa192f1c39..c56df0da7ae5 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -611,6 +611,13 @@ static inline bool vmemmap_pmd_huge(pmd_t *pmd)
->  }
->  #endif
->
-> +#ifndef vmemmap_pmd_mkhuge
-> +static inline pmd_t vmemmap_pmd_mkhuge(struct page *page)
-> +{
-> +       return pmd_mkhuge(mk_pmd(page, PAGE_KERNEL));
-> +}
-> +#endif
-> +
->  #ifndef VMEMMAP_HPAGE_SHIFT
->  #define VMEMMAP_HPAGE_SHIFT            PMD_SHIFT
->  #endif
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 28c154679838..3ca36e259b4e 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1759,6 +1759,62 @@ static void __remap_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
->         }
->  }
->
-> +static void __replace_huge_page_pte_vmemmap(pte_t *ptep, unsigned long start,
-> +                                           unsigned int nr, struct page *huge,
-> +                                           struct list_head *free_pages)
-> +{
-> +       unsigned long addr;
-> +       unsigned long end = start + (nr  << PAGE_SHIFT);
-> +
-> +       for (addr = start; addr < end; addr += PAGE_SIZE, ptep++) {
-> +               struct page *page;
-> +               pte_t old = *ptep;
-> +               pte_t entry;
-> +
-> +               prepare_vmemmap_page(huge);
-> +
-> +               entry = mk_pte(huge++, PAGE_KERNEL);
-> +               VM_WARN_ON(!pte_present(old));
-> +               page = pte_page(old);
-> +               list_add(&page->lru, free_pages);
-> +
-> +               set_pte_at(&init_mm, addr, ptep, entry);
-> +       }
-> +}
-> +
-> +static void replace_huge_page_pmd_vmemmap(pmd_t *pmd, unsigned long start,
-> +                                         struct page *huge,
-> +                                         struct list_head *free_pages)
-> +{
-> +       unsigned long end = start + VMEMMAP_HPAGE_SIZE;
-> +
-> +       flush_cache_vunmap(start, end);
-> +       __replace_huge_page_pte_vmemmap(pte_offset_kernel(pmd, start), start,
-> +                                       VMEMMAP_HPAGE_NR, huge, free_pages);
-> +       flush_tlb_kernel_range(start, end);
-> +}
-> +
-> +static pte_t *merge_vmemmap_pte(pmd_t *pmdp, unsigned long addr)
-> +{
-> +       pte_t *pte;
-> +       struct page *page;
-> +
-> +       pte = pte_offset_kernel(pmdp, addr);
-> +       page = pte_page(*pte);
-> +       set_pmd(pmdp, vmemmap_pmd_mkhuge(page));
-> +
-> +       return pte;
-> +}
-> +
-> +static void merge_huge_page_pmd_vmemmap(pmd_t *pmd, unsigned long start,
-> +                                       struct page *huge,
-> +                                       struct list_head *free_pages)
-> +{
-> +       replace_huge_page_pmd_vmemmap(pmd, start, huge, free_pages);
-> +       pte_free_kernel(&init_mm, merge_vmemmap_pte(pmd, start));
-> +       flush_tlb_kernel_range(start, start + VMEMMAP_HPAGE_SIZE);
-> +}
-> +
->  static inline void alloc_vmemmap_pages(struct hstate *h, struct list_head *list)
->  {
->         int i;
-> @@ -1772,6 +1828,15 @@ static inline void alloc_vmemmap_pages(struct hstate *h, struct list_head *list)
->         }
->  }
->
-> +static inline void dissolve_compound_page(struct page *page, unsigned int order)
-> +{
-> +       int i;
-> +       unsigned int nr_pages = 1 << order;
-> +
-> +       for (i = 1; i < nr_pages; i++)
-> +               set_page_refcounted(page + i);
-> +}
-> +
->  static void alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
->  {
->         pmd_t *pmd;
-> @@ -1791,10 +1856,45 @@ static void alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
->                                     __remap_huge_page_pte_vmemmap);
->         if (!freed_vmemmap_hpage_dec(pmd_page(*pmd)) && pmd_split(pmd)) {
->                 /*
-> -                * Todo:
-> -                * Merge pte to huge pmd if it has ever been split.
-> +                * Merge pte to huge pmd if it has ever been split. Now only
-> +                * support gigantic page which's vmemmap pages size is an
-> +                * integer multiple of PMD_SIZE. This is the simplest case
-> +                * to handle.
->                  */
->                 clear_pmd_split(pmd);
-> +
-> +               if (IS_ALIGNED(nr_vmemmap(h), VMEMMAP_HPAGE_NR)) {
-> +                       unsigned long addr = (unsigned long)head;
-> +                       unsigned long end = addr + nr_vmemmap_size(h);
-> +
-> +                       spin_unlock(ptl);
-> +
-> +                       for (; addr < end; addr += VMEMMAP_HPAGE_SIZE) {
-> +                               void *to;
-> +                               struct page *page;
-> +
-> +                               page = alloc_pages(GFP_VMEMMAP_PAGE & ~__GFP_NOFAIL,
-> +                                                  VMEMMAP_HPAGE_ORDER);
-> +                               if (!page)
-> +                                       goto out;
+> So screw such read/write methods - don't use them with io_uring.
+> That, BTW, is one of the reasons I'm sceptical about burying the
+> decisions deep into the callchain - we don't _want_ different
+> data layouts on read/write depending upon the 32bit vs. 64bit
+> caller, let alone the pointer-chasing garbage that is /dev/sg.
 
-Here forget to call dissolve_compound_page().
+Would it be too late to limit what kind of file descriptors we allow
+io_uring to read/write on?
 
-+                               dissolve_compound_page(page,
-+                                                      VMEMMAP_HPAGE_ORDER);
+If io_uring can get changed to return -EINVAL on trying to
+read/write something other than S_IFREG file descriptors,
+that particular problem space gets a lot simpler, but this
+is of course only possible if nobody actually relies on it yet.
 
-> +
-> +                               to = page_to_virt(page);
-> +                               memcpy(to, (void *)addr, VMEMMAP_HPAGE_SIZE);
-> +
-> +                               /*
-> +                                * Make sure that any data that writes to the
-> +                                * @to is made visible to the physical page.
-> +                                */
-> +                               flush_kernel_vmap_range(to, VMEMMAP_HPAGE_SIZE);
-> +
-> +                               merge_huge_page_pmd_vmemmap(pmd++, addr, page,
-> +                                                           &remap_pages);
-> +                       }
-> +
-> +out:
-> +                       free_vmemmap_page_list(&remap_pages);
-> +                       return;
-> +               }
->         }
->         spin_unlock(ptl);
->  }
-> --
-> 2.20.1
->
-
-
--- 
-Yours,
-Muchun
+      Arnd
