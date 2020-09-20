@@ -2,92 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8FD9271683
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 20:00:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49CA52716A0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 20:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbgITSAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Sep 2020 14:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50382 "EHLO
+        id S1726151AbgITSIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Sep 2020 14:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726308AbgITSAn (ORCPT
+        with ESMTP id S1726043AbgITSIB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Sep 2020 14:00:43 -0400
-Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE57C061755;
-        Sun, 20 Sep 2020 11:00:43 -0700 (PDT)
-Received: by mail-oo1-xc41.google.com with SMTP id k13so2723360oor.2;
-        Sun, 20 Sep 2020 11:00:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=M0zggyfFjCAqyNLqtifhyH6zYXreXaBzwic7FAekGto=;
-        b=IvMBl3CQ7YZUWY4496ldrNZa4422339Kk8l6pMiyxYGJr7BiSUNqSIzb6cojqhhrKD
-         1uevcbwmZYabsvmuu3B7nziQ8W+K+BlgpyFQt6qDtfvNtbLDhSfQxnWFhNGlkf320Clc
-         8UkLof7282z+eRy4wztsDPugZgo1rG0mMYftnxtc7Cr04d0GXrZbAzm81ATONn6SuP+A
-         ypErX1WR4c7OT2VMrNvdj+7pmWDboEtvC1U1gZKnUbBafs6j06FeUufXinPGG/WE/Tn8
-         JAl84WkWSqvg9ekK+3ue7Wqdns7hbId3Ki4hH69pUDvasq4qc8KsZfQi/omW22hXUXxm
-         WAcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=M0zggyfFjCAqyNLqtifhyH6zYXreXaBzwic7FAekGto=;
-        b=mwYIQTaH7hdfvtd5PlavMGTM9Cm9Wdob668gML0AtxW3tvSl7ckvanfKwYeKVvOOYW
-         ioX2ogGLIaGNgSkVEEgPmAiUso1XDtkn05B4HO1FBhA9Gis7bLTFmWdD+p4XhASEOZ+I
-         871nUm18Io5jyHNqVk0gKn3phk8/q8d85WMTaOqyxg9TSIzOokSTDauvq1hcqFGvEoIL
-         GrZ6dSOx9JbWfz/y1Tq4x5AG7CWLG2QmfPXC9kx6vAowPQ+rz87BTWWNVPDQfyGRpir6
-         jLgDQ1WbMFhTN0SJ6qp5OCsfWR3ee1p0pqcUhvK5f1R1LJ+c9ZVsHTbAgnCwCanw+bw4
-         yT1A==
-X-Gm-Message-State: AOAM530a79exvQIKRbCm9Rx/XjdZ/y0RAf9eyGwoQnZuUvSPeyu0EAX1
-        ydnYtn9BrQY8NkLt7qAw18Q7EYKwz3qu0ZOzBbI=
-X-Google-Smtp-Source: ABdhPJwCdWlu4oiXRdcA1xLGP9lA1AxoYUx+S/5QI6gFG2lM2CVvTeu7Vp0Uu9oNE7bk7NG8JU3CWiulnrCt6QDC9A8=
-X-Received: by 2002:a4a:2c02:: with SMTP id o2mr30374645ooo.24.1600624841846;
- Sun, 20 Sep 2020 11:00:41 -0700 (PDT)
+        Sun, 20 Sep 2020 14:08:01 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 470E0C061755;
+        Sun, 20 Sep 2020 11:08:01 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kK3kU-002bOQ-WD; Sun, 20 Sep 2020 18:07:43 +0000
+Date:   Sun, 20 Sep 2020 19:07:42 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Message-ID: <20200920180742.GN3421308@ZenIV.linux.org.uk>
+References: <20200918124533.3487701-1-hch@lst.de>
+ <20200918124533.3487701-2-hch@lst.de>
+ <20200920151510.GS32101@casper.infradead.org>
 MIME-Version: 1.0
-References: <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
- <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
- <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com>
- <20200917182314.GU5449@casper.infradead.org> <CAHk-=wj6g2y2Z3cGzHBMoeLx-mfG0Md_2wMVwx=+g_e-xDNTbw@mail.gmail.com>
- <20200917185049.GV5449@casper.infradead.org> <CAHk-=wj6Ha=cNU4kL3z661CV+c2x2=DKzPrfH=XujMa378NhWQ@mail.gmail.com>
- <20200917192707.GW5449@casper.infradead.org> <CAHk-=wjp+KiZE2EM=f8Z1J_wmZSoq0MVZTJi=bMSXmfZ7Gx76w@mail.gmail.com>
- <CA+icZUWVRordvPzJ=pYnQb1HiPFGxL6Acunkjfwx5YtgUw+wuA@mail.gmail.com>
- <CA+icZUUUkuV-sSEtb6F5Gk=yJ0efKUzEfE-_ko_b8BE3C7PTvQ@mail.gmail.com>
- <CA+icZUWoktdNKpdgBiojy=ofXhHP+y6Y4tPWm1Y3n4Yi_adjPQ@mail.gmail.com>
- <CAHk-=wi9x33YvO_=5VOXiNDg7yQU5D5MHReqUNzFrJ9azNx3hg@mail.gmail.com>
- <CA+icZUW=2aaM1X1dfhEbB74pLXekCULXCkU2s7J=qVHHXjxJdQ@mail.gmail.com> <CAHk-=wgfWh-b7AHT6TDF2ekq01zFFnzwDUkjNM02hXxN__rTRA@mail.gmail.com>
-In-Reply-To: <CAHk-=wgfWh-b7AHT6TDF2ekq01zFFnzwDUkjNM02hXxN__rTRA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sun, 20 Sep 2020 20:00:30 +0200
-Message-ID: <CA+icZUWH7pqCXQPM_=OqeGxOyB-m6Ww1D6o2oQ+DYTv_ARaBwg@mail.gmail.com>
-Subject: Re: Kernel Benchmarking
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michael Larabel <Michael@michaellarabel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Ted Ts'o" <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200920151510.GS32101@casper.infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 20, 2020 at 7:40 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, Sep 20, 2020 at 10:14 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> >
-> > You had the glory of writing the patch :-).
->
-> Your loss. I know it must hurt to not get the glory of authorship.
->
+On Sun, Sep 20, 2020 at 04:15:10PM +0100, Matthew Wilcox wrote:
+> On Fri, Sep 18, 2020 at 02:45:25PM +0200, Christoph Hellwig wrote:
+> > Add a flag to force processing a syscall as a compat syscall.  This is
+> > required so that in_compat_syscall() works for I/O submitted by io_uring
+> > helper threads on behalf of compat syscalls.
+> 
+> Al doesn't like this much, but my suggestion is to introduce two new
+> opcodes -- IORING_OP_READV32 and IORING_OP_WRITEV32.  The compat code
+> can translate IORING_OP_READV to IORING_OP_READV32 and then the core
+> code can know what that user pointer is pointing to.
 
-No money. No bitcoins. Yelping for credits.
+Let's separate two issues:
+	1) compat syscalls want 32bit iovecs.  Nothing to do with the
+drivers, dealt with just fine.
+	2) a few drivers are really fucked in head.  They use different
+*DATA* layouts for reads/writes, depending upon the calling process.
+IOW, if you fork/exec a 32bit binary and your stdin is one of those,
+reads from stdin in parent and child will yield different data layouts.
+On the same struct file.
+	That's what Christoph worries about (/dev/sg he'd mentioned is
+one of those).
 
-- Sedat -
+	IMO we should simply have that dozen or so of pathological files
+marked with FMODE_SHITTY_ABI; it's not about how they'd been opened -
+it describes the userland ABI provided by those.  And it's cast in stone.
+
+	Any in_compat_syscall() in ->read()/->write() instances is an ABI
+bug, plain and simple.  Some are unfixable for compatibility reasons, but
+any new caller like that should be a big red flag.
+
+	How we import iovec array is none of the drivers' concern; we do
+not need to mess with in_compat_syscall() reporting the matching value,
+etc. for that.  It's about the instances that want in_compat_syscall() to
+decide between the 32bit and 64bit data layouts.  And I believe that
+we should simply have them marked as such and rejected by io_uring.  With
+any new occurences getting slapped down hard.
+
+	Current list of those turds:
+/dev/sg (pointer-chasing, generally insane)
+/sys/firmware/efi/vars/*/raw_var (fucked binary structure)
+/sys/firmware/efi/vars/new_var (fucked binary structure)
+/sys/firmware/efi/vars/del_var (fucked binary structure)
+/dev/uhid	(pointer-chasing for one obsolete command)
+/dev/input/event* (timestamps)
+/dev/uinput (timestamps)
+/proc/bus/input/devices (fucked bitmap-to-text representation)
+/sys/class/input/*/capabilities/* (fucked bitmap-to-text representation)
