@@ -2,114 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF1E27161F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 18:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43BBA271632
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Sep 2020 19:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbgITQ74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Sep 2020 12:59:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48382 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbgITQ7v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Sep 2020 12:59:51 -0400
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29B79235FD
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 16:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600621190;
-        bh=x0CbGoy7QDKeuRiDyZ0r+bpumnscmCVOPI/85NlktW8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gJKTktW4SZM9Nk5DOVt1OrRoD5xvcMTHGvsORGcnvvYrrRwkT7FctEN7F9OgfkMkf
-         go8qh4j37RWcESJvMJRLehEaF3oKhwPYJJdJDts/+toGi7k1LIglAiuuVrdC6I4+Xp
-         /LzZmxNyVgp/8l8nI8i/3m9FhkW6jCz/eC4EQY4Q=
-Received: by mail-wm1-f41.google.com with SMTP id q9so9880605wmj.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 09:59:50 -0700 (PDT)
-X-Gm-Message-State: AOAM530LxHTMyjtoCHQz9MgodKW0O35JizWjL4qTKdGFhHbJipJjB/wu
-        vqiatHUbFAUUh/6B7xc/aRJxv20oNNaB7wDtwOEKqQ==
-X-Google-Smtp-Source: ABdhPJwqhOCovrDdCcRZECZNQYs8Sx/d9wwPnQKSY4d4VjHeXmP8XzKxWrTfmcwJ7rQVtp7oa0fbaMUpJAjukisl/1Y=
-X-Received: by 2002:a1c:7e15:: with SMTP id z21mr25730921wmc.21.1600621188572;
- Sun, 20 Sep 2020 09:59:48 -0700 (PDT)
+        id S1726353AbgITRGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Sep 2020 13:06:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgITRGg (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 20 Sep 2020 13:06:36 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883BCC061755
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 10:06:36 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 77so4142051lfj.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 10:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m32ara5dRLo2fJ/OEn+HKg3b14u2N0hvKAREROX6J3w=;
+        b=ZU/G/BKEGVGbGhBZcMQce8SRRc6gdKG2pt2dEkrk0tevuzgea69QuukEwURgcFprFP
+         BnaAgukvuAqWpzOjAAe3AOwqiczubQccEn5vVpobtBfYrf/pL5rxLvXLRyZEmb1PHN8s
+         29lQhEHVes9pkcET+nYdylijIWda5znrxx8SM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m32ara5dRLo2fJ/OEn+HKg3b14u2N0hvKAREROX6J3w=;
+        b=pOjQ8CpYcoqWa63DHGUkroafGuUeraoBkTnZGGNRHU22Kxl3vls/aLoshyLdR8bXX6
+         ZPm6PzpxpJ9dId/cR2oslq+keCxBIBUdF5DcWpAELpWTtgrUueX2tTZBoyAE6o3TanCL
+         W8jy1VDNHM0FLrC6lRhiETgvSY1A5JvhjtagDzgNUff16GtYFU5lUiMp+BoxbSo6ip2f
+         4n2N3e4P6LzJXtGBIF1YEGJrmkqiSURmRuG4EIcz7lKRHlCtxFCHRd02RFjqKs491gDB
+         or57pzunbFgPhbMBWA5dTYyNaZvNu4XtwW9tl07QKGqSavs32/jR+dJgH3K6ftWZt2DX
+         nb6g==
+X-Gm-Message-State: AOAM531HhZAJnAon0QTKHYlzedc/2RlzwKtmxbejJ1XlXo6wTGJgtS26
+        kBmnrZAmsDi6FCE0vTsemUnzniDgEYL97g==
+X-Google-Smtp-Source: ABdhPJwPDwmQPjqahdZTY1VbN1dJmKCIUm7lEriE2LrxAPe8M/h0P+DCEYK7bbJp0pu2nz9Wl0h6CA==
+X-Received: by 2002:ac2:592d:: with SMTP id v13mr13649237lfi.124.1600621594643;
+        Sun, 20 Sep 2020 10:06:34 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id h13sm2037956ljl.63.2020.09.20.10.06.32
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 20 Sep 2020 10:06:32 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id y2so11439464lfy.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Sep 2020 10:06:32 -0700 (PDT)
+X-Received: by 2002:ac2:4a6a:: with SMTP id q10mr12935270lfp.534.1600621592348;
+ Sun, 20 Sep 2020 10:06:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200919224122.GJ3421308@ZenIV.linux.org.uk> <36CF3DE7-7B4B-41FD-9818-FDF8A5B440FB@amacapital.net>
- <20200919232411.GK3421308@ZenIV.linux.org.uk> <CALCETrViwOdFia_aX4p4riE8aqop1zoOqVfiQtSAZEzheC+Ozg@mail.gmail.com>
- <20200920025745.GL3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200920025745.GL3421308@ZenIV.linux.org.uk>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 20 Sep 2020 09:59:36 -0700
-X-Gmail-Original-Message-ID: <CALCETrWj1i-oyfA1rCXsNqdJddK6Vwm=W31YEf=k-OMBTC0vHw@mail.gmail.com>
-Message-ID: <CALCETrWj1i-oyfA1rCXsNqdJddK6Vwm=W31YEf=k-OMBTC0vHw@mail.gmail.com>
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andy Lutomirski <luto@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
+References: <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
+ <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+ <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com>
+ <20200917182314.GU5449@casper.infradead.org> <CAHk-=wj6g2y2Z3cGzHBMoeLx-mfG0Md_2wMVwx=+g_e-xDNTbw@mail.gmail.com>
+ <20200917185049.GV5449@casper.infradead.org> <CAHk-=wj6Ha=cNU4kL3z661CV+c2x2=DKzPrfH=XujMa378NhWQ@mail.gmail.com>
+ <20200917192707.GW5449@casper.infradead.org> <CAHk-=wjp+KiZE2EM=f8Z1J_wmZSoq0MVZTJi=bMSXmfZ7Gx76w@mail.gmail.com>
+ <CA+icZUWVRordvPzJ=pYnQb1HiPFGxL6Acunkjfwx5YtgUw+wuA@mail.gmail.com>
+ <CA+icZUUUkuV-sSEtb6F5Gk=yJ0efKUzEfE-_ko_b8BE3C7PTvQ@mail.gmail.com> <CA+icZUWoktdNKpdgBiojy=ofXhHP+y6Y4tPWm1Y3n4Yi_adjPQ@mail.gmail.com>
+In-Reply-To: <CA+icZUWoktdNKpdgBiojy=ofXhHP+y6Y4tPWm1Y3n4Yi_adjPQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 20 Sep 2020 10:06:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi9x33YvO_=5VOXiNDg7yQU5D5MHReqUNzFrJ9azNx3hg@mail.gmail.com>
+Message-ID: <CAHk-=wi9x33YvO_=5VOXiNDg7yQU5D5MHReqUNzFrJ9azNx3hg@mail.gmail.com>
+Subject: Re: Kernel Benchmarking
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michael Larabel <Michael@michaellarabel.com>,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Ted Ts'o" <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 19, 2020 at 7:57 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Fri, Sep 18, 2020 at 1:25 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
 >
-> On Sat, Sep 19, 2020 at 05:14:41PM -0700, Andy Lutomirski wrote:
->
-> > > 2) have you counted the syscalls that do and do not need that?
-> >
-> > No.
->
-> Might be illuminating...
->
-> > > 3) how many of those realistically *can* be unified with their
-> > > compat counterparts?  [hint: ioctl(2) cannot]
-> >
-> > There would be no requirement to unify anything.  The idea is that
-> > we'd get rid of all the global state flags.
->
-> _What_ global state flags?  When you have separate SYSCALL_DEFINE3(ioctl...)
-> and COMPAT_SYSCALL_DEFINE3(ioctl...), there's no flags at all, global or
-> local.  They only come into the play when you try to share the same function
-> for both, right on the top level.
+> do you want me to send a patch for the above typos or do you want to
+> do that yourself?
 
-...
+I was about to do it myself, and then I noticed this email of yours
+and I went "heck yeah, let Sedat send me a patch and get all the glory
+for it".
 
->
-> > For ioctl, we'd have a new file_operation:
-> >
-> > long ioctl(struct file *, unsigned int, unsigned long, enum syscall_arch);
-> >
-> > I'm not saying this is easy, but I think it's possible and the result
-> > would be more obviously correct than what we have now.
->
-> No, it would not.  Seriously, from time to time a bit of RTFS before grand
-> proposals turns out to be useful.
-
-As one example, look at __sys_setsockopt().  It's called for the
-native and compat versions, and it contains an in_compat_syscall()
-check.  (This particularly check looks dubious to me, but that's
-another story.)  If this were to be done with equivalent semantics
-without a separate COMPAT_DEFINE_SYSCALL and without
-in_compat_syscall(), there would need to be some indication as to
-whether this is compat or native setsockopt.  There are other
-setsockopt implementations in the net stack with more
-legitimate-seeming uses of in_compat_syscall() that would need some
-other mechanism if in_compat_syscall() were to go away.
-
-setsockopt is (I hope!) out of scope for io_uring, but the situation
-isn't fundamentally different from read and write.
+                    Linus
