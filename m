@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A0F271A85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 07:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36CE1271A87
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 07:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbgIUFtt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 01:49:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40376 "EHLO mail.kernel.org"
+        id S1726244AbgIUFvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 01:51:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbgIUFtt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 01:49:49 -0400
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        id S1726011AbgIUFvE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 01:51:04 -0400
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1091207DE;
-        Mon, 21 Sep 2020 05:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48E2720BED;
+        Mon, 21 Sep 2020 05:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600667389;
-        bh=qBSHYO9pDJszEKBlL6Pv/Rf9R9wIlasteug3iXxVxyg=;
+        s=default; t=1600667464;
+        bh=fclHvYa4RgGnbMPpcyC+ZgH/EaNxF3N4Y2dz1niw6y8=;
         h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Kq781Xb15xsKlD4kl+1Xr6h6y6cOE2B4lNbfCeqHF8rTL4Jpx5tbWgaqz0E5iP9Qt
-         r4ujCnn1BgI1mJyuq5XM3b7WPSjEBxsZAC9HvkHZFcVRYLMTg5F0dKlDEvMmUHDfUG
-         T+6WtbQpS073giVrSRLdBqiSIH3IbhLXSU7ubEgs=
-Received: by mail-oi1-f173.google.com with SMTP id i17so15634436oig.10;
-        Sun, 20 Sep 2020 22:49:48 -0700 (PDT)
-X-Gm-Message-State: AOAM531JZ3QQE+lxjo0ysduXWZd2F5xRiNUFRf/sYiioGSJcj2BJQycy
-        drf8hzMJZmoCohPpyCVRZgVBmc3SfoQtWT+YlTc=
-X-Google-Smtp-Source: ABdhPJxvweHKFZtKANXKvwJXFk79HdzjJPeNotIAmKK952CYdST2RBMZ4XjBX9FlatvQ/3Uq+8+bCry1CJpgSo8LRA8=
-X-Received: by 2002:aca:da8b:: with SMTP id r133mr16599116oig.163.1600667388152;
- Sun, 20 Sep 2020 22:49:48 -0700 (PDT)
+        b=0MHJLEDXMgY+umChaeHtB0v21lx23ExbcKVVmhB9A8Yp5cw3kxUUZ+b/By35bmlI/
+         Bb+RiOgsOkuuC1A911jc4cBfkU39FB7NaaDxXLsGtXe7fWWe8W+7c1zAXXEEiHbzBF
+         Iou267PVuAq1NAP/aowZpqoTXX2nWmKPIWA0tUp8=
+Received: by mail-ot1-f47.google.com with SMTP id e23so11288447otk.7;
+        Sun, 20 Sep 2020 22:51:04 -0700 (PDT)
+X-Gm-Message-State: AOAM532BMQZUAWNX9YCRzYEiM2hmxEE6YLF6fUnansNMnp0ycqyDIR4i
+        CvSPnapidI+wQVUpl8qMIxovN9hCH1VfwV+dg7s=
+X-Google-Smtp-Source: ABdhPJzRJhb/S0DLv+X/uQ8vahV4ZMtWqng9Yb9PMfXDd1tt6udcIsD7C8Ayy8Wo/zqUHofVbkjiPeivanWsXaQ/NJU=
+X-Received: by 2002:a05:6830:1083:: with SMTP id y3mr19593085oto.282.1600667463566;
+ Sun, 20 Sep 2020 22:51:03 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac9:30cf:0:0:0:0:0 with HTTP; Sun, 20 Sep 2020 22:49:47
+Received: by 2002:ac9:30cf:0:0:0:0:0 with HTTP; Sun, 20 Sep 2020 22:51:03
  -0700 (PDT)
-In-Reply-To: <015d01d68bd0$2fc6bb60$8f543220$@samsung.com>
-References: <CGME20200911044449epcas1p42ecc35423eebc3b62428b14529d6a592@epcas1p4.samsung.com>
- <20200911044439.13842-1-kohada.t2@gmail.com> <015d01d68bd0$2fc6bb60$8f543220$@samsung.com>
+In-Reply-To: <015e01d68bd0$5324fe00$f96efa00$@samsung.com>
+References: <CGME20200911044525epcas1p4a050411f3049c625b81c7d6516982537@epcas1p4.samsung.com>
+ <20200911044519.13981-1-kohada.t2@gmail.com> <015e01d68bd0$5324fe00$f96efa00$@samsung.com>
 From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Sun, 20 Sep 2020 22:49:47 -0700
-X-Gmail-Original-Message-ID: <CAKYAXd-+3wox_1R2kdPQ1sGfC+9nvkdz+64uwgs_x4oEr-BexA@mail.gmail.com>
-Message-ID: <CAKYAXd-+3wox_1R2kdPQ1sGfC+9nvkdz+64uwgs_x4oEr-BexA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] exfat: remove useless directory scan in exfat_add_entry()
+Date:   Sun, 20 Sep 2020 22:51:03 -0700
+X-Gmail-Original-Message-ID: <CAKYAXd_umX=_nCjVStts7Gv4siHRv_sENGYChUqm6J20hUDhvg@mail.gmail.com>
+Message-ID: <CAKYAXd_umX=_nCjVStts7Gv4siHRv_sENGYChUqm6J20hUDhvg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] exfat: replace memcpy with structure assignment
 To:     Tetsuhiro Kohada <kohada.t2@gmail.com>
 Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
         kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
@@ -53,8 +53,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2020-09-15 19:22 GMT-07:00, Sungjong Seo <sj1557.seo@samsung.com>:
->> There is nothing in directory just created, so there is no need to scan.
+2020-09-15 19:23 GMT-07:00, Sungjong Seo <sj1557.seo@samsung.com>:
+>> Use structure assignment instead of memcpy.
 >>
 >> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 >
