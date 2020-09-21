@@ -2,194 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C33272CBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 18:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20D142730A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 19:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728763AbgIUQeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 12:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728743AbgIUQeY (ORCPT
+        id S1728553AbgIURHN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 13:07:13 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:46532 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbgIURHN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 12:34:24 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48478C061755;
-        Mon, 21 Sep 2020 09:34:24 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id s12so13471886wrw.11;
-        Mon, 21 Sep 2020 09:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EwqPNPGMMD7jZugkeGHNPUgslTiWGHPwKe5jmVOjgzM=;
-        b=k92Hm9Mq3cOSa6Iizgmb6g6eu0cp6tsC9vlUcHnDr+eyGjc7d8tl2cs1waeU/5Jc5C
-         Q19QEIe7IVgC0bmZqsnVPpjkxCRrfygcpzN2r1jaEept+UU8xAsxxyIVXEOUheDlJXSg
-         bQAhTXCNlOp7GDwSrMTlBElKFLqBIjfYcpk0KUwx1okVESBvRGqQYCNXPzMlScBwikhA
-         X+aygAa+449GxfoLPkswgJKbNrEOKnEVSJQajPG8RkHqI40wXDNjcKYn33I2ih60EuMa
-         J2ObDOyD8s7HGrYunUCQj11JoFL1rOu7R6quKlOKfMGhTkI6wIB1/Oe04WOodzJquTej
-         jnNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=EwqPNPGMMD7jZugkeGHNPUgslTiWGHPwKe5jmVOjgzM=;
-        b=LWIC3FnrMzEkVNcJX/lgIclraMbGK5YK/i+Yfww4qrCz1IvWH1Ydsrc3uyde9v491V
-         1wlSmvGDGBYZ6uzSlJVstiD12swy2kX00UXT5EKZ9k3ETMjaikjhuqm3EEqDOnv0vkN8
-         tN3Od4cwHbJbfhSILDkaDylOCjTa0kIqiyZcT/IRPNcfxgiCmQMP3wVYCfZz79x/f0Hy
-         1CBafMaB9JP4hN0ZlDapeUJbjfKOShyVSq15W6jaGWz1G0LT4RXbepzX2btNyhr4UDeP
-         1KsaGuSM+ztNX2oGZOfm9DFi/f3LzNAD/vLsOw4dNR749i5oPqD4y5GBa2BJKYU1sf8m
-         4pJw==
-X-Gm-Message-State: AOAM530Lq6OEYBXtGA1gWKbiGFySt6sV18AVTbzD2YPK9gY2ftS/8CzB
-        BFQW+0y5KR80acW7PkBKSFXILlQgz1Klfg==
-X-Google-Smtp-Source: ABdhPJxD3vBKkJ0SpjXPgN8gXctt48HUZS+njjzoFRpi+BFSe0pOOK6itnWY3TleSHxiKn4AbMBMMQ==
-X-Received: by 2002:adf:c404:: with SMTP id v4mr599178wrf.17.1600706062651;
-        Mon, 21 Sep 2020 09:34:22 -0700 (PDT)
-Received: from [192.168.43.240] ([5.100.192.97])
-        by smtp.gmail.com with ESMTPSA id r14sm21193916wrn.56.2020.09.21.09.34.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2020 09:34:22 -0700 (PDT)
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Arnd Bergmann' <arnd@arndb.de>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-References: <20200918124533.3487701-1-hch@lst.de>
- <20200918124533.3487701-2-hch@lst.de>
- <20200920151510.GS32101@casper.infradead.org>
- <20200920180742.GN3421308@ZenIV.linux.org.uk>
- <20200920190159.GT32101@casper.infradead.org>
- <20200920191031.GQ3421308@ZenIV.linux.org.uk>
- <20200920192259.GU32101@casper.infradead.org>
- <CALCETrXVtBkxNJcMxf9myaKT9snHKbCWUenKHGRfp8AOtORBPg@mail.gmail.com>
- <CAK8P3a37BRFj_qg61gP2oVrjJzBrZ58y1vggeTk_5n55Ou5U2Q@mail.gmail.com>
- <8363d874e503470f8caa201e85e9fbd4@AcuMS.aculab.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <7fc71d22-e213-b050-75fe-b45adc6bf0d8@gmail.com>
-Date:   Mon, 21 Sep 2020 19:31:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 21 Sep 2020 13:07:13 -0400
+X-Greylist: delayed 995 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 13:07:12 EDT
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08LGjPW0153954;
+        Mon, 21 Sep 2020 16:50:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=cpHbKq/jzNkOqXMpHVAVZLahUeBKCi8bOij5q/cpM7w=;
+ b=GBgWyYkLH9S+7vIDa+H0Vhjhe/dhRTbNdp2AEdP5y+ptNGmSeijp0LFlMWGmE1mOK110
+ +n65Dj6dxj3RUHhT5sTyZ41aBcLrKOiNV4M03A/QQ6GkqX1HM1793+Sphcv3Nrs8HEfW
+ OhWQLQk8Yf+ikcARgTfL7VpuMEugT15KYTV1lljWXZjVi/VeHnTcwsUmaTOusczNJ5a2
+ mr2KiliOblv9dP5cJfJ3AkZ1HWaBMeARgbeznZyhBZNgpKAhQ7eyb1C954FSs8rwTNeW
+ fr5eAbP7RPbyfaCO3kkxwN9PflAgr/OpsbGl7sed6/IgZ/mhxCquQCj/hkCtiXkXrDn3 uQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 33n7ga9jsa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Sep 2020 16:50:27 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08LGoKUR058347;
+        Mon, 21 Sep 2020 16:50:26 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 33nurr4rjt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 21 Sep 2020 16:50:26 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08LGoPYo031067;
+        Mon, 21 Sep 2020 16:50:26 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 21 Sep 2020 09:50:25 -0700
+Date:   Mon, 21 Sep 2020 09:50:24 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [ANNOUNCE] xfs-linux: iomap-5.10-merge updated to 81ee8e52a71c
+Message-ID: <20200921165024.GC7949@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <8363d874e503470f8caa201e85e9fbd4@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9751 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=2
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009210120
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9751 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 bulkscore=0
+ mlxscore=0 suspectscore=2 impostorscore=0 malwarescore=0 spamscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 adultscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2009210119
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21/09/2020 00:13, David Laight wrote:
-> From: Arnd Bergmann
->> Sent: 20 September 2020 21:49
->>
->> On Sun, Sep 20, 2020 at 9:28 PM Andy Lutomirski <luto@kernel.org> wrote:
->>> On Sun, Sep 20, 2020 at 12:23 PM Matthew Wilcox <willy@infradead.org> wrote:
->>>>
->>>> On Sun, Sep 20, 2020 at 08:10:31PM +0100, Al Viro wrote:
->>>>> IMO it's much saner to mark those and refuse to touch them from io_uring...
->>>>
->>>> Simpler solution is to remove io_uring from the 32-bit syscall list.
->>>> If you're a 32-bit process, you don't get to use io_uring.  Would
->>>> any real users actually care about that?
->>>
->>> We could go one step farther and declare that we're done adding *any*
->>> new compat syscalls :)
->>
->> Would you also stop adding system calls to native 32-bit systems then?
->>
->> On memory constrained systems (less than 2GB a.t.m.), there is still a
->> strong demand for running 32-bit user space, but all of the recent Arm
->> cores (after Cortex-A55) dropped the ability to run 32-bit kernels, so
->> that compat mode may eventually become the primary way to run
->> Linux on cheap embedded systems.
->>
->> I don't think there is any chance we can realistically take away io_uring
->> from the 32-bit ABI any more now.
-> 
-> Can't it just run requests from 32bit apps in a kernel thread that has
-> the 'in_compat_syscall' flag set?
-> Not that i recall seeing the code where it saves the 'compat' nature
-> of any requests.
-> 
-> It is already completely f*cked if you try to pass the command ring
-> to a child process - it uses the wrong 'mm'.
+Hi folks,
 
-And how so? io_uring uses mm of a submitter. The exception is SQPOLL
-mode, but it requires CAP_SYS_ADMIN or CAP_SYS_NICE anyway.
+The iomap-5.10-merge branch of the xfs-linux repository at:
 
-> I suspect there are some really horrid security holes in that area.
-> 
-> 	David.
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
--- 
-Pavel Begunkov
+has just been updated.
+
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  (Yes, I saw a btrfs directio series containing iomap
+patches, but they had no S-o-b, which will impede review...)
+
+The new head of the iomap-5.10-merge branch is commit:
+
+81ee8e52a71c iomap: Change calling convention for zeroing
+
+New Commits:
+
+Andreas Gruenbacher (1):
+      [c114bbc6c423] iomap: Fix direct I/O write consistency check
+
+Matthew Wilcox (Oracle) (11):
+      [e6e7ca92623a] iomap: Clear page error before beginning a write
+      [14284fedf59f] iomap: Mark read blocks uptodate in write_begin
+      [7ed3cd1a69e3] iomap: Fix misplaced page flushing
+      [24addd848a45] fs: Introduce i_blocks_per_page
+      [a6901d4d148d] iomap: Use kzalloc to allocate iomap_page
+      [b21866f514cb] iomap: Use bitmap ops to set uptodate bits
+      [0a195b91e899] iomap: Support arbitrarily many blocks per page
+      [7d636676d284] iomap: Convert read_count to read_bytes_pending
+      [0fb2d7209d66] iomap: Convert write_count to write_bytes_pending
+      [e25ba8cbfd16] iomap: Convert iomap_write_end types
+      [81ee8e52a71c] iomap: Change calling convention for zeroing
+
+Nikolay Borisov (1):
+      [6cc19c5fad09] iomap: Use round_down/round_up macros in __iomap_write_begin
+
+Qian Cai (1):
+      [a805c111650c] iomap: fix WARN_ON_ONCE() from unprivileged users
+
+
+Code Diffstat:
+
+ fs/dax.c                |  13 ++--
+ fs/iomap/buffered-io.c  | 192 ++++++++++++++++++++----------------------------
+ fs/iomap/direct-io.c    |  12 ++-
+ fs/jfs/jfs_metapage.c   |   2 +-
+ fs/xfs/xfs_aops.c       |   2 +-
+ include/linux/dax.h     |   3 +-
+ include/linux/pagemap.h |  16 ++++
+ 7 files changed, 116 insertions(+), 124 deletions(-)
