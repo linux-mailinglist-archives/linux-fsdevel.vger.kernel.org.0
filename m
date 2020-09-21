@@ -2,148 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5D87271D2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 10:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70054271DE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 10:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgIUIIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 04:08:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbgIUIH6 (ORCPT
+        id S1726416AbgIUI0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 04:26:13 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41029 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726318AbgIUI0N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 04:07:58 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D7EC0613D2;
-        Mon, 21 Sep 2020 01:07:58 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BvxrN6CR4z9sRf;
-        Mon, 21 Sep 2020 18:07:48 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1600675674;
-        bh=iaBdLJOvxyJXfcUEqmY+3Nksf5Jf9xHCFLBtVdF2GM8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=K5wKwexmDJAci9TTwYRSQ0w9PM5CiPqAwagC2tcao/hBigyuoMxG1C8D0UmTRvwbU
-         EhPScTRFe/siLj3BjXiyv9uIFmQY0S4UmOdPSVysuZGSDahrfPB83W3uawREPQpzd0
-         kHld44CU++GsPbN3dC1XVd4QoBpM6Lgj+V1kNNdSetTvjN8TgT8QvRc6F00jrjsQD6
-         lDVtnrJaxh5Jw5LEvG/jpEkcuTha5XPYFINClW5XVtzMcKkHT38c4BYivb3A3RLDRr
-         JaS6Iuw/LnkzJSYvM742RWyWBJTrmzSqPEqXAqPcsYg8niNwEgDNwWig1CMgfOS4OB
-         vkx4v/7kdkZQQ==
-Date:   Mon, 21 Sep 2020 18:07:48 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Qian Cai <cai@redhat.com>
-Cc:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mon, 21 Sep 2020 04:26:13 -0400
+Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3400982635B;
+        Mon, 21 Sep 2020 18:26:01 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kKH96-0006yw-7S; Mon, 21 Sep 2020 18:26:00 +1000
+Date:   Mon, 21 Sep 2020 18:26:00 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Qiuyang Sun <sunqiuyang@huawei.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org,
-        linux-next@vger.kernel.org
-Subject: Re: [PATCH v5 0/5] mm: introduce memfd_secret system call to create
- "secret" memory areas
-Message-ID: <20200921180748.4f88028d@canb.auug.org.au>
-In-Reply-To: <fdd0240c187f974fccc553acea895f638d5e822a.camel@redhat.com>
-References: <20200916073539.3552-1-rppt@kernel.org>
-        <5d97da4d86db258fdc9b20be3c12588089e17da2.camel@redhat.com>
-        <fdd0240c187f974fccc553acea895f638d5e822a.camel@redhat.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, nborisov@suse.de
+Subject: Re: More filesystem need this fix (xfs: use MMAPLOCK around
+ filemap_map_pages())
+Message-ID: <20200921082600.GO12131@dread.disaster.area>
+References: <20200623052059.1893966-1-david@fromorbit.com>
+ <CAOQ4uxh0dnVXJ9g+5jb3q72RQYYqTLPW_uBqHPKn6AJZ2DNPOQ@mail.gmail.com>
+ <20200916155851.GA1572@quack2.suse.cz>
+ <20200917014454.GZ12131@dread.disaster.area>
+ <alpine.LSU.2.11.2009161853220.2087@eggly.anvils>
+ <20200917064532.GI12131@dread.disaster.area>
+ <alpine.LSU.2.11.2009170017590.8077@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qIGimAfxVKTvCJ+PllFC0A/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.2009170017590.8077@eggly.anvils>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=esqhMbhX c=1 sm=1 tr=0 cx=a_idp_d
+        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
+        a=Rl2tvrQ78qD9MlTf7ZcA:9 a=0JP9OAGvzaOLfl4_:21 a=MdB2K0HZLmbF2jdA:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/qIGimAfxVKTvCJ+PllFC0A/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 17, 2020 at 12:47:10AM -0700, Hugh Dickins wrote:
+> On Thu, 17 Sep 2020, Dave Chinner wrote:
+> > On Wed, Sep 16, 2020 at 07:04:46PM -0700, Hugh Dickins wrote:
+> > > On Thu, 17 Sep 2020, Dave Chinner wrote:
+> > > > 					<pte now points to a freed page>
+> > > 
+> > > No.  filemap_map_pages() checks page->mapping after trylock_page(),
+> > > before setting up the pte; and truncate_cleanup_page() does a one-page
+> > > unmap_mapping_range() if page_mapped(), while holding page lock.
+> > 
+> > Ok, fair, I missed that.
+> > 
+> > So why does truncate_pagecache() talk about fault races and require
+> > a second unmap range after the invalidation "for correctness" if
+> > this sort of race cannot happen?
+> 
+> I thought the comment
+> 	 * unmap_mapping_range is called twice, first simply for
+> 	 * efficiency so that truncate_inode_pages does fewer
+> 	 * single-page unmaps.  However after this first call, and
+> 	 * before truncate_inode_pages finishes, it is possible for
+> 	 * private pages to be COWed, which remain after
+> 	 * truncate_inode_pages finishes, hence the second
+> 	 * unmap_mapping_range call must be made for correctness.
+> explains it fairly well.
 
-Hi all,
+Not to me. It explains what the code is doing, and the why is simply
+"correctness".
 
-On Fri, 18 Sep 2020 14:25:15 -0400 Qian Cai <cai@redhat.com> wrote:
->
-> On Thu, 2020-09-17 at 09:27 -0400, Qian Cai wrote:
-> > On Wed, 2020-09-16 at 10:35 +0300, Mike Rapoport wrote: =20
-> > > From: Mike Rapoport <rppt@linux.ibm.com>
-> > >=20
-> > > This is an implementation of "secret" mappings backed by a file descr=
-iptor.=20
-> > > I've dropped the boot time reservation patch for now as it is not str=
-ictly
-> > > required for the basic usage and can be easily added later either wit=
-h or
-> > > without CMA. =20
-> >=20
-> > On powerpc: https://gitlab.com/cailca/linux-mm/-/blob/master/powerpc.co=
-nfig
-> >=20
-> > There is a compiling warning from the today's linux-next:
-> >=20
-> > <stdin>:1532:2: warning: #warning syscall memfd_secret not implemented =
-[-Wcpp] =20
->=20
-> This should silence the warning:
->=20
-> diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
-> index a18b47695f55..b7609958ee36 100755
-> --- a/scripts/checksyscalls.sh
-> +++ b/scripts/checksyscalls.sh
-> @@ -40,6 +40,10 @@ cat << EOF
->  #define __IGNORE_setrlimit	/* setrlimit */
->  #endif
-> =20
-> +#ifndef __ARCH_WANT_MEMFD_SECRET
-> +#define __IGNORE_memfd_secret
-> +#endif
-> +
->  /* Missing flags argument */
->  #define __IGNORE_renameat	/* renameat2 */
->=20
+I have no idea what "correctness" actually means in this context
+because there is no reference to what correct behaviour should be.
+Nor do I have any idea why COW faults might behave differently to a
+normal read/write page fault...
 
-Added to linux-next today.
+> It's because POSIX demanded that when a file
+> is truncated, the user will get SIGBUS on trying to access even the
+> COWed pages beyond EOF in a MAP_PRIVATE mapping.  Page lock on the
+> cache page does not serialize the pages COWed from it very well.
 
---=20
+And there's the "why". I don't find the "page lock doesn't
+serialise COW faults very well" particularly reassuring in this
+case....
+
+> But there's no such SIGBUS requirement in the case of hole-punching,
+> and trying to unmap those pages racily instantiated just after the
+> punching cursor passed, would probably do more harm than good.
+
+There isn't a SIGBUS requirement for fallocate operations, just a
+"don't expose stale data to userspace" requirement.
+
+FWIW, how does a COW fault even work with file backed pages? We can
+only have a single page attached to the inode address space for a given
+offset, so if there's been a COW fault and a new page faulted in for
+the write fault in that VMA, doesn't that imply the user data then
+written to that page is never going to be written back to storage
+because the COW page is not tracked by the inode address space?
+
+> > Why is that different to truncate_pagecache_range() which -doesn't-i
+> > do that second removal? It's called for more than just hole_punch -
+> > from the filesystem's persepective holepunch should do exactly the
+> > same as truncate to the page cache, and for things like
+> > COLLAPSE_RANGE it is absolutely essential because the data in that
+> > range is -not zero- and will be stale if the mappings are not
+> > invalidated completely....
+> 
+> I can't speak to COLLAPSE_RANGE.
+
+It moves data around, doesn't replace data with zeros. Hence the
+contents of any page that isn't invalidated entirely by
+truncate_pagecache_range() is now entirely incorrect...
+
+> > Also, if page->mapping == NULL is sufficient to detect an invalidated
+> > page in all cases, then why does page_cache_delete() explicitly
+> > leave page->index intact:
+> > 
+> > 	page->mapping = NULL;
+> > 	/* Leave page->index set: truncation lookup relies upon it */
+> 
+> Because there was, and I think still is (but might it now be xarrayed
+> away?), code (mainly in mm/truncate.c) which finds it convenient to
+> check page->index for end of range, without necessitating the overhead
+> of getting page lock.  I've no doubt it's an (minor) optimization that
+> could be discarded if there were ever a need to invalidate page->index
+> when deleting; but nobody has required that yet.
+
+And that's exactly my concern w.r.t. fallocate based invalidation:
+checking the page is beyond EOF without locking the page or checking
+the mapping does not detect pages invalidated by hole punching and
+other fallocate() operations because page->index on the invalidated
+pages is never beyond EOF....
+
 Cheers,
-Stephen Rothwell
 
---Sig_/qIGimAfxVKTvCJ+PllFC0A/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9oX1QACgkQAVBC80lX
-0GwVfQgAho6bGSHnGAjI0IiMmFRLcHM+KMH0XiVgh9bvUjVASl1mVgeIe7v//Oef
-uyH9zCWyUFof0EnaT4f5uZctC2pe/qvb7BsEdaSlLUSz4X8J1xLWfdYbdJHMvtYR
-WnrFHwGCmEtpImNTTZtXcdDZeliVgq41XGd/h1Z59o6givzPYTtIK59LlOOcZj3y
-KIY0ELXUPauFOINBbfRzs0xlB6upYfVrHUdh9/glsrY4wVcEfPhjgFVAk+Ua/4/E
-/ksLJ+WeUZxJ/2SOPL5Vm23vZvmSE0fD4krBBiANbBiKShRgJRU21uc/ulEdHh5E
-qZjQA6jjcKFGbIbi78Sb6LxIzI/mKQ==
-=OfZk
------END PGP SIGNATURE-----
-
---Sig_/qIGimAfxVKTvCJ+PllFC0A/--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
