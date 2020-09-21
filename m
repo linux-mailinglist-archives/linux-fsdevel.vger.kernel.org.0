@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3AF32728A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 16:46:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9863D2728A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 16:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbgIUOod (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1728297AbgIUOod (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 21 Sep 2020 10:44:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55850 "EHLO mx2.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:55954 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727948AbgIUOoY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 10:44:24 -0400
+        id S1727610AbgIUOo1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 10:44:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5DB40AD5F;
-        Mon, 21 Sep 2020 14:44:58 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 2721AAD8D;
+        Mon, 21 Sep 2020 14:45:01 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
         johannes.thumshirn@wdc.com, dsterba@suse.com,
         darrick.wong@oracle.com, josef@toxicpanda.com,
         Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 06/15] btrfs: Move pos increment and pagecache extension to btrfs_buffered_write()
-Date:   Mon, 21 Sep 2020 09:43:44 -0500
-Message-Id: <20200921144353.31319-7-rgoldwyn@suse.de>
+Subject: [PATCH 07/15] btrfs: Move FS error state bit early during write
+Date:   Mon, 21 Sep 2020 09:43:45 -0500
+Message-Id: <20200921144353.31319-8-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200921144353.31319-1-rgoldwyn@suse.de>
 References: <20200921144353.31319-1-rgoldwyn@suse.de>
@@ -35,69 +35,54 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-While we do this, correct the call to pagecache_isize_extended():
- - pagecache_isisze_extended needs to be called to the starting of the
-   write as opposed to i_size
- - We don't need to check range before the call, this is done in the
-   function
+fs_info->fs_state is a filesystem bit check as opposed to inode
+and can be performed before we begin with write checks. This eliminates
+inode lock/unlock in case of error bit is set.
 
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 ---
- fs/btrfs/file.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ fs/btrfs/file.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
 diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 910e2fd234a9..4c40a2742aab 100644
+index 4c40a2742aab..ca374cb5ffc9 100644
 --- a/fs/btrfs/file.c
 +++ b/fs/btrfs/file.c
-@@ -1632,6 +1632,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 	int ret = 0;
- 	bool only_release_metadata = false;
- 	bool force_page_uptodate = false;
-+	loff_t old_isize = i_size_read(inode);
- 
- 	nrptrs = min(DIV_ROUND_UP(iov_iter_count(i), PAGE_SIZE),
- 			PAGE_SIZE / (sizeof(struct page *)));
-@@ -1852,6 +1853,10 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 	}
- 
- 	extent_changeset_free(data_reserved);
-+	if (num_written > 0) {
-+		pagecache_isize_extended(inode, old_isize, iocb->ki_pos);
-+		iocb->ki_pos += num_written;
-+	}
- 	return num_written ? num_written : ret;
- }
- 
-@@ -1975,7 +1980,6 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
- 	loff_t pos;
+@@ -1981,6 +1981,15 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
  	size_t count;
  	loff_t oldsize;
--	int clean_page = 0;
  
++	/*
++	 * If BTRFS flips readonly due to some impossible error
++	 * (fs_info->fs_state now has BTRFS_SUPER_FLAG_ERROR),
++	 * although we have opened a file as writable, we have
++	 * to stop this write operation to ensure FS consistency.
++	 */
++	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
++		return -EROFS;
++
  	if (!(iocb->ki_flags & IOCB_DIRECT) &&
  	    (iocb->ki_flags & IOCB_NOWAIT))
-@@ -2057,8 +2061,6 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
- 			inode_unlock(inode);
- 			goto out;
- 		}
--		if (start_pos > round_up(oldsize, fs_info->sectorsize))
--			clean_page = 1;
+ 		return -EOPNOTSUPP;
+@@ -2030,18 +2039,6 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
+ 		goto out;
  	}
  
- 	if (sync)
-@@ -2101,11 +2103,6 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
- 		current->journal_info = NULL;
- 	} else {
- 		num_written = btrfs_buffered_write(iocb, from);
--		if (num_written > 0)
--			iocb->ki_pos = pos + num_written;
--		if (clean_page)
--			pagecache_isize_extended(inode, oldsize,
--						i_size_read(inode));
- 	}
- 
- 	inode_unlock(inode);
+-	/*
+-	 * If BTRFS flips readonly due to some impossible error
+-	 * (fs_info->fs_state now has BTRFS_SUPER_FLAG_ERROR),
+-	 * although we have opened a file as writable, we have
+-	 * to stop this write operation to ensure FS consistency.
+-	 */
+-	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state)) {
+-		inode_unlock(inode);
+-		err = -EROFS;
+-		goto out;
+-	}
+-
+ 	/*
+ 	 * We reserve space for updating the inode when we reserve space for the
+ 	 * extent we are going to write, so we will enospc out there.  We don't
 -- 
 2.26.2
 
