@@ -2,131 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 529E5272BA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 18:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47322272BC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 18:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbgIUQUx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 12:20:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23727 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727967AbgIUQUw (ORCPT
+        id S1728145AbgIUQXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 12:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbgIUQXR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 12:20:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600705250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jQWTc66kqIVZ12N6Cbr6RkCq5AT8IRw3RQfZVWbTbrI=;
-        b=XGcgXnxEjLG2twMNuMLbR23HEyJGYVMPfpCp+7sgv7/EViAfHiXfVN9vbJwIueWxpZdFJy
-        DNA3XCeByF0o8lODIdF92J4qcRiYvmieiQWjPPaAwCTVyQ9w3j4pSCtZntoHD6Y/eyyaPY
-        84E2c3vqHbOL5XIROi/rs6w/yaInxXs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-515-cblGsGTfOVqBQ7_yEP5lXA-1; Mon, 21 Sep 2020 12:20:46 -0400
-X-MC-Unique: cblGsGTfOVqBQ7_yEP5lXA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D80471005E5B;
-        Mon, 21 Sep 2020 16:20:43 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A19A010013D0;
-        Mon, 21 Sep 2020 16:20:43 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08LGKhfl006434;
-        Mon, 21 Sep 2020 12:20:43 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08LGKgrb006430;
-        Mon, 21 Sep 2020 12:20:42 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 21 Sep 2020 12:20:42 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mon, 21 Sep 2020 12:23:17 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C542EC061755;
+        Mon, 21 Sep 2020 09:23:16 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id a9so108514wmm.2;
+        Mon, 21 Sep 2020 09:23:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IvRIyYO3t2SUgu0arXiDBfv6J5V0f2K0pu+NF0qCX5w=;
+        b=Sc96S6lfmurSpfOzVka44PHPQYNuWoG7JxCB4XIUf9HPO88rqJ+GWaU7/Y9y20Ow8M
+         Di7TJYVba9SsbXwHrsQvQvoBR2Nnm2mDgusw9rNGcnvKI4lT7c8atlnPUkT8nbzGd/E7
+         MKgVHJkc+3wIQtro6A/DqbjOOTLY92BDRoYn0lM3n9CiOUzTJK/Gn2dgL4adn1jdQqgE
+         GNxDUaobxhydr/wUBBdueva2w+Wf6ylcpl7wzPsamNhCaU6uo6ck2Wb1uRgTUuOUO+bU
+         HGFzFO1HgQxb8gSQefH7PcwwxXwudPQ8DWavTZ9E2fjqDXcxcFOe//Zso6LpQiW58B+x
+         UucA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IvRIyYO3t2SUgu0arXiDBfv6J5V0f2K0pu+NF0qCX5w=;
+        b=A6MCYliyLky0CzdB8Kii9j37ZOqsCDPEuPs0dEOZNiRRJ8Ef9B9MinIzBPSiCa/4tY
+         Df04RlBDtnJ53fJz2iq8euZRRqVpcBcskoZpV3EF2IAGqRlrudQ7pHQ176UUQ8qyBLel
+         p+JGVxOF4iGiaDDw2aqcMLrG1ya2E3O7urXNZz53h51OnX8Rgsn5mcKtB7GnnAIA4c+Z
+         ido5Y1rpV0fYJ/+OxoniEL3In61ocTuqkqP1Ebxwlj6o0Ifo+k2Ayfk1gFKkqATFMb48
+         JRZMORs1SIlnX4/6o8G8yGyMUUtfTlCNCfyVla1/HrsgMCqnA/2bx21B19UFZyp14W+E
+         paTg==
+X-Gm-Message-State: AOAM531Vh1TjdyEvzt4EF36HhQwt59RDXCcaJrpsErNFlAK/Nzb+hlkY
+        TDqJkZUWxsHFguonU44VEjd+n10XT8YkQA==
+X-Google-Smtp-Source: ABdhPJyYfk+EzbFnRftaSb6O/4j5H92Q+rKsLnOqJxPSmwFSmKmQaK8gbExjV0xQhTxCqhQoZcucgw==
+X-Received: by 2002:a05:600c:4142:: with SMTP id h2mr184584wmm.128.1600705395307;
+        Mon, 21 Sep 2020 09:23:15 -0700 (PDT)
+Received: from [192.168.43.240] ([5.100.192.97])
+        by smtp.gmail.com with ESMTPSA id t6sm23571512wre.30.2020.09.21.09.23.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Sep 2020 09:23:14 -0700 (PDT)
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+To:     William Kucharski <kucharsk@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: NVFS XFS metadata (was: [PATCH] pmem: export the symbols
- __copy_user_flushcache and __copy_from_user_flushcache)
-In-Reply-To: <alpine.LRH.2.02.2009161359540.20710@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.LRH.2.02.2009191336380.3478@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com> <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
- <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com> <alpine.LRH.2.02.2009161359540.20710@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20200920151510.GS32101@casper.infradead.org>
+ <76A432F3-4532-42A4-900E-16C0AC2D21D8@gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
+ bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
+ 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
+ +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
+ W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
+ CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
+ Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
+ EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
+ jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
+ NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
+ bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
+ PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
+ Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
+ Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
+ xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
+ aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
+ HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
+ 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
+ 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
+ 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
+ M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
+ reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
+ IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
+ dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
+ Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
+ jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
+ Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
+ dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
+ xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
+ DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
+ F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
+ 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
+ aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
+ 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
+ LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
+ uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
+ rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
+ 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
+ JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
+ UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
+ m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
+ OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
+Message-ID: <2f2ee014-688e-8835-369b-61deb0688c73@gmail.com>
+Date:   Mon, 21 Sep 2020 19:20:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <76A432F3-4532-42A4-900E-16C0AC2D21D8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 20/09/2020 18:55, William Kucharski wrote:
+> I really like that as it’s self-documenting and anyone debugging it can see what is actually being used at a glance.
 
-
-On Wed, 16 Sep 2020, Mikulas Patocka wrote:
+Also creates special cases for things that few people care about,
+and makes it a pain for cross-platform (cross-bitness) development.
 
 > 
-> 
-> On Wed, 16 Sep 2020, Dan Williams wrote:
-> 
-> > On Wed, Sep 16, 2020 at 10:24 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> > >
-> > > > My first question about nvfs is how it compares to a daxfs with
-> > > > executables and other binaries configured to use page cache with the
-> > > > new per-file dax facility?
-> > >
-> > > nvfs is faster than dax-based filesystems on metadata-heavy operations
-> > > because it doesn't have the overhead of the buffer cache and bios. See
-> > > this: http://people.redhat.com/~mpatocka/nvfs/BENCHMARKS
-> > 
-> > ...and that metadata problem is intractable upstream? Christoph poked
-> > at bypassing the block layer for xfs metadata operations [1], I just
-> > have not had time to carry that further.
-> > 
-> > [1]: "xfs: use dax_direct_access for log writes", although it seems
-> > he's dropped that branch from his xfs.git
-> 
-> XFS is very big. I wanted to create something small.
+>> On Sep 20, 2020, at 09:15, Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> ﻿On Fri, Sep 18, 2020 at 02:45:25PM +0200, Christoph Hellwig wrote:
+>>> Add a flag to force processing a syscall as a compat syscall.  This is
+>>> required so that in_compat_syscall() works for I/O submitted by io_uring
+>>> helper threads on behalf of compat syscalls.
+>>
+>> Al doesn't like this much, but my suggestion is to introduce two new
+>> opcodes -- IORING_OP_READV32 and IORING_OP_WRITEV32.  The compat code
+>> can translate IORING_OP_READV to IORING_OP_READV32 and then the core
+>> code can know what that user pointer is pointing to.
 
-And the another difference is that XFS metadata are optimized for disks 
-and SSDs.
-
-On disks and SSDs, reading one byte is as costly as reading a full block. 
-So we must put as much information to a block as possible. XFS uses 
-b+trees for file block mapping and for directories - it is reasonable 
-decision because b+trees minimize the number of disk accesses.
-
-On persistent memory, each access has its own cost, so NVFS uses metadata 
-structures that minimize the number of cache lines accessed (rather than 
-the number of blocks accessed). For block mapping, NVFS uses the classic 
-unix dierct/indirect blocks - if a file block is mapped by a 3-rd level 
-indirect block, we do just three memory accesses and we are done. If we 
-used b+trees, the number of accesses would be much larger than 3 (we would 
-have to do binary search in the b+tree nodes).
-
-The same for directories - NVFS hashes the file name and uses radix-tree 
-to locate a directory page where the directory entry is located. XFS 
-b+trees would result in much more accesses than the radix-tree.
-
-Regarding journaling - NVFS doesn't do it because persistent memory is so 
-fast that we can just check it in the case of crash. NVFS has a 
-multithreaded fsck that can do 3 million inodes per second. XFS does 
-journaling (it was reasonable decision for disks where fsck took hours) 
-and it will cause overhead for all the filesystem operations.
-
-Mikulas
-
+-- 
+Pavel Begunkov
