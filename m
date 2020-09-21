@@ -2,133 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63F49271F5A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 11:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0D5E2720D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 12:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgIUJzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 05:55:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32820 "EHLO mx2.suse.de"
+        id S1726753AbgIUKZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 06:25:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34222 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726375AbgIUJzJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 05:55:09 -0400
+        id S1726783AbgIUKZk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 06:25:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2A091AF0B;
-        Mon, 21 Sep 2020 09:55:43 +0000 (UTC)
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Justin Sanders <justin@coraid.com>,
-        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-References: <20200921080734.452759-1-hch@lst.de>
- <20200921080734.452759-4-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-Autocrypt: addr=colyli@suse.de; keydata=
- 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
-Subject: Re: [PATCH 03/13] bcache: inherit the optimal I/O size
-Message-ID: <b547a1b6-ab03-0520-012d-86d112c83d92@suse.de>
-Date:   Mon, 21 Sep 2020 17:54:59 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.0
+        by mx2.suse.de (Postfix) with ESMTP id 12CE2AE37;
+        Mon, 21 Sep 2020 10:26:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 82FBA1E12E1; Mon, 21 Sep 2020 12:25:38 +0200 (CEST)
+Date:   Mon, 21 Sep 2020 12:25:38 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Shijie Luo <luoshijie1@huawei.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        lihaotian9@huawei.com, lutianxiong@huawei.com, jack@suse.cz,
+        linfeilong@huawei.com
+Subject: Re: [PATCH RESEND] fs: fix race condition oops between destroy_inode
+ and writeback_sb_inodes
+Message-ID: <20200921102538.GF5862@quack2.suse.cz>
+References: <20200919093923.19016-1-luoshijie1@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20200921080734.452759-4-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200919093923.19016-1-luoshijie1@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/9/21 16:07, Christoph Hellwig wrote:
-> Inherit the optimal I/O size setting just like the readahead window,
-> as any reason to do larger I/O does not apply to just readahead.
+On Sat 19-09-20 05:39:23, Shijie Luo wrote:
+> We tested an oops problem in Linux 4.18. The Call Trace message is
+>  followed below.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/md/bcache/super.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index 1bbdc410ee3c51..48113005ed86ad 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -1430,6 +1430,8 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
->  	dc->disk.disk->queue->backing_dev_info->ra_pages =
->  		max(dc->disk.disk->queue->backing_dev_info->ra_pages,
->  		    q->backing_dev_info->ra_pages);
-> +	blk_queue_io_opt(dc->disk.disk->queue,
-> +		max(queue_io_opt(dc->disk.disk->queue), queue_io_opt(q)));
->  
+> [255946.665989] Oops: 0000 [#1] SMP PTI
+> [255946.674811] Workqueue: writeback wb_workfn (flush-253:6)
+> [255946.676443] RIP: 0010:locked_inode_to_wb_and_lock_list+0x20/0x120
+> [255946.683916] RSP: 0018:ffffbb0e44727c00 EFLAGS: 00010286
+> [255946.685518] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> [255946.687699] RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff9ef282be5398
+> [255946.689866] RBP: ffff9ef282be5398 R08: ffffbb0e44727cd8 R09: ffff9ef3064f306e
+> [255946.692037] R10: 0000000000000000 R11: 0000000000000010 R12: ffff9ef282be5420
+> [255946.694208] R13: ffff9ef3351cc800 R14: 0000000000000000 R15: ffff9ef3352e2058
+> [255946.696378] FS:  0000000000000000(0000) GS:ffff9ef33ad80000(0000) knlGS:0000000000000000
+> [255946.698835] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [255946.700604] CR2: 0000000000000000 CR3: 000000000760a005 CR4: 00000000003606e0
+> [255946.702787] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [255946.704955] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [255946.707123] Call Trace:
+> [255946.707918]  writeback_sb_inodes+0x1fe/0x460
+> [255946.709244]  __writeback_inodes_wb+0x5d/0xb0
+> [255946.710575]  wb_writeback+0x265/0x2f0
+> [255946.711728]  ? wb_workfn+0x3cf/0x4d0
+> [255946.712850]  wb_workfn+0x3cf/0x4d0
+> [255946.713923]  process_one_work+0x195/0x390
+> [255946.715173]  worker_thread+0x30/0x390
+> [255946.716319]  ? process_one_work+0x390/0x390
+> [255946.717625]  kthread+0x10d/0x130
+> [255946.718789]  ? kthread_flush_work_fn+0x10/0x10
+> [255946.720170]  ret_from_fork+0x35/0x40
 
-Hi Christoph,
+So 4.18 is rather old and we had several fixes in this area for crashes
+similar to the one you show above. The list was likely:
 
-I am not sure whether virtual bcache device's optimal request size can
-be simply set like this.
+68f23b89067 ("memcg: fix a crash in wb_workfn when a device disappears")
 
-Most of time inherit backing device's optimal request size is fine, but
-there are two exceptions,
-- Read request hits on cache device
-- User sets sequential_cuttoff as 0, all writing may go into cache
-device firstly.
-For the above two conditions, all I/Os goes into cache device, using
-optimal request size of backing device might be improper.
+but there were multiple changes before that to bdi logic to fix lifetime
+issues when devices are hot-removed.
 
-Just a guess, is it OK to set the optimal request size of the virtual
-bcache device as the least common multiple of cache device's and backing
-device's optimal request sizes ?
+> There is a race condition between destroy_inode and writeback_sb_inodes,
+> thread-1                                    thread-2
+> wb_workfn
+>   writeback_inodes_wb
+>     __writeback_inodes_wb
+>       writeback_sb_inodes
+>         wbc_attach_and_unlock_inode
+> 					iget_locked
+>                                           destroy_inode
+>                                             inode_detach_wb
+>                                               inode->i_wb = NULL;
 
+So thread-1 looks sensible but I don't see how what is in thread-2 can ever
+happen. We can call destroy_inode() from iget_locked() only for inodes that
+were never added to inode hash (and so they couldn't ever be dirty of even
+be handled by the flusher thread). Active inodes must (and AFAIK always do)
+pass through fs/inode.c:evict() which takes care of waiting for the running
+flusher thread (through inode_wait_for_writeback()).
 
-[snipped]
-
-Thanks.
-
-Coly Li
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
