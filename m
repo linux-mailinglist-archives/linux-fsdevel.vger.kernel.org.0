@@ -2,103 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 179A3272B9A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 18:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C31272C16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 18:27:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbgIUQTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 12:19:20 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:21664 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728041AbgIUQTS (ORCPT
+        id S1728468AbgIUQ1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 12:27:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59756 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728476AbgIUQ1I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 12:19:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600705157;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZmFjVvOWAAxGsKnBKa5OzPqNgYQ+Dx+Zm77T3IL8Os4=;
-        b=Z2l06jRkQQd+mObFHJ7dYlQxMJOmVX35UrfGuiciY9WI2R0qTCI13FIeTyhw7uKlM9laXL
-        owNHHFQw4jVCPcJ7kG1CXffYyS8oOa2bEc8uxLhCKaDE2+XFGnvFq0lZxvpen3ZF6Jgenj
-        y9X3iJakKJ6Vw+UbJ/kClI1nN2wxenU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-407-VnG3BKQDNH25JjLQQZjOew-1; Mon, 21 Sep 2020 12:19:13 -0400
-X-MC-Unique: VnG3BKQDNH25JjLQQZjOew-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0746C801F99;
-        Mon, 21 Sep 2020 16:19:11 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4BF186115F;
-        Mon, 21 Sep 2020 16:19:10 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08LGJ9Iq006331;
-        Mon, 21 Sep 2020 12:19:09 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08LGJ7Y4006327;
-        Mon, 21 Sep 2020 12:19:08 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 21 Sep 2020 12:19:07 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [RFC] nvfs: a filesystem for persistent memory
-In-Reply-To: <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.2009211133190.15623@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 21 Sep 2020 12:27:08 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70384C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Sep 2020 09:27:08 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id q8so14709455lfb.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Sep 2020 09:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f8LK5dloOXhiAuv1jzPTpg6aj5g8mwVrNmUPAV9ogWY=;
+        b=RFMB/gNwPwfIqudW3R4jXCFsXqrNlGTxVuJ7YvVxCKzq5Y/YUC/Ma6uY7s95wRftZ1
+         7s8sQIj4iiCqfqYdGopoS/gZplkdWgCmkY2aCa/c5cevLuamU4HpSU0quOZvV2Xv5EaL
+         vunDI/0xHWZgKhUbEF4U4wC7LUJxngCiHSvxU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f8LK5dloOXhiAuv1jzPTpg6aj5g8mwVrNmUPAV9ogWY=;
+        b=GyXClOM5cwREL5gbtHU44vAASbvbINYhopLOuYSL+YMLVuPF/STQN5b8LR/xqenCa7
+         BtdNnOuZA9ShykDoBZaJnrl4XARoYpHAC2o0FhTDOuW9uX5pp9RgPNRve2d/H12OhOXZ
+         AP4La4XrWHNNN579V59KeVJ9r02bTnL0piPiSLry4WGyAhOU2D+iDDPb2WaF3sRyqBxw
+         EnBYcAsHIQGlKlkmfNE99tvII62YpZDgc/ycYGA3LPAUE5uKDfkpGroo/+QycoQEus82
+         jZoRDottdqMEy3dmCHOHbTY12HKiqgS3fwmZtU6+xklxljXgBQDaURPM8oimSrQ4HmaK
+         a5dQ==
+X-Gm-Message-State: AOAM531PEnhEJHwdE/FS6JZK4NLoT8Fg8RS62OVHOuVrJA+VhqUcHZxp
+        U8QGbOzCNHTLpLAAOmjfc3wOg9Lcnqn6WA==
+X-Google-Smtp-Source: ABdhPJzwfEYgfq+lfMfXC0jHzWM6nZpyO5rSxooFYwWyMJVNjGxFlRjswPJW0gBvu3dc+/na6RPJEw==
+X-Received: by 2002:ac2:5463:: with SMTP id e3mr235202lfn.474.1600705626561;
+        Mon, 21 Sep 2020 09:27:06 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id w4sm2661891lff.231.2020.09.21.09.27.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Sep 2020 09:27:06 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id d15so14697438lfq.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Sep 2020 09:27:06 -0700 (PDT)
+X-Received: by 2002:a2e:84d6:: with SMTP id q22mr149175ljh.70.1600705241845;
+ Mon, 21 Sep 2020 09:20:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <20200623052059.1893966-1-david@fromorbit.com> <CAOQ4uxh0dnVXJ9g+5jb3q72RQYYqTLPW_uBqHPKn6AJZ2DNPOQ@mail.gmail.com>
+ <20200916155851.GA1572@quack2.suse.cz> <20200917014454.GZ12131@dread.disaster.area>
+ <alpine.LSU.2.11.2009161853220.2087@eggly.anvils> <20200917064532.GI12131@dread.disaster.area>
+ <alpine.LSU.2.11.2009170017590.8077@eggly.anvils> <20200921082600.GO12131@dread.disaster.area>
+ <20200921091143.GB5862@quack2.suse.cz>
+In-Reply-To: <20200921091143.GB5862@quack2.suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 21 Sep 2020 09:20:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wir89LPH6A4H2hkxVXT20+dpcw2qQq0GtQJvy87ARga-g@mail.gmail.com>
+Message-ID: <CAHk-=wir89LPH6A4H2hkxVXT20+dpcw2qQq0GtQJvy87ARga-g@mail.gmail.com>
+Subject: Re: More filesystem need this fix (xfs: use MMAPLOCK around filemap_map_pages())
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Hugh Dickins <hughd@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Qiuyang Sun <sunqiuyang@huawei.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, nborisov@suse.de
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Sep 21, 2020 at 2:11 AM Jan Kara <jack@suse.cz> wrote:
+>
+> Except that on truncate, we have to unmap these
+> anonymous pages in private file mappings as well...
 
+I'm actually not 100% sure we strictly would need to care.
 
-On Tue, 15 Sep 2020, Dan Williams wrote:
+Once we've faulted in a private file mapping page, that page is
+"ours". That's kind of what MAP_PRIVATE means.
 
-> > TODO:
-> >
-> > - programs run approximately 4% slower when running from Optane-based
-> > persistent memory. Therefore, programs and libraries should use page cache
-> > and not DAX mapping.
-> 
-> This needs to be based on platform firmware data f(ACPI HMAT) for the
-> relative performance of a PMEM range vs DRAM. For example, this
-> tradeoff should not exist with battery backed DRAM, or virtio-pmem.
+If we haven't written to it, we do keep things coherent with the file,
+but that's actually not required by POSIX afaik - it's a QoI issue,
+and a lot of (bad) Unixes didn't do it at all.
 
-Hi
+So as long as truncate _clears_ the pages it truncates, I think we'd
+actually be ok.
 
-I have implemented this functionality - if we mmap a file with 
-(vma->vm_flags & VM_DENYWRITE), then it is assumed that this is executable 
-file mapping - the flag S_DAX on the inode is cleared on and the inode 
-will use normal page cache.
+The SIGBUS is supposed to happen, but that's really only relevant for
+the _first_ access. Once we've accessed the page, and have it mapped,
+the private part really means that there are no guarantees it stays
+coherent.
 
-Is there some way how to test if we are using Optane-based module (where 
-this optimization should be applied) or battery backed DRAM (where it 
-should not)?
+In particular, obviously if we've written to a page, we've lost the
+association with the original file entirely. And I'm pretty sure that
+a private mapping is allowed to act as if it was a private copy
+without that association in the first place.
 
-I've added mount options dax=never, dax=auto, dax=always, so that the user 
-can override the automatic behavior.
+That said, this _is_ a QoI thing, and in Linux we've generally tried
+quite hard to stay as coherent as possible even with private mappings.
 
-Mikulas
+In fact, before we had real shared file mappings (in a distant past,
+long long ago), we allowed read-only shared mappings because we
+internally turned them into read-only private mappings and our private
+mappings were coherent.
 
+And those "fake" read-only shared mappings actually were much better
+than some other platforms "real" shared mappings (*cough*hpux*cough*)
+and actually worked with things that mixed "write()" and "mmap()" and
+expected coherency.
+
+Admittedly the only case I'm aware of that did that was nntpd or
+something like that. Exactly because a lot of Unixes were *not*
+coherent (either because they had actual hardware cache coherency
+issues, or because their VM was not set up for it).
+
+                 Linus
