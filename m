@@ -2,85 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 643A82722DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 13:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17D5F27249B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 15:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbgIULoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 07:44:14 -0400
-Received: from z5.mailgun.us ([104.130.96.5]:51234 "EHLO z5.mailgun.us"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726951AbgIULoG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 07:44:06 -0400
-X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 07:44:05 EDT
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1600688645; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=aj7+moQI0HWZLSMQvc/earvkxmxlSTsYW5THyyMnfSg=;
- b=pC3qQ1xtn0g/sbQtGrP0plCZfYIxklGQGHRRVFL3j6TvwzTVCINKA3KdRb0igASxrlN62IRx
- D1Rcfj0hGqDRabuZQ3HoUI5s1liEMTxV6/VaW8rV5E0g7d9my1Xu1I3RJaBHjtO8qyjJSmmX
- 5UN0ya777B5o4b0Vw7cw+CuBJvM=
-X-Mailgun-Sending-Ip: 104.130.96.5
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
- 5f6890d44ab73023a792e0be (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 21 Sep 2020 11:39:00
- GMT
-Sender: ppvk=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DDCE2C433F1; Mon, 21 Sep 2020 11:39:00 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ppvk)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9F189C433CB;
-        Mon, 21 Sep 2020 11:39:00 +0000 (UTC)
+        id S1726795AbgIUNII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 09:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726584AbgIUNII (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 09:08:08 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22B83C061755;
+        Mon, 21 Sep 2020 06:08:08 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id y13so15256768iow.4;
+        Mon, 21 Sep 2020 06:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o0Jv0CLGJ4DfZHttNSCtLSVitK8nvs/atSVnSKAM6bs=;
+        b=hsaWX9w5jMWlEZ96TVclL1PoprwTmY7ooxwDz3mUg1vUN64DaieSMlteLKi2A5qIEJ
+         SWVpndESE8A6SD41i4YOcJIiaxBMPL05K7T4wnGyDKoSDFhUQsO7Yh1BRfAU2V7MUej/
+         Va4TIO99JMW3cfn8UU71F/zM38ku/Q6tyaxPxyStiRsXoe2GeAJol52X6n9ud+9VRB+g
+         W2rkhOpgFpYnaxhhwSuCTvjiOEWapsoVLAC75wyp0w7golWOyIrOo3OaAPyQ0lgjayBS
+         YxiLwXddUs8fvWYj8TuHSCXrMPIxY3pYcC866G07ivPt4JXJHIdO+9Ndhm6K55BUqE+a
+         4a/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o0Jv0CLGJ4DfZHttNSCtLSVitK8nvs/atSVnSKAM6bs=;
+        b=EgFaZLVPyLSTNiuSaHVQkypwGabJFIaP52Jxd+bdvCe+lB6L9J/ZhAzrxPdM7rJGxh
+         geDXGw2DfS9+mfS8w/oFWhckwnhpgLxqJp6zVkfJyewL6J13k91vLaSIhR3D9XK5GF8d
+         3RAxHpUkHPFz+L5h+/x0sWy4e07gkCmtJcm8e7iaKocj3Ny97y8cJWptlu+K9gIXg8U3
+         SDD2P1Q1r41hKtFDodl9STNSiEEj7lINqjDbF24i0TB7j2JaugsFehHVFkhRreWWYdpd
+         SfWI9MqGKmVQv9P8u0ildQU/892pmLJeqRx66Zu8riIYcHNQVqhq6uji79fTDptnqYVm
+         SfMA==
+X-Gm-Message-State: AOAM530STHH3RWM7ue0+xdbTBauuLAIieaHQyrswiypTt/53lnBBiXEN
+        t0UwEBK+Y7WPUblxKxmJRDbxj1+BuVXWrfg6d3Y=
+X-Google-Smtp-Source: ABdhPJzfEhuHujTa3hefuqudWxZ/EKDNycHeqfbn3emhF0Wj5zn21IHdIbr1kW809gDv6sFlFQc+YU6+GbZwEs3v3So=
+X-Received: by 2002:a02:76d5:: with SMTP id z204mr37834534jab.93.1600693687349;
+ Mon, 21 Sep 2020 06:08:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 21 Sep 2020 17:09:00 +0530
-From:   ppvk@codeaurora.org
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org
-Subject: Re: [PATCH V2] fuse: Remove __GFP_FS flag to avoid allocator
- recursing
-In-Reply-To: <20200916145634.GN5449@casper.infradead.org>
-References: <1600238380-33350-1-git-send-email-ppvk@codeaurora.org>
- <20200916145634.GN5449@casper.infradead.org>
-Message-ID: <2a5b17f0a80d6a52e6c2c7301dea4c41@codeaurora.org>
-X-Sender: ppvk@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+References: <20200911163403.79505-1-balsini@android.com> <20200911163403.79505-3-balsini@android.com>
+ <CAOQ4uxhxiuZV3LVk=ihqt4S7ktNK=gZcyLh19iZ1+je0fhc3Uw@mail.gmail.com> <20200921110156.GC3385065@google.com>
+In-Reply-To: <20200921110156.GC3385065@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 21 Sep 2020 16:07:56 +0300
+Message-ID: <CAOQ4uxhA+6+m0GTWiaRLC090FCngVYHJv62TCPNNSWzVkdQjgg@mail.gmail.com>
+Subject: Re: [PATCH V8 2/3] fuse: Introduce synchronous read and write for passthrough
+To:     Alessio Balsini <balsini@android.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        David Anderson <dvander@google.com>,
+        Eric Yan <eric.yan@oneplus.com>, Jann Horn <jannh@google.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <stefanoduo@google.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-09-16 20:26, Matthew Wilcox wrote:
-> On Wed, Sep 16, 2020 at 12:09:40PM +0530, Pradeep P V K wrote:
->> Changes since V1:
->> - Used memalloc_nofs_save() in all allocation paths of fuse daemons
->>   to avoid use __GFP_FS flag as per Matthew comments.
-> 
-> That's not how to use memalloc_nofs_save().  You call it when entering 
-> a
-> context in which any memory allocation would cause a deadlock.  You 
-> don't
-> look for every place which allocates memory and wrap the memory 
-> allocation
-> calls in memalloc_nofs_save() because you're likely to miss one.
+On Mon, Sep 21, 2020 at 2:01 PM Alessio Balsini <balsini@android.com> wrote:
+>
+> Hi Amir,
+>
+> On Sat, Sep 12, 2020 at 12:55:35PM +0300, Amir Goldstein wrote:
+> > On Fri, Sep 11, 2020 at 7:34 PM Alessio Balsini <balsini@android.com> wrote:
+> > > +ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
+> > > +                                  struct iov_iter *iter)
+> > > +{
+> > > +       ssize_t ret;
+> > > +       struct file *fuse_filp = iocb_fuse->ki_filp;
+> > > +       struct fuse_file *ff = fuse_filp->private_data;
+> > > +       struct file *passthrough_filp = ff->passthrough_filp;
+> > > +
+> > > +       if (!iov_iter_count(iter))
+> > > +               return 0;
+> > > +
+> > > +       if (is_sync_kiocb(iocb_fuse)) {
+> > > +               struct kiocb iocb;
+> > > +
+> > > +               kiocb_clone(&iocb, iocb_fuse, passthrough_filp);
+> > > +               ret = call_read_iter(passthrough_filp, &iocb, iter);
+> > > +               iocb_fuse->ki_pos = iocb.ki_pos;
+> > > +               if (ret >= 0)
+> > > +                       fuse_copyattr(fuse_filp, passthrough_filp, false);
+> > > +
+> > > +       } else {
+> > > +               ret = -EIO;
+> > > +       }
+> > > +
+> > > +       return ret;
+> > > +}
+> > > +
+> > > +ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
+> > > +                                   struct iov_iter *iter)
+> > > +{
+> > > +       ssize_t ret;
+> > > +       struct file *fuse_filp = iocb_fuse->ki_filp;
+> > > +       struct fuse_file *ff = fuse_filp->private_data;
+> > > +       struct inode *fuse_inode = file_inode(fuse_filp);
+> > > +       struct file *passthrough_filp = ff->passthrough_filp;
+> > > +
+> > > +       if (!iov_iter_count(iter))
+> > > +               return 0;
+> > > +
+> > > +       inode_lock(fuse_inode);
+> > > +
+> > > +       if (is_sync_kiocb(iocb_fuse)) {
+> > > +               struct kiocb iocb;
+> > > +
+> > > +               kiocb_clone(&iocb, iocb_fuse, passthrough_filp);
+> > > +
+> > > +               file_start_write(passthrough_filp);
+> > > +               ret = call_write_iter(passthrough_filp, &iocb, iter);
+> >
+> > Why not vfs_iter_write()/vfs_iter_read()?
+> >
+> > You are bypassing many internal VFS checks that seem pretty important.
+> >
+>
+> I've been thinking a lot about this and decided to go for the VFS bypassing
+> solution because:
+> 1. it looked odd to me to perform VFS checks twice, both for FUSE and lower
+>    FS and it seemed to me that we found a tradeoff with Jann about doing
+>    this lower FS call, and
+> 2. in our Android use case (I just saw you asking for more details about
+>    this in, I'll reply on the other thread), the user might have the right
+>    credentials to access the FUSE file system, but not to access the lower
+>    file system, so the VFS checkings would fail. So that would have created
+>    the need for a credential bypassing that looked hacky.
+>
+> But I agree and I would probably sleep better knowing that VFS checks are
+> not skipped :) So I decided to implemented the vfs_iter_{read,write}()
+> variant.
+>
+> I again picked a lot from the overlayfs solution. In a few words, I get the
+> FUSE daemon credential reference at FUSE FS creation time and, when
+> passthrough read/write operations are triggered, the kernel temporarily
+> overrides the requesting process' credentials with those of the FUSE
+> daemon. Credentials are reverted as soon as the operation completes.
+>
+> I have a temporary development branch where I'm developing the V9 of this
+> patch, plus the VFS variant (git history may change):
+>
+> https://github.com/balsini/linux/tree/fuse-passthrough-stable-v5.8-v9-vfs
+>
+> For now, I'm happy to say that I like this VFS solution, it also simplified
+> the lower file system notifications, so I'll probably go with this in the
+> V9.
+>
 
-> ok, i will fix this in my next patch set.
->>  static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
->>  {
->> +	ssize_t size;
->> +	unsigned nofs_flag;
-> 
-> This is almost certainly too low in the call stack.
-ok, i will update this in my next patch set.
+I am happy this direction was workable, not because the overlayfs solution
+is perfect, but because it already has decent mileage running into strange
+corner cases and fixing them.
+
+But I also think it is better when fuse driver performs actions on behalf
+of the server, that it uses the server's credential, because this way,
+the passthrough fd code path behaves logically closer to the non-passthrough
+code, only (hopefully) faster.
+
+Thanks,
+Amir.
