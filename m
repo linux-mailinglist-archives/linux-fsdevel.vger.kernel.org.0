@@ -2,59 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A99DC271B16
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 08:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABF8271B8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 09:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgIUGsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 02:48:17 -0400
-Received: from verein.lst.de ([213.95.11.211]:38665 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbgIUGsQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 02:48:16 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4772268AFE; Mon, 21 Sep 2020 08:48:14 +0200 (CEST)
-Date:   Mon, 21 Sep 2020 08:48:13 +0200
+        id S1726553AbgIUHUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 03:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59362 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbgIUHUI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 03:20:08 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA5E8C0613D1;
+        Mon, 21 Sep 2020 00:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=uiln3MtorCIt+OqTbXUWnLiMXWC8lUgm2hs2JozLc28=; b=WlAvqo0PcB605+Hw0QLRuD1pQx
+        BdyYtsNFPR3wMN5n8f93MPj6oeQPqy60GRR7KR8bYAlYCuZAV8luCL8w+E8yqR9ni0BMRscRRY/iW
+        BUZ16kWwXlC+tHFzJzi9sWaMYwaug6V8SIOW0b0kfNVKHHE181qPrix3SHrySoGyTgz1fO3D0O/W9
+        eeIwVaKs6zgWS3g2U3WN1SDQBNkp6w54ecHbNf+X36dRXVbSVKkTJOoOuUWusZDlmIpfwewvJnGpm
+        EjjwNpfnPKmsjgRiOI+gFhBvsYdAesrUy9JAiGqPs0teXQE5Ceg8fqbMPBSPgzUQ8Sy1TQ1zYmQyy
+        CsavluHw==;
+Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKG73-0003Dm-IT; Mon, 21 Sep 2020 07:19:49 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 2/5] fs,nfs: lift compat nfs4 mount data handling into
- the nfs code
-Message-ID: <20200921064813.GB18559@lst.de>
-References: <20200917082236.2518236-1-hch@lst.de> <20200917082236.2518236-3-hch@lst.de> <20200917171604.GW3421308@ZenIV.linux.org.uk> <20200917171826.GA8198@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, nbd@other.debian.org,
+        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Subject: remove blkdev_get as a public API v2
+Date:   Mon, 21 Sep 2020 09:19:44 +0200
+Message-Id: <20200921071958.307589-1-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917171826.GA8198@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 07:18:26PM +0200, Christoph Hellwig wrote:
-> On Thu, Sep 17, 2020 at 06:16:04PM +0100, Al Viro wrote:
-> > On Thu, Sep 17, 2020 at 10:22:33AM +0200, Christoph Hellwig wrote:
-> > > There is no reason the generic fs code should bother with NFS specific
-> > > binary mount data - lift the conversion into nfs4_parse_monolithic
-> > > instead.
-> > 
-> > Considering the size of struct compat_nfs4_mount_data_v1...  Do we really
-> > need to bother with that "copy in place, so we go through the fields
-> > backwards" logics?  Just make that
-> > 
-> > > +static void nfs4_compat_mount_data_conv(struct nfs4_mount_data *data)
-> > > +{
-> > 	struct compat_nfs4_mount_data_v1 compat;
-> > 	compat = *(struct compat_nfs4_mount_data_v1 *)data;
-> > and copy the damnt thing without worrying about the field order...
-> 
-> Maybe.  But then again why bother?  I just sticked to the existing
-> code as much as possible.
+Hi Jens,
 
-Trond, Anna: what is your preference?
+this series removes blkdev_get as a public API, leaving it as just an
+implementation detail of blkdev_get_by_path and blkdev_get_by_dev.  The
+reason for that is that blkdev_get is a very confusing API that requires
+a struct block_device to be fed in, but then actually consumes the
+reference.  And it turns out just using the two above mentioned APIs
+actually significantly simplifies the code as well.
+
+Changes since v1:
+ - fix a mismerged that left a stray bdget_disk around
+ - factour the partition scan at registration time code into a new
+   helper.
+
+Diffstat:
+ block/genhd.c                   |   35 ++++++---------
+ block/ioctl.c                   |   13 ++---
+ drivers/block/nbd.c             |    8 +--
+ drivers/block/pktcdvd.c         |   92 +++++-----------------------------------
+ drivers/block/zram/zram_drv.c   |    7 +--
+ drivers/char/raw.c              |   51 ++++++++--------------
+ drivers/ide/ide-gd.c            |    2 
+ drivers/s390/block/dasd_genhd.c |   15 +-----
+ fs/block_dev.c                  |   12 ++---
+ fs/ocfs2/cluster/heartbeat.c    |   28 ++++--------
+ include/linux/blk_types.h       |    4 -
+ include/linux/blkdev.h          |    1 
+ include/linux/genhd.h           |    2 
+ include/linux/suspend.h         |    4 -
+ include/linux/swap.h            |    3 -
+ kernel/power/swap.c             |   21 +++------
+ kernel/power/user.c             |   26 +++--------
+ mm/swapfile.c                   |   45 ++++++++++---------
+ 18 files changed, 130 insertions(+), 239 deletions(-)
