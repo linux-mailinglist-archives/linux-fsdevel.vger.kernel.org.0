@@ -2,62 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 587362724E4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 15:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09BE272559
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 15:26:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbgIUNMO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 09:12:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56014 "EHLO mx2.suse.de"
+        id S1726436AbgIUN0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 09:26:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726749AbgIUNMM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 09:12:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 90E80B563;
-        Mon, 21 Sep 2020 13:12:47 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 34A381E0BA1; Mon, 21 Sep 2020 15:12:11 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     <reiserfs-devel@vger.kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Jan Kara <jack@suse.cz>, stable@vger.kernel.org
-Subject: [PATCH] reiserfs: Initialize inode keys properly
-Date:   Mon, 21 Sep 2020 15:12:09 +0200
-Message-Id: <20200921131209.31976-1-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
+        id S1726932AbgIUN0e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 09:26:34 -0400
+Received: from pali.im (pali.im [31.31.79.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B9712076E;
+        Mon, 21 Sep 2020 13:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600694794;
+        bh=vvbV0d1b9m6RLAHTC+GfWYs2Cg+CuDl9iFfAyv4zfok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xnPuiqQb5g5HgvW0Dczozc7y5dnQeN1FlC4k6x6a6cZV9e0uYv+s4HfgakYyYbYwt
+         IkFWxbywc90mezKfMUieUzFjIeeclzxDNoBCgF5nw17Dhfpx8EPzltzW1eL8Ci1UHs
+         FcQ+0/ijfWQyjAbbsPXdqdUiFFzh2JtsSfrqrlwA=
+Received: by pali.im (Postfix)
+        id F257A7BF; Mon, 21 Sep 2020 15:26:31 +0200 (CEST)
+Date:   Mon, 21 Sep 2020 15:26:31 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, dsterba@suse.cz, aaptel@suse.com,
+        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
+        mark@harmstone.com, nborisov@suse.com
+Subject: Re: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+Message-ID: <20200921132631.q6jfmbhqf6j6ay5t@pali>
+References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
+ <20200911141018.2457639-9-almaz.alexandrovich@paragon-software.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200911141018.2457639-9-almaz.alexandrovich@paragon-software.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-reiserfs_read_locked_inode() didn't initialize key length properly. Use
-_make_cpu_key() macro for key initialization so that all key member are
-properly initialized.
+On Friday 11 September 2020 17:10:16 Konstantin Komarov wrote:
+> +Mount Options
+> +=============
+> +
+> +The list below describes mount options supported by NTFS3 driver in addition to
+> +generic ones.
+> +
+> +===============================================================================
+> +
+> +nls=name		This option informs the driver how to interpret path
+> +			strings and translate them to Unicode and back. If
+> +			this option is not set, the default codepage will be
+> +			used (CONFIG_NLS_DEFAULT).
+> +			Examples:
+> +				'nls=utf8'
+> +
+> +nls_alt=name		This option extends "nls". It will be used to translate
+> +			path string to Unicode if primary nls failed.
+> +			Examples:
+> +				'nls_alt=cp1251'
 
-CC: stable@vger.kernel.org
-Reported-by: syzbot+d94d02749498bb7bab4b@syzkaller.appspotmail.com
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/reiserfs/inode.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Hello! I'm looking at other filesystem drivers and no other with UNICODE
+semantic (vfat, udf, isofs) has something like nls_alt option.
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 1509775da040..e43fed96704d 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -1551,11 +1551,7 @@ void reiserfs_read_locked_inode(struct inode *inode,
- 	 * set version 1, version 2 could be used too, because stat data
- 	 * key is the same in both versions
- 	 */
--	key.version = KEY_FORMAT_3_5;
--	key.on_disk_key.k_dir_id = dirino;
--	key.on_disk_key.k_objectid = inode->i_ino;
--	key.on_disk_key.k_offset = 0;
--	key.on_disk_key.k_type = 0;
-+	_make_cpu_key(&key, KEY_FORMAT_3_5, dirino, inode->i_ino, 0, 0, 3);
- 
- 	/* look for the object's stat data */
- 	retval = search_item(inode->i_sb, &key, &path_to_sd);
--- 
-2.16.4
+So do we really need it? And if yes, it should be added to all other
+UNICODE filesystem drivers for consistency.
 
+But I'm very sceptical if such thing is really needed. nls= option just
+said how to convert UNICODE code points for userpace. This option is
+passed by userspace (when mounting disk), so userspace already know what
+it wanted. And it should really use this encoding for filenames (e.g.
+utf8 or cp1251) which already told to kernel.
