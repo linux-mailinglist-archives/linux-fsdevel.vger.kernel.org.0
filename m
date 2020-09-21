@@ -2,90 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C491F2721F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 13:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 643A82722DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Sep 2020 13:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbgIULLc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Sep 2020 07:11:32 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:47086 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726457AbgIULL0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Sep 2020 07:11:26 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-233-9UYq0ao9O6ejB4ujVxtO9g-1; Mon, 21 Sep 2020 12:11:22 +0100
-X-MC-Unique: 9UYq0ao9O6ejB4ujVxtO9g-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 12:11:21 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 21 Sep 2020 12:11:21 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: let import_iovec deal with compat_iovecs as well
-Thread-Topic: let import_iovec deal with compat_iovecs as well
-Thread-Index: AQHWjbnKEn35LxofhEeT1lmdzdUiWqlwBNiwgAJx3YCAAH2K4A==
-Date:   Mon, 21 Sep 2020 11:11:21 +0000
-Message-ID: <ac8a3691c4f5442f908c51298260ca0e@AcuMS.aculab.com>
-References: <20200918124533.3487701-1-hch@lst.de>
- <2c7bf42ee4314484ae0177280cd8f5f3@AcuMS.aculab.com>
- <20200921044125.GA16522@lst.de>
-In-Reply-To: <20200921044125.GA16522@lst.de>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726973AbgIULoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Sep 2020 07:44:14 -0400
+Received: from z5.mailgun.us ([104.130.96.5]:51234 "EHLO z5.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726951AbgIULoG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 21 Sep 2020 07:44:06 -0400
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 07:44:05 EDT
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1600688645; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=aj7+moQI0HWZLSMQvc/earvkxmxlSTsYW5THyyMnfSg=;
+ b=pC3qQ1xtn0g/sbQtGrP0plCZfYIxklGQGHRRVFL3j6TvwzTVCINKA3KdRb0igASxrlN62IRx
+ D1Rcfj0hGqDRabuZQ3HoUI5s1liEMTxV6/VaW8rV5E0g7d9my1Xu1I3RJaBHjtO8qyjJSmmX
+ 5UN0ya777B5o4b0Vw7cw+CuBJvM=
+X-Mailgun-Sending-Ip: 104.130.96.5
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 5f6890d44ab73023a792e0be (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 21 Sep 2020 11:39:00
+ GMT
+Sender: ppvk=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id DDCE2C433F1; Mon, 21 Sep 2020 11:39:00 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ppvk)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9F189C433CB;
+        Mon, 21 Sep 2020 11:39:00 +0000 (UTC)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 21 Sep 2020 17:09:00 +0530
+From:   ppvk@codeaurora.org
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org
+Subject: Re: [PATCH V2] fuse: Remove __GFP_FS flag to avoid allocator
+ recursing
+In-Reply-To: <20200916145634.GN5449@casper.infradead.org>
+References: <1600238380-33350-1-git-send-email-ppvk@codeaurora.org>
+ <20200916145634.GN5449@casper.infradead.org>
+Message-ID: <2a5b17f0a80d6a52e6c2c7301dea4c41@codeaurora.org>
+X-Sender: ppvk@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Sat, Sep 19, 2020 at 02:24:10PM +0000, David Laight wrote:
-> > I thought about that change while writing my import_iovec() => iovec_import()
-> > patch - and thought that the io_uring code would (as usual) cause grief.
-> >
-> > Christoph - did you see those patches?
+On 2020-09-16 20:26, Matthew Wilcox wrote:
+> On Wed, Sep 16, 2020 at 12:09:40PM +0530, Pradeep P V K wrote:
+>> Changes since V1:
+>> - Used memalloc_nofs_save() in all allocation paths of fuse daemons
+>>   to avoid use __GFP_FS flag as per Matthew comments.
+> 
+> That's not how to use memalloc_nofs_save().  You call it when entering 
+> a
+> context in which any memory allocation would cause a deadlock.  You 
+> don't
+> look for every place which allocates memory and wrap the memory 
+> allocation
+> calls in memalloc_nofs_save() because you're likely to miss one.
 
-Link to cover email.
-
-https://lkml.org/lkml/2020/9/15/661
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+> ok, i will fix this in my next patch set.
+>>  static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
+>>  {
+>> +	ssize_t size;
+>> +	unsigned nofs_flag;
+> 
+> This is almost certainly too low in the call stack.
+ok, i will update this in my next patch set.
