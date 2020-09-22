@@ -2,229 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EF55273DBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 10:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB43273DC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 10:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgIVIt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Sep 2020 04:49:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54648 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbgIVIt5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Sep 2020 04:49:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 01CA2AF16;
-        Tue, 22 Sep 2020 08:50:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id EA6C01E12E3; Tue, 22 Sep 2020 10:49:54 +0200 (CEST)
-Date:   Tue, 22 Sep 2020 10:49:54 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Justin Sanders <justin@coraid.com>,
-        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH 05/13] bdi: initialize ->ra_pages and ->io_pages in
- bdi_init
-Message-ID: <20200922084954.GC16464@quack2.suse.cz>
-References: <20200921080734.452759-1-hch@lst.de>
- <20200921080734.452759-6-hch@lst.de>
+        id S1726566AbgIVIvK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Sep 2020 04:51:10 -0400
+Received: from mail-dm6nam10on2045.outbound.protection.outlook.com ([40.107.93.45]:41169
+        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726098AbgIVIvK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Sep 2020 04:51:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pj1Z1AUvf644WGgTrueI8bhgzNyK2deebT8jE+4jwVX8rP/VlYkKOJF2vxz9i9Xxvc75oCcpsOapqo81HdNW/mDJulE5Ye2R/93yYM+zsmg9mBXKuphCKKkIKOOVkN3XozU7e74CGjXRPT6rw1wZmJff+BVmV0SGHtaXQZMFwq49koLP5KE8Ly9ZWXMQDtODhUouxR2wMulFn8ZxbD6LKnxtpO+Qlhpx4AIAtLIL2FJVUwInqRU+PYu9+sx+8mRwUk6vcdl9psH0l7cC9c7CtZpCMQtDPmoBuTepSZe9K9KJ4FJWm3AfE2OJAFM/0zEz3iV+sS3GX8n1PhDRg9VvUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UckRBRR05g19PH2qqSyvnCwZhGLCWayn09vV4fEmaqE=;
+ b=k6vp4xSCg8DfPCOHcB8cpVSsKKFM3kwt+CAjkcaLePX070EQkwz2m7LxgEPpTjejXFOX+3HkN2aVdqGxyG4/7V6t3n+13tO52NJN7tMizKXoXQk7VqdAUEkHnDPH/X74631CFwH3A49+yrecv1vXvzye9cWhD0sMb7dMu6pTWx8WkImHyNbgrxtKGvzEyp03YNOVvLxJSe0txYPSJ9lvyO1X/ztZJyzG0yAppgc6oGUpyGFRLFTEdglcM5QyAfK1erGfjcKOPCZqOTfqY04ZNBkqe5bS038Wzf1mYd6mQbZmre9iQMebTqUBYY5j8I0j2snVoqWdjNZyM8iNJrpfPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
+ dkim=pass header.d=vmware.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UckRBRR05g19PH2qqSyvnCwZhGLCWayn09vV4fEmaqE=;
+ b=f5qFvucBzhlzKOmPyP9SlxVk+rEvCHLOePLOr0Qt3ov8nYoxqQD6oxHOFwGTmvaeX3hmXLqNsVuEJDXmaGoIvJYMvdJVUdj7yF3dSCmpN19gk6FRXwjNlL59hM6ZfrFS0q7YhA0t+hSwTm81I1fuaQ6mHr4W09CrnVsSTVxpikQ=
+Received: from BYAPR05MB4839.namprd05.prod.outlook.com (52.135.235.141) by
+ SJ0PR05MB7392.namprd05.prod.outlook.com (20.181.200.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3412.8; Tue, 22 Sep 2020 08:51:06 +0000
+Received: from BYAPR05MB4839.namprd05.prod.outlook.com
+ ([fe80::4cec:47f6:a0be:8304]) by BYAPR05MB4839.namprd05.prod.outlook.com
+ ([fe80::4cec:47f6:a0be:8304%6]) with mapi id 15.20.3391.025; Tue, 22 Sep 2020
+ 08:51:05 +0000
+From:   Abdul Anshad Azeez <aazees@vmware.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Performance regressions in networking & storage benchmarks in Linux
+ kernel 5.8
+Thread-Topic: Performance regressions in networking & storage benchmarks in
+ Linux kernel 5.8
+Thread-Index: AQHWkLxv33yBR7j1VE2lVgq0lG/dkA==
+Date:   Tue, 22 Sep 2020 08:51:05 +0000
+Message-ID: <BYAPR05MB4839189DFC487A1529D6734CA63B0@BYAPR05MB4839.namprd05.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=vmware.com;
+x-originating-ip: [183.82.221.236]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6719534e-4b59-4741-e756-08d85ed4a48b
+x-ms-traffictypediagnostic: SJ0PR05MB7392:
+x-microsoft-antispam-prvs: <SJ0PR05MB7392A7F22390FC9640D130E7A63B0@SJ0PR05MB7392.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: N/2zpkm77UcejifI3PVInlFNFUUwwxroOzK7n3FNMlwueNrmTliprkXm6vtDNYo24AsyeChuVVMSMWeUS/rwDntnacKqsn2+HI1/KVkeIefFZOTEss3PoB7WCPfj5uC3i1jJa0OOOjKMQIp78drVRfsxW3Nx2SVdix7EuqWeM/17oY8cMuRCnYNAyGy2Iac/voX4CDEQOS6qknuhTm8xL4+ucx5ggXsdPVE7uThYs2hSUNCyvRTwT499fYGRLOkB/TKIXjPYXzW6jFTQpeGFv/Pi+31qEntSqRDXLVN2tOCbTE/P6wtAI5ogsNqjbwQB7kvSb5YVuPOjND+7uQROpass2yfnNVcyceALqU4w5zfpMTpDiLMh7vtwp5/Wv0tu
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB4839.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(346002)(136003)(376002)(39860400002)(366004)(54906003)(76116006)(6506007)(2906002)(9686003)(66476007)(66946007)(8936002)(26005)(66556008)(64756008)(186003)(110136005)(55016002)(4326008)(86362001)(478600001)(5660300002)(71200400001)(33656002)(7696005)(52536014)(91956017)(66446008)(8676002)(83380400001)(316002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: 5Sn448QOeVmXWAlaPdrN5e4+mPcfQCfncIQCfnBSXDOwL/OLSExdoIdah0ip03tjb30qmNmWDo5Ep4eLLr42aYcQzZiuhPC6q2mksyt5LuQUZSgh11yApL9Ae/mLXsjcR33/WuMs9jrD2mmzYJEphv9pSg+VXt35Ivq3hpeb/6Ve1bdz7zuYPqJa9VFMcMTDMUzgABOUPpjhk0DixMFoZOIh0MSU1eTOAwsfpMTI9diEr2OpMHNqHSRcaIgHkm7AJt0LLiuDdB/TNJk3IMcKf9pjV7jwHAKKYHXmLoZ/OdgXw6FYKOV+Ooz4hJThereMx8l7Lv4/9y+oS6gm7mtW1Qw1GUZGdhi2AWPEDapOkqg6r3mM3hkhtn5Z9frbhPGs+1S6UtYwGAinKfPyEFLJeqpnQ3ORIP3gn7mm6g/as3bKulyzWuEG0JTSgrc5TumTglchfc7ye9MbRWQRd+8S0wDxIAwXiwiSVou6IV/23QobioSs/ygJ50vgw6xmRjJ+UFwg1Pi419l62gQkhJdj0S4RvW0pOccasXsC6/A0BQPoU+1lezKwZRErBq6xsUMGtNpMfLu9PO56dNuLCWM+OTrkw3hNscrHx6gGQ09Glb87BGCLBFNa9HotVxufdvyf9XHXZH4OmVonDCG4U/nYTg==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200921080734.452759-6-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB4839.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6719534e-4b59-4741-e756-08d85ed4a48b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2020 08:51:05.9065
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Qgr3s/8HXKh0W8hyFoCBtRKiLR8/fJC8xElxDdMMM3l9okt3Hpfzwe+e2t/ptWDl9prrwt4qi//LOA/SRH1LCg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR05MB7392
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 21-09-20 10:07:26, Christoph Hellwig wrote:
-> Set up a readahead size by default, as very few users have a good
-> reason to change it.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: David Sterba <dsterba@suse.com> [btrfs]
-> Acked-by: Richard Weinberger <richard@nod.at> [ubifs, mtd]
-
-The patch looks good to me. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-I'd just prefer if the changelog explicitely mentioned that this patch
-results in enabling readahead for coda, ecryptfs, and orangefs... Just in
-case someone bisects some issue down to this patch :).
-
-								Honza
-
-> ---
->  block/blk-core.c      | 2 --
->  drivers/mtd/mtdcore.c | 2 ++
->  fs/9p/vfs_super.c     | 6 ++++--
->  fs/afs/super.c        | 1 -
->  fs/btrfs/disk-io.c    | 1 -
->  fs/fuse/inode.c       | 1 -
->  fs/nfs/super.c        | 9 +--------
->  fs/ubifs/super.c      | 2 ++
->  fs/vboxsf/super.c     | 2 ++
->  mm/backing-dev.c      | 2 ++
->  10 files changed, 13 insertions(+), 15 deletions(-)
-> 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index ca3f0f00c9435f..865d39e5be2b28 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -538,8 +538,6 @@ struct request_queue *blk_alloc_queue(int node_id)
->  	if (!q->stats)
->  		goto fail_stats;
->  
-> -	q->backing_dev_info->ra_pages = VM_READAHEAD_PAGES;
-> -	q->backing_dev_info->io_pages = VM_READAHEAD_PAGES;
->  	q->backing_dev_info->capabilities = BDI_CAP_CGROUP_WRITEBACK;
->  	q->node = node_id;
->  
-> diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-> index 7d930569a7dfb7..b5e5d3140f578e 100644
-> --- a/drivers/mtd/mtdcore.c
-> +++ b/drivers/mtd/mtdcore.c
-> @@ -2196,6 +2196,8 @@ static struct backing_dev_info * __init mtd_bdi_init(char *name)
->  	bdi = bdi_alloc(NUMA_NO_NODE);
->  	if (!bdi)
->  		return ERR_PTR(-ENOMEM);
-> +	bdi->ra_pages = 0;
-> +	bdi->io_pages = 0;
->  
->  	/*
->  	 * We put '-0' suffix to the name to get the same name format as we
-> diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-> index 74df32be4c6a52..e34fa20acf612e 100644
-> --- a/fs/9p/vfs_super.c
-> +++ b/fs/9p/vfs_super.c
-> @@ -80,8 +80,10 @@ v9fs_fill_super(struct super_block *sb, struct v9fs_session_info *v9ses,
->  	if (ret)
->  		return ret;
->  
-> -	if (v9ses->cache)
-> -		sb->s_bdi->ra_pages = VM_READAHEAD_PAGES;
-> +	if (!v9ses->cache) {
-> +		sb->s_bdi->ra_pages = 0;
-> +		sb->s_bdi->io_pages = 0;
-> +	}
->  
->  	sb->s_flags |= SB_ACTIVE | SB_DIRSYNC;
->  	if (!v9ses->cache)
-> diff --git a/fs/afs/super.c b/fs/afs/super.c
-> index b552357b1d1379..3a40ee752c1e3f 100644
-> --- a/fs/afs/super.c
-> +++ b/fs/afs/super.c
-> @@ -456,7 +456,6 @@ static int afs_fill_super(struct super_block *sb, struct afs_fs_context *ctx)
->  	ret = super_setup_bdi(sb);
->  	if (ret)
->  		return ret;
-> -	sb->s_bdi->ra_pages	= VM_READAHEAD_PAGES;
->  
->  	/* allocate the root inode and dentry */
->  	if (as->dyn_root) {
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index f6bba7eb1fa171..047934cea25efa 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3092,7 +3092,6 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
->  	}
->  
->  	sb->s_bdi->capabilities |= BDI_CAP_CGROUP_WRITEBACK;
-> -	sb->s_bdi->ra_pages = VM_READAHEAD_PAGES;
->  	sb->s_bdi->ra_pages *= btrfs_super_num_devices(disk_super);
->  	sb->s_bdi->ra_pages = max(sb->s_bdi->ra_pages, SZ_4M / PAGE_SIZE);
->  
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index bba747520e9b08..17b00670fb539e 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1049,7 +1049,6 @@ static int fuse_bdi_init(struct fuse_conn *fc, struct super_block *sb)
->  	if (err)
->  		return err;
->  
-> -	sb->s_bdi->ra_pages = VM_READAHEAD_PAGES;
->  	/* fuse does it's own writeback accounting */
->  	sb->s_bdi->capabilities = BDI_CAP_NO_ACCT_WB | BDI_CAP_STRICTLIMIT;
->  
-> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-> index 7a70287f21a2c1..f943e37853fa25 100644
-> --- a/fs/nfs/super.c
-> +++ b/fs/nfs/super.c
-> @@ -1200,13 +1200,6 @@ static void nfs_get_cache_cookie(struct super_block *sb,
->  }
->  #endif
->  
-> -static void nfs_set_readahead(struct backing_dev_info *bdi,
-> -			      unsigned long iomax_pages)
-> -{
-> -	bdi->ra_pages = VM_READAHEAD_PAGES;
-> -	bdi->io_pages = iomax_pages;
-> -}
-> -
->  int nfs_get_tree_common(struct fs_context *fc)
->  {
->  	struct nfs_fs_context *ctx = nfs_fc2context(fc);
-> @@ -1251,7 +1244,7 @@ int nfs_get_tree_common(struct fs_context *fc)
->  					     MINOR(server->s_dev));
->  		if (error)
->  			goto error_splat_super;
-> -		nfs_set_readahead(s->s_bdi, server->rpages);
-> +		s->s_bdi->io_pages = server->rpages;
->  		server->super = s;
->  	}
->  
-> diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-> index a2420c900275a8..fbddb2a1c03f5e 100644
-> --- a/fs/ubifs/super.c
-> +++ b/fs/ubifs/super.c
-> @@ -2177,6 +2177,8 @@ static int ubifs_fill_super(struct super_block *sb, void *data, int silent)
->  				   c->vi.vol_id);
->  	if (err)
->  		goto out_close;
-> +	sb->s_bdi->ra_pages = 0;
-> +	sb->s_bdi->io_pages = 0;
->  
->  	sb->s_fs_info = c;
->  	sb->s_magic = UBIFS_SUPER_MAGIC;
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index 8fe03b4a0d2b03..8e3792177a8523 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -167,6 +167,8 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  	err = super_setup_bdi_name(sb, "vboxsf-%d", sbi->bdi_id);
->  	if (err)
->  		goto fail_free;
-> +	sb->s_bdi->ra_pages = 0;
-> +	sb->s_bdi->io_pages = 0;
->  
->  	/* Turn source into a shfl_string and map the folder */
->  	size = strlen(fc->source) + 1;
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 8e8b00627bb2d8..2dac3be6127127 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -746,6 +746,8 @@ struct backing_dev_info *bdi_alloc(int node_id)
->  		kfree(bdi);
->  		return NULL;
->  	}
-> +	bdi->ra_pages = VM_READAHEAD_PAGES;
-> +	bdi->io_pages = VM_READAHEAD_PAGES;
->  	return bdi;
->  }
->  EXPORT_SYMBOL(bdi_alloc);
-> -- 
-> 2.28.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Part of VMware's performance regression testing for Linux Kernel upstream r=
+ele=0A=
+ases we compared Linux kernel 5.8 against 5.7. Our evaluation revealed perf=
+orm=0A=
+ance regressions mostly in networking latency/response-time benchmarks up t=
+o 6=0A=
+0%. Storage throughput & latency benchmarks were also up by 8%.=0A=
+=0A=
+After performing the bisect between kernel 5.8 and 5.7, we identified the r=
+oot=0A=
+ cause behaviour to be an interrupt related change from Thomas Gleixner's "=
+633=0A=
+260fa143bbed05e65dc557a492667dfdc45bb(x86/irq: Convey vector as argument an=
+d n=0A=
+ot in ptregs)" commit. To confirm this, we backed out the commit from 5.8 &=
+ re=0A=
+ran our tests and found that the performance was similar to 5.7 kernel.=0A=
+=0A=
+Impacted test cases:=0A=
+=0A=
+Networking:=0A=
+    - Netperf TCP_RR & TCP_CRR - Response time=0A=
+    - Ping - Response time=0A=
+    - Memcache - Response time=0A=
+    - Netperf TCP_STREAM small(8K socket & 256B message)(TCP_NODELAY set) p=
+ack=0A=
+ets - Throughput & CPU utilization(CPU/Gbits)=0A=
+=0A=
+Storage:=0A=
+    - FIO:=0A=
+        - 4K (rand|seq)_(read|write) local-NVMe MultiVM tests - Throughput =
+& l=0A=
+atency=0A=
+=0A=
+From our testing, overall results indicate that above-mentioned commit has =
+int=0A=
+roduced performance regressions in latency-sensitive workloads for networki=
+ng.=0A=
+ For storage, it affected both throughput & latency workloads.=0A=
+=0A=
+Also, since Linux 5.9-rc4 kernel was released recently, we repeated the sam=
+e e=0A=
+xperiments on 5.9-rc4. We observed all regressions were fixed and the perfo=
+rma=0A=
+nce numbers between 5.7 and 5.9-rc4 were similar.=0A=
+=0A=
+In order to find the fix commit, we bisected again between 5.8 and 5.9-rc4 =
+and=0A=
+ identified that regressions were fixed from a commit made by the same auth=
+or =0A=
+Thomas Gleixner, which unbreaks the interrupt affinity settings - "e027ffff=
+f79=0A=
+9cdd70400c5485b1a54f482255985(x86/irq: Unbreak interrupt affinity setting)"=
+.=0A=
+=0A=
+We believe these findings would be useful to the Linux community and wanted=
+ to=0A=
+ document the same.=0A=
+=0A=
+Abdul Anshad Azeez=0A=
+Performance Engineering=0A=
+VMware, Inc.=
