@@ -2,49 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51325273F95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 12:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78ACB273FCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 12:42:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbgIVK04 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Sep 2020 06:26:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48544 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbgIVK04 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Sep 2020 06:26:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1600770414;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NMJmnLI06vJXPxa6modAvGqnYZPCj9ff74h1pzwMv/4=;
-        b=dgDYvubZbMVTnG9XAG9gizyD0wYkqNHziClRtQHrrL5/1yRtJpQ6gaE+Ir2RbM0mHKRcvB
-        JP0QhPuW0SZ4s4l6SVeOsa7WFj32f+KHNx7jlQaC3f8mWgEdtK8ErwPJB49rhMy0hrs4Wy
-        E1xw+4IXKArfp+XVS4eR9s52Mh1JYkc=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 4BD69B226;
-        Tue, 22 Sep 2020 10:27:31 +0000 (UTC)
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "mark@harmstone.com" <mark@harmstone.com>
-Subject: Re: [PATCH v3 04/10] fs/ntfs3: Add file operations and implementation
-In-Reply-To: <20200921133647.3tczqm5zfvae6q6a@pali>
-References: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
- <20200828143938.102889-5-almaz.alexandrovich@paragon-software.com>
- <20200904115049.i6zjfwba7egalxnp@pali>
- <820d8a637a41448194f60dee4361dea0@paragon-software.com>
- <20200921133647.3tczqm5zfvae6q6a@pali>
-Date:   Tue, 22 Sep 2020 12:26:53 +0200
-Message-ID: <877dsmksya.fsf@suse.com>
+        id S1726503AbgIVKml (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Sep 2020 06:42:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59300 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbgIVKmk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Sep 2020 06:42:40 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB4CC061755;
+        Tue, 22 Sep 2020 03:42:40 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id j11so22206519ejk.0;
+        Tue, 22 Sep 2020 03:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:references:user-agent:in-reply-to:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=+Y3ed1m6nxjnbHLRR7kUi5TDx9qWoo/PyUUq5YncPkQ=;
+        b=gc77FN/+PjhKvNJYSNmj/RHYPujDbUWk/cUVuQqtKFdmWarskSmquza3mijS6jIA5+
+         ak1YP1WizrX6/ZGF6c6QSsm/RmR2BvlU1XRoT1NRovbmIuma0Tkb/T+lh46Uy1c/7QTW
+         ZD+eCbdoNHR1QR2t55XNlYObp7toeOzhBkGBveTiOI33w2668qS+ifZzjVc/K7CawcwE
+         QlFA9lTB8sHCJ3qU6T/iOq+eVg1ZtTWbcL0P75aiflleJFDPeMcEBijaNxu1/QIrbnwy
+         RaJnRV8P/Vn3IDSfc9aL4S7puoXWHMQsWXgppat0HqMcQOUNGEnQM8yjdc0Po2q6xA/g
+         dPzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:user-agent
+         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
+        bh=+Y3ed1m6nxjnbHLRR7kUi5TDx9qWoo/PyUUq5YncPkQ=;
+        b=EUjZiqfRD+GDJcis5DPFeQqs5xyG45foQRRrOvvY2TYzf0HuFzTGhFFwTQswhf04g6
+         OMJEmOyH6wi41/sCUS6asY54sjvXSGFu+pG9VkBzO5azulNWWw/o6ir64mn6GcyyLaJQ
+         s2O8pYpn5VuTUdIBgJqRP8l04WADukOIrgNQdHOn51FH6AAUiS1KudsoRAhmLMJ6l72d
+         ICOdFk5dT1+3P8r0sFjW75jwgstF+iHuWD6ckDiIab9lgZO7Ik+O8V6ckzMINn3NM+L+
+         n3TiHcE045iPdNt/97vyGav2aMy3EvkQl6k/97Qc7hWVYGDWazN1cR0ojNa+78IGrbCE
+         TDTw==
+X-Gm-Message-State: AOAM532PbTOxK6Kb7VfMAJeU1QyahYWGmgwrbOHiUI0PHzx03A+lHDca
+        IrqNgPqp+VV/soBExPkiY54=
+X-Google-Smtp-Source: ABdhPJwV5H6ovaIEDPQAeeiyuR9yCRVTy0SBUft2EFQ4Txu48oZqqdFYWA0UGlHHm9oeauKW66dApA==
+X-Received: by 2002:a17:906:5046:: with SMTP id e6mr4333881ejk.449.1600771358998;
+        Tue, 22 Sep 2020 03:42:38 -0700 (PDT)
+Received: from evledraar (dhcp-077-248-252-018.chello.nl. [77.248.252.18])
+        by smtp.gmail.com with ESMTPSA id r13sm10680949edo.48.2020.09.22.03.42.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2020 03:42:38 -0700 (PDT)
+From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     git@vger.kernel.org, tytso@mit.edu,
+        Junio C Hamano <gitster@pobox.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when core.fsyncObjectFiles
+References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-2-avarab@gmail.com> <20200917140912.GA27653@lst.de>
+User-agent: Debian GNU/Linux bullseye/sid; Emacs 26.3; mu4e 1.4.13
+In-reply-to: <20200917140912.GA27653@lst.de>
+Date:   Tue, 22 Sep 2020 12:42:37 +0200
+Message-ID: <877dsmhz36.fsf@evledraar.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -52,22 +67,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pali Roh=C3=A1r <pali@kernel.org> writes:
-> I think ENAMETOOLONG could be useful also for other filesystem drivers.
+
+On Thu, Sep 17 2020, Christoph Hellwig wrote:
+
+> On Thu, Sep 17, 2020 at 01:28:29PM +0200, =C3=86var Arnfj=C3=B6r=C3=B0 Bj=
+armason wrote:
+>> Change the behavior of core.fsyncObjectFiles to also sync the
+>> directory entry. I don't have a case where this broke, just going by
+>> paranoia and the fsync(2) manual page's guarantees about its behavior.
 >
-> So for me it looks better to extend kernel's utf8s_to_utf16s() function
-> and use it in ntfs driver instead of having private (modified/duplicate)
-> copy of utf8s_to_utf16s() in ntfs driver.
+> It is not just paranoia, but indeed what is required from the standards
+> POV.  At least for many Linux file systems your second fsync will be
+> very cheap (basically a NULL syscall) as the log has alredy been forced
+> all the way by the first one, but you can't rely on that.
+>
+> Acked-by: Christoph Hellwig <hch@lst.de>
 
-As a side note, cifs has related functions that may be useful.
+Thanks a lot for your advice in this thread.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/=
-cifs/cifs_unicode.c
+Can you (or someone else) suggest a Linux fs setup that's as unforgiving
+as possible vis-a-vis fsync() for testing? I'd like to hack on making
+git better at this, but one of the problems of testing it is that modern
+filesystems generally do a pretty good job of not losing your data.
 
-Cheers,
---=20
-Aur=C3=A9lien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, DE
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah HRB 247165 (AG M=C3=BC=
-nchen)
+So something like ext4's commit=3DN is an obvious start, but for git's own
+test suite it would be ideal to have process A write file X, and then
+have process B try to read it and just not see it if X hadn't been
+fsynced (or not see its directory if that hadn't been synced).
+
+It would turn our test suite into pretty much a 100% failure, but one
+that could then be fixed by fixing the relevant file writing code.
