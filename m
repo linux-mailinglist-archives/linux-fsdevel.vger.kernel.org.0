@@ -2,86 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FA427404B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 13:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F7A22740BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 13:26:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgIVLCS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Sep 2020 07:02:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40360 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbgIVLCS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Sep 2020 07:02:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 92ED3AD85;
-        Tue, 22 Sep 2020 11:02:53 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 71E0CDA6E9; Tue, 22 Sep 2020 13:01:01 +0200 (CEST)
-Date:   Tue, 22 Sep 2020 13:01:01 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Jan Kara <jack@suse.cz>
-Cc:     syzbot <syzbot+84a0634dc5d21d488419@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: Re: possible deadlock in blkdev_put
-Message-ID: <20200922110101.GY6756@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+84a0634dc5d21d488419@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        linux-btrfs@vger.kernel.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-References: <000000000000fc04d105afcf86d7@google.com>
- <20200922091642.GE16464@quack2.suse.cz>
+        id S1726599AbgIVLZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Sep 2020 07:25:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726454AbgIVLZz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Sep 2020 07:25:55 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A390C061755;
+        Tue, 22 Sep 2020 04:25:55 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1600773954;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KbPR/HCKRHyAv5LTQZ0qDPTMbhu34/nFtP5pay1MXIE=;
+        b=4RDnNluOdohF63P9pPZrHwj1wDlIRBfjyDPphUeZ+gMiycbrE9qGozP86vvLQDznBLcWWw
+        E3JbF48GowdKJ+0KtrS6wp9zuKfPyuCGD9f3J97BB4VFEJZxNqENQ0ufNmGe4zESYpk+FE
+        V7yaEKtObrg6hgvTx4QC/Fw9iGukTXoFvmpmsbt/hp/7wJMU2frz884bjtxB8P/dIOdxdB
+        7qRd1thtPWbBRwOwqyX69CRb378VkaShhOW8tw2342dKJUbj2ZwcHmx3y7j/smkTL2Ylnp
+        ToJ5yrQoik5JJ7HNHboQAbD8kCfP4K4vro6U0Lhznx5Y7pEuhznsnhpkZJmHEg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1600773954;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KbPR/HCKRHyAv5LTQZ0qDPTMbhu34/nFtP5pay1MXIE=;
+        b=zD1mgRKFMrwiNzhJeBhRUMy6UoOF3ScfHKbU8u6UziFewfFMX7YJBqERAF+oK7eIypMqJu
+        pupIfA0KgQkeomBg==
+To:     Abdul Anshad Azeez <aazees@vmware.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Cc:     "rostedt\@goodmis.org" <rostedt@goodmis.org>
+Subject: Re: Performance regressions in networking & storage benchmarks in Linux kernel 5.8
+In-Reply-To: <BYAPR05MB4839189DFC487A1529D6734CA63B0@BYAPR05MB4839.namprd05.prod.outlook.com>
+References: <BYAPR05MB4839189DFC487A1529D6734CA63B0@BYAPR05MB4839.namprd05.prod.outlook.com>
+Date:   Tue, 22 Sep 2020 13:25:53 +0200
+Message-ID: <87h7rqaw8u.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200922091642.GE16464@quack2.suse.cz>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 22, 2020 at 11:16:42AM +0200, Jan Kara wrote:
-> Looks like btrfs issue. Adding relevant people to CC.
+Abdul,
 
-Thanks.
+On Tue, Sep 22 2020 at 08:51, Abdul Anshad Azeez wrote:
+> Part of VMware's performance regression testing for Linux Kernel upstream rele
+> ases we compared Linux kernel 5.8 against 5.7. Our evaluation revealed perform
+> ance regressions mostly in networking latency/response-time benchmarks up to 6
+> 0%. Storage throughput & latency benchmarks were also up by 8%.
+> In order to find the fix commit, we bisected again between 5.8 and 5.9-rc4 and
+>  identified that regressions were fixed from a commit made by the same author 
+> Thomas Gleixner, which unbreaks the interrupt affinity settings - "e027fffff79
+> 9cdd70400c5485b1a54f482255985(x86/irq: Unbreak interrupt affinity setting)".
+>
+> We believe these findings would be useful to the Linux community and wanted to
+>  document the same.
 
-> On Mon 21-09-20 02:32:21, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    325d0eab Merge branch 'akpm' (patches from Andrew)
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=102425d9900000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=b12e84189082991c
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=84a0634dc5d21d488419
-> > compiler:       gcc (GCC) 10.1.0-syz 20200507
-> > 
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+84a0634dc5d21d488419@syzkaller.appspotmail.com
-> > 
-> > ======================================================
-> > WARNING: possible circular locking dependency detected
-> > 5.9.0-rc5-syzkaller #0 Not tainted
-> > ------------------------------------------------------
-> > syz-executor.0/6878 is trying to acquire lock:
-> > ffff88804c17d780 (&bdev->bd_mutex){+.+.}-{3:3}, at: blkdev_put+0x30/0x520 fs/block_dev.c:1804
-> > 
-> > but task is already holding lock:
-> > ffff8880908cfce0 (&fs_devs->device_list_mutex){+.+.}-{3:3}, at: close_fs_devices.part.0+0x2e/0x800 fs/btrfs/volumes.c:1159
-> > 
-> > which lock already depends on the new lock.
+thanks for letting us know, but the issue is known already and the fix
+has been backported to the stable kernel version 5.8.6 as of Sept. 3rd.
 
-That matches what "btrfs: move btrfs_rm_dev_replace_free_srcdev outside
-of all locks" fixes, among other syzbot reports.
+Please always check the latest stable version.
 
-On the way to master:
-https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git/commit/?h=next-fixes&id=d1db82c9a34451e8c0288315b51d9a67fb8eff95
+Thanks,
+
+        tglx
