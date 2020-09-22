@@ -2,123 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1269D273D58
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 10:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C5A273DA0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Sep 2020 10:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbgIVIdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Sep 2020 04:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbgIVIdV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Sep 2020 04:33:21 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3ECC061755;
-        Tue, 22 Sep 2020 01:24:54 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id z23so21520619ejr.13;
-        Tue, 22 Sep 2020 01:24:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:references:user-agent:in-reply-to:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=euHLybc7rW/4XsdAvIoyvU/CkIl8dD4tTWO/e4S01eI=;
-        b=HT81UnEC6Hoq1ZvZ7PQvretGUxhZmk/+dosnsd2UG7h+5bIsZ0bWoFT9TYN9jQenBe
-         9tD3X6YSHND2DbXWP5m0qDCbWKtl8G/aWcY6JBelwFr2VLTotEdrUMeFI9cF4MpH5Isu
-         IBFinDf1lc09B3jfbaJ1ziTJvGsve4uYjjw3OquLc/hhJGMrdHAseQH9ZffqHq5R4IFR
-         XYpViCRFfXYGAu7/hJ8f1Lf+XHFOE7c/jXfZP2aWsh9O6vSx4nc15UovmEIl6cIscYi6
-         PVOc0Ojo84C8ldNYOHJ2fWt5KTcxh5YpOsBxDBaoip2vG25Yw5BF1zFYnn2TMljlE52X
-         C77Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:user-agent
-         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
-        bh=euHLybc7rW/4XsdAvIoyvU/CkIl8dD4tTWO/e4S01eI=;
-        b=UulpX21Zs8kHG6NJT1NzgHEuUlhjYmNJhrV1lUScFR7J+7K5rJyywJ5feKPRt3ofAy
-         e8nxnn8yPispu04UavCGylkAAANOMjG62oU2NAhr/g/fuH5R/PvyCpJ2LUOPEcAi3aa5
-         gtfvchrWw7YtFxy0En0Fstb//l1b0D2xyFfhVpBS/dgfCHkEGH4aRgHkCrVpJN/0K1R8
-         m4WUbqEkcASj8jwNhgI/T8QZ/+qae5M8EcRtxlWPVA/0ycRxqwljoHjvsOl7yyvKu3kv
-         fxnQ8/ZW/7T4PKDBSAZi+20G3iy1go7PzxtKQEjqV/HWlAczmeeXFf1P0afS57zxIEVr
-         Om4w==
-X-Gm-Message-State: AOAM531HvAeDQN74g84UIaJEJllQRqLkqF2bvBi/LEBK8v+6Q7fLX2kd
-        uxbsaKeKPbDdD93iOc3AJg6i75Mkcqj2Ew==
-X-Google-Smtp-Source: ABdhPJxt0TEg4+8/K6Xstz1eCqn+Y2D3uk1VmkTkThmeIOekJhpwABIMvzmE325n7cv4qu01kL6N3w==
-X-Received: by 2002:a17:906:4d97:: with SMTP id s23mr3757441eju.157.1600763092675;
-        Tue, 22 Sep 2020 01:24:52 -0700 (PDT)
-Received: from evledraar (dhcp-077-248-252-018.chello.nl. [77.248.252.18])
-        by smtp.gmail.com with ESMTPSA id j15sm10728520ejs.5.2020.09.22.01.24.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2020 01:24:51 -0700 (PDT)
-From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-To:     Johannes Sixt <j6t@kdbg.org>
-Cc:     git@vger.kernel.org, tytso@mit.edu,
-        Junio C Hamano <gitster@pobox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when core.fsyncObjectFiles
-References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-2-avarab@gmail.com> <64358b70-4fff-5dc8-6e63-2fc916bea6af@kdbg.org>
-User-agent: Debian GNU/Linux bullseye/sid; Emacs 26.3; mu4e 1.4.13
-In-reply-to: <64358b70-4fff-5dc8-6e63-2fc916bea6af@kdbg.org>
-Date:   Tue, 22 Sep 2020 10:24:51 +0200
-Message-ID: <87a6xii5gs.fsf@evledraar.gmail.com>
+        id S1726544AbgIVIoe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Sep 2020 04:44:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51464 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726522AbgIVIod (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 22 Sep 2020 04:44:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AC920ACBF;
+        Tue, 22 Sep 2020 08:45:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7FB371E12E3; Tue, 22 Sep 2020 10:44:31 +0200 (CEST)
+Date:   Tue, 22 Sep 2020 10:44:31 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Justin Sanders <justin@coraid.com>,
+        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH 03/13] bcache: inherit the optimal I/O size
+Message-ID: <20200922084431.GA16464@quack2.suse.cz>
+References: <20200921080734.452759-1-hch@lst.de>
+ <20200921080734.452759-4-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200921080734.452759-4-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon 21-09-20 10:07:24, Christoph Hellwig wrote:
+> Inherit the optimal I/O size setting just like the readahead window,
+> as any reason to do larger I/O does not apply to just readahead.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-On Thu, Sep 17 2020, Johannes Sixt wrote:
+The patch looks good to me. You can add:
 
-> Am 17.09.20 um 13:28 schrieb =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason:
->> Change the behavior of core.fsyncObjectFiles to also sync the
->> directory entry. I don't have a case where this broke, just going by
->> paranoia and the fsync(2) manual page's guarantees about its behavior.
->>=20
->> Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.com>
->> ---
->>  sha1-file.c | 19 ++++++++++++++-----
->>  1 file changed, 14 insertions(+), 5 deletions(-)
->>=20
->> diff --git a/sha1-file.c b/sha1-file.c
->> index dd65bd5c68..d286346921 100644
->> --- a/sha1-file.c
->> +++ b/sha1-file.c
->> @@ -1784,10 +1784,14 @@ int hash_object_file(const struct git_hash_algo =
-*algo, const void *buf,
->>  }
->>=20=20
->>  /* Finalize a file on disk, and close it. */
->> -static void close_loose_object(int fd)
->> +static void close_loose_object(int fd, const struct strbuf *dirname)
->>  {
->> -	if (fsync_object_files)
->> +	int dirfd;
->> +	if (fsync_object_files) {
->>  		fsync_or_die(fd, "loose object file");
->> +		dirfd =3D xopen(dirname->buf, O_RDONLY);
->> +		fsync_or_die(dirfd, "loose object directory");
->
-> Did you have the opportunity to verify that this works on Windows?
-> Opening a directory with open(2), I mean: It's disallowed according to
-> the docs:
-> https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/open-wop=
-en?view=3Dvs-2019#return-value
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I did not, just did a quick hack for an RFC discussion (didn't even
-close() that fd), but if I pursue this I'll do it properly.
+								Honza
 
-Doing some research on it now reveals that we should probably have some
-Windows-specific code here, e.g. browsing GNUlib's source code reveals
-that it uses FlushFileBuffers(), and that code itself is taken from
-sqlite. SQLite also has special-case code for some Unix warts,
-e.g. OSX's and AIX's special fsync behaviors in its src/os_unix.c
-
->> +	}
->>  	if (close(fd) !=3D 0)
->>  		die_errno(_("error when closing loose object file"));
->>  }
->
-> -- Hannes
-
+> ---
+>  drivers/md/bcache/super.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index 1bbdc410ee3c51..48113005ed86ad 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1430,6 +1430,8 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+>  	dc->disk.disk->queue->backing_dev_info->ra_pages =
+>  		max(dc->disk.disk->queue->backing_dev_info->ra_pages,
+>  		    q->backing_dev_info->ra_pages);
+> +	blk_queue_io_opt(dc->disk.disk->queue,
+> +		max(queue_io_opt(dc->disk.disk->queue), queue_io_opt(q)));
+>  
+>  	atomic_set(&dc->io_errors, 0);
+>  	dc->io_disable = false;
+> -- 
+> 2.28.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
