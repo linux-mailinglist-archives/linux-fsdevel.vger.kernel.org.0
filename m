@@ -2,130 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7468275410
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 11:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FAA627541B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 11:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbgIWJKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 05:10:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56252 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbgIWJKY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 05:10:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1600852222;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=Zz71jEGwJx7Yj0REhceyZ4M0LIfZVxVkERM9zccNdg4=;
-        b=L6SXRsnv++dEI7OyKWrJl5VlO1vz/HpxEMZdP3gCr9xFQhsDaXbfWUikwT5OF0m/zSHTtk
-        a3fJNtna5xMVytM6E+lJ6lm5+IMnxH+Dhm5MKhXGLiCBsYzV3oIM0VIYCRlu3zvY9G7JU6
-        LAbUK4lkYkS3GFIu7PEMxW1QxHSgxGE=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9938DADF5;
-        Wed, 23 Sep 2020 09:10:59 +0000 (UTC)
-Subject: Re: [PATCH 07/15] btrfs: Move FS error state bit early during write
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-fsdevel@vger.kernel.org
-Cc:     linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
-        johannes.thumshirn@wdc.com, dsterba@suse.com,
-        darrick.wong@oracle.com, josef@toxicpanda.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20200921144353.31319-1-rgoldwyn@suse.de>
- <20200921144353.31319-8-rgoldwyn@suse.de>
-From:   Nikolay Borisov <nborisov@suse.com>
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <832c6168-42cf-4ba1-1254-ce0057ff8c0a@suse.com>
-Date:   Wed, 23 Sep 2020 12:10:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726415AbgIWJL3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 05:11:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbgIWJL3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 05:11:29 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC42C0613CE;
+        Wed, 23 Sep 2020 02:11:29 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id w12so22094903qki.6;
+        Wed, 23 Sep 2020 02:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Vw57DoHZqWXx4xymzlnY2cv6nwjJilOmIUjotMaIXOw=;
+        b=uGmOF57rr5ir3wAdlX8DbJUFQYeCyGRLwVLuZTKa/TMGKjwtHBeLRN092fsFJUBqBb
+         SuUoCfSgVnnf4GLR7NZk09ipWP0t8tVVjaVv9fHjmkv+JNJNLFoaXROJ3JiqOMI+g7JI
+         Cgu3TjFR+V/A2os/3tbtCaxBg8kG7KQuCFnlilzzDSPL2NjtzNsZqzJ694Gm63tCBOwM
+         /sxKPIq+AzxrUpe0jfLXVERIDkSsHRDS+7YmD5oIK+G2hQPc0rcBC0JreyEHXYhuGtKs
+         +edxK73xkevQqkuE+tXmnoaTeJNLfjsBQzEEG+Qpm98ZPXCiVlYr+n8Uq3H15ZH+f6pw
+         noSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=Vw57DoHZqWXx4xymzlnY2cv6nwjJilOmIUjotMaIXOw=;
+        b=ViwBecK+R+Fi7fcp0+FYDRUMMSPXHVy+bZLpjYm1tQmnZaBrPu25MdZGu+bStO3ruh
+         T/ILH721HLqJURl8OTOne5XaBUZwQbkPRuxU/GiSM8hI3rpNU5t4VUXaTtHneJtK6RJG
+         xQn+U8dLzkGW7vE1T5ex4GUDTIcXxAjMgPJhMNVOVbXTsKti9PpuM0o1d5Y+hZQBaaL2
+         Vk+pIw7DkvrxpBVcrZXcrQ3QDfHPcznFszGZWsJOaLsawyPlRBZVlMdSUX470uIz8J/b
+         pfypqRegA0nsQ5lHwmHB8cvcd+G1/jrVVGIO5f5LzstxDmYl8yzFCWH98cQMVIcay6vn
+         MFbQ==
+X-Gm-Message-State: AOAM530fNjZWh2eC6oxQjD/a3dXsj7IYZh3ziUsp3twx3eOUl3gcTjCx
+        mF7IvdH7DhUFxzzX6AFTMC1TaMsUpCs=
+X-Google-Smtp-Source: ABdhPJz8KuC6aUCmaAzrq7TnqiwL4nJshKmmil9Y7NRnJ5NrQuLaaXEQ3bxRj/TVJoC2K9hOXX24yQ==
+X-Received: by 2002:a05:620a:4fb:: with SMTP id b27mr9342851qkh.120.1600852288175;
+        Wed, 23 Sep 2020 02:11:28 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id z133sm13528802qka.3.2020.09.23.02.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2020 02:11:27 -0700 (PDT)
+Sender: Arvind Sankar <niveditas98@gmail.com>
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 23 Sep 2020 05:11:25 -0400
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, libffi-discuss@sourceware.org, luto@kernel.org,
+        David.Laight@ACULAB.COM, mark.rutland@arm.com, mic@digikod.net,
+        pavel@ucw.cz
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923091125.GB1240819@rani.riverdale.lan>
+References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
+ <87v9gdz01h.fsf@mid.deneb.enyo.de>
+ <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
+ <20200923014616.GA1216401@rani.riverdale.lan>
 MIME-Version: 1.0
-In-Reply-To: <20200921144353.31319-8-rgoldwyn@suse.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20200923014616.GA1216401@rani.riverdale.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 21.09.20 г. 17:43 ч., Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Tue, Sep 22, 2020 at 09:46:16PM -0400, Arvind Sankar wrote:
+> On Thu, Sep 17, 2020 at 10:36:02AM -0500, Madhavan T. Venkataraman wrote:
+> > 
+> > 
+> > On 9/16/20 8:04 PM, Florian Weimer wrote:
+> > > * madvenka:
+> > > 
+> > >> Examples of trampolines
+> > >> =======================
+> > >>
+> > >> libffi (A Portable Foreign Function Interface Library):
+> > >>
+> > >> libffi allows a user to define functions with an arbitrary list of
+> > >> arguments and return value through a feature called "Closures".
+> > >> Closures use trampolines to jump to ABI handlers that handle calling
+> > >> conventions and call a target function. libffi is used by a lot
+> > >> of different applications. To name a few:
+> > >>
+> > >> 	- Python
+> > >> 	- Java
+> > >> 	- Javascript
+> > >> 	- Ruby FFI
+> > >> 	- Lisp
+> > >> 	- Objective C
+> > > 
+> > > libffi does not actually need this.  It currently collocates
+> > > trampolines and the data they need on the same page, but that's
+> > > actually unecessary.  It's possible to avoid doing this just by
+> > > changing libffi, without any kernel changes.
+> > > 
+> > > I think this has already been done for the iOS port.
+> > > 
+> > 
+> > The trampoline table that has been implemented for the iOS port (MACH)
+> > is based on PC-relative data referencing. That is, the code and data
+> > are placed in adjacent pages so that the code can access the data using
+> > an address relative to the current PC.
+> > 
+> > This is an ISA feature that is not supported on all architectures.
+> > 
+> > Now, if it is a performance feature, we can include some architectures
+> > and exclude others. But this is a security feature. IMO, we cannot
+> > exclude any architecture even if it is a legacy one as long as Linux
+> > is running on the architecture. So, we need a solution that does
+> > not assume any specific ISA feature.
 > 
-> fs_info->fs_state is a filesystem bit check as opposed to inode
-> and can be performed before we begin with write checks. This eliminates
-> inode lock/unlock in case of error bit is set.
+> Which ISA does not support PIC objects? You mentioned i386 below, but
+> i386 does support them, it just needs to copy the PC into a GPR first
+> (see below).
 > 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/btrfs/file.c | 21 +++++++++------------
->  1 file changed, 9 insertions(+), 12 deletions(-)
+> > 
+> > >> The code for trampoline X in the trampoline table is:
+> > >>
+> > >> 	load	&code_table[X], code_reg
+> > >> 	load	(code_reg), code_reg
+> > >> 	load	&data_table[X], data_reg
+> > >> 	load	(data_reg), data_reg
+> > >> 	jump	code_reg
+> > >>
+> > >> The addresses &code_table[X] and &data_table[X] are baked into the
+> > >> trampoline code. So, PC-relative data references are not needed. The user
+> > >> can modify code_table[X] and data_table[X] dynamically.
+> > > 
+> > > You can put this code into the libffi shared object and map it from
+> > > there, just like the rest of the libffi code.  To get more
+> > > trampolines, you can map the page containing the trampolines multiple
+> > > times, each instance preceded by a separate data page with the control
+> > > information.
+> > > 
+> > 
+> > If you put the code in the libffi shared object, how do you pass data to
+> > the code at runtime? If the code we are talking about is a function, then
+> > there is an ABI defined way to pass data to the function. But if the
+> > code we are talking about is some arbitrary code such as a trampoline,
+> > there is no ABI defined way to pass data to it except in a couple of
+> > platforms such as HP PA-RISC that have support for function descriptors
+> > in the ABI itself.
+> > 
+> > As mentioned before, if the ISA supports PC-relative data references
+> > (e.g., X86 64-bit platforms support RIP-relative data references)
+> > then we can pass data to that code by placing the code and data in
+> > adjacent pages. So, you can implement the trampoline table for X64.
+> > i386 does not support it.
+> > 
 > 
-> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> index 4c40a2742aab..ca374cb5ffc9 100644
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@ -1981,6 +1981,15 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
->  	size_t count;
->  	loff_t oldsize;
->  
-> +	/*
-> +	 * If BTRFS flips readonly due to some impossible error
-> +	 * (fs_info->fs_state now has BTRFS_SUPER_FLAG_ERROR),
-> +	 * although we have opened a file as writable, we have
-> +	 * to stop this write operation to ensure FS consistency.
-> +	 */
-> +	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
-> +		return -EROFS;
-> +
+> i386 just needs a tiny bit of code to copy the PC into a GPR first, i.e.
+> the trampoline would be:
+> 
+> 	call	1f
+> 1:	pop	%data_reg
+> 	movl	(code_table + X - 1b)(%data_reg), %code_reg
+> 	movl	(data_table + X - 1b)(%data_reg), %data_reg
+> 	jmp	*(%code_reg)
+> 
+> I do not understand the point about passing data at runtime. This
+> trampoline is to achieve exactly that, no? 
+> 
+> Thanks.
 
-nit: Actually can't this check be eliminated altogether or the comment
-vastly simplified because BTRFS_SUPER_FLAG_ERROR check is performed only
-during mount so the description in the parantheses is invalid i.e the fs
-won't flip to RO because BTRFS_SUPER_FLAG_ERROR is now set in the super
-block. As a matter of fact how is this flag set - because I don't see it
-set in the kernel code nor in btrfs-progs ?
+For libffi, I think the proposed standard trampoline won't actually
+work, because not all ABIs have two scratch registers available to use
+as code_reg and data_reg. Eg i386 fastcall only has one, and register
+has zero scratch registers. I believe 32-bit ARM only has one scratch
+register as well.
 
-<snip>
+For i386 you'd need something that saves a register on the stack first,
+maybe like the below with a 16-byte trampoline and a 16-byte context
+structure that has the address of the code to jump to in the first
+dword:
+
+	.balign 4096
+	trampoline_page:
+
+	.rept	4096/16-1
+	0:	endbr32
+		push	%eax
+		call	__x86.get_pc_thunk.ax
+	1:	jmp	trampoline
+	.balign 16
+	.endr
+
+	.org trampoline_page + 4096 - 16
+	__x86.get_pc_thunk.ax:
+		movl	(%esp), %eax
+		ret
+	trampoline:
+		subl	$(1b-0b), %eax
+		jmp	*(table-trampoline_page)(%eax)
+
+	.org trampoline_page + 4096
+	table:
