@@ -2,90 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68163275969
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:08:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0237A275985
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgIWOID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 10:08:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34064 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726603AbgIWOIC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 10:08:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B4C28ACC6;
-        Wed, 23 Sep 2020 14:08:37 +0000 (UTC)
-Date:   Wed, 23 Sep 2020 09:07:57 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        david@fromorbit.com, hch@lst.de, johannes.thumshirn@wdc.com,
-        dsterba@suse.com, darrick.wong@oracle.com, josef@toxicpanda.com
-Subject: Re: [PATCH 07/15] btrfs: Move FS error state bit early during write
-Message-ID: <20200923140757.bspzgzwajcvpr62i@fiona>
-References: <20200921144353.31319-1-rgoldwyn@suse.de>
- <20200921144353.31319-8-rgoldwyn@suse.de>
- <832c6168-42cf-4ba1-1254-ce0057ff8c0a@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S1726684AbgIWOLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 10:11:16 -0400
+Received: from mother.openwall.net ([195.42.179.200]:55686 "HELO
+        mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726665AbgIWOLN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 10:11:13 -0400
+Received: (qmail 30262 invoked from network); 23 Sep 2020 14:11:11 -0000
+Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
+  by localhost with SMTP; 23 Sep 2020 14:11:11 -0000
+Received: by pvt.openwall.com (Postfix, from userid 503)
+        id C2648AB844; Wed, 23 Sep 2020 16:11:02 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 16:11:02 +0200
+From:   Solar Designer <solar@openwall.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     madvenka@linux.microsoft.com, kernel-hardening@lists.openwall.com,
+        linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net,
+        Rich Felker <dalias@libc.org>
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923141102.GA7142@openwall.com>
+References: <20200922215326.4603-1-madvenka@linux.microsoft.com> <20200923081426.GA30279@amd> <20200923091456.GA6177@openwall.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <832c6168-42cf-4ba1-1254-ce0057ff8c0a@suse.com>
+In-Reply-To: <20200923091456.GA6177@openwall.com>
+User-Agent: Mutt/1.4.2.3i
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12:10 23/09, Nikolay Borisov wrote:
-> 
-> 
-> On 21.09.20 г. 17:43 ч., Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On Wed, Sep 23, 2020 at 11:14:56AM +0200, Solar Designer wrote:
+> On Wed, Sep 23, 2020 at 10:14:26AM +0200, Pavel Machek wrote:
+> > > Introduction
+> > > ============
+> > > 
+> > > Dynamic code is used in many different user applications. Dynamic code is
+> > > often generated at runtime. Dynamic code can also just be a pre-defined
+> > > sequence of machine instructions in a data buffer. Examples of dynamic
+> > > code are trampolines, JIT code, DBT code, etc.
+> > > 
+> > > Dynamic code is placed either in a data page or in a stack page. In order
+> > > to execute dynamic code, the page it resides in needs to be mapped with
+> > > execute permissions. Writable pages with execute permissions provide an
+> > > attack surface for hackers. Attackers can use this to inject malicious
+> > > code, modify existing code or do other harm.
+> > > 
+> > > To mitigate this, LSMs such as SELinux implement W^X. That is, they may not
+> > > allow pages to have both write and execute permissions. This prevents
+> > > dynamic code from executing and blocks applications that use it. To allow
+> > > genuine applications to run, exceptions have to be made for them (by setting
+> > > execmem, etc) which opens the door to security issues.
+> > > 
+> > > The W^X implementation today is not complete. There exist many user level
+> > > tricks that can be used to load and execute dynamic code. E.g.,
+> > > 
+> > > - Load the code into a file and map the file with R-X.
+> > > 
+> > > - Load the code in an RW- page. Change the permissions to R--. Then,
+> > >   change the permissions to R-X.
+> > > 
+> > > - Load the code in an RW- page. Remap the page with R-X to get a separate
+> > >   mapping to the same underlying physical page.
+> > > 
+> > > IMO, these are all security holes as an attacker can exploit them to inject
+> > > his own code.
 > > 
-> > fs_info->fs_state is a filesystem bit check as opposed to inode
-> > and can be performed before we begin with write checks. This eliminates
-> > inode lock/unlock in case of error bit is set.
+> > IMO, you are smoking crack^H^H very seriously misunderstanding what
+> > W^X is supposed to protect from.
 > > 
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > ---
-> >  fs/btrfs/file.c | 21 +++++++++------------
-> >  1 file changed, 9 insertions(+), 12 deletions(-)
+> > W^X is not supposed to protect you from attackers that can already do
+> > system calls. So loading code into a file then mapping the file as R-X
+> > is in no way security hole in W^X.
 > > 
-> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-> > index 4c40a2742aab..ca374cb5ffc9 100644
-> > --- a/fs/btrfs/file.c
-> > +++ b/fs/btrfs/file.c
-> > @@ -1981,6 +1981,15 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
-> >  	size_t count;
-> >  	loff_t oldsize;
-> >  
-> > +	/*
-> > +	 * If BTRFS flips readonly due to some impossible error
-> > +	 * (fs_info->fs_state now has BTRFS_SUPER_FLAG_ERROR),
-> > +	 * although we have opened a file as writable, we have
-> > +	 * to stop this write operation to ensure FS consistency.
-> > +	 */
-> > +	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
-> > +		return -EROFS;
-> > +
+> > If you want to provide protection from attackers that _can_ do system
+> > calls, fine, but please don't talk about W^X and please specify what
+> > types of attacks you want to prevent and why that's good thing.
 > 
-> nit: Actually can't this check be eliminated altogether or the comment
-> vastly simplified because BTRFS_SUPER_FLAG_ERROR check is performed only
-> during mount so the description in the parantheses is invalid i.e the fs
-> won't flip to RO because BTRFS_SUPER_FLAG_ERROR is now set in the super
-> block. As a matter of fact how is this flag set - because I don't see it
-> set in the kernel code nor in btrfs-progs ?
+> On one hand, Pavel is absolutely right.  It is ridiculous to say that
+> "these are all security holes as an attacker can exploit them to inject
+> his own code."
 
-You are right. This flag originated from 
-acce952b0263 ("Btrfs: forced readonly mounts on errors")
+I stand corrected, due to Brad's tweet and follow-ups here:
 
-However, the following commit removed writing the super in case of the
-error:
-68ce9682a4bb ("Btrfs: remove superblock writing after fatal error")
+https://twitter.com/spendergrsec/status/1308728284390318082
 
-So, it does not land in the super flags anyways.
-The flag does not make sense if we use BTRFS_FS_STATE_ERROR.
+It sure does make sense to combine ret2libc/ROP to mprotect() with one's
+own injected shellcode.  Compared to doing everything from ROP, this is
+easier and more reliable across versions/builds if the desired payload
+is non-trivial.  My own example: invoking a shell in a local attack on
+Linux is trivial enough to do via ret2libc only, but a connect-back
+shell in a remote attack might be easier and more reliably done via
+mprotect() + shellcode.
 
-I will remove BTRFS_SUPER_FLAG_ERROR comment for now.
+Per the follow-ups, this was an established technique on Windows and iOS
+until further hardening prevented it.  So it does make sense for Linux
+to do the same (as an option because of it breaking existing stuff), and
+not so much as policy enforcement for the sake of it and ease of
+reasoning, but mostly to force real-world exploits to be more complex
+and less reliable.
 
--- 
-Goldwyn
+> On the other hand, "what W^X is supposed to protect from" depends on how
+> the term W^X is defined (historically, by PaX and OpenBSD).  It may be
+> that W^X is partially not a feature to defeat attacks per se, but also a
+> policy enforcement feature preventing use of dangerous techniques (JIT).
+> 
+> Such policy might or might not make sense.  It might make sense for ease
+> of reasoning, e.g. "I've flipped this setting, and now I'm certain the
+> system doesn't have JIT within a process (can still have it through
+> dynamically creating and invoking an entire new program), so there are
+> no opportunities for an attacker to inject code nor generate previously
+> non-existing ROP gadgets into an executable mapping within a process."
+> 
+> I do find it questionable whether such policy and such reasoning make
+> sense beyond academia.
+
+I was wrong in the above, focusing on the wrong thing.
+
+> Then, there might be even more ways in which W^X is not perfect enough
+> to enable such reasoning.  What about using ptrace(2) to inject code?
+> Should enabling W^X also disable ability to debug programs by non-root?
+> We already have Yama ptrace_scope, which can achieve that at the highest
+> setting, although that's rather inconvenient and is probably unexpected
+> by most to be a requirement for having (ridiculously?) full W^X allowing
+> for the academic reasoning.
+
+Thinking out loud:
+
+Technically, ptrace() is also usable from a ROP chain.  It might be too
+cumbersome to bother using to get a shellcode going, but OTOH it's just
+one function to be invoked in a similar fashion multiple times, so might
+be more reliable than having a ROP chain depend on multiple actually
+needed functions directly (moving that dependency into the shellcode).
+
+> Personally, I am for policies that make more practical sense.  For
+> example, years ago I advocated here on kernel-hardening that we should
+> have a mode where ELF flags enabling/disabling executable stack are
+> ignored, and non-executable stack is always enforced.  This should also
+> be extended to default (at program startup) permissions on more than
+> just stack (but also on .bss, typical libcs' heap allocations, etc.)
+> However, I am not convinced there's enough value in extending the policy
+> to restricting explicit uses of mprotect(2).
+> 
+> Yes, PaX did that, and its emutramp.txt said "runtime code generation is
+> by its nature incompatible with PaX's PAGEEXEC/SEGMEXEC and MPROTECT
+> features, therefore the real solution is not in emulation but by
+> designing a kernel API for runtime code generation and modifying
+> userland to make use of it."  However, not being convinced in the
+> MPROTECT feature having enough practical value,
+
+I am convinced now, however:
+
+> I am also not convinced
+> "a kernel API for runtime code generation and modifying userland to make
+> use of it" is the way to go.
+
+doesn't automatically follow from the above, because:
+
+> Having static instead of dynamically-generated trampolines in userland
+> code where possible (and making other userland/ABI changes to make that
+> possible in more/all cases) is an obvious improvement, and IMO should be
+> a priority over the above.
+> 
+> While I share my opinion here, I don't mean that to block Madhavan's
+> work.  I'd rather defer to people more knowledgeable in current userland
+> and ABI issues/limitations and plans on dealing with those, especially
+> to Florian Weimer.  I haven't seen Florian say anything specific for or
+> against Madhavan's proposal, and I'd like to.  (Have I missed that?)
+> It'd be wrong to introduce a kernel API that userland doesn't need, and
+> it'd be right to introduce one that userland actually intends to use.
+> 
+> I've also added Rich Felker to CC here, for musl libc and its possible
+> intent to use the proposed API.  (My guess is there's no such need, and
+> thus no intent, but Rich might want to confirm that or correct me.)
+
+So need to hear more from the userland folks, I guess.
+
+Alexander
