@@ -2,66 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13380275074
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 07:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46B7D275077
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 07:49:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbgIWFrQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 01:47:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57882 "EHLO mail.kernel.org"
+        id S1727001AbgIWFt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 01:49:29 -0400
+Received: from verein.lst.de ([213.95.11.211]:47260 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726883AbgIWFrQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 01:47:16 -0400
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D80D82065E;
-        Wed, 23 Sep 2020 05:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600840036;
-        bh=++X+8xe8ksxtaAPLTC3s7LLyQp4x7rbFiWoZMedsomY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0PaOt3uokBZgumht4KFfo0Bi5Pdzn8rPnyDclTMCD47QGTeVVUypAgZdEFBA3qpw4
-         /Xw6aYy/tyPMudYfTpRtjTSmawmtjb9KPK0K8eIaKVS9uBwWBD41gyyYVyx1Tk+Fh6
-         p5u+hnxp8N9hejVxJLGIKnaNWU5BPEtdZ3p3QjNY=
-Date:   Tue, 22 Sep 2020 22:47:14 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Chao Yu <chao@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH 1/5] ext4: Use generic casefolding support
-Message-ID: <20200923054714.GB9538@sol.localdomain>
-References: <20200923010151.69506-1-drosen@google.com>
- <20200923010151.69506-2-drosen@google.com>
+        id S1726883AbgIWFt3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 01:49:29 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id CB6F367373; Wed, 23 Sep 2020 07:49:25 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 07:49:25 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        johannes.thumshirn@wdc.com, dsterba@suse.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 04/15] iomap: Call inode_dio_end() before
+ generic_write_sync()
+Message-ID: <20200923054925.GA15389@lst.de>
+References: <20200921144353.31319-1-rgoldwyn@suse.de> <20200921144353.31319-5-rgoldwyn@suse.de> <20bf949a-7237-8409-4230-cddb430026a9@toxicpanda.com> <20200922163156.GD7949@magnolia> <20200922214934.GC12096@dread.disaster.area> <20200923051658.GA14957@lst.de> <20200923053149.GK7964@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200923010151.69506-2-drosen@google.com>
+In-Reply-To: <20200923053149.GK7964@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 01:01:47AM +0000, Daniel Rosenberg wrote:
-> This switches ext4 over to the generic support provided in
-> the previous patch.
+On Tue, Sep 22, 2020 at 10:31:49PM -0700, Darrick J. Wong wrote:
+> > ... and I replied with a detailed analysis of what it is fine, and
+> > how this just restores the behavior we historically had before
+> > switching to the iomap direct I/O code.  Although if we want to go
+> > into the fine details we did not have the REQ_FUA path back then,
+> > but that does not change the analysis.
 > 
-> Since casefolded dentries behave the same in ext4 and f2fs, we decrease
-> the maintenance burden by unifying them, and any optimizations will
-> immediately apply to both.
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> Reviewed-by: Eric Biggers <ebiggers@google.com>
+> You did?  Got a link?  Not sure if vger/oraclemail are still delaying
+> messages for me.... :/
 
-You could also add Gabriel's Reviewed-by from last time:
-https://lkml.kernel.org/linux-fsdevel/87lfh4djdq.fsf@collabora.com/
+Two replies from September 17 to the
+"Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context"
 
-- Eric
+thread.
+
+Msg IDs:
+
+20200917055232.GA31646@lst.de
+
+and
+
+20200917064238.GA32441@lst.de
