@@ -2,109 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1936D275A48
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C75B275A54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbgIWOia convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 10:38:30 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:57243 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726540AbgIWOi3 (ORCPT
+        id S1726603AbgIWOjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 10:39:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41698 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726130AbgIWOjs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 10:38:29 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-165-Nw6nj9OTOPCDM2jdlTcJwQ-1; Wed, 23 Sep 2020 15:38:25 +0100
-X-MC-Unique: Nw6nj9OTOPCDM2jdlTcJwQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 23 Sep 2020 15:38:24 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 23 Sep 2020 15:38:24 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Al Viro' <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: RE: [PATCH 3/9] iov_iter: refactor rw_copy_check_uvector and
- import_iovec
-Thread-Topic: [PATCH 3/9] iov_iter: refactor rw_copy_check_uvector and
- import_iovec
-Thread-Index: AQHWkbQ2JliFoXXebU2Mp2qBncEZ86l2SGTw
-Date:   Wed, 23 Sep 2020 14:38:24 +0000
-Message-ID: <200cf2b9ce5e408f8838948fda7ce9a0@AcuMS.aculab.com>
-References: <20200923060547.16903-1-hch@lst.de>
- <20200923060547.16903-4-hch@lst.de>
- <20200923141654.GJ3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200923141654.GJ3421308@ZenIV.linux.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 23 Sep 2020 10:39:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600871986;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XtUNJYHV2J1JZ6JLBA0jisxCSujCzEq2vD80O/D6hKQ=;
+        b=iY5/7dAe6kEgdFVW1z/ow1frn3WX7v/28nEB8WFbbrAEe9TNIK2z7i2fG2Y0iPR6iocjS2
+        EHFfhUwf8l/aWF2K3tFuqit5C/OHl0g7qc9K1bHx/r3UBnkGqa634OfPvBEAr2qomvrLJh
+        WS5qkt1Wp4Gi/vs+X3QEeA1AoaKRN3Y=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-497-Ai1jqBmFMUa4zYresSj0Pg-1; Wed, 23 Sep 2020 10:39:44 -0400
+X-MC-Unique: Ai1jqBmFMUa4zYresSj0Pg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CBF2018A2249;
+        Wed, 23 Sep 2020 14:39:40 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-114-108.ams2.redhat.com [10.36.114.108])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 147BA7882D;
+        Wed, 23 Sep 2020 14:39:32 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Solar Designer <solar@openwall.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, madvenka@linux.microsoft.com,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        mark.rutland@arm.com, mic@digikod.net,
+        Rich Felker <dalias@libc.org>
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+References: <20200922215326.4603-1-madvenka@linux.microsoft.com>
+        <20200923081426.GA30279@amd> <20200923091456.GA6177@openwall.com>
+Date:   Wed, 23 Sep 2020 16:39:31 +0200
+In-Reply-To: <20200923091456.GA6177@openwall.com> (Solar Designer's message of
+        "Wed, 23 Sep 2020 11:14:57 +0200")
+Message-ID: <87wo0ko8v0.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro
-> Sent: 23 September 2020 15:17
-> 
-> On Wed, Sep 23, 2020 at 08:05:41AM +0200, Christoph Hellwig wrote:
-> 
-> > +struct iovec *iovec_from_user(const struct iovec __user *uvec,
-> > +		unsigned long nr_segs, unsigned long fast_segs,
-> 
-> Hmm...  For fast_segs unsigned long had always been ridiculous
-> (4G struct iovec on caller stack frame?), but that got me wondering about
-> nr_segs and I wish I'd thought of that when introducing import_iovec().
-> 
-> The thing is, import_iovec() takes unsigned int there.  Which is fine
-> (hell, the maximal value that can be accepted in 1024), except that
-> we do pass unsigned long syscall argument to it in some places.
+* Solar Designer:
 
-It will make diddly-squit difference.
-The parameters end up in registers on most calling conventions.
-Plausibly you get an extra 'REX' byte on x86 for the 64bit value.
-What you want to avoid is explicit sign/zero extension and value
-masking after arithmetic.
+> While I share my opinion here, I don't mean that to block Madhavan's
+> work.  I'd rather defer to people more knowledgeable in current userland
+> and ABI issues/limitations and plans on dealing with those, especially
+> to Florian Weimer.  I haven't seen Florian say anything specific for or
+> against Madhavan's proposal, and I'd like to.  (Have I missed that?)
 
-On x86-64 the 'horrid' type is actually 'signed int'.
-It often needs sign extending to 64bits (eg when being
-used as an array subscript).
+There was a previous discussion, where I provided feedback (not much
+different from the feedback here, given that the mechanism is mostly the
+same).
 
-	David
+I think it's unnecessary for the libffi use case.  Precompiled code can
+be loaded from disk because the libffi trampolines are so regular.  On
+most architectures, it's not even the code that's patched, but some of
+the data driving it, which happens to be located on the same page due to
+a libffi quirk.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+The libffi use case is a bit strange anyway: its trampolines are
+type-generic, and the per-call adjustment is data-driven.  This means
+that once you have libffi in the process, you have a generic
+data-to-function-call mechanism available that can be abused (it's even
+fully CET compatible in recent versions).  And then you need to look at
+the processes that use libffi.  A lot of them contain bytecode
+interpreters, and those enable data-driven arbitrary code execution as
+well.  I know that there are efforts under way to harden Python, but
+it's going to be tough to get to the point where things are still
+difficult for an attacker once they have the ability to make mprotect
+calls.
+
+It was pointed out to me that libffi is doing things wrong, and the
+trampolines should not be type-generic, but generated so that they match
+the function being called.  That is, the marshal/unmarshal code would be
+open-coded in the trampoline, rather than using some generic mechanism
+plus run-time dispatch on data tables describing the function type.
+That is a very different design (and typically used by compilers (JIT or
+not JIT) to implement native calls).  Mapping some code page with a
+repeating pattern would no longer work to defeat anti-JIT measures
+because it's closer to real JIT.  I don't know if kernel support could
+make sense in this context, but it would be a completely different
+patch.
+
+Thanks,
+Florian
+-- 
+Red Hat GmbH, https://de.redhat.com/ , Registered seat: Grasbrunn,
+Commercial register: Amtsgericht Muenchen, HRB 153243,
+Managing Directors: Charles Cachera, Brian Klemm, Laurie Krebs, Michael O'Neill
 
