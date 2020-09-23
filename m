@@ -2,88 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83197275086
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 07:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2061727508B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 07:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbgIWF7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 01:59:35 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:49010 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726179AbgIWF7f (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 01:59:35 -0400
-Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 3B64B825975;
-        Wed, 23 Sep 2020 15:59:25 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kKxoK-0004zG-D5; Wed, 23 Sep 2020 15:59:24 +1000
-Date:   Wed, 23 Sep 2020 15:59:24 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        johannes.thumshirn@wdc.com, dsterba@suse.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 04/15] iomap: Call inode_dio_end() before
- generic_write_sync()
-Message-ID: <20200923055924.GE12096@dread.disaster.area>
-References: <20200921144353.31319-1-rgoldwyn@suse.de>
- <20200921144353.31319-5-rgoldwyn@suse.de>
- <20bf949a-7237-8409-4230-cddb430026a9@toxicpanda.com>
- <20200922163156.GD7949@magnolia>
- <20200922214934.GC12096@dread.disaster.area>
- <20200923051658.GA14957@lst.de>
- <20200923053149.GK7964@magnolia>
- <20200923054925.GA15389@lst.de>
+        id S1726650AbgIWF7x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 01:59:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38524 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbgIWF7x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 01:59:53 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73F0123444;
+        Wed, 23 Sep 2020 05:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600840792;
+        bh=I/8XzISzbBcCgYVmxLepZyG9w1CITHS3v+J9bySyNa0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ma7PADmZA95LLBo9KrXphWNWVsOVp+R73XlXBBcLHitEY4X5VwCFJSVq7vuCYgC3V
+         HIT9jQdNXpRYH0Rkj3vSz4V7G9BGteBdDqsxV/pAjN1mmz6khsLf9uFQEZlx+JA+bt
+         9uHpKQjziJ+IY+pVDK+nuHCnTz8A3CoT7WQ/HOGU=
+Date:   Tue, 22 Sep 2020 22:59:50 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Chao Yu <chao@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH 2/5] fscrypt: Export fscrypt_d_revalidate
+Message-ID: <20200923055950.GC9538@sol.localdomain>
+References: <20200923010151.69506-1-drosen@google.com>
+ <20200923010151.69506-3-drosen@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200923054925.GA15389@lst.de>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
-        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
-        a=sFGyzmBIlTUhO1WhgXwA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200923010151.69506-3-drosen@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 07:49:25AM +0200, Christoph Hellwig wrote:
-> On Tue, Sep 22, 2020 at 10:31:49PM -0700, Darrick J. Wong wrote:
-> > > ... and I replied with a detailed analysis of what it is fine, and
-> > > how this just restores the behavior we historically had before
-> > > switching to the iomap direct I/O code.  Although if we want to go
-> > > into the fine details we did not have the REQ_FUA path back then,
-> > > but that does not change the analysis.
-> > 
-> > You did?  Got a link?  Not sure if vger/oraclemail are still delaying
-> > messages for me.... :/
+On Wed, Sep 23, 2020 at 01:01:48AM +0000, Daniel Rosenberg wrote:
+> This is in preparation for shifting the responsibility of setting the
+> dentry_operations to the filesystem, allowing it to maintain its own
+> operations.
 > 
-> Two replies from September 17 to the
-> "Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context"
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> ---
+>  fs/crypto/fname.c       | 3 ++-
+>  include/linux/fscrypt.h | 1 +
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 > 
-> thread.
-> 
-> Msg IDs:
-> 
-> 20200917055232.GA31646@lst.de
-> 
-> and
-> 
-> 20200917064238.GA32441@lst.de
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 011830f84d8d..d45db23ff6c4 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -541,7 +541,7 @@ EXPORT_SYMBOL_GPL(fscrypt_fname_siphash);
+>   * Validate dentries in encrypted directories to make sure we aren't potentially
+>   * caching stale dentries after a key has been added.
+>   */
+> -static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+> +int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  {
+>  	struct dentry *dir;
+>  	int err;
+> @@ -580,6 +580,7 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  
+>  	return valid;
+>  }
+> +EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
+>  
+>  const struct dentry_operations fscrypt_d_ops = {
+>  	.d_revalidate = fscrypt_d_revalidate,
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index 991ff8575d0e..265b1e9119dc 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -207,6 +207,7 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+>  bool fscrypt_match_name(const struct fscrypt_name *fname,
+>  			const u8 *de_name, u32 de_name_len);
+>  u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
+> +extern int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
 
-<sigh>
+Please don't use 'extern' here.
 
-That last one is not in my local archive - vger has been on the
-blink lately, so I guess I'm not really that surprised that mail has
-gone missing and not just delayed for a day or two....
+Also FYI, Jeff Layton has sent this same patch as part of the ceph support for
+fscrypt: https://lkml.kernel.org/linux-fscrypt/20200914191707.380444-4-jlayton@kernel.org
 
-Cheers,
+I'd like to apply one of them for 5.10 to get it out of the way for both
+patchsets, but I'd like for the commit message to mention both users.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
