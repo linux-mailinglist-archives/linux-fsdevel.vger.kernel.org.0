@@ -2,95 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6AB0275FE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 20:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD76276056
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 20:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbgIWScl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 14:32:41 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:41288 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbgIWScl (ORCPT
+        id S1726997AbgIWSqO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 14:46:14 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:35555 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbgIWSqO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 14:32:41 -0400
-Received: from [192.168.254.38] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C2FCF20B7179;
-        Wed, 23 Sep 2020 11:32:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C2FCF20B7179
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600885960;
-        bh=eYamxZ/9KfLziSqDZDGqyg7y9XmLAhhecaK/mPCYbeo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=IEKAOv4CAGnJC0ocS9BKbEqfbu3dCVuW/cFUdHjlI4t7pPCt2gifpPrQEZh/AH9+R
-         6V0pnvqh/QE35boMAi5/Gc9Y99hTzFFKdtBE5V31AAbiKRFLHnNCgM4e8sTkn1d/mq
-         KWb62hF+OUSGnVGFx0w0M2JxeTlKiQXTMnTJ7lkA=
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
-        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net
-References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
- <20200922215326.4603-1-madvenka@linux.microsoft.com>
- <20200923081426.GA30279@amd>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <8daf09c0-1651-143b-c57c-433c850605c3@linux.microsoft.com>
-Date:   Wed, 23 Sep 2020 13:32:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 23 Sep 2020 14:46:14 -0400
+Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M89P1-1kOi931zbn-005Hlb; Wed, 23 Sep 2020 20:46:10 +0200
+Received: by mail-qt1-f182.google.com with SMTP id a4so831862qth.0;
+        Wed, 23 Sep 2020 11:46:09 -0700 (PDT)
+X-Gm-Message-State: AOAM531B6RKNkGQC/NDN1KVy6L7ZJDh/eTh8x/vyn/fCGays+viehdTH
+        kYMDsdGq5j5wMlrpbikXGrM/muVRkR5VaFZOmUo=
+X-Google-Smtp-Source: ABdhPJwsvaOBWtaZA0D/OVEHB/gCWu247kr3QZZFrdP10NBc4wqx9Hcp+T5ZYDolhQMYUd20W7JjEkRUKsdbgp0ivyQ=
+X-Received: by 2002:ac8:64a:: with SMTP id e10mr1527617qth.142.1600886767946;
+ Wed, 23 Sep 2020 11:46:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200923081426.GA30279@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200923060547.16903-1-hch@lst.de> <20200923060547.16903-6-hch@lst.de>
+ <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
+ <20200923145901.GN3421308@ZenIV.linux.org.uk> <20200923163831.GO3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200923163831.GO3421308@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 23 Sep 2020 20:45:51 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com>
+Message-ID: <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com>
+Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Networking <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:mMkQRAJUWfdk4a4PEkmTkMjSEPbcbr4OqrN3fUr4LQ2AQqlPl0n
+ bOWryggRLru9T6JJoTMuOGI9kvl/I6BtMLB/VbJVDYLH2lraHpn3UOgXAQiZMVZJ9Wt6/3q
+ dgtI834LPxJGojFQwlbq6VqcE61sUtAzG9Asu4SnN3A1f/GYReptJqFvli47ZUGxJu1McD6
+ wXqFv/2sZdtXtrzvqb6Gw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ARXrn3BJvHg=:OaZDrHRji4s3F+Z4R525Bn
+ agD8Hjw3INq7irUQDHIrs31n4HiItPG1qRH9sCOQsBDzKfQ2GBPxOe8cQiCUK6etjcRZgS5uz
+ ltu+yxAg8SdJB7S6UrMx8x4gZIRJZNx/h1Pd359G8hRQEWUkB77c3Uu7iX6+oWPogrXiRLcyE
+ Ay+LH2roCsVe74rsugu9p8r/jxgEYoo6ke7HkJiyLsrJx77n+/GWpX9PQTbGXJGYCmPKo03Dx
+ 7rZxQHvz4lzlsQGvZ22Lw1H85lBROKXGp/T1YCWt7CkiGs0Y/R3V3UonSnBX41Bf98v3feicD
+ RYBnkyjEcAUUQRR5u9cw067xVVV2JdvUKInxkNdutFVn0CM66u/fDJxueg1uLRW9RPYp7DjVs
+ Mx/HRUmO0wQonj6taqWhVCgSUthPIg1jpw3qykbSoDJ96MDdaz8DcUt+7qpkA5t/+tGOD+rWW
+ Bn0ajxwLkORS0R61/JXIJExhw4SvyLBTVKDr7LI7QuYFV9tfgKH3fZzLZmBkdPEqiGd2kyAMe
+ 0agELAyDb5Rehyc/3jcYzTGZyQ9nlXuD/YYv4vEmC1CRzjxWF4KIZFY6D3HWoeuUMlzvMCijI
+ ue6FAYnnAerqxzrTow74a1x9I80VfvnWRTz0xYpnoiGRegiq0P5uWv1YSyriRyFortckburp8
+ xW1/xnziTC/+/JUjrApbsItKfFZpj/Vffo23zPwOLXvOArj8zkutkvZ9h8hGYgo934l9OKJGu
+ P5NJw1LlqSAdgmNcPhTbFVxjnCSs1G9+5tq34fiY8XA66+2tLlwvaAnYp+zv5HOWn5OOwlMar
+ YndfSM38x1BkZ1kFiYikEr51lnNKUep3VIupblSMr1ljcWZWbNW0XzKu+xNzfuUJBnp9WMfFy
+ 7T3ELZ0Iq8IWSMYb0u7TCVmN4B9t5+iKBzUQ+0CqaqKkDuOmWY7NnBHAU/IZ6fceZMEkzvN4O
+ Id5+SP2sVY8Io6R5XqdC6M9inrRybKQ1OIWUL/7Bpv8x4eU8nqVGM
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-...
->> The W^X implementation today is not complete. There exist many user level
->> tricks that can be used to load and execute dynamic code. E.g.,
->>
->> - Load the code into a file and map the file with R-X.
->>
->> - Load the code in an RW- page. Change the permissions to R--. Then,
->>   change the permissions to R-X.
->>
->> - Load the code in an RW- page. Remap the page with R-X to get a separate
->>   mapping to the same underlying physical page.
->>
->> IMO, these are all security holes as an attacker can exploit them to inject
->> his own code.
-> 
-> IMO, you are smoking crack^H^H very seriously misunderstanding what
-> W^X is supposed to protect from.
-> 
-> W^X is not supposed to protect you from attackers that can already do
-> system calls. So loading code into a file then mapping the file as R-X
-> is in no way security hole in W^X.
-> 
-> If you want to provide protection from attackers that _can_ do system
-> calls, fine, but please don't talk about W^X and please specify what
-> types of attacks you want to prevent and why that's good thing.
-> 
+On Wed, Sep 23, 2020 at 6:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> I wonder if we should do something like
+>
+> SYSCALL_DECLARE3(readv, unsigned long, fd, const struct iovec __user *, vec,
+>                  unsigned long, vlen);
+> in syscalls.h instead, and not under that ifdef.
+>
+> Let it expand to declaration of sys_...() in generic case and, on x86, into
+> __do_sys_...() and __ia32_sys_...()/__x64_sys_...(), with types matching
+> what SYSCALL_DEFINE ends up using.
+>
+> Similar macro would cover compat_sys_...() declarations.  That would
+> restore mismatch checking for x86 and friends.  AFAICS, the cost wouldn't
+> be terribly high - cpp would have more to chew through in syscalls.h,
+> but it shouldn't be all that costly.  Famous last words, of course...
+>
+> Does anybody see fundamental problems with that?
 
+I've had some ideas along those lines in the past and I think it should work.
 
-There are two things here - the idea behind W^X and the current realization
-of that idea in actual implementation. The idea behind W^X, as I understand,
-is to prevent a user from loading arbitrary code into a page and getting it
-to execute. If the user code contains a vulnerability, an attacker can 
-exploit it to potentially inject his own code and get it to execute. This
-cannot be denied.
+As a variation of this, the SYSCALL_DEFINEx() macros could go away
+entirely, leaving only the macro instantiations from the header to
+require that syntax. It would require first changing the remaining
+architectures to build the syscall table from C code instead of
+assembler though.
 
-From that perspective, all of the above tricks I have mentioned are tricks
-that user code can use to load arbitrary code into a page and get it to
-execute.
+Regardless of that, another advantage of having the SYSCALL_DECLAREx()
+would be the ability to include that header file from elsewhere with a different
+macro definition to create a machine-readable version of the interface when
+combined with the syscall.tbl files. This could be used to create a user
+space stub for calling into the low-level syscall regardless of the
+libc interfaces,
+or for synchronizing the interfaces with strace, qemu-user, or anything that
+needs to deal with the low-level interface.
 
-Now, I don't want the discussion to be stuck in a mere name. If what I am
-suggesting needs a name other than "W^X" in the opinion of the reviewers,
-that is fine with me. But I don't believe there is any disagreement that
-the above user tricks are security holes.
-
-Madhavan
+      Arnd
