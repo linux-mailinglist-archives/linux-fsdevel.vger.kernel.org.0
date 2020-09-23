@@ -2,137 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 847D1275E51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 19:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DA58275E78
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 19:19:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbgIWRJC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 13:09:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWRJB (ORCPT
+        id S1726460AbgIWRTw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 13:19:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48664 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726381AbgIWRTw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 13:09:01 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EE84C0613CE;
-        Wed, 23 Sep 2020 10:09:01 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id t12so346238ilh.3;
-        Wed, 23 Sep 2020 10:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ytIfUWOmJqLPL+KzEZROrbe3lD4J5ZzRU4bHZaNkG6o=;
-        b=SJdkZUQ5ybixC9OLlVL9ihYm0CGLZ1cfDuOlRdKBWI5QTOmULV2iGenUUbUD5nTor1
-         kqILyv2JLjuaan6UAW6DDaQNCIcU/yd6/FB4cjytVESzyvnF521+vXIlGuspDiz4mn1x
-         0pe9AHsIqqDfUYIywe8ABpEPxZ0PmyFGn5nW6irTMP9h7VkNxgroibbBOMNzUXMn7vKx
-         rVhw9xS6DwUCuluTBETmo7u/kv8kt+9usmeZxWSMpFV/oDBu5nsCmM/Qw8xhLz8Y3lKG
-         ByUShFY2nuSD519gJ//MM/eqO74kPkrESHRriPZ7jnkjAQUVo2q29u3OUNdwzjm6srT3
-         IBjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ytIfUWOmJqLPL+KzEZROrbe3lD4J5ZzRU4bHZaNkG6o=;
-        b=l/ejPnyC86aP/SIXBnObQ0REfhnvAMPlGBTgsjnoFbe8WZ/E9ar6LY5+XXFvAPGJ21
-         BuLa8kUA40Po3oMi6wWKfqXGeJn4ufi7/bLU0Bd2DmtlFDc9S5umwxQh0YkGQEpARN29
-         MX2uFX2kfGXqpncZgaW3XrgcZ2li5Wvr8K81BztGqG8rwGiR1sF9i8/w9phnCh8A0W6d
-         zYUThtXKioC2Q1oQVF+Tlhfoy7NpqOvmSIgXZwh1VXl3igvc+XAq2Fxe2e7P++MSyYkW
-         cf/JXlv6zuUj8SNz7YnwjOF1KVdvHcbPi8bzZO7USkKb3Se8s9IMzgl3FuKkAwK1F75+
-         SSMw==
-X-Gm-Message-State: AOAM530RUah7vGM7wPg7ndnrod5ofQsKXQloTK+Nj9PBklvMLec+ZkKP
-        Fb6DANmx9gHkRARKufBcE0scHKcQN5ihOFVkDA==
-X-Google-Smtp-Source: ABdhPJx9AHt865Jv+eAAUR1TTStZMpA1/c10T3SLrotTbGP81GAP4lHvM3CmBFRNspJd1OouW0Bqrb/e9Ox1UsZBcH4=
-X-Received: by 2002:a92:99cb:: with SMTP id t72mr675478ilk.172.1600880940723;
- Wed, 23 Sep 2020 10:09:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200923060547.16903-1-hch@lst.de> <20200923060547.16903-6-hch@lst.de>
- <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
- <20200923145901.GN3421308@ZenIV.linux.org.uk> <20200923163831.GO3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200923163831.GO3421308@ZenIV.linux.org.uk>
-From:   Brian Gerst <brgerst@gmail.com>
-Date:   Wed, 23 Sep 2020 13:08:49 -0400
-Message-ID: <CAMzpN2idk7bc7+37sj5UFD_PUOXCxn+RS8xmviq6Yc_LU4jyCw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
+        Wed, 23 Sep 2020 13:19:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600881590;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZAwjKYHLvX7CV9LXjpmU9CFTSk3gBA0Z/UIj2jnpmK8=;
+        b=E030EmGjseoFJIcszE8z3Ir3T1/59TEvN9aMXbuj/pfxuS2inxRQBMQNAzbguIAlXubvnd
+        AsLfQZOTMOiD4IS4K8RaajAVlkj3B9XKBwCFloQq/GoTQ17PqJ9bSr84ayFA41xFAV78Al
+        djvPWo2Ddn3TRZPtRBm1RcsAKEJFcTA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-124-1LsOWFgnOlmg5st1mkkATQ-1; Wed, 23 Sep 2020 13:19:46 -0400
+X-MC-Unique: 1LsOWFgnOlmg5st1mkkATQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 60228107464E;
+        Wed, 23 Sep 2020 17:19:44 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F1241972B;
+        Wed, 23 Sep 2020 17:19:44 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08NHJhRP016496;
+        Wed, 23 Sep 2020 13:19:43 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08NHJgdZ016492;
+        Wed, 23 Sep 2020 13:19:42 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 23 Sep 2020 13:19:42 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Dave Chinner <david@fromorbit.com>
+cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Kani, Toshi" <toshi.kani@hpe.com>,
+        "Norton, Scott J" <scott.norton@hpe.com>,
+        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
+        <rajesh.tadakamadla@hpe.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: NVFS XFS metadata (was: [PATCH] pmem: export the symbols
+ __copy_user_flushcache and __copy_from_user_flushcache)
+In-Reply-To: <20200923024528.GD12096@dread.disaster.area>
+Message-ID: <alpine.LRH.2.02.2009230445030.1800@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com> <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com> <alpine.LRH.2.02.2009161359540.20710@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009191336380.3478@file01.intranet.prod.int.rdu2.redhat.com> <20200922050314.GB12096@dread.disaster.area> <alpine.LRH.2.02.2009220815420.16480@file01.intranet.prod.int.rdu2.redhat.com> <20200923024528.GD12096@dread.disaster.area>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 12:39 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Sep 23, 2020 at 03:59:01PM +0100, Al Viro wrote:
->
-> > > That's a very good question.  But it does not just compile but actually
-> > > works.  Probably because all the syscall wrappers mean that we don't
-> > > actually generate the normal names.  I just tried this:
-> > >
-> > > --- a/include/linux/syscalls.h
-> > > +++ b/include/linux/syscalls.h
-> > > @@ -468,7 +468,7 @@ asmlinkage long sys_lseek(unsigned int fd, off_t offset,
-> > >  asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
-> > >  asmlinkage long sys_write(unsigned int fd, const char __user *buf,
-> > >                             size_t count);
-> > > -asmlinkage long sys_readv(unsigned long fd,
-> > > +asmlinkage long sys_readv(void *fd,
-> > >
-> > > for fun, and the compiler doesn't care either..
-> >
-> > Try to build it for sparc or ppc...
->
-> FWIW, declarations in syscalls.h used to serve 4 purposes:
->         1) syscall table initializers needed symbols declared
->         2) direct calls needed the same
->         3) catching mismatches between the declarations and definitions
->         4) centralized list of all syscalls
->
-> (2) has been (thankfully) reduced for some time; in any case, ksys_... is
-> used for the remaining ones.
->
-> (1) and (3) are served by syscalls.h in architectures other than x86, arm64
-> and s390.  On those 3 (1) is done otherwise (near the syscall table initializer)
-> and (3) is not done at all.
->
-> I wonder if we should do something like
->
-> SYSCALL_DECLARE3(readv, unsigned long, fd, const struct iovec __user *, vec,
->                  unsigned long, vlen);
-> in syscalls.h instead, and not under that ifdef.
->
-> Let it expand to declaration of sys_...() in generic case and, on x86, into
-> __do_sys_...() and __ia32_sys_...()/__x64_sys_...(), with types matching
-> what SYSCALL_DEFINE ends up using.
->
-> Similar macro would cover compat_sys_...() declarations.  That would
-> restore mismatch checking for x86 and friends.  AFAICS, the cost wouldn't
-> be terribly high - cpp would have more to chew through in syscalls.h,
-> but it shouldn't be all that costly.  Famous last words, of course...
->
-> Does anybody see fundamental problems with that?
 
-I think this would be a good idea.  I have been working on a patchset
-to clean up the conditional syscall handling (sys_ni.c), and conflicts
-with the prototypes in syscalls.h have been getting in the way.
-Having the prototypes use SYSCALL_DECLAREx(...) would solve that
-issue.
 
---
-Brian Gerst
+On Wed, 23 Sep 2020, Dave Chinner wrote:
+
+> > > dir-test /mnt/test/linux-2.6 63000 1048576
+> > > nvfs		6.6s
+> > > ext4 dax	8.4s
+> > > xfs dax		12.2s
+> > > 
+> > > 
+> > > dir-test /mnt/test/linux-2.6 63000 1048576 link
+> > > nvfs		4.7s
+> > > ext4 dax	5.6s
+> > > xfs dax		7.8s
+> > > 
+> > > dir-test /mnt/test/linux-2.6 63000 1048576 dir
+> > > nvfs		8.2s
+> > > ext4 dax	15.1s
+> > > xfs dax		11.8s
+> > > 
+> > > Yes, nvfs is faster than both ext4 and XFS on DAX, but it's  not a
+> > > huge difference - it's not orders of magnitude faster.
+> > 
+> > If I increase the size of the test directory, NVFS is order of magnitude 
+> > faster:
+> > 
+> > time dir-test /mnt/test/ 2000000 2000000
+> > NVFS: 0m29,395s
+> > XFS:  1m59,523s
+> > EXT4: 1m14,176s
+> 
+> What happened to NVFS there? The runtime went up by a factor of 5,
+> even though the number of ops performed only doubled.
+
+This test is from a different machine (K10 Opteron) than the above test 
+(Skylake Xeon). I borrowed the Xeon for a short time and I no longer have 
+access to it.
+
+> > time dir-test /mnt/test/ 8000000 8000000
+> > NVFS: 2m13,507s
+> > XFS: 14m31,261s
+> > EXT4: reports "file 1976882 can't be created: No space left on device", 
+> > 	(although there are free blocks and inodes)
+> > 	Is it a bug or expected behavior?
+> 
+> Exponential increase in runtime for a workload like this indicates
+> the XFS journal is too small to run large scale operations. I'm
+> guessing you're just testing on a small device?
+
+In this test, the pmem device had 64GiB.
+
+I've created 1TiB ramdisk, formatted it with XFS and ran dir-test 8000000 
+on it, however it wasn't much better - it took 14m8,824s.
+
+> In which case, you'd get a 16MB log for XFS, which is tiny and most
+> definitely will limit performance of any large scale metadta
+> operation. Performance should improve significantly for large scale
+> operations with a much larger log, and that should bring the XFS
+> runtimes down significantly.
+
+Is there some mkfs.xfs option that can increase log size?
+
+> > If you think that the lack of journaling is show-stopper, I can implement 
+> > it.
+> 
+> I did not say that. My comments are about the requirement for
+> atomicity of object changes, not journalling. Journalling is an
+> -implementation that can provide change atomicity-, it is not a
+> design constraint for metadata modification algorithms.
+> 
+> Really, you can chose how to do object update however you want. What
+> I want to review is the design documentation and a correctness proof
+> for whatever mechanism you choose to use. Without that information,
+> we have absolutely no chance of reviewing the filesystem
+> implementation for correctness. We don't need a proof for something
+> that uses journalling (because we all know how that works), but for
+> something that uses soft updates we most definitely need the proof
+> of correctness for the update algorithm before we can determine if
+> the implementation is good...
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+
+I am thinking about this: I can implement lightweight journaling that will 
+journal just a few writes - I'll allocate some small per-cpu intent log 
+for that.
+
+For example, in nvfs_rename, we call nvfs_delete_de and nvfs_finish_add - 
+these functions are very simple, both of them write just one word - so we 
+can add these two words to the intent log. The same for setattr requesting 
+simultaneous uid/gid/mode change - they are small, so they'll fit into the 
+intent log well.
+
+Regarding verifiability, I can do this - the writes to pmem are wrapped in 
+a macro nv_store. So, I can modify this macro so that it logs all 
+modifications. Then I take the log, cut it at random time, reorder the 
+entries (to simulate reordering in the CPU write-combining buffers), 
+replay it, run nvfsck on it and mount it. This way, we can verify that no 
+matter where the crash happened, either an old file or a new file is 
+present in a directory.
+
+Do you agree with that?
+
+Mikulas
+
