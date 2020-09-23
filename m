@@ -2,75 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D24BD275894
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 15:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68163275969
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:08:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbgIWNXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 09:23:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWNXI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 09:23:08 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A9BC0613CE;
-        Wed, 23 Sep 2020 06:23:08 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kL4jW-004YbY-CV; Wed, 23 Sep 2020 13:22:54 +0000
-Date:   Wed, 23 Sep 2020 14:22:54 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Message-ID: <20200923132254.GI3421308@ZenIV.linux.org.uk>
-References: <563138b5-7073-74bc-f0c5-b2bad6277e87@gmail.com>
- <486c92d0-0f2e-bd61-1ab8-302524af5e08@gmail.com>
- <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
- <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com>
- <CALCETrUEC81va8-fuUXG1uA5rbKxnKDYsDOXC70_HtKD4LAeAg@mail.gmail.com>
- <e0a1b4d1-ff47-18d1-d535-c62812cb3105@gmail.com>
- <CAK8P3a2-6JNS38EbZcLrk=cTT526oP=Rf0aoqWNSJ-k4XTYehQ@mail.gmail.com>
- <f25b4708-eba6-78d6-03f9-5bfb04e07627@gmail.com>
- <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
- <91209170-dcb4-d9ee-afa0-a819f8877b86@gmail.com>
+        id S1726701AbgIWOID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 10:08:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34064 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbgIWOIC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 10:08:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B4C28ACC6;
+        Wed, 23 Sep 2020 14:08:37 +0000 (UTC)
+Date:   Wed, 23 Sep 2020 09:07:57 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, johannes.thumshirn@wdc.com,
+        dsterba@suse.com, darrick.wong@oracle.com, josef@toxicpanda.com
+Subject: Re: [PATCH 07/15] btrfs: Move FS error state bit early during write
+Message-ID: <20200923140757.bspzgzwajcvpr62i@fiona>
+References: <20200921144353.31319-1-rgoldwyn@suse.de>
+ <20200921144353.31319-8-rgoldwyn@suse.de>
+ <832c6168-42cf-4ba1-1254-ce0057ff8c0a@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <91209170-dcb4-d9ee-afa0-a819f8877b86@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <832c6168-42cf-4ba1-1254-ce0057ff8c0a@suse.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 11:01:34AM +0300, Pavel Begunkov wrote:
-
-> > I'm not following why that would be considered a valid option,
-> > as that clearly breaks existing users that update from a 32-bit
-> > kernel to a 64-bit one.
+On 12:10 23/09, Nikolay Borisov wrote:
 > 
-> Do you mean users who move 32-bit binaries (without recompiling) to a
-> new x64 kernel? Does the kernel guarantees that to work?
+> 
+> On 21.09.20 г. 17:43 ч., Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > 
+> > fs_info->fs_state is a filesystem bit check as opposed to inode
+> > and can be performed before we begin with write checks. This eliminates
+> > inode lock/unlock in case of error bit is set.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > ---
+> >  fs/btrfs/file.c | 21 +++++++++------------
+> >  1 file changed, 9 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> > index 4c40a2742aab..ca374cb5ffc9 100644
+> > --- a/fs/btrfs/file.c
+> > +++ b/fs/btrfs/file.c
+> > @@ -1981,6 +1981,15 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
+> >  	size_t count;
+> >  	loff_t oldsize;
+> >  
+> > +	/*
+> > +	 * If BTRFS flips readonly due to some impossible error
+> > +	 * (fs_info->fs_state now has BTRFS_SUPER_FLAG_ERROR),
+> > +	 * although we have opened a file as writable, we have
+> > +	 * to stop this write operation to ensure FS consistency.
+> > +	 */
+> > +	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
+> > +		return -EROFS;
+> > +
+> 
+> nit: Actually can't this check be eliminated altogether or the comment
+> vastly simplified because BTRFS_SUPER_FLAG_ERROR check is performed only
+> during mount so the description in the parantheses is invalid i.e the fs
+> won't flip to RO because BTRFS_SUPER_FLAG_ERROR is now set in the super
+> block. As a matter of fact how is this flag set - because I don't see it
+> set in the kernel code nor in btrfs-progs ?
 
-Yes.
+You are right. This flag originated from 
+acce952b0263 ("Btrfs: forced readonly mounts on errors")
 
-No further (printable) comments for now...
+However, the following commit removed writing the super in case of the
+error:
+68ce9682a4bb ("Btrfs: remove superblock writing after fatal error")
+
+So, it does not land in the super flags anyways.
+The flag does not make sense if we use BTRFS_FS_STATE_ERROR.
+
+I will remove BTRFS_SUPER_FLAG_ERROR comment for now.
+
+-- 
+Goldwyn
