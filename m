@@ -2,53 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B03275E27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 19:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA62275E39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 19:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgIWRDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 13:03:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57150 "EHLO
+        id S1726647AbgIWRFn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 13:05:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgIWRD3 (ORCPT
+        with ESMTP id S1726466AbgIWRFn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 13:03:29 -0400
+        Wed, 23 Sep 2020 13:05:43 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97BEC0613CE;
-        Wed, 23 Sep 2020 10:03:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE806C0613CE;
+        Wed, 23 Sep 2020 10:05:42 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kL8As-004fka-To; Wed, 23 Sep 2020 17:03:23 +0000
-Date:   Wed, 23 Sep 2020 18:03:22 +0100
+        id 1kL8Ct-004fq0-Js; Wed, 23 Sep 2020 17:05:27 +0000
+Date:   Wed, 23 Sep 2020 18:05:27 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
-Cc:     avagin@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] fsopen: fsconfig syscall restart fix
-Message-ID: <20200923170322.GP3421308@ZenIV.linux.org.uk>
-References: <20200923164637.13032-1-alexander.mikhalitsyn@virtuozzo.com>
- <20200923164637.13032-2-alexander.mikhalitsyn@virtuozzo.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
+Message-ID: <20200923170527.GQ3421308@ZenIV.linux.org.uk>
+References: <20200923060547.16903-1-hch@lst.de>
+ <20200923060547.16903-6-hch@lst.de>
+ <20200923142549.GK3421308@ZenIV.linux.org.uk>
+ <20200923143251.GA14062@lst.de>
+ <20200923145901.GN3421308@ZenIV.linux.org.uk>
+ <20200923163831.GO3421308@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200923164637.13032-2-alexander.mikhalitsyn@virtuozzo.com>
+In-Reply-To: <20200923163831.GO3421308@ZenIV.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 07:46:36PM +0300, Alexander Mikhalitsyn wrote:
-> During execution of vfs_fsconfig_locked function we can get ERESTARTNOINTR
-> error (or other interrupt error). But we changing fs context fc->phase
-> field to transient states and our entry fc->phase checks in switch cases
-> (see FS_CONTEXT_CREATE_PARAMS, FS_CONTEXT_RECONF_PARAMS) will always fail
-> after syscall restart which will lead to returning -EBUSY to the userspace.
+On Wed, Sep 23, 2020 at 05:38:31PM +0100, Al Viro wrote:
+> On Wed, Sep 23, 2020 at 03:59:01PM +0100, Al Viro wrote:
 > 
-> The idea of the fix is to save entry-time fs_context phase field value and
-> recover fc->phase value to the original one before exiting with
-> "interrupt error" (ERESTARTNOINTR or similar).
+> > > That's a very good question.  But it does not just compile but actually
+> > > works.  Probably because all the syscall wrappers mean that we don't
+> > > actually generate the normal names.  I just tried this:
+> > > 
+> > > --- a/include/linux/syscalls.h
+> > > +++ b/include/linux/syscalls.h
+> > > @@ -468,7 +468,7 @@ asmlinkage long sys_lseek(unsigned int fd, off_t offset,
+> > >  asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
+> > >  asmlinkage long sys_write(unsigned int fd, const char __user *buf,
+> > >                             size_t count);
+> > > -asmlinkage long sys_readv(unsigned long fd,
+> > > +asmlinkage long sys_readv(void *fd,
+> > > 
+> > > for fun, and the compiler doesn't care either..
+> > 
+> > Try to build it for sparc or ppc...
+> 
+> FWIW, declarations in syscalls.h used to serve 4 purposes:
+> 	1) syscall table initializers needed symbols declared
+> 	2) direct calls needed the same
+> 	3) catching mismatches between the declarations and definitions
+> 	4) centralized list of all syscalls
+> 
+> (2) has been (thankfully) reduced for some time; in any case, ksys_... is
+> used for the remaining ones.
+> 
+> (1) and (3) are served by syscalls.h in architectures other than x86, arm64
+> and s390.  On those 3 (1) is done otherwise (near the syscall table initializer)
+> and (3) is not done at all.
+> 
+> I wonder if we should do something like
+> 
+> SYSCALL_DECLARE3(readv, unsigned long, fd, const struct iovec __user *, vec,
+> 		 unsigned long, vlen);
+> in syscalls.h instead, and not under that ifdef.
+> 
+> Let it expand to declaration of sys_...() in generic case and, on x86, into
+> __do_sys_...() and __ia32_sys_...()/__x64_sys_...(), with types matching
+> what SYSCALL_DEFINE ends up using.
+> 
+> Similar macro would cover compat_sys_...() declarations.  That would
+> restore mismatch checking for x86 and friends.  AFAICS, the cost wouldn't
+> be terribly high - cpp would have more to chew through in syscalls.h,
+> but it shouldn't be all that costly.  Famous last words, of course...
+> 
+> Does anybody see fundamental problems with that?
 
-If you have e.g. vfs_create_tree() fail in the middle of ->get_tree(),
-the only thing you can do to that thing is to discard it.  The state is
-*NOT* required to be recoverable after a failure exit - quite a bit of
-config might've been consumed and freed by that point.
-
-CREATE and RECONFIGURE are simply not restartable.
+Just to make it clear - I do not propose to fold that into this series;
+there we just need to keep those declarations in sync with fs/read_write.c
