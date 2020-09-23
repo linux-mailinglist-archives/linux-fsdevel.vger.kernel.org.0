@@ -2,151 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF35274F3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 04:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E80274F42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 04:49:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbgIWCtE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Sep 2020 22:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38576 "EHLO
+        id S1727358AbgIWCtl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Sep 2020 22:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgIWCtD (ORCPT
+        with ESMTP id S1726789AbgIWCtl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Sep 2020 22:49:03 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8117DC061755;
-        Tue, 22 Sep 2020 19:49:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+tm3L9Qdu9Qa27/TXUn0VZXyFl0wWgXIWdk1uWUmYXo=; b=bro9h2a+1VJMD+WRmif02SxOCd
-        V6iYwofbx8Scioi6syigtzG1nhgPfDNbKD+0AWCloYcoCtuGqizghQ+7957ITN7duW0ad3Y5qa8VB
-        ihRdtXr+JyqzpvML6OtwnnNFi7N//U0P0vnT9u30mG5Rim8975d7CazXnklVXf3CEerJaHJoGFIz9
-        4bAUYyK+H0hxgkSUl+ojUHYKyXOM0gcJpmUlOTvCob9VH08ZAXjhQFntUbdjqyBJJLNWrbVYtRIHC
-        OodUmoJ9hZSATDquWRrgE+cTS0iPMrQgoPY77FgQMh9bNrJbF4LdjWkjTbbI5hNKEdsJTwkzAeM1R
-        P9U1wjcA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kKuq4-0000Po-1g; Wed, 23 Sep 2020 02:49:00 +0000
-Date:   Wed, 23 Sep 2020 03:48:59 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Qian Cai <cai@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net,
-        Dave Chinner <dchinner@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org
-Subject: Re: [PATCH v2 5/9] iomap: Support arbitrarily many blocks per page
-Message-ID: <20200923024859.GM32101@casper.infradead.org>
-References: <20200910234707.5504-1-willy@infradead.org>
- <20200910234707.5504-6-willy@infradead.org>
- <163f852ba12fd9de5dec7c4a2d6b6c7cdb379ebc.camel@redhat.com>
- <20200922170526.GK32101@casper.infradead.org>
- <95bd1230f2fcf01f690770eb77696862b8fb607b.camel@redhat.com>
+        Tue, 22 Sep 2020 22:49:41 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31888C061755;
+        Tue, 22 Sep 2020 19:49:41 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id l16so5932695ilt.13;
+        Tue, 22 Sep 2020 19:49:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iitp+6G6CV8dBY09hArmbnqdeh71WtAbwtN/C393QxQ=;
+        b=NqyhVs+/rqSEVLUUutMcC5znSda0KfzAW3N3C38ITH8a6he30nFJXY4DayGvkm9Pff
+         cPlIQgCSRSoir9gJNs86Q5feA/dS9kZYXu+MWJY4g6W1H9UjxQaqa//r2Ars1J91kOTS
+         MydyaEeQmpa74paNHyM2uY+6LB8qTwC1wxs7OdHu8BOWzufViGRo7iaymL00Y14tD0CJ
+         c1Qi0B15yGD6hNhB1iFb+HoKGpgpdiijC5k5WVKPmlgEb5y5V7pT3Sa4sMhHL560aSXk
+         uS0uXVFnSkLcuygleH6Li1xC9g1Pbm51H6Noe5rifDU0j+/HUx3xq6x4FZH7ETSzDowY
+         Q4+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iitp+6G6CV8dBY09hArmbnqdeh71WtAbwtN/C393QxQ=;
+        b=SO0RL+ur0bM8zZoQAs1YPcJYqonUGkD/gwTJMVVJ1THSVeYfAqwT7tzkCo/8oMFBJs
+         OYrpM7MDT6/8fpxIaDx7nsM0CBb31qQzhqsQInEGwzKzMo+6aEPQ2sx7B48OH6vcohzC
+         ogy8o07xk/XCCdAgK5Jeu9+w3fC2NBvjvAY370OZrFaPINwi0occtmmvTE7CoNXLHWff
+         G8HUbWVqefYw9c2iA8zmXX2KXr8aC+M66RJp+LB4icPYLv+mWtPo4bVRMPIrAoKoxXYO
+         krp+Uz7/aNtTqdnTFUzBGFl+V/5/GN27RvTfB0r9a1gLIVA7kOrbg3DMNFvzmDSRzHZc
+         pAvw==
+X-Gm-Message-State: AOAM530A5My3fR6Bd8t0rLQet5olLYv7ZWg3ioQS1HJWCRbEIGa9d0rp
+        W9fhtAtN8RMvCveSE7HzRBixw5s02GRO0Yu0c0DXwZpH
+X-Google-Smtp-Source: ABdhPJzCPiO6Pt1MAv16dOGUfbykWWMajBTBTPLREFJTwlsSIxSOkmR5cxY2sO3zNi5vAKCdjpa9vBMbQOVcLdVPFq4=
+X-Received: by 2002:a92:8b41:: with SMTP id i62mr7228764ild.9.1600829380413;
+ Tue, 22 Sep 2020 19:49:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95bd1230f2fcf01f690770eb77696862b8fb607b.camel@redhat.com>
+References: <a8828676-210a-99e8-30d7-6076f334ed71@virtuozzo.com>
+ <CAOQ4uxgZ08ePA5WFOYFoLZaq_-Kjr-haNzBN5Aj3MfF=f9pjdg@mail.gmail.com>
+ <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com> <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
+ <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com> <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
+ <20200922210445.GG57620@redhat.com>
+In-Reply-To: <20200922210445.GG57620@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 23 Sep 2020 05:49:29 +0300
+Message-ID: <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+Subject: Re: virtiofs uuid and file handles
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 22, 2020 at 09:06:03PM -0400, Qian Cai wrote:
-> On Tue, 2020-09-22 at 18:05 +0100, Matthew Wilcox wrote:
-> > On Tue, Sep 22, 2020 at 12:23:45PM -0400, Qian Cai wrote:
-> > > On Fri, 2020-09-11 at 00:47 +0100, Matthew Wilcox (Oracle) wrote:
-> > > > Size the uptodate array dynamically to support larger pages in the
-> > > > page cache.  With a 64kB page, we're only saving 8 bytes per page today,
-> > > > but with a 2MB maximum page size, we'd have to allocate more than 4kB
-> > > > per page.  Add a few debugging assertions.
-> > > > 
-> > > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > > Reviewed-by: Dave Chinner <dchinner@redhat.com>
-> > > 
-> > > Some syscall fuzzing will trigger this on powerpc:
-> > > 
-> > > .config: https://gitlab.com/cailca/linux-mm/-/blob/master/powerpc.config
-> > > 
-> > > [ 8805.895344][T445431] WARNING: CPU: 61 PID: 445431 at fs/iomap/buffered-
-> > > io.c:78 iomap_page_release+0x250/0x270
-> > 
-> > Well, I'm glad it triggered.  That warning is:
-> >         WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
-> >                         PageUptodate(page));
-> > so there was definitely a problem of some kind.
-> > 
-> > truncate_cleanup_page() calls
-> > do_invalidatepage() calls
-> > iomap_invalidatepage() calls
-> > iomap_page_release()
-> > 
-> > Is this the first warning?  I'm wondering if maybe there was an I/O error
-> > earlier which caused PageUptodate to get cleared again.  If it's easy to
-> > reproduce, perhaps you could try something like this?
-> > 
-> > +void dump_iomap_page(struct page *page, const char *reason)
-> > +{
-> > +       struct iomap_page *iop = to_iomap_page(page);
-> > +       unsigned int nr_blocks = i_blocks_per_page(page->mapping->host, page);
-> > +
-> > +       dump_page(page, reason);
-> > +       if (iop)
-> > +               printk("iop:reads %d writes %d uptodate %*pb\n",
-> > +                               atomic_read(&iop->read_bytes_pending),
-> > +                               atomic_read(&iop->write_bytes_pending),
-> > +                               nr_blocks, iop->uptodate);
-> > +       else
-> > +               printk("iop:none\n");
-> > +}
-> > 
-> > and then do something like:
-> > 
-> > 	if (bitmap_full(iop->uptodate, nr_blocks) != PageUptodate(page))
-> > 		dump_iomap_page(page, NULL);
-> 
-> This:
-> 
-> [ 1683.158254][T164965] page:000000004a6c16cd refcount:2 mapcount:0 mapping:00000000ea017dc5 index:0x2 pfn:0xc365c
-> [ 1683.158311][T164965] aops:xfs_address_space_operations ino:417b7e7 dentry name:"trinity-testfile2"
-> [ 1683.158354][T164965] flags: 0x7fff8000000015(locked|uptodate|lru)
-> [ 1683.158392][T164965] raw: 007fff8000000015 c00c0000019c4b08 c00c0000019a53c8 c000201c8362c1e8
-> [ 1683.158430][T164965] raw: 0000000000000002 0000000000000000 00000002ffffffff c000201c54db4000
-> [ 1683.158470][T164965] page->mem_cgroup:c000201c54db4000
-> [ 1683.158506][T164965] iop:none
-
-Oh, I'm a fool.  This is after the call to detach_page_private() so
-page->private is NULL and we don't get the iop dumped.
-
-Nevertheless, this is interesting.  Somehow, the page is marked Uptodate,
-but the bitmap is deemed not full.  There are three places where we set
-an iomap page Uptodate:
-
-1.      if (bitmap_full(iop->uptodate, i_blocks_per_page(inode, page)))
-                SetPageUptodate(page);
-
-2.      if (page_has_private(page))
-                iomap_iop_set_range_uptodate(page, off, len);
-        else
-                SetPageUptodate(page);
-
-3.      BUG_ON(page->index);
+On Wed, Sep 23, 2020 at 12:04 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
 ...
-        SetPageUptodate(page);
+> > Note that if all overlayfs layers are on the same fs and that fs has
+> > null uuid, then the "disk copy" use case should just work, but I never
+> > tested that.
+> >
+> > So far, there has been no filesystem with null uuid that could be used
+> > as upper+lower layers (even xfs with option nouuid has non null s_uuid).
+> >
+> > Recently, virtiofs was added as a filesystem that could be used for
+> > upper+lower layers and virtiofs (which is fuse) has null uuid.
+>
+> I guess I never paid attention to uuid part of virtiofs. Probably we
+> are not using index or any of the advanced features of overlayfs yet,
+> that's why.
+>
 
-It can't be #2 because the page has an iop.  It can't be #3 because the
-page->index is not 0.  So at some point in the past, the bitmap was full.
+I don't expect you should have a problem enabling index because
+of null uuid when all layers are on the same virtiofs.
+That setup is allowed.
+We only ever start checking for null uuid on lower layers that
+are NOT on the same fs as upper layer.
 
-I don't think it's possible for inode->i_blksize to change, and you
-aren't running with THPs, so it's definitely not possible for thp_size()
-to change.  So i_blocks_per_page() isn't going to change.
+What you are expected to have a problem with is that FUSE support
+for file handles is "problematic".
 
-We seem to have allocated enough memory for ->iop because that's also
-based on i_blocks_per_page().
+I found out the hard way that FUSE can decode NFS file handles
+to completely different object than the encoded object if the encoded
+inode was evicted from cache and its node id has been reused.
 
-I'm out of ideas.  Maybe I'll wake up with a better idea in the morning.
-I've been trying to reproduce this on x86 with a 1kB block size
-filesystem, and haven't been able to yet.  Maybe I'll try to setup a
-powerpc cross-compilation environment tomorrow.
+Another problem is that FUSE protocol does not have complete
+support for decoding file handles. FUSE implements decode
+file handle by LOOKUP(ino, ".") to server, but if server is proxying
+a local filesystem, there is not enough information to construct
+an open_by_handle_at() request.
+
+I wrote a fuse filesystem whose file handles are persistent and
+reliable [1], but it is a specialized server that uses knowledge
+of the local filesystem file handle format and it requires that the
+local filesystem has a special feature to interpret a file handle
+with 0 generation as ANY generation (ext4 does that).
+
+I think that the proper was to implement reliable persistent file
+handles in fuse/virtiofs would be to add ENCODE/DECODE to
+FUSE protocol and allow the server to handle this.
+
+Thanks,
+Amir,
+
+[1] https://github.com/amir73il/libfuse/commits/cachegwfs
