@@ -2,110 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26FAA2754E4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 11:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB7A2754FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 11:58:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbgIWJ5B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 05:57:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWJ5B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 05:57:01 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D9DC0613CE;
-        Wed, 23 Sep 2020 02:57:01 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id y13so22998005iow.4;
-        Wed, 23 Sep 2020 02:57:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1mQ0aj960a7RVZHIGZZAGMeUhM0butXCj6YzXOVIy1I=;
-        b=sRdg64pRyDDN/T2g0q3D5ISVio8iK5nvZeaNn0anwUyPsOQD0QHf8nARyYUlpA3i5m
-         NL+NNP0O72mAzZpPdRXviIJsw0V5oi30JqfXqhnzLRebuRwplEWIzDlYpYiGuzx+wT5y
-         hMAWO8NBXGvK6vORNGJXpOxeoI5uDRHKVuzeGgcY47fZ0YK7wvmrcDGPvYamOt6brZj6
-         RohyqUVVf1t4M6aP8q6tP7iQs7rgk9ViYMTtwj439PAqJ+y+Ic/dzoevvKkjUm/Vsgwp
-         39eDOu2rmNMGm6u8+C/R7WXZT0AUjnxmqBvgMWOU+ez7bDOr4fs166mHvHecRbt2oUfh
-         a2hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1mQ0aj960a7RVZHIGZZAGMeUhM0butXCj6YzXOVIy1I=;
-        b=ca9AKME7wbgUcO0MB+fasJenNla5VDj4Mv6swstGzOzFG7ltMpzGcz6Gh//6/CYHZF
-         ouHvb/i8jbOP5Pma73F4HnF7wSSgjUXj9V/pQ26fKsvSSid7HI1Wvw9MEIOqB5UsAKeZ
-         IIpZZuK9AJIGqjfmXyvDyFR9XOwJAxRX0OaSIg/uGhkEMZe+DKVXMt5LhWZJcemBRh1W
-         VAJhYIGPhD+q3qRIqR9eZZgVhS4ZCWf8c5xykbhCx5v0eiLg9oz6OB/yP+0F/6FitZR4
-         IDYdKnKyGJIScqLUfwUInAQ46KETOMbO9IoXz69KcONGsFWSe135wSeRQZhDechMZlfx
-         IQFA==
-X-Gm-Message-State: AOAM533R2J9akY5+RgZhabh72wRabBItH2SYVhnN1YEXRQwc3Tv+7M/k
-        WsPbEoD7m/udcu5eCbnybXdprUpLRRuSRp8mNbOKOcdxxE0=
-X-Google-Smtp-Source: ABdhPJz/KpbTpVRf47HrMkPmdOW4tzubkRJVeTwGVsKpsZ1Ue3/1zls0KrbCTeU+FFabCd6sd1jj81iOBUAnOAdcb8o=
-X-Received: by 2002:a05:6602:2f8a:: with SMTP id u10mr6637527iow.72.1600855020585;
- Wed, 23 Sep 2020 02:57:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <a8828676-210a-99e8-30d7-6076f334ed71@virtuozzo.com>
- <CAOQ4uxgZ08ePA5WFOYFoLZaq_-Kjr-haNzBN5Aj3MfF=f9pjdg@mail.gmail.com>
- <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com> <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
- <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com> <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
- <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
- <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
-In-Reply-To: <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 23 Sep 2020 12:56:49 +0300
-Message-ID: <CAOQ4uxgKr75J1YcuYAqRGC_C5H_mpCt01p5T9fHSuao_JnxcJA@mail.gmail.com>
-Subject: Re: virtiofs uuid and file handles
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
+        id S1726703AbgIWJ5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 05:57:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52714 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726674AbgIWJ5m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 05:57:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 4DCB9AFFB;
+        Wed, 23 Sep 2020 09:58:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 968EF1E12E3; Wed, 23 Sep 2020 11:57:39 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 11:57:39 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Kani, Toshi" <toshi.kani@hpe.com>,
+        "Norton, Scott J" <scott.norton@hpe.com>,
+        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
+        <rajesh.tadakamadla@hpe.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Max Reitz <mreitz@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: NVFS XFS metadata (was: [PATCH] pmem: export the symbols
+ __copy_user_flushcache and __copy_from_user_flushcache)
+Message-ID: <20200923095739.GC6719@quack2.suse.cz>
+References: <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
+ <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com>
+ <alpine.LRH.2.02.2009161359540.20710@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009191336380.3478@file01.intranet.prod.int.rdu2.redhat.com>
+ <20200922050314.GB12096@dread.disaster.area>
+ <alpine.LRH.2.02.2009220815420.16480@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.2009220815420.16480@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 10:44 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, Sep 23, 2020 at 4:49 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > I think that the proper was to implement reliable persistent file
-> > handles in fuse/virtiofs would be to add ENCODE/DECODE to
-> > FUSE protocol and allow the server to handle this.
->
-> Max Reitz (Cc-d) is currently looking into this.
->
-> One proposal was to add  LOOKUP_HANDLE operation that is similar to
-> LOOKUP except it takes a {variable length handle, name} as input and
-> returns a variable length handle *and* a u64 node_id that can be used
-> normally for all other operations.
->
-> The advantage of such a scheme for virtio-fs (and possibly other fuse
-> based fs) would be that userspace need not keep a refcounted object
-> around until the kernel sends a FORGET, but can prune its node ID
-> based cache at any time.   If that happens and a request from the
-> client (kernel) comes in with a stale node ID, the server will return
-> -ESTALE and the client can ask for a new node ID with a special
-> lookup_handle(fh, NULL).
->
-> Disadvantages being:
->
->  - cost of generating a file handle on all lookups
+On Tue 22-09-20 12:46:05, Mikulas Patocka wrote:
+> > mapping 2^21 blocks requires a 5 level indirect tree. Which one if going 
+> > to be faster to truncate away - a single record or 2 million individual 
+> > blocks?
+> > 
+> > IOWs, we can take afford to take an extra cacheline miss or two on a
+> > tree block search, because we're accessing and managing orders of
+> > magnitude fewer records in the mapping tree than an indirect block
+> > tree.
+> > 
+> > PMEM doesn't change this: extents are more time and space efficient
+> > at scale for mapping trees than indirect block trees regardless
+> > of the storage medium in use.
+> 
+> PMEM doesn't have to be read linearly, so the attempts to allocate large 
+> linear space are not needed. They won't harm but they won't help either.
+> 
+> That's why NVFS has very simple block allocation alrogithm - it uses a 
+> per-cpu pointer and tries to allocate by a bit scan from this pointer. If 
+> the group is full, it tries a random group with above-average number of 
+> free blocks.
 
-I never ran into a local fs implementation where this was expensive.
+I agree with Dave here. People are interested in 2MB or 1GB contiguous
+allocations for DAX so that files can be mapped at PMD or event PUD levels
+thus saving a lot of CPU time on page faults and TLB.
 
->  - cost of storing file handle in kernel icache
->
-> I don't think either of those are problematic in the virtiofs case.
-> The cost of having to keep fds open while the client has them in its
-> cache is much higher.
->
+> EXT4 uses bit scan for allocations and people haven't complained that it's 
+> inefficient, so it is probably OK.
 
-Sounds good.
-I suppose flock() does need to keep the open fd on server.
+Yes, it is more or less OK but once you get to 1TB filesystem size and
+larger, the number of block groups grows enough that it isn't that great
+anymore. We are actually considering new allocation schemes for ext4 for
+this large filesystems...
 
-Are there any other states for an open fd that must be preserved?
+> If you think that the lack of journaling is show-stopper, I can implement 
+> it. But then, I'll have something that has complexity of EXT4 and 
+> performance of EXT4. So that there will no longer be any reason why to use 
+> NVFS over EXT4. Without journaling, it will be faster than EXT4 and it may 
+> attract some users who want good performance and who don't care about GID 
+> and UID being updated atomically, etc.
 
-Thanks,
-Amir.
+I'd hope that your filesystem offers more performance benefits than just
+what you can get from a lack of journalling :). ext4 can be configured to
+run without a journal as well - mkfs.ext4 -O ^has_journal. And yes, it does
+significantly improve performance for some workloads but you have to have
+some way to recover from crashes so it's mostly used for scratch
+filesystems (e.g. in build systems, Google uses this feature a lot for some
+of their infrastructure as well).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
