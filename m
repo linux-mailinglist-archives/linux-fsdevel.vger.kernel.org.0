@@ -2,130 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FAF276167
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 21:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F615276173
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 21:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbgIWTvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 15:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgIWTvv (ORCPT
+        id S1726613AbgIWTxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 15:53:09 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:49141 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbgIWTxJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 15:51:51 -0400
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC40C0613CE;
-        Wed, 23 Sep 2020 12:51:51 -0700 (PDT)
-Received: by mail-qt1-x841.google.com with SMTP id z2so934352qtv.12;
-        Wed, 23 Sep 2020 12:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=K/pUtqEAd6FaTDCf00ujMgUqqETSXfPhUeGuKchWXUs=;
-        b=YDuXTVEPUbAJafRqh/dypmyCmOtqDZ2dqQKZplay/eHegdSKIEI9B7GFZydCeewdM1
-         F4y82sJPZZrXoXdu89i+v9LgMLfLO5dWf9qfjvTSJyJaARNyPQcUnI/xdfnZWaIeip+4
-         IuGNV9+2rBKAd87bd/oKTVle2Y16/7RrJZgWLHmEvSY4vKB5y+il7B34hPUS0X/6OpZd
-         gOmpExT9thdKpwF+eJKIOgmu/jncp8hF7T//iMWu+dOFW7m+WSZH5yMLDv/wBjTEAMW1
-         XU3qN/29UsHna8AFr4iVe8VMhv03zG+KI/2MhWWWHNBqTHY70yRtXnOJOsK722s1fruS
-         +O3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=K/pUtqEAd6FaTDCf00ujMgUqqETSXfPhUeGuKchWXUs=;
-        b=FqTUVIcnSTpBn2jRknUJBqwWDa7kgmy/e9P8FrbHNcbnj3pKaUdXUWXwlbk/cQTkQt
-         4wvi4JzM4cnifS1SzPIGxbPCloPdWfDeuPSUuzy2cn7o2bsONjcJlEQTPTsywAkJo0Nc
-         SfuXxJFXhzUp7OG4HuDrZbC1EJcAJNIoz0sLM7odXeI11esrCWJ+9jSEaWxG1vVx5aPS
-         TVv5zlICC72qnDUBq97ImuA5v/RLwMI+In5Oy6e+SKaMg/5PGQgP+APkpm14x/3bhCCN
-         CuDn6MiREkriwhiaFjrIMjKGbhhUml7+oEhvhnFwi2lTP4KYhRS2ko/3Nd1j5n2AlhUC
-         I7rQ==
-X-Gm-Message-State: AOAM530mX86XLxgLngrOA0pHdZ0W2VDHyl0giCHHTA8g3MrbgpbhJGFi
-        whVejSG3rCjOpA86dsyrpeTc6lVeodY=
-X-Google-Smtp-Source: ABdhPJzjUTxogU34ItSMJ0OdmM63Q03/ic99kwSF7ETgPXeMzfaQhO5sAjfKzolXALvtzOWcxGlwDw==
-X-Received: by 2002:ac8:5d43:: with SMTP id g3mr1813055qtx.295.1600890710351;
-        Wed, 23 Sep 2020 12:51:50 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id n144sm648905qkn.69.2020.09.23.12.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Sep 2020 12:51:49 -0700 (PDT)
-Sender: Arvind Sankar <niveditas98@gmail.com>
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Wed, 23 Sep 2020 15:51:47 -0400
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org, luto@kernel.org,
-        David.Laight@ACULAB.COM, mark.rutland@arm.com, mic@digikod.net,
-        pavel@ucw.cz
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200923195147.GA1358246@rani.riverdale.lan>
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
- <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
- <20200923014616.GA1216401@rani.riverdale.lan>
- <20200923091125.GB1240819@rani.riverdale.lan>
- <a742b9cd-4ffb-60e0-63b8-894800009700@linux.microsoft.com>
+        Wed, 23 Sep 2020 15:53:09 -0400
+Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mof1D-1knLhY1WDR-00p1Cg; Wed, 23 Sep 2020 21:53:05 +0200
+Received: by mail-qk1-f175.google.com with SMTP id c62so1009747qke.1;
+        Wed, 23 Sep 2020 12:53:03 -0700 (PDT)
+X-Gm-Message-State: AOAM530ZlfmksSqecWKDQ3DFtZU062m1eW50TJHuAOM1NehNCZNSs1hi
+        XGsSJeH6U+rOX7g6WJ5h3KiEI72zgD5M/7gTGgc=
+X-Google-Smtp-Source: ABdhPJw80vxbxwT0bQ4Vkw0aE+k6Uuv2/dRNGRP/PGmAg2m3M1syddgA8VQgAKVqDM0S7SkWa6ZTkZVQ5JNt1c0Eq1g=
+X-Received: by 2002:a37:5d8:: with SMTP id 207mr1587539qkf.352.1600890783036;
+ Wed, 23 Sep 2020 12:53:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a742b9cd-4ffb-60e0-63b8-894800009700@linux.microsoft.com>
+References: <20200923060547.16903-1-hch@lst.de> <20200923060547.16903-6-hch@lst.de>
+ <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
+ <20200923145901.GN3421308@ZenIV.linux.org.uk> <20200923163831.GO3421308@ZenIV.linux.org.uk>
+ <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com> <20200923194755.GR3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200923194755.GR3421308@ZenIV.linux.org.uk>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 23 Sep 2020 21:52:47 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1VPh0ufiUMbcRuj9wrpqojzQ_8mO68Vjc8yzLGxVNkpw@mail.gmail.com>
+Message-ID: <CAK8P3a1VPh0ufiUMbcRuj9wrpqojzQ_8mO68Vjc8yzLGxVNkpw@mail.gmail.com>
+Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Networking <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:FcOmYEc7S70x327+yC5nQPBEM0rt3a6h0aY4XmvYdCQO/8YHm6L
+ kQ4zWoMsMiqUpkNCuPq40vpPiey/pLiaKIbN7QkQudHxc4Jh3awCIgTkZ9zYNjIGusQwsP4
+ 1f1B0nElrTF0UDKdAoVLxWVksyAkcP1rgW6OWMr1s5U6Ho/SuN3wPdE/qoJwLEFRspiRqUj
+ yq6+or7yQpPXAv/J1caXQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WeZ7mFq3nUo=:ejU75HdVaJwErPbl07WyY/
+ SzJqUDCrQEJB1WeBXC2y8Ssm/xYmjapzEBN2ahXTydur/hOzj69Kg2Qzgtoc3VNc8XFmw919o
+ ESSsgSfQzPzPrlX3MgopJwOnkQ3I4bvWzTa2ZlS7YrZa/AyhvFw4gd4FCpGxRi6WmPfp76f1e
+ myF7aStZTXsarPDA2STRNrZOIUYyDueuimX9V2S7rv5BW/onorUna7NOsEwkE7aU0mJt+v0Hl
+ HIA6IfIR05QbpoKPI/OpdgJEact/NAJX3zC1ZJXh62ABmy+E/nnChSTV1nsGJIXjNhCuBVdFk
+ bQBjXBaT8FGfl83RztO1RmQ3bqsqk8ku9XIaqGrmQ9i5OX6DAQHK7c30Vm+EMZDuan5IKUoxh
+ cYHDHFlB37P7T0CXow6euG48MwQQRXwNWG94LigYmIKrGfCNIQ4DHyCeRw1+68wkbtADxLVH8
+ CB0nRpMe7rUrmHGpqYNqt8wLM0pJKHM0tsjdDP650XCTmpPS3/NlStYy3mgCJIW9hqkuS7w7A
+ GkIBYy2IUu1bbRxzL8ypcn4Cp96IkenTf/tXQXtLAggbQEk+CIKr/QP9S6AMOum8srwv1+VKM
+ ORMh1sY7JkDqzxIAYpvgHUPA1mej8HF4555mPWMlPk7ICBIsJDcaGzkmlBgB6B23rbiKuCCsr
+ iyC89P2nxjFi+GzaaYFHYRrz399DxPlViaNhzrAVJsWX0gM3VD02wi37/y8AW5K3d0vI6p/7f
+ DV1q85DyULmO6ez5MisWBBUBROpFlvx1IghlxiINd/QvCa5H+comengpnbWjgMe/VluZszkB9
+ P0Qk+w+vd9NiE3WeN+I42nTS8gMPYeMp7/0S9Nib8gESVnNDFc2shVtY2bhFcaVX6Tkq2thRH
+ 4RYELGgsPV/p/jHf0yA1sgT5WRYlN6txBoLIeSX9HQ3uUovY6j9F6HIzPfzzcZCcKlkVPUElJ
+ DqEhYfcAAh7V0lJVm7vBtu55QYk5+o4wTMvTEFkCyMYNWNypOQGY7
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 02:17:30PM -0500, Madhavan T. Venkataraman wrote:
-> 
-> 
-> On 9/23/20 4:11 AM, Arvind Sankar wrote:
-> > For libffi, I think the proposed standard trampoline won't actually
-> > work, because not all ABIs have two scratch registers available to use
-> > as code_reg and data_reg. Eg i386 fastcall only has one, and register
-> > has zero scratch registers. I believe 32-bit ARM only has one scratch
-> > register as well.
-> 
-> The trampoline is invoked as a function call in the libffi case. Any
-> caller saved register can be used as code_reg, can it not? And the
-> scratch register is needed only to jump to the code. After that, it
-> can be reused for any other purpose.
-> 
-> However, for ARM, you are quite correct. There is only one scratch
-> register. This means that I have to provide two types of trampolines:
-> 
-> 	- If an architecture has enough scratch registers, use the currently
-> 	  defined trampoline.
-> 
-> 	- If the architecture has only one scratch register, but has PC-relative
-> 	  data references, then embed the code address at the bottom of the
-> 	  trampoline and access it using PC-relative addressing.
-> 
-> Thanks for pointing this out.
-> 
-> Madhavan
+On Wed, Sep 23, 2020 at 9:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> FWIW, after playing with that for a while...  Do we really want the
+> compat_sys_...() declarations to live in linux/compat.h?  Most of
+> the users of that file don't want those; why not move them to
+> linux/syscalls.h?
 
-libffi is trying to provide closures with non-standard ABIs as well: the
-actual user function is standard ABI, but the closure can be called with
-a different ABI. If the closure was created with FFI_REGISTER abi, there
-are no registers available for the trampoline to use: EAX, EDX and ECX
-contain the first three arguments of the function, and every other
-register is callee-save.
+Sure, let's do that. The trend overall is to integrate the compat stuff
+more closely into where the native implementation lives, so this
+would just follow that trend.
 
-I provided a sample of the kind of trampoline that would be needed in
-this case -- it's position-independent and doesn't clobber any registers
-at all, and you get 255 trampolines per page. If I take another 16-byte
-slot out of the page for the end trampoline that does the actual work,
-I'm sure I could even come up with one that can just call a normal C
-function, only the return might need special handling depending on the
-return type.
+I think with Christoph's latest patches, about half of them are
+going away as well.
 
-And again, do you actually have any example of an architecture that
-cannot run position-independent code? PC-relative addressing is an
-implementation detail: the fact that it's available for x86_64 but not
-for i386 just makes position-independent code more cumbersome on i386,
-but it doesn't make it impossible. For the tiny trampolines here, it
-makes almost no difference.
+> Reason: there's a lot more users of linux/compat.h than those of
+> linux/syscalls.h - it's pulled by everything in the networking stack,
+> for starters...
+
+Right, the network headers pull in almost everything else through
+multiple indirect inclusions, anything we can do to reduce that
+helps.
+
+     Arnd
