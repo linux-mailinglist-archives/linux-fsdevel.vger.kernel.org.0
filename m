@@ -2,181 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E6CC27509C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 08:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07AE227510D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 08:07:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbgIWGE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 02:04:27 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:39555 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgIWGE1 (ORCPT
+        id S1727070AbgIWGHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 02:07:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbgIWGGD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 02:04:27 -0400
-X-Greylist: delayed 363 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Sep 2020 02:04:26 EDT
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 22 Sep 2020 22:58:23 -0700
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 22 Sep 2020 22:58:21 -0700
-Received: from hydcbspbld03.qualcomm.com ([10.242.221.48])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 23 Sep 2020 11:28:08 +0530
-Received: by hydcbspbld03.qualcomm.com (Postfix, from userid 2304101)
-        id 6868020F13; Wed, 23 Sep 2020 11:28:07 +0530 (IST)
-From:   Pradeep P V K <ppvk@codeaurora.org>
-To:     miklos@szeredi.hu, willy@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, stummala@codeaurora.org,
-        sayalil@codeaurora.org, Pradeep P V K <ppvk@codeaurora.org>
-Subject: [PATCH V3] fuse: Remove __GFP_FS flag to avoid allocator recursing 
-Date:   Wed, 23 Sep 2020 11:27:55 +0530
-Message-Id: <1600840675-43691-1-git-send-email-ppvk@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 23 Sep 2020 02:06:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74F2C0613D1;
+        Tue, 22 Sep 2020 23:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=1Vh0dAKOdnXFeXkvpj04uvS6NbxfgNRMpuVYVFb02f4=; b=UHUJHa1QYjtLCQQD5BgcksLg9Q
+        ogJ562LcQiJIT5vdgrH0k4zEs1KHZKEtE5FKLLBpdPMh61bVcd85zhmEsDbr6XSCO5/IYcC5xosc+
+        +Bs/Af8KVfawjVAHZhgFtXS8OiPnerF4zdWvt5BNj0oHrZft0kEI4+9TtBZcFd3lyEVe37nzNVbH0
+        aZadmqU25GvmueBPpKO5jnBNpPCgYeh+qgig1FxlRqFgPDmiWBJxKwTYM40NB0p30YQScbA4MiDmO
+        lYYgIhxZbqaTBRDM4Yi29He2+pqLkpKcUM8CEtjyUQQ2/n3lFqVS/1SQoX+7346gfnroqdVZS236p
+        XbWKDsJg==;
+Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKxuZ-0003T1-26; Wed, 23 Sep 2020 06:05:51 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: let import_iovec deal with compat_iovecs as well v3
+Date:   Wed, 23 Sep 2020 08:05:38 +0200
+Message-Id: <20200923060547.16903-1-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Found a deadlock between kswapd, writeback thread and fuse process
-Here are the sequence of events with callstacks on the deadlock.
+Hi Al,
 
-process#1		process#2		process#3
-__switch_to+0x150	__switch_to+0x150	try_to_free_pages
-__schedule+0x984	__schedule+0x984
-					memalloc_noreclaim_restore
-schedule+0x70		schedule+0x70		__perform_reclaim
-bit_wait+0x14		__fuse_request_send+0x154
-					__alloc_pages_direct_reclaim
-__wait_on_bit+0x70	fuse_simple_request+0x174
-inode_wait_for_writeback+0xa0
-						__alloc_pages_slowpath
-			fuse_flush_times+0x10c
-evict+0xa4		fuse_write_inode+0x5c	__alloc_pages_nodemask
-iput+0x248		__writeback_single_inode+0x3d4
-dentry_unlink_inode+0xd8			__alloc_pages_node
-			writeback_sb_inodes+0x4a0
-__dentry_kill+0x160	__writeback_inodes_wb+0xac
-shrink_dentry_list+0x170			alloc_pages_node
-			wb_writeback+0x26c	fuse_copy_fill
-prune_dcache_sb+0x54	wb_workfn+0x2c0		fuse_copy_one
-super_cache_scan+0x114	process_one_work+0x278	fuse_read_single_forget
-do_shrink_slab+0x24c	worker_thread+0x26c	fuse_read_forget
-shrink_slab+0xa8	kthread+0x118		fuse_dev_do_read
-shrink_node+0x118				fuse_dev_splice_read
-kswapd+0x92c					do_splice_to
-						do_splice
+this series changes import_iovec to transparently deal with comat iovec
+structures, and then cleanups up a lot of code dupliation.
 
-Process#1(kswapd) held an inode lock and initaited a writeback to free
-the pages, as the inode superblock is fuse, process#2 forms a fuse
-request. Process#3 (Fuse daemon threads) while serving process#2 request,
-it requires memory(pages) and as the system is already running in low
-memory it ends up in calling try_to_ free_pages(), which might now call
-kswapd again, which is already stuck with an inode lock held. Thus forms
-a deadlock.
+Changes since v2:
+ - revert the switch of the access process vm sysclls to iov_iter
+ - refactor the import_iovec internals differently
+ - switch aio to use __import_iovec
 
-So, drop  __GFP_FS flag to avoid allocator recursing into the
-filesystem that might already held locks by using memalloc_nofs_save()
-and memalloc_nofs_restore() respectively.
+Changes since v1:
+ - improve a commit message
+ - drop a pointless unlikely
+ - drop the PF_FORCE_COMPAT flag
+ - add a few more cleanups (including two from David Laight)
 
-Changes since V2:
-- updated memalloc_nofs_save() to allocation paths that potentially
-  can cause deadlock.
-
-Changes since V1:
-- Used memalloc_nofs_save() in all allocation paths of fuse daemons
-  to avoid use __GFP_FS flag as per Matthew comments.
-
-Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
----
- fs/fuse/dev.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 5078a6c..e7a8718 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -21,6 +21,7 @@
- #include <linux/swap.h>
- #include <linux/splice.h>
- #include <linux/sched.h>
-+#include <linux/sched/mm.h>
- 
- MODULE_ALIAS_MISCDEV(FUSE_MINOR);
- MODULE_ALIAS("devname:fuse");
-@@ -683,6 +684,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
- {
- 	struct page *page;
- 	int err;
-+	unsigned nofs_flag;
- 
- 	err = unlock_request(cs->req);
- 	if (err)
-@@ -708,7 +710,9 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
- 			if (cs->nr_segs >= cs->pipe->max_usage)
- 				return -EIO;
- 
-+			nofs_flag = memalloc_nofs_save();
- 			page = alloc_page(GFP_HIGHUSER);
-+			memalloc_nofs_restore(nofs_flag);
- 			if (!page)
- 				return -ENOMEM;
- 
-@@ -781,6 +785,7 @@ static int fuse_check_page(struct page *page)
- static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
- {
- 	int err;
-+	unsigned nofs_flag;
- 	struct page *oldpage = *pagep;
- 	struct page *newpage;
- 	struct pipe_buffer *buf = cs->pipebufs;
-@@ -831,7 +836,9 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
- 	if (WARN_ON(PageMlocked(oldpage)))
- 		goto out_fallback_unlock;
- 
-+	nofs_flag = memalloc_nofs_save();
- 	err = replace_page_cache_page(oldpage, newpage, GFP_KERNEL);
-+	memalloc_nofs_restore(nofs_flag);
- 	if (err) {
- 		unlock_page(newpage);
- 		goto out_put_old;
-@@ -1177,6 +1184,7 @@ __releases(fiq->lock)
-  * the pending list and copies request data to userspace buffer.  If
-  * no reply is needed (FORGET) or request has been aborted or there
-  * was an error during the copying then it's finished by calling
-+ *
-  * fuse_request_end().  Otherwise add it to the processing list, and set
-  * the 'sent' flag.
-  */
-@@ -1346,12 +1354,15 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
- 	struct pipe_buffer *bufs;
- 	struct fuse_copy_state cs;
- 	struct fuse_dev *fud = fuse_get_dev(in);
-+	unsigned nofs_flag;
- 
- 	if (!fud)
- 		return -EPERM;
- 
-+	nofs_flag = memalloc_nofs_save();
- 	bufs = kvmalloc_array(pipe->max_usage, sizeof(struct pipe_buffer),
- 			      GFP_KERNEL);
-+	memalloc_nofs_restore(nofs_flag);
- 	if (!bufs)
- 		return -ENOMEM;
- 
-@@ -1952,6 +1963,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 	struct fuse_dev *fud;
- 	size_t rem;
- 	ssize_t ret;
-+	unsigned nofs_flag;
- 
- 	fud = fuse_get_dev(out);
- 	if (!fud)
-@@ -1964,7 +1976,9 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 	mask = pipe->ring_size - 1;
- 	count = head - tail;
- 
-+	nofs_flag = memalloc_nofs_save();
- 	bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
-+	memalloc_nofs_restore(nofs_flag);
- 	if (!bufs) {
- 		pipe_unlock(pipe);
- 		return -ENOMEM;
--- 
-2.7.4
-
+Diffstat:
+ arch/arm64/include/asm/unistd32.h                  |   10 
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |   10 
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |   10 
+ arch/parisc/kernel/syscalls/syscall.tbl            |   10 
+ arch/powerpc/kernel/syscalls/syscall.tbl           |   10 
+ arch/s390/kernel/syscalls/syscall.tbl              |   10 
+ arch/sparc/kernel/syscalls/syscall.tbl             |   10 
+ arch/x86/entry/syscall_x32.c                       |    5 
+ arch/x86/entry/syscalls/syscall_32.tbl             |   10 
+ arch/x86/entry/syscalls/syscall_64.tbl             |   10 
+ block/scsi_ioctl.c                                 |   12 
+ drivers/scsi/sg.c                                  |    9 
+ fs/aio.c                                           |   38 --
+ fs/io_uring.c                                      |   20 -
+ fs/read_write.c                                    |  362 +--------------------
+ fs/splice.c                                        |   57 ---
+ include/linux/compat.h                             |   24 -
+ include/linux/fs.h                                 |   11 
+ include/linux/uio.h                                |   10 
+ include/uapi/asm-generic/unistd.h                  |   12 
+ lib/iov_iter.c                                     |  161 +++++++--
+ mm/process_vm_access.c                             |   85 ----
+ net/compat.c                                       |    4 
+ security/keys/compat.c                             |   37 --
+ security/keys/internal.h                           |    5 
+ security/keys/keyctl.c                             |    2 
+ tools/include/uapi/asm-generic/unistd.h            |   12 
+ tools/perf/arch/powerpc/entry/syscalls/syscall.tbl |   10 
+ tools/perf/arch/s390/entry/syscalls/syscall.tbl    |   10 
+ tools/perf/arch/x86/entry/syscalls/syscall_64.tbl  |   10 
+ 30 files changed, 280 insertions(+), 706 deletions(-)
