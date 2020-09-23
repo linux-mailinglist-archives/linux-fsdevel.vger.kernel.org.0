@@ -2,144 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C896B275227
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 09:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CECDC275267
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 09:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbgIWHJM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 03:09:12 -0400
-Received: from mail-bn8nam11on2055.outbound.protection.outlook.com ([40.107.236.55]:31744
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726550AbgIWHJM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 03:09:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lFf7GU2FDVVnnY9sKS/cWwq2tf/CfPXVbQKNjwOfLb/5KEzer8GQmSS/JB1h01s1UIH+PHDeTa0IraXe1Fzwh1sUp7bYkD9MMA8e5W0WNWSl5slSbKaoYasOMak/oY8O5eSlcrQ2iBzYKff4hDBQyPGQBuzdGu6eVGGzdJnPMmYlfPwVPGfiUi1dD3GIsRSWEaBGWhS1hoKO9YZzIMkit51XgJqhIIYAkQDtmPvDPLqW8sgOzKNdW22jk4YVVvAYGRMLx/y8Iia4c2o1o4BquvbBk4OTgOVAAK4uQK9+4AjsV+qlmoPRNJ6oEEKMAr6zEdHmZp4qWA52Rm0ae8KERg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sIvZRZ3JDfDF+9gvJdKWgb97LoYMpBwQZ6pvtMMTtHo=;
- b=hPk4RkNDbhzR9fSc8mZGJF4UgO4UDjg7T6D7PMmY+bHyl8j++xUaL7OVCeZYwZt+bye8QKm5fZ+dn8oPVcNHyQ4ltaga5maQoa9RgbYjOPGnWjE+YJUPNVCzN6i30kT2+0z07qg2dSWZiVoS3u/OmB0Em8oNO7g8QQVBwLLjY6bJh/tlyoWS4seDLSM++njTQPWC68fEJrXV9uTdMugTqyiNVMOQxBMSlGlISXd1h1VHqbS5vKp5OG0v8O9s5h/hGgsSRShi6VHa6z8Upw2RqeqE96k2oDpz3Vcjm+Ye4ZGjwBk3jkU8saDm7TrCRUh52swFGrswOJwi5IheWL8R6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sIvZRZ3JDfDF+9gvJdKWgb97LoYMpBwQZ6pvtMMTtHo=;
- b=bLt4iQWKfgRRjRlcP6kBj87ic0AGc8CfBlL2Q2BVUWtPbKO60UhZY9C/0EwOxpUnCAH2k0YNPGi1FhAVWBJOhqelp4ZaZjLdKCH9VeH1XACLqcCNXnupsijZBjBvL0RbN5EstNHrZnQzDoSRjpi6FNdSOCV8xCbBpzQvoncrZY0=
-Received: from BYAPR05MB4839.namprd05.prod.outlook.com (2603:10b6:a03:42::13)
- by BYAPR05MB5653.namprd05.prod.outlook.com (2603:10b6:a03:1a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.11; Wed, 23 Sep
- 2020 07:09:09 +0000
-Received: from BYAPR05MB4839.namprd05.prod.outlook.com
- ([fe80::4cec:47f6:a0be:8304]) by BYAPR05MB4839.namprd05.prod.outlook.com
- ([fe80::4cec:47f6:a0be:8304%6]) with mapi id 15.20.3391.025; Wed, 23 Sep 2020
- 07:09:09 +0000
-From:   Abdul Anshad Azeez <aazees@vmware.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>
-Subject: Re: Performance regressions in networking & storage benchmarks in
- Linux kernel 5.8
-Thread-Topic: Performance regressions in networking & storage benchmarks in
- Linux kernel 5.8
-Thread-Index: AQHWkLxv33yBR7j1VE2lVgq0lG/dkKl0hMqAgAFKF7s=
-Date:   Wed, 23 Sep 2020 07:09:09 +0000
-Message-ID: <BYAPR05MB4839B5A2091ABE8AF2D8F87BA6380@BYAPR05MB4839.namprd05.prod.outlook.com>
-References: <BYAPR05MB4839189DFC487A1529D6734CA63B0@BYAPR05MB4839.namprd05.prod.outlook.com>,<87h7rqaw8u.fsf@nanos.tec.linutronix.de>
-In-Reply-To: <87h7rqaw8u.fsf@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linutronix.de; dkim=none (message not signed)
- header.d=none;linutronix.de; dmarc=none action=none header.from=vmware.com;
-x-originating-ip: [183.82.217.194]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a74d1df8-5e77-4d5d-f459-08d85f8f910c
-x-ms-traffictypediagnostic: BYAPR05MB5653:
-x-microsoft-antispam-prvs: <BYAPR05MB5653E8BEEE58BF9BFEB397ABA6380@BYAPR05MB5653.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: shPa3M9aHlaiObORuKOm9PeQyOBB7bxRdwD88OZGgMZXt/pVvfHINROu0QecN2zHyVkWaOms9voZImuKOctyqvpSKAhSWJK0p0KlfdIjPHk+0QKMYbnUDZEyQ9TWJ+cKSNMKCiyJ2blVZxks+xJa0rjQmpCwCFl8ronpWlyAbqGYwXriduKIjciu96xk2MEkrjFKGWAr6nv6nRtHbyXyx4iYmfsGJ388BMOZaW2ATCrIXaK2O/c8oxsW0YxtYdh7pMLP+ME40Tg1QYIqF0cRQeI601mtsoexOGF1cyJHxPD6ln3NnBQlrbDssQ3kD0jAffqjDrI15EXSRNg3V61PAPNtlNXv8ljtRUH6PgU/hWE1SqUUH+2hP1UdabjkO/D1
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB4839.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(39860400002)(366004)(396003)(376002)(346002)(53546011)(316002)(86362001)(26005)(6506007)(478600001)(7696005)(5660300002)(83380400001)(33656002)(2906002)(55016002)(9686003)(66476007)(186003)(64756008)(8676002)(76116006)(66946007)(4326008)(8936002)(71200400001)(66446008)(91956017)(110136005)(66556008)(52536014);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: 0wLvUhzO/79Ykt0mprz1j/uvO5FXaONgvoNmOSCAJYSMeRtQQBiAgu6Br0dR46812654SH9KQJAMEtrh6c+OlsV7kGPrqRJgpccZnYVeo7u2iV8uHKioxS77c6j0hAmZypv0x/xJysXAEdaNJOrKtgGLgOjDIxKliMcZKweV7cfk2W76ri95ZVLD+6zTNBvBQkgsIt+Lb9xsPwP2ETuVQyP1wl7XyDky6j1Sn+0vdj6pdbgFrXNGiMLgP3M0zfkT4zG/QNa/7Kx5eohtjIb/5gSRe6wOqU5juh/V4S8UsX25aq4QqUEaRgYiDlObQHMsDWSVMxf9EyALs33FvLF9DkFZrG7RgC25zfQ3EQ34yk23CeImqeUnCqI5rfJNnCKXuyLMNPGABCc3SPkDS3rjIiW+ZF/8UxncGoNkeCfvfgZeLcRJuYWQQlrfU7xLsjhw65HNlwirdotRjp4m5DDjwUjYL5F+UPv2LtX5aFd5Uz21nv9Rj3C/bpUHRzpyLpZPeLZwxP/qOG8pn/FtkFlhKrw6blvdC69ivI5rxrpqGdPLMGauKgxoEQMGET0zF3SyfhxupdBbxY/FwTdWaXvhlP4qJwyRk7OLgGj37dhLofjNoM+WGqhbr7WoEi1y4pL0AVyUUqtYXYRyIqx4Fy8mEA==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726178AbgIWHoT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 03:44:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55768 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgIWHoS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 03:44:18 -0400
+Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93E01C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Sep 2020 00:44:18 -0700 (PDT)
+Received: by mail-ua1-x942.google.com with SMTP id z46so6328677uac.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Sep 2020 00:44:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rl19lI+kzmvLV+RTaRC2uHmkNHy2s32s2TlrNNmSXiI=;
+        b=EDFoI7PiyIzC8lWlUiL1PpQxuozqM9FpybG0HWP7YEbQj8TOWbMzvV7mNyiz4I44kY
+         V0a3gByPJEx+VHK9ovn7jeb2B6qKvNFlpva2wWMCVQK39wQ8SajNBxmUvCC5oxcN+a7K
+         96/dG58Y2X5+z6Bl+UC7Pt11ameOiROtv5wZg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rl19lI+kzmvLV+RTaRC2uHmkNHy2s32s2TlrNNmSXiI=;
+        b=tTqcEGBvwBzX4/gl9q/vCwYL1OzNgBgS0739SG24QHgYUZaXkOl+FGPlLqstGz4Gtn
+         P+4OZ+jWw2GiycR32iewXCieDcpjj6rMvQqmZ/EExafrKRj8zZE+WZX/246cLpxY3VYk
+         QcmiwK9rJZApZ4tqHBDVrDKe0IfPIyrfIPNUbXii1uMuVK5Jk7PAINzgDG4TgLE5PyX4
+         zxGNz0hmuws437C+hD7NHuLnNFmtrB0v48NsoZIBGd5A7rZmsV2JG2UDmoL+T9jK8eZp
+         kfWPx9F9OIfv6kD5gXUkrky8gaqmoU8vrNXiUNMlelS0TNwddaPoBmDhfJgWDLR3CJkN
+         zo6w==
+X-Gm-Message-State: AOAM532GBa7+5Hb+N4CBGZL6fDmZo+CGy7+vzkYMM4BnbeLQMpu6vNdz
+        A+TwYlc9rNQhiUhbPJ3JdyZYRRXUVHOQFxDqKNAo7g==
+X-Google-Smtp-Source: ABdhPJxfmBPlZ+telSSrlZN0qAwufcsB4ufZxJNuUCefdCwzZZ5LDOhEUknY1T4dPkEPWXD4hRf2kao3fkIKF9qMcm4=
+X-Received: by 2002:ab0:6298:: with SMTP id z24mr6015411uao.105.1600847057500;
+ Wed, 23 Sep 2020 00:44:17 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB4839.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a74d1df8-5e77-4d5d-f459-08d85f8f910c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2020 07:09:09.0143
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Me7KX6whOV1j1/o2/aBTVhL/5+lygkL4oWYa2nH3TV8gue3NEj+Lt9r5pPh8S83538jHbTZJ1/Y9XkrmI8j8/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5653
+References: <a8828676-210a-99e8-30d7-6076f334ed71@virtuozzo.com>
+ <CAOQ4uxgZ08ePA5WFOYFoLZaq_-Kjr-haNzBN5Aj3MfF=f9pjdg@mail.gmail.com>
+ <1bb71cbf-0a10-34c7-409d-914058e102f6@virtuozzo.com> <CAOQ4uxieqnKENV_kJYwfcnPjNdVuqH3BnKVx_zLz=N_PdAguNg@mail.gmail.com>
+ <dc696835-bbb5-ed4e-8708-bc828d415a2b@virtuozzo.com> <CAOQ4uxg0XVEEzc+HyyC63WWZuA2AsRjJmbZBuNimtj=t+quVyg@mail.gmail.com>
+ <20200922210445.GG57620@redhat.com> <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+In-Reply-To: <CAOQ4uxg_FV8U833qVkgPaAWJ4MNcnGoy9Gci41bmak4_ROSc3g@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 23 Sep 2020 09:44:06 +0200
+Message-ID: <CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com>
+Subject: Re: virtiofs uuid and file handles
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Max Reitz <mreitz@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Thomas,=0A=
-=0A=
-Thank you very much for your comments.=0A=
-=0A=
-Since the performance regressions were fixed when we tested version 5.9-rc4=
-, we =0A=
-were not reporting it as an issue and our intention was just to share this =
-as an=0A=
- information only.=0A=
-=0A=
-Thanks,=0A=
-Abdul Anshad A=0A=
-=0A=
-=0A=
-From: Thomas Gleixner <tglx@linutronix.de>=0A=
-Sent: Tuesday, September 22, 2020 04:55 PM=0A=
-To: Abdul Anshad Azeez <aazees@vmware.com>; linux-kernel@vger.kernel.org <l=
-inux-kernel@vger.kernel.org>; x86@kernel.org <x86@kernel.org>; netdev@vger.=
-kernel.org <netdev@vger.kernel.org>; linux-fsdevel@vger.kernel.org <linux-f=
-sdevel@vger.kernel.org>=0A=
-Cc: rostedt@goodmis.org <rostedt@goodmis.org>=0A=
-Subject: Re: Performance regressions in networking & storage benchmarks in =
-Linux kernel 5.8 =0A=
-=A0=0A=
-Abdul,=0A=
-=0A=
-On Tue, Sep 22 2020 at 08:51, Abdul Anshad Azeez wrote:=0A=
-> Part of VMware's performance regression testing for Linux Kernel upstream=
- rele=0A=
-> ases we compared Linux kernel 5.8 against 5.7. Our evaluation revealed pe=
-rform=0A=
-> ance regressions mostly in networking latency/response-time benchmarks up=
- to 6=0A=
-> 0%. Storage throughput & latency benchmarks were also up by 8%.=0A=
-> In order to find the fix commit, we bisected again between 5.8 and 5.9-rc=
-4 and=0A=
->=A0 identified that regressions were fixed from a commit made by the same =
-author =0A=
-> Thomas Gleixner, which unbreaks the interrupt affinity settings - "e027ff=
-fff79=0A=
-> 9cdd70400c5485b1a54f482255985(x86/irq: Unbreak interrupt affinity setting=
-)".=0A=
->=0A=
-> We believe these findings would be useful to the Linux community and want=
-ed to=0A=
->=A0 document the same.=0A=
-=0A=
-thanks for letting us know, but the issue is known already and the fix=0A=
-has been backported to the stable kernel version 5.8.6 as of Sept. 3rd.=0A=
-=0A=
-Please always check the latest stable version.=0A=
-=0A=
-Thanks,=0A=
-=0A=
-=A0=A0=A0=A0=A0=A0=A0 tglx=
+On Wed, Sep 23, 2020 at 4:49 AM Amir Goldstein <amir73il@gmail.com> wrote:
+
+> I think that the proper was to implement reliable persistent file
+> handles in fuse/virtiofs would be to add ENCODE/DECODE to
+> FUSE protocol and allow the server to handle this.
+
+Max Reitz (Cc-d) is currently looking into this.
+
+One proposal was to add  LOOKUP_HANDLE operation that is similar to
+LOOKUP except it takes a {variable length handle, name} as input and
+returns a variable length handle *and* a u64 node_id that can be used
+normally for all other operations.
+
+The advantage of such a scheme for virtio-fs (and possibly other fuse
+based fs) would be that userspace need not keep a refcounted object
+around until the kernel sends a FORGET, but can prune its node ID
+based cache at any time.   If that happens and a request from the
+client (kernel) comes in with a stale node ID, the server will return
+-ESTALE and the client can ask for a new node ID with a special
+lookup_handle(fh, NULL).
+
+Disadvantages being:
+
+ - cost of generating a file handle on all lookups
+ - cost of storing file handle in kernel icache
+
+I don't think either of those are problematic in the virtiofs case.
+The cost of having to keep fds open while the client has them in its
+cache is much higher.
+
+Thanks,
+Miklos
