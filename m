@@ -2,188 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0237A275985
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E7F2759B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 16:17:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgIWOLQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 10:11:16 -0400
-Received: from mother.openwall.net ([195.42.179.200]:55686 "HELO
-        mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726665AbgIWOLN (ORCPT
+        id S1726603AbgIWORF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 10:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgIWORF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 10:11:13 -0400
-Received: (qmail 30262 invoked from network); 23 Sep 2020 14:11:11 -0000
-Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
-  by localhost with SMTP; 23 Sep 2020 14:11:11 -0000
-Received: by pvt.openwall.com (Postfix, from userid 503)
-        id C2648AB844; Wed, 23 Sep 2020 16:11:02 +0200 (CEST)
-Date:   Wed, 23 Sep 2020 16:11:02 +0200
-From:   Solar Designer <solar@openwall.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     madvenka@linux.microsoft.com, kernel-hardening@lists.openwall.com,
-        linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
-        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net,
-        Rich Felker <dalias@libc.org>
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200923141102.GA7142@openwall.com>
-References: <20200922215326.4603-1-madvenka@linux.microsoft.com> <20200923081426.GA30279@amd> <20200923091456.GA6177@openwall.com>
-Mime-Version: 1.0
+        Wed, 23 Sep 2020 10:17:05 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07F8C0613CE;
+        Wed, 23 Sep 2020 07:17:04 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kL5Zm-004aBB-Mq; Wed, 23 Sep 2020 14:16:54 +0000
+Date:   Wed, 23 Sep 2020 15:16:54 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 3/9] iov_iter: refactor rw_copy_check_uvector and
+ import_iovec
+Message-ID: <20200923141654.GJ3421308@ZenIV.linux.org.uk>
+References: <20200923060547.16903-1-hch@lst.de>
+ <20200923060547.16903-4-hch@lst.de>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200923091456.GA6177@openwall.com>
-User-Agent: Mutt/1.4.2.3i
+In-Reply-To: <20200923060547.16903-4-hch@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 11:14:56AM +0200, Solar Designer wrote:
-> On Wed, Sep 23, 2020 at 10:14:26AM +0200, Pavel Machek wrote:
-> > > Introduction
-> > > ============
-> > > 
-> > > Dynamic code is used in many different user applications. Dynamic code is
-> > > often generated at runtime. Dynamic code can also just be a pre-defined
-> > > sequence of machine instructions in a data buffer. Examples of dynamic
-> > > code are trampolines, JIT code, DBT code, etc.
-> > > 
-> > > Dynamic code is placed either in a data page or in a stack page. In order
-> > > to execute dynamic code, the page it resides in needs to be mapped with
-> > > execute permissions. Writable pages with execute permissions provide an
-> > > attack surface for hackers. Attackers can use this to inject malicious
-> > > code, modify existing code or do other harm.
-> > > 
-> > > To mitigate this, LSMs such as SELinux implement W^X. That is, they may not
-> > > allow pages to have both write and execute permissions. This prevents
-> > > dynamic code from executing and blocks applications that use it. To allow
-> > > genuine applications to run, exceptions have to be made for them (by setting
-> > > execmem, etc) which opens the door to security issues.
-> > > 
-> > > The W^X implementation today is not complete. There exist many user level
-> > > tricks that can be used to load and execute dynamic code. E.g.,
-> > > 
-> > > - Load the code into a file and map the file with R-X.
-> > > 
-> > > - Load the code in an RW- page. Change the permissions to R--. Then,
-> > >   change the permissions to R-X.
-> > > 
-> > > - Load the code in an RW- page. Remap the page with R-X to get a separate
-> > >   mapping to the same underlying physical page.
-> > > 
-> > > IMO, these are all security holes as an attacker can exploit them to inject
-> > > his own code.
-> > 
-> > IMO, you are smoking crack^H^H very seriously misunderstanding what
-> > W^X is supposed to protect from.
-> > 
-> > W^X is not supposed to protect you from attackers that can already do
-> > system calls. So loading code into a file then mapping the file as R-X
-> > is in no way security hole in W^X.
-> > 
-> > If you want to provide protection from attackers that _can_ do system
-> > calls, fine, but please don't talk about W^X and please specify what
-> > types of attacks you want to prevent and why that's good thing.
-> 
-> On one hand, Pavel is absolutely right.  It is ridiculous to say that
-> "these are all security holes as an attacker can exploit them to inject
-> his own code."
+On Wed, Sep 23, 2020 at 08:05:41AM +0200, Christoph Hellwig wrote:
 
-I stand corrected, due to Brad's tweet and follow-ups here:
+> +struct iovec *iovec_from_user(const struct iovec __user *uvec,
+> +		unsigned long nr_segs, unsigned long fast_segs,
 
-https://twitter.com/spendergrsec/status/1308728284390318082
+Hmm...  For fast_segs unsigned long had always been ridiculous
+(4G struct iovec on caller stack frame?), but that got me wondering about
+nr_segs and I wish I'd thought of that when introducing import_iovec().
 
-It sure does make sense to combine ret2libc/ROP to mprotect() with one's
-own injected shellcode.  Compared to doing everything from ROP, this is
-easier and more reliable across versions/builds if the desired payload
-is non-trivial.  My own example: invoking a shell in a local attack on
-Linux is trivial enough to do via ret2libc only, but a connect-back
-shell in a remote attack might be easier and more reliably done via
-mprotect() + shellcode.
+The thing is, import_iovec() takes unsigned int there.  Which is fine
+(hell, the maximal value that can be accepted in 1024), except that
+we do pass unsigned long syscall argument to it in some places.
 
-Per the follow-ups, this was an established technique on Windows and iOS
-until further hardening prevented it.  So it does make sense for Linux
-to do the same (as an option because of it breaking existing stuff), and
-not so much as policy enforcement for the sake of it and ease of
-reasoning, but mostly to force real-world exploits to be more complex
-and less reliable.
+E.g. vfs_readv() quietly truncates vlen to 32 bits, and vlen can
+come unchanged through sys_readv() -> do_readv() -> vfs_readv().
+With unsigned long passed by syscall glue.
 
-> On the other hand, "what W^X is supposed to protect from" depends on how
-> the term W^X is defined (historically, by PaX and OpenBSD).  It may be
-> that W^X is partially not a feature to defeat attacks per se, but also a
-> policy enforcement feature preventing use of dangerous techniques (JIT).
-> 
-> Such policy might or might not make sense.  It might make sense for ease
-> of reasoning, e.g. "I've flipped this setting, and now I'm certain the
-> system doesn't have JIT within a process (can still have it through
-> dynamically creating and invoking an entire new program), so there are
-> no opportunities for an attacker to inject code nor generate previously
-> non-existing ROP gadgets into an executable mapping within a process."
-> 
-> I do find it questionable whether such policy and such reasoning make
-> sense beyond academia.
+AFAICS, passing 4G+1 as the third argument to readv(2) on 64bit box
+will be quietly treated as 1 these days.  Which would be fine, except
+that before "switch {compat_,}do_readv_writev() to {compat_,}import_iovec()"
+it used to fail with -EINVAL.
 
-I was wrong in the above, focusing on the wrong thing.
+Userland, BTW, describes readv(2) iovcnt as int; process_vm_readv(),
+OTOH, has these counts unsigned long from the userland POV...
 
-> Then, there might be even more ways in which W^X is not perfect enough
-> to enable such reasoning.  What about using ptrace(2) to inject code?
-> Should enabling W^X also disable ability to debug programs by non-root?
-> We already have Yama ptrace_scope, which can achieve that at the highest
-> setting, although that's rather inconvenient and is probably unexpected
-> by most to be a requirement for having (ridiculously?) full W^X allowing
-> for the academic reasoning.
+I suppose we ought to switch import_iovec() to unsigned long for nr_segs ;-/
+Strictly speaking that had been a userland ABI change, even though nothing
+except regression tests checking for expected errors would've been likely
+to notice.  And it looks like no regression tests covered that one...
 
-Thinking out loud:
-
-Technically, ptrace() is also usable from a ROP chain.  It might be too
-cumbersome to bother using to get a shellcode going, but OTOH it's just
-one function to be invoked in a similar fashion multiple times, so might
-be more reliable than having a ROP chain depend on multiple actually
-needed functions directly (moving that dependency into the shellcode).
-
-> Personally, I am for policies that make more practical sense.  For
-> example, years ago I advocated here on kernel-hardening that we should
-> have a mode where ELF flags enabling/disabling executable stack are
-> ignored, and non-executable stack is always enforced.  This should also
-> be extended to default (at program startup) permissions on more than
-> just stack (but also on .bss, typical libcs' heap allocations, etc.)
-> However, I am not convinced there's enough value in extending the policy
-> to restricting explicit uses of mprotect(2).
-> 
-> Yes, PaX did that, and its emutramp.txt said "runtime code generation is
-> by its nature incompatible with PaX's PAGEEXEC/SEGMEXEC and MPROTECT
-> features, therefore the real solution is not in emulation but by
-> designing a kernel API for runtime code generation and modifying
-> userland to make use of it."  However, not being convinced in the
-> MPROTECT feature having enough practical value,
-
-I am convinced now, however:
-
-> I am also not convinced
-> "a kernel API for runtime code generation and modifying userland to make
-> use of it" is the way to go.
-
-doesn't automatically follow from the above, because:
-
-> Having static instead of dynamically-generated trampolines in userland
-> code where possible (and making other userland/ABI changes to make that
-> possible in more/all cases) is an obvious improvement, and IMO should be
-> a priority over the above.
-> 
-> While I share my opinion here, I don't mean that to block Madhavan's
-> work.  I'd rather defer to people more knowledgeable in current userland
-> and ABI issues/limitations and plans on dealing with those, especially
-> to Florian Weimer.  I haven't seen Florian say anything specific for or
-> against Madhavan's proposal, and I'd like to.  (Have I missed that?)
-> It'd be wrong to introduce a kernel API that userland doesn't need, and
-> it'd be right to introduce one that userland actually intends to use.
-> 
-> I've also added Rich Felker to CC here, for musl libc and its possible
-> intent to use the proposed API.  (My guess is there's no such need, and
-> thus no intent, but Rich might want to confirm that or correct me.)
-
-So need to hear more from the userland folks, I guess.
-
-Alexander
+Linus, does that qualify for your "if no userland has noticed the change,
+it's not a breakage"?
