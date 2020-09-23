@@ -2,140 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B6327575E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 13:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0D6275828
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 14:47:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbgIWLpM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 07:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbgIWLpA (ORCPT
+        id S1726557AbgIWMrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 08:47:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:23610 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726545AbgIWMrF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 07:45:00 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02FFC0613CE
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Sep 2020 04:45:00 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id u3so3029415pjr.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Sep 2020 04:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nPkmLEjjOLqKd/lOoAyA8z7n9dUCjwGzd+W0L3DZgSM=;
-        b=jUElUNR/aCuC47FTFhG+ItffqFmwJg58kuZUnBmtNmUSCv3QmjsuHGiNubphfVCWwo
-         f5WVv+EXIx5PHxtWQ5Cqy4gRLqc8pAx6KV4ryb3N5QIky0xU8+dpfa9TZXTpzsopQtNH
-         NojmKG9IHrIQbClrFWFgmUAb2cJg5x3l3EfYOGaHLnQ0fYSGZ3kF5EaCe59e0l7SUBY9
-         O80XINHl/CvqKhEnwJ4SqQp/hX2tuJMg5gW3bto/N+744BSwhaZg9fWIPZtEKPydO3D0
-         N9EXzRXiEVHTEF2BfD5A7SJjfZn9I6fJt0E60wHquNb0j/Uj5imwTOzJcOu1FCUADHe1
-         qsAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nPkmLEjjOLqKd/lOoAyA8z7n9dUCjwGzd+W0L3DZgSM=;
-        b=B+jZjpmCDJdRQlqKaSRup7WjNOLSiZybFoHDlduba89qPlPSyUziIypfhJT70gSNdr
-         pSjGX3ihNzbuJIsc9fvMI7A7IkePtCfxTBV8QHEq1PD6i7Q34klgVVnIbGiDYwTAtMBR
-         z5LwxxzoPaFn0wQ+qBhpDSdze7002NFnCreFwbX32n2tWm3WaS1RdbYaZMAOh2l2cEzx
-         3oDmcF6F6JLE4wVYXqx42KGAj0fG9gSwgWlTW41LMV9Lu45A4O3jHPZjA6AU2dY8bqdb
-         kMHresZT33nXSGMpxtuhilDSh6xki5q3v73Kvy+M8eHxMbchAiworyDNIvQezgmZ29a/
-         Jy/w==
-X-Gm-Message-State: AOAM532vRm4Lhy/5y3BnxHbbDGzNWHBMXqML6nZvKLKLCcsmWpH544+l
-        uKlq/L+yV18W4wY11GaxLClM+w==
-X-Google-Smtp-Source: ABdhPJynCqLc4R0uR3z+mm+2RmWHC4eyIwG+zcF5oGEc0p73c69eYffchw07KnbDQyeAvZgLntwxfQ==
-X-Received: by 2002:a17:90b:3c1:: with SMTP id go1mr7987568pjb.192.1600861500197;
-        Wed, 23 Sep 2020 04:45:00 -0700 (PDT)
-Received: from Smcdef-MBP.local.net ([103.136.220.72])
-        by smtp.gmail.com with ESMTPSA id a13sm17632155pfl.184.2020.09.23.04.44.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Sep 2020 04:44:59 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhuyinyin@bytedance.com,
-        Muchun Song <songmuchun@bytedance.com>,
-        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Subject: [PATCH v2 5/5] io_uring: Fix double list add in io_queue_async_work()
-Date:   Wed, 23 Sep 2020 19:44:19 +0800
-Message-Id: <20200923114419.71218-6-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20200923114419.71218-1-songmuchun@bytedance.com>
-References: <20200923114419.71218-1-songmuchun@bytedance.com>
+        Wed, 23 Sep 2020 08:47:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600865224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eTJH5fsunyc+8vtxo0cxTOWltBYbQ+uQLkgwLM6exPI=;
+        b=R2jEqA/yllybeMBm/EJPGOvL87xVSqlXCFScBSmh90hFa86ulwjM6pf5GzDRieV/+OJzGw
+        4cLxmzs+rJBKl1O3x5bqryA8nCAM7Zf95AyhUaqD/+z9A4tmWt1tLErKrbxDeLWohhcXgi
+        lP12sLPO74WrSgVk4qlL7uExSveGLrk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-434-RTPIZN_4P6qOg6GgeD4nRQ-1; Wed, 23 Sep 2020 08:47:02 -0400
+X-MC-Unique: RTPIZN_4P6qOg6GgeD4nRQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 055D9107464E;
+        Wed, 23 Sep 2020 12:47:00 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8B9B05D98D;
+        Wed, 23 Sep 2020 12:46:59 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08NCkwt8020916;
+        Wed, 23 Sep 2020 08:46:58 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08NCkvuo020912;
+        Wed, 23 Sep 2020 08:46:57 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 23 Sep 2020 08:46:57 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Jan Kara <jack@suse.cz>
+cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: A bug in ext4 with big directories (was: NVFS XFS metadata)
+In-Reply-To: <20200923094457.GB6719@quack2.suse.cz>
+Message-ID: <alpine.LRH.2.02.2009230846210.1800@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com> <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com> <alpine.LRH.2.02.2009161359540.20710@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009191336380.3478@file01.intranet.prod.int.rdu2.redhat.com> <20200922050314.GB12096@dread.disaster.area>
+ <alpine.LRH.2.02.2009220815420.16480@file01.intranet.prod.int.rdu2.redhat.com> <20200923024528.GD12096@dread.disaster.area> <alpine.LRH.2.02.2009230459450.1800@file01.intranet.prod.int.rdu2.redhat.com> <20200923094457.GB6719@quack2.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we queue work in io_poll_wake(), it will leads to list double
-add. So we should add the list when the callback func is the
-io_sq_wq_submit_work.
 
-The following oops was seen:
 
-    list_add double add: new=ffff9ca6a8f1b0e0, prev=ffff9ca62001cee8,
-    next=ffff9ca6a8f1b0e0.
-    ------------[ cut here ]------------
-    kernel BUG at lib/list_debug.c:31!
-    Call Trace:
-     <IRQ>
-     io_poll_wake+0xf3/0x230
-     __wake_up_common+0x91/0x170
-     __wake_up_common_lock+0x7a/0xc0
-     io_commit_cqring+0xea/0x280
-     ? blkcg_iolatency_done_bio+0x2b/0x610
-     io_cqring_add_event+0x3e/0x60
-     io_complete_rw+0x58/0x80
-     dio_complete+0x106/0x250
-     blk_update_request+0xa0/0x3b0
-     blk_mq_end_request+0x1a/0x110
-     blk_mq_complete_request+0xd0/0xe0
-     nvme_irq+0x129/0x270 [nvme]
-     __handle_irq_event_percpu+0x7b/0x190
-     handle_irq_event_percpu+0x30/0x80
-     handle_irq_event+0x3c/0x60
-     handle_edge_irq+0x91/0x1e0
-     do_IRQ+0x4d/0xd0
-     common_interrupt+0xf/0xf
+On Wed, 23 Sep 2020, Jan Kara wrote:
 
-Fixes: 1c4404efcf2c ("io_uring: make sure async workqueue is canceled on exit")
-Reported-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- fs/io_uring.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+> Hi!
+> 
+> On Wed 23-09-20 05:20:55, Mikulas Patocka wrote:
+> > There seems to be a bug in ext4 - when I create very large directory, ext4 
+> > fails with -ENOSPC despite the fact that there is plenty of free space and 
+> > free inodes on the filesystem.
+> > 
+> > How to reproduce:
+> > download the program dir-test: 
+> > http://people.redhat.com/~mpatocka/benchmarks/dir-test.c
+> > 
+> > # modprobe brd rd_size=67108864
+> > # mkfs.ext4 /dev/ram0
+> > # mount -t ext4 /dev/ram0 /mnt/test
+> > # dir-test /mnt/test/ 8000000 8000000
+> > deleting: 7999000
+> > 2540000
+> > file 2515327 can't be created: No space left on device
+> > # df /mnt/test
+> > /dev/ram0        65531436 633752 61525860   2% /mnt/test
+> > # df -i /mnt/test
+> > /dev/ram0        4194304 1881547 2312757   45% /mnt/test
+> 
+> Yeah, you likely run out of space in ext4 directory h-tree. You can enable
+> higher depth h-trees with large_dir feature (mkfs.ext4 -O large_dir). Does
+> that help?
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index c65f78f395655..a7cfe976480d8 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -513,12 +513,14 @@ static inline void io_queue_async_work(struct io_ring_ctx *ctx,
- 		}
- 	}
- 
--	req->files = current->files;
-+	if (req->work.func == io_sq_wq_submit_work) {
-+		req->files = current->files;
- 
--	spin_lock_irqsave(&ctx->task_lock, flags);
--	list_add(&req->task_list, &ctx->task_list);
--	req->work_task = NULL;
--	spin_unlock_irqrestore(&ctx->task_lock, flags);
-+		spin_lock_irqsave(&ctx->task_lock, flags);
-+		list_add(&req->task_list, &ctx->task_list);
-+		req->work_task = NULL;
-+		spin_unlock_irqrestore(&ctx->task_lock, flags);
-+	}
- 
- 	queue_work(ctx->sqo_wq[rw], &req->work);
- }
-@@ -667,6 +669,7 @@ static struct io_kiocb *io_get_req(struct io_ring_ctx *ctx,
- 		state->cur_req++;
- 	}
- 
-+	INIT_LIST_HEAD(&req->task_list);
- 	req->file = NULL;
- 	req->ctx = ctx;
- 	req->flags = 0;
--- 
-2.11.0
+Yes, this helps.
+
+Mikulas
+
+> 
+> 								Honza
+> 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
