@@ -2,166 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E463B27625A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 22:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C92276288
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 22:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgIWUof (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 16:44:35 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47686 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgIWUof (ORCPT
+        id S1726779AbgIWUwC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 16:52:02 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33862 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbgIWUwC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 16:44:35 -0400
-X-Greylist: delayed 1561 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Sep 2020 16:44:34 EDT
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 0338129C28A
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Chao Yu <chao@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, kernel-team@android.com
-Subject: Re: [PATCH 3/5] libfs: Add generic function for setting dentry_ops
-Organization: Collabora
-References: <20200923010151.69506-1-drosen@google.com>
-        <20200923010151.69506-4-drosen@google.com>
-Date:   Wed, 23 Sep 2020 16:44:28 -0400
-In-Reply-To: <20200923010151.69506-4-drosen@google.com> (Daniel Rosenberg's
-        message of "Wed, 23 Sep 2020 01:01:49 +0000")
-Message-ID: <87ft785ikz.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Wed, 23 Sep 2020 16:52:02 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 2992C1C0BB6; Wed, 23 Sep 2020 22:51:57 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 22:51:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923205156.GA12034@duo.ucw.cz>
+References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
+ <20200922215326.4603-1-madvenka@linux.microsoft.com>
+ <20200923084232.GB30279@amd>
+ <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Disposition: inline
+In-Reply-To: <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Daniel Rosenberg <drosen@google.com> writes:
 
-> This adds a function to set dentry operations at lookup time that will
-> work for both encrypted files and casefolded filenames.
->
-> A filesystem that supports both features simultaneously can use this
-> function during lookup preperations to set up its dentry operations once
-> fscrypt no longer does that itself.
->
-> Currently the casefolding dentry operation are always set because the
-> feature is toggleable on empty directories. Since we don't know what
-> set of functions we'll eventually need, and cannot change them later,
-> we add just add them.
->
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> ---
->  fs/libfs.c         | 49 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  1 +
->  2 files changed, 50 insertions(+)
->
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index fc34361c1489..83303858f1fe 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1449,4 +1449,53 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
->  	return 0;
->  }
->  EXPORT_SYMBOL(generic_ci_d_hash);
-> +
-> +static const struct dentry_operations generic_ci_dentry_ops = {
-> +	.d_hash = generic_ci_d_hash,
-> +	.d_compare = generic_ci_d_compare,
-> +};
-> +#endif
-> +
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +static const struct dentry_operations generic_encrypted_dentry_ops = {
-> +	.d_revalidate = fscrypt_d_revalidate,
-> +};
-> +#endif
-> +
-> +#if IS_ENABLED(CONFIG_UNICODE) && IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static const struct dentry_operations generic_encrypted_ci_dentry_ops = {
-> +	.d_hash = generic_ci_d_hash,
-> +	.d_compare = generic_ci_d_compare,
-> +	.d_revalidate = fscrypt_d_revalidate,
-> +};
-> +#endif
-> +
-> +/**
-> + * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-> + * @dentry:	dentry to set ops on
-> + *
-> + * This function sets the dentry ops for the given dentry to handle both
-> + * casefolding and encryption of the dentry name.
-> + */
-> +void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
-> +{
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME) {
-> +#ifdef CONFIG_UNICODE
-> +		if (dentry->d_sb->s_encoding) {
-> +			d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
-> +			return;
-> +		}
->  #endif
-> +		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
-> +		return;
-> +	}
-> +#endif
-> +#ifdef CONFIG_UNICODE
-> +	if (dentry->d_sb->s_encoding) {
-> +		d_set_d_op(dentry, &generic_ci_dentry_ops);
-> +		return;
-> +	}
-> +#endif
-> +}
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think this is harder to read than necessary.  What do you think about
-just splitting the three cases like the following:
+Hi!
 
-void generic_set_encrypted_ci_d_ops(struct dentry *dentry) {
+> >> Scenario 2
+> >> ----------
+> >>
+> >> We know what code we need in advance. User trampolines are a good exam=
+ple of
+> >> this. It is possible to define such code statically with some help fro=
+m the
+> >> kernel.
+> >>
+> >> This RFC addresses (2). (1) needs a general purpose trusted code gener=
+ator
+> >> and is out of scope for this RFC.
+> >=20
+> > This is slightly less crazy talk than introduction talking about holes
+> > in W^X. But it is very, very far from normal Unix system, where you
+> > have selection of interpretters to run your malware on (sh, python,
+> > awk, emacs, ...) and often you can even compile malware from sources.=
+=20
+> >=20
+> > And as you noted, we don't have "a general purpose trusted code
+> > generator" for our systems.
+> >=20
+> > I believe you should simply delete confusing "introduction" and
+> > provide details of super-secure system where your patches would be
+> > useful, instead.
+>=20
+> This RFC talks about converting dynamic code (which cannot be authenticat=
+ed)
+> to static code that can be authenticated using signature verification. Th=
+at
+> is the scope of this RFC.
+>=20
+> If I have not been clear before, by dynamic code, I mean machine code tha=
+t is
+> dynamic in nature. Scripts are beyond the scope of this RFC.
+>=20
+> Also, malware compiled from sources is not dynamic code. That is orthogon=
+al
+> to this RFC. If such malware has a valid signature that the kernel permit=
+s its
+> execution, we have a systemic problem.
+>=20
+> I am not saying that script authentication or compiled malware are not pr=
+oblems.
+> I am just saying that this RFC is not trying to solve all of the security=
+ problems.
+> It is trying to define one way to convert dynamic code to static code to =
+address
+> one class of problems.
 
-#if defined(CONFIG_FS_ENCRYPTION) && defined(CONFIG_UNICODE)
-    if (encoding && encryption) {
-    	d_set_d_op(dentry, &generic_encrypted_ci_dentry_ops);
-            return;
-    }
-#endif
+Well, you don't have to solve all problems at once.
 
-#if defined (CONFIG_FS_ENCRYPTION)
-    if (encryption) {
-    	d_set_d_op(dentry, &generic_encrypted_dentry_ops);
-        return;
-    }
-#endif
+But solutions have to exist, and AFAIK in this case they don't. You
+are armoring doors, but ignoring open windows.
 
-#if defined (CONFIG_UNICODE)
-    if (encoding) {
-    	d_set_d_op(dentry, &generic_ci_dentry_ops);
-        return;
-    }
-#endif
-}
+Or very probably you are thinking about something different than
+normal desktop distros (Debian 10). Because on my systems, I have
+python, gdb and gcc...
 
-> +EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bc5417c61e12..6627896db835 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3277,6 +3277,7 @@ extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
->  extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
->  				const char *str, const struct qstr *name);
->  #endif
-> +extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
->  
->  #ifdef CONFIG_MIGRATION
->  extern int buffer_migrate_page(struct address_space *,
+It would be nice to specify what other pieces need to be present for
+this to make sense -- because it makes no sense on Debian 10.
 
--- 
-Gabriel Krisman Bertazi
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2u1bAAKCRAw5/Bqldv6
+8ov1AJ9oh8sVA5W7qErLEsJzifoDuHM8DACgh6w28VCKvVj+dLDCdmUuI6zKsgc=
+=0Viq
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
