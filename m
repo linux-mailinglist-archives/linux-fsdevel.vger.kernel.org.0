@@ -2,98 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FAAD275DA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 18:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D47E4275DBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 18:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbgIWQin (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 12:38:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53324 "EHLO
+        id S1726755AbgIWQoA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 12:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbgIWQin (ORCPT
+        with ESMTP id S1726671AbgIWQn7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 12:38:43 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33F6C0613CE;
-        Wed, 23 Sep 2020 09:38:42 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kL7mp-004f4D-Mx; Wed, 23 Sep 2020 16:38:31 +0000
-Date:   Wed, 23 Sep 2020 17:38:31 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
+        Wed, 23 Sep 2020 12:43:59 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4177C0613CE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Sep 2020 09:43:59 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id l126so19535pfd.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Sep 2020 09:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9kKVBm2QDcEhoI7VNH0u9uwqsgFbX84K7to4q+EvAF8=;
+        b=wo1HxCm5bKIVa9so0OH72jUPeuxpy0gBmSztrnAMX5SSm8gqDsd/uDbJD7n0nTY7Hv
+         CKJoObg/EBB1JCvStmCq+2DKeNopjuTxhY6T7yv5TlzOVOSgvtBEy4neG07it4ARoA4J
+         WHOi+7obrEMIUDmzT3kBBEHLDf0ZbrbNxMoUwtAnQnNZ4qwV/A1Mq5PJhKVbgpJ/Rod5
+         V4wdCnvNPJU0KSWHIs05KbU5DxoLhNDG93YaWxwBm6g7XccmnyHw+ixRtSpxeaSGMhwd
+         mx1/GOsS6pG7kDo6kprXjUbJ/6H+1rzHGTrQ7trw2dp1Uk7jyzCH8F6put7clvS8xmh3
+         DueQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9kKVBm2QDcEhoI7VNH0u9uwqsgFbX84K7to4q+EvAF8=;
+        b=SPoPcO+aw71b+U1Ow/16ebZc8CJlnHRnNdXr8QzkoSwcvnrbNuakpIa7Mqn9pMRlkG
+         T9G0ZM8ov089KeEMwS/G+OXLB1kwp4iZtfkMPIxXYctGAx3onFT7316mjAZ7wLaDQ3Wv
+         3HNYQswvFeDUyTyQx9BQQ6nmFPUYpTSS1Fh43hj/I6ptTboFsQ7JkBFDuhCCfg1NtVqC
+         B4E3tIWcZufyU/BvVIK+mcv6/fHGpI79Xxz+2syuJuuB98srhkouFz4xOId2MUcuy+nh
+         OzPaBziOpqjrapkwPKJO5cosszDZDLKo2S8c7pUvqfvCpS5LkA5YKDEzr8oP9xlb5FIg
+         Bolg==
+X-Gm-Message-State: AOAM531WayU1gfMeWPDJVUU/NqK9KDk3kui+op8zt/2IPrgAOXcCFAi6
+        tPWtd5bAVFMIrOjHCbITg4m5/w==
+X-Google-Smtp-Source: ABdhPJzQnxjNRw3M1n4lJU3pDIkemY3ZCQKnOQ7VywhFrMYRm0itMgYfj3gWdktm3tes58COiW8SXA==
+X-Received: by 2002:a62:2b52:0:b029:142:2501:39e9 with SMTP id r79-20020a622b520000b0290142250139e9mr746426pfr.56.1600879439083;
+        Wed, 23 Sep 2020 09:43:59 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id q190sm241046pfq.99.2020.09.23.09.43.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Sep 2020 09:43:58 -0700 (PDT)
+Subject: Re: remove blkdev_get as a public API v2
 To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
-Message-ID: <20200923163831.GO3421308@ZenIV.linux.org.uk>
-References: <20200923060547.16903-1-hch@lst.de>
- <20200923060547.16903-6-hch@lst.de>
- <20200923142549.GK3421308@ZenIV.linux.org.uk>
- <20200923143251.GA14062@lst.de>
- <20200923145901.GN3421308@ZenIV.linux.org.uk>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, nbd@other.debian.org,
+        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+References: <20200921071958.307589-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d23e5bd4-4d69-f909-eb8b-10c489b67f8b@kernel.dk>
+Date:   Wed, 23 Sep 2020 10:43:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200923145901.GN3421308@ZenIV.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20200921071958.307589-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 03:59:01PM +0100, Al Viro wrote:
-
-> > That's a very good question.  But it does not just compile but actually
-> > works.  Probably because all the syscall wrappers mean that we don't
-> > actually generate the normal names.  I just tried this:
-> > 
-> > --- a/include/linux/syscalls.h
-> > +++ b/include/linux/syscalls.h
-> > @@ -468,7 +468,7 @@ asmlinkage long sys_lseek(unsigned int fd, off_t offset,
-> >  asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
-> >  asmlinkage long sys_write(unsigned int fd, const char __user *buf,
-> >                             size_t count);
-> > -asmlinkage long sys_readv(unsigned long fd,
-> > +asmlinkage long sys_readv(void *fd,
-> > 
-> > for fun, and the compiler doesn't care either..
+On 9/21/20 1:19 AM, Christoph Hellwig wrote:
+> Hi Jens,
 > 
-> Try to build it for sparc or ppc...
+> this series removes blkdev_get as a public API, leaving it as just an
+> implementation detail of blkdev_get_by_path and blkdev_get_by_dev.  The
+> reason for that is that blkdev_get is a very confusing API that requires
+> a struct block_device to be fed in, but then actually consumes the
+> reference.  And it turns out just using the two above mentioned APIs
+> actually significantly simplifies the code as well.
+> 
+> Changes since v1:
+>  - fix a mismerged that left a stray bdget_disk around
+>  - factour the partition scan at registration time code into a new
+>    helper.
 
-FWIW, declarations in syscalls.h used to serve 4 purposes:
-	1) syscall table initializers needed symbols declared
-	2) direct calls needed the same
-	3) catching mismatches between the declarations and definitions
-	4) centralized list of all syscalls
+Applied for 5.10, thanks.
 
-(2) has been (thankfully) reduced for some time; in any case, ksys_... is
-used for the remaining ones.
+-- 
+Jens Axboe
 
-(1) and (3) are served by syscalls.h in architectures other than x86, arm64
-and s390.  On those 3 (1) is done otherwise (near the syscall table initializer)
-and (3) is not done at all.
-
-I wonder if we should do something like
-
-SYSCALL_DECLARE3(readv, unsigned long, fd, const struct iovec __user *, vec,
-		 unsigned long, vlen);
-in syscalls.h instead, and not under that ifdef.
-
-Let it expand to declaration of sys_...() in generic case and, on x86, into
-__do_sys_...() and __ia32_sys_...()/__x64_sys_...(), with types matching
-what SYSCALL_DEFINE ends up using.
-
-Similar macro would cover compat_sys_...() declarations.  That would
-restore mismatch checking for x86 and friends.  AFAICS, the cost wouldn't
-be terribly high - cpp would have more to chew through in syscalls.h,
-but it shouldn't be all that costly.  Famous last words, of course...
-
-Does anybody see fundamental problems with that?
