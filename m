@@ -2,98 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F93275F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 19:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F881275F43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Sep 2020 20:00:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbgIWRqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Sep 2020 13:46:15 -0400
-Received: from verein.lst.de ([213.95.11.211]:49388 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726130AbgIWRqP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Sep 2020 13:46:15 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 5EA266736F; Wed, 23 Sep 2020 19:46:09 +0200 (CEST)
-Date:   Wed, 23 Sep 2020 19:46:09 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
-Message-ID: <20200923174609.GA24379@lst.de>
-References: <20200923060547.16903-1-hch@lst.de> <20200923060547.16903-6-hch@lst.de> <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de> <20200923145901.GN3421308@ZenIV.linux.org.uk> <20200923163831.GO3421308@ZenIV.linux.org.uk> <20200923170527.GQ3421308@ZenIV.linux.org.uk>
-MIME-Version: 1.0
+        id S1726537AbgIWSAP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Sep 2020 14:00:15 -0400
+Received: from mother.openwall.net ([195.42.179.200]:53989 "HELO
+        mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726228AbgIWSAP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 23 Sep 2020 14:00:15 -0400
+Received: (qmail 18029 invoked from network); 23 Sep 2020 18:00:12 -0000
+Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
+  by localhost with SMTP; 23 Sep 2020 18:00:12 -0000
+Received: by pvt.openwall.com (Postfix, from userid 503)
+        id 59151AB844; Wed, 23 Sep 2020 20:00:07 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 20:00:07 +0200
+From:   Solar Designer <solar@openwall.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     madvenka@linux.microsoft.com, kernel-hardening@lists.openwall.com,
+        linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net,
+        Rich Felker <dalias@libc.org>
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923180007.GA8646@openwall.com>
+References: <20200922215326.4603-1-madvenka@linux.microsoft.com> <20200923081426.GA30279@amd> <20200923091456.GA6177@openwall.com> <20200923141102.GA7142@openwall.com> <20200923151835.GA32555@duo.ucw.cz>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200923170527.GQ3421308@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200923151835.GA32555@duo.ucw.cz>
+User-Agent: Mutt/1.4.2.3i
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 06:05:27PM +0100, Al Viro wrote:
-> On Wed, Sep 23, 2020 at 05:38:31PM +0100, Al Viro wrote:
-> > On Wed, Sep 23, 2020 at 03:59:01PM +0100, Al Viro wrote:
-> > 
-> > > > That's a very good question.  But it does not just compile but actually
-> > > > works.  Probably because all the syscall wrappers mean that we don't
-> > > > actually generate the normal names.  I just tried this:
-> > > > 
-> > > > --- a/include/linux/syscalls.h
-> > > > +++ b/include/linux/syscalls.h
-> > > > @@ -468,7 +468,7 @@ asmlinkage long sys_lseek(unsigned int fd, off_t offset,
-> > > >  asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
-> > > >  asmlinkage long sys_write(unsigned int fd, const char __user *buf,
-> > > >                             size_t count);
-> > > > -asmlinkage long sys_readv(unsigned long fd,
-> > > > +asmlinkage long sys_readv(void *fd,
-> > > > 
-> > > > for fun, and the compiler doesn't care either..
-> > > 
-> > > Try to build it for sparc or ppc...
-> > 
-> > FWIW, declarations in syscalls.h used to serve 4 purposes:
-> > 	1) syscall table initializers needed symbols declared
-> > 	2) direct calls needed the same
-> > 	3) catching mismatches between the declarations and definitions
-> > 	4) centralized list of all syscalls
-> > 
-> > (2) has been (thankfully) reduced for some time; in any case, ksys_... is
-> > used for the remaining ones.
-> > 
-> > (1) and (3) are served by syscalls.h in architectures other than x86, arm64
-> > and s390.  On those 3 (1) is done otherwise (near the syscall table initializer)
-> > and (3) is not done at all.
-> > 
-> > I wonder if we should do something like
-> > 
-> > SYSCALL_DECLARE3(readv, unsigned long, fd, const struct iovec __user *, vec,
-> > 		 unsigned long, vlen);
-> > in syscalls.h instead, and not under that ifdef.
-> > 
-> > Let it expand to declaration of sys_...() in generic case and, on x86, into
-> > __do_sys_...() and __ia32_sys_...()/__x64_sys_...(), with types matching
-> > what SYSCALL_DEFINE ends up using.
-> > 
-> > Similar macro would cover compat_sys_...() declarations.  That would
-> > restore mismatch checking for x86 and friends.  AFAICS, the cost wouldn't
-> > be terribly high - cpp would have more to chew through in syscalls.h,
-> > but it shouldn't be all that costly.  Famous last words, of course...
-> > 
-> > Does anybody see fundamental problems with that?
+On Wed, Sep 23, 2020 at 05:18:35PM +0200, Pavel Machek wrote:
+> > It sure does make sense to combine ret2libc/ROP to mprotect() with one's
+> > own injected shellcode.  Compared to doing everything from ROP, this is
+> > easier and more reliable across versions/builds if the desired
+> > payload
 > 
-> Just to make it clear - I do not propose to fold that into this series;
-> there we just need to keep those declarations in sync with fs/read_write.c
+> Ok, so this starts to be a bit confusing.
+> 
+> I thought W^X is to protect from attackers that have overflowed buffer
+> somewhere, but can not to do arbitrary syscalls, yet.
+> 
+> You are saying that there's important class of attackers that can do
+> some syscalls but not arbitrary ones.
 
-Agreed.  The above idea generally sounds sane to me.
+They might be able to do many, most, or all arbitrary syscalls via
+ret2libc or such.  The crucial detail is that each time they do that,
+they risk incompatibility with the given target system (version, build,
+maybe ASLR if gadgets from multiple libraries are involved).  By using
+mprotect(), they only take this risk once (need to get the address of an
+mprotect() gadget and of what to change protections on right), and then
+they can invoke multiple syscalls from their shellcode more reliably.
+So for doing a lot of work, mprotect() combined with injected code can
+be easier and more reliable.  It is also an extra option an attacker can
+use, in addition to doing everything via borrowed code.  More
+flexibility for the attacker means the attacker may choose whichever
+approach works better in a given case (or try several).
+
+I am embarrassed for not thinking/recalling this when I first posted
+earlier today.  It's actually obvious.  I'm just getting old and rusty.
+
+> I'd like to see definition of that attacker (and perhaps description
+> of the system the protection is expected to be useful on -- if it is
+> not close to common Linux distros).
+
+There's nothing unusual about that attacker and the system.
+
+A couple of other things Brad kindly pointed out:
+
+SELinux already has similar protections (execmem, execmod):
+
+http://lkml.iu.edu/hypermail/linux/kernel/0508.2/0194.html
+https://danwalsh.livejournal.com/6117.html
+
+PaX MPROTECT is implemented in a way or at a layer that covers ptrace()
+abuse that I mentioned.  (At least that's how I understood Brad.)
+
+Alexander
+
+P.S. Meanwhile, Twitter locked my account "for security purposes".  Fun.
+I'll just let it be for now.
