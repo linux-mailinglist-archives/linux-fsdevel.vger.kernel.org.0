@@ -2,30 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1488B2776E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 18:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 171D62776E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 18:39:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbgIXQjq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 12:39:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35876 "EHLO mx2.suse.de"
+        id S1728531AbgIXQjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 12:39:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35914 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726458AbgIXQjn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 12:39:43 -0400
+        id S1727074AbgIXQjr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 12:39:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 162F8ABD1;
-        Thu, 24 Sep 2020 16:39:42 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id D9937B289;
+        Thu, 24 Sep 2020 16:39:44 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
         johannes.thumshirn@wdc.com, dsterba@suse.com,
         darrick.wong@oracle.com, josef@toxicpanda.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Johannes Thumshirn <jth@kernel.org>
-Subject: [PATCH 02/14] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
-Date:   Thu, 24 Sep 2020 11:39:09 -0500
-Message-Id: <20200924163922.2547-3-rgoldwyn@suse.de>
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: [PATCH 03/14] iomap: Allow filesystem to call iomap_dio_complete without i_rwsem
+Date:   Thu, 24 Sep 2020 11:39:10 -0500
+Message-Id: <20200924163922.2547-4-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200924163922.2547-1-rgoldwyn@suse.de>
 References: <20200924163922.2547-1-rgoldwyn@suse.de>
@@ -35,75 +33,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+From: Christoph Hellwig <hch@lst.de>
 
-Since we now perform direct reads using i_rwsem, we can remove this
-inode flag used to co-ordinate unlocked reads.
+This is to avoid the deadlock caused in btrfs because of O_DIRECT |
+O_DSYNC.
 
-The truncate call takes i_rwsem. This means it is correctly synchronized
-with concurrent direct reads.
+Filesystems such as btrfs require i_rwsem while performing sync on a
+file. iomap_dio_rw() is called under i_rw_sem. This leads to a
+deadlock because of:
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Johannes Thumshirn <jth@kernel.org>
+iomap_dio_complete()
+  generic_write_sync()
+    btrfs_sync_file()
+
+Separate out iomap_dio_complete() from iomap_dio_rw(), so filesystems
+can call iomap_dio_complete() after unlocking i_rwsem.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 ---
- fs/btrfs/btrfs_inode.h | 18 ------------------
- fs/btrfs/inode.c       |  3 ---
- 2 files changed, 21 deletions(-)
+ fs/iomap/direct-io.c  | 35 ++++++++++++++++++++++++++---------
+ include/linux/iomap.h |  5 +++++
+ 2 files changed, 31 insertions(+), 9 deletions(-)
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 6fdb46d58299..738009a22320 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -33,7 +33,6 @@ enum {
- 	BTRFS_INODE_NEEDS_FULL_SYNC,
- 	BTRFS_INODE_COPY_EVERYTHING,
- 	BTRFS_INODE_IN_DELALLOC_LIST,
--	BTRFS_INODE_READDIO_NEED_LOCK,
- 	BTRFS_INODE_HAS_PROPS,
- 	BTRFS_INODE_SNAPSHOT_FLUSH,
- };
-@@ -334,23 +333,6 @@ struct btrfs_dio_private {
- 	u8 csums[];
- };
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index c1aafb2ab990..b88dbfe15118 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -76,7 +76,7 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+ 		dio->submit.cookie = submit_bio(bio);
+ }
  
--/*
-- * Disable DIO read nolock optimization, so new dio readers will be forced
-- * to grab i_mutex. It is used to avoid the endless truncate due to
-- * nonlocked dio read.
-- */
--static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
--{
--	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
--	smp_mb();
--}
--
--static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
--{
--	smp_mb__before_atomic();
--	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
--}
--
- /* Array of bytes with variable length, hexadecimal format 0x1234 */
- #define CSUM_FMT				"0x%*phN"
- #define CSUM_FMT_VALUE(size, bytes)		size, bytes
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 18d171b2d544..3db4697ff1ba 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4855,10 +4855,7 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
+-static ssize_t iomap_dio_complete(struct iomap_dio *dio)
++ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ {
+ 	const struct iomap_dio_ops *dops = dio->dops;
+ 	struct kiocb *iocb = dio->iocb;
+@@ -130,6 +130,7 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
  
- 		truncate_setsize(inode, newsize);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(iomap_dio_complete);
  
--		/* Disable nonlocked read DIO to avoid the endless truncate */
--		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
- 		inode_dio_wait(inode);
--		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
+ static void iomap_dio_complete_work(struct work_struct *work)
+ {
+@@ -406,8 +407,8 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+  * Returns -ENOTBLK In case of a page invalidation invalidation failure for
+  * writes.  The callers needs to fall back to buffered I/O in this case.
+  */
+-ssize_t
+-iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
++struct iomap_dio *
++__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		bool wait_for_completion)
+ {
+@@ -421,14 +422,14 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	struct iomap_dio *dio;
  
- 		ret = btrfs_truncate(inode, newsize == oldsize);
- 		if (ret && inode->i_nlink) {
+ 	if (!count)
+-		return 0;
++		return NULL;
+ 
+ 	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+-		return -EIO;
++		return ERR_PTR(-EIO);
+ 
+ 	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+ 	if (!dio)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	dio->iocb = iocb;
+ 	atomic_set(&dio->ref, 1);
+@@ -558,7 +559,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	dio->wait_for_completion = wait_for_completion;
+ 	if (!atomic_dec_and_test(&dio->ref)) {
+ 		if (!wait_for_completion)
+-			return -EIOCBQUEUED;
++			return ERR_PTR(-EIOCBQUEUED);
+ 
+ 		for (;;) {
+ 			set_current_state(TASK_UNINTERRUPTIBLE);
+@@ -574,10 +575,26 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		__set_current_state(TASK_RUNNING);
+ 	}
+ 
+-	return iomap_dio_complete(dio);
++	return dio;
+ 
+ out_free_dio:
+ 	kfree(dio);
+-	return ret;
++	if (ret)
++		return ERR_PTR(ret);
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(__iomap_dio_rw);
++
++ssize_t
++iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
++		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
++		bool wait_for_completion)
++{
++	struct iomap_dio *dio;
++
++	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
++	if (IS_ERR_OR_NULL(dio))
++		return PTR_ERR_OR_ZERO(dio);
++	return iomap_dio_complete(dio);
+ }
+ EXPORT_SYMBOL_GPL(iomap_dio_rw);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 4d1d3c3469e9..172b3397a1a3 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -13,6 +13,7 @@
+ struct address_space;
+ struct fiemap_extent_info;
+ struct inode;
++struct iomap_dio;
+ struct iomap_writepage_ctx;
+ struct iov_iter;
+ struct kiocb;
+@@ -258,6 +259,10 @@ struct iomap_dio_ops {
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		bool wait_for_completion);
++struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
++		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
++		bool wait_for_completion);
++ssize_t iomap_dio_complete(struct iomap_dio *dio);
+ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+ 
+ #ifdef CONFIG_SWAP
 -- 
 2.26.2
 
