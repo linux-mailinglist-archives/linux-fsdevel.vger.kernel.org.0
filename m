@@ -2,109 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2677227689F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 08:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2CF82769B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 08:54:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgIXGAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 02:00:06 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:41129 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726799AbgIXGAG (ORCPT
+        id S1727404AbgIXGxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 02:53:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43460 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727014AbgIXGv7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 02:00:06 -0400
-X-IronPort-AV: E=Sophos;i="5.77,296,1596470400"; 
-   d="scan'208";a="99567075"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 24 Sep 2020 14:00:02 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id 0A1AF48990E8;
-        Thu, 24 Sep 2020 14:00:01 +0800 (CST)
-Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Thu, 24 Sep 2020 13:59:58 +0800
-Received: from localhost.localdomain (10.167.225.206) by
- G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Thu, 24 Sep 2020 13:59:58 +0800
-From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-CC:     <david@fromorbit.com>, <ira.weiny@intel.com>,
-        <linux-xfs@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-        <y-goto@fujitsu.com>, <lihao2018.fnst@cn.fujitsu.com>
-Subject: [PATCH v2] fs: Kill DCACHE_DONTCACHE dentry even if DCACHE_REFERENCED is set
-Date:   Thu, 24 Sep 2020 13:59:58 +0800
-Message-ID: <20200924055958.825515-1-lihao2018.fnst@cn.fujitsu.com>
+        Thu, 24 Sep 2020 02:51:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F282C0613D3;
+        Wed, 23 Sep 2020 23:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=5cv5XM1WbeIcMKM5m6HEEjDcYpaEJfjGWw9dDjM6nfI=; b=r2w8hhD+ZBoRdDKl0qZXo3vF81
+        hM/13MLXzpPkHMHSdkeatYWtW/3Rk3FztSV6U5y+CbAh6t7JHsfTFWVb3fcVheFT1g+IP1CUvdL/M
+        qf6RvhVVVcfKzIDmXfduJ5W90Ne2Xmv0UFnYt+mp024P858pnetDNMffHtNWZutPuWI481/Ixizft
+        VzlRi+PBja8K/ca/ZHfPdeq8UXLIZ3VY+HnhwsTOu5umASFwHza1/IftOvz3nrDcW8iJ2OvWsxcVr
+        FHnaTnZTbgNXfbL0liL+h4MJ2F/DEq8P/XjVxB+RLUSVk0zwY6gebGFkYLAM8tqFMr4ps3to5Wmm/
+        AERB55ug==;
+Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kLL6T-00019A-6Y; Thu, 24 Sep 2020 06:51:41 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Justin Sanders <justin@coraid.com>,
+        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, cgroups@vger.kernel.org
+Subject: bdi cleanups v7
+Date:   Thu, 24 Sep 2020 08:51:27 +0200
+Message-Id: <20200924065140.726436-1-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 0A1AF48990E8.ADB91
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If DCACHE_REFERENCED is set, fast_dput() will return true, and then
-retain_dentry() have no chance to check DCACHE_DONTCACHE. As a result,
-the dentry won't be killed and the corresponding inode can't be evicted.
-In the following example, the DAX policy can't take effects unless we
-do a drop_caches manually.
+Hi Jens,
 
-  # DCACHE_LRU_LIST will be set
-  echo abcdefg > test.txt
+this series contains a bunch of different BDI cleanups.  The biggest item
+is to isolate block drivers from the BDI in preparation of changing the
+lifetime of the block device BDI in a follow up series.
 
-  # DCACHE_REFERENCED will be set and DCACHE_DONTCACHE can't do anything
-  xfs_io -c 'chattr +x' test.txt
+Changes since v6:
+ - add a new blk_queue_update_readahead helper and use it in stacking
+   drivers
+ - improve another commit log
 
-  # Drop caches to make DAX changing take effects
-  echo 2 > /proc/sys/vm/drop_caches
+Changes since v5:
+ - improve a commit message
+ - improve the stable_writes deprecation printk
+ - drop "drbd: remove RB_CONGESTED_REMOTE"
+ - drop a few hunks that add a local variable in a otherwise unchanged
+   file due to changes in the previous revisions
+ - keep updating ->io_pages in queue_max_sectors_store
+ - set an optimal I/O size in aoe
+ - inherit the optimal I/O size in bcache
 
-What this patch does is preventing fast_dput() from returning true if
-DCACHE_DONTCACHE is set. Then retain_dentry() will detect the
-DCACHE_DONTCACHE and will return false. As a result, the dentry will be
-killed and the inode will be evicted. In this way, if we change per-file
-DAX policy, it will take effects automatically after this file is closed
-by all processes.
+Changes since v4:
+ - add a back a prematurely removed assignment in dm-table.c
+ - pick up a few reviews from Johannes that got lost
 
-I also add some comments to make the code more clear.
+Changes since v3:
+ - rebased on the lasted block tree, which has some of the prep
+   changes merged
+ - extend the ->ra_pages changes to ->io_pages
+ - move initializing ->ra_pages and ->io_pages for block devices to
+   blk_register_queue
 
-Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
----
-v1 is split into two standalone patch as discussed in [1], and the first
-patch has been reviewed in [2]. This is the second patch.
+Changes since v2:
+ - fix a rw_page return value check
+ - fix up various changelogs
 
-[1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
-[2]: https://lore.kernel.org/linux-fsdevel/20200906214002.GI12131@dread.disaster.area/
-
- fs/dcache.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index ea0485861d93..97e81a844a96 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -793,10 +793,17 @@ static inline bool fast_dput(struct dentry *dentry)
- 	 * a reference to the dentry and change that, but
- 	 * our work is done - we can leave the dentry
- 	 * around with a zero refcount.
-+	 *
-+	 * Nevertheless, there are two cases that we should kill
-+	 * the dentry anyway.
-+	 * 1. free disconnected dentries as soon as their refcount
-+	 *    reached zero.
-+	 * 2. free dentries if they should not be cached.
- 	 */
- 	smp_rmb();
- 	d_flags = READ_ONCE(dentry->d_flags);
--	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
-+	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST |
-+			DCACHE_DISCONNECTED | DCACHE_DONTCACHE;
- 
- 	/* Nothing to do? Dropping the reference was all we needed? */
- 	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
--- 
-2.28.0
+Changes since v1:
+ - rebased to the for-5.9/block-merge branch
+ - explicitly set the readahead to 0 for ubifs, vboxsf and mtd
+ - split the zram block_device operations
+ - let rw_page users fall back to bios in swap_readpage
 
 
-
+Diffstat:
