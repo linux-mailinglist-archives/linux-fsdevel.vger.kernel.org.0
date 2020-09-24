@@ -2,118 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43845277B76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 00:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC21E277B8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 00:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgIXWFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 18:05:46 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:60532 "EHLO
+        id S1726668AbgIXWNq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 18:13:46 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:32818 "EHLO
         jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbgIXWFq (ORCPT
+        with ESMTP id S1726205AbgIXWNq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 18:05:46 -0400
+        Thu, 24 Sep 2020 18:13:46 -0400
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 251041C0BD9; Fri, 25 Sep 2020 00:05:42 +0200 (CEST)
-Date:   Fri, 25 Sep 2020 00:05:40 +0200
+        id 0D9A61C0BE0; Fri, 25 Sep 2020 00:13:43 +0200 (CEST)
+Date:   Fri, 25 Sep 2020 00:13:42 +0200
 From:   Pavel Machek <pavel@ucw.cz>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Florian Weimer <fw@deneb.enyo.de>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
-        fweimer@redhat.com, mark.rutland@arm.com
+        x86@kernel.org, libffi-discuss@sourceware.org, luto@kernel.org,
+        David.Laight@ACULAB.COM, mark.rutland@arm.com, mic@digikod.net
 Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200924220540.GA13185@amd>
-References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
- <20200922215326.4603-1-madvenka@linux.microsoft.com>
- <20200923084232.GB30279@amd>
- <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
- <20200923205156.GA12034@duo.ucw.cz>
- <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
+Message-ID: <20200924221342.GB13185@amd>
+References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
+ <87v9gdz01h.fsf@mid.deneb.enyo.de>
+ <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
+ <20200923014616.GA1216401@rani.riverdale.lan>
+ <20200923091125.GB1240819@rani.riverdale.lan>
+ <a742b9cd-4ffb-60e0-63b8-894800009700@linux.microsoft.com>
+ <20200923195147.GA1358246@rani.riverdale.lan>
+ <2ed2becd-49b5-7e76-9836-6a43707f539f@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+        protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
 Content-Disposition: inline
-In-Reply-To: <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
+In-Reply-To: <2ed2becd-49b5-7e76-9836-6a43707f539f@linux.microsoft.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---SUOF0GtieIMvvwua
+--nVMJ2NtxeReIH9PS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> >>> I believe you should simply delete confusing "introduction" and
-> >>> provide details of super-secure system where your patches would be
-> >>> useful, instead.
-> >>
-> >> This RFC talks about converting dynamic code (which cannot be authenti=
-cated)
-> >> to static code that can be authenticated using signature verification.=
- That
-> >> is the scope of this RFC.
-> >>
-> >> If I have not been clear before, by dynamic code, I mean machine code =
-that is
-> >> dynamic in nature. Scripts are beyond the scope of this RFC.
-> >>
-> >> Also, malware compiled from sources is not dynamic code. That is ortho=
-gonal
-> >> to this RFC. If such malware has a valid signature that the kernel per=
-mits its
-> >> execution, we have a systemic problem.
-> >>
-> >> I am not saying that script authentication or compiled malware are not=
- problems.
-> >> I am just saying that this RFC is not trying to solve all of the secur=
-ity problems.
-> >> It is trying to define one way to convert dynamic code to static code =
-to address
-> >> one class of problems.
-> >=20
-> > Well, you don't have to solve all problems at once.
-> >=20
-> > But solutions have to exist, and AFAIK in this case they don't. You
-> > are armoring doors, but ignoring open windows.
+> PC-relative data referencing
+> ----------------------------
 >=20
-> FYI, script execution is being addressed (for the kernel part) by this
-> patch series:
-> https://lore.kernel.org/lkml/20200924153228.387737-1-mic@digikod.net/
-
-Ok.
-
-> > Or very probably you are thinking about something different than
-> > normal desktop distros (Debian 10). Because on my systems, I have
-> > python, gdb and gcc...
+> I agree that the current PC value can be loaded in a GPR using the trick
+> of call, pop on i386.
 >=20
-> It doesn't make sense for a tailored security system to leave all these
-> tools available to an attacker.
-
-And it also does not make sense to use "trampoline file descriptor" on
-generic system... while W^X should make sense there.
-
-> > It would be nice to specify what other pieces need to be present for
-> > this to make sense -- because it makes no sense on Debian 10.
+> Perhaps, on other architectures, we can do similar things. For instance,
+> in architectures that load the return address in a designated register
+> instead of pushing it on the stack, the trampoline could call a leaf func=
+tion
+> that moves the value of that register into data_reg so that at the locati=
+on
+> after the call instruction, the current PC is already loaded in data_reg.
+> SPARC is one example I can think of.
 >=20
-> Not all kernel features make sense for a generic/undefined usage,
-> especially specific security mechanisms (e.g. SELinux, Smack, Tomoyo,
-> SafeSetID, LoadPin, IMA, IPE, secure/trusted boot, lockdown, etc.), but
-> they can still be definitely useful.
+> My take is - if the ISA supports PC-relative data referencing explicitly =
+(like
+> X64 or ARM64), then we can use it. Or, if the ABI specification documents=
+ an
+> approved way to load the PC into a GPR, we can use it.
+>=20
+> Otherwise, using an ABI quirk or a calling convention side effect to load=
+ the
+> PC into a GPR is, IMO, non-standard or non-compliant or non-approved or
+> whatever you want to call it. I would be conservative and not use
 
-Yep... so... I'd expect something like... "so you have single-purpose
-system with all script interpreters removed, IMA hashing all the files
-to make sure they are not modified, and W^X enabled. Attacker can
-still execute code after buffer overflow by .... and trapoline file
-descriptor addrsses that"... so that people running generic systems
-can stop reading after first sentence.
+ISAs are very well defined, and basically not changing. If you want to
+argue we should not use something, you should have very clear picture
+_why_ it is bad. "Non-standard or non-approved or whatever" just does
+not cut it.
+
+And yes, certain tricks may be seriously slow on modern CPUs, and we
+might want to avoid those. But other than that... you should have
+better argument than "it is non-standard".
 
 Best regards,
 									Pavel
@@ -122,16 +96,16 @@ Best regards,
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---SUOF0GtieIMvvwua
+--nVMJ2NtxeReIH9PS
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAl9tGDQACgkQMOfwapXb+vJJrACguUwBUXADnMj7K1we9pMBCXao
-yuMAoLYUAsqVN8r3PK8Ax9IBA9TWFYbf
-=yH8g
+iEYEARECAAYFAl9tGhYACgkQMOfwapXb+vJZHwCfU5jKO40qUDcezUI+s8fyyfU7
+zC8An2cC26db1I80i/2GbnoRTakpnf34
+=8gy5
 -----END PGP SIGNATURE-----
 
---SUOF0GtieIMvvwua--
+--nVMJ2NtxeReIH9PS--
