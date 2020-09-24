@@ -2,98 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA0A277605
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 17:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754A427767A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 18:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbgIXP5t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 11:57:49 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:58118 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgIXP5t (ORCPT
+        id S1726565AbgIXQTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 12:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46716 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbgIXQTP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 11:57:49 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OFYNF4187938;
-        Thu, 24 Sep 2020 15:57:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : mime-version :
- content-type; s=corp-2020-01-29;
- bh=coGfpNEvHw1Ww6VMM3AUAr95WYwBGdMfGxQAq7Ut3Eo=;
- b=td1+RxKdoLOO2t63uF4zlGVrGlzNX/kncvf9CRu1+Q/Z185II6vOPY7OYVmR00lwbBvB
- oI39qsaxEsXuhrFRnhPNYadRAzid4vpFVH1DnNrCOUVZGKGLshblg06fbzYwGPztgdZo
- Z/fUTCgCP16jQ550PJt+VWDuquf6GdVURF+vw2dk3HUNxhFcamf3ZH2BVw0ZfMpJ+5yZ
- mxpIgUdAVm3QXDHsXihsvYimVL4XmoOEGm2cGgSqGvu3D9jELBR6iVkzSAWn9+LAYCfl
- ZfTFRr7HESquQPnKqBx6g1RyXHnWraO8Kxaud9pk648QpJJgQ9L9MM7dy9P+I69dS8p3 Iw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 33qcpu62rn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Sep 2020 15:57:21 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OFUVZ4083297;
-        Thu, 24 Sep 2020 15:57:21 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 33nujr3a74-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Sep 2020 15:57:21 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08OFvJrj021930;
-        Thu, 24 Sep 2020 15:57:19 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 24 Sep 2020 08:57:19 -0700
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Song Liu <song@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Justin Sanders <justin@coraid.com>,
-        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@tron.linbit.com,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 07/13] block: lift setting the readahead size into the
- block layer
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1y2kzkw1h.fsf@ca-mkp.ca.oracle.com>
-References: <20200924065140.726436-1-hch@lst.de>
-        <20200924065140.726436-8-hch@lst.de>
-Date:   Thu, 24 Sep 2020 11:57:14 -0400
-In-Reply-To: <20200924065140.726436-8-hch@lst.de> (Christoph Hellwig's message
-        of "Thu, 24 Sep 2020 08:51:34 +0200")
+        Thu, 24 Sep 2020 12:19:15 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22ECEC0613CE;
+        Thu, 24 Sep 2020 09:19:15 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id c2so1663441otp.7;
+        Thu, 24 Sep 2020 09:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=EDrVEIgRKX7DJHruxvfWiEIEjp75G6MffjRUfIzRobk=;
+        b=KgXwBeE8eBvm9xJKsCWdNtbXpSuC/6StTGu0Q5164xy7XkeG8qJDADIfxv4VWmpNuq
+         8Gss+VlXw3LfHQkceCMfeLIjNTv9PFs5iEdeOEbbNUWbSYlvaskZ2p48E5Gv5Cg8aDCg
+         lc5QBukmSTYDy0UiGAxEcHUDjPe+m4P3jsnGbbhsIA/7VMbsnxRb9FPS2Dw+mgsQcaIz
+         xleqLdgDvjqjXTu08RO4X1O3umFIuoBW/Y1lDvLGenEs2TNTq6OZuC3mTGjGcDmrmeNr
+         2RlytAA/oVr/MoDgqUyP9RFrr5S9saMtbRmxI7rSjxVqBHXWQJlbpNkr8sTAelbYdWwJ
+         l0hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=EDrVEIgRKX7DJHruxvfWiEIEjp75G6MffjRUfIzRobk=;
+        b=XSmig/bBSf3LKdUlZi8AsaCmRR7DOcpIyzwD11dfHLa/iPwwOcFZJHiwjKj0BSw+bm
+         dLO3XsyDIQikq/Dl1QjUIYQIIllOaofCvquxLr7gcNlMYm/wxIAsmDPM7aj/UZbh8Wqp
+         uSKbC205ti2rvdl6r0FNkeYtYfijIWDLZABI+FIQ5Q8+v27f6s7fbs4U3Hf2TUIwxN+V
+         HBaF2Unv4VuSO7YMgniWqSl3RTJZzbr0Q/ZryKCUxxijVc9Wzz0h0F1Pt0Lg8ln/Xsn4
+         4e/yEf1zJBWvAQ7SggQegwx5o0nhOaFeBZV1NEQOXqSmCwWI2I3yJC9yDiIrKnvYZrnA
+         euqg==
+X-Gm-Message-State: AOAM530w11m85RQ3GMSbCzkaxunD+FEZxKtsdp7iAXqvkngAWPMDGQox
+        MSfq46KAsT8wCCjjtRALoonhwZGstz37kvX9Wmu+d81OflI=
+X-Google-Smtp-Source: ABdhPJyqVHCc8Cnz+bPH4+z4HNo3jgU6hfL+HkJ6shnN/Y4Fc6DBtW1IZ/2ZePgbFEzrsqIeDEXsehjG8uBU1VHwraQ=
+X-Received: by 2002:a05:6830:110b:: with SMTP id w11mr285499otq.109.1600964354539;
+ Thu, 24 Sep 2020 09:19:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 suspectscore=1
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009240118
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 mlxlogscore=999
- adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 spamscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009240118
+References: <20200924125608.31231-1-willy@infradead.org> <CA+icZUUQGmd3juNPv1sHTWdhzXwZzRv=p1i+Q=20z_WGcZOzbg@mail.gmail.com>
+ <20200924151538.GW32101@casper.infradead.org> <CA+icZUX4bQf+pYsnOR0gHZLsX3NriL=617=RU0usDfx=idgZmA@mail.gmail.com>
+ <20200924152755.GY32101@casper.infradead.org>
+In-Reply-To: <20200924152755.GY32101@casper.infradead.org>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Thu, 24 Sep 2020 18:19:03 +0200
+Message-ID: <CA+icZUURRcCh1TYtLs=U_353bhv5_JhVFaGxVPL5Rydee0P1=Q@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Qian Cai <cai@redhat.com>, Brian Foster <bfoster@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Sep 24, 2020 at 5:27 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Sep 24, 2020 at 05:21:00PM +0200, Sedat Dilek wrote:
+> > Great and thanks.
+> >
+> > Can you send out a seperate patch and label it with "PATCH v5.9"?
+> > I run:
+> > $ git format-patch -1 --subject-prefix="PATCH v5.9" --signoff
+> >
+> > Normally, I catch patches from any patchwork URL in mbox format.
+>
+> Maybe wait a few hours for people to decide if they like the approach
+> taken to fix the bug before diving into producing backports?
 
-Christoph,
+That make sense.
 
-> Drivers shouldn't really mess with the readahead size, as that is a VM
-> concept.  Instead set it based on the optimal I/O size by lifting the
-> algorithm from the md driver when registering the disk.  Also set
-> bdi->io_pages there as well by applying the same scheme based on
-> max_sectors.  To ensure the limits work well for stacking drivers a
-> new helper is added to update the readahead limits from the block
-> limits, which is also called from disk_stack_limits.
+You have a test-case for me?
+I have here Linux-Test-Project and FIO available.
 
-Looks good!
-
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+- Sedat -
