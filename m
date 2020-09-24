@@ -2,113 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D781F27753F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 17:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F7F827755D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 17:32:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728440AbgIXP2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 11:28:02 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58165 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728285AbgIXP2B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 11:28:01 -0400
-IronPort-SDR: LgHY0KrwQPGYD8SVZHo9lC2CB9hS6VurKlP5T24v6rn3lPQtiPzUQ+fIP3LGZEhGydGACpNRA8
- DUicohK0+Cow==
-X-IronPort-AV: E=McAfee;i="6000,8403,9753"; a="225381798"
-X-IronPort-AV: E=Sophos;i="5.77,298,1596524400"; 
-   d="scan'208";a="225381798"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 08:28:00 -0700
-IronPort-SDR: LA1eFb5xMaqYkH1ryN0Tb0/RIqDte/AgdxwEvMOTpof540OpjqnWCwyWoZf1UHzvpvcAWIRBBU
- sPiUZx0xqZ9Q==
-X-IronPort-AV: E=Sophos;i="5.77,298,1596524400"; 
-   d="scan'208";a="486940874"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Sep 2020 08:28:00 -0700
-Date:   Thu, 24 Sep 2020 08:27:59 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Hao Li <lihao2018.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, linux-xfs@vger.kernel.org,
-        viro@zeniv.linux.org.uk, y-goto@fujitsu.com
-Subject: Re: [PATCH v2] fs: Kill DCACHE_DONTCACHE dentry even if
- DCACHE_REFERENCED is set
-Message-ID: <20200924152759.GJ2540965@iweiny-DESK2.sc.intel.com>
-References: <20200924055958.825515-1-lihao2018.fnst@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200924055958.825515-1-lihao2018.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        id S1728381AbgIXPcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 11:32:18 -0400
+Received: from relay.sw.ru ([185.231.240.75]:50486 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728350AbgIXPcP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 11:32:15 -0400
+Received: from [192.168.15.46] (helo=alex-laptop)
+        by relay3.sw.ru with smtp (Exim 4.94)
+        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
+        id 1kLTDk-000vAT-UD; Thu, 24 Sep 2020 18:31:44 +0300
+Date:   Thu, 24 Sep 2020 18:31:45 +0300
+From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     christian@brauner.io, dhowells@redhat.com
+Subject: Re: [PATCH 1/1] fsopen: fsconfig syscall restart fix
+Message-Id: <20200924183145.040df323d6b86b12d7bd22a2@virtuozzo.com>
+In-Reply-To: <20200923201958.b27ecda5a1e788fb5f472bcd@virtuozzo.com>
+References: <20200923164637.13032-1-alexander.mikhalitsyn@virtuozzo.com>
+        <20200923164637.13032-2-alexander.mikhalitsyn@virtuozzo.com>
+        <20200923170322.GP3421308@ZenIV.linux.org.uk>
+        <20200923201958.b27ecda5a1e788fb5f472bcd@virtuozzo.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 01:59:58PM +0800, Hao Li wrote:
-> If DCACHE_REFERENCED is set, fast_dput() will return true, and then
-> retain_dentry() have no chance to check DCACHE_DONTCACHE. As a result,
-> the dentry won't be killed and the corresponding inode can't be evicted.
-> In the following example, the DAX policy can't take effects unless we
-> do a drop_caches manually.
-> 
->   # DCACHE_LRU_LIST will be set
->   echo abcdefg > test.txt
-> 
->   # DCACHE_REFERENCED will be set and DCACHE_DONTCACHE can't do anything
->   xfs_io -c 'chattr +x' test.txt
-> 
->   # Drop caches to make DAX changing take effects
->   echo 2 > /proc/sys/vm/drop_caches
-> 
-> What this patch does is preventing fast_dput() from returning true if
-> DCACHE_DONTCACHE is set. Then retain_dentry() will detect the
-> DCACHE_DONTCACHE and will return false. As a result, the dentry will be
-> killed and the inode will be evicted. In this way, if we change per-file
-> DAX policy, it will take effects automatically after this file is closed
-> by all processes.
-> 
-> I also add some comments to make the code more clear.
-> 
-> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+I've sent the copy to Christian and David
 
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Cc: Christian Brauner <christian@brauner.io>
+Cc: David Howells <dhowells@redhat.com>
 
-> ---
-> v1 is split into two standalone patch as discussed in [1], and the first
-> patch has been reviewed in [2]. This is the second patch.
+Guys, please take a look once time permit.
+
+Thank you.
+Regards, Alex
+
+On Wed, 23 Sep 2020 20:19:58 +0300
+Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com> wrote:
+
+> On Wed, 23 Sep 2020 18:03:22 +0100
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
 > 
-> [1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
-> [2]: https://lore.kernel.org/linux-fsdevel/20200906214002.GI12131@dread.disaster.area/
+> > On Wed, Sep 23, 2020 at 07:46:36PM +0300, Alexander Mikhalitsyn wrote:
+> > > During execution of vfs_fsconfig_locked function we can get ERESTARTNOINTR
+> > > error (or other interrupt error). But we changing fs context fc->phase
+> > > field to transient states and our entry fc->phase checks in switch cases
+> > > (see FS_CONTEXT_CREATE_PARAMS, FS_CONTEXT_RECONF_PARAMS) will always fail
+> > > after syscall restart which will lead to returning -EBUSY to the userspace.
+> > > 
+> > > The idea of the fix is to save entry-time fs_context phase field value and
+> > > recover fc->phase value to the original one before exiting with
+> > > "interrupt error" (ERESTARTNOINTR or similar).
+> > 
+> > If you have e.g. vfs_create_tree() fail in the middle of ->get_tree(),
+> > the only thing you can do to that thing is to discard it.  The state is
+> > *NOT* required to be recoverable after a failure exit - quite a bit of
+> > config might've been consumed and freed by that point.
+> > 
+> > CREATE and RECONFIGURE are simply not restartable.
 > 
->  fs/dcache.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+> Thank you for quick response!
 > 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index ea0485861d93..97e81a844a96 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -793,10 +793,17 @@ static inline bool fast_dput(struct dentry *dentry)
->  	 * a reference to the dentry and change that, but
->  	 * our work is done - we can leave the dentry
->  	 * around with a zero refcount.
-> +	 *
-> +	 * Nevertheless, there are two cases that we should kill
-> +	 * the dentry anyway.
-> +	 * 1. free disconnected dentries as soon as their refcount
-> +	 *    reached zero.
-> +	 * 2. free dentries if they should not be cached.
->  	 */
->  	smp_rmb();
->  	d_flags = READ_ONCE(dentry->d_flags);
-> -	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
-> +	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST |
-> +			DCACHE_DISCONNECTED | DCACHE_DONTCACHE;
->  
->  	/* Nothing to do? Dropping the reference was all we needed? */
->  	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
-> -- 
-> 2.28.0
+> I got you idea. But as far as I understand fsopen/fsconfig API is in
+> early-development stage and we can think about convenience here.
 > 
+> Consider the typical code here:
+> int fsfd;
+> fsfd = fsopen("somefs", 0);
+> // a lot of:
+> fsconfig(fsfd, FSCONFIG_SET_FLAG, ...);
+> fsconfig(fsfd, FSCONFIG_SET_STRING, ...);
+> fsconfig(fsfd, FSCONFIG_SET_BINARY, ...);
+> //...
 > 
+> // now call:
+> fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0)
+> -> get signal here or something else
+> -> syscall restarted but this doesn't work because
+> of broken fc->phase state
+> -> get EBUSY
+> -> now we need to repeat *all* steps with
+> fsconfig(fsfd, FSCONFIG_SET_FLAG/FSCONFIG_SET_STRING, ...).
+> Speaking honestly, this looks weird.
 > 
+> Regards,
+> Alex.
+
