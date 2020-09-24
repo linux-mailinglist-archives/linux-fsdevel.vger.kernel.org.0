@@ -2,128 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94322277AFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 23:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43845277B76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 00:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbgIXVTz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 17:19:55 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51380 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726316AbgIXVTz (ORCPT
+        id S1726684AbgIXWFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 18:05:46 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:60532 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbgIXWFq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 17:19:55 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1600982393;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/f2519A4FFfEiLO37RE5G/56UlC68vOhs3kQ5xBftDs=;
-        b=zGWGGczcrPtzNvrC1XAax8sFAbJb/azuMPygmdZ24MAMzrc/rjxqzfXFcjpF+RO/Vrl/1e
-        +FVzQkuP0EXtYU0GQJ1REFUeX1JdMrFC3EmQKMfjWwK/KINl3+NfNG58Ti5k2MkHtHSwmK
-        m8PJx0ZQ0s/YMLaz5m3riFBqlfyDUeS5UyK7erdiU9EkoPsCZg6UpOI/6arxw8KNo6FbST
-        j5kafCPdBC/8OSgIuNU0jnMUHqYnw9SCCluodEsuv/u/I81efcup1XxxD/RFex8cKksjD2
-        L5ZPgFpCAZazHE3udxArK3sXCTaK+lvEtzNV3euIuwyrCZyvE4ASCMDLU2QnlA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1600982393;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/f2519A4FFfEiLO37RE5G/56UlC68vOhs3kQ5xBftDs=;
-        b=0j6xC2UCjpscBk8+SqseCoV0zxI+5wS2N+WGzn1FbjiK2tzMmySjJ9H6+QqcJ4GLVGCvQp
-        Y5V37dIH/PgeasCw==
-To:     Tom Hromatka <tom.hromatka@oracle.com>, tom.hromatka@oracle.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        fweisbec@gmail.com, mingo@kernel.org, adobriyan@gmail.com
-Subject: Re: [PATCH v2 2/2] /proc/stat: Simplify iowait and idle calculations when cpu is offline
-In-Reply-To: <20200915193627.85423-3-tom.hromatka@oracle.com>
-References: <20200915193627.85423-1-tom.hromatka@oracle.com> <20200915193627.85423-3-tom.hromatka@oracle.com>
-Date:   Thu, 24 Sep 2020 23:19:53 +0200
-Message-ID: <87h7rm7tza.fsf@nanos.tec.linutronix.de>
+        Thu, 24 Sep 2020 18:05:46 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 251041C0BD9; Fri, 25 Sep 2020 00:05:42 +0200 (CEST)
+Date:   Fri, 25 Sep 2020 00:05:40 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200924220540.GA13185@amd>
+References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
+ <20200922215326.4603-1-madvenka@linux.microsoft.com>
+ <20200923084232.GB30279@amd>
+ <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
+ <20200923205156.GA12034@duo.ucw.cz>
+ <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Disposition: inline
+In-Reply-To: <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 15 2020 at 13:36, Tom Hromatka wrote:
-> Prior to this commit, the cpu idle and iowait data in /proc/stat used
-> different data sources based upon whether the CPU was online or not.
-> This would cause spikes in the cpu idle and iowait data.
 
-This would not cause spikes. It _causes_ these times to go backwards and
-start over from 0. That's something completely different than a spike.
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please describe problems precisely.
+Hi!
 
-> This patch uses the same data source, get_cpu_{idle,iowait}_time_us(),
-> whether the CPU is online or not.
->
-> This patch and the preceding patch, "tick-sched: Do not clear the
-> iowait and idle times", ensure that the cpu idle and iowait data
-> are always increasing.
+> >>> I believe you should simply delete confusing "introduction" and
+> >>> provide details of super-secure system where your patches would be
+> >>> useful, instead.
+> >>
+> >> This RFC talks about converting dynamic code (which cannot be authenti=
+cated)
+> >> to static code that can be authenticated using signature verification.=
+ That
+> >> is the scope of this RFC.
+> >>
+> >> If I have not been clear before, by dynamic code, I mean machine code =
+that is
+> >> dynamic in nature. Scripts are beyond the scope of this RFC.
+> >>
+> >> Also, malware compiled from sources is not dynamic code. That is ortho=
+gonal
+> >> to this RFC. If such malware has a valid signature that the kernel per=
+mits its
+> >> execution, we have a systemic problem.
+> >>
+> >> I am not saying that script authentication or compiled malware are not=
+ problems.
+> >> I am just saying that this RFC is not trying to solve all of the secur=
+ity problems.
+> >> It is trying to define one way to convert dynamic code to static code =
+to address
+> >> one class of problems.
+> >=20
+> > Well, you don't have to solve all problems at once.
+> >=20
+> > But solutions have to exist, and AFAIK in this case they don't. You
+> > are armoring doors, but ignoring open windows.
+>=20
+> FYI, script execution is being addressed (for the kernel part) by this
+> patch series:
+> https://lore.kernel.org/lkml/20200924153228.387737-1-mic@digikod.net/
 
-So now you have a mixture of 'This commit and this patch'. Oh well.
+Ok.
 
-Aside of that the ordering of your changelog is backwards. Something
-like this:
+> > Or very probably you are thinking about something different than
+> > normal desktop distros (Debian 10). Because on my systems, I have
+> > python, gdb and gcc...
+>=20
+> It doesn't make sense for a tailored security system to leave all these
+> tools available to an attacker.
 
-   The CPU idle and iowait times in /proc/stats are inconsistent accross
-   CPU hotplug.
+And it also does not make sense to use "trampoline file descriptor" on
+generic system... while W^X should make sense there.
 
-   The reason is that for NOHZ active systems the core accounting of CPU
-   idle and iowait times used to be reset when a CPU was unplugged. The
-   /proc/stat code tries to work around that by using the corresponding
-   member of kernel_cpustat when the CPU is offline.
+> > It would be nice to specify what other pieces need to be present for
+> > this to make sense -- because it makes no sense on Debian 10.
+>=20
+> Not all kernel features make sense for a generic/undefined usage,
+> especially specific security mechanisms (e.g. SELinux, Smack, Tomoyo,
+> SafeSetID, LoadPin, IMA, IPE, secure/trusted boot, lockdown, etc.), but
+> they can still be definitely useful.
 
-   This works as long as the CPU stays offline, but when it is onlined
-   again then the accounting is taken from the NOHZ core data again
-   which started over from 0 causing both times to go backwards.
+Yep... so... I'd expect something like... "so you have single-purpose
+system with all script interpreters removed, IMA hashing all the files
+to make sure they are not modified, and W^X enabled. Attacker can
+still execute code after buffer overflow by .... and trapoline file
+descriptor addrsses that"... so that people running generic systems
+can stop reading after first sentence.
 
-   The HOHZ core has been fixed to preserve idle and iowait times
-   accross CPU unplug, so the broken workaround is not longer required.
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Hmm?
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-But...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> --- a/fs/proc/stat.c
-> +++ b/fs/proc/stat.c
-> @@ -47,34 +47,12 @@ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
->  
->  static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
->  {
-> -	u64 idle, idle_usecs = -1ULL;
-> -
-> -	if (cpu_online(cpu))
-> -		idle_usecs = get_cpu_idle_time_us(cpu, NULL);
-> -
-> -	if (idle_usecs == -1ULL)
-> -		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
-> -		idle = kcs->cpustat[CPUTIME_IDLE];
-> -	else
-> -		idle = idle_usecs * NSEC_PER_USEC;
-> -
-> -	return idle;
-> +	return get_cpu_idle_time_us(cpu, NULL) * NSEC_PER_USEC;
+iEYEARECAAYFAl9tGDQACgkQMOfwapXb+vJJrACguUwBUXADnMj7K1we9pMBCXao
+yuMAoLYUAsqVN8r3PK8Ax9IBA9TWFYbf
+=yH8g
+-----END PGP SIGNATURE-----
 
-Q: How is this supposed to work on !NO_HZ systems or in case that NOHZ
-   has been disabled at boot time via command line option or lack of
-   hardware?
-
-A: Not at all.
-
-Hint #1: You removed the following comment:
-
-	/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
-
-Hint #2: There is more than one valid kernel configuration.
-'
-Hint #3: Command line options and hardware features have side effects
-
-Hint #4: git grep 'get_cpu_.*_time_us' 
-
-Thanks,
-
-        tglx
-
+--SUOF0GtieIMvvwua--
