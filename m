@@ -2,446 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC5627725D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D12142772C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgIXNaa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 09:30:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51466 "EHLO mail.kernel.org"
+        id S1728111AbgIXNkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 09:40:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55300 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728078AbgIXNa3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 09:30:29 -0400
-Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8C2C2076D;
-        Thu, 24 Sep 2020 13:30:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600954228;
-        bh=ZF6ebB6ByDsVPLqbeCAiZ/D5kFit/eGAiTgw70Mqjh0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RyVUh10cgDLiIdEqoRsO4Go/maTrDx6hf/gA6CT7BTYPMUcxh8gbb1QtRGyTj9JHD
-         MW+bufqUeQloXkLoxL7WWTaiaNCtDvOQZPp8tGZPJENMn0a4jJo+B9RALkyJQaO6k5
-         1K8hF4tr6/W/LUOczKEP0RsH7toijiGM3qJp2MDc=
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: [PATCH v6 6/6] secretmem: test: add basic selftest for memfd_secret(2)
-Date:   Thu, 24 Sep 2020 16:29:04 +0300
-Message-Id: <20200924132904.1391-7-rppt@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200924132904.1391-1-rppt@kernel.org>
-References: <20200924132904.1391-1-rppt@kernel.org>
+        id S1727898AbgIXNkl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 09:40:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E5D67B0E6;
+        Thu, 24 Sep 2020 13:40:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A00AC1E12F3; Thu, 24 Sep 2020 10:56:33 +0200 (CEST)
+Date:   Thu, 24 Sep 2020 10:56:33 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, nbd@other.debian.org,
+        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH 01/14] block: move the NEED_PART_SCAN flag to struct
+ gendisk
+Message-ID: <20200924085633.GD27019@quack2.suse.cz>
+References: <20200917165720.3285256-1-hch@lst.de>
+ <20200917165720.3285256-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200917165720.3285256-2-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+On Thu 17-09-20 18:57:07, Christoph Hellwig wrote:
+> We can only scan for partitions on the whole disk, so move the flag
+> from struct block_device to struct gendisk.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-The test verifies that file descriptor created with memfd_secret does
-not allow read/write operations, that secret memory mappings respect
-RLIMIT_MEMLOCK and that remote accesses with process_vm_read() and
-ptrace() to the secret memory fail.
+Makes sense. You can add:
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- tools/testing/selftests/vm/.gitignore     |   1 +
- tools/testing/selftests/vm/Makefile       |   3 +-
- tools/testing/selftests/vm/memfd_secret.c | 301 ++++++++++++++++++++++
- tools/testing/selftests/vm/run_vmtests    |  17 ++
- 4 files changed, 321 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/vm/memfd_secret.c
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selftests/vm/.gitignore
-index 849e8226395a..8a951fed3c3f 100644
---- a/tools/testing/selftests/vm/.gitignore
-+++ b/tools/testing/selftests/vm/.gitignore
-@@ -20,3 +20,4 @@ va_128TBswitch
- map_fixed_noreplace
- write_to_hugetlbfs
- hmm-tests
-+memfd_secret
-diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
-index a9026706d597..937afee6a8af 100644
---- a/tools/testing/selftests/vm/Makefile
-+++ b/tools/testing/selftests/vm/Makefile
-@@ -21,6 +21,7 @@ TEST_GEN_FILES += thuge-gen
- TEST_GEN_FILES += transhuge-stress
- TEST_GEN_FILES += userfaultfd
- TEST_GEN_FILES += khugepaged
-+TEST_GEN_FILES += memfd_secret
- 
- ifeq ($(ARCH),x86_64)
- CAN_BUILD_I386 := $(shell ./../x86/check_cc.sh $(CC) ../x86/trivial_32bit_program.c -m32)
-@@ -112,4 +113,4 @@ endif
- 
- $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
- 
--$(OUTPUT)/mlock-random-test: LDLIBS += -lcap
-+$(OUTPUT)/mlock-random-test $(OUTPUT)/memfd_secret: LDLIBS += -lcap
-diff --git a/tools/testing/selftests/vm/memfd_secret.c b/tools/testing/selftests/vm/memfd_secret.c
-new file mode 100644
-index 000000000000..81e1a8689241
---- /dev/null
-+++ b/tools/testing/selftests/vm/memfd_secret.c
-@@ -0,0 +1,301 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2020, Mike Rapoport, IBM Corporation.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <sys/uio.h>
-+#include <sys/mman.h>
-+#include <sys/wait.h>
-+#include <sys/types.h>
-+#include <sys/ptrace.h>
-+#include <sys/syscall.h>
-+#include <sys/resource.h>
-+#include <sys/capability.h>
-+
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stdio.h>
-+
-+#include "../kselftest.h"
-+
-+#define fail(fmt, ...) ksft_test_result_fail(fmt, ##__VA_ARGS__)
-+#define pass(fmt, ...) ksft_test_result_pass(fmt, ##__VA_ARGS__)
-+#define skip(fmt, ...) ksft_test_result_skip(fmt, ##__VA_ARGS__)
-+
-+#ifdef __NR_memfd_secret
-+
-+#include <linux/secretmem.h>
-+
-+#define PATTERN	0x55
-+
-+static const int prot = PROT_READ | PROT_WRITE;
-+static const int mode = MAP_SHARED;
-+
-+static unsigned long page_size;
-+static unsigned long mlock_limit_cur;
-+static unsigned long mlock_limit_max;
-+
-+static int memfd_secret(unsigned long flags)
-+{
-+	return syscall(__NR_memfd_secret, flags);
-+}
-+
-+static void test_file_apis(int fd)
-+{
-+	char buf[64];
-+
-+	if ((read(fd, buf, sizeof(buf)) >= 0) ||
-+	    (write(fd, buf, sizeof(buf)) >= 0) ||
-+	    (pread(fd, buf, sizeof(buf), 0) >= 0) ||
-+	    (pwrite(fd, buf, sizeof(buf), 0) >= 0))
-+		fail("unexpected file IO\n");
-+	else
-+		pass("file IO is blocked as expected\n");
-+}
-+
-+static void test_mlock_limit(int fd)
-+{
-+	size_t len;
-+	char *mem;
-+
-+	len = mlock_limit_cur;
-+	mem = mmap(NULL, len, prot, mode, fd, 0);
-+	if (mem == MAP_FAILED) {
-+		fail("unable to mmap secret memory\n");
-+		return;
-+	}
-+	munmap(mem, len);
-+
-+	len = mlock_limit_max * 2;
-+	mem = mmap(NULL, len, prot, mode, fd, 0);
-+	if (mem != MAP_FAILED) {
-+		fail("unexpected mlock limit violation\n");
-+		munmap(mem, len);
-+		return;
-+	}
-+
-+	pass("mlock limit is respected\n");
-+}
-+
-+static void try_process_vm_read(int fd, int pipefd[2])
-+{
-+	struct iovec liov, riov;
-+	char buf[64];
-+	char *mem;
-+
-+	if (read(pipefd[0], &mem, sizeof(mem)) < 0) {
-+		fail("pipe write: %s\n", strerror(errno));
-+		exit(KSFT_FAIL);
-+	}
-+
-+	liov.iov_len = riov.iov_len = sizeof(buf);
-+	liov.iov_base = buf;
-+	riov.iov_base = mem;
-+
-+	if (process_vm_readv(getppid(), &liov, 1, &riov, 1, 0) < 0) {
-+		if (errno == ENOSYS)
-+			exit(KSFT_SKIP);
-+		exit(KSFT_PASS);
-+	}
-+
-+	exit(KSFT_FAIL);
-+}
-+
-+static void try_ptrace(int fd, int pipefd[2])
-+{
-+	pid_t ppid = getppid();
-+	int status;
-+	char *mem;
-+	long ret;
-+
-+	if (read(pipefd[0], &mem, sizeof(mem)) < 0) {
-+		perror("pipe write");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	ret = ptrace(PTRACE_ATTACH, ppid, 0, 0);
-+	if (ret) {
-+		perror("ptrace_attach");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	ret = waitpid(ppid, &status, WUNTRACED);
-+	if ((ret != ppid) || !(WIFSTOPPED(status))) {
-+		fprintf(stderr, "weird waitppid result %ld stat %x\n",
-+			ret, status);
-+		exit(KSFT_FAIL);
-+	}
-+
-+	/* this access should fail and the task should be killed */
-+	ret = ptrace(PTRACE_PEEKDATA, ppid, mem, 0);
-+	if (ret < 0) {
-+		perror("ptrace_peek");
-+		exit(KSFT_FAIL);
-+	}
-+
-+	/* we shouldn't survive PTRACE_PEEKDATA */
-+	exit(KSFT_FAIL);
-+}
-+
-+static void check_child_status(pid_t pid, const char *name)
-+{
-+	int status;
-+
-+	waitpid(pid, &status, 0);
-+
-+	if (WIFEXITED(status) && WEXITSTATUS(status) == KSFT_SKIP) {
-+		skip("%s is not supported\n", name);
-+		return;
-+	}
-+
-+	if ((WIFEXITED(status) && WEXITSTATUS(status) == KSFT_PASS) ||
-+	    WIFSIGNALED(status)) {
-+		pass("%s failed as expected\n", name);
-+		return;
-+	}
-+
-+	fail("%s: unexpected memory access\n", name);
-+}
-+
-+static void test_remote_access(int fd, const char *name,
-+			       void (*func)(int fd, int pipefd[2]))
-+{
-+	int pipefd[2];
-+	pid_t pid;
-+	char *mem;
-+
-+	if (pipe(pipefd)) {
-+		fail("pipe failed: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	pid = fork();
-+	if (pid < 0) {
-+		fail("fork failed: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	if (pid == 0) {
-+		func(fd, pipefd);
-+		return;
-+	}
-+
-+	mem = mmap(NULL, page_size, prot, mode, fd, 0);
-+	if (mem == MAP_FAILED) {
-+		fail("Unable to mmap secret memory\n");
-+		return;
-+	}
-+
-+	ftruncate(fd, page_size);
-+	memset(mem, PATTERN, page_size);
-+
-+	if (write(pipefd[1], &mem, sizeof(mem)) < 0) {
-+		fail("pipe write: %s\n", strerror(errno));
-+		return;
-+	}
-+
-+	check_child_status(pid, name);
-+}
-+
-+static void test_process_vm_read(int fd)
-+{
-+	test_remote_access(fd, "process_vm_read", try_process_vm_read);
-+}
-+
-+static void test_ptrace(int fd)
-+{
-+	test_remote_access(fd, "ptrace", try_ptrace);
-+}
-+
-+static int set_cap_limits(rlim_t max)
-+{
-+	struct rlimit new;
-+	cap_t cap = cap_init();
-+
-+	new.rlim_cur = max;
-+	new.rlim_max = max;
-+	if (setrlimit(RLIMIT_MEMLOCK, &new)) {
-+		perror("setrlimit() returns error");
-+		return -1;
-+	}
-+
-+	/* drop capabilities including CAP_IPC_LOCK */
-+	if (cap_set_proc(cap)) {
-+		perror("cap_set_proc() returns error");
-+		return -2;
-+	}
-+
-+	return 0;
-+}
-+
-+static void prepare(void)
-+{
-+	struct rlimit rlim;
-+
-+	page_size = sysconf(_SC_PAGE_SIZE);
-+	if (!page_size)
-+		ksft_exit_fail_msg("Failed to get page size %s\n",
-+				   strerror(errno));
-+
-+	if (getrlimit(RLIMIT_MEMLOCK, &rlim))
-+		ksft_exit_fail_msg("Unable to detect mlock limit: %s\n",
-+				   strerror(errno));
-+
-+	mlock_limit_cur = rlim.rlim_cur;
-+	mlock_limit_max = rlim.rlim_max;
-+
-+	printf("page_size: %ld, mlock.soft: %ld, mlock.hard: %ld\n",
-+	       page_size, mlock_limit_cur, mlock_limit_max);
-+
-+	if (page_size > mlock_limit_cur)
-+		mlock_limit_cur = page_size;
-+	if (page_size > mlock_limit_max)
-+		mlock_limit_max = page_size;
-+
-+	if (set_cap_limits(mlock_limit_max))
-+		ksft_exit_fail_msg("Unable to set mlock limit: %s\n",
-+				   strerror(errno));
-+}
-+
-+#define NUM_TESTS 4
-+
-+int main(int argc, char *argv[])
-+{
-+	int fd;
-+
-+	prepare();
-+
-+	ksft_print_header();
-+	ksft_set_plan(NUM_TESTS);
-+
-+	fd = memfd_secret(0);
-+	if (fd < 0) {
-+		if (errno == ENOSYS)
-+			ksft_exit_skip("memfd_secret is not supported\n");
-+		else
-+			ksft_exit_fail_msg("memfd_secret failed: %s\n",
-+					   strerror(errno));
-+	}
-+
-+	test_mlock_limit(fd);
-+	test_file_apis(fd);
-+	test_process_vm_read(fd);
-+	test_ptrace(fd);
-+
-+	close(fd);
-+
-+	ksft_exit(!ksft_get_fail_cnt());
-+}
-+
-+#else /* __NR_memfd_secret */
-+
-+int main(int argc, char *argv[])
-+{
-+	printf("skip: skipping memfd_secret test (missing __NR_memfd_secret)\n");
-+	return KSFT_SKIP;
-+}
-+
-+#endif /* __NR_memfd_secret */
-diff --git a/tools/testing/selftests/vm/run_vmtests b/tools/testing/selftests/vm/run_vmtests
-index a3f4f30f0a2e..bee7365f3cc2 100755
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@ -323,4 +323,21 @@ else
- 	exitcode=1
- fi
- 
-+echo "running memfd_secret test"
-+echo "------------------------------------"
-+./memfd_secret
-+ret_val=$?
-+
-+if [ $ret_val -eq 0 ]; then
-+	echo "[PASS]"
-+elif [ $ret_val -eq $ksft_skip ]; then
-+	echo "[SKIP]"
-+	exitcode=$ksft_skip
-+else
-+	echo "[FAIL]"
-+	exitcode=1
-+fi
-+
-+exit $exitcode
-+
- exit $exitcode
+								Honza
+
+> ---
+>  block/genhd.c             | 4 ++--
+>  drivers/block/nbd.c       | 8 ++++----
+>  drivers/ide/ide-gd.c      | 2 +-
+>  fs/block_dev.c            | 7 +++----
+>  include/linux/blk_types.h | 4 +---
+>  include/linux/genhd.h     | 2 ++
+>  6 files changed, 13 insertions(+), 14 deletions(-)
+> 
+> diff --git a/block/genhd.c b/block/genhd.c
+> index 9d060e79eb31d8..7b56203c90a303 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -731,7 +731,7 @@ static void register_disk(struct device *parent, struct gendisk *disk,
+>  	if (!bdev)
+>  		goto exit;
+>  
+> -	set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +	set_bit(GD_NEED_PART_SCAN, &disk->state);
+>  	err = blkdev_get(bdev, FMODE_READ, NULL);
+>  	if (err < 0)
+>  		goto exit;
+> @@ -2112,7 +2112,7 @@ bool bdev_check_media_change(struct block_device *bdev)
+>  	if (__invalidate_device(bdev, true))
+>  		pr_warn("VFS: busy inodes on changed media %s\n",
+>  			bdev->bd_disk->disk_name);
+> -	set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +	set_bit(GD_NEED_PART_SCAN, &bdev->bd_disk->state);
+>  	return true;
+>  }
+>  EXPORT_SYMBOL(bdev_check_media_change);
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index 15eed210feeff4..2dca0aab0a9a25 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -315,7 +315,7 @@ static void nbd_size_update(struct nbd_device *nbd)
+>  			bd_set_nr_sectors(bdev, nr_sectors);
+>  			set_blocksize(bdev, config->blksize);
+>  		} else
+> -			set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +			set_bit(GD_NEED_PART_SCAN, &nbd->disk->state);
+>  		bdput(bdev);
+>  	}
+>  	kobject_uevent(&nbd_to_dev(nbd)->kobj, KOBJ_CHANGE);
+> @@ -1322,7 +1322,7 @@ static int nbd_start_device_ioctl(struct nbd_device *nbd, struct block_device *b
+>  		return ret;
+>  
+>  	if (max_part)
+> -		set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +		set_bit(GD_NEED_PART_SCAN, &nbd->disk->state);
+>  	mutex_unlock(&nbd->config_lock);
+>  	ret = wait_event_interruptible(config->recv_wq,
+>  					 atomic_read(&config->recv_threads) == 0);
+> @@ -1500,9 +1500,9 @@ static int nbd_open(struct block_device *bdev, fmode_t mode)
+>  		refcount_set(&nbd->config_refs, 1);
+>  		refcount_inc(&nbd->refs);
+>  		mutex_unlock(&nbd->config_lock);
+> -		set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +		set_bit(GD_NEED_PART_SCAN, &bdev->bd_disk->state);
+>  	} else if (nbd_disconnected(nbd->config)) {
+> -		set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +		set_bit(GD_NEED_PART_SCAN, &bdev->bd_disk->state);
+>  	}
+>  out:
+>  	mutex_unlock(&nbd_index_mutex);
+> diff --git a/drivers/ide/ide-gd.c b/drivers/ide/ide-gd.c
+> index 661e2aa9c96784..e2b6c82586ce8b 100644
+> --- a/drivers/ide/ide-gd.c
+> +++ b/drivers/ide/ide-gd.c
+> @@ -230,7 +230,7 @@ static int ide_gd_open(struct block_device *bdev, fmode_t mode)
+>  				bdev->bd_disk->disk_name);
+>  		drive->disk_ops->get_capacity(drive);
+>  		set_capacity(disk, ide_gd_capacity(drive));
+> -		set_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +		set_bit(GD_NEED_PART_SCAN, &disk->state);
+>  	} else if (drive->dev_flags & IDE_DFLAG_FORMAT_IN_PROGRESS) {
+>  		ret = -EBUSY;
+>  		goto out_put_idkp;
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 0b34955b9e360f..1a9325f4315769 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -910,7 +910,6 @@ struct block_device *bdget(dev_t dev)
+>  		bdev->bd_super = NULL;
+>  		bdev->bd_inode = inode;
+>  		bdev->bd_part_count = 0;
+> -		bdev->bd_flags = 0;
+>  		inode->i_mode = S_IFBLK;
+>  		inode->i_rdev = dev;
+>  		inode->i_bdev = bdev;
+> @@ -1385,7 +1384,7 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+>  
+>  	lockdep_assert_held(&bdev->bd_mutex);
+>  
+> -	clear_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags);
+> +	clear_bit(GD_NEED_PART_SCAN, &bdev->bd_disk->state);
+>  
+>  rescan:
+>  	ret = blk_drop_partitions(bdev);
+> @@ -1509,7 +1508,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, void *holder,
+>  			 * The latter is necessary to prevent ghost
+>  			 * partitions on a removed medium.
+>  			 */
+> -			if (test_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags) &&
+> +			if (test_bit(GD_NEED_PART_SCAN, &disk->state) &&
+>  			    (!ret || ret == -ENOMEDIUM))
+>  				bdev_disk_changed(bdev, ret == -ENOMEDIUM);
+>  
+> @@ -1539,7 +1538,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, void *holder,
+>  			if (bdev->bd_disk->fops->open)
+>  				ret = bdev->bd_disk->fops->open(bdev, mode);
+>  			/* the same as first opener case, read comment there */
+> -			if (test_bit(BDEV_NEED_PART_SCAN, &bdev->bd_flags) &&
+> +			if (test_bit(GD_NEED_PART_SCAN, &disk->state) &&
+>  			    (!ret || ret == -ENOMEDIUM))
+>  				bdev_disk_changed(bdev, ret == -ENOMEDIUM);
+>  			if (ret)
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index 6ffa783e16335e..eb20e28184ab19 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -19,8 +19,6 @@ struct cgroup_subsys_state;
+>  typedef void (bio_end_io_t) (struct bio *);
+>  struct bio_crypt_ctx;
+>  
+> -#define BDEV_NEED_PART_SCAN		0
+> -
+>  struct block_device {
+>  	dev_t			bd_dev;
+>  	int			bd_openers;
+> @@ -39,7 +37,7 @@ struct block_device {
+>  	struct hd_struct *	bd_part;
+>  	/* number of times partitions within this device have been opened. */
+>  	unsigned		bd_part_count;
+> -	unsigned long		bd_flags;
+> +
+>  	spinlock_t		bd_size_lock; /* for bd_inode->i_size updates */
+>  	struct gendisk *	bd_disk;
+>  	struct backing_dev_info *bd_bdi;
+> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+> index 1c97cf84f011a7..38f23d75701379 100644
+> --- a/include/linux/genhd.h
+> +++ b/include/linux/genhd.h
+> @@ -191,6 +191,8 @@ struct gendisk {
+>  	void *private_data;
+>  
+>  	int flags;
+> +	unsigned long state;
+> +#define GD_NEED_PART_SCAN		0
+>  	struct rw_semaphore lookup_sem;
+>  	struct kobject *slave_dir;
+>  
+> -- 
+> 2.28.0
+> 
 -- 
-2.28.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
