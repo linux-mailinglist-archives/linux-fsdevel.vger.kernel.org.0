@@ -2,89 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 878A427799D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 21:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4CB22779C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 21:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgIXTo6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 15:44:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50220 "EHLO
+        id S1726205AbgIXTyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 15:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbgIXTo6 (ORCPT
+        with ESMTP id S1726135AbgIXTyt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 15:44:58 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9846C0613D5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 12:44:57 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id g29so338266pgl.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 12:44:57 -0700 (PDT)
+        Thu, 24 Sep 2020 15:54:49 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFD8C0613CE;
+        Thu, 24 Sep 2020 12:54:49 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id t76so276001oif.7;
+        Thu, 24 Sep 2020 12:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ADwlTn9rnJzlHv/xfLefERCgTh/zOY3+dj+IP5LMhIo=;
-        b=L2Wx7FlLw8QHVp62Ne3mt4GV7+MUCO/WLUazgDqXAmYbUX1Et5GwKUZRbOhKWcg1pJ
-         h3F8YG2QH8T53HlhbxkOnKDq7rYr7VYQSpBZ/SrGKbAAN0q9gjlZztvIvkLYWYD2H5p5
-         D5jWhUDJxNaNV9x10hDsgdYsv3+GqUJuih92RXGRYnyEyog4jlWpFA8o+B+sqtqEeysu
-         zXsVFR5QGsEI7lJZ39JHqx1JjZyubGP7QEwNsybW+JHQWulohPcvjDgNlPxNi7sQOhp+
-         YLXR3ph4QhgGStegDp9ue2849D7tWES5wOYPeY73GujeWcYMaP3DsMTgcgakPfQ8C4Iw
-         pmzA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=jldMj2b4W/i201Qch4vQ/qr+pxXhjLlwoSvPBbRwv+w=;
+        b=Ag7cmlDip6MLztwNHzkjXP/MQtMVjcCMKP9L3Yr26nhJlEPCTgd7hGZl4RXvU/vboh
+         KA+ogWNW8L6/7lcXC+5kj4Vp42bTIkJpKor/nRA6fRJxswS+/pOLAjvd0b5sA3DtohxM
+         0MhRfTJO6ER+F+FRyCRHNapWrf+N8bmaM2yqQATru3baBBZgmMywmMI0eOtVtExtByJs
+         f17pHYtYm+u2QpT2tXMm6+J9/jaPUMvHivaF1lM6gFN3+fkOorDDKXNUfzZ6dW0iy7uZ
+         hw0djMDlmfuChm1TkEUGJS8ORDezBCfF6aAU9EDvhvoq7pxWQkdaL4hRRsk9Bp6hpjyv
+         YL1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ADwlTn9rnJzlHv/xfLefERCgTh/zOY3+dj+IP5LMhIo=;
-        b=nb+fUWURGMiv4LM6QsBThO72+wX0/hPB3C3FbrR1Adu1XP6uZtKd8lTZDJ7Q1baA2x
-         6uhtAfoOvL+nPg9tofxPimzzQv6RDUaVckGw/1tPDqxxmSJ61dZKurMjbEBD41Yo4M+k
-         FBvAFecAEqS0/0i7dVt5vixD0HTJQatIZ4HuGq9WPh9pgxXqwbMuzwEtHzhuWsw8vQpg
-         2LB4lP8k3iZs45mnQX4Wl6PdCuf3znC9x2IukggdotD9vsxAKVxSAla8bGaeYcSYe4K+
-         3oSdq1nVQ/H+6JgrsXAMXJCm5POwVQsBtF0O4HhA89sJ+/xbvfX85OhduXr/zCgbT9jw
-         1R8Q==
-X-Gm-Message-State: AOAM533NIuAlYlvhuSxbB1dfovmnIj3uCFCPMmoJnx3NXczNxSBqxJYr
-        Wt+9T7EB0W/Uc2oMjNgRvNAUQg==
-X-Google-Smtp-Source: ABdhPJyn7jUbiC3AGiO/dBfKmKGpcA3VV/JE4LzjEmCUjGJIbrcL8/kmgANM72e+JonEfnG9EJ77rg==
-X-Received: by 2002:a17:902:854b:b029:d1:cbf4:bb43 with SMTP id d11-20020a170902854bb02900d1cbf4bb43mr778274plo.13.1600976697336;
-        Thu, 24 Sep 2020 12:44:57 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21d6::1911? ([2620:10d:c090:400::5:d63d])
-        by smtp.gmail.com with ESMTPSA id u10sm267612pfn.122.2020.09.24.12.44.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Sep 2020 12:44:56 -0700 (PDT)
-Subject: Re: bdi cleanups v7
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
-        Coly Li <colyli@suse.de>, Richard Weinberger <richard@nod.at>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Justin Sanders <justin@coraid.com>,
-        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-References: <20200924065140.726436-1-hch@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a9235ba9-95a0-4251-ee7d-e4012775346e@kernel.dk>
-Date:   Thu, 24 Sep 2020 13:44:54 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=jldMj2b4W/i201Qch4vQ/qr+pxXhjLlwoSvPBbRwv+w=;
+        b=JXARMTr0UQhPSnKrah3QJZ5DBXlb/dGIQbL1V/2S/OLoHM9JkK0uZWJwjL/XZWtph0
+         pOvGHjS4kUNmTxExZYKerr6kWPVACS9TlP4OtDRe8fGFI914szv6xqo1FzXv/4vvjqw/
+         NRpiC7ndr7+VxW0vB92iHh/AElkRudkCZPdfvVtii9YFU/0AhvY4N/7w0xO8YQOtmTQR
+         lDXlXztX2gxWFsS8IoDnjksZXXwCnw20LfyWW9h07rIlxdg9U+/jQxJq8SaKLlhfVGpJ
+         +E8/0S0tt3qNpCYSbci9RZFG66Nc2Ppt0x4st2tA0/njGSrITS3sTezpkDFT4pXn5GJg
+         jrug==
+X-Gm-Message-State: AOAM533LbznLPtrMZw53bZ8WtWhOd+IBd9iDI4wwppZrgJJ9qP6Wa+AM
+        dREw+HVDqKG9GWnEE0r+GAmfy2WTUNJNu82xF1c=
+X-Google-Smtp-Source: ABdhPJyzB7jvMmkSgAOmdTjvZlsmOKuH5+ZJjESfv8QED1qgQLMae2leuVu0j/Dfj7LUDklmmK9Cup61HCCOCQOqht0=
+X-Received: by 2002:aca:ec50:: with SMTP id k77mr270352oih.35.1600977287872;
+ Thu, 24 Sep 2020 12:54:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200924065140.726436-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200924125608.31231-1-willy@infradead.org> <CA+icZUUQGmd3juNPv1sHTWdhzXwZzRv=p1i+Q=20z_WGcZOzbg@mail.gmail.com>
+ <20200924151538.GW32101@casper.infradead.org> <CA+icZUX4bQf+pYsnOR0gHZLsX3NriL=617=RU0usDfx=idgZmA@mail.gmail.com>
+ <20200924152755.GY32101@casper.infradead.org> <CA+icZUURRcCh1TYtLs=U_353bhv5_JhVFaGxVPL5Rydee0P1=Q@mail.gmail.com>
+ <20200924163635.GZ32101@casper.infradead.org> <CA+icZUUgwcLP8O9oDdUMT0SzEQHjn+LkFFkPL3NsLCBhDRSyGw@mail.gmail.com>
+ <f623da731d7c2e96e3a37b091d0ec99095a6386b.camel@redhat.com>
+In-Reply-To: <f623da731d7c2e96e3a37b091d0ec99095a6386b.camel@redhat.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Thu, 24 Sep 2020 21:54:36 +0200
+Message-ID: <CA+icZUVO65ADxk5SZkZwV70ax5JCzPn8PPfZqScTTuvDRD1smQ@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
+To:     Qian Cai <cai@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/24/20 12:51 AM, Christoph Hellwig wrote:
-> Hi Jens,
-> 
-> this series contains a bunch of different BDI cleanups.  The biggest item
-> is to isolate block drivers from the BDI in preparation of changing the
-> lifetime of the block device BDI in a follow up series.
+On Thu, Sep 24, 2020 at 8:47 PM Qian Cai <cai@redhat.com> wrote:
+>
+> On Thu, 2020-09-24 at 20:27 +0200, Sedat Dilek wrote:
+> > I run both linux-kernel on my Debian/unstable AMD64 host (means not in
+> > a VM) with and without your patch.
+> >
+> > Instructions:
+> > cd /opt/ltp
+> > ./runltp -f syscalls -s preadv203
+> >
+> > Unfortunately, the logs in the "results" directory have only the short
+> > summary.
+> >
+> > Testcase                                           Result     Exit Value
+> > --------                                           ------     ----------
+> > preadv203                                          PASS       0
+> > preadv203_64                                       PASS       0
+> >
+> > So, I guess I am not hitting the issue?
+> > Or do I miss some important kernel-config?
+>
+> https://gitlab.com/cailca/linux-mm/-/blob/master/arm64.config
+>
+> That is .config I used to reproduce. Then, I ran the linux-mm testsuite (lots of
+> hard-coded places because I only need to run this on RHEL8) first:
+>
+> # git clone https://gitlab.com/cailca/linux-mm
+> # cd linux-mm; make
+> # ./random -k
+>
+> Then, run the whole LTP syscalls:
+> # ./runltp -f syscalls
+>
 
-Applied, thanks.
+Doing this right now.
 
--- 
-Jens Axboe
+> If that is still not triggered, it needs some syscall fuzzing:
+> # ./random -x 0-100 -f
+>
 
+Out of curiosity:
+You are named in "mm: fix misplaced unlock_page in do_wp_page()".
+Is this here a different issue?
+
+- Sedat -
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=be068f29034fb00530a053d18b8cf140c32b12b3
