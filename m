@@ -2,119 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94CB327779B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 19:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D092777C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 19:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbgIXRT4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 13:19:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbgIXRT4 (ORCPT
+        id S1728694AbgIXR1J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 13:27:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55554 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727988AbgIXR1J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 13:19:56 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E3EBC0613CE;
-        Thu, 24 Sep 2020 10:19:56 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id s12so4661299wrw.11;
-        Thu, 24 Sep 2020 10:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kAbZd3vS2mRaNP4IzKbD5ITPH51zcyuJzcimZuIDrHU=;
-        b=qNlQD2VUwuZlfp3QTbChXLwkrg3TPs4FW/cPGjFxkYsyIdgolpsVHCzK+JtmhzuOVy
-         pdi0dktqgCnXlIOv5hDbMPTnXdMBVdkZQoe7O2BW6Bbczk9+1s2DIwD9PrSuK6v+sEaF
-         DI5dYuyUqGJB5Cqg0RJ5MGE9wp6SI2DQKTHm83cS8wjNJQ+D8i9i22W5Wc0KAEJPt/lI
-         lMqIAU3dAoFQknurRyITwbWpD/XwQwQH7f+RMIfkHbp/eYOroyMTFqQ42nmLRTZ0AFEs
-         ZImi//w1eD9Vr/kJD930rSvZA6+0qyZXWvUYBdxkM9YPx/4j22h5EaLNGpyTSrXMbCwO
-         YKUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kAbZd3vS2mRaNP4IzKbD5ITPH51zcyuJzcimZuIDrHU=;
-        b=V21uYvRbHZmmTSh3fWjo8BfbaL41yrIXH/LzNGG90j0d+TEjVPxei13O3cZ/CpZi+w
-         dsQ5Rxqv8mfkZ3D/pKzhGpeonQs2ixAtmuCBguC+xWnAICRlXSDVEll/jQrmPgCJYruh
-         KllSIWPU7j23jrqZi4AFt2/qZBce5bWkFU9a3e9ODDq1/ml3Fk0EI1QgXibidClGM8OI
-         ncDnarO0V5INSytdvFJnjZ4G59CJnm48s5WRI3gvbqYIF7dbkiI5xB80SlFjVubtCGSU
-         P9GYtyPCCG2iA5FhX7sSPkgXvlcTSlbcqbHQoXP3lT1DLMkkOzOkXMFH0cm0Akxu2jQv
-         TrMw==
-X-Gm-Message-State: AOAM530qgixWz+BMK83Ty3+x2kopAJJW9TEPB6zrRV56pBTp1V6WUU8e
-        VJqic41txBqV6JiPJvkwadNM0DDkiCM0YaRmwXf1XTevHy6UDYEwhJE=
-X-Google-Smtp-Source: ABdhPJxhIbv58SUHooN6WEjrkYW8U18ujKGcxnMYrWPH1bVWcmnQmjph4Yyi6hSpgSDoFyjg4oEh0yHOb+QZtev8xNw=
-X-Received: by 2002:adf:dd51:: with SMTP id u17mr834011wrm.355.1600967994708;
- Thu, 24 Sep 2020 10:19:54 -0700 (PDT)
+        Thu, 24 Sep 2020 13:27:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600968427;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uOFRmlux1Q9wWSOyOrju/L0ylnL8q5CD+U+8dCkSiL8=;
+        b=KPsIrpLHceL2XNuzJRAtS8E1pFY5SfXZXWlpVTJetHoMP2qd3KfWaXlBmCoIOyr53V9Wwm
+        /gO6Jma8LaVY5vAQKdrwLCNdBP4dXn/I6JfFCrDw7hi+3ML07UaReJKuex4mz/YyAe2/qA
+        IbOc9oYu2h+uqT6G2ZygQ+8padLmU54=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-286-9lA6ish4MVaQRGWqUcLISg-1; Thu, 24 Sep 2020 13:27:00 -0400
+X-MC-Unique: 9lA6ish4MVaQRGWqUcLISg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9099802EA5;
+        Thu, 24 Sep 2020 17:26:58 +0000 (UTC)
+Received: from bfoster (ovpn-113-130.rdu2.redhat.com [10.10.113.130])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 647257B7A0;
+        Thu, 24 Sep 2020 17:26:55 +0000 (UTC)
+Date:   Thu, 24 Sep 2020 13:26:53 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Qian Cai <cai@redhat.com>
+Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
+Message-ID: <20200924172653.GC2603692@bfoster>
+References: <20200924125608.31231-1-willy@infradead.org>
+ <20200924131235.GA2603692@bfoster>
+ <20200924135900.GV32101@casper.infradead.org>
+ <20200924151259.GB2603692@bfoster>
+ <20200924152211.GX32101@casper.infradead.org>
 MIME-Version: 1.0
-References: <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
- <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731091416.GA29634@infradead.org> <MWHPR04MB37586D39CA389296CE0252A4E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731094135.GA4104@infradead.org> <MWHPR04MB3758A4B2967DB1FABAAD9265E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731125110.GA11500@infradead.org> <CY4PR04MB37517D633920E4D31AC6EA0DE74B0@CY4PR04MB3751.namprd04.prod.outlook.com>
- <20200814081411.GA16943@infradead.org> <CA+1E3r+WXC_MK5Zf2OZEv17ddJDjtXbhpRFoeDns4F341xMhow@mail.gmail.com>
- <20200908151801.GA16742@infradead.org>
-In-Reply-To: <20200908151801.GA16742@infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Thu, 24 Sep 2020 22:49:28 +0530
-Message-ID: <CA+1E3r+MSEW=-SL8L+pquq+cFAu+nQOULQ+HZoQsCvdjKMkrNw@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-To:     "hch@infradead.org" <hch@infradead.org>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200924152211.GX32101@casper.infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 8:48 PM hch@infradead.org <hch@infradead.org> wrote:
->
-> On Mon, Sep 07, 2020 at 12:31:42PM +0530, Kanchan Joshi wrote:
-> > But there are use-cases which benefit from supporting zone-append on
-> > raw block-dev path.
-> > Certain user-space log-structured/cow FS/DB will use the device that
-> > way. Aerospike is one example.
-> > Pass-through is synchronous, and we lose the ability to use io-uring.
->
-> So use zonefs, which is designed exactly for that use case.
+On Thu, Sep 24, 2020 at 04:22:11PM +0100, Matthew Wilcox wrote:
+> On Thu, Sep 24, 2020 at 11:12:59AM -0400, Brian Foster wrote:
+> > On Thu, Sep 24, 2020 at 02:59:00PM +0100, Matthew Wilcox wrote:
+> > > On Thu, Sep 24, 2020 at 09:12:35AM -0400, Brian Foster wrote:
+> > > > On Thu, Sep 24, 2020 at 01:56:08PM +0100, Matthew Wilcox (Oracle) wrote:
+> > > > > For filesystems with block size < page size, we need to set all the
+> > > > > per-block uptodate bits if the page was already uptodate at the time
+> > > > > we create the per-block metadata.  This can happen if the page is
+> > > > > invalidated (eg by a write to drop_caches) but ultimately not removed
+> > > > > from the page cache.
+> > > > > 
+> > > > > This is a data corruption issue as page writeback skips blocks which
+> > > > > are marked !uptodate.
+> > > > 
+> > > > Thanks. Based on my testing of clearing PageUptodate here I suspect this
+> > > > will similarly prevent the problem, but I'll give this a test
+> > > > nonetheless. 
+> > > > 
+> > > > I am a little curious why we'd prefer to fill the iop here rather than
+> > > > just clear the page state if the iop data has been released. If the page
+> > > > is partially uptodate, then we end up having to re-read the page
+> > > > anyways, right? OTOH, I guess this behavior is more consistent with page
+> > > > size == block size filesystems where iop wouldn't exist and we just go
+> > > > by page state, so perhaps that makes more sense.
+> > > 
+> > > Well, it's _true_ ... the PageUptodate bit means that every byte in this
+> > > page is at least as new as every byte on storage.  There's no need to
+> > > re-read it, which is what we'll do if we ClearPageUptodate.
+> > 
+> > Yes, of course. I'm just noting the inconsistent behavior between a full
+> > and partially uptodate page.
+> 
+> Heh, well, we have no way of knowing.  We literally just threw away
+> the information about which blocks are uptodate.  So the best we can
+> do is work with the single bit we have.  We do know that there are no
+> dirty blocks left on the page at this point (... maybe we should add a
+> VM_BUG_ON(!PageUptodate && PageDirty)).
+> 
 
-Not specific to zone-append, but in general it may not be good to lock
-new features/interfaces to ZoneFS alone, given that direct-block
-interface has its own merits.
-Mapping one file to a one zone is good for some use-cases, but
-limiting for others.
-Some user-space FS/DBs would be more efficient (less meta, indirection)
-with the freedom to decide file-to-zone mapping/placement.
-- Rocksdb and those LSM style DBs would map SSTable to zone, but
-SSTable file may be two small (initially) and may become too large
-(after compaction) for a zone.
-- The internal parallelism of a single zone is a design-choice, and
-depends on the drive. Writing multiple zones parallely (striped/raid
-way) can give better performance than writing on one. In that case one
-would want to file that seamlessly combines multiple-zones in a
-striped fashion.
+Right..
 
-Also it seems difficult (compared to block dev) to fit simple-copy TP
-in ZoneFS. The new
-command needs: one NVMe drive, list of source LBAs and one destination
-LBA. In ZoneFS, we would deal with N+1 file-descriptors (N source zone
-file, and one destination zone file) for that. While with block
-interface, we do not need  more than one file-descriptor representing
-the entire device. With more zone-files, we face open/close overhead too.
+> Something we could do is summarise the block uptodate information in
+> the 32/64 bits of page_private without setting PagePrivate.  That would
+> cause us to still allocate an iop so we can track reads/writes, but we
+> might be able to avoid a few reads.
+> 
+> But I don't think it's worth it.  Partially uptodate pages are not what
+> we should be optimising for; we should try to get & keep pages uptodate.
+> After all, it's a page cache ;-)
+> 
 
--- 
-Joshi
+Fair enough. I was thinking about whether we could ensure the page is
+released if releasepage() effectively invalidated the page content (or
+avoid the release if we know the mapping won't be removed), but that
+appears to be nontrivial given the refcount interdependencies between
+page private and removing the mapping. I.e., the private data can hold a
+reference on the page and remove_mapping() wants to assume that the
+caller and page cache hold the last references on the page.
+
+Brian
+
