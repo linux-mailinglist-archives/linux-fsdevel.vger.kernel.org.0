@@ -2,222 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 616962776FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 18:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E8C277713
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 18:45:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgIXQkU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 12:40:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36948 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727153AbgIXQkS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 12:40:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 8D810B299;
-        Thu, 24 Sep 2020 16:40:16 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
-        johannes.thumshirn@wdc.com, dsterba@suse.com,
-        darrick.wong@oracle.com, josef@toxicpanda.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 14/14] btrfs: Revert 09745ff88d93 ("btrfs: dio iomap DSYNC workaround")
-Date:   Thu, 24 Sep 2020 11:39:21 -0500
-Message-Id: <20200924163922.2547-15-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200924163922.2547-1-rgoldwyn@suse.de>
-References: <20200924163922.2547-1-rgoldwyn@suse.de>
+        id S1727330AbgIXQpC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 12:45:02 -0400
+Received: from smtp-42ac.mail.infomaniak.ch ([84.16.66.172]:47395 "EHLO
+        smtp-42ac.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726645AbgIXQpC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 12:45:02 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4By19B01Y1zlhTqt;
+        Thu, 24 Sep 2020 18:44:30 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4By1972FNszlh8Yx;
+        Thu, 24 Sep 2020 18:44:27 +0200 (CEST)
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Pavel Machek <pavel@ucw.cz>,
+        "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com
+References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
+ <20200922215326.4603-1-madvenka@linux.microsoft.com>
+ <20200923084232.GB30279@amd>
+ <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
+ <20200923205156.GA12034@duo.ucw.cz>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
+Date:   Thu, 24 Sep 2020 18:44:26 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200923205156.GA12034@duo.ucw.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-iomap_dio_complete() is not called under i_rwsem anymore, revert
-the workaround.
+On 23/09/2020 22:51, Pavel Machek wrote:
+> Hi!
+> 
+>>>> Scenario 2
+>>>> ----------
+>>>>
+>>>> We know what code we need in advance. User trampolines are a good example of
+>>>> this. It is possible to define such code statically with some help from the
+>>>> kernel.
+>>>>
+>>>> This RFC addresses (2). (1) needs a general purpose trusted code generator
+>>>> and is out of scope for this RFC.
+>>>
+>>> This is slightly less crazy talk than introduction talking about holes
+>>> in W^X. But it is very, very far from normal Unix system, where you
+>>> have selection of interpretters to run your malware on (sh, python,
+>>> awk, emacs, ...) and often you can even compile malware from sources. 
+>>>
+>>> And as you noted, we don't have "a general purpose trusted code
+>>> generator" for our systems.
+>>>
+>>> I believe you should simply delete confusing "introduction" and
+>>> provide details of super-secure system where your patches would be
+>>> useful, instead.
+>>
+>> This RFC talks about converting dynamic code (which cannot be authenticated)
+>> to static code that can be authenticated using signature verification. That
+>> is the scope of this RFC.
+>>
+>> If I have not been clear before, by dynamic code, I mean machine code that is
+>> dynamic in nature. Scripts are beyond the scope of this RFC.
+>>
+>> Also, malware compiled from sources is not dynamic code. That is orthogonal
+>> to this RFC. If such malware has a valid signature that the kernel permits its
+>> execution, we have a systemic problem.
+>>
+>> I am not saying that script authentication or compiled malware are not problems.
+>> I am just saying that this RFC is not trying to solve all of the security problems.
+>> It is trying to define one way to convert dynamic code to static code to address
+>> one class of problems.
+> 
+> Well, you don't have to solve all problems at once.
+> 
+> But solutions have to exist, and AFAIK in this case they don't. You
+> are armoring doors, but ignoring open windows.
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/btrfs/ctree.h       |  1 -
- fs/btrfs/file.c        | 38 ++------------------------------
- fs/btrfs/inode.c       | 50 ------------------------------------------
- fs/btrfs/transaction.h |  1 -
- 4 files changed, 2 insertions(+), 88 deletions(-)
+FYI, script execution is being addressed (for the kernel part) by this
+patch series:
+https://lore.kernel.org/lkml/20200924153228.387737-1-mic@digikod.net/
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index ea15771bf3da..bc96c52021b2 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3051,7 +3051,6 @@ void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
- extern const struct dentry_operations btrfs_dentry_operations;
- extern const struct iomap_ops btrfs_dio_iomap_ops;
- extern const struct iomap_dio_ops btrfs_dio_ops;
--extern const struct iomap_dio_ops btrfs_sync_dops;
- 
- /* ilock flags definition */
- #define BTRFS_ILOCK_SHARED	(1 << 0)
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index e28bd3134efd..598a3df4d284 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -2091,44 +2091,10 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
- 	if (sync)
- 		atomic_inc(&BTRFS_I(inode)->sync_writers);
- 
--	if (iocb->ki_flags & IOCB_DIRECT) {
--		/*
--		 * 1. We must always clear IOCB_DSYNC in order to not deadlock
--		 *    in iomap, as it calls generic_write_sync() in this case.
--		 * 2. If we are async, we can call iomap_dio_complete() either
--		 *    in
--		 *
--		 *    2.1. A worker thread from the last bio completed.  In this
--		 *	   case we need to mark the btrfs_dio_data that it is
--		 *	   async in order to call generic_write_sync() properly.
--		 *	   This is handled by setting BTRFS_DIO_SYNC_STUB in the
--		 *	   current->journal_info.
--		 *    2.2  The submitter context, because all IO completed
--		 *         before we exited iomap_dio_rw().  In this case we can
--		 *         just re-set the IOCB_DSYNC on the iocb and we'll do
--		 *         the sync below.  If our ->end_io() gets called and
--		 *         current->journal_info is set, then we know we're in
--		 *         our current context and we will clear
--		 *         current->journal_info to indicate that we need to
--		 *         sync below.
--		 */
--		if (sync) {
--			ASSERT(current->journal_info == NULL);
--			iocb->ki_flags &= ~IOCB_DSYNC;
--			current->journal_info = BTRFS_DIO_SYNC_STUB;
--		}
-+	if (iocb->ki_flags & IOCB_DIRECT)
- 		num_written = btrfs_direct_write(iocb, from);
--
--		/*
--		 * As stated above, we cleared journal_info, so we need to do
--		 * the sync ourselves.
--		 */
--		if (sync && current->journal_info == NULL)
--			iocb->ki_flags |= IOCB_DSYNC;
--		current->journal_info = NULL;
--	} else {
-+	else
- 		num_written = btrfs_buffered_write(iocb, from);
--	}
- 
- 	/*
- 	 * We also have to set last_sub_trans to the current log transid,
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 17c97f30459c..e660d219e262 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -62,7 +62,6 @@ struct btrfs_dio_data {
- 	loff_t length;
- 	ssize_t submitted;
- 	struct extent_changeset *data_reserved;
--	bool sync;
- };
- 
- static const struct inode_operations btrfs_dir_inode_operations;
-@@ -7376,17 +7375,6 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
- 	int ret = 0;
- 	u64 len = length;
- 	bool unlock_extents = false;
--	bool sync = (current->journal_info == BTRFS_DIO_SYNC_STUB);
--
--	/*
--	 * We used current->journal_info here to see if we were sync, but
--	 * there's a lot of tests in the enospc machinery to not do flushing if
--	 * we have a journal_info set, so we need to clear this out and re-set
--	 * it in iomap_end.
--	 */
--	ASSERT(current->journal_info == NULL ||
--	       current->journal_info == BTRFS_DIO_SYNC_STUB);
--	current->journal_info = NULL;
- 
- 	if (!write)
- 		len = min_t(u64, len, fs_info->sectorsize);
-@@ -7412,7 +7400,6 @@ static int btrfs_dio_iomap_begin(struct inode *inode, loff_t start,
- 	if (!dio_data)
- 		return -ENOMEM;
- 
--	dio_data->sync = sync;
- 	dio_data->length = length;
- 	if (write) {
- 		dio_data->reserve = round_up(length, fs_info->sectorsize);
-@@ -7560,14 +7547,6 @@ static int btrfs_dio_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- 		extent_changeset_free(dio_data->data_reserved);
- 	}
- out:
--	/*
--	 * We're all done, we can re-set the current->journal_info now safely
--	 * for our endio.
--	 */
--	if (dio_data->sync) {
--		ASSERT(current->journal_info == NULL);
--		current->journal_info = BTRFS_DIO_SYNC_STUB;
--	}
- 	kfree(dio_data);
- 	iomap->private = NULL;
- 
-@@ -7943,30 +7922,6 @@ static blk_qc_t btrfs_submit_direct(struct inode *inode, struct iomap *iomap,
- 	return BLK_QC_T_NONE;
- }
- 
--static inline int btrfs_maybe_fsync_end_io(struct kiocb *iocb, ssize_t size,
--					   int error, unsigned flags)
--{
--	/*
--	 * Now if we're still in the context of our submitter we know we can't
--	 * safely run generic_write_sync(), so clear our flag here so that the
--	 * caller knows to follow up with a sync.
--	 */
--	if (current->journal_info == BTRFS_DIO_SYNC_STUB) {
--		current->journal_info = NULL;
--		return error;
--	}
--
--	if (error)
--		return error;
--
--	if (size) {
--		iocb->ki_flags |= IOCB_DSYNC;
--		return generic_write_sync(iocb, size);
--	}
--
--	return 0;
--}
--
- const struct iomap_ops btrfs_dio_iomap_ops = {
- 	.iomap_begin            = btrfs_dio_iomap_begin,
- 	.iomap_end              = btrfs_dio_iomap_end,
-@@ -7976,11 +7931,6 @@ const struct iomap_dio_ops btrfs_dio_ops = {
- 	.submit_io		= btrfs_submit_direct,
- };
- 
--const struct iomap_dio_ops btrfs_sync_dops = {
--	.submit_io		= btrfs_submit_direct,
--	.end_io			= btrfs_maybe_fsync_end_io,
--};
--
- static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			u64 start, u64 len)
- {
-diff --git a/fs/btrfs/transaction.h b/fs/btrfs/transaction.h
-index 858d9153a1cd..8241c050ba71 100644
---- a/fs/btrfs/transaction.h
-+++ b/fs/btrfs/transaction.h
-@@ -112,7 +112,6 @@ struct btrfs_transaction {
- #define TRANS_EXTWRITERS	(__TRANS_START | __TRANS_ATTACH)
- 
- #define BTRFS_SEND_TRANS_STUB	((void *)1)
--#define BTRFS_DIO_SYNC_STUB	((void *)2)
- 
- struct btrfs_trans_handle {
- 	u64 transid;
--- 
-2.26.2
+> 
+> Or very probably you are thinking about something different than
+> normal desktop distros (Debian 10). Because on my systems, I have
+> python, gdb and gcc...
 
+It doesn't make sense for a tailored security system to leave all these
+tools available to an attacker.
+
+> 
+> It would be nice to specify what other pieces need to be present for
+> this to make sense -- because it makes no sense on Debian 10.
+
+Not all kernel features make sense for a generic/undefined usage,
+especially specific security mechanisms (e.g. SELinux, Smack, Tomoyo,
+SafeSetID, LoadPin, IMA, IPE, secure/trusted boot, lockdown, etc.), but
+they can still be definitely useful.
+
+> 
+> Best regards,
+> 									Pavel
+> 
