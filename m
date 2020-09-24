@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF032771F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65ADA2771ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:13:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbgIXNNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 09:13:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46134 "EHLO
+        id S1727970AbgIXNN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 09:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbgIXNNY (ORCPT
+        with ESMTP id S1727891AbgIXNNZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 09:13:24 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F22C0613CE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 06:13:24 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id e17so3506095wme.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 06:13:24 -0700 (PDT)
+        Thu, 24 Sep 2020 09:13:25 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582CCC0613CE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 06:13:25 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id w2so3494396wmi.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 06:13:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uP1yJZtRXAR2CZTk0DWpcUT9I4b5eMNOzOvstfr8R5g=;
-        b=TAZ0MnPOn+Xo/Z+9MdzvJfVWbVCyNt38ECQZwVDE5DM+nDosRJQ+kUtn9QdH3xXjUZ
-         CBNt5eGW0FWpfIKXoorf98yKvMt9dHPcjGAw7p/yeKAJrc42L81YIhi2A51m3DNU/xW3
-         eyNv1xSJ3hraKUtq8FPxoZXL2oVPvK3ctYm1SJk1pJqZ/XG33ONMwD6qhBCl2OylUUp5
-         mipYTg/MEaxQBfggYHX14JI0yS9kT2FFzcf77+83VQm8oWhUtk7Z33MnoBlSZbfjiHoi
-         PBvkozEXjzndB1zq/h/E26hzTDNB54ETV4yCLu0BOKNn8DAoUIw8FvC39zsPHlA5SozF
-         /KFQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OBqvHPVRVJk3ZG/oqmQk5EP9lqOerQ2Xy+/srUo/wiA=;
+        b=uJnlAv/aL1XmuplMzUvcuFvtfX8FJcXsfcQ0tGZX5elBjleB4pW0N8kFqc3qOKw2id
+         JEeg85Lwp9w1EPvA0JfS56hn9SQMsYvE1X14ESMEGHkPbUzHLbVbXaixJUeBFZfHs5eV
+         k8U+rIkjiFWQ6zVCP6SFBqwzdohotrPG6AuwsUxlehabP/SGYB1QJNAcERujhcGhmeGY
+         RMNqS+yh+CoDUjTEikr7hnOxCG2UPmLaikRbZ5JDAMCBBiloi404F73zE/CoAJO7Le1S
+         Fq2TUXHu5HKYnkD24iYibBVdYsHfh5jD8fAuapB34ZzKcXpScU85FC1wKY7isHOL0ASw
+         Cnig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uP1yJZtRXAR2CZTk0DWpcUT9I4b5eMNOzOvstfr8R5g=;
-        b=E0WyMvI2AZQS56z5MU56ej0j2YojdbWBqXjtPIdnINYAfQho1Y+jgwHsZass0zqXIc
-         QovOOzfVpF+fGvL7QZu2DACl+y9D+5tzjKHRH5QGutG3GfYLvMWCCyLO9jTEq/E8YG8m
-         T2KWTdTuqKiwx8qlLu05N9lPvTf8Bo2MChXqCL1qcahcaDSjRAUv6ypOS0N+SHiEtTL0
-         bsdjKTjrf0sEfuSiRm1luGnkZv0P3i0Xt1UuWTwjfJlR2ecEOBRwzF2Br0TpimH4FVpz
-         CVliKOD/Nd+DysDQn/aSBFfM8LwtaF6YiU73RmEkXZctqfUokABxX8fkE1qm65KNrpj8
-         npvQ==
-X-Gm-Message-State: AOAM530dpDLQqw8ZpLbS2Kvqj2cKuloFzpipPXRRVV232PDxKqS7/7WC
-        p7TiLc5d/3JXioMSKEfgA1PITA==
-X-Google-Smtp-Source: ABdhPJx+Ajs1zmrAcaXn8LUrOlS5IJG5H7/m7w10TrL8GZZ00S+CdnrbiQFLJSKh6z1nutgo1/M4Rw==
-X-Received: by 2002:a05:600c:2053:: with SMTP id p19mr4727105wmg.50.1600953203002;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OBqvHPVRVJk3ZG/oqmQk5EP9lqOerQ2Xy+/srUo/wiA=;
+        b=ckkbxNUL6l+C3EP318MB1r94X3S1O+GOAFVMIMADjtIVLXI35lbuH9luvOqTAxkcs+
+         0ZXdv77RKOQ/rDRoG9AsaQTb8kjqO+wDPMHNzZ7y4gIC8Qv3f9IQN2w2RdwDKP2TuqIQ
+         45cz1m27yw3Em2zWjwV9g7dKFPog9hTLU/VPkl/ZJbUbCt+MAtf924Dprnlqo9Wyjcfx
+         SmI+2WeGHpjONG2xpkQnmjLBLangy4fjvTENMcz6JMBubvgXj3oAL4JUNftbtaxJluD/
+         tvK7juEz7yJ7fq3FxVOS94i47TsMEL212xOoyRQl+s1YrEu3FuDGNLGp0dpYtUb22bMu
+         bovA==
+X-Gm-Message-State: AOAM5312SOYToD6KkrtJj84OBlzrZdXd0yLu0jVcCTB0ZcWd7nQxGTOj
+        hsfTC4QrRUp36tT0k+D4bpICjQ==
+X-Google-Smtp-Source: ABdhPJxye7QzFtLjQWsUXkCBuiHSS0YdQllP6GH1279i9l5TAnnWnhbtL6m7W4HYsW+eDiM445QJ2Q==
+X-Received: by 2002:a7b:c92c:: with SMTP id h12mr4725630wml.121.1600953203881;
         Thu, 24 Sep 2020 06:13:23 -0700 (PDT)
 Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
-        by smtp.gmail.com with ESMTPSA id k22sm3805044wrd.29.2020.09.24.06.13.22
+        by smtp.gmail.com with ESMTPSA id k22sm3805044wrd.29.2020.09.24.06.13.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2020 06:13:22 -0700 (PDT)
+        Thu, 24 Sep 2020 06:13:23 -0700 (PDT)
 From:   Alessio Balsini <balsini@android.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Akilesh Kailash <akailash@google.com>,
@@ -63,251 +63,394 @@ Cc:     Akilesh Kailash <akailash@google.com>,
         Zimuzo Ezeozue <zezeozue@google.com>,
         fuse-devel@lists.sourceforge.net, kernel-team@android.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V9 0/4] fuse: Add support for passthrough read/write
-Date:   Thu, 24 Sep 2020 14:13:14 +0100
-Message-Id: <20200924131318.2654747-1-balsini@android.com>
+Subject: [PATCH V9 1/4] fuse: Definitions and ioctl() for passthrough
+Date:   Thu, 24 Sep 2020 14:13:15 +0100
+Message-Id: <20200924131318.2654747-2-balsini@android.com>
 X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
+In-Reply-To: <20200924131318.2654747-1-balsini@android.com>
+References: <20200924131318.2654747-1-balsini@android.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the 9th version of the series. Please find the changelog at the
-bottom of this cover letter.
+Introduce the new FUSE passthrough ioctl(), which allows userspace to
+specify a direct connection between a FUSE file and a lower file system
+file.
+Such ioctl() requires userspace to specify:
+- the file descriptor of one of its opened files,
+- the unique identifier of the FUSE request associated with a pending
+  open/create operation,
+both encapsulated into a fuse_passthrough_out data structure.
+The ioctl() will search for the pending FUSE request matching the unique
+identifier, and update the passthrough file pointer of the request with the
+file pointer referenced by the passed file descriptor.
+When that pending FUSE request is handled, the passthrough file pointer
+is copied to the fuse_file data structure, so that the link between FUSE
+and lower file system is consolidated.
 
-Add support for file system passthrough read/write of files when enabled in
-userspace through the option FUSE_PASSTHROUGH.
+In order for the passthrough mode to be successfully activated, the lower
+file system file must implement both read_ and write_iter file operations.
+This extra check avoids special pseudofiles to be targets for this feature.
+An additional enforced limitation is that when FUSE passthrough is enabled,
+no further file system stacking is allowed.
 
-There are file systems based on FUSE that are intended to enforce special
-policies or trigger complicated decision makings at the file operations
-level. Android, for example, uses FUSE to enforce fine-grained access
-policies that also depend on the file contents.
-Sometimes it happens that at open or create time a file is identified as
-not requiring additional checks for consequent reads/writes, thus FUSE
-would simply act as a passive bridge between the process accessing the FUSE
-file system and the lower file system. Splicing and caching help reduce the
-FUSE overhead, but there are still read/write operations forwarded to the
-userspace FUSE daemon that could be avoided.
-
-This series has been inspired by the original patches from Nikhilesh Reddy,
-the idea and code of which has been elaborated and improved thanks to the
-community support.
-
-When the FUSE_PASSTHROUGH capability is enabled, the FUSE daemon may decide
-while handling the open/create operations, if the given file can be
-accessed in passthrough mode. This means that all the further read and
-write operations would be forwarded by the kernel directly to the lower
-file system using the VFS layer rather than to the FUSE daemon. All the
-requests other than reads or writes are still handled by the userspace FUSE
-daemon.
-This allows for improved performance on reads and writes, especially in the
-case of reads at random offsets, for which no (readahead) caching mechanism
-would help.
-Benchmarks show improved performance that is close to native file system
-access when doing massive manipulations on a single opened file, especially
-in the case of random reads, for which the bandwidth increased by almost 2X
-or sequential writes for which the improvement is close to 3X.
-
-The creation of this direct connection (passthrough) between FUSE file
-objects and file objects in the lower file system happens in a way that
-reminds of passing file descriptors via sockets:
-- a process requests the opening of a file handled by FUSE, so the kernel
-  forwards the request to the FUSE daemon;
-- the FUSE daemon opens the target file in the lower file system, getting
-  its file descriptor;
-- the FUSE daemon also decides according to its internal policies if
-  passthrough can be enabled for that file, and, if so, can perform a
-FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl() on /dev/fuse, passing the file
-descriptor obtained at the previous step and the fuse_req unique
-identifier;
-- the kernel translates the file descriptor to the file pointer navigating
-  through the opened files of the "current" process and temporarily stores
-it in the associated open/create fuse_req's passthrough_filp;
-- when the FUSE daemon has done with the request and it's time for the
-  kernel to close it, it checks if the passthrough_filp is available and in
-case updates the additional field in the fuse_file owned by the process
-accessing the FUSE file system.
-From now on, all the read/write operations performed by that process will
-be redirected to the corresponding lower file system file by creating new
-VFS requests.
-Since the read/write operation to the lower file system is executed with
-the current process's credentials, it might happen that it does not have
-enough privileges to succeed. For this reason, the process temporarily
-receives the same credentials as the FUSE daemon, that are reverted as soon
-as the read/write operation completes, emulating the behavior of the
-request to be performed by the FUSE daemon itself. This solution has been
-inspired by the way overlayfs handles read/write operations.
-Asynchronous IO is supported as well, handled by creating separate AIO
-requests for the lower file system that will be internally tracked by FUSE,
-that intercepts and propagates their completion through an internal
-ki_completed callback similar to the current implementation of overlayfs.
-The ioctl() has been designed taking as a reference and trying to converge
-to the fuse2 implementation. For example, the fuse_passthrough_out data
-structure has extra fields that will allow for further extensions of the
-feature.
-
-
-    Performance
-
-What follows has been performed with this change [V6] rebased on top of
-vanilla v5.8 Linux kernel, using a custom passthrough_hp FUSE daemon that
-enables pass-through for each file that is opened during both “open” and
-“create”. Tests were run on an Intel Xeon E5-2678V3, 32GiB of RAM, with an
-ext4-formatted SSD as the lower file system, with no special tuning, e.g.,
-all the involved processes are SCHED_OTHER, ondemand is the frequency
-governor with no frequency restrictions, and turbo-boost, as well as
-p-state, are active. This is because I noticed that, for such high-level
-benchmarks, results consistency was minimally affected by these features.
-The source code of the updated libfuse library and passthrough_hp is shared
-at the following repository:
-
-    https://github.com/balsini/libfuse/tree/fuse-passthrough-stable-v.3.9.4
-
-Two different kinds of benchmarks were done for this change, the first set
-of tests evaluates the bandwidth improvements when manipulating a huge
-single file, the second set of tests verify that no performance regressions
-were introduced when handling many small files.
-
-The first benchmarks were done by running FIO (fio-3.21) with:
-- bs=4Ki;
-- file size: 50Gi;
-- ioengine: sync;
-- fsync_on_close: true.
-The target file has been chosen large enough to avoid it to be entirely
-loaded into the page cache.
-Results are presented in the following table:
-
-+-----------+--------+-------------+--------+
-| Bandwidth |  FUSE  |     FUSE    |  Bind  |
-|  (KiB/s)  |        | passthrough |  mount |
-+-----------+--------+-------------+--------+
-| read      | 468897 |      502085 | 516830 |
-+-----------+--------+-------------+--------+
-| randread  |  15773 |       26632 |  21386 |
-+-----------+--------+-------------+--------+
-| write     |  58185 |      141272 | 141671 |
-+-----------+--------+-------------+--------+
-| randwrite |  59892 |       75236 |  76486 |
-+-----------+--------+-------------+--------+
-
-As long as this patch has the primary objective of improving bandwidth,
-another set of tests has been performed to see how this behaves on a
-totally different scenario that involves accessing many small files. For
-this purpose, measuring the build time of the Linux kernel has been chosen
-as a well-known workload. The kernel has been built with as many processes
-as the number of logical CPUs (-j $(nproc)), that besides being a
-reasonable number, is also enough to saturate the processor’s utilization
-thanks to the additional FUSE daemon’s threads, making it even harder to
-get closer to the native file system performance.
-The following table shows the total build times in the different
-configurations:
-
-+------------------+--------------+-----------+
-|                  | AVG duration |  Standard |
-|                  |     (sec)    | deviation |
-+------------------+--------------+-----------+
-| FUSE             |      144.566 |     0.697 |
-+------------------+--------------+-----------+
-| FUSE passthrough |      133.820 |     0.341 |
-+------------------+--------------+-----------+
-| Raw              |      109.423 |     0.724 |
-+------------------+--------------+-----------+
-
-Similar performance measurements were performed with the current version of
-the patch, the results of which are comparable with what is shown above.
-Further testing and performance evaluations are welcome.
-
-
-    Description of the series
-
-Patch 1 introduces the data structures and definitions required both for
-the communication with userspace and for the internal kernel use.
-It also adds the basic functionalities to establish the bridge between the
-FUSE file and the lower file system file through an ioctl().
-
-Patch 2 creates a reference to the FUSE daemon credentials in the FUSE
-connection.
-
-Patch 3 enables the synchronous read and write operations for those FUSE
-files for which the passthrough functionality is enabled.
-
-Patch 4 extends the read and write operations to also support asynchronous
-IO.
-
-Changes in v9:
-* Switched to using VFS instead of direct lower FS file ops
-  [Attempt to address a request from Jens Axboe, Jann Horn, Amir Goldstein]
-* Removal of useless included aio.h header
-  [Proposed by Jens Axboe]
-
-Changes in v8:
-* aio requests now use kmalloc/kfree, instead of kmem_cache
-* Switched to call_{read,write}_iter in AIO
-* Revisited attributes copy
-* Passthrough can only be enabled via ioctl(), fixing the security issue
-* spotted by Jann
-* Use an extensible fuse_passthrough_out data structure
-  [Attempt to address a request from Nikolaus Rath, Amir Goldstein and
-  Miklos Szeredi]
-
-Changes in v7:
-* Full handling of aio requests as done in overlayfs (update commit
-* message).
-* s/fget_raw/fget.
-* Open fails in case of passthrough errors, emitting warning messages.
-  [Proposed by Jann Horn]
-* Create new local kiocb, getting rid of the previously proposed ki_filp
-* swapping.
-  [Proposed by Jann Horn and Jens Axboe]
-* Code polishing.
-
-Changes in v6:
-* Port to kernel v5.8:
-  * fuse_file_{read,write}_iter() changed since the v5 of this patch was
-  * proposed.
-* Simplify fuse_simple_request().
-* Merge fuse_passthrough.h into fuse_i.h
-* Refactor of passthrough.c:
-  * Remove BUG_ON()s.
-  * Simplified error checking and request arguments indexing.
-  * Use call_{read,write}_iter() utility functions.
-  * Remove get_file() and fputs() during read/write: handle the extra FUSE
-  * references to the lower file object when the fuse_file is
-  * created/deleted.
-    [Proposed by Jann Horn]
-
-Changes in v5:
-* Fix the check when setting the passthrough file.
-  [Found when testing by Mike Shal]
-
-Changes in v3 and v4:
-* Use the fs_stack_depth to prevent further stacking and a minor fix.
-  [Proposed by Jann Horn]
-
-Changes in v2:
-* Changed the feature name to passthrough from stacked_io.
-  [Proposed by Linus Torvalds]
-
-
-Alessio Balsini (4):
-  fuse: Definitions and ioctl() for passthrough
-  fuse: Trace daemon creds
-  fuse: Introduce synchronous read and write for passthrough
-  fuse: Handle asynchronous read and write in passthrough
-
- fs/fuse/Makefile          |   1 +
- fs/fuse/dev.c             |  57 ++++++++++-
- fs/fuse/dir.c             |   2 +
- fs/fuse/file.c            |  25 +++--
- fs/fuse/fuse_i.h          |  19 ++++
- fs/fuse/inode.c           |  17 +++-
- fs/fuse/passthrough.c     | 208 ++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h |  12 ++-
- 8 files changed, 328 insertions(+), 13 deletions(-)
+Signed-off-by: Alessio Balsini <balsini@android.com>
+---
+ fs/fuse/Makefile          |  1 +
+ fs/fuse/dev.c             | 57 +++++++++++++++++++++++++++++++++++----
+ fs/fuse/dir.c             |  2 ++
+ fs/fuse/file.c            | 17 +++++++++---
+ fs/fuse/fuse_i.h          | 14 ++++++++++
+ fs/fuse/inode.c           |  9 ++++++-
+ fs/fuse/passthrough.c     | 55 +++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h | 12 ++++++++-
+ 8 files changed, 156 insertions(+), 11 deletions(-)
  create mode 100644 fs/fuse/passthrough.c
 
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 3e8cebfb59b7..6971454a2bdf 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_CUSE) += cuse.o
+ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+ 
+ fuse-objs := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o
++fuse-objs += passthrough.o
+ virtiofs-y += virtio_fs.o
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 02b3c36b3676..c31e6c30fabf 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -2219,21 +2219,53 @@ static int fuse_device_clone(struct fuse_conn *fc, struct file *new)
+ 	return 0;
+ }
+ 
++static int fuse_passthrough_open(struct fuse_dev *fud,
++				 struct fuse_passthrough_out *pto)
++{
++	int ret;
++	struct fuse_req *req;
++	struct fuse_pqueue *fpq = &fud->pq;
++	struct fuse_conn *fc = fud->fc;
++
++	if (!fc->passthrough)
++		return -EPERM;
++
++	/* This field is reserved for future use */
++	if (pto->len != 0)
++		return -EINVAL;
++
++	spin_lock(&fpq->lock);
++	req = request_find(fpq, pto->unique & ~FUSE_INT_REQ_BIT);
++	if (!req) {
++		spin_unlock(&fpq->lock);
++		return -ENOENT;
++	}
++	__fuse_get_request(req);
++	spin_unlock(&fpq->lock);
++
++	ret = fuse_passthrough_setup(req, pto->fd);
++
++	fuse_put_request(fc, req);
++	return ret;
++}
++
+ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ 			   unsigned long arg)
+ {
+-	int err = -ENOTTY;
+-
+-	if (cmd == FUSE_DEV_IOC_CLONE) {
+-		int oldfd;
++	int err;
++	int oldfd;
++	struct fuse_dev *fud;
++	struct fuse_passthrough_out pto;
+ 
++	switch (cmd) {
++	case FUSE_DEV_IOC_CLONE:
+ 		err = -EFAULT;
+ 		if (!get_user(oldfd, (__u32 __user *) arg)) {
+ 			struct file *old = fget(oldfd);
+ 
+ 			err = -EINVAL;
+ 			if (old) {
+-				struct fuse_dev *fud = NULL;
++				fud = NULL;
+ 
+ 				/*
+ 				 * Check against file->f_op because CUSE
+@@ -2251,6 +2283,21 @@ static long fuse_dev_ioctl(struct file *file, unsigned int cmd,
+ 				fput(old);
+ 			}
+ 		}
++		break;
++	case FUSE_DEV_IOC_PASSTHROUGH_OPEN:
++		err = -EFAULT;
++		if (!copy_from_user(&pto,
++				    (struct fuse_passthrough_out __user *)arg,
++				    sizeof(pto))) {
++			err = -EINVAL;
++			fud = fuse_get_dev(file);
++			if (fud)
++				err = fuse_passthrough_open(fud, &pto);
++		}
++		break;
++	default:
++		err = -ENOTTY;
++		break;
+ 	}
+ 	return err;
+ }
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 26f028bc760b..531de0c5c9e8 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -477,6 +477,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	args.out_args[0].value = &outentry;
+ 	args.out_args[1].size = sizeof(outopen);
+ 	args.out_args[1].value = &outopen;
++	args.passthrough_filp = NULL;
+ 	err = fuse_simple_request(fc, &args);
+ 	if (err)
+ 		goto out_free_ff;
+@@ -489,6 +490,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	ff->fh = outopen.fh;
+ 	ff->nodeid = outentry.nodeid;
+ 	ff->open_flags = outopen.open_flags;
++	ff->passthrough_filp = args.passthrough_filp;
+ 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+ 			  &outentry.attr, entry_attr_timeout(&outentry), 0);
+ 	if (!inode) {
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 83d917f7e542..6c0ec742ce74 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -33,10 +33,12 @@ static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
+ }
+ 
+ static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+-			  int opcode, struct fuse_open_out *outargp)
++			  int opcode, struct fuse_open_out *outargp,
++			  struct file **passthrough_filp)
+ {
+ 	struct fuse_open_in inarg;
+ 	FUSE_ARGS(args);
++	int ret;
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.flags = file->f_flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
+@@ -51,7 +53,10 @@ static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+ 	args.out_args[0].size = sizeof(*outargp);
+ 	args.out_args[0].value = outargp;
+ 
+-	return fuse_simple_request(fc, &args);
++	ret = fuse_simple_request(fc, &args);
++	*passthrough_filp = args.passthrough_filp;
++
++	return ret;
+ }
+ 
+ struct fuse_release_args {
+@@ -144,14 +149,16 @@ int fuse_do_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+ 	/* Default for no-open */
+ 	ff->open_flags = FOPEN_KEEP_CACHE | (isdir ? FOPEN_CACHE_DIR : 0);
+ 	if (isdir ? !fc->no_opendir : !fc->no_open) {
++		struct file *passthrough_filp;
+ 		struct fuse_open_out outarg;
+ 		int err;
+ 
+-		err = fuse_send_open(fc, nodeid, file, opcode, &outarg);
++		err = fuse_send_open(fc, nodeid, file, opcode, &outarg,
++				     &passthrough_filp);
+ 		if (!err) {
+ 			ff->fh = outarg.fh;
+ 			ff->open_flags = outarg.open_flags;
+-
++			ff->passthrough_filp = passthrough_filp;
+ 		} else if (err != -ENOSYS) {
+ 			fuse_file_free(ff);
+ 			return err;
+@@ -281,6 +288,8 @@ void fuse_release_common(struct file *file, bool isdir)
+ 	struct fuse_release_args *ra = ff->release_args;
+ 	int opcode = isdir ? FUSE_RELEASEDIR : FUSE_RELEASE;
+ 
++	fuse_passthrough_release(ff);
++
+ 	fuse_prepare_release(fi, ff, file->f_flags, opcode);
+ 
+ 	if (ff->flock) {
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 740a8a7d7ae6..6c5166447905 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -208,6 +208,12 @@ struct fuse_file {
+ 
+ 	} readdir;
+ 
++	/**
++	 * Reference to lower filesystem file for read/write operations
++	 * handled in pass-through mode
++	 */
++	struct file *passthrough_filp;
++
+ 	/** RB node to be linked on fuse_conn->polled_files */
+ 	struct rb_node polled_node;
+ 
+@@ -250,6 +256,8 @@ struct fuse_args {
+ 	bool page_zeroing:1;
+ 	bool page_replace:1;
+ 	bool may_block:1;
++	/** Lower filesystem file pointer used in pass-through mode */
++	struct file *passthrough_filp;
+ 	struct fuse_in_arg in_args[3];
+ 	struct fuse_arg out_args[2];
+ 	void (*end)(struct fuse_conn *fc, struct fuse_args *args, int error);
+@@ -720,6 +728,9 @@ struct fuse_conn {
+ 	/* Do not show mount options */
+ 	unsigned int no_mount_options:1;
+ 
++	/** Pass-through mode for read/write IO */
++	unsigned int passthrough:1;
++
+ 	/** The number of requests waiting for completion */
+ 	atomic_t num_waiting;
+ 
+@@ -1093,4 +1104,7 @@ unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args);
+ u64 fuse_get_unique(struct fuse_iqueue *fiq);
+ void fuse_free_conn(struct fuse_conn *fc);
+ 
++int fuse_passthrough_setup(struct fuse_req *req, unsigned int fd);
++void fuse_passthrough_release(struct fuse_file *ff);
++
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index bba747520e9b..eb223130a917 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -965,6 +965,12 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
+ 					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+ 					max_t(unsigned int, arg->max_pages, 1));
+ 			}
++			if (arg->flags & FUSE_PASSTHROUGH) {
++				fc->passthrough = 1;
++				/* Prevent further stacking */
++				fc->sb->s_stack_depth =
++					FILESYSTEM_MAX_STACK_DEPTH;
++			}
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1002,7 +1008,8 @@ void fuse_send_init(struct fuse_conn *fc)
+ 		FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
+ 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+-		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
++		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
++		FUSE_PASSTHROUGH;
+ 	ia->args.opcode = FUSE_INIT;
+ 	ia->args.in_numargs = 1;
+ 	ia->args.in_args[0].size = sizeof(ia->in);
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+new file mode 100644
+index 000000000000..86ab4eafa7bf
+--- /dev/null
++++ b/fs/fuse/passthrough.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "fuse_i.h"
++
++int fuse_passthrough_setup(struct fuse_req *req, unsigned int fd)
++{
++	int ret;
++	int fs_stack_depth;
++	struct file *passthrough_filp;
++	struct inode *passthrough_inode;
++	struct super_block *passthrough_sb;
++
++	/* Passthrough mode can only be enabled at file open/create time */
++	if (req->in.h.opcode != FUSE_OPEN && req->in.h.opcode != FUSE_CREATE) {
++		pr_err("FUSE: invalid OPCODE for request.\n");
++		return -EINVAL;
++	}
++
++	passthrough_filp = fget(fd);
++	if (!passthrough_filp) {
++		pr_err("FUSE: invalid file descriptor for passthrough.\n");
++		return -EINVAL;
++	}
++
++	ret = -EINVAL;
++	if (!passthrough_filp->f_op->read_iter ||
++	    !passthrough_filp->f_op->write_iter) {
++		pr_err("FUSE: passthrough file misses file operations.\n");
++		goto out;
++	}
++
++	passthrough_inode = file_inode(passthrough_filp);
++	passthrough_sb = passthrough_inode->i_sb;
++	fs_stack_depth = passthrough_sb->s_stack_depth + 1;
++	ret = -EEXIST;
++	if (fs_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
++		pr_err("FUSE: maximum fs stacking depth exceeded for passthrough\n");
++		goto out;
++	}
++
++	req->args->passthrough_filp = passthrough_filp;
++	return 0;
++out:
++	fput(passthrough_filp);
++	return ret;
++}
++
++void fuse_passthrough_release(struct fuse_file *ff)
++{
++	if (!ff->passthrough_filp)
++		return;
++
++	fput(ff->passthrough_filp);
++	ff->passthrough_filp = NULL;
++}
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 373cada89815..0cd9fd83374a 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -342,6 +342,7 @@ struct fuse_file_lock {
+ #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+ #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
+ #define FUSE_MAP_ALIGNMENT	(1 << 26)
++#define FUSE_PASSTHROUGH	(1 << 27)
+ 
+ /**
+  * CUSE INIT request/reply flags
+@@ -794,6 +795,14 @@ struct fuse_in_header {
+ 	uint32_t	padding;
+ };
+ 
++struct fuse_passthrough_out {
++	uint64_t	unique;
++	uint32_t	fd;
++	/* For future implementation */
++	uint32_t	len;
++	void		*vec;
++};
++
+ struct fuse_out_header {
+ 	uint32_t	len;
+ 	int32_t		error;
+@@ -869,7 +878,8 @@ struct fuse_notify_retrieve_in {
+ };
+ 
+ /* Device ioctls: */
+-#define FUSE_DEV_IOC_CLONE	_IOR(229, 0, uint32_t)
++#define FUSE_DEV_IOC_CLONE		_IOR(229, 0, uint32_t)
++#define FUSE_DEV_IOC_PASSTHROUGH_OPEN	_IOW(229, 1, struct fuse_passthrough_out)
+ 
+ struct fuse_lseek_in {
+ 	uint64_t	fh;
 -- 
 2.28.0.681.g6f77f65b4e-goog
 
