@@ -2,151 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFCB2767DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 06:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2677227689F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 08:00:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbgIXE3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 00:29:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726466AbgIXE3C (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 00:29:02 -0400
-Received: from sol.attlocal.net (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67FAA238E4;
-        Thu, 24 Sep 2020 04:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600921741;
-        bh=zkbK3kc+vjesm/oo0BR3v4YFB7mgYl6/SjNVtaJC49I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tf+3f9n9whDLE3nRQBGBiXSBPyJBU5+wbl0Pzxy1oCesqnjN+hwcu1TZ3Crt7oe8w
-         +VrERYCOeGY6zv1gmE8R4l1E5n4V+56OUhJTmCp+u35lAl+nOOoxMwnY0FVDRfpiKR
-         lmE8PryChQoOaSxuK9i2Ja8Q4GUSoNu1QyPdPDhE=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Daniel Rosenberg <drosen@google.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 2/2] fscrypt: rename DCACHE_ENCRYPTED_NAME to DCACHE_NOKEY_NAME
-Date:   Wed, 23 Sep 2020 21:26:24 -0700
-Message-Id: <20200924042624.98439-3-ebiggers@kernel.org>
+        id S1726828AbgIXGAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 02:00:06 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:41129 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726799AbgIXGAG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 02:00:06 -0400
+X-IronPort-AV: E=Sophos;i="5.77,296,1596470400"; 
+   d="scan'208";a="99567075"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 24 Sep 2020 14:00:02 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id 0A1AF48990E8;
+        Thu, 24 Sep 2020 14:00:01 +0800 (CST)
+Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Thu, 24 Sep 2020 13:59:58 +0800
+Received: from localhost.localdomain (10.167.225.206) by
+ G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Thu, 24 Sep 2020 13:59:58 +0800
+From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <david@fromorbit.com>, <ira.weiny@intel.com>,
+        <linux-xfs@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+        <y-goto@fujitsu.com>, <lihao2018.fnst@cn.fujitsu.com>
+Subject: [PATCH v2] fs: Kill DCACHE_DONTCACHE dentry even if DCACHE_REFERENCED is set
+Date:   Thu, 24 Sep 2020 13:59:58 +0800
+Message-ID: <20200924055958.825515-1-lihao2018.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200924042624.98439-1-ebiggers@kernel.org>
-References: <20200924042624.98439-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 0A1AF48990E8.ADB91
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+If DCACHE_REFERENCED is set, fast_dput() will return true, and then
+retain_dentry() have no chance to check DCACHE_DONTCACHE. As a result,
+the dentry won't be killed and the corresponding inode can't be evicted.
+In the following example, the DAX policy can't take effects unless we
+do a drop_caches manually.
 
-Originally we used the term "encrypted name" or "ciphertext name" to
-mean the encoded filename that is shown when an encrypted directory is
-listed without its key.  But these terms are ambiguous since they also
-mean the filename stored on-disk.  "Encrypted name" is especially
-ambiguous since it could also be understood to mean "this filename is
-encrypted on-disk", similar to "encrypted file".
+  # DCACHE_LRU_LIST will be set
+  echo abcdefg > test.txt
 
-So we've started calling these encoded names "no-key names" instead.
+  # DCACHE_REFERENCED will be set and DCACHE_DONTCACHE can't do anything
+  xfs_io -c 'chattr +x' test.txt
 
-Therefore, rename DCACHE_ENCRYPTED_NAME to DCACHE_NOKEY_NAME to avoid
-confusion about what this flag means.
+  # Drop caches to make DAX changing take effects
+  echo 2 > /proc/sys/vm/drop_caches
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+What this patch does is preventing fast_dput() from returning true if
+DCACHE_DONTCACHE is set. Then retain_dentry() will detect the
+DCACHE_DONTCACHE and will return false. As a result, the dentry will be
+killed and the inode will be evicted. In this way, if we change per-file
+DAX policy, it will take effects automatically after this file is closed
+by all processes.
+
+I also add some comments to make the code more clear.
+
+Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
 ---
- fs/crypto/fname.c       |  2 +-
- fs/crypto/hooks.c       |  7 +++----
- include/linux/dcache.h  |  2 +-
- include/linux/fscrypt.h | 12 ++++++------
- 4 files changed, 11 insertions(+), 12 deletions(-)
+v1 is split into two standalone patch as discussed in [1], and the first
+patch has been reviewed in [2]. This is the second patch.
 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index 391acea4bc96..c65979452844 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -541,7 +541,7 @@ static int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
- 	 * reverting to no-key names without evicting the directory's inode
- 	 * -- which implies eviction of the dentries in the directory.
+[1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
+[2]: https://lore.kernel.org/linux-fsdevel/20200906214002.GI12131@dread.disaster.area/
+
+ fs/dcache.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index ea0485861d93..97e81a844a96 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -793,10 +793,17 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 * a reference to the dentry and change that, but
+ 	 * our work is done - we can leave the dentry
+ 	 * around with a zero refcount.
++	 *
++	 * Nevertheless, there are two cases that we should kill
++	 * the dentry anyway.
++	 * 1. free disconnected dentries as soon as their refcount
++	 *    reached zero.
++	 * 2. free dentries if they should not be cached.
  	 */
--	if (!(dentry->d_flags & DCACHE_ENCRYPTED_NAME))
-+	if (!(dentry->d_flags & DCACHE_NOKEY_NAME))
- 		return 1;
+ 	smp_rmb();
+ 	d_flags = READ_ONCE(dentry->d_flags);
+-	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
++	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST |
++			DCACHE_DISCONNECTED | DCACHE_DONTCACHE;
  
- 	/*
-diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
-index ca996e1c92d9..20b0df47fe6a 100644
---- a/fs/crypto/hooks.c
-+++ b/fs/crypto/hooks.c
-@@ -61,7 +61,7 @@ int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
- 		return err;
- 
- 	/* ... in case we looked up no-key name before key was added */
--	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME)
-+	if (dentry->d_flags & DCACHE_NOKEY_NAME)
- 		return -ENOKEY;
- 
- 	if (!fscrypt_has_permitted_context(dir, inode))
-@@ -86,8 +86,7 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		return err;
- 
- 	/* ... in case we looked up no-key name(s) before key was added */
--	if ((old_dentry->d_flags | new_dentry->d_flags) &
--	    DCACHE_ENCRYPTED_NAME)
-+	if ((old_dentry->d_flags | new_dentry->d_flags) & DCACHE_NOKEY_NAME)
- 		return -ENOKEY;
- 
- 	if (old_dir != new_dir) {
-@@ -116,7 +115,7 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
- 
- 	if (fname->is_nokey_name) {
- 		spin_lock(&dentry->d_lock);
--		dentry->d_flags |= DCACHE_ENCRYPTED_NAME;
-+		dentry->d_flags |= DCACHE_NOKEY_NAME;
- 		spin_unlock(&dentry->d_lock);
- 		d_set_d_op(dentry, &fscrypt_d_ops);
- 	}
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 65d975bf9390..6f95c3300cbb 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -213,7 +213,7 @@ struct dentry_operations {
- 
- #define DCACHE_MAY_FREE			0x00800000
- #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
--#define DCACHE_ENCRYPTED_NAME		0x02000000 /* Encrypted name (dir key was unavailable) */
-+#define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
- #define DCACHE_OP_REAL			0x04000000
- 
- #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
-diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index bc9ec727e993..f1757e73162d 100644
---- a/include/linux/fscrypt.h
-+++ b/include/linux/fscrypt.h
-@@ -100,15 +100,15 @@ static inline bool fscrypt_needs_contents_encryption(const struct inode *inode)
- }
- 
- /*
-- * When d_splice_alias() moves a directory's encrypted alias to its decrypted
-- * alias as a result of the encryption key being added, DCACHE_ENCRYPTED_NAME
-- * must be cleared.  Note that we don't have to support arbitrary moves of this
-- * flag because fscrypt doesn't allow encrypted aliases to be the source or
-- * target of a rename().
-+ * When d_splice_alias() moves a directory's no-key alias to its plaintext alias
-+ * as a result of the encryption key being added, DCACHE_NOKEY_NAME must be
-+ * cleared.  Note that we don't have to support arbitrary moves of this flag
-+ * because fscrypt doesn't allow no-key names to be the source or target of a
-+ * rename().
-  */
- static inline void fscrypt_handle_d_move(struct dentry *dentry)
- {
--	dentry->d_flags &= ~DCACHE_ENCRYPTED_NAME;
-+	dentry->d_flags &= ~DCACHE_NOKEY_NAME;
- }
- 
- /* crypto.c */
+ 	/* Nothing to do? Dropping the reference was all we needed? */
+ 	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
 -- 
 2.28.0
+
+
 
