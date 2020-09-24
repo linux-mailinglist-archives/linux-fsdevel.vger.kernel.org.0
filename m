@@ -2,199 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF1F2771F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24EF5277235
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728000AbgIXNNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 09:13:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727983AbgIXNN2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 09:13:28 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6415C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 06:13:27 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id a17so3772224wrn.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Sep 2020 06:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SnFurKpeBkbwLq0KOJ5lvNPVyL4t0UDoYrGfHs7nv0A=;
-        b=c49kIoCNMCWuGzzxSiHgueczTg5CkgrwLkGuWWq0FAGajSgKan0mFscWOzZVZ+m05d
-         RbXYXA5FxFJCeXX7mCyh/aiJnyvqxapJeon+80154c1bUNnQb82F4gdw7Ej5UktyMO7k
-         rdobOrqsNJFec7D8/br7wA47DdV9NURPNYsPThcpOki9m0thIqLiLbuRY4FgjXMsR04N
-         SgpRRL5PtFgFAYE/gC7RVtUpmBRrctaosbCu9mkSBwDACxmcy70fQW+z6IZaqNo6orLr
-         KL9ZHtgqVaorBff9YMt60zaVL854011zyCBngVeDEpHIO6pUMJdPr0mg9vOQxDHTy24j
-         Fobg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SnFurKpeBkbwLq0KOJ5lvNPVyL4t0UDoYrGfHs7nv0A=;
-        b=tFkpah3VYbg2rpwS2rYwxFR80aCT9zMpYBGPQJ/SdFX+B60N7yBV73cY/x38cBOmuB
-         hs5L88Sr/oCeYs8zXg5nIA4e5742Z/4hIIgnarf5QcxHqJgjsn4XgfV6PO3lDV49x+GD
-         +eTOnYUBnTWGrTFUDTNBPG8cnS13qllDokh49znAnb6qz43DdSNHkcOfdVatAfvNSImz
-         +72T8IQT9ME++OcoYwXCDj3WvP7N2As/y2azdadkCvZMcMzyD8Y0Q41t6ZuvQZvIt4nf
-         fDvBjSjPRcc2Y5qTxZAqxd4xi8pqUzEAyB6G1qFt2YHJgJ8jQdZx2u+FqWH43nyPAGiQ
-         WtgA==
-X-Gm-Message-State: AOAM531ZbIn0ln4uotQHmHlITqx6WHgyCLILGzmaIsBPbg/lI0jXhs26
-        QlD6RjDyQarHJNnE6q5a63vXCA==
-X-Google-Smtp-Source: ABdhPJwK71YGbcO6RW1+2r9ehrDaUmk/rj/VmGPTl16ohLV3Ibabs4NOTPjOmXGkw+O1V+VCBcxg2g==
-X-Received: by 2002:adf:cd0e:: with SMTP id w14mr5608662wrm.0.1600953206542;
-        Thu, 24 Sep 2020 06:13:26 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
-        by smtp.gmail.com with ESMTPSA id k22sm3805044wrd.29.2020.09.24.06.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2020 06:13:25 -0700 (PDT)
-From:   Alessio Balsini <balsini@android.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
+        id S1727950AbgIXN3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 09:29:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727809AbgIXN3U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 09:29:20 -0400
+Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1A6D2076D;
+        Thu, 24 Sep 2020 13:29:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600954159;
+        bh=oMnQkmIke2EbG8i1xZ6PRGZiyu34wgJzYF+0mpDqH74=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XiiU0oQ0I8gxLMSVN9RQEEmvUcp2Am+QmdMIuSNpjeQAdhy185feEYovF6YTIr5Vz
+         XME0HCGcvBadbdH3QboRSOdukRZWPL6DBjqVqMhMVhRbbRIWYSC0Vz9dbDs9577fXw
+         x7MPVWPytFrdo94kQiywkxhotxdf1F9r1kNH1oBc=
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <stefanoduo@google.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>,
-        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V9 4/4] fuse: Handle asynchronous read and write in passthrough
-Date:   Thu, 24 Sep 2020 14:13:18 +0100
-Message-Id: <20200924131318.2654747-5-balsini@android.com>
-X-Mailer: git-send-email 2.28.0.681.g6f77f65b4e-goog
-In-Reply-To: <20200924131318.2654747-1-balsini@android.com>
-References: <20200924131318.2654747-1-balsini@android.com>
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
+        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: [PATCH v6 0/6] mm: introduce memfd_secret system call to create "secret" memory areas
+Date:   Thu, 24 Sep 2020 16:28:58 +0300
+Message-Id: <20200924132904.1391-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Extend the passthrough feature by handling asynchronous IO both for read
-and write operations.
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-When an AIO request is received, if the request targets a FUSE file with
-the passthrough functionality enabled, a new identical AIO request is
-created. The new request targets the lower file system file, and gets
-assigned a special FUSE passthrough AIO completion callback.
-When the lower file system AIO request is completed, the FUSE passthrough
-AIO completion callback is executed and propagates the completion signal to
-the FUSE AIO request by triggering its completion callback as well.
+Hi,
 
-Signed-off-by: Alessio Balsini <balsini@android.com>
----
- fs/fuse/passthrough.c | 64 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 2 deletions(-)
+This is an implementation of "secret" mappings backed by a file descriptor. 
+I've dropped the boot time reservation patch for now as it is not strictly
+required for the basic usage and can be easily added later either with or
+without CMA.
 
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index f70c0ef6945b..b7d1a5517ffd 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -4,6 +4,11 @@
- 
- #include <linux/uio.h>
- 
-+struct fuse_aio_req {
-+	struct kiocb iocb;
-+	struct kiocb *iocb_fuse;
-+};
-+
- static void fuse_copyattr(struct file *dst_file, struct file *src_file)
- {
- 	struct inode *dst = file_inode(dst_file);
-@@ -39,6 +44,32 @@ fuse_passthrough_override_creds(const struct file *fuse_filp)
- 	return override_creds(fc->creator_cred);
- }
- 
-+static void fuse_aio_cleanup_handler(struct fuse_aio_req *aio_req)
-+{
-+	struct kiocb *iocb = &aio_req->iocb;
-+	struct kiocb *iocb_fuse = aio_req->iocb_fuse;
-+
-+	if (iocb->ki_flags & IOCB_WRITE) {
-+		__sb_writers_acquired(file_inode(iocb->ki_filp)->i_sb,
-+				      SB_FREEZE_WRITE);
-+		file_end_write(iocb->ki_filp);
-+		fuse_copyattr(iocb_fuse->ki_filp, iocb->ki_filp);
-+	}
-+
-+	iocb_fuse->ki_pos = iocb->ki_pos;
-+	kfree(aio_req);
-+}
-+
-+static void fuse_aio_rw_complete(struct kiocb *iocb, long res, long res2)
-+{
-+	struct fuse_aio_req *aio_req =
-+		container_of(iocb, struct fuse_aio_req, iocb);
-+	struct kiocb *iocb_fuse = aio_req->iocb_fuse;
-+
-+	fuse_aio_cleanup_handler(aio_req);
-+	iocb_fuse->ki_complete(iocb_fuse, res, res2);
-+}
-+
- ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
- 				   struct iov_iter *iter)
- {
-@@ -56,7 +87,18 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
- 		ret = vfs_iter_read(passthrough_filp, iter, &iocb_fuse->ki_pos,
- 				    iocbflags_to_rwf(iocb_fuse->ki_flags));
- 	} else {
--		ret = -EIO;
-+		struct fuse_aio_req *aio_req;
-+
-+		aio_req = kmalloc(sizeof(struct fuse_aio_req), GFP_KERNEL);
-+		if (!aio_req)
-+			return -ENOMEM;
-+
-+		aio_req->iocb_fuse = iocb_fuse;
-+		kiocb_clone(&aio_req->iocb, iocb_fuse, passthrough_filp);
-+		aio_req->iocb.ki_complete = fuse_aio_rw_complete;
-+		ret = call_read_iter(passthrough_filp, &aio_req->iocb, iter);
-+		if (ret != -EIOCBQUEUED)
-+			fuse_aio_cleanup_handler(aio_req);
- 	}
- 	revert_creds(old_cred);
- 
-@@ -72,6 +114,7 @@ ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
- 	struct fuse_file *ff = fuse_filp->private_data;
- 	struct inode *fuse_inode = file_inode(fuse_filp);
- 	struct file *passthrough_filp = ff->passthrough_filp;
-+	struct inode *passthrough_inode = file_inode(passthrough_filp);
- 
- 	if (!iov_iter_count(iter))
- 		return 0;
-@@ -87,8 +130,25 @@ ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
- 		if (ret > 0)
- 			fuse_copyattr(fuse_filp, passthrough_filp);
- 	} else {
--		ret = -EIO;
-+		struct fuse_aio_req *aio_req;
-+
-+		aio_req = kmalloc(sizeof(struct fuse_aio_req), GFP_KERNEL);
-+		if (!aio_req) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+
-+		file_start_write(passthrough_filp);
-+		__sb_writers_release(passthrough_inode->i_sb, SB_FREEZE_WRITE);
-+
-+		aio_req->iocb_fuse = iocb_fuse;
-+		kiocb_clone(&aio_req->iocb, iocb_fuse, passthrough_filp);
-+		aio_req->iocb.ki_complete = fuse_aio_rw_complete;
-+		ret = call_write_iter(passthrough_filp, &aio_req->iocb, iter);
-+		if (ret != -EIOCBQUEUED)
-+			fuse_aio_cleanup_handler(aio_req);
- 	}
-+out:
- 	revert_creds(old_cred);
- 	inode_unlock(fuse_inode);
- 
+v6 changes:
+* Silence the warning about missing syscall, thanks to Qian Cai
+* Replace spaces with tabs in Kconfig additions, per Randy
+* Add a selftest. 
+
+v5 changes:
+* rebase on v5.9-rc5
+* drop boot time memory reservation patch
+
+v4 changes:
+* rebase on v5.9-rc1
+* Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
+* Make secret mappings exclusive by default and only require flags to
+  memfd_secret() system call for uncached mappings, thanks again Kirill :)
+
+v3 changes:
+* Squash kernel-parameters.txt update into the commit that added the
+  command line option.
+* Make uncached mode explicitly selectable by architectures. For now enable
+  it only on x86.
+
+v2 changes:
+* Follow Michael's suggestion and name the new system call 'memfd_secret'
+* Add kernel-parameters documentation about the boot option
+* Fix i386-tinyconfig regression reported by the kbuild bot.
+  CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
+  from one side and still make it available unconditionally on
+  architectures that support SET_DIRECT_MAP.
+
+The file descriptor backing secret memory mappings is created using a
+dedicated memfd_secret system call The desired protection mode for the
+memory is configured using flags parameter of the system call. The mmap()
+of the file descriptor created with memfd_secret() will create a "secret"
+memory mapping. The pages in that mapping will be marked as not present in
+the direct map and will have desired protection bits set in the user page
+table. For instance, current implementation allows uncached mappings.
+
+Although normally Linux userspace mappings are protected from other users, 
+such secret mappings are useful for environments where a hostile tenant is
+trying to trick the kernel into giving them access to other tenants
+mappings.
+
+Additionally, the secret mappings may be used as a mean to protect guest
+memory in a virtual machine host.
+
+For demonstration of secret memory usage we've created a userspace library
+[1] that does two things: the first is act as a preloader for openssl to
+redirect all the OPENSSL_malloc calls to secret memory meaning any secret
+keys get automatically protected this way and the other thing it does is
+expose the API to the user who needs it. We anticipate that a lot of the
+use cases would be like the openssl one: many toolkits that deal with
+secret keys already have special handling for the memory to try to give
+them greater protection, so this would simply be pluggable into the
+toolkits without any need for user application modification.
+
+I've hesitated whether to continue to use new flags to memfd_create() or to
+add a new system call and I've decided to use a new system call after I've
+started to look into man pages update. There would have been two completely
+independent descriptions and I think it would have been very confusing.
+
+Hiding secret memory mappings behind an anonymous file allows (ab)use of
+the page cache for tracking pages allocated for the "secret" mappings as
+well as using address_space_operations for e.g. page migration callbacks.
+
+The anonymous file may be also used implicitly, like hugetlb files, to
+implement mmap(MAP_SECRET) and use the secret memory areas with "native" mm
+ABIs in the future.
+
+As the fragmentation of the direct map was one of the major concerns raised
+during the previous postings, I've added an amortizing cache of PMD-size
+pages to each file descriptor that is used as an allocation pool for the
+secret memory areas.
+
+v5: https://lore.kernel.org/lkml/20200916073539.3552-1-rppt@kernel.org
+v4: https://lore.kernel.org/lkml/20200818141554.13945-1-rppt@kernel.org
+v3: https://lore.kernel.org/lkml/20200804095035.18778-1-rppt@kernel.org
+v2: https://lore.kernel.org/lkml/20200727162935.31714-1-rppt@kernel.org
+v1: https://lore.kernel.org/lkml/20200720092435.17469-1-rppt@kernel.org
+
+Mike Rapoport (6):
+  mm: add definition of PMD_PAGE_ORDER
+  mmap: make mlock_future_check() global
+  mm: introduce memfd_secret system call to create "secret" memory areas
+  arch, mm: wire up memfd_secret system call were relevant
+  mm: secretmem: use PMD-size pages to amortize direct map fragmentation
+  secretmem: test: add basic selftest for memfd_secret(2)
+
+ arch/Kconfig                              |   7 +
+ arch/arm64/include/asm/unistd.h           |   2 +-
+ arch/arm64/include/asm/unistd32.h         |   2 +
+ arch/arm64/include/uapi/asm/unistd.h      |   1 +
+ arch/riscv/include/asm/unistd.h           |   1 +
+ arch/x86/Kconfig                          |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl    |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl    |   1 +
+ fs/dax.c                                  |  11 +-
+ include/linux/pgtable.h                   |   3 +
+ include/linux/syscalls.h                  |   1 +
+ include/uapi/asm-generic/unistd.h         |   7 +-
+ include/uapi/linux/magic.h                |   1 +
+ include/uapi/linux/secretmem.h            |   8 +
+ kernel/sys_ni.c                           |   2 +
+ mm/Kconfig                                |   4 +
+ mm/Makefile                               |   1 +
+ mm/internal.h                             |   3 +
+ mm/mmap.c                                 |   5 +-
+ mm/secretmem.c                            | 333 ++++++++++++++++++++++
+ scripts/checksyscalls.sh                  |   4 +
+ tools/testing/selftests/vm/.gitignore     |   1 +
+ tools/testing/selftests/vm/Makefile       |   3 +-
+ tools/testing/selftests/vm/memfd_secret.c | 296 +++++++++++++++++++
+ tools/testing/selftests/vm/run_vmtests    |  17 ++
+ 25 files changed, 703 insertions(+), 13 deletions(-)
+ create mode 100644 include/uapi/linux/secretmem.h
+ create mode 100644 mm/secretmem.c
+ create mode 100644 tools/testing/selftests/vm/memfd_secret.c
+
 -- 
-2.28.0.681.g6f77f65b4e-goog
+2.28.0
 
