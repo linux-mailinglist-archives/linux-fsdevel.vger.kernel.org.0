@@ -2,260 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA14277275
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:35:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D458827733D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Sep 2020 15:59:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgIXNf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 09:35:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbgIXNf2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 09:35:28 -0400
-Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90FE6238E4;
-        Thu, 24 Sep 2020 13:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600954527;
-        bh=gmPXyAX6NRORABRS1X+O+hlaJaxz4SMaYcsWwU32+YQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p32nBzNWVSlkrVPnxwe/lSmc0i585xyETJ13vozHH4MSaiQYdYQhbLRYp8OcGNviF
-         A3s8z1nuUKq2G3l1nKn8slJz++kKmb/ls5QtnT5kqETxZYNCs9p2nQ4ZN/ur/PWnmp
-         cAZVHTBRLlUKnA2dGaS9fYLKh/bUtZqXJRPNtM3c=
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org
-Subject: [PATCH] man2: new page describing memfd_secret() system call
-Date:   Thu, 24 Sep 2020 16:35:13 +0300
-Message-Id: <20200924133513.1589-1-rppt@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200924132904.1391-1-rppt@kernel.org>
-References: <20200924132904.1391-1-rppt@kernel.org>
+        id S1728102AbgIXN7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 09:59:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727970AbgIXN7D (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 24 Sep 2020 09:59:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4ECC0613CE;
+        Thu, 24 Sep 2020 06:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hug6s8+8lq9lwcdzlq9aErM3rYYYEQGQn5xx+p5VjoI=; b=AI34F+XbZgxnfiPgroDkfneKcW
+        s2GFVLoXhb/roI3d9dnsEH70J71FeLFYt9F6fVuUlpphyTpKaDQ3If84LY2oI9+AL+E8oY6CEhCWY
+        BPIFVaSjdYXGWoZWvrAiB5XOGEo9ITC6Bf3jfSIO6nf2FGfMM7La+jU58FjOJM1D+gzbUtfK7Ks/u
+        rS0GdYfYy6xL5gAV1oNblTedh+yxzSzpehbGmiihAzpUvNZM4EXSU/FScnDoqQoK6C2XmAYaDTBk9
+        eF2hgTrueXk5YLVDtUTiE00kF4tVVT8jP2ettssUE+5m73qbLYNYx64L1QP5GIigXFLR0XROBt7rV
+        ddJiaNfA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kLRm0-0003vc-GP; Thu, 24 Sep 2020 13:59:01 +0000
+Date:   Thu, 24 Sep 2020 14:59:00 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Qian Cai <cai@redhat.com>
+Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
+Message-ID: <20200924135900.GV32101@casper.infradead.org>
+References: <20200924125608.31231-1-willy@infradead.org>
+ <20200924131235.GA2603692@bfoster>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200924131235.GA2603692@bfoster>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+On Thu, Sep 24, 2020 at 09:12:35AM -0400, Brian Foster wrote:
+> On Thu, Sep 24, 2020 at 01:56:08PM +0100, Matthew Wilcox (Oracle) wrote:
+> > For filesystems with block size < page size, we need to set all the
+> > per-block uptodate bits if the page was already uptodate at the time
+> > we create the per-block metadata.  This can happen if the page is
+> > invalidated (eg by a write to drop_caches) but ultimately not removed
+> > from the page cache.
+> > 
+> > This is a data corruption issue as page writeback skips blocks which
+> > are marked !uptodate.
+> 
+> Thanks. Based on my testing of clearing PageUptodate here I suspect this
+> will similarly prevent the problem, but I'll give this a test
+> nonetheless. 
+> 
+> I am a little curious why we'd prefer to fill the iop here rather than
+> just clear the page state if the iop data has been released. If the page
+> is partially uptodate, then we end up having to re-read the page
+> anyways, right? OTOH, I guess this behavior is more consistent with page
+> size == block size filesystems where iop wouldn't exist and we just go
+> by page state, so perhaps that makes more sense.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- man2/memfd_secret.2 | 176 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 176 insertions(+)
- create mode 100644 man2/memfd_secret.2
+Well, it's _true_ ... the PageUptodate bit means that every byte in this
+page is at least as new as every byte on storage.  There's no need to
+re-read it, which is what we'll do if we ClearPageUptodate.
 
-diff --git a/man2/memfd_secret.2 b/man2/memfd_secret.2
-new file mode 100644
-index 000000000..e4ecd3662
---- /dev/null
-+++ b/man2/memfd_secret.2
-@@ -0,0 +1,176 @@
-+.\" Copyright (c) 2020, IBM Corporation.
-+.\" Written by Mike Rapoport <rppt@linux.ibm.com>
-+.\"
-+.\" Based on memfd_create(2) man page
-+.\" Copyright (C) 2014 Michael Kerrisk <mtk.manpages@gmail.com>
-+.\" and Copyright (C) 2014 David Herrmann <dh.herrmann@gmail.com>
-+.\"
-+.\" %%%LICENSE_START(GPLv2+)
-+.\"
-+.\" This program is free software; you can redistribute it and/or modify
-+.\" it under the terms of the GNU General Public License as published by
-+.\" the Free Software Foundation; either version 2 of the License, or
-+.\" (at your option) any later version.
-+.\"
-+.\" This program is distributed in the hope that it will be useful,
-+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+.\" GNU General Public License for more details.
-+.\"
-+.\" You should have received a copy of the GNU General Public
-+.\" License along with this manual; if not, see
-+.\" <http://www.gnu.org/licenses/>.
-+.\" %%%LICENSE_END
-+.\"
-+.TH MEMFD_SECRET 2 2020-08-02 Linux "Linux Programmer's Manual"
-+.SH NAME
-+memfd_secret \- create an anonymous file to map secret memory regions
-+.SH SYNOPSIS
-+.nf
-+.B #include <linux/secretmem.h>
-+.PP
-+.BI "int memfd_secret(unsigned long " flags ");"
-+.fi
-+.PP
-+.IR Note :
-+There is no glibc wrapper for this system call; see NOTES.
-+.SH DESCRIPTION
-+.BR memfd_secret ()
-+creates an anonymous file and returns a file descriptor that refers to it.
-+The file can only be memory-mapped;
-+the memory in such mapping
-+will have stronger protection than usual memory mapped files,
-+and so it can be used to store application secrets.
-+Unlike a regular file, a file created with
-+.BR memfd_secret ()
-+lives in RAM and has a volatile backing storage.
-+Once all references to the file are dropped, it is automatically released.
-+The initial size of the file is set to 0.
-+Following the call, the file size should be set using
-+.BR ftruncate (2).
-+.PP
-+The memory areas obtained with
-+.BR mmap (2)
-+from the file descriptor are exclusive to the owning context.
-+These areas are removed from the kernel page tables
-+and only the page table of the process holding the file descriptor
-+maps the corresponding physical memory.
-+.PP
-+The following values may be bitwise ORed in
-+.IR flags
-+to control the behavior of
-+.BR memfd_secret (2):
-+.TP
-+.BR FD_CLOEXEC
-+Set the close-on-exec flag on the new file descriptor.
-+See the description of the
-+.B O_CLOEXEC
-+flag in
-+.BR open (2)
-+for reasons why this may be useful.
-+.PP
-+.TP
-+.BR SECRETMEM_UNCACHED
-+In addition to excluding memory areas from the kernel page tables,
-+mark the memory mappings uncached in the page table of the owning process.
-+Such mappings can be used to prevent speculative loads
-+and cache-based side channels.
-+This mode of
-+.BR memfd_secret ()
-+is not supported on all architectures.
-+.PP
-+See also NOTES below.
-+.PP
-+As its return value,
-+.BR memfd_secret ()
-+returns a new file descriptor that can be used to refer to an anonymous file.
-+This file descriptor is opened for both reading and writing
-+.RB ( O_RDWR )
-+and
-+.B O_LARGEFILE
-+is set for the file descriptor.
-+.PP
-+With respect to
-+.BR fork (2)
-+and
-+.BR execve (2),
-+the usual semantics apply for the file descriptor created by
-+.BR memfd_secret ().
-+A copy of the file descriptor is inherited by the child produced by
-+.BR fork (2)
-+and refers to the same file.
-+The file descriptor is preserved across
-+.BR execve (2),
-+unless the close-on-exec flag has been set.
-+.PP
-+The memory regions backed with
-+.BR memfd_secret ()
-+are locked in the same way as
-+.BR mlock (2),
-+however the implementation will not try to
-+populate the whole range during the
-+.BR mmap ()
-+call.
-+The amount of memory allowed for memory mappings
-+of the file descriptor obeys the same rules as
-+.BR mlock (2)
-+and cannot exceed
-+.B RLIMIT_MEMLOCK.
-+.SH RETURN VALUE
-+On success,
-+.BR memfd_secret ()
-+returns a new file descriptor.
-+On error, \-1 is returned and
-+.I errno
-+is set to indicate the error.
-+.SH ERRORS
-+.TP
-+.B ENOSYS
-+.BR memfd_secret ()
-+is not implemented on this architecture.
-+.TP
-+.B EINVAL
-+.I flags
-+included unknown bits.
-+.TP
-+.B EMFILE
-+The per-process limit on the number of open file descriptors has been reached.
-+.TP
-+.B EMFILE
-+The system-wide limit on the total number of open files has been reached.
-+.TP
-+.B ENOMEM
-+There was insufficient memory to create a new anonymous file.
-+.SH VERSIONS
-+The
-+.BR memfd_secret (2)
-+system call first appeared in Linux 5.X;
-+.SH CONFORMING TO
-+The
-+.BR memfd_secret (2)
-+system call is Linux-specific.
-+.SH NOTES
-+The
-+.BR memfd_secret (2)
-+system call provides an ability to hide information
-+from the operating system.
-+Normally Linux userspace mappings are protected from other users,
-+but they are visible to the privileged code.
-+The mappings created using
-+.BR memfd_secret ()
-+are hidden from the kernel as well.
-+.PP
-+If an architecture supports
-+.B SECRETMEM_UNCACHED,
-+the mappings also have protection from speculative execution vulnerabilties,
-+at the expense of increased memory access latency.
-+Care should be taken when using
-+.B
-+SECRETMEM_UNCACHED
-+to avoid degrading application performance.
-+.SH SEE ALSO
-+.BR fcntl (2),
-+.BR ftruncate (2),
-+.BR mlock (2),
-+.BR mmap (2),
-+.BR setrlimit (2),
--- 
-2.25.4
+My original motivation for this was splitting a THP.  In that case,
+we have, let's say, 16 * 4kB pages, and an iop for 64 blocks.  When we
+split that 64kB page into 16 4kB pages, we can't afford to allocate 16
+iops for them, so we just drop the iop and copy the uptodate state from
+the head page to all subpages.
 
+So now we have 16 pages, all marked uptodate (and with valid data) but
+no iop.  So we need to create an iop for each page during the writeback
+path, and that has to be created with uptodate bits or we'll skip the
+entire page.  When I wrote the patch below, I had no idea we could
+already get an iop allocated for an uptodate page, or I would have
+submitted this patch months ago.
+
+http://git.infradead.org/users/willy/pagecache.git/commitdiff/bc503912d4a9aad4496a4591e9992f0ada47a9c9
