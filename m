@@ -2,152 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5797527851C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 12:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C1B278553
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 12:44:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbgIYKba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Sep 2020 06:31:30 -0400
-Received: from foss.arm.com ([217.140.110.172]:41500 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbgIYKba (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Sep 2020 06:31:30 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1AE91045;
-        Fri, 25 Sep 2020 03:31:28 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.16.138])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B1DFE3F718;
-        Fri, 25 Sep 2020 03:31:21 -0700 (PDT)
-Date:   Fri, 25 Sep 2020 11:31:14 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v6 5/6] mm: secretmem: use PMD-size pages to amortize
- direct map fragmentation
-Message-ID: <20200925103114.GA7407@C02TD0UTHF1T.local>
-References: <20200924132904.1391-1-rppt@kernel.org>
- <20200924132904.1391-6-rppt@kernel.org>
- <20200925074125.GQ2628@hirez.programming.kicks-ass.net>
- <8435eff6-7fa9-d923-45e5-d8850e4c6d73@redhat.com>
- <20200925095029.GX2628@hirez.programming.kicks-ass.net>
+        id S1727290AbgIYKo4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Sep 2020 06:44:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbgIYKo4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 25 Sep 2020 06:44:56 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2429CC0613CE;
+        Fri, 25 Sep 2020 03:44:56 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id u126so2273598oif.13;
+        Fri, 25 Sep 2020 03:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=E9cSV5CE+MHJw1tuBMNdGwIhk859xENBsrzkUuMudZg=;
+        b=EXuMI9FMTtqmLXffR4V4ar32H3o7ampleIRJ1mnTOa+RvEDZjGUxQ5/nILr/fBZ1mG
+         zRqOw45thhUf6h1ixpWOZ3dnV96syaScynoD1Tj4JrH7ZO5f9iV0gfirvKnYsplUi1GG
+         B9wF1MLuCLmxFMO6lL/NJfMDFFNYDdFeTnJftxFmu51iA2J6aAA7SrlJDz3ssWGWmUsN
+         TdFbaf9exXTjFmcOkIOKOmweovQmYzGcvfYB9zY0sf9rlFL02bnGS7CLgqE6Hcefl6F/
+         FzdjYDsBfhDsP/yAOdOdIcJBQ0lQwNb62uqHRzugpmtA8ET8sphcIeCZV6qU8jDmG/MA
+         Sz1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=E9cSV5CE+MHJw1tuBMNdGwIhk859xENBsrzkUuMudZg=;
+        b=VA+goyIeaH2vUzbdnhEnmt4bjUiScq07o28KoZ085Wpmh/zgNdGB2j+0XjSygFmj5X
+         4n4fmdfj5gHi5QqkIgY5CC4fygCcvTTK5jh6e/yEOgaBBnPNMxNfieTVw3CfM2/6+hzz
+         5ISkbRG5nldmu+Ka7Lpv4kQg2HKJW9wn3Ab6ZWoGl6K3p5rJ3LFDuJP+miWr36jUbpha
+         LJrRMDtkdlrSpgBCoNPXMPlLR5KHIeS0Y3+EwwPaS6m9GDd1txgFYAblA4xeSqiRivAe
+         PR8Sjeh7M0WvstTwKmrZvdMlcFLeZeZSp4FTAW5UbF++UBs8K8nufL56XcE2yHppXUFC
+         0zsA==
+X-Gm-Message-State: AOAM532tYwCBiNtt38qksBx7TlWsRC0tuBHHKHwS15RTpKAsaftCmx7o
+        uGzGY0YZoSbnkAIaQR84+lzB1W8kkmTwSTriY7i1BroA1D2eig==
+X-Google-Smtp-Source: ABdhPJyXmmW5Dk2fR5llT2dunbY3CDhMLvgSKpwBKpJHS23hyTb47Kbk3u8QhUzD1//fzlQ4TJQ5/WRlSBCgEapvuzM=
+X-Received: by 2002:aca:4754:: with SMTP id u81mr1186591oia.72.1601030695513;
+ Fri, 25 Sep 2020 03:44:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200925095029.GX2628@hirez.programming.kicks-ass.net>
+References: <20200924151538.GW32101@casper.infradead.org> <CA+icZUX4bQf+pYsnOR0gHZLsX3NriL=617=RU0usDfx=idgZmA@mail.gmail.com>
+ <20200924152755.GY32101@casper.infradead.org> <CA+icZUURRcCh1TYtLs=U_353bhv5_JhVFaGxVPL5Rydee0P1=Q@mail.gmail.com>
+ <20200924163635.GZ32101@casper.infradead.org> <CA+icZUUgwcLP8O9oDdUMT0SzEQHjn+LkFFkPL3NsLCBhDRSyGw@mail.gmail.com>
+ <f623da731d7c2e96e3a37b091d0ec99095a6386b.camel@redhat.com>
+ <CA+icZUVO65ADxk5SZkZwV70ax5JCzPn8PPfZqScTTuvDRD1smQ@mail.gmail.com>
+ <20200924200225.GC32101@casper.infradead.org> <CA+icZUV3aL_7MptHbradtnd8P6X9VO-=Pi2gBezWaZXgeZFMpg@mail.gmail.com>
+ <20200924235756.GD32101@casper.infradead.org>
+In-Reply-To: <20200924235756.GD32101@casper.infradead.org>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 25 Sep 2020 12:44:44 +0200
+Message-ID: <CA+icZUXesz8SrB65qsVevEVC1iTV7heTWQyZYOZ21mem4kTZ3g@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Qian Cai <cai@redhat.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, Sep 25, 2020 at 1:57 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Sep 24, 2020 at 10:04:40PM +0200, Sedat Dilek wrote:
+> > On Thu, Sep 24, 2020 at 10:02 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Thu, Sep 24, 2020 at 09:54:36PM +0200, Sedat Dilek wrote:
+> > > > You are named in "mm: fix misplaced unlock_page in do_wp_page()".
+> > > > Is this here a different issue?
+> > >
+> > > Yes, completely different.  That bug is one Linus introduced in this
+> > > cycle; the bug that this patch fixes was introduced a couple of years
+> > > ago, and we only noticed now because I added an assertion to -next.
+> > > Maybe I should add the assertion for 5.9 too.
+> >
+> > Can you point me to this "assertion"?
+> > Thanks.
+>
+> Here's the version against 5.8
+>
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 810f7dae11d9..b421e4efc4bd 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -70,11 +70,15 @@ static void
+>  iomap_page_release(struct page *page)
+>  {
+>         struct iomap_page *iop = detach_page_private(page);
+> +       unsigned int nr_blocks = PAGE_SIZE / i_blocksize(page->mapping->host);
+>
+>         if (!iop)
+>                 return;
+>         WARN_ON_ONCE(atomic_read(&iop->read_count));
+>         WARN_ON_ONCE(atomic_read(&iop->write_count));
+> +       WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
+> +                       PageUptodate(page));
+> +
 
-Sorry to come to this so late; I've been meaning to provide feedback on
-this for a while but have been indisposed for a bit due to an injury.
+Are you sure this is "bitmap_full()" or should it be "bitmap_f*i*ll()"?
 
-On Fri, Sep 25, 2020 at 11:50:29AM +0200, Peter Zijlstra wrote:
-> On Fri, Sep 25, 2020 at 11:00:30AM +0200, David Hildenbrand wrote:
-> > On 25.09.20 09:41, Peter Zijlstra wrote:
-> > > On Thu, Sep 24, 2020 at 04:29:03PM +0300, Mike Rapoport wrote:
-> > >> From: Mike Rapoport <rppt@linux.ibm.com>
-> > >>
-> > >> Removing a PAGE_SIZE page from the direct map every time such page is
-> > >> allocated for a secret memory mapping will cause severe fragmentation of
-> > >> the direct map. This fragmentation can be reduced by using PMD-size pages
-> > >> as a pool for small pages for secret memory mappings.
-> > >>
-> > >> Add a gen_pool per secretmem inode and lazily populate this pool with
-> > >> PMD-size pages.
-> > > 
-> > > What's the actual efficacy of this? Since the pmd is per inode, all I
-> > > need is a lot of inodes and we're in business to destroy the directmap,
-> > > no?
-> > > 
-> > > Afaict there's no privs needed to use this, all a process needs is to
-> > > stay below the mlock limit, so a 'fork-bomb' that maps a single secret
-> > > page will utterly destroy the direct map.
-> > > 
-> > > I really don't like this, at all.
-> > 
-> > As I expressed earlier, I would prefer allowing allocation of secretmem
-> > only from a previously defined CMA area. This would physically locally
-> > limit the pain.
-> 
-> Given that this thing doesn't have a migrate hook, that seems like an
-> eminently reasonable contraint. Because not only will it mess up the
-> directmap, it will also destroy the ability of the page-allocator /
-> compaction to re-form high order blocks by sprinkling holes throughout.
-> 
-> Also, this is all very close to XPFO, yet I don't see that mentioned
-> anywhere.
+Both are available in include/linux/bitmap.h.
 
-Agreed. I think if we really need something like this, something between
-XPFO and DEBUG_PAGEALLOC would be generally better, since:
+- Sedat -
 
-* Secretmem puts userspace in charge of kernel internals (AFAICT without
-  any ulimits?), so that seems like an avenue for malicious or buggy
-  userspace to exploit and trigger DoS, etc. The other approaches leave
-  the kernel in charge at all times, and it's a system-level choice
-  which is easier to reason about and test.
-
-* Secretmem interaction with existing ABIs is unclear. Should uaccess
-  primitives work for secretmem? If so, this means that it's not valid
-  to transform direct uaccesses in syscalls etc into accesses via the
-  linear/direct map. If not, how do we prevent syscalls? The other
-  approaches are clear that this should always work, but the kernel
-  should avoid mappings wherever possible.
-
-* The uncached option doesn't work in a number of situations, such as
-  systems which are purely cache coherent at all times, or where the
-  hypervisor has overridden attributes. The kernel cannot even know that
-  whther this works as intended. On its own this doens't solve a
-  particular problem, and I think this is a solution looking for a
-  problem.
-
-... and fundamentally, this seems like a "more security, please" option
-that is going to be abused, since everyone wants security, regardless of
-how we say it *should* be used. The few use-cases that may make sense
-(e.g. protection of ketys and/or crypto secrrets), aren't going to be
-able to rely on this (since e.g. other uses may depelete memory pools),
-so this is going to be best-effort. With all that in mind, I struggle to
-beleive that this is going to be worth the maintenance cost (e.g. with
-any issues arising from uaccess, IO, etc).
-
-Overall, I would prefer to not see this syscall in the kernel.
-
-> Further still, it has this HAVE_SECRETMEM_UNCACHED nonsense which is
-> completely unused. I'm not at all sure exposing UNCACHED to random
-> userspace is a sane idea.
-
-I agree the uncached stuff should be removed. It is at best misleading
-since the kernel can't guarantee it does what it says, I think it's
-liable to lead to issues in future (e.g. since it can cause memory
-operations to raise different exceptions relative to what they can
-today), and as above it seems like a solution looking for a problem.
-
-Thanks,
-Mark.
+>         kfree(iop);
+>  }
+>
