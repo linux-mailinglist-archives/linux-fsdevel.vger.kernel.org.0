@@ -2,93 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A87277C8B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 01:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC7C277D5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 03:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbgIXX6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Sep 2020 19:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbgIXX6A (ORCPT
+        id S1726847AbgIYBGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Sep 2020 21:06:06 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:16208 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbgIYBGF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Sep 2020 19:58:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D531CC0613CE;
-        Thu, 24 Sep 2020 16:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=J/tuyLxu5cq1kPHap7w/ykYlaZ9fPtuLFMVuedHctq0=; b=eIcNbl1HriAwt/NIhyhYCjCa6k
-        tsuUYxO+iD6Ip6B9mLD1nN1N+Zy8AyJjn9cNKUeduLZAI7W2/7jL1wbHALAtVsDDUXl+3wMA8i1JI
-        IWsYuPyiKy5pRfd861FDZojdkO7ZWPG+qyU99OPUYKJ7vipdR9IvRaSObHGqp5dfVnT31wp5bxwV+
-        UDjlkh8aexyAH1M3ipZEOE9O73+WsC6eSaJ5eMErlAyV6Yw10CXEynBMn12M01NdkUjk4qRD9PxK5
-        zVBWo4IRa2+cpy5IHrEdyaShMmDiuInJBx4kMYjitpjNVNe7TTuK/7S+ASM8mXIx8vvHkBcWDUz3p
-        37/rngkw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kLb7c-0005p0-LS; Thu, 24 Sep 2020 23:57:56 +0000
-Date:   Fri, 25 Sep 2020 00:57:56 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     Qian Cai <cai@redhat.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
-Message-ID: <20200924235756.GD32101@casper.infradead.org>
-References: <20200924151538.GW32101@casper.infradead.org>
- <CA+icZUX4bQf+pYsnOR0gHZLsX3NriL=617=RU0usDfx=idgZmA@mail.gmail.com>
- <20200924152755.GY32101@casper.infradead.org>
- <CA+icZUURRcCh1TYtLs=U_353bhv5_JhVFaGxVPL5Rydee0P1=Q@mail.gmail.com>
- <20200924163635.GZ32101@casper.infradead.org>
- <CA+icZUUgwcLP8O9oDdUMT0SzEQHjn+LkFFkPL3NsLCBhDRSyGw@mail.gmail.com>
- <f623da731d7c2e96e3a37b091d0ec99095a6386b.camel@redhat.com>
- <CA+icZUVO65ADxk5SZkZwV70ax5JCzPn8PPfZqScTTuvDRD1smQ@mail.gmail.com>
- <20200924200225.GC32101@casper.infradead.org>
- <CA+icZUV3aL_7MptHbradtnd8P6X9VO-=Pi2gBezWaZXgeZFMpg@mail.gmail.com>
+        Thu, 24 Sep 2020 21:06:05 -0400
+X-Greylist: delayed 556 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Sep 2020 21:06:04 EDT
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200925005646epoutp01ee011bd5f7baf29383b1d6851b378ca2~34Nb_igCK2123221232epoutp01S
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Sep 2020 00:56:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200925005646epoutp01ee011bd5f7baf29383b1d6851b378ca2~34Nb_igCK2123221232epoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600995406;
+        bh=z32H6aQay7XFfuA804nDkfeVeeydsEIaljd/QbT8aUI=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=NYXFfix7ixEYe9izi4jnW6jsrkYqj8c6VarhAP3a2h9DLP/tqHTwqazq+liYZEzs0
+         1WGYRspfrcbYL9JMrq7e47vdOA5hQD/s8uuO6IdNzMTvc/jhI9PCZkylpVYesXaS8I
+         qZJIxeZzFZCxhge97MEea9Z8/oHf/5KxvutbGt6g=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200925005645epcas1p401c9e6c33a83d249ef4d53c4196da45b~34NbVFdUj0917209172epcas1p4z;
+        Fri, 25 Sep 2020 00:56:45 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.159]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4ByD584TnJzMqYkk; Fri, 25 Sep
+        2020 00:56:44 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A5.A3.09543.C404D6F5; Fri, 25 Sep 2020 09:56:44 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200925005644epcas1p43904a4a4e545c6533e2bfd87ffca4b45~34NZ2RH0r0917209172epcas1p4t;
+        Fri, 25 Sep 2020 00:56:44 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200925005644epsmtrp1807eda8f91f90720edc07ab36551a14b~34NZ1p7L_2495024950epsmtrp1c;
+        Fri, 25 Sep 2020 00:56:44 +0000 (GMT)
+X-AuditID: b6c32a35-35dff70000002547-42-5f6d404c6984
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E0.39.08604.C404D6F5; Fri, 25 Sep 2020 09:56:44 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200925005644epsmtip2c5a72b329430f5b16961fc79dcaab928~34NZnl4ZD1970419704epsmtip2F;
+        Fri, 25 Sep 2020 00:56:44 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
+Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
+        <mori.takahiro@ab.mitsubishielectric.co.jp>,
+        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <0f9d3d3e-075f-511d-12e5-21346bca081e@gmail.com>
+Subject: RE: [PATCH] exfat: remove 'rwoffset' in exfat_inode_info
+Date:   Fri, 25 Sep 2020 09:56:43 +0900
+Message-ID: <711c01d692d6$bc389610$34a9c230$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+icZUV3aL_7MptHbradtnd8P6X9VO-=Pi2gBezWaZXgeZFMpg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQMi4/VQwbYo/U4C9ybSoLj7f91ObgIeTeE0AlzxujABsyhvGKauceYw
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmga6PQ268wfV3yhY/5t5msXhzciqL
+        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
+        Hp83yQWwReXYZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
+        5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMDQo0CtOzC0uzUvXS87PtTI0
+        MDAyBapMyMlY0vmMsaCPr2LZj83MDYxvuboYOTkkBEwk5i+5xtTFyMUhJLCDUWLOuvusEM4n
+        RokFU94zQjjfGCUeLVjCBtMy6+1NdojEXkaJy8d/QLW8ZJS482UrE0gVm4CuxJMbP5lBbBEB
+        PYmTJ6+DdTMLNDJJnHiZDWJzCthKHJq4hBXEFhZwlPjVfg+snkVAVWLtsZMsIDavgKXE+nv9
+        rBC2oMTJmU9YIObIS2x/O4cZ4iIFid2fjrJC7HKTOHvlJCNEjYjE7M42qJq5HBL3GuMgbBeJ
+        RXf3QX0jLPHq+BZ2CFtK4mV/G5RdL/F//lqwLyUEWhglHn7aBvQYB5BjL/H+kgWIySygKbF+
+        lz5EuaLEzt9zodbySbz72sMKUc0r0dEmBFGiIvH9w04WmE1XflxlmsCoNAvJY7OQPDYLyQOz
+        EJYtYGRZxSiWWlCcm55abFhgiBzZmxjByVTLdAfjxLcf9A4xMnEwHmKU4GBWEuE9viEnXog3
+        JbGyKrUoP76oNCe1+BCjKTCoJzJLiSbnA9N5Xkm8oamRsbGxhYmZuZmpsZI478NbCvFCAumJ
+        JanZqakFqUUwfUwcnFINTAd+HZtlrrTEu1wu0JA/4mDpvPZv8rlpG+OntbQerli13SBnm7+b
+        3JvNVx51vp0nL1v5TLK49tWTGN39ZdNlk8JCPx6bWHDt7BXxr1eUO2qFnwTvuSFzdZLtoctC
+        y3dfObBxnZO4y6d/ohLqCkekP2c9jfi73frLh6berbd1SlpP+S96HHUxT/LsjT/B5TJFv73K
+        l+qWu9+7tHuFmm6qVNmt03/cOK+67NG+bbRm1eXV3Esndr9PYekN/nar88qXvrNHEmr7DWbE
+        3FVo3Ga6grFhnpJc3IMbWbWHk36J986pLmCyP6MUtcbJ7pxE+bNuyfu2a5cmCPEmrTlWb1FV
+        /yW++MURpSWFO2etfsLXsU2JpTgj0VCLuag4EQD5itxlLwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJXtfHITfe4PEGdosfc2+zWLw5OZXF
+        Ys/ekywWl3fNYbO4/P8Ti8WyL5NZLH5Mr3dg9/gy5zi7R9vkf+wezcdWsnnsnHWX3aNvyypG
+        j8+b5ALYorhsUlJzMstSi/TtErgylnQ+Yyzo46tY9mMzcwPjW64uRk4OCQETiVlvb7J3MXJx
+        CAnsZpR40/6RqYuRAyghJXFwnyaEKSxx+HAxRMlzRokNP54xgfSyCehKPLnxkxnEFhHQkzh5
+        8jobSBGzQDOTROuXZrA5QgIvGSUOcoDUcArYShyauIQVxBYWcJT41X4PrJdFQFVi7bGTLCA2
+        r4ClxPp7/awQtqDEyZlPwOLMAtoSvQ9bGSFseYntb+cwQ9yvILH701FWiBvcJM5eOQlVIyIx
+        u7ONeQKj8Cwko2YhGTULyahZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQI
+        jiktzR2M21d90DvEyMTBeIhRgoNZSYT3+IaceCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8NwoX
+        xgkJpCeWpGanphakFsFkmTg4pRqYdIRLGmQW3tc7WzvrAJvK/5gDRXlnFx7eb7n9dKPKwb3x
+        0Wx/hVO/uPGpzxScaP3c8O1r7ya1k0fO7mH6u/SnTIVkprZwqsrqyrgbT7RfVu6bd06JZa1k
+        0B2hIEbnNL/SP2ZcZiqn803eV25mc9HbZXjqzOdZYT8vrNfu+fZs48UWoboPHDo98evt5jxu
+        YGq/e/323x9x/yerekjdtd/0fdqlj19i8hNnRxawWvK9nxN8WktgYsuz0n8z7r+2FPy37vRt
+        jTkP3qYFspwMshVW/poSsm6+bRJXleSrHquL3duXmCbEfpjK5dV9alLlB/HmBwaskfdfL+nO
+        SpHapv1bot0tX/rTv3uHkhf/WNP9TYmlOCPRUIu5qDgRAOaRTlMYAwAA
+X-CMS-MailID: 20200925005644epcas1p43904a4a4e545c6533e2bfd87ffca4b45
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200909075713epcas1p44c2503251f78baa2fde0ce4351bf936d
+References: <CGME20200909075713epcas1p44c2503251f78baa2fde0ce4351bf936d@epcas1p4.samsung.com>
+        <20200909075652.11203-1-kohada.t2@gmail.com>
+        <000001d688c1$c329cad0$497d6070$@samsung.com>
+        <0f9d3d3e-075f-511d-12e5-21346bca081e@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 10:04:40PM +0200, Sedat Dilek wrote:
-> On Thu, Sep 24, 2020 at 10:02 PM Matthew Wilcox <willy@infradead.org> wrote:
+> On 2020/09/12 14:01, Sungjong Seo wrote:
+> >> Remove 'rwoffset' in exfat_inode_info and replace it with the
+> >> parameter(cpos) of exfat_readdir.
+> >> Since rwoffset of  is referenced only by exfat_readdir, it is not
+> >> necessary a exfat_inode_info's member.
+> >>
+> >> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+> >> ---
+> >>   fs/exfat/dir.c      | 16 ++++++----------
+> >>   fs/exfat/exfat_fs.h |  2 --
+> >>   fs/exfat/file.c     |  2 --
+> >>   fs/exfat/inode.c    |  3 ---
+> >>   fs/exfat/super.c    |  1 -
+> >>   5 files changed, 6 insertions(+), 18 deletions(-)
+> >>
+> >> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index
+> >> a9b13ae3f325..fa5bb72aa295 100644
+> >> --- a/fs/exfat/dir.c
+> >> +++ b/fs/exfat/dir.c
+> > [snip]
+> >> sector @@ -262,13 +260,11 @@ static int exfat_iterate(struct file
+> >> *filp, struct dir_context *ctx)
+> >>   		goto end_of_dir;
+> >>   	}
+> >>
+> >> -	cpos = EXFAT_DEN_TO_B(ei->rwoffset);
+> >> -
+> >>   	if (!nb->lfn[0])
+> >>   		goto end_of_dir;
+> >>
+> >>   	i_pos = ((loff_t)ei->start_clu << 32) |
+> >> -		((ei->rwoffset - 1) & 0xffffffff);
+> >> +		(EXFAT_B_TO_DEN(cpos-1) & 0xffffffff);
 > >
-> > On Thu, Sep 24, 2020 at 09:54:36PM +0200, Sedat Dilek wrote:
-> > > You are named in "mm: fix misplaced unlock_page in do_wp_page()".
-> > > Is this here a different issue?
-> >
-> > Yes, completely different.  That bug is one Linus introduced in this
-> > cycle; the bug that this patch fixes was introduced a couple of years
-> > ago, and we only noticed now because I added an assertion to -next.
-> > Maybe I should add the assertion for 5.9 too.
+> > Need to fix the above line to be:
+> > (EXFAT_B_TO_DEN(cpos)-1)) & 0xffffffff);
 > 
-> Can you point me to this "assertion"?
-> Thanks.
+> 
+> Here, we simply converted so that the calculation results would be the
+> same.
+> But after reading it carefully again, I noticed.
+>   - Why use the previous entry?
+>   - Why does cpos point to stream dir-entry in entry-set?
+> 
+> For the former, there is no need to "++dentry" in exfat_readdir().
+> For the latter, I think cpos should point to the next to current entry-set.
+> 
+> I'll make V2 considering these.
+> How do you think?
 
-Here's the version against 5.8
+The latter looks better.
+> 
+> BR
+> ---
+> Tetsuhiro Kohada <kohada.t2@gmail.com>
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 810f7dae11d9..b421e4efc4bd 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -70,11 +70,15 @@ static void
- iomap_page_release(struct page *page)
- {
- 	struct iomap_page *iop = detach_page_private(page);
-+	unsigned int nr_blocks = PAGE_SIZE / i_blocksize(page->mapping->host);
- 
- 	if (!iop)
- 		return;
- 	WARN_ON_ONCE(atomic_read(&iop->read_count));
- 	WARN_ON_ONCE(atomic_read(&iop->write_count));
-+	WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
-+			PageUptodate(page));
-+
- 	kfree(iop);
- }
- 
+
