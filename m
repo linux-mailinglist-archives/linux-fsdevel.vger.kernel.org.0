@@ -2,78 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D49A278D5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 17:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEA1278D93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 18:04:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbgIYP5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Sep 2020 11:57:52 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:54866 "EHLO
+        id S1727749AbgIYQEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Sep 2020 12:04:46 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:55249 "EHLO
         relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729263AbgIYP5t (ORCPT
+        by vger.kernel.org with ESMTP id S1727201AbgIYQEq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Sep 2020 11:57:49 -0400
+        Fri, 25 Sep 2020 12:04:46 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 4D11382061;
-        Fri, 25 Sep 2020 18:57:46 +0300 (MSK)
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 0744081E7A;
+        Fri, 25 Sep 2020 19:04:43 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1601049466;
-        bh=1COnYXFJZzO8G/9dvoysPCcTbfY010OHRJhC438k9BI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Aeo+jZ0NfOK8/ocXM3DGBFXPuh2d14WOxCE4Wh+rRDn8iz8rMlN/RPaZcsYBKBfy5
-         2thDNbggBwPJulwPDL5B8GK41U4MeLvlOpr8tf1X+pzAivr53QoAX3fvOJnzVKMAg6
-         o1EzuiTZOpwTnNya6y/I4gvdd0ELcBDgVn6Mbw6w=
-Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
+        d=paragon-software.com; s=mail; t=1601049883;
+        bh=ywehzJ6YFxcIY8HSB5APcyLJlqfi+g+DhfY2lJn+4y0=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=UgaFn6+zowNWoMqeDyAy3jPHEztWR5gigoafsIwMB0byCBmZedmo11UBpMS2LPRyz
+         AWZXfKRmXrFygRToaYqGa2kB4kGDywgEXu02ulimJzVvB06a5/ecWYvo4I8ryuxn74
+         xFWZNzV8R83RnlZY2kfnSfG3JtkxP6wYGBmGEiA8=
+Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 25 Sep 2020 18:57:45 +0300
+ 15.1.1847.3; Fri, 25 Sep 2020 19:04:42 +0300
+Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
+ by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
+ id 15.01.1847.003; Fri, 25 Sep 2020 19:04:42 +0300
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     <linux-fsdevel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
-        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
-        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
-        <mark@harmstone.com>, <nborisov@suse.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v7 10/10] fs/ntfs3: Add MAINTAINERS
-Date:   Fri, 25 Sep 2020 18:55:37 +0300
-Message-ID: <20200925155537.1030046-11-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200925155537.1030046-1-almaz.alexandrovich@paragon-software.com>
-References: <20200925155537.1030046-1-almaz.alexandrovich@paragon-software.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Joe Perches <joe@perches.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pali@kernel.org" <pali@kernel.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "aaptel@suse.com" <aaptel@suse.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "mark@harmstone.com" <mark@harmstone.com>,
+        "nborisov@suse.com" <nborisov@suse.com>
+Subject: RE: [PATCH v5 03/10] fs/ntfs3: Add bitmap
+Thread-Topic: [PATCH v5 03/10] fs/ntfs3: Add bitmap
+Thread-Index: AQHWiEVLqTuLvbWOTEKMmELjfZa26KlmuM8AgACEsICAB2PZsP//1JcAgAsjewA=
+Date:   Fri, 25 Sep 2020 16:04:42 +0000
+Message-ID: <930a4c89bf794cda9b5e21e68cc79ae9@paragon-software.com>
+References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
+ <20200911141018.2457639-4-almaz.alexandrovich@paragon-software.com>
+ <d1dc86f2792d3e64d1281fc2b5fddaca5fa17b5a.camel@perches.com>
+ <20200914023845.GJ6583@casper.infradead.org>
+ <1cb55e79c5a54feb82cf4850486890df@paragon-software.com>
+ <20200918165434.GG32101@casper.infradead.org>
+In-Reply-To: <20200918165434.GG32101@casper.infradead.org>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.30.8.36]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.30.114.105]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds MAINTAINERS
+From: Matthew Wilcox <willy@infradead.org>
+Sent: Friday, September 18, 2020 7:55 PM
+> Subject: Re: [PATCH v5 03/10] fs/ntfs3: Add bitmap
+>=20
+> On Fri, Sep 18, 2020 at 04:35:11PM +0000, Konstantin Komarov wrote:
+> > > That was only just renamed.  More concerningly, the documentation is
+> > > quite unambiguous:
+> > >
+> > >  * This function is for filesystems to call when they want to start
+> > >  * readahead beyond a file's stated i_size.  This is almost certainly
+> > >  * not the function you want to call.  Use page_cache_async_readahead=
+()
+> > >  * or page_cache_sync_readahead() instead.
+> >
+> > Hi Matthew! it's not so clear for us by several reasons (please correct
+> > if this is wrong):
+> > page_cache_sync_readahead() seems applicable as a replacement, but
+> > it doesn't seem to be reasonable as readahead in this case gives perf
+> > improvement because of it's async nature. The 'async' function is incom=
+patible
+> > replacement based on the arguments list.
+>=20
+> I think the naming has confused you (so I need to clarify the docs).
+> The sync function is to be called when you need the page which is being
+> read, and you might want to take the opportunity to read more pages.
+> The async version is to be called when the page you need is in cache,
+> but you've noticed that you're getting towards the end of the readahead
+> window.  Neither version waits for I/O to complete; you have to wait for
+> the page to become unlocked and then you can check PageUptodate.
+>=20
+> Looking at what you're doing, you don't have a file_ra_state because
+> you're just trying to readahead fs metadata, right?
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Hi Matthew! Yes, correct.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 190c7fa2ea01..48b979e11f9b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12375,6 +12375,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
- F:	Documentation/filesystems/ntfs.rst
- F:	fs/ntfs/
- 
-+NTFS3 FILESYSTEM
-+M:	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-+S:	Supported
-+W:	http://www.paragon-software.com/
-+F:	Documentation/filesystems/ntfs3.rst
-+F:	fs/ntfs3/
-+
- NUBUS SUBSYSTEM
- M:	Finn Thain <fthain@telegraphics.com.au>
- L:	linux-m68k@lists.linux-m68k.org
--- 
-2.25.4
+> I think you want
+> to call force_page_cache_readahead(mapping, NULL, start, nr_pages);
+> The prototype for it is in mm/internal.h, but I think moving it to
+> include/linux/pagemap.h is justifiable.
 
+Seems like this. We decided to temporarily remove the ra usage iv V7, while=
+ it's
+not clear which of the public options is "our" case. Is there anything we c=
+an
+assist regarding the force_page_cache_readahead() move to
+include/linux/pagemap.h?
+
+Thanks.
