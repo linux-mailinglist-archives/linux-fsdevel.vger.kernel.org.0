@@ -2,103 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F06E7278DBD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 18:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB40278E77
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 18:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbgIYQML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Sep 2020 12:12:11 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:57532 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727201AbgIYQML (ORCPT
+        id S1729306AbgIYQaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Sep 2020 12:30:23 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:56608 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726990AbgIYQaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Sep 2020 12:12:11 -0400
+        Fri, 25 Sep 2020 12:30:22 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 0841B1D21;
-        Fri, 25 Sep 2020 19:12:08 +0300 (MSK)
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 32B0781E18;
+        Fri, 25 Sep 2020 19:30:20 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1601050328;
-        bh=FC5t8suzVZZJmgErK3qG2Jap3Va5qDoQI2aBJbDel/0=;
+        d=paragon-software.com; s=mail; t=1601051420;
+        bh=ku5HcfPTrYYoHR4U6YrcFO4/qyieMTdjlj9S1ShhrAA=;
         h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=bqS0kM2CYqFE85WU9tnpTzIVG1MH4gYl0nqAwcWCK+LvP0FvijEpLfYkkcEBCZ0KS
-         Ue2Q2JwLXlZwCrXvuXhj4zojOTKTk+7/wCiDAzZd0ttXKsjNK8PevBgAGPjJz6t7F0
-         L8kTXydMUIPbjk/lvE9rrKtyYzqMuf4k9tbJaVJg=
+        b=p0auxOBZUhx5pDvQLRLUT0ZmH3owNNRFUGVliazh1czvFEjX+eik4SzesuD47wAeJ
+         3wJ+SS5yUt/gL8/dkWNAphj9T0rNQPa53144F15Ku00Mpykl4xYHAR2f8acwaa0pFl
+         YPCxG8Pv1RVSCjwnRKrlj0UalcUpsXF/jd4IXZ9g=
 Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 25 Sep 2020 19:12:07 +0300
+ 15.1.1847.3; Fri, 25 Sep 2020 19:30:19 +0300
 Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
  by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Fri, 25 Sep 2020 19:12:07 +0300
+ id 15.01.1847.003; Fri, 25 Sep 2020 19:30:19 +0300
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     Mark Harmstone <mark@harmstone.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+To:     =?iso-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pali@kernel.org" <pali@kernel.org>,
         "dsterba@suse.cz" <dsterba@suse.cz>,
         "aaptel@suse.com" <aaptel@suse.com>,
         "willy@infradead.org" <willy@infradead.org>,
         "rdunlap@infradead.org" <rdunlap@infradead.org>,
         "joe@perches.com" <joe@perches.com>,
+        "mark@harmstone.com" <mark@harmstone.com>,
         "nborisov@suse.com" <nborisov@suse.com>
-Subject: RE: [PATCH v6 05/10] fs/ntfs3: Add attrib operations
-Thread-Topic: [PATCH v6 05/10] fs/ntfs3: Add attrib operations
-Thread-Index: AQHWjdglN/dStLJq+0+dmsar6G90RqluhMEAgAsLTpA=
-Date:   Fri, 25 Sep 2020 16:12:06 +0000
-Message-ID: <779cf3a270d2426b9da1bce6b1801ccc@paragon-software.com>
-References: <20200918162204.3706029-1-almaz.alexandrovich@paragon-software.com>
- <20200918162204.3706029-6-almaz.alexandrovich@paragon-software.com>
- <fd0d9b84-8018-3f6d-0b3d-03c35b1db7f2@harmstone.com>
-In-Reply-To: <fd0d9b84-8018-3f6d-0b3d-03c35b1db7f2@harmstone.com>
+Subject: RE: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+Thread-Topic: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+Thread-Index: AQHWiEVMa6NNOPBUmU2lQbRIYYQ96qly8s2AgAaqUoA=
+Date:   Fri, 25 Sep 2020 16:30:19 +0000
+Message-ID: <7facb550be6449c2b35f467ab1716224@paragon-software.com>
+References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
+ <20200911141018.2457639-9-almaz.alexandrovich@paragon-software.com>
+ <20200921132631.q6jfmbhqf6j6ay5t@pali>
+In-Reply-To: <20200921132631.q6jfmbhqf6j6ay5t@pali>
 Accept-Language: ru-RU, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTWFyayBIYXJtc3RvbmUgPG1hcmsuaGFybXN0b25lQGdtYWlsLmNvbT4gT24gQmVoYWxm
-IE9mIE1hcmsgSGFybXN0b25lDQpTZW50OiBGcmlkYXksIFNlcHRlbWJlciAxOCwgMjAyMCA5OjI4
-IFBNDQo+IA0KPiBDb3VsZCBJIHN1Z2dlc3QgdGhhdCBzeXN0ZW0ubnRmc19zZWN1cml0eSBiZSBy
-ZW5hbWVkIHRvIHNlY3VyaXR5Lk5UQUNMPyBUaGF0J3MNCj4gd2hhdCBXaW5CdHJmcyB1c2VzLCBh
-bmQgaXQgbWVhbnMgeW91J2QgYmUgYWJsZSB0byBjcmVhdGUgYSB3b3JraW5nIEJ0cmZzIGNvcHkN
-Cj4gb2YgYSBXaW5kb3dzIGluc3RhbGxhdGlvbiBqdXN0IGJ5IHVzaW5nIHJzeW5jLiBJSVJDIFNh
-bWJhIGFsc28gdW5kZXJzdGFuZHMNCj4geGF0dHJzIGNhbGxlZCBzZWN1cml0eS5OVEFDTCwgd2hl
-biB5b3UndmUgcHV0IGl0IGluIHRoZSByaWdodCBtb2RlLg0KPiANCj4gUXVpdGUgYXBhcnQgZnJv
-bSBhbnl0aGluZyBlbHNlLCBpdCdzIGFuIE5UIHNlY3VyaXR5IGRlc2NyaXB0b3IsIG5vdCBzcGVj
-aWZpY2FsbHkNCj4gTlRGUyAtIEknbSBmYWlybHkgc3VyZSBSZUZTIHVzZXMgdGhlIHNhbWUgZm9y
-bWF0IChmb3Igd2hhdCBpdCdzIHdvcnRoKS4NCj4gDQoNCkhpIE1hcmshIFNlZW1zIHJlYXNvbmFi
-bGUuIFdpbGwgYmUgY2hhbmdlZCBpbiBWOC4NCg0KPiBPbiAxOC85LzIwIDU6MjEgcG0sIEtvbnN0
-YW50aW4gS29tYXJvdiB3cm90ZToNCj4gPiBUaGlzIGFkZHMgYXR0cmliIG9wZXJhdGlvbnMNCj4g
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEtvbnN0YW50aW4gS29tYXJvdiA8YWxtYXouYWxleGFuZHJv
-dmljaEBwYXJhZ29uLXNvZnR3YXJlLmNvbT4NCj4gPiAtLS0NCj4gPiAgZnMvbnRmczMvYXR0cmli
-LmMgICB8IDEzMTIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0K
-PiA+ICBmcy9udGZzMy9hdHRybGlzdC5jIHwgIDQ2MiArKysrKysrKysrKysrKysNCj4gPiAgZnMv
-bnRmczMveGF0dHIuYyAgICB8IDEwNDEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Kw0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDI4MTUgaW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUg
-bW9kZSAxMDA2NDQgZnMvbnRmczMvYXR0cmliLmMNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGZz
-L250ZnMzL2F0dHJsaXN0LmMNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGZzL250ZnMzL3hhdHRy
-LmMNCltdDQo+ID4gKwlpZiAoZXJyIDwgMCkNCj4gPiArCQlnb3RvIG91dDE7DQo+ID4gKwlpZiAo
-IWVycikgew0KPiA+ICsJCXBvc2l4X2FjbF9yZWxlYXNlKGFjbCk7DQo+ID4gKwkJYWNsID0gTlVM
-TDsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlpZiAoIVNfSVNESVIoaW5vZGUtPmlfbW9kZSkpIHsN
-Cj4gPiArCQlwb3NpeF9hY2xfcmVsZWFzZShkZWZhdWx0X2FjbCk7DQo+ID4gKwkJZGVmYXVsdF9h
-Y2wgPSBOVUxMOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCWlmIChkZWZhdWx0X2FjbCkNCj4gPiAr
-CQllcnIgPSBudGZzX3NldF9hY2xfZXgoaW5vZGUsIGRlZmF1bHRfYWNsLCBBQ0xfVFlQRV9ERUZB
-VUxULCAxKTsNCj4gPiArDQo+ID4gKwlpZiAoIWFjbCkNCj4gPiArCQlpbm9kZS0+aV9hY2wgPSBO
-VUxMOw0KPiA+ICsJZWxzZSBpZiAoIWVycikNCj4gPiArCQllcnIgPSBudGZzX3NldF9hY2xfZXgo
-aW5vZGUsIGFjbCwgQUNMX1RZUEVfQUNDRVNTLCAxKTsNCj4gPiArDQo+ID4gKwlwb3NpeF9hY2xf
-cmVsZWFzZShhY2wpOw0KPiA+ICtvdXQxOg0KPiA+ICsJcG9zaXhfYWNsX3JlbGVhc2UoZGVmYXVs
-dF9hY2wpOw0KPiA+ICsNCj4gPiArb3V0Og0KPiA+ICsJcmV0dXJuIGVycjsNCj4gPiArfQ0KPiA+
-ICsNCj4gPiArc3RhdGljIGJvb2wgbnRmc194YXR0cl91c2VyX2xpc3Qoc3RydWN0IGRlbnRyeSAq
-ZGVudHJ5KQ0KPiA+ICt7DQo+ID4gKwlyZXR1cm4gMTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3Rh
-dGljIGNvbnN0IHN0cnVjdCB4YXR0cl9oYW5kbGVyIG50ZnNfeGF0dHJfaGFuZGxlciA9IHsNCj4g
-PiArCS5wcmVmaXggPSAiIiwNCj4gPiArCS5nZXQgPSBudGZzX2dldHhhdHRyLA0KPiA+ICsJLnNl
-dCA9IG50ZnNfc2V0eGF0dHIsDQo+ID4gKwkubGlzdCA9IG50ZnNfeGF0dHJfdXNlcl9saXN0LA0K
-PiA+ICt9Ow0KPiA+ICsNCj4gPiArY29uc3Qgc3RydWN0IHhhdHRyX2hhbmRsZXIgKm50ZnNfeGF0
-dHJfaGFuZGxlcnNbXSA9IHsgJm50ZnNfeGF0dHJfaGFuZGxlciwNCj4gPiArCQkJCQkJICAgICAg
-TlVMTCB9Ow0KPiANCg0KVGhhbmtzLg0K
+From: Pali Roh=E1r <pali@kernel.org>
+Sent: Monday, September 21, 2020 4:27 PM
+> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@=
+vger.kernel.org; dsterba@suse.cz; aaptel@suse.com;
+> willy@infradead.org; rdunlap@infradead.org; joe@perches.com; mark@harmsto=
+ne.com; nborisov@suse.com
+> Subject: Re: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
+>=20
+> On Friday 11 September 2020 17:10:16 Konstantin Komarov wrote:
+> > +Mount Options
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The list below describes mount options supported by NTFS3 driver in ad=
+dition to
+> > +generic ones.
+> > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > +
+> > +nls=3Dname		This option informs the driver how to interpret path
+> > +			strings and translate them to Unicode and back. If
+> > +			this option is not set, the default codepage will be
+> > +			used (CONFIG_NLS_DEFAULT).
+> > +			Examples:
+> > +				'nls=3Dutf8'
+> > +
+> > +nls_alt=3Dname		This option extends "nls". It will be used to translat=
+e
+> > +			path string to Unicode if primary nls failed.
+> > +			Examples:
+> > +				'nls_alt=3Dcp1251'
+>=20
+> Hello! I'm looking at other filesystem drivers and no other with UNICODE
+> semantic (vfat, udf, isofs) has something like nls_alt option.
+>=20
+> So do we really need it? And if yes, it should be added to all other
+> UNICODE filesystem drivers for consistency.
+>=20
+> But I'm very sceptical if such thing is really needed. nls=3D option just
+> said how to convert UNICODE code points for userpace. This option is
+> passed by userspace (when mounting disk), so userspace already know what
+> it wanted. And it should really use this encoding for filenames (e.g.
+> utf8 or cp1251) which already told to kernel.
+
+Hi Pali! Thanks for the feedback. We do not consider the nls_alt option as =
+the must have
+one. But it is very nice "QOL-type" mount option, which may help some amoun=
+t of
+dual-booters/Windows users to avoid tricky fails with files originated on n=
+on-English
+Windows systems. One of the cases where this one may be useful is the case =
+of zipping
+files with non-English names (e.g. Polish etc) under Windows and then unzip=
+ping the archive
+under Linux. In this case unzip will likely to fail on those files, as arch=
+ive stores filenames not
+in utf. Windows have that "Language for non-Unicode programs" setting, whic=
+h controls the
+encoding used for the described (and similar) cases.
+Overall, it's kinda niche mount option, but we suppose it's legit for Windo=
+ws-originated filesystems.
+What do you think on this, Pali?
+
+Best regards!
