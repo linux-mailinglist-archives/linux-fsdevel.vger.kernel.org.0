@@ -2,127 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A822278D40
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 17:53:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC040278D54
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Sep 2020 17:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbgIYPxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Sep 2020 11:53:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729048AbgIYPxo (ORCPT
+        id S1729041AbgIYP5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Sep 2020 11:57:45 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:57210 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728423AbgIYP5p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Sep 2020 11:53:44 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBAA6C0613CE;
-        Fri, 25 Sep 2020 08:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YVkX1AFaHFQ10Cu8+Y2oeIelkhmu78mT2NIzs7fqtMQ=; b=NitexxSY1jUxbPqeqAnRyxlSim
-        Pke3nJ6OB+4ldDJoCkjq5rYaW6lhhnmwIHAUTTD/E90VZBCuTlEMrb6co0sn21tEalpWRkhOgDY4p
-        lrT4m30bqDa7FOrYaT/BajizhiL10K/FXCr9VGBIwqvzlqmp4StUxytktVeXTmT7KJHfvs6go15RG
-        e+jBfLUaypKyydrYNHqHhSgn9FA+IWspbnOcLXS7TxyTQyvUCPdqnG5ArOOityCN43JCZZZfO35m7
-        N+ADN4a17fXCyhiSfvBgBdpe0Y9qBwAjqOVwnVy/w/hQmdgdaN4qSS4kn/zClO0xtmE62bKZ8flnz
-        LJaWNQ/Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kLq2W-0002Nb-SY; Fri, 25 Sep 2020 15:53:41 +0000
-Date:   Fri, 25 Sep 2020 16:53:40 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     Qian Cai <cai@redhat.com>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
-Message-ID: <20200925155340.GG32101@casper.infradead.org>
-References: <CA+icZUUgwcLP8O9oDdUMT0SzEQHjn+LkFFkPL3NsLCBhDRSyGw@mail.gmail.com>
- <f623da731d7c2e96e3a37b091d0ec99095a6386b.camel@redhat.com>
- <CA+icZUVO65ADxk5SZkZwV70ax5JCzPn8PPfZqScTTuvDRD1smQ@mail.gmail.com>
- <20200924200225.GC32101@casper.infradead.org>
- <CA+icZUV3aL_7MptHbradtnd8P6X9VO-=Pi2gBezWaZXgeZFMpg@mail.gmail.com>
- <20200924235756.GD32101@casper.infradead.org>
- <CA+icZUWcx5hBjU35tfY=7KXin7cA5AAY8AMKx-pjYnLCsQywGw@mail.gmail.com>
- <CA+icZUWMs5Xz5vMP370uUBCqzgjq6Aqpy+krZMNg-5JRLxaALA@mail.gmail.com>
- <20200925134608.GE32101@casper.infradead.org>
- <CA+icZUV9tNMbTC+=MoKp3rGmhDeO9ScW7HC+WUTCCvSMpih7DA@mail.gmail.com>
+        Fri, 25 Sep 2020 11:57:45 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 438E91D21;
+        Fri, 25 Sep 2020 18:57:43 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1601049463;
+        bh=BzJMvYL8lwpxuyQPxWxXbPG81ZPmNHqhN7tEA8oz5dM=;
+        h=From:To:CC:Subject:Date;
+        b=ZIgc5KHhycSdDQzLsSLHtySnqVHgOib1fIVbZaSl1HYMJ0aXXgU3qbJo8+WnMz/Fw
+         IlG0MUkEZjbJQA+KFMbtepp7H7toc9Ji3uQow7kqdad8EN+VRbR+k/2ah2l2HRVz89
+         MYrvW8v7PjBHp6LcVvZPILfUbCBEkeEfwMeROBhs=
+Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 25 Sep 2020 18:57:42 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
+        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
+        <mark@harmstone.com>, <nborisov@suse.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v7 00/10] NTFS read-write driver GPL implementation by Paragon Software
+Date:   Fri, 25 Sep 2020 18:55:27 +0300
+Message-ID: <20200925155537.1030046-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+icZUV9tNMbTC+=MoKp3rGmhDeO9ScW7HC+WUTCCvSMpih7DA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.30.114.105]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 25, 2020 at 04:01:02PM +0200, Sedat Dilek wrote:
-> On Fri, Sep 25, 2020 at 3:46 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, Sep 25, 2020 at 03:36:01PM +0200, Sedat Dilek wrote:
-> > > > I have applied your diff on top of Linux v5.9-rc6+ together with
-> > > > "iomap: Set all uptodate bits for an Uptodate page".
-> > > >
-> > > > Run LTP tests:
-> > > >
-> > > > #1: syscalls (all)
-> > > > #2: syscalls/preadv203
-> > > > #3: syscalls/dirtyc0w
-> > > >
-> > > > With #1 I see some failures with madvise0x tests.
-> >
-> > Why do you think these failures are related to my patches?
-> 
-> Oh sorry, I was not saying it is related to your patches and I am not
-> familiar with all syscalls LTP tests.
+This patch adds NTFS Read-Write driver to fs/ntfs3.
 
-It's probably a good idea to become familiar with the tests.  I'm not,
-but a good way to work with any test-suite is to run it against a
-presumed-good kernel, then against a kernel with changes and see whether
-the failures change.
+Having decades of expertise in commercial file systems development and huge
+test coverage, we at Paragon Software GmbH want to make our contribution to
+the Open Source Community by providing implementation of NTFS Read-Write
+driver for the Linux Kernel.
 
-> You said:
-> > Qian reported preadv203.c could reproduce it easily on POWER and ARM.
-> > They have 64kB pages, so it's easier to hit.  You need to have a
-> > filesystem with block size < page size to hit the problem.
-> 
-> Here on my x86-64 Debian host I use Ext4-FS.
-> I can setup a new partition with a different filesystem if this helps.
-> Any recommendations?
+This is fully functional NTFS Read-Write driver. Current version works with
+NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
 
-If I understand the output from preadv203 correctly, it sets up a loop
-block device with a new filesystem on it, so it doesn't matter what your
-host fs is.  What I don't know is how to change the block size for that
-filesystem.
+We plan to support this version after the codebase once merged, and add new
+features and fix bugs. For example, full journaling support over JBD will be
+added in later updates.
 
-> How does the assertion look like in the logs?
-> You have an example.
+v2:
+ - patch splitted to chunks (file-wise)
+ - build issues fixed
+ - sparse and checkpatch.pl errors fixed
+ - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+ - cosmetics + code cleanup
 
-I happen to have one from my testing last night:
+v3:
+ - added acl, noatime, no_acs_rules, prealloc mount options
+ - added fiemap support
+ - fixed encodings support
+ - removed typedefs
+ - adapted Kernel-way logging mechanisms
+ - fixed typos and corner-case issues
 
-0006 ------------[ cut here ]------------
-0006 WARNING: CPU: 5 PID: 1417 at fs/iomap/buffered-io.c:80 iomap_page_release+0xb1/0xc0
-0006 bam!
-0006 Modules linked in:
-0006 CPU: 5 PID: 1417 Comm: fio Kdump: loaded Not tainted 5.8.0-00001-g51f85a97ccdd-dirty #54
-0006 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-1 04/01/2014
-0006 RIP: 0010:iomap_page_release+0xb1/0xc0
-0006 Code: 45 d9 48 8b 03 48 c1 e8 02 83 e0 01 75 13 38 d0 75 18 4c 89 ef e8 1f 6a f8 ff 5b 41 5c 41 5d 5d c3 eb eb e8 e1 07 f4 ff eb 8c <0f> 0b eb e4 0f 0b eb a8 0f 0b eb ac 0f 1f 00 55 48 89 e5 41 56 41
-0006 RSP: 0018:ffffc90001ed3a40 EFLAGS: 00010202
-0006 RAX: 0000000000000001 RBX: ffffea0001458ec0 RCX: ffffffff81cf75a7
-0006 RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880727d1f90
-0006 RBP: ffffc90001ed3a58 R08: 0000000000000000 R09: ffff888051ddd6e8
-0006 R10: 0000000000000005 R11: 0000000000000230 R12: 0000000000000004
-0006 R13: ffff8880727d1f80 R14: 0000000000000005 R15: ffffea0001458ec0
-0006 FS:  00007fe4bdd9df00(0000) GS:ffff88807f540000(0000) knlGS:0000000000000000
-0006 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-0006 CR2: 00007fe4bdd50000 CR3: 000000006f7e6005 CR4: 0000000000360ea0
-0006 Call Trace:
-0006  iomap_releasepage+0x58/0xc0
-0006  try_to_release_page+0x4b/0x60
-0006  invalidate_inode_pages2_range+0x38b/0x3f0
+v4:
+ - atomic_open() refactored
+ - code style updated
+ - bugfixes
 
-I would suggest that you try applying just the assertion to Linus'
-kernel, then try to make it fire.  Then apply the fix and see if you
-can still make the assertion fire.
+v5:
+- nls/nls_alt mount options added
+- Unicode conversion fixes
+- Improved very fragmented files operations
+- logging cosmetics
 
-FWIW, I got it to fire with generic/095 from the xfstests test suite.
+v6:
+- Security Descriptors processing changed
+  added system.ntfs_security xattr to set
+  SD
+- atomic_open() optimized
+- cosmetics
+
+v7:
+- Security Descriptors validity checks added (by Mark Harmstone)
+- atomic_open() fixed for the compressed file creation with directio
+  case
+- remount support
+- temporarily removed readahead usage
+- cosmetics
+
+Konstantin Komarov (10):
+  fs/ntfs3: Add headers and misc files
+  fs/ntfs3: Add initialization of super block
+  fs/ntfs3: Add bitmap
+  fs/ntfs3: Add file operations and implementation
+  fs/ntfs3: Add attrib operations
+  fs/ntfs3: Add compression
+  fs/ntfs3: Add NTFS journal
+  fs/ntfs3: Add Kconfig, Makefile and doc
+  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+  fs/ntfs3: Add MAINTAINERS
+
+ Documentation/filesystems/ntfs3.rst |  107 +
+ MAINTAINERS                         |    7 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs3/Kconfig                    |   23 +
+ fs/ntfs3/Makefile                   |   11 +
+ fs/ntfs3/attrib.c                   | 1316 +++++++
+ fs/ntfs3/attrlist.c                 |  462 +++
+ fs/ntfs3/bitfunc.c                  |  137 +
+ fs/ntfs3/bitmap.c                   | 1508 ++++++++
+ fs/ntfs3/debug.h                    |   60 +
+ fs/ntfs3/dir.c                      |  607 ++++
+ fs/ntfs3/file.c                     | 1201 ++++++
+ fs/ntfs3/frecord.c                  | 2399 ++++++++++++
+ fs/ntfs3/fslog.c                    | 5222 +++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2320 ++++++++++++
+ fs/ntfs3/index.c                    | 2639 ++++++++++++++
+ fs/ntfs3/inode.c                    | 1975 ++++++++++
+ fs/ntfs3/lznt.c                     |  452 +++
+ fs/ntfs3/namei.c                    |  576 +++
+ fs/ntfs3/ntfs.h                     | 1295 +++++++
+ fs/ntfs3/ntfs_fs.h                  | 1002 +++++
+ fs/ntfs3/record.c                   |  615 ++++
+ fs/ntfs3/run.c                      | 1159 ++++++
+ fs/ntfs3/super.c                    | 1485 ++++++++
+ fs/ntfs3/upcase.c                   |   78 +
+ fs/ntfs3/xattr.c                    | 1056 ++++++
+ 27 files changed, 27714 insertions(+)
+ create mode 100644 Documentation/filesystems/ntfs3.rst
+ create mode 100644 fs/ntfs3/Kconfig
+ create mode 100644 fs/ntfs3/Makefile
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/bitfunc.c
+ create mode 100644 fs/ntfs3/bitmap.c
+ create mode 100644 fs/ntfs3/debug.h
+ create mode 100644 fs/ntfs3/dir.c
+ create mode 100644 fs/ntfs3/file.c
+ create mode 100644 fs/ntfs3/frecord.c
+ create mode 100644 fs/ntfs3/fslog.c
+ create mode 100644 fs/ntfs3/fsntfs.c
+ create mode 100644 fs/ntfs3/index.c
+ create mode 100644 fs/ntfs3/inode.c
+ create mode 100644 fs/ntfs3/lznt.c
+ create mode 100644 fs/ntfs3/namei.c
+ create mode 100644 fs/ntfs3/ntfs.h
+ create mode 100644 fs/ntfs3/ntfs_fs.h
+ create mode 100644 fs/ntfs3/record.c
+ create mode 100644 fs/ntfs3/run.c
+ create mode 100644 fs/ntfs3/super.c
+ create mode 100644 fs/ntfs3/upcase.c
+ create mode 100644 fs/ntfs3/xattr.c
+
+-- 
+2.25.4
+
