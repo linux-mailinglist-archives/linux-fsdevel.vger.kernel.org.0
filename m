@@ -2,428 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DC0279BE4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 20:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2880279C0B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 21:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbgIZSf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Sep 2020 14:35:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59994 "EHLO
+        id S1730074AbgIZTNL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Sep 2020 15:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729106AbgIZSf5 (ORCPT
+        with ESMTP id S1726183AbgIZTNL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Sep 2020 14:35:57 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D783AC0613D3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Sep 2020 11:35:56 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id m15so1104768pls.8
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Sep 2020 11:35:56 -0700 (PDT)
+        Sat, 26 Sep 2020 15:13:11 -0400
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7CCC0613CE;
+        Sat, 26 Sep 2020 12:13:11 -0700 (PDT)
+Received: by mail-oi1-x243.google.com with SMTP id 26so6683403ois.5;
+        Sat, 26 Sep 2020 12:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w5kVvmGe2Xwz2eVnmNj+YCW9Kx9XZ7HdatC4wyGdito=;
-        b=BKB15pPicLXqvhcK97vsToWCGSeAdyqmWfE2bnXldaWY73JLfa+mQLEWLMJTrdJmjz
-         3yyaRXWEduQ7OHpq1FDrozrzpywI/8nKjkxfN5cZktJrWs4o2e1WjYbdSfLz6nky3/ro
-         jspk30yni2BF2PvCzt10NhFQfxxTOSBEqhFDpQqi71mY41VJHoF6Rs6eCw7f0Yv2FDk2
-         yvxk6E9xqr/qx6LraWY7gSTcWC/lYHQDXIBDd/SUAW86CRXWdTrEkiBFs+UkWJ1tckk9
-         4nyAckHWh9q/+JIy0bhKhJroKvDLR+yn1wf5YHX7zr+8QFObgCVHuJnTk7Zvj6Rc1lkO
-         cD2Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=+fAzY/YKdgot67kmHIgZxQBjZo7KUMmu9cN3uidw/nI=;
+        b=a3Xx86UdAtDo/78pi4k5iv7YKBceh37BgrH/g92zxlMNYaKCk43xCh4KbGTsOpr5CS
+         9Gj6NSlpCoeAUSVpSXmMAtuwN5HsXl43tPtS3K5gQDoNOm/xmUrN+yyKJqWsDTZEZZO5
+         XQwbHwLdj6czu5qeONPhUNAYwaRUJDts8TpYg52LwBcc8YlNxaz9uGeV5yoIuDdJOag6
+         uLB1mNMlXO3xZpPG58cEYWMiSBZa8Is3a7PEm71ID2IAMRloxYOPks6eXMx1fooyzUtf
+         9/0rUChHTcG5lvMNP7TeELwsVi41XYZb6e0QMo2YHicMNNU0Ceb+xg2d16wqJ+5+L2yt
+         owtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w5kVvmGe2Xwz2eVnmNj+YCW9Kx9XZ7HdatC4wyGdito=;
-        b=ImhfjKpdPHZDhUHOn0NOBaKvRfebcqnJM9gUnOX2Shjp6dV++2KbYfxq0i1qpMG9Cx
-         RG/u8dpAMyLcEsDImDiFDXclFvmu+5TOIq4Ai49IkD4cW5Z4YArdheJVN6VnRBMIynku
-         kwCFoZN8JTJjx+wnynPsKl1GB1iahT8qSW2bDrHGP50REpUlxGP64q8SoGH49XBiRz5U
-         1ia0nx89WVg89Qm2Ub+yxXAerNL35K6fYaDXCTzPnKeB8XHS7Xfwvy6KgxTq7sV1JWYC
-         LwBfSf55DJKBJCQWtYrbb/onsP+OhiUdwcUdeL/ehMeaHnWNSqScLXKZrakiVGKqAXM5
-         tD5A==
-X-Gm-Message-State: AOAM5301gJHlWnEBF74C+3EoZ/2b3LlaxHMXpZqIhMZwUutAv82l8yQZ
-        S3bgTNb0oN6uRt0+N2wtPRT4Ww==
-X-Google-Smtp-Source: ABdhPJzsq4QiZVJO8VoayArCCpkOVLhvCEMYvMT283ZN+5L6yGJfakD8dcTQNO0UQe/W5Cva2Rlvcg==
-X-Received: by 2002:a17:90a:6a0d:: with SMTP id t13mr3048547pjj.208.1601145355884;
-        Sat, 26 Sep 2020 11:35:55 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id p6sm6352900pfn.63.2020.09.26.11.35.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Sep 2020 11:35:55 -0700 (PDT)
-Subject: Re: [PATCH next] io-wq: fix use-after-free in io_wq_worker_running
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk,
-        syzbot+45fa0a195b941764e0f0@syzkaller.appspotmail.com,
-        syzbot+9af99580130003da82b1@syzkaller.appspotmail.com,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <20200926132655.6192-1-hdanton@sina.com>
- <1ac425e8-f302-4e91-0c1d-3ebb0a40cf96@kernel.dk>
-Message-ID: <515725f2-5932-4735-17d7-6bfddaa61512@kernel.dk>
-Date:   Sat, 26 Sep 2020 12:35:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=+fAzY/YKdgot67kmHIgZxQBjZo7KUMmu9cN3uidw/nI=;
+        b=tePY8UneRRqila5eiz48vWoOFCNWGKwLvvzTteCVMEcH9YLzziRNH3zc5pdmxRLBLI
+         a76rBuaOKIV/QUWkmVSB0FDWWkuhhXX9VpZvy4pqIG5gIcvd06h2W2CqeSkgATPSQMM+
+         P3d6vMw0p4s167INqC87exWDrXhnDaJaRcR39XLUewVD5IPm4DjNFqtVOQioa1PNuWpC
+         Nmd3axGyzOfEQaERm80V6hQ13eoaRI2wCHRlPMwhlyT4EcwbFoPOZKJLBZRoMgpSpLpD
+         lXS6Obesvc/8jDVXm1nZyyjH3yJit143Rj8Lg/V70sveux2tl+BgSJRrrve2AlqbKjXT
+         YwOw==
+X-Gm-Message-State: AOAM533t48AqzOK2UlQukhnO4gaaSToOLvPsV+glc3FhKc3xHA9Eu8eh
+        H/UNe0VtaxxaeBs3qg+GksReBVNDetyS1dPojvQ=
+X-Google-Smtp-Source: ABdhPJzzvRk26GEH6fkGxt7/Xle7wR9kTLLqWjDJ7/JcsOAxcw+0koLxqiSBwDDYD3thCOrEiSTedFmBFQvRoOBl0Xk=
+X-Received: by 2002:aca:ec50:: with SMTP id k77mr1934383oih.35.1601147590988;
+ Sat, 26 Sep 2020 12:13:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1ac425e8-f302-4e91-0c1d-3ebb0a40cf96@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CA+icZUUgwcLP8O9oDdUMT0SzEQHjn+LkFFkPL3NsLCBhDRSyGw@mail.gmail.com>
+ <f623da731d7c2e96e3a37b091d0ec99095a6386b.camel@redhat.com>
+ <CA+icZUVO65ADxk5SZkZwV70ax5JCzPn8PPfZqScTTuvDRD1smQ@mail.gmail.com>
+ <20200924200225.GC32101@casper.infradead.org> <CA+icZUV3aL_7MptHbradtnd8P6X9VO-=Pi2gBezWaZXgeZFMpg@mail.gmail.com>
+ <20200924235756.GD32101@casper.infradead.org> <CA+icZUWcx5hBjU35tfY=7KXin7cA5AAY8AMKx-pjYnLCsQywGw@mail.gmail.com>
+ <CA+icZUWMs5Xz5vMP370uUBCqzgjq6Aqpy+krZMNg-5JRLxaALA@mail.gmail.com>
+ <20200925134608.GE32101@casper.infradead.org> <CA+icZUV9tNMbTC+=MoKp3rGmhDeO9ScW7HC+WUTCCvSMpih7DA@mail.gmail.com>
+ <20200925155340.GG32101@casper.infradead.org>
+In-Reply-To: <20200925155340.GG32101@casper.infradead.org>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Sat, 26 Sep 2020 21:12:59 +0200
+Message-ID: <CA+icZUV__V=_BrYz2kA2jos92mTGU0FoarHYWLgWB8tbnbo5dQ@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Qian Cai <cai@redhat.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/26/20 12:07 PM, Jens Axboe wrote:
-> On 9/26/20 7:26 AM, Hillf Danton wrote:
->> --- a/fs/io-wq.c
->> +++ b/fs/io-wq.c
->> @@ -200,7 +200,6 @@ static void io_worker_exit(struct io_wor
->>  {
->>  	struct io_wqe *wqe = worker->wqe;
->>  	struct io_wqe_acct *acct = io_wqe_get_acct(wqe, worker);
->> -	unsigned nr_workers;
->>  
->>  	/*
->>  	 * If we're not at zero, someone else is holding a brief reference
->> @@ -228,15 +227,11 @@ static void io_worker_exit(struct io_wor
->>  		raw_spin_lock_irq(&wqe->lock);
->>  	}
->>  	acct->nr_workers--;
->> -	nr_workers = wqe->acct[IO_WQ_ACCT_BOUND].nr_workers +
->> -			wqe->acct[IO_WQ_ACCT_UNBOUND].nr_workers;
->>  	raw_spin_unlock_irq(&wqe->lock);
->>  
->> -	/* all workers gone, wq exit can proceed */
->> -	if (!nr_workers && refcount_dec_and_test(&wqe->wq->refs))
->> -		complete(&wqe->wq->done);
->> -
->>  	kfree_rcu(worker, rcu);
->> +	if (refcount_dec_and_test(&wqe->wq->refs))
->> +		complete(&wqe->wq->done);
->>  }
-> 
-> Nice, we came up with the same fix, thanks a lot for looking into this.
-> I pushed this one out for syzbot to test:
-> 
-> https://git.kernel.dk/cgit/linux-block/commit/?h=io_uring-5.9&id=41d5f92f60a61e264dafbada79175dad0bc60c5b
-> 
-> which is basically identical. I did consider the EXIT check as well, but
-> we don't really need it, so I'd prefer to leave that out of it.
-> 
-> I'll queue yours up.
+On Fri, Sep 25, 2020 at 5:53 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Sep 25, 2020 at 04:01:02PM +0200, Sedat Dilek wrote:
+> > On Fri, Sep 25, 2020 at 3:46 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Fri, Sep 25, 2020 at 03:36:01PM +0200, Sedat Dilek wrote:
+> > > > > I have applied your diff on top of Linux v5.9-rc6+ together with
+> > > > > "iomap: Set all uptodate bits for an Uptodate page".
+> > > > >
+> > > > > Run LTP tests:
+> > > > >
+> > > > > #1: syscalls (all)
+> > > > > #2: syscalls/preadv203
+> > > > > #3: syscalls/dirtyc0w
+> > > > >
+> > > > > With #1 I see some failures with madvise0x tests.
+> > >
+> > > Why do you think these failures are related to my patches?
+> >
+> > Oh sorry, I was not saying it is related to your patches and I am not
+> > familiar with all syscalls LTP tests.
+>
+> It's probably a good idea to become familiar with the tests.  I'm not,
+> but a good way to work with any test-suite is to run it against a
+> presumed-good kernel, then against a kernel with changes and see whether
+> the failures change.
+>
+> > You said:
+> > > Qian reported preadv203.c could reproduce it easily on POWER and ARM.
+> > > They have 64kB pages, so it's easier to hit.  You need to have a
+> > > filesystem with block size < page size to hit the problem.
+> >
+> > Here on my x86-64 Debian host I use Ext4-FS.
+> > I can setup a new partition with a different filesystem if this helps.
+> > Any recommendations?
+>
+> If I understand the output from preadv203 correctly, it sets up a loop
+> block device with a new filesystem on it, so it doesn't matter what your
+> host fs is.  What I don't know is how to change the block size for that
+> filesystem.
+>
+> > How does the assertion look like in the logs?
+> > You have an example.
+>
+> I happen to have one from my testing last night:
+>
+> 0006 ------------[ cut here ]------------
+> 0006 WARNING: CPU: 5 PID: 1417 at fs/iomap/buffered-io.c:80 iomap_page_release+0xb1/0xc0
+> 0006 bam!
+> 0006 Modules linked in:
+> 0006 CPU: 5 PID: 1417 Comm: fio Kdump: loaded Not tainted 5.8.0-00001-g51f85a97ccdd-dirty #54
+> 0006 Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-1 04/01/2014
+> 0006 RIP: 0010:iomap_page_release+0xb1/0xc0
+> 0006 Code: 45 d9 48 8b 03 48 c1 e8 02 83 e0 01 75 13 38 d0 75 18 4c 89 ef e8 1f 6a f8 ff 5b 41 5c 41 5d 5d c3 eb eb e8 e1 07 f4 ff eb 8c <0f> 0b eb e4 0f 0b eb a8 0f 0b eb ac 0f 1f 00 55 48 89 e5 41 56 41
+> 0006 RSP: 0018:ffffc90001ed3a40 EFLAGS: 00010202
+> 0006 RAX: 0000000000000001 RBX: ffffea0001458ec0 RCX: ffffffff81cf75a7
+> 0006 RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880727d1f90
+> 0006 RBP: ffffc90001ed3a58 R08: 0000000000000000 R09: ffff888051ddd6e8
+> 0006 R10: 0000000000000005 R11: 0000000000000230 R12: 0000000000000004
+> 0006 R13: ffff8880727d1f80 R14: 0000000000000005 R15: ffffea0001458ec0
+> 0006 FS:  00007fe4bdd9df00(0000) GS:ffff88807f540000(0000) knlGS:0000000000000000
+> 0006 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> 0006 CR2: 00007fe4bdd50000 CR3: 000000006f7e6005 CR4: 0000000000360ea0
+> 0006 Call Trace:
+> 0006  iomap_releasepage+0x58/0xc0
+> 0006  try_to_release_page+0x4b/0x60
+> 0006  invalidate_inode_pages2_range+0x38b/0x3f0
+>
+> I would suggest that you try applying just the assertion to Linus'
+> kernel, then try to make it fire.  Then apply the fix and see if you
+> can still make the assertion fire.
+>
 
-I made some edits - some cleanups, but also for the error handling case
-of failing to create a worker that isn't the first one.
+Thanks.
 
-This is my current version, let me know if you are fine with this one.
+In the meantime I built a new LTP-from-Git and Linux-kernel v5.9-rc6+.
+Applied only with the iomap-assertion diff.
 
+Unfortunately, I do not hit the assertion when running all LTP syscalls tests.
 
-commit a6f353e50fb3cd78aae98277cfc34aa25831fff1
-Author: Hillf Danton <hdanton@sina.com>
-Date:   Sat Sep 26 21:26:55 2020 +0800
+> FWIW, I got it to fire with generic/095 from the xfstests test suite.
 
-    io-wq: fix use-after-free in io_wq_worker_running
-    
-    The smart syzbot has found a reproducer for the following issue:
-    
-     ==================================================================
-     BUG: KASAN: use-after-free in instrument_atomic_write include/linux/instrumented.h:71 [inline]
-     BUG: KASAN: use-after-free in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-     BUG: KASAN: use-after-free in io_wqe_inc_running fs/io-wq.c:301 [inline]
-     BUG: KASAN: use-after-free in io_wq_worker_running+0xde/0x110 fs/io-wq.c:613
-     Write of size 4 at addr ffff8882183db08c by task io_wqe_worker-0/7771
-    
-     CPU: 0 PID: 7771 Comm: io_wqe_worker-0 Not tainted 5.9.0-rc4-syzkaller #0
-     Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-     Call Trace:
-      __dump_stack lib/dump_stack.c:77 [inline]
-      dump_stack+0x198/0x1fd lib/dump_stack.c:118
-      print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
-      __kasan_report mm/kasan/report.c:513 [inline]
-      kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
-      check_memory_region_inline mm/kasan/generic.c:186 [inline]
-      check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
-      instrument_atomic_write include/linux/instrumented.h:71 [inline]
-      atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-      io_wqe_inc_running fs/io-wq.c:301 [inline]
-      io_wq_worker_running+0xde/0x110 fs/io-wq.c:613
-      schedule_timeout+0x148/0x250 kernel/time/timer.c:1879
-      io_wqe_worker+0x517/0x10e0 fs/io-wq.c:580
-      kthread+0x3b5/0x4a0 kernel/kthread.c:292
-      ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-    
-     Allocated by task 7768:
-      kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
-      kasan_set_track mm/kasan/common.c:56 [inline]
-      __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
-      kmem_cache_alloc_node_trace+0x17b/0x3f0 mm/slab.c:3594
-      kmalloc_node include/linux/slab.h:572 [inline]
-      kzalloc_node include/linux/slab.h:677 [inline]
-      io_wq_create+0x57b/0xa10 fs/io-wq.c:1064
-      io_init_wq_offload fs/io_uring.c:7432 [inline]
-      io_sq_offload_start fs/io_uring.c:7504 [inline]
-      io_uring_create fs/io_uring.c:8625 [inline]
-      io_uring_setup+0x1836/0x28e0 fs/io_uring.c:8694
-      do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-      entry_SYSCALL_64_after_hwframe+0x44/0xa9
-    
-     Freed by task 21:
-      kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
-      kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
-      kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
-      __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
-      __cache_free mm/slab.c:3418 [inline]
-      kfree+0x10e/0x2b0 mm/slab.c:3756
-      __io_wq_destroy fs/io-wq.c:1138 [inline]
-      io_wq_destroy+0x2af/0x460 fs/io-wq.c:1146
-      io_finish_async fs/io_uring.c:6836 [inline]
-      io_ring_ctx_free fs/io_uring.c:7870 [inline]
-      io_ring_exit_work+0x1e4/0x6d0 fs/io_uring.c:7954
-      process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
-      worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
-      kthread+0x3b5/0x4a0 kernel/kthread.c:292
-      ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-    
-     The buggy address belongs to the object at ffff8882183db000
-      which belongs to the cache kmalloc-1k of size 1024
-     The buggy address is located 140 bytes inside of
-      1024-byte region [ffff8882183db000, ffff8882183db400)
-     The buggy address belongs to the page:
-     page:000000009bada22b refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2183db
-     flags: 0x57ffe0000000200(slab)
-     raw: 057ffe0000000200 ffffea0008604c48 ffffea00086a8648 ffff8880aa040700
-     raw: 0000000000000000 ffff8882183db000 0000000100000002 0000000000000000
-     page dumped because: kasan: bad access detected
-    
-     Memory state around the buggy address:
-      ffff8882183daf80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-      ffff8882183db000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-     >ffff8882183db080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                           ^
-      ffff8882183db100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-      ffff8882183db180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-     ==================================================================
-    
-    which is down to the comment below,
-    
-            /* all workers gone, wq exit can proceed */
-            if (!nr_workers && refcount_dec_and_test(&wqe->wq->refs))
-                    complete(&wqe->wq->done);
-    
-    because there might be multiple cases of wqe in a wq and we would wait
-    for every worker in every wqe to go home before releasing wq's resources
-    on destroying.
-    
-    To that end, rework wq's refcount by making it independent of the tracking
-    of workers because after all they are two different things, and keeping
-    it balanced when workers come and go. Note the manager kthread, like
-    other workers, now holds a grab to wq during its lifetime.
-    
-    Finally to help destroy wq, check IO_WQ_BIT_EXIT upon creating worker
-    and do nothing for exiting wq.
-    
-    Cc: stable@vger.kernel.org # v5.5+
-    Reported-by: syzbot+45fa0a195b941764e0f0@syzkaller.appspotmail.com
-    Reported-by: syzbot+9af99580130003da82b1@syzkaller.appspotmail.com
-    Cc: Pavel Begunkov <asml.silence@gmail.com>
-    Signed-off-by: Hillf Danton <hdanton@sina.com>
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Good to know.
+It's been a long time since I used xfstests.
+Is it clone xfstests Git or do I need to compile?
+Can I run only one single test like generic/095 (and how)?
 
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index 1be0d70f8673..98f9c74b25d2 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -213,7 +213,6 @@ static void io_worker_exit(struct io_worker *worker)
- {
- 	struct io_wqe *wqe = worker->wqe;
- 	struct io_wqe_acct *acct = io_wqe_get_acct(wqe, worker);
--	unsigned nr_workers;
- 
- 	/*
- 	 * If we're not at zero, someone else is holding a brief reference
-@@ -241,15 +240,11 @@ static void io_worker_exit(struct io_worker *worker)
- 		raw_spin_lock_irq(&wqe->lock);
- 	}
- 	acct->nr_workers--;
--	nr_workers = wqe->acct[IO_WQ_ACCT_BOUND].nr_workers +
--			wqe->acct[IO_WQ_ACCT_UNBOUND].nr_workers;
- 	raw_spin_unlock_irq(&wqe->lock);
- 
--	/* all workers gone, wq exit can proceed */
--	if (!nr_workers && refcount_dec_and_test(&wqe->wq->refs))
--		complete(&wqe->wq->done);
--
- 	kfree_rcu(worker, rcu);
-+	if (refcount_dec_and_test(&wqe->wq->refs))
-+		complete(&wqe->wq->done);
- }
- 
- static inline bool io_wqe_run_queue(struct io_wqe *wqe)
-@@ -664,7 +659,7 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
- 
- static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- {
--	struct io_wqe_acct *acct =&wqe->acct[index];
-+	struct io_wqe_acct *acct = &wqe->acct[index];
- 	struct io_worker *worker;
- 
- 	worker = kzalloc_node(sizeof(*worker), GFP_KERNEL, wqe->node);
-@@ -697,6 +692,7 @@ static bool create_io_worker(struct io_wq *wq, struct io_wqe *wqe, int index)
- 	if (index == IO_WQ_ACCT_UNBOUND)
- 		atomic_inc(&wq->user->processes);
- 
-+	refcount_inc(&wq->refs);
- 	wake_up_process(worker->task);
- 	return true;
- }
-@@ -712,28 +708,63 @@ static inline bool io_wqe_need_worker(struct io_wqe *wqe, int index)
- 	return acct->nr_workers < acct->max_workers;
- }
- 
-+static bool io_wqe_worker_send_sig(struct io_worker *worker, void *data)
-+{
-+	send_sig(SIGINT, worker->task, 1);
-+	return false;
-+}
-+
-+/*
-+ * Iterate the passed in list and call the specific function for each
-+ * worker that isn't exiting
-+ */
-+static bool io_wq_for_each_worker(struct io_wqe *wqe,
-+				  bool (*func)(struct io_worker *, void *),
-+				  void *data)
-+{
-+	struct io_worker *worker;
-+	bool ret = false;
-+
-+	list_for_each_entry_rcu(worker, &wqe->all_list, all_list) {
-+		if (io_worker_get(worker)) {
-+			/* no task if node is/was offline */
-+			if (worker->task)
-+				ret = func(worker, data);
-+			io_worker_release(worker);
-+			if (ret)
-+				break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static bool io_wq_worker_wake(struct io_worker *worker, void *data)
-+{
-+	wake_up_process(worker->task);
-+	return false;
-+}
-+
- /*
-  * Manager thread. Tasked with creating new workers, if we need them.
-  */
- static int io_wq_manager(void *data)
- {
- 	struct io_wq *wq = data;
--	int workers_to_create = num_possible_nodes();
- 	int node;
- 
- 	/* create fixed workers */
--	refcount_set(&wq->refs, workers_to_create);
-+	refcount_set(&wq->refs, 1);
- 	for_each_node(node) {
- 		if (!node_online(node))
- 			continue;
--		if (!create_io_worker(wq, wq->wqes[node], IO_WQ_ACCT_BOUND))
--			goto err;
--		workers_to_create--;
-+		if (create_io_worker(wq, wq->wqes[node], IO_WQ_ACCT_BOUND))
-+			continue;
-+		set_bit(IO_WQ_BIT_ERROR, &wq->state);
-+		set_bit(IO_WQ_BIT_EXIT, &wq->state);
-+		goto out;
- 	}
- 
--	while (workers_to_create--)
--		refcount_dec(&wq->refs);
--
- 	complete(&wq->done);
- 
- 	while (!kthread_should_stop()) {
-@@ -765,12 +796,18 @@ static int io_wq_manager(void *data)
- 	if (current->task_works)
- 		task_work_run();
- 
--	return 0;
--err:
--	set_bit(IO_WQ_BIT_ERROR, &wq->state);
--	set_bit(IO_WQ_BIT_EXIT, &wq->state);
--	if (refcount_sub_and_test(workers_to_create, &wq->refs))
-+out:
-+	if (refcount_dec_and_test(&wq->refs)) {
- 		complete(&wq->done);
-+		return 0;
-+	}
-+	/* if ERROR is set and we get here, we have workers to wake */
-+	if (test_bit(IO_WQ_BIT_ERROR, &wq->state)) {
-+		rcu_read_lock();
-+		for_each_node(node)
-+			io_wq_for_each_worker(wq->wqes[node], io_wq_worker_wake, NULL);
-+		rcu_read_unlock();
-+	}
- 	return 0;
- }
- 
-@@ -877,37 +914,6 @@ void io_wq_hash_work(struct io_wq_work *work, void *val)
- 	work->flags |= (IO_WQ_WORK_HASHED | (bit << IO_WQ_HASH_SHIFT));
- }
- 
--static bool io_wqe_worker_send_sig(struct io_worker *worker, void *data)
--{
--	send_sig(SIGINT, worker->task, 1);
--	return false;
--}
--
--/*
-- * Iterate the passed in list and call the specific function for each
-- * worker that isn't exiting
-- */
--static bool io_wq_for_each_worker(struct io_wqe *wqe,
--				  bool (*func)(struct io_worker *, void *),
--				  void *data)
--{
--	struct io_worker *worker;
--	bool ret = false;
--
--	list_for_each_entry_rcu(worker, &wqe->all_list, all_list) {
--		if (io_worker_get(worker)) {
--			/* no task if node is/was offline */
--			if (worker->task)
--				ret = func(worker, data);
--			io_worker_release(worker);
--			if (ret)
--				break;
--		}
--	}
--
--	return ret;
--}
--
- void io_wq_cancel_all(struct io_wq *wq)
- {
- 	int node;
-@@ -1140,12 +1146,6 @@ bool io_wq_get(struct io_wq *wq, struct io_wq_data *data)
- 	return refcount_inc_not_zero(&wq->use_refs);
- }
- 
--static bool io_wq_worker_wake(struct io_worker *worker, void *data)
--{
--	wake_up_process(worker->task);
--	return false;
--}
--
- static void __io_wq_destroy(struct io_wq *wq)
- {
- 	int node;
-
--- 
-Jens Axboe
-
+- Sedat -
