@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A83279770
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 09:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8766279771
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 09:04:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbgIZHEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Sep 2020 03:04:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38280 "EHLO
+        id S1729041AbgIZHEI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Sep 2020 03:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728974AbgIZHEF (ORCPT
+        with ESMTP id S1728991AbgIZHEG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Sep 2020 03:04:05 -0400
+        Sat, 26 Sep 2020 03:04:06 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B7FBC0613CE
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Sep 2020 00:04:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479D5C0613CE
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Sep 2020 00:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=5+cvC+Olnt2RYhxM/leFa/Y8/9TKxLp0Dqgd9JVP0q4=; b=Tzw0GNeUxpjf4C2sVJlTlyj4hn
-        7Um1TnJueHQEt9/TZ/t6VDES1Ixsf4r7QPt7oR0DY9WD93ctmVLk+6K7POOuu7zMcx0QLiMb1mgOh
-        ZYmBa8JGM78AICbnwYgGBxqMY3ZIOuZtI/SFpPR0XcoU3F69/Q6hTKbmxuvk5yQtFEHIA+1AX+Z4b
-        IDxCBpLLmhmT75+/QfVUUFhNYPUL2Vke06u8Gmeg0WVowq/v/PC1Wx6Z3fsZMFKo5GnfL5FEwLOFl
-        GzsZBTTPCqYdazo2rdaEbf9wPtAWiFWu8PEO07nyAcyn5eqKUvdAyNbJEXhpqpo6cPI0vvCtY5uj3
-        PFW8Vx5Q==;
+        bh=G5DjZWIno3FaRn8f6l4VfdQbCAzY4Ys08lCIh0jKDVo=; b=P7AoyeysmlTxqPL39jxRg4CS+A
+        1WYqsjKjCEUZ+QY7sJseqOZqZci0q+I6NboJp+sb8BHANZBCAIoTEona0ZL5vni51n14jD9Q+R52c
+        NO50cKieo9FCmAE42x/O49mui+T18H8eAAM/vA+WKqvURlnVf43L/EsapIGZjWZuAZHmW64xSB/ts
+        xoaRpX2TI97Ba6UahtHj7TFVi7cD/Y3sd8m//8L8X7eFMtERkxvHo1+VQ/DwQx3S5gmHxtLyaR3iB
+        PQbP6SE6jVFqp4o5VRuIgi+vKAEauQ/oRtF+WrfVuFFnRXotye1lkkFCTrnwkB3N32kIEzkOkwA6S
+        qZZFKXVA==;
 Received: from [46.189.67.162] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kM4FY-0003vn-2M; Sat, 26 Sep 2020 07:04:04 +0000
+        id 1kM4FY-0003vt-Ri; Sat, 26 Sep 2020 07:04:05 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/5] fs: move vfs_fstatat out of line
-Date:   Sat, 26 Sep 2020 09:03:59 +0200
-Message-Id: <20200926070401.11816-4-hch@lst.de>
+Subject: [PATCH 4/5] fs: remove vfs_stat_set_lookup_flags
+Date:   Sat, 26 Sep 2020 09:04:00 +0200
+Message-Id: <20200926070401.11816-5-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200926070401.11816-1-hch@lst.de>
 References: <20200926070401.11816-1-hch@lst.de>
@@ -44,65 +44,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows to keep vfs_statx static in fs/stat.c to prepare for the following
-changes.
+The function really obsfucates checking for valid flags and setting the
+lookup flags.  The fact that it returns -EINVAL through and unsigned
+return value, which is then used as boolean really doesn't help either.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/stat.c          | 9 +++++++--
- include/linux/fs.h | 9 ++-------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ fs/stat.c | 33 ++++++++++++---------------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
 diff --git a/fs/stat.c b/fs/stat.c
-index 2683a051ce07fa..ddf0176d4dbcd7 100644
+index ddf0176d4dbcd7..8acc4b14ac24c9 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
-@@ -181,7 +181,7 @@ static inline unsigned vfs_stat_set_lookup_flags(unsigned *lookup_flags,
-  *
-  * 0 will be returned on success, and a -ve error code if unsuccessful.
-  */
--int vfs_statx(int dfd, const char __user *filename, int flags,
-+static int vfs_statx(int dfd, const char __user *filename, int flags,
+@@ -148,24 +148,6 @@ int vfs_fstat(int fd, struct kstat *stat)
+ 	return error;
+ }
+ 
+-static inline unsigned vfs_stat_set_lookup_flags(unsigned *lookup_flags,
+-						 int flags)
+-{
+-	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT |
+-		       AT_EMPTY_PATH | KSTAT_QUERY_FLAGS)) != 0)
+-		return -EINVAL;
+-
+-	*lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
+-	if (flags & AT_SYMLINK_NOFOLLOW)
+-		*lookup_flags &= ~LOOKUP_FOLLOW;
+-	if (flags & AT_NO_AUTOMOUNT)
+-		*lookup_flags &= ~LOOKUP_AUTOMOUNT;
+-	if (flags & AT_EMPTY_PATH)
+-		*lookup_flags |= LOOKUP_EMPTY;
+-
+-	return 0;
+-}
+-
+ /**
+  * vfs_statx - Get basic and extra attributes by filename
+  * @dfd: A file descriptor representing the base dir for a relative filename
+@@ -185,11 +167,20 @@ static int vfs_statx(int dfd, const char __user *filename, int flags,
  	      struct kstat *stat, u32 request_mask)
  {
  	struct path path;
-@@ -209,8 +209,13 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
- out:
- 	return error;
- }
--EXPORT_SYMBOL(vfs_statx);
+-	int error = -EINVAL;
+-	unsigned lookup_flags;
++	unsigned lookup_flags = 0;
++	int error;
  
-+int vfs_fstatat(int dfd, const char __user *filename,
-+			      struct kstat *stat, int flags)
-+{
-+	return vfs_statx(dfd, filename, flags | AT_NO_AUTOMOUNT,
-+			 stat, STATX_BASIC_STATS);
-+}
- 
- #ifdef __ARCH_WANT_OLD_STAT
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 107f6a84ead8f7..0678e9ca07b0ed 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3165,15 +3165,10 @@ extern const struct inode_operations simple_symlink_inode_operations;
- 
- extern int iterate_dir(struct file *, struct dir_context *);
- 
--extern int vfs_statx(int, const char __user *, int, struct kstat *, u32);
-+int vfs_fstatat(int dfd, const char __user *filename, struct kstat *stat,
-+		int flags);
- int vfs_fstat(int fd, struct kstat *stat);
- 
--static inline int vfs_fstatat(int dfd, const char __user *filename,
--			      struct kstat *stat, int flags)
--{
--	return vfs_statx(dfd, filename, flags | AT_NO_AUTOMOUNT,
--			 stat, STATX_BASIC_STATS);
--}
- static inline int vfs_stat(const char __user *filename, struct kstat *stat)
- {
- 	return vfs_fstatat(AT_FDCWD, filename, stat, 0);
+-	if (vfs_stat_set_lookup_flags(&lookup_flags, flags))
++	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
++		      KSTAT_QUERY_FLAGS))
+ 		return -EINVAL;
++
++	if (!(flags & AT_SYMLINK_NOFOLLOW))
++		lookup_flags |= LOOKUP_FOLLOW;
++	if (!(flags & AT_NO_AUTOMOUNT))
++		lookup_flags |= LOOKUP_AUTOMOUNT;
++	if (flags & AT_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
++
+ retry:
+ 	error = user_path_at(dfd, filename, lookup_flags, &path);
+ 	if (error)
 -- 
 2.28.0
 
