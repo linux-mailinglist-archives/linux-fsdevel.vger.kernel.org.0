@@ -2,134 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 838A4279829
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 11:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47102798A1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 12:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbgIZJVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Sep 2020 05:21:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbgIZJVA (ORCPT
+        id S1726587AbgIZK6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Sep 2020 06:58:23 -0400
+Received: from mail-io1-f80.google.com ([209.85.166.80]:50129 "EHLO
+        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbgIZK6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Sep 2020 05:21:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E3F9C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Sep 2020 02:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=/ivdUATQZkP6+hgnvpZgn5U9ayT1PU/oH61zOJIUGD0=; b=DoP77tW2RDBYNJh7O/kZPzFgne
-        WWz8XGRRCNYJUSqce9WVS/n1Ni8sSBsaM8bygmV65hZKmonc1g9UB0iq0L2mItNb9uY+sWJjyQg7M
-        ng7ZC4DWqa2lDFmv+yGuLTYnKpi0/aSemq5wyTcJN+IsIOKhV30JYh1/4bzOWPHEIwy2EwcMFOiMr
-        2DZTq5vXu3NdqsV626MX71OVyBFp8wVf3IAkIAWogtgUKzQ7TpCGAGqaYtWvjaT+eic9hY/WALkzs
-        IDlrzdAiRQrdb1ufJlnqVp6wfFUtWye5Zdqmv6lmq/jjzBSfqEC1faW4EHmihE/kRR3SAQ0j6DmIA
-        n44bJe3g==;
-Received: from [46.189.67.162] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kM6O2-0002Fp-UY; Sat, 26 Sep 2020 09:20:59 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] fs: simplify vfs_path_lookup
-Date:   Sat, 26 Sep 2020 11:20:51 +0200
-Message-Id: <20200926092051.115577-5-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200926092051.115577-1-hch@lst.de>
-References: <20200926092051.115577-1-hch@lst.de>
+        Sat, 26 Sep 2020 06:58:18 -0400
+Received: by mail-io1-f80.google.com with SMTP id k133so3905472iof.16
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Sep 2020 03:58:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=TtTv3mjkQp5CKRWiMYylgUft3vHyjPQyIuTYGFhYbxk=;
+        b=RmKDNjH+kuRpqhwfKvvunToS81W3QdANUdh8wwYiBTadylWJI/reu5wweaZb+NdZif
+         PXaHPnJh99js83rm7S+JVURR/C1+AUxcvZDwfZMx3m6x5ca8CIXsczp6M0yw8XUTRhxc
+         274eki6Caejd0e/2MdxOt/FYimxJEXY1zrtKnW8tpqV2P438fLhePBE25A5gPOHqOieD
+         1rvjAlFSGMyUJGsGYoqn1wLNp+zg5bdMUzUqqY+mJyvJJXROEdghQ5MVAhM1/uYGFMop
+         RUClGD7MJ33uupM1JL1pRGwnuukTQylY25h0WqIsGycXpQwnal+2hVTNiggjb37fkD7L
+         tx1A==
+X-Gm-Message-State: AOAM530A+oKJl1Z++YNPpmPf9RNUngElcOGTfYe9uUPZ7hKtMvoOGHdI
+        wYljYPaSdJmOnU6CsUmuC0W9CiLgM9P/z+zYr2a0JUytEohv
+X-Google-Smtp-Source: ABdhPJyaDtGw4JMShzXBdwFY588MGEE6JZE1cHLw1152lrqsPXUYZA1du2CBVfmk5FS80UL/1ryGJ8J0gVzKTrkBU3kljUDSk84+
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a05:6638:144f:: with SMTP id l15mr2546075jad.5.1601117896999;
+ Sat, 26 Sep 2020 03:58:16 -0700 (PDT)
+Date:   Sat, 26 Sep 2020 03:58:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007e88ec05b0354fdd@google.com>
+Subject: KASAN: use-after-free Read in io_wqe_worker
+From:   syzbot <syzbot+9af99580130003da82b1@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-vfs_path_lookup is only used to lookup mount points.  So drop the dentry
-parameter that is always set to mnt->mnt_root, remove the unused export
-and rename the function to mount_path_lookup.
+Hello,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+syzbot found the following issue on:
+
+HEAD commit:    98477740 Merge branch 'rcu/urgent' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=153e929b900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=af502ec9a451c9fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=9af99580130003da82b1
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14138009900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d0f809900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9af99580130003da82b1@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x92/0x2ae0 kernel/locking/lockdep.c:4311
+Read of size 8 at addr ffff88821ae5f818 by task io_wqe_worker-0/11054
+
+CPU: 1 PID: 11054 Comm: io_wqe_worker-0 Not tainted 5.9.0-rc6-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1d6/0x29e lib/dump_stack.c:118
+ print_address_description+0x66/0x620 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report+0x132/0x1d0 mm/kasan/report.c:530
+ __lock_acquire+0x92/0x2ae0 kernel/locking/lockdep.c:4311
+ lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+ _raw_spin_lock_irq+0xa6/0xc0 kernel/locking/spinlock.c:167
+ spin_lock_irq include/linux/spinlock.h:379 [inline]
+ io_wqe_worker+0x756/0x810 fs/io-wq.c:589
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Allocated by task 11048:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc+0x100/0x130 mm/kasan/common.c:461
+ kmem_cache_alloc_node_trace+0x1f7/0x2a0 mm/slab.c:3594
+ kmalloc_node include/linux/slab.h:572 [inline]
+ kzalloc_node include/linux/slab.h:677 [inline]
+ io_wq_create+0x295/0x880 fs/io-wq.c:1064
+ io_init_wq_offload fs/io_uring.c:7432 [inline]
+ io_sq_offload_start fs/io_uring.c:7504 [inline]
+ io_uring_create fs/io_uring.c:8625 [inline]
+ io_uring_setup fs/io_uring.c:8694 [inline]
+ __do_sys_io_uring_setup fs/io_uring.c:8700 [inline]
+ __se_sys_io_uring_setup+0x18ed/0x2a00 fs/io_uring.c:8697
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 128:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track+0x3d/0x70 mm/kasan/common.c:56
+ kasan_set_free_info+0x17/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xdd/0x110 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kfree+0x113/0x200 mm/slab.c:3756
+ __io_wq_destroy fs/io-wq.c:1138 [inline]
+ io_wq_destroy+0x470/0x510 fs/io-wq.c:1146
+ io_finish_async fs/io_uring.c:6836 [inline]
+ io_ring_ctx_free fs/io_uring.c:7870 [inline]
+ io_ring_exit_work+0x195/0x520 fs/io_uring.c:7954
+ process_one_work+0x789/0xfc0 kernel/workqueue.c:2269
+ worker_thread+0xaa4/0x1460 kernel/workqueue.c:2415
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+The buggy address belongs to the object at ffff88821ae5f800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 24 bytes inside of
+ 1024-byte region [ffff88821ae5f800, ffff88821ae5fc00)
+The buggy address belongs to the page:
+page:000000008e41b1c2 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21ae5f
+flags: 0x57ffe0000000200(slab)
+raw: 057ffe0000000200 ffffea00086a10c8 ffffea00085d1848 ffff8880aa440700
+raw: 0000000000000000 ffff88821ae5f000 0000000100000002 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88821ae5f700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88821ae5f780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88821ae5f800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88821ae5f880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88821ae5f900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- fs/internal.h  |  4 ++--
- fs/namei.c     | 16 +++-------------
- fs/namespace.c |  8 +++-----
- 3 files changed, 8 insertions(+), 20 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 695e12bc285061..bbdae2648f6b7d 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -71,8 +71,8 @@ extern int finish_clean_context(struct fs_context *fc);
- /*
-  * namei.c
-  */
--extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
--			   const char *, unsigned int, struct path *);
-+int mount_path_lookup(struct vfsmount *mnt, const char *name,
-+		      unsigned int flags, struct path *path);
- long do_rmdir(int dfd, struct filename *name);
- long do_unlinkat(int dfd, struct filename *name);
- int may_linkat(struct path *link);
-diff --git a/fs/namei.c b/fs/namei.c
-index 90e1cb008ae449..30f7caf5eda79b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2453,26 +2453,16 @@ int kern_path(const char *name, unsigned int flags, struct path *path)
- }
- EXPORT_SYMBOL(kern_path);
- 
--/**
-- * vfs_path_lookup - lookup a file path relative to a dentry-vfsmount pair
-- * @dentry:  pointer to dentry of the base directory
-- * @mnt: pointer to vfs mount of the base directory
-- * @name: pointer to file name
-- * @flags: lookup flags
-- * @path: pointer to struct path to fill
-- */
--int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
--		    const char *name, unsigned int flags,
--		    struct path *path)
-+int mount_path_lookup(struct vfsmount *mnt, const char *name,
-+		unsigned int flags, struct path *path)
- {
- 	struct nameidata nd;
- 
- 	nd.root.mnt = mnt;
--	nd.root.dentry = dentry;
-+	nd.root.dentry = mnt->mnt_root;
- 	return filename_lookup(AT_FDCWD, getname_kernel(name),
- 			       flags | LOOKUP_ROOT, path, &nd);
- }
--EXPORT_SYMBOL(vfs_path_lookup);
- 
- static int lookup_one_len_common(const char *name, struct dentry *base,
- 				 int len, struct qstr *this)
-diff --git a/fs/namespace.c b/fs/namespace.c
-index bae0e95b3713a3..0e904b27f7baeb 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3368,9 +3368,8 @@ struct dentry *mount_subtree(struct vfsmount *m, const char *name)
- 	ns->mounts++;
- 	list_add(&mnt->mnt_list, &ns->list);
- 
--	err = vfs_path_lookup(m->mnt_root, m,
--			name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &path);
--
-+	err = mount_path_lookup(m, name, LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT,
-+				&path);
- 	put_mnt_ns(ns);
- 
- 	if (err)
-@@ -4060,8 +4059,7 @@ static int mntns_install(struct nsset *nsset, struct ns_common *ns)
- 	nsproxy->mnt_ns = mnt_ns;
- 
- 	/* Find the root */
--	err = vfs_path_lookup(mnt_ns->root->mnt.mnt_root, &mnt_ns->root->mnt,
--				"/", LOOKUP_DOWN, &root);
-+	err = mount_path_lookup(&mnt_ns->root->mnt, "/", LOOKUP_DOWN, &root);
- 	if (err) {
- 		/* revert to old namespace */
- 		nsproxy->mnt_ns = old_mnt_ns;
--- 
-2.28.0
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
