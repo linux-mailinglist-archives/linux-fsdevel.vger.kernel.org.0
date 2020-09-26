@@ -2,263 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93E19279452
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 00:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC867279607
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Sep 2020 03:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgIYWo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Sep 2020 18:44:59 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:40484 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbgIYWo7 (ORCPT
+        id S1729057AbgIZBuB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Sep 2020 21:50:01 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39458 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbgIZBuB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Sep 2020 18:44:59 -0400
-Received: from [192.168.254.38] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DE3432089ED3;
-        Fri, 25 Sep 2020 15:44:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DE3432089ED3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1601073897;
-        bh=WY/Zhx0OkWgdKNXb6KD7NkVI4FAqTaUC8ip6BVzDyTw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Of1ErLnQKILG5G/HeAZUGf6kQFU4opuREYXDutW21uIYZBxzFgMS72QTjuwuNwDQG
-         Qk7eQlshRTUs1GujwF3asIgJEn5KuPSJtJ7WxEgV/oKEmXTTpYwMI8imzyVAsnJ3Ev
-         RbYisMeArtx5DWY+PTPXnxFPgtB8gFX1dSLeKYO8=
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Florian Weimer <fw@deneb.enyo.de>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org, luto@kernel.org,
-        David.Laight@ACULAB.COM, mark.rutland@arm.com, mic@digikod.net,
-        pavel@ucw.cz
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
- <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
- <20200923014616.GA1216401@rani.riverdale.lan>
- <20200923091125.GB1240819@rani.riverdale.lan>
- <a742b9cd-4ffb-60e0-63b8-894800009700@linux.microsoft.com>
- <20200923195147.GA1358246@rani.riverdale.lan>
- <2ed2becd-49b5-7e76-9836-6a43707f539f@linux.microsoft.com>
- <20200924234347.GA341645@rani.riverdale.lan>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <b9dfeea3-a36d-5b60-a37b-409363b39ffd@linux.microsoft.com>
-Date:   Fri, 25 Sep 2020 17:44:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 25 Sep 2020 21:50:01 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08Q1kTwm027956;
+        Sat, 26 Sep 2020 01:49:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=sXjGsOTMBrrIPiwb3LmvY804JrcHel7QixYSuvHz8QY=;
+ b=XIMaeajgjX4WwKB1B/xfyFW5w/i97L1kq70QYmIAbifnI40nnA/4ui4o2TMc+h6u9z8Z
+ ciwGv2wgI2gvCc2iD2ITVZ8Sh//prUIqNAU47fkqOg6yhJsUQ3XFqtVzjHg0uelBcAX9
+ Ntc/IN+7eC0K6cEjkBPEkPRRAWIT/5Q3XtyHzk7HGS1Iu2RCbfYv/7d/80zj2CZrCjmP
+ P2KbjDESZWLEE/frP7G08kPfNu6jkl9UU6UeRvT/gn2S9t2N0+j+73OgRsFSsSn0VbhE
+ eFjLd+4s6tFYWd35RhTRNI/R3klH2DmqH20vWp7e0JyZWIuXIr5gDa5xLs7xXVWWuY4r 6w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 33ndnv0ayw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 26 Sep 2020 01:49:46 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08Q1iXVM008056;
+        Sat, 26 Sep 2020 01:49:46 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 33nuryjdnr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 26 Sep 2020 01:49:46 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08Q1nfUI020995;
+        Sat, 26 Sep 2020 01:49:41 GMT
+Received: from localhost (/10.159.232.106)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 25 Sep 2020 18:49:40 -0700
+Date:   Fri, 25 Sep 2020 18:49:39 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, johannes.thumshirn@wdc.com,
+        dsterba@suse.com, josef@toxicpanda.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 03/14] iomap: Allow filesystem to call iomap_dio_complete
+ without i_rwsem
+Message-ID: <20200926014939.GP7964@magnolia>
+References: <20200924163922.2547-1-rgoldwyn@suse.de>
+ <20200924163922.2547-4-rgoldwyn@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20200924234347.GA341645@rani.riverdale.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200924163922.2547-4-rgoldwyn@suse.de>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9755 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=5
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009260011
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9755 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 suspectscore=5 bulkscore=0
+ clxscore=1015 impostorscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2009260011
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 9/24/20 6:43 PM, Arvind Sankar wrote:
-> On Thu, Sep 24, 2020 at 03:23:52PM -0500, Madhavan T. Venkataraman wrote:
->>
->>
->>> Which ISA does not support PIC objects? You mentioned i386 below, but
->>> i386 does support them, it just needs to copy the PC into a GPR first
->>> (see below).
->>
->> Position Independent Code needs PC-relative branches. I was referring
->> to PC-relative data references. Like RIP-relative data references in
->> X64. i386 ISA does not support this.
+On Thu, Sep 24, 2020 at 11:39:10AM -0500, Goldwyn Rodrigues wrote:
+> From: Christoph Hellwig <hch@lst.de>
 > 
-> I was talking about PC-relative data references too: they are a
-> requirement for PIC code that wants to access any global data. They can
-> be implemented easily on i386 even though it doesn't have an addressing
-> mode that uses the PC.
+> This is to avoid the deadlock caused in btrfs because of O_DIRECT |
+> O_DSYNC.
 > 
->> Otherwise, using an ABI quirk or a calling convention side effect to load the
->> PC into a GPR is, IMO, non-standard or non-compliant or non-approved or
->> whatever you want to call it. I would be conservative and not use it. Who knows
->> what incompatibility there will be with some future software or hardware
->> features?
->>
->> For instance, in the i386 example, we do a call without a matching return.
->> Also, we use a pop to undo the call. Can anyone tell me if this kind of use
->> is an ABI approved one?
+> Filesystems such as btrfs require i_rwsem while performing sync on a
+> file. iomap_dio_rw() is called under i_rw_sem. This leads to a
+> deadlock because of:
 > 
-> This doesn't have anything to do with the ABI, since what happened here
-> isn't visible to any caller or callee. Any machine instruction sequence
-> that has the effect of copying the PC into a GPR is acceptable, but this
-> is basically the only possible solution on i386. If you don't like the
-> call/pop mismatch (though that's supported by the hardware, and is what
-> clang likes to use), you can use the slightly different technique used
-> in my example, which copies the top of stack into a GPR after a call.
+> iomap_dio_complete()
+>   generic_write_sync()
+>     btrfs_sync_file()
 > 
-> This is how all i386 PIC code has always worked.
+> Separate out iomap_dio_complete() from iomap_dio_rw(), so filesystems
+> can call iomap_dio_complete() after unlocking i_rwsem.
 > 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-I have responded to this in my reply to Florian. Basically, I accept the opinion
-of the reviewers. I will assume that any trick we use to get the current PC into a
-GPR will not cause ABI compliance issue in the future.
+Seems clunky, but then I don't understand btrfs locking either. :)
 
->> Standard API for all userland for all architectures
->> ---------------------------------------------------
->>
->> The next advantage in using the kernel is standardization.
->>
->> If the kernel supplies this, then all applications and libraries can use
->> it for all architectures with one single, simple API. Without this, each
->> application/library has to roll its own solution for every architecture-ABI
->> combo it wants to support.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+>  fs/iomap/direct-io.c  | 35 ++++++++++++++++++++++++++---------
+>  include/linux/iomap.h |  5 +++++
+>  2 files changed, 31 insertions(+), 9 deletions(-)
 > 
-> But you can get even more standardization out of a userspace library,
-> because that can work even on non-linux OS's, as well as versions of
-> linux where the new syscall isn't available.
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index c1aafb2ab990..b88dbfe15118 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -76,7 +76,7 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+>  		dio->submit.cookie = submit_bio(bio);
+>  }
+>  
+> -static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> +ssize_t iomap_dio_complete(struct iomap_dio *dio)
+>  {
+>  	const struct iomap_dio_ops *dops = dio->dops;
+>  	struct kiocb *iocb = dio->iocb;
+> @@ -130,6 +130,7 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(iomap_dio_complete);
+>  
+>  static void iomap_dio_complete_work(struct work_struct *work)
+>  {
+> @@ -406,8 +407,8 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+>   * Returns -ENOTBLK In case of a page invalidation invalidation failure for
+>   * writes.  The callers needs to fall back to buffered I/O in this case.
+>   */
+> -ssize_t
+> -iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> +struct iomap_dio *
+> +__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		bool wait_for_completion)
+>  {
+> @@ -421,14 +422,14 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	struct iomap_dio *dio;
+>  
+>  	if (!count)
+> -		return 0;
+> +		return NULL;
+>  
+>  	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+> -		return -EIO;
+> +		return ERR_PTR(-EIO);
+>  
+>  	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+>  	if (!dio)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	dio->iocb = iocb;
+>  	atomic_set(&dio->ref, 1);
+> @@ -558,7 +559,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	dio->wait_for_completion = wait_for_completion;
+>  	if (!atomic_dec_and_test(&dio->ref)) {
+>  		if (!wait_for_completion)
+> -			return -EIOCBQUEUED;
+> +			return ERR_PTR(-EIOCBQUEUED);
+>  
+>  		for (;;) {
+>  			set_current_state(TASK_UNINTERRUPTIBLE);
+> @@ -574,10 +575,26 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		__set_current_state(TASK_RUNNING);
+>  	}
+>  
+> -	return iomap_dio_complete(dio);
+> +	return dio;
+>  
+>  out_free_dio:
+>  	kfree(dio);
+> -	return ret;
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(__iomap_dio_rw);
+> +
+> +ssize_t
+> +iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> +		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> +		bool wait_for_completion)
+> +{
+> +	struct iomap_dio *dio;
+> +
+> +	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
+> +	if (IS_ERR_OR_NULL(dio))
+> +		return PTR_ERR_OR_ZERO(dio);
+> +	return iomap_dio_complete(dio);
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_dio_rw);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 4d1d3c3469e9..172b3397a1a3 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -13,6 +13,7 @@
+>  struct address_space;
+>  struct fiemap_extent_info;
+>  struct inode;
+> +struct iomap_dio;
+>  struct iomap_writepage_ctx;
+>  struct iov_iter;
+>  struct kiocb;
+> @@ -258,6 +259,10 @@ struct iomap_dio_ops {
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+>  		bool wait_for_completion);
+> +struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> +		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> +		bool wait_for_completion);
+> +ssize_t iomap_dio_complete(struct iomap_dio *dio);
+>  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+>  
+>  #ifdef CONFIG_SWAP
+> -- 
+> 2.26.2
 > 
-
-Dealing with old vs new kernels is the same as dealing with old vs new libs.
-
-In any case, what you have suggested above has already been suggested before
-and I have accepted everyone's opinion. Please see my response to Florian's email.
-
->>
->> Furthermore, if this work gets accepted, I plan to add a glibc wrapper for
->> the kernel API. The glibc API would look something like this:
->>
->> 	Allocate a trampoline
->> 	---------------------
->>
->> 	tramp = alloc_tramp();
->>
->> 	Set trampoline parameters
->> 	-------------------------
->>
->> 	init_tramp(tramp, code, data);
->>
->> 	Free the trampoline
->> 	-------------------
->>
->> 	free_tramp(tramp);
->>
->> glibc will allocate and manage the code and data tables, handle kernel API
->> details and manage the trampoline table.
-> 
-> glibc could do this already if it wants, even without the syscall,
-> because this can be done in userspace already.
-> 
-
-I am wary of using ABI tricks or calling convention side-effects. However,
-since the reviewers feel it is OK, I have accepted that opinion. I have
-assumed now that any trick to load the current PC into a GPR can be used
-without any risk. I hope that assumption is correct.
-
->>
->> Secure vs Performant trampoline
->> -------------------------------
->>
->> If you recall, in version 1, I presented a trampoline type that is
->> implemented in the kernel. When an application invokes the trampoline,
->> it traps into the kernel and the kernel performs the work of the trampoline.
->>
->> The disadvantage is that a trip to the kernel is needed. That can be
->> expensive.
->>
->> The advantage is that the kernel can add security checks before doing the
->> work. Mainly, I am looking at checks that might prevent the trampoline
->> from being used in an ROP/BOP chain. Some half-baked ideas:
->>
->> 	- Check that the invocation is at the starting point of the
->> 	  trampoline
->>
->> 	- Check if the trampoline is jumping to an allowed PC
->>
->> 	- Check if the trampoline is being invoked from an allowed
->> 	  calling PC or PC range
->>
->> Allowed PCs can be input using the trampfd API mentioned in version 1.
->> Basically, an array of PCs is written into trampfd.
-> 
-> The source PC will generally not be available if the compiler decided to
-> tail-call optimize the call to the trampoline into a jump.
-> 
-
-This is still work in progress. But I am thinking that labels can be used.
-So, if the code is:
-
-	invoke_tramp:
-		(*tramp)();
-
-then, invoke_tramp can be supplied as the calling PC.
-
-Similarly, labels can be used in assembly functions as well.
-
-Like I said, I have to think about this more.
-
-> What's special about these trampolines anyway? Any indirect function
-> call could have these same problems -- an attacker could have
-> overwritten the pointer the same way, whether it's supposed to point to
-> a normal function or it is the target of this trampoline.
-> 
-> For making them a bit safer, userspace could just map the page holding
-> the data pointers/destination address(es) as read-only after
-> initialization.
-> 
-
-You need to look at version 1 of trampfd for how to do "allowed pcs".
-As an example, libffi defines ABI handlers for every arch-ABI combo.
-These ABI handler pointers could be placed in an array in .rodata.
-Then, the array can be written into trampfd for setting allowed PCS.
-When the target PC is set for a trampoline, the kernel will check
-it against allowed PCs and reject it if it has been overwritten.
-
->>
->> Suggestions for other checks are most welcome!
->>
->> I would like to implement an option in the trampfd API. The user can
->> choose a secure trampoline or a performant trampoline. For a performant
->> trampoline, the kernel will generate the code. For a secure trampoline,
->> the kernel will do the work itself.
->>
->> In order to address the FFI_REGISTER ABI in libffi, we could use the secure
->> trampoline. In FFI_REGISTER, the data is pushed on the stack and the code
->> is jumped to without using any registers.
->>
->> As outlined in version 1, the kernel can push the data address on the stack
->> and write the code address into the PC and return to userland.
->>
->> For doing all of this, we need trampfd.
-> 
-> We don't need this for FFI_REGISTER. I presented a solution that works
-> in userspace. Even if you want to use a trampoline created by the
-> kernel, there's no reason it needs to trap into the kernel at trampoline
-> execution time. libffi's trampolines already handle this case today.
-> 
-
-libffi handles this using user level dynamic code which needs to be executed.
-If the security subsystem prevents that, then the dynamic code cannot execute.
-That is the whole point of this RFC.
-
->>
->> Permitting the use of trampfd
->> -----------------------------
->>
->> An "exectramp" setting can be implemented in SELinux to selectively allow the
->> use of trampfd for applications.
->>
->> Madhavan
-> 
-> Applications can use their own userspace trampolines regardless of this
-> setting, so it doesn't provide any additional security benefit by
-> preventing usage of trampfd.
-> 
-
-The background for all of this is that dynamic code such as trampolines
-need to be placed in a page with executable permissions so they can
-execute. If security measures such as W^X are present, this will not
-be possible. Admitted, today some user level tricks exist to get around
-W^X. I have alluded to those. IMO, they are all security holes and will
-get plugged sooner or later. Then, these trampolines cannot execute.
-Currently, there exist security exceptions such as execmem to let them
-execute. But we would like to do it without making security exceptions.
-
-Madhavan
