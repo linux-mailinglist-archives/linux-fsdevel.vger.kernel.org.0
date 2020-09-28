@@ -2,82 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73C3427AF92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 16:02:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B99927AFB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 16:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgI1OCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 10:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
+        id S1726415AbgI1OJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 10:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbgI1OCN (ORCPT
+        with ESMTP id S1726291AbgI1OJR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 10:02:13 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4543C061755;
-        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id h9so1007571ybm.4;
-        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
-        b=kGyWZIIp5KWHAGEvNGD57Jds877X3K30zUvrXMhCc2uGut7+7RFaiCu90WSaeaNwOM
-         d8wtBroD9M2FLfLJdOrX/buE+n96izF0nKrSYXOuIg6OD30rVF14YzFKy8rpxvtT5Fjk
-         wVE53d3XHzGKunmib6ALKFy3VbutjolaGRb0Kr0zY3Pf4JPGuXQ1QOxRKshk7MeOoQzt
-         FJBVuUd8GPQW3kWzHpxa5R4FccXnumytkjL2sU2AujF1pG1E3jQlVH8EBYl4WZS1yVm3
-         MWf0+CX7hQrPHpucd/4SyLLvlbXEAyiM7lMJ7MtJNCfTiUoMCauZpOEnhTELypeC8B8M
-         WI/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
-        b=Y9xd0z5iRnCVBASnEcvxv4+cpNclNjb0SNnhmhdz8vmLYAxrwBnVkA2CPD2JAtPn0X
-         nVrb9SoTfkU1+BBl8MrmvdO/oEUh9YUaXM4l0seiAcKgZ6dhc7jJnPzsnx4b+qFjNTVE
-         GaBUabEp3/nfVaoXMUmHuyE7ZFvhvVHQmmH2FSh3CY+K7S/7fauWrvjJI5xiX+DKogTt
-         5nB7VGjXsqnJ7ZeTPopMW0dlM8X1DmLch7VIwL1V84cLiUkvya3zZFFcNA+rtUsvT6Tx
-         It6RYmpv6JPyEdzoGam2Ar8X4Hq7SBR5KpPTiqHRySzbpBdRQIPMSKp5TvMKb651ePNj
-         UNqw==
-X-Gm-Message-State: AOAM530CoWOE6Gl9utvh8n8OPsT9yHxnPIylQ3pU/Rmqc1oeBShkFNef
-        45NklKyLABj99KTDjqHCi1UcHwrxoEqDRCvPoKNKeqAi4t1xaw==
-X-Google-Smtp-Source: ABdhPJzjyxAmAQJq3yUMV41ZaU6Jib4Hra0UERJdaARNie1e5vycnV4dot72wEdcHL/iFF2THt+3kbIbKOzP/jul6kE=
-X-Received: by 2002:a25:b219:: with SMTP id i25mr2027503ybj.52.1601301731841;
- Mon, 28 Sep 2020 07:02:11 -0700 (PDT)
+        Mon, 28 Sep 2020 10:09:17 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BC3C061755;
+        Mon, 28 Sep 2020 07:09:17 -0700 (PDT)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1601302155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=L54CoEWBVUEoUgztDt/fYNcIrindjGfPg4BQ9nlbPQo=;
+        b=VmyQ/I6TAsPuwzLBO6cfGye6Wn8MjHGHtWSifSjlyyS/R7oMk2CUHj5jdOFtvGazuZC7Nf
+        Cc2js+/3MKg0e2OjeQnO9igShic/Qa/MtBotcz5exYr6KSGq0I37WOv96B0mAErsWpAbm7
+        THIKjrKqE0wRl7ez5BhNQi+nr3gKIchVhnRnwwvgyLYrb3zhs5ipvymvTf9EH+Ti+mfo4t
+        ZniajsbINh8qmlPXwlJMggFEiuCtdMykpg3uyK5oO7sK49FKaA3SQcIkwWPcTsTPVLA7iL
+        ZYh6fGmh4dPdip6tKT+pw+H//s4JrW+VkvErKjlNSONadvHOBGdvTHccU9Iyow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1601302155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=L54CoEWBVUEoUgztDt/fYNcIrindjGfPg4BQ9nlbPQo=;
+        b=araDj3lJgWWBYqYuu6vxXooeGxxvWeo4wwx8v/QShwQYym4CotMKDeQPI9yzBzbGrldE8O
+        lmeL4Vli8hz32qBA==
+To:     Tom Hromatka <tom.hromatka@oracle.com>
+Cc:     mingo@kernel.org, fweisbec@gmail.com, adobriyan@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] /proc/stat: Simplify iowait and idle calculations when cpu is offline
+In-Reply-To: <061c43fb-5f0d-4d4f-85ca-5fff2ef6f4db@default>
+References: <061c43fb-5f0d-4d4f-85ca-5fff2ef6f4db@default>
+Date:   Mon, 28 Sep 2020 16:09:15 +0200
+Message-ID: <873632kn78.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-From:   Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date:   Mon, 28 Sep 2020 17:02:50 +0300
-Message-ID: <CACE9dm_eypZ4wn8PpYYCYNuM501_M-8pH7by=U-6hOmJCwuxig@mail.gmail.com>
-Subject: Mount options may be silently discarded
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Tom,
 
-"copy_mount_options" function came to my eyes.
-It splits copy into 2 pieces - over page boundaries.
-I wonder what is the real reason for doing this?
-Original comment was that we need exact bytes and some user memcpy
-functions  do not return correct number on page fault.
+On Sun, Sep 27 2020 at 19:59, Tom Hromatka wrote:
 
-But how would all other cases work?
+> My sincere apologies.  2020 has been a challenging year for
+> my family and me, and I readily admit that I have struggled
+> with all of the added stress.  I realize and acknowledge that
+> this is not an acceptable excuse for a patchset that doesn't
+> hold up to the kernel or my standards.
 
-https://elixir.bootlin.com/linux/latest/source/fs/namespace.c#L3075
+don't worry. We all have periods where we are not up to the task. Take
+your time!
 
-if (size != PAGE_SIZE) {
-       if (copy_from_user(copy + size, data + size, PAGE_SIZE - size))
-            memset(copy + size, 0, PAGE_SIZE - size);
-}
-
-This looks like some options may be just discarded?
-What if it is an important security option?
-
-Why it does not return EFAULT, but just memset?
-
--- 
 Thanks,
-Dmitry
+
+        Thomas
