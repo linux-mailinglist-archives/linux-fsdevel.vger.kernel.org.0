@@ -2,101 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F9327AE30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 14:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73C3427AF92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 16:02:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgI1MvY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 08:51:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53116 "EHLO
+        id S1726601AbgI1OCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 10:02:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbgI1MvW (ORCPT
+        with ESMTP id S1726348AbgI1OCN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 08:51:22 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6196C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Sep 2020 05:51:21 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x22so912952pfo.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Sep 2020 05:51:21 -0700 (PDT)
+        Mon, 28 Sep 2020 10:02:13 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4543C061755;
+        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id h9so1007571ybm.4;
+        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QctrJGO1I1Zuq9UjMR9T/NENbwiqNJx5W8ogBL7RQ5k=;
-        b=Wdbs+kQhoDgB+n99eSez3KyAycIljc9Qj/GQ39BXZvD9xGiS9EynalYs0Q4br8vS12
-         drU4r1qnw04T/+k4hDdBJ6lu/ugHFPvQ59DawL4UGbaCznu28po0/vwp23JsmL6ajkU1
-         7+dL2mIBh/kofHf4TWgUnp63wdbkh2lK8w+K5UXkgLGA0XEBvGo9II52ooO2Bf6XPsfJ
-         L5iQws00GWLHkVNkL6qkJJZLkS3USdMpipUqDZZTbxkKZQshtpRw9B8cD/yIr0LSj3Lk
-         ONA23uHk80zPrU9hYVszOHe/Veleq9MpkYzzePz31Ywp24nsCK2jp3XDUBKlHeRYs2PY
-         821w==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
+        b=kGyWZIIp5KWHAGEvNGD57Jds877X3K30zUvrXMhCc2uGut7+7RFaiCu90WSaeaNwOM
+         d8wtBroD9M2FLfLJdOrX/buE+n96izF0nKrSYXOuIg6OD30rVF14YzFKy8rpxvtT5Fjk
+         wVE53d3XHzGKunmib6ALKFy3VbutjolaGRb0Kr0zY3Pf4JPGuXQ1QOxRKshk7MeOoQzt
+         FJBVuUd8GPQW3kWzHpxa5R4FccXnumytkjL2sU2AujF1pG1E3jQlVH8EBYl4WZS1yVm3
+         MWf0+CX7hQrPHpucd/4SyLLvlbXEAyiM7lMJ7MtJNCfTiUoMCauZpOEnhTELypeC8B8M
+         WI/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QctrJGO1I1Zuq9UjMR9T/NENbwiqNJx5W8ogBL7RQ5k=;
-        b=nlJSPAOJGTd+MdWriaQM05XY7wax4pkRddOjO4PhcbiTIFLUvXCmCKNXqdEEdFc8mY
-         4ta8au/xRKZ9xRNeDdREL06oHDrgP9FXBo0UPCj03IJBUID9FkPZoQaqXPwjmPhPCwu/
-         rv9ZePNUALPHwP5g+tL9nzry+CeZDQSCi3cVW+N0AO7Ws+w6R4sAcnFEmr5o3o0VRaNM
-         9waduDxwNRZvFYODqmFcSnt3NQUyOOYFmZTZcXsJmBHx/wkoB1IY7X/q8XycgYqIqLKy
-         6Ksw2d5Jao1j6ZP86j56Ap2yN4wzPGHfhJA72ONovD4TbYe5SXyq8NbdjzcxXiSV/8CK
-         zOJQ==
-X-Gm-Message-State: AOAM5320Q1f95WLEBUngUjsQ9HEbIrvUDCFxuLJMwHSCh3sRLUrsWNil
-        Z+G/9ihLYqU0XReLmtJWOP/seUQLzdDo7j2+1J7nvA==
-X-Google-Smtp-Source: ABdhPJz9AK/9Nb+6ZHbA6CAHV8fQ++VqMz+5ImOS6aqC3CdqZZQF7dyj+J1OJFyYnyhqbh7E1B/9cyjzPInPq4h19mk=
-X-Received: by 2002:a63:c112:: with SMTP id w18mr1007690pgf.31.1601297481123;
- Mon, 28 Sep 2020 05:51:21 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
+        b=Y9xd0z5iRnCVBASnEcvxv4+cpNclNjb0SNnhmhdz8vmLYAxrwBnVkA2CPD2JAtPn0X
+         nVrb9SoTfkU1+BBl8MrmvdO/oEUh9YUaXM4l0seiAcKgZ6dhc7jJnPzsnx4b+qFjNTVE
+         GaBUabEp3/nfVaoXMUmHuyE7ZFvhvVHQmmH2FSh3CY+K7S/7fauWrvjJI5xiX+DKogTt
+         5nB7VGjXsqnJ7ZeTPopMW0dlM8X1DmLch7VIwL1V84cLiUkvya3zZFFcNA+rtUsvT6Tx
+         It6RYmpv6JPyEdzoGam2Ar8X4Hq7SBR5KpPTiqHRySzbpBdRQIPMSKp5TvMKb651ePNj
+         UNqw==
+X-Gm-Message-State: AOAM530CoWOE6Gl9utvh8n8OPsT9yHxnPIylQ3pU/Rmqc1oeBShkFNef
+        45NklKyLABj99KTDjqHCi1UcHwrxoEqDRCvPoKNKeqAi4t1xaw==
+X-Google-Smtp-Source: ABdhPJzjyxAmAQJq3yUMV41ZaU6Jib4Hra0UERJdaARNie1e5vycnV4dot72wEdcHL/iFF2THt+3kbIbKOzP/jul6kE=
+X-Received: by 2002:a25:b219:: with SMTP id i25mr2027503ybj.52.1601301731841;
+ Mon, 28 Sep 2020 07:02:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200923114419.71218-1-songmuchun@bytedance.com>
-In-Reply-To: <20200923114419.71218-1-songmuchun@bytedance.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 28 Sep 2020 20:50:44 +0800
-Message-ID: <CAMZfGtUFacR9GFfmySEN6EfdxVi7ZKdwTs17HrJmOL9A38J8sg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] io_uring: Fix async workqueue is not canceled on
- some corner case
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Yinyin Zhu <zhuyinyin@bytedance.com>
+From:   Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date:   Mon, 28 Sep 2020 17:02:50 +0300
+Message-ID: <CACE9dm_eypZ4wn8PpYYCYNuM501_M-8pH7by=U-6hOmJCwuxig@mail.gmail.com>
+Subject: Mount options may be silently discarded
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ping guys. This is worth fixing.
+Hi,
 
-On Wed, Sep 23, 2020 at 7:44 PM Muchun Song <songmuchun@bytedance.com> wrote:
->
-> We should make sure that async workqueue is canceled on exit, but on
-> some corner case, we found that the async workqueue is not canceled
-> on exit in the linux-5.4. So we started an in-depth investigation.
-> Fortunately, we finally found the problem. The commit:
->
->   1c4404efcf2c ("io_uring: make sure async workqueue is canceled on exit")
->
-> did not completely solve this problem. This patch series to solve this
-> problem completely. And there's no upstream variant of this commit, so
-> this patch series is just fix the linux-5.4.y stable branch.
->
-> changelog in v2:
->   1. Fix missing save the current thread files
->   2. Fix double list add in io_queue_async_work()
->
-> Muchun Song (4):
->   io_uring: Fix missing smp_mb() in io_cancel_async_work()
->   io_uring: Fix remove irrelevant req from the task_list
->   io_uring: Fix missing save the current thread files
->   io_uring: Fix double list add in io_queue_async_work()
->
-> Yinyin Zhu (1):
->   io_uring: Fix resource leaking when kill the process
->
->  fs/io_uring.c | 59 +++++++++++++++++++++++++++++++++++++++--------------------
->  1 file changed, 39 insertions(+), 20 deletions(-)
->
-> --
-> 2.11.0
->
+"copy_mount_options" function came to my eyes.
+It splits copy into 2 pieces - over page boundaries.
+I wonder what is the real reason for doing this?
+Original comment was that we need exact bytes and some user memcpy
+functions  do not return correct number on page fault.
 
+But how would all other cases work?
+
+https://elixir.bootlin.com/linux/latest/source/fs/namespace.c#L3075
+
+if (size != PAGE_SIZE) {
+       if (copy_from_user(copy + size, data + size, PAGE_SIZE - size))
+            memset(copy + size, 0, PAGE_SIZE - size);
+}
+
+This looks like some options may be just discarded?
+What if it is an important security option?
+
+Why it does not return EFAULT, but just memset?
 
 -- 
-Yours,
-Muchun
+Thanks,
+Dmitry
