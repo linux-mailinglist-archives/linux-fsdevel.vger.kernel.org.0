@@ -2,89 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C763327B081
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 17:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD6B27B0D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 17:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgI1PFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 11:05:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49068 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726420AbgI1PFj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 11:05:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CDD19ACB7;
-        Mon, 28 Sep 2020 15:05:37 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 27A8DDA701; Mon, 28 Sep 2020 17:04:19 +0200 (CEST)
-Date:   Mon, 28 Sep 2020 17:04:19 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        david@fromorbit.com, hch@lst.de, johannes.thumshirn@wdc.com,
-        dsterba@suse.com, josef@toxicpanda.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 04/14] iomap: Call inode_dio_end() before
- generic_write_sync()
-Message-ID: <20200928150418.GC6756@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
-        johannes.thumshirn@wdc.com, dsterba@suse.com, josef@toxicpanda.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20200924163922.2547-1-rgoldwyn@suse.de>
- <20200924163922.2547-5-rgoldwyn@suse.de>
- <20200926015108.GQ7964@magnolia>
+        id S1726657AbgI1PWj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 11:22:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56853 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726630AbgI1PWi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Sep 2020 11:22:38 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601306557;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bGZWgwzuGIdAypUrofmdQnD4jfN7gEMGxpknQBWzkOA=;
+        b=DfXH9PMJDBsi2EJIREK9Q7Ujevm9aJqVNCFkZgqHnFyPI2G77AbLubPyeRz/1B9jwwRaWc
+        t40fXD0qNLyt/SPp/90kwlfnYFZ4sGAbdrunNxWV3TJ6vEvnFBxrAcKciarXRtEhTLfXBe
+        IEP1uiLkcaJ2do0Eh/bWUOU9ZSV7myc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-326-X5AXtCc6OP6C_QKUxT9PQQ-1; Mon, 28 Sep 2020 11:22:34 -0400
+X-MC-Unique: X5AXtCc6OP6C_QKUxT9PQQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 22FF81868405;
+        Mon, 28 Sep 2020 15:22:32 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6887D100238C;
+        Mon, 28 Sep 2020 15:22:31 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08SFMUjU032257;
+        Mon, 28 Sep 2020 11:22:30 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08SFMS8e032253;
+        Mon, 28 Sep 2020 11:22:29 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 28 Sep 2020 11:22:28 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Kani, Toshi" <toshi.kani@hpe.com>,
+        "Norton, Scott J" <scott.norton@hpe.com>,
+        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
+        <rajesh.tadakamadla@hpe.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: NVFS XFS metadata (was: [PATCH] pmem: export the symbols
+ __copy_user_flushcache and __copy_from_user_flushcache)
+In-Reply-To: <alpine.LRH.2.02.2009240853200.3485@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.LRH.2.02.2009281105200.27411@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com> <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com> <alpine.LRH.2.02.2009161359540.20710@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009191336380.3478@file01.intranet.prod.int.rdu2.redhat.com> <20200922050314.GB12096@dread.disaster.area> <alpine.LRH.2.02.2009220815420.16480@file01.intranet.prod.int.rdu2.redhat.com> <20200922172553.GL32101@casper.infradead.org>
+ <alpine.LRH.2.02.2009240853200.3485@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200926015108.GQ7964@magnolia>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 25, 2020 at 06:51:08PM -0700, Darrick J. Wong wrote:
-> On Thu, Sep 24, 2020 at 11:39:11AM -0500, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > iomap complete routine can deadlock with btrfs_fallocate because of the
-> > call to generic_write_sync().
-> > 
-> > P0                      P1
-> > inode_lock()            fallocate(FALLOC_FL_ZERO_RANGE)
-> > __iomap_dio_rw()        inode_lock()
-> >                         <block>
-> > <submits IO>
-> > <completes IO>
-> > inode_unlock()
-> >                         <gets inode_lock()>
-> >                         inode_dio_wait()
-> > iomap_dio_complete()
-> >   generic_write_sync()
-> >     btrfs_file_fsync()
-> >       inode_lock()
-> >       <deadlock>
-> > 
-> > inode_dio_end() is used to notify the end of DIO data in order
-> > to synchronize with truncate. Call inode_dio_end() before calling
-> > generic_write_sync(), so filesystems can lock i_rwsem during a sync.
-> > 
-> > This matches the way it is done in fs/direct-io.c:dio_complete().
-> > 
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> 
-> Looks ok (at least with the fses that use either iomap or ye olde
-> directio) to me...
-> 
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> So, uh, do you want me to pull these two iomap patches in for 5.10?
 
-That would be great, thanks. Once they land in 5.10-rc we'll be able to
-base the rest on some master snapshot and target 5.11 for release.
+
+On Thu, 24 Sep 2020, Mikulas Patocka wrote:
+
+> On Tue, 22 Sep 2020, Matthew Wilcox wrote:
+> 
+> > > There is a small window when renamed inode is neither in source nor in 
+> > > target directory. Fsck will reclaim such inode and add it to lost+found - 
+> > > just like on EXT2.
+> > 
+> > ... ouch.  If you have to choose, it'd be better to link it to the second
+> > directory then unlink it from the first one.  Then your fsck can detect
+> > it has the wrong count and fix up the count (ie link it into both
+> > directories rather than neither).
+> 
+> I admit that this is lame and I'll fix it. Rename is not so 
+> performance-critical, so I can add a small journal for this.
+
+Hi
+
+I have implmemented transactions in nvfs and I use them for rename, 
+setattr, atomic xattr replacement and for RENAME_EXCHANGE.
+
+You can download the current version here:
+git://leontynka.twibright.com/nvfs.git
+
+Mikulas
+
