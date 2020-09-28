@@ -2,65 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DDB027A7BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 08:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 632B027A85F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Sep 2020 09:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbgI1GlU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 02:41:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbgI1GlU (ORCPT
+        id S1726497AbgI1HR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 03:17:26 -0400
+Received: from mail-io1-f80.google.com ([209.85.166.80]:34232 "EHLO
+        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgI1HRZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 02:41:20 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B173C0613CE;
-        Sun, 27 Sep 2020 23:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=C1ZhthwT6GCyuOQr6B6dYOTLb2FPoU8txQN+oDdWZU4=; b=ahYA8bRzbFOs+QLC9HY4AAUsdr
-        ukSHhFAJBaGlY7vgE6j5SrzYClwhLywHNDVESTku7xJSyQ04C857XP5LgDRX7+Hmpg/t9nP6ytTmR
-        JRRALHxrM79i0IizwhZb90dVagxWO8a4nP7DrFI2i1HugjHO189Oz+bSgEE5S9fZBe40Z0xNKjvaV
-        AruV5nth2qazZk9GVzhGsOzLj7rV77ApOXgujcqnDYKT7BIcXECzkDzq0MRQFBpIgDOfv4dPZNdd/
-        L4bawF2Y6TBQ/YFqHtg2SwjHVHSzPbn1LEq+fGxjUjuWlaDC9bGpgxEBVMIFRjuCqbOz2UuezHZFK
-        KIYB7HuQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kMmqc-0004Qe-Mi; Mon, 28 Sep 2020 06:41:18 +0000
-Date:   Mon, 28 Sep 2020 07:41:18 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Qian Cai <cai@redhat.com>, Brian Foster <bfoster@redhat.com>
-Subject: Re: [PATCH] iomap: Set all uptodate bits for an Uptodate page
-Message-ID: <20200928064118.GA16179@infradead.org>
-References: <20200924125608.31231-1-willy@infradead.org>
+        Mon, 28 Sep 2020 03:17:25 -0400
+Received: by mail-io1-f80.google.com with SMTP id i1so112283iom.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Sep 2020 00:17:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=GHGGR4Zfn1U2MwoQAnVbHF7lefhURprcgm/RtnFwDRQ=;
+        b=gqs9wtgronwbw2rp7ashn4k0M6esYs2o/csmTKP0XaktqeLFTOYhLYNwvdafgMq6r0
+         PXEKf6O6Ic+k+N6WZCGuI6+UWcU3PaWk59K1aFccjvONlHTC2lO3zzwFoW21oOLH1Imk
+         Lz+It7QnsPO2WoBTViEfZ7VC15jte4Ufe/yTSjrywYdH0FNn0x+9dHjkqaRUg/VBhBXS
+         YdOtoAwdXzO933u9HOGEapffh1VY6dPQS8caOBYWh0XEvXyls/JAOlii68BmmKDwRpjC
+         1hE9EJLGE0rrMptp+WGEtfHA67C3kBnyegrBWiXbYKSM7tlCoiMwrb87dGUouDUtTQ2o
+         bFxA==
+X-Gm-Message-State: AOAM532ZJ9Ru+DKQ9yH2IFYxN/vOvd9zN5L9cLZLA9r3Wz5/alHnUEPT
+        LCiy3gAvxSLjlBHc45+A57J/qkRYWTH3LFnXkpgZfc475TuW
+X-Google-Smtp-Source: ABdhPJwkfJxPhyjGtwfnoYbPxJx2Gypp/5FpZVK82XXdI5Exe87xWNsfIU11of/7hMYigERZk0exFULdXDuusHWvcR5e3moApY3X
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200924125608.31231-1-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a6b:da19:: with SMTP id x25mr6111900iob.12.1601277444720;
+ Mon, 28 Sep 2020 00:17:24 -0700 (PDT)
+Date:   Mon, 28 Sep 2020 00:17:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000478f3a05b05a7539@google.com>
+Subject: general protection fault in io_poll_double_wake (2)
+From:   syzbot <syzbot+81b3883093f772addf6d@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 01:56:08PM +0100, Matthew Wilcox (Oracle) wrote:
-> For filesystems with block size < page size, we need to set all the
-> per-block uptodate bits if the page was already uptodate at the time
-> we create the per-block metadata.  This can happen if the page is
-> invalidated (eg by a write to drop_caches) but ultimately not removed
-> from the page cache.
-> 
-> This is a data corruption issue as page writeback skips blocks which
-> are marked !uptodate.
-> 
-> Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Reported-by: Qian Cai <cai@redhat.com>
-> Cc: Brian Foster <bfoster@redhat.com>
+Hello,
 
-Looks good,
+syzbot found the following issue on:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+HEAD commit:    d1d2220c Add linux-next specific files for 20200924
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1550b609900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=254e028a642027c
+dashboard link: https://syzkaller.appspot.com/bug?extid=81b3883093f772addf6d
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15946317900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1266c5ad900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+81b3883093f772addf6d@syzkaller.appspotmail.com
+
+IPVS: ftp: loaded support on port[0] = 21
+general protection fault, probably for non-canonical address 0xdffffc0000000009: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000048-0x000000000000004f]
+CPU: 0 PID: 6874 Comm: syz-executor749 Not tainted 5.9.0-rc6-next-20200924-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_poll_get_single fs/io_uring.c:4778 [inline]
+RIP: 0010:io_poll_double_wake+0x51/0x510 fs/io_uring.c:4845
+Code: fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 9e 03 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 48 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 06 0f 8e 63 03 00 00 0f b6 6b 48 bf 06 00 00
+RSP: 0018:ffffc90001c1fb70 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000004
+RDX: 0000000000000009 RSI: ffffffff81d9b3ad RDI: 0000000000000048
+RBP: dffffc0000000000 R08: ffff8880a3cac798 R09: ffffc90001c1fc60
+R10: fffff52000383f73 R11: 0000000000000000 R12: 0000000000000004
+R13: ffff8880a3cac798 R14: ffff8880a3cac7a0 R15: 0000000000000004
+FS:  0000000001f98880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f18886916c0 CR3: 0000000094c5a000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ __wake_up_common+0x147/0x650 kernel/sched/wait.c:93
+ __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:123
+ tty_ldisc_hangup+0x1cf/0x680 drivers/tty/tty_ldisc.c:735
+ __tty_hangup.part.0+0x403/0x870 drivers/tty/tty_io.c:625
+ __tty_hangup drivers/tty/tty_io.c:575 [inline]
+ tty_vhangup+0x1d/0x30 drivers/tty/tty_io.c:698
+ pty_close+0x3f5/0x550 drivers/tty/pty.c:79
+ tty_release+0x455/0xf60 drivers/tty/tty_io.c:1679
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:141
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:165 [inline]
+ exit_to_user_mode_prepare+0x1e2/0x1f0 kernel/entry/common.c:192
+ syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x401210
+Code: 01 f0 ff ff 0f 83 20 0c 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 83 3d dd 24 2d 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 f4 0b 00 00 c3 48 83 ec 08 e8 5a 01 00 00
+RSP: 002b:00007ffcdc2c7408 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000401210
+RDX: 0000000000000000 RSI: 000000000000450c RDI: 0000000000000003
+RBP: 00007ffcdc2c7410 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402290
+R13: 0000000000402320 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace b71b955b40cc85b6 ]---
+RIP: 0010:io_poll_get_single fs/io_uring.c:4778 [inline]
+RIP: 0010:io_poll_double_wake+0x51/0x510 fs/io_uring.c:4845
+Code: fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 9e 03 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 48 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 06 0f 8e 63 03 00 00 0f b6 6b 48 bf 06 00 00
+RSP: 0018:ffffc90001c1fb70 EFLAGS: 00010006
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000004
+RDX: 0000000000000009 RSI: ffffffff81d9b3ad RDI: 0000000000000048
+RBP: dffffc0000000000 R08: ffff8880a3cac798 R09: ffffc90001c1fc60
+R10: fffff52000383f73 R11: 0000000000000000 R12: 0000000000000004
+R13: ffff8880a3cac798 R14: ffff8880a3cac7a0 R15: 0000000000000004
+FS:  0000000001f98880(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f18886916c0 CR3: 0000000094c5a000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
