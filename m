@@ -2,63 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD84B27B824
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 01:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EB527B825
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 01:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbgI1Xac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 19:30:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53592 "EHLO mail.kernel.org"
+        id S1727184AbgI1Xai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 19:30:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726948AbgI1Xab (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 19:30:31 -0400
+        id S1727125AbgI1Xac (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Sep 2020 19:30:32 -0400
 Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77F1121775;
-        Mon, 28 Sep 2020 21:55:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49BCC22262;
+        Mon, 28 Sep 2020 22:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601330121;
-        bh=htsG7cgCjOWP+vwgIjl2Fqt34Hd6Ri+elKAS7Sa4s9I=;
+        s=default; t=1601331283;
+        bh=USpniiZPSjX9PvCc27mG/IIV3bgaeRYXivPfC1sKaCs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JeRoDOX5fGNEqD17+mt8alMS/Ia9anUvzJ/J58HMWp75rczK5TvFc7upYr25aFTI8
-         bTg4Nx/nPXozSDG5jlQS/tXr1awsFaY2y51DJRpQEEk2ieG+nhP8Ujyvy03NzcunRo
-         7kVX8u2ZU2gx42MvnDioqFMgJ0OtAzWZ2S6ug+FU=
-Date:   Mon, 28 Sep 2020 14:55:20 -0700
+        b=1JPJAa2M8r1+Kmgu2TUoUpoIUzu0X8/iCW/FXrJ+a3Jd9Id4x5d0wHUS5KczOFfSG
+         QGLKMegDqCV2jarOmBu7voR1a+2TJpmbBMMDVHhg1BiqwC5DXIDA8GEGrd08lKzHli
+         Ydn4a/Qdlc/puyb39pAQ58QzsjRekS18hTo6EzSA=
+Date:   Mon, 28 Sep 2020 15:14:41 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Daniel Rosenberg <drosen@google.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH 0/2] fscrypt: avoid ambiguous terms for "no-key name"
-Message-ID: <20200928215520.GC1340@sol.localdomain>
-References: <20200924042624.98439-1-ebiggers@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     David Laight <David.Laight@aculab.com>,
+        syzbot+51177e4144d764827c45@syzkaller.appspotmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: WARNING in __kernel_read (2)
+Message-ID: <20200928221441.GF1340@sol.localdomain>
+References: <000000000000da992305b02e9a51@google.com>
+ <3b3de066852d4e30bd9d85bd28023100@AcuMS.aculab.com>
+ <642ed0b4810d44ab97a7832ccb8b3e44@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200924042624.98439-1-ebiggers@kernel.org>
+In-Reply-To: <642ed0b4810d44ab97a7832ccb8b3e44@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 23, 2020 at 09:26:22PM -0700, Eric Biggers wrote:
-> This series fixes overloading of the terms "ciphertext name" and
-> "encrypted name" to also sometimes mean "no-key name".
-> The overloading of these terms has caused some confusion.
+On Sat, Sep 26, 2020 at 01:17:04PM +0000, David Laight wrote:
+> From: David Laight
+> > Sent: 26 September 2020 12:16
+> > To: 'syzbot' <syzbot+51177e4144d764827c45@syzkaller.appspotmail.com>; linux-fsdevel@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; syzkaller-bugs@googlegroups.com; viro@zeniv.linux.org.uk
+> > Subject: RE: WARNING in __kernel_read (2)
+> > 
+> > > From: syzbot <syzbot+51177e4144d764827c45@syzkaller.appspotmail.com>
+> > > Sent: 26 September 2020 03:58
+> > > To: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; syzkaller-bugs@googlegroups.com;
+> > > viro@zeniv.linux.org.uk
+> > > Subject: WARNING in __kernel_read (2)
+> > 
+> > I suspect this is calling finit_module() on an fd
+> > that doesn't have read permissions.
 > 
-> No change in behavior.
+> Code inspection also seems to imply that the check means
+> the exec() also requires read permissions on the file.
 > 
-> Eric Biggers (2):
->   fscrypt: don't call no-key names "ciphertext names"
->   fscrypt: rename DCACHE_ENCRYPTED_NAME to DCACHE_NOKEY_NAME
-> 
->  fs/crypto/fname.c       | 16 ++++++++--------
->  fs/crypto/hooks.c       | 13 ++++++-------
->  fs/f2fs/dir.c           |  2 +-
->  include/linux/dcache.h  |  2 +-
->  include/linux/fscrypt.h | 25 ++++++++++++-------------
->  5 files changed, 28 insertions(+), 30 deletions(-)
+> This isn't traditionally true.
+> suid #! scripts are particularly odd without 'owner read'
+> (everyone except the owner can run them!).
 
-Applied to fscrypt.git#master for 5.10.
+Christoph, any thoughts here?  You added this WARN_ON_ONCE in:
 
-- Eric
+	commit 61a707c543e2afe3aa7e88f87267c5dafa4b5afa
+	Author: Christoph Hellwig <hch@lst.de>
+	Date:   Fri May 8 08:54:16 2020 +0200
+
+	    fs: add a __kernel_read helper
