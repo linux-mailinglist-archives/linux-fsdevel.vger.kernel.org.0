@@ -2,78 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B61D27C245
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 12:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BD0427C856
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 14:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbgI2KVz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Sep 2020 06:21:55 -0400
-Received: from verein.lst.de ([213.95.11.211]:39127 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725372AbgI2KVz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Sep 2020 06:21:55 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2B07C68B02; Tue, 29 Sep 2020 12:21:53 +0200 (CEST)
-Date:   Tue, 29 Sep 2020 12:21:52 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "syzbot+51177e4144d764827c45@syzkaller.appspotmail.com" 
-        <syzbot+51177e4144d764827c45@syzkaller.appspotmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: WARNING in __kernel_read (2)
-Message-ID: <20200929102152.GA14610@lst.de>
-References: <000000000000da992305b02e9a51@google.com> <3b3de066852d4e30bd9d85bd28023100@AcuMS.aculab.com> <642ed0b4810d44ab97a7832ccb8b3e44@AcuMS.aculab.com> <20200928221441.GF1340@sol.localdomain> <20200929063815.GB1839@lst.de> <20200929064648.GA238449@sol.localdomain> <20200929065601.GA2095@lst.de> <e81e2721e8ce4612b0fc6098d311d378@AcuMS.aculab.com> <CACT4Y+ax5YN5r=zL1NaxB_9S_7e6aUiL3tmBc6-8UMwuJpnn_Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ax5YN5r=zL1NaxB_9S_7e6aUiL3tmBc6-8UMwuJpnn_Q@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1731212AbgI2MBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 08:01:22 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:60637 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731686AbgI2MBD (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Sep 2020 08:01:03 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UATygG0_1601380850;
+Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UATygG0_1601380850)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 29 Sep 2020 20:01:00 +0800
+From:   Hao Xu <haoxu@linux.alibaba.com>
+To:     io-uring@vger.kernel.org, axboe@kernel.dk
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hannes@cmpxchg.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Hao Xu <haoxu@linux.alibaba.com>
+Subject: [PATCH] io_uring: support async buffered reads when readahead is disabled
+Date:   Tue, 29 Sep 2020 20:00:45 +0800
+Message-Id: <1601380845-206925-1-git-send-email-haoxu@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 10:21:19AM +0200, Dmitry Vyukov wrote:
-> On Tue, Sep 29, 2020 at 10:06 AM David Laight <David.Laight@aculab.com> wrote:
-> >
-> > From: Christoph Hellwig
-> > > Sent: 29 September 2020 07:56
-> > >
-> > > On Mon, Sep 28, 2020 at 11:46:48PM -0700, Eric Biggers wrote:
-> > > > > Linus asked for it.  What is the call chain that we hit it with?
-> > > >
-> > > > Call Trace:
-> > > >  kernel_read+0x52/0x70 fs/read_write.c:471
-> > > >  kernel_read_file fs/exec.c:989 [inline]
-> > > >  kernel_read_file+0x2e5/0x620 fs/exec.c:952
-> > > >  kernel_read_file_from_fd+0x56/0xa0 fs/exec.c:1076
-> > > >  __do_sys_finit_module+0xe6/0x190 kernel/module.c:4066
-> > > >  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-> > > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > >
-> > > > See the email from syzbot for the full details:
-> > > > https://lkml.kernel.org/linux-fsdevel/000000000000da992305b02e9a51@google.com
-> > >
-> > > Passing a fs without read permissions definitively looks bogus for
-> > > the finit_module syscall.  So I think all we need is an extra check
-> > > to validate the fd.
-> >
-> > The sysbot test looked like it didn't even have a regular file.
-> > I thought I saw a test for that - but it might be in a different path.
-> >
-> > You do need to ensure that 'exec' doesn't need read access.
-> 
-> The test tried to load a module from /dev/input/mouse
-> 
-> r2 = syz_open_dev$mouse(&(0x7f0000000000)='/dev/input/mouse#\x00',
-> 0x101, 0x109887)
-> finit_module(r2, 0x0, 0x0)
-> 
-> because... why not? Everything is a file! :)
+The async buffered reads feature is not working when readahead is
+turned off. There are two things to concern:
 
-Yes, syzbot is fine here.  It is the modules code that needs to better
-verify the fd.
+- when doing retry in io_read, not only the IOCB_WAITQ flag but also
+  the IOCB_NOWAIT flag is still set, which makes it goes to would_block
+  phase in generic_file_buffered_read() and then return -EAGAIN. After
+  that, the io-wq thread work is queued, and later doing the async
+  reads in the old way.
+
+- even if we remove IOCB_NOWAIT when doing retry, the feature is still
+  not running properly, since in generic_file_buffered_read() it goes to
+  lock_page_killable() after calling mapping->a_ops->readpage() to do
+  IO, and thus causing process to sleep.
+
+Fixes: 1a0a7853b901 ("mm: support async buffered reads in generic_file_buffered_read()")
+Fixes: 3b2a4439e0ae ("io_uring: get rid of kiocb_wait_page_queue_init()")
+Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
+---
+ fs/io_uring.c | 1 +
+ mm/filemap.c  | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 556e4a2ead07..e7e8ea58274e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3106,6 +3106,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
+ 	wait->wait.flags = 0;
+ 	INIT_LIST_HEAD(&wait->wait.entry);
+ 	kiocb->ki_flags |= IOCB_WAITQ;
++	kiocb->ki_flags &= ~IOCB_NOWAIT;
+ 	kiocb->ki_waitq = wait;
+ 
+ 	io_get_req_task(req);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 1aaea26556cc..ea383478fc22 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2267,7 +2267,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		}
+ 
+ 		if (!PageUptodate(page)) {
+-			error = lock_page_killable(page);
++			if (iocb->ki_flags & IOCB_WAITQ)
++				error = lock_page_async(page, iocb->ki_waitq);
++			else
++				error = lock_page_killable(page);
++
+ 			if (unlikely(error))
+ 				goto readpage_error;
+ 			if (!PageUptodate(page)) {
+-- 
+1.8.3.1
+
