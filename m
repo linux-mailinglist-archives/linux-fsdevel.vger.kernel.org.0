@@ -2,37 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6165427BA41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 03:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3138E27BA31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 03:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbgI2Bae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 21:30:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39310 "EHLO mail.kernel.org"
+        id S1727710AbgI2BgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 21:36:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbgI2Bab (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 21:30:31 -0400
+        id S1727218AbgI2Baw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Sep 2020 21:30:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACD3621734;
-        Tue, 29 Sep 2020 01:30:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAA8721D43;
+        Tue, 29 Sep 2020 01:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601343030;
-        bh=zB0SGeeoNPVMkVnQLXd5mspfS30Xe6OaobqccoNYGuU=;
+        s=default; t=1601343047;
+        bh=mQw6OM3u2KV7FtkFQ65Z0Bp1vJ5Xuw66f17h80F5flE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DQpo1itrfHYIa3bfnoMVkPwryZ7WZ/jrEMBr4My59eNxYqJEzVGgsMBFFxzuXYrXR
-         biaoBXMdWEeFagKD5o6sotBwbtzgJzY5J5ty4AtPTPhYYonebFCNPLJFtZjMUNiLmN
-         wkvo1X8d8W1/55P0sRhoHIXjTzgP8mQYurOQbpEM=
+        b=zl9b9IaOHL+Hp1rBbP6ES7g3/DD+BAiyIQeSvKU3I68i+TDr3iua0ewZ9NQ9v6MQA
+         B/xs7MRiW/J1yX5QLdlPTVeofMdlXYYPh48wQ6okhR6Pcc11B4TFW+Oogssl2hgqYw
+         4aGpWrGhg3J4q9s10A/SNQRQwhUS/EpnI7RvmaYI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        kernel test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@redhat.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 02/29] vboxsf: Fix the check for the old binary mount-arguments struct
-Date:   Mon, 28 Sep 2020 21:29:59 -0400
-Message-Id: <20200929013027.2406344-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 15/29] fuse: fix the ->direct_IO() treatment of iov_iter
+Date:   Mon, 28 Sep 2020 21:30:12 -0400
+Message-Id: <20200929013027.2406344-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200929013027.2406344-1-sashal@kernel.org>
 References: <20200929013027.2406344-1-sashal@kernel.org>
@@ -44,42 +41,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-[ Upstream commit 9d682ea6bcc76b8b2691c79add59f7d99c881635 ]
+[ Upstream commit 933a3752babcf6513117d5773d2b70782d6ad149 ]
 
-Fix the check for the mainline vboxsf code being used with the old
-mount.vboxsf mount binary from the out-of-tree vboxsf version doing
-a comparison between signed and unsigned data types.
+the callers rely upon having any iov_iter_truncate() done inside
+->direct_IO() countered by iov_iter_reexpand().
 
-This fixes the following smatch warnings:
-
-fs/vboxsf/super.c:390 vboxsf_parse_monolithic() warn: impossible condition '(options[1] == (255)) => ((-128)-127 == 255)'
-fs/vboxsf/super.c:391 vboxsf_parse_monolithic() warn: impossible condition '(options[2] == (254)) => ((-128)-127 == 254)'
-fs/vboxsf/super.c:392 vboxsf_parse_monolithic() warn: impossible condition '(options[3] == (253)) => ((-128)-127 == 253)'
-
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reported-by: Qian Cai <cai@redhat.com>
+Tested-by: Qian Cai <cai@redhat.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/vboxsf/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fuse/file.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
-diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-index 8fe03b4a0d2b0..25aade3441922 100644
---- a/fs/vboxsf/super.c
-+++ b/fs/vboxsf/super.c
-@@ -384,7 +384,7 @@ static int vboxsf_setup(void)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 83d917f7e5425..98e170cc0b932 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -3091,11 +3091,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	ssize_t ret = 0;
+ 	struct file *file = iocb->ki_filp;
+ 	struct fuse_file *ff = file->private_data;
+-	bool async_dio = ff->fc->async_dio;
+ 	loff_t pos = 0;
+ 	struct inode *inode;
+ 	loff_t i_size;
+-	size_t count = iov_iter_count(iter);
++	size_t count = iov_iter_count(iter), shortened = 0;
+ 	loff_t offset = iocb->ki_pos;
+ 	struct fuse_io_priv *io;
  
- static int vboxsf_parse_monolithic(struct fs_context *fc, void *data)
- {
--	char *options = data;
-+	unsigned char *options = data;
+@@ -3103,17 +3102,9 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	inode = file->f_mapping->host;
+ 	i_size = i_size_read(inode);
  
- 	if (options && options[0] == VBSF_MOUNT_SIGNATURE_BYTE_0 &&
- 		       options[1] == VBSF_MOUNT_SIGNATURE_BYTE_1 &&
+-	if ((iov_iter_rw(iter) == READ) && (offset > i_size))
++	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
+ 		return 0;
+ 
+-	/* optimization for short read */
+-	if (async_dio && iov_iter_rw(iter) != WRITE && offset + count > i_size) {
+-		if (offset >= i_size)
+-			return 0;
+-		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
+-		count = iov_iter_count(iter);
+-	}
+-
+ 	io = kmalloc(sizeof(struct fuse_io_priv), GFP_KERNEL);
+ 	if (!io)
+ 		return -ENOMEM;
+@@ -3129,15 +3120,22 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	 * By default, we want to optimize all I/Os with async request
+ 	 * submission to the client filesystem if supported.
+ 	 */
+-	io->async = async_dio;
++	io->async = ff->fc->async_dio;
+ 	io->iocb = iocb;
+ 	io->blocking = is_sync_kiocb(iocb);
+ 
++	/* optimization for short read */
++	if (io->async && !io->write && offset + count > i_size) {
++		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
++		shortened = count - iov_iter_count(iter);
++		count -= shortened;
++	}
++
+ 	/*
+ 	 * We cannot asynchronously extend the size of a file.
+ 	 * In such case the aio will behave exactly like sync io.
+ 	 */
+-	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
++	if ((offset + count > i_size) && io->write)
+ 		io->blocking = true;
+ 
+ 	if (io->async && io->blocking) {
+@@ -3155,6 +3153,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	} else {
+ 		ret = __fuse_direct_read(io, iter, &pos);
+ 	}
++	iov_iter_reexpand(iter, iov_iter_count(iter) + shortened);
+ 
+ 	if (io->async) {
+ 		bool blocking = io->blocking;
 -- 
 2.25.1
 
