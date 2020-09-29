@@ -2,147 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34B0127D123
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 16:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E04127D156
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 16:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbgI2ObQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Sep 2020 10:31:16 -0400
-Received: from mga03.intel.com ([134.134.136.65]:61873 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbgI2ObQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Sep 2020 10:31:16 -0400
-IronPort-SDR: nLAl7FGuzkPej9weIPtfmCXRdg2i8DT3HTGXBDhrkEinZFVR6T672Bk1ofWfDBgcfjgJffC7df
- HkxPgMXlIMuw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="162267044"
-X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
-   d="scan'208";a="162267044"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 07:31:11 -0700
-IronPort-SDR: KrMLHqm4vAIyh2wEols3UDgP/wgJVmEBxPrskh3CBl5CkdoeOD2dSYZ5qMX5xKeD8mdL9Iu4pj
- NMHmcT11ayaQ==
-X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
-   d="scan'208";a="324690295"
-Received: from balumahx-mobl.amr.corp.intel.com (HELO [10.212.138.118]) ([10.212.138.118])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 07:31:08 -0700
-Subject: Re: [PATCH v6 5/6] mm: secretmem: use PMD-size pages to amortize
- direct map fragmentation
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
+        id S1730833AbgI2Oh0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 10:37:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38252 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730131AbgI2Oh0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Sep 2020 10:37:26 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1BDC061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Sep 2020 07:37:25 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id k10so5687775wru.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Sep 2020 07:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4thglTsU672R6183seyBnljqOq4ywCJEfxOVEmyHhBc=;
+        b=YdyLS5EenXDRxghn69b9SpbqPtIfctAotTCVJYuhsSJwzn3N555MgFY53pQxvCS7cj
+         KQQxQ1IbPkCt+yiN2OZbuHK/9RsG5qndjhi8InnjMRI6SuJ3dD37R9XXPUut1F9gU9+S
+         KPaCAJXubIHsmVFCfo+br3kfyP4dDEcp5NvDbM9LydE0n5UOohb2cyYrdY3irscF8Bzk
+         slySsHDAnBPEo7oh+7revV68LyXhlZBpg6dr5TdANFp9syC7WZWHlncy12r25pdu91Xx
+         IuZyHSP86XnZ8b7CoxfPcEWUcrD3Peu3hxSYf3GzGhqu4lFfJjY2UnHMOOwn0MxzdlwX
+         5d6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4thglTsU672R6183seyBnljqOq4ywCJEfxOVEmyHhBc=;
+        b=rEfekQVsoWbSP3aNA/blExCTZr/doFLftSxfj4NssK9nMblhRZ5s8H+hPakWkzE422
+         jjriXRX7epFVuz/AsPCHOCxXkZkYsrGXnD6APevZrfVgvhJv6Lcb6LxDzB/0IloCEW0p
+         e3LnD9o/y8IiORXpvGLaOqonLbbTL8gfbkHa1oyh7LENAdzr0JBz1e5TFLJsioEaX9oX
+         aMpaeHH4/gfIIyzDS+LrtsJr92b2r2m+X4Md8a5g17l3qFw+UxaVZ2J0ahy03dR2Jtk/
+         /nUYSHluSZH7GpZspwLdeZvbulRx5ww7VeXH/ptr5DK7FG8fqk59Cj9LJ7NeeYSqdVb8
+         Ds4A==
+X-Gm-Message-State: AOAM533bU8R8vasmwGsWFAgiGja468grIhuDZw3AgzSTPNDBVCvXKEfK
+        rCWMnasaP6TY7HJTJHe2mI/X3g==
+X-Google-Smtp-Source: ABdhPJwTnLt9PJBcyxeHBl/hpr0rDd9CLDdBUt1LQth6Z+obyqx4rWDWAJnjil4yI+hg9W2jV1TMPA==
+X-Received: by 2002:adf:c404:: with SMTP id v4mr4640623wrf.17.1601390244674;
+        Tue, 29 Sep 2020 07:37:24 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
+        by smtp.gmail.com with ESMTPSA id 11sm5418223wmi.14.2020.09.29.07.37.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2020 07:37:24 -0700 (PDT)
+Date:   Tue, 29 Sep 2020 15:37:22 +0100
+From:   Alessio Balsini <balsini@android.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-References: <20200924132904.1391-1-rppt@kernel.org>
- <20200924132904.1391-6-rppt@kernel.org>
- <20200925074125.GQ2628@hirez.programming.kicks-ass.net>
- <20200929130529.GE2142832@kernel.org>
- <20200929141216.GO2628@hirez.programming.kicks-ass.net>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <4f6ad8a8-88aa-54ab-697e-1f44634ad2fb@intel.com>
-Date:   Tue, 29 Sep 2020 07:31:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <stefanoduo@google.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>,
+        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 1/4] fuse: Definitions and ioctl() for passthrough
+Message-ID: <20200929143722.GB1680101@google.com>
+References: <20200924131318.2654747-1-balsini@android.com>
+ <20200924131318.2654747-2-balsini@android.com>
 MIME-Version: 1.0
-In-Reply-To: <20200929141216.GO2628@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200924131318.2654747-2-balsini@android.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/29/20 7:12 AM, Peter Zijlstra wrote:
->>                              |  1G    |  2M    |  4K
->>        ----------------------+--------+--------+---------
->>   ssd, mitigations=on	| 308.75 | 317.37 | 314.9
->>   ssd, mitigations=off	| 305.25 | 295.32 | 304.92
->>   ram, mitigations=on	| 301.58 | 322.49 | 306.54
->>   ram, mitigations=off	| 299.32 | 288.44 | 310.65
-> These results lack error data, but assuming the reults are significant,
-> then this very much makes a case for 1G mappings. 5s on a kernel builds
-> is pretty good.
+Hi,
 
-Is something like secretmem all or nothing?
+I noticed the following fixup suggested by Amir slipped from this
+submission.
 
-This seems like a similar situation to the side-channel mitigations.  We
-know what the most "secure" thing to do is.  But, folks also disagree
-about how much pain that security is worth.
+Thanks,
+Alessio
 
-That seems to indicate we're never going to come up with a
-one-size-fits-all solution to this.  Apps are going to have to live
-without secretmem being around if they want to run on old kernels
-anyway, so it seems like something we should be able to enable or
-disable without ABI concerns.
-
-Do we just include it, but disable it by default so it doesn't eat
-performance?  But, allow it to be reenabled by the folks who generally
-prioritize hardening over performance, like Chromebooks for instance.
+---8<---
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+index b7d1a5517ffd..eba26196be92 100644
+--- a/fs/fuse/passthrough.c
++++ b/fs/fuse/passthrough.c
+@@ -185,7 +185,7 @@ int fuse_passthrough_setup(struct fuse_req *req, unsigned int fd)
+        passthrough_inode = file_inode(passthrough_filp);
+        passthrough_sb = passthrough_inode->i_sb;
+        fs_stack_depth = passthrough_sb->s_stack_depth + 1;
+-       ret = -EEXIST;
++       ret = -EINVAL;
+        if (fs_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
+                pr_err("FUSE: maximum fs stacking depth exceeded for passthrough\n");
+                goto out;
