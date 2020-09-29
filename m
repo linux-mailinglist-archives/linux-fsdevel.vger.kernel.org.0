@@ -2,60 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2576927C03B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 10:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E07F027C083
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 11:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbgI2I62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Sep 2020 04:58:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
+        id S1727863AbgI2JJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 05:09:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727403AbgI2I61 (ORCPT
+        with ESMTP id S1727843AbgI2JJP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Sep 2020 04:58:27 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CDCCC061755;
-        Tue, 29 Sep 2020 01:58:27 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id u21so3348791ljl.6;
-        Tue, 29 Sep 2020 01:58:27 -0700 (PDT)
+        Tue, 29 Sep 2020 05:09:15 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286BFC061755;
+        Tue, 29 Sep 2020 02:09:13 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id k25so3366547ljg.9;
+        Tue, 29 Sep 2020 02:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=0zBr7rwUnSApw+xeuuXKjxi2DqhntGUX6NwDcSVTSP4=;
-        b=TdP329uMGNiYMCvAVgrGW1puWhYZdPxdwfxqylSQuqfP62QTDNG0mEpBgTbgV5hz5A
-         3Por1zOy+ISPwcRmoSVzN24jp14oOVGcqjq7kENc3LLLNgFoJVr5zI9+5TuWQvAiLjL7
-         Qm/U+Cnu+MO7WN8V9yy7epsGmEZDAXjar7lKgY7HGcT5ntm6xWqz8QT0ziEog1Z3c/hy
-         Vgse6+FXUi/+7G905A51A5W0hX53fUiCiZB8AjTQQHOQPDDXPDP4iOADgnJCw5ikKKoP
-         vqxoZ828GhkigQmSlpU/UKBBUTKcLxAN2FFp6s5w79H9g0Mn42vZNt804AKFmaDgNal8
-         SKtQ==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=HcejzjPAY3kRZiHY2O5twYR4gacV7N8E91O9312hk8Q=;
+        b=NZzAnwSpc6ZwBehq3kT1UV9xEzdsz2ZX6uy5/MRQKctOo/+ITq97TsGaybjyXJz4en
+         SDPSixlZWEPvIQcC31LQqkFSfetpdpLHbi3wPblnWqoTJiX4hHsCV06bOd7E+8F+f8U6
+         J3wvCUiIOuhrkAK1TmOl7C2x318VGArBecSrYEAngEe6EKi3nLdxUfWWk3FmclnccCwr
+         UNk0NshWKEviR9sMGruaCZ3bIR6dgJg+bNgBFe/wondBSzXfmcBC6Ao/nBWql+jlYQep
+         hygl2FQCzWCWNNuS1TotT2c7y1bzA1E+y3JlBI7PLtEyl4zKfDgsjAqrHPUzvPkUsASd
+         rCZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=0zBr7rwUnSApw+xeuuXKjxi2DqhntGUX6NwDcSVTSP4=;
-        b=gCfTCig4TLeMzve25CId9tEqh2Ki4V1tqDFMjc+E55JHHNe4F4yXUx7u+0MdHFFV+Q
-         HOFWuVyt6VEMjEN21pu5z95VoVZ2/G+ODx1psvpCvLrqrpJvHMgm/2Ftcqx+ZZJJGuds
-         UtesxxPgq8F2vlYAzpvzKRpY/9la77CBOoQq1C6LEcp7ecdC/ufSuBfWYuz/IOd2rGpA
-         SFBGaXHATH0VmXI5kPXf3tkdi4hqOWXrJAldcPoo3gj7VPn8VJVOwdWL9InOAcDxLiuf
-         EyY76hrBF8FMpnlbMqwsJL0jXSHudXleRcP2Nr+ARfve0jiMFrTM+MHLmGaLFC1JOTEr
-         nWCg==
-X-Gm-Message-State: AOAM531VcfR62wPy1RSJ8iw+p+uLDkmOBqQY7NynXEWvJuW54h5obvvr
-        y45I5MIdM1pUSYbPPVZTrh04ADYHqJMSai14HRL/idoDD54=
-X-Google-Smtp-Source: ABdhPJwSkLeByJEAdpmXiurVAZcbG+LrGSQrU7Zy0uUZCrKgeu4jfpJOsrcN7xKuNSs718reur9sus9Tb7pjWc0vjDk=
-X-Received: by 2002:a2e:b054:: with SMTP id d20mr913125ljl.406.1601369905660;
- Tue, 29 Sep 2020 01:58:25 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=HcejzjPAY3kRZiHY2O5twYR4gacV7N8E91O9312hk8Q=;
+        b=A7/SeQEQnK+awBR6Apbj4X8bxCpahXNzH0k04m5Faypo5RiHTVz+phKIFhqknDxysd
+         e+qrzLvbAAZFw/jvJofKW5iQXF5TAethN2n+ImlHoJDRcxp5Q3GX1LsskFKJXNFwFWLL
+         cta3mbyqiHWnGzaOn5tz2RMigZCZ5xsL3SZkYNVVmo55p7O06VaOeCK9lEXIsFQ0CeXh
+         j8pKs6MN3uEtTup+p0PF9IfeldKbgbwIK16pz6QBC8a2MNzypVHb3mNWcHFDU329Ma9C
+         rtLCYsCLXwgfVbnXk3y9EBrHgasLUfn/CGyLe4BTaxsqoH6nAtEC9BautPJJWv1Dk+k5
+         gCBw==
+X-Gm-Message-State: AOAM530htBa8zoUN6lm1gaT1aB85SiUOeAuqZK3RkgWIgDdhGN5evSpM
+        p8WzRxjQZDMHR8tBUo4KYM1LcSUTaIAiUWdJxsU=
+X-Google-Smtp-Source: ABdhPJwbG4vCCnMv5qnNu15PSMsxl0G/yNUn0yfEqo/dsuoRh8NuU7rjG1Q/qsPArciDq1FJcsR3nlJs6Ex9qMQ5B+4=
+X-Received: by 2002:a05:651c:1032:: with SMTP id w18mr913083ljm.238.1601370551478;
+ Tue, 29 Sep 2020 02:09:11 -0700 (PDT)
 MIME-Version: 1.0
 From:   butt3rflyh4ck <butterflyhuangxx@gmail.com>
-Date:   Tue, 29 Sep 2020 16:58:14 +0800
-Message-ID: <CAFcO6XM4UC9rwrAjpjAhKfwgu0iZh3bjPopueGM=yzx2HahSEQ@mail.gmail.com>
+Date:   Tue, 29 Sep 2020 17:09:00 +0800
+Message-ID: <CAFcO6XMgLZXrQCXSLjb9uWGykOdTHJG0mYJFun4+RRPVEYmrfg@mail.gmail.com>
 Subject: null-ptr-deref in exfat_cache_inval_inode
-To:     namjae.jeon@samsung.com, sj1557.seo@samsung.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yzkaller@googlegroups.com
+To:     namjae.jeon@samsung.com, sj1557.seo@samsung.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I report a null pointer deref bug (in linux-5.9.0-rc6) found by kernel fuzz.
+I report a null pointer dereference bug (in linux-5.9.0-rc6) found by
+kernel fuzz.
 
 kernel config: https://github.com/butterflyhack/syzkaller-fuzz/blob/master/v5.9.0-rc6-config
 
