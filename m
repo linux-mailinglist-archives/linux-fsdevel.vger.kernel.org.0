@@ -2,129 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE3627BA00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 03:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73D5627BA9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 04:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbgI2Be6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 21:34:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727632AbgI2Bba (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 21:31:30 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64961221E8;
-        Tue, 29 Sep 2020 01:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601343077;
-        bh=KnfAmQCDLWxrgUP4TjvPtfODWHnIpaoEfhe3KY3zoWc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nAKEuzhWPC0e0Ch3BKtTD9T5wvTTbFHVxiMlQqxYK1GPlffd0UHG10ZO9L8qJxv/S
-         ON2q1jDtqBL/PyQ4Pl/GBxv8WVUXYNzhW0mRUCVB4/YN5oknqsN6kzrtDfYVRTzhj+
-         Z7kHt79mQgtot+42PyrOd3T0ZQ7gc1I7PIPOqq7g=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 09/18] fuse: fix the ->direct_IO() treatment of iov_iter
-Date:   Mon, 28 Sep 2020 21:30:55 -0400
-Message-Id: <20200929013105.2406634-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200929013105.2406634-1-sashal@kernel.org>
-References: <20200929013105.2406634-1-sashal@kernel.org>
+        id S1727303AbgI2CFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 22:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbgI2CFX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Sep 2020 22:05:23 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75534C061755;
+        Mon, 28 Sep 2020 19:05:23 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id jw11so1819390pjb.0;
+        Mon, 28 Sep 2020 19:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=iG/bDnzqe0Ijt5t+Wte/8y83V66TpQLjZGlUCfab1wM=;
+        b=EpFofk08+f9XITxoematI1OddFtlpiCUaEhRU1X8Rf3an9Wf7Z359hgUmUFpbHoPlP
+         8RxfGcHxl0ll7p8Vv9aC0nB8jAe7BcKRPgFm1MJIUV9iNEvpimIJEC0XLsnt1/o09PcF
+         +GLVK5dBh3fVli5MWTsCkWGgNgmhoTdolAxDXRIiqkfMi4eimOGaYCGATR+SVIHdsRRe
+         9mlew9d5gcr78P46fZ8EGcWjjz6bnPhryLd+yC3/II6dTOxBQ5NLB2GCCaAyLRCPKYv2
+         rPd5QHyrYZI4Q/h2/BO7k4yYlBisKMqi/mF5QSB++gKtFHSyPRDoj4d0X7CICgzyDec8
+         3y1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=iG/bDnzqe0Ijt5t+Wte/8y83V66TpQLjZGlUCfab1wM=;
+        b=GITYyTXUu+joFGvxRbVicd6Joh7V+S65i8Y7o5GMxQXRMgkTcgAJnp6sV/CMQT8aCc
+         nz81fKNIjj/lb7LZyxbNBISV7i+EBfPbHDrIDOiyBG7cvEZxqG3unU8970sxcQbHorh9
+         llFOdSndaaBrAHv7n2y6KNwIPjkDDdkiZHpqp3bbnqGKQFQH1pkowTASlndsaJ3O6kvR
+         3tKYyTx6/mpDHmdcM49DoTolEN+u0MRSdbLMv/9bcv9CrxbjUlSwU4A9aLVWNpL5FnUz
+         v9xBkXd90zoNkNTRyKBIe0meUhkSoU1NvXar4oW2KRaXxG55i9W0VeVlc+Uxd2JHbRK9
+         xTvg==
+X-Gm-Message-State: AOAM532U/T+5RrMs5foNiMAFUVI2buskkbGLMQUuvntLqucLnSxWjS+l
+        NJZ4PF/6OdTcLTghSA0DOjE=
+X-Google-Smtp-Source: ABdhPJxJpmMaNJwZ6htIVmhNPWkcCWKRWoXVeHqM+7TyR3A1gD0li91bQ1A0WrWY5y6DMA7aPmnDtA==
+X-Received: by 2002:a17:90a:c255:: with SMTP id d21mr1857806pjx.212.1601345122954;
+        Mon, 28 Sep 2020 19:05:22 -0700 (PDT)
+Received: from localhost ([2409:10:2e40:5100:6e29:95ff:fe2d:8f34])
+        by smtp.gmail.com with ESMTPSA id 31sm2577845pgs.59.2020.09.28.19.05.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Sep 2020 19:05:21 -0700 (PDT)
+Date:   Tue, 29 Sep 2020 11:05:20 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [RFC] process /proc/PID/smaps vs /proc/PID/smaps_rollup
+Message-ID: <20200929020520.GC871730@jagdpanzerIV.localdomain>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+Hello,
 
-[ Upstream commit 933a3752babcf6513117d5773d2b70782d6ad149 ]
+One of our unprivileged daemon process needs process PSS info. That
+info is usually available in /proc/PID/smaps on per-vma basis, on
+in /proc/PID/smaps_rollup as a bunch of accumulated per-vma values.
+The latter one is much faster and simpler to get, but, unlike smaps,
+smaps_rollup requires PTRACE_MODE_READ, which we don't want to
+grant to our unprivileged daemon.
 
-the callers rely upon having any iov_iter_truncate() done inside
-->direct_IO() countered by iov_iter_reexpand().
+So the question is - can we get, somehow, accumulated PSS info from
+a non-privileged process? (Iterating through all process' smaps
+vma-s consumes quite a bit of CPU time). This is related to another
+question - why do smaps and smaps_rollup have different permission
+requirements?
 
-Reported-by: Qian Cai <cai@redhat.com>
-Tested-by: Qian Cai <cai@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/fuse/file.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index f8d8a8e34b808..ab4fc1255aca8 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3074,11 +3074,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	ssize_t ret = 0;
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_file *ff = file->private_data;
--	bool async_dio = ff->fc->async_dio;
- 	loff_t pos = 0;
- 	struct inode *inode;
- 	loff_t i_size;
--	size_t count = iov_iter_count(iter);
-+	size_t count = iov_iter_count(iter), shortened = 0;
- 	loff_t offset = iocb->ki_pos;
- 	struct fuse_io_priv *io;
- 
-@@ -3086,17 +3085,9 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	inode = file->f_mapping->host;
- 	i_size = i_size_read(inode);
- 
--	if ((iov_iter_rw(iter) == READ) && (offset > i_size))
-+	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
- 		return 0;
- 
--	/* optimization for short read */
--	if (async_dio && iov_iter_rw(iter) != WRITE && offset + count > i_size) {
--		if (offset >= i_size)
--			return 0;
--		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
--		count = iov_iter_count(iter);
--	}
--
- 	io = kmalloc(sizeof(struct fuse_io_priv), GFP_KERNEL);
- 	if (!io)
- 		return -ENOMEM;
-@@ -3112,15 +3103,22 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * By default, we want to optimize all I/Os with async request
- 	 * submission to the client filesystem if supported.
- 	 */
--	io->async = async_dio;
-+	io->async = ff->fc->async_dio;
- 	io->iocb = iocb;
- 	io->blocking = is_sync_kiocb(iocb);
- 
-+	/* optimization for short read */
-+	if (io->async && !io->write && offset + count > i_size) {
-+		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
-+		shortened = count - iov_iter_count(iter);
-+		count -= shortened;
-+	}
-+
- 	/*
- 	 * We cannot asynchronously extend the size of a file.
- 	 * In such case the aio will behave exactly like sync io.
- 	 */
--	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
-+	if ((offset + count > i_size) && io->write)
- 		io->blocking = true;
- 
- 	if (io->async && io->blocking) {
-@@ -3138,6 +3136,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	} else {
- 		ret = __fuse_direct_read(io, iter, &pos);
- 	}
-+	iov_iter_reexpand(iter, iov_iter_count(iter) + shortened);
- 
- 	if (io->async) {
- 		bool blocking = io->blocking;
--- 
-2.25.1
-
+	-ss
