@@ -2,148 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41FA627D11A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 16:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B0127D123
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 16:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbgI2OaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Sep 2020 10:30:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbgI2OaP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Sep 2020 10:30:15 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E406CC0613D0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Sep 2020 07:30:14 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id y15so5061576wmi.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Sep 2020 07:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uFKLSPWDwm3eYZd6YdR+/hX/HXeA1BnZbw8cxB8l5tM=;
-        b=WLRfbKRyHsDE1KbYQsDpufajswYgeVpkZCRZM2rE14Jx7ciTmLPeGxQab+NzzN1k4g
-         X38WvCMV7E6erCcNfmdeLauHb9a0J2yy59NWFf7U4SB4Nn5QQLSnv62rv02144hynjG1
-         FC2+vhsot7ySsIfREUOKkn6m84xWWEHKFkGxbh5DUhhIyCgeCACveM1dRvWE2Z/W52gS
-         rehupa2hgU+q9dKjrg1/rS7wAZi18abSfFEBZlkig2QH6c3KhY+Jk4QZ3PdJX7AnJ4L4
-         zTuPzu5OqmGNZxTG8L5M8dcP8kULVBC1icpmpqxdIdcUf5m3qdvNnjdNjePEG0NJoGYg
-         TFeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uFKLSPWDwm3eYZd6YdR+/hX/HXeA1BnZbw8cxB8l5tM=;
-        b=EhSgjfHsSN+QbcJxzP2OoevroauHllkFByoB/qcNpuzY0R0EyRYGJz6G/LDSNZQrEs
-         6cXnRsFpzweMniPj8YUaXDei83BtM1yXnh/tEThAlQQxuF23qwYaGUhIuWk/Ruz/kCf1
-         IE735h1E47VnSQvVXUm+fUO4Qf+KCRwQn/zvqR8E5x1JMndRRyyNUCCjYBjHSBd7K8Qu
-         ONFLa6WsdXjWiga7rBtncyW23iHgiENXkdCPrCfIfyOOjBt/l0oTTyiVw7yPwp6mpoDD
-         8pPKs45ePp50os1HV50zfywC+9Iji2hkaR9mAVb1QiyKU/5PjzCuYffLlghrDNbC0RLw
-         8qVA==
-X-Gm-Message-State: AOAM531ED9PwEgA1wMtmNvYZFRSkmuZT9TJ7P+7bbYoqpu1jgZWhpihJ
-        XgTFnYe7+6bxCtLBaAA+2rK6nQ==
-X-Google-Smtp-Source: ABdhPJykPpWjvgERiuRHSP5oeS8qkCVKd3aWFFRAg7EnL8L6Ivoa6wZFihmDj+vUefS/lJFiUhefWw==
-X-Received: by 2002:a1c:f716:: with SMTP id v22mr4675565wmh.183.1601389813562;
-        Tue, 29 Sep 2020 07:30:13 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
-        by smtp.gmail.com with ESMTPSA id n10sm6012031wmk.7.2020.09.29.07.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2020 07:30:12 -0700 (PDT)
-Date:   Tue, 29 Sep 2020 15:30:11 +0100
-From:   Alessio Balsini <balsini@android.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Alessio Balsini <balsini@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Akilesh Kailash <akailash@google.com>,
-        David Anderson <dvander@google.com>,
-        Eric Yan <eric.yan@oneplus.com>, Jann Horn <jannh@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
+        id S1729146AbgI2ObQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 10:31:16 -0400
+Received: from mga03.intel.com ([134.134.136.65]:61873 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbgI2ObQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Sep 2020 10:31:16 -0400
+IronPort-SDR: nLAl7FGuzkPej9weIPtfmCXRdg2i8DT3HTGXBDhrkEinZFVR6T672Bk1ofWfDBgcfjgJffC7df
+ HkxPgMXlIMuw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="162267044"
+X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
+   d="scan'208";a="162267044"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 07:31:11 -0700
+IronPort-SDR: KrMLHqm4vAIyh2wEols3UDgP/wgJVmEBxPrskh3CBl5CkdoeOD2dSYZ5qMX5xKeD8mdL9Iu4pj
+ NMHmcT11ayaQ==
+X-IronPort-AV: E=Sophos;i="5.77,318,1596524400"; 
+   d="scan'208";a="324690295"
+Received: from balumahx-mobl.amr.corp.intel.com (HELO [10.212.138.118]) ([10.212.138.118])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 07:31:08 -0700
+Subject: Re: [PATCH v6 5/6] mm: secretmem: use PMD-size pages to amortize
+ direct map fragmentation
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <stefanoduo@google.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V8 1/3] fuse: Definitions and ioctl() for passthrough
-Message-ID: <20200929143011.GA1680101@google.com>
-References: <20200911163403.79505-1-balsini@android.com>
- <20200911163403.79505-2-balsini@android.com>
- <CAOQ4uxiWK5dNMkrriApMVZQi6apmnMijcCw5j4fa2thHFdnFcw@mail.gmail.com>
- <20200918163354.GB3385065@google.com>
- <CAOQ4uxhNddkdZ5TCdg6Gdb9oYqNVUrpk25kGYxZNe-LDsZV_Ag@mail.gmail.com>
- <20200922121508.GB600068@google.com>
- <CAOQ4uxjFjpbVBQ6zAhtVfjB=+_T48m1c-cdA-Qr+O=2=6YmW3w@mail.gmail.com>
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
+        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+References: <20200924132904.1391-1-rppt@kernel.org>
+ <20200924132904.1391-6-rppt@kernel.org>
+ <20200925074125.GQ2628@hirez.programming.kicks-ass.net>
+ <20200929130529.GE2142832@kernel.org>
+ <20200929141216.GO2628@hirez.programming.kicks-ass.net>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <4f6ad8a8-88aa-54ab-697e-1f44634ad2fb@intel.com>
+Date:   Tue, 29 Sep 2020 07:31:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjFjpbVBQ6zAhtVfjB=+_T48m1c-cdA-Qr+O=2=6YmW3w@mail.gmail.com>
+In-Reply-To: <20200929141216.GO2628@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 22, 2020 at 07:08:48PM +0300, Amir Goldstein wrote:
-> 
-> I am hearing about a lot of these projects.
-> I think that FUSE_PASSTHROUGH is a very useful feature.
-> I have an intention to explore passthrough to directory fd for
-> directory modifications. I sure hope you will beat me to it ;-)
+On 9/29/20 7:12 AM, Peter Zijlstra wrote:
+>>                              |  1G    |  2M    |  4K
+>>        ----------------------+--------+--------+---------
+>>   ssd, mitigations=on	| 308.75 | 317.37 | 314.9
+>>   ssd, mitigations=off	| 305.25 | 295.32 | 304.92
+>>   ram, mitigations=on	| 301.58 | 322.49 | 306.54
+>>   ram, mitigations=off	| 299.32 | 288.44 | 310.65
+> These results lack error data, but assuming the reults are significant,
+> then this very much makes a case for 1G mappings. 5s on a kernel builds
+> is pretty good.
 
+Is something like secretmem all or nothing?
 
-It's awesome that you mentioned this, something similar is already in my
-TODO list, suggested by Paul (in CC). I'll start working on this and will
-be glad to discuss as soon as this FUSE_PASSTHROUGH extension will
-hopefully get accepted.
+This seems like a similar situation to the side-channel mitigations.  We
+know what the most "secure" thing to do is.  But, folks also disagree
+about how much pain that security is worth.
 
+That seems to indicate we're never going to come up with a
+one-size-fits-all solution to this.  Apps are going to have to live
+without secretmem being around if they want to run on old kernels
+anyway, so it seems like something we should be able to enable or
+disable without ABI concerns.
 
-> 
-> > I'm not directly involved in the Incremental FS project, but, as far as I
-> > remember, only for the first PoC was actually developed as a FUSE file
-> > system. Because of the overhead introduced by the user space round-trips,
-> > that design was left behind and the whole Incremental FS infrastructure
-> > switched to becoming a kernel module.
-> > In general, the FUSE passthrough patch set proposed in this series wouldn't
-> > be helpful for that use case because, for example, Incremental FS requires
-> > live (de)compression of data, that can only be performed by the FUSE
-> > daemon.
-> >
-> 
-> Ext4 supports inline encryption. Btrfs supports encrypted/compressed extents.
-> No reason for FUSE not to support the same.
-> Is it trivial? No.
-> Is it an excuse for not using FUSE and writing a new userspace fs. Not
-> in my option.
-
-
-I started exploring the FUSE internals only in the last months and had the
-feeling this compression feature was a bit out of context or at least very
-use-case specific. But I'll start thinking about this.
-
-
-> 
-> > The specific use case I'm trying to improve with this FUSE passthrough
-> > series is instead related to the scoped storage feature that we introduced
-> > in Android 11, that is based on FUSE, and affects those folders that are
-> > shared among all the Apps (e.g., DCIM, Downloads, etc). More details here:
-> >
-> 
-> sdcard fs has had a lot of reincarnations :-)
-> 
-> I for one am happy with the return to FUSE.
-> Instead of saying "FUSE is too slow" and implementing a kernel sdcardfs,
-> improve FUSE to be faster for everyone - that's the way to go ;-)
-
-
-Yes! This is exactly what we are trying to achieve and this patch-set is
-the first piece of a bigger picture which, among others, includes the
-direct directory access that you mentioned before.
-I hope the community appreciates these improvement attempts :)
-
-As you may have noticed, I recently shared the v9 of the patch-set.
-Thanks to the feedback I received, what we have now has a completely
-different than the initial proposal.
-
-Thanks again everyone for the suggestions!
-
-Alessio
+Do we just include it, but disable it by default so it doesn't eat
+performance?  But, allow it to be reenabled by the folks who generally
+prioritize hardening over performance, like Chromebooks for instance.
