@@ -2,212 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BF727BFAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 10:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 746FE27BFB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 10:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgI2IhX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Sep 2020 04:37:23 -0400
-Received: from mail-io1-f79.google.com ([209.85.166.79]:48309 "EHLO
-        mail-io1-f79.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbgI2IhX (ORCPT
+        id S1727799AbgI2Iiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 04:38:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38486 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbgI2Iiu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Sep 2020 04:37:23 -0400
-Received: by mail-io1-f79.google.com with SMTP id u3so2357864iow.15
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Sep 2020 01:37:22 -0700 (PDT)
+        Tue, 29 Sep 2020 04:38:50 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B1EC061755;
+        Tue, 29 Sep 2020 01:38:50 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id e11so6102014wme.0;
+        Tue, 29 Sep 2020 01:38:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dmGf1FRJlXDhCUgK6fiA66lZin9rP4W1yXe+rkN5lfo=;
+        b=pRjMRO5D33ilsDuphOJlgFYEuejymTllYwEQ9NL8+sx9tiphg8R8mfSxOqQuMbbaEi
+         jCe/ztdfDU4IiL+/ZaTo890rYlE2ON37+Vzui24nT+qJsfycmWRAwBwShTIoVNt7ha6t
+         f+rzbyUumVTWZsOzspEIxB/8YpDP/uWJiUpR9QpEtpxYQgQ9AksWRYsX2CmYk/1gMBlG
+         2d4d8C35oP6HK5OsCrwueA2GYqlVLnywW3Ua/zd6j+h97yzVSL8tQi3mZgFCSXxzrIbO
+         hmXhw2Nh4DBKvH5g2uoieE6S5/YTTTd3KVQFt47CelNpQ8JbJ+ASD1CD3DT3c/xWFJBC
+         8iCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=3LRSjGGqkPX5mBDw4mbslhAYvjhu1Sv4cLBuwz6kq00=;
-        b=VIUg5Z95QhJdTq/+gZqwzHAtRTtTiBCK6D4+IyQ4ZMat7vV6py87vD3K8iPLQbkhAB
-         5yWZBllOxysTJzSdnbqVWcKtQH1Fu4r42SZv2zPIrA7/OLSuFChkkxi3o1v2rgWwRzp/
-         bSx2zJ2qhl6zOUoGE0DdPhcWeSfdnUf6jmU72rlXiu7IKuRDsv4PCz4u8GJ5KBzgGOHc
-         dz1c6B3RgbuHLksUqcZi6Lqhh1suG+1cpixwpoWMNNSLi6apXLExlSQ+Zw5xUSAe3HRP
-         ScBYSIQ0j10xPUs/LQfiAZC77uOPwaN+mt+5ZPlh5Hn6PehdtiMh5X7zpig/LnQAprGq
-         M8QQ==
-X-Gm-Message-State: AOAM533q9rcL2+r0OP1z/Ij1WonCLGZHh3MF79SNheYrM8BkHraByof7
-        zcTg9ognD6MUDdkSri+//5WwWo+FydlRftuTnKr3KjHv+nMk
-X-Google-Smtp-Source: ABdhPJxK8JK3IBXCwghWxVbHlJ1u3zVM53Aa44DCW7UrsCEywttQQPK4lIjQ6dtUlBiXblZ0SBPRMqTIDjD2GNwUkwHvrmYbtjj0
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dmGf1FRJlXDhCUgK6fiA66lZin9rP4W1yXe+rkN5lfo=;
+        b=iQI4oSJ47ZBwPGr8WJ1UcaI1hstlEP1byQeUI9yjQmDf4n4jx7l9HKkTh2j0EzRXWe
+         9TkH6mJI9s2VPrWDd7WIptc63znuiioVttsuozC/TL/Qs5AP0iZyaQxmiRBfEO1oZgmD
+         6KJbwTSn3QPOo/yi6XT5cQ1BTDvqA4nPLJJM243tn6jBGYEZV4W072bN6Y31w8/vaIkH
+         7GzKGGE3QbYaDawTnr0LUAyhjMpzrIdWdGAxGWYGWO4k02bqcvs9d6UO+UMRZN1tP86d
+         nZ6ldOaDQwhlPf6kY6QaIGWC4S6rTuQS00AbzLstIaH8qho/aAOKN5BtDYiz7sHVHRlb
+         +n2Q==
+X-Gm-Message-State: AOAM532smaB4hG9Kq+6Zm8Q5BhxH6/rpF47Rkl4rT7Sr3loV+fx/0D+V
+        NGW6gTx4lm2QDEV4XNuwARRzfORo01U=
+X-Google-Smtp-Source: ABdhPJyBHXd39b1Y0Nd8HyE5S8phPtTwTGwEELYDj45/RQlofUJDP7uVEvOWdHxonXnH9wFc7n5rdA==
+X-Received: by 2002:a05:600c:2189:: with SMTP id e9mr3304284wme.8.1601368728464;
+        Tue, 29 Sep 2020 01:38:48 -0700 (PDT)
+Received: from ?IPv6:2001:a61:2479:6801:d8fe:4132:9f23:7e8f? ([2001:a61:2479:6801:d8fe:4132:9f23:7e8f])
+        by smtp.gmail.com with ESMTPSA id z191sm1470344wme.40.2020.09.29.01.38.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Sep 2020 01:38:47 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] man/statx: Add STATX_ATTR_DAX
+To:     Ira Weiny <ira.weiny@intel.com>
+References: <20200505002016.1085071-1-ira.weiny@intel.com>
+ <20200928164200.GA459459@iweiny-DESK2.sc.intel.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <ddf4dd69-6bf8-8ca7-cdd7-a949884d997f@gmail.com>
+Date:   Tue, 29 Sep 2020 10:38:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:62c9:: with SMTP id d192mr2097122jac.59.1601368641644;
- Tue, 29 Sep 2020 01:37:21 -0700 (PDT)
-Date:   Tue, 29 Sep 2020 01:37:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000a315605b06fb13c@google.com>
-Subject: possible deadlock in io_uring_show_fdinfo
-From:   syzbot <syzbot+d8076141c9af9baf6304@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200928164200.GA459459@iweiny-DESK2.sc.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hello Ira,
 
-syzbot found the following issue on:
+On 9/28/20 6:42 PM, Ira Weiny wrote:
+> On Mon, May 04, 2020 at 05:20:16PM -0700, 'Ira Weiny' wrote:
+>> From: Ira Weiny <ira.weiny@intel.com>
+>>
+>> Linux 5.8 is slated to have STATX_ATTR_DAX support.
+>>
+>> https://lore.kernel.org/lkml/20200428002142.404144-4-ira.weiny@intel.com/
+>> https://lore.kernel.org/lkml/20200504161352.GA13783@magnolia/
+>>
+>> Add the text to the statx man page.
+>>
+>> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> Have I sent this to the wrong list?  Or perhaps I have missed a reply.
 
-HEAD commit:    fb0155a0 Merge tag 'nfs-for-5.9-3' of git://git.linux-nfs...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=109bf9e3900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=adebb40048274f92
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8076141c9af9baf6304
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+No, it's just me being a bit slow, I'm sorry. Thank you for pining.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> I don't see this applied to the man-pages project.[1]  But perhaps I am looking
+> at the wrong place?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8076141c9af9baf6304@syzkaller.appspotmail.com
+Your patch is applied now, and pushed to kernel .org. Thanks!
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.9.0-rc7-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.3/10475 is trying to acquire lock:
-ffff8880a1a23428 (&ctx->uring_lock){+.+.}-{3:3}, at: __io_uring_show_fdinfo fs/io_uring.c:8417 [inline]
-ffff8880a1a23428 (&ctx->uring_lock){+.+.}-{3:3}, at: io_uring_show_fdinfo+0x6c/0x790 fs/io_uring.c:8460
+Cheers,
 
-but task is already holding lock:
-ffff888089039668 (&p->lock){+.+.}-{3:3}, at: seq_read+0x60/0xce0 fs/seq_file.c:155
+Michael
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&p->lock){+.+.}-{3:3}:
-       lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
-       __mutex_lock_common+0x189/0x2fc0 kernel/locking/mutex.c:956
-       __mutex_lock kernel/locking/mutex.c:1103 [inline]
-       mutex_lock_nested+0x1a/0x20 kernel/locking/mutex.c:1118
-       seq_read+0x60/0xce0 fs/seq_file.c:155
-       do_loop_readv_writev fs/read_write.c:734 [inline]
-       do_iter_read+0x438/0x620 fs/read_write.c:955
-       vfs_readv+0xc2/0x120 fs/read_write.c:1073
-       kernel_readv fs/splice.c:355 [inline]
-       default_file_splice_read+0x579/0xa40 fs/splice.c:412
-       do_splice_to fs/splice.c:871 [inline]
-       splice_direct_to_actor+0x3de/0xb60 fs/splice.c:950
-       do_splice_direct+0x201/0x340 fs/splice.c:1059
-       do_sendfile+0x86d/0x1210 fs/read_write.c:1540
-       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-       __x64_sys_sendfile64+0x164/0x1a0 fs/read_write.c:1587
-       do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
--> #1 (sb_writers#4){.+.+}-{0:0}:
-       lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write+0x14b/0x400 fs/super.c:1672
-       io_write+0x50f/0x1230 fs/io_uring.c:3294
-       io_issue_sqe+0x34fe/0xc1a0 fs/io_uring.c:5722
-       __io_queue_sqe+0x297/0x1310 fs/io_uring.c:6178
-       io_submit_sqe fs/io_uring.c:6327 [inline]
-       io_submit_sqes+0x149f/0x2570 fs/io_uring.c:6521
-       __do_sys_io_uring_enter fs/io_uring.c:8349 [inline]
-       __se_sys_io_uring_enter+0x1af/0x1300 fs/io_uring.c:8308
-       do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
--> #0 (&ctx->uring_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:2496 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2601 [inline]
-       validate_chain+0x1b0c/0x88a0 kernel/locking/lockdep.c:3218
-       __lock_acquire+0x110b/0x2ae0 kernel/locking/lockdep.c:4441
-       lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
-       __mutex_lock_common+0x189/0x2fc0 kernel/locking/mutex.c:956
-       __mutex_lock kernel/locking/mutex.c:1103 [inline]
-       mutex_lock_nested+0x1a/0x20 kernel/locking/mutex.c:1118
-       __io_uring_show_fdinfo fs/io_uring.c:8417 [inline]
-       io_uring_show_fdinfo+0x6c/0x790 fs/io_uring.c:8460
-       seq_show+0x567/0x620 fs/proc/fd.c:65
-       seq_read+0x41a/0xce0 fs/seq_file.c:208
-       do_loop_readv_writev fs/read_write.c:734 [inline]
-       do_iter_read+0x438/0x620 fs/read_write.c:955
-       vfs_readv+0xc2/0x120 fs/read_write.c:1073
-       kernel_readv fs/splice.c:355 [inline]
-       default_file_splice_read+0x579/0xa40 fs/splice.c:412
-       do_splice_to fs/splice.c:871 [inline]
-       splice_direct_to_actor+0x3de/0xb60 fs/splice.c:950
-       do_splice_direct+0x201/0x340 fs/splice.c:1059
-       do_sendfile+0x86d/0x1210 fs/read_write.c:1540
-       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-       __x64_sys_sendfile64+0x164/0x1a0 fs/read_write.c:1587
-       do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ctx->uring_lock --> sb_writers#4 --> &p->lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&p->lock);
-                               lock(sb_writers#4);
-                               lock(&p->lock);
-  lock(&ctx->uring_lock);
-
- *** DEADLOCK ***
-
-2 locks held by syz-executor.3/10475:
- #0: ffff88821407a450 (sb_writers#4){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2783 [inline]
- #0: ffff88821407a450 (sb_writers#4){.+.+}-{0:0}, at: do_sendfile+0x83b/0x1210 fs/read_write.c:1539
- #1: ffff888089039668 (&p->lock){+.+.}-{3:3}, at: seq_read+0x60/0xce0 fs/seq_file.c:155
-
-stack backtrace:
-CPU: 0 PID: 10475 Comm: syz-executor.3 Not tainted 5.9.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1d6/0x29e lib/dump_stack.c:118
- print_circular_bug+0xc72/0xea0 kernel/locking/lockdep.c:1703
- check_noncircular+0x1fb/0x3a0 kernel/locking/lockdep.c:1827
- check_prev_add kernel/locking/lockdep.c:2496 [inline]
- check_prevs_add kernel/locking/lockdep.c:2601 [inline]
- validate_chain+0x1b0c/0x88a0 kernel/locking/lockdep.c:3218
- __lock_acquire+0x110b/0x2ae0 kernel/locking/lockdep.c:4441
- lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
- __mutex_lock_common+0x189/0x2fc0 kernel/locking/mutex.c:956
- __mutex_lock kernel/locking/mutex.c:1103 [inline]
- mutex_lock_nested+0x1a/0x20 kernel/locking/mutex.c:1118
- __io_uring_show_fdinfo fs/io_uring.c:8417 [inline]
- io_uring_show_fdinfo+0x6c/0x790 fs/io_uring.c:8460
- seq_show+0x567/0x620 fs/proc/fd.c:65
- seq_read+0x41a/0xce0 fs/seq_file.c:208
- do_loop_readv_writev fs/read_write.c:734 [inline]
- do_iter_read+0x438/0x620 fs/read_write.c:955
- vfs_readv+0xc2/0x120 fs/read_write.c:1073
- kernel_readv fs/splice.c:355 [inline]
- default_file_splice_read+0x579/0xa40 fs/splice.c:412
- do_splice_to fs/splice.c:871 [inline]
- splice_direct_to_actor+0x3de/0xb60 fs/splice.c:950
- do_splice_direct+0x201/0x340 fs/splice.c:1059
- do_sendfile+0x86d/0x1210 fs/read_write.c:1540
- __do_sys_sendfile64 fs/read_write.c:1601 [inline]
- __se_sys_sendfile64 fs/read_write.c:1587 [inline]
- __x64_sys_sendfile64+0x164/0x1a0 fs/read_write.c:1587
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45dd99
-Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f3edfb2ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 0000000000027ec0 RCX: 000000000045dd99
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 000000000000000a
-RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000208 R11: 0000000000000246 R12: 000000000118bf2c
-R13: 00007ffe7ad0078f R14: 00007f3edfb2f9c0 R15: 000000000118bf2c
+> [1] git://git.kernel.org/pub/scm/docs/man-pages/man-pages.git
+> 
+>> ---
+>>  man2/statx.2 | 24 ++++++++++++++++++++++++
+>>  1 file changed, 24 insertions(+)
+>>
+>> diff --git a/man2/statx.2 b/man2/statx.2
+>> index 2e90f07dbdbc..14c4ab78e7bd 100644
+>> --- a/man2/statx.2
+>> +++ b/man2/statx.2
+>> @@ -468,6 +468,30 @@ The file has fs-verity enabled.
+>>  It cannot be written to, and all reads from it will be verified
+>>  against a cryptographic hash that covers the
+>>  entire file (e.g., via a Merkle tree).
+>> +.TP
+>> +.BR STATX_ATTR_DAX (since Linux 5.8)
+>> +The file is in the DAX (cpu direct access) state.  DAX state attempts to
+>> +minimize software cache effects for both I/O and memory mappings of this file.
+>> +It requires a file system which has been configured to support DAX.
+>> +.PP
+>> +DAX generally assumes all accesses are via cpu load / store instructions which
+>> +can minimize overhead for small accesses, but may adversely affect cpu
+>> +utilization for large transfers.
+>> +.PP
+>> +File I/O is done directly to/from user-space buffers and memory mapped I/O may
+>> +be performed with direct memory mappings that bypass kernel page cache.
+>> +.PP
+>> +While the DAX property tends to result in data being transferred synchronously,
+>> +it does not give the same guarantees of O_SYNC where data and the necessary
+>> +metadata are transferred together.
+>> +.PP
+>> +A DAX file may support being mapped with the MAP_SYNC flag, which enables a
+>> +program to use CPU cache flush instructions to persist CPU store operations
+>> +without an explicit
+>> +.BR fsync(2).
+>> +See
+>> +.BR mmap(2)
+>> +for more information.
+>>  .SH RETURN VALUE
+>>  On success, zero is returned.
+>>  On error, \-1 is returned, and
+>> -- 
+>> 2.25.1
+>>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
