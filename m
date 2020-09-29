@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3138E27BA31
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 03:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A25A27BA22
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 03:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbgI2BgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 21:36:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
+        id S1727786AbgI2Bf4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Sep 2020 21:35:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbgI2Baw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 21:30:52 -0400
+        id S1727449AbgI2Ba4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 28 Sep 2020 21:30:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAA8721D43;
-        Tue, 29 Sep 2020 01:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D716216C4;
+        Tue, 29 Sep 2020 01:30:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601343047;
-        bh=mQw6OM3u2KV7FtkFQ65Z0Bp1vJ5Xuw66f17h80F5flE=;
+        s=default; t=1601343055;
+        bh=hjeLJcU4y+D2UPaE6PdGfXAU95Pq1CLWddqqvWCNuNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zl9b9IaOHL+Hp1rBbP6ES7g3/DD+BAiyIQeSvKU3I68i+TDr3iua0ewZ9NQ9v6MQA
-         B/xs7MRiW/J1yX5QLdlPTVeofMdlXYYPh48wQ6okhR6Pcc11B4TFW+Oogssl2hgqYw
-         4aGpWrGhg3J4q9s10A/SNQRQwhUS/EpnI7RvmaYI=
+        b=HP2gxXSTqo7d/1KuVWEez/au5qMfDTuvDULmCc4RA45D0djSPANYJDQGqQ9bBj41c
+         ZLDKPaIa607XZ+apVhw1E0XaGLF1vx3750AVC3TcN21YUzwYQ9tEkArsLBl6wA0fkY
+         Q7ObTAbmn/Q09dJ9nUkyQXJgwZkniWgwwpzLkI30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 15/29] fuse: fix the ->direct_IO() treatment of iov_iter
-Date:   Mon, 28 Sep 2020 21:30:12 -0400
-Message-Id: <20200929013027.2406344-15-sashal@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.8 22/29] io_uring: mark statx/files_update/epoll_ctl as non-SQPOLL
+Date:   Mon, 28 Sep 2020 21:30:19 -0400
+Message-Id: <20200929013027.2406344-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200929013027.2406344-1-sashal@kernel.org>
 References: <20200929013027.2406344-1-sashal@kernel.org>
@@ -41,90 +41,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 933a3752babcf6513117d5773d2b70782d6ad149 ]
+[ Upstream commit 6ca56f845955e325033758f90a2cffe150f31bc8 ]
 
-the callers rely upon having any iov_iter_truncate() done inside
-->direct_IO() countered by iov_iter_reexpand().
+These will naturally fail when attempted through SQPOLL, but either
+with -EFAULT or -EBADF. Make it explicit that these are not workable
+through SQPOLL and return -EINVAL, just like other ops that need to
+use ->files.
 
-Reported-by: Qian Cai <cai@redhat.com>
-Tested-by: Qian Cai <cai@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/file.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ fs/io_uring.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 83d917f7e5425..98e170cc0b932 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3091,11 +3091,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	ssize_t ret = 0;
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_file *ff = file->private_data;
--	bool async_dio = ff->fc->async_dio;
- 	loff_t pos = 0;
- 	struct inode *inode;
- 	loff_t i_size;
--	size_t count = iov_iter_count(iter);
-+	size_t count = iov_iter_count(iter), shortened = 0;
- 	loff_t offset = iocb->ki_pos;
- 	struct fuse_io_priv *io;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d05023ca74bdc..25543fdec5904 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3316,7 +3316,7 @@ static int io_epoll_ctl_prep(struct io_kiocb *req,
+ #if defined(CONFIG_EPOLL)
+ 	if (sqe->ioprio || sqe->buf_index)
+ 		return -EINVAL;
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL)))
+ 		return -EINVAL;
  
-@@ -3103,17 +3102,9 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	inode = file->f_mapping->host;
- 	i_size = i_size_read(inode);
+ 	req->epoll.epfd = READ_ONCE(sqe->fd);
+@@ -3433,7 +3433,7 @@ static int io_fadvise(struct io_kiocb *req, bool force_nonblock)
  
--	if ((iov_iter_rw(iter) == READ) && (offset > i_size))
-+	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
- 		return 0;
- 
--	/* optimization for short read */
--	if (async_dio && iov_iter_rw(iter) != WRITE && offset + count > i_size) {
--		if (offset >= i_size)
--			return 0;
--		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
--		count = iov_iter_count(iter);
--	}
--
- 	io = kmalloc(sizeof(struct fuse_io_priv), GFP_KERNEL);
- 	if (!io)
- 		return -ENOMEM;
-@@ -3129,15 +3120,22 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * By default, we want to optimize all I/Os with async request
- 	 * submission to the client filesystem if supported.
- 	 */
--	io->async = async_dio;
-+	io->async = ff->fc->async_dio;
- 	io->iocb = iocb;
- 	io->blocking = is_sync_kiocb(iocb);
- 
-+	/* optimization for short read */
-+	if (io->async && !io->write && offset + count > i_size) {
-+		iov_iter_truncate(iter, fuse_round_up(ff->fc, i_size - offset));
-+		shortened = count - iov_iter_count(iter);
-+		count -= shortened;
-+	}
-+
- 	/*
- 	 * We cannot asynchronously extend the size of a file.
- 	 * In such case the aio will behave exactly like sync io.
- 	 */
--	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
-+	if ((offset + count > i_size) && io->write)
- 		io->blocking = true;
- 
- 	if (io->async && io->blocking) {
-@@ -3155,6 +3153,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	} else {
- 		ret = __fuse_direct_read(io, iter, &pos);
- 	}
-+	iov_iter_reexpand(iter, iov_iter_count(iter) + shortened);
- 
- 	if (io->async) {
- 		bool blocking = io->blocking;
+ static int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+-	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
++	if (unlikely(req->ctx->flags & (IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL)))
+ 		return -EINVAL;
+ 	if (sqe->ioprio || sqe->buf_index)
+ 		return -EINVAL;
+@@ -5038,6 +5038,8 @@ static int io_async_cancel(struct io_kiocb *req)
+ static int io_files_update_prep(struct io_kiocb *req,
+ 				const struct io_uring_sqe *sqe)
+ {
++	if (unlikely(req->ctx->flags & IORING_SETUP_SQPOLL))
++		return -EINVAL;
+ 	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
+ 		return -EINVAL;
+ 	if (sqe->ioprio || sqe->rw_flags)
 -- 
 2.25.1
 
