@@ -2,232 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1720C27BB33
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 04:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE4427BC98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 07:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbgI2C5T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Sep 2020 22:57:19 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:53989 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727248AbgI2C5S (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Sep 2020 22:57:18 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200929025715epoutp01dea0d6f5251b7e9e361450d00519c43a~5IbxnmrRl1010510105epoutp01I
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Sep 2020 02:57:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200929025715epoutp01dea0d6f5251b7e9e361450d00519c43a~5IbxnmrRl1010510105epoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1601348235;
-        bh=RFF/AUA1tonFt7bhsKJ+aqteROnuxL6A+SEx1vq3I58=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=j/n5Iegp8O4D9HaUX+6iSLDXKX/Dtkv7E5Lcq6mQlcVSkkeGo38ZCjP8ewYXPyHG9
-         GPjSN3QDQuhV2f4CEcS/js74JpvqlFtfxOfKjRBCngoWmilwTD4ZkO4vxz7fh1TXXs
-         Tpk2CPdCBHiv2Zdtz1YudhEAxfoVo+gVscFf4Goc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200929025715epcas1p4ce232b9c9e55546b07426d1cae7a9b73~5IbxYPaWl1684816848epcas1p4X;
-        Tue, 29 Sep 2020 02:57:15 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4C0kZL1lBHzMqYkX; Tue, 29 Sep
-        2020 02:57:14 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        06.FA.09918.882A27F5; Tue, 29 Sep 2020 11:57:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20200929025712epcas1p2a065ed9773f9933a08faf05240a5a1ec~5IbuwvYDD0742007420epcas1p2O;
-        Tue, 29 Sep 2020 02:57:12 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200929025712epsmtrp15073afee7e347e1eb8389bdb6e4af3a6~5IbuwH_fH1019410194epsmtrp1b;
-        Tue, 29 Sep 2020 02:57:12 +0000 (GMT)
-X-AuditID: b6c32a36-729ff700000026be-36-5f72a2883142
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        74.C3.08604.882A27F5; Tue, 29 Sep 2020 11:57:12 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.88.103.87]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20200929025712epsmtip1f426b99cc62c267288fd95e05f510c7e~5Ibul2Izn0830308303epsmtip1H;
-        Tue, 29 Sep 2020 02:57:12 +0000 (GMT)
-From:   Namjae Jeon <namjae.jeon@samsung.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     sj1557.seo@samsung.com,
-        kohada.tetsuhiro@dc.mitsubishielectric.co.jp, kohada.t2@gmail.com,
-        stable@vger.kernel.org, Namjae Jeon <namjae.jeon@samsung.com>
-Subject: [PATCH] exfat: fix use of uninitialized spinlock on error path
-Date:   Tue, 29 Sep 2020 11:51:05 +0900
-Message-Id: <20200929025105.14341-1-namjae.jeon@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7bCmgW7HoqJ4g0czTC1+zL3NYvHm5FQW
-        iz17T7JY/Jheb7Hl3xFWiwUbHzE6sHk0H1vJ5rFz1l12j74tqxg9Pm+SC2CJyrHJSE1MSS1S
-        SM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAdqtpFCWmFMKFApILC5W
-        0rezKcovLUlVyMgvLrFVSi1IySkwNCjQK07MLS7NS9dLzs+1MjQwMDIFqkzIyehd+IGp4J1i
-        xf8lC1kbGLtkuxg5OSQETCQW9D1mBLGFBHYwSpy+U9DFyAVkf2KUeL37FzuE841R4uD3e+ww
-        HWvmfWGESOxllLj4ZwcTXEvz211sXYwcHGwC2hJ/toiCmCICihKX3zuBlDALLGCUWPb/KjPI
-        IGEBd4nFX5eBrWYRUJU4/Pk4K4jNK2AjcaDnKSvEMnmJ1RsOMIM0SwgsYpc43vsX6goXiZNz
-        X0IVCUu8Or4FKi4l8bK/jR1ksYRAtcTH/cwQ4Q5GiRffbSFsY4mb6zewgpQwC2hKrN+lDxFW
-        lNj5ey7YOcwCfBLvvvawQkzhlehoE4IoUZXou3SYCcKWluhq/wC11ENi67+7LJBAjJX4MnUG
-        ywRG2VkICxYwMq5iFEstKM5NTy02LDBCjqJNjODUpGW2g3HS2w96hxiZOBgPMUpwMCuJ8Prm
-        FMQL8aYkVlalFuXHF5XmpBYfYjQFBtdEZinR5HxgcswriTc0NTI2NrYwMTM3MzVWEud9eEsh
-        XkggPbEkNTs1tSC1CKaPiYNTqoHJ5lc158GHU69GlXuKNE6esLNwbvytLburtzjbO9lEMjHt
-        /7XY53fCn0nT//zm7/h4X0B7v3pqyrbnf/QTy5nfqWs8aBONkb4tYSstN7P/LcvVALcEnXKH
-        N+cCV77+ODP7wrykdH0dn6KNGtXmuwN8wi8Z732kcv747Elaz1s8Zzd//ZlY9HyhbKfa4pQ1
-        089nL9hqqvL62eSszZlM187rq3y7oJ58Zs224M+9ylc2B7FoJ7+oYQ1Rq91b23h0v2Vv7u1V
-        AhUXPm1TLTm149WMrX+ksnhzV67LEa5MerF0kqFidl2NteFH/isrM7ra5h7fOq1u3s5KsRVX
-        BdfZMLE/Kao6u1JsW7R5yqO+BdL7lViKMxINtZiLihMBxfCzatYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJMWRmVeSWpSXmKPExsWy7bCSnG7HoqJ4gxm9UhY/5t5msXhzciqL
-        xZ69J1ksfkyvt9jy7wirxYKNjxgd2Dyaj61k89g56y67R9+WVYwenzfJBbBEcdmkpOZklqUW
-        6dslcGX0LvzAVPBOseL/koWsDYxdsl2MnBwSAiYSa+Z9Yexi5OIQEtjNKPHr0UxWiIS0xLET
-        Z5i7GDmAbGGJw4eLIWo+MEq035zBChJnE9CW+LNFFMQUEVCUuPzeCaSEWWAJo8SCWcfYQMYI
-        C7hLLP66jBHEZhFQlTj8+TjYeF4BG4kDPU+hVslLrN5wgHkCI88CRoZVjJKpBcW56bnFhgWG
-        eanlesWJucWleel6yfm5mxjBwaKluYNx+6oPeocYmTgYDzFKcDArifD65hTEC/GmJFZWpRbl
-        xxeV5qQWH2KU5mBREue9UbgwTkggPbEkNTs1tSC1CCbLxMEp1cA06Xmcg8eDtDf9u5/a/k+6
-        cjO0rGTV9iurfG30otQnW/uc+pVULrT3sITo36PfnixZxZj/I+Gau0DvZfN2FYfgXJv4uoVL
-        LZ/FuUk63Er037UmWed42fqjcvvE579X8oyumKHd+5XXV3eLV/nthmXqRk/fX3rLJRJ9qq9Y
-        hXWL8yVTjbAFnj+1Vk3kv2C+duuX1z96J+nu2Heo+U7ZzEIJkdCzUw+z3Tt/6fElsy8an37d
-        WvpapiwiYefx2Ss39h66qtjOrBLMrJRVLNp14OStrGvb/Fz3eif+ObYhMvWnkfcXp32nMq/o
-        1WyUcrHsCl1zrejkJdMjn749+B20RfXt5K2Rj0QK+h9vF1j+bUYkjxJLcUaioRZzUXEiAGdp
-        wDKFAgAA
-X-CMS-MailID: 20200929025712epcas1p2a065ed9773f9933a08faf05240a5a1ec
-X-Msg-Generator: CA
+        id S1727350AbgI2FzF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 01:55:05 -0400
+Received: from mga01.intel.com ([192.55.52.88]:61546 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725355AbgI2FzF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Sep 2020 01:55:05 -0400
+IronPort-SDR: t0pSNbRhJHaQ9yYpAppY7kdL892TmrOfdqGBm1bIkZEgdtZronCb/RhYfSe1YlX2HnmX6NWPX+
+ L+gBcWUXXuNA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="180270377"
+X-IronPort-AV: E=Sophos;i="5.77,317,1596524400"; 
+   d="scan'208";a="180270377"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 21:58:56 -0700
+IronPort-SDR: MTa3SG/D44iPy0JwazIs4vYf6q4sqQXDHzSUKL55ywUxjojUAHVckBJLYiTCfwbvERNG4JggIG
+ lQ0mmaWesEtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,317,1596524400"; 
+   d="scan'208";a="307614587"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orsmga003.jf.intel.com with ESMTP; 28 Sep 2020 21:58:55 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 28 Sep 2020 21:58:54 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 28 Sep 2020 21:58:54 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1713.5; Mon, 28 Sep 2020 21:58:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Cjk+TjRFFzrQVZP8/NQqAuTdBvNyVCNKraSHHBOXgS7Jr8314m9q6gf/1kSny7UgDvIPTwNLlhA6aJ3IaU8ZKL6cNNrIDQETGm4ln0Z3VBdqNXUAjGD2K7jckaYQ5TOREnRWPsvTZENdUSGoIJ4gakMYQxdFmWExiKneE5euY9hoFOhRivoa7Infe3Afj/GyVuvlrdEHsQ1W64U2qbPAyyoc68HailuVnp+tVyHVZhC1fFobNzEn3Ab+gP0LtfgsLw9lhHAVypqB+lJU87RuRYuIw8MPQXRxY75HCkzf82KeKHwIhEiD5gKM7bDnosxctfDeN5iXNnKS7SRRfbjgrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FUsklQmapfplnqf1yTcJidXuvWTsT7CgEvKfdT9uYGA=;
+ b=Yo3WbhvaZyeUOlSYy6/LeB8v7qWxBpxXv1nlOx4h8+M5NxzrST0pP54laPmmf9XVDzS6zCGgusYntb6hvenQNoyCYBedXo5YkZDTNKe1hkpsUA+caIZGGuB+GEb68qneDVOiHPxkdRuInma79ixhjkE2STdUqbbnRIokk6azsjZsMhgpGJlm9HVqMQI1BdVG5V1NK5SUq7A6P5flWabkHR3S1NdMNSHxeILJsx+pHV6OuuB7pF55ml/jQPFiDxNNlFQqQ5JM2uVl11sIolXjcyNADdFY/mSTEsr353aX8qz3olUUEyv8UDBJukHZhYDOrm7mFnQpF97xodFJbPmClQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=intel.onmicrosoft.com;
+ s=selector2-intel-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FUsklQmapfplnqf1yTcJidXuvWTsT7CgEvKfdT9uYGA=;
+ b=jEE2yb6RnQ0rsQ9qDKcMYvr/aBP5IoS3W6zJ8EuQy4gulLXEIFXDj82054aAg54qBKUZyECehLlNfWmEZF36bHOeMMlAXfNMLXpZ/n9chorIBzMpIxsQw5+lFBoAtLRVwimT4LVTvMdKGVOxGXw4rbJTJf3lj/ow/BTQvLxJ74Y=
+Received: from SN6PR11MB3184.namprd11.prod.outlook.com (2603:10b6:805:bd::17)
+ by SA0PR11MB4653.namprd11.prod.outlook.com (2603:10b6:806:94::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3412.22; Tue, 29 Sep
+ 2020 04:58:44 +0000
+Received: from SN6PR11MB3184.namprd11.prod.outlook.com
+ ([fe80::b901:8e07:4340:6704]) by SN6PR11MB3184.namprd11.prod.outlook.com
+ ([fe80::b901:8e07:4340:6704%7]) with mapi id 15.20.3412.029; Tue, 29 Sep 2020
+ 04:58:44 +0000
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "rppt@kernel.org" <rppt@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "tycho@tycho.ws" <tycho@tycho.ws>,
+        "david@redhat.com" <david@redhat.com>,
+        "cl@linux.com" <cl@linux.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "idan.yaniv@ibm.com" <idan.yaniv@ibm.com>,
+        "kirill@shutemov.name" <kirill@shutemov.name>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "mtk.manpages@gmail.com" <mtk.manpages@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+Subject: Re: [PATCH v6 3/6] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Thread-Topic: [PATCH v6 3/6] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Thread-Index: AQHWlh00WOVRjW6Kw0OmwswTJieWmg==
+Date:   Tue, 29 Sep 2020 04:58:44 +0000
+Message-ID: <d466e1f13ff615332fe1f513f6c1d763db28bd9a.camel@intel.com>
+References: <20200924132904.1391-1-rppt@kernel.org>
+         <20200924132904.1391-4-rppt@kernel.org>
+In-Reply-To: <20200924132904.1391-4-rppt@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=intel.com;
+x-originating-ip: [192.55.55.43]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f70bc009-fad6-405a-8e4d-08d8643457cd
+x-ms-traffictypediagnostic: SA0PR11MB4653:
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr,ExtFwd
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SA0PR11MB4653F3AF8D931E8B3292D667C9320@SA0PR11MB4653.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ieS4qv3igJqVq2uNt8hS2k67axxhLmQpSmyH4p/UhJwfou7k9DeSxTNFgFcZlnjNXNBMA6P2MLM9paGd+6AJcLBwAI1LeqPtFqG83RPIPUiL3OB4uDE/RYQARLa+BPcvje3Kw++No46etp7OUi1bN3DJijZEBPbruuqh/eH7tquAnQogNbIRK1irozw17BH6RXIkJlIY6kql/wSavqO9h22SfkFejG9U4Qb0LcOrizbvhCL+Hw9iXN69n2E76JdQjcfNKxVeEijTRbHeK2zBCE1VDHk5B777G73nJ6I07P0V3/DQPTagPN75esUsU7FEiMyHbTUw/FeClE0pcEQ8LHSvIWMke6S8Yl2ClKSas5+v00NZ9N4cBqqj3ziG6FSjGsiGDzFOfw1xFVnH28GcZo+sbbogI4h3MRV/T8Dbc3M=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR11MB3184.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(39860400002)(376002)(346002)(366004)(396003)(136003)(7406005)(316002)(66446008)(4326008)(64756008)(186003)(5660300002)(66476007)(66556008)(6512007)(6486002)(8936002)(26005)(91956017)(76116006)(66946007)(8676002)(86362001)(36756003)(83380400001)(110136005)(7416002)(6506007)(2906002)(478600001)(71200400001)(2616005)(54906003)(219293001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: RxwwA1BEh2ArsB3KR0Moev6U8/fZwfr8YodkyCbo1nSTSbC3k2hqil6A7vXde1YZGqgwqG0OnuBn/XSfKLUeFRbHFXziVwc/57IA4IE2iFNh/1U+YRGE6ZWFWJ0o9lJIE9FCJ58Vh0h6Tg4Mh0VWth/UrvqgkjcsYBY2hI7PIeu/sMOvsQqJkmOAvNno4QeIYZUPyfq6mtaddTP0wjeEG51ws5/L0YuTmTizeH+LBrmy6GnxdMo/uFjp7jlYn2uVo9JI6mFgxSGbKC+tPl1jMB15kE8pbOcjIpcA0/0SBeUZsfEukKryQv8VvPm61qrHj29la/xPD7RWjeSlywFBy820BJBsz+tQ3JjgbesYr3WnpCFMLjmIQMTYBFVbvARNut0SmOE7iDjp3m9VJ42uD4gIa2Rl4malMnc76DZhXDzhvbXQgN+5IeIfAMDJKgc7vBlnI8TVXeADuRQZ7vt2ZJDJVnBq0tQt7mytDphUgP+zBu79/3SV4raAm6IMyxM+iaZaYafqhv0Qmg7ZY6Fr7ERxwLvhr2nK9cznuw2x7Su/JMGvuNcpPDvef237krn4qOQORCXM3V31YueNAw0UpZIDEXFIz9ezmDrdPA9yGjPqjiMnga2pbWmA6dgiNGJBt7KUxWQ0q3XYF19KSJxZ4Q==
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200929025712epcas1p2a065ed9773f9933a08faf05240a5a1ec
-References: <CGME20200929025712epcas1p2a065ed9773f9933a08faf05240a5a1ec@epcas1p2.samsung.com>
+Content-ID: <9FEAF26BDE791E4CAE434527DF482AD0@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR11MB3184.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f70bc009-fad6-405a-8e4d-08d8643457cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2020 04:58:44.4152
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: etO50W/t3kxQxurmTtPYdwh2lIDsJCMEOsAsZgbyH0b+f4mv2fltU/sZqL5BUysy+feywqIiVmJEnSrFbZ2N2W7WcYwG47lolWQLnvPYgCI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4653
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot reported warning message:
-
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1d6/0x29e lib/dump_stack.c:118
- register_lock_class+0xf06/0x1520 kernel/locking/lockdep.c:893
- __lock_acquire+0xfd/0x2ae0 kernel/locking/lockdep.c:4320
- lock_acquire+0x148/0x720 kernel/locking/lockdep.c:5029
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- exfat_cache_inval_inode+0x30/0x280 fs/exfat/cache.c:226
- exfat_evict_inode+0x124/0x270 fs/exfat/inode.c:660
- evict+0x2bb/0x6d0 fs/inode.c:576
- exfat_fill_super+0x1e07/0x27d0 fs/exfat/super.c:681
- get_tree_bdev+0x3e9/0x5f0 fs/super.c:1342
- vfs_get_tree+0x88/0x270 fs/super.c:1547
- do_new_mount fs/namespace.c:2875 [inline]
- path_mount+0x179d/0x29e0 fs/namespace.c:3192
- do_mount fs/namespace.c:3205 [inline]
- __do_sys_mount fs/namespace.c:3413 [inline]
- __se_sys_mount+0x126/0x180 fs/namespace.c:3390
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-If exfat_read_root() returns an error, spinlock is used in 
-exfat_evict_inode() without initialization. This patch combines
-exfat_cache_init_inode() with exfat_inode_init_once() to initialize
-spinlock by slab constructor.
-
-Fixes: c35b6810c495 ("exfat: add exfat cache")
-Cc: stable@vger.kernel.org # v5.7+
-Reported-by: syzbot <syzbot+b91107320911a26c9a95@syzkaller.appspotmail.com>
-Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
----
- fs/exfat/cache.c    | 11 -----------
- fs/exfat/exfat_fs.h |  3 ++-
- fs/exfat/inode.c    |  2 --
- fs/exfat/super.c    |  5 ++++-
- 4 files changed, 6 insertions(+), 15 deletions(-)
-
-diff --git a/fs/exfat/cache.c b/fs/exfat/cache.c
-index 03d0824fc368..5a2f119b7e8c 100644
---- a/fs/exfat/cache.c
-+++ b/fs/exfat/cache.c
-@@ -17,7 +17,6 @@
- #include "exfat_raw.h"
- #include "exfat_fs.h"
- 
--#define EXFAT_CACHE_VALID	0
- #define EXFAT_MAX_CACHE		16
- 
- struct exfat_cache {
-@@ -61,16 +60,6 @@ void exfat_cache_shutdown(void)
- 	kmem_cache_destroy(exfat_cachep);
- }
- 
--void exfat_cache_init_inode(struct inode *inode)
--{
--	struct exfat_inode_info *ei = EXFAT_I(inode);
--
--	spin_lock_init(&ei->cache_lru_lock);
--	ei->nr_caches = 0;
--	ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
--	INIT_LIST_HEAD(&ei->cache_lru);
--}
--
- static inline struct exfat_cache *exfat_cache_alloc(void)
- {
- 	return kmem_cache_alloc(exfat_cachep, GFP_NOFS);
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index e586daf5a2e7..b8f0e829ecbd 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -248,6 +248,8 @@ struct exfat_sb_info {
- 	struct rcu_head rcu;
- };
- 
-+#define EXFAT_CACHE_VALID	0
-+
- /*
-  * EXFAT file system inode in-memory data
-  */
-@@ -426,7 +428,6 @@ extern const struct dentry_operations exfat_utf8_dentry_ops;
- /* cache.c */
- int exfat_cache_init(void);
- void exfat_cache_shutdown(void);
--void exfat_cache_init_inode(struct inode *inode);
- void exfat_cache_inval_inode(struct inode *inode);
- int exfat_get_cluster(struct inode *inode, unsigned int cluster,
- 		unsigned int *fclus, unsigned int *dclus,
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 687f77653187..730373e0965a 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -608,8 +608,6 @@ static int exfat_fill_inode(struct inode *inode, struct exfat_dir_entry *info)
- 	ei->i_crtime = info->crtime;
- 	inode->i_atime = info->atime;
- 
--	exfat_cache_init_inode(inode);
--
- 	return 0;
- }
- 
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index b29935a91b9b..3ffdce5c7384 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -375,7 +375,6 @@ static int exfat_read_root(struct inode *inode)
- 	inode->i_mtime = inode->i_atime = inode->i_ctime = ei->i_crtime =
- 		current_time(inode);
- 	exfat_truncate_atime(&inode->i_atime);
--	exfat_cache_init_inode(inode);
- 	return 0;
- }
- 
-@@ -762,6 +761,10 @@ static void exfat_inode_init_once(void *foo)
- {
- 	struct exfat_inode_info *ei = (struct exfat_inode_info *)foo;
- 
-+	spin_lock_init(&ei->cache_lru_lock);
-+	ei->nr_caches = 0;
-+	ei->cache_valid_id = EXFAT_CACHE_VALID + 1;
-+	INIT_LIST_HEAD(&ei->cache_lru);
- 	INIT_HLIST_NODE(&ei->i_hash_fat);
- 	inode_init_once(&ei->vfs_inode);
- }
--- 
-2.17.1
-
+T24gVGh1LCAyMDIwLTA5LTI0IGF0IDE2OjI5ICswMzAwLCBNaWtlIFJhcG9wb3J0IHdyb3RlOg0K
+PiBJbnRyb2R1Y2UgIm1lbWZkX3NlY3JldCIgc3lzdGVtIGNhbGwgd2l0aCB0aGUgYWJpbGl0eSB0
+byBjcmVhdGUNCj4gbWVtb3J5DQo+IGFyZWFzIHZpc2libGUgb25seSBpbiB0aGUgY29udGV4dCBv
+ZiB0aGUgb3duaW5nIHByb2Nlc3MgYW5kIG5vdA0KPiBtYXBwZWQgbm90DQo+IG9ubHkgdG8gb3Ro
+ZXIgcHJvY2Vzc2VzIGJ1dCBpbiB0aGUga2VybmVsIHBhZ2UgdGFibGVzIGFzIHdlbGwuDQo+IA0K
+PiBUaGUgdXNlciB3aWxsIGNyZWF0ZSBhIGZpbGUgZGVzY3JpcHRvciB1c2luZyB0aGUgbWVtZmRf
+c2VjcmV0KCkNCj4gc3lzdGVtIGNhbGwNCj4gd2hlcmUgZmxhZ3Mgc3VwcGxpZWQgYXMgYSBwYXJh
+bWV0ZXIgdG8gdGhpcyBzeXN0ZW0gY2FsbCB3aWxsIGRlZmluZQ0KPiB0aGUNCj4gZGVzaXJlZCBw
+cm90ZWN0aW9uIG1vZGUgZm9yIHRoZSBtZW1vcnkgYXNzb2NpYXRlZCB3aXRoIHRoYXQgZmlsZQ0K
+PiBkZXNjcmlwdG9yLg0KPiANCj4gIEN1cnJlbnRseSB0aGVyZSBhcmUgdHdvIHByb3RlY3Rpb24g
+bW9kZXM6DQo+IA0KPiAqIGV4Y2x1c2l2ZSAtIHRoZSBtZW1vcnkgYXJlYSBpcyB1bm1hcHBlZCBm
+cm9tIHRoZSBrZXJuZWwgZGlyZWN0IG1hcA0KPiBhbmQgaXQNCj4gICAgICAgICAgICAgICBpcyBw
+cmVzZW50IG9ubHkgaW4gdGhlIHBhZ2UgdGFibGVzIG9mIHRoZSBvd25pbmcgbW0uDQoNClNlZW1z
+IGxpa2UgdGhlcmUgd2VyZSBzb21lIGNvbmNlcm5zIHJhaXNlZCBhcm91bmQgZGlyZWN0IG1hcA0K
+ZWZmaWNpZW5jeSwgYnV0IGluIGNhc2UgeW91IGFyZSBnb2luZyB0byByZXdvcmsgdGhpcy4uLmhv
+dyBkb2VzIHRoaXMNCm1lbW9yeSB3b3JrIGZvciB0aGUgZXhpc3Rpbmcga2VybmVsIGZ1bmN0aW9u
+YWxpdHkgdGhhdCBkb2VzIHRoaW5ncyBsaWtlDQp0aGlzPw0KDQpnZXRfdXNlcl9wYWdlcygsICZw
+YWdlKTsNCnB0ciA9IGttYXAocGFnZSk7DQpmb28gPSAqcHRyOw0KDQpOb3Qgc3VyZSBpZiBJJ20g
+bWlzc2luZyBzb21ldGhpbmcsIGJ1dCBJIHRoaW5rIGFwcHMgY291bGQgY2F1c2UgdGhlDQprZXJu
+ZWwgdG8gYWNjZXNzIGEgbm90LXByZXNlbnQgcGFnZSBhbmQgb29wcy4NCg==
