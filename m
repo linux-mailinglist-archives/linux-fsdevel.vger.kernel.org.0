@@ -2,84 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD0427C856
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 14:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B9E27CA47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Sep 2020 14:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731212AbgI2MBW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Sep 2020 08:01:22 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:60637 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731686AbgI2MBD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Sep 2020 08:01:03 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UATygG0_1601380850;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UATygG0_1601380850)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 29 Sep 2020 20:01:00 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     io-uring@vger.kernel.org, axboe@kernel.dk
-Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Hao Xu <haoxu@linux.alibaba.com>
-Subject: [PATCH] io_uring: support async buffered reads when readahead is disabled
-Date:   Tue, 29 Sep 2020 20:00:45 +0800
-Message-Id: <1601380845-206925-1-git-send-email-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1732363AbgI2MRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Sep 2020 08:17:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46732 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732356AbgI2MRv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 29 Sep 2020 08:17:51 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id A3971AC84;
+        Tue, 29 Sep 2020 12:17:49 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 45172DA701; Tue, 29 Sep 2020 14:16:30 +0200 (CEST)
+Date:   Tue, 29 Sep 2020 14:16:29 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, johannes.thumshirn@wdc.com,
+        dsterba@suse.com, darrick.wong@oracle.com, josef@toxicpanda.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: [PATCH 01/14] fs: remove dio_end_io()
+Message-ID: <20200929121629.GD6756@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, johannes.thumshirn@wdc.com,
+        dsterba@suse.com, darrick.wong@oracle.com, josef@toxicpanda.com,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+References: <20200924163922.2547-1-rgoldwyn@suse.de>
+ <20200924163922.2547-2-rgoldwyn@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200924163922.2547-2-rgoldwyn@suse.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The async buffered reads feature is not working when readahead is
-turned off. There are two things to concern:
+On Thu, Sep 24, 2020 at 11:39:08AM -0500, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> Since we removed the last user of dio_end_io(), remove the helper
+> function dio_end_io().
+> 
+> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+> Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-- when doing retry in io_read, not only the IOCB_WAITQ flag but also
-  the IOCB_NOWAIT flag is still set, which makes it goes to would_block
-  phase in generic_file_buffered_read() and then return -EAGAIN. After
-  that, the io-wq thread work is queued, and later doing the async
-  reads in the old way.
-
-- even if we remove IOCB_NOWAIT when doing retry, the feature is still
-  not running properly, since in generic_file_buffered_read() it goes to
-  lock_page_killable() after calling mapping->a_ops->readpage() to do
-  IO, and thus causing process to sleep.
-
-Fixes: 1a0a7853b901 ("mm: support async buffered reads in generic_file_buffered_read()")
-Fixes: 3b2a4439e0ae ("io_uring: get rid of kiocb_wait_page_queue_init()")
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
- fs/io_uring.c | 1 +
- mm/filemap.c  | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 556e4a2ead07..e7e8ea58274e 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3106,6 +3106,7 @@ static bool io_rw_should_retry(struct io_kiocb *req)
- 	wait->wait.flags = 0;
- 	INIT_LIST_HEAD(&wait->wait.entry);
- 	kiocb->ki_flags |= IOCB_WAITQ;
-+	kiocb->ki_flags &= ~IOCB_NOWAIT;
- 	kiocb->ki_waitq = wait;
- 
- 	io_get_req_task(req);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 1aaea26556cc..ea383478fc22 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2267,7 +2267,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		}
- 
- 		if (!PageUptodate(page)) {
--			error = lock_page_killable(page);
-+			if (iocb->ki_flags & IOCB_WAITQ)
-+				error = lock_page_async(page, iocb->ki_waitq);
-+			else
-+				error = lock_page_killable(page);
-+
- 			if (unlikely(error))
- 				goto readpage_error;
- 			if (!PageUptodate(page)) {
--- 
-1.8.3.1
-
+I'll add this and patch 2 to misc-next as they're cleanups after the
+dio-iomap switch, so they're in the same batch.
