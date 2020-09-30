@@ -2,162 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A28B727E2AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 09:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6CA227E478
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 11:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbgI3Hb4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 03:31:56 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:51982 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725535AbgI3Hb4 (ORCPT
+        id S1728349AbgI3JDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 05:03:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60569 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725776AbgI3JDu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 03:31:56 -0400
-Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4D5008282AC;
-        Wed, 30 Sep 2020 17:31:53 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kNWae-0002Ke-HS; Wed, 30 Sep 2020 17:31:52 +1000
-Date:   Wed, 30 Sep 2020 17:31:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/2] Remove shrinker's nr_deferred
-Message-ID: <20200930073152.GH12096@dread.disaster.area>
-References: <20200916185823.5347-1-shy828301@gmail.com>
- <20200917023742.GT12096@dread.disaster.area>
- <CAHbLzkrGB_=KBgD1sMpW33QjWSGTXNnLy3JtVUyHc2Omsa3gWA@mail.gmail.com>
- <20200921003231.GZ12096@dread.disaster.area>
- <CAHbLzkqAWiO4uhGBmbUjgs6EmQazYQXHPxR2-MWo4X8zxZ7gfQ@mail.gmail.com>
- <CAHbLzkoidoBWtLtd_3DjuSvm7dAJV1gSJAMmWY95=e8N7Hy=TQ@mail.gmail.com>
+        Wed, 30 Sep 2020 05:03:50 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601456628;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=R/QJgyxDMvcRR6m4xtClN4vnEz5dUPsFrc65pR0SiHw=;
+        b=W/82m9yjYAoURk9qmrpgCStagLLLQd0QEZyYB+6j5YwF0DTsbyVd3oxJbAepa9cQI3qEcB
+        oKNS6RQYy3uql/XY9UMBZSPF/WWrvlFhgAe5Jukui8TVDk9AKPuqQuHVBQukCXaPYmjsLv
+        4N7zow630GnjE+30ImMTnVaq4+FCZl4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-136-i68UVix_NfyAMa8aX9sv8g-1; Wed, 30 Sep 2020 05:03:45 -0400
+X-MC-Unique: i68UVix_NfyAMa8aX9sv8g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B2C7C100A969;
+        Wed, 30 Sep 2020 09:03:41 +0000 (UTC)
+Received: from localhost (ovpn-114-33.ams2.redhat.com [10.36.114.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2411355775;
+        Wed, 30 Sep 2020 09:03:40 +0000 (UTC)
+Date:   Wed, 30 Sep 2020 10:03:40 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Brian Foster <bfoster@redhat.com>
+Subject: Re: [Virtio-fs] [RFC PATCH] fuse: update attributes on read() only
+ on timeout
+Message-ID: <20200930090340.GB201070@stefanha-x1.localdomain>
+References: <20200929185015.GG220516@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20200929185015.GG220516@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=stefanha@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
 Content-Disposition: inline
-In-Reply-To: <CAHbLzkoidoBWtLtd_3DjuSvm7dAJV1gSJAMmWY95=e8N7Hy=TQ@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
-        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
-        a=UfYygaMNmWWEh68mB8UA:9 a=CjuIK1q_8ugA:10 a=-RoEEKskQ1sA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 26, 2020 at 01:31:36PM -0700, Yang Shi wrote:
-> Hi Dave,
-> 
-> I was exploring to make the "nr_deferred" per memcg. I looked into and
-> had some prototypes for two approaches so far:
-> 1. Have per memcg data structure for each memcg aware shrinker, just
-> like what shrinker_map does.
-> 2. Have "nr_deferred" on list_lru_one for memcg aware lists.
-> 
-> Both seem feasible, however the latter one looks much cleaner, I just
-> need to add two new APIs for shrinker which gets and sets
-> "nr_deferred" respectively. And, just memcg aware shrinkers need
-> define those two callouts. We just need to care about memcg aware
-> shrinkers, and the most memcg aware shrinkers (inode/dentry, nfs and
-> workingset) use list_lru, so I'd prefer the latter one.
+--61jdw2sOBCFtR2d/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The list_lru is completely separate from the shrinker context. The
-structure that tracks objects in a subsystem is not visible or aware
-of how the high level shrinker scanning algorithms work. Not to
-mention that subsystem shrinkers can be memcg aware without using
-list_lru structures to index objects owned by a given memcg. Hence I
-really don't like the idea of tying the shrinker control data deeply
-into subsystem cache indexing....
+On Tue, Sep 29, 2020 at 02:50:15PM -0400, Vivek Goyal wrote:
+> Following commit added a flag to invalidate guest page cache automaticall=
+y.
+>=20
+> 72d0d248ca823 fuse: add FUSE_AUTO_INVAL_DATA init flag
+>=20
+> Idea seemed to be that for network file systmes if client A modifies
+> the file, then client B should be able to detect that mtime of file
+> change and invalidate its own cache and fetch new data from server.
+>=20
+> There are few questions/issues with this method.
+>=20
+> How soon client B able to detect that file has changed. Should it
+> first GETATTR from server for every READ and compare mtime. That
+> will be much stronger cache coherency but very slow because every
+> READ will first be preceeded by a GETATTR.
+>=20
+> Or should this be driven by inode timeout. That is if inode cached attrs
+> (including mtime) have timed out, we fetch new mtime from server and
+> invalidate cache based on that.
+>=20
+> Current logic calls fuse_update_attr() on every READ. But that method
+> will result in GETATTR only if either attrs have timedout or if cached
+> attrs have been invalidated.
+>=20
+> If client B is only doing READs (and not WRITEs), then attrs should be
+> valid for inode timeout interval. And that means client B will detect
+> mtime change only after timeout interval.
+>=20
+> But if client B is also doing WRITE, then once WRITE completes, we
+> invalidate cached attrs. That means next READ will force GETATTR()
+> and invalidate page cache. In this case client B will detect the
+> change by client A much sooner but it can't differentiate between
+> its own WRITEs and by another client WRITE. So every WRITE followed
+> by READ will result in GETATTR, followed by page cache invalidation
+> and performance suffers in mixed read/write workloads.
+>=20
+> I am assuming that intent of auto_inval_data is to detect changes
+> by another client but it can take up to "inode timeout" seconds
+> to detect that change. (And it does not guarantee an immidiate change
+> detection).
+>=20
+> If above assumption is acceptable, then I am proposing this patch
+> which will update attrs on READ only if attrs have timed out. This
+> means every second we will do a GETATTR and invalidate page cache.
+>=20
+> This is also suboptimal because only if client B is writing, our
+> cache is still valid but we will still invalidate it after 1 second.
+> But we don't have a good mechanism to differentiate between our own
+> changes and another client's changes. So this is probably second
+> best method to reduce the extent of issue.
+>=20
+> I am running equivalent of following fio workload on virtiofs (cache=3Dau=
+to)
+> and there I see a performance improvement of roughly 12%.
+>=20
+> fio --direct=3D1 --gtod_reduce=3D1 --name=3Dtest --filename=3Drandom_read=
+_write.fio
+> +--bs=3D4k --iodepth=3D64 --size=3D4G --readwrite=3Drandrw --rwmixread=3D=
+75
+> +--output=3D/output/fio.txt
+>=20
+> NAME                    WORKLOAD                Bandwidth       IOPS
+> vtfs-auto-sh=09=09randrw-psync            43.3mb/14.4mb   10.8k/3709
+> vtfs-auto-sh-invaltime  randrw-psync            48.9mb/16.3mb   12.2k/419=
+7
+>=20
+> Signee-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/dir.c    |  6 ++++++
+>  fs/fuse/file.c   | 21 +++++++++++++++------
+>  fs/fuse/fuse_i.h |  1 +
+>  3 files changed, 22 insertions(+), 6 deletions(-)
 
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-> But there are two memcg aware shrinkers are not that straightforward
-> to deal with:
-> 1. The deferred split THP. It doesn't use list_lru, but actually I
-> don't worry about this one, since it is not cache just some partial
-> unmapped THPs. I could try to convert it to use list_lru later on or
-> just kill deferred split by making vmscan split partial unmapped THPs.
-> So TBH I don't think it is a blocker.
+--61jdw2sOBCFtR2d/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-What a fantastic abuse of the reclaim infrastructure. :/
+-----BEGIN PGP SIGNATURE-----
 
-First it was just defered work. Then it became NUMA_AWARE. THen it
-became MEMCG_AWARE and....
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl90SewACgkQnKSrs4Gr
+c8h0mggAoyljBPY2q3mlW+TCBJ5Ig/QXnVvLDMTgatjG0DXACJ3pWp78+LClzLZK
+sXvfGi1A69uvlZyGex/CHXg3IGO+47Acy/kNBTgjF1u5Uqt8XasCmR1Vdybc8gvQ
+kWBm+B3ovtmLEBd/dVOJETV6y/4ozLYum30efwMcVX55Atfn7kL4A11Way6HuSy0
+yB7ZwkfyuAxtfUyrJyObskqyygEP74VVo9kKULTxestDoUzP5p4u754q1Gx40Bcn
+aSuWAj0GeEcu93xkeC4xO5KyXte1yEIDVks7F1r/C9qWC8UYLW22Wm8Q+89aW8wW
+hcviFP7W5vr/d/b8uzuP16iKRrlH0g==
+=xSGE
+-----END PGP SIGNATURE-----
 
-Oh, man what a nasty hack that SHRINKER_NONSLAB flag is so that it
-runs through shrink_slab_memcg() even when memcgs are configured in
-but kmem tracking disabled. We have heaps of shrinkers that reclaim
-from things that aren't slab caches, but this one is just nuts.
+--61jdw2sOBCFtR2d/--
 
-> 2. The fs_objects. This one looks weird. It shares the same shrinker
-> with inode/dentry. The only user is XFS currently. But it looks it is
-> not really memcg aware at all, right?
-
-It most definitely is.
-
-The VFS dentry and inode cache reclaim are memcg aware. The
-fs_objects callout is for filesystem level object garbage collection
-that can be done as a result of the dentry and inode caches being
-reclaimed.
-
-i.e. once the VFS has reclaimed the inode attached to the memcg, it
-is no longer attached and accounted to the memcg anymore. It is
-owned by the filesystem at this point, and it is entirely up to the
-filesytem to when it can then be freed. Most filesystems do it in
-the inode cache reclaim via the ->destroy method. XFS, OTOH, tags
-freeable inodes in it's internal radix trees rather than freeing
-them immediately because it still may have to clean the inode before
-it can be freed. Hence we defer freeing of inodes until the
-->fs_objects pass....
-
-> They are managed by radix tree
-> which is not per memcg by looking into xfs code, so the "per list_lru
-> nr_deferred" can't work for it.  I thought of a couple of ways to
-> tackle it off the top of my head:
->     A. Just ignore it. If the amount of fs_objects are negligible
-> comparing to inode/dentry, then I think it can be just ignored and
-> kept it as is.
-
-Ah, no, they are not negliable. Under memory pressure, the number of
-objects is typically 1/3rd dentries, 1/3rd VFS inodes, 1/3rd fs
-objects to be reclaimed. The dentries and VFS inodes are owned by
-VFS level caches and associated with memcgs, the fs_objects are only
-visible to the filesystem.
-
->     B. Move it out of inode/dentry shrinker. Add a dedicated shrinker
-> for it, for example, sb->s_fs_obj_shrink.
-
-No, they are there because the reclaim has to be kept in exact
-proportion to the dentry and inode reclaim quantities. That's the
-reason I put that code there in the first place: a separate inode
-filesystem cache shrinker just didn't work well at all.
-
->     C. Make it really memcg aware and use list_lru.
-
-Two things. Firstly, objects are owned by the filesystem at this
-point, not memcgs. Memcgs were detatched at the VFS inode reclaim
-layer.
-
-Secondly, list-lru does not scale well enough for the use needed by
-XFS. We use radix trees so we can do lockless batch lookups and
-IO-efficient inode-order reclaim passes. We also have concurrent
-reclaim capabilities because of the lockless tag lookup walks.
-Using a list_lru for this substantially reduces reclaim performance
-and greatly increases CPU usage of reclaim because of contention on
-the internal list lru locks. Been there, measured that....
-
-> I don't have any experience on XFS code, #C seems the most optimal,
-> but should be the most time consuming, I'm not sure if it is worth it
-> or not. So, #B sounds more preferred IMHO.
-
-I think you're going completely in the wrong direction. The problem
-that needs solving is integrating shrinker scanning control state
-with memcgs more tightly, not force every memcg aware shrinker to
-use list_lru for their subsystem shrinker implementations....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
