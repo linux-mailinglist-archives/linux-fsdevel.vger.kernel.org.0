@@ -2,93 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D74F427EDB2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 17:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F0AE27EEA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 18:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgI3PpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 11:45:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44722 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbgI3PpI (ORCPT
+        id S1725893AbgI3QMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 12:12:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33910 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725800AbgI3QMb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 11:45:08 -0400
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B57C0613D0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 08:45:06 -0700 (PDT)
-Received: by mail-vs1-xe44.google.com with SMTP id 5so1188100vsu.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 08:45:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ApvBKc8Khxg0IoEksSg3GInYcR+U6xm2yDW9gWHbZWY=;
-        b=peW6K2GBAkpVrhNuGiGONtsbqNn3KO8HZw8ixAOOhnbRJIZabs2ua7ORJscfylzLKD
-         0dA911UyQL46gahT488TSi9oZZNJYgvIeCpKeJpQcQLr2Q0oqN0MH+CAlfYyn98t55Z8
-         IyhwzOppuPYsddcdr4di4nVskmt73wt6fK3+I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ApvBKc8Khxg0IoEksSg3GInYcR+U6xm2yDW9gWHbZWY=;
-        b=cDfaZwKQT9353Ssmdp0y5trKl10w6FWziF8D+e82AEDa2m+5xGjfBnaj3F2+UGsZ8D
-         rECqeCjS1BozvCWXELLtXnknyKQlVvPliZ7cP/Q0Xo3FchX8LZBilAqUUEnxmyFg7D+Z
-         dpo52I9Ck/0rq5RtWlKoVyYZs4J135CLCIxPaJzGZwesZgAIom7PnS5v2RDneFf68kvD
-         yjLqbmKBSo/eOVPFrkEbp2hXA2gf5LYCeQvHzQZOJ/lgfGW+sjsMuReWS+w2eiWMBHLh
-         RM/1+4kxjR9/uy48GLBp280jxUoB1v4BJ86dENM9wEMZ7z5OFtx5lSn2n/59oIDJuGei
-         Teow==
-X-Gm-Message-State: AOAM5330BhkZvGrIyJX66/IE25918UDyIpBurL1n27la3FAqLFZra3ty
-        WC8/KSO4Qr5vvm/KbnvVzjBMXoyijgXNM9Z9VDOyOg==
-X-Google-Smtp-Source: ABdhPJxumN4h6iGLvR5ObOrFqwk8EkF5bJbF39rhN5043r3Ml389oAO96ocWz71kNFzko+iDwCClq7JcI8Kx7XOz5qg=
-X-Received: by 2002:a67:6855:: with SMTP id d82mr1876811vsc.46.1601480705468;
- Wed, 30 Sep 2020 08:45:05 -0700 (PDT)
+        Wed, 30 Sep 2020 12:12:31 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601482350;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=VRC4C4b2jNcQOEWL2pH6VjUsE4SE12G1nNAW+RTvV2w=;
+        b=ZPLrnvNoN4IeNHiCz508cn3/dn18jHIrNdPowXd9wzOyld+7Llj3tABIiBF26QdMKc2exh
+        +SqiFDfYK3dSSao4qnsrBB6LwdsTHuecPMrbrxlHQVZVmOgBF8KkUqljYtERtj/EyzquSo
+        fUxlZQ1elKmb9Jj+QEu6pOFpbjgkJ2I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-353-4885p7OJNTmQMRSambbOFQ-1; Wed, 30 Sep 2020 12:12:28 -0400
+X-MC-Unique: 4885p7OJNTmQMRSambbOFQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D5DCB80F058;
+        Wed, 30 Sep 2020 16:12:26 +0000 (UTC)
+Received: from x2.localnet (ovpn-117-41.rdu2.redhat.com [10.10.117.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 742D865F5E;
+        Wed, 30 Sep 2020 16:12:21 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        linux-audit@redhat.com, Paul Moore <paul@paul-moore.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Eric Paris <eparis@redhat.com>
+Subject: [PATCH 0/3] fanotify: Allow user space to pass back additional   audit info
+Date:   Wed, 30 Sep 2020 12:12:19 -0400
+Message-ID: <2042449.irdbgypaU6@x2>
+Organization: Red Hat
 MIME-Version: 1.0
-References: <20200924131318.2654747-1-balsini@android.com> <20200924131318.2654747-2-balsini@android.com>
-In-Reply-To: <20200924131318.2654747-2-balsini@android.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 30 Sep 2020 17:44:54 +0200
-Message-ID: <CAJfpegvB7XJH7sPni7Vj7R4ZwSrDfevfeRRBgvESSgGg=C5tdQ@mail.gmail.com>
-Subject: Re: [PATCH V9 1/4] fuse: Definitions and ioctl() for passthrough
-To:     Alessio Balsini <balsini@android.com>
-Cc:     Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <stefanoduo@google.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 24, 2020 at 3:13 PM Alessio Balsini <balsini@android.com> wrote:
->
-> Introduce the new FUSE passthrough ioctl(), which allows userspace to
-> specify a direct connection between a FUSE file and a lower file system
-> file.
-> Such ioctl() requires userspace to specify:
-> - the file descriptor of one of its opened files,
-> - the unique identifier of the FUSE request associated with a pending
->   open/create operation,
-> both encapsulated into a fuse_passthrough_out data structure.
-> The ioctl() will search for the pending FUSE request matching the unique
-> identifier, and update the passthrough file pointer of the request with the
-> file pointer referenced by the passed file descriptor.
-> When that pending FUSE request is handled, the passthrough file pointer
-> is copied to the fuse_file data structure, so that the link between FUSE
-> and lower file system is consolidated.
+The Fanotify API can be used for access control by requesting permission
+event notification. The user space tooling that uses it may have a
+complicated policy that inherently contains additional context for the
+decision. If this information were available in the audit trail, policy
+writers can close the loop on debugging policy. Also, if this additional
+information were available, it would enable the creation of tools that
+can suggest changes to the policy similar to how audit2allow can help
+refine labeled security.
 
-How about returning an ID from the ioctl (like the fuse2 porototype)
-and returning that in fuse_open_out.passthrough_fh?
+This patch defines 2 bit maps within the response variable returned from
+user space on a permission event. The first field is 3 bits for the 
+context type. The context type will describe what the meaning is of the
+second bit field. The audit system will separate the pieces and log them
+individually.
 
-Seems a more straightforward interface to me.
+The audit function was updated to log the additional information in the
+AUDIT_FANOTIFY record. The following is an example of the new record
+format:
 
-Thanks,
-Miklos
+type=FANOTIFY msg=audit(1600385147.372:590): resp=2 ctx_type=1 fan_ctx=17
+
+
+Steve Grubb (3):
+  fanotify: Ensure consistent variable type for response
+  fanotify: define bit map fields to hold response decision context
+  fanotify: Allow audit to use the full permission event response
+
+ fs/notify/fanotify/fanotify.c      |  5 ++---
+ fs/notify/fanotify/fanotify.h      |  2 +-
+ fs/notify/fanotify/fanotify_user.c | 11 +++--------
+ include/linux/fanotify.h           |  5 +++++
+ include/uapi/linux/fanotify.h      | 31 ++++++++++++++++++++++++++++++
+ kernel/auditsc.c                   |  7 +++++--
+ 6 files changed, 47 insertions(+), 14 deletions(-)
+
+-- 
+2.26.2
+
+
+
+
