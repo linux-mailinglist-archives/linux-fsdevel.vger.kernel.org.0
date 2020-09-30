@@ -2,102 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFFAF27EBE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 17:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3923327EC24
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 17:16:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730653AbgI3PKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 11:10:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730601AbgI3PKF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 11:10:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1ABC0613D0;
-        Wed, 30 Sep 2020 08:10:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5MQ9wWjMl2wFlC5FFeBBoGdxqFKxERQlgHCfOe6SJqc=; b=BuH49sEnpXdPdqBuzbVs2V633x
-        nj0QNsnZGyV7Ur1XjcD+GgLOUPiioSSgYAd5LQANsJHnqdR8DPJWazR4b6fyMIXitNoG7i2qACEk+
-        x90zdteFRAk01MpO/bR6H/INrJI1XI2Z43TfeD0w4o67kW8JKU7F7v72SRgVVditUoo8hvSGVzDht
-        IAsFpsrXy2rohggWiPlFlZ49/3gB8uDSMyALzcjv+0EyTng6cu9mrYkRLaKyDQJSYJSgaeqtXpg7T
-        r4qwLvOvtVk6qnTcZdu5tJ+aiAkiq/I/XPzY9EzutGsKlZpzzVHG+lZEakQO08fZJbB9Z3UwWnHbB
-        qlCH3W+Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kNdjU-0007EC-6u; Wed, 30 Sep 2020 15:09:28 +0000
-Date:   Wed, 30 Sep 2020 16:09:28 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v6 5/6] mm: secretmem: use PMD-size pages to amortize
- direct map fragmentation
-Message-ID: <20200930150928.GR20115@casper.infradead.org>
-References: <20200924132904.1391-1-rppt@kernel.org>
- <20200924132904.1391-6-rppt@kernel.org>
- <20200925074125.GQ2628@hirez.programming.kicks-ass.net>
- <20200929130529.GE2142832@kernel.org>
- <20200929141216.GO2628@hirez.programming.kicks-ass.net>
- <20200929145813.GA3226834@linux.ibm.com>
- <20200929151552.GS2628@hirez.programming.kicks-ass.net>
- <20200930102745.GC3226834@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200930102745.GC3226834@linux.ibm.com>
+        id S1728679AbgI3PQ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 11:16:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47390 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbgI3PQV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Sep 2020 11:16:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 4B441AFBB;
+        Wed, 30 Sep 2020 15:16:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EE7011E0EAA; Wed, 30 Sep 2020 17:16:19 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <reiserfs-devel@vger.kernel.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org
+Subject: [PATCH] reiserfs: Fix oops during mount
+Date:   Wed, 30 Sep 2020 17:16:16 +0200
+Message-Id: <20200930151616.13466-1-jack@suse.cz>
+X-Mailer: git-send-email 2.16.4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 01:27:45PM +0300, Mike Rapoport wrote:
-> On Tue, Sep 29, 2020 at 05:15:52PM +0200, Peter Zijlstra wrote:
-> > On Tue, Sep 29, 2020 at 05:58:13PM +0300, Mike Rapoport wrote:
-> > > On Tue, Sep 29, 2020 at 04:12:16PM +0200, Peter Zijlstra wrote:
-> > 
-> > > > It will drop them down to 4k pages. Given enough inodes, and allocating
-> > > > only a single sekrit page per pmd, we'll shatter the directmap into 4k.
-> > > 
-> > > Why? Secretmem allocates PMD-size page per inode and uses it as a pool
-> > > of 4K pages for that inode. This way it ensures that
-> > > __kernel_map_pages() is always called on PMD boundaries.
-> > 
-> > Oh, you unmap the 2m page upfront? I read it like you did the unmap at
-> > the sekrit page alloc, not the pool alloc side of things.
-> > 
-> > Then yes, but then you're wasting gobs of memory. Basically you can pin
-> > 2M per inode while only accounting a single page.
-> 
-> Right, quite like THP :)
+With suitably crafted reiserfs image and mount command reiserfs will
+crash when trying to verify that XATTR_ROOT directory can be looked up
+in / as that recurses back to xattr code like:
 
-Huh?  THP accounts every page it allocates.  If you allocate 2MB,
-it accounts 512 pages.  And THP are reclaimable by vmscan, this is
-obviously not.
+ xattr_lookup+0x24/0x280 fs/reiserfs/xattr.c:395
+ reiserfs_xattr_get+0x89/0x540 fs/reiserfs/xattr.c:677
+ reiserfs_get_acl+0x63/0x690 fs/reiserfs/xattr_acl.c:209
+ get_acl+0x152/0x2e0 fs/posix_acl.c:141
+ check_acl fs/namei.c:277 [inline]
+ acl_permission_check fs/namei.c:309 [inline]
+ generic_permission+0x2ba/0x550 fs/namei.c:353
+ do_inode_permission fs/namei.c:398 [inline]
+ inode_permission+0x234/0x4a0 fs/namei.c:463
+ lookup_one_len+0xa6/0x200 fs/namei.c:2557
+ reiserfs_lookup_privroot+0x85/0x1e0 fs/reiserfs/xattr.c:972
+ reiserfs_fill_super+0x2b51/0x3240 fs/reiserfs/super.c:2176
+ mount_bdev+0x24f/0x360 fs/super.c:1417
+
+Fix the problem by bailing from reiserfs_xattr_get() when xattrs are not
+yet initialized.
+
+CC: stable@vger.kernel.org
+Reported-by: syzbot+9b33c9b118d77ff59b6f@syzkaller.appspotmail.com
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/reiserfs/xattr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 28b241cd6987..fe63a7c3e0da 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -674,6 +674,13 @@ reiserfs_xattr_get(struct inode *inode, const char *name, void *buffer,
+ 	if (get_inode_sd_version(inode) == STAT_DATA_V1)
+ 		return -EOPNOTSUPP;
+ 
++	/*
++	 * priv_root needn't be initialized during mount so allow initial
++	 * lookups to succeed.
++	 */
++	if (!REISERFS_SB(inode->i_sb)->priv_root)
++		return 0;
++
+ 	dentry = xattr_lookup(inode, name, XATTR_REPLACE);
+ 	if (IS_ERR(dentry)) {
+ 		err = PTR_ERR(dentry);
+-- 
+2.16.4
 
