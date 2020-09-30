@@ -2,158 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5438727E6C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 12:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9447B27E6E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 12:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbgI3Kfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 06:35:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbgI3Kf0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 06:35:26 -0400
-Received: from kernel.org (unknown [87.71.73.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F6D62071E;
-        Wed, 30 Sep 2020 10:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601462125;
-        bh=SzkDe746rX0ODWGVw7fDdaVyUZrEV+gM3E8swkXbMbU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uKhmviR7RakW6A11UWNT5ZnPb8uwHbZGJ7h8lD3kaL9kXhV36bE4HhoR+/vz33Mhg
-         MZsGnqTwp+vEmRtvpupcTHKJZOyDerAKfWNGjQ5XLmLmvO7wymY3GajpjZH4do/Pa4
-         U6C3rjeog953uQ4NSrLfTOZ44e0M4M9L8g8QNuUE=
-Date:   Wed, 30 Sep 2020 13:35:07 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "cl@linux.com" <cl@linux.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "idan.yaniv@ibm.com" <idan.yaniv@ibm.com>,
-        "kirill@shutemov.name" <kirill@shutemov.name>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        "palmer@dabbelt.com" <palmer@dabbelt.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "mtk.manpages@gmail.com" <mtk.manpages@gmail.com>,
-        "tycho@tycho.ws" <tycho@tycho.ws>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>
-Subject: Re: [PATCH v6 3/6] mm: introduce memfd_secret system call to create
- "secret" memory areas
-Message-ID: <20200930103507.GK2142832@kernel.org>
-References: <20200924132904.1391-1-rppt@kernel.org>
- <20200924132904.1391-4-rppt@kernel.org>
- <d466e1f13ff615332fe1f513f6c1d763db28bd9a.camel@intel.com>
- <20200929130602.GF2142832@kernel.org>
- <839fbb26254dc9932dcff3c48a3a4ab038c016ea.camel@intel.com>
+        id S1728126AbgI3KmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 06:42:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbgI3KmB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Sep 2020 06:42:01 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B072FC061755;
+        Wed, 30 Sep 2020 03:42:01 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id k8so924608pfk.2;
+        Wed, 30 Sep 2020 03:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9PUVuYIAR3dsuoBiBsw/RZdRsjKZPpHWKBbXuKbDzwc=;
+        b=TotQ5KO1k06WtIu22CRFT3dk/TqwrOVUrHQqITSA7RPgZjx6kPnkXk80M0XPYy13o/
+         tvzXsN06FNvHxrDEU4pYzJ6xNLNi1KqlJw7Q3Ttq4DcRFVfzN8CR2me9QJGfvX1t5SD2
+         pRgXHiFPNDlO39Idj0WfRHPwZnUhrp90z/Iyu+MkBxn7TcPyYUmXdm534piI+tdThpZe
+         cbZcjsdiXMCPdNB4SlDA2e2EOxfZpG94sYzf+EsMynvTJu9H0lDgJ19QNyh+3xl6GnuW
+         EjmR7Xn4svgOSmwTfhToSiTnTak+g6sdYTdg57m0dJoS/89jn/asKV4Jpir8rMiwrQG5
+         thhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9PUVuYIAR3dsuoBiBsw/RZdRsjKZPpHWKBbXuKbDzwc=;
+        b=Ct/UBY8UTCqTbhfn0nOleZFCswBgjr4tOSyHT0esLw/dQWPCwZ66w6YnhqeMS1sGTu
+         3WoE50G9J/TnJV2YXBHmQD0yDT7E4CadTnVMel0VNyMWUfcccLAJrI2xftJkliyM1kLX
+         eC6TdY9j3vMtw4IjajRv5RMu4UYu6pDunnyQU0ctST2qVJQ4xoGHzHBqk2LKtdILGvZ4
+         d4KlExCQF3eXyLNZCZ+wE1vIdPjk+cVIyBlGuPusxNnEBMT8k4wRce1MhydaDgfXSScA
+         SF9UCO/DstCD+7bLVCB9dTGpWxznOahtiayFFVM20W5FmrOVgODKXpfHu6meJesMIVzj
+         TnmQ==
+X-Gm-Message-State: AOAM5316tAgCFhSicwvtcVqviVkQVNTBL7GfGyuPqqSwRmkJFyamGL9h
+        xDWJO+n+AR0Yn6tbWnhQsFw=
+X-Google-Smtp-Source: ABdhPJzWNvBir+nQe8cAzPzySMJQIsCctw7pje1panx0WeVO3T/pHdZpInaWEXRM1KbGPe7oSPNwlQ==
+X-Received: by 2002:a63:da13:: with SMTP id c19mr1693718pgh.68.1601462521219;
+        Wed, 30 Sep 2020 03:42:01 -0700 (PDT)
+Received: from [192.168.1.200] (flh2-125-196-131-224.osk.mesh.ad.jp. [125.196.131.224])
+        by smtp.gmail.com with ESMTPSA id u22sm1670248pgi.85.2020.09.30.03.41.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Sep 2020 03:42:00 -0700 (PDT)
+Subject: Re: [PATCH 2/3] exfat: remove useless check in exfat_move_file()
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        'Sungjong Seo' <sj1557.seo@samsung.com>
+References: <CGME20200911044511epcas1p4d62863352e65c534cd6080dd38d54b26@epcas1p4.samsung.com>
+ <20200911044506.13912-1-kohada.t2@gmail.com>
+ <015f01d68bd1$95ace4d0$c106ae70$@samsung.com>
+ <8a430d18-39ac-135f-d522-90d44276faf8@gmail.com>
+ <8c9701d6956a$13898560$3a9c9020$@samsung.com>
+ <000001d6956b$e7bab2e0$b73018a0$@samsung.com>
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+Message-ID: <6a0364e6-2192-439d-f874-11402dc8009c@gmail.com>
+Date:   Wed, 30 Sep 2020 19:41:58 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <839fbb26254dc9932dcff3c48a3a4ab038c016ea.camel@intel.com>
+In-Reply-To: <000001d6956b$e7bab2e0$b73018a0$@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 08:06:03PM +0000, Edgecombe, Rick P wrote:
-> On Tue, 2020-09-29 at 16:06 +0300, Mike Rapoport wrote:
-> > On Tue, Sep 29, 2020 at 04:58:44AM +0000, Edgecombe, Rick P wrote:
-> > > On Thu, 2020-09-24 at 16:29 +0300, Mike Rapoport wrote:
-> > > > Introduce "memfd_secret" system call with the ability to create
-> > > > memory
-> > > > areas visible only in the context of the owning process and not
-> > > > mapped not
-> > > > only to other processes but in the kernel page tables as well.
-> > > > 
-> > > > The user will create a file descriptor using the memfd_secret()
-> > > > system call
-> > > > where flags supplied as a parameter to this system call will
-> > > > define
-> > > > the
-> > > > desired protection mode for the memory associated with that file
-> > > > descriptor.
-> > > > 
-> > > >   Currently there are two protection modes:
-> > > > 
-> > > > * exclusive - the memory area is unmapped from the kernel direct
-> > > > map
-> > > > and it
-> > > >                is present only in the page tables of the owning
-> > > > mm.
-> > > 
-> > > Seems like there were some concerns raised around direct map
-> > > efficiency, but in case you are going to rework this...how does
-> > > this
-> > > memory work for the existing kernel functionality that does things
-> > > like
-> > > this?
-> > > 
-> > > get_user_pages(, &page);
-> > > ptr = kmap(page);
-> > > foo = *ptr;
-> > > 
-> > > Not sure if I'm missing something, but I think apps could cause the
-> > > kernel to access a not-present page and oops.
-> > 
-> > The idea is that this memory should not be accessible by the kernel,
-> > so
-> > the sequence you describe should indeed fail.
-> > 
-> > Probably oops would be to noisy and in this case the report needs to
-> > be
-> > less verbose.
-> 
-> I was more concerned that it could cause kernel instabilities.
 
-I think kernel recovers nicely from such sort of page fault, at least on
-x86.
+>>> BTW
+>>> Are you busy now?
+>> I'm sorry, I'm so busy for my full time work :( Anyway, I'm trying to review serious bug patches or
+>> bug reports first.
+>> Other patches, such as clean-up or code refactoring, may take some time to review.
+>>
+>>> I am waiting for your reply about "integrates dir-entry getting and
+>>> validation" patch.
+>> As I know, your patch is being under review by Namjae.
+> I already gave comments and a patch, but you said you can't do it.
+> I'm sorry, But I can't accept an incomplete patch. I will directly fix it later.
 
-> I see, so it should not be accessed even at the userspace address? I
-> wonder if it should be prevented somehow then. At least
-> get_user_pages() should be prevented I think. Blocking copy_*_user()
-> access might not be simple.
-> 
-> I'm also not so sure that a user would never have any possible reason
-> to copy data from this memory into the kernel, even if it's just
-> convenience. In which case a user setup could break if a specific
-> kernel implementation switched to get_user_pages()/kmap() from using
-> copy_*_user(). So seems maybe a bit thorny without fully blocking
-> access from the kernel, or deprecating that pattern.
-> 
-> You should probably call out these "no passing data to/from the kernel"
-> expectations, unless I missed them somewhere.
+Of course, I understand that you can't accept a under-discussed patch.
 
-You are right, I should have been more explicit in the description of
-the expected behavoir. 
+I think you know what I'm trying to do, with previous patches.
+Unfortunately, I couldn't implement it properly using the patch you provided.
+But I don't think the checksum and name-lenth issues should be left unresolved.
+(How do you think?)
+So I want you to think with me.
 
-Our thinking was that copy_*user() would work in the context of the
-process that "owns" the secretmem and gup() would not allow access in
-general, unless requested with certail (yet another) FOLL_ flag.
+I still feel we haven't discussed this enough.
+I still don't understand what you think is the problem with the patch.
+Where and what kind of problems do you think the patch has?
+- performance?
+- wrong behavior?
+- readability?
+- runtime cost?
+- style?
+- other?
 
--- 
-Sincerely yours,
-Mike.
+I think I explained the reason for each implementation.
+If it's not enough, I'd like to explain it in more detail.
+
+
+BR
+---
+Tetsuhiro Kohada <kohada.t2@gmail.com>
