@@ -2,144 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B5727E6A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 12:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5438727E6C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 12:35:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729352AbgI3K2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 06:28:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:7390 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728500AbgI3K2l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 06:28:41 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08UACrbo033738;
-        Wed, 30 Sep 2020 06:27:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=YLMZRYhLxXYowrAZOtKzuR/O6QgcBOt/bbAeTvAVLYk=;
- b=DMFFWxWQQQ/dOUDvmOcVNiZFPAqDQ+snKuj9I6y9e7JHxF4bBih3sAFH5XZIn/4WPNpW
- gyMRwSGnThr/oC4YT6P+4JGsCQA/nOuSjX7YuhpWz46EXu65qVfgIz2hFfaGewFvSaoS
- L0gg9kNhzz5iwXCb22/7peTMmvDQaTyxwsYgmt7chFrzDHZMvHLEMmD5TvagNiMShquq
- vw8E4ePr5a9XSW1nrzo4fHkmXkMVeMNJU2a2YlPEySk58tXJVrLzC+um0RhsN8HafEyD
- LJfK1Zy1eWk6G7U5hrspZWnWHBA5T90SHU1OjQWl9PYBFWCWxXH2Ha9j9c3iVKR3pYxn fQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33vr2hgdas-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Sep 2020 06:27:57 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08UADAG4034594;
-        Wed, 30 Sep 2020 06:27:56 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33vr2hgd9x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Sep 2020 06:27:56 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08UAMX6f004141;
-        Wed, 30 Sep 2020 10:27:54 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 33v6mgruss-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Sep 2020 10:27:54 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08UARpio24969710
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Sep 2020 10:27:51 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C1F85AE053;
-        Wed, 30 Sep 2020 10:27:51 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B2A9AAE045;
-        Wed, 30 Sep 2020 10:27:47 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.145.79.47])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 30 Sep 2020 10:27:47 +0000 (GMT)
-Date:   Wed, 30 Sep 2020 13:27:45 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Shuah Khan <shuah@kernel.org>, Tycho Andersen <tycho@tycho.ws>,
-        Will Deacon <will@kernel.org>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-Subject: Re: [PATCH v6 5/6] mm: secretmem: use PMD-size pages to amortize
- direct map fragmentation
-Message-ID: <20200930102745.GC3226834@linux.ibm.com>
+        id S1729240AbgI3Kfa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 06:35:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725776AbgI3Kf0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 30 Sep 2020 06:35:26 -0400
+Received: from kernel.org (unknown [87.71.73.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F6D62071E;
+        Wed, 30 Sep 2020 10:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601462125;
+        bh=SzkDe746rX0ODWGVw7fDdaVyUZrEV+gM3E8swkXbMbU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uKhmviR7RakW6A11UWNT5ZnPb8uwHbZGJ7h8lD3kaL9kXhV36bE4HhoR+/vz33Mhg
+         MZsGnqTwp+vEmRtvpupcTHKJZOyDerAKfWNGjQ5XLmLmvO7wymY3GajpjZH4do/Pa4
+         U6C3rjeog953uQ4NSrLfTOZ44e0M4M9L8g8QNuUE=
+Date:   Wed, 30 Sep 2020 13:35:07 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "cl@linux.com" <cl@linux.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "idan.yaniv@ibm.com" <idan.yaniv@ibm.com>,
+        "kirill@shutemov.name" <kirill@shutemov.name>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "mtk.manpages@gmail.com" <mtk.manpages@gmail.com>,
+        "tycho@tycho.ws" <tycho@tycho.ws>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>
+Subject: Re: [PATCH v6 3/6] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <20200930103507.GK2142832@kernel.org>
 References: <20200924132904.1391-1-rppt@kernel.org>
- <20200924132904.1391-6-rppt@kernel.org>
- <20200925074125.GQ2628@hirez.programming.kicks-ass.net>
- <20200929130529.GE2142832@kernel.org>
- <20200929141216.GO2628@hirez.programming.kicks-ass.net>
- <20200929145813.GA3226834@linux.ibm.com>
- <20200929151552.GS2628@hirez.programming.kicks-ass.net>
+ <20200924132904.1391-4-rppt@kernel.org>
+ <d466e1f13ff615332fe1f513f6c1d763db28bd9a.camel@intel.com>
+ <20200929130602.GF2142832@kernel.org>
+ <839fbb26254dc9932dcff3c48a3a4ab038c016ea.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200929151552.GS2628@hirez.programming.kicks-ass.net>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-30_05:2020-09-29,2020-09-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=950 malwarescore=0 phishscore=0 mlxscore=0 clxscore=1015
- bulkscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
- suspectscore=1 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009300075
+In-Reply-To: <839fbb26254dc9932dcff3c48a3a4ab038c016ea.camel@intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 29, 2020 at 05:15:52PM +0200, Peter Zijlstra wrote:
-> On Tue, Sep 29, 2020 at 05:58:13PM +0300, Mike Rapoport wrote:
-> > On Tue, Sep 29, 2020 at 04:12:16PM +0200, Peter Zijlstra wrote:
-> 
-> > > It will drop them down to 4k pages. Given enough inodes, and allocating
-> > > only a single sekrit page per pmd, we'll shatter the directmap into 4k.
+On Tue, Sep 29, 2020 at 08:06:03PM +0000, Edgecombe, Rick P wrote:
+> On Tue, 2020-09-29 at 16:06 +0300, Mike Rapoport wrote:
+> > On Tue, Sep 29, 2020 at 04:58:44AM +0000, Edgecombe, Rick P wrote:
+> > > On Thu, 2020-09-24 at 16:29 +0300, Mike Rapoport wrote:
+> > > > Introduce "memfd_secret" system call with the ability to create
+> > > > memory
+> > > > areas visible only in the context of the owning process and not
+> > > > mapped not
+> > > > only to other processes but in the kernel page tables as well.
+> > > > 
+> > > > The user will create a file descriptor using the memfd_secret()
+> > > > system call
+> > > > where flags supplied as a parameter to this system call will
+> > > > define
+> > > > the
+> > > > desired protection mode for the memory associated with that file
+> > > > descriptor.
+> > > > 
+> > > >   Currently there are two protection modes:
+> > > > 
+> > > > * exclusive - the memory area is unmapped from the kernel direct
+> > > > map
+> > > > and it
+> > > >                is present only in the page tables of the owning
+> > > > mm.
+> > > 
+> > > Seems like there were some concerns raised around direct map
+> > > efficiency, but in case you are going to rework this...how does
+> > > this
+> > > memory work for the existing kernel functionality that does things
+> > > like
+> > > this?
+> > > 
+> > > get_user_pages(, &page);
+> > > ptr = kmap(page);
+> > > foo = *ptr;
+> > > 
+> > > Not sure if I'm missing something, but I think apps could cause the
+> > > kernel to access a not-present page and oops.
 > > 
-> > Why? Secretmem allocates PMD-size page per inode and uses it as a pool
-> > of 4K pages for that inode. This way it ensures that
-> > __kernel_map_pages() is always called on PMD boundaries.
+> > The idea is that this memory should not be accessible by the kernel,
+> > so
+> > the sequence you describe should indeed fail.
+> > 
+> > Probably oops would be to noisy and in this case the report needs to
+> > be
+> > less verbose.
 > 
-> Oh, you unmap the 2m page upfront? I read it like you did the unmap at
-> the sekrit page alloc, not the pool alloc side of things.
+> I was more concerned that it could cause kernel instabilities.
+
+I think kernel recovers nicely from such sort of page fault, at least on
+x86.
+
+> I see, so it should not be accessed even at the userspace address? I
+> wonder if it should be prevented somehow then. At least
+> get_user_pages() should be prevented I think. Blocking copy_*_user()
+> access might not be simple.
 > 
-> Then yes, but then you're wasting gobs of memory. Basically you can pin
-> 2M per inode while only accounting a single page.
+> I'm also not so sure that a user would never have any possible reason
+> to copy data from this memory into the kernel, even if it's just
+> convenience. In which case a user setup could break if a specific
+> kernel implementation switched to get_user_pages()/kmap() from using
+> copy_*_user(). So seems maybe a bit thorny without fully blocking
+> access from the kernel, or deprecating that pattern.
+> 
+> You should probably call out these "no passing data to/from the kernel"
+> expectations, unless I missed them somewhere.
 
-Right, quite like THP :)
+You are right, I should have been more explicit in the description of
+the expected behavoir. 
 
-I considered using a global pool of 2M pages for secretmem and handing
-4K pages to each inode from that global pool. But I've decided to waste
-memory in favor of simplicity.
-
-The prevoius version of this set included additional patch that allowed
-reserving chunk of the physical memory for a global secretmem pool at
-boot time. We didn't reach an agreement with David H. about whether this
-pool should be allocated directly from memblock or from CMA and I've
-dropped the boot time reservation patch because it can always be added on
-top. 
+Our thinking was that copy_*user() would work in the context of the
+process that "owns" the secretmem and gup() would not allow access in
+general, unless requested with certail (yet another) FOLL_ flag.
 
 -- 
 Sincerely yours,
