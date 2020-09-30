@@ -2,107 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30CD227F520
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Oct 2020 00:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C41A27F556
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Oct 2020 00:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731596AbgI3W3W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 18:29:22 -0400
-Received: from mail-il1-f205.google.com ([209.85.166.205]:50224 "EHLO
-        mail-il1-f205.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbgI3W3W (ORCPT
+        id S1730785AbgI3WnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 18:43:20 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48950 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729980AbgI3WnT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 18:29:22 -0400
-Received: by mail-il1-f205.google.com with SMTP id u20so2798790ilk.17
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 15:29:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+0VlvcNRUBLPwYY+/l3iWps8TddUUFMalUbSMxo1nMc=;
-        b=WwVf4CLxHFKmzQZJVTan8Y5NT75iLz1xKg0Va9ssPHB8edr+9Y88C6XKf4NpuIUjBh
-         MNiQ268YBS9kSKDXaezxexg8GKKXJcchMaSIUaYdu6RpLPTXV4wHXhqYIL2+gm6CL/v8
-         9SPzA5Hj+yqK1yy/v4huPZTKEIz6UAvC2QlK9iRaX3ENuXmfw6kcPBFS0TEfU+yv1fCg
-         LaHQHeIoP3mtA9nOh9W+duOTz+31WaGb8biReyFVpeKVBoKrO6tvSFsGDlonhA+2WJ9J
-         5mM4d3wLjozfL6tY9HmAVKSDPHa5OBI4dvvqH2Ijwa4GCZUao6smx55Al9MySjJAuXPq
-         2IPg==
-X-Gm-Message-State: AOAM530vR3JjFDSR2JH35C/x7XOAsbEVa9/7yQ9kMYW9n3zc6uZ6PdMj
-        oiXiWAG6Hjj8tWMulGnk5sD3TuHcsW6fCarz+DZOvEWyyAPB
-X-Google-Smtp-Source: ABdhPJxQ53hwefKNF6WE9W0GG8xHlmhPERFSu7t/v13Oo8rcSYfID9pDQh/morvR5iOb+/sczzfKsSw84sYfzhDoi8jBLmnKOSv5
+        Wed, 30 Sep 2020 18:43:19 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08UMZTe5075222;
+        Wed, 30 Sep 2020 22:41:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=QxSTjWUBwbndFPhMD0Pu8VbFrWz1EUUHjkxEADBt03w=;
+ b=S+piuall3XH/UJ3/r83kO5qOH6cP1qI5BykZuJekLNJhHQdUEC4mClJ+NrOGOQGoqNGh
+ leeLg93oOLLJbm/6CynaLEHz5fTZvQQXVnXrGgVHYq12utIFOxnMZHWNtenS6axdzI1C
+ vkKqMy7c/mLlEXKMW7XxziHYr40FHtZ7xbRNgbJ+1549qLybUboP38etN/K/4YAaIFDl
+ 1QccPISX63SsGuKhYz9DWvSbVjQDgABb7wUL7ObCme5HhMUN95Vw64rL62DhxRlCytnM
+ xcM0R/c8hhqbU4eMLjdkFR1iAucEtNCQvRD+i6GpUW0z5qKLpsWIEciei66UfQvxOrBQ vw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 33sx9nb1eq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 30 Sep 2020 22:41:39 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08UMenIp165255;
+        Wed, 30 Sep 2020 22:41:39 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 33tfdur3ah-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 30 Sep 2020 22:41:39 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08UMfVfS007055;
+        Wed, 30 Sep 2020 22:41:31 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 30 Sep 2020 15:41:31 -0700
+Subject: Re: [RFC PATCH 05/24] mm/hugetlb: Introduce nr_free_vmemmap_pages in
+ the struct hstate
+To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <20200915125947.26204-1-songmuchun@bytedance.com>
+ <20200915125947.26204-6-songmuchun@bytedance.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <b2811679-cd90-4685-2284-64490e7dfb7e@oracle.com>
+Date:   Wed, 30 Sep 2020 15:41:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:de4b:: with SMTP id e11mr89152ilr.101.1601504961330;
- Wed, 30 Sep 2020 15:29:21 -0700 (PDT)
-Date:   Wed, 30 Sep 2020 15:29:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000053864e05b08f6e58@google.com>
-Subject: WARNING in kthread_park
-From:   syzbot <syzbot+e7eea402700c6db193be@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200915125947.26204-6-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9760 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ adultscore=0 malwarescore=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=2 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009300182
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9760 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=2
+ phishscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2009300181
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 9/15/20 5:59 AM, Muchun Song wrote:
+> If the size of hugetlb page is 2MB, we need 512 struct page structures
+> (8 pages) to be associated with it. As far as I know, we only use the
+> first 3 struct page structures and only read the compound_dtor members
 
-syzbot found the following issue on:
+Actually, the first 4 pages can be used if CONFIG_CGROUP_HUGETLB.
+/*
+ * Minimum page order trackable by hugetlb cgroup.
+ * At least 4 pages are necessary for all the tracking information.
+ * The second tail page (hpage[2]) is the fault usage cgroup.
+ * The third tail page (hpage[3]) is the reservation usage cgroup.
+ */
+#define HUGETLB_CGROUP_MIN_ORDER        2
 
-HEAD commit:    d1d2220c Add linux-next specific files for 20200924
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b1918d900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=254e028a642027c
-dashboard link: https://syzkaller.appspot.com/bug?extid=e7eea402700c6db193be
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+However, this still easily fits within the first page of struct page
+structures.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> of the remaining struct page structures. For tail page, the value of
+> compound_dtor is the same. So we can reuse first tail page. We map the
+> virtual addresses of the remaining 6 tail pages to the first tail page,
+> and then free these 6 pages. Therefore, we need to reserve at least 2
+> pages as vmemmap areas.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e7eea402700c6db193be@syzkaller.appspotmail.com
+I got confused the first time I read the above sentences.  Perhaps it
+should be more explicit with something like:
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 28162 at kernel/kthread.c:547 kthread_park+0x17c/0x1b0 kernel/kthread.c:547
-Modules linked in:
-CPU: 1 PID: 28162 Comm: syz-executor.3 Not tainted 5.9.0-rc6-next-20200924-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:kthread_park+0x17c/0x1b0 kernel/kthread.c:547
-Code: 2a 04 27 00 0f 0b e9 fb fe ff ff e8 1e 04 27 00 0f 0b e8 17 04 27 00 41 bc da ff ff ff 5b 44 89 e0 5d 41 5c c3 e8 04 04 27 00 <0f> 0b 41 bc f0 ff ff ff eb be e8 f5 03 27 00 0f 0b eb b2 e8 bc 74
-RSP: 0018:ffffc90017ebfd50 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff888092c0ca00 RCX: ffffffff814e2ccf
-RDX: ffff88804f30a040 RSI: ffffffff814e2d6c RDI: 0000000000000007
-RBP: ffff88804f46c440 R08: 0000000000000000 R09: ffff888092c0ca07
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff888096f7d000 R15: 0000000000000000
-FS:  0000000002a7e940(0000) GS:ffff8880ae500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000001590004 CR3: 000000020a32f000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- io_sq_thread_park fs/io_uring.c:7145 [inline]
- io_sq_thread_park fs/io_uring.c:7139 [inline]
- io_uring_flush+0x10a6/0x1640 fs/io_uring.c:8596
- filp_close+0xb4/0x170 fs/open.c:1276
- __close_fd+0x2f/0x50 fs/file.c:671
- __do_sys_close fs/open.c:1295 [inline]
- __se_sys_close fs/open.c:1293 [inline]
- __x64_sys_close+0x69/0x100 fs/open.c:1293
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x417901
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 a4 1a 00 00 c3 48 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007fffe4c281e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000417901
-RDX: 0000000000000000 RSI: ffffffff8840e309 RDI: 0000000000000003
-RBP: 0000000000000001 R08: ffffffff8134e496 R09: 0000000092f8bb6d
-R10: 00007fffe4c282d0 R11: 0000000000000293 R12: 000000000118d9c0
-R13: 000000000118d9c0 R14: ffffffffffffffff R15: 000000000118cf4c
+For tail pages, the value of compound_dtor is the same. So we can reuse
+first page of tail page structs. We map the virtual addresses of the
+remaining 6 pages of tail page structs to the first tail page struct,
+and then free these 6 pages. Therefore, we need to reserve at least 2
+pages as vmemmap areas.
 
+It still does not sound great, but hopefully avoids some confusion.
+-- 
+Mike Kravetz
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> So we introduce a new nr_free_vmemmap_pages field in the hstate to
+> indicate how many vmemmap pages associated with a hugetlb page that we
+> can free to buddy system.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  include/linux/hugetlb.h |  3 +++
+>  mm/hugetlb.c            | 35 +++++++++++++++++++++++++++++++++++
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index d5cc5f802dd4..eed3dd3bd626 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -492,6 +492,9 @@ struct hstate {
+>  	unsigned int nr_huge_pages_node[MAX_NUMNODES];
+>  	unsigned int free_huge_pages_node[MAX_NUMNODES];
+>  	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +	unsigned int nr_free_vmemmap_pages;
+> +#endif
+>  #ifdef CONFIG_CGROUP_HUGETLB
+>  	/* cgroup control files */
+>  	struct cftype cgroup_files_dfl[7];
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 81a41aa080a5..f1b2b733b49b 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1292,6 +1292,39 @@ static inline void destroy_compound_gigantic_page(struct page *page,
+>  						unsigned int order) { }
+>  #endif
+>  
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +#define RESERVE_VMEMMAP_NR	2U
+> +
+> +static inline unsigned int nr_free_vmemmap(struct hstate *h)
+> +{
+> +	return h->nr_free_vmemmap_pages;
+> +}
+> +
+> +static void __init hugetlb_vmemmap_init(struct hstate *h)
+> +{
+> +	unsigned int order = huge_page_order(h);
+> +	unsigned int vmemmap_pages;
+> +
+> +	vmemmap_pages = ((1 << order) * sizeof(struct page)) >> PAGE_SHIFT;
+> +	/*
+> +	 * The head page and the first tail page not free to buddy system,
+> +	 * the others page will map to the first tail page. So there are
+> +	 * (@vmemmap_pages - RESERVE_VMEMMAP_NR) pages can be freed.
+> +	 */
+> +	if (vmemmap_pages > RESERVE_VMEMMAP_NR)
+> +		h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
+> +	else
+> +		h->nr_free_vmemmap_pages = 0;
+> +
+> +	pr_info("HugeTLB: can free %d vmemmap pages for %s\n",
+> +		h->nr_free_vmemmap_pages, h->name);
+> +}
+> +#else
+> +static inline void hugetlb_vmemmap_init(struct hstate *h)
+> +{
+> +}
+> +#endif
+> +
+>  static void update_and_free_page(struct hstate *h, struct page *page)
+>  {
+>  	int i;
+> @@ -3285,6 +3318,8 @@ void __init hugetlb_add_hstate(unsigned int order)
+>  	snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
+>  					huge_page_size(h)/1024);
+>  
+> +	hugetlb_vmemmap_init(h);
+> +
+>  	parsed_hstate = h;
+>  }
+>  
+> 
