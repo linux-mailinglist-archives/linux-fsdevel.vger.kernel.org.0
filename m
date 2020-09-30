@@ -2,168 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0671127E806
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 13:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BED6127E8E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Sep 2020 14:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbgI3L6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 07:58:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728270AbgI3L6G (ORCPT
+        id S1730062AbgI3MtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 08:49:17 -0400
+Received: from mail-il1-f205.google.com ([209.85.166.205]:57113 "EHLO
+        mail-il1-f205.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729890AbgI3MtQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 07:58:06 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3284FC061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 04:58:05 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id q5so1348475ilj.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 04:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cuRMI2dEbW7qdVyqJr4Dp9XK546nDs8UHDfV++8fh6o=;
-        b=WdYfVz9XvAYja6V+uU/flmg7Tzv7KdXyhWt4mlGjsjZW71CHBTA8ggwk/LrKV3Uqum
-         YpybTHXhAsT/C0FWeRaFHGN23XEvuHeX3MQv8RL+b/D9vR7DN82aMn8dgtLzm46NNpmt
-         tTxL0uArHNkW3CFSxm7PPKBTx9yKAwcTzCC6NCu48iowbceXYrU+3WOMKKsEmoV0O4EH
-         T0GxaUz2KjsYZs6S8bselpH/VzKRZGHjJ0tlPmapjQb1hM4qUHAePmxtnjPLJFtqqN79
-         eRScaW5lBRep+xRYClOTz4HWPiPXG9dy40AcHizr1LaJGby86y4PB6Vef+of/pJPZ7RQ
-         6beA==
+        Wed, 30 Sep 2020 08:49:16 -0400
+Received: by mail-il1-f205.google.com with SMTP id d16so1306844ila.23
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 05:49:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cuRMI2dEbW7qdVyqJr4Dp9XK546nDs8UHDfV++8fh6o=;
-        b=IzBjtfKMl2M0GZg1JzAOxqivg8bm2Rvou4M8nYTslW0HPkFfSGgLMPbtPsTfp0dWNu
-         YNEUGbnvdDgquqL2JU7YUfkMi4Xe0UDpZ4Zmby/+/W0BP31PypQu/Neb4BCzxQoYba/J
-         0m4duDbS4yozmSDeld9ulXtFnr9/eJcdasGB5MdoiEsy6l37M39Ci8n4kzRBlmEhYw4+
-         8Y3W91hL/m3pdb70liUfg9SshLh5VNfcRNjEn3Wj0ZhXrVSTW44Gol4BZznfVKlBs3cQ
-         8oQ3u4uxaV/9p/KCm2KtyhTFyKfTgsTRRLGIfllDfXUM5l6p0Bss9ww8W2+SonSb90Hu
-         48Qw==
-X-Gm-Message-State: AOAM53317A2WMAixxRD4E4R9jy7zBf4nVGF23IY4Gw1bP0Zo8V8t8a1a
-        2pP1D7T7CXJUgmjqW8dhO2dOt2S0q7eWLRsAmYolX27dSCc=
-X-Google-Smtp-Source: ABdhPJwPLlAg7n3NiQlbyv1Y37KBn0IkAvIJ/3NLyU5VPyMzkRoPS4M574QcOMoq0c82I9PIpwBChtL/o5kYnkl1P8Q=
-X-Received: by 2002:a92:6403:: with SMTP id y3mr1705190ilb.72.1601467084449;
- Wed, 30 Sep 2020 04:58:04 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=/hvE1WJmPnaf3tjNkTN3ozvcblsJGWdVi4rG2TJXdkU=;
+        b=et6HRywMcYPSCMii+eIFLD5IdqdJoaYZoWN4UGd3WfD+zPT4Z/eNcicc6QJ+rpXQJS
+         4JrM/kJHcY08+r0GiOG3ju5GVlGHX9GRw2SWfck3rGY7/t9Ga+v9SuEYck5L0kXFiFfd
+         vQmFNCnt4DVX7k0zVoQXGTJ3bVJzJfk+OmFbWAoZsspUPFVOXX4uhpYCTnZzw5Vw1DL8
+         zXpEZheEtQ/znbgtdb1Fj2xXym2u6fsRvHkpajrFdxWKZsZ/vgtYXPLPH8EfdOoQ+jjA
+         JzLCPOeBGtZ+5//cMS/RWsRiZxNTMOSakn4TH5Qkw3y1Htjk0DStrQzfG3VPm3ALANQA
+         i/lA==
+X-Gm-Message-State: AOAM531jygsIY0vtC5+RlPnoCAT0lHmSpdW1BK0fJn+mdRmg4Hl7P8fm
+        plUoqmTccyo6mMqWUu4n+PPcTPDzl+GRd3WSi2R/j1B2cG1Y
+X-Google-Smtp-Source: ABdhPJwbn/fqdYCXnI/R+QHdujVgoT2Pzz8fN7PgCIf7YuX8QCigcm7lu47/nSQDOlgt+u78bQauDvqSjujVtabBfA9X7GyLDH+m
 MIME-Version: 1.0
-References: <20200929185015.GG220516@redhat.com> <CAOQ4uxgMeWF_vitenBY6_N3Eu-ix92q8AO5ckDAF+SVxHTBXXw@mail.gmail.com>
- <CAJfpegtH0TruLCnG_YJ8aUBHh7k5sqN_wVEegvDPJOoDcmwLSQ@mail.gmail.com>
-In-Reply-To: <CAJfpegtH0TruLCnG_YJ8aUBHh7k5sqN_wVEegvDPJOoDcmwLSQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 30 Sep 2020 14:57:53 +0300
-Message-ID: <CAOQ4uxiity6zAW__Y+T=o+GHkzxo=fnVj+21Z8cRjdvFWbauRQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] fuse: update attributes on read() only on timeout
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Brian Foster <bfoster@redhat.com>,
-        Zhi Zhang <zhang.david2011@gmail.com>
+X-Received: by 2002:a92:7713:: with SMTP id s19mr1904120ilc.161.1601470155527;
+ Wed, 30 Sep 2020 05:49:15 -0700 (PDT)
+Date:   Wed, 30 Sep 2020 05:49:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bd1edd05b087535a@google.com>
+Subject: INFO: rcu detected stall in security_file_open (3)
+From:   syzbot <syzbot+d2b6e8cc299748fecf25@syzkaller.appspotmail.com>
+To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
+        davem@davemloft.net, fweisbec@gmail.com, ktkhai@virtuozzo.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mareklindner@neomailbox.ch, miklos@szeredi.hu, mingo@kernel.org,
+        mszeredi@redhat.com, netdev@vger.kernel.org, sw@simonwunderlich.de,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 30, 2020 at 9:40 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, Sep 30, 2020 at 6:36 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > I wonder out loud if this change of behavior you proposed is a good opportunity
-> > to introduce some of the verbs from SMB oplocks / NFS delegations into the
-> > FUSE protocol in order to allow finer grained control over per-file
-> > (and later also per-directory) caching behavior.
->
-> That would be really nice.  Let me find a recent discussion on this...
-> ah it was private.   Copying the thread below.  Thoughts?
->
-> Thanks,
-> Miklos
->
-> On Tue, Aug 11, 2020 at 8:56 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Wed, Aug 5, 2020 at 5:53 AM Zhi Zhang <zhang.david2011@gmail.com> wrote:
-> > > On Tue, Aug 4, 2020 at 11:36 AM Zhi Zhang <zhang.david2011@gmail.com> wrote:
-> > > > On Mon, Aug 3, 2020 at 6:37 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > >
-> > > > > On Thu, Jul 23, 2020 at 12:40 PM Zhi Zhang <zhang.david2011@gmail.com> wrote:
-> >
-> > > > > > We are using distributed filesystem ceph-fuse and we enabled writeback
-> > > > > > cache on fuse which improves the write performance, but the file's
-> > > > > > size attribute can't be updated on another client even if the users on
-> > > > > > this client only read this file.
-> > > > > >
-> > > > > > From my understanding, if the file is not opened in write mode and
-> > > > > > already writes its buffered data to userspace filesystem like
-> > > > > > ceph-fuse, then its state should be clean. The upper userspace and
-> > > > > > remote server should be responsible for the data and consistency. So
-> > > > > > at this moment fuse could trust the attributes from the server which
-> > > > > > has the most authoritative information about this file.
-> > > > > >
-> > > > > > Please let me know your thoughts, then I can work on this patch. Thanks.
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Something like this makes sense, but I think we should be adding an
-> > > > > explicit state (a lease to read/write the data) to the fuse inode.
-> > > > >
-> > > > > Opening for write would automatically acquire the WRITE lease,
-> > > > > similarly opening for read would acquire the READ lease.  Then we need
-> > > > > a new notification for revoking a lease (FUSE_NOTIFY_REVOKE).  And we
-> > > > > need a new request for re-acquiring a lease (FUSE_REACQUIRE).
-> > > > >
-> > > > > Does that make sense?
+Hello,
 
-Sounds right.
+syzbot found the following issue on:
 
-Linking to MS docs for reference, because I find their documentation
-most comprehensive and SMBv3.1 semantics is much richer than NFSv4,
-so maybe useful examples can be found there:
-https://docs.microsoft.com/en-us/windows/win32/fileio/breaking-opportunistic-locks
+HEAD commit:    fb0155a0 Merge tag 'nfs-for-5.9-3' of git://git.linux-nfs...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b007cf900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41b736b7ce1b3ea4
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2b6e8cc299748fecf25
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1249c717900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1048d9e3900000
 
-I would consider adopting the downgrade/upgrade terminology, because
-REVOKE/REACQUIRE sounds like losing the old any taking a new lease
-when in fact downgrade from WRITE to READ and vice versa is a common
-case. But the name is not what matters, it's to get the functionality right.
+The issue was bisected to:
 
-Thanks,
-Amir.
+commit c9d8f5f0692d5960ed50970ffe63756fb8f96cdb
+Author: Kirill Tkhai <ktkhai@virtuozzo.com>
+Date:   Fri Nov 9 10:33:27 2018 +0000
 
-> > > > >
-> > > > > Would you mind discussing this on the linux-fsdevel mailing lists?
-> > > > >
-> > > > > Thanks,
-> > > > > Miklos>
-> > > Hi Miklos,
-> > >
-> > > Thanks for the comments. I thought about it but I still have a couple
-> > > of questions about the lease.
-> > >
-> > > 1. After acquiring a WRITE lease, when should we release(revoke) it?
-> > > Before I assumed the file would be clean once we wrote buffered data
-> > > to the userspace file system. Now if we introduce the lease, should we
-> > > release the WRITE lease once we write the buffered data or we need to
-> > > wait for the revoking notification from userspace file system?
-> >
-> > I think it's easier to wait for the notification, instead of trying to
-> > guess.   When the file is closed (released) then the lease is also
-> > implicitly released.
-> >
-> > > 2. What is the purpose of READ lease?
-> > > Once we hold the READ lease, we could trust cached attributes and data
-> > > until revoking notification from userspace file system?
-> >
-> > Yes.
-> >
-> > > 3. What is the purpose of re-acquiring a lease and why do we need a new request?
-> > > From my understanding, the lease mechanism is only known by kernel
-> > > fuse, not for libfuse.
-> >
-> > We don't necessarily need a new request, it could be implicit in the
-> > first uncached write.
-> >
-> > > To re-acquire a lease here is actually for READ
-> > > lease by sending a sync getattr request.
-> >
-> > Yes.
-> >
-> > Thanks,
-> > Miklos
+    fuse: Protect fi->nlookup with fi->lock
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11af769d900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13af769d900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15af769d900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d2b6e8cc299748fecf25@syzkaller.appspotmail.com
+Fixes: c9d8f5f0692d ("fuse: Protect fi->nlookup with fi->lock")
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1):
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 3922 at kernel/sched/core.c:3013 rq_unlock kernel/sched/sched.h:1326 [inline]
+WARNING: CPU: 0 PID: 3922 at kernel/sched/core.c:3013 try_invoke_on_locked_down_task+0x21d/0x2f0 kernel/sched/core.c:3019
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 3922 Comm: systemd-udevd Not tainted 5.9.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fd lib/dump_stack.c:118
+ panic+0x382/0x7fb kernel/panic.c:231
+ __warn.cold+0x20/0x4b kernel/panic.c:600
+ report_bug+0x1bd/0x210 lib/bug.c:198
+ handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+ exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
+ asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
+RIP: 0010:try_invoke_on_locked_down_task+0x21d/0x2f0 kernel/sched/core.c:3013
+Code: 45 31 f6 49 39 c0 74 3a 8b 74 24 38 49 8d 78 18 4c 89 04 24 e8 a4 e7 08 00 4c 8b 04 24 4c 89 c7 e8 28 ab d6 06 e9 20 ff ff ff <0f> 0b e9 7d fe ff ff 4c 89 ee 48 89 ef 41 ff d4 41 89 c6 e9 08 ff
+RSP: 0018:ffffc90000007be0 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 1ffff92000000f7e RCX: 0000000000000001
+RDX: 0000000000000000 RSI: ffffffff8162da10 RDI: ffff8880a61a2440
+RBP: ffff8880a61a2440 R08: 0000000000000033 R09: ffffffff8a05ae03
+R10: 000000000000062e R11: 0000000000000001 R12: ffffffff8162da10
+R13: ffffc90000007d08 R14: ffff8880a61a2440 R15: 0000000000000000
+ rcu_print_task_stall kernel/rcu/tree_stall.h:267 [inline]
+ print_other_cpu_stall kernel/rcu/tree_stall.h:475 [inline]
+ check_cpu_stall kernel/rcu/tree_stall.h:634 [inline]
+ rcu_pending kernel/rcu/tree.c:3639 [inline]
+ rcu_sched_clock_irq.cold+0x97e/0xdfd kernel/rcu/tree.c:2521
+ update_process_times+0x25/0xa0 kernel/time/timer.c:1710
+ tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:176
+ tick_sched_timer+0x1d1/0x2a0 kernel/time/tick-sched.c:1328
+ __run_hrtimer kernel/time/hrtimer.c:1524 [inline]
+ __hrtimer_run_queues+0x1d5/0xfc0 kernel/time/hrtimer.c:1588
+ hrtimer_interrupt+0x334/0x940 kernel/time/hrtimer.c:1650
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1080 [inline]
+ __sysvec_apic_timer_interrupt+0x147/0x5f0 arch/x86/kernel/apic/apic.c:1097
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ __run_sysvec_on_irqstack arch/x86/include/asm/irq_stack.h:37 [inline]
+ run_sysvec_on_irqstack_cond arch/x86/include/asm/irq_stack.h:89 [inline]
+ sysvec_apic_timer_interrupt+0xb2/0xf0 arch/x86/kernel/apic/apic.c:1091
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:581
+RIP: 0010:preempt_count arch/x86/include/asm/preempt.h:26 [inline]
+RIP: 0010:check_kcov_mode kernel/kcov.c:163 [inline]
+RIP: 0010:__sanitizer_cov_trace_pc+0x9/0x60 kernel/kcov.c:197
+Code: 5d be 03 00 00 00 e9 76 af 49 02 66 0f 1f 44 00 00 48 8b be b0 01 00 00 e8 b4 ff ff ff 31 c0 c3 90 65 48 8b 14 25 c0 fe 01 00 <65> 8b 05 e0 bf 8b 7e a9 00 01 ff 00 48 8b 34 24 74 0f f6 c4 01 74
+RSP: 0018:ffffc90000f075a8 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: ffffffff838a0be7
+RDX: ffff88809c62c4c0 RSI: ffff88809c62c4c0 RDI: 0000000000000005
+RBP: ffff8880a601de80 R08: 0000000000000001 R09: ffffffff8d5f79c7
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
+R13: 0000000000000183 R14: dffffc0000000000 R15: 0000000000000000
+ tomoyo_domain_quota_is_ok+0x31a/0x550 security/tomoyo/util.c:1070
+ tomoyo_supervisor+0x2f2/0xef0 security/tomoyo/common.c:2089
+ tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
+ tomoyo_path_permission security/tomoyo/file.c:587 [inline]
+ tomoyo_path_permission+0x270/0x3a0 security/tomoyo/file.c:573
+ tomoyo_check_open_permission+0x33e/0x380 security/tomoyo/file.c:777
+ tomoyo_file_open security/tomoyo/tomoyo.c:313 [inline]
+ tomoyo_file_open+0xa3/0xd0 security/tomoyo/tomoyo.c:308
+ security_file_open+0x52/0x4f0 security/security.c:1574
+ do_dentry_open+0x358/0x11b0 fs/open.c:804
+ do_open fs/namei.c:3251 [inline]
+ path_openat+0x1b9a/0x2730 fs/namei.c:3368
+ do_filp_open+0x17e/0x3c0 fs/namei.c:3395
+ do_sys_openat2+0x16d/0x420 fs/open.c:1168
+ do_sys_open fs/open.c:1184 [inline]
+ __do_sys_open fs/open.c:1192 [inline]
+ __se_sys_open fs/open.c:1188 [inline]
+ __x64_sys_open+0x119/0x1c0 fs/open.c:1188
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fb405960840
+Code: 73 01 c3 48 8b 0d 68 77 20 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 89 bb 20 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e f6 ff ff 48 89 04 24
+RSP: 002b:00007fff26dc0bd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fff26dc0c70 RCX: 00007fb405960840
+RDX: 0000560daddc7fe3 RSI: 00000000000a0800 RDI: 0000560daede0670
+RBP: 00007fff26dc1100 R08: 0000560daddc7670 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff26dc0d80
+R13: 0000560daed2da60 R14: 0000560daedeeef0 R15: 00007fff26dc0c50
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
