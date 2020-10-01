@@ -2,98 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B77727FD3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Oct 2020 12:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12AA527FDF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Oct 2020 12:59:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbgJAKYV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Oct 2020 06:24:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50236 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725938AbgJAKYV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Oct 2020 06:24:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 52B34AC2F;
-        Thu,  1 Oct 2020 10:24:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 136F41E12EF; Thu,  1 Oct 2020 12:24:19 +0200 (CEST)
-Date:   Thu, 1 Oct 2020 12:24:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        linux-audit@redhat.com, Paul Moore <paul@paul-moore.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH 2/3] fanotify: define bit map fields to hold response
- decision  context
-Message-ID: <20201001102419.GF17860@quack2.suse.cz>
-References: <2745105.e9J7NaK4W3@x2>
- <20201001101219.GE17860@quack2.suse.cz>
+        id S1732020AbgJAK7v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Oct 2020 06:59:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731913AbgJAK7v (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 1 Oct 2020 06:59:51 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE69FC0613D0
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Oct 2020 03:59:49 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id a2so3722108ybj.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Oct 2020 03:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=LpSM+rRHzBSMytnDHL/DL9sUB5Qjfbqr4nyejqcrB+c=;
+        b=VZJh5yq3z3gLFVpd0Yf5p4+7MycS0zi4PMhMfXI3FB+7dZESFI06Q2G+uDEGQwQajK
+         MfsNN50B/L7rOY9DjOng5/vpvp8v2GCVKh/0LpfWtbliSmUOoFpJPQQMQh+Vuv1gSstS
+         Iccii4h0aprQbkEnbTcyUm4+Ob/SMf/Jeyh3UE1pPyDMPKykmHWRaYs7udZHgZn6HSzd
+         bZ1eoYhbE6QFZWoI2JxE+d+BgrdP69bpwSfsrNr7KrENft6Qcm1j82jXOIkhJOZzH6V/
+         2dNPhSaamoy+VmG9SboNfRLDJmdwEnSJ3EVAbPvhN4GHb3OyiukKc7klo6qfGwb3BI71
+         wO7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=LpSM+rRHzBSMytnDHL/DL9sUB5Qjfbqr4nyejqcrB+c=;
+        b=tMxlLKCFdM/bZ2shC3xbxJ61jN33ryrhUdrmLbOdDAYm5Y5Qm2q6MVLTa8sc27FciX
+         o9JYBcx4PDYAcwAqXcZAUW9RWBUXfE4f5Rjn/I45R2QQAgLeKCRTLPNwpJ5Yxwfs3KW/
+         lhnrkniQbqr2X5JIMv/6kFFMhO6MBNs6c1rX4Io5wADGd56/Gl2J1byJQM+BAAfoeZ4O
+         r+BkTlS/BG/XepHUnU36a1b6OTkM85zkokGFKHSzYMrq0+cfcl+UkNDozejcGPEI8IBJ
+         B80tMYT3Q4KqKsXoB4EIbNGtItZEGmI/E+0LboMTIV4uzvdlK1X4W8TeDulrdoO3RrYJ
+         jMVA==
+X-Gm-Message-State: AOAM532S80iua5BnBB63hkF72qlFhpJdtBPzmZLP4ZRyI8WP2RKDrYs+
+        qDRn+JmBAYMB/YFv2vwJN3HWzIw0fawOOdOKMTkOAPGr0OMzNQ==
+X-Google-Smtp-Source: ABdhPJx+Fm1IxjpqGApvBxBebNU8xs+4bb9LigpNro1rr8EhL6ZnhZ3epWf3lYedURNU+DD/Ny+oBRAOdujvgn/pN/0=
+X-Received: by 2002:a05:6902:1025:: with SMTP id x5mr9013881ybt.131.1601549988523;
+ Thu, 01 Oct 2020 03:59:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201001101219.GE17860@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Shyam Prasad N <nspmangalore@gmail.com>
+Date:   Thu, 1 Oct 2020 16:29:38 +0530
+Message-ID: <CANT5p=pvumVCNCLbSCaxgmfFLR-ifeQJrUETfG4ALxzfTRRxew@mail.gmail.com>
+Subject: Error codes for VFS calls
+To:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        samba-technical@lists.samba.org
+Cc:     Steve French <smfrench@gmail.com>,
+        =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel@suse.com>,
+        ronnie sahlberg <ronniesahlberg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 01-10-20 12:12:19, Jan Kara wrote:
-> On Wed 30-09-20 12:12:28, Steve Grubb wrote:
-> > This patch defines 2 bit maps within the response variable returned from
-> > user space on a permission event. The first field is 3 bits for the context
-> > type. The context type will describe what the meaning is of the second bit
-> > field. The default is none. The patch defines one additional context type
-> > which means that the second field is a rule number. This will allow for the
-> > creation of 6 other context types in the future if other users of the API
-> > identify different needs. The second field is 10 bits wide and can be used
-> > to pass along the data described by the context. Neither of these bit maps
-> > are directly adjacent and could be expanded if the need arises.
-> > 
-> > To support this, several macros were created to facilitate storing and
-> > retrieving the values. There is also a macro for user space to check that
-> > the data being sent is valid. Of course, without this check, anything that
-> > overflows the bit field will trigger an EINVAL based on the use of
-> > of INVALID_RESPONSE_MASK in process_access_response().
-> > 
-> > Signed-off-by: Steve Grubb <sgrubb@redhat.com>
-> 
-> So how likely do you find other context types are or that you'd need to
-> further expand the information passed from userspace? Because if there are
-> decent changes the expansion will be needed then I'd rather do something
-> like:
-> 
-> struct fanotify_response {
-> 	__s32 fd;
-> 	__u16 response;
-> 	__u16 extra_info_type;
-> };
-> 
-> which is also backwards compatible and then userspace can set extra_info_type
-> and based on the type we'd know how much more bytes we need to copy from
-> buf to get additional information for that info type. 
-> 
-> This is much more flexible than what you propose and not that complex to
-> implement, you get type safety for extra information and don't need to use
-> macros to cram everything in u32 etc. Overall cleaner interface I'd say.
-> 
-> So in your case you'd then have something like:
-> 
-> #define FAN_RESPONSE_INFO_AUDIT_RULE 1
-> 
-> struct fanotify_response_audit_rule {
-> 	__u32 rule;
-> };
+Hi developers,
 
-Now I realized we need to propagate the extra information through fanotify
-permission event to audit - that can be also done relatively easily. Just
-add '__u16 extra_info_type' to fanotify_perm_event and 'char
-extra_info_buf[FANOTIFY_MAX_RESPONSE_EXTRA_LEN]' for now for the data. If
-we ever grow larger extra info structures, we can always change this to
-dynamic allocation but that will be only internal fanotify change,
-userspace facing API can stay the same.
+I seek your opinions about the error codes returned by the Linux
+filesystem for the I/Os triggered by users. In general, each VFS
+system call (open, read, write, close, stat) man page defines a
+limited set of error codes returned by the call, and the meaning of
+the error, in the context of that call.
 
-								Honza
+But in many cases, especially in network based filesystems, this
+limited set of error codes may not be sufficient to indicate the exact
+problem to the user. For example, in case of SMB3, where things like
+authentication or actual mount of the filesystem may be delayed to the
+point of first I/O by the specific user on the mount point, having a
+limited set of error codes could end up confusing the user, and not
+indicate the actual error to the user.
+
+So my questions here:
+1. Should the error codes be specific to the filesystem in question,
+and not just specific to the VFS system call?
+2. Do we have any other mechanism of returning a custom error message
+to the user (the one that tells the user about the exact problem in
+more detail), other than to print this in the logs?
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-Shyam
