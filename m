@@ -2,162 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 366A727F80B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Oct 2020 04:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A717A27F813
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Oct 2020 04:58:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbgJACx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Sep 2020 22:53:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36793 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725372AbgJACx1 (ORCPT
+        id S1730338AbgJAC6P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Sep 2020 22:58:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730238AbgJAC6P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Sep 2020 22:53:27 -0400
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601520805;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=3onzANrKcElOeJRqYfauqyHXTE9OT8+U7H5RZIzMJqY=;
-        b=FhDXKehUF5QlUBpM8IFdqNuDVtzxDZF8iiNSQl042YlemDJLD0epoglIyEknVA5CX/v6tn
-        Dvg+pAPUCKgn86E6JVxPZATktWkPzt85QR3Kmfqmlsns5uViGsjIbyWxZsCc/8hSNYVoyT
-        SZrKsw0NBwxXKfs9yUkwZCjsjsBtUy0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-365-sPFtqgRcMsiEurG6ebSxsQ-1; Wed, 30 Sep 2020 22:53:23 -0400
-X-MC-Unique: sPFtqgRcMsiEurG6ebSxsQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 22BB61868416;
-        Thu,  1 Oct 2020 02:53:21 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-115-71.rdu2.redhat.com [10.10.115.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 811BE5C1CF;
-        Thu,  1 Oct 2020 02:53:19 +0000 (UTC)
-From:   Qian Cai <cai@redhat.com>
-To:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pipe: Fix memory leaks in create_pipe_files()
-Date:   Wed, 30 Sep 2020 22:52:55 -0400
-Message-Id: <20201001025255.29560-1-cai@redhat.com>
+        Wed, 30 Sep 2020 22:58:15 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47625C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 19:58:15 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id x123so3041735pfc.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Sep 2020 19:58:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mwzDXzGzheFaLtfSgxu27esE2z5Zeui3HFQefTnFb8g=;
+        b=zgOeDmpJuU6J+m/pXdHtw3CZdp3/+XRjOtE4QzOo5btYMi5CLEyMdYXP4kSuNLz0eJ
+         TFwUKsIYwfUQUmtI+2qMLoVZYgC7w7vkFssPY0ClvBK10qm7/mmR+KOvvl74hI+k/bB/
+         1Fn6MN/yuQdtO3KDGy+7pAlMNut7JupiZLTCM25c9gbmkHd3h5qXV1x4slS9nd7QdC72
+         Dse4DbSqwOSlALxNQ+/L/J27u5yzgeCl4uE/08Z0Z8ByPYub7ETutOqST4m2+qsy60+j
+         uD8cO44bxV1JAX4MTkAqxwFpazo/MUwoaL01/QQ/iBZy7NVW7x5qhZin16ywUexEwRsu
+         CdTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mwzDXzGzheFaLtfSgxu27esE2z5Zeui3HFQefTnFb8g=;
+        b=SqLkcUXYIAYUPdH/w/eiOghBtuHAp9cZWW72THruBw7CB8LNTIMKudWGWu19y6kUcO
+         AMs+hlkvep04gHMdNZS1HSRIKR6ohijOsZr0q4rkXnImQ8ccPgZC1XPsSc3lLDo3E6g3
+         JdRTfP+LKtLh71tWt21y/grhsC8XaRSjNE9ICE7spC7pOFHVxDFOgD3ZJ67A9xEuoYZz
+         5YOD1UqjLHbQRzUlE1SSDK72Z1HCxhOCRIW9tEsH9MaoEU0+7Sk5APHw856I8O7deLnX
+         Ruu6bfRYActX3tVRV6bSuX34uG5fG0Oj+PuaR8uWHqm/FOkBBExzIOpbiv1HJ73vqENY
+         5AWA==
+X-Gm-Message-State: AOAM530QKAZ3q5Vbm8OK83Fei6RFx5F7bJ8fK77dn6TnR4MkYc15ssud
+        4n2q8vO/TCyDyz686o5agoZLm0i2+kZohWrG7hebwg==
+X-Google-Smtp-Source: ABdhPJw54fMhnUTblVABuAoszldUwSDkq8h8waLyxfnj4UMJiylKdptjrq1mXx8p4IpIh0PDd6kd4W1ynwcS/DGmTZU=
+X-Received: by 2002:aa7:8287:0:b029:142:2501:39ec with SMTP id
+ s7-20020aa782870000b0290142250139ecmr4965310pfm.59.1601521094544; Wed, 30 Sep
+ 2020 19:58:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20200915125947.26204-1-songmuchun@bytedance.com>
+ <20200915125947.26204-6-songmuchun@bytedance.com> <b2811679-cd90-4685-2284-64490e7dfb7e@oracle.com>
+In-Reply-To: <b2811679-cd90-4685-2284-64490e7dfb7e@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 1 Oct 2020 10:57:38 +0800
+Message-ID: <CAMZfGtV99X7TbkortsFaUYQC-Zvq53ggwB_PBzqUBFyQ2Hkvpg@mail.gmail.com>
+Subject: Re: [External] Re: [RFC PATCH 05/24] mm/hugetlb: Introduce
+ nr_free_vmemmap_pages in the struct hstate
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Calling pipe2() with O_NOTIFICATION_PIPE could results in memory leaks
-in an error path or CONFIG_WATCH_QUEUE=n. Plug them.
+On Thu, Oct 1, 2020 at 6:41 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 9/15/20 5:59 AM, Muchun Song wrote:
+> > If the size of hugetlb page is 2MB, we need 512 struct page structures
+> > (8 pages) to be associated with it. As far as I know, we only use the
+> > first 3 struct page structures and only read the compound_dtor members
+>
+> Actually, the first 4 pages can be used if CONFIG_CGROUP_HUGETLB.
 
-unreferenced object 0xc00000141114a0d8 (size 992):
-  comm "trinity-c61", pid 1353192, jiffies 4296255779 (age 25989.560s)
-  hex dump (first 32 bytes):
-    80 11 00 00 e8 03 00 00 00 00 00 00 00 00 00 00  ................
-    ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff  ................
-  backtrace:
-    [<00000000abff13d7>] kmem_cache_alloc+0x1b4/0x470
-    [<000000009502e5d5>] alloc_inode+0xd0/0x130
-    [<00000000ca1c1a21>] new_inode_pseudo+0x1c/0x80
-new_inode_pseudo at fs/inode.c:932
-    [<000000000c01d1d6>] create_pipe_files+0x48/0x2d0
-get_pipe_inode at fs/pipe.c:874
-(inlined by) create_pipe_files at fs/pipe.c:914
-    [<00000000d13ff4c4>] __do_pipe_flags+0x50/0x120
-__do_pipe_flags at fs/pipe.c:965
-    [<0000000003941e42>] do_pipe2+0x3c/0x100
-do_pipe2 at fs/pipe.c:1013
-    [<00000000a006b818>] sys_pipe2+0x1c/0x30
-__se_sys_pipe2 at fs/pipe.c:1028
-    [<00000000a6925b55>] system_call_exception+0xf8/0x1d0
-    [<000000001c6b0740>] system_call_common+0xe8/0x218
-unreferenced object 0xc000001f575ce600 (size 512):
-  comm "trinity-c61", pid 1353192, jiffies 4296255779 (age 25989.560s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 ad 4e ad de  .............N..
-    ff ff ff ff 00 00 00 00 ff ff ff ff ff ff ff ff  ................
-  backtrace:
-    [<00000000d74d5e3a>] kmem_cache_alloc_trace+0x1c4/0x2d0
-    [<0000000061cbc9cb>] alloc_pipe_info+0x88/0x2c0
-kmalloc at include/linux/slab.h:554
-(inlined by) kzalloc at include/linux/slab.h:666
-(inlined by) alloc_pipe_info at fs/pipe.c:793
-    [<00000000efd6129c>] create_pipe_files+0x6c/0x2d0
-get_pipe_inode at fs/pipe.c:883
-(inlined by) create_pipe_files at fs/pipe.c:914
-    [<00000000d13ff4c4>] __do_pipe_flags+0x50/0x120
-    [<0000000003941e42>] do_pipe2+0x3c/0x100
-    [<00000000a006b818>] sys_pipe2+0x1c/0x30
-    [<00000000a6925b55>] system_call_exception+0xf8/0x1d0
-    [<000000001c6b0740>] system_call_common+0xe8/0x218
-unreferenced object 0xc000000d94f20400 (size 1024):
-  comm "trinity-c61", pid 1353192, jiffies 4296255779 (age 25989.560s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<00000000e60ee00f>] __kmalloc+0x1e4/0x330
-    [<00000000130e8cc8>] alloc_pipe_info+0x154/0x2c0
-kmalloc_array at include/linux/slab.h:594
-(inlined by) kcalloc at include/linux/slab.h:605
-(inlined by) alloc_pipe_info at fs/pipe.c:810
-    [<00000000efd6129c>] create_pipe_files+0x6c/0x2d0
-    [<00000000d13ff4c4>] __do_pipe_flags+0x50/0x120
-    [<0000000003941e42>] do_pipe2+0x3c/0x100
-    [<00000000a006b818>] sys_pipe2+0x1c/0x30
-    [<00000000a6925b55>] system_call_exception+0xf8/0x1d0
-    [<000000001c6b0740>] system_call_common+0xe8/0x218
+Right, thanks.
 
-Fixes: c73be61cede5 ("pipe: Add general notification queue support")
-Signed-off-by: Qian Cai <cai@redhat.com>
----
- fs/pipe.c                   | 11 +++++------
- include/linux/watch_queue.h |  4 ++++
- 2 files changed, 9 insertions(+), 6 deletions(-)
+> /*
+>  * Minimum page order trackable by hugetlb cgroup.
+>  * At least 4 pages are necessary for all the tracking information.
+>  * The second tail page (hpage[2]) is the fault usage cgroup.
+>  * The third tail page (hpage[3]) is the reservation usage cgroup.
+>  */
+> #define HUGETLB_CGROUP_MIN_ORDER        2
+>
+> However, this still easily fits within the first page of struct page
+> structures.
+>
+> > of the remaining struct page structures. For tail page, the value of
+> > compound_dtor is the same. So we can reuse first tail page. We map the
+> > virtual addresses of the remaining 6 tail pages to the first tail page,
+> > and then free these 6 pages. Therefore, we need to reserve at least 2
+> > pages as vmemmap areas.
+>
+> I got confused the first time I read the above sentences.  Perhaps it
+> should be more explicit with something like:
+>
+> For tail pages, the value of compound_dtor is the same. So we can reuse
+> first page of tail page structs. We map the virtual addresses of the
+> remaining 6 pages of tail page structs to the first tail page struct,
+> and then free these 6 pages. Therefore, we need to reserve at least 2
+> pages as vmemmap areas.
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 60dbee457143..6fbfbb8f32e1 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -913,19 +913,18 @@ int create_pipe_files(struct file **res, int flags)
- {
- 	struct inode *inode = get_pipe_inode();
- 	struct file *f;
-+	int ret;
- 
- 	if (!inode)
- 		return -ENFILE;
- 
- 	if (flags & O_NOTIFICATION_PIPE) {
--#ifdef CONFIG_WATCH_QUEUE
--		if (watch_queue_init(inode->i_pipe) < 0) {
-+		ret = watch_queue_init(inode->i_pipe);
-+		if (ret < 0) {
-+			free_pipe_info(inode->i_pipe);
- 			iput(inode);
--			return -ENOMEM;
-+			return ret;
- 		}
--#else
--		return -ENOPKG;
--#endif
- 	}
- 
- 	f = alloc_file_pseudo(inode, pipe_mnt, "",
-diff --git a/include/linux/watch_queue.h b/include/linux/watch_queue.h
-index 5e08db2adc31..20665fbe0552 100644
---- a/include/linux/watch_queue.h
-+++ b/include/linux/watch_queue.h
-@@ -123,5 +123,9 @@ static inline void remove_watch_list(struct watch_list *wlist, u64 id)
- #define watch_sizeof(STRUCT) (sizeof(STRUCT) << WATCH_INFO_LENGTH__SHIFT)
- 
- #endif
-+static inline int watch_queue_init(struct pipe_inode_info *pipe)
-+{
-+	return -ENOPKG;
-+}
- 
- #endif /* _LINUX_WATCH_QUEUE_H */
+Sorry for my poor English. Thanks for your suggestions. I can apply this.
+
+>
+> It still does not sound great, but hopefully avoids some confusion.
+> --
+> Mike Kravetz
+>
+> > So we introduce a new nr_free_vmemmap_pages field in the hstate to
+> > indicate how many vmemmap pages associated with a hugetlb page that we
+> > can free to buddy system.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  include/linux/hugetlb.h |  3 +++
+> >  mm/hugetlb.c            | 35 +++++++++++++++++++++++++++++++++++
+> >  2 files changed, 38 insertions(+)
+> >
+> > diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> > index d5cc5f802dd4..eed3dd3bd626 100644
+> > --- a/include/linux/hugetlb.h
+> > +++ b/include/linux/hugetlb.h
+> > @@ -492,6 +492,9 @@ struct hstate {
+> >       unsigned int nr_huge_pages_node[MAX_NUMNODES];
+> >       unsigned int free_huge_pages_node[MAX_NUMNODES];
+> >       unsigned int surplus_huge_pages_node[MAX_NUMNODES];
+> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> > +     unsigned int nr_free_vmemmap_pages;
+> > +#endif
+> >  #ifdef CONFIG_CGROUP_HUGETLB
+> >       /* cgroup control files */
+> >       struct cftype cgroup_files_dfl[7];
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 81a41aa080a5..f1b2b733b49b 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -1292,6 +1292,39 @@ static inline void destroy_compound_gigantic_page(struct page *page,
+> >                                               unsigned int order) { }
+> >  #endif
+> >
+> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> > +#define RESERVE_VMEMMAP_NR   2U
+> > +
+> > +static inline unsigned int nr_free_vmemmap(struct hstate *h)
+> > +{
+> > +     return h->nr_free_vmemmap_pages;
+> > +}
+> > +
+> > +static void __init hugetlb_vmemmap_init(struct hstate *h)
+> > +{
+> > +     unsigned int order = huge_page_order(h);
+> > +     unsigned int vmemmap_pages;
+> > +
+> > +     vmemmap_pages = ((1 << order) * sizeof(struct page)) >> PAGE_SHIFT;
+> > +     /*
+> > +      * The head page and the first tail page not free to buddy system,
+> > +      * the others page will map to the first tail page. So there are
+> > +      * (@vmemmap_pages - RESERVE_VMEMMAP_NR) pages can be freed.
+> > +      */
+> > +     if (vmemmap_pages > RESERVE_VMEMMAP_NR)
+> > +             h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
+> > +     else
+> > +             h->nr_free_vmemmap_pages = 0;
+> > +
+> > +     pr_info("HugeTLB: can free %d vmemmap pages for %s\n",
+> > +             h->nr_free_vmemmap_pages, h->name);
+> > +}
+> > +#else
+> > +static inline void hugetlb_vmemmap_init(struct hstate *h)
+> > +{
+> > +}
+> > +#endif
+> > +
+> >  static void update_and_free_page(struct hstate *h, struct page *page)
+> >  {
+> >       int i;
+> > @@ -3285,6 +3318,8 @@ void __init hugetlb_add_hstate(unsigned int order)
+> >       snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
+> >                                       huge_page_size(h)/1024);
+> >
+> > +     hugetlb_vmemmap_init(h);
+> > +
+> >       parsed_hstate = h;
+> >  }
+> >
+> >
+
+
+
 -- 
-2.28.0
-
+Yours,
+Muchun
