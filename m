@@ -2,125 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A28AD2817B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Oct 2020 18:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09292817E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Oct 2020 18:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388153AbgJBQT2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Oct 2020 12:19:28 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50194 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbgJBQT2 (ORCPT
+        id S2388042AbgJBQ1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Oct 2020 12:27:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733260AbgJBQ1a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Oct 2020 12:19:28 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 092GDfsZ139593;
-        Fri, 2 Oct 2020 16:19:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=FcZy9PfJSVB0G83HZ7/BBIKBYKMNzfdXXN/tNf4sIh4=;
- b=uos+Sd1xbIzjzw0SecSy0gAEbW0tcBTSxHpLIMTrvHTjNyw2ZxwaeMQH+ZLWrBB0IaTq
- SkFx/P5Ikad2NZ9T+25NoatVKGzQQHahuQkcrQVMn0BBTpx8JBEwxz1f2LpsF7YQjBtZ
- Uwtna2YAX2VDK16W6Q2biu8Rgxc1D4W1fX3Ditl8wiIzBuB0JFYBa7LfrMAEhSQqh5C0
- emorv08+sJ/x8zKjjG41/2fwi1d9kfJULorBJ+xznuf6bvetmga7GSLEJEQWfcWbI8eh
- e7dntnZZTPSVgs/Zuxek39jDFSvyMdGGPekMiXj59qrTk0hrgG1ZzGGoE3j2XMomq6OK Rg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 33swkmbrpd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 02 Oct 2020 16:19:24 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 092GF2xp036984;
-        Fri, 2 Oct 2020 16:19:24 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 33uv2jhgby-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 02 Oct 2020 16:19:24 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 092GJNWU016768;
-        Fri, 2 Oct 2020 16:19:23 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 02 Oct 2020 09:19:23 -0700
-Date:   Fri, 2 Oct 2020 09:19:23 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/2] xfs: kick extra large ioends to completion workqueue
-Message-ID: <20201002161923.GB49524@magnolia>
-References: <20201002153357.56409-1-bfoster@redhat.com>
- <20201002153357.56409-3-bfoster@redhat.com>
+        Fri, 2 Oct 2020 12:27:30 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F295C0613E2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Oct 2020 09:27:30 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id c2so1657866ljj.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Oct 2020 09:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XESAsar1PPbow9QXM6iPAt7dZfh4lXWZnIFR2ENhSp8=;
+        b=dQd4p/GwRMxd2rF8gBrN78ey6p2K8zuzTy3s9sWMNAin9xHfUCuyFLi919lpEWk9Dc
+         zCAWOHW6ysQaFQHfncwjPw8GtCF9mIdVDdsTyJBxdGYxPtsWb34P9+jGkQhhAkEUnrzR
+         +hu0t3g2U6uMrarSu3VT/dg6iysw2VK0TvQ0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XESAsar1PPbow9QXM6iPAt7dZfh4lXWZnIFR2ENhSp8=;
+        b=t2fxofK1CrTm3Yh/EJgL5Fb6jsXsCD1mupYKpNCUuh27EoT6a4JvZ+SoexnCiCdMmk
+         xqYTh936EH39L4DQcGjA+ZS40Q4q26E5y54ry9vSuz3krgj02doTm34C4qNVmOjnKlkZ
+         E2jg0wlGB+DwMFNflEwKoZuIQQhSM0I/GJM/77pruSXAz+FqMGHwf1Qu6JKP7PGKMRJp
+         cDNSindnvrKG6vrVRdBCnMnjQfSfozcJhSdrUQk0ZUVy51Q+N5T8kbC3VFr3XmLtKIJB
+         Tiq+Zw4vdM3a9puNZbFp7Q3H/CzgRXyjOpN2CkElAjS6MyAQ0JEoYW1kHX54XMYzfxtn
+         5K0A==
+X-Gm-Message-State: AOAM532GLX6aQWmmhtKGeZVgBenbbs/kZYS6iLnCCTOP+bouhyYyNf4p
+        IxfRpy4OpBYKSJlMmQdJxs/HCwr6VyHSNg==
+X-Google-Smtp-Source: ABdhPJzzwzs5cIIP+132JOk/eRdlERyOXAkUtbyMi2QGBJ0JcmQG2thbE1zPNwPco1CBxwC68K4YxQ==
+X-Received: by 2002:a2e:b44f:: with SMTP id o15mr902383ljm.321.1601656048038;
+        Fri, 02 Oct 2020 09:27:28 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id s13sm368876lfd.286.2020.10.02.09.27.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Oct 2020 09:27:26 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id z17so2559195lfi.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Oct 2020 09:27:26 -0700 (PDT)
+X-Received: by 2002:ac2:5594:: with SMTP id v20mr1257887lfg.344.1601656045931;
+ Fri, 02 Oct 2020 09:27:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201002153357.56409-3-bfoster@redhat.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9762 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- suspectscore=1 malwarescore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2010020123
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9762 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 phishscore=0
- suspectscore=1 mlxlogscore=999 clxscore=1015 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2010020123
+References: <20200903142242.925828-1-hch@lst.de> <20200903142242.925828-6-hch@lst.de>
+ <20201001223852.GA855@sol.localdomain> <20201001224051.GI3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20201001224051.GI3421308@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 2 Oct 2020 09:27:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgj=mKeN-EfV5tKwJNeHPLG0dybq+R5ZyGuc4WeUnqcmA@mail.gmail.com>
+Message-ID: <CAHk-=wgj=mKeN-EfV5tKwJNeHPLG0dybq+R5ZyGuc4WeUnqcmA@mail.gmail.com>
+Subject: Re: [PATCH 05/14] fs: don't allow kernel reads and writes without
+ iter ops
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Eric Biggers <ebiggers@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 02, 2020 at 11:33:57AM -0400, Brian Foster wrote:
-> We've had reports of soft lockup warnings in the iomap ioend
-> completion path due to very large bios and/or bio chains. Divert any
-> ioends with 256k or more pages to process to the workqueue so
-> completion occurs in non-atomic context and can reschedule to avoid
-> soft lockup warnings.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->  fs/xfs/xfs_aops.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 3e061ea99922..84ee917014f1 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -30,6 +30,13 @@ XFS_WPC(struct iomap_writepage_ctx *ctx)
->  	return container_of(ctx, struct xfs_writepage_ctx, ctx);
->  }
->  
-> +/*
-> + * Kick extra large ioends off to the workqueue. Completion will process a lot
-> + * of pages for a large bio or bio chain and a non-atomic context is required to
-> + * reschedule and avoid soft lockup warnings.
-> + */
-> +#define XFS_LARGE_IOEND	(262144 << PAGE_SHIFT)
+On Thu, Oct 1, 2020 at 3:41 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Better
+>         loff_t dummy = 0;
+> ...
+>                 wr = __kernel_write(file, data, bytes, &dummy);
 
-Hm, shouldn't that 262144 have to be annoated with a 'ULL' so that a
-dumb compiler won't turn that into a u32 and shift that all the way to
-zero?
+No, just fix __kernel_write() to work correctly.
 
-I still kind of wonder about the letting the limit hit 16G on power with
-64k pages, but I guess the number of pages we have to whack is ... not
-that high?
+The fact is, NULL _is_ the right pointer for ppos these days.
 
-I dunno, if you fire up a 64k-page system with fantastical IO
-capabilities, attach a realtime volume, fallocate a 32G file and then
-try to write to that, will it actually turn that into one gigantic IO?
+That commit by Christoph is buggy: it replaces new_sync_write() with a
+buggy open-coded version.
 
-> +
->  /*
->   * Fast and loose check if this write could update the on-disk inode size.
->   */
-> @@ -239,7 +246,8 @@ static inline bool xfs_ioend_needs_workqueue(struct iomap_ioend *ioend)
->  {
->  	return ioend->io_private ||
->  		ioend->io_type == IOMAP_UNWRITTEN ||
-> -		(ioend->io_flags & IOMAP_F_SHARED);
-> +		(ioend->io_flags & IOMAP_F_SHARED) ||
-> +		(ioend->io_size >= XFS_LARGE_IOEND);
->  }
->  
->  STATIC void
-> -- 
-> 2.25.4
-> 
+Notice how new_sync_write does
+
+        kiocb.ki_pos = (ppos ? *ppos : 0);
+,,,
+        if (ret > 0 && ppos)
+                *ppos = kiocb.ki_pos;
+
+but the open-coded version doesn't.
+
+So just fix that in linux-next. The *last* thing we want is to have
+different semantics for the "same" kernel functions.
+
+               Linus
