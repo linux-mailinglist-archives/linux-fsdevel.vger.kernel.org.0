@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C3F3282399
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Oct 2020 12:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31255282434
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Oct 2020 15:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725782AbgJCK3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Oct 2020 06:29:18 -0400
-Received: from mail-il1-f205.google.com ([209.85.166.205]:49632 "EHLO
+        id S1725798AbgJCNJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Oct 2020 09:09:17 -0400
+Received: from mail-il1-f205.google.com ([209.85.166.205]:39456 "EHLO
         mail-il1-f205.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725777AbgJCK3S (ORCPT
+        with ESMTP id S1725794AbgJCNJQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 3 Oct 2020 06:29:18 -0400
-Received: by mail-il1-f205.google.com with SMTP id o18so3142564ilm.16
-        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Oct 2020 03:29:16 -0700 (PDT)
+        Sat, 3 Oct 2020 09:09:16 -0400
+Received: by mail-il1-f205.google.com with SMTP id r10so3378889ilq.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Oct 2020 06:09:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=G4i+qxoZS1h9xcqOjqce04kB/T00rcmIWlmTvez//Lk=;
-        b=S2jpSKYP993qn7lM3VcBLCw84hvYNCQrbTeURut+FcYcTDgdptcrAtsC24alh98jcN
-         yPkb9iPWLx52o0BrWbeP1DJqyjgMDy25XkSbOpQD4UK2GO8G+rvQrUr66V3mJw/1VPoP
-         Xq2mOmbUNICwI9QQ9u4t91bZFsBVZc6VKAlySjgSRyPfrk4v9B7wjxMZ8jicXuAupD2M
-         DukTTtCUXigtD1+LOWs5Io9oxb8pvoARBkmSmW5kTsq81jKwPp8NjuGBR9/C+cOCZM1Q
-         boKDewAzqjRfnkrt3poyAxCo7P20bvGUHtEG7IgScRq6HoyzzYCb4gCmZcA629dMDE8n
-         tcJQ==
-X-Gm-Message-State: AOAM533m4YJMUSjcpPIZiWyoehs/BAvSBa/xmYxzcjpHshPZ6dQRDl8o
-        dAKeliUUFpSIR4+Vjpy4mB6BtYsinxDIi0qbR8WcVWJeq1Oe
-X-Google-Smtp-Source: ABdhPJy4g6XW5GNnNafS6v9MpxqMc7rKDJozmp7G6eth11SQ7uFAC0BluZMBgMkAP3Wl2PsfcXSHNCb24TxWolg9MTepjLu0mWnd
+        bh=iVL3IohRqT6c/uXzx5CC8YPW5rjrUz4BS2oOo74sL2M=;
+        b=av5IjgJBacHy2Q3YOQpnwpXQdOfItoTAQteFusjr/xG1m1x/zA0dvJZZNMiJKPmTSz
+         9PyOVAElynfDgMXzjv8olPyMCdpUNG1eqsbyHU2EzQZWnzdNPLyWHHABYCA2VTpPSLS5
+         i2tLoJTnJog2tOCvFc+6E7QuD1Lneob6H0THrguBEU5JACb80Ke8ZalwTqlLEAgBrtHx
+         BtS64h5ipVLK+ualbZG1U0TULruwEbbKuRzDQ8uqne2+Zp2Z03oU9s7APIdTVGbpprR1
+         cRXhydy62lyfyaYK0E95BAdfgvGj9t38RG46nXx+RZfXVrpnVUueFc9yKiEtTe5lsYDY
+         yS9g==
+X-Gm-Message-State: AOAM53030GnkWBwUEt740ZOEPW/H9t47n3FAov9X0duEaCZ5Mc7OW5d/
+        aArqHemSvNL10AZa0IUNpSfRXqJM++wXKWtmC2gcOIvTz/cO
+X-Google-Smtp-Source: ABdhPJzRay26HKMVft78Lrncn852vCrGTWO51ZHtl15nl4W8WpyjG0P3FlwM0y2vhB9msdxzy6rqhqrJOgovuNK0MeVEDP/zauuo
 MIME-Version: 1.0
-X-Received: by 2002:a02:6623:: with SMTP id k35mr5973348jac.105.1601720955989;
- Sat, 03 Oct 2020 03:29:15 -0700 (PDT)
-Date:   Sat, 03 Oct 2020 03:29:15 -0700
+X-Received: by 2002:a05:6638:c6:: with SMTP id w6mr6259820jao.143.1601730555760;
+ Sat, 03 Oct 2020 06:09:15 -0700 (PDT)
+Date:   Sat, 03 Oct 2020 06:09:15 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c775805b0c1b811@google.com>
-Subject: possible deadlock in kill_fasync
-From:   syzbot <syzbot+3e12e14ee01b675e1af2@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
+Message-ID: <000000000000cd530a05b0c3f4bc@google.com>
+Subject: INFO: task hung in blkdev_put (4)
+From:   syzbot <syzbot+9a29d5e745bd7523c851@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, josef@toxicpanda.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+        mchristi@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -48,306 +49,149 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    663b07a4 Add linux-next specific files for 20200928
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16202587900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4279ffe1791babf
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e12e14ee01b675e1af2
+HEAD commit:    fb0155a0 Merge tag 'nfs-for-5.9-3' of git://git.linux-nfs...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1527329d900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41b736b7ce1b3ea4
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a29d5e745bd7523c851
 compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cb63e3900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ae6083900000
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The issue was bisected to:
+
+commit 2da22da573481cc4837e246d0eee4d518b3f715e
+Author: Mike Christie <mchristi@redhat.com>
+Date:   Tue Aug 13 16:39:52 2019 +0000
+
+    nbd: fix zero cmd timeout handling v2
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14e51b27900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16e51b27900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12e51b27900000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3e12e14ee01b675e1af2@syzkaller.appspotmail.com
+Reported-by: syzbot+9a29d5e745bd7523c851@syzkaller.appspotmail.com
+Fixes: 2da22da57348 ("nbd: fix zero cmd timeout handling v2")
 
-========================================================
-WARNING: possible irq lock inversion dependency detected
-5.9.0-rc7-next-20200928-syzkaller #0 Not tainted
---------------------------------------------------------
-kworker/u4:3/37 just changed the state of lock:
-ffff88809f2f6f30 (&new->fa_lock){.+..}-{2:2}, at: kill_fasync_rcu fs/fcntl.c:1002 [inline]
-ffff88809f2f6f30 (&new->fa_lock){.+..}-{2:2}, at: kill_fasync fs/fcntl.c:1023 [inline]
-ffff88809f2f6f30 (&new->fa_lock){.+..}-{2:2}, at: kill_fasync+0x14b/0x460 fs/fcntl.c:1016
-but this lock was taken by another, HARDIRQ-safe lock in the past:
- (&dev->event_lock){-...}-{2:2}
+INFO: task syz-executor931:6875 blocked for more than 143 seconds.
+      Not tainted 5.9.0-rc7-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor931 state:D stack:27640 pid: 6875 ppid:  6874 flags:0x80004006
+Call Trace:
+ context_switch kernel/sched/core.c:3778 [inline]
+ __schedule+0xec9/0x2280 kernel/sched/core.c:4527
+ schedule+0xd0/0x2a0 kernel/sched/core.c:4602
+ schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4661
+ __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
+ __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
+ blkdev_put+0x30/0x520 fs/block_dev.c:1804
+ blkdev_close+0x8c/0xb0 fs/block_dev.c:1853
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:141
+ exit_task_work include/linux/task_work.h:25 [inline]
+ do_exit+0xb7d/0x29f0 kernel/exit.c:806
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x428/0x1f00 kernel/signal.c:2757
+ arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
+ exit_to_user_mode_prepare+0x1ae/0x200 kernel/entry/common.c:192
+ syscall_exit_to_user_mode+0x7e/0x2e0 kernel/entry/common.c:267
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x445039
+Code: Bad RIP value.
+RSP: 002b:00007ffdc5595ec8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: fffffffffffffe00 RBX: 0000000000000000 RCX: 0000000000445039
+RDX: 00000000ffffffff RSI: 000000000000ab03 RDI: 0000000000000003
+RBP: 00000000006cf018 R08: 00000000004002e0 R09: 00000000004002e0
+R10: 00000000004002e0 R11: 0000000000000246 R12: 0000000000402200
+R13: 0000000000402290 R14: 0000000000000000 R15: 0000000000000000
+INFO: task systemd-udevd:6879 blocked for more than 143 seconds.
+      Not tainted 5.9.0-rc7-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:systemd-udevd   state:D stack:26264 pid: 6879 ppid:  3932 flags:0x00004100
+Call Trace:
+ context_switch kernel/sched/core.c:3778 [inline]
+ __schedule+0xec9/0x2280 kernel/sched/core.c:4527
+ schedule+0xd0/0x2a0 kernel/sched/core.c:4602
+ io_schedule+0xb5/0x120 kernel/sched/core.c:6296
+ wait_on_page_bit_common+0x32a/0xe30 mm/filemap.c:1253
+ wait_on_page_bit mm/filemap.c:1314 [inline]
+ wait_on_page_locked include/linux/pagemap.h:611 [inline]
+ wait_on_page_read mm/filemap.c:2931 [inline]
+ do_read_cache_page+0x957/0x1390 mm/filemap.c:2974
+ read_mapping_page include/linux/pagemap.h:437 [inline]
+ read_part_sector+0xf6/0x5af block/partitions/core.c:777
+ adfspart_check_ICS+0x9d/0xc90 block/partitions/acorn.c:360
+ check_partition block/partitions/core.c:140 [inline]
+ blk_add_partitions+0x45c/0xe40 block/partitions/core.c:705
+ bdev_disk_changed+0x1ea/0x370 fs/block_dev.c:1416
+ __blkdev_get+0xee4/0x1aa0 fs/block_dev.c:1559
+ blkdev_get fs/block_dev.c:1639 [inline]
+ blkdev_open+0x227/0x300 fs/block_dev.c:1753
+ do_dentry_open+0x4b9/0x11b0 fs/open.c:817
+ do_open fs/namei.c:3251 [inline]
+ path_openat+0x1b9a/0x2730 fs/namei.c:3368
+ do_filp_open+0x17e/0x3c0 fs/namei.c:3395
+ do_sys_openat2+0x16d/0x420 fs/open.c:1168
+ do_sys_open fs/open.c:1184 [inline]
+ __do_sys_open fs/open.c:1192 [inline]
+ __se_sys_open fs/open.c:1188 [inline]
+ __x64_sys_open+0x119/0x1c0 fs/open.c:1188
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fd8b1526840
+Code: Bad RIP value.
+RSP: 002b:00007ffc6e5f3668 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 000055f1c1bb6e40 RCX: 00007fd8b1526840
+RDX: 000055f1c0593fe3 RSI: 00000000000a0800 RDI: 000055f1c1bb9b10
+RBP: 00007ffc6e5f37e0 R08: 000055f1c0593670 R09: 0000000000000010
+R10: 000055f1c0593d0c R11: 0000000000000246 R12: 00007ffc6e5f3730
+R13: 000055f1c1bb1a90 R14: 0000000000000003 R15: 000000000000000e
 
+Showing all locks held in the system:
+1 lock held by khungtaskd/1174:
+ #0: ffffffff8a067f40 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5852
+1 lock held by in:imklog/6556:
+ #0: ffff88809144e370 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:930
+1 lock held by syz-executor931/6875:
+ #0: ffff88808927b6c0 (&bdev->bd_mutex){+.+.}-{3:3}, at: blkdev_put+0x30/0x520 fs/block_dev.c:1804
+1 lock held by systemd-udevd/6879:
+ #0: ffff88808927b6c0 (&bdev->bd_mutex){+.+.}-{3:3}, at: __blkdev_get+0x4b8/0x1aa0 fs/block_dev.c:1492
 
-and interrupts could create inverse lock ordering between them.
+=============================================
 
-
-other info that might help us debug this:
-Chain exists of:
-  &dev->event_lock --> &client->buffer_lock --> &new->fa_lock
-
- Possible interrupt unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&new->fa_lock);
-                               local_irq_disable();
-                               lock(&dev->event_lock);
-                               lock(&client->buffer_lock);
-  <Interrupt>
-    lock(&dev->event_lock);
-
- *** DEADLOCK ***
-
-7 locks held by kworker/u4:3/37:
- #0: ffff888099228138 ((wq_completion)bat_events){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888099228138 ((wq_completion)bat_events){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888099228138 ((wq_completion)bat_events){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888099228138 ((wq_completion)bat_events){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888099228138 ((wq_completion)bat_events){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888099228138 ((wq_completion)bat_events){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2240
- #1: ffffc90000eb7da8 ((work_completion)(&(&forw_packet_aggr->delayed_work)->work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2244
- #2: ffffffff8a553ca0 (rcu_read_lock_bh){....}-{1:2}, at: __dev_queue_xmit+0x1d7/0x2d30 net/core/dev.c:4072
- #3: ffffffff8a553d00 (rcu_read_lock){....}-{1:2}, at: dev_queue_xmit_nit+0x0/0xac0 net/core/dev.c:5620
- #4: ffffffff8a553d00 (rcu_read_lock){....}-{1:2}, at: sock_def_readable+0x0/0x4c0 include/net/sock.h:1804
- #5: ffffffff8a553d00 (rcu_read_lock){....}-{1:2}, at: rcu_lock_release include/linux/rcupdate.h:258 [inline]
- #5: ffffffff8a553d00 (rcu_read_lock){....}-{1:2}, at: rcu_read_unlock include/linux/rcupdate.h:696 [inline]
- #5: ffffffff8a553d00 (rcu_read_lock){....}-{1:2}, at: sock_def_readable+0x1c7/0x4c0 net/core/sock.c:2897
- #6: ffffffff8a553d00 (rcu_read_lock){....}-{1:2}, at: kill_fasync+0x3d/0x460 fs/fcntl.c:1021
-
-the shortest dependencies between 2nd lock and 1st lock:
-  -> (&dev->event_lock){-...}-{2:2} {
-     IN-HARDIRQ-W at:
-                        lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5398
-                        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-                        _raw_spin_lock_irqsave+0x94/0xd0 kernel/locking/spinlock.c:159
-                        input_event drivers/input/input.c:440 [inline]
-                        input_event+0x7b/0xb0 drivers/input/input.c:433
-                        input_report_key include/linux/input.h:417 [inline]
-                        psmouse_report_standard_buttons+0x2c/0x80 drivers/input/mouse/psmouse-base.c:123
-                        psmouse_report_standard_packet drivers/input/mouse/psmouse-base.c:141 [inline]
-                        psmouse_process_byte+0x1e1/0x890 drivers/input/mouse/psmouse-base.c:232
-                        psmouse_handle_byte+0x41/0x1b0 drivers/input/mouse/psmouse-base.c:274
-                        psmouse_interrupt+0x304/0xf00 drivers/input/mouse/psmouse-base.c:426
-                        serio_interrupt+0x88/0x150 drivers/input/serio/serio.c:1002
-                        i8042_interrupt+0x27a/0x520 drivers/input/serio/i8042.c:598
-                        __handle_irq_event_percpu+0x20b/0x9e0 kernel/irq/handle.c:156
-                        handle_irq_event_percpu kernel/irq/handle.c:196 [inline]
-                        handle_irq_event+0x102/0x290 kernel/irq/handle.c:213
-                        handle_edge_irq+0x25f/0xd00 kernel/irq/chip.c:819
-                        asm_call_irq_on_stack+0xf/0x20
-                        __run_irq_on_irqstack arch/x86/include/asm/irq_stack.h:48 [inline]
-                        run_irq_on_irqstack_cond arch/x86/include/asm/irq_stack.h:101 [inline]
-                        handle_irq arch/x86/kernel/irq.c:230 [inline]
-                        __common_interrupt arch/x86/kernel/irq.c:249 [inline]
-                        common_interrupt+0x115/0x1f0 arch/x86/kernel/irq.c:239
-                        asm_common_interrupt+0x1e/0x40 arch/x86/include/asm/idtentry.h:622
-                        arch_local_irq_restore arch/x86/include/asm/paravirt.h:653 [inline]
-                        console_unlock+0xa31/0xd20 kernel/printk/printk.c:2500
-                        vprintk_emit+0x2a6/0x6e0 kernel/printk/printk.c:2021
-                        vprintk_func+0x8d/0x1e0 kernel/printk/printk_safe.c:393
-                        printk+0xba/0xed kernel/printk/printk.c:2069
-                        vivid_create_devnodes drivers/media/test-drivers/vivid/vivid-core.c:1528 [inline]
-                        vivid_create_instance drivers/media/test-drivers/vivid/vivid-core.c:1886 [inline]
-                        vivid_probe.cold+0x7178/0x845c drivers/media/test-drivers/vivid/vivid-core.c:1941
-                        platform_drv_probe+0x87/0x140 drivers/base/platform.c:761
-                        really_probe+0x282/0x9f0 drivers/base/dd.c:553
-                        driver_probe_device+0xfe/0x1d0 drivers/base/dd.c:737
-                        device_driver_attach+0x228/0x290 drivers/base/dd.c:1012
-                        __driver_attach drivers/base/dd.c:1089 [inline]
-                        __driver_attach+0xda/0x240 drivers/base/dd.c:1043
-                        bus_for_each_dev+0x147/0x1d0 drivers/base/bus.c:305
-                        bus_add_driver+0x348/0x5a0 drivers/base/bus.c:622
-                        driver_register+0x220/0x3a0 drivers/base/driver.c:171
-                        vivid_init+0x37/0x64 drivers/media/test-drivers/vivid/vivid-core.c:2069
-                        do_one_initcall+0x103/0x6f0 init/main.c:1205
-                        do_initcall_level init/main.c:1278 [inline]
-                        do_initcalls init/main.c:1294 [inline]
-                        do_basic_setup init/main.c:1314 [inline]
-                        kernel_init_freeable+0x652/0x6d6 init/main.c:1514
-                        kernel_init+0xd/0x1b8 init/main.c:1403
-                        ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-     INITIAL USE at:
-                       lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5398
-                       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-                       _raw_spin_lock_irqsave+0x94/0xd0 kernel/locking/spinlock.c:159
-                       input_inject_event+0xa6/0x310 drivers/input/input.c:466
-                       __led_set_brightness drivers/leds/led-core.c:48 [inline]
-                       led_set_brightness_nopm drivers/leds/led-core.c:275 [inline]
-                       led_set_brightness_nosleep+0xe6/0x1a0 drivers/leds/led-core.c:292
-                       led_set_brightness+0x134/0x170 drivers/leds/led-core.c:267
-                       led_trigger_event drivers/leds/led-triggers.c:387 [inline]
-                       led_trigger_event+0x70/0xd0 drivers/leds/led-triggers.c:377
-                       kbd_led_trigger_activate+0xfa/0x130 drivers/tty/vt/keyboard.c:1005
-                       led_trigger_set+0x61e/0xbd0 drivers/leds/led-triggers.c:195
-                       led_trigger_set_default drivers/leds/led-triggers.c:259 [inline]
-                       led_trigger_set_default+0x1a6/0x230 drivers/leds/led-triggers.c:246
-                       led_classdev_register_ext+0x552/0x6e0 drivers/leds/led-class.c:417
-                       led_classdev_register include/linux/leds.h:190 [inline]
-                       input_leds_connect+0x3fb/0x740 drivers/input/input-leds.c:139
-                       input_attach_handler+0x180/0x1f0 drivers/input/input.c:1031
-                       input_register_device.cold+0xf0/0x243 drivers/input/input.c:2229
-                       atkbd_connect+0x736/0x9d0 drivers/input/keyboard/atkbd.c:1293
-                       serio_connect_driver drivers/input/serio/serio.c:47 [inline]
-                       serio_driver_probe+0x72/0xa0 drivers/input/serio/serio.c:778
-                       really_probe+0x282/0x9f0 drivers/base/dd.c:553
-                       driver_probe_device+0xfe/0x1d0 drivers/base/dd.c:737
-                       device_driver_attach+0x228/0x290 drivers/base/dd.c:1012
-                       __driver_attach drivers/base/dd.c:1089 [inline]
-                       __driver_attach+0xda/0x240 drivers/base/dd.c:1043
-                       bus_for_each_dev+0x147/0x1d0 drivers/base/bus.c:305
-                       serio_attach_driver drivers/input/serio/serio.c:808 [inline]
-                       serio_handle_event+0x5f6/0xa30 drivers/input/serio/serio.c:227
-                       process_one_work+0x933/0x15a0 kernel/workqueue.c:2269
-                       worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
-                       kthread+0x3af/0x4a0 kernel/kthread.c:292
-                       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-   }
-   ... key      at: [<ffffffff8e607fa0>] __key.5+0x0/0x40
-   ... acquired at:
-   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-   _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
-   spin_lock include/linux/spinlock.h:354 [inline]
-   evdev_pass_values+0x195/0xa70 drivers/input/evdev.c:262
-   evdev_events+0x20c/0x330 drivers/input/evdev.c:307
-   input_to_handler+0x2a0/0x4c0 drivers/input/input.c:115
-   input_pass_values.part.0+0x284/0x700 drivers/input/input.c:145
-   input_pass_values drivers/input/input.c:134 [inline]
-   input_handle_event+0x324/0x1400 drivers/input/input.c:399
-   input_inject_event+0x2f5/0x310 drivers/input/input.c:471
-   evdev_write+0x424/0x750 drivers/input/evdev.c:530
-   vfs_write+0x28e/0x700 fs/read_write.c:593
-   ksys_write+0x1ee/0x250 fs/read_write.c:648
-   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
- -> (&client->buffer_lock){....}-{2:2} {
-    INITIAL USE at:
-                     lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5398
-                     __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-                     _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
-                     spin_lock include/linux/spinlock.h:354 [inline]
-                     evdev_pass_values+0x195/0xa70 drivers/input/evdev.c:262
-                     evdev_events+0x20c/0x330 drivers/input/evdev.c:307
-                     input_to_handler+0x2a0/0x4c0 drivers/input/input.c:115
-                     input_pass_values.part.0+0x284/0x700 drivers/input/input.c:145
-                     input_pass_values drivers/input/input.c:134 [inline]
-                     input_handle_event+0x324/0x1400 drivers/input/input.c:399
-                     input_inject_event+0x2f5/0x310 drivers/input/input.c:471
-                     evdev_write+0x424/0x750 drivers/input/evdev.c:530
-                     vfs_write+0x28e/0x700 fs/read_write.c:593
-                     ksys_write+0x1ee/0x250 fs/read_write.c:648
-                     do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-                     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  }
-  ... key      at: [<ffffffff8e6084a0>] __key.4+0x0/0x40
-  ... acquired at:
-   __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
-   _raw_read_lock+0x5b/0x70 kernel/locking/spinlock.c:223
-   kill_fasync_rcu fs/fcntl.c:1002 [inline]
-   kill_fasync fs/fcntl.c:1023 [inline]
-   kill_fasync+0x14b/0x460 fs/fcntl.c:1016
-   __pass_event drivers/input/evdev.c:240 [inline]
-   evdev_pass_values+0x72a/0xa70 drivers/input/evdev.c:279
-   evdev_events+0x20c/0x330 drivers/input/evdev.c:307
-   input_to_handler+0x2a0/0x4c0 drivers/input/input.c:115
-   input_pass_values.part.0+0x284/0x700 drivers/input/input.c:145
-   input_pass_values drivers/input/input.c:134 [inline]
-   input_handle_event+0x324/0x1400 drivers/input/input.c:399
-   input_inject_event+0x2f5/0x310 drivers/input/input.c:471
-   evdev_write+0x424/0x750 drivers/input/evdev.c:530
-   vfs_write+0x28e/0x700 fs/read_write.c:593
-   ksys_write+0x1ee/0x250 fs/read_write.c:648
-   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
--> (&new->fa_lock){.+..}-{2:2} {
-   HARDIRQ-ON-R at:
-                    lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5398
-                    __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
-                    _raw_read_lock+0x36/0x70 kernel/locking/spinlock.c:223
-                    kill_fasync_rcu fs/fcntl.c:1002 [inline]
-                    kill_fasync fs/fcntl.c:1023 [inline]
-                    kill_fasync+0x14b/0x460 fs/fcntl.c:1016
-                    sock_wake_async+0xd2/0x160 net/socket.c:1331
-                    sk_wake_async include/net/sock.h:2259 [inline]
-                    sk_wake_async include/net/sock.h:2255 [inline]
-                    sock_def_readable+0x2cb/0x4c0 net/core/sock.c:2896
-                    __sock_queue_rcv_skb+0x520/0xaa0 net/core/sock.c:468
-                    sock_queue_rcv_skb+0x41/0x60 net/core/sock.c:481
-                    packet_rcv_spkt+0x3ad/0x530 net/packet/af_packet.c:1856
-                    dev_queue_xmit_nit+0x7f6/0xac0 net/core/dev.c:2362
-                    xmit_one net/core/dev.c:3558 [inline]
-                    dev_hard_start_xmit+0xa4/0x880 net/core/dev.c:3578
-                    __dev_queue_xmit+0x2062/0x2d30 net/core/dev.c:4137
-                    batadv_send_skb_packet+0x4a9/0x5f0 net/batman-adv/send.c:108
-                    batadv_iv_ogm_send_to_if net/batman-adv/bat_iv_ogm.c:394 [inline]
-                    batadv_iv_ogm_emit net/batman-adv/bat_iv_ogm.c:420 [inline]
-                    batadv_iv_send_outstanding_bat_ogm_packet+0x6ad/0x800 net/batman-adv/bat_iv_ogm.c:1712
-                    process_one_work+0x933/0x15a0 kernel/workqueue.c:2269
-                    worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
-                    kthread+0x3af/0x4a0 kernel/kthread.c:292
-                    ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-   INITIAL USE at:
-                   lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5398
-                   __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
-                   _raw_read_lock+0x5b/0x70 kernel/locking/spinlock.c:223
-                   kill_fasync_rcu fs/fcntl.c:1002 [inline]
-                   kill_fasync fs/fcntl.c:1023 [inline]
-                   kill_fasync+0x14b/0x460 fs/fcntl.c:1016
-                   __pass_event drivers/input/evdev.c:240 [inline]
-                   evdev_pass_values+0x72a/0xa70 drivers/input/evdev.c:279
-                   evdev_events+0x20c/0x330 drivers/input/evdev.c:307
-                   input_to_handler+0x2a0/0x4c0 drivers/input/input.c:115
-                   input_pass_values.part.0+0x284/0x700 drivers/input/input.c:145
-                   input_pass_values drivers/input/input.c:134 [inline]
-                   input_handle_event+0x324/0x1400 drivers/input/input.c:399
-                   input_inject_event+0x2f5/0x310 drivers/input/input.c:471
-                   evdev_write+0x424/0x750 drivers/input/evdev.c:530
-                   vfs_write+0x28e/0x700 fs/read_write.c:593
-                   ksys_write+0x1ee/0x250 fs/read_write.c:648
-                   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-                   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-   (null) at:
-================================================================================
-UBSAN: array-index-out-of-bounds in kernel/locking/lockdep.c:2240:40
-index 9 is out of range for type 'lock_trace *[9]'
-CPU: 0 PID: 37 Comm: kworker/u4:3 Not tainted 5.9.0-rc7-next-20200928-syzkaller #0
+NMI backtrace for cpu 1
+CPU: 1 PID: 1174 Comm: khungtaskd Not tainted 5.9.0-rc7-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fb lib/dump_stack.c:118
- ubsan_epilogue+0xb/0x5a lib/ubsan.c:148
- __ubsan_handle_out_of_bounds.cold+0x62/0x6c lib/ubsan.c:356
- print_lock_class_header kernel/locking/lockdep.c:2240 [inline]
- print_shortest_lock_dependencies.cold+0x11c/0x2e2 kernel/locking/lockdep.c:2263
- print_irq_inversion_bug.part.0+0x2c6/0x2ee kernel/locking/lockdep.c:3769
- print_irq_inversion_bug kernel/locking/lockdep.c:3694 [inline]
- check_usage_backwards kernel/locking/lockdep.c:3838 [inline]
- mark_lock_irq kernel/locking/lockdep.c:3928 [inline]
- mark_lock.cold+0x1a/0x74 kernel/locking/lockdep.c:4375
- mark_usage kernel/locking/lockdep.c:4266 [inline]
- __lock_acquire+0x11ef/0x56d0 kernel/locking/lockdep.c:4750
- lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5398
- __raw_read_lock include/linux/rwlock_api_smp.h:149 [inline]
- _raw_read_lock+0x36/0x70 kernel/locking/spinlock.c:223
- kill_fasync_rcu fs/fcntl.c:1002 [inline]
- kill_fasync fs/fcntl.c:1023 [inline]
- kill_fasync+0x14b/0x460 fs/fcntl.c:1016
- sock_wake_async+0xd2/0x160 net/socket.c:1331
- sk_wake_async include/net/sock.h:2259 [inline]
- sk_wake_async include/net/sock.h:2255 [inline]
- sock_def_readable+0x2cb/0x4c0 net/core/sock.c:2896
- __sock_queue_rcv_skb+0x520/0xaa0 net/core/sock.c:468
- sock_queue_rcv_skb+0x41/0x60 net/core/sock.c:481
- packet_rcv_spkt+0x3ad/0x530 net/packet/af_packet.c:1856
- dev_queue_xmit_nit+0x7f6/0xac0 net/core/dev.c:2362
- xmit_one net/core/dev.c:3558 [inline]
- dev_hard_start_xmit+0xa4/0x880 net/core/dev.c:3578
- __dev_queue_xmit+0x2062/0x2d30 net/core/dev.c:4137
- batadv_send_skb_packet+0x4a9/0x5f0 net/batman-adv/send.c:108
- batadv_iv_ogm_send_to_if net/batman-adv/bat_iv_ogm.c:394 [inline]
- batadv_iv_ogm_emit net/batman-adv/bat_iv_ogm.c:420 [inline]
- batadv_iv_send_outstanding_bat_ogm_packet+0x6ad/0x800 net/batman-adv/bat_iv_ogm.c:1712
- process_one_work+0x933/0x15a0 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-================================================================================
+ dump_stack+0x198/0x1fd lib/dump_stack.c:118
+ nmi_cpu_backtrace.cold+0x70/0xb1 lib/nmi_backtrace.c:101
+ nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:209 [inline]
+ watchdog+0xd7d/0x1000 kernel/hung_task.c:295
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 PID: 3911 Comm: systemd-journal Not tainted 5.9.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:0xffffffffa00185f0
+Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <0f> 1f 44 00 00 55 48 89 e5 48 81 ec 00 00 00 00 53 41 55 41 56 41
+RSP: 0018:ffffc90003817d88 EFLAGS: 00000246
+RAX: 1ffff920001c3e06 RBX: ffff8880a7b97c00 RCX: dffffc0000000000
+RDX: ffff8880a77602c0 RSI: ffffc90000e1f038 RDI: ffffc90003817e38
+RBP: ffffc90000e1f000 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
+R13: 00000000000001a0 R14: 0000000000080042 R15: ffffc90003817e38
+FS:  00007fa30091e8c0(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa2fdcde010 CR3: 00000000a8f90000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
 
 
 ---
@@ -357,3 +201,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
