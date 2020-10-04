@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A165282847
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Oct 2020 04:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F418282815
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Oct 2020 04:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgJDClO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 3 Oct 2020 22:41:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48868 "EHLO
+        id S1726418AbgJDCjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Oct 2020 22:39:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbgJDCjb (ORCPT
+        with ESMTP id S1726327AbgJDCjb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sat, 3 Oct 2020 22:39:31 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D673CC0613E7;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073F9C0613D0;
         Sat,  3 Oct 2020 19:39:30 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kOtvt-00BUpS-HI; Sun, 04 Oct 2020 02:39:29 +0000
+        id 1kOtvt-00BUpZ-Lz; Sun, 04 Oct 2020 02:39:29 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Marc Zyngier <maz@kernel.org>
-Subject: [RFC PATCH 02/27] epoll: get rid of epitem->nwait
-Date:   Sun,  4 Oct 2020 03:39:04 +0100
-Message-Id: <20201004023929.2740074-2-viro@ZenIV.linux.org.uk>
+Subject: [RFC PATCH 03/27] untangling ep_call_nested(): get rid of useless arguments
+Date:   Sun,  4 Oct 2020 03:39:05 +0100
+Message-Id: <20201004023929.2740074-3-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20201004023929.2740074-1-viro@ZenIV.linux.org.uk>
 References: <20201004023608.GM3421308@ZenIV.linux.org.uk>
@@ -37,103 +37,107 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-we use it only to indicate allocation failures within queueing
-callback back to ep_insert().  Might as well use epq.epi for that
-reporting...
+ctx is always equal to current, ncalls - to &poll_loop_ncalls.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/eventpoll.c | 46 ++++++++++++++++++++--------------------------
- 1 file changed, 20 insertions(+), 26 deletions(-)
+ fs/eventpoll.c | 31 ++++++++++++-------------------
+ 1 file changed, 12 insertions(+), 19 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index ae41868d9b35..44aca681d897 100644
+index 44aca681d897..ef73d71a5dc8 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -172,9 +172,6 @@ struct epitem {
- 	/* The file descriptor information this item refers to */
- 	struct epoll_filefd ffd;
- 
--	/* Number of active wait queue attached to poll operations */
--	int nwait;
--
- 	/* List containing poll wait queues */
- 	struct eppoll_entry *pwqlist;
- 
-@@ -351,12 +348,6 @@ static inline struct epitem *ep_item_from_wait(wait_queue_entry_t *p)
- 	return container_of(p, struct eppoll_entry, wait)->base;
- }
- 
--/* Get the "struct epitem" from an epoll queue wrapper */
--static inline struct epitem *ep_item_from_epqueue(poll_table *p)
--{
--	return container_of(p, struct ep_pqueue, pt)->epi;
--}
--
- /* Initialize the poll safe wake up structure */
- static void ep_nested_calls_init(struct nested_calls *ncalls)
+@@ -455,21 +455,19 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+  *                  the same nested call (by the meaning of same cookie) is
+  *                  no re-entered.
+  *
+- * @ncalls: Pointer to the nested_calls structure to be used for this call.
+  * @nproc: Nested call core function pointer.
+  * @priv: Opaque data to be passed to the @nproc callback.
+  * @cookie: Cookie to be used to identify this nested call.
+- * @ctx: This instance context.
+  *
+  * Returns: Returns the code returned by the @nproc callback, or -1 if
+  *          the maximum recursion limit has been exceeded.
+  */
+-static int ep_call_nested(struct nested_calls *ncalls,
+-			  int (*nproc)(void *, void *, int), void *priv,
+-			  void *cookie, void *ctx)
++static int ep_call_nested(int (*nproc)(void *, void *, int), void *priv,
++			  void *cookie)
  {
-@@ -1307,24 +1298,28 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
- static void ep_ptable_queue_proc(struct file *file, wait_queue_head_t *whead,
- 				 poll_table *pt)
- {
--	struct epitem *epi = ep_item_from_epqueue(pt);
-+	struct ep_pqueue *epq = container_of(pt, struct ep_pqueue, pt);
-+	struct epitem *epi = epq->epi;
- 	struct eppoll_entry *pwq;
- 
--	if (epi->nwait >= 0 && (pwq = kmem_cache_alloc(pwq_cache, GFP_KERNEL))) {
--		init_waitqueue_func_entry(&pwq->wait, ep_poll_callback);
--		pwq->whead = whead;
--		pwq->base = epi;
--		if (epi->event.events & EPOLLEXCLUSIVE)
--			add_wait_queue_exclusive(whead, &pwq->wait);
--		else
--			add_wait_queue(whead, &pwq->wait);
--		pwq->next = epi->pwqlist;
--		epi->pwqlist = pwq;
--		epi->nwait++;
--	} else {
--		/* We have to signal that an error occurred */
--		epi->nwait = -1;
-+	if (unlikely(!epi))	// an earlier allocation has failed
-+		return;
-+
-+	pwq = kmem_cache_alloc(pwq_cache, GFP_KERNEL);
-+	if (unlikely(!pwq)) {
-+		epq->epi = NULL;
-+		return;
- 	}
-+
-+	init_waitqueue_func_entry(&pwq->wait, ep_poll_callback);
-+	pwq->whead = whead;
-+	pwq->base = epi;
-+	if (epi->event.events & EPOLLEXCLUSIVE)
-+		add_wait_queue_exclusive(whead, &pwq->wait);
-+	else
-+		add_wait_queue(whead, &pwq->wait);
-+	pwq->next = epi->pwqlist;
-+	epi->pwqlist = pwq;
- }
- 
- static void ep_rbtree_insert(struct eventpoll *ep, struct epitem *epi)
-@@ -1510,7 +1505,6 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
- 	epi->ep = ep;
- 	ep_set_ffd(&epi->ffd, tfile, fd);
- 	epi->event = *event;
--	epi->nwait = 0;
- 	epi->next = EP_UNACTIVE_PTR;
- 	if (epi->event.events & EPOLLWAKEUP) {
- 		error = ep_create_wakeup_source(epi);
-@@ -1555,7 +1549,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
- 	 * high memory pressure.
+ 	int error, call_nests = 0;
+ 	unsigned long flags;
++	struct nested_calls *ncalls = &poll_loop_ncalls;
+ 	struct list_head *lsthead = &ncalls->tasks_call_list;
+ 	struct nested_call_node *tncur;
+ 	struct nested_call_node tnode;
+@@ -482,7 +480,7 @@ static int ep_call_nested(struct nested_calls *ncalls,
+ 	 * very much limited.
  	 */
- 	error = -ENOMEM;
--	if (epi->nwait < 0)
-+	if (!epq.epi)
- 		goto error_unregister;
+ 	list_for_each_entry(tncur, lsthead, llink) {
+-		if (tncur->ctx == ctx &&
++		if (tncur->ctx == current &&
+ 		    (tncur->cookie == cookie || ++call_nests > EP_MAX_NESTS)) {
+ 			/*
+ 			 * Ops ... loop detected or maximum nest level reached.
+@@ -494,7 +492,7 @@ static int ep_call_nested(struct nested_calls *ncalls,
+ 	}
  
- 	/* We have to drop the new item inside our item list to keep track of it */
+ 	/* Add the current task and cookie to the list */
+-	tnode.ctx = ctx;
++	tnode.ctx = current;
+ 	tnode.cookie = cookie;
+ 	list_add(&tnode.llink, lsthead);
+ 
+@@ -1397,10 +1395,8 @@ static int reverse_path_check_proc(void *priv, void *cookie, int call_nests)
+ 					break;
+ 				}
+ 			} else {
+-				error = ep_call_nested(&poll_loop_ncalls,
+-							reverse_path_check_proc,
+-							child_file, child_file,
+-							current);
++				error = ep_call_nested(reverse_path_check_proc,
++							child_file, child_file);
+ 			}
+ 			if (error != 0)
+ 				break;
+@@ -1431,9 +1427,8 @@ static int reverse_path_check(void)
+ 	/* let's call this for all tfiles */
+ 	list_for_each_entry(current_file, &tfile_check_list, f_tfile_llink) {
+ 		path_count_init();
+-		error = ep_call_nested(&poll_loop_ncalls,
+-					reverse_path_check_proc, current_file,
+-					current_file, current);
++		error = ep_call_nested(reverse_path_check_proc, current_file,
++					current_file);
+ 		if (error)
+ 			break;
+ 	}
+@@ -1970,9 +1965,8 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
+ 			ep_tovisit = epi->ffd.file->private_data;
+ 			if (ep_tovisit->gen == loop_check_gen)
+ 				continue;
+-			error = ep_call_nested(&poll_loop_ncalls,
+-					ep_loop_check_proc, epi->ffd.file,
+-					ep_tovisit, current);
++			error = ep_call_nested(ep_loop_check_proc, epi->ffd.file,
++					ep_tovisit);
+ 			if (error != 0)
+ 				break;
+ 		} else {
+@@ -2009,8 +2003,7 @@ static int ep_loop_check_proc(void *priv, void *cookie, int call_nests)
+  */
+ static int ep_loop_check(struct eventpoll *ep, struct file *file)
+ {
+-	return ep_call_nested(&poll_loop_ncalls,
+-			      ep_loop_check_proc, file, ep, current);
++	return ep_call_nested(ep_loop_check_proc, file, ep);
+ }
+ 
+ static void clear_tfile_check_list(void)
 -- 
 2.11.0
 
