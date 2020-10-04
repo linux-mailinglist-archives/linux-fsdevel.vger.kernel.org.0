@@ -2,82 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD01C282C62
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Oct 2020 20:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 999C3282D41
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Oct 2020 21:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgJDSId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Oct 2020 14:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgJDSId (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Oct 2020 14:08:33 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF035C0613CE
-        for <linux-fsdevel@vger.kernel.org>; Sun,  4 Oct 2020 11:08:31 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id z19so8239248lfr.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Oct 2020 11:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xPAa0PwCL+R/4m3eXjRBJhAhCv7o5/mqYPfRFjTLnGg=;
-        b=M6RlgCZ5gbxyh0LuGCVU7rx08rpHawmOJPAeN6wnqB8RhOwogrcswDWcqaI+EGv4iK
-         UD5br9uNzrHjxpMfY386lkrsJth+5txvK2FM3VsMWKLX6kWBoeb/iRV08pFFOyyWi3Am
-         zMJLNiMgDG4x3awCC4zhCyxMQtrkF6oL0bNGM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xPAa0PwCL+R/4m3eXjRBJhAhCv7o5/mqYPfRFjTLnGg=;
-        b=AYLP3Z+XYjVAq189kxR229nO4KVV5RZZ17aXBR5r3o4+YuuoQC4aWLl4hiMuGvA+Vj
-         TeZCT2R5wdn8YrxxJao8GwuP+xH/8rt2ghMjhPYBUqF+8ASSImpOu7Vg0DLDhKgnPtym
-         n/4oZpa9V1AhzbGcbhmLXQLLV83qi16s2mZ/X65nMQUWAAIc+4dEqjpHHJYpJgcAVr1y
-         ffhgw9O6FrB3NRa5SpFjIzC0S9Q4Rjjn+fC4rxk3KUGrEE2t67+SfuVAoD5YqDHNRriX
-         wNdxNqoW7b8FYOMUA8dK300Y6CeUgNHghPqcvnI/OOmYS0TX3nSPEwYwf8jdhPOIBkAO
-         74MQ==
-X-Gm-Message-State: AOAM533YwzmiS+uHAu/Xr05XSt6s4W7VyBbrnBBk8zZp1qj+QcNlYzJ2
-        dK3tJFYrSJWjK4yWahblYJnPJDd5OZRDsw==
-X-Google-Smtp-Source: ABdhPJzGViQrdlSpo+zSorxaxDK9a55ZPOkCJJkkr5YLfjYS3WiLZ5MZTiIhqR/1FOA3ztN9HU4Z3Q==
-X-Received: by 2002:a05:6512:529:: with SMTP id o9mr1652742lfc.331.1601834909366;
-        Sun, 04 Oct 2020 11:08:29 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id b11sm2557984lfo.66.2020.10.04.11.08.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Oct 2020 11:08:28 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id l13so2297399ljg.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Oct 2020 11:08:28 -0700 (PDT)
-X-Received: by 2002:a2e:7819:: with SMTP id t25mr2979278ljc.371.1601834907754;
- Sun, 04 Oct 2020 11:08:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201004023608.GM3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20201004023608.GM3421308@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 4 Oct 2020 11:08:11 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjmrwNf65FZ7-S_3nJ3vEQYOruG4EoJ3Wcm2t-GvpVn4w@mail.gmail.com>
-Message-ID: <CAHk-=wjmrwNf65FZ7-S_3nJ3vEQYOruG4EoJ3Wcm2t-GvpVn4w@mail.gmail.com>
-Subject: Re: [RFC][PATCHSET] epoll cleanups
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726590AbgJDTZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Oct 2020 15:25:05 -0400
+Received: from relay.sw.ru ([185.231.240.75]:42160 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726289AbgJDTZF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 4 Oct 2020 15:25:05 -0400
+Received: from [172.16.25.93] (helo=amikhalitsyn-pc0.sw.ru)
+        by relay3.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
+        id 1kP9cE-00318e-8c; Sun, 04 Oct 2020 22:24:14 +0300
+From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+To:     miklos@szeredi.hu
+Cc:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/1] overlayfs: C/R enhancments (RFC)
+Date:   Sun,  4 Oct 2020 22:24:00 +0300
+Message-Id: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 3, 2020 at 7:36 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->         Locking and especially control flow in fs/eventpoll.c is
-> overcomplicated.  As the result, the code has been hard to follow
-> and easy to fuck up while modifying.
+Some time ago we discussed about the problem of Checkpoint-Restoring
+overlayfs mounts [1]. Big thanks to Amir for review and suggestions.
 
-Scanning through the patches they all look superficially ok to me, but
-I'm wondering how much test coverage you have (because I'm wondering
-how much test coverage we have in general for epoll).
+Brief from previous discussion.
+Problem statement: to checkpoint-restore overlayfs mounts we need
+to save overlayfs mount state and save it into the image. Basically,
+this state for us it's just mount options of overlayfs mount. But
+here we have two problems:
 
-But I'm certainly not in the least against trying to make the epoll
-code more straightforward and understandable.
+I. during mounting overlayfs user may specify relative paths in upperdir,
+workdir, lowerdir options
 
-                  Linus
+II. also user may unmount mount from which these paths was opened during mounting
+
+This is real problems for us. My first patch was attempt to address both problems.
+1. I've added refcnt get for mounts from which overlayfs was mounted.
+2. I've changed overlayfs mountinfo show algorithm, so overlayfs started to *always*
+show full paths for upperdir,workdir,lowerdirs.
+3. I've added mnt_id show-time only option which allows to determine from which mnt_id
+we opened options paths.
+
+Pros:
+- we can determine full information about overlayfs mount
+- we hold refcnt to mount, so, user may unmount source mounts only
+with lazy flag
+
+Cons:
+- by adding refcnt get for mount I've changed possible overlayfs usecases
+- by showing *full* paths we can more easily reache PAGE_SIZE limit of 
+mounts options in procfs
+- by adding mnt_id show-only option I've added inconsistency between
+mount-time options and show-time mount options
+
+After very productive discussion with Amir and Pavel I've decided to write new
+implementation. In new approach we decided *not* to take extra refcnts to mounts.
+Also we decided to use exportfs fhandles instead of full paths. To determine
+full path we plan to use the next algo:
+1. Export {s_dev; fhandle} from overlayfs for *all* sources
+2. User open_by_handle_at syscall to open all these fhandles (we need to
+determine mount for each fhandle, looks like we can do this by s_dev by linear
+search in /proc/<pid>/mountinfo)
+3. Then readlink /proc/<pid>/fd/<opened fd>
+4. Dump this full path+mnt_id
+
+But there is question. How to export this {s_dev; fhandle} from kernel to userspace?
+- We decided not to use procfs.
+- Amir proposed solution - use xattrs. But after diving into it I've meet problem
+where I can set this xattrs?
+If I set this xattrs on overlayfs dentries then during rsync, or cp -p=xattr we will copy
+this temporary information.
+- ioctls? (this patchset implements this approach)
+- fsinfo subsystem (not merged yet) [2]
+
+Problems with ioctls:
+1. We limited in output data size (16 KB AFAIK)
+but MAX_HANDLE_SZ=128(bytes), OVL_MAX_STACK=500(num lowerdirs)
+So, MAX_HANDLE_SZ*OVL_MAX_STACK = 64KB which is bigger than limit.
+So, I've decided to give user one fhandle by one call. This is also
+bad from the performance point of view.
+2. When using ioctls we need to have *fixed* size of input and output.
+So, if MAX_HANDLE_SZ will change in the future our _IOR('o', 2, struct ovl_mnt_opt_fh)
+will also change with struct ovl_mnt_opt_fh.
+
+So, I hope that we discuss about this patchset and try to make possible solutions together.
+
+Thanks.
+Regards, Alex.
+
+[1] https://lore.kernel.org/linux-unionfs/20200604161133.20949-1-alexander.mikhalitsyn@virtuozzo.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fsinfo-core
+
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: David Howells <dhowells@redhat.com>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Alexander Mikhalitsyn (1):
+  overlayfs: add ioctls that allows to get fhandle for layers dentries
+
+ fs/overlayfs/readdir.c | 160 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 160 insertions(+)
+
+-- 
+2.25.1
+
