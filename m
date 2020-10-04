@@ -2,110 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E457282B68
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Oct 2020 17:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81EA282C3F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Oct 2020 20:05:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725832AbgJDPZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 4 Oct 2020 11:25:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52766 "EHLO
+        id S1726694AbgJDSFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 4 Oct 2020 14:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbgJDPZh (ORCPT
+        with ESMTP id S1726617AbgJDSEz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 4 Oct 2020 11:25:37 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAB3AC0613CE;
-        Sun,  4 Oct 2020 08:25:35 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id y14so1588447pfp.13;
-        Sun, 04 Oct 2020 08:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=61Y9XXa32aHa2HBH5bKa29Ys7Tpne59ThWARVK1VO5M=;
-        b=S/9vKvvNgK6Nw/O7vNDqpFYfPPRkGTRDHFm4Liv+pjE8n0McxtM9JKVieg6pvxyIAI
-         mg2fO1mmY3MaVzzQwu4WqZ8mHX3GFbPM9mLSsGaAayWu+euQzELw7Lg5wFPRibD6J0Bv
-         2zvSAWMfueSWaXeGuMNizP2MYcHzbtd046vnj09llBpIek/rJwpSYo5jcIAE/aHxky0V
-         sYrkKDCldPUTyGrlM4JU7MrrCpLxZizijbdNcZGehttMA58KX+sPtAPCKZN3GD125TCk
-         eWoh9RIVtDQYtV1hIiCSo6IacX0rLxYHbfHyhvnYj4ER3YFsZdKF7op6o3PhBum4dLDm
-         GE9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=61Y9XXa32aHa2HBH5bKa29Ys7Tpne59ThWARVK1VO5M=;
-        b=Hd9RrEcIcQWYzhM6Ht++VUFKWDMkPS/sewc8IQ+eO0ouADznPl7/15oJBwE33jb/Sh
-         fJ+Od29OKWzkTC+Fb588xcr9JmuiKYJbBMQG38W3OOlertMM04/Psvb2wfEwwZUrLRaN
-         Gg2Qc9kJOIJ//4g++BHh5wKek4b+7O80z9wv7ys446/4TXfnuVfuYHGq2sLfIxPjyxNq
-         X7CIkTVLO+jMZEax1Ks3Z8Rm2Kw49RAMUuLgVCYLy/da/FSib6b2hwapS12hoAB9joN3
-         o4bEOXBQ2h7eliufYm0nffOgybokaxlaQ6OkJ+kqDDvCW+SD5TVxftsTMpU2BgqFa8tl
-         Tlfg==
-X-Gm-Message-State: AOAM532IiXAZA2azZb5IfN2eqS/g7mtOiInD0HGbP/0TDubK99UnYJa7
-        bsW81MFz5Lv38QlSsJ8O8LmSuC/e48n3Q4Ho2OY=
-X-Google-Smtp-Source: ABdhPJx97wWLfx3WjXcyASNCqXzkrzVfdDgRFx87Yag9PXstJOg4yR1urxl581eZE2Q9026h1+snWA==
-X-Received: by 2002:a65:644c:: with SMTP id s12mr1176142pgv.327.1601825134548;
-        Sun, 04 Oct 2020 08:25:34 -0700 (PDT)
-Received: from [192.168.0.104] ([49.207.217.69])
-        by smtp.gmail.com with ESMTPSA id v10sm7698991pjf.34.2020.10.04.08.25.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Oct 2020 08:25:33 -0700 (PDT)
-Subject: Re: [Linux-kernel-mentees] [PATCH] fs: fix KMSAN uninit-value bug by
- initializing nd in do_file_open_root
-From:   Anant Thazhemadam <anant.thazhemadam@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        syzbot+4191a44ad556eacc1a7a@syzkaller.appspotmail.com,
-        linux-kernel@vger.kernel.org
-References: <20200916052657.18683-1-anant.thazhemadam@gmail.com>
- <20200916054157.GC825@sol.localdomain>
- <20200917002238.GO3421308@ZenIV.linux.org.uk>
- <20200919144451.GF2712238@kroah.com>
- <20200919161727.GG3421308@ZenIV.linux.org.uk>
- <20200919165558.GH3421308@ZenIV.linux.org.uk>
- <26d881e5-f68a-b3b7-4cb0-04a3c6c384ac@gmail.com>
- <e8b218d4-e64a-ac0a-ea53-567d07a58f42@gmail.com>
-Message-ID: <0537f532-1499-f644-2c91-ad91da7901df@gmail.com>
-Date:   Sun, 4 Oct 2020 20:55:29 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Sun, 4 Oct 2020 14:04:55 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5190EC0613CE;
+        Sun,  4 Oct 2020 11:04:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=kq60hyf/JkVss6PLFja6RwjmdK1h2wopBDD0M0MxutQ=; b=HTM6IuREa2NKfNjD/1XHN4bmam
+        asXq+hMHbW3IIMoYqhQ2hB5WpfrcCG6+YI/KOZlt0XYJBdycvCd+N6fKqCdAhgb8NYHU7c1MqPvDb
+        bAcV3/0kJ8WQQ8sljWxsaHW06a8/FmGl8z7IHhKQqqhPcZTkMndg+S6OaVY1Na4jz0JoOrmnjndSZ
+        YCKHQk/F952Sl76JYLmtLX1wj2HGWcOqT9UHx+D8PCdcyAtgFP60Fw6IoL29kHQMWum0kb4mpEsA9
+        7q1lbKApiGGqiXkaM2motFy2ejSLJrzvyUOUhcUaw5dRknYlNOqITO8WwkOkiIvTthqzHXCHxW4+e
+        7GDCOIfw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kP8N4-0003mV-Po; Sun, 04 Oct 2020 18:04:31 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, ericvh@gmail.com,
+        lucho@ionkov.net, viro@zeniv.linux.org.uk, jlayton@kernel.org,
+        idryomov@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
+        joseph.qi@linux.alibaba.com, v9fs-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-btrfs@vger.kernel.org,
+        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com
+Subject: [PATCH 0/7] Fix a pile of 4GB file problems on 32-bit
+Date:   Sun,  4 Oct 2020 19:04:21 +0100
+Message-Id: <20201004180428.14494-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-In-Reply-To: <e8b218d4-e64a-ac0a-ea53-567d07a58f42@gmail.com>
-Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+I caught a bug in my own code where I forgot to cast to loff_t before
+shifting.  So I thought I'd grep around and see if I could find any
+other occurrences.  I found a few that were clearly bugs, and they're
+fixed below.  There are other places where we don't cast, and I think
+they're OK.  For example, some places we have a 'nr_pages' being shifted
+by PAGE_SHIFT, and that's probably OK because it's probably a single I/O.
 
-On 20-09-2020 01:47, Anant Thazhemadam wrote:
-> On 19-09-2020 17:03, Anant Thazhemadam wrote:
->> On 19-09-2020 22:25, Al Viro wrote:
->>> On Sat, Sep 19, 2020 at 05:17:27PM +0100, Al Viro wrote:
->>>
->>>> Lovely...  That would get an empty path and non-directory for a starting
->>>> point, but it should end up with LAST_ROOT in nd->last_type.  Which should
->>>> not be able to reach the readers of those fields...  Which kernel had
->>>> that been on?
->>> Yecchhh...  I see what's going on; I suspect that this ought to be enough.
->>> Folks, could somebody test it on the original reproducer setup?
->> Sure. I can do that.
-> Looks like this patch actually fixes this bug.
-> I made syzbot test the patch, and no issues were triggered!
->
-> Note:    syzbot tested the patch with the KMSAN kernel, which
-> was recently rebased on v5.9-rc4.
->
-> Thanks,
-> Anant
+Also, I didn't touch AFFS or ROMFS or some other filesystems which
+probably have never seen a 4GB file in their lives.  Might be worth
+fixing to be sure nobody copies bad code from them, but not worth cc'ing
+stable for.
 
-Ping.
-Has the patch that was tested been applied to any tree yet?
-If yes, could someone please let me know the commit details, so we can close
-the issue? (Unfortunately, I was unable to find it. :( )
+I didn't look for SECTOR_SHIFT or SECTOR_SIZE (or bare 9/512), just
+PAGE_SIZE and PAGE_SHIFT.
 
-Thanks,
-Anant
+I can't find a GCC warning to enable for this pattern, so I filed
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=97287
+
+Matthew Wilcox (Oracle) (7):
+  9P: Cast to loff_t before multiplying
+  buffer: Promote to unsigned long long before shifting
+  ceph: Promote to unsigned long long before shifting
+  ocfs2: Promote to unsigned long long before shifting
+  btrfs: Promote to unsigned long long before shifting
+  btrfs: Promote to unsigned long long before shifting
+  btrfs: Promote to unsigned long long before multiplying
+
+ fs/9p/vfs_file.c  |  4 ++--
+ fs/btrfs/ioctl.c  |  6 +++---
+ fs/btrfs/raid56.c |  2 +-
+ fs/btrfs/scrub.c  | 25 ++++++++++++++++---------
+ fs/buffer.c       |  2 +-
+ fs/ceph/addr.c    |  2 +-
+ fs/ocfs2/alloc.c  |  2 +-
+ 7 files changed, 25 insertions(+), 18 deletions(-)
+
+-- 
+2.28.0
 
