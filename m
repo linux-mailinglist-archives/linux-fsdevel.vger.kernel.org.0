@@ -2,108 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEAD2841E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 23:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19599284309
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 01:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbgJEVFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 17:05:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbgJEVFP (ORCPT
+        id S1725947AbgJEXrl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 19:47:41 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57308 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgJEXrl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 17:05:15 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54ACDC0613CE
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Oct 2020 14:05:14 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id 22so2816191pgv.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Oct 2020 14:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=S28irEL+s00l76Xd6JezzJDnWUqPSi/xIcPO6jGVw0k=;
-        b=i13avUSEFUfkzqcD46Nq22pgh7sreScxeo625UkqLK+daDX8lE4BFXwZCR+i0RWl4j
-         kQm9H9aDflprfWtjdjMu/szcbm39wcJ2ojG/5XrIVT5i/zqP2JxIZQoZeRQA5IF5ZQ8c
-         QofnFVvrTWOYSLWkSa8Di/OBLzw49kjy9yTGw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=S28irEL+s00l76Xd6JezzJDnWUqPSi/xIcPO6jGVw0k=;
-        b=UvjhXFNaPlCt2JDcJ0rNNssuQtvltkt6G3usn7iqR0St5kDzas71KVjGyhcjtkvLuX
-         7UuHaQfsvEWVEQ8y6KimvQJmteMb7PhpEHGrQy7Gghp7LI5EjmT0BrAta9FBDjLjS8dF
-         GaeWsbMeTi5tfXnoOWsA0AFZpS1PLvcey322uBx9Hdn0SPmimXV8/R8MVZJzmR3Yglet
-         mdXF//lgvnXeYeTpGE2AauW5e2XVcPb4k9uar8gPjuHw+27FmhhUXT//E3SlsoPO117I
-         dkLkfoj59IyKG8LmzxQByDZrqpglhTWTG7NuLuZdIP2SSy1YQ6Gu4EwWQPSqBuU0Iwy3
-         j9RQ==
-X-Gm-Message-State: AOAM531R1B7Ao3/1omkkbzd/HCgXMRpm0DpHMfYV4LfRUl3d73lSHFgT
-        60Ne36MzhrL6ANHsJyFymW0n3hwtSlUBkxFR
-X-Google-Smtp-Source: ABdhPJz/S0gfoJShrvVKOkjfbJx02Hws0BkXYZdBoTIGEHtSmorXowh1oXM2pwYvKWxA6ebn5AMJEw==
-X-Received: by 2002:a63:a510:: with SMTP id n16mr1283040pgf.256.1601931913748;
-        Mon, 05 Oct 2020 14:05:13 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q12sm478376pjd.16.2020.10.05.14.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2020 14:05:12 -0700 (PDT)
-Date:   Mon, 5 Oct 2020 14:05:11 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-safety@lists.elisa.tech,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] kernel/sysctl.c: drop unneeded assignment in
- proc_do_large_bitmap()
-Message-ID: <202010051404.CEE37CD617@keescook>
-References: <20201005203749.28083-1-sudipm.mukherjee@gmail.com>
+        Mon, 5 Oct 2020 19:47:41 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 095NlWEf058208;
+        Tue, 6 Oct 2020 08:47:32 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
+ Tue, 06 Oct 2020 08:47:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 095NlV7I058186
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 6 Oct 2020 08:47:32 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] splice: fix premature end of input detection
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201005121339.4063-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <CAHk-=wiRkmMvm09+TJtbf+zNYyUB_J0-U=B0bzPte=j0hzPdAw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <54cd9095-8bda-96f0-a744-f817b6e6af40@i-love.sakura.ne.jp>
+Date:   Tue, 6 Oct 2020 08:47:29 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201005203749.28083-1-sudipm.mukherjee@gmail.com>
+In-Reply-To: <CAHk-=wiRkmMvm09+TJtbf+zNYyUB_J0-U=B0bzPte=j0hzPdAw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 05, 2020 at 09:37:49PM +0100, Sudip Mukherjee wrote:
-> The variable 'first' is assigned 0 inside the while loop in the if block
-> but it is not used in the if block and is only used in the else block.
-> So, remove the unneeded assignment.
+On 2020/10/06 3:26, Linus Torvalds wrote:
+> On Mon, Oct 5, 2020 at 5:14 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> splice() from pipe should return 0 when there is no pipe writer. However,
+>> since commit a194dfe6e6f6f720 ("pipe: Rearrange sequence in pipe_write()
+>> to preallocate slot") started inserting empty pages, splice() from pipe
+>> also returns 0 when all ready buffers are empty pages.
+> 
+> Well... Only if you had writers that intentionally did that whole "no
+> valid data write" thing.
+> 
+> Which could be seen as a feature.
 
-True, but in this case, please move the definition of "first" into the
-else block so it in only in scope there.
+pipe_read() is aware of such writers.
 
-Thanks!
+  /*
+   * We only get here if we didn't actually read anything.
+   *
+   * However, we could have seen (and removed) a zero-sized
+   * pipe buffer, and might have made space in the buffers
+   * that way.
+   *
+   * You can't make zero-sized pipe buffers by doing an empty
+   * write (not even in packet mode), but they can happen if
+   * the writer gets an EFAULT when trying to fill a buffer
+   * that already got allocated and inserted in the buffer
+   * array.
+   *
+   * So we still need to wake up any pending writers in the
+   * _very_ unlikely case that the pipe was full, but we got
+   * no data.
+   */
 
--Kees
+We also need to care about handle_userfault()
+( https://lkml.kernel.org/r/29dd8637-5e44-db4a-9aea-305b079941fb@i-love.sakura.ne.jp )
+which we might change it to return an error when pagefault from
+pipe_write() takes too long.
 
 > 
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> ---
+> That said, if this actually broke some code, then we need to fix it -
+> but I really hate how you have that whole !pipe_empty() loop around
+> the empty buffers.
 > 
-> The resultant binary stayed same after this change. Verified with
-> md5sum which remained same with and without this change.
-> 
-> $ md5sum kernel/sysctl.o 
-> e9e97adbfd3f0b32f83dd35d100c0e4e  kernel/sysctl.o
-> 
->  kernel/sysctl.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index ce75c67572b9..b51ebfd1ba6e 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1508,7 +1508,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
->  			}
->  
->  			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
-> -			first = 0;
->  			proc_skip_char(&p, &left, '\n');
->  		}
->  		left += skipped;
-> -- 
-> 2.11.0
-> 
+> That case is very unlikely, and you have a loop with !pipe_empty()
+> *anyway* with the whole "goto refill". So the loop is completely
+> pointless.
 
--- 
-Kees Cook
+This loop just removes all leading empty pages at once.
+"goto refill" is a result of all pages were empty.
+
+> 
+> Also, what if we have a packet pipe? Do we perhaps want to return at
+> packet boundaries? I don't think splice() has cared, so probably not,
+> but it's worth perhaps thinking about.
+
+Since manpage says that "Zero-length packets are not supported.", I think that
+skipping leading empty pages (either my version or your version) will not break
+packet boundaries.
+
+This check is there to avoid returning 0 when all available buffers are empty.
+This check should remain no-op if some buffer is not empty.
+
+> 
+> Anyway, I'd be a lot happier with the patch being structured something
+> like this instead.. UNTESTED
+
+I'm OK with your version.
+
