@@ -2,194 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C97812832A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 10:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 985FD2834D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 13:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbgJEI4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 04:56:19 -0400
-Received: from mail-il1-f206.google.com ([209.85.166.206]:36141 "EHLO
-        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbgJEI4S (ORCPT
+        id S1725939AbgJELTj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 07:19:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbgJELTi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 04:56:18 -0400
-Received: by mail-il1-f206.google.com with SMTP id q5so277556ilm.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Oct 2020 01:56:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Amwp1aqa7bTc2xanzlXXNgO7NgBXnd0zxzTo/kSRKZ4=;
-        b=rWZot9WVbmX2uE3xJ4WOhKLHAnvRZVWez3108436pynJSqfM/f8pC7ySOzQRBdoL9c
-         FLqAlzfc4TvB8aidq2a30BhHh7QSwlPpIkDeCbsJXXdiyG0t3fSkthtGKcQWWvp/FvXh
-         M2t9wNSY0sCq9ZcnoQIX8Ae2uIz83gPkMg5rbMWFVU9ZoNrbWzjkXb2xv7zA1/icH3fe
-         B6kcA3cLh8HirvHVCmy/96vGJY/EHH8yLsiafNbSYlrZMEzUfFYBSsO0/IcD7J4T+ajN
-         EavfRNbZkdHcaLMwPNXwzT4ScGtcI2/y87znzE+goDz4dSEII9nVr9xW0YbG802G4sXm
-         JEuA==
-X-Gm-Message-State: AOAM533JJldgz2Vx2xiYi80JEV7pWFARy7wk6+nhlGhmJcXiHz/zjRu/
-        BbmbJ5k0+A4OfHL2PqvPkbXFX2Ghw6LidKonJoDodIHzWrdZ
-X-Google-Smtp-Source: ABdhPJz3JXucT/swRsk+KIgFBhBuEK/6ZIeOJpjrlErbuuvYmaYmsTK0T6RYtV+OwHha6Wy2dAHmV1TceajiSoT4jt4LsTh/NmKg
+        Mon, 5 Oct 2020 07:19:38 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30ED0C0613CE;
+        Mon,  5 Oct 2020 04:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Ra1YPs5Ur9GmtKp6lL+9W2Oo4CFvG8xsosvNRMWmnLY=; b=V66/orP3bwMW/YEzkQN47EHpD0
+        ZHYBKXwFpZjN1JhOy9tkZOghvamu5T3Xn0IC3/1aT+Ov6tncf/sfxBH43pTa8WPtZ9mE6bv4Dpkrs
+        2ll0hJz5kXjlhB29PBgIL9r0MHsTl5moUvqWlCgs69PnX/c3lK2Mq1pXoB8WMUrmlouauK1PHtFSb
+        9ZIBHXKXEvl82+Tyy6wPJeNLYf1gPAFbY331j42cE1K5aZaFBJegF5nzybQs3ZqTdT5M35NKUSAzJ
+        uncFb5gRUMbtuwwcwEfLS/EI+pEaVfSJPsPTJWUBds9Kb1Z6FKddw+lVuhGZ6XPsNhf44tduhmXoh
+        NiQh4hmw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kPOWZ-0006Pv-K0; Mon, 05 Oct 2020 11:19:23 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C8C17300B22;
+        Mon,  5 Oct 2020 13:19:20 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AE5B020C19001; Mon,  5 Oct 2020 13:19:20 +0200 (CEST)
+Date:   Mon, 5 Oct 2020 13:19:20 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Xi Wang <xii@google.com>
+Cc:     Paul Turner <pjt@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Don <joshdon@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] sched: watchdog: Touch kernel watchdog in sched code
+Message-ID: <20201005111920.GO2611@hirez.programming.kicks-ass.net>
+References: <20200304213941.112303-1-xii@google.com>
+ <20200305075742.GR2596@hirez.programming.kicks-ass.net>
+ <CAPM31RJdNtxmOi2eeRYFyvRKG9nofhqZfPgZGA5U7u8uZ2WXwA@mail.gmail.com>
+ <20200306084039.GC12561@hirez.programming.kicks-ass.net>
+ <CAOBoifiWWcodi9HddxVsKUahTSdAS5OiQOcapDJ-4p+HufRzeQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:46:: with SMTP id i6mr9221812ilr.74.1601888177519;
- Mon, 05 Oct 2020 01:56:17 -0700 (PDT)
-Date:   Mon, 05 Oct 2020 01:56:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca835605b0e8a723@google.com>
-Subject: KASAN: use-after-free Read in idr_for_each (2)
-From:   syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOBoifiWWcodi9HddxVsKUahTSdAS5OiQOcapDJ-4p+HufRzeQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Mar 06, 2020 at 02:34:20PM -0800, Xi Wang wrote:
+> On Fri, Mar 6, 2020 at 12:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Thu, Mar 05, 2020 at 02:11:49PM -0800, Paul Turner wrote:
+> > > The goal is to improve jitter since we're constantly periodically
+> > > preempting other classes to run the watchdog.   Even on a single CPU
+> > > this is measurable as jitter in the us range.  But, what increases the
+> > > motivation is this disruption has been recently magnified by CPU
+> > > "gifts" which require evicting the whole core when one of the siblings
+> > > schedules one of these watchdog threads.
+> > >
+> > > The majority outcome being asserted here is that we could actually
+> > > exercise pick_next_task if required -- there are other potential
+> > > things this will catch, but they are much more braindead generally
+> > > speaking (e.g. a bug in pick_next_task itself).
+> >
+> > I still utterly hate what the patch does though; there is no way I'll
+> > have watchdog code hook in the scheduler like this. That's just asking
+> > for trouble.
+> >
+> > Why isn't it sufficient to sample the existing context switch counters
+> > from the watchdog? And why can't we fix that?
+> 
+> We could go to pick next and repick the same task. There won't be a
+> context switch but we still want to hold the watchdog. I assume such a
+> counter also needs to be per cpu and inside the rq lock. There doesn't
+> seem to be an existing one that fits this purpose.
 
-syzbot found the following issue on:
+Sorry, your reply got lost, but I just ran into something that reminded
+me of this.
 
-HEAD commit:    472e5b05 pipe: remove pipe_wait() and fix wakeup race with..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ae0d47900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=89ab6a0c48f30b49
-dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-userspace arch: i386
+There's sched_count. That's currently schedstat, but if you can find a
+spot in a hot cacheline (from schedule()'s perspective) then it
+should be cheap to incremenent unconditionally.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+If only someone were to write a useful cacheline perf tool (and no that
+c2c trainwreck doesn't count).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
-BUG: KASAN: use-after-free in idr_for_each+0x206/0x220 lib/idr.c:202
-Read of size 8 at addr ffff88804eb9cb30 by task kworker/u4:8/13668
-
-CPU: 1 PID: 13668 Comm: kworker/u4:8 Not tainted 5.9.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events_unbound io_ring_exit_work
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fd lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
- __kasan_report mm/kasan/report.c:513 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
- radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
- idr_for_each+0x206/0x220 lib/idr.c:202
- io_destroy_buffers fs/io_uring.c:7889 [inline]
- io_ring_ctx_free fs/io_uring.c:7904 [inline]
- io_ring_exit_work+0x363/0x6d0 fs/io_uring.c:7979
- process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-Allocated by task 17016:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
- slab_post_alloc_hook mm/slab.h:518 [inline]
- slab_alloc mm/slab.c:3316 [inline]
- kmem_cache_alloc+0x13a/0x3f0 mm/slab.c:3486
- radix_tree_node_alloc.constprop.0+0x7c/0x350 lib/radix-tree.c:275
- idr_get_free+0x4c5/0x940 lib/radix-tree.c:1505
- idr_alloc_u32+0x170/0x2d0 lib/idr.c:46
- idr_alloc+0xc2/0x130 lib/idr.c:87
- io_provide_buffers fs/io_uring.c:3768 [inline]
- io_issue_sqe+0x48d2/0x5c50 fs/io_uring.c:5906
- __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6178
- io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6257
- io_submit_sqe fs/io_uring.c:6327 [inline]
- io_submit_sqes+0x1759/0x23f0 fs/io_uring.c:6521
- __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
- do_syscall_32_irqs_on arch/x86/entry/common.c:78 [inline]
- __do_fast_syscall_32+0x60/0x90 arch/x86/entry/common.c:137
- do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
- entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
-
-Freed by task 16:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
- kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
- __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
- __cache_free mm/slab.c:3422 [inline]
- kmem_cache_free.part.0+0x74/0x1e0 mm/slab.c:3697
- rcu_do_batch kernel/rcu/tree.c:2430 [inline]
- rcu_core+0x5ca/0x1130 kernel/rcu/tree.c:2658
- __do_softirq+0x1f8/0xb23 kernel/softirq.c:298
-
-Last call_rcu():
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
- __call_rcu kernel/rcu/tree.c:2896 [inline]
- call_rcu+0x15e/0x7c0 kernel/rcu/tree.c:2970
- radix_tree_node_free lib/radix-tree.c:309 [inline]
- delete_node+0x591/0x8c0 lib/radix-tree.c:572
- __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
- radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
- __io_remove_buffers fs/io_uring.c:3666 [inline]
- __io_remove_buffers fs/io_uring.c:3645 [inline]
- __io_destroy_buffers+0x161/0x200 fs/io_uring.c:7883
- idr_for_each+0x113/0x220 lib/idr.c:208
- io_destroy_buffers fs/io_uring.c:7889 [inline]
- io_ring_ctx_free fs/io_uring.c:7904 [inline]
- io_ring_exit_work+0x363/0x6d0 fs/io_uring.c:7979
- process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-Second to last call_rcu():
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
- __call_rcu kernel/rcu/tree.c:2896 [inline]
- call_rcu+0x15e/0x7c0 kernel/rcu/tree.c:2970
- radix_tree_node_free lib/radix-tree.c:309 [inline]
- radix_tree_shrink lib/radix-tree.c:535 [inline]
- delete_node+0x37a/0x8c0 lib/radix-tree.c:553
- __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
- radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
- free_pid+0xa1/0x260 kernel/pid.c:151
- __change_pid+0x1c7/0x2d0 kernel/pid.c:352
- __unhash_process kernel/exit.c:77 [inline]
- __exit_signal kernel/exit.c:147 [inline]
- release_task+0xd29/0x14d0 kernel/exit.c:198
- wait_task_zombie kernel/exit.c:1088 [inline]
- wait_consider_task+0x2fd2/0x3b70 kernel/exit.c:1315
- do_wait_thread kernel/exit.c:1378 [inline]
- do_wait+0x376/0xa00 kernel/exit.c:1449
- kernel_wait4+0x14c/0x260 kernel/exit.c:1621
- do_syscall_32_irqs_on arch/x86/entry/common.c:78 [inline]
- __do_fast_syscall_32+0x60/0x90 arch/x86/entry/common.c:137
- do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
- entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
-
-The buggy address belongs to the object at ffff88804eb9cb00
- which belongs to the cache radix_tree_node of size 576
-The buggy address is located 48 bytes inside of
- 576-byte region [ffff88804eb9cb00, ffff88804eb9cd40)
-The buggy address belongs to the page:
-page:00000000a35d3b6e refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88804eb9cffb pfn:0x4eb9c
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea00013ab388 ffffea0002927748 ffff8880aa06f000
-raw: ffff88804eb9cffb ffff88804eb9c000 0000000100000005 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88804eb9ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88804eb9ca80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88804eb9cb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff88804eb9cb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88804eb9cc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
