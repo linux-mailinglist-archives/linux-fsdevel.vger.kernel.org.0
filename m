@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B94E283238
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 10:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C97812832A1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 10:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbgJEIia (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 04:38:30 -0400
-Received: from mail-il1-f207.google.com ([209.85.166.207]:42361 "EHLO
-        mail-il1-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbgJEIi0 (ORCPT
+        id S1725996AbgJEI4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 04:56:19 -0400
+Received: from mail-il1-f206.google.com ([209.85.166.206]:36141 "EHLO
+        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbgJEI4S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 04:38:26 -0400
-Received: by mail-il1-f207.google.com with SMTP id 18so6732804ilt.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Oct 2020 01:38:24 -0700 (PDT)
+        Mon, 5 Oct 2020 04:56:18 -0400
+Received: by mail-il1-f206.google.com with SMTP id q5so277556ilm.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Oct 2020 01:56:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/X0hny45nTAJMYRYWT5kLxsV4E880MCOQ1NBrS8q5FA=;
-        b=kleBv3o9pypNllSMupiYKvZynLoJGWUCz9TGIu3XHl6Ct/Bi833dU1Mgl5mRgnF3ut
-         1wLHXS3v8TVS90Yzb8R9i3fMY3PK1jGTkT5FFjNJdYbNaHigyzo/ZBU2ZAAXZdNrqoWF
-         BkCIsI90ZccVPkf0ZMlOq/7+2tkiP/FN4VvW+DPAwdhNVZKTCJt6VXTIGWS9XOgx55qX
-         WBkpLw66Tv8ef4bh0b0ljgcd2t/VFkVvfCyR644nbuTkX+C111uo4+ResI29u2Qz45tU
-         eAX6QBP/B25WnaHqH20Frj5D2FFdiE9ULF/InQClTKwuVfczW0ZKEGTcLG1jstjCKLNR
-         B9iw==
-X-Gm-Message-State: AOAM530KRoOY/m0JBTg63FEK0z79xTAj2goPRe8VZ9Gwv2PpQ07YaOTs
-        4zFlXtox3+LRb82ucN0L+M8iiXcTRNX7rO9sSOkOQp4om2xl
-X-Google-Smtp-Source: ABdhPJyIyPhScsYqZWWyyWaEryIxyoXWd7m0pZF+x3CfI1nk/ejhYBvuelFHDDwWnfF5pMttNGsjus/AyYMPovd5FTWpeUmM24wC
+        bh=Amwp1aqa7bTc2xanzlXXNgO7NgBXnd0zxzTo/kSRKZ4=;
+        b=rWZot9WVbmX2uE3xJ4WOhKLHAnvRZVWez3108436pynJSqfM/f8pC7ySOzQRBdoL9c
+         FLqAlzfc4TvB8aidq2a30BhHh7QSwlPpIkDeCbsJXXdiyG0t3fSkthtGKcQWWvp/FvXh
+         M2t9wNSY0sCq9ZcnoQIX8Ae2uIz83gPkMg5rbMWFVU9ZoNrbWzjkXb2xv7zA1/icH3fe
+         B6kcA3cLh8HirvHVCmy/96vGJY/EHH8yLsiafNbSYlrZMEzUfFYBSsO0/IcD7J4T+ajN
+         EavfRNbZkdHcaLMwPNXwzT4ScGtcI2/y87znzE+goDz4dSEII9nVr9xW0YbG802G4sXm
+         JEuA==
+X-Gm-Message-State: AOAM533JJldgz2Vx2xiYi80JEV7pWFARy7wk6+nhlGhmJcXiHz/zjRu/
+        BbmbJ5k0+A4OfHL2PqvPkbXFX2Ghw6LidKonJoDodIHzWrdZ
+X-Google-Smtp-Source: ABdhPJz3JXucT/swRsk+KIgFBhBuEK/6ZIeOJpjrlErbuuvYmaYmsTK0T6RYtV+OwHha6Wy2dAHmV1TceajiSoT4jt4LsTh/NmKg
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1392:: with SMTP id d18mr3017810ilo.196.1601887103768;
- Mon, 05 Oct 2020 01:38:23 -0700 (PDT)
-Date:   Mon, 05 Oct 2020 01:38:23 -0700
+X-Received: by 2002:a05:6e02:46:: with SMTP id i6mr9221812ilr.74.1601888177519;
+ Mon, 05 Oct 2020 01:56:17 -0700 (PDT)
+Date:   Mon, 05 Oct 2020 01:56:17 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca5ab205b0e8675a@google.com>
-Subject: INFO: trying to register non-static key in clear_inode (2)
-From:   syzbot <syzbot+d8dcf068719ec73f6ea9@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+Message-ID: <000000000000ca835605b0e8a723@google.com>
+Subject: KASAN: use-after-free Read in idr_for_each (2)
+From:   syzbot <syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
@@ -47,105 +48,142 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    549738f1 Linux 5.9-rc8
+HEAD commit:    472e5b05 pipe: remove pipe_wait() and fix wakeup race with..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=138b8993900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c06bcf3cc963d91c
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8dcf068719ec73f6ea9
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ae0d47900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=89ab6a0c48f30b49
+dashboard link: https://syzkaller.appspot.com/bug?extid=12056a09a0311d758e60
 compiler:       gcc (GCC) 10.1.0-syz 20200507
 userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8dcf068719ec73f6ea9@syzkaller.appspotmail.com
+Reported-by: syzbot+12056a09a0311d758e60@syzkaller.appspotmail.com
 
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 1 PID: 7216 Comm: syz-executor.5 Not tainted 5.9.0-rc8-syzkaller #0
+==================================================================
+BUG: KASAN: use-after-free in radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
+BUG: KASAN: use-after-free in idr_for_each+0x206/0x220 lib/idr.c:202
+Read of size 8 at addr ffff88804eb9cb30 by task kworker/u4:8/13668
+
+CPU: 1 PID: 13668 Comm: kworker/u4:8 Not tainted 5.9.0-rc7-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound io_ring_exit_work
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
  dump_stack+0x198/0x1fd lib/dump_stack.c:118
- assign_lock_key kernel/locking/lockdep.c:894 [inline]
- register_lock_class+0x157d/0x1630 kernel/locking/lockdep.c:1206
- __lock_acquire+0x101/0x5780 kernel/locking/lockdep.c:4320
- lock_acquire+0x1f3/0xaf0 kernel/locking/lockdep.c:5029
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
- _raw_spin_lock_irq+0x94/0xd0 kernel/locking/spinlock.c:167
- spin_lock_irq include/linux/spinlock.h:379 [inline]
- clear_inode+0x1b/0x1e0 fs/inode.c:529
- shmem_evict_inode+0x240/0xbc0 mm/shmem.c:1182
- evict+0x2ed/0x750 fs/inode.c:576
- iput_final fs/inode.c:1652 [inline]
- iput.part.0+0x424/0x850 fs/inode.c:1678
- iput+0x58/0x70 fs/inode.c:1668
- do_unlinkat+0x40b/0x660 fs/namei.c:3902
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
+ idr_for_each+0x206/0x220 lib/idr.c:202
+ io_destroy_buffers fs/io_uring.c:7889 [inline]
+ io_ring_ctx_free fs/io_uring.c:7904 [inline]
+ io_ring_exit_work+0x363/0x6d0 fs/io_uring.c:7979
+ process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Allocated by task 17016:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ slab_post_alloc_hook mm/slab.h:518 [inline]
+ slab_alloc mm/slab.c:3316 [inline]
+ kmem_cache_alloc+0x13a/0x3f0 mm/slab.c:3486
+ radix_tree_node_alloc.constprop.0+0x7c/0x350 lib/radix-tree.c:275
+ idr_get_free+0x4c5/0x940 lib/radix-tree.c:1505
+ idr_alloc_u32+0x170/0x2d0 lib/idr.c:46
+ idr_alloc+0xc2/0x130 lib/idr.c:87
+ io_provide_buffers fs/io_uring.c:3768 [inline]
+ io_issue_sqe+0x48d2/0x5c50 fs/io_uring.c:5906
+ __io_queue_sqe+0x280/0x1160 fs/io_uring.c:6178
+ io_queue_sqe+0x692/0xfa0 fs/io_uring.c:6257
+ io_submit_sqe fs/io_uring.c:6327 [inline]
+ io_submit_sqes+0x1759/0x23f0 fs/io_uring.c:6521
+ __do_sys_io_uring_enter+0xeac/0x1bd0 fs/io_uring.c:8349
  do_syscall_32_irqs_on arch/x86/entry/common.c:78 [inline]
  __do_fast_syscall_32+0x60/0x90 arch/x86/entry/common.c:137
  do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
  entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
-RIP: 0023:0xf7f4f549
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000090bed1c EFLAGS: 00000212 ORIG_RAX: 000000000000000a
-RAX: ffffffffffffffda RBX: 00000000090bedac RCX: 000000005f7aa726
-RDX: 0000000009908228 RSI: 0000000000000000 RDI: 00000000080d8a9e
-RBP: 00000000090bedac R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-------------[ cut here ]------------
-kernel BUG at fs/inode.c:533!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7216 Comm: syz-executor.5 Not tainted 5.9.0-rc8-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:clear_inode+0x189/0x1e0 fs/inode.c:533
-Code: 75 38 e8 aa 5e ad ff 48 c7 83 d8 00 00 00 60 00 00 00 5b 5d 41 5c c3 e8 95 5e ad ff 0f 0b e8 8e 5e ad ff 0f 0b e8 87 5e ad ff <0f> 0b e8 80 5e ad ff 0f 0b e8 79 5e ad ff 0f 0b e8 72 5e ad ff 0f
-RSP: 0018:ffffc90006677c38 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88800011c120 RCX: 0000000000000000
-RDX: ffff8880910aa380 RSI: ffffffff81c8e009 RDI: 0000000000000001
-RBP: ffff88800011c4c8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000031323754 R12: ffff88800011c350
-R13: ffff888086128878 R14: ffff88800011c0c8 R15: ffff88800011c0c8
-FS:  0000000000000000(0000) GS:ffff8880ae500000(0063) knlGS:0000000009907900
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 000000002001d000 CR3: 00000000a4575000 CR4: 00000000001526e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- shmem_evict_inode+0x240/0xbc0 mm/shmem.c:1182
- evict+0x2ed/0x750 fs/inode.c:576
- iput_final fs/inode.c:1652 [inline]
- iput.part.0+0x424/0x850 fs/inode.c:1678
- iput+0x58/0x70 fs/inode.c:1668
- do_unlinkat+0x40b/0x660 fs/namei.c:3902
+
+Freed by task 16:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3422 [inline]
+ kmem_cache_free.part.0+0x74/0x1e0 mm/slab.c:3697
+ rcu_do_batch kernel/rcu/tree.c:2430 [inline]
+ rcu_core+0x5ca/0x1130 kernel/rcu/tree.c:2658
+ __do_softirq+0x1f8/0xb23 kernel/softirq.c:298
+
+Last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2896 [inline]
+ call_rcu+0x15e/0x7c0 kernel/rcu/tree.c:2970
+ radix_tree_node_free lib/radix-tree.c:309 [inline]
+ delete_node+0x591/0x8c0 lib/radix-tree.c:572
+ __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
+ radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
+ __io_remove_buffers fs/io_uring.c:3666 [inline]
+ __io_remove_buffers fs/io_uring.c:3645 [inline]
+ __io_destroy_buffers+0x161/0x200 fs/io_uring.c:7883
+ idr_for_each+0x113/0x220 lib/idr.c:208
+ io_destroy_buffers fs/io_uring.c:7889 [inline]
+ io_ring_ctx_free fs/io_uring.c:7904 [inline]
+ io_ring_exit_work+0x363/0x6d0 fs/io_uring.c:7979
+ process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Second to last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2896 [inline]
+ call_rcu+0x15e/0x7c0 kernel/rcu/tree.c:2970
+ radix_tree_node_free lib/radix-tree.c:309 [inline]
+ radix_tree_shrink lib/radix-tree.c:535 [inline]
+ delete_node+0x37a/0x8c0 lib/radix-tree.c:553
+ __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
+ radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
+ free_pid+0xa1/0x260 kernel/pid.c:151
+ __change_pid+0x1c7/0x2d0 kernel/pid.c:352
+ __unhash_process kernel/exit.c:77 [inline]
+ __exit_signal kernel/exit.c:147 [inline]
+ release_task+0xd29/0x14d0 kernel/exit.c:198
+ wait_task_zombie kernel/exit.c:1088 [inline]
+ wait_consider_task+0x2fd2/0x3b70 kernel/exit.c:1315
+ do_wait_thread kernel/exit.c:1378 [inline]
+ do_wait+0x376/0xa00 kernel/exit.c:1449
+ kernel_wait4+0x14c/0x260 kernel/exit.c:1621
  do_syscall_32_irqs_on arch/x86/entry/common.c:78 [inline]
  __do_fast_syscall_32+0x60/0x90 arch/x86/entry/common.c:137
  do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
  entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
-RIP: 0023:0xf7f4f549
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000090bed1c EFLAGS: 00000212 ORIG_RAX: 000000000000000a
-RAX: ffffffffffffffda RBX: 00000000090bedac RCX: 000000005f7aa726
-RDX: 0000000009908228 RSI: 0000000000000000 RDI: 00000000080d8a9e
-RBP: 00000000090bedac R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 9126b3e9e9b64308 ]---
-RIP: 0010:clear_inode+0x189/0x1e0 fs/inode.c:533
-Code: 75 38 e8 aa 5e ad ff 48 c7 83 d8 00 00 00 60 00 00 00 5b 5d 41 5c c3 e8 95 5e ad ff 0f 0b e8 8e 5e ad ff 0f 0b e8 87 5e ad ff <0f> 0b e8 80 5e ad ff 0f 0b e8 79 5e ad ff 0f 0b e8 72 5e ad ff 0f
-RSP: 0018:ffffc90006677c38 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88800011c120 RCX: 0000000000000000
-RDX: ffff8880910aa380 RSI: ffffffff81c8e009 RDI: 0000000000000001
-RBP: ffff88800011c4c8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000031323754 R12: ffff88800011c350
-R13: ffff888086128878 R14: ffff88800011c0c8 R15: ffff88800011c0c8
-FS:  0000000000000000(0000) GS:ffff8880ae500000(0063) knlGS:0000000009907900
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000090c7850 CR3: 00000000a4575000 CR4: 00000000001526e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+The buggy address belongs to the object at ffff88804eb9cb00
+ which belongs to the cache radix_tree_node of size 576
+The buggy address is located 48 bytes inside of
+ 576-byte region [ffff88804eb9cb00, ffff88804eb9cd40)
+The buggy address belongs to the page:
+page:00000000a35d3b6e refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88804eb9cffb pfn:0x4eb9c
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea00013ab388 ffffea0002927748 ffff8880aa06f000
+raw: ffff88804eb9cffb ffff88804eb9c000 0000000100000005 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88804eb9ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88804eb9ca80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88804eb9cb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff88804eb9cb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88804eb9cc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
