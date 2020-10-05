@@ -2,87 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F32284182
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 22:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8241E284188
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 22:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbgJEUhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 16:37:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39101 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727247AbgJEUhb (ORCPT
+        id S1728069AbgJEUj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 16:39:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbgJEUj7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 16:37:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601930250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7nUZF53moaE0jZmZ5l3IQLMteMr+7qZSYgEgvocHM68=;
-        b=ZQbPraSQ0cEUyl2O9Idf4hXdoURC42mw44ToB1wUs0FJWN28GVqp+l2N2+hPlhZ78YjVE2
-        M3K0GCK4P5jFdwAl/4iLvxMcuFOrDhXvQGYXLXPe9hR094VVH62VVWQKPvjgHzf3M5jAlA
-        ANGFGTMT+CXavoozdeNSFZbvtJLaELE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-497-i1Bmh4B7MzGC0GSNKOjgoA-1; Mon, 05 Oct 2020 16:37:23 -0400
-X-MC-Unique: i1Bmh4B7MzGC0GSNKOjgoA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7547B107AFA9;
-        Mon,  5 Oct 2020 20:37:19 +0000 (UTC)
-Received: from ovpn-114-87.rdu2.redhat.com (ovpn-114-87.rdu2.redhat.com [10.10.114.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7A9A10013C0;
-        Mon,  5 Oct 2020 20:37:18 +0000 (UTC)
-Message-ID: <b56d7eff12d3e85f4fcca11d70b8dbb29da25a3f.camel@redhat.com>
-Subject: Re: [RFC PATCH 27/27] epoll: take epitem list out of struct file
-From:   Qian Cai <cai@redhat.com>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Marc Zyngier <maz@kernel.org>
-Date:   Mon, 05 Oct 2020 16:37:18 -0400
-In-Reply-To: <20201004023929.2740074-27-viro@ZenIV.linux.org.uk>
-References: <20201004023608.GM3421308@ZenIV.linux.org.uk>
-         <20201004023929.2740074-1-viro@ZenIV.linux.org.uk>
-         <20201004023929.2740074-27-viro@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Mon, 5 Oct 2020 16:39:59 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2766C0613CE;
+        Mon,  5 Oct 2020 13:39:58 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id e17so2363978wru.12;
+        Mon, 05 Oct 2020 13:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=s6iDC9dUHJsp946AwvB4HqOpH0+Gyt+ZQFRpxT0XcVA=;
+        b=K7DTrK0GdYHxog7SsY1N3+Kxz2lpMsx9Ntecvkbxy7EnP7KNodDTxm4vg9KgPVRrkp
+         oERbErfELiAWgBC7sy+G9vkMbUhcOd/3Ouop8+32yTbCP+lW4XfInqX6YQsvm1jxvDw5
+         IlTOcH0P09hkLrPat1IgfcU3HXAfRyBbCAFmBWyd2y7bVPo7HwubzU0tGB2Mt6JG8PfR
+         VEAB9TSw4ahUGoA4exHQmC2laANryX350/O3xDEPJXKo3Qb+88SDbgu0swk12fDoUZv2
+         cMeCfDKbOsaKyI5Lyfw48BjpviW5aDNKQMVIkHffZYTSXAD/JchcIrEkgR4eiNCJhODJ
+         GrNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s6iDC9dUHJsp946AwvB4HqOpH0+Gyt+ZQFRpxT0XcVA=;
+        b=S2+8FIBOEejYm1o6KAZsASBnqJvjljcPlFko4dVaqOll3qqKTxdJtUJlhho9iK6erM
+         pSzQoC9qEk0UNg3gvZ6j/IhhdK1LHqRajaH2VuXUzAO46EwNq62q0uCIHPA0DkN/zKWa
+         7ZhaL27TM29pT+UvY0W1GcjWecZSbCbByhwbG5QUlcsaEZM352ICc7JKAD31TQtJjxKR
+         1alE6CReDN6S7O6p6ro3VcmQiDbumdEIj+c4QYR+FQ1xQAhm/mDXECeqpoys5FHGSOWf
+         og4Sl7KLpHoXqDm36Bd83TXFFLktVaQicfdyQFmrx7Zub2V7t3Rf3+8SChYIyJBQU/3q
+         1xSw==
+X-Gm-Message-State: AOAM531ITzdCEBMZLtvh+Mghz2EhOyy3rMtNMzUfiNl5xTnzdeKtBgcB
+        Opu6BsZvkXmTPeGsotVWTGIgJTS2cshang==
+X-Google-Smtp-Source: ABdhPJzFSr8+CEKAseUSNhBRTaD/bhR4pMFdNpvhT9e1yKN0zIQNhueuD86vXnYgCViRRH7kKSF7Tg==
+X-Received: by 2002:adf:9504:: with SMTP id 4mr1207472wrs.27.1601930397364;
+        Mon, 05 Oct 2020 13:39:57 -0700 (PDT)
+Received: from localhost.localdomain (host-92-5-241-147.as43234.net. [92.5.241.147])
+        by smtp.gmail.com with ESMTPSA id t13sm882079wmj.15.2020.10.05.13.39.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Oct 2020 13:39:56 -0700 (PDT)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-safety@lists.elisa.tech,
+        linux-fsdevel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] kernel/sysctl.c: drop unneeded assignment in proc_do_large_bitmap()
+Date:   Mon,  5 Oct 2020 21:37:49 +0100
+Message-Id: <20201005203749.28083-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2020-10-04 at 03:39 +0100, Al Viro wrote:
->  /*
->   * Must be called with "mtx" held.
->   */
-> @@ -1367,19 +1454,21 @@ static int ep_insert(struct eventpoll *ep, const
-> struct epoll_event *event,
->  	epi->event = *event;
->  	epi->next = EP_UNACTIVE_PTR;
->  
-> -	atomic_long_inc(&ep->user->epoll_watches);
-> -
->  	if (tep)
->  		mutex_lock(&tep->mtx);
->  	/* Add the current item to the list of active epoll hook for this file
-> */
-> -	spin_lock(&tfile->f_lock);
-> -	hlist_add_head_rcu(&epi->fllink, &tfile->f_ep_links);
-> -	spin_unlock(&tfile->f_lock);
-> -	if (full_check && !tep) {
-> -		get_file(tfile);
-> -		list_add(&tfile->f_tfile_llink, &tfile_check_list);
-> +	if (unlikely(attach_epitem(tfile, epi) < 0)) {
-> +		kmem_cache_free(epi_cache, epi);
-> +		if (tep)
-> +			mutex_lock(&tep->mtx);
+The variable 'first' is assigned 0 inside the while loop in the if block
+but it is not used in the if block and is only used in the else block.
+So, remove the unneeded assignment.
 
-Shouldn't this be mutex_unlock() instead?
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
 
-> +		return -ENOMEM;
->  	}
->  
+The resultant binary stayed same after this change. Verified with
+md5sum which remained same with and without this change.
+
+$ md5sum kernel/sysctl.o 
+e9e97adbfd3f0b32f83dd35d100c0e4e  kernel/sysctl.o
+
+ kernel/sysctl.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ce75c67572b9..b51ebfd1ba6e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1508,7 +1508,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 			}
+ 
+ 			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
+-			first = 0;
+ 			proc_skip_char(&p, &left, '\n');
+ 		}
+ 		left += skipped;
+-- 
+2.11.0
 
