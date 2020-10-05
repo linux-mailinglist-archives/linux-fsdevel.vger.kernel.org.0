@@ -2,34 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35BD6283869
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 16:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6FDC283843
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 16:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbgJEOqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 10:46:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52606 "EHLO mail.kernel.org"
+        id S1726744AbgJEOpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 10:45:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbgJEOp1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 10:45:27 -0400
+        id S1726692AbgJEOp3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Oct 2020 10:45:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1A3121481;
-        Mon,  5 Oct 2020 14:45:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9559D2085B;
+        Mon,  5 Oct 2020 14:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601909125;
-        bh=4NO0J/BJcytxI4agbgpurZSYnskHQLT0CQNH+GnXuc0=;
+        s=default; t=1601909129;
+        bh=0tQkDMUo0WwTNvnmJIszwt/KCV34U2dSxtHnYJEU1jg=;
         h=From:To:Cc:Subject:Date:From;
-        b=z9PLbH3/Uy0NvX6AAoCI9ZIKwSahCe/ywmMWCRV0iivKi+N4wZZLJT014UBHPSmGG
-         taSDzhWbSsWQW0YE5WvFd2TvwX6BB52PKb0l/an7/B2edyPJBHwxJGYN0HyP9SsXSj
-         Q4Hu4JbfcQ+dfhf7JkYm+99GEmoPE40gzgjsczsU=
+        b=q73dW9wimiKaNlJxvdFYws1Xl+qfy4DF/EltbueIXVLOQ6MFBHcb1kkZ/gmTFcoat
+         FLuqVGCdx44vwOKOm7tpGl7WoqiWdTaOwnDr2HfpmEjg+j5eG46+FWjb3K1qmARQAr
+         Qey8qVYRPWG2wbfttV9vTmYezsaibMgGQ1l8PGpY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 1/2] epoll: do not insert into poll queues until all sanity checks are done
-Date:   Mon,  5 Oct 2020 10:45:22 -0400
-Message-Id: <20201005144523.2527710-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 1/2] epoll: do not insert into poll queues until all sanity checks are done
+Date:   Mon,  5 Oct 2020 10:45:26 -0400
+Message-Id: <20201005144527.2527777-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 X-stable: review
@@ -50,10 +50,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+), 19 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 61a52bb26d127..ed6c06dbb5369 100644
+index af9dfa494b1fa..a32df9cad519f 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -1450,6 +1450,22 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+@@ -1461,6 +1461,22 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
  		RCU_INIT_POINTER(epi->ws, NULL);
  	}
  
@@ -76,7 +76,7 @@ index 61a52bb26d127..ed6c06dbb5369 100644
  	/* Initialize the poll table using the queue callback */
  	epq.epi = epi;
  	init_poll_funcptr(&epq.pt, ep_ptable_queue_proc);
-@@ -1472,22 +1488,6 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+@@ -1483,22 +1499,6 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
  	if (epi->nwait < 0)
  		goto error_unregister;
  
@@ -97,9 +97,9 @@ index 61a52bb26d127..ed6c06dbb5369 100644
 -		goto error_remove_epi;
 -
  	/* We have to drop the new item inside our item list to keep track of it */
- 	spin_lock_irq(&ep->wq.lock);
+ 	spin_lock_irqsave(&ep->lock, flags);
  
-@@ -1516,6 +1516,8 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+@@ -1527,6 +1527,8 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
  
  	return 0;
  
@@ -108,7 +108,7 @@ index 61a52bb26d127..ed6c06dbb5369 100644
  error_remove_epi:
  	spin_lock(&tfile->f_lock);
  	list_del_rcu(&epi->fllink);
-@@ -1523,9 +1525,6 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+@@ -1534,9 +1536,6 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
  
  	rb_erase_cached(&epi->rbn, &ep->rbr);
  
