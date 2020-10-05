@@ -2,96 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26B7C283969
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 17:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50790283D01
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 19:03:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgJEPVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 11:21:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50196 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726535AbgJEPVH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 11:21:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601911265;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hnW4zQ5CZEz0tnuomz7d5q0aSypy1kjZEOXZe9vGNgo=;
-        b=MpgbUFxAWjoEfIEXIqS1oOIQg/ylyKsMsUO+lQHnLyuA54+7wvy2483bH4BeYoBtFYghoR
-        A/z/nECD67pHdvC885xMbDTSf2D+rGuQ0xQ6xq1iUt3sjn+Gi4Q5EvAlsaEhjL1s4Xf6ye
-        /nYFgJfCizl71woXZKlZyDiujNkS4H0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-507-8HSL-yvDOwSdMR8iD516nw-1; Mon, 05 Oct 2020 11:21:04 -0400
-X-MC-Unique: 8HSL-yvDOwSdMR8iD516nw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F3CE1DDEF;
-        Mon,  5 Oct 2020 15:21:03 +0000 (UTC)
-Received: from bfoster.redhat.com (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D0A5310001B3;
-        Mon,  5 Oct 2020 15:21:02 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org
-Subject: [PATCH v2 2/2] xfs: kick extra large ioends to completion workqueue
-Date:   Mon,  5 Oct 2020 11:21:02 -0400
-Message-Id: <20201005152102.15797-1-bfoster@redhat.com>
-In-Reply-To: <20201002153357.56409-3-bfoster@redhat.com>
-References: <20201002153357.56409-3-bfoster@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        id S1727524AbgJERDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 13:03:30 -0400
+Received: from relay.sw.ru ([185.231.240.75]:50324 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726320AbgJERDa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Oct 2020 13:03:30 -0400
+Received: from [172.16.25.93] (helo=amikhalitsyn-pc0.sw.ru)
+        by relay3.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
+        id 1kPTsk-0039Uv-Gp; Mon, 05 Oct 2020 20:02:38 +0300
+From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+To:     miklos@szeredi.hu
+Cc:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] overlayfs: add OVL_IOC_GETINFOFD ioctl that opens ovlinfofd
+Date:   Mon,  5 Oct 2020 20:02:27 +0300
+Message-Id: <20201005170227.11340-1-alexander.mikhalitsyn@virtuozzo.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
+References: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We've had reports of soft lockup warnings in the iomap ioend
-completion path due to very large bios and/or bio chains. Divert any
-ioends with 256k or more pages to process to the workqueue so
-completion occurs in non-atomic context and can reschedule to avoid
-soft lockup warnings.
+Second variant of possible interface to get source-dirs fhandles from
+userspace. OVL_IOC_GETINFOFD ioctls opens special [ovlinfofd] descriptor
+which is really just seq_file. When read from this seq_file we will get
+something like this:
+===
+numlower: 2
+L fhandle-bytes:c fhandle-type:1 f_handle:9685a2160200000000000000
+L fhandle-bytes:c fhandle-type:1 f_handle:c74cd5c10300000000000000
+U fhandle-bytes:c fhandle-type:1 f_handle:e45842640400000000000000
+W fhandle-bytes:c fhandle-type:1 f_handle:d393374d0500000000000000
+===
 
-Signed-off-by: Brian Foster <bfoster@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: David Howells <dhowells@redhat.com>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
 ---
+ fs/overlayfs/readdir.c | 171 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 171 insertions(+)
 
-v2:
-- Fix type in macro.
-
- fs/xfs/xfs_aops.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 3e061ea99922..c00cc0624986 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -30,6 +30,13 @@ XFS_WPC(struct iomap_writepage_ctx *ctx)
- 	return container_of(ctx, struct xfs_writepage_ctx, ctx);
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 12ee043d2b3a..60c3c47a6b3e 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -14,6 +14,9 @@
+ #include <linux/cred.h>
+ #include <linux/ratelimit.h>
+ #include <linux/exportfs.h>
++#include <linux/anon_inodes.h>
++#include <linux/seq_file.h>
++#include <linux/syscalls.h>
+ #include "overlayfs.h"
+ 
+ struct ovl_cache_entry {
+@@ -1067,11 +1070,175 @@ static long ovl_ioctl_get_work_fhandle(struct super_block *sb,
+ 	return __ovl_ioctl_get_fhandle(ofs->workbasedir, arg);
  }
  
-+/*
-+ * Kick extra large ioends off to the workqueue. Completion will process a lot
-+ * of pages for a large bio or bio chain and a non-atomic context is required to
-+ * reschedule and avoid soft lockup warnings.
-+ */
-+#define XFS_LARGE_IOEND	(262144ULL << PAGE_SHIFT)
++static int ovlinfofd_release(struct inode *inode, struct file *file)
++{
++	printk("ovlinfofd_release\n");
++	return single_release(inode, file);
++}
 +
- /*
-  * Fast and loose check if this write could update the on-disk inode size.
-  */
-@@ -239,7 +246,8 @@ static inline bool xfs_ioend_needs_workqueue(struct iomap_ioend *ioend)
- {
- 	return ioend->io_private ||
- 		ioend->io_type == IOMAP_UNWRITTEN ||
--		(ioend->io_flags & IOMAP_F_SHARED);
-+		(ioend->io_flags & IOMAP_F_SHARED) ||
-+		(ioend->io_size >= XFS_LARGE_IOEND);
- }
++#ifdef CONFIG_PROC_FS
++static void ovlinfofd_show_fdinfo(struct seq_file *m, struct file *f)
++{
++	/* TODO */
++}
++#endif
++
++static const struct file_operations ovlinfofd_fops = {
++	.owner		= THIS_MODULE,
++#ifdef CONFIG_PROC_FS
++	.show_fdinfo	= ovlinfofd_show_fdinfo,
++#endif
++	.release	= ovlinfofd_release,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++};
++
++static long __ovl_ioctl_show_dentry_fhandle(struct seq_file *s,
++					    const char *prefix,
++					    struct dentry *origin)
++{
++	struct ovl_mnt_opt_fh *fh;
++	int ret = 0, i;
++
++	fh = __ovl_encode_mnt_opt_fh(origin);
++	if (IS_ERR(fh))
++		return PTR_ERR(fh);
++
++	seq_printf(s, "%s fhandle-bytes:%x fhandle-type:%x f_handle:",
++		   prefix, fh->fh.handle_bytes, fh->fh.handle_type);
++
++	for (i = 0; i < fh->fh.handle_bytes; i++)
++		seq_printf(s, "%02x", (int)fh->fh.f_handle[i]);
++
++	seq_putc(s, '\n');
++
++	kfree(fh);
++	return ret;
++}
++
++static long ovl_ioctl_show_lower_fhandle(struct seq_file *s,
++					 unsigned long arg)
++{
++	struct super_block *sb = s->private;
++	struct ovl_entry *oe = sb->s_root->d_fsdata;
++	struct dentry *origin;
++
++	if (arg >= oe->numlower)
++		return -EINVAL;
++
++	origin = oe->lowerstack[arg].dentry;
++
++	return __ovl_ioctl_show_dentry_fhandle(s, "L", origin);
++}
++
++static long ovl_ioctl_show_upper_fhandle(struct seq_file *s)
++{
++	struct super_block *sb = s->private;
++	struct ovl_fs *ofs = sb->s_fs_info;
++	struct dentry *origin;
++
++	if (!ofs->config.upperdir)
++		return -EINVAL;
++
++	origin = OVL_I(d_inode(sb->s_root))->__upperdentry;
++
++	return __ovl_ioctl_show_dentry_fhandle(s, "U", origin);
++}
++
++static long ovl_ioctl_show_work_fhandle(struct seq_file *s)
++{
++	struct super_block *sb = s->private;
++	struct ovl_fs *ofs = sb->s_fs_info;
++
++	if (!ofs->config.upperdir)
++		return -EINVAL;
++
++	return __ovl_ioctl_show_dentry_fhandle(s, "W", ofs->workbasedir);
++}
++
++static int ovlinfofd_show(struct seq_file *s, void *unused)
++{
++	struct super_block *sb = s->private;
++	struct ovl_entry *oe = sb->s_root->d_fsdata;
++	int i;
++
++	printk("ovlinfofd_show\n");
++
++	seq_printf(s, "numlower: %d\n", oe->numlower);
++
++	for (i = 0; i < oe->numlower; i++)
++		ovl_ioctl_show_lower_fhandle(s, i);
++	ovl_ioctl_show_upper_fhandle(s);
++	ovl_ioctl_show_work_fhandle(s);
++
++	return 0;
++}
++
++static long ovl_ioctl_get_info_fd(struct super_block *sb,
++				  unsigned long arg)
++{
++	struct ovl_fs *ofs = sb->s_fs_info;
++	struct ovl_entry *oe = sb->s_root->d_fsdata;
++	int err, ufd, flags = arg;
++	struct fd f;
++
++	if (flags & ~(O_CLOEXEC))
++		return -EINVAL;
++
++	/* FIXME Comment taken from signalfd.c. Need to think about this.
++	 * When we call this, the initialization must be complete, since
++	 * anon_inode_getfd() will install the fd.
++	 */
++	ufd = anon_inode_getfd("[ovlinfofd]", &ovlinfofd_fops, NULL,
++				O_RDONLY | (flags & (O_CLOEXEC)));
++	if (ufd < 0)
++		return ufd;
++
++	f = fdget(ufd);
++	if (!f.file) {
++		err = -EBADF;
++		goto err_close;
++	}
++
++	/*
++	 * It's good to have some good guess of seq_file buffer size
++	 * from start because if we will just use single_open() function
++	 * then we will make several seq_file overflows and .show callback
++	 * will be called several times. It's very bad for performance.
++	 *
++	 * Guess is very simple: we show fhandles as hex string. So,
++	 * all that we need is take MAX_HANDLE_SZ * 2 and multiply by
++	 * number of overlayfs mount source-dirs.
++	 */
++	err = single_open_size(f.file, ovlinfofd_show, sb,
++			       MAX_HANDLE_SZ * 2 *
++			       (oe->numlower + 2 * !!ofs->config.upperdir));
++	if (err)
++		goto err_fdput;
++
++	/*
++	 * We doing tricky things by combining anon_inode_getfd with seq_files,
++	 * so, it's better to check that all fine with fops after single_open_size
++	 * call.
++	 */
++	WARN_ON(f.file->f_op != &ovlinfofd_fops);
++	fdput(f);
++
++	return ufd;
++
++err_fdput:
++	fdput(f);
++err_close:
++	ksys_close(ufd);
++	return err;
++}
++
+ #define	OVL_IOC_GETLWRFHNDLSNUM			_IO('o', 1)
+ // DISCUSS: what if MAX_HANDLE_SZ will change?
+ #define	OVL_IOC_GETLWRFHNDL			_IOR('o', 2, struct ovl_mnt_opt_fh)
+ #define	OVL_IOC_GETUPPRFHNDL			_IOR('o', 3, struct ovl_mnt_opt_fh)
+ #define	OVL_IOC_GETWRKFHNDL			_IOR('o', 4, struct ovl_mnt_opt_fh)
++#define	OVL_IOC_GETINFOFD			_IO('o', 5)
  
- STATIC void
+ static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+@@ -1094,6 +1261,10 @@ static long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		ret = ovl_ioctl_get_work_fhandle(file_inode(file)->i_sb, arg);
+ 		break;
+ 
++	case OVL_IOC_GETINFOFD:
++		ret = ovl_ioctl_get_info_fd(file_inode(file)->i_sb, arg);
++		break;
++
+ 	default:
+ 		ret = -ENOTTY;
+ 	}
 -- 
-2.25.4
+2.25.1
 
