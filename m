@@ -2,122 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2132F28384C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 16:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B7C283969
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Oct 2020 17:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbgJEOpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 10:45:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52966 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbgJEOph (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 10:45:37 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726641AbgJEPVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 11:21:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50196 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726535AbgJEPVH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 5 Oct 2020 11:21:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601911265;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hnW4zQ5CZEz0tnuomz7d5q0aSypy1kjZEOXZe9vGNgo=;
+        b=MpgbUFxAWjoEfIEXIqS1oOIQg/ylyKsMsUO+lQHnLyuA54+7wvy2483bH4BeYoBtFYghoR
+        A/z/nECD67pHdvC885xMbDTSf2D+rGuQ0xQ6xq1iUt3sjn+Gi4Q5EvAlsaEhjL1s4Xf6ye
+        /nYFgJfCizl71woXZKlZyDiujNkS4H0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-507-8HSL-yvDOwSdMR8iD516nw-1; Mon, 05 Oct 2020 11:21:04 -0400
+X-MC-Unique: 8HSL-yvDOwSdMR8iD516nw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31EE8208A9;
-        Mon,  5 Oct 2020 14:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601909136;
-        bh=Wi7QxXgy94wOlaQDq/KWGfhyrMHjIhQDYdG5fCh7ss0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PCopsENNQcpCCPWj92wu5AKDqjWAk/bVkPHiJfdjmfefxWdibj6CbAyfFMlqlRXWc
-         AayHiOCx1QNfM40c6puA5GGACftmfMgsfSseHIGxqNY2ISbMRDPcS9UkqqxohsDTo3
-         QljSRyDuhsNsxOyyq9xNzO0NVOfP3/w8nwpTZMN0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4] epoll: do not insert into poll queues until all sanity checks are done
-Date:   Mon,  5 Oct 2020 10:45:34 -0400
-Message-Id: <20201005144535.2527911-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F3CE1DDEF;
+        Mon,  5 Oct 2020 15:21:03 +0000 (UTC)
+Received: from bfoster.redhat.com (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D0A5310001B3;
+        Mon,  5 Oct 2020 15:21:02 +0000 (UTC)
+From:   Brian Foster <bfoster@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-xfs@vger.kernel.org
+Subject: [PATCH v2 2/2] xfs: kick extra large ioends to completion workqueue
+Date:   Mon,  5 Oct 2020 11:21:02 -0400
+Message-Id: <20201005152102.15797-1-bfoster@redhat.com>
+In-Reply-To: <20201002153357.56409-3-bfoster@redhat.com>
+References: <20201002153357.56409-3-bfoster@redhat.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+We've had reports of soft lockup warnings in the iomap ioend
+completion path due to very large bios and/or bio chains. Divert any
+ioends with 256k or more pages to process to the workqueue so
+completion occurs in non-atomic context and can reschedule to avoid
+soft lockup warnings.
 
-[ Upstream commit f8d4f44df056c5b504b0d49683fb7279218fd207 ]
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Brian Foster <bfoster@redhat.com>
 ---
- fs/eventpoll.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index e5324642023d6..f287ec04b9a99 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1304,6 +1304,22 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
- 		RCU_INIT_POINTER(epi->ws, NULL);
- 	}
+v2:
+- Fix type in macro.
+
+ fs/xfs/xfs_aops.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 3e061ea99922..c00cc0624986 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -30,6 +30,13 @@ XFS_WPC(struct iomap_writepage_ctx *ctx)
+ 	return container_of(ctx, struct xfs_writepage_ctx, ctx);
+ }
  
-+	/* Add the current item to the list of active epoll hook for this file */
-+	spin_lock(&tfile->f_lock);
-+	list_add_tail_rcu(&epi->fllink, &tfile->f_ep_links);
-+	spin_unlock(&tfile->f_lock);
++/*
++ * Kick extra large ioends off to the workqueue. Completion will process a lot
++ * of pages for a large bio or bio chain and a non-atomic context is required to
++ * reschedule and avoid soft lockup warnings.
++ */
++#define XFS_LARGE_IOEND	(262144ULL << PAGE_SHIFT)
 +
-+	/*
-+	 * Add the current item to the RB tree. All RB tree operations are
-+	 * protected by "mtx", and ep_insert() is called with "mtx" held.
-+	 */
-+	ep_rbtree_insert(ep, epi);
-+
-+	/* now check if we've created too many backpaths */
-+	error = -EINVAL;
-+	if (full_check && reverse_path_check())
-+		goto error_remove_epi;
-+
- 	/* Initialize the poll table using the queue callback */
- 	epq.epi = epi;
- 	init_poll_funcptr(&epq.pt, ep_ptable_queue_proc);
-@@ -1326,22 +1342,6 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
- 	if (epi->nwait < 0)
- 		goto error_unregister;
+ /*
+  * Fast and loose check if this write could update the on-disk inode size.
+  */
+@@ -239,7 +246,8 @@ static inline bool xfs_ioend_needs_workqueue(struct iomap_ioend *ioend)
+ {
+ 	return ioend->io_private ||
+ 		ioend->io_type == IOMAP_UNWRITTEN ||
+-		(ioend->io_flags & IOMAP_F_SHARED);
++		(ioend->io_flags & IOMAP_F_SHARED) ||
++		(ioend->io_size >= XFS_LARGE_IOEND);
+ }
  
--	/* Add the current item to the list of active epoll hook for this file */
--	spin_lock(&tfile->f_lock);
--	list_add_tail_rcu(&epi->fllink, &tfile->f_ep_links);
--	spin_unlock(&tfile->f_lock);
--
--	/*
--	 * Add the current item to the RB tree. All RB tree operations are
--	 * protected by "mtx", and ep_insert() is called with "mtx" held.
--	 */
--	ep_rbtree_insert(ep, epi);
--
--	/* now check if we've created too many backpaths */
--	error = -EINVAL;
--	if (full_check && reverse_path_check())
--		goto error_remove_epi;
--
- 	/* We have to drop the new item inside our item list to keep track of it */
- 	spin_lock_irqsave(&ep->lock, flags);
- 
-@@ -1367,6 +1367,8 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
- 
- 	return 0;
- 
-+error_unregister:
-+	ep_unregister_pollwait(ep, epi);
- error_remove_epi:
- 	spin_lock(&tfile->f_lock);
- 	list_del_rcu(&epi->fllink);
-@@ -1374,9 +1376,6 @@ static int ep_insert(struct eventpoll *ep, struct epoll_event *event,
- 
- 	rb_erase(&epi->rbn, &ep->rbr);
- 
--error_unregister:
--	ep_unregister_pollwait(ep, epi);
--
- 	/*
- 	 * We need to do this because an event could have been arrived on some
- 	 * allocated wait queue. Note that we don't care about the ep->ovflist
+ STATIC void
 -- 
-2.25.1
+2.25.4
 
