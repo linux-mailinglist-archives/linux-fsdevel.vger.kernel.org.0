@@ -2,64 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4CF284953
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 11:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C8032849C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 11:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbgJFJZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 05:25:55 -0400
-Received: from sonic307-56.consmr.mail.ne1.yahoo.com ([66.163.190.31]:33074
-        "EHLO sonic307-56.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725891AbgJFJZy (ORCPT
+        id S1726133AbgJFJyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 05:54:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49876 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbgJFJyp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 05:25:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1601976354; bh=qFbuKRmrzUWd5SE3tGcypHHoWywgg3aF/p/xNRx13LQ=; h=Date:From:Reply-To:Subject:References:From:Subject; b=SJTIOHCHuKDepxV7veB31DhKrxChLKHAwKLB18lewWHHs+RbjkbtOjx/jbu2RMTgcYC5uJ2omMnAsrvagtq1LVhN4qBfmV4SAQR60c0f8Ry7ugK9sarayb4bKCBWeiPEKDK4bI/2i7/GzEK/Y64Y8VlWWWheJLK1V0AojsLNoWFfFr3KXnFkpQaP2y/SbZ4NTR8M2YTyWVXGRTFnI0WZYs41nD0en4KHRnZWzQ8zQMMk+BMPvaiQ1v14Hh0q1OAdfJfl0SPCo+z2ZM286j9BNoOrKtLuR6E3yKoPIc31TA+lAoO6BdJToktJhaI2ALHB2Z7Z37LFbVfNIjrqgkGwhw==
-X-YMail-OSG: BKH6F5IVM1mGNxVlYgqu0K0ARKKA4Tmq5zy7gveFgBSURysnV3ohL303dShPX70
- VgFKF0ef_Sy23j_IHH9w4GSvPduaTtzhFb0mxSVcjM.7z9I7Gzu0Ed7Y1ddGbxFVjacxEIulO0oR
- Bi2qOkMo26YEGVByBJUJaFj5_aSHTvSR0LKR6K7joarJMZ7akI2PjjISprdw9yp0pNd4.GcIUIEL
- yuKgZfzPle54CPuaWLbkJYT2TbGIPMuRpHj_QkogjF.8bOplYm8KCXi8Ygi0DEaxaqC2nrBEwqYJ
- CNaVafAuYtQCFC9A4Yd9DfHIHJVDCYZL.4nbFpZZL0XZZbBzhMGELj6tSeu28AeyI1.LV58sw2tb
- cD9xRqeTsIc67Rbu_bTc2zvYzvbp9y.cMzRxb_bcalhCLNikRywyxi2FLPxu94hIiw9ATnDjTgcu
- 5EoKLI_s8VTof90CUMPjnomaEKGJ60XULvJwdCX8FApFvaWML1lQiw_Cxree5aSpHhiJ2yw66ERC
- YV_n1HQEXjnuO0Iqx_iKbLn8nG1Qsg2ZrbSw4dTUtGpPDCv6XWvXtR_tlDahYT8E1wM.WOGMCvbd
- qF5DybMQzzTlHCHbeXihiSG1Fr_jI8kv5yYkQQPCHU0Mu8OavIB0oFCnzOoT2tLtj7q2cwiz5Vgz
- .rVsGdRRmWnNGoMC3n2OU.m_03YdmxWCfTvPyOvByb7lBK.vUmKEPrmwJzEOkcpulyvbg.29.M.B
- z_kW1xV6wxUwCt03Y9pTfCEbluQSaZJxZa.TC0WLhpxAijpayahes9lmJlXuxauBKgBJlcOsHRQ0
- C8In0B58Q4hllZDRsNRh7TLHjIZnLohpwm1z1fSd_legawiP9x3FGO0jEzGnHidESYpNp2qO43F5
- J6uTfGOPuj7R7QP.oVa6LtObWprU0Z5TrBCg8A6J97wM9Chq_U7rd5PwJE7TL5_dHQGn4agOux7m
- ZjpC4ZShzSkHGxxx38hL1fkfB4z9RcJwJRyBZROt_VO0kldawhQuQxbKyjqZ1xkgIHJIM4e0Lka8
- 7DJftvs6inTNk2OOpXaRWthFaIoI2XWV.HydFs3Jegs747G3vES7u1czBe39OtU3nEdi1tznkttj
- Jz41ABNWGbYvIXDiDv1mYkUX3Zu3G57MoDeoK_ABtTUIFZSmWcYUlVVjnPGgYLHtJUqw6URg1AZW
- u9PMxFgNHPF_nFRTC7.7vd_VNDMOlv_fAm9HyJV0sAd5mKqstxbqG_IJVOprR4BTMX__ILT0Hw9i
- Azj0q2afD_NZCGCf.vBQqfv4rQvSk4PVcfiqRG.FqW6OOJm_N2Skr6RNFuX.eGC5fOjUH9nzIsZ9
- qvcwpCz_ILw5XhyAQUs5WKiqoHIZvgTcfrdWnFkUWxSbwVI6ODMWU2FYei3ryOsNXhA2rGRteaFU
- BcLBKuz0uk8rTbeG7CJhzVNsrFh65MkvZh.7X_sMe8A.IcWk-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 6 Oct 2020 09:25:54 +0000
-Date:   Tue, 6 Oct 2020 09:25:50 +0000 (UTC)
-From:   Michel <micheldukuu@gmail.com>
-Reply-To: mrmichelduku@outlook.com
-Message-ID: <153836595.2424350.1601976350272@mail.yahoo.com>
-Subject:  HELLO.
+        Tue, 6 Oct 2020 05:54:45 -0400
+Received: from mail-ua1-x943.google.com (mail-ua1-x943.google.com [IPv6:2607:f8b0:4864:20::943])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B481CC061755
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Oct 2020 02:54:44 -0700 (PDT)
+Received: by mail-ua1-x943.google.com with SMTP id j21so1677349uak.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Oct 2020 02:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=izApQwLJB5xPWcDbk9LN+B6IrXmrGQdSEQHBKE/yABU=;
+        b=fpqf5dT61cMzTgvRhlVympy9TJKqv3ohM7WHPKQXL3i7K7ngMfot+Y+oWwO8CNTCGy
+         bd1UEQWTE7IrhVcTG4S1fH9tuCMpJOOyvT6vEgNpYjqW/KWb2ArFVwcI0SvoXDWM0+Mn
+         4CtVjT0Rw1hwtt9rVTRqc2gunccE7Ey7oTyik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=izApQwLJB5xPWcDbk9LN+B6IrXmrGQdSEQHBKE/yABU=;
+        b=CoFxHg/TlyKKYB79JARJffLapTnyU6sdHWwB/bP4gEBQax1vUOz0vht2hCsyLWJvpH
+         53vs7SzPiBSwP9oT5auJ8VUSKxmXWWEH604TYpGTzCGHjh05l/v/Zwol6YxKNWk2hdVE
+         pIQZb5gZFRC3RmwFcSmh9QBgTTe+2Vomm90lrWWHvNBvVbXaYH+mombqF1+sEsEEX1qb
+         6ZGH31ge+6lZXwpYbVJPfJXrTYQp/cZpekD+LIlMCVNo2Jd3KO2vRstJFYKRBMC19oga
+         G0FlRjicd2Qdl9Iy65HP6BE04KwvRW0eL0LOisKq0bNbPPWqy0SRCTQ7SNvgkjQwIbLp
+         zLmg==
+X-Gm-Message-State: AOAM5311tK8fKvmqIFQHp7iwbSnjQ1D6f5xWeY6RxYA3iOmx2hzdzPAN
+        TcF7Qdkg7uSd7ZgFbuMQRk8agFUVE6eZF6ufD5kr4w==
+X-Google-Smtp-Source: ABdhPJxV86chRtP6w3u4OVoe9k5LOEGi8t+NTLL+/pC+E4MyMJFZkel/aoG8IL1rzehJhmqxb5jdR2LEH5aH269JqW0=
+X-Received: by 2002:ab0:6709:: with SMTP id q9mr2345943uam.142.1601978083945;
+ Tue, 06 Oct 2020 02:54:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <153836595.2424350.1601976350272.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.16718 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:80.0) Gecko/20100101 Firefox/80.0
-To:     unlisted-recipients:; (no To-header on input)
+References: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
+ <20201005170227.11340-1-alexander.mikhalitsyn@virtuozzo.com>
+ <83d78791-b650-c8d5-e18a-327d065d53d7@infradead.org> <20201005201222.d1f42917d060a5f7138b6446@virtuozzo.com>
+ <CAOQ4uxiGq40XLhjx_Nz1ymGj967QsMAj_PvuSKH1_4dX=dRMXA@mail.gmail.com> <20201005223948.6e9769ded3301b2d04a2bdae@virtuozzo.com>
+In-Reply-To: <20201005223948.6e9769ded3301b2d04a2bdae@virtuozzo.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 6 Oct 2020 11:54:33 +0200
+Message-ID: <CAJfpegtEbkdLnYvNVJYEb6yCtAjDAs4PWLVO53uQ3y5uprEELw@mail.gmail.com>
+Subject: Re: [RFC PATCH] overlayfs: add OVL_IOC_GETINFOFD ioctl that opens ovlinfofd
+To:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        David Howells <dhowells@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Oct 5, 2020 at 9:40 PM Alexander Mikhalitsyn
+<alexander.mikhalitsyn@virtuozzo.com> wrote:
 
+> Oh, yes, it's just another one choice for us ;)
+> I decided to create ioctl which opens fd for transferring
+> data about overlayfs.
+> Sure, let's look on sys fs. I will dive into it!
 
-Greetings,
+Or maybe use fsinfo(2) or whatever it's going to be called?
 
-I know that this mail will come to you as a surprise as we have never met before, but need not to worry as I am contacting you independently of my investigation and no one is informed of this communication. I need your urgent assistance in transferring the sum of $11.3million immediately to your private account.The money has been here in our Bank lying dormant for years now without anybody coming for the claim of it.
+That one seems stuck at the moment, but having a clear set of use
+cases can possibly help move it forward.
 
-I want to release the money to you as the relative to our deceased customer (the account owner) who died a long with his supposed Next Of Kin since 16th October 2005. The Banking laws here does not allow such money to stay more than 15 years, because the money will be recalled to the Bank treasury account as unclaimed fund.
-
-By indicating your interest I will send you the full details on how the business will be executed.
-
-Please respond urgently and delete if you are not interested.
-
-Best Regards,
-Michel Duku.
+Thanks,
+Miklos
