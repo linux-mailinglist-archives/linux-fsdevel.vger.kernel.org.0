@@ -2,233 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE41D284D6D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 16:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16CD5284F1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 17:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbgJFOPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 10:15:05 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:46503 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbgJFOPF (ORCPT
+        id S1725906AbgJFPjv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 11:39:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:37238 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725769AbgJFPju (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 10:15:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1601993777; x=1633529777;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=brWbdb8ZT/F+65IASdWSJDq+OevjxjDwCP3i3gjiR7s=;
-  b=qfNpCKmk0MVk1NS1R0qRrhOCym7JjkhnBnqOjBeYHl5gofJ0/YGjTVGy
-   kjApeahpuiJWmQBgh0A9jEmurMSad219WftTzYa1hVbp/ngPKXYhIvEgG
-   dOV2HsmFU0pkIBlrH1FZ8fF7gIYxLbiOcIlp5G9ogilA/8O8JD+LqT7mP
-   rqr0O3lPcd3KO4phkIc45kAXQaS3AYyHLPviJWIHxCuiL8AbglBIQLVew
-   4YCpBooczhe64HVv74Sa1i6UhQkErH1hv8/2T4gb+RYGCQMzXRjHXAV3V
-   wVa1gOGDfwNZ2P0+Gd/vYct3tcNwBSx/6bgHO78scUzeQMLIjsXIOPV0D
-   g==;
-IronPort-SDR: COJF/m5p3AaWRjooEWwAOtCof3dqZNOWa/41Bx7IsxvsyP4y5dsKIIhLUmdvscfBN7jv2oIU9z
- vkKydYkx53er87bUf3ZvD3/I/mBHN2i75nYDuZDIusWFgMnoVa5TPTS5aqAYYZNaLxHKMdSY02
- U0PjvE6KI4qgpSx6dJYcdbQj2/kdEYnRlsv4D7xipEl3HDI5UzUW60X2HkmfH31+lK8WevKN/+
- O0p9rG4QMuKWSqXLkkLuZ8FuNzqpkXnqrJCS7phTQFmugzSHwV7kXf8bi1KhUwkKRbMXh6gbh0
- r+0=
-X-IronPort-AV: E=Sophos;i="5.77,343,1596470400"; 
-   d="scan'208";a="252599919"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Oct 2020 22:16:16 +0800
-IronPort-SDR: H2gwr2N0XTdrJvFvSqvrFif6gX/gFyYAzZYdDbfX0vGovxQvjxLWxppnQwR0+0TU7PQe6JFy9H
- m5SlaJH22LAQ==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Oct 2020 07:01:49 -0700
-IronPort-SDR: XeuPyC1xVCVaO6oTOZ5G1B+GZfqxhjQDm4Ss4C5H6VnivqMlzSvI0ln2aVA3fN6pSv07ZOgJ07
- jGyjcFE5QP0A==
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 06 Oct 2020 07:15:02 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH] block: make maximum zone append size configurable
-Date:   Tue,  6 Oct 2020 23:14:47 +0900
-Message-Id: <8fe2e364c4dac89e3ecd1234fab24a690d389038.1601993564.git.johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.26.2
+        Tue, 6 Oct 2020 11:39:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601998789;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7j3tlaqwikKX6dXf5OjrfH7DeJ1R8898CPkDBkVnN9c=;
+        b=DPCYBf0AmhHH9mhXQ6n1WSxdrlrp/tX12o504m7I1CXPVND/DJjhGVazkZGCxi9gUDYzuN
+        TG6nNDRS1w+Gtg4Zmdc4WaIm01BOqSEt/8ygBqawQEQUZAAVzEzTvNzvn5ab4CpEDCtLDq
+        s91Pq4ox+wZuLcUA7L4aUQmeQ7F/ADc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-172-Oq-wDvjeM9itdg4nlaqF8Q-1; Tue, 06 Oct 2020 11:39:43 -0400
+X-MC-Unique: Oq-wDvjeM9itdg4nlaqF8Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 657AF1006704;
+        Tue,  6 Oct 2020 15:39:42 +0000 (UTC)
+Received: from localhost (ovpn-115-42.ams2.redhat.com [10.36.115.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D51E15C1BD;
+        Tue,  6 Oct 2020 15:39:35 +0000 (UTC)
+Date:   Tue, 6 Oct 2020 16:39:33 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        CAI Qian <caiqian@redhat.com>
+Subject: Re: [PATCH] virtiofs: Fix false positive warning
+Message-ID: <20201006153933.GA87345@stefanha-x1.localdomain>
+References: <20201005174531.GB4302@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201005174531.GB4302@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=stefanha@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Martin rightfully noted that for normal filesystem IO we have soft limits
-in place, to prevent them from getting too big and not lead to
-unpredictable latencies. For zone append we only have the hardware limit
-in place.
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add a soft limit to the maximal zone append size which is gated by the
-hardware's capabilities, so the user can control the IO size of zone
-append commands.
+On Mon, Oct 05, 2020 at 01:45:31PM -0400, Vivek Goyal wrote:
+> virtiofs currently maps various buffers in scatter gather list and it loo=
+ks
+> at number of pages (ap->pages) and assumes that same number of pages will
+> be used both for input and output (sg_count_fuse_req()), and calculates
+> total number of scatterlist elements accordingly.
+>=20
+> But looks like this assumption is not valid in all the cases. For example=
+,
+> Cai Qian reported that trinity, triggers warning with virtiofs sometimes.
+> A closer look revealed that if one calls ioctl(fd, 0x5a004000, buf), it
+> will trigger following warning.
+>=20
+> WARN_ON(out_sgs + in_sgs !=3D total_sgs)
+>=20
+> In this case, total_sgs =3D 8, out_sgs=3D4, in_sgs=3D3. Number of pages i=
+s 2
+> (ap->pages), but out_sgs are using both the pages but in_sgs are using
+> only one page. (fuse_do_ioctl() sets out_size to one page).
+>=20
+> So existing WARN_ON() seems to be wrong. Instead of total_sgs, it should
+> be max_sgs and make sure out_sgs and in_sgs don't cross max_sgs. This
+> will allow input and output pages numbers to be different.
+>=20
+> Reported-by: Qian Cai <cai@redhat.com>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> Link: https://lore.kernel.org/linux-fsdevel/5ea77e9f6cb8c2db43b09fbd4158a=
+b2d8c066a0a.camel@redhat.com/
+> ---
+>  fs/fuse/virtio_fs.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index da3ede268604..3f4f2fa0bb96 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1110,17 +1110,17 @@ static int virtio_fs_enqueue_req(struct virtio_fs=
+_vq *fsvq,
+>  =09unsigned int argbuf_used =3D 0;
+>  =09unsigned int out_sgs =3D 0;
+>  =09unsigned int in_sgs =3D 0;
+> -=09unsigned int total_sgs;
+> +=09unsigned int  max_sgs;
+>  =09unsigned int i;
+>  =09int ret;
+>  =09bool notify;
+>  =09struct fuse_pqueue *fpq;
+> =20
+>  =09/* Does the sglist fit on the stack? */
+> -=09total_sgs =3D sg_count_fuse_req(req);
 
-Reported-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- block/blk-settings.c           | 10 ++++++----
- block/blk-sysfs.c              | 33 ++++++++++++++++++++++++++++++++-
- drivers/block/null_blk_zoned.c |  2 +-
- drivers/nvme/host/core.c       |  2 +-
- drivers/scsi/sd_zbc.c          |  2 +-
- include/linux/blkdev.h         |  3 ++-
- 6 files changed, 43 insertions(+), 9 deletions(-)
+sg_count_fuse_req() should be exact. It's risky to treat it as a maximum
+unless all cases where in_sgs + out_sgs < total_sgs are understood. Even
+then, it's still possible that new bugs introduced to the code will go
+undetected due to the weaker WARN_ON() condition.
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 4f6eb4bb1723..e4ff7546dd82 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -222,11 +222,11 @@ void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
- EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
- 
- /**
-- * blk_queue_max_zone_append_sectors - set max sectors for a single zone append
-+ * blk_queue_max_hw_zone_append_sectors - set max sectors for a single zone append
-  * @q:  the request queue for the device
-  * @max_zone_append_sectors: maximum number of sectors to write per command
-  **/
--void blk_queue_max_zone_append_sectors(struct request_queue *q,
-+void blk_queue_max_hw_zone_append_sectors(struct request_queue *q,
- 		unsigned int max_zone_append_sectors)
- {
- 	unsigned int max_sectors;
-@@ -244,9 +244,11 @@ void blk_queue_max_zone_append_sectors(struct request_queue *q,
- 	 */
- 	WARN_ON(!max_sectors);
- 
--	q->limits.max_zone_append_sectors = max_sectors;
-+	q->limits.max_hw_zone_append_sectors = max_sectors;
-+	q->limits.max_zone_append_sectors = min_not_zero(max_sectors,
-+							 q->limits.max_zone_append_sectors);
- }
--EXPORT_SYMBOL_GPL(blk_queue_max_zone_append_sectors);
-+EXPORT_SYMBOL_GPL(blk_queue_max_hw_zone_append_sectors);
- 
- /**
-  * blk_queue_max_segments - set max hw segments for a request for this queue
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index 76b54c7750b0..087b7e66e638 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -226,6 +226,35 @@ static ssize_t queue_zone_append_max_show(struct request_queue *q, char *page)
- 	return sprintf(page, "%llu\n", max_sectors << SECTOR_SHIFT);
- }
- 
-+static ssize_t
-+queue_zone_append_max_store(struct request_queue *q, const char *page,
-+				    size_t count)
-+{
-+	unsigned long max_hw_sectors = q->limits.max_hw_zone_append_sectors;
-+	unsigned long max_sectors;
-+	ssize_t ret;
-+
-+	ret = queue_var_store(&max_sectors, page, count);
-+	if (ret < 0)
-+		return ret;
-+
-+	max_sectors >>= SECTOR_SHIFT;
-+	max_sectors = min_not_zero(max_sectors, max_hw_sectors);
-+
-+	spin_lock_irq(&q->queue_lock);
-+	q->limits.max_zone_append_sectors = max_sectors;
-+	spin_unlock_irq(&q->queue_lock);
-+
-+	return ret;
-+}
-+
-+static ssize_t queue_zone_append_max_hw_show(struct request_queue *q, char *page)
-+{
-+	unsigned long long max_sectors = q->limits.max_hw_zone_append_sectors;
-+
-+	return sprintf(page, "%llu\n", max_sectors << SECTOR_SHIFT);
-+}
-+
- static ssize_t
- queue_max_sectors_store(struct request_queue *q, const char *page, size_t count)
- {
-@@ -584,7 +613,8 @@ QUEUE_RO_ENTRY(queue_discard_zeroes_data, "discard_zeroes_data");
- 
- QUEUE_RO_ENTRY(queue_write_same_max, "write_same_max_bytes");
- QUEUE_RO_ENTRY(queue_write_zeroes_max, "write_zeroes_max_bytes");
--QUEUE_RO_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
-+QUEUE_RW_ENTRY(queue_zone_append_max, "zone_append_max_bytes");
-+QUEUE_RO_ENTRY(queue_zone_append_max_hw, "zone_append_max_hw_bytes");
- 
- QUEUE_RO_ENTRY(queue_zoned, "zoned");
- QUEUE_RO_ENTRY(queue_nr_zones, "nr_zones");
-@@ -639,6 +669,7 @@ static struct attribute *queue_attrs[] = {
- 	&queue_write_same_max_entry.attr,
- 	&queue_write_zeroes_max_entry.attr,
- 	&queue_zone_append_max_entry.attr,
-+	&queue_zone_append_max_hw_entry.attr,
- 	&queue_nonrot_entry.attr,
- 	&queue_zoned_entry.attr,
- 	&queue_nr_zones_entry.attr,
-diff --git a/drivers/block/null_blk_zoned.c b/drivers/block/null_blk_zoned.c
-index 3d25c9ad2383..b1b08f2a09bd 100644
---- a/drivers/block/null_blk_zoned.c
-+++ b/drivers/block/null_blk_zoned.c
-@@ -98,7 +98,7 @@ int null_register_zoned_dev(struct nullb *nullb)
- 		q->nr_zones = blkdev_nr_zones(nullb->disk);
- 	}
- 
--	blk_queue_max_zone_append_sectors(q, dev->zone_size_sects);
-+	blk_queue_max_hw_zone_append_sectors(q, dev->zone_size_sects);
- 
- 	return 0;
- }
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index c190c56bf702..b2da0ab9d68a 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2217,7 +2217,7 @@ static int nvme_revalidate_disk(struct gendisk *disk)
- 
- 		ret = blk_revalidate_disk_zones(disk, NULL);
- 		if (!ret)
--			blk_queue_max_zone_append_sectors(disk->queue,
-+			blk_queue_max_hw_zone_append_sectors(disk->queue,
- 							  ctrl->max_zone_append);
- 	}
- #endif
-diff --git a/drivers/scsi/sd_zbc.c b/drivers/scsi/sd_zbc.c
-index 0e94ff056bff..9412445d4efb 100644
---- a/drivers/scsi/sd_zbc.c
-+++ b/drivers/scsi/sd_zbc.c
-@@ -705,7 +705,7 @@ int sd_zbc_revalidate_zones(struct scsi_disk *sdkp)
- 			   q->limits.max_segments << (PAGE_SHIFT - 9));
- 	max_append = min_t(u32, max_append, queue_max_hw_sectors(q));
- 
--	blk_queue_max_zone_append_sectors(q, max_append);
-+	blk_queue_max_hw_zone_append_sectors(q, max_append);
- 
- 	sd_zbc_print_zones(sdkp);
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index cf80e61b4c5e..e53ea384c15d 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -336,6 +336,7 @@ struct queue_limits {
- 	unsigned int		max_hw_discard_sectors;
- 	unsigned int		max_write_same_sectors;
- 	unsigned int		max_write_zeroes_sectors;
-+	unsigned int		max_hw_zone_append_sectors;
- 	unsigned int		max_zone_append_sectors;
- 	unsigned int		discard_granularity;
- 	unsigned int		discard_alignment;
-@@ -1141,7 +1142,7 @@ extern void blk_queue_max_write_same_sectors(struct request_queue *q,
- extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
- 		unsigned int max_write_same_sectors);
- extern void blk_queue_logical_block_size(struct request_queue *, unsigned int);
--extern void blk_queue_max_zone_append_sectors(struct request_queue *q,
-+extern void blk_queue_max_hw_zone_append_sectors(struct request_queue *q,
- 		unsigned int max_zone_append_sectors);
- extern void blk_queue_physical_block_size(struct request_queue *, unsigned int);
- extern void blk_queue_alignment_offset(struct request_queue *q,
--- 
-2.26.2
+Do you have the values of the relevant fuse_req and fuse_args_pages
+fields so we can understand exactly what happened? I think the issue is
+that sg_count_fuse_req() doesn't use the fuse_page_desc size field.
+
+Stefan
+
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl98j7UACgkQnKSrs4Gr
+c8gB6gf/aZ4tHmBLaYFN2d9LhfdfFVtnA4Ey8AZGt4yF1aXTtvgX+PVs7dGnPxQK
+E2SPRJuNiFpxRN0VwtOxABWO7GG5osYU4l4Tc0+PIBfcyhQUbjWiFchh3TJ3aa+P
+Q55fXTSIhfVWi29hTCSofrfjGKyUoJYZ1FvBTjom38S7Bb+36pMWQ0L7Akvs3uTn
+gKJdfriolsjxqMPK5Pu/uX08RTcT9ty1gs3KYi9LtVvZZzlntFCEgqicMODevDst
+glPRwjRrtMRFVUpX6Xj56Y8XguFwZXgeVRKwdteF2hzbyelpxgutFwbA7gGqqt+Z
+9zhzdLjfpJ6T6jl7m5foLXAjuz9fFQ==
+=pEjP
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
 
