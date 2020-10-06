@@ -2,133 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D8D284873
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 10:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD2792849D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 11:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbgJFIYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 04:24:03 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:60750 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbgJFIYA (ORCPT
+        id S1725943AbgJFJ6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 05:58:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49232 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725891AbgJFJ6z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 04:24:00 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20201006082357epoutp013d7fd23504fc9522244dd4fa141cbec6~7WaA-N7FS1211312113epoutp01v
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Oct 2020 08:23:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20201006082357epoutp013d7fd23504fc9522244dd4fa141cbec6~7WaA-N7FS1211312113epoutp01v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1601972637;
-        bh=CEmnTgcyed9RAomU3ELyjDL9JtVQH2eE3sKWO4ZrQ1Y=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=MYUF5hgkszuuGOZX06MqHhk6NxkBGM7yGjY/8kz3iNiUT5xsVcYCZaN+8P2qOEmaP
-         O48ypcwh5ow2KXXAejKjoxBPgaLAUM/70Zj0SM1J+fDgGQjElZU97NV7WgynAs68uJ
-         Mx208jqfSA1o9XLEFctJ5C6UJS/f4cgGV05NoGI4=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20201006082356epcas1p262b5c86bd40766eaf57d386c40791ddc~7WaAsR3GG0392203922epcas1p2G;
-        Tue,  6 Oct 2020 08:23:56 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4C59V41RXdzMqYkk; Tue,  6 Oct
-        2020 08:23:56 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        07.EC.10463.C992C7F5; Tue,  6 Oct 2020 17:23:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201006082355epcas1p1b16e3b8623ae34ea69c533da042c1326~7WZ-YAMPZ2061120611epcas1p1T;
-        Tue,  6 Oct 2020 08:23:55 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201006082355epsmtrp12a7f3bcc6fd0877d6e7ee7e9873df367~7WZ-W2UZl0812208122epsmtrp1H;
-        Tue,  6 Oct 2020 08:23:55 +0000 (GMT)
-X-AuditID: b6c32a38-efbff700000028df-b2-5f7c299ca394
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4B.DB.08745.B992C7F5; Tue,  6 Oct 2020 17:23:55 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201006082355epsmtip28006e7cb430c79633f5783556ada8ff5~7WZ-MP1C03176531765epsmtip2_;
-        Tue,  6 Oct 2020 08:23:55 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20201002060505.27449-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH v3 1/2] exfat: add exfat_update_inode()
-Date:   Tue, 6 Oct 2020 17:23:55 +0900
-Message-ID: <000b01d69bba$08047320$180d5960$@samsung.com>
+        Tue, 6 Oct 2020 05:58:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601978333;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7LV4W7glSecH78sK1+Pn5RbohOXK+OKpDxoa9IzxyOE=;
+        b=NKWYtG7CEqIngiPzl4CKNz7Z2ZumzpHkRA8Nk3b9cNChSKFYt0NM9zQZDWmfSDUtbS0FDG
+        J8YDylWAaBJy7upka8DuDSWleY/3OKt1TXCOGj2PXKpx4LWSRiT1Kb7XiK96gAnOWqS6Tx
+        tQgYGbmtCJ2yDx3ZdwmTvX6gpXSD4xE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-178-lLK2Aw8zM5Wouy5X8P0zEw-1; Tue, 06 Oct 2020 05:58:51 -0400
+X-MC-Unique: lLK2Aw8zM5Wouy5X8P0zEw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8BB7D1084D61;
+        Tue,  6 Oct 2020 09:58:50 +0000 (UTC)
+Received: from localhost (ovpn-112-180.ams2.redhat.com [10.36.112.180])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CE3F10013BD;
+        Tue,  6 Oct 2020 09:58:44 +0000 (UTC)
+Date:   Tue, 6 Oct 2020 10:04:27 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Qian Cai <cai@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com
+Subject: Re: virtiofs: WARN_ON(out_sgs + in_sgs != total_sgs)
+Message-ID: <20201006090427.GA41482@stefanha-x1.localdomain>
+References: <5ea77e9f6cb8c2db43b09fbd4158ab2d8c066a0a.camel@redhat.com>
+ <a2810c3a656115fab85fc173186f3e2c02a98182.camel@redhat.com>
+ <20201004143119.GA58616@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQG77KNAqFwZFI6Uq4r1TRBZo631DgHZ9QczqbDDbeA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmnu4czZp4g03POCx+zL3NYvHm5FQW
-        iz17T7JYXN41h83i8v9PLBZb/h1hdWDz+DLnOLtH87GVbB47Z91l9+jbsorR4/MmuQDWqByb
-        jNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKALlBTKEnNK
-        gUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFhgYFesWJucWleel6yfm5VoYGBkamQJUJORk7
-        J79nKtjJVvH963K2BsYtrF2MnBwSAiYSfzsmM3YxcnEICexglJjbtokNwvnEKPF6SgcThPOZ
-        UWLzpm/MMC3d7SehWnYxSvS27mCFcF4ySuy9sJYdpIpNQFfi35/9bCC2iICexMmT18HmMgtc
-        ZJR4eXIdUBEHB6eApcTbBdUgNcIC1hJHrm0Eq2cRUJFY3/sdbBsvUMnCXRvYIWxBiZMzn7CA
-        2MwC8hLb386BukhB4ufTZawQu6wkJl59xQhRIyIxu7ONGWSvhMBEDokvf9pYIBpcJF7Nb4ey
-        hSVeHd/CDmFLSbzsbwO7TUKgWuLjfqj5HYwSL77bQtjGEjfXb2AFKWEW0JRYv0sfIqwosfP3
-        XKi1fBLvvvawQkzhlehoE4IoUZXou3SYCcKWluhq/8A+gVFpFpLHZiF5bBaSB2YhLFvAyLKK
-        USy1oDg3PbXYsMAEObI3MYJTp5bFDsa5bz/oHWJk4mA8xCjBwawkwqsXVhEvxJuSWFmVWpQf
-        X1Sak1p8iNEUGNQTmaVEk/OByTuvJN7Q1MjY2NjCxMzczNRYSZz34S2FeCGB9MSS1OzU1ILU
-        Ipg+Jg5OqQYmqZMCMW/PNcfn/VXeOjU+6vTSt4fuSlmrTq/c+plb64U8D2+fpMnV7Uu/1j8w
-        u2Oq97dy57u73SHaSwO3HroscOvVmb18X/SX7w79ekyn98JG/W8/3+eEv5XzlVr7xrjG6MjU
-        L5tNrBf2RV77NulyT9npGRLHrkpwOP433u5xj+vJJr6Ds9f/+lp1OWpq4Xkmme/Xb2VuNgqe
-        +841L956R6Uaj+O8lHtTYsR6iuTfdpf4LnYIufRjfVi8rEYJ59Wzp41fFSWaHXWfmFl+lXuB
-        74wjtmmxmU+W8GrsrFbss2q7fnql8ZOyOx9+qN6wWXhUetV2f6s8RZfV2apf5k/O/pG89NM1
-        tk/NTcW1H35EaCixFGckGmoxFxUnAgDBbhp2JgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsWy7bCSvO5szZp4gyf/JC1+zL3NYvHm5FQW
-        iz17T7JYXN41h83i8v9PLBZb/h1hdWDz+DLnOLtH87GVbB47Z91l9+jbsorR4/MmuQDWKC6b
-        lNSczLLUIn27BK6MnZPfMxXsZKv4/nU5WwPjFtYuRk4OCQETie72k4wgtpDADkaJ23sVIOLS
-        EsdOnGHuYuQAsoUlDh8u7mLkAip5ziixYvVzFpAaNgFdiX9/9rOB2CICehInT15nAyliFrjM
-        KNHbNpEFoqOLUWJG739WkEmcApYSbxdUgzQIC1hLHLm2EayZRUBFYn3vd2YQmxeoZOGuDewQ
-        tqDEyZlPWEBamYEWtG0Eu5NZQF5i+9s5zBB3Kkj8fLqMFeIGK4mJV19B1YhIzO5sY57AKDwL
-        yaRZCJNmIZk0C0nHAkaWVYySqQXFuem5xYYFRnmp5XrFibnFpXnpesn5uZsYwfGjpbWDcc+q
-        D3qHGJk4GA8xSnAwK4nw6oVVxAvxpiRWVqUW5ccXleakFh9ilOZgURLn/TprYZyQQHpiSWp2
-        ampBahFMlomDU6qByZExyXuF39eaxRcF/mq+4LJ7rfD+7sQDayMLVjz57fSQgzdU2Ylfdf5F
-        Gb4LPyaYLIxd7cNta/9S6dEKf63JYovOqsXf8dBeVvp5b6eEc8QtxZZZ2kVKfGW3HvJPvSVR
-        c6smaMmkOROOSq8q3dt8gUVYa22gU1/Bs4ZTP14/3PeHM+d67zrtEFmNnrT3U39u6XjlYxM8
-        reKQ9tktQm0JXyeKN3rlmMSqHb/9eO554dR5earl4svaKj95yr5++/6xxdZy5QvMh95L6cWf
-        rdT8lhAk8CDP3Cd9Q6G1eL118CbGk7Vz+DlMesJrtkwyXBAbV86ZevTSfrsZppdurskO0t13
-        SEkxppVvfnHRd495SizFGYmGWsxFxYkA15U7Ng4DAAA=
-X-CMS-MailID: 20201006082355epcas1p1b16e3b8623ae34ea69c533da042c1326
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201002060529epcas1p2e05b4f565283969f4f2adc337f23a0d2
-References: <CGME20201002060529epcas1p2e05b4f565283969f4f2adc337f23a0d2@epcas1p2.samsung.com>
-        <20201002060505.27449-1-kohada.t2@gmail.com>
+In-Reply-To: <20201004143119.GA58616@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=stefanha@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> @@ -1352,19 +1340,13 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
->  	new_dir->i_ctime = new_dir->i_mtime = new_dir->i_atime =
->  		EXFAT_I(new_dir)->i_crtime = current_time(new_dir);
->  	exfat_truncate_atime(&new_dir->i_atime);
-> -	if (IS_DIRSYNC(new_dir))
-> -		exfat_sync_inode(new_dir);
-> -	else
-> -		mark_inode_dirty(new_dir);
-> +	exfat_update_inode(new_dir);
-> 
->  	i_pos = ((loff_t)EXFAT_I(old_inode)->dir.dir << 32) |
->  		(EXFAT_I(old_inode)->entry & 0xffffffff);
->  	exfat_unhash_inode(old_inode);
->  	exfat_hash_inode(old_inode, i_pos);
-> -	if (IS_DIRSYNC(new_dir))
-> -		exfat_sync_inode(old_inode);
-> -	else
-> -		mark_inode_dirty(old_inode);
-> +	exfat_update_inode(old_inode);
-This is checking if old_inode is IS_DIRSYNC, not new_dir.
-Is there any reason ?
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Oct 04, 2020 at 10:31:19AM -0400, Vivek Goyal wrote:
+> On Fri, Oct 02, 2020 at 10:44:37PM -0400, Qian Cai wrote:
+> > On Fri, 2020-10-02 at 12:28 -0400, Qian Cai wrote:
+> > > Running some fuzzing on virtiofs from a non-privileged user could tri=
+gger a
+> > > warning in virtio_fs_enqueue_req():
+> > >=20
+> > > WARN_ON(out_sgs + in_sgs !=3D total_sgs);
+> >=20
+> > Okay, I can reproduce this after running for a few hours:
+> >=20
+> > out_sgs =3D 3, in_sgs =3D 2, total_sgs =3D 6
+>=20
+> Thanks. I can also reproduce it simply by calling.
+>=20
+> ioctl(fd, 0x5a004000, buf);
+>=20
+> I think following WARN_ON() is not correct.
+>=20
+> WARN_ON(out_sgs + in_sgs !=3D total_sgs)
+>=20
+> toal_sgs should actually be max sgs. It looks at ap->num_pages and
+> counts one sg for each page. And it assumes that same number of
+> pages will be used both for input and output.
+>=20
+> But there are no such guarantees. With above ioctl() call, I noticed
+> we are using 2 pages for input (out_sgs) and one page for output (in_sgs)=
+.
+>=20
+> So out_sgs=3D4, in_sgs=3D3 and total_sgs=3D8 and warning triggers.
+>=20
+> I think total sgs is actually max number of sgs and warning
+> should probably be.
+>=20
+> WARN_ON(out_sgs + in_sgs >  total_sgs)
+>=20
+> Stefan, WDYT?
+
+It should be possible to calculate total_sgs precisely (not a maximum).
+Treating it as a maximum could hide bugs.
+
+Maybe sg_count_fuse_req() should count in_args/out_args[numargs -
+1].size pages instead of adding ap->num_pages.
+
+Do you have the details of struct fuse_req and struct fuse_args_pages
+fields for the ioctl in question?
+
+Thanks,
+Stefan
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl98MxsACgkQnKSrs4Gr
+c8gfnwf+MqC6BshRLBrYU+tLmXR6WJwbG8X0i6P2g42yuD/GJ4WOYHVPw2oEdnc/
+OwEMYJ9LWwFiYmhT5DeapDx9XmVJVMlPeQ6GjkRilgo53OGu3IMi3T3JIOHKN4ZZ
+nCwWqrE1CA4bVx7sX6HUKOqGwLhOIs1DrAen/sNjEtbKi2Bum1OTpo5uWDQuGEIn
+BwYfQmuuSL/lBpz2Um+le97b8YskkC01oJAMONlNtQZqhYyZKl67Xbqq219Mnyzv
+O0uePL5gPQr1pNOknKXmgOsZUSHn5XamPiNz2LbHFVGRswIUM0BCNFVTnfOeRi7r
+Zm0jNqFLkavBPraEY08HjFnbBTwLDQ==
+=Ol2A
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
 
