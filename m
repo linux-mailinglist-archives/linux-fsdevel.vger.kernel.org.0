@@ -2,77 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC17284AE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 13:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FE46284BE1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 14:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbgJFL3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 07:29:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38396 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbgJFL3D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 07:29:03 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726551AbgJFMor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 08:44:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56713 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726439AbgJFMor (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 6 Oct 2020 08:44:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601988285;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lioyiK8xjC0fOm4WWDInz8tqPP/NCfGvAyNyJiaFTe4=;
+        b=MXOlvgBOgkrkQ1u8zZlyqM3jNh6M/oYx3lwxlnfixib0oNSVgUzQwU7LNkO066pnU8akE7
+        CG1OX4VECfSF4XDaemcxe8oTEHLICytDKE0+wqUroVreKqlR7xHT8KC82q+6FCg9VE+fut
+        PAL1O2i5ihTobjMy1iqGlMiWg0uFzgs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-5-Dt7HI9lqN7extXnoOeL94A-1; Tue, 06 Oct 2020 08:44:43 -0400
+X-MC-Unique: Dt7HI9lqN7extXnoOeL94A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ECD62078E;
-        Tue,  6 Oct 2020 11:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1601983743;
-        bh=vV/cWTk5oZ3xCfPmOW1JyTYnqQAJ5XkLf+0bV/y1Ito=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Jlhl4S6lFeJYtGWHmUA4l515wPAaDd/izhoqUtrYXjms0ElqbF3M1ArUgFO1ky40k
-         zer6Zj9SWbb2ipxs05ptZWJ6MDYoZRPh+rtKtTZ8YbwdQuR8Z44fKxafme5xp9Yxo5
-         ryw9iFW4AEoas3dmsQFu+N/Z05Z69uSV6dPaytRg=
-Message-ID: <c00f08a9891c878ee9483aa9d05b4e28c2a5791a.camel@kernel.org>
-Subject: Re: [PATCH 3/7] ceph: Promote to unsigned long long before shifting
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     ericvh@gmail.com, lucho@ionkov.net, viro@zeniv.linux.org.uk,
-        idryomov@gmail.com, mark@fasheh.com, jlbec@evilplan.org,
-        joseph.qi@linux.alibaba.com, v9fs-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-btrfs@vger.kernel.org,
-        clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-        stable@vger.kernel.org
-Date:   Tue, 06 Oct 2020 07:29:00 -0400
-In-Reply-To: <20201004180428.14494-4-willy@infradead.org>
-References: <20201004180428.14494-1-willy@infradead.org>
-         <20201004180428.14494-4-willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DF8A804001;
+        Tue,  6 Oct 2020 12:44:42 +0000 (UTC)
+Received: from bfoster (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BC8F5D9CD;
+        Tue,  6 Oct 2020 12:44:42 +0000 (UTC)
+Date:   Tue, 6 Oct 2020 08:44:40 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] xfs: kick extra large ioends to completion
+ workqueue
+Message-ID: <20201006124440.GA50358@bfoster>
+References: <20201002153357.56409-3-bfoster@redhat.com>
+ <20201005152102.15797-1-bfoster@redhat.com>
+ <20201006035537.GD49524@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201006035537.GD49524@magnolia>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2020-10-04 at 19:04 +0100, Matthew Wilcox (Oracle) wrote:
-> On 32-bit systems, this shift will overflow for files larger than 4GB.
+On Mon, Oct 05, 2020 at 08:55:37PM -0700, Darrick J. Wong wrote:
+> On Mon, Oct 05, 2020 at 11:21:02AM -0400, Brian Foster wrote:
+> > We've had reports of soft lockup warnings in the iomap ioend
+> > completion path due to very large bios and/or bio chains. Divert any
+> > ioends with 256k or more pages to process to the workqueue so
+> > completion occurs in non-atomic context and can reschedule to avoid
+> > soft lockup warnings.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 61f68816211e ("ceph: check caps in filemap_fault and page_mkwrite")
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/ceph/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hmmmm... is there any way we can just make end_page_writeback faster?
 > 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 6ea761c84494..970e5a094035 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1522,7 +1522,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_file_info *fi = vma->vm_file->private_data;
->  	struct page *pinned_page = NULL;
-> -	loff_t off = vmf->pgoff << PAGE_SHIFT;
-> +	loff_t off = (loff_t)vmf->pgoff << PAGE_SHIFT;
->  	int want, got, err;
->  	sigset_t oldset;
->  	vm_fault_t ret = VM_FAULT_SIGBUS;
 
-Good catch! Would you like us to take this in via the ceph tree, or are
-you planning to submit altogether upstream? Either way:
+I'm not sure that would help us. It's not doing much work as it is. The
+issue is just that we effectively queue so many of them to a single bio
+completion due to either bio chaining or the physical page merging
+implemented by multipage bvecs.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> TBH it still strikes me as odd that we'd cap ioends this way just to
+> cover for the fact that we have to poke each and every page.
+> 
+
+I suppose, but it's not like we don't already account for constructing
+bios that must be handed off to a workqueue for completion processing.
+Also FWIW this doesn't cap ioend size like my original patch does. It
+just updates XFS to send them to the completion workqueue.
+
+> (Also, those 'bool atomic' in the other patch make me kind of nervous --
+> how do we make sure (from a QA perspective) that nobody gets that wrong?)
+> 
+
+Yeah, that's a bit ugly. If somebody has a better idea on the factoring
+I'm interested in hearing about it. My understanding is that in_atomic()
+is not reliable and/or generally frowned upon, hence the explicit
+context parameter.
+
+Also, I don't have the error handy but my development kernel complains
+quite clearly if we make a call that can potentially sleep in atomic
+context. I believe this is the purpose of the __might_sleep()
+(CONFIG_DEBUG_ATOMIC_SLEEP) annotation.
+
+Brian
+
+> --D
+> 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > ---
+> > 
+> > v2:
+> > - Fix type in macro.
+> > 
+> >  fs/xfs/xfs_aops.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> > index 3e061ea99922..c00cc0624986 100644
+> > --- a/fs/xfs/xfs_aops.c
+> > +++ b/fs/xfs/xfs_aops.c
+> > @@ -30,6 +30,13 @@ XFS_WPC(struct iomap_writepage_ctx *ctx)
+> >  	return container_of(ctx, struct xfs_writepage_ctx, ctx);
+> >  }
+> >  
+> > +/*
+> > + * Kick extra large ioends off to the workqueue. Completion will process a lot
+> > + * of pages for a large bio or bio chain and a non-atomic context is required to
+> > + * reschedule and avoid soft lockup warnings.
+> > + */
+> > +#define XFS_LARGE_IOEND	(262144ULL << PAGE_SHIFT)
+> > +
+> >  /*
+> >   * Fast and loose check if this write could update the on-disk inode size.
+> >   */
+> > @@ -239,7 +246,8 @@ static inline bool xfs_ioend_needs_workqueue(struct iomap_ioend *ioend)
+> >  {
+> >  	return ioend->io_private ||
+> >  		ioend->io_type == IOMAP_UNWRITTEN ||
+> > -		(ioend->io_flags & IOMAP_F_SHARED);
+> > +		(ioend->io_flags & IOMAP_F_SHARED) ||
+> > +		(ioend->io_size >= XFS_LARGE_IOEND);
+> >  }
+> >  
+> >  STATIC void
+> > -- 
+> > 2.25.4
+> > 
+> 
 
