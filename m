@@ -2,116 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A36BB284C37
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 15:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9AC9284D4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 16:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgJFNG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 09:06:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:39239 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725891AbgJFNGw (ORCPT
+        id S1726709AbgJFOHb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 10:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726356AbgJFOHZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 09:06:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601989611;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y104BtTdOzAa80N7i3WOmV1nO/+g8slrnxNz0C4ODak=;
-        b=f80H9gghhmy/2OkzdENke3Yb5mHa6mek/SWcH2F5NAlnu+W8wgQKoymI3cga64DEs3zVqt
-        RgZtNqUZMhf1taYPkN4lajufDYVbB5zS0n7NzQsfneyagXsKAIKRaw01KJlBUSp3PxZJsw
-        ua4r+DHtqyMdFOt5soKN8gycrE/Y0lA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-166-Di54MA5uOGqm0AYrOkFu7g-1; Tue, 06 Oct 2020 09:06:48 -0400
-X-MC-Unique: Di54MA5uOGqm0AYrOkFu7g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9754A8030C7;
-        Tue,  6 Oct 2020 13:06:47 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-117-72.rdu2.redhat.com [10.10.117.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B9D79CBA;
-        Tue,  6 Oct 2020 13:06:38 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3CCFE220AD7; Tue,  6 Oct 2020 09:06:38 -0400 (EDT)
-Date:   Tue, 6 Oct 2020 09:06:38 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     Qian Cai <cai@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com
-Subject: Re: virtiofs: WARN_ON(out_sgs + in_sgs != total_sgs)
-Message-ID: <20201006130638.GA5306@redhat.com>
-References: <5ea77e9f6cb8c2db43b09fbd4158ab2d8c066a0a.camel@redhat.com>
- <a2810c3a656115fab85fc173186f3e2c02a98182.camel@redhat.com>
- <20201004143119.GA58616@redhat.com>
- <20201006090427.GA41482@stefanha-x1.localdomain>
+        Tue, 6 Oct 2020 10:07:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AD1C061755;
+        Tue,  6 Oct 2020 07:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IleYZyF5Ir/ZDhCRg7zB0cdpd4ApTbAF/++Iy+fWTy4=; b=VXRTSrS6/tJHYjphWFj2B5dxiL
+        /OZ420EZNgmrV3oA+UijYNbjrgcbMfhxj/tH3uaiYjqN579z08MREzFtZZwjrwBXfxbHERs8eW7lW
+        uMs5FIFZaU3Oj6/g1JmgIe/Bye/iSXy7YQOUslvusr0/P0v9jfnfMdPPlVRzHW+HKDkeU0DZA2PTm
+        kxfg+WDiZidvXqLWgxkZ5SRstqZu3COnnzjFp527NNE29UKmIojoBQ0+S4WsPXu15KsEKok10vPHN
+        h7o3XX1d+4oJ+uSX4cb0mu4+78OK/hKthyehlMEaE/ajT7JXPRMFkySr/ICirmWeXIz5SlZhL83L6
+        cEfWqFRg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kPncf-0004P7-2J; Tue, 06 Oct 2020 14:07:21 +0000
+Date:   Tue, 6 Oct 2020 15:07:20 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] xfs: kick extra large ioends to completion
+ workqueue
+Message-ID: <20201006140720.GQ20115@casper.infradead.org>
+References: <20201002153357.56409-3-bfoster@redhat.com>
+ <20201005152102.15797-1-bfoster@redhat.com>
+ <20201006035537.GD49524@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201006090427.GA41482@stefanha-x1.localdomain>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <20201006035537.GD49524@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 06, 2020 at 10:04:27AM +0100, Stefan Hajnoczi wrote:
-> On Sun, Oct 04, 2020 at 10:31:19AM -0400, Vivek Goyal wrote:
-> > On Fri, Oct 02, 2020 at 10:44:37PM -0400, Qian Cai wrote:
-> > > On Fri, 2020-10-02 at 12:28 -0400, Qian Cai wrote:
-> > > > Running some fuzzing on virtiofs from a non-privileged user could trigger a
-> > > > warning in virtio_fs_enqueue_req():
-> > > > 
-> > > > WARN_ON(out_sgs + in_sgs != total_sgs);
-> > > 
-> > > Okay, I can reproduce this after running for a few hours:
-> > > 
-> > > out_sgs = 3, in_sgs = 2, total_sgs = 6
-> > 
-> > Thanks. I can also reproduce it simply by calling.
-> > 
-> > ioctl(fd, 0x5a004000, buf);
-> > 
-> > I think following WARN_ON() is not correct.
-> > 
-> > WARN_ON(out_sgs + in_sgs != total_sgs)
-> > 
-> > toal_sgs should actually be max sgs. It looks at ap->num_pages and
-> > counts one sg for each page. And it assumes that same number of
-> > pages will be used both for input and output.
-> > 
-> > But there are no such guarantees. With above ioctl() call, I noticed
-> > we are using 2 pages for input (out_sgs) and one page for output (in_sgs).
-> > 
-> > So out_sgs=4, in_sgs=3 and total_sgs=8 and warning triggers.
-> > 
-> > I think total sgs is actually max number of sgs and warning
-> > should probably be.
-> > 
-> > WARN_ON(out_sgs + in_sgs >  total_sgs)
-> > 
-> > Stefan, WDYT?
+On Mon, Oct 05, 2020 at 08:55:37PM -0700, Darrick J. Wong wrote:
+> On Mon, Oct 05, 2020 at 11:21:02AM -0400, Brian Foster wrote:
+> > We've had reports of soft lockup warnings in the iomap ioend
+> > completion path due to very large bios and/or bio chains. Divert any
+> > ioends with 256k or more pages to process to the workqueue so
+> > completion occurs in non-atomic context and can reschedule to avoid
+> > soft lockup warnings.
 > 
-> It should be possible to calculate total_sgs precisely (not a maximum).
-> Treating it as a maximum could hide bugs.
+> Hmmmm... is there any way we can just make end_page_writeback faster?
 
-I thought about calculating total_sgs as well. Then became little lazy.
-I will redo the patch and then calculate total_sgs precisely.
+There are ways to make it faster.  I don't know if they're a "just"
+solution ...
 
-> 
-> Maybe sg_count_fuse_req() should count in_args/out_args[numargs -
-> 1].size pages instead of adding ap->num_pages.
+1. We can use THPs.  That will reduce the number of pages being operated
+on.  I hear somebody might have a patch set for that.  Incidentally,
+this patch set will clash with the THP patchset, so one of us is going to
+have to rebase on the other's work.  Not a complaint, just acknowledging
+that some coordination will be needed for the 5.11 merge window.
 
-That should work, I guess. Will try.
+2. We could create end_writeback_pages(struct pagevec *pvec) which
+calls a new test_clear_writeback_pages(pvec).  That could amortise
+taking the memcg lock and finding the lruvec and taking the mapping
+lock -- assuming these pages are sufficiently virtually contiguous.
+It can definitely amortise all the statistics updates.
 
-Vivek
-> 
-> Do you have the details of struct fuse_req and struct fuse_args_pages
-> fields for the ioctl in question?
+3. We can make wake_up_page(page, PG_writeback); more efficient.  If
+you can produce this situation on demand, I had a patch for that which
+languished due to lack of interest.
 
-> 
-> Thanks,
-> Stefan
-
+https://lore.kernel.org/linux-fsdevel/20200416220130.13343-1-willy@infradead.org/
 
