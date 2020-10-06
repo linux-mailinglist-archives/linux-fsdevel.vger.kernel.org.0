@@ -2,153 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD08E28453A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 07:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E3A284657
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 08:53:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgJFFML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 01:12:11 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:14814 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgJFFML (ORCPT
+        id S1727087AbgJFGx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 02:53:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbgJFGx0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 01:12:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1601961130; x=1633497130;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=EI1ySS5O4hHNuL3SSLfFd27W6kFu52cM8TjhY69zy6U=;
-  b=MQmcHhZS/fnNzwuR/m5lb3kCxb48yNaSD2lNvwctoh+5P81w1nic6Q85
-   OOjeh3oyZWGsNPYbMYjX1h/Wu06vxxk1wHXjpGfZHWGfNSte8r+YcIgfQ
-   UWpxi/5OkMoGTQPoqfJgRWZU16+mjU/vygb8cc3rRyGjVffnwr8d8aYcR
-   0BvpJFIOG69T1MNW4ep4DyM245n4BIzSg6Cl74ATipQLUJa1HpZrhyKSN
-   MB9EQD//n35XKU4aghk9XpfhqVAvpkYU40HAb3SZPrgWy9mP8IZFi+NNU
-   XEmvIvhKtrdRtEdRONps9BbHWGFIJuawvbVDFocCDsna0nFPy8tUiiY37
-   A==;
-IronPort-SDR: T7NEAbToYXILWG3vKD+bTfZxHhfJIavTTvf63yhRQf1x049kyx4xBj2oNA6H55IdA56aMhILCs
- 20oxhHUdMFRNzCQquyKgJ8XlvxJVKaTPrupeWrFF523ryHemRcyNWT18fmsyPnhre9bGY3jvo3
- x/FSOAH7b+rDOXfyqMUPVaUKdxUYZXk0MM8HnNYkG74bLwpimRtN8Aftu3maTKDvk9HCx0zcIP
- EKdPV7bkUiVeV0e0YeIf9ZAmg2I6UDCF8BReYCGM7kiUej9h1LIvM/K1OSqHT9W53ntsv/YZjT
- yGQ=
-X-IronPort-AV: E=Sophos;i="5.77,342,1596470400"; 
-   d="scan'208";a="258922402"
-Received: from mail-co1nam11lp2170.outbound.protection.outlook.com (HELO NAM11-CO1-obe.outbound.protection.outlook.com) ([104.47.56.170])
-  by ob1.hgst.iphmx.com with ESMTP; 06 Oct 2020 13:12:10 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IB+n1B+ymDbPdWdcfVQ7rjeZfPWhRMGmGt8fp8+uAPY1uAR41Us5xxaQPwvR0SZKW7/WKnVmSmOu2UBuEq842BwJt7sRn6bAKcKsWEnJHbGdyl+bKeY0VGf4SPokm0jDjS+zcjeeU1AMYMf9ImBFVXlWEi/eXVr0tKr4fyD9vns9+2PqKWpomnx9pwLT4blVWw8YBehM08IyiowhtYFT3y7sorBPpTms4nAeybdtpHE13ILZywUG8Zmd4J7dIBK+VHgvu02BqoMOd2n421HZrlR1R+2w29uhP84jzZDk1IORbt2tYW5jI5EUkSG6QIUexPw107X2L199/zF+9Avxow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HI29J8PpyOHg9/4YmqwixZfCzeidkRsdCqDO12WBico=;
- b=kPLHGe3R+hupS9SMPf+w5jAFRBXGxTrBV/UbI6sTXRyqobVvoUqFjMmvwQJQ3WQXcg17vCwJkyotGiVn2KUsoTeZ8tQdmMtK+Ulz/HSZ4VQ20Wu7Jd2/n3ZXTfeb/PGWdcrF6LfTaQrqYq5bjf/W1PHtXXx6SLazKH6nOh55rWwUHTBpQ9mMEFhz1MaK8Mfz//6HiqMTIDJWyHTIP5ziQ4Dl7c+1vjozjTrFzX7DjG24KMDr6BiOTjw8O4arCyLJAp2AGUpu/YwQwfut7+8Henek4IuDxmj8EO656zEfWX1LwXvZKQ5baDsNXOL9pw3CTn5rkPM7A8jc4FqjG2AeGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Tue, 6 Oct 2020 02:53:26 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F13C0613A7;
+        Mon,  5 Oct 2020 23:53:26 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id d66so392959ill.0;
+        Mon, 05 Oct 2020 23:53:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HI29J8PpyOHg9/4YmqwixZfCzeidkRsdCqDO12WBico=;
- b=n73+VCwf3tFG1qtk+QZD0OOOQG2P4r7h5CWTi64lgC3t8Q6GDQYhYt8cgo9mVidLixqUzP9sG16Gx2TprEOwn6Wxks2LV/vQHv4DeujKqOD67ZbUB6Mz2rmL5vEXlnM+iTUWRJzrRTIip13A20AeTdYMMTCmbrppJd/sadiHaMg=
-Received: from CY4PR04MB3751.namprd04.prod.outlook.com (2603:10b6:903:ec::14)
- by CY4PR04MB0968.namprd04.prod.outlook.com (2603:10b6:910:51::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.43; Tue, 6 Oct
- 2020 05:12:09 +0000
-Received: from CY4PR04MB3751.namprd04.prod.outlook.com
- ([fe80::9124:2453:fe9c:9a7]) by CY4PR04MB3751.namprd04.prod.outlook.com
- ([fe80::9124:2453:fe9c:9a7%12]) with mapi id 15.20.3433.044; Tue, 6 Oct 2020
- 05:12:08 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "hch@infradead.org" <hch@infradead.org>
-CC:     Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Subject: Re: [PATCH v8 01/41] block: add bio_add_zone_append_page
-Thread-Topic: [PATCH v8 01/41] block: add bio_add_zone_append_page
-Thread-Index: AQHWmCICMDDhRg8S9EGeqVQ0V4cAqg==
-Date:   Tue, 6 Oct 2020 05:12:08 +0000
-Message-ID: <CY4PR04MB37514819134C6D19C216A3BFE70D0@CY4PR04MB3751.namprd04.prod.outlook.com>
-References: <cover.1601572459.git.naohiro.aota@wdc.com>
- <dece91bca322ce44bed19f2b0f460fa5ded2e512.1601574234.git.naohiro.aota@wdc.com>
- <yq1k0w8g3rw.fsf@ca-mkp.ca.oracle.com> <20201005134319.GA11537@infradead.org>
- <yq1v9fo87tz.fsf@ca-mkp.ca.oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: oracle.com; dkim=none (message not signed)
- header.d=none;oracle.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2400:2411:43c0:6000:1d8:5f02:9c5c:7c1f]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 639d718a-9838-4af7-6da1-08d869b6600f
-x-ms-traffictypediagnostic: CY4PR04MB0968:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY4PR04MB0968EE279B7AD92783D8C924E70D0@CY4PR04MB0968.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 6vEJTUwi89xQsRnaqRZEi1ghmTtXwWuYu62VqBbFZv9l1f0ANQIqpQOWaHHk5bO822vNeEeTtvz/sMMtdTSCC1mxTZWup9EnUX11EX9YoMrU8Io0/s19iL5hmHdnIMz6wa0c5MFpHrpjYkvKpJist0KJoSQyzK5Zp3jRedPIRzEovqJlcNgc1h1rZERD5kwQ5rqr3CXYBA5SagIKyJqnM7qWVVuvO+ZEXWJzS8eomeRJ1vX68zjdm9YJfMIyqiB8liaVj2FaApo07CsLWSva8A+kBZqXUY4Z2T01pWJMxo/DVHbfl+ed4RERPjvSQiBl
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR04MB3751.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(39860400002)(376002)(346002)(366004)(136003)(2906002)(8676002)(86362001)(9686003)(316002)(83380400001)(54906003)(64756008)(76116006)(66476007)(66556008)(91956017)(66446008)(186003)(66946007)(110136005)(55016002)(7696005)(4326008)(53546011)(6506007)(8936002)(71200400001)(478600001)(5660300002)(33656002)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: 04/c0oizfq8AkOS1dd3VPHCg770yCTALvoePxaJJpLIxvf5aYga3hFeCQK83yhPBX3QIWQ54EGpsP7cPqtnatOMSxWvewq6Iu1sFGn8h3kT1wCqhu+28AjrBHJsIuU04C/6iF4E4sDYMIDAFYPPIEGNRHnhFvpivGt/m8SYrYVNfvAbcHnDo8S3PiDXpE4mPKklW9A9TSF+mq3i8jz5U1c1uc2eKshRzNf+cZbTqwkfupSKus/1j9pOWmbULIRUve7OGj0mDoNiQTZPvFpUvCEPjnrohJCss1G+fYmdzZcCfVszDOxOtrs0UCxRrnqTnAqBm/O+rFuKOAg66dy83++hcXD7syxEZDhR25XX8nuTvkF1XPOpByXhthpqeliOw5ZGyPcrCRwsQGDsSYfIvlXtKcyqF/SJAqqOObPQXUGcmMmqgRZ/HFNKTWEJiq6RCiINu3rdIqzW4kAJXaAAG1REYFvWskKCEosxHosEjDSXlVhVRDQ0YXwAT43mdx04X07MFn84ldu0APGHPbz4QR8ZthRvK6N6EdH+/a0Y8LuN8np0q00ilFjR2w4u3lKbtWWMyWk2ia8mnk112Uc3FpMLsOXXcmh4CYnl71ZT/aiqLAtrSTmnvjA2QddRrPgbnfz1HJ56RMqUf8+0dwS5+VSxVbGznW/J6WFBiYm9J31E6/4AAna9+wESUhmh3f0aEXK9J/jjw8d7lMBhe+IA78Q==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z0+dp4f3ePtjH+bvz+fgSMrbzLb2G05YyXJcIAi4CoM=;
+        b=tIspH0Wvzoky/Yo8C9WKQ/cq6Q2KSVKQ814aQl/tzXcgMq7/nX7W0oxmfTlKSxhR5g
+         I0c0nX8JdqwIakcIruSrwMU7zEt3NXlm8MjmB5HU/tGuklfcQS6zW9F21wql6umjSUSk
+         uWL8pxjFyJds9IkEENhyaiSqiR25a0ZMgbK6BaE7CP/NrjbreQ3FL2DMAlWd3d1r7LO1
+         fAOuysta+Ija1x/mlSWlsVYwFywJLw4i81kuyLRLbN4yNPU6GnXejRAtwcpgYeUKDMK6
+         RrYsGzK2HcmQx2vPUykVXR45GW4SLFkCkYELrHhaJGHHxESm4CMp134TPDkvdTVVOLXA
+         IlgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z0+dp4f3ePtjH+bvz+fgSMrbzLb2G05YyXJcIAi4CoM=;
+        b=TdOJeXVJjXXF1OKyX0EhfM8SFjtPH8p97iOuJy21debhhiwb2Z0bdn2sIHlCaGI8Gr
+         deibCDdj8RZGkjNzMTbGLTOBjJKSlUm63Glb+u7A8R8LFxggdSfZLvfEF2pnbdF2r9j3
+         HXv5u/I6zYCTZKrUSXc1YBh2KxGG+2MeIfSdE166VKNHqeU+H0VGJ7FsGH3cvVDMmF9I
+         JrTUWTHTywbcoAvZVqzBgPNZGLs1Cdh71PuwMRqp95A2xFOMMc7kDahMckUIbVakGm7k
+         vhjA0LLxzQFpw3Atw8ALvWCRk54kLme1tZm0+ACTW39rXZcApSum/umdtYAO2LkZ7G4a
+         ep6w==
+X-Gm-Message-State: AOAM531kFtvem50YRNuILobdJtfnO3Zh104oxgdyXPd7Cs00icwQyxPR
+        WmobJ1wXZZjKUJoy2jSGAsX/411RIWnxvbkkq3cENM4Uryg=
+X-Google-Smtp-Source: ABdhPJw8QRmKhmDepZiLjWxV+Z6JBqnX0TuFfhHXXXnKJ0RZrcV37wZLtmaAZKuRuiSs8X74eibWondUY4YjBDtxP2o=
+X-Received: by 2002:a92:5882:: with SMTP id z2mr2492627ilf.137.1601967205601;
+ Mon, 05 Oct 2020 23:53:25 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY4PR04MB3751.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 639d718a-9838-4af7-6da1-08d869b6600f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Oct 2020 05:12:08.8183
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ODzbCreHGbeVvUAUm54MuNKvvwgdhHG4WQhn8R7omprBCu+f129eRKVfYLNLh6Q5qyrK2oxbQFZ7afJE/wfmXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0968
+References: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
+ <CAOQ4uxjot9f=XZEchRuNopVyZtKGzp7R7j5i2GxO_OuxUE8KMg@mail.gmail.com> <20201005224642.0c23dbb66a637c7581be725f@virtuozzo.com>
+In-Reply-To: <20201005224642.0c23dbb66a637c7581be725f@virtuozzo.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 6 Oct 2020 09:53:15 +0300
+Message-ID: <CAOQ4uxj=hd+NP6g5P8+Cj71AUnoZpWk8x=SvAZhDv45ApY0Emw@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/1] overlayfs: C/R enhancments (RFC)
+To:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        David Howells <dhowells@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/10/06 10:27, Martin K. Petersen wrote:=0A=
-> =0A=
-> Christoph,=0A=
-> =0A=
->>> max_zone_append_sectors also appears to be gated exclusively by hardwar=
-e=0A=
->>> constraints. Is there user-controllable limit in place for append=0A=
->>> operations?=0A=
->>=0A=
->> Zone Append operations can't be split, as they return the first written=
-=0A=
->> LBA to the caller.  If you'd split it you'd now need to return multiple=
-=0A=
->> start LBA values.=0A=
-> =0A=
-> Yep, this limit would have to be enforced at the top.=0A=
-> =0A=
-> Anyway, not sure how important this is given modern drives. I just know=
-=0A=
-> that for our workloads the soft limit is something we almost always end=
-=0A=
-> up tweaking.=0A=
-=0A=
-We can fix the max_zone_append_sectors limit independently of this btrfs se=
-ries.=0A=
-Right now, this attribute represents the hardware limit but we can easily r=
-ename=0A=
-it to max_hw_zone_append_sectors and define a soft max_zone_append_sectors =
-which=0A=
-would be min(max_sectors, max_hw_zone_append_sectors). That will result in=
-=0A=
-similar soft limit control as for regular writes & max_sectors/max_hw_secto=
-rs.=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Mon, Oct 5, 2020 at 10:47 PM Alexander Mikhalitsyn
+<alexander.mikhalitsyn@virtuozzo.com> wrote:
+>
+> Hi Amir,
+>
+> On Mon, 5 Oct 2020 10:56:50 +0300
+> Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > On Sun, Oct 4, 2020 at 10:25 PM Alexander Mikhalitsyn
+> > <alexander.mikhalitsyn@virtuozzo.com> wrote:
+> > >
+> > > Some time ago we discussed about the problem of Checkpoint-Restoring
+> > > overlayfs mounts [1]. Big thanks to Amir for review and suggestions.
+> > >
+> > > Brief from previous discussion.
+> > > Problem statement: to checkpoint-restore overlayfs mounts we need
+> > > to save overlayfs mount state and save it into the image. Basically,
+> > > this state for us it's just mount options of overlayfs mount. But
+> > > here we have two problems:
+> > >
+> > > I. during mounting overlayfs user may specify relative paths in upperdir,
+> > > workdir, lowerdir options
+> > >
+> > > II. also user may unmount mount from which these paths was opened during mounting
+> > >
+> > > This is real problems for us. My first patch was attempt to address both problems.
+> > > 1. I've added refcnt get for mounts from which overlayfs was mounted.
+> > > 2. I've changed overlayfs mountinfo show algorithm, so overlayfs started to *always*
+> > > show full paths for upperdir,workdir,lowerdirs.
+> > > 3. I've added mnt_id show-time only option which allows to determine from which mnt_id
+> > > we opened options paths.
+> > >
+> > > Pros:
+> > > - we can determine full information about overlayfs mount
+> > > - we hold refcnt to mount, so, user may unmount source mounts only
+> > > with lazy flag
+> > >
+> > > Cons:
+> > > - by adding refcnt get for mount I've changed possible overlayfs usecases
+> > > - by showing *full* paths we can more easily reache PAGE_SIZE limit of
+> > > mounts options in procfs
+> > > - by adding mnt_id show-only option I've added inconsistency between
+> > > mount-time options and show-time mount options
+> > >
+> > > After very productive discussion with Amir and Pavel I've decided to write new
+> > > implementation. In new approach we decided *not* to take extra refcnts to mounts.
+> > > Also we decided to use exportfs fhandles instead of full paths. To determine
+> > > full path we plan to use the next algo:
+> > > 1. Export {s_dev; fhandle} from overlayfs for *all* sources
+> > > 2. User open_by_handle_at syscall to open all these fhandles (we need to
+> > > determine mount for each fhandle, looks like we can do this by s_dev by linear
+> > > search in /proc/<pid>/mountinfo)
+> > > 3. Then readlink /proc/<pid>/fd/<opened fd>
+> > > 4. Dump this full path+mnt_id
+> > >
+> >
+> > Hi Alex,
+> >
+> > The general concept looks good to me.
+> > I will not provide specific comment on the implementation (it looks
+> > fine) until the
+> > concept API is accepted by the maintainer.
+> >
+> > The main thing I want to make sure is that if we add this interface it can
+> > serve other use cases as well.
+>
+> Yes, let's create universal interface.
+>
+
+Note that this universal interface contradicts the direction of sysfs
+which is a convenient way for getting filesystem instance info, but
+not object info.
+
+> >
+> > During my talk on LPC, I got a similar request from two developers for two
+> > different use cases. They wanted a safe method to iterate "changes
+> > since baseline"
+> > from either within the container or from the host.
+>
+> This discussions was on lkml or in private room?
+>
+
+The containers track:
+https://youtu.be/fSyr_IXM21Y?t=4939
+
+We continued in private channels, but the general idea
+is an API to provide some insight about underlying layers
+
+> >
+> > Your proposed API is a step in the direction for meeting their requirement.
+> > The major change is that ioctl (or whatever method) should expose the
+> > layers topology of a specific object, not only the overlay instance.
+> >
+> > For C/R you would query the layers topology of the overlay root dir.
+> >
+> > My comments of the specific methods below are not meant to
+> > object to the choice of ioctl, but they are meant to give the alternative
+> > a fair chance. I am kind of leaning towards ioctl myself.
+> >
+> > > But there is question. How to export this {s_dev; fhandle} from kernel to userspace?
+> > > - We decided not to use procfs.
+> >
+> > Why not?
+> > C/R already uses procfs to export fhandle for fanotify/inotify
+> > I kind of like the idea of having /sys/fs/overlay/instances etc.
+> > It could be useful to many things.
+>
+> Ah, sorry. For some reason I've decided that we excluded procfs/sysfs option :)
+> Let's take this option into account too.
+>
+> >
+> > > - Amir proposed solution - use xattrs. But after diving into it I've meet problem
+> > > where I can set this xattrs?
+> > > If I set this xattrs on overlayfs dentries then during rsync, or cp -p=xattr we will copy
+> > > this temporary information.
+> >
+> > No you won't.
+> > rsync, cp will only copy xattrs listed with listxattr.
+> > Several filesystems, such as cifs and nfs export "object properties"
+> > via private xattrs
+> > that are not listed in listxattr (e.g. CIFS_XATTR_CIFS_ACL).
+> > You are not limited in what you can do in the "trusted.overlay" namespace, for
+> > example "trusted.overlay.layers.0.fh"
+> >
+> > The advantage is that it is very easy to implement and requires
+> > less discussions about ABI, but I agree it does feel a bit like a hack.
+>
+> Ack. I can try to write some draft implementation with xattrs.
+>
+
+You don't have to write code before getting an ack from
+maintainer on the design, but fine by me.
+
+> >
+> > > - ioctls? (this patchset implements this approach)
+> > > - fsinfo subsystem (not merged yet) [2]
+> > >
+> > > Problems with ioctls:
+> > > 1. We limited in output data size (16 KB AFAIK)
+> > > but MAX_HANDLE_SZ=128(bytes), OVL_MAX_STACK=500(num lowerdirs)
+> > > So, MAX_HANDLE_SZ*OVL_MAX_STACK = 64KB which is bigger than limit.
+> > > So, I've decided to give user one fhandle by one call. This is also
+> > > bad from the performance point of view.
+> > > 2. When using ioctls we need to have *fixed* size of input and output.
+> > > So, if MAX_HANDLE_SZ will change in the future our _IOR('o', 2, struct ovl_mnt_opt_fh)
+> > > will also change with struct ovl_mnt_opt_fh.
+> > >
+> >
+> > The choice of API with fixed output size for a variable length info seems weird.
+>
+> Yes, and I've proposed option with ioctl syscall where we open file descriptor
+> instead of doing direct copy_from_user/copy_to_user.
+>
+> >
+> > I am tempted to suggest extending name_to_handle_at(), for example
+> > name_to_handle_at(ovl_root_fd, path, &fhandle, &layer_id, AT_LAYER)
+> >
+> > Where layer_id can be input/output arg.
+> >
+> > But I acknowledge this is going to be a much harder sell...
+>
+> Looks interesting. I'll need to dive and think about it.
+>
+
+This API change has a lot more stakeholders.
+I think it would be wiser for you to stay within the overlayfs boundaries.
+
+Thanks,
+Amir.
