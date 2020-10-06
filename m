@@ -2,117 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19599284309
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 01:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 144412843D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 03:27:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725947AbgJEXrl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Oct 2020 19:47:41 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57308 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgJEXrl (ORCPT
+        id S1726075AbgJFB1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Oct 2020 21:27:18 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:49070 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbgJFB1S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Oct 2020 19:47:41 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 095NlWEf058208;
-        Tue, 6 Oct 2020 08:47:32 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
- Tue, 06 Oct 2020 08:47:32 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 095NlV7I058186
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 6 Oct 2020 08:47:32 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] splice: fix premature end of input detection
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20201005121339.4063-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <CAHk-=wiRkmMvm09+TJtbf+zNYyUB_J0-U=B0bzPte=j0hzPdAw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <54cd9095-8bda-96f0-a744-f817b6e6af40@i-love.sakura.ne.jp>
-Date:   Tue, 6 Oct 2020 08:47:29 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Mon, 5 Oct 2020 21:27:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0961Aw9P023363;
+        Tue, 6 Oct 2020 01:27:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=+jqH+gCjTnoSMLQMcgMYCzbAm6K826JajoLh0LCFQbI=;
+ b=kBYsBI/Wev6VmHfD3XUw3Z/e3GQ92OIPc5QlaI6tTzyoUWPwAai5ga042hsVt0Rn38R4
+ 7qdxW/uWKkF4hzl36nWSx3q7OUmTZByZLtMSAZ+MWsPMz803GOZILiKsNYXgcKTMg+2r
+ HE+mu0QqtFJL4UaNR4ivKa3KNOmuFfVcDHrGdlvGROMmUR3UkJtgRSYnZwJ8tBDfhECm
+ Z4oabjNVimJyJMBfOyPh02Sdfz682d7doZDaQUMPW43YO/YzRHUwrxyCO9n0UDFNJWDi
+ uqUShxniYcB/WdSwvWxYUibNugu7DhkcaObinMh1pPF7F4lW0gk79GixDrYluGl6WfJw UA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 33ym34ehdt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 06 Oct 2020 01:27:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0961BJfm145117;
+        Tue, 6 Oct 2020 01:27:04 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 33yyjes89h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 06 Oct 2020 01:27:04 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0961R0l1025382;
+        Tue, 6 Oct 2020 01:27:00 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 05 Oct 2020 18:27:00 -0700
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v8 01/41] block: add bio_add_zone_append_page
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1v9fo87tz.fsf@ca-mkp.ca.oracle.com>
+References: <cover.1601572459.git.naohiro.aota@wdc.com>
+        <dece91bca322ce44bed19f2b0f460fa5ded2e512.1601574234.git.naohiro.aota@wdc.com>
+        <yq1k0w8g3rw.fsf@ca-mkp.ca.oracle.com>
+        <20201005134319.GA11537@infradead.org>
+Date:   Mon, 05 Oct 2020 21:26:57 -0400
+In-Reply-To: <20201005134319.GA11537@infradead.org> (Christoph Hellwig's
+        message of "Mon, 5 Oct 2020 14:43:19 +0100")
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiRkmMvm09+TJtbf+zNYyUB_J0-U=B0bzPte=j0hzPdAw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9765 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 adultscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=996 mlxscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010060003
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9765 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 priorityscore=1501
+ mlxscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0 spamscore=0
+ malwarescore=0 phishscore=0 suspectscore=1 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010060003
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/10/06 3:26, Linus Torvalds wrote:
-> On Mon, Oct 5, 2020 at 5:14 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> splice() from pipe should return 0 when there is no pipe writer. However,
->> since commit a194dfe6e6f6f720 ("pipe: Rearrange sequence in pipe_write()
->> to preallocate slot") started inserting empty pages, splice() from pipe
->> also returns 0 when all ready buffers are empty pages.
-> 
-> Well... Only if you had writers that intentionally did that whole "no
-> valid data write" thing.
-> 
-> Which could be seen as a feature.
 
-pipe_read() is aware of such writers.
+Christoph,
 
-  /*
-   * We only get here if we didn't actually read anything.
-   *
-   * However, we could have seen (and removed) a zero-sized
-   * pipe buffer, and might have made space in the buffers
-   * that way.
-   *
-   * You can't make zero-sized pipe buffers by doing an empty
-   * write (not even in packet mode), but they can happen if
-   * the writer gets an EFAULT when trying to fill a buffer
-   * that already got allocated and inserted in the buffer
-   * array.
-   *
-   * So we still need to wake up any pending writers in the
-   * _very_ unlikely case that the pipe was full, but we got
-   * no data.
-   */
+>> max_zone_append_sectors also appears to be gated exclusively by hardware
+>> constraints. Is there user-controllable limit in place for append
+>> operations?
+>
+> Zone Append operations can't be split, as they return the first written
+> LBA to the caller.  If you'd split it you'd now need to return multiple
+> start LBA values.
 
-We also need to care about handle_userfault()
-( https://lkml.kernel.org/r/29dd8637-5e44-db4a-9aea-305b079941fb@i-love.sakura.ne.jp )
-which we might change it to return an error when pagefault from
-pipe_write() takes too long.
+Yep, this limit would have to be enforced at the top.
 
-> 
-> That said, if this actually broke some code, then we need to fix it -
-> but I really hate how you have that whole !pipe_empty() loop around
-> the empty buffers.
-> 
-> That case is very unlikely, and you have a loop with !pipe_empty()
-> *anyway* with the whole "goto refill". So the loop is completely
-> pointless.
+Anyway, not sure how important this is given modern drives. I just know
+that for our workloads the soft limit is something we almost always end
+up tweaking.
 
-This loop just removes all leading empty pages at once.
-"goto refill" is a result of all pages were empty.
-
-> 
-> Also, what if we have a packet pipe? Do we perhaps want to return at
-> packet boundaries? I don't think splice() has cared, so probably not,
-> but it's worth perhaps thinking about.
-
-Since manpage says that "Zero-length packets are not supported.", I think that
-skipping leading empty pages (either my version or your version) will not break
-packet boundaries.
-
-This check is there to avoid returning 0 when all available buffers are empty.
-This check should remain no-op if some buffer is not empty.
-
-> 
-> Anyway, I'd be a lot happier with the patch being structured something
-> like this instead.. UNTESTED
-
-I'm OK with your version.
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
