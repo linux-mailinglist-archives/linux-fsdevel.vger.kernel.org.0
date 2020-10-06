@@ -2,152 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE392852DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 22:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B84EA28530C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Oct 2020 22:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgJFUEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 16:04:16 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56821 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727176AbgJFUEQ (ORCPT
+        id S1727176AbgJFU0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 16:26:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34182 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbgJFU0V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 16:04:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602014654;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nAsLvgW1nDOTPpn1U85aTp/X7z+VtDo99/tckF5jXNI=;
-        b=iGvuAtojmV7k69MejaC4O5HTbnKN7dN9I6xPrjq3AgVn7746bb1zdtFsaAbCmcE5bBZV+W
-        2s56X+TtcRjMyUWkdXcPFBjXrnxltr6EjpuoGu0hrDSl1nJgWP8oDF4VoscwrYN67bPgkk
-        T7ICsQAJIIR3Lh8AUHAwwRF3WRhbXcs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-483-r50GUUy5MiC9VEv4faOv2Q-1; Tue, 06 Oct 2020 16:04:10 -0400
-X-MC-Unique: r50GUUy5MiC9VEv4faOv2Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DA58804018;
-        Tue,  6 Oct 2020 20:04:08 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 767315D9CD;
-        Tue,  6 Oct 2020 20:03:50 +0000 (UTC)
-Date:   Tue, 6 Oct 2020 16:03:47 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>, aris@redhat.com
-Subject: Re: [PATCH ghak90 V9 11/13] audit: contid check descendancy and
- nesting
-Message-ID: <20201006200347.GI2882171@madcap2.tricolour.ca>
-References: <cover.1593198710.git.rgb@redhat.com>
- <01229b93733d9baf6ac9bb0cc243eeb08ad579cd.1593198710.git.rgb@redhat.com>
- <CAHC9VhT6cLxxws_pYWcL=mWe786xPoTTFfPZ1=P4hx4V3nytXA@mail.gmail.com>
- <20200807171025.523i2sxfyfl7dfjy@madcap2.tricolour.ca>
- <CAHC9VhQ3MVUY8Zs4GNXdaqhiPJBzHW_YcCe=DghAgo7g6yrNBw@mail.gmail.com>
+        Tue, 6 Oct 2020 16:26:21 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B411DC0613D2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Oct 2020 13:26:20 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id i3so2163917pjz.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Oct 2020 13:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uNEX0ozXAl6BoosMQvMms2YwhVI/0IP0lEwVThfHmbY=;
+        b=2GUcIUTHIMo6vhOS0my89Cj9kP2D4p07/rhhxDBGfqb3N3x6c6AQO+3lCuxilotc3L
+         pmVCYaED3MxFa+8coBygSTGtli3oY0c1gxcQ5VsVjK9KLdrlS2EEGrGOd/gslcKAJqNZ
+         kDy1NozgF2AYIHtxrezLC2sDzcg2A4tNdFPDU9wr3dPUCGdkh5N++3UO9OoLX9Ag+B2W
+         WjC4r++/G9ycyK6gNX1JaqAL2/votn9dWm8EJCVdZnfJIV+OvoaqVTP1luRfJglVcUJw
+         FlyteZyr83635j2JA0575M2OPorVKTKpeoUBDEmBGAo3IO84JGcUYAvq20GQDBBFsW3b
+         rB3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uNEX0ozXAl6BoosMQvMms2YwhVI/0IP0lEwVThfHmbY=;
+        b=NoqWe0dggyttbsmoZcq2DE0lexn0sE4UJLvSzwAEvDrS1imwVuHwbZgi1UmWNzUarh
+         Cu8p+bNnsPIhTMr75KNgtiyXnHxbx/jloYpKENrCmZKphuAH8dBtsMvsdZZZYzn+HeXs
+         IWyGcRh8V+AGATVvx8n5nZkD66Be/S7gIWUM4ePoT32O9KkjBNydpYcgQzKgk3nXd83o
+         tgCrIx+zJBTp86Xgh7++Kry4s4Xu0M1Xy9X+s+gDq67ciGx09BWjMyhhoSwbAGpW8bBA
+         gBiRqSBRQJVbNlFwebe7G055fKvEuJGtfHjX/oNoWPeqvnSWRhMY/bFNqZTq40extuTY
+         TSjw==
+X-Gm-Message-State: AOAM533NN94WL95YaO/BDH8nTXVLFjC4StrpoP0irhzLXceCO8YDBITZ
+        SuxfMRFQfUMmqzpzC1vZFfeaIw==
+X-Google-Smtp-Source: ABdhPJzRWLYq7Oj3RrV+2fvHmO+qLCXG/WyhzYWtvAMD2oXcC2iLzNl3CtOpcqVq7cxg6i88OmAa0A==
+X-Received: by 2002:a17:902:6ac6:b029:d3:b4d7:2e55 with SMTP id i6-20020a1709026ac6b02900d3b4d72e55mr4536406plt.62.1602015980074;
+        Tue, 06 Oct 2020 13:26:20 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id hk17sm3144525pjb.14.2020.10.06.13.26.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Oct 2020 13:26:19 -0700 (PDT)
+Subject: Re: [PATCH v2 4/5] io_uring: Fix missing save the current thread
+ files
+To:     Muchun Song <songmuchun@bytedance.com>, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhuyinyin@bytedance.com
+References: <20200923114419.71218-1-songmuchun@bytedance.com>
+ <20200923114419.71218-5-songmuchun@bytedance.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6f19c032-4b49-8eca-c264-be6f23751f70@kernel.dk>
+Date:   Tue, 6 Oct 2020 14:26:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ3MVUY8Zs4GNXdaqhiPJBzHW_YcCe=DghAgo7g6yrNBw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20200923114419.71218-5-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-08-21 16:13, Paul Moore wrote:
-> On Fri, Aug 7, 2020 at 1:10 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2020-07-05 11:11, Paul Moore wrote:
-> > > On Sat, Jun 27, 2020 at 9:23 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > Require the target task to be a descendant of the container
-> > > > orchestrator/engine.
+On 9/23/20 5:44 AM, Muchun Song wrote:
+> We forget to save the current thread files, in this case, we can not
+> send SIGINT signal to the kworker because the files is not equal.
 > 
-> If you want to get formal about this, you need to define "target" in
-> the sentence above.  Target of what?
-
-The target is the task having its audit container identifier modified by
-the orchestrator current task.
-
-> FWIW, I read the above to basically mean that a task can only set the
-> audit container ID of processes which are beneath it in the "process
-> tree" where the "process tree" is defined as the relationship between
-> a parent and children processes such that the children processes are
-> branches below the parent process.
-
-Yes.
-
-> I have no problem with that, with the understanding that nesting
-> complicates it somewhat.  For example, this isn't true when one of the
-> children is a nested orchestrator, is it?
-
-It should still be true if that child is a nested orchestrator that has
-not yet spawned any children or threads (or they have all died off).
-
-It does get more complicated when we consider the scenario outlined
-below about perceived layer violations...
-
-> > > > You would only change the audit container ID from one set or inherited
-> > > > value to another if you were nesting containers.
+> Fixes: 54ee77961e79 ("io_uring: Fix NULL pointer dereference in io_sq_wq_submit_work()")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  fs/io_uring.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> I thought we decided we were going to allow an orchestrator to move a
-> process between audit container IDs, yes?  no?
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 12e68ea00a543..c65f78f395655 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -2391,6 +2391,8 @@ static bool io_add_to_prev_work(struct async_list *list, struct io_kiocb *req)
+>  	if (ret) {
+>  		struct io_ring_ctx *ctx = req->ctx;
+>  
+> +		req->files = current->files;
+> +
+>  		spin_lock_irq(&ctx->task_lock);
+>  		list_add(&req->task_list, &ctx->task_list);
+>  		req->work_task = NULL;
 
-We did?  I don't remember anything about that.  Has this been requested?
-This seems to violate the rule that we can't change the audit container
-identifier once it has been set (other than nesting).  Can you suggest a
-use case?
+This should be folded in with patch 1.
 
-> > > > If changing the contid, the container orchestrator/engine must be a
-> > > > descendant and not same orchestrator as the one that set it so it is not
-> > > > possible to change the contid of another orchestrator's container.
-> 
-> Try rephrasing the above please, it isn't clear to me what you are
-> trying to say.
-
-This is harder than I expected to rephrase...  It also makes it clear
-that there are some scenarios that have not been considered that may
-need to be restricted.
-
-Orchestrator A spawned task B which is itself an orchestrator without
-chidren yet.  Orchestrator A sets the audit container identifier of B.
-Neither A, nor B, nor any other child of A (or any of their
-descendants), nor any orchestrator outside the tree of A (uncles, aunts
-and cousins are outside), can change the audit container identifier of
-B.
-
-Orchestrator B spawns task C.  Here's where it gets tricky.  It seems
-like a layer violation for B to spawn a child C and have A reach over B
-to set the audit container identifier of C, especially if B is also an
-orchestrator.  This all will be especially hard to police if we don't
-limit the ability of an orchestrator task to set an audit container
-identifier to that orchestrator's immediate children, only once.
-
-> > Are we able to agree on the premises above?  Is anything asserted that
-> > should not be and is there anything missing?
-> 
-> See above.
-> 
-> If you want to go back to the definitions/assumptions stage, it
-> probably isn't worth worrying about the other comments until we get
-> the above sorted.
-
-I don't want to.  I'm trying to confirm that we are on the same page.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-- 
+Jens Axboe
 
