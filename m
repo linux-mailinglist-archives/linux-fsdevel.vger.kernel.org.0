@@ -2,389 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9990286205
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 17:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BBF2286229
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 17:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbgJGPYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 11:24:24 -0400
-Received: from mail-dm6nam12on2040.outbound.protection.outlook.com ([40.107.243.40]:42049
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726100AbgJGPYX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 11:24:23 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a72I6WY55tsoBtD7KDcoFT5dSphUeZTM/NxLVNSQnaHp1ULfkRX7ogS9hu3F3tyRofwU5WjRliGNB9uLPwEuzQo9g2P7JnBgJPxY/CFHY4rCtqgFrMGiKY52XT8A2qM1L85ILfxw7n8WJpUi0npvwJ3+SHLm+ad0tFF5dSQuk9eNlg9euxgYtxhAIYneaQbe2k6VpgqeoN6FLsfSnYNvy7By/OJQAbJ+JrHNidq2kUUKq5VggrTk6SEIPpIJx5UD/nWmwGpg0I0uHSZimnmWs9c3vvrWXS55Q31Ar7yM2plPY37LHQRw5Fj4I3MOvLcQ9FcEZToOJuuDS3kD6qGVAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zMdkDw6WGKvuQR/64AXppGlMZ9L6qEooQ89iwyuWPgc=;
- b=lhMS50E78KY6Q15+gJIBSiGggTf50gDzUqR6vHsxJCQ1E8NvpRBDjQju1bWztxtmquMuMnrqtj24tTRpCiDD0U9uwpU5NZ+q3k0VDUrKbQuswUaL73LUmjzsaVlk+KFNGJsAfO9CsOsAN1TELPwyqYPnu0X+v1blfp3lIFTzSw15US1893RFcDaN4/CLhgEJrqBXqTGfaQf7kHOp3UPHsjNEH7i0FL0ys0Z6ubeN9OqSYS/dm89zwasiNsAodF0ellw78Hvq+chg/j8CLj5jT5E7JDEFhKDTAi+aLdGh+2Ziy/GMdqQPXmHBMg3AVYYDgcqC5ahPRaoV4V+nk/obzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=none action=none header.from=amd.com; dkim=none (message not signed);
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zMdkDw6WGKvuQR/64AXppGlMZ9L6qEooQ89iwyuWPgc=;
- b=f2PrxOfJnT6B9/xG15CxrA/b71smdvHPxCXYOQDHtfCmFmmKyki0Zr3TxgWHGxbUZm3mHB0t3FclH/G54xWzBjEHTeSvPbCrlVE+lbiOWO/+L7n0zcOU+vqURIWzAJg5jZ3y34uHHL8j4eX8DudQhRIdo7AvWFGm//RI1z1OwW4=
-Received: from BN7PR06CA0048.namprd06.prod.outlook.com (2603:10b6:408:34::25)
- by MW3PR12MB4428.namprd12.prod.outlook.com (2603:10b6:303:57::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3433.36; Wed, 7 Oct
- 2020 15:24:16 +0000
-Received: from BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:34:cafe::64) by BN7PR06CA0048.outlook.office365.com
- (2603:10b6:408:34::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3455.21 via Frontend
- Transport; Wed, 7 Oct 2020 15:24:16 +0000
-X-MS-Exchange-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXMB02.amd.com (165.204.84.17) by
- BN8NAM11FT023.mail.protection.outlook.com (10.13.177.103) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.3455.23 via Frontend Transport; Wed, 7 Oct 2020 15:24:16 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB02.amd.com
- (10.181.40.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3; Wed, 7 Oct 2020
- 10:24:15 -0500
-Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3; Wed, 7 Oct 2020
- 10:24:15 -0500
-Received: from yuho-dev.amd.com (10.180.168.240) by SATLEXMB02.amd.com
- (10.181.40.143) with Microsoft SMTP Server id 15.1.1979.3 via Frontend
- Transport; Wed, 7 Oct 2020 10:24:15 -0500
-From:   Kenny Ho <Kenny.Ho@amd.com>
-To:     <linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-        <alexander.deucher@amd.com>, <amd-gfx@lists.freedesktop.org>,
-        <y2kenny@gmail.com>
-CC:     Kenny Ho <Kenny.Ho@amd.com>
-Subject: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
-Date:   Wed, 7 Oct 2020 11:23:55 -0400
-Message-ID: <20201007152355.2446741-1-Kenny.Ho@amd.com>
-X-Mailer: git-send-email 2.25.1
+        id S1727536AbgJGPeL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 11:34:11 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51172 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbgJGPeL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Oct 2020 11:34:11 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 097FXd29021820;
+        Wed, 7 Oct 2020 15:34:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=IR1iHSLq8s/YXlPxkH6d1UGMtG9AcByaFCsHvId1+Ug=;
+ b=YK56Xe7YNRI6bpWTcZzi7llTLJz2Zb9e2t7UoKtgAfEqNqTuI0c47YZmKrLTBJLjjlYw
+ usu0UWSq/p4MUO08Lev9VzZHNqSPN00NLFK8qcx6JkZpGYw6FAH5cGkS25tv/BtngWkN
+ k9rej83kgbyUwM5kiEP6qNAJN/B5GUAbvUDtJSqPYvB7WUjg6bKE4pRypGNSGUP9iKq+
+ LX6AyYDrZAp6mOgr7546BhO9Fkx8ILpwLPJxCLsSqKpWUJAfZrdy4g7Tr8dNXqH5gdG9
+ DVX3yC8fQ2e9nDyrH6zGRs7ojQCTwLbxOvsI0H0F6TJjJUCqG2lzaFq4qVY+YUos3JBf Ng== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 33xhxn2eur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 07 Oct 2020 15:34:05 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 097FFCw6142944;
+        Wed, 7 Oct 2020 15:34:05 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 33yyjhbxnv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Oct 2020 15:34:05 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 097FXxuj011212;
+        Wed, 7 Oct 2020 15:33:59 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 07 Oct 2020 08:33:59 -0700
+Date:   Wed, 7 Oct 2020 08:33:59 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] xfs: flush new eof page on truncate to avoid post-eof
+ corruption
+Message-ID: <20201007153359.GC49547@magnolia>
+References: <20201007143509.669729-1-bfoster@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d2d70dde-348a-4899-4293-08d86ad50d93
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4428:
-X-Microsoft-Antispam-PRVS: <MW3PR12MB4428E83C19966FAE8B7E4A4C830A0@MW3PR12MB4428.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: E28xFklBCKzHf8bishkOhzE0jUJTiCVTcu2/5kpuNo/UB1xJ4xVITiOQQPkxRVUzYHRemUdi3UlbACTNR9ntv8xwM1fR42+ZWfdtS1CyotQEMyOEzFNBpypXK8zti8QFgwqGVeG4qJtFlA77VWtcfRHTEvtMNv3FDzl74awIdztPrho3Hh9dJ1mXlidYtbIM7Bfvg2igXkgHKilZXNxrLg0Q8opPi/Qie9w7dW621YBDZIubbaI4DBYZMRLjwBhrEr03HASAK9g0lWir3rxiSMve6VTyfsGBpzAqSnXXwxc/MjEmkKHJax+qSk3zJaHlvmkBcDc0XzQts3k3LZADyai6LK+sj44DC2Eusv/gafe6ot7FihiI0vWHgLJHYfuhUvAEgGuSo+2D+CfGO/w7zI32KU95TM0h/G+4SvMyy8A=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB02.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(396003)(39850400004)(346002)(136003)(376002)(46966005)(4326008)(83380400001)(1076003)(6666004)(110136005)(316002)(82740400003)(81166007)(478600001)(7696005)(8936002)(47076004)(2906002)(36756003)(5660300002)(2616005)(356005)(336012)(8676002)(26005)(426003)(186003)(82310400003)(70206006)(70586007)(86362001)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2020 15:24:16.0828
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2d70dde-348a-4899-4293-08d86ad50d93
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB02.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT023.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4428
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201007143509.669729-1-bfoster@redhat.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9767 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 adultscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 mlxscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010070098
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9767 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 lowpriorityscore=0 suspectscore=1 phishscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1015 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010070099
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a skeleton implementation to invite comments and generate
-discussion around the idea of introducing a bpf-cgroup program type to
-control ioctl access.  This is modelled after
-BPF_PROG_TYPE_CGROUP_DEVICE.  The premise is to allow system admins to
-write bpf programs to block some ioctl access, potentially in conjunction
-with data collected by other bpf programs stored in some bpf maps and
-with bpf_spin_lock.
+On Wed, Oct 07, 2020 at 10:35:09AM -0400, Brian Foster wrote:
+> It is possible to expose non-zeroed post-EOF data in XFS if the new
+> EOF page is dirty, backed by an unwritten block and the truncate
+> happens to race with writeback. iomap_truncate_page() will not zero
+> the post-EOF portion of the page if the underlying block is
+> unwritten. The subsequent call to truncate_setsize() will, but
+> doesn't dirty the page. Therefore, if writeback happens to complete
+> after iomap_truncate_page() (so it still sees the unwritten block)
+> but before truncate_setsize(), the cached page becomes inconsistent
+> with the on-disk block. A mapped read after the associated page is
+> reclaimed or invalidated exposes non-zero post-EOF data.
+> 
+> For example, consider the following sequence when run on a kernel
+> modified to explicitly flush the new EOF page within the race
+> window:
+> 
+> $ xfs_io -fc "falloc 0 4k" -c fsync /mnt/file
+> $ xfs_io -c "pwrite 0 4k" -c "truncate 1k" /mnt/file
+>   ...
+> $ xfs_io -c "mmap 0 4k" -c "mread -v 1k 8" /mnt/file
+> 00000400:  00 00 00 00 00 00 00 00  ........
+> $ umount /mnt/; mount <dev> /mnt/
+> $ xfs_io -c "mmap 0 4k" -c "mread -v 1k 8" /mnt/file
+> 00000400:  cd cd cd cd cd cd cd cd  ........
+> 
+> Update xfs_setattr_size() to explicitly flush the new EOF page prior
+> to the page truncate to ensure iomap has the latest state of the
+> underlying block.
+> 
+> Fixes: 68a9f5e7007c ("xfs: implement iomap based buffered write path")
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
+> 
+> This patch is intentionally simplistic because I wanted to get some
+> thoughts on a proper fix and at the same time consider something easily
+> backportable. The iomap behavior seems rather odd to me in general,
+> particularly if we consider the same kind of behavior can occur on
+> file-extending writes. It's just not a user observable problem in that
+> case because a sub-page write of a current EOF page (backed by an
+> unwritten block) will zero fill the rest of the page at write time
+> (before the zero range essentially skips it due to the unwritten block).
+> It's not totally clear to me if that's an intentional design
+> characteristic of iomap or something we should address.
+> 
+> It _seems_ like the more appropriate fix is that iomap truncate page
+> should at least accommodate a dirty page over an unwritten block and
+> modify the page (or perhaps just unconditionally do a buffered write on
+> a non-aligned truncate, similar to what block_truncate_page() does). For
+> example, we could push the UNWRITTEN check from iomap_zero_range_actor()
+> down into iomap_zero(), actually check for an existing page there, and
+> then either zero it or skip out if none exists. Thoughts?
 
-For example, a bpf program has been accumulating resource usaging
-statistic and a second bpf program of BPF_PROG_TYPE_CGROUP_IOCTL would
-block access to previously mentioned resource via ioctl when the stats
-stored in a bpf map reaches certain threshold.
+I haven't looked at this in much depth yet, but I agree with the
+principle that iomap ought to handle the case of unwritten extents
+fronted by dirty pagecache.
 
-Like BPF_PROG_TYPE_CGROUP_DEVICE, the default is permissive (i.e.,
-ioctls are not blocked if no bpf program is present for the cgroup.) to
-maintain current interface behaviour when this functionality is unused.
+--D
 
-Performance impact to ioctl calls is minimal as bpf's in-kernel verifier
-ensure attached bpf programs cannot crash and always terminate quickly.
-
-TODOs:
-- correct usage of the verifier
-- toolings
-- samples
-- device driver may provide helper functions that take
-bpf_cgroup_ioctl_ctx and return something more useful for specific
-device
-
-Signed-off-by: Kenny Ho <Kenny.Ho@amd.com>
----
- fs/ioctl.c                 |  5 +++
- include/linux/bpf-cgroup.h | 14 ++++++++
- include/linux/bpf_types.h  |  2 ++
- include/uapi/linux/bpf.h   |  8 +++++
- kernel/bpf/cgroup.c        | 66 ++++++++++++++++++++++++++++++++++++++
- kernel/bpf/syscall.c       |  7 ++++
- kernel/bpf/verifier.c      |  1 +
- 7 files changed, 103 insertions(+)
-
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 4e6cc0a7d69c..a3925486d417 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -19,6 +19,7 @@
- #include <linux/falloc.h>
- #include <linux/sched/signal.h>
- #include <linux/fiemap.h>
-+#include <linux/cgroup.h>
- 
- #include "internal.h"
- 
-@@ -45,6 +46,10 @@ long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	if (!filp->f_op->unlocked_ioctl)
- 		goto out;
- 
-+	error = BPF_CGROUP_RUN_PROG_IOCTL(filp, cmd, arg);
-+	if (error)
-+		goto out;
-+
- 	error = filp->f_op->unlocked_ioctl(filp, cmd, arg);
- 	if (error == -ENOIOCTLCMD)
- 		error = -ENOTTY;
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index 64f367044e25..a5f0b0a8f82b 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -134,6 +134,9 @@ int __cgroup_bpf_run_filter_sock_ops(struct sock *sk,
- int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
- 				      short access, enum bpf_attach_type type);
- 
-+int __cgroup_bpf_check_ioctl_permission(struct file *filp, unsigned int cmd, unsigned long arg,
-+				        enum bpf_attach_type type);
-+
- int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
- 				   struct ctl_table *table, int write,
- 				   void **buf, size_t *pcount, loff_t *ppos,
-@@ -346,6 +349,16 @@ int bpf_percpu_cgroup_storage_update(struct bpf_map *map, void *key,
- 	__ret;								       \
- })
- 
-+#define BPF_CGROUP_RUN_PROG_IOCTL(filp, cmd, arg)       	              \
-+({									      \
-+	int __ret = 0;							      \
-+	if (cgroup_bpf_enabled)						      \
-+		__ret = __cgroup_bpf_check_ioctl_permission(filp, cmd, arg,   \
-+							    BPF_CGROUP_IOCTL);\
-+									      \
-+	__ret;								      \
-+})
-+
- int cgroup_bpf_prog_attach(const union bpf_attr *attr,
- 			   enum bpf_prog_type ptype, struct bpf_prog *prog);
- int cgroup_bpf_prog_detach(const union bpf_attr *attr,
-@@ -429,6 +442,7 @@ static inline int bpf_percpu_cgroup_storage_update(struct bpf_map *map,
- 				       optlen, max_optlen, retval) ({ retval; })
- #define BPF_CGROUP_RUN_PROG_SETSOCKOPT(sock, level, optname, optval, optlen, \
- 				       kernel_optval) ({ 0; })
-+#define BPF_CGROUP_RUN_PROG_IOCTL(type,major,minor,access) ({ 0; })
- 
- #define for_each_cgroup_storage_type(stype) for (; false; )
- 
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index a52a5688418e..3055e7e4918c 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -56,6 +56,8 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_CGROUP_SYSCTL, cg_sysctl,
- 	      struct bpf_sysctl, struct bpf_sysctl_kern)
- BPF_PROG_TYPE(BPF_PROG_TYPE_CGROUP_SOCKOPT, cg_sockopt,
- 	      struct bpf_sockopt, struct bpf_sockopt_kern)
-+BPF_PROG_TYPE(BPF_PROG_TYPE_CGROUP_IOCTL, cg_ioctl,
-+	      struct bpf_cgroup_ioctl_ctx, struct bpf_cgroup_ioctl_ctx)
- #endif
- #ifdef CONFIG_BPF_LIRC_MODE2
- BPF_PROG_TYPE(BPF_PROG_TYPE_LIRC_MODE2, lirc_mode2,
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index b6238b2209b7..6a908e13d3a3 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -197,6 +197,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_EXT,
- 	BPF_PROG_TYPE_LSM,
- 	BPF_PROG_TYPE_SK_LOOKUP,
-+	BPF_PROG_TYPE_CGROUP_IOCTL,
- };
- 
- enum bpf_attach_type {
-@@ -238,6 +239,7 @@ enum bpf_attach_type {
- 	BPF_XDP_CPUMAP,
- 	BPF_SK_LOOKUP,
- 	BPF_XDP,
-+	BPF_CGROUP_IOCTL,
- 	__MAX_BPF_ATTACH_TYPE
- };
- 
-@@ -4276,6 +4278,12 @@ struct bpf_cgroup_dev_ctx {
- 	__u32 minor;
- };
- 
-+struct bpf_cgroup_ioctl_ctx {
-+	__u64 filp;
-+	__u32 cmd;
-+	__u32 arg;
-+};
-+
- struct bpf_raw_tracepoint_args {
- 	__u64 args[0];
- };
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 83ff127ef7ae..0958bae3b0b7 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -1203,6 +1203,72 @@ const struct bpf_verifier_ops cg_dev_verifier_ops = {
- 	.is_valid_access	= cgroup_dev_is_valid_access,
- };
- 
-+int __cgroup_bpf_check_ioctl_permission(struct file *filp, unsigned int cmd, unsigned long arg,
-+				      enum bpf_attach_type type)
-+{
-+	struct cgroup *cgrp;
-+	struct bpf_cgroup_ioctl_ctx ctx = {
-+		.filp = filp,
-+		.cmd = cmd,
-+		.arg = arg,
-+	};
-+	int allow = 1;
-+
-+	rcu_read_lock();
-+	cgrp = task_dfl_cgroup(current);
-+	allow = BPF_PROG_RUN_ARRAY(cgrp->bpf.effective[type], &ctx,
-+				   BPF_PROG_RUN);
-+	rcu_read_unlock();
-+
-+	return !allow;
-+}
-+
-+static const struct bpf_func_proto *
-+cgroup_ioctl_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-+{
-+	return cgroup_base_func_proto(func_id, prog);
-+}
-+
-+static bool cgroup_ioctl_is_valid_access(int off, int size,
-+				       enum bpf_access_type type,
-+				       const struct bpf_prog *prog,
-+				       struct bpf_insn_access_aux *info)
-+{
-+	const int size_default = sizeof(__u32);
-+
-+	if (type == BPF_WRITE)
-+		return false;
-+
-+	if (off < 0 || off + size > sizeof(struct bpf_cgroup_ioctl_ctx))
-+		return false;
-+	/* The verifier guarantees that size > 0. */
-+	if (off % size != 0)
-+		return false;
-+
-+	switch (off) {
-+	case bpf_ctx_range(struct bpf_cgroup_ioctl_ctx, filp):
-+		bpf_ctx_record_field_size(info, size_default);
-+		if (!bpf_ctx_narrow_access_ok(off, size, size_default))
-+			return false;
-+		break;
-+	case bpf_ctx_range(struct bpf_cgroup_ioctl_ctx, cmd):
-+	case bpf_ctx_range(struct bpf_cgroup_ioctl_ctx, arg):
-+	default:
-+		if (size != size_default)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+const struct bpf_prog_ops cg_ioctl_prog_ops = {
-+};
-+
-+const struct bpf_verifier_ops cg_ioctl_verifier_ops = {
-+	.get_func_proto		= cgroup_ioctl_func_proto,
-+	.is_valid_access	= cgroup_ioctl_is_valid_access,
-+};
-+
- /**
-  * __cgroup_bpf_run_filter_sysctl - Run a program on sysctl
-  *
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 86299a292214..6984a62c96f4 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2054,6 +2054,7 @@ static bool is_net_admin_prog_type(enum bpf_prog_type prog_type)
- 	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
-+	case BPF_PROG_TYPE_CGROUP_IOCTL:
- 	case BPF_PROG_TYPE_SOCK_OPS:
- 	case BPF_PROG_TYPE_EXT: /* extends any prog */
- 		return true;
-@@ -2806,6 +2807,8 @@ attach_type_to_prog_type(enum bpf_attach_type attach_type)
- 		return BPF_PROG_TYPE_SOCK_OPS;
- 	case BPF_CGROUP_DEVICE:
- 		return BPF_PROG_TYPE_CGROUP_DEVICE;
-+	case BPF_CGROUP_IOCTL:
-+		return BPF_PROG_TYPE_CGROUP_IOCTL;
- 	case BPF_SK_MSG_VERDICT:
- 		return BPF_PROG_TYPE_SK_MSG;
- 	case BPF_SK_SKB_STREAM_PARSER:
-@@ -2878,6 +2881,7 @@ static int bpf_prog_attach(const union bpf_attr *attr)
- 	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
-+	case BPF_PROG_TYPE_CGROUP_IOCTL:
- 	case BPF_PROG_TYPE_SOCK_OPS:
- 		ret = cgroup_bpf_prog_attach(attr, ptype, prog);
- 		break;
-@@ -2915,6 +2919,7 @@ static int bpf_prog_detach(const union bpf_attr *attr)
- 	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
-+	case BPF_PROG_TYPE_CGROUP_IOCTL:
- 	case BPF_PROG_TYPE_SOCK_OPS:
- 		return cgroup_bpf_prog_detach(attr, ptype);
- 	default:
-@@ -2958,6 +2963,7 @@ static int bpf_prog_query(const union bpf_attr *attr,
- 	case BPF_CGROUP_SYSCTL:
- 	case BPF_CGROUP_GETSOCKOPT:
- 	case BPF_CGROUP_SETSOCKOPT:
-+	case BPF_CGROUP_IOCTL:
- 		return cgroup_bpf_prog_query(attr, uattr);
- 	case BPF_LIRC_MODE2:
- 		return lirc_prog_query(attr, uattr);
-@@ -3914,6 +3920,7 @@ static int link_create(union bpf_attr *attr)
- 	case BPF_PROG_TYPE_CGROUP_DEVICE:
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-+	case BPF_PROG_TYPE_CGROUP_IOCTL:
- 		ret = cgroup_bpf_link_attach(attr, prog);
- 		break;
- 	case BPF_PROG_TYPE_TRACING:
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index ef938f17b944..af68f463e828 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7419,6 +7419,7 @@ static int check_return_code(struct bpf_verifier_env *env)
- 	case BPF_PROG_TYPE_CGROUP_DEVICE:
- 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
- 	case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-+	case BPF_PROG_TYPE_CGROUP_IOCTL:
- 		break;
- 	case BPF_PROG_TYPE_RAW_TRACEPOINT:
- 		if (!env->prog->aux->attach_btf_id)
--- 
-2.25.1
-
+> Brian
+> 
+>  fs/xfs/xfs_iops.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 80a13c8561d8..3ef2e77b454e 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -911,6 +911,16 @@ xfs_setattr_size(
+>  		error = iomap_zero_range(inode, oldsize, newsize - oldsize,
+>  				&did_zeroing, &xfs_buffered_write_iomap_ops);
+>  	} else {
+> +		/*
+> +		 * iomap won't detect a dirty page over an unwritten block and
+> +		 * subsequently skips zeroing the newly post-eof portion of the
+> +		 * page. Flush the new EOF to convert the block before the
+> +		 * pagecache truncate.
+> +		 */
+> +		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
+> +						     newsize);
+> +		if (error)
+> +			return error;
+>  		error = iomap_truncate_page(inode, newsize, &did_zeroing,
+>  				&xfs_buffered_write_iomap_ops);
+>  	}
+> -- 
+> 2.25.4
+> 
