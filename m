@@ -2,132 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AC8F286539
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 18:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9167728656A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 19:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgJGQuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 12:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53628 "EHLO
+        id S1727927AbgJGRGC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 13:06:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbgJGQuG (ORCPT
+        with ESMTP id S1726041AbgJGRGC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 12:50:06 -0400
+        Wed, 7 Oct 2020 13:06:02 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 748B5C061755;
-        Wed,  7 Oct 2020 09:50:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C01C061755;
+        Wed,  7 Oct 2020 10:06:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=Nav6Oy18S0mncB3AAW0uN+jV/XzmjmJbW8GBwpVEUfw=; b=Frs5Gubuq3ricUN+drCNVuXFCQ
-        mjI7QUo+b9QJ0YTE5NrJrGyyJTC4C7Xnqrmod9ynuk2Y4oiEYd+aqpRGhhGIukQecVxABVPSNgViH
-        jXvjPC1UixiXhwHJ04SFdFoxR8VLpIunkTZG6/3+V/LmPruKj0WukyumMT+flkN7/b9TYSWUGvcd9
-        EZ4oPxIyDyE1OJcZ/xUA2i8t/gu5hDGhZdmPy3Nk2nrEgX6vLDagbZaWR9br0Pnz4xXebGH+/oo50
-        5hFO3Svf9XCI1rvN/DfQQ+Vat5rRqfQNhNOJGo/fHDm/oFL+uiPJmQZwQuGy0T2XOUVCxAWxyy/Ow
-        zGOlf7dw==;
-Received: from [2601:1c0:6280:3f0::2c9a]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kQCdf-0004Uj-U1; Wed, 07 Oct 2020 16:50:04 +0000
-Subject: Re: [PATCH] fs: use correct parameter in notes of
- generic_file_llseek_size()
-To:     Tianxianting <tian.xianting@h3c.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20200905071525.12259-1-tian.xianting@h3c.com>
- <3808373d663146c882c22397a1d6587f@h3c.com>
- <07de1867-e61c-07fb-8809-91d5e573329b@infradead.org>
- <e028ff27412d4a80aa273320482a801d@h3c.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b2bd4f65-3054-3c08-807f-f1e800c122ed@infradead.org>
-Date:   Wed, 7 Oct 2020 09:50:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=yKmG7sDo2Hnmphbd29uuI2McQMWDJPEwalTXCxvAe3w=; b=U9HXBDNu+js8W+6zeTrV/jtVbE
+        oMZoX096Vc8qatSsLrVFG7bwYEYUWHjBzexbJg2O0Rge2BHdOTAHGkuoHcMBNJvkVFvlkbgWYoMaV
+        D5g7T1A2br7NSa3/EP3hesxNxR+rP8hlaRJt5b8WIwE0EtyOGEkMU2TXl0eyIYF+eXRA2lw+dCJI2
+        93JiKTXr0l/z2ovvqGoOYkSP0yzM6zD4PhTQuxnCTqBSDpaPXy7f6m3VTRMCxN36K0Y16lMFkMlnD
+        0fM0rhB+yHBfryWGrgBHb9TgsEUqjETEcVHsfU7VjgXMA6KM7Db1Vd5Wde79UK81MdFSp+IvZwPRW
+        sTkTHBKA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQCt4-0005jh-S1; Wed, 07 Oct 2020 17:05:58 +0000
+Date:   Wed, 7 Oct 2020 18:05:58 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Josef Bacik <jbacik@fb.com>
+Subject: Re: [PATCH 00/14] Small step toward KSM for file back page.
+Message-ID: <20201007170558.GU20115@casper.infradead.org>
+References: <20201007010603.3452458-1-jglisse@redhat.com>
+ <20201007032013.GS20115@casper.infradead.org>
+ <20201007144835.GA3471400@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <e028ff27412d4a80aa273320482a801d@h3c.com>
-Content-Type: text/plain; charset=gbk
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201007144835.GA3471400@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/7/20 8:20 AM, Tianxianting wrote:
-> hi,
+On Wed, Oct 07, 2020 at 10:48:35AM -0400, Jerome Glisse wrote:
+> On Wed, Oct 07, 2020 at 04:20:13AM +0100, Matthew Wilcox wrote:
+> > On Tue, Oct 06, 2020 at 09:05:49PM -0400, jglisse@redhat.com wrote:
+> > > The present patchset just add mapping argument to the various vfs call-
+> > > backs. It does not make use of that new parameter to avoid regression.
+> > > I am posting this whole things as small contain patchset as it is rather
+> > > big and i would like to make progress step by step.
+> > 
+> > Well, that's the problem.  This patch set is gigantic and unreviewable.
+> > And it has no benefits.  The idea you present here was discussed at
+> > LSFMM in Utah and I recall absolutely nobody being in favour of it.
+> > You claim many wonderful features will be unlocked by this, but I think
+> > they can all be achieved without doing any of this very disruptive work.
 > 
-> thanks Randy
-> 
-> I checked the latest code, seems this patch not applied currently.
+> You have any ideas on how to achieve them without such change ? I will
+> be more than happy for a simpler solution but i fail to see how you can
+> work around the need for a pointer inside struct page. Given struct
+> page can not grow it means you need to be able to overload one of the
+> existing field, at least i do not see any otherway.
 
-Hi--
+The one I've spent the most time thinking about is sharing pages between
+reflinked files.  My approach is to pull DAX entries into the main page
+cache and have them reference the PFN directly.  It's not a struct page,
+but we can find a struct page from it if we need it.  The struct page
+would belong to a mapping that isn't part of the file.
 
-Please don't send html email.
-I'm pretty sure that the mailing list has dropped (discarded) your email
-because it was html.
+For other things (NUMA distribution), we can point to something which
+isn't a struct page and can be distiguished from a real struct page by a
+bit somewhere (I have ideas for at least three bits in struct page that
+could be used for this).  Then use a pointer in that data structure to
+point to the real page.  Or do NUMA distribution at the inode level.
+Have a way to get from (inode, node) to an address_space which contains
+just regular pages.
 
-Probably only Al and I received your email.
+Using main memory to cache DAX could be done today without any data
+structure changes.  It just needs the DAX entries pulled up into the
+main pagecache.  See earlier item.
 
-Al- Would you prefer that fs/ documentation patches go to someone else
-for merging?  maybe Andrew?
+Exclusive write access ... you could put a magic value in the pagecache
+for pages which are exclusively for someone else's use and handle those
+specially.  I don't entirely understand this use case.
 
-Thanks.
-
-PS: I can't tell if I am writing an html email or not... :(
-
-
-> ________________________________
-> 发件人: Randy Dunlap <rdunlap@infradead.org>
-> 发送时间: Friday, September 11, 2020 10:57:24 AM
-> 收件人: tianxianting (RD); viro@zeniv.linux.org.uk
-> 抄送: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org
-> 主题: Re: [PATCH] fs: use correct parameter in notes of generic_file_llseek_size()
-> 
-> On 9/10/20 7:06 PM, Tianxianting wrote:
->> Hi viro,
->> Could I get your feedback?
->> This patch fixed the build warning, I think it can be applied, thanks :)
->>
->> -----Original Message-----
->> From: tianxianting (RD)
->> Sent: Saturday, September 05, 2020 3:15 PM
->> To: viro@zeniv.linux.org.uk
->> Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; tianxianting (RD) <tian.xianting@h3c.com>
->> Subject: [PATCH] fs: use correct parameter in notes of generic_file_llseek_size()
->>
->> Fix warning when compiling with W=1:
->> fs/read_write.c:88: warning: Function parameter or member 'maxsize' not described in 'generic_file_llseek_size'
->> fs/read_write.c:88: warning: Excess function parameter 'size' description in 'generic_file_llseek_size'
->>
->> Signed-off-by: Xianting Tian <tian.xianting@h3c.com>
-> 
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Thanks.
-> 
->> ---
->>  fs/read_write.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/read_write.c b/fs/read_write.c
->> index 5db58b8c7..058563ee2 100644
->> --- a/fs/read_write.c
->> +++ b/fs/read_write.c
->> @@ -71,7 +71,7 @@ EXPORT_SYMBOL(vfs_setpos);
->>   * @file:    file structure to seek on
->>   * @offset:  file offset to seek to
->>   * @whence:  type of seek
->> - * @size:    max size of this file in file system
->> + * @maxsize: max size of this file in file system
->>   * @eof:     offset used for SEEK_END position
->>   *
->>   * This is a variant of generic_file_llseek that allows passing in a custom
->>
-> 
-> 
-> --
-> ~Randy
-> 
-
--- 
-~Randy
-
+I don't have time to work on all of these.  If there's one that
+particularly interests you, let's dive deep into it and figure out how
+you can do it without committing this kind of violence to struct page.
