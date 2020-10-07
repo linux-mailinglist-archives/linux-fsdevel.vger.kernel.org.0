@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B2442855F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 03:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D7212855FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 03:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbgJGBH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 21:07:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55816 "EHLO
+        id S1727306AbgJGBII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 21:08:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27067 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727397AbgJGBHv (ORCPT
+        by vger.kernel.org with ESMTP id S1727401AbgJGBHx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 21:07:51 -0400
+        Tue, 6 Oct 2020 21:07:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602032869;
+        s=mimecast20190719; t=1602032870;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=K8JlkirHab7R6tb/5VeyHeLb4GW/ljQVqPPREaFgnMY=;
-        b=bdkFfaZltr0G+yYruCceXigivYtbp62y1WFFevUbPs4l7Dn8VJbUQ4Q76/lrieHMbmL+3/
-        QGCWKz840LUmawJXqy46g9KOXqTp4ktcPq4rRAfbr90hBrX9dnaPuFfq7yM44/+DDPGtDt
-        T6dYU+ZpOrHWvcUE0yeHI/Vjku6Gfjc=
+        bh=dIjWvKp1A0e0W4GIot1k+x52KQno6rPc1gzlEYRF8k0=;
+        b=i5zzWfSl/4Xiaib0aw3r7H/cWzzCQQo0H9sep78xj2j5EuUI0ZXU3Kt0yMA6dhpG5RnJ3R
+        Mp5xhiDkvVIBwKlC2EKW9c2VpaeM1UtPuVfl/dllDTwwp6Q3Ld8VqXOPNR0DVrK6L/yuCR
+        4NnEsu3+0/9wxKY+rPCCdqqFRrgtTzQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-331-74yG6wIeMJetf6EgMEydjg-1; Tue, 06 Oct 2020 21:07:45 -0400
-X-MC-Unique: 74yG6wIeMJetf6EgMEydjg-1
+ us-mta-411-Wl-T1OHfPe-QKuHoKN7tOw-1; Tue, 06 Oct 2020 21:07:46 -0400
+X-MC-Unique: Wl-T1OHfPe-QKuHoKN7tOw-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7999E1009442;
-        Wed,  7 Oct 2020 01:07:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAC4A425D1;
+        Wed,  7 Oct 2020 01:07:44 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-119-161.rdu2.redhat.com [10.10.119.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F0385D9D2;
-        Wed,  7 Oct 2020 01:07:42 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FFFB5D9D2;
+        Wed,  7 Oct 2020 01:07:43 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
@@ -42,9 +42,9 @@ Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
         Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 12/14] mm: add struct address_space to is_partially_uptodate() callback
-Date:   Tue,  6 Oct 2020 21:06:01 -0400
-Message-Id: <20201007010603.3452458-13-jglisse@redhat.com>
+Subject: [PATCH 13/14] mm: add struct address_space to isolate_page() callback
+Date:   Tue,  6 Oct 2020 21:06:02 -0400
+Message-Id: <20201007010603.3452458-14-jglisse@redhat.com>
 In-Reply-To: <20201007010603.3452458-1-jglisse@redhat.com>
 References: <20201007010603.3452458-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -62,7 +62,7 @@ field so that we can temporarily update it to point to a special
 structure tracking temporary page state (note that original mapping
 pointer is preserved and can still be accessed but at a cost).
 
-Add struct address_space to is_partially_uptodate() callback arguments.
+Add struct address_space to isolate_page() callback arguments.
 
 Note that this patch does not make use of the new argument, nor does
 it use a valid one at call site (by default this patch just use NULL
@@ -113,7 +113,7 @@ With the following semantic patch:
 virtual part1, part2, part3, part4
 
 // ----------------------------------------------------------------------------
-// Part 1 is grepping all function that are use as callback for is_partially_uptodate.
+// Part 1 is grepping all function that are use as callback for isolate_page.
 
 // initialize file where we collect all function name (erase it)
 @initialize:python depends on part1@
@@ -125,7 +125,7 @@ file.close()
 @p1r2 depends on part1@
 identifier I1, FN;
 @@
-struct address_space_operations I1 = {..., .is_partially_uptodate = FN, ...};
+struct address_space_operations I1 = {..., .isolate_page = FN, ...};
 
 @script:python p1r3 depends on p1r2@
 funcname << p1r2.FN;
@@ -138,35 +138,35 @@ if funcname != "NULL":
 // -------------------------------------------------------------------
 // Part 2 modify callback
 
-// Add address_space argument to the function (is_partially_uptodate callback one)
+// Add address_space argument to the function (isolate_page callback one)
 @p2r1 depends on part2@
 identifier virtual.fn;
-identifier I1, I2, I3;
-type T1, T2, T3;
+identifier I1, I2;
+type R, T1, T2;
 @@
-int fn(
+R fn(
 +struct address_space *__mapping,
-T1 I1, T2 I2, T3 I3) { ... }
+T1 I1, T2 I2) { ... }
 
 @p2r2 depends on part2@
 identifier virtual.fn;
-identifier I1, I2, I3;
-type T1, T2, T3;
+identifier I1, I2;
+type R, T1, T2;
 @@
-int fn(
+R fn(
 +struct address_space *__mapping,
-T1 I1, T2 I2, T3 I3);
+T1 I1, T2 I2);
 
 @p2r3 depends on part2@
 identifier virtual.fn;
-expression E1, E2, E3;
+expression E1, E2;
 @@
 fn(
 +MAPPING_NULL,
-E1, E2, E3)
+E1, E2)
 
 // ----------------------------------------------------------------------------
-// Part 3 is grepping all function that are use the callback for is_partially_uptodate.
+// Part 3 is grepping all function that are use the callback for isolate_page.
 
 // initialize file where we collect all function name (erase it)
 @initialize:python depends on part3@
@@ -180,15 +180,15 @@ file.write("./mm/filemap.c\n")
 file.close()
 
 @p3r1 depends on part3 exists@
-expression E1, E2, E3, E4;
+expression E1, E2, E3;
 identifier FN;
 position P;
 @@
 FN@P(...) {...
 (
-E1.a_ops->is_partially_uptodate(E2, E3, E4)
+E1.a_ops->isolate_page(E2, E3)
 |
-E1->a_ops->is_partially_uptodate(E2, E3, E4)
+E1->a_ops->isolate_page(E2, E3)
 )
 ...}
 
@@ -199,54 +199,28 @@ file=open('/tmp/unicorn-files', 'a')
 file.write(P[0].file + '\n')
 file.close()
 
-@p3r3 depends on part3 exists@
-struct address_space_operations *AOPS;
-expression E1, E2, E3;
-identifier FN;
-position P;
-@@
-FN@P(...) {...
-AOPS->is_partially_uptodate(E1, E2, E3)
-...}
-
-@script:python p3r4 depends on p3r3@
-P << p3r3.P;
-@@
-file=open('/tmp/unicorn-files', 'a')
-file.write(P[0].file + '\n')
-file.close()
-
 // -------------------------------------------------------------------
 // Part 4 generic modification
 @p4r1 depends on part4@
+type R;
 @@
-struct address_space_operations { ... int (*is_partially_uptodate)(
+struct address_space_operations { ... R (*isolate_page)(
 +struct address_space *,
 struct page *, ...); ... };
 
 @p4r2 depends on part4@
-expression E1, E2, E3, E4;
-@@
-E1.a_ops->is_partially_uptodate(
-+MAPPING_NULL,
-E2, E3, E4)
-
-@p4r3 depends on part4@
-expression E1, E2, E3, E4;
-@@
-E1->a_ops->is_partially_uptodate(
-+MAPPING_NULL,
-E2, E3, E4)
-
-@p4r4 depends on part4 exists@
-struct address_space_operations *AOPS;
 expression E1, E2, E3;
 @@
-{...
-AOPS->is_partially_uptodate(
+E1.a_ops->isolate_page(
 +MAPPING_NULL,
-E1, E2, E3)
-...}
+E2, E3)
+
+@p4r3 depends on part4@
+expression E1, E2, E3;
+@@
+E1->a_ops->isolate_page(
++MAPPING_NULL,
+E2, E3)
 -------------------------------------------------------------------->%
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
@@ -259,117 +233,99 @@ Cc: Tejun Heo <tj@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <jbacik@fb.com>
 ---
- fs/buffer.c                 | 3 ++-
- fs/iomap/buffered-io.c      | 5 +++--
- fs/iomap/seek.c             | 2 +-
- include/linux/buffer_head.h | 3 ++-
- include/linux/fs.h          | 3 ++-
- include/linux/iomap.h       | 5 +++--
- mm/filemap.c                | 4 ++--
- 7 files changed, 15 insertions(+), 10 deletions(-)
+ include/linux/balloon_compaction.h | 5 +++--
+ include/linux/fs.h                 | 3 ++-
+ mm/balloon_compaction.c            | 3 ++-
+ mm/migrate.c                       | 2 +-
+ mm/z3fold.c                        | 3 ++-
+ mm/zsmalloc.c                      | 3 ++-
+ 6 files changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 1f0f72b76fc2a..7adf0af7530ba 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2213,7 +2213,8 @@ EXPORT_SYMBOL(generic_write_end);
-  * Returns true if all buffers which correspond to a file portion
-  * we want to read are uptodate.
-  */
--int block_is_partially_uptodate(struct page *page, unsigned long from,
-+int block_is_partially_uptodate(struct address_space *__mapping,
-+				struct page *page, unsigned long from,
- 					unsigned long count)
- {
- 	unsigned block_start, block_end, blocksize;
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 091f6656f3d6b..c2c8b3f173443 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -449,8 +449,9 @@ EXPORT_SYMBOL_GPL(iomap_readahead);
-  * we want to read within the page are uptodate.
-  */
- int
--iomap_is_partially_uptodate(struct page *page, unsigned long from,
--		unsigned long count)
-+iomap_is_partially_uptodate(struct address_space *__mapping,
-+			    struct page *page, unsigned long from,
-+			    unsigned long count)
- {
- 	struct iomap_page *iop = to_iomap_page(page);
- 	struct inode *inode = page->mapping->host;
-diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
-index 107ee80c35683..3f09cc0979a4a 100644
---- a/fs/iomap/seek.c
-+++ b/fs/iomap/seek.c
-@@ -49,7 +49,7 @@ page_seek_hole_data(struct inode *inode, struct page *page, loff_t *lastoff,
- 	for (off = 0; off < PAGE_SIZE; off += bsize) {
- 		if (offset_in_page(*lastoff) >= off + bsize)
- 			continue;
--		if (ops->is_partially_uptodate(page, off, bsize) == seek_data) {
-+		if (ops->is_partially_uptodate(MAPPING_NULL, page, off, bsize) == seek_data) {
- 			unlock_page(page);
- 			return true;
- 		}
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 0902142e93f0d..89a3758531889 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -223,7 +223,8 @@ int __block_write_full_page(struct inode *inode, struct page *page,
- 			get_block_t *get_block, struct writeback_control *wbc,
- 			bh_end_io_t *handler);
- int block_read_full_page(struct page*, get_block_t*);
--int block_is_partially_uptodate(struct page *page, unsigned long from,
-+int block_is_partially_uptodate(struct address_space *__mapping,
-+				struct page *page, unsigned long from,
- 				unsigned long count);
- int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
- 		unsigned flags, struct page **pagep, get_block_t *get_block);
+diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
+index 07b235161d040..c1e45339a53c1 100644
+--- a/include/linux/balloon_compaction.h
++++ b/include/linux/balloon_compaction.h
+@@ -80,8 +80,9 @@ static inline void balloon_devinfo_init(struct balloon_dev_info *balloon)
+ 
+ #ifdef CONFIG_BALLOON_COMPACTION
+ extern const struct address_space_operations balloon_aops;
+-extern bool balloon_page_isolate(struct page *page,
+-				isolate_mode_t mode);
++extern bool balloon_page_isolate(struct address_space *__mapping,
++				 struct page *page,
++				 isolate_mode_t mode);
+ extern void balloon_page_putback(struct address_space *__mapping,
+ 				 struct page *page);
+ extern int balloon_page_migrate(struct address_space *mapping,
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3854da5a1bcb9..21f179e7c5daa 100644
+index 21f179e7c5daa..6798a13e3c980 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -411,7 +411,8 @@ struct address_space_operations {
- 	bool (*isolate_page)(struct page *, isolate_mode_t);
+@@ -408,7 +408,8 @@ struct address_space_operations {
+ 	 */
+ 	int (*migratepage) (struct address_space *,
+ 			struct page *, struct page *, enum migrate_mode);
+-	bool (*isolate_page)(struct page *, isolate_mode_t);
++	bool (*isolate_page)(struct address_space *, struct page *,
++			     isolate_mode_t);
  	void (*putback_page)(struct address_space *, struct page *);
  	int (*launder_page) (struct address_space *, struct page *);
--	int (*is_partially_uptodate) (struct page *, unsigned long,
-+	int (*is_partially_uptodate) (struct address_space *, struct page *,
-+					unsigned long,
- 					unsigned long);
- 	void (*is_dirty_writeback) (struct page *, bool *, bool *);
- 	int (*error_remove_page)(struct address_space *, struct page *);
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index cb4b207974756..53b94e35b02fd 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -157,8 +157,9 @@ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- int iomap_readpage(struct page *page, const struct iomap_ops *ops);
- void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
- int iomap_set_page_dirty(struct address_space *__mapping, struct page *page);
--int iomap_is_partially_uptodate(struct page *page, unsigned long from,
--		unsigned long count);
-+int iomap_is_partially_uptodate(struct address_space *__mapping,
-+				struct page *page, unsigned long from,
-+				unsigned long count);
- int iomap_releasepage(struct address_space *__mapping, struct page *page,
- 		      gfp_t gfp_mask);
- void iomap_invalidatepage(struct address_space *__mapping, struct page *page,
-diff --git a/mm/filemap.c b/mm/filemap.c
-index faa190598cba8..951af134e0bf0 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2244,8 +2244,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 			/* Did it get truncated before we got the lock? */
- 			if (!page->mapping)
- 				goto page_not_up_to_date_locked;
--			if (!mapping->a_ops->is_partially_uptodate(page,
--							offset, iter->count))
-+			if (!mapping->a_ops->is_partially_uptodate(MAPPING_NULL, page,
-+								   offset, iter->count))
- 				goto page_not_up_to_date_locked;
- 			unlock_page(page);
- 		}
+ 	int (*is_partially_uptodate) (struct address_space *, struct page *,
+diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+index abc4a63df9903..ed9120e6c9bfe 100644
+--- a/mm/balloon_compaction.c
++++ b/mm/balloon_compaction.c
+@@ -203,7 +203,8 @@ EXPORT_SYMBOL_GPL(balloon_page_dequeue);
+ 
+ #ifdef CONFIG_BALLOON_COMPACTION
+ 
+-bool balloon_page_isolate(struct page *page, isolate_mode_t mode)
++bool balloon_page_isolate(struct address_space *__mapping, struct page *page,
++			  isolate_mode_t mode)
+ 
+ {
+ 	struct balloon_dev_info *b_dev_info = balloon_page_device(page);
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 3fba7429151bf..a3220050fbe05 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -126,7 +126,7 @@ int isolate_movable_page(struct page *page, isolate_mode_t mode)
+ 	mapping = page_mapping(page);
+ 	VM_BUG_ON_PAGE(!mapping, page);
+ 
+-	if (!mapping->a_ops->isolate_page(page, mode))
++	if (!mapping->a_ops->isolate_page(MAPPING_NULL, page, mode))
+ 		goto out_no_isolated;
+ 
+ 	/* Driver shouldn't use PG_isolated bit of page->flags */
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index 37453a14257a4..4ca02bb55a56b 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -1566,7 +1566,8 @@ static u64 z3fold_get_pool_size(struct z3fold_pool *pool)
+ 	return atomic64_read(&pool->pages_nr);
+ }
+ 
+-static bool z3fold_page_isolate(struct page *page, isolate_mode_t mode)
++static bool z3fold_page_isolate(struct address_space *__mapping,
++				struct page *page, isolate_mode_t mode)
+ {
+ 	struct z3fold_header *zhdr;
+ 	struct z3fold_pool *pool;
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 99d74c6e98216..c896f069e5b0a 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -1914,7 +1914,8 @@ static void replace_sub_page(struct size_class *class, struct zspage *zspage,
+ 	__SetPageMovable(newpage, page_mapping(oldpage));
+ }
+ 
+-static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
++static bool zs_page_isolate(struct address_space *__mapping,
++			    struct page *page, isolate_mode_t mode)
+ {
+ 	struct zs_pool *pool;
+ 	struct size_class *class;
 -- 
 2.26.2
 
