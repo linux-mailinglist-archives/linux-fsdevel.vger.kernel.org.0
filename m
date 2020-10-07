@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA3C2855EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 03:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B2442855F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 03:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727424AbgJGBH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727435AbgJGBH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 6 Oct 2020 21:07:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31053 "EHLO
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55816 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727390AbgJGBHu (ORCPT
+        by vger.kernel.org with ESMTP id S1727397AbgJGBHv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 21:07:50 -0400
+        Tue, 6 Oct 2020 21:07:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602032868;
+        s=mimecast20190719; t=1602032869;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zymcGZSrOWXVIpJx2uixJqx927t3AJNvb6Oa2OBEwDQ=;
-        b=im7hQvUismsePCIrF9pSsn1+qgGS95aWIrsaBH004jzb03pPsDqaxwtywlSRbSG/tumed6
-        0B11eYvnVcGPvKf1dPo3ZTMVnU76+7AgsRQ6qL3OWYxwcXK+SxemYE0MwDGcLVb1SMhzNF
-        Ubfe/fAtWKUyALemKfhBd7HuzGsHXpg=
+        bh=K8JlkirHab7R6tb/5VeyHeLb4GW/ljQVqPPREaFgnMY=;
+        b=bdkFfaZltr0G+yYruCceXigivYtbp62y1WFFevUbPs4l7Dn8VJbUQ4Q76/lrieHMbmL+3/
+        QGCWKz840LUmawJXqy46g9KOXqTp4ktcPq4rRAfbr90hBrX9dnaPuFfq7yM44/+DDPGtDt
+        T6dYU+ZpOrHWvcUE0yeHI/Vjku6Gfjc=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-61-FMDSZ2F_MUODxG3u9BoL1g-1; Tue, 06 Oct 2020 21:07:43 -0400
-X-MC-Unique: FMDSZ2F_MUODxG3u9BoL1g-1
+ us-mta-331-74yG6wIeMJetf6EgMEydjg-1; Tue, 06 Oct 2020 21:07:45 -0400
+X-MC-Unique: 74yG6wIeMJetf6EgMEydjg-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 494A5425CB;
-        Wed,  7 Oct 2020 01:07:42 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7999E1009442;
+        Wed,  7 Oct 2020 01:07:43 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-119-161.rdu2.redhat.com [10.10.119.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FD3B5D9D2;
-        Wed,  7 Oct 2020 01:07:41 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6F0385D9D2;
+        Wed,  7 Oct 2020 01:07:42 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
@@ -42,9 +42,9 @@ Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
         Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 11/14] mm: add struct address_space to launder_page() callback
-Date:   Tue,  6 Oct 2020 21:06:00 -0400
-Message-Id: <20201007010603.3452458-12-jglisse@redhat.com>
+Subject: [PATCH 12/14] mm: add struct address_space to is_partially_uptodate() callback
+Date:   Tue,  6 Oct 2020 21:06:01 -0400
+Message-Id: <20201007010603.3452458-13-jglisse@redhat.com>
 In-Reply-To: <20201007010603.3452458-1-jglisse@redhat.com>
 References: <20201007010603.3452458-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -62,7 +62,7 @@ field so that we can temporarily update it to point to a special
 structure tracking temporary page state (note that original mapping
 pointer is preserved and can still be accessed but at a cost).
 
-Add struct address_space to launder_page() callback arguments.
+Add struct address_space to is_partially_uptodate() callback arguments.
 
 Note that this patch does not make use of the new argument, nor does
 it use a valid one at call site (by default this patch just use NULL
@@ -113,7 +113,7 @@ With the following semantic patch:
 virtual part1, part2, part3, part4
 
 // ----------------------------------------------------------------------------
-// Part 1 is grepping all function that are use as callback for launder_page.
+// Part 1 is grepping all function that are use as callback for is_partially_uptodate.
 
 // initialize file where we collect all function name (erase it)
 @initialize:python depends on part1@
@@ -125,7 +125,7 @@ file.close()
 @p1r2 depends on part1@
 identifier I1, FN;
 @@
-struct address_space_operations I1 = {..., .launder_page = FN, ...};
+struct address_space_operations I1 = {..., .is_partially_uptodate = FN, ...};
 
 @script:python p1r3 depends on p1r2@
 funcname << p1r2.FN;
@@ -138,43 +138,35 @@ if funcname != "NULL":
 // -------------------------------------------------------------------
 // Part 2 modify callback
 
-// Add address_space argument to the function (launder_page callback one)
+// Add address_space argument to the function (is_partially_uptodate callback one)
 @p2r1 depends on part2@
 identifier virtual.fn;
-identifier I1;
-type T1;
+identifier I1, I2, I3;
+type T1, T2, T3;
 @@
 int fn(
 +struct address_space *__mapping,
-T1 I1) { ... }
+T1 I1, T2 I2, T3 I3) { ... }
 
 @p2r2 depends on part2@
 identifier virtual.fn;
-identifier I1;
-type T1;
+identifier I1, I2, I3;
+type T1, T2, T3;
 @@
 int fn(
 +struct address_space *__mapping,
-T1 I1);
+T1 I1, T2 I2, T3 I3);
 
 @p2r3 depends on part2@
 identifier virtual.fn;
-type T1;
-@@
-int fn(
-+struct address_space *__mapping,
-T1);
-
-@p2r4 depends on part2@
-identifier virtual.fn;
-expression E1;
+expression E1, E2, E3;
 @@
 fn(
 +MAPPING_NULL,
-E1)
+E1, E2, E3)
 
 // ----------------------------------------------------------------------------
-// Part 3 is grepping all function that are use the callback for launder_page.
+// Part 3 is grepping all function that are use the callback for is_partially_uptodate.
 
 // initialize file where we collect all function name (erase it)
 @initialize:python depends on part3@
@@ -188,15 +180,15 @@ file.write("./mm/filemap.c\n")
 file.close()
 
 @p3r1 depends on part3 exists@
-expression E1, E2;
+expression E1, E2, E3, E4;
 identifier FN;
 position P;
 @@
 FN@P(...) {...
 (
-E1.a_ops->launder_page(E2)
+E1.a_ops->is_partially_uptodate(E2, E3, E4)
 |
-E1->a_ops->launder_page(E2)
+E1->a_ops->is_partially_uptodate(E2, E3, E4)
 )
 ...}
 
@@ -207,27 +199,54 @@ file=open('/tmp/unicorn-files', 'a')
 file.write(P[0].file + '\n')
 file.close()
 
+@p3r3 depends on part3 exists@
+struct address_space_operations *AOPS;
+expression E1, E2, E3;
+identifier FN;
+position P;
+@@
+FN@P(...) {...
+AOPS->is_partially_uptodate(E1, E2, E3)
+...}
+
+@script:python p3r4 depends on p3r3@
+P << p3r3.P;
+@@
+file=open('/tmp/unicorn-files', 'a')
+file.write(P[0].file + '\n')
+file.close()
+
 // -------------------------------------------------------------------
 // Part 4 generic modification
 @p4r1 depends on part4@
 @@
-struct address_space_operations { ... int (*launder_page)(
+struct address_space_operations { ... int (*is_partially_uptodate)(
 +struct address_space *,
-struct page *); ... };
+struct page *, ...); ... };
 
 @p4r2 depends on part4@
-expression E1, E2;
+expression E1, E2, E3, E4;
 @@
-E1.a_ops->launder_page(
+E1.a_ops->is_partially_uptodate(
 +MAPPING_NULL,
-E2)
+E2, E3, E4)
 
 @p4r3 depends on part4@
-expression E1, E2;
+expression E1, E2, E3, E4;
 @@
-E1->a_ops->launder_page(
+E1->a_ops->is_partially_uptodate(
 +MAPPING_NULL,
-E2)
+E2, E3, E4)
+
+@p4r4 depends on part4 exists@
+struct address_space_operations *AOPS;
+expression E1, E2, E3;
+@@
+{...
+AOPS->is_partially_uptodate(
++MAPPING_NULL,
+E1, E2, E3)
+...}
 -------------------------------------------------------------------->%
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
@@ -240,202 +259,117 @@ Cc: Tejun Heo <tj@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <jbacik@fb.com>
 ---
- fs/9p/vfs_addr.c    |  3 ++-
- fs/afs/internal.h   |  2 +-
- fs/afs/write.c      |  2 +-
- fs/cifs/file.c      |  3 ++-
- fs/fuse/file.c      |  3 ++-
- fs/nfs/file.c       |  3 ++-
- fs/orangefs/inode.c | 17 +++++++++--------
- include/linux/fs.h  |  2 +-
- mm/truncate.c       |  2 +-
- 9 files changed, 21 insertions(+), 16 deletions(-)
+ fs/buffer.c                 | 3 ++-
+ fs/iomap/buffered-io.c      | 5 +++--
+ fs/iomap/seek.c             | 2 +-
+ include/linux/buffer_head.h | 3 ++-
+ include/linux/fs.h          | 3 ++-
+ include/linux/iomap.h       | 5 +++--
+ mm/filemap.c                | 4 ++--
+ 7 files changed, 15 insertions(+), 10 deletions(-)
 
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 0ae4f31b3d7f2..0cbf9a9050d0c 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -209,7 +209,8 @@ static int v9fs_vfs_writepage(struct address_space *__mapping,
-  * Returns 0 on success.
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 1f0f72b76fc2a..7adf0af7530ba 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2213,7 +2213,8 @@ EXPORT_SYMBOL(generic_write_end);
+  * Returns true if all buffers which correspond to a file portion
+  * we want to read are uptodate.
   */
- 
--static int v9fs_launder_page(struct page *page)
-+static int v9fs_launder_page(struct address_space *__mapping,
-+			     struct page *page)
+-int block_is_partially_uptodate(struct page *page, unsigned long from,
++int block_is_partially_uptodate(struct address_space *__mapping,
++				struct page *page, unsigned long from,
+ 					unsigned long count)
  {
- 	int retval;
+ 	unsigned block_start, block_end, blocksize;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 091f6656f3d6b..c2c8b3f173443 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -449,8 +449,9 @@ EXPORT_SYMBOL_GPL(iomap_readahead);
+  * we want to read within the page are uptodate.
+  */
+ int
+-iomap_is_partially_uptodate(struct page *page, unsigned long from,
+-		unsigned long count)
++iomap_is_partially_uptodate(struct address_space *__mapping,
++			    struct page *page, unsigned long from,
++			    unsigned long count)
+ {
+ 	struct iomap_page *iop = to_iomap_page(page);
  	struct inode *inode = page->mapping->host;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 264f28759c737..2cdf86d4200a8 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1436,7 +1436,7 @@ extern ssize_t afs_file_write(struct kiocb *, struct iov_iter *);
- extern int afs_fsync(struct file *, loff_t, loff_t, int);
- extern vm_fault_t afs_page_mkwrite(struct vm_fault *vmf);
- extern void afs_prune_wb_keys(struct afs_vnode *);
--extern int afs_launder_page(struct page *);
-+extern int afs_launder_page(struct address_space *__mapping, struct page *);
- 
- /*
-  * xattr.c
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 199cbf73b9be4..652b783cd280c 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -890,7 +890,7 @@ void afs_prune_wb_keys(struct afs_vnode *vnode)
- /*
-  * Clean up a page during invalidation.
-  */
--int afs_launder_page(struct page *page)
-+int afs_launder_page(struct address_space *__mapping, struct page *page)
- {
- 	struct address_space *mapping = page->mapping;
- 	struct afs_vnode *vnode = AFS_FS_I(mapping->host);
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 38d79a9eafa76..c6cd5ce627e22 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -4713,7 +4713,8 @@ static void cifs_invalidate_page(struct address_space *__mapping,
- 		cifs_fscache_invalidate_page(page, &cifsi->vfs_inode);
- }
- 
--static int cifs_launder_page(struct page *page)
-+static int cifs_launder_page(struct address_space *__mapping,
-+			     struct page *page)
- {
- 	int rc = 0;
- 	loff_t range_start = page_offset(page);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 66b31387e878f..4b0f85d0a0641 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2256,7 +2256,8 @@ static int fuse_write_end(struct file *file, struct address_space *mapping,
- 	return copied;
- }
- 
--static int fuse_launder_page(struct page *page)
-+static int fuse_launder_page(struct address_space *__mapping,
-+			     struct page *page)
- {
- 	int err = 0;
- 	if (clear_page_dirty_for_io(page)) {
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index ddfe95d3da057..b1ba143de48d9 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -474,7 +474,8 @@ static void nfs_check_dirty_writeback(struct page *page,
-  * - Caller holds page lock
-  * - Return 0 if successful, -error otherwise
-  */
--static int nfs_launder_page(struct page *page)
-+static int nfs_launder_page(struct address_space *__mapping,
-+			    struct page *page)
- {
- 	struct inode *inode = page_file_mapping(page)->host;
- 	struct nfs_inode *nfsi = NFS_I(inode);
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 8b47bcbf0ca4d..883f78b5c9fcb 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -244,7 +244,7 @@ static int orangefs_writepages(struct address_space *mapping,
- 	return ret;
- }
- 
--static int orangefs_launder_page(struct page *);
-+static int orangefs_launder_page(struct address_space *, struct page *);
- 
- static int orangefs_readpage(struct file *file,
- 			     struct address_space *__mapping,
-@@ -273,7 +273,7 @@ static int orangefs_readpage(struct file *file,
- 	read_size = 524288;
- 
- 	if (PageDirty(page))
--		orangefs_launder_page(page);
-+		orangefs_launder_page(MAPPING_NULL, page);
- 
- 	off = page_offset(page);
- 	index = off >> PAGE_SHIFT;
-@@ -381,7 +381,7 @@ static int orangefs_write_begin(struct file *file,
- 		 * since we don't know what's dirty.  This will WARN in
- 		 * orangefs_writepage_locked.
- 		 */
--		ret = orangefs_launder_page(page);
-+		ret = orangefs_launder_page(MAPPING_NULL, page);
- 		if (ret)
- 			return ret;
- 	}
-@@ -394,7 +394,7 @@ static int orangefs_write_begin(struct file *file,
- 			wr->len += len;
- 			goto okay;
- 		} else {
--			ret = orangefs_launder_page(page);
-+			ret = orangefs_launder_page(MAPPING_NULL, page);
- 			if (ret)
- 				return ret;
+diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+index 107ee80c35683..3f09cc0979a4a 100644
+--- a/fs/iomap/seek.c
++++ b/fs/iomap/seek.c
+@@ -49,7 +49,7 @@ page_seek_hole_data(struct inode *inode, struct page *page, loff_t *lastoff,
+ 	for (off = 0; off < PAGE_SIZE; off += bsize) {
+ 		if (offset_in_page(*lastoff) >= off + bsize)
+ 			continue;
+-		if (ops->is_partially_uptodate(page, off, bsize) == seek_data) {
++		if (ops->is_partially_uptodate(MAPPING_NULL, page, off, bsize) == seek_data) {
+ 			unlock_page(page);
+ 			return true;
  		}
-@@ -517,7 +517,7 @@ static void orangefs_invalidatepage(struct address_space *__mapping,
- 	 * Thus the following runs if wr was modified above.
- 	 */
- 
--	orangefs_launder_page(page);
-+	orangefs_launder_page(MAPPING_NULL, page);
- }
- 
- static int orangefs_releasepage(struct address_space *__mapping,
-@@ -532,7 +532,8 @@ static void orangefs_freepage(struct address_space *__mapping,
- 	kfree(detach_page_private(page));
- }
- 
--static int orangefs_launder_page(struct page *page)
-+static int orangefs_launder_page(struct address_space *__mapping,
-+				 struct page *page)
- {
- 	int r = 0;
- 	struct writeback_control wbc = {
-@@ -701,7 +702,7 @@ vm_fault_t orangefs_page_mkwrite(struct vm_fault *vmf)
- 		 * since we don't know what's dirty.  This will WARN in
- 		 * orangefs_writepage_locked.
- 		 */
--		if (orangefs_launder_page(page)) {
-+		if (orangefs_launder_page(MAPPING_NULL, page)) {
- 			ret = VM_FAULT_LOCKED|VM_FAULT_RETRY;
- 			goto out;
- 		}
-@@ -714,7 +715,7 @@ vm_fault_t orangefs_page_mkwrite(struct vm_fault *vmf)
- 			wr->len = PAGE_SIZE;
- 			goto okay;
- 		} else {
--			if (orangefs_launder_page(page)) {
-+			if (orangefs_launder_page(MAPPING_NULL, page)) {
- 				ret = VM_FAULT_LOCKED|VM_FAULT_RETRY;
- 				goto out;
- 			}
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index 0902142e93f0d..89a3758531889 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -223,7 +223,8 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ 			get_block_t *get_block, struct writeback_control *wbc,
+ 			bh_end_io_t *handler);
+ int block_read_full_page(struct page*, get_block_t*);
+-int block_is_partially_uptodate(struct page *page, unsigned long from,
++int block_is_partially_uptodate(struct address_space *__mapping,
++				struct page *page, unsigned long from,
+ 				unsigned long count);
+ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
+ 		unsigned flags, struct page **pagep, get_block_t *get_block);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4d0b9c14a5017..3854da5a1bcb9 100644
+index 3854da5a1bcb9..21f179e7c5daa 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -410,7 +410,7 @@ struct address_space_operations {
- 			struct page *, struct page *, enum migrate_mode);
+@@ -411,7 +411,8 @@ struct address_space_operations {
  	bool (*isolate_page)(struct page *, isolate_mode_t);
  	void (*putback_page)(struct address_space *, struct page *);
--	int (*launder_page) (struct page *);
-+	int (*launder_page) (struct address_space *, struct page *);
- 	int (*is_partially_uptodate) (struct page *, unsigned long,
+ 	int (*launder_page) (struct address_space *, struct page *);
+-	int (*is_partially_uptodate) (struct page *, unsigned long,
++	int (*is_partially_uptodate) (struct address_space *, struct page *,
++					unsigned long,
  					unsigned long);
  	void (*is_dirty_writeback) (struct page *, bool *, bool *);
-diff --git a/mm/truncate.c b/mm/truncate.c
-index e24688115c903..c0719e141e34e 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -668,7 +668,7 @@ static int do_launder_page(struct address_space *mapping, struct page *page)
- 		return 0;
- 	if (page->mapping != mapping || mapping->a_ops->launder_page == NULL)
- 		return 0;
--	return mapping->a_ops->launder_page(page);
-+	return mapping->a_ops->launder_page(MAPPING_NULL, page);
- }
- 
- /**
+ 	int (*error_remove_page)(struct address_space *, struct page *);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index cb4b207974756..53b94e35b02fd 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -157,8 +157,9 @@ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+ int iomap_readpage(struct page *page, const struct iomap_ops *ops);
+ void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+ int iomap_set_page_dirty(struct address_space *__mapping, struct page *page);
+-int iomap_is_partially_uptodate(struct page *page, unsigned long from,
+-		unsigned long count);
++int iomap_is_partially_uptodate(struct address_space *__mapping,
++				struct page *page, unsigned long from,
++				unsigned long count);
+ int iomap_releasepage(struct address_space *__mapping, struct page *page,
+ 		      gfp_t gfp_mask);
+ void iomap_invalidatepage(struct address_space *__mapping, struct page *page,
+diff --git a/mm/filemap.c b/mm/filemap.c
+index faa190598cba8..951af134e0bf0 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2244,8 +2244,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 			/* Did it get truncated before we got the lock? */
+ 			if (!page->mapping)
+ 				goto page_not_up_to_date_locked;
+-			if (!mapping->a_ops->is_partially_uptodate(page,
+-							offset, iter->count))
++			if (!mapping->a_ops->is_partially_uptodate(MAPPING_NULL, page,
++								   offset, iter->count))
+ 				goto page_not_up_to_date_locked;
+ 			unlock_page(page);
+ 		}
 -- 
 2.26.2
 
