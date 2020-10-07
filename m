@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 613FF2855FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 03:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC6A12855F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 03:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbgJGBIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 21:08:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39674 "EHLO
+        id S1727416AbgJGBHz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 21:07:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49614 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727261AbgJGBHk (ORCPT
+        by vger.kernel.org with ESMTP id S1727256AbgJGBHp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 21:07:40 -0400
+        Tue, 6 Oct 2020 21:07:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602032855;
+        s=mimecast20190719; t=1602032862;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7N2mjBwp8HLhjDivzCXg+PKFLbZWVE6k56VjjRdZtmo=;
-        b=WQaRrIAikef4SOAUljwXv/rKS6bCmTYdig3QpJtDlGNRXkf6rVbUhsh7huDAM9lfL6jpnH
-        S/4bBE+iOHcCLLSQ7DgrVrm7ypuJQQx6qeC+NMYjWwuv7cS0GhwN8p0XmBFIVrEQtaMjUK
-        HAPZH852nA45vOhANanvnM0S2THpSNs=
+        bh=IriaecYx7OO0AtHHMf6obSiIrGUgAAlWP3UaNhWyD8k=;
+        b=OwukHzUiJix52YDRe9jFsFHlKj3ogmDqg4TF4Qo/XnPrgPaZink2juPUw3b+6BnEPXnoJS
+        1LDDEfViEAi3fEQKCcznDi+YP08DDBjYuQ9FPUGUKj0t7W4DlY1bFi+AUR3E9TN7xci6dv
+        1RJlnR+RpIrdFmtkxBRtwl8LdNSwGX4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-231-yeGEYydnMLCukqEiYdasag-1; Tue, 06 Oct 2020 21:07:33 -0400
-X-MC-Unique: yeGEYydnMLCukqEiYdasag-1
+ us-mta-368-aoI3yRfYMMOsuqfW6u4AQA-1; Tue, 06 Oct 2020 21:07:37 -0400
+X-MC-Unique: aoI3yRfYMMOsuqfW6u4AQA-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1547F10BBEC4;
-        Wed,  7 Oct 2020 01:07:32 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 481C310BBEC4;
+        Wed,  7 Oct 2020 01:07:36 +0000 (UTC)
 Received: from localhost.localdomain.com (ovpn-119-161.rdu2.redhat.com [10.10.119.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A2FBB5D9D2;
-        Wed,  7 Oct 2020 01:07:28 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C1B25D9D2;
+        Wed,  7 Oct 2020 01:07:32 +0000 (UTC)
 From:   jglisse@redhat.com
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
@@ -42,9 +42,9 @@ Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
         Josef Bacik <jbacik@fb.com>
-Subject: [PATCH 07/14] mm: add struct address_space to invalidatepage() callback
-Date:   Tue,  6 Oct 2020 21:05:56 -0400
-Message-Id: <20201007010603.3452458-8-jglisse@redhat.com>
+Subject: [PATCH 08/14] mm: add struct address_space to releasepage() callback
+Date:   Tue,  6 Oct 2020 21:05:57 -0400
+Message-Id: <20201007010603.3452458-9-jglisse@redhat.com>
 In-Reply-To: <20201007010603.3452458-1-jglisse@redhat.com>
 References: <20201007010603.3452458-1-jglisse@redhat.com>
 MIME-Version: 1.0
@@ -62,7 +62,7 @@ field so that we can temporarily update it to point to a special
 structure tracking temporary page state (note that original mapping
 pointer is preserved and can still be accessed but at a cost).
 
-Add struct address_space to invalidatepage() callback arguments.
+Add struct address_space to releasepage() callback arguments.
 
 Note that this patch does not make use of the new argument, nor does
 it use a valid one at call site (by default this patch just use NULL
@@ -113,7 +113,7 @@ With the following semantic patch:
 virtual part1, part2, part3, part4
 
 // ----------------------------------------------------------------------------
-// Part 1 is grepping all function that are use as callback for invalidatepage.
+// Part 1 is grepping all function that are use as callback for releasepage.
 
 // initialize file where we collect all function name (erase it)
 @initialize:python depends on part1@
@@ -125,7 +125,7 @@ file.close()
 @p1r2 depends on part1@
 identifier I1, FN;
 @@
-struct address_space_operations I1 = {..., .invalidatepage = FN, ...};
+struct address_space_operations I1 = {..., .releasepage = FN, ...};
 
 @script:python p1r3 depends on p1r2@
 funcname << p1r2.FN;
@@ -138,35 +138,35 @@ if funcname != "NULL":
 // -------------------------------------------------------------------
 // Part 2 modify callback
 
-// Add address_space argument to the function (invalidatepage callback one)
+// Add address_space argument to the function (releasepage callback one)
 @p2r1 depends on part2@
 identifier virtual.fn;
-identifier I1, I2, I3;
-type T1, T2, T3;
+identifier I1, I2;
+type T1, T2;
 @@
-void fn(
+int fn(
 +struct address_space *__mapping,
-T1 I1, T2 I2, T3 I3) { ... }
+T1 I1, T2 I2) { ... }
 
 @p2r2 depends on part2@
 identifier virtual.fn;
-identifier I1, I2, I3;
-type T1, T2, T3;
+identifier I1, I2;
+type T1, T2;
 @@
-void fn(
+int fn(
 +struct address_space *__mapping,
-T1 I1, T2 I2, T3 I3);
+T1 I1, T2 I2);
 
 @p2r3 depends on part2@
 identifier virtual.fn;
-expression E1, E2, E3;
+expression E1, E2;
 @@
 fn(
 +MAPPING_NULL,
-E1, E2, E3)
+E1, E2)
 
 // ----------------------------------------------------------------------------
-// Part 3 is grepping all function that are use the callback for invalidatepage.
+// Part 3 is grepping all function that are use the callback for releasepage.
 
 // initialize file where we collect all function name (erase it)
 @initialize:python depends on part3@
@@ -176,20 +176,19 @@ file.write("./include/linux/pagemap.h\n")
 file.write("./include/linux/mm.h\n")
 file.write("./include/linux/fs.h\n")
 file.write("./mm/readahead.c\n")
-file.write("./mm/truncate.c\n")
 file.write("./mm/filemap.c\n")
 file.close()
 
 @p3r1 depends on part3 exists@
-expression E1, E2, E3, E4;
+expression E1, E2, E3;
 identifier FN;
 position P;
 @@
 FN@P(...) {...
 (
-E1.a_ops->invalidatepage(E2, E3, E4)
+E1.a_ops->releasepage(E2, E3)
 |
-E1->a_ops->invalidatepage(E2, E3, E4)
+E1->a_ops->releasepage(E2, E3)
 )
 ...}
 
@@ -204,59 +203,23 @@ file.close()
 // Part 4 generic modification
 @p4r1 depends on part4@
 @@
-struct address_space_operations { ... void (*invalidatepage)(
+struct address_space_operations { ... int (*releasepage)(
 +struct address_space *,
 struct page *, ...); ... };
 
 @p4r2 depends on part4@
-expression E1, E2, E3, E4;
+expression E1, E2, E3;
 @@
-E1.a_ops->invalidatepage(
+E1.a_ops->releasepage(
 +MAPPING_NULL,
-E2, E3, E4)
+E2, E3)
 
 @p4r3 depends on part4@
-expression E1, E2, E3, E4;
-@@
-E1->a_ops->invalidatepage(
-+MAPPING_NULL,
-E2, E3, E4)
-
-@p4r4 depends on part4 exists@
-identifier I1, FN;
-expression E1;
-@@
-FN (...) {...
-void (*I1)(struct page *, unsigned int, unsigned int);
-...
-I1 = E1->a_ops->invalidatepage;
-...}
-
-@p4r5 depends on p4r4 exists@
-expression E1, E2, E3;
-identifier I1, p4r4.FN;
-@@
-FN(...) {...
-void (*I1)(
-+struct address_space *,
-struct page *, unsigned int, unsigned int);
-...
- (*I1)(
-+MAPPING_NULL,
-E1, E2, E3);
-...}
-
-@p4r6 depends on part4@
 expression E1, E2, E3;
 @@
-{...
--void (*invalidatepage)(struct page *, unsigned int, unsigned int);
-+void (*invalidatepage)(struct address_space *, struct page *, unsigned int, unsigned int);
-...
- (*invalidatepage)(
+E1->a_ops->releasepage(
 +MAPPING_NULL,
-E1, E2, E3);
-...}
+E2, E3)
 -------------------------------------------------------------------->%
 
 Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
@@ -269,544 +232,453 @@ Cc: Tejun Heo <tj@kernel.org>
 Cc: Jan Kara <jack@suse.cz>
 Cc: Josef Bacik <jbacik@fb.com>
 ---
- fs/9p/vfs_addr.c            |  3 ++-
- fs/afs/dir.c                |  6 ++++--
- fs/afs/file.c               |  6 ++++--
- fs/btrfs/disk-io.c          |  3 ++-
- fs/btrfs/extent_io.c        |  3 ++-
- fs/btrfs/inode.c            |  3 ++-
- fs/buffer.c                 |  3 ++-
- fs/ceph/addr.c              | 12 ++++++++----
- fs/cifs/file.c              |  3 ++-
- fs/erofs/super.c            |  3 ++-
- fs/ext4/inode.c             | 17 +++++++++++------
- fs/f2fs/data.c              |  3 ++-
- fs/f2fs/f2fs.h              |  5 +++--
- fs/gfs2/aops.c              |  6 ++++--
- fs/iomap/buffered-io.c      |  3 ++-
- fs/jfs/jfs_metapage.c       |  3 ++-
- fs/libfs.c                  |  5 +++--
- fs/nfs/file.c               |  3 ++-
- fs/ntfs/aops.c              |  2 +-
- fs/orangefs/inode.c         |  7 ++++---
- fs/reiserfs/inode.c         |  3 ++-
- fs/ubifs/file.c             |  3 ++-
- fs/xfs/xfs_aops.c           |  2 +-
- include/linux/buffer_head.h |  3 ++-
- include/linux/fs.h          |  8 +++++---
- include/linux/iomap.h       |  5 +++--
- mm/truncate.c               |  5 +++--
- 27 files changed, 82 insertions(+), 46 deletions(-)
+ fs/9p/vfs_addr.c       | 3 ++-
+ fs/afs/dir.c           | 6 ++++--
+ fs/afs/file.c          | 6 ++++--
+ fs/block_dev.c         | 3 ++-
+ fs/btrfs/disk-io.c     | 5 +++--
+ fs/btrfs/inode.c       | 5 +++--
+ fs/ceph/addr.c         | 3 ++-
+ fs/cifs/file.c         | 3 ++-
+ fs/erofs/super.c       | 5 +++--
+ fs/ext4/inode.c        | 3 ++-
+ fs/f2fs/data.c         | 3 ++-
+ fs/f2fs/f2fs.h         | 3 ++-
+ fs/gfs2/aops.c         | 3 ++-
+ fs/gfs2/inode.h        | 3 ++-
+ fs/hfs/inode.c         | 3 ++-
+ fs/hfsplus/inode.c     | 3 ++-
+ fs/iomap/buffered-io.c | 3 ++-
+ fs/jfs/jfs_metapage.c  | 5 +++--
+ fs/nfs/file.c          | 3 ++-
+ fs/ocfs2/aops.c        | 3 ++-
+ fs/orangefs/inode.c    | 3 ++-
+ fs/reiserfs/inode.c    | 3 ++-
+ fs/ubifs/file.c        | 3 ++-
+ include/linux/fs.h     | 2 +-
+ include/linux/iomap.h  | 3 ++-
+ mm/filemap.c           | 3 ++-
+ 26 files changed, 59 insertions(+), 32 deletions(-)
 
 diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index c7a8037df9fcf..357f2e5049c48 100644
+index 357f2e5049c48..0ae4f31b3d7f2 100644
 --- a/fs/9p/vfs_addr.c
 +++ b/fs/9p/vfs_addr.c
-@@ -137,7 +137,8 @@ static int v9fs_release_page(struct page *page, gfp_t gfp)
-  * @offset: offset in the page
+@@ -123,7 +123,8 @@ static int v9fs_vfs_readpages(struct file *filp, struct address_space *mapping,
+  * Returns 1 if the page can be released, false otherwise.
   */
  
--static void v9fs_invalidate_page(struct page *page, unsigned int offset,
-+static void v9fs_invalidate_page(struct address_space *__mapping,
-+				 struct page *page, unsigned int offset,
- 				 unsigned int length)
+-static int v9fs_release_page(struct page *page, gfp_t gfp)
++static int v9fs_release_page(struct address_space *__mapping,
++			     struct page *page, gfp_t gfp)
  {
- 	/*
+ 	if (PagePrivate(page))
+ 		return 0;
 diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index ebcf074bcaaa2..d77c13c213d2d 100644
+index d77c13c213d2d..c27524f35281e 100644
 --- a/fs/afs/dir.c
 +++ b/fs/afs/dir.c
-@@ -41,7 +41,8 @@ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
+@@ -40,7 +40,8 @@ static int afs_symlink(struct inode *dir, struct dentry *dentry,
+ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
  		      struct inode *new_dir, struct dentry *new_dentry,
  		      unsigned int flags);
- static int afs_dir_releasepage(struct page *page, gfp_t gfp_flags);
--static void afs_dir_invalidatepage(struct page *page, unsigned int offset,
-+static void afs_dir_invalidatepage(struct address_space *__mapping,
-+				   struct page *page, unsigned int offset,
+-static int afs_dir_releasepage(struct page *page, gfp_t gfp_flags);
++static int afs_dir_releasepage(struct address_space *__mapping,
++			       struct page *page, gfp_t gfp_flags);
+ static void afs_dir_invalidatepage(struct address_space *__mapping,
+ 				   struct page *page, unsigned int offset,
  				   unsigned int length);
- 
- static int afs_dir_set_page_dirty(struct address_space *__mapping,
-@@ -1990,7 +1991,8 @@ static int afs_dir_releasepage(struct page *page, gfp_t gfp_flags)
-  * - release a page and clean up its private data if offset is 0 (indicating
-  *   the entire page)
+@@ -1971,7 +1972,8 @@ static int afs_rename(struct inode *old_dir, struct dentry *old_dentry,
+  * Release a directory page and clean up its private state if it's not busy
+  * - return true if the page can now be released, false if not
   */
--static void afs_dir_invalidatepage(struct page *page, unsigned int offset,
-+static void afs_dir_invalidatepage(struct address_space *__mapping,
-+				   struct page *page, unsigned int offset,
- 				   unsigned int length)
+-static int afs_dir_releasepage(struct page *page, gfp_t gfp_flags)
++static int afs_dir_releasepage(struct address_space *__mapping,
++			       struct page *page, gfp_t gfp_flags)
  {
  	struct afs_vnode *dvnode = AFS_FS_I(page->mapping->host);
+ 
 diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 908f9e3196251..43edfa65c7ac7 100644
+index 43edfa65c7ac7..496595240f12b 100644
 --- a/fs/afs/file.c
 +++ b/fs/afs/file.c
-@@ -19,7 +19,8 @@
- static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
- static int afs_readpage(struct file *file, struct address_space *__mapping,
- 			struct page *page);
--static void afs_invalidatepage(struct page *page, unsigned int offset,
-+static void afs_invalidatepage(struct address_space *__mapping,
-+			       struct page *page, unsigned int offset,
+@@ -22,7 +22,8 @@ static int afs_readpage(struct file *file, struct address_space *__mapping,
+ static void afs_invalidatepage(struct address_space *__mapping,
+ 			       struct page *page, unsigned int offset,
  			       unsigned int length);
- static int afs_releasepage(struct page *page, gfp_t gfp_flags);
+-static int afs_releasepage(struct page *page, gfp_t gfp_flags);
++static int afs_releasepage(struct address_space *__mapping, struct page *page,
++			   gfp_t gfp_flags);
  
-@@ -607,7 +608,8 @@ static int afs_readpages(struct file *file, struct address_space *mapping,
-  * - release a page and clean up its private data if offset is 0 (indicating
-  *   the entire page)
+ static int afs_readpages(struct file *filp, struct address_space *mapping,
+ 			 struct list_head *pages, unsigned nr_pages);
+@@ -645,7 +646,8 @@ static void afs_invalidatepage(struct address_space *__mapping,
+  * release a page and clean up its private state if it's not busy
+  * - return true if the page can now be released, false if not
   */
--static void afs_invalidatepage(struct page *page, unsigned int offset,
-+static void afs_invalidatepage(struct address_space *__mapping,
-+			       struct page *page, unsigned int offset,
- 			       unsigned int length)
+-static int afs_releasepage(struct page *page, gfp_t gfp_flags)
++static int afs_releasepage(struct address_space *__mapping, struct page *page,
++			   gfp_t gfp_flags)
  {
  	struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
+ 	unsigned long priv;
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index b50c93932dfdf..e4cb73598e3c1 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1935,7 +1935,8 @@ EXPORT_SYMBOL_GPL(blkdev_read_iter);
+  * Try to release a page associated with block device when the system
+  * is under memory pressure.
+  */
+-static int blkdev_releasepage(struct page *page, gfp_t wait)
++static int blkdev_releasepage(struct address_space *__mapping,
++			      struct page *page, gfp_t wait)
+ {
+ 	struct super_block *super = BDEV_I(page->mapping->host)->bdev.bd_super;
+ 
 diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 7f548f9f5ace1..d57d0a6dd2621 100644
+index d57d0a6dd2621..c9d640cfa51cb 100644
 --- a/fs/btrfs/disk-io.c
 +++ b/fs/btrfs/disk-io.c
-@@ -965,7 +965,8 @@ static int btree_releasepage(struct page *page, gfp_t gfp_flags)
- 	return try_release_extent_buffer(page);
+@@ -957,7 +957,8 @@ static int btree_readpage(struct file *file, struct address_space *__mapping,
+ 	return extent_read_full_page(page, btree_get_extent, 0);
  }
  
--static void btree_invalidatepage(struct page *page, unsigned int offset,
-+static void btree_invalidatepage(struct address_space *__mapping,
-+				 struct page *page, unsigned int offset,
- 				 unsigned int length)
+-static int btree_releasepage(struct page *page, gfp_t gfp_flags)
++static int btree_releasepage(struct address_space *__mapping,
++			     struct page *page, gfp_t gfp_flags)
  {
- 	struct extent_io_tree *tree;
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 02569dffe8e14..9877f1222b318 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3632,7 +3632,8 @@ static int __extent_writepage(struct page *page, struct writeback_control *wbc,
- 	pg_offset = offset_in_page(i_size);
- 	if (page->index > end_index ||
- 	   (page->index == end_index && !pg_offset)) {
--		page->mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
-+		page->mapping->a_ops->invalidatepage(MAPPING_NULL, page, 0,
-+						     PAGE_SIZE);
- 		unlock_page(page);
+ 	if (PageWriteback(page) || PageDirty(page))
  		return 0;
- 	}
+@@ -972,7 +973,7 @@ static void btree_invalidatepage(struct address_space *__mapping,
+ 	struct extent_io_tree *tree;
+ 	tree = &BTRFS_I(page->mapping->host)->io_tree;
+ 	extent_invalidatepage(tree, page, offset);
+-	btree_releasepage(page, GFP_NOFS);
++	btree_releasepage(MAPPING_NULL, page, GFP_NOFS);
+ 	if (PagePrivate(page)) {
+ 		btrfs_warn(BTRFS_I(page->mapping->host)->root->fs_info,
+ 			   "page private not zero on page %llu",
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 9f35648ba06d8..062886fc0e750 100644
+index 062886fc0e750..95bf86a871ffb 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -8091,7 +8091,8 @@ static int btrfs_migratepage(struct address_space *mapping,
+@@ -8057,7 +8057,8 @@ static int __btrfs_releasepage(struct page *page, gfp_t gfp_flags)
+ 	return ret;
  }
- #endif
  
--static void btrfs_invalidatepage(struct page *page, unsigned int offset,
-+static void btrfs_invalidatepage(struct address_space *__mapping,
-+				 struct page *page, unsigned int offset,
- 				 unsigned int length)
+-static int btrfs_releasepage(struct page *page, gfp_t gfp_flags)
++static int btrfs_releasepage(struct address_space *__mapping,
++			     struct page *page, gfp_t gfp_flags)
  {
- 	struct inode *inode = page->mapping->host;
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 6fb6cf497feb8..1f0f72b76fc2a 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1499,7 +1499,8 @@ static void discard_buffer(struct buffer_head * bh)
-  * point.  Because the caller is about to free (and possibly reuse) those
-  * blocks on-disk.
-  */
--void block_invalidatepage(struct page *page, unsigned int offset,
-+void block_invalidatepage(struct address_space *__mapping, struct page *page,
-+			  unsigned int offset,
- 			  unsigned int length)
- {
- 	struct buffer_head *head, *bh, *next;
+ 	if (PageWriteback(page) || PageDirty(page))
+ 		return 0;
+@@ -8116,7 +8117,7 @@ static void btrfs_invalidatepage(struct address_space *__mapping,
+ 
+ 	tree = &BTRFS_I(inode)->io_tree;
+ 	if (offset) {
+-		btrfs_releasepage(page, GFP_NOFS);
++		btrfs_releasepage(MAPPING_NULL, page, GFP_NOFS);
+ 		return;
+ 	}
+ 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index b2b2c8f8118e4..ed555b0d48bfa 100644
+index ed555b0d48bfa..f6739a7b9ad35 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -140,7 +140,8 @@ static int ceph_set_page_dirty(struct address_space *__mapping,
-  * dirty page counters appropriately.  Only called if there is private
-  * data on the page.
-  */
--static void ceph_invalidatepage(struct page *page, unsigned int offset,
-+static void ceph_invalidatepage(struct address_space *__mapping,
-+				struct page *page, unsigned int offset,
- 				unsigned int length)
- {
- 	struct inode *inode;
-@@ -708,7 +709,8 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- 	/* is this a partial page at end of file? */
- 	if (page_off >= ceph_wbc.i_size) {
- 		dout("%p page eof %llu\n", page, ceph_wbc.i_size);
--		page->mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
-+		page->mapping->a_ops->invalidatepage(MAPPING_NULL, page, 0,
-+						     PAGE_SIZE);
- 		return 0;
- 	}
+@@ -172,7 +172,8 @@ static void ceph_invalidatepage(struct address_space *__mapping,
+ 	ClearPagePrivate(page);
+ }
  
-@@ -1004,8 +1006,10 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				if ((ceph_wbc.size_stable ||
- 				    page_offset(page) >= i_size_read(inode)) &&
- 				    clear_page_dirty_for_io(page))
--					mapping->a_ops->invalidatepage(page,
--								0, PAGE_SIZE);
-+					mapping->a_ops->invalidatepage(MAPPING_NULL,
-+								       page,
-+								       0,
-+								       PAGE_SIZE);
- 				unlock_page(page);
- 				continue;
- 			}
+-static int ceph_releasepage(struct page *page, gfp_t g)
++static int ceph_releasepage(struct address_space *__mapping,
++			    struct page *page, gfp_t g)
+ {
+ 	dout("%p releasepage %p idx %lu (%sdirty)\n", page->mapping->host,
+ 	     page, page->index, PageDirty(page) ? "" : "not ");
 diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index ca7df2a2dde0f..84cb64821036c 100644
+index 84cb64821036c..38d79a9eafa76 100644
 --- a/fs/cifs/file.c
 +++ b/fs/cifs/file.c
-@@ -4702,7 +4702,8 @@ static int cifs_release_page(struct page *page, gfp_t gfp)
- 	return cifs_fscache_release_page(page, gfp);
+@@ -4694,7 +4694,8 @@ static int cifs_write_begin(struct file *file, struct address_space *mapping,
+ 	return rc;
  }
  
--static void cifs_invalidate_page(struct page *page, unsigned int offset,
-+static void cifs_invalidate_page(struct address_space *__mapping,
-+				 struct page *page, unsigned int offset,
- 				 unsigned int length)
+-static int cifs_release_page(struct page *page, gfp_t gfp)
++static int cifs_release_page(struct address_space *__mapping,
++			     struct page *page, gfp_t gfp)
  {
- 	struct cifsInodeInfo *cifsi = CIFS_I(page->mapping->host);
+ 	if (PagePrivate(page))
+ 		return 0;
 diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index ddaa516c008af..3c0e10d1b4e19 100644
+index 3c0e10d1b4e19..d4082102c180f 100644
 --- a/fs/erofs/super.c
 +++ b/fs/erofs/super.c
-@@ -295,7 +295,8 @@ static int erofs_managed_cache_releasepage(struct page *page, gfp_t gfp_mask)
- 	return ret;
+@@ -281,7 +281,8 @@ static int erofs_fc_parse_param(struct fs_context *fc,
+ #ifdef CONFIG_EROFS_FS_ZIP
+ static const struct address_space_operations managed_cache_aops;
+ 
+-static int erofs_managed_cache_releasepage(struct page *page, gfp_t gfp_mask)
++static int erofs_managed_cache_releasepage(struct address_space *__mapping,
++					   struct page *page, gfp_t gfp_mask)
+ {
+ 	int ret = 1;	/* 0 - busy */
+ 	struct address_space *const mapping = page->mapping;
+@@ -308,7 +309,7 @@ static void erofs_managed_cache_invalidatepage(struct address_space *__mapping,
+ 	DBG_BUGON(stop > PAGE_SIZE || stop < length);
+ 
+ 	if (offset == 0 && stop == PAGE_SIZE)
+-		while (!erofs_managed_cache_releasepage(page, GFP_NOFS))
++		while (!erofs_managed_cache_releasepage(MAPPING_NULL, page, GFP_NOFS))
+ 			cond_resched();
  }
  
--static void erofs_managed_cache_invalidatepage(struct page *page,
-+static void erofs_managed_cache_invalidatepage(struct address_space *__mapping,
-+					       struct page *page,
- 					       unsigned int offset,
- 					       unsigned int length)
- {
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 528eec0b02bf2..27b8d57349d88 100644
+index 27b8d57349d88..2fd0c674136cc 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -135,7 +135,8 @@ static inline int ext4_begin_ordered_truncate(struct inode *inode,
- 						   new_size);
+@@ -3283,7 +3283,8 @@ static void ext4_journalled_invalidatepage(struct address_space *__mapping,
+ 	WARN_ON(__ext4_journalled_invalidatepage(page, offset, length) < 0);
  }
  
--static void ext4_invalidatepage(struct page *page, unsigned int offset,
-+static void ext4_invalidatepage(struct address_space *__mapping,
-+				struct page *page, unsigned int offset,
- 				unsigned int length);
- static int __ext4_journalled_writepage(struct page *page, unsigned int len);
- static int ext4_bh_delay_or_unwritten(handle_t *handle, struct buffer_head *bh);
-@@ -1572,7 +1573,8 @@ static void mpage_release_unused_pages(struct mpage_da_data *mpd,
- 			if (invalidate) {
- 				if (page_mapped(page))
- 					clear_page_dirty_for_io(page);
--				block_invalidatepage(page, 0, PAGE_SIZE);
-+				block_invalidatepage(MAPPING_NULL, page, 0,
-+						     PAGE_SIZE);
- 				ClearPageUptodate(page);
- 			}
- 			unlock_page(page);
-@@ -1981,7 +1983,8 @@ static int ext4_writepage(struct address_space *__mapping, struct page *page,
- 	bool keep_towrite = false;
- 
- 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb)))) {
--		inode->i_mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
-+		inode->i_mapping->a_ops->invalidatepage(MAPPING_NULL, page, 0,
-+							PAGE_SIZE);
- 		unlock_page(page);
- 		return -EIO;
- 	}
-@@ -3242,7 +3245,8 @@ static void ext4_readahead(struct readahead_control *rac)
- 	ext4_mpage_readpages(inode, rac, NULL);
- }
- 
--static void ext4_invalidatepage(struct page *page, unsigned int offset,
-+static void ext4_invalidatepage(struct address_space *__mapping,
-+				struct page *page, unsigned int offset,
- 				unsigned int length)
+-static int ext4_releasepage(struct page *page, gfp_t wait)
++static int ext4_releasepage(struct address_space *__mapping,
++		            struct page *page, gfp_t wait)
  {
- 	trace_ext4_invalidatepage(page, offset, length);
-@@ -3250,7 +3254,7 @@ static void ext4_invalidatepage(struct page *page, unsigned int offset,
- 	/* No journalling happens on data buffers when this function is used */
- 	WARN_ON(page_has_buffers(page) && buffer_jbd(page_buffers(page)));
+ 	journal_t *journal = EXT4_JOURNAL(page->mapping->host);
  
--	block_invalidatepage(page, offset, length);
-+	block_invalidatepage(MAPPING_NULL, page, offset, length);
- }
- 
- static int __ext4_journalled_invalidatepage(struct page *page,
-@@ -3271,7 +3275,8 @@ static int __ext4_journalled_invalidatepage(struct page *page,
- }
- 
- /* Wrapper for aops... */
--static void ext4_journalled_invalidatepage(struct page *page,
-+static void ext4_journalled_invalidatepage(struct address_space *__mapping,
-+					   struct page *page,
- 					   unsigned int offset,
- 					   unsigned int length)
- {
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 12350175133aa..b13e430e62435 100644
+index b13e430e62435..c6444ffd7d6e9 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -3690,7 +3690,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	return err;
+@@ -3720,7 +3720,8 @@ void f2fs_invalidate_page(struct address_space *__mapping, struct page *page,
+ 	f2fs_clear_page_private(page);
  }
  
--void f2fs_invalidate_page(struct page *page, unsigned int offset,
-+void f2fs_invalidate_page(struct address_space *__mapping, struct page *page,
-+							unsigned int offset,
- 							unsigned int length)
+-int f2fs_release_page(struct page *page, gfp_t wait)
++int f2fs_release_page(struct address_space *__mapping, struct page *page,
++		      gfp_t wait)
  {
- 	struct inode *inode = page->mapping->host;
+ 	/* If this is dirty page, keep PagePrivate */
+ 	if (PageDirty(page))
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d9e52a7f3702f..eb6f9aa4007c6 100644
+index eb6f9aa4007c6..6bb30d2192842 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -3469,8 +3469,9 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 				struct writeback_control *wbc,
- 				enum iostat_type io_type,
- 				int compr_blocks);
--void f2fs_invalidate_page(struct page *page, unsigned int offset,
--			unsigned int length);
-+void f2fs_invalidate_page(struct address_space *__mapping, struct page *page,
-+			  unsigned int offset,
-+			  unsigned int length);
- int f2fs_release_page(struct page *page, gfp_t wait);
+@@ -3472,7 +3472,8 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
+ void f2fs_invalidate_page(struct address_space *__mapping, struct page *page,
+ 			  unsigned int offset,
+ 			  unsigned int length);
+-int f2fs_release_page(struct page *page, gfp_t wait);
++int f2fs_release_page(struct address_space *__mapping, struct page *page,
++		      gfp_t wait);
  #ifdef CONFIG_MIGRATION
  int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+ 			struct page *page, enum migrate_mode mode);
 diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 8911771f95c5c..0c6d2e99a5243 100644
+index 0c6d2e99a5243..77efc65a412ec 100644
 --- a/fs/gfs2/aops.c
 +++ b/fs/gfs2/aops.c
-@@ -103,7 +103,8 @@ static int gfs2_writepage(struct address_space *__mapping, struct page *page,
- 	/* Is the page fully outside i_size? (truncate in progress) */
- 	offset = i_size & (PAGE_SIZE-1);
- 	if (page->index > end_index || (page->index == end_index && !offset)) {
--		page->mapping->a_ops->invalidatepage(page, 0, PAGE_SIZE);
-+		page->mapping->a_ops->invalidatepage(MAPPING_NULL, page, 0,
-+						     PAGE_SIZE);
- 		goto out;
- 	}
- 
-@@ -680,7 +681,8 @@ static void gfs2_discard(struct gfs2_sbd *sdp, struct buffer_head *bh)
- 	unlock_buffer(bh);
- }
- 
--static void gfs2_invalidatepage(struct page *page, unsigned int offset,
-+static void gfs2_invalidatepage(struct address_space *__mapping,
-+				struct page *page, unsigned int offset,
- 				unsigned int length)
- {
- 	struct gfs2_sbd *sdp = GFS2_SB(page->mapping->host);
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 26f7fe7c80adc..b94729b7088a7 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -494,7 +494,8 @@ iomap_releasepage(struct page *page, gfp_t gfp_mask)
- EXPORT_SYMBOL_GPL(iomap_releasepage);
- 
- void
--iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
-+iomap_invalidatepage(struct address_space *__mapping, struct page *page,
-+		     unsigned int offset, unsigned int len)
- {
- 	trace_iomap_invalidatepage(page->mapping->host, offset, len);
- 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index a6e48e733d3a6..5be751fa11e0b 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -557,7 +557,8 @@ static int metapage_releasepage(struct page *page, gfp_t gfp_mask)
- 	return ret;
- }
- 
--static void metapage_invalidatepage(struct page *page, unsigned int offset,
-+static void metapage_invalidatepage(struct address_space *__mapping,
-+				    struct page *page, unsigned int offset,
- 				    unsigned int length)
- {
- 	BUG_ON(offset || length < PAGE_SIZE);
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 899feec2eb683..f4b6db18e62b5 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1172,8 +1172,9 @@ int noop_set_page_dirty(struct address_space *__mapping, struct page *page)
- }
- EXPORT_SYMBOL_GPL(noop_set_page_dirty);
- 
--void noop_invalidatepage(struct page *page, unsigned int offset,
--		unsigned int length)
-+void noop_invalidatepage(struct address_space *__mapping, struct page *page,
-+			 unsigned int offset,
-+			 unsigned int length)
- {
- 	/*
- 	 * There is no page cache to invalidate in the dax case, however
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 02e2112d77f86..381288d686386 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -405,7 +405,8 @@ static int nfs_write_end(struct file *file, struct address_space *mapping,
-  * - Called if either PG_private or PG_fscache is set on the page
-  * - Caller holds page lock
+@@ -723,7 +723,8 @@ static void gfs2_invalidatepage(struct address_space *__mapping,
+  * Returns: 1 if the page was put or else 0
   */
--static void nfs_invalidate_page(struct page *page, unsigned int offset,
-+static void nfs_invalidate_page(struct address_space *__mapping,
-+				struct page *page, unsigned int offset,
- 				unsigned int length)
+ 
+-int gfs2_releasepage(struct page *page, gfp_t gfp_mask)
++int gfs2_releasepage(struct address_space *__mapping, struct page *page,
++		     gfp_t gfp_mask)
  {
- 	dfprintk(PAGECACHE, "NFS: invalidate_page(%p, %u, %u)\n",
-diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-index 3d3a6b6bc6717..a9fe68e4c89b5 100644
---- a/fs/ntfs/aops.c
-+++ b/fs/ntfs/aops.c
-@@ -1356,7 +1356,7 @@ static int ntfs_writepage(struct address_space *__mapping, struct page *page,
- 		 * The page may have dirty, unmapped buffers.  Make them
- 		 * freeable here, so the page does not leak.
- 		 */
--		block_invalidatepage(page, 0, PAGE_SIZE);
-+		block_invalidatepage(MAPPING_NULL, page, 0, PAGE_SIZE);
- 		unlock_page(page);
- 		ntfs_debug("Write outside i_size - truncated?");
- 		return 0;
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index f463cfb435292..6ea0ec45754dc 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -448,9 +448,10 @@ static int orangefs_write_end(struct file *file, struct address_space *mapping,
- 	return copied;
+ 	struct address_space *mapping = page->mapping;
+ 	struct gfs2_sbd *sdp = gfs2_mapping2sbd(mapping);
+diff --git a/fs/gfs2/inode.h b/fs/gfs2/inode.h
+index b52ecf4ffe634..f1e878353cebb 100644
+--- a/fs/gfs2/inode.h
++++ b/fs/gfs2/inode.h
+@@ -12,7 +12,8 @@
+ #include <linux/mm.h>
+ #include "util.h"
+ 
+-extern int gfs2_releasepage(struct page *page, gfp_t gfp_mask);
++extern int gfs2_releasepage(struct address_space *__mapping,
++			    struct page *page, gfp_t gfp_mask);
+ extern int gfs2_internal_read(struct gfs2_inode *ip,
+ 			      char *buf, loff_t *pos, unsigned size);
+ extern void gfs2_set_aops(struct inode *inode);
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 101cc5e10524f..8986c8a0a23b2 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -72,7 +72,8 @@ static sector_t hfs_bmap(struct address_space *mapping, sector_t block)
+ 	return generic_block_bmap(mapping, block, hfs_get_block);
  }
  
--static void orangefs_invalidatepage(struct page *page,
--				 unsigned int offset,
--				 unsigned int length)
-+static void orangefs_invalidatepage(struct address_space *__mapping,
-+				    struct page *page,
-+				    unsigned int offset,
-+				    unsigned int length)
- {
- 	struct orangefs_write_range *wr;
- 	wr = (struct orangefs_write_range *)page_private(page);
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 9ef4365c07fdd..d35c03a7d3f5b 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -3156,7 +3156,8 @@ static int invalidatepage_can_drop(struct inode *inode, struct buffer_head *bh)
- }
- 
- /* clm -- taken from fs/buffer.c:block_invalidate_page */
--static void reiserfs_invalidatepage(struct page *page, unsigned int offset,
-+static void reiserfs_invalidatepage(struct address_space *__mapping,
-+				    struct page *page, unsigned int offset,
- 				    unsigned int length)
- {
- 	struct buffer_head *head, *bh, *next;
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index 5af8c311d38f0..11ed42c4859f0 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1288,7 +1288,8 @@ int ubifs_setattr(struct dentry *dentry, struct iattr *attr)
- 	return err;
- }
- 
--static void ubifs_invalidatepage(struct page *page, unsigned int offset,
-+static void ubifs_invalidatepage(struct address_space *__mapping,
-+				 struct page *page, unsigned int offset,
- 				 unsigned int length)
+-static int hfs_releasepage(struct page *page, gfp_t mask)
++static int hfs_releasepage(struct address_space *__mapping, struct page *page,
++			   gfp_t mask)
  {
  	struct inode *inode = page->mapping->host;
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 6827f6226499a..24cd33c5f3466 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -548,7 +548,7 @@ xfs_discard_page(
- 	if (error && !XFS_FORCED_SHUTDOWN(mp))
- 		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
- out_invalidate:
--	iomap_invalidatepage(page, 0, PAGE_SIZE);
-+	iomap_invalidatepage(MAPPING_NULL, page, 0, PAGE_SIZE);
+ 	struct super_block *sb = inode->i_sb;
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 1654ee206e7e5..0534280978457 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -66,7 +66,8 @@ static sector_t hfsplus_bmap(struct address_space *mapping, sector_t block)
+ 	return generic_block_bmap(mapping, block, hfsplus_get_block);
  }
  
- static const struct iomap_writeback_ops xfs_writeback_ops = {
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 07fe6d613ed9f..0902142e93f0d 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -214,7 +214,8 @@ extern int buffer_heads_over_limit;
-  * Generic address_space_operations implementations for buffer_head-backed
-  * address_spaces.
+-static int hfsplus_releasepage(struct page *page, gfp_t mask)
++static int hfsplus_releasepage(struct address_space *__mapping,
++			       struct page *page, gfp_t mask)
+ {
+ 	struct inode *inode = page->mapping->host;
+ 	struct super_block *sb = inode->i_sb;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index b94729b7088a7..091f6656f3d6b 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -476,7 +476,8 @@ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+ 
+ int
+-iomap_releasepage(struct page *page, gfp_t gfp_mask)
++iomap_releasepage(struct address_space *__mapping, struct page *page,
++		  gfp_t gfp_mask)
+ {
+ 	trace_iomap_releasepage(page->mapping->host, page_offset(page),
+ 			PAGE_SIZE);
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 5be751fa11e0b..435b55faca4ff 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -528,7 +528,8 @@ static int metapage_readpage(struct file *fp, struct address_space *__mapping,
+ 	return -EIO;
+ }
+ 
+-static int metapage_releasepage(struct page *page, gfp_t gfp_mask)
++static int metapage_releasepage(struct address_space *__mapping,
++				struct page *page, gfp_t gfp_mask)
+ {
+ 	struct metapage *mp;
+ 	int ret = 1;
+@@ -565,7 +566,7 @@ static void metapage_invalidatepage(struct address_space *__mapping,
+ 
+ 	BUG_ON(PageWriteback(page));
+ 
+-	metapage_releasepage(page, 0);
++	metapage_releasepage(MAPPING_NULL, page, 0);
+ }
+ 
+ const struct address_space_operations jfs_metapage_aops = {
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 381288d686386..ddfe95d3da057 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -426,7 +426,8 @@ static void nfs_invalidate_page(struct address_space *__mapping,
+  * - Caller holds page lock
+  * - Return true (may release page) or false (may not)
   */
--void block_invalidatepage(struct page *page, unsigned int offset,
-+void block_invalidatepage(struct address_space *__mapping, struct page *page,
-+			  unsigned int offset,
- 			  unsigned int length);
- int block_write_full_page(struct page *page, get_block_t *get_block,
- 				struct writeback_control *wbc);
+-static int nfs_release_page(struct page *page, gfp_t gfp)
++static int nfs_release_page(struct address_space *__mapping,
++			    struct page *page, gfp_t gfp)
+ {
+ 	dfprintk(PAGECACHE, "NFS: release_page(%p)\n", page);
+ 
+diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
+index c597a104e0af4..fdd3c6a55d817 100644
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -501,7 +501,8 @@ static sector_t ocfs2_bmap(struct address_space *mapping, sector_t block)
+ 	return status;
+ }
+ 
+-static int ocfs2_releasepage(struct page *page, gfp_t wait)
++static int ocfs2_releasepage(struct address_space *__mapping,
++			     struct page *page, gfp_t wait)
+ {
+ 	if (!page_has_buffers(page))
+ 		return 0;
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 6ea0ec45754dc..1534dc2df6e5c 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -520,7 +520,8 @@ static void orangefs_invalidatepage(struct address_space *__mapping,
+ 	orangefs_launder_page(page);
+ }
+ 
+-static int orangefs_releasepage(struct page *page, gfp_t foo)
++static int orangefs_releasepage(struct address_space *__mapping,
++				struct page *page, gfp_t foo)
+ {
+ 	return !PagePrivate(page);
+ }
+diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
+index d35c03a7d3f5b..efd149cc897a9 100644
+--- a/fs/reiserfs/inode.c
++++ b/fs/reiserfs/inode.c
+@@ -3230,7 +3230,8 @@ static int reiserfs_set_page_dirty(struct address_space *__mapping,
+  * even in -o notail mode, we can't be sure an old mount without -o notail
+  * didn't create files with tails.
+  */
+-static int reiserfs_releasepage(struct page *page, gfp_t unused_gfp_flags)
++static int reiserfs_releasepage(struct address_space *__mapping,
++				struct page *page, gfp_t unused_gfp_flags)
+ {
+ 	struct inode *inode = page->mapping->host;
+ 	struct reiserfs_journal *j = SB_JOURNAL(inode->i_sb);
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 11ed42c4859f0..7e00370ca3ed1 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -1486,7 +1486,8 @@ static int ubifs_migrate_page(struct address_space *mapping,
+ }
+ #endif
+ 
+-static int ubifs_releasepage(struct page *page, gfp_t unused_gfp_flags)
++static int ubifs_releasepage(struct address_space *__mapping,
++			     struct page *page, gfp_t unused_gfp_flags)
+ {
+ 	struct inode *inode = page->mapping->host;
+ 	struct ubifs_info *c = inode->i_sb->s_fs_info;
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0b1e2c231dcf8..b471e82546001 100644
+index b471e82546001..989e505de9182 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -397,7 +397,8 @@ struct address_space_operations {
- 
- 	/* Unfortunately this kludge is needed for FIBMAP. Don't use it */
+@@ -399,7 +399,7 @@ struct address_space_operations {
  	sector_t (*bmap)(struct address_space *, sector_t);
--	void (*invalidatepage) (struct page *, unsigned int, unsigned int);
-+	void (*invalidatepage) (struct address_space *, struct page *,
-+				unsigned int, unsigned int);
- 	int (*releasepage) (struct page *, gfp_t);
+ 	void (*invalidatepage) (struct address_space *, struct page *,
+ 				unsigned int, unsigned int);
+-	int (*releasepage) (struct page *, gfp_t);
++	int (*releasepage) (struct address_space *, struct page *, gfp_t);
  	void (*freepage)(struct page *);
  	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
-@@ -3225,8 +3226,9 @@ extern void simple_recursive_removal(struct dentry *,
- extern int noop_fsync(struct file *, loff_t, loff_t, int);
- extern int noop_set_page_dirty(struct address_space *__mapping,
- 			       struct page *page);
--extern void noop_invalidatepage(struct page *page, unsigned int offset,
--		unsigned int length);
-+extern void noop_invalidatepage(struct address_space *__mapping,
-+				struct page *page, unsigned int offset,
-+				unsigned int length);
- extern ssize_t noop_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
- extern int simple_empty(struct dentry *);
- extern int simple_readpage(struct file *file, struct address_space *__mapping,
+ 	/*
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 781f22ee0a53b..45f23d2268365 100644
+index 45f23d2268365..cb4b207974756 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -160,8 +160,9 @@ int iomap_set_page_dirty(struct address_space *__mapping, struct page *page);
+@@ -159,7 +159,8 @@ void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+ int iomap_set_page_dirty(struct address_space *__mapping, struct page *page);
  int iomap_is_partially_uptodate(struct page *page, unsigned long from,
  		unsigned long count);
- int iomap_releasepage(struct page *page, gfp_t gfp_mask);
--void iomap_invalidatepage(struct page *page, unsigned int offset,
--		unsigned int len);
-+void iomap_invalidatepage(struct address_space *__mapping, struct page *page,
-+			  unsigned int offset,
-+			  unsigned int len);
- #ifdef CONFIG_MIGRATION
- int iomap_migrate_page(struct address_space *mapping, struct page *newpage,
- 		struct page *page, enum migrate_mode mode);
-diff --git a/mm/truncate.c b/mm/truncate.c
-index dd9ebc1da3566..e26b232b66c01 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -152,7 +152,8 @@ static int invalidate_exceptional_entry2(struct address_space *mapping,
- void do_invalidatepage(struct page *page, unsigned int offset,
- 		       unsigned int length)
- {
--	void (*invalidatepage)(struct page *, unsigned int, unsigned int);
-+	void (*invalidatepage)(struct address_space *, struct page *,
-+		               unsigned int, unsigned int);
+-int iomap_releasepage(struct page *page, gfp_t gfp_mask);
++int iomap_releasepage(struct address_space *__mapping, struct page *page,
++		      gfp_t gfp_mask);
+ void iomap_invalidatepage(struct address_space *__mapping, struct page *page,
+ 			  unsigned int offset,
+ 			  unsigned int len);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index b67a253e5e6c7..eccd5d0554851 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3694,7 +3694,8 @@ int try_to_release_page(struct page *page, gfp_t gfp_mask)
+ 		return 0;
  
- 	invalidatepage = page->mapping->a_ops->invalidatepage;
- #ifdef CONFIG_BLOCK
-@@ -160,7 +161,7 @@ void do_invalidatepage(struct page *page, unsigned int offset,
- 		invalidatepage = block_invalidatepage;
- #endif
- 	if (invalidatepage)
--		(*invalidatepage)(page, offset, length);
-+		(*invalidatepage)(MAPPING_NULL, page, offset, length);
+ 	if (mapping && mapping->a_ops->releasepage)
+-		return mapping->a_ops->releasepage(page, gfp_mask);
++		return mapping->a_ops->releasepage(MAPPING_NULL, page,
++						   gfp_mask);
+ 	return try_to_free_buffers(page);
  }
  
- /*
 -- 
 2.26.2
 
