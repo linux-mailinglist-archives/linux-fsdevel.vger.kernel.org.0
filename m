@@ -2,127 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB22286154
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 16:36:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 873A828616A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 16:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbgJGOgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 10:36:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:35091 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728535AbgJGOgL (ORCPT
+        id S1728679AbgJGOlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 10:41:49 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38855 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728535AbgJGOls (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 10:36:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602081370;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=il3YpmjtKhASkC/ZXwr1418et/cRzf+XfCkFjJHc+lU=;
-        b=EzSiF392/9emQOiFtSmyXdKrryr+K/qakpwJkBNR/My/aCySqFZXfyxwlxo2YngZbn1IgN
-        8hBbExhQxz/TRWoLUn49vwZUOW1n0iwMUpEgzyATThuMySRF30n5XUvLvyY74Wy6vI6+wY
-        J/7eXcwpaPCuJ2YEEX/RjuR+DGsnLYI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-398-67SMbqtWOMKVh2DbQQ8LXw-1; Wed, 07 Oct 2020 10:36:06 -0400
-X-MC-Unique: 67SMbqtWOMKVh2DbQQ8LXw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5322F84E246;
-        Wed,  7 Oct 2020 14:35:10 +0000 (UTC)
-Received: from bfoster.redhat.com (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C21F25D9DD;
-        Wed,  7 Oct 2020 14:35:09 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH] xfs: flush new eof page on truncate to avoid post-eof corruption
-Date:   Wed,  7 Oct 2020 10:35:09 -0400
-Message-Id: <20201007143509.669729-1-bfoster@redhat.com>
+        Wed, 7 Oct 2020 10:41:48 -0400
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 097EfEdZ005736
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 7 Oct 2020 10:41:15 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 3E8A6420107; Wed,  7 Oct 2020 10:41:14 -0400 (EDT)
+Date:   Wed, 7 Oct 2020 10:41:14 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Ralph Campbell <rcampbell@nvidia.com>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] ext4/xfs: add page refcount helper
+Message-ID: <20201007144114.GB235506@mit.edu>
+References: <20201006230930.3908-1-rcampbell@nvidia.com>
+ <CAPcyv4gYtCmzPOWErYOkCCfD0ZvLcrgfR8n2kG3QPMww9B0gyg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4gYtCmzPOWErYOkCCfD0ZvLcrgfR8n2kG3QPMww9B0gyg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It is possible to expose non-zeroed post-EOF data in XFS if the new
-EOF page is dirty, backed by an unwritten block and the truncate
-happens to race with writeback. iomap_truncate_page() will not zero
-the post-EOF portion of the page if the underlying block is
-unwritten. The subsequent call to truncate_setsize() will, but
-doesn't dirty the page. Therefore, if writeback happens to complete
-after iomap_truncate_page() (so it still sees the unwritten block)
-but before truncate_setsize(), the cached page becomes inconsistent
-with the on-disk block. A mapped read after the associated page is
-reclaimed or invalidated exposes non-zero post-EOF data.
+On Tue, Oct 06, 2020 at 07:40:05PM -0700, Dan Williams wrote:
+> On Tue, Oct 6, 2020 at 4:09 PM Ralph Campbell <rcampbell@nvidia.com> wrote:
+> >
+> > There are several places where ZONE_DEVICE struct pages assume a reference
+> > count == 1 means the page is idle and free. Instead of open coding this,
+> > add a helper function to hide this detail.
+> >
+> > Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >
+> > I'm resending this as a separate patch since I think it is ready to
+> > merge. Originally, this was part of an RFC and is unchanged from v3:
+> > https://lore.kernel.org/linux-mm/20201001181715.17416-1-rcampbell@nvidia.com
+> >
+> > It applies cleanly to linux-5.9.0-rc7-mm1 but doesn't really
+> > depend on anything, just simple merge conflicts when applied to
+> > other trees.
+> > I'll let the various maintainers decide which tree and when to merge.
+> > It isn't urgent since it is a clean up patch.
+> 
+> Thanks Ralph, it looks good to me. Jan, or Ted care to ack? I don't
+> have much else pending for dax at the moment as Andrew is carrying my
+> dax updates for this cycle. Andrew please take this into -mm if you
+> get a chance. Otherwise I'll cycle back to it when some other dax
+> updates arrive in my queue.
 
-For example, consider the following sequence when run on a kernel
-modified to explicitly flush the new EOF page within the race
-window:
-
-$ xfs_io -fc "falloc 0 4k" -c fsync /mnt/file
-$ xfs_io -c "pwrite 0 4k" -c "truncate 1k" /mnt/file
-  ...
-$ xfs_io -c "mmap 0 4k" -c "mread -v 1k 8" /mnt/file
-00000400:  00 00 00 00 00 00 00 00  ........
-$ umount /mnt/; mount <dev> /mnt/
-$ xfs_io -c "mmap 0 4k" -c "mread -v 1k 8" /mnt/file
-00000400:  cd cd cd cd cd cd cd cd  ........
-
-Update xfs_setattr_size() to explicitly flush the new EOF page prior
-to the page truncate to ensure iomap has the latest state of the
-underlying block.
-
-Fixes: 68a9f5e7007c ("xfs: implement iomap based buffered write path")
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
-
-This patch is intentionally simplistic because I wanted to get some
-thoughts on a proper fix and at the same time consider something easily
-backportable. The iomap behavior seems rather odd to me in general,
-particularly if we consider the same kind of behavior can occur on
-file-extending writes. It's just not a user observable problem in that
-case because a sub-page write of a current EOF page (backed by an
-unwritten block) will zero fill the rest of the page at write time
-(before the zero range essentially skips it due to the unwritten block).
-It's not totally clear to me if that's an intentional design
-characteristic of iomap or something we should address.
-
-It _seems_ like the more appropriate fix is that iomap truncate page
-should at least accommodate a dirty page over an unwritten block and
-modify the page (or perhaps just unconditionally do a buffered write on
-a non-aligned truncate, similar to what block_truncate_page() does). For
-example, we could push the UNWRITTEN check from iomap_zero_range_actor()
-down into iomap_zero(), actually check for an existing page there, and
-then either zero it or skip out if none exists. Thoughts?
-
-Brian
-
- fs/xfs/xfs_iops.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 80a13c8561d8..3ef2e77b454e 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -911,6 +911,16 @@ xfs_setattr_size(
- 		error = iomap_zero_range(inode, oldsize, newsize - oldsize,
- 				&did_zeroing, &xfs_buffered_write_iomap_ops);
- 	} else {
-+		/*
-+		 * iomap won't detect a dirty page over an unwritten block and
-+		 * subsequently skips zeroing the newly post-eof portion of the
-+		 * page. Flush the new EOF to convert the block before the
-+		 * pagecache truncate.
-+		 */
-+		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
-+						     newsize);
-+		if (error)
-+			return error;
- 		error = iomap_truncate_page(inode, newsize, &did_zeroing,
- 				&xfs_buffered_write_iomap_ops);
- 	}
--- 
-2.25.4
-
+Acked-by: Theodore Ts'o <tytso@mit.edu> # for fs/ext4/inode.c
