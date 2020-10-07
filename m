@@ -2,95 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1A1285BCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 11:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8304285CFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 12:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgJGJUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 05:20:16 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:33865 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbgJGJUP (ORCPT
+        id S1728036AbgJGKgn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 06:36:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52118 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727773AbgJGKgn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 05:20:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1602062415; x=1633598415;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mVXJD/HmBXUaYpJmBbZLOsC8B5CT7o9dSHz18WsTBTc=;
-  b=eoxDmeokIVo4lT3DDq1pV+qzXG1DvCUSuoAoyNOsJJNZIO/keNaKxRoB
-   n+a5X4CU2R6YnesoNWKeM4i2+7PMaM1TLlAdCijVJ/A4IbN48PGOsCg1s
-   yed0eYxVU1ttDuhIBPZrt27yYYLfc5z51esaNYUS6Iv8eQB2BUgGyoTky
-   OHEkqf31kfTfBaH+FOE3NVmbDebculBZbugjXYwp/OCXsz1Gkic/gY8o9
-   Yz+b2PNEkWIjkh5BylUhGb+8bJ1H8aXuhEvC9nEZ6PZWrkpqZT037V+5j
-   p4JHW6UAc9xUXjMZ8wC5pWF6p0DfhR64qrpYWvVjr+clwdnoMs/HE+nBp
-   A==;
-IronPort-SDR: bzjQ4W5P1tJHI+POUaYuJlsBSMhVCAafeU1RdaiEBVnMsF2I/8c7EHVYfa/ckn6N8DBaQ8rRXd
- OGuFzTIxrUhnp/NvXv4UWM8p6zx+m8NfRbe3JvXLmVIpg5WhS2EPYC9uniobJb37M+lKW5XF5F
- bwIcYNIpa4VU57lUF+7IN/X/PCBA3HR9kpGqPi13EoVhd+bTLTB1JmL+OLwaKR52zE2cp1h9Pb
- rAdm5iHvlSZpTi1OmUsGt3j4QNjocjNvXhuUweZ1bEaW0H75ZU7559qQJ0yaAYjwFFBBnFgvug
- Lps=
-X-IronPort-AV: E=Sophos;i="5.77,346,1596470400"; 
-   d="scan'208";a="149317682"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Oct 2020 17:20:15 +0800
-IronPort-SDR: xEwFrTzpufW/QOgDjkWGmbnobEGC3jpvVCw4bhjzC0JtiqMq/cLZObQleRHPkOv0W11a1qDkvH
- L1fTA1tTnZhw==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 02:06:04 -0700
-IronPort-SDR: r4kM4InNEEBYrVaYRbj3eDNt1IZnjRKUatK6JfPH4+a1n7AHPAjbE1+ey93M59C4K0MVR2PFND
- MLZKuZXusU2Q==
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 07 Oct 2020 02:20:13 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH] block: soft limit zone-append sectors as well
-Date:   Wed,  7 Oct 2020 18:20:05 +0900
-Message-Id: <2358a1f93c2c2f9f7564eb77334a7ea679453deb.1602062387.git.johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.26.2
+        Wed, 7 Oct 2020 06:36:43 -0400
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1315AC061755;
+        Wed,  7 Oct 2020 03:36:43 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4C5rNk6tpzzKmh1;
+        Wed,  7 Oct 2020 12:36:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id GCodGCpHNCIN; Wed,  7 Oct 2020 12:36:32 +0200 (CEST)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>, stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] openat2: reject RESOLVE_BENEATH|RESOLVE_IN_ROOT
+Date:   Wed,  7 Oct 2020 21:36:08 +1100
+Message-Id: <20201007103608.17349-1-cyphar@cyphar.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -7.86 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 94FA014AF
+X-Rspamd-UID: 962eff
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Martin rightfully noted that for normal filesystem IO we have soft limits
-in place, to prevent them from getting too big and not lead to
-unpredictable latencies. For zone append we only have the hardware limit
-in place.
+This was an oversight in the original implementation, as it makes no
+sense to specify both scoping flags to the same openat2(2) invocation
+(before this patch, the result of such an invocation was equivalent to
+RESOLVE_IN_ROOT being ignored).
 
-Cap the max sectors we submit via zone-append to the maximal number of
-sectors if the second limit is lower.
+This is a userspace-visible ABI change, but the only user of openat2(2)
+at the moment is LXC which doesn't specify both flags and so no
+userspace programs will break as a result.
 
-Link: https://lore.kernel.org/linux-btrfs/yq1k0w8g3rw.fsf@ca-mkp.ca.oracle.com
-Reported-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc: <stable@vger.kernel.org> # v5.6+
+Fixes: fddb5d430ad9 ("open: introduce openat2(2) syscall")
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 ---
- include/linux/blkdev.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/open.c                                      | 4 ++++
+ tools/testing/selftests/openat2/openat2_test.c | 8 +++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index cf80e61b4c5e..967cd76f16d4 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1406,7 +1406,10 @@ static inline unsigned int queue_max_segment_size(const struct request_queue *q)
+diff --git a/fs/open.c b/fs/open.c
+index 9af548fb841b..4d7537ae59df 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1010,6 +1010,10 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
+ 		return -EINVAL;
  
- static inline unsigned int queue_max_zone_append_sectors(const struct request_queue *q)
++	/* Scoping flags are mutually exclusive. */
++	if ((how->resolve & RESOLVE_BENEATH) && (how->resolve & RESOLVE_IN_ROOT))
++		return -EINVAL;
++
+ 	/* Deal with the mode. */
+ 	if (WILL_CREATE(flags)) {
+ 		if (how->mode & ~S_IALLUGO)
+diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
+index b386367c606b..381d874cce99 100644
+--- a/tools/testing/selftests/openat2/openat2_test.c
++++ b/tools/testing/selftests/openat2/openat2_test.c
+@@ -155,7 +155,7 @@ struct flag_test {
+ 	int err;
+ };
+ 
+-#define NUM_OPENAT2_FLAG_TESTS 23
++#define NUM_OPENAT2_FLAG_TESTS 24
+ 
+ void test_openat2_flags(void)
  {
--	return q->limits.max_zone_append_sectors;
-+
-+	struct queue_limits *l = q->limits;
-+
-+	return min(l->max_zone_append_sectors, l->max_sectors);
- }
+@@ -210,6 +210,12 @@ void test_openat2_flags(void)
+ 		  .how.flags = O_TMPFILE | O_RDWR,
+ 		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
  
- static inline unsigned queue_logical_block_size(const struct request_queue *q)
++		/* ->resolve flags must not conflict. */
++		{ .name = "incompatible resolve flags (BENEATH | IN_ROOT)",
++		  .how.flags = O_RDONLY,
++		  .how.resolve = RESOLVE_BENEATH | RESOLVE_IN_ROOT,
++		  .err = -EINVAL },
++
+ 		/* ->resolve must only contain RESOLVE_* flags. */
+ 		{ .name = "invalid how.resolve and O_RDONLY",
+ 		  .how.flags = O_RDONLY,
 -- 
-2.26.2
+2.28.0
 
