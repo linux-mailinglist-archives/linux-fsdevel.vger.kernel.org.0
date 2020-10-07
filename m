@@ -2,93 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7A71286A9C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 00:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42A9B286AB6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 00:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbgJGWAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 18:00:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45478 "EHLO
+        id S1728775AbgJGWJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 18:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728742AbgJGWAM (ORCPT
+        with ESMTP id S1726463AbgJGWJT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 18:00:12 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22E6BC0613D2
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Oct 2020 15:00:12 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id e22so5143741ejr.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Oct 2020 15:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lT3B2ypuGco/P409+8M6gpuF12PaIQWc3S2n+DY8zro=;
-        b=Ncyj5HRyOHiv/PCCXeiIOREYqhKi9W7Kz+qYVEQlXmRkJQFhr4mPMx/M7DMnm6YtOW
-         DUL/0irEJWJ1u3Tn9PvlSn9dTNsY5IVKDzbC9mmRlGyJusWXyE84FSrRMHnC7+4R/s2K
-         JlmM8UKi1+egfyf0npBB325upNgCiCd5lLpYz+Qt+xyrV5CQrPP3johyniRb8z+kgaE1
-         GT+P5nqT7wPGuzMyK7J2sXKrVtMSHN7U9uJt8nssAD4vXadYIDhLD2lwmqXOOlH+//Pq
-         Hz5f0mZ598OqpvKpcokOiVFhrrXoK3FDSB6Diw9PKUvJFn/Wdx3dxk6fca3QGoU6OwHC
-         HCLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lT3B2ypuGco/P409+8M6gpuF12PaIQWc3S2n+DY8zro=;
-        b=QPtymkAz/HN1171IQnzq3TPBQSUjgcQf1IXGqemcQAWhjGrg9EYnJlB3IW/NdLR5XU
-         NvVmPFwa94nVbytJ2GtaPZuMqBoYvkwoIMsmwyYDZMEbbLtWFpTHMZFfJLV8ACyZmjin
-         PuCugzNkPgNRUgp9wxZl6NbfWdzoAp8isCIgFK7g8z5jxT+bBET5hGMTilnUSBe7QmWl
-         13aX6AEiBShM3X8gZ1M7ZX2vKxgJOSbUh45qR3yTs+Ldgj3v0P1cf3+ivqA73/ZlFGyM
-         8pechDTFRr5A95QJWKFX0n0bCzfL6bhXvgwLsD7k8syeUuPgBiBdk4Oo4NKepyYIlQML
-         z1jA==
-X-Gm-Message-State: AOAM532B14THwdbP7qeIXw9jR6YO+LmkyTuoiZtw/B16mqzQ7DeBqlol
-        MEwhm0RFKjxnFlFlfVmjgjgbYH/Hs284mfLNsF87WQ==
-X-Google-Smtp-Source: ABdhPJwku5mxYKwAyqqbDYZNawCeRw0Upn7X7sfFjzI/V4bf8n3ZT6QOAaXMTZWtxx4JzYTkY6EwLAJYedQOql+eTOc=
-X-Received: by 2002:a17:906:4701:: with SMTP id y1mr5413376ejq.341.1602108010723;
- Wed, 07 Oct 2020 15:00:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201006230930.3908-1-rcampbell@nvidia.com> <20201007082517.GC6984@quack2.suse.cz>
-In-Reply-To: <20201007082517.GC6984@quack2.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 7 Oct 2020 14:59:59 -0700
-Message-ID: <CAPcyv4j=q4n1PDW5vwOFpkeDEoDv2_xXBL+xoGsRwPn_ej=hnA@mail.gmail.com>
-Subject: Re: [PATCH] ext4/xfs: add page refcount helper
-To:     Jan Kara <jack@suse.cz>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        Wed, 7 Oct 2020 18:09:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78EC3C061755;
+        Wed,  7 Oct 2020 15:09:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FEyhRMHjvO7n4JR1kZOaUpAum7aLXI1/AmH/kM8Di7Q=; b=jEQFarLVGmJvJtUMk7xjGMLhHE
+        ksIEFR5pAQc9z0QNSgqcXKyCc2ixuFlwwpafyim20TV/jPW8Rc8fYoMlVPDDzNmRe4+4Cq90ACmx4
+        hTm2i6ZKXEYViCRFk/1m1WZu6EyPWr27SMVKyRAQIoSfZQ5c8fy1/ZCActML71txswZbHwqsGxbog
+        L6soLM5Tn5mDPs88ZZV3TXf+ybIUD4UVdD9ft7ABL4R1OTnBT4JyQFFj6Rmor3YdBRpmmGfgEOSrU
+        4mHu3/zP5mTEtQiPYTt4xHoUr6JheZYj1EhlTIj0ZD7OK8X0NWoN5lOUKxL/qGgXWRyEwWq3cKEsy
+        BG1NyvrA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQHca-0008Qf-M0; Wed, 07 Oct 2020 22:09:16 +0000
+Date:   Wed, 7 Oct 2020 23:09:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Josef Bacik <jbacik@fb.com>
+Subject: Re: [PATCH 00/14] Small step toward KSM for file back page.
+Message-ID: <20201007220916.GX20115@casper.infradead.org>
+References: <20201007010603.3452458-1-jglisse@redhat.com>
+ <20201007032013.GS20115@casper.infradead.org>
+ <20201007144835.GA3471400@redhat.com>
+ <20201007170558.GU20115@casper.infradead.org>
+ <20201007175419.GA3478056@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201007175419.GA3478056@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 7, 2020 at 1:25 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 06-10-20 16:09:30, Ralph Campbell wrote:
-> > There are several places where ZONE_DEVICE struct pages assume a reference
-> > count == 1 means the page is idle and free. Instead of open coding this,
-> > add a helper function to hide this detail.
-> >
-> > Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
->
-> Looks as sane direction but if we are going to abstract checks when
-> ZONE_DEVICE page is idle, we should also update e.g.
-> mm/swap.c:put_devmap_managed_page() or
-> mm/gup.c:__unpin_devmap_managed_user_page() (there may be more places like
-> this but I found at least these two...). Maybe Dan has more thoughts about
-> this.
+On Wed, Oct 07, 2020 at 01:54:19PM -0400, Jerome Glisse wrote:
+> > For other things (NUMA distribution), we can point to something which
+> > isn't a struct page and can be distiguished from a real struct page by a
+> > bit somewhere (I have ideas for at least three bits in struct page that
+> > could be used for this).  Then use a pointer in that data structure to
+> > point to the real page.  Or do NUMA distribution at the inode level.
+> > Have a way to get from (inode, node) to an address_space which contains
+> > just regular pages.
+> 
+> How do you find all the copies ? KSM maintains a list for a reasons.
+> Same would be needed here because if you want to break the write prot
+> you need to find all the copy first. If you intend to walk page table
+> then how do you synchronize to avoid more copy to spawn while you
+> walk reverse mapping, we could lock the struct page i guess. Also how
+> do you walk device page table which are completely hidden from core mm.
 
-Yes, but I think that cleanup comes once the idle page count is
-unified to be 0 across typical and ZONE_DEVICE pages. Then
-free_devmap_managed_page() can be moved internal to __put_page(). For
-this patch it's just hiding the "idle == 1" assumption from
-dax-filesystems.
+So ... why don't you put a PageKsm page in the page cache?  That way you
+can share code with the current KSM implementation.  You'd need
+something like this:
+
++++ b/mm/filemap.c
+@@ -1622,6 +1622,9 @@ struct page *find_lock_entry(struct address_space *mapping
+, pgoff_t index)
+                lock_page(page);
+                /* Has the page been truncated? */
+                if (unlikely(page->mapping != mapping)) {
++                       if (PageKsm(page)) {
++                               ...
++                       }
+                        unlock_page(page);
+                        put_page(page);
+                        goto repeat;
+@@ -1655,6 +1658,7 @@ struct page *find_lock_entry(struct address_space *mapping, pgoff_t index)
+  * * %FGP_WRITE - The page will be written
+  * * %FGP_NOFS - __GFP_FS will get cleared in gfp mask
+  * * %FGP_NOWAIT - Don't get blocked by page lock
++ * * %FGP_KSM - Return KSM pages
+  *
+  * If %FGP_LOCK or %FGP_CREAT are specified then the function may sleep even
+  * if the %GFP flags specified for %FGP_CREAT are atomic.
+@@ -1687,6 +1691,11 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t index,
+ 
+                /* Has the page been truncated? */
+                if (unlikely(page->mapping != mapping)) {
++                       if (PageKsm(page) {
++                               if (fgp_flags & FGP_KSM)
++                                       return page;
++                               ...
++                       }
+                        unlock_page(page);
+                        put_page(page);
+                        goto repeat;
+
+I don't know what you want to do when you find a KSM page, so I just left
+an ellipsis.
+
