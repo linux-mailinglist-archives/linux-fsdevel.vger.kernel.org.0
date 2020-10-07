@@ -2,65 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6921C2861B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 16:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298DF2861FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 17:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbgJGO7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 10:59:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29754 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728694AbgJGO7l (ORCPT
+        id S1727697AbgJGPYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 11:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgJGPYQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 10:59:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602082780;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7N51+8sQh2H8W9MnGonUz2RHvBYt0K/Eby2kep8UCRc=;
-        b=ZeqMy4GBgox1PcxxxmYy6y3ZEER1v7eAY6Kc44eDBTktfNx0krysbQXrxxpXZU7kiUt4uz
-        m9cPeJYQTtY80kooG1pHhYlMXkVK8v3EWK3ynWLY00JfURqUYJW0OzBnIChhmxjZaUzFGW
-        9V+nBu7RM5YDwAy+227Pvy8fidrxYXA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-5-B_T5IR5CNSmQWc6bIYMBCw-1; Wed, 07 Oct 2020 10:59:38 -0400
-X-MC-Unique: B_T5IR5CNSmQWc6bIYMBCw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 652AE191E2A0;
-        Wed,  7 Oct 2020 14:59:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-196.rdu2.redhat.com [10.10.116.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C0B96EF42;
-        Wed,  7 Oct 2020 14:59:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <160207693283.3934207.6150787285715868358.stgit@warthog.procyon.org.uk>
-References: <160207693283.3934207.6150787285715868358.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs: Fix deadlock between writeback and truncate
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4013287.1602082775.1@warthog.procyon.org.uk>
-Date:   Wed, 07 Oct 2020 15:59:35 +0100
-Message-ID: <4013288.1602082775@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        Wed, 7 Oct 2020 11:24:16 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02EECC061755;
+        Wed,  7 Oct 2020 08:24:16 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id j2so2667953wrx.7;
+        Wed, 07 Oct 2020 08:24:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9fZtNueIKa1HonbojTUuFEHA3Qjc+wNXpiWwCGdSRok=;
+        b=vK7q1RY3f0TWa5MN6WxRKfIlZGN25DpQ5+088RPNAZbjbYhGezt/0RWRtW+0/Fg49a
+         +tOdjU+9QgwsoDG5dgzQqVAfIJTO61hiBoVNw1PJXYr6DJ8zYRknWXI6jqmdvNTBQr/Q
+         KUNST5SqMdBYYpcHRj1mH14BROSTD/HxappTUVaEbPgXTdMeqcJ4hNMphB+EUINIhXOL
+         O955hN9/O3KJowrq2KG2YUSMVHgkZOhoVnzxzFgp97vf+UB5ugI379g0ntuB3THVI3Fo
+         7XIt8BwSZPaHwCDjczD2vT2J50j4pd7jJfL6MQytVELw4TJVAhjif0ohavtCfc+4ZydV
+         qffg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9fZtNueIKa1HonbojTUuFEHA3Qjc+wNXpiWwCGdSRok=;
+        b=kvYO85jLm1hZDHA0xEX0iiXJAfveOz7/mSaWZReTy3bY+o4V8xUyE+Xx++ClmmKqpJ
+         BAZOJMjLBGwGRtzAQnD7OrSIQI+Ld+Vii/RLkpL6lgypoHfWQNoVCC4uc4E+nVfCQcsd
+         cBru9fKwuwRBj0J6cGS8ODOueqna3ZnXBOPJMCFjbbEbmxiSDC19fAYmzcxN6ObRXrOu
+         VL4OUcsS0I9bDEAIzo+fPLoyaiEzXBkS2f3I5skc8mefjtxV0NxdG/lNCn7rIYPPwAR6
+         usW5RHyoqbFgsU+Qcae1RQsdJ2jJp26Pyc3X1LlE0QFdnJxgATpv5ULHQ2q5QxgnWLaJ
+         lMbQ==
+X-Gm-Message-State: AOAM5304yh5LMFyxR9lU34Sklc80BgeHO11hAPypSr0o1OohUge8OZny
+        rZHszkRCaRXXlYCDKJRAmsw=
+X-Google-Smtp-Source: ABdhPJwUld/XygEX1hTNO+qWq9Mc1WE1opsxETj+NlwHC3C1dbCijY44BsjTyuOzuBVPl4aH9Q/1mw==
+X-Received: by 2002:adf:de11:: with SMTP id b17mr4129147wrm.82.1602084254649;
+        Wed, 07 Oct 2020 08:24:14 -0700 (PDT)
+Received: from localhost.localdomain (host-92-5-241-147.as43234.net. [92.5.241.147])
+        by smtp.gmail.com with ESMTPSA id d30sm3562742wrc.19.2020.10.07.08.24.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Oct 2020 08:24:13 -0700 (PDT)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-safety@lists.elisa.tech,
+        linux-fsdevel@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH v2] kernel/sysctl.c: drop unneeded assignment in proc_do_large_bitmap()
+Date:   Wed,  7 Oct 2020 16:19:04 +0100
+Message-Id: <20201007151904.20415-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+The variable 'first' is assigned 0 inside the while loop in the if block
+but it is not used in the if block and is only used in the else block.
+So, remove the unneeded assignment and move the variable in the else block.
 
->  (1) Use the vnode validate_lock to mediate access between afs_setattr()
->      and afs_writepages():
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
 
-Hmmm...  I wonder if the problem can occur between afs_setattr() and
-afs_writepage() too.
+v1: only had the removal of assignment
 
-David
+The resultant binary stayed same after this change. Verified with
+md5sum which remained same with and without this change.
+
+$ md5sum kernel/sysctl.o 
+77e8b8f3cd9da4446e7f117115c8ba84  kernel/sysctl.o
+
+ kernel/sysctl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ce75c67572b9..cc274a431d91 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1423,7 +1423,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 			 void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int err = 0;
+-	bool first = 1;
+ 	size_t left = *lenp;
+ 	unsigned long bitmap_len = table->maxlen;
+ 	unsigned long *bitmap = *(unsigned long **) table->data;
+@@ -1508,12 +1507,12 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 			}
+ 
+ 			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
+-			first = 0;
+ 			proc_skip_char(&p, &left, '\n');
+ 		}
+ 		left += skipped;
+ 	} else {
+ 		unsigned long bit_a, bit_b = 0;
++		bool first = 1;
+ 
+ 		while (left) {
+ 			bit_a = find_next_bit(bitmap, bitmap_len, bit_b);
+-- 
+2.11.0
 
