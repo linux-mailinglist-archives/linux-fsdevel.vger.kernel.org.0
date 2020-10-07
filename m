@@ -2,95 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74DAB2856B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 04:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB89A2856ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 05:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbgJGCkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Oct 2020 22:40:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35346 "EHLO
+        id S1726637AbgJGDQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Oct 2020 23:16:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbgJGCkS (ORCPT
+        with ESMTP id S1726096AbgJGDQv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Oct 2020 22:40:18 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C925C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Oct 2020 19:40:18 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id u21so777045eja.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Oct 2020 19:40:17 -0700 (PDT)
+        Tue, 6 Oct 2020 23:16:51 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90797C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Oct 2020 20:16:51 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id 22so490244pgv.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Oct 2020 20:16:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=afZ2ku0615X/vbgIsq8uZABQa+HrZmef3/cMOPPeXPE=;
-        b=EPjdVqDeTinUn3xle7QkZRs1c1I777r6WwVNCzmQvuelLMEIhN7D3byY1DbMWiHRAd
-         QgHw7nunbi78JiFNVYPaj+vzDaQToh84mycymDqg79odab44O2bFpy0hTFRZMk6Gq88h
-         gdm22jg2FmT9PYcFKiksCpHH97YYjHNLfkRJqB+XyuOtAK7X6n9Ol7Qc3aWxyX/ubcf1
-         1Dj3nT3ueZ1gSrXVBd01SuIcMxMF+W8KjeuouHZbfkVWg3QUD53z+H8ypZQCYHGiMbYk
-         lCoLazlQUecuVDEtHUfRDwSsCvcaF59aNbsh9HWw6NNgsgGSQloXWj+DnfN5l7npN3En
-         PmkQ==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2nHndZKwwfOOj5bwaqodAdSawGiEECEuWU/h1JxfIjE=;
+        b=tAplSRDrpqc0bLhzdVINXo66tsmyG4077hKzUat22H5dF7Vj//0RV7AArxOdQoESc2
+         Pc1oXj5o1aBDxEsXhyFT5DUjos3yqJdciaIWy9R7gRRGZ3bi//gyke/tUgu5dAYfEGni
+         xfH9eipKOHyy0sVf76ROJzb0besS5j3UyYOzr1UUM/kkUuaSuETXstNK3e9bku88JvMc
+         pOa/pbNOepvAIcA7Zij2sTe3d08qjaUHOpnkXnWpGeghOWKktvhXZd66o5IYI9tTjAwz
+         rHyMxgYjLvQvepUW0rMgxFRZtwjga7DYckXPZg367rZiMg3h3mDNWFMIR0AlwCDy5lzx
+         UMnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=afZ2ku0615X/vbgIsq8uZABQa+HrZmef3/cMOPPeXPE=;
-        b=OEeljDYaCmfYHqbW5cIrVVm1pZCnmm0EEfaj4z69ZbyHhSDesxNAvh2Sj0TDVB2Zam
-         UVWuthm4vCHTj+NT2a9FvgLnoTNdLNk7ibZSkvZ7fd71dGifVYGVCJrHHWHeL5AjhVId
-         oo8txSYj5K5POfIvwdeEatIcob+RHlpbDztvbbVojM9FwuowlDglSIYM3D6gIgYT+1ru
-         RufrngLtfvGZyopG9Fy8qQGxAOFOO8QYpypB9tfowpmxNnQD4s6Hz9b9RUuG6l/pJSyk
-         iF0AnkrsKWtMpWyAebHGqN1Y3Sb+yWDUiqFhe7UY3E/R0aFQ0Mm3kg5HeURQVNm/8Sgv
-         6kxA==
-X-Gm-Message-State: AOAM530TrTBj7yyp9bxlEqH1pyKbl4bmoxmxujfY2ogqggViw4J6juAl
-        cz+vIp4kAkHefl7WXlLhzk85wmW992ZGqqDvfQe6zg==
-X-Google-Smtp-Source: ABdhPJyzhK0w2iAz2iCMzOOn/0AFV3bEvaxuBmF2mBxx+C4IpyFlFHdfkT/qw+BQgpUSKwf1wNdFiTZy1ImFQ33Wm94=
-X-Received: by 2002:a17:906:1a0b:: with SMTP id i11mr1116582ejf.472.1602038416463;
- Tue, 06 Oct 2020 19:40:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2nHndZKwwfOOj5bwaqodAdSawGiEECEuWU/h1JxfIjE=;
+        b=rSoOgeOwlPb8ZYcP3yBp/HbJvf/kAKCFfR826x0fOXJdMMl/1HeepYwjhmMrBJGIwR
+         /KsTFjyUJy+V8guyAV3OFJJaE0hsfsXm7cd4iaHKRjGvDXwMHl8DqNhSYlHnTtjVP37+
+         ROiBsbQ170KZG3zEl8QBdc/V9WlIn82KYDvCCKqd00GeHcFFfy/2XMSa6G8ggSnbuh2t
+         wpt+bOBK95x5wf/qnCUW0ExqG+JRGa7svmQJGZg/EuIQcp382mWlaNrfmtvRbC9gOO48
+         ym5N+UNimO8xe6h0EjuOAu18OrXdWQELrRtEjabEONQBXgV7m/IXOYo/33+0kIBp5Sws
+         4vFQ==
+X-Gm-Message-State: AOAM530s9hkEwa0BgB18XgkFEgrerkp4+lfH9MhD2zmOJw2R+PbmrQpG
+        rC2Ypg0jh05JIZ7k/ZWWI9YH1A==
+X-Google-Smtp-Source: ABdhPJxjUqK0ytYdUt6Nfja9Covk8gWR2hTabrYqA/cE6OV7oT6XN3O0+nt+zWZnwe+FrHvxZ3gc9A==
+X-Received: by 2002:a63:705c:: with SMTP id a28mr1165305pgn.266.1602040610841;
+        Tue, 06 Oct 2020 20:16:50 -0700 (PDT)
+Received: from localhost.localdomain ([103.136.221.72])
+        by smtp.gmail.com with ESMTPSA id e1sm729094pfd.198.2020.10.06.20.16.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Oct 2020 20:16:50 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     axboe@kernel.dk, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhuyinyin@bytedance.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v3 0/4] io_uring: Fix async workqueue is not canceled on some corner case
+Date:   Wed,  7 Oct 2020 11:16:31 +0800
+Message-Id: <20201007031635.65295-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-References: <20201006230930.3908-1-rcampbell@nvidia.com>
-In-Reply-To: <20201006230930.3908-1-rcampbell@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 6 Oct 2020 19:40:05 -0700
-Message-ID: <CAPcyv4gYtCmzPOWErYOkCCfD0ZvLcrgfR8n2kG3QPMww9B0gyg@mail.gmail.com>
-Subject: Re: [PATCH] ext4/xfs: add page refcount helper
-To:     Ralph Campbell <rcampbell@nvidia.com>
-Cc:     Linux MM <linux-mm@kvack.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 6, 2020 at 4:09 PM Ralph Campbell <rcampbell@nvidia.com> wrote:
->
-> There are several places where ZONE_DEVICE struct pages assume a reference
-> count == 1 means the page is idle and free. Instead of open coding this,
-> add a helper function to hide this detail.
->
-> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> ---
->
-> I'm resending this as a separate patch since I think it is ready to
-> merge. Originally, this was part of an RFC and is unchanged from v3:
-> https://lore.kernel.org/linux-mm/20201001181715.17416-1-rcampbell@nvidia.com
->
-> It applies cleanly to linux-5.9.0-rc7-mm1 but doesn't really
-> depend on anything, just simple merge conflicts when applied to
-> other trees.
-> I'll let the various maintainers decide which tree and when to merge.
-> It isn't urgent since it is a clean up patch.
+We should make sure that async workqueue is canceled on exit, but on
+some corner case, we found that the async workqueue is not canceled
+on exit in the linux-5.4. So we started an in-depth investigation.
+Fortunately, we finally found the problem. The commit:
 
-Thanks Ralph, it looks good to me. Jan, or Ted care to ack? I don't
-have much else pending for dax at the moment as Andrew is carrying my
-dax updates for this cycle. Andrew please take this into -mm if you
-get a chance. Otherwise I'll cycle back to it when some other dax
-updates arrive in my queue.
+  1c4404efcf2c ("io_uring: make sure async workqueue is canceled on exit")
+
+did not completely solve this problem. This patch series to solve this
+problem completely. And there's no upstream variant of this commit, so
+this patch series is just fix the linux-5.4.y stable branch.
+
+changelog in v3:
+  1. Merge patch-4 to patch-1.
+
+changelog in v2:
+  1. Fix missing save the current thread files
+  2. Fix double list add in io_queue_async_work()
+
+Muchun Song (4):
+  io_uring: Fix missing smp_mb() in io_cancel_async_work()
+  io_uring: Fix remove irrelevant req from the task_list
+  io_uring: Fix missing save the current thread files
+  io_uring: Fix double list add in io_queue_async_work()
+
+Yinyin Zhu (1):
+  io_uring: Fix resource leaking when kill the process
+
+ fs/io_uring.c | 59 +++++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 39 insertions(+), 20 deletions(-)
+
+-- 
+2.11.0
+
