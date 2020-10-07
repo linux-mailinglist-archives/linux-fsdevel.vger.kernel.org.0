@@ -2,76 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6B4E28679D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 20:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B6B62867B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 20:47:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgJGSoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 14:44:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43214 "EHLO
+        id S1728237AbgJGSre (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 14:47:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727033AbgJGSoK (ORCPT
+        with ESMTP id S1728119AbgJGSre (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 14:44:10 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE39EC0613D2
-        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Oct 2020 11:44:08 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id g9so1969122pgh.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Oct 2020 11:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=X8jO+k78iPi+PQAecC0Q3ap/SytXosdxrChjraSoqaw=;
-        b=WXlaV9pjXkhbYj7Tg3Q1c0hwqAynsaOgzckoDSnGldqENxpknhYFK+5HgLYSpow9GR
-         FA1COQvpB8NLwrZ6HZ5yEyhxNDEVzPNlCrGNETZoLg/yTH6YMwVaZfS6Cd5ikwVO95aL
-         lHiAXKSV918g2lozIMNiL3bie1lJw3NAvn3fM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=X8jO+k78iPi+PQAecC0Q3ap/SytXosdxrChjraSoqaw=;
-        b=EGadpCWt1/KBhekbb3UVepxd9DBb+gUFvynSnOfN+SltS1mCdmOKqf6xXS3ihsbQ3g
-         qQe9MGN8oqNN3Emdx7P3UaJX4gBTSt14FllXv5bCqIPMGu12TWICCnFvjynkRfZtKFWw
-         /ot8pB5pNfPJn6l7FFhr0uuy/HpVCdqAdf3GivH3scU3FHnl9/FuoDuQZ4dZltTuYRis
-         EEc9PMtZhBifB6MT8ejEJc5n6TSEW+6Q8r5LGtTtxwROOkCcK3/NGGUIwE9qb7PZ8mv3
-         Nx0HOHhWVWAh5ffGjMEa2dRli1m7jdHpxBPGDtAuPkNy0slFTrky+JXT/DSWBKQzWcT3
-         mebA==
-X-Gm-Message-State: AOAM530y/v+/xUMhYaRCtVhf9/1wESPoP4wNqQicj8cauRWWPUXxQczZ
-        I0wcv9uaWjjyr0KO84Jw7YZLnVDMNRQvKaqm
-X-Google-Smtp-Source: ABdhPJxnc93bpj6O2XDgoB+4iJqQIaVqQaTINKkUrGuNUPDT7MwB5tqBz0QOGR7AhWiAKFDQbgzAJw==
-X-Received: by 2002:a05:6a00:d2:b029:152:5ebd:426 with SMTP id e18-20020a056a0000d2b02901525ebd0426mr4181620pfj.5.1602096248247;
-        Wed, 07 Oct 2020 11:44:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c9sm4014370pgl.92.2020.10.07.11.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2020 11:44:07 -0700 (PDT)
-Date:   Wed, 7 Oct 2020 11:44:06 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-safety@lists.elisa.tech,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] kernel/sysctl.c: drop unneeded assignment in
- proc_do_large_bitmap()
-Message-ID: <202010071144.FA87F25D5D@keescook>
-References: <20201007151904.20415-1-sudipm.mukherjee@gmail.com>
+        Wed, 7 Oct 2020 14:47:34 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D2CC061755;
+        Wed,  7 Oct 2020 11:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Fd9c7NnGlZlQsPoX32Y7E0H7T+E2rrcfUhUeaY9NVV4=; b=ZTQCinhxmjer2B4rWKjYH5Zt45
+        jkp9CrbpI7giGfDFPrQO8yS1DANnlbqytLhjgJ6zCKxt4PPjzryYAjRdzaIjwIqteaaegdVmBd3rh
+        7l2GniIcTZNK7ZOgUdn8kgeSejFLP89v0sDQhBWa0B+LyRp8CYVQzwzreuLIG8oa5X+HzvwVn+qaD
+        NwkEw5W7uMFUQTWmuuNHkHtJjIyJWCRIET5Rf5PfhTb4wBbqN/64JntPZtIkBQ7TPsh4vfIUgqVsx
+        7qdChRAM994JJ0YjxFO5EKOdi3LaeniRItdUqu9KH5Q0BRuHkEErw5JKLkv9RZ67yFfYET6J96ebw
+        oesKFOSQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQETK-0004O9-Q8; Wed, 07 Oct 2020 18:47:30 +0000
+Date:   Wed, 7 Oct 2020 19:47:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, ericvh@gmail.com, lucho@ionkov.net,
+        viro@zeniv.linux.org.uk, jlayton@kernel.org, idryomov@gmail.com,
+        mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, josef@toxicpanda.com,
+        dsterba@suse.com, stable@vger.kernel.org
+Subject: Re: [PATCH 1/7] 9P: Cast to loff_t before multiplying
+Message-ID: <20201007184730.GW20115@casper.infradead.org>
+References: <20201004180428.14494-1-willy@infradead.org>
+ <20201004180428.14494-2-willy@infradead.org>
+ <20201007054849.GA16556@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201007151904.20415-1-sudipm.mukherjee@gmail.com>
+In-Reply-To: <20201007054849.GA16556@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 04:19:04PM +0100, Sudip Mukherjee wrote:
-> The variable 'first' is assigned 0 inside the while loop in the if block
-> but it is not used in the if block and is only used in the else block.
-> So, remove the unneeded assignment and move the variable in the else block.
+On Wed, Oct 07, 2020 at 06:48:49AM +0100, Christoph Hellwig wrote:
+> > -		.range_start = vma->vm_pgoff * PAGE_SIZE,
+> > +		.range_start = (loff_t)vma->vm_pgoff * PAGE_SIZE,
 > 
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> Given the may places where this issue shows up I think we really need
+> a vma_offset or similar helper for it.  Much better than chasing missing
+> casts everywhere.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Good point.  I think these patches need to go in to fix the bugs in
+the various stable releases, but we should definitely have a helper
+for the future.  Also, several of these patches are for non-VMA
+pgoff_t.
 
--- 
-Kees Cook
+vma_offset() is a bit weird for me -- vmas have all kinds of offsets.
+vma_file_offset() would work or vma_fpos().  I tend to prefer the shorter
+function name ;-)
+
+A quick grep shows we probably want a vmf_fpos() too:
+
+arch/powerpc/platforms/cell/spufs/file.c:       unsigned long area, offset = vmf->pgoff << PAGE_SHIFT;
+arch/x86/entry/vdso/vma.c:      sym_offset = (long)(vmf->pgoff << PAGE_SHIFT) +
+drivers/gpu/drm/gma500/framebuffer.c:   address = vmf->address - (vmf->pgoff << PAGE_SHIFT);
+drivers/scsi/cxlflash/ocxl_hw.c:        offset = vmf->pgoff << PAGE_SHIFT;
+
+I'm sure a lot of this will never run on a 32-bit kernel or with a 4GB
+file, but it's not good to have bad code around for people to copy from.
+
