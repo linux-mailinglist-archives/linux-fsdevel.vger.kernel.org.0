@@ -2,79 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 869E02869CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 23:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6540A2869F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 23:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbgJGVDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 17:03:36 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15322 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbgJGVDf (ORCPT
+        id S1728675AbgJGVPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 17:15:46 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53430 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727821AbgJGVPq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 17:03:35 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f7e2cba0001>; Wed, 07 Oct 2020 14:01:46 -0700
-Received: from [10.2.85.86] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 7 Oct
- 2020 21:03:35 +0000
-Subject: Re: mmotm 2020-10-06-15-50 uploaded
-To:     <akpm@linux-foundation.org>, <broonie@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-next@vger.kernel.org>,
-        <mhocko@suse.cz>, <mm-commits@vger.kernel.org>,
-        <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Gary Gunthorpe <jgg@nvidia.com>
-References: <20201006225133.Y21m5SGLJ%akpm@linux-foundation.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <6a97eeaf-781b-f06b-050b-a56c9f8f1632@nvidia.com>
-Date:   Wed, 7 Oct 2020 14:03:34 -0700
+        Wed, 7 Oct 2020 17:15:46 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 097L9wBI146673;
+        Wed, 7 Oct 2020 21:15:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=JPMWL4bTVnMXu+B6HCp8FDYPYl29laP2NiOsFFNS9QQ=;
+ b=WGXPcwhBqra3r34fdmj2xTjTiiUtavQUyyv8t5oMMOoUDEPyghSyV6iBb+d3ispKtFmx
+ MPzuM3HiJ0a1msA4SRyTRdNZV7rxFJjTF5m+EHxhobYPQipTTOsAxe517iy99bs/v6Ox
+ 2qlG49kEYwgIxRMtjrk7as3Adn7WyGVZ0Nq/ILuLmXEZ4dep0rIEP8QLt2yC+R/ALhEj
+ q2uR53OjmSm7N9A3eEIKUXXprTkvxqARVAkAQPzKOGd8Kqcv5rOgzMmnqGYkQP/RXQh2
+ Ai56OmPwrqCYkZAALrEzGOYS/oBK8XmoXV2djklH7arEv10e5HqFkwaYjV8jqeWDRgbA hA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 33ym34sgtp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 07 Oct 2020 21:15:01 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 097LBKZG037135;
+        Wed, 7 Oct 2020 21:13:01 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 33y2vq0gpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Oct 2020 21:13:01 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 097LCnQm031393;
+        Wed, 7 Oct 2020 21:12:49 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 07 Oct 2020 14:12:49 -0700
+Subject: Re: [RFC PATCH 00/24] mm/hugetlb: Free some vmemmap pages of hugetlb
+ page
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+References: <20200915125947.26204-1-songmuchun@bytedance.com>
+ <31eac1d8-69ba-ed2f-8e47-d957d6bb908c@oracle.com>
+Message-ID: <9d220de0-f06d-cb5b-363f-6ae97d5b4146@oracle.com>
+Date:   Wed, 7 Oct 2020 14:12:46 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20201006225133.Y21m5SGLJ%akpm@linux-foundation.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <31eac1d8-69ba-ed2f-8e47-d957d6bb908c@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1602104506; bh=JZfEZdS82MK5uL1Zki+SPS+QszJMiRQrlHgFw1PPP20=;
-        h=Subject:To:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=kIpxYqeZ1MCqIMXKYxFL/yzbz2v8z4MZXZxABnVPpduChvb6wcuqYrUzQb1fPLuIW
-         uDpb9BihN63L7B049pu8l+IFEMQ2s+UKQoZe2nxqnX9tth8Xmjh62Z4ydvJi0ur8cR
-         +gO16mqVLHXDruzxsoZrzaQXAmwNk3S1h/UObIkBbtOM6cZW/qIAFedV9Yu3srsGkT
-         DYOBuT1MeLvrCCVbY6T0Ipxqc0My0e3gUoQi6gLuW41tA6Pad5Zgin0SveWDYn96up
-         pOgTU3LjyeWYeRhywdoqQqW5YPuf3QOZC6/wIWgp0gZcwbj8w5KEWBWH/rFnn8lnfy
-         SrVj3f+TJWY6w==
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9767 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 suspectscore=2 spamscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2010070137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9767 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 priorityscore=1501
+ mlxscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0 spamscore=0
+ malwarescore=0 phishscore=0 suspectscore=2 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010070137
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/6/20 3:51 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2020-10-06-15-50 has been uploaded to
-...
+On 9/29/20 2:58 PM, Mike Kravetz wrote:
+> On 9/15/20 5:59 AM, Muchun Song wrote:
+>> Hi all,
+>>
+>> This patch series will free some vmemmap pages(struct page structures)
+>> associated with each hugetlbpage when preallocated to save memory.
+> ...
+>> The mapping of the first page(index 0) and the second page(index 1) is
+>> unchanged. The remaining 6 pages are all mapped to the same page(index
+>> 1). So we only need 2 pages for vmemmap area and free 6 pages to the
+>> buddy system to save memory. Why we can do this? Because the content
+>> of the remaining 7 pages are usually same except the first page.
+>>
+>> When a hugetlbpage is freed to the buddy system, we should allocate 6
+>> pages for vmemmap pages and restore the previous mapping relationship.
+>>
+>> If we uses the 1G hugetlbpage, we can save 4095 pages. This is a very
+>> substantial gain. On our server, run some SPDK applications which will
+>> use 300GB hugetlbpage. With this feature enabled, we can save 4797MB
+>> memory.
 
-> * mm-frame-vec-drop-gup_flags-from-get_vaddr_frames.patch
-> * mm-frame-vec-use-foll_longterm.patch
+I had a hard time going through the patch series as it is currently
+structured, and instead examined all the code together.  Muchun put in
+much effort and the code does reduce memory usage.
+- For 2MB hugetlb pages, we save 5 pages of struct pages
+- For 1GB hugetlb pages, we save 4086 pages of struct pages
 
-That last one needs to be dropped--see my note about why in [1].
-And syzbot is also complaining [2], correctly, that you can't pass
-FOLL_LONGTERM to pin_user_pages_locked().
+Code is even in pace to handle poisoned pages, although I have not looked
+at this closely.  The code survives the libhugetlbfs and ltp huge page tests.
 
-And the patch right before it, while correct as it stands, should end
-up being unnecessary, because Daniel is taking a different approach.
+To date, nobody has asked the important question "Is the added complexity
+worth the memory savings?".  I suppose it all depends on one's use case.
+Obviously, the savings are more significant when one uses 1G huge pages but
+that may not be the common case today.
 
-So probably best to drop both of those from mmotm and -next.
+> At a high level this seems like a reasonable optimization for hugetlb
+> pages.  It is possible because hugetlb pages are 'special' and mostly
+> handled differently than pages in normal mm paths.
 
+Such an optimization only makes sense for something like hugetlb pages.  One
+reason is the 'special' nature of hugetlbfs as stated above.  The other is
+that this optimization mostly makes sense for huge pages that are created
+once and stick around for a long time.  hugetlb pool pages are a perfect
+example.  This is because manipulation of struct page mappings is done when
+a huge page is created or destroyed.
 
-[1] https://lore.kernel.org/dri-devel/f5130c7f-eebe-7b21-62b8-68f08212b106@nvidia.com
+> The majority of the new code is hugetlb specific, so it should not be
+> of too much concern for the general mm code paths.
 
-[2] https://lore.kernel.org/r/000000000000f3c7f005b11111c9@google.com
+It is true that much of the code in this series was put in hugetlb.c.  However,
+I would argue that there is a bunch of code that only deals with remapping
+the memmap which should more generic and added to sparse-vmemmap.c.  This
+would at least allow for easier reuse.
 
-thanks,
+Before Muchun and myself put more effort into this series, I would really
+like to get feedback on the whether or not this should move forward.
+Specifically, is the memory savings worth added complexity?  Is the removing
+of struct pages going to come back and cause issues for future features?
 -- 
-John Hubbard
-NVIDIA
+Mike Kravetz
