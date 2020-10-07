@@ -2,135 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EC7F286A6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 23:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAC6A286A71
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 23:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbgJGVpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 17:45:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30708 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727798AbgJGVpn (ORCPT
+        id S1728615AbgJGVth (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 17:49:37 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10433 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbgJGVth (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 17:45:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602107141;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HW8OEIB2v/3NbD2TNZtIeljE7aJBVgAky13HzY3nNm4=;
-        b=NdJ+zK5u3C4riPyi/7wEx6gbABaBI1vgMDCByAWBLKCvw2cZfvMiJEiCf5Tw8nx5EYlShs
-        CuZel9E3jCiIyV4H3keS/v52A+DMnnYjOs0creK8NX5cWfNs8N99hLyX56WJM8KryN1dRY
-        g3+KIEBKkcBY6U3Ed/GHK2zUQ429hyI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-97-PjEJ89a3MAm8sT_gIn3EDw-1; Wed, 07 Oct 2020 17:45:36 -0400
-X-MC-Unique: PjEJ89a3MAm8sT_gIn3EDw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DA65387950B;
-        Wed,  7 Oct 2020 21:45:34 +0000 (UTC)
-Received: from redhat.com (ovpn-119-161.rdu2.redhat.com [10.10.119.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D0CB46EF5D;
-        Wed,  7 Oct 2020 21:45:33 +0000 (UTC)
-Date:   Wed, 7 Oct 2020 17:45:32 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Wed, 7 Oct 2020 17:49:37 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f7e37e40001>; Wed, 07 Oct 2020 14:49:24 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 7 Oct
+ 2020 21:49:36 +0000
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by mail.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server id 15.0.1473.3 via Frontend
+ Transport; Wed, 7 Oct 2020 21:49:36 +0000
+From:   Ralph Campbell <rcampbell@nvidia.com>
+To:     <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
+        <linux-kernel@vger.kernel.org>, <linux-ext4@vger.kernel.org>
+CC:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 00/14] Small step toward KSM for file back page.
-Message-ID: <20201007214532.GA3484657@redhat.com>
-References: <20201007010603.3452458-1-jglisse@redhat.com>
- <20201007032013.GS20115@casper.infradead.org>
- <20201007144835.GA3471400@redhat.com>
- <20201007170558.GU20115@casper.infradead.org>
- <20201007175419.GA3478056@redhat.com>
- <20201007183316.GV20115@casper.infradead.org>
+        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Ralph Campbell" <rcampbell@nvidia.com>
+Subject: [PATCH v2] ext4/xfs: add page refcount helper
+Date:   Wed, 7 Oct 2020 14:49:25 -0700
+Message-ID: <20201007214925.11181-1-rcampbell@nvidia.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201007183316.GV20115@casper.infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1602107364; bh=REj8QP14NN2VWymC9pd1yxt9jHOscnBs9nwknQCUye0=;
+        h=From:To:CC:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+         X-NVConfidentiality:Content-Transfer-Encoding:Content-Type;
+        b=qVPPzYo5AsUUHwus/S8Ekhyio/IAdtBrC6rBk43gpPR44t506lOgv7FACMlrPcebX
+         ZLxuBFBl+bbjpwzC5xKe3ZNDanoYq3hpP9YuWHoKAUFkpmQzwlZtKUjo5MMT4ltMyS
+         Wduyz1Xy7k+v+rJnc/V1Qw8MiHeuuhrppUxCc/wNr9+xtaawmxmlOPjQKfE8ulelhi
+         XdmOd/vMiAsj5HqRLP3zkooeipjGcmVtyFPw5s1SjWeUqiFWlZt3xkIK7oyDXa8xkr
+         QgaPDWkuP1DQJ2io/rptyAJIfDUGJDOKgktAodAK73J42JSasCWO5KuvnY52qevauN
+         hd7lr9rnqU5jg==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 07, 2020 at 07:33:16PM +0100, Matthew Wilcox wrote:
-> On Wed, Oct 07, 2020 at 01:54:19PM -0400, Jerome Glisse wrote:
-> > On Wed, Oct 07, 2020 at 06:05:58PM +0100, Matthew Wilcox wrote:
-> > > On Wed, Oct 07, 2020 at 10:48:35AM -0400, Jerome Glisse wrote:
-> > > > On Wed, Oct 07, 2020 at 04:20:13AM +0100, Matthew Wilcox wrote:
-> > > > > On Tue, Oct 06, 2020 at 09:05:49PM -0400, jglisse@redhat.com wrote:
-> > > For other things (NUMA distribution), we can point to something which
+There are several places where ZONE_DEVICE struct pages assume a reference
+count =3D=3D 1 means the page is idle and free. Instead of open coding this=
+,
+add helper functions to hide this detail.
 
-[...]
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+Acked-by: Theodore Ts'o <tytso@mit.edu> # for fs/ext4/inode.c
+---
 
-> > > isn't a struct page and can be distiguished from a real struct page by a
-> > > bit somewhere (I have ideas for at least three bits in struct page that
-> > > could be used for this).  Then use a pointer in that data structure to
-> > > point to the real page.  Or do NUMA distribution at the inode level.
-> > > Have a way to get from (inode, node) to an address_space which contains
-> > > just regular pages.
-> > 
-> > How do you find all the copies ? KSM maintains a list for a reasons.
-> > Same would be needed here because if you want to break the write prot
-> > you need to find all the copy first. If you intend to walk page table
-> > then how do you synchronize to avoid more copy to spawn while you
-> > walk reverse mapping, we could lock the struct page i guess. Also how
-> > do you walk device page table which are completely hidden from core mm.
-> 
-> You have the inode and you iterate over each mapping, looking up the page
-> that's in each mapping.  Or you use the i_mmap tree to find the pages.
+Changes in v2:
+I strongly resisted the idea of extending this patch but after Jan
+Kara's comment about there being more places that could be cleaned
+up, I felt compelled to make this one tensy wensy change to add
+a dax_wakeup_page() to match the dax_wait_page().
+I kept the Reviewed/Acked-bys since I don't think this substantially
+changes the patch.
 
-This would slow down for everyone as we would have to walk all mapping
-each time we try to write to page. Also we a have mechanism for page
-write back to avoid race between thread trying to write and write back.
-We would also need something similar. Without mediating this through
-struct page i do not see how to keep this reasonable from performance
-point of view.
+ fs/dax.c            |  4 ++--
+ fs/ext4/inode.c     |  5 +----
+ fs/xfs/xfs_file.c   |  4 +---
+ include/linux/dax.h | 15 +++++++++++++++
+ mm/memremap.c       |  3 ++-
+ 5 files changed, 21 insertions(+), 10 deletions(-)
 
-
-> > > I don't have time to work on all of these.  If there's one that
-> > > particularly interests you, let's dive deep into it and figure out how
-> > 
-> > I care about KSM, duplicate NUMA copy (not only for CPU but also
-> > device) and write protection or exclusive write access. In each case
-> > you need a list of all the copy (for KSM of the deduplicated page)
-> > Having a special entry in the page cache does not sound like a good
-> > option in many code path you would need to re-look the page cache to
-> > find out if the page is in special state. If you use a bit flag in
-> > struct page how do you get to the callback or to the copy/alias,
-> > walk all the page tables ?
-> 
-> Like I said, something that _looks_ like a struct page.  At least looks
-> enough like a struct page that you can pull a pointer out of the page
-> cache and check the bit.  But since it's not actually a struct page,
-> you can use the rest of the data structure for pointers to things you
-> want to track.  Like the real struct page.
-
-What i fear is the added cost because it means we need to do this look-
-up everytime to check and we also need proper locking to avoid races.
-Adding an ancilliary struct and trying to keep everything synchronize
-seems harder to me.
-
-> 
-> > I do not see how i am doing violence to struct page :) The basis of
-> > my approach is to pass down the mapping. We always have the mapping
-> > at the top of the stack (either syscall entry point on a file or
-> > through the vma when working on virtual address).
-> 
-> Yes, you explained all that in Utah.  I wasn't impressed than, and I'm
-> not impressed now.
-
-Is this more of a taste thing or is there something specific you do not
-like ?
-
-Cheers,
-Jérôme
+diff --git a/fs/dax.c b/fs/dax.c
+index 5b47834f2e1b..85c63f735909 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -358,7 +358,7 @@ static void dax_disassociate_entry(void *entry, struct =
+address_space *mapping,
+ 	for_each_mapped_pfn(entry, pfn) {
+ 		struct page *page =3D pfn_to_page(pfn);
+=20
+-		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
++		WARN_ON_ONCE(trunc && !dax_layout_is_idle_page(page));
+ 		WARN_ON_ONCE(page->mapping && page->mapping !=3D mapping);
+ 		page->mapping =3D NULL;
+ 		page->index =3D 0;
+@@ -372,7 +372,7 @@ static struct page *dax_busy_page(void *entry)
+ 	for_each_mapped_pfn(entry, pfn) {
+ 		struct page *page =3D pfn_to_page(pfn);
+=20
+-		if (page_ref_count(page) > 1)
++		if (!dax_layout_is_idle_page(page))
+ 			return page;
+ 	}
+ 	return NULL;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 771ed8b1fadb..132620cbfa13 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3937,10 +3937,7 @@ int ext4_break_layouts(struct inode *inode)
+ 		if (!page)
+ 			return 0;
+=20
+-		error =3D ___wait_var_event(&page->_refcount,
+-				atomic_read(&page->_refcount) =3D=3D 1,
+-				TASK_INTERRUPTIBLE, 0, 0,
+-				ext4_wait_dax_page(ei));
++		error =3D dax_wait_page(ei, page, ext4_wait_dax_page);
+ 	} while (error =3D=3D 0);
+=20
+ 	return error;
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 3d1b95124744..a5304aaeaa3a 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -749,9 +749,7 @@ xfs_break_dax_layouts(
+ 		return 0;
+=20
+ 	*retry =3D true;
+-	return ___wait_var_event(&page->_refcount,
+-			atomic_read(&page->_refcount) =3D=3D 1, TASK_INTERRUPTIBLE,
+-			0, 0, xfs_wait_dax_page(inode));
++	return dax_wait_page(inode, page, xfs_wait_dax_page);
+ }
+=20
+ int
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index b52f084aa643..e2da78e87338 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -243,6 +243,21 @@ static inline bool dax_mapping(struct address_space *m=
+apping)
+ 	return mapping->host && IS_DAX(mapping->host);
+ }
+=20
++static inline bool dax_layout_is_idle_page(struct page *page)
++{
++	return page_ref_count(page) =3D=3D 1;
++}
++
++static inline void dax_wakeup_page(struct page *page)
++{
++	wake_up_var(&page->_refcount);
++}
++
++#define dax_wait_page(_inode, _page, _wait_cb)				\
++	___wait_var_event(&(_page)->_refcount,				\
++		dax_layout_is_idle_page(_page),				\
++		TASK_INTERRUPTIBLE, 0, 0, _wait_cb(_inode))
++
+ #ifdef CONFIG_DEV_DAX_HMEM_DEVICES
+ void hmem_register_device(int target_nid, struct resource *r);
+ #else
+diff --git a/mm/memremap.c b/mm/memremap.c
+index 2bb276680837..504a10ff2edf 100644
+--- a/mm/memremap.c
++++ b/mm/memremap.c
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <linux/wait_bit.h>
+ #include <linux/xarray.h>
++#include <linux/dax.h>
+=20
+ static DEFINE_XARRAY(pgmap_array);
+=20
+@@ -508,7 +509,7 @@ void free_devmap_managed_page(struct page *page)
+ {
+ 	/* notify page idle for dax */
+ 	if (!is_device_private_page(page)) {
+-		wake_up_var(&page->_refcount);
++		dax_wakeup_page(page);
+ 		return;
+ 	}
+=20
+--=20
+2.20.1
 
