@@ -2,120 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 770BE285A31
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 10:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1CAA285A6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Oct 2020 10:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbgJGINf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Oct 2020 04:13:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbgJGINd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Oct 2020 04:13:33 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A274C061755;
-        Wed,  7 Oct 2020 01:13:33 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id e10so920293pfj.1;
-        Wed, 07 Oct 2020 01:13:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aObhDWq+952zOEk1Dbgb/RY6DzpjbMzmFP6DHRLyT8s=;
-        b=jnBgLxK8LCSMcjWVAaR8C2tTQYCen0tg7v8CvuYvCO5nqF5x792pi2vHv0mdsA9gPc
-         Ock/JjL2oh+ztPUXL5fccvfXtrIdsHBMIItEnQsNmkDni3rNZXbnX9Le42IG4NtP1cZ2
-         zoNsX4BIXbiA5K51AW5vs2MsePd9vobMcZPTa2LbkScAwQ8WakCF8fWNsIQyBLBzagBB
-         2tlIC7H/tGED8TFfMlpDbL5kIdeyuKAC3+S16v3DtZeAfA7gIBoj3cxvo8+pDOvvnYln
-         CsbuLeuoPoZkh4L0I4Wo+vwZAYFJoTlJ07Xw/7jMhQrTiXipEZJute/kvq8b8IiGqNMg
-         o7DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aObhDWq+952zOEk1Dbgb/RY6DzpjbMzmFP6DHRLyT8s=;
-        b=EObLZh00+LkHyGByeiiHMdF9lE7WUCLK0ccPQZbCptJVGhMYb+jvuo4vApNpEuq2Tr
-         0swjsqADfjYeB4VgaKxWQoSg710+8OhFyd4/G2eKUoOipB16w2IvBbzDCuwiRC6JVMIJ
-         a0DYXKLoS5d9lwCuxS1d6WiN2Dim4HGygfB/aNSFau4jZq6AeV31JOrNQeYt82qiAkvR
-         OACueVaBUr5W7R3SQVd+IC/2F8wJ8IzcRiIqzGpgKjK+7mX9p906hyH/aTYmbf68fGzm
-         yxh9skGfBsPi6Xi+nqUn6M+YNF4HLd4bnDCkEsqZV7ZdKNJai23DpGvW6gWF+SomuUuZ
-         LQlg==
-X-Gm-Message-State: AOAM530uTQae9VGtx9nKsSWyTEG3rFhDSP+v/WxRBo9xHvibywlV8drF
-        7OAe5u3oCF/7IGet8L8b10J5/iP7nyjy8A==
-X-Google-Smtp-Source: ABdhPJzi0tV/pskRbOZtxEM17LLWCXDdYbzAjsqxYzHTdy5PhRkeGbFfyzvJK/aG3g8CzgfLABHPaw==
-X-Received: by 2002:a63:4e4f:: with SMTP id o15mr1948563pgl.202.1602058412223;
-        Wed, 07 Oct 2020 01:13:32 -0700 (PDT)
-Received: from [192.168.1.200] (flh2-125-196-131-224.osk.mesh.ad.jp. [125.196.131.224])
-        by smtp.gmail.com with ESMTPSA id x22sm1869920pfp.181.2020.10.07.01.13.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Oct 2020 01:13:31 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] exfat: add exfat_update_inode()
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        'Sungjong Seo' <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20201002060529epcas1p2e05b4f565283969f4f2adc337f23a0d2@epcas1p2.samsung.com>
- <20201002060505.27449-1-kohada.t2@gmail.com>
- <000b01d69bba$08047320$180d5960$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <d19ecc4d-968e-9341-aaa5-a6c2c541eefb@gmail.com>
-Date:   Wed, 7 Oct 2020 17:13:29 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        id S1727679AbgJGIZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Oct 2020 04:25:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52014 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725976AbgJGIZX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 7 Oct 2020 04:25:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 96FFBABD1;
+        Wed,  7 Oct 2020 08:25:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E96721E1305; Wed,  7 Oct 2020 10:25:17 +0200 (CEST)
+Date:   Wed, 7 Oct 2020 10:25:17 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] ext4/xfs: add page refcount helper
+Message-ID: <20201007082517.GC6984@quack2.suse.cz>
+References: <20201006230930.3908-1-rcampbell@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <000b01d69bba$08047320$180d5960$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201006230930.3908-1-rcampbell@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for your reply.
+On Tue 06-10-20 16:09:30, Ralph Campbell wrote:
+> There are several places where ZONE_DEVICE struct pages assume a reference
+> count == 1 means the page is idle and free. Instead of open coding this,
+> add a helper function to hide this detail.
+> 
+> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
->>   	new_dir->i_ctime = new_dir->i_mtime = new_dir->i_atime =
->>   		EXFAT_I(new_dir)->i_crtime = current_time(new_dir);
->>   	exfat_truncate_atime(&new_dir->i_atime);
->> -	if (IS_DIRSYNC(new_dir))
->> -		exfat_sync_inode(new_dir);
->> -	else
->> -		mark_inode_dirty(new_dir);
->> +	exfat_update_inode(new_dir);
->>
->>   	i_pos = ((loff_t)EXFAT_I(old_inode)->dir.dir << 32) |
->>   		(EXFAT_I(old_inode)->entry & 0xffffffff);
->>   	exfat_unhash_inode(old_inode);
->>   	exfat_hash_inode(old_inode, i_pos);
->> -	if (IS_DIRSYNC(new_dir))
->> -		exfat_sync_inode(old_inode);
->> -	else
->> -		mark_inode_dirty(old_inode);
->> +	exfat_update_inode(old_inode);
-> This is checking if old_inode is IS_DIRSYNC, not new_dir.
-> Is there any reason ?
+Looks as sane direction but if we are going to abstract checks when
+ZONE_DEVICE page is idle, we should also update e.g.
+mm/swap.c:put_devmap_managed_page() or
+mm/gup.c:__unpin_devmap_managed_user_page() (there may be more places like
+this but I found at least these two...). Maybe Dan has more thoughts about
+this.
 
-To eliminate meaningless usage and simplify it.
+								Honza
 
-Th exfat does not have an attribute that indicates whether each file/dir should be synced(such as ext4).
-Therefore, sync necessity cannot be set for each inode, so sync necessity of the whole FS setting(sb-> s_flags) is inherited.
-As a result, the following values ​​are all the same.
-  IS_DIRSYNC (new_dir)
-  IS_DIRSYNC (old_dir)
-  IS_DIRSYNC (old_inode)
-  sb-> s_flags & SB_SYNCHRONOUS | SB_DIRSYNC
-
-In exfat, IS_DIRSYNC only works as a shortcut to sb->s_flags.
-
-Even if S_SYNC or S_DIRSYNC were set to inode->i_flags, the current implementation is inappropriate.
-Whether to sync or not should be determined by "IS_DIRSYNC(new_dir)||IS_DIRSYNC(old_dir)", I think.
-(Syncing only old_dir is a high risk of losing file)
-
-Whatever, no one sets S_SYNC and S_DIRSYNC in exfat, so the behavior is no different.
-
-***
-Please tell me your opinion about "aggregate dir-entry updates into __exfat_write_inode()"
-
-BR
----
-Tetsuhiro Kohada <kohada.t2@gmail.com>
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 5b47834f2e1b..85c63f735909 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -358,7 +358,7 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+>  	for_each_mapped_pfn(entry, pfn) {
+>  		struct page *page = pfn_to_page(pfn);
+>  
+> -		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
+> +		WARN_ON_ONCE(trunc && !dax_layout_is_idle_page(page));
+>  		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
+>  		page->mapping = NULL;
+>  		page->index = 0;
+> @@ -372,7 +372,7 @@ static struct page *dax_busy_page(void *entry)
+>  	for_each_mapped_pfn(entry, pfn) {
+>  		struct page *page = pfn_to_page(pfn);
+>  
+> -		if (page_ref_count(page) > 1)
+> +		if (!dax_layout_is_idle_page(page))
+>  			return page;
+>  	}
+>  	return NULL;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 771ed8b1fadb..132620cbfa13 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3937,10 +3937,7 @@ int ext4_break_layouts(struct inode *inode)
+>  		if (!page)
+>  			return 0;
+>  
+> -		error = ___wait_var_event(&page->_refcount,
+> -				atomic_read(&page->_refcount) == 1,
+> -				TASK_INTERRUPTIBLE, 0, 0,
+> -				ext4_wait_dax_page(ei));
+> +		error = dax_wait_page(ei, page, ext4_wait_dax_page);
+>  	} while (error == 0);
+>  
+>  	return error;
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 3d1b95124744..a5304aaeaa3a 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -749,9 +749,7 @@ xfs_break_dax_layouts(
+>  		return 0;
+>  
+>  	*retry = true;
+> -	return ___wait_var_event(&page->_refcount,
+> -			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
+> -			0, 0, xfs_wait_dax_page(inode));
+> +	return dax_wait_page(inode, page, xfs_wait_dax_page);
+>  }
+>  
+>  int
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index b52f084aa643..8909a91cd381 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -243,6 +243,16 @@ static inline bool dax_mapping(struct address_space *mapping)
+>  	return mapping->host && IS_DAX(mapping->host);
+>  }
+>  
+> +static inline bool dax_layout_is_idle_page(struct page *page)
+> +{
+> +	return page_ref_count(page) == 1;
+> +}
+> +
+> +#define dax_wait_page(_inode, _page, _wait_cb)				\
+> +	___wait_var_event(&(_page)->_refcount,				\
+> +		dax_layout_is_idle_page(_page),				\
+> +		TASK_INTERRUPTIBLE, 0, 0, _wait_cb(_inode))
+> +
+>  #ifdef CONFIG_DEV_DAX_HMEM_DEVICES
+>  void hmem_register_device(int target_nid, struct resource *r);
+>  #else
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
