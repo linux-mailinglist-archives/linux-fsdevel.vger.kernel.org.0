@@ -2,79 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE85287804
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 17:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 337AD287931
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 17:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731302AbgJHPt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 11:49:27 -0400
-Received: from namei.org ([65.99.196.166]:33834 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731293AbgJHPtX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 11:49:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 098Fm0VN010198;
-        Thu, 8 Oct 2020 15:48:00 GMT
-Date:   Fri, 9 Oct 2020 02:48:00 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Lokesh Gidra <lokeshgidra@google.com>
-cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v9 0/3] SELinux support for anonymous inodes and UFFD
-In-Reply-To: <CA+EESO4eS4KsqgjmDWdwMozK36GbgTvJsKsC_5NO-pQA3huDWg@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.2010090243400.9736@namei.org>
-References: <20200923193324.3090160-1-lokeshgidra@google.com> <CA+EESO4eS4KsqgjmDWdwMozK36GbgTvJsKsC_5NO-pQA3huDWg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1731944AbgJHP5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 11:57:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731925AbgJHP5l (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 11:57:41 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F77C0613D6;
+        Thu,  8 Oct 2020 08:57:34 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id h24so8826859ejg.9;
+        Thu, 08 Oct 2020 08:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:references:user-agent:in-reply-to:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=XvMgROSzuESaOzQKx7kh2yMiXeKygcT+Y838NKvx+Wk=;
+        b=utMGe7b0UZ9Ghbr0xIiMxfvyGOVXoV03nSf8CntJlYmO7vB7xtLD4aHUNjc2/1/YU/
+         BGvibLFWsc7ym63F744U8+Dvg+MPLLlIe39KKft9fTFf/JCqV0QFyzJlB84X3j9CzYYd
+         cfn/JosupL/LZGDneCw4hVCPbbk6S1oOd2KhScE0ig21aIYVuv9lVo2/qwjSHU48qgho
+         Gpt7+nG/UgQvrPPQNVb8oBF2ZDIT4aT1IGb85RFKmEclC+uDsDYwytwnia23jiGG9kUm
+         7Ue5TkRy+YK44QofgRJ3mlyWceuPw1r/kNv5Ypo/k+9ncvxrA5bz4VdxXU/ozMBNJbsB
+         f5eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:references:user-agent
+         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
+        bh=XvMgROSzuESaOzQKx7kh2yMiXeKygcT+Y838NKvx+Wk=;
+        b=Zpw06G8rgKWf94hqs/RtHuRV1f04M94xkR8cCKwEiZMr+EgjByEb3k+cT4mImPzsCi
+         97BQjDisWF5PpMr2jpX5fhX58tqkZdXj/k0mUp4Ziy9Wd7SkuyLYHjoSriDEnBdJK/bH
+         120Dh9ymx/g+9vhR1SD50is9FXMp8RRuA5xXrLeEbuoZkjb5Xm4IkRPf6EMTwo/tMloM
+         wF7uUjmxO2wgCDfEm+/EaYANr8UwfyySwiKVwi34P0Ndz1f71RrlqmOKEIcp3p+Hywri
+         0iD9XyHIo3rut8BoGF6KlPUNQw0CBbMI3EFLFjkPqljrlGb5FB+bW/g9JNxzbitiF5J/
+         mVnQ==
+X-Gm-Message-State: AOAM530JE+mMk/nhgpjr1UlfMnFc9lj8Lg/XLR0eoMtXt45HXo01PvYi
+        OtF39D1ieX6QIjlQWkzNlQ4=
+X-Google-Smtp-Source: ABdhPJyOmtOhHIUCQ1CMgl2VfYfvlPZw97lvJG+K35XaFBwxl0BqyCNtiL5xNtxS6W8gKNz5ugHDoQ==
+X-Received: by 2002:a17:906:60d6:: with SMTP id f22mr9505409ejk.250.1602172652413;
+        Thu, 08 Oct 2020 08:57:32 -0700 (PDT)
+Received: from evledraar (dhcp-077-248-252-018.chello.nl. [77.248.252.18])
+        by smtp.gmail.com with ESMTPSA id q27sm4473794ejd.74.2020.10.08.08.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2020 08:57:31 -0700 (PDT)
+From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+To:     Johannes Schindelin <Johannes.Schindelin@gmx.de>
+Cc:     Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org,
+        tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
+References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-3-avarab@gmail.com> <xmqqv9gcs91k.fsf@gitster.c.googlers.com> <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
+User-agent: Debian GNU/Linux bullseye/sid; Emacs 26.3; mu4e 1.4.13
+In-reply-to: <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
+Date:   Thu, 08 Oct 2020 17:57:30 +0200
+Message-ID: <87eem8hfrp.fsf@evledraar.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 7 Oct 2020, Lokesh Gidra wrote:
 
->  Is there anything else that needs to be done before merging this
-> patch series? I urge the reviewers to please take a look.
-> 
+On Thu, Oct 08 2020, Johannes Schindelin wrote:
 
-It looks generally fine to me from a security POV, we really need some 
-feedback from VFS folk.
+> Hi Junio and =C3=86var,
+>
+> On Thu, 17 Sep 2020, Junio C Hamano wrote:
+>
+>> =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason  <avarab@gmail.com> writes:
+>>
+>> > As amusing as Linus's original prose[1] is here it doesn't really expl=
+ain
+>> > in any detail to the uninitiated why you would or wouldn't enable
+>> > this, and the counter-intuitive reason for why git wouldn't fsync your
+>> > precious data.
+>> >
+>> > So elaborate (a lot) on why this may or may not be needed. This is my
+>> > best-effort attempt to summarize the various points raised in the last
+>> > ML[2] discussion about this.
+>> >
+>> > 1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
+>> >     files", 2008-06-18)
+>> > 2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
+>> >
+>> > Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.co=
+m>
+>> > ---
+>> >  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-----
+>> >  1 file changed, 36 insertions(+), 6 deletions(-)
+>>
+>> When I saw the subject in my mailbox, I expected to see that you
+>> would resurrect Christoph's updated text in [*1*], but you wrote a
+>> whole lot more ;-) And they are quite informative to help readers to
+>> understand what the option does.  I am not sure if the understanding
+>> directly help readers to decide if it is appropriate for their own
+>> repositories, though X-<.
+>
+> I agree that it is an improvement, and am therefore in favor of applying
+> the patch.
 
+Just the improved docs, or flipping the default of core.fsyncObjectFiles
+to "true"?
 
--- 
-James Morris
-<jmorris@namei.org>
+I've been meaning to re-roll this. I won't have time anytime soon to fix
+git's fsync() use, i.e. ensure that we run up & down modified
+directories and fsync()/fdatasync() file/dir fd's as appropriate but I
+think documenting it and changing the core.fsyncObjectFiles default
+makes sense and is at least a step in the right direction.
 
+I do think it makes more sense for a v2 to split most of this out into
+some section that generally discusses data integrity in the .git
+directory. I.e. that says that currently where we use fsync() (such as
+pack/commit-graph writes) we don't fsync() the corresponding
+director{y,ies), and ref updates don't fsync() at all.
+
+Where to put that though? gitrepository-layout(5)? Or a new page like
+gitrepository-integrity(5) (other suggestions welcome..).
+
+Looking at the code again it seems easier than I thought to make this
+right if we ignore .git/refs (which reftable can fix for us). Just:
+
+1. Change fsync_or_die() and its callsites to also pass/sync the
+   containing directory, which is always created already
+   (e.g. .git/objects/pack/)...).
+
+2. ..Or in the case where it's not created already such as
+   .git/objects/??/ (or .git/objects/pack/) itself) it's not N-deep like
+   the refs hierarchy, so "did we create it" state is pretty simple, or
+   we can just always do it unconditionally.
+
+3. Without reftable the .git/refs/ case shouldn't be too hard if we're
+   OK with redundantly fsyncing all the way down, i.e. to make it
+   simpler by not tracking the state of exactly what was changed.
+
+4. Now that I'm writing this there's also .git/{config,rr-cache} and any
+   number of other things we need to change for 100% coverage, but the
+   above 1-3 should be good enough for repo integrity where repo =3D refs
+   & objects.
