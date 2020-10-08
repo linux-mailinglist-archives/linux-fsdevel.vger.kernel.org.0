@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F96287044
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEDAE28703D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbgJHH4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 03:56:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52290 "EHLO
+        id S1729167AbgJHH4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 03:56:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729114AbgJHHzs (ORCPT
+        with ESMTP id S1729131AbgJHHzw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 03:55:48 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5F5C061755;
-        Thu,  8 Oct 2020 00:55:48 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id bb1so2375567plb.2;
-        Thu, 08 Oct 2020 00:55:48 -0700 (PDT)
+        Thu, 8 Oct 2020 03:55:52 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED9AC0613D2;
+        Thu,  8 Oct 2020 00:55:52 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id k8so3331909pfk.2;
+        Thu, 08 Oct 2020 00:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=yi7jGxxMRJTKFHMt31rtyi+qjpDfCVRN9Gvuq5A1fhY=;
-        b=gozkt5zB0DgYVhBidJhV+3vMXvqRNyABsdhKqCq86ORheKAC8rxjkpILlfOy5sDRnh
-         OWypeMNFz+MRE/KvQf0Iep9F+oqDQ0inncfWzr66ewlRDYUsZ+JjIXGnj2TesfBBNo3f
-         +iIHhotwCu5A5fEjoWzcqMf5V9XLrVeKeZy20Vtr1mwPIg9EnFOO1GSSMuwAgDbcBpXv
-         SqgOznz8FarHLZQs6/XLHvurg4ZzWpzfiUraE6vQkRpXon/gtopXQb+9uxA5Dc7jjl1q
-         GCrc+go7/JRvYFlbqAln9NVPmm41R01BYy5Hk6eY/IUnysJ+TsuH/Ut8E05TsVh8l3hC
-         B0DA==
+        bh=LyBV6N3gjq3MiLxBfZ3JOHalx3ds96tA29NRwEvbdoI=;
+        b=vd9Dnz8emLxl2V0MxRbRE8ukBDhBRtccJzUehh/zwzrFX58KybIlfgmtQJ04bVTuD+
+         ChU852jZS1a6muWTlmD2z4byGPamv02s2TKdjDlLGQy5EVqnySrqDzcIdw4LVN+Ivd9a
+         P1fICw3poYzu1PShO70s1IICT6lDQRwMQK8uS7ciPRkKvtxfpAARUfgpgu9pGqqv7cEz
+         FOrM4hjxUiagkjqFMEfNipPJK35UQv3aLfUDWT49eQJaUBdHZhoPBuhoMHK3eAzd/KkU
+         3KSWL1JK2UvxDtZn8qCXmvMK5oaix3Q89m+VHUSKRYDHZKTZBqnCwjmZUkRrP5CnhZ8r
+         LUJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=yi7jGxxMRJTKFHMt31rtyi+qjpDfCVRN9Gvuq5A1fhY=;
-        b=hzIs5oAqoBaywUlCAytMwu9NqFinLrpOlxbWp7mt3krmyCzCN4UIFajQEsjnjrJ+D1
-         CLL/R9SkaJ2m0aAOIla19UXVjaEnmzyyePIg1RzwXg2DF2w1RYP+5G8Xs929L6S5FOLv
-         U9bWfQgpjE0joIvFA4gRz1zy0314qeONUbh59JMAkze7JE3UGXS95HLS9sB7ubqnl++R
-         mgCp+N/uw5fwbz5mVh0VeldbMdjbvn4lE72OVYhqEUP+lGdZFtScdNLG2TrRP7wU51zL
-         Ecr1wrS73Yk1sssRvLxEENxADqrfT6nvOWIZJYXwRDZPqFCuCiU6eFiXT54ZSIKu5ui1
-         Uobg==
-X-Gm-Message-State: AOAM530xE5POnMgZuCclHv7spB0UnJ2uzqT4YVufTL68D1wpLtVFsSd+
-        OOJclY6j/X3nkDlRV1CVotQ=
-X-Google-Smtp-Source: ABdhPJz089XPEbawgMw+wnqaJGiaMcZofnvQOPXXqAfc3qfL7nSL9Oiv4dpga2EV5DLU23FnwN3xJg==
-X-Received: by 2002:a17:902:ea8c:b029:d2:8abd:c8de with SMTP id x12-20020a170902ea8cb02900d28abdc8demr6617467plb.21.1602143748229;
-        Thu, 08 Oct 2020 00:55:48 -0700 (PDT)
+        bh=LyBV6N3gjq3MiLxBfZ3JOHalx3ds96tA29NRwEvbdoI=;
+        b=iXidjNyXOJamFenCey8QfO9crVNwrEHpOU3htr9351ifcf/PIX9wDBDR8v1r6/jzuq
+         zyphTJLDh3jSe68ZxCle5azr/YwIKe+711/Y7Gi1TuHNNGhKhBzfi1Y3Gzn0mrUTzWv+
+         qH3T+JRREGnoNkCDPhhpYMq7k/MAJaCXSWoxNJVoeNvhiPeXlLgQV/PcfdWRM4m8/7dH
+         naA3SS7ohkbhlVeDJVxFr9EZo0/bfPH936rmMS2ELIqjUX9n96/R7sAyjlGoBDomLnsY
+         RHAPa64vSEsxrLVh26DBzwB+gHFa6RaH5naQikz9oeAET2zAf5FCYyji+Aw6TL67v76K
+         Dtdg==
+X-Gm-Message-State: AOAM532BdkJgEQrCyPedwpCMYokAahaik46Vh0R7MZghEErwgvLDgmFQ
+        7bQN3oXHMUB7dqx1LIWTdAs=
+X-Google-Smtp-Source: ABdhPJzchyQcPfaxUgFQfXjYWLFWkCzMJoJcb2OICRAl5QnyfvZRb6BniUxZb6dGsJpVC7oewwtwAQ==
+X-Received: by 2002:a63:d65:: with SMTP id 37mr6412097pgn.139.1602143752415;
+        Thu, 08 Oct 2020 00:55:52 -0700 (PDT)
 Received: from localhost.localdomain ([203.205.141.61])
-        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.45
+        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 00:55:47 -0700 (PDT)
+        Thu, 08 Oct 2020 00:55:51 -0700 (PDT)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
@@ -57,9 +57,9 @@ Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Chen Zhuo <sagazchen@tencent.com>
-Subject: [PATCH 28/35] mm, dmemfs: support huge_fault() for dmemfs
-Date:   Thu,  8 Oct 2020 15:54:18 +0800
-Message-Id: <4c905a63ed6c68fd23f81e1aafb6a41197a85909.1602093760.git.yuleixzhang@tencent.com>
+Subject: [PATCH 29/35] mm: add follow_pte_pud()
+Date:   Thu,  8 Oct 2020 15:54:19 +0800
+Message-Id: <71f27b2b03471adbbacccb9a5107b6533a18a957.1602093760.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1602093760.git.yuleixzhang@tencent.com>
 References: <cover.1602093760.git.yuleixzhang@tencent.com>
@@ -71,72 +71,121 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Introduce __dmemfs_huge_fault() to handle 1G huge pud for dmemfs.
+Since we had supported dmem huge pud, here support dmem huge pud for
+hva_to_pfn().
+
+Similar to follow_pte_pmd(), follow_pte_pud() allows a PTE lead or a
+huge page PMD or huge page PUD to be found and returned.
 
 Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- fs/dmemfs/inode.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ mm/memory.c | 52 ++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 44 insertions(+), 8 deletions(-)
 
-diff --git a/fs/dmemfs/inode.c b/fs/dmemfs/inode.c
-index 53a9bf214e0d..027428a7f7a0 100644
---- a/fs/dmemfs/inode.c
-+++ b/fs/dmemfs/inode.c
-@@ -522,6 +522,43 @@ static vm_fault_t  __dmemfs_pmd_fault(struct vm_fault *vmf)
- 	return ret;
+diff --git a/mm/memory.c b/mm/memory.c
+index 3748fab7cc2a..f831ab4b7ccd 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4535,9 +4535,9 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
+ }
+ #endif /* __PAGETABLE_PMD_FOLDED */
+ 
+-static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
++static int __follow_pte_pud(struct mm_struct *mm, unsigned long address,
+ 			    struct mmu_notifier_range *range,
+-			    pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
++			    pte_t **ptepp, pmd_t **pmdpp, pud_t **pudpp, spinlock_t **ptlp)
+ {
+ 	pgd_t *pgd;
+ 	p4d_t *p4d;
+@@ -4554,6 +4554,26 @@ static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+ 		goto out;
+ 
+ 	pud = pud_offset(p4d, address);
++	VM_BUG_ON(pud_trans_huge(*pud));
++	if (pud_huge(*pud)) {
++		if (!pudpp)
++			goto out;
++
++		if (range) {
++			mmu_notifier_range_init(range, MMU_NOTIFY_CLEAR, 0,
++						NULL, mm, address & PUD_MASK,
++						(address & PUD_MASK) + PUD_SIZE);
++			mmu_notifier_invalidate_range_start(range);
++		}
++		*ptlp = pud_lock(mm, pud);
++		if (pud_huge(*pud)) {
++			*pudpp = pud;
++			return 0;
++		}
++		spin_unlock(*ptlp);
++		if (range)
++			mmu_notifier_invalidate_range_end(range);
++	}
+ 	if (pud_none(*pud) || unlikely(pud_bad(*pud)))
+ 		goto out;
+ 
+@@ -4609,8 +4629,8 @@ static inline int follow_pte(struct mm_struct *mm, unsigned long address,
+ 
+ 	/* (void) is needed to make gcc happy */
+ 	(void) __cond_lock(*ptlp,
+-			   !(res = __follow_pte_pmd(mm, address, NULL,
+-						    ptepp, NULL, ptlp)));
++			   !(res = __follow_pte_pud(mm, address, NULL,
++						    ptepp, NULL, NULL, ptlp)));
+ 	return res;
  }
  
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+static vm_fault_t __dmemfs_huge_fault(struct vm_fault *vmf)
+@@ -4622,12 +4642,24 @@ int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
+ 
+ 	/* (void) is needed to make gcc happy */
+ 	(void) __cond_lock(*ptlp,
+-			   !(res = __follow_pte_pmd(mm, address, range,
+-						    ptepp, pmdpp, ptlp)));
++			   !(res = __follow_pte_pud(mm, address, range,
++						    ptepp, pmdpp, NULL, ptlp)));
+ 	return res;
+ }
+ EXPORT_SYMBOL(follow_pte_pmd);
+ 
++int follow_pte_pud(struct mm_struct *mm, unsigned long address,
++		   struct mmu_notifier_range *range,
++		   pte_t **ptepp, pmd_t **pmdpp, pud_t **pudpp, spinlock_t **ptlp)
 +{
-+	struct vm_area_struct *vma = vmf->vma;
-+	unsigned long pud_addr = vmf->address & PUD_MASK;
-+	struct inode *inode = file_inode(vma->vm_file);
-+	void *entry;
-+	phys_addr_t phys;
-+	pfn_t pfn;
-+	int ret;
++	int res;
 +
-+	if (dmem_page_size(inode) < PUD_SIZE)
-+		return VM_FAULT_FALLBACK;
-+
-+	WARN_ON(pud_addr < vma->vm_start ||
-+		vma->vm_end < pud_addr + PUD_SIZE);
-+
-+	entry = radix_get_create_entry(vma, pud_addr, inode,
-+				       linear_page_index(vma, pud_addr));
-+	if (IS_ERR(entry))
-+		return (PTR_ERR(entry) == -ENOMEM) ?
-+			VM_FAULT_OOM : VM_FAULT_SIGBUS;
-+
-+	phys = dmem_entry_to_addr(inode, entry);
-+	pfn = phys_to_pfn_t(phys, PFN_DMEM);
-+	ret = vmf_insert_pfn_pud(vmf, pfn, !!(vma->vm_flags & VM_WRITE));
-+
-+	radix_put_entry();
-+	return ret;
++	/* (void) is needed to make gcc happy */
++	(void) __cond_lock(*ptlp,
++			   !(res = __follow_pte_pud(mm, address, range,
++						    ptepp, pmdpp, pudpp, ptlp)));
++	return res;
 +}
-+#else
-+static vm_fault_t __dmemfs_huge_fault(struct vm_fault *vmf)
-+{
-+	return VM_FAULT_FALLBACK;
-+}
-+#endif /* !CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
-+
- static vm_fault_t dmemfs_huge_fault(struct vm_fault *vmf, enum page_entry_size pe_size)
- {
- 	int ret;
-@@ -533,6 +570,9 @@ static vm_fault_t dmemfs_huge_fault(struct vm_fault *vmf, enum page_entry_size p
- 	case PE_SIZE_PMD:
- 		ret = __dmemfs_pmd_fault(vmf);
- 		break;
-+	case PE_SIZE_PUD:
-+		ret = __dmemfs_huge_fault(vmf);
-+		break;
- 	default:
- 		ret = VM_FAULT_SIGBUS;
- 	}
+ /**
+  * follow_pfn - look up PFN at a user virtual address
+  * @vma: memory mapping
+@@ -4645,15 +4677,19 @@ int follow_pfn(struct vm_area_struct *vma, unsigned long address,
+ 	spinlock_t *ptl;
+ 	pte_t *ptep;
+ 	pmd_t *pmdp = NULL;
++	pud_t *pudp = NULL;
+ 
+ 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
+ 		return ret;
+ 
+-	ret = follow_pte_pmd(vma->vm_mm, address, NULL, &ptep, &pmdp, &ptl);
++	ret = follow_pte_pud(vma->vm_mm, address, NULL, &ptep, &pmdp, &pudp, &ptl);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (pmdp) {
++	if (pudp) {
++		*pfn = pud_pfn(*pudp) + ((address & ~PUD_MASK) >> PAGE_SHIFT);
++		spin_unlock(ptl);
++	} else if (pmdp) {
+ 		*pfn = pmd_pfn(*pmdp) + ((address & ~PMD_MASK) >> PAGE_SHIFT);
+ 		spin_unlock(ptl);
+ 	} else {
 -- 
 2.28.0
 
