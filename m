@@ -2,150 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52022287BE1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 20:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09CF8287BE6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 20:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbgJHStA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 14:49:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31711 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729230AbgJHStA (ORCPT
+        id S1729179AbgJHSxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 14:53:44 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:58584 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbgJHSxo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 14:49:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602182938;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XKvUN7mKPbV+B612jB+Si5npQlDaawUSuukFx01DKck=;
-        b=Qm3OHv+7WtTMRXEPblASj+0Yaa3t9mT2F+0gIRDfz+feq89PxT1NqQDEuxoSdnI5KxnftT
-        Y6oPv0d9Ok52HEJw/XN5ez6ZU9kEePOAe7o8mjkyQqt/tQSDlkBrfl6oOwTPvs2xOs/JO+
-        Zgqguu7OaLIjtlSLlQc3AnxG3/l6i9A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-163-d1bW96jfNOOyzfUHXbAlQw-1; Thu, 08 Oct 2020 14:48:54 -0400
-X-MC-Unique: d1bW96jfNOOyzfUHXbAlQw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 8 Oct 2020 14:53:44 -0400
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 243C7889DB;
+        Thu,  8 Oct 2020 14:53:41 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
+        :subject:references:date:in-reply-to:message-id:mime-version
+        :content-type:content-transfer-encoding; s=sasl; bh=Usx5W2hRFbMq
+        gFa98Cv5wzREUKU=; b=VWvF/5AFYm2u+9a5VnKJx758hZ4DbRT2AgOMQMpxFgtJ
+        Ec9fP/pQXZahJMXjhISsm9Mpl97ZynYJ8u4pQNhfAzDJdD+04jlD+fb/hqd0ytxQ
+        M+byX/r5VYYBrFjkMSn6Bk5X3TZpp6pfIvIY/XOcOknddqkylwhnjrTq2s+EdIQ=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=from:to:cc
+        :subject:references:date:in-reply-to:message-id:mime-version
+        :content-type:content-transfer-encoding; q=dns; s=sasl; b=rLt84q
+        44iaZnqYnub+3/R0XYZzEBtUwIiWaC2nk428DdooRT+hsZKTInNnLduQStg17M9b
+        Lvh3mYwAYj7wB47DMpsfVDIf/J3Qg1m8jnAym5hiFak+dnA1278U2QouY+D6RFS/
+        jCjLTbc/awN8x/srND9TD4gYsgB7NxOM52jpQ=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id 1BFAB889DA;
+        Thu,  8 Oct 2020 14:53:41 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+Received: from pobox.com (unknown [34.74.119.39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 01FB99CC11;
-        Thu,  8 Oct 2020 18:48:53 +0000 (UTC)
-Received: from redhat.com (ovpn-119-161.rdu2.redhat.com [10.10.119.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C7DC66EF4A;
-        Thu,  8 Oct 2020 18:48:51 +0000 (UTC)
-Date:   Thu, 8 Oct 2020 14:48:49 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Josef Bacik <jbacik@fb.com>
-Subject: Re: [PATCH 00/14] Small step toward KSM for file back page.
-Message-ID: <20201008184849.GA3514601@redhat.com>
-References: <20201007010603.3452458-1-jglisse@redhat.com>
- <20201007032013.GS20115@casper.infradead.org>
- <20201007144835.GA3471400@redhat.com>
- <20201007170558.GU20115@casper.infradead.org>
- <20201007175419.GA3478056@redhat.com>
- <20201007220916.GX20115@casper.infradead.org>
- <20201008153028.GA3508856@redhat.com>
- <20201008154341.GJ20115@casper.infradead.org>
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 98A6F889D9;
+        Thu,  8 Oct 2020 14:53:40 -0400 (EDT)
+        (envelope-from junio@pobox.com)
+From:   Junio C Hamano <gitster@pobox.com>
+To:     =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
+Cc:     Johannes Schindelin <Johannes.Schindelin@gmx.de>,
+        git@vger.kernel.org, tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
+References: <87sgbghdbp.fsf@evledraar.gmail.com>
+        <20200917112830.26606-3-avarab@gmail.com>
+        <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
+        <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
+        <87eem8hfrp.fsf@evledraar.gmail.com>
+Date:   Thu, 08 Oct 2020 11:53:40 -0700
+In-Reply-To: <87eem8hfrp.fsf@evledraar.gmail.com> (=?utf-8?B?IsOGdmFyIEFy?=
+ =?utf-8?B?bmZqw7Zyw7A=?= Bjarmason"'s
+        message of "Thu, 08 Oct 2020 17:57:30 +0200")
+Message-ID: <xmqqo8lcwnuz.fsf@gitster.c.googlers.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201008154341.GJ20115@casper.infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=utf-8
+X-Pobox-Relay-ID: 94D1B56A-0997-11EB-8AF6-D152C8D8090B-77302942!pb-smtp1.pobox.com
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 08, 2020 at 04:43:41PM +0100, Matthew Wilcox wrote:
-> On Thu, Oct 08, 2020 at 11:30:28AM -0400, Jerome Glisse wrote:
-> > On Wed, Oct 07, 2020 at 11:09:16PM +0100, Matthew Wilcox wrote:
-> > > So ... why don't you put a PageKsm page in the page cache?  That way you
-> > > can share code with the current KSM implementation.  You'd need
-> > > something like this:
-> > 
-> > I do just that but there is no need to change anything in page cache.
-> 
-> That's clearly untrue.  If you just put a PageKsm page in the page
-> cache today, here's what will happen on a truncate:
-> 
-> void truncate_inode_pages_range(struct address_space *mapping,
->                                 loff_t lstart, loff_t lend)
-> {
-> ...
->                 struct page *page = find_lock_page(mapping, start - 1);
-> 
-> find_lock_page() does this:
->         return pagecache_get_page(mapping, offset, FGP_LOCK, 0);
-> 
-> pagecache_get_page():
-> 
-> repeat:
->         page = find_get_entry(mapping, index);
-> ...
->         if (fgp_flags & FGP_LOCK) {
-> ...
->                 if (unlikely(compound_head(page)->mapping != mapping)) {
->                         unlock_page(page);
->                         put_page(page);
->                         goto repeat;
-> 
-> so it's just going to spin.  There are plenty of other codepaths that
-> would need to be checked.  If you haven't found them, that shows you
-> don't understand the problem deeply enough yet.
+=C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.com> writes:
 
-I also change truncate, splice and few other special cases that do
-not goes through GUP/page fault/mkwrite (memory debug too but that's
-a different beast).
+>>> When I saw the subject in my mailbox, I expected to see that you
+>>> would resurrect Christoph's updated text in [*1*], but you wrote a
+>>> whole lot more ;-) And they are quite informative to help readers to
+>>> understand what the option does.  I am not sure if the understanding
+>>> directly help readers to decide if it is appropriate for their own
+>>> repositories, though X-<.
+>>
+>> I agree that it is an improvement, and am therefore in favor of applyi=
+ng
+>> the patch.
+>
+> Just the improved docs, or flipping the default of core.fsyncObjectFile=
+s
+> to "true"?
+
+I am not Dscho, but "applying THE patch" meant, at least to me, the
+patch [2/2] to the docs, which was the message we are responding to.
+
+> I've been meaning to re-roll this. I won't have time anytime soon to fi=
+x
+> git's fsync() use, i.e. ensure that we run up & down modified
+> directories and fsync()/fdatasync() file/dir fd's as appropriate but I
+> think documenting it and changing the core.fsyncObjectFiles default
+> makes sense and is at least a step in the right direction.
+>
+> I do think it makes more sense for a v2 to split most of this out into
+> some section that generally discusses data integrity in the .git
+> directory. I.e. that says that currently where we use fsync() (such as
+> pack/commit-graph writes) we don't fsync() the corresponding
+> director{y,ies), and ref updates don't fsync() at all.
+
+Yes, I think all of these are sensible things to do sometime in the
+future.
 
 
-> I believe we should solve this problem, but I don't think you're going
-> about it the right way.
+> Where to put that though? gitrepository-layout(5)? Or a new page like
+> gitrepository-integrity(5) (other suggestions welcome..).
 
-I have done much more than what i posted but there is bug that i
-need to hammer down before posting everything and i wanted to get
-the discussion started. I guess i will finish tracking that one
-down and post the whole thing.
+I do not have a good suggestion at this moment on this.
 
 
-> > So flow is:
-> > 
-> >   Same as before:
-> >     1 - write fault (address, vma)
-> >     2 - regular write fault handler -> find page in page cache
-> > 
-> >   New to common page fault code:
-> >     3 - ksm check in write fault common code (same as ksm today
-> >         for anonymous page fault code path).
-> >     4 - break ksm (address, vma) -> (file offset, mapping)
-> >         4.a - use mapping and file offset to lookup the proper
-> >               fs specific information that were save when the
-> >               page was made ksm.
-> >         4.b - allocate new page and initialize it with that
-> >               information (and page content), update page cache
-> >               and mappings ie all the pte who where pointing to
-> >               the ksm for that mapping at that offset to now use
-> >               the new page (like KSM for anonymous page today).
-> 
-> But by putting that logic in the page fault path, you've missed
-> the truncate path.  And maybe other places.  Putting the logic
-> down in pagecache_get_page() means you _don't_ need to find
-> all the places that call pagecache_get_page().
 
-They are cases where pagecache is not even in the loop ie you
-already have the page and you do not need to look it up (page
-fault, some fs common code, anything that goes through GUP,
-memory reclaim, ...). Making all those places having to go
-through page cache all the times will slow them down and many
-are hot code path that i do not believe we want to slow even
-if a feature is not use.
-
-Cheers,
-Jérôme
 
