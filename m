@@ -2,189 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F585286E06
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 07:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC629286E64
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 08:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgJHFTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 01:19:14 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56222 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbgJHFTO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 01:19:14 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id BD1EC2920FC
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, Anatol Pomazau <anatol@google.com>,
-        kernel@collabora.com, Khazhismel Kumykov <khazhy@google.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH] buffer: Add tracepoints to buffer write path
-Date:   Thu,  8 Oct 2020 01:19:02 -0400
-Message-Id: <20201008051902.2900651-1-krisman@collabora.com>
-X-Mailer: git-send-email 2.28.0
+        id S1728363AbgJHGE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 02:04:28 -0400
+Received: from m42-4.mailgun.net ([69.72.42.4]:18723 "EHLO m42-4.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726245AbgJHGE1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 02:04:27 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1602137067; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=q0WJO/0dJ8BgShdei2F0Ls8cHIZgFMJNnmLdHmZqEgE=;
+ b=I//eiam6y2rv6M+oTW+UCIq3wzYntQr/B1wcHYeGMH5ttMghkJ+c+WKfxvP7liv2oxV1HJPy
+ Kx1qtCLuwQj/EVvvY8eqXTjmbeQ1qvbC4f6HLqqfV8MYwKO5o+B8X7hLq5ezR9xALwAAcFpH
+ 1z6/LycLZ4+qtpj+ASC1KtdtKMQ=
+X-Mailgun-Sending-Ip: 69.72.42.4
+X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 5f7eabb5856d9308b5b5ca54 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 08 Oct 2020 06:03:33
+ GMT
+Sender: ppvk=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D1524C433FF; Thu,  8 Oct 2020 06:03:33 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ppvk)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 251F1C433CB;
+        Thu,  8 Oct 2020 06:03:33 +0000 (UTC)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 08 Oct 2020 11:33:33 +0530
+From:   ppvk@codeaurora.org
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org
+Subject: Re: [PATCH V3] fuse: Remove __GFP_FS flag to avoid allocator
+ recursing
+In-Reply-To: <077d4fc0e56db4f4433542e9fe971190@codeaurora.org>
+References: <1600840675-43691-1-git-send-email-ppvk@codeaurora.org>
+ <20200923124914.GO32101@casper.infradead.org>
+ <077d4fc0e56db4f4433542e9fe971190@codeaurora.org>
+Message-ID: <f5bb26f0b727d78e3fb685b975163d9f@codeaurora.org>
+X-Sender: ppvk@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Anatol Pomazau <anatol@google.com>
+On 2020-09-24 20:26, ppvk@codeaurora.org wrote:
+> On 2020-09-23 18:19, Matthew Wilcox wrote:
+>> On Wed, Sep 23, 2020 at 11:27:55AM +0530, Pradeep P V K wrote:
+>>> Changes since V2:
+>>> - updated memalloc_nofs_save() to allocation paths that potentially
+>>>   can cause deadlock.
+>> 
+>> That's the exact opposite of what I said to do.  Again, the *THREAD*
+>> is the thing which must not block, not the *ALLOCATION*.  So you
+>> set this flag *ON THE THREAD*, not *WHEN IT DOES AN ALLOCATION*.
+>> If that's not clear, please ask again.
+> 
+> The fuse threads are created and started in external libfuse userspace
+> library functions but not in Kernel. The lowest entry point for these 
+> threads
+> to enter in kernel is fuse_dev_read()/fuse_dev_splice_read().
+> 
+> So, can we suppose to use memalloc_nofs_save() from
+> external userspace library functions ?
+> 
+> Even if we used, can you confirm, if the context of 
+> memalloc_nofs_save()
+> can be persist in kernel ?  (when the thread enters into kernel space).
+> 
+> Also, i didn't see memalloc_nofs_save() been used/called from any
+> external userspace library functions.
+> 
+> 
+> Thanks and Regards,
+> Pradeep
 
-Hi Viro,
-
-I'm not sure if you accept tracepoint inclusions on your tree, if so,
-please take these into consideration.
-
--- >8 --
-
-Google has been carrying these tracepoints for a while, as they have
-proven particularly useful when investigating internal issues with
-direct vs. buffered IO on Google workloads.
-
-Co-developed-by: Khazhismel Kumykov <khazhy@google.com>
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-Signed-off-by: Anatol Pomazau <anatol@google.com>
-Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/buffer.c               | 10 +++++
- include/trace/events/fs.h | 82 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
- create mode 100644 include/trace/events/fs.h
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 50bbc99e3d96..f5430c721e14 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -49,6 +49,9 @@
- #include <trace/events/block.h>
- #include <linux/fscrypt.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/fs.h>
-+
- #include "internal.h"
- 
- static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
-@@ -119,7 +122,9 @@ EXPORT_SYMBOL(buffer_check_dirty_writeback);
-  */
- void __wait_on_buffer(struct buffer_head * bh)
- {
-+	trace_fs_buffer_wait_start(bh);
- 	wait_on_bit_io(&bh->b_state, BH_Lock, TASK_UNINTERRUPTIBLE);
-+	trace_fs_buffer_wait_end(bh);
- }
- EXPORT_SYMBOL(__wait_on_buffer);
- 
-@@ -1741,6 +1746,8 @@ int __block_write_full_page(struct inode *inode, struct page *page,
- 	block = (sector_t)page->index << (PAGE_SHIFT - bbits);
- 	last_block = (i_size_read(inode) - 1) >> bbits;
- 
-+	trace_block_write_full_page(inode, block, last_block);
-+
- 	/*
- 	 * Get all the dirty buffers mapped to disk addresses and
- 	 * handle any aliases from the underlying blockdev's mapping.
-@@ -1830,6 +1837,9 @@ int __block_write_full_page(struct inode *inode, struct page *page,
- 		 * here on.
- 		 */
- 	}
-+
-+	trace_block_write_full_page_done(inode, nr_underway, err);
-+
- 	return err;
- 
- recover:
-diff --git a/include/trace/events/fs.h b/include/trace/events/fs.h
-new file mode 100644
-index 000000000000..33ca57c91dc5
---- /dev/null
-+++ b/include/trace/events/fs.h
-@@ -0,0 +1,82 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM fs
-+
-+#if !defined(_TRACE_FS_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_FS_H
-+
-+#include <linux/tracepoint.h>
-+#include <linux/buffer_head.h>
-+
-+DECLARE_EVENT_CLASS(fs_buffer_wait,
-+	TP_PROTO(struct buffer_head *bh),
-+	TP_ARGS(bh),
-+	TP_STRUCT__entry(__field(void *, bh)),
-+	TP_fast_assign(__entry->bh = bh;),
-+	TP_printk("bh: %p", __entry->bh)
-+);
-+
-+DEFINE_EVENT(fs_buffer_wait, fs_buffer_wait_start,
-+	TP_PROTO(struct buffer_head *bh),
-+	TP_ARGS(bh)
-+);
-+
-+DEFINE_EVENT(fs_buffer_wait, fs_buffer_wait_end,
-+	TP_PROTO(struct buffer_head *bh),
-+	TP_ARGS(bh)
-+);
-+
-+TRACE_EVENT(block_write_full_page,
-+
-+	TP_PROTO(struct inode *inode, sector_t block, sector_t last_block),
-+
-+	TP_ARGS(inode, block, last_block),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(unsigned long, ino)
-+		__field(sector_t, block)
-+		__field(sector_t, last_block)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev            = inode->i_sb->s_dev;
-+		__entry->ino            = inode->i_ino;
-+		__entry->block          = block;
-+		__entry->last_block     = last_block;
-+	),
-+
-+	TP_printk("dev %d,%d ino %lu block %llu last block %llu",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino, __entry->block, __entry->last_block)
-+);
-+
-+TRACE_EVENT(block_write_full_page_done,
-+
-+	TP_PROTO(struct inode *inode, int nr_underway, int err),
-+
-+	TP_ARGS(inode, nr_underway, err),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(unsigned long, ino)
-+		__field(int, nr_underway)
-+		__field(int, err)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev            = inode->i_sb->s_dev;
-+		__entry->ino            = inode->i_ino;
-+		__entry->nr_underway    = nr_underway;
-+		__entry->err            = err;
-+	),
-+
-+	TP_printk("dev %d,%d ino %lu nr_underway %d err %d",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino, __entry->nr_underway, __entry->err)
-+);
-+
-+#endif /* _TRACE_FS_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
--- 
-2.28.0
-
+Friendly Reminder !!
