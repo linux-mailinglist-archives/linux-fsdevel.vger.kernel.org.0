@@ -2,204 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9717428724B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 12:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D70E4287416
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 14:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbgJHKN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 06:13:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42032 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729132AbgJHKN3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 06:13:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602152007;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0DI6cdznG5nm+heSXwkKOYcVMdwxr+rsH5+ws7BCShc=;
-        b=D0mTLsDnReO0Fah3+YeatxHlw7PWMOLrRMTJ6a45+XSnuSsUWxL8AkCJQykYtT7/Nt7XHW
-        ED6hCVWvzaxpgMaL53mcD7XnyTFHJGzNGvIQdsgMFvgJeT15LiOORuQlUNfgPm999Lyo6q
-        +qAtZgSNY3islbEl+ONPxlETfzMAn5A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-299-Sr6KnH4nMzGSKSK-TExI6g-1; Thu, 08 Oct 2020 06:13:22 -0400
-X-MC-Unique: Sr6KnH4nMzGSKSK-TExI6g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1ED6956BF8;
-        Thu,  8 Oct 2020 10:13:20 +0000 (UTC)
-Received: from localhost (ovpn-115-14.ams2.redhat.com [10.36.115.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5067F6EF4A;
-        Thu,  8 Oct 2020 10:13:13 +0000 (UTC)
-Date:   Thu, 8 Oct 2020 11:13:12 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        CAI Qian <caiqian@redhat.com>
-Subject: Re: [PATCH] virtiofs: Fix false positive warning
-Message-ID: <20201008101312.GA17253@stefanha-x1.localdomain>
-References: <20201005174531.GB4302@redhat.com>
- <20201006153933.GA87345@stefanha-x1.localdomain>
- <20201006190949.GH5306@redhat.com>
+        id S1729978AbgJHM1U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 08:27:20 -0400
+Received: from mail-eopbgr30090.outbound.protection.outlook.com ([40.107.3.90]:33432
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729963AbgJHM1Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 08:27:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=O9UOlTcX740sKR95rQsLBpVP6WFvvDFQHHVRiEYM/duf8LMnJc17yW5Bq+gyXQSuBhKpPSP1OoJ7KfVMHGNzmNNXEiz0m/uaW55KzunIOxtUn/vbL3JwCyiMZeb/7V+jMpLCZFxGRfjTzyZwKsWchnqcoCqC/2IDGRpSukgEFyxgtBA8jlqw26kWqaK4/4i6QoEjY6Xui53eRd9aDKa9wtBn4Ds2YnDPh0Hu8ClW4loTNNCvyexhtIFWB78ICpxYowEqPxXjsCbTYarZAa3KRMc1RMDohDA/b+OtQFVt3di7glz+gEbSTSS6w4lIG/tHTezFqh2GTHb92MNZqBkiNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0AXQJ/zIQPA6jZaA19ielLnhq2gohOuE5mCfAYzCK1A=;
+ b=Dcmcn5lb6Ka2kfmFzMc6tsV5SkcdZXVZ54E3qccpmRKWZJsyXebt9UhC1EOc0FmV/1gCS8A+vcypwwGIjTYl8VW9G8rfdg+ZjC413J7lnZaJzjctlcWRObERqst5u5cfs949ACvydnQhZjCNKpjoKGX8jVJKsdwzYAWMOMTWkBpRqcjeo3qJvX+lj/24GY77rH/N2NJgemkIf1OF4EHwL/xSagYNlByyVbOA9fBXil3i/Ka5bAnDQQj9YQtdiB47a4YRv12QxMTMwZEZY3yrpH0ygDT1BgTaqp8WqqZdNlxGFagTq9fr1U5CZLAFuHZIc5djtqeNiXJ+ad/zNf6xFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0AXQJ/zIQPA6jZaA19ielLnhq2gohOuE5mCfAYzCK1A=;
+ b=IEUspo+NktatnSHLOLNgpt/uDs2bem43Rnw7/0aBQM+Y8m60/kMTTMTFya8w84Tnb20/nVp87TAOb1ctHek3CZyL+Kxr5gGnVW2EHK9D/10Iz/cw5LhA218nyYCoLTwTZXedQFEu6tLkz6UmkqjiV5e6pRvCYgguKFVGPGj3+v4=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=nokia.com;
+Received: from HE1PR07MB3450.eurprd07.prod.outlook.com (2603:10a6:7:2c::17) by
+ HE1PR0701MB2347.eurprd07.prod.outlook.com (2603:10a6:3:6f::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3477.11; Thu, 8 Oct 2020 12:27:00 +0000
+Received: from HE1PR07MB3450.eurprd07.prod.outlook.com
+ ([fe80::eca3:4085:434:e74]) by HE1PR07MB3450.eurprd07.prod.outlook.com
+ ([fe80::eca3:4085:434:e74%6]) with mapi id 15.20.3455.023; Thu, 8 Oct 2020
+ 12:27:00 +0000
+From:   Tommi Rantala <tommi.t.rantala@nokia.com>
+To:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+Cc:     Tommi Rantala <tommi.t.rantala@nokia.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 10/13] selftests: proc: fix warning: _GNU_SOURCE redefined
+Date:   Thu,  8 Oct 2020 15:26:30 +0300
+Message-Id: <20201008122633.687877-11-tommi.t.rantala@nokia.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20201008122633.687877-1-tommi.t.rantala@nokia.com>
+References: <20201008122633.687877-1-tommi.t.rantala@nokia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [131.228.2.17]
+X-ClientProxiedBy: HE1PR08CA0076.eurprd08.prod.outlook.com
+ (2603:10a6:7:2a::47) To HE1PR07MB3450.eurprd07.prod.outlook.com
+ (2603:10a6:7:2c::17)
 MIME-Version: 1.0
-In-Reply-To: <20201006190949.GH5306@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=stefanha@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from trfedora.emea.nsn-net.net (131.228.2.17) by HE1PR08CA0076.eurprd08.prod.outlook.com (2603:10a6:7:2a::47) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3455.21 via Frontend Transport; Thu, 8 Oct 2020 12:26:59 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: c71a2c5d-6e42-463b-6020-08d86b857440
+X-MS-TrafficTypeDiagnostic: HE1PR0701MB2347:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <HE1PR0701MB23470BEEF7B2777BEF3F527DB40B0@HE1PR0701MB2347.eurprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ftUUnHAhw2d86T1ZPSHKFO/0otWY3C2CLR2wJ1Q2culefnpv46DQNUg+saBPA1o/i56kS1l5mFgHy6ucXkYaosuATkIRjfCoUHZmXL+0bF4Iw5HzEPH9i9y6Nbpc7cCH0m/y2JqoLtuYMSwBSuKqOHVCoVWQb/pgtHDNMiyxqnomC5zC8IUevmHhy8VwL4hL+lp4A+2wQkJSMjKxIWflvZHKEsVOZtGOeS8ESnP8tNrReaF1QuggyfwkQC7WfT0E4NTqukR3WX7dl6kWexE7PDMIvbdNaDHQtEnUCWE8/MWW27Zf4wXDEAxTcorx12nIfgDx2uT1Q6x77xo59flQtw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HE1PR07MB3450.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(346002)(39860400002)(376002)(136003)(66556008)(66476007)(103116003)(36756003)(5660300002)(6666004)(86362001)(66946007)(2906002)(54906003)(6486002)(4326008)(1076003)(316002)(6512007)(6916009)(26005)(52116002)(8936002)(83380400001)(186003)(478600001)(16526019)(6506007)(8676002)(956004)(2616005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: z5e5HB3M2SJsZW3JI6Q4uI1T5wm/DOW0N8ELIaJBLXcb9wuyEzIRamJk5lVfbaA44J1pHdBBHKyefYrOowHYvNPczJxsAGdTCyKJyMXSEinNWUbDfADTFaZlD2FtoYbwV80D/3bLZGlTK0T06SSrhchHkM/jTXOuzDVYfG2j4AUi8VlGc0UNtIWDpWkvHOW8MPxE0h8nJsAYNXcY3CH+NR7PDd3kFbfGnWHZGhwZ79GzXc2G5CyI1oKRg+ec/CQZGlssT033HCmd5HwV07IMnI/PXs37AzlLiuZSMIF6zYPWJsNC+BFrDCYonMTivQvuQEQsL+fdXIPjxnvW19jNDkno4uF0QywMm+A5FfI4+atCI17akZvwV4AAV+4QimIapq/MByGmC0xe9lNtb1+Iypih1VYvhuGX1U0pp8SgCr/sPAeavekbxzpavI5V8YfSiLl0ejXwPtlsP3u5tUwOg4xPMvS9S/jfMzsaKuTt3kB6lNneB+YcdJFZxVQzFeFxZE2002sYNlajGyJYdrXFzggGh3zpsNlvYgkc4acopcky9QtVQz4CTKTM51RtdYYoAnQhpeTz2fAO5K5r0tXlCG+zU4us8LICv3fmEpWMbdcUESRMUcCrJJADDc90mvehwdv1+d2vlIOILfL9Fcx+hw==
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c71a2c5d-6e42-463b-6020-08d86b857440
+X-MS-Exchange-CrossTenant-AuthSource: HE1PR07MB3450.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2020 12:27:00.5139
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fytmCR4InArBmABdXuRMQjLCddLOqcAu2gkIvAVIvMhEdiILVHa1iArDS4fp5xK2JCWPyiju1YllEslJWklFjXFtLdjK/yk0JRSPBsIl2Rg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0701MB2347
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Makefile already contains -D_GNU_SOURCE, so we can remove it from the
+*.c files.
 
-On Tue, Oct 06, 2020 at 03:09:49PM -0400, Vivek Goyal wrote:
-> On Tue, Oct 06, 2020 at 04:39:33PM +0100, Stefan Hajnoczi wrote:
-> > On Mon, Oct 05, 2020 at 01:45:31PM -0400, Vivek Goyal wrote:
-> > > virtiofs currently maps various buffers in scatter gather list and it=
- looks
-> > > at number of pages (ap->pages) and assumes that same number of pages =
-will
-> > > be used both for input and output (sg_count_fuse_req()), and calculat=
-es
-> > > total number of scatterlist elements accordingly.
-> > >=20
-> > > But looks like this assumption is not valid in all the cases. For exa=
-mple,
-> > > Cai Qian reported that trinity, triggers warning with virtiofs someti=
-mes.
-> > > A closer look revealed that if one calls ioctl(fd, 0x5a004000, buf), =
-it
-> > > will trigger following warning.
-> > >=20
-> > > WARN_ON(out_sgs + in_sgs !=3D total_sgs)
-> > >=20
-> > > In this case, total_sgs =3D 8, out_sgs=3D4, in_sgs=3D3. Number of pag=
-es is 2
-> > > (ap->pages), but out_sgs are using both the pages but in_sgs are usin=
-g
-> > > only one page. (fuse_do_ioctl() sets out_size to one page).
-> > >=20
-> > > So existing WARN_ON() seems to be wrong. Instead of total_sgs, it sho=
-uld
-> > > be max_sgs and make sure out_sgs and in_sgs don't cross max_sgs. This
-> > > will allow input and output pages numbers to be different.
-> > >=20
-> > > Reported-by: Qian Cai <cai@redhat.com>
-> > > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > > Link: https://lore.kernel.org/linux-fsdevel/5ea77e9f6cb8c2db43b09fbd4=
-158ab2d8c066a0a.camel@redhat.com/
-> > > ---
-> > >  fs/fuse/virtio_fs.c | 14 +++++++-------
-> > >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > >=20
-> > > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > > index da3ede268604..3f4f2fa0bb96 100644
-> > > --- a/fs/fuse/virtio_fs.c
-> > > +++ b/fs/fuse/virtio_fs.c
-> > > @@ -1110,17 +1110,17 @@ static int virtio_fs_enqueue_req(struct virti=
-o_fs_vq *fsvq,
-> > >  =09unsigned int argbuf_used =3D 0;
-> > >  =09unsigned int out_sgs =3D 0;
-> > >  =09unsigned int in_sgs =3D 0;
-> > > -=09unsigned int total_sgs;
-> > > +=09unsigned int  max_sgs;
-> > >  =09unsigned int i;
-> > >  =09int ret;
-> > >  =09bool notify;
-> > >  =09struct fuse_pqueue *fpq;
-> > > =20
-> > >  =09/* Does the sglist fit on the stack? */
-> > > -=09total_sgs =3D sg_count_fuse_req(req);
-> >=20
-> > sg_count_fuse_req() should be exact. It's risky to treat it as a maximu=
-m
-> > unless all cases where in_sgs + out_sgs < total_sgs are understood. Eve=
-n
-> > then, it's still possible that new bugs introduced to the code will go
-> > undetected due to the weaker WARN_ON() condition.
-> >=20
-> > Do you have the values of the relevant fuse_req and fuse_args_pages
-> > fields so we can understand exactly what happened? I think the issue is
-> > that sg_count_fuse_req() doesn't use the fuse_page_desc size field.
->=20
-> Hi Stefan,
->=20
-> I revised the patch. How about following. This calculates number of
-> sgs accurately by going through ap->descs and size fields.
->=20
-> Thanks
-> Vivek
->=20
-> From 24b590ebc2ffc8ed02c013b11818af89d0b135ba Mon Sep 17 00:00:00 2001
-> From: Vivek Goyal <vgoyal@redhat.com>
-> Date: Tue, 6 Oct 2020 14:53:06 -0400
-> Subject: [PATCH 1/1] virtiofs: Calculate number of scatter-gather element=
-s
->  accurately
->=20
-> virtiofs currently maps various buffers in scatter gather list and it loo=
-ks
-> at number of pages (ap->pages) and assumes that same number of pages will
-> be used both for input and output (sg_count_fuse_req()), and calculates
-> total number of scatterlist elements accordingly.
->=20
-> But looks like this assumption is not valid in all the cases. For example=
-,
-> Cai Qian reported that trinity, triggers warning with virtiofs sometimes.
-> A closer look revealed that if one calls ioctl(fd, 0x5a004000, buf), it
-> will trigger following warning.
->=20
-> WARN_ON(out_sgs + in_sgs !=3D total_sgs)
->=20
-> In this case, total_sgs =3D 8, out_sgs=3D4, in_sgs=3D3. Number of pages i=
-s 2
-> (ap->pages), but out_sgs are using both the pages but in_sgs are using
-> only one page. In this case, fuse_do_ioctl() sets different size values
-> for input and output.
->=20
-> args->in_args[args->in_numargs - 1].size =3D=3D 6656
-> args->out_args[args->out_numargs - 1].size =3D=3D 4096
->=20
-> So current method of calculating how many scatter-gather list elements
-> will be used is not accurate. Make calculations more precise by parsing
-> size and ap->descs.
->=20
-> Reported-by: Qian Cai <cai@redhat.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Link: https://lore.kernel.org/linux-fsdevel/5ea77e9f6cb8c2db43b09fbd4158a=
-b2d8c066a0a.camel@redhat.com/
-> ---
->  fs/fuse/virtio_fs.c | 30 ++++++++++++++++++++++++++----
->  1 file changed, 26 insertions(+), 4 deletions(-)
+Signed-off-by: Tommi Rantala <tommi.t.rantala@nokia.com>
+---
+ tools/testing/selftests/proc/proc-loadavg-001.c  | 1 -
+ tools/testing/selftests/proc/proc-self-syscall.c | 1 -
+ tools/testing/selftests/proc/proc-uptime-002.c   | 1 -
+ 3 files changed, 3 deletions(-)
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl9+5jYACgkQnKSrs4Gr
-c8hoPggAgtJqc+a6Y+IJS5ZWLq4Bl2BM2uwK5omJKVMZgR1Zobelex5q/PUDAuis
-yIIRkL0WEXOZafdrBgP5m45z4BEB23GgsMFsj1m0xoc1zysNQnqEi26DxOJyAsTj
-q7zecSpM6wiqlPjzKl9u1FcCPRzODrqbXvAoYpGZ+A6V7OMyQXzje5XK1iXc19bB
-91kr+TbROk2LdQLmWaqU1dC7ICSYWdtQ7gZ4MomuxiKiWFXX+eEl9CpEk+NlYl21
-36sP1umT77PBcas4n7ntMjQp8LyG5P5ovfCm2IAT/KrlMuFqhdE7WIgj7ZYpI5+L
-I4qVdVD1BKTE4TuFbBF9SiTKX+ZqFw==
-=JlBb
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
+diff --git a/tools/testing/selftests/proc/proc-loadavg-001.c b/tools/testing/selftests/proc/proc-loadavg-001.c
+index 471e2aa28077..fb4fe9188806 100644
+--- a/tools/testing/selftests/proc/proc-loadavg-001.c
++++ b/tools/testing/selftests/proc/proc-loadavg-001.c
+@@ -14,7 +14,6 @@
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ /* Test that /proc/loadavg correctly reports last pid in pid namespace. */
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <sched.h>
+ #include <sys/types.h>
+diff --git a/tools/testing/selftests/proc/proc-self-syscall.c b/tools/testing/selftests/proc/proc-self-syscall.c
+index 9f6d000c0245..8511dcfe67c7 100644
+--- a/tools/testing/selftests/proc/proc-self-syscall.c
++++ b/tools/testing/selftests/proc/proc-self-syscall.c
+@@ -13,7 +13,6 @@
+  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+-#define _GNU_SOURCE
+ #include <unistd.h>
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+diff --git a/tools/testing/selftests/proc/proc-uptime-002.c b/tools/testing/selftests/proc/proc-uptime-002.c
+index 30e2b7849089..e7ceabed7f51 100644
+--- a/tools/testing/selftests/proc/proc-uptime-002.c
++++ b/tools/testing/selftests/proc/proc-uptime-002.c
+@@ -15,7 +15,6 @@
+  */
+ // Test that values in /proc/uptime increment monotonically
+ // while shifting across CPUs.
+-#define _GNU_SOURCE
+ #undef NDEBUG
+ #include <assert.h>
+ #include <unistd.h>
+-- 
+2.26.2
 
