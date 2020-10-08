@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFAAF28704A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 592E128704B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbgJHH4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1729226AbgJHH4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 8 Oct 2020 03:56:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52412 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729213AbgJHH41 (ORCPT
+        with ESMTP id S1729214AbgJHH41 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 8 Oct 2020 03:56:27 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51000C0613D6;
-        Thu,  8 Oct 2020 00:56:14 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id 7so3568212pgm.11;
-        Thu, 08 Oct 2020 00:56:14 -0700 (PDT)
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A253C0613DC;
+        Thu,  8 Oct 2020 00:56:18 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 34so3563537pgo.13;
+        Thu, 08 Oct 2020 00:56:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=2lAuZY+zAFWdjZI2zWvNi356b2sKzGmvUf75gafHJXM=;
-        b=K1aaLzfUCrptJTIAZl158Rd5hRyDuRIyJIxBl985m5sCESH2tj90eMvSsReceCA6TR
-         Yeyc2NMcNS/zJolMIG1kJT3wKshzQqVuUdGGJTPr6SjInjxMGVRnN/g/7Y7N4PDliwBu
-         zPMhbYUtSsWz6J1SEKgK/pQiFKgUDPedA7LnRznIfSlLOvGgEGerKYsLpgXfLaxqGFis
-         f5/LQRHmY4+a1CySWvymELU0l1FGeGoXgBY8X//z25l8HAZfXudRBwYrv2W5+QT/0xwt
-         sMQ649AaGUIuTVfiHb35yR2/aWNfvvlyGZ1tn0tqP4+JwixwQnVjPRZTadCw2d863DFZ
-         xqdQ==
+        bh=2BnfFJzyK/ObYmFl6qjjvD95MAX5noA3ThIztEgoaE0=;
+        b=sD5at9h1ul8tK2eGhC10aT7eu1ACuvM8pX0UClSoOBqsWnd8ZLKBG21Or5ujlsSO4r
+         ZcSP94jhTlJ88RZsOP3erYbPjNfZZ+XJV13wDvViB10BsEc7+wwzeX5ngETPK0AzznVh
+         WhaVc55dAnhOG0gv1GJzH2TCaJ1rhgbsk4LmqTeQVRFjQ3hIczSrI6SQqNvwPnABDU6s
+         FP8l4ZgVXEIoX5hqiBtlmgXrH9XlMNG3EtoY0tPObqBPsqr62osd5A86auhcTjL7TLrZ
+         +dJRfZ8CQc6eSephIBvs2EBuVvTMTEGtKRR5UbvkYVR5BkJe9ido8lbljwqBnCt3qfBE
+         8Wew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=2lAuZY+zAFWdjZI2zWvNi356b2sKzGmvUf75gafHJXM=;
-        b=r0H6uryk1WUVo/OprHIT0zwH6G/kz/uul8t7Ld/P/GOnPn3GvNH7sgVSxVPqO3/tRv
-         dH9pjT/BdBslPdq4P+8uQUNFrqyL3VXiUrmqFviwGsqOljEOtumFagEl7MwovcguFfsM
-         44rxzwa+LhjBOZxKB99JZKozg49rW4E6ZKFReNoU45Md7eOaOyos2Y1/uLP2v6dBuSOj
-         J93wIeOGAPFTwzac6tREB7XPYfFJa+HKWkaJmML04hA6RT3EX48634ou90Kfitc2q558
-         vFdZZrg3ERerU5ZGeGrDtPDb4vFGgIHAFcU18d0IIGgy8yJdZR9G0a+ImIsVMQAwg4u2
-         eE3A==
-X-Gm-Message-State: AOAM532O50aHMwmEfOcO5vMzru3H0EKGDTruRK1RWOudXUTXxMXZKNv3
-        oCe4vNiACmCsvLeZ2a+eQXWxnHlLYZ0CNw==
-X-Google-Smtp-Source: ABdhPJzKACFEvYxYVvHX+wvfLK7h21I4Puwri8PgdyyDOKDlutYOAq9/UWwxrpOiqNKwCL2xhAv1aw==
-X-Received: by 2002:a63:2145:: with SMTP id s5mr5994447pgm.288.1602143773888;
-        Thu, 08 Oct 2020 00:56:13 -0700 (PDT)
+        bh=2BnfFJzyK/ObYmFl6qjjvD95MAX5noA3ThIztEgoaE0=;
+        b=uLOzqg+GDrzZtbnXkRSpesLhB9psHVG7yXFyTU6zzwyUsGBI+9pTUMzwBlTFOBr2Gg
+         wgACGHqDbr7zwJZvw/v4VrKFoZI6CjIUqcsCK0cyvnponme+5qxRo1nxTQRbB4ZNJlmL
+         jsbMOWhcBC06Q7aFRjqoAX1mCzhapZDvivKZy6VZLTfNwUzbfhJJQdkVi77FttbgbY7H
+         1B/plINpLg+OVrUTsy6Mk0XbxWKv+c1CAdEHiwz1KUvSZHe+SmGkY6vpcBuhPgyb6xh5
+         Qq6nwQYkVGOC0YmDr/3bRNnJdIXfY2xST0wjtJwTAwF27ZCzYwbhtelX/G/vJMTYF9Yd
+         8caQ==
+X-Gm-Message-State: AOAM533P9+stwrENgcd1fzgHYHCs3znk+Z0T2CNoTquZ8UG7XYGYoDFB
+        w9F9QxA1paD3LQP5oi/ewW0=
+X-Google-Smtp-Source: ABdhPJydbIfkN0fEyXGB0jM4KFOYE2spk9nEprX0Wp7N/fpC/X8oW8XY/9iFxzAbdDrLYJ2uam3ogQ==
+X-Received: by 2002:a17:90a:a09:: with SMTP id o9mr6438714pjo.134.1602143778213;
+        Thu, 08 Oct 2020 00:56:18 -0700 (PDT)
 Received: from localhost.localdomain ([203.205.141.61])
-        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.56.10
+        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.56.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 00:56:13 -0700 (PDT)
+        Thu, 08 Oct 2020 00:56:17 -0700 (PDT)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
@@ -55,11 +55,10 @@ To:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
 Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, xiaoguangrong.eric@gmail.com,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
-        Yulei Zhang <yuleixzhang@tencent.com>,
-        Xiao Guangrong <gloryxiao@tencent.com>
-Subject: [PATCH 34/35] dmem: add dmem unit tests
-Date:   Thu,  8 Oct 2020 15:54:24 +0800
-Message-Id: <0c0e00b2d89079714eb33fc3260a7d23518cb8ea.1602093760.git.yuleixzhang@tencent.com>
+        Yulei Zhang <yuleixzhang@tencent.com>
+Subject: [PATCH 35/35] Add documentation for dmemfs
+Date:   Thu,  8 Oct 2020 15:54:25 +0800
+Message-Id: <4d1bc80e93134fb0f5691db5c4bb8bcbc1e716dd.1602093760.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1602093760.git.yuleixzhang@tencent.com>
 References: <cover.1602093760.git.yuleixzhang@tencent.com>
@@ -71,232 +70,77 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-This test case is used to test dmem management system.
+Introduce dmemfs.rst to document the basic usage of dmemfs.
 
-Signed-off-by: Xiao Guangrong <gloryxiao@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- tools/testing/dmem/Kbuild      |   1 +
- tools/testing/dmem/Makefile    |  10 ++
- tools/testing/dmem/dmem-test.c | 184 +++++++++++++++++++++++++++++++++
- 3 files changed, 195 insertions(+)
- create mode 100644 tools/testing/dmem/Kbuild
- create mode 100644 tools/testing/dmem/Makefile
- create mode 100644 tools/testing/dmem/dmem-test.c
+ Documentation/filesystems/dmemfs.rst | 59 ++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 Documentation/filesystems/dmemfs.rst
 
-diff --git a/tools/testing/dmem/Kbuild b/tools/testing/dmem/Kbuild
+diff --git a/Documentation/filesystems/dmemfs.rst b/Documentation/filesystems/dmemfs.rst
 new file mode 100644
-index 000000000000..04988f7c76b7
+index 000000000000..cbb4cc1ed31d
 --- /dev/null
-+++ b/tools/testing/dmem/Kbuild
-@@ -0,0 +1 @@
-+obj-m += dmem-test.o
-diff --git a/tools/testing/dmem/Makefile b/tools/testing/dmem/Makefile
-new file mode 100644
-index 000000000000..21f141f585de
---- /dev/null
-+++ b/tools/testing/dmem/Makefile
-@@ -0,0 +1,10 @@
-+KDIR ?= ../../../
++++ b/Documentation/filesystems/dmemfs.rst
+@@ -0,0 +1,57 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+default:
-+	$(MAKE) -C $(KDIR) M=$$PWD
-+
-+install: default
-+	$(MAKE) -C $(KDIR) M=$$PWD modules_install
-+
-+clean:
-+	rm -f *.o *.ko Module.* modules.* *.mod.c
-diff --git a/tools/testing/dmem/dmem-test.c b/tools/testing/dmem/dmem-test.c
-new file mode 100644
-index 000000000000..4baae18b593e
---- /dev/null
-+++ b/tools/testing/dmem/dmem-test.c
-@@ -0,0 +1,184 @@
-+/*
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of version 2 of the GNU General Public License as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/module.h>
-+#include <linux/sizes.h>
-+#include <linux/list.h>
-+#include <linux/nodemask.h>
-+#include <linux/slab.h>
-+#include <linux/dmem.h>
-+
-+struct dmem_mem_node {
-+	struct list_head node;
-+};
-+
-+static LIST_HEAD(dmem_list);
-+
-+static int dmem_test_alloc_init(unsigned long dpage_shift)
-+{
-+	int ret;
-+
-+	ret = dmem_alloc_init(dpage_shift);
-+	if (ret)
-+		pr_info("dmem_alloc_init failed, dpage_shift %ld ret=%d\n",
-+			dpage_shift, ret);
-+	return ret;
-+}
-+
-+static int __dmem_test_alloc(int order, int nid, nodemask_t *nodemask,
-+			     const char *caller)
-+{
-+	struct dmem_mem_node *pos;
-+	phys_addr_t addr;
-+	int i, ret = 0;
-+
-+	for (i = 0; i < (1 << order); i++) {
-+		addr = dmem_alloc_pages_nodemask(nid, nodemask, 1, NULL);
-+		if (!addr) {
-+			ret = -ENOMEM;
-+			break;
-+		}
-+
-+		pos = __va(addr);
-+		list_add(&pos->node, &dmem_list);
-+	}
-+
-+	pr_info("%s: alloc order %d on node %d has fallback node %s... %s.\n",
-+		caller, order, nid, nodemask ? "yes" : "no",
-+		!ret ? "okay" : "failed");
-+
-+	return ret;
-+}
-+
-+static void dmem_test_free_all(void)
-+{
-+	struct dmem_mem_node *pos, *n;
-+
-+	list_for_each_entry_safe(pos, n, &dmem_list, node) {
-+		list_del(&pos->node);
-+		dmem_free_page(__pa(pos));
-+	}
-+}
-+
-+#define dmem_test_alloc(order, nid, nodemask)	\
-+	__dmem_test_alloc(order, nid, nodemask, __func__)
-+
-+/* dmem shoud have 2^6 native pages available at lest */
-+static int order_test(void)
-+{
-+	int order, i, ret;
-+	int page_orders[] = {0, 1, 2, 3, 4, 5, 6};
-+
-+	ret = dmem_test_alloc_init(PAGE_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(page_orders); i++) {
-+		order = page_orders[i];
-+
-+		ret = dmem_test_alloc(order, numa_node_id(), NULL);
-+		if (ret)
-+			break;
-+	}
-+
-+	dmem_test_free_all();
-+
-+	dmem_alloc_uinit();
-+
-+	return ret;
-+}
-+
-+static int node_test(void)
-+{
-+	nodemask_t nodemask;
-+	unsigned long nr = 0;
-+	int order;
-+	int node;
-+	int ret = 0;
-+
-+	order = 0;
-+
-+	ret = dmem_test_alloc_init(PUD_SHIFT);
-+	if (ret)
-+		return ret;
-+
-+	pr_info("%s: test allocation on node 0\n", __func__);
-+	node = 0;
-+	nodes_clear(nodemask);
-+	node_set(0, nodemask);
-+
-+	ret = dmem_test_alloc(order, node, &nodemask);
-+	if (ret)
-+		goto exit;
-+
-+	dmem_test_free_all();
-+
-+	pr_info("%s: begin to exhaust dmem on node 0.\n", __func__);
-+	node = 1;
-+	nodes_clear(nodemask);
-+	node_set(0, nodemask);
-+
-+	INIT_LIST_HEAD(&dmem_list);
-+	while (!(ret = dmem_test_alloc(order, node, &nodemask)))
-+		nr++;
-+
-+	pr_info("Allocation on node 0 success times: %lu\n", nr);
-+
-+	pr_info("%s: allocation on node 0 again\n", __func__);
-+	node = 0;
-+	nodes_clear(nodemask);
-+	node_set(0, nodemask);
-+	ret = dmem_test_alloc(order, node, &nodemask);
-+	if (!ret) {
-+		pr_info("\tNot expected fallback\n");
-+		ret = -1;
-+	} else {
-+		ret = 0;
-+		pr_info("\tOK, Dmem on node 0 exhausted, fallback success\n");
-+	}
-+
-+	pr_info("%s: Release dmem\n", __func__);
-+	dmem_test_free_all();
-+
-+exit:
-+	dmem_alloc_uinit();
-+	return ret;
-+}
-+
-+static __init int dmem_test_init(void)
-+{
-+	int ret;
-+
-+	pr_info("dmem: test init...\n");
-+
-+	ret = order_test();
-+	if (ret)
-+		return ret;
-+
-+	ret = node_test();
++=====================================
++The Direct Memory Filesystem - DMEMFS
++=====================================
 +
 +
-+	if (ret)
-+		pr_info("dmem test fail, ret=%d\n", ret);
-+	else
-+		pr_info("dmem test success\n");
-+	return ret;
-+}
++.. Table of contents
 +
-+static __exit void dmem_test_exit(void)
-+{
-+	pr_info("dmem: test exit...\n");
-+}
++   - Overview
++   - Compilation
++   - Usage
 +
-+module_init(dmem_test_init);
-+module_exit(dmem_test_exit);
-+MODULE_LICENSE("GPL v2");
++Overview
++========
++
++Dmemfs (Direct Memory filesystem) is device memory or reserved
++memory based filesystem. This kind of memory is special as it
++is not managed by kernel and it is without 'struct page'. Therefore
++it can save extra memory from the host system for various usage,
++especially for guest virtual machines.
++
++It uses a kernel boot parameter ``dmem=`` to reserve the system
++memory when the host system boots up, the details can be checked
++in /Documentation/admin-guide/kernel-parameters.txt.
++
++Compilation
++===========
++
++The filesystem should be enabled by turning on the kernel configuration
++options::
++
++        CONFIG_DMEM_FS          - Direct Memory filesystem support
++        CONFIG_DMEM             - Allow reservation of memory for dmem
++
++
++Additionally, the following can be turned on to aid debugging::
++
++        CONFIG_DMEM_DEBUG_FS    - Enable debug information for dmem
++
++Usage
++========
++
++Dmemfs supports mapping ``4K``, ``2M`` and ``1G`` size of pages to
++the userspace, for example ::
++
++    # mount -t dmemfs none -o pagesize=4K /mnt/
++
++The it can create the backing storage with 4G size ::
++
++    # truncate /mnt/dmemfs-uuid --size 4G
++
++To use as backing storage for virtual machine starts with qemu, just need
++to specify the memory-backed-file in the qemu command line like this ::
++
++    # -object memory-backend-file,id=ram-node0,mem-path=/mnt/dmemfs-uuid \
++        share=yes,size=4G,host-nodes=0,policy=preferred -numa node,nodeid=0,memdev=ram-node0
 -- 
 2.28.0
 
