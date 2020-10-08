@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEDAE28703D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9770A28703A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbgJHH4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 03:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52304 "EHLO
+        id S1729160AbgJHH4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 03:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729131AbgJHHzw (ORCPT
+        with ESMTP id S1728181AbgJHHz5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 03:55:52 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED9AC0613D2;
-        Thu,  8 Oct 2020 00:55:52 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id k8so3331909pfk.2;
-        Thu, 08 Oct 2020 00:55:52 -0700 (PDT)
+        Thu, 8 Oct 2020 03:55:57 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C893C0613D4;
+        Thu,  8 Oct 2020 00:55:57 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id d23so2366196pll.7;
+        Thu, 08 Oct 2020 00:55:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=LyBV6N3gjq3MiLxBfZ3JOHalx3ds96tA29NRwEvbdoI=;
-        b=vd9Dnz8emLxl2V0MxRbRE8ukBDhBRtccJzUehh/zwzrFX58KybIlfgmtQJ04bVTuD+
-         ChU852jZS1a6muWTlmD2z4byGPamv02s2TKdjDlLGQy5EVqnySrqDzcIdw4LVN+Ivd9a
-         P1fICw3poYzu1PShO70s1IICT6lDQRwMQK8uS7ciPRkKvtxfpAARUfgpgu9pGqqv7cEz
-         FOrM4hjxUiagkjqFMEfNipPJK35UQv3aLfUDWT49eQJaUBdHZhoPBuhoMHK3eAzd/KkU
-         3KSWL1JK2UvxDtZn8qCXmvMK5oaix3Q89m+VHUSKRYDHZKTZBqnCwjmZUkRrP5CnhZ8r
-         LUJw==
+        bh=tP/lJJiY+XHS3Tqjt8+lhvljOhGvK52JvoQA9+uEFQk=;
+        b=Qcm+4YHWLy7vd7eZwG3uqWcHRKc0LUHmPsVkrMdKIt8ykEsi4x08XRZNML/b4w/n/e
+         tayHd7M3Pmx1py2aGvGSeA8kcbN/DupSYdHK4IvkQZQElgNehtV2P0wm9y79Kz1R8nDF
+         eX/sftMraCWByoAyLe/cKmm64PaKxMy5imvLYMUggSPH8ivQO4ukPeCarYjvD3+wHDc+
+         NKNQNYGb0nVAX2mBk5rWM3YLsqnXk38yYBjePF5Ln7w0KNPbkVCY4WV2NJ03GEr2xfDl
+         JDdl8zGW1ApjHpf+BBQOFQ4RJ88g1KGQeaRBKgKNFqI3TTIWz6vsXi5HrFejtIBFDOOq
+         zp1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=LyBV6N3gjq3MiLxBfZ3JOHalx3ds96tA29NRwEvbdoI=;
-        b=iXidjNyXOJamFenCey8QfO9crVNwrEHpOU3htr9351ifcf/PIX9wDBDR8v1r6/jzuq
-         zyphTJLDh3jSe68ZxCle5azr/YwIKe+711/Y7Gi1TuHNNGhKhBzfi1Y3Gzn0mrUTzWv+
-         qH3T+JRREGnoNkCDPhhpYMq7k/MAJaCXSWoxNJVoeNvhiPeXlLgQV/PcfdWRM4m8/7dH
-         naA3SS7ohkbhlVeDJVxFr9EZo0/bfPH936rmMS2ELIqjUX9n96/R7sAyjlGoBDomLnsY
-         RHAPa64vSEsxrLVh26DBzwB+gHFa6RaH5naQikz9oeAET2zAf5FCYyji+Aw6TL67v76K
-         Dtdg==
-X-Gm-Message-State: AOAM532BdkJgEQrCyPedwpCMYokAahaik46Vh0R7MZghEErwgvLDgmFQ
-        7bQN3oXHMUB7dqx1LIWTdAs=
-X-Google-Smtp-Source: ABdhPJzchyQcPfaxUgFQfXjYWLFWkCzMJoJcb2OICRAl5QnyfvZRb6BniUxZb6dGsJpVC7oewwtwAQ==
-X-Received: by 2002:a63:d65:: with SMTP id 37mr6412097pgn.139.1602143752415;
-        Thu, 08 Oct 2020 00:55:52 -0700 (PDT)
+        bh=tP/lJJiY+XHS3Tqjt8+lhvljOhGvK52JvoQA9+uEFQk=;
+        b=pfH1ynLoIsO92pzyEmivZRuAjMhiAHi8rd022UOTFCwXv/xBvS4xow8/2nIPgvqCrW
+         iHhD29bOM1aC3gi7VVB4yF9ZycVAcrwSkwGrdO8Osw0FNBX5JPq7szWiAppCPKz5pY/J
+         IJkOqG2UWBd4CxES2aoRRbi8t7pY9GQ7GCu88AFGUitDJvGr6Ks9cnCQwtPK0tUxbjBB
+         hvZsrtUrzWeaNIHht8kYttegt3dT/0oD7hljXJ4t3vsCfAPKjH15gXNC9h2zt0N1d4QI
+         AHy3tROKFt6Bg0Fswh/V9+qgde0/7CzxSOFDN02YH46dzLvkm47YWUnbLVsTboOF1RA9
+         uH7w==
+X-Gm-Message-State: AOAM5308gfHcnK8fy8AdtTg60iEFpNLyXjurtYa0jSWprCoBCeb1u3Yx
+        x765OWT4HTqZvUo21xXfH7k=
+X-Google-Smtp-Source: ABdhPJyjs+IkeIkk5jzJbnSKGDDptAu+x0PXtjw/SvpIVj0BlEbb/SByMNcMW2ExCzt/vVrJMSI1Yw==
+X-Received: by 2002:a17:902:d888:b029:d0:cb2d:f274 with SMTP id b8-20020a170902d888b02900d0cb2df274mr6280077plz.13.1602143756683;
+        Thu, 08 Oct 2020 00:55:56 -0700 (PDT)
 Received: from localhost.localdomain ([203.205.141.61])
-        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.49
+        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 00:55:51 -0700 (PDT)
+        Thu, 08 Oct 2020 00:55:56 -0700 (PDT)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
@@ -57,9 +57,9 @@ Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Chen Zhuo <sagazchen@tencent.com>
-Subject: [PATCH 29/35] mm: add follow_pte_pud()
-Date:   Thu,  8 Oct 2020 15:54:19 +0800
-Message-Id: <71f27b2b03471adbbacccb9a5107b6533a18a957.1602093760.git.yuleixzhang@tencent.com>
+Subject: [PATCH 30/35] dmem: introduce dmem_bitmap_alloc() and dmem_bitmap_free()
+Date:   Thu,  8 Oct 2020 15:54:20 +0800
+Message-Id: <f79969d52ad112210259f39c606e158b2206792a.1602093760.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1602093760.git.yuleixzhang@tencent.com>
 References: <cover.1602093760.git.yuleixzhang@tencent.com>
@@ -71,121 +71,185 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Since we had supported dmem huge pud, here support dmem huge pud for
-hva_to_pfn().
+If dmem contained in dmem region is too large and dmemfs is mounted as
+4K pagesize, size of bitmap in this dmem region maybe exceed maximal
+available memory of kzalloc(). It would cause kzalloc() fail.
 
-Similar to follow_pte_pmd(), follow_pte_pud() allows a PTE lead or a
-huge page PMD or huge page PUD to be found and returned.
+So introduce dmem_bitmap_alloc() and use vzalloc() if bitmap is larger than
+PAGE_SIZE as vzalloc() will get sparse page.
 
 Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- mm/memory.c | 52 ++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 44 insertions(+), 8 deletions(-)
+ fs/inode.c         |  6 ++++
+ include/linux/fs.h |  1 +
+ mm/dmem.c          | 69 +++++++++++++++++++++++++++++-----------------
+ 3 files changed, 50 insertions(+), 26 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 3748fab7cc2a..f831ab4b7ccd 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4535,9 +4535,9 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address)
+diff --git a/fs/inode.c b/fs/inode.c
+index 72c4c347afb7..6f8c60ac9302 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -208,6 +208,12 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
  }
- #endif /* __PAGETABLE_PMD_FOLDED */
+ EXPORT_SYMBOL(inode_init_always);
  
--static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
-+static int __follow_pte_pud(struct mm_struct *mm, unsigned long address,
- 			    struct mmu_notifier_range *range,
--			    pte_t **ptepp, pmd_t **pmdpp, spinlock_t **ptlp)
-+			    pte_t **ptepp, pmd_t **pmdpp, pud_t **pudpp, spinlock_t **ptlp)
- {
- 	pgd_t *pgd;
- 	p4d_t *p4d;
-@@ -4554,6 +4554,26 @@ static int __follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 		goto out;
- 
- 	pud = pud_offset(p4d, address);
-+	VM_BUG_ON(pud_trans_huge(*pud));
-+	if (pud_huge(*pud)) {
-+		if (!pudpp)
-+			goto out;
-+
-+		if (range) {
-+			mmu_notifier_range_init(range, MMU_NOTIFY_CLEAR, 0,
-+						NULL, mm, address & PUD_MASK,
-+						(address & PUD_MASK) + PUD_SIZE);
-+			mmu_notifier_invalidate_range_start(range);
-+		}
-+		*ptlp = pud_lock(mm, pud);
-+		if (pud_huge(*pud)) {
-+			*pudpp = pud;
-+			return 0;
-+		}
-+		spin_unlock(*ptlp);
-+		if (range)
-+			mmu_notifier_invalidate_range_end(range);
-+	}
- 	if (pud_none(*pud) || unlikely(pud_bad(*pud)))
- 		goto out;
- 
-@@ -4609,8 +4629,8 @@ static inline int follow_pte(struct mm_struct *mm, unsigned long address,
- 
- 	/* (void) is needed to make gcc happy */
- 	(void) __cond_lock(*ptlp,
--			   !(res = __follow_pte_pmd(mm, address, NULL,
--						    ptepp, NULL, ptlp)));
-+			   !(res = __follow_pte_pud(mm, address, NULL,
-+						    ptepp, NULL, NULL, ptlp)));
- 	return res;
- }
- 
-@@ -4622,12 +4642,24 @@ int follow_pte_pmd(struct mm_struct *mm, unsigned long address,
- 
- 	/* (void) is needed to make gcc happy */
- 	(void) __cond_lock(*ptlp,
--			   !(res = __follow_pte_pmd(mm, address, range,
--						    ptepp, pmdpp, ptlp)));
-+			   !(res = __follow_pte_pud(mm, address, range,
-+						    ptepp, pmdpp, NULL, ptlp)));
- 	return res;
- }
- EXPORT_SYMBOL(follow_pte_pmd);
- 
-+int follow_pte_pud(struct mm_struct *mm, unsigned long address,
-+		   struct mmu_notifier_range *range,
-+		   pte_t **ptepp, pmd_t **pmdpp, pud_t **pudpp, spinlock_t **ptlp)
++struct inode *alloc_inode_nonrcu(void)
 +{
-+	int res;
-+
-+	/* (void) is needed to make gcc happy */
-+	(void) __cond_lock(*ptlp,
-+			   !(res = __follow_pte_pud(mm, address, range,
-+						    ptepp, pmdpp, pudpp, ptlp)));
-+	return res;
++	return kmem_cache_alloc(inode_cachep, GFP_KERNEL);
 +}
- /**
-  * follow_pfn - look up PFN at a user virtual address
-  * @vma: memory mapping
-@@ -4645,15 +4677,19 @@ int follow_pfn(struct vm_area_struct *vma, unsigned long address,
- 	spinlock_t *ptl;
- 	pte_t *ptep;
- 	pmd_t *pmdp = NULL;
-+	pud_t *pudp = NULL;
++EXPORT_SYMBOL(alloc_inode_nonrcu);
++
+ void free_inode_nonrcu(struct inode *inode)
+ {
+ 	kmem_cache_free(inode_cachep, inode);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7519ae003a08..872552dc5a61 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2984,6 +2984,7 @@ extern void clear_inode(struct inode *);
+ extern void __destroy_inode(struct inode *);
+ extern struct inode *new_inode_pseudo(struct super_block *sb);
+ extern struct inode *new_inode(struct super_block *sb);
++extern struct inode *alloc_inode_nonrcu(void);
+ extern void free_inode_nonrcu(struct inode *inode);
+ extern int should_remove_suid(struct dentry *);
+ extern int file_remove_privs(struct file *);
+diff --git a/mm/dmem.c b/mm/dmem.c
+index eb6df7059cf0..50cdff98675b 100644
+--- a/mm/dmem.c
++++ b/mm/dmem.c
+@@ -17,6 +17,7 @@
+ #include <linux/dmem.h>
+ #include <linux/debugfs.h>
+ #include <linux/notifier.h>
++#include <linux/vmalloc.h>
  
- 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
- 		return ret;
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/dmem.h>
+@@ -362,9 +363,38 @@ static int __init dmem_node_init(struct dmem_node *dnode)
+ 	return 0;
+ }
  
--	ret = follow_pte_pmd(vma->vm_mm, address, NULL, &ptep, &pmdp, &ptl);
-+	ret = follow_pte_pud(vma->vm_mm, address, NULL, &ptep, &pmdp, &pudp, &ptl);
- 	if (ret)
- 		return ret;
++static unsigned long *dmem_bitmap_alloc(unsigned long pages,
++					unsigned long *static_bitmap)
++{
++	unsigned long *bitmap, size;
++
++	size = BITS_TO_LONGS(pages) * sizeof(long);
++	if (size <= sizeof(*static_bitmap))
++		bitmap = static_bitmap;
++	else if (size <= PAGE_SIZE)
++		bitmap = kzalloc(size, GFP_KERNEL);
++	else
++		bitmap = vzalloc(size);
++
++	return bitmap;
++}
++
++static void dmem_bitmap_free(unsigned long pages,
++			     unsigned long *bitmap,
++			     unsigned long *static_bitmap)
++{
++	unsigned long size;
++
++	size = BITS_TO_LONGS(pages) * sizeof(long);
++	if (size > PAGE_SIZE)
++		vfree(bitmap);
++	else if (bitmap != static_bitmap)
++		kfree(bitmap);
++}
++
+ static void __init dmem_region_uinit(struct dmem_region *dregion)
+ {
+-	unsigned long nr_pages, size, *bitmap = dregion->error_bitmap;
++	unsigned long nr_pages, *bitmap = dregion->error_bitmap;
  
--	if (pmdp) {
-+	if (pudp) {
-+		*pfn = pud_pfn(*pudp) + ((address & ~PUD_MASK) >> PAGE_SHIFT);
-+		spin_unlock(ptl);
-+	} else if (pmdp) {
- 		*pfn = pmd_pfn(*pmdp) + ((address & ~PMD_MASK) >> PAGE_SHIFT);
- 		spin_unlock(ptl);
- 	} else {
+ 	if (!bitmap)
+ 		return;
+@@ -374,9 +404,7 @@ static void __init dmem_region_uinit(struct dmem_region *dregion)
+ 
+ 	WARN_ON(!nr_pages);
+ 
+-	size = BITS_TO_LONGS(nr_pages) * sizeof(long);
+-	if (size > sizeof(dregion->static_bitmap))
+-		kfree(bitmap);
++	dmem_bitmap_free(nr_pages, bitmap, &dregion->static_error_bitmap);
+ 	dregion->error_bitmap = NULL;
+ }
+ 
+@@ -405,19 +433,15 @@ static void __init dmem_uinit(void)
+ 
+ static int __init dmem_region_init(struct dmem_region *dregion)
+ {
+-	unsigned long *bitmap, size, nr_pages;
++	unsigned long *bitmap, nr_pages;
+ 
+ 	nr_pages = __phys_to_pfn(dregion->reserved_end_addr)
+ 		- __phys_to_pfn(dregion->reserved_start_addr);
+ 
+-	size = BITS_TO_LONGS(nr_pages) * sizeof(long);
+-	if (size <= sizeof(dregion->static_error_bitmap)) {
+-		bitmap = &dregion->static_error_bitmap;
+-	} else {
+-		bitmap = kzalloc(size, GFP_KERNEL);
+-		if (!bitmap)
+-			return -ENOMEM;
+-	}
++	bitmap = dmem_bitmap_alloc(nr_pages, &dregion->static_error_bitmap);
++	if (!bitmap)
++		return -ENOMEM;
++
+ 	dregion->error_bitmap = bitmap;
+ 	return 0;
+ }
+@@ -472,7 +496,7 @@ late_initcall(dmem_late_init);
+ static int dmem_alloc_region_init(struct dmem_region *dregion,
+ 				  unsigned long *dpages)
+ {
+-	unsigned long start, end, *bitmap, size;
++	unsigned long start, end, *bitmap;
+ 
+ 	start = DMEM_PAGE_UP(dregion->reserved_start_addr);
+ 	end = DMEM_PAGE_DOWN(dregion->reserved_end_addr);
+@@ -481,14 +505,9 @@ static int dmem_alloc_region_init(struct dmem_region *dregion,
+ 	if (!*dpages)
+ 		return 0;
+ 
+-	size = BITS_TO_LONGS(*dpages) * sizeof(long);
+-	if (size <= sizeof(dregion->static_bitmap))
+-		bitmap = &dregion->static_bitmap;
+-	else {
+-		bitmap = kzalloc(size, GFP_KERNEL);
+-		if (!bitmap)
+-			return -ENOMEM;
+-	}
++	bitmap = dmem_bitmap_alloc(*dpages, &dregion->static_bitmap);
++	if (!bitmap)
++		return -ENOMEM;
+ 
+ 	dregion->bitmap = bitmap;
+ 	dregion->next_free_pos = 0;
+@@ -582,7 +601,7 @@ static void dmem_uinit_check_alloc_bitmap(struct dmem_region *dregion)
+ 
+ static void dmem_alloc_region_uinit(struct dmem_region *dregion)
+ {
+-	unsigned long dpages, size, *bitmap = dregion->bitmap;
++	unsigned long dpages, *bitmap = dregion->bitmap;
+ 
+ 	if (!bitmap)
+ 		return;
+@@ -592,9 +611,7 @@ static void dmem_alloc_region_uinit(struct dmem_region *dregion)
+ 
+ 	dmem_uinit_check_alloc_bitmap(dregion);
+ 
+-	size = BITS_TO_LONGS(dpages) * sizeof(long);
+-	if (size > sizeof(dregion->static_bitmap))
+-		kfree(bitmap);
++	dmem_bitmap_free(dpages, bitmap, &dregion->static_bitmap);
+ 	dregion->bitmap = NULL;
+ }
+ 
 -- 
 2.28.0
 
