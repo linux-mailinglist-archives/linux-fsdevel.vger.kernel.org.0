@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9770A28703A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EFC28703C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbgJHH4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1729151AbgJHH4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 8 Oct 2020 03:56:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52318 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbgJHHz5 (ORCPT
+        with ESMTP id S1729150AbgJHH4B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 03:55:57 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C893C0613D4;
-        Thu,  8 Oct 2020 00:55:57 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id d23so2366196pll.7;
-        Thu, 08 Oct 2020 00:55:57 -0700 (PDT)
+        Thu, 8 Oct 2020 03:56:01 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6103DC0613D5;
+        Thu,  8 Oct 2020 00:56:01 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id u24so3611565pgi.1;
+        Thu, 08 Oct 2020 00:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=tP/lJJiY+XHS3Tqjt8+lhvljOhGvK52JvoQA9+uEFQk=;
-        b=Qcm+4YHWLy7vd7eZwG3uqWcHRKc0LUHmPsVkrMdKIt8ykEsi4x08XRZNML/b4w/n/e
-         tayHd7M3Pmx1py2aGvGSeA8kcbN/DupSYdHK4IvkQZQElgNehtV2P0wm9y79Kz1R8nDF
-         eX/sftMraCWByoAyLe/cKmm64PaKxMy5imvLYMUggSPH8ivQO4ukPeCarYjvD3+wHDc+
-         NKNQNYGb0nVAX2mBk5rWM3YLsqnXk38yYBjePF5Ln7w0KNPbkVCY4WV2NJ03GEr2xfDl
-         JDdl8zGW1ApjHpf+BBQOFQ4RJ88g1KGQeaRBKgKNFqI3TTIWz6vsXi5HrFejtIBFDOOq
-         zp1Q==
+        bh=wyHDR8+dAOff2WNierEioGfQpDDNjWjuRwXu10QUWLc=;
+        b=pTfNjEfzS3Q307/ptExM2s6iDRruR5t8Ppiks1cBPWbNNNJ+wLhGJhIHtyBSoLbZyc
+         nnEpxQuCBkK4/o7AxLI8yK+O4CVJa2uSf1H5QEyimWnyHcKOVsg4WyINDJMcGruyWuyI
+         1JumNEJoWBljLOBAca3mmBfh3E8NCnqGE6jzHfvvuB0e9E7rLVRW0AMRNjRmLIgrtrMt
+         o8kIXd14KlOXgHpPkOtiJurT73i1+QwYVa4SI8u/CVqxYyeAeqUzXQEzlJmxs23P8ktg
+         aP8I/MWsbb5gBEd2OOLnANzGk50mRv8CLQgSyNyKOH1FUETYZZU3WpsLlDrSmW4UOGuY
+         bbEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=tP/lJJiY+XHS3Tqjt8+lhvljOhGvK52JvoQA9+uEFQk=;
-        b=pfH1ynLoIsO92pzyEmivZRuAjMhiAHi8rd022UOTFCwXv/xBvS4xow8/2nIPgvqCrW
-         iHhD29bOM1aC3gi7VVB4yF9ZycVAcrwSkwGrdO8Osw0FNBX5JPq7szWiAppCPKz5pY/J
-         IJkOqG2UWBd4CxES2aoRRbi8t7pY9GQ7GCu88AFGUitDJvGr6Ks9cnCQwtPK0tUxbjBB
-         hvZsrtUrzWeaNIHht8kYttegt3dT/0oD7hljXJ4t3vsCfAPKjH15gXNC9h2zt0N1d4QI
-         AHy3tROKFt6Bg0Fswh/V9+qgde0/7CzxSOFDN02YH46dzLvkm47YWUnbLVsTboOF1RA9
-         uH7w==
-X-Gm-Message-State: AOAM5308gfHcnK8fy8AdtTg60iEFpNLyXjurtYa0jSWprCoBCeb1u3Yx
-        x765OWT4HTqZvUo21xXfH7k=
-X-Google-Smtp-Source: ABdhPJyjs+IkeIkk5jzJbnSKGDDptAu+x0PXtjw/SvpIVj0BlEbb/SByMNcMW2ExCzt/vVrJMSI1Yw==
-X-Received: by 2002:a17:902:d888:b029:d0:cb2d:f274 with SMTP id b8-20020a170902d888b02900d0cb2df274mr6280077plz.13.1602143756683;
-        Thu, 08 Oct 2020 00:55:56 -0700 (PDT)
+        bh=wyHDR8+dAOff2WNierEioGfQpDDNjWjuRwXu10QUWLc=;
+        b=ZjmoSNNJmyjNeA8fAQBLP7HXYxQrosRy7mamG587eGpzedN7ZbRFBrBHc22a2SIHzG
+         RnHsIBU88EQzZKuGtDKGLzsNxcXRWmqP5rse2EyPmRTOn7pv7Fma46HBWRnmkzm7M8XJ
+         F4x0pNmz8RPG27KDuXgYM3CjmswUYLyTgVCF02lFIVO7znF7mc/FVUlRDEXbLPly4KpR
+         5UuDsntjMQTUyGwW/CFL7tbNfRzf7ZdR3mHy9OAOx2090ENkAYTb8U03Ca2/iQdK3m5i
+         TCeui0I3Mid8/XvMSo16Xq2pZj/T85Z5Q76n2Q47XknHi4E1EM8thUnN9xzaIHgEHw2+
+         5kIw==
+X-Gm-Message-State: AOAM533hoRvGa1OVP0j0DBnNJtiKhcHGziENMpzTiP78Omp5+ZywEjGm
+        LYOqiHc5t0G0htUrhWoMWuw=
+X-Google-Smtp-Source: ABdhPJyB9HushHJdLOcJQrYX8ceiZBF8Sc+4Il+mcDTyBSIrDeG0ruPy5odkRh7QQaPgij1A/BGp8w==
+X-Received: by 2002:a63:4f5e:: with SMTP id p30mr6175167pgl.6.1602143760930;
+        Thu, 08 Oct 2020 00:56:00 -0700 (PDT)
 Received: from localhost.localdomain ([203.205.141.61])
-        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.53
+        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 00:55:56 -0700 (PDT)
+        Thu, 08 Oct 2020 00:56:00 -0700 (PDT)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
@@ -56,10 +56,10 @@ Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, xiaoguangrong.eric@gmail.com,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
-        Chen Zhuo <sagazchen@tencent.com>
-Subject: [PATCH 30/35] dmem: introduce dmem_bitmap_alloc() and dmem_bitmap_free()
-Date:   Thu,  8 Oct 2020 15:54:20 +0800
-Message-Id: <f79969d52ad112210259f39c606e158b2206792a.1602093760.git.yuleixzhang@tencent.com>
+        Haiwei Li <lihaiwei@tencent.com>
+Subject: [PATCH 31/35] dmem: introduce mce handler
+Date:   Thu,  8 Oct 2020 15:54:21 +0800
+Message-Id: <6ac6ec10681d935664d6d065b8464b1a7755b674.1602093760.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1602093760.git.yuleixzhang@tencent.com>
 References: <cover.1602093760.git.yuleixzhang@tencent.com>
@@ -71,185 +71,230 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-If dmem contained in dmem region is too large and dmemfs is mounted as
-4K pagesize, size of bitmap in this dmem region maybe exceed maximal
-available memory of kzalloc(). It would cause kzalloc() fail.
+dmem handle the mce if the pfn belongs to dmem when mce occurs.
+1. check whether the pfn is handled by dmem. return if true.
+2. mark the pfn in a new error bitmap defined in page.
+3. a series of mechanism to ensure that the mce pfn is not allocated.
 
-So introduce dmem_bitmap_alloc() and use vzalloc() if bitmap is larger than
-PAGE_SIZE as vzalloc() will get sparse page.
-
-Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
+Signed-off-by: Haiwei Li <lihaiwei@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- fs/inode.c         |  6 ++++
- include/linux/fs.h |  1 +
- mm/dmem.c          | 69 +++++++++++++++++++++++++++++-----------------
- 3 files changed, 50 insertions(+), 26 deletions(-)
+ include/linux/dmem.h        |   6 +++
+ include/trace/events/dmem.h |  17 ++++++
+ mm/dmem.c                   | 103 +++++++++++++++++++++++++-----------
+ mm/memory-failure.c         |   6 +++
+ 4 files changed, 102 insertions(+), 30 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 72c4c347afb7..6f8c60ac9302 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -208,6 +208,12 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- }
- EXPORT_SYMBOL(inode_init_always);
- 
-+struct inode *alloc_inode_nonrcu(void)
-+{
-+	return kmem_cache_alloc(inode_cachep, GFP_KERNEL);
-+}
-+EXPORT_SYMBOL(alloc_inode_nonrcu);
+diff --git a/include/linux/dmem.h b/include/linux/dmem.h
+index 59d3ef14fe42..cd17a91a7264 100644
+--- a/include/linux/dmem.h
++++ b/include/linux/dmem.h
+@@ -21,6 +21,8 @@ dmem_alloc_pages_vma(struct vm_area_struct *vma, unsigned long addr,
+ void dmem_free_pages(phys_addr_t addr, unsigned int dpages_nr);
+ bool is_dmem_pfn(unsigned long pfn);
+ #define dmem_free_page(addr)	dmem_free_pages(addr, 1)
 +
- void free_inode_nonrcu(struct inode *inode)
++bool dmem_memory_failure(unsigned long pfn, int flags);
+ #else
+ static inline int dmem_reserve_init(void)
  {
- 	kmem_cache_free(inode_cachep, inode);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7519ae003a08..872552dc5a61 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2984,6 +2984,7 @@ extern void clear_inode(struct inode *);
- extern void __destroy_inode(struct inode *);
- extern struct inode *new_inode_pseudo(struct super_block *sb);
- extern struct inode *new_inode(struct super_block *sb);
-+extern struct inode *alloc_inode_nonrcu(void);
- extern void free_inode_nonrcu(struct inode *inode);
- extern int should_remove_suid(struct dentry *);
- extern int file_remove_privs(struct file *);
+@@ -32,5 +34,9 @@ static inline bool is_dmem_pfn(unsigned long pfn)
+ 	return 0;
+ }
+ 
++static inline bool dmem_memory_failure(unsigned long pfn, int flags)
++{
++	return false;
++}
+ #endif
+ #endif	/* _LINUX_DMEM_H */
+diff --git a/include/trace/events/dmem.h b/include/trace/events/dmem.h
+index 10d1b90a7783..f8eeb3c63b14 100644
+--- a/include/trace/events/dmem.h
++++ b/include/trace/events/dmem.h
+@@ -62,6 +62,23 @@ TRACE_EVENT(dmem_free_pages,
+ 	TP_printk("addr %#lx dpages_nr %d", (unsigned long)__entry->addr,
+ 		  __entry->dpages_nr)
+ );
++
++TRACE_EVENT(dmem_memory_failure,
++	TP_PROTO(unsigned long pfn, bool used),
++	TP_ARGS(pfn, used),
++
++	TP_STRUCT__entry(
++		__field(unsigned long, pfn)
++		__field(bool, used)
++	),
++
++	TP_fast_assign(
++		__entry->pfn = pfn;
++		__entry->used = used;
++	),
++
++	TP_printk("pfn=%#lx used=%d", __entry->pfn, __entry->used)
++);
+ #endif
+ 
+ /* This part must be outside protection */
 diff --git a/mm/dmem.c b/mm/dmem.c
-index eb6df7059cf0..50cdff98675b 100644
+index 50cdff98675b..16438dbed3f5 100644
 --- a/mm/dmem.c
 +++ b/mm/dmem.c
-@@ -17,6 +17,7 @@
- #include <linux/dmem.h>
- #include <linux/debugfs.h>
- #include <linux/notifier.h>
-+#include <linux/vmalloc.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/dmem.h>
-@@ -362,9 +363,38 @@ static int __init dmem_node_init(struct dmem_node *dnode)
- 	return 0;
+@@ -431,6 +431,41 @@ static void __init dmem_uinit(void)
+ 	dmem_pool.registered_pages = 0;
  }
  
-+static unsigned long *dmem_bitmap_alloc(unsigned long pages,
-+					unsigned long *static_bitmap)
++/* set or clear corresponding bit on allocation bitmap based on error bitmap */
++static unsigned long dregion_alloc_bitmap_set_clear(struct dmem_region *dregion,
++						    bool set)
 +{
-+	unsigned long *bitmap, size;
++	unsigned long pos_pfn, pos_offset;
++	unsigned long valid_pages, mce_dpages = 0;
++	phys_addr_t dpage, reserved_start_pfn;
 +
-+	size = BITS_TO_LONGS(pages) * sizeof(long);
-+	if (size <= sizeof(*static_bitmap))
-+		bitmap = static_bitmap;
-+	else if (size <= PAGE_SIZE)
-+		bitmap = kzalloc(size, GFP_KERNEL);
++	reserved_start_pfn = __phys_to_pfn(dregion->reserved_start_addr);
++
++	valid_pages = dpage_to_pfn(dregion->dpage_end_pfn) - reserved_start_pfn;
++	pos_offset = dpage_to_pfn(dregion->dpage_start_pfn)
++		- reserved_start_pfn;
++try_set:
++	pos_pfn = find_next_bit(dregion->error_bitmap, valid_pages, pos_offset);
++
++	if (pos_pfn >= valid_pages)
++		return mce_dpages;
++	mce_dpages++;
++	dpage = pfn_to_dpage(pos_pfn + reserved_start_pfn);
++	if (set)
++		WARN_ON(__test_and_set_bit(dpage - dregion->dpage_start_pfn,
++					   dregion->bitmap));
 +	else
-+		bitmap = vzalloc(size);
-+
-+	return bitmap;
++		WARN_ON(!__test_and_clear_bit(dpage - dregion->dpage_start_pfn,
++					      dregion->bitmap));
++	pos_offset = dpage_to_pfn(dpage + 1) - reserved_start_pfn;
++	goto try_set;
 +}
 +
-+static void dmem_bitmap_free(unsigned long pages,
-+			     unsigned long *bitmap,
-+			     unsigned long *static_bitmap)
++static unsigned long dmem_region_mark_mce_dpages(struct dmem_region *dregion)
 +{
-+	unsigned long size;
-+
-+	size = BITS_TO_LONGS(pages) * sizeof(long);
-+	if (size > PAGE_SIZE)
-+		vfree(bitmap);
-+	else if (bitmap != static_bitmap)
-+		kfree(bitmap);
++	return dregion_alloc_bitmap_set_clear(dregion, true);
 +}
 +
- static void __init dmem_region_uinit(struct dmem_region *dregion)
- {
--	unsigned long nr_pages, size, *bitmap = dregion->error_bitmap;
-+	unsigned long nr_pages, *bitmap = dregion->error_bitmap;
- 
- 	if (!bitmap)
- 		return;
-@@ -374,9 +404,7 @@ static void __init dmem_region_uinit(struct dmem_region *dregion)
- 
- 	WARN_ON(!nr_pages);
- 
--	size = BITS_TO_LONGS(nr_pages) * sizeof(long);
--	if (size > sizeof(dregion->static_bitmap))
--		kfree(bitmap);
-+	dmem_bitmap_free(nr_pages, bitmap, &dregion->static_error_bitmap);
- 	dregion->error_bitmap = NULL;
- }
- 
-@@ -405,19 +433,15 @@ static void __init dmem_uinit(void)
- 
  static int __init dmem_region_init(struct dmem_region *dregion)
  {
--	unsigned long *bitmap, size, nr_pages;
-+	unsigned long *bitmap, nr_pages;
+ 	unsigned long *bitmap, nr_pages;
+@@ -514,6 +549,8 @@ static int dmem_alloc_region_init(struct dmem_region *dregion,
+ 	dregion->dpage_start_pfn = start;
+ 	dregion->dpage_end_pfn = end;
  
- 	nr_pages = __phys_to_pfn(dregion->reserved_end_addr)
- 		- __phys_to_pfn(dregion->reserved_start_addr);
- 
--	size = BITS_TO_LONGS(nr_pages) * sizeof(long);
--	if (size <= sizeof(dregion->static_error_bitmap)) {
--		bitmap = &dregion->static_error_bitmap;
--	} else {
--		bitmap = kzalloc(size, GFP_KERNEL);
--		if (!bitmap)
--			return -ENOMEM;
--	}
-+	bitmap = dmem_bitmap_alloc(nr_pages, &dregion->static_error_bitmap);
-+	if (!bitmap)
-+		return -ENOMEM;
++	*dpages -= dmem_region_mark_mce_dpages(dregion);
 +
- 	dregion->error_bitmap = bitmap;
- 	return 0;
- }
-@@ -472,7 +496,7 @@ late_initcall(dmem_late_init);
- static int dmem_alloc_region_init(struct dmem_region *dregion,
- 				  unsigned long *dpages)
- {
--	unsigned long start, end, *bitmap, size;
-+	unsigned long start, end, *bitmap;
- 
- 	start = DMEM_PAGE_UP(dregion->reserved_start_addr);
- 	end = DMEM_PAGE_DOWN(dregion->reserved_end_addr);
-@@ -481,14 +505,9 @@ static int dmem_alloc_region_init(struct dmem_region *dregion,
- 	if (!*dpages)
- 		return 0;
- 
--	size = BITS_TO_LONGS(*dpages) * sizeof(long);
--	if (size <= sizeof(dregion->static_bitmap))
--		bitmap = &dregion->static_bitmap;
--	else {
--		bitmap = kzalloc(size, GFP_KERNEL);
--		if (!bitmap)
--			return -ENOMEM;
--	}
-+	bitmap = dmem_bitmap_alloc(*dpages, &dregion->static_bitmap);
-+	if (!bitmap)
-+		return -ENOMEM;
- 
- 	dregion->bitmap = bitmap;
- 	dregion->next_free_pos = 0;
-@@ -582,7 +601,7 @@ static void dmem_uinit_check_alloc_bitmap(struct dmem_region *dregion)
- 
- static void dmem_alloc_region_uinit(struct dmem_region *dregion)
- {
--	unsigned long dpages, size, *bitmap = dregion->bitmap;
-+	unsigned long dpages, *bitmap = dregion->bitmap;
- 
- 	if (!bitmap)
- 		return;
-@@ -592,9 +611,7 @@ static void dmem_alloc_region_uinit(struct dmem_region *dregion)
- 
- 	dmem_uinit_check_alloc_bitmap(dregion);
- 
--	size = BITS_TO_LONGS(dpages) * sizeof(long);
--	if (size > sizeof(dregion->static_bitmap))
--		kfree(bitmap);
-+	dmem_bitmap_free(dpages, bitmap, &dregion->static_bitmap);
- 	dregion->bitmap = NULL;
+ 	dmem_pool.unaligned_pages += __phys_to_pfn((dpage_to_phys(start)
+ 		- dregion->reserved_start_addr));
+ 	dmem_pool.unaligned_pages += __phys_to_pfn(dregion->reserved_end_addr
+@@ -558,36 +595,6 @@ dmem_alloc_bitmap_clear(struct dmem_region *dregion, phys_addr_t dpage,
+ 	return err_num;
  }
  
+-/* set or clear corresponding bit on allocation bitmap based on error bitmap */
+-static unsigned long dregion_alloc_bitmap_set_clear(struct dmem_region *dregion,
+-						    bool set)
+-{
+-	unsigned long pos_pfn, pos_offset;
+-	unsigned long valid_pages, mce_dpages = 0;
+-	phys_addr_t dpage, reserved_start_pfn;
+-
+-	reserved_start_pfn = __phys_to_pfn(dregion->reserved_start_addr);
+-
+-	valid_pages = dpage_to_pfn(dregion->dpage_end_pfn) - reserved_start_pfn;
+-	pos_offset = dpage_to_pfn(dregion->dpage_start_pfn)
+-		- reserved_start_pfn;
+-try_set:
+-	pos_pfn = find_next_bit(dregion->error_bitmap, valid_pages, pos_offset);
+-
+-	if (pos_pfn >= valid_pages)
+-		return mce_dpages;
+-	mce_dpages++;
+-	dpage = pfn_to_dpage(pos_pfn + reserved_start_pfn);
+-	if (set)
+-		WARN_ON(__test_and_set_bit(dpage - dregion->dpage_start_pfn,
+-					   dregion->bitmap));
+-	else
+-		WARN_ON(!__test_and_clear_bit(dpage - dregion->dpage_start_pfn,
+-					      dregion->bitmap));
+-	pos_offset = dpage_to_pfn(dpage + 1) - reserved_start_pfn;
+-	goto try_set;
+-}
+-
+ static void dmem_uinit_check_alloc_bitmap(struct dmem_region *dregion)
+ {
+ 	unsigned long dpages, size;
+@@ -989,6 +996,42 @@ void dmem_free_pages(phys_addr_t addr, unsigned int dpages_nr)
+ }
+ EXPORT_SYMBOL(dmem_free_pages);
+ 
++bool dmem_memory_failure(unsigned long pfn, int flags)
++{
++	struct dmem_region *dregion;
++	struct dmem_node *pdnode = NULL;
++	u64 pos;
++	phys_addr_t addr = __pfn_to_phys(pfn);
++	bool used = false;
++
++	dregion = find_dmem_region(addr, &pdnode);
++	if (!dregion)
++		return false;
++
++	WARN_ON(!pdnode || !dregion->error_bitmap);
++
++	mutex_lock(&dmem_pool.lock);
++	pos = pfn - __phys_to_pfn(dregion->reserved_start_addr);
++	if (__test_and_set_bit(pos, dregion->error_bitmap))
++		goto out;
++
++	if (!dregion->bitmap || pfn < dpage_to_pfn(dregion->dpage_start_pfn) ||
++	    pfn >= dpage_to_pfn(dregion->dpage_end_pfn))
++		goto out;
++
++	pos = phys_to_dpage(addr) - dregion->dpage_start_pfn;
++	if (__test_and_set_bit(pos, dregion->bitmap)) {
++		used = true;
++	} else {
++		pr_info("MCE: free dpage, mark %#lx disabled in dmem\n", pfn);
++		dnode_count_free_dpages(pdnode, -1);
++	}
++out:
++	trace_dmem_memory_failure(pfn, used);
++	mutex_unlock(&dmem_pool.lock);
++	return true;
++}
++
+ bool is_dmem_pfn(unsigned long pfn)
+ {
+ 	struct dmem_node *dnode;
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index f1aa6433f404..c613e1ec5995 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -35,6 +35,7 @@
+  */
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
++#include <linux/dmem.h>
+ #include <linux/page-flags.h>
+ #include <linux/kernel-page-flags.h>
+ #include <linux/sched/signal.h>
+@@ -1280,6 +1281,11 @@ int memory_failure(unsigned long pfn, int flags)
+ 	if (!sysctl_memory_failure_recovery)
+ 		panic("Memory failure on page %lx", pfn);
+ 
++	if (dmem_memory_failure(pfn, flags)) {
++		pr_info("MCE %#lx: handled by dmem\n", pfn);
++		return 0;
++	}
++
+ 	p = pfn_to_online_page(pfn);
+ 	if (!p) {
+ 		if (pfn_valid(pfn)) {
 -- 
 2.28.0
 
