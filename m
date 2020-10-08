@@ -2,145 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 337AD287931
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 17:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 422FC2879A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 18:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731944AbgJHP5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 11:57:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731925AbgJHP5l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 11:57:41 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F77C0613D6;
-        Thu,  8 Oct 2020 08:57:34 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id h24so8826859ejg.9;
-        Thu, 08 Oct 2020 08:57:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:references:user-agent:in-reply-to:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=XvMgROSzuESaOzQKx7kh2yMiXeKygcT+Y838NKvx+Wk=;
-        b=utMGe7b0UZ9Ghbr0xIiMxfvyGOVXoV03nSf8CntJlYmO7vB7xtLD4aHUNjc2/1/YU/
-         BGvibLFWsc7ym63F744U8+Dvg+MPLLlIe39KKft9fTFf/JCqV0QFyzJlB84X3j9CzYYd
-         cfn/JosupL/LZGDneCw4hVCPbbk6S1oOd2KhScE0ig21aIYVuv9lVo2/qwjSHU48qgho
-         Gpt7+nG/UgQvrPPQNVb8oBF2ZDIT4aT1IGb85RFKmEclC+uDsDYwytwnia23jiGG9kUm
-         7Ue5TkRy+YK44QofgRJ3mlyWceuPw1r/kNv5Ypo/k+9ncvxrA5bz4VdxXU/ozMBNJbsB
-         f5eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:user-agent
-         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
-        bh=XvMgROSzuESaOzQKx7kh2yMiXeKygcT+Y838NKvx+Wk=;
-        b=Zpw06G8rgKWf94hqs/RtHuRV1f04M94xkR8cCKwEiZMr+EgjByEb3k+cT4mImPzsCi
-         97BQjDisWF5PpMr2jpX5fhX58tqkZdXj/k0mUp4Ziy9Wd7SkuyLYHjoSriDEnBdJK/bH
-         120Dh9ymx/g+9vhR1SD50is9FXMp8RRuA5xXrLeEbuoZkjb5Xm4IkRPf6EMTwo/tMloM
-         wF7uUjmxO2wgCDfEm+/EaYANr8UwfyySwiKVwi34P0Ndz1f71RrlqmOKEIcp3p+Hywri
-         0iD9XyHIo3rut8BoGF6KlPUNQw0CBbMI3EFLFjkPqljrlGb5FB+bW/g9JNxzbitiF5J/
-         mVnQ==
-X-Gm-Message-State: AOAM530JE+mMk/nhgpjr1UlfMnFc9lj8Lg/XLR0eoMtXt45HXo01PvYi
-        OtF39D1ieX6QIjlQWkzNlQ4=
-X-Google-Smtp-Source: ABdhPJyOmtOhHIUCQ1CMgl2VfYfvlPZw97lvJG+K35XaFBwxl0BqyCNtiL5xNtxS6W8gKNz5ugHDoQ==
-X-Received: by 2002:a17:906:60d6:: with SMTP id f22mr9505409ejk.250.1602172652413;
-        Thu, 08 Oct 2020 08:57:32 -0700 (PDT)
-Received: from evledraar (dhcp-077-248-252-018.chello.nl. [77.248.252.18])
-        by smtp.gmail.com with ESMTPSA id q27sm4473794ejd.74.2020.10.08.08.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 08:57:31 -0700 (PDT)
-From:   =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-To:     Johannes Schindelin <Johannes.Schindelin@gmx.de>
-Cc:     Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org,
-        tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
-References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-3-avarab@gmail.com> <xmqqv9gcs91k.fsf@gitster.c.googlers.com> <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
-User-agent: Debian GNU/Linux bullseye/sid; Emacs 26.3; mu4e 1.4.13
-In-reply-to: <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
-Date:   Thu, 08 Oct 2020 17:57:30 +0200
-Message-ID: <87eem8hfrp.fsf@evledraar.gmail.com>
+        id S1729504AbgJHQE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 12:04:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44214 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726875AbgJHQE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 12:04:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 064D4AC85;
+        Thu,  8 Oct 2020 16:04:25 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A3C181E1305; Thu,  8 Oct 2020 18:04:24 +0200 (CEST)
+Date:   Thu, 8 Oct 2020 18:04:24 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jack@suse.cz, anju@linux.vnet.ibm.com,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock
+ mount opt
+Message-ID: <20201008160424.GA14976@quack2.suse.cz>
+References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu 08-10-20 20:32:48, Ritesh Harjani wrote:
+> left shifting m_lblk by blkbits was causing value overflow and hence
+> it was not able to convert unwritten to written extent.
+> So, make sure we typecast it to loff_t before do left shift operation.
+> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
+> ret variable to avoid accidentally returning an uninitialized ret.
+> 
+> This patch fixes the issue reported in ext4 for bs < ps with
+> dioread_nolock mount option.
+> 
+> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
+> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 
-On Thu, Oct 08 2020, Johannes Schindelin wrote:
+Ah, good spotting! The patch looks good. You can add:
 
-> Hi Junio and =C3=86var,
->
-> On Thu, 17 Sep 2020, Junio C Hamano wrote:
->
->> =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason  <avarab@gmail.com> writes:
->>
->> > As amusing as Linus's original prose[1] is here it doesn't really expl=
-ain
->> > in any detail to the uninitiated why you would or wouldn't enable
->> > this, and the counter-intuitive reason for why git wouldn't fsync your
->> > precious data.
->> >
->> > So elaborate (a lot) on why this may or may not be needed. This is my
->> > best-effort attempt to summarize the various points raised in the last
->> > ML[2] discussion about this.
->> >
->> > 1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
->> >     files", 2008-06-18)
->> > 2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
->> >
->> > Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.co=
-m>
->> > ---
->> >  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-----
->> >  1 file changed, 36 insertions(+), 6 deletions(-)
->>
->> When I saw the subject in my mailbox, I expected to see that you
->> would resurrect Christoph's updated text in [*1*], but you wrote a
->> whole lot more ;-) And they are quite informative to help readers to
->> understand what the option does.  I am not sure if the understanding
->> directly help readers to decide if it is appropriate for their own
->> repositories, though X-<.
->
-> I agree that it is an improvement, and am therefore in favor of applying
-> the patch.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Just the improved docs, or flipping the default of core.fsyncObjectFiles
-to "true"?
+								Honza
 
-I've been meaning to re-roll this. I won't have time anytime soon to fix
-git's fsync() use, i.e. ensure that we run up & down modified
-directories and fsync()/fdatasync() file/dir fd's as appropriate but I
-think documenting it and changing the core.fsyncObjectFiles default
-makes sense and is at least a step in the right direction.
-
-I do think it makes more sense for a v2 to split most of this out into
-some section that generally discusses data integrity in the .git
-directory. I.e. that says that currently where we use fsync() (such as
-pack/commit-graph writes) we don't fsync() the corresponding
-director{y,ies), and ref updates don't fsync() at all.
-
-Where to put that though? gitrepository-layout(5)? Or a new page like
-gitrepository-integrity(5) (other suggestions welcome..).
-
-Looking at the code again it seems easier than I thought to make this
-right if we ignore .git/refs (which reftable can fix for us). Just:
-
-1. Change fsync_or_die() and its callsites to also pass/sync the
-   containing directory, which is always created already
-   (e.g. .git/objects/pack/)...).
-
-2. ..Or in the case where it's not created already such as
-   .git/objects/??/ (or .git/objects/pack/) itself) it's not N-deep like
-   the refs hierarchy, so "did we create it" state is pretty simple, or
-   we can just always do it unconditionally.
-
-3. Without reftable the .git/refs/ case shouldn't be too hard if we're
-   OK with redundantly fsyncing all the way down, i.e. to make it
-   simpler by not tracking the state of exactly what was changed.
-
-4. Now that I'm writing this there's also .git/{config,rr-cache} and any
-   number of other things we need to change for 100% coverage, but the
-   above 1-3 should be good enough for repo integrity where repo =3D refs
-   & objects.
+> ---
+>  fs/ext4/extents.c | 2 +-
+>  fs/ext4/inode.c   | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index a0481582187a..32d610cc896d 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4769,7 +4769,7 @@ int ext4_convert_unwritten_extents(handle_t *handle, struct inode *inode,
+>  
+>  int ext4_convert_unwritten_io_end_vec(handle_t *handle, ext4_io_end_t *io_end)
+>  {
+> -	int ret, err = 0;
+> +	int ret = 0, err = 0;
+>  	struct ext4_io_end_vec *io_end_vec;
+>  
+>  	/*
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index bf596467c234..3021235deaa1 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -2254,7 +2254,7 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
+>  					err = PTR_ERR(io_end_vec);
+>  					goto out;
+>  				}
+> -				io_end_vec->offset = mpd->map.m_lblk << blkbits;
+> +				io_end_vec->offset = (loff_t)mpd->map.m_lblk << blkbits;
+>  			}
+>  			*map_bh = true;
+>  			goto out;
+> -- 
+> 2.26.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
