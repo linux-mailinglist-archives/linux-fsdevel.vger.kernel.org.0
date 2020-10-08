@@ -2,95 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11224287699
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 17:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C084C2876B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 17:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbgJHPCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 11:02:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730550AbgJHPCB (ORCPT
+        id S1730850AbgJHPHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 11:07:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34024 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729833AbgJHPHH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 11:02:01 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 100E1C061755
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Oct 2020 08:02:01 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id o18so5987018ill.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 08:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=P6w4xCafRHbwrlFfPz4fGd6pUBvY7sGVwZN8EowUQ9E=;
-        b=ZkHIYFq4AG21UWWnea6lir2iqx9wcCge82U1rfSPA5awUvOZgjJcZsASTlzI9xcdb7
-         V2uqZ6iC/X3/Bh55wKjBUTQjaywr/t+yzb0//LbgL8qqeuZwgHN5mQAE6dpICI0KOE8R
-         0ahsq5LhagcyJt0u93o+5QFTuJrC67rYibr02TBLeOncD4tyPY2zGpKabFPf5bIDf9Ia
-         wu+LD3bbrAbntvTm8sgAgojmGxL7uK3PuxYJ1FjI+wndPgVUrI6qtpQV3cD5VmlLrhVc
-         e3gb2SBDuPARcuv4x96AViEYKnIZV6rxhVZgvicEWLzSRZ200/f62Eny16A9uJIa1xTu
-         jEYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P6w4xCafRHbwrlFfPz4fGd6pUBvY7sGVwZN8EowUQ9E=;
-        b=K/zvlYAHsQcrbN4unWpG99WWqgErThS3cZv87ZdaSPreCycc9WGhRFzRlBYeQCn1Ta
-         t8rQi1KmoX+Q4BYmduExCNlIZt857kA4uf50VYlboydv3hrdX/4WbSVRT5K7WLAZLw0l
-         +kFEhxcY2GNm+Qq3fkV/DrDLn7tce/07uMbOwPA5X+Hef4RXy6U+UU4v2Gdy6mMKfmcc
-         3hJrnCzGswj1JCwtsv5mWmi8RmOBWSEs6e+I2lBfySAKjZQ17MXb/Q0qDxenZPvLqOPO
-         eWhCn+9o+l4e+zmoAqZEevodhY79Xu2/iuKMGqXjjJMFaSzw6JcaL4H8pzVXoHodEXNp
-         yVlw==
-X-Gm-Message-State: AOAM533KL26ju8Q6CoDqxXw/kujF7CmuuvqLGg5HP7CmU9S1TQzocpRI
-        FelXU9zwgwHDLgwmyqWCJxBxUQ==
-X-Google-Smtp-Source: ABdhPJzXGC7Cqlfzu8AjaNIu8ag7EKbF/T2OerPsLkd8v2og61MLo0ACGD6F+TlfZU3nfSOiwG2roQ==
-X-Received: by 2002:a92:c74c:: with SMTP id y12mr7242718ilp.19.1602169318868;
-        Thu, 08 Oct 2020 08:01:58 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id h14sm2760890ilc.38.2020.10.08.08.01.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Oct 2020 08:01:58 -0700 (PDT)
-Subject: Re: inconsistent lock state in xa_destroy
-To:     syzbot <syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <00000000000045ac4605b12a1720@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <de842e7f-fa50-193b-b1d7-c573e515ef8b@kernel.dk>
-Date:   Thu, 8 Oct 2020 09:01:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 8 Oct 2020 11:07:07 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 098F6hqc005281;
+        Thu, 8 Oct 2020 11:07:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=TU3Vv6Ga6bEzHHrK5lKsNSnFYGgobH1F9L4w1nv/Bug=;
+ b=ILz1Hp1fJCeHNWYCPzqjNDQgcWurKlyVq4Q8THfbDcugVRWwLRGNsoIv0jqd1+qni6Af
+ sVvp6SbRxOeUFjd6/Ng76Z/hCUhbh5oOPWvnDzuM6Qw6Z0iGrJ736cCoFnAOK5OotnMn
+ n/1BGvXEipt19SdS1gxMryMHDcb4U5fGZwlDRT5itGzOq/9tgmjjE5+tJdHzleQZVA7W
+ MgimL28z5BHpPD+JeyFUNvKNl583bjz9pkeBUNKiC2Bb24UkFT3J0zx7DKPYOD6CziRO
+ dyKw81OudQ29W4JzWfNXEeA5+4jYWjXad98rXH+Wkv4/63xIj670l28sxfm2LxPOKj1e vw== 
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3421ec084n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Oct 2020 11:06:58 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 098F2msC001928;
+        Thu, 8 Oct 2020 15:02:56 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 33xgjh5f6b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Oct 2020 15:02:55 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 098F2rLq30605688
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 8 Oct 2020 15:02:53 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EADD7A4053;
+        Thu,  8 Oct 2020 15:02:52 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3E801A4057;
+        Thu,  8 Oct 2020 15:02:51 +0000 (GMT)
+Received: from riteshh-domain.ibmuc.com (unknown [9.199.46.138])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Oct 2020 15:02:51 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, tytso@mit.edu, jack@suse.cz,
+        anju@linux.vnet.ibm.com, Ritesh Harjani <riteshh@linux.ibm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Subject: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock  mount opt
+Date:   Thu,  8 Oct 2020 20:32:48 +0530
+Message-Id: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <00000000000045ac4605b12a1720@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-08_08:2020-10-08,2020-10-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501
+ impostorscore=0 suspectscore=1 phishscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010080111
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/8/20 9:00 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12555227900000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=cdcbdc0bd42e559b52b9
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com
+left shifting m_lblk by blkbits was causing value overflow and hence
+it was not able to convert unwritten to written extent.
+So, make sure we typecast it to loff_t before do left shift operation.
+Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
+ret variable to avoid accidentally returning an uninitialized ret.
 
-Already pushed out a fix for this, it's really an xarray issue where it just
-assumes that destroy can irq grab the lock.
+This patch fixes the issue reported in ext4 for bs < ps with
+dioread_nolock mount option.
 
-#syz fix: io_uring: no need to call xa_destroy() on empty xarray
+Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
+Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+ fs/ext4/extents.c | 2 +-
+ fs/ext4/inode.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index a0481582187a..32d610cc896d 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4769,7 +4769,7 @@ int ext4_convert_unwritten_extents(handle_t *handle, struct inode *inode,
+ 
+ int ext4_convert_unwritten_io_end_vec(handle_t *handle, ext4_io_end_t *io_end)
+ {
+-	int ret, err = 0;
++	int ret = 0, err = 0;
+ 	struct ext4_io_end_vec *io_end_vec;
+ 
+ 	/*
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index bf596467c234..3021235deaa1 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2254,7 +2254,7 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
+ 					err = PTR_ERR(io_end_vec);
+ 					goto out;
+ 				}
+-				io_end_vec->offset = mpd->map.m_lblk << blkbits;
++				io_end_vec->offset = (loff_t)mpd->map.m_lblk << blkbits;
+ 			}
+ 			*map_bh = true;
+ 			goto out;
 -- 
-Jens Axboe
+2.26.2
 
