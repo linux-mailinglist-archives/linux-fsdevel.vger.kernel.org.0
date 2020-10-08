@@ -2,110 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09CF8287BE6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 20:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF272287C02
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 21:03:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbgJHSxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 14:53:44 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:58584 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbgJHSxo (ORCPT
+        id S1729430AbgJHTC6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 15:02:58 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:59498 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbgJHTC6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 14:53:44 -0400
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 243C7889DB;
-        Thu,  8 Oct 2020 14:53:41 -0400 (EDT)
-        (envelope-from junio@pobox.com)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:references:date:in-reply-to:message-id:mime-version
-        :content-type:content-transfer-encoding; s=sasl; bh=Usx5W2hRFbMq
-        gFa98Cv5wzREUKU=; b=VWvF/5AFYm2u+9a5VnKJx758hZ4DbRT2AgOMQMpxFgtJ
-        Ec9fP/pQXZahJMXjhISsm9Mpl97ZynYJ8u4pQNhfAzDJdD+04jlD+fb/hqd0ytxQ
-        M+byX/r5VYYBrFjkMSn6Bk5X3TZpp6pfIvIY/XOcOknddqkylwhnjrTq2s+EdIQ=
-DomainKey-Signature: a=rsa-sha1; c=nofws; d=pobox.com; h=from:to:cc
-        :subject:references:date:in-reply-to:message-id:mime-version
-        :content-type:content-transfer-encoding; q=dns; s=sasl; b=rLt84q
-        44iaZnqYnub+3/R0XYZzEBtUwIiWaC2nk428DdooRT+hsZKTInNnLduQStg17M9b
-        Lvh3mYwAYj7wB47DMpsfVDIf/J3Qg1m8jnAym5hiFak+dnA1278U2QouY+D6RFS/
-        jCjLTbc/awN8x/srND9TD4gYsgB7NxOM52jpQ=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 1BFAB889DA;
-        Thu,  8 Oct 2020 14:53:41 -0400 (EDT)
-        (envelope-from junio@pobox.com)
-Received: from pobox.com (unknown [34.74.119.39])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 98A6F889D9;
-        Thu,  8 Oct 2020 14:53:40 -0400 (EDT)
-        (envelope-from junio@pobox.com)
-From:   Junio C Hamano <gitster@pobox.com>
-To:     =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-Cc:     Johannes Schindelin <Johannes.Schindelin@gmx.de>,
-        git@vger.kernel.org, tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less flippant
-References: <87sgbghdbp.fsf@evledraar.gmail.com>
-        <20200917112830.26606-3-avarab@gmail.com>
-        <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
-        <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
-        <87eem8hfrp.fsf@evledraar.gmail.com>
-Date:   Thu, 08 Oct 2020 11:53:40 -0700
-In-Reply-To: <87eem8hfrp.fsf@evledraar.gmail.com> (=?utf-8?B?IsOGdmFyIEFy?=
- =?utf-8?B?bmZqw7Zyw7A=?= Bjarmason"'s
-        message of "Thu, 08 Oct 2020 17:57:30 +0200")
-Message-ID: <xmqqo8lcwnuz.fsf@gitster.c.googlers.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 8 Oct 2020 15:02:58 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 098IsKZf015692;
+        Thu, 8 Oct 2020 19:01:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=oEdoGCftYl9e35Z3xTIANl9P7c3NRcgZwGIvUau/kaI=;
+ b=TmVoqot11TWOMOGuU9DriSh8W9rWvRJf7tFs/K4rMkLHQChmGGOB2wkiTzlaB2cBkSE+
+ ZTuxJAK5pR0Qa0fUaFJdjv97wfw4EXoR5g1vUL8FHAl70XmGSUzvn8l6YXvpXA16DdAE
+ DT1kakSEXmzwzPV+Ok0cUJ0/gAIDbeVbsm84w1Gkt3KuEIBav/fIDvSXibg1/02Q1PnT
+ ImaJJCCwfSvAmmKaVVak+MXFtkFvDBmMLtlnjKTkHs4tXwu6IR1NRiXH4HN35eofQvFs
+ XhKmhJXRDyslrC83mcp7kIjGJGL9hBY51IutWGi67RqwNRL1ydazQ80t5mgMkTe+9pP9 5Q== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 33xetb9neh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 08 Oct 2020 19:01:44 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 098IuFHF110603;
+        Thu, 8 Oct 2020 19:01:44 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 33y381jrsc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 08 Oct 2020 19:01:44 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 098J1fG1031310;
+        Thu, 8 Oct 2020 19:01:42 GMT
+Received: from [192.168.1.85] (/94.63.165.137)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 08 Oct 2020 12:01:41 -0700
+Subject: Re: [PATCH 00/35] Enhance memory utilization with DMEMFS
+To:     yulei.kernel@gmail.com
+Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xiaoguangrong.eric@gmail.com,
+        kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
+        Yulei Zhang <yuleixzhang@tencent.com>,
+        akpm@linux-foundation.org, naoya.horiguchi@nec.com,
+        viro@zeniv.linux.org.uk, pbonzini@redhat.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Jane Y Chu <jane.chu@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <cover.1602093760.git.yuleixzhang@tencent.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <bdd0250e-4e14-f407-a584-f39af12c4e09@oracle.com>
+Date:   Thu, 8 Oct 2020 20:01:35 +0100
 MIME-Version: 1.0
+In-Reply-To: <cover.1602093760.git.yuleixzhang@tencent.com>
 Content-Type: text/plain; charset=utf-8
-X-Pobox-Relay-ID: 94D1B56A-0997-11EB-8AF6-D152C8D8090B-77302942!pb-smtp1.pobox.com
-Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9768 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 spamscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010080134
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9768 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxscore=0
+ clxscore=1011 priorityscore=1501 adultscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2010080134
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-=C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.com> writes:
+[adding a couple folks that directly or indirectly work on the subject]
 
->>> When I saw the subject in my mailbox, I expected to see that you
->>> would resurrect Christoph's updated text in [*1*], but you wrote a
->>> whole lot more ;-) And they are quite informative to help readers to
->>> understand what the option does.  I am not sure if the understanding
->>> directly help readers to decide if it is appropriate for their own
->>> repositories, though X-<.
->>
->> I agree that it is an improvement, and am therefore in favor of applyi=
-ng
->> the patch.
->
-> Just the improved docs, or flipping the default of core.fsyncObjectFile=
-s
-> to "true"?
+On 10/8/20 8:53 AM, yulei.kernel@gmail.com wrote:
+> From: Yulei Zhang <yuleixzhang@tencent.com>
+> 
+> In current system each physical memory page is assocaited with
+> a page structure which is used to track the usage of this page.
+> But due to the memory usage rapidly growing in cloud environment,
+> we find the resource consuming for page structure storage becomes
+> highly remarkable. So is it an expense that we could spare?
+> 
+Happy to see another person working to solve the same problem!
 
-I am not Dscho, but "applying THE patch" meant, at least to me, the
-patch [2/2] to the docs, which was the message we are responding to.
+I am really glad to see more folks being interested in solving
+this problem and I hope we can join efforts?
 
-> I've been meaning to re-roll this. I won't have time anytime soon to fi=
-x
-> git's fsync() use, i.e. ensure that we run up & down modified
-> directories and fsync()/fdatasync() file/dir fd's as appropriate but I
-> think documenting it and changing the core.fsyncObjectFiles default
-> makes sense and is at least a step in the right direction.
->
-> I do think it makes more sense for a v2 to split most of this out into
-> some section that generally discusses data integrity in the .git
-> directory. I.e. that says that currently where we use fsync() (such as
-> pack/commit-graph writes) we don't fsync() the corresponding
-> director{y,ies), and ref updates don't fsync() at all.
+BTW, there is also a second benefit in removing struct page -
+which is carving out memory from the direct map.
 
-Yes, I think all of these are sensible things to do sometime in the
-future.
+> This patchset introduces an idea about how to save the extra
+> memory through a new virtual filesystem -- dmemfs.
+> 
+> Dmemfs (Direct Memory filesystem) is device memory or reserved
+> memory based filesystem. This kind of memory is special as it
+> is not managed by kernel and most important it is without 'struct page'.
+> Therefore we can leverage the extra memory from the host system
+> to support more tenants in our cloud service.
+> 
+This is like a walk down the memory lane.
+
+About a year ago we followed the same exact idea/motivation to
+have memory outside of the direct map (and removing struct page overhead)
+and started with our own layer/thingie. However we realized that DAX
+is one the subsystems which already gives you direct access to memory
+for free (and is already upstream), plus a couple of things which we
+found more handy.
+
+So we sent an RFC a couple months ago:
+
+https://lore.kernel.org/linux-mm/20200110190313.17144-1-joao.m.martins@oracle.com/
+
+Since then majority of the work has been in improving DAX[1].
+But now that is done I am going to follow up with the above patchset.
+
+[1]
+https://lore.kernel.org/linux-mm/159625229779.3040297.11363509688097221416.stgit@dwillia2-desk3.amr.corp.intel.com/
+
+(Give me a couple of days and I will send you the link to the latest
+patches on a git-tree - would love feedback!)
+
+The struct page removal for DAX would then be small, and ticks the
+same bells and whistles (MCE handling, reserving PAT memtypes, ptrace
+support) that we both do, with a smaller diffstat and it doesn't
+touch KVM (not at least fundamentally).
+
+	15 files changed, 401 insertions(+), 38 deletions(-)
+
+The things needed in core-mm is for handling PMD/PUD PAGE_SPECIAL much
+like we both do. Furthermore there wouldn't be a need for a new vm type,
+consuming an extra page bit (in addition to PAGE_SPECIAL) or new filesystem.
+
+[1]
+https://lore.kernel.org/linux-mm/159625229779.3040297.11363509688097221416.stgit@dwillia2-desk3.amr.corp.intel.com/
 
 
-> Where to put that though? gitrepository-layout(5)? Or a new page like
-> gitrepository-integrity(5) (other suggestions welcome..).
+> We uses a kernel boot parameter 'dmem=' to reserve the system
+> memory when the host system boots up, the details can be checked
+> in /Documentation/admin-guide/kernel-parameters.txt. 
+> 
+> Theoretically for each 4k physical page it can save 64 bytes if
+> we drop the 'struct page', so for guest memory with 320G it can
+> save about 5G physical memory totally. 
+> 
+Also worth mentioning that if you only care about 'struct page' cost, and not on the
+security boundary, there's also some work on hugetlbfs preallocation of hugepages into
+tricking vmemmap in reusing tail pages.
 
-I do not have a good suggestion at this moment on this.
+  https://lore.kernel.org/linux-mm/20200915125947.26204-1-songmuchun@bytedance.com/
 
+Going forward that could also make sense for device-dax to avoid so many
+struct pages allocated (which would require its transition to compound
+struct pages like hugetlbfs which we are looking at too). In addition an
+idea <handwaving> would be perhaps to have a stricter mode in DAX where
+we initialize/use the metadata ('struct page') but remove the underlaying
+PFNs (of the 'struct page') from the direct map having to bear the cost of
+mapping/unmapping on gup/pup.
 
-
-
+	Joao
