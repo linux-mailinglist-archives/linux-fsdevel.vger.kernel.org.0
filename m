@@ -2,94 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 422FC2879A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 18:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08F152879CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 18:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbgJHQE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 12:04:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44214 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbgJHQE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 12:04:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 064D4AC85;
-        Thu,  8 Oct 2020 16:04:25 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A3C181E1305; Thu,  8 Oct 2020 18:04:24 +0200 (CEST)
-Date:   Thu, 8 Oct 2020 18:04:24 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tytso@mit.edu, jack@suse.cz, anju@linux.vnet.ibm.com,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock
- mount opt
-Message-ID: <20201008160424.GA14976@quack2.suse.cz>
-References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
+        id S1728356AbgJHQQK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 12:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgJHQQK (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 12:16:10 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D4CC061755
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Oct 2020 09:16:09 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id k6so6818500ior.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 09:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MXGKdXgV6wJNdOluiYAUCg/NRvd9faNoK+7jU+DVzqk=;
+        b=zCT4EDCmvezByHBFYDBPCHZAeJbfRwU9Vou4tHLcuDWhcS1bLxz+kB9Qtk6vgHiQcD
+         SwBlMQcX0YXhLcA+IQJzi9IOPjU3wYnQnXIGCN24tIjqG3iWsfFD2UPxgxvkxTMKL3bp
+         Wu2vOwTrqhYmor6jZm8CXxO3klBZnJuC9d0Ijzky9nAoZziH/rZbJA1tb5XRdljpnCh8
+         j2XXW8HvFV45z5r18zAVa9Yu3YT3L3T7zc/qwHR/K2VluhTfmOPyWsuMFM9GaDQHz33F
+         fKp8qco2JTlkMcWDwmkqvhlWE530OJxJbrGYRPdzM8kbbWILyMvHnqso1C2OAMHkcs0X
+         dQvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MXGKdXgV6wJNdOluiYAUCg/NRvd9faNoK+7jU+DVzqk=;
+        b=pcwg7ChE6urKIL5KJBgy7q5bD8C+EOE8IYdVaoSwtcbSAlxBdYsngVp+BgV15UxEYi
+         LxOL1T0Ye11uetMiiThI8XNlpyz+sqa27Q+Z29vSzNULMCmqwF4jaJj2i0pCDgTOIRFK
+         EYTg99EmAofZ3Oe8ViJbNJ17b8IhkXhFN5t6vegiLCR7iVWSnPSGa3MaSH+Z89dMaYvC
+         rtEr3E6OWDqNIUbXukcvSAIbEjbWy4xNMCFe4k651vvvEwwNIq+N3gdAF+uu7vxyYL4f
+         Wn0/1d4Xd5StIDF3iDFG9RZoDTMUN7/keAHc+wyXxyZI3A4hxNwfCOCkQh+LAkGnP9Cg
+         MyrQ==
+X-Gm-Message-State: AOAM532WcE6dDGRRgxZfxQRChZvq/vedUsM++Y45gJoo6eY19/CGK/z/
+        gNpBM24XySZZhvxIfOLv8healw497ZY/MA==
+X-Google-Smtp-Source: ABdhPJwmoeodaZBffOtccmlvSqtW+C51oDiN8MyiPoTDI3KxZKhUamXFx7KA1ZkChCf4FdzD6hdgjg==
+X-Received: by 2002:a5d:8752:: with SMTP id k18mr6616050iol.27.1602173768672;
+        Thu, 08 Oct 2020 09:16:08 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id j3sm610362ilc.25.2020.10.08.09.16.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Oct 2020 09:16:07 -0700 (PDT)
+Subject: Re: [RESEND^2 PATCH v3 0/3] Clean up and fix error handling in DIO
+To:     Jan Kara <jack@suse.cz>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        kernel@collabora.com
+References: <20201008062620.2928326-1-krisman@collabora.com>
+ <20201008093213.GB3486@quack2.suse.cz>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b8e122ef-d36b-c107-dae6-29fce6a69e26@kernel.dk>
+Date:   Thu, 8 Oct 2020 10:16:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201008093213.GB3486@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 08-10-20 20:32:48, Ritesh Harjani wrote:
-> left shifting m_lblk by blkbits was causing value overflow and hence
-> it was not able to convert unwritten to written extent.
-> So, make sure we typecast it to loff_t before do left shift operation.
-> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
-> ret variable to avoid accidentally returning an uninitialized ret.
+On 10/8/20 3:32 AM, Jan Kara wrote:
+> On Thu 08-10-20 02:26:17, Gabriel Krisman Bertazi wrote:
+>> Hi,
+>>
+>> Given the proximity of the merge window and since I haven't seen it pop
+>> up in any of the trees, and considering it is reviewed and fixes a bug
+>> for us, I'm trying another resend for this so it can get picked up in
+>> time for 5.10.
+>>
+>> Jan, thanks again for the review and sorry for the noise but is there
+>> any one else that should be looking at this?
 > 
-> This patch fixes the issue reported in ext4 for bs < ps with
-> dioread_nolock mount option.
-> 
-> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
-> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> If you can't catch attention of Al Viro, then Jens Axboe is sometimes
+> merging direct IO fixes as well through his tree. Added to CC. If that
+> doesn't work out, I can also take the changes through my tree and send them
+> to Linus in a separate pull request...
 
-Ah, good spotting! The patch looks good. You can add:
+For this case, probably best if you take it, Jan. I looked over the
+patches and they look good to me, feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-								Honza
-
-> ---
->  fs/ext4/extents.c | 2 +-
->  fs/ext4/inode.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index a0481582187a..32d610cc896d 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4769,7 +4769,7 @@ int ext4_convert_unwritten_extents(handle_t *handle, struct inode *inode,
->  
->  int ext4_convert_unwritten_io_end_vec(handle_t *handle, ext4_io_end_t *io_end)
->  {
-> -	int ret, err = 0;
-> +	int ret = 0, err = 0;
->  	struct ext4_io_end_vec *io_end_vec;
->  
->  	/*
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index bf596467c234..3021235deaa1 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2254,7 +2254,7 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
->  					err = PTR_ERR(io_end_vec);
->  					goto out;
->  				}
-> -				io_end_vec->offset = mpd->map.m_lblk << blkbits;
-> +				io_end_vec->offset = (loff_t)mpd->map.m_lblk << blkbits;
->  			}
->  			*map_bh = true;
->  			goto out;
-> -- 
-> 2.26.2
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
+
