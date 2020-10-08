@@ -2,68 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D35E92879F7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 18:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F65287BA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 20:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730697AbgJHQ1w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 12:27:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47976 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728620AbgJHQ1v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 12:27:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1A80FABF4;
-        Thu,  8 Oct 2020 16:27:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D1A131E1305; Thu,  8 Oct 2020 18:27:49 +0200 (CEST)
-Date:   Thu, 8 Oct 2020 18:27:49 +0200
-From:   Jan Kara <jack@suse.cz>
+        id S1728781AbgJHSX5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 14:23:57 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37296 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbgJHSX5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 14:23:57 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1kQaa3-0003dS-IM; Thu, 08 Oct 2020 18:23:55 +0000
 To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Jan Kara <jack@suse.cz>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [RESEND^2 PATCH v3 0/3] Clean up and fix error handling in DIO
-Message-ID: <20201008162749.GC14976@quack2.suse.cz>
-References: <20201008062620.2928326-1-krisman@collabora.com>
- <20201008093213.GB3486@quack2.suse.cz>
- <b8e122ef-d36b-c107-dae6-29fce6a69e26@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Colin Ian King <colin.king@canonical.com>
+Subject: re: io_uring: process task work in io_uring_register()
+Message-ID: <f7ac4874-9c6c-4f41-653b-b5a664bfc843@canonical.com>
+Date:   Thu, 8 Oct 2020 19:23:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8e122ef-d36b-c107-dae6-29fce6a69e26@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 08-10-20 10:16:07, Jens Axboe wrote:
-> On 10/8/20 3:32 AM, Jan Kara wrote:
-> > On Thu 08-10-20 02:26:17, Gabriel Krisman Bertazi wrote:
-> >> Hi,
-> >>
-> >> Given the proximity of the merge window and since I haven't seen it pop
-> >> up in any of the trees, and considering it is reviewed and fixes a bug
-> >> for us, I'm trying another resend for this so it can get picked up in
-> >> time for 5.10.
-> >>
-> >> Jan, thanks again for the review and sorry for the noise but is there
-> >> any one else that should be looking at this?
-> > 
-> > If you can't catch attention of Al Viro, then Jens Axboe is sometimes
-> > merging direct IO fixes as well through his tree. Added to CC. If that
-> > doesn't work out, I can also take the changes through my tree and send them
-> > to Linus in a separate pull request...
-> 
-> For this case, probably best if you take it, Jan. I looked over the
-> patches and they look good to me, feel free to add:
-> 
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Hi,
 
-Ok, I'll pull them into my tree. Thanks for review Jens!
+Static analysis with Coverity has detected a "dead-code" issue with the
+following commit:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+commit af9c1a44f8dee7a958e07977f24ba40e3c770987
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Sep 24 13:32:18 2020 -0600
+
+    io_uring: process task work in io_uring_register()
+
+The analysis is as follows:
+
+9513                do {
+9514                        ret =
+wait_for_completion_interruptible(&ctx->ref_comp);
+
+cond_const: Condition ret, taking false branch. Now the value of ret is
+equal to 0.
+
+9515                        if (!ret)
+9516                                break;
+9517                        if (io_run_task_work_sig() > 0)
+9518                                continue;
+9519                } while (1);
+9520
+9521                mutex_lock(&ctx->uring_lock);
+9522
+
+const: At condition ret, the value of ret must be equal to 0.
+dead_error_condition: The condition ret cannot be true.
+
+9523                if (ret) {
+
+Logically dead code (DEADCODE)
+dead_error_begin: Execution cannot reach this statement:
+
+9524                        percpu_ref_resurrect(&ctx->refs);
+9525                        ret = -EINTR;
+9526                        goto out_quiesce;
+9527                }
+9528        }
+9529
+
+Colin
