@@ -2,116 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1109F28708F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 10:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B74372870E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 10:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbgJHINj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 04:13:39 -0400
-Received: from mout.gmx.net ([212.227.15.18]:36243 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728582AbgJHINi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 04:13:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1602144810;
-        bh=ND3QC8T6DzlkM1MXwumYq/WoXUhrvJlzK9kmXJvXBpI=;
-        h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:References;
-        b=jrKBAY1lY6yh9wuWat9o3k+9BWDRl/Sob0W7uxI9sZs7dzMlXVdV0A5WCvHq/nJ6i
-         On5Sk8iQqpgl5QdN8iGLLwhhs5qlK9SjdSaapcIiSla7cLSqK3PpLzk+j8Hye/y9mQ
-         wc9MfJRCnGqFe6RFGglqB1R+eiJWIixrFMjCH2qY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [172.20.73.169] ([213.196.213.184]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M9o1v-1kLEWl2EWj-005m42; Thu, 08
- Oct 2020 10:13:30 +0200
-Date:   Thu, 8 Oct 2020 10:13:29 +0200 (CEST)
-From:   Johannes Schindelin <Johannes.Schindelin@gmx.de>
-X-X-Sender: virtualbox@gitforwindows.org
-To:     Junio C Hamano <gitster@pobox.com>
-cc:     =?UTF-8?Q?=C3=86var_Arnfj=C3=B6r=C3=B0_Bjarmason?= 
-        <avarab@gmail.com>, git@vger.kernel.org, tytso@mit.edu,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less
- flippant
-In-Reply-To: <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
-Message-ID: <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet>
-References: <87sgbghdbp.fsf@evledraar.gmail.com>        <20200917112830.26606-3-avarab@gmail.com> <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
-User-Agent: Alpine 2.21.1 (DEB 209 2017-03-23)
+        id S1727008AbgJHIoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 04:44:08 -0400
+Received: from mail-il1-f206.google.com ([209.85.166.206]:52888 "EHLO
+        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbgJHIoI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 04:44:08 -0400
+Received: by mail-il1-f206.google.com with SMTP id m1so3561785iln.19
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 01:44:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=6MwKd6ECqXO02glRpdlbEwUDApjYJYWG4NqQdqBh3uA=;
+        b=eOoMPuX1yC9QzhsSxw8ivwFCBv2FXpyjc1of7tqDM8MpBtE7R4qc7Q30Db7XiAyoXp
+         n9my08oAYYlk5ShnQFuhYpGHPoeCJDXC2aPNbU3gFGIgqF5aLLVKIhlo97D4aJBXsRqb
+         fPhYg1LhfYRc/qp5/6DDybcMRHjajM3wzNu45UpRXLDZc/DHYbLa+UiJx57IsgMVcOyy
+         0wOtS2VCKt/UHO1a8nFZu7WQVlnbX0AOQo9SG38CRUZXbgJ2Zl/XzV27eAttfSFNURfv
+         TMbnUyLxfuHO3KcuOkBrFkClCXZvGc4b0p8Hk+M77APqvpzgWhnq2EUFvrBdj7oKXrMz
+         ZWaQ==
+X-Gm-Message-State: AOAM5331TfrZvXIK11DbzT9KUYJRg/pL8feQpwg52bXTW3NK6DH4FbVV
+        ILzvaaNv4Br2ywYRUn/zN/cDzJH/9sfB9xivrnMwgptDYy/Q
+X-Google-Smtp-Source: ABdhPJwe9yGzWtEyp2QVuKoHI7i5uX++AtNA/6JCwRa0wbYTKjpni0vLIZXpzGGh3imciRcuugLUvK3o2lB6t1c1Z1qEMdkQi8ka
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-860472456-1602144811=:50"
-X-Provags-ID: V03:K1:JUptP6/9Eo2dkPlDKE0uRIK1JkYJVCoP/B8SN+A697YcrwVGYKE
- IzWhOWHYAHqujVDBzL27EqfuJKiYf+i3tKFWuXp0VrxBhboE4oHmEvAUrfcy44t6FhcAtGR
- ALCfyfG2EIXb2WZy3u4hGVT0Q1E2rCrSPdy8Wp6ZGzzJ4aJyFA+RXKthrlGP4zYA336iHrO
- bPE6TLjvw0nZl25XrMIBg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+esBftxN4Qg=:b+TiawBwXn3Pzbuddu9CB7
- XEOGXNehCbaFxMwcTPTA66cWKajrbBhondBIGlfsm6BqEsnHj8V0teYyi5DHTIL3Ogzz5cs23
- 94LtHMR17l7ft9C3a2P3zLUFdikF70SNE3MrepQn5Ah3SBthatvOmBnhgd2j/E95+BdOZfgjG
- umsRA3TdkwwQ4i7V8uua6a2QcBDFGX6BztQ89J12ZAm0+VTif7ny7aSUMGouG8UfzGgY4cKvJ
- sD2CZSwJUOKS2/p3HBqLYPJd5euB0yjLZgyOM14wVaaSU5T4FxmqLH3nhm27YMcscu0TA3ahp
- oAzDG7cZolNC4cifCDKofnkh+obTQSsO3KeA1e8JVy99PNLXFpvxeIaUk1n34p6AQjF5A2gcc
- +f5WHNKIMcYnRsXQl9V15aAaIKwIQuzSzqFq8UDTHdRVQdHHRMt6b1kXFvCyCNkQIyfwKp/+F
- vFiWFEwIduMzbmv88o4hsLtXuZfem+e1kbb5AiVhcGPA/k1oiFQzNDn4YgxSi2ba9IHPysv+S
- ZCj3Eg6HWwyVVbdTS/wWl/Dk0fTcfjdv+fcrDIvGyGLr5ufw2UMNjxc+PRz7EpCCWJMb2jjXJ
- CQxcQ1a44osPvxa83fzWGz1s5pMsXBSUwV935A8B51lKR7uEr6rFin6zuAPdaMN12/eeF/NZI
- N8hOrNqfaef8Jf+j1uuCkCqSLnkxKRvPkbjMyoVnotXJXLp2O1GN5ngBDImHqUWXWvxnJeqyX
- tL2EiyQsYfpqYyyT+YibegP6BP7AQBw3a1YS2slm+1GHvWwFIL0QTs2mJuzfqpGaP38q13ViF
- +X6MOjw39KZddp8B5/vl2XUPIPhjgUVJ+8K04j1XCv9JPg3K8PkWAoAb+iT4sxF9ppl10IrwG
- 063XJAlJPdSZHVrpt3I8DIj75c+7NuKLqQes/0vsHFVFXVv/AYWiyjzML38HgBcWCTms0mEe4
- jxQMf1FQcXcnWozeieLGcOmYeDcc5kKxhmX3a2VjFoR7ITD0bN0kjlT6bXfhoFOnOb38keWA7
- UZWlpvPdT9QDwFImHMkaLTf2zepWiITjh+MwlDa+k9Q8ITTbuR2FTbazwWzaGhY22md8GSltU
- 1+KMzWG6tJkrjfWBWhn8Z/Ijv123G4mL6dUun4FLqpvIpHIVj0Bm+yW3cBbc3b0i40teHLAKR
- K8eYPDi6djzQPKalQ2xcGcQRHrjGGG9x4m7yQyDcGutxVKbv496JHeyHf+0TKxVimCmK9oSXr
- 0SJ557NPF00vssTWVR72L5o0Tu4YZab2xG28OaQ==
+X-Received: by 2002:a02:a10f:: with SMTP id f15mr5972131jag.62.1602146647376;
+ Thu, 08 Oct 2020 01:44:07 -0700 (PDT)
+Date:   Thu, 08 Oct 2020 01:44:07 -0700
+In-Reply-To: <0000000000006226c805adf16cb8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cb8c0605b124d53c@google.com>
+Subject: Re: WARNING: ODEBUG bug in exit_to_user_mode_prepare
+From:   syzbot <syzbot+fbd7ba7207767ed15165@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, bfoster@redhat.com, darrick.wong@oracle.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, maz@kernel.org, oleg@redhat.com,
+        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+syzbot suspects this issue was fixed by commit:
 
---8323328-860472456-1602144811=:50
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+commit 9c516e0e4554e8f26ab73d46cbc789d7d8db664d
+Author: Brian Foster <bfoster@redhat.com>
+Date:   Tue Aug 18 15:05:58 2020 +0000
 
-Hi Junio and =C3=86var,
+    xfs: finish dfops on every insert range shift iteration
 
-On Thu, 17 Sep 2020, Junio C Hamano wrote:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=157f71e0500000
+start commit:   dcc5c6f0 Merge tag 'x86-urgent-2020-08-30' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=978db74cb30aa994
+dashboard link: https://syzkaller.appspot.com/bug?extid=fbd7ba7207767ed15165
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1447c115900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1344f9fe900000
 
-> =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason  <avarab@gmail.com> writes:
->
-> > As amusing as Linus's original prose[1] is here it doesn't really expl=
-ain
-> > in any detail to the uninitiated why you would or wouldn't enable
-> > this, and the counter-intuitive reason for why git wouldn't fsync your
-> > precious data.
-> >
-> > So elaborate (a lot) on why this may or may not be needed. This is my
-> > best-effort attempt to summarize the various points raised in the last
-> > ML[2] discussion about this.
-> >
-> > 1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
-> >     files", 2008-06-18)
-> > 2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
-> >
-> > Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.co=
-m>
-> > ---
-> >  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++----=
--
-> >  1 file changed, 36 insertions(+), 6 deletions(-)
->
-> When I saw the subject in my mailbox, I expected to see that you
-> would resurrect Christoph's updated text in [*1*], but you wrote a
-> whole lot more ;-) And they are quite informative to help readers to
-> understand what the option does.  I am not sure if the understanding
-> directly help readers to decide if it is appropriate for their own
-> repositories, though X-<.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-I agree that it is an improvement, and am therefore in favor of applying
-the patch.
+#syz fix: xfs: finish dfops on every insert range shift iteration
 
-Ciao,
-Dscho
-
---8323328-860472456-1602144811=:50--
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
