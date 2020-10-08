@@ -2,70 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B74372870E5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 10:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C438287128
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 11:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbgJHIoI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 04:44:08 -0400
-Received: from mail-il1-f206.google.com ([209.85.166.206]:52888 "EHLO
-        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbgJHIoI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 04:44:08 -0400
-Received: by mail-il1-f206.google.com with SMTP id m1so3561785iln.19
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 01:44:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=6MwKd6ECqXO02glRpdlbEwUDApjYJYWG4NqQdqBh3uA=;
-        b=eOoMPuX1yC9QzhsSxw8ivwFCBv2FXpyjc1of7tqDM8MpBtE7R4qc7Q30Db7XiAyoXp
-         n9my08oAYYlk5ShnQFuhYpGHPoeCJDXC2aPNbU3gFGIgqF5aLLVKIhlo97D4aJBXsRqb
-         fPhYg1LhfYRc/qp5/6DDybcMRHjajM3wzNu45UpRXLDZc/DHYbLa+UiJx57IsgMVcOyy
-         0wOtS2VCKt/UHO1a8nFZu7WQVlnbX0AOQo9SG38CRUZXbgJ2Zl/XzV27eAttfSFNURfv
-         TMbnUyLxfuHO3KcuOkBrFkClCXZvGc4b0p8Hk+M77APqvpzgWhnq2EUFvrBdj7oKXrMz
-         ZWaQ==
-X-Gm-Message-State: AOAM5331TfrZvXIK11DbzT9KUYJRg/pL8feQpwg52bXTW3NK6DH4FbVV
-        ILzvaaNv4Br2ywYRUn/zN/cDzJH/9sfB9xivrnMwgptDYy/Q
-X-Google-Smtp-Source: ABdhPJwe9yGzWtEyp2QVuKoHI7i5uX++AtNA/6JCwRa0wbYTKjpni0vLIZXpzGGh3imciRcuugLUvK3o2lB6t1c1Z1qEMdkQi8ka
+        id S1727778AbgJHJBi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 05:01:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32886 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725802AbgJHJBh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 05:01:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3232EAC3C;
+        Thu,  8 Oct 2020 09:01:36 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id BD5DA1E1305; Thu,  8 Oct 2020 11:01:35 +0200 (CEST)
+Date:   Thu, 8 Oct 2020 11:01:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2] ext4/xfs: add page refcount helper
+Message-ID: <20201008090135.GA3486@quack2.suse.cz>
+References: <20201007214925.11181-1-rcampbell@nvidia.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:a10f:: with SMTP id f15mr5972131jag.62.1602146647376;
- Thu, 08 Oct 2020 01:44:07 -0700 (PDT)
-Date:   Thu, 08 Oct 2020 01:44:07 -0700
-In-Reply-To: <0000000000006226c805adf16cb8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cb8c0605b124d53c@google.com>
-Subject: Re: WARNING: ODEBUG bug in exit_to_user_mode_prepare
-From:   syzbot <syzbot+fbd7ba7207767ed15165@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, bfoster@redhat.com, darrick.wong@oracle.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, maz@kernel.org, oleg@redhat.com,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201007214925.11181-1-rcampbell@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Wed 07-10-20 14:49:25, Ralph Campbell wrote:
+> There are several places where ZONE_DEVICE struct pages assume a reference
+> count == 1 means the page is idle and free. Instead of open coding this,
+> add helper functions to hide this detail.
+> 
+> Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+> Acked-by: Theodore Ts'o <tytso@mit.edu> # for fs/ext4/inode.c
 
-commit 9c516e0e4554e8f26ab73d46cbc789d7d8db664d
-Author: Brian Foster <bfoster@redhat.com>
-Date:   Tue Aug 18 15:05:58 2020 +0000
+The patch looks good to me. Feel free to add:
 
-    xfs: finish dfops on every insert range shift iteration
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=157f71e0500000
-start commit:   dcc5c6f0 Merge tag 'x86-urgent-2020-08-30' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=978db74cb30aa994
-dashboard link: https://syzkaller.appspot.com/bug?extid=fbd7ba7207767ed15165
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1447c115900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1344f9fe900000
+								Honza
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: xfs: finish dfops on every insert range shift iteration
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> ---
+> 
+> Changes in v2:
+> I strongly resisted the idea of extending this patch but after Jan
+> Kara's comment about there being more places that could be cleaned
+> up, I felt compelled to make this one tensy wensy change to add
+> a dax_wakeup_page() to match the dax_wait_page().
+> I kept the Reviewed/Acked-bys since I don't think this substantially
+> changes the patch.
+> 
+>  fs/dax.c            |  4 ++--
+>  fs/ext4/inode.c     |  5 +----
+>  fs/xfs/xfs_file.c   |  4 +---
+>  include/linux/dax.h | 15 +++++++++++++++
+>  mm/memremap.c       |  3 ++-
+>  5 files changed, 21 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 5b47834f2e1b..85c63f735909 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -358,7 +358,7 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+>  	for_each_mapped_pfn(entry, pfn) {
+>  		struct page *page = pfn_to_page(pfn);
+>  
+> -		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
+> +		WARN_ON_ONCE(trunc && !dax_layout_is_idle_page(page));
+>  		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
+>  		page->mapping = NULL;
+>  		page->index = 0;
+> @@ -372,7 +372,7 @@ static struct page *dax_busy_page(void *entry)
+>  	for_each_mapped_pfn(entry, pfn) {
+>  		struct page *page = pfn_to_page(pfn);
+>  
+> -		if (page_ref_count(page) > 1)
+> +		if (!dax_layout_is_idle_page(page))
+>  			return page;
+>  	}
+>  	return NULL;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 771ed8b1fadb..132620cbfa13 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3937,10 +3937,7 @@ int ext4_break_layouts(struct inode *inode)
+>  		if (!page)
+>  			return 0;
+>  
+> -		error = ___wait_var_event(&page->_refcount,
+> -				atomic_read(&page->_refcount) == 1,
+> -				TASK_INTERRUPTIBLE, 0, 0,
+> -				ext4_wait_dax_page(ei));
+> +		error = dax_wait_page(ei, page, ext4_wait_dax_page);
+>  	} while (error == 0);
+>  
+>  	return error;
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 3d1b95124744..a5304aaeaa3a 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -749,9 +749,7 @@ xfs_break_dax_layouts(
+>  		return 0;
+>  
+>  	*retry = true;
+> -	return ___wait_var_event(&page->_refcount,
+> -			atomic_read(&page->_refcount) == 1, TASK_INTERRUPTIBLE,
+> -			0, 0, xfs_wait_dax_page(inode));
+> +	return dax_wait_page(inode, page, xfs_wait_dax_page);
+>  }
+>  
+>  int
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index b52f084aa643..e2da78e87338 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -243,6 +243,21 @@ static inline bool dax_mapping(struct address_space *mapping)
+>  	return mapping->host && IS_DAX(mapping->host);
+>  }
+>  
+> +static inline bool dax_layout_is_idle_page(struct page *page)
+> +{
+> +	return page_ref_count(page) == 1;
+> +}
+> +
+> +static inline void dax_wakeup_page(struct page *page)
+> +{
+> +	wake_up_var(&page->_refcount);
+> +}
+> +
+> +#define dax_wait_page(_inode, _page, _wait_cb)				\
+> +	___wait_var_event(&(_page)->_refcount,				\
+> +		dax_layout_is_idle_page(_page),				\
+> +		TASK_INTERRUPTIBLE, 0, 0, _wait_cb(_inode))
+> +
+>  #ifdef CONFIG_DEV_DAX_HMEM_DEVICES
+>  void hmem_register_device(int target_nid, struct resource *r);
+>  #else
+> diff --git a/mm/memremap.c b/mm/memremap.c
+> index 2bb276680837..504a10ff2edf 100644
+> --- a/mm/memremap.c
+> +++ b/mm/memremap.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/types.h>
+>  #include <linux/wait_bit.h>
+>  #include <linux/xarray.h>
+> +#include <linux/dax.h>
+>  
+>  static DEFINE_XARRAY(pgmap_array);
+>  
+> @@ -508,7 +509,7 @@ void free_devmap_managed_page(struct page *page)
+>  {
+>  	/* notify page idle for dax */
+>  	if (!is_device_private_page(page)) {
+> -		wake_up_var(&page->_refcount);
+> +		dax_wakeup_page(page);
+>  		return;
+>  	}
+>  
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
