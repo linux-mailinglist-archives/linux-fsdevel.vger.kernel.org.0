@@ -2,86 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D92B2287D14
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 22:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB87287D16
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 22:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730278AbgJHU1i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 16:27:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55816 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729280AbgJHU1i (ORCPT
+        id S1730373AbgJHU2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 16:28:15 -0400
+Received: from mail-io1-f78.google.com ([209.85.166.78]:34487 "EHLO
+        mail-io1-f78.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730369AbgJHU2N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 16:27:38 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5B5C0613D2;
-        Thu,  8 Oct 2020 13:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=7jif2k9zcZ8cHV0IvpYw8TET4vLh557VQNExhD1A4Wo=; b=CTzcYsDLt2qZcuaRE50e5/Tk0x
-        RORejz9K7yDXQyTYhwvrg2JWgAcrr9LYrXw6bsr6DS4rkl0ey7kkju4NqD5Q0Mjvk4GAElSkaMq7f
-        RkpyWSqvrV8IWfmiFG80+lSVgrT4+QcRoXKwfaGxRAVRY3/kQEHr0O9sxUNOpfIUEz8l32dqleWeN
-        hwKhOPdKI0D21AuXgGOsCDP7GsBGteclbShiuMLFKxMSpfIGquwuZKwG8hMVrJxmVAZzuzBM4T0Uk
-        La63iEZMMhHGqBJ59SqoXFtB+cFa5O931XHzGVAACARHUCliVLXRBXH2DY8Bvq2u7FgWYFVuMQaQl
-        3FCQ0bjQ==;
-Received: from [2601:1c0:6280:3f0::2c9a]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kQcVY-00014w-Tq; Thu, 08 Oct 2020 20:27:25 +0000
-Subject: Re: [PATCH 02/35] mm: support direct memory reservation
-To:     yulei.kernel@gmail.com, akpm@linux-foundation.org,
-        naoya.horiguchi@nec.com, viro@zeniv.linux.org.uk,
-        pbonzini@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xiaoguangrong.eric@gmail.com,
-        kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
-        Yulei Zhang <yuleixzhang@tencent.com>,
-        Xiao Guangrong <gloryxiao@tencent.com>
-References: <cover.1602093760.git.yuleixzhang@tencent.com>
- <2fbc347a5f52591fc9da8d708fef0be238eb06a5.1602093760.git.yuleixzhang@tencent.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <84108593-f56a-8897-2026-a27d07a4824e@infradead.org>
-Date:   Thu, 8 Oct 2020 13:27:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        Thu, 8 Oct 2020 16:28:13 -0400
+Received: by mail-io1-f78.google.com with SMTP id y70so4641946iof.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 13:28:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=7y3B3XsOiPTLYLIDns6NguVsL9ucnpw4TXcZn72tI0c=;
+        b=TpzLfWTWgXl92MSUzTwr3sE8B4+2PiLbwd/oYm1J19C/5ttGVF3k0Qm45cGh8UI1sY
+         HKA3d/6nVoecH3BHhGQxWsIVvFR+tA45UlFBIHHOQu526MxPthm3mOhnhrLxDU4+vY/l
+         6V7095LLfzZe8BR2jV8DeiMMES1a2uJRpYYQApTWqVnGF0BBKRY6vxfbfvLCzbypX+8u
+         O6ZCuanXnH7ag7ezWDMTIB3GjXOJNBzdBgWD2VyoLNSTpvZkyav2s9eFxk7E0ZvxuUUs
+         sK8a18uIZi0lMQhft5r35zc0bJh0OVD1ylH34ae8AlTKCEsrnZVShCvu8QkjhRtpWhSI
+         xWvg==
+X-Gm-Message-State: AOAM533gvm/bhRjH1qf0CNh43xCQFCmIvozCXyecJ3LWO+jaTOt/S18i
+        TE6g2Kq3R1N+iZPpOmJ3r2xcM2PKQQl/vcLj8beLYKVTR6Cl
+X-Google-Smtp-Source: ABdhPJxQG7zkhxy1g7ndmakw3pFTvWpidkFGm3ConSOutpg5F4NLy+BDbf/l7aHvxuH3DwXEGuIgtAHY6s+z1objQuaP9/PVvEnF
 MIME-Version: 1.0
-In-Reply-To: <2fbc347a5f52591fc9da8d708fef0be238eb06a5.1602093760.git.yuleixzhang@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:1f44:: with SMTP id i65mr7622723ile.280.1602188890683;
+ Thu, 08 Oct 2020 13:28:10 -0700 (PDT)
+Date:   Thu, 08 Oct 2020 13:28:10 -0700
+In-Reply-To: <00000000000084dcbd05b12a3736@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b1412b05b12eab0a@google.com>
+Subject: Re: general protection fault in percpu_ref_exit
+From:   syzbot <syzbot+fd15ff734dace9e16437@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, bcrl@kvack.org, hch@lst.de, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ming.lei@redhat.com, syzkaller-bugs@googlegroups.com,
+        tj@kernel.org, viro@zeniv.linux.org.uk, vkabatov@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/8/20 12:53 AM, yulei.kernel@gmail.com wrote:
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 6c974888f86f..e1995da11cea 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -226,6 +226,15 @@ config BALLOON_COMPACTION
->  	  scenario aforementioned and helps improving memory defragmentation.
->  
->  #
-> +# support for direct memory basics
-> +config DMEM
-> +	bool "Direct Memory Reservation"
-> +	def_bool n
+syzbot has bisected this issue to:
 
-Drop the def_bool line.
+commit 2b0d3d3e4fcfb19d10f9a82910b8f0f05c56ee3e
+Author: Ming Lei <ming.lei@redhat.com>
+Date:   Thu Oct 1 15:48:41 2020 +0000
 
-> +	depends on SPARSEMEM
-> +	help
-> +	  Allow reservation of memory which could be dedicated usage of dmem.
+    percpu_ref: reduce memory footprint of percpu_ref in fast path
 
-	                                             dedicated to the use of dmem.
-or
-	                              which could be for the dedicated use of dmem.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126930d0500000
+start commit:   8b787da7 Add linux-next specific files for 20201007
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=116930d0500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=166930d0500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aac055e9c8fbd2b8
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd15ff734dace9e16437
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119a0568500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=106c0a8b900000
 
-> +	  It's the basics of dmemfs.
+Reported-by: syzbot+fd15ff734dace9e16437@syzkaller.appspotmail.com
+Fixes: 2b0d3d3e4fcf ("percpu_ref: reduce memory footprint of percpu_ref in fast path")
 
-	           basis
-
-
--- 
-~Randy
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
