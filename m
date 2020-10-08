@@ -2,42 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4C628768B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 16:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 580D9287693
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 17:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730778AbgJHO7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 10:59:25 -0400
-Received: from mail-io1-f78.google.com ([209.85.166.78]:56481 "EHLO
-        mail-io1-f78.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730761AbgJHO7T (ORCPT
+        id S1730791AbgJHPAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 11:00:22 -0400
+Received: from mail-il1-f207.google.com ([209.85.166.207]:42269 "EHLO
+        mail-il1-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730753AbgJHPAW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 10:59:19 -0400
-Received: by mail-io1-f78.google.com with SMTP id y19so1377514iow.23
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 07:59:18 -0700 (PDT)
+        Thu, 8 Oct 2020 11:00:22 -0400
+Received: by mail-il1-f207.google.com with SMTP id 18so4326033ilt.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 08:00:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=PduyJpvNzvzrVpxv+i1EoFks3qADDQEN3YsVMd137NY=;
-        b=qGfBCG2lIZWzulZYmJVchY+DfC3FoYpIRavyX4qDUS2ygIOntnd+YOOvF0blCPM0kT
-         SEfTCDsj/qdBiBuUnkD96Q4f4dTgKceCnPu7ydek/uZkY+aPK0SDHDXzik+qBy/w+bTs
-         vbyRHmkZwISZJPZWWCzDBSfdF51TTWovgZMwguOmOrCDWGBa8oUS2rfSukhEQi5gFyyx
-         zKEgPObITNUq5T2kILkUlmQJpxD/ZGZGxrIhY6KUDXTqyphPWFO+HOE3EZSZ7rSW+BA4
-         8kQ6WJdXBrJiHlmo/EfBqmweqncKx79u2IqDwoKUms3KS/McDz5JVNAqvXlXD1dribtm
-         C4SA==
-X-Gm-Message-State: AOAM531ogDVIQcQTZYWcuIzrM0pw1ZSiBjnHSOR3vbL9ZugtiAV0Vd8Y
-        iT0de3BP5KcBQlCm/QrGV9WmZAES88RHQ4vJuJQVbftmBpPz
-X-Google-Smtp-Source: ABdhPJzz1MActP86o8lrA0eWRgo0hTkMoCE4wNwY13Wz6FXWIL1N1oazw3U/pSr3RRYghkcyszfeZ+lS0Xlham1QX3fBSzN5Cf58
+        bh=lY++L9cL0ljmsfqhwTNdE4O6nYJ0FxIg2oBi5vOfh+k=;
+        b=ocvyPV+IKx5RoXWQOTCCRlYHKqtkaiVTGar50KeAXq1eJZNXf6Mc0r74n3xNLXf+2X
+         mMv7f5Qlg3Fz9wfeSuCWL26P4sF1n9D1whqXrXlnNJImSflo/HRhVPoG3qvXommFr7rE
+         MtqPCKmbag76hqOmX8LgQ3iqKPmglsY7IUXNgtTtWthpdNmrhNrUMSC1/sM1ggZV3fhf
+         YyLIPkW+NowmiQnsQzeAbpNNlyNJUDXdUKkUGMm+N+V8HVTH0SXZ+43zyTwUsEhNyML5
+         aEvfgkESQK1qMenSkZddpv/MBMQe4M/fedhngOm1Hg5VniX93eOc1xxF2QFCC9A7WT+C
+         g23A==
+X-Gm-Message-State: AOAM530Z9jCFvhPzJ0lu3euFqpv3nT3gGFTz4VwPxzDqc1xd6HlPpxue
+        1CvSuludsA9bAStG4mmjNehr5QiRwAzoRTfkpCh7tgiOzSmx
+X-Google-Smtp-Source: ABdhPJy5aHn+Vg0GvVVRIq4RnjAMgJLNj5w4U0f/S+lPUJa9VMu5/sO8YizAwNfFZdRrYz3IbJZ7t+wEq3upfkE/hCqmhC0zV3Zf
 MIME-Version: 1.0
-X-Received: by 2002:a92:8587:: with SMTP id f129mr7263256ilh.226.1602169157826;
- Thu, 08 Oct 2020 07:59:17 -0700 (PDT)
-Date:   Thu, 08 Oct 2020 07:59:17 -0700
+X-Received: by 2002:a02:a510:: with SMTP id e16mr7153429jam.51.1602169220736;
+ Thu, 08 Oct 2020 08:00:20 -0700 (PDT)
+Date:   Thu, 08 Oct 2020 08:00:20 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000085be6f05b12a1366@google.com>
-Subject: general protection fault in utf8_casefold
-From:   syzbot <syzbot+05139c4039d0679e19ff@syzkaller.appspotmail.com>
-To:     krisman@collabora.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000045ac4605b12a1720@google.com>
+Subject: inconsistent lock state in xa_destroy
+From:   syzbot <syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -47,74 +48,119 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    c85fb28b Merge tag 'arm64-fixes' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1785ccd0500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=de7f697da23057c7
-dashboard link: https://syzkaller.appspot.com/bug?extid=05139c4039d0679e19ff
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12316e00500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e80420500000
+HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12555227900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=cdcbdc0bd42e559b52b9
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+05139c4039d0679e19ff@syzkaller.appspotmail.com
+Reported-by: syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com
 
-F2FS-fs (loop0): invalid crc_offset: 0
-F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=1, run fsck to fix.
-F2FS-fs (loop0): f2fs_check_nid_range: out-of-range nid=2, run fsck to fix.
-F2FS-fs (loop0): Try to recover 2th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = 27d57943
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 PID: 6860 Comm: syz-executor835 Not tainted 5.9.0-rc8-syzkaller #0
+================================
+WARNING: inconsistent lock state
+5.9.0-rc8-next-20201008-syzkaller #0 Not tainted
+--------------------------------
+inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
+syz-executor.2/6913 [HC0[0]:SC1[1]:HE0:SE0] takes:
+ffff888023003c18 (&xa->xa_lock#9){+.?.}-{2:2}, at: xa_destroy+0xaa/0x350 lib/xarray.c:2205
+{SOFTIRQ-ON-W} state was registered at:
+  lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+  spin_lock include/linux/spinlock.h:354 [inline]
+  io_uring_add_task_file fs/io_uring.c:8607 [inline]
+  io_uring_add_task_file+0x207/0x430 fs/io_uring.c:8590
+  io_uring_get_fd fs/io_uring.c:9116 [inline]
+  io_uring_create fs/io_uring.c:9280 [inline]
+  io_uring_setup+0x2727/0x3660 fs/io_uring.c:9314
+  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+irq event stamp: 362445
+hardirqs last  enabled at (362444): [<ffffffff8847f0df>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
+hardirqs last  enabled at (362444): [<ffffffff8847f0df>] _raw_spin_unlock_irqrestore+0x6f/0x90 kernel/locking/spinlock.c:191
+hardirqs last disabled at (362445): [<ffffffff8847f6c9>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+hardirqs last disabled at (362445): [<ffffffff8847f6c9>] _raw_spin_lock_irqsave+0xa9/0xd0 kernel/locking/spinlock.c:159
+softirqs last  enabled at (361998): [<ffffffff86db0172>] tcp_close+0x8d2/0x1220 net/ipv4/tcp.c:2576
+softirqs last disabled at (362079): [<ffffffff88600f2f>] asm_call_irq_on_stack+0xf/0x20
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&xa->xa_lock#9);
+  <Interrupt>
+    lock(&xa->xa_lock#9);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.2/6913:
+ #0: ffffffff8a554c80 (rcu_callback){....}-{0:0}, at: rcu_do_batch kernel/rcu/tree.c:2474 [inline]
+ #0: ffffffff8a554c80 (rcu_callback){....}-{0:0}, at: rcu_core+0x5d8/0x1240 kernel/rcu/tree.c:2718
+
+stack backtrace:
+CPU: 0 PID: 6913 Comm: syz-executor.2 Not tainted 5.9.0-rc8-next-20201008-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:utf8_casefold+0x43/0x1b0 fs/unicode/utf8-core.c:107
-Code: 89 fd 65 48 8b 04 25 28 00 00 00 48 89 44 24 48 49 be 00 00 00 00 00 fc ff df e8 d8 c5 19 ff 48 83 c5 08 48 89 e8 48 c1 e8 03 <42> 8a 04 30 84 c0 0f 85 21 01 00 00 8b 7d 00 e8 89 f8 ff ff 49 89
-RSP: 0018:ffffc900072e7c48 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: ffff888087470e10 RCX: ffff8880a6b26440
-RDX: 0000000000000000 RSI: ffff888087470e10 RDI: 0000000000000000
-RBP: 0000000000000008 R08: ffffffff834b74e9 R09: fffffbfff16c82b1
-R10: fffffbfff16c82b1 R11: 0000000000000000 R12: ffffc900072e7dc8
-R13: 1ffff92000e5cfb3 R14: dffffc0000000000 R15: 00000000000000ff
-FS:  00007f59a4052700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f360e3b4000 CR3: 00000000973fb000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- f2fs_init_casefolded_name fs/f2fs/dir.c:85 [inline]
- __f2fs_setup_filename fs/f2fs/dir.c:118 [inline]
- f2fs_prepare_lookup+0x3bf/0x640 fs/f2fs/dir.c:163
- f2fs_lookup+0x10d/0x920 fs/f2fs/namei.c:494
- __lookup_hash+0x115/0x240 fs/namei.c:1445
- filename_create+0x14b/0x630 fs/namei.c:3467
- user_path_create fs/namei.c:3524 [inline]
- do_mkdirat+0x56/0x310 fs/namei.c:3664
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ <IRQ>
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fb lib/dump_stack.c:118
+ print_usage_bug kernel/locking/lockdep.c:3715 [inline]
+ valid_state kernel/locking/lockdep.c:3726 [inline]
+ mark_lock_irq kernel/locking/lockdep.c:3929 [inline]
+ mark_lock.cold+0x32/0x74 kernel/locking/lockdep.c:4396
+ mark_usage kernel/locking/lockdep.c:4281 [inline]
+ __lock_acquire+0x118a/0x56d0 kernel/locking/lockdep.c:4771
+ lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x94/0xd0 kernel/locking/spinlock.c:159
+ xa_destroy+0xaa/0x350 lib/xarray.c:2205
+ __io_uring_free+0x60/0xc0 fs/io_uring.c:7693
+ io_uring_free include/linux/io_uring.h:40 [inline]
+ __put_task_struct+0xff/0x3f0 kernel/fork.c:732
+ put_task_struct include/linux/sched/task.h:111 [inline]
+ delayed_put_task_struct+0x1f6/0x340 kernel/exit.c:172
+ rcu_do_batch kernel/rcu/tree.c:2484 [inline]
+ rcu_core+0x645/0x1240 kernel/rcu/tree.c:2718
+ __do_softirq+0x203/0xab6 kernel/softirq.c:298
+ asm_call_irq_on_stack+0xf/0x20
+ </IRQ>
+ __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
+ run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
+ do_softirq_own_stack+0x9b/0xd0 arch/x86/kernel/irq_64.c:77
+ invoke_softirq kernel/softirq.c:393 [inline]
+ __irq_exit_rcu kernel/softirq.c:423 [inline]
+ irq_exit_rcu+0x235/0x280 kernel/softirq.c:435
+ sysvec_apic_timer_interrupt+0x51/0xf0 arch/x86/kernel/apic/apic.c:1091
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:631
+RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:66
+Code: c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8 c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01
+RSP: 0018:ffffc900053c7b78 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000002040
+RDX: 0000000000008000 RSI: 0000000000000000 RDI: ffffc900161a5fc0
+RBP: ffffc900053c7d08 R08: 0000000000000001 R09: ffffc900161a0000
+R10: fffff52002c34fff R11: 0000000000000000 R12: ffff88805b9f0380
+R13: ffff888010ccae08 R14: 0000000001200000 R15: 0000000000000000
+ memset include/linux/string.h:384 [inline]
+ alloc_thread_stack_node kernel/fork.c:232 [inline]
+ dup_task_struct kernel/fork.c:864 [inline]
+ copy_process+0x68a/0x6e90 kernel/fork.c:1938
+ kernel_clone+0xe5/0xae0 kernel/fork.c:2456
+ __do_sys_clone+0xc8/0x110 kernel/fork.c:2573
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x449367
-Code: ff ff ff ff c3 66 0f 1f 44 00 00 48 c7 c0 d0 ff ff ff 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 0f 83 8d e0 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f59a4051bb8 EFLAGS: 00000203 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 0000000000449367
-RDX: 0000000000000000 RSI: 00000000000001ff RDI: 0000000020001940
-RBP: 00007f59a40526d0 R08: 0000000000000002 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000203 R12: 00000000ffffffff
-R13: 0000000000000000 R14: 0000000000000000 R15: 00007f59a4051c50
-Modules linked in:
----[ end trace cf7b61b9a89941d1 ]---
-RIP: 0010:utf8_casefold+0x43/0x1b0 fs/unicode/utf8-core.c:107
-Code: 89 fd 65 48 8b 04 25 28 00 00 00 48 89 44 24 48 49 be 00 00 00 00 00 fc ff df e8 d8 c5 19 ff 48 83 c5 08 48 89 e8 48 c1 e8 03 <42> 8a 04 30 84 c0 0f 85 21 01 00 00 8b 7d 00 e8 89 f8 ff ff 49 89
-RSP: 0018:ffffc900072e7c48 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: ffff888087470e10 RCX: ffff8880a6b26440
-RDX: 0000000000000000 RSI: ffff888087470e10 RDI: 0000000000000000
-RBP: 0000000000000008 R08: ffffffff834b74e9 R09: fffffbfff16c82b1
-R10: fffffbfff16c82b1 R11: 0000000000000000 R12: ffffc900072e7dc8
-R13: 1ffff92000e5cfb3 R14: dffffc0000000000 R15: 00000000000000ff
-FS:  00007f59a4052700(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f360e3b4000 CR3: 00000000973fb000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+RIP: 0033:0x45c3fa
+Code: f7 d8 64 89 04 25 d4 02 00 00 64 4c 8b 0c 25 10 00 00 00 31 d2 4d 8d 91 d0 02 00 00 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 f5 00 00 00 85 c0 41 89 c5 0f 85 fc 00 00
+RSP: 002b:00007ffe5dc445b0 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: ffffffffffffffda RBX: 00007ffe5dc445b0 RCX: 000000000045c3fa
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffe5dc445f0 R08: 0000000000000001 R09: 0000000002f46940
+R10: 0000000002f46c10 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000001 R15: 00007ffe5dc44640
 
 
 ---
@@ -124,5 +170,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
