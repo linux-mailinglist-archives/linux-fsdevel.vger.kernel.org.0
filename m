@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2144E28705A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6474287057
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Oct 2020 09:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729004AbgJHH5O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 03:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
+        id S1728928AbgJHH5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 03:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729000AbgJHHzT (ORCPT
+        with ESMTP id S1729017AbgJHHzY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 03:55:19 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55784C061755;
-        Thu,  8 Oct 2020 00:55:19 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id k8so3330846pfk.2;
-        Thu, 08 Oct 2020 00:55:19 -0700 (PDT)
+        Thu, 8 Oct 2020 03:55:24 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63774C0613D5;
+        Thu,  8 Oct 2020 00:55:23 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id h6so3596156pgk.4;
+        Thu, 08 Oct 2020 00:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=GAQmo3emgE7wGALCr56xbTRFWPok3r8JHn097oLTrgo=;
-        b=feR3Hp4Mm0c11NezfLW8RmQ4nPtConWWWECi6vPDapgIc/SYfqzk1dmw2SvgMuHvkv
-         spxvknKBvJBMPz0sV+Zd6yiR/GVE76Qc0zVt4ora65VHgmvWOEOoLtu+fWeoUqbkZFQF
-         ZE7oR4PsRgqLQ5y/ReaMWKS2S4khTxfXyEPHBiKhA6MqGPxwmJ+At0ncMzUWgikHZ59U
-         Jccx0kkt1U7OEylV2ok/m/AZt9s1UtU2NPlVDVs4FsWZtlC4V6N4cz+J9rE5u379tHKf
-         yA1KVQR2wDwRXA7XpsJEyKe3piteYnWd9gG0vtRbL48dqdsrBJ65xUI6IYRFPz/EenIj
-         VAjA==
+        bh=Q63UGNU50PxJwBeAw35OlXFM2zT0ydG7N+0qP8I/gHo=;
+        b=SQ2f9dH1UsoGi1f/XZ7ldaen6tWpM4BB3XGMmJ7K/NG22QSMmTLZu6+XrO8owZNNCA
+         Sag8KMDiI/xIiMonNj2iFUHigJcVao+uCWBhgm2p9aLuin9Lp9hRdEJEtTpqu9oNuo2x
+         nLMeX5Z+LjndXkm7XET64/pO6fW7Hmid8g0nOkftuuslqiWXTlOPP/+D5mnT56ARk4Sl
+         FBI3YJulFj83gaDSMHT4/GS3HBbcLKb8v8f+CdQ4co7oFUQEyPk1L3foWAcn+VyVhAl5
+         cIJrejQMadXEQC6kWkYMlQNj9k4aNiM5cVwDpsCbhpNTSQ09QMLbQGkpsg8ku5AjhKsZ
+         KIYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=GAQmo3emgE7wGALCr56xbTRFWPok3r8JHn097oLTrgo=;
-        b=K3JeW0Y/ywY/J7OOnkTBIq7NdforhYMjmTJSKldL47ksX7HRYG46cViOmCLGxIYfC3
-         Y/OJB9EE5BZ0Lex71qeLEELCHPlADf/YaQ/fQM/I3l9gMBDs0mHWI33VFXWGQaPjbMSh
-         afo9KUxhWMJmKIqaFs0qKNq68MpYNOBeBhqTq1b1GfkWBi2Zc+knOngB8vB9ddK9wp2/
-         dFneJLvTD9Z3E7tLotmxc9oMEWvfhFhG0RlKJq4ll/QeUsNI5GPSeEGEi+rsa6VA5Fpx
-         //6qGr+HZr6EZ4SCPYLl49tc0fDhFu95VZ4rwCt5DfSHZc3BhzLcSNGIFXgQjCQ0WNVM
-         QiUg==
-X-Gm-Message-State: AOAM532e6gpc6YmTQ2qeaVYPcHtd1Uu+TsmmACJMF3ZKcL+kAjOs80gE
-        NdF0FURDrBnzYJSYFQBJPp0=
-X-Google-Smtp-Source: ABdhPJzmgKs9G1dEB0PWPDBmnTSeOR/fYfsVYYngL49TYYKJ8bmnoC2kfQISr+E1jQmIAcBcwTnBXg==
-X-Received: by 2002:a17:90a:7d16:: with SMTP id g22mr6886600pjl.135.1602143718936;
-        Thu, 08 Oct 2020 00:55:18 -0700 (PDT)
+        bh=Q63UGNU50PxJwBeAw35OlXFM2zT0ydG7N+0qP8I/gHo=;
+        b=fetPs220nvH1vHD6nZpkyVd74iLFO92IHsNnwc1hwOG97j4qFWMp7X9Le08aFDbGAs
+         0jBKvKIpgsA/MUpa0oss3WQA0E1E5gi7E29VjdwkIQIXaAroU+M9hg/3k1+zZIfEdcwV
+         83PQdhXqJXkjGys3GRn72E3PFvZzDp9AfUEm0h8vdXC8BF6aid6kvCyCUrULhk1eMmW5
+         ogWa+PehnDawNfYWufdPqAa9O4chOfkA5JVLKmnXVNDiyXa4vVEWiVDS07BuQVJl8WN8
+         /iJTDa2OQc6vTYAVWge8uwnNrHAOdo+yLaxPliVKGfcbYAXd/dHyBg3hx8jW1tAGBjeA
+         gveg==
+X-Gm-Message-State: AOAM533x/TIXAupN/TW6Z6scFKXxYKnNMNOwsFHUgNuVUQuVCRK9lHO+
+        SXE5gkN7IxyVPND5HYktRBA=
+X-Google-Smtp-Source: ABdhPJxpDi+MtXox+1vt3agOi/zxClZUn41exKjvJWiEd5KpI2sW06SKrQRX7PWXhlZeBzN93ix7PA==
+X-Received: by 2002:a17:90a:a88:: with SMTP id 8mr6844949pjw.105.1602143723037;
+        Thu, 08 Oct 2020 00:55:23 -0700 (PDT)
 Received: from localhost.localdomain ([203.205.141.61])
-        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.15
+        by smtp.gmail.com with ESMTPSA id k206sm6777106pfd.126.2020.10.08.00.55.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2020 00:55:18 -0700 (PDT)
+        Thu, 08 Oct 2020 00:55:22 -0700 (PDT)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
@@ -57,9 +57,9 @@ Cc:     linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Chen Zhuo <sagazchen@tencent.com>
-Subject: [PATCH 21/35] mm: support dmem huge pmd for follow_pfn()
-Date:   Thu,  8 Oct 2020 15:54:11 +0800
-Message-Id: <5c508795a2f262e80cc3855853eba4042c863a3f.1602093760.git.yuleixzhang@tencent.com>
+Subject: [PATCH 22/35] kvm, x86: Distinguish dmemfs page from mmio page
+Date:   Thu,  8 Oct 2020 15:54:12 +0800
+Message-Id: <b2b6837785f6786575823c919788464373d3ee05.1602093760.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1602093760.git.yuleixzhang@tencent.com>
 References: <cover.1602093760.git.yuleixzhang@tencent.com>
@@ -71,45 +71,79 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-follow_pfn() will get pfn of pmd if huge pmd is encountered.
+Dmem page is pfn invalid but not mmio. Support cacheable
+dmem page for kvm.
 
 Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- mm/memory.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/x86/kvm/mmu/mmu.c | 5 +++--
+ include/linux/dmem.h   | 7 +++++++
+ mm/dmem.c              | 7 +++++++
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 2d2c0f8a966b..ca42a6e56e9b 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4644,15 +4644,23 @@ int follow_pfn(struct vm_area_struct *vma, unsigned long address,
- 	int ret = -EINVAL;
- 	spinlock_t *ptl;
- 	pte_t *ptep;
-+	pmd_t *pmdp = NULL;
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 71aa3da2a0b7..0115c1767063 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -41,6 +41,7 @@
+ #include <linux/hash.h>
+ #include <linux/kern_levels.h>
+ #include <linux/kthread.h>
++#include <linux/dmem.h>
  
- 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP)))
- 		return ret;
+ #include <asm/page.h>
+ #include <asm/memtype.h>
+@@ -2962,9 +2963,9 @@ static bool kvm_is_mmio_pfn(kvm_pfn_t pfn)
+ 			 */
+ 			(!pat_enabled() || pat_pfn_immune_to_uc_mtrr(pfn));
  
--	ret = follow_pte(vma->vm_mm, address, &ptep, &ptl);
-+	ret = follow_pte_pmd(vma->vm_mm, address, NULL, &ptep, &pmdp, &ptl);
- 	if (ret)
- 		return ret;
--	*pfn = pte_pfn(*ptep);
--	pte_unmap_unlock(ptep, ptl);
-+
-+	if (pmdp) {
-+		*pfn = pmd_pfn(*pmdp) + ((address & ~PMD_MASK) >> PAGE_SHIFT);
-+		spin_unlock(ptl);
-+	} else {
-+		*pfn = pte_pfn(*ptep);
-+		pte_unmap_unlock(ptep, ptl);
-+	}
-+
+-	return !e820__mapped_raw_any(pfn_to_hpa(pfn),
++	return (!e820__mapped_raw_any(pfn_to_hpa(pfn),
+ 				     pfn_to_hpa(pfn + 1) - 1,
+-				     E820_TYPE_RAM);
++				     E820_TYPE_RAM)) || (!is_dmem_pfn(pfn));
+ }
+ 
+ /* Bits which may be returned by set_spte() */
+diff --git a/include/linux/dmem.h b/include/linux/dmem.h
+index 8682d63ed43a..59d3ef14fe42 100644
+--- a/include/linux/dmem.h
++++ b/include/linux/dmem.h
+@@ -19,11 +19,18 @@ dmem_alloc_pages_vma(struct vm_area_struct *vma, unsigned long addr,
+ 		     unsigned int try_max, unsigned int *result_nr);
+ 
+ void dmem_free_pages(phys_addr_t addr, unsigned int dpages_nr);
++bool is_dmem_pfn(unsigned long pfn);
+ #define dmem_free_page(addr)	dmem_free_pages(addr, 1)
+ #else
+ static inline int dmem_reserve_init(void)
+ {
  	return 0;
  }
- EXPORT_SYMBOL(follow_pfn);
++
++static inline bool is_dmem_pfn(unsigned long pfn)
++{
++	return 0;
++}
++
+ #endif
+ #endif	/* _LINUX_DMEM_H */
+diff --git a/mm/dmem.c b/mm/dmem.c
+index 2e61dbddbc62..eb6df7059cf0 100644
+--- a/mm/dmem.c
++++ b/mm/dmem.c
+@@ -972,3 +972,10 @@ void dmem_free_pages(phys_addr_t addr, unsigned int dpages_nr)
+ }
+ EXPORT_SYMBOL(dmem_free_pages);
+ 
++bool is_dmem_pfn(unsigned long pfn)
++{
++	struct dmem_node *dnode;
++
++	return !!find_dmem_region(__pfn_to_phys(pfn), &dnode);
++}
++EXPORT_SYMBOL(is_dmem_pfn);
 -- 
 2.28.0
 
