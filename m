@@ -2,204 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5C3C288994
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 15:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F38F2887A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 13:13:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388174AbgJINHh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 09:07:37 -0400
-Received: from mout.gmx.net ([212.227.17.21]:57737 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388153AbgJINHh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 09:07:37 -0400
-X-Greylist: delayed 308 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Oct 2020 09:07:36 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1602248855;
-        bh=fZmlBl+lNn5TpmcFS4ptgIjr3xO6EXVK9ZX1TPguxhg=;
-        h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:References;
-        b=FZZdaPThMCpZk686xYPb50dlXx2LfRBdPUxO7bNXwK/MpohywDEOpSmPEeenNoiEL
-         lwz7EzEhfYKhcQwRIVfSX5BdKjkdtdTO4cbJA6OXZh5cye92yQIENd08CEKimoY6pV
-         rB7N+gm8/bnWnL9IjfJ+PtoRZFWE1xGW2tDYtrv8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [172.20.73.169] ([89.1.213.205]) by mail.gmx.com (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N95iR-1kOTTo1mTv-0167iv; Fri, 09
- Oct 2020 15:02:19 +0200
-Date:   Fri, 9 Oct 2020 12:44:36 +0200 (CEST)
-From:   Johannes Schindelin <Johannes.Schindelin@gmx.de>
-X-X-Sender: virtualbox@gitforwindows.org
-To:     =?UTF-8?Q?=C3=86var_Arnfj=C3=B6r=C3=B0_Bjarmason?= 
-        <avarab@gmail.com>
-cc:     Junio C Hamano <gitster@pobox.com>, git@vger.kernel.org,
-        tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less
- flippant
-In-Reply-To: <87eem8hfrp.fsf@evledraar.gmail.com>
-Message-ID: <nycvar.QRO.7.76.6.2010091219480.50@tvgsbejvaqbjf.bet>
-References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-3-avarab@gmail.com> <xmqqv9gcs91k.fsf@gitster.c.googlers.com> <nycvar.QRO.7.76.6.2010081012490.50@tvgsbejvaqbjf.bet> <87eem8hfrp.fsf@evledraar.gmail.com>
-User-Agent: Alpine 2.21.1 (DEB 209 2017-03-23)
+        id S1731817AbgJILNf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 07:13:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbgJILNe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Oct 2020 07:13:34 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBF60C0613D2;
+        Fri,  9 Oct 2020 04:13:33 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id 13so9451464wmf.0;
+        Fri, 09 Oct 2020 04:13:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:autocrypt:cc:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xQGmikQ6qE8XE7CIqs+7KCZpNNncfn6RoV4oeJtNd1E=;
+        b=tHuzqDahggSxCagXgsRx7GQ9PIos54VEPcXFVyperxa8+8cQfK2hxVkIZiyT/2aNjl
+         GJU8xtjGUzwYdV4QW8iyMz3kidj97b+SzNJf9jcz5ZJGpwFvrtojMVbC5+azfo1L1shf
+         VBPwnTB5U7J/0QNVEDh4jVk3AG1SuYAkieRb/G4XJyJGC8ZMqzNZq3ozTgEg3xiC3me3
+         MWPbO20gFBY0N9bL5HHFa/0Kh1FeVg5eT5kMTRh3FNAO9jQGsx3Mq30PEyNCMadgvG4f
+         jPySw8VAw8hsnvC5MnDzrcZTkimvWi/B+E76FqTn0gYM4ZIX7sDFwwdruvw0f13NUNzE
+         2Nrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:autocrypt:cc:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=xQGmikQ6qE8XE7CIqs+7KCZpNNncfn6RoV4oeJtNd1E=;
+        b=Vi8CyTMNXjJVu55Ne49oHdwMKU1ixMX8lUEt0bazoP9Br5O+DDZNCmP3lcpt1dtnlh
+         OMsZXAWjgL5RbMOA9yBo/JSSZljDf6bUnRCj7YW8VviNcIC+gOtoJ1wTGaqGVwIA/GA/
+         /OL20t4tlI9oiNT14UwhC0bwlaxwibxmE+UHnVftbvN95l2GsoPmcSWt/5TLnLOW19nz
+         vP3reYPZwTXQzqbGWKbmngpwceUyxGDSYfyb3C/8G9hfHJ/s+rgXhuo/cDVKxYEHZ0qj
+         pHcIU2EVCZheUjwTGYekkeZS4yNKdnQHRFg9JpBJ61rn8QZIotJU1UgV+f2/CaVabQqs
+         jJIQ==
+X-Gm-Message-State: AOAM530FRjUHNFriTcO8cvtIoEiWfbAOItHJ1gOXa7ahFtZwih3CJiI6
+        V7qrHPrj6SRsTFaPIpR8nO4=
+X-Google-Smtp-Source: ABdhPJzJDh/o2qCZD+v9/3/UHjs6FXi2S5xnbOHJ0uYyV9bHi0n3nNvSfAs6vygzGCdLIo3vX6GPgw==
+X-Received: by 2002:a7b:cd9a:: with SMTP id y26mr13489092wmj.101.1602242012463;
+        Fri, 09 Oct 2020 04:13:32 -0700 (PDT)
+Received: from [192.168.1.73] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id d9sm10724326wmb.30.2020.10.09.04.13.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Oct 2020 04:13:31 -0700 (PDT)
+To:     syzbot <syzbot+77efce558b2b9e6b6405@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Matthew Wilcox <willy@infradead.org>
+References: <0000000000001a684d05b1385e71@google.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Cc:     viro@zeniv.linux.org.uk
+Subject: Re: KASAN: use-after-free Read in __io_uring_files_cancel
+Message-ID: <3a98a77a-a507-954a-f2ec-e38af18c168f@gmail.com>
+Date:   Fri, 9 Oct 2020 14:10:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1671604778-1602240278=:50"
-X-Provags-ID: V03:K1:wdWnPyaEsATVpuSlL6/9AdbDM366ZdlXcGblcp3j3EAOf0DZUMQ
- E9JKWjSASdhwq2yczSynJ/SPAVkzjK4TlbY/sPXyLnCnh08PjdMIJL5IfZAle37PVCBuXYR
- 6wQO+p6p2/kjUj9Udeg0WAcEo8RhJlgGiZWFxbchtbANBMvAvD65aA3zI4MlD23rZMFYkGb
- YDo02nIxiW3x27R9BBBpA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FlHaw0sqBTU=:nvhiHHKgw1Gte1DxF/S6CL
- s+Nb5LdhcEe7IlfHK+hVatgxpeWjIPCw88a8DTcBWAco3gw8Ari08DzlDc5kXepvtY/kmX0V6
- rNrPVHZbzj4eeBb6esof65OSPRrwmOtiosoBl+wrdsRnqjsYigG3lJZYZBaoZKYe8o4Zo4qVK
- SzsYa1nHWFBEaQzPgpCzaXvmrFO7dEV7JM0b99Xnf1IlU7pS3RXPY5lnSlhh3aIWrKaSggFq7
- kYCB/Bp+1U+5ebO/vhsqwJqCFlJW5NDW49DCVXi0Pc0c5rkHKCNlRxJIq8LSClLCijcyMgzO+
- nOlyVdBadUDPt9rxkwtBxm2c67/94zmg8BFJwhII+hie+muHsKUPrz2RFTcbZ3shRu84CTpoV
- DX87vq+7r9nwm7wPDpFVcO+9ngTT39Qrel3cxhAW/bbgoaccF5AYNxpDomvbkjQXoK1r09p5N
- 5lgnKBMDOdXy3CZBlycoGcZ73rigCpHB+fFvFpF5Z5+9tKxBt5UZDFSX+4VzWQPM3IfDYM8Bo
- DD7aSb8FxawVdFOkQnNv3j+8JUzx7t0T9RUrUPbbJLvYLBqZON003mxYTF/XDSaqEd/X1YDVi
- SXaSUNZEIqhmJBiZIU0KAeiIP+iXDqx7H2IVjCNkUvlPi7B45U7Zfypkgxc5mOR6f9ycYHVjd
- fcnfU2fMCrCY5+9Wb9rPZNFnmIfa3//2bg437dgSwr6ffTClMZjZvF5q3qXEi6ePJtkk8vtj2
- I3QOgwjlm5s4gksp2S20CAePTzV+zQh3IRXOfqR/NdqUuSOVdaEHAWHTXTilkP2muKxhu/Ryp
- UgOtjQsxiMBx8wdJn5nr8Snpww0DCtHnYD/SYZmsRv1ciF0Rlr8VZf67AD7gZrN9iC2tGPC7c
- 3iFue8u5RfHQ7PrTjaZc3w8kuzXfW8U2zpfKyxnUv8hnX+kK6Ozc4OZlc/d3E19p62EdeOMEP
- AkBgNAivEyjt/KimlqOrEX2LwDhwj+I80ZqHrpgwW+hAURBwIi+dikpW8LH1p9o1d72/3B7MB
- rEAtQtcZgomopyvVdMkm0oTReTGREEZ9SvASENX5Trhsuf5a1+zdrHZPMFxtvltYhhhGz0G4c
- VodG9XL/TFBOpHSgeBb6M6zBJ1PfTCkstB9nG0rObOrCQR+sttyvUWFZrRVQpet2e20YsoqfN
- yJyrbU4aE9r83BBCMT6WX2csfSkISUgdH/YnApuQA3yFcWeCe74aH5WCdBnonY7DMdh+t5Y3J
- 58DcyQhBDc8j0VLilyuKRCHE3TurW6L4CXw1aXw==
+In-Reply-To: <0000000000001a684d05b1385e71@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 09/10/2020 11:02, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1592ee1b900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=77efce558b2b9e6b6405
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+77efce558b2b9e6b6405@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in xas_next_entry include/linux/xarray.h:1630 [inline]
+> BUG: KASAN: use-after-free in __io_uring_files_cancel+0x417/0x440 fs/io_uring.c:8681
+> Read of size 1 at addr ffff888033631880 by task syz-executor.1/8477
+> 
+> CPU: 1 PID: 8477 Comm: syz-executor.1 Not tainted 5.9.0-rc8-next-20201008-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x198/0x1fb lib/dump_stack.c:118
+>  print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:385
+>  __kasan_report mm/kasan/report.c:545 [inline]
+>  kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
+>  xas_next_entry include/linux/xarray.h:1630 [inline]
+>  __io_uring_files_cancel+0x417/0x440 fs/io_uring.c:8681
+>  io_uring_files_cancel include/linux/io_uring.h:35 [inline]
+>  exit_files+0xe4/0x170 fs/file.c:456
+>  do_exit+0xae9/0x2930 kernel/exit.c:801
+>  do_group_exit+0x125/0x310 kernel/exit.c:903
+>  get_signal+0x428/0x1f00 kernel/signal.c:2757
+>  arch_do_signal+0x82/0x2470 arch/x86/kernel/signal.c:811
+>  exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
+>  exit_to_user_mode_prepare+0x194/0x1f0 kernel/entry/common.c:192
+>  syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
---8323328-1671604778-1602240278=:50
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+It seems this fails on "node->shift" in xas_next_entry(), that would
+mean that the node itself was freed while we're iterating on it.
 
-Hi =C3=86var,
+__io_uring_files_cancel() iterates with xas_next_entry() and creates
+XA_STATE once by hand, but it also removes entries in the loop with
+io_uring_del_task_file() -> xas_store(&xas, NULL); without updating
+the iterating XA_STATE. Could it be the problem? See a diff below
 
-On Thu, 8 Oct 2020, =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason wrote:
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 824ed4e01562..356313c7aec2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8617,10 +8617,9 @@ static int io_uring_add_task_file(struct file *file)
+ /*
+  * Remove this io_uring_file -> task mapping.
+  */
+-static void io_uring_del_task_file(struct file *file)
++static void io_uring_del_task_file(struct file *file, struct xa_state *xas)
+ {
+ 	struct io_uring_task *tctx = current->io_uring;
+-	XA_STATE(xas, &tctx->xa, (unsigned long) file);
+ 
+ 	if (tctx->last == file)
+ 		tctx->last = NULL;
+@@ -8643,7 +8642,7 @@ static void __io_uring_attempt_task_drop(struct file *file)
+ 	rcu_read_unlock();
+ 
+ 	if (old == file)
+-		io_uring_del_task_file(file);
++		io_uring_del_task_file(file, &xas);
+ }
+ 
+ /*
+@@ -8687,7 +8686,7 @@ void __io_uring_files_cancel(struct files_struct *files)
+ 
+ 		io_uring_cancel_task_requests(ctx, files);
+ 		if (files)
+-			io_uring_del_task_file(file);
++			io_uring_del_task_file(file, &xas);
+ 	} while (1);
+ }
 
-> On Thu, Oct 08 2020, Johannes Schindelin wrote:
->
-> > On Thu, 17 Sep 2020, Junio C Hamano wrote:
-> >
-> >> =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason  <avarab@gmail.com> writes:
-> >>
-> >> > As amusing as Linus's original prose[1] is here it doesn't really e=
-xplain
-> >> > in any detail to the uninitiated why you would or wouldn't enable
-> >> > this, and the counter-intuitive reason for why git wouldn't fsync y=
-our
-> >> > precious data.
-> >> >
-> >> > So elaborate (a lot) on why this may or may not be needed. This is =
-my
-> >> > best-effort attempt to summarize the various points raised in the l=
-ast
-> >> > ML[2] discussion about this.
-> >> >
-> >> > 1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
-> >> >     files", 2008-06-18)
-> >> > 2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
-> >> >
-> >> > Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail=
-.com>
-> >> > ---
-> >> >  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-=
-----
-> >> >  1 file changed, 36 insertions(+), 6 deletions(-)
-> >>
-> >> When I saw the subject in my mailbox, I expected to see that you
-> >> would resurrect Christoph's updated text in [*1*], but you wrote a
-> >> whole lot more ;-) And they are quite informative to help readers to
-> >> understand what the option does.  I am not sure if the understanding
-> >> directly help readers to decide if it is appropriate for their own
-> >> repositories, though X-<.
-> >
-> > I agree that it is an improvement, and am therefore in favor of applyi=
-ng
-> > the patch.
->
-> Just the improved docs, or flipping the default of core.fsyncObjectFiles
-> to "true"?
-
-I am actually also in favor of flipping the default. We carry
-https://github.com/git-for-windows/git/commit/14dad078c28159b250be599c0890=
-ece2d6f4d635
-in Git for Windows for over three years. The commit message:
-
-	mingw: change core.fsyncObjectFiles =3D 1 by default
-
-	From the documentation of said setting:
-
-		This boolean will enable fsync() when writing object files.
-
-		This is a total waste of time and effort on a filesystem that
-		orders data writes properly, but can be useful for filesystems
-		that do not use journalling (traditional UNIX filesystems) or
-		that only journal metadata and not file contents (OS X=E2=80=99s HFS+,
-		or Linux ext3 with "data=3Dwriteback").
-
-	The most common file system on Windows (NTFS) does not guarantee that
-	order, therefore a sudden loss of power (or any other event causing an
-	unclean shutdown) would cause corrupt files (i.e. files filled with
-	NULs). Therefore we need to change the default.
-
-	Note that the documentation makes it sound as if this causes really bad
-	performance. In reality, writing loose objects is something that is done
-	only rarely, and only a handful of files at a time.
-
-	Signed-off-by: Johannes Schindelin <johannes.schindelin@gmx.de>
-
-The patch itself limits this change to Windows, but if this becomes a
-platform-independent change, all the better for me!
-
-> I've been meaning to re-roll this. I won't have time anytime soon to fix
-> git's fsync() use, i.e. ensure that we run up & down modified
-> directories and fsync()/fdatasync() file/dir fd's as appropriate but I
-> think documenting it and changing the core.fsyncObjectFiles default
-> makes sense and is at least a step in the right direction.
-
-Agreed.
-
-> I do think it makes more sense for a v2 to split most of this out into
-> some section that generally discusses data integrity in the .git
-> directory. I.e. that says that currently where we use fsync() (such as
-> pack/commit-graph writes) we don't fsync() the corresponding
-> director{y,ies), and ref updates don't fsync() at all.
->
-> Where to put that though? gitrepository-layout(5)? Or a new page like
-> gitrepository-integrity(5) (other suggestions welcome..).
-
-I think `gitrepository-layout` is probably the best location for now.
-
-> Looking at the code again it seems easier than I thought to make this
-> right if we ignore .git/refs (which reftable can fix for us). Just:
->
-> 1. Change fsync_or_die() and its callsites to also pass/sync the
->    containing directory, which is always created already
->    (e.g. .git/objects/pack/)...).
->
-> 2. ..Or in the case where it's not created already such as
->    .git/objects/??/ (or .git/objects/pack/) itself) it's not N-deep like
->    the refs hierarchy, so "did we create it" state is pretty simple, or
->    we can just always do it unconditionally.
->
-> 3. Without reftable the .git/refs/ case shouldn't be too hard if we're
->    OK with redundantly fsyncing all the way down, i.e. to make it
->    simpler by not tracking the state of exactly what was changed.
->
-> 4. Now that I'm writing this there's also .git/{config,rr-cache} and any
->    number of other things we need to change for 100% coverage, but the
->    above 1-3 should be good enough for repo integrity where repo =3D ref=
-s
->    & objects.
-
-I fear that the changes to `fsync` also the directory need to be guarded
-behind a preprocessor flag, though: if you try to `open()` a directory on
-Windows, it fails (our emulated `open()` sets `errno =3D EISDIR`).
-
-Ciao,
-Dscho
-
---8323328-1671604778-1602240278=:50--
+-- 
+Pavel Begunkov
