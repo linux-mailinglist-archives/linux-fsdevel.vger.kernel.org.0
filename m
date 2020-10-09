@@ -2,120 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA53287FA4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 02:55:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98726287FAE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 02:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbgJIAzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Oct 2020 20:55:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729045AbgJIAzW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Oct 2020 20:55:22 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07D6DC0613D2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Oct 2020 17:55:20 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id e10so5430921pfj.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Oct 2020 17:55:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=96SG6wG1EzdWabmC3NwLr5pFbLC7Ex0RqbFipjBgyx0=;
-        b=gzQVqE0y8i8X6Vlk0sl8S/6ixQXqrLWeTanP+PWmDQvDu1NXMxbbFYiJSqJKros2VY
-         q9+/bO8fDSmD/wB5/BbgXxjSwP2oR0cG2yhMhbZAWK8ggVAbfG8l16IA4Tz2Yl1DPjGE
-         XfInfBd06vDTrM9lgSjWICC/9OO1/SaTh6WxV5ArDSWECJSUJaZX1GgWSzTA8xh/pAlp
-         Cp2RnlHPA0Ww5pDgJcHdzsYA36sXNc1liFVjJMc8o6OCPqSXt8dc2InzQVAJiVAW/uel
-         WJcmgI49Rw54ZVGs4IYZ4XNo7Mm4SNUbD9Xk8e8fbHMoPqQ8mR/MEQbyBX+nm2dmBdk8
-         Z8gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=96SG6wG1EzdWabmC3NwLr5pFbLC7Ex0RqbFipjBgyx0=;
-        b=t4LW7pdlz5zxplqdnIE93y7m2zIlyci4iiPVl2zGMBNvo2z3oy9WytVU2ZYfIGH6nE
-         SwkTDMj4f1bBWCKyEwPv5T3pgjv9Y0kmoRV68ziLb6qgY+2hu5oLDgy60DjL7uDTmbLh
-         NTchqLMdm/Iq/gIFPF+FKmG23F2lgsRYK/zCfkZTmTAHbNlsQvqQhcOLuSIUVMgiK6M2
-         ZSp43oH8db5P412BYukKoTc3ZwTgt8mW5LLqzwGhs10cExqwcaYBt3t2caZlJc5sm1O1
-         /lAodwbMxT/04AuugKjh4wrAUtqxNjx1Cjn57bGi7c0lBvqCEgMDUR4xoG3f1jh9gC+C
-         57PQ==
-X-Gm-Message-State: AOAM533iFh8/BHefMRRhXw06Qe40GCv9IkCFYK9IA3nF5wlLC0hZAVu7
-        xDh0pO2+Lsobl/grfZf4LiTqCg==
-X-Google-Smtp-Source: ABdhPJz8lKf0b4fcitxEpXw3lv3qbmOMTDRwfUE/lgebrlw3AXlnTEiY3NfKwf3yAWi3Da3d2mP57w==
-X-Received: by 2002:a17:90a:ad8b:: with SMTP id s11mr1700807pjq.40.1602204920471;
-        Thu, 08 Oct 2020 17:55:20 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id l21sm8467041pjq.54.2020.10.08.17.55.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Oct 2020 17:55:19 -0700 (PDT)
-Subject: Re: inconsistent lock state in xa_destroy
-To:     Matthew Wilcox <willy@infradead.org>,
-        syzbot <syzbot+cdcbdc0bd42e559b52b9@syzkaller.appspotmail.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <00000000000045ac4605b12a1720@google.com>
- <000000000000c35f0805b12f5099@google.com>
- <20201008222753.GP20115@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9a7462a4-9be8-c7f9-e9dd-d16e22f312c8@kernel.dk>
-Date:   Thu, 8 Oct 2020 18:55:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1730201AbgJIA60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Oct 2020 20:58:26 -0400
+Received: from mga04.intel.com ([192.55.52.120]:23450 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725979AbgJIA6Z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 8 Oct 2020 20:58:25 -0400
+IronPort-SDR: mNat5ftlMF+/aWBh96+2/dYhPUUD6sngEFY7KAD/UadEp78eRPxpHSN4M8HwjPhjBUGjHDTAkF
+ MIKXSBnc74wQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9768"; a="162789248"
+X-IronPort-AV: E=Sophos;i="5.77,353,1596524400"; 
+   d="scan'208";a="162789248"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2020 17:58:24 -0700
+IronPort-SDR: GltQmS+4InnTbci6lMsS7uuuC/Au3gBVh1CnYduQ9e/hpEY/YA5KVKJ92y8dtUlTQcMasbgIaH
+ +DhCc/+CdoIA==
+X-IronPort-AV: E=Sophos;i="5.77,353,1596524400"; 
+   d="scan'208";a="328742638"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.160])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2020 17:58:24 -0700
+Date:   Thu, 8 Oct 2020 17:58:23 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     yulei.kernel@gmail.com
+Cc:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
+        viro@zeniv.linux.org.uk, pbonzini@redhat.com,
+        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xiaoguangrong.eric@gmail.com,
+        kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
+        Yulei Zhang <yuleixzhang@tencent.com>,
+        Chen Zhuo <sagazchen@tencent.com>
+Subject: Re: [PATCH 22/35] kvm, x86: Distinguish dmemfs page from mmio page
+Message-ID: <20201009005823.GA11151@linux.intel.com>
+References: <cover.1602093760.git.yuleixzhang@tencent.com>
+ <b2b6837785f6786575823c919788464373d3ee05.1602093760.git.yuleixzhang@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <20201008222753.GP20115@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2b6837785f6786575823c919788464373d3ee05.1602093760.git.yuleixzhang@tencent.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/8/20 4:27 PM, Matthew Wilcox wrote:
+On Thu, Oct 08, 2020 at 03:54:12PM +0800, yulei.kernel@gmail.com wrote:
+> From: Yulei Zhang <yuleixzhang@tencent.com>
 > 
-> If I understand the lockdep report here, this actually isn't an XArray
-> issue, although I do think there is one.
+> Dmem page is pfn invalid but not mmio. Support cacheable
+> dmem page for kvm.
 > 
-> On Thu, Oct 08, 2020 at 02:14:20PM -0700, syzbot wrote:
->> ================================
->> WARNING: inconsistent lock state
->> 5.9.0-rc8-next-20201008-syzkaller #0 Not tainted
->> --------------------------------
->> inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
->> swapper/0/0 [HC0[0]:SC1[1]:HE0:SE0] takes:
->> ffff888025f65018 (&xa->xa_lock#7){+.?.}-{2:2}, at: xa_destroy+0xaa/0x350 lib/xarray.c:2205
->> {SOFTIRQ-ON-W} state was registered at:
->>   lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
->>   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->>   _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
->>   spin_lock include/linux/spinlock.h:354 [inline]
->>   io_uring_add_task_file fs/io_uring.c:8607 [inline]
+> Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
+> Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
+> ---
+>  arch/x86/kvm/mmu/mmu.c | 5 +++--
+>  include/linux/dmem.h   | 7 +++++++
+>  mm/dmem.c              | 7 +++++++
+>  3 files changed, 17 insertions(+), 2 deletions(-)
 > 
-> You're using the XArray in a non-interrupt-disabling mode.
-> 
->>  _raw_spin_lock_irqsave+0x94/0xd0 kernel/locking/spinlock.c:159
->>  xa_destroy+0xaa/0x350 lib/xarray.c:2205
->>  __io_uring_free+0x60/0xc0 fs/io_uring.c:7693
->>  io_uring_free include/linux/io_uring.h:40 [inline]
->>  __put_task_struct+0xff/0x3f0 kernel/fork.c:732
->>  put_task_struct include/linux/sched/task.h:111 [inline]
->>  delayed_put_task_struct+0x1f6/0x340 kernel/exit.c:172
->>  rcu_do_batch kernel/rcu/tree.c:2484 [inline]
-> 
-> But you're calling xa_destroy() from in-interrupt context.
-> So (as far as lockdep is concerned), no matter what I do in
-> xa_destroy(), this potential deadlock is there.  You'd need to be
-> using xa_init_flags(XA_FLAGS_LOCK_IRQ) if you actually needed to call
-> xa_destroy() here.
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 71aa3da2a0b7..0115c1767063 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -41,6 +41,7 @@
+>  #include <linux/hash.h>
+>  #include <linux/kern_levels.h>
+>  #include <linux/kthread.h>
+> +#include <linux/dmem.h>
+>  
+>  #include <asm/page.h>
+>  #include <asm/memtype.h>
+> @@ -2962,9 +2963,9 @@ static bool kvm_is_mmio_pfn(kvm_pfn_t pfn)
+>  			 */
+>  			(!pat_enabled() || pat_pfn_immune_to_uc_mtrr(pfn));
+>  
+> -	return !e820__mapped_raw_any(pfn_to_hpa(pfn),
+> +	return (!e820__mapped_raw_any(pfn_to_hpa(pfn),
+>  				     pfn_to_hpa(pfn + 1) - 1,
+> -				     E820_TYPE_RAM);
+> +				     E820_TYPE_RAM)) || (!is_dmem_pfn(pfn));
 
-Yeah good point, I guess that last free is in softirq from RCU.
+This is wrong.  As is, the logic reads "A PFN is MMIO if it is INVALID &&
+(!RAM || !DMEM)".  The obvious fix would be to change it to "INVALID &&
+!RAM && !DMEM", but that begs the question of whether or DMEM is reported
+as RAM.  I don't see any e820 related changes in the series, i.e. no evidence
+that dmem yanks its memory out of the e820 tables, which makes me think this
+change is unnecessary.
 
-> Fortunately, it seems you don't need to call xa_destroy() at all, so
-> that problem is solved, but the patch I have here wouldn't help.
-
-Right, it wouldn't have helped this case.
-
--- 
-Jens Axboe
-
+>  }
+>  
+>  /* Bits which may be returned by set_spte() */
