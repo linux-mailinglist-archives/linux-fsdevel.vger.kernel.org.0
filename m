@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE00288AF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 16:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A33288B66
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 16:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388890AbgJIObU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 10:31:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53618 "EHLO
+        id S2388797AbgJIObJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 10:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388880AbgJIObR (ORCPT
+        with ESMTP id S1731698AbgJIObI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 10:31:17 -0400
+        Fri, 9 Oct 2020 10:31:08 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50174C0613DC;
-        Fri,  9 Oct 2020 07:31:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D40CC0613D2;
+        Fri,  9 Oct 2020 07:31:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ck7tjnyWrUbu2fgU3wEmHKO8ECkKRvYNOzxLe93kaKs=; b=BiC282mRNnUukNWWTqgtbnhsqu
-        2W6Gbvyh9SISCymJu5kFXw5QdqjGbdQzamuQbRf1rL8tiIeP0p40GR7yl2ar7Eb+6xSyY8upJelEN
-        ntmagHzfaNWfBwLcJVs3aeWLtV3tJpfcnnVa/yp99qw7rtgUWxNDXTTwII/m5GhJ7TlS+CpNQSQhq
-        wA1CvIYl0LWqu3b5YY0VMcEG1BR4mSICeWJ+Ox/QHS1wPbDG6jm7ZN6TzE2IVH0Yu8DWdd5pc6FLh
-        yslfa5C0Y3/JNM4OSc4GK5KFNVIm0ZICpAtFs9Hxnm8fI9rz5cJBc/h+X0blwHudPVU8k6vDV6Cvz
-        t42dWX/g==;
+        bh=9pnCDQD7BT3wSOEmQ/ujAa+Hm2ir7A48RB79T7IxK0Q=; b=OpgwA4h4sqP1jU/IETGKZCdM+Q
+        i2z3mUNTVaNMrPcKu/kIEUukM1dt974qFSZx4F1PJP3u9M1SgxVKgcIonjd/aNrK8oJYJJN4oHRk1
+        obdU0/M9Ik9JMH/nzkWE8D3yho4lKnaBpftYWxPJpDwLQo52xiQnfV7kpYc8EtYGLGmDorJ9y8V5N
+        CJcX+ugzQELTPBZdvOkJejfwb3L1y6UeR3FiWZL/sICMMOlGRRiA2qGYtu0wV9jkbIzwzA2oq/dOd
+        H5aqicfp9nwOgncn7C7ET7kxAk5rWlkDprT8RSZwKu9U+B7N0o7spekfqopBUVo/2X+R5nO4vA99R
+        nxNxhJxw==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kQtQI-0005uT-Hr; Fri, 09 Oct 2020 14:31:06 +0000
+        id 1kQtQI-0005uX-P8; Fri, 09 Oct 2020 14:31:06 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -36,9 +36,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         ecryptfs@vger.kernel.org, linux-um@lists.infradead.org,
         linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
         linux-xfs@vger.kernel.org
-Subject: [PATCH v2 01/16] mm: Add AOP_UPDATED_PAGE return value
-Date:   Fri,  9 Oct 2020 15:30:49 +0100
-Message-Id: <20201009143104.22673-2-willy@infradead.org>
+Subject: [PATCH v2 02/16] mm: Inline wait_on_page_read into its one caller
+Date:   Fri,  9 Oct 2020 15:30:50 +0100
+Message-Id: <20201009143104.22673-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201009143104.22673-1-willy@infradead.org>
 References: <20201009143104.22673-1-willy@infradead.org>
@@ -48,152 +48,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow synchronous ->readpage implementations to execute more
-efficiently by skipping the re-locking of the page.
+Having this code inline helps the function read more easily.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- Documentation/filesystems/locking.rst |  7 ++++---
- Documentation/filesystems/vfs.rst     | 21 ++++++++++++++-------
- include/linux/fs.h                    |  5 +++++
- mm/filemap.c                          | 15 +++++++++++++--
- 4 files changed, 36 insertions(+), 12 deletions(-)
+ mm/filemap.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index 64f94a18d97e..06a7a8bf2362 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -269,7 +269,7 @@ locking rules:
- ops			PageLocked(page)	 i_rwsem
- ======================	======================== =========
- writepage:		yes, unlocks (see below)
--readpage:		yes, unlocks
-+readpage:		yes, may unlock
- writepages:
- set_page_dirty		no
- readahead:		yes, unlocks
-@@ -294,8 +294,9 @@ swap_deactivate:	no
- ->write_begin(), ->write_end() and ->readpage() may be called from
- the request handler (/dev/loop).
- 
--->readpage() unlocks the page, either synchronously or via I/O
--completion.
-+->readpage() may return AOP_UPDATED_PAGE if the page is now Uptodate
-+or 0 if the page will be unlocked asynchronously by I/O completion.
-+If it returns -errno, it should unlock the page.
- 
- ->readahead() unlocks the pages that I/O is attempted on like ->readpage().
- 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index ca52c82e5bb5..16248c299aaa 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -643,7 +643,7 @@ set_page_dirty to write data into the address_space, and writepage and
- writepages to writeback data to storage.
- 
- Adding and removing pages to/from an address_space is protected by the
--inode's i_mutex.
-+inode's i_rwsem held exclusively.
- 
- When data is written to a page, the PG_Dirty flag should be set.  It
- typically remains set until writepage asks for it to be written.  This
-@@ -757,12 +757,19 @@ cache in your filesystem.  The following members are defined:
- 
- ``readpage``
- 	called by the VM to read a page from backing store.  The page
--	will be Locked when readpage is called, and should be unlocked
--	and marked uptodate once the read completes.  If ->readpage
--	discovers that it needs to unlock the page for some reason, it
--	can do so, and then return AOP_TRUNCATED_PAGE.  In this case,
--	the page will be relocated, relocked and if that all succeeds,
--	->readpage will be called again.
-+	will be Locked and !Uptodate when readpage is called.  Ideally,
-+	the filesystem will bring the page Uptodate and return
-+	AOP_UPDATED_PAGE.  If the filesystem encounters an error, it
-+	should unlock the page and return a negative errno without marking
-+	the page Uptodate.  It does not need to mark the page as Error.
-+	If the filesystem returns 0, this means the page will be unlocked
-+	asynchronously by I/O completion.  The VFS will wait for the
-+	page to be unlocked, so there is no advantage to executing this
-+	operation asynchronously.
-+
-+	The filesystem can also return AOP_TRUNCATED_PAGE to indicate
-+	that it had to unlock the page to avoid a deadlock.  The caller
-+	will re-check the page cache and call ->readpage again.
- 
- ``writepages``
- 	called by the VM to write out pages associated with the
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7519ae003a08..badf80e133fd 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -273,6 +273,10 @@ struct iattr {
-  *  			reference, it should drop it before retrying.  Returned
-  *  			by readpage().
-  *
-+ * @AOP_UPDATED_PAGE: The readpage method has brought the page Uptodate
-+ * without releasing the page lock.  This is suitable for synchronous
-+ * implementations of readpage.
-+ *
-  * address_space_operation functions return these large constants to indicate
-  * special semantics to the caller.  These are much larger than the bytes in a
-  * page to allow for functions that return the number of bytes operated on in a
-@@ -282,6 +286,7 @@ struct iattr {
- enum positive_aop_returns {
- 	AOP_WRITEPAGE_ACTIVATE	= 0x80000,
- 	AOP_TRUNCATED_PAGE	= 0x80001,
-+	AOP_UPDATED_PAGE	= 0x80002,
- };
- 
- #define AOP_FLAG_CONT_EXPAND		0x0001 /* called from cont_expand */
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 1aaea26556cc..95b68ec1f22c 100644
+index 95b68ec1f22c..0ef06d515532 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2254,8 +2254,13 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		 * PG_error will be set again if readpage fails.
- 		 */
- 		ClearPageError(page);
--		/* Start the actual read. The read will unlock the page. */
-+		/* Start the actual read. The read may unlock the page. */
- 		error = mapping->a_ops->readpage(filp, page);
-+		if (error == AOP_UPDATED_PAGE) {
-+			unlock_page(page);
-+			error = 0;
-+			goto page_ok;
-+		}
+@@ -2834,18 +2834,6 @@ EXPORT_SYMBOL(filemap_page_mkwrite);
+ EXPORT_SYMBOL(generic_file_mmap);
+ EXPORT_SYMBOL(generic_file_readonly_mmap);
  
- 		if (unlikely(error)) {
- 			if (error == AOP_TRUNCATED_PAGE) {
-@@ -2619,7 +2624,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	 */
- 	if (unlikely(!PageUptodate(page)))
- 		goto page_not_uptodate;
+-static struct page *wait_on_page_read(struct page *page)
+-{
+-	if (!IS_ERR(page)) {
+-		wait_on_page_locked(page);
+-		if (!PageUptodate(page)) {
+-			put_page(page);
+-			page = ERR_PTR(-EIO);
+-		}
+-	}
+-	return page;
+-}
 -
-+page_ok:
- 	/*
- 	 * We've made it this far and we had to drop our mmap_lock, now is the
- 	 * time to return to the upper layer and have it re-find the vma and
-@@ -2654,6 +2659,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	ClearPageError(page);
- 	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
- 	error = mapping->a_ops->readpage(file, page);
-+	if (error == AOP_UPDATED_PAGE)
-+		goto page_ok;
- 	if (!error) {
- 		wait_on_page_locked(page);
- 		if (!PageUptodate(page))
-@@ -2867,6 +2874,10 @@ static struct page *do_read_cache_page(struct address_space *mapping,
- 			err = filler(data, page);
- 		else
+ static struct page *do_read_cache_page(struct address_space *mapping,
+ 				pgoff_t index,
+ 				int (*filler)(void *, struct page *),
+@@ -2876,7 +2864,10 @@ static struct page *do_read_cache_page(struct address_space *mapping,
  			err = mapping->a_ops->readpage(data, page);
-+		if (err == AOP_UPDATED_PAGE) {
-+			unlock_page(page);
-+			goto out;
-+		}
+ 		if (err == AOP_UPDATED_PAGE) {
+ 			unlock_page(page);
+-			goto out;
++		} else if (!err) {
++			wait_on_page_locked(page);
++			if (!PageUptodate(page))
++				err = -EIO;
+ 		}
  
  		if (err < 0) {
- 			put_page(page);
+@@ -2884,9 +2875,6 @@ static struct page *do_read_cache_page(struct address_space *mapping,
+ 			return ERR_PTR(err);
+ 		}
+ 
+-		page = wait_on_page_read(page);
+-		if (IS_ERR(page))
+-			return page;
+ 		goto out;
+ 	}
+ 	if (PageUptodate(page))
 -- 
 2.28.0
 
