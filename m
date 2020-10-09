@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE65A28920E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 21:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85DA6289209
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 21:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403799AbgJITn1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 15:43:27 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2891 "EHLO mga01.intel.com"
+        id S2403789AbgJITn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 15:43:26 -0400
+Received: from mga11.intel.com ([192.55.52.93]:39868 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403780AbgJITnW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 15:43:22 -0400
-IronPort-SDR: h0uS+odjFhrLMbeHBMREWtH27f8f0AK+9++50O07wCMAt7OG3hwBG+6xlumEP2lmNkr8CS8nCb
- JhIUM6SiNBMQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="182975359"
+        id S2403784AbgJITnZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Oct 2020 15:43:25 -0400
+IronPort-SDR: TYY1em9GFrgUMxZ6YchokexPuVMo3uw0BnUjp+OITFy1ClLThNh6bD4AFRLNkFwesjZpfEtLPI
+ DQstLH6CPepA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="162067197"
 X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; 
-   d="scan'208";a="182975359"
+   d="scan'208";a="162067197"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 12:43:22 -0700
-IronPort-SDR: MkfnCLSSRwOBTQEfWdMVmXruOqSNup+ZdyDI/59QanK2/5c7cgi3y+Kyqitw3PbH47IJQ1/95p
- LM+Wp9uIp/MA==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 12:43:25 -0700
+IronPort-SDR: f326VtQ/J/RWkxFiCpz/kiD7Xj+cSFF0pP15xotiHGZI291vspb/kEX97RQyX66SyO79RXGHu/
+ vUNLWJVFNkxw==
 X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; 
-   d="scan'208";a="354957039"
+   d="scan'208";a="355860009"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 12:43:21 -0700
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 12:43:24 -0700
 From:   ira.weiny@intel.com
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
         Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH RFC V3 6/9] x86/entry: Pass irqentry_state_t by reference
-Date:   Fri,  9 Oct 2020 12:42:55 -0700
-Message-Id: <20201009194258.3207172-7-ira.weiny@intel.com>
+Subject: [PATCH RFC V3 7/9] x86/entry: Preserve PKRS MSR across exceptions
+Date:   Fri,  9 Oct 2020 12:42:56 -0700
+Message-Id: <20201009194258.3207172-8-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201009194258.3207172-1-ira.weiny@intel.com>
 References: <20201009194258.3207172-1-ira.weiny@intel.com>
@@ -53,447 +53,244 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-In preparation for adding PKS information to struct irqentry_state_t
-change all call sites and usages to pass the struct by reference
-instead of by value.
+The PKRS MSR is not managed by XSAVE.  It is preserved through a context
+switch but this support leaves exception handling code open to memory
+accesses during exceptions.
 
+2 possible places for preserving this state were considered,
+irqentry_state_t or pt_regs.[1]  pt_regs was much more complicated and
+was potentially fraught with unintended consequences.[2]
+irqentry_state_t was already an object being used in the exception
+handling and is straightforward.  It is also easy for any number of
+nested states to be tracked and eventually can be enhanced to store the
+reference counting required to support PKS through kmap reentry
+
+Preserve the current task's PKRS values in irqentry_state_t on exception
+entry and restoring them on exception exit.
+
+Each nested exception is further saved allowing for any number of levels
+of exception handling.
+
+Peter and Thomas both suggested parts of the patch, IDT and NMI respectively.
+
+[1] https://lore.kernel.org/lkml/CALCETrVe1i5JdyzD_BcctxQJn+ZE3T38EFPgjxN1F577M36g+w@mail.gmail.com/
+[2] https://lore.kernel.org/lkml/874kpxx4jf.fsf@nanos.tec.linutronix.de/#t
+
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- arch/x86/entry/common.c         | 16 +++++++---------
- arch/x86/include/asm/idtentry.h | 29 +++++++++++++++++------------
- arch/x86/kernel/kvm.c           |  4 ++--
- arch/x86/kernel/nmi.c           |  7 ++++---
- arch/x86/kernel/traps.c         | 21 +++++++++++++--------
- arch/x86/mm/fault.c             |  4 ++--
- include/linux/entry-common.h    |  7 ++++---
- kernel/entry/common.c           | 20 ++++++++------------
- 8 files changed, 57 insertions(+), 51 deletions(-)
+ arch/x86/entry/common.c             | 43 +++++++++++++++++++++++++++++
+ arch/x86/include/asm/pkeys_common.h |  5 ++--
+ arch/x86/kernel/cpu/mce/core.c      |  4 +++
+ arch/x86/mm/pkeys.c                 |  2 +-
+ include/linux/entry-common.h        | 12 ++++++++
+ kernel/entry/common.c               | 12 ++++++--
+ 6 files changed, 73 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 870efeec8bda..305da13770b6 100644
+index 305da13770b6..324a8fd5ac10 100644
 --- a/arch/x86/entry/common.c
 +++ b/arch/x86/entry/common.c
-@@ -209,9 +209,9 @@ SYSCALL_DEFINE0(ni_syscall)
- 	return -ENOSYS;
- }
+@@ -19,6 +19,7 @@
+ #include <linux/nospec.h>
+ #include <linux/syscalls.h>
+ #include <linux/uaccess.h>
++#include <linux/pkeys.h>
  
--noinstr bool idtentry_enter_nmi(struct pt_regs *regs)
-+noinstr void idtentry_enter_nmi(struct pt_regs *regs, irqentry_state_t *irq_state)
- {
--	bool irq_state = lockdep_hardirqs_enabled();
-+	irq_state->exit_rcu = lockdep_hardirqs_enabled();
- 
- 	__nmi_enter();
- 	lockdep_hardirqs_off(CALLER_ADDR0);
-@@ -222,15 +222,13 @@ noinstr bool idtentry_enter_nmi(struct pt_regs *regs)
+ #ifdef CONFIG_XEN_PV
+ #include <xen/xen-ops.h>
+@@ -222,6 +223,8 @@ noinstr void idtentry_enter_nmi(struct pt_regs *regs, irqentry_state_t *irq_stat
  	trace_hardirqs_off_finish();
  	ftrace_nmi_enter();
  	instrumentation_end();
--
--	return irq_state;
++
++	irq_save_pkrs(irq_state);
  }
  
--noinstr void idtentry_exit_nmi(struct pt_regs *regs, bool restore)
-+noinstr void idtentry_exit_nmi(struct pt_regs *regs, irqentry_state_t *irq_state)
- {
- 	instrumentation_begin();
- 	ftrace_nmi_exit();
--	if (restore) {
-+	if (irq_state->exit_rcu) {
- 		trace_hardirqs_on_prepare();
- 		lockdep_hardirqs_on_prepare(CALLER_ADDR0);
- 	}
-@@ -238,7 +236,7 @@ noinstr void idtentry_exit_nmi(struct pt_regs *regs, bool restore)
- 
- 	rcu_nmi_exit();
+ noinstr void idtentry_exit_nmi(struct pt_regs *regs, irqentry_state_t *irq_state)
+@@ -238,9 +241,47 @@ noinstr void idtentry_exit_nmi(struct pt_regs *regs, irqentry_state_t *irq_state
  	lockdep_hardirq_exit();
--	if (restore)
-+	if (irq_state->exit_rcu)
+ 	if (irq_state->exit_rcu)
  		lockdep_hardirqs_on(CALLER_ADDR0);
++
++	irq_restore_pkrs(irq_state);
  	__nmi_exit();
  }
-@@ -295,7 +293,7 @@ __visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
- 	bool inhcall;
- 	irqentry_state_t state;
  
--	state = irqentry_enter(regs);
-+	irqentry_enter(regs, &state);
- 	old_regs = set_irq_regs(regs);
++#ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
++/*
++ * PKRS is a per-logical-processor MSR which overlays additional protection for
++ * pages which have been mapped with a protection key.
++ *
++ * The register is not maintained with XSAVE so we have to maintain the MSR
++ * value in software during context switch and exception handling.
++ *
++ * Context switches save the MSR in the task struct thus taking that value to
++ * other processors if necessary.
++ *
++ * To protect against exceptions having access to this memory we save the
++ * current running value and set the default PKRS value for the duration of the
++ * exception.  Thus preventing exception handlers from having the elevated
++ * access of the interrupted task.
++ */
++noinstr void irq_save_pkrs(irqentry_state_t *state)
++{
++	if (!cpu_feature_enabled(X86_FEATURE_PKS))
++		return;
++
++	state->thread_pkrs = current->thread.saved_pkrs;
++	state->pkrs = this_cpu_read(pkrs_cache);
++	write_pkrs(INIT_PKRS_VALUE);
++}
++
++noinstr void irq_restore_pkrs(irqentry_state_t *state)
++{
++	if (!cpu_feature_enabled(X86_FEATURE_PKS))
++		return;
++
++	write_pkrs(state->pkrs);
++	current->thread.saved_pkrs = state->thread_pkrs;
++}
++#endif /* CONFIG_ARCH_HAS_SUPERVISOR_PKEYS */
++
+ #ifdef CONFIG_XEN_PV
+ #ifndef CONFIG_PREEMPTION
+ /*
+@@ -304,6 +345,8 @@ __visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
  
- 	instrumentation_begin();
-@@ -311,7 +309,7 @@ __visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
+ 	inhcall = get_and_clear_inhcall();
+ 	if (inhcall && !WARN_ON_ONCE(state.exit_rcu)) {
++		/* Normally called by irqentry_exit, we must restore pkrs here */
++		irq_restore_pkrs(&state);
+ 		instrumentation_begin();
+ 		irqentry_exit_cond_resched();
  		instrumentation_end();
- 		restore_inhcall(inhcall);
- 	} else {
--		irqentry_exit(regs, state);
-+		irqentry_exit(regs, &state);
- 	}
- }
- #endif /* CONFIG_XEN_PV */
-diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
-index a0638640f1ed..622889ba21d0 100644
---- a/arch/x86/include/asm/idtentry.h
-+++ b/arch/x86/include/asm/idtentry.h
-@@ -11,8 +11,8 @@
+diff --git a/arch/x86/include/asm/pkeys_common.h b/arch/x86/include/asm/pkeys_common.h
+index 40464c170522..8961e2ddd6ff 100644
+--- a/arch/x86/include/asm/pkeys_common.h
++++ b/arch/x86/include/asm/pkeys_common.h
+@@ -27,9 +27,10 @@
+ #define        PKS_NUM_KEYS            16
  
- #include <asm/irq_stack.h>
- 
--bool idtentry_enter_nmi(struct pt_regs *regs);
--void idtentry_exit_nmi(struct pt_regs *regs, bool irq_state);
-+void idtentry_enter_nmi(struct pt_regs *regs, irqentry_state_t *irq_state);
-+void idtentry_exit_nmi(struct pt_regs *regs, irqentry_state_t *irq_state);
- 
- /**
-  * DECLARE_IDTENTRY - Declare functions for simple IDT entry points
-@@ -52,12 +52,13 @@ static __always_inline void __##func(struct pt_regs *regs);		\
- 									\
- __visible noinstr void func(struct pt_regs *regs)			\
- {									\
--	irqentry_state_t state = irqentry_enter(regs);			\
-+	irqentry_state_t state;						\
- 									\
-+	irqentry_enter(regs, &state);					\
- 	instrumentation_begin();					\
- 	__##func (regs);						\
- 	instrumentation_end();						\
--	irqentry_exit(regs, state);					\
-+	irqentry_exit(regs, &state);					\
- }									\
- 									\
- static __always_inline void __##func(struct pt_regs *regs)
-@@ -99,12 +100,13 @@ static __always_inline void __##func(struct pt_regs *regs,		\
- __visible noinstr void func(struct pt_regs *regs,			\
- 			    unsigned long error_code)			\
- {									\
--	irqentry_state_t state = irqentry_enter(regs);			\
-+	irqentry_state_t state;						\
- 									\
-+	irqentry_enter(regs, &state);					\
- 	instrumentation_begin();					\
- 	__##func (regs, error_code);					\
- 	instrumentation_end();						\
--	irqentry_exit(regs, state);					\
-+	irqentry_exit(regs, &state);					\
- }									\
- 									\
- static __always_inline void __##func(struct pt_regs *regs,		\
-@@ -195,15 +197,16 @@ static __always_inline void __##func(struct pt_regs *regs, u8 vector);	\
- __visible noinstr void func(struct pt_regs *regs,			\
- 			    unsigned long error_code)			\
- {									\
--	irqentry_state_t state = irqentry_enter(regs);			\
-+	irqentry_state_t state;						\
- 									\
-+	irqentry_enter(regs, &state);					\
- 	instrumentation_begin();					\
- 	irq_enter_rcu();						\
- 	kvm_set_cpu_l1tf_flush_l1d();					\
- 	__##func (regs, (u8)error_code);				\
- 	irq_exit_rcu();							\
- 	instrumentation_end();						\
--	irqentry_exit(regs, state);					\
-+	irqentry_exit(regs, &state);					\
- }									\
- 									\
- static __always_inline void __##func(struct pt_regs *regs, u8 vector)
-@@ -237,15 +240,16 @@ static void __##func(struct pt_regs *regs);				\
- 									\
- __visible noinstr void func(struct pt_regs *regs)			\
- {									\
--	irqentry_state_t state = irqentry_enter(regs);			\
-+	irqentry_state_t state;						\
- 									\
-+	irqentry_enter(regs, &state);					\
- 	instrumentation_begin();					\
- 	irq_enter_rcu();						\
- 	kvm_set_cpu_l1tf_flush_l1d();					\
- 	run_sysvec_on_irqstack_cond(__##func, regs);			\
- 	irq_exit_rcu();							\
- 	instrumentation_end();						\
--	irqentry_exit(regs, state);					\
-+	irqentry_exit(regs, &state);					\
- }									\
- 									\
- static noinline void __##func(struct pt_regs *regs)
-@@ -266,15 +270,16 @@ static __always_inline void __##func(struct pt_regs *regs);		\
- 									\
- __visible noinstr void func(struct pt_regs *regs)			\
- {									\
--	irqentry_state_t state = irqentry_enter(regs);			\
-+	irqentry_state_t state;						\
- 									\
-+	irqentry_enter(regs, &state);					\
- 	instrumentation_begin();					\
- 	__irq_enter_raw();						\
- 	kvm_set_cpu_l1tf_flush_l1d();					\
- 	__##func (regs);						\
- 	__irq_exit_raw();						\
- 	instrumentation_end();						\
--	irqentry_exit(regs, state);					\
-+	irqentry_exit(regs, &state);					\
- }									\
- 									\
- static __always_inline void __##func(struct pt_regs *regs)
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 9663ba31347c..c6be0a54236f 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -241,7 +241,7 @@ noinstr bool __kvm_handle_async_pf(struct pt_regs *regs, u32 token)
- 	if (!flags)
- 		return false;
- 
--	state = irqentry_enter(regs);
-+	irqentry_enter(regs, &state);
- 	instrumentation_begin();
- 
- 	/*
-@@ -262,7 +262,7 @@ noinstr bool __kvm_handle_async_pf(struct pt_regs *regs, u32 token)
- 	}
- 
- 	instrumentation_end();
--	irqentry_exit(regs, state);
-+	irqentry_exit(regs, &state);
- 	return true;
- }
- 
-diff --git a/arch/x86/kernel/nmi.c b/arch/x86/kernel/nmi.c
-index 4fc9954a9560..68c07cad0150 100644
---- a/arch/x86/kernel/nmi.c
-+++ b/arch/x86/kernel/nmi.c
-@@ -33,6 +33,7 @@
- #include <asm/reboot.h>
- #include <asm/cache.h>
- #include <asm/nospec-branch.h>
-+#include <asm/idtentry.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/nmi.h>
-@@ -475,7 +476,7 @@ static DEFINE_PER_CPU(unsigned long, nmi_dr7);
- 
- DEFINE_IDTENTRY_RAW(exc_nmi)
- {
--	bool irq_state;
-+	irqentry_state_t irq_state = { };
- 
- 	if (IS_ENABLED(CONFIG_SMP) && arch_cpu_is_offline(smp_processor_id()))
- 		return;
-@@ -490,14 +491,14 @@ DEFINE_IDTENTRY_RAW(exc_nmi)
- 
- 	this_cpu_write(nmi_dr7, local_db_save());
- 
--	irq_state = idtentry_enter_nmi(regs);
-+	idtentry_enter_nmi(regs, &irq_state);
- 
- 	inc_irq_stat(__nmi_count);
- 
- 	if (!ignore_nmis)
- 		default_do_nmi(regs);
- 
--	idtentry_exit_nmi(regs, irq_state);
-+	idtentry_exit_nmi(regs, &irq_state);
- 
- 	local_db_restore(this_cpu_read(nmi_dr7));
- 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 81a2fb711091..daf7bc02fc99 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -254,11 +254,11 @@ DEFINE_IDTENTRY_RAW(exc_invalid_op)
- 	if (!user_mode(regs) && handle_bug(regs))
- 		return;
- 
--	state = irqentry_enter(regs);
-+	irqentry_enter(regs, &state);
- 	instrumentation_begin();
- 	handle_invalid_op(regs);
- 	instrumentation_end();
--	irqentry_exit(regs, state);
-+	irqentry_exit(regs, &state);
- }
- 
- DEFINE_IDTENTRY(exc_coproc_segment_overrun)
-@@ -342,6 +342,7 @@ __visible void __noreturn handle_stack_overflow(const char *message,
-  */
- DEFINE_IDTENTRY_DF(exc_double_fault)
- {
-+	irqentry_state_t irq_state;
- 	static const char str[] = "double fault";
- 	struct task_struct *tsk = current;
- 
-@@ -404,7 +405,7 @@ DEFINE_IDTENTRY_DF(exc_double_fault)
- 	}
+ #ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
+-void write_pkrs(u32 new_pkrs);
++DECLARE_PER_CPU(u32, pkrs_cache);
++noinstr void write_pkrs(u32 new_pkrs);
+ #else
+-static inline void write_pkrs(u32 new_pkrs) { }
++static __always_inline void write_pkrs(u32 new_pkrs) { }
  #endif
  
--	idtentry_enter_nmi(regs);
-+	idtentry_enter_nmi(regs, &irq_state);
- 	instrumentation_begin();
- 	notify_die(DIE_TRAP, str, regs, error_code, X86_TRAP_DF, SIGSEGV);
+ #endif /*_ASM_X86_PKEYS_INTERNAL_H */
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index f43a78bde670..abcd41f19669 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1904,6 +1904,8 @@ void (*machine_check_vector)(struct pt_regs *) = unexpected_machine_check;
  
-@@ -650,12 +651,15 @@ DEFINE_IDTENTRY_RAW(exc_int3)
- 		instrumentation_end();
- 		irqentry_exit_to_user_mode(regs);
- 	} else {
--		bool irq_state = idtentry_enter_nmi(regs);
-+		irqentry_state_t irq_state;
+ static __always_inline void exc_machine_check_kernel(struct pt_regs *regs)
+ {
++	irqentry_state_t irq_state = { };
 +
-+		idtentry_enter_nmi(regs, &irq_state);
-+
- 		instrumentation_begin();
- 		if (!do_int3(regs))
- 			die("int3", regs, 0);
- 		instrumentation_end();
--		idtentry_exit_nmi(regs, irq_state);
-+		idtentry_exit_nmi(regs, &irq_state);
- 	}
- }
- 
-@@ -861,7 +865,9 @@ static __always_inline void exc_debug_kernel(struct pt_regs *regs,
- 	 * includes the entry stack is excluded for everything.
- 	 */
- 	unsigned long dr7 = local_db_save();
--	bool irq_state = idtentry_enter_nmi(regs);
-+	irqentry_state_t irq_state;
-+
-+	idtentry_enter_nmi(regs, &irq_state);
- 	instrumentation_begin();
+ 	WARN_ON_ONCE(user_mode(regs));
  
  	/*
-@@ -880,8 +886,7 @@ static __always_inline void exc_debug_kernel(struct pt_regs *regs,
- 	handle_debug(regs, dr6, false);
+@@ -1915,6 +1917,7 @@ static __always_inline void exc_machine_check_kernel(struct pt_regs *regs)
+ 		return;
  
+ 	nmi_enter();
++	irq_save_pkrs(&irq_state);
+ 	/*
+ 	 * The call targets are marked noinstr, but objtool can't figure
+ 	 * that out because it's an indirect call. Annotate it.
+@@ -1925,6 +1928,7 @@ static __always_inline void exc_machine_check_kernel(struct pt_regs *regs)
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		trace_hardirqs_on_prepare();
  	instrumentation_end();
--	idtentry_exit_nmi(regs, irq_state);
--
-+	idtentry_exit_nmi(regs, &irq_state);
- 	local_db_restore(dr7);
++	irq_restore_pkrs(&irq_state);
+ 	nmi_exit();
  }
  
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 6e3e8a124903..e55bc4bff389 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1476,11 +1476,11 @@ DEFINE_IDTENTRY_RAW_ERRORCODE(exc_page_fault)
- 	 * code reenabled RCU to avoid subsequent wreckage which helps
- 	 * debugability.
- 	 */
--	state = irqentry_enter(regs);
-+	irqentry_enter(regs, &state);
+diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
+index 1d9f451b4b78..2431c68ef752 100644
+--- a/arch/x86/mm/pkeys.c
++++ b/arch/x86/mm/pkeys.c
+@@ -247,7 +247,7 @@ DEFINE_PER_CPU(u32, pkrs_cache);
+  * 	until all prior executions of WRPKRU have completed execution
+  * 	and updated the PKRU register.
+  */
+-void write_pkrs(u32 new_pkrs)
++noinstr void write_pkrs(u32 new_pkrs)
+ {
+ 	u32 *pkrs;
  
- 	instrumentation_begin();
- 	handle_page_fault(regs, error_code, address);
- 	instrumentation_end();
- 
--	irqentry_exit(regs, state);
-+	irqentry_exit(regs, &state);
- }
 diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index 159c7476b11b..de4f24c554ee 100644
+index de4f24c554ee..c3b361ffa059 100644
 --- a/include/linux/entry-common.h
 +++ b/include/linux/entry-common.h
-@@ -349,6 +349,7 @@ typedef struct irqentry_state {
+@@ -342,10 +342,22 @@ void irqentry_exit_to_user_mode(struct pt_regs *regs);
+ 
+ #ifndef irqentry_state
+ typedef struct irqentry_state {
++#ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
++	u32 pkrs;
++	u32 thread_pkrs;
++#endif
+ 	bool	exit_rcu;
+ } irqentry_state_t;
+ #endif
+ 
++#ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
++noinstr void irq_save_pkrs(irqentry_state_t *state);
++noinstr void irq_restore_pkrs(irqentry_state_t *state);
++#else
++static __always_inline void irq_save_pkrs(irqentry_state_t *state) { }
++static __always_inline void irq_restore_pkrs(irqentry_state_t *state) { }
++#endif
++
  /**
   * irqentry_enter - Handle state tracking on ordinary interrupt entries
   * @regs:	Pointer to pt_regs of interrupted context
-+ * @state:	Pointer to an object to store the irq state
-  *
-  * Invokes:
-  *  - lockdep irqflag state tracking as low level ASM entry disabled
-@@ -377,7 +378,7 @@ typedef struct irqentry_state {
-  *
-  * Returns: An opaque object that must be passed to idtentry_exit()
-  */
--irqentry_state_t noinstr irqentry_enter(struct pt_regs *regs);
-+void noinstr irqentry_enter(struct pt_regs *regs, irqentry_state_t *state);
- 
- /**
-  * irqentry_exit_cond_resched - Conditionally reschedule on return from interrupt
-@@ -389,7 +390,7 @@ void irqentry_exit_cond_resched(void);
- /**
-  * irqentry_exit - Handle return from exception that used irqentry_enter()
-  * @regs:	Pointer to pt_regs (exception entry regs)
-- * @state:	Return value from matching call to irqentry_enter()
-+ * @state:	Reference to the value saved in irqentry_enter()
-  *
-  * Depending on the return target (kernel/user) this runs the necessary
-  * preemption and work checks if possible and reguired and returns to
-@@ -400,6 +401,6 @@ void irqentry_exit_cond_resched(void);
-  *
-  * Counterpart to irqentry_enter().
-  */
--void noinstr irqentry_exit(struct pt_regs *regs, irqentry_state_t state);
-+void noinstr irqentry_exit(struct pt_regs *regs, irqentry_state_t *state);
- 
- #endif
 diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-index 6fdb6105e6d6..21601993ad1b 100644
+index 21601993ad1b..b6fb3f580673 100644
 --- a/kernel/entry/common.c
 +++ b/kernel/entry/common.c
-@@ -282,15 +282,13 @@ noinstr void irqentry_exit_to_user_mode(struct pt_regs *regs)
- 	exit_to_user_mode();
- }
- 
--noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
-+noinstr void irqentry_enter(struct pt_regs *regs, irqentry_state_t *state)
- {
--	irqentry_state_t ret = {
--		.exit_rcu = false,
--	};
-+	state->exit_rcu = false;
- 
- 	if (user_mode(regs)) {
- 		irqentry_enter_from_user_mode(regs);
--		return ret;
-+		return;
- 	}
- 
- 	/*
-@@ -328,8 +326,8 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
- 		trace_hardirqs_off_finish();
+@@ -327,7 +327,7 @@ noinstr void irqentry_enter(struct pt_regs *regs, irqentry_state_t *state)
  		instrumentation_end();
  
--		ret.exit_rcu = true;
--		return ret;
-+		state->exit_rcu = true;
-+		return;
+ 		state->exit_rcu = true;
+-		return;
++		goto done;
  	}
  
  	/*
-@@ -343,8 +341,6 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
+@@ -341,6 +341,9 @@ noinstr void irqentry_enter(struct pt_regs *regs, irqentry_state_t *state)
  	/* Use the combo lockdep/tracing function */
  	trace_hardirqs_off();
  	instrumentation_end();
--
--	return ret;
++
++done:
++	irq_save_pkrs(state);
  }
  
  void irqentry_exit_cond_resched(void)
-@@ -359,7 +355,7 @@ void irqentry_exit_cond_resched(void)
- 	}
- }
- 
--noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t state)
-+noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t *state)
- {
- 	lockdep_assert_irqs_disabled();
- 
-@@ -372,7 +368,7 @@ noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t state)
+@@ -362,7 +365,12 @@ noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t *state)
+ 	/* Check whether this returns to user mode */
+ 	if (user_mode(regs)) {
+ 		irqentry_exit_to_user_mode(regs);
+-	} else if (!regs_irqs_disabled(regs)) {
++		return;
++	}
++
++	irq_restore_pkrs(state);
++
++	if (!regs_irqs_disabled(regs)) {
+ 		/*
+ 		 * If RCU was not watching on entry this needs to be done
  		 * carefully and needs the same ordering of lockdep/tracing
- 		 * and RCU as the return to user mode path.
- 		 */
--		if (state.exit_rcu) {
-+		if (state->exit_rcu) {
- 			instrumentation_begin();
- 			/* Tell the tracer that IRET will enable interrupts */
- 			trace_hardirqs_on_prepare();
-@@ -394,7 +390,7 @@ noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t state)
- 		 * IRQ flags state is correct already. Just tell RCU if it
- 		 * was not watching on entry.
- 		 */
--		if (state.exit_rcu)
-+		if (state->exit_rcu)
- 			rcu_irq_exit();
- 	}
- }
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
