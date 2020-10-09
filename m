@@ -2,193 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D142884CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 10:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA072886B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 12:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732627AbgJIICo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 04:02:44 -0400
-Received: from mail-io1-f80.google.com ([209.85.166.80]:36850 "EHLO
-        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732925AbgJIICU (ORCPT
+        id S2387570AbgJIKSi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 06:18:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbgJIKSi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 04:02:20 -0400
-Received: by mail-io1-f80.google.com with SMTP id q126so5663091iof.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Oct 2020 01:02:19 -0700 (PDT)
+        Fri, 9 Oct 2020 06:18:38 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E80C0613D2;
+        Fri,  9 Oct 2020 03:18:36 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id u19so9565191ion.3;
+        Fri, 09 Oct 2020 03:18:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=Y4lptqLbscY9tMeYKpziy+lZfi07IAnN2JlQGiAiY2Y=;
+        b=YbZrcyp8iB4BWyJcfn64Dumb50RbytQy9JYECrmb77dbmoAdWIBJOIcg54WR50izmi
+         55F0PriXbq/cdZVk+69gqbpHGTQIvpAtu+rvqdTIzWEbOv/BwHafx8wRsqlc4Wt9GlqC
+         ShAW4jv71J2cGfTG/K0dRKBo3t1/J/fmdJCY9aL5SyJbkFSViKLdZ5e+LbqFLSHA2NQK
+         fQmprcHgV7ZOWSlqb3u+uqjgWU/8RAc1UFt4ORjkrYfSghhpRsDrj/EgkxyxPlAY3dyO
+         VlVkjyeLPzQvYTp0gkApXz1lzbGmwfvrC0F11pjgRjhBxmOWF/S5L2xYtLp44f43EdPT
+         kJiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=wjVhKiqgqTabR+ms1hyzS3BfeUzc+mXHyOkqU5qccHg=;
-        b=cE1JVvMxPW3Rp03/KoUsharwRr6Zgef//M4djtjW24s4QVfXDYD2wcM7VzRuIpIDm5
-         eIv6zGjQ+2mwu9Ag9wjFNwMnqhHx9gmGoHy1QblJBajGIPlnu3VCzjDEiN26JkGVEGo3
-         j7RfSYc61lDfKqActIYaFiIHMUF9E9dn8fCpesfK/b2eDRdGcplyqnGYaFOIbbM4XTxF
-         dr1PVCkiOwm/u7X4NYjLn47jrLvVB63x0gGwS09vqF6SLOysacOVuvPwHvxYrRmd8tyJ
-         FIMCwmYpXddqC9joqO+YwhTwsVq+vhNTVXaJt6KwnCbCNQG11HoQ6X1bnv2uLv7MTlwn
-         2ugQ==
-X-Gm-Message-State: AOAM5329p7LRuaIfM05Tvh/JRFQBc2TdPNRfqmqYN+UIaqkSWd5YN/gg
-        YyOOSS3iulw3rIU3B0SNaLiIti7KVPhqJO4IUJD3C7PjqV0S
-X-Google-Smtp-Source: ABdhPJxvPML8Fq9zq1J/OM2ISnEuo4McWxii+SNAUhGQ4MOg5taScDzwaz+lZBKph82jR2BOp9UJo83i8mIGfDlVXFkK636edH8x
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=Y4lptqLbscY9tMeYKpziy+lZfi07IAnN2JlQGiAiY2Y=;
+        b=JHyZtJSqST/ed8EHax+V6JQYvCqsYqoCmBo5b+4nyBKLgqnaCgkebxfjMXvayaOxaA
+         5HekWPHn8Hdd1Oggb2HOr4yRIwY9Y3gDjmFwmNGVAVF6vBWsDhLhELa23FHkiuJJm06k
+         vkf1eBfI7j/Wo9YiagoHZaEROpyX9DKH6KM5MtPa2ueHMHBIJ58yrJDX1/x7R2tLPbQ8
+         DIQrtDEig6hJWFzNFMTBUjgJmzJBzQCAOkvPzUb0B8+Eu7XvPT4lZtX/T0psZrtKJh/M
+         38+fMdqqWeh8LucEewFEsXK32PWuI7ste17EQS8RZti5ObIkj8G6gdCOFEFF8VLFCPRR
+         Q/SA==
+X-Gm-Message-State: AOAM532vF+5wnpl+RpCtN2ISes+/DrnW1GF2NglOjsNs8qIy4O+xjau3
+        28zwumF64Zf+ROimyvKOIcmsJfE6azm0jD+2wUYt5G1NnHiCEQ==
+X-Google-Smtp-Source: ABdhPJyn1jxZ2DRcKx96ZWhTYK2Ft3WJX50NELibl8KfUB9/8XIwa2Fze6N+3AWegm4Uwv+BJqSRtNvAF5gp1b23QJ8=
+X-Received: by 2002:a02:7717:: with SMTP id g23mr10123023jac.97.1602238715692;
+ Fri, 09 Oct 2020 03:18:35 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a92:c74c:: with SMTP id y12mr9899144ilp.19.1602230538625;
- Fri, 09 Oct 2020 01:02:18 -0700 (PDT)
-Date:   Fri, 09 Oct 2020 01:02:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001a684d05b1385e71@google.com>
-Subject: KASAN: use-after-free Read in __io_uring_files_cancel
-From:   syzbot <syzbot+77efce558b2b9e6b6405@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
+ <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com> <22e5c5f9-c06b-5c49-d165-8f194aad107b@linux.ibm.com>
+In-Reply-To: <22e5c5f9-c06b-5c49-d165-8f194aad107b@linux.ibm.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 9 Oct 2020 12:18:23 +0200
+Message-ID: <CA+icZUXLDGfHVGJXp2dA2JAxP8LUV4EVDNJmz20YjHa5A9oTtQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock
+ mount opt
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jack@suse.cz, anju@linux.vnet.ibm.com,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Oct 9, 2020 at 9:19 AM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+>
+>
+>
+> On 10/9/20 12:16 PM, Sedat Dilek wrote:
+> > On Thu, Oct 8, 2020 at 5:56 PM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+> >>
+> >> left shifting m_lblk by blkbits was causing value overflow and hence
+> >> it was not able to convert unwritten to written extent.
+> >> So, make sure we typecast it to loff_t before do left shift operation.
+> >> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
+> >> ret variable to avoid accidentally returning an uninitialized ret.
+> >>
+> >> This patch fixes the issue reported in ext4 for bs < ps with
+> >> dioread_nolock mount option.
+> >>
+> >> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
+> >
+> > Fixes: tag should be 12 digits (see [1]).
+> > ( Seen while walking through ext-dev Git commits. )
+>
+>
+> Thanks Sedat, I guess it should be minimum 12 chars [1]
+>
+> [1]:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n177
+>
 
-syzbot found the following issue on:
+OK.
 
-HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1592ee1b900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=77efce558b2b9e6b6405
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+In my ~/.gitconfig:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+[core]
+       abbrev = 12
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+77efce558b2b9e6b6405@syzkaller.appspotmail.com
+# Check for 'Fixes:' tag used in the Linux-kernel development process
+(Thanks Kalle Valo).
+# Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst
+# Usage: $ git log --format=fixes | head -5
+[pretty]
+   fixes = Fixes: %h (\"%s\")
 
-==================================================================
-BUG: KASAN: use-after-free in xas_next_entry include/linux/xarray.h:1630 [inline]
-BUG: KASAN: use-after-free in __io_uring_files_cancel+0x417/0x440 fs/io_uring.c:8681
-Read of size 1 at addr ffff888033631880 by task syz-executor.1/8477
+Hope this is useful for others.
 
-CPU: 1 PID: 8477 Comm: syz-executor.1 Not tainted 5.9.0-rc8-next-20201008-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fb lib/dump_stack.c:118
- print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:385
- __kasan_report mm/kasan/report.c:545 [inline]
- kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
- xas_next_entry include/linux/xarray.h:1630 [inline]
- __io_uring_files_cancel+0x417/0x440 fs/io_uring.c:8681
- io_uring_files_cancel include/linux/io_uring.h:35 [inline]
- exit_files+0xe4/0x170 fs/file.c:456
- do_exit+0xae9/0x2930 kernel/exit.c:801
- do_group_exit+0x125/0x310 kernel/exit.c:903
- get_signal+0x428/0x1f00 kernel/signal.c:2757
- arch_do_signal+0x82/0x2470 arch/x86/kernel/signal.c:811
- exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
- exit_to_user_mode_prepare+0x194/0x1f0 kernel/entry/common.c:192
- syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45de29
-Code: Unable to access opcode bytes at RIP 0x45ddff.
-RSP: 002b:00007f887aa8fcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000118bf28 RCX: 000000000045de29
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000118bf28
-RBP: 000000000118bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
-R13: 00007ffe3a42135f R14: 00007f887aa909c0 R15: 000000000118bf2c
-
-Allocated by task 8477:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
- slab_post_alloc_hook mm/slab.h:514 [inline]
- slab_alloc mm/slab.c:3314 [inline]
- kmem_cache_alloc+0x162/0x550 mm/slab.c:3484
- xas_alloc+0x330/0x440 lib/xarray.c:374
- xas_create+0x2db/0x1020 lib/xarray.c:676
- xas_store+0x8a/0x1bb0 lib/xarray.c:784
- io_uring_add_task_file fs/io_uring.c:8608 [inline]
- io_uring_add_task_file+0x212/0x430 fs/io_uring.c:8590
- io_uring_get_fd fs/io_uring.c:9116 [inline]
- io_uring_create fs/io_uring.c:9280 [inline]
- io_uring_setup+0x2727/0x3660 fs/io_uring.c:9314
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Freed by task 6907:
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
- kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
- __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
- __cache_free mm/slab.c:3420 [inline]
- kmem_cache_free.part.0+0x74/0x1d0 mm/slab.c:3695
- rcu_do_batch kernel/rcu/tree.c:2484 [inline]
- rcu_core+0x645/0x1240 kernel/rcu/tree.c:2718
- __do_softirq+0x203/0xab6 kernel/softirq.c:298
-
-Last call_rcu():
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
- __call_rcu kernel/rcu/tree.c:2960 [inline]
- call_rcu+0x15e/0x7d0 kernel/rcu/tree.c:3033
- xa_node_free lib/xarray.c:258 [inline]
- xas_delete_node lib/xarray.c:494 [inline]
- update_node lib/xarray.c:756 [inline]
- xas_store+0xbcc/0x1bb0 lib/xarray.c:841
- io_uring_del_task_file+0x105/0x1a0 fs/io_uring.c:8630
- __io_uring_files_cancel+0x3dd/0x440 fs/io_uring.c:8691
- io_uring_files_cancel include/linux/io_uring.h:35 [inline]
- exit_files+0xe4/0x170 fs/file.c:456
- do_exit+0xae9/0x2930 kernel/exit.c:801
- do_group_exit+0x125/0x310 kernel/exit.c:903
- get_signal+0x428/0x1f00 kernel/signal.c:2757
- arch_do_signal+0x82/0x2470 arch/x86/kernel/signal.c:811
- exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
- exit_to_user_mode_prepare+0x194/0x1f0 kernel/entry/common.c:192
- syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Second to last call_rcu():
- kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
- kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
- __call_rcu kernel/rcu/tree.c:2960 [inline]
- call_rcu+0x15e/0x7d0 kernel/rcu/tree.c:3033
- radix_tree_node_free lib/radix-tree.c:308 [inline]
- delete_node+0xef/0x8c0 lib/radix-tree.c:571
- __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1377
- radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1428
- free_pid+0x9b/0x260 kernel/pid.c:152
- __change_pid+0x1c7/0x2d0 kernel/pid.c:353
- __unhash_process kernel/exit.c:76 [inline]
- __exit_signal kernel/exit.c:147 [inline]
- release_task+0xd1c/0x14d0 kernel/exit.c:198
- exit_notify kernel/exit.c:681 [inline]
- do_exit+0x143f/0x2930 kernel/exit.c:826
- call_usermodehelper_exec_async+0x413/0x580 kernel/umh.c:123
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-
-The buggy address belongs to the object at ffff888033631880
- which belongs to the cache radix_tree_node of size 576
-The buggy address is located 0 bytes inside of
- 576-byte region [ffff888033631880, ffff888033631ac0)
-The buggy address belongs to the page:
-page:00000000c45adbd1 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888033631ffb pfn:0x33631
-flags: 0xfffe0000000200(slab)
-raw: 00fffe0000000200 ffffea0000cd8908 ffffea0000cd8488 ffff88800ec6f000
-raw: ffff888033631ffb ffff888033631040 0000000100000005 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff888033631780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888033631800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888033631880: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff888033631900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888033631980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+- Sedat -
