@@ -2,105 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA89288BEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 16:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 254D1288BEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 16:58:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388970AbgJIO55 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 10:57:57 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:44916 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388811AbgJIO55 (ORCPT
+        id S2389042AbgJIO6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 10:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388811AbgJIO56 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 10:57:57 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 363F2820AC;
-        Fri,  9 Oct 2020 17:57:54 +0300 (MSK)
+        Fri, 9 Oct 2020 10:57:58 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FC57C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Oct 2020 07:57:58 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id i2so7368216pgh.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Oct 2020 07:57:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1602255474;
-        bh=QxnLJ1s0AAVUtv6Yg0GXUFXfxq0lduuog+0DpMGrZ7A=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=j9qF+kM/8+kd2mdoxtJlBVxjBCS/ndOR1Q19eyUpXohy8uSf7oJzKgryJ+zyxXMlK
-         8sctQWqUsMB2/HgS09WlV17/JFdMeyJ1vjd/5AhYTEDgBMcnnUejTvCS3PKmPm9dmT
-         kwX+/B3fWHALqwxdyqpqV7voG10IBo7TvxFKA4/Q=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 9 Oct 2020 17:57:53 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Fri, 9 Oct 2020 17:57:53 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     Joe Perches <joe@perches.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pali@kernel.org" <pali@kernel.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "mark@harmstone.com" <mark@harmstone.com>,
-        "nborisov@suse.com" <nborisov@suse.com>,
-        linux-ntfs-dev <linux-ntfs-dev@lists.sourceforge.net>
-Subject: RE: [PATCH v7 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Thread-Topic: [PATCH v7 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Thread-Index: AQHWk1Sa2wLqUS628U6j9N8+RWiOE6l5ZhEAgBYJkOA=
-Date:   Fri, 9 Oct 2020 14:57:53 +0000
-Message-ID: <2fa19fb9767948ca920bead9e2e65f91@paragon-software.com>
-References: <20200925155537.1030046-1-almaz.alexandrovich@paragon-software.com>
- <670bc2f60983d9d08c697031ea5a59937f5ed489.camel@perches.com>
-In-Reply-To: <670bc2f60983d9d08c697031ea5a59937f5ed489.camel@perches.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=naLP2X5I9g+bYi2NX0HGEbL0Y2mLcduh6jJ59cFCp50=;
+        b=jJ287B22+BBCohsKfzN1eBMlh7TPMTxSHpjlZTV7jIwxxKi1czatfwzCNMHdrl9K8W
+         K4lbiOPZ23zEwDtxUfAICrZu4zAgwqGZOREmt61Cgk4VXVwZy1fv1Hy4wfujEbrou5LG
+         Nz9vNYgktAzzzagV0qE0ByB6LTEh0YmbUfgl/77vbClVm+oTFxbLjneOGHZMWP1ZmdnP
+         oa1vsg08TFe1c2c9gUSkzHkuFBH0iU2mkKBVGm+okVTz2pYExYZwGGQbeEnyZQs/V9Sl
+         SVDvf7DQY37wKAV4hKL02UJ5HLJXeZ8fMcMhBjQtkvDvKLTA3Dp3vOaSJ4SGMwpRH+oO
+         xCow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=naLP2X5I9g+bYi2NX0HGEbL0Y2mLcduh6jJ59cFCp50=;
+        b=DWq2vTpB0GZLmY/Pe0b3uthtt3Zgf6F1knW12YuVpuU5MAIFBMLZ/6g5gm+ravSzzI
+         qEJP5WskWbwmPtTU2RErQNWdz04QD5juqsr8SQQiJSENGGj6wE9QTco0DxC7ZMQaaegl
+         zkkMVIr1khL17ms+7KH3TNHuxnHjGPIBrY6FxKDR7/gmKsi2PYSD/SqA3JkK2u1Vcget
+         81Xx4BaO4FrwlSVnTiRUE3lo+g9MQ1wHaUmHupf714z2XW5G/AxCmghcGFjsC8wejkNs
+         FFlPacGuthODvnjiv+MpVY5B3CSSPCPLt4o5PGauUL4lxtwP8/bqW+9+G4gyAAZkiEa9
+         LO4A==
+X-Gm-Message-State: AOAM531tThvL6q3jkzJoPDkSuo+/EL5p4tmzxm8OMQR1XfYPa2M80Kvk
+        3w/bCeYtAmydi/RvPpiHGnFavQ6lCR+uvBw6
+X-Google-Smtp-Source: ABdhPJyp69hQ2foCcgYmyYM6EbJ2fD2UC/aoMd3Incifq58OYlYKldBTmOSi98f3SnOrwwW80trX5w==
+X-Received: by 2002:a17:90a:14a4:: with SMTP id k33mr5016963pja.236.1602255477936;
+        Fri, 09 Oct 2020 07:57:57 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id i2sm11893818pjk.12.2020.10.09.07.57.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Oct 2020 07:57:57 -0700 (PDT)
+Subject: Re: [PATCH 2/3] io_uring: Fix XArray usage in io_uring_add_task_file
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>
+References: <20201009124954.31830-1-willy@infradead.org>
+ <20201009124954.31830-2-willy@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <0746e0aa-cb81-0fde-5405-acb1e61b6854@kernel.dk>
+Date:   Fri, 9 Oct 2020 08:57:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20201009124954.31830-2-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
-Sent: Friday, September 25, 2020 8:16 PM
-> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>; linux-=
-fsdevel@vger.kernel.org; Anton Altaparmakov
-> <anton@tuxera.com>
-> Cc: viro@zeniv.linux.org.uk; linux-kernel@vger.kernel.org; pali@kernel.or=
-g; dsterba@suse.cz; aaptel@suse.com;
-> willy@infradead.org; rdunlap@infradead.org; mark@harmstone.com; nborisov@=
-suse.com; linux-ntfs-dev <linux-ntfs-
-> dev@lists.sourceforge.net>
-> Subject: Re: [PATCH v7 00/10] NTFS read-write driver GPL implementation b=
-y Paragon Software
->=20
-> (adding cc's to Anton Altaparmakov and linux-ntfs-dev)
->=20
-> On Fri, 2020-09-25 at 18:55 +0300, Konstantin Komarov wrote:
-> > This patch adds NTFS Read-Write driver to fs/ntfs3.
->=20
-> This code should eventually supplant the existing NTFS
-> implementation right?
->=20
-> Unless there is some specific reason you have not done so,
-> I believe you should cc the current NTFS maintainer and
-> NTFS mailing list on all these patches in the future.
->=20
-> MAINTAINERS-NTFS FILESYSTEM
-> MAINTAINERS-M:  Anton Altaparmakov <anton@tuxera.com>
-> MAINTAINERS-L:  linux-ntfs-dev@lists.sourceforge.net
->=20
-> Link to the v7 patches:
-> https://lore.kernel.org/lkml/20200925155537.1030046-1-almaz.alexandrovich=
-@paragon-software.com/
->=20
+On 10/9/20 6:49 AM, Matthew Wilcox (Oracle) wrote:
+> The xas_store() wasn't paired with an xas_nomem() loop, so if it couldn't
+> allocate memory using GFP_NOWAIT, it would leak the reference to the file
+> descriptor.  Also the node pointed to by the xas could be freed between
+> the call to xas_load() under the rcu_read_lock() and the acquisition of
+> the xa_lock.
+> 
+> It's easier to just use the normal xa_load/xa_store interface here.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/io_uring.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 2978cc78538a..bcef6210bf67 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8586,27 +8586,24 @@ static void io_uring_cancel_task_requests(struct io_ring_ctx *ctx,
+>   */
+>  static int io_uring_add_task_file(struct file *file)
+>  {
+> -	if (unlikely(!current->io_uring)) {
+> +	struct io_uring_task *cur_uring = current->io_uring;
+> +
+> +	if (unlikely(!cur_uring)) {
+>  		int ret;
+>  
+>  		ret = io_uring_alloc_task_context(current);
+>  		if (unlikely(ret))
+>  			return ret;
+>  	}
 
-Hi Joe. Thanks a lot! Added both Anton and linux-ntfs-dev to the v8 cc list=
-.
-Hi Anton. Did you have a chance to look at NTFS3 code?
+I think this is missing a:
 
-Thanks.
+	cur_uring = current->io_uring;
+
+after the successful io_uring_alloc_task(). I'll also rename it to tctx
+like what is used in other spots.
+
+Apart from that, series looks good to me, thanks Matthew!
+
+-- 
+Jens Axboe
+
