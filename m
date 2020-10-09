@@ -2,227 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A90BB288D40
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 17:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76012288D5F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 17:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389475AbgJIPri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 11:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389144AbgJIPri (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 11:47:38 -0400
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D47EF20658;
-        Fri,  9 Oct 2020 15:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602258457;
-        bh=YrZvXgpNpQFMPy1K3qREb5b4WS6IxWnTEICmVQrbelw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0qMHyT/vvQ2hUlPVJSCVY1jTmFG3N7/WfU2egHZUjxUIVY628t2MDujj6UhW6vxwO
-         /+nLdUPZGou1WuFdIW9mzURWrnD+2mK7L3FKi/sQMYqcSqqZrewgIEv/BV5giDtKRM
-         sRl34eVr15c+4mljjx17dF0HZCYRniCiiVpkpgCk=
-Received: by pali.im (Postfix)
-        id 74CD2515; Fri,  9 Oct 2020 17:47:34 +0200 (CEST)
-Date:   Fri, 9 Oct 2020 17:47:34 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "mark@harmstone.com" <mark@harmstone.com>,
-        "nborisov@suse.com" <nborisov@suse.com>
-Subject: Re: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
-Message-ID: <20201009154734.andv4es3azkkskm5@pali>
-References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
- <20200911141018.2457639-9-almaz.alexandrovich@paragon-software.com>
- <20200921132631.q6jfmbhqf6j6ay5t@pali>
- <7facb550be6449c2b35f467ab1716224@paragon-software.com>
- <20200926082324.npbljzb3ydkfbswy@pali>
- <940ff3bbce3e4c8b9cb5666c3f5c113f@paragon-software.com>
+        id S2389447AbgJIPyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 11:54:00 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41660 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388745AbgJIPx7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 9 Oct 2020 11:53:59 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 099FneKe041555;
+        Fri, 9 Oct 2020 15:53:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=XuWnsL5lgcta7pemx636Wy4SNS7IjVArBRC42Pl8f6M=;
+ b=IBztltLheJCYsvy1I4q74Fp2nbdAG0UR3Ze0Kv9+k9Dva/kx3aQB9xSUFwScehDLc1JL
+ CEfuZUWdhaRFgqALhIofg6NgPypkSlUrZoS2YBwGwhQ5QRR4V6e3ANwi6CYlT5rjI6wx
+ FLkEmlXK9mwZroCLnaxiDT8qj0n4w12E2+P913JYC4zTDYbjrJ7aJVmWHMqw+CLVRcve
+ kpr7BUv3u4G+vyJ7SI2Z4Vy3Hzqbnul228hitJFDbI8Ku40Cr5qTnqrMco9ElcE1Y0RI
+ d/xFKlOr6Y5owJV8DONr0dRPC7gaZxZgF0Aa4okI2ieDOxmONCkjFnikN4FFewwCFbB4 EQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 3429jmmant-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 09 Oct 2020 15:53:43 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 099FnQQa069144;
+        Fri, 9 Oct 2020 15:53:42 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 342gurm4mu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Oct 2020 15:53:42 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 099FrdIX003764;
+        Fri, 9 Oct 2020 15:53:40 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 09 Oct 2020 08:53:39 -0700
+Date:   Fri, 9 Oct 2020 08:53:38 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     david@fromorbit.com, hch@infradead.org, willy@infradead.org,
+        mhocko@kernel.org, akpm@linux-foundation.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v8 1/2] mm: Add become_kswapd and restore_kswapd
+Message-ID: <20201009155338.GV6540@magnolia>
+References: <20201009125127.37435-1-laoar.shao@gmail.com>
+ <20201009125127.37435-2-laoar.shao@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <940ff3bbce3e4c8b9cb5666c3f5c113f@paragon-software.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20201009125127.37435-2-laoar.shao@gmail.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9769 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ bulkscore=0 malwarescore=0 mlxscore=0 spamscore=0 adultscore=0
+ suspectscore=5 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010090118
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9769 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 suspectscore=5
+ clxscore=1011 phishscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010090118
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday 09 October 2020 15:31:10 Konstantin Komarov wrote:
-> From: Pali Rohár <pali@kernel.org>
-> Sent: Saturday, September 26, 2020 11:23 AM
-> > To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> > Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@vger.kernel.org; dsterba@suse.cz; aaptel@suse.com;
-> > willy@infradead.org; rdunlap@infradead.org; joe@perches.com; mark@harmstone.com; nborisov@suse.com
-> > Subject: Re: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
-> > 
-> > On Friday 25 September 2020 16:30:19 Konstantin Komarov wrote:
-> > > From: Pali Rohár <pali@kernel.org>
-> > > Sent: Monday, September 21, 2020 4:27 PM
-> > > > To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> > > > Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@vger.kernel.org; dsterba@suse.cz; aaptel@suse.com;
-> > > > willy@infradead.org; rdunlap@infradead.org; joe@perches.com; mark@harmstone.com; nborisov@suse.com
-> > > > Subject: Re: [PATCH v5 08/10] fs/ntfs3: Add Kconfig, Makefile and doc
-> > > >
-> > > > On Friday 11 September 2020 17:10:16 Konstantin Komarov wrote:
-> > > > > +Mount Options
-> > > > > +=============
-> > > > > +
-> > > > > +The list below describes mount options supported by NTFS3 driver in addition to
-> > > > > +generic ones.
-> > > > > +
-> > > > > +===============================================================================
-> > > > > +
-> > > > > +nls=name		This option informs the driver how to interpret path
-> > > > > +			strings and translate them to Unicode and back. If
-> > > > > +			this option is not set, the default codepage will be
-> > > > > +			used (CONFIG_NLS_DEFAULT).
-> > > > > +			Examples:
-> > > > > +				'nls=utf8'
-> > > > > +
-> > > > > +nls_alt=name		This option extends "nls". It will be used to translate
-> > > > > +			path string to Unicode if primary nls failed.
-> > > > > +			Examples:
-> > > > > +				'nls_alt=cp1251'
-> > > >
-> > > > Hello! I'm looking at other filesystem drivers and no other with UNICODE
-> > > > semantic (vfat, udf, isofs) has something like nls_alt option.
-> > > >
-> > > > So do we really need it? And if yes, it should be added to all other
-> > > > UNICODE filesystem drivers for consistency.
-> > > >
-> > > > But I'm very sceptical if such thing is really needed. nls= option just
-> > > > said how to convert UNICODE code points for userpace. This option is
-> > > > passed by userspace (when mounting disk), so userspace already know what
-> > > > it wanted. And it should really use this encoding for filenames (e.g.
-> > > > utf8 or cp1251) which already told to kernel.
-> > >
-> > > Hi Pali! Thanks for the feedback. We do not consider the nls_alt option as the must have
-> > > one. But it is very nice "QOL-type" mount option, which may help some amount of
-> > > dual-booters/Windows users to avoid tricky fails with files originated on non-English
-> > > Windows systems. One of the cases where this one may be useful is the case of zipping
-> > > files with non-English names (e.g. Polish etc) under Windows and then unzipping the archive
-> > > under Linux. In this case unzip will likely to fail on those files, as archive stores filenames not
-> > > in utf.
-> > 
-> > Hello!
-> > 
-> > Thank you for providing example. Now I can imagine the problem which
-> > this option is trying to "workaround".
-> > 
-> > Personally, I think that this is the issue of the program which is
-> > unzipping content of the archive. If files are in archive are stored in
-> > different encoding, then user needs to provide information in which it
-> > is stored. Otherwise it would be broken.
-> > 
+On Fri, Oct 09, 2020 at 08:51:26PM +0800, Yafang Shao wrote:
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> Hi Pali! Partially it is the issue of the program. But such issue may affect
-> a lot of programs, esp. given that this case is somehwat niche for the Linux,
-> because it origins in Windows. We may assume it is unlikely a lot of programs
-> will try/are trying to support this case. The mount option, on the other hand,
-> gives this ability without relying on the application itself.
-
-Hello! I understand this issue. But what you have described is basically
-filesystem independent, this may happen also on ext4 with UNICODE
-support and also on fat32 with VFAT support.
-
-Therefore I do not think it is good idea to have e.g. nls_alt=cp1251
-option directly in just one filesystem driver.
-
-This would just make ntfs driver inconsistent with other Linux UNICODE
-filesystem drivers and it would cause more problems that application
-unzip is working with ntfs driver, but does not work with vfat or ext4
-driver.
-
-I would really suggest to not include this nls_alt option into
-filesystem driver. And rather come up with some universal solution for
-all UNICODE filesystem drivers. There are multiple solutions, e.g.
-implement option in VFS layer and propagate it to UNICODE fs drivers, OR
-implement NLS codepage which would handle it...
-
-Inconsistency of one FS driver with all other would really cause
-problems if not now, then in future.
-
-This issue which you described is already there, also without ntfs
-driver. And still adding something for ntfs driver looks like a
-workaround or hack for that issue. Not a solution.
-
-> > Also this your approach with nls=utf-8 and nls_alt=cp1251 is broken. I
-> > can provide you string encoded in cp1251 which is also valid UTF-8
-> > sequence.
-> > 
-> > For example: sequence of bytes "d0 93".
-> > 
-> > In cp1251 it is Р“, but also it is valid UTF-8 sequence for Г (CYRILLIC
-> > CAPITAL LETTER GHE).
-> > 
-> > Because cp1251 is set as nls_alt, you would get UTF-8 interpretation.
-> > And for all other invalid UTF-8 sequences you would get cp1251.
-> > 
-> > For me it looks like you are trying to implement workaround based on
-> > some heuristic in kernel for userspace application which handles
-> > encoding incorrectly. And because all CP???? encodings are defined at
-> > full 8bit space and UTF-8 is subset of 8bit space, it would never work
-> > correctly.
-> > 
+> Since XFS needs to pretend to be kswapd in some of its worker threads,
+> create methods to save & restore kswapd state.  Don't bother restoring
+> kswapd state in kswapd -- the only time we reach this code is when we're
+> exiting and the task_struct is about to be destroyed anyway.
 > 
-> In this case, the whole string will be treated as UTF-8 string, no matter of
-> what's the value of "nls_alt" option. The option's related logic starts to be applied
-> only for those strings which contain "invalid" UTF-8 character. And it works not in
-> symbol-by-symbol way, but applies to the whole string. So if a string does not
-> contain invalid UTF-8, the "nls_alt" won't be applied, even if set. And if the string
-> contains invalid UTF-8 AND "nls_alt" is set, then the logic will be applied with assumption
-> that user, when set the "nls_alt" had in mind that he may be in such situation.
+> Cc: Dave Chinner <david@fromorbit.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> ---
+>  fs/xfs/libxfs/xfs_btree.c | 14 ++++++++------
+>  include/linux/sched/mm.h  | 23 +++++++++++++++++++++++
+>  mm/vmscan.c               | 16 +---------------
+>  3 files changed, 32 insertions(+), 21 deletions(-)
 > 
-> When it is coming to valid UTF-8 sequences, which are actually meant to represent another
-> encoding, there is ambiguity, which seems unable to be resolved both with and without
-> the "nls_alt". But at least those cases, when the sequence is incorrect UTF-8, but correct
-> e.g. CP-1251, may be solved with the "nls_alt", but not without it. 
+> diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+> index 2d25bab68764..a04a44238aab 100644
+> --- a/fs/xfs/libxfs/xfs_btree.c
+> +++ b/fs/xfs/libxfs/xfs_btree.c
+> @@ -2813,8 +2813,9 @@ xfs_btree_split_worker(
+>  {
+>  	struct xfs_btree_split_args	*args = container_of(work,
+>  						struct xfs_btree_split_args, work);
+> +	bool			is_kswapd = args->kswapd;
+>  	unsigned long		pflags;
+> -	unsigned long		new_pflags = PF_MEMALLOC_NOFS;
+> +	int			memalloc_nofs;
+>  
+>  	/*
+>  	 * we are in a transaction context here, but may also be doing work
+> @@ -2822,16 +2823,17 @@ xfs_btree_split_worker(
+>  	 * temporarily to ensure that we don't block waiting for memory reclaim
+>  	 * in any way.
+>  	 */
+> -	if (args->kswapd)
+> -		new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
+> -
+> -	current_set_flags_nested(&pflags, new_pflags);
+> +	if (is_kswapd)
+> +		pflags = become_kswapd();
+> +	memalloc_nofs = memalloc_nofs_save();
+>  
+>  	args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
+>  					 args->key, args->curp, args->stat);
+>  	complete(args->done);
+>  
+> -	current_restore_flags_nested(&pflags, new_pflags);
+> +	memalloc_nofs_restore(memalloc_nofs);
+> +	if (is_kswapd)
+> +		restore_kswapd(pflags);
+
+It's kind of a pity that these two APIs both touch current->flags but
+there isn't a clean way to only use one flags variable to pop all of
+these things at the end. :/
+
+Oh well, at least the end result is more compact but still communicates
+what we're doing with all these PF_ mods.
+
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+>  }
+>  
+>  /*
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index f889e332912f..b38fdcb977a4 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -303,6 +303,29 @@ static inline void memalloc_nocma_restore(unsigned int flags)
+>  }
+>  #endif
+>  
+> +/*
+> + * Tell the memory management code that this thread is working on behalf
+> + * of background memory reclaim (like kswapd).  That means that it will
+> + * get access to memory reserves should it need to allocate memory in
+> + * order to make forward progress.  With this great power comes great
+> + * responsibility to not exhaust those reserves.
+> + */
+> +#define KSWAPD_PF_FLAGS		(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD)
+> +
+> +static inline unsigned long become_kswapd(void)
+> +{
+> +	unsigned long flags = current->flags & KSWAPD_PF_FLAGS;
+> +
+> +	current->flags |= KSWAPD_PF_FLAGS;
+> +
+> +	return flags;
+> +}
+> +
+> +static inline void restore_kswapd(unsigned long flags)
+> +{
+> +	current->flags &= ~(flags ^ KSWAPD_PF_FLAGS);
+> +}
+> +
+>  #ifdef CONFIG_MEMCG
+>  /**
+>   * memalloc_use_memcg - Starts the remote memcg charging scope.
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 466fc3144fff..eb6f6e8103c1 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -3867,19 +3867,7 @@ static int kswapd(void *p)
+>  	if (!cpumask_empty(cpumask))
+>  		set_cpus_allowed_ptr(tsk, cpumask);
+>  
+> -	/*
+> -	 * Tell the memory management that we're a "memory allocator",
+> -	 * and that if we need more memory we should get access to it
+> -	 * regardless (see "__alloc_pages()"). "kswapd" should
+> -	 * never get caught in the normal page freeing logic.
+> -	 *
+> -	 * (Kswapd normally doesn't need memory anyway, but sometimes
+> -	 * you need a small amount of memory in order to be able to
+> -	 * page out something else, and this flag essentially protects
+> -	 * us from recursively trying to free more memory as we're
+> -	 * trying to free the first piece of memory in the first place).
+> -	 */
+> -	tsk->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
+> +	become_kswapd();
+>  	set_freezable();
+>  
+>  	WRITE_ONCE(pgdat->kswapd_order, 0);
+> @@ -3929,8 +3917,6 @@ static int kswapd(void *p)
+>  			goto kswapd_try_sleep;
+>  	}
+>  
+> -	tsk->flags &= ~(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD);
+> -
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.17.1
 > 
-> It is not covering all the cases, but covers at least those, which otherwise lead to inability
-> operating with the file (e.g. error during unzip). Also it is set only explicitly by the user.
-> 
-> We'll follow the community opinion in our implementation, just want to make sure the
-> solution is understood correctly. Regarding the "nls_alt", it doesn't seem
-> to be harmful in any way, but may help some amount of users to overcome interoperability
-> issues.
-> 
-> > Also I do not think that kernel is correct place for workarounding
-> > userspace applications which handles encoding incorrectly.
-> > 
-> > > Windows have that "Language for non-Unicode programs" setting, which controls the
-> > > encoding used for the described (and similar) cases.
-> > 
-> > This windows setting is something different. It is system wide option
-> > which affects -A WINAPI functions and defines one fixed 8bit encoding
-> > (ACP) which should be used for converting UTF-16 strings (wchar_t*) into
-> > 8bit (char*) ACP encoding.
-> > 
-> > It is something similar to Unix CODESET set in LC_CTYPE from locale. But
-> > not the same.
-> > 
-> > > Overall, it's kinda niche mount option, but we suppose it's legit for Windows-originated filesystems.
-> > > What do you think on this, Pali?
-> > 
-> > I think this is not only for Windows-orientated FS, but rather for all
-> > filesystems which store filenames in UNICODE (as opposite of sequence of
-> > bytes).
-> > 
-> > E.g. ext4 now has extension for storing (and validating) that filenames
-> > are also in UNICODE (on disk it is in UTF-8).
-> > 
-> > Same for Beos FS or UDF fs (on DVD/BD-R). In most cases these fs are
-> > mounted with nls=utf-8 to interpret UNICODE as utf-8.
-> > 
-> > And none of these fs have such nls_alt option as I show above, it cannot
-> > work reliable.
-> 
-> Thanks.
