@@ -2,119 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15D512882F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 08:47:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3003128835A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 09:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731165AbgJIGrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 02:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbgJIGrA (ORCPT
+        id S1731710AbgJIHTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 03:19:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12064 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730467AbgJIHTF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 02:47:00 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A662C0613D2;
-        Thu,  8 Oct 2020 23:47:00 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id y16so4121443ila.7;
-        Thu, 08 Oct 2020 23:47:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=Ss/mXOR08e71a1QafBlk4YUgoJYs7qUy06tUnjygl1E=;
-        b=nYEo05DKAAHxH9EsxvMqyCWl/OTquIEt5FJKgIakA2YKAkwqOxNWpA217tTOVtTv8B
-         A0Kfu9d6J7o/YpY0OBoxFARGY3ow0EySgVAt7QCaQjF3tUAAl2rcAYn4GYrSQobK9D+Q
-         4UMtJ4QxLQ7QNf0CwGD58QfQTYD0sSL0N9UkUR5xk3am8ZWpTkdDvPcnH9T8zPoyqUoE
-         jhqwgs5dKXMpa/8/nPx4fgpaXfQnmPxf2FEqC2RG2J0d28u3UDiHd8b2yMOd+tgbkLnt
-         Oxw8yDMhx3RD6bFzcVH7t8p38XO2IH8Tq3drfRULUwpNL0dmpkbEnWhsRCK1jD6ZAWEt
-         C+Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=Ss/mXOR08e71a1QafBlk4YUgoJYs7qUy06tUnjygl1E=;
-        b=d4AZtvdL3yzb2N2oHWcUg+XBWdfGCwcKwR3ZjndjnN4pclIPwigp7XeKHTql/zKu+R
-         yaxtj0TfrHxX76b340hVCzXc/BVj5x2YFmRSGMGtXZBl5Qpx07f+0gNaAukKm7w2IZWD
-         RCCeq+dbnegSFPqJyD38165SCqo/8HGS81vfSseEqhSw0VuSfbNpTEdxlmwkHdqUshcq
-         +G4ZAvQ6mIhbjKP3dSozCNrLy3wVZqtGvymxShPIW/pmDxmKug1H/sZs74XmmvwkGvI1
-         s6mH9obo7nLPvVc6LSr0axrwsmcYlCt4nYvEzaJNhzddPgfRiRS9qs+HabnySynoLsgX
-         mxVQ==
-X-Gm-Message-State: AOAM532SyR67+8yRvcotm1qfgw6fWQyJ8Kxfoqwg60tN338W4hrhauXy
-        ble2HrpfT8uSLe3iiKaBd3mzHYTojuW3gAJ2XAU=
-X-Google-Smtp-Source: ABdhPJzcFoTjvdGfC7xWgG3pZ3MTtN4c6VxXwxpU8mWxi5u0h8PWeTmC6KhON2GWgocS3gO85WAL5YhgUTs5G/sWRjU=
-X-Received: by 2002:a92:9fc8:: with SMTP id z69mr8246401ilk.215.1602226019448;
- Thu, 08 Oct 2020 23:46:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
-In-Reply-To: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 9 Oct 2020 08:46:47 +0200
-Message-ID: <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com>
+        Fri, 9 Oct 2020 03:19:05 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 099739hD107032;
+        Fri, 9 Oct 2020 03:19:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=p2pWVivhzwZ6RbpF1JW6TIXrP3pLZCok8uts5LE2kkE=;
+ b=UR9a1xG6ldrVswK5oBNFROJytRiYEltqhGH/zv6I7jh/yKyiNOGS+GAlUA6pzF3+57UE
+ SHmlw0hx9V4hbnhwft/edg8nGC/354BrKkgm5nK5MLDeTygkit8D3s1/fXh/s19xp0LX
+ G33BFHvAGPzIuLxwQCnPR0xjZTfVaqMsCbuMTf4Qtqkn+IlpqrImf63SBF9r8nfx8u7j
+ 7GndG/gBhrSvfg1iD0916uXC7joXAIBHapJrcGgDlbZgpRK5vdxfmceN2zFMiL4KOzuf
+ Pg/fus9Ol1so2F+fxNRWc6UmfrAIxygnvFxkrnF19+ESmfs30ZoEibIOmJqW1qikJdGh Ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 342jyurs3a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Oct 2020 03:19:00 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 099749gj111511;
+        Fri, 9 Oct 2020 03:18:59 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 342jyurs2u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Oct 2020 03:18:59 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0997DeQC015607;
+        Fri, 9 Oct 2020 07:18:57 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma02fra.de.ibm.com with ESMTP id 3429hrg6tu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Oct 2020 07:18:57 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0997ItcL34734500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Oct 2020 07:18:55 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 78D0742052;
+        Fri,  9 Oct 2020 07:18:55 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED02842064;
+        Fri,  9 Oct 2020 07:18:53 +0000 (GMT)
+Received: from [9.199.46.138] (unknown [9.199.46.138])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Oct 2020 07:18:53 +0000 (GMT)
 Subject: Re: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock
  mount opt
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
+To:     sedat.dilek@gmail.com
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         tytso@mit.edu, jack@suse.cz, anju@linux.vnet.ibm.com,
         "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
+ <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Message-ID: <22e5c5f9-c06b-5c49-d165-8f194aad107b@linux.ibm.com>
+Date:   Fri, 9 Oct 2020 12:48:53 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-09_02:2020-10-09,2020-10-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010090046
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 8, 2020 at 5:56 PM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
->
-> left shifting m_lblk by blkbits was causing value overflow and hence
-> it was not able to convert unwritten to written extent.
-> So, make sure we typecast it to loff_t before do left shift operation.
-> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
-> ret variable to avoid accidentally returning an uninitialized ret.
->
-> This patch fixes the issue reported in ext4 for bs < ps with
-> dioread_nolock mount option.
->
-> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
 
-Fixes: tag should be 12 digits (see [1]).
-( Seen while walking through ext-dev Git commits. )
 
-- Sedat -
+On 10/9/20 12:16 PM, Sedat Dilek wrote:
+> On Thu, Oct 8, 2020 at 5:56 PM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+>>
+>> left shifting m_lblk by blkbits was causing value overflow and hence
+>> it was not able to convert unwritten to written extent.
+>> So, make sure we typecast it to loff_t before do left shift operation.
+>> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
+>> ret variable to avoid accidentally returning an uninitialized ret.
+>>
+>> This patch fixes the issue reported in ext4 for bs < ps with
+>> dioread_nolock mount option.
+>>
+>> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
+> 
+> Fixes: tag should be 12 digits (see [1]).
+> ( Seen while walking through ext-dev Git commits. )
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n183
 
-> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  fs/ext4/extents.c | 2 +-
->  fs/ext4/inode.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index a0481582187a..32d610cc896d 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4769,7 +4769,7 @@ int ext4_convert_unwritten_extents(handle_t *handle, struct inode *inode,
->
->  int ext4_convert_unwritten_io_end_vec(handle_t *handle, ext4_io_end_t *io_end)
->  {
-> -       int ret, err = 0;
-> +       int ret = 0, err = 0;
->         struct ext4_io_end_vec *io_end_vec;
->
->         /*
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index bf596467c234..3021235deaa1 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2254,7 +2254,7 @@ static int mpage_process_page(struct mpage_da_data *mpd, struct page *page,
->                                         err = PTR_ERR(io_end_vec);
->                                         goto out;
->                                 }
-> -                               io_end_vec->offset = mpd->map.m_lblk << blkbits;
-> +                               io_end_vec->offset = (loff_t)mpd->map.m_lblk << blkbits;
->                         }
->                         *map_bh = true;
->                         goto out;
-> --
-> 2.26.2
->
+Thanks Sedat, I guess it should be minimum 12 chars [1]
+
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n177
+
+-ritesh
