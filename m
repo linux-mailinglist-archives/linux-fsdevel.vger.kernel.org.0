@@ -2,112 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3003128835A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 09:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19658288475
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 10:01:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731710AbgJIHTF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 03:19:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12064 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730467AbgJIHTF (ORCPT
+        id S1732802AbgJIIAc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 04:00:32 -0400
+Received: from mail-il1-f206.google.com ([209.85.166.206]:40247 "EHLO
+        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732817AbgJIIA0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 03:19:05 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 099739hD107032;
-        Fri, 9 Oct 2020 03:19:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=p2pWVivhzwZ6RbpF1JW6TIXrP3pLZCok8uts5LE2kkE=;
- b=UR9a1xG6ldrVswK5oBNFROJytRiYEltqhGH/zv6I7jh/yKyiNOGS+GAlUA6pzF3+57UE
- SHmlw0hx9V4hbnhwft/edg8nGC/354BrKkgm5nK5MLDeTygkit8D3s1/fXh/s19xp0LX
- G33BFHvAGPzIuLxwQCnPR0xjZTfVaqMsCbuMTf4Qtqkn+IlpqrImf63SBF9r8nfx8u7j
- 7GndG/gBhrSvfg1iD0916uXC7joXAIBHapJrcGgDlbZgpRK5vdxfmceN2zFMiL4KOzuf
- Pg/fus9Ol1so2F+fxNRWc6UmfrAIxygnvFxkrnF19+ESmfs30ZoEibIOmJqW1qikJdGh Ug== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 342jyurs3a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Oct 2020 03:19:00 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 099749gj111511;
-        Fri, 9 Oct 2020 03:18:59 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 342jyurs2u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Oct 2020 03:18:59 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0997DeQC015607;
-        Fri, 9 Oct 2020 07:18:57 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma02fra.de.ibm.com with ESMTP id 3429hrg6tu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Oct 2020 07:18:57 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0997ItcL34734500
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Oct 2020 07:18:55 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78D0742052;
-        Fri,  9 Oct 2020 07:18:55 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED02842064;
-        Fri,  9 Oct 2020 07:18:53 +0000 (GMT)
-Received: from [9.199.46.138] (unknown [9.199.46.138])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  9 Oct 2020 07:18:53 +0000 (GMT)
-Subject: Re: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock
- mount opt
-To:     sedat.dilek@gmail.com
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        tytso@mit.edu, jack@suse.cz, anju@linux.vnet.ibm.com,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
-References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
- <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Message-ID: <22e5c5f9-c06b-5c49-d165-8f194aad107b@linux.ibm.com>
-Date:   Fri, 9 Oct 2020 12:48:53 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Fri, 9 Oct 2020 04:00:26 -0400
+Received: by mail-il1-f206.google.com with SMTP id w12so493932ilj.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Oct 2020 01:00:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=eOD7BtHWSKEPTdJ+fUO2oFYrU8z7mMDg/rYmr1MnpH8=;
+        b=q1hijTcxc40txEeQN1PUEAXyfM48arAKRNTZvLVKTGuZO3ZxEuMnt0ZtjL7KOoWoLX
+         5CaqyApP2k1duTEEOhFx4Ze/tbQ+zJnUf1NpNKSzZnYfuHliVO5E5i/SNRVUC6Ljd27V
+         dHoEkLSZ1ANNyYnraEvdKc4I0Dwd2t4XXWyvHTGqoTg2RwgzYa/qW3lx9GHeLSZnUykW
+         A3WyZwAXiu8rFz5Rk4toy/UsyvcYiffIR4gc+fBD8B9AMqX1kvWNQUcs/xe3xogb6vHS
+         FlxQhC+a0wMJ1rRUpb+r+YVVbMdM4leL3GGGNsq8IGI1sOD0/rPe1o3BzgT8z6qRz9ud
+         6nNQ==
+X-Gm-Message-State: AOAM533ZeHSJZ5OVwqrIjab3gnGh9XhW4jskYWK/4gWiICzJZbZP3Z4U
+        9XAQQNeHnfJB1M2spL3Jx84SCdFN+wIafdtxymOvMJInqvRL
+X-Google-Smtp-Source: ABdhPJwH60XYZ2M2nGvt2bLfm3bvuc9NBX2KOIX9Fet9jO9hHCS3SbvBvxns4ss6fVe6e65XHkmi/UJnoHj0G7thFmH9cPa25G8n
 MIME-Version: 1.0
-In-Reply-To: <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-09_02:2020-10-09,2020-10-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010090046
+X-Received: by 2002:a05:6638:1616:: with SMTP id x22mr10409541jas.110.1602230422963;
+ Fri, 09 Oct 2020 01:00:22 -0700 (PDT)
+Date:   Fri, 09 Oct 2020 01:00:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000358ba805b1385785@google.com>
+Subject: inconsistent lock state in io_uring_add_task_file
+From:   syzbot <syzbot+27c12725d8ff0bfe1a13@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=172b3ebf900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=27c12725d8ff0bfe1a13
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+27c12725d8ff0bfe1a13@syzkaller.appspotmail.com
+
+================================
+WARNING: inconsistent lock state
+5.9.0-rc8-next-20201008-syzkaller #0 Not tainted
+--------------------------------
+inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
+syz-executor.2/8511 [HC0[0]:SC0[0]:HE1:SE1] takes:
+ffff8880161fdc18 (&xa->xa_lock#8){+.?.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
+ffff8880161fdc18 (&xa->xa_lock#8){+.?.}-{2:2}, at: io_uring_add_task_file fs/io_uring.c:8607 [inline]
+ffff8880161fdc18 (&xa->xa_lock#8){+.?.}-{2:2}, at: io_uring_add_task_file+0x207/0x430 fs/io_uring.c:8590
+{IN-SOFTIRQ-W} state was registered at:
+  lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x94/0xd0 kernel/locking/spinlock.c:159
+  xa_destroy+0xaa/0x350 lib/xarray.c:2205
+  __io_uring_free+0x60/0xc0 fs/io_uring.c:7693
+  io_uring_free include/linux/io_uring.h:40 [inline]
+  __put_task_struct+0xff/0x3f0 kernel/fork.c:732
+  put_task_struct include/linux/sched/task.h:111 [inline]
+  delayed_put_task_struct+0x1f6/0x340 kernel/exit.c:172
+  rcu_do_batch kernel/rcu/tree.c:2484 [inline]
+  rcu_core+0x645/0x1240 kernel/rcu/tree.c:2718
+  __do_softirq+0x203/0xab6 kernel/softirq.c:298
+  asm_call_irq_on_stack+0xf/0x20
+  __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
+  run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
+  do_softirq_own_stack+0x9b/0xd0 arch/x86/kernel/irq_64.c:77
+  invoke_softirq kernel/softirq.c:393 [inline]
+  __irq_exit_rcu kernel/softirq.c:423 [inline]
+  irq_exit_rcu+0x235/0x280 kernel/softirq.c:435
+  sysvec_apic_timer_interrupt+0x51/0xf0 arch/x86/kernel/apic/apic.c:1091
+  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:631
+  arch_local_irq_restore arch/x86/include/asm/paravirt.h:653 [inline]
+  lock_acquire+0x27b/0xaa0 kernel/locking/lockdep.c:5422
+  rcu_lock_acquire include/linux/rcupdate.h:253 [inline]
+  rcu_read_lock include/linux/rcupdate.h:642 [inline]
+  batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:407 [inline]
+  batadv_nc_worker+0x12d/0xe50 net/batman-adv/network-coding.c:718
+  process_one_work+0x933/0x15a0 kernel/workqueue.c:2269
+  worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
+  kthread+0x3af/0x4a0 kernel/kthread.c:292
+  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+irq event stamp: 225
+hardirqs last  enabled at (225): [<ffffffff8847f0df>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
+hardirqs last  enabled at (225): [<ffffffff8847f0df>] _raw_spin_unlock_irqrestore+0x6f/0x90 kernel/locking/spinlock.c:191
+hardirqs last disabled at (224): [<ffffffff8847f6c9>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
+hardirqs last disabled at (224): [<ffffffff8847f6c9>] _raw_spin_lock_irqsave+0xa9/0xd0 kernel/locking/spinlock.c:159
+softirqs last  enabled at (206): [<ffffffff870a2164>] read_pnet include/net/net_namespace.h:327 [inline]
+softirqs last  enabled at (206): [<ffffffff870a2164>] sock_net include/net/sock.h:2521 [inline]
+softirqs last  enabled at (206): [<ffffffff870a2164>] unix_create1+0x484/0x570 net/unix/af_unix.c:816
+softirqs last disabled at (204): [<ffffffff870a20e1>] unix_sockets_unbound net/unix/af_unix.c:133 [inline]
+softirqs last disabled at (204): [<ffffffff870a20e1>] unix_create1+0x401/0x570 net/unix/af_unix.c:810
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&xa->xa_lock#8);
+  <Interrupt>
+    lock(&xa->xa_lock#8);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor.2/8511:
+ #0: ffffffff8a554da0 (rcu_read_lock){....}-{1:2}, at: io_uring_add_task_file fs/io_uring.c:8600 [inline]
+ #0: ffffffff8a554da0 (rcu_read_lock){....}-{1:2}, at: io_uring_add_task_file+0x138/0x430 fs/io_uring.c:8590
+
+stack backtrace:
+CPU: 1 PID: 8511 Comm: syz-executor.2 Not tainted 5.9.0-rc8-next-20201008-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fb lib/dump_stack.c:118
+ print_usage_bug kernel/locking/lockdep.c:3715 [inline]
+ valid_state kernel/locking/lockdep.c:3726 [inline]
+ mark_lock_irq kernel/locking/lockdep.c:3929 [inline]
+ mark_lock.cold+0x32/0x74 kernel/locking/lockdep.c:4396
+ mark_usage kernel/locking/lockdep.c:4299 [inline]
+ __lock_acquire+0x886/0x56d0 kernel/locking/lockdep.c:4771
+ lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
+ __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+ _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+ spin_lock include/linux/spinlock.h:354 [inline]
+ io_uring_add_task_file fs/io_uring.c:8607 [inline]
+ io_uring_add_task_file+0x207/0x430 fs/io_uring.c:8590
+ io_uring_get_fd fs/io_uring.c:9116 [inline]
+ io_uring_create fs/io_uring.c:9280 [inline]
+ io_uring_setup+0x2727/0x3660 fs/io_uring.c:9314
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45de29
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc3719c4bf8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 000000000045de29
+RDX: 00000000206d4000 RSI: 0000000020000080 RDI: 0000000000000087
+RBP: 000000000118bf78 R08: 0000000020000040 R09: 0000000020000040
+R10: 0000000020000000 R11: 0000000000000206 R12: 00000000206d4000
+R13: 0000000020ee7000 R14: 0000000020000040 R15: 0000000020000000
 
 
-On 10/9/20 12:16 PM, Sedat Dilek wrote:
-> On Thu, Oct 8, 2020 at 5:56 PM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
->>
->> left shifting m_lblk by blkbits was causing value overflow and hence
->> it was not able to convert unwritten to written extent.
->> So, make sure we typecast it to loff_t before do left shift operation.
->> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
->> ret variable to avoid accidentally returning an uninitialized ret.
->>
->> This patch fixes the issue reported in ext4 for bs < ps with
->> dioread_nolock mount option.
->>
->> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
-> 
-> Fixes: tag should be 12 digits (see [1]).
-> ( Seen while walking through ext-dev Git commits. )
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
-Thanks Sedat, I guess it should be minimum 12 chars [1]
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n177
-
--ritesh
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
