@@ -2,170 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49876288A60
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 16:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D053288A87
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 16:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388481AbgJIOKf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 10:10:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
+        id S2388192AbgJIOSH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 10:18:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732907AbgJIOK2 (ORCPT
+        with ESMTP id S1731698AbgJIOSH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 10:10:28 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9904EC0613D2;
-        Fri,  9 Oct 2020 07:10:28 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id r4so2554787ioh.0;
-        Fri, 09 Oct 2020 07:10:28 -0700 (PDT)
+        Fri, 9 Oct 2020 10:18:07 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A6BC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Fri,  9 Oct 2020 07:18:06 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id o21so8036633qtp.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Oct 2020 07:18:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=3QOGsB4kmNOkLnadomVzhGM8EBck9+Fm/DaJrjH2f+c=;
-        b=WR1XJ695yDX4OIgU1SUP1UEsQbi/4XD5tVbrM8yzQbP7xoUhQjJJuNd/5sCsmJn3DH
-         Phn0ucyqPNr7m+XzLZm7HHVHYRV/l4PartVpguC9RPLekeaFYWw1yLsJ3zskr6PlURWj
-         KxqcDHAiTfrlq/BZ4nNlR4fGGPNrMGWLXFAPwuHMnZDkG+4WxoxXhsEhRX2mB9mKPG22
-         NChnZ5y3XTHg3jhX7DxfmsrueK2cT8SwosNzdasRu4TEZIFmUQw72GMrUiXkxiMF9QG+
-         nYtKJA43rSegS+M0nws6P06peAQBSRbx6U95pNqa+BzTE6MLdqamvYkMidEClosgpmFj
-         c3JA==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CcKsaaPzQT2ESj6YOvwBkh06P5IZh1MGDwlgLgs4VHo=;
+        b=NlLNJz0gReMZ2olYoTwOI71Q3J7hZ4eCjDSLwfxrDsINskB/uRN0RJ63/6e4mp7rWK
+         8HBBtYSi0tq6rQFBsNjlT8Imwpm8kDcN4jK2nSy7e062CLRT5RQCSFjHf1lN8ImYUGqc
+         /vhv7tZjTIgwahWg6NDlOfjzYJ70RBtTYFaUtayjCmBbBlk6KxW8RzL4UWdAG77v2I9N
+         A7UYx+wU+9EnXtsWlWiz3jQTPpdXvIdYWAVVCCCHPiVwb88OgPGRxAtC9APpf83BXrog
+         jD06zR6/j/9ASrwFeC4hcqIdoEkQl6E5WRGzyO2rSgnCpr/6ATUZ0Ujgycjt3F5z1/Cd
+         Sd+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=3QOGsB4kmNOkLnadomVzhGM8EBck9+Fm/DaJrjH2f+c=;
-        b=ZGxVElsC0eFWA2o1IHJZSbr7N+FA/gsiWU2jQOFERjbRThUCifPho2258IQ6B7IcAL
-         TcfCqaUTkMMK8SkVZNORKcD//eA3lrchCYNrVR/wu+OUfbTAx00sUR5GKZvSeMzj1f1P
-         /xo/3R6FD4EvXiD7j/m3Fm5i7iyJKdDA7xqHY+Tws57P2cXmq+gnww1ld+acFd4Kk6a5
-         7sYiCnRu5ciLUt5q2CB+0OF2i3nq+RZ22cwFKPO6OHzkZhjJH1nm/0pw7yasnC8EeQaA
-         bM07wOgmp6hc0GNK2Vq3zN3CwiAQJXlbwRaiT2OSMdJIBGqZ0EZA9SGa83l5jpfMPDSL
-         sniA==
-X-Gm-Message-State: AOAM531X/373Iw4DoAQeAO+6K1dXFnmgEQ//MhMuNYZKrYzRL8MlSfUA
-        uFkpC3Vl4bF7toWYtSpxYdGiUKsowa8eSW9nVmSauOsGtXuOIw==
-X-Google-Smtp-Source: ABdhPJwODwUhP1uVzkGnFxnKlagh6KIIs7M9LNa4SYPI5aYa19oHJyxD5dDRi5DW2dGMId7MEa3UOZ7faYPE/Fl7P+M=
-X-Received: by 2002:a02:2a49:: with SMTP id w70mr11180574jaw.132.1602252627889;
- Fri, 09 Oct 2020 07:10:27 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CcKsaaPzQT2ESj6YOvwBkh06P5IZh1MGDwlgLgs4VHo=;
+        b=tJb8KxNfgFa8nzLt8QBTeS0QCCqDxN8ytEoitX8guqPwRWNryfp8RD5jsiNyDWSpzz
+         R/jRnpdBtm/yeco28UbDmJ5ju8bZV9ire+tY6TOn6eMRmMziHYCAa++CYAE99HecnUxN
+         lbKkvco8unIo9dyWXAynMbhePvYAt7QNXB1g09qgePdgcjsbnlgDn61ohR43aXEJ4Poz
+         xrnRs2sVJQjIKHA8DdWha5ZV4okUez7yQPVXUxXCZqkbwi11Pu5TgAmD5cUgLGfGHG/m
+         beuzX9Lg7TWi6fhXwbR2erF4xsjAukyekMzg38Aw9nhOf98WphU5hLssPyPHPqFMNhx6
+         VMcg==
+X-Gm-Message-State: AOAM533F86130lk4Z6+PB9hiW11RPJSzvvaixm3wiAX3oiKG8CnqWZBc
+        ysvtpR3yLEeZ6Oz1umsE6ywlEw==
+X-Google-Smtp-Source: ABdhPJxkUTamFkDclFTulS7UVScV42JPT3TSQbrdjQZFe2ID/ahDqSFwMiv5AdzptTI3yxVlMZazyg==
+X-Received: by 2002:ac8:5d04:: with SMTP id f4mr13754639qtx.290.1602253085840;
+        Fri, 09 Oct 2020 07:18:05 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c0a8:11e8::107d? ([2620:10d:c091:480::1:f1f8])
+        by smtp.gmail.com with ESMTPSA id f3sm6216160qtp.57.2020.10.09.07.18.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Oct 2020 07:18:03 -0700 (PDT)
+Subject: Re: [PATCH 5/7] btrfs: Promote to unsigned long long before shifting
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     ericvh@gmail.com, lucho@ionkov.net, viro@zeniv.linux.org.uk,
+        jlayton@kernel.org, idryomov@gmail.com, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com,
+        stable@vger.kernel.org
+References: <20201004180428.14494-1-willy@infradead.org>
+ <20201004180428.14494-6-willy@infradead.org>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <b36885cc-0c4b-ee03-bcd3-56f94800d84e@toxicpanda.com>
+Date:   Fri, 9 Oct 2020 10:18:01 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.3.1
 MIME-Version: 1.0
-References: <CA+icZUWkE5CVtGGo88zo9b28JB1rN7=Gpc4hXywUaqjdCcSyOw@mail.gmail.com>
-In-Reply-To: <CA+icZUWkE5CVtGGo88zo9b28JB1rN7=Gpc4hXywUaqjdCcSyOw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 9 Oct 2020 16:10:15 +0200
-Message-ID: <CA+icZUVd6nf-LmoHB18vsZZjprDGW6nVFNKW3b9_cwxWvbTejw@mail.gmail.com>
-Subject: Re: ext4: dev: Broken with CONFIG_JBD2=and CONFIG_EXT4_FS=m
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000b9f53905b13d82a6"
+In-Reply-To: <20201004180428.14494-6-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---000000000000b9f53905b13d82a6
-Content-Type: text/plain; charset="UTF-8"
+On 10/4/20 2:04 PM, Matthew Wilcox (Oracle) wrote:
+> On 32-bit systems, this shift will overflow for files larger than 4GB.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: df480633b891 ("btrfs: extent-tree: Switch to new delalloc space reserve and release")
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-On Fri, Oct 9, 2020 at 3:49 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
-> Hi Ted,
->
-> with <ext4.git#dev> up to commit
-> ab7b179af3f98772f2433ddc4ace6b7924a4e862 ("Merge branch
-> 'hs/fast-commit-v9' into dev") I see some warnings (were reported via
-> kernel-test-bot)...
->
-> fs/jbd2/recovery.c:241:15: warning: unused variable 'seq' [-Wunused-variable]
-> fs/ext4/fast_commit.c:1091:6: warning: variable 'start_time' is used
-> uninitialized whenever 'if' condition is true
-> [-Wsometimes-uninitialized]
-> fs/ext4/fast_commit.c:1091:6: warning: variable 'start_time' is used
-> uninitialized whenever '||' condition is true
-> [-Wsometimes-uninitialized]
->
-> ...and more severe a build breakage with CONFIG_JBD2=and CONFIG_EXT4_FS=m
->
-> ERROR: modpost: "jbd2_fc_release_bufs" [fs/ext4/ext4.ko] undefined!
-> ERROR: modpost: "jbd2_fc_init" [fs/ext4/ext4.ko] undefined!
-> ERROR: modpost: "jbd2_fc_stop_do_commit" [fs/ext4/ext4.ko] undefined!
-> ERROR: modpost: "jbd2_fc_stop" [fs/ext4/ext4.ko] undefined!
-> ERROR: modpost: "jbd2_fc_start" [fs/ext4/ext4.ko] undefined!
->
-> Looks like missing exports.
->
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-This fixes it...
+Thanks,
 
-$ git diff
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 8a51c1ad7088..e50aeefaa217 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -754,6 +754,7 @@ int jbd2_fc_start(journal_t *journal, tid_t tid)
-
-       return 0;
-}
-+EXPORT_SYMBOL(jbd2_fc_start);
-
-/*
- * Stop a fast commit. If fallback is set, this function starts commit of
-@@ -778,11 +779,13 @@ int jbd2_fc_stop(journal_t *journal)
-{
-       return __jbd2_fc_stop(journal, 0, 0);
-}
-+EXPORT_SYMBOL(jbd2_fc_stop);
-
-int jbd2_fc_stop_do_commit(journal_t *journal, tid_t tid)
-{
-       return __jbd2_fc_stop(journal, tid, 1);
-}
-+EXPORT_SYMBOL(jbd2_fc_stop_do_commit);
-
-/* Return 1 when transaction with given tid has already committed. */
-int jbd2_transaction_committed(journal_t *journal, tid_t tid)
-@@ -954,6 +957,7 @@ int jbd2_fc_release_bufs(journal_t *journal)
-
-       return 0;
-}
-+EXPORT_SYMBOL(jbd2_fc_release_bufs);
-
-/*
- * Conversion of logical to physical block numbers for the journal
-@@ -1389,6 +1393,7 @@ int jbd2_fc_init(journal_t *journal, int num_fc_blks)
-               return -ENOMEM;
-       return 0;
-}
-+EXPORT_SYMBOL(jbd2_fc_init);
-
-/* jbd2_journal_init_dev and jbd2_journal_init_inode:
- *
-
-- Sedat -
-
---000000000000b9f53905b13d82a6
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="jbd2-journal-fix-build-when-CONFIG_EXT4-as-module.diff"
-Content-Disposition: attachment; 
-	filename="jbd2-journal-fix-build-when-CONFIG_EXT4-as-module.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kg2bu3b30>
-X-Attachment-Id: f_kg2bu3b30
-
-ZGlmZiAtLWdpdCBhL2ZzL2piZDIvam91cm5hbC5jIGIvZnMvamJkMi9qb3VybmFsLmMKaW5kZXgg
-OGE1MWMxYWQ3MDg4Li5lNTBhZWVmYWEyMTcgMTAwNjQ0Ci0tLSBhL2ZzL2piZDIvam91cm5hbC5j
-CisrKyBiL2ZzL2piZDIvam91cm5hbC5jCkBAIC03NTQsNiArNzU0LDcgQEAgaW50IGpiZDJfZmNf
-c3RhcnQoam91cm5hbF90ICpqb3VybmFsLCB0aWRfdCB0aWQpCiAKIAlyZXR1cm4gMDsKIH0KK0VY
-UE9SVF9TWU1CT0woamJkMl9mY19zdGFydCk7CiAKIC8qCiAgKiBTdG9wIGEgZmFzdCBjb21taXQu
-IElmIGZhbGxiYWNrIGlzIHNldCwgdGhpcyBmdW5jdGlvbiBzdGFydHMgY29tbWl0IG9mCkBAIC03
-NzgsMTEgKzc3OSwxMyBAQCBpbnQgamJkMl9mY19zdG9wKGpvdXJuYWxfdCAqam91cm5hbCkKIHsK
-IAlyZXR1cm4gX19qYmQyX2ZjX3N0b3Aoam91cm5hbCwgMCwgMCk7CiB9CitFWFBPUlRfU1lNQk9M
-KGpiZDJfZmNfc3RvcCk7CiAKIGludCBqYmQyX2ZjX3N0b3BfZG9fY29tbWl0KGpvdXJuYWxfdCAq
-am91cm5hbCwgdGlkX3QgdGlkKQogewogCXJldHVybiBfX2piZDJfZmNfc3RvcChqb3VybmFsLCB0
-aWQsIDEpOwogfQorRVhQT1JUX1NZTUJPTChqYmQyX2ZjX3N0b3BfZG9fY29tbWl0KTsKIAogLyog
-UmV0dXJuIDEgd2hlbiB0cmFuc2FjdGlvbiB3aXRoIGdpdmVuIHRpZCBoYXMgYWxyZWFkeSBjb21t
-aXR0ZWQuICovCiBpbnQgamJkMl90cmFuc2FjdGlvbl9jb21taXR0ZWQoam91cm5hbF90ICpqb3Vy
-bmFsLCB0aWRfdCB0aWQpCkBAIC05NTQsNiArOTU3LDcgQEAgaW50IGpiZDJfZmNfcmVsZWFzZV9i
-dWZzKGpvdXJuYWxfdCAqam91cm5hbCkKIAogCXJldHVybiAwOwogfQorRVhQT1JUX1NZTUJPTChq
-YmQyX2ZjX3JlbGVhc2VfYnVmcyk7CiAKIC8qCiAgKiBDb252ZXJzaW9uIG9mIGxvZ2ljYWwgdG8g
-cGh5c2ljYWwgYmxvY2sgbnVtYmVycyBmb3IgdGhlIGpvdXJuYWwKQEAgLTEzODksNiArMTM5Myw3
-IEBAIGludCBqYmQyX2ZjX2luaXQoam91cm5hbF90ICpqb3VybmFsLCBpbnQgbnVtX2ZjX2Jsa3Mp
-CiAJCXJldHVybiAtRU5PTUVNOwogCXJldHVybiAwOwogfQorRVhQT1JUX1NZTUJPTChqYmQyX2Zj
-X2luaXQpOwogCiAvKiBqYmQyX2pvdXJuYWxfaW5pdF9kZXYgYW5kIGpiZDJfam91cm5hbF9pbml0
-X2lub2RlOgogICoK
---000000000000b9f53905b13d82a6--
+Josef
