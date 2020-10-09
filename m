@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19658288475
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 10:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D142884CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 10:03:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732802AbgJIIAc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 04:00:32 -0400
-Received: from mail-il1-f206.google.com ([209.85.166.206]:40247 "EHLO
-        mail-il1-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732817AbgJIIA0 (ORCPT
+        id S1732627AbgJIICo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 04:02:44 -0400
+Received: from mail-io1-f80.google.com ([209.85.166.80]:36850 "EHLO
+        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732925AbgJIICU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 04:00:26 -0400
-Received: by mail-il1-f206.google.com with SMTP id w12so493932ilj.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Oct 2020 01:00:23 -0700 (PDT)
+        Fri, 9 Oct 2020 04:02:20 -0400
+Received: by mail-io1-f80.google.com with SMTP id q126so5663091iof.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Oct 2020 01:02:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=eOD7BtHWSKEPTdJ+fUO2oFYrU8z7mMDg/rYmr1MnpH8=;
-        b=q1hijTcxc40txEeQN1PUEAXyfM48arAKRNTZvLVKTGuZO3ZxEuMnt0ZtjL7KOoWoLX
-         5CaqyApP2k1duTEEOhFx4Ze/tbQ+zJnUf1NpNKSzZnYfuHliVO5E5i/SNRVUC6Ljd27V
-         dHoEkLSZ1ANNyYnraEvdKc4I0Dwd2t4XXWyvHTGqoTg2RwgzYa/qW3lx9GHeLSZnUykW
-         A3WyZwAXiu8rFz5Rk4toy/UsyvcYiffIR4gc+fBD8B9AMqX1kvWNQUcs/xe3xogb6vHS
-         FlxQhC+a0wMJ1rRUpb+r+YVVbMdM4leL3GGGNsq8IGI1sOD0/rPe1o3BzgT8z6qRz9ud
-         6nNQ==
-X-Gm-Message-State: AOAM533ZeHSJZ5OVwqrIjab3gnGh9XhW4jskYWK/4gWiICzJZbZP3Z4U
-        9XAQQNeHnfJB1M2spL3Jx84SCdFN+wIafdtxymOvMJInqvRL
-X-Google-Smtp-Source: ABdhPJwH60XYZ2M2nGvt2bLfm3bvuc9NBX2KOIX9Fet9jO9hHCS3SbvBvxns4ss6fVe6e65XHkmi/UJnoHj0G7thFmH9cPa25G8n
+        bh=wjVhKiqgqTabR+ms1hyzS3BfeUzc+mXHyOkqU5qccHg=;
+        b=cE1JVvMxPW3Rp03/KoUsharwRr6Zgef//M4djtjW24s4QVfXDYD2wcM7VzRuIpIDm5
+         eIv6zGjQ+2mwu9Ag9wjFNwMnqhHx9gmGoHy1QblJBajGIPlnu3VCzjDEiN26JkGVEGo3
+         j7RfSYc61lDfKqActIYaFiIHMUF9E9dn8fCpesfK/b2eDRdGcplyqnGYaFOIbbM4XTxF
+         dr1PVCkiOwm/u7X4NYjLn47jrLvVB63x0gGwS09vqF6SLOysacOVuvPwHvxYrRmd8tyJ
+         FIMCwmYpXddqC9joqO+YwhTwsVq+vhNTVXaJt6KwnCbCNQG11HoQ6X1bnv2uLv7MTlwn
+         2ugQ==
+X-Gm-Message-State: AOAM5329p7LRuaIfM05Tvh/JRFQBc2TdPNRfqmqYN+UIaqkSWd5YN/gg
+        YyOOSS3iulw3rIU3B0SNaLiIti7KVPhqJO4IUJD3C7PjqV0S
+X-Google-Smtp-Source: ABdhPJxvPML8Fq9zq1J/OM2ISnEuo4McWxii+SNAUhGQ4MOg5taScDzwaz+lZBKph82jR2BOp9UJo83i8mIGfDlVXFkK636edH8x
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1616:: with SMTP id x22mr10409541jas.110.1602230422963;
- Fri, 09 Oct 2020 01:00:22 -0700 (PDT)
-Date:   Fri, 09 Oct 2020 01:00:22 -0700
+X-Received: by 2002:a92:c74c:: with SMTP id y12mr9899144ilp.19.1602230538625;
+ Fri, 09 Oct 2020 01:02:18 -0700 (PDT)
+Date:   Fri, 09 Oct 2020 01:02:18 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000358ba805b1385785@google.com>
-Subject: inconsistent lock state in io_uring_add_task_file
-From:   syzbot <syzbot+27c12725d8ff0bfe1a13@syzkaller.appspotmail.com>
+Message-ID: <0000000000001a684d05b1385e71@google.com>
+Subject: KASAN: use-after-free Read in __io_uring_files_cancel
+From:   syzbot <syzbot+77efce558b2b9e6b6405@syzkaller.appspotmail.com>
 To:     axboe@kernel.dk, io-uring@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
@@ -50,114 +50,139 @@ syzbot found the following issue on:
 
 HEAD commit:    e4fb79c7 Add linux-next specific files for 20201008
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=172b3ebf900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1592ee1b900000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=568d41fe4341ed0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=27c12725d8ff0bfe1a13
+dashboard link: https://syzkaller.appspot.com/bug?extid=77efce558b2b9e6b6405
 compiler:       gcc (GCC) 10.1.0-syz 20200507
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+27c12725d8ff0bfe1a13@syzkaller.appspotmail.com
+Reported-by: syzbot+77efce558b2b9e6b6405@syzkaller.appspotmail.com
 
-================================
-WARNING: inconsistent lock state
-5.9.0-rc8-next-20201008-syzkaller #0 Not tainted
---------------------------------
-inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
-syz-executor.2/8511 [HC0[0]:SC0[0]:HE1:SE1] takes:
-ffff8880161fdc18 (&xa->xa_lock#8){+.?.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-ffff8880161fdc18 (&xa->xa_lock#8){+.?.}-{2:2}, at: io_uring_add_task_file fs/io_uring.c:8607 [inline]
-ffff8880161fdc18 (&xa->xa_lock#8){+.?.}-{2:2}, at: io_uring_add_task_file+0x207/0x430 fs/io_uring.c:8590
-{IN-SOFTIRQ-W} state was registered at:
-  lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x94/0xd0 kernel/locking/spinlock.c:159
-  xa_destroy+0xaa/0x350 lib/xarray.c:2205
-  __io_uring_free+0x60/0xc0 fs/io_uring.c:7693
-  io_uring_free include/linux/io_uring.h:40 [inline]
-  __put_task_struct+0xff/0x3f0 kernel/fork.c:732
-  put_task_struct include/linux/sched/task.h:111 [inline]
-  delayed_put_task_struct+0x1f6/0x340 kernel/exit.c:172
-  rcu_do_batch kernel/rcu/tree.c:2484 [inline]
-  rcu_core+0x645/0x1240 kernel/rcu/tree.c:2718
-  __do_softirq+0x203/0xab6 kernel/softirq.c:298
-  asm_call_irq_on_stack+0xf/0x20
-  __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
-  run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
-  do_softirq_own_stack+0x9b/0xd0 arch/x86/kernel/irq_64.c:77
-  invoke_softirq kernel/softirq.c:393 [inline]
-  __irq_exit_rcu kernel/softirq.c:423 [inline]
-  irq_exit_rcu+0x235/0x280 kernel/softirq.c:435
-  sysvec_apic_timer_interrupt+0x51/0xf0 arch/x86/kernel/apic/apic.c:1091
-  asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:631
-  arch_local_irq_restore arch/x86/include/asm/paravirt.h:653 [inline]
-  lock_acquire+0x27b/0xaa0 kernel/locking/lockdep.c:5422
-  rcu_lock_acquire include/linux/rcupdate.h:253 [inline]
-  rcu_read_lock include/linux/rcupdate.h:642 [inline]
-  batadv_nc_purge_orig_hash net/batman-adv/network-coding.c:407 [inline]
-  batadv_nc_worker+0x12d/0xe50 net/batman-adv/network-coding.c:718
-  process_one_work+0x933/0x15a0 kernel/workqueue.c:2269
-  worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
-  kthread+0x3af/0x4a0 kernel/kthread.c:292
-  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-irq event stamp: 225
-hardirqs last  enabled at (225): [<ffffffff8847f0df>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-hardirqs last  enabled at (225): [<ffffffff8847f0df>] _raw_spin_unlock_irqrestore+0x6f/0x90 kernel/locking/spinlock.c:191
-hardirqs last disabled at (224): [<ffffffff8847f6c9>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (224): [<ffffffff8847f6c9>] _raw_spin_lock_irqsave+0xa9/0xd0 kernel/locking/spinlock.c:159
-softirqs last  enabled at (206): [<ffffffff870a2164>] read_pnet include/net/net_namespace.h:327 [inline]
-softirqs last  enabled at (206): [<ffffffff870a2164>] sock_net include/net/sock.h:2521 [inline]
-softirqs last  enabled at (206): [<ffffffff870a2164>] unix_create1+0x484/0x570 net/unix/af_unix.c:816
-softirqs last disabled at (204): [<ffffffff870a20e1>] unix_sockets_unbound net/unix/af_unix.c:133 [inline]
-softirqs last disabled at (204): [<ffffffff870a20e1>] unix_create1+0x401/0x570 net/unix/af_unix.c:810
+==================================================================
+BUG: KASAN: use-after-free in xas_next_entry include/linux/xarray.h:1630 [inline]
+BUG: KASAN: use-after-free in __io_uring_files_cancel+0x417/0x440 fs/io_uring.c:8681
+Read of size 1 at addr ffff888033631880 by task syz-executor.1/8477
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&xa->xa_lock#8);
-  <Interrupt>
-    lock(&xa->xa_lock#8);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/8511:
- #0: ffffffff8a554da0 (rcu_read_lock){....}-{1:2}, at: io_uring_add_task_file fs/io_uring.c:8600 [inline]
- #0: ffffffff8a554da0 (rcu_read_lock){....}-{1:2}, at: io_uring_add_task_file+0x138/0x430 fs/io_uring.c:8590
-
-stack backtrace:
-CPU: 1 PID: 8511 Comm: syz-executor.2 Not tainted 5.9.0-rc8-next-20201008-syzkaller #0
+CPU: 1 PID: 8477 Comm: syz-executor.1 Not tainted 5.9.0-rc8-next-20201008-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
  dump_stack+0x198/0x1fb lib/dump_stack.c:118
- print_usage_bug kernel/locking/lockdep.c:3715 [inline]
- valid_state kernel/locking/lockdep.c:3726 [inline]
- mark_lock_irq kernel/locking/lockdep.c:3929 [inline]
- mark_lock.cold+0x32/0x74 kernel/locking/lockdep.c:4396
- mark_usage kernel/locking/lockdep.c:4299 [inline]
- __lock_acquire+0x886/0x56d0 kernel/locking/lockdep.c:4771
- lock_acquire+0x1f2/0xaa0 kernel/locking/lockdep.c:5419
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- io_uring_add_task_file fs/io_uring.c:8607 [inline]
- io_uring_add_task_file+0x207/0x430 fs/io_uring.c:8590
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:385
+ __kasan_report mm/kasan/report.c:545 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
+ xas_next_entry include/linux/xarray.h:1630 [inline]
+ __io_uring_files_cancel+0x417/0x440 fs/io_uring.c:8681
+ io_uring_files_cancel include/linux/io_uring.h:35 [inline]
+ exit_files+0xe4/0x170 fs/file.c:456
+ do_exit+0xae9/0x2930 kernel/exit.c:801
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x428/0x1f00 kernel/signal.c:2757
+ arch_do_signal+0x82/0x2470 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
+ exit_to_user_mode_prepare+0x194/0x1f0 kernel/entry/common.c:192
+ syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45de29
+Code: Unable to access opcode bytes at RIP 0x45ddff.
+RSP: 002b:00007f887aa8fcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 000000000118bf28 RCX: 000000000045de29
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000118bf28
+RBP: 000000000118bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
+R13: 00007ffe3a42135f R14: 00007f887aa909c0 R15: 000000000118bf2c
+
+Allocated by task 8477:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ slab_post_alloc_hook mm/slab.h:514 [inline]
+ slab_alloc mm/slab.c:3314 [inline]
+ kmem_cache_alloc+0x162/0x550 mm/slab.c:3484
+ xas_alloc+0x330/0x440 lib/xarray.c:374
+ xas_create+0x2db/0x1020 lib/xarray.c:676
+ xas_store+0x8a/0x1bb0 lib/xarray.c:784
+ io_uring_add_task_file fs/io_uring.c:8608 [inline]
+ io_uring_add_task_file+0x212/0x430 fs/io_uring.c:8590
  io_uring_get_fd fs/io_uring.c:9116 [inline]
  io_uring_create fs/io_uring.c:9280 [inline]
  io_uring_setup+0x2727/0x3660 fs/io_uring.c:9314
  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45de29
-Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc3719c4bf8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 000000000045de29
-RDX: 00000000206d4000 RSI: 0000000020000080 RDI: 0000000000000087
-RBP: 000000000118bf78 R08: 0000000020000040 R09: 0000000020000040
-R10: 0000000020000000 R11: 0000000000000206 R12: 00000000206d4000
-R13: 0000000020ee7000 R14: 0000000020000040 R15: 0000000020000000
+
+Freed by task 6907:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3420 [inline]
+ kmem_cache_free.part.0+0x74/0x1d0 mm/slab.c:3695
+ rcu_do_batch kernel/rcu/tree.c:2484 [inline]
+ rcu_core+0x645/0x1240 kernel/rcu/tree.c:2718
+ __do_softirq+0x203/0xab6 kernel/softirq.c:298
+
+Last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2960 [inline]
+ call_rcu+0x15e/0x7d0 kernel/rcu/tree.c:3033
+ xa_node_free lib/xarray.c:258 [inline]
+ xas_delete_node lib/xarray.c:494 [inline]
+ update_node lib/xarray.c:756 [inline]
+ xas_store+0xbcc/0x1bb0 lib/xarray.c:841
+ io_uring_del_task_file+0x105/0x1a0 fs/io_uring.c:8630
+ __io_uring_files_cancel+0x3dd/0x440 fs/io_uring.c:8691
+ io_uring_files_cancel include/linux/io_uring.h:35 [inline]
+ exit_files+0xe4/0x170 fs/file.c:456
+ do_exit+0xae9/0x2930 kernel/exit.c:801
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x428/0x1f00 kernel/signal.c:2757
+ arch_do_signal+0x82/0x2470 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
+ exit_to_user_mode_prepare+0x194/0x1f0 kernel/entry/common.c:192
+ syscall_exit_to_user_mode+0x7a/0x2c0 kernel/entry/common.c:267
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Second to last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2960 [inline]
+ call_rcu+0x15e/0x7d0 kernel/rcu/tree.c:3033
+ radix_tree_node_free lib/radix-tree.c:308 [inline]
+ delete_node+0xef/0x8c0 lib/radix-tree.c:571
+ __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1377
+ radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1428
+ free_pid+0x9b/0x260 kernel/pid.c:152
+ __change_pid+0x1c7/0x2d0 kernel/pid.c:353
+ __unhash_process kernel/exit.c:76 [inline]
+ __exit_signal kernel/exit.c:147 [inline]
+ release_task+0xd1c/0x14d0 kernel/exit.c:198
+ exit_notify kernel/exit.c:681 [inline]
+ do_exit+0x143f/0x2930 kernel/exit.c:826
+ call_usermodehelper_exec_async+0x413/0x580 kernel/umh.c:123
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+
+The buggy address belongs to the object at ffff888033631880
+ which belongs to the cache radix_tree_node of size 576
+The buggy address is located 0 bytes inside of
+ 576-byte region [ffff888033631880, ffff888033631ac0)
+The buggy address belongs to the page:
+page:00000000c45adbd1 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888033631ffb pfn:0x33631
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea0000cd8908 ffffea0000cd8488 ffff88800ec6f000
+raw: ffff888033631ffb ffff888033631040 0000000100000005 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888033631780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888033631800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888033631880: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888033631900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888033631980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
