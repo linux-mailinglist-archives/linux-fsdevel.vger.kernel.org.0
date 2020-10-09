@@ -2,96 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E73288DD8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 18:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA8E289018
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 19:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389626AbgJIQMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 12:12:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41306 "EHLO
+        id S1732948AbgJIRgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 13:36:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389144AbgJIQMu (ORCPT
+        with ESMTP id S1732882AbgJIRgW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 12:12:50 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E358C0613D2;
-        Fri,  9 Oct 2020 09:12:50 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id t12so9651845ilh.3;
-        Fri, 09 Oct 2020 09:12:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=Uy1qbqyA70FigIO+ekukYLC701Um0d879m8IXckivCI=;
-        b=Z820tWIzrRG4Z8kIA/LiyxyQL+WZYPl8fmfj0Op2gYzuviQ9HKPhATBfmFt/hKKrCa
-         xxz+VHskQvalwSrmAq4Ll1Y4y93JgWafsfqnxct3xkOT5L3KXsdj6VXHq2R3qBkS+kjH
-         vIE8OA8DKn9ib8YH5NkLWjYwAXLCuaJaWejCgPkDdjqYPZOf9oMvz7kET7v/Bctygw/l
-         zWacU/LKUVWpO2y5zHhEtiCYC/ymOKUiD59KbM4I7NzHc1wYs1kR2UJstPHAYetSemro
-         OVkNpC163ifjkbRQ0gzyB09WyeksxJk7uV9CXV1GWlinOsAzsvIE8C6ze0VTUObxSJJx
-         d97w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=Uy1qbqyA70FigIO+ekukYLC701Um0d879m8IXckivCI=;
-        b=qM3tj5RAzcMasvC4dYRNDTnBKIL7rXFXxtOygWNJPTRH4+MeKt6FVR4y99niAbjgEP
-         TvEF3SGY6RmzGK6sWWsx2lVLK2hkwmLlKrN831yvsPLbNJ1pPrw/HBn3T9yv2Y7xRoWg
-         KER6jh8y2dEJMBFafZ0oZDsL4ISBqPXMx1jkCUkWKaaXRGB7gSxAfOtx4hbd0B/1ICmv
-         6yKGuJVfN06KGGJf0ng3wYwD2bU9eXMf2gqLmKQQfWm8qPZ885hK7tS8IWgJCa16tsfI
-         XkpLeCCVzbE15XhcFP8O59fOcDuophSo+dHalQVEdzbbgoA53NRYNwh+xn2KrqBt5HXP
-         GQBg==
-X-Gm-Message-State: AOAM531VUSPduBRBkYPsetq9cP6xhNAEOKNRt8FxdI8iD5mQfzDqYOrV
-        l1mMuz8p4XuUuZuHEchIiALH0vdFJDMWlFTuDNY=
-X-Google-Smtp-Source: ABdhPJypH5VLKyelw9J3fzz4SZ1xNrfBUtDUtsKRZ4P6JIdIa8r0CmGAc4j0X1fz52yDn3ZMp85GktEoXIK+EtcT9fU=
-X-Received: by 2002:a92:6a0a:: with SMTP id f10mr10873466ilc.186.1602259969720;
- Fri, 09 Oct 2020 09:12:49 -0700 (PDT)
+        Fri, 9 Oct 2020 13:36:22 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942DFC0613D2;
+        Fri,  9 Oct 2020 10:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fpwKpB0QRMQy9tLZQv1g7PmBUfEuKMv/BEO55MnQHTc=; b=epj475FdxE/6piVligw7f/O1Gg
+        C51sXJjusavAgwM0+vopbw1kAT6F8MeRMLuZqu9GF5kosFlBr0DMLgR2b+U5Cih/1Kg6WOrmU7ufb
+        ceowujvqt7mbx32fx0QHFLbrRyRmMZ7GHavqZM/eb1rc9k+kpVfntqs8R9aKVI/A+Mt1LLcmAHwJ3
+        pBzpV08VvjTAfGqihoUByDmRGPVtJNbnKEbbeYz9rCPLqWJ5x4g0YEHuNmtfXvgQ2Uy/yPxJF4E/c
+        7MtAAMQ8f8VyU2MrKUfpkE7D6wq4rWwqK3OU7ICBl31srqQhYEPyab/V682eiyCfvlN2kjP2Rcugr
+        SeLThKMA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kQwJY-0001Eh-D3; Fri, 09 Oct 2020 17:36:20 +0000
+Date:   Fri, 9 Oct 2020 18:36:20 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH 2/3] io_uring: Fix XArray usage in io_uring_add_task_file
+Message-ID: <20201009173620.GV20115@casper.infradead.org>
+References: <20201009124954.31830-1-willy@infradead.org>
+ <20201009124954.31830-2-willy@infradead.org>
+ <0746e0aa-cb81-0fde-5405-acb1e61b6854@kernel.dk>
 MIME-Version: 1.0
-References: <CA+icZUWkE5CVtGGo88zo9b28JB1rN7=Gpc4hXywUaqjdCcSyOw@mail.gmail.com>
- <CA+icZUVd6nf-LmoHB18vsZZjprDGW6nVFNKW3b9_cwxWvbTejw@mail.gmail.com>
- <CA+icZUU+UwKY8jQg9MfbojimepWahFSRU6DUt=468AfAf7uCSA@mail.gmail.com>
- <20201009154509.GK235506@mit.edu> <CAD+ocbxpop9fFdgqzyObuT5oA=2OpmPj7SeS+ioH6QBvN_Ao6g@mail.gmail.com>
-In-Reply-To: <CAD+ocbxpop9fFdgqzyObuT5oA=2OpmPj7SeS+ioH6QBvN_Ao6g@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 9 Oct 2020 18:12:38 +0200
-Message-ID: <CA+icZUWsF1nm5nFGjy1Bk8pBCG-+GNDTbzJG7+XHrqddMobxUA@mail.gmail.com>
-Subject: Re: ext4: dev: Broken with CONFIG_JBD2=and CONFIG_EXT4_FS=m
-To:     harshad shirwadkar <harshadshirwadkar@gmail.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0746e0aa-cb81-0fde-5405-acb1e61b6854@kernel.dk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 9, 2020 at 6:04 PM harshad shirwadkar
-<harshadshirwadkar@gmail.com> wrote:
->
-> Thanks Sedat for pointing that out and also sending out the fixes.
-> Ted, should I send out another version of fast commits out with
-> Sedat's fixes?
->
+On Fri, Oct 09, 2020 at 08:57:55AM -0600, Jens Axboe wrote:
+> > +	if (unlikely(!cur_uring)) {
+> >  		int ret;
+> >  
+> >  		ret = io_uring_alloc_task_context(current);
+> >  		if (unlikely(ret))
+> >  			return ret;
+> >  	}
+> 
+> I think this is missing a:
+> 
+> 	cur_uring = current->io_uring;
+> 
+> after the successful io_uring_alloc_task(). I'll also rename it to tctx
+> like what is used in other spots.
 
-v10 :-)?
+Quite right!  I should have woken up a little bit more before writing code.
 
-As far as I can see this has not landed in Linux-next and Stephen is
-not doing new releases at the weekend.
+> Apart from that, series looks good to me, thanks Matthew!
 
-Anyway, it is good you are at it.
-
-Thanks.
-
-- Sedat -
-
->
->
-> On Fri, Oct 9, 2020 at 8:45 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> >
-> > On Fri, Oct 09, 2020 at 04:31:51PM +0200, Sedat Dilek wrote:
-> > > > This fixes it...
-> >
-> > Sedat,
-> >
-> > Thanks for the report and the proposed fixes!
-> >
-> >                                         - Ted
+NP.  At some point, I'd like to understand a bit better how you came
+to write the code the way you did, so I can improve the documentation.
+Maybe I just need to strengthen the warnings to stay away from the
+advanced API unless you absolutely need it.
