@@ -2,71 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA8E289018
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 19:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D06E2890A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 20:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732948AbgJIRgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 13:36:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54336 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732882AbgJIRgW (ORCPT
+        id S2388176AbgJISQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 14:16:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:54621 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731864AbgJISQl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 13:36:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942DFC0613D2;
-        Fri,  9 Oct 2020 10:36:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fpwKpB0QRMQy9tLZQv1g7PmBUfEuKMv/BEO55MnQHTc=; b=epj475FdxE/6piVligw7f/O1Gg
-        C51sXJjusavAgwM0+vopbw1kAT6F8MeRMLuZqu9GF5kosFlBr0DMLgR2b+U5Cih/1Kg6WOrmU7ufb
-        ceowujvqt7mbx32fx0QHFLbrRyRmMZ7GHavqZM/eb1rc9k+kpVfntqs8R9aKVI/A+Mt1LLcmAHwJ3
-        pBzpV08VvjTAfGqihoUByDmRGPVtJNbnKEbbeYz9rCPLqWJ5x4g0YEHuNmtfXvgQ2Uy/yPxJF4E/c
-        7MtAAMQ8f8VyU2MrKUfpkE7D6wq4rWwqK3OU7ICBl31srqQhYEPyab/V682eiyCfvlN2kjP2Rcugr
-        SeLThKMA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kQwJY-0001Eh-D3; Fri, 09 Oct 2020 17:36:20 +0000
-Date:   Fri, 9 Oct 2020 18:36:20 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [PATCH 2/3] io_uring: Fix XArray usage in io_uring_add_task_file
-Message-ID: <20201009173620.GV20115@casper.infradead.org>
-References: <20201009124954.31830-1-willy@infradead.org>
- <20201009124954.31830-2-willy@infradead.org>
- <0746e0aa-cb81-0fde-5405-acb1e61b6854@kernel.dk>
+        Fri, 9 Oct 2020 14:16:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602267399;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6AOI++zZ6Cc9pncudS+cwz7OKe/aDNndvOS5Ql/WTSg=;
+        b=QMTommPiXgskajhRYIYryRtoZPxraQXkvhXNoKAs+YTc+t6P5fR1Zm2K+OTbDNapXSzw0X
+        qlmbLwo4hmhVXFlqWczDeN4Oydtc2ODLb0vHe7O5HECmT3uB73rbBUr2UvcwhPxc0Iczpy
+        yCnCgUH/sZWR20Mj/o02+mdX5LUF2Ko=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-122-OqU97U7IMFCPu48irsqf2w-1; Fri, 09 Oct 2020 14:16:37 -0400
+X-MC-Unique: OqU97U7IMFCPu48irsqf2w-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EBC9B10E2184;
+        Fri,  9 Oct 2020 18:16:36 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-194.rdu2.redhat.com [10.10.115.194])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 49E556EF57;
+        Fri,  9 Oct 2020 18:16:33 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id D461B220307; Fri,  9 Oct 2020 14:16:32 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Cc:     vgoyal@redhat.com, virtio-fs@redhat.com
+Subject: [PATCH v3 0/6] fuse: Implement FUSE_HANDLE_KILLPRIV_V2 and enable SB_NOSEC
+Date:   Fri,  9 Oct 2020 14:15:06 -0400
+Message-Id: <20201009181512.65496-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0746e0aa-cb81-0fde-5405-acb1e61b6854@kernel.dk>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 09, 2020 at 08:57:55AM -0600, Jens Axboe wrote:
-> > +	if (unlikely(!cur_uring)) {
-> >  		int ret;
-> >  
-> >  		ret = io_uring_alloc_task_context(current);
-> >  		if (unlikely(ret))
-> >  			return ret;
-> >  	}
-> 
-> I think this is missing a:
-> 
-> 	cur_uring = current->io_uring;
-> 
-> after the successful io_uring_alloc_task(). I'll also rename it to tctx
-> like what is used in other spots.
+Hi All,
 
-Quite right!  I should have woken up a little bit more before writing code.
+Please find attached V3 of the patches to enable SB_NOSEC for fuse. I
+posted V1 and V2 here.
 
-> Apart from that, series looks good to me, thanks Matthew!
+v2:
+https://lore.kernel.org/linux-fsdevel/20200916161737.38028-1-vgoyal@redhat.com/
+v1:
+https://lore.kernel.org/linux-fsdevel/20200724183812.19573-1-vgoyal@redhat.com/
 
-NP.  At some point, I'd like to understand a bit better how you came
-to write the code the way you did, so I can improve the documentation.
-Maybe I just need to strengthen the warnings to stay away from the
-advanced API unless you absolutely need it.
+Changes since v2:
+
+- Based on Miklos's feedback, dropped a patch where we send ATTR_MODE as
+  that's racy. To help the case of writeback_cache with killpriv_v2, I
+  fallback to a synchronous WRITE if suid/sgid is set on file.
+
+I have generated these patches on top of.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/log/?h=for-nex
++t
+
+I have taken care of feedback from last round. For the case of random
+write peformance has jumped from 50MB/s to 250MB/s. So I am really
+looking forward to these changes so that fuse/virtiofs performance
+can be improved for direct random writes.
+
+Thanks
+Vivek
+
+
+Vivek Goyal (6):
+  fuse: Introduce the notion of FUSE_HANDLE_KILLPRIV_V2
+  fuse: Set FUSE_WRITE_KILL_PRIV in cached write path
+  fuse: setattr should set FATTR_KILL_PRIV upon size change
+  fuse: Don't send ATTR_MODE to kill suid/sgid for handle_killpriv_v2
+  fuse: Add a flag FUSE_OPEN_KILL_PRIV for open() request
+  fuse: Support SB_NOSEC flag to improve direct write performance
+
+ fs/fuse/dir.c             |  4 +++-
+ fs/fuse/file.c            | 16 +++++++++++++++-
+ fs/fuse/fuse_i.h          |  6 ++++++
+ fs/fuse/inode.c           | 17 ++++++++++++++++-
+ include/uapi/linux/fuse.h | 18 +++++++++++++++++-
+ 5 files changed, 57 insertions(+), 4 deletions(-)
+
+-- 
+2.25.4
+
