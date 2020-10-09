@@ -2,140 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EE02890A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 20:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9AC2890A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 20:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388180AbgJISQm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 14:16:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54494 "EHLO
+        id S2388219AbgJISQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 14:16:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25907 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725979AbgJISQl (ORCPT
+        by vger.kernel.org with ESMTP id S2388128AbgJISQl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 9 Oct 2020 14:16:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602267399;
+        s=mimecast20190719; t=1602267400;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NBIFLEAJp62H7A0pgHn2uS/XaJf3Q3ojEbIgpZnScAI=;
-        b=DmMLzeywRbnVajqjBa7T06GeCmCUknD7WghnvNOQ/qQnXTMD4GCb37Be49nKuIvcfm9J1B
-        0n5wYEBuTA/TQdIe23gj+37EIc2NjPeEW15CiN3Loxx2/DsQRRZcIvAlVENPBemcuQlL8o
-        4ugUbmcuntg0XcSsGfEywmL2D8WJohs=
+        bh=Iire866pakt4/h5QQtal+bLfd84wbchwXU8t4EgOWrI=;
+        b=MH5vUu1o9SGkn2B98CP/1sE08RbdKfyJCUtWDchm7jWb8Axh1Z9Ic5fepOT9qj1yVVdfWp
+        ZRzuwauGYK7Bw7YCQqZXhsuvOTgM1dGMwNR2ifuJi4yz/pmlyFLj6hGwT747VHTxUP+ml5
+        XyjmHAgMu38D9Xib+XNldR0q4l3JQak=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-559-UC7et51XMTm7AzkZLibCZA-1; Fri, 09 Oct 2020 14:16:38 -0400
-X-MC-Unique: UC7et51XMTm7AzkZLibCZA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-516-p3hbUiZYNN6Sw6qg7134Ag-1; Fri, 09 Oct 2020 14:16:38 -0400
+X-MC-Unique: p3hbUiZYNN6Sw6qg7134Ag-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F32A118829DA;
-        Fri,  9 Oct 2020 18:16:36 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8AD8B1008559;
+        Fri,  9 Oct 2020 18:16:37 +0000 (UTC)
 Received: from horse.redhat.com (ovpn-115-194.rdu2.redhat.com [10.10.115.194])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 61C4D5D9F3;
-        Fri,  9 Oct 2020 18:16:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6955E1002C01;
+        Fri,  9 Oct 2020 18:16:37 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E24E3223D09; Fri,  9 Oct 2020 14:16:32 -0400 (EDT)
+        id E5C5F223D0A; Fri,  9 Oct 2020 14:16:32 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
 Cc:     vgoyal@redhat.com, virtio-fs@redhat.com
-Subject: [PATCH v3 4/6] fuse: Don't send ATTR_MODE to kill suid/sgid for handle_killpriv_v2
-Date:   Fri,  9 Oct 2020 14:15:10 -0400
-Message-Id: <20201009181512.65496-5-vgoyal@redhat.com>
+Subject: [PATCH v3 5/6] fuse: Add a flag FUSE_OPEN_KILL_PRIV for open() request
+Date:   Fri,  9 Oct 2020 14:15:11 -0400
+Message-Id: <20201009181512.65496-6-vgoyal@redhat.com>
 In-Reply-To: <20201009181512.65496-1-vgoyal@redhat.com>
 References: <20201009181512.65496-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If client does a write() on a suid/sgid file, VFS will first call
-fuse_setattr() with ATTR_KILL_S[UG]ID set. This requires sending
-setattr to file server with ATTR_MODE set to kill suid/sgid. But
-to do that client needs to know latest mode otherwise it is racy.
+With FUSE_HANDLE_KILLPRIV_V2 support, server will need to kill
+suid/sgid/security.capability on open(O_TRUNC), if server supports
+FUSE_ATOMIC_O_TRUNC.
 
-To reduce the race window, current code first call fuse_do_getattr()
-to get latest ->i_mode and then resets suid/sgid bits and sends rest
-to server with setattr(ATTR_MODE). This does not reduce the race
-completely but narrows race window significantly.
+But server needs to kill suid/sgid only if caller does not have
+CAP_FSETID. Given server does not have this information, client
+needs to send this info to server.
 
-With fc->handle_killpriv_v2 enabled, it should be possible to remove
-this race completely. Do not kill suid/sgid with ATTR_MODE at all. It
-will be killed by server when WRITE request is sent to server soon.
-This is similar to fc->handle_killpriv logic. V2 is just more refined
-version of protocol. Hence this patch does not send ATTR_MODE to
-kill suid/sgid if fc->handle_killpriv_v2 is enabled.
-
-This creates an issue if fc->writeback_cache is enabled. In that
-case WRITE can be cached in guest and server might not see WRITE
-request and hence will not kill suid/sgid. Miklos suggested that
-in such cases, we should fallback to a writethrough WRITE instead
-and that will generate WRITE request and kill suid/sgid. This patch
-implements that too.
-
-But this relies on client seeing the suid/sgid set. If another client
-sets suid/sgid and this client does not see it immideately, then we
-will not fallback to writethrough WRITE. So this is one limitation
-with both fc->handle_killpriv_v2 and fc->writeback_cache enabled.
-Both the options are not fully compatible. But might be good enough
-for many use cases.
-
-Note: I am not checking whether security.capability is set or not when
-      falling back to writethrough path. if suid/sgid is not set and only
-      security.capability is set, that will be taken care of by
-      file_remove_privs() call in ->writeback_cache path.
+So add a flag FUSE_OPEN_KILL_PRIV to fuse_open_in request which tells
+server to kill suid/sgid(only if group execute is set).
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/dir.c  | 2 +-
- fs/fuse/file.c | 9 ++++++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ fs/fuse/file.c            |  5 +++++
+ include/uapi/linux/fuse.h | 10 +++++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index ecdb7895c156..510178594a8d 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1664,7 +1664,7 @@ static int fuse_setattr(struct dentry *entry, struct iattr *attr)
- 		 *
- 		 * This should be done on write(), truncate() and chown().
- 		 */
--		if (!fc->handle_killpriv) {
-+		if (!fc->handle_killpriv && !fc->handle_killpriv_v2) {
- 			/*
- 			 * ia_mode calculation may have used stale i_mode.
- 			 * Refresh and recalculate.
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index e40428f3d0f1..ee1bb9bfdcd5 100644
+index ee1bb9bfdcd5..5400c6d77701 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -1260,17 +1260,24 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	ssize_t written_buffered = 0;
- 	struct inode *inode = mapping->host;
- 	ssize_t err;
-+	struct fuse_conn *fc = get_fuse_conn(inode);
- 	loff_t endbyte = 0;
- 
--	if (get_fuse_conn(inode)->writeback_cache) {
-+	if (fc->writeback_cache) {
- 		/* Update size (EOF optimization) and mode (SUID clearing) */
- 		err = fuse_update_attributes(mapping->host, file);
- 		if (err)
- 			return err;
- 
-+		if (fc->handle_killpriv_v2 &&
-+		    should_remove_suid(file_dentry(file))) {
-+			goto writethrough;
-+		}
+@@ -42,6 +42,11 @@ static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+ 	inarg.flags = file->f_flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
+ 	if (!fc->atomic_o_trunc)
+ 		inarg.flags &= ~O_TRUNC;
 +
- 		return generic_file_write_iter(iocb, from);
- 	}
++	if (fc->handle_killpriv_v2 && (inarg.flags & O_TRUNC) &&
++	    !capable(CAP_FSETID))
++		inarg.open_flags |= FUSE_OPEN_KILL_PRIV;
++
+ 	args.opcode = opcode;
+ 	args.nodeid = nodeid;
+ 	args.in_numargs = 1;
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 7b8da0a2de0d..e20b3ee9d292 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -173,6 +173,7 @@
+  *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
+  *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
+  *  - add FUSE_HANDLE_KILLPRIV_V2
++ *  - add FUSE_OPEN_KILL_PRIV
+  */
  
-+writethrough:
- 	inode_lock(inode);
+ #ifndef _LINUX_FUSE_H
+@@ -427,6 +428,13 @@ struct fuse_file_lock {
+  */
+ #define FUSE_FSYNC_FDATASYNC	(1 << 0)
  
- 	/* We can write back this queue in page reclaim */
++/**
++ * Open flags
++ * FUSE_OPEN_KILL_PRIV: Kill suid/sgid/security.capability. sgid is cleared
++ * 			only if file has group execute permission.
++ */
++#define FUSE_OPEN_KILL_PRIV	(1 << 0)
++
+ enum fuse_opcode {
+ 	FUSE_LOOKUP		= 1,
+ 	FUSE_FORGET		= 2,  /* no reply */
+@@ -588,7 +596,7 @@ struct fuse_setattr_in {
+ 
+ struct fuse_open_in {
+ 	uint32_t	flags;
+-	uint32_t	unused;
++	uint32_t	open_flags;
+ };
+ 
+ struct fuse_create_in {
 -- 
 2.25.4
 
