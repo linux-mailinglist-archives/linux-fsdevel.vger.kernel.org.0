@@ -2,131 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 327272886ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 12:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 109EF2886E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Oct 2020 12:28:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731978AbgJIK34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Oct 2020 06:29:56 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33382 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbgJIK3z (ORCPT
+        id S1731910AbgJIK2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Oct 2020 06:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbgJIK2w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Oct 2020 06:29:55 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 099AKk5E081439;
-        Fri, 9 Oct 2020 10:28:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=iO7iieAE97VWREkueb1YYE1lfRocN/epUOpy+ZHHzLU=;
- b=lm/RRwEN7aMfPBGuu1y8+/4adW66cEn+DgLonp2Cdor0mppzl8uvoXGxADkJGXzaahLt
- 08zSAgiY+fuMh6tp5BIn3HO/xI9FiGXYGAvEsnjUVQICwqzoX437nzYz7/eJbZmaJrke
- sE9v5SNvFFNfgL1dH20+B051p/OgMi7bOPKQmkhCo6gfGayoRqV+hCsxvEdpAwA27BmR
- KWmf6KPdEd3FhRWsN26JIB7pcqKANL7eF+hkIaaigun95lhrqk8ADLMcyIxYUUUQDVZG
- rL7P3chD49VMIw9nGsp2r4BOSof7u6vPob3e/gcg+9ROOAjIT/mraIkajbyHC1ipo2SC xA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 3429juts2b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 09 Oct 2020 10:28:39 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 099AQH6t142717;
-        Fri, 9 Oct 2020 10:28:38 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 3429k0x68n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Oct 2020 10:28:38 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 099ASa86025600;
-        Fri, 9 Oct 2020 10:28:36 GMT
-Received: from [10.175.178.74] (/10.175.178.74)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 09 Oct 2020 03:28:36 -0700
-Subject: Re: [PATCH 22/35] kvm, x86: Distinguish dmemfs page from mmio page
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        yulei.kernel@gmail.com
-Cc:     akpm@linux-foundation.org, naoya.horiguchi@nec.com,
-        viro@zeniv.linux.org.uk, pbonzini@redhat.com,
-        linux-fsdevel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xiaoguangrong.eric@gmail.com,
-        kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
-        Yulei Zhang <yuleixzhang@tencent.com>,
-        Chen Zhuo <sagazchen@tencent.com>
-References: <cover.1602093760.git.yuleixzhang@tencent.com>
- <b2b6837785f6786575823c919788464373d3ee05.1602093760.git.yuleixzhang@tencent.com>
- <20201009005823.GA11151@linux.intel.com>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <a6dd5fbe-ca71-cf05-ec40-ec916843e9b7@oracle.com>
-Date:   Fri, 9 Oct 2020 11:28:31 +0100
+        Fri, 9 Oct 2020 06:28:52 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 967F1C0613D2;
+        Fri,  9 Oct 2020 03:28:52 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id q7so8697920ile.8;
+        Fri, 09 Oct 2020 03:28:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=vl6FnDcmMHotO+NlsI4jNXl/ZZeiSghv4APFCf9brEc=;
+        b=GzpK03fGAvht97i6dy2iGnaeighAj9C5abdcyRyPgOGoeYaZLedkRSfW9g0ipF9LKX
+         Mh9WXoOruyqKeexTE3A9Y5TtpdxMQIQDbiq8GvFPncEf2y+uh5HrHoespBBeYPHJS+et
+         pXyMR58UsdV2/dyEFNf/gSI6ABSgizREbS00/uwosl/uU7DxnVHGsrJzKTxn2W1OczSY
+         9rCOWWrd5xaCTr0qjnZTvgkzCRbYhX76Faiq88mgMz4REzA5iP8GAjQ0KUXS3j5DL+Do
+         Ic9zwGgaNI/m6V0cHnUxhmb9ynlAbYq4x3AF4O5g+HlqYdhIq6rFo/Q5X5+Qv8SdkMD/
+         7U/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=vl6FnDcmMHotO+NlsI4jNXl/ZZeiSghv4APFCf9brEc=;
+        b=HbQv2L+i7nTW0CvwfcR/YoiZCPrf+RTzAQbva9yceeBR6gqZUgNan6v3CMhrrJfgCT
+         b39GNR0Jl3ysiz/TS3Ke3nP0so7W9uUY6nOzUVP+wFF0klCn7wOwUPfI9kqTxfxZbP5G
+         3DVn+357Pfrvy3cY75/pMefmVQRahwicHiNeomFi/xgkJYcPouF0vodfBKrIpd4j5GeR
+         MQG2OMKoIKCx2kedTop910BwmPX1iQsxygt/pNmcDPJ68DHNrAaWmBkjTiwIepkkUxRO
+         /pP/yAOJNntK3OXAdu8ZXC7SwzxfEWvvU2qWoBF2Z45W9L85em6+xlCC28vQz9++738F
+         ruRg==
+X-Gm-Message-State: AOAM532GInX6PTqxHh5cgbzHI2jqBsDwZmoQ6TZTQ+I+G1yEDWT978pV
+        UsZlLWAsOk0vAL0q8UibvtkDbi9uM+4BF5an6jD8Y21q08+Mug==
+X-Google-Smtp-Source: ABdhPJy7eg1DPaXz/9mI1i+aZOhwm8pf/MccLsSeFKJ9jM61qfo8Vv86Aa6Rekv36JHJ2AZALBz8kdCUNp0Adp1Aeww=
+X-Received: by 2002:a92:3543:: with SMTP id c64mr169470ila.209.1602239331831;
+ Fri, 09 Oct 2020 03:28:51 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201009005823.GA11151@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9768 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
- mlxlogscore=999 bulkscore=0 suspectscore=1 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010090073
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9768 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999 mlxscore=0
- phishscore=0 bulkscore=0 suspectscore=1 lowpriorityscore=0 spamscore=0
- clxscore=1011 malwarescore=0 priorityscore=1501 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010090072
+References: <af902b5db99e8b73980c795d84ad7bb417487e76.1602168865.git.riteshh@linux.ibm.com>
+ <CA+icZUVPXFkc7ow5-vF4bxggE63LqQkmaXA6m9cAZVCOnbS1fQ@mail.gmail.com>
+ <22e5c5f9-c06b-5c49-d165-8f194aad107b@linux.ibm.com> <CA+icZUXLDGfHVGJXp2dA2JAxP8LUV4EVDNJmz20YjHa5A9oTtQ@mail.gmail.com>
+In-Reply-To: <CA+icZUXLDGfHVGJXp2dA2JAxP8LUV4EVDNJmz20YjHa5A9oTtQ@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 9 Oct 2020 12:28:40 +0200
+Message-ID: <CA+icZUW4-NA6vNg4KsGWyUNSEswR39Q4WKsJW-Hg+Vo6jopiEw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ext4: Fix bs < ps issue reported with dioread_nolock
+ mount opt
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jack@suse.cz, anju@linux.vnet.ibm.com,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/9/20 1:58 AM, Sean Christopherson wrote:
-> On Thu, Oct 08, 2020 at 03:54:12PM +0800, yulei.kernel@gmail.com wrote:
->> From: Yulei Zhang <yuleixzhang@tencent.com>
->>
->> Dmem page is pfn invalid but not mmio. Support cacheable
->> dmem page for kvm.
->>
->> Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
->> Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
->> ---
->>  arch/x86/kvm/mmu/mmu.c | 5 +++--
->>  include/linux/dmem.h   | 7 +++++++
->>  mm/dmem.c              | 7 +++++++
->>  3 files changed, 17 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
->> index 71aa3da2a0b7..0115c1767063 100644
->> --- a/arch/x86/kvm/mmu/mmu.c
->> +++ b/arch/x86/kvm/mmu/mmu.c
->> @@ -41,6 +41,7 @@
->>  #include <linux/hash.h>
->>  #include <linux/kern_levels.h>
->>  #include <linux/kthread.h>
->> +#include <linux/dmem.h>
->>  
->>  #include <asm/page.h>
->>  #include <asm/memtype.h>
->> @@ -2962,9 +2963,9 @@ static bool kvm_is_mmio_pfn(kvm_pfn_t pfn)
->>  			 */
->>  			(!pat_enabled() || pat_pfn_immune_to_uc_mtrr(pfn));
->>  
->> -	return !e820__mapped_raw_any(pfn_to_hpa(pfn),
->> +	return (!e820__mapped_raw_any(pfn_to_hpa(pfn),
->>  				     pfn_to_hpa(pfn + 1) - 1,
->> -				     E820_TYPE_RAM);
->> +				     E820_TYPE_RAM)) || (!is_dmem_pfn(pfn));
-> 
-> This is wrong.  As is, the logic reads "A PFN is MMIO if it is INVALID &&
-> (!RAM || !DMEM)".  The obvious fix would be to change it to "INVALID &&
-> !RAM && !DMEM", but that begs the question of whether or DMEM is reported
-> as RAM.  I don't see any e820 related changes in the series, i.e. no evidence
-> that dmem yanks its memory out of the e820 tables, which makes me think this
-> change is unnecessary.
-> 
-Even if there would exist e820 changes, e820__mapped_raw_any() checks against
-hardware-provided e820 that we are given before any changes happen i.e. not the one kernel
-has changed (e820_table_firmware). So unless you're having that memory carved from an MMIO
-range (which would be wrong), or the BIOS is misrepresenting its memory map... the
-e820__mapped_raw_any(E820_TYPE_RAM) ought to be enough to cover RAM.
+On Fri, Oct 9, 2020 at 12:18 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Fri, Oct 9, 2020 at 9:19 AM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+> >
+> >
+> >
+> > On 10/9/20 12:16 PM, Sedat Dilek wrote:
+> > > On Thu, Oct 8, 2020 at 5:56 PM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+> > >>
+> > >> left shifting m_lblk by blkbits was causing value overflow and hence
+> > >> it was not able to convert unwritten to written extent.
+> > >> So, make sure we typecast it to loff_t before do left shift operation.
+> > >> Also in func ext4_convert_unwritten_io_end_vec(), make sure to initialize
+> > >> ret variable to avoid accidentally returning an uninitialized ret.
+> > >>
+> > >> This patch fixes the issue reported in ext4 for bs < ps with
+> > >> dioread_nolock mount option.
+> > >>
+> > >> Fixes: c8cc88163f40df39e50c ("ext4: Add support for blocksize < pagesize in dioread_nolock")
+> > >
+> > > Fixes: tag should be 12 digits (see [1]).
+> > > ( Seen while walking through ext-dev Git commits. )
+> >
+> >
+> > Thanks Sedat, I guess it should be minimum 12 chars [1]
+> >
+> > [1]:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n177
+> >
+>
+> OK.
+>
+> In my ~/.gitconfig:
+>
+> [core]
+>        abbrev = 12
+>
+> # Check for 'Fixes:' tag used in the Linux-kernel development process
+> (Thanks Kalle Valo).
+> # Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst
+> # Usage: $ git log --format=fixes | head -5
+> [pretty]
+>    fixes = Fixes: %h (\"%s\")
+>
+> Hope this is useful for others.
+>
 
-Or at least that has been my experience with similar work.
+Changed to...
 
-	Joao
+Link: https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+
+- Sedat -
