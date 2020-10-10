@@ -2,250 +2,387 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2D728A036
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Oct 2020 13:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21EF328A3F8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 01:12:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbgJJLgk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Oct 2020 07:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
+        id S2389267AbgJJWza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Oct 2020 18:55:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728984AbgJJKUC (ORCPT
+        with ESMTP id S1731322AbgJJTxn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Oct 2020 06:20:02 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D03C0613E8;
-        Sat, 10 Oct 2020 03:10:26 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id d3so12097480wma.4;
-        Sat, 10 Oct 2020 03:10:26 -0700 (PDT)
+        Sat, 10 Oct 2020 15:53:43 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534AAC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 03:39:20 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id e10so9122756pfj.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 03:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+5Kk22A1F12ZCDKSgxuLiVNU0UIB3cywAG+dlY1imeQ=;
-        b=eq7AarxeDEoSqYIc/cu4LdN3vXvJyPq0+41F5eXBCCQqrrI36cuYuYjFo90IC9A40G
-         AF8MKaxDqHmG8k/ylfp5hitQoiHpNQm2Cy8tmW54tqovxaTv2acIJFRT/aKqLYHDgHw6
-         IpaGZfqA1iIbN6WQTZrdon9+HIXeNsKw0DMohQvEX2criIXnJG5Y9+i5eLXIyXLXxUiT
-         Zi9YXaGh9CcAig13DI7P9H9XegQumHIxp6lXU6nKc8vs8vPQC27645kVnXhnBsBJWuhp
-         5lDpcUsepHYbaSN6PeXf2um89U3t8i7ikxgKVxYjFKp2jDMSS5e7TawE3MzMkIjfzd8Z
-         44ZA==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u0rkVm7C5Ne19ttZslnktIRDYT2Kn1UpPsAG5EcqOzk=;
+        b=nldkqHE8cd6nALAOIPmeXXa4lxSehpssrliInfwNUW6Hb+5AQUJqdY1lIPTMQ6GhSC
+         bNzY2yFALQ55yAPmV5/4OpkoS7Qxwcj/YUT5Oj5i9lNzl9jecn4rrsC7JXX9l2e74ImO
+         cJrwW3fD48Oz0BKuJkv+BX5P4MtW/5+lC59ohp8iD3SZuNoyFMebf73oGrnKCE0Yvu3A
+         XOgUEFfxab3XYcCK8qOUOXalHYT5GixnEluc7WjZJUD1eYMRtoTU89QqQsf9E0GIIZ9q
+         qB9nij5cQMCDcDus00QS4NHfq/KCsRWHwombRIrYkQPhxQSNvOqD8XT1glRLgL7P399O
+         Eq0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+5Kk22A1F12ZCDKSgxuLiVNU0UIB3cywAG+dlY1imeQ=;
-        b=icS0PY1Iyb/mOFEIL1C9P8zbdl3caR2zjDZNiuxNACxM9lwmPLoKQKht7dyxvk5pfP
-         UvGKdb6s1c8ROT4TEbwTdTqb0jh3KJKswhRLEX+7tDFkMNcfZmS/2HV76MGY/pPKh0R7
-         FQCsYduC+pNI3eznjkq4U0wMuTmnGw4APA4ax9ETC3OZhk6hCu1RcSt6hSsfkkSkKPM2
-         mmWb+ozL+8syPymlCuMUncgS4kS5Vc+123iSySDiDxp6VkT17PBwVknavMWwa8iIv1ou
-         9+rPanzQS61SxYHgS88gdX9HF7SjdH48sr3ZAllo0HghEDrt/csg4tv6gMNowWvZtCJR
-         XStA==
-X-Gm-Message-State: AOAM531hjlv12vXbXkVdf86Dm1bYSaJYPxX241VdZ+N0kFojvLEVgkns
-        4P/2Ib6y7aCt6SAqmBEfOO3NpiwgZS/+3QfL
-X-Google-Smtp-Source: ABdhPJznbleH2Zg/Q+gXbEw4ZFD2S3/C2VgCY65xN5MQ7lGZNIFYp2vCCFf4tdCMpa3Jl1PZtNBI3w==
-X-Received: by 2002:a7b:c401:: with SMTP id k1mr2106929wmi.120.1602324624558;
-        Sat, 10 Oct 2020 03:10:24 -0700 (PDT)
-Received: from [10.247.113.199] ([217.163.2.179])
-        by smtp.gmail.com with ESMTPSA id b25sm12693333wmj.21.2020.10.10.03.10.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Oct 2020 03:10:23 -0700 (PDT)
-Subject: Re: [io_uring] b166b25674: BUG:KASAN:null-ptr-deref_in_i
-To:     kernel test robot <lkp@intel.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lkp@lists.01.org
-References: <20201010094154.GA393@shao2-debian>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Message-ID: <17da1022-8918-0b6b-4492-685773b80b8d@gmail.com>
-Date:   Sat, 10 Oct 2020 11:07:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u0rkVm7C5Ne19ttZslnktIRDYT2Kn1UpPsAG5EcqOzk=;
+        b=QLWBbVodKAs3UmSBipHvLGRAKzei0Q0X8kDuQcKTxfANx/aeRjDORng7OQjHXyHkjK
+         VKe1WDFnI2k2vxG56i/5ZLeZ7fhs6QkNUtU2lnsi+u2g3sjgyGmtNZs/+cTmppbiZiAm
+         uwF1lsRkcfKBjNVFWq/1b5GJrLI6Ab15QejFJzXL4m0THrpIhk3A2kXck5rrKs0L+gVv
+         SGHB1eiKLVk2CFRZTvPxeAYBWHMy+Tgtlleui6OSAP/hgEZPzW5ABqMAOg07ZGMoGdj4
+         Qs92lXpGMQxMKteN+dhzReaG5KoBUV3cg/L1LZs33oGoqhexGAJtQtnuYtekTeoDSbVm
+         tuwQ==
+X-Gm-Message-State: AOAM532cE9bXyptOTSjvex3COLActBBOUKbEaXa0idvs35EsF3wbqiC8
+        cLQCj3WkwixFdNTen9kpeTbR8g==
+X-Google-Smtp-Source: ABdhPJxZnwM7IyP5/gKorplHLzpJGDDwce8ks6RVhogeGwaAYPaE9QFMriDfyYZjDuze5VAmX/L0QA==
+X-Received: by 2002:a63:e:: with SMTP id 14mr6928456pga.426.1602326359642;
+        Sat, 10 Oct 2020 03:39:19 -0700 (PDT)
+Received: from Smcdef-MBP.local.net ([103.136.220.73])
+        by smtp.gmail.com with ESMTPSA id v3sm1450830pfu.165.2020.10.10.03.39.04
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Oct 2020 03:39:18 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     gregkh@linuxfoundation.org, rafael@kernel.org, mst@redhat.com,
+        jasowang@redhat.com, davem@davemloft.net, kuba@kernel.org,
+        adobriyan@gmail.com, akpm@linux-foundation.org,
+        edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+        shakeelb@google.com, will@kernel.org, mhocko@suse.com, guro@fb.com,
+        neilb@suse.de, rppt@kernel.org, songmuchun@bytedance.com,
+        samitolvanen@google.com, kirill.shutemov@linux.intel.com,
+        feng.tang@intel.com, pabeni@redhat.com, willemb@google.com,
+        rdunlap@infradead.org, fw@strlen.de, gustavoars@kernel.org,
+        pablo@netfilter.org, decui@microsoft.com, jakub@cloudflare.com,
+        peterz@infradead.org, christian.brauner@ubuntu.com,
+        ebiederm@xmission.com, tglx@linutronix.de, dave@stgolabs.net,
+        walken@google.com, jannh@google.com, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, minchan@kernel.org, kafai@fb.com,
+        ast@kernel.org, daniel@iogearbox.net, linmiaohe@huawei.com,
+        keescook@chromium.org
+Cc:     linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH] mm: proc: add Sock to /proc/meminfo
+Date:   Sat, 10 Oct 2020 18:38:54 +0800
+Message-Id: <20201010103854.66746-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-In-Reply-To: <20201010094154.GA393@shao2-debian>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/10/2020 12:41, kernel test robot wrote:
-> Greeting,
-> 
-> FYI, we noticed the following commit (built with gcc-9):
-> 
-> commit: b166b25674b991268afbe1bcbfee7d1eadf1203d ("io_uring: Fix XArray usage in io_uring_add_task_file")
-> url: https://github.com/0day-ci/linux/commits/Matthew-Wilcox-Oracle/io_uring-Fix-use-of-XArray-in-__io_uring_files_cancel/20201009-205103
+The amount of memory allocated to sockets buffer can become significant.
+However, we do not display the amount of memory consumed by sockets
+buffer. In this case, knowing where the memory is consumed by the kernel
+is very difficult. On our server with 500GB RAM, sometimes we can see
+25GB disappear through /proc/meminfo. After our analysis, we found the
+following memory allocation path which consumes the memory with page_owner
+enabled.
 
-The patch was fixed by Jens upon queueing into io_uring tree, see
-https://git.kernel.dk/cgit/linux-block/commit/?h=for-5.10/io_uring&id=236434c3438c4da3dfbd6aeeab807577b85e951a
+  849698 times:
+  Page allocated via order 3, mask 0x4052c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP)
+   __alloc_pages_nodemask+0x11d/0x290
+   skb_page_frag_refill+0x68/0xf0
+   sk_page_frag_refill+0x19/0x70
+   tcp_sendmsg_locked+0x2f4/0xd10
+   tcp_sendmsg+0x29/0xa0
+   sock_sendmsg+0x30/0x40
+   sock_write_iter+0x8f/0x100
+   __vfs_write+0x10b/0x190
+   vfs_write+0xb0/0x190
+   ksys_write+0x5a/0xd0
+   do_syscall_64+0x5d/0x110
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-> 
-> 
-> in testcase: trinity
-> version: trinity-static-x86_64-x86_64-f93256fb_2019-08-28
-> with following parameters:
-> 
-> 	runtime: 300s
-> 
-> test-description: Trinity is a linux system call fuzz tester.
-> test-url: http://codemonkey.org.uk/projects/trinity/
-> 
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
-> 
-> +---------------------------------------------+------------+------------+
-> |                                             | 0fcb19f37b | b166b25674 |
-> +---------------------------------------------+------------+------------+
-> | boot_successes                              | 4          | 0          |
-> | boot_failures                               | 0          | 4          |
-> | BUG:KASAN:null-ptr-deref_in_i               | 0          | 4          |
-> | BUG:kernel_NULL_pointer_dereference,address | 0          | 4          |
-> | Oops:#[##]                                  | 0          | 4          |
-> | RIP:io_uring_add_task_file                  | 0          | 4          |
-> | Kernel_panic-not_syncing:Fatal_exception    | 0          | 4          |
-> +---------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> 
-> [   62.517646] BUG: KASAN: null-ptr-deref in io_uring_add_task_file+0x4c/0xe0
-> [   62.519048] Read of size 8 at addr 00000000000000b0 by task trinity-c1/829
-> [   62.523951] 
-> [   62.524242] CPU: 1 PID: 829 Comm: trinity-c1 Not tainted 5.9.0-rc8-next-20201009-00002-gb166b25674b9 #2
-> [   62.526099] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-> [   62.527815] Call Trace:
-> [   62.528308]  dump_stack+0xd1/0x119
-> [   62.529059]  ? io_uring_add_task_file+0x4c/0xe0
-> [   62.529957]  ? io_uring_add_task_file+0x4c/0xe0
-> [   62.530314] random: get_random_u64 called from arch_pick_mmap_layout+0xb6/0x280 with crng_init=1
-> [   62.530331] random: get_random_u64 called from arch_pick_mmap_layout+0x1d4/0x280 with crng_init=1
-> [   62.534194]  kasan_report.cold+0x5/0x37
-> [   62.535041]  ? io_uring_add_task_file+0x4c/0xe0
-> [   62.535996]  io_uring_add_task_file+0x4c/0xe0
-> [   62.536869]  io_uring_create+0xa0c/0xc60
-> [   62.537703]  io_uring_setup+0xb6/0x120
-> [   62.538429]  ? io_uring_create+0xc60/0xc60
-> [   62.539309]  ? syscall_enter_from_user_mode+0x74/0xc0
-> [   62.540382]  ? trace_hardirqs_on+0x48/0x120
-> [   62.541262]  do_syscall_64+0x34/0x50
-> [   62.542051]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   62.543035] RIP: 0033:0x453b29
-> [   62.543562] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 84 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-> [   62.547371] RSP: 002b:00007ffc0a17d778 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> [   62.565017] RAX: ffffffffffffffda RBX: 00000000000001a9 RCX: 0000000000453b29
-> [   62.566269] RDX: 00000000000000e7 RSI: 00007f36ac820000 RDI: 00000000000000cf
-> [   62.567534] RBP: 00007ffc0a17d820 R08: 00000000c00000ce R09: 00000000000000bb
-> [   62.568803] R10: 000000000000ff93 R11: 0000000000000246 R12: 0000000000000002
-> [   62.570093] R13: 00007f36acb4e058 R14: 0000000001afd830 R15: 00007f36acb4e000
-> [   62.571485] ==================================================================
-> [   62.572888] Disabling lock debugging due to kernel taint
-> [   62.574137] BUG: kernel NULL pointer dereference, address: 00000000000000b0
-> [   62.575657] #PF: supervisor read access in kernel mode
-> [   62.576757] #PF: error_code(0x0000) - not-present page
-> [   62.577826] PGD 8000000125f81067 P4D 8000000125f81067 PUD 10c4f8067 PMD 0 
-> [   62.579272] Oops: 0000 [#1] SMP KASAN PTI
-> [   62.590855] CPU: 1 PID: 829 Comm: trinity-c1 Tainted: G    B             5.9.0-rc8-next-20201009-00002-gb166b25674b9 #2
-> [   62.592683] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-> [   62.594078] RIP: 0010:io_uring_add_task_file+0x4c/0xe0
-> [   62.594962] Code: e8 69 70 f1 ff 49 8b ac 24 e8 05 00 00 48 85 ed 0f 84 89 00 00 00 e8 13 4b d1 ff 4c 8d a5 b0 00 00 00 4c 89 e7 e8 44 70 f1 ff <48> 39 9d b0 00 00 00 74 29 e8 f6 4a d1 ff 48 89 de 48 89 ef e8 ab
-> [   62.597942] RSP: 0018:ffff8881180b7db0 EFLAGS: 00010282
-> [   62.598810] RAX: 0000000000000001 RBX: ffff88811bb9c7c0 RCX: ffffffff81192dd3
-> [   62.600042] RDX: 0000000000000000 RSI: ffffffff8127c238 RDI: ffffffff823657c9
-> [   62.601200] RBP: 0000000000000000 R08: ffffffff81192dc4 R09: fffffbfff0722d8d
-> [   62.602476] R10: ffffffff83916c63 R11: fffffbfff0722d8c R12: 00000000000000b0
-> [   62.603680] R13: ffff8881180b7e6c R14: ffff8881268b8aa8 R15: ffff88811bb9c7c0
-> [   62.604885] FS:  0000000001afd880(0000) GS:ffff8881f7200000(0000) knlGS:0000000000000000
-> [   62.609926] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   62.611890] CR2: 00000000000000b0 CR3: 000000010d07e000 CR4: 00000000000406a0
-> [   62.614187] DR0: 00007f36ac420000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   62.616402] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000600
-> [   62.617646] Call Trace:
-> [   62.618083]  io_uring_create+0xa0c/0xc60
-> [   62.618744]  io_uring_setup+0xb6/0x120
-> [   62.630890]  ? io_uring_create+0xc60/0xc60
-> [   62.633250]  ? syscall_enter_from_user_mode+0x74/0xc0
-> [   62.635172]  ? trace_hardirqs_on+0x48/0x120
-> [   62.644116]  do_syscall_64+0x34/0x50
-> [   62.644736]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   62.645564] RIP: 0033:0x453b29
-> [   62.646478] Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b 84 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-> [   62.658096] RSP: 002b:00007ffc0a17d778 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> [   62.659354] RAX: ffffffffffffffda RBX: 00000000000001a9 RCX: 0000000000453b29
-> [   62.660754] RDX: 00000000000000e7 RSI: 00007f36ac820000 RDI: 00000000000000cf
-> [   62.661911] RBP: 00007ffc0a17d820 R08: 00000000c00000ce R09: 00000000000000bb
-> [   62.663066] R10: 000000000000ff93 R11: 0000000000000246 R12: 0000000000000002
-> [   62.664242] R13: 00007f36acb4e058 R14: 0000000001afd830 R15: 00007f36acb4e000
-> [   62.665397] Modules linked in: input_leds led_class parport_pc qemu_fw_cfg
-> [   62.666562] CR2: 00000000000000b0
-> [   62.667344] ---[ end trace b0d4015dae9c12ae ]---
-> 
-> 
-> To reproduce:
-> 
->         # build kernel
-> 	cd linux
-> 	cp config-5.9.0-rc8-next-20201009-00002-gb166b25674b9 .config
-> 	make HOSTCC=gcc-9 CC=gcc-9 ARCH=x86_64 olddefconfig prepare modules_prepare bzImage
-> 
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
-> 
-> 
-> 
-> Thanks,
-> lkp
-> 
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+---
+ drivers/base/node.c      |  2 ++
+ drivers/net/virtio_net.c |  3 +--
+ fs/proc/meminfo.c        |  1 +
+ include/linux/mmzone.h   |  1 +
+ include/linux/skbuff.h   | 43 ++++++++++++++++++++++++++++++++++++++--
+ kernel/exit.c            |  3 +--
+ mm/page_alloc.c          |  7 +++++--
+ mm/vmstat.c              |  1 +
+ net/core/sock.c          |  8 ++++----
+ net/ipv4/tcp.c           |  3 +--
+ net/xfrm/xfrm_state.c    |  3 +--
+ 11 files changed, 59 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index 508b80f6329b..6f92775da85c 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -418,6 +418,7 @@ static ssize_t node_read_meminfo(struct device *dev,
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 		       "Node %d ShadowCallStack:%8lu kB\n"
+ #endif
++		       "Node %d Sock:           %8lu kB\n"
+ 		       "Node %d PageTables:     %8lu kB\n"
+ 		       "Node %d NFS_Unstable:   %8lu kB\n"
+ 		       "Node %d Bounce:         %8lu kB\n"
+@@ -441,6 +442,7 @@ static ssize_t node_read_meminfo(struct device *dev,
+ 		       nid, K(node_page_state(pgdat, NR_ANON_MAPPED)),
+ 		       nid, K(i.sharedram),
+ 		       nid, node_page_state(pgdat, NR_KERNEL_STACK_KB),
++		       nid, K(node_page_state(pgdat, NR_SOCK)),
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 		       nid, node_page_state(pgdat, NR_KERNEL_SCS_KB),
+ #endif
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 263b005981bd..e7183f67ae4a 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2646,8 +2646,7 @@ static void free_receive_page_frags(struct virtnet_info *vi)
+ {
+ 	int i;
+ 	for (i = 0; i < vi->max_queue_pairs; i++)
+-		if (vi->rq[i].alloc_frag.page)
+-			put_page(vi->rq[i].alloc_frag.page);
++		put_page_frag(&vi->rq[i].alloc_frag);
+ }
+ 
+ static void free_unused_bufs(struct virtnet_info *vi)
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 887a5532e449..1dcf3120d831 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -106,6 +106,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "ShadowCallStack:%8lu kB\n",
+ 		   global_node_page_state(NR_KERNEL_SCS_KB));
+ #endif
++	show_val_kb(m, "Sock:           ", global_node_page_state(NR_SOCK));
+ 	show_val_kb(m, "PageTables:     ",
+ 		    global_zone_page_state(NR_PAGETABLE));
+ 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 31712bb61f7f..1996713d2c6b 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -207,6 +207,7 @@ enum node_stat_item {
+ #if IS_ENABLED(CONFIG_SHADOW_CALL_STACK)
+ 	NR_KERNEL_SCS_KB,	/* measured in KiB */
+ #endif
++	NR_SOCK,                /* Count of socket buffer pages */
+ 	NR_VM_NODE_STAT_ITEMS
+ };
+ 
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index fcd53f97c186..7e5108da4d84 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -19,7 +19,8 @@
+ #include <linux/rbtree.h>
+ #include <linux/socket.h>
+ #include <linux/refcount.h>
+-
++#include <linux/memcontrol.h>
++#include <linux/mm.h>
+ #include <linux/atomic.h>
+ #include <asm/types.h>
+ #include <linux/spinlock.h>
+@@ -3003,6 +3004,25 @@ static inline void skb_frag_ref(struct sk_buff *skb, int f)
+ 	__skb_frag_ref(&skb_shinfo(skb)->frags[f]);
+ }
+ 
++static inline void inc_sock_node_page_state(struct page *page)
++{
++	mod_node_page_state(page_pgdat(page), NR_SOCK, compound_nr(page));
++	/*
++	 * Indicate that we need to decrease the Sock page state when
++	 * the page freed.
++	 */
++	SetPagePrivate(page);
++}
++
++static inline void dec_sock_node_page_state(struct page *page)
++{
++	if (PagePrivate(page)) {
++		ClearPagePrivate(page);
++		mod_node_page_state(page_pgdat(page), NR_SOCK,
++				    -compound_nr(page));
++	}
++}
++
+ /**
+  * __skb_frag_unref - release a reference on a paged fragment.
+  * @frag: the paged fragment
+@@ -3011,7 +3031,12 @@ static inline void skb_frag_ref(struct sk_buff *skb, int f)
+  */
+ static inline void __skb_frag_unref(skb_frag_t *frag)
+ {
+-	put_page(skb_frag_page(frag));
++	struct page *page = skb_frag_page(frag);
++
++	if (put_page_testzero(page)) {
++		dec_sock_node_page_state(page);
++		__put_page(page);
++	}
+ }
+ 
+ /**
+@@ -3091,6 +3116,20 @@ static inline void skb_frag_set_page(struct sk_buff *skb, int f,
+ 	__skb_frag_set_page(&skb_shinfo(skb)->frags[f], page);
+ }
+ 
++static inline bool put_page_frag(struct page_frag *pfrag)
++{
++	struct page *page = pfrag->page;
++
++	if (page) {
++		if (put_page_testzero(page)) {
++			dec_sock_node_page_state(page);
++			__put_page(page);
++		}
++		return true;
++	}
++	return false;
++}
++
+ bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t prio);
+ 
+ /**
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 62912406d74a..58d373767d16 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -841,8 +841,7 @@ void __noreturn do_exit(long code)
+ 	if (tsk->splice_pipe)
+ 		free_pipe_info(tsk->splice_pipe);
+ 
+-	if (tsk->task_frag.page)
+-		put_page(tsk->task_frag.page);
++	put_page_frag(&tsk->task_frag);
+ 
+ 	validate_creds_for_do_exit(tsk);
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index cefbef32bf4a..6c543158aa06 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5379,7 +5379,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+ 		" unevictable:%lu dirty:%lu writeback:%lu\n"
+ 		" slab_reclaimable:%lu slab_unreclaimable:%lu\n"
+ 		" mapped:%lu shmem:%lu pagetables:%lu bounce:%lu\n"
+-		" free:%lu free_pcp:%lu free_cma:%lu\n",
++		" free:%lu free_pcp:%lu free_cma:%lu sock:%lu\n",
+ 		global_node_page_state(NR_ACTIVE_ANON),
+ 		global_node_page_state(NR_INACTIVE_ANON),
+ 		global_node_page_state(NR_ISOLATED_ANON),
+@@ -5397,7 +5397,8 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+ 		global_zone_page_state(NR_BOUNCE),
+ 		global_zone_page_state(NR_FREE_PAGES),
+ 		free_pcp,
+-		global_zone_page_state(NR_FREE_CMA_PAGES));
++		global_zone_page_state(NR_FREE_CMA_PAGES),
++		global_node_page_state(NR_SOCK));
+ 
+ 	for_each_online_pgdat(pgdat) {
+ 		if (show_mem_node_skip(filter, pgdat->node_id, nodemask))
+@@ -5425,6 +5426,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 			" shadow_call_stack:%lukB"
+ #endif
++			" sock:%lukB"
+ 			" all_unreclaimable? %s"
+ 			"\n",
+ 			pgdat->node_id,
+@@ -5450,6 +5452,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
+ #ifdef CONFIG_SHADOW_CALL_STACK
+ 			node_page_state(pgdat, NR_KERNEL_SCS_KB),
+ #endif
++			K(node_page_state(pgdat, NR_SOCK)),
+ 			pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ?
+ 				"yes" : "no");
+ 	}
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index b05dec387557..ceaf6f85c155 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1220,6 +1220,7 @@ const char * const vmstat_text[] = {
+ #if IS_ENABLED(CONFIG_SHADOW_CALL_STACK)
+ 	"nr_shadow_call_stack",
+ #endif
++	"nr_sock",
+ 
+ 	/* enum writeback_stat_item counters */
+ 	"nr_dirty_threshold",
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 5972d26f03ae..1661b423802b 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1780,10 +1780,8 @@ static void __sk_destruct(struct rcu_head *head)
+ 		pr_debug("%s: optmem leakage (%d bytes) detected\n",
+ 			 __func__, atomic_read(&sk->sk_omem_alloc));
+ 
+-	if (sk->sk_frag.page) {
+-		put_page(sk->sk_frag.page);
++	if (put_page_frag(&sk->sk_frag))
+ 		sk->sk_frag.page = NULL;
+-	}
+ 
+ 	if (sk->sk_peer_cred)
+ 		put_cred(sk->sk_peer_cred);
+@@ -2456,7 +2454,7 @@ bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t gfp)
+ 		}
+ 		if (pfrag->offset + sz <= pfrag->size)
+ 			return true;
+-		put_page(pfrag->page);
++		put_page_frag(pfrag);
+ 	}
+ 
+ 	pfrag->offset = 0;
+@@ -2469,12 +2467,14 @@ bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t gfp)
+ 					  SKB_FRAG_PAGE_ORDER);
+ 		if (likely(pfrag->page)) {
+ 			pfrag->size = PAGE_SIZE << SKB_FRAG_PAGE_ORDER;
++			inc_sock_node_page_state(pfrag->page);
+ 			return true;
+ 		}
+ 	}
+ 	pfrag->page = alloc_page(gfp);
+ 	if (likely(pfrag->page)) {
+ 		pfrag->size = PAGE_SIZE;
++		inc_sock_node_page_state(pfrag->page);
+ 		return true;
+ 	}
+ 	return false;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 57a568875539..583761844b4f 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2751,8 +2751,7 @@ int tcp_disconnect(struct sock *sk, int flags)
+ 
+ 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
+ 
+-	if (sk->sk_frag.page) {
+-		put_page(sk->sk_frag.page);
++	if (put_page_frag(&sk->sk_frag)) {
+ 		sk->sk_frag.page = NULL;
+ 		sk->sk_frag.offset = 0;
+ 	}
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 69520ad3d83b..0f7c16679e49 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -495,8 +495,7 @@ static void ___xfrm_state_destroy(struct xfrm_state *x)
+ 		x->type->destructor(x);
+ 		xfrm_put_type(x->type);
+ 	}
+-	if (x->xfrag.page)
+-		put_page(x->xfrag.page);
++	put_page_frag(&x->xfrag);
+ 	xfrm_dev_state_free(x);
+ 	security_xfrm_state_free(x);
+ 	xfrm_state_free(x);
 -- 
-Pavel Begunkov
+2.20.1
+
