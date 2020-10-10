@@ -2,387 +2,325 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21EF328A3F8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 01:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1195628A402
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 01:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389267AbgJJWza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2389248AbgJJWza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sat, 10 Oct 2020 18:55:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731322AbgJJTxn (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731474AbgJJT1J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Oct 2020 15:53:43 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534AAC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 03:39:20 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id e10so9122756pfj.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 03:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=u0rkVm7C5Ne19ttZslnktIRDYT2Kn1UpPsAG5EcqOzk=;
-        b=nldkqHE8cd6nALAOIPmeXXa4lxSehpssrliInfwNUW6Hb+5AQUJqdY1lIPTMQ6GhSC
-         bNzY2yFALQ55yAPmV5/4OpkoS7Qxwcj/YUT5Oj5i9lNzl9jecn4rrsC7JXX9l2e74ImO
-         cJrwW3fD48Oz0BKuJkv+BX5P4MtW/5+lC59ohp8iD3SZuNoyFMebf73oGrnKCE0Yvu3A
-         XOgUEFfxab3XYcCK8qOUOXalHYT5GixnEluc7WjZJUD1eYMRtoTU89QqQsf9E0GIIZ9q
-         qB9nij5cQMCDcDus00QS4NHfq/KCsRWHwombRIrYkQPhxQSNvOqD8XT1glRLgL7P399O
-         Eq0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=u0rkVm7C5Ne19ttZslnktIRDYT2Kn1UpPsAG5EcqOzk=;
-        b=QLWBbVodKAs3UmSBipHvLGRAKzei0Q0X8kDuQcKTxfANx/aeRjDORng7OQjHXyHkjK
-         VKe1WDFnI2k2vxG56i/5ZLeZ7fhs6QkNUtU2lnsi+u2g3sjgyGmtNZs/+cTmppbiZiAm
-         uwF1lsRkcfKBjNVFWq/1b5GJrLI6Ab15QejFJzXL4m0THrpIhk3A2kXck5rrKs0L+gVv
-         SGHB1eiKLVk2CFRZTvPxeAYBWHMy+Tgtlleui6OSAP/hgEZPzW5ABqMAOg07ZGMoGdj4
-         Qs92lXpGMQxMKteN+dhzReaG5KoBUV3cg/L1LZs33oGoqhexGAJtQtnuYtekTeoDSbVm
-         tuwQ==
-X-Gm-Message-State: AOAM532cE9bXyptOTSjvex3COLActBBOUKbEaXa0idvs35EsF3wbqiC8
-        cLQCj3WkwixFdNTen9kpeTbR8g==
-X-Google-Smtp-Source: ABdhPJxZnwM7IyP5/gKorplHLzpJGDDwce8ks6RVhogeGwaAYPaE9QFMriDfyYZjDuze5VAmX/L0QA==
-X-Received: by 2002:a63:e:: with SMTP id 14mr6928456pga.426.1602326359642;
-        Sat, 10 Oct 2020 03:39:19 -0700 (PDT)
-Received: from Smcdef-MBP.local.net ([103.136.220.73])
-        by smtp.gmail.com with ESMTPSA id v3sm1450830pfu.165.2020.10.10.03.39.04
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Oct 2020 03:39:18 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org, mst@redhat.com,
-        jasowang@redhat.com, davem@davemloft.net, kuba@kernel.org,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-        shakeelb@google.com, will@kernel.org, mhocko@suse.com, guro@fb.com,
-        neilb@suse.de, rppt@kernel.org, songmuchun@bytedance.com,
-        samitolvanen@google.com, kirill.shutemov@linux.intel.com,
-        feng.tang@intel.com, pabeni@redhat.com, willemb@google.com,
-        rdunlap@infradead.org, fw@strlen.de, gustavoars@kernel.org,
-        pablo@netfilter.org, decui@microsoft.com, jakub@cloudflare.com,
-        peterz@infradead.org, christian.brauner@ubuntu.com,
-        ebiederm@xmission.com, tglx@linutronix.de, dave@stgolabs.net,
-        walken@google.com, jannh@google.com, chenqiwu@xiaomi.com,
-        christophe.leroy@c-s.fr, minchan@kernel.org, kafai@fb.com,
-        ast@kernel.org, daniel@iogearbox.net, linmiaohe@huawei.com,
-        keescook@chromium.org
-Cc:     linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH] mm: proc: add Sock to /proc/meminfo
-Date:   Sat, 10 Oct 2020 18:38:54 +0800
-Message-Id: <20201010103854.66746-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
+        Sat, 10 Oct 2020 15:27:09 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09ABWDBk028050
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 07:36:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=in-reply-to : subject :
+ from : to : cc : date : mime-version : references :
+ content-transfer-encoding : content-type : message-id; s=pp1;
+ bh=NiDLo4pOxkTOHNh379y2lMt59tGJeK9BGhibE+AHe30=;
+ b=fFl+sWZ60CJNW5vj7Uw0QdIFBZaJLDIK+TmFY7+uXdPQEExbAUVKU05YhKg5dS5u6J9M
+ gRTcbWK1ehAiHgiW0QiEErv4vh+5MOV1iJMmz3AgZqVrCWi+Nh1nNGlGLl5qNxYu9TT3
+ rsErWvzJTnT/TvD/yGmIkQ5cIJnW2dxyfP5KEerqQF50430xLTdRCdzrzGOBj/IVBjpb
+ ZIGntFQpbgC01amsKXwfy1cB65UwCiqnbdgLT6Z6Qd+CSe7yV4n3BXy+qSd8xdiYdQTK
+ an7SA2yY6csjDSnstIEkYdPhg6mYvKJGwGGY1NoLkcuzdqKyvDxx/5UGYpv3tzPn6Oq9 ZA== 
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.91])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 343bvn8apr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 07:36:56 -0400
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-fsdevel@vger.kernel.org> from <BMT@zurich.ibm.com>;
+        Sat, 10 Oct 2020 11:36:55 -0000
+Received: from us1a3-smtp05.a3.dal06.isc4sb.com (10.146.71.159)
+        by smtp.notes.na.collabserv.com (10.106.227.143) with smtp.notes.na.collabserv.com ESMTP;
+        Sat, 10 Oct 2020 11:36:50 -0000
+Received: from us1a3-mail162.a3.dal06.isc4sb.com ([10.146.71.4])
+          by us1a3-smtp05.a3.dal06.isc4sb.com
+          with ESMTP id 2020101011364991-175970 ;
+          Sat, 10 Oct 2020 11:36:49 +0000 
+In-Reply-To: <20201009195033.3208459-11-ira.weiny@intel.com>
+Subject: Re: [PATCH RFC PKS/PMEM 10/58] drivers/rdma: Utilize new kmap_thread()
+From:   "Bernard Metzler" <BMT@zurich.ibm.com>
+To:     ira.weiny@intel.com
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Mike Marciniszyn" <mike.marciniszyn@intel.com>,
+        "Dennis Dalessandro" <dennis.dalessandro@intel.com>,
+        "Doug Ledford" <dledford@redhat.com>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        "Faisal Latif" <faisal.latif@intel.com>,
+        "Shiraz Saleem" <shiraz.saleem@intel.com>, x86@kernel.org,
+        "Dave Hansen" <dave.hansen@linux.intel.com>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        "Fenghua Yu" <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freed.esktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        drbd-dev@tron.linbit.com, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
+        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
+Date:   Sat, 10 Oct 2020 11:36:49 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Sensitivity: 
+Importance: Normal
+X-Priority: 3 (Normal)
+References: <20201009195033.3208459-11-ira.weiny@intel.com>,<20201009195033.3208459-1-ira.weiny@intel.com>
+X-Mailer: IBM iNotes ($HaikuForm 1054.1) | IBM Domino Build
+ SCN1812108_20180501T0841_FP65 April 15, 2020 at 09:48
+X-LLNOutbound: False
+X-Disclaimed: 59823
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+x-cbid: 20101011-2475-0000-0000-0000044A0339
+X-IBM-SpamModules-Scores: BY=0.233045; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.421684; ST=0; TS=0; UL=0; ISC=; MB=0.000000
+X-IBM-SpamModules-Versions: BY=3.00013982; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000295; SDB=6.01447073; UDB=6.00777937; IPR=6.01229775;
+ MB=3.00034472; MTD=3.00000008; XFM=3.00000015; UTC=2020-10-10 11:36:54
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2020-10-10 06:57:40 - 6.00011937
+x-cbparentid: 20101011-2476-0000-0000-0000DAA5035B
+Message-Id: <OF849D92D8.F4735ECA-ON002585FD.003F5F27-002585FD.003FCBD6@notes.na.collabserv.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-10_07:2020-10-09,2020-10-10 signatures=0
+X-Proofpoint-Spam-Reason: orgsafe
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The amount of memory allocated to sockets buffer can become significant.
-However, we do not display the amount of memory consumed by sockets
-buffer. In this case, knowing where the memory is consumed by the kernel
-is very difficult. On our server with 500GB RAM, sometimes we can see
-25GB disappear through /proc/meminfo. After our analysis, we found the
-following memory allocation path which consumes the memory with page_owner
-enabled.
+-----ira.weiny@intel.com wrote: -----
 
-  849698 times:
-  Page allocated via order 3, mask 0x4052c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP)
-   __alloc_pages_nodemask+0x11d/0x290
-   skb_page_frag_refill+0x68/0xf0
-   sk_page_frag_refill+0x19/0x70
-   tcp_sendmsg_locked+0x2f4/0xd10
-   tcp_sendmsg+0x29/0xa0
-   sock_sendmsg+0x30/0x40
-   sock_write_iter+0x8f/0x100
-   __vfs_write+0x10b/0x190
-   vfs_write+0xb0/0x190
-   ksys_write+0x5a/0xd0
-   do_syscall_64+0x5d/0x110
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>To: "Andrew Morton" <akpm@linux-foundation.org>, "Thomas Gleixner"
+><tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav
+>Petkov" <bp@alien8.de>, "Andy Lutomirski" <luto@kernel.org>, "Peter
+>Zijlstra" <peterz@infradead.org>
+>From: ira.weiny@intel.com
+>Date: 10/09/2020 09:52PM
+>Cc: "Ira Weiny" <ira.weiny@intel.com>, "Mike Marciniszyn"
+><mike.marciniszyn@intel.com>, "Dennis Dalessandro"
+><dennis.dalessandro@intel.com>, "Doug Ledford" <dledford@redhat.com>,
+>"Jason Gunthorpe" <jgg@ziepe.ca>, "Faisal Latif"
+><faisal.latif@intel.com>, "Shiraz Saleem" <shiraz.saleem@intel.com>,
+>"Bernard Metzler" <bmt@zurich.ibm.com>, x86@kernel.org, "Dave Hansen"
+><dave.hansen@linux.intel.com>, "Dan Williams"
+><dan.j.williams@intel.com>, "Fenghua Yu" <fenghua.yu@intel.com>,
+>linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+>linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+>linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+>linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+>netdev@vger.kernel.org, bpf@vger.kernel.org,
+>kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+>linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+>linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+>linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+>linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+>linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+>io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+>linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+>reiserfs-devel@vger.kernel.org,
+>linux-f2fs-devel@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
+>cluster-devel@redhat.com, ecryptfs@vger.kernel.org,
+>linux-cifs@vger.kernel.org, linux-btrfs@vger.kernel.org,
+>linux-afs@lists.infradead.org, linux-rdma@vger.kernel.org,
+>amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+>intel-gfx@lists.freedesktop.org, drbd-dev@tron.linbit.com,
+>linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
+>linux-cachefs@redhat.com, samba-technical@lists.samba.org,
+>intel-wired-lan@lists.osuosl.org
+>Subject: [EXTERNAL] [PATCH RFC PKS/PMEM 10/58] drivers/rdma: Utilize
+>new kmap=5Fthread()
+>
+>From: Ira Weiny <ira.weiny@intel.com>
+>
+>The kmap() calls in these drivers are localized to a single thread.
+>To
+>avoid the over head of global PKRS updates use the new kmap=5Fthread()
+>call.
+>
+>Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+>Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+>Cc: Doug Ledford <dledford@redhat.com>
+>Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>Cc: Faisal Latif <faisal.latif@intel.com>
+>Cc: Shiraz Saleem <shiraz.saleem@intel.com>
+>Cc: Bernard Metzler <bmt@zurich.ibm.com>
+>Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+>---
+> drivers/infiniband/hw/hfi1/sdma.c      |  4 ++--
+> drivers/infiniband/hw/i40iw/i40iw=5Fcm.c | 10 +++++-----
+> drivers/infiniband/sw/siw/siw=5Fqp=5Ftx.c  | 14 +++++++-------
+> 3 files changed, 14 insertions(+), 14 deletions(-)
+>
+>diff --git a/drivers/infiniband/hw/hfi1/sdma.c
+>b/drivers/infiniband/hw/hfi1/sdma.c
+>index 04575c9afd61..09d206e3229a 100644
+>--- a/drivers/infiniband/hw/hfi1/sdma.c
+>+++ b/drivers/infiniband/hw/hfi1/sdma.c
+>@@ -3130,7 +3130,7 @@ int ext=5Fcoal=5Fsdma=5Ftx=5Fdescs(struct hfi1=5Fdev=
+data
+>*dd, struct sdma=5Ftxreq *tx,
+> 		}
+>=20
+> 		if (type =3D=3D SDMA=5FMAP=5FPAGE) {
+>-			kvaddr =3D kmap(page);
+>+			kvaddr =3D kmap=5Fthread(page);
+> 			kvaddr +=3D offset;
+> 		} else if (WARN=5FON(!kvaddr)) {
+> 			=5F=5Fsdma=5Ftxclean(dd, tx);
+>@@ -3140,7 +3140,7 @@ int ext=5Fcoal=5Fsdma=5Ftx=5Fdescs(struct hfi1=5Fdev=
+data
+>*dd, struct sdma=5Ftxreq *tx,
+> 		memcpy(tx->coalesce=5Fbuf + tx->coalesce=5Fidx, kvaddr, len);
+> 		tx->coalesce=5Fidx +=3D len;
+> 		if (type =3D=3D SDMA=5FMAP=5FPAGE)
+>-			kunmap(page);
+>+			kunmap=5Fthread(page);
+>=20
+> 		/* If there is more data, return */
+> 		if (tx->tlen - tx->coalesce=5Fidx)
+>diff --git a/drivers/infiniband/hw/i40iw/i40iw=5Fcm.c
+>b/drivers/infiniband/hw/i40iw/i40iw=5Fcm.c
+>index a3b95805c154..122d7a5642a1 100644
+>--- a/drivers/infiniband/hw/i40iw/i40iw=5Fcm.c
+>+++ b/drivers/infiniband/hw/i40iw/i40iw=5Fcm.c
+>@@ -3721,7 +3721,7 @@ int i40iw=5Faccept(struct iw=5Fcm=5Fid *cm=5Fid, str=
+uct
+>iw=5Fcm=5Fconn=5Fparam *conn=5Fparam)
+> 		ibmr->device =3D iwpd->ibpd.device;
+> 		iwqp->lsmm=5Fmr =3D ibmr;
+> 		if (iwqp->page)
+>-			iwqp->sc=5Fqp.qp=5Fuk.sq=5Fbase =3D kmap(iwqp->page);
+>+			iwqp->sc=5Fqp.qp=5Fuk.sq=5Fbase =3D kmap=5Fthread(iwqp->page);
+> 		dev->iw=5Fpriv=5Fqp=5Fops->qp=5Fsend=5Flsmm(&iwqp->sc=5Fqp,
+> 							iwqp->ietf=5Fmem.va,
+> 							(accept.size + conn=5Fparam->private=5Fdata=5Flen),
+>@@ -3729,12 +3729,12 @@ int i40iw=5Faccept(struct iw=5Fcm=5Fid *cm=5Fid,
+>struct iw=5Fcm=5Fconn=5Fparam *conn=5Fparam)
+>=20
+> 	} else {
+> 		if (iwqp->page)
+>-			iwqp->sc=5Fqp.qp=5Fuk.sq=5Fbase =3D kmap(iwqp->page);
+>+			iwqp->sc=5Fqp.qp=5Fuk.sq=5Fbase =3D kmap=5Fthread(iwqp->page);
+> 		dev->iw=5Fpriv=5Fqp=5Fops->qp=5Fsend=5Flsmm(&iwqp->sc=5Fqp, NULL, 0, 0);
+> 	}
+>=20
+> 	if (iwqp->page)
+>-		kunmap(iwqp->page);
+>+		kunmap=5Fthread(iwqp->page);
+>=20
+> 	iwqp->cm=5Fid =3D cm=5Fid;
+> 	cm=5Fnode->cm=5Fid =3D cm=5Fid;
+>@@ -4102,10 +4102,10 @@ static void i40iw=5Fcm=5Fevent=5Fconnected(struct
+>i40iw=5Fcm=5Fevent *event)
+> 	i40iw=5Fcm=5Finit=5Ftsa=5Fconn(iwqp, cm=5Fnode);
+> 	read0 =3D (cm=5Fnode->send=5Frdma0=5Fop =3D=3D SEND=5FRDMA=5FREAD=5FZERO=
+);
+> 	if (iwqp->page)
+>-		iwqp->sc=5Fqp.qp=5Fuk.sq=5Fbase =3D kmap(iwqp->page);
+>+		iwqp->sc=5Fqp.qp=5Fuk.sq=5Fbase =3D kmap=5Fthread(iwqp->page);
+> 	dev->iw=5Fpriv=5Fqp=5Fops->qp=5Fsend=5Frtt(&iwqp->sc=5Fqp, read0);
+> 	if (iwqp->page)
+>-		kunmap(iwqp->page);
+>+		kunmap=5Fthread(iwqp->page);
+>=20
+> 	memset(&attr, 0, sizeof(attr));
+> 	attr.qp=5Fstate =3D IB=5FQPS=5FRTS;
+>diff --git a/drivers/infiniband/sw/siw/siw=5Fqp=5Ftx.c
+>b/drivers/infiniband/sw/siw/siw=5Fqp=5Ftx.c
+>index d19d8325588b..4ed37c328d02 100644
+>--- a/drivers/infiniband/sw/siw/siw=5Fqp=5Ftx.c
+>+++ b/drivers/infiniband/sw/siw/siw=5Fqp=5Ftx.c
+>@@ -76,7 +76,7 @@ static int siw=5Ftry=5F1seg(struct siw=5Fiwarp=5Ftx *c=
+=5Ftx,
+>void *paddr)
+> 			if (unlikely(!p))
+> 				return -EFAULT;
+>=20
+>-			buffer =3D kmap(p);
+>+			buffer =3D kmap=5Fthread(p);
+>=20
+> 			if (likely(PAGE=5FSIZE - off >=3D bytes)) {
+> 				memcpy(paddr, buffer + off, bytes);
+>@@ -84,7 +84,7 @@ static int siw=5Ftry=5F1seg(struct siw=5Fiwarp=5Ftx *c=
+=5Ftx,
+>void *paddr)
+> 				unsigned long part =3D bytes - (PAGE=5FSIZE - off);
+>=20
+> 				memcpy(paddr, buffer + off, part);
+>-				kunmap(p);
+>+				kunmap=5Fthread(p);
+>=20
+> 				if (!mem->is=5Fpbl)
+> 					p =3D siw=5Fget=5Fupage(mem->umem,
+>@@ -96,10 +96,10 @@ static int siw=5Ftry=5F1seg(struct siw=5Fiwarp=5Ftx
+>*c=5Ftx, void *paddr)
+> 				if (unlikely(!p))
+> 					return -EFAULT;
+>=20
+>-				buffer =3D kmap(p);
+>+				buffer =3D kmap=5Fthread(p);
+> 				memcpy(paddr + part, buffer, bytes - part);
+> 			}
+>-			kunmap(p);
+>+			kunmap=5Fthread(p);
+> 		}
+> 	}
+> 	return (int)bytes;
+>@@ -505,7 +505,7 @@ static int siw=5Ftx=5Fhdt(struct siw=5Fiwarp=5Ftx *c=
+=5Ftx,
+>struct socket *s)
+> 				page=5Farray[seg] =3D p;
+>=20
+> 				if (!c=5Ftx->use=5Fsendpage) {
+>-					iov[seg].iov=5Fbase =3D kmap(p) + fp=5Foff;
+>+					iov[seg].iov=5Fbase =3D kmap=5Fthread(p) + fp=5Foff;
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- drivers/base/node.c      |  2 ++
- drivers/net/virtio_net.c |  3 +--
- fs/proc/meminfo.c        |  1 +
- include/linux/mmzone.h   |  1 +
- include/linux/skbuff.h   | 43 ++++++++++++++++++++++++++++++++++++++--
- kernel/exit.c            |  3 +--
- mm/page_alloc.c          |  7 +++++--
- mm/vmstat.c              |  1 +
- net/core/sock.c          |  8 ++++----
- net/ipv4/tcp.c           |  3 +--
- net/xfrm/xfrm_state.c    |  3 +--
- 11 files changed, 59 insertions(+), 16 deletions(-)
+This misses a corresponding kunmap=5Fthread() in siw=5Funmap=5Fpages()
+(pls change line 403 in siw=5Fqp=5Ftx.c as well)
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 508b80f6329b..6f92775da85c 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -418,6 +418,7 @@ static ssize_t node_read_meminfo(struct device *dev,
- #ifdef CONFIG_SHADOW_CALL_STACK
- 		       "Node %d ShadowCallStack:%8lu kB\n"
- #endif
-+		       "Node %d Sock:           %8lu kB\n"
- 		       "Node %d PageTables:     %8lu kB\n"
- 		       "Node %d NFS_Unstable:   %8lu kB\n"
- 		       "Node %d Bounce:         %8lu kB\n"
-@@ -441,6 +442,7 @@ static ssize_t node_read_meminfo(struct device *dev,
- 		       nid, K(node_page_state(pgdat, NR_ANON_MAPPED)),
- 		       nid, K(i.sharedram),
- 		       nid, node_page_state(pgdat, NR_KERNEL_STACK_KB),
-+		       nid, K(node_page_state(pgdat, NR_SOCK)),
- #ifdef CONFIG_SHADOW_CALL_STACK
- 		       nid, node_page_state(pgdat, NR_KERNEL_SCS_KB),
- #endif
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 263b005981bd..e7183f67ae4a 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2646,8 +2646,7 @@ static void free_receive_page_frags(struct virtnet_info *vi)
- {
- 	int i;
- 	for (i = 0; i < vi->max_queue_pairs; i++)
--		if (vi->rq[i].alloc_frag.page)
--			put_page(vi->rq[i].alloc_frag.page);
-+		put_page_frag(&vi->rq[i].alloc_frag);
- }
- 
- static void free_unused_bufs(struct virtnet_info *vi)
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 887a5532e449..1dcf3120d831 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -106,6 +106,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 	seq_printf(m, "ShadowCallStack:%8lu kB\n",
- 		   global_node_page_state(NR_KERNEL_SCS_KB));
- #endif
-+	show_val_kb(m, "Sock:           ", global_node_page_state(NR_SOCK));
- 	show_val_kb(m, "PageTables:     ",
- 		    global_zone_page_state(NR_PAGETABLE));
- 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 31712bb61f7f..1996713d2c6b 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -207,6 +207,7 @@ enum node_stat_item {
- #if IS_ENABLED(CONFIG_SHADOW_CALL_STACK)
- 	NR_KERNEL_SCS_KB,	/* measured in KiB */
- #endif
-+	NR_SOCK,                /* Count of socket buffer pages */
- 	NR_VM_NODE_STAT_ITEMS
- };
- 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index fcd53f97c186..7e5108da4d84 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -19,7 +19,8 @@
- #include <linux/rbtree.h>
- #include <linux/socket.h>
- #include <linux/refcount.h>
--
-+#include <linux/memcontrol.h>
-+#include <linux/mm.h>
- #include <linux/atomic.h>
- #include <asm/types.h>
- #include <linux/spinlock.h>
-@@ -3003,6 +3004,25 @@ static inline void skb_frag_ref(struct sk_buff *skb, int f)
- 	__skb_frag_ref(&skb_shinfo(skb)->frags[f]);
- }
- 
-+static inline void inc_sock_node_page_state(struct page *page)
-+{
-+	mod_node_page_state(page_pgdat(page), NR_SOCK, compound_nr(page));
-+	/*
-+	 * Indicate that we need to decrease the Sock page state when
-+	 * the page freed.
-+	 */
-+	SetPagePrivate(page);
-+}
-+
-+static inline void dec_sock_node_page_state(struct page *page)
-+{
-+	if (PagePrivate(page)) {
-+		ClearPagePrivate(page);
-+		mod_node_page_state(page_pgdat(page), NR_SOCK,
-+				    -compound_nr(page));
-+	}
-+}
-+
- /**
-  * __skb_frag_unref - release a reference on a paged fragment.
-  * @frag: the paged fragment
-@@ -3011,7 +3031,12 @@ static inline void skb_frag_ref(struct sk_buff *skb, int f)
-  */
- static inline void __skb_frag_unref(skb_frag_t *frag)
- {
--	put_page(skb_frag_page(frag));
-+	struct page *page = skb_frag_page(frag);
-+
-+	if (put_page_testzero(page)) {
-+		dec_sock_node_page_state(page);
-+		__put_page(page);
-+	}
- }
- 
- /**
-@@ -3091,6 +3116,20 @@ static inline void skb_frag_set_page(struct sk_buff *skb, int f,
- 	__skb_frag_set_page(&skb_shinfo(skb)->frags[f], page);
- }
- 
-+static inline bool put_page_frag(struct page_frag *pfrag)
-+{
-+	struct page *page = pfrag->page;
-+
-+	if (page) {
-+		if (put_page_testzero(page)) {
-+			dec_sock_node_page_state(page);
-+			__put_page(page);
-+		}
-+		return true;
-+	}
-+	return false;
-+}
-+
- bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t prio);
- 
- /**
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 62912406d74a..58d373767d16 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -841,8 +841,7 @@ void __noreturn do_exit(long code)
- 	if (tsk->splice_pipe)
- 		free_pipe_info(tsk->splice_pipe);
- 
--	if (tsk->task_frag.page)
--		put_page(tsk->task_frag.page);
-+	put_page_frag(&tsk->task_frag);
- 
- 	validate_creds_for_do_exit(tsk);
- 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index cefbef32bf4a..6c543158aa06 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5379,7 +5379,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		" unevictable:%lu dirty:%lu writeback:%lu\n"
- 		" slab_reclaimable:%lu slab_unreclaimable:%lu\n"
- 		" mapped:%lu shmem:%lu pagetables:%lu bounce:%lu\n"
--		" free:%lu free_pcp:%lu free_cma:%lu\n",
-+		" free:%lu free_pcp:%lu free_cma:%lu sock:%lu\n",
- 		global_node_page_state(NR_ACTIVE_ANON),
- 		global_node_page_state(NR_INACTIVE_ANON),
- 		global_node_page_state(NR_ISOLATED_ANON),
-@@ -5397,7 +5397,8 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		global_zone_page_state(NR_BOUNCE),
- 		global_zone_page_state(NR_FREE_PAGES),
- 		free_pcp,
--		global_zone_page_state(NR_FREE_CMA_PAGES));
-+		global_zone_page_state(NR_FREE_CMA_PAGES),
-+		global_node_page_state(NR_SOCK));
- 
- 	for_each_online_pgdat(pgdat) {
- 		if (show_mem_node_skip(filter, pgdat->node_id, nodemask))
-@@ -5425,6 +5426,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- #ifdef CONFIG_SHADOW_CALL_STACK
- 			" shadow_call_stack:%lukB"
- #endif
-+			" sock:%lukB"
- 			" all_unreclaimable? %s"
- 			"\n",
- 			pgdat->node_id,
-@@ -5450,6 +5452,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- #ifdef CONFIG_SHADOW_CALL_STACK
- 			node_page_state(pgdat, NR_KERNEL_SCS_KB),
- #endif
-+			K(node_page_state(pgdat, NR_SOCK)),
- 			pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ?
- 				"yes" : "no");
- 	}
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index b05dec387557..ceaf6f85c155 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1220,6 +1220,7 @@ const char * const vmstat_text[] = {
- #if IS_ENABLED(CONFIG_SHADOW_CALL_STACK)
- 	"nr_shadow_call_stack",
- #endif
-+	"nr_sock",
- 
- 	/* enum writeback_stat_item counters */
- 	"nr_dirty_threshold",
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 5972d26f03ae..1661b423802b 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1780,10 +1780,8 @@ static void __sk_destruct(struct rcu_head *head)
- 		pr_debug("%s: optmem leakage (%d bytes) detected\n",
- 			 __func__, atomic_read(&sk->sk_omem_alloc));
- 
--	if (sk->sk_frag.page) {
--		put_page(sk->sk_frag.page);
-+	if (put_page_frag(&sk->sk_frag))
- 		sk->sk_frag.page = NULL;
--	}
- 
- 	if (sk->sk_peer_cred)
- 		put_cred(sk->sk_peer_cred);
-@@ -2456,7 +2454,7 @@ bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t gfp)
- 		}
- 		if (pfrag->offset + sz <= pfrag->size)
- 			return true;
--		put_page(pfrag->page);
-+		put_page_frag(pfrag);
- 	}
- 
- 	pfrag->offset = 0;
-@@ -2469,12 +2467,14 @@ bool skb_page_frag_refill(unsigned int sz, struct page_frag *pfrag, gfp_t gfp)
- 					  SKB_FRAG_PAGE_ORDER);
- 		if (likely(pfrag->page)) {
- 			pfrag->size = PAGE_SIZE << SKB_FRAG_PAGE_ORDER;
-+			inc_sock_node_page_state(pfrag->page);
- 			return true;
- 		}
- 	}
- 	pfrag->page = alloc_page(gfp);
- 	if (likely(pfrag->page)) {
- 		pfrag->size = PAGE_SIZE;
-+		inc_sock_node_page_state(pfrag->page);
- 		return true;
- 	}
- 	return false;
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 57a568875539..583761844b4f 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2751,8 +2751,7 @@ int tcp_disconnect(struct sock *sk, int flags)
- 
- 	WARN_ON(inet->inet_num && !icsk->icsk_bind_hash);
- 
--	if (sk->sk_frag.page) {
--		put_page(sk->sk_frag.page);
-+	if (put_page_frag(&sk->sk_frag)) {
- 		sk->sk_frag.page = NULL;
- 		sk->sk_frag.offset = 0;
- 	}
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 69520ad3d83b..0f7c16679e49 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -495,8 +495,7 @@ static void ___xfrm_state_destroy(struct xfrm_state *x)
- 		x->type->destructor(x);
- 		xfrm_put_type(x->type);
- 	}
--	if (x->xfrag.page)
--		put_page(x->xfrag.page);
-+	put_page_frag(&x->xfrag);
- 	xfrm_dev_state_free(x);
- 	security_xfrm_state_free(x);
- 	xfrm_state_free(x);
--- 
-2.20.1
+Thanks,
+Bernard.
+
+> 					iov[seg].iov=5Flen =3D plen;
+>=20
+> 					/* Remember for later kunmap() */
+>@@ -518,9 +518,9 @@ static int siw=5Ftx=5Fhdt(struct siw=5Fiwarp=5Ftx *c=
+=5Ftx,
+>struct socket *s)
+> 							plen);
+> 				} else if (do=5Fcrc) {
+> 					crypto=5Fshash=5Fupdate(c=5Ftx->mpa=5Fcrc=5Fhd,
+>-							    kmap(p) + fp=5Foff,
+>+							    kmap=5Fthread(p) + fp=5Foff,
+> 							    plen);
+>-					kunmap(p);
+>+					kunmap=5Fthread(p);
+> 				}
+> 			} else {
+> 				u64 va =3D sge->laddr + sge=5Foff;
+>--=20
+>2.28.0.rc0.12.gb6a658bd00c9
+>
+>
 
