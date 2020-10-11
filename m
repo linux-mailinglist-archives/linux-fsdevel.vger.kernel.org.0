@@ -2,145 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4711428A573
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 06:43:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6D628A5E6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 08:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726055AbgJKEnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Oct 2020 00:43:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38182 "EHLO
+        id S1726761AbgJKGZB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Oct 2020 02:25:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbgJKEnO (ORCPT
+        with ESMTP id S1725882AbgJKGZB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Oct 2020 00:43:14 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DEAC0613CE
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 21:43:14 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id h6so10865562pgk.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 21:43:14 -0700 (PDT)
+        Sun, 11 Oct 2020 02:25:01 -0400
+Received: from mail-qt1-x849.google.com (mail-qt1-x849.google.com [IPv6:2607:f8b0:4864:20::849])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7700C0613CE
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 23:25:00 -0700 (PDT)
+Received: by mail-qt1-x849.google.com with SMTP id l12so10237983qtu.22
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Oct 2020 23:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TW9KMm6OrgwSQSQ2ZasuwFiv2daX2uTGOG3qcoUMv5w=;
-        b=AnJ2qoD5K4gRsDV2GJqxk0P/F2E7jo8rtGu952jzmVjnBt2KP9bl3aJ9JTFYGg7rqR
-         SetWwDLPKamShb8Gwhchi78tPzG491wTQ4L/NdMLdd7bgL9/koS1faeeDbJH7HUjmO0L
-         2wO5oym9VV5mc8kQB0OYBN97GqdTqlZ6dyniakEy4obZPAXAf5w6redGYXQuYQD7vQ1t
-         Mz0by5XxDlUiaD4z1KZFMaMLyc86ETL6ks6p/zjkXpmix0MvTummVGOamE17jD2RlBTx
-         qYNf8xEl39T7D879PWYx6fO0ImO2wg/s1cVCK/yj2N5kLY15fBJtTKalwrrL4oiY1wiS
-         2BBg==
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=UJx97gIPGIXFXkRks4Wo0vV6Q6PxKBpX120vcE6WJsg=;
+        b=sWYTJbGOpsmE70syYCNzGsAplxbAsaDGvmNcakNaECKP+Ez8bD3Rdi6wI3rU59lXC9
+         6gfqTcuW9qjebxjGoE/SlnfNpby5Lx9LohoeIR0wNuoONARjym5sepDDSAAzRvXJTOvh
+         jWgsUd7YnS0HYTD/FqQ5fTCIc4Egy70KtDZFi4GTlSgAJR+du+MoKKkmnVxmYz+VjXsm
+         /LRCyixeYm3wQkxoj7oL5e4ruFzoYKC/W4hO6hQ+Fby9VjHr2ghxh2G+ODkOMtdkOl2L
+         n/3z5bO46TzAHYpXmxMlyLX3xSV5i+mcGQEM8lPmKs5wXtRt8EL6d6bXbmBDWTELZFnI
+         Xcjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TW9KMm6OrgwSQSQ2ZasuwFiv2daX2uTGOG3qcoUMv5w=;
-        b=N/5fUd1XRvlJylygXsskNXuAmUI+bDDKvwwRRpcOgTOiRaP06+ji2vj2KPob5nwp5X
-         2Wuc4j2weVManJZhj0JD5ETdf9ua4KolEqyrpI7/+JB57aod6rSwhcG8Sw7T+s/OV90N
-         M21X1Qb09qW3DIq4A4ASBPN01v6SUzkwWVdrDVKFAkbtu3xeTO7LDQRLq/wOr3SITy2R
-         DrB1AeKssdCwWYsOyvy3uQJWciUTJ7gQx19bk3pkqnTrcTvWX5sgmVeFktRBmjlwSDLO
-         fAqcFqmiEoEc9Uvid8eMDtJPkQIbdofOtAxfsDFTKZl5vZJKKV0dTUT34dIKePGhy25Y
-         R2mQ==
-X-Gm-Message-State: AOAM532UJhf8l0LHuh4B47bqfdj7aAvzf0Nv3IZ40/Zg6CJkvezpWOnG
-        uC8GbnZtTO1cqJRhUsvK0/neCumZT0K7o+Y1Txk8ag==
-X-Google-Smtp-Source: ABdhPJyX5zE5edIE4wAqcFOL3tIX1HCwgBxHGADIZGwbL/1HpgjGMf2Sb1l/deaG+f2s3p39mIbnOHH/kLvxzOrAV+E=
-X-Received: by 2002:a17:90a:890f:: with SMTP id u15mr13407412pjn.147.1602391393656;
- Sat, 10 Oct 2020 21:43:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201010103854.66746-1-songmuchun@bytedance.com> <f6dfa37f-5991-3e96-93b8-737f60128151@infradead.org>
-In-Reply-To: <f6dfa37f-5991-3e96-93b8-737f60128151@infradead.org>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Sun, 11 Oct 2020 12:42:37 +0800
-Message-ID: <CAMZfGtWo0m+6zxG-XWh5fxcV3d4k77P-e37ZAj1f5oDhvZGqUQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        mst@redhat.com, jasowang@redhat.com,
-        David Miller <davem@davemloft.net>, kuba@kernel.org,
-        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        Eric Dumazet <edumazet@google.com>, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, steffen.klassert@secunet.com,
-        herbert@gondor.apana.org.au, Shakeel Butt <shakeelb@google.com>,
-        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <guro@fb.com>, neilb@suse.de, rppt@kernel.org,
-        Sami Tolvanen <samitolvanen@google.com>,
-        kirill.shutemov@linux.intel.com, feng.tang@intel.com,
-        pabeni@redhat.com, Willem de Bruijn <willemb@google.com>,
-        fw@strlen.de, gustavoars@kernel.org, pablo@netfilter.org,
-        decui@microsoft.com, jakub@cloudflare.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        christian.brauner@ubuntu.com, ebiederm@xmission.com,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
-        christophe.leroy@c-s.fr, minchan@kernel.org,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, linmiaohe@huawei.com,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Networking <netdev@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=UJx97gIPGIXFXkRks4Wo0vV6Q6PxKBpX120vcE6WJsg=;
+        b=ZngxjSFd5RxBhXWinrJ1j/AruujHd8BVVDk4csiwirarzoxmpncnqBmUhSrLvhNWeU
+         UAedpS+Qr/vqdodKXW9kNbpn3qgjVfUEWVPQAdB0jK4sbs12n5toUbo+9PXiTiTL7Yb5
+         zkdKF4aQBRcPTDp7JO1hNKe3FcG4iVKQWfX+86uuPx9N9+uJ1AcuB1Wl4eGyO2z1Q0DK
+         VFmjmROXumQO++pYWz15+jbgLTErWJN9Kd86uRkNXFROQ8KpWyLnBI14HCC/Sp0drVdV
+         XwD0Z1R7/jJ31kTOnQJ07gaNhqcbN8yJXOEmLRs7lXwc+ywwmsYpdpvxJnczkLWz7Rvs
+         DnxA==
+X-Gm-Message-State: AOAM533wSEGM6IAFEseYuGJU14iNFAuU73dzELh1QHBiMkuDFqmrcO2i
+        fuqpGynl9ptGmDNnYACe1D3RW3aCirqZBptKMQ==
+X-Google-Smtp-Source: ABdhPJwwuHEwTJas51CDs0CXwMgtZ6GF8BpLVVQwMWpZxEVKux8CKK116qNPOrQYZazm9+cW7Nre45/LrKMgXOFtEA==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a0c:a203:: with SMTP id
+ f3mr20270612qva.33.1602397499810; Sat, 10 Oct 2020 23:24:59 -0700 (PDT)
+Date:   Sat, 10 Oct 2020 23:24:54 -0700
+Message-Id: <20201011062456.4065576-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.1011.ga647a8990f-goog
+Subject: [PATCH v5 0/2] Control over userfaultfd kernel-fault handling
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, Peter Xu <peterx@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kaleshsingh@google.com,
+        calin@google.com, surenb@google.com, nnk@google.com,
+        jeffv@google.com, kernel-team@android.com,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Jerome Glisse <jglisse@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 11, 2020 at 12:37 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> Hi,
->
-> On 10/10/20 3:38 AM, Muchun Song wrote:
-> > The amount of memory allocated to sockets buffer can become significant.
-> > However, we do not display the amount of memory consumed by sockets
-> > buffer. In this case, knowing where the memory is consumed by the kernel
-> > is very difficult. On our server with 500GB RAM, sometimes we can see
-> > 25GB disappear through /proc/meminfo. After our analysis, we found the
-> > following memory allocation path which consumes the memory with page_owner
-> > enabled.
-> >
-> >   849698 times:
-> >   Page allocated via order 3, mask 0x4052c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP)
-> >    __alloc_pages_nodemask+0x11d/0x290
-> >    skb_page_frag_refill+0x68/0xf0
-> >    sk_page_frag_refill+0x19/0x70
-> >    tcp_sendmsg_locked+0x2f4/0xd10
-> >    tcp_sendmsg+0x29/0xa0
-> >    sock_sendmsg+0x30/0x40
-> >    sock_write_iter+0x8f/0x100
-> >    __vfs_write+0x10b/0x190
-> >    vfs_write+0xb0/0x190
-> >    ksys_write+0x5a/0xd0
-> >    do_syscall_64+0x5d/0x110
-> >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  drivers/base/node.c      |  2 ++
-> >  drivers/net/virtio_net.c |  3 +--
-> >  fs/proc/meminfo.c        |  1 +
-> >  include/linux/mmzone.h   |  1 +
-> >  include/linux/skbuff.h   | 43 ++++++++++++++++++++++++++++++++++++++--
-> >  kernel/exit.c            |  3 +--
-> >  mm/page_alloc.c          |  7 +++++--
-> >  mm/vmstat.c              |  1 +
-> >  net/core/sock.c          |  8 ++++----
-> >  net/ipv4/tcp.c           |  3 +--
-> >  net/xfrm/xfrm_state.c    |  3 +--
-> >  11 files changed, 59 insertions(+), 16 deletions(-)
->
-> Thanks for finding that.
->
-> Please update Documentation/filesystems/proc.rst "meminfo" section also.
+This patch series is split from [1]. The other series enables SELinux
+support for userfaultfd file descriptors so that its creation and
+movement can be controlled.
 
-Will do. Thanks for your suggestions.
+It has been demonstrated on various occasions that suspending kernel
+code execution for an arbitrary amount of time at any access to
+userspace memory (copy_from_user()/copy_to_user()/...) can be exploited
+to change the intended behavior of the kernel. For instance, handling
+page faults in kernel-mode using userfaultfd has been exploited in [2, 3].
+Likewise, FUSE, which is similar to userfaultfd in this respect, has been
+exploited in [4, 5] for similar outcome.
 
->
-> --
-> ~Randy
->
+This small patch series adds a new flag to userfaultfd(2) that allows
+callers to give up the ability to handle kernel-mode faults with the
+resulting UFFD file object. It then adds a 'user-mode only' option to
+the unprivileged_userfaultfd sysctl knob to require unprivileged
+callers to use this new flag.
 
+The purpose of this new interface is to decrease the chance of an
+unprivileged userfaultfd user taking advantage of userfaultfd to
+enhance security vulnerabilities by lengthening the race window in
+kernel code.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://duasynt.com/blog/linux-kernel-heap-spray
+[3] https://duasynt.com/blog/cve-2016-6187-heap-off-by-one-exploit
+[4] https://googleprojectzero.blogspot.com/2016/06/exploiting-recursion-in-linux-kernel_20.html
+[5] https://bugs.chromium.org/p/project-zero/issues/detail?id=808
+
+Changes since v4:
+
+  - Added warning when bailing out from handling kernel fault.
+
+Changes since v3:
+
+  - Modified the meaning of value '0' of unprivileged_userfaultfd
+    sysctl knob. Setting this knob to '0' now allows unprivileged users
+    to use userfaultfd, but can handle page faults in user-mode only.
+  - The default value of unprivileged_userfaultfd sysctl knob is changed
+    to '0'.
+
+Changes since v2:
+
+  - Removed 'uffd_flags' and directly used 'UFFD_USER_MODE_ONLY' in
+    userfaultfd().
+
+Changes since v1:
+
+  - Added external references to the threats from allowing unprivileged
+    users to handle page faults from kernel-mode.
+  - Removed the new sysctl knob restricting handling of page
+    faults from kernel-mode, and added an option for the same
+    in the existing 'unprivileged_userfaultfd' knob.
+
+Lokesh Gidra (2):
+  Add UFFD_USER_MODE_ONLY
+  Add user-mode only option to unprivileged_userfaultfd sysctl knob
+
+ Documentation/admin-guide/sysctl/vm.rst | 15 ++++++++++-----
+ fs/userfaultfd.c                        | 16 +++++++++++++---
+ include/uapi/linux/userfaultfd.h        |  9 +++++++++
+ 3 files changed, 32 insertions(+), 8 deletions(-)
 
 -- 
-Yours,
-Muchun
+2.28.0.1011.ga647a8990f-goog
+
