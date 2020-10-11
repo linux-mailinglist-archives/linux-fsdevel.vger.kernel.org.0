@@ -2,54 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 060DC28A924
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 20:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49A3728A948
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 20:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbgJKSGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Oct 2020 14:06:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48096 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbgJKSGM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Oct 2020 14:06:12 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 295E3C0613CE;
-        Sun, 11 Oct 2020 11:06:12 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kRfjV-00FWeV-JD; Sun, 11 Oct 2020 18:06:09 +0000
-Date:   Sun, 11 Oct 2020 19:06:09 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git fixes
-Message-ID: <20201011180609.GC3576660@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+        id S1726986AbgJKSYG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Oct 2020 14:24:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727904AbgJKSX5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 11 Oct 2020 14:23:57 -0400
+Subject: Re: [git pull] vfs.git fixes
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602440637;
+        bh=gqyPtCSAjTL8q5TwOjjx6uDvnEf8I7XYijlLdgXdOCQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=cQ1HqULxAIQLTa4UwNrq6pDwL1zccpHb9tJUkqAcAz+iLCDE/e6s9SFS+vMbfvPB5
+         dPI1OzrSFDmAj5hi9mcMOmzQkQfzqKBD3xG8qiyaVm7PlHrzXP0m5wFGtxljmGziDZ
+         Q6iu49jHxiP0IsnKj7AzlDQolRGQHN4IRqtqN8ts=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20201011180609.GC3576660@ZenIV.linux.org.uk>
+References: <20201011180609.GC3576660@ZenIV.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20201011180609.GC3576660@ZenIV.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+X-PR-Tracked-Commit-Id: 8a018eb55e3ac033592afbcb476b0ffe64465b12
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5b697f86f9f136d200c9827d6eca0437b7eb96cf
+Message-Id: <160244063723.8522.4923464775170530284.pr-tracker-bot@kernel.org>
+Date:   Sun, 11 Oct 2020 18:23:57 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Sat in -next for a while, fixes an obvious bug
-(leak introduced in 5.8, i.e. the mess from previous cycle).
+The pull request you sent on Sun, 11 Oct 2020 19:06:09 +0100:
 
-The following changes since commit 933a3752babcf6513117d5773d2b70782d6ad149:
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
 
-  fuse: fix the ->direct_IO() treatment of iov_iter (2020-09-17 17:26:56 -0400)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5b697f86f9f136d200c9827d6eca0437b7eb96cf
 
-are available in the git repository at:
+Thank you!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
-
-for you to fetch changes up to 8a018eb55e3ac033592afbcb476b0ffe64465b12:
-
-  pipe: Fix memory leaks in create_pipe_files() (2020-10-01 09:40:35 -0400)
-
-----------------------------------------------------------------
-Qian Cai (1):
-      pipe: Fix memory leaks in create_pipe_files()
-
- fs/pipe.c                   | 11 +++++------
- include/linux/watch_queue.h |  6 ++++++
- 2 files changed, 11 insertions(+), 6 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
