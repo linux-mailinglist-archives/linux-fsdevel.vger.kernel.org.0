@@ -2,231 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4269F28A7C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 16:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7D028A825
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Oct 2020 18:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387963AbgJKOW6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Oct 2020 10:22:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42212 "EHLO
+        id S2387929AbgJKQBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Oct 2020 12:01:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbgJKOW6 (ORCPT
+        with ESMTP id S2387808AbgJKQBB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Oct 2020 10:22:58 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D63C0613CE;
-        Sun, 11 Oct 2020 07:22:58 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id s66so13460206otb.2;
-        Sun, 11 Oct 2020 07:22:58 -0700 (PDT)
+        Sun, 11 Oct 2020 12:01:01 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A44BC0613D0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Oct 2020 09:01:01 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id g29so11661777pgl.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Oct 2020 09:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cygGmMKwe8ox8+ba1k/Dv7fr+XqllMIbIsz8Hntkd5E=;
-        b=miZzENfpfIyXwxc6OW51smuOi4U1lomaRMltfa7/X76qVjOXEeimYZOOPQ9PObxdYf
-         WEHQ4+poOU4TN1L/g9+12WGu/UuLDNgpPlzg1T8nFe6BgNlv/BfRniP+kZ9/GqkTk+q+
-         /ER9hkLgEIfvimq03KeLc3Lsl1GRE5F+Ja+3k4UyHQaj0fXBEsz2D2Mf+ZrNndvLPwa6
-         kZgE1LsJLKaWbq2bD0dwUi+o5KfIWEEiQye6NxUTOQMOFW6lZyU3S8a1xhJ8uUU/F6AQ
-         fVtnzz4QDtB80I9Od3Cs1leiyLEyup9U8CllC68x4jvIpaxJ4QKpGDcOs2raLSnz/G3S
-         6Usw==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZeFjw3qLweAjOU35zoRBA8nXBOKUeG2GljXb+HxWSOw=;
+        b=wAfLQMktP3vX4gsrlyNS7bbn9fQ5HRsy2aJNNdt6ka30g9Ko/FJhQwWyAHrLsBd1W9
+         7AiJ5IaRRvN+HySKCHGDPwiC0KkE+cFhqzlUT4+q4MXFanvmSVhk/kzTw908Gp1DWunj
+         zrQDcro6Gcwx4ETnK2/bI3WREkoPuUKNxqbhUDblGB+RWrRA87LcKUVozSjTa0x3aNMe
+         TUQIZ6CB0bnK1Tsxxg9Y/KgqK9yXkn32E64iseUZsCkqK97b9VQugRYctPXTC92FZ3is
+         k77wtpura5vda4j29hm2YPSItLsBTdPUa81UMEMC4p8nkdaVpbPPm3RHrSzFWPa5Tayd
+         a3TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cygGmMKwe8ox8+ba1k/Dv7fr+XqllMIbIsz8Hntkd5E=;
-        b=QeIdnI1FKBImgmLnhaPxoHS2b8guukSVkCNj6xTpi3BIE9Uu+8Efpmn0HwV1Qyteq5
-         Sl09sj69idY2z0ZHCDGzXgFVkSyPy5PrC4ZN22DAHC4NVQ7fYhHJWxnwRwyuq1EBST/y
-         6xlQ2ZS/mtNKvpwkwu+oeSkAEWRW5Ywgi1NoXTlKE/qvCZGa5dpq4jbm8ObSydfHGdAM
-         9p4JKtXxu+64my5ZRg/R2ccN8RU9zvghzbIEk/Aa+YnoAfpA2G4Ue2BfBOnvecsLoIsI
-         KwJqM5MByZR1lakN41aoTjD7Di/4BmqCvwr/QVGco/UyMoNJ4AqqIW0kllr+yQMnl1AA
-         4lOA==
-X-Gm-Message-State: AOAM533pQGK/psxqXENtEWr8Om9rSgdKgQDk2hdIBpPS9wjgq9cHUr9d
-        gpi89k1SpMpeDAHpp0+Tn+pOOMStuRk=
-X-Google-Smtp-Source: ABdhPJyrpJLRZxNsp0L3FGVnWjpbcA5Xj9Cvm9ADGsHHKlVYroMS/Gi1xSPH2OibKBzfjCzWWZbXhQ==
-X-Received: by 2002:a9d:bee:: with SMTP id 101mr14806782oth.257.1602426177360;
-        Sun, 11 Oct 2020 07:22:57 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id w125sm8758418oiw.30.2020.10.11.07.22.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 11 Oct 2020 07:22:56 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 11 Oct 2020 07:22:55 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 4/5] alpha: simplify osf_mount
-Message-ID: <20201011142255.GA203430@roeck-us.net>
-References: <20200917082236.2518236-1-hch@lst.de>
- <20200917082236.2518236-5-hch@lst.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZeFjw3qLweAjOU35zoRBA8nXBOKUeG2GljXb+HxWSOw=;
+        b=nw5K3ZO+x4GOz0sTmTQ5kR7p+N9VtMlE8GCn407Do3uSF+anmTCh6Ddh3oVNvfyql2
+         N4CLCNz7lu9UwAqccu1adzasyO2uxeS3fN3md3S0RsLNPMC/fyhjPro8qrskH0p6Z6Hj
+         XkaYO+RCeBIImoNF/Mm8GLgEkswL0AEyXNzRGw9QN4RHoJxl4wL8lNW8uvTfO4tBkb7F
+         kEdtAfhjHJlBbJSIhAulVg52NCpVCLehvVXjCe3KKfBRMmJoTEA+OHKJHu4JTwyer+eT
+         1sKw998xhjKJVS3cXBB7iFbKXt50zNyPnhKaUzrwQkyispZa1eyxV5L/frv0JcmiK4ef
+         t/dQ==
+X-Gm-Message-State: AOAM532daLWpQ8huUoscmr5zUoJhGXtHmkJGdufj4hSASK7ZqlxCVDP4
+        924/tuBfdcHMFeUu71d5RjKUrQf2NCu36zzEe4Ds7A==
+X-Google-Smtp-Source: ABdhPJx+35KZugbZDuYuwDppg2jtVfNyVvGyDLkEevimfuHCyJp9HQAuTr44pyJ85kH6+5R+ijtE2LOzbIG0aYnD3qI=
+X-Received: by 2002:a17:90a:4749:: with SMTP id y9mr2820055pjg.229.1602432060784;
+ Sun, 11 Oct 2020 09:01:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200917082236.2518236-5-hch@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20201010103854.66746-1-songmuchun@bytedance.com> <20201011135244.GC4251@kernel.org>
+In-Reply-To: <20201011135244.GC4251@kernel.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 12 Oct 2020 00:00:24 +0800
+Message-ID: <CAMZfGtVgiZ-dg=t0Vsc5mt+UgEA+W2RjZ8sd9TFdEUB4iPPxXw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        mst@redhat.com, jasowang@redhat.com,
+        David Miller <davem@davemloft.net>, kuba@kernel.org,
+        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <edumazet@google.com>, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, steffen.klassert@secunet.com,
+        herbert@gondor.apana.org.au, Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, neilb@suse.de,
+        Sami Tolvanen <samitolvanen@google.com>,
+        kirill.shutemov@linux.intel.com, feng.tang@intel.com,
+        pabeni@redhat.com, Willem de Bruijn <willemb@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>, fw@strlen.de,
+        gustavoars@kernel.org, pablo@netfilter.org, decui@microsoft.com,
+        jakub@cloudflare.com, Peter Zijlstra <peterz@infradead.org>,
+        christian.brauner@ubuntu.com, ebiederm@xmission.com,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, minchan@kernel.org,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, linmiaohe@huawei.com,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Networking <netdev@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 10:22:35AM +0200, Christoph Hellwig wrote:
-> Merge the mount_args structures and mount helpers to simplify the code a
-> bit.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  arch/alpha/kernel/osf_sys.c | 111 +++++++++---------------------------
->  1 file changed, 28 insertions(+), 83 deletions(-)
-> 
-> diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-> index d5367a1c6300c1..5fd155b13503b5 100644
-> --- a/arch/alpha/kernel/osf_sys.c
-> +++ b/arch/alpha/kernel/osf_sys.c
-> @@ -421,109 +421,54 @@ SYSCALL_DEFINE3(osf_fstatfs64, unsigned long, fd,
->   *
->   * Although to be frank, neither are the native Linux/i386 ones..
->   */
-> -struct ufs_args {
-> +struct osf_mount_args {
->  	char __user *devname;
->  	int flags;
->  	uid_t exroot;
-> +	/* this has lots more here for cdfs at least, but we don't bother */
->  };
->  
-> -struct cdfs_args {
-> -	char __user *devname;
-> -	int flags;
-> -	uid_t exroot;
-> -
-> -	/* This has lots more here, which Linux handles with the option block
-> -	   but I'm too lazy to do the translation into ASCII.  */
-> -};
-> -
-> -struct procfs_args {
-> -	char __user *devname;
-> -	int flags;
-> -	uid_t exroot;
-> -};
-> -
-> -/*
-> - * We can't actually handle ufs yet, so we translate UFS mounts to
-> - * ext2fs mounts. I wouldn't mind a UFS filesystem, but the UFS
-> - * layout is so braindead it's a major headache doing it.
-> - *
-> - * Just how long ago was it written? OTOH our UFS driver may be still
-> - * unhappy with OSF UFS. [CHECKME]
-> - */
-> -static int
-> -osf_ufs_mount(const char __user *dirname,
-> -	      struct ufs_args __user *args, int flags)
-> +SYSCALL_DEFINE4(osf_mount, unsigned long, typenr, const char __user *, path,
-> +		int, flag, void __user *, data)
->  {
-> -	int retval;
-> -	struct cdfs_args tmp;
-> +	struct osf_mount_args tmp;
->  	struct filename *devname;
-> -
-> -	retval = -EFAULT;
-> -	if (copy_from_user(&tmp, args, sizeof(tmp)))
-> -		goto out;
-> -	devname = getname(tmp.devname);
-> -	retval = PTR_ERR(devname);
-> -	if (IS_ERR(devname))
-> -		goto out;
-> -	retval = do_mount(devname->name, dirname, "ext2", flags, NULL);
-> -	putname(devname);
-> - out:
-> -	return retval;
-> -}
-> -
-> -static int
-> -osf_cdfs_mount(const char __user *dirname,
-> -	       struct cdfs_args __user *args, int flags)
-> -{
-> +	const char *fstype;
->  	int retval;
-> -	struct cdfs_args tmp;
-> -	struct filename *devname;
-> -
-> -	retval = -EFAULT;
-> -	if (copy_from_user(&tmp, args, sizeof(tmp)))
-> -		goto out;
-> -	devname = getname(tmp.devname);
-> -	retval = PTR_ERR(devname);
-> -	if (IS_ERR(devname))
-> -		goto out;
-> -	retval = do_mount(devname->name, dirname, "iso9660", flags, NULL);
-> -	putname(devname);
-> - out:
-> -	return retval;
-> -}
-> -
-> -static int
-> -osf_procfs_mount(const char __user *dirname,
-> -		 struct procfs_args __user *args, int flags)
-> -{
-> -	struct procfs_args tmp;
->  
->  	if (copy_from_user(&tmp, args, sizeof(tmp)))
->  		return -EFAULT;
->  
-arch/alpha/kernel/osf_sys.c:440:27: error: 'args' undeclared (first use in this function)
+On Sun, Oct 11, 2020 at 9:53 PM Mike Rapoport <rppt@kernel.org> wrote:
+>
+> On Sat, Oct 10, 2020 at 06:38:54PM +0800, Muchun Song wrote:
+> > The amount of memory allocated to sockets buffer can become significant.
+> > However, we do not display the amount of memory consumed by sockets
+> > buffer. In this case, knowing where the memory is consumed by the kernel
+> > is very difficult. On our server with 500GB RAM, sometimes we can see
+> > 25GB disappear through /proc/meminfo. After our analysis, we found the
+> > following memory allocation path which consumes the memory with page_owner
+> > enabled.
+>
+> I have a high lelel question.
+> There is accounting of the socket memory for memcg that gets called from
+> the networking layer. Did you check if the same call sites can be used
+> for the system-wide accounting as well?
 
-> -	return do_mount("", dirname, "proc", flags, NULL);
-> -}
-> -
-> -SYSCALL_DEFINE4(osf_mount, unsigned long, typenr, const char __user *, path,
-> -		int, flag, void __user *, data)
-> -{
-> -	int retval;
-> -
->  	switch (typenr) {
-> -	case 1:
-> -		retval = osf_ufs_mount(path, data, flag);
-> +	case 1: /* ufs */
-> +		/*
-> +		 * We can't actually handle ufs yet, so we translate UFS mounts
-> +		 * to ext2 mounts. I wouldn't mind a UFS filesystem, but the UFS
-> +		 * layout is so braindead it's a major headache doing it.
-> +		 *
-> +		 * Just how long ago was it written? OTOH our UFS driver may be
-> +		 * still unhappy with OSF UFS. [CHECKME]
-> +		 */
-> +		fstype = "ext2";
-> +		devname = getname(tmp.devname);
->  		break;
-> -	case 6:
-> -		retval = osf_cdfs_mount(path, data, flag);
-> +	case 6: /* cdfs */
-> +		fstype = "iso9660";
-> +		devname = getname(tmp.devname);
->  		break;
-> -	case 9:
-> -		retval = osf_procfs_mount(path, data, flag);
-> +	case 9: /* procfs */
-> +		fstype = "proc";
-> +		devname = getname_kernel("");
->  		break;
->  	default:
-> -		retval = -EINVAL;
->  		printk("osf_mount(%ld, %x)\n", typenr, flag);
-> +		return -EINVAL;
->  	}
->  
-> +	if (IS_ERR(devname))
-> +		return PTR_ERR(devname);
-> +	retval = do_mount(devname.name, dirname, fstype, flags, NULL);
+I also think about this. But we did not pass the `struct page` parameter to
+the sock accounting memcg API. So we did not know the NUMA node
+which allocated the socket buffer memory and cannot do node-level
+statistics. In addition, there is another problem. If the user sends a 4096-byte
+message, we only charge one page to the memcg but the system allocates 8
+pages. So if we reuse the same call sites for the system-wide accounting,
+the statistical count we get is always smaller than the actual situation.
 
-arch/alpha/kernel/osf_sys.c:471:34: error:
-	'dirname' undeclared (first use in this function); did you mean 'devname'?
+>
+> >   849698 times:
+> >   Page allocated via order 3, mask 0x4052c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP)
+> >    __alloc_pages_nodemask+0x11d/0x290
+> >    skb_page_frag_refill+0x68/0xf0
+> >    sk_page_frag_refill+0x19/0x70
+> >    tcp_sendmsg_locked+0x2f4/0xd10
+> >    tcp_sendmsg+0x29/0xa0
+> >    sock_sendmsg+0x30/0x40
+> >    sock_write_iter+0x8f/0x100
+> >    __vfs_write+0x10b/0x190
+> >    vfs_write+0xb0/0x190
+> >    ksys_write+0x5a/0xd0
+> >    do_syscall_64+0x5d/0x110
+> >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  drivers/base/node.c      |  2 ++
+> >  drivers/net/virtio_net.c |  3 +--
+>
+> Is virtio-net the only dirver that requred an update?
 
-> +	putname(devname);
->  	return retval;
->  }
->  
+Yeah, only virtio-net needs an update. Because only it uses the
+skb_page_frag_refill() API.
+
+>
+> >  fs/proc/meminfo.c        |  1 +
+> >  include/linux/mmzone.h   |  1 +
+> >  include/linux/skbuff.h   | 43 ++++++++++++++++++++++++++++++++++++++--
+> >  kernel/exit.c            |  3 +--
+> >  mm/page_alloc.c          |  7 +++++--
+> >  mm/vmstat.c              |  1 +
+> >  net/core/sock.c          |  8 ++++----
+> >  net/ipv4/tcp.c           |  3 +--
+> >  net/xfrm/xfrm_state.c    |  3 +--
+> >  11 files changed, 59 insertions(+), 16 deletions(-)
+> >
+
+
+
+-- 
+Yours,
+Muchun
