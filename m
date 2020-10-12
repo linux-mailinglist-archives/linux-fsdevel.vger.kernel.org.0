@@ -2,83 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1441828BAC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 16:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EBB128BD7A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 18:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389604AbgJLOYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 10:24:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37966 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388833AbgJLOYo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 10:24:44 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F0FC0613D0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 07:24:44 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id j13so12214947ilc.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 07:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KXjyEZ75Pe4z4wSYrGbLTLW5aWcGXSPk3cloYXZRaQ4=;
-        b=rDqNIIj/4RCVrCTL8/M7nsY1rbeEAMaUOaH858YqkKmjLup7HNaJas+bWUE8scDgMY
-         WRgvGnWGk9gwIlxRrR1MKsaI1xyQbLtdsyiTaBFxunHI6UD73d/WqpJlABKqG9B8R1GX
-         yttwsR7L2CXJ6PmPLUUCC3VNQ3704dbZ+fRx+ZpTJjhIKHGAvPOeKJ+nemH8b8zWVnYm
-         AxPjX3mq06Z731A5VzfA2BLMaHqLrtUibfXqQtf32Zh1c7YkNJ/tEApnlk3dfDlTQ82l
-         vIiwKheyCCeFVuWiON8Gq9fRnzlG8AziqZW4w/LBoSgyTcVHf6bAm63v6uoixd2JZxSZ
-         75kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KXjyEZ75Pe4z4wSYrGbLTLW5aWcGXSPk3cloYXZRaQ4=;
-        b=Vyl4Y7eU8NMWUONdb3T96CsmAi5YNR0oy0NE+xfoYDOwDhMM3kG5X1ypzhNNlKZwFq
-         hAgJW5DO6oiOi8aar5o4BbNoA3Lm7vi/eTaBb5AlMITOtm45/eJaVc9RwcHMZVbmX/o1
-         5UBh5qhak3EdHr1Wp077QAs4RvPYUzy6Qv0C39Oi60CExUzz3dxvXq8clfnwA1aQGy6g
-         HqQ6VryV+sddj6ME+b6myHZkSsVdnsIiXNmW2AvUMN+DtM/kSkYdovA5pEqA3wSextit
-         3j1IqlBNbLQCZaMEsvo81wLUB7fC31z7FPQb/NQciqyjW/3+Gg7mLvnJCJERtzzmpXL1
-         qBQg==
-X-Gm-Message-State: AOAM5300A3O01kmmxAObeiRbevag6XvCqDFEeFP8htkF11a/JvD5zsaf
-        /9ljZHm0UztMI8lXrR7eGfccOg==
-X-Google-Smtp-Source: ABdhPJznZRNU9a15R8WfJMyAoMmQCUgRYZZ8MpyOl67bGNCEGVilcETpNqOifTaQIWKqwq05Rl0odw==
-X-Received: by 2002:a92:ae0a:: with SMTP id s10mr19507476ilh.289.1602512683984;
-        Mon, 12 Oct 2020 07:24:43 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id c2sm7405690ioc.29.2020.10.12.07.24.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Oct 2020 07:24:43 -0700 (PDT)
-Subject: Re: [PATCH][next] io_uring: Fix sizeof() mismatch
-To:     Colin King <colin.king@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201012140341.77412-1-colin.king@canonical.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <871e585c-06ca-17cb-f082-fec576bb75e1@kernel.dk>
-Date:   Mon, 12 Oct 2020 08:24:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2390684AbgJLQTv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 12:19:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390043AbgJLQTu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Oct 2020 12:19:50 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22B302080A;
+        Mon, 12 Oct 2020 16:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602519589;
+        bh=FXrMfe87r7In01hy1fZxNUDLVXbtP/5TJ3+XTzWq1o4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V7DSrccLr5b4UIwMLihtwG0wHPpEpEeCdL4DEsryZDNbDbBe/031RRLLs/mkasjte
+         GkozOXCGlriE75ewyNE/y/+1/YN0mvEXF3Fx+zkSk5bqABC19TCsH57zxXZt4yoDfc
+         Gd/Q7Kn6Oc4wJMc886CZx9bFLur2svNEjPDcQyvk=
+Date:   Mon, 12 Oct 2020 09:19:46 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, linux-aio@kvack.org,
+        linux-efi@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
+        target-devel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kselftest@vger.kernel.org, samba-technical@lists.samba.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org,
+        x86@kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-afs@lists.infradead.org, cluster-devel@redhat.com,
+        linux-cachefs@redhat.com, intel-wired-lan@lists.osuosl.org,
+        xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
+        Fenghua Yu <fenghua.yu@intel.com>, ecryptfs@vger.kernel.org,
+        linux-um@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+        linux-erofs@lists.ozlabs.org, reiserfs-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        io-uring@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH RFC PKS/PMEM 22/58] fs/f2fs: Utilize new kmap_thread()
+Message-ID: <20201012161946.GA858@sol.localdomain>
+References: <20201009195033.3208459-1-ira.weiny@intel.com>
+ <20201009195033.3208459-23-ira.weiny@intel.com>
+ <20201009213434.GA839@sol.localdomain>
+ <20201010003954.GW20115@casper.infradead.org>
+ <20201010013036.GD1122@sol.localdomain>
+ <20201012065635.GB2046448@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20201012140341.77412-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201012065635.GB2046448@iweiny-DESK2.sc.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/12/20 8:03 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, Oct 11, 2020 at 11:56:35PM -0700, Ira Weiny wrote:
+> > 
+> > And I still don't really understand.  After this patchset, there is still code
+> > nearly identical to the above (doing a temporary mapping just for a memcpy) that
+> > would still be using kmap_atomic().
 > 
-> An incorrect sizeof() is being used, sizeof(file_data->table) is not
-> correct, it should be sizeof(*file_data->table).
+> I don't understand.  You mean there would be other call sites calling:
+> 
+> kmap_atomic()
+> memcpy()
+> kunmap_atomic()
 
-Thanks, should be a no-op, which is why KASAN didn't complain in my
-testing. I'll queue this up, thanks.
+Yes, there are tons of places that do this.  Try 'git grep -A6 kmap_atomic'
+and look for memcpy().
 
--- 
-Jens Axboe
+Hence why I'm asking what will be the "recommended" way to do this...
+kunmap_thread() or kmap_atomic()?
 
+> And since I don't know the call site details if there are kmap_thread() calls
+> which are better off as kmap_atomic() calls I think it is worth converting
+> them.  But I made the assumption that kmap users would already be calling
+> kmap_atomic() if they could (because it is more efficient).
+
+Not necessarily.  In cases where either one is correct, people might not have
+put much thought into which of kmap() and kmap_atomic() they are using.
+
+- Eric
