@@ -2,127 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADB028C48D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 00:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F295D28C4D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 00:38:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388244AbgJLWMq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 18:12:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
+        id S1729643AbgJLWii (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 18:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387733AbgJLWMq (ORCPT
+        with ESMTP id S1727376AbgJLWih (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 18:12:46 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C204C0613D0;
-        Mon, 12 Oct 2020 15:12:46 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id q25so5245992ioh.4;
-        Mon, 12 Oct 2020 15:12:46 -0700 (PDT)
+        Mon, 12 Oct 2020 18:38:37 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF498C0613D0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 15:38:35 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id c21so1969418ljj.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 15:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6GZ3bPMspww2V+Ym0Qh7X9pkgI/IU9Jbpf7mzdOQus0=;
-        b=bfJwjbcd5PfSUcnm5iNF1BFJezZAWaVv8f4NLYg36c21R35nOTPcbZgGSeAP/BN0YC
-         lArmVDHnZ5+zDU4S/jy3q0/lyq09lQDp6In3uxoRVf9QoEhNVCbeiBmEhgiAO4kHrK9B
-         Hq7VkFhxWsNwnniQIXjcTgqlMxhRpcwPgURREjSvx7Dig8vrhb+HCgy+t8JOknv+TuVK
-         SodLcbqfh2IHcOVQgsCI818lRf3F8KtPBlaBu5QgIDdgNJy8y66xgSpWB+1KJX5j86Gr
-         jqyxILPzfhjLTUnkww//qeHeGNTskcutRLhjmBzZq5YXYW7gvwoYKQoL3WOILki0xJ0v
-         VmPw==
+         :cc:content-transfer-encoding;
+        bh=W9fvtl91ZorkZ0ga43XiISUsMGGK9PX5WUdwgTBh2vI=;
+        b=Dvsb9R0uvANssCFhhDBM8ZUmMAdSRxV3jfJaAInjGEfCygFxKMbDlIV5j3pIUgg7Eu
+         pE0AugZZMK7tqUgIPTLrRumLZSaWLINCODduTowGk1mNEDDJy0MRKRHtEJ/CuEv9FAL4
+         PnvpkXXvZCKgBueBM/D99kpwIRoDd7FViwD+U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6GZ3bPMspww2V+Ym0Qh7X9pkgI/IU9Jbpf7mzdOQus0=;
-        b=LAWl3dS6KGY4QdfNZ+JGrTydQYU9V8QuMXAELKsevFmOdYougzU0vHagaYbZxEcB+7
-         nrvSv8ie5BiBbHk4sFNRP8lEawyfg/KY10cYSqMNPesZW/EjZHiefW/l9I7TKq1hLezY
-         BkogOo8vwLSMsFaTuvj/Ybm2yLb5itHsYoDb6srJ/mdupImwQcwrTCFft6qlyWbmoDKa
-         l9FxuhxCcbYMUAb+/weuSG+P1o7aKvyBOEXNIydh7Hu0u+MmAiJUgrqsRSrt4t0WKJIJ
-         Zp4UWt0j8r3rbLTduL8yRxYaFJUKMK4TUXsgbdYjA2DC8JQkYnYmmqYrQr4QS0QNYgfw
-         oZBA==
-X-Gm-Message-State: AOAM532KxC6+KgL2x97nJJ4KBASjNHIllyOIqWEzDHFBSskiD+GFJv+m
-        +9xi/Q8KU4lbHc1/JlEUlyzCXVeTZ6hqKHE/emc=
-X-Google-Smtp-Source: ABdhPJyFc4ostSbxsypN1wGndFqR3BXYLSDhPoPs1FLqkP0180PUNcs1Rg52RMqlZV96tqBaaMtbT66MdYmI0R8n1vU=
-X-Received: by 2002:a05:6638:159:: with SMTP id y25mr21753172jao.131.1602540765537;
- Mon, 12 Oct 2020 15:12:45 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=W9fvtl91ZorkZ0ga43XiISUsMGGK9PX5WUdwgTBh2vI=;
+        b=nI9zjvXDFdSQ0OxihSVvBT8ilc9WyT0EYhTbEtO0+Cctz9dVkDeKlRU9X5N+l+i3oC
+         ISCtHVE2GIPw3yiZg3vRA5bIxnfF0xTqvJCWnywJyOnAAB4sYK8YqZ5Qp/zjhe9OKRmS
+         STpHQo0ieoXestKL5VbN1o/+C+/5u4h3IG6+XBqNC91Om+EfwDTxjPedLAix0KfimROV
+         bFKsbJc0mP1WTwD41VSxksewV7rgX54kdoqdN3Qo9KtRUzMRq+mQVyeuQobL+vUN4wnz
+         DAt4xdNAS7hAYlTnyzRe93dVv8sXFQHQpFijQNlywymjDzlNuEjNM8zDNqSCzdyDYDWg
+         MPQw==
+X-Gm-Message-State: AOAM531fZ7T2y2fwZa1uBBegBAqhbaEIiUmGDoiuRSGikLjcw/GW/7uF
+        r8JbUy+9rnHM4Idl5FlSDZ/CcCjuy2k4cg==
+X-Google-Smtp-Source: ABdhPJy85G/djJpYjcA33GAo7/S5Ce9j+JUAof+UXGJug/lPyySJ6Foz1BWkENGtsvFq3WTd7CVVkg==
+X-Received: by 2002:a2e:8250:: with SMTP id j16mr8842051ljh.249.1602542314010;
+        Mon, 12 Oct 2020 15:38:34 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id d23sm2143607lfm.141.2020.10.12.15.38.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Oct 2020 15:38:33 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id d24so19938751lfa.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 15:38:33 -0700 (PDT)
+X-Received: by 2002:a2e:9152:: with SMTP id q18mr10367236ljg.421.1602541824540;
+ Mon, 12 Oct 2020 15:30:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201010103854.66746-1-songmuchun@bytedance.com>
- <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
- <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
- <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
- <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
- <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com> <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
-In-Reply-To: <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Mon, 12 Oct 2020 15:12:34 -0700
-Message-ID: <CAM_iQpUgy7MDka8A44U=pLGDOwqn8YhXMp8rgs8LCJBHb5DXYA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Shakeel Butt <shakeelb@google.com>,
-        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
-        rppt@kernel.org, Sami Tolvanen <samitolvanen@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
+References: <CAKgNAkjMBGeAwF=2MKK758BhxvW58wYTgYKB2V-gY1PwXxrH+Q@mail.gmail.com>
+ <CAHk-=wig1HDZzkDEOxsxUjr7jMU_R5Z1s+v_JnFBv4HtBfP7QQ@mail.gmail.com> <81229415-fb97-51f7-332c-d5e468bcbf2a@gmail.com>
+In-Reply-To: <81229415-fb97-51f7-332c-d5e468bcbf2a@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 12 Oct 2020 15:30:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjYN_80i=9ALMwxZ77_TS_TMjkVyZ261xtuiMUaZsM4ng@mail.gmail.com>
+Message-ID: <CAHk-=wjYN_80i=9ALMwxZ77_TS_TMjkVyZ261xtuiMUaZsM4ng@mail.gmail.com>
+Subject: Re: Regression: epoll edge-triggered (EPOLLET) for pipes/FIFOs
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Alexander Viro <aviro@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
-        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>,
+        keyrings@vger.kernel.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Davide Libenzi <davidel@xmailserver.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 2:53 AM Muchun Song <songmuchun@bytedance.com> wrote:
-> We are not complaining about TCP using too much memory, but how do
-> we know that TCP uses a lot of memory. When I firstly face this problem,
-> I do not know who uses the 25GB memory and it is not shown in the /proc/meminfo.
-> If we can know the amount memory of the socket buffer via /proc/meminfo, we
-> may not need to spend a lot of time troubleshooting this problem. Not everyone
-> knows that a lot of memory may be used here. But I believe many people
-> should know /proc/meminfo to confirm memory users.
+On Mon, Oct 12, 2020 at 1:30 PM Michael Kerrisk (man-pages)
+<mtk.manpages@gmail.com> wrote:
+>
+> I don't think this is correct. The epoll(7) manual page
+> sill carries the text written long ago by Davide Libenzi,
+> the creator of epoll:
+>
+>     Since  even with edge-triggered epoll, multiple events can be gen=E2=
+=80=90
+>     erated upon receipt of multiple chunks of data, the caller has the
+>     option  to specify the EPOLLONESHOT flag, to tell epoll to disable
+>     the associated file descriptor after the receipt of an event  with
+>     epoll_wait(2).
 
-Well, I'd bet networking people know `ss -m` better than /proc/meminfo,
-generally speaking.
+Hmm.
 
-The practice here is that if you want some networking-specific counters,
-add it to where networking people know better, that is, `ss -m` or /proc/net/...
+The more I read that paragraph, the more I think the epoll man-page
+really talks about something that _could_ happen due to internal
+implementation details, but that isn't really something an epoll user
+would _want_ to happen or depend on.
 
-Or maybe the problem you described is not specific to networking at all,
-there must be some other places where pages are allocated but not charged.
-If so, adding a general mm counter in /proc/meminfo makes sense, but
-it won't be specific to networking.
+IOW, in that whole "even with edge-triggered epoll, multiple events
+can be generated", I'd emphasize the *can* part (as in "might", not as
+in "will"), and my reading is that the reason EPOLLONESHOT flag exists
+is to avoid that whole "this is implementation-defined, and if you
+absolutely _must_ get just a single event, you need to use
+EPOLLONESHOT to make sure you remove yourself after you got the one
+single event you waited for".
 
-Thanks.
+The corollary of that reading is that the new pipe behavior is
+actually the _expected_ one, and the old pipe behavior where we would
+generate multiple events is the unwanted implementation detail of
+"this might still happen, and if you care, you will need to do extra
+stuff".
+
+Anyway, I don't absolutely hate that patch of mine, but it does seem
+nonsensical and pointless, and I think I'll just hold off on applying
+it until we hear of something actually breaking.
+
+Which I suspect simply won't happen. Getting two epoll notifications
+when the pipe state didn't really change in between is not something I
+can see anybody really depending on.
+
+You _will_ get the second notification if somebody actually emptied
+the pipe in between, and you have a real new "edge".
+
+But hey, I am continually surprised by what user space code then
+occasionally does, despite my fairly low expectations.
+
+              Linus
