@@ -2,80 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE2C428AC7B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 05:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5F7A28ACC3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 06:22:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbgJLD1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Oct 2020 23:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49640 "EHLO
+        id S1727808AbgJLEWx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 00:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbgJLD1u (ORCPT
+        with ESMTP id S1727722AbgJLEWx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Oct 2020 23:27:50 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAE9C0613CE;
-        Sun, 11 Oct 2020 20:27:50 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kRoV2-00Fkpi-Oy; Mon, 12 Oct 2020 03:27:48 +0000
-Date:   Mon, 12 Oct 2020 04:27:48 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: [git pull] vfs.git mount compat series
-Message-ID: <20201012032748.GH3576660@ZenIV.linux.org.uk>
+        Mon, 12 Oct 2020 00:22:53 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B92C0613D0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Oct 2020 21:22:52 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id a200so12350123pfa.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Oct 2020 21:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=86h9GnvGBi5wC9xCp0mEaMT6C/YP6RZUf0IR+KiY+mM=;
+        b=n5A3l84IVanhAXQ+RpWAMhL2/paRrC+kBPfk32SkjMJ3AMIe+3jVIqh5wck4Qd64RH
+         OJ1A23lm7sibahUbKhN34W8lVpaxR2Sth1OKPcLb6ZGuB6MapkRU9HNBC3XkRM4rrB/L
+         qkKvRFLA1BpjbDhEJv4NzLXFuijYW2r+o17N5n+k4+ZaLNoO3bpDGymp68ohPmNCfJ3Z
+         33n6gE3eMLl3UD9fIFLUFcSbulpMADG+sOEVBQazltObrafBDS+pVXURv2NVG3AWKyVq
+         BavLV2VLLjgz1sFHY7rqtk/5uidIKHx52b48F5hLddg4pbIQX6HpruoRh2OA+Ep8QMyS
+         KNCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=86h9GnvGBi5wC9xCp0mEaMT6C/YP6RZUf0IR+KiY+mM=;
+        b=sujAecxiWCJaPwnYBaecOTIpOvEHOGp4IfmtvnGCk8YjXxr7n8FbWvxD1HbZlx38/q
+         Xpzkdk0/GryzT9SxOhVCUcJzNZkTe8LoFaP8wVY3IamxraGWgnfdPzIhzG5CIVgprAVy
+         NR7kTaUzJ22N6y6s3tT+S/+FvqA+UMwh3k4ms7UPV2ckIwY6iTXuExM1/ZqJja26OktS
+         rkeBYLCYlDJrA+IfiJk02jZGPX9SrYpg1kBrwhhK3vD90thYWJsKGKXp433LDbOildEV
+         hGVapZVTIBwhzXj+1PojjTw5+EPQU/ZFv7M5bM6GvFeILoEbFsk9a7ggQorMYLzL9fRM
+         R9Gw==
+X-Gm-Message-State: AOAM532r+kR61Djv16JTBQv9nz8UzVsK7nnj8Ctk3i6vSJevhk4fv5VG
+        NiW4NAFik2B5I3kqoGJlk3rX7m5E5kQ3OjDvVuIa7Q==
+X-Google-Smtp-Source: ABdhPJxHHIJDJzppxANA9QNUbZw/HickM6E0AFMSiV9107EW+Zh0ghm7JqhHQ8xdMJzxoaSvB20+kIMEP4lWGOY6O1g=
+X-Received: by 2002:a17:90a:890f:: with SMTP id u15mr18101013pjn.147.1602476572410;
+ Sun, 11 Oct 2020 21:22:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20201010103854.66746-1-songmuchun@bytedance.com> <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+In-Reply-To: <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 12 Oct 2020 12:22:16 +0800
+Message-ID: <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
+        rppt@kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>, decui@microsoft.com,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	The last remnants of mount(2) compat buried.  Buried into NFS, that is;
-generally I'm less enthusiastic about "let's use in_compat_syscall() deep in
-call chain" kind of approach than Christoph seems to be, but in this case it's
-warranted - that crap had been an NFS-specific wart, hopefully not to be repeated
-in any other filesystems (read: any new filesystem introducing non-text mount
-options will get NAKed even if it doesn't fuck the layout up).  Not worth trying
-to grow an infrastructure that would avoid that use of in_compat_syscall()...
-	[Note: alpha-related tail of the series got dropped]
+On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+>
+> On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com> wr=
+ote:
+> >
+> > The amount of memory allocated to sockets buffer can become significant=
+.
+> > However, we do not display the amount of memory consumed by sockets
+> > buffer. In this case, knowing where the memory is consumed by the kerne=
+l
+>
+> We do it via `ss -m`. Is it not sufficient? And if not, why not adding it=
+ there
+> rather than /proc/meminfo?
 
-The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
+If the system has little free memory, we can know where the memory is via
+/proc/meminfo. If a lot of memory is consumed by socket buffer, we cannot
+know it when the Sock is not shown in the /proc/meminfo. If the unaware use=
+r
+can't think of the socket buffer, naturally they will not `ss -m`. The
+end result
+is that we still don=E2=80=99t know where the memory is consumed. And we ad=
+d the
+Sock to the /proc/meminfo just like the memcg does('sock' item in the cgrou=
+p
+v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
 
-  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+>
+> >  static inline void __skb_frag_unref(skb_frag_t *frag)
+> >  {
+> > -       put_page(skb_frag_page(frag));
+> > +       struct page *page =3D skb_frag_page(frag);
+> > +
+> > +       if (put_page_testzero(page)) {
+> > +               dec_sock_node_page_state(page);
+> > +               __put_page(page);
+> > +       }
+> >  }
+>
+> You mix socket page frag with skb frag at least, not sure this is exactly
+> what you want, because clearly skb page frags are frequently used
+> by network drivers rather than sockets.
+>
+> Also, which one matches this dec_sock_node_page_state()? Clearly
+> not skb_fill_page_desc() or __skb_frag_ref().
 
-are available in the git repository at:
+Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
+So if someone gets the page returned by skb_page_frag_refill(), it must
+put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
+to indicate that we need to dec the node page state when the refcount of
+page reaches zero.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git compat.mount
+Thanks.
 
-for you to fetch changes up to 028abd9222df0cf5855dab5014a5ebaf06f90565:
+>
+> Thanks.
 
-  fs: remove compat_sys_mount (2020-09-22 23:45:57 -0400)
 
-----------------------------------------------------------------
-Christoph Hellwig (3):
-      nfs: simplify nfs4_parse_monolithic
-      fs,nfs: lift compat nfs4 mount data handling into the nfs code
-      fs: remove compat_sys_mount
 
- arch/arm64/include/asm/unistd32.h                  |   2 +-
- arch/mips/kernel/syscalls/syscall_n32.tbl          |   2 +-
- arch/mips/kernel/syscalls/syscall_o32.tbl          |   2 +-
- arch/parisc/kernel/syscalls/syscall.tbl            |   2 +-
- arch/powerpc/kernel/syscalls/syscall.tbl           |   2 +-
- arch/s390/kernel/syscalls/syscall.tbl              |   2 +-
- arch/sparc/kernel/syscalls/syscall.tbl             |   2 +-
- arch/x86/entry/syscalls/syscall_32.tbl             |   2 +-
- fs/Makefile                                        |   1 -
- fs/compat.c                                        | 132 --------------
- fs/internal.h                                      |   3 -
- fs/namespace.c                                     |   4 +-
- fs/nfs/fs_context.c                                | 195 +++++++++++++--------
- include/linux/compat.h                             |   6 -
- include/uapi/asm-generic/unistd.h                  |   2 +-
- tools/include/uapi/asm-generic/unistd.h            |   2 +-
- tools/perf/arch/powerpc/entry/syscalls/syscall.tbl |   2 +-
- tools/perf/arch/s390/entry/syscalls/syscall.tbl    |   2 +-
- 18 files changed, 138 insertions(+), 227 deletions(-)
- delete mode 100644 fs/compat.c
+--=20
+Yours,
+Muchun
