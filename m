@@ -2,104 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A41F28B148
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 11:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BBEF28B16B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 11:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbgJLJRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 05:17:48 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:29060 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbgJLJRr (ORCPT
+        id S1729193AbgJLJYL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 05:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbgJLJYL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 05:17:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1602494492; x=1634030492;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W++OrlzE97qwBvZF64ZDGrRiVg45COERqUhZpScC4tg=;
-  b=UpfZOENJlM/aEt+pSvwsocYCH//T7xXlSq4ErcFv+Mq/zN3ct4SoLo04
-   9A3MMqXBIyCyx/CYCVTeyOlq9jB41z+rvuwFUd2NuEiPpL8yY0ututVCD
-   +DeWz3nTGjRXRHXxDf2NzcCt2aACEyBg2wnHqZVhHLC27zF56TZFt35md
-   ZLe3oNpXaaLdvyKllqiWc7HZ4oA6SQac6HnBB9Xebek/Vpo+E1CQX+282
-   hQisIeQsAXqr11OC25ZaGupESvfSHLwVcaS8cuLnvBXreojzQX5oimgic
-   xTkuRwpXH4W69hZXEOjZDQ2UpAZ9Sm8RPj4MhqIBEk2El0kzEDv1CvMbo
-   g==;
-IronPort-SDR: 5Q+n37NTfKCw72j3tg1/le2mytT7OkGOrTB943LChdufhHWbTTJpBUPBR2k653VdTAycjtNa5m
- sdVSIDBGEgnRS8nCd86kedFYoPRvpa+yvoZt1vwmqN6s2WQfwAyXNalDCNd3gGA1Mtbg0gs8BN
- 4urWF2OGKwtGpuDus8WzZkrCyVgrEN8I6VDO/1stjHKGwP6O6dgGGcyWPKUewlvQGlGyLmROx+
- VUyQlxQIyc/KYx3guqDwITsVx6NorvgIgfKrSQhHxXxKuZz9HrJYU1dNRIIjOAOAfGfUH1UVED
- XRQ=
-X-IronPort-AV: E=Sophos;i="5.77,366,1596470400"; 
-   d="scan'208";a="253073073"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Oct 2020 17:21:31 +0800
-IronPort-SDR: E74Qok3XHuHvoskjDpJGBZXXgyBmr8wAdvDGivCSwH8Z+oQfrHua+8Li0k+Jm1g7DUMKKWlZpF
- nVDOaIT/e2qUH1xmfF9Oi6S6bZNymWvZxA9H3+YsgxPdKMXwQ3KRau98pfIl25aGcvoBre/s07
- KHrZz0EHIwc5Fxnibx7Q54pZKOGFJUY2chpgvhRKoi1ZdcAklNT1LwUWVpLmtXYF0bKLxKoFSI
- oHGw36Kh/NmdRtJzkBUzctp6txGnHGvwt0MMBgQumzsEMt2kqyg4uO1plZKGUqLehtB/Qiwb9M
- 9M/Ryscp3wnaVFWsGOaF3SDD
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2020 02:04:22 -0700
-IronPort-SDR: /3Tjbs8ony8g/+g7phg0fIfsb1DmZtaeRxvKDJJlC4v+D0Mxxp7KfRwPmF9qVmi1ZqPCRQDTdQ
- QECPiraivwxB7KVjIMeDqJe20wWH4jJI/GhGrVPX4XkhHEpvCh4xTAXA2BaFOvEkAR1+VNs35g
- Ey2gry3QWuJ4dQAZZxOrzq1Ttbp9pbMpE3D9bMZVwITorvJbKOmk+hymneQPFg2EVfY/MdxTUr
- dVx6C0lchJw1ZmCTn8Q5SUE0uvpoTl+zAvDYt2HJvBA5U+I+WETTuqmpEg8YT3hf7S0Cq5JmBU
- 8/4=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with SMTP; 12 Oct 2020 02:17:46 -0700
-Received: (nullmailer pid 829325 invoked by uid 1000);
-        Mon, 12 Oct 2020 09:17:45 -0000
-Date:   Mon, 12 Oct 2020 18:17:45 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v8 00/41] btrfs: zoned block device support
-Message-ID: <20201012091745.pgqm3lctkjgxbwpb@naota.dhcp.fujisawa.hgst.com>
-References: <cover.1601572459.git.naohiro.aota@wdc.com>
- <8a20cbf8-9049-6e6f-b618-9b4be7633f82@toxicpanda.com>
+        Mon, 12 Oct 2020 05:24:11 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6774C0613CE;
+        Mon, 12 Oct 2020 02:24:10 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id t9so18307362wrq.11;
+        Mon, 12 Oct 2020 02:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DMVGRL2h5VknQLtG+XBcBI/2PJssThsIUXIEgYmYsSU=;
+        b=uKFHU+okcDjb6Fb/zP+lA9f+wlJxiFRf7FlqX2XxTyuTAKieQcr+4zEW7fj4A8Nodv
+         UF+rwE5tD2Honok8Btx3sX6sPae46NxFjByl9kbbCK6ESCFKenq7EwhoEVom6Bihw8o8
+         JwSALjaIOzE1qYYNL5Z5adiyP5tSNlQubxoSXrK/Q/orJAeILuAmOveunVcy+BUGzlKh
+         GiyXc7DjBg3xpg2bF/WuWixArQ5fEkUFuXU6lyRn3lcpiitXWoGX4CX48uXPPd3VpwYe
+         HPOJndvhcauDFtUV5/TmvJEWQsDs07mw7cLnIx/vGlrqjxN8HNJwzQgzNPlmNJICIUK+
+         Nd0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DMVGRL2h5VknQLtG+XBcBI/2PJssThsIUXIEgYmYsSU=;
+        b=Ku7+aPhQPMMJ/r0tqU2La/x6Wv1viUaqthJN93lDREzB0lWKUFrDoOTHWsndLZpSWA
+         ABBAow1rw9sUqkiUoT1NoBweX0eiG1Wrbby6Upy3mhEm5U6r3puftkCsx44z2Zh937p8
+         hPbQ5AuwVP5rT5WIVaoBtyFUyxerHwGxsre4XjHCtzMZ0KYeCg6P+Hgb9xl4X/dyivFZ
+         lEbfZpfnn1m01hX921/fE0OgDkgSqI6KhK7+cFBKqWH2dQ8WOA/lV38jlxEO7TVIofqA
+         HrxrdjWY0jSXT3vmDnHoRNjGFkfPwD7oYuFhCag3ebpkGVtedQC6kziZcTLMM+mbjgVh
+         02Lg==
+X-Gm-Message-State: AOAM531rC2RaAGUkzRe51Z9/foBYwM8tCd4ZJz8tuP9UfiTBdKyDR/WL
+        J4jNIkm+oXTxGqdC4gzzlPk=
+X-Google-Smtp-Source: ABdhPJxWeGiqNCh1RC5V9AJmojzSnIkqs8imzlEXRVq0FqWUz6cdLVCww51FepImaJs0WTrh5TtGDQ==
+X-Received: by 2002:adf:9f4c:: with SMTP id f12mr16937624wrg.108.1602494649624;
+        Mon, 12 Oct 2020 02:24:09 -0700 (PDT)
+Received: from [192.168.8.147] ([37.167.93.109])
+        by smtp.gmail.com with ESMTPSA id c16sm25066726wrx.31.2020.10.12.02.24.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Oct 2020 02:24:08 -0700 (PDT)
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+To:     Muchun Song <songmuchun@bytedance.com>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
+        rppt@kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+References: <20201010103854.66746-1-songmuchun@bytedance.com>
+ <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+ <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
+ <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
+ <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com>
+Date:   Mon, 12 Oct 2020 11:24:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <8a20cbf8-9049-6e6f-b618-9b4be7633f82@toxicpanda.com>
+In-Reply-To: <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 09, 2020 at 11:40:36AM -0400, Josef Bacik wrote:
->On 10/1/20 2:36 PM, Naohiro Aota wrote:
->>This series adds zoned block device support to btrfs.
+
+
+On 10/12/20 10:39 AM, Muchun Song wrote:
+> On Mon, Oct 12, 2020 at 3:42 PM Eric Dumazet <edumazet@google.com> wrote:
 >>
->>Changes from v7:
->>  - Use bio_add_hw_page() to build up bio to honor hardware restrictions
->>    - add bio_add_zone_append_page() as a wrapper of the function
->>  - Split file extent on submitting bio
->>    - If bio_add_zone_append_page() fails, split the file extent and send
->>      out bio
->>    - so, we can ensure one bio == one file extent
->>  - Fix build bot issues
->>  - Rebased on misc-next
+>> On Mon, Oct 12, 2020 at 6:22 AM Muchun Song <songmuchun@bytedance.com> wrote:
+>>>
+>>> On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+>>>>
+>>>> On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com> wrote:
+>>>>>
+>>>>> The amount of memory allocated to sockets buffer can become significant.
+>>>>> However, we do not display the amount of memory consumed by sockets
+>>>>> buffer. In this case, knowing where the memory is consumed by the kernel
+>>>>
+>>>> We do it via `ss -m`. Is it not sufficient? And if not, why not adding it there
+>>>> rather than /proc/meminfo?
+>>>
+>>> If the system has little free memory, we can know where the memory is via
+>>> /proc/meminfo. If a lot of memory is consumed by socket buffer, we cannot
+>>> know it when the Sock is not shown in the /proc/meminfo. If the unaware user
+>>> can't think of the socket buffer, naturally they will not `ss -m`. The
+>>> end result
+>>> is that we still don’t know where the memory is consumed. And we add the
+>>> Sock to the /proc/meminfo just like the memcg does('sock' item in the cgroup
+>>> v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
+>>>
+>>>>
+>>>>>  static inline void __skb_frag_unref(skb_frag_t *frag)
+>>>>>  {
+>>>>> -       put_page(skb_frag_page(frag));
+>>>>> +       struct page *page = skb_frag_page(frag);
+>>>>> +
+>>>>> +       if (put_page_testzero(page)) {
+>>>>> +               dec_sock_node_page_state(page);
+>>>>> +               __put_page(page);
+>>>>> +       }
+>>>>>  }
+>>>>
+>>>> You mix socket page frag with skb frag at least, not sure this is exactly
+>>>> what you want, because clearly skb page frags are frequently used
+>>>> by network drivers rather than sockets.
+>>>>
+>>>> Also, which one matches this dec_sock_node_page_state()? Clearly
+>>>> not skb_fill_page_desc() or __skb_frag_ref().
+>>>
+>>> Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
+>>> So if someone gets the page returned by skb_page_frag_refill(), it must
+>>> put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
+>>> to indicate that we need to dec the node page state when the refcount of
+>>> page reaches zero.
+>>>
 >>
->
->This is too big of a patch series for it to not conflict with some 
->change to misc-next after a few days.  I finally sat down to run this 
->through xfstests locally and I couldn't get the patches to apply 
->cleanly.  Could you push this to a git branch publicly somewhere so I 
->can just pull from that branch to do the xfstests testing I want to do 
->while I'm reviewing it?  Thanks,
->
->Josef
+>> Pages can be transferred from pipe to socket, socket to pipe (splice()
+>> and zerocopy friends...)
+>>
+>>  If you want to track TCP memory allocations, you always can look at
+>> /proc/net/sockstat,
+>> without adding yet another expensive memory accounting.
+> 
+> The 'mem' item in the /proc/net/sockstat does not represent real
+> memory usage. This is just the total amount of charged memory.
+> 
+> For example, if a task sends a 10-byte message, it only charges one
+> page to memcg. But the system may allocate 8 pages. Therefore, it
+> does not truly reflect the memory allocated by the above memory
+> allocation path. We can see the difference via the following message.
+> 
+> cat /proc/net/sockstat
+>   sockets: used 698
+>   TCP: inuse 70 orphan 0 tw 617 alloc 134 mem 13
+>   UDP: inuse 90 mem 4
+>   UDPLITE: inuse 0
+>   RAW: inuse 1
+>   FRAG: inuse 0 memory 0
+> 
+> cat /proc/meminfo | grep Sock
+>   Sock:              13664 kB
+> 
+> The /proc/net/sockstat only shows us that there are 17*4 kB TCP
+> memory allocations. But apply this patch, we can see that we truly
+> allocate 13664 kB(May be greater than this value because of per-cpu
+> stat cache). Of course the load of the example here is not high. In
+> some high load cases, I believe the difference here will be even
+> greater.
+> 
 
-Indeed. I pushed zoned btrfs kernel & userland tools to the branches below.
+This is great, but you have not addressed my feedback.
 
-I also prepared pre-compiled userland binaries because they require patched
-util-linux (libblkid) to deal with the log-structured superblock.
+TCP memory allocations are bounded by /proc/sys/net/ipv4/tcp_mem
 
-kernel https://github.com/naota/linux/tree/btrfs-zoned
-userland https://github.com/naota/btrfs-progs/tree/btrfs-zoned
-pre-compiled userland https://wdc.app.box.com/s/fnhqsb3otrvgkstq66o6bvdw6tk525kp
+Fact that the memory is forward allocated or not is a detail.
 
-Thanks,
-Naohiro
+If you think we must pre-allocate memory, instead of forward allocations,
+your patch does not address this. Adding one line per consumer in /proc/meminfo looks
+wrong to me.
+
+If you do not want 9.37 % of physical memory being possibly used by TCP,
+just change /proc/sys/net/ipv4/tcp_mem accordingly ?
+
+
