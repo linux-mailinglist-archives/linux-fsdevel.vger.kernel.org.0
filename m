@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A052828C16A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 21:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A81AA28C179
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 21:29:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387785AbgJLT0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 15:26:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56538 "EHLO
+        id S2391179AbgJLT3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 15:29:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388034AbgJLT0F (ORCPT
+        with ESMTP id S2387797AbgJLT3A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 15:26:05 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F22EC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 12:26:03 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id v6so3822071lfa.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 12:26:03 -0700 (PDT)
+        Mon, 12 Oct 2020 15:29:00 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25BFC0613D0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 12:28:58 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id f21so17987311ljh.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 12:28:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8Cu/ApJS4ZPLXmdUPjA+GEO/t+NxWjvWW5qIGNmGRzc=;
-        b=KFwAcCtc5hqxnxdy48E86El0HI8pAhZnlOW3+QgeKE01jtXo4zTzLlN5+FR3xaB33M
-         z4FtZpoJGAU/LpQzEwaDJl7xQ1sa+11Ln2+hlhYjJxmDMtqyLJ78uTq9KY9gnS9PUaSo
-         GVVeaTgyS2hFPjBaaxjSqG3EgNKS0gELsmvCw=
+        bh=PBBv8x0EA+jyMbeGbj2AD5+EOk9EuJpVDyEvfsZ1FnQ=;
+        b=Sg/dv0+6q/T5D5BigWu87HiS3Oyz1Gx2mRS8WRM0qJR+ZvzBax9hT9Li7FBVJE0ydo
+         qxNsvOzo9+2aL74hch0pe/IBE/A3RgBB2mlynpMG99k3j8N5fOXAJq6TsU1kqDdSiWNJ
+         88IXcUyrzO2MAL00aCNG8np3MdgE/b4+Tqkog=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8Cu/ApJS4ZPLXmdUPjA+GEO/t+NxWjvWW5qIGNmGRzc=;
-        b=FKvKdzzKN1zt9IX8fd256/m3edyF5tEMWA9P9RbB6eu6dl3qXzmeNgBy//xgk8NHe4
-         egWkO+yEqvW03qIASqZxFpXhlqzsZWTCzrawze8fEvmpM8kc8q2s337tc9wkpJ8fuxwL
-         nq9ySHoU5nNdl7/6jNNowwz4xK5MNlhc3Fvj2VMiLnsOqjzV4dgkO2yMFedTDXsHdNz/
-         w9sT2aYUmzNlV89AENU9cW5/kNxFjlOvqmIf1BxO8h9OHb5Td8KrnOo9Q761TMOLza60
-         I/ay4KPuD+Iz/vH0NaWcZ3luQ76GY1eF0nxRAYNOEYFdWZgPJeIMysy1x7nxcb2JVjg7
-         M+4g==
-X-Gm-Message-State: AOAM533JPpaZ4yVHnTbcCqulC9iNzZHbBlpKbLYqKr5KXR+eQfa/wZDv
-        /bW2dV+rkNPL+BLx5lNKrxCREsn+lQ4OHw==
-X-Google-Smtp-Source: ABdhPJwS3Cts18qI0f5WT1MjFki2adX2Zd137mXN8so2IlyiJ1sjttBEI6J1zlg4zzSlBozh54zsPg==
-X-Received: by 2002:a19:593:: with SMTP id 141mr7623148lff.144.1602530761186;
-        Mon, 12 Oct 2020 12:26:01 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id b15sm2110134ljk.37.2020.10.12.12.26.00
+        bh=PBBv8x0EA+jyMbeGbj2AD5+EOk9EuJpVDyEvfsZ1FnQ=;
+        b=PHrxEszgqbtisaa+z5m9g+ctTUe3w+d6Vczj8wQdb5csJSTFYpOnomG18q3VBjYQFA
+         jTSH/N3R44dDPGenTHgqPS1gwqXwNT6FWdjtAL1KMjEPaXXjuzp68bceNQh068dKbU7w
+         Myd/pZ+ftuxbNtHJbB26UXOlU+LSC87PcdLyXif7fjMPuhleAznsNs+Sfd92qtlkKVvz
+         k8jmBRoHiwI/F5X1fF1rUisIaBQK7/uLFapMxOHUDctlX4iTzH1QFHQP/fOEZAgNm5iv
+         zfWWuwoRd4yfLK+COJ6HgKCTkD2VmSQSgQxqvAPhTo8KuLD8dzAisrP3+1q7NnHUYjru
+         9KMg==
+X-Gm-Message-State: AOAM533rsjnEQYfE9iXHWGcT9PK1X8cTeQLyp0kYQBbzlPs3MbJCkHSw
+        m92ct/VUlVVrlSYJlzOgHZeyCuwYAU3Dww==
+X-Google-Smtp-Source: ABdhPJwyQPBG/EcDr7xQTZjjD2rqcDduywoepeDaOV43JZWhZZJn78RLqgUTZHp8lSYBRw+GmTmU8A==
+X-Received: by 2002:a2e:8986:: with SMTP id c6mr2465716lji.29.1602530935740;
+        Mon, 12 Oct 2020 12:28:55 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id e73sm3540092lfd.199.2020.10.12.12.28.54
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Oct 2020 12:26:00 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id f29so4123126ljo.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 12:26:00 -0700 (PDT)
-X-Received: by 2002:a05:651c:514:: with SMTP id o20mr3545582ljp.312.1602530759770;
- Mon, 12 Oct 2020 12:25:59 -0700 (PDT)
+        Mon, 12 Oct 2020 12:28:54 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id c21so17955072ljn.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 12:28:54 -0700 (PDT)
+X-Received: by 2002:a2e:9152:: with SMTP id q18mr10194176ljg.421.1602530934167;
+ Mon, 12 Oct 2020 12:28:54 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAKgNAkjMBGeAwF=2MKK758BhxvW58wYTgYKB2V-gY1PwXxrH+Q@mail.gmail.com>
-In-Reply-To: <CAKgNAkjMBGeAwF=2MKK758BhxvW58wYTgYKB2V-gY1PwXxrH+Q@mail.gmail.com>
+ <CAHk-=wig1HDZzkDEOxsxUjr7jMU_R5Z1s+v_JnFBv4HtBfP7QQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wig1HDZzkDEOxsxUjr7jMU_R5Z1s+v_JnFBv4HtBfP7QQ@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 12 Oct 2020 12:25:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wig1HDZzkDEOxsxUjr7jMU_R5Z1s+v_JnFBv4HtBfP7QQ@mail.gmail.com>
-Message-ID: <CAHk-=wig1HDZzkDEOxsxUjr7jMU_R5Z1s+v_JnFBv4HtBfP7QQ@mail.gmail.com>
+Date:   Mon, 12 Oct 2020 12:28:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgfydyikU_KfHSLo1uMSs-vksDjYkdnyv1+89C32XwUOA@mail.gmail.com>
+Message-ID: <CAHk-=wgfydyikU_KfHSLo1uMSs-vksDjYkdnyv1+89C32XwUOA@mail.gmail.com>
 Subject: Re: Regression: epoll edge-triggered (EPOLLET) for pipes/FIFOs
 To:     Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
         Alexander Viro <aviro@redhat.com>
@@ -76,68 +77,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 11:40 AM Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
+On Mon, Oct 12, 2020 at 12:25 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> Between Linux 5.4 and 5.5 a regression was introduced in the operation
-> of the epoll EPOLLET flag. From some manual bisecting, the regression
-> appears to have been introduced in
->
->          commit 1b6b26ae7053e4914181eedf70f2d92c12abda8a
->          Author: Linus Torvalds <torvalds@linux-foundation.org>
->          Date:   Sat Dec 7 12:14:28 2019 -0800
->
->              pipe: fix and clarify pipe write wakeup logic
->
-> (I also built a kernel from the  immediate preceding commit, and did
-> not observe the regression.)
+> Now, the old pipe behavior was that it would wake up writers whether
+> they needed it or not [..]
 
-So the difference from that commit is that now we only wake up a
-reader of a pipe when we add data to it AND IT WAS EMPTY BEFORE.
+That "writers" should be "readers", of course.
 
-> The aim of ET (edge-triggered) notification is that epoll_wait() will
-> tell us a file descriptor is ready only if there has been new activity
-> on the FD since we were last informed about the FD. So, in the
-> following scenario where the read end of a pipe is being monitored
-> with EPOLLET, we see:
->
-> [Write a byte to write end of pipe]
-> 1. Call epoll_wait() ==> tells us pipe read end is ready
-> 2. Call epoll_wait() [again] ==> does not tell us that the read end of
-> pipe is ready
+Although yes, that commit changed it for both readers and writers: if
+the pipe was readable from before, then a writer adding new data to it
+doesn't make it "more readable". Similarly, if a pipe was writable
+before, and a reader made even more room in it, the pipe didn't get
+"more writable".
 
-Right.
+So that commit removes the pointless extra wakeup calls that don't
+actually make any sense (and that gave incorrect edges to the some
+EPOLL case that saw an edge that didn't actually exist).
 
-> If we go further:
->
-> [Write another byte to write end of pipe]
-> 3. Call epoll_wait() ==> tells us pipe read end is ready
-
-No.
-
-The "read end" readiness has not changed. It was ready before, it's
-ready now, there's no change in readiness.
-
-Now, the old pipe behavior was that it would wake up writers whether
-they needed it or not, so epoll got woken up even if the readiness
-didn't actually change.
-
-So we do have a change in behavior.
-
-However, clearly your test is wrong, and there is no edge difference.
-
-Now, if this is more than just a buggy test - and it actually breaks
-some actual application and real behavior - we'll need to fix it. A
-regression is a regression, and we'll need to be bug-for-bug
-compatible for people who depended on bugs.
-
-But if it's only a test, and no actual workflow that got broken, then
-it's just a buggy test.
-
-[ Adding Al to the participants, not because he has anything to do
-with this pipe change, but because he's been working on epoll
-cleanups, and I just want him to be aware of this thread. Al - Michael
-has a test program for this thing that may or may not be worth keeping
-in mind ]
-
-                  Linus
+              Linus
