@@ -2,162 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F7A28ACC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 06:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8D2B28AD55
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 06:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbgJLEWx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 00:22:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58134 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbgJLEWx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 00:22:53 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B92C0613D0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Oct 2020 21:22:52 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id a200so12350123pfa.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Oct 2020 21:22:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=86h9GnvGBi5wC9xCp0mEaMT6C/YP6RZUf0IR+KiY+mM=;
-        b=n5A3l84IVanhAXQ+RpWAMhL2/paRrC+kBPfk32SkjMJ3AMIe+3jVIqh5wck4Qd64RH
-         OJ1A23lm7sibahUbKhN34W8lVpaxR2Sth1OKPcLb6ZGuB6MapkRU9HNBC3XkRM4rrB/L
-         qkKvRFLA1BpjbDhEJv4NzLXFuijYW2r+o17N5n+k4+ZaLNoO3bpDGymp68ohPmNCfJ3Z
-         33n6gE3eMLl3UD9fIFLUFcSbulpMADG+sOEVBQazltObrafBDS+pVXURv2NVG3AWKyVq
-         BavLV2VLLjgz1sFHY7rqtk/5uidIKHx52b48F5hLddg4pbIQX6HpruoRh2OA+Ep8QMyS
-         KNCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=86h9GnvGBi5wC9xCp0mEaMT6C/YP6RZUf0IR+KiY+mM=;
-        b=sujAecxiWCJaPwnYBaecOTIpOvEHOGp4IfmtvnGCk8YjXxr7n8FbWvxD1HbZlx38/q
-         Xpzkdk0/GryzT9SxOhVCUcJzNZkTe8LoFaP8wVY3IamxraGWgnfdPzIhzG5CIVgprAVy
-         NR7kTaUzJ22N6y6s3tT+S/+FvqA+UMwh3k4ms7UPV2ckIwY6iTXuExM1/ZqJja26OktS
-         rkeBYLCYlDJrA+IfiJk02jZGPX9SrYpg1kBrwhhK3vD90thYWJsKGKXp433LDbOildEV
-         hGVapZVTIBwhzXj+1PojjTw5+EPQU/ZFv7M5bM6GvFeILoEbFsk9a7ggQorMYLzL9fRM
-         R9Gw==
-X-Gm-Message-State: AOAM532r+kR61Djv16JTBQv9nz8UzVsK7nnj8Ctk3i6vSJevhk4fv5VG
-        NiW4NAFik2B5I3kqoGJlk3rX7m5E5kQ3OjDvVuIa7Q==
-X-Google-Smtp-Source: ABdhPJxHHIJDJzppxANA9QNUbZw/HickM6E0AFMSiV9107EW+Zh0ghm7JqhHQ8xdMJzxoaSvB20+kIMEP4lWGOY6O1g=
-X-Received: by 2002:a17:90a:890f:: with SMTP id u15mr18101013pjn.147.1602476572410;
- Sun, 11 Oct 2020 21:22:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201010103854.66746-1-songmuchun@bytedance.com> <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
-In-Reply-To: <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 12 Oct 2020 12:22:16 +0800
-Message-ID: <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-To:     Cong Wang <xiyou.wangcong@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Shakeel Butt <shakeelb@google.com>,
-        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
-        rppt@kernel.org, Sami Tolvanen <samitolvanen@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>, decui@microsoft.com,
-        Jakub Sitnicki <jakub@cloudflare.com>,
+        id S1726448AbgJLEsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 00:48:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:22482 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725917AbgJLEsH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 12 Oct 2020 00:48:07 -0400
+IronPort-SDR: D5zKImA/blPs9ugNxSdwTFqrAiCPQ7MfkSDjdD7L1ZPrs2PLYW8mlo8pL00EnU95KhYD7GvV7Z
+ Er8+B/ppaVCA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9771"; a="183144505"
+X-IronPort-AV: E=Sophos;i="5.77,365,1596524400"; 
+   d="scan'208";a="183144505"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2020 21:47:58 -0700
+IronPort-SDR: OeJlrvjJIthwDW5ZiLkp+F246Fw9BWID0JMdXYyjjISLX5UipnPYleFarWgQdoLnt1ZOhIB0kv
+ QrFucSf/AAcw==
+X-IronPort-AV: E=Sophos;i="5.77,365,1596524400"; 
+   d="scan'208";a="529805779"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2020 21:47:57 -0700
+Date:   Sun, 11 Oct 2020 21:47:56 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Bernard Metzler <BMT@zurich.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
-        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freed.esktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        drbd-dev@tron.linbit.com, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
+        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH RFC PKS/PMEM 10/58] drivers/rdma: Utilize new
+ kmap_thread()
+Message-ID: <20201012044756.GY2046448@iweiny-DESK2.sc.intel.com>
+References: <20201009195033.3208459-11-ira.weiny@intel.com>
+ <20201009195033.3208459-1-ira.weiny@intel.com>
+ <OF849D92D8.F4735ECA-ON002585FD.003F5F27-002585FD.003FCBD6@notes.na.collabserv.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OF849D92D8.F4735ECA-ON002585FD.003F5F27-002585FD.003FCBD6@notes.na.collabserv.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wrote:
->
-> On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com> wr=
-ote:
-> >
-> > The amount of memory allocated to sockets buffer can become significant=
-.
-> > However, we do not display the amount of memory consumed by sockets
-> > buffer. In this case, knowing where the memory is consumed by the kerne=
-l
->
-> We do it via `ss -m`. Is it not sufficient? And if not, why not adding it=
- there
-> rather than /proc/meminfo?
+On Sat, Oct 10, 2020 at 11:36:49AM +0000, Bernard Metzler wrote:
+> -----ira.weiny@intel.com wrote: -----
+> 
 
-If the system has little free memory, we can know where the memory is via
-/proc/meminfo. If a lot of memory is consumed by socket buffer, we cannot
-know it when the Sock is not shown in the /proc/meminfo. If the unaware use=
-r
-can't think of the socket buffer, naturally they will not `ss -m`. The
-end result
-is that we still don=E2=80=99t know where the memory is consumed. And we ad=
-d the
-Sock to the /proc/meminfo just like the memcg does('sock' item in the cgrou=
-p
-v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
+[snip]
 
->
-> >  static inline void __skb_frag_unref(skb_frag_t *frag)
-> >  {
-> > -       put_page(skb_frag_page(frag));
-> > +       struct page *page =3D skb_frag_page(frag);
-> > +
-> > +       if (put_page_testzero(page)) {
-> > +               dec_sock_node_page_state(page);
-> > +               __put_page(page);
-> > +       }
-> >  }
->
-> You mix socket page frag with skb frag at least, not sure this is exactly
-> what you want, because clearly skb page frags are frequently used
-> by network drivers rather than sockets.
->
-> Also, which one matches this dec_sock_node_page_state()? Clearly
-> not skb_fill_page_desc() or __skb_frag_ref().
+> >@@ -505,7 +505,7 @@ static int siw_tx_hdt(struct siw_iwarp_tx *c_tx,
+> >struct socket *s)
+> > 				page_array[seg] = p;
+> > 
+> > 				if (!c_tx->use_sendpage) {
+> >-					iov[seg].iov_base = kmap(p) + fp_off;
+> >+					iov[seg].iov_base = kmap_thread(p) + fp_off;
+> 
+> This misses a corresponding kunmap_thread() in siw_unmap_pages()
+> (pls change line 403 in siw_qp_tx.c as well)
 
-Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
-So if someone gets the page returned by skb_page_frag_refill(), it must
-put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
-to indicate that we need to dec the node page state when the refcount of
-page reaches zero.
+Thanks I missed that.
 
-Thanks.
+Done.
 
->
-> Thanks.
+Ira
 
-
-
---=20
-Yours,
-Muchun
+> 
+> Thanks,
+> Bernard.
+> 
