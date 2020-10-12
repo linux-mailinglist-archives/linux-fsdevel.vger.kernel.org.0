@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7003228AF65
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 09:43:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD65328B075
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 10:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbgJLHm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 03:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60500 "EHLO
+        id S1727637AbgJLIkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 04:40:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbgJLHmu (ORCPT
+        with ESMTP id S1727482AbgJLIkF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 03:42:50 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D2DC0613D0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 00:42:48 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id l8so16641626ioh.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 00:42:48 -0700 (PDT)
+        Mon, 12 Oct 2020 04:40:05 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E83C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 01:40:05 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id y14so13553411pgf.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 01:40:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=e5VG5wK84kKrdrvCjTeGkiyRx9C2ZrwL+s1ArEKKadQ=;
-        b=gH4UHfk7+EsDB0g7VarNb/ZYNO10+OttrKc0yoGw5c7k6ayVzTN/IKevjdkPL+v3+3
-         eh/Q+AOKbMEQKAQQakARO/UePJJMAtw0QYem95+ENlywE4f8Fx0Y3gMADb1DD7NTEWh0
-         6XbiQVPMxB++vOsqCMibc/L8pVSSEvfiYVfzwVyX6OEscOdjkRbqtwtFr7bIybePTi39
-         bIqPGRAqYvEcDJbc6QN92YPgTxwP/KhzU/XrsucqzJjAIIJws1Wmc2o7hiEsAXpXJYtu
-         p3FFHPw53qWv8A0lKhKrMj9OuhINBpS9A81PZnFFCWd6tId/PSoAspOjwwSs+fBWTHDi
-         mTPg==
+        bh=nTI2YVEwOfgh9p+oFG+z1qgnrhBmz+BUoqQKcix3EZ0=;
+        b=vqGvXRZVq1jW4sgEi8S0/sHNxlcmL0ZqERj4Pwa/WZ/ql0G1AeXGVR3f0CADFyveGx
+         yE4XNBUehdPzqu2tIoeidrSoNM+0p+0j7cD6/4C60mkXbuwx65n9284S00AVMuCMxpzo
+         uqC2OXUTVpLHQgjMfUzNeNti7tYU4VRki29c2wScgRT6DVhDhxHhld/yLPfdsOhNpiIT
+         HjAcfMVzJE3T9Kbg0UMlUJz+JCT5AHgArYOkj2SUDhQXJV/3KxaCC79zC7ZAP/nVi9uH
+         jN9YsFuUeBuLNATPATZ0u25+bWi/vJ+VL/CNOz+ep9qFyHAmUYLN9mhb4C6/FxmKGN2v
+         G5Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=e5VG5wK84kKrdrvCjTeGkiyRx9C2ZrwL+s1ArEKKadQ=;
-        b=Kk00C0e52xYqSuheTi/IZMfO2P6CskxZ4TE4sexmFDW7mjJoQGka643Ai5nOZ97V5x
-         N7SouaIKQzqkbQFrpAf0ZZwQnGDs5moCUJr7xMPPGFDKzjbq1XsjYeIHg4H1IXTGZJNJ
-         DPjUa9XIls1iI2bflY+q+ildo+lNbOJvyrpjq2UkE0sTFJDprfzagrdNsRsxcbbVeKLF
-         wdvQJ/fEQh/UG/Dr8X7Cq3LXRz1haQU4hbz3t+4wgEsr+mRTRZG0dHFixm1gylrw/ZDC
-         J1pFQgzsATVhgx0CrxdcwuhP0VT540vBlCPxmeJbDBfAFdAPbrGtI6dBDzHIlXEP94nx
-         tIOw==
-X-Gm-Message-State: AOAM533KJD4rUtz2t6o4WLrrZk5q7I6ccXXqrkEVC7FmcobPCyVrR6vZ
-        laqN+8QJ5v2zfMX8ihscRIqjCHSGIxm+SroAkw9LTA==
-X-Google-Smtp-Source: ABdhPJyLAEKXb/V0z8Sc1yAftRlthOIMiopejO4oj5Qv8BbgPH+8hwnRpR93RKKR1Wp3B/awtoePH7Xh2/hLRZBaHsQ=
-X-Received: by 2002:a02:7350:: with SMTP id a16mr19138927jae.53.1602488567382;
- Mon, 12 Oct 2020 00:42:47 -0700 (PDT)
+        bh=nTI2YVEwOfgh9p+oFG+z1qgnrhBmz+BUoqQKcix3EZ0=;
+        b=ikMpLlyyJQkhDdIQnSX3MFH0pO9Mm290Z7Rn1SumP9OA09LXw3XoQU4ntmZapPcRI6
+         A3iXWesLJHJclX++6A1m6ybGLSEF1W679Pr8gm7yP2Q0blSvZ42UoGAUKaWfSc5JdJZ+
+         2Ay4FAW8NtdP/MC3b8huKbX0t5gw9I3WQh+EQdlkUbsigxRN1BF5WU9tpXLibiOov9Ao
+         lsuzd5O6nMUftgT0c6f4JrrF/Hbr8pAGb/ZdDJup0+YUjVJDHRZfXLx5IJ2HF/bmN0tg
+         Ua4bIMrSg1XSHshm+pcSRbLAlYxwZEiU5j18++OjX1/WMUOnGHP89CSSYhm2EZ/djDUA
+         njjA==
+X-Gm-Message-State: AOAM533oxjAouYUBi3hmuEx+8br5c367aBjduOx0Xdbk5i0wiM62czF1
+        hP07ttmw9jdEkG5O6yJU1ZJcXRzMGSnclnrdCkfUVA==
+X-Google-Smtp-Source: ABdhPJzNls6dEzlTfEwkc2JEA15IrxS4rfGeYvT3I9xltofknhxcsIMWp8gAk9p3+kZn0WPzJWpnMpGcH9se0bk2XaE=
+X-Received: by 2002:a63:fd0a:: with SMTP id d10mr12237891pgh.273.1602492005028;
+ Mon, 12 Oct 2020 01:40:05 -0700 (PDT)
 MIME-Version: 1.0
 References: <20201010103854.66746-1-songmuchun@bytedance.com>
- <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com> <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
-In-Reply-To: <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Mon, 12 Oct 2020 09:42:37 +0200
-Message-ID: <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
+ <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+ <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com> <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
+In-Reply-To: <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 12 Oct 2020 16:39:28 +0800
+Message-ID: <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
 Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-To:     Muchun Song <songmuchun@bytedance.com>
+To:     Eric Dumazet <edumazet@google.com>
 Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
         Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
         "Michael S. Tsirkin" <mst@redhat.com>,
@@ -101,67 +102,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 12, 2020 at 6:22 AM Muchun Song <songmuchun@bytedance.com> wrot=
-e:
+On Mon, Oct 12, 2020 at 3:42 PM Eric Dumazet <edumazet@google.com> wrote:
 >
-> On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wrot=
-e:
+> On Mon, Oct 12, 2020 at 6:22 AM Muchun Song <songmuchun@bytedance.com> wr=
+ote:
 > >
-> > On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com> =
-wrote:
+> > On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wr=
+ote:
 > > >
-> > > The amount of memory allocated to sockets buffer can become significa=
-nt.
-> > > However, we do not display the amount of memory consumed by sockets
-> > > buffer. In this case, knowing where the memory is consumed by the ker=
-nel
+> > > On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com=
+> wrote:
+> > > >
+> > > > The amount of memory allocated to sockets buffer can become signifi=
+cant.
+> > > > However, we do not display the amount of memory consumed by sockets
+> > > > buffer. In this case, knowing where the memory is consumed by the k=
+ernel
+> > >
+> > > We do it via `ss -m`. Is it not sufficient? And if not, why not addin=
+g it there
+> > > rather than /proc/meminfo?
 > >
-> > We do it via `ss -m`. Is it not sufficient? And if not, why not adding =
-it there
-> > rather than /proc/meminfo?
->
-> If the system has little free memory, we can know where the memory is via
-> /proc/meminfo. If a lot of memory is consumed by socket buffer, we cannot
-> know it when the Sock is not shown in the /proc/meminfo. If the unaware u=
-ser
-> can't think of the socket buffer, naturally they will not `ss -m`. The
-> end result
-> is that we still don=E2=80=99t know where the memory is consumed. And we =
-add the
-> Sock to the /proc/meminfo just like the memcg does('sock' item in the cgr=
-oup
-> v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
->
+> > If the system has little free memory, we can know where the memory is v=
+ia
+> > /proc/meminfo. If a lot of memory is consumed by socket buffer, we cann=
+ot
+> > know it when the Sock is not shown in the /proc/meminfo. If the unaware=
+ user
+> > can't think of the socket buffer, naturally they will not `ss -m`. The
+> > end result
+> > is that we still don=E2=80=99t know where the memory is consumed. And w=
+e add the
+> > Sock to the /proc/meminfo just like the memcg does('sock' item in the c=
+group
+> > v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
 > >
-> > >  static inline void __skb_frag_unref(skb_frag_t *frag)
-> > >  {
-> > > -       put_page(skb_frag_page(frag));
-> > > +       struct page *page =3D skb_frag_page(frag);
-> > > +
-> > > +       if (put_page_testzero(page)) {
-> > > +               dec_sock_node_page_state(page);
-> > > +               __put_page(page);
-> > > +       }
-> > >  }
+> > >
+> > > >  static inline void __skb_frag_unref(skb_frag_t *frag)
+> > > >  {
+> > > > -       put_page(skb_frag_page(frag));
+> > > > +       struct page *page =3D skb_frag_page(frag);
+> > > > +
+> > > > +       if (put_page_testzero(page)) {
+> > > > +               dec_sock_node_page_state(page);
+> > > > +               __put_page(page);
+> > > > +       }
+> > > >  }
+> > >
+> > > You mix socket page frag with skb frag at least, not sure this is exa=
+ctly
+> > > what you want, because clearly skb page frags are frequently used
+> > > by network drivers rather than sockets.
+> > >
+> > > Also, which one matches this dec_sock_node_page_state()? Clearly
+> > > not skb_fill_page_desc() or __skb_frag_ref().
 > >
-> > You mix socket page frag with skb frag at least, not sure this is exact=
-ly
-> > what you want, because clearly skb page frags are frequently used
-> > by network drivers rather than sockets.
+> > Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
+> > So if someone gets the page returned by skb_page_frag_refill(), it must
+> > put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
+> > to indicate that we need to dec the node page state when the refcount o=
+f
+> > page reaches zero.
 > >
-> > Also, which one matches this dec_sock_node_page_state()? Clearly
-> > not skb_fill_page_desc() or __skb_frag_ref().
 >
-> Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
-> So if someone gets the page returned by skb_page_frag_refill(), it must
-> put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
-> to indicate that we need to dec the node page state when the refcount of
-> page reaches zero.
+> Pages can be transferred from pipe to socket, socket to pipe (splice()
+> and zerocopy friends...)
 >
+>  If you want to track TCP memory allocations, you always can look at
+> /proc/net/sockstat,
+> without adding yet another expensive memory accounting.
 
-Pages can be transferred from pipe to socket, socket to pipe (splice()
-and zerocopy friends...)
+The 'mem' item in the /proc/net/sockstat does not represent real
+memory usage. This is just the total amount of charged memory.
 
- If you want to track TCP memory allocations, you always can look at
-/proc/net/sockstat,
-without adding yet another expensive memory accounting.
+For example, if a task sends a 10-byte message, it only charges one
+page to memcg. But the system may allocate 8 pages. Therefore, it
+does not truly reflect the memory allocated by the above memory
+allocation path. We can see the difference via the following message.
+
+cat /proc/net/sockstat
+  sockets: used 698
+  TCP: inuse 70 orphan 0 tw 617 alloc 134 mem 13
+  UDP: inuse 90 mem 4
+  UDPLITE: inuse 0
+  RAW: inuse 1
+  FRAG: inuse 0 memory 0
+
+cat /proc/meminfo | grep Sock
+  Sock:              13664 kB
+
+The /proc/net/sockstat only shows us that there are 17*4 kB TCP
+memory allocations. But apply this patch, we can see that we truly
+allocate 13664 kB(May be greater than this value because of per-cpu
+stat cache). Of course the load of the example here is not high. In
+some high load cases, I believe the difference here will be even
+greater.
+
+--=20
+Yours,
+Muchun
