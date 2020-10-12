@@ -2,143 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 175D828C43D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 23:44:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19FDB28C443
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Oct 2020 23:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387598AbgJLVn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 17:43:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
+        id S1730768AbgJLVrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 17:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730572AbgJLVn5 (ORCPT
+        with ESMTP id S1730022AbgJLVrD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 17:43:57 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6962C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 14:43:56 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id w11so1676431pll.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 14:43:56 -0700 (PDT)
+        Mon, 12 Oct 2020 17:47:03 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A060CC0613D0;
+        Mon, 12 Oct 2020 14:47:03 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id l8so19172577ioh.11;
+        Mon, 12 Oct 2020 14:47:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SblYN1e37CL9JdaGLQ5Y/6gLdI5UbuRc4P5/Ws+FaE0=;
-        b=trBiP6d4fYRQAfCdkqfM2hxAOmzzL+Ns2poC/dNnkAOtywmreZp1ZPUisBbEl43Q0b
-         XCCJX6j3+KcWMzUSVnqkKEL4WKhOxK2eb95cqKCWqOzssj5Gwi9Gt3kwY6jKSYEvNEKZ
-         1c8JLeN+t3UeVSfmoMB6wpOEHRQoCnoUTvVGM=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=h+F8apYj2Plr5dGtsp4Sn87icM0Gt/ZYiDUCGu5uXTA=;
+        b=sYImlSuWHY/0f/jfbP/5+gVgcuqOAtQjUMnXMHXED5umjtE3LPslOSL7etCXMHOofP
+         OCpa+2Sz42CDxUNykjUuDhWyt5vFu1VQ2q4mLxaSnkvM0BeJYsRX2yVIf69oRTE9T67o
+         HRSY3XMYMW81cX286ZryHP3m3P/6kZ5ItQS7iUkubm19T+mUJGaXaGWyUNZdJtMqQgmL
+         zSpO8tHo17YhrEljp7eptvHzAhmOHFf/hJvg/N0IaJaR5HkeDupWi3U14lijEclKn9qq
+         MEwXGSOFD9iX8EgjReyyv2j7VDxt6rk3rEUTRz5EOYXiuvy4JelYIs/WB2F89KX73aVI
+         Mp9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=SblYN1e37CL9JdaGLQ5Y/6gLdI5UbuRc4P5/Ws+FaE0=;
-        b=d7LqPbzZX6OKZXgPTYmhEGTUBuLs97c5JjOJQwcVlKF1BCC1yE8Sf7NdOjx0HezfsR
-         DvM5R/HcIkRUTkr8CdAe88JZDKsPQ19QGWYMpyP6Q7uqkfKupOn+qN/33RHP80CS5leZ
-         GeQ2RhM2xvV2zwowHhRDQb80VPUNk05IjgVb8R7X6a9rrAaLJQFSEtpOdOij67dqtfEV
-         FrAj22+h+vHeYbCAE/ly004mYNphR2aiD9Eb+Vm+Yx8jBWgFqlQPlIQ1RT4wynct3+wz
-         a6SmYffJuui7oSuj8eK+bae/09y735FIOu3mrAeJcGaPI6Zhqlt39iiSFnZZOc8BWaqw
-         8iGA==
-X-Gm-Message-State: AOAM531wjXcLyd1t0vERxPrAZNZN7PROPNPNnjf7man5lVpY7T8XPbMv
-        HoEEUrZy2/8i6gEUSLy0Xx7gcg==
-X-Google-Smtp-Source: ABdhPJze2pu/LKw8phRCCUQRAYxhYqKPdK6K3HHpTH98lUUyjsv8/goN67o4aAofFpjme7TAcbslYQ==
-X-Received: by 2002:a17:902:8d86:b029:d1:9237:6dfd with SMTP id v6-20020a1709028d86b02900d192376dfdmr25060401plo.22.1602539035925;
-        Mon, 12 Oct 2020 14:43:55 -0700 (PDT)
-Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
-        by smtp.gmail.com with ESMTPSA id x5sm21284370pfp.113.2020.10.12.14.43.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2020 14:43:55 -0700 (PDT)
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] NFS: Only reference user namespace from nfs4idmap struct instead of cred
-Date:   Mon, 12 Oct 2020 14:43:39 -0700
-Message-Id: <20201012214339.6070-1-sargun@sargun.me>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=h+F8apYj2Plr5dGtsp4Sn87icM0Gt/ZYiDUCGu5uXTA=;
+        b=bw4nJYFsH3L6LXwBI0dvBAu3GG/YkGgk2gSymw9Jm2G8SbKXb0pDY69YJSD3b0XObx
+         7Q79hcTiYmydzI+UJa7vP95O1ZYRHwQNGeTQ3ak6iSQkbpkZGJ8C9R4hyUgP9X/rJGtK
+         XrcA4V4GVIWgv9rg2fneiEijdkQhejhtWD/GnEQrqt1+oPgNoeTFDXgu2uY7hCtmk6AS
+         Q8WrM4KMdHzLKRAobosryi60chagneE+Uedi3xrAi3uITKErio06oFfyd25WnRJdpStv
+         gQuFmpUCrKcDkVOLrZcJrR38TphVDNmsZelza0YEel1QJPDoSUqrhNiXL7ZxiAwkNkmz
+         uTAQ==
+X-Gm-Message-State: AOAM532ts66YoeTI3X4kC+fMw0c/khNRe5tnLbHMVznDUFdh0nqzbbvB
+        dNg/QN1JjD3RwT3SFKGzHqgEh9oPqhGqeL1KuIo=
+X-Google-Smtp-Source: ABdhPJz+y8paHziZjzqkLnzbjCoDFkO2pq2nRDQe31YPP796UzqDxRo9ZdyGommWTE6TqDzyP+Mz9TyqV84szZZPZVw=
+X-Received: by 2002:a02:94cd:: with SMTP id x71mr20173978jah.124.1602539222864;
+ Mon, 12 Oct 2020 14:47:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201010103854.66746-1-songmuchun@bytedance.com>
+ <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com> <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
+In-Reply-To: <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Mon, 12 Oct 2020 14:46:51 -0700
+Message-ID: <CAM_iQpXLX1xXN02idk-yU1T=AGb9JmGiLkfRGCJOxjCw-OWpfQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
+        rppt@kernel.org, Sami Tolvanen <samitolvanen@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>, decui@microsoft.com,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The nfs4idmapper only needs access to the user namespace, and not the
-entire cred struct. This replaces the struct cred* member with
-struct user_namespace*. This is mostly hygiene, so we don't have to
-hold onto the cred object, which has extraneous references to
-things like user_struct. This also makes switching away
-from init_user_ns more straightforward in the future.
+On Sun, Oct 11, 2020 at 9:22 PM Muchun Song <songmuchun@bytedance.com> wrot=
+e:
+>
+> On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wrot=
+e:
+> >
+> > On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com> =
+wrote:
+> > >
+> > > The amount of memory allocated to sockets buffer can become significa=
+nt.
+> > > However, we do not display the amount of memory consumed by sockets
+> > > buffer. In this case, knowing where the memory is consumed by the ker=
+nel
+> >
+> > We do it via `ss -m`. Is it not sufficient? And if not, why not adding =
+it there
+> > rather than /proc/meminfo?
+>
+> If the system has little free memory, we can know where the memory is via
+> /proc/meminfo. If a lot of memory is consumed by socket buffer, we cannot
+> know it when the Sock is not shown in the /proc/meminfo. If the unaware u=
+ser
+> can't think of the socket buffer, naturally they will not `ss -m`. The
+> end result
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
----
- fs/nfs/nfs4idmap.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Interesting, we already have a few counters related to socket buffers,
+are you saying these are not accounted in /proc/meminfo either?
+If yes, why are page frags so special here? If not, they are more
+important than page frags, so you probably want to deal with them
+first.
 
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index 62e6eea5c516..8d8aba305ecc 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -46,6 +46,7 @@
- #include <keys/user-type.h>
- #include <keys/request_key_auth-type.h>
- #include <linux/module.h>
-+#include <linux/user_namespace.h>
- 
- #include "internal.h"
- #include "netns.h"
-@@ -69,13 +70,13 @@ struct idmap {
- 	struct rpc_pipe		*idmap_pipe;
- 	struct idmap_legacy_upcalldata *idmap_upcall_data;
- 	struct mutex		idmap_mutex;
--	const struct cred	*cred;
-+	struct user_namespace	*user_ns;
- };
- 
- static struct user_namespace *idmap_userns(const struct idmap *idmap)
- {
--	if (idmap && idmap->cred)
--		return idmap->cred->user_ns;
-+	if (idmap && idmap->user_ns)
-+		return idmap->user_ns;
- 	return &init_user_ns;
- }
- 
-@@ -286,7 +287,7 @@ static struct key *nfs_idmap_request_key(const char *name, size_t namelen,
- 	if (ret < 0)
- 		return ERR_PTR(ret);
- 
--	if (!idmap->cred || idmap->cred->user_ns == &init_user_ns)
-+	if (!idmap->user_ns || idmap->user_ns == &init_user_ns)
- 		rkey = request_key(&key_type_id_resolver, desc, "");
- 	if (IS_ERR(rkey)) {
- 		mutex_lock(&idmap->idmap_mutex);
-@@ -462,7 +463,7 @@ nfs_idmap_new(struct nfs_client *clp)
- 		return -ENOMEM;
- 
- 	mutex_init(&idmap->idmap_mutex);
--	idmap->cred = get_cred(clp->cl_rpcclient->cl_cred);
-+	idmap->user_ns = get_user_ns(clp->cl_rpcclient->cl_cred->user_ns);
- 
- 	rpc_init_pipe_dir_object(&idmap->idmap_pdo,
- 			&nfs_idmap_pipe_dir_object_ops,
-@@ -486,7 +487,7 @@ nfs_idmap_new(struct nfs_client *clp)
- err_destroy_pipe:
- 	rpc_destroy_pipe_data(idmap->idmap_pipe);
- err:
--	put_cred(idmap->cred);
-+	get_user_ns(idmap->user_ns);
- 	kfree(idmap);
- 	return error;
- }
-@@ -503,7 +504,7 @@ nfs_idmap_delete(struct nfs_client *clp)
- 			&clp->cl_rpcclient->cl_pipedir_objects,
- 			&idmap->idmap_pdo);
- 	rpc_destroy_pipe_data(idmap->idmap_pipe);
--	put_cred(idmap->cred);
-+	put_user_ns(idmap->user_ns);
- 	kfree(idmap);
- }
- 
--- 
-2.25.1
 
+> is that we still don=E2=80=99t know where the memory is consumed. And we =
+add the
+> Sock to the /proc/meminfo just like the memcg does('sock' item in the cgr=
+oup
+> v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
+
+It looks like actually the socket page frag is already accounted,
+for example, the tcp_sendmsg_locked():
+
+                        copy =3D min_t(int, copy, pfrag->size - pfrag->offs=
+et);
+
+                        if (!sk_wmem_schedule(sk, copy))
+                                goto wait_for_memory;
+
+
+>
+> >
+> > >  static inline void __skb_frag_unref(skb_frag_t *frag)
+> > >  {
+> > > -       put_page(skb_frag_page(frag));
+> > > +       struct page *page =3D skb_frag_page(frag);
+> > > +
+> > > +       if (put_page_testzero(page)) {
+> > > +               dec_sock_node_page_state(page);
+> > > +               __put_page(page);
+> > > +       }
+> > >  }
+> >
+> > You mix socket page frag with skb frag at least, not sure this is exact=
+ly
+> > what you want, because clearly skb page frags are frequently used
+> > by network drivers rather than sockets.
+> >
+> > Also, which one matches this dec_sock_node_page_state()? Clearly
+> > not skb_fill_page_desc() or __skb_frag_ref().
+>
+> Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
+
+How is skb_page_frag_refill() possibly paired with __skb_frag_unref()?
+
+> So if someone gets the page returned by skb_page_frag_refill(), it must
+> put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
+> to indicate that we need to dec the node page state when the refcount of
+> page reaches zero.
+
+skb_page_frag_refill() is called on frags not within an skb, for instance,
+sk_page_frag_refill() uses it for a per-socket or per-process page frag.
+But, __skb_frag_unref() is specifically used for skb frags, which are
+supposed to be filled by skb_fill_page_desc() (page is allocated by driver)=
+.
+
+They are different things you are mixing them up, which looks clearly
+wrong or at least misleading.
+
+Thanks.
