@@ -2,89 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99BD228CC83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 13:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BF0C28CE5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 14:31:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgJML0H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 07:26:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35930 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbgJML0F (ORCPT
+        id S1727283AbgJMMb3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 08:31:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:39452 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726112AbgJMMb3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 07:26:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BDA2C0613D0;
-        Tue, 13 Oct 2020 04:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ap+vugPRXoOSJhloW5EJc9FGxy9ZwiLwbnG+7+pEMhA=; b=a/Sp1GZZiVtkIrsbDZFKKgQTkQ
-        FS+JHTt9pp+5vCrBdk0ac5b7U8ZgZGFScrKiULCJv4PZD4wWqOSzzq06ZoGh/8vFLI33VuvYYBdii
-        wZ4VlXJvl5fnmlD+q4pIJJmvrTs/0jX/FIDmEAYUX2+Mt6vIwB3sAbRYRgWIA8hB4i4EWyZuWPFOQ
-        rIaV+GwSaVBgBLKvO/SsFSj7I46VHFxg38PLmJQ+Oh1DkRIQcIx5NIWLGcWnDXshQ14JMdlpURiF2
-        LxyBxRGv+1Wkfh31jf6dzRr+U4xHgvz3PsshAxeZoaF0OQPY6Fl5VA2XZOxLonra6CTBCfgsfUBp/
-        6eTYHzgA==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSIR6-0001VK-7P; Tue, 13 Oct 2020 11:25:44 +0000
-Date:   Tue, 13 Oct 2020 12:25:44 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     ira.weiny@intel.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
-        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH RFC PKS/PMEM 24/58] fs/freevxfs: Utilize new kmap_thread()
-Message-ID: <20201013112544.GA5249@infradead.org>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-25-ira.weiny@intel.com>
+        Tue, 13 Oct 2020 08:31:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602592288;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nzZg3OmYj+0K52j0rxUzY22YbefkTpyPAyoIYXJ5YJQ=;
+        b=ab2lRwa0Mp8gbL5v71E7MPuWqR2gXBYQcFt+ohJDihIsqw59sHXrmqNhMqq1TFylD/tL6t
+        0lrTHKn2/7YQILiGwMdnjWNnOogDEThgN0uSiFpGNsab3oI3+b6B26DEslq29RkIr6sm4o
+        zqlcn6Sxob9fZmhlpIwovhfISZe3x9k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-592-9J6wKG7RO-ySgDn4Ch5pAg-1; Tue, 13 Oct 2020 08:31:24 -0400
+X-MC-Unique: 9J6wKG7RO-ySgDn4Ch5pAg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 11B31100963F;
+        Tue, 13 Oct 2020 12:30:49 +0000 (UTC)
+Received: from bfoster (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A60EE27C21;
+        Tue, 13 Oct 2020 12:30:48 +0000 (UTC)
+Date:   Tue, 13 Oct 2020 08:30:46 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/2] iomap: use page dirty state to seek data over
+ unwritten extents
+Message-ID: <20201013123046.GD966478@bfoster>
+References: <20201012140350.950064-1-bfoster@redhat.com>
+ <20201012140350.950064-2-bfoster@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201009195033.3208459-25-ira.weiny@intel.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20201012140350.950064-2-bfoster@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> -	kaddr = kmap(pp);
-> +	kaddr = kmap_thread(pp);
->  	memcpy(kaddr, vip->vii_immed.vi_immed + offset, PAGE_SIZE);
-> -	kunmap(pp);
-> +	kunmap_thread(pp);
+On Mon, Oct 12, 2020 at 10:03:49AM -0400, Brian Foster wrote:
+> iomap seek hole/data currently uses page Uptodate state to track
+> data over unwritten extents. This is odd and unpredictable in that
+> the existence of clean pages changes behavior. For example:
+> 
+>   $ xfs_io -fc "falloc 0 32k" -c "seek -d 0" \
+> 	    -c "pread 16k 4k" -c "seek -d 0" /mnt/file
+>   Whence  Result
+>   DATA    EOF
+>   ...
+>   Whence  Result
+>   DATA    16384
+> 
+> Instead, use page dirty state to locate data over unwritten extents.
+> This causes seek data to land on the first uptodate block of a dirty
+> page since we don't have per-block dirty state in iomap. This is
+> consistent with writeback, however, which converts all uptodate
+> blocks of a dirty page for similar reasons.
+> 
+> Signed-off-by: Brian Foster <bfoster@redhat.com>
+> ---
 
-You only Cced me on this particular patch, which means I have absolutely
-no idea what kmap_thread and kunmap_thread actually do, and thus can't
-provide an informed review.
+JFYI that I hit a generic/285 failure with this patch. I suspect this
+needs to check for Dirty || Writeback, otherwise if we see the latter
+the range is incorrectly treated as a hole.
 
-That being said I think your life would be a lot easier if you add
-helpers for the above code sequence and its counterpart that copies
-to a potential hughmem page first, as that hides the implementation
-details from most users.
+Brian
+
+>  fs/iomap/seek.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/iomap/seek.c b/fs/iomap/seek.c
+> index 107ee80c3568..981a74c8d60f 100644
+> --- a/fs/iomap/seek.c
+> +++ b/fs/iomap/seek.c
+> @@ -40,7 +40,7 @@ page_seek_hole_data(struct inode *inode, struct page *page, loff_t *lastoff,
+>  	 * Just check the page unless we can and should check block ranges:
+>  	 */
+>  	if (bsize == PAGE_SIZE || !ops->is_partially_uptodate)
+> -		return PageUptodate(page) == seek_data;
+> +		return PageDirty(page) == seek_data;
+>  
+>  	lock_page(page);
+>  	if (unlikely(page->mapping != inode->i_mapping))
+> @@ -49,7 +49,8 @@ page_seek_hole_data(struct inode *inode, struct page *page, loff_t *lastoff,
+>  	for (off = 0; off < PAGE_SIZE; off += bsize) {
+>  		if (offset_in_page(*lastoff) >= off + bsize)
+>  			continue;
+> -		if (ops->is_partially_uptodate(page, off, bsize) == seek_data) {
+> +		if ((ops->is_partially_uptodate(page, off, bsize) &&
+> +		     PageDirty(page)) == seek_data) {
+>  			unlock_page(page);
+>  			return true;
+>  		}
+> -- 
+> 2.25.4
+> 
+
