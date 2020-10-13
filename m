@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A484628C6CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 03:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C74A28C6CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 03:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbgJMBeU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 21:34:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57352 "EHLO
+        id S1728221AbgJMBeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 21:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728196AbgJMBeU (ORCPT
+        with ESMTP id S1728200AbgJMBeW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 21:34:20 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47EA8C0613D0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 18:34:20 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id y12so16468903wrp.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 18:34:20 -0700 (PDT)
+        Mon, 12 Oct 2020 21:34:22 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2795C0613D0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 18:34:21 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id k18so19909115wmj.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 18:34:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m0fVYo23z5sDnIdO7CmhPP5/mdbbm0UqpjwBNjbmzHo=;
-        b=KdByimeexhgK1iSMzLpxP57NJAb2JWybo82tdWaJCPrSR7jPuYXzi7z6AI04ExzEDF
-         rns0T5/jh1vW9+BXPef9x3z9htEdn/PF5Z7GFYPlz549XuaDu8sz7EK1eqPynqoTEMlT
-         v9uozVeynaN7X7iAGyN1HO2j6/3NfcDmew2EU6yiRPSZDRG6mO/CPAWUN45x5PBNiqy3
-         0MirEi4xSdE7tG1kqjYNTiqVfEnwYmGNEoTLyOvJZST9etlU2L2kE1ZYKtLEvCDJhA46
-         9axx2nBVhBGLTW2YrUl7rO628XbQLNS5Y96xHh/B7ifPka+9/LJfE0iiuP9shnRstOda
-         sl7g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DaxIr5597WF0kxpEElTZVLTN61vAhnpO/2r1W4YxrO0=;
+        b=J2rOTWZ8Lr5Wf2QMpwxeIwTk31F0CcPsxAE+ecneTuceI94efNcmEIgFo7sgQ5lmkn
+         zLqcJTHbLpzPMw8OtVmyeRDaSk7WV69pJ35WU8S/Ni5BQSLXCGOMFKIr7yCZ95uiklXu
+         AhGmVvlhf//oWpBLnP9Pbi9S9Pwm1hZ5YPKuv0zyUoCV3Fn+Aha/78ZfCxKT06boM6hV
+         CEQgE4qDGlvBcUzSZvJQRXYHTypYqNFf9/hCzW4zFumXGHjPHoQ4nsxJGEqUsifC9zB+
+         ggvSzmzm+sUfR8KHUE7y6WLZ12vUAGmWR+1sz/qeHvP3y5XGFPLwNBoyR9cfLfWhG3fx
+         qTYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m0fVYo23z5sDnIdO7CmhPP5/mdbbm0UqpjwBNjbmzHo=;
-        b=bLW4ijcaXP6pLu6CzqMMi1hkhGfK8i+Uqskjxv276psw4WX3vmhtkDa5fFpWvqyQon
-         8s+Cwzwo/quA8k6WCaoHjG8UQ5oOT0WSbmWwU86vhTlEcPz+m30A6b4/Wz+olUmnB3Ot
-         yU1ID4jCPMcBZGJL/TXMrnq60whLsOZQT4T3bFtUtFzhqVw+Kco3SQlYy2sXlc1yWvBH
-         bmJHiF3WmMih+JWx5wSEcKzHzKffFSfEvdG1aMuZ5mA2uFyJuIZfb9pYUFKNZ2JUInsg
-         WMkXYILSurUaF7/fE6opRfsDnlsMxmN3lvvHEIU+4FGmWVxIxVUXhX3u681f6IAt0Bhw
-         qHoQ==
-X-Gm-Message-State: AOAM533OwogWdPrPeDp2OmOD2oaQJnxMxDPyvGmcHsYPWyZzPieO9MYd
-        sG88h/bfArz31S+65ISXgAxYqw==
-X-Google-Smtp-Source: ABdhPJylxMFP/0l6plAG1lC4wZxbS5FXIxuQm/csHMG5nqpO55kqKEuOOVOpMKsiWO9QwuFzHnQgrQ==
-X-Received: by 2002:adf:fd82:: with SMTP id d2mr33017560wrr.304.1602552858954;
-        Mon, 12 Oct 2020 18:34:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DaxIr5597WF0kxpEElTZVLTN61vAhnpO/2r1W4YxrO0=;
+        b=KHtkoywqTUKxB/Sm4uyPcwBAlxgE3SnglzHixc03eTfyb10TOYb9ndC2u72TdT2hBY
+         rg1Ig2nHJRmbS+kBKkm3kGGQWEpr2wKm1UejQ/6DkVaVQAPtCVPEFpsl6VS7BwQ1PNR5
+         a6oQhUlfX0ARL5Gqocw7IcZ80h6+ntcyjyDqeaJORsylLgBNl7+80TmxyKVgy4u3hz4L
+         lmSUH0aX+afdnNdaiDXVZ+Us+mcKmsA6Gf4b+oQVAB5mIe56J7PeZ5dKaD6zOY1ioWaN
+         J/IdXhFJtbQUv6FwgH8691GuODcoADrvEaGXtGjIMhjnhWMNeIJx9ygnmjWOx098c480
+         3kMg==
+X-Gm-Message-State: AOAM531zrwy8mm1zyBrsFAoA9q240V0v6Dh/muqrvZMX4tacc0Eg6AM4
+        9xgubjXpqPykBQ/2vMHRLbFKgA==
+X-Google-Smtp-Source: ABdhPJwGpJy4DdZ/eC/fCwJjqmeUbVJXNMLzWnkwR0hTzvknEAdfYsGaIbJtZWKk1I+xy8WZjoA44w==
+X-Received: by 2002:a1c:48d4:: with SMTP id v203mr10067253wma.122.1602552860468;
+        Mon, 12 Oct 2020 18:34:20 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
-        by smtp.gmail.com with ESMTPSA id d23sm24825325wmb.6.2020.10.12.18.34.17
+        by smtp.gmail.com with ESMTPSA id d23sm24825325wmb.6.2020.10.12.18.34.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2020 18:34:18 -0700 (PDT)
+        Mon, 12 Oct 2020 18:34:19 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -71,75 +71,45 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         Will Deacon <will@kernel.org>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 0/6] mremap: move_vma() fixes
-Date:   Tue, 13 Oct 2020 02:34:10 +0100
-Message-Id: <20201013013416.390574-1-dima@arista.com>
+Subject: [PATCH 1/6] mm/mremap: Account memory on do_munmap() failure
+Date:   Tue, 13 Oct 2020 02:34:11 +0100
+Message-Id: <20201013013416.390574-2-dima@arista.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201013013416.390574-1-dima@arista.com>
+References: <20201013013416.390574-1-dima@arista.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-1 - seems to be historical issue on a rarely taken path
-2,3 - fixes related to the new mremap() flag
-5 - dax device/hugetlbfs possible issue
+move_vma() copies VMA without adding it to account, then unmaps old part
+of VMA. On failure it unmaps the new VMA. With hacks accounting in
+munmap is disabled as it's a copy of existing VMA.
 
-4,6 - refactoring
+Account the memory on munmap() failure which was previously copied into
+a new VMA.
 
-As those seems to be actual issues, sending this during the merge-window.
+Fixes: commit e2ea83742133 ("[PATCH] mremap: move_vma fixes and cleanup")
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ mm/mremap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-(Changes to architecture code are in the 6 patch, but Cc'ing
-maintainers on cover for the context, I hope it's fine).
-
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Brian Geffon <bgeffon@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Will Deacon <will@kernel.org>
-
-Cc: linux-aio@kvack.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-
-Dmitry Safonov (6):
-  mm/mremap: Account memory on do_munmap() failure
-  mm/mremap: For MREMAP_DONTUNMAP check security_vm_enough_memory_mm()
-  mremap: Don't allow MREMAP_DONTUNMAP on special_mappings and aio
-  vm_ops: Rename .split() callback to .may_split()
-  mremap: Check if it's possible to split original vma
-  mm: Forbid splitting special mappings
-
- arch/arm/kernel/vdso.c                    |  9 ----
- arch/arm64/kernel/vdso.c                  | 41 ++-----------------
- arch/mips/vdso/genvdso.c                  |  4 --
- arch/s390/kernel/vdso.c                   | 11 +----
- arch/x86/entry/vdso/vma.c                 | 17 --------
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  2 +-
- drivers/dax/device.c                      |  4 +-
- fs/aio.c                                  |  5 ++-
- include/linux/mm.h                        |  5 ++-
- ipc/shm.c                                 |  8 ++--
- mm/hugetlb.c                              |  2 +-
- mm/mmap.c                                 | 22 ++++++++--
- mm/mremap.c                               | 50 +++++++++++------------
- 13 files changed, 63 insertions(+), 117 deletions(-)
-
-
-base-commit: bbf5c979011a099af5dc76498918ed7df445635b
+diff --git a/mm/mremap.c b/mm/mremap.c
+index 138abbae4f75..03d31a0d4c67 100644
+--- a/mm/mremap.c
++++ b/mm/mremap.c
+@@ -450,7 +450,8 @@ static unsigned long move_vma(struct vm_area_struct *vma,
+ 
+ 	if (do_munmap(mm, old_addr, old_len, uf_unmap) < 0) {
+ 		/* OOM: unable to split vma, just get accounts right */
+-		vm_unacct_memory(excess >> PAGE_SHIFT);
++		if (vm_flags & VM_ACCOUNT)
++			vm_acct_memory(new_len >> PAGE_SHIFT);
+ 		excess = 0;
+ 	}
+ 
 -- 
 2.28.0
 
