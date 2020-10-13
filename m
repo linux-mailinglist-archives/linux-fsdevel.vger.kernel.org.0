@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C176F28D40F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089C128D41D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbgJMSwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 14:52:33 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56060 "EHLO mga05.intel.com"
+        id S1728308AbgJMS4z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 14:56:55 -0400
+Received: from mga17.intel.com ([192.55.52.151]:44127 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727789AbgJMSwd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 14:52:33 -0400
-IronPort-SDR: +PqAYmqvphRsnMniVoEpUwMyIDIv4QLstZ9/tSQPQMmFUeDUTtczjN6G10lfyAJsk+YHKwx29e
- Vqor/kQH5PxA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="250660497"
+        id S1727033AbgJMS4z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 14:56:55 -0400
+IronPort-SDR: haoDqyWVZcZww43t2U2HC9oNnz4/woBa9HxvDyAS9SXWCx7tqw2Lh3q6UuSk8SVw0NOWECs4RE
+ l3ucVH3jlWnA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="145829077"
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="250660497"
+   d="scan'208";a="145829077"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:52:33 -0700
-IronPort-SDR: YNOb6LIzA6acbBjbhB0XEpPG7GsBsguHAmJu7laXwpuUdWjDQyddEMfR/ePX0qvLiQ40lmlKC/
- 51BxLz1q6ZyA==
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:56:54 -0700
+IronPort-SDR: raLRTUXtVSOjhLMfYeYdRGnzdOVIY4ueopEECZr2H+GBbh+H95qwtBfdauyL8KJNgeuPWQS94c
+ gW3RJpEE8e4A==
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="346282543"
+   d="scan'208";a="346283282"
 Received: from murawskx-mobl.amr.corp.intel.com (HELO [10.209.9.29]) ([10.209.9.29])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:52:32 -0700
-Subject: Re: [PATCH RFC V3 7/9] x86/entry: Preserve PKRS MSR across exceptions
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:56:54 -0700
+Subject: Re: [PATCH RFC V3 8/9] x86/fault: Report the PKRS state on fault
 To:     ira.weiny@intel.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+Cc:     x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
@@ -39,7 +39,7 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kselftest@vger.kernel.org
 References: <20201009194258.3207172-1-ira.weiny@intel.com>
- <20201009194258.3207172-8-ira.weiny@intel.com>
+ <20201009194258.3207172-9-ira.weiny@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -84,12 +84,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <6006a4c8-32bd-04ca-95cc-b2736a5cef72@intel.com>
-Date:   Tue, 13 Oct 2020 11:52:32 -0700
+Message-ID: <d6546e84-2196-25fd-3d8d-5e65fe22a71c@intel.com>
+Date:   Tue, 13 Oct 2020 11:56:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201009194258.3207172-8-ira.weiny@intel.com>
+In-Reply-To: <20201009194258.3207172-9-ira.weiny@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -97,41 +97,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
-> @@ -341,6 +341,9 @@ noinstr void irqentry_enter(struct pt_regs *regs, irqentry_state_t *state)
->  	/* Use the combo lockdep/tracing function */
->  	trace_hardirqs_off();
->  	instrumentation_end();
-> +
-> +done:
-> +	irq_save_pkrs(state);
->  }
+> @@ -548,6 +549,11 @@ show_fault_oops(struct pt_regs *regs, unsigned long error_code, unsigned long ad
+>  		 (error_code & X86_PF_PK)    ? "protection keys violation" :
+>  					       "permissions violation");
+>  
+> +#ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
+> +	if (irq_state && (error_code & X86_PF_PK))
+> +		pr_alert("PKRS: 0x%x\n", irq_state->pkrs);
+> +#endif
 
-One nit: This saves *and* sets PKRS.  It's not obvious from the call
-here that PKRS is altered at this site.  Seems like there could be a
-better name.
+This means everyone will see 'PKRS: 0x0', even if they're on non-PKS
+hardware.  I think I'd rather have this only show PKRS when we're on
+cpu_feature_enabled(PKS) hardware.
 
-Even if we did:
+...
+> @@ -1148,14 +1156,15 @@ static int fault_in_kernel_space(unsigned long address)
+>   */
+>  static void
+>  do_kern_addr_fault(struct pt_regs *regs, unsigned long hw_error_code,
+> -		   unsigned long address)
+> +		   unsigned long address, irqentry_state_t *irq_state)
+>  {
+>  	/*
+> -	 * Protection keys exceptions only happen on user pages.  We
+> -	 * have no user pages in the kernel portion of the address
+> -	 * space, so do not expect them here.
+> +	 * If protection keys are not enabled for kernel space
+> +	 * do not expect Pkey errors here.
+>  	 */
 
-	irq_save_set_pkrs(state, INIT_VAL);
+Let's fix the double-negative:
 
-It would probably compile down to the same thing, but be *really*
-obvious what's going on.
+	/*
+	 * PF_PK is only expected on kernel addresses whenn
+	 * supervisor pkeys are enabled:
+	 */
 
->  void irqentry_exit_cond_resched(void)
-> @@ -362,7 +365,12 @@ noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t *state)
->  	/* Check whether this returns to user mode */
->  	if (user_mode(regs)) {
->  		irqentry_exit_to_user_mode(regs);
-> -	} else if (!regs_irqs_disabled(regs)) {
-> +		return;
-> +	}
-> +
-> +	irq_restore_pkrs(state);
-> +
-> +	if (!regs_irqs_disabled(regs)) {
->  		/*
->  		 * If RCU was not watching on entry this needs to be done
->  		 * carefully and needs the same ordering of lockdep/tracing
-> 
+> -	WARN_ON_ONCE(hw_error_code & X86_PF_PK);
+> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_SUPERVISOR_PKEYS) ||
+> +	    !cpu_feature_enabled(X86_FEATURE_PKS))
+> +		WARN_ON_ONCE(hw_error_code & X86_PF_PK);
 
+Yeah, please stick X86_FEATURE_PKS in disabled-features so you can use
+cpu_feature_enabled(X86_FEATURE_PKS) by itself here..
