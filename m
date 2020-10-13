@@ -2,44 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FF9928D344
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 19:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 290BC28D34B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 19:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbgJMRqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 13:46:19 -0400
-Received: from mga01.intel.com ([192.55.52.88]:33930 "EHLO mga01.intel.com"
+        id S1726439AbgJMRuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 13:50:07 -0400
+Received: from mga03.intel.com ([134.134.136.65]:38217 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbgJMRqT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 13:46:19 -0400
-IronPort-SDR: vAaDb2GeOGaRBXP3BbJAEwIqjx20P40kDC8HelaKrFk+h1wwagV2vjEnynUBerFI/x265Mi3yO
- 6P/BUDSYA6Ug==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="183442281"
+        id S1725899AbgJMRuH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 13:50:07 -0400
+IronPort-SDR: 0bVIB4b9al1+98vMClZN/86V+AN6MUPLTDahY+eqVK1vDAJalSycNzHHqfJj8prqm4LczPmz4r
+ 3dWFBXPtxuOg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="166018348"
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="183442281"
+   d="scan'208";a="166018348"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 10:46:17 -0700
-IronPort-SDR: UbtoTtFSPYVfOnxZbvSkvgnWaB78ds0E2ciP4lzikIfoSU1heNRegrjE7nU/3mlcEH99Tfll+P
- m4LK8wv1e+6A==
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 10:50:06 -0700
+IronPort-SDR: RtfS0n683qj2WKcFXi5f+Sxsg83G7f/gvXW1lfZeGtXMUzz4/Xw662bQpkKZCOgv0DLm9CpDfx
+ KqcCCzHStxbQ==
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="346268085"
+   d="scan'208";a="346269023"
 Received: from murawskx-mobl.amr.corp.intel.com (HELO [10.209.9.29]) ([10.209.9.29])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 10:46:17 -0700
-Subject: Re: [PATCH RFC V3 1/9] x86/pkeys: Create pkeys_common.h
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 10:50:06 -0700
+Subject: Re: [PATCH RFC V3 2/9] x86/fpu: Refactor arch_set_user_pkey_access()
+ for PKS support
 To:     ira.weiny@intel.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+Cc:     Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
 References: <20201009194258.3207172-1-ira.weiny@intel.com>
- <20201009194258.3207172-2-ira.weiny@intel.com>
+ <20201009194258.3207172-3-ira.weiny@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -84,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <0305912d-891f-839a-e861-49f5fada62b1@intel.com>
-Date:   Tue, 13 Oct 2020 10:46:16 -0700
+Message-ID: <7ed91cb5-93e5-67ad-ad35-8489d16d283f@intel.com>
+Date:   Tue, 13 Oct 2020 10:50:05 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201009194258.3207172-2-ira.weiny@intel.com>
+In-Reply-To: <20201009194258.3207172-3-ira.weiny@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -98,38 +99,30 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
-> Protection Keys User (PKU) and Protection Keys Supervisor (PKS) work
-> in similar fashions and can share common defines.
+> +/*
+> + * Update the pk_reg value and return it.
 
-Could we be a bit less abstract?  PKS and PKU each have:
-1. A single control register
-2. The same number of keys
-3. The same number of bits in the register per key
-4. Access and Write disable in the same bit locations
+How about:
 
-That means that we can share all the macros that synthesize and
-manipulate register values between the two features.
+	Replace disable bits for @pkey with values from @flags.
 
-> +++ b/arch/x86/include/asm/pkeys_common.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_PKEYS_INTERNAL_H
-> +#define _ASM_X86_PKEYS_INTERNAL_H
+> + * Kernel users use the same flags as user space:
+> + *     PKEY_DISABLE_ACCESS
+> + *     PKEY_DISABLE_WRITE
+> + */
+> +u32 update_pkey_val(u32 pk_reg, int pkey, unsigned int flags)
+> +{
+> +	int pkey_shift = pkey * PKR_BITS_PER_PKEY;
 > +
-> +#define PKR_AD_BIT 0x1
-> +#define PKR_WD_BIT 0x2
-> +#define PKR_BITS_PER_PKEY 2
+> +	pk_reg &= ~(((1 << PKR_BITS_PER_PKEY) - 1) << pkey_shift);
 > +
-> +#define PKR_AD_KEY(pkey)	(PKR_AD_BIT << ((pkey) * PKR_BITS_PER_PKEY))
+> +	if (flags & PKEY_DISABLE_ACCESS)
+> +		pk_reg |= PKR_AD_BIT << pkey_shift;
+> +	if (flags & PKEY_DISABLE_WRITE)
+> +		pk_reg |= PKR_WD_BIT << pkey_shift;
 
-Now that this has moved away from its use-site, it's a bit less
-self-documenting.  Let's add a comment:
+I still think this deserves two lines of comments:
 
-/*
- * Generate an Access-Disable mask for the given pkey.  Several of these
- * can be OR'd together to generate pkey register values.
- */
+	/* Mask out old bit values */
 
-Once that's in place, along with the updated changelog:
-
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+	/* Or in new values */
