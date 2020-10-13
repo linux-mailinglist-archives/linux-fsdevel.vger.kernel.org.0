@@ -2,101 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA1928CF2D
+	by mail.lfdr.de (Postfix) with ESMTP id B9CE928CF2E
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 15:32:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbgJMNcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 09:32:41 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55396 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        id S1728468AbgJMNcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 09:32:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1727448AbgJMNcl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 13 Oct 2020 09:32:41 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09DDTk1e074238;
-        Tue, 13 Oct 2020 13:32:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=Vm4B4Ns9RFZduzYbWzc5CEBgid2fbz26ZcCyorFJ2zs=;
- b=N2SvjOoDMviUQr4w4eY8HbfgzXnJSqhtlJd6WK1OFLiR5LB1W7J3dCaK/Vo+v6jiA1jS
- wzAm1wNVOZ/lVXkhZ23oBL7RkpxN6tHyiaqQJsMbHFCJJa8aT8IY9B7QmEcSQ17/b60u
- HT32RyJGz6EFlzOu1wYp8nGCBPSvmqsBSNxNuoZQ0XZFrxxpUzS53MPfrHDBtZ3d0nVu
- ZzE+VTW3a4qtDS1RWkcfOFpKUl2t7+fbwhbANwrC7R3kmoILlTNw8nGXPqGDNpixIEbS
- 6nUZRokUQYDKujdrgGZTQpXR0RhRMpLnnxsvFkYEemcBYXE0UPNmtKpNXgMvSGYep5P0 vg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 343vae8h0y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Oct 2020 13:32:26 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09DDUXLL109855;
-        Tue, 13 Oct 2020 13:32:26 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 343pvwbxes-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Oct 2020 13:32:26 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 09DDWOpI027076;
-        Tue, 13 Oct 2020 13:32:24 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 13 Oct 2020 06:32:24 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.0.3.2.52\))
-Subject: Re: [PATCH 0/3] Wait for I/O without holding a page reference
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20201013030008.27219-1-willy@infradead.org>
-Date:   Tue, 13 Oct 2020 07:32:23 -0600
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Mel Gorman <mgorman@techsingularity.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5EEF6D22-639C-492E-BF81-C6239D68ABFD@oracle.com>
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70455C0613D0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 06:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uOHm79/rH5AghZZv6fFVvDRR7Z97nPls7l2vvypvxbo=; b=M/xGM6+eaifMuX2jaD5x+LNQ19
+        c1tIkYblWhcx1wBIw1JqeHz6nuBanv7FREBTWJC5RfMflaZS1QUdntSOrdDDCqyrTZkwb1TwOMD49
+        FUjniPyzMv5oNP9NckK6drjqyQi/Wq8epxsNshMV1jyS1CDR3dDcQJp4wgmfc6jeLOKViAi957Hvf
+        9PA7BkCvINAktUqD9w9YNHP6k6faprJIg3MfKKt9TJZUWvlJUqmbsbHD9joxCEWsHMqBRKq4Q+k1P
+        t/Xj7uuIAKCSOo0GVVOPQFoa8tgr/02Q1qodgpNQ36CeV3C5ORWAXKlzXtjNRYLQ86IxX3wSwjUv9
+        hFK2Wn5g==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSKPv-0001n6-Lo; Tue, 13 Oct 2020 13:32:39 +0000
+Date:   Tue, 13 Oct 2020 14:32:39 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-mm@kvack.org
+Subject: Re: [PATCH 2/3] mm: Don't hold a page reference while waiting for
+ unlock
+Message-ID: <20201013133239.GH20115@casper.infradead.org>
 References: <20201013030008.27219-1-willy@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-X-Mailer: Apple Mail (2.3654.0.3.2.52)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9772 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 adultscore=0
- bulkscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010130101
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9772 signatures=668681
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1011
- impostorscore=0 phishscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010130101
+ <20201013030008.27219-3-willy@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201013030008.27219-3-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+This patch was inadvertently included.  I blame my tools.  The actual
+patch 2/3 is the other one.
 
-> On Oct 12, 2020, at 9:00 PM, Matthew Wilcox (Oracle) =
-<willy@infradead.org> wrote:
->=20
-> The upcoming THP patchset keeps THPs Uptodate at all times unless we
-> hit an I/O error.  So I have a patch which induces I/O errors in 10%
-> of readahead I/Os in order to test the fallback path.  It hits a
-> problem with xfstests generic/273 which has 500 threads livelocking
-> trying to split the THP.  This patchset fixes that livelock and
-> takes 21 lines out of generic_file_buffered_read().
->=20
-> Matthew Wilcox (Oracle) (3):
->  mm: Pass a sleep state to put_and_wait_on_page_locked
->  mm/filemap: Don't hold a page reference while waiting for unlock
->  mm: Inline __wait_on_page_locked_async into caller
->=20
-> include/linux/pagemap.h |   3 +-
-> mm/filemap.c            | 129 +++++++++++++++-------------------------
-> mm/huge_memory.c        |   4 +-
-> mm/migrate.c            |   4 +-
-> 4 files changed, 52 insertions(+), 88 deletions(-)
->=20
-> --=20
+On Tue, Oct 13, 2020 at 04:00:06AM +0100, Matthew Wilcox (Oracle) wrote:
+> In the upcoming THP patch series, if we find a !Uptodate page, it
+> is because of a read error.  In this case, we want to split the THP
+> into smaller pages so we can handle the error in as granular a fashion
+> as possible.  But xfstests generic/273 defeats this strategy by having
+> 500 threads all sleeping on the same page, each waiting for their turn
+> to split the page.  None of them will ever succeed because splitting a
+> page requires that you hold the only reference to it.
+> 
+> To fix this, use put_and_wait_on_page_locked() to sleep without holding
+> a reference.  Each of the readers will then go back and retry the
+> page lookup.
+> 
+> This requires a few changes since we now get the page lock a little
+> earlier in generic_file_buffered_read().  This is unlikely to affect any
+> normal workloads as pages in the page cache are generally uptodate and
+> will not hit this path.  With the THP patch set and the readahead error
+> injector, I see about a 25% performance improvement with this patch over
+> an alternate approach which moves the page locking down.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/filemap.c | 51 ++++++++++++++-------------------------------------
+>  1 file changed, 14 insertions(+), 37 deletions(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index f70227941627..9916353f0f0d 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1254,14 +1254,6 @@ static int __wait_on_page_locked_async(struct page *page,
+>  	return ret;
+>  }
+>  
+> -static int wait_on_page_locked_async(struct page *page,
+> -				     struct wait_page_queue *wait)
+> -{
+> -	if (!PageLocked(page))
+> -		return 0;
+> -	return __wait_on_page_locked_async(compound_head(page), wait, false);
+> -}
+> -
+>  /**
+>   * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
+>   * @page: The page to wait for.
+> @@ -2128,19 +2120,21 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>  					put_page(page);
+>  					goto out;
+>  				}
+> -				error = wait_on_page_locked_async(page,
+> -								iocb->ki_waitq);
+> +				error = lock_page_async(page, iocb->ki_waitq);
+> +				if (error)
+> +					goto readpage_error;
+> +			} else if (iocb->ki_flags & IOCB_NOWAIT) {
+> +				put_page(page);
+> +				goto would_block;
+>  			} else {
+> -				if (iocb->ki_flags & IOCB_NOWAIT) {
+> -					put_page(page);
+> -					goto would_block;
+> +				if (!trylock_page(page)) {
+> +					put_and_wait_on_page_locked(page,
+> +							TASK_KILLABLE);
+> +					goto find_page;
+>  				}
+> -				error = wait_on_page_locked_killable(page);
+>  			}
+> -			if (unlikely(error))
+> -				goto readpage_error;
+>  			if (PageUptodate(page))
+> -				goto page_ok;
+> +				goto uptodate;
+>  
+>  			if (inode->i_blkbits == PAGE_SHIFT ||
+>  					!mapping->a_ops->is_partially_uptodate)
+> @@ -2148,14 +2142,13 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>  			/* pipes can't handle partially uptodate pages */
+>  			if (unlikely(iov_iter_is_pipe(iter)))
+>  				goto page_not_up_to_date;
+> -			if (!trylock_page(page))
+> -				goto page_not_up_to_date;
+>  			/* Did it get truncated before we got the lock? */
+>  			if (!page->mapping)
+> -				goto page_not_up_to_date_locked;
+> +				goto page_not_up_to_date;
+>  			if (!mapping->a_ops->is_partially_uptodate(page,
+>  							offset, iter->count))
+> -				goto page_not_up_to_date_locked;
+> +				goto page_not_up_to_date;
+> +uptodate:
+>  			unlock_page(page);
+>  		}
+>  page_ok:
+> @@ -2223,28 +2216,12 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>  		continue;
+>  
+>  page_not_up_to_date:
+> -		/* Get exclusive access to the page ... */
+> -		if (iocb->ki_flags & IOCB_WAITQ)
+> -			error = lock_page_async(page, iocb->ki_waitq);
+> -		else
+> -			error = lock_page_killable(page);
+> -		if (unlikely(error))
+> -			goto readpage_error;
+> -
+> -page_not_up_to_date_locked:
+>  		/* Did it get truncated before we got the lock? */
+>  		if (!page->mapping) {
+>  			unlock_page(page);
+>  			put_page(page);
+>  			continue;
+>  		}
+> -
+> -		/* Did somebody else fill it already? */
+> -		if (PageUptodate(page)) {
+> -			unlock_page(page);
+> -			goto page_ok;
+> -		}
+> -
+>  readpage:
+>  		if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT)) {
+>  			unlock_page(page);
+> -- 
 > 2.28.0
-
-For the series:
-
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-
+> 
