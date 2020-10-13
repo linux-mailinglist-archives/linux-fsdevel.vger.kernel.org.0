@@ -2,162 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EA128D3C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC36228D3DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388209AbgJMSkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 14:40:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41387 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388132AbgJMSkl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 14:40:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602614439;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ACbogWayPjxuroTC3rujC4ds8n4525cUMjBmRTXxGNo=;
-        b=VhZ38HRj1ymBnxVmRn8iwHpQi6KK7xL50npninE813tNZ6kkDQrC45bXUVEJJi9VB3IFC2
-        InnCmVnT6lOBJj/8h99K3oZH+mU9T15nIRA8PKl8rEOuPwl0037cRGAVV4nY9OxJN9Zf8G
-        0UoWBpq49nBlFcZE4BPPSVEecfNIhMc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-263-4gMiCSthM7C7ISxJt2_xXA-1; Tue, 13 Oct 2020 14:40:37 -0400
-X-MC-Unique: 4gMiCSthM7C7ISxJt2_xXA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DDDEC64091;
-        Tue, 13 Oct 2020 18:40:35 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-207.rdu2.redhat.com [10.10.115.207])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 036FD60BF3;
-        Tue, 13 Oct 2020 18:40:27 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id AE841223D0F; Tue, 13 Oct 2020 14:40:26 -0400 (EDT)
-Date:   Tue, 13 Oct 2020 14:40:26 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Qian Cai <cai@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com
-Subject: Re: Unbreakable loop in fuse_fill_write_pages()
-Message-ID: <20201013184026.GC142988@redhat.com>
-References: <7d350903c2aa8f318f8441eaffafe10b7796d17b.camel@redhat.com>
+        id S1731602AbgJMSn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 14:43:59 -0400
+Received: from mga04.intel.com ([192.55.52.120]:20642 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726481AbgJMSn7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 14:43:59 -0400
+IronPort-SDR: Kjaudnb4Km4UOzFkEr78oOwAKMo2j6Fby2qry6+9jgA6PlRX2rZACZ6cQcR9GnHz7W71ruYfdL
+ 5ckJfzbkK+4Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="163326911"
+X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
+   d="scan'208";a="163326911"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:43:58 -0700
+IronPort-SDR: Y8yr31bWt2D5ZFUro2P0qp+6A5viSF0HAT183NiudA8pSe1LDbuRDA7sOocHWIOtV1Xh+MKs9o
+ UAAH72LnMERw==
+X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
+   d="scan'208";a="346281329"
+Received: from murawskx-mobl.amr.corp.intel.com (HELO [10.209.9.29]) ([10.209.9.29])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:43:58 -0700
+Subject: Re: [PATCH RFC V3 5/9] x86/pks: Add PKS kernel API
+To:     ira.weiny@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+References: <20201009194258.3207172-1-ira.weiny@intel.com>
+ <20201009194258.3207172-6-ira.weiny@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <29e9b8f1-35d6-d1d4-661d-a36fd296b593@intel.com>
+Date:   Tue, 13 Oct 2020 11:43:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d350903c2aa8f318f8441eaffafe10b7796d17b.camel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20201009194258.3207172-6-ira.weiny@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 01:11:05PM -0400, Qian Cai wrote:
-> Running some fuzzing on virtiofs with an unprivileged user on today's linux-next 
-> could trigger soft-lockups below.
-> 
-> # virtiofsd --socket-path=/tmp/vhostqemu -o source=$TESTDIR -o cache=always -o no_posix_lock
-> 
-> Basically, everything was blocking on inode_lock(inode) because one thread
-> (trinity-c33) was holding it but stuck in the loop in fuse_fill_write_pages()
-> and unable to exit for more than 10 minutes before I executed sysrq-t.
-> Afterwards, the systems was totally unresponsive:
-> 
-> kernel:NMI watchdog: Watchdog detected hard LOCKUP on cpu 8
-> 
-> To exit the loop, it needs,
-> 
-> iov_iter_advance(ii, tmp) to set "tmp" to non-zero for each iteration.
-> 
-> and
-> 
-> 	} while (iov_iter_count(ii) && count < fc->max_write &&
-> 		 ap->num_pages < max_pages && offset == 0);
-> 
-> == the thread is stuck in the loop ==
-> [10813.290694] task:trinity-c33     state:D stack:25888 pid:254219 ppid: 87180
-> flags:0x00004004
-> [10813.292671] Call Trace:
-> [10813.293379]  __schedule+0x71d/0x1b50
-> [10813.294182]  ? __sched_text_start+0x8/0x8
-> [10813.295146]  ? mark_held_locks+0xb0/0x110
-> [10813.296117]  schedule+0xbf/0x270
-> [10813.296782]  ? __lock_page_killable+0x276/0x830
-> [10813.297867]  io_schedule+0x17/0x60
-> [10813.298772]  __lock_page_killable+0x33b/0x830
+> +static inline void pks_update_protection(int pkey, unsigned long protection)
+> +{
+> +	current->thread.saved_pkrs = update_pkey_val(current->thread.saved_pkrs,
+> +						     pkey, protection);
+> +	preempt_disable();
+> +	write_pkrs(current->thread.saved_pkrs);
+> +	preempt_enable();
+> +}
 
-This seems to suggest that filemap_fault() is blocked on page lock and
-is sleeping. For some reason it never wakes up. Not sure why.
+Why does this need preempt count manipulation in addition to the
+get/put_cpu_var() inside of write_pkrs()?
 
-And this will be called from.
+> +/**
+> + * PKS access control functions
+> + *
+> + * Change the access of the domain specified by the pkey.  These are global
+> + * updates.  They only affects the current running thread.  It is undefined and
+> + * a bug for users to call this without having allocated a pkey and using it as
+> + * pkey here.
+> + *
+> + * pks_mknoaccess()
+> + *     Disable all access to the domain
+> + * pks_mkread()
+> + *     Make the domain Read only
+> + * pks_mkrdwr()
+> + *     Make the domain Read/Write
+> + *
+> + * @pkey the pkey for which the access should change.
+> + *
+> + */
+> +void pks_mknoaccess(int pkey)
+> +{
+> +	pks_update_protection(pkey, PKEY_DISABLE_ACCESS);
+> +}
+> +EXPORT_SYMBOL_GPL(pks_mknoaccess);
 
-fuse_fill_write_pages()
-   iov_iter_fault_in_readable()
+These are named like PTE manipulation functions, which is kinda weird.
 
-So fuse code will take inode_lock() and then looks like same process
-is sleeping waiting on page lock. And rest of the processes get blocked
-behind inode lock.
+What's wrong with: pks_disable_access(pkey) ?
 
-If we are woken up (while waiting on page lock), we should make forward
-progress. Question is what page it is and why the entity which is
-holding lock is not releasing lock.
+> +void pks_mkread(int pkey)
+> +{
+> +	pks_update_protection(pkey, PKEY_DISABLE_WRITE);
+> +}
+> +EXPORT_SYMBOL_GPL(pks_mkread);
 
-Thanks
-Vivek
+I really don't like this name.  It doesn't make readable, or even
+read-only, *especially* if it was already access-disabled.
 
-> [10813.299695]  ? wait_on_page_bit+0x710/0x710
-> [10813.300609]  ? __lock_page_or_retry+0x3c0/0x3c0
-> [10813.301894]  ? up_read+0x1a3/0x730
-> [10813.302791]  ? page_cache_free_page.isra.45+0x390/0x390
-> [10813.304077]  filemap_fault+0x2bd/0x2040
-> [10813.305019]  ? read_cache_page_gfp+0x10/0x10
-> [10813.306041]  ? lock_downgrade+0x700/0x700
-> [10813.306958]  ? replace_page_cache_page+0x1130/0x1130
-> [10813.308124]  __do_fault+0xf5/0x530
-> [10813.308968]  handle_mm_fault+0x1c0e/0x25b0
-> [10813.309955]  ? copy_page_range+0xfe0/0xfe0
-> [10813.310895]  do_user_addr_fault+0x383/0x820
-> [10813.312084]  exc_page_fault+0x56/0xb0
-> [10813.312979]  asm_exc_page_fault+0x1e/0x30
-> [10813.313978] RIP: 0010:iov_iter_fault_in_readable+0x271/0x350
-> fault_in_pages_readable at include/linux/pagemap.h:745
-> (inlined by) iov_iter_fault_in_readable at lib/iov_iter.c:438
-> [10813.315293] Code: 48 39 d7 0f 82 1a ff ff ff 0f 01 cb 0f ae e8 44 89 c0 8a 0a
-> 0f 01 ca 88 4c 24 70 85 c0 74 da e9 f8 fe ff ff 0f 01 cb 0f ae e8 <8a> 11 0f 01
-> ca 88 54 24 30 85 c0 0f 85 04 ff ff ff 48 29 ee e9
->  45
-> [10813.319196] RSP: 0018:ffffc90017ccf830 EFLAGS: 00050246
-> [10813.320446] RAX: 0000000000000000 RBX: 1ffff92002f99f08 RCX: 00007fe284f1004c
-> [10813.322202] RDX: 0000000000000001 RSI: 0000000000001000 RDI: ffff8887a7664000
-> [10813.323729] RBP: 0000000000001000 R08: 0000000000000000 R09: 0000000000000000
-> [10813.325282] R10: ffffc90017ccfd48 R11: ffffed102789d5ff R12: ffff8887a7664020
-> [10813.326898] R13: ffffc90017ccfd40 R14: dffffc0000000000 R15: 0000000000e0df6a
-> [10813.328456]  ? iov_iter_revert+0x8e0/0x8e0
-> [10813.329404]  ? copyin+0x96/0xc0
-> [10813.330230]  ? iov_iter_copy_from_user_atomic+0x1f0/0xa40
-> [10813.331742]  fuse_perform_write+0x3eb/0xf20 [fuse]
-> fuse_fill_write_pages at fs/fuse/file.c:1150
-> (inlined by) fuse_perform_write at fs/fuse/file.c:1226
-> [10813.332880]  ? fuse_file_fallocate+0x5f0/0x5f0 [fuse]
-> [10813.334090]  fuse_file_write_iter+0x6b7/0x900 [fuse]
-> [10813.335191]  do_iter_readv_writev+0x42b/0x6d0
-> [10813.336161]  ? new_sync_write+0x610/0x610
-> [10813.337194]  do_iter_write+0x11f/0x5b0
-> [10813.338177]  ? __sb_start_write+0x229/0x2d0
-> [10813.339169]  vfs_writev+0x16d/0x2d0
-> [10813.339973]  ? vfs_iter_write+0xb0/0xb0
-> [10813.340950]  ? __fdget_pos+0x9c/0xb0
-> [10813.342039]  ? rcu_read_lock_sched_held+0x9c/0xd0
-> [10813.343120]  ? rcu_read_lock_bh_held+0xb0/0xb0
-> [10813.344104]  ? find_held_lock+0x33/0x1c0
-> [10813.345050]  do_writev+0xfb/0x1e0
-> [10813.345920]  ? vfs_writev+0x2d0/0x2d0
-> [10813.346802]  ? lockdep_hardirqs_on_prepare+0x27c/0x3d0
-> [10813.348026]  ? syscall_enter_from_user_mode+0x1c/0x50
-> [10813.349197]  do_syscall_64+0x33/0x40
-> [10813.350026]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
+> +static const char pks_key_user0[] = "kernel";
+> +
+> +/* Store names of allocated keys for debug.  Key 0 is reserved for the kernel.  */
+> +static const char *pks_key_users[PKS_NUM_KEYS] = {
+> +	pks_key_user0
+> +};
+> +
+> +/*
+> + * Each key is represented by a bit.  Bit 0 is set for key 0 and reserved for
+> + * its use.  We use ulong for the bit operations but only 16 bits are used.
+> + */
+> +static unsigned long pks_key_allocation_map = 1 << PKS_KERN_DEFAULT_KEY;
+> +
+> +/*
+> + * pks_key_alloc - Allocate a PKS key
+> + *
+> + * @pkey_user: String stored for debugging of key exhaustion.  The caller is
+> + * responsible to maintain this memory until pks_key_free().
+> + */
+> +int pks_key_alloc(const char * const pkey_user)
+> +{
+> +	int nr;
+> +
+> +	if (!cpu_feature_enabled(X86_FEATURE_PKS))
+> +		return -EINVAL;
 
+I'm not sure I like -EINVAL for this.  I thought we returned -ENOSPC for
+this case for user pkeys.
+
+> +	while (1) {
+> +		nr = find_first_zero_bit(&pks_key_allocation_map, PKS_NUM_KEYS);
+> +		if (nr >= PKS_NUM_KEYS) {
+> +			pr_info("Cannot allocate supervisor key for %s.\n",
+> +				pkey_user);
+> +			return -ENOSPC;
+> +		}
+> +		if (!test_and_set_bit_lock(nr, &pks_key_allocation_map))
+> +			break;
+> +	}
+> +
+> +	/* for debugging key exhaustion */
+> +	pks_key_users[nr] = pkey_user;
+> +
+> +	return nr;
+> +}
+> +EXPORT_SYMBOL_GPL(pks_key_alloc);
+> +
+> +/*
+> + * pks_key_free - Free a previously allocate PKS key
+> + *
+> + * @pkey: Key to be free'ed
+> + */
+> +void pks_key_free(int pkey)
+> +{
+> +	if (!cpu_feature_enabled(X86_FEATURE_PKS))
+> +		return;
+> +
+> +	if (pkey >= PKS_NUM_KEYS || pkey <= PKS_KERN_DEFAULT_KEY)
+> +		return;
+
+This seems worthy of a WARN_ON_ONCE() at least.  It's essentially
+corrupt data coming into a kernel API.
