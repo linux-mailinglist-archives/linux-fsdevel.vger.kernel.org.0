@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0416828D390
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8341528D3AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:31:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbgJMSXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 14:23:11 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19465 "EHLO mga09.intel.com"
+        id S1729755AbgJMSbx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 14:31:53 -0400
+Received: from mga18.intel.com ([134.134.136.126]:39019 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbgJMSXK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 14:23:10 -0400
-IronPort-SDR: udyXnqnPbSXl1mM2a8yKkJg3sNEq8k/nrAZbudM8D0AHvb6i6516WkA62u3y21ivvMz0NeDVd8
- u8jvvv8xuZFA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="166077870"
+        id S1726899AbgJMSbx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 14:31:53 -0400
+IronPort-SDR: W8xiilTl3OxH88FCikgy1IOVIU6wcB8PvfhYPPZmjweOK2+8giAVSEDMuyYi9VfZKLhhtV00Li
+ LJlK0kbY9ycg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="153794227"
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="166077870"
+   d="scan'208";a="153794227"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:23:09 -0700
-IronPort-SDR: y9TXXuh5e1eeoBKQ1hSVopxpD4BEK5Ev5lOHm/BcNe8BcXHU3kk2TbU2myxrXItgFCwaIMq9v9
- GN7i39xYdIhQ==
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:31:45 -0700
+IronPort-SDR: N1xn0HQI0ubXW+ZZ5gn2QreU7BQoHP/0atyUS215Vn7NRjG/ItSebl73LdP+GjPjSK62O2AOZS
+ e/mlDqFbQs2A==
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="346277003"
+   d="scan'208";a="346279150"
 Received: from murawskx-mobl.amr.corp.intel.com (HELO [10.209.9.29]) ([10.209.9.29])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:23:09 -0700
-Subject: Re: [PATCH RFC V3 3/9] x86/pks: Enable Protection Keys Supervisor
- (PKS)
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:31:45 -0700
+Subject: Re: [PATCH RFC V3 4/9] x86/pks: Preserve the PKRS MSR on context
+ switch
 To:     ira.weiny@intel.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, x86@kernel.org,
+Cc:     Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org
 References: <20201009194258.3207172-1-ira.weiny@intel.com>
- <20201009194258.3207172-4-ira.weiny@intel.com>
+ <20201009194258.3207172-5-ira.weiny@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <cfd8e361-9d5b-5b24-08d4-31ad3d392255@intel.com>
-Date:   Tue, 13 Oct 2020 11:23:08 -0700
+Message-ID: <429789d3-ab5b-49c3-65c3-f0fc30a12516@intel.com>
+Date:   Tue, 13 Oct 2020 11:31:45 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201009194258.3207172-4-ira.weiny@intel.com>
+In-Reply-To: <20201009194258.3207172-5-ira.weiny@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -99,49 +99,109 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
-> +/*
-> + * PKS is independent of PKU and either or both may be supported on a CPU.
-> + * Configure PKS if the cpu supports the feature.
-> + */
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> The PKRS MSR is defined as a per-logical-processor register.  This
+> isolates memory access by logical CPU.  Unfortunately, the MSR is not
+> managed by XSAVE.  Therefore, tasks must save/restore the MSR value on
+> context switch.
+> 
+> Define a saved PKRS value in the task struct, as well as a cached
+> per-logical-processor MSR value which mirrors the MSR value of the
+> current CPU.  Initialize all tasks with the default MSR value.  Then, on
+> schedule in, check the saved task MSR vs the per-cpu value.  If
+> different proceed to write the MSR.  If not avoid the overhead of the
+> MSR write and continue.
 
-Let's at least be consistent about CPU vs. cpu in a single comment. :)
+It's probably nice to note how the WRMSR is special here, in addition to
+the comments below.
 
-> +static void setup_pks(void)
-> +{
-> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_SUPERVISOR_PKEYS))
-> +		return;
-> +	if (!cpu_feature_enabled(X86_FEATURE_PKS))
-> +		return;
+>  #endif /*_ASM_X86_PKEYS_INTERNAL_H */
+> diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+> index 97143d87994c..da2381136b2d 100644
+> --- a/arch/x86/include/asm/processor.h
+> +++ b/arch/x86/include/asm/processor.h
+> @@ -18,6 +18,7 @@ struct vm86;
+>  #include <asm/cpufeatures.h>
+>  #include <asm/page.h>
+>  #include <asm/pgtable_types.h>
+> +#include <asm/pkeys_common.h>
+>  #include <asm/percpu.h>
+>  #include <asm/msr.h>
+>  #include <asm/desc_defs.h>
+> @@ -542,6 +543,11 @@ struct thread_struct {
+>  
+>  	unsigned int		sig_on_uaccess_err:1;
+>  
+> +#ifdef	CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
+> +	/* Saved Protection key register for supervisor mappings */
+> +	u32			saved_pkrs;
+> +#endif
 
-If you put X86_FEATURE_PKS in disabled-features.h, you can get rid of
-the explicit CONFIG_ check.
+Could you take a look around thread_struct and see if there are some
+other MSRs near which you can stash this?  This seems like a bit of a
+lonely place.
 
-> +	cr4_set_bits(X86_CR4_PKS);
-> +}
+...
+>  void flush_thread(void)
+>  {
+>  	struct task_struct *tsk = current;
+> @@ -195,6 +212,8 @@ void flush_thread(void)
+>  	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
+>  
+>  	fpu__clear_all(&tsk->thread.fpu);
 > +
+> +	pks_init_task(tsk);
+>  }
+>  
+>  void disable_TSC(void)
+> @@ -644,6 +663,8 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
+>  
+>  	if ((tifp ^ tifn) & _TIF_SLD)
+>  		switch_to_sld(tifn);
+> +
+> +	pks_sched_in();
+>  }
+>  
 >  /*
->   * This does the hard work of actually picking apart the CPU stuff...
->   */
-> @@ -1544,6 +1558,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+> diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
+> index 3cf8f775f36d..30f65dd3d0c5 100644
+> --- a/arch/x86/mm/pkeys.c
+> +++ b/arch/x86/mm/pkeys.c
+> @@ -229,3 +229,31 @@ u32 update_pkey_val(u32 pk_reg, int pkey, unsigned int flags)
 >  
->  	x86_init_rdrand(c);
->  	setup_pku(c);
-> +	setup_pks();
->  
->  	/*
->  	 * Clear/Set all flags overridden by options, need do it
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 6c974888f86f..1b9bc004d9bc 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -822,6 +822,8 @@ config ARCH_USES_HIGH_VMA_FLAGS
->  	bool
->  config ARCH_HAS_PKEYS
->  	bool
-> +config ARCH_HAS_SUPERVISOR_PKEYS
-> +	bool
->  
->  config PERCPU_STATS
->  	bool "Collect percpu memory statistics"
+>  	return pk_reg;
+>  }
+> +
+> +DEFINE_PER_CPU(u32, pkrs_cache);
+> +
+> +/**
+> + * It should also be noted that the underlying WRMSR(MSR_IA32_PKRS) is not
+> + * serializing but still maintains ordering properties similar to WRPKRU.
+> + * The current SDM section on PKRS needs updating but should be the same as
+> + * that of WRPKRU.  So to quote from the WRPKRU text:
+> + *
+> + * 	WRPKRU will never execute transiently. Memory accesses
+> + * 	affected by PKRU register will not execute (even transiently)
+> + * 	until all prior executions of WRPKRU have completed execution
+> + * 	and updated the PKRU register.
+> + */
+> +void write_pkrs(u32 new_pkrs)
+> +{
+> +	u32 *pkrs;
+> +
+> +	if (!static_cpu_has(X86_FEATURE_PKS))
+> +		return;
+> +
+> +	pkrs = get_cpu_ptr(&pkrs_cache);
+> +	if (*pkrs != new_pkrs) {
+> +		*pkrs = new_pkrs;
+> +		wrmsrl(MSR_IA32_PKRS, new_pkrs);
+> +	}
+> +	put_cpu_ptr(pkrs);
+> +}
 > 
 
+It bugs me a *bit* that this is being called in a preempt-disabled
+region, but we still bother with the get/put_cpu jazz.  Are there other
+future call-sites for this that aren't in preempt-disabled regions?
