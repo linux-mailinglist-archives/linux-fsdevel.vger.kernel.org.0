@@ -2,98 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EAC28D5FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 22:53:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A03C728D609
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 22:54:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbgJMUxj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 16:53:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54071 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbgJMUxi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 16:53:38 -0400
-IronPort-SDR: gI8MkOnOGO61aP07XY6CCWHG9J8FvCUX/dOJGBzQnYJFTP4ej18aKmY+Fn52D+I38Lw4zhRGT9
- RQaSxhwXc52g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="145845033"
-X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="145845033"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 13:53:36 -0700
-IronPort-SDR: 6pC5EU5QwoXbsJ9AhSALdpEnefHex0iyEFu7THvX1eaSFNd77CbWePaQQdxa3yUvYDZ6VBgRvg
- Vwn0OOQPMwwA==
-X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="313946459"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 13:53:35 -0700
-Date:   Tue, 13 Oct 2020 13:52:49 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
-        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH RFC PKS/PMEM 24/58] fs/freevxfs: Utilize new kmap_thread()
-Message-ID: <20201013205248.GJ2046448@iweiny-DESK2.sc.intel.com>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-25-ira.weiny@intel.com>
- <20201013112544.GA5249@infradead.org>
+        id S1727758AbgJMUyb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 16:54:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36941 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727215AbgJMUyb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 16:54:31 -0400
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kSRJU-0004qU-Ip; Tue, 13 Oct 2020 20:54:28 +0000
+Date:   Tue, 13 Oct 2020 22:54:27 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Giuseppe Scrivano <gscrivan@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org
+Subject: Re: [PATCH 1/2] fs, close_range: add flag CLOSE_RANGE_CLOEXEC
+Message-ID: <20201013205427.clvqno24ctwxbuyv@wittgenstein>
+References: <20201013140609.2269319-1-gscrivan@redhat.com>
+ <20201013140609.2269319-2-gscrivan@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201013112544.GA5249@infradead.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20201013140609.2269319-2-gscrivan@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 12:25:44PM +0100, Christoph Hellwig wrote:
-> > -	kaddr = kmap(pp);
-> > +	kaddr = kmap_thread(pp);
-> >  	memcpy(kaddr, vip->vii_immed.vi_immed + offset, PAGE_SIZE);
-> > -	kunmap(pp);
-> > +	kunmap_thread(pp);
+On Tue, Oct 13, 2020 at 04:06:08PM +0200, Giuseppe Scrivano wrote:
+
+Hey Guiseppe,
+
+Thanks for the patch!
+
+> When the flag CLOSE_RANGE_CLOEXEC is set, close_range doesn't
+> immediately close the files but it sets the close-on-exec bit.
+
+Hm, please expand on the use-cases a little here so people know where
+and how this is useful. Keeping the rationale for a change in the commit
+log is really important.
+
 > 
-> You only Cced me on this particular patch, which means I have absolutely
-> no idea what kmap_thread and kunmap_thread actually do, and thus can't
-> provide an informed review.
+> Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+> ---
 
-Sorry the list was so big I struggled with who to CC and on which patches.
-
+>  fs/file.c                        | 56 ++++++++++++++++++++++----------
+>  include/uapi/linux/close_range.h |  3 ++
+>  2 files changed, 42 insertions(+), 17 deletions(-)
 > 
-> That being said I think your life would be a lot easier if you add
-> helpers for the above code sequence and its counterpart that copies
-> to a potential hughmem page first, as that hides the implementation
-> details from most users.
+> diff --git a/fs/file.c b/fs/file.c
+> index 21c0893f2f1d..ad4ebee41e09 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -672,6 +672,17 @@ int __close_fd(struct files_struct *files, unsigned fd)
+>  }
+>  EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+>  
+> +static unsigned int __get_max_fds(struct files_struct *cur_fds)
+> +{
+> +	unsigned int max_fds;
+> +
+> +	rcu_read_lock();
+> +	/* cap to last valid index into fdtable */
+> +	max_fds = files_fdtable(cur_fds)->max_fds;
+> +	rcu_read_unlock();
+> +	return max_fds;
+> +}
+> +
+>  /**
+>   * __close_range() - Close all file descriptors in a given range.
+>   *
+> @@ -683,27 +694,23 @@ EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+>   */
+>  int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+>  {
+> -	unsigned int cur_max;
+> +	unsigned int cur_max = UINT_MAX;
+>  	struct task_struct *me = current;
+>  	struct files_struct *cur_fds = me->files, *fds = NULL;
+>  
+> -	if (flags & ~CLOSE_RANGE_UNSHARE)
+> +	if (flags & ~(CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC))
+>  		return -EINVAL;
+>  
+>  	if (fd > max_fd)
+>  		return -EINVAL;
+>  
+> -	rcu_read_lock();
+> -	cur_max = files_fdtable(cur_fds)->max_fds;
+> -	rcu_read_unlock();
+> -
+> -	/* cap to last valid index into fdtable */
+> -	cur_max--;
+> -
+>  	if (flags & CLOSE_RANGE_UNSHARE) {
+>  		int ret;
+>  		unsigned int max_unshare_fds = NR_OPEN_MAX;
+>  
+> +		/* cap to last valid index into fdtable */
+> +		cur_max = __get_max_fds(cur_fds) - 1;
+> +
+>  		/*
+>  		 * If the requested range is greater than the current maximum,
+>  		 * we're closing everything so only copy all file descriptors
+> @@ -724,16 +731,31 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+>  			swap(cur_fds, fds);
+>  	}
+>  
+> -	max_fd = min(max_fd, cur_max);
+> -	while (fd <= max_fd) {
+> -		struct file *file;
+> +	if (flags & CLOSE_RANGE_CLOEXEC) {
+> +		struct fdtable *fdt;
+>  
+> -		file = pick_file(cur_fds, fd++);
+> -		if (!file)
+> -			continue;
+> +		spin_lock(&cur_fds->file_lock);
+> +		fdt = files_fdtable(cur_fds);
+> +		cur_max = fdt->max_fds - 1;
+> +		max_fd = min(max_fd, cur_max);
+> +		while (fd <= max_fd)
+> +			__set_close_on_exec(fd++, fdt);
+> +		spin_unlock(&cur_fds->file_lock);
+> +	} else {
+> +		/* Initialize cur_max if needed.  */
+> +		if (cur_max == UINT_MAX)
+> +			cur_max = __get_max_fds(cur_fds) - 1;
 
-Matthew Wilcox and Al Viro have suggested similar ideas.
+The separation between how cur_fd is retrieved in the two branches makes
+the code more difficult to follow imho. Unless there's a clear reason
+why you've done it that way I would think that something like the patch
+I appended below might be a little clearer and easier to maintain(?).
 
-https://lore.kernel.org/lkml/20201013205012.GI2046448@iweiny-DESK2.sc.intel.com/
+> +		max_fd = min(max_fd, cur_max);
+> +		while (fd <= max_fd) {
+> +			struct file *file;
+>  
+> -		filp_close(file, cur_fds);
+> -		cond_resched();
+> +			file = pick_file(cur_fds, fd++);
+> +			if (!file)
+> +				continue;
+> +
+> +			filp_close(file, cur_fds);
+> +			cond_resched();
+> +		}
+>  	}
 
-Ira
+I think I don't have quarrels with this patch in principle but I wonder
+if something like the following wouldn't be easier to follow:
+
+diff --git a/fs/file.c b/fs/file.c
+index 21c0893f2f1d..872a4098c3be 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -672,6 +672,32 @@ int __close_fd(struct files_struct *files, unsigned fd)
+ }
+ EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+ 
++static inline void __range_cloexec(struct files_struct *cur_fds,
++				   unsigned int fd, unsigned max_fd)
++{
++	struct fdtable *fdt;
++	spin_lock(&cur_fds->file_lock);
++	fdt = files_fdtable(cur_fds);
++	while (fd <= max_fd)
++		__set_close_on_exec(fd++, fdt);
++	spin_unlock(&cur_fds->file_lock);
++}
++
++static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
++				 unsigned max_fd)
++{
++	while (fd <= max_fd) {
++		struct file *file;
++
++		file = pick_file(cur_fds, fd++);
++		if (!file)
++			continue;
++
++		filp_close(file, cur_fds);
++		cond_resched();
++	}
++}
++
+ /**
+  * __close_range() - Close all file descriptors in a given range.
+  *
+@@ -687,7 +713,7 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+ 	struct task_struct *me = current;
+ 	struct files_struct *cur_fds = me->files, *fds = NULL;
+ 
+-	if (flags & ~CLOSE_RANGE_UNSHARE)
++	if (flags & ~(CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC))
+ 		return -EINVAL;
+ 
+ 	if (fd > max_fd)
+@@ -725,16 +751,10 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
+ 	}
+ 
+ 	max_fd = min(max_fd, cur_max);
+-	while (fd <= max_fd) {
+-		struct file *file;
+-
+-		file = pick_file(cur_fds, fd++);
+-		if (!file)
+-			continue;
+-
+-		filp_close(file, cur_fds);
+-		cond_resched();
+-	}
++	if (flags & CLOSE_RANGE_CLOEXEC)
++		__range_cloexec(cur_fds, fd, max_fd);
++	else
++		__range_close(cur_fds, fd, max_fd);
+ 
+ 	if (fds) {
+ 		/*
+diff --git a/include/uapi/linux/close_range.h b/include/uapi/linux/close_range.h
+index 6928a9fdee3c..2d804281554c 100644
+--- a/include/uapi/linux/close_range.h
++++ b/include/uapi/linux/close_range.h
+@@ -5,5 +5,8 @@
+ /* Unshare the file descriptor table before closing file descriptors. */
+ #define CLOSE_RANGE_UNSHARE	(1U << 1)
+ 
++/* Set the FD_CLOEXEC bit instead of closing the file descriptor. */
++#define CLOSE_RANGE_CLOEXEC	(1U << 2)
++
+ #endif /* _UAPI_LINUX_CLOSE_RANGE_H */
+ 
