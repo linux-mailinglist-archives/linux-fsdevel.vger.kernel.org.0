@@ -2,104 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 718D728D4DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0604428D4FB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbgJMTpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 15:45:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbgJMTpn (ORCPT
+        id S1727665AbgJMTxi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 15:53:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38805 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726476AbgJMTxi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 15:45:43 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94EBEC0613D0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:45:43 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id l24so698966edj.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:45:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zz37D07nBex4LXRsGO0eeoEF5U7Zs7MdOvVJudSqras=;
-        b=QVCTfmGMkYn1oWoGZZpsGwjnyAgSJvogqrPoMtEQB9Cw4phzdyL69I9T4OkhHTJqa6
-         a2fe37CLNljzqeSkUEGEmzMStvdcqrsFj+qdkHBoS+9hrDgEDRfWtJ0MQZ+X5yXeBhCa
-         1zGsJCYgsaQvAZ1B8SQOis1XtgWOgMJCDL/Z8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zz37D07nBex4LXRsGO0eeoEF5U7Zs7MdOvVJudSqras=;
-        b=iK8nvN/v3jbW7f/2rZa3q49w8mbHwfOYzZxvhOljAwf5INekB1vLY03JkK9Ycl8rJB
-         FM7UPykxcXDfJL0Bmveoc1rivlE/XoT8NXeMfUcWPi65ySoq4Cj6umfDEMAWCKf9JMoi
-         /5GcTFNSlIIfPwQUN3WJ5zfB3mJbjs0lSPSszOEm6snJt82xZdc4tk1pXuXePYQqUood
-         jolq0Rbh3zHRavAbEt5EWNEaejV0VQuhUDyVsteXAVqa8CinsBoq0CQEbpxz2gBXySKU
-         KWhUyubrSe5onDllNN7fA5XmqTEmshOPInTR9c498pA3YdjREjSVyRSq6kZHGIzAWrWx
-         NQwQ==
-X-Gm-Message-State: AOAM533mzBKHzJEShbC1CNIYrCx5xomyFy01NrFSEtzyQUjbDlFLdz6W
-        g8jY4FskfrxS/T4KU1xc//+T4Q==
-X-Google-Smtp-Source: ABdhPJxCrmFOwGq3qX7GfcYdHiczoNdh4mmaHubZt8CgKaHIAmUtY8CUbLj46QYhjPDpp81Nts0ffA==
-X-Received: by 2002:a05:6402:a4f:: with SMTP id bt15mr1260487edb.345.1602618342320;
-        Tue, 13 Oct 2020 12:45:42 -0700 (PDT)
-Received: from [192.168.1.149] (5.186.115.188.cgn.fibianet.dk. [5.186.115.188])
-        by smtp.gmail.com with ESMTPSA id bx24sm459542ejb.51.2020.10.13.12.45.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Oct 2020 12:45:41 -0700 (PDT)
-Subject: Re: [PATCH] kcmp: add separate Kconfig symbol for kcmp syscall
-To:     Matthew Wilcox <willy@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Cyrill Gorcunov <gorcunov@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200710075632.14661-1-linux@rasmusvillemoes.dk>
- <20200710155719.GN12769@casper.infradead.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <20a80bdc-7a5d-c08b-e27b-bea38c378b6c@rasmusvillemoes.dk>
-Date:   Tue, 13 Oct 2020 21:45:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200710155719.GN12769@casper.infradead.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        Tue, 13 Oct 2020 15:53:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602618817;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=r8ZV+rYkGeSUFu36KKN8YPgpFKIbE9gDjxNbUNZQHuw=;
+        b=Ep4QSP8GDwFUtEfipz+phV8u5ZwzEtkCdGIgyRMIfrtIlGbX/xFkbz4cpPM5uLnswX7RH+
+        nyATr50o132hVgcjoh6H1bOX4HIWmq1FneNKCoh0pUrTZ+qa0OA/kF5seArUp+NDspj7Bl
+        0DY6qMT4bOsX3ZjgsiUOUejDzx63VBo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-354-uMFhaWd5PtiNzlJ5-7N3Qg-1; Tue, 13 Oct 2020 15:53:33 -0400
+X-MC-Unique: uMFhaWd5PtiNzlJ5-7N3Qg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C92DA800683;
+        Tue, 13 Oct 2020 19:53:31 +0000 (UTC)
+Received: from ovpn-118-16.rdu2.redhat.com (ovpn-118-16.rdu2.redhat.com [10.10.118.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BCA0E73664;
+        Tue, 13 Oct 2020 19:53:24 +0000 (UTC)
+Message-ID: <d14f6a08b4ada85289e70cbb34726fd084ccac05.camel@redhat.com>
+Subject: Re: Unbreakable loop in fuse_fill_write_pages()
+From:   Qian Cai <cai@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com
+Date:   Tue, 13 Oct 2020 15:53:19 -0400
+In-Reply-To: <20201013185808.GA164772@redhat.com>
+References: <7d350903c2aa8f318f8441eaffafe10b7796d17b.camel@redhat.com>
+         <20201013184026.GC142988@redhat.com> <20201013185808.GA164772@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/07/2020 17.57, Matthew Wilcox wrote:
-> On Fri, Jul 10, 2020 at 09:56:31AM +0200, Rasmus Villemoes wrote:
->> The ability to check open file descriptions for equality (without
->> resorting to unreliable fstat() and fcntl(F_GETFL) comparisons) can be
->> useful outside of the checkpoint/restore use case - for example,
->> systemd uses kcmp() to deduplicate the per-service file descriptor
->> store.
->>
->> Make it possible to have the kcmp() syscall without the full
->> CONFIG_CHECKPOINT_RESTORE.
+On Tue, 2020-10-13 at 14:58 -0400, Vivek Goyal wrote:
+
+> I am wondering if virtiofsd still alive and responding to requests? I
+> see another task which is blocked on getdents() for more than 120s.
 > 
-> If systemd is using it, is it even worth making it conditional any more?
-> Maybe for CONFIG_EXPERT builds, it could be de-selectable.
+> [10580.142571][  T348] INFO: task trinity-c36:254165 blocked for more than 123
+> +seconds.
+> [10580.143924][  T348]       Tainted: G           O	 5.9.0-next-20201013+ #2
+> [10580.145158][  T348] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> +disables this message.
+> [10580.146636][  T348] task:trinity-c36     state:D stack:26704 pid:254165
+> ppid:
+> +87180 flags:0x00000004
+> [10580.148260][  T348] Call Trace:
+> [10580.148789][  T348]  __schedule+0x71d/0x1b50
+> [10580.149532][  T348]  ? __sched_text_start+0x8/0x8
+> [10580.150343][  T348]  schedule+0xbf/0x270
+> [10580.151044][  T348]  schedule_preempt_disabled+0xc/0x20
+> [10580.152006][  T348]  __mutex_lock+0x9f1/0x1360
+> [10580.152777][  T348]  ? __fdget_pos+0x9c/0xb0
+> [10580.153484][  T348]  ? mutex_lock_io_nested+0x1240/0x1240
+> [10580.154432][  T348]  ? find_held_lock+0x33/0x1c0
+> [10580.155220][  T348]  ? __fdget_pos+0x9c/0xb0
+> [10580.155934][  T348]  __fdget_pos+0x9c/0xb0
+> [10580.156660][  T348]  __x64_sys_getdents+0xff/0x230
 > 
+> May be virtiofsd crashed and hence no requests are completing leading
+> to a hard lockup?
+Virtiofsd is still working. Once this happened, I manually create a file on the
+guest (in virtiofs) and then I can see the content of it from the host.
 
-[hm, I dropped the ball, sorry for the necromancy]
-
-Well, first, I don't want to change any defaults here, if that is to be
-done, it should be a separate patch.
-
-Second, yes, systemd uses it for the de-duplication, and for that reason
-recommends CONFIG_CHECKPOINT_RESTORE (at least, according to their
-README) - but I'm not aware of any daemons that actually make use of
-systemd's file descriptor store, so it's not really something essential
-to every systemd-based system out there. It would be nice if systemd
-could change its recommendation to just CONFIG_KCMP_SYSCALL.
-
-But it's also useful for others, e.g. I have some code that wants to
-temporarily replace stdin/stdout/stderr with some other file
-descriptors, but needs to preserve the '0 is a dup of 1, or not' state
-(i.e., is the same struct file) - that cannot reliably be determined
-from fstat()/lseek(SEEK_CUR)/F_GETFL or whatever else one could throw at
-an fd.
-
-Rasmus
