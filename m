@@ -2,126 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6AE28C76F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 05:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D51828C78E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 05:30:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbgJMDAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 23:00:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
+        id S1728986AbgJMDaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 23:30:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728220AbgJMDAM (ORCPT
+        with ESMTP id S1728899AbgJMDaV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 23:00:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC2EC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 20:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=RVbxbYoOWjLwJdgW3Cb8bReeSeO0h546yKG6qIjspYY=; b=H3p/y2nwCsnwVAvyqNJcScmcXf
-        7dbIMAax0AH1bYvGMIaeym0IhvhyT8hLJjADqB54QN3VnkHx/0uGoGBm8zuyl3RCFIr2lSfoOWkV7
-        jalkTzG/hg1s6mJIBBtK5aO1puGN8Wfk3obKTdNYoPuuZeRmde8Uzf/l+o1wEKpuZrnQPS3SXkCJs
-        vM3EYuMX9Lxt6yRXU07HEF0IGLvJ/aTkVvN8H4NxT2wLdEmceUUY7KeQ4FEmDXntbasDpo6SKS3fx
-        8HIHW2qYBbBYm4Oh3MmYgDZqUX9uzlQ24cCLc/8rRkLSWgfri1sl7MA5BYd9LzLRzuNwSEaWokgtF
-        qz172xuw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSAXq-00076E-Tx; Tue, 13 Oct 2020 03:00:10 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 3/3] mm: Inline __wait_on_page_locked_async into caller
-Date:   Tue, 13 Oct 2020 04:00:08 +0100
-Message-Id: <20201013030008.27219-5-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20201013030008.27219-1-willy@infradead.org>
-References: <20201013030008.27219-1-willy@infradead.org>
+        Mon, 12 Oct 2020 23:30:21 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B596C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 20:30:21 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id j18so3234178pfa.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 20:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=veclwl1rWnO1PyZHw8dPBjATssIz1mruYYxnvO/JFq8=;
+        b=sWqJ/y9JSkmPh1tUBls/oFgZXBBJAbrSQFTt+uSGq/Iu5Cll4SUFao4LHB8uZML9Nf
+         suEOfzzkUGhoWi1X8PeH7GScXYHrF5xPgJwx1WDg8hdRc8vhZuVkpui0eXEtiy3SgcYi
+         R8EIf7ncK1EhX/rdKQOmKglxFInKA3tnaF4Wbo4C5B1WXahadXjBgxv3YEPnUBjvo1yc
+         K8QTIYwTPjSHxidx02iPEuML0hdy8P6WJiVz+ogJMp3NSuWMBYhN0PE6qUt/bP4AVwjj
+         QhMuB7hqQXpc3ZNOYun05eTJ40dodrPHEW+oE0s1QGwBm8v+icuYsiWBseFF5z4khe6e
+         RXtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=veclwl1rWnO1PyZHw8dPBjATssIz1mruYYxnvO/JFq8=;
+        b=KFnhm7gtfI5QlRSNz8ZiQSB6OCNWxbXmUocXyrpzWMp5xPeB408iZXg+JRbPledMYk
+         3fEnPHgv4z1aSdeUf74w0CPLmwKoyhDVvLC7Hhl6IpBzV497pw7tpIzg477fVJCUXPJy
+         WtATVkTWZiMQUGRA/vkdMAg3TkvkxUpQeBotD9b9IA0a0rCzhzq7auwez2haA+hb3VAd
+         JZGauOpEa1QE76t+SevMS3136ID6dhCmvPFGu/ikzjrLfOP5FGX53ZbQhvokvgJ+b4d1
+         6YAAN0nrEe+gI1gU1pPRFHDWk/Sy96LMX3WBMxJILoXexphe2c+SFocMJn1ieqLtk2PX
+         Bt8A==
+X-Gm-Message-State: AOAM533qNgsT48k2pjRdYHHOC6dIChBXp7Xjh3FApGhLcxnw++eEUfrE
+        OoqayINAZqxh5nVBCaMVY3C/JBwXEro8NtvAvaRTBA==
+X-Google-Smtp-Source: ABdhPJwv7AqyroJZItMRGC4vj7W3CzjTFTwAXQqOupPBrXsMxczQqLtTe8ycRtlelanR0nD4qp9ozIIPCE46a16q6f4=
+X-Received: by 2002:a17:90a:b78b:: with SMTP id m11mr23945507pjr.13.1602559820309;
+ Mon, 12 Oct 2020 20:30:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201010103854.66746-1-songmuchun@bytedance.com>
+ <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+ <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com> <CAM_iQpXLX1xXN02idk-yU1T=AGb9JmGiLkfRGCJOxjCw-OWpfQ@mail.gmail.com>
+In-Reply-To: <CAM_iQpXLX1xXN02idk-yU1T=AGb9JmGiLkfRGCJOxjCw-OWpfQ@mail.gmail.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 13 Oct 2020 11:29:44 +0800
+Message-ID: <CAMZfGtWhnr9_m1HSnMt9QxcT_q8XCMvbsxv9ZgzXP9D8B0qLsQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
+        Mike Rapoport <rppt@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The previous patch removed wait_on_page_locked_async(), so inline
-__wait_on_page_locked_async into __lock_page_async().
+On Tue, Oct 13, 2020 at 5:47 AM Cong Wang <xiyou.wangcong@gmail.com> wrote:
+>
+> On Sun, Oct 11, 2020 at 9:22 PM Muchun Song <songmuchun@bytedance.com> wr=
+ote:
+> >
+> > On Mon, Oct 12, 2020 at 2:39 AM Cong Wang <xiyou.wangcong@gmail.com> wr=
+ote:
+> > >
+> > > On Sat, Oct 10, 2020 at 3:39 AM Muchun Song <songmuchun@bytedance.com=
+> wrote:
+> > > >
+> > > > The amount of memory allocated to sockets buffer can become signifi=
+cant.
+> > > > However, we do not display the amount of memory consumed by sockets
+> > > > buffer. In this case, knowing where the memory is consumed by the k=
+ernel
+> > >
+> > > We do it via `ss -m`. Is it not sufficient? And if not, why not addin=
+g it there
+> > > rather than /proc/meminfo?
+> >
+> > If the system has little free memory, we can know where the memory is v=
+ia
+> > /proc/meminfo. If a lot of memory is consumed by socket buffer, we cann=
+ot
+> > know it when the Sock is not shown in the /proc/meminfo. If the unaware=
+ user
+> > can't think of the socket buffer, naturally they will not `ss -m`. The
+> > end result
+>
+> Interesting, we already have a few counters related to socket buffers,
+> are you saying these are not accounted in /proc/meminfo either?
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- mm/filemap.c | 53 ++++++++++++++++++++++------------------------------
- 1 file changed, 22 insertions(+), 31 deletions(-)
+Yeah, these are not accounted for in /proc/meminfo.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ac2dfa857568..a3c299d6a2b6 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1224,36 +1224,6 @@ int wait_on_page_bit_killable(struct page *page, int bit_nr)
- }
- EXPORT_SYMBOL(wait_on_page_bit_killable);
- 
--static int __wait_on_page_locked_async(struct page *page,
--				       struct wait_page_queue *wait, bool set)
--{
--	struct wait_queue_head *q = page_waitqueue(page);
--	int ret = 0;
--
--	wait->page = page;
--	wait->bit_nr = PG_locked;
--
--	spin_lock_irq(&q->lock);
--	__add_wait_queue_entry_tail(q, &wait->wait);
--	SetPageWaiters(page);
--	if (set)
--		ret = !trylock_page(page);
--	else
--		ret = PageLocked(page);
--	/*
--	 * If we were succesful now, we know we're still on the
--	 * waitqueue as we're still under the lock. This means it's
--	 * safe to remove and return success, we know the callback
--	 * isn't going to trigger.
--	 */
--	if (!ret)
--		__remove_wait_queue(q, &wait->wait);
--	else
--		ret = -EIOCBQUEUED;
--	spin_unlock_irq(&q->lock);
--	return ret;
--}
--
- /**
-  * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
-  * @page: The page to wait for.
-@@ -1421,7 +1391,28 @@ EXPORT_SYMBOL_GPL(__lock_page_killable);
- 
- int __lock_page_async(struct page *page, struct wait_page_queue *wait)
- {
--	return __wait_on_page_locked_async(page, wait, true);
-+	struct wait_queue_head *q = page_waitqueue(page);
-+	int ret = 0;
-+
-+	wait->page = page;
-+	wait->bit_nr = PG_locked;
-+
-+	spin_lock_irq(&q->lock);
-+	__add_wait_queue_entry_tail(q, &wait->wait);
-+	SetPageWaiters(page);
-+	ret = !trylock_page(page);
-+	/*
-+	 * If we were succesful now, we know we're still on the
-+	 * waitqueue as we're still under the lock. This means it's
-+	 * safe to remove and return success, we know the callback
-+	 * isn't going to trigger.
-+	 */
-+	if (!ret)
-+		__remove_wait_queue(q, &wait->wait);
-+	else
-+		ret = -EIOCBQUEUED;
-+	spin_unlock_irq(&q->lock);
-+	return ret;
- }
- 
- /*
--- 
-2.28.0
+> If yes, why are page frags so special here? If not, they are more
+> important than page frags, so you probably want to deal with them
+> first.
+>
+>
+> > is that we still don=E2=80=99t know where the memory is consumed. And w=
+e add the
+> > Sock to the /proc/meminfo just like the memcg does('sock' item in the c=
+group
+> > v2 memory.stat). So I think that adding to /proc/meminfo is sufficient.
+>
+> It looks like actually the socket page frag is already accounted,
+> for example, the tcp_sendmsg_locked():
+>
+>                         copy =3D min_t(int, copy, pfrag->size - pfrag->of=
+fset);
+>
+>                         if (!sk_wmem_schedule(sk, copy))
+>                                 goto wait_for_memory;
+>
 
+Yeah, it is already accounted for. But it does not represent real memory
+usage. This is just the total amount of charged memory.
+
+For example, if a task sends a 10-byte message, it only charges one
+page to memcg. But the system may allocate 8 pages. Therefore, it
+does not truly reflect the memory allocated by the page frag memory
+allocation path.
+
+>
+> >
+> > >
+> > > >  static inline void __skb_frag_unref(skb_frag_t *frag)
+> > > >  {
+> > > > -       put_page(skb_frag_page(frag));
+> > > > +       struct page *page =3D skb_frag_page(frag);
+> > > > +
+> > > > +       if (put_page_testzero(page)) {
+> > > > +               dec_sock_node_page_state(page);
+> > > > +               __put_page(page);
+> > > > +       }
+> > > >  }
+> > >
+> > > You mix socket page frag with skb frag at least, not sure this is exa=
+ctly
+> > > what you want, because clearly skb page frags are frequently used
+> > > by network drivers rather than sockets.
+> > >
+> > > Also, which one matches this dec_sock_node_page_state()? Clearly
+> > > not skb_fill_page_desc() or __skb_frag_ref().
+> >
+> > Yeah, we call inc_sock_node_page_state() in the skb_page_frag_refill().
+>
+> How is skb_page_frag_refill() possibly paired with __skb_frag_unref()?
+>
+> > So if someone gets the page returned by skb_page_frag_refill(), it must
+> > put the page via __skb_frag_unref()/skb_frag_unref(). We use PG_private
+> > to indicate that we need to dec the node page state when the refcount o=
+f
+> > page reaches zero.
+>
+> skb_page_frag_refill() is called on frags not within an skb, for instance=
+,
+> sk_page_frag_refill() uses it for a per-socket or per-process page frag.
+> But, __skb_frag_unref() is specifically used for skb frags, which are
+> supposed to be filled by skb_fill_page_desc() (page is allocated by drive=
+r).
+>
+> They are different things you are mixing them up, which looks clearly
+> wrong or at least misleading.
+
+Yeah, it looks a little strange. I just want to account for page frag
+allocations. So I have to use PG_private to distinguish the page
+from page frag or others in the __skb_frag_unref(). If the page is
+allocated from skb_page_frag_refill, we should decrease the
+statistics.
+
+Thanks.
+
+>
+> Thanks.
+
+
+
+--=20
+Yours,
+Muchun
