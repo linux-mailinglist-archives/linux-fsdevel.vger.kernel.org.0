@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 290BC28D34B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 19:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0416828D390
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 20:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgJMRuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 13:50:07 -0400
-Received: from mga03.intel.com ([134.134.136.65]:38217 "EHLO mga03.intel.com"
+        id S1728307AbgJMSXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 14:23:11 -0400
+Received: from mga09.intel.com ([134.134.136.24]:19465 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbgJMRuH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 13:50:07 -0400
-IronPort-SDR: 0bVIB4b9al1+98vMClZN/86V+AN6MUPLTDahY+eqVK1vDAJalSycNzHHqfJj8prqm4LczPmz4r
- 3dWFBXPtxuOg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="166018348"
+        id S1728103AbgJMSXK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 14:23:10 -0400
+IronPort-SDR: udyXnqnPbSXl1mM2a8yKkJg3sNEq8k/nrAZbudM8D0AHvb6i6516WkA62u3y21ivvMz0NeDVd8
+ u8jvvv8xuZFA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="166077870"
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="166018348"
+   d="scan'208";a="166077870"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 10:50:06 -0700
-IronPort-SDR: RtfS0n683qj2WKcFXi5f+Sxsg83G7f/gvXW1lfZeGtXMUzz4/Xw662bQpkKZCOgv0DLm9CpDfx
- KqcCCzHStxbQ==
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:23:09 -0700
+IronPort-SDR: y9TXXuh5e1eeoBKQ1hSVopxpD4BEK5Ev5lOHm/BcNe8BcXHU3kk2TbU2myxrXItgFCwaIMq9v9
+ GN7i39xYdIhQ==
 X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="346269023"
+   d="scan'208";a="346277003"
 Received: from murawskx-mobl.amr.corp.intel.com (HELO [10.209.9.29]) ([10.209.9.29])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 10:50:06 -0700
-Subject: Re: [PATCH RFC V3 2/9] x86/fpu: Refactor arch_set_user_pkey_access()
- for PKS support
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 11:23:09 -0700
+Subject: Re: [PATCH RFC V3 3/9] x86/pks: Enable Protection Keys Supervisor
+ (PKS)
 To:     ira.weiny@intel.com, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kselftest@vger.kernel.org
 References: <20201009194258.3207172-1-ira.weiny@intel.com>
- <20201009194258.3207172-3-ira.weiny@intel.com>
+ <20201009194258.3207172-4-ira.weiny@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -85,12 +85,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <7ed91cb5-93e5-67ad-ad35-8489d16d283f@intel.com>
-Date:   Tue, 13 Oct 2020 10:50:05 -0700
+Message-ID: <cfd8e361-9d5b-5b24-08d4-31ad3d392255@intel.com>
+Date:   Tue, 13 Oct 2020 11:23:08 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201009194258.3207172-3-ira.weiny@intel.com>
+In-Reply-To: <20201009194258.3207172-4-ira.weiny@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -100,29 +100,48 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
 > +/*
-> + * Update the pk_reg value and return it.
-
-How about:
-
-	Replace disable bits for @pkey with values from @flags.
-
-> + * Kernel users use the same flags as user space:
-> + *     PKEY_DISABLE_ACCESS
-> + *     PKEY_DISABLE_WRITE
+> + * PKS is independent of PKU and either or both may be supported on a CPU.
+> + * Configure PKS if the cpu supports the feature.
 > + */
-> +u32 update_pkey_val(u32 pk_reg, int pkey, unsigned int flags)
+
+Let's at least be consistent about CPU vs. cpu in a single comment. :)
+
+> +static void setup_pks(void)
 > +{
-> +	int pkey_shift = pkey * PKR_BITS_PER_PKEY;
+> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_SUPERVISOR_PKEYS))
+> +		return;
+> +	if (!cpu_feature_enabled(X86_FEATURE_PKS))
+> +		return;
+
+If you put X86_FEATURE_PKS in disabled-features.h, you can get rid of
+the explicit CONFIG_ check.
+
+> +	cr4_set_bits(X86_CR4_PKS);
+> +}
 > +
-> +	pk_reg &= ~(((1 << PKR_BITS_PER_PKEY) - 1) << pkey_shift);
-> +
-> +	if (flags & PKEY_DISABLE_ACCESS)
-> +		pk_reg |= PKR_AD_BIT << pkey_shift;
-> +	if (flags & PKEY_DISABLE_WRITE)
-> +		pk_reg |= PKR_WD_BIT << pkey_shift;
+>  /*
+>   * This does the hard work of actually picking apart the CPU stuff...
+>   */
+> @@ -1544,6 +1558,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+>  
+>  	x86_init_rdrand(c);
+>  	setup_pku(c);
+> +	setup_pks();
+>  
+>  	/*
+>  	 * Clear/Set all flags overridden by options, need do it
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 6c974888f86f..1b9bc004d9bc 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -822,6 +822,8 @@ config ARCH_USES_HIGH_VMA_FLAGS
+>  	bool
+>  config ARCH_HAS_PKEYS
+>  	bool
+> +config ARCH_HAS_SUPERVISOR_PKEYS
+> +	bool
+>  
+>  config PERCPU_STATS
+>  	bool "Collect percpu memory statistics"
+> 
 
-I still think this deserves two lines of comments:
-
-	/* Mask out old bit values */
-
-	/* Or in new values */
