@@ -2,145 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CE6128D4B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 314C828D4D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbgJMTly (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 15:41:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56000 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbgJMTlx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 15:41:53 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693C1C0613D0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:41:53 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id u8so1501116ejg.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=;
-        b=kTjS5KS3nYcf/wrvTsuRt1BvzGw557kJOoPvyzYoBgiqb4b8bKtbI2/mMLiZYyRjFR
-         J9ydTuu0x47x+MEvbUBFhFH3/2QgRWgMVRtg9k6OLuYDe131Mp/cuPa30fJMGhSFjepr
-         cqBBXWNROTwzHkSN49lY/psarWhxU27El5EYWXEJaiWvhTqo66L6QK98x3Y0Yvi2nF9y
-         UTW/CUag9LBP+VfPW+1mn8JfLpPCSXoAzeg5FBjWoJMu0+7UEW9Ka5T8iigFwOd+JDvR
-         rrctnvxFOZW164mxjZq4IMmZGZxG4l2jAUbsCf6skOMzcKIRAwJ8OakZ/jL0rfexuXSd
-         7ngQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=;
-        b=fyun4TAh7EC56qJ+rYEoHSZvkHqA1pkxKAPaJIDIAnXkVjrpDacSrMPz1r1q6tLLfc
-         nRpbu2rmmjBjnXBwH4mx4mhPb1UJqz7KdbL0bLzFXx0mCOxuQ7srtjzROFeEg3I6oekj
-         qSIcft6Ia/SOb1lq9ZMOL6X8LDnwL2cN+B5qwsVEswLZFGkF07fkJqFzNSDcaFMZ84PS
-         xPwEiJTeQJpzBzRmdB2azPe54d75np49UASreseBkL1SN1gYtZf7Ctx301kVMngoijfe
-         oxkpKIgaavcrfEz5xcBp8nUHZYxzyQUq51NDFb2wxjZ+EhnlWb5Vk4lHHNVaWf7jWtA1
-         t4LQ==
-X-Gm-Message-State: AOAM533+onK/QKGBbY+9351XOP27ctCQZd/2IIFb3SrBlloieCLx3yv3
-        w5FPGfhFXRil0/AvSuR+It9jczosaNviC2tCkNyrow==
-X-Google-Smtp-Source: ABdhPJxGxhMZ7o2BYtIDXOupUr3pSHVXck0tIwC9HMZ0nIbp0pU6AQKRljKqMwVkoxmX0BYp74elTVEnpYvo3LWFH24=
-X-Received: by 2002:a17:906:7e47:: with SMTP id z7mr1390518ejr.418.1602618108255;
- Tue, 13 Oct 2020 12:41:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201009195033.3208459-1-ira.weiny@intel.com> <20201009195033.3208459-34-ira.weiny@intel.com>
- <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com> <20201013193643.GK20115@casper.infradead.org>
-In-Reply-To: <20201013193643.GK20115@casper.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 13 Oct 2020 12:41:36 -0700
-Message-ID: <CAPcyv4gL70FcLe8az7ezmpcZV=bG0Cka7daKWcCdmV4GoenSZw@mail.gmail.com>
-Subject: Re: [PATCH RFC PKS/PMEM 33/58] fs/cramfs: Utilize new kmap_thread()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Weiny, Ira" <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S1727788AbgJMToH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 15:44:07 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48130 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726552AbgJMToH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 15:44:07 -0400
+IronPort-SDR: Bb3xQNoTS7eEQX6Z7Gxj35PFz5/+t3zi/NM9KV4iTUwjgrmz4U1Eq1eUgZ5DCRxujHA9DSdtKn
+ Ss/5ZNw06q8w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="230152748"
+X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
+   d="scan'208";a="230152748"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 12:44:06 -0700
+IronPort-SDR: FYowcW5TgJ16AeEVdPPfqP9JnqqAhtCUVoZalbg+Ng0NVMQ+PjkvJjQyjlNEqhvyQc+O17Jzhv
+ jpaAnfNZjUOw==
+X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
+   d="scan'208";a="530539601"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 12:44:05 -0700
+Date:   Tue, 13 Oct 2020 12:44:05 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nicolas Pitre <nico@fluxnic.net>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, linux-kselftest@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, bpf@vger.kernel.org,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
-        devel@driverdev.osuosl.org, linux-efi <linux-efi@vger.kernel.org>,
-        linux-mmc@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>,
-        target-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
-        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, intel-gfx@lists.freedesktop.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        linux-cachefs@redhat.com, samba-technical@lists.samba.org,
-        intel-wired-lan@lists.osuosl.org
-Content-Type: text/plain; charset="UTF-8"
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC V3 1/9] x86/pkeys: Create pkeys_common.h
+Message-ID: <20201013194405.GG2046448@iweiny-DESK2.sc.intel.com>
+References: <20201009194258.3207172-1-ira.weiny@intel.com>
+ <20201009194258.3207172-2-ira.weiny@intel.com>
+ <0305912d-891f-839a-e861-49f5fada62b1@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0305912d-891f-839a-e861-49f5fada62b1@intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 12:37 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Tue, Oct 13, 2020 at 11:44:29AM -0700, Dan Williams wrote:
-> > On Fri, Oct 9, 2020 at 12:52 PM <ira.weiny@intel.com> wrote:
-> > >
-> > > From: Ira Weiny <ira.weiny@intel.com>
-> > >
-> > > The kmap() calls in this FS are localized to a single thread.  To avoid
-> > > the over head of global PKRS updates use the new kmap_thread() call.
-> > >
-> > > Cc: Nicolas Pitre <nico@fluxnic.net>
-> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > ---
-> > >  fs/cramfs/inode.c | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-> > > index 912308600d39..003c014a42ed 100644
-> > > --- a/fs/cramfs/inode.c
-> > > +++ b/fs/cramfs/inode.c
-> > > @@ -247,8 +247,8 @@ static void *cramfs_blkdev_read(struct super_block *sb, unsigned int offset,
-> > >                 struct page *page = pages[i];
-> > >
-> > >                 if (page) {
-> > > -                       memcpy(data, kmap(page), PAGE_SIZE);
-> > > -                       kunmap(page);
-> > > +                       memcpy(data, kmap_thread(page), PAGE_SIZE);
-> > > +                       kunmap_thread(page);
-> >
-> > Why does this need a sleepable kmap? This looks like a textbook
-> > kmap_atomic() use case.
->
-> There's a lot of code of this form.  Could we perhaps have:
->
-> static inline void copy_to_highpage(struct page *to, void *vfrom, unsigned int size)
-> {
->         char *vto = kmap_atomic(to);
->
->         memcpy(vto, vfrom, size);
->         kunmap_atomic(vto);
-> }
->
-> in linux/highmem.h ?
+On Tue, Oct 13, 2020 at 10:46:16AM -0700, Dave Hansen wrote:
+> On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
+> > Protection Keys User (PKU) and Protection Keys Supervisor (PKS) work
+> > in similar fashions and can share common defines.
+> 
+> Could we be a bit less abstract?  PKS and PKU each have:
+> 1. A single control register
+> 2. The same number of keys
+> 3. The same number of bits in the register per key
+> 4. Access and Write disable in the same bit locations
+> 
+> That means that we can share all the macros that synthesize and
+> manipulate register values between the two features.
 
-Nice, yes, that could also replace the local ones in lib/iov_iter.c
-(memcpy_{to,from}_page())
+Sure.  Done.
+
+> 
+> > +++ b/arch/x86/include/asm/pkeys_common.h
+> > @@ -0,0 +1,11 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef _ASM_X86_PKEYS_INTERNAL_H
+> > +#define _ASM_X86_PKEYS_INTERNAL_H
+> > +
+> > +#define PKR_AD_BIT 0x1
+> > +#define PKR_WD_BIT 0x2
+> > +#define PKR_BITS_PER_PKEY 2
+> > +
+> > +#define PKR_AD_KEY(pkey)	(PKR_AD_BIT << ((pkey) * PKR_BITS_PER_PKEY))
+> 
+> Now that this has moved away from its use-site, it's a bit less
+> self-documenting.  Let's add a comment:
+> 
+> /*
+>  * Generate an Access-Disable mask for the given pkey.  Several of these
+>  * can be OR'd together to generate pkey register values.
+>  */
+
+Fair enough. done.
+
+> 
+> Once that's in place, along with the updated changelog:
+> 
+> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+
+Thanks,
+Ira
+
