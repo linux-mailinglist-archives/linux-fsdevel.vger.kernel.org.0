@@ -2,34 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EEC928D49C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE6128D4B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbgJMThM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 15:37:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
+        id S1729237AbgJMTly (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 15:41:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbgJMThL (ORCPT
+        with ESMTP id S1727328AbgJMTlx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 15:37:11 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAF0FC0613D0;
-        Tue, 13 Oct 2020 12:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=julNFvrjaFWkGS8+6W5JRZKKlBpdy19jf/hCoUdzdEM=; b=iOPFuszmnN+d5S+Ahd5uX1N4pM
-        9RF6NzOI8Sd5OvAHWw4A5T4V7HBzV5SYmEitcrT6L9uijzivpv3AAlrlQ+EeeMBwBERzfaRW96tDf
-        PKzX+Sl2uCT2ULOLsIaATERkdV1cx8TAcLFUKC9PDDXh3BUb0PThsEH5DExMv1qS5B9SNDc+ifGE8
-        i5adkcq3oTTGJk72Oatktad6H8mS4gZ84Snyq0JJxGsD2588n+HRQh2ps2O3qrgewJ3m2qt+GgsvN
-        M0CVp3vtxwWhumjXm1Xcpjg1G/4g9JvOqlT5q+mB/7fQkjMGPjGhStjIFbjEA/fecM1aATnK3yCCv
-        pha3ulKA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSQ6F-000768-Gq; Tue, 13 Oct 2020 19:36:43 +0000
-Date:   Tue, 13 Oct 2020 20:36:43 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
+        Tue, 13 Oct 2020 15:41:53 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 693C1C0613D0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:41:53 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id u8so1501116ejg.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=;
+        b=kTjS5KS3nYcf/wrvTsuRt1BvzGw557kJOoPvyzYoBgiqb4b8bKtbI2/mMLiZYyRjFR
+         J9ydTuu0x47x+MEvbUBFhFH3/2QgRWgMVRtg9k6OLuYDe131Mp/cuPa30fJMGhSFjepr
+         cqBBXWNROTwzHkSN49lY/psarWhxU27El5EYWXEJaiWvhTqo66L6QK98x3Y0Yvi2nF9y
+         UTW/CUag9LBP+VfPW+1mn8JfLpPCSXoAzeg5FBjWoJMu0+7UEW9Ka5T8iigFwOd+JDvR
+         rrctnvxFOZW164mxjZq4IMmZGZxG4l2jAUbsCf6skOMzcKIRAwJ8OakZ/jL0rfexuXSd
+         7ngQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jlOzF1QhqikCoQxsvfJV6M6Hjgbrow9dB9uNs1AoGLE=;
+        b=fyun4TAh7EC56qJ+rYEoHSZvkHqA1pkxKAPaJIDIAnXkVjrpDacSrMPz1r1q6tLLfc
+         nRpbu2rmmjBjnXBwH4mx4mhPb1UJqz7KdbL0bLzFXx0mCOxuQ7srtjzROFeEg3I6oekj
+         qSIcft6Ia/SOb1lq9ZMOL6X8LDnwL2cN+B5qwsVEswLZFGkF07fkJqFzNSDcaFMZ84PS
+         xPwEiJTeQJpzBzRmdB2azPe54d75np49UASreseBkL1SN1gYtZf7Ctx301kVMngoijfe
+         oxkpKIgaavcrfEz5xcBp8nUHZYxzyQUq51NDFb2wxjZ+EhnlWb5Vk4lHHNVaWf7jWtA1
+         t4LQ==
+X-Gm-Message-State: AOAM533+onK/QKGBbY+9351XOP27ctCQZd/2IIFb3SrBlloieCLx3yv3
+        w5FPGfhFXRil0/AvSuR+It9jczosaNviC2tCkNyrow==
+X-Google-Smtp-Source: ABdhPJxGxhMZ7o2BYtIDXOupUr3pSHVXck0tIwC9HMZ0nIbp0pU6AQKRljKqMwVkoxmX0BYp74elTVEnpYvo3LWFH24=
+X-Received: by 2002:a17:906:7e47:: with SMTP id z7mr1390518ejr.418.1602618108255;
+ Tue, 13 Oct 2020 12:41:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20201009195033.3208459-1-ira.weiny@intel.com> <20201009195033.3208459-34-ira.weiny@intel.com>
+ <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com> <20201013193643.GK20115@casper.infradead.org>
+In-Reply-To: <20201013193643.GK20115@casper.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 13 Oct 2020 12:41:36 -0700
+Message-ID: <CAPcyv4gL70FcLe8az7ezmpcZV=bG0Cka7daKWcCdmV4GoenSZw@mail.gmail.com>
+Subject: Re: [PATCH RFC PKS/PMEM 33/58] fs/cramfs: Utilize new kmap_thread()
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     "Weiny, Ira" <ira.weiny@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -70,57 +93,54 @@ Cc:     "Weiny, Ira" <ira.weiny@intel.com>,
         xen-devel <xen-devel@lists.xenproject.org>,
         linux-cachefs@redhat.com, samba-technical@lists.samba.org,
         intel-wired-lan@lists.osuosl.org
-Subject: Re: [PATCH RFC PKS/PMEM 33/58] fs/cramfs: Utilize new kmap_thread()
-Message-ID: <20201013193643.GK20115@casper.infradead.org>
-References: <20201009195033.3208459-1-ira.weiny@intel.com>
- <20201009195033.3208459-34-ira.weiny@intel.com>
- <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gL3jfw4d+SJGPqAD3Dp4F_K=X3domuN4ndAA1FQDGcPg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 11:44:29AM -0700, Dan Williams wrote:
-> On Fri, Oct 9, 2020 at 12:52 PM <ira.weiny@intel.com> wrote:
+On Tue, Oct 13, 2020 at 12:37 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Tue, Oct 13, 2020 at 11:44:29AM -0700, Dan Williams wrote:
+> > On Fri, Oct 9, 2020 at 12:52 PM <ira.weiny@intel.com> wrote:
+> > >
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > >
+> > > The kmap() calls in this FS are localized to a single thread.  To avoid
+> > > the over head of global PKRS updates use the new kmap_thread() call.
+> > >
+> > > Cc: Nicolas Pitre <nico@fluxnic.net>
+> > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > > ---
+> > >  fs/cramfs/inode.c | 10 +++++-----
+> > >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
+> > > index 912308600d39..003c014a42ed 100644
+> > > --- a/fs/cramfs/inode.c
+> > > +++ b/fs/cramfs/inode.c
+> > > @@ -247,8 +247,8 @@ static void *cramfs_blkdev_read(struct super_block *sb, unsigned int offset,
+> > >                 struct page *page = pages[i];
+> > >
+> > >                 if (page) {
+> > > -                       memcpy(data, kmap(page), PAGE_SIZE);
+> > > -                       kunmap(page);
+> > > +                       memcpy(data, kmap_thread(page), PAGE_SIZE);
+> > > +                       kunmap_thread(page);
 > >
-> > From: Ira Weiny <ira.weiny@intel.com>
-> >
-> > The kmap() calls in this FS are localized to a single thread.  To avoid
-> > the over head of global PKRS updates use the new kmap_thread() call.
-> >
-> > Cc: Nicolas Pitre <nico@fluxnic.net>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  fs/cramfs/inode.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-> > index 912308600d39..003c014a42ed 100644
-> > --- a/fs/cramfs/inode.c
-> > +++ b/fs/cramfs/inode.c
-> > @@ -247,8 +247,8 @@ static void *cramfs_blkdev_read(struct super_block *sb, unsigned int offset,
-> >                 struct page *page = pages[i];
-> >
-> >                 if (page) {
-> > -                       memcpy(data, kmap(page), PAGE_SIZE);
-> > -                       kunmap(page);
-> > +                       memcpy(data, kmap_thread(page), PAGE_SIZE);
-> > +                       kunmap_thread(page);
-> 
-> Why does this need a sleepable kmap? This looks like a textbook
-> kmap_atomic() use case.
+> > Why does this need a sleepable kmap? This looks like a textbook
+> > kmap_atomic() use case.
+>
+> There's a lot of code of this form.  Could we perhaps have:
+>
+> static inline void copy_to_highpage(struct page *to, void *vfrom, unsigned int size)
+> {
+>         char *vto = kmap_atomic(to);
+>
+>         memcpy(vto, vfrom, size);
+>         kunmap_atomic(vto);
+> }
+>
+> in linux/highmem.h ?
 
-There's a lot of code of this form.  Could we perhaps have:
-
-static inline void copy_to_highpage(struct page *to, void *vfrom, unsigned int size)
-{
-	char *vto = kmap_atomic(to);
-
-	memcpy(vto, vfrom, size);
-	kunmap_atomic(vto);
-}
-
-in linux/highmem.h ?
+Nice, yes, that could also replace the local ones in lib/iov_iter.c
+(memcpy_{to,from}_page())
