@@ -2,94 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DAF728C58A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 02:09:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A484628C6CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 03:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgJMAJE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 20:09:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58980 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726197AbgJMAJD (ORCPT
+        id S1728201AbgJMBeU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 21:34:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbgJMBeU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 20:09:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602547741;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LAP1T1JAnG2HJETBGKHtI+zO8NC5NvDJAklkJA95KlI=;
-        b=RkaHlUGRt6n4mr7sB4+32VnILxdwUrixAQkcZIBSOwaMwNFsmySWDPgFeno34DY2i5TI6Q
-        XRsbj/96gLYSuQoVCp3FFyQ5R8AcpCN8lYzF/elRn2anoxu9X2LDG4eP+axyrILEotWfzI
-        idrwNNICQfVKE+JbraQgWw+btVsYIJM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-499-XEu3x5wSOryDNKrHD3xpGA-1; Mon, 12 Oct 2020 20:08:59 -0400
-X-MC-Unique: XEu3x5wSOryDNKrHD3xpGA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D4CE71018F63;
-        Tue, 13 Oct 2020 00:08:57 +0000 (UTC)
-Received: from [10.3.114.107] (ovpn-114-107.phx2.redhat.com [10.3.114.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5B0B65C269;
-        Tue, 13 Oct 2020 00:08:56 +0000 (UTC)
-Subject: Re: [PATCH v3 RESEND] fcntl: Add 32bit filesystem mode
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     Peter Maydell <peter.maydell@linaro.org>,
-        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
-        Florian Weimer <fw@deneb.enyo.de>,
+        Mon, 12 Oct 2020 21:34:20 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47EA8C0613D0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 18:34:20 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id y12so16468903wrp.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 18:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m0fVYo23z5sDnIdO7CmhPP5/mdbbm0UqpjwBNjbmzHo=;
+        b=KdByimeexhgK1iSMzLpxP57NJAb2JWybo82tdWaJCPrSR7jPuYXzi7z6AI04ExzEDF
+         rns0T5/jh1vW9+BXPef9x3z9htEdn/PF5Z7GFYPlz549XuaDu8sz7EK1eqPynqoTEMlT
+         v9uozVeynaN7X7iAGyN1HO2j6/3NfcDmew2EU6yiRPSZDRG6mO/CPAWUN45x5PBNiqy3
+         0MirEi4xSdE7tG1kqjYNTiqVfEnwYmGNEoTLyOvJZST9etlU2L2kE1ZYKtLEvCDJhA46
+         9axx2nBVhBGLTW2YrUl7rO628XbQLNS5Y96xHh/B7ifPka+9/LJfE0iiuP9shnRstOda
+         sl7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=m0fVYo23z5sDnIdO7CmhPP5/mdbbm0UqpjwBNjbmzHo=;
+        b=bLW4ijcaXP6pLu6CzqMMi1hkhGfK8i+Uqskjxv276psw4WX3vmhtkDa5fFpWvqyQon
+         8s+Cwzwo/quA8k6WCaoHjG8UQ5oOT0WSbmWwU86vhTlEcPz+m30A6b4/Wz+olUmnB3Ot
+         yU1ID4jCPMcBZGJL/TXMrnq60whLsOZQT4T3bFtUtFzhqVw+Kco3SQlYy2sXlc1yWvBH
+         bmJHiF3WmMih+JWx5wSEcKzHzKffFSfEvdG1aMuZ5mA2uFyJuIZfb9pYUFKNZ2JUInsg
+         WMkXYILSurUaF7/fE6opRfsDnlsMxmN3lvvHEIU+4FGmWVxIxVUXhX3u681f6IAt0Bhw
+         qHoQ==
+X-Gm-Message-State: AOAM533OwogWdPrPeDp2OmOD2oaQJnxMxDPyvGmcHsYPWyZzPieO9MYd
+        sG88h/bfArz31S+65ISXgAxYqw==
+X-Google-Smtp-Source: ABdhPJylxMFP/0l6plAG1lC4wZxbS5FXIxuQm/csHMG5nqpO55kqKEuOOVOpMKsiWO9QwuFzHnQgrQ==
+X-Received: by 2002:adf:fd82:: with SMTP id d2mr33017560wrr.304.1602552858954;
+        Mon, 12 Oct 2020 18:34:18 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id d23sm24825325wmb.6.2020.10.12.18.34.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Oct 2020 18:34:18 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Andy Lutomirski <luto@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-References: <20201012220620.124408-1-linus.walleij@linaro.org>
-From:   Eric Blake <eblake@redhat.com>
-Organization: Red Hat, Inc.
-Message-ID: <e395753a-115c-57d1-4312-b28e5f0d6ebf@redhat.com>
-Date:   Mon, 12 Oct 2020 19:08:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Brian Geffon <bgeffon@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 0/6] mremap: move_vma() fixes
+Date:   Tue, 13 Oct 2020 02:34:10 +0100
+Message-Id: <20201013013416.390574-1-dima@arista.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201012220620.124408-1-linus.walleij@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/12/20 5:06 PM, Linus Walleij wrote:
-> It was brought to my attention that this bug from 2018 was
-> still unresolved: 32 bit emulators like QEMU were given
-> 64 bit hashes when running 32 bit emulation on 64 bit systems.
-> 
-> This adds a flag to the fcntl() F_GETFD and F_SETFD operations
-> to set the underlying filesystem into 32bit mode even if the
-> file handle was opened using 64bit mode without the compat
-> syscalls.
-> 
-> Programs that need the 32 bit file system behavior need to
-> issue a fcntl() system call such as in this example:
-> 
->    #define FD_32BIT_MODE 2
-> 
->    int main(int argc, char** argv) {
->      DIR* dir;
->      int err;
->      int fd;
-> 
->      dir = opendir("/boot");
->      fd = dirfd(dir);
->      err = fcntl(fd, F_SETFD, FD_32BIT_MODE);
+1 - seems to be historical issue on a rarely taken path
+2,3 - fixes related to the new mremap() flag
+5 - dax device/hugetlbfs possible issue
 
-This is a blind set, and wipes out FD_CLOEXEC. Better would be to do a 
-proper demonstration of the read-modify-write with F_GETFD that portable 
-programs will have to use in practice.
+4,6 - refactoring
 
+As those seems to be actual issues, sending this during the merge-window.
+
+(Changes to architecture code are in the 6 patch, but Cc'ing
+maintainers on cover for the context, I hope it's fine).
+
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Brian Geffon <bgeffon@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Will Deacon <will@kernel.org>
+
+Cc: linux-aio@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+
+Dmitry Safonov (6):
+  mm/mremap: Account memory on do_munmap() failure
+  mm/mremap: For MREMAP_DONTUNMAP check security_vm_enough_memory_mm()
+  mremap: Don't allow MREMAP_DONTUNMAP on special_mappings and aio
+  vm_ops: Rename .split() callback to .may_split()
+  mremap: Check if it's possible to split original vma
+  mm: Forbid splitting special mappings
+
+ arch/arm/kernel/vdso.c                    |  9 ----
+ arch/arm64/kernel/vdso.c                  | 41 ++-----------------
+ arch/mips/vdso/genvdso.c                  |  4 --
+ arch/s390/kernel/vdso.c                   | 11 +----
+ arch/x86/entry/vdso/vma.c                 | 17 --------
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  2 +-
+ drivers/dax/device.c                      |  4 +-
+ fs/aio.c                                  |  5 ++-
+ include/linux/mm.h                        |  5 ++-
+ ipc/shm.c                                 |  8 ++--
+ mm/hugetlb.c                              |  2 +-
+ mm/mmap.c                                 | 22 ++++++++--
+ mm/mremap.c                               | 50 +++++++++++------------
+ 13 files changed, 63 insertions(+), 117 deletions(-)
+
+
+base-commit: bbf5c979011a099af5dc76498918ed7df445635b
 -- 
-Eric Blake, Principal Software Engineer
-Red Hat, Inc.           +1-919-301-3226
-Virtualization:  qemu.org | libvirt.org
+2.28.0
 
