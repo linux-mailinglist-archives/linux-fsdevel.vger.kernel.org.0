@@ -2,102 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 314C828D4D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 718D728D4DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 21:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbgJMToH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Oct 2020 15:44:07 -0400
-Received: from mga07.intel.com ([134.134.136.100]:48130 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726552AbgJMToH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Oct 2020 15:44:07 -0400
-IronPort-SDR: Bb3xQNoTS7eEQX6Z7Gxj35PFz5/+t3zi/NM9KV4iTUwjgrmz4U1Eq1eUgZ5DCRxujHA9DSdtKn
- Ss/5ZNw06q8w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9773"; a="230152748"
-X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="230152748"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 12:44:06 -0700
-IronPort-SDR: FYowcW5TgJ16AeEVdPPfqP9JnqqAhtCUVoZalbg+Ng0NVMQ+PjkvJjQyjlNEqhvyQc+O17Jzhv
- jpaAnfNZjUOw==
-X-IronPort-AV: E=Sophos;i="5.77,371,1596524400"; 
-   d="scan'208";a="530539601"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2020 12:44:05 -0700
-Date:   Tue, 13 Oct 2020 12:44:05 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        id S1730339AbgJMTpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Oct 2020 15:45:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56638 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbgJMTpn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 13 Oct 2020 15:45:43 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94EBEC0613D0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:45:43 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id l24so698966edj.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 12:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zz37D07nBex4LXRsGO0eeoEF5U7Zs7MdOvVJudSqras=;
+        b=QVCTfmGMkYn1oWoGZZpsGwjnyAgSJvogqrPoMtEQB9Cw4phzdyL69I9T4OkhHTJqa6
+         a2fe37CLNljzqeSkUEGEmzMStvdcqrsFj+qdkHBoS+9hrDgEDRfWtJ0MQZ+X5yXeBhCa
+         1zGsJCYgsaQvAZ1B8SQOis1XtgWOgMJCDL/Z8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zz37D07nBex4LXRsGO0eeoEF5U7Zs7MdOvVJudSqras=;
+        b=iK8nvN/v3jbW7f/2rZa3q49w8mbHwfOYzZxvhOljAwf5INekB1vLY03JkK9Ycl8rJB
+         FM7UPykxcXDfJL0Bmveoc1rivlE/XoT8NXeMfUcWPi65ySoq4Cj6umfDEMAWCKf9JMoi
+         /5GcTFNSlIIfPwQUN3WJ5zfB3mJbjs0lSPSszOEm6snJt82xZdc4tk1pXuXePYQqUood
+         jolq0Rbh3zHRavAbEt5EWNEaejV0VQuhUDyVsteXAVqa8CinsBoq0CQEbpxz2gBXySKU
+         KWhUyubrSe5onDllNN7fA5XmqTEmshOPInTR9c498pA3YdjREjSVyRSq6kZHGIzAWrWx
+         NQwQ==
+X-Gm-Message-State: AOAM533mzBKHzJEShbC1CNIYrCx5xomyFy01NrFSEtzyQUjbDlFLdz6W
+        g8jY4FskfrxS/T4KU1xc//+T4Q==
+X-Google-Smtp-Source: ABdhPJxCrmFOwGq3qX7GfcYdHiczoNdh4mmaHubZt8CgKaHIAmUtY8CUbLj46QYhjPDpp81Nts0ffA==
+X-Received: by 2002:a05:6402:a4f:: with SMTP id bt15mr1260487edb.345.1602618342320;
+        Tue, 13 Oct 2020 12:45:42 -0700 (PDT)
+Received: from [192.168.1.149] (5.186.115.188.cgn.fibianet.dk. [5.186.115.188])
+        by smtp.gmail.com with ESMTPSA id bx24sm459542ejb.51.2020.10.13.12.45.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2020 12:45:41 -0700 (PDT)
+Subject: Re: [PATCH] kcmp: add separate Kconfig symbol for kcmp syscall
+To:     Matthew Wilcox <willy@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Cyrill Gorcunov <gorcunov@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC V3 1/9] x86/pkeys: Create pkeys_common.h
-Message-ID: <20201013194405.GG2046448@iweiny-DESK2.sc.intel.com>
-References: <20201009194258.3207172-1-ira.weiny@intel.com>
- <20201009194258.3207172-2-ira.weiny@intel.com>
- <0305912d-891f-839a-e861-49f5fada62b1@intel.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200710075632.14661-1-linux@rasmusvillemoes.dk>
+ <20200710155719.GN12769@casper.infradead.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <20a80bdc-7a5d-c08b-e27b-bea38c378b6c@rasmusvillemoes.dk>
+Date:   Tue, 13 Oct 2020 21:45:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0305912d-891f-839a-e861-49f5fada62b1@intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20200710155719.GN12769@casper.infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 10:46:16AM -0700, Dave Hansen wrote:
-> On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
-> > Protection Keys User (PKU) and Protection Keys Supervisor (PKS) work
-> > in similar fashions and can share common defines.
+On 10/07/2020 17.57, Matthew Wilcox wrote:
+> On Fri, Jul 10, 2020 at 09:56:31AM +0200, Rasmus Villemoes wrote:
+>> The ability to check open file descriptions for equality (without
+>> resorting to unreliable fstat() and fcntl(F_GETFL) comparisons) can be
+>> useful outside of the checkpoint/restore use case - for example,
+>> systemd uses kcmp() to deduplicate the per-service file descriptor
+>> store.
+>>
+>> Make it possible to have the kcmp() syscall without the full
+>> CONFIG_CHECKPOINT_RESTORE.
 > 
-> Could we be a bit less abstract?  PKS and PKU each have:
-> 1. A single control register
-> 2. The same number of keys
-> 3. The same number of bits in the register per key
-> 4. Access and Write disable in the same bit locations
+> If systemd is using it, is it even worth making it conditional any more?
+> Maybe for CONFIG_EXPERT builds, it could be de-selectable.
 > 
-> That means that we can share all the macros that synthesize and
-> manipulate register values between the two features.
 
-Sure.  Done.
+[hm, I dropped the ball, sorry for the necromancy]
 
-> 
-> > +++ b/arch/x86/include/asm/pkeys_common.h
-> > @@ -0,0 +1,11 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_X86_PKEYS_INTERNAL_H
-> > +#define _ASM_X86_PKEYS_INTERNAL_H
-> > +
-> > +#define PKR_AD_BIT 0x1
-> > +#define PKR_WD_BIT 0x2
-> > +#define PKR_BITS_PER_PKEY 2
-> > +
-> > +#define PKR_AD_KEY(pkey)	(PKR_AD_BIT << ((pkey) * PKR_BITS_PER_PKEY))
-> 
-> Now that this has moved away from its use-site, it's a bit less
-> self-documenting.  Let's add a comment:
-> 
-> /*
->  * Generate an Access-Disable mask for the given pkey.  Several of these
->  * can be OR'd together to generate pkey register values.
->  */
+Well, first, I don't want to change any defaults here, if that is to be
+done, it should be a separate patch.
 
-Fair enough. done.
+Second, yes, systemd uses it for the de-duplication, and for that reason
+recommends CONFIG_CHECKPOINT_RESTORE (at least, according to their
+README) - but I'm not aware of any daemons that actually make use of
+systemd's file descriptor store, so it's not really something essential
+to every systemd-based system out there. It would be nice if systemd
+could change its recommendation to just CONFIG_KCMP_SYSCALL.
 
-> 
-> Once that's in place, along with the updated changelog:
-> 
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+But it's also useful for others, e.g. I have some code that wants to
+temporarily replace stdin/stdout/stderr with some other file
+descriptors, but needs to preserve the '0 is a dup of 1, or not' state
+(i.e., is the same struct file) - that cannot reliably be determined
+from fstat()/lseek(SEEK_CUR)/F_GETFL or whatever else one could throw at
+an fd.
 
-Thanks,
-Ira
-
+Rasmus
