@@ -2,38 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E5628C770
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 05:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0130828C76D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Oct 2020 05:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbgJMDAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Oct 2020 23:00:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42430 "EHLO
+        id S1728134AbgJMDAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Oct 2020 23:00:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727888AbgJMDAO (ORCPT
+        with ESMTP id S1727888AbgJMDAM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Oct 2020 23:00:14 -0400
+        Mon, 12 Oct 2020 23:00:12 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 932C0C0613D0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 20:00:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5F1C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Oct 2020 20:00:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=/8Rftu4fyFRkPTSAjKBbIHFyrlcbHCKyLw7S1W1iqMA=; b=NXxFI1zzdgEpGIb48TEWAuVrHS
-        dgtp6yMXT6Ff7UQ/fzt0/a5DgeMNRxAmASN8fvck16nf/Y/r77GKUrlQ41fhWt3KYtibKpGpLoaBV
-        PUiy6RcCk7uKmWUO2p+qhake30M3D+qDZ7+8/JyXx05cwmkR6iUSvAYLRRRTEirwVZjqAhWU6HqB8
-        Zkn5myXuDSuEu25Sv8wZA7sfxjIcbr1Kny2mbrdp0QS4syDjIFvyTiaRUlj8R5fMeIVtHj6jNM3Zw
-        l4DHx4RPeS+Ih9qx+JX4i0MeDnG0G/yI8twGQciQKgpSDDiGKRygHbEPj62IL+qUucszJoddfh+X3
-        3t/sgF4Q==;
+        bh=Ih8tnOLsaNOt/q9S1R9N3cf3g48uk4OcBwP+xMJ2qQA=; b=Vq2ZB5RRNBTCNtbXX+3W0Iu3Zy
+        QP6oMO4ESFu5O9ZCLsnJiqrZiX57W32Xx2iibtwl+JMs/3e8Jd8XetB8uc5J+kyoMKV2PI4yfzI+i
+        qCfV1K8uFZk4XkvgEJR6VfFSfvbn3+UOry4lVBWxqHEGfpQZ5Ft4mnuOUQh0aNwADsvyYPB9TM8S7
+        c/x2aQoOrqmk8g5naYC193FMtqEAIDp/91Je9QXPhh7LpAREnyFLAElF1gsSUtKqVLxS4SFdyU5Qf
+        mxJ5wL9fL/YksOytdPPFjFO9Jo4KCpFFPiFlxZBzIaeehBU/qeQLu51+e1AmPaubhIzQ2q/N7XG/A
+        sNaU/ZrQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSAXp-00075l-RM; Tue, 13 Oct 2020 03:00:09 +0000
+        id 1kSAXq-00075p-2Y; Tue, 13 Oct 2020 03:00:10 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 1/3] mm: Pass a sleep state to put_and_wait_on_page_locked
-Date:   Tue, 13 Oct 2020 04:00:05 +0100
-Message-Id: <20201013030008.27219-2-willy@infradead.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org
+Subject: [PATCH 2/3] mm: Don't hold a page reference while waiting for unlock
+Date:   Tue, 13 Oct 2020 04:00:06 +0100
+Message-Id: <20201013030008.27219-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201013030008.27219-1-willy@infradead.org>
 References: <20201013030008.27219-1-willy@infradead.org>
@@ -43,105 +42,127 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is prep work for the next patch, but I think at least one of the
-current callers would prefer a killable sleep to an uninterruptible one.
+In the upcoming THP patch series, if we find a !Uptodate page, it
+is because of a read error.  In this case, we want to split the THP
+into smaller pages so we can handle the error in as granular a fashion
+as possible.  But xfstests generic/273 defeats this strategy by having
+500 threads all sleeping on the same page, each waiting for their turn
+to split the page.  None of them will ever succeed because splitting a
+page requires that you hold the only reference to it.
+
+To fix this, use put_and_wait_on_page_locked() to sleep without holding
+a reference.  Each of the readers will then go back and retry the
+page lookup.
+
+This requires a few changes since we now get the page lock a little
+earlier in generic_file_buffered_read().  This is unlikely to affect any
+normal workloads as pages in the page cache are generally uptodate and
+will not hit this path.  With the THP patch set and the readahead error
+injector, I see about a 25% performance improvement with this patch over
+an alternate approach which moves the page locking down.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/pagemap.h | 3 +--
- mm/filemap.c            | 7 +++++--
- mm/huge_memory.c        | 4 ++--
- mm/migrate.c            | 4 ++--
- 4 files changed, 10 insertions(+), 8 deletions(-)
+ mm/filemap.c | 51 ++++++++++++++-------------------------------------
+ 1 file changed, 14 insertions(+), 37 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 853733286138..a9ed9ac86e0f 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -618,8 +618,7 @@ static inline int wait_on_page_locked_killable(struct page *page)
- 	return wait_on_page_bit_killable(compound_head(page), PG_locked);
- }
- 
--extern void put_and_wait_on_page_locked(struct page *page);
--
-+int put_and_wait_on_page_locked(struct page *page, int state);
- void wait_on_page_writeback(struct page *page);
- extern void end_page_writeback(struct page *page);
- void wait_for_stable_page(struct page *page);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 0ef06d515532..f70227941627 100644
+index f70227941627..9916353f0f0d 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1265,20 +1265,23 @@ static int wait_on_page_locked_async(struct page *page,
+@@ -1254,14 +1254,6 @@ static int __wait_on_page_locked_async(struct page *page,
+ 	return ret;
+ }
+ 
+-static int wait_on_page_locked_async(struct page *page,
+-				     struct wait_page_queue *wait)
+-{
+-	if (!PageLocked(page))
+-		return 0;
+-	return __wait_on_page_locked_async(compound_head(page), wait, false);
+-}
+-
  /**
   * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
   * @page: The page to wait for.
-+ * @state: The sleep state (TASK_KILLABLE, TASK_UNINTERRUPTIBLE, etc).
-  *
-  * The caller should hold a reference on @page.  They expect the page to
-  * become unlocked relatively soon, but do not wish to hold up migration
-  * (for example) by holding the reference while waiting for the page to
-  * come unlocked.  After this function returns, the caller should not
-  * dereference @page.
-+ *
-+ * Return: 0 if the page was unlocked or -EINTR if interrupted by a signal.
-  */
--void put_and_wait_on_page_locked(struct page *page)
-+int put_and_wait_on_page_locked(struct page *page, int state)
- {
- 	wait_queue_head_t *q;
+@@ -2128,19 +2120,21 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 					put_page(page);
+ 					goto out;
+ 				}
+-				error = wait_on_page_locked_async(page,
+-								iocb->ki_waitq);
++				error = lock_page_async(page, iocb->ki_waitq);
++				if (error)
++					goto readpage_error;
++			} else if (iocb->ki_flags & IOCB_NOWAIT) {
++				put_page(page);
++				goto would_block;
+ 			} else {
+-				if (iocb->ki_flags & IOCB_NOWAIT) {
+-					put_page(page);
+-					goto would_block;
++				if (!trylock_page(page)) {
++					put_and_wait_on_page_locked(page,
++							TASK_KILLABLE);
++					goto find_page;
+ 				}
+-				error = wait_on_page_locked_killable(page);
+ 			}
+-			if (unlikely(error))
+-				goto readpage_error;
+ 			if (PageUptodate(page))
+-				goto page_ok;
++				goto uptodate;
  
- 	page = compound_head(page);
- 	q = page_waitqueue(page);
--	wait_on_page_bit_common(q, page, PG_locked, TASK_UNINTERRUPTIBLE, DROP);
-+	return wait_on_page_bit_common(q, page, PG_locked, state, DROP);
- }
+ 			if (inode->i_blkbits == PAGE_SHIFT ||
+ 					!mapping->a_ops->is_partially_uptodate)
+@@ -2148,14 +2142,13 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 			/* pipes can't handle partially uptodate pages */
+ 			if (unlikely(iov_iter_is_pipe(iter)))
+ 				goto page_not_up_to_date;
+-			if (!trylock_page(page))
+-				goto page_not_up_to_date;
+ 			/* Did it get truncated before we got the lock? */
+ 			if (!page->mapping)
+-				goto page_not_up_to_date_locked;
++				goto page_not_up_to_date;
+ 			if (!mapping->a_ops->is_partially_uptodate(page,
+ 							offset, iter->count))
+-				goto page_not_up_to_date_locked;
++				goto page_not_up_to_date;
++uptodate:
+ 			unlock_page(page);
+ 		}
+ page_ok:
+@@ -2223,28 +2216,12 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		continue;
  
- /**
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 7ff29cc3d55c..4b85729016b2 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1398,7 +1398,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
- 		if (!get_page_unless_zero(page))
- 			goto out_unlock;
- 		spin_unlock(vmf->ptl);
--		put_and_wait_on_page_locked(page);
-+		put_and_wait_on_page_locked(page, TASK_UNINTERRUPTIBLE);
- 		goto out;
- 	}
- 
-@@ -1434,7 +1434,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
- 		if (!get_page_unless_zero(page))
- 			goto out_unlock;
- 		spin_unlock(vmf->ptl);
--		put_and_wait_on_page_locked(page);
-+		put_and_wait_on_page_locked(page, TASK_UNINTERRUPTIBLE);
- 		goto out;
- 	}
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 941b89383cf3..ac18bbbd8347 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -335,7 +335,7 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
- 	if (!get_page_unless_zero(page))
- 		goto out;
- 	pte_unmap_unlock(ptep, ptl);
--	put_and_wait_on_page_locked(page);
-+	put_and_wait_on_page_locked(page, TASK_UNINTERRUPTIBLE);
- 	return;
- out:
- 	pte_unmap_unlock(ptep, ptl);
-@@ -369,7 +369,7 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
- 	if (!get_page_unless_zero(page))
- 		goto unlock;
- 	spin_unlock(ptl);
--	put_and_wait_on_page_locked(page);
-+	put_and_wait_on_page_locked(page, TASK_UNINTERRUPTIBLE);
- 	return;
- unlock:
- 	spin_unlock(ptl);
+ page_not_up_to_date:
+-		/* Get exclusive access to the page ... */
+-		if (iocb->ki_flags & IOCB_WAITQ)
+-			error = lock_page_async(page, iocb->ki_waitq);
+-		else
+-			error = lock_page_killable(page);
+-		if (unlikely(error))
+-			goto readpage_error;
+-
+-page_not_up_to_date_locked:
+ 		/* Did it get truncated before we got the lock? */
+ 		if (!page->mapping) {
+ 			unlock_page(page);
+ 			put_page(page);
+ 			continue;
+ 		}
+-
+-		/* Did somebody else fill it already? */
+-		if (PageUptodate(page)) {
+-			unlock_page(page);
+-			goto page_ok;
+-		}
+-
+ readpage:
+ 		if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT)) {
+ 			unlock_page(page);
 -- 
 2.28.0
 
