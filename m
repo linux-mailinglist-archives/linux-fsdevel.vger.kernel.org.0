@@ -2,70 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4713F28E591
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91FB228E603
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 20:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbgJNRmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 13:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33056 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbgJNRmA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:42:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2082CC061755;
-        Wed, 14 Oct 2020 10:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=N5SCUctooryolwHPCm/eaPiniU4nslCQLvVL8GRMMPE=; b=Nc/SMhiwi1YF/6L0yYbXv3s43a
-        JZm89V8C74lfBiWNgv5Hq7T5THHPuaOQOapQYHXSbPK9qysoaGf18fBkJCIIw8TRkRuVqL+/iqz1E
-        +Ycw8oXw5D+sTmZZMDJywSUG0DozxfB6spXavnr5NMR6njaFvxc6UvVYhBkxVY7+enq5rrBEB3g8X
-        CIKbqk5IUUkcfnUyugWUVc2+UNNe3/+GZ7UrlSofnOL4spxFEnMckFwKnpCjOq4a5fVcr2mQxGmiR
-        dKMkiqelTIM8REmIGJ20qmasTq1OPlcKdKrw5RvBi92LlF0pCRwTzAR0oFc2VWmCjl2dxFbANrh+L
-        cYMC/NQA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSkmk-0005lv-Fc; Wed, 14 Oct 2020 17:41:58 +0000
-Date:   Wed, 14 Oct 2020 18:41:58 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 09/14] iomap: Change iomap_write_begin calling convention
-Message-ID: <20201014174158.GS20115@casper.infradead.org>
-References: <20201014030357.21898-1-willy@infradead.org>
- <20201014030357.21898-10-willy@infradead.org>
- <20201014164744.GK9832@magnolia>
+        id S1728912AbgJNSIO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 14:08:14 -0400
+Received: from namei.org ([65.99.196.166]:35594 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727369AbgJNSIN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 14:08:13 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 09EI7CpI027390;
+        Wed, 14 Oct 2020 18:07:13 GMT
+Date:   Thu, 15 Oct 2020 05:07:12 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     linux-kernel@vger.kernel.org,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v21 07/12] landlock: Support filesystem access-control
+In-Reply-To: <20201008153103.1155388-8-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.2010150504360.26012@namei.org>
+References: <20201008153103.1155388-1-mic@digikod.net> <20201008153103.1155388-8-mic@digikod.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201014164744.GK9832@magnolia>
+Content-Type: multipart/mixed; boundary="1665246916-928235661-1602698835=:26012"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 09:47:44AM -0700, Darrick J. Wong wrote:
-> > -static int
-> > -iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
-> > -		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
-> > +static ssize_t iomap_write_begin(struct inode *inode, loff_t pos, loff_t len,
-> > +		unsigned flags, struct page **pagep, struct iomap *iomap,
-> 
-> loff_t len?  You've been using size_t (ssize_t?) for length elsewhere,
-> can't return more than ssize_t, and afaik MAX_RW_COUNT will never go
-> larger than 2GB so I'm confused about types here...?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Yes, you're right.  This one should be size_t.
+--1665246916-928235661-1602698835=:26012
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-> >  	if (page_ops && page_ops->page_prepare) {
-> > +		if (len > UINT_MAX)
-> > +			len = UINT_MAX;
-> 
-> I'm not especially familiar with page_prepare (since it's a gfs2 thing);
-> why do you clamp len to UINT_MAX here?
+On Thu, 8 Oct 2020, Mickaël Salaün wrote:
 
-The len parameter of ->page_prepare is an unsigned int.  I don't want
-a 1<<32+1 byte I/O to be seen as a 1 byte I/O.  We could upgrade the
-parameter to size_t from unsigned int?
+> +config ARCH_EPHEMERAL_STATES
+> +	def_bool n
+> +	help
+> +	  An arch should select this symbol if it does not keep an internal kernel
+> +	  state for kernel objects such as inodes, but instead relies on something
+> +	  else (e.g. the host kernel for an UML kernel).
+> +
 
+This is used to disable Landlock for UML, correct? I wonder if it could be 
+more specific: "ephemeral states" is a very broad term.
+
+How about something like ARCH_OWN_INODES ?
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--1665246916-928235661-1602698835=:26012--
