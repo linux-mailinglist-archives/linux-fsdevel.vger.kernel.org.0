@@ -2,183 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D29E28D995
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 07:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07F4D28DB14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 10:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730283AbgJNFev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 01:34:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727849AbgJNFev (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 01:34:51 -0400
-Received: from kernel.org (unknown [87.71.73.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A671F2177B;
-        Wed, 14 Oct 2020 05:34:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602653690;
-        bh=d4wYMD9zxWGP4ViJqAYsTUccVHhOPjIdZNDpBMkcIPA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JzTNGhOiNyXtNTueXhjUVMEfQTx5q+4aBDwojw4g95GwoRgomkCxd+hVvWVnaqAjE
-         L8pOvlVoMurMUNwWQqJvFWzplk02ZoX2HEAQlaZc6iqUx8dj9+KMw47anVntrWxplH
-         0gT3KWk7AWi2bc4K2wN8bQTJha+ec7Hqxd8ZD09Y=
-Date:   Wed, 14 Oct 2020 08:34:29 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Muchun Song <songmuchun@bytedance.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        id S1729228AbgJNITy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 04:19:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58694 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729051AbgJNITj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 04:19:39 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1D1C045867
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 22:51:12 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id m22so2393885ots.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 22:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=faBNNQU2Gow7EJE7ViAaiknvkVVBrKWgjAapru1OHTQ=;
+        b=T2AAuHUzhO6Bc7SeY8PGLrIaulabOmxasZjQry4bCmgWuaCjV078E3R6rmWr201xBa
+         V3h3uI09VPhFRW2ljzHp938crm6aN/P4if38h/GPNpw+J9QzZ/il3ap71O9NdtSxkmtO
+         Nj4eOrQwOVydJ5YUbRcKpri+aZDytO5btWoVcHw9KDeKKSyiKqlwsrioQVgq+0k0ua1a
+         cR4FIX+kbhqv6kq8PrB0scWmPzpzvlQr9jduvKbEIQxIOPLXbyOGI7P0FRp12Tcx0vio
+         hGWYERl9PUcLq+ohtchVXiqPNmoTxhscW6oJztEx+IBtxRel7VHyEnSSxStIjjyFtbay
+         4/JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=faBNNQU2Gow7EJE7ViAaiknvkVVBrKWgjAapru1OHTQ=;
+        b=FS2UOu1+W8RfWsq8BjZvjyXcSraBW5ALUoCEb8C1hN3ZL8VNqOTH3jm+ks2QyeI1Ap
+         aAr36q7go24BlyKs150nZ9TQbM4GZuZUAy3+9o4ACFMtOryUR01/Yq4TFD5s0ItiBeor
+         iTabv0TUoWdb1mM7oYfWfFw12f0tYnHPOxxFnCeA3P14RAeHfQtYJuJOE0FTmZm9wCsA
+         2jc0ElekIfuqmtt57cA7GQj1FPDi+oRuPNATEQnQ5HYac/hv4FFx29PEAm4k9ijloyVx
+         veERVqV1g4mhWxQ+17msIbYK8ex9sSXT8oy20F6LqGPF3jKSNCSLnJNXZ7sH9SY/SHse
+         701w==
+X-Gm-Message-State: AOAM5325IQcBQSqK0niVlljtY8C1XFrqkkZcy4YOmdG3zxGlRNyJNSm3
+        vXA1qwCvqWaAyvlmCvAV801z64yVK2bruA==
+X-Google-Smtp-Source: ABdhPJxWfHTIfesWLn9sHIIL5TOnK6FKK6hZMbqDYuAU8LhtUsF/A/jstsh1MA2To9LghemduC2hLg==
+X-Received: by 2002:a05:6830:2314:: with SMTP id u20mr2342824ote.259.1602654671277;
+        Tue, 13 Oct 2020 22:51:11 -0700 (PDT)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id o14sm869102ota.63.2020.10.13.22.51.09
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Tue, 13 Oct 2020 22:51:09 -0700 (PDT)
+Date:   Tue, 13 Oct 2020 22:50:57 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Shakeel Butt <shakeelb@google.com>,
-        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
-        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-Message-ID: <20201014053429.GI4251@kernel.org>
-References: <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
- <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
- <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
- <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
- <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com>
- <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
- <20201013080906.GD4251@kernel.org>
- <e059f4b1-e51b-0277-e96b-c178d0cf4fd7@infradead.org>
- <20201013151215.GG4251@kernel.org>
- <3aa9ff1a-e04f-517c-5ebb-2c27804c143a@infradead.org>
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 0/4] Some more lock_page work..
+In-Reply-To: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
+Message-ID: <alpine.LSU.2.11.2010132230060.2516@eggly.anvils>
+References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3aa9ff1a-e04f-517c-5ebb-2c27804c143a@infradead.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 08:21:13AM -0700, Randy Dunlap wrote:
-> On 10/13/20 8:12 AM, Mike Rapoport wrote:
-> > On Tue, Oct 13, 2020 at 07:43:59AM -0700, Randy Dunlap wrote:
-> >> On 10/13/20 1:09 AM, Mike Rapoport wrote:
-> >>> On Mon, Oct 12, 2020 at 05:53:01PM +0800, Muchun Song wrote:
-> >>>> On Mon, Oct 12, 2020 at 5:24 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> >>>>>
-> >>>>> On 10/12/20 10:39 AM, Muchun Song wrote:
-> >>>>>> On Mon, Oct 12, 2020 at 3:42 PM Eric Dumazet <edumazet@google.com> wrote:
-> >>>>
-> >>>> We are not complaining about TCP using too much memory, but how do
-> >>>> we know that TCP uses a lot of memory. When I firstly face this problem,
-> >>>> I do not know who uses the 25GB memory and it is not shown in the /proc/meminfo.
-> >>>> If we can know the amount memory of the socket buffer via /proc/meminfo, we
-> >>>> may not need to spend a lot of time troubleshooting this problem. Not everyone
-> >>>> knows that a lot of memory may be used here. But I believe many people
-> >>>> should know /proc/meminfo to confirm memory users.
-> >>>
-> >>> If I undestand correctly, the problem you are trying to solve is to
-> >>> simplify troubleshooting of memory usage for people who may not be aware
-> >>> that networking stack can be a large memory consumer.
-> >>>
-> >>> For that a paragraph in 'man 5 proc' maybe a good start:
-> >>>
-> >>> >From ddbcf38576d1a2b0e36fe25a27350d566759b664 Mon Sep 17 00:00:00 2001
-> >>> From: Mike Rapoport <rppt@linux.ibm.com>
-> >>> Date: Tue, 13 Oct 2020 11:07:35 +0300
-> >>> Subject: [PATCH] proc.5: meminfo: add not anout network stack memory
-> >>>  consumption
-> >>>
-> >>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> >>> ---
-> >>>  man5/proc.5 | 8 ++++++++
-> >>>  1 file changed, 8 insertions(+)
-> >>>
-> >>> diff --git a/man5/proc.5 b/man5/proc.5
-> >>> index ed309380b..8414676f1 100644
-> >>> --- a/man5/proc.5
-> >>> +++ b/man5/proc.5
-> >>> @@ -3478,6 +3478,14 @@ Except as noted below,
-> >>>  all of the fields have been present since at least Linux 2.6.0.
-> >>>  Some fields are displayed only if the kernel was configured
-> >>>  with various options; those dependencies are noted in the list.
-> >>> +.IP
-> >>> +Note that significant part of memory allocated by the network stack
-> >>> +is not accounted in the file.
-> >>> +The memory consumption of the network stack can be queried
-> >>> +using
-> >>> +.IR /proc/net/sockstat
-> >>> +or
-> >>> +.BR ss (8)
-> >>>  .RS
-> >>>  .TP
-> >>>  .IR MemTotal " %lu"
-> >>
-> >> Hi Mike,
-> >>
-> >> Could you tell us what units those values are in?
-> >> or is that already explained somewhere else?
-> > 
-> > It is described a few lines above and anyway, "MemTotal" is a part of
-> > the diff context ;-)
-> 
-> with no units AFAICT.
-> 
-> But I was unclear. I wasn't referring to /proc/meminfo, but instead
-> to /proc/net/sockstat and its units:
-> 
-> sockets: used 1224
-> TCP: inuse 11 orphan 1 tw 1 alloc 26 mem 3
-> UDP: inuse 4 mem 2
-> UDPLITE: inuse 0
-> RAW: inuse 0
-> FRAG: inuse 0 memory 0
-> 
-> E.g., for TCP and UDP, are those socket counts or some unit of memory?
-> If units of memory, what unit size?
+On Tue, 13 Oct 2020, Linus Torvalds wrote:
 
-Ah, these are in 4k pages, AFAIU.
-And, as it seems /proc/net/sockstat lacks a description in proc.5 at
-all...
-
-> thanks.
-> -- 
-> ~Randy
+> So this is all just preliminary, but I'd really like to have people
+> think more about the page fault handling of the page lock, and I have
+> a small experimental series of patches for people to look at and maybe
+> get the discussion started.
 > 
+> The three first patches are really just fairly trivial cleanups. They
+> also likely don't really matter, because the *bulk* of all faults -
+> particularly the ones that really shouldn't need any page locking
+> games - should be all about just "filemap_map_pages()". Which is that
+> optimistic "let's insert pages from the page cache as efficiently as
+> possible" case.
 > 
+> That's how all the normal private pages that don't actually get
+> modified (so executables, but also any load that uses mmap as a
+> zero-copy read) should generally get populated.
+> 
+> That code doesn't actually do "lock_page()" itself (because it all
+> runs under the RCU read lock), but it does to do a trylock, and give
+> up if the page was locked. Which is fine as long as you don't get any
+> contention, but any concurrent faults of the same page in different
+> address spaces will then just mess with other faulters and cause it to
+> fall out of the fast path.
+> 
+> And looking at that code, I'm pretty sure it doesn't actually *need*
+> the page lock. It wants the page lock for two reasons:
+> 
+>  - the truncation worries (which may or may not be relevant - xfs
+> wraps the map_pages with xfs_ilock)
+> 
+>  - compound page worries (sub-page mapcount updates and page splitting issues)
+> 
+> The compound page case I'm not sure about, but it's probably fine to
+> just lock the page in that case - once we end up actually just mapping
+> a hugepage, the number of page faults should be small enough that it
+> probably doesn't matter.
+> 
+> The truncation thing could be handled like xfs does, but honestly, I
+> think it can equally well be handled by just doing some operations in
+> the right order, and double-checking that we don't race with truncate.
+> IOW, first increasing the page mapcount, and then re-checking that the
+> page still isn't locked and the mapping is still valid, and reachable
+> in the xarray.
+> 
+> Because we can still just drop out of this loop and not populate the
+> page table if we see anything odd going on, but if *this* code doesn't
+> bother getting the page lock (and we make the COW code not do it
+> either), then in all the normal cases you will never have that "fall
+> out of the common case".
+> 
+> IOW, I think right now the thing that makes us fall back to the actual
+> page lock is this code itself: by doing the 'trylock", it will make
+> other users of the same page not able to do the fast-case. And I think
+> the trylock is unnecessary.
+> 
+> ANYWAY. The patch I have here isn't actually that "just do the checks
+> in the right order" patch. No, it's a dirty nasty "a private mapping
+> doesn't need to be so careful" patch. Ugly, brutish and nasty. Not the
+> right thing at all. But I'm doing it here simply because I wanted to
+> test it out and get people to look at this.
+> 
+> This code is "tested" in the sense that it builds for me, and I'm
+> actually running it right now. But I haven't actually stress-tested it
+> or tried to see if it gets rid of some page lock heavy cases.
+> 
+> Comments?
 
--- 
-Sincerely yours,
-Mike.
+I haven't even read a word you wrote yet (okay, apart from "Comments?"),
+nor studied the patches; but have put them under my usual load, and the
+only adjustment I've needed so far is
+
+--- 5.9.0/mm/khugepaged.c	2020-10-11 14:15:50.000000000 -0700
++++ linux/mm/khugepaged.c	2020-10-13 21:44:26.000000000 -0700
+@@ -1814,7 +1814,7 @@ static void collapse_file(struct mm_stru
+ 		xas_set(&xas, index);
+ 
+ 		VM_BUG_ON_PAGE(page != xas_load(&xas), page);
+-		VM_BUG_ON_PAGE(page_mapped(page), page);
++//		VM_BUG_ON_PAGE(page_mapped(page), page);
+ 
+ 		/*
+ 		 * The page is expected to have page_count() == 3:
+
+But it's going to take a lot of diligence to get confident with them:
+I have no grip on all the places in which we do assume page lock held.
+
+The place to start looking will be 2.6.23's git history, in which
+Nick IIRC introduced VM_FAULT_LOCKED: I thought it was an essential
+step on the way to speculative page cache, but may be misremembering.
+
+Or maybe when I actually read what you've said, I'll find that you
+have already done that research.
+
+Hugh
