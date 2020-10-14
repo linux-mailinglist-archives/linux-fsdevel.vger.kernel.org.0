@@ -2,121 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F6128E4F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC4AD28E4F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:02:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbgJNRAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 13:00:31 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:33006 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728639AbgJNRAb (ORCPT
+        id S1731120AbgJNRCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 13:02:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730009AbgJNRCM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:00:31 -0400
-Received: by mail-il1-f200.google.com with SMTP id d6so35625ilo.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 10:00:30 -0700 (PDT)
+        Wed, 14 Oct 2020 13:02:12 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC908C061755
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 10:02:11 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id k21so2274594ioa.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 10:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=1FmEIkrqfL0T3fOHDc6OHU2lmhTkM3AhohF3xQ/xB7E=;
+        b=nCDOAyyXhiRZZz7rZ9wEUHslojMwI/MOxw3Lqtua2iKHYhXaotVSr69c6pqSs3JDno
+         rbr5GpWiK0EIzhRtNZ9JiywfQClnnP2K4YumKU0T1RM048fq9rOlrkCw/hKjK9omGufF
+         b7/VGcG7jMw8dHgKIeFxZnexkgwDEQyf2fBRXWWPqLse5diN0XaK8n4ux1Jsp4OImgbF
+         BUHvFyPwqLDJRpSHpQXTEi9YJw6YGFmJR3mtFhPKyQXo2ZC5l6zhLLWW7tMIWGg2kz9C
+         p/q/mXzv/8HGDQfX7cD8HoderJFuPXQJXMGxpKj8yxJX58xe1QGCWilXPbbc03Dx6GRr
+         VJIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=RnJBl0Hmt3VbdPCKojapfwyMp88sA/Fx2rpPy2khylI=;
-        b=Cs+s8MQLElpVyWeQ719NiC3NzyHrZXgliVUr00gb897BOOVdEIxRcayUR6hZHzglbn
-         AONOEFl2rtt8PnVDAnLLOcM+1jHYJVl72VNBemF4+w1pfnouYz1zUlA/rKJJtsXTw9TZ
-         eVsZCRfcxE1fxzx9i5ZNsjm+SgFAWTCy4BhtUVxeY6a/3FaVwdgzou+E9f7PcCm6LECE
-         F9rIUTH9wBJX2s/k6putAP13VnYIpGIGktWjWVQrE1ERx2OFg595bu9kV99mxRMJkeGB
-         nJNiUC4SzDjh29veZ5sJydqCxIoIs6+C9Rk1jHiSwr9qaGnoj3oKF/1E8OfeCwXKulcu
-         MLMw==
-X-Gm-Message-State: AOAM531uZhw/iu/kX5ppdm8lIXelMKTHUPuytFWpUNLt3zLDRD92yRHC
-        UjDFD12nejDQa/f2g/eHkhRHcWze+skjJj9GZOlMYXofL7Wl
-X-Google-Smtp-Source: ABdhPJyu0KgRC/6EhCBxf9s4T2rjtKgw4fFsPDJPRmFQstZjg5fujQkhnex6YxX/y1We5/Rg9m8e/DuHsEOloFtvvabVNJhHtwU0
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1FmEIkrqfL0T3fOHDc6OHU2lmhTkM3AhohF3xQ/xB7E=;
+        b=SelU9WoNqJwFaRP0oHdGDdgkcPiLjSCGcoTceTQivQmwvD03fFOkrf5pvtqMLdCN7W
+         zTMMACiMTfh/XErsAETC4uncPCCOb41zQUpQE5IG5wtjrmBMfj/Zl64NwFQXg7u94/5f
+         TzNXxWoFHrUY07MnxJIqgdoyo64+mDlb3R1k7Ivz1Q9jPi1Ad0UnujF2dVp6lL6B+k5F
+         /e9VL0QLSZT9432Cdy84H1V/u0XDUpG+d0D3uvrt5YarJywIJXSfIP2Z1YUvL42Rerfq
+         JoDqHmkFOW72uqd6E1NHNQQbOAniMyjCr3emuO7vH3bUQBrPVqQxXZEqLXqQsOfYhaMq
+         Ovrg==
+X-Gm-Message-State: AOAM53034VTTI7dw1x//lSAcwG69TkAneUQ0CX4VGjzUyuyhH9w08rwL
+        wAGAly5zh6mlkPN9V85Clwu68A==
+X-Google-Smtp-Source: ABdhPJzhd+/16ZvJiUYYfs9WNkd1c88ZyLGztYQfhm8605zQRwoONNTABR+sxO8FM05H4pLYKZakxg==
+X-Received: by 2002:a05:6638:dcc:: with SMTP id m12mr395388jaj.30.1602694930981;
+        Wed, 14 Oct 2020 10:02:10 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id n9sm2447180ilj.74.2020.10.14.10.02.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Oct 2020 10:02:10 -0700 (PDT)
+Subject: Re: general protection fault in __se_sys_io_uring_register
+To:     syzbot <syzbot+4520eff3d84059553f13@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000000c3be205b1a4782f@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7fccdc0f-bcd8-505d-f0dd-672471be30f6@kernel.dk>
+Date:   Wed, 14 Oct 2020 11:02:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:148:: with SMTP id v8mr239346iot.33.1602694830372;
- Wed, 14 Oct 2020 10:00:30 -0700 (PDT)
-Date:   Wed, 14 Oct 2020 10:00:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000c3be205b1a4782f@google.com>
-Subject: general protection fault in __se_sys_io_uring_register
-From:   syzbot <syzbot+4520eff3d84059553f13@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0000000000000c3be205b1a4782f@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+#syz dup: general protection fault in __do_sys_io_uring_register
 
-syzbot found the following issue on:
+-- 
+Jens Axboe
 
-HEAD commit:    029f56db Merge tag 'x86_asm_for_v5.10' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1421c89b900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c5327fbeef7650a
-dashboard link: https://syzkaller.appspot.com/bug?extid=4520eff3d84059553f13
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4520eff3d84059553f13@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 8347 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
-RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
-RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
-RIP: 0010:__do_sys_io_uring_register fs/io_uring.c:9553 [inline]
-RIP: 0010:__se_sys_io_uring_register+0x3343/0x3ea0 fs/io_uring.c:9535
-Code: ff df 48 8b 5c 24 18 42 80 3c 23 00 48 8b 6c 24 60 74 08 48 89 ef e8 bc 36 e0 ff 41 8d 5e ff 4c 8b 7d 00 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 9e 36 e0 ff 89 d8 c1 f8 09 48 63
-RSP: 0018:ffffc9001633fdc0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff11011eb5638
-RDX: ffff888051844080 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88808f5ab1b8 R08: ffffffff81d56c63 R09: ffffed1012046ab8
-R10: ffffed1012046ab8 R11: 0000000000000000 R12: dffffc0000000000
-R13: 00000000fffffff7 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f5b96b14700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000768000 CR3: 000000009ed9c000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45de59
-Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f5b96b13c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00000000000083c0 RCX: 000000000045de59
-RDX: 0000000020000040 RSI: 0000000000000002 RDI: 0000000000000003
-RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000002 R11: 0000000000000246 R12: 000000000118bf2c
-R13: 00007ffcf7ec75bf R14: 00007f5b96b149c0 R15: 000000000118bf2c
-Modules linked in:
----[ end trace ae2cc3c0d259d867 ]---
-RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
-RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
-RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
-RIP: 0010:__do_sys_io_uring_register fs/io_uring.c:9553 [inline]
-RIP: 0010:__se_sys_io_uring_register+0x3343/0x3ea0 fs/io_uring.c:9535
-Code: ff df 48 8b 5c 24 18 42 80 3c 23 00 48 8b 6c 24 60 74 08 48 89 ef e8 bc 36 e0 ff 41 8d 5e ff 4c 8b 7d 00 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 9e 36 e0 ff 89 d8 c1 f8 09 48 63
-RSP: 0018:ffffc9001633fdc0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff11011eb5638
-RDX: ffff888051844080 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88808f5ab1b8 R08: ffffffff81d56c63 R09: ffffed1012046ab8
-R10: ffffed1012046ab8 R11: 0000000000000000 R12: dffffc0000000000
-R13: 00000000fffffff7 R14: 0000000000000001 R15: 0000000000000000
-FS:  00007f5b96b14700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000768000 CR3: 000000009ed9c000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
