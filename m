@@ -2,206 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 789CE28E367
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 17:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC2F628E3E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 18:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729836AbgJNPil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 11:38:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42170 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbgJNPil (ORCPT
+        id S1730467AbgJNQBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 12:01:48 -0400
+Received: from sonic313-19.consmr.mail.gq1.yahoo.com ([98.137.65.82]:36466
+        "EHLO sonic313-19.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727034AbgJNQBs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 11:38:41 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B18C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 08:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=gCQenQmonwfZIEocLMbRlLubh9CqyAW01QUy3LdwUVk=; b=a0nr9Jo2mkDYlUfy/x6loKnsUx
-        wavuwzHSlSherzjmTVTOS1Ry8BxZFllJ6TUgEWDMFp8TBsAxH0vuDS9iE1nanvNvA/EMvQ/327INC
-        ZkeONnkRD+A6HvJXgAXUN78c+pc+rhWoPGGVpnL/gkBKE6GUvYjADrtjmQIKxYU25sYrdK9dl0+Cy
-        xbzptPxy7sogf/dIn00HLHhpFuyFl9FPNN8PkvTHHn+Nuxt1G44eqVtyhvVXMmiixIe/WITX0KdC0
-        A4mSpwJ4m25riQTOdyIfKccOZQrMKzFFOwDPg/dIjcCLFckcEzdqBl+f4O2R5TBP9MmgCzbuo/MJs
-        j5K34sIA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSirM-0006HA-H3; Wed, 14 Oct 2020 15:38:36 +0000
-Date:   Wed, 14 Oct 2020 16:38:36 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Chris Mason <clm@fb.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Wed, 14 Oct 2020 12:01:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1602691307; bh=/sK8vKP+HgENJ2KbRKwaakALG1IJ7NVFbxhkXwQJZJ8=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=IGmrltnFkLJW4X3YjPlHdbMMSg3inRjB+IVV0cntt57Z3SF5t38Hz+pWqEUDjkio0/nBDPxWGlvrNUsZ6b7I7ToCTgdaNLIXe3uS/LmnXgIHFypH2p5uKig7OoGO+N01YJQfzkydaCJGNX8UmMtqW1VH+chGBGo/RP+Ny0fH3zndFDvRGMIcdbeCXZRzqG+wOG/02Z0xIij3Pfs7ovkQblF4vZzRZ+jckpLJKFqw14FxZLkXPwpH1Mnke3w8MGKraLAuop0INJyBJ7Av/FPi/KF23VOl0TXtQe8dy4qNg/j/S+TENEaPRObTapcWZ0eRYwR9n2Arkweu8Z955PoCNQ==
+X-YMail-OSG: FpHCXvYVM1lCRnikmgMsWcgjZPs9SMDHhpdzsqUOtxcVVgBddGNuM20bH2_RzJ_
+ zvsQvmdmdkGjkCtJkZB062qix1bGPhS1IofA1HCMuK3dSDvI2zUy18jmEhKCtASIa_zpHSQIBZyi
+ saWvBmxa7AS_u8PKI2vV6dNA0hz2mH2_3QEXOCcbyzTMzxnk90YzqxgQfuWbUDwLfmjuIaqLYb.T
+ T1LmegNPXzBf0X0TubQ0Xn_0OzzOduzSB8tlg0NU5sT5WPBWuxdJBYu8oGn03nFSNWp.alEcA6jc
+ 44bhxZh8Kh7wvn.529TidX2vlIUdBinyAW3zOvZeOd4dZJDOI0Gpdi.t_O.didYsI_oe9krLL__T
+ PRld8IYLRyBWrT86iNjWEjJLG1N01Xq6MnzOtYte7QQGn8Toqc1fzJFEi4vca2SF9ES6aaAfAO5_
+ Re1Uihac3I5ow4RE7vGO3vsWnhbEq5wWo7aC6eO9s_mcmKxtboBmM_9BQSMBjibDxG4Xcfqux2bR
+ 3EReT6U7HRQTWbPpE3YJiJ8gBHQ8kV.TwEQ8bVcixfA0T7qxBQN2qZ83BPdDcde9OYhak6R60osT
+ dNViZeICIulCUrwXJQmTx.2oxegAaPibq8pUJznE7IfeMQqKuD0QACdysGxnsi7UoN7n.Aw1Gw0N
+ JhsElAGpurYLtSDe8gAAm9ih2p11UJcOQsX0auPvq5xUPioPeO1WLe0RfknMbI7Z5ShEe14p6hQt
+ u1AM1eQ1dyO4zjLHAWAAaIlZncO6pjiGqomXQp2DyWKn_AOV6MCatLFiZL4BjhiO8e_26JZ9orEF
+ UVhhTnPM5A1xq6FoS.Q1JhXW1WeLxhMK9RJVj49f2lGClnTRexBdlNTUCd9wtIzYI0J9NsKBbpIz
+ 1lR4YUDp_vqDHCjTS3gxllGlJa1VRlvriCaqtff7q3If8XYMNHsL_8fm1ciy274JTGqtJW4oKyHP
+ 6RgX1s_8Ssi_EpP4bfY_3gVY4kVMVrZ8LvPnVR901PAk94BLjrq6bksd4isX_XEJAA0crFaRrYCT
+ qhu7wplM3VkXeKSSUU8inGnZdODquMUJNxzolILXo8gezMPbeRDsSxuYqbsPUrFWXLgMdRgBKM1Z
+ eC7FVndIeZ8EyPTzFa.61hQyBE5eNVcGcO37nC3ynJVKuhwq2TjDWw4cyC3lFia8bcEUAjdT6Xhd
+ O3n.SLw.T3UN87sBURqtGWK8ZbbMUZZ8_gaNHM6NtMe9gdtKvLn3GQ1tzL_v1JA1RQkz7U0Vv0X7
+ 3VrBDE83eo30ACvL4TZEOEEjkpoL30IJci566qxqKO3iOz5MjV3tuW2z7tVfLiMbnsUb15fcE_Jl
+ .OItq1nQHCJIinG.xdplg1nyKRb512ijD0WFmkbT3zlGP7m51WlDO1NyEB7SQefg30oTH.jJCWQX
+ MHBUwiLRCjPoixSP.TdAvHQ6XumDSG3wdMUeRdVB8MHPOZlsJnVVpr_kjTLxcZv3d6VdQEFbkPx.
+ LAPHHnKMYHowU4681K9iRVl7aIyzVlUwevWhByPeJi5NG1n89QTwVB21psaUY6m6mt1d75ARJGo_
+ SRQdEuJjG
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Wed, 14 Oct 2020 16:01:47 +0000
+Received: by smtp401.mail.ir2.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 951cb00b4ca334412a3e8773b5eee046;
+          Wed, 14 Oct 2020 16:01:40 +0000 (UTC)
+Date:   Thu, 15 Oct 2020 00:01:30 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Chris Mason <clm@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
         Miaohe Lin <linmiaohe@huawei.com>,
         David Howells <dhowells@redhat.com>
 Subject: Re: PagePrivate handling
-Message-ID: <20201014153836.GM20115@casper.infradead.org>
+Message-ID: <20201014160116.GA7037@hsiangkao-HP-ZHAN-66-Pro-G1>
 References: <20201014134909.GL20115@casper.infradead.org>
  <B60A55DB-6AB7-48BF-8F11-68FF6FF46C4E@fb.com>
+ <20201014153836.GM20115@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8\""
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <B60A55DB-6AB7-48BF-8F11-68FF6FF46C4E@fb.com>
+In-Reply-To: <20201014153836.GM20115@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mailer: WebService/1.1.16845 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol Apache-HttpAsyncClient/4.1.4 (Java/15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 10:50:51AM -0400, Chris Mason wrote:
-> On 14 Oct 2020, at 9:49, Matthew Wilcox wrote:
-> > Our handling of PagePrivate, page->private and PagePrivate2 is a giant
-> > mess.  Let's recap.
+On Wed, Oct 14, 2020 at 04:38:36PM +0100, Matthew Wilcox wrote:
+> On Wed, Oct 14, 2020 at 10:50:51AM -0400, Chris Mason wrote:
+> > On 14 Oct 2020, at 9:49, Matthew Wilcox wrote:
+
+...
+
+> > > 
+> > > Also ... do we really need to increment the page refcount if we have
+> > > PagePrivate set?  I'm not awfully familiar with the buffercache -- is
+> > > it possible we end up in a situation where a buffer, perhaps under I/O,
+> > > has the last reference to a struct page?  It seems like that reference
+> > > is
+> > > always put from drop_buffers() which is called from
+> > > try_to_free_buffers()
+> > > which is always called by someone who has a reference to a struct page
+> > > that they got from the pagecache.  So what is this reference count for?
 > > 
-> > Filesystems which use bufferheads (ie most of them) set page->private
-> > to point to a buffer_head, set the PagePrivate bit and increment the
-> > refcount on the page.
-> > 
-> > The vmscan pageout code (*) needs to know whether a page is freeable:
-> >         if (!is_page_cache_freeable(page))
-> >                 return PAGE_KEEP;
-> > ... where is_page_cache_freeable() contains ...
-> >         return page_count(page) - page_has_private(page) == 1 +
-> > page_cache_pins;
-> > 
-> > That's a little inscrutable, but the important thing is that if
-> > page_has_private() is true, then the page's reference count is supposed
-> > to be one higher than it would be otherwise.  And that makes sense given
-> > how "having bufferheads" means "page refcount ges incremented".
-> > 
-> > But page_has_private() doesn't actually mean "PagePrivate is set".
-> > It means "PagePrivate or PagePrivate2 is set".  And I don't understand
-> > how filesystems are supposed to keep that straight -- if we're setting
-> > PagePrivate2, and PagePrivate is clear, increment the refcount?
-> > If we're clearing PagePrivate, decrement the refcount if PagePrivate2
-> > is also clear?
+> > Iâ€™m not sure what we gain by avoiding the refcount bump?  Many filesystems
+> > use the pattern of: â€œput something in page->private, free that thing in
+> > releasepage.â€  Without the refcount bump it feels like weâ€™d have more magic
+> > to avoid freeing the page without leaking things in page->private.  I think
+> > the extra ref lets the FS crowd keep our noses out of the MM more often, so
+> > it seems like a net positive to me.
 > 
-> At least for btrfs, only PagePrivate elevates the refcount on the page.
-> PagePrivate2 means:
+> The question is whether the "thing" in page->private can ever have the
+> last reference on a struct page.  Gao says erofs can be in that situation,
+> so never mind this change.
+
+Add some words, just my thought... we have a management structure which could
+store PagePrivate page cache pages, !PagePrivate page cache pages, and non-page
+cache pages which are directly from buddy system.
+
+and I knew the extra refcount rule for PagePrivate from the beginning (since
+the rule is quite stable for many many years (I remembered from 200x introduced
+by akpm?) so I designed the whole workflow to handle these different types of
+pages in the management structure based on this rule and to make reclaim &
+migrate work for all page cache pages properly.). I think many modules think
+the rule is stable as well ... anyway, I think there's always be another way
+to handle the same thing if the refcount rule is changed, yet I need to
+revisit all current logic and do proper changes. And I think many modules
+(including out-of-tree modules) could be impacted as well... anyway...
+
+Thanks,
+Gao Xiang
+
 > 
-> This page has been properly setup for COW’d IO, and it went through the
-> normal path of page_mkwrite() or file_write() instead of being silently
-> dirtied by a deep corner of the MM.
-
-What's not clear to me is whether btrfs can be in the situation where
-PagePrivate2 is set and PagePrivate is clear.  If so, then we have a bug
-to fix.
-
-> > We introduced attach_page_private() and detach_page_private() earlier
-> > this year to help filesystems get the refcount right.  But we still
-> > have a few filesystems using PagePrivate themselves (afs, btrfs, ceph,
-> > crypto, erofs, f2fs, jfs, nfs, orangefs & ubifs) and I'm not convinced
-> > they're all getting it right.
-> > 
-> > Here's a bug I happened on while looking into this:
-> > 
-> >         if (page_has_private(page))
-> >                 attach_page_private(newpage, detach_page_private(page));
-> > 
-> >         if (PagePrivate2(page)) {
-> >                 ClearPagePrivate2(page);
-> >                 SetPagePrivate2(newpage);
-> >         }
-> > 
-> > The aggravating thing is that this doesn't even look like a bug.
-> > You have to be in the kind of mood where you're thinking "What if page
-> > has Private2 set and Private clear?" and the answer is that newpage
-> > ends up with PagePrivate set, but page->private set to NULL.
-> 
-> Do you mean PagePrivate2 set but page->private NULL?
-
-Sorry, I skipped a step of the explanation.
-
-page_has_private returns true if Private or Private2 is set.  So if
-page has PagePrivate clear and PagePrivate2 set, newpage will end up
-with both PagePrivate and PagePrivate2 set -- attach_page_private()
-doesn't check whether the pointer is NULL (and IMO, it shouldn't).
-
-Given our current macros, what was _meant_ here was:
-
-         if (PagePrivate(page))
-                 attach_page_private(newpage, detach_page_private(page));
-
-but that's not obviously right.
-
-> Btrfs should only hage
-> PagePrivate2 set on pages that are formally in our writeback state machine,
-> so it’ll get cleared as we unwind through normal IO or truncate etc.  For
-> data pages, btrfs page->private is simply set to 1 so the MM will kindly
-> call releasepage for us.
-
-That's not what I'm seeing here:
-
-static void attach_extent_buffer_page(struct extent_buffer *eb,
-                                      struct page *page)
-{
-        if (!PagePrivate(page))
-                attach_page_private(page, eb);
-        else
-                WARN_ON(page->private != (unsigned long)eb);
-}
-
-Or is that not a data page?
-
-> > So what shold we do about all this?  First, I want to make the code
-> > snippet above correct, because it looks right.  So page_has_private()
-> > needs to test just PagePrivate and not PagePrivate2.  Now we need a
-> > new function to call to determine whether the filesystem needs its
-> > invalidatepage callback invoked.  Not sure what that should be named.
-> 
-> I haven’t checked all the page_has_private() callers, but maybe
-> page_has_private() should stay the same and add page_private_count() for
-> times where we need to get out our fingers and toes for the refcount math.
-
-I was thinking about page_expected_count() which returns the number of
-references from the page cache plus the number of references from
-the various page privates.  So is_page_cache_freeable() becomes:
-
-	return page_count(page) == page_expected_count(page) + 1;
-
-can_split_huge_page() becomes:
-
-	if (page_has_private(page))
-		return false;
-	return page_count(page) == page_expected_count(page) +
-			total_mapcount(page) + 1;
-
-> > I think I also want to rename PG_private_2 to PG_owner_priv_2.
-> > There's a clear relationship between PG_private and page->private.
-> > There is no relationship between PG_private_2 and page->private, so it's
-> > a misleading name.  Or maybe it should just be PG_fscache and btrfs can
-> > find some other way to mark the pages?
-> 
-> Btrfs should be able to flip bits in page->private to cover our current
-> usage of PG_private_2.  If we ever attach something real to page->private,
-> we can flip bits in that instead.  It’s kinda messy though and we’d have to
-> change attach_page_private a little to reflect its new life as a bit setting
-> machine.
-
-It's not great, but with David wanting to change how PageFsCache is used,
-it may be unavoidable (I'm not sure if he's discussed that with you yet)
-https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=fscache-iter&id=6f10fd7766ed6d87c3f696bb7931281557b389f5 shows part of it
--- essentially he wants to make PagePrivate2 mean that I/O is currently
-ongoing to an fscache, and so truncate needs to wait on it being finished.
-
-> > 
-> > Also ... do we really need to increment the page refcount if we have
-> > PagePrivate set?  I'm not awfully familiar with the buffercache -- is
-> > it possible we end up in a situation where a buffer, perhaps under I/O,
-> > has the last reference to a struct page?  It seems like that reference
-> > is
-> > always put from drop_buffers() which is called from
-> > try_to_free_buffers()
-> > which is always called by someone who has a reference to a struct page
-> > that they got from the pagecache.  So what is this reference count for?
-> 
-> I’m not sure what we gain by avoiding the refcount bump?  Many filesystems
-> use the pattern of: “put something in page->private, free that thing in
-> releasepage.”  Without the refcount bump it feels like we’d have more magic
-> to avoid freeing the page without leaking things in page->private.  I think
-> the extra ref lets the FS crowd keep our noses out of the MM more often, so
-> it seems like a net positive to me.
-
-The question is whether the "thing" in page->private can ever have the
-last reference on a struct page.  Gao says erofs can be in that situation,
-so never mind this change.
-
