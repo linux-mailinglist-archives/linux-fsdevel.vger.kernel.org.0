@@ -2,130 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC1528E4C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 18:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C60428E4C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 18:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388238AbgJNQrb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 12:47:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbgJNQrb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 12:47:31 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B47DC214D8;
-        Wed, 14 Oct 2020 16:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602694050;
-        bh=qQcbXQWCCAd7m2Lti1WPtkd5kda8Yy9gyEeggiebHmw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UXYn3s9uEfz94tVD2BODD8ynlMifbwOGmH+hE/wJTeN1DUTrEgmOqjPU9XFhaz9yQ
-         22OyKfZasWpZpy3ryu/t4ffiJbKBU7b+HB1iH/eY4XkdrFcUSY4vaBfWIyVIcLa2S7
-         oSmoGJnGdtgaR4HDRTIeNbWzBaOrqYmgVGeEMorc=
-Date:   Wed, 14 Oct 2020 09:47:28 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-btrfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        syzbot <syzbot+b8ff83b095e45f39e27e@syzkaller.appspotmail.com>
-Subject: Re: WARNING in __writeback_inodes_sb_nr
-Message-ID: <20201014164728.GA2545693@gmail.com>
-References: <0000000000004ffb3205b1a04abe@google.com>
+        id S2388560AbgJNQrw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 12:47:52 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51476 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388427AbgJNQrw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 12:47:52 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09EGho1Z155477;
+        Wed, 14 Oct 2020 16:47:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=ZaMFU1hUPbcaQ3+P0S5DuNiAoCTwtGbEn+HLNCGkkPE=;
+ b=t7W8f+l4Sy0VaiWxIg6OhZ/Fgkbl6gp6bRkPdLHKdX4zC3OA5S8pd6Shavkqy7poTGJ8
+ GQ/NyTx1RQ6aHZJC/1DGsTB5qsKsWEKkRM6k/CHKm59o+kyYT3XiH0aqBYEffrUfyCOd
+ pVPN/9Nivp6suut1HoJ7dWrew5UQ14O7www3H+3AZZEhZEFx86oRnLa4rLexxK4hKBQi
+ jDp2ctGNIjGIl+tceQT8EKRoYJNZuElxsTCxi98K4NTb2rTfJVSuosXF1xQQqQvjXI6E
+ FzBm2XBQRJb8MSSZpcOlreQMikKhPOw2fbMPOjvEIL2n3n2e062dL2vjo40b5HyJsc0D lw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 343vaeexja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 14 Oct 2020 16:47:47 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09EGjang067519;
+        Wed, 14 Oct 2020 16:47:46 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 344by3wsej-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Oct 2020 16:47:46 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 09EGljJv002056;
+        Wed, 14 Oct 2020 16:47:46 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Oct 2020 09:47:45 -0700
+Date:   Wed, 14 Oct 2020 09:47:44 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 09/14] iomap: Change iomap_write_begin calling convention
+Message-ID: <20201014164744.GK9832@magnolia>
+References: <20201014030357.21898-1-willy@infradead.org>
+ <20201014030357.21898-10-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000004ffb3205b1a04abe@google.com>
+In-Reply-To: <20201014030357.21898-10-willy@infradead.org>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9773 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0
+ suspectscore=1 mlxscore=0 malwarescore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010140119
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9773 signatures=668681
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 phishscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=1 spamscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010140119
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+linux-btrfs, for btrfs calling writeback_inodes_sb() from
-btrfs_start_delalloc_flush() without holding super_block::s_umount.
-
-On Wed, Oct 14, 2020 at 05:01:23AM -0700, syzbot wrote:
-> Hello,
+On Wed, Oct 14, 2020 at 04:03:52AM +0100, Matthew Wilcox (Oracle) wrote:
+> Pass (up to) the remaining length of the extent to iomap_write_begin()
+> and have it return the number of bytes that will fit in the page.
+> That lets us copy more bytes per call to iomap_write_begin() if the page
+> cache has already allocated a THP (and will in future allow us to pass
+> a hint to the page cache that it should try to allocate a larger page
+> if there are none in the cache).
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    bbf5c979 Linux 5.9
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1664b377900000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3d8333c88fe898d7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b8ff83b095e45f39e27e
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13127ef0500000
-> 
-> Bisection is inconclusive: the issue happens on the oldest tested release.
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14878558500000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16878558500000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12878558500000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b8ff83b095e45f39e27e@syzkaller.appspotmail.com
-> 
-> BTRFS info (device loop0): disk space caching is enabled
-> BTRFS info (device loop0): has skinny extents
-> BTRFS info (device loop0): enabling ssd optimizations
-> BTRFS info (device loop0): checking UUID tree
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 7118 at fs/fs-writeback.c:2469 __writeback_inodes_sb_nr+0x229/0x280 fs/fs-writeback.c:2469
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 7118 Comm: syz-executor.0 Not tainted 5.9.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x198/0x1fd lib/dump_stack.c:118
->  panic+0x382/0x7fb kernel/panic.c:231
->  __warn.cold+0x20/0x4b kernel/panic.c:600
->  report_bug+0x1bd/0x210 lib/bug.c:198
->  handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
->  exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
->  asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
-> RIP: 0010:__writeback_inodes_sb_nr+0x229/0x280 fs/fs-writeback.c:2469
-> Code: 48 8b 84 24 c0 00 00 00 65 48 2b 04 25 28 00 00 00 75 38 48 81 c4 c8 00 00 00 5b 5d 41 5c 41 5d 41 5e 41 5f c3 e8 f7 75 a7 ff <0f> 0b e9 69 ff ff ff 4c 89 f7 e8 a8 4e e8 ff e9 ea fe ff ff 4c 89
-> RSP: 0018:ffffc900064076e0 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: 1ffff92000c80edd RCX: ffffffff81cec880
-> RDX: ffff888099db2200 RSI: ffffffff81cec919 RDI: 0000000000000007
-> RBP: ffff8880994ec000 R08: 0000000000000000 R09: ffff8880994ec077
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> R13: ffffc90006407708 R14: 0000000000006400 R15: ffff8880994ec158
->  btrfs_start_delalloc_flush fs/btrfs/transaction.c:1970 [inline]
->  btrfs_commit_transaction+0x8ea/0x2830 fs/btrfs/transaction.c:2150
->  btrfs_sync_file+0x821/0xd80 fs/btrfs/file.c:2279
->  vfs_fsync_range+0x13a/0x220 fs/sync.c:200
->  generic_write_sync include/linux/fs.h:2747 [inline]
->  btrfs_file_write_iter+0x1101/0x14a9 fs/btrfs/file.c:2049
->  call_write_iter include/linux/fs.h:1882 [inline]
->  do_iter_readv_writev+0x532/0x7b0 fs/read_write.c:721
->  do_iter_write+0x188/0x670 fs/read_write.c:1026
->  vfs_writev+0x1aa/0x2e0 fs/read_write.c:1099
->  do_pwritev fs/read_write.c:1196 [inline]
->  __do_sys_pwritev fs/read_write.c:1243 [inline]
->  __se_sys_pwritev fs/read_write.c:1238 [inline]
->  __x64_sys_pwritev+0x231/0x310 fs/read_write.c:1238
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x45de59
-> Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f098f185c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000128
-> RAX: ffffffffffffffda RBX: 0000000000026400 RCX: 000000000045de59
-> RDX: 0000000000000001 RSI: 00000000200014c0 RDI: 0000000000000003
-> RBP: 000000000118bf70 R08: 0000000000000020 R09: 0000000000000000
-> R10: 0000000000000002 R11: 0000000000000246 R12: 000000000118bf2c
-> R13: 00007ffe7dd36ddf R14: 00007f098f1869c0 R15: 000000000118bf2c
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  fs/iomap/buffered-io.c | 61 +++++++++++++++++++++++-------------------
+>  1 file changed, 33 insertions(+), 28 deletions(-)
 > 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this issue, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 4ef02afaedc5..397795db3ce5 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -616,14 +616,14 @@ iomap_read_page_sync(loff_t block_start, struct page *page, unsigned poff,
+>  	return submit_bio_wait(&bio);
+>  }
+>  
+> -static int
+> -__iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+> -		struct page *page, struct iomap *srcmap)
+> +static ssize_t __iomap_write_begin(struct inode *inode, loff_t pos,
+> +		size_t len, int flags, struct page *page, struct iomap *srcmap)
+>  {
+>  	loff_t block_size = i_blocksize(inode);
+>  	loff_t block_start = pos & ~(block_size - 1);
+>  	loff_t block_end = (pos + len + block_size - 1) & ~(block_size - 1);
+> -	unsigned from = offset_in_page(pos), to = from + len;
+> +	size_t from = offset_in_thp(page, pos);
+> +	size_t to = from + len;
+>  	size_t poff, plen;
+>  
+>  	if (PageUptodate(page))
+> @@ -658,12 +658,13 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
+>  	return 0;
+>  }
+>  
+> -static int
+> -iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+> -		struct page **pagep, struct iomap *iomap, struct iomap *srcmap)
+> +static ssize_t iomap_write_begin(struct inode *inode, loff_t pos, loff_t len,
+> +		unsigned flags, struct page **pagep, struct iomap *iomap,
+
+loff_t len?  You've been using size_t (ssize_t?) for length elsewhere,
+can't return more than ssize_t, and afaik MAX_RW_COUNT will never go
+larger than 2GB so I'm confused about types here...?
+
+Mostly because my brain has been trained to think that if it sees
+"size_t len" as an input parameter and a ssize_t return value, then
+probably the return value is however much of @len we managed to process.
+
+> +		struct iomap *srcmap)
+>  {
+>  	const struct iomap_page_ops *page_ops = iomap->page_ops;
+>  	struct page *page;
+> +	size_t offset;
+>  	int status = 0;
+>  
+>  	BUG_ON(pos + len > iomap->offset + iomap->length);
+> @@ -674,6 +675,8 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  		return -EINTR;
+>  
+>  	if (page_ops && page_ops->page_prepare) {
+> +		if (len > UINT_MAX)
+> +			len = UINT_MAX;
+
+I'm not especially familiar with page_prepare (since it's a gfs2 thing);
+why do you clamp len to UINT_MAX here?
+
+--D
+
+>  		status = page_ops->page_prepare(inode, pos, len, iomap);
+>  		if (status)
+>  			return status;
+> @@ -685,6 +688,10 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  		status = -ENOMEM;
+>  		goto out_no_page;
+>  	}
+> +	page = thp_head(page);
+> +	offset = offset_in_thp(page, pos);
+> +	if (len > thp_size(page) - offset)
+> +		len = thp_size(page) - offset;
+>  
+>  	if (srcmap->type == IOMAP_INLINE)
+>  		iomap_read_inline_data(inode, page, srcmap);
+> @@ -694,11 +701,11 @@ iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, unsigned flags,
+>  		status = __iomap_write_begin(inode, pos, len, flags, page,
+>  				srcmap);
+>  
+> -	if (unlikely(status))
+> +	if (status < 0)
+>  		goto out_unlock;
+>  
+>  	*pagep = page;
+> -	return 0;
+> +	return len;
+>  
+>  out_unlock:
+>  	unlock_page(page);
+> @@ -854,8 +861,10 @@ iomap_write_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  
+>  		status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap,
+>  				srcmap);
+> -		if (unlikely(status))
+> +		if (status < 0)
+>  			break;
+> +		/* We may be partway through a THP */
+> +		offset = offset_in_thp(page, pos);
+>  
+>  		if (mapping_writably_mapped(inode->i_mapping))
+>  			flush_dcache_page(page);
+> @@ -915,7 +924,6 @@ static loff_t
+>  iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		struct iomap *iomap, struct iomap *srcmap)
+>  {
+> -	long status = 0;
+>  	loff_t written = 0;
+>  
+>  	/* don't bother with blocks that are not shared to start with */
+> @@ -926,25 +934,24 @@ iomap_unshare_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  		return length;
+>  
+>  	do {
+> -		unsigned long offset = offset_in_page(pos);
+> -		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
+>  		struct page *page;
+> +		ssize_t bytes;
+>  
+> -		status = iomap_write_begin(inode, pos, bytes,
+> +		bytes = iomap_write_begin(inode, pos, length,
+>  				IOMAP_WRITE_F_UNSHARE, &page, iomap, srcmap);
+> -		if (unlikely(status))
+> -			return status;
+> +		if (bytes < 0)
+> +			return bytes;
+>  
+> -		status = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
+> +		bytes = iomap_write_end(inode, pos, bytes, bytes, page, iomap,
+>  				srcmap);
+> -		if (WARN_ON_ONCE(status == 0))
+> +		if (WARN_ON_ONCE(bytes == 0))
+>  			return -EIO;
+>  
+>  		cond_resched();
+>  
+> -		pos += status;
+> -		written += status;
+> -		length -= status;
+> +		pos += bytes;
+> +		written += bytes;
+> +		length -= bytes;
+>  
+>  		balance_dirty_pages_ratelimited(inode->i_mapping);
+>  	} while (length);
+> @@ -975,15 +982,13 @@ static s64 iomap_zero(struct inode *inode, loff_t pos, u64 length,
+>  		struct iomap *iomap, struct iomap *srcmap)
+>  {
+>  	struct page *page;
+> -	int status;
+> -	unsigned offset = offset_in_page(pos);
+> -	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
+> +	ssize_t bytes;
+>  
+> -	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
+> -	if (status)
+> -		return status;
+> +	bytes = iomap_write_begin(inode, pos, length, 0, &page, iomap, srcmap);
+> +	if (bytes < 0)
+> +		return bytes;
+>  
+> -	zero_user(page, offset, bytes);
+> +	zero_user(page, offset_in_thp(page, pos), bytes);
+>  	mark_page_accessed(page);
+>  
+>  	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
+> -- 
+> 2.28.0
+> 
