@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD5228DCC9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 11:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27A1628DCDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 11:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbgJNJUJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 05:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39930 "EHLO
+        id S2387882AbgJNJUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 05:20:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387823AbgJNJUG (ORCPT
+        with ESMTP id S1731049AbgJNJUn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 05:20:06 -0400
+        Wed, 14 Oct 2020 05:20:43 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02471C0F26EC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A43C0F26ED;
         Tue, 13 Oct 2020 20:04:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=HCUdH2gZ2mH2ZOiD3F29fY5+kaO7fY88tsiSFo4riTw=; b=G1zcZpijkarteofqchFTXXIIQW
-        vBzEil6I7JRxpZhCNqz47pCtJDP7jL4ydibo68z1pfHAPcz61TtjnPUJhrlcFcdIlC7bvUYxbzeh/
-        gJT6IDybpCuGYNxLXQjLqzgXPCUXNc+/rhDMz/EEzpn9lfb+5bqYrmycSOoFL53Mp4sDaMHYQIBDg
-        KPppMqsoDEr3OPtV5qQUzC5jCog+ZAXl8qlkiSXQvHxwA+6vuPrkWEt2CChpDRoyQpKg0ZYufrNph
-        5NnMUCqhIq8sstn9ovmiKWm0Jkaz9Xm/8fxX0BQZFzsoatYJ/6tCa7pl6fM+vVThtLsNZsJI/iHWH
-        hBn5sAuw==;
+        bh=3K1TcA9ng9V8ipeBlpNGiMaylyWSGeQVhOpeVH2itWk=; b=rC3J4SbtqpkzQ1b036e2mLfvI4
+        oWvmxuQVRrYNkC8ODb4AFicqOCMYWUmy/RJoLyi/MH7gm4Sn6GFWC1ZpwP32WgHEFut8PS0plvbOf
+        qUGBRvqQmkLmsmboFYn0MHCBAjgxKUHpCyfkzvjF+cqlluDaAFK7bCOCR1sTjy1nWq787sSFORN+x
+        wolPiv9KqKkmY0g/2hEMkjFTeMBhGMsVi54Pbu56zHxYpZAcpIDxo/iHSiRU9on+eEgkZKsoKW8ok
+        Faiw7eDvCChe/VIce3eURUenV8cPw7KmCuySJEZ84ZDQQdUxc3MJcKBj32K/jX3FIIJjtGWmgjTaV
+        BwaQFfOw==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSX56-0005ia-FO; Wed, 14 Oct 2020 03:04:00 +0000
+        id 1kSX56-0005ii-Ng; Wed, 14 Oct 2020 03:04:00 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org
-Subject: [PATCH 05/14] iomap: Support THPs in invalidatepage
-Date:   Wed, 14 Oct 2020 04:03:48 +0100
-Message-Id: <20201014030357.21898-6-willy@infradead.org>
+Subject: [PATCH 06/14] iomap: Support THPs in iomap_is_partially_uptodate
+Date:   Wed, 14 Oct 2020 04:03:49 +0100
+Message-Id: <20201014030357.21898-7-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201014030357.21898-1-willy@infradead.org>
 References: <20201014030357.21898-1-willy@infradead.org>
@@ -42,70 +42,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we're punching a hole in a THP, we need to remove the per-page
-iomap data as the THP is about to be split and each page will need
-its own.  This means that writepage can now come across a page with
-no iop allocated, so remove the assertion that there is already one,
-and just create one (with the uptodate bits set) if there isn't one.
+Factor iomap_range_uptodate() out of iomap_is_partially_uptodate() to use
+by iomap_readpage() later.  iomap_is_partially_uptodate() can be called
+on a tail page by generic_file_buffered_read(), so handle that correctly.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/iomap/buffered-io.c | 43 ++++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 95ac66731297..4633ebd03a3f 100644
+index 4633ebd03a3f..4ea6c601a183 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -60,6 +60,8 @@ iomap_page_create(struct inode *inode, struct page *page)
- 	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
- 			GFP_NOFS | __GFP_NOFAIL);
- 	spin_lock_init(&iop->uptodate_lock);
-+	if (PageUptodate(page))
-+		bitmap_fill(iop->uptodate, nr_blocks);
- 	attach_page_private(page, iop);
- 	return iop;
+@@ -141,6 +141,24 @@ static void iomap_adjust_read_range(struct inode *inode, struct page *page,
+ 	*lenp = plen;
  }
-@@ -494,10 +496,14 @@ iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
- 	 * If we are invalidating the entire page, clear the dirty state from it
- 	 * and release it to avoid unnecessary buildup of the LRU.
- 	 */
--	if (offset == 0 && len == PAGE_SIZE) {
-+	if (offset == 0 && len == thp_size(page)) {
- 		WARN_ON_ONCE(PageWriteback(page));
- 		cancel_dirty_page(page);
- 		iomap_page_release(page);
-+	} else if (PageTransHuge(page)) {
-+		/* Punching a hole in a THP requires releasing the iop */
-+		WARN_ON_ONCE(!PageUptodate(page) && PageDirty(page));
-+		iomap_page_release(page);
- 	}
- }
- EXPORT_SYMBOL_GPL(iomap_invalidatepage);
-@@ -1363,14 +1369,13 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
- 		struct page *page, u64 end_offset)
+ 
++static bool iomap_range_uptodate(struct inode *inode, struct page *page,
++		size_t start, size_t len)
++{
++	struct iomap_page *iop = to_iomap_page(page);
++	size_t first = start >> inode->i_blkbits;
++	size_t last = (start + len - 1) >> inode->i_blkbits;
++	size_t i;
++
++	VM_BUG_ON_PGFLAGS(!PageLocked(page), page);
++	if (!iop)
++		return false;
++
++	for (i = first; i <= last; i++)
++		if (!test_bit(i, iop->uptodate))
++			return false;
++	return true;
++}
++
+ static void
+ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+ {
+@@ -446,26 +464,15 @@ int
+ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count)
  {
 -	struct iomap_page *iop = to_iomap_page(page);
-+	struct iomap_page *iop = iomap_page_create(inode, page);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
- 	u64 file_offset; /* file offset of page */
- 	int error = 0, count = 0, i;
- 	LIST_HEAD(submit_list);
+-	struct inode *inode = page->mapping->host;
+-	unsigned len, first, last;
+-	unsigned i;
+-
+-	/* Limit range to one page */
+-	len = min_t(unsigned, PAGE_SIZE - from, count);
++	struct page *head = thp_head(page);
++	size_t len;
  
--	WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
- 	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
+-	/* First and last blocks in range within page */
+-	first = from >> inode->i_blkbits;
+-	last = (from + len - 1) >> inode->i_blkbits;
++	/* 'from' is relative to page, but the bitmap is relative to head */
++	from += (page - head) * PAGE_SIZE;
++	/* Limit range to this page */
++	len = min(thp_size(head) - from, count);
  
- 	/*
-@@ -1415,7 +1420,6 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 			 */
- 			if (wpc->ops->discard_page)
- 				wpc->ops->discard_page(page);
--			ClearPageUptodate(page);
- 			unlock_page(page);
- 			goto done;
- 		}
+-	if (iop) {
+-		for (i = first; i <= last; i++)
+-			if (!test_bit(i, iop->uptodate))
+-				return 0;
+-		return 1;
+-	}
+-
+-	return 0;
++	return iomap_range_uptodate(head->mapping->host, head, from, len);
+ }
+ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+ 
 -- 
 2.28.0
 
