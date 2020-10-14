@@ -2,75 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4AD28E4F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:02:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C94D28E537
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbgJNRCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 13:02:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55178 "EHLO
+        id S1732055AbgJNRRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 13:17:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730009AbgJNRCM (ORCPT
+        with ESMTP id S1726942AbgJNRRA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:02:12 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC908C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 10:02:11 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id k21so2274594ioa.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 10:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=1FmEIkrqfL0T3fOHDc6OHU2lmhTkM3AhohF3xQ/xB7E=;
-        b=nCDOAyyXhiRZZz7rZ9wEUHslojMwI/MOxw3Lqtua2iKHYhXaotVSr69c6pqSs3JDno
-         rbr5GpWiK0EIzhRtNZ9JiywfQClnnP2K4YumKU0T1RM048fq9rOlrkCw/hKjK9omGufF
-         b7/VGcG7jMw8dHgKIeFxZnexkgwDEQyf2fBRXWWPqLse5diN0XaK8n4ux1Jsp4OImgbF
-         BUHvFyPwqLDJRpSHpQXTEi9YJw6YGFmJR3mtFhPKyQXo2ZC5l6zhLLWW7tMIWGg2kz9C
-         p/q/mXzv/8HGDQfX7cD8HoderJFuPXQJXMGxpKj8yxJX58xe1QGCWilXPbbc03Dx6GRr
-         VJIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1FmEIkrqfL0T3fOHDc6OHU2lmhTkM3AhohF3xQ/xB7E=;
-        b=SelU9WoNqJwFaRP0oHdGDdgkcPiLjSCGcoTceTQivQmwvD03fFOkrf5pvtqMLdCN7W
-         zTMMACiMTfh/XErsAETC4uncPCCOb41zQUpQE5IG5wtjrmBMfj/Zl64NwFQXg7u94/5f
-         TzNXxWoFHrUY07MnxJIqgdoyo64+mDlb3R1k7Ivz1Q9jPi1Ad0UnujF2dVp6lL6B+k5F
-         /e9VL0QLSZT9432Cdy84H1V/u0XDUpG+d0D3uvrt5YarJywIJXSfIP2Z1YUvL42Rerfq
-         JoDqHmkFOW72uqd6E1NHNQQbOAniMyjCr3emuO7vH3bUQBrPVqQxXZEqLXqQsOfYhaMq
-         Ovrg==
-X-Gm-Message-State: AOAM53034VTTI7dw1x//lSAcwG69TkAneUQ0CX4VGjzUyuyhH9w08rwL
-        wAGAly5zh6mlkPN9V85Clwu68A==
-X-Google-Smtp-Source: ABdhPJzhd+/16ZvJiUYYfs9WNkd1c88ZyLGztYQfhm8605zQRwoONNTABR+sxO8FM05H4pLYKZakxg==
-X-Received: by 2002:a05:6638:dcc:: with SMTP id m12mr395388jaj.30.1602694930981;
-        Wed, 14 Oct 2020 10:02:10 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id n9sm2447180ilj.74.2020.10.14.10.02.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 10:02:10 -0700 (PDT)
-Subject: Re: general protection fault in __se_sys_io_uring_register
-To:     syzbot <syzbot+4520eff3d84059553f13@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <0000000000000c3be205b1a4782f@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7fccdc0f-bcd8-505d-f0dd-672471be30f6@kernel.dk>
-Date:   Wed, 14 Oct 2020 11:02:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 14 Oct 2020 13:17:00 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E403C061755;
+        Wed, 14 Oct 2020 10:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=JKdSRRpfNq89jLLxix/6a/bIeQwXlNzL7+kPc2YPR8I=; b=kO7907DGs2rDxMdhsiNKzXLEKQ
+        oAgh7btZFkwpTBrbb2YuVotH6KkzSqhIDQit0yAlgDaGlEtDqjFQj+rHej8DMeUGzGkG9T2yfxnPL
+        EmvG//DB4dEoLxC21g5US6G/PJRaq9UmzQyJrmFDM20z6LukP0hIOms+dJjNFnNlrDTI3YdFIKw6O
+        iYMmkXQFfR5KrbXCm8T9m4rBdFVdBsDIWUAHtKJKdJxCsCfmlV2haVJuqrQ8mNbh9BkcpDIfiVB+c
+        AuXkQC37FbqDR47edGh/7ncgeP6caYk6jFJsXpMqzRpV7vtvfjtzBpSfAKyGSaU2NiL9tTILB5hbn
+        YF6vLcPQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSkOY-0004Id-92; Wed, 14 Oct 2020 17:16:58 +0000
+Date:   Wed, 14 Oct 2020 18:16:58 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 01/14] fs: Support THPs in vfs_dedupe_file_range
+Message-ID: <20201014171658.GN20115@casper.infradead.org>
+References: <20201014030357.21898-1-willy@infradead.org>
+ <20201014030357.21898-2-willy@infradead.org>
+ <20201014161216.GE9832@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <0000000000000c3be205b1a4782f@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201014161216.GE9832@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#syz dup: general protection fault in __do_sys_io_uring_register
+On Wed, Oct 14, 2020 at 09:12:16AM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 14, 2020 at 04:03:44AM +0100, Matthew Wilcox (Oracle) wrote:
+> > We may get tail pages returned from vfs_dedupe_get_page().  If we do,
+> > we have to call page_mapping() instead of dereferencing page->mapping
+> > directly.  We may also deadlock trying to lock the page twice if they're
+> > subpages of the same THP, so compare the head pages instead.
 
--- 
-Jens Axboe
+> >  static void vfs_lock_two_pages(struct page *page1, struct page *page2)
+> >  {
+> > +	page1 = thp_head(page1);
+> > +	page2 = thp_head(page2);
+> 
+> Hmm, is this usage (calling thp_head() to extract the head page from an
+> arbitrary page reference) a common enough idiom that it doesn't need a
+> comment saying why we need the head page?
 
+It's pretty common.  Lots of times it gets hidden inside macros,
+and sometimes it gets spelled as 'compound_head' instead of
+thp_head.  The advantage of thp_head() is that it compiles away if
+CONFIG_TRANSPARENT_HUGEPAGE is disabled, while compound pages always
+exist.
+
+> I'm asking that genuinely-- thp_head() is new to me but maybe it's super
+> obvious to everyone else?  Or at least the mm developers?  I suspect
+> that might be the case....?
+
+thp_head is indeed new.  It was merged in August this year, partly in
+response to Dave Chinner getting annoyed at the mixing of metaphors --
+some things were thp_*, some were hpage_* and some were compound_*.
+Now everything is in the thp_* namespace if it refers to THPs.
+
+> Also, I was sort of thinking about sending a patch to Linus at the end
+> of the merge window moving all the remap/clone/dedupe common code to a
+> separate file to declutter fs/read_write.c and mm/filemap.c.  Does that
+> sound ok?
+
+I don't think that would bother me at all.
