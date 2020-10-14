@@ -2,132 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4940C28E0EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0D2628E0FE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:05:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbgJNNAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 09:00:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31129 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727187AbgJNNAC (ORCPT
+        id S1731061AbgJNNFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 09:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727141AbgJNNFw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 09:00:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1602680400;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5Fws2CJAKKqpnH//6QG5i7oTf+CdCwxvrk1+FjGnC3w=;
-        b=dFEmeFSiEdJ+6rQXd3P/A8jhvIdDHk2d79yMPIenhSUAcXtQ5jg2c24jQoUTBgg8bpDdmZ
-        5V+RPGrvB5EdCPmexulHcTaEWDdt0BEpxMwUQmkKhxkj7lRqV4e40iMEAeAp++Nag2kwx1
-        xL0vHhAnv3Ig0m9/Yb+PA04Qj1uSw/E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-BAEt4dj-M3KgnMqF-8eO7Q-1; Wed, 14 Oct 2020 08:59:58 -0400
-X-MC-Unique: BAEt4dj-M3KgnMqF-8eO7Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3477802B4B;
-        Wed, 14 Oct 2020 12:59:57 +0000 (UTC)
-Received: from bfoster (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CC4C75138;
-        Wed, 14 Oct 2020 12:59:57 +0000 (UTC)
-Date:   Wed, 14 Oct 2020 08:59:55 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] iomap: use page dirty state to seek data over
- unwritten extents
-Message-ID: <20201014125955.GA1109375@bfoster>
-References: <20201012140350.950064-1-bfoster@redhat.com>
- <20201012140350.950064-2-bfoster@redhat.com>
- <20201013225344.GA7391@dread.disaster.area>
+        Wed, 14 Oct 2020 09:05:52 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7314FC061755
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:05:52 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id c21so3152205ljj.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4ZpNEpwEuFA9Rfuw8aSUEHfgR5iSTqvnZX1G9kxgifM=;
+        b=Tte/tOrj3c7eCfHcXm4ClATrY0EmDpKA48oz5D3m0/1p3dkxXHSfod3UKUn7LMxKlM
+         r6IoMLOJlWrhtvJa3IgB0aYPRqaCiuaYK+UYZgVjPJ9htrgHoqdWFr4bQc4GGldcyYwc
+         FTy7Rh3n1xWPTAh8yUbnwnE6+43zXN/iVmZCPFftSwKJiwMjvuVjYtT+4lfKa0C4C1mi
+         nRHdoVP/J9d/lJP5HLeZ8U76fWQpXP2GjiYjZY24a3OaAWJdO84Q01ECLLu7rTM3654D
+         ClJ48Z6CqXb4Vu4aHNbWk2gWkafO6kJ/lRNFl0GGzjTjKPGU7M35xTkxT4r79Bp8kw9x
+         U5TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4ZpNEpwEuFA9Rfuw8aSUEHfgR5iSTqvnZX1G9kxgifM=;
+        b=fVEY8779PzEwsclB4svyD5WggQfSwB4iOcx8lPAWAlBp6TcWF0TCktJC/NOJOAOPLd
+         ruWWKe3KMhYsNoYY2ald12f5JgLPd/PTAB4MAWROmfhuF1AweyW4MapXu5mjYANKzus8
+         LQds9MhUhUKO7xb6KywybwDmxPp7g3ycFOWe6vN4aAIUj/a6QLPmqx9Bux5ub1KgejJW
+         i4dM3zOeP70h8I+1dqPVbfhzawT9fLtZ9GNNTOzO3p3+UC+OfC/tMyXFLTJm29nRwz/i
+         my/d2aSSwdj6Y7Em6Akdi11NzO5EHQ6b/TY/hgpRue53P50vHIN9BbH8RADAS/XHpJev
+         1Uyg==
+X-Gm-Message-State: AOAM531Dx/U7oIZY/rlZLS5inFa1SNODlcgeGutnPA1W8aSegNJVc9Fd
+        SIptt6O13Q3ON0nBoWV+fI8kvQ==
+X-Google-Smtp-Source: ABdhPJxjPAif0rDRfil1S4kF1FE0lGY1f39gKXlMRTWe6gjf0jnvjuHXT2t5WekJ69UjCNHZCpi2XQ==
+X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr1699656ljc.254.1602680750926;
+        Wed, 14 Oct 2020 06:05:50 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id p7sm1113688lfc.299.2020.10.14.06.05.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Oct 2020 06:05:50 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 4EC9A1035E0; Wed, 14 Oct 2020 16:05:55 +0300 (+03)
+Date:   Wed, 14 Oct 2020 16:05:55 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH 0/4] Some more lock_page work..
+Message-ID: <20201014130555.kdbxyavqoyfnpos3@box>
+References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
+ <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201013225344.GA7391@dread.disaster.area>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 09:53:44AM +1100, Dave Chinner wrote:
-> On Mon, Oct 12, 2020 at 10:03:49AM -0400, Brian Foster wrote:
-> > iomap seek hole/data currently uses page Uptodate state to track
-> > data over unwritten extents. This is odd and unpredictable in that
-> > the existence of clean pages changes behavior. For example:
-> > 
-> >   $ xfs_io -fc "falloc 0 32k" -c "seek -d 0" \
-> > 	    -c "pread 16k 4k" -c "seek -d 0" /mnt/file
-> >   Whence  Result
-> >   DATA    EOF
-> >   ...
-> >   Whence  Result
-> >   DATA    16384
-> 
-> I don't think there is any way around this, because the page cache
-> lookup done by the seek hole/data code is an
-> unlocked operation and can race with other IO and operations. That
-> is, seek does not take IO serialisation locks at all so
-> read/write/page faults/fallocate/etc all run concurrently with it...
-> 
-> i.e. we get an iomap that is current at the time the iomap_begin()
-> call is made, but we don't hold any locks to stabilise that extent
-> range while we do a page cache traversal looking for cached data.
-> That means any region of the unwritten iomap can change state while
-> we are running the page cache seek.
-> 
+On Tue, Oct 13, 2020 at 01:03:30PM -0700, Linus Torvalds wrote:
+> On Tue, Oct 13, 2020 at 12:59 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Comments?
 
-Hm, Ok.. that makes sense..
+So we remove strict serialization against truncation in
+filemap_map_pages() if the mapping is private.
 
-> We cannot determine what the data contents without major overhead,
-> and if we are seeking over a large unwritten extent covered by clean
-> pages that then gets partially written synchronously by another
-> concurrent write IO then we might trip across clean uptodate pages
-> with real data in them by the time the page cache scan gets to it.
-> 
-> Hence the only thing we are looking at here is whether there is data
-> present in the cache or not. As such, I think assuming that only
-> dirty/writeback pages contain actual user data in a seek data/hole
-> operation is a fundametnally incorrect premise.
-> 
+IIUC, we can end up with a page with ->mapping == NULL set up in a PTE for
+such mappings. The "page->mapping != mapping" check makes the race window
+smaller, but doesn't remove it.
 
-... but afaict this kind of thing is already possible because nothing
-stops a subsequently cleaned page (i.e., dirtied and written back) from
-also being dropped from cache before the scan finds it. IOW, I don't
-really see how this justifies using one page state check over another as
-opposed to pointing out the whole page scanning thing itself seems to be
-racy. Perhaps the reasoning wrt to seek is simply that we should either
-see one state (hole) or the next (data) and we don't terribly care much
-about seek being racy..?
+I'm not sure all codepaths are fine with this. For instance, looks like
+migration will back off such pages: __unmap_and_move() doesn't know how to
+deal with mapped pages with ->mapping == NULL.
+Yes, it is not crash, but still...
 
-My concern is more the issue described by patch 2. Note that patch 2
-doesn't necessarily depend on this one. The tradeoff without patch 1 is
-just that we'd explicitly zero and dirty any uptodate new EOF page as
-opposed to a page that was already dirty (or writeback).
+Do I miss something?
 
-Truncate does hold iolock/mmaplock, but ISTM that is still not
-sufficient because of the same page reclaim issue mentioned above. E.g.,
-a truncate down lands on a dirty page over an unwritten block,
-iomap_truncate_page() receives the unwritten mapping, page is flushed
-and reclaimed (changing block state), iomap_truncate_page() (still using
-the unwritten mapping) has nothing to do without a page and thus stale
-data is exposed.
-
-ISTM that either the filesystem needs to be more involved with the
-stabilization of unwritten mappings in general or truncate page needs to
-do something along the lines of block_truncate_page() (which we used
-pre-iomap) and just explicitly zero/dirty the new page if the block is
-otherwise mapped. Thoughts? Other ideas?
-
-Brian
-
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
-
+-- 
+ Kirill A. Shutemov
