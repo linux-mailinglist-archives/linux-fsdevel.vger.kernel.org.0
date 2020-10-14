@@ -2,42 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6764A28E03A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 14:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D118F28E055
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 14:12:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388676AbgJNMBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 08:01:41 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:39775 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388602AbgJNMB1 (ORCPT
+        id S1729298AbgJNMMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 08:12:18 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:39598 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbgJNMMS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 08:01:27 -0400
-Received: by mail-io1-f69.google.com with SMTP id s135so2216408ios.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 05:01:25 -0700 (PDT)
+        Wed, 14 Oct 2020 08:12:18 -0400
+Received: by mail-il1-f200.google.com with SMTP id r10so2233110ilq.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 05:12:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=m6pDnHMdiVubenDMsWeSi3ZB8r2ghwq2DBPL+d9F3AA=;
-        b=PrODYipHmSGPtBQnPRV9qOfG8JcBPO8dYZq4h8hM6ERBZptEyl5Xyqzxii3H75jOKT
-         dnl2btyxsPaQ2pOa0eeJRdJLzZmA9tvTpHd2RzdXx/3A6IdmC1S0a/0UU8EC5ZeL8Yi4
-         pf45JzOTXTeh72NZFN2g4KxY4J9QmlkGoRdzNiMjiAXnv2niLDMdN5JUtqnF8ykHW8JG
-         8Fvod75+WWeg4guro+2Nzre7GOKZbmfBoyS0xs1xUpb31jt+EG4RjlKsNtR2Po/EVL3u
-         37atNGmp8FDWtCljsg9i99Ph20wSCXsmKGB6v8LEgsC7b33T6LEZGa7IGkPvK52jgQP3
-         XiJg==
-X-Gm-Message-State: AOAM531cs5t/bovSFMUAFmocN2Cq8dHAcX4ZqISzcs4ATTe8Ft1ln7az
-        PDaNfHahOUvn66moOe3RS2JyA6WySSUJV2oMAsPs6m897gm7
-X-Google-Smtp-Source: ABdhPJxdho8NKnGbbUPFgQORA943leB6qV3R9Bcd9POiY3Qc6I6iK24VamqjNg7hfqz6iI6MtsVQDeVwdgWIitoPWh1XzZ6t4eBw
+        bh=zg+I8d7ndikJ7TpxgGlYT9fzJHpVC4H6Dh85V9obOeM=;
+        b=uIO5faYGNCPlHeaGER7XTMZD7Q8+Z9+UMEWDUMun8DlJmw8RyVKbSkndOSQdH78lkD
+         sLAnIyT248bMQrn8n71Es7C1ajT+qwNEMwcmkDXeykVOmh3yVOccOgo77nGlgvcaU5ZP
+         yrvGpQ+qyCdGMaw09cY2Yh0kQS6uu41k9Hg59fEBBJIg7klQ6NgiCVQN2g2Uh8sH4QqT
+         XVLlqEEgVxRe7kjgddaAmkJf6cuu6Tvo8e5Jj0Meu5brpXSuMe1UjUiTGjh0kx+DQIjL
+         NyqF72TiwAkkTlGxNcXlIEOIxAg3XBv7m1pbzq5ejbCqSfnxeKRA6xs08hkCSggbXtyS
+         AkyA==
+X-Gm-Message-State: AOAM531x45gFpMzGtb3+mTQUkA3lzXp4RWMu6FjQLC6C1vzhlcvArOVl
+        Kq60n2O1UHqzo+5wYgumTzrQEKNNBZEGOb35Jp9jejnSFGXf
+X-Google-Smtp-Source: ABdhPJzRW7x0/xlervt4O2pE68CaIIdEKA1VQFrZob2AbSmj39suHSe9DEIiaQwntmUbHW3aGq5XiLTagbrw77a+fKZ0sJf2cLXK
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1d0:: with SMTP id w16mr2611673iot.102.1602676883882;
- Wed, 14 Oct 2020 05:01:23 -0700 (PDT)
-Date:   Wed, 14 Oct 2020 05:01:23 -0700
+X-Received: by 2002:a92:c88e:: with SMTP id w14mr3290219ilo.185.1602677536914;
+ Wed, 14 Oct 2020 05:12:16 -0700 (PDT)
+Date:   Wed, 14 Oct 2020 05:12:16 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a849705b1a04ab8@google.com>
-Subject: general protection fault in __do_sys_io_uring_register
-From:   syzbot <syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+Message-ID: <0000000000004702c605b1a0717e@google.com>
+Subject: WARNING in cleanup_mnt (2)
+From:   syzbot <syzbot+428c51fcb8f9e5a84850@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
@@ -48,67 +47,63 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    029f56db Merge tag 'x86_asm_for_v5.10' of git://git.kernel..
+HEAD commit:    bbf5c979 Linux 5.9
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b5c678500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d4ce0764b8e2dd3f
-dashboard link: https://syzkaller.appspot.com/bug?extid=f4ebcc98223dafd8991e
+console output: https://syzkaller.appspot.com/x/log.txt?x=15498ffb900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3d8333c88fe898d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=428c51fcb8f9e5a84850
 compiler:       gcc (GCC) 10.1.0-syz 20200507
+userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com
+Reported-by: syzbot+428c51fcb8f9e5a84850@syzkaller.appspotmail.com
 
-general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 8927 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 30737 at fs/namespace.c:1109 cleanup_mnt+0x409/0x530 fs/namespace.c:1109
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 30737 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
-RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
-RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
-RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
-Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
-RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
-RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
-RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
-R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
-FS:  00007f4266f3c700(0000) GS:ffff8880ae500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000118c000 CR3: 000000008e57d000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45de59
-Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f4266f3bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00000000000083c0 RCX: 000000000045de59
-RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000005
-RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
-R10: 40000000000000a1 R11: 0000000000000246 R12: 000000000118bf2c
-R13: 00007fff2fa4f12f R14: 00007f4266f3c9c0 R15: 000000000118bf2c
-Modules linked in:
----[ end trace 2a40a195e2d5e6e6 ]---
-RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
-RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
-RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
-RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
-Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
-RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
-RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
-RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
-R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
-FS:  00007f4266f3c700(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000074a918 CR3: 000000008e57d000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fd lib/dump_stack.c:118
+ panic+0x382/0x7fb kernel/panic.c:231
+ __warn.cold+0x20/0x4b kernel/panic.c:600
+ report_bug+0x1bd/0x210 lib/bug.c:198
+ handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+ exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
+ asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
+RIP: 0010:cleanup_mnt+0x409/0x530 fs/namespace.c:1109
+Code: 8a e8 9b c0 0c 02 49 8d 7c 24 38 48 c7 c6 80 4a ca 81 48 83 c4 18 5b 5d 41 5c 41 5d 41 5e 41 5f e9 ec 9c 98 ff e8 f7 9f ab ff <0f> 0b e9 0a fd ff ff e8 eb 9f ab ff 4c 89 e7 e8 43 03 06 00 e9 2f
+RSP: 0018:ffffc900163afac0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff81ca9c21
+RDX: ffff88809201a2c0 RSI: ffffffff81ca9f19 RDI: 0000000000000005
+RBP: 0000000000000040 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880889c0540
+R13: 000000000000042b R14: 0000000000000007 R15: 0000000000000002
+ task_work_run+0xdd/0x190 kernel/task_work.c:141
+ exit_task_work include/linux/task_work.h:25 [inline]
+ do_exit+0xb7d/0x29f0 kernel/exit.c:806
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x428/0x1f00 kernel/signal.c:2757
+ arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
+ exit_to_user_mode_prepare+0x1ae/0x200 kernel/entry/common.c:192
+ syscall_exit_to_user_mode+0x7e/0x2e0 kernel/entry/common.c:267
+ __do_fast_syscall_32+0x6c/0x90 arch/x86/entry/common.c:138
+ do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
+ entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
+RIP: 0023:0xf7f06549
+Code: Bad RIP value.
+RSP: 002b:00000000090bfbfc EFLAGS: 00000212 ORIG_RAX: 0000000000000006
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000000000
+RDX: 0000000000000005 RSI: 0000000008bab680 RDI: 0000000008bab680
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
