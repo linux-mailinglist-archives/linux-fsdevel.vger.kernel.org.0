@@ -2,114 +2,302 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 213C828E1A0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB84F28E201
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 16:15:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbgJNNtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 09:49:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbgJNNtN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 09:49:13 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8D0C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=Xrn4UVQxl89wkUAKqCKref0AgwtCQZS0u+gdq+m30fA=; b=ksKg7vwg2L5KNjxMdVR0QfRKSe
-        GePJvw6XrxBnwXTACw6lwaTx9IaWm5sYtEF442PCP2/SMtJj9VBQiEgP/uv2K23d7xF8KiEhyiVEB
-        ovXs8L6eeRJg7kjstDeKJVZnaJTrt/OlXj+g978Uu9tyJ1S2JdOZlcwxN0rYrH9XtcKG+EshkW77w
-        U7093BsUCx3HtLMZXNi2nx2hmhba089pSKg0kOErsKSHOSoHSU3OGIkyDsc8jnDUx//tcHdb1vLOW
-        bscKj64SCxaazjPuE8bBgfSNe8dLC2XYi19nXHWXhQ99UBRDa0MA1n0mL1zR0fD67aysJ4Bj832Wo
-        DRAN5P+w==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSh9R-0000DG-4J; Wed, 14 Oct 2020 13:49:09 +0000
-Date:   Wed, 14 Oct 2020 14:49:09 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        David Howells <dhowells@redhat.com>
-Subject: PagePrivate handling
-Message-ID: <20201014134909.GL20115@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        id S2388832AbgJNOPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 10:15:23 -0400
+Received: from relay.sw.ru ([185.231.240.75]:42450 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727023AbgJNOPX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 10:15:23 -0400
+Received: from [172.16.25.93] (helo=amikhalitsyn-pc0.sw.ru)
+        by relay3.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
+        id 1kShXi-004ONi-FS; Wed, 14 Oct 2020 17:14:14 +0300
+From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+To:     miklos@szeredi.hu
+Cc:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
+        David Howells <dhowells@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] overlayfs: add fsinfo(FSINFO_ATTR_OVL_SOURCES) support
+Date:   Wed, 14 Oct 2020 17:14:16 +0300
+Message-Id: <20201014141416.25272-1-alexander.mikhalitsyn@virtuozzo.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
+References: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Our handling of PagePrivate, page->private and PagePrivate2 is a giant
-mess.  Let's recap.
+FSINFO_ATTR_OVL_SOURCES fsinfo attribute allows us
+to export fhandles for overlayfs source directories
+such as upperdir, workdir, lowerdirs.
 
-Filesystems which use bufferheads (ie most of them) set page->private
-to point to a buffer_head, set the PagePrivate bit and increment the
-refcount on the page.
+This patchs adds initial support of fsinfo into overlayfs.
+If community decide to take this way of C/R support
+in overlayfs then I have plan to implement FSINFO_ATTR_SUPPORTS
+and FSINFO_ATTR_FEATURES standard attributes handlers too.
 
-The vmscan pageout code (*) needs to know whether a page is freeable:
-        if (!is_page_cache_freeable(page))
-                return PAGE_KEEP;
-... where is_page_cache_freeable() contains ...
-        return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
+Cc: David Howells <dhowells@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
+---
+ fs/overlayfs/Makefile       |   1 +
+ fs/overlayfs/fsinfo.c       | 133 ++++++++++++++++++++++++++++++++++++
+ fs/overlayfs/overlayfs.h    |   6 ++
+ fs/overlayfs/super.c        |   3 +
+ include/uapi/linux/fsinfo.h |  31 +++++++++
+ 5 files changed, 174 insertions(+)
+ create mode 100644 fs/overlayfs/fsinfo.c
 
-That's a little inscrutable, but the important thing is that if
-page_has_private() is true, then the page's reference count is supposed
-to be one higher than it would be otherwise.  And that makes sense given
-how "having bufferheads" means "page refcount ges incremented".
+diff --git a/fs/overlayfs/Makefile b/fs/overlayfs/Makefile
+index 9164c585eb2f..db555c0e4508 100644
+--- a/fs/overlayfs/Makefile
++++ b/fs/overlayfs/Makefile
+@@ -7,3 +7,4 @@ obj-$(CONFIG_OVERLAY_FS) += overlay.o
+ 
+ overlay-objs := super.o namei.o util.o inode.o file.o dir.o readdir.o \
+ 		copy_up.o export.o
++overlay-$(CONFIG_FSINFO)	+= fsinfo.o
+diff --git a/fs/overlayfs/fsinfo.c b/fs/overlayfs/fsinfo.c
+new file mode 100644
+index 000000000000..9857949dcce5
+--- /dev/null
++++ b/fs/overlayfs/fsinfo.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Filesystem information for overlayfs
++ *
++ * Copyright (C) 2020 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#include <linux/mount.h>
++#include <linux/fsinfo.h>
++#include "overlayfs.h"
++
++static int __ovl_encode_mnt_opt_fh(struct fsinfo_ovl_source *p,
++				   struct dentry *dentry)
++{
++	int fh_type, dwords;
++	int buflen = MAX_HANDLE_SZ;
++	int err;
++
++	/* we ask for a non connected handle */
++	dwords = buflen >> 2;
++	fh_type = exportfs_encode_fh(dentry, (void *)p->fh.f_handle, &dwords, 0);
++	buflen = (dwords << 2);
++
++	err = -EIO;
++	if (WARN_ON(fh_type < 0) ||
++	    WARN_ON(buflen > MAX_HANDLE_SZ) ||
++	    WARN_ON(fh_type == FILEID_INVALID))
++		goto out_err;
++
++	p->fh.handle_type = fh_type;
++	p->fh.handle_bytes = buflen;
++
++	/*
++	 * Ideally, we want to have mnt_id+fhandle, but overlayfs not
++	 * keep refcnts on layers mounts and we couldn't determine
++	 * mnt_ids for layers. So, let's give s_dev to CRIU.
++	 * It's better than nothing.
++	 */
++	p->s_dev = dentry->d_sb->s_dev;
++
++	return 0;
++
++out_err:
++	return err;
++}
++
++static int ovl_fsinfo_store_source(struct fsinfo_ovl_source *p,
++				   enum fsinfo_ovl_source_type type,
++				   struct dentry *dentry)
++{
++	__ovl_encode_mnt_opt_fh(p, dentry);
++	p->type = type;
++	return 0;
++}
++
++static long ovl_ioctl_stor_lower_fhandle(struct fsinfo_ovl_source *p,
++					 struct super_block *sb,
++					 unsigned long arg)
++{
++	struct ovl_entry *oe = sb->s_root->d_fsdata;
++	struct dentry *origin;
++
++	if (arg >= oe->numlower)
++		return -EINVAL;
++
++	origin = oe->lowerstack[arg].dentry;
++
++	return ovl_fsinfo_store_source(p, FSINFO_OVL_LWR, origin);
++}
++
++static long ovl_ioctl_stor_upper_fhandle(struct fsinfo_ovl_source *p,
++					 struct super_block *sb)
++{
++	struct ovl_fs *ofs = sb->s_fs_info;
++	struct dentry *origin;
++
++	if (!ofs->config.upperdir)
++		return -EINVAL;
++
++	origin = OVL_I(d_inode(sb->s_root))->__upperdentry;
++
++	return ovl_fsinfo_store_source(p, FSINFO_OVL_UPPR, origin);
++}
++
++static long ovl_ioctl_stor_work_fhandle(struct fsinfo_ovl_source *p,
++					struct super_block *sb)
++{
++	struct ovl_fs *ofs = sb->s_fs_info;
++
++	if (!ofs->config.upperdir)
++		return -EINVAL;
++
++	return ovl_fsinfo_store_source(p, FSINFO_OVL_WRK, ofs->workbasedir);
++}
++
++static int ovl_fsinfo_sources(struct path *path, struct fsinfo_context *ctx)
++{
++	struct fsinfo_ovl_source *p = ctx->buffer;
++	struct super_block *sb = path->dentry->d_sb;
++	struct ovl_fs *ofs = sb->s_fs_info;
++	struct ovl_entry *oe = sb->s_root->d_fsdata;
++	size_t nr_sources = (oe->numlower + 2 * !!ofs->config.upperdir);
++	unsigned int i = 0, j;
++	int ret = -ENODATA;
++
++	ret = nr_sources * sizeof(*p);
++	if (ret <= ctx->buf_size) {
++		if (ofs->config.upperdir) {
++			ovl_ioctl_stor_upper_fhandle(&p[i++], sb);
++			ovl_ioctl_stor_work_fhandle(&p[i++], sb);
++		}
++
++		for (j = 0; j < oe->numlower; j++)
++			ovl_ioctl_stor_lower_fhandle(&p[i++], sb, j);
++	}
++
++	return ret;
++}
++
++static const struct fsinfo_attribute ovl_fsinfo_attributes[] = {
++	/* TODO: implement FSINFO_ATTR_SUPPORTS and FSINFO_ATTR_FEATURES */
++	/*
++	FSINFO_VSTRUCT	(FSINFO_ATTR_SUPPORTS,		ovl_fsinfo_supports),
++	FSINFO_VSTRUCT	(FSINFO_ATTR_FEATURES,		ovl_fsinfo_features),
++	*/
++	FSINFO_LIST	(FSINFO_ATTR_OVL_SOURCES,	ovl_fsinfo_sources),
++	{}
++};
++
++int ovl_fsinfo(struct path *path, struct fsinfo_context *ctx)
++{
++	return fsinfo_get_attribute(path, ctx, ovl_fsinfo_attributes);
++}
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index 29bc1ec699e7..1c0ac23ecf8f 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -7,6 +7,7 @@
+ #include <linux/kernel.h>
+ #include <linux/uuid.h>
+ #include <linux/fs.h>
++#include <linux/xattr.h>
+ #include "ovl_entry.h"
+ 
+ #undef pr_fmt
+@@ -492,3 +493,8 @@ int ovl_set_origin(struct dentry *dentry, struct dentry *lower,
+ 
+ /* export.c */
+ extern const struct export_operations ovl_export_operations;
++
++/* fsinfo.c */
++#ifdef CONFIG_FSINFO
++extern int ovl_fsinfo(struct path *path, struct fsinfo_context *ctx);
++#endif
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 4b38141c2985..1a4cdbbd766f 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -392,6 +392,9 @@ static const struct super_operations ovl_super_operations = {
+ 	.put_super	= ovl_put_super,
+ 	.sync_fs	= ovl_sync_fs,
+ 	.statfs		= ovl_statfs,
++#ifdef CONFIG_FSINFO
++	.fsinfo		= ovl_fsinfo,
++#endif
+ 	.show_options	= ovl_show_options,
+ 	.remount_fs	= ovl_remount,
+ };
+diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
+index dcd764771a7d..83c2511691e4 100644
+--- a/include/uapi/linux/fsinfo.h
++++ b/include/uapi/linux/fsinfo.h
+@@ -10,6 +10,8 @@
+ #include <linux/types.h>
+ #include <linux/socket.h>
+ #include <linux/openat2.h>
++#include <linux/fs.h>
++#include <linux/exportfs.h>
+ 
+ /*
+  * The filesystem attributes that can be requested.  Note that some attributes
+@@ -44,6 +46,8 @@
+ #define FSINFO_ATTR_AFS_SERVER_NAME	0x301	/* Name of the Nth server (string) */
+ #define FSINFO_ATTR_AFS_SERVER_ADDRESSES 0x302	/* List of addresses of the Nth server */
+ 
++#define FSINFO_ATTR_OVL_SOURCES		0x400	/* List of overlayfs source dirs fhandles+sdev */
++
+ /*
+  * Optional fsinfo() parameter structure.
+  *
+@@ -341,4 +345,31 @@ struct fsinfo_error_state {
+ 
+ #define FSINFO_ATTR_ERROR_STATE__STRUCT struct fsinfo_error_state
+ 
++/*
++ * Information struct for fsinfo(FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO).
++ *
++ * This gives information about the overlayfs upperdir, workdir, lowerdir
++ * superblock options (exported as fhandles).
++ */
++enum fsinfo_ovl_source_type {
++	FSINFO_OVL_UPPR	= 0,	/* upperdir */
++	FSINFO_OVL_WRK	= 1,	/* workdir */
++	FSINFO_OVL_LWR	= 2,	/* lowerdir list item */
++};
++
++/* DISCUSS: we can also export mnt_unique_id here which introduced by fsinfo patchset
++ * and then use him to detect if source was unmounted in the time gap between the moment when
++ * overlayfs was mounted and C/R process was started.
++ * We can get mnt_unique_id also by using fsinfo(FSINFO_ATTR_MOUNT_ALL)
++ */
++struct fsinfo_ovl_source {
++	enum fsinfo_ovl_source_type type;
++	__u32 s_dev;
++	struct file_handle fh;
++	/* use f_handle field from struct file_handle */
++	__u8 __fhdata[MAX_HANDLE_SZ];
++};
++
++#define FSINFO_ATTR_OVL_SOURCES__STRUCT struct fsinfo_ovl_source
++
+ #endif /* _UAPI_LINUX_FSINFO_H */
+-- 
+2.25.1
 
-But page_has_private() doesn't actually mean "PagePrivate is set".
-It means "PagePrivate or PagePrivate2 is set".  And I don't understand
-how filesystems are supposed to keep that straight -- if we're setting
-PagePrivate2, and PagePrivate is clear, increment the refcount?
-If we're clearing PagePrivate, decrement the refcount if PagePrivate2
-is also clear?
-
-We introduced attach_page_private() and detach_page_private() earlier
-this year to help filesystems get the refcount right.  But we still
-have a few filesystems using PagePrivate themselves (afs, btrfs, ceph,
-crypto, erofs, f2fs, jfs, nfs, orangefs & ubifs) and I'm not convinced
-they're all getting it right.
-
-Here's a bug I happened on while looking into this:
-
-        if (page_has_private(page))
-                attach_page_private(newpage, detach_page_private(page));
-
-        if (PagePrivate2(page)) {
-                ClearPagePrivate2(page);
-                SetPagePrivate2(newpage);
-        }
-
-The aggravating thing is that this doesn't even look like a bug.
-You have to be in the kind of mood where you're thinking "What if page
-has Private2 set and Private clear?" and the answer is that newpage
-ends up with PagePrivate set, but page->private set to NULL.  And I
-don't know whether this is a situation that can ever happen with btrfs,
-but we shouldn't have code like this lying around in the tree because
-it _looks_ right and somebody else might copy it.
-
-So what shold we do about all this?  First, I want to make the code
-snippet above correct, because it looks right.  So page_has_private()
-needs to test just PagePrivate and not PagePrivate2.  Now we need a
-new function to call to determine whether the filesystem needs its
-invalidatepage callback invoked.  Not sure what that should be named.
-
-I think I also want to rename PG_private_2 to PG_owner_priv_2.
-There's a clear relationship between PG_private and page->private.
-There is no relationship between PG_private_2 and page->private, so it's
-a misleading name.  Or maybe it should just be PG_fscache and btrfs can
-find some other way to mark the pages?
-
-Also ... do we really need to increment the page refcount if we have
-PagePrivate set?  I'm not awfully familiar with the buffercache -- is
-it possible we end up in a situation where a buffer, perhaps under I/O,
-has the last reference to a struct page?  It seems like that reference is
-always put from drop_buffers() which is called from try_to_free_buffers()
-which is always called by someone who has a reference to a struct page
-that they got from the pagecache.  So what is this reference count for?
-
-(*) Also THP split and page migration.  But maybe you don't care about
-those things ... you definitely care about pageout!
