@@ -2,302 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB84F28E201
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 16:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4F628E280
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 16:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388832AbgJNOPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 10:15:23 -0400
-Received: from relay.sw.ru ([185.231.240.75]:42450 "EHLO relay3.sw.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727023AbgJNOPX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 10:15:23 -0400
-Received: from [172.16.25.93] (helo=amikhalitsyn-pc0.sw.ru)
-        by relay3.sw.ru with esmtp (Exim 4.94)
-        (envelope-from <alexander.mikhalitsyn@virtuozzo.com>)
-        id 1kShXi-004ONi-FS; Wed, 14 Oct 2020 17:14:14 +0300
-From:   Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
-To:     miklos@szeredi.hu
-Cc:     Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
-        David Howells <dhowells@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] overlayfs: add fsinfo(FSINFO_ATTR_OVL_SOURCES) support
-Date:   Wed, 14 Oct 2020 17:14:16 +0300
-Message-Id: <20201014141416.25272-1-alexander.mikhalitsyn@virtuozzo.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
-References: <20201004192401.9738-1-alexander.mikhalitsyn@virtuozzo.com>
+        id S1730056AbgJNOvW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 10:51:22 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:9872 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729276AbgJNOvW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 10:51:22 -0400
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09EEnrL4017037;
+        Wed, 14 Oct 2020 07:50:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=facebook;
+ bh=1Wzso4Fz19sTe5idSM2izxkRy2+JO964wd+O+jrevds=;
+ b=eDp3TnpJNGLd33k+GJXJ3V4k4Nhx3CyKfzCSzM4yYvSrivZWDrz8kh78dTQDOqVcH4zb
+ pC9jb7IOU2AAdtq8HlP1hJFJsWF4zmLXPUp3k767TMhMTyMEOAUkD5pdAOf8KOx1QACf
+ KPruGvx46aZlFAy6iaGi1odlyjjK2uVOx20= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com with ESMTP id 345e3re976-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Wed, 14 Oct 2020 07:50:57 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.98.9) by
+ o365-in.thefacebook.com (100.104.94.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Wed, 14 Oct 2020 07:50:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e2BRbVtJyFVEMeO2wClAZ4GOASxVwe1c7nKv9a6mCZZy3HaOM+KUSfqLxU/kyExNSYjeRc5ekIVg4Jm6UXpNbbO3MFG+jmlhKoC6WR930yfpKJ4BPKfEYm1DP6SF6VYgtgSIBUIgOH4MAD/spQaqjUiWX+N3qsjigXi7S8pp1iv/Vn4cNr7iE4OcxBqe/G5oB9Qslcv9OudWH6OilaLlgWQGWlY+xLVQ7c0YzlHvTKI3vGaKbrZuwWhUad8rTY8w9dNZngGmw6Y1FpPHmqOaPm4u/E3PhvLMRWgn2I2JWKh2EHdQWC/DOGZhDAVfA23jDxepoOS+nHJZjhMKVkbhhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1Wzso4Fz19sTe5idSM2izxkRy2+JO964wd+O+jrevds=;
+ b=EYjzq0qvWywQCHgpkvbjGIILQm5fDklCPk99AZyRaDjxjzaZhb9Cy2NV4/SwDe4aein/w3rXKHiloVXiJmehaa4Y8tSyqWz+Ycemn+HW1VI+NaDAAW2Z5/NM7w2RNUplex4YjQR7p1cqGIfmj4dGr2eb8Vr1PWOfAqU/wIBAnx5CH9E3Fq3EVlK26OMktARyivuaCPg5okVpx9F5HKfmwipCwQkMptX3pTzi283bDpt4x8wLTxni3HTbknoVm8RNU1OPWfuePOIyzW2CYT2NekHLpWJ4QWJ79nX9GsGOYzrxjVz1PRuK1kt/bHnyEAup6mdlwmTMancjePXfjFe4rQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1Wzso4Fz19sTe5idSM2izxkRy2+JO964wd+O+jrevds=;
+ b=OJKIkusWzYLJGzZ7AyQsBOq7wz0aCvS6HikCjfzGNgxkxmA1Z/MgMxDWuO6fIxVXc4vvv606FFuP1uPxG/5D57dMBu1h8OCmsN+tJcbjRTVYbNKbB5kV5lDAYgxmbXHFi22ByEtvo27+7RbjMFVid9Fp+zoYqrJg/LJQ5eQcBGI=
+Authentication-Results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=fb.com;
+Received: from MN2PR15MB2878.namprd15.prod.outlook.com (2603:10b6:208:e9::12)
+ by MN2PR15MB2605.namprd15.prod.outlook.com (2603:10b6:208:126::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.21; Wed, 14 Oct
+ 2020 14:50:54 +0000
+Received: from MN2PR15MB2878.namprd15.prod.outlook.com
+ ([fe80::38aa:c2b:59bf:1d7]) by MN2PR15MB2878.namprd15.prod.outlook.com
+ ([fe80::38aa:c2b:59bf:1d7%6]) with mapi id 15.20.3477.020; Wed, 14 Oct 2020
+ 14:50:54 +0000
+From:   "Chris Mason" <clm@fb.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: PagePrivate handling
+Date:   Wed, 14 Oct 2020 10:50:51 -0400
+X-Mailer: MailMate (1.13.2r5673)
+Message-ID: <B60A55DB-6AB7-48BF-8F11-68FF6FF46C4E@fb.com>
+In-Reply-To: <20201014134909.GL20115@casper.infradead.org>
+References: <20201014134909.GL20115@casper.infradead.org>
+X-Originating-IP: [2620:10d:c091:480::1:e105]
+X-ClientProxiedBy: BL0PR05CA0007.namprd05.prod.outlook.com
+ (2603:10b6:208:91::17) To MN2PR15MB2878.namprd15.prod.outlook.com
+ (2603:10b6:208:e9::12)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [100.109.123.254] (2620:10d:c091:480::1:e105) by BL0PR05CA0007.namprd05.prod.outlook.com (2603:10b6:208:91::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.4 via Frontend Transport; Wed, 14 Oct 2020 14:50:53 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3024a1e8-18f7-4a90-c4a2-08d870508d1d
+X-MS-TrafficTypeDiagnostic: MN2PR15MB2605:
+X-Microsoft-Antispam-PRVS: <MN2PR15MB2605641E959A584191128705D3050@MN2PR15MB2605.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: cMw40ooSH3ilOu+r0V/0/WzD6hnOsSuHIsZMTr5BQemPh2OUSd6DIV/L9eU+kwgImewJL86N9zXI6goJgkKdLE/veNPGn1AQlhMblg2tz2l63QrgEiK8BF6nTiEHya2seWCFEfHsVtrM+/t4mBrM4ppSA2/uGEZEAagf4jTjl2Y7kF83FJGUk19BMUEjYMVncjG8i2j+yMfHaamwp/s/9kmxxLJUM65F2/ogscLs0dLfp3CSzstjJG2i8bX8CtyeqsYErN3VCfYP4pcDe5X5MUfuseqh/FEJtt+RVDHVS/kI+wTQlVzEePWYmsYicAW11lIT/CfRB7vu/XhRtpkM7yHA1Dm6tj20pm/OkGyQ0nNtU5+/RjIi3WyDexV9Wc54
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR15MB2878.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(396003)(376002)(39860400002)(366004)(136003)(5660300002)(54906003)(52116002)(8936002)(478600001)(36756003)(8676002)(7116003)(33656002)(316002)(6486002)(2906002)(4326008)(2616005)(956004)(53546011)(186003)(16526019)(3480700007)(66556008)(86362001)(66476007)(66946007)(6916009)(83380400001)(78286007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: gSLyBQo8wiO+EooBeic+t5ecU5YLgGnCEVm06BMc5BpdSOz16s2C4n8is/LxVbmZEtJ0lnw0EYsL7GS33ygLlQ9wGbNDPxzMa+Al6u+laZWxnbrg+yfTZwdKoHz/v44A9djQC6mI+KN+2/7IBOA+42gAzEKQo6ksyoR7udYom64ceM8Lj9IpQa0DGWgdIbu2Z0YgwiPdT+3g4DU9lHkgLGlPskRhVAQ/tPAHWe6gzvtIYY+rujezfu8PoyP9nu8qeLJ40r3wCO0fSOVkiDP0vr3P4uEBIBBnfDeUuilvqa2/ZT0V8aPsrprc1v+rxbhl/EdoYVCNp3nZGZ5Wk8DFJzoS5Qe7F3G2toX8XQXV712Tut6MBlV9ehd66+1qY18h70VIeFuBl+RI8tfq6mLK9nv7Logo0Bte76u4A34AhyQE3IEUJsSN8shS0AxPlPIX+r6ujjiBsOSWcuKW8ZlpvmKcpo2GQahZDApBLnEUFUpqu7qGukAHFDWicxWEfjyEHwirXBlxF0ImgVtpCIxKRaBlpO1O61t4pHzhgnD4PltHkbpwLTdD4RhKKxBh8XJZUtyFHhpdSbWCHtwqXUCdkyRupKmN1vWb+aQDWdHRyZADo7kC0ighmpbhEdqjJAxEtOnvl39rYPQbJ9SboAtPR8TWkMpG0J0o8jSHdSoH7YQauvzRPSHV5OtftnHicbt+
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3024a1e8-18f7-4a90-c4a2-08d870508d1d
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR15MB2878.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2020 14:50:54.3536
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6X97+p3+vqqUPmzp5FXyw9EJf4sRHjIEk7um6UPYMAs8wi6kIQ5flV9LripSyaXa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR15MB2605
+X-OriginatorOrg: fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-14_08:2020-10-14,2020-10-14 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ adultscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1011
+ suspectscore=2 mlxscore=0 bulkscore=0 phishscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010140108
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FSINFO_ATTR_OVL_SOURCES fsinfo attribute allows us
-to export fhandles for overlayfs source directories
-such as upperdir, workdir, lowerdirs.
+On 14 Oct 2020, at 9:49, Matthew Wilcox wrote:
 
-This patchs adds initial support of fsinfo into overlayfs.
-If community decide to take this way of C/R support
-in overlayfs then I have plan to implement FSINFO_ATTR_SUPPORTS
-and FSINFO_ATTR_FEATURES standard attributes handlers too.
+> Our handling of PagePrivate, page->private and PagePrivate2 is a giant
+> mess.  Let's recap.
+>
+> Filesystems which use bufferheads (ie most of them) set page->private
+> to point to a buffer_head, set the PagePrivate bit and increment the
+> refcount on the page.
+>
+> The vmscan pageout code (*) needs to know whether a page is freeable:
+>         if (!is_page_cache_freeable(page))
+>                 return PAGE_KEEP;
+> ... where is_page_cache_freeable() contains ...
+>         return page_count(page) - page_has_private(page) == 1 + 
+> page_cache_pins;
+>
+> That's a little inscrutable, but the important thing is that if
+> page_has_private() is true, then the page's reference count is 
+> supposed
+> to be one higher than it would be otherwise.  And that makes sense 
+> given
+> how "having bufferheads" means "page refcount ges incremented".
+>
+> But page_has_private() doesn't actually mean "PagePrivate is set".
+> It means "PagePrivate or PagePrivate2 is set".  And I don't understand
+> how filesystems are supposed to keep that straight -- if we're setting
+> PagePrivate2, and PagePrivate is clear, increment the refcount?
+> If we're clearing PagePrivate, decrement the refcount if PagePrivate2
+> is also clear?
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Andrei Vagin <avagin@gmail.com>
-Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>
----
- fs/overlayfs/Makefile       |   1 +
- fs/overlayfs/fsinfo.c       | 133 ++++++++++++++++++++++++++++++++++++
- fs/overlayfs/overlayfs.h    |   6 ++
- fs/overlayfs/super.c        |   3 +
- include/uapi/linux/fsinfo.h |  31 +++++++++
- 5 files changed, 174 insertions(+)
- create mode 100644 fs/overlayfs/fsinfo.c
+At least for btrfs, only PagePrivate elevates the refcount on the page.  
+PagePrivate2 means:
 
-diff --git a/fs/overlayfs/Makefile b/fs/overlayfs/Makefile
-index 9164c585eb2f..db555c0e4508 100644
---- a/fs/overlayfs/Makefile
-+++ b/fs/overlayfs/Makefile
-@@ -7,3 +7,4 @@ obj-$(CONFIG_OVERLAY_FS) += overlay.o
- 
- overlay-objs := super.o namei.o util.o inode.o file.o dir.o readdir.o \
- 		copy_up.o export.o
-+overlay-$(CONFIG_FSINFO)	+= fsinfo.o
-diff --git a/fs/overlayfs/fsinfo.c b/fs/overlayfs/fsinfo.c
-new file mode 100644
-index 000000000000..9857949dcce5
---- /dev/null
-+++ b/fs/overlayfs/fsinfo.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Filesystem information for overlayfs
-+ *
-+ * Copyright (C) 2020 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#include <linux/mount.h>
-+#include <linux/fsinfo.h>
-+#include "overlayfs.h"
-+
-+static int __ovl_encode_mnt_opt_fh(struct fsinfo_ovl_source *p,
-+				   struct dentry *dentry)
-+{
-+	int fh_type, dwords;
-+	int buflen = MAX_HANDLE_SZ;
-+	int err;
-+
-+	/* we ask for a non connected handle */
-+	dwords = buflen >> 2;
-+	fh_type = exportfs_encode_fh(dentry, (void *)p->fh.f_handle, &dwords, 0);
-+	buflen = (dwords << 2);
-+
-+	err = -EIO;
-+	if (WARN_ON(fh_type < 0) ||
-+	    WARN_ON(buflen > MAX_HANDLE_SZ) ||
-+	    WARN_ON(fh_type == FILEID_INVALID))
-+		goto out_err;
-+
-+	p->fh.handle_type = fh_type;
-+	p->fh.handle_bytes = buflen;
-+
-+	/*
-+	 * Ideally, we want to have mnt_id+fhandle, but overlayfs not
-+	 * keep refcnts on layers mounts and we couldn't determine
-+	 * mnt_ids for layers. So, let's give s_dev to CRIU.
-+	 * It's better than nothing.
-+	 */
-+	p->s_dev = dentry->d_sb->s_dev;
-+
-+	return 0;
-+
-+out_err:
-+	return err;
-+}
-+
-+static int ovl_fsinfo_store_source(struct fsinfo_ovl_source *p,
-+				   enum fsinfo_ovl_source_type type,
-+				   struct dentry *dentry)
-+{
-+	__ovl_encode_mnt_opt_fh(p, dentry);
-+	p->type = type;
-+	return 0;
-+}
-+
-+static long ovl_ioctl_stor_lower_fhandle(struct fsinfo_ovl_source *p,
-+					 struct super_block *sb,
-+					 unsigned long arg)
-+{
-+	struct ovl_entry *oe = sb->s_root->d_fsdata;
-+	struct dentry *origin;
-+
-+	if (arg >= oe->numlower)
-+		return -EINVAL;
-+
-+	origin = oe->lowerstack[arg].dentry;
-+
-+	return ovl_fsinfo_store_source(p, FSINFO_OVL_LWR, origin);
-+}
-+
-+static long ovl_ioctl_stor_upper_fhandle(struct fsinfo_ovl_source *p,
-+					 struct super_block *sb)
-+{
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+	struct dentry *origin;
-+
-+	if (!ofs->config.upperdir)
-+		return -EINVAL;
-+
-+	origin = OVL_I(d_inode(sb->s_root))->__upperdentry;
-+
-+	return ovl_fsinfo_store_source(p, FSINFO_OVL_UPPR, origin);
-+}
-+
-+static long ovl_ioctl_stor_work_fhandle(struct fsinfo_ovl_source *p,
-+					struct super_block *sb)
-+{
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+
-+	if (!ofs->config.upperdir)
-+		return -EINVAL;
-+
-+	return ovl_fsinfo_store_source(p, FSINFO_OVL_WRK, ofs->workbasedir);
-+}
-+
-+static int ovl_fsinfo_sources(struct path *path, struct fsinfo_context *ctx)
-+{
-+	struct fsinfo_ovl_source *p = ctx->buffer;
-+	struct super_block *sb = path->dentry->d_sb;
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+	struct ovl_entry *oe = sb->s_root->d_fsdata;
-+	size_t nr_sources = (oe->numlower + 2 * !!ofs->config.upperdir);
-+	unsigned int i = 0, j;
-+	int ret = -ENODATA;
-+
-+	ret = nr_sources * sizeof(*p);
-+	if (ret <= ctx->buf_size) {
-+		if (ofs->config.upperdir) {
-+			ovl_ioctl_stor_upper_fhandle(&p[i++], sb);
-+			ovl_ioctl_stor_work_fhandle(&p[i++], sb);
-+		}
-+
-+		for (j = 0; j < oe->numlower; j++)
-+			ovl_ioctl_stor_lower_fhandle(&p[i++], sb, j);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct fsinfo_attribute ovl_fsinfo_attributes[] = {
-+	/* TODO: implement FSINFO_ATTR_SUPPORTS and FSINFO_ATTR_FEATURES */
-+	/*
-+	FSINFO_VSTRUCT	(FSINFO_ATTR_SUPPORTS,		ovl_fsinfo_supports),
-+	FSINFO_VSTRUCT	(FSINFO_ATTR_FEATURES,		ovl_fsinfo_features),
-+	*/
-+	FSINFO_LIST	(FSINFO_ATTR_OVL_SOURCES,	ovl_fsinfo_sources),
-+	{}
-+};
-+
-+int ovl_fsinfo(struct path *path, struct fsinfo_context *ctx)
-+{
-+	return fsinfo_get_attribute(path, ctx, ovl_fsinfo_attributes);
-+}
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 29bc1ec699e7..1c0ac23ecf8f 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -7,6 +7,7 @@
- #include <linux/kernel.h>
- #include <linux/uuid.h>
- #include <linux/fs.h>
-+#include <linux/xattr.h>
- #include "ovl_entry.h"
- 
- #undef pr_fmt
-@@ -492,3 +493,8 @@ int ovl_set_origin(struct dentry *dentry, struct dentry *lower,
- 
- /* export.c */
- extern const struct export_operations ovl_export_operations;
-+
-+/* fsinfo.c */
-+#ifdef CONFIG_FSINFO
-+extern int ovl_fsinfo(struct path *path, struct fsinfo_context *ctx);
-+#endif
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 4b38141c2985..1a4cdbbd766f 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -392,6 +392,9 @@ static const struct super_operations ovl_super_operations = {
- 	.put_super	= ovl_put_super,
- 	.sync_fs	= ovl_sync_fs,
- 	.statfs		= ovl_statfs,
-+#ifdef CONFIG_FSINFO
-+	.fsinfo		= ovl_fsinfo,
-+#endif
- 	.show_options	= ovl_show_options,
- 	.remount_fs	= ovl_remount,
- };
-diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
-index dcd764771a7d..83c2511691e4 100644
---- a/include/uapi/linux/fsinfo.h
-+++ b/include/uapi/linux/fsinfo.h
-@@ -10,6 +10,8 @@
- #include <linux/types.h>
- #include <linux/socket.h>
- #include <linux/openat2.h>
-+#include <linux/fs.h>
-+#include <linux/exportfs.h>
- 
- /*
-  * The filesystem attributes that can be requested.  Note that some attributes
-@@ -44,6 +46,8 @@
- #define FSINFO_ATTR_AFS_SERVER_NAME	0x301	/* Name of the Nth server (string) */
- #define FSINFO_ATTR_AFS_SERVER_ADDRESSES 0x302	/* List of addresses of the Nth server */
- 
-+#define FSINFO_ATTR_OVL_SOURCES		0x400	/* List of overlayfs source dirs fhandles+sdev */
-+
- /*
-  * Optional fsinfo() parameter structure.
-  *
-@@ -341,4 +345,31 @@ struct fsinfo_error_state {
- 
- #define FSINFO_ATTR_ERROR_STATE__STRUCT struct fsinfo_error_state
- 
-+/*
-+ * Information struct for fsinfo(FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO).
-+ *
-+ * This gives information about the overlayfs upperdir, workdir, lowerdir
-+ * superblock options (exported as fhandles).
-+ */
-+enum fsinfo_ovl_source_type {
-+	FSINFO_OVL_UPPR	= 0,	/* upperdir */
-+	FSINFO_OVL_WRK	= 1,	/* workdir */
-+	FSINFO_OVL_LWR	= 2,	/* lowerdir list item */
-+};
-+
-+/* DISCUSS: we can also export mnt_unique_id here which introduced by fsinfo patchset
-+ * and then use him to detect if source was unmounted in the time gap between the moment when
-+ * overlayfs was mounted and C/R process was started.
-+ * We can get mnt_unique_id also by using fsinfo(FSINFO_ATTR_MOUNT_ALL)
-+ */
-+struct fsinfo_ovl_source {
-+	enum fsinfo_ovl_source_type type;
-+	__u32 s_dev;
-+	struct file_handle fh;
-+	/* use f_handle field from struct file_handle */
-+	__u8 __fhdata[MAX_HANDLE_SZ];
-+};
-+
-+#define FSINFO_ATTR_OVL_SOURCES__STRUCT struct fsinfo_ovl_source
-+
- #endif /* _UAPI_LINUX_FSINFO_H */
--- 
-2.25.1
+This page has been properly setup for COW’d IO, and it went through 
+the normal path of page_mkwrite() or file_write() instead of being 
+silently dirtied by a deep corner of the MM.
 
+>
+> We introduced attach_page_private() and detach_page_private() earlier
+> this year to help filesystems get the refcount right.  But we still
+> have a few filesystems using PagePrivate themselves (afs, btrfs, ceph,
+> crypto, erofs, f2fs, jfs, nfs, orangefs & ubifs) and I'm not convinced
+> they're all getting it right.
+>
+> Here's a bug I happened on while looking into this:
+>
+>         if (page_has_private(page))
+>                 attach_page_private(newpage, 
+> detach_page_private(page));
+>
+>         if (PagePrivate2(page)) {
+>                 ClearPagePrivate2(page);
+>                 SetPagePrivate2(newpage);
+>         }
+>
+> The aggravating thing is that this doesn't even look like a bug.
+> You have to be in the kind of mood where you're thinking "What if page
+> has Private2 set and Private clear?" and the answer is that newpage
+> ends up with PagePrivate set, but page->private set to NULL.
+
+Do you mean PagePrivate2 set but page->private NULL?  Btrfs should only 
+hage PagePrivate2 set on pages that are formally in our writeback state 
+machine, so it’ll get cleared as we unwind through normal IO or 
+truncate etc.  For data pages, btrfs page->private is simply set to 1 so 
+the MM will kindly call releasepage for us.
+
+> And I
+> don't know whether this is a situation that can ever happen with 
+> btrfs,
+> but we shouldn't have code like this lying around in the tree because
+> it _looks_ right and somebody else might copy it.
+>
+> So what shold we do about all this?  First, I want to make the code
+> snippet above correct, because it looks right.  So page_has_private()
+> needs to test just PagePrivate and not PagePrivate2.  Now we need a
+> new function to call to determine whether the filesystem needs its
+> invalidatepage callback invoked.  Not sure what that should be named.
+>
+
+I haven’t checked all the page_has_private() callers, but maybe 
+page_has_private() should stay the same and add page_private_count() for 
+times where we need to get out our fingers and toes for the refcount 
+math.
+
+> I think I also want to rename PG_private_2 to PG_owner_priv_2.
+> There's a clear relationship between PG_private and page->private.
+> There is no relationship between PG_private_2 and page->private, so 
+> it's
+> a misleading name.  Or maybe it should just be PG_fscache and btrfs 
+> can
+> find some other way to mark the pages?
+
+Btrfs should be able to flip bits in page->private to cover our current 
+usage of PG_private_2.  If we ever attach something real to 
+page->private, we can flip bits in that instead.  It’s kinda messy 
+though and we’d have to change attach_page_private a little to reflect 
+its new life as a bit setting machine.
+
+>
+> Also ... do we really need to increment the page refcount if we have
+> PagePrivate set?  I'm not awfully familiar with the buffercache -- is
+> it possible we end up in a situation where a buffer, perhaps under 
+> I/O,
+> has the last reference to a struct page?  It seems like that reference 
+> is
+> always put from drop_buffers() which is called from 
+> try_to_free_buffers()
+> which is always called by someone who has a reference to a struct page
+> that they got from the pagecache.  So what is this reference count 
+> for?
+
+I’m not sure what we gain by avoiding the refcount bump?  Many 
+filesystems use the pattern of: “put something in page->private, free 
+that thing in releasepage.”  Without the refcount bump it feels like 
+we’d have more magic to avoid freeing the page without leaking things 
+in page->private.  I think the extra ref lets the FS crowd keep our 
+noses out of the MM more often, so it seems like a net positive to me.
+
+>
+> (*) Also THP split and page migration.  But maybe you don't care about
+> those things ... you definitely care about pageout!
+
+-chris
