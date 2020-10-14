@@ -2,225 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A91028E3FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 18:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F7B028E3F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 18:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbgJNQGm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 12:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730579AbgJNQGm (ORCPT
+        id S1730515AbgJNQFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 12:05:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50709 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729391AbgJNQFX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 12:06:42 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24937C061755;
-        Wed, 14 Oct 2020 09:06:42 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id b8so4578713wrn.0;
-        Wed, 14 Oct 2020 09:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e+m5qsnEajbbEQHI4VfPxur6uIKBSMwPX12oNaFiBDs=;
-        b=jZqr70ut+rRRq5MGT8YTcxZA6Ka07Ib+zp8eg4tdDwASQsk8knXCaaK5440TtNHHtR
-         uWf7LY0rUt8TXtSgzmVuPywJOlOU/0rXzggXWwPVkfiN91cLmNFi9M7qqT1c49HPaW+q
-         p2i9QgalW0iOOrfJBuVMMcS6lVnUZMzuQx4zWYbp24awpbVqUr7zM11ySdyczNYf84SE
-         MvvKLcfx9Um3ex5jW2ELTy60y7IMlHnLzapyZD7AiCJJJs+gYmV/fHNtVN9h9fZzFEpU
-         IFyghg1vLEu7S4jrBzAzcXo24DwMHFHdEyDiwYSnUqD+auloMGGaL2zrresZ7OGUWnLp
-         jPuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:autocrypt:subject:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e+m5qsnEajbbEQHI4VfPxur6uIKBSMwPX12oNaFiBDs=;
-        b=RZN6b0peNujpt6bhLnISFnHHHh5wtvNwKjy45y8xyT4k0qCGOssUXEOITvvNnfOKxP
-         IoayXQmOjbCzkbN1u65xr+cOjl88eTMhGO3qBVB+d1nhUF0O2MVqKSKVBv+j3tYTUwSP
-         sNRGML4X8WT3TfmbfLXOb+yA1efS4zAxmO3DMvc8APjCVEBteqqgnCQlg3pms31WWJ/o
-         3hKn0CfVSERZOA1swD34GQsk9voQIIYLKZ6nIFtldzDX9uFZiZbH/K8NB+N2GmutdlgZ
-         LhHbc8W71qp/3GEAPQ1lsSpmVfHxqsIc3rtV0qRdQ1EVoBVwgG5QO81nLX/ueyJHfz/y
-         5+LA==
-X-Gm-Message-State: AOAM531vFDh0ThvhRoop5L2MLm/YNEfnTpFx7H4mvDOmMk+nXJ8xG8oE
-        DLgIfwulzylt4X2kSQBP6yTEPLmk1NLrLA==
-X-Google-Smtp-Source: ABdhPJyNyV8QEK4HJQfrwODLW2R6Quk5UjF7jmPmudF/sqldIOdirnZPvAtXwzbTo97jyIF1poCnRg==
-X-Received: by 2002:adf:f7d1:: with SMTP id a17mr6408322wrq.396.1602691600707;
-        Wed, 14 Oct 2020 09:06:40 -0700 (PDT)
-Received: from [192.168.1.27] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
-        by smtp.gmail.com with ESMTPSA id o4sm5597034wrv.8.2020.10.14.09.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 09:06:40 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <0000000000005a849705b1a04ab8@google.com>
- <94fe990f-6382-039b-34b5-233b437af610@kernel.dk>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: general protection fault in __do_sys_io_uring_register
-Message-ID: <cc5d791f-78da-f73d-c6a3-c9dae3cf5a1b@gmail.com>
-Date:   Wed, 14 Oct 2020 17:03:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Wed, 14 Oct 2020 12:05:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602691522;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=auAyP+fVKBxRH1I46TJ6M6ABd1PyYGefPcWLaA/lgsA=;
+        b=W8/csl2ybCeASmhEMxLhSU3NZ6pficG1ufx/4VaYyuh7BxNVuBNP9z3zByyLecHXdwfIU1
+        78e5WlmZVeXMumoFOFBVEQzffTO4F0s22cvp611b1+MlyBrJWYFavxfLaXbO+upyncdiV0
+        tmVu7FRjvdiaEc9U4kgdVfjnAQlkNv4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-319-SklELPrJNNqPO3nTE7p1yg-1; Wed, 14 Oct 2020 12:05:15 -0400
+X-MC-Unique: SklELPrJNNqPO3nTE7p1yg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D639A6414B;
+        Wed, 14 Oct 2020 16:05:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C06D60C0F;
+        Wed, 14 Oct 2020 16:05:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201014153836.GM20115@casper.infradead.org>
+References: <20201014153836.GM20115@casper.infradead.org> <20201014134909.GL20115@casper.infradead.org> <B60A55DB-6AB7-48BF-8F11-68FF6FF46C4E@fb.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, Chris Mason <clm@fb.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Miaohe Lin <linmiaohe@huawei.com>
+Subject: Re: PagePrivate handling
 MIME-Version: 1.0
-In-Reply-To: <94fe990f-6382-039b-34b5-233b437af610@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <668210.1602691511.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 14 Oct 2020 17:05:11 +0100
+Message-ID: <668211.1602691511@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14/10/2020 14:35, Jens Axboe wrote:
-> On 10/14/20 6:01 AM, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    029f56db Merge tag 'x86_asm_for_v5.10' of git://git.kernel..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13b5c678500000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4ce0764b8e2dd3f
->> dashboard link: https://syzkaller.appspot.com/bug?extid=f4ebcc98223dafd8991e
->> compiler:       gcc (GCC) 10.1.0-syz 20200507
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com
->>
->> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
->> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
->> CPU: 1 PID: 8927 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
->> RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
->> RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
->> RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
->> Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
->> RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
->> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
->> RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
->> RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
->> R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
->> FS:  00007f4266f3c700(0000) GS:ffff8880ae500000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000000000118c000 CR3: 000000008e57d000 CR4: 00000000001506e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> RIP: 0033:0x45de59
->> Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
->> RSP: 002b:00007f4266f3bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
->> RAX: ffffffffffffffda RBX: 00000000000083c0 RCX: 000000000045de59
->> RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000005
->> RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
->> R10: 40000000000000a1 R11: 0000000000000246 R12: 000000000118bf2c
->> R13: 00007fff2fa4f12f R14: 00007f4266f3c9c0 R15: 000000000118bf2c
->> Modules linked in:
->> ---[ end trace 2a40a195e2d5e6e6 ]---
->> RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
->> RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
->> RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
->> RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
->> Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
->> RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
->> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
->> RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
->> RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
->> R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
->> FS:  00007f4266f3c700(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000000000074a918 CR3: 000000008e57d000 CR4: 00000000001506f0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> I think this should fix it.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-("io_uring: clean file_data access in files_register") is reported
-already a second time, that's a really unfortunate commit...
+> It's not great, but with David wanting to change how PageFsCache is used=
+,
+> it may be unavoidable (I'm not sure if he's discussed that with you yet)
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/co=
+mmit/?h=3Dfscache-iter&id=3D6f10fd7766ed6d87c3f696bb7931281557b389f5 shows=
+ part of it
+> -- essentially he wants to make PagePrivate2 mean that I/O is currently
+> ongoing to an fscache, and so truncate needs to wait on it being finishe=
+d.
 
-The fix looks good. Though, in the future I'd prefer to remove the
-ctx dependency there, e.g. __io_file_from_index(file_table).
+->invalidatepage() and ->releasepage() had to wait anyway.
 
-> 
-> 
-> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> index fc6de6b4784e..528eced8ee1f 100644
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -7311,6 +7311,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
->  
->  	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
->  		goto out_ref;
-> +	ctx->file_data = file_data;
->  
->  	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
->  		struct fixed_file_table *table;
-> @@ -7345,7 +7346,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
->  		table->files[index] = file;
->  	}
->  
-> -	ctx->file_data = file_data;
->  	ret = io_sqe_files_scm(ctx);
->  	if (ret) {
->  		io_sqe_files_unregister(ctx);
-> @@ -7378,6 +7378,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
->  out_free:
->  	kfree(file_data->table);
->  	kfree(file_data);
-> +	ctx->file_data = NULL;
->  	return ret;
->  }
->  
-> 
+PG_fscache used to mean that the cache might have some knowledge of the pa=
+ge
+and it might have I/O in progress on it - entirely as and when the cache f=
+elt
+like doing it.
 
--- 
-Pavel Begunkov
+Now it just means that there's write I/O in progress on it at the netfs's
+behest (though it might be issued by a cache helper).  The main part of th=
+e
+cache doesn't know about the page and doesn't care about the page flag, it
+just sees an iov_iter.
+
+In a sense, it's now a second PG_writeback flag.  A page can be being writ=
+ten
+to two locations at the same time (the server and the cache).  Each write =
+is
+independent, though they may be started from the same place, and one of th=
+e
+writes may be being handled by another filesystem entirely (the cache may =
+have
+started a DIO write to ext4, for example).
+
+It's not needed for reading, since the PG_locked flag entirely suffices fo=
+r
+that.  The read helper doesn't do parallel reads from the server and the c=
+ache
+to the same chunk of pagecache.
+
+Willy has asked that I either make PG_writeback cover both cases or that
+PG_fscache can only be set if PG_writeback is also set.  However, both of
+these require extra state to be attached to page->private to be able to
+coordinate this as there may be (as mentioned above) two parallel writes f=
+rom
+the same data that may finish at different times.
+
+David
+
