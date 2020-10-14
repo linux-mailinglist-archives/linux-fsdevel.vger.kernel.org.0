@@ -2,172 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6854C28E166
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 213C828E1A0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731310AbgJNNfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 09:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
+        id S1727300AbgJNNtO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 09:49:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731308AbgJNNfv (ORCPT
+        with ESMTP id S1726680AbgJNNtN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 09:35:51 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28434C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:35:51 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id a17so1591803pju.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:35:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=Wy0Ge2R1/3xJqBcrn7DRgPvP5sQkmecIsTO05iyvDPI=;
-        b=oaWRltC9WgKkU5AVb81kGaNKgvV3MWJ3WWPSbPNCtDxPQTLutzxBPvJyjz51KQDIWg
-         ia6TLh6OIJzB85yCJhmub3PQTMcKxw8eceNIqvU4ZpiNJtQcDus4+bSrkNko05UPANIA
-         phiaOeSA107xelJxqKRZOpjFe09QGS/xnj+DSOrIspouhmoWHOynGH+L1B6JW0EjPG3l
-         ILuiS2oxWb2UCsPOya76QYvVqCAXQQRz59DQdn3VnVSBLiqkipdexdj6j8zmsUoFDCyV
-         EB5qYgiwJTYtFoS4Je4VYCg5GR8cgWIKaWOETCwBDj6DOjnnMsz2qS2BggLFl4ltBLwT
-         j3iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Wy0Ge2R1/3xJqBcrn7DRgPvP5sQkmecIsTO05iyvDPI=;
-        b=P+nK+tRmI2h51RRH61tnQToQB53IWPhTe0PXsmEtMkDbdVs3eSq0g6brvJm6mYPRoR
-         QWRSGXA5JzEWWIro8yjPBjW9XpiP3mLRTwMUdQJpcgVdWouJzgCYxHTiQxiyRNcJyEgS
-         NUU5WC4JmY3D/wl12el6o/7e/h9BwhmoAOM+DF0RxEjyYRV2Y2ie/zPIA70rSFXicvfB
-         tIeQqi9Vyf07FuGpd2n/z71U664aH+JVqGLqp4eF1NYp3wrQOOu/5QYj/dWDPM6d1tW8
-         W5YddeW+whvlP2ky5geVs4gm7WvzS9brZUIj3UqQ2jB/kl8ZCiR+/m8jsN6uvYOSS+l8
-         uofw==
-X-Gm-Message-State: AOAM532wLiisomF8vAuH1RBluR080/RQfPLtuNXgU2M3gHNXXniKbbzK
-        Go9Ufe2OtZWHQCD1CKLhzJzWFg==
-X-Google-Smtp-Source: ABdhPJyftra9I5a+UmwFsdFPNjzXI/wjtHTShNQjT0d0+UsYDvRuic+mMuS4HpRz7Zn++E94jt+QJA==
-X-Received: by 2002:a17:90a:4ece:: with SMTP id v14mr3797628pjl.70.1602682550509;
-        Wed, 14 Oct 2020 06:35:50 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 190sm3596239pfc.151.2020.10.14.06.35.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 06:35:49 -0700 (PDT)
-Subject: Re: general protection fault in __do_sys_io_uring_register
-To:     syzbot <syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, Pavel Begunkov <asml.silence@gmail.com>
-References: <0000000000005a849705b1a04ab8@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <94fe990f-6382-039b-34b5-233b437af610@kernel.dk>
-Date:   Wed, 14 Oct 2020 07:35:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 14 Oct 2020 09:49:13 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8D0C061755
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=Xrn4UVQxl89wkUAKqCKref0AgwtCQZS0u+gdq+m30fA=; b=ksKg7vwg2L5KNjxMdVR0QfRKSe
+        GePJvw6XrxBnwXTACw6lwaTx9IaWm5sYtEF442PCP2/SMtJj9VBQiEgP/uv2K23d7xF8KiEhyiVEB
+        ovXs8L6eeRJg7kjstDeKJVZnaJTrt/OlXj+g978Uu9tyJ1S2JdOZlcwxN0rYrH9XtcKG+EshkW77w
+        U7093BsUCx3HtLMZXNi2nx2hmhba089pSKg0kOErsKSHOSoHSU3OGIkyDsc8jnDUx//tcHdb1vLOW
+        bscKj64SCxaazjPuE8bBgfSNe8dLC2XYi19nXHWXhQ99UBRDa0MA1n0mL1zR0fD67aysJ4Bj832Wo
+        DRAN5P+w==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kSh9R-0000DG-4J; Wed, 14 Oct 2020 13:49:09 +0000
+Date:   Wed, 14 Oct 2020 14:49:09 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        David Howells <dhowells@redhat.com>
+Subject: PagePrivate handling
+Message-ID: <20201014134909.GL20115@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <0000000000005a849705b1a04ab8@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/14/20 6:01 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    029f56db Merge tag 'x86_asm_for_v5.10' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13b5c678500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4ce0764b8e2dd3f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f4ebcc98223dafd8991e
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com
-> 
-> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 1 PID: 8927 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
-> RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
-> RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
-> RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
-> Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
-> RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
-> RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
-> RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
-> R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
-> FS:  00007f4266f3c700(0000) GS:ffff8880ae500000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000118c000 CR3: 000000008e57d000 CR4: 00000000001506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x45de59
-> Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f4266f3bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-> RAX: ffffffffffffffda RBX: 00000000000083c0 RCX: 000000000045de59
-> RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000005
-> RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
-> R10: 40000000000000a1 R11: 0000000000000246 R12: 000000000118bf2c
-> R13: 00007fff2fa4f12f R14: 00007f4266f3c9c0 R15: 000000000118bf2c
-> Modules linked in:
-> ---[ end trace 2a40a195e2d5e6e6 ]---
-> RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
-> RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
-> RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
-> RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
-> Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
-> RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
-> RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
-> RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
-> R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
-> FS:  00007f4266f3c700(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000074a918 CR3: 000000008e57d000 CR4: 00000000001506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Our handling of PagePrivate, page->private and PagePrivate2 is a giant
+mess.  Let's recap.
 
-I think this should fix it.
+Filesystems which use bufferheads (ie most of them) set page->private
+to point to a buffer_head, set the PagePrivate bit and increment the
+refcount on the page.
 
+The vmscan pageout code (*) needs to know whether a page is freeable:
+        if (!is_page_cache_freeable(page))
+                return PAGE_KEEP;
+... where is_page_cache_freeable() contains ...
+        return page_count(page) - page_has_private(page) == 1 + page_cache_pins;
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fc6de6b4784e..528eced8ee1f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7311,6 +7311,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 
- 	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
- 		goto out_ref;
-+	ctx->file_data = file_data;
- 
- 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
- 		struct fixed_file_table *table;
-@@ -7345,7 +7346,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 		table->files[index] = file;
- 	}
- 
--	ctx->file_data = file_data;
- 	ret = io_sqe_files_scm(ctx);
- 	if (ret) {
- 		io_sqe_files_unregister(ctx);
-@@ -7378,6 +7378,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- out_free:
- 	kfree(file_data->table);
- 	kfree(file_data);
-+	ctx->file_data = NULL;
- 	return ret;
- }
- 
+That's a little inscrutable, but the important thing is that if
+page_has_private() is true, then the page's reference count is supposed
+to be one higher than it would be otherwise.  And that makes sense given
+how "having bufferheads" means "page refcount ges incremented".
 
--- 
-Jens Axboe
+But page_has_private() doesn't actually mean "PagePrivate is set".
+It means "PagePrivate or PagePrivate2 is set".  And I don't understand
+how filesystems are supposed to keep that straight -- if we're setting
+PagePrivate2, and PagePrivate is clear, increment the refcount?
+If we're clearing PagePrivate, decrement the refcount if PagePrivate2
+is also clear?
 
+We introduced attach_page_private() and detach_page_private() earlier
+this year to help filesystems get the refcount right.  But we still
+have a few filesystems using PagePrivate themselves (afs, btrfs, ceph,
+crypto, erofs, f2fs, jfs, nfs, orangefs & ubifs) and I'm not convinced
+they're all getting it right.
+
+Here's a bug I happened on while looking into this:
+
+        if (page_has_private(page))
+                attach_page_private(newpage, detach_page_private(page));
+
+        if (PagePrivate2(page)) {
+                ClearPagePrivate2(page);
+                SetPagePrivate2(newpage);
+        }
+
+The aggravating thing is that this doesn't even look like a bug.
+You have to be in the kind of mood where you're thinking "What if page
+has Private2 set and Private clear?" and the answer is that newpage
+ends up with PagePrivate set, but page->private set to NULL.  And I
+don't know whether this is a situation that can ever happen with btrfs,
+but we shouldn't have code like this lying around in the tree because
+it _looks_ right and somebody else might copy it.
+
+So what shold we do about all this?  First, I want to make the code
+snippet above correct, because it looks right.  So page_has_private()
+needs to test just PagePrivate and not PagePrivate2.  Now we need a
+new function to call to determine whether the filesystem needs its
+invalidatepage callback invoked.  Not sure what that should be named.
+
+I think I also want to rename PG_private_2 to PG_owner_priv_2.
+There's a clear relationship between PG_private and page->private.
+There is no relationship between PG_private_2 and page->private, so it's
+a misleading name.  Or maybe it should just be PG_fscache and btrfs can
+find some other way to mark the pages?
+
+Also ... do we really need to increment the page refcount if we have
+PagePrivate set?  I'm not awfully familiar with the buffercache -- is
+it possible we end up in a situation where a buffer, perhaps under I/O,
+has the last reference to a struct page?  It seems like that reference is
+always put from drop_buffers() which is called from try_to_free_buffers()
+which is always called by someone who has a reference to a struct page
+that they got from the pagecache.  So what is this reference count for?
+
+(*) Also THP split and page migration.  But maybe you don't care about
+those things ... you definitely care about pageout!
