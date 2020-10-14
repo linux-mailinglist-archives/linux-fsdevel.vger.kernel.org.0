@@ -2,57 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0261328E564
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D8D28E56D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388453AbgJNRap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 13:30:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
+        id S2388816AbgJNRfC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 13:35:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbgJNRap (ORCPT
+        with ESMTP id S2388388AbgJNRfC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:30:45 -0400
+        Wed, 14 Oct 2020 13:35:02 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD0FC061755;
-        Wed, 14 Oct 2020 10:30:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18BFC061755;
+        Wed, 14 Oct 2020 10:35:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AK8bcl5go2531vZZGKg0DJyQ5BbOzGirGdwSJSVvpg8=; b=Z/v/BmAErP8cNwni3jP1t43syF
-        RUEKfwVmpNhm+d92PuP21fdDLgzACeWsqPzbQv06gEOJgGyCGzIACmm/E66qy3CuwA98Fgi0mt9Ng
-        u96Cu0UBzwhbqD+rwVbM06hMTT9h6pNUm2uUR8VWLn+82769+AGxORqvDjZci4U3HczqI1jgeF/Xg
-        75xnEEjb8u/6dBFKoU7vv3DqIn+jjXELSymweRfc7yV6XcfDlND+bpwlBKQkif/ooIRiUGQCfLT/g
-        5g3kJK/LUuaqwH55REmjIuNW5+JW43EzauppKTQnPuwnRTcwDOFEQBqhgzMavs+70zeROD+8fjZZb
-        JINWOBuQ==;
+        bh=bFmp8qmgBGhqB/X65ibwSq7YXKtNnPqEkqnUE5CNjEo=; b=e/CJ+gzF8JKH8KtYyrNxYuOSkV
+        B454oRZUzlRVyVXJUQWRlJTYtsR8r3hhJHGjfJN1Lci0RKBHG3yxMXwjZPIX+jHCUNpTVTa+J4jKW
+        AkKR2toT/nv9lv9ZZT72RmzL2+NPZssaoNRObRc42/aRDwc35u6GvkHpZz0UITqGWF2BFMtla+uyx
+        W0BtjjcG8eKeWpDjO6YcChWX2QBThekM5dGa10yQc+bI0l3wY0fRiLiYACT/Zee565bhjAAAJjag/
+        H4p3LeTHLebyk99pmv+4UHsysvX3qjsql3DqWx9Lfhyb2ymaQhT5z0SrRobDc/Qd8ZHrDQO5iOmiH
+        autXjUeQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSkbr-00054e-RY; Wed, 14 Oct 2020 17:30:43 +0000
-Date:   Wed, 14 Oct 2020 18:30:43 +0100
+        id 1kSkg0-0005Gv-8n; Wed, 14 Oct 2020 17:35:00 +0000
+Date:   Wed, 14 Oct 2020 18:35:00 +0100
 From:   Matthew Wilcox <willy@infradead.org>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 14/14] xfs: Support THPs
-Message-ID: <20201014173043.GQ20115@casper.infradead.org>
+Subject: Re: [PATCH 07/14] iomap: Support THPs in readpage
+Message-ID: <20201014173500.GR20115@casper.infradead.org>
 References: <20201014030357.21898-1-willy@infradead.org>
- <20201014030357.21898-15-willy@infradead.org>
- <20201014165116.GL9832@magnolia>
+ <20201014030357.21898-8-willy@infradead.org>
+ <20201014163936.GJ9832@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201014165116.GL9832@magnolia>
+In-Reply-To: <20201014163936.GJ9832@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 09:51:16AM -0700, Darrick J. Wong wrote:
-> > -	.fs_flags		= FS_REQUIRES_DEV,
-> > +	.fs_flags		= FS_REQUIRES_DEV | FS_THP_SUPPORT,
+On Wed, Oct 14, 2020 at 09:39:36AM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 14, 2020 at 04:03:50AM +0100, Matthew Wilcox (Oracle) wrote:
+> > +/*
+> > + * The page that was passed in has become Uptodate.  This may be due to
+> > + * the storage being synchronous or due to a page split finding the page
+> > + * is actually uptodate.  The page is still locked.
+> > + * Lift this into the VFS at some point.
+> > + */
+> > +#define AOP_UPDATED_PAGE       (AOP_TRUNCATED_PAGE + 1)
 > 
-> Mostly looks reasonable to me so far, though I forget where exactly
-> FS_THP_SUPPORT got added...?
+> Er... why not lift it now?
+> 
+> "Because touching fs.h causes the whole kernel to be rebuilt and that's
+> annoying"? :D
 
-That's in akpm's tree ... not sure if it's in his current pull request,
-but I'm assuming it'll go upstream this merge window.
+Hah!  Because I already have a patch series out that does lift it to
+the VFS:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=akpm&id=b97a1c642769622b2f22f575f624aefcd1cd9b7f
+https://lore.kernel.org/linux-fsdevel/20201009143104.22673-1-willy@infradead.org/
+
+which I'm kind of hoping gets merged first.  Then I can adjust this patch.
+
+> > +static int iomap_split_page(struct inode *inode, struct page *page)
+> > +{
+> > +	struct page *head = thp_head(page);
+> > +	bool uptodate = iomap_range_uptodate(inode, head,
+> > +				(page - head) * PAGE_SIZE, PAGE_SIZE);
+> > +
+> > +	iomap_page_release(head);
+> > +	if (split_huge_page(page) < 0) {
+> > +		unlock_page(page);
+> > +		return AOP_TRUNCATED_PAGE;
+> > +	}
+> > +	if (!uptodate)
+> > +		return 0;
+> > +	SetPageUptodate(page);
+> > +	return AOP_UPDATED_PAGE;
+> > +}
+> > +
+> >  int
+> >  iomap_readpage(struct page *page, const struct iomap_ops *ops)
+> >  {
+> >  	struct iomap_readpage_ctx ctx = { .cur_page = page };
+> > -	struct inode *inode = page->mapping->host;
+> > +	struct inode *inode = thp_head(page)->mapping->host;
+> >  	unsigned poff;
+> >  	loff_t ret;
+> >  
+> > -	trace_iomap_readpage(page->mapping->host, 1);
+> > +	trace_iomap_readpage(inode, 1);
+> > +
+> > +	if (PageTransCompound(page)) {
+> > +		int status = iomap_split_page(inode, page);
+> > +		if (status == AOP_UPDATED_PAGE) {
+> > +			unlock_page(page);
+> 
+> /me wonders why not do the unlock in iomap_split_page?
+
+This is working around AOP_UPDATED_PAGE not existing in the VFS.  So
+adjusting this patch becomes:
+
+		int status = iomap_split_page(inode, page);
+		if (status)
+			return status;
