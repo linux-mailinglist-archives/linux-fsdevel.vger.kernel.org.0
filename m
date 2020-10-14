@@ -2,88 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE4628E61E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 20:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9458E28E6B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 20:52:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729213AbgJNSPP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 14:15:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38218 "EHLO
+        id S2389286AbgJNSwR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 14:52:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbgJNSPO (ORCPT
+        with ESMTP id S2389276AbgJNSwR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 14:15:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C2DC061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 11:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=sQvG5B57qQ8pitJx5xAsS25qRLEbRjXr/NwuIkkRph8=; b=ZqWQT4WOvQ0G8vZGdAd085nXrs
-        793fmY3O7zgdfZle1c1NyuwoZu7RGnqlY4Z/8dpeMAOxPz9IhxWF9EzqaaRVjxs6N/VI5J831DfQY
-        uTVWrGcNvvLfLbZfAosgrTXIZRbAS9NqXDF1Co6YnJV11pIWnA0bnezhDdnV5urq79X+nKOQj1Zxq
-        vwVBT7xHTDA6HyJXLKP2k5iWbZ9XRxzDWRcS15m/RKYKQveTHUBqMnOc3m1CdgV2jkyM73yqSvRtM
-        lK5ryRd8zQwYy+HY9tf1otRyew4C0b0CHgFCI/0vJq99zn6UriMxo55sAyMnAZeS6c80ZbXmm3Wxa
-        ty+Vc4PA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSlIr-0007sy-UD; Wed, 14 Oct 2020 18:15:09 +0000
-Date:   Wed, 14 Oct 2020 19:15:09 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>, Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH 0/4] Some more lock_page work..
-Message-ID: <20201014181509.GU20115@casper.infradead.org>
-References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
- <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
- <20201014130555.kdbxyavqoyfnpos3@box>
- <CAHk-=wjXBv0ZKqH4muuo2j4bH2km=7wedrEeQJxY6g2JcdOZSQ@mail.gmail.com>
+        Wed, 14 Oct 2020 14:52:17 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83CB5C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 11:52:17 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CBM3H4S3vzlhGlF;
+        Wed, 14 Oct 2020 20:52:11 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4CBM3F37gyzlh8TJ;
+        Wed, 14 Oct 2020 20:52:09 +0200 (CEST)
+Subject: Re: [PATCH v21 07/12] landlock: Support filesystem access-control
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201008153103.1155388-1-mic@digikod.net>
+ <20201008153103.1155388-8-mic@digikod.net>
+ <alpine.LRH.2.21.2010150504360.26012@namei.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <77ea263c-4200-eb74-24b2-9a8155aff9b5@digikod.net>
+Date:   Wed, 14 Oct 2020 20:52:08 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjXBv0ZKqH4muuo2j4bH2km=7wedrEeQJxY6g2JcdOZSQ@mail.gmail.com>
+In-Reply-To: <alpine.LRH.2.21.2010150504360.26012@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 09:53:35AM -0700, Linus Torvalds wrote:
-> In particular, what I _think_ we could do is:
-> 
->  - lock the page tables
-> 
->  - check that the page isn't locked
-> 
->  - increment the page mapcount (atomic and ordered)
-> 
->  - check that the page still isn't locked
-> 
->  - insert pte
-> 
-> without taking the page lock. And the reason that's safe is that *if*
-[...]
-> And they aren't necessarily a _lot_ more involved. In fact, I think we
-> may already hold the page table lock due to doing that
-> "pte_alloc_one_map()" thing over all of filemap_map_pages(). So I
-> think the only _real_ problem is that I think we increment the
-> page_mapcount() too late in alloc_set_pte().
 
-I'm not entirely sure why we require the page lock to be held in
-page_add_file_rmap():
+On 14/10/2020 20:07, James Morris wrote:
+> On Thu, 8 Oct 2020, Mickaël Salaün wrote:
+> 
+>> +config ARCH_EPHEMERAL_STATES
+>> +	def_bool n
+>> +	help
+>> +	  An arch should select this symbol if it does not keep an internal kernel
+>> +	  state for kernel objects such as inodes, but instead relies on something
+>> +	  else (e.g. the host kernel for an UML kernel).
+>> +
+> 
+> This is used to disable Landlock for UML, correct?
 
-        } else {
-                if (PageTransCompound(page) && page_mapping(page)) {
-                        VM_WARN_ON_ONCE(!PageLocked(page));
+Yes
 
-                        SetPageDoubleMap(compound_head(page));
-                        if (PageMlocked(page))
-                                clear_page_mlock(compound_head(page));
-                }
+> I wonder if it could be 
+> more specific: "ephemeral states" is a very broad term.
+> 
+> How about something like ARCH_OWN_INODES ?
 
-We have a reference to the page, so compound_head() isn't going
-to change.  SetPageDoubleMap() is atomic.  PageMlocked() is atomic.
-clear_page_mlock() does TestClearPageMlocked() as its first thing,
-so that's atomic too.  What am I missing?  (Kirill added it, so I
-assume he remembers ;-)
+Sounds good. We may need add new ones (e.g. for network socket, UID,
+etc.) in the future though.
