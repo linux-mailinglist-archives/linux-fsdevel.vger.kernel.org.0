@@ -2,140 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A013C28DC70
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 11:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D29E28D995
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 07:35:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbgJNJJh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 05:09:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727827AbgJNJJh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 05:09:37 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA23C04585D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Oct 2020 22:30:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=0RdLnWdqLniXru95MsyVjh9zwMbeEReIgSPPac9ZFJM=; b=lWrIQk8P4mN5/kRF2M4whnSigo
-        CLDH5QWbITTOzbEdVFh8wXS4hd4dJMQicu6DkH3Rs/lutIFKxC5/nZYceoCz/htv40QOR4qzYWCBR
-        HOLGY2hLCgCBgjs3idGyCXOCUQ++39T7bQoVzKzryuC9ESgUKXFmSCX3zOjnQXkWEhM6eDDRPsy4n
-        RWmlHTnwNqetZOJrV/Slg0nGVI3JXcK4oQWMsS0b/othPYFqnX46ZEtjHppgGfUUdz07GAPq+XGz4
-        h0UQxMvYraoSJO4WJlFUNXlDqPh72IRuE5VpdwGkzWac8D6+EBYiOjkeNMRuD1A4Sq+6i2lis3f15
-        RyA0xcfA==;
-Received: from [2601:1c0:6280:3f0::507c]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSZMX-0008WR-Pr; Wed, 14 Oct 2020 05:30:10 +0000
-Subject: Re: [PATCH] jfs: delete duplicated words + other fixes
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net
-References: <20200805024901.12181-1-rdunlap@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8a632de9-d4ef-3f90-036a-7f9cc35eb8a9@infradead.org>
-Date:   Tue, 13 Oct 2020 22:30:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1730283AbgJNFev (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 01:34:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727849AbgJNFev (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 01:34:51 -0400
+Received: from kernel.org (unknown [87.71.73.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A671F2177B;
+        Wed, 14 Oct 2020 05:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1602653690;
+        bh=d4wYMD9zxWGP4ViJqAYsTUccVHhOPjIdZNDpBMkcIPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JzTNGhOiNyXtNTueXhjUVMEfQTx5q+4aBDwojw4g95GwoRgomkCxd+hVvWVnaqAjE
+         L8pOvlVoMurMUNwWQqJvFWzplk02ZoX2HEAQlaZc6iqUx8dj9+KMw47anVntrWxplH
+         0gT3KWk7AWi2bc4K2wN8bQTJha+ec7Hqxd8ZD09Y=
+Date:   Wed, 14 Oct 2020 08:34:29 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Muchun Song <songmuchun@bytedance.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+Message-ID: <20201014053429.GI4251@kernel.org>
+References: <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+ <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
+ <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
+ <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
+ <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com>
+ <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
+ <20201013080906.GD4251@kernel.org>
+ <e059f4b1-e51b-0277-e96b-c178d0cf4fd7@infradead.org>
+ <20201013151215.GG4251@kernel.org>
+ <3aa9ff1a-e04f-517c-5ebb-2c27804c143a@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200805024901.12181-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3aa9ff1a-e04f-517c-5ebb-2c27804c143a@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ping.
+On Tue, Oct 13, 2020 at 08:21:13AM -0700, Randy Dunlap wrote:
+> On 10/13/20 8:12 AM, Mike Rapoport wrote:
+> > On Tue, Oct 13, 2020 at 07:43:59AM -0700, Randy Dunlap wrote:
+> >> On 10/13/20 1:09 AM, Mike Rapoport wrote:
+> >>> On Mon, Oct 12, 2020 at 05:53:01PM +0800, Muchun Song wrote:
+> >>>> On Mon, Oct 12, 2020 at 5:24 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> >>>>>
+> >>>>> On 10/12/20 10:39 AM, Muchun Song wrote:
+> >>>>>> On Mon, Oct 12, 2020 at 3:42 PM Eric Dumazet <edumazet@google.com> wrote:
+> >>>>
+> >>>> We are not complaining about TCP using too much memory, but how do
+> >>>> we know that TCP uses a lot of memory. When I firstly face this problem,
+> >>>> I do not know who uses the 25GB memory and it is not shown in the /proc/meminfo.
+> >>>> If we can know the amount memory of the socket buffer via /proc/meminfo, we
+> >>>> may not need to spend a lot of time troubleshooting this problem. Not everyone
+> >>>> knows that a lot of memory may be used here. But I believe many people
+> >>>> should know /proc/meminfo to confirm memory users.
+> >>>
+> >>> If I undestand correctly, the problem you are trying to solve is to
+> >>> simplify troubleshooting of memory usage for people who may not be aware
+> >>> that networking stack can be a large memory consumer.
+> >>>
+> >>> For that a paragraph in 'man 5 proc' maybe a good start:
+> >>>
+> >>> >From ddbcf38576d1a2b0e36fe25a27350d566759b664 Mon Sep 17 00:00:00 2001
+> >>> From: Mike Rapoport <rppt@linux.ibm.com>
+> >>> Date: Tue, 13 Oct 2020 11:07:35 +0300
+> >>> Subject: [PATCH] proc.5: meminfo: add not anout network stack memory
+> >>>  consumption
+> >>>
+> >>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> >>> ---
+> >>>  man5/proc.5 | 8 ++++++++
+> >>>  1 file changed, 8 insertions(+)
+> >>>
+> >>> diff --git a/man5/proc.5 b/man5/proc.5
+> >>> index ed309380b..8414676f1 100644
+> >>> --- a/man5/proc.5
+> >>> +++ b/man5/proc.5
+> >>> @@ -3478,6 +3478,14 @@ Except as noted below,
+> >>>  all of the fields have been present since at least Linux 2.6.0.
+> >>>  Some fields are displayed only if the kernel was configured
+> >>>  with various options; those dependencies are noted in the list.
+> >>> +.IP
+> >>> +Note that significant part of memory allocated by the network stack
+> >>> +is not accounted in the file.
+> >>> +The memory consumption of the network stack can be queried
+> >>> +using
+> >>> +.IR /proc/net/sockstat
+> >>> +or
+> >>> +.BR ss (8)
+> >>>  .RS
+> >>>  .TP
+> >>>  .IR MemTotal " %lu"
+> >>
+> >> Hi Mike,
+> >>
+> >> Could you tell us what units those values are in?
+> >> or is that already explained somewhere else?
+> > 
+> > It is described a few lines above and anyway, "MemTotal" is a part of
+> > the diff context ;-)
+> 
+> with no units AFAICT.
+> 
+> But I was unclear. I wasn't referring to /proc/meminfo, but instead
+> to /proc/net/sockstat and its units:
+> 
+> sockets: used 1224
+> TCP: inuse 11 orphan 1 tw 1 alloc 26 mem 3
+> UDP: inuse 4 mem 2
+> UDPLITE: inuse 0
+> RAW: inuse 0
+> FRAG: inuse 0 memory 0
+> 
+> E.g., for TCP and UDP, are those socket counts or some unit of memory?
+> If units of memory, what unit size?
 
-On 8/4/20 7:49 PM, Randy Dunlap wrote:
-> Delete repeated words in fs/jfs/.
-> {for, allocation, if, the}
-> Insert "is" in one place to correct the grammar.
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> To: linux-fsdevel@vger.kernel.org
-> Cc: Dave Kleikamp <shaggy@kernel.org>
-> Cc: jfs-discussion@lists.sourceforge.net
-> ---
->  fs/jfs/jfs_dmap.c   |    2 +-
->  fs/jfs/jfs_extent.c |    2 +-
->  fs/jfs/jfs_extent.h |    2 +-
->  fs/jfs/jfs_logmgr.h |    2 +-
->  fs/jfs/jfs_txnmgr.c |    2 +-
->  fs/jfs/jfs_xtree.c  |    2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> --- linux-next-20200804.orig/fs/jfs/jfs_dmap.c
-> +++ linux-next-20200804/fs/jfs/jfs_dmap.c
-> @@ -668,7 +668,7 @@ unlock:
->   *		this does not succeed, we finally try to allocate anywhere
->   *		within the aggregate.
->   *
-> - *		we also try to allocate anywhere within the aggregate for
-> + *		we also try to allocate anywhere within the aggregate
->   *		for allocation requests larger than the allocation group
->   *		size or requests that specify no hint value.
->   *
-> --- linux-next-20200804.orig/fs/jfs/jfs_extent.c
-> +++ linux-next-20200804/fs/jfs/jfs_extent.c
-> @@ -575,7 +575,7 @@ extBalloc(struct inode *ip, s64 hint, s6
->   *	blkno	 - starting block number of the extents current allocation.
->   *	nblks	 - number of blocks within the extents current allocation.
->   *	newnblks - pointer to a s64 value.  on entry, this value is the
-> - *		   the new desired extent size (number of blocks).  on
-> + *		   new desired extent size (number of blocks).  on
->   *		   successful exit, this value is set to the extent's actual
->   *		   new size (new number of blocks).
->   *	newblkno - the starting block number of the extents new allocation.
-> --- linux-next-20200804.orig/fs/jfs/jfs_extent.h
-> +++ linux-next-20200804/fs/jfs/jfs_extent.h
-> @@ -5,7 +5,7 @@
->  #ifndef	_H_JFS_EXTENT
->  #define _H_JFS_EXTENT
->  
-> -/*  get block allocation allocation hint as location of disk inode */
-> +/*  get block allocation hint as location of disk inode */
->  #define	INOHINT(ip)	\
->  	(addressPXD(&(JFS_IP(ip)->ixpxd)) + lengthPXD(&(JFS_IP(ip)->ixpxd)) - 1)
->  
-> --- linux-next-20200804.orig/fs/jfs/jfs_logmgr.h
-> +++ linux-next-20200804/fs/jfs/jfs_logmgr.h
-> @@ -132,7 +132,7 @@ struct logpage {
->   * (this comment should be rewritten !)
->   * jfs uses only "after" log records (only a single writer is allowed
->   * in a page, pages are written to temporary paging space if
-> - * if they must be written to disk before commit, and i/o is
-> + * they must be written to disk before commit, and i/o is
->   * scheduled for modified pages to their home location after
->   * the log records containing the after values and the commit
->   * record is written to the log on disk, undo discards the copy
-> --- linux-next-20200804.orig/fs/jfs/jfs_txnmgr.c
-> +++ linux-next-20200804/fs/jfs/jfs_txnmgr.c
-> @@ -1474,7 +1474,7 @@ static int diLog(struct jfs_log * log, s
->  		 * For the LOG_NOREDOINOEXT record, we need
->  		 * to pass the IAG number and inode extent
->  		 * index (within that IAG) from which the
-> -		 * the extent being released.  These have been
-> +		 * extent is being released.  These have been
->  		 * passed to us in the iplist[1] and iplist[2].
->  		 */
->  		lrd->log.noredoinoext.iagnum =
-> --- linux-next-20200804.orig/fs/jfs/jfs_xtree.c
-> +++ linux-next-20200804/fs/jfs/jfs_xtree.c
-> @@ -3684,7 +3684,7 @@ s64 xtTruncate(tid_t tid, struct inode *
->   *
->   * function:
->   *	Perform truncate to zero length for deleted file, leaving the
-> - *	the xtree and working map untouched.  This allows the file to
-> + *	xtree and working map untouched.  This allows the file to
->   *	be accessed via open file handles, while the delete of the file
->   *	is committed to disk.
->   *
-> 
+Ah, these are in 4k pages, AFAIU.
+And, as it seems /proc/net/sockstat lacks a description in proc.5 at
+all...
 
+> thanks.
+> -- 
+> ~Randy
+> 
+> 
 
 -- 
-~Randy
-
+Sincerely yours,
+Mike.
