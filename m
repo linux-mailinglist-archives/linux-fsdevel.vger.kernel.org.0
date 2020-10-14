@@ -2,94 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D2628E0FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6854C28E166
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbgJNNFx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 09:05:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
+        id S1731310AbgJNNfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 09:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727141AbgJNNFw (ORCPT
+        with ESMTP id S1731308AbgJNNfv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 09:05:52 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7314FC061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:05:52 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id c21so3152205ljj.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:05:52 -0700 (PDT)
+        Wed, 14 Oct 2020 09:35:51 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28434C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:35:51 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id a17so1591803pju.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 06:35:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4ZpNEpwEuFA9Rfuw8aSUEHfgR5iSTqvnZX1G9kxgifM=;
-        b=Tte/tOrj3c7eCfHcXm4ClATrY0EmDpKA48oz5D3m0/1p3dkxXHSfod3UKUn7LMxKlM
-         r6IoMLOJlWrhtvJa3IgB0aYPRqaCiuaYK+UYZgVjPJ9htrgHoqdWFr4bQc4GGldcyYwc
-         FTy7Rh3n1xWPTAh8yUbnwnE6+43zXN/iVmZCPFftSwKJiwMjvuVjYtT+4lfKa0C4C1mi
-         nRHdoVP/J9d/lJP5HLeZ8U76fWQpXP2GjiYjZY24a3OaAWJdO84Q01ECLLu7rTM3654D
-         ClJ48Z6CqXb4Vu4aHNbWk2gWkafO6kJ/lRNFl0GGzjTjKPGU7M35xTkxT4r79Bp8kw9x
-         U5TA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=Wy0Ge2R1/3xJqBcrn7DRgPvP5sQkmecIsTO05iyvDPI=;
+        b=oaWRltC9WgKkU5AVb81kGaNKgvV3MWJ3WWPSbPNCtDxPQTLutzxBPvJyjz51KQDIWg
+         ia6TLh6OIJzB85yCJhmub3PQTMcKxw8eceNIqvU4ZpiNJtQcDus4+bSrkNko05UPANIA
+         phiaOeSA107xelJxqKRZOpjFe09QGS/xnj+DSOrIspouhmoWHOynGH+L1B6JW0EjPG3l
+         ILuiS2oxWb2UCsPOya76QYvVqCAXQQRz59DQdn3VnVSBLiqkipdexdj6j8zmsUoFDCyV
+         EB5qYgiwJTYtFoS4Je4VYCg5GR8cgWIKaWOETCwBDj6DOjnnMsz2qS2BggLFl4ltBLwT
+         j3iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4ZpNEpwEuFA9Rfuw8aSUEHfgR5iSTqvnZX1G9kxgifM=;
-        b=fVEY8779PzEwsclB4svyD5WggQfSwB4iOcx8lPAWAlBp6TcWF0TCktJC/NOJOAOPLd
-         ruWWKe3KMhYsNoYY2ald12f5JgLPd/PTAB4MAWROmfhuF1AweyW4MapXu5mjYANKzus8
-         LQds9MhUhUKO7xb6KywybwDmxPp7g3ycFOWe6vN4aAIUj/a6QLPmqx9Bux5ub1KgejJW
-         i4dM3zOeP70h8I+1dqPVbfhzawT9fLtZ9GNNTOzO3p3+UC+OfC/tMyXFLTJm29nRwz/i
-         my/d2aSSwdj6Y7Em6Akdi11NzO5EHQ6b/TY/hgpRue53P50vHIN9BbH8RADAS/XHpJev
-         1Uyg==
-X-Gm-Message-State: AOAM531Dx/U7oIZY/rlZLS5inFa1SNODlcgeGutnPA1W8aSegNJVc9Fd
-        SIptt6O13Q3ON0nBoWV+fI8kvQ==
-X-Google-Smtp-Source: ABdhPJxjPAif0rDRfil1S4kF1FE0lGY1f39gKXlMRTWe6gjf0jnvjuHXT2t5WekJ69UjCNHZCpi2XQ==
-X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr1699656ljc.254.1602680750926;
-        Wed, 14 Oct 2020 06:05:50 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id p7sm1113688lfc.299.2020.10.14.06.05.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2020 06:05:50 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 4EC9A1035E0; Wed, 14 Oct 2020 16:05:55 +0300 (+03)
-Date:   Wed, 14 Oct 2020 16:05:55 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH 0/4] Some more lock_page work..
-Message-ID: <20201014130555.kdbxyavqoyfnpos3@box>
-References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
- <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Wy0Ge2R1/3xJqBcrn7DRgPvP5sQkmecIsTO05iyvDPI=;
+        b=P+nK+tRmI2h51RRH61tnQToQB53IWPhTe0PXsmEtMkDbdVs3eSq0g6brvJm6mYPRoR
+         QWRSGXA5JzEWWIro8yjPBjW9XpiP3mLRTwMUdQJpcgVdWouJzgCYxHTiQxiyRNcJyEgS
+         NUU5WC4JmY3D/wl12el6o/7e/h9BwhmoAOM+DF0RxEjyYRV2Y2ie/zPIA70rSFXicvfB
+         tIeQqi9Vyf07FuGpd2n/z71U664aH+JVqGLqp4eF1NYp3wrQOOu/5QYj/dWDPM6d1tW8
+         W5YddeW+whvlP2ky5geVs4gm7WvzS9brZUIj3UqQ2jB/kl8ZCiR+/m8jsN6uvYOSS+l8
+         uofw==
+X-Gm-Message-State: AOAM532wLiisomF8vAuH1RBluR080/RQfPLtuNXgU2M3gHNXXniKbbzK
+        Go9Ufe2OtZWHQCD1CKLhzJzWFg==
+X-Google-Smtp-Source: ABdhPJyftra9I5a+UmwFsdFPNjzXI/wjtHTShNQjT0d0+UsYDvRuic+mMuS4HpRz7Zn++E94jt+QJA==
+X-Received: by 2002:a17:90a:4ece:: with SMTP id v14mr3797628pjl.70.1602682550509;
+        Wed, 14 Oct 2020 06:35:50 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id 190sm3596239pfc.151.2020.10.14.06.35.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Oct 2020 06:35:49 -0700 (PDT)
+Subject: Re: general protection fault in __do_sys_io_uring_register
+To:     syzbot <syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, Pavel Begunkov <asml.silence@gmail.com>
+References: <0000000000005a849705b1a04ab8@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <94fe990f-6382-039b-34b5-233b437af610@kernel.dk>
+Date:   Wed, 14 Oct 2020 07:35:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
+In-Reply-To: <0000000000005a849705b1a04ab8@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 01:03:30PM -0700, Linus Torvalds wrote:
-> On Tue, Oct 13, 2020 at 12:59 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Comments?
+On 10/14/20 6:01 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    029f56db Merge tag 'x86_asm_for_v5.10' of git://git.kernel..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13b5c678500000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d4ce0764b8e2dd3f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f4ebcc98223dafd8991e
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f4ebcc98223dafd8991e@syzkaller.appspotmail.com
+> 
+> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 1 PID: 8927 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
+> RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
+> RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
+> RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
+> Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
+> RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
+> RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
+> RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
+> R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
+> FS:  00007f4266f3c700(0000) GS:ffff8880ae500000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000118c000 CR3: 000000008e57d000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x45de59
+> Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f4266f3bc78 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+> RAX: ffffffffffffffda RBX: 00000000000083c0 RCX: 000000000045de59
+> RDX: 0000000020000280 RSI: 0000000000000002 RDI: 0000000000000005
+> RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
+> R10: 40000000000000a1 R11: 0000000000000246 R12: 000000000118bf2c
+> R13: 00007fff2fa4f12f R14: 00007f4266f3c9c0 R15: 000000000118bf2c
+> Modules linked in:
+> ---[ end trace 2a40a195e2d5e6e6 ]---
+> RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
+> RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
+> RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
+> RIP: 0010:__do_sys_io_uring_register+0x2fd2/0x3ee0 fs/io_uring.c:9553
+> Code: ec 03 49 c1 ee 03 49 01 ec 49 01 ee e8 57 61 9c ff 41 80 3c 24 00 0f 85 9b 09 00 00 4d 8b af b8 01 00 00 4c 89 e8 48 c1 e8 03 <80> 3c 28 00 0f 85 76 09 00 00 49 8b 55 00 89 d8 c1 f8 09 48 98 4c
+> RSP: 0018:ffffc90009137d68 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000ef2a000
+> RDX: 0000000000040000 RSI: ffffffff81d81dd9 RDI: 0000000000000005
+> RBP: dffffc0000000000 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffed1012882a37
+> R13: 0000000000000000 R14: ffffed1012882a38 R15: ffff888094415000
+> FS:  00007f4266f3c700(0000) GS:ffff8880ae400000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000000074a918 CR3: 000000008e57d000 CR4: 00000000001506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-So we remove strict serialization against truncation in
-filemap_map_pages() if the mapping is private.
+I think this should fix it.
 
-IIUC, we can end up with a page with ->mapping == NULL set up in a PTE for
-such mappings. The "page->mapping != mapping" check makes the race window
-smaller, but doesn't remove it.
 
-I'm not sure all codepaths are fine with this. For instance, looks like
-migration will back off such pages: __unmap_and_move() doesn't know how to
-deal with mapped pages with ->mapping == NULL.
-Yes, it is not crash, but still...
-
-Do I miss something?
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fc6de6b4784e..528eced8ee1f 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7311,6 +7311,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 
+ 	if (io_sqe_alloc_file_tables(file_data, nr_tables, nr_args))
+ 		goto out_ref;
++	ctx->file_data = file_data;
+ 
+ 	for (i = 0; i < nr_args; i++, ctx->nr_user_files++) {
+ 		struct fixed_file_table *table;
+@@ -7345,7 +7346,6 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 		table->files[index] = file;
+ 	}
+ 
+-	ctx->file_data = file_data;
+ 	ret = io_sqe_files_scm(ctx);
+ 	if (ret) {
+ 		io_sqe_files_unregister(ctx);
+@@ -7378,6 +7378,7 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ out_free:
+ 	kfree(file_data->table);
+ 	kfree(file_data);
++	ctx->file_data = NULL;
+ 	return ret;
+ }
+ 
 
 -- 
- Kirill A. Shutemov
+Jens Axboe
+
