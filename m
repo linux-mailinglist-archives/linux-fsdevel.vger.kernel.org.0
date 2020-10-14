@@ -2,181 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CB828E4E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 18:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F6128E4F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729482AbgJNQx4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 12:53:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53878 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbgJNQx4 (ORCPT
+        id S1729007AbgJNRAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 13:00:31 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:33006 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728639AbgJNRAb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 12:53:56 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E563C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 09:53:55 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id p15so158598ljj.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 09:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jUWxdkdjg3lFrQZhFI9PuRj+O488sFbEr8pq3LquhNM=;
-        b=Dt066gP1+r7WsWUip/hPQkGd3om2xvR/D+iICX0sXkTFFYEBD2RqEDZQy8tSaGaMUR
-         H5wB5kzJTkCT8oQU72tNDP92wSRVr2NCIZjn7r0Dv76pfk4Ja635M0iatP/0mGcrd5ff
-         ONoPiJsCy5e36akQzfPFFU9VTMraqg5N1opLw=
+        Wed, 14 Oct 2020 13:00:31 -0400
+Received: by mail-il1-f200.google.com with SMTP id d6so35625ilo.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 10:00:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jUWxdkdjg3lFrQZhFI9PuRj+O488sFbEr8pq3LquhNM=;
-        b=bSp3A3w/E12h5oTTvdQFpjdii1/ptqwAX/r4SuDlN2BcmvzYxwd9eksy080jGdKuM8
-         GvjYh59NMMEPveCqqE7mcLss07KwA9ZefXuYyowkSm3Z2pHDE+kz45xWJbUlIj1HVzlm
-         iPjqN9S2XPgNiwPbJAEvVW7cxLcGBY33UD6kdXmL6REIOCOaGmMr0CvKhRSzORVTvvVm
-         8Aw/4YXaAdEQx65o3ByiHujLZb1uu2ixbFUtZRo+LxpW3aUJWF26SYw3/0AYiCYnwo10
-         3YkT6KZVlke/XTsXHoT6Qc4gcdxuZOC98KFbeNqhxqwWDE0Z/6zuptcq3hr08vO0o6yX
-         to2g==
-X-Gm-Message-State: AOAM533YKzNBxsStoUdWEcQu0Pbvc2sKDv7ADecjhCxj9n+ME9NlWTPT
-        Ys5s2QHicLi4tDlyyWxfYe7mYBJ6cIYuVQ==
-X-Google-Smtp-Source: ABdhPJzTa0u/FFjWcHykLgWj5Dd91qKAy4Yf6gWjs3+PraocwCY+gA9Zvp8YWz59aWEmAN/N8Ld/cQ==
-X-Received: by 2002:a2e:9bcf:: with SMTP id w15mr57781ljj.14.1602694433138;
-        Wed, 14 Oct 2020 09:53:53 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id u15sm1341794lfl.140.2020.10.14.09.53.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 09:53:51 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id c21so122674ljn.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 09:53:51 -0700 (PDT)
-X-Received: by 2002:a2e:868b:: with SMTP id l11mr55751lji.102.1602694431261;
- Wed, 14 Oct 2020 09:53:51 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=RnJBl0Hmt3VbdPCKojapfwyMp88sA/Fx2rpPy2khylI=;
+        b=Cs+s8MQLElpVyWeQ719NiC3NzyHrZXgliVUr00gb897BOOVdEIxRcayUR6hZHzglbn
+         AONOEFl2rtt8PnVDAnLLOcM+1jHYJVl72VNBemF4+w1pfnouYz1zUlA/rKJJtsXTw9TZ
+         eVsZCRfcxE1fxzx9i5ZNsjm+SgFAWTCy4BhtUVxeY6a/3FaVwdgzou+E9f7PcCm6LECE
+         F9rIUTH9wBJX2s/k6putAP13VnYIpGIGktWjWVQrE1ERx2OFg595bu9kV99mxRMJkeGB
+         nJNiUC4SzDjh29veZ5sJydqCxIoIs6+C9Rk1jHiSwr9qaGnoj3oKF/1E8OfeCwXKulcu
+         MLMw==
+X-Gm-Message-State: AOAM531uZhw/iu/kX5ppdm8lIXelMKTHUPuytFWpUNLt3zLDRD92yRHC
+        UjDFD12nejDQa/f2g/eHkhRHcWze+skjJj9GZOlMYXofL7Wl
+X-Google-Smtp-Source: ABdhPJyu0KgRC/6EhCBxf9s4T2rjtKgw4fFsPDJPRmFQstZjg5fujQkhnex6YxX/y1We5/Rg9m8e/DuHsEOloFtvvabVNJhHtwU0
 MIME-Version: 1.0
-References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
- <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com> <20201014130555.kdbxyavqoyfnpos3@box>
-In-Reply-To: <20201014130555.kdbxyavqoyfnpos3@box>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 14 Oct 2020 09:53:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjXBv0ZKqH4muuo2j4bH2km=7wedrEeQJxY6g2JcdOZSQ@mail.gmail.com>
-Message-ID: <CAHk-=wjXBv0ZKqH4muuo2j4bH2km=7wedrEeQJxY6g2JcdOZSQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Some more lock_page work..
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
+X-Received: by 2002:a05:6602:148:: with SMTP id v8mr239346iot.33.1602694830372;
+ Wed, 14 Oct 2020 10:00:30 -0700 (PDT)
+Date:   Wed, 14 Oct 2020 10:00:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000c3be205b1a4782f@google.com>
+Subject: general protection fault in __se_sys_io_uring_register
+From:   syzbot <syzbot+4520eff3d84059553f13@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 6:05 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> So we remove strict serialization against truncation in
-> filemap_map_pages() if the mapping is private.
+Hello,
 
-Well, that particular patch does.
+syzbot found the following issue on:
 
-But as mentioned, that's the wrong way of doing it. It's just that the
-right way - which keeps the serialization - requires some changes to
-how we actually install the pte.
+HEAD commit:    029f56db Merge tag 'x86_asm_for_v5.10' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1421c89b900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c5327fbeef7650a
+dashboard link: https://syzkaller.appspot.com/bug?extid=4520eff3d84059553f13
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
 
-Right now that goes through alloc_set_pte(), and that one is basically
-written with the page lock in mind. So the current logic is
+Unfortunately, I don't have any reproducer for this issue yet.
 
- - lock page
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4520eff3d84059553f13@syzkaller.appspotmail.com
 
- - check page->mapping etc that is now stable
+general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 PID: 8347 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
+RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
+RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
+RIP: 0010:__do_sys_io_uring_register fs/io_uring.c:9553 [inline]
+RIP: 0010:__se_sys_io_uring_register+0x3343/0x3ea0 fs/io_uring.c:9535
+Code: ff df 48 8b 5c 24 18 42 80 3c 23 00 48 8b 6c 24 60 74 08 48 89 ef e8 bc 36 e0 ff 41 8d 5e ff 4c 8b 7d 00 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 9e 36 e0 ff 89 d8 c1 f8 09 48 63
+RSP: 0018:ffffc9001633fdc0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff11011eb5638
+RDX: ffff888051844080 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff88808f5ab1b8 R08: ffffffff81d56c63 R09: ffffed1012046ab8
+R10: ffffed1012046ab8 R11: 0000000000000000 R12: dffffc0000000000
+R13: 00000000fffffff7 R14: 0000000000000001 R15: 0000000000000000
+FS:  00007f5b96b14700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000768000 CR3: 000000009ed9c000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45de59
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f5b96b13c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00000000000083c0 RCX: 000000000045de59
+RDX: 0000000020000040 RSI: 0000000000000002 RDI: 0000000000000003
+RBP: 000000000118bf68 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 000000000118bf2c
+R13: 00007ffcf7ec75bf R14: 00007f5b96b149c0 R15: 000000000118bf2c
+Modules linked in:
+---[ end trace ae2cc3c0d259d867 ]---
+RIP: 0010:io_file_from_index fs/io_uring.c:5963 [inline]
+RIP: 0010:io_sqe_files_register fs/io_uring.c:7369 [inline]
+RIP: 0010:__io_uring_register fs/io_uring.c:9463 [inline]
+RIP: 0010:__do_sys_io_uring_register fs/io_uring.c:9553 [inline]
+RIP: 0010:__se_sys_io_uring_register+0x3343/0x3ea0 fs/io_uring.c:9535
+Code: ff df 48 8b 5c 24 18 42 80 3c 23 00 48 8b 6c 24 60 74 08 48 89 ef e8 bc 36 e0 ff 41 8d 5e ff 4c 8b 7d 00 4c 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 ff e8 9e 36 e0 ff 89 d8 c1 f8 09 48 63
+RSP: 0018:ffffc9001633fdc0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff11011eb5638
+RDX: ffff888051844080 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff88808f5ab1b8 R08: ffffffff81d56c63 R09: ffffed1012046ab8
+R10: ffffed1012046ab8 R11: 0000000000000000 R12: dffffc0000000000
+R13: 00000000fffffff7 R14: 0000000000000001 R15: 0000000000000000
+FS:  00007f5b96b14700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000768000 CR3: 000000009ed9c000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
- - lock page tables if required (alloc_set_pte -> pte_alloc_one_map ->
-pte_offset_map_lock)
 
- - insert pte
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-but that whole alloc_set_pte() thing is actually much too generic for
-what "map_pages()" really wants, and I think we could re-organize it.
-
-In particular, what I _think_ we could do is:
-
- - lock the page tables
-
- - check that the page isn't locked
-
- - increment the page mapcount (atomic and ordered)
-
- - check that the page still isn't locked
-
- - insert pte
-
-without taking the page lock. And the reason that's safe is that *if*
-we're racing with something that is about the remove the page mapping,
-then *that* code will
-
- (a) hold the page lock
-
- (b) before it removes the mapping, it has to remove it from any
-existing mappings, which involves checking the mapcount and going off
-and getting the page table locks to remove any ptes.
-
-but my patch did *not* do that, because you have to re-organize things a bit.
-
-Note that the above still keeps the "optimistic" model - if the page
-is locked, we'll skip that pte, and we'll end up doing the heavy thing
-(which will then take the pte lock if required). Which is why we
-basically get away with that "only test page lock, don't take it"
-approach with some ordering.
-
-But my theory is that the actual truncate case is *so* rare that we
-basically don't need to even worry about it, and that once the
-(common) page fault case doesn't need the page lock, then that whole
-"fall back to slow case" simply doesn't happen in practice.
-
-> IIUC, we can end up with a page with ->mapping == NULL set up in a PTE for
-> such mappings. The "page->mapping != mapping" check makes the race window
-> smaller, but doesn't remove it.
-
-Yes, that patch I posted as an RFC does exactly that. But I think we
-can keep the serialization if we just make slightly more involved
-changes.
-
-And they aren't necessarily a _lot_ more involved. In fact, I think we
-may already hold the page table lock due to doing that
-"pte_alloc_one_map()" thing over all of filemap_map_pages(). So I
-think the only _real_ problem is that I think we increment the
-page_mapcount() too late in alloc_set_pte().
-
-And yeah, I realize this is a bit handwavy. But that's why I sent
-these things out as an RFC. To see if people can shoot holes in this,
-and maybe do that proper patch instead of my "let's get discussion
-going" one.
-
-Also, I really do think that our current "private mappings are
-coherent with fiel changes" is a big QoI issue: it's the right thing
-to do. So I wouldn't actually really want to take advantage of
-"private mappings don't really _have_ to be coherent according to
-POSIX". That's a lazy cop-out.
-
-So I dislike my patch, and don't think it's really acceptable, but as
-a "let's try this" I think it's a good first step.
-
-> I'm not sure all codepaths are fine with this. For instance, looks like
-> migration will back off such pages: __unmap_and_move() doesn't know how to
-> deal with mapped pages with ->mapping == NULL.
-
-So as outlined above, I think we can avoid the ->mapping == NULL case,
-and we can remove all the races.
-
-But it would still do new things, like incremnt the page mapcount
-without holding the page lock. I think that's ok - we already
-_decrement_ it without holding the lock, so it's not that the count is
-stable without locking - but at a minimum we'd have that "need to make
-sure the memory ordering between testing the page lock initially,
-incrementing the count, and re-testing is ok". And maybe some code
-that expects things to be stable.
-
-So I'm not at all claiming that things are obviously fine. I'm happy
-to see that Hugh started some practical stress-tests on that RFC
-patch, and I think we can improve on the situation.
-
-               Linus
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
