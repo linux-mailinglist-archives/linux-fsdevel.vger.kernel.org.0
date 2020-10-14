@@ -2,114 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D118F28E055
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 14:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4940C28E0EC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 15:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbgJNMMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 08:12:18 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:39598 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbgJNMMS (ORCPT
+        id S1730780AbgJNNAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 09:00:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31129 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727187AbgJNNAC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 08:12:18 -0400
-Received: by mail-il1-f200.google.com with SMTP id r10so2233110ilq.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 05:12:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zg+I8d7ndikJ7TpxgGlYT9fzJHpVC4H6Dh85V9obOeM=;
-        b=uIO5faYGNCPlHeaGER7XTMZD7Q8+Z9+UMEWDUMun8DlJmw8RyVKbSkndOSQdH78lkD
-         sLAnIyT248bMQrn8n71Es7C1ajT+qwNEMwcmkDXeykVOmh3yVOccOgo77nGlgvcaU5ZP
-         yrvGpQ+qyCdGMaw09cY2Yh0kQS6uu41k9Hg59fEBBJIg7klQ6NgiCVQN2g2Uh8sH4QqT
-         XVLlqEEgVxRe7kjgddaAmkJf6cuu6Tvo8e5Jj0Meu5brpXSuMe1UjUiTGjh0kx+DQIjL
-         NyqF72TiwAkkTlGxNcXlIEOIxAg3XBv7m1pbzq5ejbCqSfnxeKRA6xs08hkCSggbXtyS
-         AkyA==
-X-Gm-Message-State: AOAM531x45gFpMzGtb3+mTQUkA3lzXp4RWMu6FjQLC6C1vzhlcvArOVl
-        Kq60n2O1UHqzo+5wYgumTzrQEKNNBZEGOb35Jp9jejnSFGXf
-X-Google-Smtp-Source: ABdhPJzRW7x0/xlervt4O2pE68CaIIdEKA1VQFrZob2AbSmj39suHSe9DEIiaQwntmUbHW3aGq5XiLTagbrw77a+fKZ0sJf2cLXK
+        Wed, 14 Oct 2020 09:00:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1602680400;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5Fws2CJAKKqpnH//6QG5i7oTf+CdCwxvrk1+FjGnC3w=;
+        b=dFEmeFSiEdJ+6rQXd3P/A8jhvIdDHk2d79yMPIenhSUAcXtQ5jg2c24jQoUTBgg8bpDdmZ
+        5V+RPGrvB5EdCPmexulHcTaEWDdt0BEpxMwUQmkKhxkj7lRqV4e40iMEAeAp++Nag2kwx1
+        xL0vHhAnv3Ig0m9/Yb+PA04Qj1uSw/E=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-293-BAEt4dj-M3KgnMqF-8eO7Q-1; Wed, 14 Oct 2020 08:59:58 -0400
+X-MC-Unique: BAEt4dj-M3KgnMqF-8eO7Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3477802B4B;
+        Wed, 14 Oct 2020 12:59:57 +0000 (UTC)
+Received: from bfoster (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CC4C75138;
+        Wed, 14 Oct 2020 12:59:57 +0000 (UTC)
+Date:   Wed, 14 Oct 2020 08:59:55 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/2] iomap: use page dirty state to seek data over
+ unwritten extents
+Message-ID: <20201014125955.GA1109375@bfoster>
+References: <20201012140350.950064-1-bfoster@redhat.com>
+ <20201012140350.950064-2-bfoster@redhat.com>
+ <20201013225344.GA7391@dread.disaster.area>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c88e:: with SMTP id w14mr3290219ilo.185.1602677536914;
- Wed, 14 Oct 2020 05:12:16 -0700 (PDT)
-Date:   Wed, 14 Oct 2020 05:12:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004702c605b1a0717e@google.com>
-Subject: WARNING in cleanup_mnt (2)
-From:   syzbot <syzbot+428c51fcb8f9e5a84850@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201013225344.GA7391@dread.disaster.area>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Oct 14, 2020 at 09:53:44AM +1100, Dave Chinner wrote:
+> On Mon, Oct 12, 2020 at 10:03:49AM -0400, Brian Foster wrote:
+> > iomap seek hole/data currently uses page Uptodate state to track
+> > data over unwritten extents. This is odd and unpredictable in that
+> > the existence of clean pages changes behavior. For example:
+> > 
+> >   $ xfs_io -fc "falloc 0 32k" -c "seek -d 0" \
+> > 	    -c "pread 16k 4k" -c "seek -d 0" /mnt/file
+> >   Whence  Result
+> >   DATA    EOF
+> >   ...
+> >   Whence  Result
+> >   DATA    16384
+> 
+> I don't think there is any way around this, because the page cache
+> lookup done by the seek hole/data code is an
+> unlocked operation and can race with other IO and operations. That
+> is, seek does not take IO serialisation locks at all so
+> read/write/page faults/fallocate/etc all run concurrently with it...
+> 
+> i.e. we get an iomap that is current at the time the iomap_begin()
+> call is made, but we don't hold any locks to stabilise that extent
+> range while we do a page cache traversal looking for cached data.
+> That means any region of the unwritten iomap can change state while
+> we are running the page cache seek.
+> 
 
-syzbot found the following issue on:
+Hm, Ok.. that makes sense..
 
-HEAD commit:    bbf5c979 Linux 5.9
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15498ffb900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d8333c88fe898d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=428c51fcb8f9e5a84850
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-userspace arch: i386
+> We cannot determine what the data contents without major overhead,
+> and if we are seeking over a large unwritten extent covered by clean
+> pages that then gets partially written synchronously by another
+> concurrent write IO then we might trip across clean uptodate pages
+> with real data in them by the time the page cache scan gets to it.
+> 
+> Hence the only thing we are looking at here is whether there is data
+> present in the cache or not. As such, I think assuming that only
+> dirty/writeback pages contain actual user data in a seek data/hole
+> operation is a fundametnally incorrect premise.
+> 
 
-Unfortunately, I don't have any reproducer for this issue yet.
+... but afaict this kind of thing is already possible because nothing
+stops a subsequently cleaned page (i.e., dirtied and written back) from
+also being dropped from cache before the scan finds it. IOW, I don't
+really see how this justifies using one page state check over another as
+opposed to pointing out the whole page scanning thing itself seems to be
+racy. Perhaps the reasoning wrt to seek is simply that we should either
+see one state (hole) or the next (data) and we don't terribly care much
+about seek being racy..?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+428c51fcb8f9e5a84850@syzkaller.appspotmail.com
+My concern is more the issue described by patch 2. Note that patch 2
+doesn't necessarily depend on this one. The tradeoff without patch 1 is
+just that we'd explicitly zero and dirty any uptodate new EOF page as
+opposed to a page that was already dirty (or writeback).
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 30737 at fs/namespace.c:1109 cleanup_mnt+0x409/0x530 fs/namespace.c:1109
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 30737 Comm: syz-executor.3 Not tainted 5.9.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fd lib/dump_stack.c:118
- panic+0x382/0x7fb kernel/panic.c:231
- __warn.cold+0x20/0x4b kernel/panic.c:600
- report_bug+0x1bd/0x210 lib/bug.c:198
- handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
- exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
- asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
-RIP: 0010:cleanup_mnt+0x409/0x530 fs/namespace.c:1109
-Code: 8a e8 9b c0 0c 02 49 8d 7c 24 38 48 c7 c6 80 4a ca 81 48 83 c4 18 5b 5d 41 5c 41 5d 41 5e 41 5f e9 ec 9c 98 ff e8 f7 9f ab ff <0f> 0b e9 0a fd ff ff e8 eb 9f ab ff 4c 89 e7 e8 43 03 06 00 e9 2f
-RSP: 0018:ffffc900163afac0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffffffff81ca9c21
-RDX: ffff88809201a2c0 RSI: ffffffff81ca9f19 RDI: 0000000000000005
-RBP: 0000000000000040 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880889c0540
-R13: 000000000000042b R14: 0000000000000007 R15: 0000000000000002
- task_work_run+0xdd/0x190 kernel/task_work.c:141
- exit_task_work include/linux/task_work.h:25 [inline]
- do_exit+0xb7d/0x29f0 kernel/exit.c:806
- do_group_exit+0x125/0x310 kernel/exit.c:903
- get_signal+0x428/0x1f00 kernel/signal.c:2757
- arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
- exit_to_user_mode_loop kernel/entry/common.c:161 [inline]
- exit_to_user_mode_prepare+0x1ae/0x200 kernel/entry/common.c:192
- syscall_exit_to_user_mode+0x7e/0x2e0 kernel/entry/common.c:267
- __do_fast_syscall_32+0x6c/0x90 arch/x86/entry/common.c:138
- do_fast_syscall_32+0x2f/0x70 arch/x86/entry/common.c:160
- entry_SYSENTER_compat_after_hwframe+0x4d/0x5c
-RIP: 0023:0xf7f06549
-Code: Bad RIP value.
-RSP: 002b:00000000090bfbfc EFLAGS: 00000212 ORIG_RAX: 0000000000000006
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000000000
-RDX: 0000000000000005 RSI: 0000000008bab680 RDI: 0000000008bab680
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Truncate does hold iolock/mmaplock, but ISTM that is still not
+sufficient because of the same page reclaim issue mentioned above. E.g.,
+a truncate down lands on a dirty page over an unwritten block,
+iomap_truncate_page() receives the unwritten mapping, page is flushed
+and reclaimed (changing block state), iomap_truncate_page() (still using
+the unwritten mapping) has nothing to do without a page and thus stale
+data is exposed.
 
+ISTM that either the filesystem needs to be more involved with the
+stabilization of unwritten mappings in general or truncate page needs to
+do something along the lines of block_truncate_page() (which we used
+pre-iomap) and just explicitly zero/dirty the new page if the block is
+otherwise mapped. Thoughts? Other ideas?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Brian
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
+
