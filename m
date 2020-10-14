@@ -2,83 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C94D28E537
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C2B728E546
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732055AbgJNRRA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 13:17:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57464 "EHLO
+        id S1729063AbgJNRXO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 13:23:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726942AbgJNRRA (ORCPT
+        with ESMTP id S1726057AbgJNRXO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:17:00 -0400
+        Wed, 14 Oct 2020 13:23:14 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E403C061755;
-        Wed, 14 Oct 2020 10:17:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E71C061755;
+        Wed, 14 Oct 2020 10:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=JKdSRRpfNq89jLLxix/6a/bIeQwXlNzL7+kPc2YPR8I=; b=kO7907DGs2rDxMdhsiNKzXLEKQ
-        oAgh7btZFkwpTBrbb2YuVotH6KkzSqhIDQit0yAlgDaGlEtDqjFQj+rHej8DMeUGzGkG9T2yfxnPL
-        EmvG//DB4dEoLxC21g5US6G/PJRaq9UmzQyJrmFDM20z6LukP0hIOms+dJjNFnNlrDTI3YdFIKw6O
-        iYMmkXQFfR5KrbXCm8T9m4rBdFVdBsDIWUAHtKJKdJxCsCfmlV2haVJuqrQ8mNbh9BkcpDIfiVB+c
-        AuXkQC37FbqDR47edGh/7ncgeP6caYk6jFJsXpMqzRpV7vtvfjtzBpSfAKyGSaU2NiL9tTILB5hbn
-        YF6vLcPQ==;
+        bh=xQBp1EgPdtL8Qs4qso/PVo7/b/IICCiUCO43QNj5csk=; b=jYAg9SQ7tQ15WQe+RnGL6zYBtL
+        tgy54wfcEdwvnj0O8zjNIqYOTd+WPnFIcipPJ+7KrF3EfQdC+BHI7eZqd7S+9rMfnyUclA/ov3xA6
+        k0i8fN3Pyuc4HfAweaY/Mv08Fh01YiPQASiUlOlA16Xf9/bAPZjZtIsPJctmzmCjYhZRCuTPehcuj
+        yOvR1g6LOMCU+BlHEgcw8rtkr48Xbf2qZFrCaICIESraZ0WVp6VYcIJdv7+9N5DCyo31/ePZ9znkb
+        xdAD+lm2NDAmpaiDf1P1mgs9Evm/Bwadc69uRuCcUqLatAKAf7Pna1wcEXy1YTqMlWooOrexFIXbA
+        A37aHkCw==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSkOY-0004Id-92; Wed, 14 Oct 2020 17:16:58 +0000
-Date:   Wed, 14 Oct 2020 18:16:58 +0100
+        id 1kSkUa-0004bk-QK; Wed, 14 Oct 2020 17:23:13 +0000
+Date:   Wed, 14 Oct 2020 18:23:12 +0100
 From:   Matthew Wilcox <willy@infradead.org>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 01/14] fs: Support THPs in vfs_dedupe_file_range
-Message-ID: <20201014171658.GN20115@casper.infradead.org>
+Subject: Re: [PATCH 02/14] fs: Make page_mkwrite_check_truncate thp-aware
+Message-ID: <20201014172312.GO20115@casper.infradead.org>
 References: <20201014030357.21898-1-willy@infradead.org>
- <20201014030357.21898-2-willy@infradead.org>
- <20201014161216.GE9832@magnolia>
+ <20201014030357.21898-3-willy@infradead.org>
+ <20201014161704.GF9832@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201014161216.GE9832@magnolia>
+In-Reply-To: <20201014161704.GF9832@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 09:12:16AM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 14, 2020 at 04:03:44AM +0100, Matthew Wilcox (Oracle) wrote:
-> > We may get tail pages returned from vfs_dedupe_get_page().  If we do,
-> > we have to call page_mapping() instead of dereferencing page->mapping
-> > directly.  We may also deadlock trying to lock the page twice if they're
-> > subpages of the same THP, so compare the head pages instead.
-
-> >  static void vfs_lock_two_pages(struct page *page1, struct page *page2)
-> >  {
-> > +	page1 = thp_head(page1);
-> > +	page2 = thp_head(page2);
+On Wed, Oct 14, 2020 at 09:17:04AM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 14, 2020 at 04:03:45AM +0100, Matthew Wilcox (Oracle) wrote:
+> > If the page is compound, check the last index in the page and return
+> > the appropriate size.  Change the return type to ssize_t in case we ever
+> > support pages larger than 2GB.
 > 
-> Hmm, is this usage (calling thp_head() to extract the head page from an
-> arbitrary page reference) a common enough idiom that it doesn't need a
-> comment saying why we need the head page?
+> "But what about 16G pages?" :P
 
-It's pretty common.  Lots of times it gets hidden inside macros,
-and sometimes it gets spelled as 'compound_head' instead of
-thp_head.  The advantage of thp_head() is that it compiles away if
-CONFIG_TRANSPARENT_HUGEPAGE is disabled, while compound pages always
-exist.
+They're not practical with today's I/O limits; a x4 PCIe link running at
+gen4 speeds will take 2 seconds to do 16GB of I/O.  Assuming doubling of PCIe
+speeds every four years, and a reasonable latency of 0.1 seconds, we're
+about fifteen years away from that being reasonable.  I'm sure this
+code will have bitrotted by then and whoever tries to add support for
+them will have work to do ...
 
-> I'm asking that genuinely-- thp_head() is new to me but maybe it's super
-> obvious to everyone else?  Or at least the mm developers?  I suspect
-> that might be the case....?
+> >  	/* page is wholly inside EOF */
+> > -	if (page->index < index)
+> > -		return PAGE_SIZE;
+> > +	if (page->index + thp_nr_pages(page) - 1 < index)
+> 
+> Just curious, is this expression common enough to create a helper for
+> that too?
+> 
+> #define thp_last_index(page) ((page)->index + thp_nr_pages(page) - 1) ?
+> 
+> (Maybe make that a static inline, I used a macro for brevity)
 
-thp_head is indeed new.  It was merged in August this year, partly in
-response to Dave Chinner getting annoyed at the mixing of metaphors --
-some things were thp_*, some were hpage_* and some were compound_*.
-Now everything is in the thp_* namespace if it refers to THPs.
-
-> Also, I was sort of thinking about sending a patch to Linus at the end
-> of the merge window moving all the remap/clone/dedupe common code to a
-> separate file to declutter fs/read_write.c and mm/filemap.c.  Does that
-> sound ok?
-
-I don't think that would bother me at all.
+I had that in an earlier version and there were two callers, so I
+took it out again because it was more effort to explain what it did
+than it was to open-code it.
