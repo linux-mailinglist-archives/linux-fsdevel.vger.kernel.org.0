@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3385828E550
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0261328E564
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Oct 2020 19:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732059AbgJNR0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 13:26:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58918 "EHLO
+        id S2388453AbgJNRap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 13:30:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbgJNR0g (ORCPT
+        with ESMTP id S1727297AbgJNRap (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 13:26:36 -0400
+        Wed, 14 Oct 2020 13:30:45 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FECDC061755;
-        Wed, 14 Oct 2020 10:26:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD0FC061755;
+        Wed, 14 Oct 2020 10:30:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wZo7ZkSSpcEOkwiGEswMZXQPiQFGCWMDlHQwEWZTg+g=; b=Hid3+8VuqwReQUUypNu3kZeRe2
-        Kh2KAmXxKY9Ur8nD/slUpFfahtVHNvwKhZdE3S5k7mf0fCXYvZ6ZI1rbbYDJhD1DJH+YMdOS27CEn
-        cS6ALVl8MxmDkVlWkBRCt16Q8QFwmAZXLmKs7hb2+QBs5Zb1OU1sBuVaXnXORj7m4tnxDGryqLWRR
-        /qbjCcKQ+zTqUuSu968Cc6Pt8vBxgdBjE78qVUsrM7zOfljDPz5hTFWvIOnSWsyxniwL89WQJLzBC
-        7CLrKfQKHqoLWw/hm24cq12IcO/GnTC5j5s+mi1CzN6slefAFm+vRZvpzdbBnaWlnn/DW/BwDRUf4
-        ORjZoMvg==;
+        bh=AK8bcl5go2531vZZGKg0DJyQ5BbOzGirGdwSJSVvpg8=; b=Z/v/BmAErP8cNwni3jP1t43syF
+        RUEKfwVmpNhm+d92PuP21fdDLgzACeWsqPzbQv06gEOJgGyCGzIACmm/E66qy3CuwA98Fgi0mt9Ng
+        u96Cu0UBzwhbqD+rwVbM06hMTT9h6pNUm2uUR8VWLn+82769+AGxORqvDjZci4U3HczqI1jgeF/Xg
+        75xnEEjb8u/6dBFKoU7vv3DqIn+jjXELSymweRfc7yV6XcfDlND+bpwlBKQkif/ooIRiUGQCfLT/g
+        5g3kJK/LUuaqwH55REmjIuNW5+JW43EzauppKTQnPuwnRTcwDOFEQBqhgzMavs+70zeROD+8fjZZb
+        JINWOBuQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kSkXq-0004pT-Vr; Wed, 14 Oct 2020 17:26:35 +0000
-Date:   Wed, 14 Oct 2020 18:26:34 +0100
+        id 1kSkbr-00054e-RY; Wed, 14 Oct 2020 17:30:43 +0000
+Date:   Wed, 14 Oct 2020 18:30:43 +0100
 From:   Matthew Wilcox <willy@infradead.org>
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 05/14] iomap: Support THPs in invalidatepage
-Message-ID: <20201014172634.GP20115@casper.infradead.org>
+Subject: Re: [PATCH 14/14] xfs: Support THPs
+Message-ID: <20201014173043.GQ20115@casper.infradead.org>
 References: <20201014030357.21898-1-willy@infradead.org>
- <20201014030357.21898-6-willy@infradead.org>
- <20201014163347.GI9832@magnolia>
+ <20201014030357.21898-15-willy@infradead.org>
+ <20201014165116.GL9832@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201014163347.GI9832@magnolia>
+In-Reply-To: <20201014165116.GL9832@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 09:33:47AM -0700, Darrick J. Wong wrote:
-> > @@ -1415,7 +1420,6 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >  			 */
-> >  			if (wpc->ops->discard_page)
-> >  				wpc->ops->discard_page(page);
-> > -			ClearPageUptodate(page);
+On Wed, Oct 14, 2020 at 09:51:16AM -0700, Darrick J. Wong wrote:
+> > -	.fs_flags		= FS_REQUIRES_DEV,
+> > +	.fs_flags		= FS_REQUIRES_DEV | FS_THP_SUPPORT,
 > 
-> Er, I don't get it -- why do we now leave the page up to date after
-> writeback fails?
+> Mostly looks reasonable to me so far, though I forget where exactly
+> FS_THP_SUPPORT got added...?
 
-The page is still uptodate -- every byte in this page is at least as new
-as the corresponding bytes on disk.
+That's in akpm's tree ... not sure if it's in his current pull request,
+but I'm assuming it'll go upstream this merge window.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=akpm&id=b97a1c642769622b2f22f575f624aefcd1cd9b7f
