@@ -2,83 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CFB28EA08
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 03:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B08AA28EAAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 04:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388743AbgJOB3x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 21:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
+        id S1732493AbgJOCEk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 22:04:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388232AbgJOB3k (ORCPT
+        with ESMTP id S1732484AbgJOCEj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 21:29:40 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3293C0613B6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 14:49:37 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id a5so966889ljj.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 14:49:37 -0700 (PDT)
+        Wed, 14 Oct 2020 22:04:39 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0123AC0610D0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 15:25:37 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id o18so1082205edq.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 15:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HeA545JHkumJvp2vsCHk2yunYiCvO0ipKJnKrSnCtIA=;
-        b=g+63cfS60C2BkSY+gwVeR7vMl97bsv1IQGRh6EJKNoeFEa6XKQGTfjY4KphKtzenwi
-         fgv3PqPlIj0FA/ulDIEm+3G2Gferh1d68pORa8D1ERInDuhw+ymz7MsyEvN54yg39J26
-         rG2Fwdtv8ESAe/MsPrELWQV6dHYKUvg88BNRg=
+        bh=u6oCs/9cz9zpdxxwRUYUm1kSBmkyW+u+MezXxhay8qc=;
+        b=gW7j1C0VbGjDq2pb7kmXH0xuHfgsrcWmVnw7BNVz/Tby5/EWLlBSYuBTYmw17rDAqg
+         lylbJ+o7UaR1mbiUY/egwQXmpuAYlVsKg/KEJAFHM0AKmH7VjwvYUAavAORKxt4CGi8g
+         M7gYE3jmVYpGvmVyGdCJ066k4QR6/4VTZrtzhL0Kf6EH0ce9c1QIYuPlcrPZ7dtjJu8/
+         Gh+8T2NmhdI6B3Pen0YfzFvoYdbu/Dy9QpcRvzpe6AxR+rchzzx5vGlJywIP/1UBe2bk
+         66kkB2VI1PTPWeg7Iqud8PKlE0vqJ5bVtOtFWTOAktts6jlF64c/PpMGGLMcl86iJ4mY
+         vmCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HeA545JHkumJvp2vsCHk2yunYiCvO0ipKJnKrSnCtIA=;
-        b=cVbGgK2clwqSN0PFvjGwps0mPJPPgImTsRY73OOht2I8WXpuo2sgZPK388wVu8qftV
-         0WmsBBVm8Vk16gm3gTC7IxDtiAYIVSjwxgNYDtuYBX/QNoqmqOp1JNAuqaeeYercZ5SS
-         baZjLOQtRrZ9dcM4eBLbL/a+QU08KKjRrVOLqqwNUvsmu0X4TrIAL6YMDBY/nZ932Q9O
-         MdZzjAxK4APTwKQMZUoujifaiHDe+58BogMnBhI1ucbeBLTu9aB5k2ZbOzKnQyykxJ5b
-         +wELDl/XRw6oktWGhnee2qki2uTKhgieDCCYC9V1ml5IhdO4IeMx8h1m45edp0vQ6tEB
-         V3Hg==
-X-Gm-Message-State: AOAM532Mied6s1YEStnDOnT/C4C7kwO0hJMz0MsIDMrQu8r3gZjH/r3W
-        MfMF6ocTZm9eZdPbgcH927hqZ7ujm4isAw==
-X-Google-Smtp-Source: ABdhPJwYlKxH1uuvxdPu73tsVie+WE4NhPToXizHh1KE1TGG5HF4I/Qb7aPJIDr7+5sZdEFae99YTA==
-X-Received: by 2002:a2e:b889:: with SMTP id r9mr77139ljp.378.1602712175338;
-        Wed, 14 Oct 2020 14:49:35 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id r133sm206795lff.77.2020.10.14.14.49.34
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 14:49:34 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 77so1174951lfl.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 14:49:34 -0700 (PDT)
-X-Received: by 2002:a19:9142:: with SMTP id y2mr31716lfj.352.1602712173956;
- Wed, 14 Oct 2020 14:49:33 -0700 (PDT)
+        bh=u6oCs/9cz9zpdxxwRUYUm1kSBmkyW+u+MezXxhay8qc=;
+        b=rsRGQSohEj0iR6vsrRlTMTNOrf7Ye/rI9sLWoa1HHftzvuH4hge9srYVI0MbEJ+OgK
+         UYKEV142oSGN3axJDK9O7Afd/a8fomEZ7gqeYoywgfM/gvwR9b/iM5I3tq4lLqZYhMZp
+         qmKf2E38LhzfkC1fJiQWRTXnp5qoLilb8iQpQu7iN+RyWJ9R8a7V39pzmnl0ZSOfdNhu
+         N8cYq+ytNLFLHAZJy2/ciyg6dVWiWztmsYOuDJ/ImjWek0gjUMwn8SgW9NgO3MN8d7Gv
+         JL72NqjUp6Kvm9hMD9tkVeOfwebUUVop5yceleZEUYPVVCvLNB6I+a9aoCLMK3Jev6Sb
+         QRQw==
+X-Gm-Message-State: AOAM531/dK8MACf9ZUtLoONszLs7kxcj7XBc5XW5Cjk7OjqF3zAOfeN9
+        WbKhmhNDpE96Y2bqr8yQCGaawNXr/C5XowCqbEFyGg==
+X-Google-Smtp-Source: ABdhPJwHdi4HqJ28TwinJvmyYBdUNtOckKs21QUkcH2wM5UlBfHQVhUGhI4kpBB80wiBW3IH4Rhy4jEkZvU0KukYURg=
+X-Received: by 2002:a50:8e1e:: with SMTP id 30mr1288139edw.354.1602714336584;
+ Wed, 14 Oct 2020 15:25:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201014204529.934574-1-andrii@kernel.org>
-In-Reply-To: <20201014204529.934574-1-andrii@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 14 Oct 2020 14:49:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiE04vsfJmZ-AyWJHfNdGa=WmBYt4bP3aN+sTP05=QXXA@mail.gmail.com>
-Message-ID: <CAHk-=wiE04vsfJmZ-AyWJHfNdGa=WmBYt4bP3aN+sTP05=QXXA@mail.gmail.com>
-Subject: Re: [PATCH] fs: fix NULL dereference due to data race in prepend_path()
-To:     Andrii Nakryiko <andrii@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+References: <cover.1602093760.git.yuleixzhang@tencent.com> <bdd0250e-4e14-f407-a584-f39af12c4e09@oracle.com>
+ <CACZOiM2qKhogXQ_DXzWjGM5UCeCuEqT6wnR=f2Wi_T45_uoYHQ@mail.gmail.com>
+ <b963565b-61d8-89d3-1abd-50cd8c8daad5@oracle.com> <CACZOiM26GPtqkGyecG=NGuB3etipV5-KgN+s19_U1WJrFxtYPQ@mail.gmail.com>
+ <98be093d-c869-941a-6dd9-fb16356f763b@oracle.com>
+In-Reply-To: <98be093d-c869-941a-6dd9-fb16356f763b@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 14 Oct 2020 15:25:25 -0700
+Message-ID: <CAPcyv4jZ7XTnYd7vLQ18xij7d+80jU0zLs+ykS2frY-LMPS=Nw@mail.gmail.com>
+Subject: Re: [PATCH 00/35] Enhance memory utilization with DMEMFS
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     yulei zhang <yulei.kernel@gmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        Haiwei Li <lihaiwei.kernel@gmail.com>,
+        Yulei Zhang <yuleixzhang@tencent.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Jane Y Chu <jane.chu@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 2:40 PM Andrii Nakryiko <andrii@kernel.org> wrote:
->
-> Fix data race in prepend_path() with re-reading mnt->mnt_ns twice without
-> holding the lock. is_mounted() does check for NULL, but is_anon_ns(mnt->mnt_ns)
-> might re-read the pointer again which could be NULL already, if in between
-> reads one of kern_unmount()/kern_unmount_array()/umount_tree() sets mnt->mnt_ns
-> to NULL.
+On Mon, Oct 12, 2020 at 4:00 AM Joao Martins <joao.m.martins@oracle.com> wrote:
+[..]
+> On 10/10/20 9:15 AM, yulei zhang wrote:
+> > On Fri, Oct 9, 2020 at 7:53 PM Joao Martins <joao.m.martins@oracle.com> wrote:
+> >> On 10/9/20 12:39 PM, yulei zhang wrote:
+> >>> Joao, thanks a lot for the feedback. One more thing needs to mention
+> >>> is that dmemfs also support fine-grained
+> >>> memory management which makes it more flexible for tenants with
+> >>> different requirements.
+> >>>
+> >> So as DAX when it allows to partition a region (starting 5.10). Meaning you have a region
+> >> which you dedicated to userspace. That region can then be partitioning into devices which
+> >> give you access to multiple (possibly discontinuous) extents with at a given page
+> >> granularity (selectable when you create the device), accessed through mmap().
+> >> You can then give that device to a cgroup. Or you can return that memory back to the
+> >> kernel (should you run into OOM situation), or you recreate the same mappings across
+> >> reboot/kexec.
+> >>
+> >> I probably need to read your patches again, but can you extend on the 'dmemfs also support
+> >> fine-grained memory management' to understand what is the gap that you mention?
+> >>
+> > sure, dmemfs uses bitmap to track the memory usage in the reserved
+> > memory region in
+> > a given page size granularity. And for each user the memory can be
+> > discrete as well.
+> >
+> That same functionality of tracking reserved region usage across different users at any
+> page granularity is covered the DAX series I mentioned below. The discrete part -- IIUC
+> what you meant -- is then reduced using DAX ABI/tools to create a device file vs a filesystem.
 
-This seems like the obviously correct fix, so I think I'll just apply
-it directly.
-
-Al? Holler if you have any issues with this..
-
-             Linus
+Put another way. Linux already has a fine grained memory management
+system, the page allocator. Now, with recent device-dax extensions, it
+also has a coarse grained memory management system for  physical
+address-space partitioning and a path for struct-page-less backing for
+VMs. What feature gaps remain vs dmemfs, and can those gaps be closed
+with incremental improvements to the 2 existing memory-management
+systems?
