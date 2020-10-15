@@ -2,78 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 776B828EA52
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 03:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D19F28E97D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 02:31:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389287AbgJOBj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 21:39:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389157AbgJOBji (ORCPT
+        id S1728658AbgJOAbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 20:31:23 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:55984 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbgJOAbX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 21:39:38 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB23DC05113E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 16:12:26 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id a7so1315760lfk.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 16:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pAvZc2gfIDjGucI+VwMq6whQr0/X879Oidvupvz4o8Y=;
-        b=A8ynlJkvJwu91bo1EWLWkCdSoSsQOYY27iLOzHN9LrJCn/9FttdpwSl7LCaiHFBWPU
-         d2qwxL/Z2dBelY1gPIpdNoJbzejfSDUiWJ1po2uf2uumX/elh707ayGNBojGD8rKYC8W
-         vfXI/Sd9WF7LGiFge0wniSqlTuIXeGGij18nY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pAvZc2gfIDjGucI+VwMq6whQr0/X879Oidvupvz4o8Y=;
-        b=kJyZQKMmAUV5c0BtYFbGbpyz/4fKI5Tde7coq6k1LZBAtHMc1A0gQ1MBHf29k1ADJ8
-         XjEGONjtkEorOw5iYGFGZw+bOxTXJPOfpQOIQ0YLZnNLcraOq7ej0pv5UQ+R33HLy9TV
-         fq84zY/0upZLtjhJDQHay+y0GCY4Y8ef5p8tm72NYA0yyglKwoLq3wwWLgXN+wIGqPdu
-         jtj3Og6A4QDNwFrXyCkfOZVy9DA2VWWGyjROKGmbgDHcO51l3r9YvOM5pMtfHMkSwh6b
-         HPkRzl4ZUIRCi2bBch66j4OyatiZIbzV+Kyw8E+sJaiZAyRx8lp43bGJs4G9HNETdBae
-         OFxg==
-X-Gm-Message-State: AOAM531txz88Ksxb3P4u2sLXWnWTK6E6qCVK5Oiiswx/xsOKlZrj52zR
-        ++wViAsU+S5F99jbxBtdUDU/wZxS93eWSg==
-X-Google-Smtp-Source: ABdhPJxa/nK6LtYU+xZx7m9JK4d5K3V0KSWIH5kQEPwG/CG7H78Q+QpEzi9y9DPzPLeeVTaIOnihMg==
-X-Received: by 2002:a19:f71a:: with SMTP id z26mr107331lfe.90.1602717145017;
-        Wed, 14 Oct 2020 16:12:25 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id i11sm445815ljn.119.2020.10.14.16.12.23
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Oct 2020 16:12:23 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id v6so1286714lfa.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Oct 2020 16:12:23 -0700 (PDT)
-X-Received: by 2002:ac2:5f48:: with SMTP id 8mr122638lfz.344.1602717143436;
- Wed, 14 Oct 2020 16:12:23 -0700 (PDT)
+        Wed, 14 Oct 2020 20:31:23 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09F0VIn2057469;
+        Thu, 15 Oct 2020 00:31:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=Y8qiMhy/TtMb2QqybxDtEswQihoXnMGkdNPr8ht3+QI=;
+ b=c5JKROgL5I9Uys/T0AKfNyjlPFIob2PLlL42IJ931DvFIJ5uJl0JrDSW/RztEm5LotNT
+ dnjzKXRmqM8oWvf/ztAWG5YE1NQOtZdv1nMjicovdD5e5X4TvsOvN+4PAdExAjnzlatb
+ MleMyS7Of4leuhdXljneGoYwH88kMLuT4GqUpZQiaW2gTKxPdXWw++LWr0qptGrJJmhR
+ sfdBSxVgtpTh6F7d6tGsr14BHCCYBeiWzMQwYpVhbEAnUcORCsKSKC3B9oQVHTBMih9I
+ +gVyNUjrD/4GH5uusHjWJUEuowb4gKXdbGTQA3ZTW/vc0Hf5JBJil1cD+ZD99H7j0mpD WA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 343vaegmrp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 15 Oct 2020 00:31:18 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09F0TiwR123312;
+        Thu, 15 Oct 2020 00:31:17 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 343phqb09a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Oct 2020 00:31:17 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09F0VGQU017266;
+        Thu, 15 Oct 2020 00:31:16 GMT
+Received: from localhost (/10.159.142.84)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Oct 2020 17:31:16 -0700
+Subject: [PATCH 0/2] vfs: move the clone/dedupe/remap helpers to a single file
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     darrick.wong@oracle.com, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 14 Oct 2020 17:31:14 -0700
+Message-ID: <160272187483.913987.4254237066433242737.stgit@magnolia>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-References: <20201014204529.934574-1-andrii@kernel.org> <CAHk-=wiE04vsfJmZ-AyWJHfNdGa=WmBYt4bP3aN+sTP05=QXXA@mail.gmail.com>
- <20201014230858.GL3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201014230858.GL3576660@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 14 Oct 2020 16:12:07 -0700
-X-Gmail-Original-Message-ID: <CAHk-=winDPLHSayCSPJnFZF9K31krw5TbLdGSxn_x-s++8=meQ@mail.gmail.com>
-Message-ID: <CAHk-=winDPLHSayCSPJnFZF9K31krw5TbLdGSxn_x-s++8=meQ@mail.gmail.com>
-Subject: Re: [PATCH] fs: fix NULL dereference due to data race in prepend_path()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrii Nakryiko <andrii@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel-team@fb.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9774 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010150001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9774 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 phishscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010150001
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 14, 2020 at 4:09 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
->  If you've already grabbed it, I'll just push a followup cleanup.
+Hi all,
 
-Already grabbed (along with the ppc32 csum fix). Your suggested helper
-function cleanup sounds good.
+I would like to move the generic helper functions that support the file
+remap range operations (aka clone and dedupe) to a separate file under
+fs/.  For the moment, I have a few goals here: one is to declutter
+fs/read_write.c and mm/filemap.c.  The second goal is to be able to
+deselect all the remap code if no filesystems require it.
 
-          Linus
+The third (and much more long term) goal is to have a place to land the
+generic code for the atomic file extent swap functionality, since it
+will reuse some of the functionality.  Someday.  Whenever I get around
+to submitting that again.
+
+AFAICT, nobody is attempting to land any major changes in any of the vfs
+remap functions during the 5.10 window -- for-next showed conflicts only
+in the Makefile, so it seems like a quiet enough time to do this.  There
+are no functional changes here, it's just moving code blocks around.
+
+So, I have a few questions, particularly for Al, Andrew, and Linus:
+
+(1) Do you find this reorganizing acceptable?
+
+(2) I was planning to rebase this series next Friday and try to throw it
+in at the end of the merge window; is that ok?  (The current patches are
+based on 5.9, and applying them manually to current master and for-next
+didn't show any new conflicts.)
+
+(3) Can I just grab the copyrights from mm/filemap.c?  Or fs/read_write.c?
+Or something entirely different?
+
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
+
+This is an extraordinary way to destroy everything.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=vfs-rearrange-remap-helpers
+---
+ fs/Makefile        |    3 
+ fs/read_write.c    |  473 -------------------------------------------
+ fs/remap_range.c   |  577 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |    5 
+ mm/filemap.c       |   81 -------
+ 5 files changed, 582 insertions(+), 557 deletions(-)
+ create mode 100644 fs/remap_range.c
+
