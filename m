@@ -2,118 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 868FF28F70F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 18:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8BCF28F717
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 18:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389746AbgJOQpT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Oct 2020 12:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50136 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388946AbgJOQpT (ORCPT
+        id S2389725AbgJOQrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Oct 2020 12:47:03 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46728 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388946AbgJOQrC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Oct 2020 12:45:19 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04FB1C061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Oct 2020 09:45:15 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id f21so3834035ljh.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Oct 2020 09:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3tqw/3zrYvsNT6/LR4jSbjq5V2hTGEWhd2+Uj6nH5og=;
-        b=bXA5S6h7u6rIO9U/8BCb6V/8Ll3Ohd0j+gGB1Jz+dDK0SLkxKak/vxGbO5EY80lQrl
-         XTyn2JME8K25Dj3a827M7Z/SWLep/EKvRlhLCdwEtMCA+qf0iowvH/YmJnJ6asN3NR8z
-         4hY6Ae3XMIxJOCPu1McEBPI5tx2SllEcM2ifs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3tqw/3zrYvsNT6/LR4jSbjq5V2hTGEWhd2+Uj6nH5og=;
-        b=fzh5Kk1tc8L9P1PD0lCOXxF9efMSj7TWQ+Atk4GKuDrKvHI2vMrvFPiw4EB3tCP44W
-         tmcYcAbbw6pN04nx3e0/vQLlk+hL8T2lx1Dy1xnBSxtwGKkpiVQfEZUHQEeXDOyL6zHX
-         GVi93OpA8Th9XQfiTHtwWGocEZrts65h1UHlsYo3NnVgQTRz8HgCQqfYcp5b6YDRHE8T
-         cAXrQO45/mRaa27mmeafi5QtsGF5AgDDlZTxJg0/91KA7rZL8JZyj74ATo/fglBxZ5as
-         QNgSltjLWB6hhpiJ7eFOIO+NG3vvmQlI5AJmaSyAvy/K130J7c38Ua64L16jHaEqI6qQ
-         U/gg==
-X-Gm-Message-State: AOAM530RRJ3oiMTuUg+Mca7UX2CZ9cqhn9XPuSXgd0yUbCBG+TdhOx0W
-        J8ggUdzAPxcST4czcE5Litkb8Hj3dkmZng==
-X-Google-Smtp-Source: ABdhPJw2oMM7x15Kv7ogIn/+fPKku1q+Btce/A6iyodGqGyWejJx4oMJTsOLNhKR58hR43xMhw/laQ==
-X-Received: by 2002:a05:651c:238:: with SMTP id z24mr1783757ljn.408.1602780313143;
-        Thu, 15 Oct 2020 09:45:13 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id j17sm1480456ljg.82.2020.10.15.09.45.08
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Oct 2020 09:45:08 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id r127so4314559lff.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Oct 2020 09:45:08 -0700 (PDT)
-X-Received: by 2002:a19:4186:: with SMTP id o128mr1291810lfa.148.1602780308013;
- Thu, 15 Oct 2020 09:45:08 -0700 (PDT)
+        Thu, 15 Oct 2020 12:47:02 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09FGdsFt105036;
+        Thu, 15 Oct 2020 16:46:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=LtA7JgeCTgNJzEFvoas2D++PHkIz1MPQ0A+sBP9uiQw=;
+ b=GLkfJhw82IfW16zPsuJZFxfB5XExbDV0/bSazRW9Ab9UPPfGls9q3Wfwi1Z96hxWN8bk
+ dpihzj9nQ+bkyYplXd5TZ5RLZQ3ziQej/GaHLqrPZHwmb/n6H5lJQItQ+8P5ffU9H1I5
+ A0eo9vnehe87OtopIkY3MpOU25BHCUsaXyNqsgVV+sKftRp3rV/uk5BJ/GrBCu/fb6fC
+ vSHiFY5Eg7HWoLYqp0yI0W++rpnE6Q7qJTZL0fZyBG33h36L7axx8J4dM+uTHMq9qBHW
+ T32qqH2Vbkl/8I01inAHzAWmpN5rg7q7dmWce8eNs0EtFgLXLdGBEn2/HtecqRuUPCz4 aQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 343vaem3cy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 15 Oct 2020 16:46:58 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09FGdlIt193614;
+        Thu, 15 Oct 2020 16:46:58 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 343phrau4n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Oct 2020 16:46:57 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 09FGkvcW013135;
+        Thu, 15 Oct 2020 16:46:57 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Oct 2020 09:46:57 -0700
+Date:   Thu, 15 Oct 2020 09:46:56 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] vfs: move the clone/dedupe/remap helpers to a single
+ file
+Message-ID: <20201015164656.GC9825@magnolia>
+References: <160272187483.913987.4254237066433242737.stgit@magnolia>
+ <20201015031819.GN3576660@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
- <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
- <20201014130555.kdbxyavqoyfnpos3@box> <CAHk-=wjXBv0ZKqH4muuo2j4bH2km=7wedrEeQJxY6g2JcdOZSQ@mail.gmail.com>
- <20201015094344.pmvg2jxrb2bsoanr@box>
-In-Reply-To: <20201015094344.pmvg2jxrb2bsoanr@box>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 15 Oct 2020 09:44:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgNooZpC8G4=0dB-OBT5PYuv9d=sqzUXS9Ea_acjrAi_A@mail.gmail.com>
-Message-ID: <CAHk-=wgNooZpC8G4=0dB-OBT5PYuv9d=sqzUXS9Ea_acjrAi_A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Some more lock_page work..
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201015031819.GN3576660@ZenIV.linux.org.uk>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9775 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010150110
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9775 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
+ impostorscore=0 phishscore=0 malwarescore=0 bulkscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=1 spamscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010150110
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 2:43 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> Okay, I see what you propose.
->
-> But I don't think it addresses race with try_to_unmap():
+On Thu, Oct 15, 2020 at 04:18:19AM +0100, Al Viro wrote:
+> On Wed, Oct 14, 2020 at 05:31:14PM -0700, Darrick J. Wong wrote:
+> 
+> > AFAICT, nobody is attempting to land any major changes in any of the vfs
+> > remap functions during the 5.10 window -- for-next showed conflicts only
+> > in the Makefile, so it seems like a quiet enough time to do this.  There
+> > are no functional changes here, it's just moving code blocks around.
+> > 
+> > So, I have a few questions, particularly for Al, Andrew, and Linus:
+> > 
+> > (1) Do you find this reorganizing acceptable?
+> 
+> No objections, assuming that it's really a move (it's surprisingly easy to
+> screw that up - BTDT ;-/)
+> 
+> I have not done function-by-function comparison, but assuming it holds...
+> no problem.
 
-I don't think it needs to.
+<nod> The only changes between before and after are that some of the
+functions lose their static status, and some gain it; and a minor
+indenting issue that I'll fix for the final patch series.
 
-Remember: the map_pages() thing is called only for when the page
-tables are empty.
+As far as makefiles go, both read_write.o and filemap.o are both obj-y
+targets, so I think it's safe to make remap_range.o also an obj-y
+target.  The fun part will be the careful Kconfig surgery to make
+remap_range.o an optional build target, but that will come later.
 
-So try_to_unmap() will never see the pte entry, and there is nothing
-to race with.
+> > (2) I was planning to rebase this series next Friday and try to throw it
+> > in at the end of the merge window; is that ok?  (The current patches are
+> > based on 5.9, and applying them manually to current master and for-next
+> > didn't show any new conflicts.)
+> 
+> Up to Linus.  I don't have anything in vfs.git around that area; the
+> only remaining stuff touching fs/read_write.c is nowhere near those,
+> AFAICS.
 
-So sure, it can "race" with try_to_unmap like you say, but who cares?
-The "race" is no different from taking the page lock _after_
-try_to_unmap() already ran (and didn't see anything because the page
-hadn't been mapped yet).
+<nod> Thanks. :)
 
-IOW I don't think try_to_unmap() really matters. The race you outline
-can already happen with the "trylock()" - no different from the
-trylock just succeeding after the unlock_page().
-
-So you can think of map_pages() as all happening after try_to_unmap()
-has already succeeded - and didn't see the new pte that hasn't been
-filled in yet.
-
-I do think there is a real race, but it is is with "__remove_mapping()".
-
-That still happens under the page lock, but it doesn't actually
-_depend_ on the page lock as far as I can tell. Because I think the
-real protection there is that
-
-        if (!page_ref_freeze(page, refcount))
-                goto cannot_free;
-
-it that code sees "oh, somebody else has a reference to the page, we
-can't remove the mapping".
-
-But it's entirely possible that I don't understand your worry, and I
-overlooked something. If so, can you explain using smaller words,
-please ;)
-
-             Linus
+--D
