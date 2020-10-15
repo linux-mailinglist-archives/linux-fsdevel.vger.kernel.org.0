@@ -2,85 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3A528EBB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 05:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBCC28EBBC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 05:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbgJODnq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Oct 2020 23:43:46 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25320 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727281AbgJODnq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Oct 2020 23:43:46 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1602733374; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=glihQqZHOWEanX82GEQUt1QvPdrkmls0lPHtbBpbRWFgxKTypLMPv2tECuftevG8C+f9NjlGpI0mjss9lPGHnoG4L4xYqgNfku7qQd04ilko8bchB5z18XqTWN77D4uME0X259x5HZGNeEyhRYpk4cStgbFI4tUoYMWjnb0qiJ8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1602733374; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=gM+h3UABq11r8FW6zPR1UVWPjXGD5LCom+7Ae3jDVuA=; 
-        b=gS8OQhrTSC/O0EgpiecF1OalTqKjzyBEKD/cRo6F3lHdMlSIHkXjIFJU5xPuANBUo7VaEufjMP6e51ruk62vOAaLEvXwKSpbB5LFhS31tjluczUuCrU2NKCuG0fczVwNO5yNgAiDoXoDKnQ+H5h9uL3PxMk3VNLg9R8JU9ujGkE=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1602733374;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=gM+h3UABq11r8FW6zPR1UVWPjXGD5LCom+7Ae3jDVuA=;
-        b=UAFxCW3iwtWx0fwbR+oI79bsV2JPIokYXjgzTimZMvke/+qZO4/VHQaAKhJFMj6m
-        7EWX4RT5RYxKYeaa3jwG54wxRBUARTJEFxzr991qB6U42gqxayMQUxCpCJDZOA0QMtP
-        I7peKhFAr2Wzmi5rvXZxEV3+xI+kc9CSMbG/6KgI=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1602733371751111.20093810371054; Thu, 15 Oct 2020 11:42:51 +0800 (CST)
-Date:   Thu, 15 Oct 2020 11:42:51 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Al Viro" <viro@zeniv.linux.org.uk>
-Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
-        "jack" <jack@suse.cz>,
-        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "cgxu519" <cgxu519@mykernel.net>
-Message-ID: <1752a5a7164.e9a05b8943438.8099134270028614634@mykernel.net>
-In-Reply-To: <20201015032501.GO3576660@ZenIV.linux.org.uk>
-References: <20201010142355.741645-1-cgxu519@mykernel.net>
- <20201010142355.741645-2-cgxu519@mykernel.net> <20201015032501.GO3576660@ZenIV.linux.org.uk>
-Subject: Re: [RFC PATCH 1/5] fs: introduce notifier list for vfs inode
+        id S1730192AbgJODqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Oct 2020 23:46:46 -0400
+Received: from mga03.intel.com ([134.134.136.65]:19759 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727281AbgJODqq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 14 Oct 2020 23:46:46 -0400
+IronPort-SDR: oqXXNKu6P/DWlqnbFJQN/3W5BEe+cUTAQc62mFUJ4eOu11uxTB1rGIl7Nz3Skg62oOoQYh9E4R
+ hSPkgNwu9Mhg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9774"; a="166313689"
+X-IronPort-AV: E=Sophos;i="5.77,377,1596524400"; 
+   d="scan'208";a="166313689"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2020 20:46:45 -0700
+IronPort-SDR: frVKPMJAzb1m9jivZ/XfXNx7VCqDkNNADy0hOKKQpIfrYnJ8mOjxbWGy/FPBq9IrrLYbuNMuZF
+ XeLLSEBZdFVw==
+X-IronPort-AV: E=Sophos;i="5.77,377,1596524400"; 
+   d="scan'208";a="531094057"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2020 20:46:45 -0700
+Date:   Wed, 14 Oct 2020 20:46:45 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC V3 7/9] x86/entry: Preserve PKRS MSR across exceptions
+Message-ID: <20201015034645.GQ2046448@iweiny-DESK2.sc.intel.com>
+References: <20201009194258.3207172-1-ira.weiny@intel.com>
+ <20201009194258.3207172-8-ira.weiny@intel.com>
+ <6006a4c8-32bd-04ca-95cc-b2736a5cef72@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6006a4c8-32bd-04ca-95cc-b2736a5cef72@intel.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2020-10-15 11:25:01 Al Viro <v=
-iro@zeniv.linux.org.uk> =E6=92=B0=E5=86=99 ----
- > On Sat, Oct 10, 2020 at 10:23:51PM +0800, Chengguang Xu wrote:
- > > Currently there is no notification api for kernel about modification
- > > of vfs inode, in some use cases like overlayfs, this kind of notificat=
-ion
- > > will be very helpful to implement containerized syncfs functionality.
- > > As the first attempt, we introduce marking inode dirty notification so=
- that
- > > overlay's inode could mark itself dirty as well and then only sync dir=
-ty
- > > overlay inode while syncfs.
- >=20
- > Who's responsible for removing the crap from notifier chain?  And how do=
-es
- > that affect the lifetime of inode?
-=20
-In this case, overlayfs unregisters call back from the notifier chain of up=
-per inode
-when evicting it's own  inode. It will not affect the lifetime of upper ino=
-de because
-overlayfs inode holds a reference of upper inode that means upper inode wil=
-l not be
-evicted while overlayfs inode is still alive.
+On Tue, Oct 13, 2020 at 11:52:32AM -0700, Dave Hansen wrote:
+> On 10/9/20 12:42 PM, ira.weiny@intel.com wrote:
+> > @@ -341,6 +341,9 @@ noinstr void irqentry_enter(struct pt_regs *regs, irqentry_state_t *state)
+> >  	/* Use the combo lockdep/tracing function */
+> >  	trace_hardirqs_off();
+> >  	instrumentation_end();
+> > +
+> > +done:
+> > +	irq_save_pkrs(state);
+> >  }
+> 
+> One nit: This saves *and* sets PKRS.  It's not obvious from the call
+> here that PKRS is altered at this site.  Seems like there could be a
+> better name.
+> 
+> Even if we did:
+> 
+> 	irq_save_set_pkrs(state, INIT_VAL);
+> 
+> It would probably compile down to the same thing, but be *really*
+> obvious what's going on.
 
+I suppose that is true.  But I think it is odd having a parameter which is the
+same for every call site.
 
-Thanks,
-Chengguang
+But I'm not going to quibble over something like this.
+
+Changed,
+Ira
+
+> 
+> >  void irqentry_exit_cond_resched(void)
+> > @@ -362,7 +365,12 @@ noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t *state)
+> >  	/* Check whether this returns to user mode */
+> >  	if (user_mode(regs)) {
+> >  		irqentry_exit_to_user_mode(regs);
+> > -	} else if (!regs_irqs_disabled(regs)) {
+> > +		return;
+> > +	}
+> > +
+> > +	irq_restore_pkrs(state);
+> > +
+> > +	if (!regs_irqs_disabled(regs)) {
+> >  		/*
+> >  		 * If RCU was not watching on entry this needs to be done
+> >  		 * carefully and needs the same ordering of lockdep/tracing
+> > 
+> 
