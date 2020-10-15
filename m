@@ -2,84 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EAF28F313
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 15:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DBB28F34E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 15:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729435AbgJONSz convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Oct 2020 09:18:55 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([205.139.111.44]:52430 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728418AbgJONSx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Oct 2020 09:18:53 -0400
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-510-tbMKmALHMZan0v96HjDSeQ-1; Thu, 15 Oct 2020 09:18:46 -0400
-X-MC-Unique: tbMKmALHMZan0v96HjDSeQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2123C18A822D;
-        Thu, 15 Oct 2020 13:18:44 +0000 (UTC)
-Received: from ovpn-112-177.rdu2.redhat.com (ovpn-112-177.rdu2.redhat.com [10.10.112.177])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 329766EF52;
-        Thu, 15 Oct 2020 13:18:36 +0000 (UTC)
-Message-ID: <df388727036a6ad85d5ad23f44da5420dda49b4d.camel@lca.pw>
-Subject: Re: Unbreakable loop in fuse_fill_write_pages()
-From:   Qian Cai <cai@lca.pw>
-To:     Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com
-Date:   Thu, 15 Oct 2020 09:18:36 -0400
-In-Reply-To: <20201013184026.GC142988@redhat.com>
-References: <7d350903c2aa8f318f8441eaffafe10b7796d17b.camel@redhat.com>
-         <20201013184026.GC142988@redhat.com>
-Mime-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: lca.pw
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1729355AbgJONet (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Oct 2020 09:34:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41894 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728216AbgJONet (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 15 Oct 2020 09:34:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id F1709AD64;
+        Thu, 15 Oct 2020 13:34:47 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5A1AA1E133C; Thu, 15 Oct 2020 15:34:47 +0200 (CEST)
+Date:   Thu, 15 Oct 2020 15:34:47 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] UDF, reiserfs, ext2, quota fixes for 5.10-rc1
+Message-ID: <20201015133447.GG7037@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-10-13 at 14:40 -0400, Vivek Goyal wrote:
-> > == the thread is stuck in the loop ==
-> > [10813.290694] task:trinity-c33     state:D stack:25888 pid:254219 ppid:
-> > 87180
-> > flags:0x00004004
-> > [10813.292671] Call Trace:
-> > [10813.293379]  __schedule+0x71d/0x1b50
-> > [10813.294182]  ? __sched_text_start+0x8/0x8
-> > [10813.295146]  ? mark_held_locks+0xb0/0x110
-> > [10813.296117]  schedule+0xbf/0x270
-> > [10813.296782]  ? __lock_page_killable+0x276/0x830
-> > [10813.297867]  io_schedule+0x17/0x60
-> > [10813.298772]  __lock_page_killable+0x33b/0x830
-> 
-> This seems to suggest that filemap_fault() is blocked on page lock and
-> is sleeping. For some reason it never wakes up. Not sure why.
-> 
-> And this will be called from.
-> 
-> fuse_fill_write_pages()
->    iov_iter_fault_in_readable()
-> 
-> So fuse code will take inode_lock() and then looks like same process
-> is sleeping waiting on page lock. And rest of the processes get blocked
-> behind inode lock.
-> 
-> If we are woken up (while waiting on page lock), we should make forward
-> progress. Question is what page it is and why the entity which is
-> holding lock is not releasing lock.
+  Hello Linus,
 
-FYI, it was mentioned that this is likely a deadlock in FUSE:
+  could you please pull from
 
-https://lore.kernel.org/linux-fsdevel/CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com/
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.10-rc1
 
+to get:
+* couple of UDF fixes for issues found by syzbot fuzzing
+* couple of reiserfs fixes for issues found by syzbot fuzzing
+* some minor ext2 cleanups
+* quota patches to support grace times beyond year 2038 for XFS quota APIs
 
+Top of the tree is c2bb80b8bdd0. The full shortlog is:
 
+Darrick J. Wong (1):
+      quota: widen timestamps for the fs_disk_quota structure
+
+Denis Efremov (1):
+      udf: Use kvzalloc() in udf_sb_alloc_bitmap()
+
+Eric Biggers (1):
+      reiserfs: only call unlock_new_inode() if I_NEW
+
+Eric Dumazet (1):
+      quota: clear padding in v2r1_mem2diskdqb()
+
+Jan Kara (8):
+      reiserfs: Fix memory leak in reiserfs_parse_options()
+      quota: Expand comment describing d_itimer
+      udf: Fix memory leak when mounting
+      reiserfs: Initialize inode keys properly
+      udf: Avoid accessing uninitialized data on failed inode read
+      udf: Remove pointless union in udf_inode_info
+      udf: Limit sparing table size
+      reiserfs: Fix oops during mount
+
+Jing Xiangfeng (1):
+      udf: Remove redundant initialization of variable ret
+
+Wang Hai (2):
+      ext2: remove duplicate include
+      ext2: Fix some kernel-doc warnings in balloc.c
+
+The diffstat is
+
+ fs/ext2/balloc.c               |  6 ++---
+ fs/ext2/inode.c                |  1 -
+ fs/quota/quota.c               | 42 ++++++++++++++++++++++++-----
+ fs/quota/quota_v2.c            |  1 +
+ fs/reiserfs/inode.c            |  9 +++----
+ fs/reiserfs/super.c            |  8 +++---
+ fs/reiserfs/xattr.c            |  7 +++++
+ fs/udf/directory.c             |  2 +-
+ fs/udf/file.c                  |  7 +++--
+ fs/udf/ialloc.c                | 14 +++++-----
+ fs/udf/inode.c                 | 61 +++++++++++++++++++++---------------------
+ fs/udf/misc.c                  |  6 ++---
+ fs/udf/namei.c                 |  7 +++--
+ fs/udf/partition.c             |  2 +-
+ fs/udf/super.c                 | 47 +++++++++++++++++---------------
+ fs/udf/symlink.c               |  2 +-
+ fs/udf/udf_i.h                 |  6 +----
+ include/uapi/linux/dqblk_xfs.h | 16 ++++++++---
+ 18 files changed, 143 insertions(+), 101 deletions(-)
+
+							Thanks
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
