@@ -2,64 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BCF28F1BB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 14:00:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E8C28F219
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 14:32:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387485AbgJOMAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Oct 2020 08:00:24 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34427 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730039AbgJOLzy (ORCPT
+        id S1726583AbgJOMcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Oct 2020 08:32:04 -0400
+Received: from smtp-8fae.mail.infomaniak.ch ([83.166.143.174]:42087 "EHLO
+        smtp-8fae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726814AbgJOMcE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Oct 2020 07:55:54 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1kT1rK-0004cr-Mt; Thu, 15 Oct 2020 11:55:50 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] io_uring: fix flags check for the REQ_F_WORK_INITIALIZED setting
-Date:   Thu, 15 Oct 2020 12:55:50 +0100
-Message-Id: <20201015115550.485235-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.27.0
+        Thu, 15 Oct 2020 08:32:04 -0400
+X-Greylist: delayed 63590 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Oct 2020 08:32:04 EDT
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CBpZB5fPXzlhTQt;
+        Thu, 15 Oct 2020 14:32:02 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4CBpZ66ymBzlh8V2;
+        Thu, 15 Oct 2020 14:31:58 +0200 (CEST)
+Subject: Re: [PATCH v21 12/12] landlock: Add user and kernel documentation
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201008153103.1155388-1-mic@digikod.net>
+ <20201008153103.1155388-13-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <fc1c5675-034b-bf5b-ba2b-6be06e03b458@digikod.net>
+Date:   Thu, 15 Oct 2020 14:31:58 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20201008153103.1155388-13-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-Currently the check for REQ_F_WORK_INITIALIZED is always true because
-the | operator is being used. I believe this check should be checking
-if the bit is set using the & operator.
+On 08/10/2020 17:31, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
+> 
+> This documentation can be built with the Sphinx framework.
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
+> ---
+> 
+> Changes since v20:
+> * Update examples and documentation with the new syscalls.
+> 
+> Changes since v19:
+> * Update examples and documentation with the new syscalls.
+> 
+> Changes since v15:
+> * Add current limitations.
+> 
+> Changes since v14:
+> * Fix spelling (contributed by Randy Dunlap).
+> * Extend documentation about inheritance and explain layer levels.
+> * Remove the use of now-removed access rights.
+> * Use GitHub links.
+> * Improve kernel documentation.
+> * Add section for tests.
+> * Update example.
+> 
+> Changes since v13:
+> * Rewrote the documentation according to the major revamp.
+> 
+> Previous changes:
+> https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
+> ---
+>  Documentation/security/index.rst           |   1 +
+>  Documentation/security/landlock/index.rst  |  18 ++
+>  Documentation/security/landlock/kernel.rst |  69 ++++++
+>  Documentation/security/landlock/user.rst   | 242 +++++++++++++++++++++
+>  4 files changed, 330 insertions(+)
+>  create mode 100644 Documentation/security/landlock/index.rst
+>  create mode 100644 Documentation/security/landlock/kernel.rst
+>  create mode 100644 Documentation/security/landlock/user.rst
+> 
+> diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+> index 8129405eb2cc..e3f2bf4fef77 100644
+> --- a/Documentation/security/index.rst
+> +++ b/Documentation/security/index.rst
+> @@ -16,3 +16,4 @@ Security Documentation
+>     siphash
+>     tpm/index
+>     digsig
+> +   landlock/index
+> diff --git a/Documentation/security/landlock/index.rst b/Documentation/security/landlock/index.rst
+> new file mode 100644
+> index 000000000000..2520f8f33f5e
+> --- /dev/null
+> +++ b/Documentation/security/landlock/index.rst
+> @@ -0,0 +1,18 @@
+> +=========================================
+> +Landlock LSM: unprivileged access control
+> +=========================================
+> +
+> +:Author: Mickaël Salaün
+> +
+> +The goal of Landlock is to enable to restrict ambient rights (e.g.  global
+> +filesystem access) for a set of processes.  Because Landlock is a stackable
+> +LSM, it makes possible to create safe security sandboxes as new security layers
+> +in addition to the existing system-wide access-controls. This kind of sandbox
+> +is expected to help mitigate the security impact of bugs or
+> +unexpected/malicious behaviors in user-space applications. Landlock empowers
+> +any process, including unprivileged ones, to securely restrict themselves.
+> +
+> +.. toctree::
+> +
+> +    user
+> +    kernel
+> diff --git a/Documentation/security/landlock/kernel.rst b/Documentation/security/landlock/kernel.rst
+> new file mode 100644
+> index 000000000000..27c0933a0b6e
+> --- /dev/null
+> +++ b/Documentation/security/landlock/kernel.rst
+> @@ -0,0 +1,69 @@
+> +==============================
+> +Landlock: kernel documentation
+> +==============================
+Cf. https://landlock.io/linux-doc/landlock-v21/security/landlock/kernel.html
 
-Addresses-Coverity: ("Wrong operator used")
-Fixes: 9c357fed168a ("io_uring: fix REQ_F_COMP_LOCKED by killing it")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I guess this is the good place for kernel API documentation.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 01d0b35415dc..5ef54df03d7c 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1813,7 +1813,7 @@ static void __io_fail_links(struct io_kiocb *req)
- 		 * but avoid REQ_F_WORK_INITIALIZED because it may deadlock on
- 		 * work.fs->lock.
- 		 */
--		if (link->flags | REQ_F_WORK_INITIALIZED)
-+		if (link->flags & REQ_F_WORK_INITIALIZED)
- 			io_put_req_deferred(link, 2);
- 		else
- 			io_double_put_req(link);
--- 
-2.27.0
+> diff --git a/Documentation/security/landlock/user.rst b/Documentation/security/landlock/user.rst
+> new file mode 100644
+> index 000000000000..e6fbc75c1af1
+> --- /dev/null
+> +++ b/Documentation/security/landlock/user.rst
+> @@ -0,0 +1,242 @@
+> +=================================
+> +Landlock: userspace documentation
+> +=================================
+Cf. https://landlock.io/linux-doc/landlock-v21/security/landlock/user.html
 
+Shouldn't this go in Documentation/userspace-api/ instead?
+
+Documentation/security/lsm-development.rst says that LSM documentation
+should go to Documentation/admin-guide/LSM/ but this is not (like
+seccomp) an admin documentation.
+Should the Documentation/userspace-api/landlock.rst be linked from
+Documentation/admin-guide/LSM/index.rst too?
