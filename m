@@ -2,166 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37E8C28F219
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 14:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A440328F221
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 14:32:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgJOMcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Oct 2020 08:32:04 -0400
-Received: from smtp-8fae.mail.infomaniak.ch ([83.166.143.174]:42087 "EHLO
-        smtp-8fae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726814AbgJOMcE (ORCPT
+        id S1728521AbgJOMch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Oct 2020 08:32:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728048AbgJOMch (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Oct 2020 08:32:04 -0400
-X-Greylist: delayed 63590 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Oct 2020 08:32:04 EDT
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CBpZB5fPXzlhTQt;
-        Thu, 15 Oct 2020 14:32:02 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4CBpZ66ymBzlh8V2;
-        Thu, 15 Oct 2020 14:31:58 +0200 (CEST)
-Subject: Re: [PATCH v21 12/12] landlock: Add user and kernel documentation
-To:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20201008153103.1155388-1-mic@digikod.net>
- <20201008153103.1155388-13-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <fc1c5675-034b-bf5b-ba2b-6be06e03b458@digikod.net>
-Date:   Thu, 15 Oct 2020 14:31:58 +0200
-User-Agent: 
+        Thu, 15 Oct 2020 08:32:37 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4360C061755;
+        Thu, 15 Oct 2020 05:32:36 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id k6so4099988ior.2;
+        Thu, 15 Oct 2020 05:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=It21HUEP/CV7FitEvMD4n5JsB6P+ylamqrbiit/hLGo=;
+        b=az3jJ0S/x9iSqq+JB3mKSeFIMxLxg69WeVdNxSrp/fQEXGBqifG6J0264mBYsv4V/D
+         YpkwyKaG6FvZdmBQNMX69ZfjvCYI8fGsdoEE0TZmt3IK5qmGQHQBe6LPdB8cE/fZWBmk
+         wheZShG5OCAz3QkwkXykqpSfX34Yv0VM3pqWtHWJlEfFKxyFx6eHDKLEcklV9lI2LOfn
+         eoVc8Qq9iAVsg6+2QXEI2zqp7v/LZn8scoi1YmMyGqimKWasV/iGuQXJJ96h1vtLWD7M
+         8T5FndrtKCvqX/S04c6YiVgOzssFO9TR7sDqXpsHjeywJx5LZPANr5rkcoOHsEqSBQJJ
+         1Dow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=It21HUEP/CV7FitEvMD4n5JsB6P+ylamqrbiit/hLGo=;
+        b=h/7fh0KukdSMAKTT0R0OyILD6rV0bAr0VyZllFuusmtRdNdHA80HxoYV45ohgZT1EN
+         6vn6d1Lr9LsO3tZ7SBdsmkG/mMONpHo0Pw4DmSqG6qqHowNvE1qFbfv+iqzEweWbhbhs
+         CYaraaVHMaSWfp+FMoHmIcasVEjK+oIEz/lSb3xe5yqGs8IIXgpmtOxRAUiGnYnIs1du
+         Gfag0xoIiOweOGv7ZTr54POMoCp3Bkti7bFYREdyn7QWMUQk1iohYnDHem6x5HDdmmGI
+         4UOH6Ni3O2OvtsLAM/vaUVX6fQ30jPwZfbLrVzXxUQdF9ix88PU0alWq+oE5cqLCBOYw
+         NWGQ==
+X-Gm-Message-State: AOAM533+raCeMoFtNGIygP087nzDAMF6U4+9A2Fy1wv51IY/iQ9xLdWl
+        ojFWebRqFGvebnPJ6DhfpeQ7T7MVmjEU4eUinVO5kLi0hVM=
+X-Google-Smtp-Source: ABdhPJw6+7vvOW5OA70+YfAt0GtsxEr+JFY/UpyZekrHQN4MwYJ7M2T4+maWcahNzMcCkFsMVYT+QZKqtzx1pR3B/nI=
+X-Received: by 2002:a6b:651a:: with SMTP id z26mr2996527iob.186.1602765156224;
+ Thu, 15 Oct 2020 05:32:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201008153103.1155388-13-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20201010142355.741645-1-cgxu519@mykernel.net> <20201010142355.741645-2-cgxu519@mykernel.net>
+ <20201014161538.GA27613@quack2.suse.cz> <1752a360692.e4f6555543384.3080516622688985279@mykernel.net>
+ <CAOQ4uxhOrPfJxhJ1g7eSSdO4=giFJabCCOvJL7dSo1R9VsZozA@mail.gmail.com> <1752c05cbe5.fd554a7a44272.2744418978249296745@mykernel.net>
+In-Reply-To: <1752c05cbe5.fd554a7a44272.2744418978249296745@mykernel.net>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 15 Oct 2020 15:32:24 +0300
+Message-ID: <CAOQ4uxhEA=ggONsJrUzGfHOGHob+81-UHk1Wo9ejj=CziAjtTQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] fs: introduce notifier list for vfs inode
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, miklos <miklos@szeredi.hu>,
+        linux-unionfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+>  > Perhaps you can combine that with the shadow overlay sbi approach.
+>  > Instead of dirtying overlay inode when underlying is dirtied, you can
+>  > "pre-dirty" overlayfs inode in higher level file ops and add them to the
+>  > "maybe-dirty" list (e.g. after write).
+>  >
+>
+> Main problem is we can't be notified by set_page_dirty from writable mmap.
+> Meanwhile, if we dirty overlay inode then writeback will pick up dirty overlay
+> inode and clear it after syncing, then overlay inode could be release at any time,
+> so in the end, maybe overlay inode is released but upper inode is still dirty and
+> there is no any pointer to find upper dirty inode out.
+>
 
-On 08/10/2020 17:31, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> This documentation can be built with the Sphinx framework.
-> 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
-> ---
-> 
-> Changes since v20:
-> * Update examples and documentation with the new syscalls.
-> 
-> Changes since v19:
-> * Update examples and documentation with the new syscalls.
-> 
-> Changes since v15:
-> * Add current limitations.
-> 
-> Changes since v14:
-> * Fix spelling (contributed by Randy Dunlap).
-> * Extend documentation about inheritance and explain layer levels.
-> * Remove the use of now-removed access rights.
-> * Use GitHub links.
-> * Improve kernel documentation.
-> * Add section for tests.
-> * Update example.
-> 
-> Changes since v13:
-> * Rewrote the documentation according to the major revamp.
-> 
-> Previous changes:
-> https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
-> ---
->  Documentation/security/index.rst           |   1 +
->  Documentation/security/landlock/index.rst  |  18 ++
->  Documentation/security/landlock/kernel.rst |  69 ++++++
->  Documentation/security/landlock/user.rst   | 242 +++++++++++++++++++++
->  4 files changed, 330 insertions(+)
->  create mode 100644 Documentation/security/landlock/index.rst
->  create mode 100644 Documentation/security/landlock/kernel.rst
->  create mode 100644 Documentation/security/landlock/user.rst
-> 
-> diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-> index 8129405eb2cc..e3f2bf4fef77 100644
-> --- a/Documentation/security/index.rst
-> +++ b/Documentation/security/index.rst
-> @@ -16,3 +16,4 @@ Security Documentation
->     siphash
->     tpm/index
->     digsig
-> +   landlock/index
-> diff --git a/Documentation/security/landlock/index.rst b/Documentation/security/landlock/index.rst
-> new file mode 100644
-> index 000000000000..2520f8f33f5e
-> --- /dev/null
-> +++ b/Documentation/security/landlock/index.rst
-> @@ -0,0 +1,18 @@
-> +=========================================
-> +Landlock LSM: unprivileged access control
-> +=========================================
-> +
-> +:Author: Mickaël Salaün
-> +
-> +The goal of Landlock is to enable to restrict ambient rights (e.g.  global
-> +filesystem access) for a set of processes.  Because Landlock is a stackable
-> +LSM, it makes possible to create safe security sandboxes as new security layers
-> +in addition to the existing system-wide access-controls. This kind of sandbox
-> +is expected to help mitigate the security impact of bugs or
-> +unexpected/malicious behaviors in user-space applications. Landlock empowers
-> +any process, including unprivileged ones, to securely restrict themselves.
-> +
-> +.. toctree::
-> +
-> +    user
-> +    kernel
-> diff --git a/Documentation/security/landlock/kernel.rst b/Documentation/security/landlock/kernel.rst
-> new file mode 100644
-> index 000000000000..27c0933a0b6e
-> --- /dev/null
-> +++ b/Documentation/security/landlock/kernel.rst
-> @@ -0,0 +1,69 @@
-> +==============================
-> +Landlock: kernel documentation
-> +==============================
-Cf. https://landlock.io/linux-doc/landlock-v21/security/landlock/kernel.html
+But we can control whether overlay inode is release with ovl_drop_inode()
+right? Can we prevent dropping overlay inode if upper inode is
+inode_is_open_for_write()?
 
-I guess this is the good place for kernel API documentation.
+About re-dirty, see below...
 
-> diff --git a/Documentation/security/landlock/user.rst b/Documentation/security/landlock/user.rst
-> new file mode 100644
-> index 000000000000..e6fbc75c1af1
-> --- /dev/null
-> +++ b/Documentation/security/landlock/user.rst
-> @@ -0,0 +1,242 @@
-> +=================================
-> +Landlock: userspace documentation
-> +=================================
-Cf. https://landlock.io/linux-doc/landlock-v21/security/landlock/user.html
+>
+>  > ovl_sync_fs() can iterate the maybe-dirty list and re-dirty overlay inodes
+>  > if the underlying inode is still dirty on the (!wait) pass.
+>  >
+>  > As for memory mapped inodes via overlayfs (which can be dirtied without
+>  > notifying overlayfs) I am not sure that is a big problem in practice.
+>  >
+>
+> Yes, it's key problem here.
+>
+>  > When an inode is writably mapped via ovarlayfs, you can flag the
+>  > overlay inode with "maybe-writably-mapped" and then remove
+>  > it from the maybe dirty list when the underlying inode is not dirty
+>  > AND its i_writecount is 0 (checked on write_inode() and release()).
+>  >
+>  > Actually, there is no reason to treat writably mapped inodes and
+>  > other dirty inodes differently - insert to suspect list on open for
+>  > write, remove from suspect list on last release() or write_inode()
+>  > when inode is no longer dirty and writable.
+>  >
+>  > Did I miss anything?
+>  >
+>
+> If we dirty overlay inode that means we have launched writeback mechanism,
+> so in this case, re-dirty overlay inode in time becomes important.
+>
 
-Shouldn't this go in Documentation/userspace-api/ instead?
+My idea was to use the first call to ovl_sync_fs() with 'wait' false
+to iterate the
+maybe-dirty list and re-dirty overlay inodes whose upper is dirty.
 
-Documentation/security/lsm-development.rst says that LSM documentation
-should go to Documentation/admin-guide/LSM/ but this is not (like
-seccomp) an admin documentation.
-Should the Documentation/userspace-api/landlock.rst be linked from
-Documentation/admin-guide/LSM/index.rst too?
+Then in the second call to __sync_filesystem, sync_inodes_sb() will take
+care of calling ovl_write_inode() for all the re-dirty inodes.
+
+In current code we sync ALL dirty upper fs inodes and we do not overlay
+inodes with no reference in cache.
+
+The best code would sync only upper fs inodes dirtied by this overlay
+and will be able to evict overlay inodes whose upper inodes are clean.
+
+The compromise code would sync only upper fs inodes dirtied by this overlay,
+and would not evict overlay inodes as long as upper inodes are "open for write".
+I think its a fine compromise considering the alternatives.
+
+Is this workable?
+
+Thanks,
+Amir.
