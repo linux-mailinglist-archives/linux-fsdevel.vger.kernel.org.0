@@ -2,136 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D28628F707
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 18:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 868FF28F70F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Oct 2020 18:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389913AbgJOQng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Oct 2020 12:43:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49876 "EHLO
+        id S2389746AbgJOQpT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Oct 2020 12:45:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388946AbgJOQng (ORCPT
+        with ESMTP id S2388946AbgJOQpT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Oct 2020 12:43:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E28C061755;
-        Thu, 15 Oct 2020 09:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Hz/6L/k6/ZOdJL5HZTqoNr1Jk2Qpg013UruFF7Ew+Ak=; b=bQaSzufpfmAGrd9FrqRwxr4T5m
-        X84DxXuyxdBxVSzNhwLsBArjvcHS/mpvQPMZpafZ2TFdCdqgJ61ukuXQ8z1+fRqIJN4wmquqbdjwb
-        WlC/CzV4Pp78jUv25MprLTjKe1dtz28Q/PktQvYy7zVnE/E3avpBrh5UWPXm2Fgae7v6OeA7rDMq4
-        7iaqZGguIxyTRBXcyx5J0Q4M03apjgSaI7oKJVb+jf6v9ttPIG3pGr5Dj6oOGRgd2VxNiwCBRvGTx
-        qATN08w9wjnLNiSCe1bkXvj5OwbEQdtYQ+VNCBA2TlI4A8jt7rVLQHJzG1ZvNjQL68Fr4DnKbAIwu
-        E1bjNH9Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kT6Lm-0005af-0i; Thu, 15 Oct 2020 16:43:34 +0000
-Date:   Thu, 15 Oct 2020 17:43:33 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-        Richard Weinberger <richard@nod.at>, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 16/16] iomap: Make readpage synchronous
-Message-ID: <20201015164333.GA20115@casper.infradead.org>
-References: <20201009143104.22673-1-willy@infradead.org>
- <20201009143104.22673-17-willy@infradead.org>
- <20201015094203.GA21420@infradead.org>
+        Thu, 15 Oct 2020 12:45:19 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04FB1C061755
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Oct 2020 09:45:15 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id f21so3834035ljh.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Oct 2020 09:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3tqw/3zrYvsNT6/LR4jSbjq5V2hTGEWhd2+Uj6nH5og=;
+        b=bXA5S6h7u6rIO9U/8BCb6V/8Ll3Ohd0j+gGB1Jz+dDK0SLkxKak/vxGbO5EY80lQrl
+         XTyn2JME8K25Dj3a827M7Z/SWLep/EKvRlhLCdwEtMCA+qf0iowvH/YmJnJ6asN3NR8z
+         4hY6Ae3XMIxJOCPu1McEBPI5tx2SllEcM2ifs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3tqw/3zrYvsNT6/LR4jSbjq5V2hTGEWhd2+Uj6nH5og=;
+        b=fzh5Kk1tc8L9P1PD0lCOXxF9efMSj7TWQ+Atk4GKuDrKvHI2vMrvFPiw4EB3tCP44W
+         tmcYcAbbw6pN04nx3e0/vQLlk+hL8T2lx1Dy1xnBSxtwGKkpiVQfEZUHQEeXDOyL6zHX
+         GVi93OpA8Th9XQfiTHtwWGocEZrts65h1UHlsYo3NnVgQTRz8HgCQqfYcp5b6YDRHE8T
+         cAXrQO45/mRaa27mmeafi5QtsGF5AgDDlZTxJg0/91KA7rZL8JZyj74ATo/fglBxZ5as
+         QNgSltjLWB6hhpiJ7eFOIO+NG3vvmQlI5AJmaSyAvy/K130J7c38Ua64L16jHaEqI6qQ
+         U/gg==
+X-Gm-Message-State: AOAM530RRJ3oiMTuUg+Mca7UX2CZ9cqhn9XPuSXgd0yUbCBG+TdhOx0W
+        J8ggUdzAPxcST4czcE5Litkb8Hj3dkmZng==
+X-Google-Smtp-Source: ABdhPJw2oMM7x15Kv7ogIn/+fPKku1q+Btce/A6iyodGqGyWejJx4oMJTsOLNhKR58hR43xMhw/laQ==
+X-Received: by 2002:a05:651c:238:: with SMTP id z24mr1783757ljn.408.1602780313143;
+        Thu, 15 Oct 2020 09:45:13 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id j17sm1480456ljg.82.2020.10.15.09.45.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2020 09:45:08 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id r127so4314559lff.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Oct 2020 09:45:08 -0700 (PDT)
+X-Received: by 2002:a19:4186:: with SMTP id o128mr1291810lfa.148.1602780308013;
+ Thu, 15 Oct 2020 09:45:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201015094203.GA21420@infradead.org>
+References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
+ <CAHk-=wicH=FaLOeum9_f7Vyyz9Fe4MWmELT7WKR_UbfY37yX-Q@mail.gmail.com>
+ <20201014130555.kdbxyavqoyfnpos3@box> <CAHk-=wjXBv0ZKqH4muuo2j4bH2km=7wedrEeQJxY6g2JcdOZSQ@mail.gmail.com>
+ <20201015094344.pmvg2jxrb2bsoanr@box>
+In-Reply-To: <20201015094344.pmvg2jxrb2bsoanr@box>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 15 Oct 2020 09:44:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgNooZpC8G4=0dB-OBT5PYuv9d=sqzUXS9Ea_acjrAi_A@mail.gmail.com>
+Message-ID: <CAHk-=wgNooZpC8G4=0dB-OBT5PYuv9d=sqzUXS9Ea_acjrAi_A@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Some more lock_page work..
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 10:42:03AM +0100, Christoph Hellwig wrote:
-> > +static void iomap_read_page_end_io(struct bio_vec *bvec,
-> > +		struct completion *done, bool error)
-> 
-> I really don't like the parameters here.  Part of the problem is
-> that ctx is only assigned to bi_private conditionally, which can
-> easily be fixed.  The other part is the strange bool error when
-> we can just pass on bi_stats.  See the patch at the end of what
-> I'd do intead.
+On Thu, Oct 15, 2020 at 2:43 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> Okay, I see what you propose.
+>
+> But I don't think it addresses race with try_to_unmap():
 
-I prefer assigning ctx conditionally to propagating the knowledge
-that !rac means synchronous.  I've gone with this:
+I don't think it needs to.
 
- static void iomap_read_page_end_io(struct bio_vec *bvec,
--               struct completion *done, bool error)
-+               struct iomap_readpage_ctx *ctx, blk_status_t status)
- {
-        struct page *page = bvec->bv_page;
-        struct iomap_page *iop = to_iomap_page(page);
- 
--       if (!error)
-+       if (status == BLK_STS_OK) {
-                iomap_set_range_uptodate(page, bvec->bv_offset, bvec->bv_len);
-+       } else if (ctx && ctx->status == BLK_STS_OK) {
-+               ctx->status = status;
-+       }
- 
-        if (!iop ||
-            atomic_sub_and_test(bvec->bv_len, &iop->read_bytes_pending)) {
--               if (done)
--                       complete(done);
-+               if (ctx)
-+                       complete(&ctx->done);
-                else
-                        unlock_page(page);
-        }
+Remember: the map_pages() thing is called only for when the page
+tables are empty.
 
-> >  	} else {
-> >  		WARN_ON_ONCE(ctx.cur_page_in_bio);
-> > -		unlock_page(page);
-> > +		complete(&ctx.done);
-> >  	}
-> >  
-> > +	wait_for_completion(&ctx.done);
-> 
-> I don't think we need the complete / wait_for_completion dance in
-> this case.
-> 
-> > +	if (ret >= 0)
-> > +		ret = blk_status_to_errno(ctx.status);
-> > +	if (ret == 0)
-> > +		return AOP_UPDATED_PAGE;
-> > +	unlock_page(page);
-> > +	return ret;
-> 
-> Nipick, but I'd rather have a goto out_unlock for both error case
-> and have the AOP_UPDATED_PAGE for the normal path straight in line.
-> 
-> Here is an untested patch with my suggestions:
+So try_to_unmap() will never see the pte entry, and there is nothing
+to race with.
 
-I think we can go a little further here:
+So sure, it can "race" with try_to_unmap like you say, but who cares?
+The "race" is no different from taking the page lock _after_
+try_to_unmap() already ran (and didn't see anything because the page
+hadn't been mapped yet).
 
-@@ -340,16 +335,12 @@ iomap_readpage(struct page *page, const struct iomap_ops *
-ops)
- 
-        if (ctx.bio) {
-                submit_bio(ctx.bio);
--               WARN_ON_ONCE(!ctx.cur_page_in_bio);
--       } else {
--               WARN_ON_ONCE(ctx.cur_page_in_bio);
--               complete(&ctx.done);
-+               wait_for_completion(&ctx.done);
-+               if (ret > 0)
-+                       ret = blk_status_to_errno(ctx.status);
-        }
- 
--       wait_for_completion(&ctx.done);
-        if (ret >= 0)
--               ret = blk_status_to_errno(ctx.status);
--       if (ret == 0)
-                return AOP_UPDATED_PAGE;
-        unlock_page(page);
-        return ret;
+IOW I don't think try_to_unmap() really matters. The race you outline
+can already happen with the "trylock()" - no different from the
+trylock just succeeding after the unlock_page().
 
+So you can think of map_pages() as all happening after try_to_unmap()
+has already succeeded - and didn't see the new pte that hasn't been
+filled in yet.
 
-... there's no need to call blk_status_to_errno if we never submitted a bio.
+I do think there is a real race, but it is is with "__remove_mapping()".
+
+That still happens under the page lock, but it doesn't actually
+_depend_ on the page lock as far as I can tell. Because I think the
+real protection there is that
+
+        if (!page_ref_freeze(page, refcount))
+                goto cannot_free;
+
+it that code sees "oh, somebody else has a reference to the page, we
+can't remove the mapping".
+
+But it's entirely possible that I don't understand your worry, and I
+overlooked something. If so, can you explain using smaller words,
+please ;)
+
+             Linus
