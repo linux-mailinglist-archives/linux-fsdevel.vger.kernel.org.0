@@ -2,97 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 793E5290507
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 14:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6C50290553
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 14:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407479AbgJPM2M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 08:28:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
+        id S2405344AbgJPMiE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 08:38:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405601AbgJPM2M (ORCPT
+        with ESMTP id S2407656AbgJPMhz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 08:28:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B99C061755
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 05:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=F5azy1C+DHm5sWEovkALlRq6rf8uP+uxnGoxIcsol1Y=; b=FXKKcMQzE/3gOVuBZ+SUutLO8h
-        P6iDD5g0oWQMrNdhYk2KAllWnu49bPdTlHFgWEuD5Tcpfj60oMPox/nMiNQse2WzRBhmaZ0zYKc9P
-        vtAxxyo+mUHHqKrLVHHujm76H/6KkGu2r5EzMo00NhvZWmW8BxdXULjqJd+NY9l0SQtHFk6S65Rbx
-        fKNySLt9Ur6U0mXMt0GL3rdWhz7HDzCQZktD64PfaAA59OXfo5ZPKVkwGKE2MdDhg008cC/5Jk5hu
-        KoNEHdt7CcE3XCA7wTUn8fps8GXVfwoC48WNBFZUswFwoppezge+RYMbVTQR4yZe0T6XMS0uIAxfE
-        JSq5ISHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kTOpy-0007mL-BV; Fri, 16 Oct 2020 12:27:58 +0000
-Date:   Fri, 16 Oct 2020 13:27:58 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Vivek Goyal <vgoyal@redhat.com>, Qian Cai <cai@lca.pw>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: Possible deadlock in fuse write path (Was: Re: [PATCH 0/4] Some
- more lock_page work..)
-Message-ID: <20201016122758.GE20115@casper.infradead.org>
-References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
- <4794a3fa3742a5e84fb0f934944204b55730829b.camel@lca.pw>
- <CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com>
- <20201015151606.GA226448@redhat.com>
- <20201015195526.GC226448@redhat.com>
- <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
- <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
+        Fri, 16 Oct 2020 08:37:55 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AFDBC0613D3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 05:37:55 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id j8so1429207pjy.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 05:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O1evu/uCI+QRNY7SsK/no8njk1hcUqNItCkuJRC3dLc=;
+        b=bbJsAymhNU7wMqvb0WzSVgn1C9Jcd2lKiiaXod7R/qUN4qsDT63a+BhDt4ttf0Jl4C
+         rjtiJa1dk4TOXpoKlArIjTaEtyzOWqWztAYpfgR1YZng7senS2eo6FvwC4oJxXRS3ELW
+         /M62ON0214rJR8cODTrk/F8IWYlsvYFtJzBSU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O1evu/uCI+QRNY7SsK/no8njk1hcUqNItCkuJRC3dLc=;
+        b=YXlwRdf1dh/7SzOaJmQkw6/ZklOvI1C14j+7oUhc+xdeAA/4F4jvh0XrD4+fwFRbae
+         bw2M0KMXFQzY5dl/nl0lSsuNbhVR43qkM8WpD07IoVn6USz9XEZEn7QVuoZHn4byUDRh
+         EyOXpjq+nTkQ2VxxrzX7U392rIt8pUQ/8GJYALpcjsUaKE/GSjHiOU8/wABSCpXqax7h
+         Ombw1f0h9Sz0gyzMn5kPgTWH7rMdd4MCvdjA+2tuTaMpYw7h25PkbEQZozLuCQAE6X5Y
+         JUrxyjCgMG2FpWZnw8WvaDAjT6YsYera/aBWANM2xuntAbO+aGwPyACnvitwrLIPox7V
+         +q8w==
+X-Gm-Message-State: AOAM530oPbQOwOf7sPqJxZvpveW3joIM0xdESx+/Yz95FTYdm0Y9fAfX
+        WP+7aw72XBFObN2MvMn/0HPziJHvUhiD5w==
+X-Google-Smtp-Source: ABdhPJzsFH8TOOowaw0mIWd+vpBDOWRsXcrIqIPbu4xMwYtLhl/N2BPAgpaIC6rR8+z7FBQJsv7CTg==
+X-Received: by 2002:a17:90a:65cc:: with SMTP id i12mr3772205pjs.193.1602851874366;
+        Fri, 16 Oct 2020 05:37:54 -0700 (PDT)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id q8sm2857216pfg.118.2020.10.16.05.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Oct 2020 05:37:53 -0700 (PDT)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     "J . Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] NFS User Namespaces
+Date:   Fri, 16 Oct 2020 05:37:42 -0700
+Message-Id: <20201016123745.9510-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 12:02:21PM +0200, Miklos Szeredi wrote:
-> This was added by commit ea9b9907b82a ("fuse: implement
-> perform_write") in v2.6.26 and remains essentially unchanged, AFAICS.
-> So this is an old bug indeed.
-> 
-> So what is the page lock protecting?   I think not truncation, because
-> inode_lock should be sufficient protection.
-> 
-> What it does after sending a synchronous WRITE and before unlocking
-> the pages is set the PG_uptodate flag, but only if the complete page
-> was really written, which is what the uptodate flag really says:  this
-> page is in sync with the underlying fs.
+This patchset adds some functionality to allow NFS to be used from
+NFS namespaces (containers).
 
-Not in sync with.  Uptodate means "every byte on this page is at least
-as new as the bytes on storage".  Dirty means "at least one byte is
-newer than the bytes on storage".
+Changes since v1:
+  * Added samples
 
-> So I think the page lock here is trying to protect against concurrent
-> reads/faults on not uptodate pages.  I.e. until the WRITE request
-> completes it is unknown whether the page was really written or not, so
-> any reads must block until this state becomes known.  This logic falls
-> down on already cached pages, since they start out uptodate and the
-> write does not clear this flag.
+Sargun Dhillon (3):
+  NFS: Use cred from fscontext during fsmount
+  samples/vfs: Split out common code for new syscall APIs
+  samples/vfs: Add example leveraging NFS with new APIs and user
+    namespaces
 
-That's not how the page cache should work -- if a write() has touched
-every byte in a page, then the page should be marked as Uptodate, and it
-can immediately satisfy read()s without even touching the backing store.
+ fs/nfs/client.c                        |   2 +-
+ fs/nfs/flexfilelayout/flexfilelayout.c |   1 +
+ fs/nfs/nfs4client.c                    |   2 +-
+ samples/vfs/.gitignore                 |   2 +
+ samples/vfs/Makefile                   |   5 +-
+ samples/vfs/test-fsmount.c             |  86 +-----------
+ samples/vfs/test-nfs-userns.c          | 181 +++++++++++++++++++++++++
+ samples/vfs/vfs-helper.c               |  43 ++++++
+ samples/vfs/vfs-helper.h               |  55 ++++++++
+ 9 files changed, 289 insertions(+), 88 deletions(-)
+ create mode 100644 samples/vfs/test-nfs-userns.c
+ create mode 100644 samples/vfs/vfs-helper.c
+ create mode 100644 samples/vfs/vfs-helper.h
 
-> So keeping the pages locked has dubious value: short writes don't seem
-> to work correctly anyway.  Which means that we can probably just set
-> the page uptodate right after filling it from the user buffer, and
-> unlock the page immediately.
-> 
-> Am I missing something?
+-- 
+2.25.1
 
-I haven't looked at fuse in detail -- are you handling partial page
-writes?  That is, if someone writes to bytes 5-15 of a file, are you
-first reading bytes 0-4 and 16-4095 from the backing store?  If so,
-you can mark the page Uptodate as soon as you've copied bytes 5-15
-from the user.
