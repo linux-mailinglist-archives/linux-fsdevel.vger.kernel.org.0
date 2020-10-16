@@ -2,125 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1AF028FE88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 08:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D486228FEED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 09:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394396AbgJPGuh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 02:50:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39490 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730492AbgJPGug (ORCPT
+        id S2404286AbgJPHKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 03:10:31 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25315 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2394503AbgJPHKa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 02:50:36 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A553C061755;
-        Thu, 15 Oct 2020 23:50:35 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id h10so1317606oie.5;
-        Thu, 15 Oct 2020 23:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=yp9ezkkjfxFU72KviY2SkL912AddVp1dJs01IZSrZBg=;
-        b=f7XD5Y6tkQqNxCb9E2piNE/vVBs2nIqq57a1OUPD+2wvy5Mlq3Tx1ZXcM9tHRRYK7x
-         eqL4Cc2a6SA8D4e4qUReAf3gDYqvBmbUTIOMNByP1SMSo80g4jqQD95ytopbeGsoXpUq
-         H+IFbMbZRNippsbYwMWl4lMLLOHZSeb6c/7ozB9qMwJTSOjTwrInneS7Y4vOfsc+xW8Z
-         8gy5YZuzw+zYfV8ugPK4XDNjsd+2ntOuQBfB5qCJHuY0QcQESfzrx+A1B2cAmCGq5c9D
-         m4J47Z1JuODqDzTcxzwAEHypWfNz/TiDZ9Eu3JtbykLszQWiVsPc2SXlWRsqi31mDfN5
-         abpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=yp9ezkkjfxFU72KviY2SkL912AddVp1dJs01IZSrZBg=;
-        b=FHuDFRpZyCfZoVwtegE5cd1P89DrQ5lLNdAMqHNYZuCSAdLE0JqdRbstgZl/dKYBjZ
-         /XukWmawwFFNJFJHchJROM0uCigB7cSOTaKB3oOKgOl5rBCSLQ2YVXNfY5yMEelU3bey
-         U0X6Z/FVZVXtxTsuOvkdCYUItBRsBB8qAnf8dFYTI9NWNJ9rgWao+0qXNh9i78KHI2w8
-         6zmvYH9suxLF2LnbNRD6Xa2I4PjHxwkNQfJo+RdNGEoiUDplDbBShQj5ihrxae+1YyRs
-         4wrmjOM13Y7jfOJPmX1+5t1sgfIUH3ow9ks0DBkHT4csl3BBZUurXyKcw5a+d9CxWOAR
-         KqzA==
-X-Gm-Message-State: AOAM531tVzCD5wfJpl5j/bu6+Tte3EKvkA6w6nNQMcaQzFbMoCkwt4j9
-        rxWlYYw71Vo/CrVN3l3C5sbnSqu/Iru2JOMht35vxwi26pA=
-X-Google-Smtp-Source: ABdhPJxxET8Z7gDhnMrab9PWw1QSWqPZi2aX8J9f+URrB7gyQFY/lMVbekd5YiqEg/0BXNj9zczVPsII0FL4f7AyZwM=
-X-Received: by 2002:aca:bb41:: with SMTP id l62mr1469702oif.148.1602831034578;
- Thu, 15 Oct 2020 23:50:34 -0700 (PDT)
+        Fri, 16 Oct 2020 03:10:30 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1602832180; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=R+M18zk++GMjGpjqjy1i/9byzAk4VBAAEaIdxBEVKzexNVHTzGKtJYPEQ9GHjghSLvwbQU/TbgGBnRAVYO446UvGogyNVzkPIlyuXMkhDw78Iqsgl9G3Ww3cN3L0zMpzXkA5kHAnHzRW7JIStiRtPzkM4GRzkcrI77zbnQbTarQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1602832180; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=8H9LAHFIA+AhDfpYtbj8paGnKhDwdmvRlbesaqVWxJE=; 
+        b=Z3uNwqwB6hvTvmJgN6hmR/jTeVciqmoJklyX50CFUfnYxEq9vJW6BaYKupYpAoSsCBlHc7WyerXuCcWlQEb2dQWi6JiGMkiw659cH9dAL5MWegU5KcVTrZ/jr9kwF6dpOEHHZqJ3ZI0WKK3chNmHjtyMje+KyHYkzxGRxLu6kQc=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1602832180;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=8H9LAHFIA+AhDfpYtbj8paGnKhDwdmvRlbesaqVWxJE=;
+        b=PfraqAf//zjp4ajJSEKpKOojTF34tSKfJHpIgkXpsooSMV8b8LIt5m6WgGiJyO15
+        wl2j3cis+OcnzQMQPPO1vHEM3qSduX1SET86lftSfG6HNddwhq2evdAWRX/tQ95L9dl
+        kHkg83lXheVs41w5GS82JY36ltSz+5bNOUQiRNkU=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1602832178473516.6721618998677; Fri, 16 Oct 2020 15:09:38 +0800 (CST)
+Date:   Fri, 16 Oct 2020 15:09:38 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Al Viro" <viro@zeniv.linux.org.uk>,
+        "amir73il" <amir73il@gmail.com>, "jack" <jack@suse.cz>
+Cc:     "miklos" <miklos@szeredi.hu>,
+        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "cgxu519" <cgxu519@mykernel.net>
+Message-ID: <175303e1d27.105ba43f146287.2025735092350714226@mykernel.net>
+In-Reply-To: <20201015045741.GP3576660@ZenIV.linux.org.uk>
+References: <20201010142355.741645-1-cgxu519@mykernel.net>
+ <20201010142355.741645-2-cgxu519@mykernel.net>
+ <20201015032501.GO3576660@ZenIV.linux.org.uk>
+ <1752a5a7164.e9a05b8943438.8099134270028614634@mykernel.net> <20201015045741.GP3576660@ZenIV.linux.org.uk>
+Subject: Re: [RFC PATCH 1/5] fs: introduce notifier list for vfs inode
 MIME-Version: 1.0
-References: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
- <159827190508.306468.12755090833140558156.stgit@warthog.procyon.org.uk>
- <CAKgNAkho1WSOsxvCYQOs7vDxpfyeJ9JGdTL-Y0UEZtO3jVfmKw@mail.gmail.com>
- <667616.1599063270@warthog.procyon.org.uk> <CAKgNAkhjDB9bvQ0h5b13fkbhuP9tYrkBQe7w1cbeOH8gM--D0g@mail.gmail.com>
- <CAKgNAkh9h3aA1hiYownT2O=xg5JmZwmJUCvQ1Z4f85MTq-26Fw@mail.gmail.com>
-In-Reply-To: <CAKgNAkh9h3aA1hiYownT2O=xg5JmZwmJUCvQ1Z4f85MTq-26Fw@mail.gmail.com>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Fri, 16 Oct 2020 08:50:23 +0200
-Message-ID: <CAKgNAkju-65h1bKBUJQf-k=TCZeFmD9Nf4ZgZ9Mm_TQ1rQA6MA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] Add manpage for fsopen(2) and fsmount(2)
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2020-10-15 12:57:41 Al Viro <v=
+iro@zeniv.linux.org.uk> =E6=92=B0=E5=86=99 ----
+ > On Thu, Oct 15, 2020 at 11:42:51AM +0800, Chengguang Xu wrote:
+ > >  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E5=9B=9B, 2020-10-15 11:25:01 Al Vi=
+ro <viro@zeniv.linux.org.uk> =E6=92=B0=E5=86=99 ----
+ > >  > On Sat, Oct 10, 2020 at 10:23:51PM +0800, Chengguang Xu wrote:
+ > >  > > Currently there is no notification api for kernel about modificat=
+ion
+ > >  > > of vfs inode, in some use cases like overlayfs, this kind of noti=
+fication
+ > >  > > will be very helpful to implement containerized syncfs functional=
+ity.
+ > >  > > As the first attempt, we introduce marking inode dirty notificati=
+on so that
+ > >  > > overlay's inode could mark itself dirty as well and then only syn=
+c dirty
+ > >  > > overlay inode while syncfs.
+ > >  >=20
+ > >  > Who's responsible for removing the crap from notifier chain?  And h=
+ow does
+ > >  > that affect the lifetime of inode?
+ > > =20
+ > > In this case, overlayfs unregisters call back from the notifier chain =
+of upper inode
+ > > when evicting it's own  inode. It will not affect the lifetime of uppe=
+r inode because
+ > > overlayfs inode holds a reference of upper inode that means upper inod=
+e will not be
+ > > evicted while overlayfs inode is still alive.
+ >=20
+ > Let me see if I've got it right:
+ >     * your chain contains 1 (for upper inodes) or 0 (everything else, i.=
+e. the
+ > vast majority of inodes) recepients
+ >     * recepient pins the inode for as long as the recepient exists
+ >=20
+ > That looks like a massive overkill, especially since all you are propaga=
+ting is
+ > dirtying the suckers.  All you really need is one bit in your inode + ha=
+sh table
+ > indexed by the address of struct inode (well, middle bits thereof, as us=
+ual).
+ > With entries embedded into overlayfs-private part of overlayfs inode.  A=
+nd callback
+ > to be called stored in that entry...
+ >=20
 
-Another ping for these five patches please!
+Hi AI, Jack, Amir
 
-Cheers,
-
-Michael
-
-On Fri, 11 Sep 2020 at 14:44, Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
->
-> Hi David,
->
-> A ping for these five patches please!
->
-> Cheers,
->
-> Michael
->
-> On Wed, 2 Sep 2020 at 22:14, Michael Kerrisk (man-pages)
-> <mtk.manpages@gmail.com> wrote:
-> >
-> > On Wed, 2 Sep 2020 at 18:14, David Howells <dhowells@redhat.com> wrote:
-> > >
-> > > Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
-> > >
-> > > > The term "filesystem configuration context" is introduced, but never
-> > > > really explained. I think it would be very helpful to have a sentence
-> > > > or three that explains this concept at the start of the page.
-> > >
-> > > Does that need a .7 manpage?
-> >
-> > I was hoping a sentence or a paragraph in this page might suffice. Do
-> > you think more is required?
-> >
-> > Cheers,
-> >
-> > Michael
-> >
-> > --
-> > Michael Kerrisk
-> > Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-> > Linux/UNIX System Programming Training: http://man7.org/training/
->
->
->
-> --
-> Michael Kerrisk
-> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-> Linux/UNIX System Programming Training: http://man7.org/training/
+Based on your feedback, I would to change the inode dirty notification
+something like below, is it acceptable?=20
 
 
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 1492271..48473d9 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2249,6 +2249,14 @@ void __mark_inode_dirty(struct inode *inode, int fla=
+gs)
+=20
+        trace_writeback_mark_inode_dirty(inode, flags);
+=20
++       if (inode->state & I_OVL_INUSE) {
++               struct inode *ovl_inode;
++
++               ovl_inode =3D ilookup5(NULL, (unsigned long)inode, ovl_inod=
+e_test, inode);
++               if (ovl_inode)
++                       __mark_inode_dirty(ovl_inode, flags);
++       }
++
+        /*
+         * Don't do this for I_DIRTY_PAGES - that doesn't actually
+         * dirty the inode itself
+diff --git a/fs/inode.c b/fs/inode.c
+index 72c4c34..ed6c85e 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -820,7 +820,7 @@ static struct inode *find_inode(struct super_block *sb,
+=20
+ repeat:
+        hlist_for_each_entry(inode, head, i_hash) {
+-               if (inode->i_sb !=3D sb)
++               if (sb && inode->i_sb !=3D sb)
+                        continue;
+                if (!test(inode, data))
+                        continue;
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+
+Thanks,
+Chengguang
