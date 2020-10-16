@@ -2,68 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8664F290938
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 18:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F15290978
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 18:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410583AbgJPQE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 12:04:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41020 "EHLO
+        id S2410650AbgJPQO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 12:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410571AbgJPQE4 (ORCPT
+        with ESMTP id S2409919AbgJPQO3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 12:04:56 -0400
+        Fri, 16 Oct 2020 12:14:29 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7017FC0613E0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 09:04:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47ED1C061755;
+        Fri, 16 Oct 2020 09:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=7bp7tBDREj0/quRwoGKFhcM4IA6X+ak+6znUWRbIy7w=; b=qgdML7Eu0svzD9aZEAF3t+N+Hl
-        WhJ378LctHaJ2RpvavXxT9nHM/zbtJnZoksNdYM4h7jg713eWgZGak3vbcg1/QvZkZIpD9TEvZZxh
-        Eb6vMVI5dQhtNO/jFneRGv7v/P72Fr5D5IhyPDLlP6LaSnbLphK93OgTwSOjy8mbZV/ihaYN6oGVb
-        UHxuh7O8lrgpZOtQbTDJcREsSgpDewF0WmrSWUJpc3g7OStb+rmjn+B31ZMREHgD/mbLbckdXCvLc
-        ef6ebyetdHJQUT8P5idONrecE1bek7FJm3SdogVKgcMF44Ne8fBvksCqGphIwZGuMuuacWl6PGRvJ
-        rejNztAw==;
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=A2r1qaPIFfrxY6pOJS0p2GeZCUo4+cjjTO0/Z2u8PNg=; b=QzudlnbkbsfrvMbUddT+oNa3AM
+        bkGk2fQ0YpG7QyutD/NIJQYEzUM7xcc25QNTihG/5Bf8d0JCOAvP4U/CT+ACZJ6BjH7w1Tp4DE92u
+        zGFBdS2CqWO7M2HSFEYvjIBSmaoqoIESL1QvFriHChn380NIbhopdAwGjn7ktq786onrTA61J1vhz
+        pl3F3FcWz6QJPEAVxFSogvDrF5rMMmiUzeFvPqJ80xM6hDNX/WUwA/zDYxUedx6Gk3cKbMONgjOdz
+        b+hqQTgOjuvwDj6IAeWsTGWqYcGLdDALk2l+j9cTgipXPIqU1CVHUWUnytELPR98NZhVzmLB8HZhZ
+        b8dPrrsg==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kTSDt-0004ur-4r; Fri, 16 Oct 2020 16:04:53 +0000
+        id 1kTSN9-0005ew-PT; Fri, 16 Oct 2020 16:14:27 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-mm@kvack.org, Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v3 18/18] vboxsf: Tell the VFS that readpage was synchronous
-Date:   Fri, 16 Oct 2020 17:04:43 +0100
-Message-Id: <20201016160443.18685-19-willy@infradead.org>
+To:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 0/2] Killable synchronous BIO submission
+Date:   Fri, 16 Oct 2020 17:14:24 +0100
+Message-Id: <20201016161426.21715-1-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20201016160443.18685-1-willy@infradead.org>
-References: <20201016160443.18685-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The vboxsf inline data readpage implementation was already synchronous,
-so use AOP_UPDATED_PAGE to avoid cycling the page lock.
+It would be nice to be able to report the actual errors from block devices
+instead of the default -EIO.  In order to do that, we need to execute the
+BIO synchronously as the only way to get the error back to the caller is
+by returning it from readpage() -- we can't store it in the struct page.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/vboxsf/file.c | 2 ++
- 1 file changed, 2 insertions(+)
+But we need to be able to respond to a fatal signal, as we do today with
+lock_page_killable().  This turns out to be quite hard.  The solution
+I settled on is that the caller must pass in an alternate end_io to be
+called asynchronously if a fatal signal arrives.
 
-diff --git a/fs/vboxsf/file.c b/fs/vboxsf/file.c
-index c4ab5996d97a..c2a144e5cb5a 100644
---- a/fs/vboxsf/file.c
-+++ b/fs/vboxsf/file.c
-@@ -228,6 +228,8 @@ static int vboxsf_readpage(struct file *file, struct page *page)
- 	}
- 
- 	kunmap(page);
-+	if (!err)
-+		return AOP_UPDATED_PAGE;
- 	unlock_page(page);
- 	return err;
- }
+I believe the synchronize_rcu() call to be sufficient to ensure that the
+old bi_end_io() will not be called.  If there are callers of bi_end_io()
+from BH-enabled regions, it may not be!  Perhaps we could put a warning
+in bio_endio() to make sure that's true?
+
+Matthew Wilcox (Oracle) (2):
+  block: Add submit_bio_killable
+  fs: Make mpage_readpage synchronous
+
+ block/bio.c                | 87 +++++++++++++++++++++++++++++---------
+ fs/mpage.c                 | 25 +++++++++--
+ include/linux/bio.h        |  1 +
+ include/linux/completion.h |  1 +
+ kernel/sched/completion.c  |  9 ++--
+ 5 files changed, 97 insertions(+), 26 deletions(-)
+
 -- 
 2.28.0
 
