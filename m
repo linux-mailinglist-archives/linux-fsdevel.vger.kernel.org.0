@@ -2,130 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CDD28FF93
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 09:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B1628FFCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 10:12:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404883AbgJPH5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 03:57:10 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:22842 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404837AbgJPH5K (ORCPT
+        id S2405047AbgJPIMq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 04:12:46 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:42521 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405069AbgJPIMY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 03:57:10 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20201016075706epoutp0205f2dcd8d4fb49f117dbba068cf4bcf2~_afcAKsDo2505925059epoutp02B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 07:57:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20201016075706epoutp0205f2dcd8d4fb49f117dbba068cf4bcf2~_afcAKsDo2505925059epoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1602835027;
-        bh=AHDZsjQ1Pel0DEbKCXT7dBQAhD7i5lWKT6QFUbNHMB4=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=N9Evvk1AaPQ6QZcpBEj3dnm9ujycUAPEJekjczUxlvZc9OB48P1W8n91ucYuzT8m9
-         BBDWZV+ZjEY+fpnlsbHLyp8JDBZb/mjcX65ksn56YDsjx4Czjuk+c5cfAQkVva3or0
-         OC4sxQ2M7Nw5VEciGDsQ8mYcj7dQYfYgbH6o01Q4=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20201016075706epcas1p499778fe5ffcd26a948de1aaf4e8fc295~_afbvS3DS2246422464epcas1p46;
-        Fri, 16 Oct 2020 07:57:06 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.162]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4CCJQT57GSzMqYlh; Fri, 16 Oct
-        2020 07:57:05 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D0.1E.09543.152598F5; Fri, 16 Oct 2020 16:57:05 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20201016075705epcas1p153f32bba72725478ab1f2715f0b5ac84~_afabrY_k2008320083epcas1p1K;
-        Fri, 16 Oct 2020 07:57:05 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20201016075705epsmtrp1dc1a036ad890002d58c7378202ccf760~_afaa62YJ0675906759epsmtrp1k;
-        Fri, 16 Oct 2020 07:57:05 +0000 (GMT)
-X-AuditID: b6c32a35-35dff70000002547-4f-5f895251f76d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        10.14.08745.152598F5; Fri, 16 Oct 2020 16:57:05 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20201016075705epsmtip26be1c6eb37ca4650274f0f51a9478a69~_afaPZpbz2976129761epsmtip2M;
-        Fri, 16 Oct 2020 07:57:05 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20201002060528.27519-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH v3 2/2] exfat: aggregate dir-entry updates into
- __exfat_write_inode().
-Date:   Fri, 16 Oct 2020 16:57:05 +0900
-Message-ID: <018b01d6a391$f06fc310$d14f4930$@samsung.com>
+        Fri, 16 Oct 2020 04:12:24 -0400
+Received: by mail-il1-f197.google.com with SMTP id f12so1005665ilq.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 01:12:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Bm5SWSSR+OsZVNyMrrEA80pp6Iujuo2nZZDiousUxIE=;
+        b=Q5sf3iSnH/IYYqVbSqtog2AVI1pu3LHeaccArcV3lBJ/Ldj6GEKQAIAIW6PF4LSAmK
+         WtHgIEzp1N6LbV3z7zvnj2gY2H4POpOLMj6QBN0m5nEDhSZo9HSw6MCUS/CO3JeFNaSU
+         ZzbWOgvc7zqGBAFfReOiYq8qvXOr0DbBJqumpSxQBgGrEghKtITFhsPMo3SggdS7kUws
+         /nWgUacTkpSt43xLQ6r3B7uUKiZm7cJ1yFVSTlPQnKF0jucUZP+JYVauiQw4oapPJyfE
+         i5afvTA0nFuvtlXh0jigZBHL/HqrQr7EL4VhzL7rG9S10IKctImiD0vl0qCn4ZS285+W
+         PTPQ==
+X-Gm-Message-State: AOAM530x4C+rd7frJ72lnNL11jATwEGIoiQobITWvayM4c77nut4PGO9
+        dB+flIpJ+UiAlTPjzI1w/dklVrlXP3cJ5oCJLwM/rVtp6trb
+X-Google-Smtp-Source: ABdhPJy3LJBD6x/8VkyDz94aY18nGxniV6nVha/uNNH6Dza+BQ6D5uZ0J9EKSFEFuqaj/qAA0FDyTdaa7Rr/9N4BWuttro+XA9Ui
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGsrAc6GOeBBrRdXvsz9tvKpNvsaQJgHYnqqdrHtUA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7bCmnm5gUGe8wctd6hY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFost/46wOrB5fJlznN2j+dhKNo+ds+6ye/RtWcXo8XmTXABrVI5N
-        RmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtAFSgpliTml
-        QKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCQ4MCveLE3OLSvHS95PxcK0MDAyNToMqEnIwf
-        s1+yFfxgqbh3YQdbA+ML5i5GTg4JAROJSyfmsXQxcnEICexglFgypYkZwvnEKLFl21mozGdG
-        iQ9bTrDCtHy9tpERIrGLUeJA0002COclo8T9h0fABrMJ6Er8+7OfDcQWEdCTOHnyOlgRs8BF
-        RomXJ9exgyQ4BSwlfhxcxQJiCwvESFxfOJEJxGYRUJXYeuEy2CBeoJr5pyazQdiCEidnPgGr
-        ZxaQl9j+dg7UFwoSP58uY4VYZiXx7l8XVI2IxOzONrCHJAR6OSRW7OligmhwkZi8/BYLhC0s
-        8er4FnYIW0riZX8bkM0BZFdLfNwPNb+DUeLFd1sI21ji5voNrCAlzAKaEut36UOEFSV2/p7L
-        CLGWT+Ld1x5WiCm8Eh1tQhAlqhJ9lw5DHSAt0dX+gX0Co9IsJI/NQvLYLCQPzEJYtoCRZRWj
-        WGpBcW56arFhgSFybG9iBCdPLdMdjBPfftA7xMjEwXiIUYKDWUmE95V0W7wQb0piZVVqUX58
-        UWlOavEhRlNgUE9klhJNzgem77ySeENTI2NjYwsTM3MzU2Mlcd4/2h3xQgLpiSWp2ampBalF
-        MH1MHJxSDUw9ex6+qD9YuP3Nzj83NSYmHpJPuVC+3HZVgNN39Z3PDstn31pWf03Z9i1b9QO5
-        +Y3i1xntVxwrO+nB+W/a066QWf2vk1n/LewzrTXYv6CBU4z10wyHI7sviysKVG9eeU//lprp
-        ZIulftbfBQ3bmgvk6pm2rJ7ftiXJIvcZb0IU04J9oZE3klrLk2fsijhodmud/WOjxTGVj/bH
-        Xed6MNk5+2mJ8LWp085dvMh78MHb/yFtkU+5BS9nblUNZ5UX/vDQYnbwl1rHmTr+x8/Y5jRs
-        TJrk11Wm7bDz5/p7Aa86CzK/bYuPjLmQwly43aY9eMnV6sSy6N5+d7H8ZW+MFqdOE5r3Rpfp
-        evH29FaJLe5KLMUZiYZazEXFiQDgBR9BJwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDLMWRmVeSWpSXmKPExsWy7bCSvG5gUGe8wbzp3BY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFost/46wOrB5fJlznN2j+dhKNo+ds+6ye/RtWcXo8XmTXABrFJdN
-        SmpOZllqkb5dAlfGj9kv2Qp+sFTcu7CDrYHxBXMXIyeHhICJxNdrGxlBbCGBHYwSrRPcIOLS
-        EsdOnAGq4QCyhSUOHy7uYuQCKnnOKNE18RxYL5uArsS/P/vZQGwRAT2Jkyevs4EUMQtcZpTo
-        bZvIAtHRxSix+MxOsCpOAUuJHwdXsYDYwgJREis2/ADbzCKgKrH1wmWwqbxANfNPTWaDsAUl
-        Ts58wgJyBTPQhjaIQ5kF5CW2v50D9YCCxM+ny1ghjrCSePeviwWiRkRidmcb8wRG4VlIJs1C
-        mDQLyaRZSDoWMLKsYpRMLSjOTc8tNiwwykst1ytOzC0uzUvXS87P3cQIjiAtrR2Me1Z90DvE
-        yMTBeIhRgoNZSYT3lXRbvBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHer7MWxgkJpCeWpGanphak
-        FsFkmTg4pRqY5FQZ3ob9e7x9/T2p5F5bB80G1sJGm80CD3+w9v0sOpCdrlhvx2u/4tZPzp9f
-        bk7YlrZBwDf4XY+a+toDHjXcv4XOnVIJWcSQcXyalr2c+sc7MhLVO486FPmJsK3QL9pxefnz
-        C7xP9QOev9q0a6K36Hwboa97WHKeVau4SaeffFSXea3+OEPdBLczjEdeLLE0ObU8oLKC88jl
-        cBaxnp8/dO52z/XYapXa3fBcR35NbNdh3kTpzlBG/2N+4ru4d5fUbUs0l580K9x4cpr4Nk63
-        vMhTfUd2W4TmX94eYNDO+eBM1K7zdxpv+97tPnf8aGJHq8oPs/ftDU945MwmX/Zv858b1sYk
-        aqa12oNB4JwSS3FGoqEWc1FxIgCCKYwRDwMAAA==
-X-CMS-MailID: 20201016075705epcas1p153f32bba72725478ab1f2715f0b5ac84
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20201002060539epcas1p4efa16130724ad15a3f105f62dd78d018
-References: <CGME20201002060539epcas1p4efa16130724ad15a3f105f62dd78d018@epcas1p4.samsung.com>
-        <20201002060528.27519-1-kohada.t2@gmail.com>
+X-Received: by 2002:a6b:651a:: with SMTP id z26mr1572620iob.186.1602835943793;
+ Fri, 16 Oct 2020 01:12:23 -0700 (PDT)
+Date:   Fri, 16 Oct 2020 01:12:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000010295205b1c553d5@google.com>
+Subject: WARNING: suspicious RCU usage in io_init_identity
+From:   syzbot <syzbot+4596e1fcf98efa7d1745@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> *inode)  static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
->  		unsigned int *clu, int create)
->  {
-> -	int ret, modified = false;
-> +	int ret;
->  	unsigned int last_clu;
->  	struct exfat_chain new_clu;
->  	struct super_block *sb = inode->i_sb;
-> @@ -184,6 +185,11 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
->  			return -EIO;
->  		}
-> 
-> +		exfat_warn(sb, "alloc[%lu]@map: %lld (%d - %08x)",
-> +			   inode->i_ino, i_size_read(inode),
-> +			   (clu_offset << sbi->sect_per_clus_bits) * 512,
-> +			   last_clu);
-Is this leftover print from debugging?
+Hello,
 
+syzbot found the following issue on:
+
+HEAD commit:    b2926c10 Add linux-next specific files for 20201016
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12fc877f900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6160209582f55fb1
+dashboard link: https://syzkaller.appspot.com/bug?extid=4596e1fcf98efa7d1745
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4596e1fcf98efa7d1745@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+5.9.0-next-20201016-syzkaller #0 Not tainted
+-----------------------------
+include/linux/cgroup.h:494 suspicious rcu_dereference_check() usage!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+no locks held by syz-executor.0/8301.
+
+stack backtrace:
+CPU: 0 PID: 8301 Comm: syz-executor.0 Not tainted 5.9.0-next-20201016-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fb lib/dump_stack.c:118
+ task_css include/linux/cgroup.h:494 [inline]
+ blkcg_css include/linux/blk-cgroup.h:224 [inline]
+ blkcg_css include/linux/blk-cgroup.h:217 [inline]
+ io_init_identity+0x3a9/0x450 fs/io_uring.c:1052
+ io_uring_alloc_task_context+0x176/0x250 fs/io_uring.c:7730
+ io_uring_add_task_file+0x10d/0x180 fs/io_uring.c:8653
+ io_uring_get_fd fs/io_uring.c:9144 [inline]
+ io_uring_create fs/io_uring.c:9308 [inline]
+ io_uring_setup+0x2727/0x3660 fs/io_uring.c:9342
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45de59
+Code: 0d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7e11fe1bf8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000020000080 RCX: 000000000045de59
+RDX: 00000000206d4000 RSI: 0000000020000080 RDI: 0000000000000087
+RBP: 000000000118c020 R08: 0000000020000040 R09: 0000000020000040
+R10: 0000000020000000 R11: 0000000000000206 R12: 00000000206d4000
+R13: 0000000020ee7000 R14: 0000000020000040 R15: 0000000020000000
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
