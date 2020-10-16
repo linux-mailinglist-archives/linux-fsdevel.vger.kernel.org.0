@@ -2,143 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 761322908A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 17:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1263290948
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 18:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408563AbgJPPik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 11:38:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34748 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408427AbgJPPib (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 11:38:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 26A7DADAB;
-        Fri, 16 Oct 2020 15:38:29 +0000 (UTC)
-To:     Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <songmuchun@bytedance.com>
-Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Shakeel Butt <shakeelb@google.com>,
-        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
-        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-References: <20201010103854.66746-1-songmuchun@bytedance.com>
- <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
- <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
- <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
- <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
- <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com>
- <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
- <20201013080906.GD4251@kernel.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-Message-ID: <8d1558e7-cd09-1f9e-edab-5f22c5bfc342@suse.cz>
-Date:   Fri, 16 Oct 2020 17:38:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.2
+        id S2410564AbgJPQFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 12:05:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410556AbgJPQEs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Oct 2020 12:04:48 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F17C0613D3;
+        Fri, 16 Oct 2020 09:04:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=1gAdnouxzpGmlXDQWytpWvnXaVVvGdMiUWIOHN43YgI=; b=PHsOXRefPXYbuJLyhWUENQjtiv
+        PvaSV2vCC8WINCdV5AEp+CWhJHRK1p+aNonulN42m466RQIlXw3IHvb/RmNXaOhRzldy1UxbTuDqY
+        NcaDewCnsmzuXcHVpziXWnYI9ue3WklexPhlQxnJI0qP9K+wrBh2T/E3jt7iyKhERHWrykln9HYHU
+        AcuhU7UL2O5ncbuQK7iGexv0LcVyc1NEntKTSG4YYsK1VFL9hLXL98h0ZxzQvFe/4kZJfHEsSaX7C
+        dIWtul+Pv9CexE12o1k6i9W7t8kyhYtguoGau7Kf/zgMdTW5lDReKoy2VvafZqPjD58NOmUCeSSsV
+        Ecb8d3sw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kTSDk-0004s5-Ui; Fri, 16 Oct 2020 16:04:44 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-mm@kvack.org, David Howells <dhowells@redhat.com>,
+        Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v3 00/18] Allow readpage to return a locked page
+Date:   Fri, 16 Oct 2020 17:04:25 +0100
+Message-Id: <20201016160443.18685-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-In-Reply-To: <20201013080906.GD4251@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/13/20 10:09 AM, Mike Rapoport wrote:
->> We are not complaining about TCP using too much memory, but how do
->> we know that TCP uses a lot of memory. When I firstly face this problem,
->> I do not know who uses the 25GB memory and it is not shown in the /proc/meminfo.
->> If we can know the amount memory of the socket buffer via /proc/meminfo, we
->> may not need to spend a lot of time troubleshooting this problem. Not everyone
->> knows that a lot of memory may be used here. But I believe many people
->> should know /proc/meminfo to confirm memory users.
-> If I undestand correctly, the problem you are trying to solve is to
-> simplify troubleshooting of memory usage for people who may not be aware
-> that networking stack can be a large memory consumer.
-> 
-> For that a paragraph in 'man 5 proc' maybe a good start:
+I've dropped the conversion of readpage implementations to synchronous
+from this patchset.  I realised I'd neglected the requirement for making
+the sleep killable, and that turns out to be more convoluted to fix.
 
-Yeah. Another major consumer that I've seen at some point was xfs buffers. And 
-there might be others, and adding everything to /proc/meminfo is not feasible. I 
-have once proposed adding a counter called "Unaccounted:" which would at least 
-tell the user easily if a significant portion is occupied by memory not 
-explained by the other meminfo counters, and look for trends (increase = 
-potential memory leak?). For specific prominent consumers not covered by meminfo 
-but that have some kind of internal counters, we could document where to look, 
-such as /proc/net/sockstat or maybe create some /proc/ or /sys directory with 
-file per consumer so that it's still easy to check, but without the overhead of 
-global counters and bloated /proc/meminfo?
+So these patches add:
+ - An error-path bugfix for cachefiles.
+ - The ability for the filesystem to tell the caller of ->readpage
+   that the read was successful and the page was not unlocked.  This is
+   a performance improvement for some scenarios that I think are rare.
+ - Mildly improved error handling for ext4.
 
->  From ddbcf38576d1a2b0e36fe25a27350d566759b664 Mon Sep 17 00:00:00 2001
-> From: Mike Rapoport<rppt@linux.ibm.com>
-> Date: Tue, 13 Oct 2020 11:07:35 +0300
-> Subject: [PATCH] proc.5: meminfo: add not anout network stack memory
->   consumption
-> 
-> Signed-off-by: Mike Rapoport<rppt@linux.ibm.com>
-> ---
->   man5/proc.5 | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/man5/proc.5 b/man5/proc.5
-> index ed309380b..8414676f1 100644
-> --- a/man5/proc.5
-> +++ b/man5/proc.5
-> @@ -3478,6 +3478,14 @@ Except as noted below,
->   all of the fields have been present since at least Linux 2.6.0.
->   Some fields are displayed only if the kernel was configured
->   with various options; those dependencies are noted in the list.
-> +.IP
-> +Note that significant part of memory allocated by the network stack
-> +is not accounted in the file.
-> +The memory consumption of the network stack can be queried
-> +using
-> +.IR /proc/net/sockstat
-> +or
-> +.BR ss (8)
->   .RS
->   .TP
->   .IR MemTotal " %lu"
-> -- 2.25.4
+v2: https://lore.kernel.org/linux-fsdevel/20201009143104.22673-1-willy@infradead.org/
+v1: https://lore.kernel.org/linux-fsdevel/20200917151050.5363-1-willy@infradead.org/
+Matthew Wilcox (Oracle) (18):
+  cachefiles: Handle readpage error correctly
+  swap: Call aops->readahead if appropriate
+  fs: Add AOP_UPDATED_PAGE return value
+  mm/filemap: Inline wait_on_page_read into its one caller
+  9p: Tell the VFS that readpage was synchronous
+  afs: Tell the VFS that readpage was synchronous
+  ceph: Tell the VFS that readpage was synchronous
+  cifs: Tell the VFS that readpage was synchronous
+  cramfs: Tell the VFS that readpage was synchronous
+  ecryptfs: Tell the VFS that readpage was synchronous
+  ext4: Tell the VFS that readpage was synchronous
+  ext4: Return error from ext4_readpage
+  fuse: Tell the VFS that readpage was synchronous
+  hostfs: Tell the VFS that readpage was synchronous
+  jffs2: Tell the VFS that readpage was synchronous
+  ubifs: Tell the VFS that readpage was synchronous
+  udf: Tell the VFS that readpage was synchronous
+  vboxsf: Tell the VFS that readpage was synchronous
+
+ Documentation/filesystems/locking.rst |  7 +++---
+ Documentation/filesystems/vfs.rst     | 21 +++++++++++------
+ fs/9p/vfs_addr.c                      |  6 ++++-
+ fs/afs/file.c                         |  3 ++-
+ fs/buffer.c                           | 15 +++++++-----
+ fs/cachefiles/rdwr.c                  |  9 ++++++++
+ fs/ceph/addr.c                        |  9 ++++----
+ fs/cifs/file.c                        |  8 +++++--
+ fs/cramfs/inode.c                     |  5 ++--
+ fs/ecryptfs/mmap.c                    | 11 +++++----
+ fs/ext4/inline.c                      |  9 +++++---
+ fs/ext4/readpage.c                    | 24 +++++++++++--------
+ fs/fuse/file.c                        |  2 ++
+ fs/hostfs/hostfs_kern.c               |  2 ++
+ fs/jffs2/file.c                       |  6 +++--
+ fs/ubifs/file.c                       | 16 ++++++++-----
+ fs/udf/file.c                         |  3 +--
+ fs/vboxsf/file.c                      |  2 ++
+ include/linux/fs.h                    |  5 ++++
+ mm/filemap.c                          | 33 +++++++++++++--------------
+ mm/page_io.c                          | 27 ++++++++++++++++++++--
+ mm/readahead.c                        |  3 ++-
+ 22 files changed, 151 insertions(+), 75 deletions(-)
+
+-- 
+2.28.0
 
