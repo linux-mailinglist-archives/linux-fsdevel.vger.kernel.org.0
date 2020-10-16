@@ -2,79 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B07629086D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 17:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 761322908A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 17:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410193AbgJPPbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 11:31:50 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:45105 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2410185AbgJPPbs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 11:31:48 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 4B798822E2;
-        Fri, 16 Oct 2020 18:31:46 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1602862306;
-        bh=WLeg7ys/KIsVt7u+TjM0PAK6kpSAzKg0Jy5Nt2l7ObA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=dufhSUvd6i3mdP+wGZZwUlL9QpXcJGeZpUrdQDGTmreATSBnPU9nq4BJh4HiKv1me
-         L5kKbZc/94YO1nJ+1MlwzbBNIDo6M5+nazm0V+vIFQj4FgC4L1WZq+0UtriJl3A3YV
-         WbXNNM4z7T2sXGFsH31n/rI/n0VB8ls/xEJJhAYg=
-Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 16 Oct 2020 18:31:45 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     <linux-fsdevel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
-        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
-        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
-        <mark@harmstone.com>, <nborisov@suse.com>,
-        <linux-ntfs-dev@lists.sourceforge.net>, <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v9 10/10] fs/ntfs3: Add MAINTAINERS
-Date:   Fri, 16 Oct 2020 18:29:37 +0300
-Message-ID: <20201016152937.4030001-11-almaz.alexandrovich@paragon-software.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20201016152937.4030001-1-almaz.alexandrovich@paragon-software.com>
-References: <20201016152937.4030001-1-almaz.alexandrovich@paragon-software.com>
+        id S2408563AbgJPPik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 11:38:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34748 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2408427AbgJPPib (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Oct 2020 11:38:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 26A7DADAB;
+        Fri, 16 Oct 2020 15:38:29 +0000 (UTC)
+To:     Mike Rapoport <rppt@kernel.org>,
+        Muchun Song <songmuchun@bytedance.com>
+Cc:     Eric Dumazet <eric.dumazet@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Shakeel Butt <shakeelb@google.com>,
+        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
+        christophe.leroy@c-s.fr, Minchan Kim <minchan@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+References: <20201010103854.66746-1-songmuchun@bytedance.com>
+ <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
+ <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
+ <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
+ <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
+ <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com>
+ <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
+ <20201013080906.GD4251@kernel.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
+Message-ID: <8d1558e7-cd09-1f9e-edab-5f22c5bfc342@suse.cz>
+Date:   Fri, 16 Oct 2020 17:38:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.2
 MIME-Version: 1.0
+In-Reply-To: <20201013080906.GD4251@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.30.114.105]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds MAINTAINERS
+On 10/13/20 10:09 AM, Mike Rapoport wrote:
+>> We are not complaining about TCP using too much memory, but how do
+>> we know that TCP uses a lot of memory. When I firstly face this problem,
+>> I do not know who uses the 25GB memory and it is not shown in the /proc/meminfo.
+>> If we can know the amount memory of the socket buffer via /proc/meminfo, we
+>> may not need to spend a lot of time troubleshooting this problem. Not everyone
+>> knows that a lot of memory may be used here. But I believe many people
+>> should know /proc/meminfo to confirm memory users.
+> If I undestand correctly, the problem you are trying to solve is to
+> simplify troubleshooting of memory usage for people who may not be aware
+> that networking stack can be a large memory consumer.
+> 
+> For that a paragraph in 'man 5 proc' maybe a good start:
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Yeah. Another major consumer that I've seen at some point was xfs buffers. And 
+there might be others, and adding everything to /proc/meminfo is not feasible. I 
+have once proposed adding a counter called "Unaccounted:" which would at least 
+tell the user easily if a significant portion is occupied by memory not 
+explained by the other meminfo counters, and look for trends (increase = 
+potential memory leak?). For specific prominent consumers not covered by meminfo 
+but that have some kind of internal counters, we could document where to look, 
+such as /proc/net/sockstat or maybe create some /proc/ or /sys directory with 
+file per consumer so that it's still easy to check, but without the overhead of 
+global counters and bloated /proc/meminfo?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0f59b0412953..3020b6dcaadb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12471,6 +12471,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
- F:	Documentation/filesystems/ntfs.rst
- F:	fs/ntfs/
- 
-+NTFS3 FILESYSTEM
-+M:	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-+S:	Supported
-+W:	http://www.paragon-software.com/
-+F:	Documentation/filesystems/ntfs3.rst
-+F:	fs/ntfs3/
-+
- NUBUS SUBSYSTEM
- M:	Finn Thain <fthain@telegraphics.com.au>
- L:	linux-m68k@lists.linux-m68k.org
--- 
-2.25.4
+>  From ddbcf38576d1a2b0e36fe25a27350d566759b664 Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport<rppt@linux.ibm.com>
+> Date: Tue, 13 Oct 2020 11:07:35 +0300
+> Subject: [PATCH] proc.5: meminfo: add not anout network stack memory
+>   consumption
+> 
+> Signed-off-by: Mike Rapoport<rppt@linux.ibm.com>
+> ---
+>   man5/proc.5 | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/man5/proc.5 b/man5/proc.5
+> index ed309380b..8414676f1 100644
+> --- a/man5/proc.5
+> +++ b/man5/proc.5
+> @@ -3478,6 +3478,14 @@ Except as noted below,
+>   all of the fields have been present since at least Linux 2.6.0.
+>   Some fields are displayed only if the kernel was configured
+>   with various options; those dependencies are noted in the list.
+> +.IP
+> +Note that significant part of memory allocated by the network stack
+> +is not accounted in the file.
+> +The memory consumption of the network stack can be queried
+> +using
+> +.IR /proc/net/sockstat
+> +or
+> +.BR ss (8)
+>   .RS
+>   .TP
+>   .IR MemTotal " %lu"
+> -- 2.25.4
 
