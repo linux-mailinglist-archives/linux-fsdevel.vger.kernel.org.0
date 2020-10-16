@@ -2,102 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C911F2901C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 11:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D9CE290269
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Oct 2020 12:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395234AbgJPJWv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Oct 2020 05:22:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47932 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395230AbgJPJWv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Oct 2020 05:22:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0F9E4AEA2;
-        Fri, 16 Oct 2020 09:22:49 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 71F2A1E133E; Fri, 16 Oct 2020 11:22:48 +0200 (CEST)
-Date:   Fri, 16 Oct 2020 11:22:48 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, amir73il <amir73il@gmail.com>,
-        jack <jack@suse.cz>, miklos <miklos@szeredi.hu>,
-        linux-unionfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/5] fs: introduce notifier list for vfs inode
-Message-ID: <20201016092248.GK7037@quack2.suse.cz>
-References: <20201010142355.741645-1-cgxu519@mykernel.net>
- <20201010142355.741645-2-cgxu519@mykernel.net>
- <20201015032501.GO3576660@ZenIV.linux.org.uk>
- <1752a5a7164.e9a05b8943438.8099134270028614634@mykernel.net>
- <20201015045741.GP3576660@ZenIV.linux.org.uk>
- <175303e1d27.105ba43f146287.2025735092350714226@mykernel.net>
+        id S2406500AbgJPKCf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Oct 2020 06:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41086 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406498AbgJPKCe (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 16 Oct 2020 06:02:34 -0400
+Received: from mail-vk1-xa43.google.com (mail-vk1-xa43.google.com [IPv6:2607:f8b0:4864:20::a43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA24C061755
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 03:02:33 -0700 (PDT)
+Received: by mail-vk1-xa43.google.com with SMTP id l23so499110vkm.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Oct 2020 03:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q2UAmLb0Qij04dFY8btDQwDS1sHsBxgRtlIjW8zX0hU=;
+        b=HxuXGdW5l4w+ihhtKYRt3hD/bRT+8E5pe3iSfQPyrw6D67FeV6PB/zpzWqDX1xfdd8
+         4K6TneSSeRdgIYXCWGY8595WYwWcd46mNtnaUcSiwffKjIyI3j13jgudt36kpzzwWlop
+         JG0WJgcGmXY6SXquDOu/toyDrsl3gtpsxJRu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q2UAmLb0Qij04dFY8btDQwDS1sHsBxgRtlIjW8zX0hU=;
+        b=O0qx+9FKSk1u/64XyFw08NGU67uRFb6k+AgEp8spcEXYsogItAHZ8mcPS5QQ1zw00m
+         gURAcIm28kQQSus9yBi4zvFhZcee+XoQZZxdbMFVroF0lugP9t800TFM6YllXEg4ltRe
+         3/V4fVMIU4fZ8QD92XmOEoOedLN1RaIx7Euz5HrunbvBsJsdnFyT/9Li5yDEp738ntNd
+         x+jhykExEMA67H7y6KNFj6/WIbdypIoCQvNn11XDE1cV6qaGO5qY9vzf1boa3nC8T5jE
+         ZpFVwF6hPObb3jVJXS9gl3JV/aCq1oJ0gRt7xQ7QNJA6UYOBpgiS9rtX0utZlYvM5CTp
+         UtCA==
+X-Gm-Message-State: AOAM5322WkNcnNlD5s4yMRXehgn9/xRdVG9fT4AWVRYGSu3RncD5E0q/
+        /sIKGm1CqM8WHpoHsbb8f8yfvibR0U/upAL4s5L7fw==
+X-Google-Smtp-Source: ABdhPJwi3kZwYWwdrcHl+IhxKB+EmYRh7nUgJOgGUsnavnybsSB+2XY2LVZ4yAEPcqe8eMB4+xdF+3zdjIQ6i1w+tBs=
+X-Received: by 2002:a1f:3144:: with SMTP id x65mr1594215vkx.3.1602842552307;
+ Fri, 16 Oct 2020 03:02:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175303e1d27.105ba43f146287.2025735092350714226@mykernel.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
+ <4794a3fa3742a5e84fb0f934944204b55730829b.camel@lca.pw> <CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com>
+ <20201015151606.GA226448@redhat.com> <20201015195526.GC226448@redhat.com> <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
+In-Reply-To: <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 16 Oct 2020 12:02:21 +0200
+Message-ID: <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
+Subject: Re: Possible deadlock in fuse write path (Was: Re: [PATCH 0/4] Some
+ more lock_page work..)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, Qian Cai <cai@lca.pw>,
+        Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 16-10-20 15:09:38, Chengguang Xu wrote:
->  ---- 在 星期四, 2020-10-15 12:57:41 Al Viro <viro@zeniv.linux.org.uk> 撰写 ----
->  > On Thu, Oct 15, 2020 at 11:42:51AM +0800, Chengguang Xu wrote:
->  > >  ---- 在 星期四, 2020-10-15 11:25:01 Al Viro <viro@zeniv.linux.org.uk> 撰写 ----
->  > >  > On Sat, Oct 10, 2020 at 10:23:51PM +0800, Chengguang Xu wrote:
->  > >  > > Currently there is no notification api for kernel about modification
->  > >  > > of vfs inode, in some use cases like overlayfs, this kind of notification
->  > >  > > will be very helpful to implement containerized syncfs functionality.
->  > >  > > As the first attempt, we introduce marking inode dirty notification so that
->  > >  > > overlay's inode could mark itself dirty as well and then only sync dirty
->  > >  > > overlay inode while syncfs.
->  > >  > 
->  > >  > Who's responsible for removing the crap from notifier chain?  And how does
->  > >  > that affect the lifetime of inode?
->  > >  
->  > > In this case, overlayfs unregisters call back from the notifier chain of upper inode
->  > > when evicting it's own  inode. It will not affect the lifetime of upper inode because
->  > > overlayfs inode holds a reference of upper inode that means upper inode will not be
->  > > evicted while overlayfs inode is still alive.
->  > 
->  > Let me see if I've got it right:
->  >     * your chain contains 1 (for upper inodes) or 0 (everything else, i.e. the
->  > vast majority of inodes) recepients
->  >     * recepient pins the inode for as long as the recepient exists
->  > 
->  > That looks like a massive overkill, especially since all you are propagating is
->  > dirtying the suckers.  All you really need is one bit in your inode + hash table
->  > indexed by the address of struct inode (well, middle bits thereof, as usual).
->  > With entries embedded into overlayfs-private part of overlayfs inode.  And callback
->  > to be called stored in that entry...
->  > 
-> 
-> Hi AI, Jack, Amir
-> 
-> Based on your feedback, I would to change the inode dirty notification
-> something like below, is it acceptable? 
-> 
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 1492271..48473d9 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -2249,6 +2249,14 @@ void __mark_inode_dirty(struct inode *inode, int flags)
->  
->         trace_writeback_mark_inode_dirty(inode, flags);
->  
-> +       if (inode->state & I_OVL_INUSE) {
-> +               struct inode *ovl_inode;
-> +
-> +               ovl_inode = ilookup5(NULL, (unsigned long)inode, ovl_inode_test, inode);
+On Thu, Oct 15, 2020 at 11:22 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, Oct 15, 2020 at 12:55 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > I am wondering how should I fix this issue. Is it enough that I drop
+> > the page lock (but keep the reference) inside the loop. And once copying
+> > from user space is done, acquire page locks for all pages (Attached
+> > a patch below).
+>
+> What is the page lock supposed to protect?
+>
+> Because whatever it protects, dropping the lock drops, and you'd need
+> to re-check whatever the page lock was there for.
+>
+> > Or dropping page lock means that there are no guarantees that this
+> > page did not get written back and removed from address space and
+> > a new page has been placed at same offset. Does that mean I should
+> > instead be looking up page cache again after copying from user
+> > space is done.
+>
+> I don't know why fuse does multiple pages to begin with. Why can't it
+> do whatever it does just one page at a time?
+>
+> But yes, you probably should look the page up again whenever you've
+> unlocked it, because it might have been truncated or whatever.
+>
+> Not that this is purely about unlocking the page, not about "after
+> copying from user space". The iov_iter_copy_from_user_atomic() part is
+> safe - if that takes a page fault, it will just do a partial copy, it
+> won't deadlock.
+>
+> So you can potentially do multiple pages, and keep them all locked,
+> but only as long as the copies are all done with that
+> "from_user_atomic()" case. Which normally works fine, since normal
+> users will write stuff that they just generated, so it will all be
+> there.
+>
+> It's only when that returns zero, and you do the fallback to pre-fault
+> in any data with iov_iter_fault_in_readable() that you need to unlock
+> _all_ pages (and once you do that, I don't see what possible advantage
+> the multi-page array can have).
+>
+> Of course, the way that code is written, it always does the
+> iov_iter_fault_in_readable() for each page - it's not written like
+> some kind of "special case fallback thing".
 
-I don't think this will work - superblock pointer is part of the hash value
-inode is hashed with so without proper sb pointer you won't find proper
-hash chain.
+This was added by commit ea9b9907b82a ("fuse: implement
+perform_write") in v2.6.26 and remains essentially unchanged, AFAICS.
+So this is an old bug indeed.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So what is the page lock protecting?   I think not truncation, because
+inode_lock should be sufficient protection.
+
+What it does after sending a synchronous WRITE and before unlocking
+the pages is set the PG_uptodate flag, but only if the complete page
+was really written, which is what the uptodate flag really says:  this
+page is in sync with the underlying fs.
+
+So I think the page lock here is trying to protect against concurrent
+reads/faults on not uptodate pages.  I.e. until the WRITE request
+completes it is unknown whether the page was really written or not, so
+any reads must block until this state becomes known.  This logic falls
+down on already cached pages, since they start out uptodate and the
+write does not clear this flag.
+
+So keeping the pages locked has dubious value: short writes don't seem
+to work correctly anyway.  Which means that we can probably just set
+the page uptodate right after filling it from the user buffer, and
+unlock the page immediately.
+
+Am I missing something?
+
+Thanks,
+Miklos
