@@ -2,40 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1514291654
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Oct 2020 09:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07AC62917DB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Oct 2020 16:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbgJRH2E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Oct 2020 03:28:04 -0400
-Received: from verein.lst.de ([213.95.11.211]:39370 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725275AbgJRH2E (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Oct 2020 03:28:04 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4CCAA68B05; Sun, 18 Oct 2020 09:28:01 +0200 (CEST)
-Date:   Sun, 18 Oct 2020 09:28:01 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        bugzilla-daemon@bugzilla.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, haxk612@gmail.com
-Subject: Re: [Bug 209719] New: NULL pointer dereference
-Message-ID: <20201018072801.GA15414@lst.de>
-References: <bug-209719-27@https.bugzilla.kernel.org/> <20201016133301.aaff2b261a0afe5e15a32138@linux-foundation.org>
+        id S1726628AbgJROZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Oct 2020 10:25:03 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:50507 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725776AbgJROZC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Oct 2020 10:25:02 -0400
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 09IEOlS0008165
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 18 Oct 2020 10:24:47 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id E880C420107; Sun, 18 Oct 2020 10:24:46 -0400 (EDT)
+Date:   Sun, 18 Oct 2020 10:24:46 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 11/18] ext4: Tell the VFS that readpage was synchronous
+Message-ID: <20201018142446.GG181507@mit.edu>
+References: <20201016160443.18685-1-willy@infradead.org>
+ <20201016160443.18685-12-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201016133301.aaff2b261a0afe5e15a32138@linux-foundation.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20201016160443.18685-12-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 01:33:01PM -0700, Andrew Morton wrote:
-> (switched to email.  Please respond via emailed reply-to-all, not via the
-> bugzilla web interface).
+On Fri, Oct 16, 2020 at 05:04:36PM +0100, Matthew Wilcox (Oracle) wrote:
+> The ext4 inline data readpage implementation was already synchronous,
+> so use AOP_UPDATED_PAGE to avoid cycling the page lock.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-This is already fixed in Al's for-next tree:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/commit/?h=for-next&id=4c207ef48269377236cd38979197c5e1631c8c16
+Acked-by: Theodore Ts'o <tytso@mit.edu>
