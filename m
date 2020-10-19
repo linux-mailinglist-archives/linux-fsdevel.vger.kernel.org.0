@@ -2,224 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 758EF292DE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Oct 2020 20:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A738292E14
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Oct 2020 21:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbgJSS7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Oct 2020 14:59:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727681AbgJSS7V (ORCPT
+        id S1731228AbgJSTEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Oct 2020 15:04:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44332 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731220AbgJSTEk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Oct 2020 14:59:21 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09382C0613CE;
-        Mon, 19 Oct 2020 11:59:21 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id q9so971625iow.6;
-        Mon, 19 Oct 2020 11:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RQFUXiA3CVc168Ax+F3zE3K0hjfpsoCD8RSBN8GOM0Q=;
-        b=hQ6vOzRmW6IPAOwAcv/uAbA7blzdDR4KOZNDRoktVCexd0J63zWwEaduMgN0B+wxR8
-         YU02OJ8giVloxMK89QZQH0tXdzng9JQnozRuq107BW2boWX3eQ0IbDV/pvlnwNkdtnSF
-         /j+bIyfT/OntmfdxODSWJzngUdwl0A1zgTd4J9w4HrRCQTDk5f69u7TtJrpRL7p2xRMB
-         UG9vU3FOnKwDyus+0EBtrhAOEWVQPPv8CUlefJ8t8afjiCSqDNaJjZbj95ZW3U/NDuAO
-         a/DuIlCJ+CRpGKzYnzbsgQymzm2gh56sZJv2TjKhgxrycdJjkLiGuI9bPvhZoqbELinT
-         AqaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RQFUXiA3CVc168Ax+F3zE3K0hjfpsoCD8RSBN8GOM0Q=;
-        b=bveqkjdOTklhIH9zMVlO7Z949+a0YrvXTgc5P8uQu6XTrUW3tspqZclON1F5RQEdY+
-         9DW21VLkCc1mthSw3owLtulq5x6s4ORCkmJ9T175wgC6Y0oggC+2Pt9FQdDchYk2H0ZJ
-         1nZaj6KYohWpCKNUPRNBiNReQ06jjlCo2TLeOyumwb/dKLIvxUthz6RqFPLwKnEbdlOf
-         mfXlV10kxWKBBSBjDkT5Mn0FY+fYg34jzqLtFbUxAztazkfz1ueG0/hP/PX9CAmXP58n
-         4tBjWlN/DRETxw1FIkTxKvidVBL40flaHh4z+QAbWeEdrCfjwxKiP5L//DL+VLEXEtYD
-         +PxQ==
-X-Gm-Message-State: AOAM532DdlpL9krxnO0bnxRBJNj5JsPOoFLX9K7DZC9h4N8cGAiHu8Kp
-        LAKl6YSfYjz37nkCmxyAhz+Rg9x4BQ==
-X-Google-Smtp-Source: ABdhPJy0CNgeIv1MTTtEls/84tAIiZtbJw+IzM6wUa+0oOtaiWVNqFXN3JKed0L00xvWJnKUl9eWyQ==
-X-Received: by 2002:a05:6602:2dce:: with SMTP id l14mr732539iow.198.1603133960261;
-        Mon, 19 Oct 2020 11:59:20 -0700 (PDT)
-Received: from moria.home.lan ([2601:19b:c500:a1:7285:c2ff:fed5:c918])
-        by smtp.gmail.com with ESMTPSA id t12sm538770ilh.18.2020.10.19.11.59.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2020 11:59:19 -0700 (PDT)
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        akpm@linux-foundation.org, sfrench@samba.org,
-        linux-cifs@vger.kernel.org
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 2/2] fs: kill add_to_page_cache_locked()
-Date:   Mon, 19 Oct 2020 14:59:11 -0400
-Message-Id: <20201019185911.2909471-2-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201019185911.2909471-1-kent.overstreet@gmail.com>
-References: <20201019185911.2909471-1-kent.overstreet@gmail.com>
+        Mon, 19 Oct 2020 15:04:40 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09JIsEfY062482;
+        Mon, 19 Oct 2020 19:03:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=EC+J7ah2W71offlqrVjvLudJMGpmFKGp6UHyonnt/xo=;
+ b=dPwLybw8G2mpMYUEMx9H5KSnnBXhbvSNMSLKO8gtkeCBHcBvQAbaqCLuK/Ot7g35l9EM
+ XQsRp3tECIUEz44RNP7TS7WGWgdCsuL7fc6leHt6k1yRAownFljnyefOYsYxGel5EFCj
+ jPk7/rD3YNyqsf7NlUWAYyhB81IZaRjcpunc9ALg47DEBCn61eQw/iGeuDCte4jrRjZT
+ I9JqF3aOsRSdQGHcgFGfvuaQdRRmcpQVxyWS2CYNvzwJ2gjpnXSYrePy9LOxdmXNvAJ4
+ oihLf3PRAQIfeN+56sRYfEXB59c3QOqiePBn2VJ+lWhXkbA2R+mcSV9nYqrONzHXVWkp DA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 347s8mq69x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Oct 2020 19:03:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09JItYev165922;
+        Mon, 19 Oct 2020 19:03:20 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 348agwg5n4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Oct 2020 19:03:20 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09JJ3G6d032708;
+        Mon, 19 Oct 2020 19:03:17 GMT
+Received: from [10.175.162.151] (/10.175.162.151)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 19 Oct 2020 12:03:16 -0700
+Subject: Re: [PATCH 00/35] Enhance memory utilization with DMEMFS
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     yulei zhang <yulei.kernel@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        Haiwei Li <lihaiwei.kernel@gmail.com>,
+        Yulei Zhang <yuleixzhang@tencent.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Jane Y Chu <jane.chu@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <cover.1602093760.git.yuleixzhang@tencent.com>
+ <bdd0250e-4e14-f407-a584-f39af12c4e09@oracle.com>
+ <CACZOiM2qKhogXQ_DXzWjGM5UCeCuEqT6wnR=f2Wi_T45_uoYHQ@mail.gmail.com>
+ <b963565b-61d8-89d3-1abd-50cd8c8daad5@oracle.com>
+ <CACZOiM26GPtqkGyecG=NGuB3etipV5-KgN+s19_U1WJrFxtYPQ@mail.gmail.com>
+ <98be093d-c869-941a-6dd9-fb16356f763b@oracle.com>
+ <CAPcyv4jZ7XTnYd7vLQ18xij7d+80jU0zLs+ykS2frY-LMPS=Nw@mail.gmail.com>
+ <3626f5ff-b6a0-0811-5899-703a0714897d@redhat.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <0c8fd8ab-c0d4-003a-6943-1ec732c96e1c@oracle.com>
+Date:   Mon, 19 Oct 2020 20:03:09 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3626f5ff-b6a0-0811-5899-703a0714897d@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9779 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010190126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9779 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 suspectscore=0
+ lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ phishscore=0 clxscore=1015 bulkscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010190126
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No longer has any users, so remove it.
+On 10/19/20 2:37 PM, Paolo Bonzini wrote:
+> On 15/10/20 00:25, Dan Williams wrote:
+>> Now, with recent device-dax extensions, it
+>> also has a coarse grained memory management system for  physical
+>> address-space partitioning and a path for struct-page-less backing for
+>> VMs. What feature gaps remain vs dmemfs, and can those gaps be closed
+>> with incremental improvements to the 2 existing memory-management
+>> systems?
+> 
+> If I understand correctly, devm_memremap_pages() on ZONE_DEVICE memory
+> would still create the "struct page" albeit lazily?  KVM then would use
+> the usual get_user_pages() path.
+> 
+Correct.
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- include/linux/pagemap.h | 20 ++-----------
- mm/filemap.c            | 62 ++++++++++++++++++++---------------------
- 2 files changed, 32 insertions(+), 50 deletions(-)
+The removal of struct page would be one of the added incremental improvements, like a
+'map' with 'raw' sysfs attribute for dynamic dax regions that wouldn't online/create the
+struct pages. The remaining plumbing (...)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 434c9c34ae..aceaebfaab 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -689,8 +689,8 @@ static inline int fault_in_pages_readable(const char __user *uaddr, int size)
- 	return 0;
- }
- 
--int add_to_page_cache_locked(struct page *page, struct address_space *mapping,
--				pgoff_t index, gfp_t gfp_mask);
-+int add_to_page_cache(struct page *page, struct address_space *mapping,
-+		      pgoff_t index, gfp_t gfp_mask);
- int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 				pgoff_t index, gfp_t gfp_mask);
- extern void delete_from_page_cache(struct page *page);
-@@ -710,22 +710,6 @@ void page_cache_readahead_unbounded(struct address_space *, struct file *,
- 		pgoff_t index, unsigned long nr_to_read,
- 		unsigned long lookahead_count);
- 
--/*
-- * Like add_to_page_cache_locked, but used to add newly allocated pages:
-- * the page is new, so we can just run __SetPageLocked() against it.
-- */
--static inline int add_to_page_cache(struct page *page,
--		struct address_space *mapping, pgoff_t offset, gfp_t gfp_mask)
--{
--	int error;
--
--	__SetPageLocked(page);
--	error = add_to_page_cache_locked(page, mapping, offset, gfp_mask);
--	if (unlikely(error))
--		__ClearPageLocked(page);
--	return error;
--}
--
- /**
-  * struct readahead_control - Describes a readahead request.
-  *
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 82e5e0ba24..c562ad7e05 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -827,10 +827,10 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
- }
- EXPORT_SYMBOL_GPL(replace_page_cache_page);
- 
--static int __add_to_page_cache_locked(struct page *page,
--				      struct address_space *mapping,
--				      pgoff_t offset, gfp_t gfp_mask,
--				      void **shadowp)
-+static int __add_to_page_cache(struct page *page,
-+			       struct address_space *mapping,
-+			       pgoff_t offset, gfp_t gfp_mask,
-+			       void **shadowp)
- {
- 	XA_STATE(xas, &mapping->i_pages, offset);
- 	int huge = PageHuge(page);
-@@ -841,6 +841,7 @@ static int __add_to_page_cache_locked(struct page *page,
- 	VM_BUG_ON_PAGE(PageSwapBacked(page), page);
- 	mapping_set_update(&xas, mapping);
- 
-+	__SetPageLocked(page);
- 	get_page(page);
- 	page->mapping = mapping;
- 	page->index = offset;
-@@ -885,29 +886,30 @@ static int __add_to_page_cache_locked(struct page *page,
- 	page->mapping = NULL;
- 	/* Leave page->index set: truncation relies upon it */
- 	put_page(page);
-+	__ClearPageLocked(page);
- 	return error;
- }
--ALLOW_ERROR_INJECTION(__add_to_page_cache_locked, ERRNO);
- 
- /**
-- * add_to_page_cache_locked - add a locked page to the pagecache
-+ * add_to_page_cache - add a newly allocated page to the pagecache
-  * @page:	page to add
-  * @mapping:	the page's address_space
-  * @offset:	page index
-  * @gfp_mask:	page allocation mode
-  *
-- * This function is used to add a page to the pagecache. It must be locked.
-- * This function does not add the page to the LRU.  The caller must do that.
-+ * This function is used to add a page to the pagecache. It must be newly
-+ * allocated.  This function does not add the page to the LRU.  The caller must
-+ * do that.
-  *
-  * Return: %0 on success, negative error code otherwise.
-  */
--int add_to_page_cache_locked(struct page *page, struct address_space *mapping,
--		pgoff_t offset, gfp_t gfp_mask)
-+int add_to_page_cache(struct page *page, struct address_space *mapping,
-+		      pgoff_t offset, gfp_t gfp_mask)
- {
--	return __add_to_page_cache_locked(page, mapping, offset,
--					  gfp_mask, NULL);
-+	return __add_to_page_cache(page, mapping, offset, gfp_mask, NULL);
- }
--EXPORT_SYMBOL(add_to_page_cache_locked);
-+EXPORT_SYMBOL(add_to_page_cache);
-+ALLOW_ERROR_INJECTION(add_to_page_cache, ERRNO);
- 
- int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 				pgoff_t offset, gfp_t gfp_mask)
-@@ -915,26 +917,22 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 	void *shadow = NULL;
- 	int ret;
- 
--	__SetPageLocked(page);
--	ret = __add_to_page_cache_locked(page, mapping, offset,
--					 gfp_mask, &shadow);
-+	ret = __add_to_page_cache(page, mapping, offset, gfp_mask, &shadow);
- 	if (unlikely(ret))
--		__ClearPageLocked(page);
--	else {
--		/*
--		 * The page might have been evicted from cache only
--		 * recently, in which case it should be activated like
--		 * any other repeatedly accessed page.
--		 * The exception is pages getting rewritten; evicting other
--		 * data from the working set, only to cache data that will
--		 * get overwritten with something else, is a waste of memory.
--		 */
--		WARN_ON_ONCE(PageActive(page));
--		if (!(gfp_mask & __GFP_WRITE) && shadow)
--			workingset_refault(page, shadow);
--		lru_cache_add(page);
--	}
--	return ret;
-+		return ret;
-+
-+	/*
-+	 * The page might have been evicted from cache only recently, in which
-+	 * case it should be activated like any other repeatedly accessed page.
-+	 * The exception is pages getting rewritten; evicting other data from
-+	 * the working set, only to cache data that will get overwritten with
-+	 * something else, is a waste of memory.
-+	 */
-+	WARN_ON_ONCE(PageActive(page));
-+	if (!(gfp_mask & __GFP_WRITE) && shadow)
-+		workingset_refault(page, shadow);
-+	lru_cache_add(page);
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
- 
--- 
-2.28.0
+> Looking more closely at the implementation of dmemfs, I don't understand
+> is why dmemfs needs VM_DMEM etc. and cannot provide access to mmap-ed
+> memory using remap_pfn_range and VM_PFNMAP, just like /dev/mem.  If it
+> did that KVM would get physical addresses using fixup_user_fault and
+> never need pfn_to_page() or get_user_pages().  I'm not saying that would
+> instantly be an approval, but it would make remove a lot of hooks.
+> 
 
+(...) is similar to what you describe above. Albeit there's probably no need to do a
+remap_pfn_range at mmap(), as DAX supplies a fault/huge_fault. Also, using that means it's
+limited to a single contiguous PFN chunk.
+
+KVM has the bits to make it work without struct pages, I don't think there's a need for
+new pg/pfn_t/VM_* bits (aside from relying on {PFN,PAGE}_SPECIAL) as mentioned at the
+start of the thread. I'm storing my wip here:
+
+	https://github.com/jpemartins/linux pageless-dax
+
+Which is based on the first series that had been submitted earlier this year:
+
+	https://lore.kernel.org/kvm/20200110190313.17144-1-joao.m.martins@oracle.com/
+
+  Joao
