@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 057FD2925C2
+	by mail.lfdr.de (Postfix) with ESMTP id E04182925C4
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Oct 2020 12:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbgJSK1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Oct 2020 06:27:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30223 "EHLO
+        id S1726931AbgJSK1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Oct 2020 06:27:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50775 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726890AbgJSK1Q (ORCPT
+        by vger.kernel.org with ESMTP id S1726882AbgJSK1R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Oct 2020 06:27:16 -0400
+        Mon, 19 Oct 2020 06:27:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
         s=mimecast20190719; t=1603103235;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WBzpiSVOvbHp+nYghgN2sMC6AfToSVt2rCZNa5vt8wY=;
-        b=WD8Iz/hah9U4uKAPiZOpn6f3IWpla7JgrUrZfUuS4/UEo7fVJkCQSwOwB5Dq9NoKV0RBFH
-        2em/OBZ3LOGBLukMWX+qjWJJl9BwIVL7xCDRo0MG7OH+TwiTyynVM1zGVvx7R7KQsNxvyE
-        bfy+VVGpJxsNF3A5MZNrRCbAIWKRutI=
+        bh=F+KU3D6CZGkwaGqgOEZ5SUeu//6q1wj8wVndMUn0nkY=;
+        b=fMYNV1S2E+UWJTdIlaVYnOpbL6ievqPx7kukFeG2nnWxn02ADcdG6gSMAG5mfRzkMrkpU8
+        hrSLzs/UWuopvvk1N+ZSTJ+Jz+X8XQO5R5987Q87hHgAa2qK190Ph2Yeurh1NXfN2+iYdb
+        CPziL6IsWIlCJn38H4SazNqA9HwhOhg=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-OAOQZn7hOpiSDwqxQJp9PA-1; Mon, 19 Oct 2020 06:27:11 -0400
-X-MC-Unique: OAOQZn7hOpiSDwqxQJp9PA-1
+ us-mta-89-_VUznokVMPeyyxFPWoKEuw-1; Mon, 19 Oct 2020 06:27:13 -0400
+X-MC-Unique: _VUznokVMPeyyxFPWoKEuw-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 74326425D5;
-        Mon, 19 Oct 2020 10:27:09 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5A90F10066FB;
+        Mon, 19 Oct 2020 10:27:11 +0000 (UTC)
 Received: from lithium.redhat.com (ovpn-115-42.ams2.redhat.com [10.36.115.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B31A950B44;
-        Mon, 19 Oct 2020 10:27:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B0EEC50B44;
+        Mon, 19 Oct 2020 10:27:09 +0000 (UTC)
 From:   Giuseppe Scrivano <gscrivan@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux@rasmusvillemoes.dk, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, christian.brauner@ubuntu.com,
         containers@lists.linux-foundation.org
-Subject: [PATCH v2 1/2] fs, close_range: add flag CLOSE_RANGE_CLOEXEC
-Date:   Mon, 19 Oct 2020 12:26:53 +0200
-Message-Id: <20201019102654.16642-2-gscrivan@redhat.com>
+Subject: [PATCH v2 2/2] selftests: add tests for CLOSE_RANGE_CLOEXEC
+Date:   Mon, 19 Oct 2020 12:26:54 +0200
+Message-Id: <20201019102654.16642-3-gscrivan@redhat.com>
 In-Reply-To: <20201019102654.16642-1-gscrivan@redhat.com>
 References: <20201019102654.16642-1-gscrivan@redhat.com>
 MIME-Version: 1.0
@@ -51,120 +51,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the flag CLOSE_RANGE_CLOEXEC is set, close_range doesn't
-immediately close the files but it sets the close-on-exec bit.
-
-It is useful for e.g. container runtimes that usually install a
-seccomp profile "as late as possible" before execv'ing the container
-process itself.  The container runtime could either do:
-  1                                  2
-- install_seccomp_profile();       - close_range(MIN_FD, MAX_INT, 0);
-- close_range(MIN_FD, MAX_INT, 0); - install_seccomp_profile();
-- execve(...);                     - execve(...);
-
-Both alternative have some disadvantages.
-
-In the first variant the seccomp_profile cannot block the close_range
-syscall, as well as opendir/read/close/... for the fallback on older
-kernels).
-In the second variant, close_range() can be used only on the fds
-that are not going to be needed by the runtime anymore, and it must be
-potentially called multiple times to account for the different ranges
-that must be closed.
-
-Using close_range(..., ..., CLOSE_RANGE_CLOEXEC) solves these issues.
-The runtime is able to use the open fds and the seccomp profile could
-block close_range() and the syscalls used for its fallback.
-
 Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
 ---
- fs/file.c                        | 44 ++++++++++++++++++++++++--------
- include/uapi/linux/close_range.h |  3 +++
- 2 files changed, 37 insertions(+), 10 deletions(-)
+ .../testing/selftests/core/close_range_test.c | 74 +++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-diff --git a/fs/file.c b/fs/file.c
-index 21c0893f2f1d..0295d4f7c5ef 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -672,6 +672,35 @@ int __close_fd(struct files_struct *files, unsigned fd)
- }
- EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
+index c99b98b0d461..c9db282158bb 100644
+--- a/tools/testing/selftests/core/close_range_test.c
++++ b/tools/testing/selftests/core/close_range_test.c
+@@ -11,6 +11,7 @@
+ #include <string.h>
+ #include <syscall.h>
+ #include <unistd.h>
++#include <sys/resource.h>
  
-+static inline void __range_cloexec(struct files_struct *cur_fds,
-+				   unsigned int fd, unsigned int max_fd)
+ #include "../kselftest_harness.h"
+ #include "../clone3/clone3_selftests.h"
+@@ -23,6 +24,10 @@
+ #define CLOSE_RANGE_UNSHARE	(1U << 1)
+ #endif
+ 
++#ifndef CLOSE_RANGE_CLOEXEC
++#define CLOSE_RANGE_CLOEXEC	(1U << 2)
++#endif
++
+ static inline int sys_close_range(unsigned int fd, unsigned int max_fd,
+ 				  unsigned int flags)
+ {
+@@ -224,4 +229,73 @@ TEST(close_range_unshare_capped)
+ 	EXPECT_EQ(0, WEXITSTATUS(status));
+ }
+ 
++TEST(close_range_cloexec)
 +{
-+	struct fdtable *fdt;
++	int i, ret;
++	int open_fds[101];
++	struct rlimit rlimit;
 +
-+        if (fd > max_fd)
-+		return;
++	for (i = 0; i < ARRAY_SIZE(open_fds); i++) {
++		int fd;
 +
-+	spin_lock(&cur_fds->file_lock);
-+	fdt = files_fdtable(cur_fds);
-+	bitmap_set(fdt->close_on_exec, fd, max_fd - fd + 1);
-+	spin_unlock(&cur_fds->file_lock);
-+}
++		fd = open("/dev/null", O_RDONLY);
++		ASSERT_GE(fd, 0) {
++			if (errno == ENOENT)
++				XFAIL(return, "Skipping test since /dev/null does not exist");
++		}
 +
-+static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
-+				 unsigned int max_fd)
-+{
-+	while (fd <= max_fd) {
-+		struct file *file;
++		open_fds[i] = fd;
++	}
 +
-+		file = pick_file(cur_fds, fd++);
-+		if (!file)
-+			continue;
++	ret = sys_close_range(1000, 1000, CLOSE_RANGE_CLOEXEC);
++	if (ret < 0) {
++		if (errno == ENOSYS)
++			XFAIL(return, "close_range() syscall not supported");
++		if (errno == EINVAL)
++			XFAIL(return, "close_range() doesn't support CLOSE_RANGE_CLOEXEC");
++	}
 +
-+		filp_close(file, cur_fds);
-+		cond_resched();
++	/* Ensure the FD_CLOEXEC bit is set also with a resource limit in place.  */
++	EXPECT_EQ(0, getrlimit(RLIMIT_NOFILE, &rlimit));
++	rlimit.rlim_cur = 25;
++	EXPECT_EQ(0, setrlimit(RLIMIT_NOFILE, &rlimit));
++
++	/* Set close-on-exec for two ranges: [0-50] and [75-100].  */
++	ret = sys_close_range(open_fds[0], open_fds[50], CLOSE_RANGE_CLOEXEC);
++	EXPECT_EQ(0, ret);
++	ret = sys_close_range(open_fds[75], open_fds[100], CLOSE_RANGE_CLOEXEC);
++	EXPECT_EQ(0, ret);
++
++	for (i = 0; i <= 50; i++) {
++		int flags = fcntl(open_fds[i], F_GETFD);
++
++		EXPECT_GT(flags, -1);
++		EXPECT_EQ(flags & FD_CLOEXEC, FD_CLOEXEC);
++	}
++
++	for (i = 51; i <= 74; i++) {
++		int flags = fcntl(open_fds[i], F_GETFD);
++
++		EXPECT_GT(flags, -1);
++		EXPECT_EQ(flags & FD_CLOEXEC, 0);
++	}
++
++	for (i = 75; i <= 100; i++) {
++		int flags = fcntl(open_fds[i], F_GETFD);
++
++		EXPECT_GT(flags, -1);
++		EXPECT_EQ(flags & FD_CLOEXEC, FD_CLOEXEC);
++	}
++
++	/* Test a common pattern.  */
++	ret = sys_close_range(3, UINT_MAX, CLOSE_RANGE_CLOEXEC);
++	for (i = 0; i <= 100; i++) {
++		int flags = fcntl(open_fds[i], F_GETFD);
++
++		EXPECT_GT(flags, -1);
++		EXPECT_EQ(flags & FD_CLOEXEC, FD_CLOEXEC);
 +	}
 +}
 +
- /**
-  * __close_range() - Close all file descriptors in a given range.
-  *
-@@ -687,7 +716,7 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- 	struct task_struct *me = current;
- 	struct files_struct *cur_fds = me->files, *fds = NULL;
- 
--	if (flags & ~CLOSE_RANGE_UNSHARE)
-+	if (flags & ~(CLOSE_RANGE_UNSHARE | CLOSE_RANGE_CLOEXEC))
- 		return -EINVAL;
- 
- 	if (fd > max_fd)
-@@ -725,16 +754,11 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
- 	}
- 
- 	max_fd = min(max_fd, cur_max);
--	while (fd <= max_fd) {
--		struct file *file;
- 
--		file = pick_file(cur_fds, fd++);
--		if (!file)
--			continue;
--
--		filp_close(file, cur_fds);
--		cond_resched();
--	}
-+	if (flags & CLOSE_RANGE_CLOEXEC)
-+		__range_cloexec(cur_fds, fd, max_fd);
-+	else
-+		__range_close(cur_fds, fd, max_fd);
- 
- 	if (fds) {
- 		/*
-diff --git a/include/uapi/linux/close_range.h b/include/uapi/linux/close_range.h
-index 6928a9fdee3c..2d804281554c 100644
---- a/include/uapi/linux/close_range.h
-+++ b/include/uapi/linux/close_range.h
-@@ -5,5 +5,8 @@
- /* Unshare the file descriptor table before closing file descriptors. */
- #define CLOSE_RANGE_UNSHARE	(1U << 1)
- 
-+/* Set the FD_CLOEXEC bit instead of closing the file descriptor. */
-+#define CLOSE_RANGE_CLOEXEC	(1U << 2)
 +
- #endif /* _UAPI_LINUX_CLOSE_RANGE_H */
- 
+ TEST_HARNESS_MAIN
 -- 
 2.26.2
 
