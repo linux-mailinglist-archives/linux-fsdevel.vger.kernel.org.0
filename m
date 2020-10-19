@@ -2,140 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E114292C96
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Oct 2020 19:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 103E2292D4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Oct 2020 20:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730773AbgJSRXk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Oct 2020 13:23:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730657AbgJSRXk (ORCPT
+        id S1730216AbgJSSB5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Oct 2020 14:01:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20325 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726005AbgJSSB4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Oct 2020 13:23:40 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C585FC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Oct 2020 10:23:39 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id v6so363799lfa.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Oct 2020 10:23:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iyXXWfOQa+1d+k4Kfi8s1b5PhoxBW70UL1MRANY5iTA=;
-        b=o9jkQBUpkBGEwOPcru1DIzTI4hADMkSZb2pfw2EQWRKUHSYKt6lOgBGbe0/PbjBsyj
-         gkCeKyOJfMcHu8JQBuIGXYq2bMyUO23p7qpUH07+K7VJuHC15dj9M6Jixv+0kGJ3I484
-         bibfM3wj1lSg02RVEGxrX4Vn06BnYQ9Fkpzq6GOiAp/P6ZC5OVnYSRqS0zxc14K0j6WJ
-         cCjXupRPGQ3TQDsCBLaS0PxaOBRob35h4AyY0tvNebkGYNGxcnr2o07kc5d9g5o6COFY
-         ILq2uDK4Y0klCUbaiEoIjmZxvz8kx/FNpsGUPC+D11xVFrfoxaJk055Yiql09wfYplO5
-         TC/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iyXXWfOQa+1d+k4Kfi8s1b5PhoxBW70UL1MRANY5iTA=;
-        b=GcHzYCwhphf6MTImSio+sOz3655TcwbJ2h/N2ebvy1CNN74oeMuJKuZTibrTx9M6fu
-         sPheqa6PgSCBS5N5uiyfzfe6IqM3vrax5ecnfAGS5JagAd48YcSySaH5Nt788VkqEqap
-         FAee8qjpXzkzMPB0FRCzFYjtZSUgpAM6ivcAs5G1aKfLRdX3PaxWGC3VY39wqo/onbno
-         lUE57GfuZ7qxOO29gU3/A9F4Voh6gHGrngrl2EK9+nmfeEtat2wWcy1m6MarOHhwnCTt
-         0cCHfE+xyMV+UF/n0rusWaTMyJEh6RSGuvegv08t56DLXsZVo6IkhJw7dxHMZGEMcZ7N
-         BIPw==
-X-Gm-Message-State: AOAM531XN3UAVxjKtgvd2JgCCWiy6114fRgwdbJBMO3O5nclHGdj6H0b
-        03zcc3Malp9NLQCnachS4rCuFxb14M5uZjDBX4K9eA==
-X-Google-Smtp-Source: ABdhPJwSXb1dY6AgaVzNQLt+reDscKrvoARfXRBXfeo2h9MZNArk1CXUTqLg5bs0YhI3mYrfPTwBL8qmTMYBnfbcX4E=
-X-Received: by 2002:a19:d10:: with SMTP id 16mr216317lfn.385.1603128217818;
- Mon, 19 Oct 2020 10:23:37 -0700 (PDT)
+        Mon, 19 Oct 2020 14:01:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603130515;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3ZRhVayc2gwj9c+mByvsT99OLPdz2/IY1oQ3zLgfgHU=;
+        b=dW4Xtc/j7nIDsuBSGMmrf0k7KPqw8NhDsArqXjxDkAcH22jXuDheDfuXk5+KcNAA0+5JBb
+        JJ9n41pe+N8Dv4pnRJY/SQOZNbsPFt6DI92MJ6Ac3aktkhcnt7V9+CeyHToQQFMeAbVkNL
+        ZRdQfsJYraidvCFsvmLT5WH34MEbAYo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-219-7HpEU7DdOLGhX7ZiDHCvIA-1; Mon, 19 Oct 2020 14:01:53 -0400
+X-MC-Unique: 7HpEU7DdOLGhX7ZiDHCvIA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07D62108BBE2;
+        Mon, 19 Oct 2020 18:01:52 +0000 (UTC)
+Received: from bfoster (ovpn-112-249.rdu2.redhat.com [10.10.112.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 833F75D9EF;
+        Mon, 19 Oct 2020 18:01:51 +0000 (UTC)
+Date:   Mon, 19 Oct 2020 14:01:44 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: zero cached pages over unwritten extents on
+ zero range
+Message-ID: <20201019180144.GC1232435@bfoster>
+References: <20201012140350.950064-1-bfoster@redhat.com>
+ <20201012140350.950064-3-bfoster@redhat.com>
+ <20201015094901.GC21420@infradead.org>
+ <20201019165519.GB1232435@bfoster>
 MIME-Version: 1.0
-References: <20201010103854.66746-1-songmuchun@bytedance.com>
- <CAM_iQpUQXctR8UBNRP6td9dWTA705tP5fWKj4yZe9gOPTn_8oQ@mail.gmail.com>
- <CAMZfGtUhVx_iYY3bJZRY5s1PG0N1mCsYGS9Oku8cTqPiMDze-g@mail.gmail.com>
- <CANn89iKprp7WYeZy4RRO5jHykprnSCcVBc7Tk14Ui_MA9OK7Fg@mail.gmail.com>
- <CAMZfGtXVKER_GM-wwqxrUshDzcEg9FkS3x_BaMTVyeqdYPGSkw@mail.gmail.com>
- <9262ea44-fc3a-0b30-54dd-526e16df85d1@gmail.com> <CAMZfGtVF6OjNuJFUExRMY1k-EaDS744=nKy6_a2cYdrJRncTgQ@mail.gmail.com>
- <20201013080906.GD4251@kernel.org> <8d1558e7-cd09-1f9e-edab-5f22c5bfc342@suse.cz>
- <20201016205336.GE1976566@google.com>
-In-Reply-To: <20201016205336.GE1976566@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 19 Oct 2020 10:23:26 -0700
-Message-ID: <CALvZod78tJDZauFvYfWmMyd+Z3Ci7Lsruyd_-nU00WL0EjN6vQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] mm: proc: add Sock to /proc/meminfo
-To:     Minchan Kim <minchan@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Will Deacon <will@kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Roman Gushchin <guro@fb.com>, Neil Brown <neilb@suse.de>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Florian Westphal <fw@strlen.de>, gustavoars@kernel.org,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Dexuan Cui <decui@microsoft.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu@xiaomi.com,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201019165519.GB1232435@bfoster>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-CCed: Paolo Bonzini
+On Mon, Oct 19, 2020 at 12:55:19PM -0400, Brian Foster wrote:
+> On Thu, Oct 15, 2020 at 10:49:01AM +0100, Christoph Hellwig wrote:
+> > > +iomap_zero_range_skip_uncached(struct inode *inode, loff_t *pos,
+> > > +		loff_t *count, loff_t *written)
+> > > +{
+> > > +	unsigned dirty_offset, bytes = 0;
+> > > +
+> > > +	dirty_offset = page_cache_seek_hole_data(inode, *pos, *count,
+> > > +				SEEK_DATA);
+> > > +	if (dirty_offset == -ENOENT)
+> > > +		bytes = *count;
+> > > +	else if (dirty_offset > *pos)
+> > > +		bytes = dirty_offset - *pos;
+> > > +
+> > > +	if (bytes) {
+> > > +		*pos += bytes;
+> > > +		*count -= bytes;
+> > > +		*written += bytes;
+> > > +	}
+> > 
+> > I find the calling conventions weird.  why not return bytes and
+> > keep the increments/decrements of the three variables in the caller?
+> > 
+> 
+> No particular reason. IIRC I had it both ways and just landed on this.
+> I'd change it, but as mentioned in the patch 1 thread I don't think this
+> patch is sufficient (with or without patch 1) anyways because the page
+> can also have been reclaimed before we get here.
+> 
 
-On Fri, Oct 16, 2020 at 1:53 PM Minchan Kim <minchan@kernel.org> wrote:
-[snip]
-> > And there might be others, and adding everything to /proc/meminfo is not
-> > feasible. I have once proposed adding a counter called "Unaccounted:" which
-> > would at least tell the user easily if a significant portion is occupied by
-> > memory not explained by the other meminfo counters, and look for trends
-> > (increase = potential memory leak?). For specific prominent consumers not
-> > covered by meminfo but that have some kind of internal counters, we could
-> > document where to look, such as /proc/net/sockstat or maybe create some
-> > /proc/ or /sys directory with file per consumer so that it's still easy to
-> > check, but without the overhead of global counters and bloated
-> > /proc/meminfo?
->
-> What have in my mind is to support simple general sysfs infra from MM for
-> driver/subysstems rather than creating each own memory stat. The API
-> could support flexible accounting like just global memory consumption and/or
-> consmption by key(e.g,. pid or each own special) for the detail.
->
-> So, they are all shown under /sys/kernel/mm/misc/ with detail as well as
-> /proc/meminfo with simple line for global.
+Christoph,
 
-This reminds me of statsfs [1]. I am wondering if this can be another
-useful use-case for statsfs.
+What do you think about introducing behavior specific to
+iomap_truncate_page() to unconditionally write zeroes over unwritten
+extents? AFAICT that addresses the race and was historical XFS behavior
+(via block_truncate_page()) before iomap, so is not without precedent.
+What I'd probably do is bury the caller's did_zero parameter into a new
+internal struct iomap_zero_data to pass down into
+iomap_zero_range_actor(), then extend that structure with a
+'zero_unwritten' field such that iomap_zero_range_actor() can do this:
 
-[1] https://lkml.org/lkml/2020/5/26/332
+        if (srcmap->type == IOMAP_HOLE ||
+            (srcmap->type == IOMAP_UNWRITTEN && !zdata->zero_unwritten))
+                return count;
+
+iomap_truncate_page() would set that flag either via open coding
+iomap_zero_range() or creating a new internal wrapper. Hm?
+
+Brian
+
+> Brian
+> 
+
