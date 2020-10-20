@@ -2,113 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9B42934FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 08:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D03EE29361B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 09:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404290AbgJTGaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Oct 2020 02:30:16 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:57538 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404268AbgJTGaP (ORCPT
+        id S2405475AbgJTHxP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Oct 2020 03:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34966 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728676AbgJTHxO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Oct 2020 02:30:15 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=zoucao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0UCcdLet_1603175410;
-Received: from localhost(mailfrom:zoucao@linux.alibaba.com fp:SMTPD_---0UCcdLet_1603175410)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 20 Oct 2020 14:30:11 +0800
-From:   Zou Cao <zoucao@linux.alibaba.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] fs:regfs: add panic notifier callback for saving regs
-Date:   Tue, 20 Oct 2020 14:30:08 +0800
-Message-Id: <1603175408-96164-2-git-send-email-zoucao@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1603175408-96164-1-git-send-email-zoucao@linux.alibaba.com>
-References: <1603175408-96164-1-git-send-email-zoucao@linux.alibaba.com>
+        Tue, 20 Oct 2020 03:53:14 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F807C061755;
+        Tue, 20 Oct 2020 00:53:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ClWPa4AkLnnBnYkDIyiYUv/9clx3J7jmiEl5C8bh0VM=; b=LdPWmfbS1LtE/LHhG7DtxoOFuI
+        cltHDUTqFsQ1MQvZyFVvtOyK/gTUkyWHi/TWI41pmu4myCdTCVh/9ZzRLt21vBwLmvlxd4ZTktnZx
+        k9JhbxkG04ZSHbzwO/S8KWO5tcN2BBJlgsvAyi2dKtVIkja9jahd5goiPi0X+1JFo1OMJPzzJw+sf
+        FRIrbxCB8HgimHx0AzkHgATOSMorXHEbCqH12XjGNE1BKxQo68xxl8yzV6HIJ3shsdSApJRlbRnjz
+        dXvPQgwexYdxJ999PdRjdUv+iZZwtSHtsUfw2ldJLECWo16+N9zrcJGZjZeH62/bZEDa1FBgi051z
+        7YEx4PpA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kUmSB-0004se-3w; Tue, 20 Oct 2020 07:53:07 +0000
+Date:   Tue, 20 Oct 2020 08:53:07 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, Takashi Iwai <tiwai@suse.de>,
+        dwysocha@redhat.com, linux-kernel@vger.kernel.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
+Subject: Re: [PATCH] cachefiles: Drop superfluous readpages aops NULL check
+Message-ID: <20201020075307.GA17780@infradead.org>
+References: <160311941493.2265023.9116264838885193100.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <160311941493.2265023.9116264838885193100.stgit@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-register panic notifier callback for saveing regs, add a module
-param regfs_panic to enable the show reg info when panic.
+Hmm,
 
-Signed-off-by: Zou Cao <zoucao@linux.alibaba.com>
----
- fs/regfs/inode.c | 39 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
-
-diff --git a/fs/regfs/inode.c b/fs/regfs/inode.c
-index 1643fcd..6c79f73 100644
---- a/fs/regfs/inode.c
-+++ b/fs/regfs/inode.c
-@@ -46,10 +46,41 @@
- static LIST_HEAD(regfs_head);
- 
- static const struct inode_operations regfs_dir_inode_operations;
--int regfs_debug;
-+int regfs_debug = 1;
- module_param(regfs_debug, int, S_IRUGO);
- MODULE_PARM_DESC(regfs_debug, "enable regfs debug mode");
- 
-+static int regfs_panic = 1;
-+module_param(regfs_panic, int, S_IRUGO);
-+MODULE_PARM_DESC(regfs_debug, "printk the register when panic");
-+
-+//save all register val when panic
-+static int regfs_panic_event(struct notifier_block *self,
-+		 unsigned long val, void *data)
-+{
-+	struct regfs_fs_info *fsi;
-+	struct inode *inode, *next;
-+
-+
-+	list_for_each_entry(fsi, &regfs_head, regfs_head) {
-+		list_for_each_entry_safe(inode, next, &fsi->sb->s_inodes, i_sb_list) {
-+			struct regfs_inode_info *info =  REGFS_I(inode);;
-+			//save the regs val
-+			if (info->type == RES_TYPE_ITEM) {
-+				info->val = readl_relaxed(info->base + info->offset);
-+				if (regfs_panic)
-+					printk("%llx:%llx\n", (u64)(info->base + info->offset), info->val);
-+			}
-+		}
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block regfs_panic_event_nb = {
-+	.notifier_call   = regfs_panic_event,
-+};
-+
- struct inode *regfs_get_inode(struct super_block *sb, const struct inode *dir, umode_t mode, dev_t dev)
- {
- 	struct inode *inode = new_inode(sb);
-@@ -328,6 +359,7 @@ static void init_once(void *foo)
- 
- static int __init init_regfs_fs(void)
- {
-+	int ret;
- 
- 	regfs_inode_cachep = kmem_cache_create_usercopy("regfs_inode_cache",
- 				sizeof(struct regfs_inode_info), 0,
-@@ -337,11 +369,16 @@ static int __init init_regfs_fs(void)
- 	if (!regfs_inode_cachep)
- 		return -ENOMEM;
- 
-+	ret = atomic_notifier_chain_register(&panic_notifier_list, &regfs_panic_event_nb);
-+	if (ret)
-+		pr_warn("regfs regiter panic notifier failed\n");
-+
- 	return  register_filesystem(&regfs_fs_type);
- }
- 
- static void __exit exit_regfs_fs(void)
- {
-+	atomic_notifier_chain_unregister(&panic_notifier_list, &regfs_panic_event_nb);
- 	unregister_filesystem(&regfs_fs_type);
- 	rcu_barrier();
- 	kmem_cache_destroy(regfs_inode_cachep);
--- 
-1.8.3.1
-
+what prevents us from killing of the last ->readpages instance?
+Leaving half-finished API conversions in the tree usually doesn't end
+well..
