@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CCBA293FCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 17:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85103293FD2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 17:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436731AbgJTPo7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Oct 2020 11:44:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52074 "EHLO
+        id S2436748AbgJTPpF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Oct 2020 11:45:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436727AbgJTPo7 (ORCPT
+        with ESMTP id S2436743AbgJTPpF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Oct 2020 11:44:59 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60ABC061755;
-        Tue, 20 Oct 2020 08:44:58 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id t9so2721165wrq.11;
-        Tue, 20 Oct 2020 08:44:58 -0700 (PDT)
+        Tue, 20 Oct 2020 11:45:05 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3B5C061755;
+        Tue, 20 Oct 2020 08:45:03 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id 13so2291783wmf.0;
+        Tue, 20 Oct 2020 08:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OBgYFG8ewp8FjuDRc/9ogeevL4i12xB05s0x+Hp/xsw=;
-        b=LEdn6Eg1/0ZYM0DaTybF3nD7sC9bpyW0xeYfyGgJzseRYf65TUAkWDN1vv73aW6H+H
-         xVcPGd0Wtm0ABZfA8LdBGaYR+lLgKySY/cj9/is4my/llxoV1gEa2fxJKFL8GP8jyhi1
-         sVkkwvcVxvQ50FO2fPndqAUtr232xJ4koRdBq5MpuFgCKPqXQtiDadGDkJayrDLhz2sV
-         OG7kXecFitHJ8rZZoQFPZjZqx0Bj75w5JtI8QSn60oWVpT25lgrpy+XjU5OU0J45LTIR
-         Ax31dp2d85vF3Wj6icmspHBEdRm2SGMzX/08VqDi7pX9EZbBIKjM6bAJk5+82H8kIgB5
-         FZuQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0MEzLA4ps4DnbBY/k9ap4B4wApccT4YDXE6Yuya3wrU=;
+        b=EPr9vdgXoMBAOmTLMIa+/gA1zkqZHPaEdP3AFG0yLxEVUzPeaHwZY4rKWNF5tf270v
+         ddzdKUzfOgbM0ZHwQs0iSJYW6p44RTkG9FEUuDeXx0fCvqcV5/34kxzrZHPWcTYJohFT
+         O/+WZAxw8banZ6ua/IsVQBRpBdPyKh7/fK6Ysoo0XF5rsUI0JP4cubtCzz/0rB1vOqeE
+         +aAJLYuIpMW0EmVtEamCdlQRivxsJ8/87WWp782LCd3yNqAkEbxaah4eAbPFBt8p+aDZ
+         M1mk+VlBYnEPSRJ8bpSpVWERMMGvFJ20CQ9+bSnckQgOcQfzWJFafJNBooY/xqf1mriz
+         x19g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OBgYFG8ewp8FjuDRc/9ogeevL4i12xB05s0x+Hp/xsw=;
-        b=kdk8OW909xntem7u69ANWE1nDIk1d7ZdyHQegspLwubkNMEA2AaGdHt9MAZKG6JJT/
-         f1WU0Oqwa1Gf+eBfH+H3E75Z5LB2dMbqLF3UzKjGIakAyeh9YGjne6W6uylhdnAa/czj
-         lPEwHWW3Y+KZp8brr9PcX07OyeUFCvnnU7G0xEwkOlD14yAqy8y3kTRe029c6rFSN0b9
-         o74k0cvtoi0enbt8FVsUmAmKGyZ7JefIQDThmZtWUs0ljukIFTA4OL7pk/1gXl33MdNX
-         1bcoHxiOC1bqaoVRKxKICZFHQ0vcRPapwNv+dKs3d0zdBR0V8yaJeiMsYbIb7Wp/cNoA
-         dQ7g==
-X-Gm-Message-State: AOAM530adc7a3c58d+HrVzQKGcVLcYghc+kDA1IJhssJxFYe8tUVSAAz
-        7nC8Z72Xo8tTozstZT3pJNg=
-X-Google-Smtp-Source: ABdhPJwAAJtsA7Ru071qpDqpkrZsiYH2XnRzpfAMyQ8oivkOUcayQ4kIVuVNf8wBj+piL5b+Pz/nXw==
-X-Received: by 2002:adf:8290:: with SMTP id 16mr4511202wrc.103.1603208697353;
-        Tue, 20 Oct 2020 08:44:57 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0MEzLA4ps4DnbBY/k9ap4B4wApccT4YDXE6Yuya3wrU=;
+        b=AH+M7iEtuvZc+I2tw9er7EdV8nHwZUQhtEkxLbYhaM14vc8KSbhRWy55zPNYasamcj
+         PQPIEYI370ua7y/OrLi4bmFPIXmV/KcCkx63sRfpvinR9I/7aP8fm967NJGG+KsaT6iH
+         6QChmiG9HyiHJea6s6TASnsADOw7QRV78ZWs3q/89aHoKGHeQtwAPsHelVKyY3FeR+qF
+         v/jS43tGP3xmjCz9e6hgdhMzfUHs+/gB4dHtkBwDU6q6NS7N22n8TsVEgojaPu6KpIqE
+         ZvgBiMMbQv7RFhhGvVrGvQmtaPBgM/RDxcD65u3mPfNiQ7Q3IXNiCoS4UC2ilvOPKDvF
+         /oMQ==
+X-Gm-Message-State: AOAM530BzvnLxf3dbCSf40ARRuQ4uY35X+xKZwzuvlI2xFvx89Uu3LXJ
+        crqPb5yMMCTo5flG/0onvro=
+X-Google-Smtp-Source: ABdhPJwISNFUaFdP9X2T5hYgzriznkIbMrVdXqhZFdWDWErPzBAj2PAbI9UsHFB8MPGI5rcb3Ggnhg==
+X-Received: by 2002:a05:600c:2302:: with SMTP id 2mr3533803wmo.111.1603208702259;
+        Tue, 20 Oct 2020 08:45:02 -0700 (PDT)
 Received: from stormsend.lip6.fr (dell-redha.rsr.lip6.fr. [132.227.76.3])
-        by smtp.googlemail.com with ESMTPSA id y21sm3070464wma.19.2020.10.20.08.44.55
+        by smtp.googlemail.com with ESMTPSA id y21sm3070464wma.19.2020.10.20.08.45.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2020 08:44:56 -0700 (PDT)
+        Tue, 20 Oct 2020 08:45:01 -0700 (PDT)
 From:   Redha Gouicem <redha.gouicem@gmail.com>
 Cc:     julien.sopena@lip6.fr, julia.lawall@inria.fr,
         gilles.muller@inria.fr, carverdamien@gmail.com,
@@ -70,16 +70,17 @@ Cc:     julien.sopena@lip6.fr, julia.lawall@inria.fr,
         Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrey Ignatov <rdna@fb.com>,
         "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Qais Yousef <qais.yousef@arm.com>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 0/3] sched: delayed thread migration
-Date:   Tue, 20 Oct 2020 17:44:38 +0200
-Message-Id: <20201020154445.119701-1-redha.gouicem@gmail.com>
+Subject: [PATCH 1/3] cpufreq: x86: allow external frequency measures
+Date:   Tue, 20 Oct 2020 17:44:39 +0200
+Message-Id: <20201020154445.119701-2-redha.gouicem@gmail.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201020154445.119701-1-redha.gouicem@gmail.com>
+References: <20201020154445.119701-1-redha.gouicem@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -87,141 +88,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch series proposes a tweak in the thread placement strategy of CFS
-to make a better use of cores running at a high frequency. It is the result
-of a published work at ATC'20, available here:
-https://www.usenix.org/conference/atc20/presentation/gouicern
+Allow other subsystems to query the current frequency from the CPU without
+affecting the cached value of cpufreq. The subsystems doing this will need
+to maintain their own version of struct aperfmperf_sample.
 
-We address the frequency inversion problem that stems from new DVFS
-capabilities of CPUs where frequency can be different among cores of the
-same chip. On applications with a large number of fork/wait patterns, we
-see that CFS tends to place new threads on idle cores running at a low
-frequency, while cores where the parent is running are at a high frequency
-and become idle immediately after. This means that a low frequency core is
-used while a high frequency core becomes idle. A more detailed analysis of
-this behavior is available in the paper but here is small example with 2
-cores c0 and c1 and 2 threads A and B.
+This is useful if you need to query frequency more frequently than
+APERFMPERF_CACHE_THRESHOLD_MS but don't want to mess with the current
+caching behavior.
 
-Legend: - means high frequency
-        . means low frequency
-	  nothing means nothing is running.
+Even though querying too frequently may render the measures inaccurate, it
+is still useful if your subsystem tolerates this inaccuracy.
 
-c0:   A------fork()-wait()
-                  \
-c1:                B................--------
-
-c0 becomes idle while at a high frequency and c1 becomes busy and executes
-B at a low frequency for a long time.
-
-The fix we propose is to delay the migration of threads in order to
-see if the parent's core can be used quickly before using another core.
-When choosing a core to place a new or waking up thread (in
-select_task_rq_fair()), we check if the destination core is idle or busy
-frequency-wise. If it is busy, we keep the current behavior and move the
-thread to this new core. If it is idle, we place the thread locally
-(parent's core on fork, waker's core on wakeup). We also arm a
-high-resolution timer that will trigger a migration of this thread to the
-new core chosen by the original algorithm of CFS. If the thread is able to
-run quickly on the local core, we cancel the timer (e.g. the parent thread
-calls the wait() syscall). Else, the thread will be moved to the core
-decided by CFS and run quickly. When the parent thread waits, the previous
-example becomes:
-
-c0:   A------fork()-wait()-B---------------
-                  \/
-c1:
-
-If the parent thread keeps running, the example becomes:
-
-c0:   A------fork()---------timer------------
-                  \/           \
-c1:                             B.............--------
-
-In the first case, we use a high frequency core (c0) and let c1 be idle. In
-the second case, we loose a few us of execution time for B.
-
-There are two configurable parameters in this patch:
-     - the frequency threshold above which we consider a core busy
-       frequency-wise. By default, the threshold is set to 0, which
-       disables the delayed migrations. On our test server (an Intel Xeon
-       E7-8870 v4), an efficient value was the minimal frequency of the
-       CPU. On another test machine (AMD Ryzen 5 3400G), it was a frequency
-       a little bit higher than the minimal one.
-     - the delay of the high-resolution timer. We choose a default value of
-       50 us since it is the mean delay we observed between a fork and a
-       wait during a kernel build.
-Both parameters can be modified through files in /proc/sys/kernel/. Since
-this is kind of work in progress, we are still looking to find better ways
-to choose the best threshold and delay, as both values probably depend on
-the machine.
-
-In terms of performance, we benchmarked 60 applications on a 5.4 kernel at
-the time of the paper's publication. The detailed results are available in
-the paper but overall, we improve the performance of 23 applications, with
-a best improvement of 56%. Only 3 applications suffer large performance
-degradations (more than 5%), but the degradation is "small" (at most 8%).
-We also think there might be energy savings since we try to avoid waking
-idle cores. We did see small improvements on our machines, but nothing as
-good as in terms of performance (at most 5% improvement).
-
-On the current development kernel (on the sched/core branch, commit
-f166b111e049), we run a few of these benchmarks to confirm our results on
-an up-to-date kernel. We run the build of the kernel (complete and
-scheduler only), hackbench, 2 applications from the NAS benchmark suite and
-openssl. We select these applications because they had either very good or
-very bad results on the 5.4 kernel. We present the mean of 10 runs, with
-the powersave scaling governor and the intel_pstate driver in active mode.
-
- Benchmark    | unit | 5.9-f166b111e049 |          patched
- -------------+------+------------------+------------------
-			LOWER IS BETTER
- -------------+------+------------------+------------------
- hackbench    |    s |            5.661 |    5.612 (- 0.9%)
- kbuild-sched |    s |            7.370 |    6.309 (-14.4%)
- kbuild       |    s |           34.798 |   34.788 (- 0.0%)
- nas_ft.C     |    s |           10.080 |   10.012 (- 0.7%)
- nas_sp.B     |    s |            6.653 |    7.033 (+ 5.7%)
- -------------+------+------------------+------------------
- 			HIGHER IS BETTER
- -------------+------+------------------+------------------
- openssl      |sign/s|         15086.89 | 15071.08 (- 0.1%)
-
-On this small subset, the only application negatively impacted application
-is an HPC workload, so it is less of a problem since HPC people usually
-bypass the scheduler altogether. We still have a large beneficial impact on
-the scheduler build that proeminently has the fork/wait pattern and
-frequency inversions.
-
-
-
-The first patch of the series is not specific to scheduling. It allows us
-(or anyone else) to use the cpufreq infrastructure at a different sampling
-rate without compromising the cpufreq subsystem and applications that
-depend on it.
-
-The main idea behind this patch series is to bring to light the frequency
-inversion problem that will become more and more prominent with new CPUs
-that feature per-core DVFS. The solution proposed is a first idea for
-solving this problem that still needs to be tested across more CPUs and
-with more applications.
-
-
-Redha Gouicem (3):
-  cpufreq: x86: allow external frequency measures
-  sched: core: x86: query frequency at each tick
-  sched/fair: delay thread migration on fork/wakeup/exec
-
- arch/x86/kernel/cpu/aperfmperf.c | 31 ++++++++++++++++++++---
- drivers/cpufreq/cpufreq.c        |  5 ++++
+Co-developed-by: Damien Carver <carverdamien@gmail.com>
+Signed-off-by: Damien Carver <carverdamien@gmail.com>
+Signed-off-by: Redha Gouicem <redha.gouicem@gmail.com>
+---
+ arch/x86/kernel/cpu/aperfmperf.c | 31 +++++++++++++++++++++++++++----
+ drivers/cpufreq/cpufreq.c        |  5 +++++
  include/linux/cpufreq.h          |  1 +
- include/linux/sched.h            |  4 +++
- include/linux/sched/sysctl.h     |  3 +++
- kernel/sched/core.c              | 43 ++++++++++++++++++++++++++++++++
- kernel/sched/fair.c              | 42 ++++++++++++++++++++++++++++++-
- kernel/sched/sched.h             |  7 ++++++
- kernel/sysctl.c                  | 14 +++++++++++
- 9 files changed, 145 insertions(+), 5 deletions(-)
+ 3 files changed, 33 insertions(+), 4 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
+index e2f319dc992d..c3be81d689f4 100644
+--- a/arch/x86/kernel/cpu/aperfmperf.c
++++ b/arch/x86/kernel/cpu/aperfmperf.c
+@@ -36,11 +36,11 @@ static DEFINE_PER_CPU(struct aperfmperf_sample, samples);
+  * unless we already did it within 10ms
+  * calculate kHz, save snapshot
+  */
+-static void aperfmperf_snapshot_khz(void *dummy)
++static void aperfmperf_snapshot_khz(void *prev_sample)
+ {
+ 	u64 aperf, aperf_delta;
+ 	u64 mperf, mperf_delta;
+-	struct aperfmperf_sample *s = this_cpu_ptr(&samples);
++	struct aperfmperf_sample *s = prev_sample;
+ 	unsigned long flags;
+ 
+ 	local_irq_save(flags);
+@@ -72,7 +72,8 @@ static bool aperfmperf_snapshot_cpu(int cpu, ktime_t now, bool wait)
+ 	if (time_delta < APERFMPERF_CACHE_THRESHOLD_MS)
+ 		return true;
+ 
+-	smp_call_function_single(cpu, aperfmperf_snapshot_khz, NULL, wait);
++	smp_call_function_single(cpu, aperfmperf_snapshot_khz,
++				 per_cpu_ptr(&samples, cpu), wait);
+ 
+ 	/* Return false if the previous iteration was too long ago. */
+ 	return time_delta <= APERFMPERF_STALE_THRESHOLD_MS;
+@@ -131,7 +132,29 @@ unsigned int arch_freq_get_on_cpu(int cpu)
+ 		return per_cpu(samples.khz, cpu);
+ 
+ 	msleep(APERFMPERF_REFRESH_DELAY_MS);
+-	smp_call_function_single(cpu, aperfmperf_snapshot_khz, NULL, 1);
++	smp_call_function_single(cpu, aperfmperf_snapshot_khz,
++				 per_cpu_ptr(&samples, cpu), 1);
+ 
+ 	return per_cpu(samples.khz, cpu);
+ }
++
++unsigned int arch_freq_get_on_cpu_from_sample(int cpu, void *sample)
++{
++	struct aperfmperf_sample *s = sample;
++
++	if (!sample)
++		return 0;
++
++	if (!cpu_khz)
++		return 0;
++
++	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
++		return 0;
++
++	if (!housekeeping_cpu(cpu, HK_FLAG_MISC))
++		return 0;
++
++	smp_call_function_single(cpu, aperfmperf_snapshot_khz, s, 1);
++
++	return s->khz;
++}
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 02ab56b2a0d8..36e6dbd87317 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -695,6 +695,11 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
+ 	return 0;
+ }
+ 
++__weak unsigned int arch_freq_get_on_cpu_from_sample(int cpu, void *sample)
++{
++	return 0;
++}
++
+ static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
+ {
+ 	ssize_t ret;
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 8f141d4c859c..129083684ca0 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -1005,6 +1005,7 @@ static inline void sched_cpufreq_governor_change(struct cpufreq_policy *policy,
+ 
+ extern void arch_freq_prepare_all(void);
+ extern unsigned int arch_freq_get_on_cpu(int cpu);
++extern unsigned int arch_freq_get_on_cpu_from_sample(int cpu, void *sample);
+ 
+ extern void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
+ 				unsigned long max_freq);
 -- 
 2.28.0
 
