@@ -2,164 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1779529440F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 22:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CAA294469
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 23:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbgJTUmf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Oct 2020 16:42:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:26836 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726765AbgJTUme (ORCPT
+        id S2409793AbgJTVQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Oct 2020 17:16:41 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33206 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2409790AbgJTVQk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Oct 2020 16:42:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603226552;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZmjO6QniYZl+YplQxqK/hVHiry7M+krWuodsm/yS+i4=;
-        b=F99SqyshBCRDsX8/t/NYhCcegTOJ4CSzRgrbqmSOpBsx60rcVDTb4gb98iAim1MAmBsx37
-        FtDaTVD0PRjUMYUPWntVrjVhGBFzDbvGNcSN0pR5jm0xEAv5r3A2ImJp4mv7s2abb4ABYY
-        Edp5zZg3TtxmcIn/OhG4SbQiiovNL7o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-72-wWQxqmBUPgqxND_VKvgy0w-1; Tue, 20 Oct 2020 16:42:30 -0400
-X-MC-Unique: wWQxqmBUPgqxND_VKvgy0w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 30EEE57053;
-        Tue, 20 Oct 2020 20:42:28 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-203.rdu2.redhat.com [10.10.115.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0901219D6C;
-        Tue, 20 Oct 2020 20:42:27 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 8D580220307; Tue, 20 Oct 2020 16:42:26 -0400 (EDT)
-Date:   Tue, 20 Oct 2020 16:42:26 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, Hugh Dickins <hughd@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: Possible deadlock in fuse write path (Was: Re: [PATCH 0/4] Some
- more lock_page work..)
-Message-ID: <20201020204226.GA376497@redhat.com>
-References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
- <4794a3fa3742a5e84fb0f934944204b55730829b.camel@lca.pw>
- <CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com>
- <20201015151606.GA226448@redhat.com>
- <20201015195526.GC226448@redhat.com>
- <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
- <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
+        Tue, 20 Oct 2020 17:16:40 -0400
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4F5E258C093;
+        Wed, 21 Oct 2020 08:16:35 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kUyzi-002cD8-B3; Wed, 21 Oct 2020 08:16:34 +1100
+Date:   Wed, 21 Oct 2020 08:16:34 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: Splitting a THP beyond EOF
+Message-ID: <20201020211634.GQ7391@dread.disaster.area>
+References: <20201020014357.GW20115@casper.infradead.org>
+ <20201020045928.GO7391@dread.disaster.area>
+ <20201020112138.GZ20115@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <20201020112138.GZ20115@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=afefHYAZSVUA:10 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8
+        a=7-415B0cAAAA:8 a=3MSxnCdPCWzHt-A28tsA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 16, 2020 at 12:02:21PM +0200, Miklos Szeredi wrote:
-> On Thu, Oct 15, 2020 at 11:22 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Thu, Oct 15, 2020 at 12:55 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > I am wondering how should I fix this issue. Is it enough that I drop
-> > > the page lock (but keep the reference) inside the loop. And once copying
-> > > from user space is done, acquire page locks for all pages (Attached
-> > > a patch below).
-> >
-> > What is the page lock supposed to protect?
-> >
-> > Because whatever it protects, dropping the lock drops, and you'd need
-> > to re-check whatever the page lock was there for.
-> >
-> > > Or dropping page lock means that there are no guarantees that this
-> > > page did not get written back and removed from address space and
-> > > a new page has been placed at same offset. Does that mean I should
-> > > instead be looking up page cache again after copying from user
-> > > space is done.
-> >
-> > I don't know why fuse does multiple pages to begin with. Why can't it
-> > do whatever it does just one page at a time?
-> >
-> > But yes, you probably should look the page up again whenever you've
-> > unlocked it, because it might have been truncated or whatever.
-> >
-> > Not that this is purely about unlocking the page, not about "after
-> > copying from user space". The iov_iter_copy_from_user_atomic() part is
-> > safe - if that takes a page fault, it will just do a partial copy, it
-> > won't deadlock.
-> >
-> > So you can potentially do multiple pages, and keep them all locked,
-> > but only as long as the copies are all done with that
-> > "from_user_atomic()" case. Which normally works fine, since normal
-> > users will write stuff that they just generated, so it will all be
-> > there.
-> >
-> > It's only when that returns zero, and you do the fallback to pre-fault
-> > in any data with iov_iter_fault_in_readable() that you need to unlock
-> > _all_ pages (and once you do that, I don't see what possible advantage
-> > the multi-page array can have).
-> >
-> > Of course, the way that code is written, it always does the
-> > iov_iter_fault_in_readable() for each page - it's not written like
-> > some kind of "special case fallback thing".
+On Tue, Oct 20, 2020 at 12:21:38PM +0100, Matthew Wilcox wrote:
+> On Tue, Oct 20, 2020 at 03:59:28PM +1100, Dave Chinner wrote:
+> > On Tue, Oct 20, 2020 at 02:43:57AM +0100, Matthew Wilcox wrote:
+> > > This is a weird one ... which is good because it means the obvious
+> > > ones have been fixed and now I'm just tripping over the weird cases.
+> > > And fortunately, xfstests exercises the weird cases.
+> > > 
+> > > 1. The file is 0x3d000 bytes long.
+> > > 2. A readahead allocates an order-2 THP for 0x3c000-0x3ffff
+> > > 3. We simulate a read error for 0x3c000-0x3cfff
+> > > 4. Userspace writes to 0x3d697 to 0x3dfaa
+> > 
+> > So this is a write() beyond EOF, yes?
+> > 
+> > If yes, then we first go through this path:
+> > 
+> > 	xfs_file_buffered_aio_write()
+> > 	  xfs_file_aio_write_checks()
+> > 	    iomap_zero_range(isize, pos - isize)
+> > 
+> > To zero the region between the current EOF and where the new write
+> > starts. i.e. from 0x3d000 to 0x3d696.
 > 
-> This was added by commit ea9b9907b82a ("fuse: implement
-> perform_write") in v2.6.26 and remains essentially unchanged, AFAICS.
-> So this is an old bug indeed.
+> Yes.  That calls iomap_write_begin() which calls iomap_split_page()
+> which is where we run into trouble.  I elided the exact path from the
+> description of the problem.
 > 
-> So what is the page lock protecting?   I think not truncation, because
-> inode_lock should be sufficient protection.
+> > > 5. iomap_write_begin() gets the 0x3c page, sees it's THP and !Uptodate
+> > >    so it calls iomap_split_page() (passing page 0x3d)
+> > 
+> > Splitting the page because it's !Uptodate seems rather drastic to
+> > me.  Why does it need to split the page here?
 > 
-> What it does after sending a synchronous WRITE and before unlocking
-> the pages is set the PG_uptodate flag, but only if the complete page
-> was really written, which is what the uptodate flag really says:  this
-> page is in sync with the underlying fs.
+> Because we can't handle Dirty, !Uptodate THPs in the truncate path.
+> Previous discussion:
+> https://lore.kernel.org/linux-mm/20200821144021.GV17456@casper.infradead.org/
+
+Maybe I'm just dense, but this doesn't explain the reason for
+needing to split THPs during partial THP invalidation, nor the
+reason why we need to split THPs when the write path sees a
+partially up to date THP. iomap is supposed to be tracking the
+sub-page regions that are not up to date, so why would we ever need
+to split the page to get sub-page regions into the correct state?
+
+i.e. why do THPs need to be handled any differently to a block size
+< page size situation with a normal PAGE_SIZE page?
+
+FWIW, didn't you change the dirty tracking to be done sub-page and
+held in the iomap_page? If so, releasing the iomap_page on a partial
+page invalidation looks ... problematic. i.e. not only are you
+throwing away the per-block up-to-date state on a THP, you're alos
+throwing away the per-block dirty state.
+
+i.e. we still need that per-block state to be maintained once the
+THP has been split - the split pages should be set to the correct
+state held on the THP as the split progresses. IOWs, I suspect that
+split_huge_page() needs to call into iomap to determine the actual
+state of each individual sub-page from the iomap_page state attached
+to the huge page.
+
+> The current assumption is that a !Uptodate THP is due to a read error,
+> and so the sensible thing to do is split it and handle read errors at
+> a single-page level.
+
+Why? Apart from the range of the file coverd by the page, how is
+handling a read error at a single page level any different from
+handling it at a THP level?
+
+Alternatively, if there's a read error on THP-based readahead, then
+why isn't the entire THP tossed away when a subsequent read sees
+PageError() so it can then be re-read synchronously into the cache
+using single pages?
+
+> I've been playing around with creating THPs in the write path, and that
+> offers a different pathway to creating Dirty, !Uptodate THPs, so this
+> may also change at some point.  I'd like to get what I have merged and
+> then figure out how to make this better.
+
+Sure. However, again, splitting THPs in this situation makes no
+sense to me. I can't see why we don't just treat them like a normal
+page and the sub-page !uptodate range filling algorithms just do
+their normal work on them...
+
+> > Also, this concerns me: if we are exposing the cached EOF page via
+> > mmap, it needs to contain only zeroes in the region beyond EOF so
+> > that we don't expose stale data to userspace. Hence when a THP that
+> > contains EOF is instantiated, we have to ensure that the region
+> > beyond EOF is compeltely zeroed. It then follows that if we read all
+> > the data in that THP up to EOF, then the page is actually up to
+> > date...
 > 
-> So I think the page lock here is trying to protect against concurrent
-> reads/faults on not uptodate pages.  I.e. until the WRITE request
-> completes it is unknown whether the page was really written or not, so
-> any reads must block until this state becomes known.  This logic falls
-> down on already cached pages, since they start out uptodate and the
-> write does not clear this flag.
-> 
-> So keeping the pages locked has dubious value: short writes don't seem
-> to work correctly anyway. Which means that we can probably just set
-> the page uptodate right after filling it from the user buffer, and
-> unlock the page immediately.
+> We do that in iomap_readpage_actor().  Had the readahead I/O not "failed",
+> we'd've had an Uptodate THP which straddled EOF.
 
-Hi Miklos,
+If the IO error in a THP is the trigger for bad things here, then
+surely the correct thing to do is trash the THP on IO error, not
+leave a landmine that every path has to handle specially...
 
-As you said, for the full page WRITE, we can probably mark it
-page uptodate write away and drop page lock (Keep reference and
-send WRITE request to fuse server). For the partial page write this will
-not work and there seem to be atleast two options.
+Cheers,
 
-A. Either we read the page back from disk first and mark it uptodate.
-
-B. Or we keep track of such partial writes and block any further
-   reads/readpage/direct_IO on these pages till partial write is
-   complete. After that looks like page will be left notuptodate
-   in page cache and reader will read it from disk. We are doing
-   something similar for tracking writeback requests. It is much
-   more complicated though and we probably can design something
-   simpler for these writethrough/synchronous writes.
-
-I am assuming that A. will lead to performance penalty for short
-random writes. So B might be better from performance point of
-view.
-
-Is it worth giving option B a try.
-
-Thanks
-Vivek
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
