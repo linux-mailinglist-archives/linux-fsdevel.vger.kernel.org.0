@@ -2,81 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 049B7294114
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 19:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB98C2942CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 21:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395141AbgJTRIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Oct 2020 13:08:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36806 "EHLO
+        id S2438031AbgJTTPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Oct 2020 15:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389936AbgJTRIt (ORCPT
+        with ESMTP id S2437999AbgJTTPs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Oct 2020 13:08:49 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE877C0613CE;
-        Tue, 20 Oct 2020 10:08:48 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id d24so3029072lfa.8;
-        Tue, 20 Oct 2020 10:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E5KBFJ16+yiu/KCls0reGAouhQdS/mqbPKY0iYtitxw=;
-        b=uldXtsgwR5acYsbuvz3WREl3ulSvzxPxjHH6WG+nVg6d3SmJv9CcgV/30TxwMmiYcC
-         nFUi6qpt5CQ+6wOty/fKqHsARbcTZvxyAsn2blczoQmmCW5kSrdtNvyQSJUSGKiss5Co
-         JGkLzzk7lCfeClIlIx8pB30OSTLWUmd62WDwfbBt+ELdQ9iJUvcr5Yo5QP7C4EBCax+z
-         zpFTC85qeolepCVHADfvwEhXKWwmYmkptEEC2oVsz1ym7bJjqTzn8MzfEs2BkckEd7CE
-         0RP3De+lwUvl+igFvmgc506inqLiQw0y3gxIsmaj4cPrufWQBjA8/3N5LI6Kk+EQZeFv
-         mEhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E5KBFJ16+yiu/KCls0reGAouhQdS/mqbPKY0iYtitxw=;
-        b=mYmEhY9/n+nFHt6XHxxQxSIL0uteDcVNF6z+NqgX796KB2LEwfW2puRJhNc9Mivy2t
-         8eDQ+vqwkz1JzDbcK99722I/8XaYJ7thYnJGusDXkFwbq8opdN/ivwrwiZOUHynLrxx0
-         J2/6MB0WNmsGbLPuAxaiRV/kJqN4t6I9f9ec5/5f1HWPUoH+wRTZN8DUeIrmIk3dOlb6
-         0L3ePtzuE8k/9bzKRifR/VBA67seHbURlJILL72AB5mOAL8sktfvj+lx6uxxo2OlRiwd
-         hykONOb+gLWqmbKF/zzz/tRZOWI5JT6Gf1SdaP1+P7klbBb1qPLjae0XgKR2ej8LcZQ7
-         q9Mw==
-X-Gm-Message-State: AOAM530b/BjBvpdvKZfQ5FPtQPyggVUqUWVnokzZo0BiIp2FuRds6CAl
-        yodbOM2lJLS5Ma2tmSbHEs42P/YDPw9KG/IJ+ElpZK4z61g+HA==
-X-Google-Smtp-Source: ABdhPJxVr/P8EhydPvYWLxqL+p8JaCUz3aZ3OXjUj5UaQCT6y2Dp6WTv21jNaHDgINEW63FUj8iThaB5zips6imOq6s=
-X-Received: by 2002:a19:c112:: with SMTP id r18mr1288210lff.208.1603213727192;
- Tue, 20 Oct 2020 10:08:47 -0700 (PDT)
+        Tue, 20 Oct 2020 15:15:48 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2D5C0613CE;
+        Tue, 20 Oct 2020 12:15:48 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 94E161F44C1F
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     dhowells@redhat.com
+Cc:     viro@zeniv.linux.org.uk, tytso@mit.edu, khazhy@google.com,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH RFC 0/7] Superblock notifications
+Date:   Tue, 20 Oct 2020 15:15:36 -0400
+Message-Id: <20201020191543.601784-1-krisman@collabora.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <20201019185911.2909471-1-kent.overstreet@gmail.com> <20201020075813.GA18793@infradead.org>
-In-Reply-To: <20201020075813.GA18793@infradead.org>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 20 Oct 2020 12:08:36 -0500
-Message-ID: <CAH2r5msRkzeCQTQTvP9uNSgobVO86S+O76fw=7-kkihXFF+-2A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cifs: convert to add_to_page_cache()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Other than the unnecessary split line which Christoph pointed out, looks fine.
+Hi,
 
-You can add my Reviewed--by: Steve French <stfrench@microsoft.com>
+Google has been using an out-of-tree mechanism for error notification in
+Ext4 and we decided it is time to push for an upstream solution.  This
+would surely fit on top of David's notification work.
 
-On Tue, Oct 20, 2020 at 5:10 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> > +     rc = add_to_page_cache(page, mapping,
-> > +                            page->index, gfp);
->
-> This trivially fits onto a single line.
+This patchset is an attempt to restart that discussion.  It forward ports
+some code from David on top of Linus tree, adds features to
+watch_queue and implements ext4 support.
 
+The new notifications are designed after ext4 messages, so it exposes
+notifications types to fit that filesystem, but it doesn't change much
+to other filesystems, so it should be easily extensible.
 
+I'm aware of the discussion around fsinfo, but I'd like to ask if there
+are other missing pieces and what we could do to help that work go
+upstream.  From a previous mailing list discussion, Linus complained
+about lack of users as a main reason for it to not be merged, so hey! :)
+
+In addition, I'd like to ask for feedback on the current implementation,
+specifically regarding the passing of extra unformatted information at
+the end of the notification and the ext4 support.
+
+The work, as shared on this patchset can be found at:
+
+  https://gitlab.collabora.com/krisman/linux.git -b ext4-error-notifications
+
+And there is an example code at:
+
+  https://gitlab.collabora.com/krisman/ext4-watcher
+
+I'm Cc'ing Khazhismel Kumykov, from Google, who can provide more
+information about their use case, if requested.
+
+David Howells (3):
+  watch_queue: Make watch_sizeof() check record size
+  security: Add hooks to rule on setting a watch for superblock
+  vfs: Add superblock notifications
+
+Gabriel Krisman Bertazi (4):
+  watch_queue: Support a text field at the end of the notification
+  vfs: Include origin of the SB error notification
+  fs: Add more superblock error subtypes
+  ext4: Implement SB error notification through watch_sb
+
+ arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+ fs/Kconfig                             |  12 ++
+ fs/ext4/super.c                        |  32 +++-
+ fs/super.c                             | 127 +++++++++++++++
+ include/linux/fs.h                     | 207 +++++++++++++++++++++++++
+ include/linux/lsm_hook_defs.h          |   1 +
+ include/linux/lsm_hooks.h              |   4 +
+ include/linux/security.h               |  13 ++
+ include/linux/syscalls.h               |   2 +
+ include/linux/watch_queue.h            |  21 ++-
+ include/uapi/asm-generic/unistd.h      |   4 +-
+ include/uapi/linux/watch_queue.h       |  68 +++++++-
+ kernel/sys_ni.c                        |   3 +
+ kernel/watch_queue.c                   |  29 +++-
+ security/security.c                    |   7 +
+ 16 files changed, 514 insertions(+), 18 deletions(-)
 
 -- 
-Thanks,
+2.28.0
 
-Steve
