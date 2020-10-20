@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85103293FD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 17:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 310BA293FD3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Oct 2020 17:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436748AbgJTPpF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Oct 2020 11:45:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52086 "EHLO
+        id S2436763AbgJTPpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Oct 2020 11:45:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436743AbgJTPpF (ORCPT
+        with ESMTP id S2436743AbgJTPpJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Oct 2020 11:45:05 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F3B5C061755;
-        Tue, 20 Oct 2020 08:45:03 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id 13so2291783wmf.0;
-        Tue, 20 Oct 2020 08:45:03 -0700 (PDT)
+        Tue, 20 Oct 2020 11:45:09 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E164C061755;
+        Tue, 20 Oct 2020 08:45:08 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id d3so2449955wma.4;
+        Tue, 20 Oct 2020 08:45:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0MEzLA4ps4DnbBY/k9ap4B4wApccT4YDXE6Yuya3wrU=;
-        b=EPr9vdgXoMBAOmTLMIa+/gA1zkqZHPaEdP3AFG0yLxEVUzPeaHwZY4rKWNF5tf270v
-         ddzdKUzfOgbM0ZHwQs0iSJYW6p44RTkG9FEUuDeXx0fCvqcV5/34kxzrZHPWcTYJohFT
-         O/+WZAxw8banZ6ua/IsVQBRpBdPyKh7/fK6Ysoo0XF5rsUI0JP4cubtCzz/0rB1vOqeE
-         +aAJLYuIpMW0EmVtEamCdlQRivxsJ8/87WWp782LCd3yNqAkEbxaah4eAbPFBt8p+aDZ
-         M1mk+VlBYnEPSRJ8bpSpVWERMMGvFJ20CQ9+bSnckQgOcQfzWJFafJNBooY/xqf1mriz
-         x19g==
+        bh=9JWcw8hODuoK9CFrfdzCcqj6AmzzPAq3wC79+nVDeMI=;
+        b=o2QFgXtn+p1np1aVT7zzRbaf2Frr1SjzIjrPZwg1+9ZtUGgiiIjPYRqe7xwKdzs4yi
+         yDHjczRuoLIP+Iuv/gEEMJwmPXsnjLFR2BEbEHiqXPz71cTBHz5xYgrK8XfqF6aNrxvP
+         P0AsmLGOYay+YjrHNhEbXcmyBD11Vsp6xTHHkwS34osFqauohLc2nGE2ynBjrBlvhSK/
+         6WDxm8kgmQ7mk5pSS2hyndQz5w4T59lpa8GISmzmo8GSzahe4qM4b++vEdQXsmdARD+H
+         +5zGs9qY38C9ceHYgXaKunniWy19Aq+4vo2oJtD+KTBtkGkeuVRbr4vcj2o4wlmDpmqS
+         OCQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0MEzLA4ps4DnbBY/k9ap4B4wApccT4YDXE6Yuya3wrU=;
-        b=AH+M7iEtuvZc+I2tw9er7EdV8nHwZUQhtEkxLbYhaM14vc8KSbhRWy55zPNYasamcj
-         PQPIEYI370ua7y/OrLi4bmFPIXmV/KcCkx63sRfpvinR9I/7aP8fm967NJGG+KsaT6iH
-         6QChmiG9HyiHJea6s6TASnsADOw7QRV78ZWs3q/89aHoKGHeQtwAPsHelVKyY3FeR+qF
-         v/jS43tGP3xmjCz9e6hgdhMzfUHs+/gB4dHtkBwDU6q6NS7N22n8TsVEgojaPu6KpIqE
-         ZvgBiMMbQv7RFhhGvVrGvQmtaPBgM/RDxcD65u3mPfNiQ7Q3IXNiCoS4UC2ilvOPKDvF
-         /oMQ==
-X-Gm-Message-State: AOAM530BzvnLxf3dbCSf40ARRuQ4uY35X+xKZwzuvlI2xFvx89Uu3LXJ
-        crqPb5yMMCTo5flG/0onvro=
-X-Google-Smtp-Source: ABdhPJwISNFUaFdP9X2T5hYgzriznkIbMrVdXqhZFdWDWErPzBAj2PAbI9UsHFB8MPGI5rcb3Ggnhg==
-X-Received: by 2002:a05:600c:2302:: with SMTP id 2mr3533803wmo.111.1603208702259;
-        Tue, 20 Oct 2020 08:45:02 -0700 (PDT)
+        bh=9JWcw8hODuoK9CFrfdzCcqj6AmzzPAq3wC79+nVDeMI=;
+        b=IdzYPCit2SDWTP0+DX2C10cqXmxdpL+2UCPfVLV8GWxHnTlDL4GnlCgde9eSMZf2zu
+         Oh+aSBdyYZnTkrPFAylb1/ruEM4lltiQnLg99GbIHARz9lnJyy7TzUm5XRMjEJEL+5JS
+         PHdpi4uGtWInTPCZuAEgh/u7WvwbAiT1Xuu+GbL9iFPHlWQYfXyH1Tn9y3BsS2RIMq4j
+         k0y7wuY8rP6e9LpWdalEhx7cjJXXLwp/Z9H7y5SrhGFYzogv67YMPs/AUDGgH61f2aXG
+         xFhWaw42wHXfjErYxrV38x19CH5qTI0Rw9atIAIpW7iaXz+6IFZRW7x/eVu8+uP20ttY
+         kY4Q==
+X-Gm-Message-State: AOAM532Elw38SnGzAWz4UyV7WcEQ4n5/tVz/fz2BaB0S48boiVvi5Fh6
+        IN63Rwg0OmHmJVfxcatjHgs=
+X-Google-Smtp-Source: ABdhPJxJbMY6a7HmBwAtdexJV4WfZiaJ4FZ523l2FgqiR2pbrz1XKZ0TG5lnq0ueY115RLEct5o9fw==
+X-Received: by 2002:a1c:48c3:: with SMTP id v186mr3873408wma.16.1603208707186;
+        Tue, 20 Oct 2020 08:45:07 -0700 (PDT)
 Received: from stormsend.lip6.fr (dell-redha.rsr.lip6.fr. [132.227.76.3])
-        by smtp.googlemail.com with ESMTPSA id y21sm3070464wma.19.2020.10.20.08.45.01
+        by smtp.googlemail.com with ESMTPSA id y21sm3070464wma.19.2020.10.20.08.45.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2020 08:45:01 -0700 (PDT)
+        Tue, 20 Oct 2020 08:45:06 -0700 (PDT)
 From:   Redha Gouicem <redha.gouicem@gmail.com>
 Cc:     julien.sopena@lip6.fr, julia.lawall@inria.fr,
         gilles.muller@inria.fr, carverdamien@gmail.com,
@@ -70,14 +70,15 @@ Cc:     julien.sopena@lip6.fr, julia.lawall@inria.fr,
         Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
-        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Qais Yousef <qais.yousef@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/3] cpufreq: x86: allow external frequency measures
-Date:   Tue, 20 Oct 2020 17:44:39 +0200
-Message-Id: <20201020154445.119701-2-redha.gouicem@gmail.com>
+Subject: [PATCH 2/3] sched: core: x86: query frequency at each tick
+Date:   Tue, 20 Oct 2020 17:44:40 +0200
+Message-Id: <20201020154445.119701-3-redha.gouicem@gmail.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201020154445.119701-1-redha.gouicem@gmail.com>
 References: <20201020154445.119701-1-redha.gouicem@gmail.com>
@@ -88,113 +89,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow other subsystems to query the current frequency from the CPU without
-affecting the cached value of cpufreq. The subsystems doing this will need
-to maintain their own version of struct aperfmperf_sample.
-
-This is useful if you need to query frequency more frequently than
-APERFMPERF_CACHE_THRESHOLD_MS but don't want to mess with the current
-caching behavior.
-
-Even though querying too frequently may render the measures inaccurate, it
-is still useful if your subsystem tolerates this inaccuracy.
+Query the current frequency of the core during the scheduler tick.
+The scheduler subsystem maintains its own copies of the aperf/mperf
+structure because it will query the frequency more frequently than what
+the cpufreq subsystem does. This can lead to inaccurate measurements,
+but it is not problematic here.
 
 Co-developed-by: Damien Carver <carverdamien@gmail.com>
 Signed-off-by: Damien Carver <carverdamien@gmail.com>
 Signed-off-by: Redha Gouicem <redha.gouicem@gmail.com>
 ---
- arch/x86/kernel/cpu/aperfmperf.c | 31 +++++++++++++++++++++++++++----
- drivers/cpufreq/cpufreq.c        |  5 +++++
- include/linux/cpufreq.h          |  1 +
- 3 files changed, 33 insertions(+), 4 deletions(-)
+ kernel/sched/core.c  | 11 +++++++++++
+ kernel/sched/sched.h |  4 ++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-index e2f319dc992d..c3be81d689f4 100644
---- a/arch/x86/kernel/cpu/aperfmperf.c
-+++ b/arch/x86/kernel/cpu/aperfmperf.c
-@@ -36,11 +36,11 @@ static DEFINE_PER_CPU(struct aperfmperf_sample, samples);
-  * unless we already did it within 10ms
-  * calculate kHz, save snapshot
-  */
--static void aperfmperf_snapshot_khz(void *dummy)
-+static void aperfmperf_snapshot_khz(void *prev_sample)
- {
- 	u64 aperf, aperf_delta;
- 	u64 mperf, mperf_delta;
--	struct aperfmperf_sample *s = this_cpu_ptr(&samples);
-+	struct aperfmperf_sample *s = prev_sample;
- 	unsigned long flags;
- 
- 	local_irq_save(flags);
-@@ -72,7 +72,8 @@ static bool aperfmperf_snapshot_cpu(int cpu, ktime_t now, bool wait)
- 	if (time_delta < APERFMPERF_CACHE_THRESHOLD_MS)
- 		return true;
- 
--	smp_call_function_single(cpu, aperfmperf_snapshot_khz, NULL, wait);
-+	smp_call_function_single(cpu, aperfmperf_snapshot_khz,
-+				 per_cpu_ptr(&samples, cpu), wait);
- 
- 	/* Return false if the previous iteration was too long ago. */
- 	return time_delta <= APERFMPERF_STALE_THRESHOLD_MS;
-@@ -131,7 +132,29 @@ unsigned int arch_freq_get_on_cpu(int cpu)
- 		return per_cpu(samples.khz, cpu);
- 
- 	msleep(APERFMPERF_REFRESH_DELAY_MS);
--	smp_call_function_single(cpu, aperfmperf_snapshot_khz, NULL, 1);
-+	smp_call_function_single(cpu, aperfmperf_snapshot_khz,
-+				 per_cpu_ptr(&samples, cpu), 1);
- 
- 	return per_cpu(samples.khz, cpu);
- }
-+
-+unsigned int arch_freq_get_on_cpu_from_sample(int cpu, void *sample)
-+{
-+	struct aperfmperf_sample *s = sample;
-+
-+	if (!sample)
-+		return 0;
-+
-+	if (!cpu_khz)
-+		return 0;
-+
-+	if (!boot_cpu_has(X86_FEATURE_APERFMPERF))
-+		return 0;
-+
-+	if (!housekeeping_cpu(cpu, HK_FLAG_MISC))
-+		return 0;
-+
-+	smp_call_function_single(cpu, aperfmperf_snapshot_khz, s, 1);
-+
-+	return s->khz;
-+}
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 02ab56b2a0d8..36e6dbd87317 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -695,6 +695,11 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
- 	return 0;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c36dc1ae58be..d6d27a6fc23c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3976,6 +3976,15 @@ unsigned long long task_sched_runtime(struct task_struct *p)
+ 	return ns;
  }
  
-+__weak unsigned int arch_freq_get_on_cpu_from_sample(int cpu, void *sample)
-+{
-+	return 0;
-+}
++struct freq_sample {
++	unsigned int  khz;
++	ktime_t       time;
++	u64           aperf;
++	u64           mperf;
++};
 +
- static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
- {
- 	ssize_t ret;
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 8f141d4c859c..129083684ca0 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -1005,6 +1005,7 @@ static inline void sched_cpufreq_governor_change(struct cpufreq_policy *policy,
++DEFINE_PER_CPU(struct freq_sample, freq_sample);
++
+ /*
+  * This function gets called by the timer code, with HZ frequency.
+  * We call it with interrupts disabled.
+@@ -3996,6 +4005,8 @@ void scheduler_tick(void)
+ 	update_rq_clock(rq);
+ 	thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
+ 	update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure);
++	rq->freq = arch_freq_get_on_cpu_from_sample(cpu,
++						    this_cpu_ptr(&freq_sample));
+ 	curr->sched_class->task_tick(rq, curr, 0);
+ 	calc_global_load_tick(rq);
+ 	psi_task_tick(rq);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 28709f6b0975..7d794ab756d2 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1048,6 +1048,10 @@ struct rq {
+ 	/* Must be inspected within a rcu lock section */
+ 	struct cpuidle_state	*idle_state;
+ #endif
++
++	/* Frequency measured at the last tick */
++	unsigned int            freq;
++
+ };
  
- extern void arch_freq_prepare_all(void);
- extern unsigned int arch_freq_get_on_cpu(int cpu);
-+extern unsigned int arch_freq_get_on_cpu_from_sample(int cpu, void *sample);
- 
- extern void arch_set_freq_scale(struct cpumask *cpus, unsigned long cur_freq,
- 				unsigned long max_freq);
+ #ifdef CONFIG_FAIR_GROUP_SCHED
 -- 
 2.28.0
 
