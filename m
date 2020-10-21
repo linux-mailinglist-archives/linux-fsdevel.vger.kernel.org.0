@@ -2,178 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6F85294C35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 14:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8DD294CA8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 14:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440005AbgJUMFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 08:05:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439997AbgJUMFp (ORCPT
+        id S2440362AbgJUMdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 08:33:53 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:25619 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411680AbgJUMdw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 08:05:45 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A61C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Oct 2020 05:05:44 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id lw2so1036929pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Oct 2020 05:05:44 -0700 (PDT)
+        Wed, 21 Oct 2020 08:33:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1603283632; x=1634819632;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=YyoWyxTxEs/A9ge8ezyiqXZUAF5600tbR/Tlm6JbEtw=;
+  b=M30hxXdLebozwyQ++fcFud3JLiA5w9JQ9z6urr/q6Wk037ew88mhYqOs
+   5bffA7oCc08LCYLVz2UHPYHvHMv+nVRAuvWszrGiQFE4HSJkvZo/zwE4E
+   yICsA0bhD5WMjSGMwObRyfDNlbgAgHswqdD2QQFE7RD/Q+0VWBWtg0Mk8
+   hH26KIxb8A8FpnGKKEcPwoVtxakYH57wmGaynhYkGNDlVTK2NuqNQ91o8
+   Bm0Va09REf92SUbCJFky1jMXtWr1Bm9vDzxI01mgVuAvV49JQPk4OWEmo
+   tT+aMvcRmfoKnAXbOwlntoM+0XfZz6JYD3Tr3N+lDzDS5KuuADT23PbCr
+   Q==;
+IronPort-SDR: XgCYsfGGFO+sSB5WNMabJ6RMB7M+PfFZx6EsQ64pcJSUJSw1ZY5ake6oUljpyj2E6LlsIr+MA7
+ tmjWAU4GT1xy8W1GZbR534n5pamXz94xS4JJVNxiu/uK2rn5spr0s9z9FWOK6kfGRMNXiv0+ou
+ P34WxeZcCHEBYD2A8DwNTLBp4xk9P+XGQr2r7oeoDkLbVWkj6BChTU2n7zBxf8FdbjDZSTDuzV
+ 7WBGuTDivsoAufO0lgwR9II5qSvrx580AUlSFlyL/En/rr877mVVujAw6MlmVL4YAgiCp+ByEH
+ +fw=
+X-IronPort-AV: E=Sophos;i="5.77,401,1596470400"; 
+   d="scan'208";a="260405465"
+Received: from mail-bn8nam11lp2173.outbound.protection.outlook.com (HELO NAM11-BN8-obe.outbound.protection.outlook.com) ([104.47.58.173])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Oct 2020 20:33:51 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lLkbXsqf9ZeeJHNNICDI/FaYWb6C70IbjnOWsMYnX+rune86EX6pmcPBzUeVIqyy5xthiuzWNIVm1oZzcxTexg+cJtLNF30Ir6l03n/JCDJAMXrRssJwAi2jrhdRN0Y3s9+5mgpVQ3ZH7OD9ZQu/9j5QjKb384OQLlIbDdjdodBgCVzegjSMitjNMBbAo4QsSwQ5Kadj5iq899nwz/hrpyfxapW8PRzT87U1CX/vc0iLcNoKIr6T1tu87EP1zQTQG60oxl0O1Uae3wb2MFVC/I4feyp9JSdYO7sYs8BQVb1xuMpAgT8ro85sZaW0AkKkQJmcN/cScHPoQ4d97aJbRQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8dpB+qlh5q04PzTHuhXLVlL1xae6NwnlI+NzNj2krsQ=;
+ b=kA9v7qCvSZ/9TszNBLgk9zyd1Z5uZFLj1oUG5ibMJkXkj6DZu2A8PoPj4vZjFH4JC7I1DRBE2nWwsktNIwXI9OduVtKX2O/56A5va5WpojSD2lfTOAoCXcs248Ws/QJFljws8vfnjfeiq2KrSKDpdmoG3YIuSu+2AUhVixCEZssXz6B9ViZ2K5n0/4H0PP2Xl9by4ZOJ1EcRemBlg9mylNbCNBmUkHRpZevOPpi7kmjvRSrNekDkj613ObMrnS09ehvLuRyqsumi3PGgkhz1EhywB2BqGNtN2W3pCdTC2kKcVa3ewqRwtQlTNDq/bfCNqw7guqQtBy41XE1z3/wQ7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jLn1x0a229/WkcL7/dHpbssMTZU0rXgDdf1xqdaPV3Q=;
-        b=GxJ3G4RDlax+CMWklzAbiprEUD+1G2uWIJmvVWDLA/XN7EHQ8OSVGo06rSs0k7M0H8
-         nEkZhQpI6AXtct80ms0hra9wJOf4R4ldgfSAPS1p7dwhgayvynUrndILReguMrHxD+Gq
-         rtYMTAN3Iql7l5vYUN/mIgJGGHp8sH39yxPm8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jLn1x0a229/WkcL7/dHpbssMTZU0rXgDdf1xqdaPV3Q=;
-        b=ZOP+2xA3Q3gaqDDn+KbmzyFitUwN0Zvd9cQO8p7UYkOjDEy9RtGvSHKiaIzzGBPXks
-         f/YrotvmYR0u1BkYLYx64upn91SRv2zaeXTbeEI8a6IsSUGZtiYKMmKcQeHl2nXxzu8r
-         +wCwBDheYs4PuXlXFj+ME7vIfeuISEau4t7F9gp/l0MedBb+WiUZDgvAIWB2mk9wi6tD
-         XcUVZgGiJVVwVRe2tuD2HDls9MFguiVGe0WeCkIUb4qeZukNAbiDz9w4c19QtdlaI8x1
-         IdwAkDpZicBa0gLH36NVw6CPBeUc2rWhX8V97a8V9mP1rR8my99kopc30P+7Cziv8YV3
-         S0yA==
-X-Gm-Message-State: AOAM533Ll0+7kYzVg+Tk/pdvSo77l7LBrU7s+WfsXbkc/sFk6f5t5nDr
-        Vx3A0kyQF0tJihM5L79rsFiYYQ==
-X-Google-Smtp-Source: ABdhPJwbJOHDfZc9DluTXh1hC3PF30lFHtcQ8YvHY2EPqNGCPlk96//ypyM34ATIq9vWGH5taROkkQ==
-X-Received: by 2002:a17:902:7798:b029:d5:d3b6:2526 with SMTP id o24-20020a1709027798b02900d5d3b62526mr3424428pll.2.1603281944284;
-        Wed, 21 Oct 2020 05:05:44 -0700 (PDT)
-Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
-        by smtp.gmail.com with ESMTPSA id b5sm2276392pfo.64.2020.10.21.05.05.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 05:05:43 -0700 (PDT)
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, kylea@netflix.com
-Subject: [PATCH v3 3/3] NFSv4: Refactor NFS to be use user namespaces
-Date:   Wed, 21 Oct 2020 05:05:29 -0700
-Message-Id: <20201021120529.7062-4-sargun@sargun.me>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201021120529.7062-1-sargun@sargun.me>
-References: <20201021120529.7062-1-sargun@sargun.me>
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8dpB+qlh5q04PzTHuhXLVlL1xae6NwnlI+NzNj2krsQ=;
+ b=lFEtI53QeB0emOHPLME+/cOvCtUtdUIAD13BRUxxgOuF2hpjKohtjYbORPxn5VSoFQB+/kyjidhyeIXoxI5Rd6SQCqEuieOQfshln/OTC3+vCs3CcVrTJ4NAOwjMFcswRR3LEHtxv3GUliUVd8ap+bTIpTp4BErIqWzjc93lQVA=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SA0PR04MB7289.namprd04.prod.outlook.com
+ (2603:10b6:806:db::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.20; Wed, 21 Oct
+ 2020 12:33:49 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::619a:567c:d053:ce25]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::619a:567c:d053:ce25%6]) with mapi id 15.20.3477.028; Wed, 21 Oct 2020
+ 12:33:49 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: UBSAN: shift-out-of-bounds in get_init_ra_size()
+Thread-Topic: UBSAN: shift-out-of-bounds in get_init_ra_size()
+Thread-Index: AQHWp5jo+FBwU+0LhU2DuGQVCdRitA==
+Date:   Wed, 21 Oct 2020 12:33:49 +0000
+Message-ID: <SN4PR0401MB3598DD920ABF1AE876BF50609B1C0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <SN4PR0401MB3598C9C5B4D7ED74E79F28A09B1C0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <20201021112347.GI20115@casper.infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: infradead.org; dkim=none (message not signed)
+ header.d=none;infradead.org; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: fc28e5e8-5d90-4f7f-6e95-08d875bd8ff0
+x-ms-traffictypediagnostic: SA0PR04MB7289:
+x-microsoft-antispam-prvs: <SA0PR04MB728997ADFCC57E34973A0D6D9B1C0@SA0PR04MB7289.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:873;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: lzUQACMrHxzquH5lOhHkyt5shi5J7TntprK5Mn4iPOpFfteBXiYXRTprbQskS4PC9fUEPuzrZXaK6M6iqD6NRRV5p5HMjmAz8HkZGnbVKwibX/QbXonQObmwTyRVvjGaM3BQ2NhWTqXrMKLf/L/3Wyk7PQK/NM+i9GhlxOxZBEnhdN2JkZisDnGZ1kyLa8vMpR7CbTXsAwBB+TFfC6NtoOM67Zzm+cXcurMmW9H9383h6FivvxTsHmM+TgZlvjl0bRfVrtacX18wdXpQGXcydQ74mqAhW5sTLImsx/R6mQZ+ceBZFRvQPUrpHQ6WopmEj/7Fp4IoFiU/LDPtqiPfWA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(366004)(39860400002)(346002)(136003)(376002)(55016002)(8676002)(6916009)(7696005)(9686003)(66476007)(66556008)(64756008)(66446008)(2906002)(91956017)(4326008)(8936002)(76116006)(86362001)(66946007)(186003)(71200400001)(26005)(6506007)(53546011)(54906003)(52536014)(478600001)(5660300002)(33656002)(316002)(4744005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: lGjwvrKLtAOqE8wJ72xktQEJ4MI/WPJpyJUjtJ4rvu1Wl60FRE1cHk0bVaQPU+2nQgmPwGUVCSQWsc5fYzM/QWmy0AyZnFa+MYlSlPs1I1dQsqSJWSqsiXS3bOm7vOLYTtiOfOks02JzUZwX1tRJ2B953rZVuX8yDbHirCYNZaPklgKnVAAupn3ZwqWcrT4B0Ib78RFNEXoQZAMNtp8jg4YvYrcwnmirC786is09AqUXYRiwFOeh1kgEOdtWnbsVotRQYGY/9NBgiSSCbGcdKtNATPCylGZfSl/y514ORaJJ1WPcrxOEEHmreg/qxQMGHzS9VfXzrGNhGWfQDP5a/Mb+lthnDB3E1U2N+/5n0S+ZSySNi9B+xhdnoHMQgCUXFq1W5JhQDhDlEs69ciBxJ5gQus4pu4/IutUFBGgWeC1r/Zo7ETAARq093tM1ci54mn5urGdXo6IOJsZgfVd1HE8kHBHwuKUZu3bn4WOK3ixbRaF+S8QcHYXq487Ms+xTyx69y7A1ElZqDGi8fhZub052DILc558vTScloBDVI0vQzolDgqm3eipE4kFUMWkbcsKh34UCvNAjjmEzDtHbc+wcFTQEVKyQ8pR392sPNkSoXqtXbW9svc7jyNmAgkq5fZrolHT8no65bMlZ3vEjdQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc28e5e8-5d90-4f7f-6e95-08d875bd8ff0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2020 12:33:49.6183
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ia9fyPGvB/brEUhRUBkn0+3D6okxCZDIjMstl1XKreFlGKyOxfTLOkf34GlpJehpvWCmkUDJayY5pFcU7UdVoHdBiLkOCncQehWnGPQ0fFk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR04MB7289
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In several patches work has been done to enable NFSv4 to use user
-namespaces: 58002399da65: NFSv4: Convert the NFS client idmapper to use the
-container user namespace 3b7eb5e35d0f: NFS: When mounting, don't share
-filesystems between different user namespaces
-
-Unfortunately, the userspace APIs were only such that the userspace facing side of the
-filesystem (superblock s_user_ns) could be set to a non init user namespace. This furthers
-the fs_context related refactoring, and piggybacks on top of that logic, so the superblock
-user namespace, and the NFS user namespace are the same.
-
-This change only allows those users whom are not using ID mapping to use user namespaces
-because the upcall mechanism still needs to be made fully namespace aware. Currently,
-it is only network namespace aware (and this patch doesn't impede that behaviour).
-Also, there is currently a limitation that enabling / disabling ID mapping can only
-be done on a machine-wide basis.
-
-Eventually, we will need to at least:
-  * Separate out the keyring cache by namespace
-  * Come up with an upcall mechanism that can be triggered inside of the container,
-    or safely triggered outside, with the requisite context to do the right mapping.
-  * Handle whatever refactoring needs to be done in net/sunrpc.
-
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
----
- fs/nfs/nfs4client.c | 27 ++++++++++++++++++++++++++-
- fs/nfs/nfs4idmap.c  |  2 +-
- fs/nfs/nfs4idmap.h  |  3 ++-
- 3 files changed, 29 insertions(+), 3 deletions(-)
-
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index daacc78a3d48..0811e9540bf5 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -1151,7 +1151,19 @@ struct nfs_server *nfs4_create_server(struct fs_context *fc)
- 	if (!server)
- 		return ERR_PTR(-ENOMEM);
- 
--	server->cred = get_cred(current_cred());
-+	/*
-+	 * current_cred() must have CAP_SYS_ADMIN in init_user_ns. All non
-+	 * init user namespaces cannot mount NFS, but the fs_context
-+	 * can be created in any user namespace.
-+	 */
-+	if (fc->cred->user_ns != &init_user_ns) {
-+		dprintk("%s: Using creds from non-init userns\n", __func__);
-+	} else if (fc->cred != current_cred()) {
-+		dprintk("%s: Using creds from fs_context which are different than current_creds\n",
-+			__func__);
-+	}
-+
-+	server->cred = get_cred(fc->cred);
- 
- 	auth_probe = ctx->auth_info.flavor_len < 1;
- 
-@@ -1164,6 +1176,19 @@ struct nfs_server *nfs4_create_server(struct fs_context *fc)
- 	if (error < 0)
- 		goto error;
- 
-+	/*
-+	 * nfs4idmap is not fully isolated by user namespaces. It is currently
-+	 * only network namespace aware. If upcalls never happen, we do not
-+	 * need to worry as nfs_client instances aren't shared between
-+	 * user namespaces.
-+	 */
-+	if (idmap_userns(server->nfs_client->cl_idmap) != &init_user_ns &&
-+		!(server->caps & NFS_CAP_UIDGID_NOMAP)) {
-+		error = -EINVAL;
-+		errorf(fc, "Mount credentials are from non init user namespace and ID mapping is enabled. This is not allowed.");
-+		goto error;
-+	}
-+
- 	return server;
- 
- error:
-diff --git a/fs/nfs/nfs4idmap.c b/fs/nfs/nfs4idmap.c
-index 8d8aba305ecc..33dc9b76dc17 100644
---- a/fs/nfs/nfs4idmap.c
-+++ b/fs/nfs/nfs4idmap.c
-@@ -73,7 +73,7 @@ struct idmap {
- 	struct user_namespace	*user_ns;
- };
- 
--static struct user_namespace *idmap_userns(const struct idmap *idmap)
-+struct user_namespace *idmap_userns(const struct idmap *idmap)
- {
- 	if (idmap && idmap->user_ns)
- 		return idmap->user_ns;
-diff --git a/fs/nfs/nfs4idmap.h b/fs/nfs/nfs4idmap.h
-index de44d7330ab3..2f5296497887 100644
---- a/fs/nfs/nfs4idmap.h
-+++ b/fs/nfs/nfs4idmap.h
-@@ -38,7 +38,7 @@
- 
- #include <linux/uidgid.h>
- #include <uapi/linux/nfs_idmap.h>
--
-+#include <linux/user_namespace.h>
- 
- /* Forward declaration to make this header independent of others */
- struct nfs_client;
-@@ -50,6 +50,7 @@ int nfs_idmap_init(void);
- void nfs_idmap_quit(void);
- int nfs_idmap_new(struct nfs_client *);
- void nfs_idmap_delete(struct nfs_client *);
-+struct user_namespace *idmap_userns(const struct idmap *idmap);
- 
- void nfs_fattr_init_names(struct nfs_fattr *fattr,
- 		struct nfs4_string *owner_name,
--- 
-2.25.1
-
+On 21/10/2020 13:23, Matthew Wilcox wrote:=0A=
+> -	unsigned long newsize =3D roundup_pow_of_two(size);=0A=
+> +	unsigned long newsize =3D size ? roundup_pow_of_two(size) : size;=0A=
+> =0A=
+> would fix the ubsan splat.  Or maybe you should stop passing 0 to=0A=
+> get_init_ra_size()?  ;-)=0A=
+=0A=
+You're right. Let's do both ;-). Fix btrfs to stop passing in 0 and=0A=
+get_init_ra_size() to not call roundup_pow_of_two() with 0.=0A=
+=0A=
