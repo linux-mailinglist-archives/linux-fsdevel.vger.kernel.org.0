@@ -2,122 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 219B82951D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 19:53:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0FF295313
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 21:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503758AbgJURxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 13:53:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55381 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2503751AbgJURx3 (ORCPT
+        id S2505066AbgJUTpZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 15:45:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57744 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438786AbgJUTpY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 13:53:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603302807;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0aM6MG+N6GRh+zh31VWFPduo2rgWm3emASszSAw8inM=;
-        b=dVQtkUVDhMe6hJ36UJkcJNAJMIJpA1I1O8kaqEQyrmEfH4muWRRUbNPvxLlxQjJ0ExqLdj
-        rkmb1Jg7EuzEyE5Bs74izyyhK/a2u6iuqMR/DvBU/Ox10mWN+uckbZE/gXlW78B8pmC3IU
-        Tao5jPLFYuBy6RT/EfpXYxv5qC51sDE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-582-0BAAGVqzMda2Ab5lMPFbVA-1; Wed, 21 Oct 2020 13:53:23 -0400
-X-MC-Unique: 0BAAGVqzMda2Ab5lMPFbVA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 57DDD804B66;
-        Wed, 21 Oct 2020 17:53:20 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E934B5D9EF;
-        Wed, 21 Oct 2020 17:53:06 +0000 (UTC)
-Date:   Wed, 21 Oct 2020 13:53:03 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, linux-audit@redhat.com,
-        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 V9 05/13] audit: log container info of syscalls
-Message-ID: <20201021175303.GH2882171@madcap2.tricolour.ca>
-References: <cover.1593198710.git.rgb@redhat.com>
- <20201002195231.GH2882171@madcap2.tricolour.ca>
- <20201021163926.GA3929765@madcap2.tricolour.ca>
- <2174083.ElGaqSPkdT@x2>
+        Wed, 21 Oct 2020 15:45:24 -0400
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54D8C0613CE;
+        Wed, 21 Oct 2020 12:45:24 -0700 (PDT)
+Received: by mail-oo1-xc31.google.com with SMTP id j6so833262oot.3;
+        Wed, 21 Oct 2020 12:45:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=v0iK/cV72UNiwB5XBenTai9sOdiim2LZ9CpHGg2+i4Y=;
+        b=gtHnwaCCQDA7vrlBp6DaFMbU7Dy9JQ5t2J28uDXHa71Q3oPwKst66bkUxieJjipnmQ
+         Pe8YmMcb9hVn4TB0kA9JY2exDGR7WubLdX3ofIEkIpmYYuYRxHPU6qdH0Bx3wXoLFuN5
+         u7Zqbia33X+8YYerN1tQjTlp+yPSFyVv5TuuncpfZ2XFNcTybtL2mpDCBbEatMeLYBFp
+         Wp4oLTFG7u9DJBrUR69FonpvYhZv97ZXzgLfmsQcmwQ4OtODw9cbxqQwct2M65Kg7eMf
+         iH+cAxWsngb1P3pFDNPIbv95Uu7kNHVCoHJMn0xJNnpZ35M4qx4QClwnjkjDjV9YDMIq
+         pTiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=v0iK/cV72UNiwB5XBenTai9sOdiim2LZ9CpHGg2+i4Y=;
+        b=dVnGKu6/2TmScXJFbsfwaQl8nIqNjXe43dsbGN0SXWfRCZE5hgnwFppejnpWNpvp3G
+         BdtMZZRbv6uFyiiwrho2SS2kcu5xXwx4G4xzXTFe3gWhnDd3K2G3HTD+sz+3X50Twk+A
+         wQh61C/Kueb9eqzKo/S3iDxa1qZsv9Q01jomFFQdi2syAcTbz6r8UtAt/3vd3YnmeIug
+         Ssz0fGwfAgBilOEZ3BiqlKr4YnuGJhENPf2lK64n5qf2cL7kerSsUXFq1ybMOryQpigj
+         QoIxiNjXHZLPEHfbjawLLChNwe3Bp+jqvJLdl4RnTsBBLnkzoewdMPl5TxDkxE5viD1c
+         rf6w==
+X-Gm-Message-State: AOAM533ENRWRaQ7rxvktIJJPYSrxrA5Xx4t5AqtKJj+6zaEXYUD2HZtf
+        35sS8oSIXWze8Zic3r3WtkOMvxaRx5EZllZ0Xo4=
+X-Google-Smtp-Source: ABdhPJzJL5CqKmGI9mY3iOQcT4fjT9UfTQeTDtRqkSxMQaxbob7iglOXLrVsz8WK7WSCXek9YQhYIFHLtdp8TDN3jkY=
+X-Received: by 2002:a4a:ea4b:: with SMTP id j11mr3737030ooe.56.1603309524072;
+ Wed, 21 Oct 2020 12:45:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2174083.ElGaqSPkdT@x2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+From:   Albert Netymk <albertnetymk@gmail.com>
+Date:   Wed, 21 Oct 2020 21:45:13 +0200
+Message-ID: <CAKEGsXR_ZDwydz2Ed3gvqCbnVA_vT3PZG0a2RLbgj5q4fP5LuQ@mail.gmail.com>
+Subject: Imprecise definition for proportional set size in documentation
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-10-21 12:49, Steve Grubb wrote:
-> On Wednesday, October 21, 2020 12:39:26 PM EDT Richard Guy Briggs wrote:
-> > > I think I have a way to generate a signal to multiple targets in one
-> > > syscall...  The added challenge is to also give those targets different
-> > > audit container identifiers.
-> > 
-> > Here is an exmple I was able to generate after updating the testsuite
-> > script to include a signalling example of a nested audit container
-> > identifier:
-> > 
-> > ----
-> > type=PROCTITLE msg=audit(2020-10-21 10:31:16.655:6731) :
-> > proctitle=/usr/bin/perl -w containerid/test type=CONTAINER_ID
-> > msg=audit(2020-10-21 10:31:16.655:6731) :
-> > contid=7129731255799087104^3333941723245477888 type=OBJ_PID
-> > msg=audit(2020-10-21 10:31:16.655:6731) : opid=115583 oauid=root ouid=root
-> > oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> > ocomm=perl type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) :
-> > contid=3333941723245477888 type=OBJ_PID msg=audit(2020-10-21
-> > 10:31:16.655:6731) : opid=115580 oauid=root ouid=root oses=1
-> > obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 ocomm=perl
-> > type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) :
-> > contid=8098399240850112512^3333941723245477888 type=OBJ_PID
-> > msg=audit(2020-10-21 10:31:16.655:6731) : opid=115582 oauid=root ouid=root
-> > oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> > ocomm=perl type=SYSCALL msg=audit(2020-10-21 10:31:16.655:6731) :
-> > arch=x86_64 syscall=kill success=yes exit=0 a0=0xfffe3c84 a1=SIGTERM
-> > a2=0x4d524554 a3=0x0 items=0 ppid=115564 pid=115567 auid=root uid=root
-> > gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root
-> > tty=ttyS0 ses=1 comm=perl exe=/usr/bin/perl
-> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-> > key=testsuite-1603290671-AcLtUulY ----
-> > 
-> > There are three CONTAINER_ID records which need some way of associating
-> > with OBJ_PID records.  An additional CONTAINER_ID record would be present
-> > if the killing process itself had an audit container identifier.  I think
-> > the most obvious way to connect them is with a pid= field in the
-> > CONTAINER_ID record.
-> 
-> pid is the process sending the signal, opid is the process receiving the 
-> signal. I think you mean opid?
+From https://www.kernel.org/doc/html/latest/filesystems/proc.html
+```
+The =E2=80=9Cproportional set size=E2=80=9D (PSS) of a process is the count=
+ of pages
+it has in memory, where each page is divided by the number of
+processes sharing it.
+```
+The definition is a bit imprecise if a process uses multiple-mapping.
+A real example is ZGC in OpenJDK, as asked at
+https://superuser.com/questions/1485370/linux-misreports-process-size-with-=
+heap-multi-mapping
 
-If the process sending the signal (it has a pid= field) has an audit
-container identifier, it will generate a CONTAINER_ID record.  Each
-process being signalled (each has an opid= field) that has an audit
-container identifier will also generate a CONTAINER_ID record.  The
-former will be much more common.  Which do we use in the CONTAINER_ID
-record?  Having swinging fields, pid vs opid does not seem like a
-reasonable solution.  Do we go back to "ref=pid=..." vs "ref=opid=..."?
+A more precise wording could be something like `..., where each page
+is divided by the number of mappings associated with it.`
 
-> -Steve
+PS: I have read
+https://www.kernel.org/doc/html/latest/admin-guide/reporting-bugs.html,
+but it's still unclear to me whether a mail or a ticket in bugzilla is
+preferred.  Since this is just a documentation issue, maybe a mail is
+fine.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+/Albert
