@@ -2,196 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64C162950B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 18:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9ED52950FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 18:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2444615AbgJUQZy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 12:25:54 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52626 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390908AbgJUQZx (ORCPT
+        id S2503113AbgJUQju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 12:39:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37377 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2503106AbgJUQjt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 12:25:53 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09LGODWG152937;
-        Wed, 21 Oct 2020 16:25:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=d3ckWHdveMySigHXiLucQZSgdA4gFXNzC2B9tGAIPAo=;
- b=MICm2Zu1pirl3epjh2xBAgDX5GmSCyCYCSGszeY6Gg2KLTyNitrkQnN+E83cXbPzIYfx
- tPMsO/NCJgusFCyhLJL/tXzT7DSNicVeYRxvLdXr5p+C4nNwSQQ0i+39f8RO+wXvGO9T
- 8AEwagcwYYZG6iGBWOAI8b+KcsSAJnxIuwix8dQ+BlFkwZb3d0IhqT5ihfAcDgDgOGEI
- 2+Tu8irINIvyy4+WfuZcYjX1dQVoTYvFURBEVzYwvlqOW86IIRkTtI76dgP+BlF5uY8z
- won7VsmsgC8Zm8ZC929ptfhYv3AeuIMLHAojCvQir1CCtIy9AZKlXRw1E1k9MAyEuLl7 Pw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 34ak16htf1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Oct 2020 16:25:49 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09LGOwc7047879;
-        Wed, 21 Oct 2020 16:25:49 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 348ahxs7ur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Oct 2020 16:25:49 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 09LGPm3j023051;
-        Wed, 21 Oct 2020 16:25:48 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Oct 2020 09:25:48 -0700
-Date:   Wed, 21 Oct 2020 09:25:47 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] iomap: zero cached page over unwritten extent on
- truncate page
-Message-ID: <20201021162547.GL9832@magnolia>
-References: <20201021133329.1337689-1-bfoster@redhat.com>
+        Wed, 21 Oct 2020 12:39:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603298387;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YklPv8/0OmCyptwlWRuggJNTmVWGoVbcydh3UqMAmHw=;
+        b=NpjyFbNCsIK++Au5ZBhZQ2KM8/IgQsJOnOBnKvVFmD/k/Ak/rvt7pma+tdsNE7tW48sqqi
+        BnX870V6sv8l8Auc6SmHi/Js+6P7ikr8sidTf897p/h5jrx8S/dagqVcxfp14PQOvWKHLm
+        C503Zh3OHOikq82Dk/ima6wgBkmiaVU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-359-jJiRbKeWMNqcOmXwf7GJ-g-1; Wed, 21 Oct 2020 12:39:43 -0400
+X-MC-Unique: jJiRbKeWMNqcOmXwf7GJ-g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 969AB5F9C1;
+        Wed, 21 Oct 2020 16:39:41 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BC5E27CC1;
+        Wed, 21 Oct 2020 16:39:28 +0000 (UTC)
+Date:   Wed, 21 Oct 2020 12:39:26 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V9 05/13] audit: log container info of syscalls
+Message-ID: <20201021163926.GA3929765@madcap2.tricolour.ca>
+References: <cover.1593198710.git.rgb@redhat.com>
+ <6e2e10432e1400f747918eeb93bf45029de2aa6c.1593198710.git.rgb@redhat.com>
+ <CAHC9VhSCm5eeBcyY8bBsnxr-hK4rkso9_NJHJec2OXLu4m5QTA@mail.gmail.com>
+ <20200729194058.kcbsqjhzunjpipgm@madcap2.tricolour.ca>
+ <CAHC9VhRUwCKBjffA_XNSjUwvUn8e6zfmy8WD203dK7R2KD0__g@mail.gmail.com>
+ <20201002195231.GH2882171@madcap2.tricolour.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201021133329.1337689-1-bfoster@redhat.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9780 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
- malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010210119
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9780 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0
- priorityscore=1501 clxscore=1015 malwarescore=0 mlxscore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010210119
+In-Reply-To: <20201002195231.GH2882171@madcap2.tricolour.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 09:33:29AM -0400, Brian Foster wrote:
-> iomap_truncate_page() relies on zero range and zero range
-> unconditionally skips unwritten mappings. This is normally not a
-> problem as most users synchronize in-core state to the underlying
-> block mapping by flushing pagecache prior to calling into iomap.
-> This is not the case for iomap_truncate_page(), however. XFS calls
-> iomap_truncate_page() on truncate down before flushing the new EOF
-> page of the file. This means that if the new EOF block is unwritten
-> but covered by a dirty or writeback page (i.e. awaiting unwritten
-> conversion after writeback), iomap fails to zero that page. The
-> subsequent truncate_setsize() call does perform page zeroing, but
-> doesn't dirty the page. Therefore if the new EOF page is written
-> back after calling into iomap but before the pagecache truncate, the
-> post-EOF zeroing is lost on page reclaim. This exposes stale
-> post-EOF data on mapped reads.
+On 2020-10-02 15:52, Richard Guy Briggs wrote:
+> On 2020-08-21 15:15, Paul Moore wrote:
+> > On Wed, Jul 29, 2020 at 3:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2020-07-05 11:10, Paul Moore wrote:
+> > > > On Sat, Jun 27, 2020 at 9:22 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > 
+> > ...
+> > 
+> > > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > > index f03d3eb0752c..9e79645e5c0e 100644
+> > > > > --- a/kernel/auditsc.c
+> > > > > +++ b/kernel/auditsc.c
+> > > > > @@ -1458,6 +1466,7 @@ static void audit_log_exit(void)
+> > > > >         struct audit_buffer *ab;
+> > > > >         struct audit_aux_data *aux;
+> > > > >         struct audit_names *n;
+> > > > > +       struct audit_contobj *cont;
+> > > > >
+> > > > >         context->personality = current->personality;
+> > > > >
+> > > > > @@ -1541,7 +1550,7 @@ static void audit_log_exit(void)
+> > > > >         for (aux = context->aux_pids; aux; aux = aux->next) {
+> > > > >                 struct audit_aux_data_pids *axs = (void *)aux;
+> > > > >
+> > > > > -               for (i = 0; i < axs->pid_count; i++)
+> > > > > +               for (i = 0; i < axs->pid_count; i++) {
+> > > > >                         if (audit_log_pid_context(context, axs->target_pid[i],
+> > > > >                                                   axs->target_auid[i],
+> > > > >                                                   axs->target_uid[i],
+> > > > > @@ -1549,14 +1558,20 @@ static void audit_log_exit(void)
+> > > > >                                                   axs->target_sid[i],
+> > > > >                                                   axs->target_comm[i]))
+> > > > >                                 call_panic = 1;
+> > > > > +                       audit_log_container_id(context, axs->target_cid[i]);
+> > > > > +               }
+> > > >
+> > > > It might be nice to see an audit event example including the
+> > > > ptrace/signal information.  I'm concerned there may be some confusion
+> > > > about associating the different audit container IDs with the correct
+> > > > information in the event.
+> > >
+> > > This is the subject of ghat81, which is a test for ptrace and signal
+> > > records.
+> > >
+> > > This was the reason I had advocated for an op= field since there is a
+> > > possibility of multiple contid records per event.
+> > 
+> > I think an "op=" field is the wrong way to link audit container ID to
+> > a particular record.  It may be convenient, but I fear that it would
+> > be overloading the field too much.
 > 
-> Rework iomap_truncate_page() to check pagecache state before calling
-> into iomap_apply() and use that info to determine whether we can
-> safely skip zeroing unwritten extents. The filesystem has locked out
-> concurrent I/O and mapped operations at this point but is not
-> serialized against writeback, unwritten extent conversion (I/O
-> completion) or page reclaim. Therefore if a page does not exist
-> before we acquire the mapping, we can be certain that an unwritten
-> extent cannot be converted before we return and thus it is safe to
-> skip. If a page does exist over an unwritten block, it could be in
-> the dirty or writeback states, convert the underlying mapping at any
-> time, and thus should be explicitly written to avoid racing with
-> writeback. Finally, since iomap_truncate_page() only targets the new
-> EOF block and must now pass additional state to the actor, open code
-> the zeroing actor instead of plumbing through zero range.
+> Ok, after looking at the field dictionary how about item, rel, ref or rec?
+> Item perhaps could be added to the OBJ_PID records, but that might be
+> overloading a field that is already used in PATH records.  "rel" for
+> relates-to, "ref" for reference to, "rec" for record...  Perhaps pid=
+> would be enough to tie this record to the OBJ_PID record or the SYSCALL
+> record, but in the case of network events, the pid may refer to a kernel
+> thread.
 > 
-> This does have the tradeoff that an existing clean page is dirtied
-> and causes unwritten conversion, but this is analogous to historical
-> behavior implemented by block_truncate_page(). This patch restores
-> historical behavior to address the data exposure problem and leaves
-> filtering out the clean page case for a separate patch.
-> Fixes: 68a9f5e7007c ("xfs: implement iomap based buffered write path")
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
+> > Like I said above, I think it would be good to see an audit event
+> > example including the ptrace/signal information.  This way we can talk
+> > about it on-list and hash out the various solutions if it proves to be
+> > a problem.
 > 
-> v2:
-> - Rework to check for cached page explicitly and avoid use of seek data.
-> v1: https://lore.kernel.org/linux-fsdevel/20201012140350.950064-1-bfoster@redhat.com/
-
-Has the reproducer listed in that email been turned into a fstest case
-yet? :)
-
+> See the list posting from 2020-09-29 "auditing signals" pointing to
+> ghat81 test case about testing ptrace and signals from 18 months ago.
 > 
->  fs/iomap/buffered-io.c | 41 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 40 insertions(+), 1 deletion(-)
+> I think I have a way to generate a signal to multiple targets in one
+> syscall...  The added challenge is to also give those targets different
+> audit container identifiers.
+
+Here is an exmple I was able to generate after updating the testsuite
+script to include a signalling example of a nested audit container
+identifier:
+
+----
+type=PROCTITLE msg=audit(2020-10-21 10:31:16.655:6731) : proctitle=/usr/bin/perl -w containerid/test
+type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) : contid=7129731255799087104^3333941723245477888
+type=OBJ_PID msg=audit(2020-10-21 10:31:16.655:6731) : opid=115583 oauid=root ouid=root oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 ocomm=perl
+type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) : contid=3333941723245477888
+type=OBJ_PID msg=audit(2020-10-21 10:31:16.655:6731) : opid=115580 oauid=root ouid=root oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 ocomm=perl
+type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) : contid=8098399240850112512^3333941723245477888
+type=OBJ_PID msg=audit(2020-10-21 10:31:16.655:6731) : opid=115582 oauid=root ouid=root oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 ocomm=perl
+type=SYSCALL msg=audit(2020-10-21 10:31:16.655:6731) : arch=x86_64 syscall=kill success=yes exit=0 a0=0xfffe3c84 a1=SIGTERM a2=0x4d524554 a3=0x0 items=0 ppid=115564 pid=115567 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=perl exe=/usr/bin/perl subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=testsuite-1603290671-AcLtUulY                     
+----
+
+There are three CONTAINER_ID records which need some way of associating with OBJ_PID records.  An additional CONTAINER_ID record would be present if the killing process itself had an audit container identifier.  I think the most obvious way to connect them is with a pid= field in the CONTAINER_ID record.
+
+> > > > > @@ -1575,6 +1590,14 @@ static void audit_log_exit(void)
+> > > > >
+> > > > >         audit_log_proctitle();
+> > > > >
+> > > > > +       rcu_read_lock();
+> > > > > +       cont = _audit_contobj_get(current);
+> > > > > +       rcu_read_unlock();
+> > > > > +       audit_log_container_id(context, cont);
+> > > > > +       rcu_read_lock();
+> > > > > +       _audit_contobj_put(cont);
+> > > > > +       rcu_read_unlock();
+> > > >
+> > > > Do we need to grab an additional reference for the audit container
+> > > > object here?  We don't create any additional references here that
+> > > > persist beyond the lifetime of this function, right?
+> > >
+> > > Why do we need another reference?  There's one for each pointer pointing
+> > > to it and so far we have just one from this task.  Or are you thinking
+> > > of the contid hash list, which is only added to when a task points to it
+> > > and gets removed from that list when the last task stops pointing to it.
+> > > Later that gets more complicated with network namespaces and nested
+> > > container objects.  For now we just needed it while generating the
+> > > record, then it gets freed.
+> > 
+> > I don't think we need to grab an additional reference here, that is
+> > why I asked the question.  The code above grabs a reference for the
+> > audit container ID object associated with the current task and then
+> > drops it before returning; if the current task, and it's associated
+> > audit container ID object, disappears in the middle of the function
+> > we've got much bigger worries :)
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index bcfc288dba3f..2cdfcff02307 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1000,17 +1000,56 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  }
->  EXPORT_SYMBOL_GPL(iomap_zero_range);
->  
-> +struct iomap_trunc_priv {
-> +	bool *did_zero;
-> +	bool has_page;
-> +};
-> +
-> +static loff_t
-> +iomap_truncate_page_actor(struct inode *inode, loff_t pos, loff_t count,
-> +		void *data, struct iomap *iomap, struct iomap *srcmap)
-> +{
-> +	struct iomap_trunc_priv	*priv = data;
-> +	unsigned offset;
-> +	int status;
-> +
-> +	if (srcmap->type == IOMAP_HOLE)
-> +		return count;
-> +	if (srcmap->type == IOMAP_UNWRITTEN && !priv->has_page)
-> +		return count;
-> +
-> +	offset = offset_in_page(pos);
-> +	if (IS_DAX(inode))
-> +		status = dax_iomap_zero(pos, offset, count, iomap);
-> +	else
-> +		status = iomap_zero(inode, pos, offset, count, iomap, srcmap);
-> +	if (status < 0)
-> +		return status;
-> +
-> +	if (priv->did_zero)
-> +		*priv->did_zero = true;
-> +	return count;
-> +}
-> +
->  int
->  iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
->  		const struct iomap_ops *ops)
->  {
-> +	struct iomap_trunc_priv priv = { .did_zero = did_zero };
->  	unsigned int blocksize = i_blocksize(inode);
->  	unsigned int off = pos & (blocksize - 1);
-> +	loff_t ret;
->  
->  	/* Block boundary? Nothing to do */
->  	if (!off)
->  		return 0;
-> -	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
-> +
-> +	priv.has_page = filemap_range_has_page(inode->i_mapping, pos, pos);
-
-Er... shouldn't that second 'pos' be 'pos + blocksize - off - 1', like
-the apply call below?  I guess it doesn't matter since we're only
-interested in the page at pos, but the double usage of pos caught my
-eye.
-
-I also wonder, can you move this into the actor so that you can pass
-*did_zero straight through without the two-item struct?
-
---D
-
-> +	ret = iomap_apply(inode, pos, blocksize - off, IOMAP_ZERO, ops, &priv,
-> +			  iomap_truncate_page_actor);
-> +	if (ret <= 0)
-> +		return ret;
-> +	return 0;
->  }
->  EXPORT_SYMBOL_GPL(iomap_truncate_page);
->  
-> -- 
-> 2.25.4
+> I misunderstood your question previously thinking you wanted yet another
+> reference taken in this case, when in fact it was the opposite and you
+> thought the one taken here was superfluous.
 > 
+> I don't *need* to grab the additional references here, but those are the
+> accessor functions that exist, so I either create sub-accessor functions
+> without the refcount manipulations that called from the primary accessor
+> functions or open code a reduncancy...  The locking has been updated to
+> protect the _put by a spin-lock.  Now that I look at it, the 4th to 7th
+> lines could be bypassed by a cont == NULL check.
+> 
+> It is somewhat hidden now since this sequence of 7 commands has been
+> abstracted into another function that is called from a second location.
+> 
+> > paul moore
+> 
+> - RGB
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
