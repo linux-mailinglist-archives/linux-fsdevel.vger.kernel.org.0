@@ -2,87 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F12F295500
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 01:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A915729553D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 01:39:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507006AbgJUXE2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 19:04:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60148 "EHLO
+        id S2507147AbgJUXjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 19:39:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2507003AbgJUXE1 (ORCPT
+        with ESMTP id S2439511AbgJUXjc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 19:04:27 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F6DBC0613CE;
-        Wed, 21 Oct 2020 16:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=TpsthbD3koAAJ+9i1h4tChG9Qdt7aV7hAviInSK0j8w=; b=msWwivM0eP4XcBH4werP4uWZ3K
-        jfPUkLMw/LuNJevgVg0pz703Bd+YI6wtaRd7au/GBYYWIRNZqqTNHQDI8D2UJRo7I/l4TeM/pEgj8
-        gf5atUXz0E6iEAdi1tQmgr0fIJxybe9d+6uY+vKk02a4B636XVcIHLHcMBBDD80qI/I+CIoV4AU8k
-        e80Ok3IdnCQA33Xhvh53ZSteZ7uBMIjDxZUAtnpzVBDkRDusQDjlIfQ6+aQCIpD6KMYpPtWmakzG7
-        OgqJ6BPPr6dS0/rYN32DNzgdXjM211rJVaLuPWkeT7DQ4G6xycfnjsKTevvOBfY7qB94vXsOSrMGs
-        wPvGMEYQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVN9a-0000Af-Bh; Wed, 21 Oct 2020 23:04:22 +0000
-Date:   Thu, 22 Oct 2020 00:04:22 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: Splitting a THP beyond EOF
-Message-ID: <20201021230422.GP20115@casper.infradead.org>
-References: <20201020014357.GW20115@casper.infradead.org>
- <20201020045928.GO7391@dread.disaster.area>
- <20201020112138.GZ20115@casper.infradead.org>
- <20201020211634.GQ7391@dread.disaster.area>
- <20201020225331.GE20115@casper.infradead.org>
- <20201021221435.GR7391@dread.disaster.area>
+        Wed, 21 Oct 2020 19:39:32 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86217C0613CE;
+        Wed, 21 Oct 2020 16:39:31 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVNhK-005pSF-DC; Wed, 21 Oct 2020 23:39:14 +0000
+Date:   Thu, 22 Oct 2020 00:39:14 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201021233914.GR3576660@ZenIV.linux.org.uk>
+References: <20200925045146.1283714-1-hch@lst.de>
+ <20200925045146.1283714-3-hch@lst.de>
+ <20201021161301.GA1196312@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201021221435.GR7391@dread.disaster.area>
+In-Reply-To: <20201021161301.GA1196312@kroah.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 09:14:35AM +1100, Dave Chinner wrote:
-> On Tue, Oct 20, 2020 at 11:53:31PM +0100, Matthew Wilcox wrote:
-> > True, we don't _have to_ split THP on holepunch/truncation/... but it's
-> > a better implementation to free pages which cover blocks that no longer
-> > have data associated with them.
+On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
+> On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
+> > From: David Laight <David.Laight@ACULAB.COM>
+> > 
+> > This lets the compiler inline it into import_iovec() generating
+> > much better code.
+> > 
+> > Signed-off-by: David Laight <david.laight@aculab.com>
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  fs/read_write.c | 179 ------------------------------------------------
+> >  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 176 insertions(+), 179 deletions(-)
 > 
-> "Better" is a very subjective measure. What numbers do you have
-> to back that up?
-
-None.  When we choose to use a THP, we're choosing to treat a chunk
-of a file as a single unit for the purposes of tracking dirtiness,
-age, membership of the workingset, etc.  We're trading off reduced
-precision for reduced overhead; just like the CPU tracks dirtiness on
-a cacheline basis instead of at byte level.
-
-So at some level, we've making the assumption that this 128kB THP is
-all one thingand it should be tracked together.  But the user has just
-punched a hole in it.  I can think of no stronger signal to say "The
-piece before this hole, the piece I just got rid of and the piece after
-this are three separate pieces of the file".
-
-If I could split them into pieces that weren't single pages, I would.
-Zi Yan has a patch to do just that, and I'm very much looking forward
-to that being merged.  But saying "Oh, this is quite small, I'll keep
-the rest of the THP together" is conceptually wrong.
-
-> > Splitting the page instead of throwing it away makes sense once we can
-> > transfer the Uptodate bits to each subpage.  If we don't have that,
-> > it doesn't really matter which we do.
+> Strangely, this commit causes a regression in Linus's tree right now.
 > 
-> Sounds like more required functionality...
+> I can't really figure out what the regression is, only that this commit
+> triggers a "large Android system binary" from working properly.  There's
+> no kernel log messages anywhere, and I don't have any way to strace the
+> thing in the testing framework, so any hints that people can provide
+> would be most appreciated.
 
-I'm not saying that my patchset is the last word and there will be no
-tweaking.  I'm saying I think it's good enough, an improvement on the
-status quo, and it's better to merge it for 5.11 than to keep it out of
-tree for another three months while we tinker with improving it.
+It's a pure move - modulo changed line breaks in the argument lists
+the functions involved are identical before and after that (just checked
+that directly, by checking out the trees before and after, extracting two
+functions in question from fs/read_write.c and lib/iov_iter.c (before and
+after, resp.) and checking the diff between those.
 
-Do you disagree?
+How certain is your bisection?
