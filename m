@@ -2,73 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 766D8294F10
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 16:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11F7E294F90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 17:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443626AbgJUOuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 10:50:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:60170 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2442847AbgJUOuu (ORCPT
+        id S2443877AbgJUPJf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 11:09:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2501914AbgJUPJf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 10:50:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603291849;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Ui07pSFmRprVluh7b5FPlpkbusJBG/+iyA3QcwbOIAo=;
-        b=acaesCFfCJFC7qrI+qplIryST0NJaLnYiZQ3KmAMp4xPUMCWU72dPyNRMsJ58CSyMltXmw
-        I0ephgUHk7RlS6jWF5ZnlnITPo/GVZEwSu7rA3M0Tb2y8k4UXi4cX6snrn3Bqi3mTrVGjI
-        NKJjRGf/9Ybwc5n3TclbylmYMfsN84E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-371-F7SVLUDsO4iWHOZp74jeFA-1; Wed, 21 Oct 2020 10:50:46 -0400
-X-MC-Unique: F7SVLUDsO4iWHOZp74jeFA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A13F110866A8;
-        Wed, 21 Oct 2020 14:50:45 +0000 (UTC)
-Received: from madhat.boston.devel.redhat.com (ovpn-113-128.phx2.redhat.com [10.3.113.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B34D5C230;
-        Wed, 21 Oct 2020 14:50:45 +0000 (UTC)
-From:   Steve Dickson <SteveD@RedHat.com>
-Subject: ANNOUNCE: nfs-utils-2.5.2 released.
-To:     Linux NFS Mailing list <linux-nfs@vger.kernel.org>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Message-ID: <51e19f54-9635-1037-50e7-96913988932a@RedHat.com>
-Date:   Wed, 21 Oct 2020 10:50:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Wed, 21 Oct 2020 11:09:35 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B712C0613CE;
+        Wed, 21 Oct 2020 08:09:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=JogALXxUhOTRDSLNlL38sulkhzXdXhR1YKEuIv/wTTQ=; b=UfbClxFM2J/bWwfotALuJETGVH
+        jn8HBocgzQdLffV6pdJAjLEEVYVrCgiZp8xPR1xHVEAsmLizuXFdCJV6YENInuttJbaeaYHlk22OO
+        UBzPF5mjIIafZPLgqPibLYQXfFmtbAltRpVavsaBA0EKU6MBZRMkgn09O7FG5flBpXeNUynkBAzl8
+        68XHs+y4SpbfEPAWnsBp6TfEt+s1cCo9baXPi2IMqg6ZrL9pV0XgPVeDlIY4pHLPYF5p1mAUsG7vA
+        1fuaJE1u7TrB8IsQbSu+Ev6Vvcyqcv9LzNj24oJqDQNrRbiMZZyv9KSBXuRQ9V5j9AXV+S0xixArw
+        7yW/feRw==;
+Received: from [2601:1c0:6280:3f0::507c]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVFjz-0003Y7-MR; Wed, 21 Oct 2020 15:09:27 +0000
+Subject: Re: [PATCH 1/2] Block layer filter - second version
+To:     Sergei Shtepa <sergei.shtepa@veeam.com>, axboe@kernel.dk,
+        viro@zeniv.linux.org.uk, hch@infradead.org,
+        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, rjw@rjwysocki.net,
+        len.brown@intel.com, pavel@ucw.cz, akpm@linux-foundation.org,
+        johannes.thumshirn@wdc.com, ming.lei@redhat.com, jack@suse.cz,
+        tj@kernel.org, gustavo@embeddedor.com, bvanassche@acm.org,
+        osandov@fb.com, koct9i@gmail.com, damien.lemoal@wdc.com,
+        steve@sk2.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-mm@kvack.org
+References: <1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com>
+ <1603271049-20681-2-git-send-email-sergei.shtepa@veeam.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7bd31238-0c7c-ed6f-d0b9-680fcaa54513@infradead.org>
+Date:   Wed, 21 Oct 2020 08:09:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <1603271049-20681-2-git-send-email-sergei.shtepa@veeam.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 10/21/20 2:04 AM, Sergei Shtepa wrote:
+> diff --git a/block/Kconfig b/block/Kconfig
+> index bbad5e8bbffe..a308801b4376 100644
+> --- a/block/Kconfig
+> +++ b/block/Kconfig
+> @@ -204,6 +204,17 @@ config BLK_INLINE_ENCRYPTION_FALLBACK
+>  	  by falling back to the kernel crypto API when inline
+>  	  encryption hardware is not present.
+>  
+> +config BLK_FILTER
+> +	bool "Enable support for block layer filters"
+> +	default y
 
-Nothing too big in the release... More of a maintenance release than anything.
-A couple memory leaks, a lot of clean up, as well as a number of bug fixes.  
+Drop the default y. We don't add modules to a default build without
+some tough justification.
 
-The tarballs can be found in
-  https://www.kernel.org/pub/linux/utils/nfs-utils/2.5.2/
-or
-  http://sourceforge.net/projects/nfs/files/nfs-utils/2.5.2
+> +	depends on MODULES
+> +	help
+> +	  Enabling this lets third-party kernel modules intercept
 
-The change log is in
-   https://www.kernel.org/pub/linux/utils/nfs-utils/2.5.2/2.5.2-Changelog
-or
-   http://sourceforge.net/projects/nfs/files/nfs-utils/2.5.2/
+	                lets loadable kernel modules intercept
 
-The git tree is at:
-   git://linux-nfs.org/~steved/nfs-utils
+> +	  bio requests for any block device. This allows them to implement
+> +	  changed block tracking and snapshots without any reconfiguration of
+> +	  the existing setup. For example, this option allows snapshotting of
+> +	  a block device without adding it to LVM.
 
-Please send comments/bugs to linux-nfs@vger.kernel.org
 
-steved.
+-- 
+~Randy
 
