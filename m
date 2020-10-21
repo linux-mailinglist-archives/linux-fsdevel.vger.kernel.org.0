@@ -2,9930 +2,5009 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 956C4294A6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 11:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2094294A76
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 11:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394617AbgJUJYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 05:24:01 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:29963 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394575AbgJUJYB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 05:24:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1603273154; x=1634809154;
-  h=from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=dQ3fJeOKq/DMyS1gQPR4jXbeM/56cY3TNJo4t1Skj/g=;
-  b=etEhYaM7SWecMldZ8btAkxkKqMOuWEZNScTSKajo9bahJpVz2EwnGuXz
-   uFg7lwnAMm/5otlAH3wR7qSesIWE69AjPdsIyTSzBmt1niWmiT784QA2j
-   cbSZXxFJ0CUnQxF6k1rMl8P64swrdAG5qbxiEYG9h35lcYXoRd8lshOpM
-   vTkDHMpSd18T/4W5tkY4JJ2+zZFY6mp4hJYJbhX2z8vVNBAUOoWO+ex1i
-   q9z7nyx9LWxAYf43eWY8BIw6f21CV8zLDR79rBCXxVNsqi0tOfuJWmX5q
-   iuM8Fsw2hptHFDeEZSxJ1N9u27Av7UJE03Kg7YAS2ZPqzvErYOSBqI/A9
-   A==;
-IronPort-SDR: 3t/M2vVqaQBifwAhgn/SQxwhuqbH4L/rwEVWvmxbJSSmQCxBbGzYXFULyj8GOOxTf4M+6OtNpW
- Px5OyeKG+8Xs02eGti5ngN9fkxwL9fh7lJNQ+PM2eKWmlLB6Uu0DM6AH0e7S0EMy8pked465d1
- 17oVo2A5wbtuWVEj36M+Ul+FhBF8hV+OIHCpzFQWcUAAo/2CPB+2USYSpH4kY3NWCg08SS06SM
- jM8Xbb4SvwhggodX4piId/VUfH2m6lWM1PbOIBxSj5vCF8PVzEb9XSytwX4y4tgx8K2yYzOhG5
- t3w=
-X-IronPort-AV: E=Sophos;i="5.77,400,1596470400"; 
-   d="scan'208";a="253998709"
-Received: from mail-sn1nam02lp2053.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.53])
-  by ob1.hgst.iphmx.com with ESMTP; 21 Oct 2020 17:39:10 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BQ47KQV8/aZYFDkVyh6QRXck8Imow+lxg+jRoFrfhbKmWNBg9Bm/U1YwTXb3rB+zBkqTzi78+GRP63g9jfQrniUmBNtZRINSbko9J8WQSxIo8X5brcqp0K+l+sP5goun1vUYkv/Ba7/LwJXYwZ4rdVLmayxYLr71WX8JCXLhR8f1+BSwgHKAwGOS6IQLG80szggevIY7v6t3vpkyVBjcUWTxrM0vktJGcpN70L0w+PoTKV9cg+EfbtRT+M52SRCbkJr/YMqg2w7cyvqmp3o96TVndm9dridHpL/rbX8XpuA6umwNp646U0pTNuqUaPSb03JM2tA/iUS7rktFGR6/QA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oRAH0jPsHKn/Rel6OzU5cfBuDH6jC0dRxZ8LmT8Envg=;
- b=TBLHZMHi4/8nXpN3fEcb13pbu941axdDCiBQ1COwRz40wkLNDwdgOeUtJ3ucLDcGveUQcHMP70ExvdqFdt5/BU7mTnHApSdsh9AfeB5sPPsDCXWtURKlJI4wD14oGDd3S0kQFscQZ89O79tgI976JTQYcQj2t3jlaus//GFF1TDKn7p2pOrQhmBHy/05722hr9ECYX40t3DGhXJ9tI0tlQ4v7NhPfCenKH+lCe5fEVonJQDmllAaI/DbaNVUEmPLQFth5OO9GnxvCOH0gAmh6AEI1bkfZYech+GS1R/L2oJfxiuyFzMOaWve1/9JMJfhq4vgHEwBUqTOEgw8xQukWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oRAH0jPsHKn/Rel6OzU5cfBuDH6jC0dRxZ8LmT8Envg=;
- b=RR+C6EvXUgIFk/qt3bUTNka6OscJ/QeKl4Dq7jk8i449sfkIbMAZ1ARH5zlR3N17ov5M0XmyzsHNWjFNcZJgns9N8QkuGVA2/TixrRLeXGDCXf+p13Q59YXTA6CakknDRVzyxpni9+32hSTpWBxZQ/ikiqJ+WjuhMwnejxKo5JA=
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com (2603:10b6:208:1ca::23)
- by MN2PR04MB6446.namprd04.prod.outlook.com (2603:10b6:208:1aa::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3477.25; Wed, 21 Oct
- 2020 09:23:46 +0000
-Received: from BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::4c3e:2b29:1dc5:1a85]) by BL0PR04MB6514.namprd04.prod.outlook.com
- ([fe80::4c3e:2b29:1dc5:1a85%7]) with mapi id 15.20.3477.028; Wed, 21 Oct 2020
- 09:23:46 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Sergei Shtepa <sergei.shtepa@veeam.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "len.brown@intel.com" <len.brown@intel.com>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "jack@suse.cz" <jack@suse.cz>, "tj@kernel.org" <tj@kernel.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "osandov@fb.com" <osandov@fb.com>,
-        "koct9i@gmail.com" <koct9i@gmail.com>,
-        "steve@sk2.org" <steve@sk2.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/2] blk-snap - snapshots and change-tracking for block
- devices
-Thread-Topic: [PATCH 2/2] blk-snap - snapshots and change-tracking for block
- devices
-Thread-Index: AQHWp4lJdYkB5530LUao1vU1j+0tNA==
-Date:   Wed, 21 Oct 2020 09:23:45 +0000
-Message-ID: <BL0PR04MB65142D9F391FE8777F096EF5E71C0@BL0PR04MB6514.namprd04.prod.outlook.com>
-References: <1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com>
- <1603271049-20681-3-git-send-email-sergei.shtepa@veeam.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: veeam.com; dkim=none (message not signed)
- header.d=none;veeam.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2400:2411:43c0:6000:ccac:9944:3b6:800f]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 03b5fe2a-2d04-4da0-5cc0-08d875a302eb
-x-ms-traffictypediagnostic: MN2PR04MB6446:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR04MB6446B4A2AC5728173489C898E71C0@MN2PR04MB6446.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:16;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3wiXec0S6722chXwdpjd29Jm2CT/SpFyVmi010e5nCRb+UAkXXfxzxLU08ZUXP650Fc3iO96FFIH6w7YIOa7bQtbdL1hAY87sHXQZBzPB4hkFbSPzpPOphJv6GzKxu4z3/894iJQde/k72RGWyRZUIuodUhYSpX0CjeeCLcZgSe7/ibBvbEhVqYrA8HM4bAFhX4pfQAYrIaclinyfGmkGhBBlSPnwI8iW2SzRfQ0sRn4+uSRs+QvFSkoOxqOHlASetPBLw5Po9QY2dGBW8aPcaCe+/QZFAc/X0ASdbzCre8Cr5nIsBdlEyrnBfuYOaUX9Sfgffp9IzHvpwJ37KMXhX20egAp44F/sfvp6TAmRtQVReD8ImGl9nJVQLFZdiTk1+wEkuZo0qSHaPm5BozbqA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR04MB6514.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(366004)(346002)(376002)(39860400002)(316002)(83380400001)(76116006)(66556008)(91956017)(110136005)(478600001)(5660300002)(55016002)(71200400001)(66446008)(64756008)(6506007)(52536014)(8676002)(53546011)(7696005)(66476007)(8936002)(7416002)(2906002)(9686003)(66946007)(30864003)(186003)(86362001)(33656002)(921003)(559001)(569008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: mXLx1hQzQ2IR49QYPqFLuc1IwNrIyrYO0rW7ctOOHDOl1hOrPyQRDsV/zt1oz2WheNF7IhWhvnab3KWOFvKm5RXcSFmznhXsdSZvMziWu5sr3BvrVPoe6ua/pYafV2JobUfLnhR1Yg0Fo3I/80BwzBAtfSbGOvBw0ETjb6dXWoqvE5IVqtFI47I526cR6bWAztpwWUeho54SaO5DL0vLzbnCrwlQgWjLniUCxqwkuhODmOI4/81U/CWPdXVVN4vou/ORUAQEgzxLcFGe+5cosAbTr4Tf4fjIudRLBirMn7tEWGH0A4MzgK5vFaivh/czGoKg8gmlEyOsL/x/x8GhRzWQdevzfXJf+/2p8yGVkVg1ptOdWQvp96HlDdEeOKdc3EyZIim1bPB1B4doS+JH7Py1DgKmXJwmnJFW+ZHME2d0MLr6LPGuyItYR7NhwNnOWZ0WQTCMrCfsIZDdoGBU1y9b0Jy1ATR+LuzhIhny0X5v6rKfIbVlpP5Oi4BJlp2ev7t4Bby8T+ORUehPKjMfbI++BF1m8ycEDkyb5hYQW+EHnE4zBbs616TPhYRXxNRqgbq1RWoCCihjRfo12YPVsHqmL+mgSLWrXeDHmGTO5e6PVhVA5yyeMbPCPOQ32Y/3BZQuJgNOXjsH9Mj9rByP+P0FTQQUAfWmQVrap6CirdTtJ+DLdXwFzsEuyzk0lLV5CugeiZsbqKaoPJ96YbdJtQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2436482AbgJUJZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 05:25:47 -0400
+Received: from mga09.intel.com ([134.134.136.24]:6484 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2395228AbgJUJZr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Oct 2020 05:25:47 -0400
+IronPort-SDR: ncQNnRowjso3vi7mA4pzyHf8/7dc4toG2oIVl4HSRrtZ8jSbCPwQ6P24p89LGkh7Lh5sHvNl5F
+ HNUhYwzqkbRA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9780"; a="167458800"
+X-IronPort-AV: E=Sophos;i="5.77,400,1596524400"; 
+   d="xz'?scan'208";a="167458800"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2020 02:25:41 -0700
+IronPort-SDR: qSN7IGkHzzx1+MLPrlQFCIXoUSdJF/nLb4Y1njhgMuAppcR9KPWci2/cS2cO2BhaiLcody95OJ
+ mVkyN8lg3VJw==
+X-IronPort-AV: E=Sophos;i="5.77,400,1596524400"; 
+   d="xz'?scan'208";a="533458244"
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.3])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2020 02:25:36 -0700
+Date:   Wed, 21 Oct 2020 17:24:50 +0800
+From:   kernel test robot <rong.a.chen@intel.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        akpm@linux-foundation.org, sfrench@samba.org,
+        linux-cifs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        0day robot <lkp@intel.com>, lkp@lists.01.org
+Subject: [fs] 8e602a0a70: kernel_BUG_at_mm/filemap.c
+Message-ID: <20201021092450.GQ11647@shao2-debian>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR04MB6514.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03b5fe2a-2d04-4da0-5cc0-08d875a302eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2020 09:23:45.9335
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gdCGDSLKqR2IceHgaeYjvOOFW8koMEcCEbzLwxo8gvK5FQkuwpmH1mN7glmnl0jh6tm3DVsUqOnCf0LYqBeQaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6446
+Content-Type: multipart/mixed; boundary="DCA/C9WSnDtl50zu"
+Content-Disposition: inline
+In-Reply-To: <20201019185911.2909471-2-kent.overstreet@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No commit message...=0A=
-=0A=
-And this is a 8600+ lines patch.=0A=
-Can you split this into manageable pieces ?=0A=
-=0A=
-I do not think anybody will review such a huge patch.=0A=
-=0A=
-On 2020/10/21 18:05, Sergei Shtepa wrote:=0A=
-> Signed-off-by: Sergei Shtepa <sergei.shtepa@veeam.com>=0A=
-> ---=0A=
->  drivers/block/Kconfig                       |   2 +=0A=
->  drivers/block/Makefile                      |   1 +=0A=
->  drivers/block/blk-snap/Kconfig              |  24 +=0A=
->  drivers/block/blk-snap/Makefile             |  28 +=0A=
->  drivers/block/blk-snap/big_buffer.c         | 193 ++++=0A=
->  drivers/block/blk-snap/big_buffer.h         |  24 +=0A=
->  drivers/block/blk-snap/blk-snap-ctl.h       | 190 ++++=0A=
->  drivers/block/blk-snap/blk_deferred.c       | 566 +++++++++++=0A=
->  drivers/block/blk-snap/blk_deferred.h       |  67 ++=0A=
->  drivers/block/blk-snap/blk_descr_file.c     |  82 ++=0A=
->  drivers/block/blk-snap/blk_descr_file.h     |  26 +=0A=
->  drivers/block/blk-snap/blk_descr_mem.c      |  66 ++=0A=
->  drivers/block/blk-snap/blk_descr_mem.h      |  14 +=0A=
->  drivers/block/blk-snap/blk_descr_multidev.c |  86 ++=0A=
->  drivers/block/blk-snap/blk_descr_multidev.h |  25 +=0A=
->  drivers/block/blk-snap/blk_descr_pool.c     | 190 ++++=0A=
->  drivers/block/blk-snap/blk_descr_pool.h     |  38 +=0A=
->  drivers/block/blk-snap/blk_redirect.c       | 507 ++++++++++=0A=
->  drivers/block/blk-snap/blk_redirect.h       |  73 ++=0A=
->  drivers/block/blk-snap/blk_util.c           |  33 +=0A=
->  drivers/block/blk-snap/blk_util.h           |  33 +=0A=
->  drivers/block/blk-snap/cbt_map.c            | 210 +++++=0A=
->  drivers/block/blk-snap/cbt_map.h            |  62 ++=0A=
->  drivers/block/blk-snap/common.h             |  31 +=0A=
->  drivers/block/blk-snap/ctrl_fops.c          | 691 ++++++++++++++=0A=
->  drivers/block/blk-snap/ctrl_fops.h          |  19 +=0A=
->  drivers/block/blk-snap/ctrl_pipe.c          | 562 +++++++++++=0A=
->  drivers/block/blk-snap/ctrl_pipe.h          |  34 +=0A=
->  drivers/block/blk-snap/ctrl_sysfs.c         |  73 ++=0A=
->  drivers/block/blk-snap/ctrl_sysfs.h         |   5 +=0A=
->  drivers/block/blk-snap/defer_io.c           | 397 ++++++++=0A=
->  drivers/block/blk-snap/defer_io.h           |  39 +=0A=
->  drivers/block/blk-snap/main.c               |  82 ++=0A=
->  drivers/block/blk-snap/params.c             |  58 ++=0A=
->  drivers/block/blk-snap/params.h             |  29 +=0A=
->  drivers/block/blk-snap/rangevector.c        |  85 ++=0A=
->  drivers/block/blk-snap/rangevector.h        |  31 +=0A=
->  drivers/block/blk-snap/snapimage.c          | 982 ++++++++++++++++++++=
-=0A=
->  drivers/block/blk-snap/snapimage.h          |  16 +=0A=
->  drivers/block/blk-snap/snapshot.c           | 225 +++++=0A=
->  drivers/block/blk-snap/snapshot.h           |  17 +=0A=
->  drivers/block/blk-snap/snapstore.c          | 929 ++++++++++++++++++=0A=
->  drivers/block/blk-snap/snapstore.h          |  68 ++=0A=
->  drivers/block/blk-snap/snapstore_device.c   | 532 +++++++++++=0A=
->  drivers/block/blk-snap/snapstore_device.h   |  63 ++=0A=
->  drivers/block/blk-snap/snapstore_file.c     |  52 ++=0A=
->  drivers/block/blk-snap/snapstore_file.h     |  15 +=0A=
->  drivers/block/blk-snap/snapstore_mem.c      |  91 ++=0A=
->  drivers/block/blk-snap/snapstore_mem.h      |  20 +=0A=
->  drivers/block/blk-snap/snapstore_multidev.c | 118 +++=0A=
->  drivers/block/blk-snap/snapstore_multidev.h |  22 +=0A=
->  drivers/block/blk-snap/tracker.c            | 449 +++++++++=0A=
->  drivers/block/blk-snap/tracker.h            |  38 +=0A=
->  drivers/block/blk-snap/tracking.c           | 270 ++++++=0A=
->  drivers/block/blk-snap/tracking.h           |  13 +=0A=
->  drivers/block/blk-snap/version.h            |   7 +=0A=
->  56 files changed, 8603 insertions(+)=0A=
->  create mode 100644 drivers/block/blk-snap/Kconfig=0A=
->  create mode 100644 drivers/block/blk-snap/Makefile=0A=
->  create mode 100644 drivers/block/blk-snap/big_buffer.c=0A=
->  create mode 100644 drivers/block/blk-snap/big_buffer.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk-snap-ctl.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_deferred.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_deferred.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_file.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_file.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_mem.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_mem.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_multidev.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_multidev.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_pool.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_descr_pool.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_redirect.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_redirect.h=0A=
->  create mode 100644 drivers/block/blk-snap/blk_util.c=0A=
->  create mode 100644 drivers/block/blk-snap/blk_util.h=0A=
->  create mode 100644 drivers/block/blk-snap/cbt_map.c=0A=
->  create mode 100644 drivers/block/blk-snap/cbt_map.h=0A=
->  create mode 100644 drivers/block/blk-snap/common.h=0A=
->  create mode 100644 drivers/block/blk-snap/ctrl_fops.c=0A=
->  create mode 100644 drivers/block/blk-snap/ctrl_fops.h=0A=
->  create mode 100644 drivers/block/blk-snap/ctrl_pipe.c=0A=
->  create mode 100644 drivers/block/blk-snap/ctrl_pipe.h=0A=
->  create mode 100644 drivers/block/blk-snap/ctrl_sysfs.c=0A=
->  create mode 100644 drivers/block/blk-snap/ctrl_sysfs.h=0A=
->  create mode 100644 drivers/block/blk-snap/defer_io.c=0A=
->  create mode 100644 drivers/block/blk-snap/defer_io.h=0A=
->  create mode 100644 drivers/block/blk-snap/main.c=0A=
->  create mode 100644 drivers/block/blk-snap/params.c=0A=
->  create mode 100644 drivers/block/blk-snap/params.h=0A=
->  create mode 100644 drivers/block/blk-snap/rangevector.c=0A=
->  create mode 100644 drivers/block/blk-snap/rangevector.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapimage.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapimage.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapshot.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapshot.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_device.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_device.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_file.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_file.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_mem.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_mem.h=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_multidev.c=0A=
->  create mode 100644 drivers/block/blk-snap/snapstore_multidev.h=0A=
->  create mode 100644 drivers/block/blk-snap/tracker.c=0A=
->  create mode 100644 drivers/block/blk-snap/tracker.h=0A=
->  create mode 100644 drivers/block/blk-snap/tracking.c=0A=
->  create mode 100644 drivers/block/blk-snap/tracking.h=0A=
->  create mode 100644 drivers/block/blk-snap/version.h=0A=
-> =0A=
-> diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig=0A=
-> index ecceaaa1a66f..c53ef661110f 100644=0A=
-> --- a/drivers/block/Kconfig=0A=
-> +++ b/drivers/block/Kconfig=0A=
-> @@ -460,4 +460,6 @@ config BLK_DEV_RSXX=0A=
->  =0A=
->  source "drivers/block/rnbd/Kconfig"=0A=
->  =0A=
-> +source "drivers/block/blk-snap/Kconfig"=0A=
-> +=0A=
->  endif # BLK_DEV=0A=
-> diff --git a/drivers/block/Makefile b/drivers/block/Makefile=0A=
-> index e1f63117ee94..312000598944 100644=0A=
-> --- a/drivers/block/Makefile=0A=
-> +++ b/drivers/block/Makefile=0A=
-> @@ -40,6 +40,7 @@ obj-$(CONFIG_BLK_DEV_PCIESSD_MTIP32XX)	+=3D mtip32xx/=
-=0A=
->  obj-$(CONFIG_BLK_DEV_RSXX) +=3D rsxx/=0A=
->  obj-$(CONFIG_ZRAM) +=3D zram/=0A=
->  obj-$(CONFIG_BLK_DEV_RNBD)	+=3D rnbd/=0A=
-> +obj-$(CONFIG_BLK_SNAP)	+=3D blk-snap/=0A=
->  =0A=
->  obj-$(CONFIG_BLK_DEV_NULL_BLK)	+=3D null_blk.o=0A=
->  null_blk-objs	:=3D null_blk_main.o=0A=
-> diff --git a/drivers/block/blk-snap/Kconfig b/drivers/block/blk-snap/Kcon=
-fig=0A=
-> new file mode 100644=0A=
-> index 000000000000..7a2db99a80dd=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/Kconfig=0A=
-> @@ -0,0 +1,24 @@=0A=
-> +# SPDX-License-Identifier: GPL-2.0=0A=
-> +#=0A=
-> +# blk-snap block io layer filter module configuration=0A=
-> +#=0A=
-> +#=0A=
-> +#select BLK_FILTER=0A=
-> +=0A=
-> +config BLK_SNAP=0A=
-> +	tristate "Block device snapshot filter"=0A=
-> +	depends on BLK_FILTER=0A=
-> +	help=0A=
-> +=0A=
-> +	  Allow to create snapshots and track block changes for a block=0A=
-> +	  devices. Designed for creating backups for any block devices=0A=
-> +	  (without device mapper). Snapshots are temporary and are released=0A=
-> +	  then backup is completed. Change block tracking allows you to=0A=
-> +	  create incremental or differential backups.=0A=
-> +=0A=
-> +config BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	bool "Multi device snapstore configuration support"=0A=
-> +	depends on BLK_SNAP=0A=
-> +	help=0A=
-> +=0A=
-> +	  Allow to create snapstore on multiple block devices.=0A=
-> diff --git a/drivers/block/blk-snap/Makefile b/drivers/block/blk-snap/Mak=
-efile=0A=
-> new file mode 100644=0A=
-> index 000000000000..1d628e8e1862=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/Makefile=0A=
-> @@ -0,0 +1,28 @@=0A=
-> +# SPDX-License-Identifier: GPL-2.0=0A=
-> +blk-snap-y +=3D blk_deferred.o=0A=
-> +blk-snap-y +=3D blk_descr_file.o=0A=
-> +blk-snap-y +=3D blk_descr_mem.o=0A=
-> +blk-snap-y +=3D blk_descr_multidev.o=0A=
-> +blk-snap-y +=3D blk_descr_pool.o=0A=
-> +blk-snap-y +=3D blk_redirect.o=0A=
-> +blk-snap-y +=3D blk_util.o=0A=
-> +blk-snap-y +=3D cbt_map.o=0A=
-> +blk-snap-y +=3D ctrl_fops.o=0A=
-> +blk-snap-y +=3D ctrl_pipe.o=0A=
-> +blk-snap-y +=3D ctrl_sysfs.o=0A=
-> +blk-snap-y +=3D defer_io.o=0A=
-> +blk-snap-y +=3D main.o=0A=
-> +blk-snap-y +=3D params.o=0A=
-> +blk-snap-y +=3D big_buffer.o=0A=
-> +blk-snap-y +=3D rangevector.o=0A=
-> +blk-snap-y +=3D snapimage.o=0A=
-> +blk-snap-y +=3D snapshot.o=0A=
-> +blk-snap-y +=3D snapstore.o=0A=
-> +blk-snap-y +=3D snapstore_device.o=0A=
-> +blk-snap-y +=3D snapstore_file.o=0A=
-> +blk-snap-y +=3D snapstore_mem.o=0A=
-> +blk-snap-y +=3D snapstore_multidev.o=0A=
-> +blk-snap-y +=3D tracker.o=0A=
-> +blk-snap-y +=3D tracking.o=0A=
-> +=0A=
-> +obj-$(CONFIG_BLK_SNAP)	 +=3D blk-snap.o=0A=
-> diff --git a/drivers/block/blk-snap/big_buffer.c b/drivers/block/blk-snap=
-/big_buffer.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..c0a75255a807=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/big_buffer.c=0A=
-> @@ -0,0 +1,193 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#include "common.h"=0A=
-> +#include <linux/mm.h>=0A=
-> +#include "big_buffer.h"=0A=
-> +=0A=
-> +static inline size_t page_count_calc(size_t buffer_size)=0A=
-> +{=0A=
-> +	size_t page_count =3D buffer_size / PAGE_SIZE;=0A=
-> +=0A=
-> +	if (buffer_size & (PAGE_SIZE - 1))=0A=
-> +		page_count +=3D 1;=0A=
-> +	return page_count;=0A=
-> +}=0A=
-> +=0A=
-> +struct big_buffer *big_buffer_alloc(size_t buffer_size, int gfp_opt)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct big_buffer *bbuff;=0A=
-> +	size_t count;=0A=
-> +	size_t inx;=0A=
-> +=0A=
-> +	count =3D page_count_calc(buffer_size);=0A=
-> +=0A=
-> +	bbuff =3D kzalloc(sizeof(struct big_buffer) + count * sizeof(void *), g=
-fp_opt);=0A=
-> +	if (bbuff =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	bbuff->pg_cnt =3D count;=0A=
-> +	for (inx =3D 0; inx < bbuff->pg_cnt; ++inx) {=0A=
-> +		struct page *pg =3D alloc_page(gfp_opt);=0A=
-> +=0A=
-> +		if (!pg) {=0A=
-> +			res =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		bbuff->pg[inx] =3D page_address(pg);=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		big_buffer_free(bbuff);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return bbuff;=0A=
-> +}=0A=
-> +=0A=
-> +void big_buffer_free(struct big_buffer *bbuff)=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +	size_t count =3D bbuff->pg_cnt;=0A=
-> +=0A=
-> +	if (bbuff =3D=3D NULL)=0A=
-> +		return;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < count; ++inx)=0A=
-> +		if (bbuff->pg[inx] !=3D NULL)=0A=
-> +			free_page((unsigned long)bbuff->pg[inx]);=0A=
-> +=0A=
-> +	kfree(bbuff);=0A=
-> +}=0A=
-> +=0A=
-> +size_t big_buffer_copy_to_user(char __user *dst_user, size_t offset, str=
-uct big_buffer *bbuff,=0A=
-> +			       size_t length)=0A=
-> +{=0A=
-> +	size_t left_data_length;=0A=
-> +	int page_inx =3D offset / PAGE_SIZE;=0A=
-> +	size_t processed_len =3D 0;=0A=
-> +	size_t unordered =3D offset & (PAGE_SIZE - 1);=0A=
-> +=0A=
-> +	if (unordered !=3D 0) { //first=0A=
-> +		size_t page_len =3D min_t(size_t, (PAGE_SIZE - unordered), length);=0A=
-> +=0A=
-> +		left_data_length =3D copy_to_user(dst_user + processed_len,=0A=
-> +						bbuff->pg[page_inx] + unordered, page_len);=0A=
-> +		if (left_data_length !=3D 0) {=0A=
-> +			pr_err("Failed to copy data from big_buffer to user buffer\n");=0A=
-> +			return processed_len;=0A=
-> +		}=0A=
-> +=0A=
-> +		++page_inx;=0A=
-> +		processed_len +=3D page_len;=0A=
-> +	}=0A=
-> +=0A=
-> +	while ((processed_len < length) && (page_inx < bbuff->pg_cnt)) {=0A=
-> +		size_t page_len =3D min_t(size_t, PAGE_SIZE, (length - processed_len))=
-;=0A=
-> +=0A=
-> +		left_data_length =3D=0A=
-> +			copy_to_user(dst_user + processed_len, bbuff->pg[page_inx], page_len)=
-;=0A=
-> +		if (left_data_length !=3D 0) {=0A=
-> +			pr_err("Failed to copy data from big_buffer to user buffer\n");=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		++page_inx;=0A=
-> +		processed_len +=3D page_len;=0A=
-> +	}=0A=
-> +=0A=
-> +	return processed_len;=0A=
-> +}=0A=
-> +=0A=
-> +size_t big_buffer_copy_from_user(const char __user *src_user, size_t off=
-set,=0A=
-> +				 struct big_buffer *bbuff, size_t length)=0A=
-> +{=0A=
-> +	size_t left_data_length;=0A=
-> +	int page_inx =3D offset / PAGE_SIZE;=0A=
-> +	size_t processed_len =3D 0;=0A=
-> +	size_t unordered =3D offset & (PAGE_SIZE - 1);=0A=
-> +=0A=
-> +	if (unordered !=3D 0) { //first=0A=
-> +		size_t page_len =3D min_t(size_t, (PAGE_SIZE - unordered), length);=0A=
-> +=0A=
-> +		left_data_length =3D copy_from_user(bbuff->pg[page_inx] + unordered,=
-=0A=
-> +						  src_user + processed_len, page_len);=0A=
-> +		if (left_data_length !=3D 0) {=0A=
-> +			pr_err("Failed to copy data from user buffer to big_buffer\n");=0A=
-> +			return processed_len;=0A=
-> +		}=0A=
-> +=0A=
-> +		++page_inx;=0A=
-> +		processed_len +=3D page_len;=0A=
-> +	}=0A=
-> +=0A=
-> +	while ((processed_len < length) && (page_inx < bbuff->pg_cnt)) {=0A=
-> +		size_t page_len =3D min_t(size_t, PAGE_SIZE, (length - processed_len))=
-;=0A=
-> +=0A=
-> +		left_data_length =3D=0A=
-> +			copy_from_user(bbuff->pg[page_inx], src_user + processed_len, page_le=
-n);=0A=
-> +		if (left_data_length !=3D 0) {=0A=
-> +			pr_err("Failed to copy data from user buffer to big_buffer\n");=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		++page_inx;=0A=
-> +		processed_len +=3D page_len;=0A=
-> +	}=0A=
-> +=0A=
-> +	return processed_len;=0A=
-> +}=0A=
-> +=0A=
-> +void *big_buffer_get_element(struct big_buffer *bbuff, size_t index, siz=
-e_t sizeof_element)=0A=
-> +{=0A=
-> +	size_t elements_in_page =3D PAGE_SIZE / sizeof_element;=0A=
-> +	size_t pg_inx =3D index / elements_in_page;=0A=
-> +	size_t pg_ofs =3D (index - (pg_inx * elements_in_page)) * sizeof_elemen=
-t;=0A=
-> +=0A=
-> +	if (pg_inx >=3D bbuff->pg_cnt)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	return bbuff->pg[pg_inx] + pg_ofs;=0A=
-> +}=0A=
-> +=0A=
-> +void big_buffer_memset(struct big_buffer *bbuff, int value)=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < bbuff->pg_cnt; ++inx)=0A=
-> +		memset(bbuff->pg[inx], value, PAGE_SIZE);=0A=
-> +}=0A=
-> +=0A=
-> +void big_buffer_memcpy(struct big_buffer *dst, struct big_buffer *src)=
-=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +	size_t count =3D min_t(size_t, dst->pg_cnt, src->pg_cnt);=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < count; ++inx)=0A=
-> +		memcpy(dst->pg[inx], src->pg[inx], PAGE_SIZE);=0A=
-> +}=0A=
-> +=0A=
-> +int big_buffer_byte_get(struct big_buffer *bbuff, size_t inx, u8 *value)=
-=0A=
-> +{=0A=
-> +	size_t page_inx =3D inx >> PAGE_SHIFT;=0A=
-> +	size_t byte_pos =3D inx & (PAGE_SIZE - 1);=0A=
-> +=0A=
-> +	if (page_inx >=3D bbuff->pg_cnt)=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	*value =3D bbuff->pg[page_inx][byte_pos];=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int big_buffer_byte_set(struct big_buffer *bbuff, size_t inx, u8 value)=
-=0A=
-> +{=0A=
-> +	size_t page_inx =3D inx >> PAGE_SHIFT;=0A=
-> +	size_t byte_pos =3D inx & (PAGE_SIZE - 1);=0A=
-> +=0A=
-> +	if (page_inx >=3D bbuff->pg_cnt)=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	bbuff->pg[page_inx][byte_pos] =3D value;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/big_buffer.h b/drivers/block/blk-snap=
-/big_buffer.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..f38ab5288b05=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/big_buffer.h=0A=
-> @@ -0,0 +1,24 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +struct big_buffer {=0A=
-> +	size_t pg_cnt;=0A=
-> +	u8 *pg[0];=0A=
-> +};=0A=
-> +=0A=
-> +struct big_buffer *big_buffer_alloc(size_t count, int gfp_opt);=0A=
-> +void big_buffer_free(struct big_buffer *bbuff);=0A=
-> +=0A=
-> +size_t big_buffer_copy_to_user(char __user *dst_user_buffer, size_t offs=
-et,=0A=
-> +			       struct big_buffer *bbuff, size_t length);=0A=
-> +size_t big_buffer_copy_from_user(const char __user *src_user_buffer, siz=
-e_t offset,=0A=
-> +				 struct big_buffer *bbuff, size_t length);=0A=
-> +=0A=
-> +void *big_buffer_get_element(struct big_buffer *bbuff, size_t index, siz=
-e_t sizeof_element);=0A=
-> +=0A=
-> +void big_buffer_memset(struct big_buffer *bbuff, int value);=0A=
-> +void big_buffer_memcpy(struct big_buffer *dst, struct big_buffer *src);=
-=0A=
-> +=0A=
-> +//byte access=0A=
-> +int big_buffer_byte_get(struct big_buffer *bbuff, size_t inx, u8 *value)=
-;=0A=
-> +int big_buffer_byte_set(struct big_buffer *bbuff, size_t inx, u8 value);=
-=0A=
-> diff --git a/drivers/block/blk-snap/blk-snap-ctl.h b/drivers/block/blk-sn=
-ap/blk-snap-ctl.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..4ffd836836b1=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk-snap-ctl.h=0A=
-> @@ -0,0 +1,190 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#define MODULE_NAME "blk-snap"=0A=
-> +#define SNAP_IMAGE_NAME "blk-snap-image"=0A=
-> +=0A=
-> +#define SUCCESS 0=0A=
-> +=0A=
-> +#define MAX_TRACKING_DEVICE_COUNT 256=0A=
-> +=0A=
-> +#define BLK_SNAP 'V'=0A=
-> +=0A=
-> +#pragma pack(push, 1)=0A=
-> +////////////////////////////////////////////////////////////////////////=
-//=0A=
-> +// version=0A=
-> +=0A=
-> +#define BLK_SNAP_COMPATIBILITY_SNAPSTORE 0x0000000000000001ull /* rudime=
-nt */=0A=
-> +//#define BLK_SNAP_COMPATIBILITY_BTRFS	 0x0000000000000002ull /* rudimen=
-t */=0A=
-> +#define BLK_SNAP_COMPATIBILITY_MULTIDEV 0x0000000000000004ull=0A=
-> +=0A=
-> +struct ioctl_compatibility_flags_s {=0A=
-> +	unsigned long long flags;=0A=
-> +};=0A=
-> +#define IOCTL_COMPATIBILITY_FLAGS _IOW(BLK_SNAP, 0, struct ioctl_compati=
-bility_flags_s)=0A=
-> +=0A=
-> +struct ioctl_getversion_s {=0A=
-> +	unsigned short major;=0A=
-> +	unsigned short minor;=0A=
-> +	unsigned short revision;=0A=
-> +	unsigned short build;=0A=
-> +};=0A=
-> +#define IOCTL_GETVERSION _IOW(BLK_SNAP, 1, struct ioctl_getversion_s)=0A=
-> +=0A=
-> +////////////////////////////////////////////////////////////////////////=
-//=0A=
-> +// tracking=0A=
-> +struct ioctl_dev_id_s {=0A=
-> +	int major;=0A=
-> +	int minor;=0A=
-> +};=0A=
-> +#define IOCTL_TRACKING_ADD _IOW(BLK_SNAP, 2, struct ioctl_dev_id_s)=0A=
-> +=0A=
-> +#define IOCTL_TRACKING_REMOVE _IOW(BLK_SNAP, 3, struct ioctl_dev_id_s)=
-=0A=
-> +=0A=
-> +struct cbt_info_s {=0A=
-> +	struct ioctl_dev_id_s dev_id;=0A=
-> +	unsigned long long dev_capacity;=0A=
-> +	unsigned int cbt_map_size;=0A=
-> +	unsigned char snap_number;=0A=
-> +	unsigned char generationId[16];=0A=
-> +};=0A=
-> +struct ioctl_tracking_collect_s {=0A=
-> +	unsigned int count;=0A=
-> +	union {=0A=
-> +		struct cbt_info_s *p_cbt_info;=0A=
-> +		unsigned long long ull_cbt_info;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_TRACKING_COLLECT _IOW(BLK_SNAP, 4, struct ioctl_tracking_c=
-ollect_s)=0A=
-> +=0A=
-> +#define IOCTL_TRACKING_BLOCK_SIZE _IOW(BLK_SNAP, 5, unsigned int)=0A=
-> +=0A=
-> +struct ioctl_tracking_read_cbt_bitmap_s {=0A=
-> +	struct ioctl_dev_id_s dev_id;=0A=
-> +	unsigned int offset;=0A=
-> +	unsigned int length;=0A=
-> +	union {=0A=
-> +		unsigned char *buff;=0A=
-> +		unsigned long long ull_buff;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_TRACKING_READ_CBT_BITMAP _IOR(BLK_SNAP, 6, struct ioctl_tr=
-acking_read_cbt_bitmap_s)=0A=
-> +=0A=
-> +struct block_range_s {=0A=
-> +	unsigned long long ofs; //sectors=0A=
-> +	unsigned long long cnt; //sectors=0A=
-> +};=0A=
-> +=0A=
-> +struct ioctl_tracking_mark_dirty_blocks_s {=0A=
-> +	struct ioctl_dev_id_s image_dev_id;=0A=
-> +	unsigned int count;=0A=
-> +	union {=0A=
-> +		struct block_range_s *p_dirty_blocks;=0A=
-> +		unsigned long long ull_dirty_blocks;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_TRACKING_MARK_DIRTY_BLOCKS                                =
-                           \=0A=
-> +	_IOR(BLK_SNAP, 7, struct ioctl_tracking_mark_dirty_blocks_s)=0A=
-> +////////////////////////////////////////////////////////////////////////=
-//=0A=
-> +// snapshot=0A=
-> +=0A=
-> +struct ioctl_snapshot_create_s {=0A=
-> +	unsigned long long snapshot_id;=0A=
-> +	unsigned int count;=0A=
-> +	union {=0A=
-> +		struct ioctl_dev_id_s *p_dev_id;=0A=
-> +		unsigned long long ull_dev_id;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSHOT_CREATE _IOW(BLK_SNAP, 0x10, struct ioctl_snapshot=
-_create_s)=0A=
-> +=0A=
-> +#define IOCTL_SNAPSHOT_DESTROY _IOR(BLK_SNAP, 0x11, unsigned long long)=
-=0A=
-> +=0A=
-> +struct ioctl_snapshot_errno_s {=0A=
-> +	struct ioctl_dev_id_s dev_id;=0A=
-> +	int err_code;=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSHOT_ERRNO _IOW(BLK_SNAP, 0x12, struct ioctl_snapshot_=
-errno_s)=0A=
-> +=0A=
-> +struct ioctl_range_s {=0A=
-> +	unsigned long long left;=0A=
-> +	unsigned long long right;=0A=
-> +};=0A=
-> +=0A=
-> +////////////////////////////////////////////////////////////////////////=
-//=0A=
-> +// snapstore=0A=
-> +struct ioctl_snapstore_create_s {=0A=
-> +	unsigned char id[16];=0A=
-> +	struct ioctl_dev_id_s snapstore_dev_id;=0A=
-> +	unsigned int count;=0A=
-> +	union {=0A=
-> +		struct ioctl_dev_id_s *p_dev_id;=0A=
-> +		unsigned long long ull_dev_id;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSTORE_CREATE _IOR(BLK_SNAP, 0x28, struct ioctl_snapsto=
-re_create_s)=0A=
-> +=0A=
-> +struct ioctl_snapstore_file_add_s {=0A=
-> +	unsigned char id[16];=0A=
-> +	unsigned int range_count;=0A=
-> +	union {=0A=
-> +		struct ioctl_range_s *ranges;=0A=
-> +		unsigned long long ull_ranges;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSTORE_FILE _IOR(BLK_SNAP, 0x29, struct ioctl_snapstore=
-_file_add_s)=0A=
-> +=0A=
-> +struct ioctl_snapstore_memory_limit_s {=0A=
-> +	unsigned char id[16];=0A=
-> +	unsigned long long size;=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSTORE_MEMORY _IOR(BLK_SNAP, 0x2A, struct ioctl_snapsto=
-re_memory_limit_s)=0A=
-> +=0A=
-> +struct ioctl_snapstore_cleanup_s {=0A=
-> +	unsigned char id[16];=0A=
-> +	unsigned long long filled_bytes;=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSTORE_CLEANUP _IOW(BLK_SNAP, 0x2B, struct ioctl_snapst=
-ore_cleanup_s)=0A=
-> +=0A=
-> +struct ioctl_snapstore_file_add_multidev_s {=0A=
-> +	unsigned char id[16];=0A=
-> +	struct ioctl_dev_id_s dev_id;=0A=
-> +	unsigned int range_count;=0A=
-> +	union {=0A=
-> +		struct ioctl_range_s *ranges;=0A=
-> +		unsigned long long ull_ranges;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_SNAPSTORE_FILE_MULTIDEV                                   =
-                           \=0A=
-> +	_IOR(BLK_SNAP, 0x2C, struct ioctl_snapstore_file_add_multidev_s)=0A=
-> +////////////////////////////////////////////////////////////////////////=
-//=0A=
-> +// collect snapshot images=0A=
-> +=0A=
-> +struct image_info_s {=0A=
-> +	struct ioctl_dev_id_s original_dev_id;=0A=
-> +	struct ioctl_dev_id_s snapshot_dev_id;=0A=
-> +};=0A=
-> +=0A=
-> +struct ioctl_collect_snapshot_images_s {=0A=
-> +	int count; //=0A=
-> +	union {=0A=
-> +		struct image_info_s *p_image_info;=0A=
-> +		unsigned long long ull_image_info;=0A=
-> +	};=0A=
-> +};=0A=
-> +#define IOCTL_COLLECT_SNAPSHOT_IMAGES _IOW(BLK_SNAP, 0x30, struct ioctl_=
-collect_snapshot_images_s)=0A=
-> +=0A=
-> +#pragma pack(pop)=0A=
-> +=0A=
-> +// commands for character device interface=0A=
-> +#define BLK_SNAP_CHARCMD_UNDEFINED 0x00=0A=
-> +#define BLK_SNAP_CHARCMD_ACKNOWLEDGE 0x01=0A=
-> +#define BLK_SNAP_CHARCMD_INVALID 0xFF=0A=
-> +// to module commands=0A=
-> +#define BLK_SNAP_CHARCMD_INITIATE 0x21=0A=
-> +#define BLK_SNAP_CHARCMD_NEXT_PORTION 0x22=0A=
-> +#define BLK_SNAP_CHARCMD_NEXT_PORTION_MULTIDEV 0x23=0A=
-> +// from module commands=0A=
-> +#define BLK_SNAP_CHARCMD_HALFFILL 0x41=0A=
-> +#define BLK_SNAP_CHARCMD_OVERFLOW 0x42=0A=
-> +#define BLK_SNAP_CHARCMD_TERMINATE 0x43=0A=
-> diff --git a/drivers/block/blk-snap/blk_deferred.c b/drivers/block/blk-sn=
-ap/blk_deferred.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..1d0b7d2c4d71=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_deferred.c=0A=
-> @@ -0,0 +1,566 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-deferred"=0A=
-> +#include "common.h"=0A=
-> +=0A=
-> +#include "blk_deferred.h"=0A=
-> +#include "blk_util.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +struct bio_set blk_deferred_bioset =3D { 0 };=0A=
-> +=0A=
-> +struct dio_bio_complete {=0A=
-> +	struct blk_deferred_request *dio_req;=0A=
-> +	sector_t bio_sect_len;=0A=
-> +};=0A=
-> +=0A=
-> +struct dio_deadlocked_list {=0A=
-> +	struct list_head link;=0A=
-> +=0A=
-> +	struct blk_deferred_request *dio_req;=0A=
-> +};=0A=
-> +=0A=
-> +LIST_HEAD(dio_deadlocked_list);=0A=
-> +DEFINE_RWLOCK(dio_deadlocked_list_lock);=0A=
-> +=0A=
-> +atomic64_t dio_alloc_count =3D ATOMIC64_INIT(0);=0A=
-> +atomic64_t dio_free_count =3D ATOMIC64_INIT(0);=0A=
-> +=0A=
-> +void blk_deferred_done(void)=0A=
-> +{=0A=
-> +	struct dio_deadlocked_list *dio_locked;=0A=
-> +=0A=
-> +	do {=0A=
-> +		dio_locked =3D NULL;=0A=
-> +=0A=
-> +		write_lock(&dio_deadlocked_list_lock);=0A=
-> +		if (!list_empty(&dio_deadlocked_list)) {=0A=
-> +			dio_locked =3D list_entry(dio_deadlocked_list.next,=0A=
-> +						struct dio_deadlocked_list, link);=0A=
-> +=0A=
-> +			list_del(&dio_locked->link);=0A=
-> +		}=0A=
-> +		write_unlock(&dio_deadlocked_list_lock);=0A=
-> +=0A=
-> +		if (dio_locked) {=0A=
-> +			if (dio_locked->dio_req->sect_len =3D=3D=0A=
-> +			    atomic64_read(&dio_locked->dio_req->sect_processed))=0A=
-> +				blk_deferred_request_free(dio_locked->dio_req);=0A=
-> +			else=0A=
-> +				pr_err("Locked defer IO is still in memory\n");=0A=
-> +=0A=
-> +			kfree(dio_locked);=0A=
-> +		}=0A=
-> +	} while (dio_locked);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_deferred_request_deadlocked(struct blk_deferred_request *dio_re=
-q)=0A=
-> +{=0A=
-> +	struct dio_deadlocked_list *dio_locked =3D=0A=
-> +		kzalloc(sizeof(struct dio_deadlocked_list), GFP_KERNEL);=0A=
-> +=0A=
-> +	dio_locked->dio_req =3D dio_req;=0A=
-> +=0A=
-> +	write_lock(&dio_deadlocked_list_lock);=0A=
-> +	list_add_tail(&dio_locked->link, &dio_deadlocked_list);=0A=
-> +	write_unlock(&dio_deadlocked_list_lock);=0A=
-> +=0A=
-> +	pr_warn("Deadlock with defer IO\n");=0A=
-> +}=0A=
-> +=0A=
-> +void blk_deferred_free(struct blk_deferred_io *dio)=0A=
-> +{=0A=
-> +	size_t inx =3D 0;=0A=
-> +=0A=
-> +	if (dio->page_array !=3D NULL) {=0A=
-> +		while (dio->page_array[inx] !=3D NULL) {=0A=
-> +			__free_page(dio->page_array[inx]);=0A=
-> +			dio->page_array[inx] =3D NULL;=0A=
-> +=0A=
-> +			++inx;=0A=
-> +		}=0A=
-> +=0A=
-> +		kfree(dio->page_array);=0A=
-> +		dio->page_array =3D NULL;=0A=
-> +	}=0A=
-> +	kfree(dio);=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_deferred_io *blk_deferred_alloc(unsigned long block_index,=0A=
-> +					   union blk_descr_unify blk_descr)=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +	size_t page_count;=0A=
-> +	struct blk_deferred_io *dio =3D kmalloc(sizeof(struct blk_deferred_io),=
- GFP_NOIO);=0A=
-> +=0A=
-> +	if (dio =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&dio->link);=0A=
-> +=0A=
-> +	dio->blk_descr =3D blk_descr;=0A=
-> +	dio->blk_index =3D block_index;=0A=
-> +=0A=
-> +	dio->sect.ofs =3D block_index << snapstore_block_shift();=0A=
-> +	dio->sect.cnt =3D snapstore_block_size();=0A=
-> +=0A=
-> +	page_count =3D snapstore_block_size() / (PAGE_SIZE / SECTOR_SIZE);=0A=
-> +	/*=0A=
-> +	 * empty pointer on the end=0A=
-> +	 */=0A=
-> +	dio->page_array =3D kzalloc((page_count + 1) * sizeof(struct page *), G=
-FP_NOIO);=0A=
-> +	if (dio->page_array =3D=3D NULL) {=0A=
-> +		blk_deferred_free(dio);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < page_count; inx++) {=0A=
-> +		dio->page_array[inx] =3D alloc_page(GFP_NOIO);=0A=
-> +		if (dio->page_array[inx] =3D=3D NULL) {=0A=
-> +			pr_err("Failed to allocate page\n");=0A=
-> +			blk_deferred_free(dio);=0A=
-> +			return NULL;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	return dio;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_bioset_create(void)=0A=
-> +{=0A=
-> +	return bioset_init(&blk_deferred_bioset, 64, sizeof(struct dio_bio_comp=
-lete),=0A=
-> +			   BIOSET_NEED_BVECS | BIOSET_NEED_RESCUER);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_deferred_bioset_free(void)=0A=
-> +{=0A=
-> +	bioset_exit(&blk_deferred_bioset);=0A=
-> +}=0A=
-> +=0A=
-> +struct bio *_blk_deferred_bio_alloc(int nr_iovecs)=0A=
-> +{=0A=
-> +	struct bio *new_bio =3D bio_alloc_bioset(GFP_NOIO, nr_iovecs, &blk_defe=
-rred_bioset);=0A=
-> +=0A=
-> +	if (new_bio =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	new_bio->bi_end_io =3D blk_deferred_bio_endio;=0A=
-> +	new_bio->bi_private =3D ((void *)new_bio) - sizeof(struct dio_bio_compl=
-ete);=0A=
-> +=0A=
-> +	return new_bio;=0A=
-> +}=0A=
-> +=0A=
-> +static void blk_deferred_complete(struct blk_deferred_request *dio_req, =
-sector_t portion_sect_cnt,=0A=
-> +				  int result)=0A=
-> +{=0A=
-> +	atomic64_add(portion_sect_cnt, &dio_req->sect_processed);=0A=
-> +=0A=
-> +	if (dio_req->sect_len =3D=3D atomic64_read(&dio_req->sect_processed))=
-=0A=
-> +		complete(&dio_req->complete);=0A=
-> +=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		dio_req->result =3D result;=0A=
-> +		pr_err("Failed to process defer IO request. errno=3D%d\n", result);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +void blk_deferred_bio_endio(struct bio *bio)=0A=
-> +{=0A=
-> +	int local_err;=0A=
-> +	struct dio_bio_complete *complete_param =3D (struct dio_bio_complete *)=
-bio->bi_private;=0A=
-> +=0A=
-> +	if (complete_param =3D=3D NULL) {=0A=
-> +		//bio already complete=0A=
-> +	} else {=0A=
-> +		if (bio->bi_status !=3D BLK_STS_OK)=0A=
-> +			local_err =3D -EIO;=0A=
-> +		else=0A=
-> +			local_err =3D SUCCESS;=0A=
-> +=0A=
-> +		blk_deferred_complete(complete_param->dio_req, complete_param->bio_sec=
-t_len,=0A=
-> +				      local_err);=0A=
-> +		bio->bi_private =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	bio_put(bio);=0A=
-> +}=0A=
-> +=0A=
-> +static inline size_t _page_count_calculate(sector_t size_sector)=0A=
-> +{=0A=
-> +	size_t page_count =3D size_sector / (PAGE_SIZE / SECTOR_SIZE);=0A=
-> +=0A=
-> +	if (unlikely(size_sector & ((PAGE_SIZE / SECTOR_SIZE) - 1)))=0A=
-> +		page_count +=3D 1;=0A=
-> +=0A=
-> +	return page_count;=0A=
-> +}=0A=
-> +=0A=
-> +sector_t _blk_deferred_submit_pages(struct block_device *blk_dev,=0A=
-> +				    struct blk_deferred_request *dio_req, int direction,=0A=
-> +				    sector_t arr_ofs, struct page **page_array, sector_t ofs_sector,=
-=0A=
-> +				    sector_t size_sector)=0A=
-> +{=0A=
-> +	struct bio *bio =3D NULL;=0A=
-> +	int nr_iovecs;=0A=
-> +	int page_inx =3D arr_ofs >> (PAGE_SHIFT - SECTOR_SHIFT);=0A=
-> +	sector_t process_sect =3D 0;=0A=
-> +=0A=
-> +	nr_iovecs =3D _page_count_calculate(size_sector);=0A=
-> +=0A=
-> +	while (NULL =3D=3D (bio =3D _blk_deferred_bio_alloc(nr_iovecs))) {=0A=
-> +		size_sector =3D (size_sector >> 1) & ~((PAGE_SIZE / SECTOR_SIZE) - 1);=
-=0A=
-> +		if (size_sector =3D=3D 0)=0A=
-> +			return 0;=0A=
-> +=0A=
-> +		nr_iovecs =3D _page_count_calculate(size_sector);=0A=
-> +	}=0A=
-> +=0A=
-> +	bio_set_dev(bio, blk_dev);=0A=
-> +=0A=
-> +	if (direction =3D=3D READ)=0A=
-> +		bio_set_op_attrs(bio, REQ_OP_READ, 0);=0A=
-> +	else=0A=
-> +		bio_set_op_attrs(bio, REQ_OP_WRITE, 0);=0A=
-> +=0A=
-> +	bio->bi_iter.bi_sector =3D ofs_sector;=0A=
-> +=0A=
-> +	{ //add first=0A=
-> +		sector_t unordered =3D arr_ofs & ((PAGE_SIZE / SECTOR_SIZE) - 1);=0A=
-> +		sector_t bvec_len_sect =3D=0A=
-> +			min_t(sector_t, ((PAGE_SIZE / SECTOR_SIZE) - unordered), size_sector)=
-;=0A=
-> +		struct page *page =3D page_array[page_inx];=0A=
-> +		unsigned int len =3D (unsigned int)from_sectors(bvec_len_sect);=0A=
-> +		unsigned int offset =3D (unsigned int)from_sectors(unordered);=0A=
-> +=0A=
-> +		if (unlikely(page =3D=3D NULL)) {=0A=
-> +			pr_err("NULL found in page array");=0A=
-> +			bio_put(bio);=0A=
-> +			return 0;=0A=
-> +		}=0A=
-> +		if (unlikely(bio_add_page(bio, page, len, offset) !=3D len)) {=0A=
-> +			bio_put(bio);=0A=
-> +			return 0;=0A=
-> +		}=0A=
-> +		++page_inx;=0A=
-> +		process_sect +=3D bvec_len_sect;=0A=
-> +	}=0A=
-> +=0A=
-> +	while (process_sect < size_sector) {=0A=
-> +		sector_t bvec_len_sect =3D=0A=
-> +			min_t(sector_t, (PAGE_SIZE / SECTOR_SIZE), (size_sector - process_sec=
-t));=0A=
-> +		struct page *page =3D page_array[page_inx];=0A=
-> +		unsigned int len =3D (unsigned int)from_sectors(bvec_len_sect);=0A=
-> +=0A=
-> +=0A=
-> +		if (unlikely(page =3D=3D NULL)) {=0A=
-> +			pr_err("NULL found in page array");=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		if (unlikely(bio_add_page(bio, page, len, 0) !=3D len))=0A=
-> +			break;=0A=
-> +=0A=
-> +		++page_inx;=0A=
-> +		process_sect +=3D bvec_len_sect;=0A=
-> +	}=0A=
-> +=0A=
-> +	((struct dio_bio_complete *)bio->bi_private)->dio_req =3D dio_req;=0A=
-> +	((struct dio_bio_complete *)bio->bi_private)->bio_sect_len =3D process_=
-sect;=0A=
-> +=0A=
-> +	submit_bio_direct(bio);=0A=
-> +=0A=
-> +	return process_sect;=0A=
-> +}=0A=
-> +=0A=
-> +sector_t blk_deferred_submit_pages(struct block_device *blk_dev,=0A=
-> +				   struct blk_deferred_request *dio_req, int direction,=0A=
-> +				   sector_t arr_ofs, struct page **page_array, sector_t ofs_sector,=
-=0A=
-> +				   sector_t size_sector)=0A=
-> +{=0A=
-> +	sector_t process_sect =3D 0;=0A=
-> +=0A=
-> +	do {=0A=
-> +		sector_t portion_sect =3D _blk_deferred_submit_pages(=0A=
-> +			blk_dev, dio_req, direction, arr_ofs + process_sect, page_array,=0A=
-> +			ofs_sector + process_sect, size_sector - process_sect);=0A=
-> +		if (portion_sect =3D=3D 0) {=0A=
-> +			pr_err("Failed to submit defer IO pages. Only [%lld] sectors processe=
-d\n",=0A=
-> +			       process_sect);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		process_sect +=3D portion_sect;=0A=
-> +	} while (process_sect < size_sector);=0A=
-> +=0A=
-> +	return process_sect;=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_deferred_request *blk_deferred_request_new(void)=0A=
-> +{=0A=
-> +	struct blk_deferred_request *dio_req =3D NULL;=0A=
-> +=0A=
-> +	dio_req =3D kzalloc(sizeof(struct blk_deferred_request), GFP_NOIO);=0A=
-> +	if (dio_req =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&dio_req->dios);=0A=
-> +=0A=
-> +	dio_req->result =3D SUCCESS;=0A=
-> +	atomic64_set(&dio_req->sect_processed, 0);=0A=
-> +	dio_req->sect_len =3D 0;=0A=
-> +	init_completion(&dio_req->complete);=0A=
-> +=0A=
-> +	return dio_req;=0A=
-> +}=0A=
-> +=0A=
-> +bool blk_deferred_request_already_added(struct blk_deferred_request *dio=
-_req,=0A=
-> +					unsigned long block_index)=0A=
-> +{=0A=
-> +	bool result =3D false;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	if (list_empty(&dio_req->dios))=0A=
-> +		return result;=0A=
-> +=0A=
-> +	list_for_each(_list_head, &dio_req->dios) {=0A=
-> +		struct blk_deferred_io *dio =3D list_entry(_list_head, struct blk_defe=
-rred_io, link);=0A=
-> +=0A=
-> +		if (dio->blk_index =3D=3D block_index) {=0A=
-> +			result =3D true;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_request_add(struct blk_deferred_request *dio_req, struc=
-t blk_deferred_io *dio)=0A=
-> +{=0A=
-> +	list_add_tail(&dio->link, &dio_req->dios);=0A=
-> +	dio_req->sect_len +=3D dio->sect.cnt;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +void blk_deferred_request_free(struct blk_deferred_request *dio_req)=0A=
-> +{=0A=
-> +	if (dio_req !=3D NULL) {=0A=
-> +		while (!list_empty(&dio_req->dios)) {=0A=
-> +			struct blk_deferred_io *dio =3D=0A=
-> +				list_entry(dio_req->dios.next, struct blk_deferred_io, link);=0A=
-> +=0A=
-> +			list_del(&dio->link);=0A=
-> +=0A=
-> +			blk_deferred_free(dio);=0A=
-> +		}=0A=
-> +		kfree(dio_req);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +void blk_deferred_request_waiting_skip(struct blk_deferred_request *dio_=
-req)=0A=
-> +{=0A=
-> +	init_completion(&dio_req->complete);=0A=
-> +	atomic64_set(&dio_req->sect_processed, 0);=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_request_wait(struct blk_deferred_request *dio_req)=0A=
-> +{=0A=
-> +	u64 start_jiffies =3D get_jiffies_64();=0A=
-> +	u64 current_jiffies;=0A=
-> +=0A=
-> +	while (wait_for_completion_timeout(&dio_req->complete, (HZ * 1)) =3D=3D=
- 0) {=0A=
-> +		current_jiffies =3D get_jiffies_64();=0A=
-> +		if (jiffies_to_msecs(current_jiffies - start_jiffies) > 60 * 1000) {=
-=0A=
-> +			pr_warn("Defer IO request timeout\n");=0A=
-> +			return -EDEADLK;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	return dio_req->result;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_request_read_original(struct block_device *original_blk=
-_dev,=0A=
-> +				       struct blk_deferred_request *dio_copy_req)=0A=
-> +{=0A=
-> +	int res =3D -ENODATA;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	blk_deferred_request_waiting_skip(dio_copy_req);=0A=
-> +=0A=
-> +	if (list_empty(&dio_copy_req->dios))=0A=
-> +		return res;=0A=
-> +=0A=
-> +	list_for_each(_list_head, &dio_copy_req->dios) {=0A=
-> +		struct blk_deferred_io *dio =3D list_entry(_list_head, struct blk_defe=
-rred_io, link);=0A=
-> +=0A=
-> +		sector_t ofs =3D dio->sect.ofs;=0A=
-> +		sector_t cnt =3D dio->sect.cnt;=0A=
-> +=0A=
-> +		if (cnt !=3D blk_deferred_submit_pages(original_blk_dev, dio_copy_req,=
- READ, 0,=0A=
-> +						     dio->page_array, ofs, cnt)) {=0A=
-> +			pr_err("Failed to submit reading defer IO request. offset=3D%lld\n",=
-=0A=
-> +			       dio->sect.ofs);=0A=
-> +			res =3D -EIO;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		res =3D SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS)=0A=
-> +		res =3D blk_deferred_request_wait(dio_copy_req);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +=0A=
-> +static int _store_file(struct block_device *blk_dev, struct blk_deferred=
-_request *dio_copy_req,=0A=
-> +		       struct blk_descr_file *blk_descr, struct page **page_array)=0A=
-> +{=0A=
-> +	struct list_head *_rangelist_head;=0A=
-> +	sector_t page_array_ofs =3D 0;=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&blk_descr->rangelist))) {=0A=
-> +		pr_err("Invalid block descriptor");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +	list_for_each(_rangelist_head, &blk_descr->rangelist) {=0A=
-> +		struct blk_range_link *range_link;=0A=
-> +		sector_t process_sect;=0A=
-> +=0A=
-> +		range_link =3D list_entry(_rangelist_head, struct blk_range_link, link=
-);=0A=
-> +		process_sect =3D blk_deferred_submit_pages(blk_dev, dio_copy_req, WRIT=
-E,=0A=
-> +							 page_array_ofs, page_array,=0A=
-> +							 range_link->rg.ofs, range_link->rg.cnt);=0A=
-> +		if (range_link->rg.cnt !=3D process_sect) {=0A=
-> +			pr_err("Failed to submit defer IO request for storing\n");=0A=
-> +			return -EIO;=0A=
-> +		}=0A=
-> +		page_array_ofs +=3D range_link->rg.cnt;=0A=
-> +	}=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_request_store_file(struct block_device *blk_dev,=0A=
-> +				    struct blk_deferred_request *dio_copy_req)=0A=
-> +{=0A=
-> +	struct list_head *_dio_list_head;=0A=
-> +=0A=
-> +	blk_deferred_request_waiting_skip(dio_copy_req);=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&dio_copy_req->dios))) {=0A=
-> +		pr_err("Invalid deferred io request");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +	list_for_each(_dio_list_head, &dio_copy_req->dios) {=0A=
-> +		int res;=0A=
-> +		struct blk_deferred_io *dio;=0A=
-> +=0A=
-> +		dio =3D list_entry(_dio_list_head, struct blk_deferred_io, link);=0A=
-> +		res =3D _store_file(blk_dev, dio_copy_req, dio->blk_descr.file, dio->p=
-age_array);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	return blk_deferred_request_wait(dio_copy_req);=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +=0A=
-> +static int _store_multidev(struct blk_deferred_request *dio_copy_req,=0A=
-> +			   struct blk_descr_multidev *blk_descr, struct page **page_array)=0A=
-> +{=0A=
-> +	struct list_head *_ranges_list_head;=0A=
-> +	sector_t page_array_ofs =3D 0;=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&blk_descr->rangelist))) {=0A=
-> +		pr_err("Invalid block descriptor");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +	list_for_each(_ranges_list_head, &blk_descr->rangelist) {=0A=
-> +		sector_t process_sect;=0A=
-> +		struct blk_range_link_ex *range_link;=0A=
-> +=0A=
-> +		range_link =3D list_entry(_ranges_list_head, struct blk_range_link_ex,=
- link);=0A=
-> +		process_sect =3D blk_deferred_submit_pages(range_link->blk_dev, dio_co=
-py_req, WRITE,=0A=
-> +							 page_array_ofs, page_array,=0A=
-> +							 range_link->rg.ofs, range_link->rg.cnt);=0A=
-> +		if (range_link->rg.cnt !=3D process_sect) {=0A=
-> +			pr_err("Failed to submit defer IO request for storing\n");=0A=
-> +			return -EIO;=0A=
-> +		}=0A=
-> +=0A=
-> +		page_array_ofs +=3D range_link->rg.cnt;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_request_store_multidev(struct blk_deferred_request *dio=
-_copy_req)=0A=
-> +{=0A=
-> +	struct list_head *_dio_list_head;=0A=
-> +=0A=
-> +	blk_deferred_request_waiting_skip(dio_copy_req);=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&dio_copy_req->dios))) {=0A=
-> +		pr_err("Invalid deferred io request");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +	list_for_each(_dio_list_head, &dio_copy_req->dios) {=0A=
-> +		int res;=0A=
-> +		struct blk_deferred_io *dio;=0A=
-> +=0A=
-> +		dio =3D list_entry(_dio_list_head, struct blk_deferred_io, link);=0A=
-> +		res =3D _store_multidev(dio_copy_req, dio->blk_descr.multidev, dio->pa=
-ge_array);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	return blk_deferred_request_wait(dio_copy_req);=0A=
-> +}=0A=
-> +#endif=0A=
-> +=0A=
-> +static size_t _store_pages(void *dst, struct page **page_array, size_t l=
-ength)=0A=
-> +{=0A=
-> +	size_t page_inx =3D 0;=0A=
-> +	size_t processed_len =3D 0;=0A=
-> +=0A=
-> +	while ((processed_len < length) && (page_array[page_inx] !=3D NULL)) {=
-=0A=
-> +		void *src;=0A=
-> +		size_t page_len =3D min_t(size_t, PAGE_SIZE, (length - processed_len))=
-;=0A=
-> +=0A=
-> +		src =3D page_address(page_array[page_inx]);=0A=
-> +		memcpy(dst + processed_len, src, page_len);=0A=
-> +=0A=
-> +		++page_inx;=0A=
-> +		processed_len +=3D page_len;=0A=
-> +	}=0A=
-> +=0A=
-> +	return processed_len;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_deferred_request_store_mem(struct blk_deferred_request *dio_copy=
-_req)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t processed =3D 0;=0A=
-> +=0A=
-> +	if (!list_empty(&dio_copy_req->dios)) {=0A=
-> +		struct list_head *_list_head;=0A=
-> +=0A=
-> +		list_for_each(_list_head, &dio_copy_req->dios) {=0A=
-> +			size_t length;=0A=
-> +			size_t portion;=0A=
-> +			struct blk_deferred_io *dio;=0A=
-> +=0A=
-> +			dio =3D list_entry(_list_head, struct blk_deferred_io, link);=0A=
-> +			length =3D snapstore_block_size() * SECTOR_SIZE;=0A=
-> +=0A=
-> +			portion =3D _store_pages(dio->blk_descr.mem->buff, dio->page_array, l=
-ength);=0A=
-> +			if (unlikely(portion !=3D length)) {=0A=
-> +				res =3D -EIO;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +			processed +=3D (sector_t)to_sectors(portion);=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	blk_deferred_complete(dio_copy_req, processed, res);=0A=
-> +	return res;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/blk_deferred.h b/drivers/block/blk-sn=
-ap/blk_deferred.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..3c516a835c25=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_deferred.h=0A=
-> @@ -0,0 +1,67 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "blk_descr_file.h"=0A=
-> +#include "blk_descr_mem.h"=0A=
-> +#include "blk_descr_multidev.h"=0A=
-> +=0A=
-> +#define DEFER_IO_DIO_REQUEST_LENGTH 250=0A=
-> +#define DEFER_IO_DIO_REQUEST_SECTORS_COUNT (10 * 1024 * 1024 / SECTOR_SI=
-ZE)=0A=
-> +=0A=
-> +struct blk_deferred_io {=0A=
-> +	struct list_head link;=0A=
-> +=0A=
-> +	unsigned long blk_index;=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +=0A=
-> +	struct blk_range sect;=0A=
-> +=0A=
-> +	struct page **page_array; //null pointer on tail=0A=
-> +};=0A=
-> +=0A=
-> +struct blk_deferred_request {=0A=
-> +	struct completion complete;=0A=
-> +	sector_t sect_len;=0A=
-> +	atomic64_t sect_processed;=0A=
-> +	int result;=0A=
-> +=0A=
-> +	struct list_head dios;=0A=
-> +};=0A=
-> +=0A=
-> +void blk_deferred_done(void);=0A=
-> +=0A=
-> +struct blk_deferred_io *blk_deferred_alloc(unsigned long block_index,=0A=
-> +					   union blk_descr_unify blk_descr);=0A=
-> +void blk_deferred_free(struct blk_deferred_io *dio);=0A=
-> +=0A=
-> +void blk_deferred_bio_endio(struct bio *bio);=0A=
-> +=0A=
-> +sector_t blk_deferred_submit_pages(struct block_device *blk_dev,=0A=
-> +				   struct blk_deferred_request *dio_req, int direction,=0A=
-> +				   sector_t arr_ofs, struct page **page_array, sector_t ofs_sector,=
-=0A=
-> +				   sector_t size_sector);=0A=
-> +=0A=
-> +struct blk_deferred_request *blk_deferred_request_new(void);=0A=
-> +=0A=
-> +bool blk_deferred_request_already_added(struct blk_deferred_request *dio=
-_req,=0A=
-> +					unsigned long block_index);=0A=
-> +=0A=
-> +int blk_deferred_request_add(struct blk_deferred_request *dio_req, struc=
-t blk_deferred_io *dio);=0A=
-> +void blk_deferred_request_free(struct blk_deferred_request *dio_req);=0A=
-> +void blk_deferred_request_deadlocked(struct blk_deferred_request *dio_re=
-q);=0A=
-> +=0A=
-> +void blk_deferred_request_waiting_skip(struct blk_deferred_request *dio_=
-req);=0A=
-> +int blk_deferred_request_wait(struct blk_deferred_request *dio_req);=0A=
-> +=0A=
-> +int blk_deferred_bioset_create(void);=0A=
-> +void blk_deferred_bioset_free(void);=0A=
-> +=0A=
-> +int blk_deferred_request_read_original(struct block_device *original_blk=
-_dev,=0A=
-> +				       struct blk_deferred_request *dio_copy_req);=0A=
-> +=0A=
-> +int blk_deferred_request_store_file(struct block_device *blk_dev,=0A=
-> +				    struct blk_deferred_request *dio_copy_req);=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +int blk_deferred_request_store_multidev(struct blk_deferred_request *dio=
-_copy_req);=0A=
-> +#endif=0A=
-> +int blk_deferred_request_store_mem(struct blk_deferred_request *dio_copy=
-_req);=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_file.c b/drivers/block/blk-=
-snap/blk_descr_file.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..fca298d35744=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_file.c=0A=
-> @@ -0,0 +1,82 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-blk_descr"=0A=
-> +#include "common.h"=0A=
-> +=0A=
-> +#include "blk_descr_file.h"=0A=
-> +=0A=
-> +static inline void list_assign(struct list_head *dst, struct list_head *=
-src)=0A=
-> +{=0A=
-> +	dst->next =3D src->next;=0A=
-> +	dst->prev =3D src->prev;=0A=
-> +=0A=
-> +	src->next->prev =3D dst;=0A=
-> +	src->prev->next =3D dst;=0A=
-> +}=0A=
-> +=0A=
-> +static inline void blk_descr_file_init(struct blk_descr_file *blk_descr,=
-=0A=
-> +				       struct list_head *rangelist)=0A=
-> +{=0A=
-> +	list_assign(&blk_descr->rangelist, rangelist);=0A=
-> +}=0A=
-> +=0A=
-> +static inline void blk_descr_file_done(struct blk_descr_file *blk_descr)=
-=0A=
-> +{=0A=
-> +	struct blk_range_link *range_link;=0A=
-> +=0A=
-> +	while (!list_empty(&blk_descr->rangelist)) {=0A=
-> +		range_link =3D list_entry(blk_descr->rangelist.next, struct blk_range_=
-link, link);=0A=
-> +=0A=
-> +		list_del(&range_link->link);=0A=
-> +		kfree(range_link);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_file_pool_init(struct blk_descr_pool *pool)=0A=
-> +{=0A=
-> +	blk_descr_pool_init(pool, 0);=0A=
-> +}=0A=
-> +=0A=
-> +void _blk_descr_file_cleanup(void *descr_array, size_t count)=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +	struct blk_descr_file *file_blocks =3D descr_array;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < count; ++inx)=0A=
-> +		blk_descr_file_done(file_blocks + inx);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_file_pool_done(struct blk_descr_pool *pool)=0A=
-> +{=0A=
-> +	blk_descr_pool_done(pool, _blk_descr_file_cleanup);=0A=
-> +}=0A=
-> +=0A=
-> +static union blk_descr_unify _blk_descr_file_allocate(void *descr_array,=
- size_t index, void *arg)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +	struct blk_descr_file *file_blocks =3D descr_array;=0A=
-> +=0A=
-> +	blk_descr.file =3D &file_blocks[index];=0A=
-> +=0A=
-> +	blk_descr_file_init(blk_descr.file, (struct list_head *)arg);=0A=
-> +=0A=
-> +	return blk_descr;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_descr_file_pool_add(struct blk_descr_pool *pool, struct list_hea=
-d *rangelist)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +=0A=
-> +	blk_descr =3D blk_descr_pool_alloc(pool, sizeof(struct blk_descr_file),=
-=0A=
-> +					 _blk_descr_file_allocate, (void *)rangelist);=0A=
-> +	if (blk_descr.ptr =3D=3D NULL) {=0A=
-> +		pr_err("Failed to allocate block descriptor\n");=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_file_pool_take(struct blk_descr_pool *po=
-ol)=0A=
-> +{=0A=
-> +	return blk_descr_pool_take(pool, sizeof(struct blk_descr_file));=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_file.h b/drivers/block/blk-=
-snap/blk_descr_file.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..0e9a5e3efdea=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_file.h=0A=
-> @@ -0,0 +1,26 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "blk_descr_pool.h"=0A=
-> +=0A=
-> +struct blk_descr_file {=0A=
-> +	struct list_head rangelist;=0A=
-> +};=0A=
-> +=0A=
-> +struct blk_range_link {=0A=
-> +	struct list_head link;=0A=
-> +	struct blk_range rg;=0A=
-> +};=0A=
-> +=0A=
-> +void blk_descr_file_pool_init(struct blk_descr_pool *pool);=0A=
-> +void blk_descr_file_pool_done(struct blk_descr_pool *pool);=0A=
-> +=0A=
-> +/*=0A=
-> + * allocate new empty block in pool=0A=
-> + */=0A=
-> +int blk_descr_file_pool_add(struct blk_descr_pool *pool, struct list_hea=
-d *rangelist);=0A=
-> +=0A=
-> +/*=0A=
-> + * take empty block from pool=0A=
-> + */=0A=
-> +union blk_descr_unify blk_descr_file_pool_take(struct blk_descr_pool *po=
-ol);=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_mem.c b/drivers/block/blk-s=
-nap/blk_descr_mem.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..cd326ac150b6=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_mem.c=0A=
-> @@ -0,0 +1,66 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-blk_descr"=0A=
-> +#include "common.h"=0A=
-> +#include "blk_descr_mem.h"=0A=
-> +=0A=
-> +#define SECTION "blk_descr "=0A=
-> +=0A=
-> +static inline void blk_descr_mem_init(struct blk_descr_mem *blk_descr, v=
-oid *ptr)=0A=
-> +{=0A=
-> +	blk_descr->buff =3D ptr;=0A=
-> +}=0A=
-> +=0A=
-> +static inline void blk_descr_mem_done(struct blk_descr_mem *blk_descr)=
-=0A=
-> +{=0A=
-> +	blk_descr->buff =3D NULL;=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_mem_pool_init(struct blk_descr_pool *pool, size_t availab=
-le_blocks)=0A=
-> +{=0A=
-> +	blk_descr_pool_init(pool, available_blocks);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_mem_cleanup(void *descr_array, size_t count)=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +	struct blk_descr_mem *mem_blocks =3D descr_array;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < count; ++inx)=0A=
-> +		blk_descr_mem_done(mem_blocks + inx);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_mem_pool_done(struct blk_descr_pool *pool)=0A=
-> +{=0A=
-> +	blk_descr_pool_done(pool, blk_descr_mem_cleanup);=0A=
-> +}=0A=
-> +=0A=
-> +static union blk_descr_unify blk_descr_mem_alloc(void *descr_array, size=
-_t index, void *arg)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +	struct blk_descr_mem *mem_blocks =3D descr_array;=0A=
-> +=0A=
-> +	blk_descr.mem =3D &mem_blocks[index];=0A=
-> +=0A=
-> +	blk_descr_mem_init(blk_descr.mem, (void *)arg);=0A=
-> +=0A=
-> +	return blk_descr;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_descr_mem_pool_add(struct blk_descr_pool *pool, void *buffer)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +=0A=
-> +	blk_descr =3D blk_descr_pool_alloc(pool, sizeof(struct blk_descr_mem),=
-=0A=
-> +					 blk_descr_mem_alloc, buffer);=0A=
-> +	if (blk_descr.ptr =3D=3D NULL) {=0A=
-> +		pr_err("Failed to allocate block descriptor\n");=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_mem_pool_take(struct blk_descr_pool *poo=
-l)=0A=
-> +{=0A=
-> +	return blk_descr_pool_take(pool, sizeof(struct blk_descr_mem));=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_mem.h b/drivers/block/blk-s=
-nap/blk_descr_mem.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..43e8de76c07c=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_mem.h=0A=
-> @@ -0,0 +1,14 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "blk_descr_pool.h"=0A=
-> +=0A=
-> +struct blk_descr_mem {=0A=
-> +	void *buff; //pointer to snapstore block in memory=0A=
-> +};=0A=
-> +=0A=
-> +void blk_descr_mem_pool_init(struct blk_descr_pool *pool, size_t availab=
-le_blocks);=0A=
-> +void blk_descr_mem_pool_done(struct blk_descr_pool *pool);=0A=
-> +=0A=
-> +int blk_descr_mem_pool_add(struct blk_descr_pool *pool, void *buffer);=
-=0A=
-> +union blk_descr_unify blk_descr_mem_pool_take(struct blk_descr_pool *poo=
-l);=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_multidev.c b/drivers/block/=
-blk-snap/blk_descr_multidev.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..cf5e0ed6f781=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_multidev.c=0A=
-> @@ -0,0 +1,86 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-blk_descr"=0A=
-> +#include "common.h"=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +#include "blk_descr_multidev.h"=0A=
-> +=0A=
-> +static inline void list_assign(struct list_head *dst, struct list_head *=
-src)=0A=
-> +{=0A=
-> +	dst->next =3D src->next;=0A=
-> +	dst->prev =3D src->prev;=0A=
-> +=0A=
-> +	src->next->prev =3D dst;=0A=
-> +	src->prev->next =3D dst;=0A=
-> +}=0A=
-> +=0A=
-> +static inline void blk_descr_multidev_init(struct blk_descr_multidev *bl=
-k_descr,=0A=
-> +					   struct list_head *rangelist)=0A=
-> +{=0A=
-> +	list_assign(&blk_descr->rangelist, rangelist);=0A=
-> +}=0A=
-> +=0A=
-> +static inline void blk_descr_multidev_done(struct blk_descr_multidev *bl=
-k_descr)=0A=
-> +{=0A=
-> +	struct blk_range_link_ex *rangelist;=0A=
-> +=0A=
-> +	while (!list_empty(&blk_descr->rangelist)) {=0A=
-> +		rangelist =3D list_entry(blk_descr->rangelist.next,=0A=
-> +				       struct blk_range_link_ex, link);=0A=
-> +=0A=
-> +		list_del(&rangelist->link);=0A=
-> +		kfree(rangelist);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_multidev_pool_init(struct blk_descr_pool *pool)=0A=
-> +{=0A=
-> +	blk_descr_pool_init(pool, 0);=0A=
-> +}=0A=
-> +=0A=
-> +static void blk_descr_multidev_cleanup(void *descr_array, size_t count)=
-=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +	struct blk_descr_multidev *descr_multidev =3D descr_array;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < count; ++inx)=0A=
-> +		blk_descr_multidev_done(descr_multidev + inx);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_multidev_pool_done(struct blk_descr_pool *pool)=0A=
-> +{=0A=
-> +	blk_descr_pool_done(pool, blk_descr_multidev_cleanup);=0A=
-> +}=0A=
-> +=0A=
-> +static union blk_descr_unify blk_descr_multidev_allocate(void *descr_arr=
-ay, size_t index, void *arg)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +	struct blk_descr_multidev *multidev_blocks =3D descr_array;=0A=
-> +=0A=
-> +	blk_descr.multidev =3D &multidev_blocks[index];=0A=
-> +=0A=
-> +	blk_descr_multidev_init(blk_descr.multidev, (struct list_head *)arg);=
-=0A=
-> +=0A=
-> +	return blk_descr;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_descr_multidev_pool_add(struct blk_descr_pool *pool, struct list=
-_head *rangelist)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr;=0A=
-> +=0A=
-> +	blk_descr =3D blk_descr_pool_alloc(pool, sizeof(struct blk_descr_multid=
-ev),=0A=
-> +					 blk_descr_multidev_allocate, (void *)rangelist);=0A=
-> +	if (blk_descr.ptr =3D=3D NULL) {=0A=
-> +		pr_err("Failed to allocate block descriptor\n");=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_multidev_pool_take(struct blk_descr_pool=
- *pool)=0A=
-> +{=0A=
-> +	return blk_descr_pool_take(pool, sizeof(struct blk_descr_multidev));=0A=
-> +}=0A=
-> +=0A=
-> +#endif //CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_multidev.h b/drivers/block/=
-blk-snap/blk_descr_multidev.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..0145b0d78b10=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_multidev.h=0A=
-> @@ -0,0 +1,25 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +=0A=
-> +#include "blk_descr_pool.h"=0A=
-> +=0A=
-> +struct blk_descr_multidev {=0A=
-> +	struct list_head rangelist;=0A=
-> +};=0A=
-> +=0A=
-> +struct blk_range_link_ex {=0A=
-> +	struct list_head link;=0A=
-> +	struct blk_range rg;=0A=
-> +	struct block_device *blk_dev;=0A=
-> +};=0A=
-> +=0A=
-> +void blk_descr_multidev_pool_init(struct blk_descr_pool *pool);=0A=
-> +void blk_descr_multidev_pool_done(struct blk_descr_pool *pool);=0A=
-> +=0A=
-> +int blk_descr_multidev_pool_add(struct blk_descr_pool *pool,=0A=
-> +				struct list_head *rangelist); //allocate new empty block=0A=
-> +union blk_descr_unify blk_descr_multidev_pool_take(struct blk_descr_pool=
- *pool); //take empty=0A=
-> +=0A=
-> +#endif //CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_pool.c b/drivers/block/blk-=
-snap/blk_descr_pool.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..b1fe2ba9c2d0=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_pool.c=0A=
-> @@ -0,0 +1,190 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-blk_descr"=0A=
-> +#include "common.h"=0A=
-> +#include "blk_descr_pool.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +struct pool_el {=0A=
-> +	struct list_head link;=0A=
-> +=0A=
-> +	size_t used_cnt; // used blocks=0A=
-> +	size_t capacity; // blocks array capacity=0A=
-> +=0A=
-> +	u8 descr_array[0];=0A=
-> +};=0A=
-> +=0A=
-> +static void *kmalloc_huge(size_t max_size, size_t min_size, gfp_t flags,=
- size_t *p_allocated_size)=0A=
-> +{=0A=
-> +	void *ptr =3D NULL;=0A=
-> +=0A=
-> +	do {=0A=
-> +		ptr =3D kmalloc(max_size, flags | __GFP_NOWARN | __GFP_RETRY_MAYFAIL);=
-=0A=
-> +=0A=
-> +		if (ptr !=3D NULL) {=0A=
-> +			*p_allocated_size =3D max_size;=0A=
-> +			return ptr;=0A=
-> +		}=0A=
-> +		pr_err("Failed to allocate buffer size=3D%zu\n", max_size);=0A=
-> +		max_size =3D max_size >> 1;=0A=
-> +	} while (max_size >=3D min_size);=0A=
-> +=0A=
-> +	pr_err("Failed to allocate buffer.");=0A=
-> +	return NULL;=0A=
-> +}=0A=
-> +=0A=
-> +static struct pool_el *pool_el_alloc(size_t blk_descr_size)=0A=
-> +{=0A=
-> +	size_t el_size;=0A=
-> +	struct pool_el *el;=0A=
-> +=0A=
-> +	el =3D kmalloc_huge(8 * PAGE_SIZE, PAGE_SIZE, GFP_NOIO, &el_size);=0A=
-> +	if (el =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	el->capacity =3D (el_size - sizeof(struct pool_el)) / blk_descr_size;=
-=0A=
-> +	el->used_cnt =3D 0;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&el->link);=0A=
-> +=0A=
-> +	return el;=0A=
-> +}=0A=
-> +=0A=
-> +static void _pool_el_free(struct pool_el *el)=0A=
-> +{=0A=
-> +	if (el !=3D NULL)=0A=
-> +		kfree(el);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_pool_init(struct blk_descr_pool *pool, size_t available_b=
-locks)=0A=
-> +{=0A=
-> +	mutex_init(&pool->lock);=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&pool->head);=0A=
-> +=0A=
-> +	pool->blocks_cnt =3D 0;=0A=
-> +=0A=
-> +	pool->total_cnt =3D available_blocks;=0A=
-> +	pool->take_cnt =3D 0;=0A=
-> +}=0A=
-> +=0A=
-> +void blk_descr_pool_done(struct blk_descr_pool *pool,=0A=
-> +			 void (*blocks_cleanup_cb)(void *descr_array, size_t count))=0A=
-> +{=0A=
-> +	mutex_lock(&pool->lock);=0A=
-> +	while (!list_empty(&pool->head)) {=0A=
-> +		struct pool_el *el;=0A=
-> +=0A=
-> +		el =3D list_entry(pool->head.next, struct pool_el, link);=0A=
-> +		if (el =3D=3D NULL)=0A=
-> +			break;=0A=
-> +=0A=
-> +		list_del(&el->link);=0A=
-> +		--pool->blocks_cnt;=0A=
-> +=0A=
-> +		pool->total_cnt -=3D el->used_cnt;=0A=
-> +=0A=
-> +		blocks_cleanup_cb(el->descr_array, el->used_cnt);=0A=
-> +=0A=
-> +		_pool_el_free(el);=0A=
-> +	}=0A=
-> +	mutex_unlock(&pool->lock);=0A=
-> +}=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_pool_alloc(=0A=
-> +	struct blk_descr_pool *pool, size_t blk_descr_size,=0A=
-> +	union blk_descr_unify (*block_alloc_cb)(void *descr_array, size_t index=
-, void *arg),=0A=
-> +	void *arg)=0A=
-> +{=0A=
-> +	union blk_descr_unify blk_descr =3D { NULL };=0A=
-> +=0A=
-> +	mutex_lock(&pool->lock);=0A=
-> +	do {=0A=
-> +		struct pool_el *el =3D NULL;=0A=
-> +=0A=
-> +		if (!list_empty(&pool->head)) {=0A=
-> +			el =3D list_entry(pool->head.prev, struct pool_el, link);=0A=
-> +			if (el->used_cnt =3D=3D el->capacity)=0A=
-> +				el =3D NULL;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (el =3D=3D NULL) {=0A=
-> +			el =3D pool_el_alloc(blk_descr_size);=0A=
-> +			if (el =3D=3D NULL)=0A=
-> +				break;=0A=
-> +=0A=
-> +			list_add_tail(&el->link, &pool->head);=0A=
-> +=0A=
-> +			++pool->blocks_cnt;=0A=
-> +		}=0A=
-> +=0A=
-> +		blk_descr =3D block_alloc_cb(el->descr_array, el->used_cnt, arg);=0A=
-> +=0A=
-> +		++el->used_cnt;=0A=
-> +		++pool->total_cnt;=0A=
-> +=0A=
-> +	} while (false);=0A=
-> +	mutex_unlock(&pool->lock);=0A=
-> +=0A=
-> +	return blk_descr;=0A=
-> +}=0A=
-> +=0A=
-> +static union blk_descr_unify __blk_descr_pool_at(struct blk_descr_pool *=
-pool, size_t blk_descr_size,=0A=
-> +						 size_t index)=0A=
-> +{=0A=
-> +	union blk_descr_unify bkl_descr =3D { NULL };=0A=
-> +	size_t curr_inx =3D 0;=0A=
-> +	struct pool_el *el;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	if (list_empty(&(pool)->head))=0A=
-> +		return bkl_descr;=0A=
-> +=0A=
-> +	list_for_each(_list_head, &(pool)->head) {=0A=
-> +		el =3D list_entry(_list_head, struct pool_el, link);=0A=
-> +=0A=
-> +		if ((index >=3D curr_inx) && (index < (curr_inx + el->used_cnt))) {=0A=
-> +			bkl_descr.ptr =3D el->descr_array + (index - curr_inx) * blk_descr_si=
-ze;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		curr_inx +=3D el->used_cnt;=0A=
-> +	}=0A=
-> +=0A=
-> +	return bkl_descr;=0A=
-> +}=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_pool_take(struct blk_descr_pool *pool, s=
-ize_t blk_descr_size)=0A=
-> +{=0A=
-> +	union blk_descr_unify result =3D { NULL };=0A=
-> +=0A=
-> +	mutex_lock(&pool->lock);=0A=
-> +	do {=0A=
-> +		if (pool->take_cnt >=3D pool->total_cnt) {=0A=
-> +			pr_err("Unable to get block descriptor: ");=0A=
-> +			pr_err("not enough descriptors, already took %zu, total %zu\n",=0A=
-> +			       pool->take_cnt, pool->total_cnt);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		result =3D __blk_descr_pool_at(pool, blk_descr_size, pool->take_cnt);=
-=0A=
-> +		if (result.ptr =3D=3D NULL) {=0A=
-> +			pr_err("Unable to get block descriptor: ");=0A=
-> +			pr_err("not enough descriptors, already took %zu, total %zu\n",=0A=
-> +			       pool->take_cnt, pool->total_cnt);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		++pool->take_cnt;=0A=
-> +	} while (false);=0A=
-> +	mutex_unlock(&pool->lock);=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +bool blk_descr_pool_check_halffill(struct blk_descr_pool *pool, sector_t=
- empty_limit,=0A=
-> +				   sector_t *fill_status)=0A=
-> +{=0A=
-> +	size_t empty_blocks =3D (pool->total_cnt - pool->take_cnt);=0A=
-> +=0A=
-> +	*fill_status =3D (sector_t)(pool->take_cnt) << snapstore_block_shift();=
-=0A=
-> +=0A=
-> +	return (empty_blocks < (size_t)(empty_limit >> snapstore_block_shift())=
-);=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/blk_descr_pool.h b/drivers/block/blk-=
-snap/blk_descr_pool.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..32f8b8c4103e=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_descr_pool.h=0A=
-> @@ -0,0 +1,38 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +struct blk_descr_mem;=0A=
-> +struct blk_descr_file;=0A=
-> +struct blk_descr_multidev;=0A=
-> +=0A=
-> +union blk_descr_unify {=0A=
-> +	void *ptr;=0A=
-> +	struct blk_descr_mem *mem;=0A=
-> +	struct blk_descr_file *file;=0A=
-> +	struct blk_descr_multidev *multidev;=0A=
-> +};=0A=
-> +=0A=
-> +struct blk_descr_pool {=0A=
-> +	struct list_head head;=0A=
-> +	struct mutex lock;=0A=
-> +=0A=
-> +	size_t blocks_cnt; // count of struct pool_el=0A=
-> +=0A=
-> +	size_t total_cnt;  // total count of block descriptors=0A=
-> +	size_t take_cnt;   // take count of block descriptors=0A=
-> +};=0A=
-> +=0A=
-> +void blk_descr_pool_init(struct blk_descr_pool *pool, size_t available_b=
-locks);=0A=
-> +=0A=
-> +void blk_descr_pool_done(struct blk_descr_pool *pool,=0A=
-> +			 void (*blocks_cleanup_cb)(void *descr_array, size_t count));=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_pool_alloc(=0A=
-> +	struct blk_descr_pool *pool, size_t blk_descr_size,=0A=
-> +	union blk_descr_unify (*block_alloc_cb)(void *descr_array, size_t index=
-, void *arg),=0A=
-> +	void *arg);=0A=
-> +=0A=
-> +union blk_descr_unify blk_descr_pool_take(struct blk_descr_pool *pool, s=
-ize_t blk_descr_size);=0A=
-> +=0A=
-> +bool blk_descr_pool_check_halffill(struct blk_descr_pool *pool, sector_t=
- empty_limit,=0A=
-> +				   sector_t *fill_status);=0A=
-> diff --git a/drivers/block/blk-snap/blk_redirect.c b/drivers/block/blk-sn=
-ap/blk_redirect.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..4c28a8cb4275=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_redirect.c=0A=
-> @@ -0,0 +1,507 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-redirect"=0A=
-> +#include "common.h"=0A=
-> +#include "blk_util.h"=0A=
-> +#include "blk_redirect.h"=0A=
-> +=0A=
-> +#define bio_vec_sectors(bv) (bv.bv_len >> SECTOR_SHIFT)=0A=
-> +=0A=
-> +struct bio_set blk_redirect_bioset =3D { 0 };=0A=
-> +=0A=
-> +int blk_redirect_bioset_create(void)=0A=
-> +{=0A=
-> +	return bioset_init(&blk_redirect_bioset, 64, 0, BIOSET_NEED_BVECS | BIO=
-SET_NEED_RESCUER);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_redirect_bioset_free(void)=0A=
-> +{=0A=
-> +	bioset_exit(&blk_redirect_bioset);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_redirect_bio_endio(struct bio *bb)=0A=
-> +{=0A=
-> +	struct blk_redirect_bio *rq_redir =3D (struct blk_redirect_bio *)bb->bi=
-_private;=0A=
-> +=0A=
-> +	if (rq_redir !=3D NULL) {=0A=
-> +		int err =3D SUCCESS;=0A=
-> +=0A=
-> +		if (bb->bi_status !=3D BLK_STS_OK)=0A=
-> +			err =3D -EIO;=0A=
-> +=0A=
-> +		if (err !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to process redirect IO request. errno=3D%d\n", 0 - err=
-);=0A=
-> +=0A=
-> +			if (rq_redir->err =3D=3D SUCCESS)=0A=
-> +				rq_redir->err =3D err;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (atomic64_dec_and_test(&rq_redir->bio_count))=0A=
-> +			blk_redirect_complete(rq_redir, rq_redir->err);=0A=
-> +	}=0A=
-> +	bio_put(bb);=0A=
-> +}=0A=
-> +=0A=
-> +struct bio *_blk_dev_redirect_bio_alloc(int nr_iovecs, void *bi_private)=
-=0A=
-> +{=0A=
-> +	struct bio *new_bio;=0A=
-> +=0A=
-> +	new_bio =3D bio_alloc_bioset(GFP_NOIO, nr_iovecs, &blk_redirect_bioset)=
-;=0A=
-> +	if (new_bio =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	new_bio->bi_end_io =3D blk_redirect_bio_endio;=0A=
-> +	new_bio->bi_private =3D bi_private;=0A=
-> +=0A=
-> +	return new_bio;=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_redirect_bio_list *_redirect_bio_allocate_list(struct bio *ne=
-w_bio)=0A=
-> +{=0A=
-> +	struct blk_redirect_bio_list *next;=0A=
-> +=0A=
-> +	next =3D kzalloc(sizeof(struct blk_redirect_bio_list), GFP_NOIO);=0A=
-> +	if (next =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	next->next =3D NULL;=0A=
-> +	next->this =3D new_bio;=0A=
-> +=0A=
-> +	return next;=0A=
-> +}=0A=
-> +=0A=
-> +int bio_endio_list_push(struct blk_redirect_bio *rq_redir, struct bio *n=
-ew_bio)=0A=
-> +{=0A=
-> +	struct blk_redirect_bio_list *head;=0A=
-> +=0A=
-> +	if (rq_redir->bio_list_head =3D=3D NULL) {=0A=
-> +		//list is empty, add first bio=0A=
-> +		rq_redir->bio_list_head =3D _redirect_bio_allocate_list(new_bio);=0A=
-> +		if (rq_redir->bio_list_head =3D=3D NULL)=0A=
-> +			return -ENOMEM;=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	// seek end of list=0A=
-> +	head =3D rq_redir->bio_list_head;=0A=
-> +	while (head->next !=3D NULL)=0A=
-> +		head =3D head->next;=0A=
-> +=0A=
-> +	//append new bio to the end of list=0A=
-> +	head->next =3D _redirect_bio_allocate_list(new_bio);=0A=
-> +	if (head->next =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +void bio_endio_list_cleanup(struct blk_redirect_bio_list *curr)=0A=
-> +{=0A=
-> +	while (curr !=3D NULL) {=0A=
-> +		struct blk_redirect_bio_list *next;=0A=
-> +=0A=
-> +		next =3D curr->next;=0A=
-> +		kfree(curr);=0A=
-> +		curr =3D next;=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +static unsigned int get_max_sect(struct block_device *blk_dev)=0A=
-> +{=0A=
-> +	struct request_queue *q =3D bdev_get_queue(blk_dev);=0A=
-> +=0A=
-> +	return min((unsigned int)(BIO_MAX_PAGES << (PAGE_SHIFT - SECTOR_SHIFT))=
-,=0A=
-> +		   q->limits.max_sectors);=0A=
-> +}=0A=
-> +=0A=
-> +static int _blk_dev_redirect_part_fast(struct blk_redirect_bio *rq_redir=
-, int direction,=0A=
-> +				       struct block_device *blk_dev, sector_t target_pos,=0A=
-> +				       sector_t rq_ofs, sector_t rq_count)=0A=
-> +{=0A=
-> +	__label__ _fail_out;=0A=
-> +	__label__ _reprocess_bv;=0A=
-> +=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	struct bio_vec bvec;=0A=
-> +	struct bvec_iter iter;=0A=
-> +=0A=
-> +	struct bio *new_bio =3D NULL;=0A=
-> +=0A=
-> +	sector_t sect_ofs =3D 0;=0A=
-> +	sector_t processed_sectors =3D 0;=0A=
-> +	int nr_iovecs;=0A=
-> +	struct blk_redirect_bio_list *bio_endio_rec;=0A=
-> +=0A=
-> +	nr_iovecs =3D get_max_sect(blk_dev) >> (PAGE_SHIFT - SECTOR_SHIFT);=0A=
-> +=0A=
-> +	bio_for_each_segment(bvec, rq_redir->bio, iter) {=0A=
-> +		sector_t bvec_ofs;=0A=
-> +		sector_t bvec_sectors;=0A=
-> +=0A=
-> +		unsigned int len;=0A=
-> +		unsigned int offset;=0A=
-> +=0A=
-> +		if ((sect_ofs + bio_vec_sectors(bvec)) <=3D rq_ofs) {=0A=
-> +			sect_ofs +=3D bio_vec_sectors(bvec);=0A=
-> +			continue;=0A=
-> +		}=0A=
-> +		if (sect_ofs >=3D (rq_ofs + rq_count))=0A=
-> +			break;=0A=
-> +=0A=
-> +		bvec_ofs =3D 0;=0A=
-> +		if (sect_ofs < rq_ofs)=0A=
-> +			bvec_ofs =3D rq_ofs - sect_ofs;=0A=
-> +=0A=
-> +		bvec_sectors =3D bio_vec_sectors(bvec) - bvec_ofs;=0A=
-> +		if (bvec_sectors > (rq_count - processed_sectors))=0A=
-> +			bvec_sectors =3D rq_count - processed_sectors;=0A=
-> +=0A=
-> +		if (bvec_sectors =3D=3D 0) {=0A=
-> +			res =3D -EIO;=0A=
-> +			goto _fail_out;=0A=
-> +		}=0A=
-> +=0A=
-> +_reprocess_bv:=0A=
-> +		if (new_bio =3D=3D NULL) {=0A=
-> +			new_bio =3D _blk_dev_redirect_bio_alloc(nr_iovecs, rq_redir);=0A=
-> +			while (new_bio =3D=3D NULL) {=0A=
-> +				pr_err("Unable to allocate new bio for redirect IO.\n");=0A=
-> +				res =3D -ENOMEM;=0A=
-> +				goto _fail_out;=0A=
-> +			}=0A=
-> +=0A=
-> +			bio_set_dev(new_bio, blk_dev);=0A=
-> +=0A=
-> +			if (direction =3D=3D READ)=0A=
-> +				bio_set_op_attrs(new_bio, REQ_OP_READ, 0);=0A=
-> +=0A=
-> +			if (direction =3D=3D WRITE)=0A=
-> +				bio_set_op_attrs(new_bio, REQ_OP_WRITE, 0);=0A=
-> +=0A=
-> +			new_bio->bi_iter.bi_sector =3D target_pos + processed_sectors;=0A=
-> +		}=0A=
-> +=0A=
-> +		len =3D (unsigned int)from_sectors(bvec_sectors);=0A=
-> +		offset =3D bvec.bv_offset + (unsigned int)from_sectors(bvec_ofs);=0A=
-> +		if (unlikely(bio_add_page(new_bio, bvec.bv_page, len, offset) !=3D len=
-)) {=0A=
-> +			if (bio_sectors(new_bio) =3D=3D 0) {=0A=
-> +				res =3D -EIO;=0A=
-> +				goto _fail_out;=0A=
-> +			}=0A=
-> +=0A=
-> +			res =3D bio_endio_list_push(rq_redir, new_bio);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to add bio into bio_endio_list\n");=0A=
-> +				goto _fail_out;=0A=
-> +			}=0A=
-> +=0A=
-> +			atomic64_inc(&rq_redir->bio_count);=0A=
-> +			new_bio =3D NULL;=0A=
-> +=0A=
-> +			goto _reprocess_bv;=0A=
-> +		}=0A=
-> +		processed_sectors +=3D bvec_sectors;=0A=
-> +=0A=
-> +		sect_ofs +=3D bio_vec_sectors(bvec);=0A=
-> +	}=0A=
-> +=0A=
-> +	if (new_bio !=3D NULL) {=0A=
-> +		res =3D bio_endio_list_push(rq_redir, new_bio);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to add bio into bio_endio_list\n");=0A=
-> +			goto _fail_out;=0A=
-> +		}=0A=
-> +=0A=
-> +		atomic64_inc(&rq_redir->bio_count);=0A=
-> +		new_bio =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +=0A=
-> +_fail_out:=0A=
-> +	bio_endio_rec =3D rq_redir->bio_list_head;=0A=
-> +	while (bio_endio_rec !=3D NULL) {=0A=
-> +		if (bio_endio_rec->this !=3D NULL)=0A=
-> +			bio_put(bio_endio_rec->this);=0A=
-> +=0A=
-> +		bio_endio_rec =3D bio_endio_rec->next;=0A=
-> +	}=0A=
-> +=0A=
-> +	bio_endio_list_cleanup(bio_endio_rec);=0A=
-> +=0A=
-> +	pr_err("Failed to process part of redirect IO request. rq_ofs=3D%lld, r=
-q_count=3D%lld\n",=0A=
-> +	       rq_ofs, rq_count);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_dev_redirect_part(struct blk_redirect_bio *rq_redir, int directi=
-on,=0A=
-> +			  struct block_device *blk_dev, sector_t target_pos, sector_t rq_ofs,=
-=0A=
-> +			  sector_t rq_count)=0A=
-> +{=0A=
-> +	struct request_queue *q =3D bdev_get_queue(blk_dev);=0A=
-> +	sector_t logical_block_size_mask =3D=0A=
-> +		(sector_t)((q->limits.logical_block_size >> SECTOR_SHIFT) - 1);=0A=
-> +=0A=
-> +	if (likely(logical_block_size_mask =3D=3D 0))=0A=
-> +		return _blk_dev_redirect_part_fast(rq_redir, direction, blk_dev, targe=
-t_pos, rq_ofs,=0A=
-> +						   rq_count);=0A=
-> +=0A=
-> +	if (likely((0 =3D=3D (target_pos & logical_block_size_mask)) &&=0A=
-> +		   (0 =3D=3D (rq_count & logical_block_size_mask))))=0A=
-> +		return _blk_dev_redirect_part_fast(rq_redir, direction, blk_dev, targe=
-t_pos, rq_ofs,=0A=
-> +						   rq_count);=0A=
-> +=0A=
-> +	return -EFAULT;=0A=
-> +}=0A=
-> +=0A=
-> +void blk_dev_redirect_submit(struct blk_redirect_bio *rq_redir)=0A=
-> +{=0A=
-> +	struct blk_redirect_bio_list *head;=0A=
-> +	struct blk_redirect_bio_list *curr;=0A=
-> +=0A=
-> +	head =3D curr =3D rq_redir->bio_list_head;=0A=
-> +	rq_redir->bio_list_head =3D NULL;=0A=
-> +=0A=
-> +	while (curr !=3D NULL) {=0A=
-> +		submit_bio_direct(curr->this);=0A=
-> +=0A=
-> +		curr =3D curr->next;=0A=
-> +	}=0A=
-> +=0A=
-> +	bio_endio_list_cleanup(head);=0A=
-> +}=0A=
-> +=0A=
-> +int blk_dev_redirect_memcpy_part(struct blk_redirect_bio *rq_redir, int =
-direction, void *buff,=0A=
-> +				 sector_t rq_ofs, sector_t rq_count)=0A=
-> +{=0A=
-> +	struct bio_vec bvec;=0A=
-> +	struct bvec_iter iter;=0A=
-> +=0A=
-> +	sector_t sect_ofs =3D 0;=0A=
-> +	sector_t processed_sectors =3D 0;=0A=
-> +=0A=
-> +	bio_for_each_segment(bvec, rq_redir->bio, iter) {=0A=
-> +		void *mem;=0A=
-> +		sector_t bvec_ofs;=0A=
-> +		sector_t bvec_sectors;=0A=
-> +=0A=
-> +		if ((sect_ofs + bio_vec_sectors(bvec)) <=3D rq_ofs) {=0A=
-> +			sect_ofs +=3D bio_vec_sectors(bvec);=0A=
-> +			continue;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (sect_ofs >=3D (rq_ofs + rq_count))=0A=
-> +			break;=0A=
-> +=0A=
-> +		bvec_ofs =3D 0;=0A=
-> +		if (sect_ofs < rq_ofs)=0A=
-> +			bvec_ofs =3D rq_ofs - sect_ofs;=0A=
-> +=0A=
-> +		bvec_sectors =3D bio_vec_sectors(bvec) - bvec_ofs;=0A=
-> +		if (bvec_sectors > (rq_count - processed_sectors))=0A=
-> +			bvec_sectors =3D rq_count - processed_sectors;=0A=
-> +=0A=
-> +		mem =3D kmap_atomic(bvec.bv_page);=0A=
-> +		if (direction =3D=3D READ) {=0A=
-> +			memcpy(mem + bvec.bv_offset + (unsigned int)from_sectors(bvec_ofs),=
-=0A=
-> +			       buff + (unsigned int)from_sectors(processed_sectors),=0A=
-> +			       (unsigned int)from_sectors(bvec_sectors));=0A=
-> +		} else {=0A=
-> +			memcpy(buff + (unsigned int)from_sectors(processed_sectors),=0A=
-> +			       mem + bvec.bv_offset + (unsigned int)from_sectors(bvec_ofs),=
-=0A=
-> +			       (unsigned int)from_sectors(bvec_sectors));=0A=
-> +		}=0A=
-> +		kunmap_atomic(mem);=0A=
-> +=0A=
-> +		processed_sectors +=3D bvec_sectors;=0A=
-> +=0A=
-> +		sect_ofs +=3D bio_vec_sectors(bvec);=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_dev_redirect_zeroed_part(struct blk_redirect_bio *rq_redir, sect=
-or_t rq_ofs,=0A=
-> +				 sector_t rq_count)=0A=
-> +{=0A=
-> +	struct bio_vec bvec;=0A=
-> +	struct bvec_iter iter;=0A=
-> +=0A=
-> +	sector_t sect_ofs =3D 0;=0A=
-> +	sector_t processed_sectors =3D 0;=0A=
-> +=0A=
-> +	bio_for_each_segment(bvec, rq_redir->bio, iter) {=0A=
-> +		void *mem;=0A=
-> +		sector_t bvec_ofs;=0A=
-> +		sector_t bvec_sectors;=0A=
-> +=0A=
-> +		if ((sect_ofs + bio_vec_sectors(bvec)) <=3D rq_ofs) {=0A=
-> +			sect_ofs +=3D bio_vec_sectors(bvec);=0A=
-> +			continue;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (sect_ofs >=3D (rq_ofs + rq_count))=0A=
-> +			break;=0A=
-> +=0A=
-> +		bvec_ofs =3D 0;=0A=
-> +		if (sect_ofs < rq_ofs)=0A=
-> +			bvec_ofs =3D rq_ofs - sect_ofs;=0A=
-> +=0A=
-> +		bvec_sectors =3D bio_vec_sectors(bvec) - bvec_ofs;=0A=
-> +		if (bvec_sectors > (rq_count - processed_sectors))=0A=
-> +			bvec_sectors =3D rq_count - processed_sectors;=0A=
-> +=0A=
-> +		mem =3D kmap_atomic(bvec.bv_page);=0A=
-> +		memset(mem + bvec.bv_offset + (unsigned int)from_sectors(bvec_ofs), 0,=
-=0A=
-> +		       (unsigned int)from_sectors(bvec_sectors));=0A=
-> +		kunmap_atomic(mem);=0A=
-> +=0A=
-> +		processed_sectors +=3D bvec_sectors;=0A=
-> +=0A=
-> +		sect_ofs +=3D bio_vec_sectors(bvec);=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int blk_dev_redirect_read_zeroed(struct blk_redirect_bio *rq_redir, stru=
-ct block_device *blk_dev,=0A=
-> +				 sector_t rq_pos, sector_t blk_ofs_start, sector_t blk_ofs_count,=0A=
-> +				 struct rangevector *zero_sectors)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct blk_range_tree_node *range_node;=0A=
-> +=0A=
-> +	sector_t ofs =3D 0;=0A=
-> +=0A=
-> +	sector_t from =3D rq_pos + blk_ofs_start;=0A=
-> +	sector_t to =3D rq_pos + blk_ofs_start + blk_ofs_count - 1;=0A=
-> +=0A=
-> +	down_read(&zero_sectors->lock);=0A=
-> +	range_node =3D blk_range_rb_iter_first(&zero_sectors->root, from, to);=
-=0A=
-> +	while (range_node) {=0A=
-> +		struct blk_range *zero_range =3D &range_node->range;=0A=
-> +		sector_t current_portion;=0A=
-> +=0A=
-> +		if (zero_range->ofs > rq_pos + blk_ofs_start + ofs) {=0A=
-> +			sector_t pre_zero_cnt =3D zero_range->ofs - (rq_pos + blk_ofs_start +=
- ofs);=0A=
-> +=0A=
-> +			res =3D blk_dev_redirect_part(rq_redir, READ, blk_dev,=0A=
-> +						    rq_pos + blk_ofs_start + ofs,=0A=
-> +						    blk_ofs_start + ofs, pre_zero_cnt);=0A=
-> +			if (res !=3D SUCCESS)=0A=
-> +				break;=0A=
-> +=0A=
-> +			ofs +=3D pre_zero_cnt;=0A=
-> +		}=0A=
-> +=0A=
-> +		current_portion =3D min_t(sector_t, zero_range->cnt, blk_ofs_count - o=
-fs);=0A=
-> +=0A=
-> +		res =3D blk_dev_redirect_zeroed_part(rq_redir, blk_ofs_start + ofs, cu=
-rrent_portion);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			break;=0A=
-> +=0A=
-> +		ofs +=3D current_portion;=0A=
-> +=0A=
-> +		range_node =3D blk_range_rb_iter_next(range_node, from, to);=0A=
-> +	}=0A=
-> +	up_read(&zero_sectors->lock);=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS)=0A=
-> +		if ((blk_ofs_count - ofs) > 0)=0A=
-> +			res =3D blk_dev_redirect_part(rq_redir, READ, blk_dev,=0A=
-> +						    rq_pos + blk_ofs_start + ofs,=0A=
-> +						    blk_ofs_start + ofs, blk_ofs_count - ofs);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +void blk_redirect_complete(struct blk_redirect_bio *rq_redir, int res)=
-=0A=
-> +{=0A=
-> +	rq_redir->complete_cb(rq_redir->complete_param, rq_redir->bio, res);=0A=
-> +	redirect_bio_queue_free(rq_redir);=0A=
-> +}=0A=
-> +=0A=
-> +void redirect_bio_queue_init(struct redirect_bio_queue *queue)=0A=
-> +{=0A=
-> +	INIT_LIST_HEAD(&queue->list);=0A=
-> +=0A=
-> +	spin_lock_init(&queue->lock);=0A=
-> +=0A=
-> +	atomic_set(&queue->in_queue_cnt, 0);=0A=
-> +	atomic_set(&queue->alloc_cnt, 0);=0A=
-> +=0A=
-> +	atomic_set(&queue->active_state, true);=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_redirect_bio *redirect_bio_queue_new(struct redirect_bio_queu=
-e *queue)=0A=
-> +{=0A=
-> +	struct blk_redirect_bio *rq_redir =3D kzalloc(sizeof(struct blk_redirec=
-t_bio), GFP_NOIO);=0A=
-> +=0A=
-> +	if (rq_redir =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	atomic_inc(&queue->alloc_cnt);=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&rq_redir->link);=0A=
-> +	rq_redir->queue =3D queue;=0A=
-> +=0A=
-> +	return rq_redir;=0A=
-> +}=0A=
-> +=0A=
-> +void redirect_bio_queue_free(struct blk_redirect_bio *rq_redir)=0A=
-> +{=0A=
-> +	if (rq_redir) {=0A=
-> +		if (rq_redir->queue)=0A=
-> +			atomic_dec(&rq_redir->queue->alloc_cnt);=0A=
-> +=0A=
-> +		kfree(rq_redir);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +int redirect_bio_queue_push_back(struct redirect_bio_queue *queue,=0A=
-> +				 struct blk_redirect_bio *rq_redir)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	spin_lock(&queue->lock);=0A=
-> +=0A=
-> +	if (atomic_read(&queue->active_state)) {=0A=
-> +		INIT_LIST_HEAD(&rq_redir->link);=0A=
-> +		list_add_tail(&rq_redir->link, &queue->list);=0A=
-> +		atomic_inc(&queue->in_queue_cnt);=0A=
-> +	} else=0A=
-> +		res =3D -EACCES;=0A=
-> +=0A=
-> +	spin_unlock(&queue->lock);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_redirect_bio *redirect_bio_queue_get_first(struct redirect_bi=
-o_queue *queue)=0A=
-> +{=0A=
-> +	struct blk_redirect_bio *rq_redir =3D NULL;=0A=
-> +=0A=
-> +	spin_lock(&queue->lock);=0A=
-> +=0A=
-> +	if (!list_empty(&queue->list)) {=0A=
-> +		rq_redir =3D list_entry(queue->list.next, struct blk_redirect_bio, lin=
-k);=0A=
-> +		list_del(&rq_redir->link);=0A=
-> +		atomic_dec(&queue->in_queue_cnt);=0A=
-> +	}=0A=
-> +=0A=
-> +	spin_unlock(&queue->lock);=0A=
-> +=0A=
-> +	return rq_redir;=0A=
-> +}=0A=
-> +=0A=
-> +bool redirect_bio_queue_active(struct redirect_bio_queue *queue, bool st=
-ate)=0A=
-> +{=0A=
-> +	bool prev_state;=0A=
-> +=0A=
-> +	spin_lock(&queue->lock);=0A=
-> +=0A=
-> +	prev_state =3D atomic_read(&queue->active_state);=0A=
-> +	atomic_set(&queue->active_state, state);=0A=
-> +=0A=
-> +	spin_unlock(&queue->lock);=0A=
-> +=0A=
-> +	return prev_state;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/blk_redirect.h b/drivers/block/blk-sn=
-ap/blk_redirect.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..aae23e78ebe2=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_redirect.h=0A=
-> @@ -0,0 +1,73 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "rangevector.h"=0A=
-> +=0A=
-> +int blk_redirect_bioset_create(void);=0A=
-> +void blk_redirect_bioset_free(void);=0A=
-> +=0A=
-> +void blk_redirect_bio_endio(struct bio *bb);=0A=
-> +=0A=
-> +struct blk_redirect_bio_list {=0A=
-> +	struct blk_redirect_bio_list *next;=0A=
-> +	struct bio *this;=0A=
-> +};=0A=
-> +=0A=
-> +struct redirect_bio_queue {=0A=
-> +	struct list_head list;=0A=
-> +	spinlock_t lock;=0A=
-> +=0A=
-> +	atomic_t active_state;=0A=
-> +	atomic_t in_queue_cnt;=0A=
-> +	atomic_t alloc_cnt;=0A=
-> +};=0A=
-> +=0A=
-> +struct blk_redirect_bio {=0A=
-> +	struct list_head link;=0A=
-> +	struct redirect_bio_queue *queue;=0A=
-> +=0A=
-> +	struct bio *bio;=0A=
-> +	int err;=0A=
-> +	struct blk_redirect_bio_list *bio_list_head; //list of created bios=0A=
-> +	atomic64_t bio_count;=0A=
-> +=0A=
-> +	void *complete_param;=0A=
-> +	void (*complete_cb)(void *complete_param, struct bio *rq, int err);=0A=
-> +};=0A=
-> +=0A=
-> +int blk_dev_redirect_part(struct blk_redirect_bio *rq_redir, int directi=
-on,=0A=
-> +			  struct block_device *blk_dev, sector_t target_pos, sector_t rq_ofs,=
-=0A=
-> +			  sector_t rq_count);=0A=
-> +=0A=
-> +void blk_dev_redirect_submit(struct blk_redirect_bio *rq_redir);=0A=
-> +=0A=
-> +int blk_dev_redirect_memcpy_part(struct blk_redirect_bio *rq_redir, int =
-direction, void *src_buff,=0A=
-> +				 sector_t rq_ofs, sector_t rq_count);=0A=
-> +=0A=
-> +int blk_dev_redirect_zeroed_part(struct blk_redirect_bio *rq_redir, sect=
-or_t rq_ofs,=0A=
-> +				 sector_t rq_count);=0A=
-> +=0A=
-> +int blk_dev_redirect_read_zeroed(struct blk_redirect_bio *rq_redir, stru=
-ct block_device *blk_dev,=0A=
-> +				 sector_t rq_pos, sector_t blk_ofs_start, sector_t blk_ofs_count,=0A=
-> +				 struct rangevector *zero_sectors);=0A=
-> +=0A=
-> +void blk_redirect_complete(struct blk_redirect_bio *rq_redir, int res);=
-=0A=
-> +=0A=
-> +void redirect_bio_queue_init(struct redirect_bio_queue *queue);=0A=
-> +=0A=
-> +struct blk_redirect_bio *redirect_bio_queue_new(struct redirect_bio_queu=
-e *queue);=0A=
-> +=0A=
-> +void redirect_bio_queue_free(struct blk_redirect_bio *rq_redir);=0A=
-> +=0A=
-> +int redirect_bio_queue_push_back(struct redirect_bio_queue *queue,=0A=
-> +				 struct blk_redirect_bio *rq_redir);=0A=
-> +=0A=
-> +struct blk_redirect_bio *redirect_bio_queue_get_first(struct redirect_bi=
-o_queue *queue);=0A=
-> +=0A=
-> +bool redirect_bio_queue_active(struct redirect_bio_queue *queue, bool st=
-ate);=0A=
-> +=0A=
-> +#define redirect_bio_queue_empty(queue) (atomic_read(&(queue).in_queue_c=
-nt) =3D=3D 0)=0A=
-> +=0A=
-> +#define redirect_bio_queue_unactive(queue)                              =
-                           \=0A=
-> +	((atomic_read(&((queue).active_state)) =3D=3D false) &&                =
-                        \=0A=
-> +	 (atomic_read(&((queue).alloc_cnt)) =3D=3D 0))=0A=
-> diff --git a/drivers/block/blk-snap/blk_util.c b/drivers/block/blk-snap/b=
-lk_util.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..57db70b86516=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_util.c=0A=
-> @@ -0,0 +1,33 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#include "common.h"=0A=
-> +#include "blk_util.h"=0A=
-> +=0A=
-> +int blk_dev_open(dev_t dev_id, struct block_device **p_blk_dev)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	struct block_device *blk_dev;=0A=
-> +	int refCount;=0A=
-> +=0A=
-> +	blk_dev =3D bdget(dev_id);=0A=
-> +	if (blk_dev =3D=3D NULL) {=0A=
-> +		pr_err("Unable to open device [%d:%d]: bdget return NULL\n", MAJOR(dev=
-_id),=0A=
-> +		       MINOR(dev_id));=0A=
-> +		return -ENODEV;=0A=
-> +	}=0A=
-> +=0A=
-> +	refCount =3D blkdev_get(blk_dev, FMODE_READ | FMODE_WRITE, NULL);=0A=
-> +	if (refCount < 0) {=0A=
-> +		pr_err("Unable to open device [%d:%d]: blkdev_get return error code %d=
-\n",=0A=
-> +		       MAJOR(dev_id), MINOR(dev_id), 0 - refCount);=0A=
-> +		result =3D refCount;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (result =3D=3D SUCCESS)=0A=
-> +		*p_blk_dev =3D blk_dev;=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +void blk_dev_close(struct block_device *blk_dev)=0A=
-> +{=0A=
-> +	blkdev_put(blk_dev, FMODE_READ);=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/blk_util.h b/drivers/block/blk-snap/b=
-lk_util.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..0776f2faa668=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/blk_util.h=0A=
-> @@ -0,0 +1,33 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +int blk_dev_open(dev_t dev_id, struct block_device **p_blk_dev);=0A=
-> +void blk_dev_close(struct block_device *blk_dev);=0A=
-> +=0A=
-> +/*=0A=
-> + * this function was copied from block/blk.h=0A=
-> + */=0A=
-> +static inline sector_t part_nr_sects_read(struct hd_struct *part)=0A=
-> +{=0A=
-> +#if (BITS_PER_LONG =3D=3D 32) && defined(CONFIG_SMP)=0A=
-> +	sector_t nr_sects;=0A=
-> +	unsigned int seq;=0A=
-> +=0A=
-> +	do {=0A=
-> +		seq =3D read_seqcount_begin(&part->nr_sects_seq);=0A=
-> +		nr_sects =3D part->nr_sects;=0A=
-> +	} while (read_seqcount_retry(&part->nr_sects_seq, seq));=0A=
-> +=0A=
-> +	return nr_sects;=0A=
-> +#elif (BITS_PER_LONG =3D=3D 32) && defined(CONFIG_PREEMPTION)=0A=
-> +	sector_t nr_sects;=0A=
-> +=0A=
-> +	preempt_disable();=0A=
-> +	nr_sects =3D part->nr_sects;=0A=
-> +	preempt_enable();=0A=
-> +=0A=
-> +	return nr_sects;=0A=
-> +#else=0A=
-> +	return part->nr_sects;=0A=
-> +#endif=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/cbt_map.c b/drivers/block/blk-snap/cb=
-t_map.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..e913069d1a57=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/cbt_map.c=0A=
-> @@ -0,0 +1,210 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-cbt_map"=0A=
-> +#include "common.h"=0A=
-> +#include "cbt_map.h"=0A=
-> +=0A=
-> +int cbt_map_allocate(struct cbt_map *cbt_map, unsigned int cbt_sect_in_b=
-lock_degree,=0A=
-> +		     sector_t device_capacity)=0A=
-> +{=0A=
-> +	sector_t size_mod;=0A=
-> +=0A=
-> +	cbt_map->sect_in_block_degree =3D cbt_sect_in_block_degree;=0A=
-> +	cbt_map->device_capacity =3D device_capacity;=0A=
-> +	cbt_map->map_size =3D (device_capacity >> (sector_t)cbt_sect_in_block_d=
-egree);=0A=
-> +=0A=
-> +	pr_info("Allocate CBT map of %zu\n", cbt_map->map_size);=0A=
-> +=0A=
-> +	size_mod =3D (device_capacity & ((sector_t)(1 << cbt_sect_in_block_degr=
-ee) - 1));=0A=
-> +	if (size_mod)=0A=
-> +		cbt_map->map_size++;=0A=
-> +=0A=
-> +	cbt_map->read_map =3D big_buffer_alloc(cbt_map->map_size, GFP_KERNEL);=
-=0A=
-> +	if (cbt_map->read_map !=3D NULL)=0A=
-> +		big_buffer_memset(cbt_map->read_map, 0);=0A=
-> +=0A=
-> +	cbt_map->write_map =3D big_buffer_alloc(cbt_map->map_size, GFP_KERNEL);=
-=0A=
-> +	if (cbt_map->write_map !=3D NULL)=0A=
-> +		big_buffer_memset(cbt_map->write_map, 0);=0A=
-> +=0A=
-> +	if ((cbt_map->read_map =3D=3D NULL) || (cbt_map->write_map =3D=3D NULL)=
-) {=0A=
-> +		pr_err("Cannot allocate CBT map. map_size=3D%zu\n", cbt_map->map_size)=
-;=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	cbt_map->snap_number_previous =3D 0;=0A=
-> +	cbt_map->snap_number_active =3D 1;=0A=
-> +	generate_random_uuid(cbt_map->generationId.b);=0A=
-> +	cbt_map->active =3D true;=0A=
-> +=0A=
-> +	cbt_map->state_changed_sectors =3D 0;=0A=
-> +	cbt_map->state_dirty_sectors =3D 0;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +void cbt_map_deallocate(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	if (cbt_map->read_map !=3D NULL) {=0A=
-> +		big_buffer_free(cbt_map->read_map);=0A=
-> +		cbt_map->read_map =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (cbt_map->write_map !=3D NULL) {=0A=
-> +		big_buffer_free(cbt_map->write_map);=0A=
-> +		cbt_map->write_map =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	cbt_map->active =3D false;=0A=
-> +}=0A=
-> +=0A=
-> +static void cbt_map_destroy(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	pr_info("CBT map destroy\n");=0A=
-> +	if (cbt_map !=3D NULL) {=0A=
-> +		cbt_map_deallocate(cbt_map);=0A=
-> +=0A=
-> +		kfree(cbt_map);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +struct cbt_map *cbt_map_create(unsigned int cbt_sect_in_block_degree, se=
-ctor_t device_capacity)=0A=
-> +{=0A=
-> +	struct cbt_map *cbt_map =3D NULL;=0A=
-> +=0A=
-> +	pr_info("CBT map create\n");=0A=
-> +=0A=
-> +	cbt_map =3D kzalloc(sizeof(struct cbt_map), GFP_KERNEL);=0A=
-> +	if (cbt_map =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	if (cbt_map_allocate(cbt_map, cbt_sect_in_block_degree, device_capacity=
-) !=3D SUCCESS) {=0A=
-> +		cbt_map_destroy(cbt_map);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	spin_lock_init(&cbt_map->locker);=0A=
-> +	init_rwsem(&cbt_map->rw_lock);=0A=
-> +	kref_init(&cbt_map->refcount);=0A=
-> +=0A=
-> +	return cbt_map;=0A=
-> +}=0A=
-> +=0A=
-> +void cbt_map_destroy_cb(struct kref *kref)=0A=
-> +{=0A=
-> +	cbt_map_destroy(container_of(kref, struct cbt_map, refcount));=0A=
-> +}=0A=
-> +=0A=
-> +struct cbt_map *cbt_map_get_resource(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	if (cbt_map)=0A=
-> +		kref_get(&cbt_map->refcount);=0A=
-> +=0A=
-> +	return cbt_map;=0A=
-> +}=0A=
-> +=0A=
-> +void cbt_map_put_resource(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	if (cbt_map)=0A=
-> +		kref_put(&cbt_map->refcount, cbt_map_destroy_cb);=0A=
-> +}=0A=
-> +=0A=
-> +void cbt_map_switch(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	pr_info("CBT map switch\n");=0A=
-> +	spin_lock(&cbt_map->locker);=0A=
-> +=0A=
-> +	big_buffer_memcpy(cbt_map->read_map, cbt_map->write_map);=0A=
-> +=0A=
-> +	cbt_map->snap_number_previous =3D cbt_map->snap_number_active;=0A=
-> +	++cbt_map->snap_number_active;=0A=
-> +	if (cbt_map->snap_number_active =3D=3D 256) {=0A=
-> +		cbt_map->snap_number_active =3D 1;=0A=
-> +=0A=
-> +		big_buffer_memset(cbt_map->write_map, 0);=0A=
-> +=0A=
-> +		generate_random_uuid(cbt_map->generationId.b);=0A=
-> +=0A=
-> +		pr_info("CBT reset\n");=0A=
-> +	}=0A=
-> +	spin_unlock(&cbt_map->locker);=0A=
-> +}=0A=
-> +=0A=
-> +int _cbt_map_set(struct cbt_map *cbt_map, sector_t sector_start, sector_=
-t sector_cnt,=0A=
-> +		 u8 snap_number, struct big_buffer *map)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	size_t cbt_block;=0A=
-> +	size_t cbt_block_first =3D (size_t)(sector_start >> cbt_map->sect_in_bl=
-ock_degree);=0A=
-> +	size_t cbt_block_last =3D (size_t)((sector_start + sector_cnt - 1) >>=
-=0A=
-> +					 cbt_map->sect_in_block_degree); //inclusive=0A=
-> +=0A=
-> +	for (cbt_block =3D cbt_block_first; cbt_block <=3D cbt_block_last; ++cb=
-t_block) {=0A=
-> +		if (cbt_block < cbt_map->map_size) {=0A=
-> +			u8 num;=0A=
-> +=0A=
-> +			res =3D big_buffer_byte_get(map, cbt_block, &num);=0A=
-> +			if (res =3D=3D SUCCESS)=0A=
-> +				if (num < snap_number)=0A=
-> +					res =3D big_buffer_byte_set(map, cbt_block, snap_number);=0A=
-> +		} else=0A=
-> +			res =3D -EINVAL;=0A=
-> +=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Block index is too large. #%zu was demanded, map size %zu\n",=
-=0A=
-> +			       cbt_block, cbt_map->map_size);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	}=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int cbt_map_set(struct cbt_map *cbt_map, sector_t sector_start, sector_t=
- sector_cnt)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	spin_lock(&cbt_map->locker);=0A=
-> +=0A=
-> +	res =3D _cbt_map_set(cbt_map, sector_start, sector_cnt, (u8)cbt_map->sn=
-ap_number_active,=0A=
-> +			   cbt_map->write_map);=0A=
-> +	cbt_map->state_changed_sectors +=3D sector_cnt;=0A=
-> +=0A=
-> +	spin_unlock(&cbt_map->locker);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int cbt_map_set_both(struct cbt_map *cbt_map, sector_t sector_start, sec=
-tor_t sector_cnt)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	spin_lock(&cbt_map->locker);=0A=
-> +=0A=
-> +	res =3D _cbt_map_set(cbt_map, sector_start, sector_cnt,=0A=
-> +			   (u8)cbt_map->snap_number_active, cbt_map->write_map);=0A=
-> +	if (res =3D=3D SUCCESS)=0A=
-> +		res =3D _cbt_map_set(cbt_map, sector_start, sector_cnt,=0A=
-> +				   (u8)cbt_map->snap_number_previous, cbt_map->read_map);=0A=
-> +	cbt_map->state_dirty_sectors +=3D sector_cnt;=0A=
-> +=0A=
-> +	spin_unlock(&cbt_map->locker);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +size_t cbt_map_read_to_user(struct cbt_map *cbt_map, void __user *user_b=
-uff, size_t offset,=0A=
-> +			    size_t size)=0A=
-> +{=0A=
-> +	size_t readed =3D 0;=0A=
-> +	size_t left_size;=0A=
-> +	size_t real_size =3D min((cbt_map->map_size - offset), size);=0A=
-> +=0A=
-> +	left_size =3D real_size -=0A=
-> +		    big_buffer_copy_to_user(user_buff, offset, cbt_map->read_map, real=
-_size);=0A=
-> +=0A=
-> +	if (left_size =3D=3D 0)=0A=
-> +		readed =3D real_size;=0A=
-> +	else {=0A=
-> +		pr_err("Not all CBT data was read. Left [%zu] bytes\n", left_size);=0A=
-> +		readed =3D real_size - left_size;=0A=
-> +	}=0A=
-> +=0A=
-> +	return readed;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/cbt_map.h b/drivers/block/blk-snap/cb=
-t_map.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..cb52b09531fe=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/cbt_map.h=0A=
-> @@ -0,0 +1,62 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "big_buffer.h"=0A=
-> +#include <linux/kref.h>=0A=
-> +#include <linux/uuid.h>=0A=
-> +=0A=
-> +struct cbt_map {=0A=
-> +	struct kref refcount;=0A=
-> +=0A=
-> +	spinlock_t locker;=0A=
-> +=0A=
-> +	size_t sect_in_block_degree;=0A=
-> +	sector_t device_capacity;=0A=
-> +	size_t map_size;=0A=
-> +=0A=
-> +	struct big_buffer *read_map;=0A=
-> +	struct big_buffer *write_map;=0A=
-> +=0A=
-> +	unsigned long snap_number_active;=0A=
-> +	unsigned long snap_number_previous;=0A=
-> +	uuid_t generationId;=0A=
-> +=0A=
-> +	bool active;=0A=
-> +=0A=
-> +	struct rw_semaphore rw_lock;=0A=
-> +=0A=
-> +	sector_t state_changed_sectors;=0A=
-> +	sector_t state_dirty_sectors;=0A=
-> +};=0A=
-> +=0A=
-> +struct cbt_map *cbt_map_create(unsigned int cbt_sect_in_block_degree, se=
-ctor_t device_capacity);=0A=
-> +=0A=
-> +struct cbt_map *cbt_map_get_resource(struct cbt_map *cbt_map);=0A=
-> +void cbt_map_put_resource(struct cbt_map *cbt_map);=0A=
-> +=0A=
-> +void cbt_map_switch(struct cbt_map *cbt_map);=0A=
-> +int cbt_map_set(struct cbt_map *cbt_map, sector_t sector_start, sector_t=
- sector_cnt);=0A=
-> +int cbt_map_set_both(struct cbt_map *cbt_map, sector_t sector_start, sec=
-tor_t sector_cnt);=0A=
-> +=0A=
-> +size_t cbt_map_read_to_user(struct cbt_map *cbt_map, void __user *user_b=
-uffer, size_t offset,=0A=
-> +			    size_t size);=0A=
-> +=0A=
-> +static inline void cbt_map_read_lock(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	down_read(&cbt_map->rw_lock);=0A=
-> +};=0A=
-> +=0A=
-> +static inline void cbt_map_read_unlock(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	up_read(&cbt_map->rw_lock);=0A=
-> +};=0A=
-> +=0A=
-> +static inline void cbt_map_write_lock(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	down_write(&cbt_map->rw_lock);=0A=
-> +};=0A=
-> +=0A=
-> +static inline void cbt_map_write_unlock(struct cbt_map *cbt_map)=0A=
-> +{=0A=
-> +	up_write(&cbt_map->rw_lock);=0A=
-> +};=0A=
-> diff --git a/drivers/block/blk-snap/common.h b/drivers/block/blk-snap/com=
-mon.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..bbd5e98ab2a6=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/common.h=0A=
-> @@ -0,0 +1,31 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#ifndef BLK_SNAP_SECTION=0A=
-> +#define BLK_SNAP_SECTION ""=0A=
-> +#endif=0A=
-> +#define pr_fmt(fmt) KBUILD_MODNAME BLK_SNAP_SECTION ": " fmt=0A=
-> +=0A=
-> +#include <linux/version.h> /*rudiment - needed for using KERNEL_VERSION =
-*/=0A=
-> +=0A=
-> +#include <linux/types.h>=0A=
-> +#include <linux/errno.h>=0A=
-> +#include <linux/mutex.h>=0A=
-> +#include <linux/rwsem.h>=0A=
-> +#include <linux/spinlock.h>=0A=
-> +#include <linux/slab.h>=0A=
-> +#include <linux/list.h>=0A=
-> +#include <linux/atomic.h>=0A=
-> +#include <linux/blkdev.h>=0A=
-> +=0A=
-> +#define from_sectors(_sectors) (_sectors << SECTOR_SHIFT)=0A=
-> +#define to_sectors(_byte_size) (_byte_size >> SECTOR_SHIFT)=0A=
-> +=0A=
-> +struct blk_range {=0A=
-> +	sector_t ofs;=0A=
-> +	blkcnt_t cnt;=0A=
-> +};=0A=
-> +=0A=
-> +#ifndef SUCCESS=0A=
-> +#define SUCCESS 0=0A=
-> +#endif=0A=
-> diff --git a/drivers/block/blk-snap/ctrl_fops.c b/drivers/block/blk-snap/=
-ctrl_fops.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..b7b18539ee96=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/ctrl_fops.c=0A=
-> @@ -0,0 +1,691 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-ctrl"=0A=
-> +#include "common.h"=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +#include "ctrl_fops.h"=0A=
-> +#include "version.h"=0A=
-> +#include "tracking.h"=0A=
-> +#include "snapshot.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include "snapimage.h"=0A=
-> +#include "tracker.h"=0A=
-> +#include "blk_deferred.h"=0A=
-> +#include "big_buffer.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +#include <linux/module.h>=0A=
-> +#include <linux/poll.h>=0A=
-> +#include <linux/uaccess.h>=0A=
-> +=0A=
-> +int blk_snap_major; //zero by default=0A=
-> +=0A=
-> +const struct file_operations ctrl_fops =3D { .owner =3D THIS_MODULE,=0A=
-> +					   .read =3D ctrl_read,=0A=
-> +					   .write =3D ctrl_write,=0A=
-> +					   .open =3D ctrl_open,=0A=
-> +					   .release =3D ctrl_release,=0A=
-> +					   .poll =3D ctrl_poll,=0A=
-> +					   .unlocked_ioctl =3D ctrl_unlocked_ioctl };=0A=
-> +=0A=
-> +atomic_t dev_open_cnt =3D ATOMIC_INIT(0);=0A=
-> +=0A=
-> +const struct ioctl_getversion_s version =3D { .major =3D FILEVER_MAJOR,=
-=0A=
-> +					    .minor =3D FILEVER_MINOR,=0A=
-> +					    .revision =3D FILEVER_REVISION,=0A=
-> +					    .build =3D 0 };=0A=
-> +=0A=
-> +int get_blk_snap_major(void)=0A=
-> +{=0A=
-> +	return blk_snap_major;=0A=
-> +}=0A=
-> +=0A=
-> +int ctrl_init(void)=0A=
-> +{=0A=
-> +	int ret;=0A=
-> +=0A=
-> +	ret =3D register_chrdev(0, MODULE_NAME, &ctrl_fops);=0A=
-> +	if (ret < 0) {=0A=
-> +		pr_err("Failed to register a character device. errno=3D%d\n", blk_snap=
-_major);=0A=
-> +		return ret;=0A=
-> +	}=0A=
-> +=0A=
-> +	blk_snap_major =3D ret;=0A=
-> +	pr_info("Module major [%d]\n", blk_snap_major);=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_done(void)=0A=
-> +{=0A=
-> +	unregister_chrdev(blk_snap_major, MODULE_NAME);=0A=
-> +	ctrl_pipe_done();=0A=
-> +}=0A=
-> +=0A=
-> +ssize_t ctrl_read(struct file *fl, char __user *buffer, size_t length, l=
-off_t *offset)=0A=
-> +{=0A=
-> +	ssize_t bytes_read =3D 0;=0A=
-> +	struct ctrl_pipe *pipe =3D (struct ctrl_pipe *)fl->private_data;=0A=
-> +=0A=
-> +	if (pipe =3D=3D NULL) {=0A=
-> +		pr_err("Unable to read from pipe: invalid pipe pointer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	bytes_read =3D ctrl_pipe_read(pipe, buffer, length);=0A=
-> +	if (bytes_read =3D=3D 0)=0A=
-> +		if (fl->f_flags & O_NONBLOCK)=0A=
-> +			bytes_read =3D -EAGAIN;=0A=
-> +=0A=
-> +	return bytes_read;=0A=
-> +}=0A=
-> +=0A=
-> +ssize_t ctrl_write(struct file *fl, const char __user *buffer, size_t le=
-ngth, loff_t *offset)=0A=
-> +{=0A=
-> +	struct ctrl_pipe *pipe =3D (struct ctrl_pipe *)fl->private_data;=0A=
-> +=0A=
-> +	if (pipe =3D=3D NULL) {=0A=
-> +		pr_err("Unable to write into pipe: invalid pipe pointer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return ctrl_pipe_write(pipe, buffer, length);=0A=
-> +}=0A=
-> +=0A=
-> +unsigned int ctrl_poll(struct file *fl, struct poll_table_struct *wait)=
-=0A=
-> +{=0A=
-> +	struct ctrl_pipe *pipe =3D (struct ctrl_pipe *)fl->private_data;=0A=
-> +=0A=
-> +	if (pipe =3D=3D NULL) {=0A=
-> +		pr_err("Unable to poll pipe: invalid pipe pointer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return ctrl_pipe_poll(pipe);=0A=
-> +}=0A=
-> +=0A=
-> +int ctrl_open(struct inode *inode, struct file *fl)=0A=
-> +{=0A=
-> +	fl->f_pos =3D 0;=0A=
-> +=0A=
-> +	if (false =3D=3D try_module_get(THIS_MODULE))=0A=
-> +		return -EINVAL;=0A=
-> +=0A=
-> +	fl->private_data =3D (void *)ctrl_pipe_new();=0A=
-> +	if (fl->private_data =3D=3D NULL) {=0A=
-> +		pr_err("Failed to open ctrl file\n");=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	atomic_inc(&dev_open_cnt);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int ctrl_release(struct inode *inode, struct file *fl)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +=0A=
-> +	if (atomic_read(&dev_open_cnt) > 0) {=0A=
-> +		module_put(THIS_MODULE);=0A=
-> +		ctrl_pipe_put_resource((struct ctrl_pipe *)fl->private_data);=0A=
-> +=0A=
-> +		atomic_dec(&dev_open_cnt);=0A=
-> +	} else {=0A=
-> +		pr_err("Unable to close ctrl file: the file is already closed\n");=0A=
-> +		result =3D -EALREADY;=0A=
-> +	}=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_compatibility_flags(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	struct ioctl_compatibility_flags_s param;=0A=
-> +=0A=
-> +	param.flags =3D 0;=0A=
-> +	param.flags |=3D BLK_SNAP_COMPATIBILITY_SNAPSTORE;=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	param.flags |=3D BLK_SNAP_COMPATIBILITY_MULTIDEV;=0A=
-> +#endif=0A=
-> +	len =3D copy_to_user((void *)arg, &param, sizeof(struct ioctl_compatibi=
-lity_flags_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to get compatibility flags: invalid user buffer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_get_version(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +=0A=
-> +	pr_info("Get version\n");=0A=
-> +=0A=
-> +	len =3D copy_to_user((void *)arg, &version, sizeof(struct ioctl_getvers=
-ion_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to get version: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_tracking_add(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	struct ioctl_dev_id_s dev;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&dev, (void *)arg, sizeof(struct ioctl_dev_id_s)=
-);=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to add device under tracking: invalid user buffer\n");=
-=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	return tracking_add(MKDEV(dev.major, dev.minor), 0ull);=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_tracking_remove(unsigned long arg)=0A=
-> +{=0A=
-> +	struct ioctl_dev_id_s dev;=0A=
-> +=0A=
-> +	if (copy_from_user(&dev, (void *)arg, sizeof(struct ioctl_dev_id_s)) !=
-=3D 0) {=0A=
-> +		pr_err("Unable to remove device from tracking: invalid user buffer\n")=
-;=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +	return tracking_remove(MKDEV(dev.major, dev.minor));=0A=
-> +	;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_tracking_collect(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res;=0A=
-> +	struct ioctl_tracking_collect_s get;=0A=
-> +=0A=
-> +	pr_info("Collecting tracking devices:\n");=0A=
-> +=0A=
-> +	len =3D copy_from_user(&get, (void *)arg, sizeof(struct ioctl_tracking_=
-collect_s));=0A=
-> +	if (len  !=3D 0) {=0A=
-> +		pr_err("Unable to collect tracking devices: invalid user buffer\n");=
-=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (get.p_cbt_info =3D=3D NULL) {=0A=
-> +		res =3D tracking_collect(0x7FFFffff, NULL, &get.count);=0A=
-> +		if (res =3D=3D SUCCESS) {=0A=
-> +			len =3D copy_to_user((void *)arg, (void *)&get,=0A=
-> +					   sizeof(struct ioctl_tracking_collect_s));=0A=
-> +			if (len !=3D 0) {=0A=
-> +				pr_err("Unable to collect tracking devices: invalid user buffer for =
-arguments\n");=0A=
-> +				res =3D -ENODATA;=0A=
-> +			}=0A=
-> +		} else {=0A=
-> +			pr_err("Failed to execute tracking_collect. errno=3D%d\n", res);=0A=
-> +		}=0A=
-> +	} else {=0A=
-> +		struct cbt_info_s *p_cbt_info =3D NULL;=0A=
-> +=0A=
-> +		p_cbt_info =3D kcalloc(get.count, sizeof(struct cbt_info_s), GFP_KERNE=
-L);=0A=
-> +		if (p_cbt_info =3D=3D NULL)=0A=
-> +			return -ENOMEM;=0A=
-> +=0A=
-> +		do {=0A=
-> +			res =3D tracking_collect(get.count, p_cbt_info, &get.count);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to execute tracking_collect. errno=3D%d\n", res);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +			len =3D copy_to_user(get.p_cbt_info, p_cbt_info,=0A=
-> +					      get.count * sizeof(struct cbt_info_s));=0A=
-> +			if (len !=3D 0) {=0A=
-> +				pr_err("Unable to collect tracking devices: invalid user buffer for =
-CBT info\n");=0A=
-> +				res =3D -ENODATA;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			len =3D copy_to_user((void *)arg, (void *)&get,=0A=
-> +					   sizeof(struct ioctl_tracking_collect_s));=0A=
-> +			if (len !=3D 0) {=0A=
-> +				pr_err("Unable to collect tracking devices: invalid user buffer for =
-arguments\n");=0A=
-> +				res =3D -ENODATA;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +		} while (false);=0A=
-> +=0A=
-> +		kfree(p_cbt_info);=0A=
-> +		p_cbt_info =3D NULL;=0A=
-> +	}=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_tracking_block_size(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	unsigned int blk_sz =3D change_tracking_block_size();=0A=
-> +=0A=
-> +	len =3D copy_to_user((void *)arg, &blk_sz, sizeof(unsigned int));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to get tracking block size: invalid user buffer for arg=
-uments\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_tracking_read_cbt_map(unsigned long arg)=0A=
-> +{=0A=
-> +	dev_t dev_id;=0A=
-> +	unsigned long len;=0A=
-> +	struct ioctl_tracking_read_cbt_bitmap_s readbitmap;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&readbitmap, (void *)arg,=0A=
-> +				sizeof(struct ioctl_tracking_read_cbt_bitmap_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to read CBT map: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	dev_id =3D MKDEV(readbitmap.dev_id.major, readbitmap.dev_id.minor);=0A=
-> +	return tracking_read_cbt_bitmap(dev_id, readbitmap.offset, readbitmap.l=
-ength,=0A=
-> +					(void *)readbitmap.buff);=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_tracking_mark_dirty_blocks(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	struct ioctl_tracking_mark_dirty_blocks_s param;=0A=
-> +	struct block_range_s *p_dirty_blocks;=0A=
-> +	size_t buffer_size;=0A=
-> +	int result =3D SUCCESS;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg,=0A=
-> +			     sizeof(struct ioctl_tracking_mark_dirty_blocks_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to mark dirty blocks: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	buffer_size =3D param.count * sizeof(struct block_range_s);=0A=
-> +	p_dirty_blocks =3D kzalloc(buffer_size, GFP_KERNEL);=0A=
-> +	if (p_dirty_blocks =3D=3D NULL) {=0A=
-> +		pr_err("Unable to mark dirty blocks: cannot allocate [%zu] bytes\n", b=
-uffer_size);=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	do {=0A=
-> +		dev_t image_dev_id;=0A=
-> +=0A=
-> +		len =3D copy_from_user(p_dirty_blocks, (void *)param.p_dirty_blocks, b=
-uffer_size);=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to mark dirty blocks: invalid user buffer\n");=0A=
-> +			result =3D -ENODATA;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		image_dev_id =3D MKDEV(param.image_dev_id.major, param.image_dev_id.mi=
-nor);=0A=
-> +		result =3D snapimage_mark_dirty_blocks(image_dev_id, p_dirty_blocks, p=
-aram.count);=0A=
-> +	} while (false);=0A=
-> +	kfree(p_dirty_blocks);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_snapshot_create(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	size_t dev_id_buffer_size;=0A=
-> +	int status;=0A=
-> +	struct ioctl_snapshot_create_s param;=0A=
-> +	struct ioctl_dev_id_s *pk_dev_id =3D NULL;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_snapsho=
-t_create_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to create snapshot: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	dev_id_buffer_size =3D sizeof(struct ioctl_dev_id_s) * param.count;=0A=
-> +	pk_dev_id =3D kzalloc(dev_id_buffer_size, GFP_KERNEL);=0A=
-> +	if (pk_dev_id =3D=3D NULL) {=0A=
-> +		pr_err("Unable to create snapshot: cannot allocate [%zu] bytes\n",=0A=
-> +		       dev_id_buffer_size);=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	do {=0A=
-> +		size_t dev_buffer_size;=0A=
-> +		dev_t *p_dev =3D NULL;=0A=
-> +		int inx =3D 0;=0A=
-> +=0A=
-> +		len =3D copy_from_user(pk_dev_id, (void *)param.p_dev_id,=0A=
-> +				     param.count * sizeof(struct ioctl_dev_id_s));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to create snapshot: invalid user buffer for parameters=
-\n");=0A=
-> +			status =3D -ENODATA;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		dev_buffer_size =3D sizeof(dev_t) * param.count;=0A=
-> +		p_dev =3D kzalloc(dev_buffer_size, GFP_KERNEL);=0A=
-> +		if (p_dev =3D=3D NULL) {=0A=
-> +			pr_err("Unable to create snapshot: cannot allocate [%zu] bytes\n",=0A=
-> +			       dev_buffer_size);=0A=
-> +			status =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		for (inx =3D 0; inx < param.count; ++inx)=0A=
-> +			p_dev[inx] =3D MKDEV(pk_dev_id[inx].major, pk_dev_id[inx].minor);=0A=
-> +=0A=
-> +		status =3D snapshot_create(p_dev, param.count, &param.snapshot_id);=0A=
-> +=0A=
-> +		kfree(p_dev);=0A=
-> +		p_dev =3D NULL;=0A=
-> +=0A=
-> +	} while (false);=0A=
-> +	kfree(pk_dev_id);=0A=
-> +	pk_dev_id =3D NULL;=0A=
-> +=0A=
-> +	if (status =3D=3D SUCCESS) {=0A=
-> +		len =3D copy_to_user((void *)arg, &param, sizeof(struct ioctl_snapshot=
-_create_s));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to create snapshot: invalid user buffer\n");=0A=
-> +			status =3D -ENODATA;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	return status;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_snapshot_destroy(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	unsigned long long param;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(unsigned long long))=
-;=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to destroy snapshot: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	return snapshot_destroy(param);=0A=
-> +}=0A=
-> +=0A=
-> +static inline dev_t _snapstore_dev(struct ioctl_dev_id_s *dev_id)=0A=
-> +{=0A=
-> +	if ((dev_id->major =3D=3D 0) && (dev_id->minor =3D=3D 0))=0A=
-> +		return 0; //memory snapstore=0A=
-> +=0A=
-> +	if ((dev_id->major =3D=3D -1) && (dev_id->minor =3D=3D -1))=0A=
-> +		return 0xFFFFffff; //multidevice snapstore=0A=
-> +=0A=
-> +	return MKDEV(dev_id->major, dev_id->minor);=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_snapstore_create(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct ioctl_snapstore_create_s param;=0A=
-> +	size_t inx =3D 0;=0A=
-> +	dev_t *dev_id_set =3D NULL;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_snapsto=
-re_create_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to create snapstore: invalid user buffer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	dev_id_set =3D kcalloc(param.count, sizeof(dev_t), GFP_KERNEL);=0A=
-> +	if (dev_id_set =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < param.count; ++inx) {=0A=
-> +		struct ioctl_dev_id_s dev_id;=0A=
-> +=0A=
-> +		len =3D copy_from_user(&dev_id, param.p_dev_id + inx, sizeof(struct io=
-ctl_dev_id_s));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to create snapstore: ");=0A=
-> +			pr_err("invalid user buffer for parameters\n");=0A=
-> +=0A=
-> +			res =3D -ENODATA;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		dev_id_set[inx] =3D MKDEV(dev_id.major, dev_id.minor);=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS)=0A=
-> +		res =3D snapstore_create((uuid_t *)param.id, _snapstore_dev(&param.sna=
-pstore_dev_id),=0A=
-> +				       dev_id_set, (size_t)param.count);=0A=
-> +=0A=
-> +	kfree(dev_id_set);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_snapstore_file(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct ioctl_snapstore_file_add_s param;=0A=
-> +	struct big_buffer *ranges =3D NULL;=0A=
-> +	size_t ranges_buffer_size;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_snapsto=
-re_file_add_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to add file to snapstore: invalid user buffer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	ranges_buffer_size =3D sizeof(struct ioctl_range_s) * param.range_count=
-;=0A=
-> +=0A=
-> +	ranges =3D big_buffer_alloc(ranges_buffer_size, GFP_KERNEL);=0A=
-> +	if (ranges =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add file to snapstore: cannot allocate [%zu] bytes\n=
-",=0A=
-> +		       ranges_buffer_size);=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (big_buffer_copy_from_user((void *)param.ranges, 0, ranges, ranges_b=
-uffer_size)=0A=
-> +		!=3D ranges_buffer_size) {=0A=
-> +=0A=
-> +		pr_err("Unable to add file to snapstore: invalid user buffer for param=
-eters\n");=0A=
-> +		res =3D -ENODATA;=0A=
-> +	} else=0A=
-> +		res =3D snapstore_add_file((uuid_t *)(param.id), ranges, (size_t)param=
-.range_count);=0A=
-> +=0A=
-> +	big_buffer_free(ranges);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_snapstore_memory(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct ioctl_snapstore_memory_limit_s param;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_snapsto=
-re_memory_limit_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to add memory block to snapstore: invalid user buffer\n=
-");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	res =3D snapstore_add_memory((uuid_t *)param.id, param.size);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +int ioctl_snapstore_cleanup(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct ioctl_snapstore_cleanup_s param;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_snapsto=
-re_cleanup_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to perform snapstore cleanup: invalid user buffer\n");=
-=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	pr_info("Cleanup snapstore %pUB\n", (uuid_t *)param.id);=0A=
-> +	res =3D snapstore_cleanup((uuid_t *)param.id, &param.filled_bytes);=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS) {=0A=
-> +		if (0 !=3D=0A=
-> +		    copy_to_user((void *)arg, &param, sizeof(struct ioctl_snapstore_cl=
-eanup_s))) {=0A=
-> +			pr_err("Unable to perform snapstore cleanup: invalid user buffer\n");=
-=0A=
-> +			res =3D -ENODATA;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +int ioctl_snapstore_file_multidev(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct ioctl_snapstore_file_add_multidev_s param;=0A=
-> +	struct big_buffer *ranges =3D NULL; //struct ioctl_range_s* ranges =3D =
-NULL;=0A=
-> +	size_t ranges_buffer_size;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg,=0A=
-> +				sizeof(struct ioctl_snapstore_file_add_multidev_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to add file to multidev snapstore: invalid user buffer\=
-n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	ranges_buffer_size =3D sizeof(struct ioctl_range_s) * param.range_count=
-;=0A=
-> +=0A=
-> +	ranges =3D big_buffer_alloc(ranges_buffer_size, GFP_KERNEL);=0A=
-> +	if (ranges =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add file to multidev snapstore: cannot allocate [%zu=
-] bytes\n",=0A=
-> +		       ranges_buffer_size);=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	do {=0A=
-> +		uuid_t *id =3D (uuid_t *)(param.id);=0A=
-> +		dev_t snapstore_device =3D MKDEV(param.dev_id.major, param.dev_id.mino=
-r);=0A=
-> +		size_t ranges_cnt =3D (size_t)param.range_count;=0A=
-> +=0A=
-> +		if (ranges_buffer_size !=3D big_buffer_copy_from_user((void *)param.ra=
-nges, 0, ranges,=0A=
-> +								    ranges_buffer_size)) {=0A=
-> +			pr_err("Unable to add file to snapstore: invalid user buffer for para=
-meters\n");=0A=
-> +			res =3D -ENODATA;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		res =3D snapstore_add_multidev(id, snapstore_device, ranges, ranges_cn=
-t);=0A=
-> +	} while (false);=0A=
-> +	big_buffer_free(ranges);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +#endif=0A=
-> +////////////////////////////////////////////////////////////////////////=
-//=0A=
-> +=0A=
-> +/*=0A=
-> + * Snapshot get errno for device=0A=
-> + */=0A=
-> +int ioctl_snapshot_errno(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int res;=0A=
-> +	struct ioctl_snapshot_errno_s param;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_dev_id_=
-s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable failed to get snapstore error code: invalid user buffer=
-\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	res =3D snapstore_device_errno(MKDEV(param.dev_id.major, param.dev_id.m=
-inor),=0A=
-> +				     &param.err_code);=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		return res;=0A=
-> +=0A=
-> +	len =3D copy_to_user((void *)arg, &param, sizeof(struct ioctl_snapshot_=
-errno_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to get snapstore error code: invalid user buffer\n");=
-=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int ioctl_collect_snapimages(unsigned long arg)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int status =3D SUCCESS;=0A=
-> +	struct ioctl_collect_snapshot_images_s param;=0A=
-> +=0A=
-> +	len =3D copy_from_user(&param, (void *)arg, sizeof(struct ioctl_collect=
-_snapshot_images_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to collect snapshot images: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	status =3D snapimage_collect_images(param.count, param.p_image_info, &p=
-aram.count);=0A=
-> +=0A=
-> +	len =3D copy_to_user((void *)arg, &param, sizeof(struct ioctl_collect_s=
-napshot_images_s));=0A=
-> +	if (len !=3D 0) {=0A=
-> +		pr_err("Unable to collect snapshot images: invalid user buffer\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	return status;=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_snap_ioctl_table {=0A=
-> +	unsigned int cmd;=0A=
-> +	int (*fn)(unsigned long arg);=0A=
-> +};=0A=
-> +=0A=
-> +static struct blk_snap_ioctl_table blk_snap_ioctl_table[] =3D {=0A=
-> +	{ (IOCTL_COMPATIBILITY_FLAGS), ioctl_compatibility_flags },=0A=
-> +	{ (IOCTL_GETVERSION), ioctl_get_version },=0A=
-> +=0A=
-> +	{ (IOCTL_TRACKING_ADD), ioctl_tracking_add },=0A=
-> +	{ (IOCTL_TRACKING_REMOVE), ioctl_tracking_remove },=0A=
-> +	{ (IOCTL_TRACKING_COLLECT), ioctl_tracking_collect },=0A=
-> +	{ (IOCTL_TRACKING_BLOCK_SIZE), ioctl_tracking_block_size },=0A=
-> +	{ (IOCTL_TRACKING_READ_CBT_BITMAP), ioctl_tracking_read_cbt_map },=0A=
-> +	{ (IOCTL_TRACKING_MARK_DIRTY_BLOCKS), ioctl_tracking_mark_dirty_blocks =
-},=0A=
-> +=0A=
-> +	{ (IOCTL_SNAPSHOT_CREATE), ioctl_snapshot_create },=0A=
-> +	{ (IOCTL_SNAPSHOT_DESTROY), ioctl_snapshot_destroy },=0A=
-> +	{ (IOCTL_SNAPSHOT_ERRNO), ioctl_snapshot_errno },=0A=
-> +=0A=
-> +	{ (IOCTL_SNAPSTORE_CREATE), ioctl_snapstore_create },=0A=
-> +	{ (IOCTL_SNAPSTORE_FILE), ioctl_snapstore_file },=0A=
-> +	{ (IOCTL_SNAPSTORE_MEMORY), ioctl_snapstore_memory },=0A=
-> +	{ (IOCTL_SNAPSTORE_CLEANUP), ioctl_snapstore_cleanup },=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	{ (IOCTL_SNAPSTORE_FILE_MULTIDEV), ioctl_snapstore_file_multidev },=0A=
-> +#endif=0A=
-> +	{ (IOCTL_COLLECT_SNAPSHOT_IMAGES), ioctl_collect_snapimages },=0A=
-> +	{ 0, NULL }=0A=
-> +};=0A=
-> +=0A=
-> +long ctrl_unlocked_ioctl(struct file *filp, unsigned int cmd, unsigned l=
-ong arg)=0A=
-> +{=0A=
-> +	long status =3D -ENOTTY;=0A=
-> +	size_t inx =3D 0;=0A=
-> +=0A=
-> +	while (blk_snap_ioctl_table[inx].cmd !=3D 0) {=0A=
-> +		if (blk_snap_ioctl_table[inx].cmd =3D=3D cmd) {=0A=
-> +			status =3D blk_snap_ioctl_table[inx].fn(arg);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		++inx;=0A=
-> +	}=0A=
-> +=0A=
-> +	return status;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/ctrl_fops.h b/drivers/block/blk-snap/=
-ctrl_fops.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..98072b61aa96=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/ctrl_fops.h=0A=
-> @@ -0,0 +1,19 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include <linux/fs.h>=0A=
-> +=0A=
-> +int get_blk_snap_major(void);=0A=
-> +=0A=
-> +int ctrl_init(void);=0A=
-> +void ctrl_done(void);=0A=
-> +=0A=
-> +int ctrl_open(struct inode *inode, struct file *file);=0A=
-> +int ctrl_release(struct inode *inode, struct file *file);=0A=
-> +=0A=
-> +ssize_t ctrl_read(struct file *filp, char __user *buffer, size_t length,=
- loff_t *offset);=0A=
-> +ssize_t ctrl_write(struct file *filp, const char __user *buffer, size_t =
-length, loff_t *offset);=0A=
-> +=0A=
-> +unsigned int ctrl_poll(struct file *filp, struct poll_table_struct *wait=
-);=0A=
-> +=0A=
-> +long ctrl_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned l=
-ong arg);=0A=
-> diff --git a/drivers/block/blk-snap/ctrl_pipe.c b/drivers/block/blk-snap/=
-ctrl_pipe.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..73cfbca93487=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/ctrl_pipe.c=0A=
-> @@ -0,0 +1,562 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-ctrl"=0A=
-> +#include "common.h"=0A=
-> +#include "ctrl_pipe.h"=0A=
-> +#include "version.h"=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include "big_buffer.h"=0A=
-> +=0A=
-> +#include <linux/poll.h>=0A=
-> +#include <linux/uuid.h>=0A=
-> +=0A=
-> +#define CMD_TO_USER_FIFO_SIZE 1024=0A=
-> +=0A=
-> +LIST_HEAD(ctl_pipes);=0A=
-> +DECLARE_RWSEM(ctl_pipes_lock);=0A=
-> +=0A=
-> +=0A=
-> +static void ctrl_pipe_push_request(struct ctrl_pipe *pipe, unsigned int =
-*cmd, size_t cmd_len)=0A=
-> +{=0A=
-> +	kfifo_in_spinlocked(&pipe->cmd_to_user, cmd, (cmd_len * sizeof(unsigned=
- int)),=0A=
-> +			    &pipe->cmd_to_user_lock);=0A=
-> +=0A=
-> +	wake_up(&pipe->readq);=0A=
-> +}=0A=
-> +=0A=
-> +static void ctrl_pipe_request_acknowledge(struct ctrl_pipe *pipe, unsign=
-ed int result)=0A=
-> +{=0A=
-> +	unsigned int cmd[2];=0A=
-> +=0A=
-> +	cmd[0] =3D BLK_SNAP_CHARCMD_ACKNOWLEDGE;=0A=
-> +	cmd[1] =3D result;=0A=
-> +=0A=
-> +	ctrl_pipe_push_request(pipe, cmd, 2);=0A=
-> +}=0A=
-> +=0A=
-> +static inline dev_t _snapstore_dev(struct ioctl_dev_id_s *dev_id)=0A=
-> +{=0A=
-> +	if ((dev_id->major =3D=3D 0) && (dev_id->minor =3D=3D 0))=0A=
-> +		return 0; //memory snapstore=0A=
-> +=0A=
-> +	if ((dev_id->major =3D=3D -1) && (dev_id->minor =3D=3D -1))=0A=
-> +		return 0xFFFFffff; //multidevice snapstore=0A=
-> +=0A=
-> +	return MKDEV(dev_id->major, dev_id->minor);=0A=
-> +}=0A=
-> +=0A=
-> +static ssize_t ctrl_pipe_command_initiate(struct ctrl_pipe *pipe, const =
-char __user *buffer,=0A=
-> +					  size_t length)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	ssize_t processed =3D 0;=0A=
-> +	char *kernel_buffer;=0A=
-> +=0A=
-> +	kernel_buffer =3D kmalloc(length, GFP_KERNEL);=0A=
-> +	if (kernel_buffer =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	len =3D copy_from_user(kernel_buffer, buffer, length);=0A=
-> +	if (len !=3D 0) {=0A=
-> +		kfree(kernel_buffer);=0A=
-> +		pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	do {=0A=
-> +		u64 stretch_empty_limit;=0A=
-> +		unsigned int dev_id_list_length;=0A=
-> +		uuid_t *unique_id;=0A=
-> +		struct ioctl_dev_id_s *snapstore_dev_id;=0A=
-> +		struct ioctl_dev_id_s *dev_id_list;=0A=
-> +=0A=
-> +		//get snapstore uuid=0A=
-> +		if ((length - processed) < 16) {=0A=
-> +			pr_err("Unable to get snapstore uuid: invalid ctrl pipe initiate comm=
-and. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		unique_id =3D (uuid_t *)(kernel_buffer + processed);=0A=
-> +		processed +=3D 16;=0A=
-> +=0A=
-> +		//get snapstore empty limit=0A=
-> +		if ((length - processed) < sizeof(u64)) {=0A=
-> +			pr_err("Unable to get stretch snapstore limit: invalid ctrl pipe init=
-iate command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		stretch_empty_limit =3D *(u64 *)(kernel_buffer + processed);=0A=
-> +		processed +=3D sizeof(u64);=0A=
-> +=0A=
-> +		//get snapstore device id=0A=
-> +		if ((length - processed) < sizeof(struct ioctl_dev_id_s)) {=0A=
-> +			pr_err("Unable to get snapstore device id: invalid ctrl pipe initiate=
- command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		snapstore_dev_id =3D (struct ioctl_dev_id_s *)(kernel_buffer + process=
-ed);=0A=
-> +		processed +=3D sizeof(struct ioctl_dev_id_s);=0A=
-> +=0A=
-> +		//get device id list length=0A=
-> +		if ((length - processed) < 4) {=0A=
-> +			pr_err("Unable to get device id list length: ivalid ctrl pipe initiat=
-e command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		dev_id_list_length =3D *(unsigned int *)(kernel_buffer + processed);=
-=0A=
-> +		processed +=3D sizeof(unsigned int);=0A=
-> +=0A=
-> +		//get devices id list=0A=
-> +		if ((length - processed) < (dev_id_list_length * sizeof(struct ioctl_d=
-ev_id_s))) {=0A=
-> +			pr_err("Unable to get all devices from device id list: invalid ctrl p=
-ipe initiate command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		dev_id_list =3D (struct ioctl_dev_id_s *)(kernel_buffer + processed);=
-=0A=
-> +		processed +=3D (dev_id_list_length * sizeof(struct ioctl_dev_id_s));=
-=0A=
-> +=0A=
-> +		{=0A=
-> +			size_t inx;=0A=
-> +			dev_t *dev_set;=0A=
-> +			size_t dev_id_set_length =3D (size_t)dev_id_list_length;=0A=
-> +=0A=
-> +			dev_set =3D kcalloc(dev_id_set_length, sizeof(dev_t), GFP_KERNEL);=0A=
-> +			if (dev_set =3D=3D NULL) {=0A=
-> +				result =3D -ENOMEM;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			for (inx =3D 0; inx < dev_id_set_length; ++inx)=0A=
-> +				dev_set[inx] =3D=0A=
-> +					MKDEV(dev_id_list[inx].major, dev_id_list[inx].minor);=0A=
-> +=0A=
-> +			result =3D snapstore_create(unique_id, _snapstore_dev(snapstore_dev_i=
-d),=0A=
-> +						  dev_set, dev_id_set_length);=0A=
-> +			kfree(dev_set);=0A=
-> +			if (result !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to create snapstore\n");=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			result =3D snapstore_stretch_initiate(=0A=
-> +				unique_id, pipe, (sector_t)to_sectors(stretch_empty_limit));=0A=
-> +			if (result !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to initiate stretch snapstore %pUB\n", unique_id);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	} while (false);=0A=
-> +	kfree(kernel_buffer);=0A=
-> +	ctrl_pipe_request_acknowledge(pipe, result);=0A=
-> +=0A=
-> +	if (result =3D=3D SUCCESS)=0A=
-> +		return processed;=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +static ssize_t ctrl_pipe_command_next_portion(struct ctrl_pipe *pipe, co=
-nst char __user *buffer,=0A=
-> +					      size_t length)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	ssize_t processed =3D 0;=0A=
-> +	struct big_buffer *ranges =3D NULL;=0A=
-> +=0A=
-> +	do {=0A=
-> +		uuid_t unique_id;=0A=
-> +		unsigned int ranges_length;=0A=
-> +		size_t ranges_buffer_size;=0A=
-> +=0A=
-> +		//get snapstore id=0A=
-> +		if ((length - processed) < 16) {=0A=
-> +			pr_err("Unable to get snapstore id: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		len =3D copy_from_user(&unique_id, buffer + processed, sizeof(uuid_t))=
-;=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D 16;=0A=
-> +=0A=
-> +		//get ranges length=0A=
-> +		if ((length - processed) < 4) {=0A=
-> +			pr_err("Unable to get device id list length: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		len =3D copy_from_user(&ranges_length, buffer + processed, sizeof(unsi=
-gned int));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D sizeof(unsigned int);=0A=
-> +=0A=
-> +		ranges_buffer_size =3D ranges_length * sizeof(struct ioctl_range_s);=
-=0A=
-> +=0A=
-> +		// ranges=0A=
-> +		if ((length - processed) < (ranges_buffer_size)) {=0A=
-> +			pr_err("Unable to get all ranges: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		ranges =3D big_buffer_alloc(ranges_buffer_size, GFP_KERNEL);=0A=
-> +		if (ranges =3D=3D NULL) {=0A=
-> +			pr_err("Unable to allocate page array buffer: ");=0A=
-> +			pr_err("failed to process next portion command\n");=0A=
-> +			processed =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		if (ranges_buffer_size !=3D=0A=
-> +		    big_buffer_copy_from_user(buffer + processed, 0, ranges, ranges_bu=
-ffer_size)) {=0A=
-> +			pr_err("Unable to process next portion command: ");=0A=
-> +			pr_err("invalid user buffer for parameters\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D ranges_buffer_size;=0A=
-> +=0A=
-> +		{=0A=
-> +			result =3D snapstore_add_file(&unique_id, ranges, ranges_length);=0A=
-> +=0A=
-> +			if (result !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to add file to snapstore\n");=0A=
-> +				result =3D -ENODEV;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	} while (false);=0A=
-> +	if (ranges)=0A=
-> +		big_buffer_free(ranges);=0A=
-> +=0A=
-> +	if (result =3D=3D SUCCESS)=0A=
-> +		return processed;=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +static ssize_t ctrl_pipe_command_next_portion_multidev(struct ctrl_pipe =
-*pipe,=0A=
-> +						       const char __user *buffer, size_t length)=0A=
-> +{=0A=
-> +	unsigned long len;=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	ssize_t processed =3D 0;=0A=
-> +	struct big_buffer *ranges =3D NULL;=0A=
-> +=0A=
-> +	do {=0A=
-> +		uuid_t unique_id;=0A=
-> +		int snapstore_major;=0A=
-> +		int snapstore_minor;=0A=
-> +		unsigned int ranges_length;=0A=
-> +		size_t ranges_buffer_size;=0A=
-> +=0A=
-> +		//get snapstore id=0A=
-> +		if ((length - processed) < 16) {=0A=
-> +			pr_err("Unable to get snapstore id: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		len =3D copy_from_user(&unique_id, buffer + processed, sizeof(uuid_t))=
-;=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D 16;=0A=
-> +=0A=
-> +		//get device id=0A=
-> +		if ((length - processed) < 8) {=0A=
-> +			pr_err("Unable to get device id list length: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command. length=3D%zu\n", leng=
-th);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		len =3D copy_from_user(&snapstore_major, buffer + processed, sizeof(un=
-signed int));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D sizeof(unsigned int);=0A=
-> +=0A=
-> +		len =3D copy_from_user(&snapstore_minor, buffer + processed, sizeof(un=
-signed int));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D sizeof(unsigned int);=0A=
-> +=0A=
-> +		//get ranges length=0A=
-> +		if ((length - processed) < 4) {=0A=
-> +			pr_err("Unable to get device id list length: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command. length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		len =3D copy_from_user(&ranges_length, buffer + processed, sizeof(unsi=
-gned int));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D sizeof(unsigned int);=0A=
-> +=0A=
-> +		ranges_buffer_size =3D ranges_length * sizeof(struct ioctl_range_s);=
-=0A=
-> +=0A=
-> +		// ranges=0A=
-> +		if ((length - processed) < (ranges_buffer_size)) {=0A=
-> +			pr_err("Unable to get all ranges: ");=0A=
-> +			pr_err("invalid ctrl pipe next portion command.  length=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		ranges =3D big_buffer_alloc(ranges_buffer_size, GFP_KERNEL);=0A=
-> +		if (ranges =3D=3D NULL) {=0A=
-> +			pr_err("Unable to process next portion command: ");=0A=
-> +			pr_err("failed to allocate page array buffer\n");=0A=
-> +			processed =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		if (ranges_buffer_size !=3D=0A=
-> +		    big_buffer_copy_from_user(buffer + processed, 0, ranges, ranges_bu=
-ffer_size)) {=0A=
-> +			pr_err("Unable to process next portion command: ");=0A=
-> +			pr_err("invalid user buffer from parameters\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D ranges_buffer_size;=0A=
-> +=0A=
-> +		{=0A=
-> +			result =3D snapstore_add_multidev(&unique_id,=0A=
-> +							MKDEV(snapstore_major, snapstore_minor),=0A=
-> +							ranges, ranges_length);=0A=
-> +=0A=
-> +			if (result !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to add file to snapstore\n");=0A=
-> +				result =3D -ENODEV;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	} while (false);=0A=
-> +	if (ranges)=0A=
-> +		big_buffer_free(ranges);=0A=
-> +=0A=
-> +	if (result =3D=3D SUCCESS)=0A=
-> +		return processed;=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +#endif=0A=
-> +=0A=
-> +static void ctrl_pipe_release_cb(struct kref *kref)=0A=
-> +{=0A=
-> +	struct ctrl_pipe *pipe =3D container_of(kref, struct ctrl_pipe, refcoun=
-t);=0A=
-> +=0A=
-> +	down_write(&ctl_pipes_lock);=0A=
-> +	list_del(&pipe->link);=0A=
-> +	up_write(&ctl_pipes_lock);=0A=
-> +=0A=
-> +	kfifo_free(&pipe->cmd_to_user);=0A=
-> +=0A=
-> +	kfree(pipe);=0A=
-> +}=0A=
-> +=0A=
-> +struct ctrl_pipe *ctrl_pipe_get_resource(struct ctrl_pipe *pipe)=0A=
-> +{=0A=
-> +	if (pipe)=0A=
-> +		kref_get(&pipe->refcount);=0A=
-> +=0A=
-> +	return pipe;=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_pipe_put_resource(struct ctrl_pipe *pipe)=0A=
-> +{=0A=
-> +	if (pipe)=0A=
-> +		kref_put(&pipe->refcount, ctrl_pipe_release_cb);=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_pipe_done(void)=0A=
-> +{=0A=
-> +	bool is_empty;=0A=
-> +=0A=
-> +	pr_info("Ctrl pipes - done\n");=0A=
-> +=0A=
-> +	down_write(&ctl_pipes_lock);=0A=
-> +	is_empty =3D list_empty(&ctl_pipes);=0A=
-> +	up_write(&ctl_pipes_lock);=0A=
-> +=0A=
-> +	if (!is_empty)=0A=
-> +		pr_err("Unable to perform ctrl pipes cleanup: container is not empty\n=
-");=0A=
-> +}=0A=
-> +=0A=
-> +struct ctrl_pipe *ctrl_pipe_new(void)=0A=
-> +{=0A=
-> +	int ret;=0A=
-> +	struct ctrl_pipe *pipe;=0A=
-> +=0A=
-> +	pipe =3D kzalloc(sizeof(struct ctrl_pipe), GFP_KERNEL);=0A=
-> +	if (pipe =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&pipe->link);=0A=
-> +=0A=
-> +	ret =3D kfifo_alloc(&pipe->cmd_to_user, CMD_TO_USER_FIFO_SIZE, GFP_KERN=
-EL);=0A=
-> +	if (ret) {=0A=
-> +		pr_err("Failed to allocate fifo. errno=3D%d.\n", ret);=0A=
-> +		kfree(pipe);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +	spin_lock_init(&pipe->cmd_to_user_lock);=0A=
-> +=0A=
-> +	kref_init(&pipe->refcount);=0A=
-> +=0A=
-> +	init_waitqueue_head(&pipe->readq);=0A=
-> +=0A=
-> +	down_write(&ctl_pipes_lock);=0A=
-> +	list_add_tail(&pipe->link, &ctl_pipes);=0A=
-> +	up_write(&ctl_pipes_lock);=0A=
-> +=0A=
-> +	return pipe;=0A=
-> +}=0A=
-> +=0A=
-> +ssize_t ctrl_pipe_read(struct ctrl_pipe *pipe, char __user *buffer, size=
-_t length)=0A=
-> +{=0A=
-> +	int ret;=0A=
-> +	unsigned int processed =3D 0;=0A=
-> +=0A=
-> +	if (kfifo_is_empty_spinlocked(&pipe->cmd_to_user, &pipe->cmd_to_user_lo=
-ck)) {=0A=
-> +		//nothing to read=0A=
-> +		ret =3D wait_event_interruptible(pipe->readq,=0A=
-> +					       !kfifo_is_empty_spinlocked(&pipe->cmd_to_user,=0A=
-> +									&pipe->cmd_to_user_lock));=0A=
-> +		if (ret) {=0A=
-> +			pr_err("Unable to wait for pipe read queue: interrupt signal was rece=
-ived\n");=0A=
-> +			return -ERESTARTSYS;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	ret =3D kfifo_to_user(&pipe->cmd_to_user, buffer, length, &processed);=
-=0A=
-> +	if (ret) {=0A=
-> +		pr_err("Failed to read command from ctrl pipe\n");=0A=
-> +		return ret;=0A=
-> +	}=0A=
-> +=0A=
-> +	return (ssize_t)processed;=0A=
-> +}=0A=
-> +=0A=
-> +ssize_t ctrl_pipe_write(struct ctrl_pipe *pipe, const char __user *buffe=
-r, size_t length)=0A=
-> +{=0A=
-> +	ssize_t processed =3D 0;=0A=
-> +=0A=
-> +	do {=0A=
-> +		unsigned long len;=0A=
-> +		unsigned int command;=0A=
-> +=0A=
-> +		if ((length - processed) < 4) {=0A=
-> +			pr_err("Unable to write command to ctrl pipe: invalid command length=
-=3D%zu\n",=0A=
-> +			       length);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		len =3D copy_from_user(&command, buffer + processed, sizeof(unsigned i=
-nt));=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to write to pipe: invalid user buffer\n");=0A=
-> +			processed =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		processed +=3D sizeof(unsigned int);=0A=
-> +		//+4=0A=
-> +		switch (command) {=0A=
-> +		case BLK_SNAP_CHARCMD_INITIATE: {=0A=
-> +			ssize_t res =3D ctrl_pipe_command_initiate(pipe, buffer + processed,=
-=0A=
-> +								 length - processed);=0A=
-> +			if (res >=3D 0)=0A=
-> +				processed +=3D res;=0A=
-> +			else=0A=
-> +				processed =3D res;=0A=
-> +		} break;=0A=
-> +		case BLK_SNAP_CHARCMD_NEXT_PORTION: {=0A=
-> +			ssize_t res =3D ctrl_pipe_command_next_portion(pipe, buffer + process=
-ed,=0A=
-> +								     length - processed);=0A=
-> +			if (res >=3D 0)=0A=
-> +				processed +=3D res;=0A=
-> +			else=0A=
-> +				processed =3D res;=0A=
-> +		} break;=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +		case BLK_SNAP_CHARCMD_NEXT_PORTION_MULTIDEV: {=0A=
-> +			ssize_t res =3D ctrl_pipe_command_next_portion_multidev(=0A=
-> +				pipe, buffer + processed, length - processed);=0A=
-> +			if (res >=3D 0)=0A=
-> +				processed +=3D res;=0A=
-> +			else=0A=
-> +				processed =3D res;=0A=
-> +		} break;=0A=
-> +#endif=0A=
-> +		default:=0A=
-> +			pr_err("Ctrl pipe write error: invalid command [0x%x] received\n", co=
-mmand);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	} while (false);=0A=
-> +	return processed;=0A=
-> +}=0A=
-> +=0A=
-> +unsigned int ctrl_pipe_poll(struct ctrl_pipe *pipe)=0A=
-> +{=0A=
-> +	unsigned int mask =3D 0;=0A=
-> +=0A=
-> +	if (!kfifo_is_empty_spinlocked(&pipe->cmd_to_user, &pipe->cmd_to_user_l=
-ock))=0A=
-> +		mask |=3D (POLLIN | POLLRDNORM); /* readable */=0A=
-> +=0A=
-> +	mask |=3D (POLLOUT | POLLWRNORM); /* writable */=0A=
-> +=0A=
-> +	return mask;=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_pipe_request_halffill(struct ctrl_pipe *pipe, unsigned long lo=
-ng filled_status)=0A=
-> +{=0A=
-> +	unsigned int cmd[3];=0A=
-> +=0A=
-> +	pr_info("Snapstore is half-full\n");=0A=
-> +=0A=
-> +	cmd[0] =3D (unsigned int)BLK_SNAP_CHARCMD_HALFFILL;=0A=
-> +	cmd[1] =3D (unsigned int)(filled_status & 0xFFFFffff); //lo=0A=
-> +	cmd[2] =3D (unsigned int)(filled_status >> 32);=0A=
-> +=0A=
-> +	ctrl_pipe_push_request(pipe, cmd, 3);=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_pipe_request_overflow(struct ctrl_pipe *pipe, unsigned int err=
-or_code,=0A=
-> +				unsigned long long filled_status)=0A=
-> +{=0A=
-> +	unsigned int cmd[4];=0A=
-> +=0A=
-> +	pr_info("Snapstore overflow\n");=0A=
-> +=0A=
-> +	cmd[0] =3D (unsigned int)BLK_SNAP_CHARCMD_OVERFLOW;=0A=
-> +	cmd[1] =3D error_code;=0A=
-> +	cmd[2] =3D (unsigned int)(filled_status & 0xFFFFffff); //lo=0A=
-> +	cmd[3] =3D (unsigned int)(filled_status >> 32);=0A=
-> +=0A=
-> +	ctrl_pipe_push_request(pipe, cmd, 4);=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_pipe_request_terminate(struct ctrl_pipe *pipe, unsigned long l=
-ong filled_status)=0A=
-> +{=0A=
-> +	unsigned int cmd[3];=0A=
-> +=0A=
-> +	pr_info("Snapstore termination\n");=0A=
-> +=0A=
-> +	cmd[0] =3D (unsigned int)BLK_SNAP_CHARCMD_TERMINATE;=0A=
-> +	cmd[1] =3D (unsigned int)(filled_status & 0xFFFFffff); //lo=0A=
-> +	cmd[2] =3D (unsigned int)(filled_status >> 32);=0A=
-> +=0A=
-> +	ctrl_pipe_push_request(pipe, cmd, 3);=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/ctrl_pipe.h b/drivers/block/blk-snap/=
-ctrl_pipe.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..1aa1099eec25=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/ctrl_pipe.h=0A=
-> @@ -0,0 +1,34 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include <linux/kref.h>=0A=
-> +#include <linux/wait.h>=0A=
-> +#include <linux/kfifo.h>=0A=
-> +=0A=
-> +struct ctrl_pipe {=0A=
-> +	struct list_head link;=0A=
-> +=0A=
-> +	struct kref refcount;=0A=
-> +=0A=
-> +	wait_queue_head_t readq;=0A=
-> +=0A=
-> +	struct kfifo cmd_to_user;=0A=
-> +	spinlock_t cmd_to_user_lock;=0A=
-> +};=0A=
-> +=0A=
-> +struct ctrl_pipe *ctrl_pipe_get_resource(struct ctrl_pipe *pipe);=0A=
-> +void ctrl_pipe_put_resource(struct ctrl_pipe *pipe);=0A=
-> +=0A=
-> +void ctrl_pipe_done(void);=0A=
-> +=0A=
-> +struct ctrl_pipe *ctrl_pipe_new(void);=0A=
-> +=0A=
-> +ssize_t ctrl_pipe_read(struct ctrl_pipe *pipe, char __user *buffer, size=
-_t length);=0A=
-> +ssize_t ctrl_pipe_write(struct ctrl_pipe *pipe, const char __user *buffe=
-r, size_t length);=0A=
-> +=0A=
-> +unsigned int ctrl_pipe_poll(struct ctrl_pipe *pipe);=0A=
-> +=0A=
-> +void ctrl_pipe_request_halffill(struct ctrl_pipe *pipe, unsigned long lo=
-ng filled_status);=0A=
-> +void ctrl_pipe_request_overflow(struct ctrl_pipe *pipe, unsigned int err=
-or_code,=0A=
-> +				unsigned long long filled_status);=0A=
-> +void ctrl_pipe_request_terminate(struct ctrl_pipe *pipe, unsigned long l=
-ong filled_status);=0A=
-> diff --git a/drivers/block/blk-snap/ctrl_sysfs.c b/drivers/block/blk-snap=
-/ctrl_sysfs.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..4ec78e85b510=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/ctrl_sysfs.c=0A=
-> @@ -0,0 +1,73 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-ctrl"=0A=
-> +#include "common.h"=0A=
-> +#include "ctrl_sysfs.h"=0A=
-> +#include "ctrl_fops.h"=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +=0A=
-> +#include <linux/blkdev.h>=0A=
-> +#include <linux/sysfs.h>=0A=
-> +=0A=
-> +static ssize_t major_show(struct class *class, struct class_attribute *a=
-ttr, char *buf)=0A=
-> +{=0A=
-> +	sprintf(buf, "%d", get_blk_snap_major());=0A=
-> +	return strlen(buf);=0A=
-> +}=0A=
-> +=0A=
-> +CLASS_ATTR_RO(major); // declare class_attr_major=0A=
-> +static struct class *blk_snap_class;=0A=
-> +=0A=
-> +static struct device *blk_snap_device;=0A=
-> +=0A=
-> +int ctrl_sysfs_init(void)=0A=
-> +{=0A=
-> +	struct device *dev;=0A=
-> +	int res;=0A=
-> +=0A=
-> +	blk_snap_class =3D class_create(THIS_MODULE, MODULE_NAME);=0A=
-> +	if (IS_ERR(blk_snap_class)) {=0A=
-> +		res =3D PTR_ERR(blk_snap_class);=0A=
-> +=0A=
-> +		pr_err("Bad class create. errno=3D%d\n", 0 - res);=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	pr_info("Create 'major' sysfs attribute\n");=0A=
-> +	res =3D class_create_file(blk_snap_class, &class_attr_major);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to create 'major' sysfs file\n");=0A=
-> +=0A=
-> +		class_destroy(blk_snap_class);=0A=
-> +		blk_snap_class =3D NULL;=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	dev =3D device_create(blk_snap_class, NULL, MKDEV(get_blk_snap_major(),=
- 0), NULL,=0A=
-> +			    MODULE_NAME);=0A=
-> +	if (IS_ERR(dev)) {=0A=
-> +		res =3D PTR_ERR(dev);=0A=
-> +		pr_err("Failed to create device, errno=3D%d\n", res);=0A=
-> +=0A=
-> +		class_remove_file(blk_snap_class, &class_attr_major);=0A=
-> +		class_destroy(blk_snap_class);=0A=
-> +		blk_snap_class =3D NULL;=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	blk_snap_device =3D dev;=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +void ctrl_sysfs_done(void)=0A=
-> +{=0A=
-> +	if (blk_snap_device) {=0A=
-> +		device_unregister(blk_snap_device);=0A=
-> +		blk_snap_device =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (blk_snap_class !=3D NULL) {=0A=
-> +		class_remove_file(blk_snap_class, &class_attr_major);=0A=
-> +		class_destroy(blk_snap_class);=0A=
-> +		blk_snap_class =3D NULL;=0A=
-> +	}=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/ctrl_sysfs.h b/drivers/block/blk-snap=
-/ctrl_sysfs.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..27a2a4d3da4c=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/ctrl_sysfs.h=0A=
-> @@ -0,0 +1,5 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +int ctrl_sysfs_init(void);=0A=
-> +void ctrl_sysfs_done(void);=0A=
-> diff --git a/drivers/block/blk-snap/defer_io.c b/drivers/block/blk-snap/d=
-efer_io.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..309216fe7319=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/defer_io.c=0A=
-> @@ -0,0 +1,397 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-defer_io"=0A=
-> +#include "common.h"=0A=
-> +#include "defer_io.h"=0A=
-> +#include "blk_deferred.h"=0A=
-> +#include "tracker.h"=0A=
-> +#include "blk_util.h"=0A=
-> +=0A=
-> +#include <linux/kthread.h>=0A=
-> +=0A=
-> +#define BLK_IMAGE_THROTTLE_TIMEOUT (1 * HZ) //delay 1 sec=0A=
-> +//#define BLK_IMAGE_THROTTLE_TIMEOUT ( HZ/1000 * 10 )	//delay 10 ms=0A=
-> +=0A=
-> +=0A=
-> +=0A=
-> +struct defer_io_orig_rq {=0A=
-> +	struct list_head link;=0A=
-> +	struct defer_io_queue *queue;=0A=
-> +=0A=
-> +	struct bio *bio;=0A=
-> +	struct tracker *tracker;=0A=
-> +};=0A=
-> +=0A=
-> +static inline void defer_io_queue_init(struct defer_io_queue *queue)=0A=
-> +{=0A=
-> +	INIT_LIST_HEAD(&queue->list);=0A=
-> +=0A=
-> +	spin_lock_init(&queue->lock);=0A=
-> +=0A=
-> +	atomic_set(&queue->in_queue_cnt, 0);=0A=
-> +	atomic_set(&queue->active_state, true);=0A=
-> +}=0A=
-> +=0A=
-> +static inline struct defer_io_orig_rq *defer_io_queue_new(struct defer_i=
-o_queue *queue, struct bio *bio)=0A=
-> +{=0A=
-> +	struct defer_io_orig_rq *dio_rq;=0A=
-> +=0A=
-> +	dio_rq =3D kzalloc(sizeof(struct defer_io_orig_rq), GFP_NOIO);=0A=
-> +	if (dio_rq =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	dio_rq->bio =3D bio;=0A=
-> +	bio_get(dio_rq->bio);=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&dio_rq->link);=0A=
-> +	dio_rq->queue =3D queue;=0A=
-> +=0A=
-> +	return dio_rq;=0A=
-> +}=0A=
-> +=0A=
-> +static inline void defer_io_queue_free(struct defer_io_orig_rq *dio_rq)=
-=0A=
-> +{=0A=
-> +	if (likely(dio_rq)) {=0A=
-> +		if (likely(dio_rq->bio)) {=0A=
-> +			bio_put(dio_rq->bio);=0A=
-> +			dio_rq->bio =3D NULL;=0A=
-> +		}=0A=
-> +		kfree(dio_rq);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +static int defer_io_queue_push_back(struct defer_io_queue *queue, struct=
- defer_io_orig_rq *dio_rq)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	spin_lock(&queue->lock);=0A=
-> +=0A=
-> +	if (atomic_read(&queue->active_state)) {=0A=
-> +		list_add_tail(&dio_rq->link, &queue->list);=0A=
-> +		atomic_inc(&queue->in_queue_cnt);=0A=
-> +	} else=0A=
-> +		res =3D -EACCES;=0A=
-> +=0A=
-> +	spin_unlock(&queue->lock);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +static struct defer_io_orig_rq *defer_io_queue_get_first(struct defer_io=
-_queue *queue)=0A=
-> +{=0A=
-> +	struct defer_io_orig_rq *dio_rq =3D NULL;=0A=
-> +=0A=
-> +	spin_lock(&queue->lock);=0A=
-> +=0A=
-> +	if (!list_empty(&queue->list)) {=0A=
-> +		dio_rq =3D list_entry(queue->list.next, struct defer_io_orig_rq, link)=
-;=0A=
-> +		list_del(&dio_rq->link);=0A=
-> +		atomic_dec(&queue->in_queue_cnt);=0A=
-> +	}=0A=
-> +=0A=
-> +	spin_unlock(&queue->lock);=0A=
-> +=0A=
-> +	return dio_rq;=0A=
-> +}=0A=
-> +=0A=
-> +static bool defer_io_queue_active(struct defer_io_queue *queue, bool sta=
-te)=0A=
-> +{=0A=
-> +	bool prev_state;=0A=
-> +=0A=
-> +	spin_lock(&queue->lock);=0A=
-> +=0A=
-> +	prev_state =3D atomic_read(&queue->active_state);=0A=
-> +	atomic_set(&queue->active_state, state);=0A=
-> +=0A=
-> +	spin_unlock(&queue->lock);=0A=
-> +=0A=
-> +	return prev_state;=0A=
-> +}=0A=
-> +=0A=
-> +#define defer_io_queue_empty(queue) (atomic_read(&(queue).in_queue_cnt) =
-=3D=3D 0)=0A=
-> +=0A=
-> +static void _defer_io_finish(struct defer_io *defer_io, struct defer_io_=
-queue *queue_in_progress)=0A=
-> +{=0A=
-> +	while (!defer_io_queue_empty(*queue_in_progress)) {=0A=
-> +		struct tracker *tracker =3D NULL;=0A=
-> +		bool cbt_locked =3D false;=0A=
-> +		bool is_write_bio;=0A=
-> +		sector_t sectCount =3D 0;=0A=
-> +=0A=
-> +		struct defer_io_orig_rq *orig_req =3D defer_io_queue_get_first(queue_i=
-n_progress);=0A=
-> +=0A=
-> +		is_write_bio =3D bio_data_dir(orig_req->bio) && bio_has_data(orig_req-=
->bio);=0A=
-> +=0A=
-> +		if (orig_req->tracker && is_write_bio) {=0A=
-> +			tracker =3D orig_req->tracker;=0A=
-> +			cbt_locked =3D tracker_cbt_bitmap_lock(tracker);=0A=
-> +			if (cbt_locked) {=0A=
-> +				sectCount =3D bio_sectors(orig_req->bio);=0A=
-> +				tracker_cbt_bitmap_set(tracker, orig_req->bio->bi_iter.bi_sector,=0A=
-> +						       sectCount);=0A=
-> +			}=0A=
-> +		}=0A=
-> +=0A=
-> +		submit_bio_direct(orig_req->bio);=0A=
-> +=0A=
-> +		if (cbt_locked)=0A=
-> +			tracker_cbt_bitmap_unlock(tracker);=0A=
-> +=0A=
-> +		defer_io_queue_free(orig_req);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +static int _defer_io_copy_prepare(struct defer_io *defer_io,=0A=
-> +				  struct defer_io_queue *queue_in_process,=0A=
-> +				  struct blk_deferred_request **dio_copy_req)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	int dios_count =3D 0;=0A=
-> +	sector_t dios_sectors_count =3D 0;=0A=
-> +=0A=
-> +	//fill copy_request set=0A=
-> +	while (!defer_io_queue_empty(defer_io->dio_queue) &&=0A=
-> +	       (dios_count < DEFER_IO_DIO_REQUEST_LENGTH) &&=0A=
-> +	       (dios_sectors_count < DEFER_IO_DIO_REQUEST_SECTORS_COUNT)) {=0A=
-> +		struct defer_io_orig_rq *dio_orig_req =3D=0A=
-> +			(struct defer_io_orig_rq *)defer_io_queue_get_first(&defer_io->dio_qu=
-eue);=0A=
-> +		atomic_dec(&defer_io->queue_filling_count);=0A=
-> +=0A=
-> +		defer_io_queue_push_back(queue_in_process, dio_orig_req);=0A=
-> +=0A=
-> +		if (!kthread_should_stop() &&=0A=
-> +		    !snapstore_device_is_corrupted(defer_io->snapstore_device)) {=0A=
-> +			if (bio_data_dir(dio_orig_req->bio) && bio_has_data(dio_orig_req->bio=
-)) {=0A=
-> +				struct blk_range copy_range;=0A=
-> +=0A=
-> +				copy_range.ofs =3D dio_orig_req->bio->bi_iter.bi_sector;=0A=
-> +				copy_range.cnt =3D bio_sectors(dio_orig_req->bio);=0A=
-> +				res =3D snapstore_device_prepare_requests(defer_io->snapstore_device=
-,=0A=
-> +									&copy_range, dio_copy_req);=0A=
-> +				if (res !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to execute Copy On Write algorithm: failed to add ra=
-nges to copy to snapstore request. errno=3D%d\n",=0A=
-> +					       res);=0A=
-> +					break;=0A=
-> +				}=0A=
-> +=0A=
-> +				dios_sectors_count +=3D copy_range.cnt;=0A=
-> +			}=0A=
-> +		}=0A=
-> +		++dios_count;=0A=
-> +	}=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +static int defer_io_work_thread(void *p)=0A=
-> +{=0A=
-> +	struct defer_io_queue queue_in_process =3D { 0 };=0A=
-> +	struct defer_io *defer_io =3D NULL;=0A=
-> +=0A=
-> +	//set_user_nice( current, -20 ); //MIN_NICE=0A=
-> +	defer_io_queue_init(&queue_in_process);=0A=
-> +=0A=
-> +	defer_io =3D defer_io_get_resource((struct defer_io *)p);=0A=
-> +	pr_info("Defer IO thread for original device [%d:%d] started\n",=0A=
-> +		MAJOR(defer_io->original_dev_id), MINOR(defer_io->original_dev_id));=
-=0A=
-> +=0A=
-> +	while (!kthread_should_stop() || !defer_io_queue_empty(defer_io->dio_qu=
-eue)) {=0A=
-> +		if (defer_io_queue_empty(defer_io->dio_queue)) {=0A=
-> +			int res =3D wait_event_interruptible_timeout(=0A=
-> +				defer_io->queue_add_event,=0A=
-> +				(!defer_io_queue_empty(defer_io->dio_queue)),=0A=
-> +				BLK_IMAGE_THROTTLE_TIMEOUT);=0A=
-> +			if (-ERESTARTSYS =3D=3D res)=0A=
-> +				pr_err("Signal received in defer IO thread. Waiting for completion w=
-ith code ERESTARTSYS\n");=0A=
-> +		}=0A=
-> +=0A=
-> +		if (!defer_io_queue_empty(defer_io->dio_queue)) {=0A=
-> +			int dio_copy_result =3D SUCCESS;=0A=
-> +			struct blk_deferred_request *dio_copy_req =3D NULL;=0A=
-> +=0A=
-> +			mutex_lock(&defer_io->snapstore_device->store_block_map_locker);=0A=
-> +			do {=0A=
-> +				dio_copy_result =3D _defer_io_copy_prepare(=0A=
-> +					defer_io, &queue_in_process, &dio_copy_req);=0A=
-> +				if (dio_copy_result !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to process defer IO request: failed to prepare copy =
-request. erro=3D%d\n",=0A=
-> +					       dio_copy_result);=0A=
-> +					break;=0A=
-> +				}=0A=
-> +				if (dio_copy_req =3D=3D NULL)=0A=
-> +					break; //nothing to copy=0A=
-> +=0A=
-> +				dio_copy_result =3D blk_deferred_request_read_original(=0A=
-> +					defer_io->original_blk_dev, dio_copy_req);=0A=
-> +				if (dio_copy_result !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to process defer IO request: failed to read data to =
-copy request. errno=3D%d\n",=0A=
-> +					       dio_copy_result);=0A=
-> +					break;=0A=
-> +				}=0A=
-> +				dio_copy_result =3D snapstore_device_store(defer_io->snapstore_devic=
-e,=0A=
-> +									 dio_copy_req);=0A=
-> +				if (dio_copy_result !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to process defer IO request: failed to write data fr=
-om copy request. errno=3D%d\n",=0A=
-> +					       dio_copy_result);=0A=
-> +					break;=0A=
-> +				}=0A=
-> +=0A=
-> +			} while (false);=0A=
-> +			_defer_io_finish(defer_io, &queue_in_process);=0A=
-> +			mutex_unlock(&defer_io->snapstore_device->store_block_map_locker);=0A=
-> +=0A=
-> +			if (dio_copy_req) {=0A=
-> +				if (dio_copy_result =3D=3D -EDEADLK)=0A=
-> +					blk_deferred_request_deadlocked(dio_copy_req);=0A=
-> +				else=0A=
-> +					blk_deferred_request_free(dio_copy_req);=0A=
-> +			}=0A=
-> +		}=0A=
-> +=0A=
-> +		//wake up snapimage if defer io queue empty=0A=
-> +		if (defer_io_queue_empty(defer_io->dio_queue))=0A=
-> +			wake_up_interruptible(&defer_io->queue_throttle_waiter);=0A=
-> +	}=0A=
-> +	defer_io_queue_active(&defer_io->dio_queue, false);=0A=
-> +=0A=
-> +	//waiting for all sent request complete=0A=
-> +	_defer_io_finish(defer_io, &defer_io->dio_queue);=0A=
-> +=0A=
-> +	pr_info("Defer IO thread for original device [%d:%d] completed\n",=0A=
-> +		MAJOR(defer_io->original_dev_id), MINOR(defer_io->original_dev_id));=
-=0A=
-> +	defer_io_put_resource(defer_io);=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +static void _defer_io_destroy(struct defer_io *defer_io)=0A=
-> +{=0A=
-> +	if (defer_io =3D=3D NULL)=0A=
-> +		return;=0A=
-> +=0A=
-> +	if (defer_io->dio_thread)=0A=
-> +		defer_io_stop(defer_io);=0A=
-> +=0A=
-> +	if (defer_io->snapstore_device)=0A=
-> +		snapstore_device_put_resource(defer_io->snapstore_device);=0A=
-> +=0A=
-> +	kfree(defer_io);=0A=
-> +	pr_info("Defer IO processor was destroyed\n");=0A=
-> +}=0A=
-> +=0A=
-> +static void defer_io_destroy_cb(struct kref *kref)=0A=
-> +{=0A=
-> +	_defer_io_destroy(container_of(kref, struct defer_io, refcount));=0A=
-> +}=0A=
-> +=0A=
-> +struct defer_io *defer_io_get_resource(struct defer_io *defer_io)=0A=
-> +{=0A=
-> +	if (defer_io)=0A=
-> +		kref_get(&defer_io->refcount);=0A=
-> +=0A=
-> +	return defer_io;=0A=
-> +}=0A=
-> +=0A=
-> +void defer_io_put_resource(struct defer_io *defer_io)=0A=
-> +{=0A=
-> +	if (defer_io)=0A=
-> +		kref_put(&defer_io->refcount, defer_io_destroy_cb);=0A=
-> +}=0A=
-> +=0A=
-> +int defer_io_create(dev_t dev_id, struct block_device *blk_dev, struct d=
-efer_io **pp_defer_io)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct defer_io *defer_io =3D NULL;=0A=
-> +	struct snapstore_device *snapstore_device;=0A=
-> +=0A=
-> +	pr_info("Defer IO processor was created for device [%d:%d]\n", MAJOR(de=
-v_id),=0A=
-> +		MINOR(dev_id));=0A=
-> +=0A=
-> +	defer_io =3D kzalloc(sizeof(struct defer_io), GFP_KERNEL);=0A=
-> +	if (defer_io =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	snapstore_device =3D snapstore_device_find_by_dev_id(dev_id);=0A=
-> +	if (snapstore_device =3D=3D NULL) {=0A=
-> +		pr_err("Unable to create defer IO processor: failed to initialize snap=
-shot data for device [%d:%d]\n",=0A=
-> +		       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +=0A=
-> +		kfree(defer_io);=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	defer_io->snapstore_device =3D snapstore_device_get_resource(snapstore_=
-device);=0A=
-> +	defer_io->original_dev_id =3D dev_id;=0A=
-> +	defer_io->original_blk_dev =3D blk_dev;=0A=
-> +=0A=
-> +	kref_init(&defer_io->refcount);=0A=
-> +=0A=
-> +	defer_io_queue_init(&defer_io->dio_queue);=0A=
-> +=0A=
-> +	init_waitqueue_head(&defer_io->queue_add_event);=0A=
-> +=0A=
-> +	atomic_set(&defer_io->queue_filling_count, 0);=0A=
-> +=0A=
-> +	init_waitqueue_head(&defer_io->queue_throttle_waiter);=0A=
-> +=0A=
-> +	defer_io->dio_thread =3D kthread_create(defer_io_work_thread, (void *)d=
-efer_io,=0A=
-> +					      "blksnapdeferio%d:%d", MAJOR(dev_id), MINOR(dev_id));=0A=
-> +	if (IS_ERR(defer_io->dio_thread)) {=0A=
-> +		res =3D PTR_ERR(defer_io->dio_thread);=0A=
-> +		pr_err("Unable to create defer IO processor: failed to create thread. =
-errno=3D%d\n",=0A=
-> +		       res);=0A=
-> +=0A=
-> +		_defer_io_destroy(defer_io);=0A=
-> +		defer_io =3D NULL;=0A=
-> +		*pp_defer_io =3D NULL;=0A=
-> +=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	wake_up_process(defer_io->dio_thread);=0A=
-> +=0A=
-> +	*pp_defer_io =3D defer_io;=0A=
-> +	pr_info("Defer IO processor was created\n");=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int defer_io_stop(struct defer_io *defer_io)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	pr_info("Defer IO thread for the device stopped [%d:%d]\n",=0A=
-> +		MAJOR(defer_io->original_dev_id), MINOR(defer_io->original_dev_id));=
-=0A=
-> +=0A=
-> +	if (defer_io->dio_thread !=3D NULL) {=0A=
-> +		struct task_struct *dio_thread =3D defer_io->dio_thread;=0A=
-> +=0A=
-> +		defer_io->dio_thread =3D NULL;=0A=
-> +		res =3D kthread_stop(dio_thread); //stopping and waiting.=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Failed to stop defer IO thread. errno=3D%d\n", res);=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int defer_io_redirect_bio(struct defer_io *defer_io, struct bio *bio, vo=
-id *tracker)=0A=
-> +{=0A=
-> +	struct defer_io_orig_rq *dio_orig_req;=0A=
-> +=0A=
-> +	if (snapstore_device_is_corrupted(defer_io->snapstore_device))=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	dio_orig_req =3D defer_io_queue_new(&defer_io->dio_queue, bio);=0A=
-> +	if (dio_orig_req =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	dio_orig_req->tracker =3D (struct tracker *)tracker;=0A=
-> +=0A=
-> +	if (defer_io_queue_push_back(&defer_io->dio_queue, dio_orig_req) !=3D S=
-UCCESS) {=0A=
-> +		defer_io_queue_free(dio_orig_req);=0A=
-> +		return -EFAULT;=0A=
-> +	}=0A=
-> +=0A=
-> +	atomic_inc(&defer_io->queue_filling_count);=0A=
-> +=0A=
-> +	wake_up_interruptible(&defer_io->queue_add_event);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/defer_io.h b/drivers/block/blk-snap/d=
-efer_io.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..27c3bb03241f=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/defer_io.h=0A=
-> @@ -0,0 +1,39 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include <linux/kref.h>=0A=
-> +#include "snapstore_device.h"=0A=
-> +=0A=
-> +struct defer_io_queue {=0A=
-> +	struct list_head list;=0A=
-> +	spinlock_t lock;=0A=
-> +=0A=
-> +	atomic_t active_state;=0A=
-> +	atomic_t in_queue_cnt;=0A=
-> +};=0A=
-> +=0A=
-> +struct defer_io {=0A=
-> +	struct kref refcount;=0A=
-> +=0A=
-> +	wait_queue_head_t queue_add_event;=0A=
-> +=0A=
-> +	atomic_t queue_filling_count;=0A=
-> +	wait_queue_head_t queue_throttle_waiter;=0A=
-> +=0A=
-> +	dev_t original_dev_id;=0A=
-> +	struct block_device *original_blk_dev;=0A=
-> +=0A=
-> +	struct snapstore_device *snapstore_device;=0A=
-> +=0A=
-> +	struct task_struct *dio_thread;=0A=
-> +=0A=
-> +	struct defer_io_queue dio_queue;=0A=
-> +};=0A=
-> +=0A=
-> +int defer_io_create(dev_t dev_id, struct block_device *blk_dev, struct d=
-efer_io **pp_defer_io);=0A=
-> +int defer_io_stop(struct defer_io *defer_io);=0A=
-> +=0A=
-> +struct defer_io *defer_io_get_resource(struct defer_io *defer_io);=0A=
-> +void defer_io_put_resource(struct defer_io *defer_io);=0A=
-> +=0A=
-> +int defer_io_redirect_bio(struct defer_io *defer_io, struct bio *bio, vo=
-id *tracker);=0A=
-> diff --git a/drivers/block/blk-snap/main.c b/drivers/block/blk-snap/main.=
-c=0A=
-> new file mode 100644=0A=
-> index 000000000000..d1d4e08a4890=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/main.c=0A=
-> @@ -0,0 +1,82 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#include "common.h"=0A=
-> +#include "version.h"=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +#include "params.h"=0A=
-> +#include "ctrl_fops.h"=0A=
-> +#include "ctrl_pipe.h"=0A=
-> +#include "ctrl_sysfs.h"=0A=
-> +#include "snapimage.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include "snapstore_device.h"=0A=
-> +#include "snapshot.h"=0A=
-> +#include "tracker.h"=0A=
-> +#include "tracking.h"=0A=
-> +#include <linux/module.h>=0A=
-> +=0A=
-> +int __init blk_snap_init(void)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +=0A=
-> +	pr_info("Loading\n");=0A=
-> +=0A=
-> +	params_check();=0A=
-> +=0A=
-> +	result =3D ctrl_init();=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	result =3D blk_redirect_bioset_create();=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	result =3D blk_deferred_bioset_create();=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	result =3D snapimage_init();=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	result =3D ctrl_sysfs_init();=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	result =3D tracking_init();=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +void __exit blk_snap_exit(void)=0A=
-> +{=0A=
-> +	pr_info("Unloading module\n");=0A=
-> +=0A=
-> +	ctrl_sysfs_done();=0A=
-> +=0A=
-> +	snapshot_done();=0A=
-> +=0A=
-> +	snapstore_device_done();=0A=
-> +	snapstore_done();=0A=
-> +=0A=
-> +	tracker_done();=0A=
-> +	tracking_done();=0A=
-> +=0A=
-> +	snapimage_done();=0A=
-> +=0A=
-> +	blk_deferred_bioset_free();=0A=
-> +	blk_deferred_done();=0A=
-> +=0A=
-> +	blk_redirect_bioset_free();=0A=
-> +=0A=
-> +	ctrl_done();=0A=
-> +}=0A=
-> +=0A=
-> +module_init(blk_snap_init);=0A=
-> +module_exit(blk_snap_exit);=0A=
-> +=0A=
-> +MODULE_DESCRIPTION("Block Layer Snapshot Kernel Module");=0A=
-> +MODULE_VERSION(FILEVER_STR);=0A=
-> +MODULE_AUTHOR("Veeam Software Group GmbH");=0A=
-> +MODULE_LICENSE("GPL");=0A=
-> diff --git a/drivers/block/blk-snap/params.c b/drivers/block/blk-snap/par=
-ams.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..7eba3c8bf395=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/params.c=0A=
-> @@ -0,0 +1,58 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#include "common.h"=0A=
-> +#include "params.h"=0A=
-> +#include <linux/module.h>=0A=
-> +=0A=
-> +int snapstore_block_size_pow =3D 14;=0A=
-> +int change_tracking_block_size_pow =3D 18;=0A=
-> +=0A=
-> +int get_snapstore_block_size_pow(void)=0A=
-> +{=0A=
-> +	return snapstore_block_size_pow;=0A=
-> +}=0A=
-> +=0A=
-> +int inc_snapstore_block_size_pow(void)=0A=
-> +{=0A=
-> +	if (snapstore_block_size_pow > 30)=0A=
-> +		return -EFAULT;=0A=
-> +=0A=
-> +	++snapstore_block_size_pow;=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int get_change_tracking_block_size_pow(void)=0A=
-> +{=0A=
-> +	return change_tracking_block_size_pow;=0A=
-> +}=0A=
-> +=0A=
-> +void params_check(void)=0A=
-> +{=0A=
-> +	pr_info("snapstore_block_size_pow: %d\n", snapstore_block_size_pow);=0A=
-> +	pr_info("change_tracking_block_size_pow: %d\n", change_tracking_block_s=
-ize_pow);=0A=
-> +=0A=
-> +	if (snapstore_block_size_pow > 23) {=0A=
-> +		snapstore_block_size_pow =3D 23;=0A=
-> +		pr_info("Limited snapstore_block_size_pow: %d\n", snapstore_block_size=
-_pow);=0A=
-> +	} else if (snapstore_block_size_pow < 12) {=0A=
-> +		snapstore_block_size_pow =3D 12;=0A=
-> +		pr_info("Limited snapstore_block_size_pow: %d\n", snapstore_block_size=
-_pow);=0A=
-> +	}=0A=
-> +=0A=
-> +	if (change_tracking_block_size_pow > 23) {=0A=
-> +		change_tracking_block_size_pow =3D 23;=0A=
-> +		pr_info("Limited change_tracking_block_size_pow: %d\n",=0A=
-> +			change_tracking_block_size_pow);=0A=
-> +	} else if (change_tracking_block_size_pow < 12) {=0A=
-> +		change_tracking_block_size_pow =3D 12;=0A=
-> +		pr_info("Limited change_tracking_block_size_pow: %d\n",=0A=
-> +			change_tracking_block_size_pow);=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +module_param_named(snapstore_block_size_pow, snapstore_block_size_pow, i=
-nt, 0644);=0A=
-> +MODULE_PARM_DESC(snapstore_block_size_pow,=0A=
-> +		 "Snapstore block size binary pow. 20 for 1MiB block size");=0A=
-> +=0A=
-> +module_param_named(change_tracking_block_size_pow, change_tracking_block=
-_size_pow, int, 0644);=0A=
-> +MODULE_PARM_DESC(change_tracking_block_size_pow,=0A=
-> +		 "Change-tracking block size binary pow. 18 for 256 KiB block size");=
-=0A=
-> diff --git a/drivers/block/blk-snap/params.h b/drivers/block/blk-snap/par=
-ams.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..c1b853a1363b=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/params.h=0A=
-> @@ -0,0 +1,29 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +int get_snapstore_block_size_pow(void);=0A=
-> +int inc_snapstore_block_size_pow(void);=0A=
-> +=0A=
-> +static inline sector_t snapstore_block_shift(void)=0A=
-> +{=0A=
-> +	return get_snapstore_block_size_pow() - SECTOR_SHIFT;=0A=
-> +};=0A=
-> +=0A=
-> +static inline sector_t snapstore_block_size(void)=0A=
-> +{=0A=
-> +	return 1ull << snapstore_block_shift();=0A=
-> +};=0A=
-> +=0A=
-> +static inline sector_t snapstore_block_mask(void)=0A=
-> +{=0A=
-> +	return snapstore_block_size() - 1ull;=0A=
-> +};=0A=
-> +=0A=
-> +int get_change_tracking_block_size_pow(void);=0A=
-> +=0A=
-> +static inline unsigned int change_tracking_block_size(void)=0A=
-> +{=0A=
-> +	return 1 << get_change_tracking_block_size_pow();=0A=
-> +};=0A=
-> +=0A=
-> +void params_check(void);=0A=
-> diff --git a/drivers/block/blk-snap/rangevector.c b/drivers/block/blk-sna=
-p/rangevector.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..49fe4589b6f7=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/rangevector.c=0A=
-> @@ -0,0 +1,85 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#include "common.h"=0A=
-> +#include "rangevector.h"=0A=
-> +=0A=
-> +#define SECTION "ranges	"=0A=
-> +=0A=
-> +static inline sector_t range_node_start(struct blk_range_tree_node *rang=
-e_node)=0A=
-> +{=0A=
-> +	return range_node->range.ofs;=0A=
-> +}=0A=
-> +=0A=
-> +static inline sector_t range_node_last(struct blk_range_tree_node *range=
-_node)=0A=
-> +{=0A=
-> +	return range_node->range.ofs + range_node->range.cnt - 1;=0A=
-> +}=0A=
-> +=0A=
-> +#ifndef INTERVAL_TREE_DEFINE=0A=
-> +#pragma message("INTERVAL_TREE_DEFINE is undefined")=0A=
-> +#endif=0A=
-> +INTERVAL_TREE_DEFINE(struct blk_range_tree_node, _node, sector_t, _subtr=
-ee_last,=0A=
-> +		     range_node_start, range_node_last, static inline, _blk_range_rb)=
-=0A=
-> +=0A=
-> +void blk_range_rb_insert(struct blk_range_tree_node *node, struct rb_roo=
-t_cached *root)=0A=
-> +{=0A=
-> +	_blk_range_rb_insert(node, root);=0A=
-> +}=0A=
-> +=0A=
-> +void blk_range_rb_remove(struct blk_range_tree_node *node, struct rb_roo=
-t_cached *root)=0A=
-> +{=0A=
-> +	_blk_range_rb_remove(node, root);=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_range_tree_node *blk_range_rb_iter_first(struct rb_root_cache=
-d *root, sector_t start,=0A=
-> +						    sector_t last)=0A=
-> +{=0A=
-> +	return _blk_range_rb_iter_first(root, start, last);=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_range_tree_node *blk_range_rb_iter_next(struct blk_range_tree=
-_node *node, sector_t start,=0A=
-> +						   sector_t last)=0A=
-> +{=0A=
-> +	return _blk_range_rb_iter_next(node, start, last);=0A=
-> +}=0A=
-> +=0A=
-> +void rangevector_init(struct rangevector *rangevector)=0A=
-> +{=0A=
-> +	init_rwsem(&rangevector->lock);=0A=
-> +=0A=
-> +	rangevector->root =3D RB_ROOT_CACHED;=0A=
-> +}=0A=
-> +=0A=
-> +void rangevector_done(struct rangevector *rangevector)=0A=
-> +{=0A=
-> +	struct rb_node *rb_node =3D NULL;=0A=
-> +=0A=
-> +	down_write(&rangevector->lock);=0A=
-> +	rb_node =3D rb_first_cached(&rangevector->root);=0A=
-> +	while (rb_node) {=0A=
-> +		struct blk_range_tree_node *range_node =3D (struct blk_range_tree_node=
- *)=0A=
-> +			rb_node; //container_of(rb_node, struct blk_range_tree_node, node);=
-=0A=
-> +=0A=
-> +		blk_range_rb_remove(range_node, &rangevector->root);=0A=
-> +		kfree(range_node);=0A=
-> +=0A=
-> +		rb_node =3D rb_first_cached(&rangevector->root);=0A=
-> +	}=0A=
-> +	up_write(&rangevector->lock);=0A=
-> +}=0A=
-> +=0A=
-> +int rangevector_add(struct rangevector *rangevector, struct blk_range *r=
-g)=0A=
-> +{=0A=
-> +	struct blk_range_tree_node *range_node;=0A=
-> +=0A=
-> +	range_node =3D kzalloc(sizeof(struct blk_range_tree_node), GFP_KERNEL);=
-=0A=
-> +	if (range_node)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	range_node->range =3D *rg;=0A=
-> +=0A=
-> +	down_write(&rangevector->lock);=0A=
-> +	blk_range_rb_insert(range_node, &rangevector->root);=0A=
-> +	up_write(&rangevector->lock);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/rangevector.h b/drivers/block/blk-sna=
-p/rangevector.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..5ff439423178=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/rangevector.h=0A=
-> @@ -0,0 +1,31 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include <linux/interval_tree_generic.h>=0A=
-> +=0A=
-> +struct blk_range_tree_node {=0A=
-> +	struct rb_node _node;=0A=
-> +	struct blk_range range;=0A=
-> +	sector_t _subtree_last;=0A=
-> +};=0A=
-> +=0A=
-> +void blk_range_rb_insert(struct blk_range_tree_node *node, struct rb_roo=
-t_cached *root);=0A=
-> +=0A=
-> +void blk_range_rb_remove(struct blk_range_tree_node *node, struct rb_roo=
-t_cached *root);=0A=
-> +=0A=
-> +struct blk_range_tree_node *blk_range_rb_iter_first(struct rb_root_cache=
-d *root, sector_t start,=0A=
-> +						    sector_t last);=0A=
-> +=0A=
-> +struct blk_range_tree_node *blk_range_rb_iter_next(struct blk_range_tree=
-_node *node, sector_t start,=0A=
-> +						   sector_t last);=0A=
-> +=0A=
-> +struct rangevector {=0A=
-> +	struct rb_root_cached root;=0A=
-> +	struct rw_semaphore lock;=0A=
-> +};=0A=
-> +=0A=
-> +void rangevector_init(struct rangevector *rangevector);=0A=
-> +=0A=
-> +void rangevector_done(struct rangevector *rangevector);=0A=
-> +=0A=
-> +int rangevector_add(struct rangevector *rangevector, struct blk_range *r=
-g);=0A=
-> diff --git a/drivers/block/blk-snap/snapimage.c b/drivers/block/blk-snap/=
-snapimage.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..da971486cbef=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapimage.c=0A=
-> @@ -0,0 +1,982 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapimage"=0A=
-> +#include "common.h"=0A=
-> +#include "snapimage.h"=0A=
-> +#include "blk_util.h"=0A=
-> +#include "defer_io.h"=0A=
-> +#include "cbt_map.h"=0A=
-> +#include "tracker.h"=0A=
-> +=0A=
-> +#include <asm/div64.h>=0A=
-> +#include <linux/cdrom.h>=0A=
-> +#include <linux/blk-mq.h>=0A=
-> +#include <linux/hdreg.h>=0A=
-> +#include <linux/kthread.h>=0A=
-> +=0A=
-> +#define SNAPIMAGE_MAX_DEVICES 2048=0A=
-> +=0A=
-> +int snapimage_major;=0A=
-> +unsigned long *snapimage_minors;=0A=
-> +DEFINE_SPINLOCK(snapimage_minors_lock);=0A=
-> +=0A=
-> +LIST_HEAD(snap_images);=0A=
-> +DECLARE_RWSEM(snap_images_lock);=0A=
-> +=0A=
-> +DECLARE_RWSEM(snap_image_destroy_lock);=0A=
-> +=0A=
-> +struct snapimage {=0A=
-> +	struct list_head link;=0A=
-> +=0A=
-> +	sector_t capacity;=0A=
-> +	dev_t original_dev;=0A=
-> +=0A=
-> +	struct defer_io *defer_io;=0A=
-> +	struct cbt_map *cbt_map;=0A=
-> +=0A=
-> +	dev_t image_dev;=0A=
-> +=0A=
-> +	struct request_queue *queue;=0A=
-> +	struct gendisk *disk;=0A=
-> +=0A=
-> +	atomic_t own_cnt;=0A=
-> +=0A=
-> +	struct redirect_bio_queue image_queue;=0A=
-> +=0A=
-> +	struct task_struct *rq_processor;=0A=
-> +=0A=
-> +	wait_queue_head_t rq_proc_event;=0A=
-> +	wait_queue_head_t rq_complete_event;=0A=
-> +=0A=
-> +	struct mutex open_locker;=0A=
-> +	struct block_device *open_bdev;=0A=
-> +=0A=
-> +	size_t open_cnt;=0A=
-> +};=0A=
-> +=0A=
-> +int _snapimage_open(struct block_device *bdev, fmode_t mode)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	if (bdev->bd_disk =3D=3D NULL) {=0A=
-> +		pr_err("Unable to open snapshot image: bd_disk is NULL. Device [%d:%d]=
-\n",=0A=
-> +		       MAJOR(bdev->bd_dev), MINOR(bdev->bd_dev));=0A=
-> +		pr_err("Block device object %p\n", bdev);=0A=
-> +		return -ENODEV;=0A=
-> +	}=0A=
-> +=0A=
-> +	down_read(&snap_image_destroy_lock);=0A=
-> +	do {=0A=
-> +		struct snapimage *image =3D bdev->bd_disk->private_data;=0A=
-> +=0A=
-> +		if (image =3D=3D NULL) {=0A=
-> +			pr_err("Unable to open snapshot image: private data is not initialize=
-d. Block device object %p\n",=0A=
-> +			       bdev);=0A=
-> +			res =3D -ENODEV;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		mutex_lock(&image->open_locker);=0A=
-> +		{=0A=
-> +			if (image->open_cnt =3D=3D 0)=0A=
-> +				image->open_bdev =3D bdev;=0A=
-> +=0A=
-> +			image->open_cnt++;=0A=
-> +		}=0A=
-> +		mutex_unlock(&image->open_locker);=0A=
-> +	} while (false);=0A=
-> +	up_read(&snap_image_destroy_lock);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +static inline uint64_t do_div_inline(uint64_t division, uint32_t divisor=
-)=0A=
-> +{=0A=
-> +	do_div(division, divisor);=0A=
-> +	return division;=0A=
-> +}=0A=
-> +=0A=
-> +int _snapimage_getgeo(struct block_device *bdev, struct hd_geometry *geo=
-)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t quotient;=0A=
-> +=0A=
-> +	down_read(&snap_image_destroy_lock);=0A=
-> +	do {=0A=
-> +		struct snapimage *image =3D bdev->bd_disk->private_data;=0A=
-> +=0A=
-> +		if (image =3D=3D NULL) {=0A=
-> +			pr_err("Unable to open snapshot image: private data is not initialize=
-d. Block device object %p\n",=0A=
-> +			       bdev);=0A=
-> +			res =3D -ENODEV;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		pr_info("Getting geo for snapshot image device [%d:%d]\n", MAJOR(image=
-->image_dev),=0A=
-> +			MINOR(image->image_dev));=0A=
-> +=0A=
-> +		geo->start =3D 0;=0A=
-> +		if (image->capacity > 63) {=0A=
-> +			geo->sectors =3D 63;=0A=
-> +			quotient =3D do_div_inline(image->capacity + (63 - 1), 63);=0A=
-> +=0A=
-> +			if (quotient > 255ULL) {=0A=
-> +				geo->heads =3D 255;=0A=
-> +				geo->cylinders =3D=0A=
-> +					(unsigned short)do_div_inline(quotient + (255 - 1), 255);=0A=
-> +			} else {=0A=
-> +				geo->heads =3D (unsigned char)quotient;=0A=
-> +				geo->cylinders =3D 1;=0A=
-> +			}=0A=
-> +		} else {=0A=
-> +			geo->sectors =3D (unsigned char)image->capacity;=0A=
-> +			geo->cylinders =3D 1;=0A=
-> +			geo->heads =3D 1;=0A=
-> +		}=0A=
-> +=0A=
-> +		pr_info("Image device geo: capacity=3D%lld, heads=3D%d, cylinders=3D%d=
-, sectors=3D%d\n",=0A=
-> +			image->capacity, geo->heads, geo->cylinders, geo->sectors);=0A=
-> +	} while (false);=0A=
-> +	up_read(&snap_image_destroy_lock);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +void _snapimage_close(struct gendisk *disk, fmode_t mode)=0A=
-> +{=0A=
-> +	if (disk->private_data !=3D NULL) {=0A=
-> +		down_read(&snap_image_destroy_lock);=0A=
-> +		do {=0A=
-> +			struct snapimage *image =3D disk->private_data;=0A=
-> +=0A=
-> +			mutex_lock(&image->open_locker);=0A=
-> +			{=0A=
-> +				if (image->open_cnt > 0)=0A=
-> +					image->open_cnt--;=0A=
-> +=0A=
-> +				if (image->open_cnt =3D=3D 0)=0A=
-> +					image->open_bdev =3D NULL;=0A=
-> +			}=0A=
-> +			mutex_unlock(&image->open_locker);=0A=
-> +		} while (false);=0A=
-> +		up_read(&snap_image_destroy_lock);=0A=
-> +	} else=0A=
-> +		pr_err("Unable to close snapshot image: private data is not initialize=
-d\n");=0A=
-> +}=0A=
-> +=0A=
-> +int _snapimage_ioctl(struct block_device *bdev, fmode_t mode, unsigned i=
-nt cmd, unsigned long arg)=0A=
-> +{=0A=
-> +	int res =3D -ENOTTY;=0A=
-> +=0A=
-> +	down_read(&snap_image_destroy_lock);=0A=
-> +	{=0A=
-> +		struct snapimage *image =3D bdev->bd_disk->private_data;=0A=
-> +=0A=
-> +		switch (cmd) {=0A=
-> +			/*=0A=
-> +			 * The only command we need to interpret is HDIO_GETGEO, since=0A=
-> +			 * we can't partition the drive otherwise.  We have no real=0A=
-> +			 * geometry, of course, so make something up.=0A=
-> +			 */=0A=
-> +		case HDIO_GETGEO: {=0A=
-> +			unsigned long len;=0A=
-> +			struct hd_geometry geo;=0A=
-> +=0A=
-> +			res =3D _snapimage_getgeo(bdev, &geo);=0A=
-> +=0A=
-> +			len =3D copy_to_user((void *)arg, &geo, sizeof(geo));=0A=
-> +			if (len !=3D 0)=0A=
-> +				res =3D -EFAULT;=0A=
-> +			else=0A=
-> +				res =3D SUCCESS;=0A=
-> +		} break;=0A=
-> +		case CDROM_GET_CAPABILITY: //0x5331  / * get capabilities * /=0A=
-> +		{=0A=
-> +			struct gendisk *disk =3D bdev->bd_disk;=0A=
-> +=0A=
-> +			if (bdev->bd_disk && (disk->flags & GENHD_FL_CD))=0A=
-> +				res =3D SUCCESS;=0A=
-> +			else=0A=
-> +				res =3D -EINVAL;=0A=
-> +		} break;=0A=
-> +=0A=
-> +		default:=0A=
-> +			pr_info("Snapshot image ioctl receive unsupported command\n");=0A=
-> +			pr_info("Device [%d:%d], command 0x%x, arg 0x%lx\n",=0A=
-> +				MAJOR(image->image_dev), MINOR(image->image_dev), cmd, arg);=0A=
-> +=0A=
-> +			res =3D -ENOTTY; /* unknown command */=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_read(&snap_image_destroy_lock);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +blk_qc_t _snapimage_submit_bio(struct bio *bio);=0A=
-> +=0A=
-> +const struct block_device_operations snapimage_ops =3D {=0A=
-> +	.owner =3D THIS_MODULE,=0A=
-> +	.submit_bio =3D _snapimage_submit_bio,=0A=
-> +	.open =3D _snapimage_open,=0A=
-> +	.ioctl =3D _snapimage_ioctl,=0A=
-> +	.release =3D _snapimage_close,=0A=
-> +};=0A=
-> +=0A=
-> +static inline int _snapimage_request_read(struct snapimage *image,=0A=
-> +					  struct blk_redirect_bio *rq_redir)=0A=
-> +{=0A=
-> +	struct snapstore_device *snapstore_device =3D image->defer_io->snapstor=
-e_device;=0A=
-> +=0A=
-> +	return snapstore_device_read(snapstore_device, rq_redir);=0A=
-> +}=0A=
-> +=0A=
-> +int _snapimage_request_write(struct snapimage *image, struct blk_redirec=
-t_bio *rq_redir)=0A=
-> +{=0A=
-> +	struct snapstore_device *snapstore_device;=0A=
-> +	struct cbt_map *cbt_map;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	if (unlikely((image->defer_io =3D=3D NULL) || (image->cbt_map =3D=3D NU=
-LL))) {=0A=
-> +		pr_err("Invalid snapshot image structure");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +=0A=
-> +	snapstore_device =3D image->defer_io->snapstore_device;=0A=
-> +	cbt_map =3D image->cbt_map;=0A=
-> +=0A=
-> +	if (snapstore_device_is_corrupted(snapstore_device))=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	if (!bio_has_data(rq_redir->bio)) {=0A=
-> +		pr_warn("Snapshot image receive empty block IO. flags=3D%u\n",=0A=
-> +			rq_redir->bio->bi_flags);=0A=
-> +=0A=
-> +		blk_redirect_complete(rq_redir, SUCCESS);=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (cbt_map !=3D NULL) {=0A=
-> +		sector_t ofs =3D rq_redir->bio->bi_iter.bi_sector;=0A=
-> +		sector_t cnt =3D bio_sectors(rq_redir->bio);=0A=
-> +=0A=
-> +		res =3D cbt_map_set_both(cbt_map, ofs, cnt);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Unable to write data to snapshot image: failed to set CBT map=
-. errno=3D%d\n",=0A=
-> +			       res);=0A=
-> +	}=0A=
-> +=0A=
-> +	res =3D snapstore_device_write(snapstore_device, rq_redir);=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to write data to snapshot image\n");=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +void _snapimage_processing(struct snapimage *image)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct blk_redirect_bio *rq_redir;=0A=
-> +=0A=
-> +	rq_redir =3D redirect_bio_queue_get_first(&image->image_queue);=0A=
-> +=0A=
-> +	if (bio_data_dir(rq_redir->bio) =3D=3D READ) {=0A=
-> +		res =3D _snapimage_request_read(image, rq_redir);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Failed to read data from snapshot image. errno=3D%d\n", res);=
-=0A=
-> +=0A=
-> +	} else {=0A=
-> +		res =3D _snapimage_request_write(image, rq_redir);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Failed to write data to snapshot image. errno=3D%d\n", res);=
-=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		blk_redirect_complete(rq_redir, res);=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_processor_waiting(struct snapimage *image)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	if (redirect_bio_queue_empty(image->image_queue)) {=0A=
-> +		res =3D wait_event_interruptible_timeout(=0A=
-> +			image->rq_proc_event,=0A=
-> +			(!redirect_bio_queue_empty(image->image_queue) || kthread_should_stop=
-()),=0A=
-> +			5 * HZ);=0A=
-> +		if (res > 0)=0A=
-> +			res =3D SUCCESS;=0A=
-> +		else if (res =3D=3D 0)=0A=
-> +			res =3D -ETIME;=0A=
-> +	}=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_processor_thread(void *data)=0A=
-> +{=0A=
-> +	struct snapimage *image =3D data;=0A=
-> +=0A=
-> +	pr_info("Snapshot image thread for device [%d:%d] start\n", MAJOR(image=
-->image_dev),=0A=
-> +		MINOR(image->image_dev));=0A=
-> +=0A=
-> +	add_disk(image->disk);=0A=
-> +=0A=
-> +	//priority=0A=
-> +	set_user_nice(current, -20); //MIN_NICE=0A=
-> +=0A=
-> +	while (!kthread_should_stop()) {=0A=
-> +		int res =3D snapimage_processor_waiting(image);=0A=
-> +=0A=
-> +		if (res =3D=3D SUCCESS) {=0A=
-> +			if (!redirect_bio_queue_empty(image->image_queue))=0A=
-> +				_snapimage_processing(image);=0A=
-> +		} else if (res !=3D -ETIME) {=0A=
-> +			pr_err("Failed to wait snapshot image thread queue. errno=3D%d\n", re=
-s);=0A=
-> +			return res;=0A=
-> +		}=0A=
-> +		schedule();=0A=
-> +	}=0A=
-> +	pr_info("Snapshot image disk delete\n");=0A=
-> +	del_gendisk(image->disk);=0A=
-> +=0A=
-> +	while (!redirect_bio_queue_empty(image->image_queue))=0A=
-> +		_snapimage_processing(image);=0A=
-> +=0A=
-> +	pr_info("Snapshot image thread for device [%d:%d] complete", MAJOR(imag=
-e->image_dev),=0A=
-> +		MINOR(image->image_dev));=0A=
-> +	return 0;=0A=
-> +}=0A=
-> +=0A=
-> +static inline void _snapimage_bio_complete(struct bio *bio, int err)=0A=
-> +{=0A=
-> +	if (err =3D=3D SUCCESS)=0A=
-> +		bio->bi_status =3D BLK_STS_OK;=0A=
-> +	else=0A=
-> +		bio->bi_status =3D BLK_STS_IOERR;=0A=
-> +=0A=
-> +	bio_endio(bio);=0A=
-> +}=0A=
-> +=0A=
-> +void _snapimage_bio_complete_cb(void *complete_param, struct bio *bio, i=
-nt err)=0A=
-> +{=0A=
-> +	struct snapimage *image =3D (struct snapimage *)complete_param;=0A=
-> +=0A=
-> +	_snapimage_bio_complete(bio, err);=0A=
-> +=0A=
-> +	if (redirect_bio_queue_unactive(image->image_queue))=0A=
-> +		wake_up_interruptible(&image->rq_complete_event);=0A=
-> +=0A=
-> +	atomic_dec(&image->own_cnt);=0A=
-> +}=0A=
-> +=0A=
-> +int _snapimage_throttling(struct defer_io *defer_io)=0A=
-> +{=0A=
-> +	return wait_event_interruptible(defer_io->queue_throttle_waiter,=0A=
-> +					redirect_bio_queue_empty(defer_io->dio_queue));=0A=
-> +}=0A=
-> +=0A=
-> +blk_qc_t _snapimage_submit_bio(struct bio *bio)=0A=
-> +{=0A=
-> +	blk_qc_t result =3D SUCCESS;=0A=
-> +	struct request_queue *q =3D bio->bi_disk->queue;=0A=
-> +	struct snapimage *image =3D q->queuedata;=0A=
-> +=0A=
-> +	if (unlikely(blk_mq_queue_stopped(q))) {=0A=
-> +		pr_info("Failed to make snapshot image request. Queue already is not a=
-ctive.");=0A=
-> +		pr_info("Queue flags=3D%lx\n", q->queue_flags);=0A=
-> +=0A=
-> +		_snapimage_bio_complete(bio, -ENODEV);=0A=
-> +=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	atomic_inc(&image->own_cnt);=0A=
-> +	do {=0A=
-> +		int res;=0A=
-> +		struct blk_redirect_bio *rq_redir;=0A=
-> +=0A=
-> +		if (false =3D=3D atomic_read(&(image->image_queue.active_state))) {=0A=
-> +			_snapimage_bio_complete(bio, -ENODEV);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (snapstore_device_is_corrupted(image->defer_io->snapstore_device)) =
-{=0A=
-> +			_snapimage_bio_complete(bio, -ENODATA);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		res =3D _snapimage_throttling(image->defer_io);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to throttle snapshot image device. errno=3D%d\n", res)=
-;=0A=
-> +			_snapimage_bio_complete(bio, res);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		rq_redir =3D redirect_bio_queue_new(&image->image_queue);=0A=
-> +		if (rq_redir =3D=3D NULL) {=0A=
-> +			pr_err("Unable to make snapshot image request: failed to allocate red=
-irect bio structure\n");=0A=
-> +			_snapimage_bio_complete(bio, -ENOMEM);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		rq_redir->bio =3D bio;=0A=
-> +		rq_redir->complete_cb =3D _snapimage_bio_complete_cb;=0A=
-> +		rq_redir->complete_param =3D (void *)image;=0A=
-> +		atomic_inc(&image->own_cnt);=0A=
-> +=0A=
-> +		res =3D redirect_bio_queue_push_back(&image->image_queue, rq_redir);=
-=0A=
-> +		if (res =3D=3D SUCCESS)=0A=
-> +			wake_up(&image->rq_proc_event);=0A=
-> +		else {=0A=
-> +			redirect_bio_queue_free(rq_redir);=0A=
-> +			_snapimage_bio_complete(bio, -EIO);=0A=
-> +=0A=
-> +			if (redirect_bio_queue_unactive(image->image_queue))=0A=
-> +				wake_up_interruptible(&image->rq_complete_event);=0A=
-> +		}=0A=
-> +=0A=
-> +	} while (false);=0A=
-> +	atomic_dec(&image->own_cnt);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_dev_info {=0A=
-> +	size_t blk_size;=0A=
-> +	sector_t start_sect;=0A=
-> +	sector_t count_sect;=0A=
-> +=0A=
-> +	unsigned int io_min;=0A=
-> +	unsigned int physical_block_size;=0A=
-> +	unsigned short logical_block_size;=0A=
-> +};=0A=
-> +=0A=
-> +static int _blk_dev_get_info(struct block_device *blk_dev, struct blk_de=
-v_info *pdev_info)=0A=
-> +{=0A=
-> +	sector_t SectorStart;=0A=
-> +	sector_t SectorsCapacity;=0A=
-> +=0A=
-> +	if (blk_dev->bd_part)=0A=
-> +		SectorsCapacity =3D blk_dev->bd_part->nr_sects;=0A=
-> +	else if (blk_dev->bd_disk)=0A=
-> +		SectorsCapacity =3D get_capacity(blk_dev->bd_disk);=0A=
-> +	else=0A=
-> +		return -EINVAL;=0A=
-> +=0A=
-> +	SectorStart =3D get_start_sect(blk_dev);=0A=
-> +=0A=
-> +	pdev_info->physical_block_size =3D blk_dev->bd_disk->queue->limits.phys=
-ical_block_size;=0A=
-> +	pdev_info->logical_block_size =3D blk_dev->bd_disk->queue->limits.logic=
-al_block_size;=0A=
-> +	pdev_info->io_min =3D blk_dev->bd_disk->queue->limits.io_min;=0A=
-> +=0A=
-> +	pdev_info->blk_size =3D block_size(blk_dev);=0A=
-> +	pdev_info->start_sect =3D SectorStart;=0A=
-> +	pdev_info->count_sect =3D SectorsCapacity;=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +static int blk_dev_get_info(dev_t dev_id, struct blk_dev_info *pdev_info=
-)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	struct block_device *blk_dev;=0A=
-> +=0A=
-> +	result =3D blk_dev_open(dev_id, &blk_dev);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to open device [%d:%d]\n", MAJOR(dev_id), MINOR(dev_id)=
-);=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	result =3D _blk_dev_get_info(blk_dev, pdev_info);=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		pr_err("Failed to identify block device [%d:%d]\n", MAJOR(dev_id), MIN=
-OR(dev_id));=0A=
-> +=0A=
-> +	blk_dev_close(blk_dev);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +static inline void _snapimage_free(struct snapimage *image)=0A=
-> +{=0A=
-> +	defer_io_put_resource(image->defer_io);=0A=
-> +	cbt_map_put_resource(image->cbt_map);=0A=
-> +	image->defer_io =3D NULL;=0A=
-> +}=0A=
-> +=0A=
-> +static void _snapimage_stop(struct snapimage *image)=0A=
-> +{=0A=
-> +	if (image->rq_processor !=3D NULL) {=0A=
-> +		if (redirect_bio_queue_active(&image->image_queue, false)) {=0A=
-> +			struct request_queue *q =3D image->queue;=0A=
-> +=0A=
-> +			pr_info("Snapshot image request processing stop\n");=0A=
-> +=0A=
-> +			if (!blk_queue_stopped(q)) {=0A=
-> +				blk_sync_queue(q);=0A=
-> +				blk_mq_stop_hw_queues(q);=0A=
-> +			}=0A=
-> +		}=0A=
-> +=0A=
-> +		pr_info("Snapshot image thread stop\n");=0A=
-> +		kthread_stop(image->rq_processor);=0A=
-> +		image->rq_processor =3D NULL;=0A=
-> +=0A=
-> +		while (!redirect_bio_queue_unactive(image->image_queue))=0A=
-> +			wait_event_interruptible(image->rq_complete_event,=0A=
-> +						 redirect_bio_queue_unactive(image->image_queue));=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +static void _snapimage_destroy(struct snapimage *image)=0A=
-> +{=0A=
-> +	if (image->rq_processor !=3D NULL)=0A=
-> +		_snapimage_stop(image);=0A=
-> +=0A=
-> +	if (image->queue) {=0A=
-> +		pr_info("Snapshot image queue cleanup\n");=0A=
-> +		blk_cleanup_queue(image->queue);=0A=
-> +		image->queue =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (image->disk !=3D NULL) {=0A=
-> +		struct gendisk *disk;=0A=
-> +=0A=
-> +		disk =3D image->disk;=0A=
-> +		image->disk =3D NULL;=0A=
-> +=0A=
-> +		pr_info("Snapshot image disk structure release\n");=0A=
-> +=0A=
-> +		disk->private_data =3D NULL;=0A=
-> +		put_disk(disk);=0A=
-> +	}=0A=
-> +=0A=
-> +	spin_lock(&snapimage_minors_lock);=0A=
-> +	bitmap_clear(snapimage_minors, MINOR(image->image_dev), 1u);=0A=
-> +	spin_unlock(&snapimage_minors_lock);=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_create(dev_t original_dev)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +	struct snapimage *image =3D NULL;=0A=
-> +	struct gendisk *disk =3D NULL;=0A=
-> +	int minor;=0A=
-> +	struct blk_dev_info original_dev_info;=0A=
-> +=0A=
-> +	pr_info("Create snapshot image for device [%d:%d]\n", MAJOR(original_de=
-v),=0A=
-> +		MINOR(original_dev));=0A=
-> +=0A=
-> +	res =3D blk_dev_get_info(original_dev, &original_dev_info);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to obtain original device info\n");=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	res =3D tracker_find_by_dev_id(original_dev, &tracker);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		pr_err("Unable to create snapshot image: cannot find tracker for devic=
-e [%d:%d]\n",=0A=
-> +		       MAJOR(original_dev), MINOR(original_dev));=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	image =3D kzalloc(sizeof(struct snapimage), GFP_KERNEL);=0A=
-> +	if (image =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&image->link);=0A=
-> +=0A=
-> +	do {=0A=
-> +		spin_lock(&snapimage_minors_lock);=0A=
-> +		minor =3D bitmap_find_free_region(snapimage_minors, SNAPIMAGE_MAX_DEVI=
-CES, 0);=0A=
-> +		spin_unlock(&snapimage_minors_lock);=0A=
-> +=0A=
-> +		if (minor < SUCCESS) {=0A=
-> +			pr_err("Failed to allocate minor for snapshot image device. errno=3D%=
-d\n",=0A=
-> +			       0 - minor);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		image->rq_processor =3D NULL;=0A=
-> +=0A=
-> +		image->capacity =3D original_dev_info.count_sect;=0A=
-> +=0A=
-> +		image->defer_io =3D defer_io_get_resource(tracker->defer_io);=0A=
-> +		image->cbt_map =3D cbt_map_get_resource(tracker->cbt_map);=0A=
-> +		image->original_dev =3D original_dev;=0A=
-> +=0A=
-> +		image->image_dev =3D MKDEV(snapimage_major, minor);=0A=
-> +		pr_info("Snapshot image device id [%d:%d]\n", MAJOR(image->image_dev),=
-=0A=
-> +			MINOR(image->image_dev));=0A=
-> +=0A=
-> +		atomic_set(&image->own_cnt, 0);=0A=
-> +=0A=
-> +		mutex_init(&image->open_locker);=0A=
-> +		image->open_bdev =3D NULL;=0A=
-> +		image->open_cnt =3D 0;=0A=
-> +=0A=
-> +		image->queue =3D blk_alloc_queue(NUMA_NO_NODE);=0A=
-> +		if (image->queue =3D=3D NULL) {=0A=
-> +			res =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		image->queue->queuedata =3D image;=0A=
-> +=0A=
-> +		blk_queue_max_segment_size(image->queue, 1024 * PAGE_SIZE);=0A=
-> +=0A=
-> +		{=0A=
-> +			unsigned int physical_block_size =3D original_dev_info.physical_block=
-_size;=0A=
-> +			unsigned short logical_block_size =3D original_dev_info.logical_block=
-_size;=0A=
-> +=0A=
-> +			pr_info("Snapshot image physical block size %d\n", physical_block_siz=
-e);=0A=
-> +			pr_info("Snapshot image logical block size %d\n", logical_block_size)=
-;=0A=
-> +=0A=
-> +			blk_queue_physical_block_size(image->queue, physical_block_size);=0A=
-> +			blk_queue_logical_block_size(image->queue, logical_block_size);=0A=
-> +		}=0A=
-> +		disk =3D alloc_disk(1); //only one partition on disk=0A=
-> +		if (disk =3D=3D NULL) {=0A=
-> +			pr_err("Failed to allocate disk for snapshot image device\n");=0A=
-> +			res =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +		image->disk =3D disk;=0A=
-> +=0A=
-> +		if (snprintf(disk->disk_name, DISK_NAME_LEN, "%s%d", SNAP_IMAGE_NAME, =
-minor) < 0) {=0A=
-> +			pr_err("Unable to set disk name for snapshot image device: invalid mi=
-nor %d\n",=0A=
-> +			       minor);=0A=
-> +			res =3D -EINVAL;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		pr_info("Snapshot image disk name [%s]", disk->disk_name);=0A=
-> +=0A=
-> +		disk->flags |=3D GENHD_FL_NO_PART_SCAN;=0A=
-> +		disk->flags |=3D GENHD_FL_REMOVABLE;=0A=
-> +=0A=
-> +		disk->major =3D snapimage_major;=0A=
-> +		disk->minors =3D 1; // one disk have only one partition.=0A=
-> +		disk->first_minor =3D minor;=0A=
-> +=0A=
-> +		disk->private_data =3D image;=0A=
-> +=0A=
-> +		disk->fops =3D &snapimage_ops;=0A=
-> +		disk->queue =3D image->queue;=0A=
-> +=0A=
-> +		set_capacity(disk, image->capacity);=0A=
-> +		pr_info("Snapshot image device capacity %lld bytes",=0A=
-> +			(u64)from_sectors(image->capacity));=0A=
-> +=0A=
-> +		//res =3D -ENOMEM;=0A=
-> +		redirect_bio_queue_init(&image->image_queue);=0A=
-> +=0A=
-> +		{=0A=
-> +			struct task_struct *task =3D=0A=
-> +				kthread_create(snapimage_processor_thread, image, disk->disk_name);=
-=0A=
-> +			if (IS_ERR(task)) {=0A=
-> +				res =3D PTR_ERR(task);=0A=
-> +				pr_err("Failed to create request processing thread for snapshot imag=
-e device. errno=3D%d\n",=0A=
-> +				       res);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +			image->rq_processor =3D task;=0A=
-> +		}=0A=
-> +		init_waitqueue_head(&image->rq_complete_event);=0A=
-> +=0A=
-> +		init_waitqueue_head(&image->rq_proc_event);=0A=
-> +		wake_up_process(image->rq_processor);=0A=
-> +	} while (false);=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS) {=0A=
-> +		down_write(&snap_images_lock);=0A=
-> +		list_add_tail(&image->link, &snap_images);=0A=
-> +		up_write(&snap_images_lock);=0A=
-> +	} else {=0A=
-> +		_snapimage_destroy(image);=0A=
-> +		_snapimage_free(image);=0A=
-> +=0A=
-> +		kfree(image);=0A=
-> +		image =3D NULL;=0A=
-> +	}=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +static struct snapimage *snapimage_find(dev_t original_dev)=0A=
-> +{=0A=
-> +	struct snapimage *image =3D NULL;=0A=
-> +=0A=
-> +	down_read(&snap_images_lock);=0A=
-> +	if (!list_empty(&snap_images)) {=0A=
-> +		struct list_head *_list_head;=0A=
-> +=0A=
-> +		list_for_each(_list_head, &snap_images) {=0A=
-> +			struct snapimage *_image =3D list_entry(_list_head, struct snapimage,=
- link);=0A=
-> +=0A=
-> +			if (_image->original_dev =3D=3D original_dev) {=0A=
-> +				image =3D _image;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_read(&snap_images_lock);=0A=
-> +=0A=
-> +	return image;=0A=
-> +}=0A=
-> +=0A=
-> +void snapimage_stop(dev_t original_dev)=0A=
-> +{=0A=
-> +	struct snapimage *image;=0A=
-> +=0A=
-> +	pr_info("Snapshot image processing stop for original device [%d:%d]\n",=
- MAJOR(original_dev),=0A=
-> +		MINOR(original_dev));=0A=
-> +=0A=
-> +	down_read(&snap_image_destroy_lock);=0A=
-> +=0A=
-> +	image =3D snapimage_find(original_dev);=0A=
-> +	if (image !=3D NULL)=0A=
-> +		_snapimage_stop(image);=0A=
-> +	else=0A=
-> +		pr_err("Snapshot image [%d:%d] not found\n", MAJOR(original_dev),=0A=
-> +		       MINOR(original_dev));=0A=
-> +=0A=
-> +	up_read(&snap_image_destroy_lock);=0A=
-> +}=0A=
-> +=0A=
-> +void snapimage_destroy(dev_t original_dev)=0A=
-> +{=0A=
-> +	struct snapimage *image =3D NULL;=0A=
-> +=0A=
-> +	pr_info("Destroy snapshot image for device [%d:%d]\n", MAJOR(original_d=
-ev),=0A=
-> +		MINOR(original_dev));=0A=
-> +=0A=
-> +	down_write(&snap_images_lock);=0A=
-> +	if (!list_empty(&snap_images)) {=0A=
-> +		struct list_head *_list_head;=0A=
-> +=0A=
-> +		list_for_each(_list_head, &snap_images) {=0A=
-> +			struct snapimage *_image =3D list_entry(_list_head, struct snapimage,=
- link);=0A=
-> +=0A=
-> +			if (_image->original_dev =3D=3D original_dev) {=0A=
-> +				image =3D _image;=0A=
-> +				list_del(&image->link);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_write(&snap_images_lock);=0A=
-> +=0A=
-> +	if (image !=3D NULL) {=0A=
-> +		down_write(&snap_image_destroy_lock);=0A=
-> +=0A=
-> +		_snapimage_destroy(image);=0A=
-> +		_snapimage_free(image);=0A=
-> +=0A=
-> +		kfree(image);=0A=
-> +		image =3D NULL;=0A=
-> +=0A=
-> +		up_write(&snap_image_destroy_lock);=0A=
-> +	} else=0A=
-> +		pr_err("Snapshot image [%d:%d] not found\n", MAJOR(original_dev),=0A=
-> +		       MINOR(original_dev));=0A=
-> +}=0A=
-> +=0A=
-> +void snapimage_destroy_for(dev_t *p_dev, int count)=0A=
-> +{=0A=
-> +	int inx =3D 0;=0A=
-> +=0A=
-> +	for (; inx < count; ++inx)=0A=
-> +		snapimage_destroy(p_dev[inx]);=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_create_for(dev_t *p_dev, int count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	int inx =3D 0;=0A=
-> +=0A=
-> +	for (; inx < count; ++inx) {=0A=
-> +		res =3D snapimage_create(p_dev[inx]);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to create snapshot image for original device [%d:%d]\n=
-",=0A=
-> +			       MAJOR(p_dev[inx]), MINOR(p_dev[inx]));=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	}=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		if (inx > 0)=0A=
-> +			snapimage_destroy_for(p_dev, inx - 1);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_init(void)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	res =3D register_blkdev(snapimage_major, SNAP_IMAGE_NAME);=0A=
-> +	if (res >=3D SUCCESS) {=0A=
-> +		snapimage_major =3D res;=0A=
-> +		pr_info("Snapshot image block device major %d was registered\n", snapi=
-mage_major);=0A=
-> +		res =3D SUCCESS;=0A=
-> +=0A=
-> +		spin_lock(&snapimage_minors_lock);=0A=
-> +		snapimage_minors =3D bitmap_zalloc(SNAPIMAGE_MAX_DEVICES, GFP_KERNEL);=
-=0A=
-> +		spin_unlock(&snapimage_minors_lock);=0A=
-> +=0A=
-> +		if (snapimage_minors =3D=3D NULL)=0A=
-> +			pr_err("Failed to initialize bitmap of minors\n");=0A=
-> +	} else=0A=
-> +		pr_err("Failed to register snapshot image block device. errno=3D%d\n",=
- res);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +void snapimage_done(void)=0A=
-> +{=0A=
-> +	down_write(&snap_image_destroy_lock);=0A=
-> +	while (true) {=0A=
-> +		struct snapimage *image =3D NULL;=0A=
-> +=0A=
-> +		down_write(&snap_images_lock);=0A=
-> +		if (!list_empty(&snap_images)) {=0A=
-> +			image =3D list_entry(snap_images.next, struct snapimage, link);=0A=
-> +=0A=
-> +			list_del(&image->link);=0A=
-> +		}=0A=
-> +		up_write(&snap_images_lock);=0A=
-> +=0A=
-> +		if (image =3D=3D NULL)=0A=
-> +			break;=0A=
-> +=0A=
-> +		pr_err("Snapshot image for device was unexpectedly removed [%d:%d]\n",=
-=0A=
-> +		       MAJOR(image->original_dev), MINOR(image->original_dev));=0A=
-> +=0A=
-> +		_snapimage_destroy(image);=0A=
-> +		_snapimage_free(image);=0A=
-> +=0A=
-> +		kfree(image);=0A=
-> +		image =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	spin_lock(&snapimage_minors_lock);=0A=
-> +	bitmap_free(snapimage_minors);=0A=
-> +	snapimage_minors =3D NULL;=0A=
-> +	spin_unlock(&snapimage_minors_lock);=0A=
-> +=0A=
-> +	if (!list_empty(&snap_images))=0A=
-> +		pr_err("Failed to release snapshot images container\n");=0A=
-> +=0A=
-> +	unregister_blkdev(snapimage_major, SNAP_IMAGE_NAME);=0A=
-> +	pr_info("Snapshot image block device [%d] was unregistered\n", snapimag=
-e_major);=0A=
-> +=0A=
-> +	up_write(&snap_image_destroy_lock);=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_collect_images(int count, struct image_info_s *p_user_imag=
-e_info, int *p_real_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	int real_count =3D 0;=0A=
-> +=0A=
-> +	down_read(&snap_images_lock);=0A=
-> +	if (!list_empty(&snap_images)) {=0A=
-> +		struct list_head *_list_head;=0A=
-> +=0A=
-> +		list_for_each(_list_head, &snap_images)=0A=
-> +			real_count++;=0A=
-> +	}=0A=
-> +	up_read(&snap_images_lock);=0A=
-> +	*p_real_count =3D real_count;=0A=
-> +=0A=
-> +	if (count < real_count)=0A=
-> +		res =3D -ENODATA;=0A=
-> +=0A=
-> +	real_count =3D min(count, real_count);=0A=
-> +	if (real_count > 0) {=0A=
-> +		unsigned long len;=0A=
-> +		struct image_info_s *p_kernel_image_info =3D NULL;=0A=
-> +		size_t buff_size;=0A=
-> +=0A=
-> +		buff_size =3D sizeof(struct image_info_s) * real_count;=0A=
-> +		p_kernel_image_info =3D kzalloc(buff_size, GFP_KERNEL);=0A=
-> +		if (p_kernel_image_info =3D=3D NULL) {=0A=
-> +			pr_err("Unable to collect snapshot images: not enough memory. size=3D=
-%zu\n",=0A=
-> +			       buff_size);=0A=
-> +			return res =3D -ENOMEM;=0A=
-> +		}=0A=
-> +=0A=
-> +		down_read(&snap_image_destroy_lock);=0A=
-> +		down_read(&snap_images_lock);=0A=
-> +=0A=
-> +		if (!list_empty(&snap_images)) {=0A=
-> +			size_t inx =3D 0;=0A=
-> +			struct list_head *_list_head;=0A=
-> +=0A=
-> +			list_for_each(_list_head, &snap_images) {=0A=
-> +				struct snapimage *img =3D=0A=
-> +					list_entry(_list_head, struct snapimage, link);=0A=
-> +=0A=
-> +				real_count++;=0A=
-> +=0A=
-> +				p_kernel_image_info[inx].original_dev_id.major =3D=0A=
-> +					MAJOR(img->original_dev);=0A=
-> +				p_kernel_image_info[inx].original_dev_id.minor =3D=0A=
-> +					MINOR(img->original_dev);=0A=
-> +=0A=
-> +				p_kernel_image_info[inx].snapshot_dev_id.major =3D=0A=
-> +					MAJOR(img->image_dev);=0A=
-> +				p_kernel_image_info[inx].snapshot_dev_id.minor =3D=0A=
-> +					MINOR(img->image_dev);=0A=
-> +=0A=
-> +				++inx;=0A=
-> +				if (inx > real_count)=0A=
-> +					break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +=0A=
-> +		up_read(&snap_images_lock);=0A=
-> +		up_read(&snap_image_destroy_lock);=0A=
-> +=0A=
-> +		len =3D copy_to_user(p_user_image_info, p_kernel_image_info, buff_size=
-);=0A=
-> +		if (len !=3D 0) {=0A=
-> +			pr_err("Unable to collect snapshot images: failed to copy data to use=
-r buffer\n");=0A=
-> +			res =3D -ENODATA;=0A=
-> +		}=0A=
-> +=0A=
-> +		kfree(p_kernel_image_info);=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapimage_mark_dirty_blocks(dev_t image_dev_id, struct block_range_s=
- *block_ranges,=0A=
-> +				unsigned int count)=0A=
-> +{=0A=
-> +	size_t inx =3D 0;=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	pr_info("Marking [%d] dirty blocks for image device [%d:%d]\n", count, =
-MAJOR(image_dev_id),=0A=
-> +		MINOR(image_dev_id));=0A=
-> +=0A=
-> +	down_read(&snap_image_destroy_lock);=0A=
-> +	do {=0A=
-> +		struct snapimage *image =3D snapimage_find(image_dev_id);=0A=
-> +=0A=
-> +		if (image =3D=3D NULL) {=0A=
-> +			pr_err("Cannot find device [%d:%d]\n", MAJOR(image_dev_id),=0A=
-> +			       MINOR(image_dev_id));=0A=
-> +			res =3D -ENODEV;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		for (inx =3D 0; inx < count; ++inx) {=0A=
-> +			sector_t ofs =3D (sector_t)block_ranges[inx].ofs;=0A=
-> +			sector_t cnt =3D (sector_t)block_ranges[inx].cnt;=0A=
-> +=0A=
-> +			res =3D cbt_map_set_both(image->cbt_map, ofs, cnt);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to set CBT table. errno=3D%d\n", res);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	} while (false);=0A=
-> +	up_read(&snap_image_destroy_lock);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapimage.h b/drivers/block/blk-snap/=
-snapimage.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..67995c321496=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapimage.h=0A=
-> @@ -0,0 +1,16 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +=0A=
-> +int snapimage_init(void);=0A=
-> +void snapimage_done(void);=0A=
-> +int snapimage_create_for(dev_t *p_dev, int count);=0A=
-> +=0A=
-> +void snapimage_stop(dev_t original_dev);=0A=
-> +void snapimage_destroy(dev_t original_dev);=0A=
-> +=0A=
-> +int snapimage_collect_images(int count, struct image_info_s *p_user_imag=
-e_info, int *p_real_count);=0A=
-> +=0A=
-> +int snapimage_mark_dirty_blocks(dev_t image_dev_id, struct block_range_s=
- *block_ranges,=0A=
-> +				unsigned int count);=0A=
-> diff --git a/drivers/block/blk-snap/snapshot.c b/drivers/block/blk-snap/s=
-napshot.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..fdef713103d2=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapshot.c=0A=
-> @@ -0,0 +1,225 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapshot"=0A=
-> +#include "common.h"=0A=
-> +#include "snapshot.h"=0A=
-> +#include "tracker.h"=0A=
-> +#include "snapimage.h"=0A=
-> +#include "tracking.h"=0A=
-> +=0A=
-> +LIST_HEAD(snapshots);=0A=
-> +DECLARE_RWSEM(snapshots_lock);=0A=
-> +=0A=
-> +=0A=
-> +static int _snapshot_remove_device(dev_t dev_id)=0A=
-> +{=0A=
-> +	int result;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	result =3D tracker_find_by_dev_id(dev_id, &tracker);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		if (result =3D=3D -ENODEV)=0A=
-> +			pr_err("Cannot find device by device id=3D[%d:%d]\n", MAJOR(dev_id),=
-=0A=
-> +			       MINOR(dev_id));=0A=
-> +		else=0A=
-> +			pr_err("Failed to find device by device id=3D[%d:%d]\n", MAJOR(dev_id=
-),=0A=
-> +			       MINOR(dev_id));=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	tracker->snapshot_id =3D 0ull;=0A=
-> +=0A=
-> +	pr_info("Device [%d:%d] successfully removed from snapshot\n", MAJOR(de=
-v_id),=0A=
-> +		MINOR(dev_id));=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +static void _snapshot_cleanup(struct snapshot *snapshot)=0A=
-> +{=0A=
-> +	int inx;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < snapshot->dev_id_set_size; ++inx) {=0A=
-> +=0A=
-> +		if (_snapshot_remove_device(snapshot->dev_id_set[inx]) !=3D SUCCESS)=
-=0A=
-> +			pr_err("Failed to remove device [%d:%d] from snapshot\n",=0A=
-> +			       MAJOR(snapshot->dev_id_set[inx]), MINOR(snapshot->dev_id_set[i=
-nx]));=0A=
-> +	}=0A=
-> +=0A=
-> +	if (snapshot->dev_id_set !=3D NULL)=0A=
-> +		kfree(snapshot->dev_id_set);=0A=
-> +	kfree(snapshot);=0A=
-> +}=0A=
-> +=0A=
-> +static void _snapshot_destroy(struct snapshot *snapshot)=0A=
-> +{=0A=
-> +	size_t inx;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < snapshot->dev_id_set_size; ++inx)=0A=
-> +		snapimage_stop(snapshot->dev_id_set[inx]);=0A=
-> +=0A=
-> +	pr_info("Release snapshot [0x%llx]\n", snapshot->id);=0A=
-> +=0A=
-> +	tracker_release_snapshot(snapshot->dev_id_set, snapshot->dev_id_set_siz=
-e);=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < snapshot->dev_id_set_size; ++inx)=0A=
-> +		snapimage_destroy(snapshot->dev_id_set[inx]);=0A=
-> +=0A=
-> +	_snapshot_cleanup(snapshot);=0A=
-> +}=0A=
-> +=0A=
-> +=0A=
-> +static int _snapshot_new(dev_t *p_dev, int count, struct snapshot **pp_s=
-napshot)=0A=
-> +{=0A=
-> +	struct snapshot *p_snapshot =3D NULL;=0A=
-> +	dev_t *snap_set =3D NULL;=0A=
-> +=0A=
-> +	p_snapshot =3D kzalloc(sizeof(struct snapshot), GFP_KERNEL);=0A=
-> +	if (p_snapshot =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&p_snapshot->link);=0A=
-> +=0A=
-> +	p_snapshot->id =3D (unsigned long)(p_snapshot);=0A=
-> +=0A=
-> +	snap_set =3D kcalloc(count, sizeof(dev_t), GFP_KERNEL);=0A=
-> +	if (snap_set =3D=3D NULL) {=0A=
-> +		kfree(p_snapshot);=0A=
-> +=0A=
-> +		pr_err("Unable to create snapshot: faile to allocate memory for snapsh=
-ot map\n");=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +	memcpy(snap_set, p_dev, sizeof(dev_t) * count);=0A=
-> +=0A=
-> +	p_snapshot->dev_id_set_size =3D count;=0A=
-> +	p_snapshot->dev_id_set =3D snap_set;=0A=
-> +=0A=
-> +	down_write(&snapshots_lock);=0A=
-> +	list_add_tail(&snapshots, &p_snapshot->link);=0A=
-> +	up_write(&snapshots_lock);=0A=
-> +=0A=
-> +	*pp_snapshot =3D p_snapshot;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +void snapshot_done(void)=0A=
-> +{=0A=
-> +	struct snapshot *snap;=0A=
-> +=0A=
-> +	pr_info("Removing all snapshots\n");=0A=
-> +	do {=0A=
-> +		snap =3D NULL;=0A=
-> +		down_write(&snapshots_lock);=0A=
-> +		if (!list_empty(&snapshots)) {=0A=
-> +			struct snapshot *snap =3D list_entry(snapshots.next, struct snapshot,=
- link);=0A=
-> +=0A=
-> +			list_del(&snap->link);=0A=
-> +		}=0A=
-> +		up_write(&snapshots_lock);=0A=
-> +=0A=
-> +		if (snap)=0A=
-> +			_snapshot_destroy(snap);=0A=
-> +=0A=
-> +	} while (snap);=0A=
-> +}=0A=
-> +=0A=
-> +int snapshot_create(dev_t *dev_id_set, unsigned int dev_id_set_size,=0A=
-> +		    unsigned long long *p_snapshot_id)=0A=
-> +{=0A=
-> +	struct snapshot *snapshot =3D NULL;=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	unsigned int inx;=0A=
-> +=0A=
-> +	pr_info("Create snapshot for devices:\n");=0A=
-> +	for (inx =3D 0; inx < dev_id_set_size; ++inx)=0A=
-> +		pr_info("\t%d:%d\n", MAJOR(dev_id_set[inx]), MINOR(dev_id_set[inx]));=
-=0A=
-> +=0A=
-> +	result =3D _snapshot_new(dev_id_set, dev_id_set_size, &snapshot);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Unable to create snapshot: failed to allocate snapshot structu=
-re\n");=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	do {=0A=
-> +		result =3D -ENODEV;=0A=
-> +		for (inx =3D 0; inx < snapshot->dev_id_set_size; ++inx) {=0A=
-> +			dev_t dev_id =3D snapshot->dev_id_set[inx];=0A=
-> +=0A=
-> +			result =3D tracking_add(dev_id, snapshot->id);=0A=
-> +			if (result =3D=3D -EALREADY)=0A=
-> +				result =3D SUCCESS;=0A=
-> +			else if (result !=3D SUCCESS) {=0A=
-> +				pr_err("Unable to create snapshot\n");=0A=
-> +				pr_err("Failed to add device [%d:%d] to snapshot tracking\n",=0A=
-> +				       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +		if (result !=3D SUCCESS)=0A=
-> +			break;=0A=
-> +=0A=
-> +		result =3D tracker_capture_snapshot(snapshot->dev_id_set, snapshot->de=
-v_id_set_size);=0A=
-> +		if (result !=3D SUCCESS) {=0A=
-> +			pr_err("Unable to create snapshot: failed to capture snapshot [0x%llx=
-]\n",=0A=
-> +			       snapshot->id);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		result =3D snapimage_create_for(snapshot->dev_id_set, snapshot->dev_id=
-_set_size);=0A=
-> +		if (result !=3D SUCCESS) {=0A=
-> +			pr_err("Unable to create snapshot\n");=0A=
-> +			pr_err("Failed to create snapshot image devices\n");=0A=
-> +=0A=
-> +			tracker_release_snapshot(snapshot->dev_id_set, snapshot->dev_id_set_s=
-ize);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		*p_snapshot_id =3D snapshot->id;=0A=
-> +		pr_info("Snapshot [0x%llx] was created\n", snapshot->id);=0A=
-> +	} while (false);=0A=
-> +=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_info("Snapshot [0x%llx] cleanup\n", snapshot->id);=0A=
-> +=0A=
-> +		down_write(&snapshots_lock);=0A=
-> +		list_del(&snapshot->link);=0A=
-> +		up_write(&snapshots_lock);=0A=
-> +=0A=
-> +		_snapshot_cleanup(snapshot);=0A=
-> +	}=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int snapshot_destroy(unsigned long long snapshot_id)=0A=
-> +{=0A=
-> +	struct snapshot *snapshot =3D NULL;=0A=
-> +=0A=
-> +	pr_info("Destroy snapshot [0x%llx]\n", snapshot_id);=0A=
-> +=0A=
-> +	down_read(&snapshots_lock);=0A=
-> +	if (!list_empty(&snapshots)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &snapshots) {=0A=
-> +			struct snapshot *_snap =3D list_entry(_head, struct snapshot, link);=
-=0A=
-> +=0A=
-> +			if (_snap->id =3D=3D snapshot_id) {=0A=
-> +				snapshot =3D _snap;=0A=
-> +				list_del(&snapshot->link);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_read(&snapshots_lock);=0A=
-> +=0A=
-> +	if (snapshot =3D=3D NULL) {=0A=
-> +		pr_err("Unable to destroy snapshot [0x%llx]: cannot find snapshot by i=
-d\n",=0A=
-> +		       snapshot_id);=0A=
-> +		return -ENODEV;=0A=
-> +	}=0A=
-> +=0A=
-> +	_snapshot_destroy(snapshot);=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapshot.h b/drivers/block/blk-snap/s=
-napshot.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..59fb4dba0241=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapshot.h=0A=
-> @@ -0,0 +1,17 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +struct snapshot {=0A=
-> +	struct list_head link;=0A=
-> +	unsigned long long id;=0A=
-> +=0A=
-> +	dev_t *dev_id_set; //array of assigned devices=0A=
-> +	int dev_id_set_size;=0A=
-> +};=0A=
-> +=0A=
-> +void snapshot_done(void);=0A=
-> +=0A=
-> +int snapshot_create(dev_t *dev_id_set, unsigned int dev_id_set_size,=0A=
-> +		    unsigned long long *p_snapshot_id);=0A=
-> +=0A=
-> +int snapshot_destroy(unsigned long long snapshot_id);=0A=
-> diff --git a/drivers/block/blk-snap/snapstore.c b/drivers/block/blk-snap/=
-snapstore.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..0bedeaeec021=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore.c=0A=
-> @@ -0,0 +1,929 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapstore"=0A=
-> +#include "common.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include "snapstore_device.h"=0A=
-> +#include "big_buffer.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +LIST_HEAD(snapstores);=0A=
-> +DECLARE_RWSEM(snapstores_lock);=0A=
-> +=0A=
-> +bool _snapstore_check_halffill(struct snapstore *snapstore, sector_t *fi=
-ll_status)=0A=
-> +{=0A=
-> +	struct blk_descr_pool *pool =3D NULL;=0A=
-> +=0A=
-> +	if (snapstore->file)=0A=
-> +		pool =3D &snapstore->file->pool;=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	else if (snapstore->multidev)=0A=
-> +		pool =3D &snapstore->multidev->pool;=0A=
-> +#endif=0A=
-> +	else if (snapstore->mem)=0A=
-> +		pool =3D &snapstore->mem->pool;=0A=
-> +=0A=
-> +	if (pool)=0A=
-> +		return blk_descr_pool_check_halffill(pool, snapstore->empty_limit, fil=
-l_status);=0A=
-> +=0A=
-> +	return false;=0A=
-> +}=0A=
-> +=0A=
-> +void _snapstore_destroy(struct snapstore *snapstore)=0A=
-> +{=0A=
-> +	sector_t fill_status;=0A=
-> +=0A=
-> +	pr_info("Destroy snapstore with id %pUB\n", &snapstore->id);=0A=
-> +=0A=
-> +	_snapstore_check_halffill(snapstore, &fill_status);=0A=
-> +=0A=
-> +	down_write(&snapstores_lock);=0A=
-> +	list_del(&snapstore->link);=0A=
-> +	up_write(&snapstores_lock);=0A=
-> +=0A=
-> +	if (snapstore->mem !=3D NULL)=0A=
-> +		snapstore_mem_destroy(snapstore->mem);=0A=
-> +	if (snapstore->multidev !=3D NULL)=0A=
-> +		snapstore_multidev_destroy(snapstore->multidev);=0A=
-> +	if (snapstore->file !=3D NULL)=0A=
-> +		snapstore_file_destroy(snapstore->file);=0A=
-> +=0A=
-> +	if (snapstore->ctrl_pipe) {=0A=
-> +		struct ctrl_pipe *pipe;=0A=
-> +=0A=
-> +		pipe =3D snapstore->ctrl_pipe;=0A=
-> +		snapstore->ctrl_pipe =3D NULL;=0A=
-> +=0A=
-> +		ctrl_pipe_request_terminate(pipe, fill_status);=0A=
-> +=0A=
-> +		ctrl_pipe_put_resource(pipe);=0A=
-> +	}=0A=
-> +=0A=
-> +	kfree(snapstore);=0A=
-> +}=0A=
-> +=0A=
-> +static void _snapstore_destroy_cb(struct kref *kref)=0A=
-> +{=0A=
-> +	struct snapstore *snapstore =3D container_of(kref, struct snapstore, re=
-fcount);=0A=
-> +=0A=
-> +	_snapstore_destroy(snapstore);=0A=
-> +}=0A=
-> +=0A=
-> +struct snapstore *snapstore_get(struct snapstore *snapstore)=0A=
-> +{=0A=
-> +	if (snapstore)=0A=
-> +		kref_get(&snapstore->refcount);=0A=
-> +=0A=
-> +	return snapstore;=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_put(struct snapstore *snapstore)=0A=
-> +{=0A=
-> +	if (snapstore)=0A=
-> +		kref_put(&snapstore->refcount, _snapstore_destroy_cb);=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_done(void)=0A=
-> +{=0A=
-> +	bool is_empty;=0A=
-> +=0A=
-> +	down_read(&snapstores_lock);=0A=
-> +	is_empty =3D list_empty(&snapstores);=0A=
-> +	up_read(&snapstores_lock);=0A=
-> +=0A=
-> +	if (!is_empty)=0A=
-> +		pr_err("Unable to perform snapstore cleanup: container is not empty\n"=
-);=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_create(uuid_t *id, dev_t snapstore_dev_id, dev_t *dev_id_s=
-et,=0A=
-> +		     size_t dev_id_set_length)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	size_t dev_id_inx;=0A=
-> +	struct snapstore *snapstore =3D NULL;=0A=
-> +=0A=
-> +	if (dev_id_set_length =3D=3D 0)=0A=
-> +		return -EINVAL;=0A=
-> +=0A=
-> +	snapstore =3D kzalloc(sizeof(struct snapstore), GFP_KERNEL);=0A=
-> +	if (snapstore =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&snapstore->link);=0A=
-> +	uuid_copy(&snapstore->id, id);=0A=
-> +=0A=
-> +	pr_info("Create snapstore with id %pUB\n", &snapstore->id);=0A=
-> +=0A=
-> +	snapstore->mem =3D NULL;=0A=
-> +	snapstore->multidev =3D NULL;=0A=
-> +	snapstore->file =3D NULL;=0A=
-> +=0A=
-> +	snapstore->ctrl_pipe =3D NULL;=0A=
-> +	snapstore->empty_limit =3D (sector_t)(64 * (1024 * 1024 / SECTOR_SIZE))=
-; //by default value=0A=
-> +	snapstore->halffilled =3D false;=0A=
-> +	snapstore->overflowed =3D false;=0A=
-> +=0A=
-> +	if (snapstore_dev_id =3D=3D 0)=0A=
-> +		pr_info("Memory snapstore create\n");=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	else if (snapstore_dev_id =3D=3D 0xFFFFffff) {=0A=
-> +		struct snapstore_multidev *multidev =3D NULL;=0A=
-> +=0A=
-> +		res =3D snapstore_multidev_create(&multidev);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			kfree(snapstore);=0A=
-> +=0A=
-> +			pr_err("Failed to create multidevice snapstore %pUB\n", id);=0A=
-> +			return res;=0A=
-> +		}=0A=
-> +		snapstore->multidev =3D multidev;=0A=
-> +	}=0A=
-> +#endif=0A=
-> +	else {=0A=
-> +		struct snapstore_file *file =3D NULL;=0A=
-> +=0A=
-> +		res =3D snapstore_file_create(snapstore_dev_id, &file);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			kfree(snapstore);=0A=
-> +=0A=
-> +			pr_err("Failed to create snapstore file for snapstore %pUB\n", id);=
-=0A=
-> +			return res;=0A=
-> +		}=0A=
-> +		snapstore->file =3D file;=0A=
-> +	}=0A=
-> +=0A=
-> +	down_write(&snapstores_lock);=0A=
-> +	list_add_tail(&snapstores, &snapstore->link);=0A=
-> +	up_write(&snapstores_lock);=0A=
-> +=0A=
-> +	kref_init(&snapstore->refcount);=0A=
-> +=0A=
-> +	for (dev_id_inx =3D 0; dev_id_inx < dev_id_set_length; ++dev_id_inx) {=
-=0A=
-> +		res =3D snapstore_device_create(dev_id_set[dev_id_inx], snapstore);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			break;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		snapstore_device_cleanup(id);=0A=
-> +=0A=
-> +	snapstore_put(snapstore);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +int snapstore_create_multidev(uuid_t *id, dev_t *dev_id_set, size_t dev_=
-id_set_length)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	size_t dev_id_inx;=0A=
-> +	struct snapstore *snapstore =3D NULL;=0A=
-> +	struct snapstore_multidev *multidev =3D NULL;=0A=
-> +=0A=
-> +	if (dev_id_set_length =3D=3D 0)=0A=
-> +		return -EINVAL;=0A=
-> +=0A=
-> +	snapstore =3D kzalloc(sizeof(struct snapstore), GFP_KERNEL);=0A=
-> +	if (snapstore =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&snapstore->link);=0A=
-> +=0A=
-> +	uuid_copy(&snapstore->id, id);=0A=
-> +=0A=
-> +	pr_info("Create snapstore with id %pUB\n", &snapstore->id);=0A=
-> +=0A=
-> +	snapstore->mem =3D NULL;=0A=
-> +	snapstore->file =3D NULL;=0A=
-> +	snapstore->multidev =3D NULL;=0A=
-> +=0A=
-> +	snapstore->ctrl_pipe =3D NULL;=0A=
-> +	snapstore->empty_limit =3D (sector_t)(64 * (1024 * 1024 / SECTOR_SIZE))=
-; //by default value=0A=
-> +	snapstore->halffilled =3D false;=0A=
-> +	snapstore->overflowed =3D false;=0A=
-> +=0A=
-> +	res =3D snapstore_multidev_create(&multidev);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		kfree(snapstore);=0A=
-> +=0A=
-> +		pr_err("Failed to create snapstore file for snapstore %pUB\n", id);=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +	snapstore->multidev =3D multidev;=0A=
-> +=0A=
-> +	down_write(&snapstores_lock);=0A=
-> +	list_add_tail(&snapstore->link, &snapstores);=0A=
-> +	up_write(&snapstores_lock);=0A=
-> +=0A=
-> +	kref_init(&snapstore->refcount);=0A=
-> +=0A=
-> +	for (dev_id_inx =3D 0; dev_id_inx < dev_id_set_length; ++dev_id_inx) {=
-=0A=
-> +		res =3D snapstore_device_create(dev_id_set[dev_id_inx], snapstore);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			break;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		snapstore_device_cleanup(id);=0A=
-> +=0A=
-> +	snapstore_put(snapstore);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +#endif=0A=
-> +=0A=
-> +int snapstore_cleanup(uuid_t *id, u64 *filled_bytes)=0A=
-> +{=0A=
-> +	int res;=0A=
-> +	sector_t filled;=0A=
-> +=0A=
-> +	res =3D snapstore_check_halffill(id, &filled);=0A=
-> +	if (res =3D=3D SUCCESS) {=0A=
-> +		*filled_bytes =3D (u64)from_sectors(filled);=0A=
-> +=0A=
-> +		pr_info("Snapstore fill size: %lld MiB\n", (*filled_bytes >> 20));=0A=
-> +	} else {=0A=
-> +		*filled_bytes =3D -1;=0A=
-> +		pr_err("Failed to obtain snapstore data filled size\n");=0A=
-> +	}=0A=
-> +=0A=
-> +	return snapstore_device_cleanup(id);=0A=
-> +}=0A=
-> +=0A=
-> +struct snapstore *_snapstore_find(uuid_t *id)=0A=
-> +{=0A=
-> +	struct snapstore *result =3D NULL;=0A=
-> +=0A=
-> +	down_read(&snapstores_lock);=0A=
-> +	if (!list_empty(&snapstores)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &snapstores) {=0A=
-> +			struct snapstore *snapstore =3D list_entry(_head, struct snapstore, l=
-ink);=0A=
-> +=0A=
-> +			if (uuid_equal(&snapstore->id, id)) {=0A=
-> +				result =3D snapstore;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_read(&snapstores_lock);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_stretch_initiate(uuid_t *unique_id, struct ctrl_pipe *ctrl=
-_pipe, sector_t empty_limit)=0A=
-> +{=0A=
-> +	struct snapstore *snapstore;=0A=
-> +=0A=
-> +	snapstore =3D _snapstore_find(unique_id);=0A=
-> +	if (snapstore =3D=3D NULL) {=0A=
-> +		pr_err("Unable to initiate stretch snapstore: ");=0A=
-> +		pr_err("cannot find snapstore by uuid %pUB\n", unique_id);=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	snapstore->ctrl_pipe =3D ctrl_pipe_get_resource(ctrl_pipe);=0A=
-> +	snapstore->empty_limit =3D empty_limit;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_add_memory(uuid_t *id, unsigned long long sz)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct snapstore *snapstore =3D NULL;=0A=
-> +	size_t available_blocks =3D (size_t)(sz >> (snapstore_block_shift() + S=
-ECTOR_SHIFT));=0A=
-> +	size_t current_block =3D 0;=0A=
-> +=0A=
-> +	pr_info("Adding %lld bytes to the snapstore\n", sz);=0A=
-> +=0A=
-> +	snapstore =3D _snapstore_find(id);=0A=
-> +	if (snapstore =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add memory block to the snapstore: ");=0A=
-> +		pr_err("cannot found snapstore by id %pUB\n", id);=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (snapstore->file !=3D NULL) {=0A=
-> +		pr_err("Unable to add memory block to the snapstore: ");=0A=
-> +		pr_err("snapstore file is already created\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	if (snapstore->multidev !=3D NULL) {=0A=
-> +		pr_err("Unable to add memory block to the snapstore: ");=0A=
-> +		pr_err("snapstore multidevice is already created\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +#endif=0A=
-> +	if (snapstore->mem !=3D NULL) {=0A=
-> +		pr_err("Unable to add memory block to the snapstore: ");=0A=
-> +		pr_err("snapstore memory buffer is already created\n");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	snapstore->mem =3D snapstore_mem_create(available_blocks);=0A=
-> +	for (current_block =3D 0; current_block < available_blocks; ++current_b=
-lock) {=0A=
-> +		void *buffer =3D snapstore_mem_get_block(snapstore->mem);=0A=
-> +=0A=
-> +		if (buffer =3D=3D NULL) {=0A=
-> +			pr_err("Unable to add memory block to the snapstore: ");=0A=
-> +			pr_err("not enough memory\n");=0A=
-> +			res =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		res =3D blk_descr_mem_pool_add(&snapstore->mem->pool, buffer);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Unable to add memory block to the snapstore: ");=0A=
-> +			pr_err("failed to initialize new block\n");=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	}=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		snapstore_mem_destroy(snapstore->mem);=0A=
-> +		snapstore->mem =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int rangelist_add(struct list_head *rglist, struct blk_range *rg)=0A=
-> +{=0A=
-> +	struct blk_range_link *range_link;=0A=
-> +=0A=
-> +	range_link =3D kzalloc(sizeof(struct blk_range_link), GFP_KERNEL);=0A=
-> +	if (range_link =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&range_link->link);=0A=
-> +=0A=
-> +	range_link->rg.ofs =3D rg->ofs;=0A=
-> +	range_link->rg.cnt =3D rg->cnt;=0A=
-> +=0A=
-> +	list_add_tail(&range_link->link, rglist);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_add_file(uuid_t *id, struct big_buffer *ranges, size_t ran=
-ges_cnt)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct snapstore *snapstore =3D NULL;=0A=
-> +	struct snapstore_device *snapstore_device =3D NULL;=0A=
-> +	sector_t current_blk_size =3D 0;=0A=
-> +	LIST_HEAD(blk_rangelist);=0A=
-> +	size_t inx;=0A=
-> +=0A=
-> +	pr_info("Snapstore add %zu ranges\n", ranges_cnt);=0A=
-> +=0A=
-> +	if ((ranges_cnt =3D=3D 0) || (ranges =3D=3D NULL))=0A=
-> +		return -EINVAL;=0A=
-> +=0A=
-> +	snapstore =3D _snapstore_find(id);=0A=
-> +	if (snapstore =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add file to snapstore: ");=0A=
-> +		pr_err("cannot find snapstore by id %pUB\n", id);=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (snapstore->file =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add file to snapstore: ");=0A=
-> +		pr_err("snapstore file was not initialized\n");=0A=
-> +		return -EFAULT;=0A=
-> +	}=0A=
-> +=0A=
-> +	snapstore_device =3D=0A=
-> +		snapstore_device_find_by_dev_id(snapstore->file->blk_dev_id); //for ze=
-roed=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < ranges_cnt; ++inx) {=0A=
-> +		size_t blocks_count =3D 0;=0A=
-> +		sector_t range_offset =3D 0;=0A=
-> +=0A=
-> +		struct blk_range range;=0A=
-> +		struct ioctl_range_s *ioctl_range;=0A=
-> +=0A=
-> +		ioctl_range =3D big_buffer_get_element(ranges, inx, sizeof(struct ioct=
-l_range_s));=0A=
-> +		if (ioctl_range =3D=3D NULL) {=0A=
-> +			pr_err("Invalid count of ranges\n");=0A=
-> +			res =3D -ENODATA;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		range.ofs =3D (sector_t)to_sectors(ioctl_range->left);=0A=
-> +		range.cnt =3D (blkcnt_t)to_sectors(ioctl_range->right) - range.ofs;=0A=
-> +=0A=
-> +		while (range_offset < range.cnt) {=0A=
-> +			struct blk_range rg;=0A=
-> +=0A=
-> +			rg.ofs =3D range.ofs + range_offset;=0A=
-> +			rg.cnt =3D min_t(sector_t, (range.cnt - range_offset),=0A=
-> +				       (snapstore_block_size() - current_blk_size));=0A=
-> +=0A=
-> +			range_offset +=3D rg.cnt;=0A=
-> +=0A=
-> +			res =3D rangelist_add(&blk_rangelist, &rg);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Unable to add file to snapstore: ");=0A=
-> +				pr_err("cannot add range to rangelist\n");=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			//zero sectors logic=0A=
-> +			if (snapstore_device !=3D NULL) {=0A=
-> +				res =3D rangevector_add(&snapstore_device->zero_sectors, &rg);=0A=
-> +				if (res !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to add file to snapstore: ");=0A=
-> +					pr_err("cannot add range to zero_sectors tree\n");=0A=
-> +					break;=0A=
-> +				}=0A=
-> +			}=0A=
-> +=0A=
-> +			current_blk_size +=3D rg.cnt;=0A=
-> +=0A=
-> +			if (current_blk_size =3D=3D snapstore_block_size()) { //allocate  blo=
-ck=0A=
-> +				res =3D blk_descr_file_pool_add(&snapstore->file->pool,=0A=
-> +							      &blk_rangelist);=0A=
-> +				if (res !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to add file to snapstore: ");=0A=
-> +					pr_err("cannot initialize new block\n");=0A=
-> +					break;=0A=
-> +				}=0A=
-> +=0A=
-> +				snapstore->halffilled =3D false;=0A=
-> +=0A=
-> +				current_blk_size =3D 0;=0A=
-> +				INIT_LIST_HEAD(&blk_rangelist); //renew list=0A=
-> +				++blocks_count;=0A=
-> +			}=0A=
-> +		}=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			break;=0A=
-> +	}=0A=
-> +=0A=
-> +	if ((res =3D=3D SUCCESS) && (current_blk_size !=3D 0))=0A=
-> +		pr_warn("Snapstore portion was not ordered by Copy-on-Write block size=
-\n");=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +static int rangelist_ex_add(struct list_head *list, struct blk_range *rg=
-,=0A=
-> +			    struct block_device *blk_dev)=0A=
-> +{=0A=
-> +	struct blk_range_link_ex *range_link =3D=0A=
-> +		kzalloc(sizeof(struct blk_range_link_ex), GFP_KERNEL);=0A=
-> +	if (range_link =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&range_link->link);=0A=
-> +=0A=
-> +	range_link->rg.ofs =3D rg->ofs;=0A=
-> +	range_link->rg.cnt =3D rg->cnt;=0A=
-> +	range_link->blk_dev =3D blk_dev;=0A=
-> +=0A=
-> +	list_add_tail(&range_link->link, list);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_add_multidev(uuid_t *id, dev_t dev_id, struct big_buffer *=
-ranges, size_t ranges_cnt)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct snapstore *snapstore =3D NULL;=0A=
-> +	sector_t current_blk_size =3D 0;=0A=
-> +	size_t inx;=0A=
-> +	LIST_HEAD(blk_rangelist);=0A=
-> +=0A=
-> +	pr_info("Snapstore add %zu ranges for device [%d:%d]\n", ranges_cnt, MA=
-JOR(dev_id),=0A=
-> +		MINOR(dev_id));=0A=
-> +=0A=
-> +	if ((ranges_cnt =3D=3D 0) || (ranges =3D=3D NULL))=0A=
-> +		return -EINVAL;=0A=
-> +=0A=
-> +	snapstore =3D _snapstore_find(id);=0A=
-> +	if (snapstore =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add file to multidevice snapstore: ");=0A=
-> +		pr_err("cannot find snapstore by id %pUB\n", id);=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (snapstore->multidev =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add file to multidevice snapstore: ");=0A=
-> +		pr_err("it was not initialized\n");=0A=
-> +		return -EFAULT;=0A=
-> +	}=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < ranges_cnt; ++inx) {=0A=
-> +		size_t blocks_count =3D 0;=0A=
-> +		sector_t range_offset =3D 0;=0A=
-> +		struct blk_range range;=0A=
-> +		struct ioctl_range_s *data;=0A=
-> +=0A=
-> +		data =3D big_buffer_get_element(ranges, inx, sizeof(struct ioctl_range=
-_s));=0A=
-> +		if (data =3D=3D NULL) {=0A=
-> +			pr_err("Invalid count of ranges\n");=0A=
-> +			res =3D -ENODATA;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		range.ofs =3D (sector_t)to_sectors(data->left);=0A=
-> +		range.cnt =3D (blkcnt_t)to_sectors(data->right) - range.ofs;=0A=
-> +=0A=
-> +		while (range_offset < range.cnt) {=0A=
-> +			struct blk_range rg;=0A=
-> +			struct block_device *blk_dev =3D NULL;=0A=
-> +=0A=
-> +			rg.ofs =3D range.ofs + range_offset;=0A=
-> +			rg.cnt =3D min_t(sector_t,=0A=
-> +				       range.cnt - range_offset,=0A=
-> +				       snapstore_block_size() - current_blk_size);=0A=
-> +=0A=
-> +			range_offset +=3D rg.cnt;=0A=
-> +=0A=
-> +			blk_dev =3D snapstore_multidev_get_device(snapstore->multidev, dev_id=
-);=0A=
-> +			if (blk_dev =3D=3D NULL) {=0A=
-> +				pr_err("Cannot find or open device [%d:%d] for multidevice snapstore=
-\n",=0A=
-> +				       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +				res =3D -ENODEV;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			res =3D rangelist_ex_add(&blk_rangelist, &rg, blk_dev);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Unable to add file to multidevice snapstore: ");=0A=
-> +				pr_err("failed to add range to rangelist\n");=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			/*=0A=
-> +			 * zero sectors logic is not implemented for multidevice snapstore=0A=
-> +			 */=0A=
-> +=0A=
-> +			current_blk_size +=3D rg.cnt;=0A=
-> +=0A=
-> +			if (current_blk_size =3D=3D snapstore_block_size()) { //allocate  blo=
-ck=0A=
-> +				res =3D blk_descr_multidev_pool_add(&snapstore->multidev->pool,=0A=
-> +								  &blk_rangelist);=0A=
-> +				if (res !=3D SUCCESS) {=0A=
-> +					pr_err("Unable to add file to multidevice snapstore: ");=0A=
-> +					pr_err("failed to initialize new block\n");=0A=
-> +					break;=0A=
-> +				}=0A=
-> +=0A=
-> +				snapstore->halffilled =3D false;=0A=
-> +=0A=
-> +				current_blk_size =3D 0;=0A=
-> +				INIT_LIST_HEAD(&blk_rangelist);=0A=
-> +				++blocks_count;=0A=
-> +			}=0A=
-> +		}=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			break;=0A=
-> +	}=0A=
-> +=0A=
-> +	if ((res =3D=3D SUCCESS) && (current_blk_size !=3D 0))=0A=
-> +		pr_warn("Snapstore portion was not ordered by Copy-on-Write block size=
-\n");=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +#endif=0A=
-> +=0A=
-> +void snapstore_order_border(struct blk_range *in, struct blk_range *out)=
-=0A=
-> +{=0A=
-> +	struct blk_range unorder;=0A=
-> +=0A=
-> +	unorder.ofs =3D in->ofs & snapstore_block_mask();=0A=
-> +	out->ofs =3D in->ofs & ~snapstore_block_mask();=0A=
-> +	out->cnt =3D in->cnt + unorder.ofs;=0A=
-> +=0A=
-> +	unorder.cnt =3D out->cnt & snapstore_block_mask();=0A=
-> +	if (unorder.cnt !=3D 0)=0A=
-> +		out->cnt +=3D (snapstore_block_size() - unorder.cnt);=0A=
-> +}=0A=
-> +=0A=
-> +union blk_descr_unify snapstore_get_empty_block(struct snapstore *snapst=
-ore)=0A=
-> +{=0A=
-> +	union blk_descr_unify result =3D { NULL };=0A=
-> +=0A=
-> +	if (snapstore->overflowed)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	if (snapstore->file !=3D NULL)=0A=
-> +		result =3D blk_descr_file_pool_take(&snapstore->file->pool);=0A=
-> +	else if (snapstore->multidev !=3D NULL)=0A=
-> +		result =3D blk_descr_multidev_pool_take(&snapstore->multidev->pool);=
-=0A=
-> +	else if (snapstore->mem !=3D NULL)=0A=
-> +		result =3D blk_descr_mem_pool_take(&snapstore->mem->pool);=0A=
-> +=0A=
-> +	if (result.ptr =3D=3D NULL) {=0A=
-> +		if (snapstore->ctrl_pipe) {=0A=
-> +			sector_t fill_status;=0A=
-> +=0A=
-> +			_snapstore_check_halffill(snapstore, &fill_status);=0A=
-> +			ctrl_pipe_request_overflow(snapstore->ctrl_pipe, -EINVAL,=0A=
-> +						   (u64)from_sectors(fill_status));=0A=
-> +		}=0A=
-> +		snapstore->overflowed =3D true;=0A=
-> +	}=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_check_halffill(uuid_t *unique_id, sector_t *fill_status)=
-=0A=
-> +{=0A=
-> +	struct snapstore *snapstore;=0A=
-> +=0A=
-> +	snapstore =3D _snapstore_find(unique_id);=0A=
-> +	if (snapstore =3D=3D NULL) {=0A=
-> +		pr_err("Cannot find snapstore by uuid %pUB\n", unique_id);=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	_snapstore_check_halffill(snapstore, fill_status);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_request_store(struct snapstore *snapstore, struct blk_defe=
-rred_request *dio_copy_req)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	if (snapstore->ctrl_pipe) {=0A=
-> +		if (!snapstore->halffilled) {=0A=
-> +			sector_t fill_status =3D 0;=0A=
-> +=0A=
-> +			if (_snapstore_check_halffill(snapstore, &fill_status)) {=0A=
-> +				snapstore->halffilled =3D true;=0A=
-> +				ctrl_pipe_request_halffill(snapstore->ctrl_pipe,=0A=
-> +							   (u64)from_sectors(fill_status));=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	if (snapstore->file)=0A=
-> +		res =3D blk_deferred_request_store_file(snapstore->file->blk_dev, dio_=
-copy_req);=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	else if (snapstore->multidev)=0A=
-> +		res =3D blk_deferred_request_store_multidev(dio_copy_req);=0A=
-> +#endif=0A=
-> +	else if (snapstore->mem)=0A=
-> +		res =3D blk_deferred_request_store_mem(dio_copy_req);=0A=
-> +	else=0A=
-> +		res =3D -EINVAL;=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +static int _snapstore_redirect_read_file(struct blk_redirect_bio *rq_red=
-ir,=0A=
-> +					 struct block_device *snapstore_blk_dev,=0A=
-> +					 struct blk_descr_file *file,=0A=
-> +					 sector_t block_ofs,=0A=
-> +					 sector_t rq_ofs, sector_t rq_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t current_ofs =3D 0;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&file->rangelist))) {=0A=
-> +		pr_err("Invalid file block descriptor");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	list_for_each(_list_head, &file->rangelist) {=0A=
-> +		struct blk_range_link *range_link;=0A=
-> +=0A=
-> +		range_link =3D list_entry(_list_head, struct blk_range_link, link);=0A=
-> +		if (current_ofs >=3D rq_count)=0A=
-> +			break;=0A=
-> +=0A=
-> +		if (range_link->rg.cnt > block_ofs) {=0A=
-> +			sector_t pos =3D range_link->rg.ofs + block_ofs;=0A=
-> +			sector_t len =3D min_t(sector_t,=0A=
-> +					     range_link->rg.cnt - block_ofs,=0A=
-> +					     rq_count - current_ofs);=0A=
-> +=0A=
-> +			res =3D blk_dev_redirect_part(rq_redir, READ, snapstore_blk_dev, pos,=
-=0A=
-> +						    rq_ofs + current_ofs, len);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to read from snapstore file. Sector #%lld\n",=0A=
-> +				       pos);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			current_ofs +=3D len;=0A=
-> +			block_ofs =3D 0;=0A=
-> +		} else=0A=
-> +			block_ofs -=3D range_link->rg.cnt;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		pr_err("Failed to read from file snapstore\n");=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +static int _snapstore_redirect_read_multidev(struct blk_redirect_bio *rq=
-_redir,=0A=
-> +					      struct blk_descr_multidev *multidev,=0A=
-> +					      sector_t block_ofs,=0A=
-> +					      sector_t rq_ofs, sector_t rq_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t current_ofs =3D 0;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&multidev->rangelist))) {=0A=
-> +		pr_err("Invalid multidev block descriptor");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	list_for_each(_list_head, &multidev->rangelist) {=0A=
-> +		struct blk_range_link_ex *range_link =3D=0A=
-> +			list_entry(_list_head, struct blk_range_link_ex, link);=0A=
-> +=0A=
-> +		if (current_ofs >=3D rq_count)=0A=
-> +			break;=0A=
-> +=0A=
-> +		if (range_link->rg.cnt > block_ofs) {=0A=
-> +			sector_t pos =3D range_link->rg.ofs + block_ofs;=0A=
-> +			sector_t len =3D min_t(sector_t,=0A=
-> +					     range_link->rg.cnt - block_ofs,=0A=
-> +					     rq_count - current_ofs);=0A=
-> +=0A=
-> +			res =3D blk_dev_redirect_part(rq_redir, READ, range_link->blk_dev, po=
-s,=0A=
-> +						    rq_ofs + current_ofs, len);=0A=
-> +=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to read from snapstore file. Sector #%lld\n", pos);=
-=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			current_ofs +=3D len;=0A=
-> +			block_ofs =3D 0;=0A=
-> +		} else=0A=
-> +			block_ofs -=3D range_link->rg.cnt;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		pr_err("Failed to read from multidev snapstore\n");=0A=
-> +	return res;=0A=
-> +}=0A=
-> +#endif=0A=
-> +=0A=
-> +int snapstore_redirect_read(struct blk_redirect_bio *rq_redir, struct sn=
-apstore *snapstore,=0A=
-> +			    union blk_descr_unify blk_descr, sector_t target_pos, sector_t rq=
-_ofs,=0A=
-> +			    sector_t rq_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t block_ofs =3D target_pos & snapstore_block_mask();=0A=
-> +=0A=
-> +	if (snapstore->file)=0A=
-> +		res =3D _snapstore_redirect_read_file(rq_redir, snapstore->file->blk_d=
-ev,=0A=
-> +						    blk_descr.file, block_ofs, rq_ofs, rq_count);=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	else if (snapstore->multidev)=0A=
-> +		res =3D _snapstore_redirect_read_multidev(rq_redir, blk_descr.multidev=
-, block_ofs,=0A=
-> +							rq_ofs, rq_count);=0A=
-> +#endif=0A=
-> +	else if (snapstore->mem) {=0A=
-> +		res =3D blk_dev_redirect_memcpy_part(=0A=
-> +			rq_redir, READ, blk_descr.mem->buff + (size_t)from_sectors(block_ofs)=
-,=0A=
-> +			rq_ofs, rq_count);=0A=
-> +=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Failed to read from snapstore memory\n");=0A=
-> +	} else=0A=
-> +		res =3D -EINVAL;=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		pr_err("Failed to read from snapstore. Offset %lld sector\n", target_p=
-os);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +static int _snapstore_redirect_write_file(struct blk_redirect_bio *rq_re=
-dir,=0A=
-> +					  struct block_device *snapstore_blk_dev,=0A=
-> +					  struct blk_descr_file *file,=0A=
-> +					  sector_t block_ofs,=0A=
-> +					  sector_t rq_ofs, sector_t rq_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t current_ofs =3D 0;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&file->rangelist))) {=0A=
-> +		pr_err("Invalid file block descriptor");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	list_for_each(_list_head, &file->rangelist) {=0A=
-> +		struct blk_range_link *range_link;=0A=
-> +=0A=
-> +		range_link =3D list_entry(_list_head, struct blk_range_link, link);=0A=
-> +		if (current_ofs >=3D rq_count)=0A=
-> +			break;=0A=
-> +=0A=
-> +		if (range_link->rg.cnt > block_ofs) {=0A=
-> +			sector_t pos =3D range_link->rg.ofs + block_ofs;=0A=
-> +			sector_t len =3D min_t(sector_t,=0A=
-> +					     range_link->rg.cnt - block_ofs,=0A=
-> +					     rq_count - current_ofs);=0A=
-> +=0A=
-> +			res =3D blk_dev_redirect_part(rq_redir, WRITE, snapstore_blk_dev, pos=
-,=0A=
-> +						    rq_ofs + current_ofs, len);=0A=
-> +=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to write to snapstore file. Sector #%lld\n",=0A=
-> +				       pos);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			current_ofs +=3D len;=0A=
-> +			block_ofs =3D 0;=0A=
-> +		} else=0A=
-> +			block_ofs -=3D range_link->rg.cnt;=0A=
-> +	}=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		pr_err("Failed to write to file snapstore\n");=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +static int _snapstore_redirect_write_multidev(struct blk_redirect_bio *r=
-q_redir,=0A=
-> +					      struct blk_descr_multidev *multidev,=0A=
-> +					      sector_t block_ofs,=0A=
-> +					      sector_t rq_ofs, sector_t rq_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t current_ofs =3D 0;=0A=
-> +	struct list_head *_list_head;=0A=
-> +=0A=
-> +	if (unlikely(list_empty(&multidev->rangelist))) {=0A=
-> +		pr_err("Invalid multidev block descriptor");=0A=
-> +		return -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	list_for_each(_list_head, &multidev->rangelist) {=0A=
-> +		struct blk_range_link_ex *range_link;=0A=
-> +=0A=
-> +		range_link =3D list_entry(_list_head, struct blk_range_link_ex, link);=
-=0A=
-> +		if (current_ofs >=3D rq_count)=0A=
-> +			break;=0A=
-> +=0A=
-> +		if (range_link->rg.cnt > block_ofs) {=0A=
-> +			sector_t pos =3D range_link->rg.ofs + block_ofs;=0A=
-> +			sector_t len =3D min_t(sector_t,=0A=
-> +					     range_link->rg.cnt - block_ofs,=0A=
-> +					     rq_count - current_ofs);=0A=
-> +=0A=
-> +			res =3D blk_dev_redirect_part(rq_redir, WRITE, range_link->blk_dev, p=
-os,=0A=
-> +						    rq_ofs + current_ofs, len);=0A=
-> +=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to write to snapstore file. Sector #%lld\n",=0A=
-> +				       pos);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +=0A=
-> +			current_ofs +=3D len;=0A=
-> +			block_ofs =3D 0;=0A=
-> +		} else=0A=
-> +			block_ofs -=3D range_link->rg.cnt;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		pr_err("Failed to write to multidevice snapstore\n");=0A=
-> +	return res;=0A=
-> +}=0A=
-> +#endif=0A=
-> +=0A=
-> +int snapstore_redirect_write(struct blk_redirect_bio *rq_redir, struct s=
-napstore *snapstore,=0A=
-> +			     union blk_descr_unify blk_descr, sector_t target_pos, sector_t r=
-q_ofs,=0A=
-> +			     sector_t rq_count)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	sector_t block_ofs =3D target_pos & snapstore_block_mask();=0A=
-> +=0A=
-> +	if (snapstore->file)=0A=
-> +		res =3D _snapstore_redirect_write_file(rq_redir, snapstore->file->blk_=
-dev,=0A=
-> +						     blk_descr.file, block_ofs, rq_ofs, rq_count);=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	else if (snapstore->multidev)=0A=
-> +		res =3D _snapstore_redirect_write_multidev(rq_redir, blk_descr.multide=
-v,=0A=
-> +							 block_ofs, rq_ofs, rq_count);=0A=
-> +#endif=0A=
-> +	else if (snapstore->mem) {=0A=
-> +		res =3D blk_dev_redirect_memcpy_part(=0A=
-> +			rq_redir, WRITE, blk_descr.mem->buff + (size_t)from_sectors(block_ofs=
-),=0A=
-> +			rq_ofs, rq_count);=0A=
-> +=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Failed to write to memory snapstore\n");=0A=
-> +	} else {=0A=
-> +		pr_err("Unable to write to snapstore: invalid type of snapstore device=
-\n");=0A=
-> +		res =3D -EINVAL;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		pr_err("Failed to write to snapstore. Offset %lld sector\n", target_po=
-s);=0A=
-> +	return res;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapstore.h b/drivers/block/blk-snap/=
-snapstore.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..db34ad2e2c58=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore.h=0A=
-> @@ -0,0 +1,68 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include <linux/uuid.h>=0A=
-> +#include <linux/kref.h>=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +#include "rangevector.h"=0A=
-> +#include "snapstore_mem.h"=0A=
-> +#include "snapstore_file.h"=0A=
-> +#include "snapstore_multidev.h"=0A=
-> +#include "blk_redirect.h"=0A=
-> +#include "ctrl_pipe.h"=0A=
-> +#include "big_buffer.h"=0A=
-> +=0A=
-> +struct snapstore {=0A=
-> +	struct list_head link;=0A=
-> +	struct kref refcount;=0A=
-> +=0A=
-> +	uuid_t id;=0A=
-> +=0A=
-> +	struct snapstore_mem *mem;=0A=
-> +	struct snapstore_file *file;=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +	struct snapstore_multidev *multidev;=0A=
-> +#endif=0A=
-> +=0A=
-> +	struct ctrl_pipe *ctrl_pipe;=0A=
-> +	sector_t empty_limit;=0A=
-> +=0A=
-> +	bool halffilled;=0A=
-> +	bool overflowed;=0A=
-> +};=0A=
-> +=0A=
-> +void snapstore_done(void);=0A=
-> +=0A=
-> +int snapstore_create(uuid_t *id, dev_t snapstore_dev_id, dev_t *dev_id_s=
-et,=0A=
-> +		     size_t dev_id_set_length);=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +int snapstore_create_multidev(uuid_t *id, dev_t *dev_id_set, size_t dev_=
-id_set_length);=0A=
-> +#endif=0A=
-> +int snapstore_cleanup(uuid_t *id, u64 *filled_bytes);=0A=
-> +=0A=
-> +struct snapstore *snapstore_get(struct snapstore *snapstore);=0A=
-> +void snapstore_put(struct snapstore *snapstore);=0A=
-> +=0A=
-> +int snapstore_stretch_initiate(uuid_t *unique_id, struct ctrl_pipe *ctrl=
-_pipe,=0A=
-> +			       sector_t empty_limit);=0A=
-> +=0A=
-> +int snapstore_add_memory(uuid_t *id, unsigned long long sz);=0A=
-> +int snapstore_add_file(uuid_t *id, struct big_buffer *ranges, size_t ran=
-ges_cnt);=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +int snapstore_add_multidev(uuid_t *id, dev_t dev_id, struct big_buffer *=
-ranges, size_t ranges_cnt);=0A=
-> +#endif=0A=
-> +=0A=
-> +void snapstore_order_border(struct blk_range *in, struct blk_range *out)=
-;=0A=
-> +=0A=
-> +union blk_descr_unify snapstore_get_empty_block(struct snapstore *snapst=
-ore);=0A=
-> +=0A=
-> +int snapstore_request_store(struct snapstore *snapstore, struct blk_defe=
-rred_request *dio_copy_req);=0A=
-> +=0A=
-> +int snapstore_redirect_read(struct blk_redirect_bio *rq_redir, struct sn=
-apstore *snapstore,=0A=
-> +			    union blk_descr_unify blk_descr, sector_t target_pos, sector_t rq=
-_ofs,=0A=
-> +			    sector_t rq_count);=0A=
-> +int snapstore_redirect_write(struct blk_redirect_bio *rq_redir, struct s=
-napstore *snapstore,=0A=
-> +			     union blk_descr_unify blk_descr, sector_t target_pos, sector_t r=
-q_ofs,=0A=
-> +			     sector_t rq_count);=0A=
-> +=0A=
-> +int snapstore_check_halffill(uuid_t *unique_id, sector_t *fill_status);=
-=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_device.c b/drivers/block/bl=
-k-snap/snapstore_device.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..6fdeebacce22=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_device.c=0A=
-> @@ -0,0 +1,532 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapstore"=0A=
-> +#include "common.h"=0A=
-> +#include "snapstore_device.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include "params.h"=0A=
-> +#include "blk_util.h"=0A=
-> +=0A=
-> +LIST_HEAD(snapstore_devices);=0A=
-> +DECLARE_RWSEM(snapstore_devices_lock);=0A=
-> +=0A=
-> +static inline void _snapstore_device_descr_write_lock(struct snapstore_d=
-evice *snapstore_device)=0A=
-> +{=0A=
-> +	mutex_lock(&snapstore_device->store_block_map_locker);=0A=
-> +}=0A=
-> +static inline void _snapstore_device_descr_write_unlock(struct snapstore=
-_device *snapstore_device)=0A=
-> +{=0A=
-> +	mutex_unlock(&snapstore_device->store_block_map_locker);=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_device_done(void)=0A=
-> +{=0A=
-> +	struct snapstore_device *snapstore_device =3D NULL;=0A=
-> +=0A=
-> +	do {=0A=
-> +		down_write(&snapstore_devices_lock);=0A=
-> +		if (!list_empty(&snapstore_devices)) {=0A=
-> +			snapstore_device =3D=0A=
-> +				list_entry(snapstore_devices.next, struct snapstore_device, link);=
-=0A=
-> +			list_del(&snapstore_device->link);=0A=
-> +		}=0A=
-> +		up_write(&snapstore_devices_lock);=0A=
-> +=0A=
-> +		if (snapstore_device)=0A=
-> +			snapstore_device_put_resource(snapstore_device);=0A=
-> +	} while (snapstore_device);=0A=
-> +}=0A=
-> +=0A=
-> +struct snapstore_device *snapstore_device_find_by_dev_id(dev_t dev_id)=
-=0A=
-> +{=0A=
-> +	struct snapstore_device *result =3D NULL;=0A=
-> +=0A=
-> +	down_read(&snapstore_devices_lock);=0A=
-> +	if (!list_empty(&snapstore_devices)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &snapstore_devices) {=0A=
-> +			struct snapstore_device *snapstore_device =3D=0A=
-> +				list_entry(_head, struct snapstore_device, link);=0A=
-> +=0A=
-> +			if (dev_id =3D=3D snapstore_device->dev_id) {=0A=
-> +				result =3D snapstore_device;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_read(&snapstore_devices_lock);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +struct snapstore_device *_snapstore_device_get_by_snapstore_id(uuid_t *i=
-d)=0A=
-> +{=0A=
-> +	struct snapstore_device *result =3D NULL;=0A=
-> +=0A=
-> +	down_write(&snapstore_devices_lock);=0A=
-> +	if (!list_empty(&snapstore_devices)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &snapstore_devices) {=0A=
-> +			struct snapstore_device *snapstore_device =3D=0A=
-> +				list_entry(_head, struct snapstore_device, link);=0A=
-> +=0A=
-> +			if (uuid_equal(id, &snapstore_device->snapstore->id)) {=0A=
-> +				result =3D snapstore_device;=0A=
-> +				list_del(&snapstore_device->link);=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	up_write(&snapstore_devices_lock);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +static void _snapstore_device_destroy(struct snapstore_device *snapstore=
-_device)=0A=
-> +{=0A=
-> +	pr_info("Destroy snapstore device\n");=0A=
-> +=0A=
-> +	xa_destroy(&snapstore_device->store_block_map);=0A=
-> +=0A=
-> +	if (snapstore_device->orig_blk_dev !=3D NULL)=0A=
-> +		blk_dev_close(snapstore_device->orig_blk_dev);=0A=
-> +=0A=
-> +	rangevector_done(&snapstore_device->zero_sectors);=0A=
-> +=0A=
-> +	if (snapstore_device->snapstore) {=0A=
-> +		pr_info("Snapstore uuid %pUB\n", &snapstore_device->snapstore->id);=0A=
-> +=0A=
-> +		snapstore_put(snapstore_device->snapstore);=0A=
-> +		snapstore_device->snapstore =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	kfree(snapstore_device);=0A=
-> +}=0A=
-> +=0A=
-> +static void snapstore_device_free_cb(struct kref *kref)=0A=
-> +{=0A=
-> +	struct snapstore_device *snapstore_device =3D=0A=
-> +		container_of(kref, struct snapstore_device, refcount);=0A=
-> +=0A=
-> +	_snapstore_device_destroy(snapstore_device);=0A=
-> +}=0A=
-> +=0A=
-> +struct snapstore_device *snapstore_device_get_resource(struct snapstore_=
-device *snapstore_device)=0A=
-> +{=0A=
-> +	if (snapstore_device)=0A=
-> +		kref_get(&snapstore_device->refcount);=0A=
-> +=0A=
-> +	return snapstore_device;=0A=
-> +};=0A=
-> +=0A=
-> +void snapstore_device_put_resource(struct snapstore_device *snapstore_de=
-vice)=0A=
-> +{=0A=
-> +	if (snapstore_device)=0A=
-> +		kref_put(&snapstore_device->refcount, snapstore_device_free_cb);=0A=
-> +};=0A=
-> +=0A=
-> +int snapstore_device_cleanup(uuid_t *id)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	struct snapstore_device *snapstore_device =3D NULL;=0A=
-> +=0A=
-> +	while (NULL !=3D (snapstore_device =3D _snapstore_device_get_by_snapsto=
-re_id(id))) {=0A=
-> +		pr_info("Cleanup snapstore device for device [%d:%d]\n",=0A=
-> +			MAJOR(snapstore_device->dev_id), MINOR(snapstore_device->dev_id));=0A=
-> +=0A=
-> +		snapstore_device_put_resource(snapstore_device);=0A=
-> +	}=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_create(dev_t dev_id, struct snapstore *snapstore)=
-=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct snapstore_device *snapstore_device =3D=0A=
-> +		kzalloc(sizeof(struct snapstore_device), GFP_KERNEL);=0A=
-> +=0A=
-> +	if (snapstore_device =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&snapstore_device->link);=0A=
-> +	snapstore_device->dev_id =3D dev_id;=0A=
-> +=0A=
-> +	res =3D blk_dev_open(dev_id, &snapstore_device->orig_blk_dev);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		kfree(snapstore_device);=0A=
-> +=0A=
-> +		pr_err("Unable to create snapstore device: failed to open original dev=
-ice [%d:%d]\n",=0A=
-> +		       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	kref_init(&snapstore_device->refcount);=0A=
-> +=0A=
-> +	snapstore_device->snapstore =3D NULL;=0A=
-> +	snapstore_device->err_code =3D SUCCESS;=0A=
-> +	snapstore_device->corrupted =3D false;=0A=
-> +	atomic_set(&snapstore_device->req_failed_cnt, 0);=0A=
-> +=0A=
-> +	mutex_init(&snapstore_device->store_block_map_locker);=0A=
-> +=0A=
-> +	rangevector_init(&snapstore_device->zero_sectors);=0A=
-> +=0A=
-> +	xa_init(&snapstore_device->store_block_map);=0A=
-> +=0A=
-> +	snapstore_device->snapstore =3D snapstore_get(snapstore);=0A=
-> +=0A=
-> +	down_write(&snapstore_devices_lock);=0A=
-> +	list_add_tail(&snapstore_device->link, &snapstore_devices);=0A=
-> +	up_write(&snapstore_devices_lock);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_add_request(struct snapstore_device *snapstore_devi=
-ce,=0A=
-> +				 unsigned long block_index,=0A=
-> +				 struct blk_deferred_request **dio_copy_req)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	union blk_descr_unify blk_descr =3D { NULL };=0A=
-> +	struct blk_deferred_io *dio =3D NULL;=0A=
-> +	bool req_new =3D false;=0A=
-> +=0A=
-> +	blk_descr =3D snapstore_get_empty_block(snapstore_device->snapstore);=
-=0A=
-> +	if (blk_descr.ptr =3D=3D NULL) {=0A=
-> +		pr_err("Unable to add block to defer IO request: failed to allocate ne=
-xt block\n");=0A=
-> +		return -ENODATA;=0A=
-> +	}=0A=
-> +=0A=
-> +	res =3D xa_err(=0A=
-> +		xa_store(&snapstore_device->store_block_map, block_index, blk_descr.pt=
-r, GFP_NOIO));=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		pr_err("Unable to add block to defer IO request: failed to set block d=
-escriptor to descriptors array. errno=3D%d\n",=0A=
-> +		       res);=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (*dio_copy_req =3D=3D NULL) {=0A=
-> +		*dio_copy_req =3D blk_deferred_request_new();=0A=
-> +		if (*dio_copy_req =3D=3D NULL) {=0A=
-> +			pr_err("Unable to add block to defer IO request: failed to allocate d=
-efer IO request\n");=0A=
-> +			return -ENOMEM;=0A=
-> +		}=0A=
-> +		req_new =3D true;=0A=
-> +	}=0A=
-> +=0A=
-> +	do {=0A=
-> +		dio =3D blk_deferred_alloc(block_index, blk_descr);=0A=
-> +		if (dio =3D=3D NULL) {=0A=
-> +			pr_err("Unabled to add block to defer IO request: failed to allocate =
-defer IO\n");=0A=
-> +			res =3D -ENOMEM;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		res =3D blk_deferred_request_add(*dio_copy_req, dio);=0A=
-> +		if (res !=3D SUCCESS)=0A=
-> +			pr_err("Unable to add block to defer IO request: failed to add defer =
-IO to request\n");=0A=
-> +	} while (false);=0A=
-> +=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		if (dio !=3D NULL) {=0A=
-> +			blk_deferred_free(dio);=0A=
-> +			dio =3D NULL;=0A=
-> +		}=0A=
-> +		if (req_new) {=0A=
-> +			blk_deferred_request_free(*dio_copy_req);=0A=
-> +			*dio_copy_req =3D NULL;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_prepare_requests(struct snapstore_device *snapstore=
-_device,=0A=
-> +				      struct blk_range *copy_range,=0A=
-> +				      struct blk_deferred_request **dio_copy_req)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	unsigned long inx =3D 0;=0A=
-> +	unsigned long first =3D (unsigned long)(copy_range->ofs >> snapstore_bl=
-ock_shift());=0A=
-> +	unsigned long last =3D=0A=
-> +		(unsigned long)((copy_range->ofs + copy_range->cnt - 1) >> snapstore_b=
-lock_shift());=0A=
-> +=0A=
-> +	for (inx =3D first; inx <=3D last; inx++) {=0A=
-> +		if (xa_load(&snapstore_device->store_block_map, inx) =3D=3D NULL) {=0A=
-> +			res =3D snapstore_device_add_request(snapstore_device, inx, dio_copy_=
-req);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to create copy defer IO request. errno=3D%d\n", res);=
-=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +		/*=0A=
-> +		 * If xa_load() return not NULL, then block already stored.=0A=
-> +		 */=0A=
-> +	}=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		snapstore_device_set_corrupted(snapstore_device, res);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_store(struct snapstore_device *snapstore_device,=0A=
-> +			   struct blk_deferred_request *dio_copy_req)=0A=
-> +{=0A=
-> +	int res;=0A=
-> +=0A=
-> +	res =3D snapstore_request_store(snapstore_device->snapstore, dio_copy_r=
-eq);=0A=
-> +	if (res !=3D SUCCESS)=0A=
-> +		snapstore_device_set_corrupted(snapstore_device, res);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_read(struct snapstore_device *snapstore_device,=0A=
-> +			  struct blk_redirect_bio *rq_redir)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +=0A=
-> +	unsigned long block_index;=0A=
-> +	unsigned long block_index_last;=0A=
-> +	unsigned long block_index_first;=0A=
-> +=0A=
-> +	sector_t blk_ofs_start =3D 0; //device range start=0A=
-> +	sector_t blk_ofs_count =3D 0; //device range length=0A=
-> +=0A=
-> +	struct blk_range rq_range;=0A=
-> +	struct rangevector *zero_sectors =3D &snapstore_device->zero_sectors;=
-=0A=
-> +=0A=
-> +	if (snapstore_device_is_corrupted(snapstore_device))=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	rq_range.cnt =3D bio_sectors(rq_redir->bio);=0A=
-> +	rq_range.ofs =3D rq_redir->bio->bi_iter.bi_sector;=0A=
-> +=0A=
-> +	if (!bio_has_data(rq_redir->bio)) {=0A=
-> +		pr_warn("Empty bio was found during reading from snapstore device. fla=
-gs=3D%u\n",=0A=
-> +			rq_redir->bio->bi_flags);=0A=
-> +=0A=
-> +		blk_redirect_complete(rq_redir, SUCCESS);=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	block_index_first =3D (unsigned long)(rq_range.ofs >> snapstore_block_s=
-hift());=0A=
-> +	block_index_last =3D=0A=
-> +		(unsigned long)((rq_range.ofs + rq_range.cnt - 1) >> snapstore_block_s=
-hift());=0A=
-> +=0A=
-> +	_snapstore_device_descr_write_lock(snapstore_device);=0A=
-> +	for (block_index =3D block_index_first; block_index <=3D block_index_la=
-st; ++block_index) {=0A=
-> +		union blk_descr_unify blk_descr;=0A=
-> +=0A=
-> +		blk_ofs_count =3D min_t(sector_t,=0A=
-> +				      (((sector_t)(block_index + 1)) << snapstore_block_shift()) -=
-=0A=
-> +					      (rq_range.ofs + blk_ofs_start),=0A=
-> +				      rq_range.cnt - blk_ofs_start);=0A=
-> +=0A=
-> +		blk_descr =3D (union blk_descr_unify)xa_load(&snapstore_device->store_=
-block_map,=0A=
-> +							   block_index);=0A=
-> +		if (blk_descr.ptr) {=0A=
-> +			//push snapstore read=0A=
-> +			res =3D snapstore_redirect_read(rq_redir, snapstore_device->snapstore=
-,=0A=
-> +						      blk_descr, rq_range.ofs + blk_ofs_start,=0A=
-> +						      blk_ofs_start, blk_ofs_count);=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to read from snapstore device\n");=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		} else {=0A=
-> +			//device read with zeroing=0A=
-> +			if (zero_sectors)=0A=
-> +				res =3D blk_dev_redirect_read_zeroed(rq_redir,=0A=
-> +								   snapstore_device->orig_blk_dev,=0A=
-> +								   rq_range.ofs, blk_ofs_start,=0A=
-> +								   blk_ofs_count, zero_sectors);=0A=
-> +			else=0A=
-> +				res =3D blk_dev_redirect_part(rq_redir, READ,=0A=
-> +							    snapstore_device->orig_blk_dev,=0A=
-> +							    rq_range.ofs + blk_ofs_start,=0A=
-> +							    blk_ofs_start, blk_ofs_count);=0A=
-> +=0A=
-> +			if (res !=3D SUCCESS) {=0A=
-> +				pr_err("Failed to redirect read request to the original device [%d:%=
-d]\n",=0A=
-> +				       MAJOR(snapstore_device->dev_id),=0A=
-> +				       MINOR(snapstore_device->dev_id));=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +=0A=
-> +		blk_ofs_start +=3D blk_ofs_count;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS) {=0A=
-> +		if (atomic64_read(&rq_redir->bio_count) > 0ll) //async direct access n=
-eeded=0A=
-> +			blk_dev_redirect_submit(rq_redir);=0A=
-> +		else=0A=
-> +			blk_redirect_complete(rq_redir, res);=0A=
-> +	} else {=0A=
-> +		pr_err("Failed to read from snapstore device. errno=3D%d\n", res);=0A=
-> +		pr_err("Position %lld sector, length %lld sectors\n", rq_range.ofs, rq=
-_range.cnt);=0A=
-> +	}=0A=
-> +	_snapstore_device_descr_write_unlock(snapstore_device);=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int _snapstore_device_copy_on_write(struct snapstore_device *snapstore_d=
-evice,=0A=
-> +				    struct blk_range *rq_range)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct blk_deferred_request *dio_copy_req =3D NULL;=0A=
-> +=0A=
-> +	mutex_lock(&snapstore_device->store_block_map_locker);=0A=
-> +	do {=0A=
-> +		res =3D snapstore_device_prepare_requests(snapstore_device, rq_range, =
-&dio_copy_req);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to create defer IO request for range. errno=3D%d\n", r=
-es);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (dio_copy_req =3D=3D NULL)=0A=
-> +			break; //nothing to copy=0A=
-> +=0A=
-> +		res =3D blk_deferred_request_read_original(snapstore_device->orig_blk_=
-dev,=0A=
-> +							 dio_copy_req);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to read data from the original device. errno=3D%d\n", =
-res);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		res =3D snapstore_device_store(snapstore_device, dio_copy_req);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Failed to write data to snapstore. errno=3D%d\n", res);=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	} while (false);=0A=
-> +	mutex_unlock(&snapstore_device->store_block_map_locker);=0A=
-> +=0A=
-> +	if (dio_copy_req) {=0A=
-> +		if (res =3D=3D -EDEADLK)=0A=
-> +			blk_deferred_request_deadlocked(dio_copy_req);=0A=
-> +		else=0A=
-> +			blk_deferred_request_free(dio_copy_req);=0A=
-> +	}=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_write(struct snapstore_device *snapstore_device,=0A=
-> +			   struct blk_redirect_bio *rq_redir)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	unsigned long block_index;=0A=
-> +	unsigned long block_index_last;=0A=
-> +	unsigned long block_index_first;=0A=
-> +	sector_t blk_ofs_start =3D 0; //device range start=0A=
-> +	sector_t blk_ofs_count =3D 0; //device range length=0A=
-> +	struct blk_range rq_range;=0A=
-> +=0A=
-> +	if (snapstore_device_is_corrupted(snapstore_device))=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	rq_range.cnt =3D bio_sectors(rq_redir->bio);=0A=
-> +	rq_range.ofs =3D rq_redir->bio->bi_iter.bi_sector;=0A=
-> +=0A=
-> +	if (!bio_has_data(rq_redir->bio)) {=0A=
-> +		pr_warn("Empty bio was found during reading from snapstore device. fla=
-gs=3D%u\n",=0A=
-> +			rq_redir->bio->bi_flags);=0A=
-> +=0A=
-> +		blk_redirect_complete(rq_redir, SUCCESS);=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	// do copy to snapstore previously=0A=
-> +	res =3D _snapstore_device_copy_on_write(snapstore_device, &rq_range);=
-=0A=
-> +=0A=
-> +	block_index_first =3D (unsigned long)(rq_range.ofs >> snapstore_block_s=
-hift());=0A=
-> +	block_index_last =3D=0A=
-> +		(unsigned long)((rq_range.ofs + rq_range.cnt - 1) >> snapstore_block_s=
-hift());=0A=
-> +=0A=
-> +	_snapstore_device_descr_write_lock(snapstore_device);=0A=
-> +	for (block_index =3D block_index_first; block_index <=3D block_index_la=
-st; ++block_index) {=0A=
-> +		union blk_descr_unify blk_descr;=0A=
-> +=0A=
-> +		blk_ofs_count =3D min_t(sector_t,=0A=
-> +				      (((sector_t)(block_index + 1)) << snapstore_block_shift()) -=
-=0A=
-> +					      (rq_range.ofs + blk_ofs_start),=0A=
-> +				      rq_range.cnt - blk_ofs_start);=0A=
-> +=0A=
-> +		blk_descr =3D (union blk_descr_unify)xa_load(&snapstore_device->store_=
-block_map,=0A=
-> +							   block_index);=0A=
-> +		if (blk_descr.ptr =3D=3D NULL) {=0A=
-> +			pr_err("Unable to write from snapstore device: invalid snapstore bloc=
-k descriptor\n");=0A=
-> +			res =3D -EIO;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		res =3D snapstore_redirect_write(rq_redir, snapstore_device->snapstore=
-, blk_descr,=0A=
-> +					       rq_range.ofs + blk_ofs_start, blk_ofs_start,=0A=
-> +					       blk_ofs_count);=0A=
-> +		if (res !=3D SUCCESS) {=0A=
-> +			pr_err("Unable to write from snapstore device: failed to redirect wri=
-te request to snapstore\n");=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +		blk_ofs_start +=3D blk_ofs_count;=0A=
-> +	}=0A=
-> +	if (res =3D=3D SUCCESS) {=0A=
-> +		if (atomic64_read(&rq_redir->bio_count) > 0) { //async direct access n=
-eeded=0A=
-> +			blk_dev_redirect_submit(rq_redir);=0A=
-> +		} else {=0A=
-> +			blk_redirect_complete(rq_redir, res);=0A=
-> +		}=0A=
-> +	} else {=0A=
-> +		pr_err("Failed to write from snapstore device. errno=3D%d\n", res);=0A=
-> +		pr_err("Position %lld sector, length %lld sectors\n", rq_range.ofs, rq=
-_range.cnt);=0A=
-> +=0A=
-> +		snapstore_device_set_corrupted(snapstore_device, res);=0A=
-> +	}=0A=
-> +	_snapstore_device_descr_write_unlock(snapstore_device);=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +bool snapstore_device_is_corrupted(struct snapstore_device *snapstore_de=
-vice)=0A=
-> +{=0A=
-> +	if (snapstore_device =3D=3D NULL)=0A=
-> +		return true;=0A=
-> +=0A=
-> +	if (snapstore_device->corrupted) {=0A=
-> +		if (atomic_read(&snapstore_device->req_failed_cnt) =3D=3D 0)=0A=
-> +			pr_err("Snapshot device is corrupted for [%d:%d]\n",=0A=
-> +			       MAJOR(snapstore_device->dev_id), MINOR(snapstore_device->dev_i=
-d));=0A=
-> +=0A=
-> +		atomic_inc(&snapstore_device->req_failed_cnt);=0A=
-> +		return true;=0A=
-> +	}=0A=
-> +=0A=
-> +	return false;=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_device_set_corrupted(struct snapstore_device *snapstore_d=
-evice, int err_code)=0A=
-> +{=0A=
-> +	if (!snapstore_device->corrupted) {=0A=
-> +		atomic_set(&snapstore_device->req_failed_cnt, 0);=0A=
-> +		snapstore_device->corrupted =3D true;=0A=
-> +		snapstore_device->err_code =3D abs(err_code);=0A=
-> +=0A=
-> +		pr_err("Set snapshot device is corrupted for [%d:%d]\n",=0A=
-> +		       MAJOR(snapstore_device->dev_id), MINOR(snapstore_device->dev_id=
-));=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +int snapstore_device_errno(dev_t dev_id, int *p_err_code)=0A=
-> +{=0A=
-> +	struct snapstore_device *snapstore_device;=0A=
-> +=0A=
-> +	snapstore_device =3D snapstore_device_find_by_dev_id(dev_id);=0A=
-> +	if (snapstore_device =3D=3D NULL)=0A=
-> +		return -ENODATA;=0A=
-> +=0A=
-> +	*p_err_code =3D snapstore_device->err_code;=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_device.h b/drivers/block/bl=
-k-snap/snapstore_device.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..729b3c05ef70=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_device.h=0A=
-> @@ -0,0 +1,63 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "rangevector.h"=0A=
-> +#include "blk_deferred.h"=0A=
-> +#include "blk_redirect.h"=0A=
-> +#include "snapstore.h"=0A=
-> +#include <linux/xarray.h>=0A=
-> +#include <linux/kref.h>=0A=
-> +=0A=
-> +struct snapstore_device {=0A=
-> +	struct list_head link;=0A=
-> +	struct kref refcount;=0A=
-> +=0A=
-> +	dev_t dev_id;=0A=
-> +	struct snapstore *snapstore;=0A=
-> +=0A=
-> +	struct block_device *orig_blk_dev;=0A=
-> +=0A=
-> +	struct xarray store_block_map; // map block index to read block offset=
-=0A=
-> +	struct mutex store_block_map_locker;=0A=
-> +=0A=
-> +	struct rangevector zero_sectors;=0A=
-> +=0A=
-> +	atomic_t req_failed_cnt;=0A=
-> +	int err_code;=0A=
-> +	bool corrupted;=0A=
-> +};=0A=
-> +=0A=
-> +void snapstore_device_done(void);=0A=
-> +=0A=
-> +struct snapstore_device *snapstore_device_get_resource(struct snapstore_=
-device *snapstore_device);=0A=
-> +void snapstore_device_put_resource(struct snapstore_device *snapstore_de=
-vice);=0A=
-> +=0A=
-> +struct snapstore_device *snapstore_device_find_by_dev_id(dev_t dev_id);=
-=0A=
-> +=0A=
-> +int snapstore_device_create(dev_t dev_id, struct snapstore *snapstore);=
-=0A=
-> +=0A=
-> +int snapstore_device_cleanup(uuid_t *id);=0A=
-> +=0A=
-> +int snapstore_device_prepare_requests(struct snapstore_device *snapstore=
-_device,=0A=
-> +				      struct blk_range *copy_range,=0A=
-> +				      struct blk_deferred_request **dio_copy_req);=0A=
-> +int snapstore_device_store(struct snapstore_device *snapstore_device,=0A=
-> +			   struct blk_deferred_request *dio_copy_req);=0A=
-> +=0A=
-> +int snapstore_device_read(struct snapstore_device *snapstore_device,=0A=
-> +			  struct blk_redirect_bio *rq_redir); //request from image=0A=
-> +int snapstore_device_write(struct snapstore_device *snapstore_device,=0A=
-> +			   struct blk_redirect_bio *rq_redir); //request from image=0A=
-> +=0A=
-> +bool snapstore_device_is_corrupted(struct snapstore_device *snapstore_de=
-vice);=0A=
-> +void snapstore_device_set_corrupted(struct snapstore_device *snapstore_d=
-evice, int err_code);=0A=
-> +int snapstore_device_errno(dev_t dev_id, int *p_err_code);=0A=
-> +=0A=
-> +static inline void _snapstore_device_descr_read_lock(struct snapstore_de=
-vice *snapstore_device)=0A=
-> +{=0A=
-> +	mutex_lock(&snapstore_device->store_block_map_locker);=0A=
-> +}=0A=
-> +static inline void _snapstore_device_descr_read_unlock(struct snapstore_=
-device *snapstore_device)=0A=
-> +{=0A=
-> +	mutex_unlock(&snapstore_device->store_block_map_locker);=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_file.c b/drivers/block/blk-=
-snap/snapstore_file.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..a5c959a8070c=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_file.c=0A=
-> @@ -0,0 +1,52 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapstore"=0A=
-> +#include "common.h"=0A=
-> +#include "snapstore_file.h"=0A=
-> +#include "blk_util.h"=0A=
-> +=0A=
-> +int snapstore_file_create(dev_t dev_id, struct snapstore_file **pfile)=
-=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct snapstore_file *file;=0A=
-> +=0A=
-> +	pr_info("Single device file snapstore was created on device [%d:%d]\n",=
- MAJOR(dev_id),=0A=
-> +	       MINOR(dev_id));=0A=
-> +=0A=
-> +	file =3D kzalloc(sizeof(struct snapstore_file), GFP_KERNEL);=0A=
-> +	if (file =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	res =3D blk_dev_open(dev_id, &file->blk_dev);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		kfree(file);=0A=
-> +		pr_err("Unable to create snapstore file: failed to open device [%d:%d]=
-. errno=3D%d",=0A=
-> +		       MAJOR(dev_id), MINOR(dev_id), res);=0A=
-> +		return res;=0A=
-> +	}=0A=
-> +	{=0A=
-> +		struct request_queue *q =3D bdev_get_queue(file->blk_dev);=0A=
-> +=0A=
-> +		pr_info("snapstore device logical block size %d\n", q->limits.logical_=
-block_size);=0A=
-> +		pr_info("snapstore device physical block size %d\n", q->limits.physica=
-l_block_size);=0A=
-> +	}=0A=
-> +=0A=
-> +	file->blk_dev_id =3D dev_id;=0A=
-> +	blk_descr_file_pool_init(&file->pool);=0A=
-> +=0A=
-> +	*pfile =3D file;=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_file_destroy(struct snapstore_file *file)=0A=
-> +{=0A=
-> +	if (file) {=0A=
-> +		blk_descr_file_pool_done(&file->pool);=0A=
-> +=0A=
-> +		if (file->blk_dev !=3D NULL) {=0A=
-> +			blk_dev_close(file->blk_dev);=0A=
-> +			file->blk_dev =3D NULL;=0A=
-> +		}=0A=
-> +=0A=
-> +		kfree(file);=0A=
-> +	}=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_file.h b/drivers/block/blk-=
-snap/snapstore_file.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..effd9d888781=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_file.h=0A=
-> @@ -0,0 +1,15 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "blk_deferred.h"=0A=
-> +=0A=
-> +struct snapstore_file {=0A=
-> +	dev_t blk_dev_id;=0A=
-> +	struct block_device *blk_dev;=0A=
-> +=0A=
-> +	struct blk_descr_pool pool;=0A=
-> +};=0A=
-> +=0A=
-> +int snapstore_file_create(dev_t dev_id, struct snapstore_file **pfile);=
-=0A=
-> +=0A=
-> +void snapstore_file_destroy(struct snapstore_file *file);=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_mem.c b/drivers/block/blk-s=
-nap/snapstore_mem.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..29a607617d99=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_mem.c=0A=
-> @@ -0,0 +1,91 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapstore"=0A=
-> +#include "common.h"=0A=
-> +#include "snapstore_mem.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +#include <linux/vmalloc.h>=0A=
-> +=0A=
-> +struct buffer_el {=0A=
-> +	struct list_head link;=0A=
-> +	void *buff;=0A=
-> +};=0A=
-> +=0A=
-> +struct snapstore_mem *snapstore_mem_create(size_t available_blocks)=0A=
-> +{=0A=
-> +	struct snapstore_mem *mem =3D kzalloc(sizeof(struct snapstore_mem), GFP=
-_KERNEL);=0A=
-> +=0A=
-> +	if (mem =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +=0A=
-> +	blk_descr_mem_pool_init(&mem->pool, available_blocks);=0A=
-> +=0A=
-> +	mem->blocks_limit =3D available_blocks;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&mem->blocks);=0A=
-> +	mutex_init(&mem->blocks_lock);=0A=
-> +=0A=
-> +	return mem;=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_mem_destroy(struct snapstore_mem *mem)=0A=
-> +{=0A=
-> +	struct buffer_el *buffer_el;=0A=
-> +=0A=
-> +	if (mem =3D=3D NULL)=0A=
-> +		return;=0A=
-> +=0A=
-> +	do {=0A=
-> +		buffer_el =3D NULL;=0A=
-> +=0A=
-> +		mutex_lock(&mem->blocks_lock);=0A=
-> +		if (!list_empty(&mem->blocks)) {=0A=
-> +			buffer_el =3D list_entry(mem->blocks.next, struct buffer_el, link);=
-=0A=
-> +=0A=
-> +			list_del(&buffer_el->link);=0A=
-> +		}=0A=
-> +		mutex_unlock(&mem->blocks_lock);=0A=
-> +=0A=
-> +		if (buffer_el) {=0A=
-> +			vfree(buffer_el->buff);=0A=
-> +			kfree(buffer_el);=0A=
-> +		}=0A=
-> +	} while (buffer_el);=0A=
-> +=0A=
-> +	blk_descr_mem_pool_done(&mem->pool);=0A=
-> +=0A=
-> +	kfree(mem);=0A=
-> +}=0A=
-> +=0A=
-> +void *snapstore_mem_get_block(struct snapstore_mem *mem)=0A=
-> +{=0A=
-> +	struct buffer_el *buffer_el;=0A=
-> +=0A=
-> +	if (mem->blocks_allocated >=3D mem->blocks_limit) {=0A=
-> +		pr_err("Unable to get block from snapstore in memory\n");=0A=
-> +		pr_err("Block limit is reached, allocated %zu, limit %zu\n", mem->bloc=
-ks_allocated,=0A=
-> +		       mem->blocks_limit);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	buffer_el =3D kzalloc(sizeof(struct buffer_el), GFP_KERNEL);=0A=
-> +	if (buffer_el =3D=3D NULL)=0A=
-> +		return NULL;=0A=
-> +	INIT_LIST_HEAD(&buffer_el->link);=0A=
-> +=0A=
-> +	buffer_el->buff =3D vmalloc(snapstore_block_size() * SECTOR_SIZE);=0A=
-> +	if (buffer_el->buff =3D=3D NULL) {=0A=
-> +		kfree(buffer_el);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	++mem->blocks_allocated;=0A=
-> +	if (0 =3D=3D (mem->blocks_allocated & 0x7F))=0A=
-> +		pr_info("%zu MiB was allocated\n", mem->blocks_allocated);=0A=
-> +=0A=
-> +	mutex_lock(&mem->blocks_lock);=0A=
-> +	list_add_tail(&buffer_el->link, &mem->blocks);=0A=
-> +	mutex_unlock(&mem->blocks_lock);=0A=
-> +=0A=
-> +	return buffer_el->buff;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_mem.h b/drivers/block/blk-s=
-nap/snapstore_mem.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..9044a6525966=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_mem.h=0A=
-> @@ -0,0 +1,20 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#include "blk_descr_mem.h"=0A=
-> +=0A=
-> +struct snapstore_mem {=0A=
-> +	struct list_head blocks;=0A=
-> +	struct mutex blocks_lock;=0A=
-> +=0A=
-> +	size_t blocks_limit;=0A=
-> +	size_t blocks_allocated;=0A=
-> +=0A=
-> +	struct blk_descr_pool pool;=0A=
-> +};=0A=
-> +=0A=
-> +struct snapstore_mem *snapstore_mem_create(size_t available_blocks);=0A=
-> +=0A=
-> +void snapstore_mem_destroy(struct snapstore_mem *mem);=0A=
-> +=0A=
-> +void *snapstore_mem_get_block(struct snapstore_mem *mem);=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_multidev.c b/drivers/block/=
-blk-snap/snapstore_multidev.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..bb6bfefa68d7=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_multidev.c=0A=
-> @@ -0,0 +1,118 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-snapstore"=0A=
-> +#include "common.h"=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +=0A=
-> +#include "snapstore_multidev.h"=0A=
-> +#include "blk_util.h"=0A=
-> +=0A=
-> +struct multidev_el {=0A=
-> +	struct list_head link;=0A=
-> +=0A=
-> +	dev_t dev_id;=0A=
-> +	struct block_device *blk_dev;=0A=
-> +};=0A=
-> +=0A=
-> +int snapstore_multidev_create(struct snapstore_multidev **p_multidev)=0A=
-> +{=0A=
-> +	int res =3D SUCCESS;=0A=
-> +	struct snapstore_multidev *multidev;=0A=
-> +=0A=
-> +	pr_info("Multidevice file snapstore create\n");=0A=
-> +=0A=
-> +	multidev =3D kzalloc(sizeof(struct snapstore_multidev), GFP_KERNEL);=0A=
-> +	if (multidev =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&multidev->devicelist);=0A=
-> +	spin_lock_init(&multidev->devicelist_lock);=0A=
-> +=0A=
-> +	blk_descr_multidev_pool_init(&multidev->pool);=0A=
-> +=0A=
-> +	*p_multidev =3D multidev;=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +void snapstore_multidev_destroy(struct snapstore_multidev *multidev)=0A=
-> +{=0A=
-> +	struct multidev_el *el;=0A=
-> +=0A=
-> +	blk_descr_multidev_pool_done(&multidev->pool);=0A=
-> +=0A=
-> +	do {=0A=
-> +		el =3D NULL;=0A=
-> +		spin_lock(&multidev->devicelist_lock);=0A=
-> +		if (!list_empty(&multidev->devicelist)) {=0A=
-> +			el =3D list_entry(multidev->devicelist.next, struct multidev_el, link=
-);=0A=
-> +=0A=
-> +			list_del(&el->link);=0A=
-> +		}=0A=
-> +		spin_unlock(&multidev->devicelist_lock);=0A=
-> +=0A=
-> +		if (el) {=0A=
-> +			blk_dev_close(el->blk_dev);=0A=
-> +=0A=
-> +			pr_info("Close device for multidevice snapstore [%d:%d]\n",=0A=
-> +				MAJOR(el->dev_id), MINOR(el->dev_id));=0A=
-> +=0A=
-> +			kfree(el);=0A=
-> +		}=0A=
-> +	} while (el);=0A=
-> +=0A=
-> +	kfree(multidev);=0A=
-> +}=0A=
-> +=0A=
-> +struct multidev_el *snapstore_multidev_find(struct snapstore_multidev *m=
-ultidev, dev_t dev_id)=0A=
-> +{=0A=
-> +	struct multidev_el *el =3D NULL;=0A=
-> +=0A=
-> +	spin_lock(&multidev->devicelist_lock);=0A=
-> +	if (!list_empty(&multidev->devicelist)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &multidev->devicelist) {=0A=
-> +			struct multidev_el *_el =3D list_entry(_head, struct multidev_el, lin=
-k);=0A=
-> +=0A=
-> +			if (_el->dev_id =3D=3D dev_id) {=0A=
-> +				el =3D _el;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	spin_unlock(&multidev->devicelist_lock);=0A=
-> +=0A=
-> +	return el;=0A=
-> +}=0A=
-> +=0A=
-> +struct block_device *snapstore_multidev_get_device(struct snapstore_mult=
-idev *multidev,=0A=
-> +						   dev_t dev_id)=0A=
-> +{=0A=
-> +	int res;=0A=
-> +	struct block_device *blk_dev =3D NULL;=0A=
-> +	struct multidev_el *el =3D snapstore_multidev_find(multidev, dev_id);=
-=0A=
-> +=0A=
-> +	if (el)=0A=
-> +		return el->blk_dev;=0A=
-> +=0A=
-> +	res =3D blk_dev_open(dev_id, &blk_dev);=0A=
-> +	if (res !=3D SUCCESS) {=0A=
-> +		pr_err("Unable to add device to snapstore multidevice file\n");=0A=
-> +		pr_err("Failed to open [%d:%d]. errno=3D%d", MAJOR(dev_id), MINOR(dev_=
-id), res);=0A=
-> +		return NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	el =3D kzalloc(sizeof(struct multidev_el), GFP_KERNEL);=0A=
-> +	INIT_LIST_HEAD(&el->link);=0A=
-> +=0A=
-> +	el->blk_dev =3D blk_dev;=0A=
-> +	el->dev_id =3D dev_id;=0A=
-> +=0A=
-> +	spin_lock(&multidev->devicelist_lock);=0A=
-> +	list_add_tail(&el->link, &multidev->devicelist);=0A=
-> +	spin_unlock(&multidev->devicelist_lock);=0A=
-> +=0A=
-> +	return el->blk_dev;=0A=
-> +}=0A=
-> +=0A=
-> +#endif=0A=
-> diff --git a/drivers/block/blk-snap/snapstore_multidev.h b/drivers/block/=
-blk-snap/snapstore_multidev.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..40c1c3a41b08=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/snapstore_multidev.h=0A=
-> @@ -0,0 +1,22 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#ifdef CONFIG_BLK_SNAP_SNAPSTORE_MULTIDEV=0A=
-> +=0A=
-> +#include "blk_deferred.h"=0A=
-> +#include "blk_descr_multidev.h"=0A=
-> +=0A=
-> +struct snapstore_multidev {=0A=
-> +	struct list_head devicelist; //for mapping device id to opened device s=
-truct pointer=0A=
-> +	spinlock_t devicelist_lock;=0A=
-> +=0A=
-> +	struct blk_descr_pool pool;=0A=
-> +};=0A=
-> +=0A=
-> +int snapstore_multidev_create(struct snapstore_multidev **p_file);=0A=
-> +=0A=
-> +void snapstore_multidev_destroy(struct snapstore_multidev *file);=0A=
-> +=0A=
-> +struct block_device *snapstore_multidev_get_device(struct snapstore_mult=
-idev *multidev,=0A=
-> +						   dev_t dev_id);=0A=
-> +#endif=0A=
-> diff --git a/drivers/block/blk-snap/tracker.c b/drivers/block/blk-snap/tr=
-acker.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..3cda996d3f0a=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/tracker.c=0A=
-> @@ -0,0 +1,449 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-tracker"=0A=
-> +#include "common.h"=0A=
-> +#include "tracker.h"=0A=
-> +#include "blk_util.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +LIST_HEAD(trackers);=0A=
-> +DEFINE_RWLOCK(trackers_lock);=0A=
-> +=0A=
-> +void tracker_done(void)=0A=
-> +{=0A=
-> +	tracker_remove_all();=0A=
-> +}=0A=
-> +=0A=
-> +int tracker_find_by_bio(struct bio *bio, struct tracker **ptracker)=0A=
-> +{=0A=
-> +	int result =3D -ENODATA;=0A=
-> +=0A=
-> +	read_lock(&trackers_lock);=0A=
-> +	if (!list_empty(&trackers)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &trackers) {=0A=
-> +			struct tracker *_tracker =3D list_entry(_head, struct tracker, link);=
-=0A=
-> +=0A=
-> +			if ((bio->bi_disk =3D=3D _tracker->target_dev->bd_disk) &&=0A=
-> +			    (bio->bi_partno =3D=3D _tracker->target_dev->bd_partno)) {=0A=
-> +				if (ptracker !=3D NULL)=0A=
-> +					*ptracker =3D _tracker;=0A=
-> +=0A=
-> +				result =3D SUCCESS;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	read_unlock(&trackers_lock);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int tracker_find_by_dev_id(dev_t dev_id, struct tracker **ptracker)=0A=
-> +{=0A=
-> +	int result =3D -ENODATA;=0A=
-> +=0A=
-> +	read_lock(&trackers_lock);=0A=
-> +	if (!list_empty(&trackers)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &trackers) {=0A=
-> +			struct tracker *_tracker =3D list_entry(_head, struct tracker, link);=
-=0A=
-> +=0A=
-> +			if (_tracker->original_dev_id =3D=3D dev_id) {=0A=
-> +				if (ptracker !=3D NULL)=0A=
-> +					*ptracker =3D _tracker;=0A=
-> +=0A=
-> +				result =3D SUCCESS;=0A=
-> +				break;=0A=
-> +			}=0A=
-> +		}=0A=
-> +	}=0A=
-> +	read_unlock(&trackers_lock);=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int tracker_enum_cbt_info(int max_count, struct cbt_info_s *p_cbt_info, =
-int *p_count)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	int count =3D 0;=0A=
-> +=0A=
-> +	read_lock(&trackers_lock);=0A=
-> +	if (!list_empty(&trackers)) {=0A=
-> +		struct list_head *_head;=0A=
-> +=0A=
-> +		list_for_each(_head, &trackers) {=0A=
-> +			struct tracker *tracker =3D list_entry(_head, struct tracker, link);=
-=0A=
-> +=0A=
-> +			if (count >=3D max_count) {=0A=
-> +				result =3D -ENOBUFS;=0A=
-> +				break; //don`t continue=0A=
-> +			}=0A=
-> +=0A=
-> +			if (p_cbt_info !=3D NULL) {=0A=
-> +				p_cbt_info[count].dev_id.major =3D MAJOR(tracker->original_dev_id);=
-=0A=
-> +				p_cbt_info[count].dev_id.minor =3D MINOR(tracker->original_dev_id);=
-=0A=
-> +=0A=
-> +				if (tracker->cbt_map) {=0A=
-> +					p_cbt_info[count].cbt_map_size =3D tracker->cbt_map->map_size;=0A=
-> +					p_cbt_info[count].snap_number =3D=0A=
-> +						(unsigned char)=0A=
-> +							tracker->cbt_map->snap_number_previous;=0A=
-> +					uuid_copy((uuid_t *)(p_cbt_info[count].generationId),=0A=
-> +						  &tracker->cbt_map->generationId);=0A=
-> +				} else {=0A=
-> +					p_cbt_info[count].cbt_map_size =3D 0;=0A=
-> +					p_cbt_info[count].snap_number =3D 0;=0A=
-> +				}=0A=
-> +=0A=
-> +				p_cbt_info[count].dev_capacity =3D (u64)from_sectors(=0A=
-> +					part_nr_sects_read(tracker->target_dev->bd_part));=0A=
-> +			}=0A=
-> +=0A=
-> +			++count;=0A=
-> +		}=0A=
-> +	}=0A=
-> +	read_unlock(&trackers_lock);=0A=
-> +=0A=
-> +	if (result =3D=3D SUCCESS)=0A=
-> +		if (count =3D=3D 0)=0A=
-> +			result =3D -ENODATA;=0A=
-> +=0A=
-> +	*p_count =3D count;=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +static void blk_thaw_bdev(dev_t dev_id, struct block_device *device,=0A=
-> +					 struct super_block *superblock)=0A=
-> +{=0A=
-> +	if (superblock =3D=3D NULL)=0A=
-> +		return;=0A=
-> +=0A=
-> +	if (thaw_bdev(device, superblock) =3D=3D SUCCESS)=0A=
-> +		pr_info("Device [%d:%d] was unfrozen\n", MAJOR(dev_id), MINOR(dev_id))=
-;=0A=
-> +	else=0A=
-> +		pr_err("Failed to unfreeze device [%d:%d]\n", MAJOR(dev_id), MINOR(dev=
-_id));=0A=
-> +}=0A=
-> +=0A=
-> +static int blk_freeze_bdev(dev_t dev_id, struct block_device *device,=0A=
-> +			   struct super_block **psuperblock)=0A=
-> +{=0A=
-> +	struct super_block *superblock;=0A=
-> +=0A=
-> +	if (device->bd_super =3D=3D NULL) {=0A=
-> +		pr_warn("Unable to freeze device [%d:%d]: no superblock was found\n",=
-=0A=
-> +			MAJOR(dev_id), MINOR(dev_id));=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	superblock =3D freeze_bdev(device);=0A=
-> +	if (IS_ERR_OR_NULL(superblock)) {=0A=
-> +		int result;=0A=
-> +=0A=
-> +		pr_err("Failed to freeze device [%d:%d]\n", MAJOR(dev_id), MINOR(dev_i=
-d));=0A=
-> +=0A=
-> +		if (superblock =3D=3D NULL)=0A=
-> +			result =3D -ENODEV;=0A=
-> +		else {=0A=
-> +			result =3D PTR_ERR(superblock);=0A=
-> +			pr_err("Error code: %d\n", result);=0A=
-> +		}=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	pr_info("Device [%d:%d] was frozen\n", MAJOR(dev_id), MINOR(dev_id));=
-=0A=
-> +	*psuperblock =3D superblock;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int _tracker_create(struct tracker *tracker, void *filter, bool attach_f=
-ilter)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	unsigned int sect_in_block_degree;=0A=
-> +	sector_t capacity;=0A=
-> +	struct super_block *superblock =3D NULL;=0A=
-> +=0A=
-> +	result =3D blk_dev_open(tracker->original_dev_id, &tracker->target_dev)=
-;=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return ENODEV;=0A=
-> +=0A=
-> +	pr_info("Create tracker for device [%d:%d]. Capacity 0x%llx sectors\n",=
-=0A=
-> +		MAJOR(tracker->original_dev_id), MINOR(tracker->original_dev_id),=0A=
-> +		(unsigned long long)part_nr_sects_read(tracker->target_dev->bd_part));=
-=0A=
-> +=0A=
-> +	sect_in_block_degree =3D get_change_tracking_block_size_pow() - SECTOR_=
-SHIFT;=0A=
-> +	capacity =3D part_nr_sects_read(tracker->target_dev->bd_part);=0A=
-> +=0A=
-> +	tracker->cbt_map =3D cbt_map_create(sect_in_block_degree, capacity);=0A=
-> +	if (tracker->cbt_map =3D=3D NULL) {=0A=
-> +		pr_err("Failed to create tracker for device [%d:%d]\n",=0A=
-> +		       MAJOR(tracker->original_dev_id), MINOR(tracker->original_dev_id=
-));=0A=
-> +		tracker_remove(tracker);=0A=
-> +		return -ENOMEM;=0A=
-> +	}=0A=
-> +=0A=
-> +	tracker->snapshot_id =3D 0ull;=0A=
-> +=0A=
-> +	if (attach_filter) {=0A=
-> +		blk_freeze_bdev(tracker->original_dev_id, tracker->target_dev, &superb=
-lock);=0A=
-> +=0A=
-> +		blk_filter_attach(tracker->original_dev_id, filter, tracker);=0A=
-> +=0A=
-> +		blk_thaw_bdev(tracker->original_dev_id, tracker->target_dev, superbloc=
-k);=0A=
-> +	}=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int tracker_create(dev_t dev_id, void *filter, struct tracker **ptracker=
-)=0A=
-> +{=0A=
-> +	int ret;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	*ptracker =3D NULL;=0A=
-> +=0A=
-> +	tracker =3D kzalloc(sizeof(struct tracker), GFP_KERNEL);=0A=
-> +	if (tracker =3D=3D NULL)=0A=
-> +		return -ENOMEM;=0A=
-> +=0A=
-> +	INIT_LIST_HEAD(&tracker->link);=0A=
-> +	atomic_set(&tracker->is_captured, false);=0A=
-> +	tracker->original_dev_id =3D dev_id;=0A=
-> +=0A=
-> +	write_lock(&trackers_lock);=0A=
-> +	list_add_tail(&tracker->link, &trackers);=0A=
-> +	write_unlock(&trackers_lock);=0A=
-> +=0A=
-> +	ret =3D _tracker_create(tracker, filter, true);=0A=
-> +	if (ret < 0) {=0A=
-> +		tracker_remove(tracker);=0A=
-> +		return ret;=0A=
-> +	}=0A=
-> +=0A=
-> +	*ptracker =3D tracker;=0A=
-> +	if (ret =3D=3D ENODEV)=0A=
-> +		pr_info("Cannot attach to unknown device [%d:%d]",=0A=
-> +		       MAJOR(tracker->original_dev_id), MINOR(tracker->original_dev_id=
-));=0A=
-> +=0A=
-> +	return ret;=0A=
-> +}=0A=
-> +=0A=
-> +void _tracker_remove(struct tracker *tracker, bool detach_filter)=0A=
-> +{=0A=
-> +	struct super_block *superblock =3D NULL;=0A=
-> +=0A=
-> +	if (tracker->target_dev !=3D NULL) {=0A=
-> +		if (detach_filter) {=0A=
-> +			blk_freeze_bdev(tracker->original_dev_id, tracker->target_dev, &super=
-block);=0A=
-> +=0A=
-> +			blk_filter_detach(tracker->original_dev_id);=0A=
-> +=0A=
-> +			blk_thaw_bdev(tracker->original_dev_id, tracker->target_dev, superblo=
-ck);=0A=
-> +		}=0A=
-> +=0A=
-> +		blk_dev_close(tracker->target_dev);=0A=
-> +		tracker->target_dev =3D NULL;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (tracker->cbt_map !=3D NULL) {=0A=
-> +		cbt_map_put_resource(tracker->cbt_map);=0A=
-> +		tracker->cbt_map =3D NULL;=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +void tracker_remove(struct tracker *tracker)=0A=
-> +{=0A=
-> +	_tracker_remove(tracker, true);=0A=
-> +=0A=
-> +	write_lock(&trackers_lock);=0A=
-> +	list_del(&tracker->link);=0A=
-> +	write_unlock(&trackers_lock);=0A=
-> +=0A=
-> +	kfree(tracker);=0A=
-> +}=0A=
-> +=0A=
-> +void tracker_remove_all(void)=0A=
-> +{=0A=
-> +	struct tracker *tracker;=0A=
-> +=0A=
-> +	pr_info("Removing all devices from tracking\n");=0A=
-> +=0A=
-> +	do {=0A=
-> +		tracker =3D NULL;=0A=
-> +=0A=
-> +		write_lock(&trackers_lock);=0A=
-> +		if (!list_empty(&trackers)) {=0A=
-> +			tracker =3D list_entry(trackers.next, struct tracker, link);=0A=
-> +=0A=
-> +			list_del(&tracker->link);=0A=
-> +		}=0A=
-> +		write_unlock(&trackers_lock);=0A=
-> +=0A=
-> +		if (tracker) {=0A=
-> +			_tracker_remove(tracker, true);=0A=
-> +			kfree(tracker);=0A=
-> +		}=0A=
-> +	} while (tracker);=0A=
-> +}=0A=
-> +=0A=
-> +void tracker_cbt_bitmap_set(struct tracker *tracker, sector_t sector, se=
-ctor_t sector_cnt)=0A=
-> +{=0A=
-> +	if (tracker->cbt_map =3D=3D NULL)=0A=
-> +		return;=0A=
-> +=0A=
-> +	if (tracker->cbt_map->device_capacity !=3D part_nr_sects_read(tracker->=
-target_dev->bd_part)) {=0A=
-> +		pr_warn("Device resize detected\n");=0A=
-> +		tracker->cbt_map->active =3D false;=0A=
-> +		return;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (cbt_map_set(tracker->cbt_map, sector, sector_cnt) !=3D SUCCESS) { /=
-/cbt corrupt=0A=
-> +		pr_warn("CBT fault detected\n");=0A=
-> +		tracker->cbt_map->active =3D false;=0A=
-> +		return;=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +bool tracker_cbt_bitmap_lock(struct tracker *tracker)=0A=
-> +{=0A=
-> +	if (tracker->cbt_map =3D=3D NULL)=0A=
-> +		return false;=0A=
-> +=0A=
-> +	cbt_map_read_lock(tracker->cbt_map);=0A=
-> +	if (!tracker->cbt_map->active) {=0A=
-> +		cbt_map_read_unlock(tracker->cbt_map);=0A=
-> +		return false;=0A=
-> +	}=0A=
-> +=0A=
-> +	return true;=0A=
-> +}=0A=
-> +=0A=
-> +void tracker_cbt_bitmap_unlock(struct tracker *tracker)=0A=
-> +{=0A=
-> +	if (tracker->cbt_map)=0A=
-> +		cbt_map_read_unlock(tracker->cbt_map);=0A=
-> +}=0A=
-> +=0A=
-> +int _tracker_capture_snapshot(struct tracker *tracker)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +=0A=
-> +	result =3D defer_io_create(tracker->original_dev_id, tracker->target_de=
-v, &tracker->defer_io);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to create defer IO processor\n");=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	atomic_set(&tracker->is_captured, true);=0A=
-> +=0A=
-> +	if (tracker->cbt_map !=3D NULL) {=0A=
-> +		cbt_map_write_lock(tracker->cbt_map);=0A=
-> +		cbt_map_switch(tracker->cbt_map);=0A=
-> +		cbt_map_write_unlock(tracker->cbt_map);=0A=
-> +=0A=
-> +		pr_info("Snapshot captured for device [%d:%d]. New snap number %ld\n",=
-=0A=
-> +			MAJOR(tracker->original_dev_id), MINOR(tracker->original_dev_id),=0A=
-> +			tracker->cbt_map->snap_number_active);=0A=
-> +	}=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int tracker_capture_snapshot(dev_t *dev_id_set, int dev_id_set_size)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	int inx =3D 0;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < dev_id_set_size; ++inx) {=0A=
-> +		struct super_block *superblock =3D NULL;=0A=
-> +		struct tracker *tracker =3D NULL;=0A=
-> +		dev_t dev_id =3D dev_id_set[inx];=0A=
-> +=0A=
-> +		result =3D tracker_find_by_dev_id(dev_id, &tracker);=0A=
-> +		if (result !=3D SUCCESS) {=0A=
-> +			pr_err("Unable to capture snapshot: cannot find device [%d:%d]\n",=0A=
-> +			       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +			break;=0A=
-> +		}=0A=
-> +=0A=
-> +=0A=
-> +		blk_freeze_bdev(tracker->original_dev_id, tracker->target_dev, &superb=
-lock);=0A=
-> +		blk_filter_freeze(tracker->target_dev);=0A=
-> +=0A=
-> +		result =3D _tracker_capture_snapshot(tracker);=0A=
-> +		if (result !=3D SUCCESS)=0A=
-> +			pr_err("Failed to capture snapshot for device [%d:%d]\n",=0A=
-> +			       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +=0A=
-> +		blk_filter_thaw(tracker->target_dev);=0A=
-> +		blk_thaw_bdev(tracker->original_dev_id, tracker->target_dev, superbloc=
-k);=0A=
-> +	}=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return result;=0A=
-> +=0A=
-> +	for (inx =3D 0; inx < dev_id_set_size; ++inx) {=0A=
-> +		struct tracker *tracker =3D NULL;=0A=
-> +		dev_t dev_id =3D dev_id_set[inx];=0A=
-> +=0A=
-> +		result =3D tracker_find_by_dev_id(dev_id, &tracker);=0A=
-> +		if (result !=3D SUCCESS) {=0A=
-> +			pr_err("Unable to capture snapshot: cannot find device [%d:%d]\n",=0A=
-> +			       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +			continue;=0A=
-> +		}=0A=
-> +=0A=
-> +		if (snapstore_device_is_corrupted(tracker->defer_io->snapstore_device)=
-) {=0A=
-> +			pr_err("Unable to freeze devices [%d:%d]: snapshot data is corrupted\=
-n",=0A=
-> +			       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +			result =3D -EDEADLK;=0A=
-> +			break;=0A=
-> +		}=0A=
-> +	}=0A=
-> +=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to capture snapshot. errno=3D%d\n", result);=0A=
-> +=0A=
-> +		tracker_release_snapshot(dev_id_set, dev_id_set_size);=0A=
-> +	}=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +void _tracker_release_snapshot(struct tracker *tracker)=0A=
-> +{=0A=
-> +	struct super_block *superblock =3D NULL;=0A=
-> +	struct defer_io *defer_io =3D tracker->defer_io;=0A=
-> +=0A=
-> +	blk_freeze_bdev(tracker->original_dev_id, tracker->target_dev, &superbl=
-ock);=0A=
-> +	blk_filter_freeze(tracker->target_dev);=0A=
-> +	{ //locked region=0A=
-> +		atomic_set(&tracker->is_captured, false); //clear freeze flag=0A=
-> +=0A=
-> +		tracker->defer_io =3D NULL;=0A=
-> +	}=0A=
-> +	blk_filter_thaw(tracker->target_dev);=0A=
-> +=0A=
-> +	blk_thaw_bdev(tracker->original_dev_id, tracker->target_dev, superblock=
-);=0A=
-> +=0A=
-> +	defer_io_stop(defer_io);=0A=
-> +	defer_io_put_resource(defer_io);=0A=
-> +}=0A=
-> +=0A=
-> +void tracker_release_snapshot(dev_t *dev_id_set, int dev_id_set_size)=0A=
-> +{=0A=
-> +	int inx =3D 0;=0A=
-> +=0A=
-> +	for (; inx < dev_id_set_size; ++inx) {=0A=
-> +		int status;=0A=
-> +		struct tracker *p_tracker =3D NULL;=0A=
-> +		dev_t dev =3D dev_id_set[inx];=0A=
-> +=0A=
-> +		status =3D tracker_find_by_dev_id(dev, &p_tracker);=0A=
-> +		if (status =3D=3D SUCCESS)=0A=
-> +			_tracker_release_snapshot(p_tracker);=0A=
-> +		else=0A=
-> +			pr_err("Unable to release snapshot: cannot find tracker for device [%=
-d:%d]\n",=0A=
-> +			       MAJOR(dev), MINOR(dev));=0A=
-> +	}=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/tracker.h b/drivers/block/blk-snap/tr=
-acker.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..9fff7c0942c3=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/tracker.h=0A=
-> @@ -0,0 +1,38 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +#include "cbt_map.h"=0A=
-> +#include "defer_io.h"=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +#include "snapshot.h"=0A=
-> +=0A=
-> +struct tracker {=0A=
-> +	struct list_head link;=0A=
-> +	dev_t original_dev_id;=0A=
-> +	struct block_device *target_dev;=0A=
-> +	struct cbt_map *cbt_map;=0A=
-> +	atomic_t is_captured;=0A=
-> +	struct defer_io *defer_io;=0A=
-> +	unsigned long long snapshot_id; // current snapshot for this device=0A=
-> +};=0A=
-> +=0A=
-> +void tracker_done(void);=0A=
-> +=0A=
-> +int tracker_find_by_bio(struct bio *bio, struct tracker **ptracker);=0A=
-> +int tracker_find_by_dev_id(dev_t dev_id, struct tracker **ptracker);=0A=
-> +=0A=
-> +int tracker_enum_cbt_info(int max_count, struct cbt_info_s *p_cbt_info, =
-int *p_count);=0A=
-> +=0A=
-> +int tracker_capture_snapshot(dev_t *dev_id_set, int dev_id_set_size);=0A=
-> +void tracker_release_snapshot(dev_t *dev_id_set, int dev_id_set_size);=
-=0A=
-> +=0A=
-> +int _tracker_create(struct tracker *tracker, void *filter, bool attach_f=
-ilter);=0A=
-> +int tracker_create(dev_t dev_id, void *filter, struct tracker **ptracker=
-);=0A=
-> +=0A=
-> +void _tracker_remove(struct tracker *tracker, bool detach_filter);=0A=
-> +void tracker_remove(struct tracker *tracker);=0A=
-> +void tracker_remove_all(void);=0A=
-> +=0A=
-> +void tracker_cbt_bitmap_set(struct tracker *tracker, sector_t sector, se=
-ctor_t sector_cnt);=0A=
-> +=0A=
-> +bool tracker_cbt_bitmap_lock(struct tracker *tracker);=0A=
-> +void tracker_cbt_bitmap_unlock(struct tracker *tracker);=0A=
-> diff --git a/drivers/block/blk-snap/tracking.c b/drivers/block/blk-snap/t=
-racking.c=0A=
-> new file mode 100644=0A=
-> index 000000000000..55e18891bb96=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/tracking.c=0A=
-> @@ -0,0 +1,270 @@=0A=
-> +// SPDX-License-Identifier: GPL-2.0=0A=
-> +#define BLK_SNAP_SECTION "-tracking"=0A=
-> +#include "common.h"=0A=
-> +#include "tracking.h"=0A=
-> +#include "tracker.h"=0A=
-> +#include "blk_util.h"=0A=
-> +#include "defer_io.h"=0A=
-> +#include "params.h"=0A=
-> +=0A=
-> +#include <linux/blk-filter.h>=0A=
-> +=0A=
-> +/* pointer to block layer filter */=0A=
-> +void *filter;=0A=
-> +=0A=
-> +/*=0A=
-> + * _tracking_submit_bio() - Intercept bio by block io layer filter=0A=
-> + */=0A=
-> +static bool _tracking_submit_bio(struct bio *bio, void *filter_data)=0A=
-> +{=0A=
-> +	int res;=0A=
-> +	bool cbt_locked =3D false;=0A=
-> +	struct tracker *tracker =3D filter_data;=0A=
-> +=0A=
-> +	if (!tracker)=0A=
-> +		return false;=0A=
-> +=0A=
-> +	//intercepting=0A=
-> +	if (atomic_read(&tracker->is_captured)) {=0A=
-> +		//snapshot is captured, call bio redirect algorithm=0A=
-> +=0A=
-> +		res =3D defer_io_redirect_bio(tracker->defer_io, bio, tracker);=0A=
-> +		if (res =3D=3D SUCCESS)=0A=
-> +			return true;=0A=
-> +	}=0A=
-> +=0A=
-> +	cbt_locked =3D false;=0A=
-> +	if (tracker && bio_data_dir(bio) && bio_has_data(bio)) {=0A=
-> +		//call CBT algorithm=0A=
-> +		cbt_locked =3D tracker_cbt_bitmap_lock(tracker);=0A=
-> +		if (cbt_locked) {=0A=
-> +			sector_t sectStart =3D bio->bi_iter.bi_sector;=0A=
-> +			sector_t sectCount =3D bio_sectors(bio);=0A=
-> +=0A=
-> +			tracker_cbt_bitmap_set(tracker, sectStart, sectCount);=0A=
-> +		}=0A=
-> +	}=0A=
-> +	if (cbt_locked)=0A=
-> +		tracker_cbt_bitmap_unlock(tracker);=0A=
-> +=0A=
-> +	return false;=0A=
-> +}=0A=
-> +=0A=
-> +static bool _tracking_part_add(dev_t devt, void **p_filter_data)=0A=
-> +{=0A=
-> +	int result;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	pr_info("new block device [%d:%d] in system\n", MAJOR(devt), MINOR(devt=
-));=0A=
-> +=0A=
-> +	result =3D tracker_find_by_dev_id(devt, &tracker);=0A=
-> +	if (result !=3D SUCCESS)=0A=
-> +		return false; /*do not track this device*/=0A=
-> +=0A=
-> +	if (_tracker_create(tracker, filter, false)) {=0A=
-> +		pr_err("Failed to attach new device to tracker. errno=3D%d\n", result)=
-;=0A=
-> +		return false; /*failed to attach new device to tracker*/=0A=
-> +	}=0A=
-> +=0A=
-> +	*p_filter_data =3D tracker;=0A=
-> +	return true;=0A=
-> +}=0A=
-> +=0A=
-> +static void _tracking_part_del(void *private_data)=0A=
-> +{=0A=
-> +	struct tracker *tracker =3D private_data;=0A=
-> +=0A=
-> +	if (!tracker)=0A=
-> +		return;=0A=
-> +=0A=
-> +	pr_info("delete block device [%d:%d] from system\n",=0A=
-> +		MAJOR(tracker->original_dev_id), MINOR(tracker->original_dev_id));=0A=
-> +=0A=
-> +	_tracker_remove(tracker, false);=0A=
-> +}=0A=
-> +=0A=
-> +struct blk_filter_ops filter_ops =3D {=0A=
-> +	.filter_bio =3D _tracking_submit_bio,=0A=
-> +	.part_add =3D _tracking_part_add,=0A=
-> +	.part_del =3D _tracking_part_del };=0A=
-> +=0A=
-> +=0A=
-> +=0A=
-> +int tracking_init(void)=0A=
-> +{=0A=
-> +	filter =3D blk_filter_register(&filter_ops);=0A=
-> +	if (!filter)=0A=
-> +		return -ENOMEM;=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +void tracking_done(void)=0A=
-> +{=0A=
-> +	if (filter) {=0A=
-> +		blk_filter_unregister(filter);=0A=
-> +		filter =3D NULL;=0A=
-> +	}=0A=
-> +}=0A=
-> +=0A=
-> +static int _add_already_tracked(dev_t dev_id, unsigned long long snapsho=
-t_id,=0A=
-> +				struct tracker *tracker)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	bool cbt_reset_needed =3D false;=0A=
-> +=0A=
-> +	if ((snapshot_id !=3D 0ull) && (tracker->snapshot_id =3D=3D 0ull))=0A=
-> +		tracker->snapshot_id =3D snapshot_id; // set new snapshot id=0A=
-> +=0A=
-> +	if (tracker->cbt_map =3D=3D NULL) {=0A=
-> +		unsigned int sect_in_block_degree =3D=0A=
-> +			get_change_tracking_block_size_pow() - SECTOR_SHIFT;=0A=
-> +		tracker->cbt_map =3D cbt_map_create(sect_in_block_degree - SECTOR_SHIF=
-T,=0A=
-> +						  part_nr_sects_read(tracker->target_dev->bd_part));=0A=
-> +		if (tracker->cbt_map =3D=3D NULL)=0A=
-> +			return -ENOMEM;=0A=
-> +=0A=
-> +		// skip snapshot id=0A=
-> +		tracker->snapshot_id =3D snapshot_id;=0A=
-> +		return SUCCESS;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (!tracker->cbt_map->active) {=0A=
-> +		cbt_reset_needed =3D true;=0A=
-> +		pr_warn("Nonactive CBT table detected. CBT fault\n");=0A=
-> +	}=0A=
-> +=0A=
-> +	if (tracker->cbt_map->device_capacity !=3D part_nr_sects_read(tracker->=
-target_dev->bd_part)) {=0A=
-> +		cbt_reset_needed =3D true;=0A=
-> +		pr_warn("Device resize detected. CBT fault\n");=0A=
-> +	}=0A=
-> +=0A=
-> +	if (!cbt_reset_needed)=0A=
-> +		return SUCCESS;=0A=
-> +=0A=
-> +	_tracker_remove(tracker, true);=0A=
-> +=0A=
-> +	result =3D _tracker_create(tracker, filter, true);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to create tracker. errno=3D%d\n", result);=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	tracker->snapshot_id =3D snapshot_id;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +static int _create_new_tracker(dev_t dev_id, unsigned long long snapshot=
-_id)=0A=
-> +{=0A=
-> +	int result;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	result =3D tracker_create(dev_id, filter, &tracker);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Failed to create tracker. errno=3D%d\n", result);=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	tracker->snapshot_id =3D snapshot_id;=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +=0A=
-> +int tracking_add(dev_t dev_id, unsigned long long snapshot_id)=0A=
-> +{=0A=
-> +	int result;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	pr_info("Adding device [%d:%d] under tracking\n", MAJOR(dev_id), MINOR(=
-dev_id));=0A=
-> +=0A=
-> +	result =3D tracker_find_by_dev_id(dev_id, &tracker);=0A=
-> +	if (result =3D=3D SUCCESS) {=0A=
-> +		//pr_info("Device [%d:%d] is already tracked\n", MAJOR(dev_id), MINOR(=
-dev_id));=0A=
-> +		result =3D _add_already_tracked(dev_id, snapshot_id, tracker);=0A=
-> +		if (result =3D=3D SUCCESS)=0A=
-> +			result =3D -EALREADY;=0A=
-> +	} else if (-ENODATA =3D=3D result)=0A=
-> +		result =3D _create_new_tracker(dev_id, snapshot_id);=0A=
-> +	else {=0A=
-> +		pr_err("Unable to add device [%d:%d] under tracking\n", MAJOR(dev_id),=
-=0A=
-> +			MINOR(dev_id));=0A=
-> +		pr_err("Invalid trackers container. errno=3D%d\n", result);=0A=
-> +	}=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> +=0A=
-> +int tracking_remove(dev_t dev_id)=0A=
-> +{=0A=
-> +	int result;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	pr_info("Removing device [%d:%d] from tracking\n", MAJOR(dev_id), MINOR=
-(dev_id));=0A=
-> +=0A=
-> +	result =3D tracker_find_by_dev_id(dev_id, &tracker);=0A=
-> +	if (result !=3D SUCCESS) {=0A=
-> +		pr_err("Unable to remove device [%d:%d] from tracking: ",=0A=
-> +		       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +=0A=
-> +		if (-ENODATA =3D=3D result)=0A=
-> +			pr_err("tracker not found\n");=0A=
-> +		else=0A=
-> +			pr_err("tracker container failed. errno=3D%d\n", result);=0A=
-> +=0A=
-> +		return result;=0A=
-> +	}=0A=
-> +=0A=
-> +	if (tracker->snapshot_id !=3D 0ull) {=0A=
-> +		pr_err("Unable to remove device [%d:%d] from tracking: ",=0A=
-> +		       MAJOR(dev_id), MINOR(dev_id));=0A=
-> +		pr_err("snapshot [0x%llx] already exist\n", tracker->snapshot_id);=0A=
-> +		return -EBUSY;=0A=
-> +	}=0A=
-> +=0A=
-> +	tracker_remove(tracker);=0A=
-> +=0A=
-> +	return SUCCESS;=0A=
-> +}=0A=
-> +=0A=
-> +int tracking_collect(int max_count, struct cbt_info_s *p_cbt_info, int *=
-p_count)=0A=
-> +{=0A=
-> +	int res =3D tracker_enum_cbt_info(max_count, p_cbt_info, p_count);=0A=
-> +=0A=
-> +	if (res =3D=3D SUCCESS)=0A=
-> +		pr_info("%d devices found under tracking\n", *p_count);=0A=
-> +	else if (res =3D=3D -ENODATA) {=0A=
-> +		pr_info("There are no devices under tracking\n");=0A=
-> +		*p_count =3D 0;=0A=
-> +		res =3D SUCCESS;=0A=
-> +	} else=0A=
-> +		pr_err("Failed to collect devices under tracking. errno=3D%d", res);=
-=0A=
-> +=0A=
-> +	return res;=0A=
-> +}=0A=
-> +=0A=
-> +int tracking_read_cbt_bitmap(dev_t dev_id, unsigned int offset, size_t l=
-ength,=0A=
-> +			     void __user *user_buff)=0A=
-> +{=0A=
-> +	int result =3D SUCCESS;=0A=
-> +	struct tracker *tracker =3D NULL;=0A=
-> +=0A=
-> +	result =3D tracker_find_by_dev_id(dev_id, &tracker);=0A=
-> +	if (result =3D=3D SUCCESS) {=0A=
-> +		if (atomic_read(&tracker->is_captured))=0A=
-> +			result =3D cbt_map_read_to_user(tracker->cbt_map, user_buff, offset, =
-length);=0A=
-> +		else {=0A=
-> +			pr_err("Unable to read CBT bitmap for device [%d:%d]: ", MAJOR(dev_id=
-),=0A=
-> +			       MINOR(dev_id));=0A=
-> +			pr_err("device is not captured by snapshot\n");=0A=
-> +			result =3D -EPERM;=0A=
-> +		}=0A=
-> +	} else if (-ENODATA =3D=3D result) {=0A=
-> +		pr_err("Unable to read CBT bitmap for device [%d:%d]: ", MAJOR(dev_id)=
-,=0A=
-> +		       MINOR(dev_id));=0A=
-> +		pr_err("device not found\n");=0A=
-> +	} else=0A=
-> +		pr_err("Failed to find devices under tracking. errno=3D%d", result);=
-=0A=
-> +=0A=
-> +	return result;=0A=
-> +}=0A=
-> diff --git a/drivers/block/blk-snap/tracking.h b/drivers/block/blk-snap/t=
-racking.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..22bd5ba54963=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/tracking.h=0A=
-> @@ -0,0 +1,13 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +#include "blk-snap-ctl.h"=0A=
-> +#include <linux/bio.h>=0A=
-> +=0A=
-> +int  tracking_init(void);=0A=
-> +void tracking_done(void);=0A=
-> +=0A=
-> +int tracking_add(dev_t dev_id, unsigned long long snapshot_id);=0A=
-> +int tracking_remove(dev_t dev_id);=0A=
-> +int tracking_collect(int max_count, struct cbt_info_s *p_cbt_info, int *=
-p_count);=0A=
-> +int tracking_read_cbt_bitmap(dev_t dev_id, unsigned int offset, size_t l=
-ength,=0A=
-> +			     void __user *user_buff);=0A=
-> diff --git a/drivers/block/blk-snap/version.h b/drivers/block/blk-snap/ve=
-rsion.h=0A=
-> new file mode 100644=0A=
-> index 000000000000..a4431da73611=0A=
-> --- /dev/null=0A=
-> +++ b/drivers/block/blk-snap/version.h=0A=
-> @@ -0,0 +1,7 @@=0A=
-> +/* SPDX-License-Identifier: GPL-2.0 */=0A=
-> +#pragma once=0A=
-> +=0A=
-> +#define FILEVER_MAJOR 5=0A=
-> +#define FILEVER_MINOR 0=0A=
-> +#define FILEVER_REVISION 0=0A=
-> +#define FILEVER_STR "5.0.0"=0A=
-> =0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+
+--DCA/C9WSnDtl50zu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Greeting,
+
+FYI, we noticed the following commit (built with gcc-9):
+
+commit: 8e602a0a7050258a8f41927f4a1ff55bd26905d7 ("[PATCH 2/2] fs: kill add_to_page_cache_locked()")
+url: https://github.com/0day-ci/linux/commits/Kent-Overstreet/cifs-convert-to-add_to_page_cache/20201020-030041
+base: git://git.samba.org/sfrench/cifs-2.6.git for-next
+
+in testcase: boot
+
+on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
+
+caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+
+
++----------------------------+------------+------------+
+|                            | 089826771b | 8e602a0a70 |
++----------------------------+------------+------------+
+| boot_successes             | 4          | 0          |
+| boot_failures              | 0          | 4          |
+| kernel_BUG_at_mm/filemap.c | 0          | 4          |
+| invalid_opcode:#[##]       | 0          | 4          |
+| RIP:__add_to_page_cache    | 0          | 4          |
+| Kernel_panic-not_syncing   | 0          | 4          |
++----------------------------+------------+------------+
+
+
+If you fix the issue, kindly add following tag
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+
+
+[    0.797302] kernel BUG at mm/filemap.c:840!
+[    0.797985] invalid opcode: 0000 [#1] SMP PTI
+[    0.798626] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.9.0-00020-g8e602a0a70502 #1
+[    0.798626] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+[    0.798626] RIP: 0010:__add_to_page_cache+0x7d/0x261
+[    0.798626] Code: 24 20 00 00 00 00 48 c7 44 24 28 00 00 00 00 e8 e0 e2 ff ff 48 8b 00 a8 01 75 11 48 c7 c6 20 9a 2b 82 48 89 ef e8 dd 8e 02 00 <0f> 0b 48 89 ef e8 c0 e2 ff ff 48 8b 00 0f ba e0 13 73 11 48 c7 c6
+[    0.798626] RSP: 0000:ffffc90000013a60 EFLAGS: 00010286
+[    0.798626] RAX: 0000000000000000 RBX: ffff8882296c2d00 RCX: 0000000000000000
+[    0.798626] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff82c8570c
+[    0.798626] RBP: ffffea0008a77700 R08: 0000000000000000 R09: ffffffff82c8774f
+[    0.798626] R10: 0000000000000000 R11: ffffc900000137cd R12: 0000000000000000
+[    0.798626] R13: ffff8882296c2d00 R14: 0000000000100cc2 R15: ffffc90000013ad0
+[    0.798626] FS:  0000000000000000(0000) GS:ffff88823fc00000(0000) knlGS:0000000000000000
+[    0.798626] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    0.798626] CR2: 0000000000000000 CR3: 0000000002612000 CR4: 00000000000406f0
+[    0.798626] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    0.798626] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    0.798626] Call Trace:
+[    0.798626]  add_to_page_cache_lru+0x32/0x8a
+[    0.798626]  pagecache_get_page+0x110/0x149
+[    0.798626]  grab_cache_page_write_begin+0x1c/0x33
+[    0.798626]  simple_write_begin+0x26/0x71
+[    0.798626]  generic_perform_write+0xc0/0x1af
+[    0.798626]  ? file_update_time+0x47/0xed
+[    0.798626]  __generic_file_write_iter+0x112/0x153
+[    0.798626]  generic_file_write_iter+0x48/0x8a
+[    0.798626]  new_sync_write+0x7f/0xba
+[    0.798626]  __kernel_write+0xa3/0xe9
+[    0.798626]  kernel_write+0x4d/0x66
+[    0.798626]  ? write_buffer+0x37/0x37
+[    0.798626]  xwrite+0x31/0x62
+[    0.798626]  do_copy+0xbd/0x103
+[    0.798626]  ? do_name+0x123/0x273
+[    0.798626]  write_buffer+0x27/0x37
+[    0.798626]  flush_buffer+0x2b/0x83
+[    0.798626]  ? initrd_load+0x3f/0x3f
+[    0.798626]  __gunzip+0x264/0x306
+[    0.798626]  ? decompress_method+0x5e/0x5e
+[    0.798626]  gunzip+0xe/0x11
+[    0.798626]  ? initrd_load+0x3f/0x3f
+[    0.798626]  unpack_to_rootfs+0x156/0x287
+[    0.798626]  ? initrd_load+0x3f/0x3f
+[    0.798626]  ? unpack_to_rootfs+0x287/0x287
+[    0.798626]  populate_rootfs+0x59/0x104
+[    0.798626]  ? unpack_to_rootfs+0x287/0x287
+[    0.798626]  do_one_initcall+0x9d/0x1bb
+[    0.798626]  kernel_init_freeable+0x19c/0x1e1
+[    0.798626]  ? rest_init+0xc6/0xc6
+[    0.798626]  kernel_init+0xa/0x109
+[    0.798626]  ret_from_fork+0x22/0x30
+[    0.798626] Modules linked in:
+[    0.834108] ---[ end trace 1f25043c0352edba ]---
+
+
+To reproduce:
+
+        # build kernel
+	cd linux
+	cp config-5.9.0-00020-g8e602a0a70502 .config
+	make HOSTCC=gcc-9 CC=gcc-9 ARCH=x86_64 olddefconfig prepare modules_prepare bzImage
+
+        git clone https://github.com/intel/lkp-tests.git
+        cd lkp-tests
+        bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+
+
+
+Thanks,
+Rong Chen
+
+
+--DCA/C9WSnDtl50zu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="config-5.9.0-00020-g8e602a0a70502"
+
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux/x86_64 5.9.0 Kernel Configuration
+#
+CONFIG_CC_VERSION_TEXT="gcc-9 (Debian 9.3.0-15) 9.3.0"
+CONFIG_CC_IS_GCC=y
+CONFIG_GCC_VERSION=90300
+CONFIG_LD_VERSION=235000000
+CONFIG_CLANG_VERSION=0
+CONFIG_CC_CAN_LINK=y
+CONFIG_CC_CAN_LINK_STATIC=y
+CONFIG_CC_HAS_ASM_GOTO=y
+CONFIG_CC_HAS_ASM_INLINE=y
+CONFIG_IRQ_WORK=y
+CONFIG_BUILDTIME_TABLE_SORT=y
+CONFIG_THREAD_INFO_IN_TASK=y
+
+#
+# General setup
+#
+CONFIG_INIT_ENV_ARG_LIMIT=32
+# CONFIG_COMPILE_TEST is not set
+CONFIG_LOCALVERSION=""
+CONFIG_LOCALVERSION_AUTO=y
+CONFIG_BUILD_SALT=""
+CONFIG_HAVE_KERNEL_GZIP=y
+CONFIG_HAVE_KERNEL_BZIP2=y
+CONFIG_HAVE_KERNEL_LZMA=y
+CONFIG_HAVE_KERNEL_XZ=y
+CONFIG_HAVE_KERNEL_LZO=y
+CONFIG_HAVE_KERNEL_LZ4=y
+CONFIG_HAVE_KERNEL_ZSTD=y
+CONFIG_KERNEL_GZIP=y
+# CONFIG_KERNEL_BZIP2 is not set
+# CONFIG_KERNEL_LZMA is not set
+# CONFIG_KERNEL_XZ is not set
+# CONFIG_KERNEL_LZO is not set
+# CONFIG_KERNEL_LZ4 is not set
+# CONFIG_KERNEL_ZSTD is not set
+CONFIG_DEFAULT_INIT=""
+CONFIG_DEFAULT_HOSTNAME="(none)"
+CONFIG_SWAP=y
+CONFIG_SYSVIPC=y
+CONFIG_SYSVIPC_SYSCTL=y
+CONFIG_POSIX_MQUEUE=y
+CONFIG_POSIX_MQUEUE_SYSCTL=y
+# CONFIG_WATCH_QUEUE is not set
+CONFIG_CROSS_MEMORY_ATTACH=y
+CONFIG_USELIB=y
+CONFIG_AUDIT=y
+CONFIG_HAVE_ARCH_AUDITSYSCALL=y
+CONFIG_AUDITSYSCALL=y
+
+#
+# IRQ subsystem
+#
+CONFIG_GENERIC_IRQ_PROBE=y
+CONFIG_GENERIC_IRQ_SHOW=y
+CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK=y
+CONFIG_GENERIC_PENDING_IRQ=y
+CONFIG_GENERIC_IRQ_MIGRATION=y
+CONFIG_HARDIRQS_SW_RESEND=y
+CONFIG_IRQ_DOMAIN=y
+CONFIG_IRQ_DOMAIN_HIERARCHY=y
+CONFIG_GENERIC_MSI_IRQ=y
+CONFIG_GENERIC_MSI_IRQ_DOMAIN=y
+CONFIG_GENERIC_IRQ_MATRIX_ALLOCATOR=y
+CONFIG_GENERIC_IRQ_RESERVATION_MODE=y
+CONFIG_IRQ_FORCED_THREADING=y
+CONFIG_SPARSE_IRQ=y
+# CONFIG_GENERIC_IRQ_DEBUGFS is not set
+# end of IRQ subsystem
+
+CONFIG_CLOCKSOURCE_WATCHDOG=y
+CONFIG_ARCH_CLOCKSOURCE_INIT=y
+CONFIG_CLOCKSOURCE_VALIDATE_LAST_CYCLE=y
+CONFIG_GENERIC_TIME_VSYSCALL=y
+CONFIG_GENERIC_CLOCKEVENTS=y
+CONFIG_GENERIC_CLOCKEVENTS_BROADCAST=y
+CONFIG_GENERIC_CLOCKEVENTS_MIN_ADJUST=y
+CONFIG_GENERIC_CMOS_UPDATE=y
+CONFIG_HAVE_POSIX_CPU_TIMERS_TASK_WORK=y
+CONFIG_POSIX_CPU_TIMERS_TASK_WORK=y
+
+#
+# Timers subsystem
+#
+CONFIG_TICK_ONESHOT=y
+CONFIG_NO_HZ_COMMON=y
+# CONFIG_HZ_PERIODIC is not set
+CONFIG_NO_HZ_IDLE=y
+# CONFIG_NO_HZ_FULL is not set
+# CONFIG_NO_HZ is not set
+CONFIG_HIGH_RES_TIMERS=y
+# end of Timers subsystem
+
+# CONFIG_PREEMPT_NONE is not set
+CONFIG_PREEMPT_VOLUNTARY=y
+# CONFIG_PREEMPT is not set
+CONFIG_PREEMPT_COUNT=y
+
+#
+# CPU/Task time and stats accounting
+#
+CONFIG_TICK_CPU_ACCOUNTING=y
+# CONFIG_VIRT_CPU_ACCOUNTING_GEN is not set
+# CONFIG_IRQ_TIME_ACCOUNTING is not set
+CONFIG_BSD_PROCESS_ACCT=y
+CONFIG_BSD_PROCESS_ACCT_V3=y
+CONFIG_TASKSTATS=y
+CONFIG_TASK_DELAY_ACCT=y
+CONFIG_TASK_XACCT=y
+CONFIG_TASK_IO_ACCOUNTING=y
+# CONFIG_PSI is not set
+# end of CPU/Task time and stats accounting
+
+CONFIG_CPU_ISOLATION=y
+
+#
+# RCU Subsystem
+#
+CONFIG_TREE_RCU=y
+# CONFIG_RCU_EXPERT is not set
+CONFIG_SRCU=y
+CONFIG_TREE_SRCU=y
+CONFIG_TASKS_RCU_GENERIC=y
+CONFIG_TASKS_RUDE_RCU=y
+CONFIG_RCU_STALL_COMMON=y
+CONFIG_RCU_NEED_SEGCBLIST=y
+# end of RCU Subsystem
+
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+# CONFIG_IKHEADERS is not set
+CONFIG_LOG_BUF_SHIFT=20
+CONFIG_LOG_CPU_MAX_BUF_SHIFT=12
+CONFIG_PRINTK_SAFE_LOG_BUF_SHIFT=13
+CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
+
+#
+# Scheduler features
+#
+# CONFIG_UCLAMP_TASK is not set
+# end of Scheduler features
+
+CONFIG_ARCH_SUPPORTS_NUMA_BALANCING=y
+CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH=y
+CONFIG_CC_HAS_INT128=y
+CONFIG_ARCH_SUPPORTS_INT128=y
+# CONFIG_NUMA_BALANCING is not set
+CONFIG_CGROUPS=y
+CONFIG_PAGE_COUNTER=y
+CONFIG_MEMCG=y
+CONFIG_MEMCG_SWAP=y
+CONFIG_MEMCG_KMEM=y
+CONFIG_BLK_CGROUP=y
+CONFIG_CGROUP_WRITEBACK=y
+CONFIG_CGROUP_SCHED=y
+CONFIG_FAIR_GROUP_SCHED=y
+# CONFIG_CFS_BANDWIDTH is not set
+CONFIG_RT_GROUP_SCHED=y
+CONFIG_CGROUP_PIDS=y
+CONFIG_CGROUP_RDMA=y
+CONFIG_CGROUP_FREEZER=y
+CONFIG_CPUSETS=y
+CONFIG_PROC_PID_CPUSET=y
+CONFIG_CGROUP_DEVICE=y
+# CONFIG_CGROUP_CPUACCT is not set
+# CONFIG_CGROUP_PERF is not set
+CONFIG_CGROUP_BPF=y
+CONFIG_CGROUP_DEBUG=y
+CONFIG_SOCK_CGROUP_DATA=y
+# CONFIG_NAMESPACES is not set
+CONFIG_CHECKPOINT_RESTORE=y
+# CONFIG_SCHED_AUTOGROUP is not set
+# CONFIG_SYSFS_DEPRECATED is not set
+CONFIG_RELAY=y
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_INITRAMFS_SOURCE=""
+CONFIG_RD_GZIP=y
+# CONFIG_RD_BZIP2 is not set
+# CONFIG_RD_LZMA is not set
+# CONFIG_RD_XZ is not set
+# CONFIG_RD_LZO is not set
+# CONFIG_RD_LZ4 is not set
+CONFIG_RD_ZSTD=y
+# CONFIG_BOOT_CONFIG is not set
+# CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+CONFIG_SYSCTL=y
+CONFIG_HAVE_UID16=y
+CONFIG_SYSCTL_EXCEPTION_TRACE=y
+CONFIG_HAVE_PCSPKR_PLATFORM=y
+CONFIG_BPF=y
+CONFIG_EXPERT=y
+CONFIG_UID16=y
+CONFIG_MULTIUSER=y
+CONFIG_SGETMASK_SYSCALL=y
+CONFIG_SYSFS_SYSCALL=y
+CONFIG_FHANDLE=y
+CONFIG_POSIX_TIMERS=y
+CONFIG_PRINTK=y
+CONFIG_PRINTK_NMI=y
+CONFIG_BUG=y
+CONFIG_ELF_CORE=y
+CONFIG_PCSPKR_PLATFORM=y
+CONFIG_BASE_FULL=y
+CONFIG_FUTEX=y
+CONFIG_FUTEX_PI=y
+CONFIG_EPOLL=y
+CONFIG_SIGNALFD=y
+CONFIG_TIMERFD=y
+CONFIG_EVENTFD=y
+CONFIG_SHMEM=y
+CONFIG_AIO=y
+CONFIG_IO_URING=y
+CONFIG_ADVISE_SYSCALLS=y
+CONFIG_HAVE_ARCH_USERFAULTFD_WP=y
+CONFIG_MEMBARRIER=y
+CONFIG_KALLSYMS=y
+# CONFIG_KALLSYMS_ALL is not set
+CONFIG_KALLSYMS_ABSOLUTE_PERCPU=y
+CONFIG_KALLSYMS_BASE_RELATIVE=y
+CONFIG_BPF_SYSCALL=y
+CONFIG_ARCH_WANT_DEFAULT_BPF_JIT=y
+CONFIG_USERFAULTFD=y
+CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE=y
+CONFIG_RSEQ=y
+# CONFIG_DEBUG_RSEQ is not set
+CONFIG_EMBEDDED=y
+CONFIG_HAVE_PERF_EVENTS=y
+# CONFIG_PC104 is not set
+
+#
+# Kernel Performance Events And Counters
+#
+CONFIG_PERF_EVENTS=y
+# CONFIG_DEBUG_PERF_USE_VMALLOC is not set
+# end of Kernel Performance Events And Counters
+
+CONFIG_VM_EVENT_COUNTERS=y
+CONFIG_SLUB_DEBUG=y
+# CONFIG_SLUB_MEMCG_SYSFS_ON is not set
+CONFIG_COMPAT_BRK=y
+# CONFIG_SLAB is not set
+CONFIG_SLUB=y
+# CONFIG_SLOB is not set
+CONFIG_SLAB_MERGE_DEFAULT=y
+# CONFIG_SLAB_FREELIST_RANDOM is not set
+# CONFIG_SLAB_FREELIST_HARDENED is not set
+# CONFIG_SHUFFLE_PAGE_ALLOCATOR is not set
+CONFIG_SLUB_CPU_PARTIAL=y
+CONFIG_SYSTEM_DATA_VERIFICATION=y
+# CONFIG_PROFILING is not set
+CONFIG_TRACEPOINTS=y
+# end of General setup
+
+CONFIG_64BIT=y
+CONFIG_X86_64=y
+CONFIG_X86=y
+CONFIG_INSTRUCTION_DECODER=y
+CONFIG_OUTPUT_FORMAT="elf64-x86-64"
+CONFIG_LOCKDEP_SUPPORT=y
+CONFIG_STACKTRACE_SUPPORT=y
+CONFIG_MMU=y
+CONFIG_ARCH_MMAP_RND_BITS_MIN=28
+CONFIG_ARCH_MMAP_RND_BITS_MAX=32
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MIN=8
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX=16
+CONFIG_GENERIC_ISA_DMA=y
+CONFIG_GENERIC_BUG=y
+CONFIG_GENERIC_BUG_RELATIVE_POINTERS=y
+CONFIG_ARCH_MAY_HAVE_PC_FDC=y
+CONFIG_GENERIC_CALIBRATE_DELAY=y
+CONFIG_ARCH_HAS_CPU_RELAX=y
+CONFIG_ARCH_HAS_CACHE_LINE_SIZE=y
+CONFIG_ARCH_HAS_FILTER_PGPROT=y
+CONFIG_HAVE_SETUP_PER_CPU_AREA=y
+CONFIG_NEED_PER_CPU_EMBED_FIRST_CHUNK=y
+CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK=y
+CONFIG_ARCH_HIBERNATION_POSSIBLE=y
+CONFIG_ARCH_SUSPEND_POSSIBLE=y
+CONFIG_ARCH_WANT_GENERAL_HUGETLB=y
+CONFIG_ZONE_DMA32=y
+CONFIG_AUDIT_ARCH=y
+CONFIG_ARCH_SUPPORTS_DEBUG_PAGEALLOC=y
+CONFIG_HAVE_INTEL_TXT=y
+CONFIG_X86_64_SMP=y
+CONFIG_ARCH_SUPPORTS_UPROBES=y
+CONFIG_FIX_EARLYCON_MEM=y
+CONFIG_PGTABLE_LEVELS=5
+CONFIG_CC_HAS_SANE_STACKPROTECTOR=y
+
+#
+# Processor type and features
+#
+CONFIG_ZONE_DMA=y
+CONFIG_SMP=y
+CONFIG_X86_FEATURE_NAMES=y
+CONFIG_X86_X2APIC=y
+CONFIG_X86_MPPARSE=y
+# CONFIG_GOLDFISH is not set
+CONFIG_RETPOLINE=y
+# CONFIG_X86_CPU_RESCTRL is not set
+CONFIG_X86_EXTENDED_PLATFORM=y
+# CONFIG_X86_NUMACHIP is not set
+# CONFIG_X86_VSMP is not set
+# CONFIG_X86_UV is not set
+# CONFIG_X86_GOLDFISH is not set
+# CONFIG_X86_INTEL_LPSS is not set
+# CONFIG_X86_AMD_PLATFORM_DEVICE is not set
+CONFIG_IOSF_MBI=y
+# CONFIG_IOSF_MBI_DEBUG is not set
+CONFIG_X86_SUPPORTS_MEMORY_FAILURE=y
+# CONFIG_SCHED_OMIT_FRAME_POINTER is not set
+CONFIG_HYPERVISOR_GUEST=y
+CONFIG_PARAVIRT=y
+# CONFIG_PARAVIRT_DEBUG is not set
+# CONFIG_PARAVIRT_SPINLOCKS is not set
+CONFIG_X86_HV_CALLBACK_VECTOR=y
+# CONFIG_XEN is not set
+CONFIG_KVM_GUEST=y
+CONFIG_ARCH_CPUIDLE_HALTPOLL=y
+# CONFIG_PVH is not set
+# CONFIG_PARAVIRT_TIME_ACCOUNTING is not set
+CONFIG_PARAVIRT_CLOCK=y
+# CONFIG_JAILHOUSE_GUEST is not set
+# CONFIG_ACRN_GUEST is not set
+# CONFIG_MK8 is not set
+# CONFIG_MPSC is not set
+# CONFIG_MCORE2 is not set
+# CONFIG_MATOM is not set
+CONFIG_GENERIC_CPU=y
+CONFIG_X86_INTERNODE_CACHE_SHIFT=6
+CONFIG_X86_L1_CACHE_SHIFT=6
+CONFIG_X86_TSC=y
+CONFIG_X86_CMPXCHG64=y
+CONFIG_X86_CMOV=y
+CONFIG_X86_MINIMUM_CPU_FAMILY=64
+CONFIG_X86_DEBUGCTLMSR=y
+CONFIG_IA32_FEAT_CTL=y
+CONFIG_X86_VMX_FEATURE_NAMES=y
+CONFIG_PROCESSOR_SELECT=y
+CONFIG_CPU_SUP_INTEL=y
+CONFIG_CPU_SUP_AMD=y
+CONFIG_CPU_SUP_HYGON=y
+CONFIG_CPU_SUP_CENTAUR=y
+CONFIG_CPU_SUP_ZHAOXIN=y
+CONFIG_HPET_TIMER=y
+CONFIG_HPET_EMULATE_RTC=y
+CONFIG_DMI=y
+CONFIG_GART_IOMMU=y
+# CONFIG_MAXSMP is not set
+CONFIG_NR_CPUS_RANGE_BEGIN=2
+CONFIG_NR_CPUS_RANGE_END=512
+CONFIG_NR_CPUS_DEFAULT=64
+CONFIG_NR_CPUS=512
+CONFIG_SCHED_SMT=y
+CONFIG_SCHED_MC=y
+CONFIG_SCHED_MC_PRIO=y
+CONFIG_X86_LOCAL_APIC=y
+CONFIG_X86_IO_APIC=y
+# CONFIG_X86_REROUTE_FOR_BROKEN_BOOT_IRQS is not set
+CONFIG_X86_MCE=y
+CONFIG_X86_MCELOG_LEGACY=y
+CONFIG_X86_MCE_INTEL=y
+CONFIG_X86_MCE_AMD=y
+CONFIG_X86_MCE_THRESHOLD=y
+CONFIG_X86_MCE_INJECT=m
+CONFIG_X86_THERMAL_VECTOR=y
+
+#
+# Performance monitoring
+#
+CONFIG_PERF_EVENTS_INTEL_UNCORE=y
+# CONFIG_PERF_EVENTS_INTEL_RAPL is not set
+# CONFIG_PERF_EVENTS_INTEL_CSTATE is not set
+# CONFIG_PERF_EVENTS_AMD_POWER is not set
+# end of Performance monitoring
+
+CONFIG_X86_VSYSCALL_EMULATION=y
+CONFIG_X86_IOPL_IOPERM=y
+# CONFIG_I8K is not set
+CONFIG_MICROCODE=y
+CONFIG_MICROCODE_INTEL=y
+CONFIG_MICROCODE_AMD=y
+CONFIG_MICROCODE_OLD_INTERFACE=y
+CONFIG_X86_MSR=y
+CONFIG_X86_CPUID=y
+CONFIG_X86_5LEVEL=y
+CONFIG_X86_DIRECT_GBPAGES=y
+# CONFIG_X86_CPA_STATISTICS is not set
+# CONFIG_AMD_MEM_ENCRYPT is not set
+CONFIG_NUMA=y
+CONFIG_AMD_NUMA=y
+CONFIG_X86_64_ACPI_NUMA=y
+# CONFIG_NUMA_EMU is not set
+CONFIG_NODES_SHIFT=6
+CONFIG_ARCH_SPARSEMEM_ENABLE=y
+CONFIG_ARCH_SPARSEMEM_DEFAULT=y
+CONFIG_ARCH_SELECT_MEMORY_MODEL=y
+# CONFIG_ARCH_MEMORY_PROBE is not set
+CONFIG_ARCH_PROC_KCORE_TEXT=y
+CONFIG_ILLEGAL_POINTER_VALUE=0xdead000000000000
+CONFIG_X86_PMEM_LEGACY_DEVICE=y
+CONFIG_X86_PMEM_LEGACY=m
+CONFIG_X86_CHECK_BIOS_CORRUPTION=y
+CONFIG_X86_BOOTPARAM_MEMORY_CORRUPTION_CHECK=y
+CONFIG_X86_RESERVE_LOW=64
+CONFIG_MTRR=y
+CONFIG_MTRR_SANITIZER=y
+CONFIG_MTRR_SANITIZER_ENABLE_DEFAULT=0
+CONFIG_MTRR_SANITIZER_SPARE_REG_NR_DEFAULT=1
+CONFIG_X86_PAT=y
+CONFIG_ARCH_USES_PG_UNCACHED=y
+CONFIG_ARCH_RANDOM=y
+CONFIG_X86_SMAP=y
+CONFIG_X86_UMIP=y
+# CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS is not set
+CONFIG_X86_INTEL_TSX_MODE_OFF=y
+# CONFIG_X86_INTEL_TSX_MODE_ON is not set
+# CONFIG_X86_INTEL_TSX_MODE_AUTO is not set
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+CONFIG_EFI_MIXED=y
+CONFIG_SECCOMP=y
+# CONFIG_HZ_100 is not set
+CONFIG_HZ_250=y
+# CONFIG_HZ_300 is not set
+# CONFIG_HZ_1000 is not set
+CONFIG_HZ=250
+CONFIG_SCHED_HRTICK=y
+CONFIG_KEXEC=y
+# CONFIG_KEXEC_FILE is not set
+# CONFIG_CRASH_DUMP is not set
+CONFIG_KEXEC_JUMP=y
+CONFIG_PHYSICAL_START=0x1000000
+CONFIG_RELOCATABLE=y
+# CONFIG_RANDOMIZE_BASE is not set
+CONFIG_PHYSICAL_ALIGN=0x1000000
+CONFIG_DYNAMIC_MEMORY_LAYOUT=y
+CONFIG_HOTPLUG_CPU=y
+CONFIG_BOOTPARAM_HOTPLUG_CPU0=y
+# CONFIG_DEBUG_HOTPLUG_CPU0 is not set
+CONFIG_COMPAT_VDSO=y
+CONFIG_LEGACY_VSYSCALL_EMULATE=y
+# CONFIG_LEGACY_VSYSCALL_XONLY is not set
+# CONFIG_LEGACY_VSYSCALL_NONE is not set
+# CONFIG_CMDLINE_BOOL is not set
+# CONFIG_MODIFY_LDT_SYSCALL is not set
+CONFIG_HAVE_LIVEPATCH=y
+# end of Processor type and features
+
+CONFIG_ARCH_HAS_ADD_PAGES=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTPLUG=y
+CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE=y
+CONFIG_USE_PERCPU_NUMA_NODE_ID=y
+CONFIG_ARCH_ENABLE_SPLIT_PMD_PTLOCK=y
+CONFIG_ARCH_ENABLE_THP_MIGRATION=y
+
+#
+# Power management and ACPI options
+#
+CONFIG_ARCH_HIBERNATION_HEADER=y
+CONFIG_SUSPEND=y
+CONFIG_SUSPEND_FREEZER=y
+CONFIG_SUSPEND_SKIP_SYNC=y
+CONFIG_HIBERNATE_CALLBACKS=y
+CONFIG_HIBERNATION=y
+CONFIG_HIBERNATION_SNAPSHOT_DEV=y
+CONFIG_PM_STD_PARTITION=""
+CONFIG_PM_SLEEP=y
+CONFIG_PM_SLEEP_SMP=y
+# CONFIG_PM_AUTOSLEEP is not set
+# CONFIG_PM_WAKELOCKS is not set
+CONFIG_PM=y
+CONFIG_PM_DEBUG=y
+# CONFIG_PM_ADVANCED_DEBUG is not set
+# CONFIG_PM_TEST_SUSPEND is not set
+CONFIG_PM_SLEEP_DEBUG=y
+# CONFIG_DPM_WATCHDOG is not set
+# CONFIG_PM_TRACE_RTC is not set
+CONFIG_PM_CLK=y
+# CONFIG_WQ_POWER_EFFICIENT_DEFAULT is not set
+# CONFIG_ENERGY_MODEL is not set
+CONFIG_ARCH_SUPPORTS_ACPI=y
+CONFIG_ACPI=y
+CONFIG_ACPI_LEGACY_TABLES_LOOKUP=y
+CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC=y
+CONFIG_ACPI_SYSTEM_POWER_STATES_SUPPORT=y
+# CONFIG_ACPI_DEBUGGER is not set
+CONFIG_ACPI_SPCR_TABLE=y
+CONFIG_ACPI_LPIT=y
+CONFIG_ACPI_SLEEP=y
+# CONFIG_ACPI_REV_OVERRIDE_POSSIBLE is not set
+# CONFIG_ACPI_EC_DEBUGFS is not set
+CONFIG_ACPI_AC=y
+CONFIG_ACPI_BATTERY=y
+CONFIG_ACPI_BUTTON=y
+# CONFIG_ACPI_VIDEO is not set
+CONFIG_ACPI_FAN=y
+# CONFIG_ACPI_TAD is not set
+# CONFIG_ACPI_DOCK is not set
+CONFIG_ACPI_CPU_FREQ_PSS=y
+CONFIG_ACPI_PROCESSOR_CSTATE=y
+CONFIG_ACPI_PROCESSOR_IDLE=y
+CONFIG_ACPI_CPPC_LIB=y
+CONFIG_ACPI_PROCESSOR=y
+# CONFIG_ACPI_IPMI is not set
+CONFIG_ACPI_HOTPLUG_CPU=y
+# CONFIG_ACPI_PROCESSOR_AGGREGATOR is not set
+CONFIG_ACPI_THERMAL=y
+CONFIG_ACPI_CUSTOM_DSDT_FILE=""
+CONFIG_ARCH_HAS_ACPI_TABLE_UPGRADE=y
+# CONFIG_ACPI_TABLE_UPGRADE is not set
+# CONFIG_ACPI_DEBUG is not set
+# CONFIG_ACPI_PCI_SLOT is not set
+CONFIG_ACPI_CONTAINER=y
+# CONFIG_ACPI_HOTPLUG_MEMORY is not set
+CONFIG_ACPI_HOTPLUG_IOAPIC=y
+# CONFIG_ACPI_SBS is not set
+CONFIG_ACPI_HED=y
+# CONFIG_ACPI_CUSTOM_METHOD is not set
+# CONFIG_ACPI_BGRT is not set
+# CONFIG_ACPI_REDUCED_HARDWARE_ONLY is not set
+CONFIG_ACPI_NFIT=m
+# CONFIG_NFIT_SECURITY_DEBUG is not set
+CONFIG_ACPI_NUMA=y
+# CONFIG_ACPI_HMAT is not set
+CONFIG_HAVE_ACPI_APEI=y
+CONFIG_HAVE_ACPI_APEI_NMI=y
+CONFIG_ACPI_APEI=y
+CONFIG_ACPI_APEI_GHES=y
+CONFIG_ACPI_APEI_PCIEAER=y
+CONFIG_ACPI_APEI_MEMORY_FAILURE=y
+CONFIG_ACPI_APEI_EINJ=m
+CONFIG_ACPI_APEI_ERST_DEBUG=y
+# CONFIG_DPTF_POWER is not set
+# CONFIG_PMIC_OPREGION is not set
+# CONFIG_ACPI_CONFIGFS is not set
+CONFIG_X86_PM_TIMER=y
+# CONFIG_SFI is not set
+
+#
+# CPU Frequency scaling
+#
+CONFIG_CPU_FREQ=y
+CONFIG_CPU_FREQ_GOV_ATTR_SET=y
+CONFIG_CPU_FREQ_GOV_COMMON=y
+CONFIG_CPU_FREQ_STAT=y
+# CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE is not set
+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
+# CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE is not set
+# CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL is not set
+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+CONFIG_CPU_FREQ_GOV_USERSPACE=y
+CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
+
+#
+# CPU frequency scaling drivers
+#
+CONFIG_X86_INTEL_PSTATE=y
+# CONFIG_X86_PCC_CPUFREQ is not set
+# CONFIG_X86_ACPI_CPUFREQ is not set
+CONFIG_X86_SPEEDSTEP_CENTRINO=y
+# CONFIG_X86_P4_CLOCKMOD is not set
+
+#
+# shared options
+#
+# end of CPU Frequency scaling
+
+#
+# CPU Idle
+#
+CONFIG_CPU_IDLE=y
+CONFIG_CPU_IDLE_GOV_LADDER=y
+CONFIG_CPU_IDLE_GOV_MENU=y
+# CONFIG_CPU_IDLE_GOV_TEO is not set
+# CONFIG_CPU_IDLE_GOV_HALTPOLL is not set
+CONFIG_HALTPOLL_CPUIDLE=y
+# end of CPU Idle
+
+# CONFIG_INTEL_IDLE is not set
+# end of Power management and ACPI options
+
+#
+# Bus options (PCI etc.)
+#
+CONFIG_PCI_DIRECT=y
+CONFIG_PCI_MMCONFIG=y
+CONFIG_MMCONF_FAM10H=y
+# CONFIG_PCI_CNB20LE_QUIRK is not set
+# CONFIG_ISA_BUS is not set
+CONFIG_ISA_DMA_API=y
+CONFIG_AMD_NB=y
+# CONFIG_X86_SYSFB is not set
+# end of Bus options (PCI etc.)
+
+#
+# Binary Emulations
+#
+CONFIG_IA32_EMULATION=y
+# CONFIG_X86_X32 is not set
+CONFIG_COMPAT_32=y
+CONFIG_COMPAT=y
+CONFIG_COMPAT_FOR_U64_ALIGNMENT=y
+CONFIG_SYSVIPC_COMPAT=y
+# end of Binary Emulations
+
+#
+# Firmware Drivers
+#
+# CONFIG_EDD is not set
+CONFIG_FIRMWARE_MEMMAP=y
+CONFIG_DMIID=y
+# CONFIG_DMI_SYSFS is not set
+CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK=y
+# CONFIG_ISCSI_IBFT is not set
+# CONFIG_FW_CFG_SYSFS is not set
+# CONFIG_GOOGLE_FIRMWARE is not set
+
+#
+# EFI (Extensible Firmware Interface) Support
+#
+# CONFIG_EFI_VARS is not set
+CONFIG_EFI_ESRT=y
+CONFIG_EFI_RUNTIME_MAP=y
+# CONFIG_EFI_FAKE_MEMMAP is not set
+CONFIG_EFI_RUNTIME_WRAPPERS=y
+CONFIG_EFI_GENERIC_STUB_INITRD_CMDLINE_LOADER=y
+# CONFIG_EFI_CAPSULE_LOADER is not set
+# CONFIG_EFI_TEST is not set
+# CONFIG_APPLE_PROPERTIES is not set
+# CONFIG_RESET_ATTACK_MITIGATION is not set
+# CONFIG_EFI_RCI2_TABLE is not set
+# CONFIG_EFI_DISABLE_PCI_DMA is not set
+# end of EFI (Extensible Firmware Interface) Support
+
+CONFIG_UEFI_CPER=y
+CONFIG_UEFI_CPER_X86=y
+CONFIG_EFI_EARLYCON=y
+
+#
+# Tegra firmware driver
+#
+# end of Tegra firmware driver
+# end of Firmware Drivers
+
+CONFIG_HAVE_KVM=y
+CONFIG_HAVE_KVM_IRQCHIP=y
+CONFIG_HAVE_KVM_IRQFD=y
+CONFIG_HAVE_KVM_IRQ_ROUTING=y
+CONFIG_HAVE_KVM_EVENTFD=y
+CONFIG_KVM_MMIO=y
+CONFIG_KVM_ASYNC_PF=y
+CONFIG_HAVE_KVM_MSI=y
+CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT=y
+CONFIG_KVM_VFIO=y
+CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
+CONFIG_KVM_COMPAT=y
+CONFIG_HAVE_KVM_IRQ_BYPASS=y
+CONFIG_HAVE_KVM_NO_POLL=y
+CONFIG_KVM_XFER_TO_GUEST_WORK=y
+CONFIG_VIRTUALIZATION=y
+CONFIG_KVM=m
+# CONFIG_KVM_WERROR is not set
+CONFIG_KVM_INTEL=m
+# CONFIG_KVM_AMD is not set
+# CONFIG_KVM_MMU_AUDIT is not set
+CONFIG_AS_AVX512=y
+CONFIG_AS_SHA1_NI=y
+CONFIG_AS_SHA256_NI=y
+CONFIG_AS_TPAUSE=y
+
+#
+# General architecture-dependent options
+#
+CONFIG_CRASH_CORE=y
+CONFIG_KEXEC_CORE=y
+CONFIG_HOTPLUG_SMT=y
+CONFIG_GENERIC_ENTRY=y
+CONFIG_HAVE_OPROFILE=y
+CONFIG_OPROFILE_NMI_TIMER=y
+CONFIG_KPROBES=y
+# CONFIG_JUMP_LABEL is not set
+CONFIG_OPTPROBES=y
+CONFIG_KPROBES_ON_FTRACE=y
+CONFIG_UPROBES=y
+CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
+CONFIG_ARCH_USE_BUILTIN_BSWAP=y
+CONFIG_KRETPROBES=y
+CONFIG_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_IOREMAP_PROT=y
+CONFIG_HAVE_KPROBES=y
+CONFIG_HAVE_KRETPROBES=y
+CONFIG_HAVE_OPTPROBES=y
+CONFIG_HAVE_KPROBES_ON_FTRACE=y
+CONFIG_HAVE_FUNCTION_ERROR_INJECTION=y
+CONFIG_HAVE_NMI=y
+CONFIG_HAVE_ARCH_TRACEHOOK=y
+CONFIG_HAVE_DMA_CONTIGUOUS=y
+CONFIG_GENERIC_SMP_IDLE_THREAD=y
+CONFIG_ARCH_HAS_FORTIFY_SOURCE=y
+CONFIG_ARCH_HAS_SET_MEMORY=y
+CONFIG_ARCH_HAS_SET_DIRECT_MAP=y
+CONFIG_HAVE_ARCH_THREAD_STRUCT_WHITELIST=y
+CONFIG_ARCH_WANTS_DYNAMIC_TASK_STRUCT=y
+CONFIG_HAVE_ASM_MODVERSIONS=y
+CONFIG_HAVE_REGS_AND_STACK_ACCESS_API=y
+CONFIG_HAVE_RSEQ=y
+CONFIG_HAVE_FUNCTION_ARG_ACCESS_API=y
+CONFIG_HAVE_HW_BREAKPOINT=y
+CONFIG_HAVE_MIXED_BREAKPOINTS_REGS=y
+CONFIG_HAVE_USER_RETURN_NOTIFIER=y
+CONFIG_HAVE_PERF_EVENTS_NMI=y
+CONFIG_HAVE_HARDLOCKUP_DETECTOR_PERF=y
+CONFIG_HAVE_PERF_REGS=y
+CONFIG_HAVE_PERF_USER_STACK_DUMP=y
+CONFIG_HAVE_ARCH_JUMP_LABEL=y
+CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=y
+CONFIG_MMU_GATHER_TABLE_FREE=y
+CONFIG_MMU_GATHER_RCU_TABLE_FREE=y
+CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
+CONFIG_HAVE_ALIGNED_STRUCT_PAGE=y
+CONFIG_HAVE_CMPXCHG_LOCAL=y
+CONFIG_HAVE_CMPXCHG_DOUBLE=y
+CONFIG_ARCH_WANT_COMPAT_IPC_PARSE_VERSION=y
+CONFIG_ARCH_WANT_OLD_COMPAT_IPC=y
+CONFIG_HAVE_ARCH_SECCOMP_FILTER=y
+CONFIG_SECCOMP_FILTER=y
+CONFIG_HAVE_ARCH_STACKLEAK=y
+CONFIG_HAVE_STACKPROTECTOR=y
+CONFIG_STACKPROTECTOR=y
+CONFIG_STACKPROTECTOR_STRONG=y
+CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES=y
+CONFIG_HAVE_CONTEXT_TRACKING=y
+CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y
+CONFIG_HAVE_IRQ_TIME_ACCOUNTING=y
+CONFIG_HAVE_MOVE_PMD=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y
+CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD=y
+CONFIG_HAVE_ARCH_HUGE_VMAP=y
+CONFIG_ARCH_WANT_HUGE_PMD_SHARE=y
+CONFIG_HAVE_ARCH_SOFT_DIRTY=y
+CONFIG_HAVE_MOD_ARCH_SPECIFIC=y
+CONFIG_MODULES_USE_ELF_RELA=y
+CONFIG_ARCH_HAS_ELF_RANDOMIZE=y
+CONFIG_HAVE_ARCH_MMAP_RND_BITS=y
+CONFIG_HAVE_EXIT_THREAD=y
+CONFIG_ARCH_MMAP_RND_BITS=28
+CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS=y
+CONFIG_ARCH_MMAP_RND_COMPAT_BITS=8
+CONFIG_HAVE_ARCH_COMPAT_MMAP_BASES=y
+CONFIG_HAVE_STACK_VALIDATION=y
+CONFIG_HAVE_RELIABLE_STACKTRACE=y
+CONFIG_OLD_SIGSUSPEND3=y
+CONFIG_COMPAT_OLD_SIGACTION=y
+CONFIG_COMPAT_32BIT_TIME=y
+CONFIG_HAVE_ARCH_VMAP_STACK=y
+CONFIG_VMAP_STACK=y
+CONFIG_ARCH_HAS_STRICT_KERNEL_RWX=y
+CONFIG_STRICT_KERNEL_RWX=y
+CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
+CONFIG_STRICT_MODULE_RWX=y
+CONFIG_HAVE_ARCH_PREL32_RELOCATIONS=y
+CONFIG_ARCH_USE_MEMREMAP_PROT=y
+# CONFIG_LOCK_EVENT_COUNTS is not set
+CONFIG_ARCH_HAS_MEM_ENCRYPT=y
+
+#
+# GCOV-based kernel profiling
+#
+# CONFIG_GCOV_KERNEL is not set
+CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+# end of GCOV-based kernel profiling
+
+CONFIG_HAVE_GCC_PLUGINS=y
+# end of General architecture-dependent options
+
+CONFIG_RT_MUTEXES=y
+CONFIG_BASE_SMALL=0
+CONFIG_MODULES=y
+CONFIG_MODULE_FORCE_LOAD=y
+CONFIG_MODULE_UNLOAD=y
+# CONFIG_MODULE_FORCE_UNLOAD is not set
+# CONFIG_MODVERSIONS is not set
+# CONFIG_MODULE_SRCVERSION_ALL is not set
+# CONFIG_MODULE_SIG is not set
+# CONFIG_MODULE_COMPRESS is not set
+# CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS is not set
+# CONFIG_UNUSED_SYMBOLS is not set
+# CONFIG_TRIM_UNUSED_KSYMS is not set
+CONFIG_MODULES_TREE_LOOKUP=y
+CONFIG_BLOCK=y
+CONFIG_BLK_SCSI_REQUEST=y
+CONFIG_BLK_DEV_BSG=y
+CONFIG_BLK_DEV_BSGLIB=y
+# CONFIG_BLK_DEV_INTEGRITY is not set
+# CONFIG_BLK_DEV_ZONED is not set
+# CONFIG_BLK_DEV_THROTTLING is not set
+# CONFIG_BLK_CMDLINE_PARSER is not set
+# CONFIG_BLK_WBT is not set
+# CONFIG_BLK_CGROUP_IOLATENCY is not set
+# CONFIG_BLK_CGROUP_IOCOST is not set
+CONFIG_BLK_DEBUG_FS=y
+# CONFIG_BLK_SED_OPAL is not set
+# CONFIG_BLK_INLINE_ENCRYPTION is not set
+
+#
+# Partition Types
+#
+CONFIG_PARTITION_ADVANCED=y
+# CONFIG_ACORN_PARTITION is not set
+# CONFIG_AIX_PARTITION is not set
+CONFIG_OSF_PARTITION=y
+CONFIG_AMIGA_PARTITION=y
+# CONFIG_ATARI_PARTITION is not set
+CONFIG_MAC_PARTITION=y
+CONFIG_MSDOS_PARTITION=y
+# CONFIG_BSD_DISKLABEL is not set
+# CONFIG_MINIX_SUBPARTITION is not set
+# CONFIG_SOLARIS_X86_PARTITION is not set
+# CONFIG_UNIXWARE_DISKLABEL is not set
+# CONFIG_LDM_PARTITION is not set
+# CONFIG_SGI_PARTITION is not set
+# CONFIG_ULTRIX_PARTITION is not set
+# CONFIG_SUN_PARTITION is not set
+# CONFIG_KARMA_PARTITION is not set
+CONFIG_EFI_PARTITION=y
+# CONFIG_SYSV68_PARTITION is not set
+# CONFIG_CMDLINE_PARTITION is not set
+# end of Partition Types
+
+CONFIG_BLOCK_COMPAT=y
+CONFIG_BLK_MQ_PCI=y
+CONFIG_BLK_PM=y
+
+#
+# IO Schedulers
+#
+CONFIG_MQ_IOSCHED_DEADLINE=y
+CONFIG_MQ_IOSCHED_KYBER=y
+# CONFIG_IOSCHED_BFQ is not set
+# end of IO Schedulers
+
+CONFIG_PREEMPT_NOTIFIERS=y
+CONFIG_ASN1=y
+CONFIG_INLINE_SPIN_UNLOCK_IRQ=y
+CONFIG_INLINE_READ_UNLOCK=y
+CONFIG_INLINE_READ_UNLOCK_IRQ=y
+CONFIG_INLINE_WRITE_UNLOCK=y
+CONFIG_INLINE_WRITE_UNLOCK_IRQ=y
+CONFIG_ARCH_SUPPORTS_ATOMIC_RMW=y
+CONFIG_MUTEX_SPIN_ON_OWNER=y
+CONFIG_RWSEM_SPIN_ON_OWNER=y
+CONFIG_LOCK_SPIN_ON_OWNER=y
+CONFIG_ARCH_USE_QUEUED_SPINLOCKS=y
+CONFIG_QUEUED_SPINLOCKS=y
+CONFIG_ARCH_USE_QUEUED_RWLOCKS=y
+CONFIG_QUEUED_RWLOCKS=y
+CONFIG_ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE=y
+CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE=y
+CONFIG_ARCH_HAS_SYSCALL_WRAPPER=y
+CONFIG_FREEZER=y
+
+#
+# Executable file formats
+#
+CONFIG_BINFMT_ELF=y
+CONFIG_COMPAT_BINFMT_ELF=y
+CONFIG_ELFCORE=y
+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+CONFIG_BINFMT_SCRIPT=y
+# CONFIG_BINFMT_MISC is not set
+CONFIG_COREDUMP=y
+# end of Executable file formats
+
+#
+# Memory Management options
+#
+CONFIG_SELECT_MEMORY_MODEL=y
+CONFIG_SPARSEMEM_MANUAL=y
+CONFIG_SPARSEMEM=y
+CONFIG_NEED_MULTIPLE_NODES=y
+CONFIG_SPARSEMEM_EXTREME=y
+CONFIG_SPARSEMEM_VMEMMAP_ENABLE=y
+CONFIG_SPARSEMEM_VMEMMAP=y
+CONFIG_HAVE_FAST_GUP=y
+CONFIG_NUMA_KEEP_MEMINFO=y
+CONFIG_MEMORY_ISOLATION=y
+CONFIG_HAVE_BOOTMEM_INFO_NODE=y
+CONFIG_MEMORY_HOTPLUG=y
+CONFIG_MEMORY_HOTPLUG_SPARSE=y
+# CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE is not set
+CONFIG_MEMORY_HOTREMOVE=y
+CONFIG_SPLIT_PTLOCK_CPUS=4
+CONFIG_COMPACTION=y
+# CONFIG_PAGE_REPORTING is not set
+CONFIG_MIGRATION=y
+CONFIG_CONTIG_ALLOC=y
+CONFIG_PHYS_ADDR_T_64BIT=y
+CONFIG_BOUNCE=y
+CONFIG_VIRT_TO_BUS=y
+CONFIG_MMU_NOTIFIER=y
+# CONFIG_KSM is not set
+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
+CONFIG_ARCH_SUPPORTS_MEMORY_FAILURE=y
+CONFIG_MEMORY_FAILURE=y
+CONFIG_HWPOISON_INJECT=m
+CONFIG_TRANSPARENT_HUGEPAGE=y
+CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
+# CONFIG_TRANSPARENT_HUGEPAGE_MADVISE is not set
+CONFIG_ARCH_WANTS_THP_SWAP=y
+CONFIG_THP_SWAP=y
+# CONFIG_CLEANCACHE is not set
+# CONFIG_FRONTSWAP is not set
+CONFIG_CMA=y
+# CONFIG_CMA_DEBUG is not set
+# CONFIG_CMA_DEBUGFS is not set
+CONFIG_CMA_AREAS=7
+# CONFIG_MEM_SOFT_DIRTY is not set
+# CONFIG_ZPOOL is not set
+# CONFIG_ZBUD is not set
+# CONFIG_ZSMALLOC is not set
+CONFIG_GENERIC_EARLY_IOREMAP=y
+# CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set
+# CONFIG_IDLE_PAGE_TRACKING is not set
+CONFIG_ARCH_HAS_PTE_DEVMAP=y
+CONFIG_ZONE_DEVICE=y
+CONFIG_DEV_PAGEMAP_OPS=y
+# CONFIG_DEVICE_PRIVATE is not set
+# CONFIG_PERCPU_STATS is not set
+# CONFIG_GUP_BENCHMARK is not set
+# CONFIG_READ_ONLY_THP_FOR_FS is not set
+CONFIG_ARCH_HAS_PTE_SPECIAL=y
+# end of Memory Management options
+
+CONFIG_NET=y
+CONFIG_COMPAT_NETLINK_MESSAGES=y
+CONFIG_SKB_EXTENSIONS=y
+
+#
+# Networking options
+#
+CONFIG_PACKET=y
+# CONFIG_PACKET_DIAG is not set
+CONFIG_UNIX=y
+CONFIG_UNIX_SCM=y
+# CONFIG_UNIX_DIAG is not set
+# CONFIG_TLS is not set
+CONFIG_XFRM=y
+# CONFIG_XFRM_USER is not set
+# CONFIG_XFRM_SUB_POLICY is not set
+# CONFIG_XFRM_MIGRATE is not set
+# CONFIG_XFRM_STATISTICS is not set
+# CONFIG_NET_KEY is not set
+# CONFIG_XDP_SOCKETS is not set
+CONFIG_INET=y
+CONFIG_IP_MULTICAST=y
+# CONFIG_IP_ADVANCED_ROUTER is not set
+CONFIG_IP_PNP=y
+CONFIG_IP_PNP_DHCP=y
+# CONFIG_IP_PNP_BOOTP is not set
+# CONFIG_IP_PNP_RARP is not set
+# CONFIG_NET_IPIP is not set
+# CONFIG_NET_IPGRE_DEMUX is not set
+CONFIG_NET_IP_TUNNEL=m
+# CONFIG_IP_MROUTE is not set
+# CONFIG_SYN_COOKIES is not set
+# CONFIG_NET_IPVTI is not set
+CONFIG_NET_UDP_TUNNEL=m
+CONFIG_NET_FOU=m
+# CONFIG_INET_AH is not set
+# CONFIG_INET_ESP is not set
+# CONFIG_INET_IPCOMP is not set
+CONFIG_INET_DIAG=y
+CONFIG_INET_TCP_DIAG=y
+# CONFIG_INET_UDP_DIAG is not set
+# CONFIG_INET_RAW_DIAG is not set
+# CONFIG_INET_DIAG_DESTROY is not set
+# CONFIG_TCP_CONG_ADVANCED is not set
+CONFIG_TCP_CONG_CUBIC=y
+CONFIG_DEFAULT_TCP_CONG="cubic"
+# CONFIG_TCP_MD5SIG is not set
+# CONFIG_IPV6 is not set
+# CONFIG_MPTCP is not set
+# CONFIG_NETWORK_SECMARK is not set
+CONFIG_NET_PTP_CLASSIFY=y
+# CONFIG_NETWORK_PHY_TIMESTAMPING is not set
+# CONFIG_NETFILTER is not set
+# CONFIG_BPFILTER is not set
+# CONFIG_IP_DCCP is not set
+# CONFIG_IP_SCTP is not set
+# CONFIG_RDS is not set
+# CONFIG_TIPC is not set
+# CONFIG_ATM is not set
+# CONFIG_L2TP is not set
+# CONFIG_BRIDGE is not set
+CONFIG_HAVE_NET_DSA=y
+# CONFIG_NET_DSA is not set
+# CONFIG_VLAN_8021Q is not set
+# CONFIG_DECNET is not set
+# CONFIG_LLC2 is not set
+# CONFIG_ATALK is not set
+# CONFIG_X25 is not set
+# CONFIG_LAPB is not set
+# CONFIG_PHONET is not set
+# CONFIG_IEEE802154 is not set
+# CONFIG_NET_SCHED is not set
+# CONFIG_DCB is not set
+CONFIG_DNS_RESOLVER=y
+# CONFIG_BATMAN_ADV is not set
+# CONFIG_OPENVSWITCH is not set
+# CONFIG_VSOCKETS is not set
+# CONFIG_NETLINK_DIAG is not set
+# CONFIG_MPLS is not set
+# CONFIG_NET_NSH is not set
+# CONFIG_HSR is not set
+# CONFIG_NET_SWITCHDEV is not set
+CONFIG_NET_L3_MASTER_DEV=y
+# CONFIG_QRTR is not set
+# CONFIG_NET_NCSI is not set
+CONFIG_RPS=y
+CONFIG_RFS_ACCEL=y
+CONFIG_XPS=y
+# CONFIG_CGROUP_NET_PRIO is not set
+# CONFIG_CGROUP_NET_CLASSID is not set
+CONFIG_NET_RX_BUSY_POLL=y
+CONFIG_BQL=y
+# CONFIG_BPF_JIT is not set
+CONFIG_BPF_STREAM_PARSER=y
+CONFIG_NET_FLOW_LIMIT=y
+
+#
+# Network testing
+#
+# CONFIG_NET_PKTGEN is not set
+# CONFIG_NET_DROP_MONITOR is not set
+# end of Network testing
+# end of Networking options
+
+# CONFIG_HAMRADIO is not set
+CONFIG_CAN=m
+CONFIG_CAN_RAW=m
+CONFIG_CAN_BCM=m
+CONFIG_CAN_GW=m
+# CONFIG_CAN_J1939 is not set
+
+#
+# CAN Device Drivers
+#
+CONFIG_CAN_VCAN=m
+# CONFIG_CAN_VXCAN is not set
+# CONFIG_CAN_SLCAN is not set
+CONFIG_CAN_DEV=m
+CONFIG_CAN_CALC_BITTIMING=y
+# CONFIG_CAN_KVASER_PCIEFD is not set
+# CONFIG_CAN_C_CAN is not set
+# CONFIG_CAN_CC770 is not set
+# CONFIG_CAN_IFI_CANFD is not set
+# CONFIG_CAN_M_CAN is not set
+# CONFIG_CAN_PEAK_PCIEFD is not set
+# CONFIG_CAN_SJA1000 is not set
+# CONFIG_CAN_SOFTING is not set
+
+#
+# CAN USB interfaces
+#
+# CONFIG_CAN_8DEV_USB is not set
+# CONFIG_CAN_EMS_USB is not set
+# CONFIG_CAN_ESD_USB2 is not set
+# CONFIG_CAN_GS_USB is not set
+# CONFIG_CAN_KVASER_USB is not set
+# CONFIG_CAN_MCBA_USB is not set
+# CONFIG_CAN_PEAK_USB is not set
+# CONFIG_CAN_UCAN is not set
+# end of CAN USB interfaces
+
+# CONFIG_CAN_DEBUG_DEVICES is not set
+# end of CAN Device Drivers
+
+# CONFIG_BT is not set
+# CONFIG_AF_RXRPC is not set
+# CONFIG_AF_KCM is not set
+CONFIG_STREAM_PARSER=y
+CONFIG_WIRELESS=y
+CONFIG_WEXT_CORE=y
+CONFIG_WEXT_PROC=y
+CONFIG_CFG80211=m
+# CONFIG_NL80211_TESTMODE is not set
+# CONFIG_CFG80211_DEVELOPER_WARNINGS is not set
+# CONFIG_CFG80211_CERTIFICATION_ONUS is not set
+CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=y
+CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=y
+CONFIG_CFG80211_DEFAULT_PS=y
+# CONFIG_CFG80211_DEBUGFS is not set
+CONFIG_CFG80211_CRDA_SUPPORT=y
+CONFIG_CFG80211_WEXT=y
+CONFIG_MAC80211=m
+CONFIG_MAC80211_HAS_RC=y
+CONFIG_MAC80211_RC_MINSTREL=y
+CONFIG_MAC80211_RC_DEFAULT_MINSTREL=y
+CONFIG_MAC80211_RC_DEFAULT="minstrel_ht"
+CONFIG_MAC80211_MESH=y
+CONFIG_MAC80211_LEDS=y
+CONFIG_MAC80211_DEBUGFS=y
+# CONFIG_MAC80211_MESSAGE_TRACING is not set
+# CONFIG_MAC80211_DEBUG_MENU is not set
+CONFIG_MAC80211_STA_HASH_MAX_SIZE=0
+# CONFIG_WIMAX is not set
+# CONFIG_RFKILL is not set
+CONFIG_NET_9P=y
+# CONFIG_NET_9P_DEBUG is not set
+# CONFIG_CAIF is not set
+# CONFIG_CEPH_LIB is not set
+# CONFIG_NFC is not set
+# CONFIG_PSAMPLE is not set
+# CONFIG_NET_IFE is not set
+CONFIG_LWTUNNEL=y
+CONFIG_LWTUNNEL_BPF=y
+CONFIG_DST_CACHE=y
+CONFIG_GRO_CELLS=y
+CONFIG_NET_SOCK_MSG=y
+CONFIG_NET_DEVLINK=y
+CONFIG_PAGE_POOL=y
+# CONFIG_FAILOVER is not set
+CONFIG_ETHTOOL_NETLINK=y
+CONFIG_HAVE_EBPF_JIT=y
+
+#
+# Device Drivers
+#
+CONFIG_HAVE_EISA=y
+# CONFIG_EISA is not set
+CONFIG_HAVE_PCI=y
+CONFIG_PCI=y
+CONFIG_PCI_DOMAINS=y
+CONFIG_PCIEPORTBUS=y
+CONFIG_PCIEAER=y
+# CONFIG_PCIEAER_INJECT is not set
+# CONFIG_PCIE_ECRC is not set
+CONFIG_PCIEASPM=y
+CONFIG_PCIEASPM_DEFAULT=y
+# CONFIG_PCIEASPM_POWERSAVE is not set
+# CONFIG_PCIEASPM_POWER_SUPERSAVE is not set
+# CONFIG_PCIEASPM_PERFORMANCE is not set
+CONFIG_PCIE_PME=y
+# CONFIG_PCIE_DPC is not set
+# CONFIG_PCIE_PTM is not set
+# CONFIG_PCIE_BW is not set
+CONFIG_PCI_MSI=y
+CONFIG_PCI_MSI_IRQ_DOMAIN=y
+CONFIG_PCI_QUIRKS=y
+# CONFIG_PCI_DEBUG is not set
+# CONFIG_PCI_REALLOC_ENABLE_AUTO is not set
+# CONFIG_PCI_STUB is not set
+# CONFIG_PCI_PF_STUB is not set
+CONFIG_PCI_ATS=y
+CONFIG_PCI_LOCKLESS_CONFIG=y
+CONFIG_PCI_IOV=y
+# CONFIG_PCI_PRI is not set
+# CONFIG_PCI_PASID is not set
+# CONFIG_PCI_P2PDMA is not set
+CONFIG_PCI_LABEL=y
+# CONFIG_HOTPLUG_PCI is not set
+
+#
+# PCI controller drivers
+#
+# CONFIG_VMD is not set
+
+#
+# DesignWare PCI Core Support
+#
+# CONFIG_PCIE_DW_PLAT_HOST is not set
+# CONFIG_PCI_MESON is not set
+# end of DesignWare PCI Core Support
+
+#
+# Mobiveil PCIe Core Support
+#
+# end of Mobiveil PCIe Core Support
+
+#
+# Cadence PCIe controllers support
+#
+# end of Cadence PCIe controllers support
+# end of PCI controller drivers
+
+#
+# PCI Endpoint
+#
+# CONFIG_PCI_ENDPOINT is not set
+# end of PCI Endpoint
+
+#
+# PCI switch controller drivers
+#
+# CONFIG_PCI_SW_SWITCHTEC is not set
+# end of PCI switch controller drivers
+
+# CONFIG_PCCARD is not set
+# CONFIG_RAPIDIO is not set
+
+#
+# Generic Driver Options
+#
+CONFIG_UEVENT_HELPER=y
+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+CONFIG_DEVTMPFS=y
+# CONFIG_DEVTMPFS_MOUNT is not set
+# CONFIG_STANDALONE is not set
+# CONFIG_PREVENT_FIRMWARE_BUILD is not set
+
+#
+# Firmware loader
+#
+CONFIG_FW_LOADER=y
+CONFIG_FW_LOADER_PAGED_BUF=y
+CONFIG_EXTRA_FIRMWARE=""
+CONFIG_FW_LOADER_USER_HELPER=y
+CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+# CONFIG_FW_LOADER_COMPRESS is not set
+CONFIG_FW_CACHE=y
+# end of Firmware loader
+
+CONFIG_ALLOW_DEV_COREDUMP=y
+# CONFIG_DEBUG_DRIVER is not set
+# CONFIG_DEBUG_DEVRES is not set
+# CONFIG_DEBUG_TEST_DRIVER_REMOVE is not set
+# CONFIG_TEST_ASYNC_DRIVER_PROBE is not set
+CONFIG_GENERIC_CPU_AUTOPROBE=y
+CONFIG_GENERIC_CPU_VULNERABILITIES=y
+CONFIG_REGMAP=y
+CONFIG_REGMAP_MMIO=y
+CONFIG_DMA_SHARED_BUFFER=y
+# CONFIG_DMA_FENCE_TRACE is not set
+# end of Generic Driver Options
+
+#
+# Bus devices
+#
+# CONFIG_MHI_BUS is not set
+# end of Bus devices
+
+CONFIG_CONNECTOR=m
+# CONFIG_GNSS is not set
+# CONFIG_MTD is not set
+# CONFIG_OF is not set
+CONFIG_ARCH_MIGHT_HAVE_PC_PARPORT=y
+# CONFIG_PARPORT is not set
+CONFIG_PNP=y
+CONFIG_PNP_DEBUG_MESSAGES=y
+
+#
+# Protocols
+#
+CONFIG_PNPACPI=y
+CONFIG_BLK_DEV=y
+# CONFIG_BLK_DEV_NULL_BLK is not set
+# CONFIG_BLK_DEV_FD is not set
+CONFIG_CDROM=m
+# CONFIG_BLK_DEV_PCIESSD_MTIP32XX is not set
+# CONFIG_BLK_DEV_UMEM is not set
+CONFIG_BLK_DEV_LOOP=y
+CONFIG_BLK_DEV_LOOP_MIN_COUNT=8
+CONFIG_BLK_DEV_CRYPTOLOOP=y
+# CONFIG_BLK_DEV_DRBD is not set
+CONFIG_BLK_DEV_NBD=m
+# CONFIG_BLK_DEV_SKD is not set
+# CONFIG_BLK_DEV_SX8 is not set
+CONFIG_BLK_DEV_RAM=m
+CONFIG_BLK_DEV_RAM_COUNT=16
+CONFIG_BLK_DEV_RAM_SIZE=65536
+# CONFIG_CDROM_PKTCDVD is not set
+CONFIG_ATA_OVER_ETH=y
+# CONFIG_BLK_DEV_RBD is not set
+# CONFIG_BLK_DEV_RSXX is not set
+
+#
+# NVME Support
+#
+CONFIG_NVME_CORE=m
+CONFIG_BLK_DEV_NVME=m
+CONFIG_NVME_MULTIPATH=y
+# CONFIG_NVME_HWMON is not set
+CONFIG_NVME_FABRICS=m
+# CONFIG_NVME_FC is not set
+# CONFIG_NVME_TCP is not set
+CONFIG_NVME_TARGET=m
+# CONFIG_NVME_TARGET_PASSTHRU is not set
+CONFIG_NVME_TARGET_LOOP=m
+# CONFIG_NVME_TARGET_FC is not set
+# CONFIG_NVME_TARGET_TCP is not set
+# end of NVME Support
+
+#
+# Misc devices
+#
+# CONFIG_AD525X_DPOT is not set
+# CONFIG_DUMMY_IRQ is not set
+# CONFIG_IBM_ASM is not set
+# CONFIG_PHANTOM is not set
+# CONFIG_TIFM_CORE is not set
+# CONFIG_ICS932S401 is not set
+# CONFIG_ENCLOSURE_SERVICES is not set
+# CONFIG_HP_ILO is not set
+# CONFIG_APDS9802ALS is not set
+# CONFIG_ISL29003 is not set
+# CONFIG_ISL29020 is not set
+# CONFIG_SENSORS_TSL2550 is not set
+# CONFIG_SENSORS_BH1770 is not set
+# CONFIG_SENSORS_APDS990X is not set
+# CONFIG_HMC6352 is not set
+# CONFIG_DS1682 is not set
+# CONFIG_SRAM is not set
+# CONFIG_PCI_ENDPOINT_TEST is not set
+# CONFIG_XILINX_SDFEC is not set
+# CONFIG_PVPANIC is not set
+# CONFIG_C2PORT is not set
+
+#
+# EEPROM support
+#
+# CONFIG_EEPROM_AT24 is not set
+# CONFIG_EEPROM_LEGACY is not set
+# CONFIG_EEPROM_MAX6875 is not set
+CONFIG_EEPROM_93CX6=y
+# CONFIG_EEPROM_IDT_89HPESX is not set
+# CONFIG_EEPROM_EE1004 is not set
+# end of EEPROM support
+
+# CONFIG_CB710_CORE is not set
+
+#
+# Texas Instruments shared transport line discipline
+#
+# end of Texas Instruments shared transport line discipline
+
+# CONFIG_SENSORS_LIS3_I2C is not set
+# CONFIG_ALTERA_STAPL is not set
+# CONFIG_INTEL_MEI is not set
+# CONFIG_INTEL_MEI_ME is not set
+# CONFIG_INTEL_MEI_TXE is not set
+# CONFIG_VMWARE_VMCI is not set
+
+#
+# Intel MIC & related support
+#
+# CONFIG_INTEL_MIC_BUS is not set
+# CONFIG_SCIF_BUS is not set
+# CONFIG_VOP_BUS is not set
+# end of Intel MIC & related support
+
+# CONFIG_GENWQE is not set
+# CONFIG_ECHO is not set
+# CONFIG_MISC_ALCOR_PCI is not set
+# CONFIG_MISC_RTSX_PCI is not set
+# CONFIG_MISC_RTSX_USB is not set
+# CONFIG_HABANA_AI is not set
+# CONFIG_UACCE is not set
+# end of Misc devices
+
+CONFIG_HAVE_IDE=y
+# CONFIG_IDE is not set
+
+#
+# SCSI device support
+#
+CONFIG_SCSI_MOD=y
+CONFIG_RAID_ATTRS=m
+CONFIG_SCSI=y
+CONFIG_SCSI_DMA=y
+CONFIG_SCSI_NETLINK=y
+# CONFIG_SCSI_PROC_FS is not set
+
+#
+# SCSI support type (disk, tape, CD-ROM)
+#
+CONFIG_BLK_DEV_SD=y
+CONFIG_CHR_DEV_ST=m
+CONFIG_BLK_DEV_SR=m
+CONFIG_CHR_DEV_SG=m
+CONFIG_CHR_DEV_SCH=m
+CONFIG_SCSI_CONSTANTS=y
+CONFIG_SCSI_LOGGING=y
+CONFIG_SCSI_SCAN_ASYNC=y
+
+#
+# SCSI Transports
+#
+CONFIG_SCSI_SPI_ATTRS=m
+CONFIG_SCSI_FC_ATTRS=m
+CONFIG_SCSI_ISCSI_ATTRS=m
+CONFIG_SCSI_SAS_ATTRS=m
+CONFIG_SCSI_SAS_LIBSAS=m
+CONFIG_SCSI_SAS_ATA=y
+CONFIG_SCSI_SAS_HOST_SMP=y
+CONFIG_SCSI_SRP_ATTRS=m
+# end of SCSI Transports
+
+CONFIG_SCSI_LOWLEVEL=y
+CONFIG_ISCSI_TCP=m
+CONFIG_ISCSI_BOOT_SYSFS=m
+CONFIG_SCSI_CXGB3_ISCSI=m
+CONFIG_SCSI_CXGB4_ISCSI=m
+CONFIG_SCSI_BNX2_ISCSI=m
+CONFIG_SCSI_BNX2X_FCOE=m
+CONFIG_BE2ISCSI=m
+# CONFIG_BLK_DEV_3W_XXXX_RAID is not set
+CONFIG_SCSI_HPSA=m
+CONFIG_SCSI_3W_9XXX=m
+CONFIG_SCSI_3W_SAS=m
+# CONFIG_SCSI_ACARD is not set
+CONFIG_SCSI_AACRAID=m
+# CONFIG_SCSI_AIC7XXX is not set
+CONFIG_SCSI_AIC79XX=m
+CONFIG_AIC79XX_CMDS_PER_DEVICE=4
+CONFIG_AIC79XX_RESET_DELAY_MS=15000
+# CONFIG_AIC79XX_BUILD_FIRMWARE is not set
+# CONFIG_AIC79XX_DEBUG_ENABLE is not set
+CONFIG_AIC79XX_DEBUG_MASK=0
+# CONFIG_AIC79XX_REG_PRETTY_PRINT is not set
+# CONFIG_SCSI_AIC94XX is not set
+CONFIG_SCSI_MVSAS=m
+# CONFIG_SCSI_MVSAS_DEBUG is not set
+CONFIG_SCSI_MVSAS_TASKLET=y
+CONFIG_SCSI_MVUMI=m
+# CONFIG_SCSI_DPT_I2O is not set
+# CONFIG_SCSI_ADVANSYS is not set
+CONFIG_SCSI_ARCMSR=m
+# CONFIG_SCSI_ESAS2R is not set
+# CONFIG_MEGARAID_NEWGEN is not set
+# CONFIG_MEGARAID_LEGACY is not set
+CONFIG_MEGARAID_SAS=m
+CONFIG_SCSI_MPT3SAS=m
+CONFIG_SCSI_MPT2SAS_MAX_SGE=128
+CONFIG_SCSI_MPT3SAS_MAX_SGE=128
+CONFIG_SCSI_MPT2SAS=m
+# CONFIG_SCSI_SMARTPQI is not set
+CONFIG_SCSI_UFSHCD=m
+CONFIG_SCSI_UFSHCD_PCI=m
+# CONFIG_SCSI_UFS_DWC_TC_PCI is not set
+# CONFIG_SCSI_UFSHCD_PLATFORM is not set
+# CONFIG_SCSI_UFS_BSG is not set
+CONFIG_SCSI_HPTIOP=m
+# CONFIG_SCSI_BUSLOGIC is not set
+# CONFIG_SCSI_MYRB is not set
+# CONFIG_SCSI_MYRS is not set
+CONFIG_VMWARE_PVSCSI=m
+CONFIG_LIBFC=m
+CONFIG_LIBFCOE=m
+CONFIG_FCOE=m
+CONFIG_FCOE_FNIC=m
+# CONFIG_SCSI_SNIC is not set
+# CONFIG_SCSI_DMX3191D is not set
+# CONFIG_SCSI_FDOMAIN_PCI is not set
+# CONFIG_SCSI_GDTH is not set
+CONFIG_SCSI_ISCI=m
+# CONFIG_SCSI_IPS is not set
+CONFIG_SCSI_INITIO=m
+# CONFIG_SCSI_INIA100 is not set
+CONFIG_SCSI_STEX=m
+# CONFIG_SCSI_SYM53C8XX_2 is not set
+CONFIG_SCSI_IPR=m
+CONFIG_SCSI_IPR_TRACE=y
+CONFIG_SCSI_IPR_DUMP=y
+# CONFIG_SCSI_QLOGIC_1280 is not set
+CONFIG_SCSI_QLA_FC=m
+CONFIG_SCSI_QLA_ISCSI=m
+# CONFIG_SCSI_LPFC is not set
+# CONFIG_SCSI_DC395x is not set
+# CONFIG_SCSI_AM53C974 is not set
+# CONFIG_SCSI_WD719X is not set
+CONFIG_SCSI_DEBUG=m
+CONFIG_SCSI_PMCRAID=m
+CONFIG_SCSI_PM8001=m
+# CONFIG_SCSI_BFA_FC is not set
+CONFIG_SCSI_CHELSIO_FCOE=m
+CONFIG_SCSI_DH=y
+CONFIG_SCSI_DH_RDAC=y
+CONFIG_SCSI_DH_HP_SW=y
+CONFIG_SCSI_DH_EMC=y
+CONFIG_SCSI_DH_ALUA=y
+# end of SCSI device support
+
+CONFIG_ATA=y
+CONFIG_SATA_HOST=y
+CONFIG_PATA_TIMINGS=y
+CONFIG_ATA_VERBOSE_ERROR=y
+CONFIG_ATA_FORCE=y
+CONFIG_ATA_ACPI=y
+# CONFIG_SATA_ZPODD is not set
+CONFIG_SATA_PMP=y
+
+#
+# Controllers with non-SFF native interface
+#
+CONFIG_SATA_AHCI=y
+CONFIG_SATA_MOBILE_LPM_POLICY=0
+CONFIG_SATA_AHCI_PLATFORM=y
+# CONFIG_SATA_INIC162X is not set
+CONFIG_SATA_ACARD_AHCI=m
+CONFIG_SATA_SIL24=m
+CONFIG_ATA_SFF=y
+
+#
+# SFF controllers with custom DMA interface
+#
+CONFIG_PDC_ADMA=m
+CONFIG_SATA_QSTOR=m
+CONFIG_SATA_SX4=m
+CONFIG_ATA_BMDMA=y
+
+#
+# SATA SFF controllers with BMDMA
+#
+CONFIG_ATA_PIIX=y
+CONFIG_SATA_MV=m
+CONFIG_SATA_NV=m
+CONFIG_SATA_PROMISE=m
+CONFIG_SATA_SIL=m
+CONFIG_SATA_SIS=m
+CONFIG_SATA_SVW=m
+CONFIG_SATA_ULI=m
+CONFIG_SATA_VIA=m
+CONFIG_SATA_VITESSE=m
+
+#
+# PATA SFF controllers with BMDMA
+#
+# CONFIG_PATA_ALI is not set
+# CONFIG_PATA_AMD is not set
+# CONFIG_PATA_ARTOP is not set
+# CONFIG_PATA_ATIIXP is not set
+# CONFIG_PATA_ATP867X is not set
+# CONFIG_PATA_CMD64X is not set
+# CONFIG_PATA_CYPRESS is not set
+# CONFIG_PATA_EFAR is not set
+# CONFIG_PATA_HPT366 is not set
+# CONFIG_PATA_HPT37X is not set
+# CONFIG_PATA_HPT3X2N is not set
+# CONFIG_PATA_HPT3X3 is not set
+# CONFIG_PATA_IT8213 is not set
+# CONFIG_PATA_IT821X is not set
+# CONFIG_PATA_JMICRON is not set
+# CONFIG_PATA_MARVELL is not set
+# CONFIG_PATA_NETCELL is not set
+# CONFIG_PATA_NINJA32 is not set
+# CONFIG_PATA_NS87415 is not set
+# CONFIG_PATA_OLDPIIX is not set
+# CONFIG_PATA_OPTIDMA is not set
+# CONFIG_PATA_PDC2027X is not set
+# CONFIG_PATA_PDC_OLD is not set
+# CONFIG_PATA_RADISYS is not set
+# CONFIG_PATA_RDC is not set
+# CONFIG_PATA_SCH is not set
+# CONFIG_PATA_SERVERWORKS is not set
+# CONFIG_PATA_SIL680 is not set
+CONFIG_PATA_SIS=m
+# CONFIG_PATA_TOSHIBA is not set
+# CONFIG_PATA_TRIFLEX is not set
+# CONFIG_PATA_VIA is not set
+# CONFIG_PATA_WINBOND is not set
+
+#
+# PIO-only SFF controllers
+#
+# CONFIG_PATA_CMD640_PCI is not set
+# CONFIG_PATA_MPIIX is not set
+# CONFIG_PATA_NS87410 is not set
+# CONFIG_PATA_OPTI is not set
+# CONFIG_PATA_PLATFORM is not set
+# CONFIG_PATA_RZ1000 is not set
+
+#
+# Generic fallback / legacy drivers
+#
+# CONFIG_PATA_ACPI is not set
+CONFIG_ATA_GENERIC=m
+# CONFIG_PATA_LEGACY is not set
+CONFIG_MD=y
+CONFIG_BLK_DEV_MD=m
+CONFIG_MD_LINEAR=m
+CONFIG_MD_RAID0=m
+CONFIG_MD_RAID1=m
+CONFIG_MD_RAID10=m
+CONFIG_MD_RAID456=m
+CONFIG_MD_MULTIPATH=m
+CONFIG_MD_FAULTY=m
+# CONFIG_BCACHE is not set
+CONFIG_BLK_DEV_DM_BUILTIN=y
+CONFIG_BLK_DEV_DM=m
+# CONFIG_DM_DEBUG is not set
+CONFIG_DM_BUFIO=m
+# CONFIG_DM_DEBUG_BLOCK_MANAGER_LOCKING is not set
+CONFIG_DM_BIO_PRISON=m
+CONFIG_DM_PERSISTENT_DATA=m
+# CONFIG_DM_UNSTRIPED is not set
+CONFIG_DM_CRYPT=m
+CONFIG_DM_SNAPSHOT=m
+CONFIG_DM_THIN_PROVISIONING=m
+CONFIG_DM_CACHE=m
+CONFIG_DM_CACHE_SMQ=m
+# CONFIG_DM_WRITECACHE is not set
+# CONFIG_DM_EBS is not set
+# CONFIG_DM_ERA is not set
+# CONFIG_DM_CLONE is not set
+CONFIG_DM_MIRROR=m
+CONFIG_DM_LOG_USERSPACE=m
+CONFIG_DM_RAID=m
+CONFIG_DM_ZERO=m
+CONFIG_DM_MULTIPATH=m
+CONFIG_DM_MULTIPATH_QL=m
+CONFIG_DM_MULTIPATH_ST=m
+# CONFIG_DM_MULTIPATH_HST is not set
+CONFIG_DM_DELAY=m
+# CONFIG_DM_DUST is not set
+# CONFIG_DM_UEVENT is not set
+CONFIG_DM_FLAKEY=m
+CONFIG_DM_VERITY=m
+# CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG is not set
+# CONFIG_DM_VERITY_FEC is not set
+CONFIG_DM_SWITCH=m
+CONFIG_DM_LOG_WRITES=m
+# CONFIG_DM_INTEGRITY is not set
+# CONFIG_TARGET_CORE is not set
+# CONFIG_FUSION is not set
+
+#
+# IEEE 1394 (FireWire) support
+#
+# CONFIG_FIREWIRE is not set
+# CONFIG_FIREWIRE_NOSY is not set
+# end of IEEE 1394 (FireWire) support
+
+# CONFIG_MACINTOSH_DRIVERS is not set
+CONFIG_NETDEVICES=y
+CONFIG_MII=y
+CONFIG_NET_CORE=y
+# CONFIG_BONDING is not set
+CONFIG_DUMMY=y
+# CONFIG_WIREGUARD is not set
+# CONFIG_EQUALIZER is not set
+CONFIG_NET_FC=y
+# CONFIG_NET_TEAM is not set
+# CONFIG_MACVLAN is not set
+# CONFIG_IPVLAN is not set
+# CONFIG_VXLAN is not set
+# CONFIG_GENEVE is not set
+# CONFIG_BAREUDP is not set
+# CONFIG_GTP is not set
+CONFIG_MACSEC=y
+CONFIG_NETCONSOLE=y
+CONFIG_NETCONSOLE_DYNAMIC=y
+CONFIG_NETPOLL=y
+CONFIG_NET_POLL_CONTROLLER=y
+CONFIG_TUN=m
+# CONFIG_TUN_VNET_CROSS_LE is not set
+CONFIG_VETH=y
+# CONFIG_NLMON is not set
+# CONFIG_ARCNET is not set
+
+#
+# Distributed Switch Architecture drivers
+#
+# end of Distributed Switch Architecture drivers
+
+CONFIG_ETHERNET=y
+CONFIG_MDIO=y
+CONFIG_NET_VENDOR_3COM=y
+CONFIG_VORTEX=y
+CONFIG_TYPHOON=y
+CONFIG_NET_VENDOR_ADAPTEC=y
+CONFIG_ADAPTEC_STARFIRE=y
+CONFIG_NET_VENDOR_AGERE=y
+# CONFIG_ET131X is not set
+CONFIG_NET_VENDOR_ALACRITECH=y
+# CONFIG_SLICOSS is not set
+CONFIG_NET_VENDOR_ALTEON=y
+CONFIG_ACENIC=y
+# CONFIG_ACENIC_OMIT_TIGON_I is not set
+# CONFIG_ALTERA_TSE is not set
+CONFIG_NET_VENDOR_AMAZON=y
+# CONFIG_ENA_ETHERNET is not set
+CONFIG_NET_VENDOR_AMD=y
+CONFIG_AMD8111_ETH=y
+CONFIG_PCNET32=y
+# CONFIG_AMD_XGBE is not set
+CONFIG_NET_VENDOR_AQUANTIA=y
+# CONFIG_AQTION is not set
+CONFIG_NET_VENDOR_ARC=y
+CONFIG_NET_VENDOR_ATHEROS=y
+CONFIG_ATL2=y
+CONFIG_ATL1=y
+CONFIG_ATL1E=y
+CONFIG_ATL1C=y
+# CONFIG_ALX is not set
+# CONFIG_NET_VENDOR_AURORA is not set
+CONFIG_NET_VENDOR_BROADCOM=y
+CONFIG_B44=y
+CONFIG_B44_PCI_AUTOSELECT=y
+CONFIG_B44_PCICORE_AUTOSELECT=y
+CONFIG_B44_PCI=y
+# CONFIG_BCMGENET is not set
+CONFIG_BNX2=y
+CONFIG_CNIC=y
+CONFIG_TIGON3=y
+CONFIG_TIGON3_HWMON=y
+CONFIG_BNX2X=y
+CONFIG_BNX2X_SRIOV=y
+# CONFIG_SYSTEMPORT is not set
+# CONFIG_BNXT is not set
+CONFIG_NET_VENDOR_BROCADE=y
+# CONFIG_BNA is not set
+CONFIG_NET_VENDOR_CADENCE=y
+# CONFIG_MACB is not set
+# CONFIG_NET_VENDOR_CAVIUM is not set
+CONFIG_NET_VENDOR_CHELSIO=y
+CONFIG_CHELSIO_T1=y
+# CONFIG_CHELSIO_T1_1G is not set
+CONFIG_CHELSIO_T3=y
+CONFIG_CHELSIO_T4=y
+# CONFIG_CHELSIO_T4VF is not set
+CONFIG_CHELSIO_LIB=m
+CONFIG_NET_VENDOR_CISCO=y
+CONFIG_ENIC=y
+CONFIG_NET_VENDOR_CORTINA=y
+# CONFIG_CX_ECAT is not set
+CONFIG_DNET=y
+CONFIG_NET_VENDOR_DEC=y
+CONFIG_NET_TULIP=y
+CONFIG_DE2104X=y
+CONFIG_DE2104X_DSL=0
+CONFIG_TULIP=y
+# CONFIG_TULIP_MWI is not set
+# CONFIG_TULIP_MMIO is not set
+# CONFIG_TULIP_NAPI is not set
+CONFIG_DE4X5=y
+CONFIG_WINBOND_840=y
+CONFIG_DM9102=y
+CONFIG_ULI526X=y
+CONFIG_NET_VENDOR_DLINK=y
+CONFIG_DL2K=y
+CONFIG_SUNDANCE=y
+CONFIG_SUNDANCE_MMIO=y
+CONFIG_NET_VENDOR_EMULEX=y
+CONFIG_BE2NET=y
+# CONFIG_BE2NET_HWMON is not set
+CONFIG_BE2NET_BE2=y
+CONFIG_BE2NET_BE3=y
+CONFIG_BE2NET_LANCER=y
+CONFIG_BE2NET_SKYHAWK=y
+# CONFIG_NET_VENDOR_EZCHIP is not set
+CONFIG_NET_VENDOR_GOOGLE=y
+# CONFIG_GVE is not set
+CONFIG_NET_VENDOR_HUAWEI=y
+# CONFIG_HINIC is not set
+CONFIG_NET_VENDOR_I825XX=y
+CONFIG_NET_VENDOR_INTEL=y
+CONFIG_E100=y
+CONFIG_E1000=y
+CONFIG_E1000E=y
+# CONFIG_E1000E_HWTS is not set
+CONFIG_IGB=y
+CONFIG_IGB_HWMON=y
+CONFIG_IGBVF=y
+CONFIG_IXGB=y
+CONFIG_IXGBE=y
+CONFIG_IXGBE_HWMON=y
+CONFIG_IXGBEVF=m
+CONFIG_I40E=y
+# CONFIG_I40EVF is not set
+# CONFIG_ICE is not set
+# CONFIG_FM10K is not set
+# CONFIG_IGC is not set
+CONFIG_JME=y
+CONFIG_NET_VENDOR_MARVELL=y
+# CONFIG_MVMDIO is not set
+CONFIG_SKGE=y
+# CONFIG_SKGE_DEBUG is not set
+# CONFIG_SKGE_GENESIS is not set
+CONFIG_SKY2=y
+# CONFIG_SKY2_DEBUG is not set
+CONFIG_NET_VENDOR_MELLANOX=y
+# CONFIG_MLX4_EN is not set
+# CONFIG_MLX5_CORE is not set
+# CONFIG_MLXSW_CORE is not set
+# CONFIG_MLXFW is not set
+CONFIG_NET_VENDOR_MICREL=y
+CONFIG_KS8851_MLL=y
+CONFIG_KSZ884X_PCI=y
+CONFIG_NET_VENDOR_MICROCHIP=y
+# CONFIG_LAN743X is not set
+CONFIG_NET_VENDOR_MICROSEMI=y
+CONFIG_NET_VENDOR_MYRI=y
+CONFIG_MYRI10GE=y
+CONFIG_FEALNX=y
+CONFIG_NET_VENDOR_NATSEMI=y
+CONFIG_NATSEMI=y
+CONFIG_NS83820=y
+CONFIG_NET_VENDOR_NETERION=y
+CONFIG_S2IO=y
+CONFIG_VXGE=y
+# CONFIG_VXGE_DEBUG_TRACE_ALL is not set
+# CONFIG_NET_VENDOR_NETRONOME is not set
+CONFIG_NET_VENDOR_NI=y
+# CONFIG_NI_XGE_MANAGEMENT_ENET is not set
+CONFIG_NET_VENDOR_8390=y
+CONFIG_NE2K_PCI=y
+CONFIG_NET_VENDOR_NVIDIA=y
+CONFIG_FORCEDETH=y
+CONFIG_NET_VENDOR_OKI=y
+CONFIG_ETHOC=y
+CONFIG_NET_VENDOR_PACKET_ENGINES=y
+# CONFIG_HAMACHI is not set
+# CONFIG_YELLOWFIN is not set
+CONFIG_NET_VENDOR_PENSANDO=y
+# CONFIG_IONIC is not set
+CONFIG_NET_VENDOR_QLOGIC=y
+CONFIG_QLA3XXX=y
+CONFIG_QLCNIC=y
+CONFIG_QLCNIC_SRIOV=y
+CONFIG_QLCNIC_HWMON=y
+CONFIG_NETXEN_NIC=y
+# CONFIG_QED is not set
+CONFIG_NET_VENDOR_QUALCOMM=y
+# CONFIG_QCOM_EMAC is not set
+# CONFIG_RMNET is not set
+CONFIG_NET_VENDOR_RDC=y
+CONFIG_R6040=y
+CONFIG_NET_VENDOR_REALTEK=y
+CONFIG_8139CP=y
+CONFIG_8139TOO=y
+CONFIG_8139TOO_PIO=y
+# CONFIG_8139TOO_TUNE_TWISTER is not set
+# CONFIG_8139TOO_8129 is not set
+# CONFIG_8139_OLD_RX_RESET is not set
+CONFIG_R8169=y
+# CONFIG_NET_VENDOR_RENESAS is not set
+CONFIG_NET_VENDOR_ROCKER=y
+CONFIG_NET_VENDOR_SAMSUNG=y
+# CONFIG_SXGBE_ETH is not set
+CONFIG_NET_VENDOR_SEEQ=y
+CONFIG_NET_VENDOR_SOLARFLARE=y
+# CONFIG_SFC is not set
+# CONFIG_SFC_FALCON is not set
+CONFIG_NET_VENDOR_SILAN=y
+CONFIG_SC92031=y
+CONFIG_NET_VENDOR_SIS=y
+CONFIG_SIS900=y
+CONFIG_SIS190=y
+CONFIG_NET_VENDOR_SMSC=y
+CONFIG_EPIC100=y
+# CONFIG_SMSC911X is not set
+CONFIG_SMSC9420=y
+CONFIG_NET_VENDOR_SOCIONEXT=y
+CONFIG_NET_VENDOR_STMICRO=y
+CONFIG_STMMAC_ETH=y
+# CONFIG_STMMAC_SELFTESTS is not set
+CONFIG_STMMAC_PLATFORM=y
+# CONFIG_DWMAC_GENERIC is not set
+CONFIG_DWMAC_INTEL=y
+# CONFIG_STMMAC_PCI is not set
+CONFIG_NET_VENDOR_SUN=y
+# CONFIG_HAPPYMEAL is not set
+# CONFIG_SUNGEM is not set
+# CONFIG_CASSINI is not set
+CONFIG_NIU=y
+# CONFIG_NET_VENDOR_SYNOPSYS is not set
+CONFIG_NET_VENDOR_TEHUTI=y
+CONFIG_TEHUTI=y
+CONFIG_NET_VENDOR_TI=y
+# CONFIG_TI_CPSW_PHY_SEL is not set
+CONFIG_TLAN=y
+CONFIG_NET_VENDOR_VIA=y
+CONFIG_VIA_RHINE=y
+CONFIG_VIA_RHINE_MMIO=y
+CONFIG_VIA_VELOCITY=y
+CONFIG_NET_VENDOR_WIZNET=y
+# CONFIG_WIZNET_W5100 is not set
+# CONFIG_WIZNET_W5300 is not set
+CONFIG_NET_VENDOR_XILINX=y
+# CONFIG_XILINX_AXI_EMAC is not set
+# CONFIG_XILINX_LL_TEMAC is not set
+# CONFIG_FDDI is not set
+# CONFIG_HIPPI is not set
+# CONFIG_NET_SB1000 is not set
+CONFIG_MDIO_DEVICE=y
+CONFIG_MDIO_BUS=y
+CONFIG_MDIO_DEVRES=y
+# CONFIG_MDIO_BCM_UNIMAC is not set
+# CONFIG_MDIO_BITBANG is not set
+# CONFIG_MDIO_MSCC_MIIM is not set
+# CONFIG_MDIO_MVUSB is not set
+# CONFIG_MDIO_THUNDER is not set
+CONFIG_MDIO_XPCS=y
+CONFIG_PHYLINK=y
+CONFIG_PHYLIB=y
+CONFIG_SWPHY=y
+# CONFIG_LED_TRIGGER_PHY is not set
+
+#
+# MII PHY device drivers
+#
+# CONFIG_SFP is not set
+# CONFIG_ADIN_PHY is not set
+# CONFIG_AMD_PHY is not set
+# CONFIG_AQUANTIA_PHY is not set
+# CONFIG_AX88796B_PHY is not set
+# CONFIG_BCM7XXX_PHY is not set
+# CONFIG_BCM87XX_PHY is not set
+CONFIG_BCM_NET_PHYLIB=y
+CONFIG_BROADCOM_PHY=y
+# CONFIG_BCM54140_PHY is not set
+# CONFIG_BCM84881_PHY is not set
+CONFIG_CICADA_PHY=y
+# CONFIG_CORTINA_PHY is not set
+CONFIG_DAVICOM_PHY=y
+# CONFIG_DP83822_PHY is not set
+# CONFIG_DP83TC811_PHY is not set
+# CONFIG_DP83848_PHY is not set
+# CONFIG_DP83867_PHY is not set
+# CONFIG_DP83869_PHY is not set
+# CONFIG_FIXED_PHY is not set
+CONFIG_ICPLUS_PHY=y
+# CONFIG_INTEL_XWAY_PHY is not set
+# CONFIG_LSI_ET1011C_PHY is not set
+CONFIG_LXT_PHY=y
+CONFIG_MARVELL_PHY=y
+# CONFIG_MARVELL_10G_PHY is not set
+# CONFIG_MICREL_PHY is not set
+# CONFIG_MICROCHIP_PHY is not set
+# CONFIG_MICROCHIP_T1_PHY is not set
+# CONFIG_MICROSEMI_PHY is not set
+# CONFIG_NATIONAL_PHY is not set
+# CONFIG_NXP_TJA11XX_PHY is not set
+CONFIG_QSEMI_PHY=y
+CONFIG_REALTEK_PHY=y
+# CONFIG_RENESAS_PHY is not set
+# CONFIG_ROCKCHIP_PHY is not set
+CONFIG_SMSC_PHY=y
+# CONFIG_STE10XP is not set
+# CONFIG_TERANETICS_PHY is not set
+CONFIG_VITESSE_PHY=y
+# CONFIG_XILINX_GMII2RGMII is not set
+CONFIG_PPP=y
+CONFIG_PPP_BSDCOMP=y
+CONFIG_PPP_DEFLATE=y
+# CONFIG_PPP_FILTER is not set
+CONFIG_PPP_MPPE=y
+CONFIG_PPP_MULTILINK=y
+CONFIG_PPPOE=y
+CONFIG_PPP_ASYNC=y
+CONFIG_PPP_SYNC_TTY=y
+CONFIG_SLIP=y
+CONFIG_SLHC=y
+# CONFIG_SLIP_COMPRESSED is not set
+CONFIG_SLIP_SMART=y
+CONFIG_SLIP_MODE_SLIP6=y
+CONFIG_USB_NET_DRIVERS=y
+CONFIG_USB_CATC=y
+CONFIG_USB_KAWETH=y
+CONFIG_USB_PEGASUS=y
+CONFIG_USB_RTL8150=y
+CONFIG_USB_RTL8152=m
+# CONFIG_USB_LAN78XX is not set
+CONFIG_USB_USBNET=y
+CONFIG_USB_NET_AX8817X=y
+CONFIG_USB_NET_AX88179_178A=y
+CONFIG_USB_NET_CDCETHER=y
+CONFIG_USB_NET_CDC_EEM=y
+CONFIG_USB_NET_CDC_NCM=y
+# CONFIG_USB_NET_HUAWEI_CDC_NCM is not set
+# CONFIG_USB_NET_CDC_MBIM is not set
+CONFIG_USB_NET_DM9601=y
+# CONFIG_USB_NET_SR9700 is not set
+# CONFIG_USB_NET_SR9800 is not set
+CONFIG_USB_NET_SMSC75XX=y
+CONFIG_USB_NET_SMSC95XX=y
+CONFIG_USB_NET_GL620A=y
+CONFIG_USB_NET_NET1080=y
+CONFIG_USB_NET_PLUSB=y
+CONFIG_USB_NET_MCS7830=y
+CONFIG_USB_NET_RNDIS_HOST=y
+CONFIG_USB_NET_CDC_SUBSET_ENABLE=y
+CONFIG_USB_NET_CDC_SUBSET=y
+CONFIG_USB_ALI_M5632=y
+CONFIG_USB_AN2720=y
+CONFIG_USB_BELKIN=y
+CONFIG_USB_ARMLINUX=y
+CONFIG_USB_EPSON2888=y
+CONFIG_USB_KC2190=y
+CONFIG_USB_NET_ZAURUS=y
+CONFIG_USB_NET_CX82310_ETH=y
+CONFIG_USB_NET_KALMIA=y
+# CONFIG_USB_NET_QMI_WWAN is not set
+CONFIG_USB_NET_INT51X1=y
+CONFIG_USB_IPHETH=y
+CONFIG_USB_SIERRA_NET=y
+CONFIG_USB_VL600=y
+# CONFIG_USB_NET_CH9200 is not set
+# CONFIG_USB_NET_AQC111 is not set
+CONFIG_WLAN=y
+# CONFIG_WIRELESS_WDS is not set
+# CONFIG_WLAN_VENDOR_ADMTEK is not set
+# CONFIG_WLAN_VENDOR_ATH is not set
+# CONFIG_WLAN_VENDOR_ATMEL is not set
+# CONFIG_WLAN_VENDOR_BROADCOM is not set
+# CONFIG_WLAN_VENDOR_CISCO is not set
+# CONFIG_WLAN_VENDOR_INTEL is not set
+# CONFIG_WLAN_VENDOR_INTERSIL is not set
+# CONFIG_WLAN_VENDOR_MARVELL is not set
+# CONFIG_WLAN_VENDOR_MEDIATEK is not set
+CONFIG_WLAN_VENDOR_MICROCHIP=y
+# CONFIG_WLAN_VENDOR_RALINK is not set
+# CONFIG_WLAN_VENDOR_REALTEK is not set
+# CONFIG_WLAN_VENDOR_RSI is not set
+# CONFIG_WLAN_VENDOR_ST is not set
+# CONFIG_WLAN_VENDOR_TI is not set
+# CONFIG_WLAN_VENDOR_ZYDAS is not set
+CONFIG_WLAN_VENDOR_QUANTENNA=y
+# CONFIG_QTNFMAC_PCIE is not set
+CONFIG_MAC80211_HWSIM=m
+CONFIG_USB_NET_RNDIS_WLAN=m
+# CONFIG_VIRT_WIFI is not set
+
+#
+# Enable WiMAX (Networking options) to see the WiMAX drivers
+#
+# CONFIG_WAN is not set
+# CONFIG_VMXNET3 is not set
+# CONFIG_FUJITSU_ES is not set
+CONFIG_NETDEVSIM=m
+# CONFIG_NET_FAILOVER is not set
+# CONFIG_ISDN is not set
+CONFIG_NVM=y
+# CONFIG_NVM_PBLK is not set
+
+#
+# Input device support
+#
+CONFIG_INPUT=y
+# CONFIG_INPUT_LEDS is not set
+# CONFIG_INPUT_FF_MEMLESS is not set
+CONFIG_INPUT_POLLDEV=y
+CONFIG_INPUT_SPARSEKMAP=y
+CONFIG_INPUT_MATRIXKMAP=y
+
+#
+# Userland interfaces
+#
+CONFIG_INPUT_MOUSEDEV=y
+CONFIG_INPUT_MOUSEDEV_PSAUX=y
+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
+# CONFIG_INPUT_JOYDEV is not set
+CONFIG_INPUT_EVDEV=y
+# CONFIG_INPUT_EVBUG is not set
+
+#
+# Input Device Drivers
+#
+CONFIG_INPUT_KEYBOARD=y
+CONFIG_KEYBOARD_ADP5588=y
+CONFIG_KEYBOARD_ADP5589=y
+CONFIG_KEYBOARD_ATKBD=y
+# CONFIG_KEYBOARD_QT1050 is not set
+CONFIG_KEYBOARD_QT1070=y
+CONFIG_KEYBOARD_QT2160=y
+# CONFIG_KEYBOARD_DLINK_DIR685 is not set
+CONFIG_KEYBOARD_LKKBD=y
+CONFIG_KEYBOARD_TCA6416=y
+# CONFIG_KEYBOARD_TCA8418 is not set
+CONFIG_KEYBOARD_LM8323=y
+# CONFIG_KEYBOARD_LM8333 is not set
+CONFIG_KEYBOARD_MAX7359=y
+CONFIG_KEYBOARD_MCS=y
+CONFIG_KEYBOARD_MPR121=y
+CONFIG_KEYBOARD_NEWTON=y
+CONFIG_KEYBOARD_OPENCORES=y
+# CONFIG_KEYBOARD_SAMSUNG is not set
+CONFIG_KEYBOARD_STOWAWAY=y
+CONFIG_KEYBOARD_SUNKBD=y
+# CONFIG_KEYBOARD_TM2_TOUCHKEY is not set
+CONFIG_KEYBOARD_XTKBD=y
+CONFIG_INPUT_MOUSE=y
+CONFIG_MOUSE_PS2=y
+CONFIG_MOUSE_PS2_ALPS=y
+# CONFIG_MOUSE_PS2_BYD is not set
+CONFIG_MOUSE_PS2_LOGIPS2PP=y
+CONFIG_MOUSE_PS2_SYNAPTICS=y
+CONFIG_MOUSE_PS2_SYNAPTICS_SMBUS=y
+CONFIG_MOUSE_PS2_CYPRESS=y
+CONFIG_MOUSE_PS2_LIFEBOOK=y
+CONFIG_MOUSE_PS2_TRACKPOINT=y
+# CONFIG_MOUSE_PS2_ELANTECH is not set
+# CONFIG_MOUSE_PS2_SENTELIC is not set
+# CONFIG_MOUSE_PS2_TOUCHKIT is not set
+CONFIG_MOUSE_PS2_FOCALTECH=y
+# CONFIG_MOUSE_PS2_VMMOUSE is not set
+CONFIG_MOUSE_PS2_SMBUS=y
+# CONFIG_MOUSE_SERIAL is not set
+# CONFIG_MOUSE_APPLETOUCH is not set
+# CONFIG_MOUSE_BCM5974 is not set
+# CONFIG_MOUSE_CYAPA is not set
+# CONFIG_MOUSE_ELAN_I2C is not set
+# CONFIG_MOUSE_VSXXXAA is not set
+# CONFIG_MOUSE_SYNAPTICS_I2C is not set
+# CONFIG_MOUSE_SYNAPTICS_USB is not set
+# CONFIG_INPUT_JOYSTICK is not set
+# CONFIG_INPUT_TABLET is not set
+# CONFIG_INPUT_TOUCHSCREEN is not set
+CONFIG_INPUT_MISC=y
+# CONFIG_INPUT_AD714X is not set
+# CONFIG_INPUT_BMA150 is not set
+# CONFIG_INPUT_E3X0_BUTTON is not set
+# CONFIG_INPUT_PCSPKR is not set
+# CONFIG_INPUT_MMA8450 is not set
+# CONFIG_INPUT_APANEL is not set
+# CONFIG_INPUT_ATLAS_BTNS is not set
+# CONFIG_INPUT_ATI_REMOTE2 is not set
+# CONFIG_INPUT_KEYSPAN_REMOTE is not set
+# CONFIG_INPUT_KXTJ9 is not set
+# CONFIG_INPUT_POWERMATE is not set
+# CONFIG_INPUT_YEALINK is not set
+# CONFIG_INPUT_CM109 is not set
+CONFIG_INPUT_UINPUT=y
+# CONFIG_INPUT_PCF8574 is not set
+# CONFIG_INPUT_ADXL34X is not set
+# CONFIG_INPUT_IMS_PCU is not set
+# CONFIG_INPUT_IQS269A is not set
+# CONFIG_INPUT_CMA3000 is not set
+# CONFIG_INPUT_IDEAPAD_SLIDEBAR is not set
+# CONFIG_INPUT_DRV2665_HAPTICS is not set
+# CONFIG_INPUT_DRV2667_HAPTICS is not set
+# CONFIG_RMI4_CORE is not set
+
+#
+# Hardware I/O ports
+#
+CONFIG_SERIO=y
+CONFIG_ARCH_MIGHT_HAVE_PC_SERIO=y
+CONFIG_SERIO_I8042=y
+# CONFIG_SERIO_SERPORT is not set
+# CONFIG_SERIO_CT82C710 is not set
+# CONFIG_SERIO_PCIPS2 is not set
+CONFIG_SERIO_LIBPS2=y
+# CONFIG_SERIO_RAW is not set
+# CONFIG_SERIO_ALTERA_PS2 is not set
+# CONFIG_SERIO_PS2MULT is not set
+# CONFIG_SERIO_ARC_PS2 is not set
+# CONFIG_USERIO is not set
+# CONFIG_GAMEPORT is not set
+# end of Hardware I/O ports
+# end of Input device support
+
+#
+# Character devices
+#
+CONFIG_TTY=y
+CONFIG_VT=y
+CONFIG_CONSOLE_TRANSLATIONS=y
+CONFIG_VT_CONSOLE=y
+CONFIG_VT_CONSOLE_SLEEP=y
+CONFIG_HW_CONSOLE=y
+CONFIG_VT_HW_CONSOLE_BINDING=y
+CONFIG_UNIX98_PTYS=y
+CONFIG_LEGACY_PTYS=y
+CONFIG_LEGACY_PTY_COUNT=256
+CONFIG_LDISC_AUTOLOAD=y
+
+#
+# Serial drivers
+#
+CONFIG_SERIAL_EARLYCON=y
+CONFIG_SERIAL_8250=y
+CONFIG_SERIAL_8250_DEPRECATED_OPTIONS=y
+CONFIG_SERIAL_8250_PNP=y
+# CONFIG_SERIAL_8250_16550A_VARIANTS is not set
+# CONFIG_SERIAL_8250_FINTEK is not set
+CONFIG_SERIAL_8250_CONSOLE=y
+CONFIG_SERIAL_8250_PCI=y
+CONFIG_SERIAL_8250_EXAR=y
+CONFIG_SERIAL_8250_NR_UARTS=16
+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
+CONFIG_SERIAL_8250_EXTENDED=y
+CONFIG_SERIAL_8250_MANY_PORTS=y
+CONFIG_SERIAL_8250_SHARE_IRQ=y
+# CONFIG_SERIAL_8250_DETECT_IRQ is not set
+CONFIG_SERIAL_8250_RSA=y
+CONFIG_SERIAL_8250_DWLIB=y
+# CONFIG_SERIAL_8250_DW is not set
+# CONFIG_SERIAL_8250_RT288X is not set
+CONFIG_SERIAL_8250_LPSS=y
+# CONFIG_SERIAL_8250_MID is not set
+
+#
+# Non-8250 serial port support
+#
+# CONFIG_SERIAL_UARTLITE is not set
+CONFIG_SERIAL_CORE=y
+CONFIG_SERIAL_CORE_CONSOLE=y
+# CONFIG_SERIAL_JSM is not set
+# CONFIG_SERIAL_LANTIQ is not set
+# CONFIG_SERIAL_SCCNXP is not set
+# CONFIG_SERIAL_SC16IS7XX is not set
+# CONFIG_SERIAL_ALTERA_JTAGUART is not set
+# CONFIG_SERIAL_ALTERA_UART is not set
+# CONFIG_SERIAL_ARC is not set
+# CONFIG_SERIAL_RP2 is not set
+# CONFIG_SERIAL_FSL_LPUART is not set
+# CONFIG_SERIAL_FSL_LINFLEXUART is not set
+# CONFIG_SERIAL_SPRD is not set
+# end of Serial drivers
+
+# CONFIG_SERIAL_NONSTANDARD is not set
+# CONFIG_N_GSM is not set
+CONFIG_NOZOMI=y
+# CONFIG_NULL_TTY is not set
+# CONFIG_TRACE_SINK is not set
+# CONFIG_SERIAL_DEV_BUS is not set
+# CONFIG_TTY_PRINTK is not set
+CONFIG_IPMI_HANDLER=m
+CONFIG_IPMI_DMI_DECODE=y
+CONFIG_IPMI_PLAT_DATA=y
+# CONFIG_IPMI_PANIC_EVENT is not set
+# CONFIG_IPMI_DEVICE_INTERFACE is not set
+CONFIG_IPMI_SI=m
+# CONFIG_IPMI_SSIF is not set
+CONFIG_IPMI_WATCHDOG=m
+CONFIG_IPMI_POWEROFF=m
+CONFIG_HW_RANDOM=y
+# CONFIG_HW_RANDOM_TIMERIOMEM is not set
+CONFIG_HW_RANDOM_INTEL=y
+# CONFIG_HW_RANDOM_AMD is not set
+# CONFIG_HW_RANDOM_BA431 is not set
+CONFIG_HW_RANDOM_VIA=y
+# CONFIG_APPLICOM is not set
+# CONFIG_MWAVE is not set
+CONFIG_DEVMEM=y
+CONFIG_DEVKMEM=y
+CONFIG_NVRAM=y
+# CONFIG_RAW_DRIVER is not set
+CONFIG_DEVPORT=y
+# CONFIG_HPET is not set
+CONFIG_HANGCHECK_TIMER=y
+# CONFIG_TCG_TPM is not set
+# CONFIG_TELCLOCK is not set
+# CONFIG_XILLYBUS is not set
+# end of Character devices
+
+# CONFIG_RANDOM_TRUST_CPU is not set
+# CONFIG_RANDOM_TRUST_BOOTLOADER is not set
+
+#
+# I2C support
+#
+CONFIG_I2C=y
+CONFIG_ACPI_I2C_OPREGION=y
+CONFIG_I2C_BOARDINFO=y
+CONFIG_I2C_COMPAT=y
+# CONFIG_I2C_CHARDEV is not set
+# CONFIG_I2C_MUX is not set
+CONFIG_I2C_HELPER_AUTO=y
+CONFIG_I2C_ALGOBIT=y
+
+#
+# I2C Hardware Bus support
+#
+
+#
+# PC SMBus host controller drivers
+#
+# CONFIG_I2C_ALI1535 is not set
+# CONFIG_I2C_ALI1563 is not set
+# CONFIG_I2C_ALI15X3 is not set
+# CONFIG_I2C_AMD756 is not set
+# CONFIG_I2C_AMD8111 is not set
+# CONFIG_I2C_AMD_MP2 is not set
+# CONFIG_I2C_I801 is not set
+# CONFIG_I2C_ISCH is not set
+# CONFIG_I2C_ISMT is not set
+# CONFIG_I2C_PIIX4 is not set
+# CONFIG_I2C_NFORCE2 is not set
+# CONFIG_I2C_NVIDIA_GPU is not set
+# CONFIG_I2C_SIS5595 is not set
+# CONFIG_I2C_SIS630 is not set
+# CONFIG_I2C_SIS96X is not set
+# CONFIG_I2C_VIA is not set
+# CONFIG_I2C_VIAPRO is not set
+
+#
+# ACPI drivers
+#
+# CONFIG_I2C_SCMI is not set
+
+#
+# I2C system bus drivers (mostly embedded / system-on-chip)
+#
+# CONFIG_I2C_DESIGNWARE_PLATFORM is not set
+# CONFIG_I2C_DESIGNWARE_PCI is not set
+# CONFIG_I2C_EMEV2 is not set
+# CONFIG_I2C_OCORES is not set
+# CONFIG_I2C_PCA_PLATFORM is not set
+# CONFIG_I2C_SIMTEC is not set
+# CONFIG_I2C_XILINX is not set
+
+#
+# External I2C/SMBus adapter drivers
+#
+# CONFIG_I2C_DIOLAN_U2C is not set
+# CONFIG_I2C_ROBOTFUZZ_OSIF is not set
+# CONFIG_I2C_TAOS_EVM is not set
+# CONFIG_I2C_TINY_USB is not set
+
+#
+# Other I2C/SMBus bus drivers
+#
+# CONFIG_I2C_MLXCPLD is not set
+# end of I2C Hardware Bus support
+
+# CONFIG_I2C_STUB is not set
+# CONFIG_I2C_SLAVE is not set
+# CONFIG_I2C_DEBUG_CORE is not set
+# CONFIG_I2C_DEBUG_ALGO is not set
+# CONFIG_I2C_DEBUG_BUS is not set
+# end of I2C support
+
+# CONFIG_I3C is not set
+# CONFIG_SPI is not set
+# CONFIG_SPMI is not set
+# CONFIG_HSI is not set
+CONFIG_PPS=y
+# CONFIG_PPS_DEBUG is not set
+
+#
+# PPS clients support
+#
+# CONFIG_PPS_CLIENT_KTIMER is not set
+# CONFIG_PPS_CLIENT_LDISC is not set
+# CONFIG_PPS_CLIENT_GPIO is not set
+
+#
+# PPS generators support
+#
+
+#
+# PTP clock support
+#
+CONFIG_PTP_1588_CLOCK=y
+
+#
+# Enable PHYLIB and NETWORK_PHY_TIMESTAMPING to see the additional clocks.
+#
+CONFIG_PTP_1588_CLOCK_KVM=y
+# CONFIG_PTP_1588_CLOCK_IDT82P33 is not set
+# CONFIG_PTP_1588_CLOCK_IDTCM is not set
+# CONFIG_PTP_1588_CLOCK_VMW is not set
+# end of PTP clock support
+
+# CONFIG_PINCTRL is not set
+# CONFIG_GPIOLIB is not set
+# CONFIG_W1 is not set
+# CONFIG_POWER_AVS is not set
+# CONFIG_POWER_RESET is not set
+CONFIG_POWER_SUPPLY=y
+# CONFIG_POWER_SUPPLY_DEBUG is not set
+CONFIG_POWER_SUPPLY_HWMON=y
+# CONFIG_PDA_POWER is not set
+# CONFIG_TEST_POWER is not set
+# CONFIG_CHARGER_ADP5061 is not set
+# CONFIG_BATTERY_CW2015 is not set
+# CONFIG_BATTERY_DS2780 is not set
+# CONFIG_BATTERY_DS2781 is not set
+# CONFIG_BATTERY_DS2782 is not set
+# CONFIG_BATTERY_SBS is not set
+# CONFIG_CHARGER_SBS is not set
+# CONFIG_BATTERY_BQ27XXX is not set
+# CONFIG_BATTERY_MAX17040 is not set
+# CONFIG_BATTERY_MAX17042 is not set
+# CONFIG_CHARGER_MAX8903 is not set
+# CONFIG_CHARGER_LP8727 is not set
+# CONFIG_CHARGER_BQ2415X is not set
+# CONFIG_CHARGER_SMB347 is not set
+# CONFIG_BATTERY_GAUGE_LTC2941 is not set
+# CONFIG_CHARGER_BD99954 is not set
+CONFIG_HWMON=y
+# CONFIG_HWMON_DEBUG_CHIP is not set
+
+#
+# Native drivers
+#
+# CONFIG_SENSORS_ABITUGURU is not set
+# CONFIG_SENSORS_ABITUGURU3 is not set
+# CONFIG_SENSORS_AD7414 is not set
+# CONFIG_SENSORS_AD7418 is not set
+# CONFIG_SENSORS_ADM1021 is not set
+# CONFIG_SENSORS_ADM1025 is not set
+# CONFIG_SENSORS_ADM1026 is not set
+# CONFIG_SENSORS_ADM1029 is not set
+# CONFIG_SENSORS_ADM1031 is not set
+# CONFIG_SENSORS_ADM1177 is not set
+# CONFIG_SENSORS_ADM9240 is not set
+# CONFIG_SENSORS_ADT7410 is not set
+# CONFIG_SENSORS_ADT7411 is not set
+# CONFIG_SENSORS_ADT7462 is not set
+# CONFIG_SENSORS_ADT7470 is not set
+# CONFIG_SENSORS_ADT7475 is not set
+# CONFIG_SENSORS_AS370 is not set
+# CONFIG_SENSORS_ASC7621 is not set
+# CONFIG_SENSORS_AXI_FAN_CONTROL is not set
+# CONFIG_SENSORS_K8TEMP is not set
+# CONFIG_SENSORS_K10TEMP is not set
+# CONFIG_SENSORS_FAM15H_POWER is not set
+# CONFIG_SENSORS_AMD_ENERGY is not set
+# CONFIG_SENSORS_APPLESMC is not set
+# CONFIG_SENSORS_ASB100 is not set
+# CONFIG_SENSORS_ASPEED is not set
+# CONFIG_SENSORS_ATXP1 is not set
+# CONFIG_SENSORS_CORSAIR_CPRO is not set
+# CONFIG_SENSORS_DRIVETEMP is not set
+# CONFIG_SENSORS_DS620 is not set
+# CONFIG_SENSORS_DS1621 is not set
+# CONFIG_SENSORS_DELL_SMM is not set
+# CONFIG_SENSORS_I5K_AMB is not set
+# CONFIG_SENSORS_F71805F is not set
+# CONFIG_SENSORS_F71882FG is not set
+# CONFIG_SENSORS_F75375S is not set
+# CONFIG_SENSORS_FSCHMD is not set
+# CONFIG_SENSORS_GL518SM is not set
+# CONFIG_SENSORS_GL520SM is not set
+# CONFIG_SENSORS_G760A is not set
+# CONFIG_SENSORS_G762 is not set
+# CONFIG_SENSORS_HIH6130 is not set
+# CONFIG_SENSORS_IBMAEM is not set
+# CONFIG_SENSORS_IBMPEX is not set
+# CONFIG_SENSORS_I5500 is not set
+# CONFIG_SENSORS_CORETEMP is not set
+# CONFIG_SENSORS_IT87 is not set
+# CONFIG_SENSORS_JC42 is not set
+# CONFIG_SENSORS_POWR1220 is not set
+# CONFIG_SENSORS_LINEAGE is not set
+# CONFIG_SENSORS_LTC2945 is not set
+# CONFIG_SENSORS_LTC2947_I2C is not set
+# CONFIG_SENSORS_LTC2990 is not set
+# CONFIG_SENSORS_LTC4151 is not set
+# CONFIG_SENSORS_LTC4215 is not set
+# CONFIG_SENSORS_LTC4222 is not set
+# CONFIG_SENSORS_LTC4245 is not set
+# CONFIG_SENSORS_LTC4260 is not set
+# CONFIG_SENSORS_LTC4261 is not set
+# CONFIG_SENSORS_MAX16065 is not set
+# CONFIG_SENSORS_MAX1619 is not set
+# CONFIG_SENSORS_MAX1668 is not set
+# CONFIG_SENSORS_MAX197 is not set
+# CONFIG_SENSORS_MAX31730 is not set
+# CONFIG_SENSORS_MAX6621 is not set
+# CONFIG_SENSORS_MAX6639 is not set
+# CONFIG_SENSORS_MAX6642 is not set
+# CONFIG_SENSORS_MAX6650 is not set
+# CONFIG_SENSORS_MAX6697 is not set
+# CONFIG_SENSORS_MAX31790 is not set
+# CONFIG_SENSORS_MCP3021 is not set
+# CONFIG_SENSORS_TC654 is not set
+# CONFIG_SENSORS_LM63 is not set
+# CONFIG_SENSORS_LM73 is not set
+# CONFIG_SENSORS_LM75 is not set
+# CONFIG_SENSORS_LM77 is not set
+# CONFIG_SENSORS_LM78 is not set
+# CONFIG_SENSORS_LM80 is not set
+# CONFIG_SENSORS_LM83 is not set
+# CONFIG_SENSORS_LM85 is not set
+# CONFIG_SENSORS_LM87 is not set
+# CONFIG_SENSORS_LM90 is not set
+# CONFIG_SENSORS_LM92 is not set
+# CONFIG_SENSORS_LM93 is not set
+# CONFIG_SENSORS_LM95234 is not set
+# CONFIG_SENSORS_LM95241 is not set
+# CONFIG_SENSORS_LM95245 is not set
+# CONFIG_SENSORS_PC87360 is not set
+# CONFIG_SENSORS_PC87427 is not set
+# CONFIG_SENSORS_NTC_THERMISTOR is not set
+# CONFIG_SENSORS_NCT6683 is not set
+# CONFIG_SENSORS_NCT6775 is not set
+# CONFIG_SENSORS_NCT7802 is not set
+# CONFIG_SENSORS_NPCM7XX is not set
+# CONFIG_SENSORS_PCF8591 is not set
+# CONFIG_PMBUS is not set
+# CONFIG_SENSORS_SHT21 is not set
+# CONFIG_SENSORS_SHT3x is not set
+# CONFIG_SENSORS_SHTC1 is not set
+# CONFIG_SENSORS_SIS5595 is not set
+# CONFIG_SENSORS_DME1737 is not set
+# CONFIG_SENSORS_EMC1403 is not set
+# CONFIG_SENSORS_EMC2103 is not set
+# CONFIG_SENSORS_EMC6W201 is not set
+# CONFIG_SENSORS_SMSC47M1 is not set
+# CONFIG_SENSORS_SMSC47M192 is not set
+# CONFIG_SENSORS_SMSC47B397 is not set
+# CONFIG_SENSORS_STTS751 is not set
+# CONFIG_SENSORS_SMM665 is not set
+# CONFIG_SENSORS_ADC128D818 is not set
+# CONFIG_SENSORS_ADS7828 is not set
+# CONFIG_SENSORS_AMC6821 is not set
+# CONFIG_SENSORS_INA209 is not set
+# CONFIG_SENSORS_INA2XX is not set
+# CONFIG_SENSORS_INA3221 is not set
+# CONFIG_SENSORS_TC74 is not set
+# CONFIG_SENSORS_THMC50 is not set
+# CONFIG_SENSORS_TMP102 is not set
+# CONFIG_SENSORS_TMP103 is not set
+# CONFIG_SENSORS_TMP108 is not set
+# CONFIG_SENSORS_TMP401 is not set
+# CONFIG_SENSORS_TMP421 is not set
+# CONFIG_SENSORS_TMP513 is not set
+# CONFIG_SENSORS_VIA_CPUTEMP is not set
+# CONFIG_SENSORS_VIA686A is not set
+# CONFIG_SENSORS_VT1211 is not set
+# CONFIG_SENSORS_VT8231 is not set
+# CONFIG_SENSORS_W83773G is not set
+# CONFIG_SENSORS_W83781D is not set
+# CONFIG_SENSORS_W83791D is not set
+# CONFIG_SENSORS_W83792D is not set
+# CONFIG_SENSORS_W83793 is not set
+# CONFIG_SENSORS_W83795 is not set
+# CONFIG_SENSORS_W83L785TS is not set
+# CONFIG_SENSORS_W83L786NG is not set
+# CONFIG_SENSORS_W83627HF is not set
+# CONFIG_SENSORS_W83627EHF is not set
+# CONFIG_SENSORS_XGENE is not set
+
+#
+# ACPI drivers
+#
+# CONFIG_SENSORS_ACPI_POWER is not set
+# CONFIG_SENSORS_ATK0110 is not set
+CONFIG_THERMAL=y
+# CONFIG_THERMAL_NETLINK is not set
+# CONFIG_THERMAL_STATISTICS is not set
+CONFIG_THERMAL_EMERGENCY_POWEROFF_DELAY_MS=0
+CONFIG_THERMAL_HWMON=y
+CONFIG_THERMAL_WRITABLE_TRIPS=y
+CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE=y
+# CONFIG_THERMAL_DEFAULT_GOV_FAIR_SHARE is not set
+# CONFIG_THERMAL_DEFAULT_GOV_USER_SPACE is not set
+# CONFIG_THERMAL_GOV_FAIR_SHARE is not set
+CONFIG_THERMAL_GOV_STEP_WISE=y
+# CONFIG_THERMAL_GOV_BANG_BANG is not set
+CONFIG_THERMAL_GOV_USER_SPACE=y
+# CONFIG_DEVFREQ_THERMAL is not set
+# CONFIG_THERMAL_EMULATION is not set
+
+#
+# Intel thermal drivers
+#
+CONFIG_INTEL_POWERCLAMP=m
+CONFIG_X86_PKG_TEMP_THERMAL=m
+# CONFIG_INTEL_SOC_DTS_THERMAL is not set
+
+#
+# ACPI INT340X thermal drivers
+#
+# CONFIG_INT340X_THERMAL is not set
+# end of ACPI INT340X thermal drivers
+
+CONFIG_INTEL_PCH_THERMAL=m
+# end of Intel thermal drivers
+
+# CONFIG_WATCHDOG is not set
+CONFIG_SSB_POSSIBLE=y
+CONFIG_SSB=y
+CONFIG_SSB_SPROM=y
+CONFIG_SSB_PCIHOST_POSSIBLE=y
+CONFIG_SSB_PCIHOST=y
+CONFIG_SSB_DRIVER_PCICORE_POSSIBLE=y
+CONFIG_SSB_DRIVER_PCICORE=y
+CONFIG_BCMA_POSSIBLE=y
+# CONFIG_BCMA is not set
+
+#
+# Multifunction device drivers
+#
+# CONFIG_MFD_AS3711 is not set
+# CONFIG_PMIC_ADP5520 is not set
+# CONFIG_MFD_BCM590XX is not set
+# CONFIG_MFD_BD9571MWV is not set
+# CONFIG_MFD_AXP20X_I2C is not set
+# CONFIG_MFD_MADERA is not set
+# CONFIG_PMIC_DA903X is not set
+# CONFIG_MFD_DA9052_I2C is not set
+# CONFIG_MFD_DA9055 is not set
+# CONFIG_MFD_DA9062 is not set
+# CONFIG_MFD_DA9063 is not set
+# CONFIG_MFD_DA9150 is not set
+# CONFIG_MFD_DLN2 is not set
+# CONFIG_MFD_MC13XXX_I2C is not set
+# CONFIG_MFD_MP2629 is not set
+# CONFIG_HTC_PASIC3 is not set
+# CONFIG_MFD_INTEL_QUARK_I2C_GPIO is not set
+# CONFIG_LPC_ICH is not set
+# CONFIG_LPC_SCH is not set
+# CONFIG_MFD_INTEL_LPSS_ACPI is not set
+# CONFIG_MFD_INTEL_LPSS_PCI is not set
+# CONFIG_MFD_IQS62X is not set
+# CONFIG_MFD_JANZ_CMODIO is not set
+# CONFIG_MFD_KEMPLD is not set
+# CONFIG_MFD_88PM800 is not set
+# CONFIG_MFD_88PM805 is not set
+# CONFIG_MFD_88PM860X is not set
+# CONFIG_MFD_MAX14577 is not set
+# CONFIG_MFD_MAX77693 is not set
+# CONFIG_MFD_MAX77843 is not set
+# CONFIG_MFD_MAX8907 is not set
+# CONFIG_MFD_MAX8925 is not set
+# CONFIG_MFD_MAX8997 is not set
+# CONFIG_MFD_MAX8998 is not set
+# CONFIG_MFD_MT6360 is not set
+# CONFIG_MFD_MT6397 is not set
+# CONFIG_MFD_MENF21BMC is not set
+# CONFIG_MFD_VIPERBOARD is not set
+# CONFIG_MFD_RETU is not set
+# CONFIG_MFD_PCF50633 is not set
+# CONFIG_MFD_RDC321X is not set
+# CONFIG_MFD_RT5033 is not set
+# CONFIG_MFD_RC5T583 is not set
+# CONFIG_MFD_SEC_CORE is not set
+# CONFIG_MFD_SI476X_CORE is not set
+# CONFIG_MFD_SM501 is not set
+# CONFIG_MFD_SKY81452 is not set
+# CONFIG_ABX500_CORE is not set
+CONFIG_MFD_SYSCON=y
+# CONFIG_MFD_TI_AM335X_TSCADC is not set
+# CONFIG_MFD_LP3943 is not set
+# CONFIG_MFD_LP8788 is not set
+# CONFIG_MFD_TI_LMU is not set
+# CONFIG_MFD_PALMAS is not set
+# CONFIG_TPS6105X is not set
+# CONFIG_TPS6507X is not set
+# CONFIG_MFD_TPS65086 is not set
+# CONFIG_MFD_TPS65090 is not set
+# CONFIG_MFD_TI_LP873X is not set
+# CONFIG_MFD_TPS6586X is not set
+# CONFIG_MFD_TPS65912_I2C is not set
+# CONFIG_MFD_TPS80031 is not set
+# CONFIG_TWL4030_CORE is not set
+# CONFIG_TWL6040_CORE is not set
+# CONFIG_MFD_WL1273_CORE is not set
+# CONFIG_MFD_LM3533 is not set
+# CONFIG_MFD_TQMX86 is not set
+# CONFIG_MFD_VX855 is not set
+# CONFIG_MFD_ARIZONA_I2C is not set
+# CONFIG_MFD_WM8400 is not set
+# CONFIG_MFD_WM831X_I2C is not set
+# CONFIG_MFD_WM8350_I2C is not set
+# CONFIG_MFD_WM8994 is not set
+# end of Multifunction device drivers
+
+# CONFIG_REGULATOR is not set
+# CONFIG_RC_CORE is not set
+# CONFIG_MEDIA_CEC_SUPPORT is not set
+# CONFIG_MEDIA_SUPPORT is not set
+
+#
+# Graphics support
+#
+# CONFIG_AGP is not set
+CONFIG_VGA_ARB=y
+CONFIG_VGA_ARB_MAX_GPUS=16
+# CONFIG_VGA_SWITCHEROO is not set
+# CONFIG_DRM is not set
+
+#
+# ARM devices
+#
+# end of ARM devices
+
+CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=y
+
+#
+# Frame buffer Devices
+#
+CONFIG_FB_CMDLINE=y
+CONFIG_FB_NOTIFY=y
+CONFIG_FB=y
+# CONFIG_FIRMWARE_EDID is not set
+CONFIG_FB_CFB_FILLRECT=y
+CONFIG_FB_CFB_COPYAREA=y
+CONFIG_FB_CFB_IMAGEBLIT=y
+# CONFIG_FB_FOREIGN_ENDIAN is not set
+# CONFIG_FB_MODE_HELPERS is not set
+# CONFIG_FB_TILEBLITTING is not set
+
+#
+# Frame buffer hardware drivers
+#
+# CONFIG_FB_CIRRUS is not set
+# CONFIG_FB_PM2 is not set
+# CONFIG_FB_CYBER2000 is not set
+# CONFIG_FB_ARC is not set
+# CONFIG_FB_ASILIANT is not set
+# CONFIG_FB_IMSTT is not set
+# CONFIG_FB_VGA16 is not set
+# CONFIG_FB_UVESA is not set
+# CONFIG_FB_VESA is not set
+CONFIG_FB_EFI=y
+# CONFIG_FB_N411 is not set
+# CONFIG_FB_HGA is not set
+# CONFIG_FB_OPENCORES is not set
+# CONFIG_FB_S1D13XXX is not set
+# CONFIG_FB_NVIDIA is not set
+# CONFIG_FB_RIVA is not set
+# CONFIG_FB_I740 is not set
+# CONFIG_FB_LE80578 is not set
+# CONFIG_FB_MATROX is not set
+# CONFIG_FB_RADEON is not set
+# CONFIG_FB_ATY128 is not set
+# CONFIG_FB_ATY is not set
+# CONFIG_FB_S3 is not set
+# CONFIG_FB_SAVAGE is not set
+# CONFIG_FB_SIS is not set
+# CONFIG_FB_NEOMAGIC is not set
+# CONFIG_FB_KYRO is not set
+# CONFIG_FB_3DFX is not set
+# CONFIG_FB_VOODOO1 is not set
+# CONFIG_FB_VT8623 is not set
+# CONFIG_FB_TRIDENT is not set
+# CONFIG_FB_ARK is not set
+# CONFIG_FB_PM3 is not set
+# CONFIG_FB_CARMINE is not set
+# CONFIG_FB_SMSCUFX is not set
+# CONFIG_FB_UDL is not set
+# CONFIG_FB_IBM_GXT4500 is not set
+# CONFIG_FB_VIRTUAL is not set
+# CONFIG_FB_METRONOME is not set
+# CONFIG_FB_MB862XX is not set
+# CONFIG_FB_SIMPLE is not set
+# CONFIG_FB_SM712 is not set
+# end of Frame buffer Devices
+
+#
+# Backlight & LCD device support
+#
+CONFIG_LCD_CLASS_DEVICE=y
+# CONFIG_LCD_PLATFORM is not set
+CONFIG_BACKLIGHT_CLASS_DEVICE=y
+# CONFIG_BACKLIGHT_APPLE is not set
+# CONFIG_BACKLIGHT_QCOM_WLED is not set
+# CONFIG_BACKLIGHT_SAHARA is not set
+# CONFIG_BACKLIGHT_ADP8860 is not set
+# CONFIG_BACKLIGHT_ADP8870 is not set
+# CONFIG_BACKLIGHT_LM3639 is not set
+# CONFIG_BACKLIGHT_LV5207LP is not set
+# CONFIG_BACKLIGHT_BD6107 is not set
+# CONFIG_BACKLIGHT_ARCXCNN is not set
+# end of Backlight & LCD device support
+
+#
+# Console display driver support
+#
+CONFIG_VGA_CONSOLE=y
+CONFIG_DUMMY_CONSOLE=y
+CONFIG_DUMMY_CONSOLE_COLUMNS=80
+CONFIG_DUMMY_CONSOLE_ROWS=25
+CONFIG_FRAMEBUFFER_CONSOLE=y
+# CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY is not set
+# CONFIG_FRAMEBUFFER_CONSOLE_ROTATION is not set
+# CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER is not set
+# end of Console display driver support
+
+# CONFIG_LOGO is not set
+# end of Graphics support
+
+CONFIG_SOUND=y
+CONFIG_SND=y
+CONFIG_SND_PCM=y
+CONFIG_SND_HWDEP=y
+CONFIG_SND_RAWMIDI=y
+CONFIG_SND_JACK=y
+CONFIG_SND_JACK_INPUT_DEV=y
+# CONFIG_SND_OSSEMUL is not set
+# CONFIG_SND_PCM_TIMER is not set
+# CONFIG_SND_HRTIMER is not set
+CONFIG_SND_DYNAMIC_MINORS=y
+CONFIG_SND_MAX_CARDS=32
+CONFIG_SND_SUPPORT_OLD_API=y
+# CONFIG_SND_PROC_FS is not set
+CONFIG_SND_VERBOSE_PRINTK=y
+CONFIG_SND_DEBUG=y
+CONFIG_SND_DEBUG_VERBOSE=y
+# CONFIG_SND_CTL_VALIDATION is not set
+CONFIG_SND_VMASTER=y
+CONFIG_SND_DMA_SGBUF=y
+# CONFIG_SND_SEQUENCER is not set
+CONFIG_SND_MPU401_UART=y
+CONFIG_SND_AC97_CODEC=y
+CONFIG_SND_DRIVERS=y
+# CONFIG_SND_PCSP is not set
+# CONFIG_SND_DUMMY is not set
+# CONFIG_SND_ALOOP is not set
+# CONFIG_SND_MTPAV is not set
+# CONFIG_SND_SERIAL_U16550 is not set
+# CONFIG_SND_MPU401 is not set
+# CONFIG_SND_AC97_POWER_SAVE is not set
+CONFIG_SND_PCI=y
+# CONFIG_SND_AD1889 is not set
+# CONFIG_SND_ALS300 is not set
+# CONFIG_SND_ALS4000 is not set
+# CONFIG_SND_ALI5451 is not set
+# CONFIG_SND_ASIHPI is not set
+# CONFIG_SND_ATIIXP is not set
+# CONFIG_SND_ATIIXP_MODEM is not set
+# CONFIG_SND_AU8810 is not set
+# CONFIG_SND_AU8820 is not set
+# CONFIG_SND_AU8830 is not set
+# CONFIG_SND_AW2 is not set
+# CONFIG_SND_AZT3328 is not set
+# CONFIG_SND_BT87X is not set
+# CONFIG_SND_CA0106 is not set
+# CONFIG_SND_CMIPCI is not set
+# CONFIG_SND_OXYGEN is not set
+# CONFIG_SND_CS4281 is not set
+# CONFIG_SND_CS46XX is not set
+# CONFIG_SND_CTXFI is not set
+# CONFIG_SND_DARLA20 is not set
+# CONFIG_SND_GINA20 is not set
+# CONFIG_SND_LAYLA20 is not set
+# CONFIG_SND_DARLA24 is not set
+# CONFIG_SND_GINA24 is not set
+# CONFIG_SND_LAYLA24 is not set
+# CONFIG_SND_MONA is not set
+# CONFIG_SND_MIA is not set
+# CONFIG_SND_ECHO3G is not set
+# CONFIG_SND_INDIGO is not set
+# CONFIG_SND_INDIGOIO is not set
+# CONFIG_SND_INDIGODJ is not set
+# CONFIG_SND_INDIGOIOX is not set
+# CONFIG_SND_INDIGODJX is not set
+# CONFIG_SND_EMU10K1 is not set
+# CONFIG_SND_EMU10K1X is not set
+# CONFIG_SND_ENS1370 is not set
+# CONFIG_SND_ENS1371 is not set
+# CONFIG_SND_ES1938 is not set
+# CONFIG_SND_ES1968 is not set
+# CONFIG_SND_FM801 is not set
+# CONFIG_SND_HDSP is not set
+# CONFIG_SND_HDSPM is not set
+# CONFIG_SND_ICE1712 is not set
+# CONFIG_SND_ICE1724 is not set
+CONFIG_SND_INTEL8X0=y
+CONFIG_SND_INTEL8X0M=y
+# CONFIG_SND_KORG1212 is not set
+# CONFIG_SND_LOLA is not set
+# CONFIG_SND_LX6464ES is not set
+# CONFIG_SND_MAESTRO3 is not set
+# CONFIG_SND_MIXART is not set
+# CONFIG_SND_NM256 is not set
+# CONFIG_SND_PCXHR is not set
+# CONFIG_SND_RIPTIDE is not set
+# CONFIG_SND_RME32 is not set
+# CONFIG_SND_RME96 is not set
+# CONFIG_SND_RME9652 is not set
+# CONFIG_SND_SE6X is not set
+# CONFIG_SND_SONICVIBES is not set
+# CONFIG_SND_TRIDENT is not set
+CONFIG_SND_VIA82XX=y
+# CONFIG_SND_VIA82XX_MODEM is not set
+# CONFIG_SND_VIRTUOSO is not set
+# CONFIG_SND_VX222 is not set
+# CONFIG_SND_YMFPCI is not set
+
+#
+# HD-Audio
+#
+CONFIG_SND_HDA=y
+CONFIG_SND_HDA_GENERIC_LEDS=y
+CONFIG_SND_HDA_INTEL=y
+CONFIG_SND_HDA_HWDEP=y
+CONFIG_SND_HDA_RECONFIG=y
+CONFIG_SND_HDA_INPUT_BEEP=y
+CONFIG_SND_HDA_INPUT_BEEP_MODE=1
+CONFIG_SND_HDA_PATCH_LOADER=y
+CONFIG_SND_HDA_CODEC_REALTEK=y
+CONFIG_SND_HDA_CODEC_ANALOG=y
+CONFIG_SND_HDA_CODEC_SIGMATEL=y
+CONFIG_SND_HDA_CODEC_VIA=y
+CONFIG_SND_HDA_CODEC_HDMI=y
+CONFIG_SND_HDA_CODEC_CIRRUS=y
+CONFIG_SND_HDA_CODEC_CONEXANT=y
+CONFIG_SND_HDA_CODEC_CA0110=y
+CONFIG_SND_HDA_CODEC_CA0132=y
+# CONFIG_SND_HDA_CODEC_CA0132_DSP is not set
+CONFIG_SND_HDA_CODEC_CMEDIA=y
+CONFIG_SND_HDA_CODEC_SI3054=y
+CONFIG_SND_HDA_GENERIC=y
+CONFIG_SND_HDA_POWER_SAVE_DEFAULT=0
+# CONFIG_SND_HDA_INTEL_HDMI_SILENT_STREAM is not set
+# end of HD-Audio
+
+CONFIG_SND_HDA_CORE=y
+CONFIG_SND_HDA_PREALLOC_SIZE=64
+CONFIG_SND_INTEL_NHLT=y
+CONFIG_SND_INTEL_DSP_CONFIG=y
+CONFIG_SND_USB=y
+# CONFIG_SND_USB_AUDIO is not set
+# CONFIG_SND_USB_UA101 is not set
+# CONFIG_SND_USB_USX2Y is not set
+# CONFIG_SND_USB_CAIAQ is not set
+# CONFIG_SND_USB_US122L is not set
+# CONFIG_SND_USB_6FIRE is not set
+# CONFIG_SND_USB_HIFACE is not set
+# CONFIG_SND_BCD2000 is not set
+# CONFIG_SND_USB_POD is not set
+# CONFIG_SND_USB_PODHD is not set
+# CONFIG_SND_USB_TONEPORT is not set
+# CONFIG_SND_USB_VARIAX is not set
+# CONFIG_SND_SOC is not set
+CONFIG_SND_X86=y
+CONFIG_AC97_BUS=y
+
+#
+# HID support
+#
+CONFIG_HID=y
+# CONFIG_HID_BATTERY_STRENGTH is not set
+CONFIG_HIDRAW=y
+# CONFIG_UHID is not set
+CONFIG_HID_GENERIC=y
+
+#
+# Special HID drivers
+#
+# CONFIG_HID_A4TECH is not set
+# CONFIG_HID_ACCUTOUCH is not set
+# CONFIG_HID_ACRUX is not set
+# CONFIG_HID_APPLE is not set
+# CONFIG_HID_APPLEIR is not set
+# CONFIG_HID_ASUS is not set
+# CONFIG_HID_AUREAL is not set
+# CONFIG_HID_BELKIN is not set
+# CONFIG_HID_BETOP_FF is not set
+# CONFIG_HID_BIGBEN_FF is not set
+# CONFIG_HID_CHERRY is not set
+# CONFIG_HID_CHICONY is not set
+# CONFIG_HID_CORSAIR is not set
+# CONFIG_HID_COUGAR is not set
+# CONFIG_HID_MACALLY is not set
+# CONFIG_HID_PRODIKEYS is not set
+# CONFIG_HID_CMEDIA is not set
+# CONFIG_HID_CREATIVE_SB0540 is not set
+# CONFIG_HID_CYPRESS is not set
+# CONFIG_HID_DRAGONRISE is not set
+# CONFIG_HID_EMS_FF is not set
+# CONFIG_HID_ELAN is not set
+# CONFIG_HID_ELECOM is not set
+# CONFIG_HID_ELO is not set
+# CONFIG_HID_EZKEY is not set
+# CONFIG_HID_GEMBIRD is not set
+# CONFIG_HID_GFRM is not set
+# CONFIG_HID_GLORIOUS is not set
+# CONFIG_HID_HOLTEK is not set
+# CONFIG_HID_GT683R is not set
+# CONFIG_HID_KEYTOUCH is not set
+# CONFIG_HID_KYE is not set
+# CONFIG_HID_UCLOGIC is not set
+# CONFIG_HID_WALTOP is not set
+# CONFIG_HID_VIEWSONIC is not set
+# CONFIG_HID_GYRATION is not set
+# CONFIG_HID_ICADE is not set
+# CONFIG_HID_ITE is not set
+# CONFIG_HID_JABRA is not set
+# CONFIG_HID_TWINHAN is not set
+# CONFIG_HID_KENSINGTON is not set
+# CONFIG_HID_LCPOWER is not set
+# CONFIG_HID_LED is not set
+# CONFIG_HID_LENOVO is not set
+# CONFIG_HID_LOGITECH is not set
+# CONFIG_HID_MAGICMOUSE is not set
+# CONFIG_HID_MALTRON is not set
+# CONFIG_HID_MAYFLASH is not set
+# CONFIG_HID_REDRAGON is not set
+# CONFIG_HID_MICROSOFT is not set
+# CONFIG_HID_MONTEREY is not set
+# CONFIG_HID_MULTITOUCH is not set
+# CONFIG_HID_NTI is not set
+# CONFIG_HID_NTRIG is not set
+# CONFIG_HID_ORTEK is not set
+# CONFIG_HID_PANTHERLORD is not set
+# CONFIG_HID_PENMOUNT is not set
+# CONFIG_HID_PETALYNX is not set
+# CONFIG_HID_PICOLCD is not set
+# CONFIG_HID_PLANTRONICS is not set
+# CONFIG_HID_PRIMAX is not set
+# CONFIG_HID_RETRODE is not set
+# CONFIG_HID_ROCCAT is not set
+# CONFIG_HID_SAITEK is not set
+# CONFIG_HID_SAMSUNG is not set
+# CONFIG_HID_SONY is not set
+# CONFIG_HID_SPEEDLINK is not set
+# CONFIG_HID_STEAM is not set
+# CONFIG_HID_STEELSERIES is not set
+# CONFIG_HID_SUNPLUS is not set
+# CONFIG_HID_RMI is not set
+# CONFIG_HID_GREENASIA is not set
+# CONFIG_HID_SMARTJOYPLUS is not set
+# CONFIG_HID_TIVO is not set
+# CONFIG_HID_TOPSEED is not set
+# CONFIG_HID_THINGM is not set
+# CONFIG_HID_THRUSTMASTER is not set
+# CONFIG_HID_UDRAW_PS3 is not set
+# CONFIG_HID_U2FZERO is not set
+# CONFIG_HID_WACOM is not set
+# CONFIG_HID_WIIMOTE is not set
+# CONFIG_HID_XINMO is not set
+# CONFIG_HID_ZEROPLUS is not set
+# CONFIG_HID_ZYDACRON is not set
+# CONFIG_HID_SENSOR_HUB is not set
+# CONFIG_HID_ALPS is not set
+# end of Special HID drivers
+
+#
+# USB HID support
+#
+CONFIG_USB_HID=y
+# CONFIG_HID_PID is not set
+CONFIG_USB_HIDDEV=y
+# end of USB HID support
+
+#
+# I2C HID support
+#
+# CONFIG_I2C_HID is not set
+# end of I2C HID support
+
+#
+# Intel ISH HID support
+#
+# CONFIG_INTEL_ISH_HID is not set
+# end of Intel ISH HID support
+# end of HID support
+
+CONFIG_USB_OHCI_LITTLE_ENDIAN=y
+CONFIG_USB_SUPPORT=y
+CONFIG_USB_COMMON=y
+# CONFIG_USB_LED_TRIG is not set
+# CONFIG_USB_ULPI_BUS is not set
+CONFIG_USB_ARCH_HAS_HCD=y
+CONFIG_USB=y
+CONFIG_USB_PCI=y
+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
+
+#
+# Miscellaneous USB options
+#
+CONFIG_USB_DEFAULT_PERSIST=y
+CONFIG_USB_DYNAMIC_MINORS=y
+# CONFIG_USB_OTG is not set
+# CONFIG_USB_OTG_PRODUCTLIST is not set
+# CONFIG_USB_OTG_DISABLE_EXTERNAL_HUB is not set
+# CONFIG_USB_LEDS_TRIGGER_USBPORT is not set
+CONFIG_USB_AUTOSUSPEND_DELAY=2
+# CONFIG_USB_MON is not set
+
+#
+# USB Host Controller Drivers
+#
+# CONFIG_USB_C67X00_HCD is not set
+CONFIG_USB_XHCI_HCD=y
+# CONFIG_USB_XHCI_DBGCAP is not set
+CONFIG_USB_XHCI_PCI=y
+# CONFIG_USB_XHCI_PCI_RENESAS is not set
+# CONFIG_USB_XHCI_PLATFORM is not set
+CONFIG_USB_EHCI_HCD=y
+CONFIG_USB_EHCI_ROOT_HUB_TT=y
+# CONFIG_USB_EHCI_TT_NEWSCHED is not set
+CONFIG_USB_EHCI_PCI=y
+# CONFIG_USB_EHCI_FSL is not set
+# CONFIG_USB_EHCI_HCD_PLATFORM is not set
+# CONFIG_USB_OXU210HP_HCD is not set
+# CONFIG_USB_ISP116X_HCD is not set
+# CONFIG_USB_FOTG210_HCD is not set
+# CONFIG_USB_OHCI_HCD is not set
+CONFIG_USB_UHCI_HCD=y
+# CONFIG_USB_SL811_HCD is not set
+# CONFIG_USB_R8A66597_HCD is not set
+# CONFIG_USB_HCD_SSB is not set
+# CONFIG_USB_HCD_TEST_MODE is not set
+
+#
+# USB Device Class drivers
+#
+CONFIG_USB_ACM=y
+# CONFIG_USB_PRINTER is not set
+CONFIG_USB_WDM=y
+# CONFIG_USB_TMC is not set
+
+#
+# NOTE: USB_STORAGE depends on SCSI but BLK_DEV_SD may
+#
+
+#
+# also be needed; see USB_STORAGE Help for more info
+#
+CONFIG_USB_STORAGE=y
+# CONFIG_USB_STORAGE_DEBUG is not set
+CONFIG_USB_STORAGE_REALTEK=y
+CONFIG_REALTEK_AUTOPM=y
+CONFIG_USB_STORAGE_DATAFAB=y
+CONFIG_USB_STORAGE_FREECOM=y
+CONFIG_USB_STORAGE_ISD200=y
+CONFIG_USB_STORAGE_USBAT=y
+CONFIG_USB_STORAGE_SDDR09=y
+CONFIG_USB_STORAGE_SDDR55=y
+CONFIG_USB_STORAGE_JUMPSHOT=y
+CONFIG_USB_STORAGE_ALAUDA=y
+CONFIG_USB_STORAGE_ONETOUCH=y
+CONFIG_USB_STORAGE_KARMA=y
+CONFIG_USB_STORAGE_CYPRESS_ATACB=y
+CONFIG_USB_STORAGE_ENE_UB6250=y
+# CONFIG_USB_UAS is not set
+
+#
+# USB Imaging devices
+#
+# CONFIG_USB_MDC800 is not set
+# CONFIG_USB_MICROTEK is not set
+# CONFIG_USBIP_CORE is not set
+# CONFIG_USB_CDNS3 is not set
+# CONFIG_USB_MUSB_HDRC is not set
+# CONFIG_USB_DWC3 is not set
+# CONFIG_USB_DWC2 is not set
+# CONFIG_USB_CHIPIDEA is not set
+# CONFIG_USB_ISP1760 is not set
+
+#
+# USB port drivers
+#
+# CONFIG_USB_SERIAL is not set
+
+#
+# USB Miscellaneous drivers
+#
+# CONFIG_USB_EMI62 is not set
+# CONFIG_USB_EMI26 is not set
+# CONFIG_USB_ADUTUX is not set
+# CONFIG_USB_SEVSEG is not set
+# CONFIG_USB_LEGOTOWER is not set
+# CONFIG_USB_LCD is not set
+# CONFIG_USB_CYPRESS_CY7C63 is not set
+# CONFIG_USB_CYTHERM is not set
+# CONFIG_USB_IDMOUSE is not set
+# CONFIG_USB_FTDI_ELAN is not set
+# CONFIG_USB_APPLEDISPLAY is not set
+# CONFIG_APPLE_MFI_FASTCHARGE is not set
+# CONFIG_USB_SISUSBVGA is not set
+# CONFIG_USB_LD is not set
+# CONFIG_USB_TRANCEVIBRATOR is not set
+# CONFIG_USB_IOWARRIOR is not set
+# CONFIG_USB_TEST is not set
+# CONFIG_USB_EHSET_TEST_FIXTURE is not set
+# CONFIG_USB_ISIGHTFW is not set
+# CONFIG_USB_YUREX is not set
+# CONFIG_USB_EZUSB_FX2 is not set
+# CONFIG_USB_HUB_USB251XB is not set
+# CONFIG_USB_HSIC_USB3503 is not set
+# CONFIG_USB_HSIC_USB4604 is not set
+# CONFIG_USB_LINK_LAYER_TEST is not set
+# CONFIG_USB_CHAOSKEY is not set
+
+#
+# USB Physical Layer drivers
+#
+# CONFIG_NOP_USB_XCEIV is not set
+# CONFIG_USB_ISP1301 is not set
+# end of USB Physical Layer drivers
+
+# CONFIG_USB_GADGET is not set
+# CONFIG_TYPEC is not set
+# CONFIG_USB_ROLE_SWITCH is not set
+# CONFIG_MMC is not set
+# CONFIG_MEMSTICK is not set
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+# CONFIG_LEDS_CLASS_FLASH is not set
+# CONFIG_LEDS_CLASS_MULTICOLOR is not set
+# CONFIG_LEDS_BRIGHTNESS_HW_CHANGED is not set
+
+#
+# LED drivers
+#
+# CONFIG_LEDS_APU is not set
+# CONFIG_LEDS_LM3530 is not set
+# CONFIG_LEDS_LM3532 is not set
+# CONFIG_LEDS_LM3642 is not set
+# CONFIG_LEDS_PCA9532 is not set
+# CONFIG_LEDS_LP3944 is not set
+# CONFIG_LEDS_CLEVO_MAIL is not set
+# CONFIG_LEDS_PCA955X is not set
+# CONFIG_LEDS_PCA963X is not set
+# CONFIG_LEDS_BD2802 is not set
+# CONFIG_LEDS_INTEL_SS4200 is not set
+# CONFIG_LEDS_TCA6507 is not set
+# CONFIG_LEDS_TLC591XX is not set
+# CONFIG_LEDS_LM355x is not set
+
+#
+# LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)
+#
+# CONFIG_LEDS_BLINKM is not set
+# CONFIG_LEDS_MLXCPLD is not set
+# CONFIG_LEDS_MLXREG is not set
+# CONFIG_LEDS_USER is not set
+# CONFIG_LEDS_NIC78BX is not set
+# CONFIG_LEDS_TI_LMU_COMMON is not set
+
+#
+# LED Triggers
+#
+CONFIG_LEDS_TRIGGERS=y
+# CONFIG_LEDS_TRIGGER_TIMER is not set
+# CONFIG_LEDS_TRIGGER_ONESHOT is not set
+# CONFIG_LEDS_TRIGGER_DISK is not set
+# CONFIG_LEDS_TRIGGER_HEARTBEAT is not set
+# CONFIG_LEDS_TRIGGER_BACKLIGHT is not set
+# CONFIG_LEDS_TRIGGER_CPU is not set
+# CONFIG_LEDS_TRIGGER_ACTIVITY is not set
+# CONFIG_LEDS_TRIGGER_DEFAULT_ON is not set
+
+#
+# iptables trigger is under Netfilter config (LED target)
+#
+# CONFIG_LEDS_TRIGGER_TRANSIENT is not set
+# CONFIG_LEDS_TRIGGER_CAMERA is not set
+# CONFIG_LEDS_TRIGGER_PANIC is not set
+# CONFIG_LEDS_TRIGGER_NETDEV is not set
+# CONFIG_LEDS_TRIGGER_PATTERN is not set
+CONFIG_LEDS_TRIGGER_AUDIO=y
+# CONFIG_ACCESSIBILITY is not set
+# CONFIG_INFINIBAND is not set
+CONFIG_EDAC_ATOMIC_SCRUB=y
+CONFIG_EDAC_SUPPORT=y
+# CONFIG_EDAC is not set
+CONFIG_RTC_LIB=y
+CONFIG_RTC_MC146818_LIB=y
+CONFIG_RTC_CLASS=y
+CONFIG_RTC_HCTOSYS=y
+CONFIG_RTC_HCTOSYS_DEVICE="rtc0"
+CONFIG_RTC_SYSTOHC=y
+CONFIG_RTC_SYSTOHC_DEVICE="n"
+# CONFIG_RTC_DEBUG is not set
+CONFIG_RTC_NVMEM=y
+
+#
+# RTC interfaces
+#
+CONFIG_RTC_INTF_SYSFS=y
+CONFIG_RTC_INTF_PROC=y
+CONFIG_RTC_INTF_DEV=y
+# CONFIG_RTC_INTF_DEV_UIE_EMUL is not set
+# CONFIG_RTC_DRV_TEST is not set
+
+#
+# I2C RTC drivers
+#
+# CONFIG_RTC_DRV_ABB5ZES3 is not set
+# CONFIG_RTC_DRV_ABEOZ9 is not set
+# CONFIG_RTC_DRV_ABX80X is not set
+# CONFIG_RTC_DRV_DS1307 is not set
+# CONFIG_RTC_DRV_DS1374 is not set
+# CONFIG_RTC_DRV_DS1672 is not set
+# CONFIG_RTC_DRV_MAX6900 is not set
+# CONFIG_RTC_DRV_RS5C372 is not set
+# CONFIG_RTC_DRV_ISL1208 is not set
+# CONFIG_RTC_DRV_ISL12022 is not set
+# CONFIG_RTC_DRV_X1205 is not set
+# CONFIG_RTC_DRV_PCF8523 is not set
+# CONFIG_RTC_DRV_PCF85063 is not set
+# CONFIG_RTC_DRV_PCF85363 is not set
+# CONFIG_RTC_DRV_PCF8563 is not set
+# CONFIG_RTC_DRV_PCF8583 is not set
+# CONFIG_RTC_DRV_M41T80 is not set
+# CONFIG_RTC_DRV_BQ32K is not set
+# CONFIG_RTC_DRV_S35390A is not set
+# CONFIG_RTC_DRV_FM3130 is not set
+# CONFIG_RTC_DRV_RX8010 is not set
+# CONFIG_RTC_DRV_RX8581 is not set
+# CONFIG_RTC_DRV_RX8025 is not set
+# CONFIG_RTC_DRV_EM3027 is not set
+# CONFIG_RTC_DRV_RV3028 is not set
+# CONFIG_RTC_DRV_RV8803 is not set
+# CONFIG_RTC_DRV_SD3078 is not set
+
+#
+# SPI RTC drivers
+#
+CONFIG_RTC_I2C_AND_SPI=y
+
+#
+# SPI and I2C RTC drivers
+#
+# CONFIG_RTC_DRV_DS3232 is not set
+# CONFIG_RTC_DRV_PCF2127 is not set
+# CONFIG_RTC_DRV_RV3029C2 is not set
+
+#
+# Platform RTC drivers
+#
+CONFIG_RTC_DRV_CMOS=y
+# CONFIG_RTC_DRV_DS1286 is not set
+# CONFIG_RTC_DRV_DS1511 is not set
+# CONFIG_RTC_DRV_DS1553 is not set
+# CONFIG_RTC_DRV_DS1685_FAMILY is not set
+# CONFIG_RTC_DRV_DS1742 is not set
+# CONFIG_RTC_DRV_DS2404 is not set
+# CONFIG_RTC_DRV_STK17TA8 is not set
+# CONFIG_RTC_DRV_M48T86 is not set
+# CONFIG_RTC_DRV_M48T35 is not set
+# CONFIG_RTC_DRV_M48T59 is not set
+# CONFIG_RTC_DRV_MSM6242 is not set
+# CONFIG_RTC_DRV_BQ4802 is not set
+# CONFIG_RTC_DRV_RP5C01 is not set
+# CONFIG_RTC_DRV_V3020 is not set
+
+#
+# on-CPU RTC drivers
+#
+# CONFIG_RTC_DRV_FTRTC010 is not set
+
+#
+# HID Sensor RTC drivers
+#
+# CONFIG_DMADEVICES is not set
+
+#
+# DMABUF options
+#
+CONFIG_SYNC_FILE=y
+CONFIG_SW_SYNC=y
+# CONFIG_UDMABUF is not set
+# CONFIG_DMABUF_MOVE_NOTIFY is not set
+# CONFIG_DMABUF_SELFTESTS is not set
+# CONFIG_DMABUF_HEAPS is not set
+# end of DMABUF options
+
+# CONFIG_AUXDISPLAY is not set
+CONFIG_UIO=y
+# CONFIG_UIO_CIF is not set
+# CONFIG_UIO_PDRV_GENIRQ is not set
+# CONFIG_UIO_DMEM_GENIRQ is not set
+# CONFIG_UIO_AEC is not set
+# CONFIG_UIO_SERCOS3 is not set
+# CONFIG_UIO_PCI_GENERIC is not set
+# CONFIG_UIO_NETX is not set
+# CONFIG_UIO_PRUSS is not set
+# CONFIG_UIO_MF624 is not set
+# CONFIG_VFIO is not set
+CONFIG_IRQ_BYPASS_MANAGER=m
+# CONFIG_VIRT_DRIVERS is not set
+CONFIG_VIRTIO_MENU=y
+# CONFIG_VIRTIO_PCI is not set
+# CONFIG_VIRTIO_MMIO is not set
+# CONFIG_VDPA is not set
+CONFIG_VHOST_IOTLB=m
+CONFIG_VHOST=m
+CONFIG_VHOST_MENU=y
+CONFIG_VHOST_NET=m
+# CONFIG_VHOST_CROSS_ENDIAN_LEGACY is not set
+
+#
+# Microsoft Hyper-V guest support
+#
+# CONFIG_HYPERV is not set
+# end of Microsoft Hyper-V guest support
+
+# CONFIG_GREYBUS is not set
+# CONFIG_STAGING is not set
+# CONFIG_X86_PLATFORM_DEVICES is not set
+CONFIG_PMC_ATOM=y
+# CONFIG_MFD_CROS_EC is not set
+# CONFIG_CHROME_PLATFORMS is not set
+# CONFIG_MELLANOX_PLATFORM is not set
+CONFIG_HAVE_CLK=y
+CONFIG_CLKDEV_LOOKUP=y
+CONFIG_HAVE_CLK_PREPARE=y
+CONFIG_COMMON_CLK=y
+# CONFIG_COMMON_CLK_MAX9485 is not set
+# CONFIG_COMMON_CLK_SI5341 is not set
+# CONFIG_COMMON_CLK_SI5351 is not set
+# CONFIG_COMMON_CLK_SI544 is not set
+# CONFIG_COMMON_CLK_CDCE706 is not set
+# CONFIG_COMMON_CLK_CS2000_CP is not set
+# CONFIG_HWSPINLOCK is not set
+
+#
+# Clock Source drivers
+#
+CONFIG_CLKEVT_I8253=y
+CONFIG_I8253_LOCK=y
+CONFIG_CLKBLD_I8253=y
+# end of Clock Source drivers
+
+CONFIG_MAILBOX=y
+CONFIG_PCC=y
+# CONFIG_ALTERA_MBOX is not set
+CONFIG_IOMMU_IOVA=y
+CONFIG_IOASID=y
+CONFIG_IOMMU_API=y
+CONFIG_IOMMU_SUPPORT=y
+
+#
+# Generic IOMMU Pagetable Support
+#
+# end of Generic IOMMU Pagetable Support
+
+# CONFIG_IOMMU_DEBUGFS is not set
+# CONFIG_IOMMU_DEFAULT_PASSTHROUGH is not set
+# CONFIG_AMD_IOMMU is not set
+CONFIG_DMAR_TABLE=y
+CONFIG_INTEL_IOMMU=y
+# CONFIG_INTEL_IOMMU_SVM is not set
+CONFIG_INTEL_IOMMU_DEFAULT_ON=y
+CONFIG_INTEL_IOMMU_FLOPPY_WA=y
+# CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON is not set
+CONFIG_IRQ_REMAP=y
+
+#
+# Remoteproc drivers
+#
+# CONFIG_REMOTEPROC is not set
+# end of Remoteproc drivers
+
+#
+# Rpmsg drivers
+#
+# CONFIG_RPMSG_QCOM_GLINK_RPM is not set
+# CONFIG_RPMSG_VIRTIO is not set
+# end of Rpmsg drivers
+
+# CONFIG_SOUNDWIRE is not set
+
+#
+# SOC (System On Chip) specific Drivers
+#
+
+#
+# Amlogic SoC drivers
+#
+# end of Amlogic SoC drivers
+
+#
+# Aspeed SoC drivers
+#
+# end of Aspeed SoC drivers
+
+#
+# Broadcom SoC drivers
+#
+# end of Broadcom SoC drivers
+
+#
+# NXP/Freescale QorIQ SoC drivers
+#
+# end of NXP/Freescale QorIQ SoC drivers
+
+#
+# i.MX SoC drivers
+#
+# end of i.MX SoC drivers
+
+#
+# Qualcomm SoC drivers
+#
+# end of Qualcomm SoC drivers
+
+# CONFIG_SOC_TI is not set
+
+#
+# Xilinx SoC drivers
+#
+# CONFIG_XILINX_VCU is not set
+# end of Xilinx SoC drivers
+# end of SOC (System On Chip) specific Drivers
+
+CONFIG_PM_DEVFREQ=y
+
+#
+# DEVFREQ Governors
+#
+CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=m
+# CONFIG_DEVFREQ_GOV_PERFORMANCE is not set
+# CONFIG_DEVFREQ_GOV_POWERSAVE is not set
+# CONFIG_DEVFREQ_GOV_USERSPACE is not set
+# CONFIG_DEVFREQ_GOV_PASSIVE is not set
+
+#
+# DEVFREQ Drivers
+#
+# CONFIG_PM_DEVFREQ_EVENT is not set
+# CONFIG_EXTCON is not set
+# CONFIG_MEMORY is not set
+# CONFIG_IIO is not set
+# CONFIG_NTB is not set
+# CONFIG_VME_BUS is not set
+# CONFIG_PWM is not set
+
+#
+# IRQ chip support
+#
+# end of IRQ chip support
+
+# CONFIG_IPACK_BUS is not set
+CONFIG_RESET_CONTROLLER=y
+# CONFIG_RESET_BRCMSTB_RESCAL is not set
+# CONFIG_RESET_TI_SYSCON is not set
+
+#
+# PHY Subsystem
+#
+CONFIG_GENERIC_PHY=y
+# CONFIG_BCM_KONA_USB2_PHY is not set
+# CONFIG_PHY_PXA_28NM_HSIC is not set
+# CONFIG_PHY_PXA_28NM_USB2 is not set
+# CONFIG_PHY_INTEL_EMMC is not set
+# end of PHY Subsystem
+
+# CONFIG_POWERCAP is not set
+# CONFIG_MCB is not set
+
+#
+# Performance monitor support
+#
+# end of Performance monitor support
+
+CONFIG_RAS=y
+# CONFIG_RAS_CEC is not set
+# CONFIG_USB4 is not set
+
+#
+# Android
+#
+# CONFIG_ANDROID is not set
+# end of Android
+
+CONFIG_LIBNVDIMM=m
+CONFIG_BLK_DEV_PMEM=m
+CONFIG_ND_BLK=m
+CONFIG_ND_CLAIM=y
+CONFIG_ND_BTT=m
+CONFIG_BTT=y
+CONFIG_ND_PFN=m
+CONFIG_NVDIMM_PFN=y
+CONFIG_NVDIMM_DAX=y
+CONFIG_DAX_DRIVER=y
+CONFIG_DAX=y
+CONFIG_DEV_DAX=m
+CONFIG_DEV_DAX_PMEM=m
+CONFIG_DEV_DAX_KMEM=m
+CONFIG_DEV_DAX_PMEM_COMPAT=m
+CONFIG_NVMEM=y
+CONFIG_NVMEM_SYSFS=y
+
+#
+# HW tracing support
+#
+# CONFIG_STM is not set
+# CONFIG_INTEL_TH is not set
+# end of HW tracing support
+
+# CONFIG_FPGA is not set
+# CONFIG_TEE is not set
+CONFIG_PM_OPP=y
+# CONFIG_UNISYS_VISORBUS is not set
+# CONFIG_SIOX is not set
+# CONFIG_SLIMBUS is not set
+# CONFIG_INTERCONNECT is not set
+# CONFIG_COUNTER is not set
+# CONFIG_MOST is not set
+# end of Device Drivers
+
+#
+# File systems
+#
+CONFIG_DCACHE_WORD_ACCESS=y
+# CONFIG_VALIDATE_FS_PARSER is not set
+CONFIG_FS_IOMAP=y
+# CONFIG_EXT2_FS is not set
+# CONFIG_EXT3_FS is not set
+CONFIG_EXT4_FS=y
+# CONFIG_EXT4_USE_FOR_EXT2 is not set
+# CONFIG_EXT4_FS_POSIX_ACL is not set
+# CONFIG_EXT4_FS_SECURITY is not set
+# CONFIG_EXT4_DEBUG is not set
+CONFIG_JBD2=y
+# CONFIG_JBD2_DEBUG is not set
+CONFIG_FS_MBCACHE=y
+# CONFIG_REISERFS_FS is not set
+# CONFIG_JFS_FS is not set
+CONFIG_XFS_FS=m
+# CONFIG_XFS_QUOTA is not set
+# CONFIG_XFS_POSIX_ACL is not set
+CONFIG_XFS_RT=y
+CONFIG_XFS_ONLINE_SCRUB=y
+# CONFIG_XFS_ONLINE_REPAIR is not set
+CONFIG_XFS_DEBUG=y
+CONFIG_XFS_ASSERT_FATAL=y
+# CONFIG_GFS2_FS is not set
+CONFIG_OCFS2_FS=m
+CONFIG_OCFS2_FS_O2CB=m
+CONFIG_OCFS2_FS_STATS=y
+CONFIG_OCFS2_DEBUG_MASKLOG=y
+# CONFIG_OCFS2_DEBUG_FS is not set
+CONFIG_BTRFS_FS=m
+CONFIG_BTRFS_FS_POSIX_ACL=y
+CONFIG_BTRFS_FS_CHECK_INTEGRITY=y
+# CONFIG_BTRFS_FS_RUN_SANITY_TESTS is not set
+# CONFIG_BTRFS_DEBUG is not set
+# CONFIG_BTRFS_ASSERT is not set
+# CONFIG_BTRFS_FS_REF_VERIFY is not set
+# CONFIG_NILFS2_FS is not set
+# CONFIG_F2FS_FS is not set
+CONFIG_FS_DAX=y
+CONFIG_FS_DAX_PMD=y
+CONFIG_FS_POSIX_ACL=y
+CONFIG_EXPORTFS=y
+# CONFIG_EXPORTFS_BLOCK_OPS is not set
+CONFIG_FILE_LOCKING=y
+# CONFIG_MANDATORY_FILE_LOCKING is not set
+CONFIG_FS_ENCRYPTION=y
+CONFIG_FS_ENCRYPTION_ALGS=y
+# CONFIG_FS_VERITY is not set
+CONFIG_FSNOTIFY=y
+# CONFIG_DNOTIFY is not set
+CONFIG_INOTIFY_USER=y
+# CONFIG_FANOTIFY is not set
+CONFIG_QUOTA=y
+# CONFIG_QUOTA_NETLINK_INTERFACE is not set
+CONFIG_PRINT_QUOTA_WARNING=y
+# CONFIG_QUOTA_DEBUG is not set
+CONFIG_QUOTA_TREE=m
+# CONFIG_QFMT_V1 is not set
+# CONFIG_QFMT_V2 is not set
+CONFIG_QUOTACTL=y
+CONFIG_QUOTACTL_COMPAT=y
+# CONFIG_AUTOFS4_FS is not set
+# CONFIG_AUTOFS_FS is not set
+CONFIG_FUSE_FS=m
+# CONFIG_CUSE is not set
+# CONFIG_VIRTIO_FS is not set
+# CONFIG_OVERLAY_FS is not set
+
+#
+# Caches
+#
+# CONFIG_FSCACHE is not set
+# end of Caches
+
+#
+# CD-ROM/DVD Filesystems
+#
+# CONFIG_ISO9660_FS is not set
+# CONFIG_UDF_FS is not set
+# end of CD-ROM/DVD Filesystems
+
+#
+# DOS/FAT/EXFAT/NT Filesystems
+#
+CONFIG_FAT_FS=y
+# CONFIG_MSDOS_FS is not set
+CONFIG_VFAT_FS=y
+CONFIG_FAT_DEFAULT_CODEPAGE=437
+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
+# CONFIG_FAT_DEFAULT_UTF8 is not set
+# CONFIG_EXFAT_FS is not set
+# CONFIG_NTFS_FS is not set
+# end of DOS/FAT/EXFAT/NT Filesystems
+
+#
+# Pseudo filesystems
+#
+CONFIG_PROC_FS=y
+CONFIG_PROC_KCORE=y
+CONFIG_PROC_SYSCTL=y
+CONFIG_PROC_PAGE_MONITOR=y
+CONFIG_PROC_CHILDREN=y
+CONFIG_PROC_PID_ARCH_STATUS=y
+CONFIG_KERNFS=y
+CONFIG_SYSFS=y
+CONFIG_TMPFS=y
+# CONFIG_TMPFS_POSIX_ACL is not set
+# CONFIG_TMPFS_XATTR is not set
+# CONFIG_TMPFS_INODE64 is not set
+# CONFIG_HUGETLBFS is not set
+CONFIG_MEMFD_CREATE=y
+CONFIG_ARCH_HAS_GIGANTIC_PAGE=y
+CONFIG_CONFIGFS_FS=y
+CONFIG_EFIVAR_FS=y
+# end of Pseudo filesystems
+
+CONFIG_MISC_FILESYSTEMS=y
+# CONFIG_ORANGEFS_FS is not set
+# CONFIG_ADFS_FS is not set
+# CONFIG_AFFS_FS is not set
+# CONFIG_ECRYPT_FS is not set
+# CONFIG_HFS_FS is not set
+# CONFIG_HFSPLUS_FS is not set
+# CONFIG_BEFS_FS is not set
+# CONFIG_BFS_FS is not set
+# CONFIG_EFS_FS is not set
+CONFIG_CRAMFS=y
+CONFIG_CRAMFS_BLOCKDEV=y
+# CONFIG_SQUASHFS is not set
+# CONFIG_VXFS_FS is not set
+# CONFIG_MINIX_FS is not set
+# CONFIG_OMFS_FS is not set
+# CONFIG_HPFS_FS is not set
+# CONFIG_QNX4FS_FS is not set
+# CONFIG_QNX6FS_FS is not set
+# CONFIG_ROMFS_FS is not set
+CONFIG_PSTORE=y
+CONFIG_PSTORE_DEFLATE_COMPRESS=y
+# CONFIG_PSTORE_LZO_COMPRESS is not set
+# CONFIG_PSTORE_LZ4_COMPRESS is not set
+# CONFIG_PSTORE_LZ4HC_COMPRESS is not set
+# CONFIG_PSTORE_842_COMPRESS is not set
+# CONFIG_PSTORE_ZSTD_COMPRESS is not set
+CONFIG_PSTORE_COMPRESS=y
+CONFIG_PSTORE_DEFLATE_COMPRESS_DEFAULT=y
+CONFIG_PSTORE_COMPRESS_DEFAULT="deflate"
+CONFIG_PSTORE_CONSOLE=y
+CONFIG_PSTORE_PMSG=y
+# CONFIG_PSTORE_FTRACE is not set
+CONFIG_PSTORE_RAM=m
+# CONFIG_PSTORE_BLK is not set
+# CONFIG_SYSV_FS is not set
+# CONFIG_UFS_FS is not set
+# CONFIG_EROFS_FS is not set
+CONFIG_NETWORK_FILESYSTEMS=y
+CONFIG_NFS_FS=y
+CONFIG_NFS_V2=y
+CONFIG_NFS_V3=y
+CONFIG_NFS_V3_ACL=y
+CONFIG_NFS_V4=y
+# CONFIG_NFS_SWAP is not set
+CONFIG_NFS_V4_1=y
+CONFIG_NFS_V4_2=y
+CONFIG_PNFS_FILE_LAYOUT=y
+CONFIG_PNFS_BLOCK=m
+CONFIG_PNFS_FLEXFILE_LAYOUT=m
+CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN="kernel.org"
+# CONFIG_NFS_V4_1_MIGRATION is not set
+CONFIG_ROOT_NFS=y
+# CONFIG_NFS_USE_LEGACY_DNS is not set
+CONFIG_NFS_USE_KERNEL_DNS=y
+CONFIG_NFS_DISABLE_UDP_SUPPORT=y
+CONFIG_NFSD=m
+CONFIG_NFSD_V2_ACL=y
+CONFIG_NFSD_V3=y
+CONFIG_NFSD_V3_ACL=y
+CONFIG_NFSD_V4=y
+# CONFIG_NFSD_BLOCKLAYOUT is not set
+# CONFIG_NFSD_SCSILAYOUT is not set
+# CONFIG_NFSD_FLEXFILELAYOUT is not set
+# CONFIG_NFSD_V4_2_INTER_SSC is not set
+CONFIG_GRACE_PERIOD=y
+CONFIG_LOCKD=y
+CONFIG_LOCKD_V4=y
+CONFIG_NFS_ACL_SUPPORT=y
+CONFIG_NFS_COMMON=y
+CONFIG_SUNRPC=y
+CONFIG_SUNRPC_GSS=y
+CONFIG_SUNRPC_BACKCHANNEL=y
+CONFIG_RPCSEC_GSS_KRB5=y
+# CONFIG_SUNRPC_DISABLE_INSECURE_ENCTYPES is not set
+# CONFIG_SUNRPC_DEBUG is not set
+# CONFIG_CEPH_FS is not set
+CONFIG_CIFS=y
+CONFIG_CIFS_STATS2=y
+CONFIG_CIFS_ALLOW_INSECURE_LEGACY=y
+# CONFIG_CIFS_WEAK_PW_HASH is not set
+# CONFIG_CIFS_UPCALL is not set
+CONFIG_CIFS_XATTR=y
+CONFIG_CIFS_POSIX=y
+CONFIG_CIFS_DEBUG=y
+CONFIG_CIFS_DEBUG2=y
+# CONFIG_CIFS_DEBUG_DUMP_KEYS is not set
+# CONFIG_CIFS_DFS_UPCALL is not set
+# CONFIG_CIFS_ROOT is not set
+# CONFIG_CODA_FS is not set
+# CONFIG_AFS_FS is not set
+# CONFIG_9P_FS is not set
+CONFIG_NLS=y
+CONFIG_NLS_DEFAULT="iso8859-1"
+CONFIG_NLS_CODEPAGE_437=y
+# CONFIG_NLS_CODEPAGE_737 is not set
+# CONFIG_NLS_CODEPAGE_775 is not set
+# CONFIG_NLS_CODEPAGE_850 is not set
+# CONFIG_NLS_CODEPAGE_852 is not set
+# CONFIG_NLS_CODEPAGE_855 is not set
+# CONFIG_NLS_CODEPAGE_857 is not set
+# CONFIG_NLS_CODEPAGE_860 is not set
+# CONFIG_NLS_CODEPAGE_861 is not set
+# CONFIG_NLS_CODEPAGE_862 is not set
+# CONFIG_NLS_CODEPAGE_863 is not set
+# CONFIG_NLS_CODEPAGE_864 is not set
+# CONFIG_NLS_CODEPAGE_865 is not set
+# CONFIG_NLS_CODEPAGE_866 is not set
+# CONFIG_NLS_CODEPAGE_869 is not set
+CONFIG_NLS_CODEPAGE_936=y
+# CONFIG_NLS_CODEPAGE_950 is not set
+# CONFIG_NLS_CODEPAGE_932 is not set
+# CONFIG_NLS_CODEPAGE_949 is not set
+# CONFIG_NLS_CODEPAGE_874 is not set
+# CONFIG_NLS_ISO8859_8 is not set
+# CONFIG_NLS_CODEPAGE_1250 is not set
+# CONFIG_NLS_CODEPAGE_1251 is not set
+# CONFIG_NLS_ASCII is not set
+CONFIG_NLS_ISO8859_1=y
+# CONFIG_NLS_ISO8859_2 is not set
+# CONFIG_NLS_ISO8859_3 is not set
+# CONFIG_NLS_ISO8859_4 is not set
+# CONFIG_NLS_ISO8859_5 is not set
+# CONFIG_NLS_ISO8859_6 is not set
+# CONFIG_NLS_ISO8859_7 is not set
+# CONFIG_NLS_ISO8859_9 is not set
+# CONFIG_NLS_ISO8859_13 is not set
+# CONFIG_NLS_ISO8859_14 is not set
+# CONFIG_NLS_ISO8859_15 is not set
+# CONFIG_NLS_KOI8_R is not set
+# CONFIG_NLS_KOI8_U is not set
+# CONFIG_NLS_MAC_ROMAN is not set
+# CONFIG_NLS_MAC_CELTIC is not set
+# CONFIG_NLS_MAC_CENTEURO is not set
+# CONFIG_NLS_MAC_CROATIAN is not set
+# CONFIG_NLS_MAC_CYRILLIC is not set
+# CONFIG_NLS_MAC_GAELIC is not set
+# CONFIG_NLS_MAC_GREEK is not set
+# CONFIG_NLS_MAC_ICELAND is not set
+# CONFIG_NLS_MAC_INUIT is not set
+# CONFIG_NLS_MAC_ROMANIAN is not set
+# CONFIG_NLS_MAC_TURKISH is not set
+CONFIG_NLS_UTF8=y
+# CONFIG_DLM is not set
+# CONFIG_UNICODE is not set
+CONFIG_IO_WQ=y
+# end of File systems
+
+#
+# Security options
+#
+CONFIG_KEYS=y
+# CONFIG_KEYS_REQUEST_CACHE is not set
+# CONFIG_PERSISTENT_KEYRINGS is not set
+# CONFIG_ENCRYPTED_KEYS is not set
+# CONFIG_KEY_DH_OPERATIONS is not set
+# CONFIG_SECURITY_DMESG_RESTRICT is not set
+# CONFIG_SECURITY is not set
+# CONFIG_SECURITYFS is not set
+CONFIG_PAGE_TABLE_ISOLATION=y
+# CONFIG_INTEL_TXT is not set
+CONFIG_HAVE_HARDENED_USERCOPY_ALLOCATOR=y
+# CONFIG_HARDENED_USERCOPY is not set
+# CONFIG_FORTIFY_SOURCE is not set
+# CONFIG_STATIC_USERMODEHELPER is not set
+# CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT is not set
+CONFIG_DEFAULT_SECURITY_DAC=y
+CONFIG_LSM="lockdown,yama,loadpin,safesetid,integrity,bpf"
+
+#
+# Kernel hardening options
+#
+
+#
+# Memory initialization
+#
+CONFIG_INIT_STACK_NONE=y
+# CONFIG_INIT_ON_ALLOC_DEFAULT_ON is not set
+# CONFIG_INIT_ON_FREE_DEFAULT_ON is not set
+# end of Memory initialization
+# end of Kernel hardening options
+# end of Security options
+
+CONFIG_XOR_BLOCKS=m
+CONFIG_ASYNC_CORE=m
+CONFIG_ASYNC_MEMCPY=m
+CONFIG_ASYNC_XOR=m
+CONFIG_ASYNC_PQ=m
+CONFIG_ASYNC_RAID6_RECOV=m
+CONFIG_CRYPTO=y
+
+#
+# Crypto core or helper
+#
+CONFIG_CRYPTO_ALGAPI=y
+CONFIG_CRYPTO_ALGAPI2=y
+CONFIG_CRYPTO_AEAD=y
+CONFIG_CRYPTO_AEAD2=y
+CONFIG_CRYPTO_SKCIPHER=y
+CONFIG_CRYPTO_SKCIPHER2=y
+CONFIG_CRYPTO_HASH=y
+CONFIG_CRYPTO_HASH2=y
+CONFIG_CRYPTO_RNG=y
+CONFIG_CRYPTO_RNG2=y
+CONFIG_CRYPTO_RNG_DEFAULT=y
+CONFIG_CRYPTO_AKCIPHER2=y
+CONFIG_CRYPTO_AKCIPHER=y
+CONFIG_CRYPTO_KPP2=y
+CONFIG_CRYPTO_ACOMP2=y
+CONFIG_CRYPTO_MANAGER=y
+CONFIG_CRYPTO_MANAGER2=y
+# CONFIG_CRYPTO_USER is not set
+CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=y
+CONFIG_CRYPTO_GF128MUL=y
+CONFIG_CRYPTO_NULL=y
+CONFIG_CRYPTO_NULL2=y
+# CONFIG_CRYPTO_PCRYPT is not set
+# CONFIG_CRYPTO_CRYPTD is not set
+CONFIG_CRYPTO_AUTHENC=y
+# CONFIG_CRYPTO_TEST is not set
+
+#
+# Public-key cryptography
+#
+CONFIG_CRYPTO_RSA=y
+# CONFIG_CRYPTO_DH is not set
+# CONFIG_CRYPTO_ECDH is not set
+# CONFIG_CRYPTO_ECRDSA is not set
+# CONFIG_CRYPTO_CURVE25519 is not set
+# CONFIG_CRYPTO_CURVE25519_X86 is not set
+
+#
+# Authenticated Encryption with Associated Data
+#
+CONFIG_CRYPTO_CCM=y
+CONFIG_CRYPTO_GCM=y
+# CONFIG_CRYPTO_CHACHA20POLY1305 is not set
+# CONFIG_CRYPTO_AEGIS128 is not set
+# CONFIG_CRYPTO_AEGIS128_AESNI_SSE2 is not set
+CONFIG_CRYPTO_SEQIV=y
+# CONFIG_CRYPTO_ECHAINIV is not set
+
+#
+# Block modes
+#
+CONFIG_CRYPTO_CBC=y
+# CONFIG_CRYPTO_CFB is not set
+CONFIG_CRYPTO_CTR=y
+CONFIG_CRYPTO_CTS=y
+CONFIG_CRYPTO_ECB=y
+# CONFIG_CRYPTO_LRW is not set
+# CONFIG_CRYPTO_OFB is not set
+# CONFIG_CRYPTO_PCBC is not set
+CONFIG_CRYPTO_XTS=y
+# CONFIG_CRYPTO_KEYWRAP is not set
+# CONFIG_CRYPTO_NHPOLY1305_SSE2 is not set
+# CONFIG_CRYPTO_NHPOLY1305_AVX2 is not set
+# CONFIG_CRYPTO_ADIANTUM is not set
+CONFIG_CRYPTO_ESSIV=m
+
+#
+# Hash modes
+#
+CONFIG_CRYPTO_CMAC=y
+CONFIG_CRYPTO_HMAC=y
+# CONFIG_CRYPTO_XCBC is not set
+# CONFIG_CRYPTO_VMAC is not set
+
+#
+# Digest
+#
+CONFIG_CRYPTO_CRC32C=y
+# CONFIG_CRYPTO_CRC32C_INTEL is not set
+# CONFIG_CRYPTO_CRC32 is not set
+# CONFIG_CRYPTO_CRC32_PCLMUL is not set
+CONFIG_CRYPTO_XXHASH=m
+CONFIG_CRYPTO_BLAKE2B=m
+# CONFIG_CRYPTO_BLAKE2S is not set
+# CONFIG_CRYPTO_BLAKE2S_X86 is not set
+CONFIG_CRYPTO_CRCT10DIF=m
+# CONFIG_CRYPTO_CRCT10DIF_PCLMUL is not set
+CONFIG_CRYPTO_GHASH=y
+# CONFIG_CRYPTO_POLY1305 is not set
+# CONFIG_CRYPTO_POLY1305_X86_64 is not set
+CONFIG_CRYPTO_MD4=y
+CONFIG_CRYPTO_MD5=y
+CONFIG_CRYPTO_MICHAEL_MIC=y
+# CONFIG_CRYPTO_RMD128 is not set
+# CONFIG_CRYPTO_RMD160 is not set
+# CONFIG_CRYPTO_RMD256 is not set
+# CONFIG_CRYPTO_RMD320 is not set
+CONFIG_CRYPTO_SHA1=y
+# CONFIG_CRYPTO_SHA1_SSSE3 is not set
+# CONFIG_CRYPTO_SHA256_SSSE3 is not set
+# CONFIG_CRYPTO_SHA512_SSSE3 is not set
+CONFIG_CRYPTO_SHA256=y
+CONFIG_CRYPTO_SHA512=y
+# CONFIG_CRYPTO_SHA3 is not set
+# CONFIG_CRYPTO_SM3 is not set
+# CONFIG_CRYPTO_STREEBOG is not set
+# CONFIG_CRYPTO_TGR192 is not set
+# CONFIG_CRYPTO_WP512 is not set
+# CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL is not set
+
+#
+# Ciphers
+#
+CONFIG_CRYPTO_AES=y
+# CONFIG_CRYPTO_AES_TI is not set
+# CONFIG_CRYPTO_AES_NI_INTEL is not set
+# CONFIG_CRYPTO_ANUBIS is not set
+CONFIG_CRYPTO_ARC4=y
+# CONFIG_CRYPTO_BLOWFISH is not set
+# CONFIG_CRYPTO_BLOWFISH_X86_64 is not set
+# CONFIG_CRYPTO_CAMELLIA is not set
+# CONFIG_CRYPTO_CAMELLIA_X86_64 is not set
+# CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64 is not set
+# CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64 is not set
+# CONFIG_CRYPTO_CAST5 is not set
+# CONFIG_CRYPTO_CAST5_AVX_X86_64 is not set
+# CONFIG_CRYPTO_CAST6 is not set
+# CONFIG_CRYPTO_CAST6_AVX_X86_64 is not set
+CONFIG_CRYPTO_DES=y
+# CONFIG_CRYPTO_DES3_EDE_X86_64 is not set
+# CONFIG_CRYPTO_FCRYPT is not set
+# CONFIG_CRYPTO_KHAZAD is not set
+# CONFIG_CRYPTO_SALSA20 is not set
+# CONFIG_CRYPTO_CHACHA20 is not set
+# CONFIG_CRYPTO_CHACHA20_X86_64 is not set
+# CONFIG_CRYPTO_SEED is not set
+# CONFIG_CRYPTO_SERPENT is not set
+# CONFIG_CRYPTO_SERPENT_SSE2_X86_64 is not set
+# CONFIG_CRYPTO_SERPENT_AVX_X86_64 is not set
+# CONFIG_CRYPTO_SERPENT_AVX2_X86_64 is not set
+# CONFIG_CRYPTO_SM4 is not set
+# CONFIG_CRYPTO_TEA is not set
+# CONFIG_CRYPTO_TWOFISH is not set
+# CONFIG_CRYPTO_TWOFISH_X86_64 is not set
+# CONFIG_CRYPTO_TWOFISH_X86_64_3WAY is not set
+# CONFIG_CRYPTO_TWOFISH_AVX_X86_64 is not set
+
+#
+# Compression
+#
+CONFIG_CRYPTO_DEFLATE=y
+# CONFIG_CRYPTO_LZO is not set
+# CONFIG_CRYPTO_842 is not set
+# CONFIG_CRYPTO_LZ4 is not set
+# CONFIG_CRYPTO_LZ4HC is not set
+# CONFIG_CRYPTO_ZSTD is not set
+
+#
+# Random Number Generation
+#
+# CONFIG_CRYPTO_ANSI_CPRNG is not set
+CONFIG_CRYPTO_DRBG_MENU=y
+CONFIG_CRYPTO_DRBG_HMAC=y
+# CONFIG_CRYPTO_DRBG_HASH is not set
+# CONFIG_CRYPTO_DRBG_CTR is not set
+CONFIG_CRYPTO_DRBG=y
+CONFIG_CRYPTO_JITTERENTROPY=y
+# CONFIG_CRYPTO_USER_API_HASH is not set
+# CONFIG_CRYPTO_USER_API_SKCIPHER is not set
+# CONFIG_CRYPTO_USER_API_RNG is not set
+# CONFIG_CRYPTO_USER_API_AEAD is not set
+CONFIG_CRYPTO_HASH_INFO=y
+
+#
+# Crypto library routines
+#
+CONFIG_CRYPTO_LIB_AES=y
+CONFIG_CRYPTO_LIB_ARC4=y
+# CONFIG_CRYPTO_LIB_BLAKE2S is not set
+# CONFIG_CRYPTO_LIB_CHACHA is not set
+# CONFIG_CRYPTO_LIB_CURVE25519 is not set
+CONFIG_CRYPTO_LIB_DES=y
+CONFIG_CRYPTO_LIB_POLY1305_RSIZE=11
+# CONFIG_CRYPTO_LIB_POLY1305 is not set
+# CONFIG_CRYPTO_LIB_CHACHA20POLY1305 is not set
+CONFIG_CRYPTO_LIB_SHA256=y
+# CONFIG_CRYPTO_HW is not set
+CONFIG_ASYMMETRIC_KEY_TYPE=y
+CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
+CONFIG_X509_CERTIFICATE_PARSER=y
+# CONFIG_PKCS8_PRIVATE_KEY_PARSER is not set
+CONFIG_PKCS7_MESSAGE_PARSER=y
+# CONFIG_PKCS7_TEST_KEY is not set
+# CONFIG_SIGNED_PE_FILE_VERIFICATION is not set
+
+#
+# Certificates for signature checking
+#
+CONFIG_SYSTEM_TRUSTED_KEYRING=y
+CONFIG_SYSTEM_TRUSTED_KEYS=""
+# CONFIG_SYSTEM_EXTRA_CERTIFICATE is not set
+# CONFIG_SECONDARY_TRUSTED_KEYRING is not set
+# CONFIG_SYSTEM_BLACKLIST_KEYRING is not set
+# end of Certificates for signature checking
+
+CONFIG_BINARY_PRINTF=y
+
+#
+# Library routines
+#
+CONFIG_RAID6_PQ=m
+CONFIG_RAID6_PQ_BENCHMARK=y
+# CONFIG_PACKING is not set
+CONFIG_BITREVERSE=y
+CONFIG_GENERIC_STRNCPY_FROM_USER=y
+CONFIG_GENERIC_STRNLEN_USER=y
+CONFIG_GENERIC_NET_UTILS=y
+CONFIG_GENERIC_FIND_FIRST_BIT=y
+# CONFIG_CORDIC is not set
+# CONFIG_PRIME_NUMBERS is not set
+CONFIG_RATIONAL=y
+CONFIG_GENERIC_PCI_IOMAP=y
+CONFIG_GENERIC_IOMAP=y
+CONFIG_ARCH_USE_CMPXCHG_LOCKREF=y
+CONFIG_ARCH_HAS_FAST_MULTIPLIER=y
+CONFIG_ARCH_USE_SYM_ANNOTATIONS=y
+CONFIG_CRC_CCITT=y
+CONFIG_CRC16=y
+CONFIG_CRC_T10DIF=m
+# CONFIG_CRC_ITU_T is not set
+CONFIG_CRC32=y
+# CONFIG_CRC32_SELFTEST is not set
+CONFIG_CRC32_SLICEBY8=y
+# CONFIG_CRC32_SLICEBY4 is not set
+# CONFIG_CRC32_SARWATE is not set
+# CONFIG_CRC32_BIT is not set
+# CONFIG_CRC64 is not set
+# CONFIG_CRC4 is not set
+# CONFIG_CRC7 is not set
+CONFIG_LIBCRC32C=y
+# CONFIG_CRC8 is not set
+CONFIG_XXHASH=y
+# CONFIG_RANDOM32_SELFTEST is not set
+CONFIG_ZLIB_INFLATE=y
+CONFIG_ZLIB_DEFLATE=y
+CONFIG_LZO_COMPRESS=y
+CONFIG_LZO_DECOMPRESS=y
+CONFIG_ZSTD_COMPRESS=m
+CONFIG_ZSTD_DECOMPRESS=y
+# CONFIG_XZ_DEC is not set
+CONFIG_DECOMPRESS_GZIP=y
+CONFIG_DECOMPRESS_ZSTD=y
+CONFIG_GENERIC_ALLOCATOR=y
+CONFIG_REED_SOLOMON=m
+CONFIG_REED_SOLOMON_ENC8=y
+CONFIG_REED_SOLOMON_DEC8=y
+CONFIG_BTREE=y
+CONFIG_INTERVAL_TREE=y
+CONFIG_XARRAY_MULTI=y
+CONFIG_ASSOCIATIVE_ARRAY=y
+CONFIG_HAS_IOMEM=y
+CONFIG_HAS_IOPORT_MAP=y
+CONFIG_HAS_DMA=y
+CONFIG_DMA_OPS=y
+CONFIG_NEED_SG_DMA_LENGTH=y
+CONFIG_NEED_DMA_MAP_STATE=y
+CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+CONFIG_SWIOTLB=y
+CONFIG_DMA_CMA=y
+
+#
+# Default contiguous memory area size:
+#
+CONFIG_CMA_SIZE_MBYTES=200
+CONFIG_CMA_SIZE_SEL_MBYTES=y
+# CONFIG_CMA_SIZE_SEL_PERCENTAGE is not set
+# CONFIG_CMA_SIZE_SEL_MIN is not set
+# CONFIG_CMA_SIZE_SEL_MAX is not set
+CONFIG_CMA_ALIGNMENT=8
+# CONFIG_DMA_API_DEBUG is not set
+CONFIG_SGL_ALLOC=y
+CONFIG_IOMMU_HELPER=y
+CONFIG_CHECK_SIGNATURE=y
+CONFIG_CPU_RMAP=y
+CONFIG_DQL=y
+CONFIG_GLOB=y
+# CONFIG_GLOB_SELFTEST is not set
+CONFIG_NLATTR=y
+CONFIG_CLZ_TAB=y
+CONFIG_IRQ_POLL=y
+CONFIG_MPILIB=y
+CONFIG_OID_REGISTRY=y
+CONFIG_UCS2_STRING=y
+CONFIG_HAVE_GENERIC_VDSO=y
+CONFIG_GENERIC_GETTIMEOFDAY=y
+CONFIG_GENERIC_VDSO_TIME_NS=y
+CONFIG_FONT_SUPPORT=y
+# CONFIG_FONTS is not set
+CONFIG_FONT_8x8=y
+CONFIG_FONT_8x16=y
+CONFIG_SG_POOL=y
+CONFIG_ARCH_HAS_PMEM_API=y
+CONFIG_MEMREGION=y
+CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
+CONFIG_ARCH_HAS_UACCESS_MCSAFE=y
+CONFIG_ARCH_STACKWALK=y
+CONFIG_SBITMAP=y
+# CONFIG_STRING_SELFTEST is not set
+# end of Library routines
+
+#
+# Kernel hacking
+#
+
+#
+# printk and dmesg options
+#
+CONFIG_PRINTK_TIME=y
+# CONFIG_PRINTK_CALLER is not set
+CONFIG_CONSOLE_LOGLEVEL_DEFAULT=7
+CONFIG_CONSOLE_LOGLEVEL_QUIET=4
+CONFIG_MESSAGE_LOGLEVEL_DEFAULT=4
+# CONFIG_BOOT_PRINTK_DELAY is not set
+# CONFIG_DYNAMIC_DEBUG is not set
+# CONFIG_DYNAMIC_DEBUG_CORE is not set
+CONFIG_SYMBOLIC_ERRNAME=y
+CONFIG_DEBUG_BUGVERBOSE=y
+# end of printk and dmesg options
+
+#
+# Compile-time checks and compiler options
+#
+CONFIG_DEBUG_INFO=y
+CONFIG_DEBUG_INFO_REDUCED=y
+# CONFIG_DEBUG_INFO_COMPRESSED is not set
+# CONFIG_DEBUG_INFO_SPLIT is not set
+# CONFIG_DEBUG_INFO_DWARF4 is not set
+# CONFIG_GDB_SCRIPTS is not set
+CONFIG_ENABLE_MUST_CHECK=y
+CONFIG_FRAME_WARN=2048
+# CONFIG_STRIP_ASM_SYMS is not set
+# CONFIG_READABLE_ASM is not set
+# CONFIG_HEADERS_INSTALL is not set
+CONFIG_DEBUG_SECTION_MISMATCH=y
+CONFIG_SECTION_MISMATCH_WARN_ONLY=y
+# CONFIG_DEBUG_FORCE_FUNCTION_ALIGN_32B is not set
+CONFIG_STACK_VALIDATION=y
+# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
+# end of Compile-time checks and compiler options
+
+#
+# Generic Kernel Debugging Instruments
+#
+CONFIG_MAGIC_SYSRQ=y
+CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x1
+CONFIG_MAGIC_SYSRQ_SERIAL=y
+CONFIG_MAGIC_SYSRQ_SERIAL_SEQUENCE=""
+CONFIG_DEBUG_FS=y
+CONFIG_DEBUG_FS_ALLOW_ALL=y
+# CONFIG_DEBUG_FS_DISALLOW_MOUNT is not set
+# CONFIG_DEBUG_FS_ALLOW_NONE is not set
+CONFIG_HAVE_ARCH_KGDB=y
+# CONFIG_KGDB is not set
+CONFIG_ARCH_HAS_UBSAN_SANITIZE_ALL=y
+# CONFIG_UBSAN is not set
+CONFIG_HAVE_ARCH_KCSAN=y
+# end of Generic Kernel Debugging Instruments
+
+CONFIG_DEBUG_KERNEL=y
+CONFIG_DEBUG_MISC=y
+
+#
+# Memory Debugging
+#
+# CONFIG_PAGE_EXTENSION is not set
+# CONFIG_DEBUG_PAGEALLOC is not set
+# CONFIG_PAGE_OWNER is not set
+# CONFIG_PAGE_POISONING is not set
+# CONFIG_DEBUG_PAGE_REF is not set
+CONFIG_DEBUG_RODATA_TEST=y
+CONFIG_ARCH_HAS_DEBUG_WX=y
+# CONFIG_DEBUG_WX is not set
+CONFIG_GENERIC_PTDUMP=y
+# CONFIG_PTDUMP_DEBUGFS is not set
+# CONFIG_DEBUG_OBJECTS is not set
+# CONFIG_SLUB_DEBUG_ON is not set
+# CONFIG_SLUB_STATS is not set
+CONFIG_HAVE_DEBUG_KMEMLEAK=y
+# CONFIG_DEBUG_KMEMLEAK is not set
+# CONFIG_DEBUG_STACK_USAGE is not set
+# CONFIG_SCHED_STACK_END_CHECK is not set
+CONFIG_ARCH_HAS_DEBUG_VM_PGTABLE=y
+CONFIG_DEBUG_VM=y
+# CONFIG_DEBUG_VM_VMACACHE is not set
+# CONFIG_DEBUG_VM_RB is not set
+# CONFIG_DEBUG_VM_PGFLAGS is not set
+CONFIG_DEBUG_VM_PGTABLE=y
+CONFIG_ARCH_HAS_DEBUG_VIRTUAL=y
+# CONFIG_DEBUG_VIRTUAL is not set
+CONFIG_DEBUG_MEMORY_INIT=y
+CONFIG_MEMORY_NOTIFIER_ERROR_INJECT=m
+# CONFIG_DEBUG_PER_CPU_MAPS is not set
+CONFIG_HAVE_ARCH_KASAN=y
+CONFIG_HAVE_ARCH_KASAN_VMALLOC=y
+CONFIG_CC_HAS_KASAN_GENERIC=y
+CONFIG_CC_HAS_WORKING_NOSANITIZE_ADDRESS=y
+# CONFIG_KASAN is not set
+# end of Memory Debugging
+
+# CONFIG_DEBUG_SHIRQ is not set
+
+#
+# Debug Oops, Lockups and Hangs
+#
+# CONFIG_PANIC_ON_OOPS is not set
+CONFIG_PANIC_ON_OOPS_VALUE=0
+CONFIG_PANIC_TIMEOUT=0
+# CONFIG_SOFTLOCKUP_DETECTOR is not set
+CONFIG_HARDLOCKUP_CHECK_TIMESTAMP=y
+# CONFIG_HARDLOCKUP_DETECTOR is not set
+# CONFIG_DETECT_HUNG_TASK is not set
+# CONFIG_WQ_WATCHDOG is not set
+# CONFIG_TEST_LOCKUP is not set
+# end of Debug Oops, Lockups and Hangs
+
+#
+# Scheduler Debugging
+#
+CONFIG_SCHED_DEBUG=y
+CONFIG_SCHED_INFO=y
+# CONFIG_SCHEDSTATS is not set
+# end of Scheduler Debugging
+
+# CONFIG_DEBUG_TIMEKEEPING is not set
+
+#
+# Lock Debugging (spinlocks, mutexes, etc...)
+#
+CONFIG_LOCK_DEBUGGING_SUPPORT=y
+# CONFIG_PROVE_LOCKING is not set
+# CONFIG_LOCK_STAT is not set
+# CONFIG_DEBUG_RT_MUTEXES is not set
+# CONFIG_DEBUG_SPINLOCK is not set
+# CONFIG_DEBUG_MUTEXES is not set
+# CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
+# CONFIG_DEBUG_RWSEMS is not set
+# CONFIG_DEBUG_LOCK_ALLOC is not set
+CONFIG_DEBUG_ATOMIC_SLEEP=y
+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
+# CONFIG_LOCK_TORTURE_TEST is not set
+# CONFIG_WW_MUTEX_SELFTEST is not set
+# end of Lock Debugging (spinlocks, mutexes, etc...)
+
+CONFIG_STACKTRACE=y
+# CONFIG_WARN_ALL_UNSEEDED_RANDOM is not set
+# CONFIG_DEBUG_KOBJECT is not set
+
+#
+# Debug kernel data structures
+#
+# CONFIG_DEBUG_LIST is not set
+# CONFIG_DEBUG_PLIST is not set
+# CONFIG_DEBUG_SG is not set
+# CONFIG_DEBUG_NOTIFIERS is not set
+# CONFIG_BUG_ON_DATA_CORRUPTION is not set
+# end of Debug kernel data structures
+
+# CONFIG_DEBUG_CREDENTIALS is not set
+
+#
+# RCU Debugging
+#
+# CONFIG_RCU_PERF_TEST is not set
+# CONFIG_RCU_TORTURE_TEST is not set
+# CONFIG_RCU_REF_SCALE_TEST is not set
+CONFIG_RCU_CPU_STALL_TIMEOUT=21
+# CONFIG_RCU_TRACE is not set
+# CONFIG_RCU_EQS_DEBUG is not set
+# end of RCU Debugging
+
+# CONFIG_DEBUG_WQ_FORCE_RR_CPU is not set
+# CONFIG_DEBUG_BLOCK_EXT_DEVT is not set
+# CONFIG_CPU_HOTPLUG_STATE_CONTROL is not set
+# CONFIG_LATENCYTOP is not set
+CONFIG_USER_STACKTRACE_SUPPORT=y
+CONFIG_NOP_TRACER=y
+CONFIG_HAVE_FUNCTION_TRACER=y
+CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y
+CONFIG_HAVE_DYNAMIC_FTRACE=y
+CONFIG_HAVE_DYNAMIC_FTRACE_WITH_REGS=y
+CONFIG_HAVE_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=y
+CONFIG_HAVE_FTRACE_MCOUNT_RECORD=y
+CONFIG_HAVE_SYSCALL_TRACEPOINTS=y
+CONFIG_HAVE_FENTRY=y
+CONFIG_HAVE_C_RECORDMCOUNT=y
+CONFIG_TRACE_CLOCK=y
+CONFIG_RING_BUFFER=y
+CONFIG_EVENT_TRACING=y
+CONFIG_CONTEXT_SWITCH_TRACER=y
+CONFIG_TRACING=y
+CONFIG_GENERIC_TRACER=y
+CONFIG_TRACING_SUPPORT=y
+CONFIG_FTRACE=y
+# CONFIG_BOOTTIME_TRACING is not set
+CONFIG_FUNCTION_TRACER=y
+CONFIG_FUNCTION_GRAPH_TRACER=y
+CONFIG_DYNAMIC_FTRACE=y
+CONFIG_DYNAMIC_FTRACE_WITH_REGS=y
+CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS=y
+# CONFIG_FUNCTION_PROFILER is not set
+# CONFIG_STACK_TRACER is not set
+# CONFIG_IRQSOFF_TRACER is not set
+# CONFIG_SCHED_TRACER is not set
+# CONFIG_HWLAT_TRACER is not set
+# CONFIG_MMIOTRACE is not set
+# CONFIG_FTRACE_SYSCALLS is not set
+# CONFIG_TRACER_SNAPSHOT is not set
+CONFIG_BRANCH_PROFILE_NONE=y
+# CONFIG_PROFILE_ANNOTATED_BRANCHES is not set
+# CONFIG_PROFILE_ALL_BRANCHES is not set
+# CONFIG_BLK_DEV_IO_TRACE is not set
+CONFIG_KPROBE_EVENTS=y
+# CONFIG_KPROBE_EVENTS_ON_NOTRACE is not set
+CONFIG_UPROBE_EVENTS=y
+CONFIG_BPF_EVENTS=y
+CONFIG_DYNAMIC_EVENTS=y
+CONFIG_PROBE_EVENTS=y
+# CONFIG_BPF_KPROBE_OVERRIDE is not set
+CONFIG_FTRACE_MCOUNT_RECORD=y
+CONFIG_TRACING_MAP=y
+CONFIG_SYNTH_EVENTS=y
+CONFIG_HIST_TRIGGERS=y
+# CONFIG_TRACE_EVENT_INJECT is not set
+# CONFIG_TRACEPOINT_BENCHMARK is not set
+# CONFIG_RING_BUFFER_BENCHMARK is not set
+# CONFIG_TRACE_EVAL_MAP_FILE is not set
+# CONFIG_FTRACE_STARTUP_TEST is not set
+# CONFIG_RING_BUFFER_STARTUP_TEST is not set
+# CONFIG_PREEMPTIRQ_DELAY_TEST is not set
+# CONFIG_SYNTH_EVENT_GEN_TEST is not set
+# CONFIG_KPROBE_EVENT_GEN_TEST is not set
+# CONFIG_HIST_TRIGGERS_DEBUG is not set
+# CONFIG_PROVIDE_OHCI1394_DMA_INIT is not set
+# CONFIG_SAMPLES is not set
+CONFIG_ARCH_HAS_DEVMEM_IS_ALLOWED=y
+# CONFIG_STRICT_DEVMEM is not set
+
+#
+# x86 Debugging
+#
+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
+CONFIG_TRACE_IRQFLAGS_NMI_SUPPORT=y
+CONFIG_EARLY_PRINTK_USB=y
+CONFIG_X86_VERBOSE_BOOTUP=y
+CONFIG_EARLY_PRINTK=y
+CONFIG_EARLY_PRINTK_DBGP=y
+CONFIG_EARLY_PRINTK_USB_XDBC=y
+# CONFIG_EFI_PGT_DUMP is not set
+# CONFIG_DEBUG_TLBFLUSH is not set
+# CONFIG_IOMMU_DEBUG is not set
+CONFIG_HAVE_MMIOTRACE_SUPPORT=y
+# CONFIG_X86_DECODER_SELFTEST is not set
+CONFIG_IO_DELAY_0X80=y
+# CONFIG_IO_DELAY_0XED is not set
+# CONFIG_IO_DELAY_UDELAY is not set
+# CONFIG_IO_DELAY_NONE is not set
+# CONFIG_DEBUG_BOOT_PARAMS is not set
+# CONFIG_CPA_DEBUG is not set
+# CONFIG_DEBUG_ENTRY is not set
+# CONFIG_DEBUG_NMI_SELFTEST is not set
+# CONFIG_X86_DEBUG_FPU is not set
+# CONFIG_PUNIT_ATOM_DEBUG is not set
+CONFIG_UNWINDER_ORC=y
+# CONFIG_UNWINDER_FRAME_POINTER is not set
+# CONFIG_UNWINDER_GUESS is not set
+# end of x86 Debugging
+
+#
+# Kernel Testing and Coverage
+#
+# CONFIG_KUNIT is not set
+CONFIG_NOTIFIER_ERROR_INJECTION=m
+CONFIG_PM_NOTIFIER_ERROR_INJECT=m
+# CONFIG_NETDEV_NOTIFIER_ERROR_INJECT is not set
+CONFIG_FUNCTION_ERROR_INJECTION=y
+CONFIG_FAULT_INJECTION=y
+# CONFIG_FAILSLAB is not set
+# CONFIG_FAIL_PAGE_ALLOC is not set
+CONFIG_FAIL_MAKE_REQUEST=y
+# CONFIG_FAIL_IO_TIMEOUT is not set
+# CONFIG_FAIL_FUTEX is not set
+CONFIG_FAULT_INJECTION_DEBUG_FS=y
+# CONFIG_FAIL_FUNCTION is not set
+CONFIG_ARCH_HAS_KCOV=y
+CONFIG_CC_HAS_SANCOV_TRACE_PC=y
+# CONFIG_KCOV is not set
+CONFIG_RUNTIME_TESTING_MENU=y
+# CONFIG_LKDTM is not set
+# CONFIG_TEST_LIST_SORT is not set
+# CONFIG_TEST_MIN_HEAP is not set
+# CONFIG_TEST_SORT is not set
+# CONFIG_KPROBES_SANITY_TEST is not set
+# CONFIG_BACKTRACE_SELF_TEST is not set
+# CONFIG_RBTREE_TEST is not set
+# CONFIG_REED_SOLOMON_TEST is not set
+# CONFIG_INTERVAL_TREE_TEST is not set
+# CONFIG_PERCPU_TEST is not set
+# CONFIG_ATOMIC64_SELFTEST is not set
+# CONFIG_ASYNC_RAID6_TEST is not set
+# CONFIG_TEST_HEXDUMP is not set
+# CONFIG_TEST_STRING_HELPERS is not set
+# CONFIG_TEST_STRSCPY is not set
+# CONFIG_TEST_KSTRTOX is not set
+CONFIG_TEST_PRINTF=m
+CONFIG_TEST_BITMAP=m
+# CONFIG_TEST_BITFIELD is not set
+# CONFIG_TEST_UUID is not set
+# CONFIG_TEST_XARRAY is not set
+# CONFIG_TEST_OVERFLOW is not set
+# CONFIG_TEST_RHASHTABLE is not set
+# CONFIG_TEST_HASH is not set
+# CONFIG_TEST_IDA is not set
+CONFIG_TEST_LKM=m
+# CONFIG_TEST_BITOPS is not set
+# CONFIG_TEST_VMALLOC is not set
+CONFIG_TEST_USER_COPY=m
+CONFIG_TEST_BPF=m
+# CONFIG_TEST_BLACKHOLE_DEV is not set
+# CONFIG_FIND_BIT_BENCHMARK is not set
+# CONFIG_TEST_FIRMWARE is not set
+CONFIG_TEST_SYSCTL=m
+# CONFIG_TEST_UDELAY is not set
+CONFIG_TEST_STATIC_KEYS=m
+CONFIG_TEST_KMOD=m
+# CONFIG_TEST_MEMCAT_P is not set
+# CONFIG_TEST_STACKINIT is not set
+# CONFIG_TEST_MEMINIT is not set
+# CONFIG_TEST_FPU is not set
+CONFIG_MEMTEST=y
+# end of Kernel Testing and Coverage
+# end of Kernel hacking
+
+--DCA/C9WSnDtl50zu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=job-script
+
+#!/bin/sh
+
+export_top_env()
+{
+	export suite='boot'
+	export testcase='boot'
+	export category='functional'
+	export timeout='10m'
+	export job_origin='/lkp-src/jobs/boot.yaml'
+	export queue_cmdline_keys='branch
+commit
+queue_at_least_once'
+	export queue='validate'
+	export testbox='vm-snb-147'
+	export tbox_group='vm-snb'
+	export branch='linux-review/Kent-Overstreet/cifs-convert-to-add_to_page_cache/20201020-030041'
+	export commit='8e602a0a7050258a8f41927f4a1ff55bd26905d7'
+	export kconfig='x86_64-kexec'
+	export repeat_to=4
+	export nr_vm=64
+	export submit_id='5f8f696b164cc215c17976ed'
+	export job_file='/lkp/jobs/scheduled/vm-snb-147/boot-1-openwrt-i386-trinity-20200812.cgz-8e602a0a7050258a8f41927f4a1ff55bd26905d7-20201021-5569-1rdfgt7-2.yaml'
+	export id='c70cabfe42b026764b8fe824f5cfc146665ae729'
+	export queuer_version='/lkp-src'
+	export model='qemu-system-x86_64 -enable-kvm -cpu SandyBridge'
+	export nr_cpu=2
+	export memory='8G'
+	export need_kconfig='CONFIG_KVM_GUEST=y'
+	export ssh_base_port=23032
+	export rootfs='openwrt-i386-trinity-20200812.cgz'
+	export compiler='gcc-9'
+	export enqueue_time='2020-10-21 06:49:15 +0800'
+	export _id='5f8f696b164cc215c17976ed'
+	export _rt='/result/boot/1/vm-snb/openwrt-i386-trinity-20200812.cgz/x86_64-kexec/gcc-9/8e602a0a7050258a8f41927f4a1ff55bd26905d7'
+	export user='lkp'
+	export result_root='/result/boot/1/vm-snb/openwrt-i386-trinity-20200812.cgz/x86_64-kexec/gcc-9/8e602a0a7050258a8f41927f4a1ff55bd26905d7/3'
+	export scheduler_version='/lkp/lkp/.src-20201020-153537'
+	export LKP_SERVER='internal-lkp-server'
+	export arch='i386'
+	export max_uptime=600
+	export initrd='/osimage/openwrt/openwrt-i386-trinity-20200812.cgz'
+	export bootloader_append='root=/dev/ram0
+user=lkp
+job=/lkp/jobs/scheduled/vm-snb-147/boot-1-openwrt-i386-trinity-20200812.cgz-8e602a0a7050258a8f41927f4a1ff55bd26905d7-20201021-5569-1rdfgt7-2.yaml
+ARCH=x86_64
+kconfig=x86_64-kexec
+branch=linux-review/Kent-Overstreet/cifs-convert-to-add_to_page_cache/20201020-030041
+commit=8e602a0a7050258a8f41927f4a1ff55bd26905d7
+BOOT_IMAGE=/pkg/linux/x86_64-kexec/gcc-9/8e602a0a7050258a8f41927f4a1ff55bd26905d7/vmlinuz-5.9.0-00020-g8e602a0a70502
+max_uptime=600
+RESULT_ROOT=/result/boot/1/vm-snb/openwrt-i386-trinity-20200812.cgz/x86_64-kexec/gcc-9/8e602a0a7050258a8f41927f4a1ff55bd26905d7/3
+LKP_SERVER=internal-lkp-server
+selinux=0
+debug
+apic=debug
+sysrq_always_enabled
+rcupdate.rcu_cpu_stall_timeout=100
+net.ifnames=0
+printk.devkmsg=on
+panic=-1
+softlockup_panic=1
+nmi_watchdog=panic
+oops=panic
+load_ramdisk=2
+prompt_ramdisk=0
+drbd.minor_count=8
+systemd.log_level=err
+ignore_loglevel
+console=tty0
+earlyprintk=ttyS0,115200
+console=ttyS0,115200
+vga=normal
+rw'
+	export modules_initrd='/pkg/linux/x86_64-kexec/gcc-9/8e602a0a7050258a8f41927f4a1ff55bd26905d7/modules.cgz'
+	export lkp_initrd='/osimage/user/lkp/lkp-i386.cgz'
+	export site='inn'
+	export LKP_CGI_PORT=80
+	export LKP_CIFS_PORT=139
+	export schedule_notify_address=
+	export queue_at_least_once=1
+	export kernel='/pkg/linux/x86_64-kexec/gcc-9/8e602a0a7050258a8f41927f4a1ff55bd26905d7/vmlinuz-5.9.0-00020-g8e602a0a70502'
+	export dequeue_time='2020-10-21 07:17:24 +0800'
+	export job_initrd='/lkp/jobs/scheduled/vm-snb-147/boot-1-openwrt-i386-trinity-20200812.cgz-8e602a0a7050258a8f41927f4a1ff55bd26905d7-20201021-5569-1rdfgt7-2.cgz'
+
+	[ -n "$LKP_SRC" ] ||
+	export LKP_SRC=/lkp/${user:-lkp}/src
+}
+
+run_job()
+{
+	echo $$ > $TMP/run-job.pid
+
+	. $LKP_SRC/lib/http.sh
+	. $LKP_SRC/lib/job.sh
+	. $LKP_SRC/lib/env.sh
+
+	export_top_env
+
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper boot-slabinfo
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper boot-meminfo
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper memmap
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
+	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper oom-killer
+	run_monitor $LKP_SRC/monitors/plain/watchdog
+
+	run_test $LKP_SRC/tests/wrapper sleep 1
+}
+
+extract_stats()
+{
+	export stats_part_begin=
+	export stats_part_end=
+
+	$LKP_SRC/stats/wrapper boot-slabinfo
+	$LKP_SRC/stats/wrapper boot-meminfo
+	$LKP_SRC/stats/wrapper memmap
+	$LKP_SRC/stats/wrapper boot-memory
+	$LKP_SRC/stats/wrapper boot-time
+	$LKP_SRC/stats/wrapper kernel-size
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper sleep
+	$LKP_SRC/stats/wrapper meminfo
+
+	$LKP_SRC/stats/wrapper time sleep.time
+	$LKP_SRC/stats/wrapper dmesg
+	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper last_state
+	$LKP_SRC/stats/wrapper stderr
+	$LKP_SRC/stats/wrapper time
+}
+
+"$@"
+
+--DCA/C9WSnDtl50zu
+Content-Type: application/x-xz
+Content-Disposition: attachment; filename="dmesg.xz"
+Content-Transfer-Encoding: base64
+
+/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4HmNIj9dADKYSqt8kKSEWvAZo7Ydv/tz/AJuxJZ5
+vBF30b/2ucNY67iJRrmU1KBL0YWxCxD+GhiRTl5p14NrDu9v7Ey3mISZYvakJzVaDAwg3sHo
+DGgc6vzw+uIOcfl5+V6CqmogyNBBlVHHVAMWXKvC8bn2F+bSrt/nsQOrDf0o3iQgEyTgdrNr
+hIw74av3tXleVLysYDM4wWZ6IZosEx/vp77xYpW2sx0sn6xACzkwiu2tt/sTelHr74uZ9A4l
+WwjRDlS0+w/+oWgO6A7djxG/47cNpeU7zOMeLxantwJ57KI4LHoRenrMzKt/O0X8sSHAgK1z
+WSSq2X1XIfSngh9cZycFhvRId59I13PQvpmnIikQ+ExLVt0v5BFKhlPBegB02uaUtbDphzSE
+ip3BeTaXYk3+3sn4DLLq6R6K2EKr3edxpZMVxnSxY08bZ6/oG4BoqnIWa1szTmhfEK96yy7m
+T9lGn0Y393sg9nTXjAngYwjqkbQmEW5jsBlhjoAN6J8aDKG8rPbVLc0NN9XUk4sx8SWL30Mo
+7zY1rNCsg8YnPApDtoDz6l9d3DBAe5ChWFa32nJhoqSVA7cf9M7POiovHdKvmdPxRS1ZSe8L
+Q2A7hDnCV6XLcAOpn8+js8FMX/EDpboJdFQuQEc/U8kYh/n1WsyprIf33VrZ7anEkcjDsTM/
+ydkkOaIRSylcwyTrIUchvXnss3BgF+gHCg8Ey0NJ3NWDOMBxCwFNQ1iYSw6ZSD9pHmpDOGy2
+Q0y2luv077VHqYH4qgDNw6rhQXvdCd+AmoK6dvhB/z5njWkTlVD8qo6NV6hGS6xtC7Vt/slt
+in9H6qFz6FR3tpahPE5pZnhk+kW0OuUos8VyKwCtE81wrDVV7/kpP/MZpS2r1e4Ly2hfX1Ay
+lLCtuVZ5kXLHPviot6y84CjgBSLyVdXVgX0RwjrDexYypmGmhlSk0YNnjxXVmUnljM87Mf6l
+xTYQ2o16127LxeLwbVNk2IHjEVHAXP+lrtN5SLZQK5dDLUG9oAMfRfAoh2E5grhqXGI8Z8V3
+q4nycH2bHnQGRSI9Opw1vIPQ8wmVRD/Ok4FNKmB5MF4fj8MVJ5r8ZTZsShJmC1DGdIFQGcDF
+3Yz6xXME/Mdhj1T69Zawrrp9mlZ5EXsitlArOVr1vLINe2hkC3tS6iMZpM8yPUYGYbMmEyxu
+6e6/rSTje3mTIGkGVuEGtzVRMQTKDyWhFygbkn8yQy8pZldU/Xnb5YUxJ1yP/jX1bPNvanSB
+ZAzmLEm9+gdkTLToVMH8/kH7ArRcrz1cnhWmCAkC/DPga4Dp8AJv55AdtsTdVB0/W6J+GSxS
+DDAymnVa6TQT51ri0MD9C97NfZna3625N09mb2Q48FPGzRHxHcGyODKpk2hWMTWz3SgxlgHV
+CZA6WjDoVTTkI+5M1H1vaRMlNX+jCjChq0WCGSASj2w0y8DEu2rUlb0VklNcIi+P4k0gmNr/
+b4xQzv4DzAzXiCadJHt6aigepne4A99x8aDhZ56T0RRBZ8jkePqm6P2Tx0fFZwBB4YTEieV/
+P1F5Nzy37/kSqYjRrKQOOmy6jk5FaQVrbbspJLVEuCNc68Ilqxg0Yn8TXPYVeVVdrmaYoulg
+nXCbw4N1dmOULhEWEeUF0LvbQ2CkTd1jEArY94LZP3EQd7POFdScA97txqVVnEgDzZTu0/D0
+0TH9agx5Qd9QBwDbWXTiCNnl4ojwhFDUQhP/qWgGQxF4aZXDT5O6BNt5fPzW+szsSgTNUxqU
+EbVQU8o5lpePJcBe4wu5BcA0Gz0aDsuax18ptM8fxmzmyPZ7ZQgkSTCwTHuB90OWvB705KaB
+JEzy7rDS5IOPJVXdtvabhvLkcOYJi741+FDVZsuyRo+hGMrHK/ciOplu4kBAMzjCiti4rwA9
+VWTPY2ZjM/S/IFERtI3slWVmEeEfS0uWmojC0eCk/SgFghGSNleOSWy4fNXNFz6cmd7lKWzf
+S39TOUofqYQ4Uj+2l9V9i0n5tVGGeGRvyAAS9mURziyI5/V+elUI1D34y0vpoAVkwx/UIxHX
+sRp/Sw1/HEHWfBjjqlTuRjP8bG3BrfGb6Zsi7OdHssUKcGbnT1/0df/3/KIZrElR6ZVQBvpr
+oLgrHCNZFD2coDV/jdT6hYchP7Vj1E7i0jBK2jSeJ6pajXl1rA2ZwxqRVqRU/krUfwhmRO+V
+NVxgGJbFvoJVdXKg6ifeVAbHOGUJimXYpf/S69TwPaYyAMA5YVMgzDie5R2m0pNKRrf8IWRx
+S5it4yz6vMQSJJZ7yu2A1qvlUtg26jmya9Vupt68FDRxFt6td5T3x433HsbBX6eEz2XZSuHO
+SZWaZty+G//0Xbi19unyyN+JzGw9TIT8RgwWiTj/ADxTo/W1MEELAdDpotMsuYxVXemji0yy
+q5NqqHNJkbFcFVkTAg1L5MzCNo//a/Az3TNSUZJmshOESR+gTKTxzLCr46OJyQhObE6isnYU
+zwKAB4rD2uLW3BDUbWOP21AyN6FPGNmXXNpJhjcyG0tLuALEc7THWFZnsJmpcGSuK286Z5Aj
+FtRFZDFmzmYl3MNyujr7gb4M4wqqwyfty0B++3WfVhXQSBajUuENr2IhfywcT8DiSXiIBpaP
+Pd/2OUj70K/zMHaJhWLUMDnpFlUN34I3KV38DMakEsENeFVm68svdQwclw5JaD8LPUUxitOs
+B9T2a+i3XDfHDfJfzD8wX9h6ysPN1cIZdLrBZguP86Q7s7e6V9mSlLcPJDvBW8bbMBFcxgES
+WMdVY/UQ3bajE+Q5tcJHCb27oitpcLtG17Ntydg5gj0EcPgmtw4DN+lpmwUjcKXgsjSx4ZoX
+N7anWfY6ug8/Uai75V/5fSlZpwBr4i9UTkMOPflXg77346RqIcUfyLu+72L/AW1oleK0ebxY
+UTrsOTpiYiunOEyOPaIz4MXbIQynXbTE8X1XGr/T8oLln7gDQJoXlOHMWieZavsfFbghhv6t
+dj/rdUem4VA/M16RKRoke2UHf76PEdmRBSQX0BChxdgPEatkzrYmKVBviyldkakki+08IdLM
+azJRzz3A8kwwDTthwiEj3j0eONlQDprgts9Z+5/JgG5cPbOxfQ9rwBovKjHUQm9XWXLzwOxH
+XJthtCOLjs2xziXrzT3Kewuzo45i/tuG2aYpfHFhcegWlDydynWeiPOwx4m9OhVRKO0X37U8
+ZMa0F5pOTKbDcLspsth4RpJUDPf3rBWCS5lAxkVWEb1QPWhodcEYX4oEWI6yVow02MuAV7pY
+CTWEgqW+vnDGjA74BDa/NizVUFUBADCROE45f/VdcOv7JHMNu7odCT88dasVgwlQ/94ZQGv+
+Z1in1i8AP2LGgWQKdj4JOrmCT6dkAjYUvOVlGuC/9Yuuca/IhGiglz7om3As1h8/qQlLkO0c
+yUWVVEYYz7mJIhgwapqd7oJODpPG1I7+e/aQNswxG0r743U+d2pZLvWYawFD5vUbFa+NtPjt
+hVBlNA32UpKbOUhCc/M7GQQkfjnjopsuNAkVcQtkYhszNDFVOtHxR/gTHAC/1grVwJhUp4wP
+DnGjX+DzbiBqFcjfcrvvpu07K1XkM1HED9lock2W/xbrsKIJdg8LnRKQzruAV96UzgQvZ1Rc
+k1LDdR67BqIwb/EUgYgjE2nNBymuT89XNx3kj2hZCdl77Enx6oEpNqxKstM57Ece3dmi2eMn
+nO8Bha5sapXCFoNVTqlvMmMhlyxK3f7LnG9JxC/pBFtpPFpdDivEI30hNQK08f3xcQEBgpJj
+PnORZ7hDl2F3QH8njgicVMlBrNVJbsJGoT22+C9vaWJ9Z7S9ULWgBiYUv8rQ70MpcoMppX1g
+LL+CTIGQxiHebs3KvkM82f8IjeFrhXKzTvBnCMb5rWz9KHhk4YjHWBL64QFYpT5M1YyUnCrR
+0aAA3XdCq193k3pwuzB5DOWATNZghQb51BJq4Y0zlcsfS283nmk1WysfNDgGLzHAjOfr7fQw
+ditVxQtpAZuP2SLZ/lAPKoVXRZo4330MfmGkWkFYv3MEAM94Lpo4qPmKXu4TJjpPM2ySX5qQ
+PMaS17XPE+UKnVpSk6Pwuzy0ODvwFr01aF2D9ChsFv3q5/zHftphdqxgwXS4usbJTj4iyY0i
+inAzPAewJVO6lcTeuEr3JyBdS0vYqvMsKAkzbxo7XnruqiuwZBw5jdCHiv/yedNCOY3CGWcC
+zTmfMKg4nq9NxOw114lmp6RHaFQpnS9WhMVBmwURVE0t2Xn0UO3GorCk0lB+CuFQ08b4XHjR
+sZlRWLMZn6LxlwGUtRaNCfAI26VJmF3EN90LW12AlJ3+xr7pG6FObiCXan/r5ovXZyih+CHk
+6hxevHmu8tYbUQhcwDxed59gFshimKUAnQ/teKD+IOTmsrE/4ofN3grGOKurU5hCveatLwes
+Vd4zma2hN0uxVukJVvK7xNIsN4trjYAQIAi3p3zlMzBd1TUHmeAUdPiSSz5XmNa0zMrk4EK5
+NTZqGTE8iD+nD9dcC4kdZ3mgLqtANT91QXjl85SPZGwdayrnac5ljecxO+ZDLDpzD72/OTu0
+Hue8mehC7oTvpVdHzBodpbk4ILH0Nkkt52WA9t4FDSKtbs1qqGpDrC9vyt4y39uKB/HQ1oTj
+c0L66H7Sq/3k8UKpDI5kKPCnmXoEaqyDOmESO0dnUojf/IZuSsn2RVpCouy/+Db7GEo3GevG
+rwrYaPIwO7ktJQ3yW7vXy0R2kd3F1TGyiMqrQdHRXQFQiWcc4nfFXwRCjyQiLi+6LSUTyLJG
+0P6EvUNahpkE/IMa6ZMvhNsUiGRRZ3tUrXhjRPRdgKMR8Qi2ikP0J4FdSUrI2tuXEMf0cCxq
+R9zOr4RJps7aQjrWlRuNz5w8qIT8ogUC3GtyXke/byQVwbRmdj4Y7PszQpUZaKzMtIZ0ggLH
+iyNsFVKeliKLGCo0cQxDxlgsxBkMPnPezyp0+igEpi+Jt/as8ZA697sQHZV1tsNaEntqSzZL
+Od/Lk85pMyp5BqBOEpe1NkY/ix8gc1/AGWE7rs4OXguI4iezWS1b3uvf8qT8mfdcSMzsVyPP
+uEixbqQ37KiEaAEyd0OOrV70JfCq36ejCIojjEKVtcuvfqHg0wpb0HFH1DZ+DcEcasHSUZWn
+aopQwsmglkQjxDqACQokB3kNepvOr6s2sUz/xnTs23xkireqA9sXeOPlq/69JyL/41mRiqUu
+4iRYioLywOVZGxW676SvPZHb3v1rBkzYgYwl8nak8VGrABkoVyp+QMl+qpzFfZqoC71LNJGN
+Lc066RMixR+9qesNIFz2/kGfGdIzG/wJcWASKf5+GwWBPyj6kq9w2xNQQ0Ut932PJSOH8qQM
+cxVkHDQrUIYJPc8XGBVH4nAC1nsWS2EglLKMCoPcDBvXNeDiA5K6tSK+iFcRe2gWuzbRZezu
+JpK6kP1kkf2Mt/Dg5mpIUPda331wPgV4NqCsRl9EWbGTmCmF0BXtAq/uVcQIp2iK6DcS/nDP
+opnkXByH7IrQNg6DEUsEzdR5WyOEjenPwXcYaL3vsci1+h8NJsvA/qjY14D85SHgmTozqh8M
+8hgZZKSZSrRup3JDgbZiWAmyeI64C6U0xpWbHaf38stOq+O+QEKn05Y87jJcAiTqqoUUuT98
+YYckrpFnF5poQVZny+7JhpyuuMGippEWYpvMulGxh/ND8iR+axqlfB4Mg2soZZvAfwTFdQZ1
+Y89JnrZzQX9Oxa+sCIUHDWZxB0m1qJpEnNoiru/sw6zgvvU7kbYf/kf2vPguc13HEHPBf5qQ
+UItf66DSaPuSyuuXUuUVGR20oG7DbHHpRwdngG+vHUQc10uWRrkKysBNSijxZWrUkPsnvCd2
+eY9dIhnpY9vvUK2Y5ryzOyYb2Zlo5op/+rU0drnQ1RiaI+zPyog0H+QorG4O3UtIvUXRw/LH
+K4W7kMI7khGT6aH/D01IWS1Rkvk6mda53Sm5s5fkeGDC7qpn3yTAzD2ZhIDNgO/SfaoXp0Gd
+OWtc4K/tj4qu3IhIO86USFLhPdqQMLueLIlBxdLYvFKOxHdCwctlo7nFAWTN8T1yakz9SWnR
+N399fGNgaa2GuBoGs400SAiCew5t/Nz+81J8GY0BaWbDawvx7QofP6me5/6HoeE9JlCMErFp
+tseHCv5jieqd//5om2pGxw3ahGLct3EzSjYzAs75YUijhh3L0G/Qz4/ROun9HxWxGH0ht3wr
+NPa821BNN6sKn0/NXJvb5Nll72S3i882QPBHpq0gWstOvnm7oRPblvQWQpZZPYxWXJwGUbS/
+knZA4aXjgg5QKqjDIc+yY0gSjq1OobygLpZ8aHdZf52Tz2v4/iP+pMVXGw4Y2lWBF0GeFfMU
++eIZeLdWZ4hRRivx2Z8oSOZzaWzXhuLrFM9MNFppdIAiUj4OWBAbsQesukYW5p6l3TDf/tew
+xHuvxTAYYHvtKjwWd4+bW0tAE2Uk9pakEVYz1sDevh45G010qBdnfn/CYOTp5qHzqXf5lFjo
+B1wwcjXlqS4l4yLc/pGW2+wW4RyntOydeiweaA+qfil94adk5DwdBjMexQQdal6MZ9IzEhSf
+noFmTuzILl9Nr7azZ/ezyed7k2rgRFvGOxdJsRQGpnd6hwSKLHttUZ7t1ys7BqByrPj6efu/
+FTakvu4BnkwhjDIsTCiAf4/fivrjrmYhb4mv27wvwQfrYn4RqX9uLr90Ijp3s2R7xepNAXnL
+GC3Gv1Wqn448Vns5iCu/e/A3qt52+hDNphaoBhv/VKscOYBP99rvW+r8ERbFx90TMNCBywSL
+rzJ0AFCmkXnUg8nthGHsDqD2CkUvGTd7IBgWKURahVEnzSaIgHbySGdO6JvKFyBJ4WibTpSH
+SVQisnifMT3zHjAWP0KSlRxy0vl8vZRBlPP/D8uDCQ+lUsWGaLp0MPJrCBjTgaFv5/YxoxDY
+qpOHy4sti+StMHAlPSEyF6y8+isKB65Spl3XPu3wRp4CQ3+0zdOycdOwmBv0qfFK5sicSiOK
+tVQ5TB9ggiRhn8PBFQtp1lFQ3eynjQAl6RDvjLjurZZVOtGlWCPQIw+SjUKcSZ8xbNPR00F5
+AH0uPKCOKIbQRypS/SMY6olX/rAwVc2/tjbeOPhKY61NA0PCxVTjGPh8VjY0pRZWEQUONWBp
+4YnCAi9Mcj9nTlXMKH3nlGx/QQIUHx3JUKRgKQWh6V7jhNnYAy+1AceR+5LW/0f85cOdZ6mI
+D9wBsHw9XgfVF7kqxCRSzL+1EOl7zLDVUDMXN65LWOqMmWS8XAT/nbHZikTHzwhvnZPUtfmU
+OCZC1TgwrrYMLeaxL9cQF/p6asjWmQ3sn7DrCcPZZlEvuBOOsvyE1hc8kCj3ZeQiwQRWle8i
+KuhKfKMoqUEn8XpUi+Nt2rPbU9dJDSwQsMpHX5gJi/PhnPBso87ZjLFHCMJK37rurRXDgxe9
+G8eyHqGhoB//pTjV0Q7d2/qbPpRhJdMEwF80l/ETk4ijmJ86EbPDMcnd/bO+odCOMj/YflKK
+BixhnC0ORx/mP2wi5F0n1hDGkPKm2v7H6AvX9XZHuUntUkqFy3nIp/ExNNBCnGHUGeQwcFHO
+EWsxdtVhnkR6kuNovtT7Eud2nGPp/9qH/ydnUDEJNeZUf4sjjAROqL6TIdvuz9NC+U+1AH3E
+2RZzKKmKtJl646y0UuMRFTQJWBDDQDl4JpGRYi9Cblw2zmdpV+tiMq+EW45W+WkoGENOMW64
+JGXCwWfPwJ37LHFZ/F9CKbDwv9WEPF3TuFRGcgoTG/yMPxa9lXL4IbC8STq0y5r9JFexccIz
+VtGp/faMu09cfrJ+fMV0z40p1CjiWCJa9VAIUThSiiEX6BJgPA9yOrL9FoeiJwHGgvolpF5L
+7uGZAsr9JroHvL1gaITye2iuTr/Duq6xk8TnvhKhxcUAlm7xwMn3EnNo2XiHVOTcN3lZjhRT
+VOb7dQH3t4yziamH6RQYfT4Th7Dl0cE26SJQog2iPS9f9NcS2VlOyBMjOd80rrAMcdsiHKc0
+vWcVxv1xl6YJ17IVm1BXzXXYhuURGur3lYaGXtdnaRFfzxJPDwLPr8xfNzF2UBIdJg+HgNJ/
+c8fUpPsyCdWcBTyYmDFpPI2TonQj6zEN9YPxcJn1iVvKsoMxiQw1ajFlX0rq80QAG7r2dL1g
+5fLXehhMJV2JdLwfhAMsfoiWT2SlH2jvmbZP3IC8VR9P1l5Mqu3fb/tvaYz7rH1VQykYRkoO
+/JpDztPRAT2nZwJY/Q3uGwezq6a/aEN7mHNU8Zy+BdWqLDdX25gFQ2WHoMPePuDFpa7+dt8p
+ZjunHdWtGHlsfKGB5zCdyGnI6dvgtMr9ye1vKW5Q7f5Xmb6O1TMtCWz7EdnWSZMMBbGa3AXc
+gdzX0icHjyWV2ZMdnC2HmMEDs73w9s553Zk1ZR/Kkaf/LMhwyU7z5cN2bPK1ZKqUYldldCvr
+U81jzCPISISDSPFVMXeQZpOlhya5cFj+8XMAbxpuDpl1F5H2zO/Cop+CwyIuZ66pWGofIhBH
+O4D/DMnZx/HjCTpgvM8XKqLV14r+EZLjXOoWlUMMV9xlG/SeEXEJWNxx15TYpjZ4Jljp6GXm
+5q4c1mrGjd8s9CAtJzzJ3K4vljJbEhtb6IJ8E6J0omMrKTXdlloUBozsO5JQdzJeLaJnFULQ
+gH0AT/Vg/rmFzcsgN+oSlTXSR6IUIyHHEQkEuYtjjhjxPfHkrb+Xjr5UuntrsGN9MkyJWcVw
+9mLiqk06jKvrNsb7Rl3KQqSnJtD70KUicQiUl/w9H/tMqqu541m3WPv7NJSJn0eh8bKqieNR
+ES8HsS0cSESc+Siby51Bh7PkmF8OvDX9V2XEIn6O3Lm+YeJlpkgC28dokoeJ1cZKfHCFSWZ2
+ZypmKEapfj0kvfTA6y3KhAe7z/xhlHec10NfcvrRMwCWtD0df4rxSq83kasxfR5z55e4xLBa
+6P7RmAXYZZRqDJRhuS3W+lDOyXu8FdCW6R01v1bos8tpcX8YStD78Re25Qee1QoNg3VidBvq
+n5bCHGmlVo0wPzZhXReEhhYERMfgIpB+RyjI1PPNN/JuPGnKcoE6fzcDaRszTDjJfe8b6Hbu
+1owudEgswR2+bCe/mvO21eU7dsWHSQndKHxHdDXYWjmq+Xn4tpA0W+r4Vr7QdkE0P2yTna0e
+gq8I5842BrPc62t5APKCLnQvTXMylZ5RBmLHdEZ9e9ZmL5adK22dMUAlyuvOSg3SJNWVsP0p
+Ueu35ax3/iB0sUOR1rF8mM4RUVqjjh01HAqZwnjJksS3KT3+Ccn0ZojEUCqtCGCoi6HUfzSC
+rtFuYw4t9UDXfxUrnS0MZAOpIsCfxwv/2/YrznKAzYaZvIsgUCNbMt8+D/mqOG4mNuQkU2H7
+kgDuXWKdu0S64ohl/Qe7rPqECC1NKkER+zmfctW0LZO76o4snKxXfZx6SjMxm4wkl/G4imVC
+gl5sPxvEEyN0ow4Zv6+6XOxR3fSAlsCLAPVcM2e0GVP5a9lKloye6DoGuHMckpo4AlM7ZhyP
+FAoc2xkdzrM/ExFQmY+LBkpb21550QrK+gcwkEBgjAYtWcO1p/VAT7bKh6Jn159bGd7JFbn8
+j/jKphRhIBwWpKggQBliw7Idvnfm7kDymn9V5JwbxLHtGMwj30JjC0ZYBlkX3Bwo4ojLuXcr
+H31+JokgZEgVrlk7A5upU1ula2UqpdcGqqy5jUE8EBcz0u692VQk4qBOZArEhfOKaDHDRv8F
+vAfoqQ0agxsjirGdMQCl+f+yPr8mRFQ+is6Q6diPsHjcMdZ7YKkGW2Iy8xZfNoTJBoLv4RBn
+E4j2bhhT7t/D3jgvqE6JAxVtjJm7squNvX6GXDqdXsegjc8gfAo+LISAgCzkLAl9anJyx0b/
+rI8S3ALN4OstkTUMhaaIzPQvj+lIBsLu7rvhbZ5qPXm+FXoYCl0YMweq6X1aYnlngUNNNQon
+JMMPuxYI1wXYQMmPCjUFGsT93V3hGxh5biTL3q3r8S7nw7iakmxYePFryIh/b8gE8Bnp2/uo
+ER0Z5H3RMrVf5gLxW5bGpE3hnwYzHEbXCZDUsME8sWfwQ6o2jtLDnHP3Bh6jHp7ZElkY7EDe
+mLnooP0CqEKSl01UrfDUh77MX4BlVhFmg3FhCYPZe/mMt86TJHRcD1nrZ2ENZ9MS6/c7/Ukj
+mImMN9QX7nYvKDO/9OhyvVSxhuTjmmwpiLHsT+9AHgIjhKTJx0sokaHn6kqOyAlEemoJ5NGk
+nILsctLNmFj7RhjDDtiFrZq3t0o4uR5/neGdpLNfS0y9ILtnCGkOD6vPxNiYxUXdvkNEE4Q5
+zpHMP0Kzr09l9p28vy9V7FWpoaQ3gk2On0MCr86COUaywXaX46g3+NvTxh2MwmGniedCjFAh
+QF+xaQO+oTtmpTfBT+TOxFqnAj1gSTUOiBR09LLeHd79tWtrkvZJ9/6IlUJwuKn2ASDQVJUu
+d6S80WfIyGNOi1yi8YAdRuI9iG5aZmbbOWYDaewixmKJp/ta5ProN8k/8tPtvSGU9ete7zmR
++5jWKmlgMeI41h4b1DHIs2IiewUqW1VLHhawI/pZUTCoku2EdtMBlVwl77p1UlN9tudyvO5i
+36dNgvunMEnApM2ebFcRiwLAWl34MznTPhT+SJ9dnVwspu6cN6zHkrMqjW+2oDbPDoHKVpYJ
+etOJgxPeCW8M4eiXt0qoovvAYVmk1qhSSuvfrn1rryYu9JcdpzrAJXWmjMkb3bSoFOXNpHx+
+foYADDNI5kPDpRzsBdds4K/piGyQ2lSyrm+/wO2lqSGjqQEFD1AyUCZ18NGcWzCFHET51WZj
+KZLN9nvsme6yw3otqMvLtgDCu5yXB+E2lPpn58qmEy+7RBC3cz4Qx+CM9tvQ3SqxVRfCUDfl
+c2/dsqXMV4M+wbjnwgSkBXmj4M1V2nEd3Z0CGf3w/QcLYS+XQIy5Z3dzEBfhGFyBZj2EkaV9
+iow8rveSps9sfcQuU8VcEvqGRs3/8hoW9VhalDhZZ9JVOQCBhWfN8xagNuxh+JATw4bLcf1X
+9+keCpt90cpElbj28xPf1I4DlwSbr89YFBi6ffjyzr3k/isR2CW+sbBhmqnVFWw5oJInEGlT
+fOoeSXLsO9SftMHK8g98MLlxEjYACi0ydjciln9xFUbIWoKkxFdJW/0B9Xp0W4aNXKP7BcXA
+hEM1a4iTEJBU+xZJaSfJPtyjZHLBpCZteLrcYIbkPkOxw8BH1JR+Yz5If8FKaLJVTFXXqJ9e
+sOfpGN55azjnqm0qyCwuprCNTjgvaLgivZx0HebDxzJ1x2Q2KPTUYksubFr7nDQYCfm8gLUS
+qRZ9RQkpr4arGuk7ExFFVGGawhhYgQ8uw3yUWrF6g/8EFPJG+fbZvS5QJACDXQjMjs4CI5k4
+Ng/jZ4XiTViIH3VUTyMUGQFtzRwgWjLHBCzs6gsVNyQLbMISXkehtm0doiWtgILdFtywEMzo
+JHpTJV4Nb7IAjEj/siYAR/QaUEQ+xxz3auPhasvH+Ea7jzT5jvplJS2ULnJ8qKQhaAFrdPGB
+jAYoCOXVZZit3Ohx2jKt8mOlljp7jS6HSGKeGH2kvElry3jF7LBD3DFUikAjYwO1F3xcoCSc
+yxNYBX6nXyTM5jcYSq/OKjLY+gzgJ6InYU6gASBC09LVaOdGXmU6piPo8nn88GdAz1wAAHhV
+e6qu1w7EAAHbRI7zAQB4+8C1scRn+wIAAAAABFla
+
+--DCA/C9WSnDtl50zu--
