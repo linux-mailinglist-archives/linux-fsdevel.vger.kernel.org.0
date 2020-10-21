@@ -2,200 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D45C1295140
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 18:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219B82951D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Oct 2020 19:53:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503320AbgJUQ7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 12:59:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24485 "EHLO
+        id S2503758AbgJURxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 13:53:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55381 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2503315AbgJUQ7X (ORCPT
+        by vger.kernel.org with ESMTP id S2503751AbgJURx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 12:59:23 -0400
+        Wed, 21 Oct 2020 13:53:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603299561;
+        s=mimecast20190719; t=1603302807;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=CS3s/nQfR82ihoySmhC+CIHgOihhQvZqioOTDsFPayg=;
-        b=YujRx67dD5+KXIZ25NSrPAhUJR3Nk+lydX4Ru3R+NA+ikKXSRC5vzQ3iWu/owFgAJt/yRM
-        6QcpL6o6kzXlaYuBipU1bxxqt0Bvvenj8NGCTD8duioTmQF5sDNLrWgTFlG7IJAZiNvy0Y
-        QS7+rJVHuRYVeDwk556ltH3GNQyoDkU=
+        bh=0aM6MG+N6GRh+zh31VWFPduo2rgWm3emASszSAw8inM=;
+        b=dVQtkUVDhMe6hJ36UJkcJNAJMIJpA1I1O8kaqEQyrmEfH4muWRRUbNPvxLlxQjJ0ExqLdj
+        rkmb1Jg7EuzEyE5Bs74izyyhK/a2u6iuqMR/DvBU/Ox10mWN+uckbZE/gXlW78B8pmC3IU
+        Tao5jPLFYuBy6RT/EfpXYxv5qC51sDE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-462-JonXkP0gOWOy34tlnyxcbw-1; Wed, 21 Oct 2020 12:59:18 -0400
-X-MC-Unique: JonXkP0gOWOy34tlnyxcbw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-582-0BAAGVqzMda2Ab5lMPFbVA-1; Wed, 21 Oct 2020 13:53:23 -0400
+X-MC-Unique: 0BAAGVqzMda2Ab5lMPFbVA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 278B5106B3B7;
-        Wed, 21 Oct 2020 16:59:10 +0000 (UTC)
-Received: from bfoster (ovpn-113-186.rdu2.redhat.com [10.10.113.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86E8476640;
-        Wed, 21 Oct 2020 16:59:09 +0000 (UTC)
-Date:   Wed, 21 Oct 2020 12:59:07 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] iomap: zero cached page over unwritten extent on
- truncate page
-Message-ID: <20201021165907.GA1328297@bfoster>
-References: <20201021133329.1337689-1-bfoster@redhat.com>
- <20201021162547.GL9832@magnolia>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 57DDD804B66;
+        Wed, 21 Oct 2020 17:53:20 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E934B5D9EF;
+        Wed, 21 Oct 2020 17:53:06 +0000 (UTC)
+Date:   Wed, 21 Oct 2020 13:53:03 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>, linux-audit@redhat.com,
+        nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V9 05/13] audit: log container info of syscalls
+Message-ID: <20201021175303.GH2882171@madcap2.tricolour.ca>
+References: <cover.1593198710.git.rgb@redhat.com>
+ <20201002195231.GH2882171@madcap2.tricolour.ca>
+ <20201021163926.GA3929765@madcap2.tricolour.ca>
+ <2174083.ElGaqSPkdT@x2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201021162547.GL9832@magnolia>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <2174083.ElGaqSPkdT@x2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 09:25:47AM -0700, Darrick J. Wong wrote:
-> On Wed, Oct 21, 2020 at 09:33:29AM -0400, Brian Foster wrote:
-> > iomap_truncate_page() relies on zero range and zero range
-> > unconditionally skips unwritten mappings. This is normally not a
-> > problem as most users synchronize in-core state to the underlying
-> > block mapping by flushing pagecache prior to calling into iomap.
-> > This is not the case for iomap_truncate_page(), however. XFS calls
-> > iomap_truncate_page() on truncate down before flushing the new EOF
-> > page of the file. This means that if the new EOF block is unwritten
-> > but covered by a dirty or writeback page (i.e. awaiting unwritten
-> > conversion after writeback), iomap fails to zero that page. The
-> > subsequent truncate_setsize() call does perform page zeroing, but
-> > doesn't dirty the page. Therefore if the new EOF page is written
-> > back after calling into iomap but before the pagecache truncate, the
-> > post-EOF zeroing is lost on page reclaim. This exposes stale
-> > post-EOF data on mapped reads.
+On 2020-10-21 12:49, Steve Grubb wrote:
+> On Wednesday, October 21, 2020 12:39:26 PM EDT Richard Guy Briggs wrote:
+> > > I think I have a way to generate a signal to multiple targets in one
+> > > syscall...  The added challenge is to also give those targets different
+> > > audit container identifiers.
 > > 
-> > Rework iomap_truncate_page() to check pagecache state before calling
-> > into iomap_apply() and use that info to determine whether we can
-> > safely skip zeroing unwritten extents. The filesystem has locked out
-> > concurrent I/O and mapped operations at this point but is not
-> > serialized against writeback, unwritten extent conversion (I/O
-> > completion) or page reclaim. Therefore if a page does not exist
-> > before we acquire the mapping, we can be certain that an unwritten
-> > extent cannot be converted before we return and thus it is safe to
-> > skip. If a page does exist over an unwritten block, it could be in
-> > the dirty or writeback states, convert the underlying mapping at any
-> > time, and thus should be explicitly written to avoid racing with
-> > writeback. Finally, since iomap_truncate_page() only targets the new
-> > EOF block and must now pass additional state to the actor, open code
-> > the zeroing actor instead of plumbing through zero range.
+> > Here is an exmple I was able to generate after updating the testsuite
+> > script to include a signalling example of a nested audit container
+> > identifier:
 > > 
-> > This does have the tradeoff that an existing clean page is dirtied
-> > and causes unwritten conversion, but this is analogous to historical
-> > behavior implemented by block_truncate_page(). This patch restores
-> > historical behavior to address the data exposure problem and leaves
-> > filtering out the clean page case for a separate patch.
-> > Fixes: 68a9f5e7007c ("xfs: implement iomap based buffered write path")
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
+> > ----
+> > type=PROCTITLE msg=audit(2020-10-21 10:31:16.655:6731) :
+> > proctitle=/usr/bin/perl -w containerid/test type=CONTAINER_ID
+> > msg=audit(2020-10-21 10:31:16.655:6731) :
+> > contid=7129731255799087104^3333941723245477888 type=OBJ_PID
+> > msg=audit(2020-10-21 10:31:16.655:6731) : opid=115583 oauid=root ouid=root
+> > oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> > ocomm=perl type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) :
+> > contid=3333941723245477888 type=OBJ_PID msg=audit(2020-10-21
+> > 10:31:16.655:6731) : opid=115580 oauid=root ouid=root oses=1
+> > obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 ocomm=perl
+> > type=CONTAINER_ID msg=audit(2020-10-21 10:31:16.655:6731) :
+> > contid=8098399240850112512^3333941723245477888 type=OBJ_PID
+> > msg=audit(2020-10-21 10:31:16.655:6731) : opid=115582 oauid=root ouid=root
+> > oses=1 obj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> > ocomm=perl type=SYSCALL msg=audit(2020-10-21 10:31:16.655:6731) :
+> > arch=x86_64 syscall=kill success=yes exit=0 a0=0xfffe3c84 a1=SIGTERM
+> > a2=0x4d524554 a3=0x0 items=0 ppid=115564 pid=115567 auid=root uid=root
+> > gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root
+> > tty=ttyS0 ses=1 comm=perl exe=/usr/bin/perl
+> > subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> > key=testsuite-1603290671-AcLtUulY ----
 > > 
-> > v2:
-> > - Rework to check for cached page explicitly and avoid use of seek data.
-> > v1: https://lore.kernel.org/linux-fsdevel/20201012140350.950064-1-bfoster@redhat.com/
+> > There are three CONTAINER_ID records which need some way of associating
+> > with OBJ_PID records.  An additional CONTAINER_ID record would be present
+> > if the killing process itself had an audit container identifier.  I think
+> > the most obvious way to connect them is with a pid= field in the
+> > CONTAINER_ID record.
 > 
-> Has the reproducer listed in that email been turned into a fstest case
-> yet? :)
-> 
+> pid is the process sending the signal, opid is the process receiving the 
+> signal. I think you mean opid?
 
-Heh.. that reproducer actually required customization to manufacture the
-problem. I'll have to think more about a generic reproducer.
+If the process sending the signal (it has a pid= field) has an audit
+container identifier, it will generate a CONTAINER_ID record.  Each
+process being signalled (each has an opid= field) that has an audit
+container identifier will also generate a CONTAINER_ID record.  The
+former will be much more common.  Which do we use in the CONTAINER_ID
+record?  Having swinging fields, pid vs opid does not seem like a
+reasonable solution.  Do we go back to "ref=pid=..." vs "ref=opid=..."?
 
-FWIW, I've also just come across a similar post-eof data exposure
-failure with this patch, so I'll need to dig into that first and
-foremost and figure out whether this is still incorrect/insufficient for
-some reason...
+> -Steve
 
-> > 
-> >  fs/iomap/buffered-io.c | 41 ++++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 40 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index bcfc288dba3f..2cdfcff02307 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -1000,17 +1000,56 @@ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
-> >  }
-> >  EXPORT_SYMBOL_GPL(iomap_zero_range);
-> >  
-> > +struct iomap_trunc_priv {
-> > +	bool *did_zero;
-> > +	bool has_page;
-> > +};
-> > +
-> > +static loff_t
-> > +iomap_truncate_page_actor(struct inode *inode, loff_t pos, loff_t count,
-> > +		void *data, struct iomap *iomap, struct iomap *srcmap)
-> > +{
-> > +	struct iomap_trunc_priv	*priv = data;
-> > +	unsigned offset;
-> > +	int status;
-> > +
-> > +	if (srcmap->type == IOMAP_HOLE)
-> > +		return count;
-> > +	if (srcmap->type == IOMAP_UNWRITTEN && !priv->has_page)
-> > +		return count;
-> > +
-> > +	offset = offset_in_page(pos);
-> > +	if (IS_DAX(inode))
-> > +		status = dax_iomap_zero(pos, offset, count, iomap);
-> > +	else
-> > +		status = iomap_zero(inode, pos, offset, count, iomap, srcmap);
-> > +	if (status < 0)
-> > +		return status;
-> > +
-> > +	if (priv->did_zero)
-> > +		*priv->did_zero = true;
-> > +	return count;
-> > +}
-> > +
-> >  int
-> >  iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
-> >  		const struct iomap_ops *ops)
-> >  {
-> > +	struct iomap_trunc_priv priv = { .did_zero = did_zero };
-> >  	unsigned int blocksize = i_blocksize(inode);
-> >  	unsigned int off = pos & (blocksize - 1);
-> > +	loff_t ret;
-> >  
-> >  	/* Block boundary? Nothing to do */
-> >  	if (!off)
-> >  		return 0;
-> > -	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
-> > +
-> > +	priv.has_page = filemap_range_has_page(inode->i_mapping, pos, pos);
-> 
-> Er... shouldn't that second 'pos' be 'pos + blocksize - off - 1', like
-> the apply call below?  I guess it doesn't matter since we're only
-> interested in the page at pos, but the double usage of pos caught my
-> eye.
-> 
+- RGB
 
-Yeah. I'll fix that up.
-
-> I also wonder, can you move this into the actor so that you can pass
-> *did_zero straight through without the two-item struct?
-> 
-
-I don't think so because the idea was to explicitly check for page
-presence prior to getting the mapping.
-
-Brian
-
-> --D
-> 
-> > +	ret = iomap_apply(inode, pos, blocksize - off, IOMAP_ZERO, ops, &priv,
-> > +			  iomap_truncate_page_actor);
-> > +	if (ret <= 0)
-> > +		return ret;
-> > +	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(iomap_truncate_page);
-> >  
-> > -- 
-> > 2.25.4
-> > 
-> 
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
