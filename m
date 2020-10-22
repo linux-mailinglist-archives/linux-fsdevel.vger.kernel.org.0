@@ -2,127 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7D44295A78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 10:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05545295AAB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 10:40:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2508051AbgJVIgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 04:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503237AbgJVIgN (ORCPT
+        id S2509543AbgJVIko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 04:40:44 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:24574 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2504135AbgJVIkh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 04:36:13 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FA6C0613CE;
-        Thu, 22 Oct 2020 01:36:13 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id l2so1235713lfk.0;
-        Thu, 22 Oct 2020 01:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7xlVNR5MT533FUS1JF8L1q49ITq1fYHlTih4/0CprSQ=;
-        b=ImlF7BpC+SQJ5a+w1+aqs9+p1Ew71mi1yRUXxVt13tWxc2DD44uQJCmfV0lRGkkY2b
-         0mVhfRBq9CnEB94V/EJrv0zy+QDUrbU7kABLF7qfK1sKosXGQlYSrOm6J26GCSLSsEU5
-         oedsYRJjx/fBfNMzly3Uh4VcqpqDsypZsdQH3+TRYWhJ/eWOztNG31b5wL1WVFcVyIlE
-         MKYeN1qiwnsoked9dPxZn9hQGco1vXOMhD1t/tbGYNLHXJ6v+LOVQrJjCsD+IP7CJPsc
-         o11u+xT1dvZKsK5s0qkiMBmRkuL83bDdFoyKi4dcPvcDFwTrJPxCIYQ+T2tFok8zJY/z
-         oHOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7xlVNR5MT533FUS1JF8L1q49ITq1fYHlTih4/0CprSQ=;
-        b=CnKzhclCmbwdjqKog+wZwPTymM66EJrJfkT3hLCjimaaq4WsFzoxg4d2UH9RUyDkdg
-         RIeCemznopsxxONgAb+FQl/JHiim0e1zEXwDgBLWTjJCr2T7SdqgJ/GoxNiu72K3l4WT
-         /tXwvbQj5NyC8VjM9+VIZhARqaIDVqyXO3QjErKIjTs/A3MhKmhfDFAes0B8sC01dUDq
-         7BlmHjONydtSk0lAMKv0VdlwDjBce+K36HXtdsCCGFblr06B2VlsWGc/U/qHsNnRnkNS
-         2q3V2ZJSxWqMWm5fNDI47tWhXsXQBE0i2LmDMc2YRrGiADK/tWDJtpyn2I6g4miu2STH
-         GGLg==
-X-Gm-Message-State: AOAM531KKyL3Vfld3J1iGLPCXKbPeU6B1HRN1KmUF6Nhvc8lkBARReAM
-        129CUo9+cdblp4dde4Bfh2auFebpUMjByaU6FMs=
-X-Google-Smtp-Source: ABdhPJz69yRsxfeDbkNZj9vnFl/k1hyGCtYM1bIVOsuVk8U6DInvbj1dp6FO8ezZ5HR32cI2EPUjyHWJIROz2NHCEgs=
-X-Received: by 2002:a19:83c1:: with SMTP id f184mr421377lfd.97.1603355771467;
- Thu, 22 Oct 2020 01:36:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201021195745.3420101-1-kent.overstreet@gmail.com> <20201021195745.3420101-2-kent.overstreet@gmail.com>
-In-Reply-To: <20201021195745.3420101-2-kent.overstreet@gmail.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 22 Oct 2020 03:36:00 -0500
-Message-ID: <CAH2r5msOSo2fj4GhJgPm-+z3YFg0osJp-V7u9Tm8Vk9LfDjAow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] cifs: convert to add_to_page_cache()
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thu, 22 Oct 2020 04:40:37 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-193-KyNHXYWSMIqmBJxmOt-l6A-1; Thu, 22 Oct 2020 09:40:33 +0100
+X-MC-Unique: KyNHXYWSMIqmBJxmOt-l6A-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 09:40:32 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 22 Oct 2020 09:40:32 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'David Hildenbrand' <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Nick Desaulniers" <ndesaulniers@google.com>
+CC:     Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Jens Axboe" <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQ
+Date:   Thu, 22 Oct 2020 08:40:32 +0000
+Message-ID: <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
+References: <20200925045146.1283714-1-hch@lst.de>
+ <20200925045146.1283714-3-hch@lst.de> <20201021161301.GA1196312@kroah.com>
+ <20201021233914.GR3576660@ZenIV.linux.org.uk>
+ <20201022082654.GA1477657@kroah.com>
+ <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
+In-Reply-To: <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-you can add my reviewed-by if you would like
+RnJvbTogRGF2aWQgSGlsZGVuYnJhbmQNCj4gU2VudDogMjIgT2N0b2JlciAyMDIwIDA5OjM1DQo+
+IA0KPiBPbiAyMi4xMC4yMCAxMDoyNiwgR3JlZyBLSCB3cm90ZToNCj4gPiBPbiBUaHUsIE9jdCAy
+MiwgMjAyMCBhdCAxMjozOToxNEFNICswMTAwLCBBbCBWaXJvIHdyb3RlOg0KPiA+PiBPbiBXZWQs
+IE9jdCAyMSwgMjAyMCBhdCAwNjoxMzowMVBNICswMjAwLCBHcmVnIEtIIHdyb3RlOg0KPiA+Pj4g
+T24gRnJpLCBTZXAgMjUsIDIwMjAgYXQgMDY6NTE6MzlBTSArMDIwMCwgQ2hyaXN0b3BoIEhlbGx3
+aWcgd3JvdGU6DQo+ID4+Pj4gRnJvbTogRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAQUNVTEFC
+LkNPTT4NCj4gPj4+Pg0KPiA+Pj4+IFRoaXMgbGV0cyB0aGUgY29tcGlsZXIgaW5saW5lIGl0IGlu
+dG8gaW1wb3J0X2lvdmVjKCkgZ2VuZXJhdGluZw0KPiA+Pj4+IG11Y2ggYmV0dGVyIGNvZGUuDQo+
+ID4+Pj4NCj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBMYWlnaHQgPGRhdmlkLmxhaWdodEBh
+Y3VsYWIuY29tPg0KPiA+Pj4+IFNpZ25lZC1vZmYtYnk6IENocmlzdG9waCBIZWxsd2lnIDxoY2hA
+bHN0LmRlPg0KPiA+Pj4+IC0tLQ0KPiA+Pj4+ICBmcy9yZWFkX3dyaXRlLmMgfCAxNzkgLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4+Pj4gIGxpYi9p
+b3ZfaXRlci5jICB8IDE3NiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKw0KPiA+Pj4+ICAyIGZpbGVzIGNoYW5nZWQsIDE3NiBpbnNlcnRpb25zKCspLCAxNzkg
+ZGVsZXRpb25zKC0pDQo+ID4+Pg0KPiA+Pj4gU3RyYW5nZWx5LCB0aGlzIGNvbW1pdCBjYXVzZXMg
+YSByZWdyZXNzaW9uIGluIExpbnVzJ3MgdHJlZSByaWdodCBub3cuDQo+ID4+Pg0KPiA+Pj4gSSBj
+YW4ndCByZWFsbHkgZmlndXJlIG91dCB3aGF0IHRoZSByZWdyZXNzaW9uIGlzLCBvbmx5IHRoYXQg
+dGhpcyBjb21taXQNCj4gPj4+IHRyaWdnZXJzIGEgImxhcmdlIEFuZHJvaWQgc3lzdGVtIGJpbmFy
+eSIgZnJvbSB3b3JraW5nIHByb3Blcmx5LiAgVGhlcmUncw0KPiA+Pj4gbm8ga2VybmVsIGxvZyBt
+ZXNzYWdlcyBhbnl3aGVyZSwgYW5kIEkgZG9uJ3QgaGF2ZSBhbnkgd2F5IHRvIHN0cmFjZSB0aGUN
+Cj4gPj4+IHRoaW5nIGluIHRoZSB0ZXN0aW5nIGZyYW1ld29yaywgc28gYW55IGhpbnRzIHRoYXQg
+cGVvcGxlIGNhbiBwcm92aWRlDQo+ID4+PiB3b3VsZCBiZSBtb3N0IGFwcHJlY2lhdGVkLg0KPiA+
+Pg0KPiA+PiBJdCdzIGEgcHVyZSBtb3ZlIC0gbW9kdWxvIGNoYW5nZWQgbGluZSBicmVha3MgaW4g
+dGhlIGFyZ3VtZW50IGxpc3RzDQo+ID4+IHRoZSBmdW5jdGlvbnMgaW52b2x2ZWQgYXJlIGlkZW50
+aWNhbCBiZWZvcmUgYW5kIGFmdGVyIHRoYXQgKGp1c3QgY2hlY2tlZA0KPiA+PiB0aGF0IGRpcmVj
+dGx5LCBieSBjaGVja2luZyBvdXQgdGhlIHRyZWVzIGJlZm9yZSBhbmQgYWZ0ZXIsIGV4dHJhY3Rp
+bmcgdHdvDQo+ID4+IGZ1bmN0aW9ucyBpbiBxdWVzdGlvbiBmcm9tIGZzL3JlYWRfd3JpdGUuYyBh
+bmQgbGliL2lvdl9pdGVyLmMgKGJlZm9yZSBhbmQNCj4gPj4gYWZ0ZXIsIHJlc3AuKSBhbmQgY2hl
+Y2tpbmcgdGhlIGRpZmYgYmV0d2VlbiB0aG9zZS4NCj4gPj4NCj4gPj4gSG93IGNlcnRhaW4gaXMg
+eW91ciBiaXNlY3Rpb24/DQo+ID4NCj4gPiBUaGUgYmlzZWN0aW9uIGlzIHZlcnkgcmVwcm9kdWNh
+YmxlLg0KPiA+DQo+ID4gQnV0LCB0aGlzIGxvb2tzIG5vdyB0byBiZSBhIGNvbXBpbGVyIGJ1Zy4g
+IEknbSB1c2luZyB0aGUgbGF0ZXN0IHZlcnNpb24NCj4gPiBvZiBjbGFuZyBhbmQgaWYgSSBwdXQg
+Im5vaW5saW5lIiBhdCB0aGUgZnJvbnQgb2YgdGhlIGZ1bmN0aW9uLA0KPiA+IGV2ZXJ5dGhpbmcg
+d29ya3MuDQo+IA0KPiBXZWxsLCB0aGUgY29tcGlsZXIgY2FuIGRvIG1vcmUgaW52YXNpdmUgb3B0
+aW1pemF0aW9ucyB3aGVuIGlubGluaW5nLiBJZg0KPiB5b3UgaGF2ZSBidWdneSBjb2RlIHRoYXQg
+cmVsaWVzIG9uIHNvbWUgdW5zcGVjaWZpZWQgYmVoYXZpb3IsIGlubGluaW5nDQo+IGNhbiBjaGFu
+Z2UgdGhlIGJlaGF2aW9yIC4uLiBidXQgZ29pbmcgb3ZlciB0aGF0IGNvZGUsIHRoZXJlIGlzbid0
+IHRvbw0KPiBtdWNoIGFjdGlvbiBnb2luZyBvbi4gQXQgbGVhc3Qgbm90aGluZyBzY3JlYW1lZCBh
+dCBtZS4NCg0KQXBhcnQgZnJvbSBhbGwgdGhlIG9wdGltaXNhdGlvbnMgdGhhdCBnZXQgcmlkIG9m
+ZiB0aGUgJ3Bhc3MgYmUgcmVmZXJlbmNlJw0KcGFyYW1ldGVycyBhbmQgc3RyYW5nZSBjb25kaXRp
+b25hbCB0ZXN0cy4NClBsZW50eSBvZiBzY29wZSBmb3IgdGhlIGNvbXBpbGVyIGdldHRpbmcgaXQg
+d3JvbmcuDQpCdXQgbm90aGluZyBldmVuIHZhZ3VlbHkgaWxsZWdhbC4NCg0KCURhdmlkDQoNCi0N
+ClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBN
+aWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxl
+cykNCg==
 
-On Thu, Oct 22, 2020 at 1:48 AM Kent Overstreet
-<kent.overstreet@gmail.com> wrote:
->
-> This is just open coding add_to_page_cache(), and the next patch will
-> delete add_to_page_cache_locked().
->
-> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> ---
->  fs/cifs/file.c | 20 ++++----------------
->  1 file changed, 4 insertions(+), 16 deletions(-)
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index be46fab4c9..b3ee790532 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -4296,20 +4296,11 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
->
->         page = lru_to_page(page_list);
->
-> -       /*
-> -        * Lock the page and put it in the cache. Since no one else
-> -        * should have access to this page, we're safe to simply set
-> -        * PG_locked without checking it first.
-> -        */
-> -       __SetPageLocked(page);
-> -       rc = add_to_page_cache_locked(page, mapping,
-> -                                     page->index, gfp);
-> +       rc = add_to_page_cache(page, mapping, page->index, gfp);
->
->         /* give up if we can't stick it in the cache */
-> -       if (rc) {
-> -               __ClearPageLocked(page);
-> +       if (rc)
->                 return rc;
-> -       }
->
->         /* move first page to the tmplist */
->         *offset = (loff_t)page->index << PAGE_SHIFT;
-> @@ -4328,12 +4319,9 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
->                 if (*bytes + PAGE_SIZE > rsize)
->                         break;
->
-> -               __SetPageLocked(page);
-> -               rc = add_to_page_cache_locked(page, mapping, page->index, gfp);
-> -               if (rc) {
-> -                       __ClearPageLocked(page);
-> +               rc = add_to_page_cache(page, mapping, page->index, gfp);
-> +               if (rc)
->                         break;
-> -               }
->                 list_move_tail(&page->lru, tmplist);
->                 (*bytes) += PAGE_SIZE;
->                 expected_index++;
-> --
-> 2.28.0
->
-
-
--- 
-Thanks,
-
-Steve
