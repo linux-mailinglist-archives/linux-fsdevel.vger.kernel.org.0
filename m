@@ -2,142 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2432966FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 00:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D887B296710
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 00:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2898387AbgJVWHS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 18:07:18 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:37670 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2509603AbgJVWHI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 18:07:08 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-164-7-H9NMQeNwGwZfcU7aRApw-1; Thu, 22 Oct 2020 23:07:03 +0100
-X-MC-Unique: 7-H9NMQeNwGwZfcU7aRApw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 23:07:02 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 22 Oct 2020 23:07:02 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Al Viro' <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>
-CC:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        "David Hildenbrand" <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAAQY5tgAAwVkCAADSfg4AALKrQ
-Date:   Thu, 22 Oct 2020 22:07:02 +0000
-Message-ID: <f35a74d034054d7fa8ce8835afb1ca6c@AcuMS.aculab.com>
-References: <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
- <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
- <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
- <20201022192458.GV3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S369623AbgJVWYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 18:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S369610AbgJVWYA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 18:24:00 -0400
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96C8F24631;
+        Thu, 22 Oct 2020 22:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603405439;
+        bh=GEmg9HIaeQ5bKfcJYYGD6ds4B2O3J6S3lkr6Gq69238=;
+        h=Date:From:To:Cc:Subject:From;
+        b=lAefka8i/isTAxOCCGr+hmtfTRZDgtMeSX0JEE3RLqrEsPURrRh4ZCPwzb6T6HHkD
+         n9K/SKWgckh+MEZQJEzsJRK51uLxc1baC56YPLobDDt0ujf2n66GoWwX3E4xFpPYXg
+         ZELdMIwwVEwa2fkYGMbaPR9EIJ4wRnmcnnc1k+eg=
+Date:   Thu, 22 Oct 2020 15:23:58 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs: move the clone/dedupe/remap helpers to a single file
+Message-ID: <20201022222358.GD9825@magnolia>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Al Viro
-> Sent: 22 October 2020 20:25
-> 
-> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
-> 
-> > Passing an `unsigned long` as an `unsigned int` does no such
-> > narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-> > calls, no masking instructions).
-> > So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-> > at the mainline@1028ae406999), then children calls of
-> > `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-> > unmodified, ie. garbage in the upper 32b.
-> 
-> FWIW,
-> 
-> void f(unsinged long v)
-> {
-> 	if (v != 1)
-> 		printf("failed\n");
-> }
-> 
-> void g(unsigned int v)
-> {
-> 	f(v);
-> }
-> 
-> void h(unsigned long v)
-> {
-> 	g(v);
-> }
-> 
-> main()
-> {
-> 	h(0x100000001);
-> }
-> 
-> must not produce any output on a host with 32bit int and 64bit long, regardless of
-> the inlining, having functions live in different compilation units, etc.
-> 
-> Depending upon the calling conventions, compiler might do truncation in caller or
-> in a callee, but it must be done _somewhere_.
+Hi Linus,
 
-Put g() in a separate compilation unit and use the 'wrong' type
-in the prototypes t() used to call g() and g() uses to call f().
+Please pull this small refactoring series that moves all the support
+functions for file range remapping (aka reflink and dedupe) out of
+mm/filemap.c and fs/read_write.c and into fs/remap_range.c.
 
-Then you might see where and masking does (or does not) happen.
+It's been a full week since the initial discussion[1] on fsdevel, and in
+that time, nobody has complained about breakage in for-next, and the
+relevant parts of the codebase haven't changed significantly.  I was
+expecting to have to rebase this branch, but aside from the trivial
+merge conflict in fs/Makefile this actually still applies cleanly atop
+master as of a couple hours ago.
 
-	David
+(FWIW I took your suggestion about license headers and didn't drag the
+copyright notices along from the other two files.)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+So, I tagged my work branch from last week a little while ago and am now
+sending this for consideration.  Please let me know if you have any
+complaints about pulling this, since I can rework the branch.
 
+--D
+
+[1] https://lore.kernel.org/linux-fsdevel/160272187483.913987.4254237066433242737.stgit@magnolia/
+
+The following changes since commit bbf5c979011a099af5dc76498918ed7df445635b:
+
+  Linux 5.9 (2020-10-11 14:15:50 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/vfs-5.10-merge-1
+
+for you to fetch changes up to 407e9c63ee571f44a2dfb0828fc30daa02abb6dc:
+
+  vfs: move the generic write and copy checks out of mm (2020-10-15 09:50:01 -0700)
+
+----------------------------------------------------------------
+Refactored code for 5.10:
+- Move the file range remap generic functions out of mm/filemap.c and
+fs/read_write.c and into fs/remap_range.c to reduce clutter in the first
+two files.
+
+----------------------------------------------------------------
+Darrick J. Wong (3):
+      vfs: move generic_remap_checks out of mm
+      vfs: move the remap range helpers to remap_range.c
+      vfs: move the generic write and copy checks out of mm
+
+ fs/Makefile        |   3 +-
+ fs/read_write.c    | 562 +++++++++++-----------------------------------------
+ fs/remap_range.c   | 571 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |   8 +-
+ mm/filemap.c       | 222 ---------------------
+ 5 files changed, 691 insertions(+), 675 deletions(-)
+ create mode 100644 fs/remap_range.c
