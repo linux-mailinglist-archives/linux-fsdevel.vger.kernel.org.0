@@ -2,83 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B01295888
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 08:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62AA5295A40
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 10:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438863AbgJVGsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 02:48:10 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:48468 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407804AbgJVGsK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 02:48:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1603349415; x=1634885415;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=FlMHwlKQHkGtz11u/T63nBONh3Bzvj/xoVk3RFmnD/Q=;
-  b=kXOKTGMfdci52Ka1r1ELMErrqFfAVDAvbh2X1L2qyzh7MyL6mpPinXC6
-   CWNPeQXixXXnf9mW1A6gr/GMinGo5vT8JRiGux3yEAQc2j9Kq2K9dxu0+
-   Tt8bYzMC5FzoTVTiCZEBoFSrPh2gEpJoqafc7scChJyVhCRDsARbtK6Qc
-   3XZNGScyo3XRwteaXJYLK7NxvbYmWMdXNKHg10+QnwWhPiJjgdSHYzBV4
-   5/890ueX9KXFtp5jsi86ArQy7jgH7v8cBvBt8bBzlsThUDPKpBsSVSWn6
-   h+a7MrOnZPCMpMyvDJUUZKrq+iHBNGoGEH0RGKi0i3NQBpC9nzdQeCC0P
-   Q==;
-IronPort-SDR: /ZSUK+K/3wz51reZn5eqcNMm/2of4Rmn9Yyi57Y0V/3K6mr/urGYyLGW5dc9FCjagxQmfmA/dh
- KvgtABfi/xzSzQfHZW+w1B6fhX2tKL5QyGjftmY5Zwufy7XAkPpttwmIFKBPmhXRkJ6EBTBi0M
- jpRZAQE77rejWCNZw9zh7cv8vwg2EG4Cp3+zCQXS4NPpSpw7jT9MUpf4qvHgrsuwHdd6ypfnX7
- ALJbPnj9OqPGKP2jHDY+V1k/dpl7lF+zvjZ0uLYOqTw5UMAjHn5XiluI3GcxP4PiChCkIJ0ZFg
- VKU=
-X-IronPort-AV: E=Sophos;i="5.77,403,1596470400"; 
-   d="scan'208";a="254094978"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Oct 2020 14:50:14 +0800
-IronPort-SDR: 2CpP3PZWJ+LPJ9WKPo9SeUJkKJ2ry68YyZaxFnOOro8D+kdpTJI39w8SYUifEvcU2AEfe09u3f
- vT6E4Szdonp5xg5anlWEGQe+iJX6kNn6BcU/JhFlF5+gg9tCBJ8TSw3BYwO8CkiCTmBzdyfM7i
- LBng+ePLmNPE/gK1J8G7a3/43MioZG4nTQVVQc7NYlwEGJwTLjb25gV4l6hAyQNqbPRzO4SL1r
- gIpGfeE/cFAMWKAdQgzE31Rp2MONwQ/vlRSt7mguG8rpaYDhXscV9Ha8+PTwqvO0yCw7V07VTk
- qll6mgv/s4bnHdhgf4Xm2Fi0
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2020 23:34:33 -0700
-IronPort-SDR: RFwsVhv+sbyh+pyn9f7IG+keDM0jIZBb58TCLI2b3WDs9k2bVDnhQmctfcrOozlk1uzQ/eIp0S
- 3t9GBBmgJ2ydfw4Zzlx8ENVDUjqXZuml46PFSF34Jq51Q72+Btcv5qJLBDRsoSZfWFwaBP39Wv
- OsrE5sC22zGojhL3egPYXs5Xc1YBuwAEKoskDgvZ995YwH/wNJgfWBgQ9Z2SXOMH2Fc21xoMgo
- Y24bPJCivNvWYur4cdcSvVR9xPBUJu9/7+ovL64Mm1v0HGHaQCgaesoRu82urZ9kCiFRYZbzPe
- BuA=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with SMTP; 21 Oct 2020 23:48:08 -0700
-Received: (nullmailer pid 791091 invoked by uid 1000);
-        Thu, 22 Oct 2020 06:48:07 -0000
-Date:   Thu, 22 Oct 2020 15:48:07 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     dsterba@suse.cz, linux-btrfs@vger.kernel.org, dsterba@suse.com,
-        hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH v8 10/41] btrfs: disallow inode_cache in ZONED mode
-Message-ID: <20201022064807.am3amanzc7tzec5f@naota.dhcp.fujisawa.hgst.com>
-References: <cover.1601572459.git.naohiro.aota@wdc.com>
- <4aad45e8c087490facbd24fc037b6ab374295cbe.1601574234.git.naohiro.aota@wdc.com>
- <20201013154117.GD6756@twin.jikos.cz>
+        id S2507667AbgJVI0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 04:26:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2444122AbgJVI0S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 04:26:18 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ABFB2065D;
+        Thu, 22 Oct 2020 08:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603355177;
+        bh=dmCNgDGTpNmF+8O2fjJO2XplnMkrwwsAXNmOMHG4kDE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zDx/QVbNU8SimNSxRnLGamZjzaL0aYk8447/KE6GRihUCtWhJ6Z86tE/3/Weg2vwC
+         GiWZsECpqwLisbFLZe5yubGxrkvnswusVy8o3gK7vn/eUfbf4ADoW/+TTZixBrP7Y/
+         ZuwgVCa1BoOMrly/6gJ13uZ1QxD/B6i974xOGQS0=
+Date:   Thu, 22 Oct 2020 10:26:54 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201022082654.GA1477657@kroah.com>
+References: <20200925045146.1283714-1-hch@lst.de>
+ <20200925045146.1283714-3-hch@lst.de>
+ <20201021161301.GA1196312@kroah.com>
+ <20201021233914.GR3576660@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201013154117.GD6756@twin.jikos.cz>
+In-Reply-To: <20201021233914.GR3576660@ZenIV.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 05:41:17PM +0200, David Sterba wrote:
->On Fri, Oct 02, 2020 at 03:36:17AM +0900, Naohiro Aota wrote:
->> inode_cache use pre-allocation to write its cache data. However,
->> pre-allocation is completely disabled in ZONED mode.
->>
->> We can technically enable inode_cache in the same way as relocation.
->> However, inode_cache is rarely used and the man page discourage using it.
->> So, let's just disable it for now.
->
->Don't worry about the inode_cache mount option, it's been deprecated
->as of commit b547a88ea5776a8092f7 and will be removed in 5.11.
+On Thu, Oct 22, 2020 at 12:39:14AM +0100, Al Viro wrote:
+> On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
+> > On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
+> > > From: David Laight <David.Laight@ACULAB.COM>
+> > > 
+> > > This lets the compiler inline it into import_iovec() generating
+> > > much better code.
+> > > 
+> > > Signed-off-by: David Laight <david.laight@aculab.com>
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > ---
+> > >  fs/read_write.c | 179 ------------------------------------------------
+> > >  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 176 insertions(+), 179 deletions(-)
+> > 
+> > Strangely, this commit causes a regression in Linus's tree right now.
+> > 
+> > I can't really figure out what the regression is, only that this commit
+> > triggers a "large Android system binary" from working properly.  There's
+> > no kernel log messages anywhere, and I don't have any way to strace the
+> > thing in the testing framework, so any hints that people can provide
+> > would be most appreciated.
+> 
+> It's a pure move - modulo changed line breaks in the argument lists
+> the functions involved are identical before and after that (just checked
+> that directly, by checking out the trees before and after, extracting two
+> functions in question from fs/read_write.c and lib/iov_iter.c (before and
+> after, resp.) and checking the diff between those.
+> 
+> How certain is your bisection?
 
-Thanks. I'll drop this one in the next version.
+The bisection is very reproducable.
+
+But, this looks now to be a compiler bug.  I'm using the latest version
+of clang and if I put "noinline" at the front of the function,
+everything works.
+
+Nick, any ideas here as to who I should report this to?
+
+I'll work on a fixup patch for the Android kernel tree to see if I can
+work around it there, but others will hit this in Linus's tree sooner or
+later...
+
+thanks,
+
+greg k-h
