@@ -2,252 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E62E8296422
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 19:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9C2296426
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 19:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2901132AbgJVRyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 13:54:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S368205AbgJVRyU (ORCPT
+        id S368410AbgJVRya (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 13:54:30 -0400
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:38189 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S368401AbgJVRy3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 13:54:20 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A71C0613D8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 10:54:19 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id w11so1351667pll.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 10:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fN98WKFQMgEXMlp8i3NGUVnGVw+6y+e2V0ke9rhUWSA=;
-        b=BKV40KcFYv/RT7WI/LzYvQYye/7QuyEZeVOFKBpWDRGSNerYyXtKTvLxKg7AQQyR6a
-         B6ov6UgSF+CT0yFZ5Kpm//JhG6JX+erMmrvxUD0nM2EPok7DJ1dyb0csZXVH+J57G76o
-         JEKNKLPukNE3mXje8tahLR4x5JyOobyLEq7zPqSmgsU53Cxt6nYjuHUBVcdVMcbrcilK
-         K/V95Mavbng7Vx66laYlk4QUwTrTI6xWi8qckIoCQ5E2cwAi2ki1g0yQJTA0k1YggZ8N
-         +hx8KG1AyjINmebjC8dKCAdqeNm9iI1l37J/7olC9z6B/lTJyWVJjteE9X9SnKXuuDmh
-         S8ew==
+        Thu, 22 Oct 2020 13:54:29 -0400
+Received: by mail-pj1-f67.google.com with SMTP id lw2so1365526pjb.3;
+        Thu, 22 Oct 2020 10:54:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fN98WKFQMgEXMlp8i3NGUVnGVw+6y+e2V0ke9rhUWSA=;
-        b=e4QOAk/FBzdiCYOKaxgcy3ukzL7uLPnQjM5agZy0QA/ReCSOdpAgSdm5H8L+T9S5zA
-         ly3UX6v1onorPw+8YILGQbLkNrcfSTMWWESpL5QziwKSCVZ8wDwVP8jPWfBxBqHSXZyc
-         ArFhL606D6gDNgNUPe4arxppxVtGjXcop5Ae+PFu6JloFugjudOdkVXPTHnWsaUzH2wE
-         PN1iC5DRkac32RzZoqNNWYkKs2uEIa76rEdpp+jYo+7X6bhR82e6QcDwJulEC9eM18py
-         1QuFZgj9UymLNAdD++t7Th6ipS3ypu9nZbMZktUGtYRYJcqWkHAteeJ3pDEgyN1NdjYF
-         QFJw==
-X-Gm-Message-State: AOAM531+SWOZd/Xf5ou4VbkXVHQahNWlmaeyCR0VsLmZSdxKtEfCWFZc
-        Ghhgxn4u14Bp5lBM90/vfnLcTQ6R6mgE6f21Iu0Nmw==
-X-Google-Smtp-Source: ABdhPJwKMlfWHWIfBAFNm3K11R3iXcLN/39e27pMOK/669Q9lQtbTX5Z9LF4v87HnqXK2It7QLj5rkKD4/EUsxOxOjE=
-X-Received: by 2002:a17:902:c40b:b029:d3:def2:d90f with SMTP id
- k11-20020a170902c40bb02900d3def2d90fmr3352248plk.29.1603389258899; Thu, 22
- Oct 2020 10:54:18 -0700 (PDT)
+        bh=jZuHlEwh3g7UcDcJaONWe8EfIxBYtT9I7AYk4QdFzwc=;
+        b=HpUKeYLOpey2keZ7sqmID8yCJJa9s8k9XXg194te9ikqq7sUoJgXsGO+0Mzyl8gNES
+         eacpNxyEJ5MFm4cjqQjfIK/DxIV9StLF5a1drbN5lhmqxA+Co5DlCbDmuWUeLRSr3ir3
+         kFx2/LZcD9SZlo6PAN+Rna7UUpt08byAxKSwPiDjt1AF470BndULHvqyPclInZ1prSxO
+         EGGQHV9dmF4XsCGNgMJnV2sjsvrTmYkIB9xfcl0PsDFSe81Z0DfqFV/GGdOVxQTbOl+k
+         G/XceJLqD910vdO7Cv48Wjh4YhVTmjTDXGvnOvVLm34AH9AA4ay7nnUjwl5mnBOAEXqW
+         5EQw==
+X-Gm-Message-State: AOAM532ZCrkUmIg+dCbL6MGWHrLtq4I1GmI0p1GrFEdNDwcKjtAFkuCy
+        ravVzeaaGskJ5KlTZXYMlYPM3AYtiKeXcxojjG4=
+X-Google-Smtp-Source: ABdhPJxcm7nxDfpt8QtfKwOARuDT6nuFczBSIqDJ7vYnHyrPosWkJvFSDvOcbTMeVUL5SpoaDYnY4onxzd0QAP3w2Bs=
+X-Received: by 2002:a17:902:c254:b029:d4:c2d4:15f with SMTP id
+ 20-20020a170902c254b02900d4c2d4015fmr3651304plg.18.1603389267970; Thu, 22 Oct
+ 2020 10:54:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201021233914.GR3576660@ZenIV.linux.org.uk> <20201022082654.GA1477657@kroah.com>
- <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com> <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com> <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com> <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com> <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de> <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
-In-Reply-To: <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 22 Oct 2020 10:54:06 -0700
-Message-ID: <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+References: <1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com>
+ <71926887-5707-04a5-78a2-ffa2ee32bd68@suse.de> <20201021141044.GF20749@veeam.com>
+ <ca8eaa40-b422-2272-1fd9-1d0a354c42bf@suse.de> <20201022094402.GA21466@veeam.com>
+ <BL0PR04MB6514AC1B1FF313E6A14D122CE71D0@BL0PR04MB6514.namprd04.prod.outlook.com>
+ <20201022135213.GB21466@veeam.com> <20201022151418.GR9832@magnolia>
+In-Reply-To: <20201022151418.GR9832@magnolia>
+From:   Mike Snitzer <snitzer@redhat.com>
+Date:   Thu, 22 Oct 2020 13:54:16 -0400
+Message-ID: <CAMM=eLfO_L-ZzcGmpPpHroznnSOq_KEWignFoM09h7Am9yE83g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] block layer filter and block device snapshot module
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Sergei Shtepa <sergei.shtepa@veeam.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Hannes Reinecke <hare@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "jack@suse.cz" <jack@suse.cz>, "tj@kernel.org" <tj@kernel.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "osandov@fb.com" <osandov@fb.com>,
+        "koct9i@gmail.com" <koct9i@gmail.com>,
+        "steve@sk2.org" <steve@sk2.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000003743e505b2462753"
+        device-mapper development <dm-devel@redhat.com>,
+        Alasdair G Kergon <agk@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000003743e505b2462753
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, Oct 22, 2020 at 9:35 AM David Laight <David.Laight@aculab.com> wrote:
+On Thu, Oct 22, 2020 at 11:14 AM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
 >
-> From: Christoph Hellwig
-> > Sent: 22 October 2020 14:24
+> On Thu, Oct 22, 2020 at 04:52:13PM +0300, Sergei Shtepa wrote:
+> > The 10/22/2020 13:28, Damien Le Moal wrote:
+> > > On 2020/10/22 18:43, Sergei Shtepa wrote:
+> > > >
+> > > > Maybe, but the problem is that I can't imagine how to implement
+> > > > dm-intercept yet.
+> > > > How to use dm to implement interception without changing the stack
+> > > > of block devices. We'll have to make a hook somewhere, isn`t it?
+> > >
+> > > Once your dm-intercept target driver is inserted with "dmsetup" or any user land
+> > > tool you implement using libdevicemapper, the "hooks" will naturally be in place
+> > > since the dm infrastructure already does that: all submitted BIOs will be passed
+> > > to dm-intercept through the "map" operation defined in the target_type
+> > > descriptor. It is then that driver job to execute the BIOs as it sees fit.
+> > >
+> > > Look at simple device mappers like dm-linear or dm-flakey for hints of how
+> > > things work (driver/md/dm-linear.c). More complex dm drivers like dm-crypt,
+> > > dm-writecache or dm-thin can give you hints about more features of device mapper.
+> > > Functions such as __map_bio() in drivers/md/dm.c are the core of DM and show
+> > > what happens to BIOs depending on the the return value of the map operation.
+> > > dm_submit_bio() and __split_and_process_bio() is the entry points for BIO
+> > > processing in DM.
+> > >
 > >
-> > On Thu, Oct 22, 2020 at 11:36:40AM +0200, David Hildenbrand wrote:
-> > > My thinking: if the compiler that calls import_iovec() has garbage in
-> > > the upper 32 bit
-> > >
-> > > a) gcc will zero it out and not rely on it being zero.
-> > > b) clang will not zero it out, assuming it is zero.
-> > >
-> > > But
-> > >
-> > > a) will zero it out when calling the !inlined variant
-> > > b) clang will zero it out when calling the !inlined variant
-> > >
-> > > When inlining, b) strikes. We access garbage. That would mean that we
-> > > have calling code that's not generated by clang/gcc IIUC.
+> > Is there something I don't understand? Please correct me.
 > >
-> > Most callchains of import_iovec start with the assembly syscall wrappers.
+> > Let me remind that by the condition of the problem, we can't change
+> > the configuration of the block device stack.
+> >
+> > Let's imagine this configuration: /root mount point on ext filesystem
+> > on /dev/sda1.
+> > +---------------+
+> > |               |
+> > |  /root        |
+> > |               |
+> > +---------------+
+> > |               |
+> > | EXT FS        |
+> > |               |
+> > +---------------+
+> > |               |
+> > | block layer   |
+> > |               |
+> > | sda queue     |
+> > |               |
+> > +---------------+
+> > |               |
+> > | scsi driver   |
+> > |               |
+> > +---------------+
+> >
+> > We need to add change block tracking (CBT) and snapshot functionality for
+> > incremental backup.
+> >
+> > With the DM we need to change the block device stack. Add device /dev/sda1
+> > to LVM Volume group, create logical volume, change /etc/fstab and reboot.
+> >
+> > The new scheme will look like this:
+> > +---------------+
+> > |               |
+> > |  /root        |
+> > |               |
+> > +---------------+
+> > |               |
+> > | EXT FS        |
+> > |               |
+> > +---------------+
+> > |               |
+> > | LV-root       |
+> > |               |
+> > +------------------+
+> > |                  |
+> > | dm-cbt & dm-snap |
+> > |                  |
+> > +------------------+
+> > |               |
+> > | sda queue     |
+> > |               |
+> > +---------------+
+> > |               |
+> > | scsi driver   |
+> > |               |
+> > +---------------+
+> >
+> > But I cannot change block device stack. And so I propose a scheme with
+> > interception.
+> > +---------------+
+> > |               |
+> > |  /root        |
+> > |               |
+> > +---------------+
+> > |               |
+> > | EXT FS        |
+> > |               |
+> > +---------------+   +-----------------+
+> > |  |            |   |                 |
+> > |  | blk-filter |-> | cbt & snapshot  |
+> > |  |            |<- |                 |
+> > |  +------------+   +-----------------+
+> > |               |
+> > | sda blk queue |
+> > |               |
+> > +---------------+
+> > |               |
+> > | scsi driver   |
+> > |               |
+> > +---------------+
+> >
+> > Perhaps I can make "cbt & snapshot" inside the DM, but without interception
+> > in any case, it will not work. Isn't that right?
 >
-> Wait...
-> readv(2) defines:
->         ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
->
-> But the syscall is defined as:
->
-> SYSCALL_DEFINE3(readv, unsigned long, fd, const struct iovec __user *, vec,
->                 unsigned long, vlen)
-> {
->         return do_readv(fd, vec, vlen, 0);
-> }
->
-> I'm guessing that nothing actually masks the high bits that come
-> from an application that is compiled with clang?
->
-> The vlen is 'unsigned long' through the first few calls.
-> So unless there is a non-inlined function than takes vlen
-> as 'int' the high garbage bits from userspace are kept.
+> Stupid question: Why don't you change the block layer to make it
+> possible to insert device mapper devices after the blockdev has been set
+> up?
 
-Yeah, that's likely a bug: https://godbolt.org/z/KfsPKs
+Not a stupid question.  Definitely something that us DM developers
+have wanted to do for a while.  Devil is in the details but it is the
+right way forward.
 
->
-> Which makes it a bug in the kernel C syscall wrappers.
-> They need to explicitly mask the high bits of 32bit
-> arguments on arm64 but not x86-64.
+Otherwise, this intercept is really just a DM-lite remapping layer
+without any of DM's well established capabilities.  Encouragingly, all
+of the replies have effectively echoed this point.  (amusingly, seems
+every mailing list under the sun is on the cc except dm-devel... now
+rectified)
 
-Why not x86-64? Wouldn't it be *any* LP64 ISA?
+Alasdair has some concrete ideas on this line of work; I'm trying to
+encourage him to reply ;)
 
-Attaching a patch that uses the proper width, but I'm pretty sure
-there's still a signedness issue .  Greg, would you mind running this
-through the wringer?
-
->
-> What does the ARM EABI say about register parameters?
-
-AAPCS is the ABI for 64b ARM, IIUC, which is the ISA GKH is reporting
-the problem against. IIUC, EABI is one of the 32b ABIs.  aarch64 is
-LP64 just like x86_64.
-
---
-Thanks,
-~Nick Desaulniers
-
---0000000000003743e505b2462753
-Content-Type: application/octet-stream; 
-	name="0001-fs-fix-up-type-confusion-in-readv-writev.patch"
-Content-Disposition: attachment; 
-	filename="0001-fs-fix-up-type-confusion-in-readv-writev.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kgl4e4rn0>
-X-Attachment-Id: f_kgl4e4rn0
-
-RnJvbSBhYWUyNmIxM2ZmYjllMzhiYjQ2YjhjODU5ODU3NjFiNWYxOTZiNmY2IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOaWNrIERlc2F1bG5pZXJzIDxuZGVzYXVsbmllcnNAZ29vZ2xl
-LmNvbT4KRGF0ZTogVGh1LCAyMiBPY3QgMjAyMCAxMDoyMzo0NyAtMDcwMApTdWJqZWN0OiBbUEFU
-Q0hdIGZzOiBmaXggdXAgdHlwZSBjb25mdXNpb24gaW4gcmVhZHYvd3JpdGV2CgpUaGUgc3lzY2Fs
-bCBpbnRlcmZhY2UgZG9lc24ndCBtYXRjaCB1cCB3aXRoIHRoZSBpbnRlcmZhY2UgbGliYyBpcyB1
-c2luZwpvciB0aGF0J3MgZGVmaW5lZCBpbiB0aGUgbWFudWFsIHBhZ2VzLgoKc3NpemVfdCByZWFk
-dihpbnQgZmQsIGNvbnN0IHN0cnVjdCBpb3ZlYyAqaW92LCBpbnQgaW92Y250KTsKc3NpemVfdCB3
-cml0ZXYoaW50IGZkLCBjb25zdCBzdHJ1Y3QgaW92ZWMgKmlvdiwgaW50IGlvdmNudCk7CgpUaGUg
-a2VybmVsIHdhcyBkZWZpbmluZyBgaW92Y250YCBhcyBgdW5zaWduZWQgbG9uZ2Agd2hpY2ggaXMg
-YSBwcm9ibGVtCndoZW4gdXNlcnNwYWNlIHVuZGVyc3RhbmRzIHRoaXMgdG8gYmUgYGludGAuCgoo
-VGhlcmUncyBzdGlsbCBsaWtlbHkgYSBzaWduZWRuZXNzIGJ1ZyBoZXJlLCBidXQgdXNlIHRoZSBw
-cm9wZXIgd2lkdGhzCnRoYXQgaW1wb3J0X2lvdmVjKCkgZXhwZWN0cy4pCgpTaWduZWQtb2ZmLWJ5
-OiBOaWNrIERlc2F1bG5pZXJzIDxuZGVzYXVsbmllcnNAZ29vZ2xlLmNvbT4KLS0tCiBmcy9yZWFk
-X3dyaXRlLmMgICAgfCAxMCArKysrKy0tLS0tCiBmcy9zcGxpY2UuYyAgICAgICAgfCAgMiArLQog
-aW5jbHVkZS9saW51eC9mcy5oIHwgIDIgKy0KIGxpYi9pb3ZfaXRlci5jICAgICB8ICA0ICsrLS0K
-IDQgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL2ZzL3JlYWRfd3JpdGUuYyBiL2ZzL3JlYWRfd3JpdGUuYwppbmRleCAxOWY1YzRiZjc1
-YWEuLmI4NThmMzlhNDQ3NSAxMDA2NDQKLS0tIGEvZnMvcmVhZF93cml0ZS5jCisrKyBiL2ZzL3Jl
-YWRfd3JpdGUuYwpAQCAtODkwLDcgKzg5MCw3IEBAIHNzaXplX3QgdmZzX2l0ZXJfd3JpdGUoc3Ry
-dWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBpb3ZfaXRlciAqaXRlciwgbG9mZl90ICpwcG9zLAogRVhQ
-T1JUX1NZTUJPTCh2ZnNfaXRlcl93cml0ZSk7CiAKIHNzaXplX3QgdmZzX3JlYWR2KHN0cnVjdCBm
-aWxlICpmaWxlLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp2ZWMsCi0JCSAgdW5zaWduZWQg
-bG9uZyB2bGVuLCBsb2ZmX3QgKnBvcywgcndmX3QgZmxhZ3MpCisJCSAgdW5zaWduZWQgaW50IHZs
-ZW4sIGxvZmZfdCAqcG9zLCByd2ZfdCBmbGFncykKIHsKIAlzdHJ1Y3QgaW92ZWMgaW92c3RhY2tb
-VUlPX0ZBU1RJT1ZdOwogCXN0cnVjdCBpb3ZlYyAqaW92ID0gaW92c3RhY2s7CkBAIC05MDcsNyAr
-OTA3LDcgQEAgc3NpemVfdCB2ZnNfcmVhZHYoc3RydWN0IGZpbGUgKmZpbGUsIGNvbnN0IHN0cnVj
-dCBpb3ZlYyBfX3VzZXIgKnZlYywKIH0KIAogc3RhdGljIHNzaXplX3QgdmZzX3dyaXRldihzdHJ1
-Y3QgZmlsZSAqZmlsZSwgY29uc3Qgc3RydWN0IGlvdmVjIF9fdXNlciAqdmVjLAotCQkgICB1bnNp
-Z25lZCBsb25nIHZsZW4sIGxvZmZfdCAqcG9zLCByd2ZfdCBmbGFncykKKwkJICAgdW5zaWduZWQg
-aW50IHZsZW4sIGxvZmZfdCAqcG9zLCByd2ZfdCBmbGFncykKIHsKIAlzdHJ1Y3QgaW92ZWMgaW92
-c3RhY2tbVUlPX0ZBU1RJT1ZdOwogCXN0cnVjdCBpb3ZlYyAqaW92ID0gaW92c3RhY2s7CkBAIC05
-MjUsNyArOTI1LDcgQEAgc3RhdGljIHNzaXplX3QgdmZzX3dyaXRldihzdHJ1Y3QgZmlsZSAqZmls
-ZSwgY29uc3Qgc3RydWN0IGlvdmVjIF9fdXNlciAqdmVjLAogfQogCiBzdGF0aWMgc3NpemVfdCBk
-b19yZWFkdih1bnNpZ25lZCBsb25nIGZkLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp2ZWMs
-Ci0JCQl1bnNpZ25lZCBsb25nIHZsZW4sIHJ3Zl90IGZsYWdzKQorCQkJdW5zaWduZWQgaW50IHZs
-ZW4sIHJ3Zl90IGZsYWdzKQogewogCXN0cnVjdCBmZCBmID0gZmRnZXRfcG9zKGZkKTsKIAlzc2l6
-ZV90IHJldCA9IC1FQkFERjsKQEAgLTEwMjUsMTMgKzEwMjUsMTMgQEAgc3RhdGljIHNzaXplX3Qg
-ZG9fcHdyaXRldih1bnNpZ25lZCBsb25nIGZkLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp2
-ZWMsCiB9CiAKIFNZU0NBTExfREVGSU5FMyhyZWFkdiwgdW5zaWduZWQgbG9uZywgZmQsIGNvbnN0
-IHN0cnVjdCBpb3ZlYyBfX3VzZXIgKiwgdmVjLAotCQl1bnNpZ25lZCBsb25nLCB2bGVuKQorCQl1
-bnNpZ25lZCBpbnQsIHZsZW4pCiB7CiAJcmV0dXJuIGRvX3JlYWR2KGZkLCB2ZWMsIHZsZW4sIDAp
-OwogfQogCiBTWVNDQUxMX0RFRklORTMod3JpdGV2LCB1bnNpZ25lZCBsb25nLCBmZCwgY29uc3Qg
-c3RydWN0IGlvdmVjIF9fdXNlciAqLCB2ZWMsCi0JCXVuc2lnbmVkIGxvbmcsIHZsZW4pCisJCXVu
-c2lnbmVkIGludCwgdmxlbikKIHsKIAlyZXR1cm4gZG9fd3JpdGV2KGZkLCB2ZWMsIHZsZW4sIDAp
-OwogfQpkaWZmIC0tZ2l0IGEvZnMvc3BsaWNlLmMgYi9mcy9zcGxpY2UuYwppbmRleCA3MGNjNTJh
-Zjc4MGIuLjc1MDhlY2NmYTE0MyAxMDA2NDQKLS0tIGEvZnMvc3BsaWNlLmMKKysrIGIvZnMvc3Bs
-aWNlLmMKQEAgLTM0Miw3ICszNDIsNyBAQCBjb25zdCBzdHJ1Y3QgcGlwZV9idWZfb3BlcmF0aW9u
-cyBub3N0ZWFsX3BpcGVfYnVmX29wcyA9IHsKIEVYUE9SVF9TWU1CT0wobm9zdGVhbF9waXBlX2J1
-Zl9vcHMpOwogCiBzdGF0aWMgc3NpemVfdCBrZXJuZWxfcmVhZHYoc3RydWN0IGZpbGUgKmZpbGUs
-IGNvbnN0IHN0cnVjdCBrdmVjICp2ZWMsCi0JCQkgICAgdW5zaWduZWQgbG9uZyB2bGVuLCBsb2Zm
-X3Qgb2Zmc2V0KQorCQkJICAgIHVuc2lnbmVkIGludCB2bGVuLCBsb2ZmX3Qgb2Zmc2V0KQogewog
-CW1tX3NlZ21lbnRfdCBvbGRfZnM7CiAJbG9mZl90IHBvcyA9IG9mZnNldDsKZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvbGludXgvZnMuaCBiL2luY2x1ZGUvbGludXgvZnMuaAppbmRleCBjNGFlOWNhZmJi
-YmEuLjIxMWJjZTVlNmU2MCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9mcy5oCisrKyBiL2lu
-Y2x1ZGUvbGludXgvZnMuaApAQCAtMTg5NSw3ICsxODk1LDcgQEAgc3RhdGljIGlubGluZSBpbnQg
-Y2FsbF9tbWFwKHN0cnVjdCBmaWxlICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkK
-IGV4dGVybiBzc2l6ZV90IHZmc19yZWFkKHN0cnVjdCBmaWxlICosIGNoYXIgX191c2VyICosIHNp
-emVfdCwgbG9mZl90ICopOwogZXh0ZXJuIHNzaXplX3QgdmZzX3dyaXRlKHN0cnVjdCBmaWxlICos
-IGNvbnN0IGNoYXIgX191c2VyICosIHNpemVfdCwgbG9mZl90ICopOwogZXh0ZXJuIHNzaXplX3Qg
-dmZzX3JlYWR2KHN0cnVjdCBmaWxlICosIGNvbnN0IHN0cnVjdCBpb3ZlYyBfX3VzZXIgKiwKLQkJ
-dW5zaWduZWQgbG9uZywgbG9mZl90ICosIHJ3Zl90KTsKKwkJdW5zaWduZWQgaW50LCBsb2ZmX3Qg
-KiwgcndmX3QpOwogZXh0ZXJuIHNzaXplX3QgdmZzX2NvcHlfZmlsZV9yYW5nZShzdHJ1Y3QgZmls
-ZSAqLCBsb2ZmX3QgLCBzdHJ1Y3QgZmlsZSAqLAogCQkJCSAgIGxvZmZfdCwgc2l6ZV90LCB1bnNp
-Z25lZCBpbnQpOwogZXh0ZXJuIHNzaXplX3QgZ2VuZXJpY19jb3B5X2ZpbGVfcmFuZ2Uoc3RydWN0
-IGZpbGUgKmZpbGVfaW4sIGxvZmZfdCBwb3NfaW4sCmRpZmYgLS1naXQgYS9saWIvaW92X2l0ZXIu
-YyBiL2xpYi9pb3ZfaXRlci5jCmluZGV4IDE2MzUxMTFjNWJkMi4uZGVkOWQ5YzRlYjI4IDEwMDY0
-NAotLS0gYS9saWIvaW92X2l0ZXIuYworKysgYi9saWIvaW92X2l0ZXIuYwpAQCAtMTczNCw3ICsx
-NzM0LDcgQEAgc3RydWN0IGlvdmVjICppb3ZlY19mcm9tX3VzZXIoY29uc3Qgc3RydWN0IGlvdmVj
-IF9fdXNlciAqdXZlYywKIH0KIAogc3NpemVfdCBfX2ltcG9ydF9pb3ZlYyhpbnQgdHlwZSwgY29u
-c3Qgc3RydWN0IGlvdmVjIF9fdXNlciAqdXZlYywKLQkJIHVuc2lnbmVkIG5yX3NlZ3MsIHVuc2ln
-bmVkIGZhc3Rfc2Vncywgc3RydWN0IGlvdmVjICoqaW92cCwKKwkJIHVuc2lnbmVkIGludCBucl9z
-ZWdzLCB1bnNpZ25lZCBpbnQgZmFzdF9zZWdzLCBzdHJ1Y3QgaW92ZWMgKippb3ZwLAogCQkgc3Ry
-dWN0IGlvdl9pdGVyICppLCBib29sIGNvbXBhdCkKIHsKIAlzc2l6ZV90IHRvdGFsX2xlbiA9IDA7
-CkBAIC0xODAzLDcgKzE4MDMsNyBAQCBzc2l6ZV90IF9faW1wb3J0X2lvdmVjKGludCB0eXBlLCBj
-b25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp1dmVjLAogICogUmV0dXJuOiBOZWdhdGl2ZSBlcnJv
-ciBjb2RlIG9uIGVycm9yLCBieXRlcyBpbXBvcnRlZCBvbiBzdWNjZXNzCiAgKi8KIHNzaXplX3Qg
-aW1wb3J0X2lvdmVjKGludCB0eXBlLCBjb25zdCBzdHJ1Y3QgaW92ZWMgX191c2VyICp1dmVjLAot
-CQkgdW5zaWduZWQgbnJfc2VncywgdW5zaWduZWQgZmFzdF9zZWdzLAorCQkgdW5zaWduZWQgaW50
-IG5yX3NlZ3MsIHVuc2lnbmVkIGludCBmYXN0X3NlZ3MsCiAJCSBzdHJ1Y3QgaW92ZWMgKippb3Zw
-LCBzdHJ1Y3QgaW92X2l0ZXIgKmkpCiB7CiAJcmV0dXJuIF9faW1wb3J0X2lvdmVjKHR5cGUsIHV2
-ZWMsIG5yX3NlZ3MsIGZhc3Rfc2VncywgaW92cCwgaSwKLS0gCjIuMjkuMC5yYzEuMjk3LmdmYTk3
-NDNlNTAxLWdvb2cKCg==
---0000000000003743e505b2462753--
+Mike
