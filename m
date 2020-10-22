@@ -2,101 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63641296120
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 16:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5BA296125
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 16:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368204AbgJVOvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 10:51:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S368201AbgJVOvZ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 10:51:25 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDF9C0613CE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 07:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SbMpuVWWxgXMVfuxUGBPNLWGxfsP/J0seak81KWV01U=; b=tJu1s1tnkx29v6TJ6OJ4r8MHq0
-        SYuGz0e+ye7/ryTZj5AjwTmHzTuciOgv2plAxPpN4Et1Lo7N1oXQBzNZvplTPa+rQK9d8gWDYMjnf
-        JJTQh8HUPifnntO//7XYxSYi6eK6jmlycadRRtc8c+8i5d/rhbaaWB8CQhYJh1jNqSUO+/MOyo2Wf
-        c8vsNGcKIddKE3A7KuxbBK4mOtup13tXyfDfjKQrRT2ZbQzqDcXur9IWuC5mys9ON+AC7Dc10z8VC
-        0qpbFZBCTofrze/+bghNmYDT9Y0ccINzpxVtq1x5P3Wx3vRY5I7NvInLb7AhTtB5AZ9CZG6OvdJHd
-        UoIgKeGA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVbvl-0004j1-QE; Thu, 22 Oct 2020 14:51:05 +0000
-Date:   Thu, 22 Oct 2020 15:51:05 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Luo Meng <luomeng12@huawei.com>, bfields@fieldses.org,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] locks: Fix UBSAN undefined behaviour in
- flock64_to_posix_lock
-Message-ID: <20201022145105.GT20115@casper.infradead.org>
-References: <20201022020341.2434316-1-luomeng12@huawei.com>
- <3cb0aeaa4e75b5dd4c0e6bb8b04f277f7162a581.camel@kernel.org>
+        id S368217AbgJVOwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 10:52:09 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15245 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S368214AbgJVOwJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 10:52:09 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 30F26FF6DDC4680DAA83;
+        Thu, 22 Oct 2020 22:52:04 +0800 (CST)
+Received: from [127.0.0.1] (10.174.176.238) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Thu, 22 Oct 2020
+ 22:51:54 +0800
+To:     <miklos@szeredi.hu>, <mszeredi@redhat.com>
+CC:     linfeilong <linfeilong@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        lihaotian <lihaotian9@huawei.com>, <liuzhiqiang26@huawei.com>
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Subject: [PATCH] fuse: fix potential accessing NULL pointer problem in
+ fuse_send_init()
+Message-ID: <5e1bf70a-0c6b-89b6-dc9f-474ccfcfe597@huawei.com>
+Date:   Thu, 22 Oct 2020 22:51:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cb0aeaa4e75b5dd4c0e6bb8b04f277f7162a581.camel@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.176.238]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 09:21:35AM -0400, Jeff Layton wrote:
-> On Thu, 2020-10-22 at 10:03 +0800, Luo Meng wrote:
-> > When the sum of fl->fl_start and l->l_len overflows,
-> > UBSAN shows the following warning:
-> > 
-> > UBSAN: Undefined behaviour in fs/locks.c:482:29
-> > signed integer overflow: 2 + 9223372036854775806
-> > cannot be represented in type 'long long int'
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0xe4/0x14e lib/dump_stack.c:118
-> >  ubsan_epilogue+0xe/0x81 lib/ubsan.c:161
-> >  handle_overflow+0x193/0x1e2 lib/ubsan.c:192
-> >  flock64_to_posix_lock fs/locks.c:482 [inline]
-> >  flock_to_posix_lock+0x595/0x690 fs/locks.c:515
-> >  fcntl_setlk+0xf3/0xa90 fs/locks.c:2262
-> >  do_fcntl+0x456/0xf60 fs/fcntl.c:387
-> >  __do_sys_fcntl fs/fcntl.c:483 [inline]
-> >  __se_sys_fcntl fs/fcntl.c:468 [inline]
-> >  __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:468
-> >  do_syscall_64+0xc8/0x5a0 arch/x86/entry/common.c:293
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > 
-> > Fix it by moving -1 forward.
-> > 
-> > Signed-off-by: Luo Meng <luomeng12@huawei.com>
-> > ---
-> >  fs/locks.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index 1f84a03601fe..8489787ca97e 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -542,7 +542,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
-> >  	if (l->l_len > 0) {
-> >  		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
-> >  			return -EOVERFLOW;
-> > -		fl->fl_end = fl->fl_start + l->l_len - 1;
-> > +		fl->fl_end = fl->fl_start - 1 + l->l_len;
-> >  
-> >  	} else if (l->l_len < 0) {
-> >  		if (fl->fl_start + l->l_len < 0)
-> 
-> Wow, ok. Interesting that the order would have such an effect here, but
-> it seems legit. I'll plan to merge this for v5.11. Let me know if we
-> need to get this in earlier.
 
-It's the kind of pedantic correctness thing that should be merged because
-C doesn't exactly define the behaviour.  eg a sign-magnitude machine
-will behave differently from a twos-complement machine.  The fact that
-nobody's made a sign-magnitude integer arithmetic machine in the last
-60 years does not matter to the C spec.
+In fuse_send_init func, ia is allocated by calling kzalloc func, and
+we donot check whether ia is NULL before using it. Thus, if allocating
+ia fails, accessing NULL pointer problem will occur.
 
-It's a shame there's no uoff_t since it would be defined.
+Here, we will call process_init_reply func if ia is NULL.
+
+Fixes: 615047eff108 ("fuse: convert init to simple api")
+Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+Signed-off-by: Haotian Li <lihaotian9@huawei.com>
+---
+ fs/fuse/inode.c | 161 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 87 insertions(+), 74 deletions(-)
+
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 581329203d68..bb526d8cf5b0 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -898,88 +898,97 @@ struct fuse_init_args {
+ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
+ 			       int error)
+ {
+-	struct fuse_init_args *ia = container_of(args, typeof(*ia), args);
+-	struct fuse_init_out *arg = &ia->out;
++	struct fuse_init_args *ia;
++	struct fuse_init_out *arg;
++	unsigned long ra_pages;
+
+-	if (error || arg->major != FUSE_KERNEL_VERSION)
++	if (!args) {
+ 		fc->conn_error = 1;
+-	else {
+-		unsigned long ra_pages;
++		goto out;
++	}
+
+-		process_init_limits(fc, arg);
++	ia = container_of(args, typeof(*ia), args);
++	arg = &ia->out;
++	if (error || arg->major != FUSE_KERNEL_VERSION) {
++		fc->conn_error = 1;
++		goto out_free_ia;
++	}
+
+-		if (arg->minor >= 6) {
+-			ra_pages = arg->max_readahead / PAGE_SIZE;
+-			if (arg->flags & FUSE_ASYNC_READ)
+-				fc->async_read = 1;
+-			if (!(arg->flags & FUSE_POSIX_LOCKS))
+-				fc->no_lock = 1;
+-			if (arg->minor >= 17) {
+-				if (!(arg->flags & FUSE_FLOCK_LOCKS))
+-					fc->no_flock = 1;
+-			} else {
+-				if (!(arg->flags & FUSE_POSIX_LOCKS))
+-					fc->no_flock = 1;
+-			}
+-			if (arg->flags & FUSE_ATOMIC_O_TRUNC)
+-				fc->atomic_o_trunc = 1;
+-			if (arg->minor >= 9) {
+-				/* LOOKUP has dependency on proto version */
+-				if (arg->flags & FUSE_EXPORT_SUPPORT)
+-					fc->export_support = 1;
+-			}
+-			if (arg->flags & FUSE_BIG_WRITES)
+-				fc->big_writes = 1;
+-			if (arg->flags & FUSE_DONT_MASK)
+-				fc->dont_mask = 1;
+-			if (arg->flags & FUSE_AUTO_INVAL_DATA)
+-				fc->auto_inval_data = 1;
+-			else if (arg->flags & FUSE_EXPLICIT_INVAL_DATA)
+-				fc->explicit_inval_data = 1;
+-			if (arg->flags & FUSE_DO_READDIRPLUS) {
+-				fc->do_readdirplus = 1;
+-				if (arg->flags & FUSE_READDIRPLUS_AUTO)
+-					fc->readdirplus_auto = 1;
+-			}
+-			if (arg->flags & FUSE_ASYNC_DIO)
+-				fc->async_dio = 1;
+-			if (arg->flags & FUSE_WRITEBACK_CACHE)
+-				fc->writeback_cache = 1;
+-			if (arg->flags & FUSE_PARALLEL_DIROPS)
+-				fc->parallel_dirops = 1;
+-			if (arg->flags & FUSE_HANDLE_KILLPRIV)
+-				fc->handle_killpriv = 1;
+-			if (arg->time_gran && arg->time_gran <= 1000000000)
+-				fc->sb->s_time_gran = arg->time_gran;
+-			if ((arg->flags & FUSE_POSIX_ACL)) {
+-				fc->default_permissions = 1;
+-				fc->posix_acl = 1;
+-				fc->sb->s_xattr = fuse_acl_xattr_handlers;
+-			}
+-			if (arg->flags & FUSE_CACHE_SYMLINKS)
+-				fc->cache_symlinks = 1;
+-			if (arg->flags & FUSE_ABORT_ERROR)
+-				fc->abort_err = 1;
+-			if (arg->flags & FUSE_MAX_PAGES) {
+-				fc->max_pages =
+-					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+-					max_t(unsigned int, arg->max_pages, 1));
+-			}
+-		} else {
+-			ra_pages = fc->max_read / PAGE_SIZE;
++	process_init_limits(fc, arg);
++
++	if (arg->minor >= 6) {
++		ra_pages = arg->max_readahead / PAGE_SIZE;
++		if (arg->flags & FUSE_ASYNC_READ)
++			fc->async_read = 1;
++		if (!(arg->flags & FUSE_POSIX_LOCKS))
+ 			fc->no_lock = 1;
+-			fc->no_flock = 1;
++		if (arg->minor >= 17) {
++			if (!(arg->flags & FUSE_FLOCK_LOCKS))
++				fc->no_flock = 1;
++		} else {
++			if (!(arg->flags & FUSE_POSIX_LOCKS))
++				fc->no_flock = 1;
+ 		}
+-
+-		fc->sb->s_bdi->ra_pages =
+-				min(fc->sb->s_bdi->ra_pages, ra_pages);
+-		fc->minor = arg->minor;
+-		fc->max_write = arg->minor < 5 ? 4096 : arg->max_write;
+-		fc->max_write = max_t(unsigned, 4096, fc->max_write);
+-		fc->conn_init = 1;
++		if (arg->flags & FUSE_ATOMIC_O_TRUNC)
++			fc->atomic_o_trunc = 1;
++		if (arg->minor >= 9) {
++			/* LOOKUP has dependency on proto version */
++			if (arg->flags & FUSE_EXPORT_SUPPORT)
++				fc->export_support = 1;
++		}
++		if (arg->flags & FUSE_BIG_WRITES)
++			fc->big_writes = 1;
++		if (arg->flags & FUSE_DONT_MASK)
++			fc->dont_mask = 1;
++		if (arg->flags & FUSE_AUTO_INVAL_DATA)
++			fc->auto_inval_data = 1;
++		else if (arg->flags & FUSE_EXPLICIT_INVAL_DATA)
++			fc->explicit_inval_data = 1;
++		if (arg->flags & FUSE_DO_READDIRPLUS) {
++			fc->do_readdirplus = 1;
++			if (arg->flags & FUSE_READDIRPLUS_AUTO)
++				fc->readdirplus_auto = 1;
++		}
++		if (arg->flags & FUSE_ASYNC_DIO)
++			fc->async_dio = 1;
++		if (arg->flags & FUSE_WRITEBACK_CACHE)
++			fc->writeback_cache = 1;
++		if (arg->flags & FUSE_PARALLEL_DIROPS)
++			fc->parallel_dirops = 1;
++		if (arg->flags & FUSE_HANDLE_KILLPRIV)
++			fc->handle_killpriv = 1;
++		if (arg->time_gran && arg->time_gran <= 1000000000)
++			fc->sb->s_time_gran = arg->time_gran;
++		if ((arg->flags & FUSE_POSIX_ACL)) {
++			fc->default_permissions = 1;
++			fc->posix_acl = 1;
++			fc->sb->s_xattr = fuse_acl_xattr_handlers;
++		}
++		if (arg->flags & FUSE_CACHE_SYMLINKS)
++			fc->cache_symlinks = 1;
++		if (arg->flags & FUSE_ABORT_ERROR)
++			fc->abort_err = 1;
++		if (arg->flags & FUSE_MAX_PAGES) {
++			fc->max_pages =
++				min_t(unsigned int, FUSE_MAX_MAX_PAGES,
++				max_t(unsigned int, arg->max_pages, 1));
++		}
++	} else {
++		ra_pages = fc->max_read / PAGE_SIZE;
++		fc->no_lock = 1;
++		fc->no_flock = 1;
+ 	}
+-	kfree(ia);
+
++	fc->sb->s_bdi->ra_pages =
++			min(fc->sb->s_bdi->ra_pages, ra_pages);
++	fc->minor = arg->minor;
++	fc->max_write = arg->minor < 5 ? 4096 : arg->max_write;
++	fc->max_write = max_t(unsigned int, 4096, fc->max_write);
++	fc->conn_init = 1;
++
++out_free_ia:
++	kfree(ia);
++out:
+ 	fuse_set_initialized(fc);
+ 	wake_up_all(&fc->blocked_waitq);
+ }
+@@ -989,6 +998,10 @@ void fuse_send_init(struct fuse_conn *fc)
+ 	struct fuse_init_args *ia;
+
+ 	ia = kzalloc(sizeof(*ia), GFP_KERNEL | __GFP_NOFAIL);
++	if (!ia) {
++		process_init_reply(fc, NULL, -ENOTCONN);
++		return;
++	}
+
+ 	ia->in.major = FUSE_KERNEL_VERSION;
+ 	ia->in.minor = FUSE_KERNEL_MINOR_VERSION;
+-- 
+2.19.1
+
+
