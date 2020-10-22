@@ -2,127 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9552296107
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 16:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63641296120
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 16:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2900967AbgJVOjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 10:39:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2900951AbgJVOjq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 10:39:46 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 276A224171;
-        Thu, 22 Oct 2020 14:39:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603377583;
-        bh=ma7f6ciQXaB7O32bDDp+GeQJ6WrSJ5EDDu1VyaA7rGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PxugVsee9PWrXt/gXzudeuTvI47TjXebpNxq+V4HCmVCe1sKZHLosNqAbXuuvW+/i
-         F3Omc7qJjCGcZpsoZ0gvdBLvvwF6P71x/p/bcwNCyzTjDInFt6yyFfEubOEEK8j98S
-         eCVIVyZ2FmbbCU8ALan3OPjQJXwF2/c6hnwwd7rg=
-Date:   Thu, 22 Oct 2020 16:40:21 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Hildenbrand <david@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022144021.GA1969554@kroah.com>
-References: <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com>
- <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com>
- <20201022135036.GA1787470@kroah.com>
- <CAK8P3a1B7OVdyzW0-97JwzZiwp0D0fnSfyete16QTvPp_1m07A@mail.gmail.com>
+        id S368204AbgJVOvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 10:51:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S368201AbgJVOvZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 10:51:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBDF9C0613CE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 07:51:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=SbMpuVWWxgXMVfuxUGBPNLWGxfsP/J0seak81KWV01U=; b=tJu1s1tnkx29v6TJ6OJ4r8MHq0
+        SYuGz0e+ye7/ryTZj5AjwTmHzTuciOgv2plAxPpN4Et1Lo7N1oXQBzNZvplTPa+rQK9d8gWDYMjnf
+        JJTQh8HUPifnntO//7XYxSYi6eK6jmlycadRRtc8c+8i5d/rhbaaWB8CQhYJh1jNqSUO+/MOyo2Wf
+        c8vsNGcKIddKE3A7KuxbBK4mOtup13tXyfDfjKQrRT2ZbQzqDcXur9IWuC5mys9ON+AC7Dc10z8VC
+        0qpbFZBCTofrze/+bghNmYDT9Y0ccINzpxVtq1x5P3Wx3vRY5I7NvInLb7AhTtB5AZ9CZG6OvdJHd
+        UoIgKeGA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVbvl-0004j1-QE; Thu, 22 Oct 2020 14:51:05 +0000
+Date:   Thu, 22 Oct 2020 15:51:05 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Luo Meng <luomeng12@huawei.com>, bfields@fieldses.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] locks: Fix UBSAN undefined behaviour in
+ flock64_to_posix_lock
+Message-ID: <20201022145105.GT20115@casper.infradead.org>
+References: <20201022020341.2434316-1-luomeng12@huawei.com>
+ <3cb0aeaa4e75b5dd4c0e6bb8b04f277f7162a581.camel@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a1B7OVdyzW0-97JwzZiwp0D0fnSfyete16QTvPp_1m07A@mail.gmail.com>
+In-Reply-To: <3cb0aeaa4e75b5dd4c0e6bb8b04f277f7162a581.camel@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 04:28:20PM +0200, Arnd Bergmann wrote:
-> On Thu, Oct 22, 2020 at 3:50 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Thu, Oct 22, 2020 at 02:57:59PM +0200, Greg KH wrote:
-> > > On Thu, Oct 22, 2020 at 02:42:24PM +0200, David Hildenbrand wrote:
+On Thu, Oct 22, 2020 at 09:21:35AM -0400, Jeff Layton wrote:
+> On Thu, 2020-10-22 at 10:03 +0800, Luo Meng wrote:
+> > When the sum of fl->fl_start and l->l_len overflows,
+> > UBSAN shows the following warning:
+> > 
+> > UBSAN: Undefined behaviour in fs/locks.c:482:29
+> > signed integer overflow: 2 + 9223372036854775806
+> > cannot be represented in type 'long long int'
+> > Call Trace:
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0xe4/0x14e lib/dump_stack.c:118
+> >  ubsan_epilogue+0xe/0x81 lib/ubsan.c:161
+> >  handle_overflow+0x193/0x1e2 lib/ubsan.c:192
+> >  flock64_to_posix_lock fs/locks.c:482 [inline]
+> >  flock_to_posix_lock+0x595/0x690 fs/locks.c:515
+> >  fcntl_setlk+0xf3/0xa90 fs/locks.c:2262
+> >  do_fcntl+0x456/0xf60 fs/fcntl.c:387
+> >  __do_sys_fcntl fs/fcntl.c:483 [inline]
+> >  __se_sys_fcntl fs/fcntl.c:468 [inline]
+> >  __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:468
+> >  do_syscall_64+0xc8/0x5a0 arch/x86/entry/common.c:293
+> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > 
+> > Fix it by moving -1 forward.
+> > 
+> > Signed-off-by: Luo Meng <luomeng12@huawei.com>
+> > ---
+> >  fs/locks.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index 1f84a03601fe..8489787ca97e 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -542,7 +542,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
+> >  	if (l->l_len > 0) {
+> >  		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
+> >  			return -EOVERFLOW;
+> > -		fl->fl_end = fl->fl_start + l->l_len - 1;
+> > +		fl->fl_end = fl->fl_start - 1 + l->l_len;
+> >  
+> >  	} else if (l->l_len < 0) {
+> >  		if (fl->fl_start + l->l_len < 0)
 > 
-> > > >  struct iovec *iovec_from_user(const struct iovec __user *uvec,
-> > > > -               unsigned long nr_segs, unsigned long fast_segs,
-> > > > +               unsigned nr_segs, unsigned fast_segs,
-> > > >                 struct iovec *fast_iov, bool compat)
-> > > >  {
-> > > >         struct iovec *iov = fast_iov;
-> > > > @@ -1738,7 +1738,7 @@ ssize_t __import_iovec(int type, const struct
-> > > > iovec __user *uvec,
-> > > >                  struct iov_iter *i, bool compat)
-> > > >  {
-> > > >         ssize_t total_len = 0;
-> > > > -       unsigned long seg;
-> > > > +       unsigned seg;
-> > > >         struct iovec *iov;
-> > > >
-> > > >         iov = iovec_from_user(uvec, nr_segs, fast_segs, *iovp, compat);
-> > > >
-> > >
-> > > Ah, I tested the other way around, making everything "unsigned long"
-> > > instead.  Will go try this too, as other tests are still running...
-> >
-> > Ok, no, this didn't work either.
-> >
-> > Nick, I think I need some compiler help here.  Any ideas?
-> 
-> I don't think the patch above would reliably clear the upper bits if they
-> contain garbage.
-> 
-> If the integer extension is the problem, the way I'd try it is to make the
-> function take an 'unsigned long' and then explictly mask the upper
-> bits with
-> 
->      seg = lower_32_bits(seg);
-> 
-> Can you attach the iov_iter.s files from the broken build, plus the
-> one with 'noinline' for comparison? Maybe something can be seen
-> in there.
+> Wow, ok. Interesting that the order would have such an effect here, but
+> it seems legit. I'll plan to merge this for v5.11. Let me know if we
+> need to get this in earlier.
 
-I don't know how to extract the .s files easily from the AOSP build
-system, I'll look into that.  I'm also now testing by downgrading to an
-older version of clang (10 instead of 11), to see if that matters at all
-or not...
+It's the kind of pedantic correctness thing that should be merged because
+C doesn't exactly define the behaviour.  eg a sign-magnitude machine
+will behave differently from a twos-complement machine.  The fact that
+nobody's made a sign-magnitude integer arithmetic machine in the last
+60 years does not matter to the C spec.
 
-thanks,
-
-greg k-h
+It's a shame there's no uoff_t since it would be defined.
