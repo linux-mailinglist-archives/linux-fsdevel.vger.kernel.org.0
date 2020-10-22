@@ -2,71 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 208BA2955CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 02:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5085B29563F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 03:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2894470AbgJVAtS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Oct 2020 20:49:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48014 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436950AbgJVAtS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Oct 2020 20:49:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E56DC0613CE;
-        Wed, 21 Oct 2020 17:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QrzozL6sqW5vYMZtN3K+R9LE+6kDlJD77dyJBYxqbOI=; b=gAQr0wgYZsNoYp/Jxj6agcvDTx
-        515wMKDVLaZCnGYu1SuKbzHmqql9n3YgNNC05Hq053Ckz8OPZOOIuRYKTYzNz1bBa0XKHFVzBo06v
-        BY+auv7WQdwFyc8/rR956Mb7tOflxn3F25od2XoCfxwYapp7OVEL5StjOLgOHgHMhBT3AWRv8oG1k
-        pclENd55pZOwFHRzR3dueqwqHv6xVCO9jQAl2pkShBMGkO+cK15NpsZ1crZSzJGtbvsoBKC/EbNqa
-        qe6wlh9cfBemaS/EMMK5qAmrUcwv1Wma502bIzvp7ctSSucnvbiVfIdxlO0Emlbn1L7YVWAUjQQWJ
-        6jZXS/xA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVOmw-0007BB-RS; Thu, 22 Oct 2020 00:49:06 +0000
-Date:   Thu, 22 Oct 2020 01:49:06 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-mm@kvack.org
-Subject: Re: kernel BUG at mm/page-writeback.c:2241 [
- BUG_ON(PageWriteback(page); ]
-Message-ID: <20201022004906.GQ20115@casper.infradead.org>
-References: <645a3f332f37e09057c10bc32f4f298ce56049bb.camel@lca.pw>
+        id S2442438AbgJVB7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Oct 2020 21:59:39 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15241 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2442392AbgJVB7i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 21 Oct 2020 21:59:38 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5B2AA69CE9909862139D;
+        Thu, 22 Oct 2020 09:59:37 +0800 (CST)
+Received: from code-website.localdomain (10.175.127.227) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 22 Oct 2020 09:59:31 +0800
+From:   Luo Meng <luomeng12@huawei.com>
+To:     <jlayton@kernel.org>, <bfields@fieldses.org>,
+        <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <luomeng12@huawei.com>
+Subject: [PATCH] locks: Fix UBSAN undefined behaviour in flock64_to_posix_lock
+Date:   Thu, 22 Oct 2020 10:03:41 +0800
+Message-ID: <20201022020341.2434316-1-luomeng12@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <645a3f332f37e09057c10bc32f4f298ce56049bb.camel@lca.pw>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 08:30:18PM -0400, Qian Cai wrote:
-> Today's linux-next starts to trigger this wondering if anyone has any clue.
+When the sum of fl->fl_start and l->l_len overflows,
+UBSAN shows the following warning:
 
-I've seen that occasionally too.  I changed that BUG_ON to VM_BUG_ON_PAGE
-to try to get a clue about it.  Good to know it's not the THP patches
-since they aren't in linux-next.
+UBSAN: Undefined behaviour in fs/locks.c:482:29
+signed integer overflow: 2 + 9223372036854775806
+cannot be represented in type 'long long int'
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xe4/0x14e lib/dump_stack.c:118
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:161
+ handle_overflow+0x193/0x1e2 lib/ubsan.c:192
+ flock64_to_posix_lock fs/locks.c:482 [inline]
+ flock_to_posix_lock+0x595/0x690 fs/locks.c:515
+ fcntl_setlk+0xf3/0xa90 fs/locks.c:2262
+ do_fcntl+0x456/0xf60 fs/fcntl.c:387
+ __do_sys_fcntl fs/fcntl.c:483 [inline]
+ __se_sys_fcntl fs/fcntl.c:468 [inline]
+ __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:468
+ do_syscall_64+0xc8/0x5a0 arch/x86/entry/common.c:293
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-I don't understand how it can happen.  We have the page locked, and then we do:
+Fix it by moving -1 forward.
 
-                        if (PageWriteback(page)) {
-                                if (wbc->sync_mode != WB_SYNC_NONE)
-                                        wait_on_page_writeback(page);
-                                else
-                                        goto continue_unlock;
-                        }
+Signed-off-by: Luo Meng <luomeng12@huawei.com>
+---
+ fs/locks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-                        VM_BUG_ON_PAGE(PageWriteback(page), page);
-
-Nobody should be able to put this page under writeback while we have it
-locked ... right?  The page can be redirtied by the code that's supposed
-to be writing it back, but I don't see how anyone can make PageWriteback
-true while we're holding the page lock.
+diff --git a/fs/locks.c b/fs/locks.c
+index 1f84a03601fe..8489787ca97e 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -542,7 +542,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
+ 	if (l->l_len > 0) {
+ 		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
+ 			return -EOVERFLOW;
+-		fl->fl_end = fl->fl_start + l->l_len - 1;
++		fl->fl_end = fl->fl_start - 1 + l->l_len;
+ 
+ 	} else if (l->l_len < 0) {
+ 		if (fl->fl_start + l->l_len < 0)
+-- 
+2.25.4
 
