@@ -2,188 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 675F8296067
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 15:51:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4E092960AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 16:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S368063AbgJVNvb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 09:51:31 -0400
-Received: from mx4.veeam.com ([104.41.138.86]:45074 "EHLO mx4.veeam.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2900458AbgJVNva (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 09:51:30 -0400
-Received: from mail.veeam.com (prgmbx01.amust.local [172.24.0.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx4.veeam.com (Postfix) with ESMTPS id 7CB8487A6E;
-        Thu, 22 Oct 2020 16:51:24 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com; s=mx4;
-        t=1603374684; bh=hjvmd6gWpnWjR7TnCCxRK2ZgAh717xbXw2Fsp2Yhyhs=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-        b=ALHxwxcOkuNdbIv3ZQxhgQea5C5irM83Ao/C9PIEbyxA2wOHfOaKUFsH8tVqHFAmx
-         2TADivC59bGpA5YsyjYjUdBS6A9K5R2b9ai6E/KS6adEgpa1mJTe3qiqCyi1WLk925
-         EVecl2M+i+3/T1K6q3ON0tWxN0/TkgwWQ38KT3J4=
-Received: from veeam.com (172.24.14.5) by prgmbx01.amust.local (172.24.0.171)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2; Thu, 22 Oct 2020
- 15:51:22 +0200
-Date:   Thu, 22 Oct 2020 16:52:13 +0300
-From:   Sergei Shtepa <sergei.shtepa@veeam.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-CC:     Hannes Reinecke <hare@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "len.brown@intel.com" <len.brown@intel.com>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "jack@suse.cz" <jack@suse.cz>, "tj@kernel.org" <tj@kernel.org>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "osandov@fb.com" <osandov@fb.com>,
-        "koct9i@gmail.com" <koct9i@gmail.com>,
-        "steve@sk2.org" <steve@sk2.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 0/2] block layer filter and block device snapshot module
-Message-ID: <20201022135213.GB21466@veeam.com>
-References: <1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com>
- <71926887-5707-04a5-78a2-ffa2ee32bd68@suse.de>
- <20201021141044.GF20749@veeam.com>
- <ca8eaa40-b422-2272-1fd9-1d0a354c42bf@suse.de>
- <20201022094402.GA21466@veeam.com>
- <BL0PR04MB6514AC1B1FF313E6A14D122CE71D0@BL0PR04MB6514.namprd04.prod.outlook.com>
+        id S2900669AbgJVOIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 10:08:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58300 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2900662AbgJVOIM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 10:08:12 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE86C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 07:08:11 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id z2so1810251ilh.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 07:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qyB9VGcnwRmV7uWQxOItmIqBY22BS8lzGEFNJoBC4fs=;
+        b=2B+nN1yWXOA54E7/hBm7W9SYoldYFseQrJHvdXwS41REnvpYiPVk9brmmk1XUdpqDK
+         O8XIOiiucGc8TycgCWRZVpOIJ0s5blu8/7Dl9S+x87uUdCEB6HYfi1avPRtDNrryQC/i
+         rw4Fxw++/9fgFynWmNNt46Td1omSCPVjfV1r0ilqU4crUK+EdfL40XmgH6y3SDQSHtKu
+         DwkVyciFPAJVW+RkFZYZbpvn1aC7nSApyeakpKqvjDuXO13pcVic2nSJmeBqgvfDSuB1
+         BB4d9UrNmbw4KWa8mL01xNEcK3iEyxNAQk+/w9Z/zb3QWpRmYcuZgVSPmMF8mE2diT5w
+         E4+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qyB9VGcnwRmV7uWQxOItmIqBY22BS8lzGEFNJoBC4fs=;
+        b=j9Yi9oDDAvpWM3C7ZGxI10UTvkn9iRteGE37HaNUedjtkE/CSl/txWZH/iCvva0Hls
+         5MaLLAag+xcPJIBlZsEoIYudYPQl4CCMomStWOQYu1p5H2vXcSplKvl7BOal/HwV556N
+         xozSf97/YBb/5+LTjAM4LMp498GRBXVm8ij0xOpvXNgwBvapcK7qvnbafSHT2CoUOAFi
+         pC/ozOtPnPJrMXY8TloZZNmCG2C6TOVQgenvxUXSESQGdFqFPPlQ5ucPFLfUhHn95h0/
+         ZAmjTd6M0Du6nEdgGKgC4U8L5M/GkpPDt62XmnJZ1fXgGLOznt5JM9IC55yv/7+F5XRn
+         1bAg==
+X-Gm-Message-State: AOAM530sCLovNw1yN5B7k9C9yOU7HE7zGOIG5BhtvvDnuU4ec8L1V6EK
+        xniRFoqIJFYuA1lFOChcShavYJKbgKiXsw==
+X-Google-Smtp-Source: ABdhPJyUzut/930LmZRIerniuf18HLXCdmG+LHK2wxfJtRs+DGdaFwPAudgE6vofbFxH9MO/SsCTbA==
+X-Received: by 2002:a92:c784:: with SMTP id c4mr1863552ilk.157.1603375690293;
+        Thu, 22 Oct 2020 07:08:10 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id e17sm1225926ile.60.2020.10.22.07.08.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Oct 2020 07:08:09 -0700 (PDT)
+Subject: Re: Question on io-wq
+To:     "Zhang,Qiang" <qiang.zhang@windriver.com>
+Cc:     viro@zeniv.linux.org.uk, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <98c41fba-87fe-b08d-2c8c-da404f91ef31@windriver.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8dd4bc4c-9d8e-fb5a-6931-3e861ad9b4bf@kernel.dk>
+Date:   Thu, 22 Oct 2020 08:08:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <BL0PR04MB6514AC1B1FF313E6A14D122CE71D0@BL0PR04MB6514.namprd04.prod.outlook.com>
-X-Originating-IP: [172.24.14.5]
-X-ClientProxiedBy: prgmbx01.amust.local (172.24.0.171) To prgmbx01.amust.local
- (172.24.0.171)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29C604D26A677464
-X-Veeam-MMEX: True
+In-Reply-To: <98c41fba-87fe-b08d-2c8c-da404f91ef31@windriver.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The 10/22/2020 13:28, Damien Le Moal wrote:
-> On 2020/10/22 18:43, Sergei Shtepa wrote:
-> > 
-> > Maybe, but the problem is that I can't imagine how to implement
-> > dm-intercept yet. 
-> > How to use dm to implement interception without changing the stack
-> > of block devices. We'll have to make a hook somewhere, isn`t it?
+On 10/22/20 3:02 AM, Zhang,Qiang wrote:
 > 
-> Once your dm-intercept target driver is inserted with "dmsetup" or any user land
-> tool you implement using libdevicemapper, the "hooks" will naturally be in place
-> since the dm infrastructure already does that: all submitted BIOs will be passed
-> to dm-intercept through the "map" operation defined in the target_type
-> descriptor. It is then that driver job to execute the BIOs as it sees fit.
+> Hi Jens Axboe
 > 
-> Look at simple device mappers like dm-linear or dm-flakey for hints of how
-> things work (driver/md/dm-linear.c). More complex dm drivers like dm-crypt,
-> dm-writecache or dm-thin can give you hints about more features of device mapper.
-> Functions such as __map_bio() in drivers/md/dm.c are the core of DM and show
-> what happens to BIOs depending on the the return value of the map operation.
-> dm_submit_bio() and __split_and_process_bio() is the entry points for BIO
-> processing in DM.
-> 
+> There are some problem in 'io_wqe_worker' thread, when the 
+> 'io_wqe_worker' be create and  Setting the affinity of CPUs in NUMA 
+> nodes, due to CPU hotplug, When the last CPU going down, the 
+> 'io_wqe_worker' thread will run anywhere. when the CPU in the node goes 
+> online again, we should restore their cpu bindings?
 
-Is there something I don't understand? Please correct me.
+Something like the below should help in ensuring affinities are
+always correct - trigger an affinity set for an online CPU event. We
+should not need to do it for offlining. Can you test it?
 
-Let me remind that by the condition of the problem, we can't change
-the configuration of the block device stack.
 
-Let's imagine this configuration: /root mount point on ext filesystem
-on /dev/sda1.
-+---------------+
-|               |
-|  /root        |
-|               |
-+---------------+
-|               |
-| EXT FS        |
-|               |
-+---------------+
-|               |
-| block layer   |
-|               |
-| sda queue     |
-|               |
-+---------------+
-|               |
-| scsi driver   |
-|               |
-+---------------+
-
-We need to add change block tracking (CBT) and snapshot functionality for
-incremental backup.
-
-With the DM we need to change the block device stack. Add device /dev/sda1
-to LVM Volume group, create logical volume, change /etc/fstab and reboot.
-
-The new scheme will look like this:
-+---------------+
-|               |
-|  /root        |
-|               |
-+---------------+
-|               |
-| EXT FS        |
-|               |
-+---------------+
-|               |
-| LV-root       |
-|               |
-+------------------+
-|                  |
-| dm-cbt & dm-snap |
-|                  |
-+------------------+
-|               |
-| sda queue     |
-|               |
-+---------------+
-|               |
-| scsi driver   |
-|               |
-+---------------+
-
-But I cannot change block device stack. And so I propose a scheme with
-interception.
-+---------------+
-|               |
-|  /root        |
-|               |
-+---------------+
-|               |
-| EXT FS        |
-|               |
-+---------------+   +-----------------+
-|  |            |   |                 |
-|  | blk-filter |-> | cbt & snapshot  |
-|  |            |<- |                 |
-|  +------------+   +-----------------+
-|               |
-| sda blk queue |
-|               |
-+---------------+
-|               |
-| scsi driver   |
-|               |
-+---------------+
-
-Perhaps I can make "cbt & snapshot" inside the DM, but without interception
-in any case, it will not work. Isn't that right?
+diff --git a/fs/io-wq.c b/fs/io-wq.c
+index 4012ff541b7b..3bf029d1170e 100644
+--- a/fs/io-wq.c
++++ b/fs/io-wq.c
+@@ -19,6 +19,7 @@
+ #include <linux/task_work.h>
+ #include <linux/blk-cgroup.h>
+ #include <linux/audit.h>
++#include <linux/cpu.h>
+ 
+ #include "io-wq.h"
+ 
+@@ -123,9 +124,13 @@ struct io_wq {
+ 	refcount_t refs;
+ 	struct completion done;
+ 
++	struct hlist_node cpuhp_node;
++
+ 	refcount_t use_refs;
+ };
+ 
++static enum cpuhp_state io_wq_online;
++
+ static bool io_worker_get(struct io_worker *worker)
+ {
+ 	return refcount_inc_not_zero(&worker->ref);
+@@ -1096,6 +1101,13 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
++	ret = cpuhp_state_add_instance_nocalls(io_wq_online, &wq->cpuhp_node);
++	if (ret) {
++		kfree(wq->wqes);
++		kfree(wq);
++		return ERR_PTR(ret);
++	}
++
+ 	wq->free_work = data->free_work;
+ 	wq->do_work = data->do_work;
+ 
+@@ -1145,6 +1157,7 @@ struct io_wq *io_wq_create(unsigned bounded, struct io_wq_data *data)
+ 	ret = PTR_ERR(wq->manager);
+ 	complete(&wq->done);
+ err:
++	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
+ 	for_each_node(node)
+ 		kfree(wq->wqes[node]);
+ 	kfree(wq->wqes);
+@@ -1164,6 +1177,8 @@ static void __io_wq_destroy(struct io_wq *wq)
+ {
+ 	int node;
+ 
++	cpuhp_state_remove_instance_nocalls(io_wq_online, &wq->cpuhp_node);
++
+ 	set_bit(IO_WQ_BIT_EXIT, &wq->state);
+ 	if (wq->manager)
+ 		kthread_stop(wq->manager);
+@@ -1191,3 +1206,40 @@ struct task_struct *io_wq_get_task(struct io_wq *wq)
+ {
+ 	return wq->manager;
+ }
++
++static bool io_wq_worker_affinity(struct io_worker *worker, void *data)
++{
++	struct task_struct *task = worker->task;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&task->pi_lock, flags);
++	do_set_cpus_allowed(task, cpumask_of_node(worker->wqe->node));
++	task->flags |= PF_NO_SETAFFINITY;
++	raw_spin_unlock_irqrestore(&task->pi_lock, flags);
++	return false;
++}
++
++static int io_wq_cpu_online(unsigned int cpu, struct hlist_node *node)
++{
++	struct io_wq *wq = hlist_entry_safe(node, struct io_wq, cpuhp_node);
++	int i;
++
++	rcu_read_lock();
++	for_each_node(i)
++		io_wq_for_each_worker(wq->wqes[i], io_wq_worker_affinity, NULL);
++	rcu_read_unlock();
++	return 0;
++}
++
++static __init int io_wq_init(void)
++{
++	int ret;
++
++	ret = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN, "io-wq/online",
++					io_wq_cpu_online, NULL);
++	if (ret < 0)
++		return ret;
++	io_wq_online = ret;
++	return 0;
++}
++subsys_initcall(io_wq_init);
 
 -- 
-Sergei Shtepa
-Veeam Software developer.
+Jens Axboe
+
