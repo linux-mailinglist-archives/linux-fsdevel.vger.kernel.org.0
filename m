@@ -2,102 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56561295F9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 15:18:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2727F295FD5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 15:21:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2899477AbgJVNSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 09:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50500 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2899446AbgJVNSF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 09:18:05 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614ABC0613CE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 06:18:05 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id bh6so938403plb.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 06:18:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=c5p1zV1CqKVH8prpsj7PEX/s64deTtbH6mLHz/sTWPo=;
-        b=sPxj/eeSkGniZwpwGV+0kEAq//Ks1jlWunt480rMLYVSZRIi4xZOoKAn9mkn5HYPkN
-         Fkw7AxIajl0UYvbLyw5iKfkrY3DUZs7/K5NVP0ecCTnIx4XoITfdeSBZU9NLP3nJbR+F
-         m/CP8lnN5y45pgRiZup/NSe3sXBPCK7l1KQFu1/5XhbAsdix6UTYgjsk5NHZUggsf+R+
-         buouCHVOu8EJVTknoEH0SXsWkVrr8c8UNxqUbrsdOW6XsWwDwjpR++Idct8cm2lU+IO3
-         4ycrvMIJ47PM0kZ2TAbRvP2JqSFxdRFAQ6RAz6wopnTtNzOjDYWuHQiGClajvFJGWlHo
-         G06Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=c5p1zV1CqKVH8prpsj7PEX/s64deTtbH6mLHz/sTWPo=;
-        b=iFpHw7KSGds3WNB0vPFyPtrlyh8mlqk81iVYOnb3PTfzbQHZIUgaRWQhcWVavlCEjQ
-         a8dFEiCGGRrKGpkyDeUzFCE4gZMyYU6LHMouZ8uxx3A5T2CG3wYUpFjfRuknVPA61oVP
-         7hLNj0nH4Vy2uwVVvBBNW8zqVxsyxTXtbDIOUOztlc5IlIyzltlGuCh0FT0ozD1eFuEQ
-         aUmJprBzscVSKrHOn30jq4agTxKoeVFmdIc6A2ABXMvimg0rpCq3t+6Qg8og2HwuBwWO
-         u5QSokzVGhe5VfUX15UU254fmlaBipDkGSEaRwwrPktxhCKpIyISQ+toFoRWbhfglJef
-         9Apw==
-X-Gm-Message-State: AOAM531Ds6F8fxcjl1HKB0k6HGbxMJyOkjN+8ItMxvN+4eJ+izAYN20W
-        OOP3JO8UwJQ3xPFmOTfAJ2J4Rg==
-X-Google-Smtp-Source: ABdhPJxFrJ8OvG+hbFts8koI3B46u1glVYhDvP6t0s8IfoVfSWdoLhC5db0WuzzwbxtbgXYlT10aAw==
-X-Received: by 2002:a17:902:b40a:b029:d5:f77c:fb4e with SMTP id x10-20020a170902b40ab02900d5f77cfb4emr2576354plr.14.1603372684980;
-        Thu, 22 Oct 2020 06:18:04 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
-        by smtp.googlemail.com with ESMTPSA id w19sm2248589pfn.174.2020.10.22.06.18.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Oct 2020 06:18:04 -0700 (PDT)
-Subject: Re: [RESEND PATCH v18 0/4] overlayfs override_creds=off & nested get
- xattr fix
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-References: <20201021151903.652827-1-salyzyn@android.com>
- <20201022051914.GI857@sol.localdomain>
-From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <ea67453d-e5de-7c3a-e1da-d1e5ac30b2dd@android.com>
-Date:   Thu, 22 Oct 2020 06:18:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S2506312AbgJVNVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 09:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2395144AbgJVNVh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 09:21:37 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CC5C24178;
+        Thu, 22 Oct 2020 13:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603372897;
+        bh=d5bUI+oEWFBXElQM/JgZ8EHLv6txyWduc+tTVwSqnpE=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=0d6gD7o05Vr/ASsXaalkU4P0+LkuVsUlfLxSrCVz/WzZFl09QDaz3b8LqbSasmiwS
+         He1bCNjnQ2ohczOvblwzUY9yDcerRCZOzTMyz2IjD25FJ+YVMQlzoBxbyYnnRTMLcX
+         KoAlAttdMR9u54urgKYi3Bgl3WnRZqV0B9WEZlPk=
+Message-ID: <3cb0aeaa4e75b5dd4c0e6bb8b04f277f7162a581.camel@kernel.org>
+Subject: Re: [PATCH] locks: Fix UBSAN undefined behaviour in
+ flock64_to_posix_lock
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Luo Meng <luomeng12@huawei.com>, bfields@fieldses.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Date:   Thu, 22 Oct 2020 09:21:35 -0400
+In-Reply-To: <20201022020341.2434316-1-luomeng12@huawei.com>
+References: <20201022020341.2434316-1-luomeng12@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <20201022051914.GI857@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/21/20 10:19 PM, Eric Biggers wrote:
-> On Wed, Oct 21, 2020 at 08:18:59AM -0700, Mark Salyzyn wrote:
->> Mark Salyzyn (3):
->>    Add flags option to get xattr method paired to __vfs_getxattr
->>    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
->>    overlayfs: override_creds=off option bypass creator_cred
->>
->> Mark Salyzyn + John Stultz (1):
->>    overlayfs: inode_owner_or_capable called during execv
->>
->> The first three patches address fundamental security issues that should
->> be solved regardless of the override_creds=off feature.
->>
->> The fourth adds the feature depends on these other fixes.
-> FYI, I didn't receive patch 4, and neither https://lkml.kernel.org/linux-fsdevel
-> nor https://lkml.kernel.org/linux-unionfs have it either.
->
-> - Eric
+On Thu, 2020-10-22 at 10:03 +0800, Luo Meng wrote:
+> When the sum of fl->fl_start and l->l_len overflows,
+> UBSAN shows the following warning:
+> 
+> UBSAN: Undefined behaviour in fs/locks.c:482:29
+> signed integer overflow: 2 + 9223372036854775806
+> cannot be represented in type 'long long int'
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0xe4/0x14e lib/dump_stack.c:118
+>  ubsan_epilogue+0xe/0x81 lib/ubsan.c:161
+>  handle_overflow+0x193/0x1e2 lib/ubsan.c:192
+>  flock64_to_posix_lock fs/locks.c:482 [inline]
+>  flock_to_posix_lock+0x595/0x690 fs/locks.c:515
+>  fcntl_setlk+0xf3/0xa90 fs/locks.c:2262
+>  do_fcntl+0x456/0xf60 fs/fcntl.c:387
+>  __do_sys_fcntl fs/fcntl.c:483 [inline]
+>  __se_sys_fcntl fs/fcntl.c:468 [inline]
+>  __x64_sys_fcntl+0x12d/0x180 fs/fcntl.c:468
+>  do_syscall_64+0xc8/0x5a0 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Fix it by moving -1 forward.
+> 
+> Signed-off-by: Luo Meng <luomeng12@huawei.com>
+> ---
+>  fs/locks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 1f84a03601fe..8489787ca97e 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -542,7 +542,7 @@ static int flock64_to_posix_lock(struct file *filp, struct file_lock *fl,
+>  	if (l->l_len > 0) {
+>  		if (l->l_len - 1 > OFFSET_MAX - fl->fl_start)
+>  			return -EOVERFLOW;
+> -		fl->fl_end = fl->fl_start + l->l_len - 1;
+> +		fl->fl_end = fl->fl_start - 1 + l->l_len;
+>  
+>  	} else if (l->l_len < 0) {
+>  		if (fl->fl_start + l->l_len < 0)
 
-Resent again, thanks.
+Wow, ok. Interesting that the order would have such an effect here, but
+it seems legit. I'll plan to merge this for v5.11. Let me know if we
+need to get this in earlier.
+
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
