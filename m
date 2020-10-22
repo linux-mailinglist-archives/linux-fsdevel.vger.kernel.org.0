@@ -2,69 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8983D2957D0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 07:19:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1106E29582B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 07:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507865AbgJVFTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 01:19:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36076 "EHLO mail.kernel.org"
+        id S2508097AbgJVF61 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 01:58:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59080 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437018AbgJVFTR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 01:19:17 -0400
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA3542145D;
-        Thu, 22 Oct 2020 05:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603343956;
-        bh=AzJmVMo5bUTZn0rWFhmYbe4LLj90dDUn7CorUzcxEE0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A45eiXQDEQHZSU3qpky+Lib6UIb+r/i7Io8YwYs0B0N0wtY8+fW9CC7zasD5z/b2U
-         hLnwSi4FiSS8IbbXeQQOlDtvQeaIQag0rD+cH27MlkejR2+1g9Ba37jC/kDL51fLnx
-         sVHVYhNITgwH/G+25LRO9jR5TzzqWxN4Xdz4bb2M=
-Date:   Wed, 21 Oct 2020 22:19:14 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [RESEND PATCH v18 0/4] overlayfs override_creds=off & nested get
- xattr fix
-Message-ID: <20201022051914.GI857@sol.localdomain>
-References: <20201021151903.652827-1-salyzyn@android.com>
+        id S2409361AbgJVF61 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 01:58:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 15CBCAC55;
+        Thu, 22 Oct 2020 05:58:25 +0000 (UTC)
+Subject: Re: [PATCH 0/2] block layer filter and block device snapshot module
+To:     Sergei Shtepa <sergei.shtepa@veeam.com>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "jack@suse.cz" <jack@suse.cz>, "tj@kernel.org" <tj@kernel.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "osandov@fb.com" <osandov@fb.com>,
+        "koct9i@gmail.com" <koct9i@gmail.com>,
+        "damien.lemoal@wdc.com" <damien.lemoal@wdc.com>,
+        "steve@sk2.org" <steve@sk2.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com>
+ <71926887-5707-04a5-78a2-ffa2ee32bd68@suse.de>
+ <20201021141044.GF20749@veeam.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <ca8eaa40-b422-2272-1fd9-1d0a354c42bf@suse.de>
+Date:   Thu, 22 Oct 2020 07:58:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201021151903.652827-1-salyzyn@android.com>
+In-Reply-To: <20201021141044.GF20749@veeam.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 08:18:59AM -0700, Mark Salyzyn wrote:
-> Mark Salyzyn (3):
->   Add flags option to get xattr method paired to __vfs_getxattr
->   overlayfs: handle XATTR_NOSECURITY flag for get xattr method
->   overlayfs: override_creds=off option bypass creator_cred
+On 10/21/20 4:10 PM, Sergei Shtepa wrote:
+> The 10/21/2020 16:31, Hannes Reinecke wrote:
+>> I do understand where you are coming from, but then we already have a
+>> dm-snap which does exactly what you want to achieve.
+>> Of course, that would require a reconfiguration of the storage stack on
+>> the machine, which is not always possible (or desired).
 > 
-> Mark Salyzyn + John Stultz (1):
->   overlayfs: inode_owner_or_capable called during execv
+> Yes, reconfiguring the storage stack on a machine is almost impossible.
 > 
-> The first three patches address fundamental security issues that should
-> be solved regardless of the override_creds=off feature.
+>>
+>> What I _could_ imagine would be a 'dm-intercept' thingie, which
+>> redirects the current submit_bio() function for any block device, and
+>> re-routes that to a linear device-mapper device pointing back to the
+>> original block device.
+>>
+>> That way you could attach it to basically any block device, _and_ can
+>> use the existing device-mapper functionality to do fancy stuff once the
+>> submit_io() callback has been re-routed.
+>>
+>> And it also would help in other scenarios, too; with such a
+>> functionality we could seamlessly clone devices without having to move
+>> the whole setup to device-mapper first.
 > 
-> The fourth adds the feature depends on these other fixes.
+> Hm...
+> Did I understand correctly that the filter itself can be left approximately
+> as it is, but the blk-snap module can be replaced with 'dm-intercept',
+> which would use the re-route mechanism from the dm?
+> I think I may be able to implement it, if you describe your idea in more
+> detail.
+> 
+> 
+Actually, once we have an dm-intercept, why do you need the block-layer 
+filter at all?
+ From you initial description the block-layer filter was implemented 
+such that blk-snap could work; but if we have dm-intercept (and with it 
+the ability to use device-mapper functionality even for normal block 
+devices) there wouldn't be any need for the block-layer filter, no?
 
-FYI, I didn't receive patch 4, and neither https://lkml.kernel.org/linux-fsdevel
-nor https://lkml.kernel.org/linux-unionfs have it either.
+Cheers,
 
-- Eric
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
