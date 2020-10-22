@@ -2,122 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 886DA295A72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 10:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D44295A78
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 10:36:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2508045AbgJVIfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 04:35:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41797 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2507983AbgJVIfg (ORCPT
+        id S2508051AbgJVIgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 04:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35168 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503237AbgJVIgN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 04:35:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603355735;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=AfHzVZ9ARVJM/ygIfC1QZ398dtBlt7YNWVKjnVzurTM=;
-        b=VokcFf2i8L4P7N6p6g1GPzIk6C4eSFVTb5tlnAVTBilTNWxUevfM8DpMbIfkJQpn94AG+0
-        cpaCgF7ODsxCEnwLzJ5x8Xkc7EEGBQ7ul0WujEaTBeLefiHXLKbUtZUFAiRK1kAbtq4m6h
-        JJ4B7smwjoegfbDrrShW+ZC1AM3+10w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-548-2Rope0bHNb6JPkcxydWrHA-1; Thu, 22 Oct 2020 04:35:30 -0400
-X-MC-Unique: 2Rope0bHNb6JPkcxydWrHA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 28CE7879517;
-        Thu, 22 Oct 2020 08:35:27 +0000 (UTC)
-Received: from [10.36.113.152] (ovpn-113-152.ams2.redhat.com [10.36.113.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EA8D5D9DD;
-        Thu, 22 Oct 2020 08:35:21 +0000 (UTC)
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20200925045146.1283714-1-hch@lst.de>
- <20200925045146.1283714-3-hch@lst.de> <20201021161301.GA1196312@kroah.com>
- <20201021233914.GR3576660@ZenIV.linux.org.uk>
- <20201022082654.GA1477657@kroah.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
-Date:   Thu, 22 Oct 2020 10:35:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Thu, 22 Oct 2020 04:36:13 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FA6C0613CE;
+        Thu, 22 Oct 2020 01:36:13 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id l2so1235713lfk.0;
+        Thu, 22 Oct 2020 01:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7xlVNR5MT533FUS1JF8L1q49ITq1fYHlTih4/0CprSQ=;
+        b=ImlF7BpC+SQJ5a+w1+aqs9+p1Ew71mi1yRUXxVt13tWxc2DD44uQJCmfV0lRGkkY2b
+         0mVhfRBq9CnEB94V/EJrv0zy+QDUrbU7kABLF7qfK1sKosXGQlYSrOm6J26GCSLSsEU5
+         oedsYRJjx/fBfNMzly3Uh4VcqpqDsypZsdQH3+TRYWhJ/eWOztNG31b5wL1WVFcVyIlE
+         MKYeN1qiwnsoked9dPxZn9hQGco1vXOMhD1t/tbGYNLHXJ6v+LOVQrJjCsD+IP7CJPsc
+         o11u+xT1dvZKsK5s0qkiMBmRkuL83bDdFoyKi4dcPvcDFwTrJPxCIYQ+T2tFok8zJY/z
+         oHOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7xlVNR5MT533FUS1JF8L1q49ITq1fYHlTih4/0CprSQ=;
+        b=CnKzhclCmbwdjqKog+wZwPTymM66EJrJfkT3hLCjimaaq4WsFzoxg4d2UH9RUyDkdg
+         RIeCemznopsxxONgAb+FQl/JHiim0e1zEXwDgBLWTjJCr2T7SdqgJ/GoxNiu72K3l4WT
+         /tXwvbQj5NyC8VjM9+VIZhARqaIDVqyXO3QjErKIjTs/A3MhKmhfDFAes0B8sC01dUDq
+         7BlmHjONydtSk0lAMKv0VdlwDjBce+K36HXtdsCCGFblr06B2VlsWGc/U/qHsNnRnkNS
+         2q3V2ZJSxWqMWm5fNDI47tWhXsXQBE0i2LmDMc2YRrGiADK/tWDJtpyn2I6g4miu2STH
+         GGLg==
+X-Gm-Message-State: AOAM531KKyL3Vfld3J1iGLPCXKbPeU6B1HRN1KmUF6Nhvc8lkBARReAM
+        129CUo9+cdblp4dde4Bfh2auFebpUMjByaU6FMs=
+X-Google-Smtp-Source: ABdhPJz69yRsxfeDbkNZj9vnFl/k1hyGCtYM1bIVOsuVk8U6DInvbj1dp6FO8ezZ5HR32cI2EPUjyHWJIROz2NHCEgs=
+X-Received: by 2002:a19:83c1:: with SMTP id f184mr421377lfd.97.1603355771467;
+ Thu, 22 Oct 2020 01:36:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201022082654.GA1477657@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20201021195745.3420101-1-kent.overstreet@gmail.com> <20201021195745.3420101-2-kent.overstreet@gmail.com>
+In-Reply-To: <20201021195745.3420101-2-kent.overstreet@gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 22 Oct 2020 03:36:00 -0500
+Message-ID: <CAH2r5msOSo2fj4GhJgPm-+z3YFg0osJp-V7u9Tm8Vk9LfDjAow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] cifs: convert to add_to_page_cache()
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.10.20 10:26, Greg KH wrote:
-> On Thu, Oct 22, 2020 at 12:39:14AM +0100, Al Viro wrote:
->> On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
->>> On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
->>>> From: David Laight <David.Laight@ACULAB.COM>
->>>>
->>>> This lets the compiler inline it into import_iovec() generating
->>>> much better code.
->>>>
->>>> Signed-off-by: David Laight <david.laight@aculab.com>
->>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
->>>> ---
->>>>  fs/read_write.c | 179 ------------------------------------------------
->>>>  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
->>>>  2 files changed, 176 insertions(+), 179 deletions(-)
->>>
->>> Strangely, this commit causes a regression in Linus's tree right now.
->>>
->>> I can't really figure out what the regression is, only that this commit
->>> triggers a "large Android system binary" from working properly.  There's
->>> no kernel log messages anywhere, and I don't have any way to strace the
->>> thing in the testing framework, so any hints that people can provide
->>> would be most appreciated.
->>
->> It's a pure move - modulo changed line breaks in the argument lists
->> the functions involved are identical before and after that (just checked
->> that directly, by checking out the trees before and after, extracting two
->> functions in question from fs/read_write.c and lib/iov_iter.c (before and
->> after, resp.) and checking the diff between those.
->>
->> How certain is your bisection?
-> 
-> The bisection is very reproducable.
-> 
-> But, this looks now to be a compiler bug.  I'm using the latest version
-> of clang and if I put "noinline" at the front of the function,
-> everything works.
+you can add my reviewed-by if you would like
 
-Well, the compiler can do more invasive optimizations when inlining. If
-you have buggy code that relies on some unspecified behavior, inlining
-can change the behavior ... but going over that code, there isn't too
-much action going on. At least nothing screamed at me.
+On Thu, Oct 22, 2020 at 1:48 AM Kent Overstreet
+<kent.overstreet@gmail.com> wrote:
+>
+> This is just open coding add_to_page_cache(), and the next patch will
+> delete add_to_page_cache_locked().
+>
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+>  fs/cifs/file.c | 20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
+>
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index be46fab4c9..b3ee790532 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -4296,20 +4296,11 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
+>
+>         page = lru_to_page(page_list);
+>
+> -       /*
+> -        * Lock the page and put it in the cache. Since no one else
+> -        * should have access to this page, we're safe to simply set
+> -        * PG_locked without checking it first.
+> -        */
+> -       __SetPageLocked(page);
+> -       rc = add_to_page_cache_locked(page, mapping,
+> -                                     page->index, gfp);
+> +       rc = add_to_page_cache(page, mapping, page->index, gfp);
+>
+>         /* give up if we can't stick it in the cache */
+> -       if (rc) {
+> -               __ClearPageLocked(page);
+> +       if (rc)
+>                 return rc;
+> -       }
+>
+>         /* move first page to the tmplist */
+>         *offset = (loff_t)page->index << PAGE_SHIFT;
+> @@ -4328,12 +4319,9 @@ readpages_get_pages(struct address_space *mapping, struct list_head *page_list,
+>                 if (*bytes + PAGE_SIZE > rsize)
+>                         break;
+>
+> -               __SetPageLocked(page);
+> -               rc = add_to_page_cache_locked(page, mapping, page->index, gfp);
+> -               if (rc) {
+> -                       __ClearPageLocked(page);
+> +               rc = add_to_page_cache(page, mapping, page->index, gfp);
+> +               if (rc)
+>                         break;
+> -               }
+>                 list_move_tail(&page->lru, tmplist);
+>                 (*bytes) += PAGE_SIZE;
+>                 expected_index++;
+> --
+> 2.28.0
+>
+
 
 -- 
 Thanks,
 
-David / dhildenb
-
+Steve
