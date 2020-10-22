@@ -2,109 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D0A295F95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 15:17:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56561295F9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 15:18:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2899448AbgJVNR3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 09:17:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50392 "EHLO
+        id S2899477AbgJVNSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 09:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2899437AbgJVNR3 (ORCPT
+        with ESMTP id S2899446AbgJVNSF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 09:17:29 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57085C0613CE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 06:17:29 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id b26so1127485pff.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 06:17:29 -0700 (PDT)
+        Thu, 22 Oct 2020 09:18:05 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 614ABC0613CE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 06:18:05 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id bh6so938403plb.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 06:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=95EtoPtq6IhF7jVfCLm2ubW0zmAlnuViyd/yfLI6I2Q=;
-        b=JLICfTM8wkAkoeu/9wJXsAVQVwcIq/0L2dvY2w5FMuiWxtn/7vLcfJGTDShfA/20bI
-         HqHj4WAUsBH6VEzGO2V/cXYVgMk8OYYYJw/fsqivUasRB9On2wnATVnNPC4enZQc0vcx
-         56l3i0xS7vzwIjdVptJkXjzGRpPJRU2bWXOUbhVUmXx/3rhaEeGFmyGuNdQZwsHU45LI
-         yYNh8DHBYn29Iy07IOgOfSb1j9JEGjBM9RlqNRmt/tp8/Fze+shK8j+6Fq5D6VbfVZyX
-         JoZaXMFo5GhVxRg6/yC3wEbfB5MkMMYioHv2WfCLSgzd1kHCZdLrZIsoe7uBgj3BLsYG
-         5ZNw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=c5p1zV1CqKVH8prpsj7PEX/s64deTtbH6mLHz/sTWPo=;
+        b=sPxj/eeSkGniZwpwGV+0kEAq//Ks1jlWunt480rMLYVSZRIi4xZOoKAn9mkn5HYPkN
+         Fkw7AxIajl0UYvbLyw5iKfkrY3DUZs7/K5NVP0ecCTnIx4XoITfdeSBZU9NLP3nJbR+F
+         m/CP8lnN5y45pgRiZup/NSe3sXBPCK7l1KQFu1/5XhbAsdix6UTYgjsk5NHZUggsf+R+
+         buouCHVOu8EJVTknoEH0SXsWkVrr8c8UNxqUbrsdOW6XsWwDwjpR++Idct8cm2lU+IO3
+         4ycrvMIJ47PM0kZ2TAbRvP2JqSFxdRFAQ6RAz6wopnTtNzOjDYWuHQiGClajvFJGWlHo
+         G06Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=95EtoPtq6IhF7jVfCLm2ubW0zmAlnuViyd/yfLI6I2Q=;
-        b=Y+bd6btoOntIO0F2NL50T5QRDHR43HeNhQvHVtygny8pMUEw8Ijxtf77Tvc8X/ccip
-         pHEyIHkNnzZwUNqVpAAirIFZyipDmc7wZp4B2xCR24lNPotwbHcIXxOlyGYxT4axwptY
-         rnOopiNuclp2w8BKOjKXi419kMd3eeCz/w21v0/bxM4Z4m5KI8vV4+xPj0ATVKThKJfz
-         cKvyrmBqTyMdwL6+70cnPmLG8vOHTAFE9piozok26m4MtG5QbkwQntlx6n8ANsFHnOcO
-         wRx9kiQiURNcQ1HA3ViUzPha5526ve4YKxltY7cHrbgYsPSMlbsaSVIqUmE8GhkWTc0r
-         A23Q==
-X-Gm-Message-State: AOAM531X4RSCPCOVcDRdvPxjsDTKLBaVifpkdUmBTwrEOo0hAKavj6la
-        6k+2lrMEcyjjJz/W6DW6OeF8pg==
-X-Google-Smtp-Source: ABdhPJyHdppZW0RFvvl0AaAOkc4OPMxfBBSE8nQVLbXo+W5/x+U7rzJWGVU+dyLXQv0nbYMASfK12A==
-X-Received: by 2002:a63:4d45:: with SMTP id n5mr2073942pgl.389.1603372648926;
-        Thu, 22 Oct 2020 06:17:28 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=c5p1zV1CqKVH8prpsj7PEX/s64deTtbH6mLHz/sTWPo=;
+        b=iFpHw7KSGds3WNB0vPFyPtrlyh8mlqk81iVYOnb3PTfzbQHZIUgaRWQhcWVavlCEjQ
+         a8dFEiCGGRrKGpkyDeUzFCE4gZMyYU6LHMouZ8uxx3A5T2CG3wYUpFjfRuknVPA61oVP
+         7hLNj0nH4Vy2uwVVvBBNW8zqVxsyxTXtbDIOUOztlc5IlIyzltlGuCh0FT0ozD1eFuEQ
+         aUmJprBzscVSKrHOn30jq4agTxKoeVFmdIc6A2ABXMvimg0rpCq3t+6Qg8og2HwuBwWO
+         u5QSokzVGhe5VfUX15UU254fmlaBipDkGSEaRwwrPktxhCKpIyISQ+toFoRWbhfglJef
+         9Apw==
+X-Gm-Message-State: AOAM531Ds6F8fxcjl1HKB0k6HGbxMJyOkjN+8ItMxvN+4eJ+izAYN20W
+        OOP3JO8UwJQ3xPFmOTfAJ2J4Rg==
+X-Google-Smtp-Source: ABdhPJxFrJ8OvG+hbFts8koI3B46u1glVYhDvP6t0s8IfoVfSWdoLhC5db0WuzzwbxtbgXYlT10aAw==
+X-Received: by 2002:a17:902:b40a:b029:d5:f77c:fb4e with SMTP id x10-20020a170902b40ab02900d5f77cfb4emr2576354plr.14.1603372684980;
+        Thu, 22 Oct 2020 06:18:04 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
-        by smtp.gmail.com with ESMTPSA id e2sm1400401pgd.27.2020.10.22.06.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2020 06:17:27 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, John Stultz <john.stultz@linaro.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        by smtp.googlemail.com with ESMTPSA id w19sm2248589pfn.174.2020.10.22.06.18.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Oct 2020 06:18:04 -0700 (PDT)
+Subject: Re: [RESEND PATCH v18 0/4] overlayfs override_creds=off & nested get
+ xattr fix
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: [RESEND PATCH v18 4/4] overlayfs: inode_owner_or_capable called during execv
-Date:   Thu, 22 Oct 2020 06:16:52 -0700
-Message-Id: <20201022131652.2784152-1-salyzyn@android.com>
-X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
+References: <20201021151903.652827-1-salyzyn@android.com>
+ <20201022051914.GI857@sol.localdomain>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <ea67453d-e5de-7c3a-e1da-d1e5ac30b2dd@android.com>
+Date:   Thu, 22 Oct 2020 06:18:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201022051914.GI857@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: John Stultz <john.stultz@linaro.org>
+On 10/21/20 10:19 PM, Eric Biggers wrote:
+> On Wed, Oct 21, 2020 at 08:18:59AM -0700, Mark Salyzyn wrote:
+>> Mark Salyzyn (3):
+>>    Add flags option to get xattr method paired to __vfs_getxattr
+>>    overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+>>    overlayfs: override_creds=off option bypass creator_cred
+>>
+>> Mark Salyzyn + John Stultz (1):
+>>    overlayfs: inode_owner_or_capable called during execv
+>>
+>> The first three patches address fundamental security issues that should
+>> be solved regardless of the override_creds=off feature.
+>>
+>> The fourth adds the feature depends on these other fixes.
+> FYI, I didn't receive patch 4, and neither https://lkml.kernel.org/linux-fsdevel
+> nor https://lkml.kernel.org/linux-unionfs have it either.
+>
+> - Eric
 
-Using old_creds as an indication that we are not overriding the
-credentials, bypass call to inode_owner_or_capable.  This solves
-a problem with all execv calls being blocked when using the caller's
-credentials.
-
-Signed-off-by: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Fixes: 05acefb4872da ("ovl: check permission to open real file")
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-unionfs@vger.kernel.org
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-team@android.com
-Cc: selinux@vger.kernel.org
-
-v18 - rebase
-
-v17 - rebase
-
-v16 - introduced fix over rebased series
----
- fs/overlayfs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index b1357bb067d9..9ab9663b02d8 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -53,7 +53,7 @@ static struct file *ovl_open_realfile(const struct file *file,
- 	err = inode_permission(realinode, MAY_OPEN | acc_mode);
- 	if (err) {
- 		realfile = ERR_PTR(err);
--	} else if (!inode_owner_or_capable(realinode)) {
-+	} else if (old_cred && !inode_owner_or_capable(realinode)) {
- 		realfile = ERR_PTR(-EPERM);
- 	} else {
- 		realfile = open_with_fake_path(&file->f_path, flags, realinode,
--- 
-2.29.0.rc1.297.gfa9743e501-goog
+Resent again, thanks.
 
