@@ -2,140 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD2A295C14
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 11:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D84295C27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 11:43:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896023AbgJVJg5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 05:36:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41709 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2510009AbgJVJg4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 05:36:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603359415;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DC+3OwmtjhrVCpfk4sXvCEkgbYjM3Mk+x26MXzYFx48=;
-        b=VMLvYiWBWMQ8BdmpBnQeU65MkER6Womd4xJdO54glA3t/92ZkYXsTYq1nUygAYE8r7fHoJ
-        VgCH5M1VDUAcntGU/mdWH31g0jLaaceEeQfPMxf0koDQMbNQ9meQSM/seFb5+cOHaUP3NR
-        yWNVcXHNeqU07Xr7fsFTmP86uBEG6MA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-481-oXTdLQjNMMegK_tfwCZIGg-1; Thu, 22 Oct 2020 05:36:50 -0400
-X-MC-Unique: oXTdLQjNMMegK_tfwCZIGg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2896062AbgJVJn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 05:43:26 -0400
+Received: from mx2.veeam.com ([64.129.123.6]:60718 "EHLO mx2.veeam.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2895914AbgJVJn0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 22 Oct 2020 05:43:26 -0400
+Received: from mail.veeam.com (prgmbx01.amust.local [172.24.0.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6A2D364152;
-        Thu, 22 Oct 2020 09:36:46 +0000 (UTC)
-Received: from [10.36.113.152] (ovpn-113-152.ams2.redhat.com [10.36.113.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E9B810013D0;
-        Thu, 22 Oct 2020 09:36:41 +0000 (UTC)
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        by mx2.veeam.com (Postfix) with ESMTPS id 2AB83413F2;
+        Thu, 22 Oct 2020 05:43:21 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=veeam.com; s=mx2;
+        t=1603359801; bh=URjUPvv4BF0KAk65rVnV3rB7ijtCMnz1I7O/6wLzuXQ=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+        b=oQQKDYEmamFH8Ys0kCLf7ywAyZM/wz8lHMKZxHCl8WudkvvaT2RFL89vccmfn1BCh
+         BQIIafd7dyM1Xj67jFQVOk0/701HowZTS335k21tL80eefEELrNesD2rDmQIVVBM0H
+         VNfsPHYwKyMOGvUNgJCnpwjvMSeRh8DnllIA7/To=
+Received: from veeam.com (172.24.14.5) by prgmbx01.amust.local (172.24.0.171)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.721.2; Thu, 22 Oct 2020
+ 11:43:19 +0200
+Date:   Thu, 22 Oct 2020 12:44:02 +0300
+From:   Sergei Shtepa <sergei.shtepa@veeam.com>
+To:     Hannes Reinecke <hare@suse.de>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <20200925045146.1283714-1-hch@lst.de>
- <20200925045146.1283714-3-hch@lst.de> <20201021161301.GA1196312@kroah.com>
- <20201021233914.GR3576660@ZenIV.linux.org.uk>
- <20201022082654.GA1477657@kroah.com>
- <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
- <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
- <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
-Date:   Thu, 22 Oct 2020 11:36:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
+        "ming.lei@redhat.com" <ming.lei@redhat.com>,
+        "jack@suse.cz" <jack@suse.cz>, "tj@kernel.org" <tj@kernel.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "osandov@fb.com" <osandov@fb.com>,
+        "koct9i@gmail.com" <koct9i@gmail.com>,
+        "damien.lemoal@wdc.com" <damien.lemoal@wdc.com>,
+        "steve@sk2.org" <steve@sk2.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 0/2] block layer filter and block device snapshot module
+Message-ID: <20201022094402.GA21466@veeam.com>
+References: <1603271049-20681-1-git-send-email-sergei.shtepa@veeam.com>
+ <71926887-5707-04a5-78a2-ffa2ee32bd68@suse.de>
+ <20201021141044.GF20749@veeam.com>
+ <ca8eaa40-b422-2272-1fd9-1d0a354c42bf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca8eaa40-b422-2272-1fd9-1d0a354c42bf@suse.de>
+X-Originating-IP: [172.24.14.5]
+X-ClientProxiedBy: prgmbx01.amust.local (172.24.0.171) To prgmbx01.amust.local
+ (172.24.0.171)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29C604D26A677460
+X-Veeam-MMEX: True
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.10.20 11:32, David Laight wrote:
-> From: David Hildenbrand
->> Sent: 22 October 2020 10:25
-> ...
->> ... especially because I recall that clang and gcc behave slightly
->> differently:
->>
->> https://github.com/hjl-tools/x86-psABI/issues/2
->>
->> "Function args are different: narrow types are sign or zero extended to
->> 32 bits, depending on their type. clang depends on this for incoming
->> args, but gcc doesn't make that assumption. But both compilers do it
->> when calling, so gcc code can call clang code.
+The 10/22/2020 08:58, Hannes Reinecke wrote:
+> On 10/21/20 4:10 PM, Sergei Shtepa wrote:
+> > The 10/21/2020 16:31, Hannes Reinecke wrote:
+> >> I do understand where you are coming from, but then we already have a
+> >> dm-snap which does exactly what you want to achieve.
+> >> Of course, that would require a reconfiguration of the storage stack on
+> >> the machine, which is not always possible (or desired).
+> > 
+> > Yes, reconfiguring the storage stack on a machine is almost impossible.
+> > 
+> >>
+> >> What I _could_ imagine would be a 'dm-intercept' thingie, which
+> >> redirects the current submit_bio() function for any block device, and
+> >> re-routes that to a linear device-mapper device pointing back to the
+> >> original block device.
+> >>
+> >> That way you could attach it to basically any block device, _and_ can
+> >> use the existing device-mapper functionality to do fancy stuff once the
+> >> submit_io() callback has been re-routed.
+> >>
+> >> And it also would help in other scenarios, too; with such a
+> >> functionality we could seamlessly clone devices without having to move
+> >> the whole setup to device-mapper first.
+> > 
+> > Hm...
+> > Did I understand correctly that the filter itself can be left approximately
+> > as it is, but the blk-snap module can be replaced with 'dm-intercept',
+> > which would use the re-route mechanism from the dm?
+> > I think I may be able to implement it, if you describe your idea in more
+> > detail.
+> > 
+> > 
+> Actually, once we have an dm-intercept, why do you need the block-layer 
+> filter at all?
+>  From you initial description the block-layer filter was implemented 
+> such that blk-snap could work; but if we have dm-intercept (and with it 
+> the ability to use device-mapper functionality even for normal block 
+> devices) there wouldn't be any need for the block-layer filter, no?
+
+Maybe, but the problem is that I can't imagine how to implement
+dm-intercept yet. 
+How to use dm to implement interception without changing the stack
+of block devices. We'll have to make a hook somewhere, isn`t it?
+
 > 
-> It really is best to use 'int' (or even 'long') for all numeric
-> arguments (and results) regardless of the domain of the value.
+> Cheers,
 > 
-> Related, I've always worried about 'bool'....
-> 
->> The upper 32 bits of registers are always undefined garbage for types
->> smaller than 64 bits."
-> 
-> On x86-64 the high bits are zeroed by all 32bit loads.
-
-Yeah, but does not help here.
-
-
-My thinking: if the compiler that calls import_iovec() has garbage in
-the upper 32 bit
-
-a) gcc will zero it out and not rely on it being zero.
-b) clang will not zero it out, assuming it is zero.
-
-But
-
-a) will zero it out when calling the !inlined variant
-b) clang will zero it out when calling the !inlined variant
-
-When inlining, b) strikes. We access garbage. That would mean that we
-have calling code that's not generated by clang/gcc IIUC.
-
-We can test easily by changing the parameters instead of adding an "inline".
+> Hannes
+> -- 
+> Dr. Hannes Reinecke                Kernel Storage Architect
+> hare@suse.de                              +49 911 74053 688
+> SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+> HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
 
 -- 
-Thanks,
-
-David / dhildenb
-
+Sergei Shtepa
+Veeam Software developer.
