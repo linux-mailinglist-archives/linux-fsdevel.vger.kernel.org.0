@@ -2,114 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A5C296281
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 18:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0338B296286
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 18:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2901618AbgJVQPP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 12:15:15 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:60133 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2901607AbgJVQPK (ORCPT
+        id S2896700AbgJVQRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 12:17:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2896697AbgJVQRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 12:15:10 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-158-p8RgjWwGO4aFW5kpOv-aSA-1; Thu, 22 Oct 2020 17:15:06 +0100
-X-MC-Unique: p8RgjWwGO4aFW5kpOv-aSA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 17:15:05 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 22 Oct 2020 17:15:05 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Greg KH' <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     David Hildenbrand <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAAVswJgAAaEtA=
-Date:   Thu, 22 Oct 2020 16:15:05 +0000
-Message-ID: <80332728fbc3438f806aee74003e26c1@AcuMS.aculab.com>
-References: <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
- <CAK8P3a1B7OVdyzW0-97JwzZiwp0D0fnSfyete16QTvPp_1m07A@mail.gmail.com>
- <20201022144021.GA1969554@kroah.com>
-In-Reply-To: <20201022144021.GA1969554@kroah.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 22 Oct 2020 12:17:49 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 531DFC0613CE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 09:17:49 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id v5so2757770wmh.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 09:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=an4HM7viF76dg/BBOcet2kiSOHM3LCjyzxKusN4Cnjw=;
+        b=iCpyZf3v2xE9KHsfzUXVGtoriEuj7sXoIkHaAXOraSZIN2rY9cfiHSmSg7CoZtrn+P
+         9nFFLzFZlRx81Z6UnMlmBMyZyaqgsY34PthTnZYTWfuoZSOGZ0GQ6ulipbK4JDi/hfZr
+         REAHdX0+4+sPPh3iZRFpEm6RETOAqGop2Gq1aqAd2/5Q8KBsp2iyTgf1D7U44s0jaZwQ
+         zAWHVvyW9U+UW/58Uosnlt1mnxWM8CTBdo+s8M4lA3zwJvd/6+eyMWcpqRstUT2++IVP
+         DIdJQUg1tUkOIiDaY0ztAr/vt5j2k5UFsFTNmigIB3IbSFm+2JoYp2W1SLuoqJ4WNHjR
+         GlSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=an4HM7viF76dg/BBOcet2kiSOHM3LCjyzxKusN4Cnjw=;
+        b=Lo9c5Tc7WTyn2BnissOzJmw8W/WAu4VDeSpMPk9+7n6V1jruckMIwNzthLX0UKJdb+
+         9/61VtWwRmNOr2pshOJVMxmGZe0JwT/3tly7af/i78ent1RqdIkKmCAEJI4G2t5BAm8E
+         OLqMQaAPJoyIgMjQ9MRoR4HrHgx3jB+VZk6rXAt+5LLMmDTOb+w1eRwe6eUYldJZmJxp
+         KVrEWymtMp2MaoANwwRZ9hU+rN7VAw/LmxkkQF9pTtGplUsG6c7Kdk3NpyOtx4loQL10
+         bDpeKhXPVxJRmdMPCNzT+Bv7Mn4pO62ffP2SLmoH2cE9rT2M2hkUcEDXv1uVfms+GUyw
+         RYGw==
+X-Gm-Message-State: AOAM533DvRccdT7IsIhKU1gK6DEe5x1nZEcsoKHK3PNlflMOHwIDcDlH
+        cZNkI4r5NxsY+6RNVJAwcYmQog==
+X-Google-Smtp-Source: ABdhPJw8L1B7TdR0f5aXqfG0EAiugB4+Afdb5e50ZlRsr4MLvNkoFdhvzOvRCWDKNky9BAc37nuSIQ==
+X-Received: by 2002:a7b:c143:: with SMTP id z3mr3456794wmi.17.1603383468056;
+        Thu, 22 Oct 2020 09:17:48 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
+        by smtp.gmail.com with ESMTPSA id s5sm4243186wmc.3.2020.10.22.09.17.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2020 09:17:47 -0700 (PDT)
+Date:   Thu, 22 Oct 2020 17:17:45 +0100
+From:   Alessio Balsini <balsini@android.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <stefanoduo@google.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 3/4] fuse: Introduce synchronous read and write for
+ passthrough
+Message-ID: <20201022161745.GC36774@google.com>
+References: <20200924131318.2654747-1-balsini@android.com>
+ <20200924131318.2654747-4-balsini@android.com>
+ <CAJfpegu=0QtzqSOGi_yd48eL3hgG1Hqf_YO2prWeiHBwwMHZyA@mail.gmail.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegu=0QtzqSOGi_yd48eL3hgG1Hqf_YO2prWeiHBwwMHZyA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Greg KH
-> Sent: 22 October 2020 15:40
+On Wed, Sep 30, 2020 at 08:50:46PM +0200, Miklos Szeredi wrote:
+> > [...]
+> > +ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
+> > +                                  struct iov_iter *iter)
+> > +{
+> > +       ssize_t ret;
+> > +       const struct cred *old_cred;
+> > +       struct file *fuse_filp = iocb_fuse->ki_filp;
+> > +       struct fuse_file *ff = fuse_filp->private_data;
+> > +       struct file *passthrough_filp = ff->passthrough_filp;
+> > +
+> > +       if (!iov_iter_count(iter))
+> > +               return 0;
+> > +
+> > +       old_cred = fuse_passthrough_override_creds(fuse_filp);
+> > +       if (is_sync_kiocb(iocb_fuse)) {
+> > +               ret = vfs_iter_read(passthrough_filp, iter, &iocb_fuse->ki_pos,
+> > +                                   iocbflags_to_rwf(iocb_fuse->ki_flags));
+> > +       } else {
+> > +               ret = -EIO;
+> > +       }
 > 
-> On Thu, Oct 22, 2020 at 04:28:20PM +0200, Arnd Bergmann wrote:
-...
-> > Can you attach the iov_iter.s files from the broken build, plus the
-> > one with 'noinline' for comparison? Maybe something can be seen
-> > in there.
+> Just do vfs_iter_read() unconditionally, instead of returning EIO.
+> It will work fine, except it won't be async.
 > 
-> I don't know how to extract the .s files easily from the AOSP build
-> system, I'll look into that.  I'm also now testing by downgrading to an
-> older version of clang (10 instead of 11), to see if that matters at all
-> or not...
+> Yeah, I know next patch is going to fix this, but still, lets not make
+> this patch return silly errors.
+> 
+> > [...]
+> > +ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
+> > +                                   struct iov_iter *iter)
+> > +{
+> > +       ssize_t ret;
+> > +       const struct cred *old_cred;
+> > +       struct file *fuse_filp = iocb_fuse->ki_filp;
+> > +       struct fuse_file *ff = fuse_filp->private_data;
+> > +       struct inode *fuse_inode = file_inode(fuse_filp);
+> > +       struct file *passthrough_filp = ff->passthrough_filp;
+> > +
+> > +       if (!iov_iter_count(iter))
+> > +               return 0;
+> > +
+> > +       inode_lock(fuse_inode);
+> > +
+> > +       old_cred = fuse_passthrough_override_creds(fuse_filp);
+> > +       if (is_sync_kiocb(iocb_fuse)) {
+> > +               file_start_write(passthrough_filp);
+> > +               ret = vfs_iter_write(passthrough_filp, iter, &iocb_fuse->ki_pos,
+> > +                                   iocbflags_to_rwf(iocb_fuse->ki_flags));
+> > +               file_end_write(passthrough_filp);
+> > +               if (ret > 0)
+> > +                       fuse_copyattr(fuse_filp, passthrough_filp);
+> > +       } else {
+> > +               ret = -EIO;
+> > +       }
+> 
+> And the same here.
+> 
 
-Back from a day out - after it stopped raining.
-Trying to use up leave before the end of the year.
+Ack, adding both to the upcoming patch set.
 
-Can you use objdump on the kernel binary itself and cut out
-the single function?
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Thanks,
+Alessio
