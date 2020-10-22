@@ -2,96 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5498E2962EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 18:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9621B296305
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Oct 2020 18:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897592AbgJVQkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 12:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53756 "EHLO
+        id S2897912AbgJVQqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 12:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2897502AbgJVQkw (ORCPT
+        with ESMTP id S2897884AbgJVQqd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 12:40:52 -0400
+        Thu, 22 Oct 2020 12:46:33 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A0BC0613CE;
-        Thu, 22 Oct 2020 09:40:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44B0C0613CE;
+        Thu, 22 Oct 2020 09:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IreJsWAehwwc9BigrWTsj0+t0+yJCwyFYLOnBdIPcSg=; b=MtK1TZXciwmKvAXJnEsSoBMqrf
-        72WiHkjyyFo9h6lPVsS32dBYqPHdi5iojV1xKAx6YuDdk1affu1pbBrT2k20OPlS+2gByBZEcvd9j
-        MlFH0jBbmth/M/2D+92OFAiZfPEHzOaHPspxeiSjK15e6TDFdxwEjlSFuOSJj6rfmS8IzOOXphXvG
-        Ht7qrXEw/cFXbdw4rjjzM4xSPRXX4g6iUWHMpU3Njtfxtxy5DA+zObVJbcYkefXEH4g9KJq62LzKN
-        0WCqRhPDlo3ZK7DTgaDVgnHVzVD3U2hWPPP4hFxd8Z8Po1erHVxohPm9W28iiZl9eK3OjpBjKRk8a
-        +67cBPOg==;
+        bh=xro6DWExEiJhODwXOAby9O4a+I7/GqhPz/+TxrJCSCI=; b=PSyTwhKEJI7x6Yu1qPkYUlYXbj
+        3NqqmLBtG03MbjTHdDGJBrpt5Ev5AwfD6v1ObDzWTzNpwECQsirZtMgIFPFMcvVoDS+LxyiaDvJVa
+        yQQgYFDKrPbnKsQgzHlZ+UBttzVn4O8gnIaS4m1e4A7cpCdedooUcoKaFbVlb20zznFVPu8+U/hD6
+        TxA0vBUNaYfrcx55mgpAT7H5P3GLgxVdcQOKi55Ta65jj2LWvJek6vxpiYtgYOMau2fIXK3Up7P6B
+        6QhfrNiW51zGsPK4jwNiBLey0oCMNYPtzHSN4XMbmo5zMKUcDlGTYuO68J31gzhjz+4qL/cXqZiWx
+        tvHZG5Hw==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVddo-0002sM-QL; Thu, 22 Oct 2020 16:40:40 +0000
-Date:   Thu, 22 Oct 2020 17:40:40 +0100
+        id 1kVdjM-0003Cv-50; Thu, 22 Oct 2020 16:46:24 +0000
+Date:   Thu, 22 Oct 2020 17:46:24 +0100
 From:   Matthew Wilcox <willy@infradead.org>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Christoph Hellwig' <hch@lst.de>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022164040.GV20115@casper.infradead.org>
-References: <80a2e5fa-718a-8433-1ab0-dd5b3e3b5416@redhat.com>
- <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
- <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+To:     William Kucharski <william.kucharski@oracle.com>
+Cc:     Qian Cai <cai@lca.pw>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-mm@kvack.org
+Subject: Re: kernel BUG at mm/page-writeback.c:2241 [
+ BUG_ON(PageWriteback(page); ]
+Message-ID: <20201022164624.GW20115@casper.infradead.org>
+References: <645a3f332f37e09057c10bc32f4f298ce56049bb.camel@lca.pw>
+ <20201022004906.GQ20115@casper.infradead.org>
+ <361D9B8E-CE8F-4BA0-8076-8384C2B7E860@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+In-Reply-To: <361D9B8E-CE8F-4BA0-8076-8384C2B7E860@oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 04:35:17PM +0000, David Laight wrote:
-> Wait...
-> readv(2) defines:
-> 	ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
-
-It doesn't really matter what the manpage says.  What does the AOSP
-libc header say?
-
-> But the syscall is defined as:
+On Thu, Oct 22, 2020 at 07:23:33AM -0600, William Kucharski wrote:
 > 
-> SYSCALL_DEFINE3(readv, unsigned long, fd, const struct iovec __user *, vec,
->                 unsigned long, vlen)
-> {
->         return do_readv(fd, vec, vlen, 0);
-> }
+> 
+> > On Oct 21, 2020, at 6:49 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > 
+> > On Wed, Oct 21, 2020 at 08:30:18PM -0400, Qian Cai wrote:
+> >> Today's linux-next starts to trigger this wondering if anyone has any clue.
+> > 
+> > I've seen that occasionally too.  I changed that BUG_ON to VM_BUG_ON_PAGE
+> > to try to get a clue about it.  Good to know it's not the THP patches
+> > since they aren't in linux-next.
+> > 
+> > I don't understand how it can happen.  We have the page locked, and then we do:
+> > 
+> >                        if (PageWriteback(page)) {
+> >                                if (wbc->sync_mode != WB_SYNC_NONE)
+> >                                        wait_on_page_writeback(page);
+> >                                else
+> >                                        goto continue_unlock;
+> >                        }
+> > 
+> >                        VM_BUG_ON_PAGE(PageWriteback(page), page);
+> > 
+> > Nobody should be able to put this page under writeback while we have it
+> > locked ... right?  The page can be redirtied by the code that's supposed
+> > to be writing it back, but I don't see how anyone can make PageWriteback
+> > true while we're holding the page lock.
+> 
+> Looking at __test_set_page_writeback(), I see that it (and most other
+> callers to lock_page_memcg()) do the following:
+
+lock_page_memcg() is, unfortunately, completely unrelated to lock_page().
+I believe all callers of __test_set_page_writeback() have the page lock
+held already, but I'm going to put in an assert to that effect.
 
