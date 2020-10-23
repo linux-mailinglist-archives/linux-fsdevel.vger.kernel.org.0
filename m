@@ -2,88 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B58296D65
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 13:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB18F296DE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 13:42:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S462803AbgJWLNW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 07:13:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55452 "EHLO
+        id S463151AbgJWLmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 07:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S462757AbgJWLNV (ORCPT
+        with ESMTP id S463147AbgJWLmW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 07:13:21 -0400
+        Fri, 23 Oct 2020 07:42:22 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23D3C0613CE;
-        Fri, 23 Oct 2020 04:13:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83323C0613CE;
+        Fri, 23 Oct 2020 04:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=L5+0ZOmshEWGRjYQbZQfyKQ/jkbENBN4GZDIbl9am3E=; b=Ie9QJ2wqfW+8LSUdxH/tSg8hAa
-        8C2mIC2GrZ8PI1MXKvN9BsfRilt8jYdEkGxyFOfAVDvy6Td3hQ9uBq6ez/h9E2ABxawDSJiOLHdJI
-        LsZGNhEw0cC/ka2DrAdzFFZOie+px6AWbWK1jzCBTuyNuGJIbDc7Ua0tb1SKyYrwGa4R7W5BG1jO8
-        lxiEoi4nFgMohtN2CS2nX2Xcq7PIeN+Dvq+4Kp4WllzbqLpZqVP7tQsfMfzuy3e8gjTCMhW6FI+3k
-        4bz8a/7pem0jnI9l+DNScgPNKZTBfOKlV0f3hYQ2enHlqjYNexs64ubBaoTEtoMg6kzVaSt0292L4
-        yhh0jICQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVv09-0005sV-5b; Fri, 23 Oct 2020 11:12:53 +0000
-Date:   Fri, 23 Oct 2020 12:12:53 +0100
-From:   "hch@infradead.org" <hch@infradead.org>
+        bh=uTBzimS1PCb6rk5CYfmm7DQ57ZumL5IF6N2uuwCT5ic=; b=ACJo1cAnkf3SCtOXvhzF84HPAz
+        utZFVfmrmNmBVfyFa5t0dItqVsR7LlM9a/jTwu2II5s5V7yF3kAfVMAnMzrXyZDJpdWcEwVJSnBdA
+        ssO+4GIuRRj3bJhia6MZuAmiwlqfgDAZwC+arcGcmvM62SC4BkH/APIgbr+WE9JUWbkEsxQJv1T+8
+        URB45+a6Ia7ysOI4DPNhoQMYW4TeQKE/LaC/YAFY5RH5zcgq+ifmOcQ6rd+lmpRFWMkpzlB1/MrUx
+        w1PAwnEZ8ryBA9uzRY/Ptw2NcZNt8qJY6m1u4wwhuG9ZxAeJpjMOjMJrrw6GfqYiffp3/XudIOj1F
+        F69t2U5g==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVvSe-0007Yd-Ua; Fri, 23 Oct 2020 11:42:21 +0000
+Date:   Fri, 23 Oct 2020 12:42:20 +0100
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Hannes Reinecke <hare@suse.de>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        "pavel@ucw.cz" <pavel@ucw.cz>, "steve@sk2.org" <steve@sk2.org>,
-        "osandov@fb.com" <osandov@fb.com>,
-        Alasdair G Kergon <agk@redhat.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "len.brown@intel.com" <len.brown@intel.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "ming.lei@redhat.com" <ming.lei@redhat.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Sergei Shtepa <sergei.shtepa@veeam.com>,
-        "koct9i@gmail.com" <koct9i@gmail.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Subject: Re: [dm-devel] [PATCH 0/2] block layer filter and block device
- snapshot module
-Message-ID: <20201023111253.GA22468@infradead.org>
-References: <71926887-5707-04a5-78a2-ffa2ee32bd68@suse.de>
- <20201021141044.GF20749@veeam.com>
- <ca8eaa40-b422-2272-1fd9-1d0a354c42bf@suse.de>
- <20201022094402.GA21466@veeam.com>
- <BL0PR04MB6514AC1B1FF313E6A14D122CE71D0@BL0PR04MB6514.namprd04.prod.outlook.com>
- <20201022135213.GB21466@veeam.com>
- <20201022151418.GR9832@magnolia>
- <CAMM=eLfO_L-ZzcGmpPpHroznnSOq_KEWignFoM09h7Am9yE83g@mail.gmail.com>
- <20201023091346.GA25115@infradead.org>
- <d50062cd-929d-c8ff-5851-4e1d517dc4cb@suse.de>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] synchronous readpage for buffer_heads
+Message-ID: <20201023114220.GY20115@casper.infradead.org>
+References: <20201022152256.GU20115@casper.infradead.org>
+ <25528b1a-7434-62cb-705a-7269d050bbc1@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d50062cd-929d-c8ff-5851-4e1d517dc4cb@suse.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <25528b1a-7434-62cb-705a-7269d050bbc1@suse.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 12:31:05PM +0200, Hannes Reinecke wrote:
-> My thoughts went more into the direction of hooking into ->submit_bio,
-> seeing that it's a NULL pointer for most (all?) block drivers.
-> 
-> But sure, I'll check how the interposer approach would turn out.
+On Fri, Oct 23, 2020 at 08:22:07AM +0200, Hannes Reinecke wrote:
+> On 10/22/20 5:22 PM, Matthew Wilcox wrote:
+> Hmm. You are aware, of course, that hch et al are working on replacing bhs
+> with iomap, right?
 
-submit_bio is owned by the underlying device, and for a good reason
-stored in a const struct..
+$ git shortlog --author=Wilcox origin/master -- fs/iomap |head -1
+Matthew Wilcox (Oracle) (17):
+
+But actually, I don't see anyone working on a mass migration of
+filesystems from either using BHs directly or using the mpage code to
+using iomap.  I have a summer student for next summer who I'm going to
+let loose on this problem, but I fear buffer_heads will be with us for
+a long time to come.
+
+I mean, who's going to convert reiserfs to iomap?
+$ git log --no-merges --since=2015-01-01 origin/master fs/reiserfs |grep -c ^comm
+130
+
+Not exactly a thriving development community.  It doesn't even support
+fallocate.
+
+> So wouldn't it be more useful to concentrate on the iomap code, and ensure
+> that _that_ is working correctly?
+
+Did that one first, then did mpage_readpage(), now I've moved on to
+block_read_full_page().  Now I'm going to go back and redo iomap
+with everything I learned doing block_read_full_page().  It's going
+to use blk_completion.
