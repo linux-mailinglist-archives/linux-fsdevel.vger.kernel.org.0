@@ -2,185 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23838297877
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 22:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0ACC2978E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 23:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756431AbgJWUxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 16:53:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756428AbgJWUxk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 16:53:40 -0400
-Received: from paulmck-ThinkPad-P72.home (50-39-104-11.bvtn.or.frontiernet.net [50.39.104.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 693F1208E4;
-        Fri, 23 Oct 2020 20:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603486419;
-        bh=ojQX8v4FWHWriM/9vutOQ7P1tVXDPKF1/x3d5VeoJaw=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=kvqPjaUAbhgOA7v9m5hPwFhSot+9JpnZXoeCrdsm06tmZk3i0PrkuY3l00nQhXTO7
-         mME/ZUGMaFJ8HfKVhEI2MvB8tG0mJXu0Oz9Lq5QXxDSvD9OeEOp7qTfPlU5UBnvfap
-         tnFzhsUdlh/9ZNLst1GWoxnofysl3fTu/WbsWfz4=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id 03E563520D11; Fri, 23 Oct 2020 13:53:39 -0700 (PDT)
-Date:   Fri, 23 Oct 2020 13:53:38 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        id S1756702AbgJWV3F convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 17:29:05 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:25055 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756690AbgJWV3E (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Oct 2020 17:29:04 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-101-a0KTql5iP42OxX-i9IRDjQ-1; Fri, 23 Oct 2020 22:29:00 +0100
+X-MC-Unique: a0KTql5iP42OxX-i9IRDjQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 23 Oct 2020 22:28:59 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 23 Oct 2020 22:28:59 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Segher Boessenkool' <segher@kernel.crashing.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     David Hildenbrand <david@redhat.com>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        'Greg KH' <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michel Lespinasse <walken@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Qian Cai <cai@lca.pw>, linux-xfs@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 04/65] mm: Extract might_alloc() debug check
-Message-ID: <20201023205338.GQ3249@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12CAAGD4RoAAL/Bg
+Date:   Fri, 23 Oct 2020 21:28:59 +0000
+Message-ID: <e9a3136ead214186877804aabde74b38@AcuMS.aculab.com>
+References: <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
+ <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+ <20201023175857.GA3576660@ZenIV.linux.org.uk>
+ <20201023182713.GG2672@gate.crashing.org>
+In-Reply-To: <20201023182713.GG2672@gate.crashing.org>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 02:21:15PM +0200, Daniel Vetter wrote:
-> Extracted from slab.h, which seems to have the most complete version
-> including the correct might_sleep() check. Roll it out to slob.c.
+From: Segher Boessenkool
+> Sent: 23 October 2020 19:27
 > 
-> Motivated by a discussion with Paul about possibly changing call_rcu
-> behaviour to allocate memory, but only roughly every 500th call.
+> On Fri, Oct 23, 2020 at 06:58:57PM +0100, Al Viro wrote:
+> > On Fri, Oct 23, 2020 at 03:09:30PM +0200, David Hildenbrand wrote:
+> >
+> > > Now, I am not a compiler expert, but as I already cited, at least on
+> > > x86-64 clang expects that the high bits were cleared by the caller - in
+> > > contrast to gcc. I suspect it's the same on arm64, but again, I am no
+> > > compiler expert.
+> > >
+> > > If what I said and cites for x86-64 is correct, if the function expects
+> > > an "unsigned int", it will happily use 64bit operations without further
+> > > checks where valid when assuming high bits are zero. That's why even
+> > > converting everything to "unsigned int" as proposed by me won't work on
+> > > clang - it assumes high bits are zero (as indicated by Nick).
+> > >
+> > > As I am neither a compiler experts (did I mention that already? ;) ) nor
+> > > an arm64 experts, I can't tell if this is a compiler BUG or not.
+> >
+> > On arm64 when callee expects a 32bit argument, the caller is *not* responsible
+> > for clearing the upper half of 64bit register used to pass the value - it only
+> > needs to store the actual value into the lower half.  The callee must consider
+> > the contents of the upper half of that register as undefined.  See AAPCS64 (e.g.
+> > https://github.com/ARM-software/abi-aa/blob/master/aapcs64/aapcs64.rst#parameter-passing-rules
+> > ); AFAICS, the relevant bit is
+> > 	"Unlike in the 32-bit AAPCS, named integral values must be narrowed by
+> > the callee rather than the caller."
 > 
-> There are a lot fewer places in the kernel that care about whether
-> allocating memory is allowed or not (due to deadlocks with reclaim
-> code) than places that care whether sleeping is allowed. But debugging
-> these also tends to be a lot harder, so nice descriptive checks could
-> come in handy. I might have some use eventually for annotations in
-> drivers/gpu.
+> Or the formal rule:
 > 
-> Note that unlike fs_reclaim_acquire/release gfpflags_allow_blocking
-> does not consult the PF_MEMALLOC flags. But there is no flag
-> equivalent for GFP_NOWAIT, hence this check can't go wrong due to
-> memalloc_no*_save/restore contexts.
-> 
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Michel Lespinasse <walken@google.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: linux-xfs@vger.kernel.org
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> C.9 	If the argument is an Integral or Pointer Type, the size of the
+> 	argument is less than or equal to 8 bytes and the NGRN is less
+> 	than 8, the argument is copied to the least significant bits in
+> 	x[NGRN]. The NGRN is incremented by one. The argument has now
+> 	been allocated.
 
-Nice!!!
+So, in essence, if the value is in a 64bit register the calling
+code is independent of the actual type of the formal parameter.
+Clearly a value might need explicit widening.
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+I've found a copy of the 64 bit arm instruction set.
+Unfortunately it is alpha sorted and repetitive so shows none
+of the symmetry and makes things difficult to find.
+But, contrary to what someone suggested most register writes
+(eg from arithmetic) seem to zero/extend the high bits.
 
-> ---
->  include/linux/sched/mm.h | 16 ++++++++++++++++
->  mm/slab.h                |  5 +----
->  mm/slob.c                |  6 ++----
->  3 files changed, 19 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index f889e332912f..2b0037abac0b 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -205,6 +205,22 @@ static inline void fs_reclaim_acquire(gfp_t gfp_mask) { }
->  static inline void fs_reclaim_release(gfp_t gfp_mask) { }
->  #endif
->  
-> +/**
-> + * might_alloc - Marks possible allocation sites
-> + * @gfp_mask: gfp_t flags that would be use to allocate
-> + *
-> + * Similar to might_sleep() and other annotations this can be used in functions
-> + * that might allocate, but often dont. Compiles to nothing without
-> + * CONFIG_LOCKDEP. Includes a conditional might_sleep() if @gfp allows blocking.
-> + */
-> +static inline void might_alloc(gfp_t gfp_mask)
-> +{
-> +	fs_reclaim_acquire(gfp_mask);
-> +	fs_reclaim_release(gfp_mask);
-> +
-> +	might_sleep_if(gfpflags_allow_blocking(gfp_mask));
-> +}
-> +
->  /**
->   * memalloc_noio_save - Marks implicit GFP_NOIO allocation scope.
->   *
-> diff --git a/mm/slab.h b/mm/slab.h
-> index 6cc323f1313a..fedd789b2270 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -492,10 +492,7 @@ static inline struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s,
->  {
->  	flags &= gfp_allowed_mask;
->  
-> -	fs_reclaim_acquire(flags);
-> -	fs_reclaim_release(flags);
-> -
-> -	might_sleep_if(gfpflags_allow_blocking(flags));
-> +	might_alloc(flags);
->  
->  	if (should_failslab(s, flags))
->  		return NULL;
-> diff --git a/mm/slob.c b/mm/slob.c
-> index 7cc9805c8091..8d4bfa46247f 100644
-> --- a/mm/slob.c
-> +++ b/mm/slob.c
-> @@ -474,8 +474,7 @@ __do_kmalloc_node(size_t size, gfp_t gfp, int node, unsigned long caller)
->  
->  	gfp &= gfp_allowed_mask;
->  
-> -	fs_reclaim_acquire(gfp);
-> -	fs_reclaim_release(gfp);
-> +	might_alloc(gfp);
->  
->  	if (size < PAGE_SIZE - minalign) {
->  		int align = minalign;
-> @@ -597,8 +596,7 @@ static void *slob_alloc_node(struct kmem_cache *c, gfp_t flags, int node)
->  
->  	flags &= gfp_allowed_mask;
->  
-> -	fs_reclaim_acquire(flags);
-> -	fs_reclaim_release(flags);
-> +	might_alloc(flags);
->  
->  	if (c->size < PAGE_SIZE) {
->  		b = slob_alloc(c->size, flags, c->align, node, 0);
-> -- 
-> 2.28.0
-> 
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
