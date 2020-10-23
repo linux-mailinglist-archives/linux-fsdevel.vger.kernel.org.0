@@ -2,73 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D8EA297128
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 16:16:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F80829715F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 16:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750417AbgJWOQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 10:16:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750414AbgJWOQr (ORCPT
+        id S1750627AbgJWOdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 10:33:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:47844 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S374727AbgJWOdT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 10:16:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD6EC0613CE;
-        Fri, 23 Oct 2020 07:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GVPYMjFqChMjoGfaKLO2uGqLmrcgLH9W7OOdDABUMfg=; b=WDuQx2OmH186JLLCT/V49+cHuG
-        mvx3za9SySicasNgXKx5tLAGyLzzjMdStqRY5+gjhxGKEuIITG+UZILbK9cBxat+a10uw+lowMHgU
-        A4XPvkubtIHPHZyepjYJtQzcRv+/NgS84fDmbjT3ffVSakzeJL/2clY9r2Aw1R+GJNBloYvsS8VlH
-        rS3VhA77U5Ki78fsi0dokXGR1DF0mXSHs1jeElg3ld72bwPIscdEHnUWgCc6qd//dojfah5sbnF4f
-        FA32w4nZVYBUke2t5rabYYM/cRMBDRJV6qjDaaaWY1XXsyx96exYVzQxYNvAH/xg57vNzc1lLniXd
-        zPwjKFvQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVxrf-0000gL-Pn; Fri, 23 Oct 2020 14:16:19 +0000
-Date:   Fri, 23 Oct 2020 15:16:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Fri, 23 Oct 2020 10:33:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603463597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CNcKkabSWjxdlB9if9c65y0HaLkS2aARxhdVq9CbB84=;
+        b=RgZTviaSdR7S1v4WSyKdNXpiKR0I4cepr4PlzBtm5onpd8D7rJQRtG2Kp+M+5C3QH071E2
+        7TdyG7+xrdM3VPZ/s0rd0RzlvJXgV5gVAdxhqJrdLC4Fz40jeglMuAEkWekJR4eVPuIISS
+        WKns5e8z61xA4dR83ldxpS/D5/c9cbI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-106-GwdqF8yrPV2_n9bqFnB1rQ-1; Fri, 23 Oct 2020 10:33:12 -0400
+X-MC-Unique: GwdqF8yrPV2_n9bqFnB1rQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8331C804B6A;
+        Fri, 23 Oct 2020 14:33:09 +0000 (UTC)
+Received: from [10.36.114.18] (ovpn-114-18.ams2.redhat.com [10.36.114.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44FD05D9CC;
+        Fri, 23 Oct 2020 14:33:04 +0000 (UTC)
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+From:   David Hildenbrand <david@redhat.com>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Greg KH' <gregkh@linuxfoundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michel Lespinasse <walken@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Qian Cai <cai@lca.pw>, linux-xfs@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 04/65] mm: Extract might_alloc() debug check
-Message-ID: <20201023141619.GC20115@casper.infradead.org>
-References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+References: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
+ <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+ <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
+ <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
+Date:   Fri, 23 Oct 2020 16:33:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
+In-Reply-To: <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 02:21:15PM +0200, Daniel Vetter wrote:
-> Note that unlike fs_reclaim_acquire/release gfpflags_allow_blocking
-> does not consult the PF_MEMALLOC flags. But there is no flag
-> equivalent for GFP_NOWAIT, hence this check can't go wrong due to
-> memalloc_no*_save/restore contexts.
+On 23.10.20 15:09, David Hildenbrand wrote:
+> On 23.10.20 14:46, David Laight wrote:
+>> From: Greg KH <gregkh@linuxfoundation.org>
+>>> Sent: 22 October 2020 14:51
+>>
+>> I've rammed the code into godbolt.
+>>
+>> https://godbolt.org/z/9v5PPW
+>>
+>> Definitely a clang bug.
+>>
+>> Search for [wx]24 in the clang output.
+>> nr_segs comes in as w2 and the initial bound checks are done on w2.
+>> w24 is loaded from w2 - I don't believe this changes the high bits.
+>> There are no references to w24, just x24.
+>> So the kmalloc_array() is passed 'huge' and will fail.
+>> The iov_iter_init also gets the 64bit value.
+>>
+>> Note that the gcc code has a sign-extend copy of w2.
+> 
+> Do we have a result from using "unsigned long" in the base function and
+> explicitly masking of the high bits? That should definitely work.
+> 
+> Now, I am not a compiler expert, but as I already cited, at least on
+> x86-64 clang expects that the high bits were cleared by the caller - in
+> contrast to gcc. I suspect it's the same on arm64, but again, I am no
+> compiler expert.
+> 
+> If what I said and cites for x86-64 is correct, if the function expects
+> an "unsigned int", it will happily use 64bit operations without further
+> checks where valid when assuming high bits are zero. That's why even
+> converting everything to "unsigned int" as proposed by me won't work on
+> clang - it assumes high bits are zero (as indicated by Nick).
+> 
+> As I am neither a compiler experts (did I mention that already? ;) ) nor
+> an arm64 experts, I can't tell if this is a compiler BUG or not.
+> 
 
-I have a patch series that adds memalloc_nowait_save/restore.
+I just checked against upstream code generated by clang 10 and it
+properly discards the upper 32bit via a mov w23 w2.
 
-https://lore.kernel.org/linux-mm/20200625113122.7540-7-willy@infradead.org/
+So at least clang 10 indeed properly assumes we could have garbage and
+masks it off.
+
+Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
+behaves differently.
+
+-- 
+Thanks,
+
+David / dhildenb
+
