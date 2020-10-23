@@ -2,224 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA6A1296E52
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 14:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9A0296E55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 14:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S463583AbgJWMW0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 08:22:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
+        id S463589AbgJWMW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 08:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S369869AbgJWMW0 (ORCPT
+        with ESMTP id S463586AbgJWMW2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 08:22:26 -0400
+        Fri, 23 Oct 2020 08:22:28 -0400
 Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCCEEC0613CE
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Oct 2020 05:22:25 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id h5so1572936wrv.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Oct 2020 05:22:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF1EC0613D5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Oct 2020 05:22:27 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id n15so1596535wrq.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Oct 2020 05:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IgQVmlN66kTzdCBU8ZoKnJMQUq1PyY1GSJDM/XX0ojY=;
-        b=SBvkme8oy7kGO+RfY6ceOp15GpaJIvk6RoLhvV/WueIm6Pg+oG/7v+xKkGaetsoFKT
-         4Jrw4O5tvC4Old6EBSgoM8lbYnG5Co58mGGq/XlAbL+NJ+J1nzTnHFdqYbcE/fjum1hb
-         sSY+nGawYtOErvna7ZMT/xH6GPplKKq36FBvY=
+        bh=Md4YAXpjpdGTyHyAgh2ay+AKQEd8Ro2fcgd8T+fjD4o=;
+        b=GgfqsG68s8RU3qED2SP+ReACq0NGvEMRdgsY6b6ebZqvXlKJoL/Mx/M9P+m8eu/R51
+         JiE6HK/crlCj0SnKoHO/QCCI3VkmWtqVIAyu4QXV/TZTZHYUHURHT9eDDCsbRIL7hGE7
+         uWyhojoODyHuN4DFjcfQ46NFY2Khc8hMcQmkE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IgQVmlN66kTzdCBU8ZoKnJMQUq1PyY1GSJDM/XX0ojY=;
-        b=Z/GKnFsoe3XeNgK2dJKCjI87XqGbouResjz3t01p2BgyGdHLcaKq2/A5PKqXRXRP0I
-         cm3UHtjrg4+3MHZ4Pfj13wCpeHp/Ys7UCvFep03imRmZY58XKIUy7iqc4Vg6qM3zNfhh
-         TVzEONgKNdb1LYF7B3/pFc/wpKlcodYiWEnMTwfWxQPhOjDzglUsj54nyw3jyUeyfgEA
-         /KW95YTiUBT26Tqt0Bn7+Sxj6Ru04VqgI9JW+QutE5cMXIrevNjPXhnK/bpu3UKTwW6+
-         CQICPe9mJvcecfb3hIoojMiwGXGaX4GJvib0kEh8jz/4p8py9j/kaYkzc6zt0WaCyg//
-         laPQ==
-X-Gm-Message-State: AOAM531xPxdxOifLgCYezad6LvRx99+raAZSalQz0mQ0IZMzvBYC/3O+
-        jcxcE3Bh6SRkldrZwoh8tDmwKQ==
-X-Google-Smtp-Source: ABdhPJznoMnt3wkQ258dPqEZNcn4LIp7cxpxLk7m7dixQUbSTt/QJMXc3d+QHpQiaKAR3urrcsOBqA==
-X-Received: by 2002:adf:e8c7:: with SMTP id k7mr2365623wrn.102.1603455744516;
-        Fri, 23 Oct 2020 05:22:24 -0700 (PDT)
+        bh=Md4YAXpjpdGTyHyAgh2ay+AKQEd8Ro2fcgd8T+fjD4o=;
+        b=KnRm/dWmQZe88bnm9kp4zTH3Ft0yFXKuISqagD/fErW/xfgh6C7O1e24xKSF4+taul
+         FeiLxyZhjuMjAsoAsRUoVhwT5cLgIOnrMt4WITHG6aWHQ55Tzsw/ld7uDUIj8qTSKZDs
+         xxrXu5Gu+tIDkR3yQRHX6fOYIFug7+D/gVOQGpjal5fGTjrOIFDStDlStALYHzmEriqQ
+         I42Hke5l5Xsr55G8z7RK+FMAZQ3N2SwwB6JnnqyM4QdTdDNmOeuEMhqHThjsLQe/tsoc
+         fwbU8dkDpRiqMw888dKBuVqqdt6COeg7NEu6e0k171znOzE2Z48gFz/1T99vDvKDYrzV
+         MMXQ==
+X-Gm-Message-State: AOAM531TEeY/tSWz2u6y8tv2h60dor0dJWKMpUoUrMbXpllVHy+/+bbu
+        UXu5u4l0e/FUXVbFk3tEvFRPpQ==
+X-Google-Smtp-Source: ABdhPJwY3k8N8hWJAzZAqbhvx4fpSD2M0kW3wHfJxLbpQ9x79iQZHoLA9FsW4Ur15mgIydU2Qpf3mw==
+X-Received: by 2002:adf:f4ca:: with SMTP id h10mr2271950wrp.89.1603455746195;
+        Fri, 23 Oct 2020 05:22:26 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id y4sm3056484wrp.74.2020.10.23.05.22.23
+        by smtp.gmail.com with ESMTPSA id y4sm3056484wrp.74.2020.10.23.05.22.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Oct 2020 05:22:23 -0700 (PDT)
+        Fri, 23 Oct 2020 05:22:25 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michel Lespinasse <walken@google.com>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
         Qian Cai <cai@lca.pw>, linux-xfs@vger.kernel.org,
-        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@mellanox.com>, linux-mm@kvack.org,
-        linux-rdma@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 03/65] mm: Track mmu notifiers in fs_reclaim_acquire/release
-Date:   Fri, 23 Oct 2020 14:21:14 +0200
-Message-Id: <20201023122216.2373294-3-daniel.vetter@ffwll.ch>
+Subject: [PATCH 04/65] mm: Extract might_alloc() debug check
+Date:   Fri, 23 Oct 2020 14:21:15 +0200
+Message-Id: <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
 References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
  <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs_reclaim_acquire/release nicely catch recursion issues when
-allocating GFP_KERNEL memory against shrinkers (which gpu drivers tend
-to use to keep the excessive caches in check). For mmu notifier
-recursions we do have lockdep annotations since 23b68395c7c7
-("mm/mmu_notifiers: add a lockdep map for invalidate_range_start/end").
+Extracted from slab.h, which seems to have the most complete version
+including the correct might_sleep() check. Roll it out to slob.c.
 
-But these only fire if a path actually results in some pte
-invalidation - for most small allocations that's very rarely the case.
-The other trouble is that pte invalidation can happen any time when
-__GFP_RECLAIM is set. Which means only really GFP_ATOMIC is a safe
-choice, GFP_NOIO isn't good enough to avoid potential mmu notifier
-recursion.
+Motivated by a discussion with Paul about possibly changing call_rcu
+behaviour to allocate memory, but only roughly every 500th call.
 
-I was pondering whether we should just do the general annotation, but
-there's always the risk for false positives. Plus I'm assuming that
-the core fs and io code is a lot better reviewed and tested than
-random mmu notifier code in drivers. Hence why I decide to only
-annotate for that specific case.
+There are a lot fewer places in the kernel that care about whether
+allocating memory is allowed or not (due to deadlocks with reclaim
+code) than places that care whether sleeping is allowed. But debugging
+these also tends to be a lot harder, so nice descriptive checks could
+come in handy. I might have some use eventually for annotations in
+drivers/gpu.
 
-Furthermore even if we'd create a lockdep map for direct reclaim, we'd
-still need to explicit pull in the mmu notifier map - there's a lot
-more places that do pte invalidation than just direct reclaim, these
-two contexts arent the same.
+Note that unlike fs_reclaim_acquire/release gfpflags_allow_blocking
+does not consult the PF_MEMALLOC flags. But there is no flag
+equivalent for GFP_NOWAIT, hence this check can't go wrong due to
+memalloc_no*_save/restore contexts.
 
-Note that the mmu notifiers needing their own independent lockdep map
-is also the reason we can't hold them from fs_reclaim_acquire to
-fs_reclaim_release - it would nest with the acquistion in the pte
-invalidation code, causing a lockdep splat. And we can't remove the
-annotations from pte invalidation and all the other places since
-they're called from many other places than page reclaim. Hence we can
-only do the equivalent of might_lock, but on the raw lockdep map.
-
-With this we can also remove the lockdep priming added in 66204f1d2d1b
-("mm/mmu_notifiers: prime lockdep") since the new annotations are
-strictly more powerful.
-
-v2: Review from Thomas Hellstrom:
-- unbotch the fs_reclaim context check, I accidentally inverted it,
-  but it didn't blow up because I inverted it immediately
-- fix compiling for !CONFIG_MMU_NOTIFIER
-
-v3: Unbreak the PF_MEMALLOC_ context flags. Thanks to Qian for the
-report and Dave for explaining what I failed to see.
-
+Cc: Paul E. McKenney <paulmck@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Michel Lespinasse <walken@google.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org
 Cc: Dave Chinner <david@fromorbit.com>
 Cc: Qian Cai <cai@lca.pw>
 Cc: linux-xfs@vger.kernel.org
-Cc: Thomas Hellström (Intel) <thomas_os@shipmail.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: linux-mm@kvack.org
-Cc: linux-rdma@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Christian König <christian.koenig@amd.com>
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 ---
- mm/mmu_notifier.c |  7 -------
- mm/page_alloc.c   | 31 ++++++++++++++++++++-----------
- 2 files changed, 20 insertions(+), 18 deletions(-)
+ include/linux/sched/mm.h | 16 ++++++++++++++++
+ mm/slab.h                |  5 +----
+ mm/slob.c                |  6 ++----
+ 3 files changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index 4fc918163dd3..6bf798373eb0 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -612,13 +612,6 @@ int __mmu_notifier_register(struct mmu_notifier *subscription,
- 	mmap_assert_write_locked(mm);
- 	BUG_ON(atomic_read(&mm->mm_users) <= 0);
- 
--	if (IS_ENABLED(CONFIG_LOCKDEP)) {
--		fs_reclaim_acquire(GFP_KERNEL);
--		lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
--		lock_map_release(&__mmu_notifier_invalidate_range_start_map);
--		fs_reclaim_release(GFP_KERNEL);
--	}
--
- 	if (!mm->notifier_subscriptions) {
- 		/*
- 		 * kmalloc cannot be called under mm_take_all_locks(), but we
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 780c8f023b28..2edd3fd447fa 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -57,6 +57,7 @@
- #include <trace/events/oom.h>
- #include <linux/prefetch.h>
- #include <linux/mm_inline.h>
-+#include <linux/mmu_notifier.h>
- #include <linux/migrate.h>
- #include <linux/hugetlb.h>
- #include <linux/sched/rt.h>
-@@ -4207,10 +4208,8 @@ should_compact_retry(struct alloc_context *ac, unsigned int order, int alloc_fla
- static struct lockdep_map __fs_reclaim_map =
- 	STATIC_LOCKDEP_MAP_INIT("fs_reclaim", &__fs_reclaim_map);
- 
--static bool __need_fs_reclaim(gfp_t gfp_mask)
-+static bool __need_reclaim(gfp_t gfp_mask)
- {
--	gfp_mask = current_gfp_context(gfp_mask);
--
- 	/* no reclaim without waiting on it */
- 	if (!(gfp_mask & __GFP_DIRECT_RECLAIM))
- 		return false;
-@@ -4219,10 +4218,6 @@ static bool __need_fs_reclaim(gfp_t gfp_mask)
- 	if (current->flags & PF_MEMALLOC)
- 		return false;
- 
--	/* We're only interested __GFP_FS allocations for now */
--	if (!(gfp_mask & __GFP_FS))
--		return false;
--
- 	if (gfp_mask & __GFP_NOLOCKDEP)
- 		return false;
- 
-@@ -4241,15 +4236,29 @@ void __fs_reclaim_release(void)
- 
- void fs_reclaim_acquire(gfp_t gfp_mask)
- {
--	if (__need_fs_reclaim(gfp_mask))
--		__fs_reclaim_acquire();
-+	gfp_mask = current_gfp_context(gfp_mask);
-+
-+	if (__need_reclaim(gfp_mask)) {
-+		if (gfp_mask & __GFP_FS)
-+			__fs_reclaim_acquire();
-+
-+#ifdef CONFIG_MMU_NOTIFIER
-+		lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
-+		lock_map_release(&__mmu_notifier_invalidate_range_start_map);
-+#endif
-+
-+	}
- }
- EXPORT_SYMBOL_GPL(fs_reclaim_acquire);
- 
- void fs_reclaim_release(gfp_t gfp_mask)
- {
--	if (__need_fs_reclaim(gfp_mask))
--		__fs_reclaim_release();
-+	gfp_mask = current_gfp_context(gfp_mask);
-+
-+	if (__need_reclaim(gfp_mask)) {
-+		if (gfp_mask & __GFP_FS)
-+			__fs_reclaim_release();
-+	}
- }
- EXPORT_SYMBOL_GPL(fs_reclaim_release);
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index f889e332912f..2b0037abac0b 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -205,6 +205,22 @@ static inline void fs_reclaim_acquire(gfp_t gfp_mask) { }
+ static inline void fs_reclaim_release(gfp_t gfp_mask) { }
  #endif
+ 
++/**
++ * might_alloc - Marks possible allocation sites
++ * @gfp_mask: gfp_t flags that would be use to allocate
++ *
++ * Similar to might_sleep() and other annotations this can be used in functions
++ * that might allocate, but often dont. Compiles to nothing without
++ * CONFIG_LOCKDEP. Includes a conditional might_sleep() if @gfp allows blocking.
++ */
++static inline void might_alloc(gfp_t gfp_mask)
++{
++	fs_reclaim_acquire(gfp_mask);
++	fs_reclaim_release(gfp_mask);
++
++	might_sleep_if(gfpflags_allow_blocking(gfp_mask));
++}
++
+ /**
+  * memalloc_noio_save - Marks implicit GFP_NOIO allocation scope.
+  *
+diff --git a/mm/slab.h b/mm/slab.h
+index 6cc323f1313a..fedd789b2270 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -492,10 +492,7 @@ static inline struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s,
+ {
+ 	flags &= gfp_allowed_mask;
+ 
+-	fs_reclaim_acquire(flags);
+-	fs_reclaim_release(flags);
+-
+-	might_sleep_if(gfpflags_allow_blocking(flags));
++	might_alloc(flags);
+ 
+ 	if (should_failslab(s, flags))
+ 		return NULL;
+diff --git a/mm/slob.c b/mm/slob.c
+index 7cc9805c8091..8d4bfa46247f 100644
+--- a/mm/slob.c
++++ b/mm/slob.c
+@@ -474,8 +474,7 @@ __do_kmalloc_node(size_t size, gfp_t gfp, int node, unsigned long caller)
+ 
+ 	gfp &= gfp_allowed_mask;
+ 
+-	fs_reclaim_acquire(gfp);
+-	fs_reclaim_release(gfp);
++	might_alloc(gfp);
+ 
+ 	if (size < PAGE_SIZE - minalign) {
+ 		int align = minalign;
+@@ -597,8 +596,7 @@ static void *slob_alloc_node(struct kmem_cache *c, gfp_t flags, int node)
+ 
+ 	flags &= gfp_allowed_mask;
+ 
+-	fs_reclaim_acquire(flags);
+-	fs_reclaim_release(flags);
++	might_alloc(flags);
+ 
+ 	if (c->size < PAGE_SIZE) {
+ 		b = slob_alloc(c->size, flags, c->align, node, 0);
 -- 
 2.28.0
 
