@@ -2,127 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D68D296846
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 03:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F1D29687B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 04:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S374288AbgJWBVo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Oct 2020 21:21:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49352 "EHLO
+        id S374559AbgJWCYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Oct 2020 22:24:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S374284AbgJWBVo (ORCPT
+        with ESMTP id S374551AbgJWCYT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Oct 2020 21:21:44 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8800C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 18:21:43 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id dt13so44542ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 18:21:43 -0700 (PDT)
+        Thu, 22 Oct 2020 22:24:19 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4000BC0613D2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 19:24:19 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id t14so21535pgg.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Oct 2020 19:24:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=aoxn8RZh5GwLX2OTvbY4F3fYrAFarAXAp+zyIW9UVc0=;
-        b=bWPmglrUmUWeh/iJB7I1EBJU+TdBzoO9kJeAZdj0Mj7vyjbv9DyccX5Lt+lUFusiZw
-         HWpqEJDPjpY3Pe66lK3CAkBsqcDG1SzJroJ/TrLWOH68lnkP3CHZa96739LkvB31F0p2
-         UKaI6v6FS6fL3igL3m2SvuN8QdEUHemh+0A+WspZbjpxU8NlNH1xji6y4zYUku/PAtIG
-         VlsE4Z2Vr2DxmyRQoiSH2mQuJn6k9T8lU/ZuPxibEI768Vlsje7dAVkK4A+TJ9+adHG8
-         +FBZ1+GlJF4yKcmomBogElmJ3P88v835veafFeBLgDo8obHbAFEfQjagR4wLw4RxeZia
-         Dx4Q==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IilmWqQBIzdGRFEb8WDv/BGb6Zru01TJYp2UzzvimNo=;
+        b=wpeItj4YfzkY9NGX9eDHOZimPqRVq75UcGTuCiNxcwnlDWgOiW57hJ3NtX0tTfJp2E
+         x2gbYpQzowr6u+7nM+r93TWzmVJxllGDoUTgZ049kEHsNpVgR0XoNyr4ckDamD/ih83h
+         wrS82wdQoSkFPu8fwQVOA/taOU3+U89m7ITVz3gRrXAq8FpurjLUryK6+7jU8zFmVfBl
+         bOqk86u+zEi7/njiX3F6GTKjlUlx6FUlQf1ixvdQwrqtmllqDIuFudNIsYqinCpgCbTH
+         WlHaXTrHm+w7bpds8L3b4oGt1U2zNH03mToy3yfk3NWzqy8UBC2j6sYRhEksUGnNfc9Y
+         uNiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=aoxn8RZh5GwLX2OTvbY4F3fYrAFarAXAp+zyIW9UVc0=;
-        b=HE9hSrb+zLezlSB15AZL+KrHwP02OS63TLy5NT8Q9IJzhMPCeHUqmtOZPPyjGAyy3t
-         MZMVEJw1hVmCKBAjiv9UNkNSQzMeiQzJytqM0oKj0BeQO1OAxTasn+xPuZy4A+wnOKkJ
-         6nm0u0aZ55zprhuUeOZ06QVIzqANukssPmNGGDi7HuAp8fZmxb4mL3Q1q/xIzLC8B6Va
-         Oegwe8BeCp039owET3Iqb3HtXFWlkaw4fyi5ue8ova43Tszu1P/iQcOc9ZDWwNlbuU82
-         beER027jPlhJWc7xPAZMMSwfGZR1VWK29wCVOK1i/Mtx2AgHPUKjPkXWQK50ZYfEbIq+
-         fzsw==
-X-Gm-Message-State: AOAM532JSBLuc/y2hUuV+Ur+fnlOjqt1kapA82sQ+nepkObCZoqHMG3Z
-        WfF1j19phg5LZwlLjX57XZ0ltNz/VkBi1EkFSbGMN/8kVQ==
-X-Google-Smtp-Source: ABdhPJzDtfnYw+rfKgxc4a8mUFIh6ll/aQ2+0itoJxliGHEeO3L/XBWkrOQEYSixIJb79O9lCBjh5YKgmDlUs8u/x/U=
-X-Received: by 2002:a17:906:25cc:: with SMTP id n12mr4813564ejb.488.1603416102090;
- Thu, 22 Oct 2020 18:21:42 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IilmWqQBIzdGRFEb8WDv/BGb6Zru01TJYp2UzzvimNo=;
+        b=HyVB4msyZuNHfAfrdnGiglyAYol5opBszXdINDg3fNM8Gbhfn8nOO3mZhSf9/4cMum
+         RdoJEGTcipK7vnu1FKLnESDmjXZhci3R7S4mQdCIPbGGFEVRp3/KHSscd4heLmNE1jSd
+         MFz3G6b0CCOP9iuU3YF+6+XZdT/BZS409ZM8/+k6/SXG5m2y/qeaHLKnPSFnBIZNtT45
+         yQaZRO3rihtw5BkSsyVEFdJpzHpKFq90nsd3N8QKPvF68a/eZ+wF0hVquAiAB6nfYBsV
+         3YJwj8Ag275LGAPk38vb0tsBfx1Els3Nfoy/cIiz6Rt9Wpc1lTpzqQrF7pJKCtQxUzfq
+         C3Kg==
+X-Gm-Message-State: AOAM531JgYSMezC0npXzMDoqxRiLDGd5jXSxJ/Yc06R4uj26cQtmSMMl
+        zD4eJNv8f7RbRFBOZiz9bGY7NEES3MRU7g==
+X-Google-Smtp-Source: ABdhPJzA5EZBSeUdXLjtYYke6gTJ/cVfed1VsTekaPVYNDWK1FLHOCtzWYTzE2/HpeO13h227ZcwHA==
+X-Received: by 2002:a62:a10a:0:b029:154:fd62:ba90 with SMTP id b10-20020a62a10a0000b0290154fd62ba90mr10722pff.62.1603419858432;
+        Thu, 22 Oct 2020 19:24:18 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id g85sm82708pfb.4.2020.10.22.19.24.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Oct 2020 19:24:17 -0700 (PDT)
+Subject: Re: Question on io-wq
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Zhang Qiang <qiang.zhang@windriver.com>, viro@zeniv.linux.org.uk,
+        io-uring@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <98c41fba-87fe-b08d-2c8c-da404f91ef31@windriver.com>
+ <20201023020514.2230-1-hdanton@sina.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e61d3c07-7db0-28d8-03a0-cae13698a634@kernel.dk>
+Date:   Thu, 22 Oct 2020 20:24:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <cover.1593198710.git.rgb@redhat.com> <6e2e10432e1400f747918eeb93bf45029de2aa6c.1593198710.git.rgb@redhat.com>
- <CAHC9VhSCm5eeBcyY8bBsnxr-hK4rkso9_NJHJec2OXLu4m5QTA@mail.gmail.com>
- <20200729194058.kcbsqjhzunjpipgm@madcap2.tricolour.ca> <CAHC9VhRUwCKBjffA_XNSjUwvUn8e6zfmy8WD203dK7R2KD0__g@mail.gmail.com>
- <20201002195231.GH2882171@madcap2.tricolour.ca> <20201021163926.GA3929765@madcap2.tricolour.ca>
-In-Reply-To: <20201021163926.GA3929765@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 22 Oct 2020 21:21:31 -0400
-Message-ID: <CAHC9VhRb7XMyTrcrmzM3yQO+eLdO_r2+DOLKr9apDDeH4ua2Ew@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V9 05/13] audit: log container info of syscalls
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        simo@redhat.com, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201023020514.2230-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 21, 2020 at 12:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> Here is an exmple I was able to generate after updating the testsuite
-> script to include a signalling example of a nested audit container
-> identifier:
->
-> ----
-> type=3DPROCTITLE msg=3Daudit(2020-10-21 10:31:16.655:6731) : proctitle=3D=
-/usr/bin/perl -w containerid/test
-> type=3DCONTAINER_ID msg=3Daudit(2020-10-21 10:31:16.655:6731) : contid=3D=
-7129731255799087104^3333941723245477888
-> type=3DOBJ_PID msg=3Daudit(2020-10-21 10:31:16.655:6731) : opid=3D115583 =
-oauid=3Droot ouid=3Droot oses=3D1 obj=3Dunconfined_u:unconfined_r:unconfine=
-d_t:s0-s0:c0.c1023 ocomm=3Dperl
-> type=3DCONTAINER_ID msg=3Daudit(2020-10-21 10:31:16.655:6731) : contid=3D=
-3333941723245477888
-> type=3DOBJ_PID msg=3Daudit(2020-10-21 10:31:16.655:6731) : opid=3D115580 =
-oauid=3Droot ouid=3Droot oses=3D1 obj=3Dunconfined_u:unconfined_r:unconfine=
-d_t:s0-s0:c0.c1023 ocomm=3Dperl
-> type=3DCONTAINER_ID msg=3Daudit(2020-10-21 10:31:16.655:6731) : contid=3D=
-8098399240850112512^3333941723245477888
-> type=3DOBJ_PID msg=3Daudit(2020-10-21 10:31:16.655:6731) : opid=3D115582 =
-oauid=3Droot ouid=3Droot oses=3D1 obj=3Dunconfined_u:unconfined_r:unconfine=
-d_t:s0-s0:c0.c1023 ocomm=3Dperl
-> type=3DSYSCALL msg=3Daudit(2020-10-21 10:31:16.655:6731) : arch=3Dx86_64 =
-syscall=3Dkill success=3Dyes exit=3D0 a0=3D0xfffe3c84 a1=3DSIGTERM a2=3D0x4=
-d524554 a3=3D0x0 items=3D0 ppid=3D115564 pid=3D115567 auid=3Droot uid=3Droo=
-t gid=3Droot euid=3Droot suid=3Droot fsuid=3Droot egid=3Droot sgid=3Droot f=
-sgid=3Droot tty=3DttyS0 ses=3D1 comm=3Dperl exe=3D/usr/bin/perl subj=3Dunco=
-nfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=3Dtestsuite-160329067=
-1-AcLtUulY
-> ----
->
-> There are three CONTAINER_ID records which need some way of associating w=
-ith OBJ_PID records.  An additional CONTAINER_ID record would be present if=
- the killing process itself had an audit container identifier.  I think the=
- most obvious way to connect them is with a pid=3D field in the CONTAINER_I=
-D record.
+On 10/22/20 8:05 PM, Hillf Danton wrote:
+> On Thu, 22 Oct 2020 08:08:09 -0600 Jens Axboe wrote:
+>> On 10/22/20 3:02 AM, Zhang,Qiang wrote:
+>>>
+>>> Hi Jens Axboe
+>>>
+>>> There are some problem in 'io_wqe_worker' thread, when the 
+>>> 'io_wqe_worker' be create and  Setting the affinity of CPUs in NUMA 
+>>> nodes, due to CPU hotplug, When the last CPU going down, the 
+>>> 'io_wqe_worker' thread will run anywhere. when the CPU in the node goes 
+>>> online again, we should restore their cpu bindings?
+>>
+>> Something like the below should help in ensuring affinities are
+>> always correct - trigger an affinity set for an online CPU event. We
+>> should not need to do it for offlining. Can you test it?
+> 
+> CPU affinity is intact because of nothing to do on offline, and scheduler
+> will move the stray workers on to the correct NUMA node if any CPU goes
+> online, so it's a bit hard to see what is going to be tested.
 
-Using a "pid=3D" field as a way to link CONTAINER_ID records to other
-records raises a few questions.  What happens if/when we need to
-represent those PIDs in the context of a namespace?  Are we ever going
-to need to link to records which don't have a "pid=3D" field?  I haven't
-done the homework to know if either of these are a concern right now,
-but I worry that this might become a problem in the future.
+Test it yourself:
 
-The idea of using something like "item=3D" is interesting.  As you
-mention, the "item=3D" field does present some overlap problems with the
-PATH record, but perhaps we can do something similar.  What if we
-added a "record=3D" (or similar, I'm not worried about names at this
-point) to each record, reset to 0/1 at the start of each event, and
-when we needed to link records somehow we could add a "related=3D1,..,N"
-field.  This would potentially be useful beyond just the audit
-container ID work.
+- Boot with > 1 NUMA node
+- Start an io_uring, you now get 2 workers, each affinitized to a node
+- Now offline all CPUs in one node
+- Online one or more of the CPU in that same node
 
---=20
-paul moore
-www.paul-moore.com
+The end result is that the worker on the node that was offlined now
+has a mask of the other node, plus the newly added CPU.
+
+So your last statement isn't correct, which is what the original
+reporter stated.
+
+-- 
+Jens Axboe
+
