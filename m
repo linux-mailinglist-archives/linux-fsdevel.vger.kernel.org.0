@@ -2,144 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE18D29701A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 15:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF5029704E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 15:21:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S464389AbgJWNMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 09:12:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:32552 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S464375AbgJWNMi (ORCPT
+        id S464572AbgJWNVj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 09:21:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S373214AbgJWNVj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 09:12:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603458757;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jTvh5muq91KS5CpSKJexFoXC1Qp8u72sWKaaLH+BBx8=;
-        b=WdwsziYTyrghRnLpZpvuoZT23rFSstYrVltFQK809xGnO76iZuZ0sg4HUzrkqCdHGt9z1s
-        U2+v+/JJpMiZYS01dVvz/23FeSY+AO2e/UGOLsxqLdSa67dgfqqAhGBfvPcNPmE25gSru7
-        pnRt4aJy/fLV+0Us3/uEtcML+ow72O8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-164-YV1Nynx1P4GwePi1t-8udg-1; Fri, 23 Oct 2020 09:12:32 -0400
-X-MC-Unique: YV1Nynx1P4GwePi1t-8udg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 44117192CC47;
-        Fri, 23 Oct 2020 13:12:29 +0000 (UTC)
-Received: from [10.36.114.18] (ovpn-114-18.ams2.redhat.com [10.36.114.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 55E915C1CF;
-        Fri, 23 Oct 2020 13:12:24 +0000 (UTC)
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
- <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
- <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
- <20201022192458.GV3576660@ZenIV.linux.org.uk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <e7a8f709-87b8-c328-6190-8371c6fa3ae8@redhat.com>
-Date:   Fri, 23 Oct 2020 15:12:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Fri, 23 Oct 2020 09:21:39 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A00C0613CE;
+        Fri, 23 Oct 2020 06:21:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/2c0g9gKUSdARpYmdua/z4fhTsqME5++uEBau8jJhvQ=; b=TxRWkWPeM0PGLBYhraIWYx3jji
+        vKvRNw8Lf9phgFQfED1jI6awnEFbU0BtkMhp/uqDCSHeoiWNiTl7dt8tg2m5uctFsWV5VUWl8YSj9
+        g+Z1IqHuZVGDENuXOe5tjRl0joghyf16i4DIhaFs26S9NdA/ehclAN49LifG1k3D2gHiFk4VtRMGb
+        Ybs1JCPcJhRTW8SMGF/uf5wIruyKjFFr6Te1zMKitSSzZWFCBKxGEp/WfzTI8mp9g+OCBpwbRbd+S
+        2QstdDkheQmWcUj8yV8+ZQ0XzM4K4b9q43p2SK2scFj1LtU1yLp3bkbCD5R/LR6hlGaHr4k3icMqd
+        MWxCurrA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVx0k-0005mF-39; Fri, 23 Oct 2020 13:21:38 +0000
+Date:   Fri, 23 Oct 2020 14:21:38 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Subject: Re: [PATCH 3/6] fs: Convert block_read_full_page to be synchronous
+Message-ID: <20201023132138.GB20115@casper.infradead.org>
+References: <20201022212228.15703-1-willy@infradead.org>
+ <20201022212228.15703-4-willy@infradead.org>
+ <20201022234011.GD3613750@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201022234011.GD3613750@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.10.20 21:24, Al Viro wrote:
-> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
+On Thu, Oct 22, 2020 at 04:40:11PM -0700, Eric Biggers wrote:
+> On Thu, Oct 22, 2020 at 10:22:25PM +0100, Matthew Wilcox (Oracle) wrote:
+> > +static int readpage_submit_bhs(struct page *page, struct blk_completion *cmpl,
+> > +		unsigned int nr, struct buffer_head **bhs)
+> > +{
+> > +	struct bio *bio = NULL;
+> > +	unsigned int i;
+> > +	int err;
+> > +
+> > +	blk_completion_init(cmpl, nr);
+> > +
+> > +	for (i = 0; i < nr; i++) {
+> > +		struct buffer_head *bh = bhs[i];
+> > +		sector_t sector = bh->b_blocknr * (bh->b_size >> 9);
+> > +		bool same_page;
+> > +
+> > +		if (buffer_uptodate(bh)) {
+> > +			end_buffer_async_read(bh, 1);
+> > +			blk_completion_sub(cmpl, BLK_STS_OK, 1);
+> > +			continue;
+> > +		}
+> > +		if (bio) {
+> > +			if (bio_end_sector(bio) == sector &&
+> > +			    __bio_try_merge_page(bio, bh->b_page, bh->b_size,
+> > +					bh_offset(bh), &same_page))
+> > +				continue;
+> > +			submit_bio(bio);
+> > +		}
+> > +		bio = bio_alloc(GFP_NOIO, 1);
+> > +		bio_set_dev(bio, bh->b_bdev);
+> > +		bio->bi_iter.bi_sector = sector;
+> > +		bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
+> > +		bio->bi_end_io = readpage_end_bio;
+> > +		bio->bi_private = cmpl;
+> > +		/* Take care of bh's that straddle the end of the device */
+> > +		guard_bio_eod(bio);
+> > +	}
 > 
->> Passing an `unsigned long` as an `unsigned int` does no such
->> narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
->> calls, no masking instructions).
->> So if rw_copy_check_uvector() is inlined into import_iovec() (looking
->> at the mainline@1028ae406999), then children calls of
->> `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
->> unmodified, ie. garbage in the upper 32b.
+> The following is needed to set the bio encryption context for the
+> '-o inlinecrypt' case on ext4:
 > 
-> FWIW,
-> 
-> void f(unsinged long v)
-> {
-> 	if (v != 1)
-> 		printf("failed\n");
-> }
-> 
-> void g(unsigned int v)
-> {
-> 	f(v);
-> }
-> 
-> void h(unsigned long v)
-> {
-> 	g(v);
-> }
-> 
-> main()
-> {
-> 	h(0x100000001);
-> }
-> 
-> must not produce any output on a host with 32bit int and 64bit long, regardless of
-> the inlining, having functions live in different compilation units, etc.
-> 
-> Depending upon the calling conventions, compiler might do truncation in caller or
-> in a callee, but it must be done _somewhere_.
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 95c338e2b99c..546a08c5003b 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2237,6 +2237,7 @@ static int readpage_submit_bhs(struct page *page, struct blk_completion *cmpl,
+>  			submit_bio(bio);
+>  		}
+>  		bio = bio_alloc(GFP_NOIO, 1);
+> +		fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+>  		bio_set_dev(bio, bh->b_bdev);
+>  		bio->bi_iter.bi_sector = sector;
+>  		bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
 
-The interesting case is having g() in a separate compilation unit and
-force-calling g() with 0x100000001 via inline ASM. So forcing garbage
-into high bits.
+Thanks!  I saw that and had every intention of copying it across.
+And then I forgot.  I'll add that.  I'm also going to do:
 
-I'll paly with it.
+-                           __bio_try_merge_page(bio, bh->b_page, bh->b_size,
+-                                       bh_offset(bh), &same_page))
++                           bio_add_page(bio, bh->b_page, bh->b_size,
++                                       bh_offset(bh)))
 
--- 
-Thanks,
+I wonder about allocating bios that can accommodate more bvecs.  Not sure
+how often filesystems have adjacent blocks which go into non-adjacent
+sub-page blocks.  It's certainly possible that a filesystem might have
+a page consisting of DDhhDDDD ('D' for Data, 'h' for hole), but how
+likely is it to have written the two data chunks next to each other?
+Maybe with O_SYNC?
 
-David / dhildenb
-
+Anyway, this patchset needs some more thought because I've just seen
+the path from mpage_readahead() to block_read_full_page() that should
+definitely not be synchronous.
