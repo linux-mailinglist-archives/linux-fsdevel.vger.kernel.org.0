@@ -2,113 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C4B297187
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 16:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1208297195
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 16:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S465246AbgJWOqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 10:46:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S375361AbgJWOqB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 10:46:01 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF523C0613CE
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Oct 2020 07:46:00 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id j7so2082844oie.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Oct 2020 07:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cmGjJdbt9z1UYbT5/ZpSCpz1o50MyYCTMK9AHq0Aakg=;
-        b=Spx4hwCaXf34JyFBNZU5P3z2Yc6125/UltDMuzpO1FUom3Imvy74oVwjnfX6eEVi0B
-         zjkOgtlhaqtz+7NG7zdnSLUt5Rs0WTD2wX6fxpxq0VZide9nyesLxotL7/nXMV4OBZYk
-         nvC79EU7g32SfEqeva4RGwvPB0L1tnqWAT7KQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cmGjJdbt9z1UYbT5/ZpSCpz1o50MyYCTMK9AHq0Aakg=;
-        b=GJ9PwlKy9TINwyPDBk+740nCLe2y0HRWojuB2/v4jIk6Kau+YNuL+Z1cBvH0tMxmWT
-         WoQW3LBL9o/H5qWGNtPY8R1ZD+XYGCncs4Rv5WDt68T5Ve/x0NDML8gy/FveqG9HfUPe
-         drqrTFjLLeSKTqEzP5HFggicBCOhYePfq2yiVnxU9mF/bF/8tNAa0LEZwJtkbWp2Cnd1
-         XYp0HES80jxbM63gHfJEG9maRnKwYJxXrniOkavfkSIpUsMIyI62zublccwvivlWYWzp
-         C1w9SD7TqYo2Rm131mcjtQlhjphEWNueyaWJiBS/S8p3eSEfrLI8WhNUKCHPuZvcLGP4
-         kb1g==
-X-Gm-Message-State: AOAM533NwjihCy9l1MYtesI5U5Qyu7cZUMGVkYenmCxxuGMOKUclQnyQ
-        e6kKDhNIAB7W2MKH4WnhHfHQiBXdVc5MOCDGG4r6JQ==
-X-Google-Smtp-Source: ABdhPJxzM7Q4pHq2VPzHFl40r08AFCr6VXVCJPwfsZqO2s0Hja92tgFb3rm5wRQVurhNjcBpW7T188EV4zJA1keqdEo=
-X-Received: by 2002:aca:cc01:: with SMTP id c1mr2005619oig.128.1603464360217;
- Fri, 23 Oct 2020 07:46:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
- <20201023122216.2373294-1-daniel.vetter@ffwll.ch> <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
- <20201023141619.GC20115@casper.infradead.org> <CAKMK7uESHHHzEC2U3xVKQEBZqS5xwQJeYFpwMz3b8OaoFEYcUQ@mail.gmail.com>
-In-Reply-To: <CAKMK7uESHHHzEC2U3xVKQEBZqS5xwQJeYFpwMz3b8OaoFEYcUQ@mail.gmail.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Fri, 23 Oct 2020 16:45:49 +0200
-Message-ID: <CAKMK7uHXJhFov96un9-itsTwkatzdKqSThGpFdJuaW_G-6w5Uw@mail.gmail.com>
-Subject: Re: [PATCH 04/65] mm: Extract might_alloc() debug check
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        id S465251AbgJWOqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 10:46:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S375361AbgJWOqp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Oct 2020 10:46:45 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E45AF21527;
+        Fri, 23 Oct 2020 14:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603464403;
+        bh=LtX8NeyP+cZ+2j1IkUU1onEVvrv3sB8QAV9FejdlLLQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n+Z3zXp7hD62WA2GyjU1CFbNrrDqUUtJgO3Hhs0qmS6IRk1kCefdPKHlJkGJDQDby
+         tb8m505yCaidWoXteLvLB2qPUN8tGHdSulV4hyYT/Cc4MZvzeSAaCs/I78FB9ZMO1G
+         o8KazfPZPnsdksdQupxOqy9g0C+sIFUJot2idFhI=
+Date:   Fri, 23 Oct 2020 16:47:18 +0200
+From:   'Greg KH' <gregkh@linuxfoundation.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'David Hildenbrand' <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michel Lespinasse <walken@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
-        Dave Chinner <david@fromorbit.com>, Qian Cai <cai@lca.pw>,
-        linux-xfs@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201023144718.GA2525489@kroah.com>
+References: <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022104805.GA1503673@kroah.com>
+ <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com>
+ <20201022135036.GA1787470@kroah.com>
+ <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+ <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
+ <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 4:37 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> On Fri, Oct 23, 2020 at 4:16 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Fri, Oct 23, 2020 at 02:21:15PM +0200, Daniel Vetter wrote:
-> > > Note that unlike fs_reclaim_acquire/release gfpflags_allow_blocking
-> > > does not consult the PF_MEMALLOC flags. But there is no flag
-> > > equivalent for GFP_NOWAIT, hence this check can't go wrong due to
-> > > memalloc_no*_save/restore contexts.
-> >
-> > I have a patch series that adds memalloc_nowait_save/restore.
->
-> tbh this was a typoed git send-email, but thanks for the heads-up,
-> I'll adjust the patch accordingly.
+On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
+> From: David Hildenbrand
+> > Sent: 23 October 2020 15:33
+> ...
+> > I just checked against upstream code generated by clang 10 and it
+> > properly discards the upper 32bit via a mov w23 w2.
+> > 
+> > So at least clang 10 indeed properly assumes we could have garbage and
+> > masks it off.
+> > 
+> > Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
+> > behaves differently.
+> 
+> We'll need the disassembly from a failing kernel image.
+> It isn't that big to hand annotate.
 
-On 2nd thought I think your patch should update
-gfpflags_allow_blocking to take into account the new ->memalloc_nowait
-flag you're adding. I'll comment over there in that thread.
--Daniel
+I've worked around the merge at the moment in the android tree, but it
+is still quite reproducable, and will try to get a .o file to
+disassemble on Monday or so...
 
->
-> > https://lore.kernel.org/linux-mm/20200625113122.7540-7-willy@infradead.org/
->
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+thanks,
 
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+greg k-h
