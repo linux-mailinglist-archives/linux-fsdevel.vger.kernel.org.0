@@ -2,23 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8E329711F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 16:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8EA297128
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 16:16:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S374349AbgJWOO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 10:14:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58066 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S374293AbgJWOO1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 10:14:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D31D2B2A6;
-        Fri, 23 Oct 2020 14:14:25 +0000 (UTC)
-Subject: Re: [PATCH 04/65] mm: Extract might_alloc() debug check
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        id S1750417AbgJWOQs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 10:16:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750414AbgJWOQr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Oct 2020 10:16:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAD6EC0613CE;
+        Fri, 23 Oct 2020 07:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=GVPYMjFqChMjoGfaKLO2uGqLmrcgLH9W7OOdDABUMfg=; b=WDuQx2OmH186JLLCT/V49+cHuG
+        mvx3za9SySicasNgXKx5tLAGyLzzjMdStqRY5+gjhxGKEuIITG+UZILbK9cBxat+a10uw+lowMHgU
+        A4XPvkubtIHPHZyepjYJtQzcRv+/NgS84fDmbjT3ffVSakzeJL/2clY9r2Aw1R+GJNBloYvsS8VlH
+        rS3VhA77U5Ki78fsi0dokXGR1DF0mXSHs1jeElg3ld72bwPIscdEHnUWgCc6qd//dojfah5sbnF4f
+        FA32w4nZVYBUke2t5rabYYM/cRMBDRJV6qjDaaaWY1XXsyx96exYVzQxYNvAH/xg57vNzc1lLniXd
+        zPwjKFvQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVxrf-0000gL-Pn; Fri, 23 Oct 2020 14:16:19 +0000
+Date:   Fri, 23 Oct 2020 15:16:19 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         "Paul E . McKenney" <paulmck@kernel.org>,
         Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
@@ -27,6 +40,7 @@ Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Michel Lespinasse <walken@google.com>,
@@ -36,64 +50,25 @@ Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
         Qian Cai <cai@lca.pw>, linux-xfs@vger.kernel.org,
         Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 04/65] mm: Extract might_alloc() debug check
+Message-ID: <20201023141619.GC20115@casper.infradead.org>
 References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
  <20201023122216.2373294-1-daniel.vetter@ffwll.ch>
  <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <d4d7ecb9-1147-2965-a551-7647e755387d@suse.cz>
-Date:   Fri, 23 Oct 2020 16:14:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.3
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20201023122216.2373294-4-daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/23/20 2:21 PM, Daniel Vetter wrote:
-> Extracted from slab.h, which seems to have the most complete version
-> including the correct might_sleep() check. Roll it out to slob.c.
-> 
-> Motivated by a discussion with Paul about possibly changing call_rcu
-> behaviour to allocate memory, but only roughly every 500th call.
-> 
-> There are a lot fewer places in the kernel that care about whether
-> allocating memory is allowed or not (due to deadlocks with reclaim
-> code) than places that care whether sleeping is allowed. But debugging
-> these also tends to be a lot harder, so nice descriptive checks could
-> come in handy. I might have some use eventually for annotations in
-> drivers/gpu.
-> 
+On Fri, Oct 23, 2020 at 02:21:15PM +0200, Daniel Vetter wrote:
 > Note that unlike fs_reclaim_acquire/release gfpflags_allow_blocking
 > does not consult the PF_MEMALLOC flags. But there is no flag
 > equivalent for GFP_NOWAIT, hence this check can't go wrong due to
 > memalloc_no*_save/restore contexts.
-> 
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Michel Lespinasse <walken@google.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: linux-xfs@vger.kernel.org
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
-Looks useful.
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+I have a patch series that adds memalloc_nowait_save/restore.
+
+https://lore.kernel.org/linux-mm/20200625113122.7540-7-willy@infradead.org/
