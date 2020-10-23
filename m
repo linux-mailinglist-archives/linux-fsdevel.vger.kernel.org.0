@@ -2,107 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 200872976E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 20:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC9D297702
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Oct 2020 20:35:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754774AbgJWSZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Oct 2020 14:25:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754600AbgJWSZJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Oct 2020 14:25:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F1CC0613CE;
-        Fri, 23 Oct 2020 11:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=u0/bR0JXIWljNk0VNX4SxhSAaiuv2GldCnPLWjMch9I=; b=JWdyPz2DsQEVqUAElZovbld7ZJ
-        fSjSKY+U+rEThybQrnXAlfgcv4jcFErG4EQzOfMTD9gYEAsc0/+SXHI/MgIJd8/2mpihU9b+xVNd3
-        xtpDAckmH7svHLr+Erx7v04473GzUAOPo06oDPCkc5dK+MecSyQBM6L9WZ4AjTfpCE57lUofxhdlx
-        7UCFX2ZkK1/s1tYSH2hxbmLuyFZyeuSBSi1kNAIquLBKCxMALkf4JQ7HPIpU+jwiZQ2TZDILi319y
-        2AsEhNu61KGKRdUtjI4SkqvlTQ+LDTUiUsd4sRbKgYHD9ufzDBwC+YTw50C6DAt9YK8nkw8HEPaGw
-        S0soAF+Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kW1kO-00005y-2u; Fri, 23 Oct 2020 18:25:04 +0000
-Date:   Fri, 23 Oct 2020 19:25:03 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com
-Subject: Re: [PATCH v10 02/10] fs/ntfs3: Add initialization of super block
-Message-ID: <20201023182503.GE20115@casper.infradead.org>
-References: <20201023154431.1853715-1-almaz.alexandrovich@paragon-software.com>
- <20201023154431.1853715-3-almaz.alexandrovich@paragon-software.com>
-MIME-Version: 1.0
+        id S1754983AbgJWSes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Oct 2020 14:34:48 -0400
+Received: from gate.crashing.org ([63.228.1.57]:46520 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754809AbgJWSep (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 23 Oct 2020 14:34:45 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 09NIREDK014153;
+        Fri, 23 Oct 2020 13:27:15 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id 09NIRD8Q014147;
+        Fri, 23 Oct 2020 13:27:13 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Fri, 23 Oct 2020 13:27:13 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Hildenbrand <david@redhat.com>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "'Greg KH'" <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201023182713.GG2672@gate.crashing.org>
+References: <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com> <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com> <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com> <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com> <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com> <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com> <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com> <20201023175857.GA3576660@ZenIV.linux.org.uk>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201023154431.1853715-3-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20201023175857.GA3576660@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.4.2.3i
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 06:44:23PM +0300, Konstantin Komarov wrote:
-> +
-> +/*ntfs_readpage*/
-> +/*ntfs_readpages*/
-> +/*ntfs_writepage*/
-> +/*ntfs_writepages*/
-> +/*ntfs_block_truncate_page*/
+On Fri, Oct 23, 2020 at 06:58:57PM +0100, Al Viro wrote:
+> On Fri, Oct 23, 2020 at 03:09:30PM +0200, David Hildenbrand wrote:
+> 
+> > Now, I am not a compiler expert, but as I already cited, at least on
+> > x86-64 clang expects that the high bits were cleared by the caller - in
+> > contrast to gcc. I suspect it's the same on arm64, but again, I am no
+> > compiler expert.
+> > 
+> > If what I said and cites for x86-64 is correct, if the function expects
+> > an "unsigned int", it will happily use 64bit operations without further
+> > checks where valid when assuming high bits are zero. That's why even
+> > converting everything to "unsigned int" as proposed by me won't work on
+> > clang - it assumes high bits are zero (as indicated by Nick).
+> > 
+> > As I am neither a compiler experts (did I mention that already? ;) ) nor
+> > an arm64 experts, I can't tell if this is a compiler BUG or not.
+> 
+> On arm64 when callee expects a 32bit argument, the caller is *not* responsible
+> for clearing the upper half of 64bit register used to pass the value - it only
+> needs to store the actual value into the lower half.  The callee must consider
+> the contents of the upper half of that register as undefined.  See AAPCS64 (e.g.
+> https://github.com/ARM-software/abi-aa/blob/master/aapcs64/aapcs64.rst#parameter-passing-rules
+> ); AFAICS, the relevant bit is
+> 	"Unlike in the 32-bit AAPCS, named integral values must be narrowed by
+> the callee rather than the caller."
 
-What are these for?
+Or the formal rule:
 
-> +int ntfs_readpage(struct file *file, struct page *page)
-> +{
-> +	int err;
-> +	struct address_space *mapping = page->mapping;
-> +	struct inode *inode = mapping->host;
-> +	struct ntfs_inode *ni = ntfs_i(inode);
-> +	u64 vbo = (u64)page->index << PAGE_SHIFT;
-> +	u64 valid;
-> +	struct ATTRIB *attr;
-> +	const char *data;
-> +	u32 data_size;
-> +
-[...]
-> +
-> +	if (is_compressed(ni)) {
-> +		if (PageUptodate(page)) {
-> +			unlock_page(page);
-> +			return 0;
-> +		}
+C.9 	If the argument is an Integral or Pointer Type, the size of the
+	argument is less than or equal to 8 bytes and the NGRN is less
+	than 8, the argument is copied to the least significant bits in
+	x[NGRN]. The NGRN is incremented by one. The argument has now
+	been allocated.
 
-You can skip this -- the readpage op won't be called for pages which
-are Uptodate.
 
-> +	/* normal + sparse files */
-> +	err = mpage_readpage(page, ntfs_get_block);
-> +	if (err)
-> +		goto out;
-
-It would be nice to use iomap instead of mpage, but that's a big ask.
-
-> +	valid = ni->i_valid;
-> +	if (vbo < valid && valid < vbo + PAGE_SIZE) {
-> +		if (PageLocked(page))
-> +			wait_on_page_bit(page, PG_locked);
-> +		if (PageError(page)) {
-> +			ntfs_inode_warn(inode, "file garbage at 0x%llx", valid);
-> +			goto out;
-> +		}
-> +		zero_user_segment(page, valid & (PAGE_SIZE - 1), PAGE_SIZE);
-
-Nono, you can't zero data after the page has been unlocked.  You can
-handle this case in ntfs_get_block().  If the block is entirely beyond
-i_size, returning a hole will cause mpage_readpage() to zero it.  If it
-straddles i_size, you can either ensure that the on-media block contains
-zeroes after the EOF, or if you can't depend on that, you can read it
-in synchronously in your get_block() and then zero the tail and set the
-buffer Uptodate.  Not the most appetising solution, but what you have here
-is racy with the user writing to it after reading.
-
+Segher
