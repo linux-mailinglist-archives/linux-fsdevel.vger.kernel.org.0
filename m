@@ -2,108 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A19297DD0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Oct 2020 19:37:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFEB297E07
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Oct 2020 20:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1762613AbgJXRgq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Oct 2020 13:36:46 -0400
-Received: from gate.crashing.org ([63.228.1.57]:45310 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1762594AbgJXRgo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Oct 2020 13:36:44 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 09OHTAUE029400;
-        Sat, 24 Oct 2020 12:29:10 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id 09OHT4g2029397;
-        Sat, 24 Oct 2020 12:29:04 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Sat, 24 Oct 2020 12:29:03 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Hildenbrand <david@redhat.com>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "'Greg KH'" <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201024172903.GK2672@gate.crashing.org>
-References: <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com> <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com> <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com> <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com> <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com> <20201023175857.GA3576660@ZenIV.linux.org.uk> <20201023182713.GG2672@gate.crashing.org> <e9a3136ead214186877804aabde74b38@AcuMS.aculab.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1763960AbgJXSrB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Oct 2020 14:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36354 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1763956AbgJXSrB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 24 Oct 2020 14:47:01 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B59ECC0613CE;
+        Sat, 24 Oct 2020 11:47:00 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kWOZ6-007i1l-Um; Sat, 24 Oct 2020 18:46:57 +0000
+Date:   Sat, 24 Oct 2020 19:46:56 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] vfs misc pile
+Message-ID: <20201024184656.GB3576660@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e9a3136ead214186877804aabde74b38@AcuMS.aculab.com>
-User-Agent: Mutt/1.4.2.3i
+Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 23, 2020 at 09:28:59PM +0000, David Laight wrote:
-> From: Segher Boessenkool
-> > Sent: 23 October 2020 19:27
-> > On Fri, Oct 23, 2020 at 06:58:57PM +0100, Al Viro wrote:
-> > > On Fri, Oct 23, 2020 at 03:09:30PM +0200, David Hildenbrand wrote:
-> > > On arm64 when callee expects a 32bit argument, the caller is *not* responsible
-> > > for clearing the upper half of 64bit register used to pass the value - it only
-> > > needs to store the actual value into the lower half.  The callee must consider
-> > > the contents of the upper half of that register as undefined.  See AAPCS64 (e.g.
-> > > https://github.com/ARM-software/abi-aa/blob/master/aapcs64/aapcs64.rst#parameter-passing-rules
-> > > ); AFAICS, the relevant bit is
-> > > 	"Unlike in the 32-bit AAPCS, named integral values must be narrowed by
-> > > the callee rather than the caller."
-> > 
-> > Or the formal rule:
-> > 
-> > C.9 	If the argument is an Integral or Pointer Type, the size of the
-> > 	argument is less than or equal to 8 bytes and the NGRN is less
-> > 	than 8, the argument is copied to the least significant bits in
-> > 	x[NGRN]. The NGRN is incremented by one. The argument has now
-> > 	been allocated.
-> 
-> So, in essence, if the value is in a 64bit register the calling
-> code is independent of the actual type of the formal parameter.
-> Clearly a value might need explicit widening.
+	Assorted stuff all over the place (the largest group here is
+Christoph's stat cleanups).  This is probably the last pull request
+for this window - there's also a group of sparc patches in -next,
+and davem seemed to be OK with that at the time, but I'd rather have
+it go through his tree when he's back - nothing urgent in that series.
 
-No, this says that if you pass a 32-bit integer in a 64-bit register,
-then the top 32 bits of that register hold an undefined value.
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
-> I've found a copy of the 64 bit arm instruction set.
-> Unfortunately it is alpha sorted and repetitive so shows none
-> of the symmetry and makes things difficult to find.
+  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 
-All of this is ABI, not ISA.  Look at the AAPCS64 pointed to above.
+are available in the git repository at:
 
-> But, contrary to what someone suggested most register writes
-> (eg from arithmetic) seem to zero/extend the high bits.
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
 
-Everything that writes a "w" does, yes.  But that has nothing to do with
-the parameter passing rules, that is ABI.  It just means that very often
-a 32-bit integer will be passed zero-extended in a 64-bit register, but
-that is just luck (or not, it makes finding bugs harder ;-) )
+for you to fetch changes up to f2d077ff1b5c17008cff5dc27e7356a694e55462:
 
+  fs: remove KSTAT_QUERY_FLAGS (2020-09-26 22:55:05 -0400)
 
-Segher
+----------------------------------------------------------------
+Al Viro (1):
+      reduce boilerplate in fsid handling
+
+Alex Dewar (1):
+      fs: omfs: use kmemdup() rather than kmalloc+memcpy
+
+Christoph Hellwig (5):
+      fs: remove vfs_statx_fd
+      fs: implement vfs_stat and vfs_lstat in terms of vfs_fstatat
+      fs: move vfs_fstatat out of line
+      fs: remove vfs_stat_set_lookup_flags
+      fs: remove KSTAT_QUERY_FLAGS
+
+Krzysztof Wilczyński (1):
+      fs: Remove duplicated flag O_NDELAY occurring twice in VALID_OPEN_FLAGS
+
+Mattias Nissler (1):
+      Add a "nosymfollow" mount option.
+
+Ross Zwisler (1):
+      selftests: mount: add nosymfollow tests
+
+ fs/9p/vfs_super.c                                  |   3 +-
+ fs/adfs/super.c                                    |   3 +-
+ fs/affs/super.c                                    |   3 +-
+ fs/befs/linuxvfs.c                                 |   3 +-
+ fs/bfs/inode.c                                     |   3 +-
+ fs/ceph/super.c                                    |   3 +-
+ fs/cramfs/inode.c                                  |   3 +-
+ fs/efs/super.c                                     |   3 +-
+ fs/erofs/super.c                                   |   3 +-
+ fs/exfat/super.c                                   |   3 +-
+ fs/ext2/super.c                                    |   3 +-
+ fs/ext4/super.c                                    |   3 +-
+ fs/f2fs/super.c                                    |   3 +-
+ fs/fat/inode.c                                     |   3 +-
+ fs/hfs/super.c                                     |   3 +-
+ fs/hfsplus/super.c                                 |   3 +-
+ fs/hpfs/super.c                                    |   3 +-
+ fs/isofs/inode.c                                   |   3 +-
+ fs/minix/inode.c                                   |   3 +-
+ fs/namei.c                                         |   3 +-
+ fs/namespace.c                                     |   2 +
+ fs/nilfs2/super.c                                  |   3 +-
+ fs/ntfs/super.c                                    |   3 +-
+ fs/omfs/inode.c                                    |   6 +-
+ fs/proc_namespace.c                                |   1 +
+ fs/qnx4/inode.c                                    |   3 +-
+ fs/qnx6/inode.c                                    |   3 +-
+ fs/romfs/super.c                                   |   3 +-
+ fs/squashfs/super.c                                |   3 +-
+ fs/stat.c                                          |  70 +++----
+ fs/statfs.c                                        |   2 +
+ fs/sysv/inode.c                                    |   3 +-
+ fs/udf/super.c                                     |   3 +-
+ fs/ufs/super.c                                     |   3 +-
+ fs/xfs/xfs_super.c                                 |   3 +-
+ fs/zonefs/super.c                                  |   3 +-
+ include/linux/fcntl.h                              |   2 +-
+ include/linux/fs.h                                 |  22 +--
+ include/linux/mount.h                              |   3 +-
+ include/linux/stat.h                               |   2 -
+ include/linux/statfs.h                             |   6 +
+ include/uapi/linux/mount.h                         |   1 +
+ tools/testing/selftests/mount/.gitignore           |   1 +
+ tools/testing/selftests/mount/Makefile             |   4 +-
+ tools/testing/selftests/mount/nosymfollow-test.c   | 218 +++++++++++++++++++++
+ tools/testing/selftests/mount/run_nosymfollow.sh   |   4 +
+ .../{run_tests.sh => run_unprivileged_remount.sh}  |   0
+ 47 files changed, 308 insertions(+), 129 deletions(-)
+ create mode 100644 tools/testing/selftests/mount/nosymfollow-test.c
+ create mode 100755 tools/testing/selftests/mount/run_nosymfollow.sh
+ rename tools/testing/selftests/mount/{run_tests.sh => run_unprivileged_remount.sh} (100%)
