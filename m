@@ -2,36 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3952A29A0B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 01:46:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C81529A04B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 01:31:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408645AbgJZXtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 19:49:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46944 "EHLO mail.kernel.org"
+        id S2409376AbgJZXvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 19:51:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408626AbgJZXtO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:49:14 -0400
+        id S2409370AbgJZXvS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Oct 2020 19:51:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4E7120773;
-        Mon, 26 Oct 2020 23:49:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A2822075B;
+        Mon, 26 Oct 2020 23:51:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756153;
-        bh=jL/nzThwVE3kIHHUDsWorn8dTrwZ96xtik9XrgKV73s=;
+        s=default; t=1603756277;
+        bh=s6BpDc92vwIIqyKivdzAUxKkYDhM+Pq/e4ELnmq5AmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mK3XZWbMMK1ezoYv3TgesLZcEXwoRbsDq6ZE2vsEcPOKqpB4eI6pToE8deKwxabMK
-         mJAKzoS4SVPuUXnIh9Fer6T4XQHMIglk81D8PYmI6blY/t+cS5MgKXzFUzqRANiJ0p
-         Gouvb6cQHI++NLInbSSjnSCEHDw3ApzrGOk+DLeM=
+        b=ILWenKOdC+HQyKbTWoiYka+lmZImFhdZY4wdLbWAbJff+AUC3glUJpxwcNHVTiYnX
+         kZSeOuHnp7ySXT6CMv4SnFCoSifPjpqLJlB9r8rNsDtHa8h834obF0KgJWLNC+ysJ3
+         8irpSU4bKjuxCf+y7d+ktrWlcy8a+81IS+8SVBd8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Cc:     Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michel Lespinasse <walken@google.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 006/147] mm: fix exec activate_mm vs TLB shootdown and lazy tlb switching race
-Date:   Mon, 26 Oct 2020 19:46:44 -0400
-Message-Id: <20201026234905.1022767-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 108/147] binfmt_elf: take the mmap lock around find_extend_vma()
+Date:   Mon, 26 Oct 2020 19:48:26 -0400
+Message-Id: <20201026234905.1022767-108-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
 References: <20201026234905.1022767-1-sashal@kernel.org>
@@ -43,114 +49,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit d53c3dfb23c45f7d4f910c3a3ca84bf0a99c6143 ]
+[ Upstream commit b2767d97f5ff758250cf28684aaa48bbfd34145f ]
 
-Reading and modifying current->mm and current->active_mm and switching
-mm should be done with irqs off, to prevent races seeing an intermediate
-state.
+create_elf_tables() runs after setup_new_exec(), so other tasks can
+already access our new mm and do things like process_madvise() on it.  (At
+the time I'm writing this commit, process_madvise() is not in mainline
+yet, but has been in akpm's tree for some time.)
 
-This is similar to commit 38cf307c1f20 ("mm: fix kthread_use_mm() vs TLB
-invalidate"). At exec-time when the new mm is activated, the old one
-should usually be single-threaded and no longer used, unless something
-else is holding an mm_users reference (which may be possible).
+While I believe that there are currently no APIs that would actually allow
+another process to mess up our VMA tree (process_madvise() is limited to
+MADV_COLD and MADV_PAGEOUT, and uring and userfaultfd cannot reach an mm
+under which no syscalls have been executed yet), this seems like an
+accident waiting to happen.
 
-Absent other mm_users, there is also a race with preemption and lazy tlb
-switching. Consider the kernel_execve case where the current thread is
-using a lazy tlb active mm:
+Let's make sure that we always take the mmap lock around GUP paths as long
+as another process might be able to see the mm.
 
-  call_usermodehelper()
-    kernel_execve()
-      old_mm = current->mm;
-      active_mm = current->active_mm;
-      *** preempt *** -------------------->  schedule()
-                                               prev->active_mm = NULL;
-                                               mmdrop(prev active_mm);
-                                             ...
-                      <--------------------  schedule()
-      current->mm = mm;
-      current->active_mm = mm;
-      if (!old_mm)
-          mmdrop(active_mm);
+(Yes, this diff looks suspicious because we drop the lock before doing
+anything with `vma`, but that's because we actually don't do anything with
+it apart from the NULL check.)
 
-If we switch back to the kernel thread from a different mm, there is a
-double free of the old active_mm, and a missing free of the new one.
-
-Closing this race only requires interrupts to be disabled while ->mm
-and ->active_mm are being switched, but the TLB problem requires also
-holding interrupts off over activate_mm. Unfortunately not all archs
-can do that yet, e.g., arm defers the switch if irqs are disabled and
-expects finish_arch_post_lock_switch() to be called to complete the
-flush; um takes a blocking lock in activate_mm().
-
-So as a first step, disable interrupts across the mm/active_mm updates
-to close the lazy tlb preempt race, and provide an arch option to
-extend that to activate_mm which allows architectures doing IPI based
-TLB shootdowns to close the second race.
-
-This is a bit ugly, but in the interest of fixing the bug and backporting
-before all architectures are converted this is a compromise.
-
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20200914045219.3736466-2-npiggin@gmail.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michel Lespinasse <walken@google.com>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Link: https://lkml.kernel.org/r/CAG48ez1-PBCdv3y8pn-Ty-b+FmBSLwDuVKFSt8h7wARLy0dF-Q@mail.gmail.com
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/Kconfig |  7 +++++++
- fs/exec.c    | 17 +++++++++++++++--
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ fs/binfmt_elf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index af14a567b493f..94821e3f94d16 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -414,6 +414,13 @@ config MMU_GATHER_NO_GATHER
- 	bool
- 	depends on MMU_GATHER_TABLE_FREE
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 13d053982dd73..02ad1a1e3781f 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -309,7 +309,10 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+ 	 * Grow the stack manually; some architectures have a limit on how
+ 	 * far ahead a user-space access may be in order to grow the stack.
+ 	 */
++	if (mmap_read_lock_killable(mm))
++		return -EINTR;
+ 	vma = find_extend_vma(mm, bprm->p);
++	mmap_read_unlock(mm);
+ 	if (!vma)
+ 		return -EFAULT;
  
-+config ARCH_WANT_IRQS_OFF_ACTIVATE_MM
-+	bool
-+	help
-+	  Temporary select until all architectures can be converted to have
-+	  irqs disabled over activate_mm. Architectures that do IPI based TLB
-+	  shootdowns should enable this.
-+
- config ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	bool
- 
-diff --git a/fs/exec.c b/fs/exec.c
-index a91003e28eaae..d4fb18baf1fb1 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1130,11 +1130,24 @@ static int exec_mmap(struct mm_struct *mm)
- 	}
- 
- 	task_lock(tsk);
--	active_mm = tsk->active_mm;
- 	membarrier_exec_mmap(mm);
--	tsk->mm = mm;
-+
-+	local_irq_disable();
-+	active_mm = tsk->active_mm;
- 	tsk->active_mm = mm;
-+	tsk->mm = mm;
-+	/*
-+	 * This prevents preemption while active_mm is being loaded and
-+	 * it and mm are being updated, which could cause problems for
-+	 * lazy tlb mm refcounting when these are updated by context
-+	 * switches. Not all architectures can handle irqs off over
-+	 * activate_mm yet.
-+	 */
-+	if (!IS_ENABLED(CONFIG_ARCH_WANT_IRQS_OFF_ACTIVATE_MM))
-+		local_irq_enable();
- 	activate_mm(active_mm, mm);
-+	if (IS_ENABLED(CONFIG_ARCH_WANT_IRQS_OFF_ACTIVATE_MM))
-+		local_irq_enable();
- 	tsk->mm->vmacache_seqnum = 0;
- 	vmacache_flush(tsk);
- 	task_unlock(tsk);
 -- 
 2.25.1
 
