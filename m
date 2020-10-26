@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9E42298638
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 05:41:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12588298637
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 05:41:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1422281AbgJZElp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 00:41:45 -0400
-Received: from casper.infradead.org ([90.155.50.34]:60106 "EHLO
+        id S1422278AbgJZEln (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 00:41:43 -0400
+Received: from casper.infradead.org ([90.155.50.34]:60094 "EHLO
         casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1422279AbgJZElp (ORCPT
+        with ESMTP id S1421510AbgJZEln (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 00:41:45 -0400
+        Mon, 26 Oct 2020 00:41:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=S4uj6+LHbvxU3x1hyEQHv26ToiNAm0/3JPZsqUbH6YY=; b=p47NmDV4nDqyPquS0ChnyJEk42
-        OnWEUFsDTQ6ib7FbZtMxGRjnaQuuU02tA7CzkpNg6TxoIooBAGNqbPsZQb/z8UQWKhA2xJidAyZKp
-        rif+IzLiDaht+LIyINpZaNbDUESpC1R5tvJnoU9frbWn7RiXFxk0qAZjlrm6cEJNasAeqWg0YIZts
-        Sc7t0PsVthpztR+SAl3JAtpK5r1sZUA2sCK5O8Rt0rcfieHWWP0l5aLntEp5syE7w7JhuB/JwlGP/
-        1/UmaG/cBKE5fxuNO0rvXUuRmTUDU0vwblPmjHEd+NH0iAmOy5bHVN5GkmtuPGs02aOvoPYEbEQiB
-        c/ljcpuQ==;
+        bh=77sJtHQNYX1BOg5wgRb+5x5Ey0reVR4xYsh2AEFFWs0=; b=qZPapEVvLMGtwwMKEZdKqalBea
+        fGV4x8P4djRsrOx3mNJZvcBgYPg7mNnZrIWZU99SlP5VJdUyYYS19diHZGGf3BeRSSI10jEDY1RpL
+        Qe4GJy/AoXIsG8Xn/MVS6QggESPXQdgFmmhcxMEix+AQ1QMIktgxHpqURuUh7HIizZNRs5FH54Z52
+        L9707duJAdRnye1BdWuqfd448PP0dJm3Ld/JeLSVXprY+EJFh82ug/HxbyUpI9dk1BF62TkiK0wDO
+        HQHBk9LWD8JxWGrWYo8ZxlzWOjxaX6kqYTWYu+tco4HwQLlKG3Gzk5jA1RsKzgCnq1AH4oyQytXab
+        yFzhYOyg==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kWtta-0006Zj-Fu; Mon, 26 Oct 2020 04:14:10 +0000
+        id 1kWtta-0006Zn-NA; Mon, 26 Oct 2020 04:14:10 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Dave Chinner <dchinner@redhat.com>,
         linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
         William Kucharski <william.kucharski@oracle.com>
-Subject: [PATCH v3 01/12] mm: Make pagecache tagged lookups return only head pages
-Date:   Mon, 26 Oct 2020 04:13:57 +0000
-Message-Id: <20201026041408.25230-2-willy@infradead.org>
+Subject: [PATCH v3 02/12] mm/shmem: Use pagevec_lookup in shmem_unlock_mapping
+Date:   Mon, 26 Oct 2020 04:13:58 +0000
+Message-Id: <20201026041408.25230-3-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201026041408.25230-1-willy@infradead.org>
 References: <20201026041408.25230-1-willy@infradead.org>
@@ -47,54 +47,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pagecache tags are used for dirty page writeback.  Since dirtiness is
-tracked on a per-THP basis, we only want to return the head page rather
-than each subpage of a tagged page.  All the filesystems which use huge
-pages today are in-memory, so there are no tagged huge pages today.
+The comment shows that the reason for using find_get_entries() is now
+stale; find_get_pages() will not return 0 if it hits a consecutive run
+of swap entries, and I don't believe it has since 2011.  pagevec_lookup()
+is a simpler function to use than find_get_pages(), so use it instead.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 ---
- mm/filemap.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ mm/shmem.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d5e7c2029d16..edde5dc0d28f 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2066,7 +2066,7 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- EXPORT_SYMBOL(find_get_pages_contig);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 537c137698f8..a33972126b60 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -842,7 +842,6 @@ unsigned long shmem_swap_usage(struct vm_area_struct *vma)
+ void shmem_unlock_mapping(struct address_space *mapping)
+ {
+ 	struct pagevec pvec;
+-	pgoff_t indices[PAGEVEC_SIZE];
+ 	pgoff_t index = 0;
  
- /**
-- * find_get_pages_range_tag - find and return pages in given range matching @tag
-+ * find_get_pages_range_tag - Find and return head pages matching @tag.
-  * @mapping:	the address_space to search
-  * @index:	the starting page index
-  * @end:	The final page index (inclusive)
-@@ -2074,8 +2074,8 @@ EXPORT_SYMBOL(find_get_pages_contig);
-  * @nr_pages:	the maximum number of pages
-  * @pages:	where the resulting pages are placed
-  *
-- * Like find_get_pages, except we only return pages which are tagged with
-- * @tag.   We update @index to index the next page for the traversal.
-+ * Like find_get_pages(), except we only return head pages which are tagged
-+ * with @tag.   We update @index to index the next page for the traversal.
-  *
-  * Return: the number of pages which were found.
-  */
-@@ -2109,9 +2109,9 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
- 		if (unlikely(page != xas_reload(&xas)))
- 			goto put_page;
- 
--		pages[ret] = find_subpage(page, xas.xa_index);
-+		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*index = xas.xa_index + 1;
-+			*index = page->index + thp_nr_pages(page);
- 			goto out;
- 		}
- 		continue;
+ 	pagevec_init(&pvec);
+@@ -850,16 +849,8 @@ void shmem_unlock_mapping(struct address_space *mapping)
+ 	 * Minor point, but we might as well stop if someone else SHM_LOCKs it.
+ 	 */
+ 	while (!mapping_unevictable(mapping)) {
+-		/*
+-		 * Avoid pagevec_lookup(): find_get_pages() returns 0 as if it
+-		 * has finished, if it hits a row of PAGEVEC_SIZE swap entries.
+-		 */
+-		pvec.nr = find_get_entries(mapping, index,
+-					   PAGEVEC_SIZE, pvec.pages, indices);
+-		if (!pvec.nr)
++		if (!pagevec_lookup(&pvec, mapping, &index))
+ 			break;
+-		index = indices[pvec.nr - 1] + 1;
+-		pagevec_remove_exceptionals(&pvec);
+ 		check_move_unevictable_pages(&pvec);
+ 		pagevec_release(&pvec);
+ 		cond_resched();
 -- 
 2.28.0
 
