@@ -2,199 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78249298D30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 13:52:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04152298D95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 14:14:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1773110AbgJZMwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 08:52:03 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35086 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1775629AbgJZMwD (ORCPT
+        id S1737268AbgJZNON (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 09:14:13 -0400
+Received: from casper.infradead.org ([90.155.50.34]:39424 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406990AbgJZNOD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 08:52:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n15so12395509wrq.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Oct 2020 05:52:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gcgBSno187aQNdhvd4N5jly+A7zB4BHcwgXiG2B//N8=;
-        b=mlOM4XI1khkSgoo5fH4K5JNpXT7Awm84134FjHcN081ek0aPls57KS+kLhzx5mzoNA
-         jk5ZZDTsJkFJ4DUS9zSIUxZ+BszBTOnGFBu2KystEnePEFTkdq1kGQa68LyTowdZ5Rxg
-         mxikb7wM3mKXfzDd/OUcGPAqZrP0Cm7Rv6NqeR+HMZhmB6/qQc1HDRwRu48kyK241O95
-         Mz6srSYgICO7m4lizZwqLRet3eJfCUFM/4NYsI0926uB5UWNy5fCXdhXUVk+oNQJz3VH
-         ue7yFrl1oSHq3I0kcnIRTUWgzAOQFp65k12+zKjaGkhTCOUtgoYiQD44PDlAN3LXwUL4
-         B+oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gcgBSno187aQNdhvd4N5jly+A7zB4BHcwgXiG2B//N8=;
-        b=pOj8b41nGjbaCnHROAefmo5bTTbZpu6jMGCy8bu4zaT3Cx6oHDfY7YO0GQur07fVcn
-         L7cwBljv1gTAn0fJbjt+1ZS40B4SelsicNRqdubvzNIKKOkzrZUnp8Lc4L2kjnkLdE5B
-         AM0cpCw4QrKJubh/o6Nh80psonjQUgH4172s5L8aWR/tqoEcW63gozZrJOJGRlUOxuka
-         jiuxt9OO8EzW0mH14EMzGjEok5+FIKbUjJtbzT1yEw+raJ8Y14rINTJdKcnseZlYgN45
-         xANel1VSL7IQz9qvQ8JSk2ptKPHAASCOyMC0KbXtdyBGhZh6EyaJciYKUD68MhDDiF1W
-         Bfmg==
-X-Gm-Message-State: AOAM530BLVIrx/areLMZRtdp0XwT1LIxss37Y96KmilUaqxecdITk76+
-        lSmLb96D/tgnxRMLmRnTETjhbQ==
-X-Google-Smtp-Source: ABdhPJyFOMU6T+owZA0xINIT11Tj46q+KH+V135ZjsSHI/oDFrAOsbqBfE4aDhI18cgmWjR1husmGw==
-X-Received: by 2002:adf:e849:: with SMTP id d9mr19065260wrn.25.1603716720303;
-        Mon, 26 Oct 2020 05:52:00 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
-        by smtp.gmail.com with ESMTPSA id r1sm24423262wro.18.2020.10.26.05.51.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2020 05:51:59 -0700 (PDT)
-From:   Alessio Balsini <balsini@android.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Akilesh Kailash <akailash@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Antonio SJ Musumeci <trapexit@spawn.link>,
-        David Anderson <dvander@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
-        Martijn Coenen <maco@android.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Lawrence <paullawrence@google.com>,
-        Stefano Duo <duostefano93@gmail.com>,
-        Zimuzo Ezeozue <zezeozue@google.com>,
-        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V10 5/5] fuse: Use daemon creds in passthrough mode
-Date:   Mon, 26 Oct 2020 12:50:16 +0000
-Message-Id: <20201026125016.1905945-6-balsini@android.com>
-X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
-In-Reply-To: <20201026125016.1905945-1-balsini@android.com>
-References: <20201026125016.1905945-1-balsini@android.com>
+        Mon, 26 Oct 2020 09:14:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=lta2H3+0F6XrQvumNGK2SyvRq8bs5VV2UbSLAwhlWGE=; b=p3vct6D2uTGzWeM0J29gXSW59P
+        Z6fYSCZYhXh0jmldeAg2pwv82tIHgQj8ajZl5XmjJRSfxawBd6GKMI0wqaI08FmgIoie/EojZTMEx
+        uABPSw22X3nZcq+0buG1zj0qm42j28oyNBAmWEHCd1lR29iqRsYcm4DkaskFSETEDMNIDRHFpX2bA
+        m32PRa9MPYqUMrkjsw0m0m+c+3KQ0ErG0bhBM8q0cGUtP0P1CITvKJmkUGeGSEJ7dEyl1SIH4w2ye
+        SOyw39zOAAnEpj8qYS7HmLsuVxKxps235DF6V/0Gu03ETPRaEunyWlc1oRdrTSTeORAjJp/Ay4awP
+        wF9ysFdQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kX2Jt-00066K-9f; Mon, 26 Oct 2020 13:13:53 +0000
+Date:   Mon, 26 Oct 2020 13:13:53 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Qian Cai <cai@lca.pw>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-mm@kvack.org
+Subject: Re: kernel BUG at mm/page-writeback.c:2241 [
+ BUG_ON(PageWriteback(page); ]
+Message-ID: <20201026131353.GP20115@casper.infradead.org>
+References: <645a3f332f37e09057c10bc32f4f298ce56049bb.camel@lca.pw>
+ <20201022004906.GQ20115@casper.infradead.org>
+ <20201026094948.GA29758@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201026094948.GA29758@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When using FUSE passthrough, read/write operations are directly forwarded
-to the lower file system file through VFS, but there is no guarantee that
-the process that is triggering the request has the right permissions to
-access the lower file system. This would cause the read/write access to
-fail.
+On Mon, Oct 26, 2020 at 10:49:48AM +0100, Jan Kara wrote:
+> On Thu 22-10-20 01:49:06, Matthew Wilcox wrote:
+> > On Wed, Oct 21, 2020 at 08:30:18PM -0400, Qian Cai wrote:
+> > > Today's linux-next starts to trigger this wondering if anyone has any clue.
+> > 
+> > I've seen that occasionally too.  I changed that BUG_ON to VM_BUG_ON_PAGE
+> > to try to get a clue about it.  Good to know it's not the THP patches
+> > since they aren't in linux-next.
+> > 
+> > I don't understand how it can happen.  We have the page locked, and then we do:
+> > 
+> >                         if (PageWriteback(page)) {
+> >                                 if (wbc->sync_mode != WB_SYNC_NONE)
+> >                                         wait_on_page_writeback(page);
+> >                                 else
+> >                                         goto continue_unlock;
+> >                         }
+> > 
+> >                         VM_BUG_ON_PAGE(PageWriteback(page), page);
+> > 
+> > Nobody should be able to put this page under writeback while we have it
+> > locked ... right?  The page can be redirtied by the code that's supposed
+> > to be writing it back, but I don't see how anyone can make PageWriteback
+> > true while we're holding the page lock.
+> 
+> FWIW here's very similar report for ext4 [1] and I strongly suspect this
+> started happening after Linus' rewrite of the page bit waiting logic. Linus
+> thinks it's preexisting bug which just got exposed by his changes (which is
+> possible). I've been searching a culprit for some time but so far I failed.
+> It's good to know it isn't ext4 specific so we should be searching in the
+> generic code ;). So far I was concentrating more on ext4 bits...
+> 
+> 								Honza
+> 
+> [1] https://lore.kernel.org/lkml/000000000000d3a33205add2f7b2@google.com/
 
-In passthrough file systems, where the FUSE daemon is responsible for the
-enforcement of the lower file system access policies, often happens that
-the process dealing with the FUSE file system doesn't have access to the
-lower file system.
-Being the FUSE daemon in charge of implementing the FUSE file operations,
-that in the case of read/write operations usually simply results in the
-copy of memory buffers from/to the lower file system respectively, these
-operations are executed with the FUSE daemon privileges.
+Oh good, I was wondering if it was an XFS bug ;-)
 
-This patch adds a reference to the FUSE daemon credentials, referenced at
-FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl() time so that they can be used to
-temporarily raise the user credentials when accessing lower file system
-files in passthrough.
-The process accessing the FUSE file with passthrough enabled temporarily
-receives the privileges of the FUSE daemon while performing read/write
-operations. Similar behavior is implemented in overlayfs.
-These privileges will be reverted as soon as the IO operation completes.
-This feature does not provide any higher security privileges to those
-processes accessing the FUSE file system with passthrough enabled. This is
-because it is still the FUSE daemon responsible for enabling or not the
-passthrough feature at file open time, and should enable the feature only
-after appropriate access policy checks.
-
-Signed-off-by: Alessio Balsini <balsini@android.com>
----
- fs/fuse/fuse_i.h      |  5 ++++-
- fs/fuse/passthrough.c | 11 +++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index a888d3df5877..59e033a59551 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -165,10 +165,13 @@ struct fuse_release_args;
- 
- /**
-  * Reference to lower filesystem file for read/write operations handled in
-- * passthrough mode
-+ * passthrough mode.
-+ * This struct also tracks the credentials to be used for handling read/write
-+ * operations.
-  */
- struct fuse_passthrough {
- 	struct file *filp;
-+	struct cred *cred;
- };
- 
- /** FUSE specific file data */
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index 10b6872cdaa7..ab81dd8f010b 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -67,6 +67,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
- 				   struct iov_iter *iter)
- {
- 	ssize_t ret;
-+	const struct cred *old_cred;
- 	struct file *fuse_filp = iocb_fuse->ki_filp;
- 	struct fuse_file *ff = fuse_filp->private_data;
- 	struct file *passthrough_filp = ff->passthrough.filp;
-@@ -74,6 +75,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
- 	if (!iov_iter_count(iter))
- 		return 0;
- 
-+	old_cred = override_creds(ff->passthrough.cred);
- 	if (is_sync_kiocb(iocb_fuse)) {
- 		ret = vfs_iter_read(passthrough_filp, iter, &iocb_fuse->ki_pos,
- 				    iocb_to_rw_flags(iocb_fuse->ki_flags));
-@@ -91,6 +93,7 @@ ssize_t fuse_passthrough_read_iter(struct kiocb *iocb_fuse,
- 		if (ret != -EIOCBQUEUED)
- 			fuse_aio_cleanup_handler(aio_req);
- 	}
-+	revert_creds(old_cred);
- 
- 	return ret;
- }
-@@ -99,6 +102,7 @@ ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
- 				    struct iov_iter *iter)
- {
- 	ssize_t ret;
-+	const struct cred *old_cred;
- 	struct file *fuse_filp = iocb_fuse->ki_filp;
- 	struct fuse_file *ff = fuse_filp->private_data;
- 	struct inode *fuse_inode = file_inode(fuse_filp);
-@@ -110,6 +114,7 @@ ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
- 
- 	inode_lock(fuse_inode);
- 
-+	old_cred = override_creds(ff->passthrough.cred);
- 	if (is_sync_kiocb(iocb_fuse)) {
- 		file_start_write(passthrough_filp);
- 		ret = vfs_iter_write(passthrough_filp, iter, &iocb_fuse->ki_pos,
-@@ -137,6 +142,7 @@ ssize_t fuse_passthrough_write_iter(struct kiocb *iocb_fuse,
- 			fuse_aio_cleanup_handler(aio_req);
- 	}
- out:
-+	revert_creds(old_cred);
- 	inode_unlock(fuse_inode);
- 
- 	return ret;
-@@ -174,6 +180,7 @@ int fuse_passthrough_open(struct fuse_dev *fud,
- 		return -ENOMEM;
- 
- 	passthrough->filp = passthrough_filp;
-+	passthrough->cred = prepare_creds();
- 
- 	idr_preload(GFP_KERNEL);
- 	spin_lock(&fc->passthrough_req_lock);
-@@ -231,4 +238,8 @@ void fuse_passthrough_release(struct fuse_passthrough *passthrough)
- 		fput(passthrough->filp);
- 		passthrough->filp = NULL;
- 	}
-+	if (passthrough->cred) {
-+		put_cred(passthrough->cred);
-+		passthrough->cred = NULL;
-+	}
- }
--- 
-2.29.0.rc1.297.gfa9743e501-goog
-
+I hope Qian gets it to reproduce soon with the assert because that will
+tell us whether it's a spurious wakeup or someone calling SetPageWriteback
+without holding the page lock.
