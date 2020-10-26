@@ -2,80 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB302990C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 16:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C12A2990DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 16:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1783427AbgJZPOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 11:14:07 -0400
-Received: from casper.infradead.org ([90.155.50.34]:43400 "EHLO
+        id S1783637AbgJZPTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 11:19:02 -0400
+Received: from casper.infradead.org ([90.155.50.34]:43578 "EHLO
         casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1782628AbgJZPOG (ORCPT
+        with ESMTP id S1783631AbgJZPTC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 11:14:06 -0400
+        Mon, 26 Oct 2020 11:19:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iICEMVCklXyInNXAOHIV8DlgInKlT7ePi5vRkZnW1+A=; b=uC0zXt6dBptf6uJ7TBJmI0X0h/
-        yAIBE/ztgC4wYgMXQz+Bhxh4zTY6P+R84pt6Ojb1YjT/DlXW8S93oEMID6ZEvQQhi1rE6qxpD+mDd
-        /lmdyrzxqrkWJkuswIkd2QlGbSrAk0j3dvvuZSmT9y4OtbjL2Zr4JMgG6E3BTgx9nnzTo22QwoOQO
-        vUVo93czMxfvyo7AvW7UyXiSLeVBg/I+VwbA7zOlAOlzmXsA3MFAKSL6820cCGcrR2an/4FbMBP3z
-        kUk40EsJnvD06jwjBc+XUaLNb84tLM92aW6qCBpV9xW6/1G5wNwNAZxFMKq91Uy4sPzWgTdKjwohB
-        Yxy6zbSA==;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=tJdlcdGVmO5hb1GVldhbnE4FaImFjKkuAuz1KFFasXY=; b=DWQfni3dYUpdPMXkGjThM7VqH8
+        6kijMsd/J434O8lkAqUkW9kCPSPbHrN1t2J6mQuPrQo+69/7r63fSVEopoRZjxYjNoCPGVGD6AJfO
+        Ox/o4C++Xv0glhBB/Ytl/w2piiG5HglNneRFupXuwvlhVXrikRPSjwp105nFcZ9T1vLh3r8mrH5jQ
+        gjh439PddBlQm1htBsBE0zPyc820WMwlf6W7PZXnZk9TOoO2/HSUKazSvfSsNy7QZu6JE+sIjR59w
+        HuGHnbL0JYFjoWziJtq74gxzTxqYFPMQ85HIhnw5xIFRm5yGKl4j4Z7DVhXnn+9X05Ir+8fobVEkJ
+        crWmwBWQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kX4CC-0005y5-Ol; Mon, 26 Oct 2020 15:14:05 +0000
-Date:   Mon, 26 Oct 2020 15:14:04 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: Strange SEEK_HOLE / SEEK_DATA behavior
-Message-ID: <20201026151404.GR20115@casper.infradead.org>
-References: <20201026145710.GF28769@quack2.suse.cz>
+        id 1kX4Gp-0006Jr-3D; Mon, 26 Oct 2020 15:18:51 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: [PATCH v2 0/4] Remove nrexceptional tracking
+Date:   Mon, 26 Oct 2020 15:18:45 +0000
+Message-Id: <20201026151849.24232-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201026145710.GF28769@quack2.suse.cz>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 03:57:10PM +0100, Jan Kara wrote:
-> Hello!
-> 
-> When reviewing Matthew's THP patches I've noticed one odd behavior which
-> got copied from current iomap seek hole/data helpers. Currently we have:
-> 
-> # fallocate -l 4096 testfile
-> # xfs_io -x -c "seek -h 0" testfile
-> Whence	Result
-> HOLE	0
-> # dd if=testfile bs=4096 count=1 of=/dev/null
-> # xfs_io -x -c "seek -h 0" testfile
-> Whence	Result
-> HOLE	4096
-> 
-> So once we read from an unwritten extent, the areas with cached pages
-> suddently become treated as data. Later when pages get evicted, they become
-> treated as holes again. Strictly speaking I wouldn't say this is a bug
-> since nobody promises we won't treat holes as data but it looks weird.
-> Shouldn't we treat clean pages over unwritten extents still as holes and
-> only once the page becomes dirty treat is as data? What do other people
-> think?
+We actually use nrexceptional for very little these days.  It's a minor
+pain to keep in sync with nrpages, but the pain becomes much bigger
+with the THP patches because we don't know how many indices a shadow
+entry occupies.  It's easier to just remove it than keep it accurate.
 
-I think we actually discussed this recently.  Unless I misunderstood
-one or both messages:
+Also, we save 8 bytes per inode which is nothing to sneeze at; on my
+laptop, it would improve shmem_inode_cache from 22 to 23 objects per
+16kB, and inode_cache from 26 to 27 objects.  Combined, that saves
+a megabyte of memory from a combined usage of 25MB for both caches.
+Unfortunately, ext4 doesn't cross a magic boundary, so it doesn't save
+any memory for ext4.
 
-https://lore.kernel.org/linux-fsdevel/20201014223743.GD7391@dread.disaster.area/
+Matthew Wilcox (Oracle) (4):
+  mm: Introduce and use mapping_empty
+  mm: Stop accounting shadow entries
+  dax: Account DAX entries as nrpages
+  mm: Remove nrexceptional from inode
 
-I agree it's not great, but I'm not sure it's worth getting it "right"
-by tracking whether a page contains only zeroes.
+ fs/block_dev.c          |  2 +-
+ fs/dax.c                |  8 ++++----
+ fs/gfs2/glock.c         |  3 +--
+ fs/inode.c              |  2 +-
+ include/linux/fs.h      |  2 --
+ include/linux/pagemap.h |  5 +++++
+ mm/filemap.c            | 16 ----------------
+ mm/swap_state.c         |  4 ----
+ mm/truncate.c           | 19 +++----------------
+ mm/workingset.c         |  1 -
+ 10 files changed, 15 insertions(+), 47 deletions(-)
 
-I have been vaguely thinking about optimising for read-mostly workloads
-on sparse files by storing a magic entry that means "use the zero
-page" in the page cache instead of a page, like DAX does (only better).
-It hasn't risen to the top of my list yet.  Does anyone have a workload
-that would benefit from it?
+-- 
+2.28.0
 
-(I don't mean "can anybody construct one"; that's trivially possible.
-I mean, do any customers care about the performance of that workload?)
