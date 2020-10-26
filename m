@@ -2,125 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A87299DAD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 01:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3952A29A0B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 01:46:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439077AbgJ0AJR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 20:09:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46418 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395073AbgJ0AJJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 20:09:09 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y14so7102383pfp.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Oct 2020 17:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LsJlRjdqhDVAHhw47g/atIos95r5K18qubNura+3fzc=;
-        b=DV6OWsJ8YTis4RWe74HnMoSPHx2wnbbnih3F0P+HiF57IXnyKrAIcBplDa0TuQW0fe
-         aii8O67y5CuNtSNcN0q+CPIFocqT+ma+us4RoqX4TC6tMgaGBGUnwVHQJ/N6qPZoUIZl
-         N8PZQaTFtDJvhHp2KmiMn99XHribiQTVBqggOOByg6ZsC+AIdPeSZ7IIhzJWtbXj8peQ
-         vUIkbSwJfbOC01KBcysHUuhejsj0lkLWHowENLgMtxCKJmsxzr5jKuNTtJsywdn514eT
-         kI7wIhvyoH92wMz2QHWzCBEBrmMggfxor976qEm1YW1xHPKbqwPNkX7lWR3OAQC8rWrk
-         OKFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LsJlRjdqhDVAHhw47g/atIos95r5K18qubNura+3fzc=;
-        b=tZpFt6ZtH7n/FaW4TKkRzvUolKRq7XolkB7c7XyQrYuiBUV8mXlQBE2jj+Uv3bAKdu
-         6x1oMhm2Ivsr9H5YlC3DXiBSWJ6Nsh7ITUCLaJcY5A2kKB/RxyzoVBWMXFiJvJuCWof9
-         26g1+Io4KCIZjqbbSNSAPxInlJyOdg8mbBBrchauLGZc48UdnjF1s8VtoAXlBDE3XpHI
-         Wa+jXUAAF5QO5B15P9KXgTrXa6Wv9zjiV4t9yhQSFs9YDJ7lWwlc1KSi9XF9nen34UFc
-         r+Gbt1ghk5dp1rJhJ8gsaqQGMWwrISugVumkN5/ULzGtfIPZ6FPmoy1qmvOa5MWVh7Xg
-         Wzrg==
-X-Gm-Message-State: AOAM531BXxLiGAEB68CfZx/h3gLQZ/o0cOZDVUmDQPWO4Lm/cHnKupcV
-        AkGRpKrVXl47QpFEzRQnjBI4Jw==
-X-Google-Smtp-Source: ABdhPJzyk1CokDb3PmPO6AYN5WbyxmkTO2goVocCEnl70vwlgJZot7evNIwwh9o3S+Q92QVwXSE2HA==
-X-Received: by 2002:a65:5c02:: with SMTP id u2mr18125891pgr.173.1603757348944;
-        Mon, 26 Oct 2020 17:09:08 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e16sm13676837pfh.45.2020.10.26.17.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2020 17:09:08 -0700 (PDT)
-Subject: Re: [REGRESSION] mm: process_vm_readv testcase no longer works after
- compat_prcoess_vm_readv removed
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Kyle Huey <me@kylehuey.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Robert O'Callahan <robert@ocallahan.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CAP045Aqrsb=CXHDHx4nS-pgg+MUDj14r-kN8_Jcbn-NAUziVag@mail.gmail.com>
- <70d5569e-4ad6-988a-e047-5d12d298684c@kernel.dk>
- <20201027000521.GD3576660@ZenIV.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0127a542-3f93-7bd0-e00d-4a0e49846c8f@kernel.dk>
-Date:   Mon, 26 Oct 2020 18:09:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2408645AbgJZXtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 19:49:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46944 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2408626AbgJZXtO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Oct 2020 19:49:14 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4E7120773;
+        Mon, 26 Oct 2020 23:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603756153;
+        bh=jL/nzThwVE3kIHHUDsWorn8dTrwZ96xtik9XrgKV73s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mK3XZWbMMK1ezoYv3TgesLZcEXwoRbsDq6ZE2vsEcPOKqpB4eI6pToE8deKwxabMK
+         mJAKzoS4SVPuUXnIh9Fer6T4XQHMIglk81D8PYmI6blY/t+cS5MgKXzFUzqRANiJ0p
+         Gouvb6cQHI++NLInbSSjnSCEHDw3ApzrGOk+DLeM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.9 006/147] mm: fix exec activate_mm vs TLB shootdown and lazy tlb switching race
+Date:   Mon, 26 Oct 2020 19:46:44 -0400
+Message-Id: <20201026234905.1022767-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
+References: <20201026234905.1022767-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20201027000521.GD3576660@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/26/20 6:05 PM, Al Viro wrote:
-> On Mon, Oct 26, 2020 at 05:56:11PM -0600, Jens Axboe wrote:
->> On 10/26/20 4:55 PM, Kyle Huey wrote:
->>> A test program from the rr[0] test suite, vm_readv_writev[1], no
->>> longer works on 5.10-rc1 when compiled as a 32 bit binary and executed
->>> on a 64 bit kernel. The first process_vm_readv call (on line 35) now
->>> fails with EFAULT. I have bisected this to
->>> c3973b401ef2b0b8005f8074a10e96e3ea093823.
->>>
->>> It should be fairly straightforward to extract the test case from our
->>> repository into a standalone program.
->>
->> Can you check with this applied?
->>
->> diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
->> index fd12da80b6f2..05676722d9cd 100644
->> --- a/mm/process_vm_access.c
->> +++ b/mm/process_vm_access.c
->> @@ -273,7 +273,8 @@ static ssize_t process_vm_rw(pid_t pid,
->>  		return rc;
->>  	if (!iov_iter_count(&iter))
->>  		goto free_iov_l;
->> -	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r, false);
->> +	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r,
->> +				in_compat_syscall());
-> 
-> _ouch_
-> 
-> There's a bug, all right, but I'm not sure that this is all there is
-> to it. For now it's probably the right fix, but...  Consider the fun
-> trying to use that from 32bit process to access the memory of 64bit
-> one.  IOW, we might want to add an explicit flag for "force 64bit
-> addresses/sizes in rvec".
+From: Nicholas Piggin <npiggin@gmail.com>
 
-Ouch yes good point, nice catch.
+[ Upstream commit d53c3dfb23c45f7d4f910c3a3ca84bf0a99c6143 ]
 
+Reading and modifying current->mm and current->active_mm and switching
+mm should be done with irqs off, to prevent races seeing an intermediate
+state.
+
+This is similar to commit 38cf307c1f20 ("mm: fix kthread_use_mm() vs TLB
+invalidate"). At exec-time when the new mm is activated, the old one
+should usually be single-threaded and no longer used, unless something
+else is holding an mm_users reference (which may be possible).
+
+Absent other mm_users, there is also a race with preemption and lazy tlb
+switching. Consider the kernel_execve case where the current thread is
+using a lazy tlb active mm:
+
+  call_usermodehelper()
+    kernel_execve()
+      old_mm = current->mm;
+      active_mm = current->active_mm;
+      *** preempt *** -------------------->  schedule()
+                                               prev->active_mm = NULL;
+                                               mmdrop(prev active_mm);
+                                             ...
+                      <--------------------  schedule()
+      current->mm = mm;
+      current->active_mm = mm;
+      if (!old_mm)
+          mmdrop(active_mm);
+
+If we switch back to the kernel thread from a different mm, there is a
+double free of the old active_mm, and a missing free of the new one.
+
+Closing this race only requires interrupts to be disabled while ->mm
+and ->active_mm are being switched, but the TLB problem requires also
+holding interrupts off over activate_mm. Unfortunately not all archs
+can do that yet, e.g., arm defers the switch if irqs are disabled and
+expects finish_arch_post_lock_switch() to be called to complete the
+flush; um takes a blocking lock in activate_mm().
+
+So as a first step, disable interrupts across the mm/active_mm updates
+to close the lazy tlb preempt race, and provide an arch option to
+extend that to activate_mm which allows architectures doing IPI based
+TLB shootdowns to close the second race.
+
+This is a bit ugly, but in the interest of fixing the bug and backporting
+before all architectures are converted this is a compromise.
+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20200914045219.3736466-2-npiggin@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/Kconfig |  7 +++++++
+ fs/exec.c    | 17 +++++++++++++++--
+ 2 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/arch/Kconfig b/arch/Kconfig
+index af14a567b493f..94821e3f94d16 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -414,6 +414,13 @@ config MMU_GATHER_NO_GATHER
+ 	bool
+ 	depends on MMU_GATHER_TABLE_FREE
+ 
++config ARCH_WANT_IRQS_OFF_ACTIVATE_MM
++	bool
++	help
++	  Temporary select until all architectures can be converted to have
++	  irqs disabled over activate_mm. Architectures that do IPI based TLB
++	  shootdowns should enable this.
++
+ config ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	bool
+ 
+diff --git a/fs/exec.c b/fs/exec.c
+index a91003e28eaae..d4fb18baf1fb1 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1130,11 +1130,24 @@ static int exec_mmap(struct mm_struct *mm)
+ 	}
+ 
+ 	task_lock(tsk);
+-	active_mm = tsk->active_mm;
+ 	membarrier_exec_mmap(mm);
+-	tsk->mm = mm;
++
++	local_irq_disable();
++	active_mm = tsk->active_mm;
+ 	tsk->active_mm = mm;
++	tsk->mm = mm;
++	/*
++	 * This prevents preemption while active_mm is being loaded and
++	 * it and mm are being updated, which could cause problems for
++	 * lazy tlb mm refcounting when these are updated by context
++	 * switches. Not all architectures can handle irqs off over
++	 * activate_mm yet.
++	 */
++	if (!IS_ENABLED(CONFIG_ARCH_WANT_IRQS_OFF_ACTIVATE_MM))
++		local_irq_enable();
+ 	activate_mm(active_mm, mm);
++	if (IS_ENABLED(CONFIG_ARCH_WANT_IRQS_OFF_ACTIVATE_MM))
++		local_irq_enable();
+ 	tsk->mm->vmacache_seqnum = 0;
+ 	vmacache_flush(tsk);
+ 	task_unlock(tsk);
 -- 
-Jens Axboe
+2.25.1
 
