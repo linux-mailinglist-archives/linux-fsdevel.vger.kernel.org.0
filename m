@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 306EC29902D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 15:55:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34ED6299034
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 15:55:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1782660AbgJZOzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 10:55:16 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38950 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1782655AbgJZOzQ (ORCPT
+        id S1782686AbgJZOz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 10:55:26 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40291 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1782681AbgJZOz0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 10:55:16 -0400
-Received: by mail-pg1-f195.google.com with SMTP id o7so6204283pgv.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Oct 2020 07:55:15 -0700 (PDT)
+        Mon, 26 Oct 2020 10:55:26 -0400
+Received: by mail-pf1-f193.google.com with SMTP id w21so6316333pfc.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Oct 2020 07:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3mpciXNwuWcA5SxSfqhs9A4AXvA+acZr3rKf1/b+yZ4=;
-        b=wxpBUBnO46XYx1IyrgXw8jKQbFTfCS8wmkAHMTfSnaTjj3luNYlMLPhMZetrgkwfvx
-         macN5wvljeYhYqBA560CER6ZjGtMQvNn1j9+UjUuaRdetFNulNxaYRbh1j66KudSwQWI
-         eDRXiIwG2Hht2uvTqtKe1iUTUE5PVzZy/hVr9ipDqvXbcxEryyzfHe7RnNsDVEEJ95v+
-         lENGhvYH7S9+Jx72NaLpfo5QBPozjAIpU8u7V3pgpFLztrajR3ZMBMYE3IH+s5dtvJKN
-         b8n3nFPnhOcCmq4Kf67F8IzSHOhCHkw3I5af0KzOV1gYUDtfBFis0u1qwULZH00Sn4f3
-         WNFA==
+        bh=11XX82E5ALlBD3J6m/pOUXlN+olXnY0ahZEaHw8en7Q=;
+        b=zVQfczPdvHO0WAjgI/GMTiBOxzlaTaxOZvh3vn2SH4Wk0B2IymlcYWAOM7SGl7WqPT
+         x/MCnfn45hQbgUyOm51SNa+iBx8Rlzmk1lgTcXHDVtn/agrnG5iR3vx7dzpbEsWe1vPG
+         HSwjtSN0tSDYKYD8YRcd9H6yckYG5228OJgHkQHfWX7qv69RLbPBntpBd1/yiVwgCbz0
+         pxfBU82m1SSMhV3gFdcqqUqZs02Th5i5HrMEI/m9DqYIsupt/XVaH3iYnYV08IWDNG6I
+         8hi8KwmUCeB7S9rmFj1rF4KJc5uKiQeBS4iFZe8UmzPCet5YWyVItznQa18z8euez/qT
+         kRdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3mpciXNwuWcA5SxSfqhs9A4AXvA+acZr3rKf1/b+yZ4=;
-        b=AGvqaJgD0h2qRXikXHonXfqhR8VdP7+WDf8vESfQOPVM7RbzaJibTnB9KhBkhBr3y/
-         ooO2O044zlTOBaRwXVR8pvYaXG+jaCObYJl/gv5UIV2W3z6UbFMfpt61UCpA4+wabCWF
-         eGqfa3jm+Kvv0zLk09+JcHI66YpbbOvZZIWk/EHaW6RKL4/XnqYPWLTVmHbL9BTwpchN
-         xCgMIqs6CgGHdSgbtHjzJfEgIbfaxYrLk13aga5gtNB1XcPIBI40hfSDXKW1zanitkXP
-         qAxxCv3L+OTeZzPH3t6UTJtQTIBY+M2m+CREefBQOtYUV205dCqbhCRJd1VnaDK+yIOe
-         ulBA==
-X-Gm-Message-State: AOAM530iagKlWGQnoPOp5kdMv72R+/aOUY0wFKTLxql59EilieS0eZdc
-        S30mlZygXjygMiuRmbe/ct2ZIg==
-X-Google-Smtp-Source: ABdhPJyrrJjqBxDZ4gmy4W3o6g0P8TouDAMt8VykFlzg75jHTBFST4T1YJx4SFz6D7HN8IASwdyp1A==
-X-Received: by 2002:a65:508a:: with SMTP id r10mr17564254pgp.307.1603724115200;
-        Mon, 26 Oct 2020 07:55:15 -0700 (PDT)
+        bh=11XX82E5ALlBD3J6m/pOUXlN+olXnY0ahZEaHw8en7Q=;
+        b=CowSEK+X+gHCKRPkg+uCZ5slGYgBWwQmlSncHUbSgb+jrHAKdpaB5fT+YZZdJZBl6K
+         SZ7Ol0Hdkrk7nUPMlyI+vr484cTYA+C4sIWnFVwXQOl9BBSPrO8YnanK3KMoAqLXevzr
+         CDA82fW3iXHnUe0NtCNYx/Jl841IoNByvCU0jHd53mZGJ+23Nxvl2cs/RooxQLCvEfqm
+         YaaTYZSqoTCZvYDxKYqUE0vTd4NArlTbaqMrB7t59Ell77m01iMuQln+PIaG00PnVjFd
+         2le/w1P7KOB8qUP+rKPKxQFInyEnfnbWEFEjqTiJi8HSprpbvYIvLREpBWsxjuWCwkea
+         /8WQ==
+X-Gm-Message-State: AOAM530QypZatxyrdx0jZ+zIHNKSiFrTkATZjnYibGunPleQPjVGTVdp
+        qeOxbzxCg9yeIQrHQpW1IDdSmA==
+X-Google-Smtp-Source: ABdhPJz5Imrs9uD0mPyJBeReMuMs5DSGfhaWTNutnMIFEPMis/AmwcRJNx6daQhlnOuERkr7EhbxgA==
+X-Received: by 2002:a65:5c85:: with SMTP id a5mr17836069pgt.145.1603724124796;
+        Mon, 26 Oct 2020 07:55:24 -0700 (PDT)
 Received: from localhost.localdomain ([103.136.220.89])
-        by smtp.gmail.com with ESMTPSA id x123sm12042726pfb.212.2020.10.26.07.55.05
+        by smtp.gmail.com with ESMTPSA id x123sm12042726pfb.212.2020.10.26.07.55.15
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Oct 2020 07:55:14 -0700 (PDT)
+        Mon, 26 Oct 2020 07:55:24 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -58,9 +58,9 @@ Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v2 13/19] mm/hugetlb: Add a BUILD_BUG_ON to check if struct page size is a power of two
-Date:   Mon, 26 Oct 2020 22:51:08 +0800
-Message-Id: <20201026145114.59424-14-songmuchun@bytedance.com>
+Subject: [PATCH v2 14/19] mm/hugetlb: Clear PageHWPoison on the non-error memory page
+Date:   Mon, 26 Oct 2020 22:51:09 +0800
+Message-Id: <20201026145114.59424-15-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20201026145114.59424-1-songmuchun@bytedance.com>
 References: <20201026145114.59424-1-songmuchun@bytedance.com>
@@ -70,30 +70,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We only can free the unused vmemmap to the buddy system when the
-size of struct page is a power of two. So add a BUILD_BUG_ON to
-check the illegal case.
+Because we reuse the first tail page, if we set PageHWPosion on a
+tail page. It indicates that we may set PageHWPoison on a series
+of pages. So we need to clear PageHWPoison on the non-error pages.
+We use the head[3].mapping to record the real error page index and
+clear non-error page PageHWPoison later.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- mm/hugetlb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ mm/hugetlb.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index d98b55ad1a90..e3209fd2e6b2 100644
+index e3209fd2e6b2..7198bd9bdce5 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -3776,6 +3776,10 @@ static int __init hugetlb_init(void)
+@@ -1806,6 +1806,21 @@ static inline void free_gigantic_page_comm(struct hstate *h, struct page *page)
  {
- 	int i;
- 
-+#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-+	BUILD_BUG_ON_NOT_POWER_OF_2(sizeof(struct page));
-+#endif
+ 	free_gigantic_page(page, huge_page_order(h));
+ }
 +
- 	if (!hugepages_supported()) {
- 		if (hugetlb_max_hstate || default_hstate_max_huge_pages)
- 			pr_warn("HugeTLB: huge pages not supported, ignoring associated command-line parameters\n");
++static inline bool subpage_hwpoison(struct page *head, struct page *page)
++{
++	return page_private(head + 4) == page - head;
++}
++
++static inline void set_subpage_hwpoison(struct page *head, struct page *page)
++{
++	set_page_private(head + 4, page - head);
++}
++
++static inline void clear_subpage_hwpoison(struct page *head)
++{
++	set_page_private(head + 4, 0);
++}
+ #else
+ static inline void hugetlb_vmemmap_init(struct hstate *h)
+ {
+@@ -1853,6 +1868,19 @@ static inline void free_gigantic_page_comm(struct hstate *h, struct page *page)
+ 	free_gigantic_page(page, huge_page_order(h));
+ 	spin_lock(&hugetlb_lock);
+ }
++
++static inline bool subpage_hwpoison(struct page *head, struct page *page)
++{
++	return true;
++}
++
++static inline void set_subpage_hwpoison(struct page *head, struct page *page)
++{
++}
++
++static inline void clear_subpage_hwpoison(struct page *head)
++{
++}
+ #endif
+ 
+ static void update_and_free_page(struct hstate *h, struct page *page)
+@@ -1877,6 +1905,9 @@ static void __free_hugepage(struct hstate *h, struct page *page)
+ 				1 << PG_referenced | 1 << PG_dirty |
+ 				1 << PG_active | 1 << PG_private |
+ 				1 << PG_writeback);
++
++		if (PageHWPoison(page + i) && !subpage_hwpoison(page, page + i))
++			ClearPageHWPoison(page + i);
+ 	}
+ 	VM_BUG_ON_PAGE(hugetlb_cgroup_from_page(page), page);
+ 	VM_BUG_ON_PAGE(hugetlb_cgroup_from_page_rsvd(page), page);
+@@ -2066,6 +2097,7 @@ static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
+ 	free_huge_page_vmemmap(h, page);
+ 	/* Must be called before the initialization of @page->lru */
+ 	vmemmap_pgtable_free(h, page);
++	clear_subpage_hwpoison(page);
+ 
+ 	INIT_LIST_HEAD(&page->lru);
+ 	set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
+@@ -2436,6 +2468,7 @@ int dissolve_free_huge_page(struct page *page)
+ 			SetPageHWPoison(page);
+ 			ClearPageHWPoison(head);
+ 		}
++		set_subpage_hwpoison(head, page);
+ 		list_del(&head->lru);
+ 		h->free_huge_pages--;
+ 		h->free_huge_pages_node[nid]--;
 -- 
 2.20.1
 
