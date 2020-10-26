@@ -2,107 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3EC7298A2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 11:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8651A298AB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 11:48:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729971AbgJZJqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 05:46:34 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10050 "EHLO mga02.intel.com"
+        id S1771081AbgJZKsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 06:48:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55352 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1768350AbgJZJqe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 05:46:34 -0400
-IronPort-SDR: ffDmliBW1JZ6OFcUu+fdDn1U+lVHWOBwx33/y2SbcuHKYklG5Ju2qTgvv/dclR2Or20vz6TX3n
- 4dWtidMSTucQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9785"; a="154865801"
-X-IronPort-AV: E=Sophos;i="5.77,417,1596524400"; 
-   d="scan'208";a="154865801"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2020 02:46:31 -0700
-IronPort-SDR: crkotdR7NUitDLqL85FRvnA/FsKTI5Ig3M4ahO3tG+S0LQz4fueNd1HMSzNTFpd7HRQPRUSZZ6
- NF7Zb23YI+Lw==
-X-IronPort-AV: E=Sophos;i="5.77,417,1596524400"; 
-   d="scan'208";a="535300062"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.3]) ([10.239.13.3])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2020 02:46:30 -0700
-Subject: Re: [kbuild-all] Re: [vfs:work.epoll 17/27] fs/eventpoll.c:1629:3:
- warning: Assignment of function parameter has no effect outside the function.
- Did you forget dereferencing
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        kernel test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org
-References: <202010261043.dPTrCpUD-lkp@intel.com>
- <20201026023559.GC3576660@ZenIV.linux.org.uk>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <35d2f16c-7b53-0088-7e7c-aa04451b8fb8@intel.com>
-Date:   Mon, 26 Oct 2020 17:45:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1771043AbgJZKsJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Oct 2020 06:48:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 743C7AE3B;
+        Mon, 26 Oct 2020 10:48:07 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D39A41E10F5; Mon, 26 Oct 2020 11:48:06 +0100 (CET)
+Date:   Mon, 26 Oct 2020 11:48:06 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v3 04/12] mm/filemap: Add mapping_seek_hole_data
+Message-ID: <20201026104806.GB29758@quack2.suse.cz>
+References: <20201026041408.25230-1-willy@infradead.org>
+ <20201026041408.25230-5-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20201026023559.GC3576660@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201026041408.25230-5-willy@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon 26-10-20 04:14:00, Matthew Wilcox (Oracle) wrote:
+> Rewrite shmem_seek_hole_data() and move it to filemap.c.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> ---
+>  include/linux/pagemap.h |  2 ++
+>  mm/filemap.c            | 76 +++++++++++++++++++++++++++++++++++++++++
+>  mm/shmem.c              | 72 +++-----------------------------------
+>  3 files changed, 82 insertions(+), 68 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index c77b7c31b2e4..5f3e829c91fd 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -760,6 +760,8 @@ extern void __delete_from_page_cache(struct page *page, void *shadow);
+>  int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
+>  void delete_from_page_cache_batch(struct address_space *mapping,
+>  				  struct pagevec *pvec);
+> +loff_t mapping_seek_hole_data(struct address_space *, loff_t start, loff_t end,
+> +		int whence);
+>  
+>  /*
+>   * Like add_to_page_cache_locked, but used to add newly allocated pages:
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 00eaed59e797..3a55d258d9f2 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2526,6 +2526,82 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  }
+>  EXPORT_SYMBOL(generic_file_read_iter);
+>  
+> +static inline loff_t page_seek_hole_data(struct page *page,
+> +		loff_t start, loff_t end, bool seek_data)
+> +{
+> +	if (xa_is_value(page) || PageUptodate(page))
+
+Please add a comment here that this is currently tmpfs specific treating
+exceptional entries as swapped out pages and thus data. It took me quite a
+while to figure this out. You can remove the comment later when it is no
+longer true...
+
+> +		return seek_data ? start : end;
+> +	return seek_data ? end : start;
+> +}
+> +
+> +static inline
+> +unsigned int seek_page_size(struct xa_state *xas, struct page *page)
+> +{
+> +	if (xa_is_value(page))
+> +		return PAGE_SIZE << xa_get_order(xas->xa, xas->xa_index);
+> +	return thp_size(page);
+> +}
+> +
+> +/**
+> + * mapping_seek_hole_data - Seek for SEEK_DATA / SEEK_HOLE in the page cache.
+> + * @mapping: Address space to search.
+> + * @start: First byte to consider.
+> + * @end: Limit of search (exclusive).
+> + * @whence: Either SEEK_HOLE or SEEK_DATA.
+> + *
+> + * If the page cache knows which blocks contain holes and which blocks
+> + * contain data, your filesystem can use this function to implement
+> + * SEEK_HOLE and SEEK_DATA.  This is useful for filesystems which are
+> + * entirely memory-based such as tmpfs, and filesystems which support
+> + * unwritten extents.
+> + *
+> + * Return: The requested offset on successs, or -ENXIO if @whence specifies
+> + * SEEK_DATA and there is no data after @start.  There is an implicit hole
+> + * after @end - 1, so SEEK_HOLE returns @end if all the bytes between @start
+> + * and @end contain data.
+> + */
+> +loff_t mapping_seek_hole_data(struct address_space *mapping, loff_t start,
+> +		loff_t end, int whence)
+> +{
+> +	XA_STATE(xas, &mapping->i_pages, start >> PAGE_SHIFT);
+> +	pgoff_t max = (end - 1) / PAGE_SIZE;
+> +	bool seek_data = (whence == SEEK_DATA);
+> +	struct page *page;
+> +
+> +	if (end <= start)
+> +		return -ENXIO;
+> +
+> +	rcu_read_lock();
+> +	while ((page = xas_find_get_entry(&xas, max, XA_PRESENT))) {
+> +		loff_t pos = xas.xa_index * PAGE_SIZE;
+> +
+> +		if (start < pos) {
+> +			if (!seek_data)
+> +				goto unlock;
+> +			start = pos;
+> +		}
+> +
+> +		pos += seek_page_size(&xas, page);
+> +		start = page_seek_hole_data(page, start, pos, seek_data);
+> +		if (start < pos)
+> +			goto unlock;
+
+Uh, I was staring at this function for half an hour but I still couldn't
+convince myself that it is correct in all the corner cases. Maybe I'm dumb
+but I'd wish this was more intuitive (and I have to say that the original
+tmpfs function is much more obviously correct to me). It would more 
+understandable for me if we had a code like:
+
+		if (page_seek_match(page, seek_data))
+			goto unlock;
+
+which would be just the condition in page_seek_hole_data(). Honestly at the
+moment I fail to see why you bother with 'pos' in the above four lines at
+all.
+
+BTW I suspect that this loop forgets to release the page reference it has got
+when doing SEEK_HOLE.
+
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	if (seek_data)
+> +		return -ENXIO;
+> +	goto out;
+> +
+> +unlock:
+> +	rcu_read_unlock();
+> +	if (!xa_is_value(page))
+> +		put_page(page);
+> +out:
+> +	if (start > end)
+> +		return end;
+> +	return start;
+> +}
 
 
-On 10/26/20 10:35 AM, Al Viro wrote:
-> On Mon, Oct 26, 2020 at 10:09:47AM +0800, kernel test robot wrote:
->> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.epoll
->> head:   319c15174757aaedacc89a6e55c965416f130e64
->> commit: ff07952aeda8563d5080da3a0754db83ed0650f6 [17/27] ep_send_events_proc(): fold into the caller
->> compiler: h8300-linux-gcc (GCC) 9.3.0
->>
->> If you fix the issue, kindly add following tag as appropriate
->> Reported-by: kernel test robot <lkp@intel.com>
->>
->>
->> "cppcheck warnings: (new ones prefixed by >>)"
->>>> fs/eventpoll.c:1629:3: warning: Assignment of function parameter has no effect outside the function. Did you forget dereferencing it? [uselessAssignmentPtrArg]
->>       events++;
->>       ^
-> Who the hell has come up with that warning?  What happens is,
-> essentially,
->
-> f(..., events, ....)
-> 	loop in which we have
-> 		g(events, something); // store the next sample
-> 		events++;
->
-> More specifically, it's
->>    1620			if (__put_user(revents, &events->events) ||
->>    1621			    __put_user(epi->event.data, &events->data)) {
->>    1622				list_add(&epi->rdllink, &txlist);
->>    1623				ep_pm_stay_awake(epi);
->>    1624				if (!res)
->>    1625					res = -EFAULT;
->>    1626				break;
->>    1627			}
->>    1628			res++;
->>> 1629			events++;
-> If anything, that should be reported to the maintainers of the buggy code.
-> Which is not the kernel in this case.
->
-> Google search on that thing brings this:
->
-> 	Cppcheck is an analysis tool for C/C++ code. It detects the types of
-> bugs that the compilers normally fail to detect. The goal is no false positives.
->
-> IOW, that should be reported to the authors of that thing, seeing that
-> their stated goal is obviously missed in this case.  Badly.  Assignments of
-> function parameters can be perfectly idiomatic and this case is such.
+								Honza
 
-Hi Al,
-
-Thanks for the explanation, we'll avoid sending out such reports 
-automatically
-and double check the warning.
-
-Best Regards,
-Rong Chen
-
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
