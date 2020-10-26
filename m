@@ -2,100 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C0B299926
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 22:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC4EE299935
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 22:59:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391063AbgJZVx3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Oct 2020 17:53:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391058AbgJZVx2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Oct 2020 17:53:28 -0400
-Received: from localhost.localdomain (unknown [192.30.34.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 443852084C;
-        Mon, 26 Oct 2020 21:53:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603749208;
-        bh=cbvz8JZpRk6jgUksGk7xL97fNKKDmg9abo4AHqnljqE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sRv3EjZur1PCPWhhj3mdgNha05v1M2MO1n/C3QZ7d2HyClMSDBGuYjcwreXwAsxn+
-         IMHaDbYbvkwvvSLHQEaesminOpgedDGwc4KNOCEqAODKQXa2j2qGkyqRiGtOo60imy
-         bl0plDlCdKtBqZo3GC5uXKq0wQQavhw03XU38t1A=
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Amir Goldstein <amir73il@gmail.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH] seq_file: fix clang warning for NULL pointer arithmetic
-Date:   Mon, 26 Oct 2020 22:52:56 +0100
-Message-Id: <20201026215321.3894419-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        id S2391350AbgJZV7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Oct 2020 17:59:31 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:55205 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391338AbgJZV7b (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 26 Oct 2020 17:59:31 -0400
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9674B58BF63;
+        Tue, 27 Oct 2020 08:59:24 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kXAWR-004fZW-3k; Tue, 27 Oct 2020 08:59:23 +1100
+Date:   Tue, 27 Oct 2020 08:59:23 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        peterz@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH] fs/dcache: optimize start_dir_add()
+Message-ID: <20201026215923.GA306023@dread.disaster.area>
+References: <20201022211650.25045-1-dave@stgolabs.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201022211650.25045-1-dave@stgolabs.net>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=afefHYAZSVUA:10 a=7-415B0cAAAA:8
+        a=jnOd6L2yOPG0MfuFbw4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Thu, Oct 22, 2020 at 02:16:50PM -0700, Davidlohr Bueso wrote:
+> Considering both end_dir_add() and d_alloc_parallel(), the
+> dir->i_dir_seq wants acquire/release semantics, therefore
+> micro-optimize for ll/sc archs and use finer grained barriers
+> to provide (load)-ACQUIRE ordering (L->S + L->L). This comes
+> at no additional cost for most of x86, as sane tso models will
+> have a nop for smp_rmb/smp_acquire__after_ctrl_dep.
+> 
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> ---
+> Alternatively I guess we could just use cmpxchg_acquire().
 
-Clang points out that adding something to NULL is notallowed
-in standard C:
+Please us cmpxchg_acquire() so that people who have no clue what the
+hell smp_acquire__after_ctrl_dep() means or does have some hope of
+understanding of what objects the ordering semantics in the function
+actually apply to....
 
-fs/kernfs/file.c:127:15: warning: performing pointer arithmetic on a
-null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-                return NULL + !*ppos;
-                       ~~~~ ^
-fs/seq_file.c:529:14: warning: performing pointer arithmetic on a
-null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-        return NULL + (*pos == 0);
+Cheers,
 
-Rephrase the function to do the same thing without triggering that
-warning. Linux already relies on a specific binary representation
-of NULL, so it makes no real difference here. The instance in
-kernfs was copied from single_start, so fix both at once.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Fixes: c2b19daf6760 ("sysfs, kernfs: prepare read path for kernfs")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/kernfs/file.c | 2 +-
- fs/seq_file.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index f277d023ebcd..b55e6ef4d677 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -124,7 +124,7 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
- 		 * The same behavior and code as single_open().  Returns
- 		 * !NULL if pos is at the beginning; otherwise, NULL.
- 		 */
--		return NULL + !*ppos;
-+		return (void *)(uintptr_t)!*ppos;
- 	}
- }
- 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 31219c1db17d..d456468eb934 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -526,7 +526,7 @@ EXPORT_SYMBOL(seq_dentry);
- 
- static void *single_start(struct seq_file *p, loff_t *pos)
- {
--	return NULL + (*pos == 0);
-+	return (void *)(uintptr_t)(*pos == 0);
- }
- 
- static void *single_next(struct seq_file *p, void *v, loff_t *pos)
+Dave.
 -- 
-2.27.0
-
+Dave Chinner
+david@fromorbit.com
