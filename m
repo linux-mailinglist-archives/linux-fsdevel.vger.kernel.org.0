@@ -2,444 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C24B2983B3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Oct 2020 22:30:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D50E29857F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Oct 2020 03:09:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1418915AbgJYVaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 25 Oct 2020 17:30:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1418890AbgJYVaH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 25 Oct 2020 17:30:07 -0400
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AC9CC061755;
-        Sun, 25 Oct 2020 14:30:07 -0700 (PDT)
-Received: by mail-qt1-x843.google.com with SMTP id z33so5384394qth.8;
-        Sun, 25 Oct 2020 14:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4kGdtnjCAvf0Iq+Bue3UeGKF21sgOzrGsHxS54xhzcE=;
-        b=Bf0tuLI35vfE13HcwHZ+wcQkUwhAU7Ye+UG/JsUuuTjcyOlkGuRoPwiHLKqkVO+qDY
-         LZ/vIiAltiUegA7q3C8zR/ap+ylG5/6J/FOS5NY2PDRZUaQ2BYOAvbd4Xn2BKOGx3aBs
-         sG9AhE5k2tmCQBq0WacvrJbIJorBhBEisXmSEqrwPorhZTnvdMihqXk57filU1EqC4hc
-         taDKZEq/Sa2rQAqi/qOKgqzYEIVcP0cvrpN5ympsBGu5Ca7Q/3G1bJXo9Yhq6hqcXOMd
-         Or8ZzndrlvE2gROJ8WMXA3ezPXsOcc+K6F/5VUc9ka9J6u1PWiaV3JDBjjH3YZiIXPmI
-         MDlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4kGdtnjCAvf0Iq+Bue3UeGKF21sgOzrGsHxS54xhzcE=;
-        b=LwLagAJLlc+ai/m14ps0SMT+opC59CpMmhjSx64sCq+eJO4RnvXczBzgbPXxkRetx6
-         XedC3kKWDxGSovIzWbUDi19eXihnvdepiSevMD2g64HJ1Rh8KXFoQF2yd8i0YarYq/cH
-         28smWK2VABZ3N/7148d7vfk+Zq3dhZaINPJ1PCXXwX0YUAfDO0mGr38G9MucR1CMa2e9
-         BRnEEh12bKbeB1YLnCTuFmyyTRbGGSzIp7GAXgkOWe0Z1xHU5Bne9T6xTIyaeU2qcku8
-         nKraghDuAhjV+kmJoDgKdlZG767WfVsenoezBiquch3LZdSpAimmBk32Gh2LDW8oBIlm
-         khQQ==
-X-Gm-Message-State: AOAM531JLP2XX0sTnV2EQu8brct9/sCt0ZPqMwW2244aIdaSi6MFhQr6
-        Aoo1HZ9UgKGfIU7v5bKG7Ab41LFblg==
-X-Google-Smtp-Source: ABdhPJymJDytMZTG0YvtnjADpMF91BDQFmLh5f/zgHBwXqWQwbT5/EFRFG5AelBCIE5xf5r6X2jeKA==
-X-Received: by 2002:ac8:5cc8:: with SMTP id s8mr13103034qta.58.1603661405610;
-        Sun, 25 Oct 2020 14:30:05 -0700 (PDT)
-Received: from moria.home.lan ([2601:19b:c500:a1:7285:c2ff:fed5:c918])
-        by smtp.gmail.com with ESMTPSA id a200sm5352221qkb.66.2020.10.25.14.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Oct 2020 14:30:03 -0700 (PDT)
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>, axboe@kernel.dk,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 2/2] fs: generic_file_buffered_read() now uses find_get_pages_contig
-Date:   Sun, 25 Oct 2020 17:29:49 -0400
-Message-Id: <20201025212949.602194-3-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201025212949.602194-1-kent.overstreet@gmail.com>
-References: <20201025212949.602194-1-kent.overstreet@gmail.com>
+        id S1421348AbgJZCJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 25 Oct 2020 22:09:54 -0400
+Received: from mga07.intel.com ([134.134.136.100]:14867 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1419665AbgJZCJx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 25 Oct 2020 22:09:53 -0400
+IronPort-SDR: GplOTd0w9Bs6qgcCPJ3nw/Yh6s3sPUbXGpuWr0foXjpB9Tc3xV8sIltMKG3Ksr9olCuq8kN0Jk
+ 4JeUP27bbkUA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9785"; a="232059519"
+X-IronPort-AV: E=Sophos;i="5.77,417,1596524400"; 
+   d="scan'208";a="232059519"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2020 19:09:52 -0700
+IronPort-SDR: /knjrN/0mMNUODiflbSaDq4Eyq+oyr8Posk3QJPSaUdEHHSMW8zzrP5GWP2I269dFuyftblUQ8
+ SYlsIc53I8bg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,417,1596524400"; 
+   d="scan'208";a="303404510"
+Received: from lkp-server01.sh.intel.com (HELO cda15bb6d7bd) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 25 Oct 2020 19:09:51 -0700
+Received: from kbuild by cda15bb6d7bd with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kWrxG-000184-Ol; Mon, 26 Oct 2020 02:09:50 +0000
+Date:   Mon, 26 Oct 2020 10:09:47 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org
+Subject: [vfs:work.epoll 17/27] fs/eventpoll.c:1629:3: warning: Assignment of
+ function parameter has no effect outside the function. Did you forget
+ dereferencing
+Message-ID: <202010261043.dPTrCpUD-lkp@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert generic_file_buffered_read() to get pages to read from in
-batches, and then copy data to userspace from many pages at once - in
-particular, we now don't touch any cachelines that might be contended
-while we're in the loop to copy data to userspace.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.epoll
+head:   319c15174757aaedacc89a6e55c965416f130e64
+commit: ff07952aeda8563d5080da3a0754db83ed0650f6 [17/27] ep_send_events_proc(): fold into the caller
+compiler: h8300-linux-gcc (GCC) 9.3.0
 
-This is is a performance improvement on workloads that do buffered reads
-with large blocksizes, and a very large performance improvement if that
-file is also being accessed concurrently by different threads.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-On smaller reads (512 bytes), there's a very small performance
-improvement (1%, within the margin of error).
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+"cppcheck warnings: (new ones prefixed by >>)"
+>> fs/eventpoll.c:1629:3: warning: Assignment of function parameter has no effect outside the function. Did you forget dereferencing it? [uselessAssignmentPtrArg]
+     events++;
+     ^
+
+vim +1629 fs/eventpoll.c
+
+  1565	
+  1566	static int ep_send_events(struct eventpoll *ep,
+  1567				  struct epoll_event __user *events, int maxevents)
+  1568	{
+  1569		struct epitem *epi, *tmp;
+  1570		LIST_HEAD(txlist);
+  1571		poll_table pt;
+  1572		int res = 0;
+  1573	
+  1574		init_poll_funcptr(&pt, NULL);
+  1575	
+  1576		ep_start_scan(ep, 0, false, &txlist);
+  1577	
+  1578		/*
+  1579		 * We can loop without lock because we are passed a task private list.
+  1580		 * Items cannot vanish during the loop because ep_scan_ready_list() is
+  1581		 * holding "mtx" during this call.
+  1582		 */
+  1583		lockdep_assert_held(&ep->mtx);
+  1584	
+  1585		list_for_each_entry_safe(epi, tmp, &txlist, rdllink) {
+  1586			struct wakeup_source *ws;
+  1587			__poll_t revents;
+  1588	
+  1589			if (res >= maxevents)
+  1590				break;
+  1591	
+  1592			/*
+  1593			 * Activate ep->ws before deactivating epi->ws to prevent
+  1594			 * triggering auto-suspend here (in case we reactive epi->ws
+  1595			 * below).
+  1596			 *
+  1597			 * This could be rearranged to delay the deactivation of epi->ws
+  1598			 * instead, but then epi->ws would temporarily be out of sync
+  1599			 * with ep_is_linked().
+  1600			 */
+  1601			ws = ep_wakeup_source(epi);
+  1602			if (ws) {
+  1603				if (ws->active)
+  1604					__pm_stay_awake(ep->ws);
+  1605				__pm_relax(ws);
+  1606			}
+  1607	
+  1608			list_del_init(&epi->rdllink);
+  1609	
+  1610			/*
+  1611			 * If the event mask intersect the caller-requested one,
+  1612			 * deliver the event to userspace. Again, ep_scan_ready_list()
+  1613			 * is holding ep->mtx, so no operations coming from userspace
+  1614			 * can change the item.
+  1615			 */
+  1616			revents = ep_item_poll(epi, &pt, 1);
+  1617			if (!revents)
+  1618				continue;
+  1619	
+  1620			if (__put_user(revents, &events->events) ||
+  1621			    __put_user(epi->event.data, &events->data)) {
+  1622				list_add(&epi->rdllink, &txlist);
+  1623				ep_pm_stay_awake(epi);
+  1624				if (!res)
+  1625					res = -EFAULT;
+  1626				break;
+  1627			}
+  1628			res++;
+> 1629			events++;
+  1630			if (epi->event.events & EPOLLONESHOT)
+  1631				epi->event.events &= EP_PRIVATE_BITS;
+  1632			else if (!(epi->event.events & EPOLLET)) {
+  1633				/*
+  1634				 * If this file has been added with Level
+  1635				 * Trigger mode, we need to insert back inside
+  1636				 * the ready list, so that the next call to
+  1637				 * epoll_wait() will check again the events
+  1638				 * availability. At this point, no one can insert
+  1639				 * into ep->rdllist besides us. The epoll_ctl()
+  1640				 * callers are locked out by
+  1641				 * ep_scan_ready_list() holding "mtx" and the
+  1642				 * poll callback will queue them in ep->ovflist.
+  1643				 */
+  1644				list_add_tail(&epi->rdllink, &ep->rdllist);
+  1645				ep_pm_stay_awake(epi);
+  1646			}
+  1647		}
+  1648		ep_done_scan(ep, 0, false, &txlist);
+  1649	
+  1650		return res;
+  1651	}
+  1652	
+
 ---
- mm/filemap.c | 313 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 175 insertions(+), 138 deletions(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index cc0f58a249..1bf1f424cb 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2168,67 +2168,6 @@ static int lock_page_for_iocb(struct kiocb *iocb, struct page *page)
- 		return lock_page_killable(page);
- }
- 
--static int generic_file_buffered_read_page_ok(struct kiocb *iocb,
--			struct iov_iter *iter,
--			struct page *page)
--{
--	struct address_space *mapping = iocb->ki_filp->f_mapping;
--	struct inode *inode = mapping->host;
--	struct file_ra_state *ra = &iocb->ki_filp->f_ra;
--	unsigned int offset = iocb->ki_pos & ~PAGE_MASK;
--	unsigned int bytes, copied;
--	loff_t isize, end_offset;
--
--	BUG_ON(iocb->ki_pos >> PAGE_SHIFT != page->index);
--
--	/*
--	 * i_size must be checked after we know the page is Uptodate.
--	 *
--	 * Checking i_size after the check allows us to calculate
--	 * the correct value for "bytes", which means the zero-filled
--	 * part of the page is not copied back to userspace (unless
--	 * another truncate extends the file - this is desired though).
--	 */
--
--	isize = i_size_read(inode);
--	if (unlikely(iocb->ki_pos >= isize))
--		return 1;
--
--	end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
--
--	bytes = min_t(loff_t, end_offset - iocb->ki_pos, PAGE_SIZE - offset);
--
--	/* If users can be writing to this page using arbitrary
--	 * virtual addresses, take care about potential aliasing
--	 * before reading the page on the kernel side.
--	 */
--	if (mapping_writably_mapped(mapping))
--		flush_dcache_page(page);
--
--	/*
--	 * Ok, we have the page, and it's up-to-date, so
--	 * now we can copy it to user space...
--	 */
--
--	copied = copy_page_to_iter(page, offset, bytes, iter);
--
--	iocb->ki_pos += copied;
--
--	/*
--	 * When a sequential read accesses a page several times,
--	 * only mark it as accessed the first time.
--	 */
--	if (iocb->ki_pos >> PAGE_SHIFT != ra->prev_pos >> PAGE_SHIFT)
--		mark_page_accessed(page);
--
--	ra->prev_pos = iocb->ki_pos;
--
--	if (copied < bytes)
--		return -EFAULT;
--
--	return !iov_iter_count(iter) || iocb->ki_pos == isize;
--}
--
- static struct page *
- generic_file_buffered_read_readpage(struct kiocb *iocb,
- 				    struct file *filp,
-@@ -2386,6 +2325,92 @@ generic_file_buffered_read_no_cached_page(struct kiocb *iocb,
- 	return generic_file_buffered_read_readpage(iocb, filp, mapping, page);
- }
- 
-+static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
-+						struct iov_iter *iter,
-+						struct page **pages,
-+						unsigned int nr)
-+{
-+	struct file *filp = iocb->ki_filp;
-+	struct address_space *mapping = filp->f_mapping;
-+	struct file_ra_state *ra = &filp->f_ra;
-+	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
-+	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
-+	int i, j, nr_got, err = 0;
-+
-+	nr = min_t(unsigned long, last_index - index, nr);
-+find_page:
-+	if (fatal_signal_pending(current))
-+		return -EINTR;
-+
-+	nr_got = find_get_pages_contig(mapping, index, nr, pages);
-+	if (nr_got)
-+		goto got_pages;
-+
-+	if (iocb->ki_flags & IOCB_NOIO)
-+		return -EAGAIN;
-+
-+	page_cache_sync_readahead(mapping, ra, filp, index, last_index - index);
-+
-+	nr_got = find_get_pages_contig(mapping, index, nr, pages);
-+	if (nr_got)
-+		goto got_pages;
-+
-+	pages[0] = generic_file_buffered_read_no_cached_page(iocb, iter);
-+	err = PTR_ERR_OR_ZERO(pages[0]);
-+	if (!IS_ERR_OR_NULL(pages[0]))
-+		nr_got = 1;
-+got_pages:
-+	for (i = 0; i < nr_got; i++) {
-+		struct page *page = pages[i];
-+		pgoff_t pg_index = index + i;
-+		loff_t pg_pos = max(iocb->ki_pos,
-+				    (loff_t) pg_index << PAGE_SHIFT);
-+		loff_t pg_count = iocb->ki_pos + iter->count - pg_pos;
-+
-+		if (PageReadahead(page)) {
-+			if (iocb->ki_flags & IOCB_NOIO) {
-+				for (j = i; j < nr_got; j++)
-+					put_page(pages[j]);
-+				nr_got = i;
-+				err = -EAGAIN;
-+				break;
-+			}
-+			page_cache_async_readahead(mapping, ra, filp, page,
-+					pg_index, last_index - pg_index);
-+		}
-+
-+		if (!PageUptodate(page)) {
-+			if ((iocb->ki_flags & IOCB_NOWAIT) ||
-+			    ((iocb->ki_flags & IOCB_WAITQ) && i)) {
-+				for (j = i; j < nr_got; j++)
-+					put_page(pages[j]);
-+				nr_got = i;
-+				err = -EAGAIN;
-+				break;
-+			}
-+
-+			page = generic_file_buffered_read_pagenotuptodate(iocb,
-+					filp, iter, page, pg_pos, pg_count);
-+			if (IS_ERR_OR_NULL(page)) {
-+				for (j = i + 1; j < nr_got; j++)
-+					put_page(pages[j]);
-+				nr_got = i;
-+				err = PTR_ERR_OR_ZERO(page);
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (likely(nr_got))
-+		return nr_got;
-+	if (err)
-+		return err;
-+	/*
-+	 * No pages and no error means we raced and should retry:
-+	 */
-+	goto find_page;
-+}
-+
- /**
-  * generic_file_buffered_read - generic file read routine
-  * @iocb:	the iocb to read
-@@ -2406,104 +2431,116 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		struct iov_iter *iter, ssize_t written)
- {
- 	struct file *filp = iocb->ki_filp;
-+	struct file_ra_state *ra = &filp->f_ra;
- 	struct address_space *mapping = filp->f_mapping;
- 	struct inode *inode = mapping->host;
--	struct file_ra_state *ra = &filp->f_ra;
--	size_t orig_count = iov_iter_count(iter);
--	pgoff_t last_index;
--	int error = 0;
-+	struct page *pages_onstack[PAGEVEC_SIZE], **pages = NULL;
-+	unsigned int nr_pages = min_t(unsigned int, 512,
-+			((iocb->ki_pos + iter->count + PAGE_SIZE - 1) >> PAGE_SHIFT) -
-+			(iocb->ki_pos >> PAGE_SHIFT));
-+	int i, pg_nr, error = 0;
-+	bool writably_mapped;
-+	loff_t isize, end_offset;
- 
- 	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
- 		return 0;
- 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
- 
--	last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
-+	if (nr_pages > ARRAY_SIZE(pages_onstack))
-+		pages = kmalloc_array(nr_pages, sizeof(void *), GFP_KERNEL);
- 
--	/*
--	 * If we've already successfully copied some data, then we
--	 * can no longer safely return -EIOCBQUEUED. Hence mark
--	 * an async read NOWAIT at that point.
--	 */
--	if (written && (iocb->ki_flags & IOCB_WAITQ))
--		iocb->ki_flags |= IOCB_NOWAIT;
--
--	for (;;) {
--		pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
--		struct page *page;
-+	if (!pages) {
-+		pages = pages_onstack;
-+		nr_pages = min_t(unsigned int, nr_pages, ARRAY_SIZE(pages_onstack));
-+	}
- 
-+	do {
- 		cond_resched();
--find_page:
--		if (fatal_signal_pending(current)) {
--			error = -EINTR;
--			goto out;
--		}
- 
- 		/*
--		 * We can't return -EIOCBQUEUED once we've done some work, so
--		 * ensure we don't block:
-+		 * If we've already successfully copied some data, then we
-+		 * can no longer safely return -EIOCBQUEUED. Hence mark
-+		 * an async read NOWAIT at that point.
- 		 */
--		if ((iocb->ki_flags & IOCB_WAITQ) &&
--		    (written + orig_count - iov_iter_count(iter)))
-+		if ((iocb->ki_flags & IOCB_WAITQ) && written)
- 			iocb->ki_flags |= IOCB_NOWAIT;
- 
--		page = find_get_page(mapping, index);
--		if (!page) {
--			if (iocb->ki_flags & IOCB_NOIO)
--				goto would_block;
--			page_cache_sync_readahead(mapping,
--					ra, filp,
--					index, last_index - index);
--			page = find_get_page(mapping, index);
--			if (unlikely(page == NULL)) {
--				page = generic_file_buffered_read_no_cached_page(iocb, iter);
--				if (!page)
--					goto find_page;
--				if (IS_ERR(page)) {
--					error = PTR_ERR(page);
--					goto out;
--				}
--			}
--		}
--		if (PageReadahead(page)) {
--			if (iocb->ki_flags & IOCB_NOIO) {
--				put_page(page);
--				goto out;
--			}
--			page_cache_async_readahead(mapping,
--					ra, filp, page,
--					index, last_index - index);
--		}
--		if (!PageUptodate(page)) {
--			if (iocb->ki_flags & IOCB_NOWAIT) {
--				put_page(page);
--				error = -EAGAIN;
--				goto out;
--			}
--			page = generic_file_buffered_read_pagenotuptodate(iocb,
--					filp, iter, page, iocb->ki_pos, iter->count);
--			if (!page)
--				goto find_page;
--			if (IS_ERR(page)) {
--				error = PTR_ERR(page);
--				goto out;
--			}
-+		i = 0;
-+		pg_nr = generic_file_buffered_read_get_pages(iocb, iter,
-+							     pages, nr_pages);
-+		if (pg_nr < 0) {
-+			error = pg_nr;
-+			break;
- 		}
- 
--		error = generic_file_buffered_read_page_ok(iocb, iter, page);
--		put_page(page);
-+		/*
-+		 * i_size must be checked after we know the pages are Uptodate.
-+		 *
-+		 * Checking i_size after the check allows us to calculate
-+		 * the correct value for "nr", which means the zero-filled
-+		 * part of the page is not copied back to userspace (unless
-+		 * another truncate extends the file - this is desired though).
-+		 */
-+		isize = i_size_read(inode);
-+		if (unlikely(iocb->ki_pos >= isize))
-+			goto put_pages;
- 
--		if (error) {
--			if (error > 0)
--				error = 0;
--			goto out;
-+		end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
-+
-+		while ((iocb->ki_pos >> PAGE_SHIFT) + pg_nr >
-+		       (end_offset + PAGE_SIZE - 1) >> PAGE_SHIFT)
-+			put_page(pages[--pg_nr]);
-+
-+		/*
-+		 * Once we start copying data, we don't want to be touching any
-+		 * cachelines that might be contended:
-+		 */
-+		writably_mapped = mapping_writably_mapped(mapping);
-+
-+		/*
-+		 * When a sequential read accesses a page several times, only
-+		 * mark it as accessed the first time.
-+		 */
-+		if (iocb->ki_pos >> PAGE_SHIFT !=
-+		    ra->prev_pos >> PAGE_SHIFT)
-+			mark_page_accessed(pages[0]);
-+		for (i = 1; i < pg_nr; i++)
-+			mark_page_accessed(pages[i]);
-+
-+		for (i = 0; i < pg_nr; i++) {
-+			unsigned int offset = iocb->ki_pos & ~PAGE_MASK;
-+			unsigned int bytes = min_t(loff_t, end_offset - iocb->ki_pos,
-+						   PAGE_SIZE - offset);
-+			unsigned int copied;
-+
-+			/*
-+			 * If users can be writing to this page using arbitrary
-+			 * virtual addresses, take care about potential aliasing
-+			 * before reading the page on the kernel side.
-+			 */
-+			if (writably_mapped)
-+				flush_dcache_page(pages[i]);
-+
-+			copied = copy_page_to_iter(pages[i], offset, bytes, iter);
-+
-+			written += copied;
-+			iocb->ki_pos += copied;
-+			ra->prev_pos = iocb->ki_pos;
-+
-+			if (copied < bytes) {
-+				error = -EFAULT;
-+				break;
-+			}
- 		}
--	}
-+put_pages:
-+		for (i = 0; i < pg_nr; i++)
-+			put_page(pages[i]);
-+	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
- 
--would_block:
--	error = -EAGAIN;
--out:
- 	file_accessed(filp);
--	written += orig_count - iov_iter_count(iter);
-+
-+	if (pages != pages_onstack)
-+		kfree(pages);
- 
- 	return written ? written : error;
- }
--- 
-2.28.0
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
