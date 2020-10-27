@@ -2,84 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8FEF29BEE1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 18:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 365D629C1D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 18:28:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1814490AbgJ0Q4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 12:56:34 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36707 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1813801AbgJ0Qyv (ORCPT
+        id S2901270AbgJ0Ow0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 10:52:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37132 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1772926AbgJ0Oug (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 12:54:51 -0400
-Received: by mail-lj1-f195.google.com with SMTP id x6so2585892ljd.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Oct 2020 09:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GEusMx0ZRn138Jwefw1g8V0UKrDDZdcut1bQJdGAhgQ=;
-        b=ZmatzM83a70P7B8/xGgnQM2/OG0aO0tUzkC/htVxiakYVLlot0AM874buXlHxDJehX
-         ds9dWNZ/n41v2KEd+RL8moBpRKEKHJwd6mHOse8lkbt+ztLaAYrzNJo9+5Ym1Vno+Dzh
-         XqswaktvPhQzc8N2erg1+15+XEoKZoIWz33yI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GEusMx0ZRn138Jwefw1g8V0UKrDDZdcut1bQJdGAhgQ=;
-        b=n35uLDWfWrF6x2Tln2/i0rrwV53Qflw76LFuWNnBqRamEPP5dPgqpql0EZmN45YBrr
-         Txh3DpYc97mdaPpaMcz9gzlI/zFmgAXmD+Ozg639DmReNWqrhgICoURtcjrO1IkskZ/p
-         lQ2x8CB5pjT/g+Dhid/WFrxKBixk4lnHNs99gjhDmL3OxaE+kkrh8iNcOMqo/qvXMjrI
-         tOBD6qetz8QkFfbWUiICWqrryRkchgauqscuxxSgVIG3/v43fr2556rStJ+BKWyP3/D/
-         XZ9iK2mnYZuz78NFZzN4nMRsnMLqXIWyrH/ralqKWQJMdhWY5bZxF8d3wbloUrefQh8r
-         qang==
-X-Gm-Message-State: AOAM532nwzc9KX82pgDdQruDMFj1LTMsqiChBzPCTFyy6NlduffUqS2T
-        f9+jy/NGyzoeus9DLkRm5jbNRlSFcXej9w==
-X-Google-Smtp-Source: ABdhPJwJBkMC+G+q26O5gMzTpSCCFHXBXz5H0y9LFmZ6oNGJ6Bpku2AzLWLNFt9k0bgYwv8vZrkYqg==
-X-Received: by 2002:a2e:7310:: with SMTP id o16mr1548064ljc.42.1603817689252;
-        Tue, 27 Oct 2020 09:54:49 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id a9sm238284lfl.70.2020.10.27.09.54.47
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2020 09:54:48 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id y16so2605625ljk.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Oct 2020 09:54:47 -0700 (PDT)
-X-Received: by 2002:a2e:8092:: with SMTP id i18mr1416961ljg.314.1603817687157;
- Tue, 27 Oct 2020 09:54:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <51a9a594a38ae6e0982e78976cf046fb55b63a8e.1603191669.git.viresh.kumar@linaro.org>
- <20201027085152.GB10053@infradead.org>
-In-Reply-To: <20201027085152.GB10053@infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 27 Oct 2020 09:54:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whw9t3ZtV8iA2SJWYQS1VOJuS14P_qhj3v5-9PCBmGQww@mail.gmail.com>
-Message-ID: <CAHk-=whw9t3ZtV8iA2SJWYQS1VOJuS14P_qhj3v5-9PCBmGQww@mail.gmail.com>
-Subject: Re: [PATCH] dcookies: Make dcookies depend on CONFIG_OPROFILE
-To:     Christoph Hellwig <hch@infradead.org>,
-        William Cohen <wcohen@redhat.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Tue, 27 Oct 2020 10:50:36 -0400
+X-Greylist: delayed 3303 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Oct 2020 10:50:36 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=zDE5jb9uxhVI9C4jlM6oDJI3APbjGF+q9+SWA/XVKeI=; b=2KemxEIJQODswF6tNzklkYfkjJ
+        QQsUcrSXbVfL0tK+ihfcobzBVTVFg606C1qriUbY54A5Q5dcls5dJITJEyA944Ri74Bpwe4vdnFnH
+        uImLAucbMEk9s5iV3n0WWOYFGZGDdevASSJOT7J+a70EK1RrlNjFfRLHwPfdRCvFwV6PCymq1cYze
+        nCLYaH3laExlXMK7uO/adSWD8Zc9hJz6LKkSn545yYoGZR9hTCzzlM+3w7pULZs6/4Bu0GwggmBE+
+        eVY2cqNAukipGfhJl04U/JvR2waVkO5t1pGdhVEOnCTywhcT8GLQf3xVnbbsyE4EAfLD+/LDv41ul
+        rD4wBrgQ==;
+Received: from i7.infradead.org ([2001:8b0:10b:1:21e:67ff:fecb:7a92])
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kXPRe-00005c-KS; Tue, 27 Oct 2020 13:55:26 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.93 #3 (Red Hat Linux))
+        id 1kXPRd-002iLY-JP; Tue, 27 Oct 2020 13:55:25 +0000
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     bonzini@redhat.com
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        anmar.oueja@linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jens Axboe <axboe@kernel.dk>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] Allow in-kernel consumers to drain events from eventfd
+Date:   Tue, 27 Oct 2020 13:55:20 +0000
+Message-Id: <20201027135523.646811-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <1faa5405-3640-f4ad-5cd9-89a9e5e834e9@redhat.com>
+References: <1faa5405-3640-f4ad-5cd9-89a9e5e834e9@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 27, 2020 at 1:52 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> Is it time to deprecate and eventually remove oprofile while we're at
-> it?
+Paolo pointed out that the KVM eventfd doesn't drain the events from the
+irqfd as it handles them, and just lets them accumulate. This is also
+true for the VFIO virqfd used for handling acks for level-triggered IRQs.
 
-I think it's well past time.
+Export eventfd_ctx_do_read() and make the wakeup functions call it as they
+handle their respective events.
 
-I think the user-space "oprofile" program doesn't actually use the
-legacy kernel code any more, and hasn't for a long time.
+David Woodhouse (3):
+      eventfd: Export eventfd_ctx_do_read()
+      vfio/virqfd: Drain events from eventfd in virqfd_wakeup()
+      kvm/eventfd: Drain events from eventfd in irqfd_wakeup()
 
-But I might be wrong. Adding William Cohen to the cc, since he seems
-to still maintain it to make sure it builds etc.
+ drivers/vfio/virqfd.c   | 3 +++
+ fs/eventfd.c            | 5 ++++-
+ include/linux/eventfd.h | 6 ++++++
+ virt/kvm/eventfd.c      | 3 +++
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
-             Linus
+
