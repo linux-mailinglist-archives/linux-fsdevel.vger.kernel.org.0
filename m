@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9110929AAAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51E4F29AAB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2899169AbgJ0LaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 07:30:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45390 "EHLO mail.kernel.org"
+        id S2899177AbgJ0Laa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 07:30:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438788AbgJ0LaU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 07:30:20 -0400
+        id S1744152AbgJ0La1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 07:30:27 -0400
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6048522281;
-        Tue, 27 Oct 2020 11:30:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2671822263;
+        Tue, 27 Oct 2020 11:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603798219;
-        bh=3qystsPnlugjRY8KsORSq7RQeCX5pBKTiAj4xq/mspE=;
+        s=default; t=1603798226;
+        bh=hxEOxl1IwdTpwx70FS/bBSNDVfegzJWvFNtGcxWnpK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BjNj5FSFIwe17dRRhPtFzFq+PmqU9E4pD5GIlu2eyCkB5srdBe5YvAntFjwJNj5JX
-         fYpsmJrEBjNkluDvSFl5V0nS70cGNpKKBs25O8Er9Oxzzdh3UabjM5ColXN7R435E4
-         RZQC0EmtS/7eX0gagqQR3rMsLaX4XsAaOEnFJo68=
+        b=E3w7SoEr+bfUieWUtprrUKUdeSIk/mdTYkq83jXT4rLa44KxiLoDPrUXbgRlwCJUk
+         /RvM+YASN1IDh/7lvbhSR/CaSXPb9U+uiK4CUciGNilyZkeYX/46tfjHPMuXAbQDMd
+         spxApcgn8Sh8oDwxyZ1BH+IQOnm7p6lfMmeYQvaQ=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH 02/13] ia64: remove custom __early_pfn_to_nid()
-Date:   Tue, 27 Oct 2020 13:29:44 +0200
-Message-Id: <20201027112955.14157-3-rppt@kernel.org>
+Subject: [PATCH 03/13] ia64: remove 'ifdef CONFIG_ZONE_DMA32' statements
+Date:   Tue, 27 Oct 2020 13:29:45 +0200
+Message-Id: <20201027112955.14157-4-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201027112955.14157-1-rppt@kernel.org>
 References: <20201027112955.14157-1-rppt@kernel.org>
@@ -57,154 +57,47 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-The ia64 implementation of __early_pfn_to_nid() essentially relies on the
-same data as the generic implementation.
+After the removal of SN2 platform (commit cf07cb1ff4ea ("ia64: remove
+support for the SGI SN2 platform") IA-64 always has ZONE_DMA32 and there is
+no point to guard code with this configuration option.
 
-The correspondence between memory ranges and nodes is set in memblock
-during early memory initialization in register_active_ranges() function.
-
-The initialization of sparsemem that requires early_pfn_to_nid() happens
-later and it can use the memblock information like the other architectures.
+Remove ifdefery associated with CONFIG_ZONE_DMA32
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- arch/ia64/Kconfig      |  3 ---
- arch/ia64/mm/numa.c    | 30 ------------------------------
- include/linux/mm.h     |  3 ---
- include/linux/mmzone.h | 11 -----------
- mm/page_alloc.c        | 16 ++++++++++++----
- 5 files changed, 12 insertions(+), 51 deletions(-)
+ arch/ia64/mm/contig.c    | 2 --
+ arch/ia64/mm/discontig.c | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index 39b25a5a591b..12aae706cb27 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -342,9 +342,6 @@ config HOLES_IN_ZONE
- 	bool
- 	default y if VIRTUAL_MEM_MAP
+diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
+index e30e360beef8..2491aaeca90c 100644
+--- a/arch/ia64/mm/contig.c
++++ b/arch/ia64/mm/contig.c
+@@ -177,10 +177,8 @@ paging_init (void)
+ 	unsigned long max_zone_pfns[MAX_NR_ZONES];
  
--config HAVE_ARCH_EARLY_PFN_TO_NID
--	def_bool NUMA && SPARSEMEM
--
- config HAVE_ARCH_NODEDATA_EXTENSION
- 	def_bool y
- 	depends on NUMA
-diff --git a/arch/ia64/mm/numa.c b/arch/ia64/mm/numa.c
-index f34964271101..46b6e5f3a40f 100644
---- a/arch/ia64/mm/numa.c
-+++ b/arch/ia64/mm/numa.c
-@@ -58,36 +58,6 @@ paddr_to_nid(unsigned long paddr)
- EXPORT_SYMBOL(paddr_to_nid);
+ 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+-#ifdef CONFIG_ZONE_DMA32
+ 	max_dma = virt_to_phys((void *) MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+ 	max_zone_pfns[ZONE_DMA32] = max_dma;
+-#endif
+ 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
  
- #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_NUMA)
--/*
-- * Because of holes evaluate on section limits.
-- * If the section of memory exists, then return the node where the section
-- * resides.  Otherwise return node 0 as the default.  This is used by
-- * SPARSEMEM to allocate the SPARSEMEM sectionmap on the NUMA node where
-- * the section resides.
-- */
--int __meminit __early_pfn_to_nid(unsigned long pfn,
--					struct mminit_pfnnid_cache *state)
--{
--	int i, section = pfn >> PFN_SECTION_SHIFT, ssec, esec;
--
--	if (section >= state->last_start && section < state->last_end)
--		return state->last_nid;
--
--	for (i = 0; i < num_node_memblks; i++) {
--		ssec = node_memblk[i].start_paddr >> PA_SECTION_SHIFT;
--		esec = (node_memblk[i].start_paddr + node_memblk[i].size +
--			((1L << PA_SECTION_SHIFT) - 1)) >> PA_SECTION_SHIFT;
--		if (section >= ssec && section < esec) {
--			state->last_start = ssec;
--			state->last_end = esec;
--			state->last_nid = node_memblk[i].nid;
--			return node_memblk[i].nid;
--		}
--	}
--
--	return -1;
--}
--
- void numa_clear_node(int cpu)
- {
- 	unmap_cpu_from_node(cpu, NUMA_NO_NODE);
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ef360fe70aaf..ac51b07b9021 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2433,9 +2433,6 @@ static inline int early_pfn_to_nid(unsigned long pfn)
- #else
- /* please see mm/page_alloc.c */
- extern int __meminit early_pfn_to_nid(unsigned long pfn);
--/* there is a per-arch backend function. */
--extern int __meminit __early_pfn_to_nid(unsigned long pfn,
--					struct mminit_pfnnid_cache *state);
- #endif
+ #ifdef CONFIG_VIRTUAL_MEM_MAP
+diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
+index dbe829fc5298..d255596f52c6 100644
+--- a/arch/ia64/mm/discontig.c
++++ b/arch/ia64/mm/discontig.c
+@@ -621,9 +621,7 @@ void __init paging_init(void)
+ 	}
  
- extern void set_dma_reserve(unsigned long new_dma_reserve);
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index fb3bf696c05e..876600a6e891 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1428,17 +1428,6 @@ void sparse_init(void);
- #define subsection_map_init(_pfn, _nr_pages) do {} while (0)
- #endif /* CONFIG_SPARSEMEM */
+ 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+-#ifdef CONFIG_ZONE_DMA32
+ 	max_zone_pfns[ZONE_DMA32] = max_dma;
+-#endif
+ 	max_zone_pfns[ZONE_NORMAL] = max_pfn;
+ 	free_area_init(max_zone_pfns);
  
--/*
-- * During memory init memblocks map pfns to nids. The search is expensive and
-- * this caches recent lookups. The implementation of __early_pfn_to_nid
-- * may treat start/end as pfns or sections.
-- */
--struct mminit_pfnnid_cache {
--	unsigned long last_start;
--	unsigned long last_end;
--	int last_nid;
--};
--
- /*
-  * If it is possible to have holes within a MAX_ORDER_NR_PAGES, then we
-  * need to check pfn validity within that MAX_ORDER_NR_PAGES block.
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 23f5066bd4a5..1fdbf8da77af 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1558,14 +1558,23 @@ void __free_pages_core(struct page *page, unsigned int order)
- 
- #ifdef CONFIG_NEED_MULTIPLE_NODES
- 
--static struct mminit_pfnnid_cache early_pfnnid_cache __meminitdata;
-+/*
-+ * During memory init memblocks map pfns to nids. The search is expensive and
-+ * this caches recent lookups. The implementation of __early_pfn_to_nid
-+ * treats start/end as pfns.
-+ */
-+struct mminit_pfnnid_cache {
-+	unsigned long last_start;
-+	unsigned long last_end;
-+	int last_nid;
-+};
- 
--#ifndef CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID
-+static struct mminit_pfnnid_cache early_pfnnid_cache __meminitdata;
- 
- /*
-  * Required by SPARSEMEM. Given a PFN, return what node the PFN is on.
-  */
--int __meminit __early_pfn_to_nid(unsigned long pfn,
-+static int __meminit __early_pfn_to_nid(unsigned long pfn,
- 					struct mminit_pfnnid_cache *state)
- {
- 	unsigned long start_pfn, end_pfn;
-@@ -1583,7 +1592,6 @@ int __meminit __early_pfn_to_nid(unsigned long pfn,
- 
- 	return nid;
- }
--#endif /* CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID */
- 
- int __meminit early_pfn_to_nid(unsigned long pfn)
- {
 -- 
 2.28.0
 
