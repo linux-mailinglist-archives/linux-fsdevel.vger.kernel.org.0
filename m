@@ -2,69 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 365D629C1D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 18:28:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE4E29C16D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 18:25:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2901270AbgJ0Ow0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 10:52:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37132 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1772926AbgJ0Oug (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 10:50:36 -0400
-X-Greylist: delayed 3303 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Oct 2020 10:50:36 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=zDE5jb9uxhVI9C4jlM6oDJI3APbjGF+q9+SWA/XVKeI=; b=2KemxEIJQODswF6tNzklkYfkjJ
-        QQsUcrSXbVfL0tK+ihfcobzBVTVFg606C1qriUbY54A5Q5dcls5dJITJEyA944Ri74Bpwe4vdnFnH
-        uImLAucbMEk9s5iV3n0WWOYFGZGDdevASSJOT7J+a70EK1RrlNjFfRLHwPfdRCvFwV6PCymq1cYze
-        nCLYaH3laExlXMK7uO/adSWD8Zc9hJz6LKkSn545yYoGZR9hTCzzlM+3w7pULZs6/4Bu0GwggmBE+
-        eVY2cqNAukipGfhJl04U/JvR2waVkO5t1pGdhVEOnCTywhcT8GLQf3xVnbbsyE4EAfLD+/LDv41ul
-        rD4wBrgQ==;
-Received: from i7.infradead.org ([2001:8b0:10b:1:21e:67ff:fecb:7a92])
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kXPRe-00005c-KS; Tue, 27 Oct 2020 13:55:26 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1kXPRd-002iLY-JP; Tue, 27 Oct 2020 13:55:25 +0000
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     bonzini@redhat.com
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/3] Allow in-kernel consumers to drain events from eventfd
-Date:   Tue, 27 Oct 2020 13:55:20 +0000
-Message-Id: <20201027135523.646811-1-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <1faa5405-3640-f4ad-5cd9-89a9e5e834e9@redhat.com>
-References: <1faa5405-3640-f4ad-5cd9-89a9e5e834e9@redhat.com>
+        id S1762974AbgJ0Owa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 10:52:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1773166AbgJ0Ovk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 10:51:40 -0400
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68AC822283;
+        Tue, 27 Oct 2020 14:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603810300;
+        bh=OA2ldPIleffPYegNQylopB0nJONj8X8WAZksjt9aE9Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bhAIQhAHEkustLbXb5xSzOPIKfcIV4FN/8NxRDqJ+bZmT6F2fWqyV8GBNEMhPfDs1
+         D5Cx7ZA1ZjtW4QdfY+DM1jIW/9Tr/8rgHEG9zaRYt5nQICsXKPp9a6bdKvbFPhZMJU
+         +gTDswUb95kfFwOeLwtsNw7UPqDrk55wNNX9OPcY=
+Received: by mail-qv1-f45.google.com with SMTP id s17so756003qvr.11;
+        Tue, 27 Oct 2020 07:51:40 -0700 (PDT)
+X-Gm-Message-State: AOAM53376I3WeTMMode6X82NIxKUgwjmP8ADj9xLkaJvA2ts7aJqVzCo
+        Y308bEFsZiVM47M8V3i2RBEFt6npfqmwr0xri1A=
+X-Google-Smtp-Source: ABdhPJxKs0hJCrdJK3jD6B/5m6V13LO5XvTLyQPwksTqoeN3Qq2cwOYkpuosPKW/VoW2FFqoXPh1ms2bEeDeTGKiy2A=
+X-Received: by 2002:ad4:4203:: with SMTP id k3mr2717093qvp.8.1603810299401;
+ Tue, 27 Oct 2020 07:51:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by merlin.infradead.org. See http://www.infradead.org/rpr.html
+References: <20201026215321.3894419-1-arnd@kernel.org> <20201027104450.GA8864@infradead.org>
+In-Reply-To: <20201027104450.GA8864@infradead.org>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Tue, 27 Oct 2020 15:51:22 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0irGzw8YDdV9HoaaiPOfgzWQ6hxgbC6_dx=4E8vGKXXA@mail.gmail.com>
+Message-ID: <CAK8P3a0irGzw8YDdV9HoaaiPOfgzWQ6hxgbC6_dx=4E8vGKXXA@mail.gmail.com>
+Subject: Re: [PATCH] seq_file: fix clang warning for NULL pointer arithmetic
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Paolo pointed out that the KVM eventfd doesn't drain the events from the
-irqfd as it handles them, and just lets them accumulate. This is also
-true for the VFIO virqfd used for handling acks for level-triggered IRQs.
+On Tue, Oct 27, 2020 at 11:45 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> > index f277d023ebcd..b55e6ef4d677 100644
+> > --- a/fs/kernfs/file.c
+> > +++ b/fs/kernfs/file.c
+> > @@ -124,7 +124,7 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
+> >                * The same behavior and code as single_open().  Returns
+> >                * !NULL if pos is at the beginning; otherwise, NULL.
+> >                */
+> > -             return NULL + !*ppos;
+> > +             return (void *)(uintptr_t)!*ppos;
+>
+> Yikes.  This is just horrible, why bnot the completely obvious:
+>
+>         if (ops->seq_start) {
+>                 ...
+>                 return next;
+>         }
+>
+>         if (*ppos)
+>                 return NULL;
+>         return ppos; /* random cookie */
 
-Export eventfd_ctx_do_read() and make the wakeup functions call it as they
-handle their respective events.
+I was trying to not change the behavior, but I guess we can do better
+than either the original version mine. Not sure I'd call your version
+'obvious' either though, at least it was immediately clear to me that
+returning an unrelated pointer here is the right thing to do (it works,
+since it is guaranteed to be neither NULL nor an error pointer
+and it is never dereferenced, but it's still odd).
 
-David Woodhouse (3):
-      eventfd: Export eventfd_ctx_do_read()
-      vfio/virqfd: Drain events from eventfd in virqfd_wakeup()
-      kvm/eventfd: Drain events from eventfd in irqfd_wakeup()
+I'd rather define something like
 
- drivers/vfio/virqfd.c   | 3 +++
- fs/eventfd.c            | 5 ++++-
- include/linux/eventfd.h | 6 ++++++
- virt/kvm/eventfd.c      | 3 +++
- 4 files changed, 16 insertions(+), 1 deletion(-)
+#define SEQ_OPEN_SINGLE (void *)1ul
 
+and return that here. I'll send a patch doing that, let me know what
+you think.
 
+     Arnd
