@@ -2,119 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8262029A421
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 06:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B3329A650
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 09:12:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505873AbgJ0Fbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 01:31:32 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:46182 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2505870AbgJ0Fbb (ORCPT
+        id S2508860AbgJ0IMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 04:12:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31195 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2508847AbgJ0IMo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 01:31:31 -0400
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 1C0923A936B;
-        Tue, 27 Oct 2020 16:31:28 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kXHZu-004mIO-TP; Tue, 27 Oct 2020 16:31:26 +1100
-Date:   Tue, 27 Oct 2020 16:31:26 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: Splitting a THP beyond EOF
-Message-ID: <20201027053126.GY7391@dread.disaster.area>
-References: <20201020014357.GW20115@casper.infradead.org>
- <20201020045928.GO7391@dread.disaster.area>
- <20201020112138.GZ20115@casper.infradead.org>
- <20201020211634.GQ7391@dread.disaster.area>
- <20201020225331.GE20115@casper.infradead.org>
- <20201021221435.GR7391@dread.disaster.area>
- <20201021230422.GP20115@casper.infradead.org>
+        Tue, 27 Oct 2020 04:12:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603786363;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NAcngyuptikvYGGpjHccIA10XCuP57p7z320i7MuxeE=;
+        b=Cp1perTca7ew4Y15f97Qo81wQNADEPhZ6yXBDF3VvkfvdqAHKFpPKtIy8S6v2QyW0lx83F
+        CFgeHJVpctAuEsaKDo9uw6F2j+3jrsoMcYdMCalgWEra+pqpDFH6rvb14DAAu6xl7P0uHo
+        BzGGZlpcEiBUb2DtvRxgA/zaqMOsD7c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-251-Q8AvrUgQOMaVTr9oXfijqA-1; Tue, 27 Oct 2020 04:12:38 -0400
+X-MC-Unique: Q8AvrUgQOMaVTr9oXfijqA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1338664085;
+        Tue, 27 Oct 2020 08:12:33 +0000 (UTC)
+Received: from [10.36.113.185] (ovpn-113-185.ams2.redhat.com [10.36.113.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AB67E5B4B3;
+        Tue, 27 Oct 2020 08:12:24 +0000 (UTC)
+Subject: Re: [PATCH v7 3/7] set_memory: allow set_direct_map_*_noflush() for
+ multiple pages
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc:     "tycho@tycho.ws" <tycho@tycho.ws>, "cl@linux.com" <cl@linux.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "will@kernel.org" <will@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "kirill@shutemov.name" <kirill@shutemov.name>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        "palmer@dabbelt.com" <palmer@dabbelt.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "mtk.manpages@gmail.com" <mtk.manpages@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>
+References: <20201026083752.13267-1-rppt@kernel.org>
+ <20201026083752.13267-4-rppt@kernel.org>
+ <e754ae3873e02e398e58091d586fe57e105803db.camel@intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <9202c4c1-9f1f-175f-0a85-fc8c30bc5e3b@redhat.com>
+Date:   Tue, 27 Oct 2020 09:12:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201021230422.GP20115@casper.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=afefHYAZSVUA:10 a=7-415B0cAAAA:8
-        a=CvBOQ0YqrXvA0BptNmkA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <e754ae3873e02e398e58091d586fe57e105803db.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 22, 2020 at 12:04:22AM +0100, Matthew Wilcox wrote:
-> On Thu, Oct 22, 2020 at 09:14:35AM +1100, Dave Chinner wrote:
-> > On Tue, Oct 20, 2020 at 11:53:31PM +0100, Matthew Wilcox wrote:
-> > > True, we don't _have to_ split THP on holepunch/truncation/... but it's
-> > > a better implementation to free pages which cover blocks that no longer
-> > > have data associated with them.
-> > 
-> > "Better" is a very subjective measure. What numbers do you have
-> > to back that up?
+On 26.10.20 20:01, Edgecombe, Rick P wrote:
+> On Mon, 2020-10-26 at 10:37 +0200, Mike Rapoport wrote:
+>> +++ b/arch/x86/mm/pat/set_memory.c
+>> @@ -2184,14 +2184,14 @@ static int __set_pages_np(struct page *page,
+>> int numpages)
+>>         return __change_page_attr_set_clr(&cpa, 0);
+>>  }
+>>  
+>> -int set_direct_map_invalid_noflush(struct page *page)
+>> +int set_direct_map_invalid_noflush(struct page *page, int numpages)
+>>  {
+>> -       return __set_pages_np(page, 1);
+>> +       return __set_pages_np(page, numpages);
+>>  }
+>>  
+>> -int set_direct_map_default_noflush(struct page *page)
+>> +int set_direct_map_default_noflush(struct page *page, int numpages)
+>>  {
+>> -       return __set_pages_p(page, 1);
+>> +       return __set_pages_p(page, numpages);
+>>  }
 > 
-> None.  When we choose to use a THP, we're choosing to treat a chunk
-> of a file as a single unit for the purposes of tracking dirtiness,
-> age, membership of the workingset, etc.  We're trading off reduced
-> precision for reduced overhead; just like the CPU tracks dirtiness on
-> a cacheline basis instead of at byte level.
+> Somewhat related to your other series, this could result in large NP
+> pages and trip up hibernate.
 > 
-> So at some level, we've making the assumption that this 128kB THP is
-> all one thingand it should be tracked together.  But the user has just
-> punched a hole in it.  I can think of no stronger signal to say "The
-> piece before this hole, the piece I just got rid of and the piece after
-> this are three separate pieces of the file".
 
-There's a difference between the physical layout of the file and
-representing data efficiently in the page cache. Just because we can
-use a THP to represent a single extent doesn't mean we should always
-use that relationship, nor should we require that small
-manipulations of on-disk extent state require that page cache pages
-be split or gathered.
+It feels somewhat desirable to disable hibernation once secretmem is
+enabled, right? Otherwise you'll be writing out your secrets to swap,
+where they will remain even after booting up again ...
 
-i.e. the whole point of the page cache is to decouple the physical
-layout of the file from the user access mechanisms for performance
-reasons, not tie them tightly together. I think that's the wrong
-approach to be taking here - truncate/holepunch do not imply that
-THPs need to be split unconditionally. Indeed, readahead doesn't
-care that a THP might be split across mulitple extents and require
-multiple bios to bring tha data into cache, so why should
-truncate/holepunch type operations require the THP to be split to
-reflect underlying disk layouts?
+Skipping secretmem pages when hibernating is the wrong approach I guess ...
 
-> If I could split them into pieces that weren't single pages, I would.
-> Zi Yan has a patch to do just that, and I'm very much looking forward
-> to that being merged.  But saying "Oh, this is quite small, I'll keep
-> the rest of the THP together" is conceptually wrong.
-
-Yet that's exactly what we do with block size < PAGE_SIZE
-configurations, so I fail to see why it's conceptually wrong for
-THPs to behave the same way and normal pages....
-
-> > > Splitting the page instead of throwing it away makes sense once we can
-> > > transfer the Uptodate bits to each subpage.  If we don't have that,
-> > > it doesn't really matter which we do.
-> > 
-> > Sounds like more required functionality...
-> 
-> I'm not saying that my patchset is the last word and there will be no
-> tweaking.  I'm saying I think it's good enough, an improvement on the
-> status quo, and it's better to merge it for 5.11 than to keep it out of
-> tree for another three months while we tinker with improving it.
-> 
-> Do you disagree?
-
-In part. Concepts and algorithms need to be sound and agreed upon
-before we merge patches, and right now I disagree with the some of
-the basic assumptions about how THP and filesystem layout operations
-are being coupled. That part needs to be sorted before stuff gets
-merged...
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+
+David / dhildenb
+
