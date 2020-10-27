@@ -2,100 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1396A29B1F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 15:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E7A29B4AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 16:06:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1760819AbgJ0Ogg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 10:36:36 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10690 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1760811AbgJ0Oge (ORCPT
+        id S1789783AbgJ0PCu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 11:02:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38411 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1789754AbgJ0PCr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 10:36:34 -0400
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5f9830780005>; Tue, 27 Oct 2020 07:36:40 -0700
-Received: from [10.2.173.19] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 27 Oct
- 2020 14:36:33 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/9] More THP fixes
-Date:   Tue, 27 Oct 2020 10:36:21 -0400
-X-Mailer: MailMate (1.13.2r5673)
-Message-ID: <A6E21592-98F1-4030-BB87-47C366F99C2A@nvidia.com>
-In-Reply-To: <20201026183136.10404-1-willy@infradead.org>
-References: <20201026183136.10404-1-willy@infradead.org>
+        Tue, 27 Oct 2020 11:02:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603810965;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=paen6LPJGadxGKzJ4bKtPZoQTiF+OV5vFNTGlE5DdVM=;
+        b=B0TrLbANdmPEhORFMesDYwhYXcJyXTwFUYkRzi/WOtmrx4qPMsrmz1mmT9Nk4o8h/UJjOQ
+        zMgKcqzjK426JfT9Eq6EIimPAKGAoPbp/O39Gx1ASl7jYVIeMWkl+nt8DhinPBEixEWlk/
+        1nYjECM9IU/WeTo9lVa3pvL+vAFVNHk=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-131-iOoYtTpNMJOwwR0naAdd8Q-1; Tue, 27 Oct 2020 11:02:43 -0400
+X-MC-Unique: iOoYtTpNMJOwwR0naAdd8Q-1
+Received: by mail-lj1-f200.google.com with SMTP id m11so883166ljp.21
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Oct 2020 08:02:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=paen6LPJGadxGKzJ4bKtPZoQTiF+OV5vFNTGlE5DdVM=;
+        b=kaL2isYLiOXIGV/pHVNfFQdanozDDNPJ0hbFBQESElAjtI3vYDdH3gBnA1ZEXZctl5
+         vZfUU0afolLL6RBdZcHM6McBlAxa4LcaEkc0dAuVZMDwN2IH1Nk0zQ5XAllY7cu+emRD
+         iaNvfSoQJvoARNCIrFNnQdiPtVH+R2QcZ93YSYXWj/ZVjVMNsB78tJfchjXYefnwrhkU
+         DYo+KFzaSQnrL0ByFDl5zupH5snCFv2edqiCrBMChdNKhsjLxfpC4jmojYP5xVqEgxkT
+         EIwwui54bLBxc1AwnZMWBZ2yJdwd5YOMQTIrGTVSfLCTN8bmTofUDcqR+67YX50cyP/H
+         lajg==
+X-Gm-Message-State: AOAM530APwLRbdUyFrO/6Y1txBnIxhFOHmud2DM9w/LPN7n4fL9V++bP
+        ZTIZh9ISU9dNNQB85r0IJ4ybhK2VrJr0UNPaxYWvAcWmIkqdJtAFOJm9xTvgO3EV2hDn7WQt0Xi
+        yEcY1Mc1PvuGpIc56Q9b0TPf/167brXSI/qQo60Y8Ew==
+X-Received: by 2002:a2e:b009:: with SMTP id y9mr1206389ljk.372.1603810962056;
+        Tue, 27 Oct 2020 08:02:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxFvqOD3Heb3NCRwRiAz2iNqSNeAiu1gIc5JBoJ/41Vgt6E94zgbiX1KwTzhjAxzXa7ronlij8Qi/FGd9k9/Nk=
+X-Received: by 2002:a2e:b009:: with SMTP id y9mr1206372ljk.372.1603810961798;
+ Tue, 27 Oct 2020 08:02:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed;
-        boundary="=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1603809401; bh=lMZLsnbv4bPvmRMvHH5HlYSCqzYY8J8HFBwFPgiU8Ow=;
-        h=From:To:CC:Subject:Date:X-Mailer:Message-ID:In-Reply-To:
-         References:MIME-Version:Content-Type:X-Originating-IP:
-         X-ClientProxiedBy;
-        b=kuF4Tebqz3n1msI/SVKaAPPNAn6IjERZy6KPyYTfKYDlQwUdm7ReGbAGjAxpOt2aZ
-         n7lReJOCdyfchO9xywmY4X152Sw3k6Zccf470b5y3sbK9wcTLasSz73y4LTiPQkHC7
-         3V11Wze9WUgGkj1yC/bqcX/akqO7FB+PKzd7hAYXjRHx+X+eGM3YabD7Cq9gOKHxGH
-         fErTV8/pHAz2KmzE8HDoVBQXtecoXWvXIX1XyKXsEYE6hku4sLaJjVtb5MATUQ0dhY
-         iUwulB5LghnUb/TEUeH1A2vuFiaoqZ9nnkMykcvriyRkBXSGQ+0fQFmoOGcg728cxi
-         b0T2L5uhVxmIw==
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 27 Oct 2020 16:02:31 +0100
+Message-ID: <CAFqZXNuy+Q1F9rT8NJKX+Wgnp2JEROHwCdzu0pmOuWdeRe1iDg@mail.gmail.com>
+Subject: selinux_file_permission() on pipes/pseudo-files - performance issue
+To:     SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On 26 Oct 2020, at 14:31, Matthew Wilcox (Oracle) wrote:
+It has been reported to me that read/write syscalls on a pipe created
+via the pipe(2) family of syscalls spend a large percentage of time in
+avc_lookup() via selinux_file_permission(). This is specific to pipes
+(and also accept(2)'d sockets, I think) because these pipe fds are
+created using alloc_file_pseudo() as opposed to do_dentry_open(),
+which means that the security_file_open() hook is never called on
+them.
 
-> I'm not sure there's a common thread to this set of THP patches other
-> than I think they're pretty uncontroversial.  Maybe I'm wrong.
->
-> Matthew Wilcox (Oracle) (8):
->   mm: Support THPs in zero_user_segments
->   mm/page-flags: Allow accessing PageError on tail pages
->   mm: Return head pages from grab_cache_page_write_begin
->   mm: Replace prep_transhuge_page with thp_prep
->   mm/truncate: Make invalidate_inode_pages2_range work with THPs
->   mm/truncate: Fix invalidate_complete_page2 for THPs
->   mm/vmscan: Free non-shmem THPs without splitting them
->   mm: Fix READ_ONLY_THP warning
+In SELinux, this means that in selinux_file_permission() the
+read/write permission is always revalidated, leading to suboptimal
+performance, because SELinux re-checks the read/write perms of an open
+file only if the subject/target label or policy is different from when
+these permissions were checked during selinux_file_open().
 
-They look good to me. Thanks.
+So I decided to try and see what would happen if I add a
+security_file_open() call to alloc_file(). This worked well for pipes
+- all domains that call pipe(2) seem to already have the necessary
+permissions to pass the open check, at least in Fedora policy - but I
+got lots of denials from accept(2), which also calls alloc_file()
+under the hood to create the new socket fd. The problem there is that
+programs usually call only recvmsg(2)/sendmsg(2) on fds returned by
+accept(2), thereby avoiding read/write checks on sock_file, which
+means that the domains don't normally have such permissions. Only
+programs that open actual socket files on the filesystem would
+unavoidably need read/write (or so I think), yet they wouldn't need
+them for the subsequent recvmsg(2)/sendmsg(2) calls.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+So I'm wondering if anyone has any idea how this could be fixed
+(optimized) without introducing regressions or awkward exceptions in
+the code. At this point, I don't see any way to do it regression-free
+without either adding a new hook or changing security_file_open() to
+distinguish between do_dentry_open() and alloc_file() + calling it
+from both places...
 
-=E2=80=94
-Best Regards,
-Yan Zi
+-- 
+Ondrej Mosnacek
+Software Engineer, Platform Security - SELinux kernel
+Red Hat, Inc.
 
---=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl+YMGUPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqK3l0QAKGShCDIX4KP9cAnECNzpwnORd/C0m0X2hV/
-YgkryXPkCp9Mw9XRlacN+N5UXyDSAR8Cfd6i7eizr0EiZB4dMQ3ElfMUPEGpylIS
-tmSgAEEMxie2CjODJ8lZ7fIm5Khgvv7JST1eDP3/gE7/GtanvSnYExvvT2ukwP8i
-fb4c2guWSBou4bcTdMO8UtYky5neQzDnXSA2U/+4Bjm45Fta8+6+zkSWU+HYIJJT
-PkN/VE3LJ63Kd9AIy9vX99Cr26rRn8gTh0r3iIN4QPRreJi8OjJ9L7t629Igc4xh
-jNqE9IGGFATcXEABMmJxWGq5JZyJQHB4bgVs+RGXugHbIHJmIuKu2DWrNvnBKNq4
-ns2qMBK1jb46cMLU/Ssmjt/Nq+ZWxfEhH0+Sn+kWVcqksPSwW0aGi+SD48+cITtE
-PJvK6mnRZjXvH7QvKVU+6tVI8NzNOp5Lo9ASQMJhE070YyKNlShc8WdTXss+spAO
-n6h81b3GmNhARiIT8IyT1RiELEGZTffce8esTcrJFYOt0VxlSgbtM2ExR/gE0Ok9
-lz0Zi5S3vTCGdEvHhCHqgSUXTnin/CYZhVhoH8atRTPv69PY8CV55R7i1CvLS/AM
-T4OQEOdcuFYgkGAnkzU8a3njdeS69zxz0rNAHeGwdtEoAjFFaLgnWnklgFvPaONb
-vOt60e47
-=Xdma
------END PGP SIGNATURE-----
-
---=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=--
