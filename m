@@ -2,192 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14AC629ADE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 14:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF4129ADE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 14:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbgJ0Nun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 09:50:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50306 "EHLO
+        id S1752799AbgJ0Nuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 09:50:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37961 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752770AbgJ0Num (ORCPT
+        by vger.kernel.org with ESMTP id S1752789AbgJ0Nus (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 09:50:42 -0400
+        Tue, 27 Oct 2020 09:50:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603806640;
+        s=mimecast20190719; t=1603806647;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ORcn3B8leoo4q9li1h7odSk682umRjCQ5ZaqggknKR8=;
-        b=gzD8vBquEcJS2tfHRmFW4LTipgqwXbj46YLVOmZSJ+nlL40qibqEadbhdcP/MC75RYHJqO
-        JWpZwqebOofSDkCBEa9odabm/rvqVj1IezUF3Rf8aJVF6JefPf/k8s9kjqrQBzGgPVsPBN
-        6bX0/GofdqFEXvMmp/bgSkiTmgbk1KE=
+        bh=s2YMz5yf9+SeEgiySGBI5pPwoN+sAaxpPqNpLxdLua0=;
+        b=buA4rSQRqcbTR9CCs1cQEgmvr9mjAt6XdsZLJI64DJqYt83IAmAcIPWZ8WHtzyGJCdNCZX
+        1iwAZtYjUnA9b+icFKjT6gSLnrD+DV8f2jEdJiwZyykw0BB/bKTZ1UfGgdkiIKO6lc7oJv
+        lBMzXsqIu79HIsf6cDtpyiEwzzhVSV4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-532-gxCmdxOwOne1cMeZ5dFaXg-1; Tue, 27 Oct 2020 09:50:36 -0400
-X-MC-Unique: gxCmdxOwOne1cMeZ5dFaXg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-323-j7gEmXULMwq8YjggTPd6wg-1; Tue, 27 Oct 2020 09:50:43 -0400
+X-MC-Unique: j7gEmXULMwq8YjggTPd6wg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BAF75ADC27;
-        Tue, 27 Oct 2020 13:50:35 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9C2EAADC26;
+        Tue, 27 Oct 2020 13:50:42 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A672B5D9DD;
-        Tue, 27 Oct 2020 13:50:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B7B0860C07;
+        Tue, 27 Oct 2020 13:50:41 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 05/10] afs: Fix to take ref on page when PG_private is set
+Subject: [PATCH 06/10] afs: Fix page leak on afs_write_begin() failure
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 27 Oct 2020 13:50:33 +0000
-Message-ID: <160380663388.3467511.14067951162593405018.stgit@warthog.procyon.org.uk>
+Cc:     Nick Piggin <npiggin@gmain.com>, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 27 Oct 2020 13:50:41 +0000
+Message-ID: <160380664097.3467511.9634415545849258835.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160380659566.3467511.15495463187114465303.stgit@warthog.procyon.org.uk>
 References: <160380659566.3467511.15495463187114465303.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix afs to take a ref on a page when it sets PG_private on it and to drop
-the ref when removing the flag.
+Fix the leak of the target page in afs_write_begin() when it fails.
 
-Note that in afs_write_begin(), a lot of the time, PG_private is already
-set on a page to which we're going to add some data.  In such a case, we
-leave the bit set and mustn't increment the page count.  To this end, make
-TestSetPagePrivate() available.
-
-Fixes: 31143d5d515e ("AFS: implement basic file write support")
-Reported-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Fixes: 15b4650e55e0 ("afs: convert to new aops")
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Nick Piggin <npiggin@gmain.com>
 ---
 
- fs/afs/dir.c               |    3 +++
- fs/afs/dir_edit.c          |    1 +
- fs/afs/file.c              |    2 ++
- fs/afs/write.c             |    9 +++++++--
- include/linux/page-flags.h |    1 +
- 5 files changed, 14 insertions(+), 2 deletions(-)
+ fs/afs/write.c |   23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 1d2e61e0ab04..064eb66c33e9 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -283,6 +283,7 @@ static struct afs_read *afs_read_dir(struct afs_vnode *dvnode, struct key *key)
- 
- 			set_page_private(req->pages[i], 1);
- 			SetPagePrivate(req->pages[i]);
-+			get_page(req->pages[i]);
- 			unlock_page(req->pages[i]);
- 			i++;
- 		} else {
-@@ -1977,6 +1978,7 @@ static int afs_dir_releasepage(struct page *page, gfp_t gfp_flags)
- 
- 	set_page_private(page, 0);
- 	ClearPagePrivate(page);
-+	put_page(page);
- 
- 	/* The directory will need reloading. */
- 	if (test_and_clear_bit(AFS_VNODE_DIR_VALID, &dvnode->flags))
-@@ -2006,5 +2008,6 @@ static void afs_dir_invalidatepage(struct page *page, unsigned int offset,
- 	if (offset == 0 && length == PAGE_SIZE) {
- 		set_page_private(page, 0);
- 		ClearPagePrivate(page);
-+		put_page(page);
- 	}
- }
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index b108528bf010..997f6798beee 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -246,6 +246,7 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
- 			if (!PagePrivate(page)) {
- 				set_page_private(page, 1);
- 				SetPagePrivate(page);
-+				get_page(page);
- 			}
- 			dir_page = kmap(page);
- 		}
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 91225421ad37..7dafa2266048 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -632,6 +632,7 @@ static void afs_invalidatepage(struct page *page, unsigned int offset,
- 					     page->index, priv);
- 			set_page_private(page, 0);
- 			ClearPagePrivate(page);
-+			put_page(page);
- 		}
- 	}
- 
-@@ -666,6 +667,7 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
- 				     page->index, priv);
- 		set_page_private(page, 0);
- 		ClearPagePrivate(page);
-+		put_page(page);
- 	}
- 
- 	/* indicate that the page can be released */
 diff --git a/fs/afs/write.c b/fs/afs/write.c
-index b937ec047ec9..29685947324e 100644
+index 29685947324e..16a896096ccf 100644
 --- a/fs/afs/write.c
 +++ b/fs/afs/write.c
-@@ -151,7 +151,8 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 	priv |= f;
- 	trace_afs_page_dirty(vnode, tracepoint_string("begin"),
- 			     page->index, priv);
--	SetPagePrivate(page);
-+	if (!TestSetPagePrivate(page))
-+		get_page(page);
+@@ -76,7 +76,7 @@ static int afs_fill_page(struct afs_vnode *vnode, struct key *key,
+  */
+ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 		    loff_t pos, unsigned len, unsigned flags,
+-		    struct page **pagep, void **fsdata)
++		    struct page **_page, void **fsdata)
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
+ 	struct page *page;
+@@ -110,9 +110,6 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 		SetPageUptodate(page);
+ 	}
+ 
+-	/* page won't leak in error case: it eventually gets cleaned off LRU */
+-	*pagep = page;
+-
+ try_again:
+ 	/* See if this page is already partially written in a way that we can
+ 	 * merge the new write with.
+@@ -154,6 +151,7 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 	if (!TestSetPagePrivate(page))
+ 		get_page(page);
  	set_page_private(page, priv);
++	*_page = page;
  	_leave(" = 0");
  	return 0;
-@@ -338,6 +339,8 @@ static void afs_pages_written_back(struct afs_vnode *vnode,
- 			trace_afs_page_dirty(vnode, tracepoint_string("clear"),
- 					     pv.pages[loop]->index, priv);
- 			set_page_private(pv.pages[loop], 0);
-+			ClearPagePrivate(pv.pages[loop]);
-+			put_page(pv.pages[loop]);
- 			end_page_writeback(pv.pages[loop]);
- 		}
- 		first += count;
-@@ -863,7 +866,8 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
- 	priv |= 0; /* From */
- 	trace_afs_page_dirty(vnode, tracepoint_string("mkwrite"),
- 			     vmf->page->index, priv);
--	SetPagePrivate(vmf->page);
-+	if (!TestSetPagePrivate(vmf->page))
-+		get_page(vmf->page);
- 	set_page_private(vmf->page, priv);
- 	file_update_time(file);
  
-@@ -930,6 +934,7 @@ int afs_launder_page(struct page *page)
- 			     page->index, priv);
- 	set_page_private(page, 0);
- 	ClearPagePrivate(page);
+@@ -163,17 +161,18 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ flush_conflicting_write:
+ 	_debug("flush conflict");
+ 	ret = write_one_page(page);
+-	if (ret < 0) {
+-		_leave(" = %d", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto error;
+ 
+ 	ret = lock_page_killable(page);
+-	if (ret < 0) {
+-		_leave(" = %d", ret);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto error;
+ 	goto try_again;
++
++error:
 +	put_page(page);
++	_leave(" = %d", ret);
++	return ret;
+ }
  
- #ifdef CONFIG_AFS_FSCACHE
- 	if (PageFsCache(page)) {
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 4f6ba9379112..37d65b55a6c6 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -365,6 +365,7 @@ PAGEFLAG(SwapBacked, swapbacked, PF_NO_TAIL)
-  */
- PAGEFLAG(Private, private, PF_ANY) __SETPAGEFLAG(Private, private, PF_ANY)
- 	__CLEARPAGEFLAG(Private, private, PF_ANY)
-+	TESTSETFLAG(Private, private, PF_ANY)
- PAGEFLAG(Private2, private_2, PF_ANY) TESTSCFLAG(Private2, private_2, PF_ANY)
- PAGEFLAG(OwnerPriv1, owner_priv_1, PF_ANY)
- 	TESTCLEARFLAG(OwnerPriv1, owner_priv_1, PF_ANY)
+ /*
 
 
