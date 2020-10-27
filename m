@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 403AF29AAB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2BA729AABD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750009AbgJ0Lag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 07:30:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45620 "EHLO mail.kernel.org"
+        id S1750025AbgJ0Lao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 07:30:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1749993AbgJ0Lae (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 07:30:34 -0400
+        id S1749993AbgJ0Lal (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 07:30:41 -0400
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03F2122283;
-        Tue, 27 Oct 2020 11:30:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB59A22281;
+        Tue, 27 Oct 2020 11:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603798233;
-        bh=UfaD/WmylipAS87Fv242yQHFr5+l5RhyHEWJxMmp2r8=;
+        s=default; t=1603798240;
+        bh=zMhqm8rA573QnfAHp47KPpfQjEAK86ZwGGp3h7Y8/nM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AZ3uGKlwmDzw01MtfzRYyVNFCrBHcj9hNEcpMvUBfVE6GXyYWgRs8+pNMO0tSpZ5n
-         oKhgEP2eGtZrAXR4Jr+NuG5k7tt55ZwBXPkLdsRajrq8dYk0EnHYeNA20jabsK6JID
-         37xeaYZ4dJneHg8tW/gL3ZpBIbtl8c+S6BeyS9O0=
+        b=Med5KL2zkjMxterKJZniLEjo4BIzhHhgT6HgAMNsbvonXdJY7u40R/x4+1OSF9GE7
+         LChGpBLJOdrRDG9kOKjYwj+MramGx6Oq6wnwsevfwAsGL/4dNKzZQLvtR1zZxlGMlK
+         qqfpH5SpV9PstSpmH/z20c6VNNqNSgLNbLEQqF60=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH 04/13] ia64: discontig: paging_init(): remove local max_pfn calculation
-Date:   Tue, 27 Oct 2020 13:29:46 +0200
-Message-Id: <20201027112955.14157-5-rppt@kernel.org>
+Subject: [PATCH 05/13] ia64: split virtual map initialization out of paging_init()
+Date:   Tue, 27 Oct 2020 13:29:47 +0200
+Message-Id: <20201027112955.14157-6-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201027112955.14157-1-rppt@kernel.org>
 References: <20201027112955.14157-1-rppt@kernel.org>
@@ -57,44 +57,132 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-The maximal PFN in the system is calculated during find_memory() time and
-it is stored at max_low_pfn then.
+For both FLATMEM and DISCONTIGMEM/SPARSEMEM the virtual map initialization
+is spread over paging_init() for no good reason.
 
-Use this value in paging_init() and remove the redundant detection of
-max_pfn in that function.
+Split out the bits related to virtual map initialization to a helper
+functions, one for FLATMEM and another for !FLATMEM configurations.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- arch/ia64/mm/discontig.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/ia64/mm/contig.c    | 34 ++++++++++++++++++++--------------
+ arch/ia64/mm/discontig.c | 37 ++++++++++++++++++++-----------------
+ 2 files changed, 40 insertions(+), 31 deletions(-)
 
+diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
+index 2491aaeca90c..ba81d8cb0059 100644
+--- a/arch/ia64/mm/contig.c
++++ b/arch/ia64/mm/contig.c
+@@ -166,21 +166,8 @@ find_memory (void)
+ 	alloc_per_cpu_data();
+ }
+ 
+-/*
+- * Set up the page tables.
+- */
+-
+-void __init
+-paging_init (void)
++static void __init virtual_map_init(void)
+ {
+-	unsigned long max_dma;
+-	unsigned long max_zone_pfns[MAX_NR_ZONES];
+-
+-	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+-	max_dma = virt_to_phys((void *) MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+-	max_zone_pfns[ZONE_DMA32] = max_dma;
+-	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+-
+ #ifdef CONFIG_VIRTUAL_MEM_MAP
+ 	efi_memmap_walk(find_largest_hole, (u64 *)&max_gap);
+ 	if (max_gap < LARGE_GAP) {
+@@ -206,6 +193,25 @@ paging_init (void)
+ 		printk("Virtual mem_map starts at 0x%p\n", mem_map);
+ 	}
+ #endif /* !CONFIG_VIRTUAL_MEM_MAP */
++}
++
++/*
++ * Set up the page tables.
++ */
++
++void __init
++paging_init (void)
++{
++	unsigned long max_dma;
++	unsigned long max_zone_pfns[MAX_NR_ZONES];
++
++	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
++	max_dma = virt_to_phys((void *) MAX_DMA_ADDRESS) >> PAGE_SHIFT;
++	max_zone_pfns[ZONE_DMA32] = max_dma;
++	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
++
++	virtual_map_init();
++
+ 	free_area_init(max_zone_pfns);
+ 	zero_page_memmap_ptr = virt_to_page(ia64_imva(empty_zero_page));
+ }
 diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
-index d255596f52c6..f41dcf75887b 100644
+index f41dcf75887b..c7311131156e 100644
 --- a/arch/ia64/mm/discontig.c
 +++ b/arch/ia64/mm/discontig.c
-@@ -594,7 +594,6 @@ void __init paging_init(void)
+@@ -584,6 +584,25 @@ void call_pernode_memory(unsigned long start, unsigned long len, void *arg)
+ 	}
+ }
+ 
++static void __init virtual_map_init(void)
++{
++#ifdef CONFIG_VIRTUAL_MEM_MAP
++	int node;
++
++	VMALLOC_END -= PAGE_ALIGN(ALIGN(max_low_pfn, MAX_ORDER_NR_PAGES) *
++		sizeof(struct page));
++	vmem_map = (struct page *) VMALLOC_END;
++	efi_memmap_walk(create_mem_map_page_table, NULL);
++	printk("Virtual mem_map starts at 0x%p\n", vmem_map);
++
++	for_each_online_node(node) {
++		unsigned long pfn_offset = mem_data[node].min_pfn;
++
++		NODE_DATA(node)->node_mem_map = vmem_map + pfn_offset;
++	}
++#endif
++}
++
+ /**
+  * paging_init - setup page tables
+  *
+@@ -593,29 +612,13 @@ void call_pernode_memory(unsigned long start, unsigned long len, void *arg)
+ void __init paging_init(void)
  {
  	unsigned long max_dma;
- 	unsigned long pfn_offset = 0;
--	unsigned long max_pfn = 0;
- 	int node;
+-	unsigned long pfn_offset = 0;
+-	int node;
  	unsigned long max_zone_pfns[MAX_NR_ZONES];
  
-@@ -616,13 +615,11 @@ void __init paging_init(void)
- #ifdef CONFIG_VIRTUAL_MEM_MAP
- 		NODE_DATA(node)->node_mem_map = vmem_map + pfn_offset;
- #endif
--		if (mem_data[node].max_pfn > max_pfn)
--			max_pfn = mem_data[node].max_pfn;
- 	}
+ 	max_dma = virt_to_phys((void *) MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+ 
+ 	sparse_init();
+ 
+-#ifdef CONFIG_VIRTUAL_MEM_MAP
+-	VMALLOC_END -= PAGE_ALIGN(ALIGN(max_low_pfn, MAX_ORDER_NR_PAGES) *
+-		sizeof(struct page));
+-	vmem_map = (struct page *) VMALLOC_END;
+-	efi_memmap_walk(create_mem_map_page_table, NULL);
+-	printk("Virtual mem_map starts at 0x%p\n", vmem_map);
+-#endif
+-
+-	for_each_online_node(node) {
+-		pfn_offset = mem_data[node].min_pfn;
+-
+-#ifdef CONFIG_VIRTUAL_MEM_MAP
+-		NODE_DATA(node)->node_mem_map = vmem_map + pfn_offset;
+-#endif
+-	}
++	virtual_map_init();
  
  	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
  	max_zone_pfns[ZONE_DMA32] = max_dma;
--	max_zone_pfns[ZONE_NORMAL] = max_pfn;
-+	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
- 	free_area_init(max_zone_pfns);
- 
- 	zero_page_memmap_ptr = virt_to_page(ia64_imva(empty_zero_page));
 -- 
 2.28.0
 
