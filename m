@@ -2,130 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76D6B29CBEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 23:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BEB129CBF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 23:28:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1832296AbgJ0WT1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 18:19:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1832259AbgJ0WTZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 18:19:25 -0400
-Received: from localhost.localdomain (unknown [192.30.34.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14B4E221FB;
-        Tue, 27 Oct 2020 22:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603837164;
-        bh=n7UpbqZyTI9aIsplmRkzVU0w4yzLRfwO05aNiS3AsM0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=R+yq+59vcUy0GqZTDoz7lEjf9VLWUQtvLsbbN67XhkkSGUemJu7lccWxE85YogQjg
-         AawX/Q4bqluHj2XJSkZzkACoWIuF3mUhY5inCqy/pTlE02I+3xHxfMVpUAPdhttJQv
-         roSSIsl0ld4nBSNaKLtjhb6lGf5L3MrCxaLzKj9c=
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH v3] seq_file: fix clang warning for NULL pointer arithmetic
-Date:   Tue, 27 Oct 2020 23:18:24 +0100
-Message-Id: <20201027221916.463235-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        id S1832362AbgJ0W2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 18:28:30 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33356 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1832358AbgJ0W2a (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 18:28:30 -0400
+Received: by mail-io1-f66.google.com with SMTP id p15so3325273ioh.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Oct 2020 15:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Yd2294ZBZMy4XljpTTzjUGRIXipCuL8kyBKHe5NQtNI=;
+        b=UvStF98FJhE092zgD2uanf57kDNaIOnaSuCHnKirsofWd0aCjRO4Qy5GS3JnhbXeJd
+         R0JIdamE6oJenSkkX6e4uPkCcRw420HhLdJjWD91oSYP5oBUv2PrnHcU21GtGHURFmaL
+         AqzzPN//XnWoxpYoy6vkYKeKEXLuzf7F4/9rI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Yd2294ZBZMy4XljpTTzjUGRIXipCuL8kyBKHe5NQtNI=;
+        b=MetXaU+iCldmg8z08JmB+je4xW/Rr/SH/YzhTr63MmHpELmhahDNwhj3Vf9RMB69i8
+         sRg2imPqsWODK7oz+dErurY/5KnuizBl6S3YUbDdKcZltWsfaD4k4fJxlOj6IA7AlLLN
+         +HsxDNORx+DnYsZT7JkotntZWxEWohP1Ik9IKxNSZcr6MeoqfEnAhtY04wkoHcCt6IZ7
+         XAaFdWae9Q3MyszuLTsxM1XdPai8ZLvdkhg0QY5RB2wMd2932vIhUiFAcKQJfSe7dnQ4
+         3QdEoZmDnBGbotYpnffVwZjj8sr4es0/LqhLBXLCey6ZANRPGeDfQm9m2oc0wf1WMYxL
+         sEiA==
+X-Gm-Message-State: AOAM5300GtQX31/Jw2kPuNyiqQl7slIvOjG/ZoujIsWDOf7kscAEwp7P
+        38wcZ8/q7kCaRzZ3omT9nr3+mQ==
+X-Google-Smtp-Source: ABdhPJySrsRO6td3S9ry6TCmbA6yj3jZ4Si223/83KN70hGwaMF2taBI3cWZWOi8+OG8ZYgPWvMvBQ==
+X-Received: by 2002:a5e:8349:: with SMTP id y9mr3812931iom.188.1603837707726;
+        Tue, 27 Oct 2020 15:28:27 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id i201sm1549583ild.12.2020.10.27.15.28.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Oct 2020 15:28:27 -0700 (PDT)
+Subject: Re: [PATCH] openat2: reject RESOLVE_BENEATH|RESOLVE_IN_ROOT
+To:     Aleksa Sarai <cyphar@cyphar.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20201007103608.17349-1-cyphar@cyphar.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <4ce6ba2c-8b23-78aa-47c0-8c9673273e8f@linuxfoundation.org>
+Date:   Tue, 27 Oct 2020 16:28:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201007103608.17349-1-cyphar@cyphar.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 10/7/20 4:36 AM, Aleksa Sarai wrote:
+> This was an oversight in the original implementation, as it makes no
+> sense to specify both scoping flags to the same openat2(2) invocation
+> (before this patch, the result of such an invocation was equivalent to
+> RESOLVE_IN_ROOT being ignored).
+> 
+> This is a userspace-visible ABI change, but the only user of openat2(2)
+> at the moment is LXC which doesn't specify both flags and so no
+> userspace programs will break as a result.
+> 
+> Cc: <stable@vger.kernel.org> # v5.6+
+> Fixes: fddb5d430ad9 ("open: introduce openat2(2) syscall")
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>   fs/open.c                                      | 4 +++
+>   tools/testing/selftests/openat2/openat2_test.c | 8 +++++++-
 
-Clang points out that adding something to NULL is notallowed
-in standard C:
+You are combining fs change with selftest change.
 
-fs/kernfs/file.c:127:15: warning: performing pointer arithmetic on a
-null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-                return NULL + !*ppos;
-                       ~~~~ ^
-fs/seq_file.c:529:14: warning: performing pointer arithmetic on a
-null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-        return NULL + (*pos == 0);
+Is there a reason why these two changes are combined?
+2 separate patches is better.
 
-Rephrase the code to be extra explicit about the valid, giving
-them named SEQ_OPEN_EOF and SEQ_OPEN_SINGLE definitions.
-The instance in kernfs was copied from single_start, so fix both
-at once.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Fixes: c2b19daf6760 ("sysfs, kernfs: prepare read path for kernfs")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: add the named macros after Christoph Hellwig pointed out
-that my original logic was too ugly.
-Suggestions for better names welcome
-
-v3: don't overload the NULL return, avoid ?: operator
----
- fs/kernfs/file.c         | 9 ++++++---
- fs/seq_file.c            | 5 ++++-
- include/linux/seq_file.h | 2 ++
- 3 files changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index f277d023ebcd..5a5adb03c6df 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -121,10 +121,13 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
- 		return next;
- 	} else {
- 		/*
--		 * The same behavior and code as single_open().  Returns
--		 * !NULL if pos is at the beginning; otherwise, NULL.
-+		 * The same behavior and code as single_open().  Continues
-+		 * if pos is at the beginning; otherwise, NULL.
- 		 */
--		return NULL + !*ppos;
-+		if (*ppos)
-+			return NULL;
-+
-+		return SEQ_OPEN_SINGLE;
- 	}
- }
- 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 31219c1db17d..6b467d769501 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -526,7 +526,10 @@ EXPORT_SYMBOL(seq_dentry);
- 
- static void *single_start(struct seq_file *p, loff_t *pos)
- {
--	return NULL + (*pos == 0);
-+	if (*pos)
-+	       return NULL;
-+
-+	return SEQ_OPEN_SINGLE;
- }
- 
- static void *single_next(struct seq_file *p, void *v, loff_t *pos)
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index 813614d4b71f..eb344448d4da 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -37,6 +37,8 @@ struct seq_operations {
- 
- #define SEQ_SKIP 1
- 
-+#define SEQ_OPEN_SINGLE	(void *)1
-+
- /**
-  * seq_has_overflowed - check if the buffer has overflowed
-  * @m: the seq_file handle
--- 
-2.27.0
-
+thanks,
+-- Shuah
