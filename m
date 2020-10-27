@@ -2,102 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40E7A29B4AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 16:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A786629BB98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 17:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1789783AbgJ0PCu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 11:02:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38411 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1789754AbgJ0PCr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 11:02:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603810965;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=paen6LPJGadxGKzJ4bKtPZoQTiF+OV5vFNTGlE5DdVM=;
-        b=B0TrLbANdmPEhORFMesDYwhYXcJyXTwFUYkRzi/WOtmrx4qPMsrmz1mmT9Nk4o8h/UJjOQ
-        zMgKcqzjK426JfT9Eq6EIimPAKGAoPbp/O39Gx1ASl7jYVIeMWkl+nt8DhinPBEixEWlk/
-        1nYjECM9IU/WeTo9lVa3pvL+vAFVNHk=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-131-iOoYtTpNMJOwwR0naAdd8Q-1; Tue, 27 Oct 2020 11:02:43 -0400
-X-MC-Unique: iOoYtTpNMJOwwR0naAdd8Q-1
-Received: by mail-lj1-f200.google.com with SMTP id m11so883166ljp.21
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Oct 2020 08:02:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=paen6LPJGadxGKzJ4bKtPZoQTiF+OV5vFNTGlE5DdVM=;
-        b=kaL2isYLiOXIGV/pHVNfFQdanozDDNPJ0hbFBQESElAjtI3vYDdH3gBnA1ZEXZctl5
-         vZfUU0afolLL6RBdZcHM6McBlAxa4LcaEkc0dAuVZMDwN2IH1Nk0zQ5XAllY7cu+emRD
-         iaNvfSoQJvoARNCIrFNnQdiPtVH+R2QcZ93YSYXWj/ZVjVMNsB78tJfchjXYefnwrhkU
-         DYo+KFzaSQnrL0ByFDl5zupH5snCFv2edqiCrBMChdNKhsjLxfpC4jmojYP5xVqEgxkT
-         EIwwui54bLBxc1AwnZMWBZ2yJdwd5YOMQTIrGTVSfLCTN8bmTofUDcqR+67YX50cyP/H
-         lajg==
-X-Gm-Message-State: AOAM530APwLRbdUyFrO/6Y1txBnIxhFOHmud2DM9w/LPN7n4fL9V++bP
-        ZTIZh9ISU9dNNQB85r0IJ4ybhK2VrJr0UNPaxYWvAcWmIkqdJtAFOJm9xTvgO3EV2hDn7WQt0Xi
-        yEcY1Mc1PvuGpIc56Q9b0TPf/167brXSI/qQo60Y8Ew==
-X-Received: by 2002:a2e:b009:: with SMTP id y9mr1206389ljk.372.1603810962056;
-        Tue, 27 Oct 2020 08:02:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxFvqOD3Heb3NCRwRiAz2iNqSNeAiu1gIc5JBoJ/41Vgt6E94zgbiX1KwTzhjAxzXa7ronlij8Qi/FGd9k9/Nk=
-X-Received: by 2002:a2e:b009:: with SMTP id y9mr1206372ljk.372.1603810961798;
- Tue, 27 Oct 2020 08:02:41 -0700 (PDT)
+        id S1808754AbgJ0QVw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 12:21:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33198 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1804983AbgJ0QAO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 12:00:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 83C70ABE3;
+        Tue, 27 Oct 2020 16:00:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 331EA1E10F5; Tue, 27 Oct 2020 17:00:12 +0100 (CET)
+Date:   Tue, 27 Oct 2020 17:00:12 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luca BRUNO <lucab@redhat.com>
+Subject: Re: [PATCH] inotify: Increase default inotify.max_user_watches limit
+ to 1048576
+Message-ID: <20201027160012.GE16090@quack2.suse.cz>
+References: <20201026204418.23197-1-longman@redhat.com>
 MIME-Version: 1.0
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 27 Oct 2020 16:02:31 +0100
-Message-ID: <CAFqZXNuy+Q1F9rT8NJKX+Wgnp2JEROHwCdzu0pmOuWdeRe1iDg@mail.gmail.com>
-Subject: selinux_file_permission() on pipes/pseudo-files - performance issue
-To:     SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201026204418.23197-1-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon 26-10-20 16:44:18, Waiman Long wrote:
+> The default value of inotify.max_user_watches sysctl parameter was set
+> to 8192 since the introduction of the inotify feature in 2005 by
+> commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
+> small for many modern usage. As a result, users have to explicitly set
+> it to a larger value to make it work.
+> 
+> After some searching around the web, these are the
+> inotify.max_user_watches values used by some projects:
+>  - vscode:  524288
+>  - dropbox support: 100000
+>  - users on stackexchange: 12228
+>  - lsyncd user: 2000000
+>  - code42 support: 1048576
+>  - monodevelop: 16384
+>  - tectonic: 524288
+>  - openshift origin: 65536
+> 
+> Each watch point adds an inotify_inode_mark structure to an inode to be
+> watched. Modeled after the epoll.max_user_watches behavior to adjust the
+> default value according to the amount of addressable memory available,
+> make inotify.max_user_watches behave in a similar way to make it use
+> no more than 1% of addressable memory within the range [8192, 1048576].
+> 
+> For 64-bit archs, inotify_inode_mark should have a size of 80 bytes. That
+> means a system with 8GB or more memory will have the maximum value of
+> 1048576 for inotify.max_user_watches. This default should be big enough
+> for most of the use cases.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-It has been reported to me that read/write syscalls on a pipe created
-via the pipe(2) family of syscalls spend a large percentage of time in
-avc_lookup() via selinux_file_permission(). This is specific to pipes
-(and also accept(2)'d sockets, I think) because these pipe fds are
-created using alloc_file_pseudo() as opposed to do_dentry_open(),
-which means that the security_file_open() hook is never called on
-them.
+So I agree that 8192 watches seem to be a bit low today but what you
+propose seems to be way too much to me. OTOH I agree that having to tune
+this manually kind of sucks so I'm for auto-tuning of the default. If the
+computation takes into account the fact that a watch pins an inode as Amir
+properly notes (that's the main reason why the number of watches is
+limited), I think limiting to 1% of pinned memory should be bearable. The
+amount of space pinned by an inode is impossible to estimate exactly
+(differs for different filesystems) but about 1k for one inode is a sound
+estimate IMO.
 
-In SELinux, this means that in selinux_file_permission() the
-read/write permission is always revalidated, leading to suboptimal
-performance, because SELinux re-checks the read/write perms of an open
-file only if the subject/target label or policy is different from when
-these permissions were checked during selinux_file_open().
+								Honza
 
-So I decided to try and see what would happen if I add a
-security_file_open() call to alloc_file(). This worked well for pipes
-- all domains that call pipe(2) seem to already have the necessary
-permissions to pass the open check, at least in Fedora policy - but I
-got lots of denials from accept(2), which also calls alloc_file()
-under the hood to create the new socket fd. The problem there is that
-programs usually call only recvmsg(2)/sendmsg(2) on fds returned by
-accept(2), thereby avoiding read/write checks on sock_file, which
-means that the domains don't normally have such permissions. Only
-programs that open actual socket files on the filesystem would
-unavoidably need read/write (or so I think), yet they wouldn't need
-them for the subsequent recvmsg(2)/sendmsg(2) calls.
-
-So I'm wondering if anyone has any idea how this could be fixed
-(optimized) without introducing regressions or awkward exceptions in
-the code. At this point, I don't see any way to do it regression-free
-without either adding a new hook or changing security_file_open() to
-distinguish between do_dentry_open() and alloc_file() + calling it
-from both places...
-
+> ---
+>  fs/notify/inotify/inotify_user.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 186722ba3894..2da8b7a84b12 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -801,6 +801,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
+>   */
+>  static int __init inotify_user_setup(void)
+>  {
+> +	unsigned int watches_max;
+> +	struct sysinfo si;
+> +
+> +	si_meminfo(&si);
+> +	/*
+> +	 * Allow up to 1% of addressible memory to be allocated for inotify
+> +	 * watches (per user) limited to the range [8192, 1048576].
+> +	 */
+> +	watches_max = (((si.totalram - si.totalhigh) / 100) << PAGE_SHIFT) /
+> +			sizeof(struct inotify_inode_mark);
+> +	watches_max = min(1048576U, max(watches_max, 8192U));
+> +
+>  	BUILD_BUG_ON(IN_ACCESS != FS_ACCESS);
+>  	BUILD_BUG_ON(IN_MODIFY != FS_MODIFY);
+>  	BUILD_BUG_ON(IN_ATTRIB != FS_ATTRIB);
+> @@ -827,7 +839,7 @@ static int __init inotify_user_setup(void)
+>  
+>  	inotify_max_queued_events = 16384;
+>  	init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES] = 128;
+> -	init_user_ns.ucount_max[UCOUNT_INOTIFY_WATCHES] = 8192;
+> +	init_user_ns.ucount_max[UCOUNT_INOTIFY_WATCHES] = watches_max;
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.18.1
+> 
 -- 
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
