@@ -2,70 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C0D29A9DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 11:40:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58D7929A9F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 11:45:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2898626AbgJ0KkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 06:40:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:35631 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2898503AbgJ0Ki0 (ORCPT
+        id S1417645AbgJ0KpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 06:45:01 -0400
+Received: from casper.infradead.org ([90.155.50.34]:37592 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1417294AbgJ0Ko7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 06:38:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603795106;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CCFkL5YPwZhrmFegn8R+P6Gr+wPqzLjyH+PKfuNRXxY=;
-        b=aGg/qZd8duSzJ8OcvoNw9Pe8uHtg0UkMqhfqlNKadThrMW/Xl47mv4n1v7qTICY8EzCy7K
-        oU+FlTBepRju3oi+XjSjGFzSeeG7THct00U582f2cMAS8XvHUGhIU4vKEs09INKnsP7+61
-        T5r8kcwwuya+dmQPUCvQWeYPDeg9M9o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-296-Tghq4TRVMxClG5BzL4_sXw-1; Tue, 27 Oct 2020 06:38:22 -0400
-X-MC-Unique: Tghq4TRVMxClG5BzL4_sXw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BB843100F967;
-        Tue, 27 Oct 2020 10:38:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD8176EF57;
-        Tue, 27 Oct 2020 10:38:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201027095455.GA30298@lst.de>
-References: <20201027095455.GA30298@lst.de> <3088368.1603790984@warthog.procyon.org.uk> <20200827150030.282762-3-hch@lst.de> <20200827150030.282762-1-hch@lst.de> <3155818.1603792294@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 27 Oct 2020 06:44:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=F58e9lenK+1xet9ATHqeZj7trQCacmvynWTT0IRQJmA=; b=e/y8y89gFRbPjSRkI3uK2ifUJ6
+        xALm8WO3xpKt0y1aTyxpPpXpfaUVNzg+bGirhMZGvntd4IvAiApKmcVzsYaIe5K1vRH7o+KBdto3a
+        N55Yt9LjByKd7/t/kXvuoB4MiDOH0vW0InTjzQOslxkoDFQDjfO9rJ/7+sLB8aMSDWEZSD+pvpLG2
+        Gqn1ZPIcGqHfrHIVS6QvK2yS40druv0vq6l9qJPXpn1urJyYSuBJ8wa++xLecPcAOqd1mGcLYO9Zb
+        hpXdQdJ5zR3lS3XSRDZZqB7kYFJK5eRFJlDbxrwUA7pxagY87ST+bRhj6ADW8ibhN0pFF8nt6ug0N
+        jPQe7gIA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kXMTC-0002QN-PH; Tue, 27 Oct 2020 10:44:50 +0000
+Date:   Tue, 27 Oct 2020 10:44:50 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 02/10] fs: don't allow splice read/write without explicit ops
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] seq_file: fix clang warning for NULL pointer arithmetic
+Message-ID: <20201027104450.GA8864@infradead.org>
+References: <20201026215321.3894419-1-arnd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3161302.1603795098.1@warthog.procyon.org.uk>
-Date:   Tue, 27 Oct 2020 10:38:18 +0000
-Message-ID: <3161303.1603795098@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201026215321.3894419-1-arnd@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> wrote:
+> index f277d023ebcd..b55e6ef4d677 100644
+> --- a/fs/kernfs/file.c
+> +++ b/fs/kernfs/file.c
+> @@ -124,7 +124,7 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
+>  		 * The same behavior and code as single_open().  Returns
+>  		 * !NULL if pos is at the beginning; otherwise, NULL.
+>  		 */
+> -		return NULL + !*ppos;
+> +		return (void *)(uintptr_t)!*ppos;
 
-> > That said, for afs at least, the fix seems to be just this:
-> 
-> And that is the correct fix, I was about to send it to you.
+Yikes.  This is just horrible, why bnot the completely obvious:
 
-Thanks.
+	if (ops->seq_start) {
+		...
+		return next;
+	}
 
-David
+	if (*ppos)
+		return NULL;
+	return ppos; /* random cookie */
 
+>  static void *single_start(struct seq_file *p, loff_t *pos)
+>  {
+> -	return NULL + (*pos == 0);
+> +	return (void *)(uintptr_t)(*pos == 0);
+
+Same here.
