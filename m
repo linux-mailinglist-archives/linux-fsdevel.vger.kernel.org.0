@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF42129AAD8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:31:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C54EF29AAD6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411070AbgJ0Lbb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 07:31:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46750 "EHLO mail.kernel.org"
+        id S1749389AbgJ0Lbg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 07:31:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410941AbgJ0Lb3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 07:31:29 -0400
+        id S2899178AbgJ0Lbf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 07:31:35 -0400
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD87122281;
-        Tue, 27 Oct 2020 11:31:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78A2622283;
+        Tue, 27 Oct 2020 11:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603798287;
-        bh=C96/Yri0OpcfVOV1K/D1OQZYc09J0deYEZYDY/R242k=;
+        s=default; t=1603798294;
+        bh=Chq+OW8jPYeS0x1/w/NuhbNqJg7T410wGKW7Vwcmmh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RO9w86ZlWcBO3seuK5eFu0P2uHFkfcLlrAbPpLsunaUHodYQ3Drj7EioUxxYpgdfn
-         p3JtpqO0uBUP1PRzqijnlt/zHUT0wz4w2dKzUEzVBfQz9BTODh6dEaA1JnbOgeD4lN
-         VIdUhU32rcODYbCtB1hDzAnX2L1R5dhx9g6xBprY=
+        b=AC/jQYaY123wRTdPEyISNQSkrk6fK6qDgIgZMnbaYj/xrL1krmjOm1LUo+gXLR4O/
+         tvpoLxCRFDQgp+0/HxwTDihCaFuJJPQpjNci9DHja12IL0KC4fU5Ba+WHbgEJL1Jgn
+         IrewywqVQYbPHxnQr4exw1rwLPXvUWiSB9GpQpzY=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH 12/13] m68k/mm: enable use of generic memory_model.h for !DISCONTIGMEM
-Date:   Tue, 27 Oct 2020 13:29:54 +0200
-Message-Id: <20201027112955.14157-13-rppt@kernel.org>
+Subject: [PATCH 13/13] m68k: deprecate DISCONTIGMEM
+Date:   Tue, 27 Oct 2020 13:29:55 +0200
+Message-Id: <20201027112955.14157-14-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201027112955.14157-1-rppt@kernel.org>
 References: <20201027112955.14157-1-rppt@kernel.org>
@@ -57,89 +57,85 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-The pg_data_map and pg_data_table arrays as well as page_to_pfn() and
-pfn_to_page() are required only for DISCONTIGMEM. Other memory models can
-use the generic definitions in asm-generic/memory_model.h.
+DISCONTIGMEM was intended to provide more efficient support for systems
+with holes in their physical address space that FLATMEM did.
+
+Yet, it's overhead in terms of the memory consumption seems to overweight
+the savings on the unused memory map.
+
+For a ARAnyM system with 16 MBytes of FastRAM configured, the memory usage
+reported after page allocator initialization is
+
+Memory: 23828K/30720K available (3206K kernel code, 535K rwdata, 936K rodata, 768K init, 193K bss, 6892K reserved, 0K cma-reserved)
+
+and with DISCONTIGMEM disabled and with relatively large hole in the memory
+map it is:
+
+Memory: 23864K/30720K available (3197K kernel code, 516K rwdata, 936K rodata, 764K init, 179K bss, 6856K reserved, 0K cma-reserved)
+
+Moreover, since m68k already has custom pfn_valid() it is possible to
+define HAVE_ARCH_PFN_VALID to enable freeing of unused memory map. The
+minimal size of a hole that can be freed should not be less than
+MAX_ORDER_NR_PAGES so to achieve more substantial memory savings let m68k
+also define custom FORCE_MAX_ZONEORDER.
+
+With FORCE_MAX_ZONEORDER set to 9 memory usage becomes:
+
+Memory: 23880K/30720K available (3197K kernel code, 516K rwdata, 936K rodata, 764K init, 179K bss, 6840K reserved, 0K cma-reserved)
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- arch/m68k/include/asm/page.h        | 2 ++
- arch/m68k/include/asm/page_mm.h     | 5 +++++
- arch/m68k/include/asm/virtconvert.h | 2 +-
- arch/m68k/mm/init.c                 | 6 +++---
- 4 files changed, 11 insertions(+), 4 deletions(-)
+ arch/m68k/Kconfig.cpu | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/arch/m68k/include/asm/page.h b/arch/m68k/include/asm/page.h
-index 2614a1206f2f..6116d7094292 100644
---- a/arch/m68k/include/asm/page.h
-+++ b/arch/m68k/include/asm/page.h
-@@ -62,8 +62,10 @@ extern unsigned long _ramend;
- #include <asm/page_no.h>
- #endif
+diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
+index 3af0fca03803..763bc80a27aa 100644
+--- a/arch/m68k/Kconfig.cpu
++++ b/arch/m68k/Kconfig.cpu
+@@ -21,6 +21,7 @@ choice
+ config M68KCLASSIC
+ 	bool "Classic M68K CPU family support"
+ 	select NEED_MULTIPLE_NODES if DISCONTIGMEM
++	select HAVE_ARCH_PFN_VALID if FLATMEM && !SINGLE_MEMORY_CHUNK
  
-+#ifdef CONFIG_DISCONTIGMEM
- #define __phys_to_pfn(paddr)	((unsigned long)((paddr) >> PAGE_SHIFT))
- #define __pfn_to_phys(pfn)	PFN_PHYS(pfn)
-+#endif
+ config COLDFIRE
+ 	bool "Coldfire CPU family support"
+@@ -378,11 +379,34 @@ config SINGLE_MEMORY_CHUNK
+ 	help
+ 	  Ignore all but the first contiguous chunk of physical memory for VM
+ 	  purposes.  This will save a few bytes kernel size and may speed up
+-	  some operations.  Say N if not sure.
++	  some operations.
++	  When this option os set to N, you may want to lower "Maximum zone
++	  order" to save memory that could be wasted for unused memory map.
++	  Say N if not sure.
  
- #include <asm-generic/getorder.h>
+ config ARCH_DISCONTIGMEM_ENABLE
++	depends on BROKEN
+ 	def_bool MMU && !SINGLE_MEMORY_CHUNK
  
-diff --git a/arch/m68k/include/asm/page_mm.h b/arch/m68k/include/asm/page_mm.h
-index 0e794051d3bb..7f5912af2a52 100644
---- a/arch/m68k/include/asm/page_mm.h
-+++ b/arch/m68k/include/asm/page_mm.h
-@@ -153,6 +153,7 @@ static inline __attribute_const__ int __virt_to_node_shift(void)
- 	pfn_to_virt(page_to_pfn(page));					\
- })
- 
-+#ifdef CONFIG_DISCONTIGMEM
- #define pfn_to_page(pfn) ({						\
- 	unsigned long __pfn = (pfn);					\
- 	struct pglist_data *pgdat;					\
-@@ -165,6 +166,10 @@ static inline __attribute_const__ int __virt_to_node_shift(void)
- 	pgdat = &pg_data_map[page_to_nid(__p)];				\
- 	((__p) - pgdat->node_mem_map) + pgdat->node_start_pfn;		\
- })
-+#else
-+#define ARCH_PFN_OFFSET (m68k_memory[0].addr)
-+#include <asm-generic/memory_model.h>
-+#endif
- 
- #define virt_addr_valid(kaddr)	((void *)(kaddr) >= (void *)PAGE_OFFSET && (void *)(kaddr) < high_memory)
- #define pfn_valid(pfn)		virt_addr_valid(pfn_to_virt(pfn))
-diff --git a/arch/m68k/include/asm/virtconvert.h b/arch/m68k/include/asm/virtconvert.h
-index dfe43083b579..751bb6f4aaf6 100644
---- a/arch/m68k/include/asm/virtconvert.h
-+++ b/arch/m68k/include/asm/virtconvert.h
-@@ -31,7 +31,7 @@ static inline void *phys_to_virt(unsigned long address)
- /* Permanent address of a page. */
- #if defined(CONFIG_MMU) && defined(CONFIG_SINGLE_MEMORY_CHUNK)
- #define page_to_phys(page) \
--	__pa(PAGE_OFFSET + (((page) - pg_data_map[0].node_mem_map) << PAGE_SHIFT))
-+	__pa(PAGE_OFFSET + (((page) - mem_map) << PAGE_SHIFT))
- #else
- #define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
- #endif
-diff --git a/arch/m68k/mm/init.c b/arch/m68k/mm/init.c
-index 4b46ceace3d3..14c1e541451c 100644
---- a/arch/m68k/mm/init.c
-+++ b/arch/m68k/mm/init.c
-@@ -42,12 +42,12 @@ EXPORT_SYMBOL(empty_zero_page);
- 
- #ifdef CONFIG_MMU
- 
--pg_data_t pg_data_map[MAX_NUMNODES];
--EXPORT_SYMBOL(pg_data_map);
--
- int m68k_virt_to_node_shift;
- 
- #ifdef CONFIG_DISCONTIGMEM
-+pg_data_t pg_data_map[MAX_NUMNODES];
-+EXPORT_SYMBOL(pg_data_map);
++config FORCE_MAX_ZONEORDER
++	int "Maximum zone order" if ADVANCED
++	depends on !SINGLE_MEMORY_CHUNK
++	default "11"
++	help
++	  The kernel memory allocator divides physically contiguous memory
++	  blocks into "zones", where each zone is a power of two number of
++	  pages.  This option selects the largest power of two that the kernel
++	  keeps in the memory allocator.  If you need to allocate very large
++	  blocks of physically contiguous memory, then you may need to
++	  increase this value.
 +
- pg_data_t *pg_data_table[65];
- EXPORT_SYMBOL(pg_data_table);
- #endif
++	  For systems that have holes in their physical address space this
++	  value also defines the minimal size of the hole that allows
++	  freeing unused memory map.
++
++	  This config option is actually maximum order plus one. For example,
++	  a value of 11 means that the largest free memory block is 2^10 pages.
++
+ config 060_WRITETHROUGH
+ 	bool "Use write-through caching for 68060 supervisor accesses"
+ 	depends on ADVANCED && M68060
 -- 
 2.28.0
 
