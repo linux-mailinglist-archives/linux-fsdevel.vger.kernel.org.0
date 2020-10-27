@@ -2,126 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C086429A667
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 09:20:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C748A29A68F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 09:27:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2894578AbgJ0ITk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 04:19:40 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42265 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2894575AbgJ0ITi (ORCPT
+        id S2894774AbgJ0I0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 04:26:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53589 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2894771AbgJ0I0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 04:19:38 -0400
-Received: by mail-io1-f68.google.com with SMTP id k21so566887ioa.9;
-        Tue, 27 Oct 2020 01:19:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5mX2s+th5lC6g4CEXYsNUnv6UwhXFGsRLGsXt/YxXUM=;
-        b=GgizP4IL7s9FBIvTOcdYkajGXihko3u85gfPZ+soYu9Zb9/qFmdmeyA0BZwVh1TDMa
-         WgS8ZYly+Gy6R0F3Ga1CDepVtgvrFan40LMDYWiVxtR4lgDYMYcXwzuCGvURpjTXvBhm
-         cPI0Wav4l696vT2klw4W/yBB/STrZBsF4Gvmulr4ggA17oQgva7B1h8giFx3znTSNkHK
-         gavZGpPLjYkEJiSaziVQTRyVif33fwLqNSAH7GFjmAl/85+rHHAPCWIeE5JhQNveReXn
-         HbOwjKIsXxj+60c3UqOd5H0OctWm0KH3lsklVEZtZn/x3hhzRIf1deQjabbuTuAXsc3e
-         rvpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5mX2s+th5lC6g4CEXYsNUnv6UwhXFGsRLGsXt/YxXUM=;
-        b=uBZa9VdO41eBAC+bzlhCpi3tx3BWk1OXlf1nX+5NVI00P0UCMAB5j4rAndv9eQPSqG
-         JtCo1H4MVF9UnLzbyivXgRvbbsXo+S5hVwwawxqXwxRoT1Z71p4P4jPo+8hORPTgXj4p
-         J5Zas7y0ocVf0w//YhdULwvQmfysIbCKitlzT6kxEDOMdZZ1CYGJ7A67Vsda/lOHV09B
-         qM5NxwlLZFEufEIV2SAMAQq62RBlfyvSVt9O1+UVVPPdBGznIeLx+CZWYaAa56s09Flj
-         hNi5Mq5dUCZg87fdZBsiab8tVwI/2HKZCDi7RNWzd8Z3baRQkYEEsTSaYVqDLCigg6Ua
-         wYoQ==
-X-Gm-Message-State: AOAM532S5BcV/iFOP/3C6KwTL2PVicRFLk7rtMUWVW3OcvwmhaaoKWgW
-        KAqw5kl2OLBpKxVE4ouMPTKJEjOfyIMTIHiu7Dg=
-X-Google-Smtp-Source: ABdhPJwOL+JEC/XqGLjWxbfrbJTGGpn1WKIl5PWGoYC1vJtB/IO4aZvin3hqcglfvTkFZyTpZJeQI3meMhrbONCMwNM=
-X-Received: by 2002:a05:6638:1351:: with SMTP id u17mr1200064jad.120.1603786776036;
- Tue, 27 Oct 2020 01:19:36 -0700 (PDT)
+        Tue, 27 Oct 2020 04:26:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603787207;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0SgGH32DtkrCtTnKEBBNXoBqjBSTDBuSJiubuSpA7gY=;
+        b=CNcWELZgl/i8VEGASEGwbUrFRgRtHW/x1BxAcbC0hwfbF8Y1TJeUqPY4yDC4gdUbXoaM2g
+        5EFodU1hRlwVZm4Ga0qyjGqkTlFvHs/qEBRVR1JjtZgPSKIhI+ys0QnZQuRU/DMljzHqTE
+        X1pt5jwrI0+5g9XNcOOZP1Fae68Wgq0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-211-6RoR-GSeOCmfUqCmMk5Dsg-1; Tue, 27 Oct 2020 04:26:42 -0400
+X-MC-Unique: 6RoR-GSeOCmfUqCmMk5Dsg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 51A7C5705E;
+        Tue, 27 Oct 2020 08:26:38 +0000 (UTC)
+Received: from [10.36.113.185] (ovpn-113-185.ams2.redhat.com [10.36.113.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 492196EF45;
+        Tue, 27 Oct 2020 08:26:31 +0000 (UTC)
+Subject: Re: [PATCH v7 1/7] mm: add definition of PMD_PAGE_ORDER
+To:     Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+References: <20201026083752.13267-1-rppt@kernel.org>
+ <20201026083752.13267-2-rppt@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <9728bfdf-9f40-68dd-3862-5befc770268b@redhat.com>
+Date:   Tue, 27 Oct 2020 09:26:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-References: <20201026204418.23197-1-longman@redhat.com>
-In-Reply-To: <20201026204418.23197-1-longman@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 27 Oct 2020 10:19:25 +0200
-Message-ID: <CAOQ4uxiejMYqFXUSU8YSsvtAADwHWTGdhT80-51yFjJGSR3bTw@mail.gmail.com>
-Subject: Re: [PATCH] inotify: Increase default inotify.max_user_watches limit
- to 1048576
-To:     Waiman Long <longman@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Luca BRUNO <lucab@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201026083752.13267-2-rppt@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 26, 2020 at 10:44 PM Waiman Long <longman@redhat.com> wrote:
->
-> The default value of inotify.max_user_watches sysctl parameter was set
-> to 8192 since the introduction of the inotify feature in 2005 by
-> commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
-> small for many modern usage. As a result, users have to explicitly set
-> it to a larger value to make it work.
->
-> After some searching around the web, these are the
-> inotify.max_user_watches values used by some projects:
->  - vscode:  524288
->  - dropbox support: 100000
->  - users on stackexchange: 12228
->  - lsyncd user: 2000000
->  - code42 support: 1048576
->  - monodevelop: 16384
->  - tectonic: 524288
->  - openshift origin: 65536
->
-> Each watch point adds an inotify_inode_mark structure to an inode to be
-> watched. Modeled after the epoll.max_user_watches behavior to adjust the
-> default value according to the amount of addressable memory available,
-> make inotify.max_user_watches behave in a similar way to make it use
-> no more than 1% of addressable memory within the range [8192, 1048576].
->
-> For 64-bit archs, inotify_inode_mark should have a size of 80 bytes. That
-> means a system with 8GB or more memory will have the maximum value of
-> 1048576 for inotify.max_user_watches. This default should be big enough
-> for most of the use cases.
->
+On 26.10.20 09:37, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> 
+> The definition of PMD_PAGE_ORDER denoting the number of base pages in the
+> second-level leaf page is already used by DAX and maybe handy in other
+> cases as well.
+> 
+> Several architectures already have definition of PMD_ORDER as the size of
+> second level page table, so to avoid conflict with these definitions use
+> PMD_PAGE_ORDER name and update DAX respectively.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Alas, the memory usage contributed by inotify watches is dominated by the
-directory inodes that they pin to cache.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-In effect, this change increases the ability of a given user to use:
 
-1048576(max_user_watches)*~1024(fs inode size) = ~1GB
-
-Surely, inotify watches are not the only way to pin inodes to cache, but
-other ways are also resource controlled, for example:
-<noproc hardlimit>*<nofile hardlimit>
-
-I did not survey distros for hard limits of noproc and nofile.
-On my Ubuntu it's pretty high (63183*1048576). I suppose other distros
-may have a lower hard limit by default.
-
-But in any case, open files resource usage has high visibility (via procfs)
-and sysadmins and tools are aware of it.
-
-I am afraid this may not be the case with inotify watches. They are also visible
-via the inotify fdinfo procfs files, but less people and tools know about them.
-
-In the end, it's a policy decision, but if you want to claim that your change
-will not use more than 1% of addressable memory, it might be better to
-use 2*sizeof(struct inode) as a closer approximation of the resource usage.
-
-I believe this conservative estimation will result in a default that covers the
-needs of most of the common use cases. Also, in general, a system with
-a larger filesystem is likely to have more RAM for caching files anyway.
-
-An anecdote: I started developing the fanotify filesystem watch as replacement
-to inotify (merged in v5.9) for a system that needs to watch many millions of
-directories and pinning all inodes to cache was not an option.
-
+-- 
 Thanks,
-Amir.
+
+David / dhildenb
+
