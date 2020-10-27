@@ -2,77 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D5829AE09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 14:55:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1396A29B1F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 15:36:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2900852AbgJ0Nza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 09:55:30 -0400
-Received: from casper.infradead.org ([90.155.50.34]:41550 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438386AbgJ0Nza (ORCPT
+        id S1760819AbgJ0Ogg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 10:36:36 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10690 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1760811AbgJ0Oge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 09:55:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=RaIfHC7BLM4SW2hHIHWeJJ18AZKbmgeAZRKzDoH2DFk=; b=u3BI0eTHwiqt8yMwHim8BcwRqs
-        wT0SyhzyBONY5MrN1aN/NK3iJctEBVEGEFbkfp/6LCLoKV/Q0Zw7vYHdM8I3q7s0iM3UTzuX+HrwX
-        kzOjvWsf7KWwrO09ZUBl3C/HCyUiExt1ZCQl0gZ6GdAG71//8fdzZS/I31RnRXJSApavJ6v6tru1C
-        VZ9n/BiVBkt2Y4so2ZttBOStebLJDz2uOZa0sqapoQGHONWmRYaBbL4n4/f1vunw2sdrJV5jkuLUe
-        bIIFYXxDk2KlGDISrlhD9XZPq9/veawNUfY/2ZriN7BQR2+QooEA5T7zfumUS5+lLaRuSxQ4gGk3t
-        8maXGEWA==;
-Received: from i7.infradead.org ([2001:8b0:10b:1:21e:67ff:fecb:7a92])
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kXPRe-00009V-3P; Tue, 27 Oct 2020 13:55:26 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.93 #3 (Red Hat Linux))
-        id 1kXPRd-002iLl-La; Tue, 27 Oct 2020 13:55:25 +0000
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     bonzini@redhat.com
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] kvm/eventfd: Drain events from eventfd in irqfd_wakeup()
-Date:   Tue, 27 Oct 2020 13:55:23 +0000
-Message-Id: <20201027135523.646811-4-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20201027135523.646811-1-dwmw2@infradead.org>
-References: <1faa5405-3640-f4ad-5cd9-89a9e5e834e9@redhat.com>
- <20201027135523.646811-1-dwmw2@infradead.org>
+        Tue, 27 Oct 2020 10:36:34 -0400
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5f9830780005>; Tue, 27 Oct 2020 07:36:40 -0700
+Received: from [10.2.173.19] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 27 Oct
+ 2020 14:36:33 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 0/9] More THP fixes
+Date:   Tue, 27 Oct 2020 10:36:21 -0400
+X-Mailer: MailMate (1.13.2r5673)
+Message-ID: <A6E21592-98F1-4030-BB87-47C366F99C2A@nvidia.com>
+In-Reply-To: <20201026183136.10404-1-willy@infradead.org>
+References: <20201026183136.10404-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed;
+        boundary="=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1603809401; bh=lMZLsnbv4bPvmRMvHH5HlYSCqzYY8J8HFBwFPgiU8Ow=;
+        h=From:To:CC:Subject:Date:X-Mailer:Message-ID:In-Reply-To:
+         References:MIME-Version:Content-Type:X-Originating-IP:
+         X-ClientProxiedBy;
+        b=kuF4Tebqz3n1msI/SVKaAPPNAn6IjERZy6KPyYTfKYDlQwUdm7ReGbAGjAxpOt2aZ
+         n7lReJOCdyfchO9xywmY4X152Sw3k6Zccf470b5y3sbK9wcTLasSz73y4LTiPQkHC7
+         3V11Wze9WUgGkj1yC/bqcX/akqO7FB+PKzd7hAYXjRHx+X+eGM3YabD7Cq9gOKHxGH
+         fErTV8/pHAz2KmzE8HDoVBQXtecoXWvXIX1XyKXsEYE6hku4sLaJjVtb5MATUQ0dhY
+         iUwulB5LghnUb/TEUeH1A2vuFiaoqZ9nnkMykcvriyRkBXSGQ+0fQFmoOGcg728cxi
+         b0T2L5uhVxmIw==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+--=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Don't allow the events to accumulate in the eventfd counter, drain them
-as they are handled.
+On 26 Oct 2020, at 14:31, Matthew Wilcox (Oracle) wrote:
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- virt/kvm/eventfd.c | 3 +++
- 1 file changed, 3 insertions(+)
+> I'm not sure there's a common thread to this set of THP patches other
+> than I think they're pretty uncontroversial.  Maybe I'm wrong.
+>
+> Matthew Wilcox (Oracle) (8):
+>   mm: Support THPs in zero_user_segments
+>   mm/page-flags: Allow accessing PageError on tail pages
+>   mm: Return head pages from grab_cache_page_write_begin
+>   mm: Replace prep_transhuge_page with thp_prep
+>   mm/truncate: Make invalidate_inode_pages2_range work with THPs
+>   mm/truncate: Fix invalidate_complete_page2 for THPs
+>   mm/vmscan: Free non-shmem THPs without splitting them
+>   mm: Fix READ_ONLY_THP warning
 
-diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
-index d6408bb497dc..98b5cfa1d69f 100644
---- a/virt/kvm/eventfd.c
-+++ b/virt/kvm/eventfd.c
-@@ -193,6 +193,9 @@ irqfd_wakeup(wait_queue_entry_t *wait, unsigned mode, int sync, void *key)
- 	int idx;
- 
- 	if (flags & EPOLLIN) {
-+		u64 cnt;
-+		eventfd_ctx_do_read(&irqfd->eventfd, &cnt);
-+
- 		idx = srcu_read_lock(&kvm->irq_srcu);
- 		do {
- 			seq = read_seqcount_begin(&irqfd->irq_entry_sc);
--- 
-2.26.2
+They look good to me. Thanks.
 
+Reviewed-by: Zi Yan <ziy@nvidia.com>
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl+YMGUPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqK3l0QAKGShCDIX4KP9cAnECNzpwnORd/C0m0X2hV/
+YgkryXPkCp9Mw9XRlacN+N5UXyDSAR8Cfd6i7eizr0EiZB4dMQ3ElfMUPEGpylIS
+tmSgAEEMxie2CjODJ8lZ7fIm5Khgvv7JST1eDP3/gE7/GtanvSnYExvvT2ukwP8i
+fb4c2guWSBou4bcTdMO8UtYky5neQzDnXSA2U/+4Bjm45Fta8+6+zkSWU+HYIJJT
+PkN/VE3LJ63Kd9AIy9vX99Cr26rRn8gTh0r3iIN4QPRreJi8OjJ9L7t629Igc4xh
+jNqE9IGGFATcXEABMmJxWGq5JZyJQHB4bgVs+RGXugHbIHJmIuKu2DWrNvnBKNq4
+ns2qMBK1jb46cMLU/Ssmjt/Nq+ZWxfEhH0+Sn+kWVcqksPSwW0aGi+SD48+cITtE
+PJvK6mnRZjXvH7QvKVU+6tVI8NzNOp5Lo9ASQMJhE070YyKNlShc8WdTXss+spAO
+n6h81b3GmNhARiIT8IyT1RiELEGZTffce8esTcrJFYOt0VxlSgbtM2ExR/gE0Ok9
+lz0Zi5S3vTCGdEvHhCHqgSUXTnin/CYZhVhoH8atRTPv69PY8CV55R7i1CvLS/AM
+T4OQEOdcuFYgkGAnkzU8a3njdeS69zxz0rNAHeGwdtEoAjFFaLgnWnklgFvPaONb
+vOt60e47
+=Xdma
+-----END PGP SIGNATURE-----
+
+--=_MailMate_7DC03037-44EC-4B9C-AA63-1AE3B845D3DF_=--
