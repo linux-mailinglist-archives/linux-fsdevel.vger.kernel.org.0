@@ -2,87 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCBA129ADDD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 14:50:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B40B329ADDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 14:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752744AbgJ0Nu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 09:50:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48466 "EHLO
+        id S1752760AbgJ0Nuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 09:50:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42154 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752739AbgJ0Nu1 (ORCPT
+        by vger.kernel.org with ESMTP id S1752751AbgJ0Nue (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 09:50:27 -0400
+        Tue, 27 Oct 2020 09:50:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603806626;
+        s=mimecast20190719; t=1603806632;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hhBCr/kNOv10l2PohOVnQJvYd1RPY4KWC4eptFHnJ5k=;
-        b=QLQpMS9X8vOfi0WKJz0KZZccAHMjsshQTbqim8Fnk8qpwjeEYjlEPmFQvpzcxjT8DroIjL
-        OFa/1H5nKmpIq/pWbe9yFJncp2jo3BbJhEs5eBQeCuFCJKy2OX96CoI5AC2MB8zdvstTYs
-        LKlLf2irwU7wpcmbEDRqnQFFJXymQsg=
+        bh=u97YpgkYwOflA5DyVOMrwMI90QOOsJn8Gu3ZLDUNc0g=;
+        b=AQDeBA4BglUdTuMI5Q1Acl9WsnNTo4wpud+NNve4xd5PRxJilGS+ADKCwsNEpPJ/gXodhe
+        zblIuiixh66w6JRAY1wCaCDt4BamyPPHJWLtqJwOuu1wjsFAGyR2FQZweCM0AB86Enl9WG
+        kzdkgHteZoytEMGB1zDL/eWswEJInK4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-85uRaBgJOPKVNzUf8EOfvA-1; Tue, 27 Oct 2020 09:50:23 -0400
-X-MC-Unique: 85uRaBgJOPKVNzUf8EOfvA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-222-ApJocr91McWnoZZsoSCXmg-1; Tue, 27 Oct 2020 09:50:29 -0400
+X-MC-Unique: ApJocr91McWnoZZsoSCXmg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7E9918B9ECB;
-        Tue, 27 Oct 2020 13:50:21 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A667FADC24;
+        Tue, 27 Oct 2020 13:50:28 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D23565B4A6;
-        Tue, 27 Oct 2020 13:50:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E73941C4;
+        Tue, 27 Oct 2020 13:50:27 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 03/10] afs: Fix a use after free in afs_xattr_get_acl()
+Subject: [PATCH 04/10] afs: Fix afs_launder_page to not clear PG_writeback
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Tue, 27 Oct 2020 13:50:17 +0000
-Message-ID: <160380661706.3467511.14857214144343578659.stgit@warthog.procyon.org.uk>
+Date:   Tue, 27 Oct 2020 13:50:27 +0000
+Message-ID: <160380662715.3467511.74460863169151977.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160380659566.3467511.15495463187114465303.stgit@warthog.procyon.org.uk>
 References: <160380659566.3467511.15495463187114465303.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+Fix afs_launder_page() to not clear PG_writeback on the page it is
+laundering as the flag isn't set in this case.
 
-The "op" pointer is freed earlier when we call afs_put_operation().
-
-Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 4343d00872e1 ("afs: Get rid of the afs_writeback record")
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Colin Ian King <colin.king@canonical.com>
 ---
 
- fs/afs/xattr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/afs/internal.h |    1 +
+ fs/afs/write.c    |   10 ++++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/afs/xattr.c b/fs/afs/xattr.c
-index 84f3c4f57531..38884d6c57cd 100644
---- a/fs/afs/xattr.c
-+++ b/fs/afs/xattr.c
-@@ -85,7 +85,7 @@ static int afs_xattr_get_acl(const struct xattr_handler *handler,
- 			if (acl->size <= size)
- 				memcpy(buffer, acl->data, acl->size);
- 			else
--				op->error = -ERANGE;
-+				ret = -ERANGE;
- 		}
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 81b0485fd22a..289f5dffa46f 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -812,6 +812,7 @@ struct afs_operation {
+ 			pgoff_t		last;		/* last page in mapping to deal with */
+ 			unsigned	first_offset;	/* offset into mapping[first] */
+ 			unsigned	last_to;	/* amount of mapping[last] */
++			bool		laundering;	/* Laundering page, PG_writeback not set */
+ 		} store;
+ 		struct {
+ 			struct iattr	*attr;
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index da12abd6db21..b937ec047ec9 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -396,7 +396,8 @@ static void afs_store_data_success(struct afs_operation *op)
+ 	op->ctime = op->file[0].scb.status.mtime_client;
+ 	afs_vnode_commit_status(op, &op->file[0]);
+ 	if (op->error == 0) {
+-		afs_pages_written_back(vnode, op->store.first, op->store.last);
++		if (!op->store.laundering)
++			afs_pages_written_back(vnode, op->store.first, op->store.last);
+ 		afs_stat_v(vnode, n_stores);
+ 		atomic_long_add((op->store.last * PAGE_SIZE + op->store.last_to) -
+ 				(op->store.first * PAGE_SIZE + op->store.first_offset),
+@@ -415,7 +416,7 @@ static const struct afs_operation_ops afs_store_data_operation = {
+  */
+ static int afs_store_data(struct address_space *mapping,
+ 			  pgoff_t first, pgoff_t last,
+-			  unsigned offset, unsigned to)
++			  unsigned offset, unsigned to, bool laundering)
+ {
+ 	struct afs_vnode *vnode = AFS_FS_I(mapping->host);
+ 	struct afs_operation *op;
+@@ -448,6 +449,7 @@ static int afs_store_data(struct address_space *mapping,
+ 	op->store.last = last;
+ 	op->store.first_offset = offset;
+ 	op->store.last_to = to;
++	op->store.laundering = laundering;
+ 	op->mtime = vnode->vfs_inode.i_mtime;
+ 	op->flags |= AFS_OPERATION_UNINTR;
+ 	op->ops = &afs_store_data_operation;
+@@ -601,7 +603,7 @@ static int afs_write_back_from_locked_page(struct address_space *mapping,
+ 	if (end > i_size)
+ 		to = i_size & ~PAGE_MASK;
+ 
+-	ret = afs_store_data(mapping, first, last, offset, to);
++	ret = afs_store_data(mapping, first, last, offset, to, false);
+ 	switch (ret) {
+ 	case 0:
+ 		ret = count;
+@@ -921,7 +923,7 @@ int afs_launder_page(struct page *page)
+ 
+ 		trace_afs_page_dirty(vnode, tracepoint_string("launder"),
+ 				     page->index, priv);
+-		ret = afs_store_data(mapping, page->index, page->index, t, f);
++		ret = afs_store_data(mapping, page->index, page->index, t, f, true);
  	}
  
+ 	trace_afs_page_dirty(vnode, tracepoint_string("laundered"),
 
 
