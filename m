@@ -2,72 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 896BA29C7E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 19:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0551A29C816
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 20:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S371310AbgJ0S6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 14:58:13 -0400
-Received: from casper.infradead.org ([90.155.50.34]:53356 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S371306AbgJ0S6L (ORCPT
+        id S1829222AbgJ0TB3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 15:01:29 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37869 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S371430AbgJ0TB1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 14:58:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mE1cwDDEmEjCnd5IdzIeq1L8rwr+K0PfUJkE+ZW/YUw=; b=b4/4PvdY33liOR8x2ruSgiRKg8
-        DgfQufrKwk4krix3uddSCJ90fBypGZ5jqxEthiA8wLgWHvzVTiqmOBmF7DGw1F+U1cxZ+hgfy/sci
-        rG0R8W79qM7PiMSGqnInGAblwFDSpSkQLUe9l+WseAHcFHUpQoJ0wDuq9bNxpekgx3QbFUp4Dp+BE
-        H3xM1AeFVBnHKz3lj7tnOByIKWtXF2+4h2MAuMbQyv4oZQLAUY5UYjOKjqlA8kk4rTDH3YPhPQhPt
-        kyUJLBdkS1DzIGvNv6BSM8KwUMNazSO+lB6joRAQLrkmpfMsF3oMkUW5GxmcohVj12mAVXgLe55TD
-        WT+Dd5FA==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kXUAb-0004F1-Qa; Tue, 27 Oct 2020 18:58:09 +0000
-Date:   Tue, 27 Oct 2020 18:58:09 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v3 04/12] mm/filemap: Add mapping_seek_hole_data
-Message-ID: <20201027185809.GB15201@infradead.org>
-References: <20201026041408.25230-1-willy@infradead.org>
- <20201026041408.25230-5-willy@infradead.org>
+        Tue, 27 Oct 2020 15:01:27 -0400
+Received: by mail-oi1-f196.google.com with SMTP id f7so2398222oib.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Oct 2020 12:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M/ppSbcOSIkyb0WLxSLtuLH+l8WQbDgVdPBCEGLhzkg=;
+        b=ITgfknbVMZfp35lpmLI31j4Nz1iCLqIjRADmmwWUK5/lEwTGJCtZuIg7KxFWy7ItTQ
+         hfI9rUKmuyCzK+NN6zramPdeJQr3T/y85wtC502Wh1aA+EVeb5zEhSA9pSEyllBQ0ubV
+         93+c6QQRkdWNThoyRK6g0NvSsnUYPyNsOg5A0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M/ppSbcOSIkyb0WLxSLtuLH+l8WQbDgVdPBCEGLhzkg=;
+        b=c7fmmUJJL46VmJhlWP08z83XC1xhMuaYtYDLVvMxTw69B2/bOwPbnz5uzkmvgAfJOT
+         z4+ZG94l6evKmnZb39AHlZBp3TgQd9hZ6V5CHY/WNvB/fTt7mvQ6iBlklAB+s4Xw+4u1
+         PQYd5RgVJ2tyj0vbzj8lQ0wkL97Fgh9fdY6Hc46quGRcQDz2HWwrkorbmS0nrD1vebSM
+         IxW+ysoJdfGYHwTP+bPx9F9015u+YRY4ZCPb10qJIh/SKE7j6kRU9ahMjIQB9kMwEMsE
+         Jrb4Tuit20MkJEO8zGaGZWgAmvUOJZ/6PEDpXnP1NpwMcqeJHsozgQ3Q1gjRnNSlRAsn
+         eOXQ==
+X-Gm-Message-State: AOAM5324CpuD9t/WLz1XfNO/s7fcpr+9XXh/pFEb/G9fWjpOW7a47Yxj
+        exyyEMIGcHtuAxkl1eyjc4NrLZKuBHenFNxseKfj9g==
+X-Google-Smtp-Source: ABdhPJwHcWbTJCbJ7AAyjVib0AGCCVAs4xDrwxrSwOfpPtT8albuTTgqSli8X5JVplvyhTsqPY2DxlaYLA/ZcsBiLvA=
+X-Received: by 2002:aca:39d6:: with SMTP id g205mr2530848oia.14.1603825286633;
+ Tue, 27 Oct 2020 12:01:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201026041408.25230-5-willy@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20201021163242.1458885-1-daniel.vetter@ffwll.ch>
+ <20201023122216.2373294-1-daniel.vetter@ffwll.ch> <20201023122216.2373294-3-daniel.vetter@ffwll.ch>
+ <20201027185100.GD12824@infradead.org>
+In-Reply-To: <20201027185100.GD12824@infradead.org>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Tue, 27 Oct 2020 20:01:15 +0100
+Message-ID: <CAKMK7uERSRmJ+E03SWsXcjVEbg24pzbVcXf7dpCvcR1JvnTcnA@mail.gmail.com>
+Subject: Re: [PATCH 03/65] mm: Track mmu notifiers in fs_reclaim_acquire/release
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Qian Cai <cai@lca.pw>, linux-xfs@vger.kernel.org,
+        "Thomas Hellstr??m" <thomas_os@shipmail.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        "Christian K??nig" <christian.koenig@amd.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +/**
-> + * mapping_seek_hole_data - Seek for SEEK_DATA / SEEK_HOLE in the page cache.
-> + * @mapping: Address space to search.
-> + * @start: First byte to consider.
-> + * @end: Limit of search (exclusive).
-> + * @whence: Either SEEK_HOLE or SEEK_DATA.
-> + *
-> + * If the page cache knows which blocks contain holes and which blocks
-> + * contain data, your filesystem can use this function to implement
-> + * SEEK_HOLE and SEEK_DATA.  This is useful for filesystems which are
-> + * entirely memory-based such as tmpfs, and filesystems which support
-> + * unwritten extents.
-> + *
-> + * Return: The requested offset on successs, or -ENXIO if @whence specifies
-> + * SEEK_DATA and there is no data after @start.  There is an implicit hole
-> + * after @end - 1, so SEEK_HOLE returns @end if all the bytes between @start
-> + * and @end contain data.
-> + */
+On Tue, Oct 27, 2020 at 7:51 PM Christoph Hellwig <hch@infradead.org> wrote:
+> Is there a list that has the cover letter and the whole series?
+> I've only found fragments (and mostly the same fragments) while
+> wading through my backlog in various list folders..
 
-This seems to just lift the tmpfs one to common code.  If it really
-is supposed to be generic it should be able to replace
-page_cache_seek_hole_data as well.  So I don't think moving this without
-removing the other common one is an all that good idea.
+Typoed git send-email command that I only caught half-way through. I
+tried to reply with apologies in a few spots, I guess I didn't cover
+all the lists this spams :-/
+
+The patch itself is still somewhere on my todo to respin, I want to
+pep it up with some testcases since previous version was kinda badly
+broken. Just didn't get around to that yet.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
