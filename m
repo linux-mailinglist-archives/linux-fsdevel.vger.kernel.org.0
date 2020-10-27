@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D4229AAA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:30:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9110929AAAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Oct 2020 12:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1749981AbgJ0LaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Oct 2020 07:30:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45262 "EHLO mail.kernel.org"
+        id S2899169AbgJ0LaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Oct 2020 07:30:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1749975AbgJ0LaN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Oct 2020 07:30:13 -0400
+        id S2438788AbgJ0LaU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 27 Oct 2020 07:30:20 -0400
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98A5922265;
-        Tue, 27 Oct 2020 11:30:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6048522281;
+        Tue, 27 Oct 2020 11:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603798212;
-        bh=961zp8YP3Ph/5e1cBGv3GfPpdUC5CFeOssQ/7iZPL6c=;
+        s=default; t=1603798219;
+        bh=3qystsPnlugjRY8KsORSq7RQeCX5pBKTiAj4xq/mspE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t+LMUjw9gvdRwfg60hai+Dx7XrGks1N/SAxFmRmvRv4Cf0w5VJIiUrfQd4UOgc3TZ
-         no57/TMTg+pUB5xAbGBf9AxLjF88mu0UIFOV1fJ0EEknHpithAt3B4XUdzJsemQzxj
-         NPemjoEI236GUI0LwuZJ2NIKKXMZd3fPz0hCsUxk=
+        b=BjNj5FSFIwe17dRRhPtFzFq+PmqU9E4pD5GIlu2eyCkB5srdBe5YvAntFjwJNj5JX
+         fYpsmJrEBjNkluDvSFl5V0nS70cGNpKKBs25O8Er9Oxzzdh3UabjM5ColXN7R435E4
+         RZQC0EmtS/7eX0gagqQR3rMsLaX4XsAaOEnFJo68=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH 01/13] alpha: switch from DISCONTIGMEM to SPARSEMEM
-Date:   Tue, 27 Oct 2020 13:29:43 +0200
-Message-Id: <20201027112955.14157-2-rppt@kernel.org>
+Subject: [PATCH 02/13] ia64: remove custom __early_pfn_to_nid()
+Date:   Tue, 27 Oct 2020 13:29:44 +0200
+Message-Id: <20201027112955.14157-3-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201027112955.14157-1-rppt@kernel.org>
 References: <20201027112955.14157-1-rppt@kernel.org>
@@ -57,197 +57,154 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-Enable SPARSEMEM support on alpha and deprecate DISCONTIGMEM.
+The ia64 implementation of __early_pfn_to_nid() essentially relies on the
+same data as the generic implementation.
 
-The required changes are mostly around moving duplicated definitions of
-page access and address conversion macros to a common place and making sure
-they are available for all memory models.
+The correspondence between memory ranges and nodes is set in memblock
+during early memory initialization in register_active_ranges() function.
 
-The DISCONTINGMEM support is marked as BROKEN an will be removed in a
-couple of releases.
+The initialization of sparsemem that requires early_pfn_to_nid() happens
+later and it can use the memblock information like the other architectures.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- arch/alpha/Kconfig                 |  8 ++++++++
- arch/alpha/include/asm/mmzone.h    | 14 ++------------
- arch/alpha/include/asm/page.h      |  7 ++++---
- arch/alpha/include/asm/pgtable.h   | 12 +++++-------
- arch/alpha/include/asm/sparsemem.h | 18 ++++++++++++++++++
- arch/alpha/kernel/setup.c          |  1 +
- 6 files changed, 38 insertions(+), 22 deletions(-)
- create mode 100644 arch/alpha/include/asm/sparsemem.h
+ arch/ia64/Kconfig      |  3 ---
+ arch/ia64/mm/numa.c    | 30 ------------------------------
+ include/linux/mm.h     |  3 ---
+ include/linux/mmzone.h | 11 -----------
+ mm/page_alloc.c        | 16 ++++++++++++----
+ 5 files changed, 12 insertions(+), 51 deletions(-)
 
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index d6e9fc7a7b19..aedf5c296f13 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -40,6 +40,7 @@ config ALPHA
- 	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
- 	select MMU_GATHER_NO_RANGE
- 	select SET_FS
-+	select SPARSEMEM_EXTREME if SPARSEMEM
- 	help
- 	  The Alpha is a 64-bit general-purpose processor designed and
- 	  marketed by the Digital Equipment Corporation of blessed memory,
-@@ -551,12 +552,19 @@ config NR_CPUS
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index 39b25a5a591b..12aae706cb27 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -342,9 +342,6 @@ config HOLES_IN_ZONE
+ 	bool
+ 	default y if VIRTUAL_MEM_MAP
  
- config ARCH_DISCONTIGMEM_ENABLE
- 	bool "Discontiguous Memory Support"
-+	depends on BROKEN
- 	help
- 	  Say Y to support efficient handling of discontiguous physical memory,
- 	  for architectures which are either NUMA (Non-Uniform Memory Access)
- 	  or have huge holes in the physical address space for other reasons.
- 	  See <file:Documentation/vm/numa.rst> for more.
+-config HAVE_ARCH_EARLY_PFN_TO_NID
+-	def_bool NUMA && SPARSEMEM
+-
+ config HAVE_ARCH_NODEDATA_EXTENSION
+ 	def_bool y
+ 	depends on NUMA
+diff --git a/arch/ia64/mm/numa.c b/arch/ia64/mm/numa.c
+index f34964271101..46b6e5f3a40f 100644
+--- a/arch/ia64/mm/numa.c
++++ b/arch/ia64/mm/numa.c
+@@ -58,36 +58,6 @@ paddr_to_nid(unsigned long paddr)
+ EXPORT_SYMBOL(paddr_to_nid);
  
-+config ARCH_SPARSEMEM_ENABLE
-+	bool "Sparse Memory Support"
-+	help
-+	  Say Y to support efficient handling of discontiguous physical memory,
-+	  for systems that have huge holes in the physical address space.
-+
- config NUMA
- 	bool "NUMA Support (EXPERIMENTAL)"
- 	depends on DISCONTIGMEM && BROKEN
-diff --git a/arch/alpha/include/asm/mmzone.h b/arch/alpha/include/asm/mmzone.h
-index 9b521c857436..86644604d977 100644
---- a/arch/alpha/include/asm/mmzone.h
-+++ b/arch/alpha/include/asm/mmzone.h
-@@ -6,6 +6,8 @@
- #ifndef _ASM_MMZONE_H_
- #define _ASM_MMZONE_H_
- 
-+#ifdef CONFIG_DISCONTIGMEM
-+
- #include <asm/smp.h>
- 
- /*
-@@ -45,8 +47,6 @@ PLAT_NODE_DATA_LOCALNR(unsigned long p, int n)
- }
+ #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_NUMA)
+-/*
+- * Because of holes evaluate on section limits.
+- * If the section of memory exists, then return the node where the section
+- * resides.  Otherwise return node 0 as the default.  This is used by
+- * SPARSEMEM to allocate the SPARSEMEM sectionmap on the NUMA node where
+- * the section resides.
+- */
+-int __meminit __early_pfn_to_nid(unsigned long pfn,
+-					struct mminit_pfnnid_cache *state)
+-{
+-	int i, section = pfn >> PFN_SECTION_SHIFT, ssec, esec;
+-
+-	if (section >= state->last_start && section < state->last_end)
+-		return state->last_nid;
+-
+-	for (i = 0; i < num_node_memblks; i++) {
+-		ssec = node_memblk[i].start_paddr >> PA_SECTION_SHIFT;
+-		esec = (node_memblk[i].start_paddr + node_memblk[i].size +
+-			((1L << PA_SECTION_SHIFT) - 1)) >> PA_SECTION_SHIFT;
+-		if (section >= ssec && section < esec) {
+-			state->last_start = ssec;
+-			state->last_end = esec;
+-			state->last_nid = node_memblk[i].nid;
+-			return node_memblk[i].nid;
+-		}
+-	}
+-
+-	return -1;
+-}
+-
+ void numa_clear_node(int cpu)
+ {
+ 	unmap_cpu_from_node(cpu, NUMA_NO_NODE);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ef360fe70aaf..ac51b07b9021 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2433,9 +2433,6 @@ static inline int early_pfn_to_nid(unsigned long pfn)
+ #else
+ /* please see mm/page_alloc.c */
+ extern int __meminit early_pfn_to_nid(unsigned long pfn);
+-/* there is a per-arch backend function. */
+-extern int __meminit __early_pfn_to_nid(unsigned long pfn,
+-					struct mminit_pfnnid_cache *state);
  #endif
  
--#ifdef CONFIG_DISCONTIGMEM
+ extern void set_dma_reserve(unsigned long new_dma_reserve);
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index fb3bf696c05e..876600a6e891 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1428,17 +1428,6 @@ void sparse_init(void);
+ #define subsection_map_init(_pfn, _nr_pages) do {} while (0)
+ #endif /* CONFIG_SPARSEMEM */
+ 
+-/*
+- * During memory init memblocks map pfns to nids. The search is expensive and
+- * this caches recent lookups. The implementation of __early_pfn_to_nid
+- * may treat start/end as pfns or sections.
+- */
+-struct mminit_pfnnid_cache {
+-	unsigned long last_start;
+-	unsigned long last_end;
+-	int last_nid;
+-};
 -
  /*
-  * Following are macros that each numa implementation must define.
-  */
-@@ -68,11 +68,6 @@ PLAT_NODE_DATA_LOCALNR(unsigned long p, int n)
- /* XXX: FIXME -- nyc */
- #define kern_addr_valid(kaddr)	(0)
+  * If it is possible to have holes within a MAX_ORDER_NR_PAGES, then we
+  * need to check pfn validity within that MAX_ORDER_NR_PAGES block.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 23f5066bd4a5..1fdbf8da77af 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1558,14 +1558,23 @@ void __free_pages_core(struct page *page, unsigned int order)
  
--#define virt_to_page(kaddr)	pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
--
--#define pmd_page(pmd)		(pfn_to_page(pmd_val(pmd) >> 32))
--#define pte_pfn(pte)		(pte_val(pte) >> 32)
--
- #define mk_pte(page, pgprot)						     \
- ({								 	     \
- 	pte_t pte;                                                           \
-@@ -95,16 +90,11 @@ PLAT_NODE_DATA_LOCALNR(unsigned long p, int n)
- 	__xx;                                                           \
- })
+ #ifdef CONFIG_NEED_MULTIPLE_NODES
  
--#define page_to_pa(page)						\
--	(page_to_pfn(page) << PAGE_SHIFT)
--
- #define pfn_to_nid(pfn)		pa_to_nid(((u64)(pfn) << PAGE_SHIFT))
- #define pfn_valid(pfn)							\
- 	(((pfn) - node_start_pfn(pfn_to_nid(pfn))) <			\
- 	 node_spanned_pages(pfn_to_nid(pfn)))					\
- 
--#define virt_addr_valid(kaddr)	pfn_valid((__pa(kaddr) >> PAGE_SHIFT))
--
- #endif /* CONFIG_DISCONTIGMEM */
- 
- #endif /* _ASM_MMZONE_H_ */
-diff --git a/arch/alpha/include/asm/page.h b/arch/alpha/include/asm/page.h
-index e241bd88880f..268f99b4602b 100644
---- a/arch/alpha/include/asm/page.h
-+++ b/arch/alpha/include/asm/page.h
-@@ -83,12 +83,13 @@ typedef struct page *pgtable_t;
- 
- #define __pa(x)			((unsigned long) (x) - PAGE_OFFSET)
- #define __va(x)			((void *)((unsigned long) (x) + PAGE_OFFSET))
--#ifndef CONFIG_DISCONTIGMEM
-+
- #define virt_to_page(kaddr)	pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
-+#define virt_addr_valid(kaddr)	pfn_valid((__pa(kaddr) >> PAGE_SHIFT))
- 
-+#ifdef CONFIG_FLATMEM
- #define pfn_valid(pfn)		((pfn) < max_mapnr)
--#define virt_addr_valid(kaddr)	pfn_valid(__pa(kaddr) >> PAGE_SHIFT)
--#endif /* CONFIG_DISCONTIGMEM */
-+#endif /* CONFIG_FLATMEM */
- 
- #include <asm-generic/memory_model.h>
- #include <asm-generic/getorder.h>
-diff --git a/arch/alpha/include/asm/pgtable.h b/arch/alpha/include/asm/pgtable.h
-index 660b14ce1317..8d856c62e22a 100644
---- a/arch/alpha/include/asm/pgtable.h
-+++ b/arch/alpha/include/asm/pgtable.h
-@@ -203,10 +203,10 @@ extern unsigned long __zero_page(void);
-  * Conversion functions:  convert a page and protection to a page entry,
-  * and a page entry and page directory to the page they refer to.
-  */
--#ifndef CONFIG_DISCONTIGMEM
--#define page_to_pa(page)	(((page) - mem_map) << PAGE_SHIFT)
--
-+#define page_to_pa(page)	(page_to_pfn(page) << PAGE_SHIFT)
- #define pte_pfn(pte)	(pte_val(pte) >> 32)
-+
-+#ifndef CONFIG_DISCONTIGMEM
- #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
- #define mk_pte(page, pgprot)						\
- ({									\
-@@ -236,10 +236,8 @@ pmd_page_vaddr(pmd_t pmd)
- 	return ((pmd_val(pmd) & _PFN_MASK) >> (32-PAGE_SHIFT)) + PAGE_OFFSET;
- }
- 
--#ifndef CONFIG_DISCONTIGMEM
--#define pmd_page(pmd)	(mem_map + ((pmd_val(pmd) & _PFN_MASK) >> 32))
--#define pud_page(pud)	(mem_map + ((pud_val(pud) & _PFN_MASK) >> 32))
--#endif
-+#define pmd_page(pmd)	(pfn_to_page(pmd_val(pmd) >> 32))
-+#define pud_page(pud)	(pfn_to_page(pud_val(pud) >> 32))
- 
- extern inline unsigned long pud_page_vaddr(pud_t pgd)
- { return PAGE_OFFSET + ((pud_val(pgd) & _PFN_MASK) >> (32-PAGE_SHIFT)); }
-diff --git a/arch/alpha/include/asm/sparsemem.h b/arch/alpha/include/asm/sparsemem.h
-new file mode 100644
-index 000000000000..a0820fd2d4b1
---- /dev/null
-+++ b/arch/alpha/include/asm/sparsemem.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_ALPHA_SPARSEMEM_H
-+#define _ASM_ALPHA_SPARSEMEM_H
-+
-+#ifdef CONFIG_SPARSEMEM
-+
-+#define SECTION_SIZE_BITS	27
-+
+-static struct mminit_pfnnid_cache early_pfnnid_cache __meminitdata;
 +/*
-+ * According to "Alpha Architecture Reference Manual" physical
-+ * addresses are at most 48 bits.
-+ * https://download.majix.org/dec/alpha_arch_ref.pdf
++ * During memory init memblocks map pfns to nids. The search is expensive and
++ * this caches recent lookups. The implementation of __early_pfn_to_nid
++ * treats start/end as pfns.
 + */
-+#define MAX_PHYSMEM_BITS	48
-+
-+#endif /* CONFIG_SPARSEMEM */
-+
-+#endif /* _ASM_ALPHA_SPARSEMEM_H */
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index 916e42d74a86..03dda3beb3bd 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -648,6 +648,7 @@ setup_arch(char **cmdline_p)
- 	/* Find our memory.  */
- 	setup_memory(kernel_end);
- 	memblock_set_bottom_up(true);
-+	sparse_init();
++struct mminit_pfnnid_cache {
++	unsigned long last_start;
++	unsigned long last_end;
++	int last_nid;
++};
  
- 	/* First guess at cpu cache sizes.  Do this before init_arch.  */
- 	determine_cpu_caches(cpu->type);
+-#ifndef CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID
++static struct mminit_pfnnid_cache early_pfnnid_cache __meminitdata;
+ 
+ /*
+  * Required by SPARSEMEM. Given a PFN, return what node the PFN is on.
+  */
+-int __meminit __early_pfn_to_nid(unsigned long pfn,
++static int __meminit __early_pfn_to_nid(unsigned long pfn,
+ 					struct mminit_pfnnid_cache *state)
+ {
+ 	unsigned long start_pfn, end_pfn;
+@@ -1583,7 +1592,6 @@ int __meminit __early_pfn_to_nid(unsigned long pfn,
+ 
+ 	return nid;
+ }
+-#endif /* CONFIG_HAVE_ARCH_EARLY_PFN_TO_NID */
+ 
+ int __meminit early_pfn_to_nid(unsigned long pfn)
+ {
 -- 
 2.28.0
 
