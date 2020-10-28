@@ -2,96 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 538A429DA71
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 00:23:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C203129DB36
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 00:45:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390291AbgJ1XXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 19:23:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390215AbgJ1XW0 (ORCPT
+        id S1730221AbgJ1XpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 19:45:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35284 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728530AbgJ1Xow (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 19:22:26 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AB9C0613CF;
-        Wed, 28 Oct 2020 16:22:26 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id a200so731707pfa.10;
-        Wed, 28 Oct 2020 16:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QGhTX+QoKKIYbk2DtoD0kZCPq/4dwaRTmF09BFXOKRg=;
-        b=UwpwHOAIrOUZ3VsldkGy9LlB9HRl97EOhvjHuUua4zqFTAEsyBHubxirHKz9lUNJ1i
-         PlWRBdnv849Mr2rG9Qk53+ooQ0m5c9A7PAbFZxhe88L3RQYklHtFgdCT56LyWnh36qBS
-         K5r1ctyINrpp5brPvXhavtQnG7ndISohEcFftKy6rDiyZwFtMzqN5EkSEBz4ey+JBXW+
-         /nBRfheIakDqZIlQjPdbAFYdAwFTB4wV4v+jA8yBEXjI9eaSjXPRK18cLZ2XsDWhTGin
-         b3T97jXkz+jdwzn/2/wQj/9UOv8O0qZAarEZdDeLeAWeGv5jet8rCPTFFJQ26T/e7m7D
-         VZNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QGhTX+QoKKIYbk2DtoD0kZCPq/4dwaRTmF09BFXOKRg=;
-        b=XmLrpUe5hD2QTu/8yVluXRnX94kDwvKrZsMp/yvTAsh2aLwTAeoZvYeth26tySibLQ
-         FDr73jlNbHU7nJK1UElTqxrvs7hl/RXtelKgra7DaCW9riMnh/eKNSzCJJ5ijyK76Kzj
-         iBvAYNDCszJXbuzqcWBd4GirQtKzCLg1V+i/Iuos7s7Wuwa7/b3g0VyBnRpUNBFn6Jtl
-         oUgVfNZ1i7SNbVn7XAynKEJMp8tWPJo+uZqVjya5ZhBMNMEoNzOZh86Jvt1D1FWn7b+m
-         zgF0e/kgnZO027PP0/mufEQgPgQHVLBGvDq4+8AYMVCJpnlf5a2ddv9AeZW75B/HA4y8
-         +MKQ==
-X-Gm-Message-State: AOAM530nuSP/ptOP/QtNQFUJ+7P2wYa69Mppi/DkjSVfr6/dd//k7oxa
-        adIpNiThBJtst9SrHYGn+AhJXss+u9w96IQX5RleDAXs7ink0A==
-X-Google-Smtp-Source: ABdhPJzlFcb2JynAI0WXnNEGu7JRacOWUNzqnje/fCwil96Oqvd9bDTj47PizXdk6M4wAbt43M3EvnLeJ7HNwHBG+8E=
-X-Received: by 2002:a17:90a:fb92:: with SMTP id cp18mr1252324pjb.228.1603927345933;
- Wed, 28 Oct 2020 16:22:25 -0700 (PDT)
+        Wed, 28 Oct 2020 19:44:52 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09SNaDvZ096206;
+        Wed, 28 Oct 2020 23:44:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=/1wXhSK1jawzXDWDiFn4sD8tOMsMcHZuwRWttfEpsBo=;
+ b=ujVTdN3aiA8l72vkEvBqXJykL6YBnFEbP3iBuB+HsFwFVzcgAGCImhQty8poCRjD3EIH
+ 5xFGOhihKgUnWcCjl+zTsnsnp6amXl3XFrbCxRZ+CoJYIdIVVo3S5RT6hDoenWyVyMwg
+ ZHbkw5sYK4JMRKwl4iL+pviAEuWU+hcpFs+p23pocEtylwG4tg/NgXDNbXsc7vG1g402
+ N/Ce6Bw77owwFFo0Ny2+vdjRO3B+qLeaoJaf5fgeks2dC7KmEJyiu4XD624ARPz4eF3k
+ /2ygaiUnxd8+rVRsMb0FsiLNQMfwb9urmySe8sDphsYYEDwa3DGnsTD4kuoWxX19KjR7 Yw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 34dgm47tm3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Oct 2020 23:44:23 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09SNe76g041534;
+        Wed, 28 Oct 2020 23:42:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 34cx5ywkq8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Oct 2020 23:42:22 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09SNgGbb012295;
+        Wed, 28 Oct 2020 23:42:16 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Oct 2020 16:42:15 -0700
+Subject: Re: [External] Re: [PATCH v2 05/19] mm/hugetlb: Introduce pgtable
+ allocation/freeing helpers
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201026145114.59424-1-songmuchun@bytedance.com>
+ <20201026145114.59424-6-songmuchun@bytedance.com>
+ <81a7a7f0-fe0e-42e4-8de0-9092b033addc@oracle.com>
+ <CAMZfGtVV5eZS-LFtU89WSdMGCib8WX0AojkL-4X+_5yvuMz2Ew@mail.gmail.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <d3e4cc32-ce07-4ce2-789a-3c1df093c270@oracle.com>
+Date:   Wed, 28 Oct 2020 16:42:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20201026155730.542020-1-tasleson@redhat.com> <CAHp75Vfno9LULSfvwYA+4bEz4kW1Z7c=65HTy-O0fgLrzVA24g@mail.gmail.com>
- <71148b03-d880-8113-bd91-25dadef777c7@redhat.com> <ec93ba9e-ead9-f49a-d569-abf4c06a60eb@redhat.com>
-In-Reply-To: <ec93ba9e-ead9-f49a-d569-abf4c06a60eb@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 29 Oct 2020 01:22:09 +0200
-Message-ID: <CAHp75VfngLah7nkARydc-BAivtyCQbHhcEGFLHLRHpXFSE_PwQ@mail.gmail.com>
-Subject: Re: [PATCH] buffer_io_error: Use dev_err_ratelimited
-To:     Tony Asleson <tasleson@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMZfGtVV5eZS-LFtU89WSdMGCib8WX0AojkL-4X+_5yvuMz2Ew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9788 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=2 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010280147
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9788 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 bulkscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ suspectscore=2 clxscore=1015 mlxscore=0 malwarescore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010280146
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 11:05 PM Tony Asleson <tasleson@redhat.com> wrote:
-> On 10/28/20 3:45 PM, Tony Asleson wrote:
-> > On 10/26/20 5:07 PM, Andy Shevchenko wrote:
->
-> >>> +       dev_err_ratelimited(gendev,
-> >>> +               "Buffer I/O error, logical block %llu%s\n",
-> >>
-> >>> +               (unsigned long long)bh->b_blocknr, msg);
-> >>
-> >> It's a u64 always (via sector_t), do we really need a casting?
-> >
-> > That's a good question, grepping around shows *many* instances of this
-> > being done.  I do agree that this doesn't seem to be needed, but maybe
-> > there is a reason why it's done?
->
-> According to this:
->
-> https://www.kernel.org/doc/html/v5.9/core-api/printk-formats.html
->
-> This should be left as it is, because 'sector_t' is dependent on a
-> config option.
+On 10/28/20 12:26 AM, Muchun Song wrote:
+> On Wed, Oct 28, 2020 at 8:33 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>> On 10/26/20 7:51 AM, Muchun Song wrote:
+>>
+>> I see the following routines follow the pattern for vmemmap manipulation
+>> in dax.
+> 
+> Did you mean move those functions to mm/sparse-vmemmap.c?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/types.h?id=72deb455b5ec619ff043c30bc90025aa3de3cdda
+No.  Sorry, that was mostly a not to myself.
 
-Staled documentation. You may send a patch to fix it (I Cc'ed
-Christoph and Jonathan).
-It means that it doesn't go under this category and the example should
-be changed to something else.
+>>> +static void vmemmap_pgtable_deposit(struct page *page, pte_t *pte_p)
+>>> +{
+>>> +     pgtable_t pgtable = virt_to_page(pte_p);
+>>> +
+>>> +     /* FIFO */
+>>> +     if (!page_huge_pte(page))
+>>> +             INIT_LIST_HEAD(&pgtable->lru);
+>>> +     else
+>>> +             list_add(&pgtable->lru, &page_huge_pte(page)->lru);
+>>> +     page_huge_pte(page) = pgtable;
+>>> +}
+>>> +
+>>> +static pte_t *vmemmap_pgtable_withdraw(struct page *page)
+>>> +{
+>>> +     pgtable_t pgtable;
+>>> +
+>>> +     /* FIFO */
+>>> +     pgtable = page_huge_pte(page);
+>>> +     if (unlikely(!pgtable))
+>>> +             return NULL;
+>>> +     page_huge_pte(page) = list_first_entry_or_null(&pgtable->lru,
+>>> +                                                    struct page, lru);
+>>> +     if (page_huge_pte(page))
+>>> +             list_del(&pgtable->lru);
+>>> +     return page_to_virt(pgtable);
+>>> +}
+>>> +
+...
+>>> @@ -1783,6 +1892,14 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
+>>>       if (!page)
+>>>               return NULL;
+>>>
+>>> +     if (vmemmap_pgtable_prealloc(h, page)) {
+>>> +             if (hstate_is_gigantic(h))
+>>> +                     free_gigantic_page(page, huge_page_order(h));
+>>> +             else
+>>> +                     put_page(page);
+>>> +             return NULL;
+>>> +     }
+>>> +
+>>
+>> It seems a bit strange that we will fail a huge page allocation if
+>> vmemmap_pgtable_prealloc fails.  Not sure, but it almost seems like we shold
+>> allow the allocation and log a warning?  It is somewhat unfortunate that
+>> we need to allocate a page to free pages.
+> 
+> Yeah, it seems unfortunate. But if we allocate success, we can free some
+> vmemmap pages later. Like a compromise :) . If we can successfully allocate
+> a huge page, I also prefer to be able to successfully allocate another one page.
+> If we allow the allocation when vmemmap_pgtable_prealloc fails, we also
+> need to mark this page that vmemmap has not been released. Seems
+> increase complexity.
 
+Yes, I think it is better to leave code as it is and avoid complexity.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Mike Kravetz
