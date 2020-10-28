@@ -2,75 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C203129DB36
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 00:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70FFB29DB23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 00:43:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbgJ1XpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 19:45:09 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35284 "EHLO
+        id S1733098AbgJ1Xnm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 19:43:42 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34422 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbgJ1Xow (ORCPT
+        with ESMTP id S2390638AbgJ1Xnf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 19:44:52 -0400
+        Wed, 28 Oct 2020 19:43:35 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09SNaDvZ096206;
-        Wed, 28 Oct 2020 23:44:23 GMT
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09SNYZAX095523;
+        Wed, 28 Oct 2020 23:42:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=/1wXhSK1jawzXDWDiFn4sD8tOMsMcHZuwRWttfEpsBo=;
- b=ujVTdN3aiA8l72vkEvBqXJykL6YBnFEbP3iBuB+HsFwFVzcgAGCImhQty8poCRjD3EIH
- 5xFGOhihKgUnWcCjl+zTsnsnp6amXl3XFrbCxRZ+CoJYIdIVVo3S5RT6hDoenWyVyMwg
- ZHbkw5sYK4JMRKwl4iL+pviAEuWU+hcpFs+p23pocEtylwG4tg/NgXDNbXsc7vG1g402
- N/Ce6Bw77owwFFo0Ny2+vdjRO3B+qLeaoJaf5fgeks2dC7KmEJyiu4XD624ARPz4eF3k
- /2ygaiUnxd8+rVRsMb0FsiLNQMfwb9urmySe8sDphsYYEDwa3DGnsTD4kuoWxX19KjR7 Yw== 
+ bh=tD+BzO2oU1/lvfSIbpKJkUT8M8vBrwQP8fXwH1PMfFo=;
+ b=pzQYSwlsBT2Zk9/rjAHlffumhXb6A/331dQo+dJwBCMGTc7W31KSXMlGmgrAU6c8L6Ha
+ +5T7MtukGlxjZwtRvsstf/mHqS2FA2DZxIbcJatSzIYyGIDdAmNsb3zYv0XkxpZ2P3Jc
+ LdrhK2UpG1nj/KtbCLiaVZC9mIt2USd6xON2qgfUAxFE82szKprT8gB0HWc/f8bg7oVJ
+ 2/h3iH/OJVdhBFJeIK4QiMJ07NOh4k5N3ZLX2ktPNvpQtRF4EBGY+KUfMBiL/APJsdaI
+ jyTXiLxAj8qb/+bMMx7hBc6rsbrioOD9Y/zx09AqVZDldsBF/XZknjdFsAZy7RvAgFWM QQ== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 34dgm47tm3-1
+        by userp2120.oracle.com with ESMTP id 34dgm47tgw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Oct 2020 23:44:23 +0000
+        Wed, 28 Oct 2020 23:42:38 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09SNe76g041534;
-        Wed, 28 Oct 2020 23:42:22 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 34cx5ywkq8-1
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09SNe7oD041499;
+        Wed, 28 Oct 2020 23:42:37 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 34cx5ywku9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Oct 2020 23:42:22 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09SNgGbb012295;
-        Wed, 28 Oct 2020 23:42:16 GMT
+        Wed, 28 Oct 2020 23:42:37 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 09SNgW8J032360;
+        Wed, 28 Oct 2020 23:42:32 GMT
 Received: from [192.168.2.112] (/50.38.35.18)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 28 Oct 2020 16:42:15 -0700
-Subject: Re: [External] Re: [PATCH v2 05/19] mm/hugetlb: Introduce pgtable
- allocation/freeing helpers
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        with ESMTP ; Wed, 28 Oct 2020 16:42:32 -0700
+Subject: Re: [PATCH v2 07/19] mm/hugetlb: Free the vmemmap pages associated
+ with each hugetlb page
+To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, paulmck@kernel.org,
         mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
+        willy@infradead.org
+Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
 References: <20201026145114.59424-1-songmuchun@bytedance.com>
- <20201026145114.59424-6-songmuchun@bytedance.com>
- <81a7a7f0-fe0e-42e4-8de0-9092b033addc@oracle.com>
- <CAMZfGtVV5eZS-LFtU89WSdMGCib8WX0AojkL-4X+_5yvuMz2Ew@mail.gmail.com>
+ <20201026145114.59424-8-songmuchun@bytedance.com>
 From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <d3e4cc32-ce07-4ce2-789a-3c1df093c270@oracle.com>
-Date:   Wed, 28 Oct 2020 16:42:13 -0700
+Message-ID: <8658f431-56c4-9774-861a-9c3b54d1910a@oracle.com>
+Date:   Wed, 28 Oct 2020 16:42:29 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <CAMZfGtVV5eZS-LFtU89WSdMGCib8WX0AojkL-4X+_5yvuMz2Ew@mail.gmail.com>
+In-Reply-To: <20201026145114.59424-8-songmuchun@bytedance.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -89,71 +82,162 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/28/20 12:26 AM, Muchun Song wrote:
-> On Wed, Oct 28, 2020 at 8:33 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->> On 10/26/20 7:51 AM, Muchun Song wrote:
->>
->> I see the following routines follow the pattern for vmemmap manipulation
->> in dax.
+On 10/26/20 7:51 AM, Muchun Song wrote:
+> When we allocate a hugetlb page from the buddy, we should free the
+> unused vmemmap pages associated with it. We can do that in the
+> prep_new_huge_page().
 > 
-> Did you mean move those functions to mm/sparse-vmemmap.c?
-
-No.  Sorry, that was mostly a not to myself.
-
->>> +static void vmemmap_pgtable_deposit(struct page *page, pte_t *pte_p)
->>> +{
->>> +     pgtable_t pgtable = virt_to_page(pte_p);
->>> +
->>> +     /* FIFO */
->>> +     if (!page_huge_pte(page))
->>> +             INIT_LIST_HEAD(&pgtable->lru);
->>> +     else
->>> +             list_add(&pgtable->lru, &page_huge_pte(page)->lru);
->>> +     page_huge_pte(page) = pgtable;
->>> +}
->>> +
->>> +static pte_t *vmemmap_pgtable_withdraw(struct page *page)
->>> +{
->>> +     pgtable_t pgtable;
->>> +
->>> +     /* FIFO */
->>> +     pgtable = page_huge_pte(page);
->>> +     if (unlikely(!pgtable))
->>> +             return NULL;
->>> +     page_huge_pte(page) = list_first_entry_or_null(&pgtable->lru,
->>> +                                                    struct page, lru);
->>> +     if (page_huge_pte(page))
->>> +             list_del(&pgtable->lru);
->>> +     return page_to_virt(pgtable);
->>> +}
->>> +
-...
->>> @@ -1783,6 +1892,14 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
->>>       if (!page)
->>>               return NULL;
->>>
->>> +     if (vmemmap_pgtable_prealloc(h, page)) {
->>> +             if (hstate_is_gigantic(h))
->>> +                     free_gigantic_page(page, huge_page_order(h));
->>> +             else
->>> +                     put_page(page);
->>> +             return NULL;
->>> +     }
->>> +
->>
->> It seems a bit strange that we will fail a huge page allocation if
->> vmemmap_pgtable_prealloc fails.  Not sure, but it almost seems like we shold
->> allow the allocation and log a warning?  It is somewhat unfortunate that
->> we need to allocate a page to free pages.
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  arch/x86/include/asm/hugetlb.h          |   7 +
+>  arch/x86/include/asm/pgtable_64_types.h |   8 +
+>  include/linux/hugetlb.h                 |   7 +
+>  mm/hugetlb.c                            | 190 ++++++++++++++++++++++++
+>  4 files changed, 212 insertions(+)
 > 
-> Yeah, it seems unfortunate. But if we allocate success, we can free some
-> vmemmap pages later. Like a compromise :) . If we can successfully allocate
-> a huge page, I also prefer to be able to successfully allocate another one page.
-> If we allow the allocation when vmemmap_pgtable_prealloc fails, we also
-> need to mark this page that vmemmap has not been released. Seems
-> increase complexity.
+> diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+> index f5e882f999cd..7c3eb60c2198 100644
+> --- a/arch/x86/include/asm/hugetlb.h
+> +++ b/arch/x86/include/asm/hugetlb.h
+> @@ -4,10 +4,17 @@
+>  
+>  #include <asm/page.h>
+>  #include <asm-generic/hugetlb.h>
+> +#include <asm/pgtable.h>
+>  
+>  #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+>  #define VMEMMAP_HPAGE_SHIFT			PMD_SHIFT
+>  #define arch_vmemmap_support_huge_mapping()	boot_cpu_has(X86_FEATURE_PSE)
+> +
+> +#define vmemmap_pmd_huge vmemmap_pmd_huge
+> +static inline bool vmemmap_pmd_huge(pmd_t *pmd)
+> +{
+> +	return pmd_large(*pmd);
+> +}
+>  #endif
+>  
+>  #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
+> diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+> index 52e5f5f2240d..bedbd2e7d06c 100644
+> --- a/arch/x86/include/asm/pgtable_64_types.h
+> +++ b/arch/x86/include/asm/pgtable_64_types.h
+> @@ -139,6 +139,14 @@ extern unsigned int ptrs_per_p4d;
+>  # define VMEMMAP_START		__VMEMMAP_BASE_L4
+>  #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+>  
+> +/*
+> + * VMEMMAP_SIZE - allows the whole linear region to be covered by
+> + *                a struct page array.
+> + */
+> +#define VMEMMAP_SIZE		(1UL << (__VIRTUAL_MASK_SHIFT - PAGE_SHIFT - \
+> +					 1 + ilog2(sizeof(struct page))))
+> +#define VMEMMAP_END		(VMEMMAP_START + VMEMMAP_SIZE)
+> +
+>  #define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
+>  
+>  #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index ace304a6196c..919f47d77117 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -601,6 +601,13 @@ static inline bool arch_vmemmap_support_huge_mapping(void)
+>  }
+>  #endif
+>  
+> +#ifndef vmemmap_pmd_huge
 
-Yes, I think it is better to leave code as it is and avoid complexity.
+Let's add
+#define vmemmap_pmd_huge vmemmap_pmd_huge
+just in case code gets moved around in header file.
+
+> +static inline bool vmemmap_pmd_huge(pmd_t *pmd)
+> +{
+> +	return pmd_huge(*pmd);
+> +}
+> +#endif
+> +
+>  #ifndef VMEMMAP_HPAGE_SHIFT
+>  #define VMEMMAP_HPAGE_SHIFT		PMD_SHIFT
+>  #endif
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index d6ae9b6876be..aa012d603e06 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1293,10 +1293,20 @@ static inline void destroy_compound_gigantic_page(struct page *page,
+>  #endif
+>  
+>  #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +#include <linux/bootmem_info.h>
+> +
+>  #define RESERVE_VMEMMAP_NR	2U
+> +#define RESERVE_VMEMMAP_SIZE	(RESERVE_VMEMMAP_NR << PAGE_SHIFT)
+
+Since RESERVE_VMEMMAP_SIZE is not used here, perhaps it should be added
+in the patch where it is first used.
+
+>  
+>  #define page_huge_pte(page)	((page)->pmd_huge_pte)
+>  
+> +#define vmemmap_hpage_addr_end(addr, end)				\
+> +({									\
+> +	unsigned long __boundary;					\
+> +	__boundary = ((addr) + VMEMMAP_HPAGE_SIZE) & VMEMMAP_HPAGE_MASK;\
+> +	(__boundary - 1 < (end) - 1) ? __boundary : (end);		\
+> +})
+> +
+>  static inline unsigned int nr_free_vmemmap(struct hstate *h)
+>  {
+>  	return h->nr_free_vmemmap_pages;
+> @@ -1416,6 +1426,181 @@ static void __init hugetlb_vmemmap_init(struct hstate *h)
+>  	pr_info("HugeTLB: can free %d vmemmap pages for %s\n",
+>  		h->nr_free_vmemmap_pages, h->name);
+>  }
+> +
+> +static inline spinlock_t *vmemmap_pmd_lockptr(pmd_t *pmd)
+> +{
+> +	static DEFINE_SPINLOCK(pgtable_lock);
+> +
+> +	return &pgtable_lock;
+> +}
+
+This is just a global lock.  Correct?  And hugetlb specific?
+
+It should be OK as the page table entries for huegtlb pages will not
+overlap with other entries.
+
+> +
+> +/*
+> + * Walk a vmemmap address to the pmd it maps.
+> + */
+> +static pmd_t *vmemmap_to_pmd(const void *page)
+> +{
+> +	unsigned long addr = (unsigned long)page;
+> +	pgd_t *pgd;
+> +	p4d_t *p4d;
+> +	pud_t *pud;
+> +	pmd_t *pmd;
+> +
+> +	if (addr < VMEMMAP_START || addr >= VMEMMAP_END)
+> +		return NULL;
+> +
+> +	pgd = pgd_offset_k(addr);
+> +	if (pgd_none(*pgd))
+> +		return NULL;
+> +	p4d = p4d_offset(pgd, addr);
+> +	if (p4d_none(*p4d))
+> +		return NULL;
+> +	pud = pud_offset(p4d, addr);
+> +
+> +	WARN_ON_ONCE(pud_bad(*pud));
+> +	if (pud_none(*pud) || pud_bad(*pud))
+> +		return NULL;
+> +	pmd = pmd_offset(pud, addr);
+> +
+> +	return pmd;
+> +}
+
+That routine is not really hugetlb specific.  Perhaps we could move it
+to sparse-vmemmap.c?  Or elsewhere?
 
 -- 
 Mike Kravetz
