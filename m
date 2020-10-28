@@ -2,138 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5205429D74E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 23:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4A7F29D5CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 23:08:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732673AbgJ1WWl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 18:22:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36830 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732619AbgJ1WWY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:22:24 -0400
-Received: from localhost.localdomain (unknown [192.30.34.233])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730069AbgJ1WHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 18:07:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:59284 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730058AbgJ1WHR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Oct 2020 18:07:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603922836;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=O/BGLtzgfmF0SgLWDxB+OjnwScbwNx4rvirjwHvdxu8=;
+        b=TkJlsHOTF19GsnnXXudJHW4flnIJnzy0DkLPUg/kXTVgZFpykQyE6mXFMnw6GszPbgzuS5
+        xrfI7YNWrzphNXRbfNvUomCAO1VV7xB2Sx6+eJIuSRl8P8685ZLDYlT/7TyylM9wuCbvNK
+        7t2QOTHdzUL0+oKAAozxaavUq5bNHJ8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-356-w0Cal7W0O1KKXv-zA7kNsg-1; Wed, 28 Oct 2020 13:05:11 -0400
+X-MC-Unique: w0Cal7W0O1KKXv-zA7kNsg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00CDA247B2;
-        Wed, 28 Oct 2020 15:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603897930;
-        bh=lub8VFdz9y1ay4Kw8idOVilwJzgx9JVK/MSfD79W7mQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ym3WEmO2VDY3tqNE+V5DjPOajVNzG45tFzO5Xq26Fk17ahiATlI8aQ0yBcgSkxktG
-         Ulaa2zatXB58MUZAxY2ID+nPSvAJqQSE1u3UwLBO68Qw1LIL/F+6UbuJ5a1zqSKHwk
-         FswansWVaI4SJFX4q7vMXLMED9aRFFkRcctAODpE=
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: [PATCH v4] seq_file: fix clang warning for NULL pointer arithmetic
-Date:   Wed, 28 Oct 2020 16:11:36 +0100
-Message-Id: <20201028151202.3074398-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2F60B802B66;
+        Wed, 28 Oct 2020 17:05:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1511D100164C;
+        Wed, 28 Oct 2020 17:05:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201028143442.GA20115@casper.infradead.org>
+References: <20201028143442.GA20115@casper.infradead.org> <160389418807.300137.8222864749005731859.stgit@warthog.procyon.org.uk> <160389426655.300137.17487677797144804730.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        kernel test robot <lkp@intel.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K pages
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <548208.1603904708.1@warthog.procyon.org.uk>
+Date:   Wed, 28 Oct 2020 17:05:08 +0000
+Message-ID: <548209.1603904708@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Clang points out that adding something to NULL is not allowed in
-standard C:
+> > +{
+> > +	if (PAGE_SIZE - 1 <= __AFS_PAGE_PRIV_MASK)
+> > +		return 1;
+> > +	else
+> > +		return PAGE_SIZE / (__AFS_PAGE_PRIV_MASK + 1);
+> 
+> Could this be DIV_ROUND_UP(PAGE_SIZE, __AFS_PAGE_PRIV_MASK + 1); avoiding
+> a conditional?  I appreciate it's calculated at compile time today, but
+> it'll be dynamic with THP.
 
-fs/kernfs/file.c:127:15: warning: performing pointer arithmetic on a
-null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-                return NULL + !*ppos;
-                       ~~~~ ^
-fs/seq_file.c:529:14: warning: performing pointer arithmetic on a
-null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-        return NULL + (*pos == 0);
+Hmmm - actually, I want a shift size, not a number of bytes as I divide by it
+twice in afs_page_dirty().
 
-Rephrase the code to be extra explicit about the valid, giving them
-named SEQ_OPEN_EOF and SEQ_OPEN_SINGLE definitions.  The instance in
-kernfs was copied from single_start, so fix both at once.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Fixes: c2b19daf6760 ("sysfs, kernfs: prepare read path for kernfs")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: add the named macros after Christoph Hellwig pointed out
-    that my original logic was too ugly.
-
-v3: don't overload the NULL return, avoid ?: operator
-
-v4: fix changelog text (Nathan Chancellor), add comment (Christoph
-    Hellwig)
----
- fs/kernfs/file.c         | 9 ++++++---
- fs/seq_file.c            | 5 ++++-
- include/linux/seq_file.h | 6 ++++++
- 3 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index f277d023ebcd..5a5adb03c6df 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -121,10 +121,13 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
- 		return next;
- 	} else {
- 		/*
--		 * The same behavior and code as single_open().  Returns
--		 * !NULL if pos is at the beginning; otherwise, NULL.
-+		 * The same behavior and code as single_open().  Continues
-+		 * if pos is at the beginning; otherwise, NULL.
- 		 */
--		return NULL + !*ppos;
-+		if (*ppos)
-+			return NULL;
-+
-+		return SEQ_OPEN_SINGLE;
- 	}
- }
- 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 31219c1db17d..6b467d769501 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -526,7 +526,10 @@ EXPORT_SYMBOL(seq_dentry);
- 
- static void *single_start(struct seq_file *p, loff_t *pos)
- {
--	return NULL + (*pos == 0);
-+	if (*pos)
-+	       return NULL;
-+
-+	return SEQ_OPEN_SINGLE;
- }
- 
- static void *single_next(struct seq_file *p, void *v, loff_t *pos)
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index 813614d4b71f..bfa34f5578b9 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -37,6 +37,12 @@ struct seq_operations {
- 
- #define SEQ_SKIP 1
- 
-+/*
-+ * op->start must return a non-NULL pointer for single_open(),
-+ * this is used when we don't care about the specific value.
-+ */
-+#define SEQ_OPEN_SINGLE (void *)1
-+
- /**
-  * seq_has_overflowed - check if the buffer has overflowed
-  * @m: the seq_file handle
--- 
-2.27.0
+David
 
