@@ -2,157 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4321A29D76B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 23:24:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 538A429DA71
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 00:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732818AbgJ1WYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 18:24:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27035 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732778AbgJ1WYA (ORCPT
+        id S2390291AbgJ1XXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 19:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390215AbgJ1XW0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:24:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603923839;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pa/qCyeFjEWsSEi5vJhUVmxOcMNabU+dLIjQMHNEdtA=;
-        b=MbdeAT9K31ESMJMPPuQpQ+4i0AMf3QF/aTJi/JnvicLvbMAQy5qtZSdDCNSEdVAiEjlwtl
-        DGTWEE+4rW42qoAjdlPgvSKSav7H+HVtNihzPj48YcQRy9t3lJBJPxW4nRTMgmrEZiHWaG
-        sgNvYW/xhGJJhHnT1jYVb8k8OSvaaO0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-514-02gb3r8rM3OU1yA0xuZ8OA-1; Wed, 28 Oct 2020 18:23:56 -0400
-X-MC-Unique: 02gb3r8rM3OU1yA0xuZ8OA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EB932107AFA5;
-        Wed, 28 Oct 2020 22:23:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C4F4D6EF46;
-        Wed, 28 Oct 2020 22:23:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K pages
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     kernel test robot <lkp@intel.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 28 Oct 2020 22:23:53 +0000
-Message-ID: <160392383297.592578.14698271215668067643.stgit@warthog.procyon.org.uk>
-In-Reply-To: <160392375589.592578.13383738325695138512.stgit@warthog.procyon.org.uk>
-References: <160392375589.592578.13383738325695138512.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Wed, 28 Oct 2020 19:22:26 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59AB9C0613CF;
+        Wed, 28 Oct 2020 16:22:26 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id a200so731707pfa.10;
+        Wed, 28 Oct 2020 16:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QGhTX+QoKKIYbk2DtoD0kZCPq/4dwaRTmF09BFXOKRg=;
+        b=UwpwHOAIrOUZ3VsldkGy9LlB9HRl97EOhvjHuUua4zqFTAEsyBHubxirHKz9lUNJ1i
+         PlWRBdnv849Mr2rG9Qk53+ooQ0m5c9A7PAbFZxhe88L3RQYklHtFgdCT56LyWnh36qBS
+         K5r1ctyINrpp5brPvXhavtQnG7ndISohEcFftKy6rDiyZwFtMzqN5EkSEBz4ey+JBXW+
+         /nBRfheIakDqZIlQjPdbAFYdAwFTB4wV4v+jA8yBEXjI9eaSjXPRK18cLZ2XsDWhTGin
+         b3T97jXkz+jdwzn/2/wQj/9UOv8O0qZAarEZdDeLeAWeGv5jet8rCPTFFJQ26T/e7m7D
+         VZNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QGhTX+QoKKIYbk2DtoD0kZCPq/4dwaRTmF09BFXOKRg=;
+        b=XmLrpUe5hD2QTu/8yVluXRnX94kDwvKrZsMp/yvTAsh2aLwTAeoZvYeth26tySibLQ
+         FDr73jlNbHU7nJK1UElTqxrvs7hl/RXtelKgra7DaCW9riMnh/eKNSzCJJ5ijyK76Kzj
+         iBvAYNDCszJXbuzqcWBd4GirQtKzCLg1V+i/Iuos7s7Wuwa7/b3g0VyBnRpUNBFn6Jtl
+         oUgVfNZ1i7SNbVn7XAynKEJMp8tWPJo+uZqVjya5ZhBMNMEoNzOZh86Jvt1D1FWn7b+m
+         zgF0e/kgnZO027PP0/mufEQgPgQHVLBGvDq4+8AYMVCJpnlf5a2ddv9AeZW75B/HA4y8
+         +MKQ==
+X-Gm-Message-State: AOAM530nuSP/ptOP/QtNQFUJ+7P2wYa69Mppi/DkjSVfr6/dd//k7oxa
+        adIpNiThBJtst9SrHYGn+AhJXss+u9w96IQX5RleDAXs7ink0A==
+X-Google-Smtp-Source: ABdhPJzlFcb2JynAI0WXnNEGu7JRacOWUNzqnje/fCwil96Oqvd9bDTj47PizXdk6M4wAbt43M3EvnLeJ7HNwHBG+8E=
+X-Received: by 2002:a17:90a:fb92:: with SMTP id cp18mr1252324pjb.228.1603927345933;
+ Wed, 28 Oct 2020 16:22:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20201026155730.542020-1-tasleson@redhat.com> <CAHp75Vfno9LULSfvwYA+4bEz4kW1Z7c=65HTy-O0fgLrzVA24g@mail.gmail.com>
+ <71148b03-d880-8113-bd91-25dadef777c7@redhat.com> <ec93ba9e-ead9-f49a-d569-abf4c06a60eb@redhat.com>
+In-Reply-To: <ec93ba9e-ead9-f49a-d569-abf4c06a60eb@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 29 Oct 2020 01:22:09 +0200
+Message-ID: <CAHp75VfngLah7nkARydc-BAivtyCQbHhcEGFLHLRHpXFSE_PwQ@mail.gmail.com>
+Subject: Re: [PATCH] buffer_io_error: Use dev_err_ratelimited
+To:     Tony Asleson <tasleson@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The dirty region bounds stored in page->private on an afs page are 15 bits
-on a 32-bit box and can, at most, represent a range of up to 32K within a
-32K page with a resolution of 1 byte.  This is a problem for powerpc32 with
-64K pages enabled.
+On Wed, Oct 28, 2020 at 11:05 PM Tony Asleson <tasleson@redhat.com> wrote:
+> On 10/28/20 3:45 PM, Tony Asleson wrote:
+> > On 10/26/20 5:07 PM, Andy Shevchenko wrote:
+>
+> >>> +       dev_err_ratelimited(gendev,
+> >>> +               "Buffer I/O error, logical block %llu%s\n",
+> >>
+> >>> +               (unsigned long long)bh->b_blocknr, msg);
+> >>
+> >> It's a u64 always (via sector_t), do we really need a casting?
+> >
+> > That's a good question, grepping around shows *many* instances of this
+> > being done.  I do agree that this doesn't seem to be needed, but maybe
+> > there is a reason why it's done?
+>
+> According to this:
+>
+> https://www.kernel.org/doc/html/v5.9/core-api/printk-formats.html
+>
+> This should be left as it is, because 'sector_t' is dependent on a
+> config option.
 
-Further, transparent huge pages may get up to 2M, which will be a problem
-for the afs filesystem on all 32-bit arches in the future.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/include/linux/types.h?id=72deb455b5ec619ff043c30bc90025aa3de3cdda
 
-Fix this by decreasing the resolution.  For the moment, a 64K page will
-have a resolution determined from PAGE_SIZE.  In the future, the page will
-need to be passed in to the helper functions so that the page size can be
-assessed and the resolution determined dynamically.
-
-Note that this might not be the ideal way to handle this, since it may
-allow some leakage of undirtied zero bytes to the server's copy in the case
-of a 3rd-party conflict.  Fixing that would require a separately allocated
-record and is a more complicated fix.
-
-Fixes: 4343d00872e1 ("afs: Get rid of the afs_writeback record")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox (Oracle) <willy@infradead.org>
----
-
- fs/afs/internal.h |   24 ++++++++++++++++++++----
- fs/afs/write.c    |    5 -----
- 2 files changed, 20 insertions(+), 9 deletions(-)
-
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index b0fce1f75397..6e7e11a21326 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -861,7 +861,8 @@ struct afs_vnode_cache_aux {
- /*
-  * We use page->private to hold the amount of the page that we've written to,
-  * splitting the field into two parts.  However, we need to represent a range
-- * 0...PAGE_SIZE inclusive, so we can't support 64K pages on a 32-bit system.
-+ * 0...PAGE_SIZE, so we reduce the resolution if the size of the page
-+ * exceeds what we can encode.
-  */
- #ifdef CONFIG_64BIT
- #define __AFS_PAGE_PRIV_MASK	0x7fffffffUL
-@@ -873,19 +874,34 @@ struct afs_vnode_cache_aux {
- #define __AFS_PAGE_PRIV_MMAPPED	0x8000UL
- #endif
- 
-+static inline unsigned int afs_page_dirty_resolution(void)
-+{
-+	long shift = PAGE_SHIFT - (__AFS_PAGE_PRIV_SHIFT - 1);
-+	return (shift > 0) ? shift : 0;
-+}
-+
- static inline size_t afs_page_dirty_from(unsigned long priv)
- {
--	return priv & __AFS_PAGE_PRIV_MASK;
-+	unsigned long x = priv & __AFS_PAGE_PRIV_MASK;
-+
-+	/* The lower bound is inclusive */
-+	return x << afs_page_dirty_resolution();
- }
- 
- static inline size_t afs_page_dirty_to(unsigned long priv)
- {
--	return ((priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK) + 1;
-+	unsigned long x = (priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK;
-+
-+	/* The upper bound is immediately beyond the region */
-+	return (x + 1) << afs_page_dirty_resolution();
- }
- 
- static inline unsigned long afs_page_dirty(size_t from, size_t to)
- {
--	return ((unsigned long)(to - 1) << __AFS_PAGE_PRIV_SHIFT) | from;
-+	unsigned int res = afs_page_dirty_resolution();
-+	from >>= res; /* Round down */
-+	to = (to - 1) >> res; /* Round up */
-+	return (to << __AFS_PAGE_PRIV_SHIFT) | from;
- }
- 
- static inline unsigned long afs_page_dirty_mmapped(unsigned long priv)
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 0bc895d4f491..a0faab1963a8 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -90,11 +90,6 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 	_enter("{%llx:%llu},{%lx},%u,%u",
- 	       vnode->fid.vid, vnode->fid.vnode, index, from, to);
- 
--	/* We want to store information about how much of a page is altered in
--	 * page->private.
--	 */
--	BUILD_BUG_ON(PAGE_SIZE - 1 > __AFS_PAGE_PRIV_MASK && sizeof(page->private) < 8);
--
- 	page = grab_cache_page_write_begin(mapping, index, flags);
- 	if (!page)
- 		return -ENOMEM;
+Staled documentation. You may send a patch to fix it (I Cc'ed
+Christoph and Jonathan).
+It means that it doesn't go under this category and the example should
+be changed to something else.
 
 
+-- 
+With Best Regards,
+Andy Shevchenko
