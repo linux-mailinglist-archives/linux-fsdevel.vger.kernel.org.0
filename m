@@ -2,86 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D024529E15A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:00:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 838FB29E1B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:03:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbgJ2CAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 22:00:36 -0400
-Received: from casper.infradead.org ([90.155.50.34]:44160 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbgJ1Vvg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:51:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=KAN5MsCxB0/0ihaYJ8QP10+Ylgbrg2B5iiFQkUw7qQc=; b=d2TjJYBnkIzUkafsxl4+hketI/
-        tk8fgkKTlSFl71xShwE1I1HSk++rr1qMmkfKX1VaPoTu4QRhF4xLsQT9qINE6zjJLph+S1NzZwSXR
-        xSFVPhcKfH1hYd2C+wE6onDrp2LrUMLZM9VpCV1BmEM7XxXghgqfEUbvruuAt1zy8ftXH+QVznJ6J
-        CPum9fbLKHPWrwteZf9NaI41x2iA0YDWFjJIQM/BP85mCFOA1gE3gBNI4XAU3CGucdbWzzUfJYMKf
-        K8wUoIdBFKBAJpVL69vhBuitKhP3/gsZEDG9KzSDVMzd5pKp9+0yah09Bd6PyAMQl+n1GZp+Ea2sN
-        ThS6LgEg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kXmXC-0004OX-Qz; Wed, 28 Oct 2020 14:34:42 +0000
-Date:   Wed, 28 Oct 2020 14:34:42 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, kernel test robot <lkp@intel.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K
- pages
-Message-ID: <20201028143442.GA20115@casper.infradead.org>
-References: <160389418807.300137.8222864749005731859.stgit@warthog.procyon.org.uk>
- <160389426655.300137.17487677797144804730.stgit@warthog.procyon.org.uk>
+        id S1729040AbgJ2CDD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 22:03:03 -0400
+Received: from namei.org ([65.99.196.166]:38520 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727928AbgJ1Vsr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 28 Oct 2020 17:48:47 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 09S5TZBd026933;
+        Wed, 28 Oct 2020 05:29:35 GMT
+Date:   Wed, 28 Oct 2020 16:29:35 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v22 05/12] LSM: Infrastructure management of the
+ superblock
+In-Reply-To: <20201027200358.557003-6-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.2010281628570.25689@namei.org>
+References: <20201027200358.557003-1-mic@digikod.net> <20201027200358.557003-6-mic@digikod.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <160389426655.300137.17487677797144804730.stgit@warthog.procyon.org.uk>
+Content-Type: multipart/mixed; boundary="1665246916-514386363-1603862978=:25689"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 02:11:06PM +0000, David Howells wrote:
-> +static inline unsigned int afs_page_dirty_resolution(void)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I've been using size_t for offsets within a struct page.  I don't know
-that we'll ever support pages larger than 2GB (they're completely
-impractical with today's bus speeds), but I'd rather not be the one
-who has to track down all the uses of 'int' in the kernel in fifteen
-years time.
+--1665246916-514386363-1603862978=:25689
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-> +{
-> +	if (PAGE_SIZE - 1 <= __AFS_PAGE_PRIV_MASK)
-> +		return 1;
-> +	else
-> +		return PAGE_SIZE / (__AFS_PAGE_PRIV_MASK + 1);
+On Tue, 27 Oct 2020, Mickaël Salaün wrote:
 
-Could this be DIV_ROUND_UP(PAGE_SIZE, __AFS_PAGE_PRIV_MASK + 1); avoiding
-a conditional?  I appreciate it's calculated at compile time today, but
-it'll be dynamic with THP.
+> From: Casey Schaufler <casey@schaufler-ca.com>
+> 
+> Move management of the superblock->sb_security blob out of the
+> individual security modules and into the security infrastructure.
+> Instead of allocating the blobs from within the modules, the modules
+> tell the infrastructure how much space is required, and the space is
+> allocated there.
+> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Reviewed-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
->  static inline unsigned int afs_page_dirty_to(unsigned long priv)
->  {
-> -	return ((priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK) + 1;
-> +	unsigned int x = (priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK;
-> +
-> +	/* The upper bound is exclusive */
+It would be good to see review from JJ here.
 
-I think you mean 'inclusive'.
+-- 
+James Morris
+<jmorris@namei.org>
 
-> +	return (x + 1) * afs_page_dirty_resolution();
->  }
->  
->  static inline unsigned long afs_page_dirty(unsigned int from, unsigned int to)
->  {
-> +	unsigned int res = afs_page_dirty_resolution();
-> +	from /= res; /* Round down */
-> +	to = (to + res - 1) / res; /* Round up */
->  	return ((unsigned long)(to - 1) << __AFS_PAGE_PRIV_SHIFT) | from;
-
-Wouldn't it produce the same result to just round down?  ie:
-
-	to = (to - 1) / res;
-	return ((unsigned long)to << __AFS_PAGE_PRIV_SHIFT) | from;
-
+--1665246916-514386363-1603862978=:25689--
