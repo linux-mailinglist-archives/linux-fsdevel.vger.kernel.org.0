@@ -2,165 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0549A29D7B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 23:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34AC929D69C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 23:16:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733064AbgJ1W0M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 18:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55020 "EHLO
+        id S1731230AbgJ1WOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 18:14:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732948AbgJ1W0L (ORCPT
+        with ESMTP id S1731220AbgJ1WOf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:26:11 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4AB0C0613CF;
-        Wed, 28 Oct 2020 15:26:10 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id y186so1247048oia.3;
-        Wed, 28 Oct 2020 15:26:10 -0700 (PDT)
+        Wed, 28 Oct 2020 18:14:35 -0400
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126E8C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Oct 2020 15:14:35 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id t6so576379qvz.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Oct 2020 15:14:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=s9cgYbyfQqq5UrYB+51r7q1mjBjejxSSOe4Pf+0dXSc=;
-        b=rXNAYzp0HeMoYo9Rs2j7a7wVExN8Iyb5gKJa3ilnzOfGHJwcd+RFugTbbv4YUD3Mnj
-         2VUO9dlRzbWeNmhZQWRmIldeVTDDuir4KELQdTV8pKPdUaKgxaJ0IfJxBnM0G7vRBCYg
-         wiT8wBbr85sNx5oNi5w1j5zdrDvcm3y/EvCc8kg4eRMh6e4OhiTUEBlFVB0b+ClJRPsJ
-         TUQPC9Lpnd7T4yc2WOtO43nneYC6WKlAT53mGvvaNge6Yx9M/aeXZ+pqCJrHxuwPUVlT
-         Z3sxPuGh8uWER8Un/fum42c093n9HO5gFE6T+nYBivL+DRtjuefzSY2LaKQepJTmgDcw
-         UYFA==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0lgr981PCkceQMgroek9L0hv+osAnCX7HPzr76CpgTQ=;
+        b=EVSFS2u4VnosZdlCuB6zdjl7fBwBAjYX2gkFMt9FqTxB9e7qNI8b54WmFqw6R0bjsB
+         prA+uftMLHrjmWze1YJwVDhbLm5Jj59ad9poDfxT/BzVl4PO4gb3/U5TDgvUbecdVSig
+         xe58I2tsDly4z1lDx7BTce3TwPAFsO68cRUfk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=s9cgYbyfQqq5UrYB+51r7q1mjBjejxSSOe4Pf+0dXSc=;
-        b=uN/mP0tUlWurG3Gdw3cZBQcgxc7YWvs/03LTDg72jKxT8k/J8lpYBgfjHSKMnkWjXT
-         a4T18xEnehlAK+qWWdXj0aUS1JkX5OMeT440pzo0trxU5FWp9KVRJemW063Ow+MVFtOU
-         vcKzYIzv8x9RRNl/JdDkPyy5vTKgvQA8TDHovaj+FnmwK6e9msAOQaBVwVwM4ihNxJqb
-         po3xrCLmCc1m5zAbJz0v8nFTIkb4ajsA+Pd6rfZH+ga9H25cv3yxGOqqpTdPJr9Efys1
-         lPbOquO330J2BhN3V5EtdIuwnOsSSLdqqvAy6ANNgkZJHnV9jM5z/xVldqnmdT/PlB4O
-         KPFw==
-X-Gm-Message-State: AOAM531sgsd7dD0lVgqQfpGEoAnzlmkHgAAkX6eiSl3x95UbwolhUzBS
-        kg4IzazG4GX9xIPTKdkUBK3XtyklJZvNRg==
-X-Google-Smtp-Source: ABdhPJxTVCFgGb7WglQERoAc+UBIhCpYSdy5fzH3i6p6S1gDc3JwHMqoX8TTAJWZ5WiJDakcD5Jdcg==
-X-Received: by 2002:a17:90b:4a83:: with SMTP id lp3mr209008pjb.138.1603908889414;
-        Wed, 28 Oct 2020 11:14:49 -0700 (PDT)
-Received: from ?IPv6:2001:df0:0:200c:70b5:cf21:2a3a:f170? ([2001:df0:0:200c:70b5:cf21:2a3a:f170])
-        by smtp.gmail.com with ESMTPSA id i21sm60510pgh.2.2020.10.28.11.14.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Oct 2020 11:14:48 -0700 (PDT)
-Subject: Re: [PATCH 11/13] m68k/mm: make node data and node setup depend on
- CONFIG_DISCONTIGMEM
-To:     Mike Rapoport <rppt@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will@kernel.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux MM <linux-mm@kvack.org>,
-        arcml <linux-snps-arc@lists.infradead.org>
-References: <20201027112955.14157-1-rppt@kernel.org>
- <20201027112955.14157-12-rppt@kernel.org>
- <CAMuHMdU4r4CJ1kBu7gx1jkputjDn2S8Lqkj7RPfa3XUnM1QOFg@mail.gmail.com>
- <20201028111631.GF1428094@kernel.org>
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <fd55643a-a17b-5a23-4c77-9e832c1e5128@gmail.com>
-Date:   Thu, 29 Oct 2020 07:14:38 +1300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0lgr981PCkceQMgroek9L0hv+osAnCX7HPzr76CpgTQ=;
+        b=b2FbihRjfun1spi5JrnnBf0bdbXxrdwBF+CqQt3WZv88IIaKlpArChIAdecPGBmzm+
+         25JgdNCIRmBrBX2JxsHdNWQvdBynaDtof+6xNmQCn0ciSC15wf59fq9Z/3ah54n3nCzk
+         CuXfKjLH0gdFBdCxPo41Bthpfnndw8apRE7GpDpeWo+h1Ac65/smc742TRYj9d9DMUfB
+         gqphS5gHJjBcP9NG46vkYBPhOKW5HEFfg7M0bsfMDP5MA2DRhoI5iuVoHZOFTKNQuMYd
+         rpZAM6x14OS6bZ52k0dYuHX2xwsPfvBzT1MlInUJBPNg2zgrbC24yyJS089fM/0LXOl5
+         L6Fg==
+X-Gm-Message-State: AOAM531zptuUzjcVhf0Twpl61fPIgEkszOEqdwRgkzyankkXkqTQRKL0
+        glKhcw0XE7RvL/4lE/tlOmRT5l0ZVuj304LSVSVDMpWpm0DeVg==
+X-Google-Smtp-Source: ABdhPJzBLdh0FAd5knuPL95LSW2YSG9dOqJ/fK6CBqNUAi1zcFb2eCEV3rNoAm8N+e4PLapUV4OjiuC/YUv79kxVZ0w=
+X-Received: by 2002:a1f:a94c:: with SMTP id s73mr1239168vke.19.1603916973556;
+ Wed, 28 Oct 2020 13:29:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201028111631.GF1428094@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <CAHk-=wgkD+sVx3cHAAzhVO5orgksY=7i8q6mbzwBjN0+4XTAUw@mail.gmail.com>
+ <4794a3fa3742a5e84fb0f934944204b55730829b.camel@lca.pw> <CAHk-=wh9Eu-gNHzqgfvUAAiO=vJ+pWnzxkv+tX55xhGPFy+cOw@mail.gmail.com>
+ <20201015151606.GA226448@redhat.com> <20201015195526.GC226448@redhat.com>
+ <CAHk-=wj0vjx0jzaq5Gha-SmDKc3Hnog5LKX0eJZkudBvEQFAUA@mail.gmail.com>
+ <CAJfpegtAstEo+nYgT81swYZWdziaZP_40QGAXcTORqYwgeWNUA@mail.gmail.com>
+ <20201020204226.GA376497@redhat.com> <CAJfpegsi8UFiYyPrPbQob2x4X7NKSnciEz-a=5YZtFCgY0wL6w@mail.gmail.com>
+ <20201021201249.GB442437@redhat.com>
+In-Reply-To: <20201021201249.GB442437@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 28 Oct 2020 21:29:22 +0100
+Message-ID: <CAJfpegsaLrbJ7bjJVBC3=vLzWZcF+GtTpGjVKYYOE3mjKyuVAw@mail.gmail.com>
+Subject: Re: Possible deadlock in fuse write path (Was: Re: [PATCH 0/4] Some
+ more lock_page work..)
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Mike,
-
-On 29/10/20 12:16 AM, Mike Rapoport wrote:
-> Hi Geert,
+On Wed, Oct 21, 2020 at 10:12 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> On Wed, Oct 28, 2020 at 10:25:49AM +0100, Geert Uytterhoeven wrote:
->> Hi Mike,
->>
->> On Tue, Oct 27, 2020 at 12:31 PM Mike Rapoport <rppt@kernel.org> wrote:
->>> From: Mike Rapoport <rppt@linux.ibm.com>
->>>
->>> The pg_data_t node structures and their initialization currently depends on
->>> !CONFIG_SINGLE_MEMORY_CHUNK. Since they are required only for DISCONTIGMEM
->>> make this dependency explicit and replace usage of
->>> CONFIG_SINGLE_MEMORY_CHUNK with CONFIG_DISCONTIGMEM where appropriate.
->>>
->>> The CONFIG_SINGLE_MEMORY_CHUNK was implicitly disabled on the ColdFire MMU
->>> variant, although it always presumed a single memory bank. As there is no
->>> actual need for DISCONTIGMEM in this case, make sure that ColdFire MMU
->>> systems set CONFIG_SINGLE_MEMORY_CHUNK to 'y'.
->>>
->>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
->> Thanks for your patch!
->>
->>> ---
->>>   arch/m68k/Kconfig.cpu           | 6 +++---
->>>   arch/m68k/include/asm/page_mm.h | 2 +-
->>>   arch/m68k/mm/init.c             | 4 ++--
->>>   3 files changed, 6 insertions(+), 6 deletions(-)
->> Is there any specific reason you didn't convert the checks for
->> CONFIG_SINGLE_MEMORY_CHUNK in arch/m68k/kernel/setup_mm.c
-> In arch/m68k/kernel/setup_mm.c the CONFIG_SINGLE_MEMORY_CHUNK is needed
-> for the case when a system has two banks, the kernel is loaded into the
-> second bank and so the first bank cannot be used as normal memory. It
-> does not matter what memory model will be used in this case.
 
+> D. If one does a partial page write of a page which is not uptodate, then
+>    keep page locked and do not try to send multiple pages in that write.
+>    If page is uptodate, then release page lock and continue to add more
+>    pages to same request.
+>
+> IOW, if head page is partial (and it is not uptodate), we will just
+> send first WRITE with head page. Rest of the pages will go in second
+> WRITE and tail page could be locked if it was a partial write and
+> page was not uptodate. Please have a look at attached patch.
 
-That case used to be detected just fine at run time (by dint of the 
-second memory chunk having an address below the first; the chunk the 
-kernel resides in is always listed first), even without using 
-CONFIG_SINGLE_MEMORY_CHUNK.
+Looks good.
 
-Unless you changed that behaviour (and I see nothing in your patch that 
-would indicate that), this is still true.
+> I still some concerns though with error handling. Not sure what to
+> do about it.
+>
+> 1. What happens if WRITE fails. If we are writing a full page and we
+>   already marked it as Uptodate (And not dirty), then we have page
+>   cache in page where we wrote data but could not send it to disk
+>   (and did not mark dirty as well). So if a user reads the page
+>   back it might get cache copy or get old copy from disk (if page
+>   cache copy was released).
 
-Converting the check as Geert suggested, without also adding a test for 
-out-of-order memory bank addresses, would implicitly treat DISCONTIGMEM 
-as  SINGLE_MEMORY_CHUNK, regardless of bank ordering. I don't think that 
-is what we really want?
+AFAICS this is what happens on write failure in current code IF the
+page was uptodate previously.   Moving the SetPageUptodate() before
+the WRITE makes this happen in all cases.
 
-Cheers,
+On write failure the page the uptodate flag should be cleared, which
+should partially solve the above issue.  There still remains a window
+where a concurrent read or load would get the wrong data, but I don't
+think anybody cares (same happens with buffered write).
 
-     Michael
+> 2. What happens if it is a partial page write to an Uptodate page
+>   in cache and that WRITE fails. Now we have same error scenario
+>   as 1. In fact this is true for even current code and not
+>   necessarily a new scenario.
 
+Same as above: need to clear uptodate flag.
+
+> 3. Current code marks a page Uptodate upon WRITE completion if
+>    it was full page WRITE. What if page was uptodate to begin
+>    with and write fails. So current code will not mark it
+>    Uptodate but it is already uptodate and we have same problem as 1.
+
+Yes.
+
+> Apart from above, there are some other concerns as well.
+>
+> So with this patch, if a page is Uptodate we drop lock and send WRITE.
+> Otherwise we keep page lock and send WRITE. This should probably be
+> fine from read or fault read point of view. Given we are holding inode
+> lock, that means write path is not a problem as well. But
+>
+> What if page is redirtied through a write mapping
+> -------------------------------------------------
+> If page is redirtied through writable mmap, then two writes for same
+> page can go in any order. But in synchronous write we are carrying
+> pointer to page cache page, so it probably does not matter. We will
+> just write same data twice.
+
+It's not that simple.  Data dirtied through an mmap will be written
+back using a temporary page.  So a WRITE request with such a page can
+be in flight while a write(2) triggers a synchronous WRITE request for
+the same data.  The two WRITEs are not ordered in any way and in fact
+the page lock doesn't help, so this is not a new issue.   OTOH this
+does not appear to be a problem in real life, since without msync() it
+is not guaranteed that the memory mapping is synchronized with the
+backing file (Linux has stronger guarantees, but test suites such as
+fsx assume the lesser guarantees by POSIX).
+
+This could be fixed to conform to the stronger coherency guarantee by
+calling fuse_wait_on_page_writeback() after having gotten a locked
+page in the synchronous writeback path.
 
 >
->> and arch/m68k/include/asm/virtconvert.h?
->   
-> I remember I had build errors and troubles with include file
-> dependencies if I changed it there, but I might be mistaken. I'll
-> recheck again.
->
->> Gr{oetje,eeting}s,
->>
->>                          Geert
->>
->> -- 
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->>
->> In personal conversations with technical people, I call myself a hacker. But
->> when I'm talking to journalists I just say "programmer" or something like that.
->>                                  -- Linus Torvalds
+> What about races with direct_IO read
+> ------------------------------------
+> If a WRITE is in progress, it is probably not marked dirty so
+> generic_file_read_iter() will probably not block on
+> filemap_write_and_wait_range() and continue mapping->a_ops->direct_IO().
+> And that means it can read previous disk data before this WRITE is
+> complete.
+
+Synchronous write vs. direct IO read shouldn't be a problem as long as
+the server provides a coherent view of the file to both.
+
+Thanks,
+Miklos
