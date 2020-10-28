@@ -2,325 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A428A29E324
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D55D929E2EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:45:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgJ1Vda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 17:33:30 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:34104 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbgJ1VdK (ORCPT
+        id S1726113AbgJ1Vdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 17:33:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:52782 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725928AbgJ1VdN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:33:10 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09S0Ttcr051191;
-        Wed, 28 Oct 2020 00:33:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=I7qDefII2+bSQ604rE0AIGAq/Gpmoaje4mXejvoeaU4=;
- b=McOQVglH8G19T3L/HUmbzxhk4qibgT0YI29VA1bWZw5G3QaS3HrS1iHx/MhISrNzP7Ms
- YBOSbuoXxc06qJF8edMmIcfSwv08KGJHdybmxA0Hmbn1tQVGKEmcjay/yO7YLN5+A/nU
- 835TX8IeSaYoEpVLr5mp5LBkKUMNLMLpL7tXgbHc/SttPCT6FRnTy5vAh10z4zAkOvQT
- Uq3Y54sBBt+m540g2dj36ngqD+R/fE8rmTxuvLLcDeYYPP6eM5ko6IzDMsk8y69BiCDH
- QeT1wuG3SECarTeZBTjpbMp9aJpl+fmXnK7Yeii7WSv5By1vmWvf0e2h4pzYydwXn0FO fw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 34c9saw0yv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Oct 2020 00:33:09 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09S0QQFT157694;
-        Wed, 28 Oct 2020 00:33:09 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 34cwun0ewc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Oct 2020 00:33:09 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09S0X06j021723;
-        Wed, 28 Oct 2020 00:33:01 GMT
-Received: from [192.168.2.112] (/50.38.35.18)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 27 Oct 2020 17:33:00 -0700
-Subject: Re: [PATCH v2 05/19] mm/hugetlb: Introduce pgtable allocation/freeing
- helpers
-To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
-        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
-        willy@infradead.org
-Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20201026145114.59424-1-songmuchun@bytedance.com>
- <20201026145114.59424-6-songmuchun@bytedance.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <81a7a7f0-fe0e-42e4-8de0-9092b033addc@oracle.com>
-Date:   Tue, 27 Oct 2020 17:32:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Wed, 28 Oct 2020 17:33:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603920790;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FRxckUNRLC0IZ+zYMP2AzU6qzBRsyuZ6desZQcjX5/o=;
+        b=TbVopAXJm2Yj+NC+3/+gFi23lJsV7vvTxslZqV3QsBvdT1v/a/klOoXkRMW+Qz8+Ik5ztd
+        HVJWSVxsB8xIJZcGOcbL+r5+AMo7shS4iDc5Scf824Zoql9YpsR6YWrZnap/4STrc9QG+T
+        kMiZEJhMg5O6r0B3e6VpFo1dGQ9EVpw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-506-czQ5cbKoPkestDaF3LltuQ-1; Wed, 28 Oct 2020 07:31:39 -0400
+X-MC-Unique: czQ5cbKoPkestDaF3LltuQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A3BBD8070F2;
+        Wed, 28 Oct 2020 11:31:38 +0000 (UTC)
+Received: from bfoster (ovpn-113-186.rdu2.redhat.com [10.10.113.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F7DA10013C4;
+        Wed, 28 Oct 2020 11:31:38 +0000 (UTC)
+Date:   Wed, 28 Oct 2020 07:31:36 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: zero cached pages over unwritten extents on
+ zero range
+Message-ID: <20201028113136.GB1610972@bfoster>
+References: <20201012140350.950064-1-bfoster@redhat.com>
+ <20201012140350.950064-3-bfoster@redhat.com>
+ <20201015094901.GC21420@infradead.org>
+ <20201019165519.GB1232435@bfoster>
+ <20201019180144.GC1232435@bfoster>
+ <20201020162150.GB1272590@bfoster>
+ <20201027181552.GB32577@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20201026145114.59424-6-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9787 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=2
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010280000
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9787 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 phishscore=0 clxscore=1015 suspectscore=2
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010280000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201027181552.GB32577@infradead.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/26/20 7:51 AM, Muchun Song wrote:
-> On some architectures, the vmemmap areas use huge page mapping.
-> If we want to free the unused vmemmap pages, we have to split
-> the huge pmd firstly. So we should pre-allocate pgtable to split
-> huge pmd.
+On Tue, Oct 27, 2020 at 06:15:52PM +0000, Christoph Hellwig wrote:
+> On Tue, Oct 20, 2020 at 12:21:50PM -0400, Brian Foster wrote:
+> > Ugh, so the above doesn't quite describe historical behavior.
+> > block_truncate_page() converts an unwritten block if a page exists
+> > (dirty or not), but bails out if a page doesn't exist. We could still do
+> > the above, but if we wanted something more intelligent I think we need
+> > to check for a page before we get the mapping to know whether we can
+> > safely skip an unwritten block or need to write over it. Otherwise if we
+> > check for a page within the actor, we have no way of knowing whether
+> > there was a (possibly dirty) page that had been written back and/or
+> > reclaimed since ->iomap_begin(). If we check for the page first, I think
+> > that the iolock/mmaplock in the truncate path ensures that a page can't
+> > be added before we complete. We might be able to take that further and
+> > check for a dirty || writeback page, but that might be safer as a
+> > separate patch. See the (compile tested only) diff below for an idea of
+> > what I was thinking.
 > 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->  arch/x86/include/asm/hugetlb.h |   5 ++
->  include/linux/hugetlb.h        |  17 +++++
->  mm/hugetlb.c                   | 117 +++++++++++++++++++++++++++++++++
->  3 files changed, 139 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
-> index 1721b1aadeb1..f5e882f999cd 100644
-> --- a/arch/x86/include/asm/hugetlb.h
-> +++ b/arch/x86/include/asm/hugetlb.h
-> @@ -5,6 +5,11 @@
->  #include <asm/page.h>
->  #include <asm-generic/hugetlb.h>
->  
-> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-> +#define VMEMMAP_HPAGE_SHIFT			PMD_SHIFT
-> +#define arch_vmemmap_support_huge_mapping()	boot_cpu_has(X86_FEATURE_PSE)
-> +#endif
-> +
->  #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
->  
->  #endif /* _ASM_X86_HUGETLB_H */
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index eed3dd3bd626..ace304a6196c 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -593,6 +593,23 @@ static inline unsigned int blocks_per_huge_page(struct hstate *h)
->  
->  #include <asm/hugetlb.h>
->  
-> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-> +#ifndef arch_vmemmap_support_huge_mapping
-> +static inline bool arch_vmemmap_support_huge_mapping(void)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
-> +#ifndef VMEMMAP_HPAGE_SHIFT
-> +#define VMEMMAP_HPAGE_SHIFT		PMD_SHIFT
-> +#endif
-> +#define VMEMMAP_HPAGE_ORDER		(VMEMMAP_HPAGE_SHIFT - PAGE_SHIFT)
-> +#define VMEMMAP_HPAGE_NR		(1 << VMEMMAP_HPAGE_ORDER)
-> +#define VMEMMAP_HPAGE_SIZE		((1UL) << VMEMMAP_HPAGE_SHIFT)
-> +#define VMEMMAP_HPAGE_MASK		(~(VMEMMAP_HPAGE_SIZE - 1))
-> +#endif /* CONFIG_HUGETLB_PAGE_FREE_VMEMMAP */
-> +
->  #ifndef is_hugepage_only_range
->  static inline int is_hugepage_only_range(struct mm_struct *mm,
->  					unsigned long addr, unsigned long len)
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index f1b2b733b49b..d6ae9b6876be 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1295,11 +1295,108 @@ static inline void destroy_compound_gigantic_page(struct page *page,
->  #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
->  #define RESERVE_VMEMMAP_NR	2U
->  
-> +#define page_huge_pte(page)	((page)->pmd_huge_pte)
-> +
-
-I am not good at function names.  The following suggestions may be too
-verbose.  However, they helped me understand purpose of routines.
-
->  static inline unsigned int nr_free_vmemmap(struct hstate *h)
-
-	perhaps?	 	free_vmemmap_pages_per_hpage()
-
->  {
->  	return h->nr_free_vmemmap_pages;
->  }
->  
-> +static inline unsigned int nr_vmemmap(struct hstate *h)
-
-	perhaps?		vmemmap_pages_per_hpage()
-
-> +{
-> +	return nr_free_vmemmap(h) + RESERVE_VMEMMAP_NR;
-> +}
-> +
-> +static inline unsigned long nr_vmemmap_size(struct hstate *h)
-
-	perhaps?		vmemmap_pages_size_per_hpage()
-
-> +{
-> +	return (unsigned long)nr_vmemmap(h) << PAGE_SHIFT;
-> +}
-> +
-> +static inline unsigned int nr_pgtable(struct hstate *h)
-
-	perhaps?	pgtable_pages_to_prealloc_per_hpage()
-
-> +{
-> +	unsigned long vmemmap_size = nr_vmemmap_size(h);
-> +
-> +	if (!arch_vmemmap_support_huge_mapping())
-> +		return 0;
-> +
-> +	/*
-> +	 * No need pre-allocate page tabels when there is no vmemmap pages
-> +	 * to free.
-> +	 */
-> +	if (!nr_free_vmemmap(h))
-> +		return 0;
-> +
-> +	return ALIGN(vmemmap_size, VMEMMAP_HPAGE_SIZE) >> VMEMMAP_HPAGE_SHIFT;
-> +}
-> +
-> +static inline void vmemmap_pgtable_init(struct page *page)
-> +{
-> +	page_huge_pte(page) = NULL;
-> +}
-> +
-
-I see the following routines follow the pattern for vmemmap manipulation
-in dax.
-
-> +static void vmemmap_pgtable_deposit(struct page *page, pte_t *pte_p)
-> +{
-> +	pgtable_t pgtable = virt_to_page(pte_p);
-> +
-> +	/* FIFO */
-> +	if (!page_huge_pte(page))
-> +		INIT_LIST_HEAD(&pgtable->lru);
-> +	else
-> +		list_add(&pgtable->lru, &page_huge_pte(page)->lru);
-> +	page_huge_pte(page) = pgtable;
-> +}
-> +
-> +static pte_t *vmemmap_pgtable_withdraw(struct page *page)
-> +{
-> +	pgtable_t pgtable;
-> +
-> +	/* FIFO */
-> +	pgtable = page_huge_pte(page);
-> +	if (unlikely(!pgtable))
-> +		return NULL;
-> +	page_huge_pte(page) = list_first_entry_or_null(&pgtable->lru,
-> +						       struct page, lru);
-> +	if (page_huge_pte(page))
-> +		list_del(&pgtable->lru);
-> +	return page_to_virt(pgtable);
-> +}
-> +
-> +static int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
-> +{
-> +	int i;
-> +	pte_t *pte_p;
-> +	unsigned int nr = nr_pgtable(h);
-> +
-> +	if (!nr)
-> +		return 0;
-> +
-> +	vmemmap_pgtable_init(page);
-> +
-> +	for (i = 0; i < nr; i++) {
-> +		pte_p = pte_alloc_one_kernel(&init_mm);
-> +		if (!pte_p)
-> +			goto out;
-> +		vmemmap_pgtable_deposit(page, pte_p);
-> +	}
-> +
-> +	return 0;
-> +out:
-> +	while (i-- && (pte_p = vmemmap_pgtable_withdraw(page)))
-> +		pte_free_kernel(&init_mm, pte_p);
-> +	return -ENOMEM;
-> +}
-> +
-> +static inline void vmemmap_pgtable_free(struct hstate *h, struct page *page)
-> +{
-> +	pte_t *pte_p;
-> +
-> +	if (!nr_pgtable(h))
-> +		return;
-> +
-> +	while ((pte_p = vmemmap_pgtable_withdraw(page)))
-> +		pte_free_kernel(&init_mm, pte_p);
-> +}
-> +
->  static void __init hugetlb_vmemmap_init(struct hstate *h)
->  {
->  	unsigned int order = huge_page_order(h);
-> @@ -1323,6 +1420,15 @@ static void __init hugetlb_vmemmap_init(struct hstate *h)
->  static inline void hugetlb_vmemmap_init(struct hstate *h)
->  {
->  }
-> +
-> +static inline int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void vmemmap_pgtable_free(struct hstate *h, struct page *page)
-> +{
-> +}
->  #endif
->  
->  static void update_and_free_page(struct hstate *h, struct page *page)
-> @@ -1531,6 +1637,9 @@ void free_huge_page(struct page *page)
->  
->  static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
->  {
-> +	/* Must be called before the initialization of @page->lru */
-> +	vmemmap_pgtable_free(h, page);
-> +
->  	INIT_LIST_HEAD(&page->lru);
->  	set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
->  	set_hugetlb_cgroup(page, NULL);
-> @@ -1783,6 +1892,14 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
->  	if (!page)
->  		return NULL;
->  
-> +	if (vmemmap_pgtable_prealloc(h, page)) {
-> +		if (hstate_is_gigantic(h))
-> +			free_gigantic_page(page, huge_page_order(h));
-> +		else
-> +			put_page(page);
-> +		return NULL;
-> +	}
-> +
-
-It seems a bit strange that we will fail a huge page allocation if
-vmemmap_pgtable_prealloc fails.  Not sure, but it almost seems like we shold
-allow the allocation and log a warning?  It is somewhat unfortunate that
-we need to allocate a page to free pages.
-
->  	if (hstate_is_gigantic(h))
->  		prep_compound_gigantic_page(page, huge_page_order(h));
->  	prep_new_huge_page(h, page, page_to_nid(page));
+> The idea looks reasonable, but a few comment below:
 > 
 
+JFYI, I had posted an implementation of this idea here[1] and followed
+up with some details on a similar COW related issue that was exposed
+once the unwritten variant was addressed. I was reasoning about a
+slightly different approach that might more clearly facilitate handling
+both scenarios, but I think I mentioned to Darrick offline that this all
+has me back to preferring the original patch to flush the new EOF block
+first, at least as a first step.
 
--- 
-Mike Kravetz
+I have a couple other fixes (one being the discard_page() patch you've
+already commented on) related to iomap and I'm going to be offline for a
+few weeks after this week so I'll try to collect them in a series and
+get them posted together soon..
+
+Brian
+
+[1] https://lore.kernel.org/linux-fsdevel/20201021133329.1337689-1-bfoster@redhat.com/
+
+> > +struct iomap_trunc_priv {
+> > +	bool *did_zero;
+> 
+> I don't think there is any point on using a pointer here, when we
+> can trivially copy out the scalar value.
+> 
+> > +	bool has_page;
+> 
+> The naming of this flag really confuses me.  Maybe has_data or
+> in_pagecache might be better options?
+> 
+> > +static loff_t
+> > +iomap_truncate_page_actor(struct inode *inode, loff_t pos, loff_t count,
+> > +		void *data, struct iomap *iomap, struct iomap *srcmap)
+> > +{
+> > +	struct iomap_trunc_priv	*priv = data;
+> > +	unsigned offset;
+> > +	int status;
+> > +
+> > +	if (srcmap->type == IOMAP_HOLE)
+> > +		return count;
+> > +	if (srcmap->type == IOMAP_UNWRITTEN && !priv->has_page)
+> > +		return count;
+> 
+> Maybe add a comment here to explain why priv->has_page matters?
+> 
+> > +
+> > +	offset = offset_in_page(pos);
+> 
+> I'd move this on the initialization line.
+> 
+> > +	ret = iomap_apply(inode, pos, blocksize - off, IOMAP_ZERO, ops, &priv,
+> > +			  iomap_truncate_page_actor);
+> > +	if (ret <= 0)
+> > +		return ret;
+> 
+> The check could just be < 0 and would be a little more obvious.
+> 
+
