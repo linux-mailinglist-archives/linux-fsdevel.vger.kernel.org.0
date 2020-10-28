@@ -2,170 +2,325 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F67729E291
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:28:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A428A29E324
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:46:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391117AbgJ2C16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 22:27:58 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:60293 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391123AbgJ2C1z (ORCPT
+        id S1726083AbgJ1Vda (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 17:33:30 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:34104 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbgJ1VdK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 22:27:55 -0400
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 5E73A58C9C6;
-        Thu, 29 Oct 2020 13:27:34 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kXxf3-005Q9Q-Vd; Thu, 29 Oct 2020 13:27:33 +1100
-Date:   Thu, 29 Oct 2020 13:27:33 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-Message-ID: <20201029022733.GB306023@dread.disaster.area>
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+        Wed, 28 Oct 2020 17:33:10 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09S0Ttcr051191;
+        Wed, 28 Oct 2020 00:33:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=I7qDefII2+bSQ604rE0AIGAq/Gpmoaje4mXejvoeaU4=;
+ b=McOQVglH8G19T3L/HUmbzxhk4qibgT0YI29VA1bWZw5G3QaS3HrS1iHx/MhISrNzP7Ms
+ YBOSbuoXxc06qJF8edMmIcfSwv08KGJHdybmxA0Hmbn1tQVGKEmcjay/yO7YLN5+A/nU
+ 835TX8IeSaYoEpVLr5mp5LBkKUMNLMLpL7tXgbHc/SttPCT6FRnTy5vAh10z4zAkOvQT
+ Uq3Y54sBBt+m540g2dj36ngqD+R/fE8rmTxuvLLcDeYYPP6eM5ko6IzDMsk8y69BiCDH
+ QeT1wuG3SECarTeZBTjpbMp9aJpl+fmXnK7Yeii7WSv5By1vmWvf0e2h4pzYydwXn0FO fw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 34c9saw0yv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Oct 2020 00:33:09 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09S0QQFT157694;
+        Wed, 28 Oct 2020 00:33:09 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 34cwun0ewc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Oct 2020 00:33:09 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09S0X06j021723;
+        Wed, 28 Oct 2020 00:33:01 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 27 Oct 2020 17:33:00 -0700
+Subject: Re: [PATCH v2 05/19] mm/hugetlb: Introduce pgtable allocation/freeing
+ helpers
+To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
+        willy@infradead.org
+Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20201026145114.59424-1-songmuchun@bytedance.com>
+ <20201026145114.59424-6-songmuchun@bytedance.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <81a7a7f0-fe0e-42e4-8de0-9092b033addc@oracle.com>
+Date:   Tue, 27 Oct 2020 17:32:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=8nJEP1OIZ-IA:10 a=afefHYAZSVUA:10 a=7-415B0cAAAA:8
-        a=7FRnUTRuY4COAZBt7UUA:9 a=wPNLvfGTeEIA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20201026145114.59424-6-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9787 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=2
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2010280000
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9787 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 lowpriorityscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 phishscore=0 clxscore=1015 suspectscore=2
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010280000
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 01:32:18AM +0100, Christian Brauner wrote:
-> Hey everyone,
+On 10/26/20 7:51 AM, Muchun Song wrote:
+> On some architectures, the vmemmap areas use huge page mapping.
+> If we want to free the unused vmemmap pages, we have to split
+> the huge pmd firstly. So we should pre-allocate pgtable to split
+> huge pmd.
 > 
-> I vanished for a little while to focus on this work here so sorry for
-> not being available by mail for a while.
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  arch/x86/include/asm/hugetlb.h |   5 ++
+>  include/linux/hugetlb.h        |  17 +++++
+>  mm/hugetlb.c                   | 117 +++++++++++++++++++++++++++++++++
+>  3 files changed, 139 insertions(+)
 > 
-> Since quite a long time we have issues with sharing mounts between
-> multiple unprivileged containers with different id mappings, sharing a
-> rootfs between multiple containers with different id mappings, and also
-> sharing regular directories and filesystems between users with different
-> uids and gids. The latter use-cases have become even more important with
-> the availability and adoption of systemd-homed (cf. [1]) to implement
-> portable home directories.
-> 
-> The solutions we have tried and proposed so far include the introduction
-> of fsid mappings, a tiny overlay based filesystem, and an approach to
-> call override creds in the vfs. None of these solutions have covered all
-> of the above use-cases.
-> 
-> The solution proposed here has it's origins in multiple discussions
-> during Linux Plumbers 2017 during and after the end of the containers
-> microconference.
-> To the best of my knowledge this involved Aleksa, Stéphane, Eric, David,
-> James, and myself. A variant of the solution proposed here has also been
-> discussed, again to the best of my knowledge, after a Linux conference
-> in St. Petersburg in Russia between Christoph, Tycho, and myself in 2017
-> after Linux Plumbers.
-> I've taken the time to finally implement a working version of this
-> solution over the last weeks to the best of my abilities. Tycho has
-> signed up for this sligthly crazy endeavour as well and he has helped
-> with the conversion of the xattr codepaths.
-> 
-> The core idea is to make idmappings a property of struct vfsmount
-> instead of tying it to a process being inside of a user namespace which
-> has been the case for all other proposed approaches.
-> It means that idmappings become a property of bind-mounts, i.e. each
-> bind-mount can have a separate idmapping. This has the obvious advantage
-> that idmapped mounts can be created inside of the initial user
-> namespace, i.e. on the host itself instead of requiring the caller to be
-> located inside of a user namespace. This enables such use-cases as e.g.
-> making a usb stick available in multiple locations with different
-> idmappings (see the vfat port that is part of this patch series).
-> 
-> The vfsmount struct gains a new struct user_namespace member. The
-> idmapping of the user namespace becomes the idmapping of the mount. A
-> caller that is either privileged with respect to the user namespace of
-> the superblock of the underlying filesystem or a caller that is
-> privileged with respect to the user namespace a mount has been idmapped
-> with can create a new bind-mount and mark it with a user namespace. The
-> user namespace the mount will be marked with can be specified by passing
-> a file descriptor refering to the user namespace as an argument to the
-> new mount_setattr() syscall together with the new MOUNT_ATTR_IDMAP flag.
-> By default vfsmounts are marked with the initial user namespace and no
-> behavioral or performance changes should be observed. All mapping
-> operations are nops for the initial user namespace.
-> 
-> When a file/inode is accessed through an idmapped mount the i_uid and
-> i_gid of the inode will be remapped according to the user namespace the
-> mount has been marked with. When a new object is created based on the
-> fsuid and fsgid of the caller they will similarly be remapped according
-> to the user namespace of the mount they care created from.
-> 
-> This means the user namespace of the mount needs to be passed down into
-> a few relevant inode_operations. This mostly includes inode operations
-> that create filesystem objects or change file attributes.
+> diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+> index 1721b1aadeb1..f5e882f999cd 100644
+> --- a/arch/x86/include/asm/hugetlb.h
+> +++ b/arch/x86/include/asm/hugetlb.h
+> @@ -5,6 +5,11 @@
+>  #include <asm/page.h>
+>  #include <asm-generic/hugetlb.h>
+>  
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +#define VMEMMAP_HPAGE_SHIFT			PMD_SHIFT
+> +#define arch_vmemmap_support_huge_mapping()	boot_cpu_has(X86_FEATURE_PSE)
+> +#endif
+> +
+>  #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
+>  
+>  #endif /* _ASM_X86_HUGETLB_H */
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index eed3dd3bd626..ace304a6196c 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -593,6 +593,23 @@ static inline unsigned int blocks_per_huge_page(struct hstate *h)
+>  
+>  #include <asm/hugetlb.h>
+>  
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +#ifndef arch_vmemmap_support_huge_mapping
+> +static inline bool arch_vmemmap_support_huge_mapping(void)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+> +#ifndef VMEMMAP_HPAGE_SHIFT
+> +#define VMEMMAP_HPAGE_SHIFT		PMD_SHIFT
+> +#endif
+> +#define VMEMMAP_HPAGE_ORDER		(VMEMMAP_HPAGE_SHIFT - PAGE_SHIFT)
+> +#define VMEMMAP_HPAGE_NR		(1 << VMEMMAP_HPAGE_ORDER)
+> +#define VMEMMAP_HPAGE_SIZE		((1UL) << VMEMMAP_HPAGE_SHIFT)
+> +#define VMEMMAP_HPAGE_MASK		(~(VMEMMAP_HPAGE_SIZE - 1))
+> +#endif /* CONFIG_HUGETLB_PAGE_FREE_VMEMMAP */
+> +
+>  #ifndef is_hugepage_only_range
+>  static inline int is_hugepage_only_range(struct mm_struct *mm,
+>  					unsigned long addr, unsigned long len)
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index f1b2b733b49b..d6ae9b6876be 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1295,11 +1295,108 @@ static inline void destroy_compound_gigantic_page(struct page *page,
+>  #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+>  #define RESERVE_VMEMMAP_NR	2U
+>  
+> +#define page_huge_pte(page)	((page)->pmd_huge_pte)
+> +
 
-That's really quite ... messy.
+I am not good at function names.  The following suggestions may be too
+verbose.  However, they helped me understand purpose of routines.
 
-Maybe I'm missing something, but if you have the user_ns to be used
-for the VFS operation we are about to execute then why can't we use
-the same model as current_fsuid/current_fsgid() for passing the
-filesystem credentials down to the filesystem operations?  i.e.
-attach it to the current->cred->fs_userns, and then the filesystem
-code that actually needs to know the current userns can call
-current_fs_user_ns() instead of current_user_ns().  i.e.
+>  static inline unsigned int nr_free_vmemmap(struct hstate *h)
 
-#define current_fs_user_ns()	\
-	(current->cred->fs_userns ? current->cred->fs_userns \
-				  : current->cred->userns)
+	perhaps?	 	free_vmemmap_pages_per_hpage()
 
-At this point, the filesystem will now always have the correct
-userns it is supposed to use for mapping the uid/gid, right?
+>  {
+>  	return h->nr_free_vmemmap_pages;
+>  }
+>  
+> +static inline unsigned int nr_vmemmap(struct hstate *h)
 
-Also, if we are passing work off to worker threads, duplicating
-the current creds will capture this information and won't leave
-random landmines where stuff doesn't work as it should because the
-worker thread is unaware of the userns that it is supposed to be
-doing filesytsem operations under...
+	perhaps?		vmemmap_pages_per_hpage()
 
-Cheers,
+> +{
+> +	return nr_free_vmemmap(h) + RESERVE_VMEMMAP_NR;
+> +}
+> +
+> +static inline unsigned long nr_vmemmap_size(struct hstate *h)
 
-Dave.
+	perhaps?		vmemmap_pages_size_per_hpage()
+
+> +{
+> +	return (unsigned long)nr_vmemmap(h) << PAGE_SHIFT;
+> +}
+> +
+> +static inline unsigned int nr_pgtable(struct hstate *h)
+
+	perhaps?	pgtable_pages_to_prealloc_per_hpage()
+
+> +{
+> +	unsigned long vmemmap_size = nr_vmemmap_size(h);
+> +
+> +	if (!arch_vmemmap_support_huge_mapping())
+> +		return 0;
+> +
+> +	/*
+> +	 * No need pre-allocate page tabels when there is no vmemmap pages
+> +	 * to free.
+> +	 */
+> +	if (!nr_free_vmemmap(h))
+> +		return 0;
+> +
+> +	return ALIGN(vmemmap_size, VMEMMAP_HPAGE_SIZE) >> VMEMMAP_HPAGE_SHIFT;
+> +}
+> +
+> +static inline void vmemmap_pgtable_init(struct page *page)
+> +{
+> +	page_huge_pte(page) = NULL;
+> +}
+> +
+
+I see the following routines follow the pattern for vmemmap manipulation
+in dax.
+
+> +static void vmemmap_pgtable_deposit(struct page *page, pte_t *pte_p)
+> +{
+> +	pgtable_t pgtable = virt_to_page(pte_p);
+> +
+> +	/* FIFO */
+> +	if (!page_huge_pte(page))
+> +		INIT_LIST_HEAD(&pgtable->lru);
+> +	else
+> +		list_add(&pgtable->lru, &page_huge_pte(page)->lru);
+> +	page_huge_pte(page) = pgtable;
+> +}
+> +
+> +static pte_t *vmemmap_pgtable_withdraw(struct page *page)
+> +{
+> +	pgtable_t pgtable;
+> +
+> +	/* FIFO */
+> +	pgtable = page_huge_pte(page);
+> +	if (unlikely(!pgtable))
+> +		return NULL;
+> +	page_huge_pte(page) = list_first_entry_or_null(&pgtable->lru,
+> +						       struct page, lru);
+> +	if (page_huge_pte(page))
+> +		list_del(&pgtable->lru);
+> +	return page_to_virt(pgtable);
+> +}
+> +
+> +static int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
+> +{
+> +	int i;
+> +	pte_t *pte_p;
+> +	unsigned int nr = nr_pgtable(h);
+> +
+> +	if (!nr)
+> +		return 0;
+> +
+> +	vmemmap_pgtable_init(page);
+> +
+> +	for (i = 0; i < nr; i++) {
+> +		pte_p = pte_alloc_one_kernel(&init_mm);
+> +		if (!pte_p)
+> +			goto out;
+> +		vmemmap_pgtable_deposit(page, pte_p);
+> +	}
+> +
+> +	return 0;
+> +out:
+> +	while (i-- && (pte_p = vmemmap_pgtable_withdraw(page)))
+> +		pte_free_kernel(&init_mm, pte_p);
+> +	return -ENOMEM;
+> +}
+> +
+> +static inline void vmemmap_pgtable_free(struct hstate *h, struct page *page)
+> +{
+> +	pte_t *pte_p;
+> +
+> +	if (!nr_pgtable(h))
+> +		return;
+> +
+> +	while ((pte_p = vmemmap_pgtable_withdraw(page)))
+> +		pte_free_kernel(&init_mm, pte_p);
+> +}
+> +
+>  static void __init hugetlb_vmemmap_init(struct hstate *h)
+>  {
+>  	unsigned int order = huge_page_order(h);
+> @@ -1323,6 +1420,15 @@ static void __init hugetlb_vmemmap_init(struct hstate *h)
+>  static inline void hugetlb_vmemmap_init(struct hstate *h)
+>  {
+>  }
+> +
+> +static inline int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void vmemmap_pgtable_free(struct hstate *h, struct page *page)
+> +{
+> +}
+>  #endif
+>  
+>  static void update_and_free_page(struct hstate *h, struct page *page)
+> @@ -1531,6 +1637,9 @@ void free_huge_page(struct page *page)
+>  
+>  static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
+>  {
+> +	/* Must be called before the initialization of @page->lru */
+> +	vmemmap_pgtable_free(h, page);
+> +
+>  	INIT_LIST_HEAD(&page->lru);
+>  	set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
+>  	set_hugetlb_cgroup(page, NULL);
+> @@ -1783,6 +1892,14 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
+>  	if (!page)
+>  		return NULL;
+>  
+> +	if (vmemmap_pgtable_prealloc(h, page)) {
+> +		if (hstate_is_gigantic(h))
+> +			free_gigantic_page(page, huge_page_order(h));
+> +		else
+> +			put_page(page);
+> +		return NULL;
+> +	}
+> +
+
+It seems a bit strange that we will fail a huge page allocation if
+vmemmap_pgtable_prealloc fails.  Not sure, but it almost seems like we shold
+allow the allocation and log a warning?  It is somewhat unfortunate that
+we need to allocate a page to free pages.
+
+>  	if (hstate_is_gigantic(h))
+>  		prep_compound_gigantic_page(page, huge_page_order(h));
+>  	prep_new_huge_page(h, page, page_to_nid(page));
+> 
+
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Mike Kravetz
