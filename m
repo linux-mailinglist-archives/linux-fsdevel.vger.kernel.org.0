@@ -2,157 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68A0029DF9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 02:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14BE529DFC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 02:04:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbgJ1WMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 18:12:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38547 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730781AbgJ1WMg (ORCPT
+        id S2404125AbgJ2BE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 21:04:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728662AbgJ1WGh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:12:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603923154;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=J/lIQYd0Sh7G20Rq0mrLdVc4exvOrCYC3SE6HrU0Kfg=;
-        b=GM6SDH6Dd4OJCGH4Ky0Hu7W2O2TqReIxXeUKt/m8jeMZckI8f8NN/74sm6oUoyK7Usd+l9
-        xMTzZbWOtcopVR8lG3cvSNjVUWFzwbUgOOl+bsg7/WnPHqr2Q29TQ20ZwJGsUvdsE0sqTd
-        01AKIV1DMDVwLm8bKRDU0R7s/F342qk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-592-UddGjduFPqW_W1lu3yZJ9w-1; Wed, 28 Oct 2020 10:11:10 -0400
-X-MC-Unique: UddGjduFPqW_W1lu3yZJ9w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D76931891E86;
-        Wed, 28 Oct 2020 14:11:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 580FB60C11;
-        Wed, 28 Oct 2020 14:11:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K pages
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     kernel test robot <lkp@intel.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 28 Oct 2020 14:11:06 +0000
-Message-ID: <160389426655.300137.17487677797144804730.stgit@warthog.procyon.org.uk>
-In-Reply-To: <160389418807.300137.8222864749005731859.stgit@warthog.procyon.org.uk>
-References: <160389418807.300137.8222864749005731859.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Wed, 28 Oct 2020 18:06:37 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4CAC0613CF;
+        Wed, 28 Oct 2020 15:06:36 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id r7so512215qkf.3;
+        Wed, 28 Oct 2020 15:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Je1s1kkyt4+Sk3cNzvubNo1nCKh/m8Vq6dPCfCCBkyo=;
+        b=dTSxd0AlKUrqznvkilblmcag8TGcwXnQBOUYPH+YjyDnYpqa5l79kWv9xtGnlcfEg4
+         0h5+E7FcTSYl+PVNOwTzsxfEQK9z/MTfFaaAGoVb7SHz8W0AOfRu5XBwLWJnZS00oDuG
+         jS+fZzamMtUJESkP7okgED5M2/zgKkFH7lKRQt42ekyoBWWf/NVYpG4DYN6AQoGVEk7S
+         2iY1R/7VKt7a1ek/S4+4A35gFqGqi3Bi0Q76oVC9NxjlFmQ2t6NocI6yXOLzUFh/LAfx
+         bYOjASOli5G9ToeVw0qmW7EhMy9jJ9tNJ3taNIocb7GkYt1U28X8IH4znWmzH6zCySdb
+         XtLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Je1s1kkyt4+Sk3cNzvubNo1nCKh/m8Vq6dPCfCCBkyo=;
+        b=V6roh5IzEl/4KDMGeQi5h6hRWAGlhWiJ6FpUUB9qrrLtiHm0L1Ho4laXXNwFCUg/oP
+         bcv5+KPV+rUMfZakvlL2ZIy7GGlQ2Cu+jZxHM74CVydaGH1R4fduePrPnTPgSfKrdu+z
+         HYU/FvQvNRhBJrnacqIFbjEdZqF+l84WntULPlYxDmkfn//6PiQxv57ZHwNeolDUOoHd
+         j6mLRt4dThgcCDNTTXTmAxzH/b0DxHSwmwAspuHbSraynAvcoviV+iaE6Oa95M280km1
+         KTiYIhPy7+ibtVwNLECsTNEg8h/FwszRL6S6kILeqjCffJRaFytxhDo+R4yF37cBB2K/
+         6jfw==
+X-Gm-Message-State: AOAM531INlC+mkbUG/ECva/kpgjr0gjhf0spup+MmJkazvcBHdiU3QHf
+        VgJy29CIR5Rb1aXnoznnU2T7XturmuA=
+X-Google-Smtp-Source: ABdhPJyuSBJ63bwvwJqI/Z4pLE6IUxC6rQn1z+b1IwljXAlCJSfx04tsV2xM9z1LqB4BaN4eT5eu7g==
+X-Received: by 2002:aed:2982:: with SMTP id o2mr73310qtd.73.1603908137202;
+        Wed, 28 Oct 2020 11:02:17 -0700 (PDT)
+Received: from soheil4.nyc.corp.google.com ([2620:0:1003:312:a6ae:11ff:fe18:6946])
+        by smtp.gmail.com with ESMTPSA id o2sm65054qkk.121.2020.10.28.11.02.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Oct 2020 11:02:16 -0700 (PDT)
+From:   Soheil Hassas Yeganeh <soheil.kdev@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        dave@stgolabs.net, Soheil Hassas Yeganeh <soheil@google.com>,
+        Guantao Liu <guantaol@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Khazhismel Kumykov <khazhy@google.com>
+Subject: [PATCH 2/2] epoll: add a selftest for epoll timeout race
+Date:   Wed, 28 Oct 2020 14:02:02 -0400
+Message-Id: <20201028180202.952079-2-soheil.kdev@gmail.com>
+X-Mailer: git-send-email 2.29.0.rc2.309.g374f81d7ae-goog
+In-Reply-To: <20201028180202.952079-1-soheil.kdev@gmail.com>
+References: <20201028180202.952079-1-soheil.kdev@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The dirty region bounds stored in page->private on an afs page are 15 bits
-on a 32-bit box and can, at most, represent a range of up to 32K within a
-32K page with a resolution of 1 byte.  This is a problem for powerpc32 with
-64K pages enabled.
+From: Soheil Hassas Yeganeh <soheil@google.com>
 
-Further, transparent huge pages may get up to 2M, which will be a problem
-for the afs filesystem on all 32-bit arches in the future.
+Add a test case to ensure an event is observed by at least one
+poller when an epoll timeout is used.
 
-Fix this by decreasing the resolution.  For the moment, a 64K page will
-have a resolution determined from PAGE_SIZE.  In the future, the page will
-need to be passed in to the helper functions so that the page size can be
-assessed and the resolution determined dynamically.
-
-Note that this might not be the ideal way to handle this, since it may
-allow some leakage of undirtied zero bytes to the server's copy in the case
-of a 3rd-party conflict.  Fixing that would require a separately allocated
-record and is a more complicated fix.
-
-Fixes: 4343d00872e1 ("afs: Get rid of the afs_writeback record")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Guantao Liu <guantaol@google.com>
+Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Willem de Bruijn <willemb@google.com>
+Reviewed-by: Khazhismel Kumykov <khazhy@google.com>
 ---
+ .../filesystems/epoll/epoll_wakeup_test.c     | 95 +++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
- fs/afs/internal.h |   24 +++++++++++++++++++++---
- fs/afs/write.c    |    5 -----
- 2 files changed, 21 insertions(+), 8 deletions(-)
-
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 214b8a239a79..52f77204f092 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -861,7 +861,8 @@ struct afs_vnode_cache_aux {
- /*
-  * We use page->private to hold the amount of the page that we've written to,
-  * splitting the field into two parts.  However, we need to represent a range
-- * 0...PAGE_SIZE inclusive, so we can't support 64K pages on a 32-bit system.
-+ * 0...PAGE_SIZE, so we reduce the resolution if the size of the page
-+ * exceeds what we can encode.
-  */
- #ifdef CONFIG_64BIT
- #define __AFS_PAGE_PRIV_MASK	0x7fffffffUL
-@@ -873,18 +874,35 @@ struct afs_vnode_cache_aux {
- #define __AFS_PAGE_PRIV_MMAPPED	0x8000UL
- #endif
+diff --git a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
+index d979ff14775a..8f82f99f7748 100644
+--- a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
++++ b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
+@@ -3282,4 +3282,99 @@ TEST(epoll60)
+ 	close(ctx.epfd);
+ }
  
-+static inline unsigned int afs_page_dirty_resolution(void)
++struct epoll61_ctx {
++	int epfd;
++	int evfd;
++};
++
++static void *epoll61_write_eventfd(void *ctx_)
 +{
-+	if (PAGE_SIZE - 1 <= __AFS_PAGE_PRIV_MASK)
-+		return 1;
-+	else
-+		return PAGE_SIZE / (__AFS_PAGE_PRIV_MASK + 1);
++	struct epoll61_ctx *ctx = ctx_;
++	int64_t l = 1;
++
++	usleep(10950);
++	write(ctx->evfd, &l, sizeof(l));
++	return NULL;
 +}
 +
- static inline unsigned int afs_page_dirty_from(unsigned long priv)
- {
--	return priv & __AFS_PAGE_PRIV_MASK;
-+	unsigned int x = priv & __AFS_PAGE_PRIV_MASK;
++static void *epoll61_epoll_with_timeout(void *ctx_)
++{
++	struct epoll61_ctx *ctx = ctx_;
++	struct epoll_event events[1];
++	int n;
 +
-+	/* The lower bound is inclusive */
-+	return x * afs_page_dirty_resolution();
- }
- 
- static inline unsigned int afs_page_dirty_to(unsigned long priv)
- {
--	return ((priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK) + 1;
-+	unsigned int x = (priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK;
++	n = epoll_wait(ctx->epfd, events, 1, 11);
++	/*
++	 * If epoll returned the eventfd, write on the eventfd to wake up the
++	 * blocking poller.
++	 */
++	if (n == 1) {
++		int64_t l = 1;
 +
-+	/* The upper bound is exclusive */
-+	return (x + 1) * afs_page_dirty_resolution();
- }
- 
- static inline unsigned long afs_page_dirty(unsigned int from, unsigned int to)
- {
-+	unsigned int res = afs_page_dirty_resolution();
-+	from /= res; /* Round down */
-+	to = (to + res - 1) / res; /* Round up */
- 	return ((unsigned long)(to - 1) << __AFS_PAGE_PRIV_SHIFT) | from;
- }
- 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index e7d6827024bf..4578b372514f 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -90,11 +90,6 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 	_enter("{%llx:%llu},{%lx},%u,%u",
- 	       vnode->fid.vid, vnode->fid.vnode, index, from, to);
- 
--	/* We want to store information about how much of a page is altered in
--	 * page->private.
--	 */
--	BUILD_BUG_ON(PAGE_SIZE - 1 > __AFS_PAGE_PRIV_MASK && sizeof(page->private) < 8);
--
- 	page = grab_cache_page_write_begin(mapping, index, flags);
- 	if (!page)
- 		return -ENOMEM;
-
++		write(ctx->evfd, &l, sizeof(l));
++	}
++	return NULL;
++}
++
++static void *epoll61_blocking_epoll(void *ctx_)
++{
++	struct epoll61_ctx *ctx = ctx_;
++	struct epoll_event events[1];
++
++	epoll_wait(ctx->epfd, events, 1, -1);
++	return NULL;
++}
++
++TEST(epoll61)
++{
++	struct epoll61_ctx ctx;
++	struct epoll_event ev;
++	int i, r;
++
++	ctx.epfd = epoll_create1(0);
++	ASSERT_GE(ctx.epfd, 0);
++	ctx.evfd = eventfd(0, EFD_NONBLOCK);
++	ASSERT_GE(ctx.evfd, 0);
++
++	ev.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLHUP;
++	ev.data.ptr = NULL;
++	r = epoll_ctl(ctx.epfd, EPOLL_CTL_ADD, ctx.evfd, &ev);
++	ASSERT_EQ(r, 0);
++
++	/*
++	 * We are testing a race.  Repeat the test case 1000 times to make it
++	 * more likely to fail in case of a bug.
++	 */
++	for (i = 0; i < 1000; i++) {
++		pthread_t threads[3];
++		int n;
++
++		/*
++		 * Start 3 threads:
++		 * Thread 1 sleeps for 10.9ms and writes to the evenfd.
++		 * Thread 2 calls epoll with a timeout of 11ms.
++		 * Thread 3 calls epoll with a timeout of -1.
++		 *
++		 * The eventfd write by Thread 1 should either wakeup Thread 2
++		 * or Thread 3.  If it wakes up Thread 2, Thread 2 writes on the
++		 * eventfd to wake up Thread 3.
++		 *
++		 * If no events are missed, all three threads should eventually
++		 * be joinable.
++		 */
++		ASSERT_EQ(pthread_create(&threads[0], NULL,
++					 epoll61_write_eventfd, &ctx), 0);
++		ASSERT_EQ(pthread_create(&threads[1], NULL,
++					 epoll61_epoll_with_timeout, &ctx), 0);
++		ASSERT_EQ(pthread_create(&threads[2], NULL,
++					 epoll61_blocking_epoll, &ctx), 0);
++
++		for (n = 0; n < ARRAY_SIZE(threads); ++n)
++			ASSERT_EQ(pthread_join(threads[n], NULL), 0);
++	}
++
++	close(ctx.epfd);
++	close(ctx.evfd);
++}
++
+ TEST_HARNESS_MAIN
+-- 
+2.29.0.rc2.309.g374f81d7ae-goog
 
