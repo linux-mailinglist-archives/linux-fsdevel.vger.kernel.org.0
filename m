@@ -2,129 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5FA729D4A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 22:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F91D29D47C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Oct 2020 22:52:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbgJ1Vxl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 17:53:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40455 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727827AbgJ1Vxi (ORCPT
+        id S1728327AbgJ1VwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 17:52:25 -0400
+Received: from casper.infradead.org ([90.155.50.34]:44300 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728311AbgJ1VwY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:53:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603922017;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K/CEDYM98JgXCxM3nau3BhO1AzT+ER9RnJI9yDKsTOQ=;
-        b=AO978dlqNlSwDS2/ji63yTxrXpZpmjK8N4kbOtbYzGQeT1Y9RK4RkAx510Y4oJYbBj/adW
-        sjbhsPPDR2LKJyoIcQ8FnqF/e40TfwtCVDoXA8qWvl1FPHvnMMGGXxU+UiDfiKP+sR9ZtY
-        sMU+bZE7JyfrDgy2KWOkX5SbZtc2PuQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-129-GZHC4amIP2eEWsNtbuZ6BQ-1; Wed, 28 Oct 2020 12:53:04 -0400
-X-MC-Unique: GZHC4amIP2eEWsNtbuZ6BQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 22DFF57212;
-        Wed, 28 Oct 2020 16:53:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D7DB45C22D;
-        Wed, 28 Oct 2020 16:53:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201028143442.GA20115@casper.infradead.org>
-References: <20201028143442.GA20115@casper.infradead.org> <160389418807.300137.8222864749005731859.stgit@warthog.procyon.org.uk> <160389426655.300137.17487677797144804730.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        kernel test robot <lkp@intel.com>,
+        Wed, 28 Oct 2020 17:52:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=C0tW2f8j7jb4MFbdm+6sFYCzENYguiyxnLGk7T5Zcss=; b=wF3nI97v/Uz1kPYDyGYYLFO4Lk
+        p/9xBY2r3teh5weq0/szrtdJX+7FWu36/I7vl3ml9pz5fqMBMVXxbdpQ4hyaWxic7UfXBbiyEV+9O
+        CBUt5F8GDxzp9HMFYQhkGOcBXdZX2SkrNisaMlmNIqZLF+BgtDMknzQzwH/Y4oIpL0CTHfWQo0kUE
+        18hBf+BPhYRhO8/llRBAjZGE+ozeYAjoHccvlHNV7H3R7s3/JpZwsa4bp0f2izE8piGj+o9o6lYFs
+        O9AcUlzWszqZWCEap50ckrIU5ur034C++3JsIvhIrReyLW0PzUQHksLRnt69nYqCKm9wY2GZneQeJ
+        XXbDgfew==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kXozP-0005WC-Ql; Wed, 28 Oct 2020 17:11:59 +0000
+Date:   Wed, 28 Oct 2020 17:11:59 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, kernel test robot <lkp@intel.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K pages
+Subject: Re: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K
+ pages
+Message-ID: <20201028171159.GB20115@casper.infradead.org>
+References: <20201028143442.GA20115@casper.infradead.org>
+ <160389418807.300137.8222864749005731859.stgit@warthog.procyon.org.uk>
+ <160389426655.300137.17487677797144804730.stgit@warthog.procyon.org.uk>
+ <548209.1603904708@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <541368.1603903981.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 28 Oct 2020 16:53:01 +0000
-Message-ID: <541369.1603903981@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <548209.1603904708@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Wed, Oct 28, 2020 at 05:05:08PM +0000, David Howells wrote:
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > > +{
+> > > +	if (PAGE_SIZE - 1 <= __AFS_PAGE_PRIV_MASK)
+> > > +		return 1;
+> > > +	else
+> > > +		return PAGE_SIZE / (__AFS_PAGE_PRIV_MASK + 1);
+> > 
+> > Could this be DIV_ROUND_UP(PAGE_SIZE, __AFS_PAGE_PRIV_MASK + 1); avoiding
+> > a conditional?  I appreciate it's calculated at compile time today, but
+> > it'll be dynamic with THP.
+> 
+> Hmmm - actually, I want a shift size, not a number of bytes as I divide by it
+> twice in afs_page_dirty().
 
-> > +static inline unsigned int afs_page_dirty_resolution(void)
-> =
+__AFS_PAGE_PRIV_MASK is a constant though.  If your compiler can't
+optimise a divide-by-a-constant-power-of-two into a shift-by-a-constant (*),
+it's time to get yourself a new compiler.
 
-> I've been using size_t for offsets within a struct page.  I don't know
-> that we'll ever support pages larger than 2GB (they're completely
-> impractical with today's bus speeds), but I'd rather not be the one
-> who has to track down all the uses of 'int' in the kernel in fifteen
-> years time.
-
-Going beyond 2G page size won't be fun and a lot of our APIs will break -
-write_begin, write_end, invalidatepage to name a few.
-
-It would probably require an analysis program to trace all the usages of s=
-uch
-information within the kernel.
-
-> > +{
-> > +	if (PAGE_SIZE - 1 <=3D __AFS_PAGE_PRIV_MASK)
-> > +		return 1;
-> > +	else
-> > +		return PAGE_SIZE / (__AFS_PAGE_PRIV_MASK + 1);
-> =
-
-> Could this be DIV_ROUND_UP(PAGE_SIZE, __AFS_PAGE_PRIV_MASK + 1); avoidin=
-g
-> a conditional?  I appreciate it's calculated at compile time today, but
-> it'll be dynamic with THP.
-
-That seems to work.
-
-> >  static inline unsigned int afs_page_dirty_to(unsigned long priv)
-> >  {
-> > -	return ((priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV_MASK) + 1;
-> > +	unsigned int x =3D (priv >> __AFS_PAGE_PRIV_SHIFT) & __AFS_PAGE_PRIV=
-_MASK;
-> > +
-> > +	/* The upper bound is exclusive */
-> =
-
-> I think you mean 'inclusive'.
-
-The returned upper bound points immediately beyond the range.  E.g. 0-0 is=
- an
-empty range.  Changing that is way too big an overhaul outside the merge
-window.
-
-> > +	return (x + 1) * afs_page_dirty_resolution();
-> >  }
-> >  =
-
-> >  static inline unsigned long afs_page_dirty(unsigned int from, unsigne=
-d int to)
-> >  {
-> > +	unsigned int res =3D afs_page_dirty_resolution();
-> > +	from /=3D res; /* Round down */
-> > +	to =3D (to + res - 1) / res; /* Round up */
-> >  	return ((unsigned long)(to - 1) << __AFS_PAGE_PRIV_SHIFT) | from;
-> =
-
-> Wouldn't it produce the same result to just round down?  ie:
-> =
-
-> 	to =3D (to - 1) / res;
-> 	return ((unsigned long)to << __AFS_PAGE_PRIV_SHIFT) | from;
-
-Actually, yes, because res/res=3D=3D1, which I then subtract afterwards.
-
-David
-
+(*) assuming that's faster on the CPU it's targetting.
