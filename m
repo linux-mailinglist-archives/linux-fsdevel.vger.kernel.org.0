@@ -2,54 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 335D629F1A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 17:36:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4179629F1AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 17:37:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgJ2QgS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 12:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbgJ2QgR (ORCPT
+        id S1726500AbgJ2Qhk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 12:37:40 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:52912 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbgJ2Qhk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 12:36:17 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B46C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 09:36:16 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id v18so3713076ilg.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 09:36:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+1FzFFklP1YnmghHH9t5lyMT4QSfeCr4QK0lMLwAvZE=;
-        b=ipmMYI2Zt/qFpfzA3A9nrn+MY99z/pArhalXX282jU89E0zmQx8CrbLcgUJ0+4BBYr
-         gOYagLL2brYfKfSk0M5bDwNOwtJPX2R0TTPBFpS1s+gFhezEv2lm2yr3dsX1V9pnC8ie
-         xjQ02ffBZ46hYZ46v5xkCdBsw/A1eNnXgRfJA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+1FzFFklP1YnmghHH9t5lyMT4QSfeCr4QK0lMLwAvZE=;
-        b=QCh5nszcRuujfdp/59GHihaMYOPq0JVz0dSJWP0ty73tUN1+6dKlq0rEA2G7V4BDY6
-         ZRuWUBGNHF2yvXZuvihw/SokFRcae8g8UXxGq4TYk2fG2HKOeKxawUH9KqOc0PouyUmV
-         xUtOwbMWE4v40Ados8yY18kGmbkh9QiS2Lta6G8k0r1BQ+ETqhobcH2YxCj9mgpSQxia
-         47t/egU+jzxXBr4AU8MoTnHDFZnGIt2JlsCV6ItDYQ4SCCEgBBmgiJ4hrBO5UYgqSmnN
-         JgLJYirLb44Q8Qi3twdjHz1VYH8GOW1gJMbeh80nTC8JN59usF75wx8/0yKeG4xU85zp
-         ejbQ==
-X-Gm-Message-State: AOAM5310a5u19/SkDnkVnsH2LeCYCMCVC+lQtu3wWtRdUBHMSoe4MTcl
-        +995CtNK7KSchKfT5/kCACZHgQ==
-X-Google-Smtp-Source: ABdhPJwdjJsI8P3ncUgKVI0MZeddl6/4SUR4eqZ1yA/w3w9keNoMZjKAVre0rxJASmFJuoRVIJjAng==
-X-Received: by 2002:a92:c7c7:: with SMTP id g7mr3777623ilk.303.1603989375791;
-        Thu, 29 Oct 2020 09:36:15 -0700 (PDT)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id t6sm2275768ilk.5.2020.10.29.09.36.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Oct 2020 09:36:14 -0700 (PDT)
-Date:   Thu, 29 Oct 2020 16:36:13 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Lennart Poettering <lennart@poettering.net>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+        Thu, 29 Oct 2020 12:37:40 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kYAvU-00C748-2E; Thu, 29 Oct 2020 10:37:24 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kYAvS-0008Bk-Sf; Thu, 29 Oct 2020 10:37:23 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel@vger.kernel.org,
@@ -74,9 +49,10 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Jann Horn <jannh@google.com>,
         Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        =?utf-8?Q?St=C3=A9phane?= Graber <stgraber@ubuntu.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
         Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
         containers@lists.linux-foundation.org,
@@ -84,97 +60,118 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-Message-ID: <20201029163612.GA15275@ircssh-2.c.rugged-nimbus-611.internal>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <87pn51ghju.fsf@x220.int.ebiederm.org>
- <20201029160502.GA333141@gardel-login>
+        <87pn51ghju.fsf@x220.int.ebiederm.org>
+        <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com>
+Date:   Thu, 29 Oct 2020 11:37:23 -0500
+In-Reply-To: <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com> (Aleksa
+        Sarai's message of "Fri, 30 Oct 2020 02:51:48 +1100")
+Message-ID: <87361xdm4c.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201029160502.GA333141@gardel-login>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-XM-SPF: eid=1kYAvS-0008Bk-Sf;;;mid=<87361xdm4c.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX180W5DqIedhnPmHhxEi5hPqd4yVVQ9Dudw=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels,
+        XM_Body_Dirty_Words autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.5 XM_Body_Dirty_Words Contains a dirty word
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Aleksa Sarai <cyphar@cyphar.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 703 ms - load_scoreonly_sql: 0.07 (0.0%),
+        signal_user_changed: 11 (1.6%), b_tie_ro: 10 (1.4%), parse: 1.76
+        (0.3%), extract_message_metadata: 27 (3.9%), get_uri_detail_list: 3.4
+        (0.5%), tests_pri_-1000: 29 (4.2%), tests_pri_-950: 1.71 (0.2%),
+        tests_pri_-900: 1.59 (0.2%), tests_pri_-90: 164 (23.3%), check_bayes:
+        143 (20.3%), b_tokenize: 23 (3.2%), b_tok_get_all: 13 (1.9%),
+        b_comp_prob: 5 (0.8%), b_tok_touch_all: 97 (13.7%), b_finish: 1.01
+        (0.1%), tests_pri_0: 448 (63.8%), check_dkim_signature: 0.80 (0.1%),
+        check_dkim_adsp: 7 (1.0%), poll_dns_idle: 0.33 (0.0%), tests_pri_10:
+        3.2 (0.4%), tests_pri_500: 9 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 00/34] fs: idmapped mounts
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 05:05:02PM +0100, Lennart Poettering wrote:
-> On Do, 29.10.20 10:47, Eric W. Biederman (ebiederm@xmission.com) wrote:
-> 
-> > Is that the use case you are looking at removing the need for
-> > systemd-homed to avoid chowning after lugging encrypted home directories
-> > from one system to another?  Why would it be desirable to avoid the
-> > chown?
-> 
-> Yes, I am very interested in seeing Christian's work succeed, for the
-> usecase in systemd-homed. In systemd-homed each user gets their own
-> private file system, and these fs shall be owned by the user's local
-> UID, regardless in which system it is used. The UID should be an
-> artifact of the local, individual system in this model, and thus
-> the UID on of the same user/home on system A might be picked as 1010
-> and on another as 1543, and on a third as 1323, and it shouldn't
-> matter. This way, home directories become migratable without having to
-> universially sync UID assignments: it doesn't matter anymore what the
-> local UID is.
-> 
-> Right now we do a recursive chown() at login time to ensure the home
-> dir is properly owned. This has two disadvantages:
-> 
-> 1. It's slow. In particular on large home dirs, it takes a while to go
->    through the whole user's homedir tree and chown/adjust ACLs for
->    everything.
-> 
-> 2. Because it is so slow we take a shortcut right now: if the
->    top-level home dir inode itself is owned by the correct user, we
->    skip the recursive chowning. This means in the typical case where a
->    user uses the same system most of the time, and thus the UID is
->    stable we can avoid the slowness. But this comes at a drawback: if
->    the user for some reason ends up with files in their homedir owned
->    by an unrelated user, then we'll never notice or readjust.
-> 
-> > If the goal is to solve fragmented administration of uid assignment I
-> > suggest that it might be better to solve the administration problem so
-> > that all of the uids of interest get assigned the same way on all of the
-> > systems of interest.
-> 
-> Well, the goal is to make things simple and be able to use the home
-> dir everywhere without any prior preparation, without central UID
-> assignment authority.
-> 
-> The goal is to have a scheme that requires no administration, by
-> making the UID management problem go away. Hence, if you suggest
-> solving this by having a central administrative authority: this is
-> exactly what the model wants to get away from.
-> 
-> Or to say this differently: just because I personally use three
-> different computers, I certainly don't want to set up LDAP or sync
-> UIDs manually.
-> 
-> Lennart
-> 
-> --
-> Lennart Poettering, Berlin
+Aleksa Sarai <cyphar@cyphar.com> writes:
 
-Can you help me understand systemd-homed a little bit?
+> On 2020-10-29, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> Christian Brauner <christian.brauner@ubuntu.com> writes:
+>> 
+>> > Hey everyone,
+>> >
+>> > I vanished for a little while to focus on this work here so sorry for
+>> > not being available by mail for a while.
+>> >
+>> > Since quite a long time we have issues with sharing mounts between
+>> > multiple unprivileged containers with different id mappings, sharing a
+>> > rootfs between multiple containers with different id mappings, and also
+>> > sharing regular directories and filesystems between users with different
+>> > uids and gids. The latter use-cases have become even more important with
+>> > the availability and adoption of systemd-homed (cf. [1]) to implement
+>> > portable home directories.
+>> 
+>> Can you walk us through the motivating use case?
+>> 
+>> As of this year's LPC I had the distinct impression that the primary use
+>> case for such a feature was due to the RLIMIT_NPROC problem where two
+>> containers with the same users still wanted different uid mappings to
+>> the disk because the users were conflicting with each other because of
+>> the per user rlimits.
+>> 
+>> Fixing rlimits is straight forward to implement, and easier to manage
+>> for implementations and administrators.
+>
+> This is separate to the question of "isolated user namespaces" and
+> managing different mappings between containers. This patchset is solving
+> the same problem that shiftfs solved -- sharing a single directory tree
+> between containers that have different ID mappings. rlimits (nor any of
+> the other proposals we discussed at LPC) will help with this problem.
 
-In the man page it says:
+First and foremost: A uid shift on write to a filesystem is a security
+bug waiting to happen.  This is especially in the context of facilities
+like iouring, that play very agressive games with how process context
+makes it to  system calls.
 
-systemd-homed is a system service that may be used to create, remove, change or 
-inspect home areas (directories and network mounts and real or loopback block 
-devices with a filesystem, optionally encrypted).
+The only reason containers were not immediately exploitable when iouring
+was introduced is because the mechanisms are built so that even if
+something escapes containment the security properties still apply.
+Changes to the uid when writing to the filesystem does not have that
+property.  The tiniest slip in containment will be a security issue.
 
-It seems that the "underlay?" (If you'll call it that, maybe there is a better 
-term) can either be a standalone block device (this sounds close to systemd 
-machined?), a btrfs subvolume (which receives its own superblock (IIRC?, I might 
-be wrong. It's been a while since I've used btrfs), or just be a directory 
-that's mapped?
+This is not even the least bit theoretical.  I have seem reports of how
+shitfs+overlayfs created a situation where anyone could read
+/etc/shadow.
 
-What decides whether it's just a directory and bind-mounted (or a similar 
-vfsmount), or an actual superblock?
+If you are going to write using the same uid to disk from different
+containers the question becomes why can't those containers configure
+those users to use the same kuid?
 
-How is the mapping of "real UIDs" to "namespace UIDs" works when it's just a 
-bind mount? From the perspective of multiple user namespaces, are all 
-"underlying" UIDs mapped through, or if I try to look at another user's
-home directory will they not show up?
+What fixing rlimits does is it fixes one of the reasons that different
+containers could not share the same kuid for users that want to write to
+disk with the same uid.
 
-Is there a reason you can't / don't / wont use overlayfs instead of bind mounts?
+
+I humbly suggest that it will be more secure, and easier to maintain for
+both developers and users if we fix the reasons people want different
+containers to have the same user running with different kuids.
+
+If not what are the reasons we fundamentally need the same on-disk user
+using multiple kuids in the kernel?
+
+Eric
