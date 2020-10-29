@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB0929DD6D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 01:38:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C976329DD95
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 01:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388740AbgJ2Ahm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 20:37:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60973 "EHLO
+        id S2388777AbgJ2Ait (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 20:38:49 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33242 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387535AbgJ2Afu (ORCPT
+        with ESMTP id S2388794AbgJ2Ahu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 20:35:50 -0400
+        Wed, 28 Oct 2020 20:37:50 -0400
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kXvur-0008Ep-3m; Thu, 29 Oct 2020 00:35:45 +0000
+        id 1kXvus-0008Ep-Pk; Thu, 29 Oct 2020 00:35:46 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -55,9 +55,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 19/34] namei: add lookup helpers with idmapped mounts aware permission checking
-Date:   Thu, 29 Oct 2020 01:32:37 +0100
-Message-Id: <20201029003252.2128653-20-christian.brauner@ubuntu.com>
+Subject: [PATCH 20/34] open: handle idmapped mounts in do_truncate()
+Date:   Thu, 29 Oct 2020 01:32:38 +0100
+Message-Id: <20201029003252.2128653-21-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
@@ -67,169 +67,201 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The lookup_one_len(), lookup_one_len_unlocked(), and lookup_positive_unlocked()
-helpers are used by filesystems targeted in this first iteration to lookup
-dentries if the caller is privileged over the inode of the base dentry. Add
-three new helpers lookup_one_len_mapped(), lookup_one_len_mapped_unlocked(),
-and lookup_one_len_mapped_unlocked() to handle idmapped mounts. If the inode is
-accessed through an idmapped mount it is mapped according to the mount's user
-namespace. Afterwards the permissions checks are identical to non-idmapped
-mounts. If the initial user namespace is passed all mapping operations are a
-nop so non-idmapped mounts will not see a change in behavior and will also not
-see any performance impact. It also means that the non-idmapped-mount aware
-helpers can be implemented on top of their idmapped-mount aware counterparts by
-passing the initial user namespace.
+When truncating files the vfs will verify that the caller is privileged over
+the inode. Since the do_truncate() helper is only used in a few places in the
+vfs code extend it to handle idmapped mounts instead of adding a new helper.
+If the inode is accessed through an idmapped mount it is mapped according to
+the mount's user namespace. Afterwards the permissions checks are identical to
+non-idmapped mounts. If the initial user namespace is passed all mapping
+operations are a nop so non-idmapped mounts will not see a change in behavior
+and will also not see any performance impact.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/namei.c            | 47 ++++++++++++++++++++++++++++++++-----------
- include/linux/namei.h |  6 ++++++
- 2 files changed, 41 insertions(+), 12 deletions(-)
+ fs/coredump.c      | 12 +++++++++---
+ fs/inode.c         | 13 +++++++++----
+ fs/namei.c         |  6 +++---
+ fs/open.c          | 21 +++++++++++++--------
+ include/linux/fs.h |  4 ++--
+ 5 files changed, 36 insertions(+), 20 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index a8a3de936cfc..7901ea09e80e 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2517,8 +2517,9 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
- }
- EXPORT_SYMBOL(vfs_path_lookup);
- 
--static int lookup_one_len_common(const char *name, struct dentry *base,
--				 int len, struct qstr *this)
-+static int lookup_one_len_common(const char *name, struct dentry *base, int len,
-+				 struct qstr *this,
-+				 struct user_namespace *mnt_user_ns)
- {
- 	this->name = name;
- 	this->len = len;
-@@ -2546,7 +2547,7 @@ static int lookup_one_len_common(const char *name, struct dentry *base,
- 			return err;
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 0cd9056d79cc..25beac7230ff 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -703,6 +703,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 			goto close_fail;
+ 		}
+ 	} else {
++		struct user_namespace *user_ns;
+ 		struct inode *inode;
+ 		int open_flags = O_CREAT | O_RDWR | O_NOFOLLOW |
+ 				 O_LARGEFILE | O_EXCL;
+@@ -786,7 +787,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 			goto close_fail;
+ 		if (!(cprm.file->f_mode & FMODE_CAN_WRITE))
+ 			goto close_fail;
+-		if (do_truncate(cprm.file->f_path.dentry, 0, 0, cprm.file))
++		user_ns = mnt_user_ns(cprm.file->f_path.mnt);
++		if (do_truncate(user_ns, cprm.file->f_path.dentry, 0, 0, cprm.file))
+ 			goto close_fail;
  	}
  
--	return inode_permission(base->d_inode, MAY_EXEC);
-+	return mapped_inode_permission(mnt_user_ns, base->d_inode, MAY_EXEC);
- }
+@@ -931,8 +933,12 @@ void dump_truncate(struct coredump_params *cprm)
  
- /**
-@@ -2570,7 +2571,7 @@ struct dentry *try_lookup_one_len(const char *name, struct dentry *base, int len
- 
- 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
- 
--	err = lookup_one_len_common(name, base, len, &this);
-+	err = lookup_one_len_common(name, base, len, &this, &init_user_ns);
- 	if (err)
- 		return ERR_PTR(err);
- 
-@@ -2589,7 +2590,8 @@ EXPORT_SYMBOL(try_lookup_one_len);
-  *
-  * The caller must hold base->i_mutex.
-  */
--struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
-+struct dentry *lookup_one_len_mapped(const char *name, struct dentry *base, int len,
-+				 struct user_namespace *mnt_user_ns)
- {
- 	struct dentry *dentry;
- 	struct qstr this;
-@@ -2597,13 +2599,19 @@ struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
- 
- 	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
- 
--	err = lookup_one_len_common(name, base, len, &this);
-+	err = lookup_one_len_common(name, base, len, &this, mnt_user_ns);
- 	if (err)
- 		return ERR_PTR(err);
- 
- 	dentry = lookup_dcache(&this, base, 0);
- 	return dentry ? dentry : __lookup_slow(&this, base, 0);
- }
-+EXPORT_SYMBOL(lookup_one_len_mapped);
+ 	if (file->f_op->llseek && file->f_op->llseek != no_llseek) {
+ 		offset = file->f_op->llseek(file, 0, SEEK_CUR);
+-		if (i_size_read(file->f_mapping->host) < offset)
+-			do_truncate(file->f_path.dentry, offset, 0, file);
++		if (i_size_read(file->f_mapping->host) < offset) {
++			struct user_namespace *user_ns;
 +
-+struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
-+{
-+	return lookup_one_len_mapped(name, base, len, &init_user_ns);
-+}
- EXPORT_SYMBOL(lookup_one_len);
- 
- /**
-@@ -2618,14 +2626,14 @@ EXPORT_SYMBOL(lookup_one_len);
-  * Unlike lookup_one_len, it should be called without the parent
-  * i_mutex held, and will take the i_mutex itself if necessary.
-  */
--struct dentry *lookup_one_len_unlocked(const char *name,
--				       struct dentry *base, int len)
-+struct dentry *lookup_one_len_mapped_unlocked(const char *name, struct dentry *base,
-+					  int len, struct user_namespace *mnt_user_ns)
- {
- 	struct qstr this;
- 	int err;
- 	struct dentry *ret;
- 
--	err = lookup_one_len_common(name, base, len, &this);
-+	err = lookup_one_len_common(name, base, len, &this, mnt_user_ns);
- 	if (err)
- 		return ERR_PTR(err);
- 
-@@ -2634,6 +2642,13 @@ struct dentry *lookup_one_len_unlocked(const char *name,
- 		ret = lookup_slow(&this, base, 0);
- 	return ret;
++			user_ns = mnt_user_ns(file->f_path.mnt);
++			do_truncate(user_ns, file->f_path.dentry, offset, 0, file);
++		}
+ 	}
  }
-+EXPORT_SYMBOL(lookup_one_len_mapped_unlocked);
-+
-+struct dentry *lookup_one_len_unlocked(const char *name,
-+				       struct dentry *base, int len)
-+{
-+	return lookup_one_len_mapped_unlocked(name, base, len, &init_user_ns);
-+}
- EXPORT_SYMBOL(lookup_one_len_unlocked);
+ EXPORT_SYMBOL(dump_truncate);
+diff --git a/fs/inode.c b/fs/inode.c
+index 22de3cb3b1f4..a9e2c8232e61 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1904,7 +1904,8 @@ int dentry_needs_remove_privs(struct dentry *dentry)
+ 	return mask;
+ }
+ 
+-static int __remove_privs(struct dentry *dentry, int kill)
++static int __remove_privs(struct user_namespace *user_ns, struct dentry *dentry,
++			  int kill)
+ {
+ 	struct iattr newattrs;
+ 
+@@ -1913,7 +1914,7 @@ static int __remove_privs(struct dentry *dentry, int kill)
+ 	 * Note we call this on write, so notify_change will not
+ 	 * encounter any conflicting delegations:
+ 	 */
+-	return notify_change(dentry, &newattrs, NULL);
++	return notify_mapped_change(user_ns, dentry, &newattrs, NULL);
+ }
  
  /*
-@@ -2644,16 +2659,24 @@ EXPORT_SYMBOL(lookup_one_len_unlocked);
-  * need to be very careful; pinned positives have ->d_inode stable, so
-  * this one avoids such problems.
-  */
--struct dentry *lookup_positive_unlocked(const char *name,
--				       struct dentry *base, int len)
-+struct dentry *lookup_positive_mapped_unlocked(const char *name,
-+					   struct dentry *base, int len,
-+					   struct user_namespace *mnt_user_ns)
- {
--	struct dentry *ret = lookup_one_len_unlocked(name, base, len);
-+	struct dentry *ret = lookup_one_len_mapped_unlocked(name, base, len, mnt_user_ns);
- 	if (!IS_ERR(ret) && d_flags_negative(smp_load_acquire(&ret->d_flags))) {
- 		dput(ret);
- 		ret = ERR_PTR(-ENOENT);
+@@ -1939,8 +1940,12 @@ int file_remove_privs(struct file *file)
+ 	kill = dentry_needs_remove_privs(dentry);
+ 	if (kill < 0)
+ 		return kill;
+-	if (kill)
+-		error = __remove_privs(dentry, kill);
++	if (kill) {
++		struct user_namespace *user_ns;
++
++		user_ns = mnt_user_ns(file->f_path.mnt);
++		error = __remove_privs(user_ns, dentry, kill);
++	}
+ 	if (!error)
+ 		inode_has_no_xattr(inode);
+ 
+diff --git a/fs/namei.c b/fs/namei.c
+index 7901ea09e80e..76c9637eccb9 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2985,9 +2985,9 @@ static int handle_truncate(struct file *filp)
+ 	if (!error)
+ 		error = security_path_truncate(path);
+ 	if (!error) {
+-		error = do_truncate(path->dentry, 0,
+-				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
+-				    filp);
++		error = do_truncate(mnt_user_ns(filp->f_path.mnt),
++				    path->dentry, 0,
++				    ATTR_MTIME | ATTR_CTIME | ATTR_OPEN, filp);
  	}
+ 	put_write_access(inode);
+ 	return error;
+diff --git a/fs/open.c b/fs/open.c
+index 9af548fb841b..efa462b6b9c7 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -35,8 +35,8 @@
+ 
+ #include "internal.h"
+ 
+-int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
+-	struct file *filp)
++int do_truncate(struct user_namespace *user_ns, struct dentry *dentry,
++		loff_t length, unsigned int time_attrs, struct file *filp)
+ {
+ 	int ret;
+ 	struct iattr newattrs;
+@@ -61,13 +61,14 @@ int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
+ 
+ 	inode_lock(dentry->d_inode);
+ 	/* Note any delegations or leases have already been broken: */
+-	ret = notify_change(dentry, &newattrs, NULL);
++	ret = notify_mapped_change(user_ns, dentry, &newattrs, NULL);
+ 	inode_unlock(dentry->d_inode);
  	return ret;
  }
-+EXPORT_SYMBOL(lookup_positive_mapped_unlocked);
+ 
+ long vfs_truncate(const struct path *path, loff_t length)
+ {
++	struct user_namespace *user_ns;
+ 	struct inode *inode;
+ 	long error;
+ 
+@@ -83,7 +84,8 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 	if (error)
+ 		goto out;
+ 
+-	error = inode_permission(inode, MAY_WRITE);
++	user_ns = mnt_user_ns(path->mnt);
++	error = mapped_inode_permission(user_ns, inode, MAY_WRITE);
+ 	if (error)
+ 		goto mnt_drop_write_and_out;
+ 
+@@ -107,7 +109,7 @@ long vfs_truncate(const struct path *path, loff_t length)
+ 	if (!error)
+ 		error = security_path_truncate(path);
+ 	if (!error)
+-		error = do_truncate(path->dentry, length, 0, NULL);
++		error = do_truncate(user_ns, path->dentry, length, 0, NULL);
+ 
+ put_write_and_out:
+ 	put_write_access(inode);
+@@ -186,13 +188,16 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+ 	/* Check IS_APPEND on real upper inode */
+ 	if (IS_APPEND(file_inode(f.file)))
+ 		goto out_putf;
+-
+ 	sb_start_write(inode->i_sb);
+ 	error = locks_verify_truncate(inode, f.file, length);
+ 	if (!error)
+ 		error = security_path_truncate(&f.file->f_path);
+-	if (!error)
+-		error = do_truncate(dentry, length, ATTR_MTIME|ATTR_CTIME, f.file);
++	if (!error) {
++		struct user_namespace *user_ns;
 +
-+struct dentry *lookup_positive_unlocked(const char *name,
-+				       struct dentry *base, int len)
-+{
-+	return lookup_positive_mapped_unlocked(name, base, len, &init_user_ns);
-+}
- EXPORT_SYMBOL(lookup_positive_unlocked);
++		user_ns = mnt_user_ns(f.file->f_path.mnt);
++		error = do_truncate(user_ns, dentry, length, ATTR_MTIME | ATTR_CTIME, f.file);
++	}
+ 	sb_end_write(inode->i_sb);
+ out_putf:
+ 	fdput(f);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f523b1db48c4..bfcfa3d7374f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2610,8 +2610,8 @@ struct filename {
+ static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
  
- #ifdef CONFIG_UNIX98_PTYS
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index a4bb992623c4..42dbe4c2653a 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -68,8 +68,14 @@ extern struct dentry *kern_path_locked(const char *, struct path *);
- 
- extern struct dentry *try_lookup_one_len(const char *, struct dentry *, int);
- extern struct dentry *lookup_one_len(const char *, struct dentry *, int);
-+extern struct dentry *lookup_one_len_mapped(const char *, struct dentry *, int,
-+					struct user_namespace *);
- extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
-+extern struct dentry *lookup_one_len_mapped_unlocked(const char *, struct dentry *,
-+						 int, struct user_namespace *);
- extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int);
-+extern struct dentry *lookup_positive_mapped_unlocked(const char *, struct dentry *,
-+						  int, struct user_namespace *);
- 
- extern int follow_down_one(struct path *);
- extern int follow_down(struct path *);
+ extern long vfs_truncate(const struct path *, loff_t);
+-extern int do_truncate(struct dentry *, loff_t start, unsigned int time_attrs,
+-		       struct file *filp);
++extern int do_truncate(struct user_namespace *, struct dentry *, loff_t start,
++		       unsigned int time_attrs, struct file *filp);
+ extern int vfs_fallocate(struct file *file, int mode, loff_t offset,
+ 			loff_t len);
+ extern long do_sys_open(int dfd, const char __user *filename, int flags,
 -- 
 2.29.0
 
