@@ -2,67 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D08929EAF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 12:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19CB829ECCD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 14:24:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725770AbgJ2Lso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 07:48:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25230 "EHLO
+        id S1727004AbgJ2NX7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 09:23:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37526 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725601AbgJ2Lso (ORCPT
+        by vger.kernel.org with ESMTP id S1725554AbgJ2NX7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 07:48:44 -0400
+        Thu, 29 Oct 2020 09:23:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603972123;
+        s=mimecast20190719; t=1603977838;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e3eO78q+9r1W8jjiRsy6XEsZ6AJ4ydkuDrUHxryN5JM=;
-        b=CU9xiqtacnbtZv0/GtVLmOHAdaidFP5qOc43DiqmBKRIFrvZeYq6FNbMTrB9WHShU3e2t5
-        ugLZUfURau+n93AlaC+LrYjZzB1v19/wrvvqc50Anh/TkKrTDTr5+XumShv9BLIcwYyONI
-        mge3hABV4s3ah1kZNoOFWyu/E0iVijE=
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=qfgXUPg8o+db+z0aYzq++pRsh1Ln28O6z6C8zbe7Ul4=;
+        b=VROyJ6TaA+Z9amVxysGw4OlRLnC8RnA9b8SFMUJ7Ho1UOWO/E+1o6aBnZoQTw/PJisklJ1
+        GXG5+t82v8irc2m0VtmbZQ983oetLyw+4JX3qiYKYXMcZuz945e88I0pPM05uwYUspOJX0
+        ycC1xBnUpdHR/fvaSnQfyk3iAT+BN4Y=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-457-j-klzaLdOVu3MhWyzwxHbg-1; Thu, 29 Oct 2020 07:48:41 -0400
-X-MC-Unique: j-klzaLdOVu3MhWyzwxHbg-1
+ us-mta-31-OrdeR1mdOmSX2rerw3M2lw-1; Thu, 29 Oct 2020 09:23:55 -0400
+X-MC-Unique: OrdeR1mdOmSX2rerw3M2lw-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0AD818015FD;
-        Thu, 29 Oct 2020 11:48:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E82085C1D0;
-        Thu, 29 Oct 2020 11:48:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <160392383297.592578.14698271215668067643.stgit@warthog.procyon.org.uk>
-References: <160392383297.592578.14698271215668067643.stgit@warthog.procyon.org.uk> <160392375589.592578.13383738325695138512.stgit@warthog.procyon.org.uk>
-To:     linux-afs@lists.infradead.org
-Cc:     dhowells@redhat.com, kernel test robot <lkp@intel.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K pages
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E64BBB7D7A;
+        Thu, 29 Oct 2020 13:23:26 +0000 (UTC)
+Received: from bfoster.redhat.com (ovpn-113-186.rdu2.redhat.com [10.10.113.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 892A95C1C4;
+        Thu, 29 Oct 2020 13:23:26 +0000 (UTC)
+From:   Brian Foster <bfoster@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-xfs@vger.kernel.org
+Subject: [PATCH v2 0/3] misc iomap/xfs writeback fixes
+Date:   Thu, 29 Oct 2020 09:23:22 -0400
+Message-Id: <20201029132325.1663790-1-bfoster@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <957372.1603972118.1@warthog.procyon.org.uk>
-Date:   Thu, 29 Oct 2020 11:48:38 +0000
-Message-ID: <957373.1603972118@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+Hi all,
 
-> +static inline unsigned int afs_page_dirty_resolution(void)
-> +{
-> +	long shift = PAGE_SHIFT - (__AFS_PAGE_PRIV_SHIFT - 1);
+Patch 1 is actually a repost of the original fix I posted[1] for the
+truncate down zeroing issue. Patch 2 has some minor tweaks based on
+feedback on v1 from Christoph. Patch 3 is new and fixes up some of the
+remaining broken iomap writepage error handling logic (also discussed in
+the v1 thread). Thoughts, reviews, flames appreciated.
 
-This should be int, not long, in case we get an explicitly unsigned int number
-included in the mix (say from thp_order() with THP support).
+Brian 
 
-David
+v2:
+- Repost original XFS truncate down post-EOF zeroing fix.
+- Pass file offset to iomap ->discard_page() callback.
+- Add patch 3 to fix up iomap writepage error handling.
+v1: https://lore.kernel.org/linux-xfs/20201026182019.1547662-1-bfoster@redhat.com/
+
+[1] https://lore.kernel.org/linux-xfs/20201007143509.669729-1-bfoster@redhat.com/
+
+Brian Foster (3):
+  xfs: flush new eof page on truncate to avoid post-eof corruption
+  iomap: support partial page discard on writeback block mapping failure
+  iomap: clean up writeback state logic on writepage error
+
+ fs/iomap/buffered-io.c | 30 ++++++++++--------------------
+ fs/xfs/xfs_aops.c      | 13 +++++++------
+ fs/xfs/xfs_iops.c      | 10 ++++++++++
+ include/linux/iomap.h  |  2 +-
+ 4 files changed, 28 insertions(+), 27 deletions(-)
+
+-- 
+2.25.4
 
