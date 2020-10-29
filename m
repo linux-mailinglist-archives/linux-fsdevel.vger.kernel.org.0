@@ -2,190 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E62A529EFDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 16:29:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0D7829EFF4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 16:31:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728130AbgJ2P2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 11:28:48 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:32818 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbgJ2P1Y (ORCPT
+        id S1728316AbgJ2PbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 11:31:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728307AbgJ2PbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 11:27:24 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09TFOcuq055985;
-        Thu, 29 Oct 2020 15:27:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=atVFzhCtRcsiKz5qcSAB5nU5EeNr15pPi2dswRrrrWQ=;
- b=n9dvwzXAHLER37KPbRmgvFcRdaM8/xF1yenMo4cZ1MxbYpSmTN0d2aYTUbA4b73KLMhO
- Z0q7pSOM8ADOASsTqcYgrrLeQVR1eEYkGZ2SS4dyUCO+6eG0J7U41mxBq0DW708B/lsW
- RXFWMHeWtBgOivUkXVyiySgMdzeW35/bcTz7gTVkMAd0Ssmem2w3aWUsJGPxUQLQryTe
- 8eAh5CPrr285Gx7AAzEsI1ZWEpyp5ht/WwHqMPUf4Xz6wgQj+CkjRzF3gFm8BJZOcGZw
- 7EvKexAeTIa1E3ESqQ0T5eFQ9Ohzk2dWf2Cgs7zxc+prhBgDUwl9NLEWittJe2KDWGzg Xg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 34dgm4b3xb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 29 Oct 2020 15:27:20 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09TFQBki063077;
-        Thu, 29 Oct 2020 15:27:19 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 34cx60muxp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Oct 2020 15:27:19 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 09TFRJmL004620;
-        Thu, 29 Oct 2020 15:27:19 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Oct 2020 08:27:18 -0700
-Date:   Thu, 29 Oct 2020 08:27:18 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] iomap: support partial page discard on writeback
- block mapping failure
-Message-ID: <20201029152718.GK1061252@magnolia>
-References: <20201029132325.1663790-1-bfoster@redhat.com>
- <20201029132325.1663790-3-bfoster@redhat.com>
+        Thu, 29 Oct 2020 11:31:00 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C6F4C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 08:21:07 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id r1so1698608vsi.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 08:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G2vNhDEm3HbJWwlXQvfrqMnwz+Y6hXypKtoqXX91090=;
+        b=ZeVFlYxbfCuY/CTkTlqJNy9tAAAQX1+083ZdKCIa7x1FWR21+Plm1CPrBsd03fL+a1
+         9kxhuhqHA5xuykUmXmhTjs+dynTESM5EFHJjUSvzEMHqzuKqmcs6r4xBJiNaMTBnPwr9
+         M9dts4aQTunZ21ku0hMwe6NKyEo9QpURz2Z28=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G2vNhDEm3HbJWwlXQvfrqMnwz+Y6hXypKtoqXX91090=;
+        b=bvU+EQPxYxfTmDrqRlUbaUyHOluVEzANGObwsK8JCneO6MG+wqFFop3Z2TNN62ebIJ
+         kQuLSw6SpgtahBtDZ6Fq+FG75n4f3+6wxPr/WAgyguJQ1myvTUt/vllvr0su1F3UsZv7
+         kRl+uboMnAomFRVYK43AjUx/DZruz+R5lzVRqoTlciQmY8pAwfOQ5uhNDmsg7ILOCReD
+         v9VedZuKF7Dsnjjm7ZIn2J8lLVLAnu+gZk6a/oTxcO1zSkzejsH+JF2NjOzUKJp6AslJ
+         yN7tLiyfgO+XF5+/0uT5YbDA+Txo1+IJF05CAiyNBh7Yc1e2rHUDF3JX77ZOLesT6jfn
+         M9kg==
+X-Gm-Message-State: AOAM5317yup4iBZ5ZQJD4KTjBOzETp0GuYbD4q9Dmh62mES7kn4Bw6UI
+        xbIqqLciL05NPieaEWgeuTjqj1Fd6nEp1zrVU2YN8A==
+X-Google-Smtp-Source: ABdhPJyPUNHkn7dNetro3OoklJYl1bWTjUQtaDqS1cgdmcB2snVQpIK+qd+2mZzS1qZQtfW6kHTw+C8nB2PbP9ucmKI=
+X-Received: by 2002:a67:1442:: with SMTP id 63mr3605467vsu.0.1603984866514;
+ Thu, 29 Oct 2020 08:21:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201029132325.1663790-3-bfoster@redhat.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9788 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=1 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010290111
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9788 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 bulkscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- suspectscore=1 clxscore=1015 mlxscore=0 malwarescore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010290111
+References: <c4cb4b41655bc890b9dbf40bd2c133cbcbef734d.camel@redhat.com> <89f0dbf6713ebd44ec519425e3a947e71f7aed55.camel@redhat.com>
+In-Reply-To: <89f0dbf6713ebd44ec519425e3a947e71f7aed55.camel@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 29 Oct 2020 16:20:55 +0100
+Message-ID: <CAJfpegv4jLewQ4G_GdxraTE8fGHy7-d52gPSi4ZAOp0N4aYJnw@mail.gmail.com>
+Subject: Re: WARN_ON(fuse_insert_writeback(root, wpa)) in tree_insert()
+To:     Qian Cai <cai@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>
+Content-Type: multipart/mixed; boundary="00000000000031f1b005b2d0d437"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 09:23:24AM -0400, Brian Foster wrote:
-> iomap writeback mapping failure only calls into ->discard_page() if
-> the current page has not been added to the ioend. Accordingly, the
-> XFS callback assumes a full page discard and invalidation. This is
-> problematic for sub-page block size filesystems where some portion
-> of a page might have been mapped successfully before a failure to
-> map a delalloc block occurs. ->discard_page() is not called in that
-> error scenario and the bio is explicitly failed by iomap via the
-> error return from ->prepare_ioend(). As a result, the filesystem
-> leaks delalloc blocks and corrupts the filesystem block counters.
-> 
-> Since XFS is the only user of ->discard_page(), tweak the semantics
-> to invoke the callback unconditionally on mapping errors and provide
-> the file offset that failed to map. Update xfs_discard_page() to
-> discard the corresponding portion of the file and pass the range
-> along to iomap_invalidatepage(). The latter already properly handles
-> both full and sub-page scenarios by not changing any iomap or page
-> state on sub-page invalidations.
-> 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->  fs/iomap/buffered-io.c | 15 ++++++++-------
->  fs/xfs/xfs_aops.c      | 13 +++++++------
->  include/linux/iomap.h  |  2 +-
->  3 files changed, 16 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index bcfc288dba3f..d1f04eabc7e4 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1412,14 +1412,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->  	 * appropriately.
->  	 */
->  	if (unlikely(error)) {
-> +		/*
-> +		 * Let the filesystem know what portion of the current page
-> +		 * failed to map. If the page wasn't been added to ioend, it
-> +		 * won't be affected by I/O completion and we must unlock it
-> +		 * now.
-> +		 */
-> +		if (wpc->ops->discard_page)
-> +			wpc->ops->discard_page(page, file_offset);
->  		if (!count) {
-> -			/*
-> -			 * If the current page hasn't been added to ioend, it
-> -			 * won't be affected by I/O completions and we must
-> -			 * discard and unlock it right here.
-> -			 */
-> -			if (wpc->ops->discard_page)
-> -				wpc->ops->discard_page(page);
->  			ClearPageUptodate(page);
->  			unlock_page(page);
->  			goto done;
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index b35611882ff9..46920c530b20 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -527,13 +527,14 @@ xfs_prepare_ioend(
->   */
->  static void
->  xfs_discard_page(
-> -	struct page		*page)
-> +	struct page		*page,
-> +	loff_t			fileoff)
->  {
->  	struct inode		*inode = page->mapping->host;
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> -	loff_t			offset = page_offset(page);
-> -	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, offset);
-> +	unsigned int		pageoff = offset_in_page(fileoff);
-> +	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, fileoff);
->  	int			error;
->  
->  	if (XFS_FORCED_SHUTDOWN(mp))
-> @@ -541,14 +542,14 @@ xfs_discard_page(
->  
->  	xfs_alert_ratelimited(mp,
->  		"page discard on page "PTR_FMT", inode 0x%llx, offset %llu.",
-> -			page, ip->i_ino, offset);
-> +			page, ip->i_ino, fileoff);
->  
->  	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> -			PAGE_SIZE / i_blocksize(inode));
-> +			(PAGE_SIZE - pageoff) / i_blocksize(inode));
+--00000000000031f1b005b2d0d437
+Content-Type: text/plain; charset="UTF-8"
 
-Er... could you rebase this against 5.10-rc1, please?  willy changed
-that line to not use PAGE_SIZE directly.
+On Thu, Oct 29, 2020 at 4:02 PM Qian Cai <cai@redhat.com> wrote:
+>
+> On Wed, 2020-10-07 at 16:08 -0400, Qian Cai wrote:
+> > Running some fuzzing by a unprivileged user on virtiofs could trigger the
+> > warning below. The warning was introduced not long ago by the commit
+> > c146024ec44c ("fuse: fix warning in tree_insert() and clean up writepage
+> > insertion").
+> >
+> > From the logs, the last piece of the fuzzing code is:
+> >
+> > fgetxattr(fd=426, name=0x7f39a69af000, value=0x7f39a8abf000, size=1)
+>
+> I can still reproduce it on today's linux-next. Any idea on how to debug it
+> further?
 
-I /think/ the way to resolve the merge conflict here is to change this
-last argument to:
+Can you please try the attached patch?
 
-(i_blocks_per_page(page) - pageoff) / i_blocksize(inode)
+Thanks,
+Miklos
 
---D
+--00000000000031f1b005b2d0d437
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="fuse-launder-page-should-wait-for-page-writeback.patch"
+Content-Disposition: attachment; 
+	filename="fuse-launder-page-should-wait-for-page-writeback.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kguz5cjv0>
+X-Attachment-Id: f_kguz5cjv0
 
->  	if (error && !XFS_FORCED_SHUTDOWN(mp))
->  		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
->  out_invalidate:
-> -	iomap_invalidatepage(page, 0, PAGE_SIZE);
-> +	iomap_invalidatepage(page, pageoff, PAGE_SIZE - pageoff);
->  }
->  
->  static const struct iomap_writeback_ops xfs_writeback_ops = {
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 4d1d3c3469e9..36e0ab19210a 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -220,7 +220,7 @@ struct iomap_writeback_ops {
->  	 * Optional, allows the file system to discard state on a page where
->  	 * we failed to submit any I/O.
->  	 */
-> -	void (*discard_page)(struct page *page);
-> +	void (*discard_page)(struct page *page, loff_t fileoff);
->  };
->  
->  struct iomap_writepage_ctx {
-> -- 
-> 2.25.4
-> 
+ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZmlsZS5jIGIvZnMvZnVzZS9maWxlLmMKaW5kZXggYzAzMDM0
+ZThjMTUyLi40MWIxZTE0ZjM4MjAgMTAwNjQ0Ci0tLSBhL2ZzL2Z1c2UvZmlsZS5jCisrKyBiL2Zz
+L2Z1c2UvZmlsZS5jCkBAIC0yMjgxLDYgKzIyODEsOSBAQCBzdGF0aWMgaW50IGZ1c2VfbGF1bmRl
+cl9wYWdlKHN0cnVjdCBwYWdlICpwYWdlKQogCWludCBlcnIgPSAwOwogCWlmIChjbGVhcl9wYWdl
+X2RpcnR5X2Zvcl9pbyhwYWdlKSkgewogCQlzdHJ1Y3QgaW5vZGUgKmlub2RlID0gcGFnZS0+bWFw
+cGluZy0+aG9zdDsKKworCQkvKiBTZXJpYWxpemUgd2l0aCBwZW5kaW5nIHdyaXRlYmFjayBmb3Ig
+dGhlIHNhbWUgcGFnZSAqLworCQlmdXNlX3dhaXRfb25fcGFnZV93cml0ZWJhY2soaW5vZGUsIHBh
+Z2UtPmluZGV4KTsKIAkJZXJyID0gZnVzZV93cml0ZXBhZ2VfbG9ja2VkKHBhZ2UpOwogCQlpZiAo
+IWVycikKIAkJCWZ1c2Vfd2FpdF9vbl9wYWdlX3dyaXRlYmFjayhpbm9kZSwgcGFnZS0+aW5kZXgp
+Owo=
+--00000000000031f1b005b2d0d437--
