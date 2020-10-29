@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 006C629ED01
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 14:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A610529ED43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 14:43:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbgJ2NfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 09:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56678 "EHLO
+        id S1727487AbgJ2Nmd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 09:42:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgJ2NfF (ORCPT
+        with ESMTP id S1727470AbgJ2Nmc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 09:35:05 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9884C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 06:35:01 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id w1so2808819wrm.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 06:35:01 -0700 (PDT)
+        Thu, 29 Oct 2020 09:42:32 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72481C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 06:42:25 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id w1so2835096wrm.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 06:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KpTzlVayUqmIgARPOMPHIPf+pVQBXZ57u27MnCRyRl4=;
-        b=bHBQYcj8neeWwxu6NrAHcOkwrOtEZGmaAjWKrh8jI1JhyZORzyCnXt3On6YqLd0N6p
-         tErqMaeHRpKVhnOsWX3ipgXBeAanJDaLg2D8M4OQev81G0DQIHUklusbFlwpETgl05pA
-         9uzcGGNCaO4+1Zg9YIBIK8jKoXD+ErnUL7DN3jIGsEqoYlvUdmyR609Qw/hR5IczuWjV
-         VOAARd7lzT6kY3GvtELMpY3LsYW8LByBImUhKXyPeXliSUfxfhqOAPaLA5/E3P/6e0Cw
-         EAEc+4wV66ab4E6oPsOs9CQKokMSZ7Skmwwz6q3RzYKcpQ3sF5XwenicLyIEirLdcuLc
-         LAJw==
+        bh=2sP4gGJw9r+NchdLRSOmNItoBGxNPh2amTUBIn7g1jk=;
+        b=u91kGQbepRwV6CBnVlOo0b3Ay7d1EQjInWPDaaj4wkoOWUdXCTegxWaE3ozKnEknUB
+         +eYQOPliDFDGe80DJ/8LITnX6yLVfq8u7VFgkdgLmvf80pGeEyBiRuILrAkce9CwKmMP
+         ZSY6JlkFzTNHrTvnmYu/d643GMWgnWY7jCLoUDvXYUapiXviuOdxZR81vsfu5y57B6Z0
+         8UkMQ/wNdD/r963I3Kh+77LgbrWItHBm+eBdbeFb6184nZ8LBMH/92yDE7rli3UzGcCz
+         zx8zJLy44lTPIJ465U32VxI9n9tPWlXzfTJBOB8Bxsq9UAgyvcuWLj6du6M2jyOr8FLD
+         36uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KpTzlVayUqmIgARPOMPHIPf+pVQBXZ57u27MnCRyRl4=;
-        b=rpni5LZeJklKKYTBGcsJCMbi5D9/ZNN8qfSA8PsvQvOiNvn31U7oAd8wAJpD2s4SdJ
-         XlMVEg+Y9Rn46BQSrSd4X3lQiXvrSF5Ib5UYtQ1vRY9vH8OmM1Y3GjpVPTALQ/ao/nt9
-         cdWELK0MJkoRCodrkw+w/f5F/nxYJPwY5XRDD6LuRVjjJbErXeXDrUD9zDNPH+/n5bs3
-         IgVyjdxghCtbCKqA+utv6UaIxz15MRd4tzMD+FNF+wJIAOxoewj85G89IkPT+jlfc40z
-         e1TBkD25kjeyp4ycNwCWDWFx6kvb0t10/qaoOdT2z+0nHBbdecTBSEXDTpLFGRJSwKs2
-         K0kQ==
-X-Gm-Message-State: AOAM533L9hPI9TpC8Pf7U5Ox6j6AO5AbeRJeeUsd5bRKtSBwLgzF2tD+
-        q9rgBfUL+/gf7l8FTH2u6vnVDFNQL/A2Zf8CDOOxPw==
-X-Google-Smtp-Source: ABdhPJzoa2kj33P5RHtMoZgDs5yNcjZnapoviF7YdfZYL3bAMykZSBtyBQnjKWARVTGdeTQXxtRcORTM2XC5tC0dDY8=
-X-Received: by 2002:a5d:69d1:: with SMTP id s17mr5830591wrw.398.1603978500435;
- Thu, 29 Oct 2020 06:35:00 -0700 (PDT)
+        bh=2sP4gGJw9r+NchdLRSOmNItoBGxNPh2amTUBIn7g1jk=;
+        b=EGxYRY8JYOpOY1a8/XCH65DjLyRhp/VF0Aek93HKFHYEeZRJDQkrTOLhjUKSdpdb9y
+         0ZgJitSvKzGVG6HVm9Dd18kAxjIAlxCAgGmKrePHVIp+JT9vZFqrBPrfY0oGy+Zp3qi4
+         g1K1zmVfnIjOUAheuEOVPM9TV2unDNdVIHOPYYDYMbqCcdUg7yPSrCLhjwIGwN+UDzIR
+         mCCtrhkNZiXXkLVHDbvDx1E2ut79r+vR84kUdZQEBN9gH8vSNXoWCHOVl9mw5fuL1uu9
+         SSkzStOU1Ds/XktYHW5BLWjfH8yQfbMXrEMIaurG1NIbGaSI5GfozhYOB+T4HWZrskCG
+         abaQ==
+X-Gm-Message-State: AOAM532k2HUATdUwV4ZfYyPCnFDD3FbP/VB0RuhP9wJFOnHJA+sxNcUp
+        CLHTp84IcUfVCBL1ys0AM6mU5+OsCujgkq4oQxJ+0g==
+X-Google-Smtp-Source: ABdhPJxlhKZ1GF2ca/c147WlPJkNLJQNEKvj7ya7bC4/MHkljcImyn5PVlyfBmI32r9hjW/QIf8ThBed7ik1ZNmL2wA=
+X-Received: by 2002:a5d:69d1:: with SMTP id s17mr5870417wrw.398.1603978944137;
+ Thu, 29 Oct 2020 06:42:24 -0700 (PDT)
 MIME-Version: 1.0
 References: <20201026145114.59424-1-songmuchun@bytedance.com>
- <20201026145114.59424-4-songmuchun@bytedance.com> <20201029102913.GA31881@linux>
-In-Reply-To: <20201029102913.GA31881@linux>
+ <20201026145114.59424-5-songmuchun@bytedance.com> <20201029132621.GA2842@linux>
+In-Reply-To: <20201029132621.GA2842@linux>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 29 Oct 2020 21:34:22 +0800
-Message-ID: <CAMZfGtVrKrvn0J7jVYjppRv_mF3y-e8RnL7aQRsqPLjfXH8T5Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2 03/19] mm/hugetlb: Introduce a new
- config HUGETLB_PAGE_FREE_VMEMMAP
+Date:   Thu, 29 Oct 2020 21:41:46 +0800
+Message-ID: <CAMZfGtWr94M0_MgBYzMX=OmHx+1s9VWCGLGzVMU38Cp-bmBk5g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v2 04/19] mm/hugetlb: Introduce
+ nr_free_vmemmap_pages in the struct hstate
 To:     Oscar Salvador <osalvador@suse.de>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
@@ -76,24 +76,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 6:29 PM Oscar Salvador <osalvador@suse.de> wrote:
+On Thu, Oct 29, 2020 at 9:26 PM Oscar Salvador <osalvador@suse.de> wrote:
 >
-> On Mon, Oct 26, 2020 at 10:50:58PM +0800, Muchun Song wrote:
-> > The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> > whether to enable the feature of freeing unused vmemmap associated
-> > with HugeTLB pages. Now only support x86.
+> On Mon, Oct 26, 2020 at 10:50:59PM +0800, Muchun Song wrote:
+> > If the size of hugetlb page is 2MB, we need 512 struct page structures
+> > (8 pages) to be associated with it. As far as I know, we only use the
+> > first 4 struct page structures.
 >
-> Why this needs to be a config thing?
-> If this space-memory-optimization does not come with a trade-off,
-> why does the user have to set this instead of coming by default?
+> As Mike pointed out, better describe what those "4" mean.
 
-Now we only support x86_64. If we want to support other archs. We
-need some arch special code to support this feature. In the future,
-if this patch series is merged to mainline, I will implement this
-optimization for other archs. At that time we can remove the
-HUGETLB_PAGE_FREE_VMEMMAP.
+Yeah, thanks.
 
-Thanks.
+>
+> > For tail pages, the value of compound_dtor is the same. So we can reuse
+>
+> I might be missing something, but HUGETLB_PAGE_DTOR is only set on the
+> first tail, right?
+
+Sorry for confusion. Here I mean the `compound_head` is the same.
+
+>
+> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> > +#define RESERVE_VMEMMAP_NR   2U
+>
+> Although you can get that from the changelog, maybe a brief comment explaining
+> why RESERVE_VMEMMAP_NR == 2.
+> > +
+> > +static inline unsigned int nr_free_vmemmap(struct hstate *h)
+> > +{
+> > +     return h->nr_free_vmemmap_pages;
+> > +}
+>
+> Better add this in the patch that is used?
+
+OK, I will do it. thanks.
+
+>
+> > +     if (vmemmap_pages > RESERVE_VMEMMAP_NR)
+> > +             h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
+> > +     else
+> > +             h->nr_free_vmemmap_pages = 0;
+>
+> Can we really have an scenario where we end up with vmemmap_pages < RESERVE_VMEMMAP_NR?
+
+I think that this is impossible. On the safe side, I do this comparison.
+Do you think we should remove this comparison? Is that right?
+
+>
+> > +
+> > +     pr_info("HugeTLB: can free %d vmemmap pages for %s\n",
+> > +             h->nr_free_vmemmap_pages, h->name);
+>
+> I do not think this is useful unless debugging situations, so I would either
+> scratch that or make it pr_debug.
+
+Thanks for your suggestions.
 
 >
 >
