@@ -2,133 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F8E29ECD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 14:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79DDF29ECD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 14:26:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725554AbgJ2NYI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 09:24:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48736 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727009AbgJ2NYH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 09:24:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603977846;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LIjuJOqsQwW30+SKQoN3FAByfEAXVCvb14GA26xjLV0=;
-        b=UWIs6dp1/7Jyp0IAo2coyUqRLbc2dWJpswQ0TODwLdDT/OCFYryQL7BcC9+YO6mumzhCZK
-        X7T7v8ECEP6qbY1pcQz5qcpWgJPGAaEtRc8BUGqgkS2lkVM9P41NsFpKYe9VNWkLm1XW1J
-        kaRL5XKHJcih0wDTjh1tEu7XAkg4/KY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-591-k5combDPNo2rN734D2XroQ-1; Thu, 29 Oct 2020 09:24:04 -0400
-X-MC-Unique: k5combDPNo2rN734D2XroQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 90681195D452;
-        Thu, 29 Oct 2020 13:23:28 +0000 (UTC)
-Received: from bfoster.redhat.com (ovpn-113-186.rdu2.redhat.com [10.10.113.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 333055C1C4;
-        Thu, 29 Oct 2020 13:23:28 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org
-Subject: [PATCH v2 3/3] iomap: clean up writeback state logic on writepage error
-Date:   Thu, 29 Oct 2020 09:23:25 -0400
-Message-Id: <20201029132325.1663790-4-bfoster@redhat.com>
-In-Reply-To: <20201029132325.1663790-1-bfoster@redhat.com>
-References: <20201029132325.1663790-1-bfoster@redhat.com>
+        id S1725771AbgJ2N0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 09:26:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49534 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725300AbgJ2N0c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 29 Oct 2020 09:26:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B47C4AC77;
+        Thu, 29 Oct 2020 13:26:30 +0000 (UTC)
+Date:   Thu, 29 Oct 2020 14:26:27 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 04/19] mm/hugetlb: Introduce nr_free_vmemmap_pages in
+ the struct hstate
+Message-ID: <20201029132621.GA2842@linux>
+References: <20201026145114.59424-1-songmuchun@bytedance.com>
+ <20201026145114.59424-5-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201026145114.59424-5-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The iomap writepage error handling logic is a mash of old and
-slightly broken XFS writepage logic. When keepwrite writeback state
-tracking was introduced in XFS in commit 0d085a529b42 ("xfs: ensure
-WB_SYNC_ALL writeback handles partial pages correctly"), XFS had an
-additional cluster writeback context that scanned ahead of
-->writepage() to process dirty pages over the current ->writepage()
-extent mapping. This context expected a dirty page and required
-retention of the TOWRITE tag on partial page processing so the
-higher level writeback context would revisit the page (in contrast
-to ->writepage(), which passes a page with the dirty bit already
-cleared).
+On Mon, Oct 26, 2020 at 10:50:59PM +0800, Muchun Song wrote:
+> If the size of hugetlb page is 2MB, we need 512 struct page structures
+> (8 pages) to be associated with it. As far as I know, we only use the
+> first 4 struct page structures.
 
-The cluster writeback mechanism was eventually removed and some of
-the error handling logic folded into the primary writeback path in
-commit 150d5be09ce4 ("xfs: remove xfs_cancel_ioend"). This patch
-accidentally conflated the two contexts by using the keepwrite logic
-in ->writepage() without accounting for the fact that the page is
-not dirty. Further, the keepwrite logic has no practical effect on
-the core ->writepage() caller (write_cache_pages()) because it never
-revisits a page in the current function invocation.
-
-Technically, the page should be redirtied for the keepwrite logic to
-have any effect. Otherwise, write_cache_pages() may find the tagged
-page but will skip it since it is clean. Even if the page was
-redirtied, however, there is still no practical effect to keepwrite
-since write_cache_pages() does not wrap around within a single
-invocation of the function. Therefore, the dirty page would simply
-end up retagged on the next writeback sequence over the associated
-range.
-
-All that being said, none of this really matters because redirtying
-a partially processed page introduces a potential infinite redirty
--> writeback failure loop that deviates from the current design
-principle of clearing the dirty state on writepage failure to avoid
-building up too much dirty, unreclaimable memory on the system.
-Therefore, drop the spurious keepwrite usage and dirty state
-clearing logic from iomap_writepage_map(), treat the partially
-processed page the same as a fully processed page, and let the
-imminent ioend failure clean up the writeback state.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/iomap/buffered-io.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index d1f04eabc7e4..e3a4568f6c2e 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1404,6 +1404,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
- 	WARN_ON_ONCE(!PageLocked(page));
- 	WARN_ON_ONCE(PageWriteback(page));
-+	WARN_ON_ONCE(PageDirty(page));
+As Mike pointed out, better describe what those "4" mean.
  
- 	/*
- 	 * We cannot cancel the ioend directly here on error.  We may have
-@@ -1425,21 +1426,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 			unlock_page(page);
- 			goto done;
- 		}
--
--		/*
--		 * If the page was not fully cleaned, we need to ensure that the
--		 * higher layers come back to it correctly.  That means we need
--		 * to keep the page dirty, and for WB_SYNC_ALL writeback we need
--		 * to ensure the PAGECACHE_TAG_TOWRITE index mark is not removed
--		 * so another attempt to write this page in this writeback sweep
--		 * will be made.
--		 */
--		set_page_writeback_keepwrite(page);
--	} else {
--		clear_page_dirty_for_io(page);
--		set_page_writeback(page);
- 	}
- 
-+	set_page_writeback(page);
- 	unlock_page(page);
- 
- 	/*
+> For tail pages, the value of compound_dtor is the same. So we can reuse
+
+I might be missing something, but HUGETLB_PAGE_DTOR is only set on the
+first tail, right?
+
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +#define RESERVE_VMEMMAP_NR	2U
+
+Although you can get that from the changelog, maybe a brief comment explaining
+why RESERVE_VMEMMAP_NR == 2.
+> +
+> +static inline unsigned int nr_free_vmemmap(struct hstate *h)
+> +{
+> +	return h->nr_free_vmemmap_pages;
+> +}
+
+Better add this in the patch that is used?
+
+> +	if (vmemmap_pages > RESERVE_VMEMMAP_NR)
+> +		h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
+> +	else
+> +		h->nr_free_vmemmap_pages = 0;
+
+Can we really have an scenario where we end up with vmemmap_pages < RESERVE_VMEMMAP_NR?
+
+> +
+> +	pr_info("HugeTLB: can free %d vmemmap pages for %s\n",
+> +		h->nr_free_vmemmap_pages, h->name);
+
+I do not think this is useful unless debugging situations, so I would either
+scratch that or make it pr_debug.
+
+
 -- 
-2.25.4
-
+Oscar Salvador
+SUSE L3
