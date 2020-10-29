@@ -2,127 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C62D29F0FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 17:15:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E870929F0C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 17:07:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbgJ2QPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 12:15:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbgJ2QPS (ORCPT
+        id S1725875AbgJ2QHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 12:07:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50135 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725814AbgJ2QHk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 12:15:18 -0400
-X-Greylist: delayed 611 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 29 Oct 2020 09:15:18 PDT
-Received: from gardel.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0BF6C0613CF;
-        Thu, 29 Oct 2020 09:15:18 -0700 (PDT)
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
-        by gardel.0pointer.net (Postfix) with ESMTP id 8D3CAE80409;
-        Thu, 29 Oct 2020 17:05:05 +0100 (CET)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id E22A4160834; Thu, 29 Oct 2020 17:05:03 +0100 (CET)
-Date:   Thu, 29 Oct 2020 17:05:02 +0100
-From:   Lennart Poettering <lennart@poettering.net>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-Message-ID: <20201029160502.GA333141@gardel-login>
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <87pn51ghju.fsf@x220.int.ebiederm.org>
+        Thu, 29 Oct 2020 12:07:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603987658;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0jJkX2CgkVafsxqj8d9NfHXlDKDCt+j6Kwpu97HKmos=;
+        b=F7Bz8HSBmpsc/M001/0VuUM9YaUH1AjJXSlwJVd0x3fSVQDH5B3IGyGXVLr8bQB7zoqlg4
+        sWU6wVVABwtZsr7bPqeEdRfdg8Fgu29lqAfesfffHlbld9anGc8YOA2LfUOtWCARPZ6bj5
+        MPY9VIE3yXOrmPAmT5yu992Gw796MVY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-405-AyGhRxkzMRa9nV6KJDjy_A-1; Thu, 29 Oct 2020 12:07:36 -0400
+X-MC-Unique: AyGhRxkzMRa9nV6KJDjy_A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 117F9809DF3;
+        Thu, 29 Oct 2020 16:07:35 +0000 (UTC)
+Received: from bfoster (ovpn-113-186.rdu2.redhat.com [10.10.113.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A1F960C17;
+        Thu, 29 Oct 2020 16:07:34 +0000 (UTC)
+Date:   Thu, 29 Oct 2020 12:07:32 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] iomap: support partial page discard on writeback
+ block mapping failure
+Message-ID: <20201029160732.GA1660404@bfoster>
+References: <20201029132325.1663790-1-bfoster@redhat.com>
+ <20201029132325.1663790-3-bfoster@redhat.com>
+ <20201029152718.GK1061252@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87pn51ghju.fsf@x220.int.ebiederm.org>
+In-Reply-To: <20201029152718.GK1061252@magnolia>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Do, 29.10.20 10:47, Eric W. Biederman (ebiederm@xmission.com) wrote:
+On Thu, Oct 29, 2020 at 08:27:18AM -0700, Darrick J. Wong wrote:
+> On Thu, Oct 29, 2020 at 09:23:24AM -0400, Brian Foster wrote:
+> > iomap writeback mapping failure only calls into ->discard_page() if
+> > the current page has not been added to the ioend. Accordingly, the
+> > XFS callback assumes a full page discard and invalidation. This is
+> > problematic for sub-page block size filesystems where some portion
+> > of a page might have been mapped successfully before a failure to
+> > map a delalloc block occurs. ->discard_page() is not called in that
+> > error scenario and the bio is explicitly failed by iomap via the
+> > error return from ->prepare_ioend(). As a result, the filesystem
+> > leaks delalloc blocks and corrupts the filesystem block counters.
+> > 
+> > Since XFS is the only user of ->discard_page(), tweak the semantics
+> > to invoke the callback unconditionally on mapping errors and provide
+> > the file offset that failed to map. Update xfs_discard_page() to
+> > discard the corresponding portion of the file and pass the range
+> > along to iomap_invalidatepage(). The latter already properly handles
+> > both full and sub-page scenarios by not changing any iomap or page
+> > state on sub-page invalidations.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 15 ++++++++-------
+> >  fs/xfs/xfs_aops.c      | 13 +++++++------
+> >  include/linux/iomap.h  |  2 +-
+> >  3 files changed, 16 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index bcfc288dba3f..d1f04eabc7e4 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -1412,14 +1412,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+> >  	 * appropriately.
+> >  	 */
+> >  	if (unlikely(error)) {
+> > +		/*
+> > +		 * Let the filesystem know what portion of the current page
+> > +		 * failed to map. If the page wasn't been added to ioend, it
+> > +		 * won't be affected by I/O completion and we must unlock it
+> > +		 * now.
+> > +		 */
+> > +		if (wpc->ops->discard_page)
+> > +			wpc->ops->discard_page(page, file_offset);
+> >  		if (!count) {
+> > -			/*
+> > -			 * If the current page hasn't been added to ioend, it
+> > -			 * won't be affected by I/O completions and we must
+> > -			 * discard and unlock it right here.
+> > -			 */
+> > -			if (wpc->ops->discard_page)
+> > -				wpc->ops->discard_page(page);
+> >  			ClearPageUptodate(page);
+> >  			unlock_page(page);
+> >  			goto done;
+> > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> > index b35611882ff9..46920c530b20 100644
+> > --- a/fs/xfs/xfs_aops.c
+> > +++ b/fs/xfs/xfs_aops.c
+> > @@ -527,13 +527,14 @@ xfs_prepare_ioend(
+> >   */
+> >  static void
+> >  xfs_discard_page(
+> > -	struct page		*page)
+> > +	struct page		*page,
+> > +	loff_t			fileoff)
+> >  {
+> >  	struct inode		*inode = page->mapping->host;
+> >  	struct xfs_inode	*ip = XFS_I(inode);
+> >  	struct xfs_mount	*mp = ip->i_mount;
+> > -	loff_t			offset = page_offset(page);
+> > -	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, offset);
+> > +	unsigned int		pageoff = offset_in_page(fileoff);
+> > +	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, fileoff);
+> >  	int			error;
+> >  
+> >  	if (XFS_FORCED_SHUTDOWN(mp))
+> > @@ -541,14 +542,14 @@ xfs_discard_page(
+> >  
+> >  	xfs_alert_ratelimited(mp,
+> >  		"page discard on page "PTR_FMT", inode 0x%llx, offset %llu.",
+> > -			page, ip->i_ino, offset);
+> > +			page, ip->i_ino, fileoff);
+> >  
+> >  	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+> > -			PAGE_SIZE / i_blocksize(inode));
+> > +			(PAGE_SIZE - pageoff) / i_blocksize(inode));
+> 
+> Er... could you rebase this against 5.10-rc1, please?  willy changed
+> that line to not use PAGE_SIZE directly.
+> 
 
-> Is that the use case you are looking at removing the need for
-> systemd-homed to avoid chowning after lugging encrypted home directories
-> from one system to another?  Why would it be desirable to avoid the
-> chown?
+Sure.. (note that there's still a PAGE_SIZE usage in the
+iomap_invalidatepage() call).
 
-Yes, I am very interested in seeing Christian's work succeed, for the
-usecase in systemd-homed. In systemd-homed each user gets their own
-private file system, and these fs shall be owned by the user's local
-UID, regardless in which system it is used. The UID should be an
-artifact of the local, individual system in this model, and thus
-the UID on of the same user/home on system A might be picked as 1010
-and on another as 1543, and on a third as 1323, and it shouldn't
-matter. This way, home directories become migratable without having to
-universially sync UID assignments: it doesn't matter anymore what the
-local UID is.
+> I /think/ the way to resolve the merge conflict here is to change this
+> last argument to:
+> 
+> (i_blocks_per_page(page) - pageoff) / i_blocksize(inode)
+> 
 
-Right now we do a recursive chown() at login time to ensure the home
-dir is properly owned. This has two disadvantages:
+Hmm... pageoff is bytes so that doesn't look quite right. How about
+something like this?
 
-1. It's slow. In particular on large home dirs, it takes a while to go
-   through the whole user's homedir tree and chown/adjust ACLs for
-   everything.
+	...
+	unsigned int            pageoff = offset_in_page(fileoff);
+	xfs_fileoff_t           pageoff_fsb = XFS_B_TO_FSBT(mp, pageoff);
 
-2. Because it is so slow we take a shortcut right now: if the
-   top-level home dir inode itself is owned by the correct user, we
-   skip the recursive chowning. This means in the typical case where a
-   user uses the same system most of the time, and thus the UID is
-   stable we can avoid the slowness. But this comes at a drawback: if
-   the user for some reason ends up with files in their homedir owned
-   by an unrelated user, then we'll never notice or readjust.
+	...
+        error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+				i_blocks_per_page(inode, page) - pageoff_fsb);
+	...
 
-> If the goal is to solve fragmented administration of uid assignment I
-> suggest that it might be better to solve the administration problem so
-> that all of the uids of interest get assigned the same way on all of the
-> systems of interest.
+Brian
 
-Well, the goal is to make things simple and be able to use the home
-dir everywhere without any prior preparation, without central UID
-assignment authority.
+> --D
+> 
+> >  	if (error && !XFS_FORCED_SHUTDOWN(mp))
+> >  		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
+> >  out_invalidate:
+> > -	iomap_invalidatepage(page, 0, PAGE_SIZE);
+> > +	iomap_invalidatepage(page, pageoff, PAGE_SIZE - pageoff);
+> >  }
+> >  
+> >  static const struct iomap_writeback_ops xfs_writeback_ops = {
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 4d1d3c3469e9..36e0ab19210a 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -220,7 +220,7 @@ struct iomap_writeback_ops {
+> >  	 * Optional, allows the file system to discard state on a page where
+> >  	 * we failed to submit any I/O.
+> >  	 */
+> > -	void (*discard_page)(struct page *page);
+> > +	void (*discard_page)(struct page *page, loff_t fileoff);
+> >  };
+> >  
+> >  struct iomap_writepage_ctx {
+> > -- 
+> > 2.25.4
+> > 
+> 
 
-The goal is to have a scheme that requires no administration, by
-making the UID management problem go away. Hence, if you suggest
-solving this by having a central administrative authority: this is
-exactly what the model wants to get away from.
-
-Or to say this differently: just because I personally use three
-different computers, I certainly don't want to set up LDAP or sync
-UIDs manually.
-
-Lennart
-
---
-Lennart Poettering, Berlin
