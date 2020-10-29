@@ -2,31 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8953E29F08C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 16:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C62D29F0FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 17:15:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbgJ2PwY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 11:52:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49850 "EHLO
+        id S1726367AbgJ2QPT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 12:15:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbgJ2PwX (ORCPT
+        with ESMTP id S1726195AbgJ2QPS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 11:52:23 -0400
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 462A0C0613CF;
-        Thu, 29 Oct 2020 08:52:23 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4CMVLs2MljzQl31;
-        Thu, 29 Oct 2020 16:52:21 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id pzROom4hCQJX; Thu, 29 Oct 2020 16:52:14 +0100 (CET)
-Date:   Fri, 30 Oct 2020 02:51:48 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
+        Thu, 29 Oct 2020 12:15:18 -0400
+X-Greylist: delayed 611 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 29 Oct 2020 09:15:18 PDT
+Received: from gardel.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0BF6C0613CF;
+        Thu, 29 Oct 2020 09:15:18 -0700 (PDT)
+Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
+        by gardel.0pointer.net (Postfix) with ESMTP id 8D3CAE80409;
+        Thu, 29 Oct 2020 17:05:05 +0100 (CET)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id E22A4160834; Thu, 29 Oct 2020 17:05:03 +0100 (CET)
+Date:   Thu, 29 Oct 2020 17:05:02 +0100
+From:   Lennart Poettering <lennart@poettering.net>
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -53,10 +49,9 @@ Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
         Jann Horn <jannh@google.com>,
         Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
         Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
         containers@lists.linux-foundation.org,
@@ -65,76 +60,69 @@ Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org
 Subject: Re: [PATCH 00/34] fs: idmapped mounts
-Message-ID: <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com>
+Message-ID: <20201029160502.GA333141@gardel-login>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
  <87pn51ghju.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kgfxsa7rlwd3wkqj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <87pn51ghju.fsf@x220.int.ebiederm.org>
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -3.91 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 6627F1700
-X-Rspamd-UID: 698b92
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Do, 29.10.20 10:47, Eric W. Biederman (ebiederm@xmission.com) wrote:
 
---kgfxsa7rlwd3wkqj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Is that the use case you are looking at removing the need for
+> systemd-homed to avoid chowning after lugging encrypted home directories
+> from one system to another?  Why would it be desirable to avoid the
+> chown?
 
-On 2020-10-29, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> writes:
->=20
-> > Hey everyone,
-> >
-> > I vanished for a little while to focus on this work here so sorry for
-> > not being available by mail for a while.
-> >
-> > Since quite a long time we have issues with sharing mounts between
-> > multiple unprivileged containers with different id mappings, sharing a
-> > rootfs between multiple containers with different id mappings, and also
-> > sharing regular directories and filesystems between users with different
-> > uids and gids. The latter use-cases have become even more important with
-> > the availability and adoption of systemd-homed (cf. [1]) to implement
-> > portable home directories.
->=20
-> Can you walk us through the motivating use case?
->=20
-> As of this year's LPC I had the distinct impression that the primary use
-> case for such a feature was due to the RLIMIT_NPROC problem where two
-> containers with the same users still wanted different uid mappings to
-> the disk because the users were conflicting with each other because of
-> the per user rlimits.
->=20
-> Fixing rlimits is straight forward to implement, and easier to manage
-> for implementations and administrators.
+Yes, I am very interested in seeing Christian's work succeed, for the
+usecase in systemd-homed. In systemd-homed each user gets their own
+private file system, and these fs shall be owned by the user's local
+UID, regardless in which system it is used. The UID should be an
+artifact of the local, individual system in this model, and thus
+the UID on of the same user/home on system A might be picked as 1010
+and on another as 1543, and on a third as 1323, and it shouldn't
+matter. This way, home directories become migratable without having to
+universially sync UID assignments: it doesn't matter anymore what the
+local UID is.
 
-This is separate to the question of "isolated user namespaces" and
-managing different mappings between containers. This patchset is solving
-the same problem that shiftfs solved -- sharing a single directory tree
-between containers that have different ID mappings. rlimits (nor any of
-the other proposals we discussed at LPC) will help with this problem.
+Right now we do a recursive chown() at login time to ensure the home
+dir is properly owned. This has two disadvantages:
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+1. It's slow. In particular on large home dirs, it takes a while to go
+   through the whole user's homedir tree and chown/adjust ACLs for
+   everything.
 
---kgfxsa7rlwd3wkqj
-Content-Type: application/pgp-signature; name="signature.asc"
+2. Because it is so slow we take a shortcut right now: if the
+   top-level home dir inode itself is owned by the correct user, we
+   skip the recursive chowning. This means in the typical case where a
+   user uses the same system most of the time, and thus the UID is
+   stable we can avoid the slowness. But this comes at a drawback: if
+   the user for some reason ends up with files in their homedir owned
+   by an unrelated user, then we'll never notice or readjust.
 
------BEGIN PGP SIGNATURE-----
+> If the goal is to solve fragmented administration of uid assignment I
+> suggest that it might be better to solve the administration problem so
+> that all of the uids of interest get assigned the same way on all of the
+> systems of interest.
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCX5rlEgAKCRCdlLljIbnQ
-EjiPAP9KREQ/2yXGdsYwcSMUpeqUj/wV1rG+UIzAlmjRSy5b2gEA+A5+ZdrAKLCh
-v+4J3Z/kM0lgTkLGg8Ib1D4QT/HGDQY=
-=Bh7P
------END PGP SIGNATURE-----
+Well, the goal is to make things simple and be able to use the home
+dir everywhere without any prior preparation, without central UID
+assignment authority.
 
---kgfxsa7rlwd3wkqj--
+The goal is to have a scheme that requires no administration, by
+making the UID management problem go away. Hence, if you suggest
+solving this by having a central administrative authority: this is
+exactly what the model wants to get away from.
+
+Or to say this differently: just because I personally use three
+different computers, I certainly don't want to set up LDAP or sync
+UIDs manually.
+
+Lennart
+
+--
+Lennart Poettering, Berlin
