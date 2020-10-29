@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FAC29DD80
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 01:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA82C29DD67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 01:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388790AbgJ2Aji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 20:39:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33327 "EHLO
+        id S2388692AbgJ2Ahk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 20:37:40 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33072 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388782AbgJ2AjH (ORCPT
+        with ESMTP id S1730313AbgJ2AgG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 20:39:07 -0400
+        Wed, 28 Oct 2020 20:36:06 -0400
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kXvuz-0008Ep-Kw; Thu, 29 Oct 2020 00:35:53 +0000
+        id 1kXvv1-0008Ep-CK; Thu, 29 Oct 2020 00:35:55 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -55,9 +55,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 24/34] would_dump: handle idmapped mounts
-Date:   Thu, 29 Oct 2020 01:32:42 +0100
-Message-Id: <20201029003252.2128653-25-christian.brauner@ubuntu.com>
+Subject: [PATCH 25/34] exec: handle idmapped mounts
+Date:   Thu, 29 Oct 2020 01:32:43 +0100
+Message-Id: <20201029003252.2128653-26-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
@@ -67,37 +67,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When determining whether or not to create a coredump the vfs will verify that
-the caller is privileged over the inode. Make the would_dump() helper handle
-idmapped mounts by passing down the mount's user namespace of the exec file.
+When executing a setuid binary the kernel will verify in bprm_fill_uid() that
+the inode has a mapping in the caller's user namespace before setting the
+callers uid and gid. Let bprm_fill_uid() handle idmapped mounts. If the inode
+is accessed through an idmapped mount it is mapped according to the mount's
+user namespace. Afterwards the checks are identical to non-idmapped mounts.On
+regular mounts this is a nop.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- fs/exec.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/exec.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 8e75d7a33514..76de175eeba8 100644
+index 76de175eeba8..cd11ab505a41 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1391,14 +1391,15 @@ EXPORT_SYMBOL(begin_new_exec);
- void would_dump(struct linux_binprm *bprm, struct file *file)
+@@ -1567,6 +1567,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
+ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
  {
- 	struct inode *inode = file_inode(file);
--	if (inode_permission(inode, MAY_READ) < 0) {
-+	struct user_namespace *ns = mnt_user_ns(file->f_path.mnt);
-+	if (mapped_inode_permission(ns, inode, MAY_READ) < 0) {
- 		struct user_namespace *old, *user_ns;
- 		bprm->interp_flags |= BINPRM_FLAGS_ENFORCE_NONDUMP;
+ 	/* Handle suid and sgid on files */
++	struct user_namespace *user_ns;
+ 	struct inode *inode;
+ 	unsigned int mode;
+ 	kuid_t uid;
+@@ -1583,13 +1584,15 @@ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
+ 	if (!(mode & (S_ISUID|S_ISGID)))
+ 		return;
  
- 		/* Ensure mm->user_ns contains the executable */
- 		user_ns = old = bprm->mm->user_ns;
- 		while ((user_ns != &init_user_ns) &&
--		       !privileged_wrt_inode_uidgid(user_ns, &init_user_ns, inode))
-+		       !privileged_wrt_inode_uidgid(user_ns, ns, inode))
- 			user_ns = user_ns->parent;
++	user_ns = mnt_user_ns(file->f_path.mnt);
++
+ 	/* Be careful if suid/sgid is set */
+ 	inode_lock(inode);
  
- 		if (old != user_ns) {
+ 	/* reload atomically mode/uid/gid now that lock held */
+ 	mode = inode->i_mode;
+-	uid = inode->i_uid;
+-	gid = inode->i_gid;
++	uid = i_uid_into_mnt(user_ns, inode);
++	gid = i_gid_into_mnt(user_ns, inode);
+ 	inode_unlock(inode);
+ 
+ 	/* We ignore suid/sgid if there are no mappings for them in the ns */
 -- 
 2.29.0
 
