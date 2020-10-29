@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66FFF29DE4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 01:53:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C6329DD31
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 01:35:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390627AbgJ2Axg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 20:53:36 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60626 "EHLO
+        id S1731947AbgJ2Afc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 20:35:32 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60632 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbgJ2Af2 (ORCPT
+        with ESMTP id S1730399AbgJ2Afa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 20:35:28 -0400
+        Wed, 28 Oct 2020 20:35:30 -0400
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kXvuU-0008Ep-1v; Thu, 29 Oct 2020 00:35:22 +0000
+        id 1kXvuV-0008Ep-OY; Thu, 29 Oct 2020 00:35:23 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -55,9 +55,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 06/34] fs: add id translation helpers
-Date:   Thu, 29 Oct 2020 01:32:24 +0100
-Message-Id: <20201029003252.2128653-7-christian.brauner@ubuntu.com>
+Subject: [PATCH 07/34] capability: handle idmapped mounts
+Date:   Thu, 29 Oct 2020 01:32:25 +0100
+Message-Id: <20201029003252.2128653-8-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
@@ -67,114 +67,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add simple helpers to make it easy to map kuids into and from idmapped
-mounts. We provide simple wrappers that filesystems can use to
-e.g. initialize inodes similar to i_{uid,gid}_read() and
-i_{uid,gid}_write(). Accessing an inode through an idmapped mount will
-require the inode to be mapped according to the mount's user namespace.
-If the fsids are used to compare against inodes or to initialize inodes
-they are required to be shifted from the mount's user namespace. Passing
-the initial user namespace to these helpers makes them a nop and so any
-non-idmapped paths will not be impacted.
+In order to determine whether a caller holds privilege over a given
+inode the capability framework exposes the two helpers
+privileged_wrt_inode_uidgid() and capable_wrt_inode_uidgid(). The former
+verifies that the inode has a mapping in the caller's user namespace and
+the latter additionally verifies that the caller has the requested
+capability in their current user namespace. If the inode is accessed
+through an idmapped mount we first need to map it according to the
+mount's user namespace. Afterwards the checks are identical to
+non-idmapped inodes. If the initial user namespace is passed all
+operations are a nop so non-idmapped mounts will not see a change in
+behavior and will also not see any performance impact.
+Since the privileged_wrt_inode_uidgid() helper only has one caller it
+makes more sense to simply add an additional user namespace argument and
+adapt the single callsite it is used in. The capable_wrt_inode_uidgid()
+helper is used in more places so we introduce a new
+capable_wrt_mapped_inode_uidgid() helper which can be used by the vfs.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- include/linux/fs.h | 75 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ fs/exec.c                  |  2 +-
+ include/linux/capability.h |  6 +++++-
+ kernel/capability.c        | 22 ++++++++++++++++------
+ 3 files changed, 22 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8314cd351673..8a891b80d0b4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -39,6 +39,7 @@
- #include <linux/fs_types.h>
- #include <linux/build_bug.h>
- #include <linux/stddef.h>
-+#include <linux/cred.h>
+diff --git a/fs/exec.c b/fs/exec.c
+index 547a2390baf5..8e75d7a33514 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1398,7 +1398,7 @@ void would_dump(struct linux_binprm *bprm, struct file *file)
+ 		/* Ensure mm->user_ns contains the executable */
+ 		user_ns = old = bprm->mm->user_ns;
+ 		while ((user_ns != &init_user_ns) &&
+-		       !privileged_wrt_inode_uidgid(user_ns, inode))
++		       !privileged_wrt_inode_uidgid(user_ns, &init_user_ns, inode))
+ 			user_ns = user_ns->parent;
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -1574,6 +1575,80 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
- 	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
+ 		if (old != user_ns) {
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 1e7fe311cabe..308d88096745 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -247,8 +247,12 @@ static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
+ 	return true;
+ }
+ #endif /* CONFIG_MULTIUSER */
+-extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode);
++extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++					struct user_namespace *mnt_user_ns,
++					const struct inode *inode);
+ extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
++extern bool capable_wrt_mapped_inode_uidgid(struct user_namespace *mnt_user_ns,
++					const struct inode *inode, int cap);
+ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
+ extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
+ static inline bool perfmon_capable(void)
+diff --git a/kernel/capability.c b/kernel/capability.c
+index de7eac903a2a..427776414487 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -484,12 +484,24 @@ EXPORT_SYMBOL(file_ns_capable);
+  *
+  * Return true if the inode uid and gid are within the namespace.
+  */
+-bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode)
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 struct user_namespace *mnt_user_ns,
++				 const struct inode *inode)
+ {
+-	return kuid_has_mapping(ns, inode->i_uid) &&
+-		kgid_has_mapping(ns, inode->i_gid);
++	return kuid_has_mapping(ns, i_uid_into_mnt(mnt_user_ns, inode)) &&
++	       kgid_has_mapping(ns, i_gid_into_mnt(mnt_user_ns, inode));
  }
  
-+static inline kuid_t kuid_into_mnt(struct user_namespace *to, kuid_t kuid)
++bool capable_wrt_mapped_inode_uidgid(struct user_namespace *mnt_user_ns,
++				 const struct inode *inode, int cap)
 +{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return make_kuid(to, __kuid_val(kuid));
-+#else
-+	return kuid;
-+#endif
-+}
++	struct user_namespace *ns = current_user_ns();
 +
-+static inline kgid_t kgid_into_mnt(struct user_namespace *to, kgid_t kgid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return make_kgid(to, __kgid_val(kgid));
-+#else
-+	return kgid;
-+#endif
++	return ns_capable(ns, cap) &&
++	       privileged_wrt_inode_uidgid(ns, mnt_user_ns, inode);
 +}
++EXPORT_SYMBOL(capable_wrt_mapped_inode_uidgid);
 +
-+static inline kuid_t i_uid_into_mnt(struct user_namespace *to,
-+				    const struct inode *inode)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kuid_into_mnt(to, inode->i_uid);
-+#else
-+	return inode->i_uid;
-+#endif
-+}
-+
-+static inline kgid_t i_gid_into_mnt(struct user_namespace *to,
-+				    const struct inode *inode)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kgid_into_mnt(to, inode->i_gid);
-+#else
-+	return inode->i_gid;
-+#endif
-+}
-+
-+static inline kuid_t kuid_from_mnt(struct user_namespace *to, kuid_t kuid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return KUIDT_INIT(from_kuid(to, kuid));
-+#else
-+	return kuid;
-+#endif
-+}
-+
-+static inline kgid_t kgid_from_mnt(struct user_namespace *to, kgid_t kgid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return KGIDT_INIT(from_kgid(to, kgid));
-+#else
-+	return kgid;
-+#endif
-+}
-+
-+static inline kuid_t fsuid_into_mnt(struct user_namespace *to)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kuid_from_mnt(to, current_fsuid());
-+#else
-+	return current_fsuid();
-+#endif
-+}
-+
-+static inline kgid_t fsgid_into_mnt(struct user_namespace *to)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kgid_from_mnt(to, current_fsgid());
-+#else
-+	return current_fsgid();
-+#endif
-+}
-+
- extern struct timespec64 current_time(struct inode *inode);
+ /**
+  * capable_wrt_inode_uidgid - Check nsown_capable and uid and gid mapped
+  * @inode: The inode in question
+@@ -501,9 +513,7 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *
+  */
+ bool capable_wrt_inode_uidgid(const struct inode *inode, int cap)
+ {
+-	struct user_namespace *ns = current_user_ns();
+-
+-	return ns_capable(ns, cap) && privileged_wrt_inode_uidgid(ns, inode);
++	return capable_wrt_mapped_inode_uidgid(&init_user_ns, inode, cap);
+ }
+ EXPORT_SYMBOL(capable_wrt_inode_uidgid);
  
- /*
 -- 
 2.29.0
 
