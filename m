@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7DD29E025
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 02:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A5D29E018
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 02:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732074AbgJ2BIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 21:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
+        id S2404257AbgJ2BHj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Oct 2020 21:07:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731684AbgJ2BGK (ORCPT
+        with ESMTP id S1732335AbgJ2BGR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 21:06:10 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB8AC0613D5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Oct 2020 18:06:08 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id d25so1244060ljc.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Oct 2020 18:06:08 -0700 (PDT)
+        Wed, 28 Oct 2020 21:06:17 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88E66C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Oct 2020 18:06:16 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id i6so1225730lfd.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Oct 2020 18:06:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=GGrU2z1MQIER/cvvO+UmfkeQMG5BianEcYdHiHe9qyQ=;
-        b=Ug/McNP55t1xm6mf6Z65dD0d/4XLutY+oae+4KAHg9dQk7Ug4H28uN0ZtA6M7NgpbT
-         I76xZ2T09J5d7Ybn9ysY9RjSdQylACxpwnNQDr/Whe2xhZiOlFqCT3OIsA9q6zLzDeCR
-         81KtjKOTYR80DEEdXwrEXNgjq/YrpBGqKd9yqxwWPNsE3aR79VfrgmiIiCuvt0LOqp4p
-         g9SdQ3WjkMfuDJcu5J+Ntpja9H+lqlKUJo2zM/NDZEiWEQKPOjO10MeAjoZ8CaD+3oKL
-         C211FUrW1ORwXJZC8XlCmBgNTqf5GZzQLzPlE4Pp9aFCrQeZrd63oWztHdhVhAjJQL1T
-         dF9w==
+        bh=bUbdsznkyssxZQUaGiYFef8NyYzvzo9ihU0AaJ53g/g=;
+        b=BDrxX4f+Wgvz7T2nQLENN+0irWwn/eNDmAKCTDCqH7wbKE23tfFJlUZmPAsdIVT6av
+         1Or1eDLwD4Ua1/VtLB9aLqgums1ThYkU6EoVz66waVy839CCdRQ4/jA5GhhAy7zJx4fP
+         lIOBOse97g1uBe2mm7vsNQdWsRKzB5bSgNBV7JJSa9s1KuspQmNoz02kO+9neBnMrIfH
+         9p9f4n15YsHkpW5CrApshNR4MlYwwrAZ2bcyzIfJFWhzAWKQIqVwpqwuGuD0xVKFI8YG
+         73ZcamzLaX7g3KVQHvBjBMxnmz2K2Y3WZoOLFQ4cjIZQPuTwsIYEU7TMMrzclXdPmFDT
+         MJYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GGrU2z1MQIER/cvvO+UmfkeQMG5BianEcYdHiHe9qyQ=;
-        b=Ysooqy7lKmEuWuW7BWdU1t4VeN6b03777mfK/8pnBW/3T6XN+x4UZfRV/uWFg8BJH4
-         s0ByuSSu3h6ZAvHfb0tQ1Etpxxnpqn6HHqxhKyt8YN9UT0qJsx0j+xJ7e6cVGte8/hQC
-         tzc8MhtUc+QzGiq6a8HKkGooNv99Q1/KG5diXdw4KV0jCjqDVKMomFWMn8cgZQHvMdgH
-         FrCFWAJ0vlBdZB1wovA/zQbEWD4YUQj+KztXlFR15goiWQDMj/RSZURdxd2l1WvmuVUE
-         qJIzfbIrNlZUF0t57NgKGbIHhb9tWkQaYB3Qpbcq1f3hmIsvtrBOyJaXtDmeHgaPFjss
-         JtSQ==
-X-Gm-Message-State: AOAM531PxEFSfG4X9+zAi9V09alwgnks3wU0PJ7Iv8s458395jjnEYxu
-        kbfalqZ0GbcF7KTaH5jfNalm3J+O3wv4/X1TRSePpQ==
-X-Google-Smtp-Source: ABdhPJwED9L0K+8kxvJCn6lQw5MHjDYLpGe4e16Gh7aY6DgACpmCDb7qbKA88fIn4deadsqcNqBfZ2vFqTocP7vkRyk=
-X-Received: by 2002:a2e:9f13:: with SMTP id u19mr725677ljk.160.1603933566252;
- Wed, 28 Oct 2020 18:06:06 -0700 (PDT)
+        bh=bUbdsznkyssxZQUaGiYFef8NyYzvzo9ihU0AaJ53g/g=;
+        b=oPtHXfM9OBnplg6+y5MvLroXaxidyKNuKN4QmeS6cG1+xdsMZqU3WSsJv+nJCVALf/
+         LE/iPE/H2ImMxc3hyUJHM/RjsGw/0rCqZM0yirC61R77AngqtM6g5GLhJrjoinig05l7
+         bOoA/AxD6d1mpJBX1/QVVyovLiATuIW9+ZIsqAPFU3ZEFzATYXnYolssiU9aL/xHCl/D
+         nA/gG36b4J4/VRLTuU641AGIjSSVSvADtX0eOKe31ziKn5edrFRuJ11W2AshHWg6dBiL
+         1coyDqATga+fDuP//p7iFQExootqVG1PQaW3RJkM5/ylyThgk0HMBtUxO4/vqK/KtPz5
+         49SQ==
+X-Gm-Message-State: AOAM533uEp12K/3Wu3B2qOawj4zUKVXfRuOfVYiJH01AD1j2eoBDpaqk
+        9nMp8U6hZNgXunX+r4ZwnWP65zU0DEM0nOsPZKMaEg==
+X-Google-Smtp-Source: ABdhPJzcgEeCZDlwnUhahSeOHzAbFOzhL6qDHJsbmuNSbxi7XgpEx/FS/YazDdtI2Qw49nUhEoyWwL1tVaMHgN9tVZA=
+X-Received: by 2002:a05:6512:1054:: with SMTP id c20mr662361lfb.576.1603933574802;
+ Wed, 28 Oct 2020 18:06:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201027200358.557003-1-mic@digikod.net>
-In-Reply-To: <20201027200358.557003-1-mic@digikod.net>
+References: <20201027200358.557003-1-mic@digikod.net> <20201027200358.557003-2-mic@digikod.net>
+In-Reply-To: <20201027200358.557003-2-mic@digikod.net>
 From:   Jann Horn <jannh@google.com>
-Date:   Thu, 29 Oct 2020 02:05:39 +0100
-Message-ID: <CAG48ez31oct9c8fkgFHQVb5u-o5cmwdNe2pJnmitnKcidNgfzw@mail.gmail.com>
-Subject: Re: [PATCH v22 00/12] Landlock LSM
+Date:   Thu, 29 Oct 2020 02:05:47 +0100
+Message-ID: <CAG48ez3CKa12SFHjVUPnYzJm2E7OBWnuh3JzVMrsvqdcMS1A8A@mail.gmail.com>
+Subject: Re: [PATCH v22 01/12] landlock: Add object management
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -75,7 +75,8 @@ Cc:     James Morris <jmorris@namei.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
         <linux-kselftest@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -84,13 +85,91 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Tue, Oct 27, 2020 at 9:04 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
 wrote:
-> This new patch series improves documentation, cleans up comments,
-> renames ARCH_EPHEMERAL_STATES to ARCH_EPHEMERAL_INODES and removes
-> LANDLOCK_ACCESS_FS_CHROOT.
+> A Landlock object enables to identify a kernel object (e.g. an inode).
+> A Landlock rule is a set of access rights allowed on an object.  Rules
+> are grouped in rulesets that may be tied to a set of processes (i.e.
+> subjects) to enforce a scoped access-control (i.e. a domain).
+>
+> Because Landlock's goal is to empower any process (especially
+> unprivileged ones) to sandbox themselves, we cannot rely on a
+> system-wide object identification such as file extended attributes.
+> Indeed, we need innocuous, composable and modular access-controls.
+>
+> The main challenge with these constraints is to identify kernel objects
+> while this identification is useful (i.e. when a security policy makes
+> use of this object).  But this identification data should be freed once
+> no policy is using it.  This ephemeral tagging should not and may not be
+> written in the filesystem.  We then need to manage the lifetime of a
+> rule according to the lifetime of its objects.  To avoid a global lock,
+> this implementation make use of RCU and counters to safely reference
+> objects.
+>
+> A following commit uses this generic object management for inodes.
+>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 
-Thanks for continuing to work on this! This is going to be really
-valuable for sandboxing.
+Reviewed-by: Jann Horn <jannh@google.com>
 
-I hadn't looked at this series for a while; but I've now read through
-it, and I don't see any major problems left. :) That said, there still
-are a couple small things...
+except for some minor nits:
+
+[...]
+> diff --git a/security/landlock/object.c b/security/landlock/object.c
+[...]
+> +void landlock_put_object(struct landlock_object *const object)
+> +{
+> +       /*
+> +        * The call to @object->underops->release(object) might sleep e.g=
+.,
+
+s/ e.g.,/, e.g./
+
+> +        * because of iput().
+> +        */
+> +       might_sleep();
+> +       if (!object)
+> +               return;
+[...]
+> +}
+> diff --git a/security/landlock/object.h b/security/landlock/object.h
+[...]
+> +struct landlock_object {
+> +       /**
+> +        * @usage: This counter is used to tie an object to the rules mat=
+ching
+> +        * it or to keep it alive while adding a new rule.  If this count=
+er
+> +        * reaches zero, this struct must not be modified, but this count=
+er can
+> +        * still be read from within an RCU read-side critical section.  =
+When
+> +        * adding a new rule to an object with a usage counter of zero, w=
+e must
+> +        * wait until the pointer to this object is set to NULL (or recyc=
+led).
+> +        */
+> +       refcount_t usage;
+> +       /**
+> +        * @lock: Guards against concurrent modifications.  This lock mus=
+t be
+
+s/must be/must be held/ ?
+
+> +        * from the time @usage drops to zero until any weak references f=
+rom
+> +        * @underobj to this object have been cleaned up.
+> +        *
+> +        * Lock ordering: inode->i_lock nests inside this.
+> +        */
+> +       spinlock_t lock;
+[...]
+> +};
+> +
+> +struct landlock_object *landlock_create_object(
+> +               const struct landlock_object_underops *const underops,
+> +               void *const underojb);
+
+nit: "underobj"
