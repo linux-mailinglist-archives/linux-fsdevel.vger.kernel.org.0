@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B7529ECD0
+	by mail.lfdr.de (Postfix) with ESMTP id A5F8E29ECD1
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 14:24:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbgJ2NYI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1725554AbgJ2NYI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 29 Oct 2020 09:24:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48066 "EHLO
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48736 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727005AbgJ2NYH (ORCPT
+        by vger.kernel.org with ESMTP id S1727009AbgJ2NYH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 29 Oct 2020 09:24:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603977845;
+        s=mimecast20190719; t=1603977846;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=OY8uEFwhhCpbmM11k5zwiPPtYztte7utm2kD/PT+in0=;
-        b=VS4DRljDQW9N4vzYofxoyU5XPq04PG5PrrPRJ/bx/YYUdzHzsJ8Cmea8I92kD0kxQOr0PS
-        XR5hchJMEtYwBSfUueuXiVh7Yaw8xQRqJOvngdL1jbsP/El/4LGRd/mlUQ8bRB9u6WO2pb
-        Md9KOm/ZXtXk0cW3E0goVYot1V1gn20=
+        bh=LIjuJOqsQwW30+SKQoN3FAByfEAXVCvb14GA26xjLV0=;
+        b=UWIs6dp1/7Jyp0IAo2coyUqRLbc2dWJpswQ0TODwLdDT/OCFYryQL7BcC9+YO6mumzhCZK
+        X7T7v8ECEP6qbY1pcQz5qcpWgJPGAaEtRc8BUGqgkS2lkVM9P41NsFpKYe9VNWkLm1XW1J
+        kaRL5XKHJcih0wDTjh1tEu7XAkg4/KY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-259-8bXqWVDLPUO2LkwtrbwbvA-1; Thu, 29 Oct 2020 09:24:03 -0400
-X-MC-Unique: 8bXqWVDLPUO2LkwtrbwbvA-1
+ us-mta-591-k5combDPNo2rN734D2XroQ-1; Thu, 29 Oct 2020 09:24:04 -0400
+X-MC-Unique: k5combDPNo2rN734D2XroQ-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1162B195D435;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 90681195D452;
         Thu, 29 Oct 2020 13:23:28 +0000 (UTC)
 Received: from bfoster.redhat.com (ovpn-113-186.rdu2.redhat.com [10.10.113.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 992245C63A;
-        Thu, 29 Oct 2020 13:23:27 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 333055C1C4;
+        Thu, 29 Oct 2020 13:23:28 +0000 (UTC)
 From:   Brian Foster <bfoster@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-xfs@vger.kernel.org
-Subject: [PATCH v2 2/3] iomap: support partial page discard on writeback block mapping failure
-Date:   Thu, 29 Oct 2020 09:23:24 -0400
-Message-Id: <20201029132325.1663790-3-bfoster@redhat.com>
+Subject: [PATCH v2 3/3] iomap: clean up writeback state logic on writepage error
+Date:   Thu, 29 Oct 2020 09:23:25 -0400
+Message-Id: <20201029132325.1663790-4-bfoster@redhat.com>
 In-Reply-To: <20201029132325.1663790-1-bfoster@redhat.com>
 References: <20201029132325.1663790-1-bfoster@redhat.com>
 MIME-Version: 1.0
@@ -49,111 +49,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iomap writeback mapping failure only calls into ->discard_page() if
-the current page has not been added to the ioend. Accordingly, the
-XFS callback assumes a full page discard and invalidation. This is
-problematic for sub-page block size filesystems where some portion
-of a page might have been mapped successfully before a failure to
-map a delalloc block occurs. ->discard_page() is not called in that
-error scenario and the bio is explicitly failed by iomap via the
-error return from ->prepare_ioend(). As a result, the filesystem
-leaks delalloc blocks and corrupts the filesystem block counters.
+The iomap writepage error handling logic is a mash of old and
+slightly broken XFS writepage logic. When keepwrite writeback state
+tracking was introduced in XFS in commit 0d085a529b42 ("xfs: ensure
+WB_SYNC_ALL writeback handles partial pages correctly"), XFS had an
+additional cluster writeback context that scanned ahead of
+->writepage() to process dirty pages over the current ->writepage()
+extent mapping. This context expected a dirty page and required
+retention of the TOWRITE tag on partial page processing so the
+higher level writeback context would revisit the page (in contrast
+to ->writepage(), which passes a page with the dirty bit already
+cleared).
 
-Since XFS is the only user of ->discard_page(), tweak the semantics
-to invoke the callback unconditionally on mapping errors and provide
-the file offset that failed to map. Update xfs_discard_page() to
-discard the corresponding portion of the file and pass the range
-along to iomap_invalidatepage(). The latter already properly handles
-both full and sub-page scenarios by not changing any iomap or page
-state on sub-page invalidations.
+The cluster writeback mechanism was eventually removed and some of
+the error handling logic folded into the primary writeback path in
+commit 150d5be09ce4 ("xfs: remove xfs_cancel_ioend"). This patch
+accidentally conflated the two contexts by using the keepwrite logic
+in ->writepage() without accounting for the fact that the page is
+not dirty. Further, the keepwrite logic has no practical effect on
+the core ->writepage() caller (write_cache_pages()) because it never
+revisits a page in the current function invocation.
+
+Technically, the page should be redirtied for the keepwrite logic to
+have any effect. Otherwise, write_cache_pages() may find the tagged
+page but will skip it since it is clean. Even if the page was
+redirtied, however, there is still no practical effect to keepwrite
+since write_cache_pages() does not wrap around within a single
+invocation of the function. Therefore, the dirty page would simply
+end up retagged on the next writeback sequence over the associated
+range.
+
+All that being said, none of this really matters because redirtying
+a partially processed page introduces a potential infinite redirty
+-> writeback failure loop that deviates from the current design
+principle of clearing the dirty state on writepage failure to avoid
+building up too much dirty, unreclaimable memory on the system.
+Therefore, drop the spurious keepwrite usage and dirty state
+clearing logic from iomap_writepage_map(), treat the partially
+processed page the same as a fully processed page, and let the
+imminent ioend failure clean up the writeback state.
 
 Signed-off-by: Brian Foster <bfoster@redhat.com>
 ---
- fs/iomap/buffered-io.c | 15 ++++++++-------
- fs/xfs/xfs_aops.c      | 13 +++++++------
- include/linux/iomap.h  |  2 +-
- 3 files changed, 16 insertions(+), 14 deletions(-)
+ fs/iomap/buffered-io.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index bcfc288dba3f..d1f04eabc7e4 100644
+index d1f04eabc7e4..e3a4568f6c2e 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1412,14 +1412,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	 * appropriately.
- 	 */
- 	if (unlikely(error)) {
-+		/*
-+		 * Let the filesystem know what portion of the current page
-+		 * failed to map. If the page wasn't been added to ioend, it
-+		 * won't be affected by I/O completion and we must unlock it
-+		 * now.
-+		 */
-+		if (wpc->ops->discard_page)
-+			wpc->ops->discard_page(page, file_offset);
- 		if (!count) {
--			/*
--			 * If the current page hasn't been added to ioend, it
--			 * won't be affected by I/O completions and we must
--			 * discard and unlock it right here.
--			 */
--			if (wpc->ops->discard_page)
--				wpc->ops->discard_page(page);
- 			ClearPageUptodate(page);
+@@ -1404,6 +1404,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
+ 	WARN_ON_ONCE(!PageLocked(page));
+ 	WARN_ON_ONCE(PageWriteback(page));
++	WARN_ON_ONCE(PageDirty(page));
+ 
+ 	/*
+ 	 * We cannot cancel the ioend directly here on error.  We may have
+@@ -1425,21 +1426,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
  			unlock_page(page);
  			goto done;
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index b35611882ff9..46920c530b20 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -527,13 +527,14 @@ xfs_prepare_ioend(
-  */
- static void
- xfs_discard_page(
--	struct page		*page)
-+	struct page		*page,
-+	loff_t			fileoff)
- {
- 	struct inode		*inode = page->mapping->host;
- 	struct xfs_inode	*ip = XFS_I(inode);
- 	struct xfs_mount	*mp = ip->i_mount;
--	loff_t			offset = page_offset(page);
--	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, offset);
-+	unsigned int		pageoff = offset_in_page(fileoff);
-+	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, fileoff);
- 	int			error;
+ 		}
+-
+-		/*
+-		 * If the page was not fully cleaned, we need to ensure that the
+-		 * higher layers come back to it correctly.  That means we need
+-		 * to keep the page dirty, and for WB_SYNC_ALL writeback we need
+-		 * to ensure the PAGECACHE_TAG_TOWRITE index mark is not removed
+-		 * so another attempt to write this page in this writeback sweep
+-		 * will be made.
+-		 */
+-		set_page_writeback_keepwrite(page);
+-	} else {
+-		clear_page_dirty_for_io(page);
+-		set_page_writeback(page);
+ 	}
  
- 	if (XFS_FORCED_SHUTDOWN(mp))
-@@ -541,14 +542,14 @@ xfs_discard_page(
++	set_page_writeback(page);
+ 	unlock_page(page);
  
- 	xfs_alert_ratelimited(mp,
- 		"page discard on page "PTR_FMT", inode 0x%llx, offset %llu.",
--			page, ip->i_ino, offset);
-+			page, ip->i_ino, fileoff);
- 
- 	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
--			PAGE_SIZE / i_blocksize(inode));
-+			(PAGE_SIZE - pageoff) / i_blocksize(inode));
- 	if (error && !XFS_FORCED_SHUTDOWN(mp))
- 		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
- out_invalidate:
--	iomap_invalidatepage(page, 0, PAGE_SIZE);
-+	iomap_invalidatepage(page, pageoff, PAGE_SIZE - pageoff);
- }
- 
- static const struct iomap_writeback_ops xfs_writeback_ops = {
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 4d1d3c3469e9..36e0ab19210a 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -220,7 +220,7 @@ struct iomap_writeback_ops {
- 	 * Optional, allows the file system to discard state on a page where
- 	 * we failed to submit any I/O.
- 	 */
--	void (*discard_page)(struct page *page);
-+	void (*discard_page)(struct page *page, loff_t fileoff);
- };
- 
- struct iomap_writepage_ctx {
+ 	/*
 -- 
 2.25.4
 
