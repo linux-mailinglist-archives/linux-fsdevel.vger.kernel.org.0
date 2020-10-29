@@ -2,128 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A24829F55F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 20:34:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 165DE29F581
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 20:43:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbgJ2TeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 15:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56550 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbgJ2TeO (ORCPT
+        id S1726237AbgJ2Tnl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 15:43:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28863 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726214AbgJ2Tnl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 15:34:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CFE0C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 12:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=moBwCUezAcUFLo9WoDknD01nYVYEhE9p2ZKZoE3n6zM=; b=akYO2Qy2xJ3zVwULlpMcvG8eoi
-        xzf6a72H7GVH2I2lViSoHAXbUOPuAFimkpllWBeTtqcCcnpWzGL2WavspUlfIyn1FDiaBppxkNvRb
-        hutBxqvgnS3FNDsLAIBEapy6pGVLdKYQU2H/gyMbkJCTi1z9kLlnBxqD3wbBTePiWu1qfmyJeeoNp
-        tW1QU42p/Wu8b7dZUWpenEAZ53JGGBRJkJhH26bchczLELRwE6DXhS0ZGjc7tUD5XLtYSxUkMG+pm
-        LFp44VXgB8Sl5XbXWxa4t8Kv33PvevbyjMf/IimtXGnHkXpXXp8K5tULJ4au45swYPoTEcr88U3YJ
-        OHrpXn/w==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kYDga-0007dA-Le; Thu, 29 Oct 2020 19:34:12 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 19/19] selftests/vm/transhuge-stress: Support file-backed THPs
-Date:   Thu, 29 Oct 2020 19:34:05 +0000
-Message-Id: <20201029193405.29125-20-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20201029193405.29125-1-willy@infradead.org>
-References: <20201029193405.29125-1-willy@infradead.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 29 Oct 2020 15:43:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604000619;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=pyqxT5SiUKjV3qyc3OeVP7maNKDjfkVq4JNc/tkubxE=;
+        b=AojnHIPJ7hmW2qW/37iRpv5xYq+acO7SwdT/WlAaLSkgKJX8zxmXmJ1bd2djG87MKqJZBZ
+        xyPja38J3iOAgf8PeIjHdGl7uDL2Xb+XGR8Mo+2oerLnwEkUyo6rmURHQ3bMbiLFVSLYtx
+        nJTwTx9mvNQnBDcMz6rfTqsq049X51k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-335-OZkRN9STNMCdxvIeC0lxog-1; Thu, 29 Oct 2020 15:43:34 -0400
+X-MC-Unique: OZkRN9STNMCdxvIeC0lxog-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 68FCC101F03E;
+        Thu, 29 Oct 2020 19:43:33 +0000 (UTC)
+Received: from llong.com (ovpn-116-17.rdu2.redhat.com [10.10.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6384C6FEEB;
+        Thu, 29 Oct 2020 19:43:08 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Luca BRUNO <lucab@redhat.com>, Waiman Long <longman@redhat.com>
+Subject: [PATCH v3] inotify: Increase default inotify.max_user_watches limit to 1048576
+Date:   Thu, 29 Oct 2020 15:42:56 -0400
+Message-Id: <20201029194256.7954-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a -f <filename> option to test THPs on files
+The default value of inotify.max_user_watches sysctl parameter was set
+to 8192 since the introduction of the inotify feature in 2005 by
+commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
+small for many modern usage. As a result, users have to explicitly set
+it to a larger value to make it work.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+After some searching around the web, these are the
+inotify.max_user_watches values used by some projects:
+ - vscode:  524288
+ - dropbox support: 100000
+ - users on stackexchange: 12228
+ - lsyncd user: 2000000
+ - code42 support: 1048576
+ - monodevelop: 16384
+ - tectonic: 524288
+ - openshift origin: 65536
+
+Each watch point adds an inotify_inode_mark structure to an inode to
+be watched. It also pins the watched inode.
+
+Modeled after the epoll.max_user_watches behavior to adjust the default
+value according to the amount of addressable memory available, make
+inotify.max_user_watches behave in a similar way to make it use no more
+than 1% of addressable memory within the range [8192, 1048576].
+
+For 64-bit archs, inotify_inode_mark plus 2 vfs inode have a size that
+is a bit over 1 kbytes (1284 bytes with my x86-64 config).  That means
+a system with 128GB or more memory will likely have the maximum value
+of 1048576 for inotify.max_user_watches. This default should be big
+enough for most use cases.
+
+[v3: increase inotify watch cost as suggested by Amir and Honza]
+
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- tools/testing/selftests/vm/transhuge-stress.c | 36 ++++++++++++-------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ fs/notify/inotify/inotify_user.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/vm/transhuge-stress.c b/tools/testing/selftests/vm/transhuge-stress.c
-index fd7f1b4a96f9..77b775700bf6 100644
---- a/tools/testing/selftests/vm/transhuge-stress.c
-+++ b/tools/testing/selftests/vm/transhuge-stress.c
-@@ -26,15 +26,17 @@
- #define PAGEMAP_PFN(ent)	((ent) & ((1ull << 55) - 1))
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 186722ba3894..f8065eda3a02 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -37,6 +37,15 @@
  
- int pagemap_fd;
-+int backing_fd = -1;
-+int mmap_flags = MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE;
-+#define PROT_RW (PROT_READ | PROT_WRITE)
+ #include <asm/ioctls.h>
  
- int64_t allocate_transhuge(void *ptr)
- {
- 	uint64_t ent[2];
- 
- 	/* drop pmd */
--	if (mmap(ptr, HPAGE_SIZE, PROT_READ | PROT_WRITE,
--				MAP_FIXED | MAP_ANONYMOUS |
--				MAP_NORESERVE | MAP_PRIVATE, -1, 0) != ptr)
-+	if (mmap(ptr, HPAGE_SIZE, PROT_RW, MAP_FIXED | mmap_flags,
-+						backing_fd, 0) != ptr)
- 		errx(2, "mmap transhuge");
- 
- 	if (madvise(ptr, HPAGE_SIZE, MADV_HUGEPAGE))
-@@ -60,6 +62,8 @@ int main(int argc, char **argv)
- 	size_t ram, len;
- 	void *ptr, *p;
- 	struct timespec a, b;
-+	int i = 0;
-+	char *name = NULL;
- 	double s;
- 	uint8_t *map;
- 	size_t map_len;
-@@ -69,14 +73,23 @@ int main(int argc, char **argv)
- 		ram = SIZE_MAX / 4;
- 	else
- 		ram *= sysconf(_SC_PAGESIZE);
-+	len = ram;
++/*
++ * An inotify watch requires allocating an inotify_inode_mark structure as
++ * well as pinning the watched inode. Doubling the size of a VFS inode
++ * should be more than enough to cover the additional filesystem inode
++ * size increase.
++ */
++#define INOTIFY_WATCH_COST	(sizeof(struct inotify_inode_mark) + \
++				 2 * sizeof(struct inode))
 +
-+	while (++i < argc) {
-+		if (!strcmp(argv[i], "-h"))
-+			errx(1, "usage: %s [size in MiB]", argv[0]);
-+		else if (!strcmp(argv[i], "-f"))
-+			name = argv[++i];
-+		else
-+			len = atoll(argv[i]) << 20;
-+	}
+ /* configurable via /proc/sys/fs/inotify/ */
+ static int inotify_max_queued_events __read_mostly;
  
--	if (argc == 1)
--		len = ram;
--	else if (!strcmp(argv[1], "-h"))
--		errx(1, "usage: %s [size in MiB]", argv[0]);
--	else
--		len = atoll(argv[1]) << 20;
--
-+	if (name) {
-+		backing_fd = open(name, O_RDWR);
-+		if (backing_fd == -1)
-+			err(2, "open %s", name);
-+		mmap_flags = MAP_SHARED;
-+	}
- 	warnx("allocate %zd transhuge pages, using %zd MiB virtual memory"
- 	      " and %zd MiB of ram", len >> HPAGE_SHIFT, len >> 20,
- 	      len >> (20 + HPAGE_SHIFT - PAGE_SHIFT - 1));
-@@ -86,8 +99,7 @@ int main(int argc, char **argv)
- 		err(2, "open pagemap");
+@@ -801,6 +810,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
+  */
+ static int __init inotify_user_setup(void)
+ {
++	unsigned int watches_max;
++	struct sysinfo si;
++
++	si_meminfo(&si);
++	/*
++	 * Allow up to 1% of addressible memory to be allocated for inotify
++	 * watches (per user) limited to the range [8192, 1048576].
++	 */
++	watches_max = (((si.totalram - si.totalhigh) / 100) << PAGE_SHIFT) /
++			INOTIFY_WATCH_COST;
++	watches_max = min(1048576U, max(watches_max, 8192U));
++
+ 	BUILD_BUG_ON(IN_ACCESS != FS_ACCESS);
+ 	BUILD_BUG_ON(IN_MODIFY != FS_MODIFY);
+ 	BUILD_BUG_ON(IN_ATTRIB != FS_ATTRIB);
+@@ -827,7 +848,7 @@ static int __init inotify_user_setup(void)
  
- 	len -= len % HPAGE_SIZE;
--	ptr = mmap(NULL, len + HPAGE_SIZE, PROT_READ | PROT_WRITE,
--			MAP_ANONYMOUS | MAP_NORESERVE | MAP_PRIVATE, -1, 0);
-+	ptr = mmap(NULL, len + HPAGE_SIZE, PROT_RW, mmap_flags, backing_fd, 0);
- 	if (ptr == MAP_FAILED)
- 		err(2, "initial mmap");
- 	ptr += HPAGE_SIZE - (uintptr_t)ptr % HPAGE_SIZE;
+ 	inotify_max_queued_events = 16384;
+ 	init_user_ns.ucount_max[UCOUNT_INOTIFY_INSTANCES] = 128;
+-	init_user_ns.ucount_max[UCOUNT_INOTIFY_WATCHES] = 8192;
++	init_user_ns.ucount_max[UCOUNT_INOTIFY_WATCHES] = watches_max;
+ 
+ 	return 0;
+ }
 -- 
-2.28.0
+2.18.1
 
