@@ -2,76 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C07FB29EADF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 12:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D08929EAF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 12:48:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725785AbgJ2LkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 07:40:06 -0400
-Received: from smtp-bc0d.mail.infomaniak.ch ([45.157.188.13]:46857 "EHLO
-        smtp-bc0d.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725747AbgJ2LkF (ORCPT
+        id S1725770AbgJ2Lso (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 07:48:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25230 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725601AbgJ2Lso (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 07:40:05 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CMNll5T2bzljbGk;
-        Thu, 29 Oct 2020 12:40:03 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4CMNlk5d69zlh8TD;
-        Thu, 29 Oct 2020 12:40:02 +0100 (CET)
-Subject: Re: [PATCH v22 00/12] Landlock LSM
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20201027200358.557003-1-mic@digikod.net>
- <CAG48ez31oct9c8fkgFHQVb5u-o5cmwdNe2pJnmitnKcidNgfzw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <25f5ec87-5462-9d47-d265-ec442eb50046@digikod.net>
-Date:   Thu, 29 Oct 2020 12:40:02 +0100
-User-Agent: 
+        Thu, 29 Oct 2020 07:48:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603972123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=e3eO78q+9r1W8jjiRsy6XEsZ6AJ4ydkuDrUHxryN5JM=;
+        b=CU9xiqtacnbtZv0/GtVLmOHAdaidFP5qOc43DiqmBKRIFrvZeYq6FNbMTrB9WHShU3e2t5
+        ugLZUfURau+n93AlaC+LrYjZzB1v19/wrvvqc50Anh/TkKrTDTr5+XumShv9BLIcwYyONI
+        mge3hABV4s3ah1kZNoOFWyu/E0iVijE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-457-j-klzaLdOVu3MhWyzwxHbg-1; Thu, 29 Oct 2020 07:48:41 -0400
+X-MC-Unique: j-klzaLdOVu3MhWyzwxHbg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0AD818015FD;
+        Thu, 29 Oct 2020 11:48:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-70.rdu2.redhat.com [10.10.120.70])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E82085C1D0;
+        Thu, 29 Oct 2020 11:48:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <160392383297.592578.14698271215668067643.stgit@warthog.procyon.org.uk>
+References: <160392383297.592578.14698271215668067643.stgit@warthog.procyon.org.uk> <160392375589.592578.13383738325695138512.stgit@warthog.procyon.org.uk>
+To:     linux-afs@lists.infradead.org
+Cc:     dhowells@redhat.com, kernel test robot <lkp@intel.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 11/11] afs: Fix dirty-region encoding on ppc32 with 64K pages
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez31oct9c8fkgFHQVb5u-o5cmwdNe2pJnmitnKcidNgfzw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <957372.1603972118.1@warthog.procyon.org.uk>
+Date:   Thu, 29 Oct 2020 11:48:38 +0000
+Message-ID: <957373.1603972118@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+David Howells <dhowells@redhat.com> wrote:
 
-On 29/10/2020 02:05, Jann Horn wrote:
-> On Tue, Oct 27, 2020 at 9:04 PM Mickaël Salaün <mic@digikod.net> wrote:
->> This new patch series improves documentation, cleans up comments,
->> renames ARCH_EPHEMERAL_STATES to ARCH_EPHEMERAL_INODES and removes
->> LANDLOCK_ACCESS_FS_CHROOT.
-> 
-> Thanks for continuing to work on this! This is going to be really
-> valuable for sandboxing.
-> 
-> I hadn't looked at this series for a while; but I've now read through
-> it, and I don't see any major problems left. :) That said, there still
-> are a couple small things...
-> 
+> +static inline unsigned int afs_page_dirty_resolution(void)
+> +{
+> +	long shift = PAGE_SHIFT - (__AFS_PAGE_PRIV_SHIFT - 1);
 
-Thanks Jann, I really appreciate your reviews!
+This should be int, not long, in case we get an explicitly unsigned int number
+included in the mix (say from thp_order() with THP support).
+
+David
+
