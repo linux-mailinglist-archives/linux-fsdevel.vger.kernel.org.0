@@ -2,191 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE7D29F3C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 19:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F02829F3CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 19:08:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725807AbgJ2SGc convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1725791AbgJ2SGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 29 Oct 2020 14:06:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38065 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbgJ2SGV (ORCPT
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56106 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725766AbgJ2SFu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 14:06:21 -0400
-Received: from mail-ed1-f49.google.com ([209.85.208.49])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <stgraber@ubuntu.com>)
-        id 1kYCI0-0003zM-Of
-        for linux-fsdevel@vger.kernel.org; Thu, 29 Oct 2020 18:04:44 +0000
-Received: by mail-ed1-f49.google.com with SMTP id dg9so3934051edb.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 11:04:44 -0700 (PDT)
-X-Gm-Message-State: AOAM533ih+a6/kgjcUDDKU1TqVmpsDG0AL8oAz1fz9LHg4N2s2Soiitc
-        m3JuDpa7hSLcaznW4Zz2hlZyWVD6aIb4ZyrU66GHUA==
-X-Google-Smtp-Source: ABdhPJzOR+GvYdcxThjeYM4q+BnWieqIoL3kVTr7F9zyXSA8NyVuuYCL1zVggZkDC4pHflRK6EVUPiYtBnL0ZVxrdaQ=
-X-Received: by 2002:ac2:5c49:: with SMTP id s9mr1955451lfp.14.1603994683268;
- Thu, 29 Oct 2020 11:04:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <87pn51ghju.fsf@x220.int.ebiederm.org> <20201029161231.GA108315@cisco> <87blglc77y.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87blglc77y.fsf@x220.int.ebiederm.org>
-From:   =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>
-Date:   Thu, 29 Oct 2020 14:04:31 -0400
-X-Gmail-Original-Message-ID: <CA+enf=vn1TgdLx9TR3m=wdBzbZxRbxK4NFY4NdYn0v5gzewCyw@mail.gmail.com>
-Message-ID: <CA+enf=vn1TgdLx9TR3m=wdBzbZxRbxK4NFY4NdYn0v5gzewCyw@mail.gmail.com>
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tycho Andersen <tycho@tycho.pizza>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stephen Barber <smbarber@chromium.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
+        Thu, 29 Oct 2020 14:05:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603994749;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GOJQra1Bwh3yvuSJrYqoF2VV9obE3+R7fpVYE5pWGho=;
+        b=buX9lTuZ28HoQX3yDnYiUl9V/r9bY6zurUwhf4huhNVPZaTM1gmHNEHdbD/g1kNram4gG/
+        e9QckPCDurgxzC7uqXH1/O0/S6lXEm2eRcdO4s/vtzuxLgu+SKTNKx1FT8YJmF9UiiUgdI
+        ZoOtDlvXwapi8IcPT1X3UN/T8GtLwNg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-161-d5uvmF6TN9uR5FTwwqKvQw-1; Thu, 29 Oct 2020 14:05:46 -0400
+X-MC-Unique: d5uvmF6TN9uR5FTwwqKvQw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 41BB410E2187;
+        Thu, 29 Oct 2020 18:05:45 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-116-17.rdu2.redhat.com [10.10.116.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 98BB0196FB;
+        Thu, 29 Oct 2020 18:05:41 +0000 (UTC)
+Subject: Re: [PATCH v2] inotify: Increase default inotify.max_user_watches
+ limit to 1048576
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Luca BRUNO <lucab@redhat.com>
+References: <20201029154535.2074-1-longman@redhat.com>
+ <CAOQ4uxjT8rWLr1yCBPGkhJ7Rr6n3+FA7a0GmZaMBHMzk9t1Sag@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <ccec54cd-cbb5-2808-3800-890cda208967@redhat.com>
+Date:   Thu, 29 Oct 2020 14:05:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <CAOQ4uxjT8rWLr1yCBPGkhJ7Rr6n3+FA7a0GmZaMBHMzk9t1Sag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 12:45 PM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
+On 10/29/20 1:27 PM, Amir Goldstein wrote:
+> On Thu, Oct 29, 2020 at 5:46 PM Waiman Long <longman@redhat.com> wrote:
+>> The default value of inotify.max_user_watches sysctl parameter was set
+>> to 8192 since the introduction of the inotify feature in 2005 by
+>> commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
+>> small for many modern usage. As a result, users have to explicitly set
+>> it to a larger value to make it work.
+>>
+>> After some searching around the web, these are the
+>> inotify.max_user_watches values used by some projects:
+>>   - vscode:  524288
+>>   - dropbox support: 100000
+>>   - users on stackexchange: 12228
+>>   - lsyncd user: 2000000
+>>   - code42 support: 1048576
+>>   - monodevelop: 16384
+>>   - tectonic: 524288
+>>   - openshift origin: 65536
+>>
+>> Each watch point adds an inotify_inode_mark structure to an inode to
+>> be watched. It also pins the watched inode as well as an inotify fdinfo
+>> procfs file.
+>>
+>> Modeled after the epoll.max_user_watches behavior to adjust the default
+>> value according to the amount of addressable memory available, make
+>> inotify.max_user_watches behave in a similar way to make it use no more
+>> than 1% of addressable memory within the range [8192, 1048576].
+>>
+>> For 64-bit archs, inotify_inode_mark plus 2 inode have a size close
+>> to 2 kbytes. That means a system with 196GB or more memory should have
+>> the maximum value of 1048576 for inotify.max_user_watches. This default
+>> should be big enough for most use cases.
+>>
+>> With my x86-64 config, the size of xfs_inode, proc_inode and
+>> inotify_inode_mark is 1680 bytes. The estimated INOTIFY_WATCH_COST is
+>> 1760 bytes.
+>>
+>> [v2: increase inotify watch cost as suggested by Amir and Honza]
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   fs/notify/inotify/inotify_user.c | 24 +++++++++++++++++++++++-
+>>   1 file changed, 23 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+>> index 186722ba3894..37d9f09c226f 100644
+>> --- a/fs/notify/inotify/inotify_user.c
+>> +++ b/fs/notify/inotify/inotify_user.c
+>> @@ -37,6 +37,16 @@
+>>
+>>   #include <asm/ioctls.h>
+>>
+>> +/*
+>> + * An inotify watch requires allocating an inotify_inode_mark structure as
+>> + * well as pinning the watched inode and adding inotify fdinfo procfs file.
+> Maybe you misunderstood me.
+> There is no procfs file per watch.
+> There is a procfs file per inotify_init() fd.
+> The fdinfo of that procfile lists all the watches of that inotify instance.
+Thanks for the clarification. Yes, I probably had misunderstood you 
+because of the 2 * sizeof(inode) figure you provided.
+>> + * The increase in size of a filesystem inode versus a VFS inode varies
+>> + * depending on the filesystem. An extra 512 bytes is added as rough
+>> + * estimate of the additional filesystem inode cost.
+>> + */
+>> +#define INOTIFY_WATCH_COST     (sizeof(struct inotify_inode_mark) + \
+>> +                                2 * sizeof(struct inode) + 512)
+>> +
+> I would consider going with double the sizeof inode as rough approximation for
+> filesystem inode size.
 >
-> Tycho Andersen <tycho@tycho.pizza> writes:
+> It is a bit less arbitrary than 512 and it has some rationale behind it -
+> Some kernel config options will grow struct inode (debug, smp)
+> The same config options may also grow the filesystem part of the inode.
 >
-> > Hi Eric,
-> >
-> > On Thu, Oct 29, 2020 at 10:47:49AM -0500, Eric W. Biederman wrote:
-> >> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> >>
-> >> > Hey everyone,
-> >> >
-> >> > I vanished for a little while to focus on this work here so sorry for
-> >> > not being available by mail for a while.
-> >> >
-> >> > Since quite a long time we have issues with sharing mounts between
-> >> > multiple unprivileged containers with different id mappings, sharing a
-> >> > rootfs between multiple containers with different id mappings, and also
-> >> > sharing regular directories and filesystems between users with different
-> >> > uids and gids. The latter use-cases have become even more important with
-> >> > the availability and adoption of systemd-homed (cf. [1]) to implement
-> >> > portable home directories.
-> >>
-> >> Can you walk us through the motivating use case?
-> >>
-> >> As of this year's LPC I had the distinct impression that the primary use
-> >> case for such a feature was due to the RLIMIT_NPROC problem where two
-> >> containers with the same users still wanted different uid mappings to
-> >> the disk because the users were conflicting with each other because of
-> >> the per user rlimits.
-> >>
-> >> Fixing rlimits is straight forward to implement, and easier to manage
-> >> for implementations and administrators.
-> >
-> > Our use case is to have the same directory exposed to several
-> > different containers which each have disjoint ID mappings.
->
-> Why do the you have disjoint ID mappings for the users that are writing
-> to disk with the same ID?
->
-> >> Reading up on systemd-homed it appears to be a way to have encrypted
-> >> home directories.  Those home directories can either be encrypted at the
-> >> fs or at the block level.  Those home directories appear to have the
-> >> goal of being luggable between systems.  If the systems in question
-> >> don't have common administration of uids and gids after lugging your
-> >> encrypted home directory to another system chowning the files is
-> >> required.
-> >>
-> >> Is that the use case you are looking at removing the need for
-> >> systemd-homed to avoid chowning after lugging encrypted home directories
-> >> from one system to another?  Why would it be desirable to avoid the
-> >> chown?
-> >
-> > Not just systemd-homed, but LXD has to do this,
->
-> I asked why the same disk users are assigned different kuids and the
-> only reason I have heard that LXD does this is the RLIMIT_NPROC problem.
->
-> Perhaps there is another reason.
->
-> In part this is why I am eager to hear peoples use case, and why I was
-> trying very hard to make certain we get the requirements.
->
-> I want the real requirements though and some thought, not just we did
-> this and it hurts.  Changning the uids on write is a very hard problem,
-> and not just in implementating it but also in maintaining and
-> understanding what is going on.
+> And this approximation can be pretty accurate at times.
+> For example, on Ubuntu 18.04 kernel 5.4.0:
+> inode_cache        608
+> nfs_inode_cache      1088
+> btrfs_inode            1168
+> xfs_inode              1024
+> ext4_inode_cache   1096
 
-The most common cases where shiftfs is used or where folks would like
-to use it today are (by importance):
- - Fast container creation (by not having to uid/gid shift all files
-in the downloaded image)
- - Sharing data between the host system and a container (some paths
-under /home being the most common)
- - Sharing data between unprivileged containers with a disjointed map
- - Sharing data between multiple containers, some privileged, some unprivileged
+Just to clarify, is your original 2 * sizeof(struct inode) figure 
+include the filesystem inode overhead or there is an additional inode 
+somewhere that I needs to go to 4 * sizeof(struct inode)?
 
-Fixing the ulimit issue only takes care of one of those (3rd item), it
-does not solve any of the other cases.
+Cheers,
+Longman
 
-The first item on there alone can be quite significant. Creation and
-startup of a regular Debian container on my system takes around 500ms
-when shiftfs is used (btrfs/lvm/zfs copy-on-write clone of the image,
-setup shiftfs, start container) compared to 2-3s when running without
-it (same clone, followed by rewrite of all uid/gid present on the fs,
-including acls and capabilities, then start container). And that's on
-a fast system with an NVME SSD and a small rootfs. We have had reports
-of a few users running on slow spinning rust with large containers
-where shifting can take several minutes.
-
-The second item can technically be worked around without shifted
-bind-mounts by doing userns map hole punching, mapping the user's
-uid/gid from the host straight into the container. The downside to
-this is that another shifting pass becomes needed for any file outside
-of the bind-mounted path (or it would become owned by -1/-1) and it's
-very much not dynamic, requiring the container be stopped, config
-updated by the user, /etc/subuid and subgid maps being updated and
-container started back up. If you need another user/group be exposed,
-start all over again...
-This is far more complex, slow and disruptive than the shifted
-approach where we just need to do:
-   lxc config device add MY-CONTAINER home disk source=/home
-path=/home shift=true
-To inject a new mount of /home from the host into the container with a
-shifting layer in place, no need to reconfig subuid/subgid, no need to
-re-create the userns to update the mapping and no need to go through
-the container's rootfs for any file which may now need remapping
-because of the map change.
-
-Stéphane
-
-> Eric
-> _______________________________________________
-> Containers mailing list
-> Containers@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/containers
