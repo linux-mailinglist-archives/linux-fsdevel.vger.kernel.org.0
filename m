@@ -2,305 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4902029E2E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 03:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD3929E3B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Oct 2020 08:20:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbgJ2Cn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Oct 2020 22:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39694 "EHLO
+        id S1725779AbgJ2HUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Oct 2020 03:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391088AbgJ2CmS (ORCPT
+        with ESMTP id S1725562AbgJ2HUM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Oct 2020 22:42:18 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B615C0613CF;
-        Wed, 28 Oct 2020 19:42:18 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kXxtG-00B2L9-DW; Thu, 29 Oct 2020 02:42:14 +0000
-Date:   Thu, 29 Oct 2020 02:42:14 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Zou Cao <zoucao@linux.alibaba.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs:regfs: add register easy filesystem
-Message-ID: <20201029024214.GN3576660@ZenIV.linux.org.uk>
-References: <1603175408-96164-1-git-send-email-zoucao@linux.alibaba.com>
+        Thu, 29 Oct 2020 03:20:12 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C29AAC08EBB2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 00:20:11 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id z5so2340371iob.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 00:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=fYJuh784A+cg3Z8+1Zy80X4u98CkOOu8oSlOndn6LP8=;
+        b=ukkHuDX6yvhUUuB02MVOivG/WA5Ojyb5VYHv669wm4UAXDWp5nAXmbtMTBCfLFoPb9
+         sVpgKjyc2zqVxegUtGLSbRzLGexJM5lQuzckbt8qF8u/HiyA4E0h7EUabZqAmLhOGN8T
+         oEGcB9xpnrhEwAKkcmxDeaZNHBU6zCIIWxMdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=fYJuh784A+cg3Z8+1Zy80X4u98CkOOu8oSlOndn6LP8=;
+        b=qWijuY9a/5WL21AOit9mklqjbyND/XfI4/iOjvyMOdBb7LpP3dxC4mKitKM+Zw0Su1
+         jURIMl8rNH1KJOVaXIgS7AUPu9nHGRSa7BcBcQack1z0MZByNZZxokh3nskT4KDe/7+N
+         TP4y/1iaEwXlhkYaqbBNLkRi1UjFWPhVk8rEVCV2XnS+dm3zL8qo+Wg9yYMOW4hgi7Dt
+         SebX6ZlUqrEx+/76JsDEZIL+/2wsvYAu/VUQSqYLZCUfl8KTOfCNlNFRpR2h3q0v8Vny
+         naC+FdqUUPCaahbJVbHcX7G6CNjhBMPHV7V5y5LmhLn7k3ZRt6D6ucdCKUuXHt7hO8Ge
+         reIQ==
+X-Gm-Message-State: AOAM532FkHKFIPIBfVXRmGvyw+JU7PyR7qsfyV9VFCINkCjV+sUsMDo6
+        hI/wceg4YTkyXfFrFBeCp0TWNw==
+X-Google-Smtp-Source: ABdhPJyOF/iJB70V4z6Kj5OehxU+n1aNhIuE8pqzjl3KXVgPoawDTq88ZFqqZglnxTR3mWhjdU4O1Q==
+X-Received: by 2002:a6b:c9c9:: with SMTP id z192mr2361774iof.175.1603956010838;
+        Thu, 29 Oct 2020 00:20:10 -0700 (PDT)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id k6sm1247023iov.26.2020.10.29.00.20.09
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Oct 2020 00:20:10 -0700 (PDT)
+Date:   Thu, 29 Oct 2020 07:20:08 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Lennart Poettering <lennart@poettering.net>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        containers@lists.linux-foundation.org,
+        Tycho Andersen <tycho@tycho.ws>,
+        Miklos Szeredi <miklos@szeredi.hu>, smbarber@chromium.org,
+        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        David Howells <dhowells@redhat.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-api@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alban Crequy <alban@kinvolk.io>,
+        linux-integrity@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH 00/34] fs: idmapped mounts
+Message-ID: <20201029071946.GA29881@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1603175408-96164-1-git-send-email-zoucao@linux.alibaba.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 20, 2020 at 02:30:07PM +0800, Zou Cao wrote:
-> +ssize_t regfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> +{
-> +	struct file *file = iocb->ki_filp;
-> +	struct inode *inode = file->f_mapping->host;
-> +	ssize_t ret;
-> +
-> +	inode_lock(inode);
-> +	ret = generic_write_checks(iocb, from);
-> +	if (ret > 0)
-> +		ret = __generic_file_write_iter(iocb, from);
-> +	inode_unlock(inode);
-> +
-> +	if (ret > 0)
-> +		ret = generic_write_sync(iocb, ret);
-> +	return ret;
-> +}
+On Thu, Oct 29, 2020 at 01:32:18AM +0100, Christian Brauner wrote:
+> Hey everyone,
+> 
+> I vanished for a little while to focus on this work here so sorry for
+> not being available by mail for a while.
+> 
+> Since quite a long time we have issues with sharing mounts between
+> multiple unprivileged containers with different id mappings, sharing a
+> rootfs between multiple containers with different id mappings, and also
+> sharing regular directories and filesystems between users with different
+> uids and gids. The latter use-cases have become even more important with
+> the availability and adoption of systemd-homed (cf. [1]) to implement
+> portable home directories.
+> 
+> The solutions we have tried and proposed so far include the introduction
+> of fsid mappings, a tiny overlay based filesystem, and an approach to
+> call override creds in the vfs. None of these solutions have covered all
+> of the above use-cases.
+> 
+> The solution proposed here has it's origins in multiple discussions
+> during Linux Plumbers 2017 during and after the end of the containers
+> microconference.
+> To the best of my knowledge this involved Aleksa, Stéphane, Eric, David,
+> James, and myself. A variant of the solution proposed here has also been
+> discussed, again to the best of my knowledge, after a Linux conference
+> in St. Petersburg in Russia between Christoph, Tycho, and myself in 2017
+> after Linux Plumbers.
+> I've taken the time to finally implement a working version of this
+> solution over the last weeks to the best of my abilities. Tycho has
+> signed up for this sligthly crazy endeavour as well and he has helped
+> with the conversion of the xattr codepaths.
+> 
+> The core idea is to make idmappings a property of struct vfsmount
+> instead of tying it to a process being inside of a user namespace which
+> has been the case for all other proposed approaches.
+> It means that idmappings become a property of bind-mounts, i.e. each
+> bind-mount can have a separate idmapping. This has the obvious advantage
+> that idmapped mounts can be created inside of the initial user
+> namespace, i.e. on the host itself instead of requiring the caller to be
+> located inside of a user namespace. This enables such use-cases as e.g.
+> making a usb stick available in multiple locations with different
+> idmappings (see the vfat port that is part of this patch series).
+> 
+> The vfsmount struct gains a new struct user_namespace member. The
+> idmapping of the user namespace becomes the idmapping of the mount. A
+> caller that is either privileged with respect to the user namespace of
+> the superblock of the underlying filesystem or a caller that is
+> privileged with respect to the user namespace a mount has been idmapped
+> with can create a new bind-mount and mark it with a user namespace. The
+> user namespace the mount will be marked with can be specified by passing
+> a file descriptor refering to the user namespace as an argument to the
+> new mount_setattr() syscall together with the new MOUNT_ATTR_IDMAP flag.
+> By default vfsmounts are marked with the initial user namespace and no
+> behavioral or performance changes should be observed. All mapping
+> operations are nops for the initial user namespace.
+> 
+> When a file/inode is accessed through an idmapped mount the i_uid and
+> i_gid of the inode will be remapped according to the user namespace the
+> mount has been marked with. When a new object is created based on the
+> fsuid and fsgid of the caller they will similarly be remapped according
+> to the user namespace of the mount they care created from.
+> 
+> This means the user namespace of the mount needs to be passed down into
+> a few relevant inode_operations. This mostly includes inode operations
+> that create filesystem objects or change file attributes. Some of them
+> such as ->getattr() don't even need to change since they pass down a
+> struct path and thus the struct vfsmount is already available. Other
+> inode operations need to be adapted to pass down the user namespace the
+> vfsmount has been marked with. Al was nice enough to point out that he
+> will not tolerate struct vfsmount being passed to filesystems and that I
+> should pass down the user namespace directly; which is what I did.
+> The inode struct itself is never altered whenever the i_uid and i_gid
+> need to be mapped, i.e. i_uid and i_gid are only remapped at the time of
+> the check. An inode once initialized (during lookup or object creation)
+> is never altered when accessed through an idmapped mount.
+> 
+> To limit the amount of noise in this first iteration we have not changed
+> the existing inode operations but rather introduced a few new struct
+> inode operation methods such as ->mkdir_mapped which pass down the user
+> namespace of the mount they have been called from. Should this solution
+> be worth pursuing we have no problem adapting the existing inode
+> operations instead.
+> 
+> In order to support idmapped mounts, filesystems need to be changed and
+> mark themselves with the FS_ALLOW_IDMAP flag in fs_flags. In this first
+> iteration I tried to illustrate this by changing three different
+> filesystem with different levels of complexity. Of course with some bias
+> towards urgent use-cases and filesystems I was at least a little more
+> familiar with. However, Tycho and I (and others) have no problem
+> converting each filesystem one-by-one. This first iteration includes fat
+> (msdos and vfat), ext4, and overlayfs (both with idmapped lower and
+> upper directories and idmapped merged directories). I'm sure I haven't
+> gotten everything right for all three of them in the first version of
+> this patch.
+> 
 
-Huh?  How is that different from generic_file_write_iter()?  And who's
-using it, anyway?
+Thanks for this patchset. It's been a long-time coming.
 
-> +	struct regfs_inode_info  *info = REGFS_I(mapping->host);
-> +	char str[67];
-> +	unsigned long val = 0;
-> +	loff_t pos = *ppos;
-> +	size_t res;
-> +
-> +	if (pos < 0)
-> +		return -EINVAL;
-> +	if (pos >= len || len > 66)
-> +		return 0;
+I'm curious as to for the most cases, how much the new fs mount APIs help, and 
+if focusing on those could solve the problem for everything other than bind 
+mounts? Specifically, the idea of doing fsopen (creation of fs_context) under 
+the user namespace of question, and relying on a user with CAP_SYS_ADMIN to call 
+fsmount[1]. I think this is actually especially valuable for places like 
+overlayfs that use the entire cred object, as opposed to just the uid / gid. I 
+imagine that soon, most filesystems will support the new mount APIs, and not set 
+the global flag if they don't need to.
 
-This is completely bogus.  "If current position is greater than the
-length of string we are asking to write, quietly return 0"?
+How popular is the "vfsmount (bind mounts) needs different uid mappings" use 
+case?
 
-> +	res = copy_from_user(str, buf, len);
-> +	if (res)
-> +		return -EFAULT;
-> +	str[len] = 0;
-> +
-> +	if (kstrtoul(str, 16, &val) < 0)
-> +		return -EINVAL;
+The other thing I worry about is the "What UID are you really?" game that's been 
+a thing recently. For example, you can have a different user namespace UID 
+mapping for your network namespace that netfilter checks[2], and a different one 
+for your mount namespace, and a different one that the process is actually in.
+This proliferation of different mappings makes auditing, and doing things like
+writing perf toolings more difficult (since I think bpf_get_current_uid_gid
+use the initial user namespace still [3]).
 
-Where does 67 come from?  If you are expecting a hexadecimal representation
-of a unsigned long on arm64, you should have at most 16 digits.  67 looks
-rather odd...
+[1]: https://lore.kernel.org/linux-nfs/20201016123745.9510-4-sargun@sargun.me/T/#u
+[2]: https://elixir.bootlin.com/linux/v5.9.1/source/net/netfilter/xt_owner.c#L37
+[3]: https://elixir.bootlin.com/linux/v5.9.1/source/kernel/bpf/helpers.c#L196
 
-> +	writel_relaxed(val, info->base + info->offset);
-
-... and you are promptly discarding the upper 32 bits, since writel_relaxed()
-takes u32:
-	((void)__raw_writel((__force u32)cpu_to_le32(v),(c)))
-is going to truncate to 32bit, no matter what.  Quietly truncate, at that...
-
-> +const struct address_space_operations regfs_aops = {
-> +	.readpage   = simple_readpage,
-> +	.write_begin    = simple_write_begin,
-> +	.write_end  = simple_write_end,
-> +	.set_page_dirty = __set_page_dirty_buffers,
-> +};
-
-Again, huh?  What would use the page cache there, anyway?
-
-> +static LIST_HEAD(regfs_head);
-
-Protected by...?
-
-> +static const struct inode_operations regfs_dir_inode_operations;
-> +int regfs_debug;
-> +module_param(regfs_debug, int, S_IRUGO);
-> +MODULE_PARM_DESC(regfs_debug, "enable regfs debug mode");
-> +
-> +struct inode *regfs_get_inode(struct super_block *sb, const struct inode *dir, umode_t mode, dev_t dev)
-> +{
-> +	struct inode *inode = new_inode(sb);
-> +
-> +	if (inode) {
-> +		inode->i_ino = get_next_ino();
-> +		inode_init_owner(inode, dir, mode);
-> +		inode->i_mapping->a_ops = &regfs_aops;
-> +		//inode->i_mapping->backing_dev_info = &regfs_backing_dev_info;
-> +		mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> +		mapping_set_unevictable(inode->i_mapping);
-> +		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-> +		switch (mode & S_IFMT) {
-> +		default:
-> +			init_special_inode(inode, mode, dev);
-> +			break;
-> +		case S_IFREG:
-> +			inode->i_op = &regfs_file_inode_operations;
-> +			inode->i_fop = &regfs_file_operations;
-> +			break;
-> +		case S_IFDIR:
-> +			inode->i_op = &regfs_dir_inode_operations;
-> +			inode->i_fop = &simple_dir_operations;
-> +
-> +			/* directory inodes start off with i_nlink == 2 (for "." entry) */
-> +			inc_nlink(inode);
-> +			break;
-> +		case S_IFLNK:
-> +			inode->i_op = &page_symlink_inode_operations;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return inode;
-> +}
-
-Seriously?  Where would symlinks, device nodes, FIFOs and sockets come from?
-And you are open-coding the regular file case in the new_dentry_create() anyway,
-so the only thing this is actually used for is the root directory.
-
-> +static const struct inode_operations regfs_dir_inode_operations = {
-> +	.lookup		= simple_lookup,
-> +};
-
-... and simple_dir_inode_operations is wrong, because...?
-
-> +static struct dentry *new_dentry_create(struct super_block *sb, struct dentry *parent,
-> +		 const char *name, bool is_dir, struct res_data *res)
-> +{
-> +	struct dentry *dentry;
-> +	struct inode *inode;
-> +	struct regfs_inode_info *ei;
-> +	struct regfs_fs_info *fsi = sb->s_fs_info;
-> +
-> +	dentry = d_alloc_name(parent, name);
-> +	if (!dentry)
-> +		return NULL;
-> +
-> +	inode = new_inode(sb);
-> +	if (!inode)
-> +		goto out;
-> +
-> +	ei = REGFS_I(inode);
-> +	inode->i_ino = get_next_ino();;
-> +	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> +	inode->i_uid =  GLOBAL_ROOT_UID;
-> +	inode->i_gid =  GLOBAL_ROOT_GID;
-> +	if (is_dir) {
-> +		inode->i_mode = S_IFDIR | S_IRUGO | S_IWUSR;
-> +		inode->i_op = &regfs_dir_inode_operations;
-> +		inode->i_fop = &simple_dir_operations;
-> +		list_add(&ei->list, &fsi->list);
-
-where's the matching removal from the list?
-
-> +	} else {
-> +		inode->i_mode = S_IFREG | S_IRUGO | S_IWUSR;
-> +		inode->i_op = &regfs_file_inode_operations;
-> +		inode->i_fop = &regfs_file_operations;
-> +		inc_nlink(inode);
-> +	}
-> +	ei->base = (void *)res->base;
-> +	ei->offset = res->offset;
-> +	ei->type = res->type;
-> +
-> +	d_add(dentry, inode);
-> +
-> +	loc_debug("new dentry io base:%llx offset:%llx ei:%llx\n", (u64)ei->base, (u64)ei->offset, (u64)ei);
-> +	return dentry;
-> +out:
-> +	dput(dentry);
-> +	return NULL;
-> +}
-> +
-> +static void node_transfer_dentry(struct super_block *sb)
-> +{
-> +	struct regfs_fs_info *fsi = sb->s_fs_info;
-> +	void *blob = fsi->dtb_buf;
-> +	const char *pathp;
-> +	int node_offset, depth = -1;
-> +	struct dentry *parent = NULL;
-> +	u64 parent_base;
-> +
-> +	for (node_offset = fdt_next_node(blob, -1, &depth);
-> +		node_offset >= 0 && depth >= 0;
-> +		node_offset = fdt_next_node(blob, node_offset, &depth)) {
-> +
-> +		const struct fdt_property *prop;
-> +		struct res_data res;
-> +
-> +		pathp = fdt_get_name(blob, node_offset, NULL);
-> +		prop = (void *)fdt_getprop(blob, node_offset, "reg", NULL);
-> +
-> +		if (prop) {
-> +			unsigned long phys;
-> +
-> +			phys = fdt32_to_cpu(((const __be32 *)prop)[1]);
-> +			res.type = RES_TYPE_RANGE;
-> +			res.offset = fdt32_to_cpu(((const __be32 *)prop)[3]);
-> +			res.base = (u64)ioremap(phys, res.offset);
-> +
-> +			if (!res.base) {
-> +				parent = NULL;
-> +				parent_base = 0;
-> +				continue;
-> +			}
-> +
-> +			loc_debug("%s reg:%lx size:%lx map:%llx\n\n", pathp
-> +				 , (unsigned long) fdt32_to_cpu(((const __be32 *)prop)[1])
-> +				 , (unsigned long) fdt32_to_cpu(((const __be32 *)prop)[3])
-> +				 , (u64)res.base);
-> +
-> +			parent = new_dentry_create(sb, sb->s_root, (const char *)pathp, true, &res);
-> +			parent_base = res.base;
-> +
-> +		} else {
-> +			// parent dentry is create failed, igonre all child dentry
-> +			if (!parent)
-> +				continue;
-> +
-> +			prop = (void *)fdt_getprop(blob, node_offset, "offset", NULL);
-> +			if (prop) {
-> +
-> +				res.offset = fdt32_to_cpu(*(const __be32 *)prop);
-> +				res.base = parent_base;
-> +				res.type = RES_TYPE_ITEM;
-> +
-> +				new_dentry_create(sb, parent, (const char *) pathp, false, &res);
-> +				loc_debug("%s offset:%lx\n", pathp, (unsigned long)fdt32_to_cpu(*(const __be32 *)prop));
-> +			}
-> +		}
-> +	}
-> +}
-> +
-> +static int parse_options(char *options, struct super_block *sb)
-> +{
-> +	char *p;
-> +	int ret = -EINVAL;
-> +	struct regfs_fs_info *fsi;
-> +	size_t msize = INT_MAX;
-> +
-> +	fsi = sb->s_fs_info;
-> +
-> +	if (!options)
-> +		return -EINVAL;
-> +
-> +	while ((p = strsep(&options, ",")) != NULL) {
-> +		char *name, *name_val;
-> +
-> +		name = strsep(&p, "=");
-> +		if (name == NULL)
-> +			goto failed;
-> +
-> +		name_val = strsep(&p, "=");
-> +		if (name_val == NULL)
-> +			goto failed;
-> +
-> +		//get resource address
-> +		if (!strcmp(name, "dtb")) {
-> +			ret = kernel_read_file_from_path(name_val, &fsi->dtb_buf, &fsi->dtb_len, msize, READING_UNKNOWN);
-
-Why bother doing that in the kernel?
-
-> +struct dentry *regfs_mount(struct file_system_type *fs_type,
-> +	int flags, const char *dev_name, void *data)
-> +{
-> +	struct dentry *root_dentry;
-> +	struct super_block *sb;
-> +
-> +	root_dentry = mount_nodev(fs_type, flags, data, regfs_fill_super);
-> +
-> +	sb = root_dentry->d_sb;
-> +
-> +	if (sb->s_root) {
-> +		node_transfer_dentry(sb);
-
-Er... Why not do that in regfs_fill_super()?
-
-Al, not going any further for now...
