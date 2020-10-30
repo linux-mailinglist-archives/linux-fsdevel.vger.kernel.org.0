@@ -2,128 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 490412A0504
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 13:08:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1982A05A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 13:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbgJ3MI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 08:08:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53376 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726413AbgJ3MIY (ORCPT
+        id S1726601AbgJ3Mlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 08:41:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbgJ3Mld (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 08:08:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604059702;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KxlJ8Mwn0Tke0WPb8nHZ6w8mEJXEo5j2Z00nnV/ApfQ=;
-        b=Wmzq52KaSQ1+YGSIS2RnmLNb3RBhkISIVRfYUkZD3drb5hVPL6ZHSLaIkwEkzC6f4AtRzv
-        u8PSSLINt2sRK0NDCAf1TwxjGErLbPeBJoIzfgqiDrq1xDxXkNzyNmZId1gffnhcKflG/a
-        cOlYaXdcNwOyNPQV1iNDqQFVsqN0Gjo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-50-AzIfXLJtNRSF2-f3T9HVoQ-1; Fri, 30 Oct 2020 08:08:18 -0400
-X-MC-Unique: AzIfXLJtNRSF2-f3T9HVoQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1A88A101F000;
-        Fri, 30 Oct 2020 12:08:17 +0000 (UTC)
-Received: from ovpn-66-212.rdu2.redhat.com (ovpn-66-212.rdu2.redhat.com [10.10.66.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F238219C71;
-        Fri, 30 Oct 2020 12:08:15 +0000 (UTC)
-Message-ID: <be8410fb81e6908457a524bc8e1df83a648d38f1.camel@redhat.com>
-Subject: Re: kernel BUG at mm/page-writeback.c:2241 [
- BUG_ON(PageWriteback(page); ]
-From:   Qian Cai <cai@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-mm@kvack.org
-Date:   Fri, 30 Oct 2020 08:08:15 -0400
-In-Reply-To: <20201022171243.GX20115@casper.infradead.org>
-References: <645a3f332f37e09057c10bc32f4f298ce56049bb.camel@lca.pw>
-         <20201022004906.GQ20115@casper.infradead.org>
-         <7ec15e2710db02be81a6c47afc57abed4bf8016c.camel@lca.pw>
-         <20201022171243.GX20115@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Fri, 30 Oct 2020 08:41:33 -0400
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A312C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 05:41:33 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CN24C353wzlhbLm;
+        Fri, 30 Oct 2020 13:41:31 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4CN2494vmzzlh8TR;
+        Fri, 30 Oct 2020 13:41:29 +0100 (CET)
+Subject: Re: [PATCH v22 08/12] landlock: Add syscall implementations
+To:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201027200358.557003-1-mic@digikod.net>
+ <20201027200358.557003-9-mic@digikod.net>
+ <CAG48ez1San538w=+He309vHg4pBSCvAf7e5xeHdqeOHA6qwitw@mail.gmail.com>
+ <de287149-ff42-40ca-5bd1-f48969880a06@digikod.net>
+ <CAG48ez1FQVkt78129WozBwFbVhAPyAr9oJAHFHAbbNxEBr9h1g@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <163f298b-b492-fee0-b475-102ae8170419@digikod.net>
+Date:   Fri, 30 Oct 2020 13:41:29 +0100
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez1FQVkt78129WozBwFbVhAPyAr9oJAHFHAbbNxEBr9h1g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-10-22 at 18:12 +0100, Matthew Wilcox wrote:
-> On Thu, Oct 22, 2020 at 11:35:26AM -0400, Qian Cai wrote:
-> > On Thu, 2020-10-22 at 01:49 +0100, Matthew Wilcox wrote:
-> > > On Wed, Oct 21, 2020 at 08:30:18PM -0400, Qian Cai wrote:
-> > > > Today's linux-next starts to trigger this wondering if anyone has any
-> > > > clue.
-> > > 
-> > > I've seen that occasionally too.  I changed that BUG_ON to VM_BUG_ON_PAGE
-> > > to try to get a clue about it.  Good to know it's not the THP patches
-> > > since they aren't in linux-next.
-> > > 
-> > > I don't understand how it can happen.  We have the page locked, and then
-> > > we
-> > > do:
-> > > 
-> > >                         if (PageWriteback(page)) {
-> > >                                 if (wbc->sync_mode != WB_SYNC_NONE)
-> > >                                         wait_on_page_writeback(page);
-> > >                                 else
-> > >                                         goto continue_unlock;
-> > >                         }
-> > > 
-> > >                         VM_BUG_ON_PAGE(PageWriteback(page), page);
-> > > 
-> > > Nobody should be able to put this page under writeback while we have it
-> > > locked ... right?  The page can be redirtied by the code that's supposed
-> > > to be writing it back, but I don't see how anyone can make PageWriteback
-> > > true while we're holding the page lock.
-> > 
-> > It happened again on today's linux-next:
-> > 
-> > [ 7613.579890][T55770] page:00000000a4b35e02 refcount:3 mapcount:0
-> > mapping:00000000457ceb87 index:0x3e pfn:0x1cef4e
-> > [ 7613.590594][T55770] aops:xfs_address_space_operations ino:805d85a dentry
-> > name:"doio.f1.55762"
-> > [ 7613.599192][T55770] flags:
-> > 0xbfffc0000000bf(locked|waiters|referenced|uptodate|dirty|lru|active)
-> > [ 7613.608596][T55770] raw: 00bfffc0000000bf ffffea0005027d48
-> > ffff88810eaec030 ffff888231f3a6a8
-> > [ 7613.617101][T55770] raw: 000000000000003e 0000000000000000
-> > 00000003ffffffff ffff888143724000
-> > [ 7613.625590][T55770] page dumped because:
-> > VM_BUG_ON_PAGE(PageWriteback(page))
-> > [ 7613.632695][T55770] page->mem_cgroup:ffff888143724000
-> 
-> Seems like it reproduces for you pretty quickly.  I have no luck ;-(
-> 
-> Can you add this?
 
-It turns out I had no luck for the last a few days. I'll keep running and report
-back if it triggers again.
-
+On 30/10/2020 04:07, Jann Horn wrote:
+> On Thu, Oct 29, 2020 at 12:30 PM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 29/10/2020 02:06, Jann Horn wrote:
+>>> On Tue, Oct 27, 2020 at 9:04 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> These 3 system calls are designed to be used by unprivileged processes
+>>>> to sandbox themselves:
+> [...]
+>>>> +       /*
+>>>> +        * Similar checks as for seccomp(2), except that an -EPERM may be
+>>>> +        * returned.
+>>>> +        */
+>>>> +       if (!task_no_new_privs(current)) {
+>>>> +               err = security_capable(current_cred(), current_user_ns(),
+>>>> +                               CAP_SYS_ADMIN, CAP_OPT_NOAUDIT);
+>>>
+>>> I think this should be ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN)?
+>>
+>> Right. The main difference is that ns_capable*() set PF_SUPERPRIV in
+>> current->flags. I guess seccomp should use ns_capable_noaudit() as well?
 > 
-> +++ b/mm/page-writeback.c
-> @@ -2774,6 +2774,7 @@ int __test_set_page_writeback(struct page *page, bool
-> keep_write)
->         struct address_space *mapping = page_mapping(page);
->         int ret, access_ret;
->  
-> +       VM_BUG_ON_PAGE(!PageLocked(page), page);
->         lock_page_memcg(page);
->         if (mapping && mapping_use_writeback_tags(mapping)) {
->                 XA_STATE(xas, &mapping->i_pages, page_index(page));
+> Yeah. That seccomp code is from commit e2cfabdfd0756, with commit date
+> in April 2012, while ns_capable_noaudit() was introduced in commit
+> 98f368e9e263, with commit date in June 2016; the seccomp code predates
+> the availability of that API.
 > 
-> This is the only place (afaict) that sets PageWriteback, so that will
-> tell us whether someone is setting Writeback without holding the lock,
-> or whether we're suffering from a spurious wakeup.
+> Do you want to send a patch to Kees for that, or should I?
 > 
 
+I found another case of this inconsistency in ptrace. I sent patches:
+https://lore.kernel.org/lkml/20201030123849.770769-1-mic@digikod.net/
