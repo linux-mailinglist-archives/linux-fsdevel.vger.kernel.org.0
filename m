@@ -2,249 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 548432A0D7C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 19:34:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5A52A0DA6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 19:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbgJ3Seo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 14:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45054 "EHLO
+        id S1727275AbgJ3Smc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 14:42:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727251AbgJ3Sen (ORCPT
+        with ESMTP id S1727208AbgJ3Sma (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 14:34:43 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3BFC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 11:34:43 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id q1so1097516qvn.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 11:34:42 -0700 (PDT)
+        Fri, 30 Oct 2020 14:42:30 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E3FAC0613D7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 11:42:30 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id q199so5757484qke.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 11:42:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=M+i5wkuc9nU1TEHuFWHR2etSh7d/UC+K8d7Euk8IJeU=;
-        b=JxO83Zme0Pt67fsWHqrm9FSoYzejK1FV3iIYUtqYfzUBL3O0vi0kI+s+z/UHnvFgGX
-         gMjrmHwz06YVytqMLZvQF3Ui8HAetI/daCK6MG1Xvyl4pxEE3SiKqT1zyE/0tyDc39Ys
-         YOjzsPvZpT6pG/WLG7G4GRadotn9p9Dn6D5s+i5J763dv4MqvZyjsdwQIgQyIdptb9+J
-         D2Eu4oaGmX5qmbOl1+SYmz9V8dQnRwNSZy9vwEEihfYkg+runJ1753gU7jDXKD9+3hQB
-         K6e/k4404Ftc00iu98X7wsTNTkhiZs7rD5Hcqfr5Dic4ePKyGiT/10GGsP8X/4RiTbSc
-         opOg==
+        bh=AIX0iUNYmKTGpsjIpq65NL9/sGsFnH8oZZCQcI/WsJo=;
+        b=bYlk+E9UZt4DRqoUdZ6MTPapJE+3m7W6ymaVF0A/Ytf9ysgpdiRa2L3mNtWF5+Vqjs
+         RUnhj68xulwkUTq7j5c+HznqkyxNCukA4LIN6ia0n8qO/Kg3DtA91F3vJui8So439Q1B
+         cggJSTEdzhgvZe1TGhZPgF6lf16mwOJWW8TEp5PTzSQGsuDd3fDgy6s+XiODTahP9RQY
+         VB2sNyLygfTA4c91kLbgbihNfNrxuJ4YT+AJzF0Fse4fAzUT/P4vszrp25TBRhOXY4kc
+         lTUsNHB/0fpFCNRNNH56EWKkzwpAZ5naDTicUEgS2YMjYDTr3lNkagtjB5K+TxakydPn
+         pFfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=M+i5wkuc9nU1TEHuFWHR2etSh7d/UC+K8d7Euk8IJeU=;
-        b=IsUobyIqlm1CrqOtzrhW7pELkqQMW+0km00UMkgEtMur8e+AJlbeELdJdBmyPtEIpS
-         oOB9HojNdqTLoQjsTpIm1/RZ8PgU8LBWb6aD58S4OP55g+F7Mem0VniPYX7ZDpm1P1J3
-         RwC72lf88BN9/4z1W5TgNtOJj+W6QApbYMapwqq3KICuQkYk95Z/TNZ5CbclP5KloRsp
-         0g41airu0dJZ46b4dOBPo/U+A8sUmUq2JxtmZYHPcdg6/gthT4KYgGVvNLrjNzhZYbv/
-         C9/ImgUekwoFqUsjmLUX08Qcl97pxbsmwoTAFppsZAe+moknwmiUWtuUcTbjfF/eIZm6
-         GTrQ==
-X-Gm-Message-State: AOAM532t/KzMTBk5ITJFS4Y4L1Ho7k9hYl/sq2xHp2WhQTp2VROBHjtW
-        VCseMCM2J0SwvaQh5SDg84hrKzyN3Dwo2XIrZuePKgIgQfUCdg==
-X-Google-Smtp-Source: ABdhPJxDERAU38ah2yHrgNu1q7OELaQUnUfp0cCMWLI3Oc2TKsa5BneAu9hT4BqjLObET+5lDGlBokMOv0unqHSplP8=
-X-Received: by 2002:a0c:8d8b:: with SMTP id t11mr10952002qvb.13.1604082881773;
- Fri, 30 Oct 2020 11:34:41 -0700 (PDT)
+        bh=AIX0iUNYmKTGpsjIpq65NL9/sGsFnH8oZZCQcI/WsJo=;
+        b=qYC53b4qhdLJ7dj1M4BrOHzgX4go3HVzLzgv9a1DGki+q8ZQpSybsbIgMjjAIhju5D
+         B7DX9A+sIeR03ecJmIuVs8Xr5d50JS/830hNwJFnJyRU+4uUcX7s9Iq1EviLtyxTFeoj
+         V7mdFeoAiIpoBrkD49jqztgCu4AyFKJ0pvaS8ARL3GliMwo5np16LVPDLPypIQqqYfEb
+         o/L1kyDPWbUuk+8ux64QkkZ4GfMFRgGkLVgeGg6FHk33mI9PqX5X1r0xbnBGsQY5+bCJ
+         AIR0lDgBSHuhDBvEZtAvsYPI8LPKOdReR2ST/SVnlX+iURNztUg3BOtny4lL0uWliKkf
+         j24Q==
+X-Gm-Message-State: AOAM533FhnKN7qZMQTxY3o4Phdz4EFLVnusSs1/EC0LPWptKL91o0EUd
+        v7E4BZVB+81HE2xX1hAIXAPnclNskj8y4TYRoCk/dg==
+X-Google-Smtp-Source: ABdhPJwWqIIGNUYiTZ//s/YW0jRWPtDrC/n5h2OIIkwmgvD9ZkczTEC7CFfpCs24TkfvR1NV9DvQppWgtO49wZ3mj+4=
+X-Received: by 2002:a37:9747:: with SMTP id z68mr3469115qkd.424.1604083349448;
+ Fri, 30 Oct 2020 11:42:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <000000000000602d0405ae64aca3@google.com> <20200903111515.17364-1-hdanton@sina.com>
- <5e0d35fb-73f7-cbb1-3932-1a1c55fa57fc@kernel.dk> <CACT4Y+Z-OcWgbVNdjPjNvp=Gqhb4o7ac8GGJxTp_zAfT=+Z26g@mail.gmail.com>
- <e3a4c745-09bb-6dc9-d787-5c10e52b6564@kernel.dk>
-In-Reply-To: <e3a4c745-09bb-6dc9-d787-5c10e52b6564@kernel.dk>
+References: <0000000000008caae305ab9a5318@google.com> <000000000000a726a405ada4b6cf@google.com>
+ <CAFqZXNvQcjp201ahjLBhYJJCuYqZrYLGDA-wE3hXiJpRNgbTKg@mail.gmail.com> <CAJfpegtzQB09ind8tkYzaiu6ODJvhMKj3myxVS75vbjTcOxU8g@mail.gmail.com>
+In-Reply-To: <CAJfpegtzQB09ind8tkYzaiu6ODJvhMKj3myxVS75vbjTcOxU8g@mail.gmail.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 30 Oct 2020 19:34:29 +0100
-Message-ID: <CACT4Y+aMPML+txtB=QP4y=rFm0Zr6qNk_w_oa9mX7dJLZhWfyQ@mail.gmail.com>
-Subject: Re: INFO: task hung in io_uring_setup
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stefano Garzarella <sgarzare@redhat.com>,
+Date:   Fri, 30 Oct 2020 19:42:18 +0100
+Message-ID: <CACT4Y+Yyxdju4FR-E3bc5ERM6xhecnos6mkJR5==xS+RS_DUuw@mail.gmail.com>
+Subject: Re: general protection fault in security_inode_getattr
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        KP Singh <kpsingh@chromium.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Song Liu <songliubraving@fb.com>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
+        Yonghong Song <yhs@fb.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 3:01 PM Jens Axboe <axboe@kernel.dk> wrote:
+On Fri, Oct 30, 2020 at 2:02 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> On 10/30/20 4:01 AM, Dmitry Vyukov wrote:
-> > On Thu, Sep 3, 2020 at 1:44 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 9/3/20 5:15 AM, Hillf Danton wrote:
-> >>>
-> >>> Thu, 03 Sep 2020 01:38:15 -0700
-> >>>> syzbot found the following issue on:
-> >>>>
-> >>>> HEAD commit:    4442749a Add linux-next specific files for 20200902
-> >>>> git tree:       linux-next
-> >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12f9e915900000
-> >>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=39134fcec6c78e33
-> >>>> dashboard link: https://syzkaller.appspot.com/bug?extid=107dd59d1efcaf3ffca4
-> >>>> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> >>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11594671900000
-> >>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111ca835900000
-> >>>>
-> >>>> The issue was bisected to:
-> >>>>
-> >>>> commit dfe127799f8e663c7e3e48b5275ca538b278177b
-> >>>> Author: Stefano Garzarella <sgarzare@redhat.com>
-> >>>> Date:   Thu Aug 27 14:58:31 2020 +0000
-> >>>>
-> >>>>     io_uring: allow disabling rings during the creation
-> >>>>
-> >>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11bc66c1900000
-> >>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=13bc66c1900000
-> >>>> console output: https://syzkaller.appspot.com/x/log.txt?x=15bc66c1900000
-> >>>>
-> >>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >>>> Reported-by: syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com
-> >>>> Fixes: dfe127799f8e ("io_uring: allow disabling rings during the creation")
-> >>>>
-> >>>> INFO: task syz-executor047:6853 blocked for more than 143 seconds.
-> >>>>       Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-> >>>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >>>> task:syz-executor047 state:D stack:28104 pid: 6853 ppid:  6847 flags:0x00004000
-> >>>> Call Trace:
-> >>>>  context_switch kernel/sched/core.c:3777 [inline]
-> >>>>  __schedule+0xea9/0x2230 kernel/sched/core.c:4526
-> >>>>  schedule+0xd0/0x2a0 kernel/sched/core.c:4601
-> >>>>  schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1855
-> >>>>  do_wait_for_common kernel/sched/completion.c:85 [inline]
-> >>>>  __wait_for_common kernel/sched/completion.c:106 [inline]
-> >>>>  wait_for_common kernel/sched/completion.c:117 [inline]
-> >>>>  wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
-> >>>>  io_sq_thread_stop fs/io_uring.c:6906 [inline]
-> >>>>  io_finish_async fs/io_uring.c:6920 [inline]
-> >>>>  io_sq_offload_create fs/io_uring.c:7595 [inline]
-> >>>>  io_uring_create fs/io_uring.c:8671 [inline]
-> >>>>  io_uring_setup+0x1495/0x29a0 fs/io_uring.c:8744
-> >>>>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-> >>>>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>>> RIP: 0033:0x440299
-> >>>> Code: Bad RIP value.
-> >>>> RSP: 002b:00007ffc57cff668 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-> >>>> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440299
-> >>>> RDX: 0000000000400b40 RSI: 0000000020000100 RDI: 0000000000003ffe
-> >>>> RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-> >>>> R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000401aa0
-> >>>> R13: 0000000000401b30 R14: 0000000000000000 R15: 0000000000000000
-> >>>> INFO: task io_uring-sq:6854 blocked for more than 143 seconds.
-> >>>>       Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-> >>>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> >>>> task:io_uring-sq     state:D stack:31200 pid: 6854 ppid:     2 flags:0x00004000
-> >>>> Call Trace:
-> >>>>  context_switch kernel/sched/core.c:3777 [inline]
-> >>>>  __schedule+0xea9/0x2230 kernel/sched/core.c:4526
-> >>>>  schedule+0xd0/0x2a0 kernel/sched/core.c:4601
-> >>>>  schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4660
-> >>>>  kthread+0x2ac/0x4a0 kernel/kthread.c:285
-> >>>>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> >>>>
-> >>>> Showing all locks held in the system:
-> >>>> 1 lock held by khungtaskd/1174:
-> >>>>  #0: ffffffff89c67980 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5829
-> >>>> 3 locks held by in:imklog/6525:
-> >>>>  #0: ffff8880a3de2df0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:930
-> >>>>  #1: ffff8880907d8968 (&mm->mmap_lock#2){++++}-{3:3}, at: rq_lock kernel/sched/sched.h:1292 [inline]
-> >>>>  #1: ffff8880907d8968 (&mm->mmap_lock#2){++++}-{3:3}, at: ttwu_queue kernel/sched/core.c:2698 [inline]
-> >>>>  #1: ffff8880907d8968 (&mm->mmap_lock#2){++++}-{3:3}, at: try_to_wake_up+0x52b/0x12b0 kernel/sched/core.c:2978
-> >>>>  #2: ffff8880ae620ec8 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x2fb/0x400 kernel/sched/psi.c:833
-> >>>>
-> >>>> =============================================
-> >>>>
-> >>>> NMI backtrace for cpu 1
-> >>>> CPU: 1 PID: 1174 Comm: khungtaskd Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-> >>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> >>>> Call Trace:
-> >>>>  __dump_stack lib/dump_stack.c:77 [inline]
-> >>>>  dump_stack+0x198/0x1fd lib/dump_stack.c:118
-> >>>>  nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
-> >>>>  nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
-> >>>>  trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
-> >>>>  check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
-> >>>>  watchdog+0xd89/0xf30 kernel/hung_task.c:339
-> >>>>  kthread+0x3b5/0x4a0 kernel/kthread.c:292
-> >>>>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> >>>> Sending NMI from CPU 1 to CPUs 0:
-> >>>> NMI backtrace for cpu 0
-> >>>> CPU: 0 PID: 3901 Comm: systemd-journal Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-> >>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> >>>> RIP: 0010:unwind_next_frame+0x139a/0x1f90 arch/x86/kernel/unwind_orc.c:607
-> >>>> Code: 49 39 47 28 0f 85 3e f0 ff ff 80 3d df 2c 84 09 00 0f 85 31 f0 ff ff e9 06 18 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 14 24 <48> c1 ea 03 80 3c 02 00 0f 85 02 08 00 00 49 8d 7f 08 49 8b 6f 38
-> >>>> RSP: 0018:ffffc900040475f8 EFLAGS: 00000246
-> >>>> RAX: dffffc0000000000 RBX: 1ffff92000808ec7 RCX: 1ffff92000808ee2
-> >>>> RDX: ffffc90004047708 RSI: ffffc90004047aa8 RDI: ffffc90004047aa8
-> >>>> RBP: 0000000000000001 R08: ffffffff8b32a670 R09: 0000000000000001
-> >>>> R10: 000000000007201e R11: 0000000000000001 R12: ffffc90004047ac8
-> >>>> R13: ffffc90004047705 R14: ffffc90004047720 R15: ffffc900040476d0
-> >>>> FS:  00007efc659ac8c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-> >>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>>> CR2: 00007efc62d51000 CR3: 0000000093d6a000 CR4: 00000000001506f0
-> >>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >>>> Call Trace:
-> >>>>  arch_stack_walk+0x81/0xf0 arch/x86/kernel/stacktrace.c:25
-> >>>>  stack_trace_save+0x8c/0xc0 kernel/stacktrace.c:123
-> >>>>  kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
-> >>>>  kasan_set_track mm/kasan/common.c:56 [inline]
-> >>>>  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
-> >>>>  slab_post_alloc_hook mm/slab.h:517 [inline]
-> >>>>  slab_alloc mm/slab.c:3312 [inline]
-> >>>>  kmem_cache_alloc+0x13a/0x3a0 mm/slab.c:3482
-> >>>>  kmem_cache_zalloc include/linux/slab.h:656 [inline]
-> >>>>  __alloc_file+0x21/0x350 fs/file_table.c:101
-> >>>>  alloc_empty_file+0x6d/0x170 fs/file_table.c:151
-> >>>>  path_openat+0xe3/0x2730 fs/namei.c:3354
-> >>>>  do_filp_open+0x17e/0x3c0 fs/namei.c:3395
-> >>>>  do_sys_openat2+0x16d/0x420 fs/open.c:1168
-> >>>>  do_sys_open fs/open.c:1184 [inline]
-> >>>>  __do_sys_open fs/open.c:1192 [inline]
-> >>>>  __se_sys_open fs/open.c:1188 [inline]
-> >>>>  __x64_sys_open+0x119/0x1c0 fs/open.c:1188
-> >>>>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-> >>>>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>>
-> >>> Add wakeup to make sure the wait for completion will be completed.
-> >>>
-> >>> --- a/fs/io_uring.c
-> >>> +++ b/fs/io_uring.c
-> >>> @@ -6903,6 +6903,7 @@ static int io_sqe_files_unregister(struc
-> >>>  static void io_sq_thread_stop(struct io_ring_ctx *ctx)
-> >>>  {
-> >>>       if (ctx->sqo_thread) {
-> >>> +             wake_up_process(ctx->sqo_thread);
-> >>>               wait_for_completion(&ctx->sq_thread_comp);
-> >>>               /*
-> >>>                * The park is a bit of a work-around, without it we get
-> >>
-> >> Yeah this looks reasonable, if the thread is attempted stopped if it
-> >> was created de-activated and never started.
-> >>
-> >> Needs a comment to that effect. Care to add that and send it as a
-> >> properly formatted patch (with commit message, etc)?
+> On Mon, Aug 24, 2020 at 11:00 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 > >
-> > What happened with this fix?
-> > The bug is marked as fixed with commit "io_uring: fix task hung in
-> > io_uring_setup":
-> > https://syzkaller.appspot.com/bug?id=a2b6779df9f5006318875364e0f18cc3af14fa60
-> > but this commit cannot be found in any tree.
+> > On Mon, Aug 24, 2020 at 9:37 PM syzbot
+> > <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com> wrote:
+> > > syzbot has found a reproducer for the following issue on:
+> >
+> > Looping in fsdevel and OverlayFS maintainers, as this seems to be
+> > FS/OverlayFS related...
 >
-> I don't think Hillf ever sent in that patch, but it did get corrected as
-> part of:
+> Hmm, the oopsing code is always something like:
 >
-> commit 7e84e1c7566a1df470a9e1f49d3db2ce311261a4
-> Author: Stefano Garzarella <sgarzare@redhat.com>
-> Date:   Thu Aug 27 16:58:31 2020 +0200
+> All code
+> ========
+>    0: 1b fe                sbb    %esi,%edi
+>    2: 49 8d 5e 08          lea    0x8(%r14),%rbx
+>    6: 48 89 d8              mov    %rbx,%rax
+>    9: 48 c1 e8 03          shr    $0x3,%rax
+>    d: 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1)
+>   12: 74 08                je     0x1c
+>   14: 48 89 df              mov    %rbx,%rdi
+>   17: e8 bc b4 5b fe        callq  0xfffffffffe5bb4d8
+>   1c: 48 8b 1b              mov    (%rbx),%rbx
+>   1f: 48 83 c3 68          add    $0x68,%rbx
+>   23: 48 89 d8              mov    %rbx,%rax
+>   26: 48 c1 e8 03          shr    $0x3,%rax
+>   2a:* 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+>   2f: 74 08                je     0x39
+>   31: 48 89 df              mov    %rbx,%rdi
+>   34: e8 9f b4 5b fe        callq  0xfffffffffe5bb4d8
+>   39: 48 8b 1b              mov    (%rbx),%rbx
+>   3c: 48 83 c3 0c          add    $0xc,%rbx
 >
->     io_uring: allow disabling rings during the creation
 >
-> which should have been done as a separate patch. I'll queue one up for
-> -stable.
+> And that looks (to me) like the unrolled loop in call_int_hook().  I
+> don't see how that could be related to overlayfs, though it's
+> definitely interesting why it only triggers from
+> overlay->vfs_getattr()->security_inode_getattr()...
 
-Thanks.
 
-Let's tell syzbot that this is not an issue anymore:
+>   26: 48 c1 e8 03          shr    $0x3,%rax
+>   2a:* 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
 
-#syz fix: io_uring: allow disabling rings during the creation
+
+This access is part of KASAN check. But the original address kernel
+tries to access is NULL, so it's not an issue with KASAN.
+
+The line is this:
+
+int security_inode_getattr(const struct path *path)
+{
+    if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
+        return 0;
+
+So it's either path is NULL, or something in d_backing_inode
+dereferences NULL path->dentry.
+
+The reproducer does involve overlayfs:
+
+mkdir(&(0x7f0000000240)='./file1\x00', 0x0)
+mkdir(&(0x7f0000000300)='./bus\x00', 0x0)
+r0 = creat(&(0x7f00000000c0)='./bus/file1\x00', 0x0)
+mkdir(&(0x7f0000000080)='./file0\x00', 0x0)
+mount$overlay(0x400002, &(0x7f0000000000)='./bus\x00',
+&(0x7f0000000100)='overlay\x00', 0x0,
+&(0x7f00000003c0)=ANY=[@ANYBLOB='upperdir=./file1,lowerdir=./bus,workdir=./file0,metacopy=on'])
+link(&(0x7f0000000200)='./bus/file1\x00', &(0x7f00000002c0)='./bus/file0\x00')
+write$RDMA_USER_CM_CMD_RESOLVE_ADDR(r0, 0x0, 0x0)
+acct(&(0x7f0000000040)='./bus/file0\x00')
+
+Though, it may be overlayfs-related, or it may be a generic bug that
+requires a tricky reproducer and the only reproducer syzbot come up
+with happened to involve overlayfs.
+But there are 4 reproducers on syzbot dashboard and all of them
+involve overlayfs and they are somewhat different. So my bet would be
+on overlayfs.
