@@ -2,62 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 908F32A06D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:52:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B06712A06EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:53:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgJ3Nwa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 09:52:30 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21974 "EHLO
+        id S1726821AbgJ3Nwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 09:52:54 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21978 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbgJ3Nw1 (ORCPT
+        with ESMTP id S1726710AbgJ3Nw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 09:52:27 -0400
+        Fri, 30 Oct 2020 09:52:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604065946; x=1635601946;
+  t=1604065948; x=1635601948;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=c1fLKFaRdT0TB+so2lzvhaU0SiAmji8TO0m4uP/4XDI=;
-  b=njApx0BeOt2UH4U9+IzOWXkcV2DM3r+YDTyQFhwtRJso2R6lHvPustix
-   j4CuGp4a+8JjHuApCxX7yiZ2s83tdWZMB6SXDRlGe+zqeFY5iCd4ojG2e
-   9wtvSMD1VuEH/xmFv+oq/ilxnvZNGxQqKGFumfeCQZlBkI6gBXx+O41aX
-   gE+lREDK1iCXWHYH5ylKqOZFbw5yOvpGQ/f/QyJw21zhWFzBQEAmECe5b
-   nyELGokmHw2uVtja4oAZI71i7UrrEOH249TsZKPPt4NS2vTftbPSNGPrB
-   GC3vdcqOcykDvXS6XfzGaGkAF4oCWKI31sP26X6mje43VcRl8ZAUKzgi5
-   A==;
-IronPort-SDR: cqiOCJOVXtkgiWhfJImXepd9RnvtaM3nsVYHSL7iq9wf4gvRPCpjYSrpWZZGpqSG7bC11snHBW
- Gd8tmU5iIMKQ1B7ysviNSWm2K3rhSwlyM2i9KvcmEgtnuiqTemAFcnufyYA4fdGJPAD74LwvQc
- uo+0KVpWITi7eNMb/jGwSvue4/nmPZWpMb6byzzkgnBWN8BnqQjxtG1zXeTRrAuskwBbt0mexG
- dpsYN93aJa69Yo8doNlZO7vGkab6v/o5HpJjcpujDap3vTsX1MPYmUmurF8wlMDOTHvVOjf0I3
- PyM=
+  bh=P8pg+cbadi/K8dJKqVoIbiNqcCKziYwvXwKeM1hNSr4=;
+  b=iM4T+e0Mx7RHq+cs/eEc2y9DGQOcdsTdWAo1esX3je1Df4aD4SxHluxS
+   g9V7wartrwggYWwKX9G1dn9R/+iK36TzHqoand/rYs0ZNOqGkdwp0Q/D4
+   M3gf6Lxh8y1N3pAXLxJxkZuB6I7RPnhivdJx0bOw4Ck63i+kFLRzOonZa
+   smfX+4CF2rLVNF9akZYNpefmBaBvedu9ITbSQBSTiOe9Fs34zANGwQQe2
+   r9Gomz78k0BzmUg2SQCAoWnoyS5a2O+nzvurdTn6lk+JZLMUBkn5Sj1/R
+   8ZD3jWx9FPhJqPpn2qBEbQsUhyAM3NhtVdC25FDwr+p47NCDVxy6CAKPC
+   g==;
+IronPort-SDR: pfcEXdXSEGIyuAxmPwgrQ+Kn+oKf3nX0sD18xMawcsUjPaJQfTQdfHfRVqbWNNQ0EN99wpH6cp
+ GikEn2ue3fdfFui7d0u52Du6ANywmN9I1GbABC1SiLaMVqFUgYK8A7NT6ab4cRu9lQBx0k0lLx
+ O0TCsqiAOUkyoVBSUN8rf+7SDHdaJyQ56lK+DLVZVjTw0nbVs+/6XgJRLXCZSnwwc/VwaxMIJN
+ Uv0iwwNxfu7s1pA7r7rjs00wp4FsZiUtxw//OQ2U0TPZ/96zQjw+IuD7x1rsxtA+Xnz438pbW4
+ RWw=
 X-IronPort-AV: E=Sophos;i="5.77,433,1596470400"; 
-   d="scan'208";a="155806579"
+   d="scan'208";a="155806581"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Oct 2020 21:52:26 +0800
-IronPort-SDR: 9sL9eU0Bcl1aHXarFLm6bFN53rs568L+0ve3iNB2LxoK4v6gdiaR1SjBpCLYJTg+8eYo2qNGuB
- 2CqlfjYqjOZB6Nhch9gTBHHSHgfDH8VPz8K2BD9/p9JJFltGbC88Q7nlyXnrQmSRQR/Ql730KW
- tdLprphQ7B5ySUCgJx9PmBhlEIxU9IkMf6drdncpzP4wdZYyd/ohJ6PqTDEARBCI+wbZ7OOBj7
- W9VORGp0EaBv7jjera+ybaPQRRHtCC9BfGaogtGA1lG+A3lFbj3gSFxSrTFS+bxV9yWWMXJotv
- kR0uE1g8pO6N3a9IaV2sCgXk
+  by ob1.hgst.iphmx.com with ESMTP; 30 Oct 2020 21:52:28 +0800
+IronPort-SDR: 2cgb+bBGL7mLrTQ41G0ewBM0MAmC1UaKbuj9amPx4z6BQ/Tp59aHAIbnjMxkUG6LdqZHxd/chi
+ nXoxg2hlM/h2IrmiYUukoKhIKubVfAxQACLVHgpv8CP84Xdf9ChRvFfNuA+s0LEFyrUr99AcII
+ sRimiLI0D5uHChVLIAUdBhfxeHqKMe/7EjIjnh6G+ZCjlMFLtDjTzO7zazbv0yOPgDF63VX6YY
+ rP07YVtJUMFK3ybeHBpemdw4kpoy28bfIH7EezIKLRXMUSI9cH63vHSa0byuWuM1HhbkB9foF9
+ 3Y7k+tgDK7Q3A+U/GsZ8HYPw
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 06:38:40 -0700
-IronPort-SDR: yxZTRp4GlqKmtDpQKhV/iq5wXugRNLgIu+NUcjEPRL5DjfdBTUldn0tv7ZpDVb4gBwnRhHpR8M
- Dbl7zVs29tNA9zASGvVTSgrIywHVXE9VCPmnBMWXqVDihqNVPrARU8PfIpjGbTZj5PhZs4jWUh
- uC1IpN0xv1s4yrgypZzujCcT8U9rei7v+VmKHazmI+CCnppnp8bN0reO4/8t8ZihpcQKLpbUG5
- aFe+n6wOZTZ4I9m/GCRYx2ZtQrYNpLxs55yk5z2SY4B+uHj1gf29vIlEzLuesJYmcI1FeGrE7T
- fjI=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 06:38:42 -0700
+IronPort-SDR: b5SpNraWoCi5Sd0BhXW1iDbfg2ztX6iliiIaSNMZdCuDYSPjUYb0CgXIiWY8nzPVEDzvewXsPh
+ rfC/4WtcrtXdgGBl6izJr1m4qkGT8cJ1dXU/Pj0S1HIVthoGak40sAEwm3cCT2J33KG9rRoCaa
+ nprXJP+QHBXbj/6G0Qq1hkU2adqI8t7RGD3/G0ZpCS/q8fITnd1dvQoey1mvW0vQuWQ5anKWWA
+ Cp3tTxVzreBuQ+qBo5YXaJxgyh9FERE/kFrsTL7joWaWE7dkSVtOor86NP0Y4Fh/X/FH9A0UjK
+ aKc=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 30 Oct 2020 06:52:25 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Oct 2020 06:52:27 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v9 04/41] btrfs: Get zone information of zoned block devices
-Date:   Fri, 30 Oct 2020 22:51:11 +0900
-Message-Id: <feca5ea7b6dc1a62eddbc00e01452b92523c8f36.1604065694.git.naohiro.aota@wdc.com>
+Subject: [PATCH v9 05/41] btrfs: Check and enable ZONED mode
+Date:   Fri, 30 Oct 2020 22:51:12 +0900
+Message-Id: <599d306d41880e3e3242120a40a78b81f6ed0473.1604065695.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
 References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
@@ -67,451 +68,275 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If a zoned block device is found, get its zone information (number of zones
-and zone size) using the new helper function btrfs_get_dev_zone_info().  To
-avoid costly run-time zone report commands to test the device zones type
-during block allocation, attach the seq_zones bitmap to the device
-structure to indicate if a zone is sequential or accept random writes. Also
-it attaches the empty_zones bitmap to indicate if a zone is empty or not.
+This commit introduces the function btrfs_check_zoned_mode() to check if
+ZONED flag is enabled on the file system and if the file system consists of
+zoned devices with equal zone size.
 
-This patch also introduces the helper function btrfs_dev_is_sequential() to
-test if the zone storing a block is a sequential write required zone and
-btrfs_dev_is_empty_zone() to test if the zone is a empty zone.
-
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/Makefile      |   1 +
- fs/btrfs/dev-replace.c |   5 ++
- fs/btrfs/super.c       |   5 ++
- fs/btrfs/volumes.c     |  19 ++++-
- fs/btrfs/volumes.h     |   4 +
- fs/btrfs/zoned.c       | 176 +++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/zoned.h       |  86 ++++++++++++++++++++
- 7 files changed, 294 insertions(+), 2 deletions(-)
- create mode 100644 fs/btrfs/zoned.c
- create mode 100644 fs/btrfs/zoned.h
+ fs/btrfs/ctree.h       | 10 ++++++
+ fs/btrfs/dev-replace.c |  7 ++++
+ fs/btrfs/disk-io.c     | 11 ++++++
+ fs/btrfs/super.c       |  1 +
+ fs/btrfs/volumes.c     |  5 +++
+ fs/btrfs/zoned.c       | 78 ++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h       | 26 ++++++++++++++
+ 7 files changed, 138 insertions(+)
 
-diff --git a/fs/btrfs/Makefile b/fs/btrfs/Makefile
-index e738f6206ea5..0497fdc37f90 100644
---- a/fs/btrfs/Makefile
-+++ b/fs/btrfs/Makefile
-@@ -16,6 +16,7 @@ btrfs-y += super.o ctree.o extent-tree.o print-tree.o root-tree.o dir-item.o \
- btrfs-$(CONFIG_BTRFS_FS_POSIX_ACL) += acl.o
- btrfs-$(CONFIG_BTRFS_FS_CHECK_INTEGRITY) += check-integrity.o
- btrfs-$(CONFIG_BTRFS_FS_REF_VERIFY) += ref-verify.o
-+btrfs-$(CONFIG_BLK_DEV_ZONED) += zoned.o
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index aac3d6f4e35b..25fd4e97dd2a 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -948,6 +948,12 @@ struct btrfs_fs_info {
+ 	/* Type of exclusive operation running */
+ 	unsigned long exclusive_operation;
  
- btrfs-$(CONFIG_BTRFS_FS_RUN_SANITY_TESTS) += tests/free-space-tests.o \
- 	tests/extent-buffer-tests.o tests/btrfs-tests.o \
++	/* Zone size when in ZONED mode */
++	union {
++		u64 zone_size;
++		u64 zoned;
++	};
++
+ #ifdef CONFIG_BTRFS_FS_REF_VERIFY
+ 	spinlock_t ref_verify_lock;
+ 	struct rb_root block_tree;
+@@ -3595,4 +3601,8 @@ static inline int btrfs_is_testing(struct btrfs_fs_info *fs_info)
+ }
+ #endif
+ 
++static inline bool btrfs_is_zoned(struct btrfs_fs_info *fs_info)
++{
++	return fs_info->zoned != 0;
++}
+ #endif
 diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index 20ce1970015f..6f6d77224c2b 100644
+index 6f6d77224c2b..5e3554482af1 100644
 --- a/fs/btrfs/dev-replace.c
 +++ b/fs/btrfs/dev-replace.c
-@@ -21,6 +21,7 @@
- #include "rcu-string.h"
- #include "dev-replace.h"
- #include "sysfs.h"
-+#include "zoned.h"
+@@ -238,6 +238,13 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
+ 		return PTR_ERR(bdev);
+ 	}
  
- /*
-  * Device replace overview
-@@ -291,6 +292,10 @@ static int btrfs_init_dev_replace_tgtdev(struct btrfs_fs_info *fs_info,
- 	set_blocksize(device->bdev, BTRFS_BDEV_BLOCKSIZE);
- 	device->fs_devices = fs_info->fs_devices;
- 
-+	ret = btrfs_get_dev_zone_info(device);
-+	if (ret)
++	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
++		btrfs_err(fs_info,
++			  "zone type of target device mismatch with the filesystem!");
++		ret = -EINVAL;
 +		goto error;
++	}
 +
- 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
- 	list_add(&device->dev_list, &fs_info->fs_devices->devices);
- 	fs_info->fs_devices->num_devices++;
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 8840a4fa81eb..ed55014fd1bd 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2462,6 +2462,11 @@ static void __init btrfs_print_mod_info(void)
- #endif
- #ifdef CONFIG_BTRFS_FS_REF_VERIFY
- 			", ref-verify=on"
-+#endif
-+#ifdef CONFIG_BLK_DEV_ZONED
-+			", zoned=yes"
-+#else
-+			", zoned=no"
- #endif
- 			;
- 	pr_info("Btrfs loaded, crc32c=%s%s\n", crc32c_impl(), options);
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 58b9c419a2b6..e787bf89f761 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -31,6 +31,7 @@
- #include "space-info.h"
+ 	sync_blockdev(bdev);
+ 
+ 	list_for_each_entry(device, &fs_info->fs_devices->devices, dev_list) {
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 764001609a15..9bc51cff48b8 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -42,6 +42,7 @@
  #include "block-group.h"
  #include "discard.h"
+ #include "space-info.h"
 +#include "zoned.h"
  
- const struct btrfs_raid_attr btrfs_raid_array[BTRFS_NR_RAID_TYPES] = {
- 	[BTRFS_RAID_RAID10] = {
-@@ -374,6 +375,7 @@ void btrfs_free_device(struct btrfs_device *device)
- 	rcu_string_free(device->name);
- 	extent_io_tree_release(&device->alloc_state);
- 	bio_put(device->flush_bio);
-+	btrfs_destroy_dev_zone_info(device);
- 	kfree(device);
- }
+ #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
+ 				 BTRFS_HEADER_FLAG_RELOC |\
+@@ -2976,6 +2977,8 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
+ 	if (features & BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA)
+ 		btrfs_info(fs_info, "has skinny extents");
  
-@@ -667,6 +669,11 @@ static int btrfs_open_one_device(struct btrfs_fs_devices *fs_devices,
- 	clear_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &device->dev_state);
- 	device->mode = flags;
- 
-+	/* Get zone type information of zoned block devices */
-+	ret = btrfs_get_dev_zone_info(device);
-+	if (ret != 0)
-+		goto error_free_page;
++	fs_info->zoned = features & BTRFS_FEATURE_INCOMPAT_ZONED;
 +
- 	fs_devices->open_devices++;
- 	if (test_bit(BTRFS_DEV_STATE_WRITEABLE, &device->dev_state) &&
- 	    device->devid != BTRFS_DEV_REPLACE_DEVID) {
-@@ -1143,6 +1150,7 @@ static void btrfs_close_one_device(struct btrfs_device *device)
- 		device->bdev = NULL;
- 	}
- 	clear_bit(BTRFS_DEV_STATE_WRITEABLE, &device->dev_state);
-+	btrfs_destroy_dev_zone_info(device);
+ 	/*
+ 	 * flag our filesystem as having big metadata blocks if
+ 	 * they are bigger than the page size
+@@ -3130,7 +3133,15 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
  
- 	device->fs_info = NULL;
- 	atomic_set(&device->dev_stats_ccnt, 0);
-@@ -2543,6 +2551,14 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
- 	}
- 	rcu_assign_pointer(device->name, name);
+ 	btrfs_free_extra_devids(fs_devices, 1);
  
-+	device->fs_info = fs_info;
-+	device->bdev = bdev;
++	ret = btrfs_check_zoned_mode(fs_info);
++	if (ret) {
++		btrfs_err(fs_info, "failed to init ZONED mode: %d",
++				ret);
++		goto fail_block_groups;
++	}
 +
-+	/* Get zone type information of zoned block devices */
-+	ret = btrfs_get_dev_zone_info(device);
-+	if (ret)
-+		goto error_free_device;
+ 	ret = btrfs_sysfs_add_fsid(fs_devices);
 +
- 	trans = btrfs_start_transaction(root, 0);
- 	if (IS_ERR(trans)) {
- 		ret = PTR_ERR(trans);
-@@ -2559,8 +2575,6 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
- 					 fs_info->sectorsize);
- 	device->disk_total_bytes = device->total_bytes;
- 	device->commit_total_bytes = device->total_bytes;
--	device->fs_info = fs_info;
--	device->bdev = bdev;
- 	set_bit(BTRFS_DEV_STATE_IN_FS_METADATA, &device->dev_state);
- 	clear_bit(BTRFS_DEV_STATE_REPLACE_TGT, &device->dev_state);
- 	device->mode = FMODE_EXCL;
-@@ -2707,6 +2721,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
- 		sb->s_flags |= SB_RDONLY;
- 	if (trans)
- 		btrfs_end_transaction(trans);
-+	btrfs_destroy_dev_zone_info(device);
- error_free_device:
- 	btrfs_free_device(device);
- error:
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index bf27ac07d315..9c07b97a2260 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -51,6 +51,8 @@ struct btrfs_io_geometry {
- #define BTRFS_DEV_STATE_REPLACE_TGT	(3)
- #define BTRFS_DEV_STATE_FLUSH_SENT	(4)
+ 	if (ret) {
+ 		btrfs_err(fs_info, "failed to init sysfs fsid interface: %d",
+ 				ret);
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index ed55014fd1bd..3312fe08168f 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -44,6 +44,7 @@
+ #include "backref.h"
+ #include "space-info.h"
+ #include "sysfs.h"
++#include "zoned.h"
+ #include "tests/btrfs-tests.h"
+ #include "block-group.h"
+ #include "discard.h"
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index e787bf89f761..10827892c086 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -2518,6 +2518,11 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
+ 	if (IS_ERR(bdev))
+ 		return PTR_ERR(bdev);
  
-+struct btrfs_zoned_device_info;
++	if (!btrfs_check_device_zone_type(fs_info, bdev)) {
++		ret = -EINVAL;
++		goto error;
++	}
 +
- struct btrfs_device {
- 	struct list_head dev_list; /* device_list_mutex */
- 	struct list_head dev_alloc_list; /* chunk mutex */
-@@ -64,6 +66,8 @@ struct btrfs_device {
- 
- 	struct block_device *bdev;
- 
-+	struct btrfs_zoned_device_info *zone_info;
-+
- 	/* the mode sent to blkdev_get */
- 	fmode_t mode;
- 
+ 	if (fs_devices->seeding) {
+ 		seeding_dev = 1;
+ 		down_write(&sb->s_umount);
 diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-new file mode 100644
-index 000000000000..5657d654bc44
---- /dev/null
+index 5657d654bc44..e1cdff5af3a3 100644
+--- a/fs/btrfs/zoned.c
 +++ b/fs/btrfs/zoned.c
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -174,3 +174,81 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 
+ 	return 0;
+ }
 +
-+#include <linux/slab.h>
-+#include <linux/blkdev.h>
-+#include "ctree.h"
-+#include "volumes.h"
-+#include "zoned.h"
-+#include "rcu-string.h"
-+
-+/* Maximum number of zones to report per blkdev_report_zones() call */
-+#define BTRFS_REPORT_NR_ZONES   4096
-+
-+static int copy_zone_info_cb(struct blk_zone *zone, unsigned int idx,
-+			     void *data)
++int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
 +{
-+	struct blk_zone *zones = data;
++	struct btrfs_fs_devices *fs_devices = fs_info->fs_devices;
++	struct btrfs_device *device;
++	u64 hmzoned_devices = 0;
++	u64 nr_devices = 0;
++	u64 zone_size = 0;
++	int incompat_zoned = btrfs_is_zoned(fs_info);
++	int ret = 0;
 +
-+	memcpy(&zones[idx], zone, sizeof(*zone));
++	/* Count zoned devices */
++	list_for_each_entry(device, &fs_devices->devices, dev_list) {
++		enum blk_zoned_model model;
 +
-+	return 0;
-+}
++		if (!device->bdev)
++			continue;
 +
-+static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
-+			       struct blk_zone *zones, unsigned int *nr_zones)
-+{
-+	int ret;
-+
-+	if (!*nr_zones)
-+		return 0;
-+
-+	ret = blkdev_report_zones(device->bdev, pos >> SECTOR_SHIFT, *nr_zones,
-+				  copy_zone_info_cb, zones);
-+	if (ret < 0) {
-+		btrfs_err_in_rcu(device->fs_info,
-+				 "get zone at %llu on %s failed %d", pos,
-+				 rcu_str_deref(device->name), ret);
-+		return ret;
-+	}
-+	*nr_zones = ret;
-+	if (!ret)
-+		return -EIO;
-+
-+	return 0;
-+}
-+
-+int btrfs_get_dev_zone_info(struct btrfs_device *device)
-+{
-+	struct btrfs_zoned_device_info *zone_info = NULL;
-+	struct block_device *bdev = device->bdev;
-+	sector_t nr_sectors = bdev->bd_part->nr_sects;
-+	sector_t sector = 0;
-+	struct blk_zone *zones = NULL;
-+	unsigned int i, nreported = 0, nr_zones;
-+	unsigned int zone_sectors;
-+	int ret;
-+	char devstr[sizeof(device->fs_info->sb->s_id) +
-+		    sizeof(" (device )") - 1];
-+
-+	if (!bdev_is_zoned(bdev))
-+		return 0;
-+
-+	if (device->zone_info)
-+		return 0;
-+
-+	zone_info = kzalloc(sizeof(*zone_info), GFP_KERNEL);
-+	if (!zone_info)
-+		return -ENOMEM;
-+
-+	zone_sectors = bdev_zone_sectors(bdev);
-+	ASSERT(is_power_of_2(zone_sectors));
-+	zone_info->zone_size = (u64)zone_sectors << SECTOR_SHIFT;
-+	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
-+	zone_info->nr_zones = nr_sectors >> ilog2(bdev_zone_sectors(bdev));
-+	if (!IS_ALIGNED(nr_sectors, zone_sectors))
-+		zone_info->nr_zones++;
-+
-+	zone_info->seq_zones = bitmap_zalloc(zone_info->nr_zones, GFP_KERNEL);
-+	if (!zone_info->seq_zones) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	zone_info->empty_zones = bitmap_zalloc(zone_info->nr_zones, GFP_KERNEL);
-+	if (!zone_info->empty_zones) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	zones = kcalloc(BTRFS_REPORT_NR_ZONES,
-+			sizeof(struct blk_zone), GFP_KERNEL);
-+	if (!zones) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/* Get zones type */
-+	while (sector < nr_sectors) {
-+		nr_zones = BTRFS_REPORT_NR_ZONES;
-+		ret = btrfs_get_dev_zones(device, sector << SECTOR_SHIFT, zones,
-+					  &nr_zones);
-+		if (ret)
-+			goto out;
-+
-+		for (i = 0; i < nr_zones; i++) {
-+			if (zones[i].type == BLK_ZONE_TYPE_SEQWRITE_REQ)
-+				set_bit(nreported, zone_info->seq_zones);
-+			if (zones[i].cond == BLK_ZONE_COND_EMPTY)
-+				set_bit(nreported, zone_info->empty_zones);
-+			nreported++;
++		model = bdev_zoned_model(device->bdev);
++		if (model == BLK_ZONED_HM ||
++		    (model == BLK_ZONED_HA && incompat_zoned)) {
++			hmzoned_devices++;
++			if (!zone_size) {
++				zone_size = device->zone_info->zone_size;
++			} else if (device->zone_info->zone_size != zone_size) {
++				btrfs_err(fs_info,
++					  "Zoned block devices must have equal zone sizes");
++				ret = -EINVAL;
++				goto out;
++			}
 +		}
-+		sector = zones[nr_zones - 1].start + zones[nr_zones - 1].len;
++		nr_devices++;
 +	}
 +
-+	if (nreported != zone_info->nr_zones) {
-+		btrfs_err_in_rcu(device->fs_info,
-+				 "inconsistent number of zones on %s (%u / %u)",
-+				 rcu_str_deref(device->name), nreported,
-+				 zone_info->nr_zones);
-+		ret = -EIO;
++	if (!hmzoned_devices && !incompat_zoned)
++		goto out;
++
++	if (!hmzoned_devices && incompat_zoned) {
++		/* No zoned block device found on ZONED FS */
++		btrfs_err(fs_info,
++			  "ZONED enabled file system should have zoned devices");
++		ret = -EINVAL;
 +		goto out;
 +	}
 +
-+	kfree(zones);
++	if (hmzoned_devices && !incompat_zoned) {
++		btrfs_err(fs_info,
++			  "Enable ZONED mode to mount HMZONED device");
++		ret = -EINVAL;
++		goto out;
++	}
 +
-+	device->zone_info = zone_info;
++	if (hmzoned_devices != nr_devices) {
++		btrfs_err(fs_info,
++			  "zoned devices cannot be mixed with regular devices");
++		ret = -EINVAL;
++		goto out;
++	}
 +
-+	devstr[0] = 0;
-+	if (device->fs_info)
-+		snprintf(devstr, sizeof(devstr), " (device %s)",
-+			 device->fs_info->sb->s_id);
++	/*
++	 * stripe_size is always aligned to BTRFS_STRIPE_LEN in
++	 * __btrfs_alloc_chunk(). Since we want stripe_len == zone_size,
++	 * check the alignment here.
++	 */
++	if (!IS_ALIGNED(zone_size, BTRFS_STRIPE_LEN)) {
++		btrfs_err(fs_info,
++			  "zone size is not aligned to BTRFS_STRIPE_LEN");
++		ret = -EINVAL;
++		goto out;
++	}
 +
-+	rcu_read_lock();
-+	pr_info(
-+"BTRFS info%s: host-%s zoned block device %s, %u zones of %llu sectors",
-+		devstr,
-+		bdev_zoned_model(bdev) == BLK_ZONED_HM ? "managed" : "aware",
-+		rcu_str_deref(device->name), zone_info->nr_zones,
-+		zone_info->zone_size >> SECTOR_SHIFT);
-+	rcu_read_unlock();
++	fs_info->zone_size = zone_size;
 +
-+	return 0;
-+
++	btrfs_info(fs_info, "ZONED mode enabled, zone size %llu B",
++		   fs_info->zone_size);
 +out:
-+	kfree(zones);
-+	bitmap_free(zone_info->empty_zones);
-+	bitmap_free(zone_info->seq_zones);
-+	kfree(zone_info);
-+
 +	return ret;
 +}
-+
-+void btrfs_destroy_dev_zone_info(struct btrfs_device *device)
-+{
-+	struct btrfs_zoned_device_info *zone_info = device->zone_info;
-+
-+	if (!zone_info)
-+		return;
-+
-+	bitmap_free(zone_info->seq_zones);
-+	bitmap_free(zone_info->empty_zones);
-+	kfree(zone_info);
-+	device->zone_info = NULL;
-+}
-+
-+int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
-+		       struct blk_zone *zone)
-+{
-+	unsigned int nr_zones = 1;
-+	int ret;
-+
-+	ret = btrfs_get_dev_zones(device, pos, zone, &nr_zones);
-+	if (ret != 0 || !nr_zones)
-+		return ret ? ret : -EIO;
-+
-+	return 0;
-+}
 diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-new file mode 100644
-index 000000000000..483229e27908
---- /dev/null
+index 483229e27908..c4c63c4294f2 100644
+--- a/fs/btrfs/zoned.h
 +++ b/fs/btrfs/zoned.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+@@ -3,6 +3,8 @@
+ #ifndef BTRFS_ZONED_H
+ #define BTRFS_ZONED_H
+ 
++#include <linux/blkdev.h>
 +
-+#ifndef BTRFS_ZONED_H
-+#define BTRFS_ZONED_H
+ struct btrfs_zoned_device_info {
+ 	/*
+ 	 * Number of zones, zone size and types of zones if bdev is a
+@@ -20,6 +22,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 		       struct blk_zone *zone);
+ int btrfs_get_dev_zone_info(struct btrfs_device *device);
+ void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
++int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
+ #else /* CONFIG_BLK_DEV_ZONED */
+ static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+ 				     struct blk_zone *zone)
+@@ -31,6 +34,14 @@ static inline int btrfs_get_dev_zone_info(struct btrfs_device *device)
+ 	return 0;
+ }
+ static inline void btrfs_destroy_dev_zone_info(struct btrfs_device *device) { }
++static inline int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
++{
++	if (!btrfs_is_zoned(fs_info))
++		return 0;
 +
-+struct btrfs_zoned_device_info {
-+	/*
-+	 * Number of zones, zone size and types of zones if bdev is a
-+	 * zoned block device.
-+	 */
++	btrfs_err(fs_info, "Zoned block devices support is not enabled");
++	return -EOPNOTSUPP;
++}
+ #endif
+ 
+ static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+@@ -83,4 +94,19 @@ static inline void btrfs_dev_clear_zone_empty(struct btrfs_device *device,
+ 	btrfs_dev_set_empty_zone_bit(device, pos, false);
+ }
+ 
++static inline bool btrfs_check_device_zone_type(struct btrfs_fs_info *fs_info,
++						struct block_device *bdev)
++{
 +	u64 zone_size;
-+	u8  zone_size_shift;
-+	u32 nr_zones;
-+	unsigned long *seq_zones;
-+	unsigned long *empty_zones;
-+};
 +
-+#ifdef CONFIG_BLK_DEV_ZONED
-+int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
-+		       struct blk_zone *zone);
-+int btrfs_get_dev_zone_info(struct btrfs_device *device);
-+void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
-+#else /* CONFIG_BLK_DEV_ZONED */
-+static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
-+				     struct blk_zone *zone)
-+{
-+	return 0;
-+}
-+static inline int btrfs_get_dev_zone_info(struct btrfs_device *device)
-+{
-+	return 0;
-+}
-+static inline void btrfs_destroy_dev_zone_info(struct btrfs_device *device) { }
-+#endif
++	if (btrfs_is_zoned(fs_info)) {
++		zone_size = (u64)bdev_zone_sectors(bdev) << SECTOR_SHIFT;
++		/* Do not allow non-zoned device */
++		return bdev_is_zoned(bdev) && fs_info->zone_size == zone_size;
++	}
 +
-+static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
-+{
-+	struct btrfs_zoned_device_info *zone_info = device->zone_info;
-+
-+	if (!zone_info)
-+		return false;
-+
-+	return test_bit(pos >> zone_info->zone_size_shift,
-+			zone_info->seq_zones);
++	/* Do not allow Host Manged zoned device */
++	return bdev_zoned_model(bdev) != BLK_ZONED_HM;
 +}
 +
-+static inline bool btrfs_dev_is_empty_zone(struct btrfs_device *device, u64 pos)
-+{
-+	struct btrfs_zoned_device_info *zone_info = device->zone_info;
-+
-+	if (!zone_info)
-+		return true;
-+
-+	return test_bit(pos >> zone_info->zone_size_shift,
-+			zone_info->empty_zones);
-+}
-+
-+static inline void btrfs_dev_set_empty_zone_bit(struct btrfs_device *device,
-+						u64 pos, bool set)
-+{
-+	struct btrfs_zoned_device_info *zone_info = device->zone_info;
-+	unsigned int zno;
-+
-+	if (!zone_info)
-+		return;
-+
-+	zno = pos >> zone_info->zone_size_shift;
-+	if (set)
-+		set_bit(zno, zone_info->empty_zones);
-+	else
-+		clear_bit(zno, zone_info->empty_zones);
-+}
-+
-+static inline void btrfs_dev_set_zone_empty(struct btrfs_device *device,
-+					    u64 pos)
-+{
-+	btrfs_dev_set_empty_zone_bit(device, pos, true);
-+}
-+
-+static inline void btrfs_dev_clear_zone_empty(struct btrfs_device *device,
-+					      u64 pos)
-+{
-+	btrfs_dev_set_empty_zone_bit(device, pos, false);
-+}
-+
-+#endif
+ #endif
 -- 
 2.27.0
 
