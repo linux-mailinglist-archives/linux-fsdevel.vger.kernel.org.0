@@ -2,85 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A2B2A0A26
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 16:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B438F2A0A65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 16:51:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbgJ3PqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 11:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46680 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbgJ3PqN (ORCPT
+        id S1726955AbgJ3PvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 11:51:13 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:36150 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726384AbgJ3PvN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 11:46:13 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A328C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:46:13 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id d19so3625701vso.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:46:13 -0700 (PDT)
+        Fri, 30 Oct 2020 11:51:13 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 1C9191D21;
+        Fri, 30 Oct 2020 18:51:11 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CFcH78Yw0pfxvt3AwM9fYeXCITwB39A7gKKajxur5/0=;
-        b=FgyeQX4aoiBbFM79EBFleLczgQbrNa2HsouqPxpbgexC5/AI1Hhd5zzIZYFgf8IXUq
-         pAarAosw+OfibouTp7RrVPFobobEau7rYvSuJ1vXunTL1MR/t8IAzrEKkDFq+0vTNGYT
-         9B6R2nxmqxrZqXn2SfZi2FTHBFfQwSWjiqKOQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CFcH78Yw0pfxvt3AwM9fYeXCITwB39A7gKKajxur5/0=;
-        b=Jv5EGsTc2Fw7bAgxQ0yWVnvhxz55QT1GIzLQL4AVgcNB5bmEv8z+k0VG8vtXdFESBi
-         FdgKgoAewsbW2QhWkJW+Jp9bSOa38eIqjGh+Op+kxnGWLJ4u+RF7/bhHouxVQvEMwpFh
-         lMfi2HKVl3/gaKF2iKgvTEnMyp8aK9yXXYH2o9A+dBAJRN9Io6hRSp97AzgLslLSaHmv
-         DTC9s63dYMGP5qo03b6bZjq1Jh4sVRbw2BxpDT0QbcngD/d+i5TL4+q9dBvU36XPKZPi
-         posnTOsRbvup8FYLBVq8khiBLMoIHS1fu9TV5bOETxFF7HL3OwAJVvJpYX2q9Ksb4H1X
-         EfDQ==
-X-Gm-Message-State: AOAM5332GEytLUQwZa2s32ibgJWQ1HouCNcGqlC1glq3KiFOsBm5v0Ko
-        4QGCMnlNEdv+qPAOUMFrP5ugKO1wT/XEEamuh2lBOg==
-X-Google-Smtp-Source: ABdhPJzgkbkcDlD/QWNYdVwGIN85FgPiKqcrWoajHn+aHB4z4aaAgVMPRcxnlcxrnWFoVc15DrfrayMXQxD31PHZfT8=
-X-Received: by 2002:a05:6102:2ec:: with SMTP id j12mr7559124vsj.21.1604072772593;
- Fri, 30 Oct 2020 08:46:12 -0700 (PDT)
+        d=paragon-software.com; s=mail; t=1604073071;
+        bh=9GP4n1/3kUo9xtQjP38LQz9IULvQeP9/jTJo14gQVIU=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=iacMwHHlvIIUyCEHKGv4IcE/D3MNb2nLkwRNPRFuXK+cJjiw+BBzbQDgzsLjTgYEE
+         duerL025mODm9V5wP66qPliXOGqgeIlCYzJPiiyggwIdgvagFJpq2AyQvqT6MA+OPo
+         1wDc2QtYP4jJ8smeGOsyYO9ssHQL96IXkmz4uZCQ=
+Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 30 Oct 2020 18:51:10 +0300
+Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
+ by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
+ id 15.01.1847.003; Fri, 30 Oct 2020 18:51:10 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     =?iso-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "aaptel@suse.com" <aaptel@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "joe@perches.com" <joe@perches.com>,
+        "mark@harmstone.com" <mark@harmstone.com>,
+        "nborisov@suse.com" <nborisov@suse.com>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "anton@tuxera.com" <anton@tuxera.com>
+Subject: RE: [PATCH v11 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+Thread-Topic: [PATCH v11 00/10] NTFS read-write driver GPL implementation by
+ Paragon Software
+Thread-Index: AQHWrs4AbuX6Qk1kykuA/KYohSTSz6mwEbcAgAA1JlA=
+Date:   Fri, 30 Oct 2020 15:51:10 +0000
+Message-ID: <5313baaad14c40d09738bf63e4659ac9@paragon-software.com>
+References: <20201030150239.3957156-1-almaz.alexandrovich@paragon-software.com>
+ <20201030152450.77mtzkxjove36qfd@pali>
+In-Reply-To: <20201030152450.77mtzkxjove36qfd@pali>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.30.8.36]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20201025034117.4918-1-cgxu519@mykernel.net>
-In-Reply-To: <20201025034117.4918-1-cgxu519@mykernel.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 30 Oct 2020 16:46:00 +0100
-Message-ID: <CAJfpegu-bn2BjkLaykk-gZLRv71n=PgrsrwBnuAav1GHzWO5iQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/8] implement containerized syncfs for overlayfs
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 25, 2020 at 4:42 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
->
-> Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
-> on upper_sb to synchronize whole dirty inodes in upper filesystem
-> regardless of the overlay ownership of the inode. In the use case of
-> container, when multiple containers using the same underlying upper
-> filesystem, it has some shortcomings as below.
->
-> (1) Performance
-> Synchronization is probably heavy because it actually syncs unnecessary
-> inodes for target overlayfs.
->
-> (2) Interference
-> Unplanned synchronization will probably impact IO performance of
-> unrelated container processes on the other overlayfs.
->
-> This series try to implement containerized syncfs for overlayfs so that
-> only sync target dirty upper inodes which are belong to specific overlayfs
-> instance. By doing this, it is able to reduce cost of synchronization and
-> will not seriously impact IO performance of unrelated processes.
+From: Pali Roh=E1r <pali@kernel.org>
+Sent: Friday, October 30, 2020 6:25 PM
+> To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> Cc: linux-fsdevel@vger.kernel.org; viro@zeniv.linux.org.uk; linux-kernel@=
+vger.kernel.org; dsterba@suse.cz; aaptel@suse.com;
+> willy@infradead.org; rdunlap@infradead.org; joe@perches.com; mark@harmsto=
+ne.com; nborisov@suse.com; linux-ntfs-
+> dev@lists.sourceforge.net; anton@tuxera.com
+> Subject: Re: [PATCH v11 00/10] NTFS read-write driver GPL implementation =
+by Paragon Software
+>=20
+> Hello and thanks for update!
+>=20
+> I have just two comments for the last v11 version.
+>=20
+> I really do not like nls_alt mount option and I do not think we should
+> merge this mount option into ntfs kernel driver. Details I described in:
+> https://lore.kernel.org/linux-fsdevel/20201009154734.andv4es3azkkskm5@pal=
+i/
+>=20
+> tl;dr it is not systematic solution and is incompatible with existing
+> in-kernel ntfs driver, also incompatible with in-kernel vfat, udf and
+> ext4 (with UNICODE support) drivers. In my opinion, all kernel fs
+> drivers which deals with UNICODE should handle it in similar way.
+>=20
 
-Series looks good at first glance.  Still need to do an in-depth review.
+Hello Pali! First of all, apologies for not providing a feedback on your pr=
+evious
+message regarding the 'nls_alt'. We had internal discussions on the topic a=
+nd
+overall conclusion is that: we do not want to compromise Kernel standards w=
+ith
+our submission. So we will remove the 'nls_alt' option in the next version.
 
-In the meantime can you post some numbers showing the performance improvements?
+However, there are still few points we have on the topic, please read below=
+.
 
-Thanks,
-Miklos
+> It would be really bad if userspace application need to behave
+> differently for this new ntfs driver and differently for all other
+> UNICODE drivers.
+>=20
+
+The option does not anyhow affect userspace applications. For the "default"=
+ example
+of unzip/tar:
+1 - if this option is not applied (e.g. "vfat case"), trying to unzip an ar=
+chive with, e.g. CP-1251,
+names inside to the target fs volume, will return error, and issued file(s)=
+ won't be unzipped;
+2 - if this option is applied and "nls_alt" is set, the above case will res=
+ult in unzipping all the files;
+
+Also, this issue in general only applies to "non-native" filesystems. I.e. =
+ext4 is not affected by it
+in any case, as it just stores the name as bytes, no matter what those byte=
+s are. The above case
+won't give an unzip error on ext4. The only symptom of this would be, maybe=
+, "incorrect encoding"
+marking within the listing of such files (in File Manager or Terminal, e.g.=
+ in Ubuntu), but there won't
+be an unzip process termination with incomplete unarchived fileset, unlike =
+it is for vfat/exfat/ntfs
+without "nls_alt".
+
+> Second comment is simplification of usage nls_load() with UTF-8 parameter
+> which I described in older email:
+> https://lore.kernel.org/linux-fsdevel/948ac894450d494ea15496c2e5b8c906@pa=
+ragon-software.com/
+>=20
+> You wrote that you have applied it, but seems it was lost (maybe during
+> rebase?) as it is not present in the last v11 version.
+>=20
+> I suggested to not use nls_load() with UTF-8 at all. Your version of
+> ntfs driver does not use kernel's nls utf8 module for UTF-8 support, so
+> trying to load it should be avoided. Also kernel can be compiled without
+> utf8 nls module (which is moreover broken) and with my above suggestion,
+> ntfs driver would work correctly. Without that suggestion, mounting
+> would fail.
+
+Thanks for pointing that out. It is likely the "nls_load()" fixes were lost=
+ during rebase.
+Will recheck it and return them to the v12.
+
+Best regards!
