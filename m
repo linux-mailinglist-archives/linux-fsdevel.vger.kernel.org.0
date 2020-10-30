@@ -2,77 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C6142A09B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 16:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AE2B2A09D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 16:27:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbgJ3PYy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 11:24:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbgJ3PYy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 11:24:54 -0400
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E707820725;
-        Fri, 30 Oct 2020 15:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604071493;
-        bh=T2KvBAlC4JJIyi5sSwStQYRy5LCf5duxKL2gGp64a+g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PztylyBAKxmttAPFkdF06ceMHW1ttTYxC1mWX3RWyEfn+YlSDPFwl4UDGKOtVkzw1
-         y/v9iPcEQt+r/UmjmcWTT8nZ3jTBzdOPXzu2vtTBiEf/WqPTCR3uJoVQRqtK+Icjcs
-         fedZmAR80qlTgfOmiDSYpN9WQOd2NJUKVlTeHULk=
-Received: by pali.im (Postfix)
-        id BA0C586D; Fri, 30 Oct 2020 16:24:50 +0100 (CET)
-Date:   Fri, 30 Oct 2020 16:24:50 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com
-Subject: Re: [PATCH v11 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Message-ID: <20201030152450.77mtzkxjove36qfd@pali>
-References: <20201030150239.3957156-1-almaz.alexandrovich@paragon-software.com>
+        id S1727004AbgJ3P1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 11:27:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgJ3P1Y (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Oct 2020 11:27:24 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17047C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:27:23 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id u62so7891383iod.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kT6xj1Vg1avCvf83jif61+Gcst08Py5XBYy759x7DZQ=;
+        b=hoPtNwVwt8sdIwotEDaBeeIXbIOm5ZiWEWDawiGxpt/NONLxZ/I2IclmI5xNNZbyh2
+         2gFiBu2DLhjDzMmnCB+XXY7sY9v1Fs+Jhm5lU7zq+gqDQo5id5TJXmpM4esrP3MO+wfe
+         TDjxcCX9ddrFrHZ4UzlAnmogHTkvQXMoSs1AIYEODIYhJ2ygJfs2cpMiav7qTG1K27L9
+         XDttUwfL0qOtq7gBRN/Zc8A/63k+tKCfq0WutbskBUJxe12etltVvsNqkB9wNLgfzs+3
+         z+F4vS7SBGdoiEyOtqvRSPdt8rf9FwALBIbVyChZuMS8IiG79MGSBl9AZSFhwnSptKYU
+         x1Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kT6xj1Vg1avCvf83jif61+Gcst08Py5XBYy759x7DZQ=;
+        b=P3ZZ36OoFj8oA9r8/f8iQEMBlb1vx7Ja4Dpv5V7TF4odAk8BUcu8n07QCHOgfBu0jl
+         iWvz95OlcxwRC3i+w+1NsD3qNDMgJQrHeKhg8HAqgfEY9kVNBPF6kPx4OqQ6Rl4J4Rcx
+         ywVKpFQxbu16Q860iXajlIkw/Wf3icc5DlLkG90ubhI7oNuESNWT3ChxLzPAq3D5x0lP
+         GdOceuA6pb8QkUY0/j7SOLKnaHKpI0kC4vG4RAZh82FM81XqYtnGvtpJBc0h1+Fx0418
+         +xzkJu5TRhzbYjWpZ4mvLIPzaR6hG1vDVlO4j8K1jqzu27fdngmPcU1OPrKxoSzvsVUk
+         aQcg==
+X-Gm-Message-State: AOAM530K4F+pTcZZ1FpWB4hM5fiZqn0WZTXZebCIzMKFEFiU5d5HUgYP
+        far+lOguv8Mz7AA5WSwBhIhcxw==
+X-Google-Smtp-Source: ABdhPJxHqoZ5EhicbB7dSv8JmLiPqTdqwE5qEr5k9JRdHSPGfwBtOeIMnDWtk0kttP7u4LsHsJ46sw==
+X-Received: by 2002:a5d:9850:: with SMTP id p16mr2277072ios.22.1604071642324;
+        Fri, 30 Oct 2020 08:27:22 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id t16sm5953083ild.27.2020.10.30.08.27.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Oct 2020 08:27:21 -0700 (PDT)
+Subject: Re: [PATCH -next] fs: Fix memory leaks in do_renameat2() error paths
+To:     Qian Cai <cai@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201030152407.43598-1-cai@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <251c80d6-a2d0-4053-404f-bffd5a53313e@kernel.dk>
+Date:   Fri, 30 Oct 2020 09:27:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201030150239.3957156-1-almaz.alexandrovich@paragon-software.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20201030152407.43598-1-cai@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello and thanks for update!
+On 10/30/20 9:24 AM, Qian Cai wrote:
+> We will need to call putname() before do_renameat2() returning -EINVAL
+> to avoid memory leaks.
 
-I have just two comments for the last v11 version.
+Thanks, should mention that this isn't final by any stretch (which is
+why it hasn't been posted yet), just pushed out for some exposure.
 
-I really do not like nls_alt mount option and I do not think we should
-merge this mount option into ntfs kernel driver. Details I described in:
-https://lore.kernel.org/linux-fsdevel/20201009154734.andv4es3azkkskm5@pali/
+-- 
+Jens Axboe
 
-tl;dr it is not systematic solution and is incompatible with existing
-in-kernel ntfs driver, also incompatible with in-kernel vfat, udf and
-ext4 (with UNICODE support) drivers. In my opinion, all kernel fs
-drivers which deals with UNICODE should handle it in similar way.
-
-It would be really bad if userspace application need to behave
-differently for this new ntfs driver and differently for all other
-UNICODE drivers.
-
-Second comment is simplification of usage nls_load() with UTF-8 parameter
-which I described in older email:
-https://lore.kernel.org/linux-fsdevel/948ac894450d494ea15496c2e5b8c906@paragon-software.com/
-
-You wrote that you have applied it, but seems it was lost (maybe during
-rebase?) as it is not present in the last v11 version.
-
-I suggested to not use nls_load() with UTF-8 at all. Your version of
-ntfs driver does not use kernel's nls utf8 module for UTF-8 support, so
-trying to load it should be avoided. Also kernel can be compiled without
-utf8 nls module (which is moreover broken) and with my above suggestion,
-ntfs driver would work correctly. Without that suggestion, mounting
-would fail.
