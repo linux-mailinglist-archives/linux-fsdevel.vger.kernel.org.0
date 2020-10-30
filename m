@@ -2,79 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AE2B2A09D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 16:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A2B2A0A26
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 16:46:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbgJ3P1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 11:27:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
+        id S1726948AbgJ3PqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 11:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbgJ3P1Y (ORCPT
+        with ESMTP id S1726642AbgJ3PqN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 11:27:24 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17047C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:27:23 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id u62so7891383iod.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:27:23 -0700 (PDT)
+        Fri, 30 Oct 2020 11:46:13 -0400
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A328C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:46:13 -0700 (PDT)
+Received: by mail-vs1-xe43.google.com with SMTP id d19so3625701vso.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 08:46:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kT6xj1Vg1avCvf83jif61+Gcst08Py5XBYy759x7DZQ=;
-        b=hoPtNwVwt8sdIwotEDaBeeIXbIOm5ZiWEWDawiGxpt/NONLxZ/I2IclmI5xNNZbyh2
-         2gFiBu2DLhjDzMmnCB+XXY7sY9v1Fs+Jhm5lU7zq+gqDQo5id5TJXmpM4esrP3MO+wfe
-         TDjxcCX9ddrFrHZ4UzlAnmogHTkvQXMoSs1AIYEODIYhJ2ygJfs2cpMiav7qTG1K27L9
-         XDttUwfL0qOtq7gBRN/Zc8A/63k+tKCfq0WutbskBUJxe12etltVvsNqkB9wNLgfzs+3
-         z+F4vS7SBGdoiEyOtqvRSPdt8rf9FwALBIbVyChZuMS8IiG79MGSBl9AZSFhwnSptKYU
-         x1Hg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CFcH78Yw0pfxvt3AwM9fYeXCITwB39A7gKKajxur5/0=;
+        b=FgyeQX4aoiBbFM79EBFleLczgQbrNa2HsouqPxpbgexC5/AI1Hhd5zzIZYFgf8IXUq
+         pAarAosw+OfibouTp7RrVPFobobEau7rYvSuJ1vXunTL1MR/t8IAzrEKkDFq+0vTNGYT
+         9B6R2nxmqxrZqXn2SfZi2FTHBFfQwSWjiqKOQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kT6xj1Vg1avCvf83jif61+Gcst08Py5XBYy759x7DZQ=;
-        b=P3ZZ36OoFj8oA9r8/f8iQEMBlb1vx7Ja4Dpv5V7TF4odAk8BUcu8n07QCHOgfBu0jl
-         iWvz95OlcxwRC3i+w+1NsD3qNDMgJQrHeKhg8HAqgfEY9kVNBPF6kPx4OqQ6Rl4J4Rcx
-         ywVKpFQxbu16Q860iXajlIkw/Wf3icc5DlLkG90ubhI7oNuESNWT3ChxLzPAq3D5x0lP
-         GdOceuA6pb8QkUY0/j7SOLKnaHKpI0kC4vG4RAZh82FM81XqYtnGvtpJBc0h1+Fx0418
-         +xzkJu5TRhzbYjWpZ4mvLIPzaR6hG1vDVlO4j8K1jqzu27fdngmPcU1OPrKxoSzvsVUk
-         aQcg==
-X-Gm-Message-State: AOAM530K4F+pTcZZ1FpWB4hM5fiZqn0WZTXZebCIzMKFEFiU5d5HUgYP
-        far+lOguv8Mz7AA5WSwBhIhcxw==
-X-Google-Smtp-Source: ABdhPJxHqoZ5EhicbB7dSv8JmLiPqTdqwE5qEr5k9JRdHSPGfwBtOeIMnDWtk0kttP7u4LsHsJ46sw==
-X-Received: by 2002:a5d:9850:: with SMTP id p16mr2277072ios.22.1604071642324;
-        Fri, 30 Oct 2020 08:27:22 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id t16sm5953083ild.27.2020.10.30.08.27.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Oct 2020 08:27:21 -0700 (PDT)
-Subject: Re: [PATCH -next] fs: Fix memory leaks in do_renameat2() error paths
-To:     Qian Cai <cai@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201030152407.43598-1-cai@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <251c80d6-a2d0-4053-404f-bffd5a53313e@kernel.dk>
-Date:   Fri, 30 Oct 2020 09:27:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CFcH78Yw0pfxvt3AwM9fYeXCITwB39A7gKKajxur5/0=;
+        b=Jv5EGsTc2Fw7bAgxQ0yWVnvhxz55QT1GIzLQL4AVgcNB5bmEv8z+k0VG8vtXdFESBi
+         FdgKgoAewsbW2QhWkJW+Jp9bSOa38eIqjGh+Op+kxnGWLJ4u+RF7/bhHouxVQvEMwpFh
+         lMfi2HKVl3/gaKF2iKgvTEnMyp8aK9yXXYH2o9A+dBAJRN9Io6hRSp97AzgLslLSaHmv
+         DTC9s63dYMGP5qo03b6bZjq1Jh4sVRbw2BxpDT0QbcngD/d+i5TL4+q9dBvU36XPKZPi
+         posnTOsRbvup8FYLBVq8khiBLMoIHS1fu9TV5bOETxFF7HL3OwAJVvJpYX2q9Ksb4H1X
+         EfDQ==
+X-Gm-Message-State: AOAM5332GEytLUQwZa2s32ibgJWQ1HouCNcGqlC1glq3KiFOsBm5v0Ko
+        4QGCMnlNEdv+qPAOUMFrP5ugKO1wT/XEEamuh2lBOg==
+X-Google-Smtp-Source: ABdhPJzgkbkcDlD/QWNYdVwGIN85FgPiKqcrWoajHn+aHB4z4aaAgVMPRcxnlcxrnWFoVc15DrfrayMXQxD31PHZfT8=
+X-Received: by 2002:a05:6102:2ec:: with SMTP id j12mr7559124vsj.21.1604072772593;
+ Fri, 30 Oct 2020 08:46:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201030152407.43598-1-cai@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201025034117.4918-1-cgxu519@mykernel.net>
+In-Reply-To: <20201025034117.4918-1-cgxu519@mykernel.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 30 Oct 2020 16:46:00 +0100
+Message-ID: <CAJfpegu-bn2BjkLaykk-gZLRv71n=PgrsrwBnuAav1GHzWO5iQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/8] implement containerized syncfs for overlayfs
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/30/20 9:24 AM, Qian Cai wrote:
-> We will need to call putname() before do_renameat2() returning -EINVAL
-> to avoid memory leaks.
+On Sun, Oct 25, 2020 at 4:42 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
+>
+> Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
+> on upper_sb to synchronize whole dirty inodes in upper filesystem
+> regardless of the overlay ownership of the inode. In the use case of
+> container, when multiple containers using the same underlying upper
+> filesystem, it has some shortcomings as below.
+>
+> (1) Performance
+> Synchronization is probably heavy because it actually syncs unnecessary
+> inodes for target overlayfs.
+>
+> (2) Interference
+> Unplanned synchronization will probably impact IO performance of
+> unrelated container processes on the other overlayfs.
+>
+> This series try to implement containerized syncfs for overlayfs so that
+> only sync target dirty upper inodes which are belong to specific overlayfs
+> instance. By doing this, it is able to reduce cost of synchronization and
+> will not seriously impact IO performance of unrelated processes.
 
-Thanks, should mention that this isn't final by any stretch (which is
-why it hasn't been posted yet), just pushed out for some exposure.
+Series looks good at first glance.  Still need to do an in-depth review.
 
--- 
-Jens Axboe
+In the meantime can you post some numbers showing the performance improvements?
 
+Thanks,
+Miklos
