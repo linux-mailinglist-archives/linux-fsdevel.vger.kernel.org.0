@@ -2,23 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 349122A0AA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 17:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CEAE2A0AF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 17:17:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbgJ3QDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 12:03:36 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:57022 "EHLO mail.hallyn.com"
+        id S1726396AbgJ3QRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 12:17:18 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:57770 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbgJ3QDg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 12:03:36 -0400
+        id S1725808AbgJ3QRR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Oct 2020 12:17:17 -0400
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 0CBD712C3; Fri, 30 Oct 2020 11:03:32 -0500 (CDT)
-Date:   Fri, 30 Oct 2020 11:03:32 -0500
+        id D02C58FF; Fri, 30 Oct 2020 11:17:12 -0500 (CDT)
+Date:   Fri, 30 Oct 2020 11:17:12 -0500
 From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         linux-fsdevel@vger.kernel.org,
@@ -40,12 +38,14 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
         Tycho Andersen <tycho@tycho.ws>,
         David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        James Bottomley <james.bottomley@hansenpartnership.com>,
         Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
         =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
         Lennart Poettering <lennart@poettering.net>,
-        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
         Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
         containers@lists.linux-foundation.org,
@@ -54,62 +54,93 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org
 Subject: Re: [PATCH 00/34] fs: idmapped mounts
-Message-ID: <20201030160332.GA30083@mail.hallyn.com>
+Message-ID: <20201030161712.GA30381@mail.hallyn.com>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <87pn51ghju.fsf@x220.int.ebiederm.org>
- <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com>
- <87361xdm4c.fsf@x220.int.ebiederm.org>
- <20201030150748.GA176340@ubuntu-x1>
+ <8E455D54-FED4-4D06-8CB7-FC6291C64259@amacapital.net>
+ <20201030120157.exz4rxmebruh7bgp@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201030150748.GA176340@ubuntu-x1>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201030120157.exz4rxmebruh7bgp@wittgenstein>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 10:07:48AM -0500, Seth Forshee wrote:
-> On Thu, Oct 29, 2020 at 11:37:23AM -0500, Eric W. Biederman wrote:
-> > First and foremost: A uid shift on write to a filesystem is a security
-> > bug waiting to happen.  This is especially in the context of facilities
-> > like iouring, that play very agressive games with how process context
-> > makes it to  system calls.
+On Fri, Oct 30, 2020 at 01:01:57PM +0100, Christian Brauner wrote:
+> On Thu, Oct 29, 2020 at 02:58:55PM -0700, Andy Lutomirski wrote:
 > > 
-> > The only reason containers were not immediately exploitable when iouring
-> > was introduced is because the mechanisms are built so that even if
-> > something escapes containment the security properties still apply.
-> > Changes to the uid when writing to the filesystem does not have that
-> > property.  The tiniest slip in containment will be a security issue.
 > > 
-> > This is not even the least bit theoretical.  I have seem reports of how
-> > shitfs+overlayfs created a situation where anyone could read
-> > /etc/shadow.
+> > > On Oct 28, 2020, at 5:35 PM, Christian Brauner <christian.brauner@ubuntu.com> wrote:
+> > > 
+> > > ﻿Hey everyone,
+> > > 
+> > > I vanished for a little while to focus on this work here so sorry for
+> > > not being available by mail for a while.
+> > > 
+> > > Since quite a long time we have issues with sharing mounts between
+> > > multiple unprivileged containers with different id mappings, sharing a
+> > > rootfs between multiple containers with different id mappings, and also
+> > > sharing regular directories and filesystems between users with different
+> > > uids and gids. The latter use-cases have become even more important with
+> > > the availability and adoption of systemd-homed (cf. [1]) to implement
+> > > portable home directories.
+> > > 
+> > > The solutions we have tried and proposed so far include the introduction
+> > > of fsid mappings, a tiny overlay based filesystem, and an approach to
+> > > call override creds in the vfs. None of these solutions have covered all
+> > > of the above use-cases.
+> > > 
+> > > The solution proposed here has it's origins in multiple discussions
+> > > during Linux Plumbers 2017 during and after the end of the containers
+> > > microconference.
+> > > To the best of my knowledge this involved Aleksa, Stéphane, Eric, David,
+> > > James, and myself. A variant of the solution proposed here has also been
+> > > discussed, again to the best of my knowledge, after a Linux conference
+> > > in St. Petersburg in Russia between Christoph, Tycho, and myself in 2017
+> > > after Linux Plumbers.
+> > > I've taken the time to finally implement a working version of this
+> > > solution over the last weeks to the best of my abilities. Tycho has
+> > > signed up for this sligthly crazy endeavour as well and he has helped
+> > > with the conversion of the xattr codepaths.
+> > > 
+> > > The core idea is to make idmappings a property of struct vfsmount
+> > > instead of tying it to a process being inside of a user namespace which
+> > > has been the case for all other proposed approaches.
+> > > It means that idmappings become a property of bind-mounts, i.e. each
+> > > bind-mount can have a separate idmapping. This has the obvious advantage
+> > > that idmapped mounts can be created inside of the initial user
+> > > namespace, i.e. on the host itself instead of requiring the caller to be
+> > > located inside of a user namespace. This enables such use-cases as e.g.
+> > > making a usb stick available in multiple locations with different
+> > > idmappings (see the vfat port that is part of this patch series).
+> > > 
+> > > The vfsmount struct gains a new struct user_namespace member. The
+> > > idmapping of the user namespace becomes the idmapping of the mount. A
+> > > caller that is either privileged with respect to the user namespace of
+> > > the superblock of the underlying filesystem or a caller that is
+> > > privileged with respect to the user namespace a mount has been idmapped
+> > > with can create a new bind-mount and mark it with a user namespace.
+> > 
+> > So one way of thinking about this is that a user namespace that has an idmapped mount can, effectively, create or chown files with *any* on-disk uid or gid by doing it directly (if that uid exists in-namespace, which is likely for interesting ids like 0) or by creating a new userns with that id inside.
+> > 
+> > For a file system that is private to a container, this seems moderately safe, although this may depend on what exactly “private” means. We probably want a mechanism such that, if you are outside the namespace, a reference to a file with the namespace’s vfsmnt does not confer suid privilege.
+> > 
+> > Imagine the following attack: user creates a namespace with a root user and arranges to get an idmapped fs, e.g. by inserting an ext4 usb stick or using whatever container management tool does this.  Inside the namespace, the user creates a suid-root file.
+> > 
+> > Now, outside the namespace, the user has privilege over the namespace.  (I’m assuming there is some tool that will idmap things in a namespace owned by an unprivileged user, which seems likely.). So the user makes a new bind mount and if maps it to the init namespace. Game over.
+> > 
+> > So I think we need to have some control to mitigate this in a comprehensible way. A big hammer would be to require nosuid. A smaller hammer might be to say that you can’t create a new idmapped mount unless you have privilege over the userns that you want to use for the idmap and to say that a vfsmnt’s paths don’t do suid outside the idmap namespace.  We already do the latter for the vfsmnt’s mntns’s userns.
 > 
-> This bug was the result of a complex interaction with several
-> contributing factors. It's fair to say that one component was overlayfs
-> writing through an id-shifted mount, but the primary cause was related
-> to how copy-up was done coupled with allowing unprivileged overlayfs
-> mounts in a user ns. Checks that the mounter had access to the lower fs
-> file were not done before copying data up, and so the file was copied up
-> temporarily to the id shifted upperdir. Even though it was immediately
-> removed, other factors made it possible for the user to get the file
-> contents from the upperdir.
-> 
-> Regardless, I do think you raise a good point. We need to be wary of any
-> place the kernel could open files through a shifted mount, especially
-> when the open could be influenced by userspace.
-> 
-> Perhaps kernel file opens through shifted mounts should to be opt-in.
-> I.e. unless a flag is passed, or a different open interface used, the
-> open will fail if the dentry being opened is subject to id shifting.
-> This way any kernel writes which would be subject to id shifting will
-> only happen through code which as been written to take it into account.
+> With this series, in order to create an idmapped mount the user must
+> either be cap_sys_admin in the superblock of the underlying filesystem
+> or if the mount is already idmapped and they want to create another
+> idmapped mount from it they must have cap_sys_admin in the userns that
+> the mount is currrently marked with. It is also not possible to change
+> an idmapped mount once it has been idmapped, i.e. the user must create a
+> new detached bind-mount first.
 
-For my use cases, it would be fine to require opt-in at original fs
-mount time by init_user_ns admin.  I.e.
-    mount -o allow_idmap /dev/mapper/whoozit /whatzit
-I'm quite certain I would always be sharing a separate LV or loopback or
-tmpfs.
-
--serge
+Yeah I spent quite some time last night trying to figure out the scenario
+you were presenting, but I failed.  Andy, could you either rephrase or
+give a more concrete end to end attack scenario?
