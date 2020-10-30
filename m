@@ -2,115 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F15529FC11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 04:08:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D2729FDCE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 07:28:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgJ3DIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Oct 2020 23:08:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42072 "EHLO
+        id S1725876AbgJ3G2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 02:28:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbgJ3DIM (ORCPT
+        with ESMTP id S1725770AbgJ3G2M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Oct 2020 23:08:12 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D3B9C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 20:08:12 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id f9so6031001lfq.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 20:08:11 -0700 (PDT)
+        Fri, 30 Oct 2020 02:28:12 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99260C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 23:28:10 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id h64so5313759ybc.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Oct 2020 23:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zehjsoI4/E9mlHSzS3GihRUsNzlSRlM3AQ/tc2JFGWU=;
-        b=q9NaR3BRuvTzXjW1tFWJC7ghaDMvWYJV4F/R/sfglQ1Do9mBfL2N70a3GMysG9ufy0
-         u543bRU8Q+xerhl0QLubqtnupkWBP51hSdP6NGnIl1X+ZkNPyDykSBY9poLAPBpDjUaq
-         0s/iVSYcxsg8yKonlY/PJPY/jry+VmI1lRRiHS3TdiNh6LhgQu6AH1HsJODK3KCF2zbN
-         XVJIkv9q1FDLnxGo0lUOJKAN5HFGYiHMifoR0MiKuttOYdJ8iNLqqbr7jNQUtCT2HPv6
-         PpvSh6aIPeBUKzLXaKv3qj2zy2CI2ktJbdFRW/aJd/vL4/1EkohKJVopAvgKPxXjiB09
-         YJRg==
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=bWMjUjDke7pBpB9uHk2we86RqTYCbGgwv7HBCqDmkBk=;
+        b=BGIzhBaOQzCy918fMVC4TFa10N0YhlADR/ixgTvZJMqd3+rJFhMvD8EirCJS6J3i9R
+         AAD479c7ZJCnmD6A8FGxmfrSIMCARnD1WmwAdivVHYl9oWbcmwDX3X9Cwiwr1Mf3cy4F
+         +gP+Z3Nn8DClAFt3hRzPQtyGtLNkIfR/iqz/vp1kXBWPGVPBexqPnlYHiFxEAsLXOSaP
+         q7UQit63yJDiVv6sKfVUYDmp1gOtetgj1mpeTv0qdVCGrRdT0hl+QF4ekmkFIM6T38hi
+         3ukU+5A8Ng7JvYsYIkhow3forXhlR773Mt50lN42juLKtIqY1leNDQrCFQN3/3Fbd9C7
+         plKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zehjsoI4/E9mlHSzS3GihRUsNzlSRlM3AQ/tc2JFGWU=;
-        b=jcNdPZyBMe2isfMWqgCnfwZcllA/z7Bu+uGP3Y92javRwGOr24BK6WvvSemwjhxja7
-         60taJn9wp8AAuorzNVSrtRIlHkMV9fARVgiPoZL5zGO5k9+3e0qc0BnYq5u5VaH2vIsk
-         ean/nifdLzyHSPSqUerQ8JdV37tfYCTqetwpm/WDNnf/OutatuGKWn8M45QektkeO/r4
-         T7O0ggETftn4Spc/cdY3KwRV2yHcNg36QGGXMtdWCos0beNVrbvf4do1V1vwIMO4VSf+
-         Y5B66f6N77ycgOi0zDX+s9zZDPfskDULGuY5RKjLcFfq3gt3g36IrHqQH+quIfaO+7Ye
-         6BCg==
-X-Gm-Message-State: AOAM5322loCypcikg1m+qYI+xaUxdXESudPXTG1YNPrQg8NjlxvM93a9
-        U1UiS6CUvMkkFLay63EEsfVVqIIvRlGnRYwHVpwcog==
-X-Google-Smtp-Source: ABdhPJwFhikEezi6cK75+Nh1jGpDUQvWygSxV/rVzK4JtvxTrHv+oYrN72yFW4FSMWmsrMzt7Jt48+wkeRxq1/Q08TY=
-X-Received: by 2002:a19:e308:: with SMTP id a8mr30300lfh.573.1604027290187;
- Thu, 29 Oct 2020 20:08:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201027200358.557003-1-mic@digikod.net> <20201027200358.557003-9-mic@digikod.net>
- <CAG48ez1San538w=+He309vHg4pBSCvAf7e5xeHdqeOHA6qwitw@mail.gmail.com> <de287149-ff42-40ca-5bd1-f48969880a06@digikod.net>
-In-Reply-To: <de287149-ff42-40ca-5bd1-f48969880a06@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 30 Oct 2020 04:07:44 +0100
-Message-ID: <CAG48ez1FQVkt78129WozBwFbVhAPyAr9oJAHFHAbbNxEBr9h1g@mail.gmail.com>
-Subject: Re: [PATCH v22 08/12] landlock: Add syscall implementations
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=bWMjUjDke7pBpB9uHk2we86RqTYCbGgwv7HBCqDmkBk=;
+        b=nQ6KHpEGn5nR6x8buSBLrQJUX8THG4JJeqgtlPR440S0iM8PwHI7//dCpZJIvo3nms
+         ftstPwlmvG9SB9YzQ8sLnJ01+G5DAcBHBJpmjaNnj1D/ylg7Lj41KY05xEcCSFG3bLJq
+         eNeF/rY7oBaL3dV6N624YkhavHC52949gHkmAS16kaOWt/JgnZMYPsVw24/PqPTNWrpa
+         h4KrxJzNdoch/1r+Kjzg9GiydHHZaQtLZCUswfoEO1C8De1ezMP1NvwGZabpo8D/v5rY
+         9gVy1sBpWlZ1m+wuagciAq5Z5MvVsP1Fz1fUXJ29HGs5Ra0kZ2+3FZxZ/Adrtzx70iGo
+         SmAw==
+X-Gm-Message-State: AOAM530VI+4qxiLt6zuA5qvbbQ0bjE6DndOVT5HgO3AjS/YzTzwCblji
+        vTptU0t4j8SBP1cD6pS7VSRk0isUlvm3qILEr6vkrsQowGf0zhOolq402fNfkXLMvyghG3AqC58
+        NFLEPTQqj7DwTIYAo4V6yYSDvqsmJOWypnDjMS3+D2Nj2blPzq+geOepRAKnu5CeTFI88RKzROA
+        ==
+X-Google-Smtp-Source: ABdhPJyjWoN7g18PEOSVgNYJa5w0pnzBX5Eojzcj2juAqLdSFphueziCdTrqvkmCh247cBGnJLIxsOP+ddDg
+Sender: "amistry via sendgmr" <amistry@nandos.syd.corp.google.com>
+X-Received: from nandos.syd.corp.google.com ([2401:fa00:9:14:725a:fff:fe46:72ab])
+ (user=amistry job=sendgmr) by 2002:a25:740e:: with SMTP id
+ p14mr1380333ybc.401.1604039289538; Thu, 29 Oct 2020 23:28:09 -0700 (PDT)
+Date:   Fri, 30 Oct 2020 17:27:54 +1100
+Message-Id: <20201030172731.1.I7782b0cedb705384a634cfd8898eb7523562da99@changeid>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
+Subject: [PATCH] proc: Provide details on indirect branch speculation
+From:   Anand K Mistry <amistry@google.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     asteinhauser@google.com, joelaf@google.com, tglx@linutronix.de,
+        Anand K Mistry <amistry@google.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
+        Kees Cook <keescook@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@kernel.org>, NeilBrown <neilb@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 12:30 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
-> On 29/10/2020 02:06, Jann Horn wrote:
-> > On Tue, Oct 27, 2020 at 9:04 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> >> These 3 system calls are designed to be used by unprivileged processes
-> >> to sandbox themselves:
-[...]
-> >> +       /*
-> >> +        * Similar checks as for seccomp(2), except that an -EPERM may=
- be
-> >> +        * returned.
-> >> +        */
-> >> +       if (!task_no_new_privs(current)) {
-> >> +               err =3D security_capable(current_cred(), current_user_=
-ns(),
-> >> +                               CAP_SYS_ADMIN, CAP_OPT_NOAUDIT);
-> >
-> > I think this should be ns_capable_noaudit(current_user_ns(), CAP_SYS_AD=
-MIN)?
->
-> Right. The main difference is that ns_capable*() set PF_SUPERPRIV in
-> current->flags. I guess seccomp should use ns_capable_noaudit() as well?
+Similar to speculation store bypass, show information about the indirect
+branch speculation mode of a task in /proc/$pid/status.
 
-Yeah. That seccomp code is from commit e2cfabdfd0756, with commit date
-in April 2012, while ns_capable_noaudit() was introduced in commit
-98f368e9e263, with commit date in June 2016; the seccomp code predates
-the availability of that API.
+Signed-off-by: Anand K Mistry <amistry@google.com>
+---
 
-Do you want to send a patch to Kees for that, or should I?
+ Documentation/filesystems/proc.rst |  2 ++
+ fs/proc/array.c                    | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 533c79e8d2cd..710dd69614b9 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -210,6 +210,7 @@ read the file /proc/PID/status::
+   NoNewPrivs:     0
+   Seccomp:        0
+   Speculation_Store_Bypass:       thread vulnerable
++  Speculation_Indirect_Branch:    conditional enabled
+   voluntary_ctxt_switches:        0
+   nonvoluntary_ctxt_switches:     1
+ 
+@@ -292,6 +293,7 @@ It's slow but very precise.
+  NoNewPrivs                  no_new_privs, like prctl(PR_GET_NO_NEW_PRIV, ...)
+  Seccomp                     seccomp mode, like prctl(PR_GET_SECCOMP, ...)
+  Speculation_Store_Bypass    speculative store bypass mitigation status
++ Speculation_Indirect_Branch indirect branch speculation mode
+  Cpus_allowed                mask of CPUs on which this process may run
+  Cpus_allowed_list           Same as previous, but in "list format"
+  Mems_allowed                mask of memory nodes allowed to this process
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 65ec2029fa80..ce4fa948c9dd 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -368,6 +368,34 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
+ 		seq_puts(m, "vulnerable");
+ 		break;
+ 	}
++
++	seq_puts(m, "\nSpeculation_Indirect_Branch:\t");
++	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_INDIRECT_BRANCH)) {
++	case -EINVAL:
++		seq_puts(m, "unsupported");
++		break;
++	case PR_SPEC_NOT_AFFECTED:
++		seq_puts(m, "not affected");
++		break;
++	case PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE:
++		seq_puts(m, "conditional force disabled");
++		break;
++	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
++		seq_puts(m, "conditional disabled");
++		break;
++	case PR_SPEC_PRCTL | PR_SPEC_ENABLE:
++		seq_puts(m, "conditional enabled");
++		break;
++	case PR_SPEC_ENABLE:
++		seq_puts(m, "always enabled");
++		break;
++	case PR_SPEC_DISABLE:
++		seq_puts(m, "always disabled");
++		break;
++	default:
++		seq_puts(m, "unknown");
++		break;
++	}
+ 	seq_putc(m, '\n');
+ }
+ 
+-- 
+2.29.1.341.ge80a0c044ae-goog
+
