@@ -2,97 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1982A05A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 13:41:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5B62A0621
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:02:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgJ3Mlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 08:41:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45998 "EHLO
+        id S1726602AbgJ3NCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 09:02:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbgJ3Mld (ORCPT
+        with ESMTP id S1726178AbgJ3NCg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 08:41:33 -0400
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A312C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 05:41:33 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CN24C353wzlhbLm;
-        Fri, 30 Oct 2020 13:41:31 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4CN2494vmzzlh8TR;
-        Fri, 30 Oct 2020 13:41:29 +0100 (CET)
-Subject: Re: [PATCH v22 08/12] landlock: Add syscall implementations
-To:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20201027200358.557003-1-mic@digikod.net>
- <20201027200358.557003-9-mic@digikod.net>
- <CAG48ez1San538w=+He309vHg4pBSCvAf7e5xeHdqeOHA6qwitw@mail.gmail.com>
- <de287149-ff42-40ca-5bd1-f48969880a06@digikod.net>
- <CAG48ez1FQVkt78129WozBwFbVhAPyAr9oJAHFHAbbNxEBr9h1g@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <163f298b-b492-fee0-b475-102ae8170419@digikod.net>
-Date:   Fri, 30 Oct 2020 13:41:29 +0100
-User-Agent: 
+        Fri, 30 Oct 2020 09:02:36 -0400
+Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB49C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 06:02:34 -0700 (PDT)
+Received: by mail-vk1-xa2d.google.com with SMTP id t67so1429639vkb.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 06:02:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hfUp6uvT0mNo9qOvWz4kadVZif4hwG0EcrIPidc71AU=;
+        b=c/0np4r5fnnReVFjWkDWXo8hF0To3ovSOoxgoL/QWs9VxL86iqjKdadij03d378/T5
+         B7rjoCbR258EwTEX+UW+6QMPF65hDWZsco0RfSUG9stFDcsd6ZZkDH+4oFGIQiro7Wrf
+         /VUafL5CtS83KydlI6lpgD86QMrk86JITh21I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hfUp6uvT0mNo9qOvWz4kadVZif4hwG0EcrIPidc71AU=;
+        b=nR477wc60TspKrHLQcsKJpRJ3nSP361AwHPCJ5hCLDMGT2yYt96P3dg/dfTLZUwJw/
+         8ro1JhurY7VIgj8+pqPdRcFP4lZhtEwSYE7+fdh2dCQika8CeuPCsLcKCOT78wOWpSnL
+         LVCaiGq/AX77PtiCKAt8MAliJXXxp0eNRFNocAOnAG4Ji96C6brF6NuSXvb9K+l5t509
+         Hy9RWehpoEqfuu2XqA6zA5tz8592nrKk5dvHEZJWIz5yZeRSLpgui5E4MwnD09sKXZFU
+         Tdq/JDG4Tf+3FySTQJ1dQO/JEOXq0R41C+vHVnIrIkwww4ds5WI5sUaURtS0MMP/xNCQ
+         Uq4Q==
+X-Gm-Message-State: AOAM531A24fhIBDRWquxBXzAGfdtiOEYx7Tor3GSxXkvvu9cl54lZN7K
+        mEit/EYALy48yqrtI4SowkfRqsIKT5TnuB2mbtVIMQ==
+X-Google-Smtp-Source: ABdhPJxPa9+zamc48OrPbKG+5+YeIbGDLouPEl6taVV7SKI2yGqJZrMzqI/DHpB0Je2VEJI3rTxbB6w6g9+fXjI8Kns=
+X-Received: by 2002:a1f:23d0:: with SMTP id j199mr6640364vkj.11.1604062953264;
+ Fri, 30 Oct 2020 06:02:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez1FQVkt78129WozBwFbVhAPyAr9oJAHFHAbbNxEBr9h1g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <0000000000008caae305ab9a5318@google.com> <000000000000a726a405ada4b6cf@google.com>
+ <CAFqZXNvQcjp201ahjLBhYJJCuYqZrYLGDA-wE3hXiJpRNgbTKg@mail.gmail.com>
+In-Reply-To: <CAFqZXNvQcjp201ahjLBhYJJCuYqZrYLGDA-wE3hXiJpRNgbTKg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 30 Oct 2020 14:02:22 +0100
+Message-ID: <CAJfpegtzQB09ind8tkYzaiu6ODJvhMKj3myxVS75vbjTcOxU8g@mail.gmail.com>
+Subject: Re: general protection fault in security_inode_getattr
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>,
+        andriin@fb.com, Alexei Starovoitov <ast@kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, john.fastabend@gmail.com,
+        kafai@fb.com, KP Singh <kpsingh@chromium.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Song Liu <songliubraving@fb.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>, yhs@fb.com,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Aug 24, 2020 at 11:00 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> On Mon, Aug 24, 2020 at 9:37 PM syzbot
+> <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com> wrote:
+> > syzbot has found a reproducer for the following issue on:
+>
+> Looping in fsdevel and OverlayFS maintainers, as this seems to be
+> FS/OverlayFS related...
 
-On 30/10/2020 04:07, Jann Horn wrote:
-> On Thu, Oct 29, 2020 at 12:30 PM Mickaël Salaün <mic@digikod.net> wrote:
->> On 29/10/2020 02:06, Jann Horn wrote:
->>> On Tue, Oct 27, 2020 at 9:04 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>> These 3 system calls are designed to be used by unprivileged processes
->>>> to sandbox themselves:
-> [...]
->>>> +       /*
->>>> +        * Similar checks as for seccomp(2), except that an -EPERM may be
->>>> +        * returned.
->>>> +        */
->>>> +       if (!task_no_new_privs(current)) {
->>>> +               err = security_capable(current_cred(), current_user_ns(),
->>>> +                               CAP_SYS_ADMIN, CAP_OPT_NOAUDIT);
->>>
->>> I think this should be ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN)?
->>
->> Right. The main difference is that ns_capable*() set PF_SUPERPRIV in
->> current->flags. I guess seccomp should use ns_capable_noaudit() as well?
-> 
-> Yeah. That seccomp code is from commit e2cfabdfd0756, with commit date
-> in April 2012, while ns_capable_noaudit() was introduced in commit
-> 98f368e9e263, with commit date in June 2016; the seccomp code predates
-> the availability of that API.
-> 
-> Do you want to send a patch to Kees for that, or should I?
-> 
+Hmm, the oopsing code is always something like:
 
-I found another case of this inconsistency in ptrace. I sent patches:
-https://lore.kernel.org/lkml/20201030123849.770769-1-mic@digikod.net/
+All code
+========
+   0: 1b fe                sbb    %esi,%edi
+   2: 49 8d 5e 08          lea    0x8(%r14),%rbx
+   6: 48 89 d8              mov    %rbx,%rax
+   9: 48 c1 e8 03          shr    $0x3,%rax
+   d: 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1)
+  12: 74 08                je     0x1c
+  14: 48 89 df              mov    %rbx,%rdi
+  17: e8 bc b4 5b fe        callq  0xfffffffffe5bb4d8
+  1c: 48 8b 1b              mov    (%rbx),%rbx
+  1f: 48 83 c3 68          add    $0x68,%rbx
+  23: 48 89 d8              mov    %rbx,%rax
+  26: 48 c1 e8 03          shr    $0x3,%rax
+  2a:* 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+  2f: 74 08                je     0x39
+  31: 48 89 df              mov    %rbx,%rdi
+  34: e8 9f b4 5b fe        callq  0xfffffffffe5bb4d8
+  39: 48 8b 1b              mov    (%rbx),%rbx
+  3c: 48 83 c3 0c          add    $0xc,%rbx
+
+
+And that looks (to me) like the unrolled loop in call_int_hook().  I
+don't see how that could be related to overlayfs, though it's
+definitely interesting why it only triggers from
+overlay->vfs_getattr()->security_inode_getattr()...
+
+Thanks,
+Miklos
