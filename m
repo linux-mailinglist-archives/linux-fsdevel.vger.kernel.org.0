@@ -2,119 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C48872A02BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 11:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 075622A0338
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 11:48:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgJ3KZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 06:25:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53032 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbgJ3KZF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 06:25:05 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626AFC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 03:25:03 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id f38so4830787pgm.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 03:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k3BGkHyMUAcPWaiYElJuGkin/Ch6RoeIDSf/cjT/XKY=;
-        b=lKwLLt4dLJrwYKz1isaaQyrg51qniG2bO9YO+gcQpxSKGHXbaqagOs5Xi28UmxmT8+
-         y54t5hh34z1betgNgZdy7j5Qp9nHohzQ+5lIzDf0xKNl/sgbY5WfNgm5zFYRTVCGEoW+
-         M5WK5W83RIkmiZrTrRXoooavnPTUqq2z6ThXPcQpe7LseuTflVuAIbIW+lk4lzU0fNpE
-         eO7Pb82pw58h64VKr3dt+77B3cvRaU1A6fhTkoYUONfYYMOkk7fYfKVmLys/v6RKU983
-         +8RODoyILxdxifNbcJRBHEuFgr9ZDWWbC0yvWPfVdHFsfjIfUtzUNaKT37paV15J7hrr
-         UX0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k3BGkHyMUAcPWaiYElJuGkin/Ch6RoeIDSf/cjT/XKY=;
-        b=KdLwulFL7fFxEnf/JWWVDAuWE067qHXYKOyXU6x4m/se88z2xCK/oNq9nUszCo5l2b
-         blYHCixiyzJL6wKwaBwtgw7KiOjqlABD50ZVHhjqnVth+nPZBmUOSx6lNAWQaSK4wui3
-         FcL1NIOCG4N0gV+OHLNXqiM7xNRU27eaSh4J83nvDDsZSmeFq0fuNhFZztWTEMGPHWEW
-         lo8d1EYhHyd81Vy/DeQiM2J8pwMtpAtNbEexVBgfHk1mhB2+2ecSVnz2b91XnXxBSWLS
-         T8/YKGY3vSZwRcTULwiQPJ6hoL+4t3X+BZxErLmM1/ZSfecVDMkg1uqQ/oKz0W+nD5ZC
-         q75A==
-X-Gm-Message-State: AOAM53221hZsQGmtmfbPoQ4KDDS5DdncvvaKKTYIPFJAt7rlC7T/lw0x
-        pN8kf6WyIUajdNZYF+02DrbJQEB/FCAhLk4zoO7TYQ==
-X-Google-Smtp-Source: ABdhPJwyjzUykhJBgO4xRIxz/zsV9eOTOu6Kknf9mk+qKBEDABpYQ3M+M9v2OBxghVmkxo89DPwXn0OjWqLJPuxH/hg=
-X-Received: by 2002:a17:90b:198d:: with SMTP id mv13mr2031860pjb.13.1604053502754;
- Fri, 30 Oct 2020 03:25:02 -0700 (PDT)
+        id S1726294AbgJ3Ks0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 06:48:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45280 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbgJ3Ks0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Oct 2020 06:48:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 25273AB0E;
+        Fri, 30 Oct 2020 10:48:24 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B55571E12D9; Fri, 30 Oct 2020 11:48:23 +0100 (CET)
+Date:   Fri, 30 Oct 2020 11:48:23 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Luca BRUNO <lucab@redhat.com>
+Subject: Re: [PATCH v2] inotify: Increase default inotify.max_user_watches
+ limit to 1048576
+Message-ID: <20201030104823.GA19757@quack2.suse.cz>
+References: <20201029154535.2074-1-longman@redhat.com>
+ <CAOQ4uxjT8rWLr1yCBPGkhJ7Rr6n3+FA7a0GmZaMBHMzk9t1Sag@mail.gmail.com>
+ <ccec54cd-cbb5-2808-3800-890cda208967@redhat.com>
+ <CAOQ4uximGK1DnM7fYabChp-8pNqt3cSHeDWZYNKSwr6qSnxpug@mail.gmail.com>
+ <4695fee5-3446-7f5b-ae89-dc48d431a8fe@redhat.com>
 MIME-Version: 1.0
-References: <20201026145114.59424-1-songmuchun@bytedance.com> <20201030091445.GF1478@dhcp22.suse.cz>
-In-Reply-To: <20201030091445.GF1478@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 30 Oct 2020 18:24:25 +0800
-Message-ID: <CAMZfGtUoEeJTBYwxYjWJEreHefcO81WhhnvRO7vTb_k+zPCHrg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2 00/19] Free some vmemmap pages of
- hugetlb page
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4695fee5-3446-7f5b-ae89-dc48d431a8fe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 5:14 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Mon 26-10-20 22:50:55, Muchun Song wrote:
-> > If we uses the 1G hugetlbpage, we can save 4095 pages. This is a very
-> > substantial gain. On our server, run some SPDK/QEMU applications which
-> > will use 1000GB hugetlbpage. With this feature enabled, we can save
-> > ~16GB(1G hugepage)/~11GB(2MB hugepage) memory.
-> [...]
-> >  15 files changed, 1091 insertions(+), 165 deletions(-)
-> >  create mode 100644 include/linux/bootmem_info.h
-> >  create mode 100644 mm/bootmem_info.c
->
-> This is a neat idea but the code footprint is really non trivial. To a
-> very tricky code which hugetlb is unfortunately.
->
-> Saving 1,6% of memory is definitely interesting especially for 1GB pages
-> which tend to be more static and where the savings are more visible.
->
-> Anyway, I haven't seen any runtime overhead analysis here. What is the
-> price to modify the vmemmap page tables and make them pte rather than
-> pmd based (especially for 2MB hugetlb). Also, how expensive is the
-> vmemmap page tables reconstruction on the freeing path?
+On Thu 29-10-20 15:04:56, Waiman Long wrote:
+> On 10/29/20 2:46 PM, Amir Goldstein wrote:
+> > On Thu, Oct 29, 2020 at 8:05 PM Waiman Long <longman@redhat.com> wrote:
+> > > On 10/29/20 1:27 PM, Amir Goldstein wrote:
+> > > > On Thu, Oct 29, 2020 at 5:46 PM Waiman Long <longman@redhat.com> wrote:
+> > > > > The default value of inotify.max_user_watches sysctl parameter was set
+> > > > > to 8192 since the introduction of the inotify feature in 2005 by
+> > > > > commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
+> > > > > small for many modern usage. As a result, users have to explicitly set
+> > > > > it to a larger value to make it work.
+> > > > > 
+> > > > > After some searching around the web, these are the
+> > > > > inotify.max_user_watches values used by some projects:
+> > > > >    - vscode:  524288
+> > > > >    - dropbox support: 100000
+> > > > >    - users on stackexchange: 12228
+> > > > >    - lsyncd user: 2000000
+> > > > >    - code42 support: 1048576
+> > > > >    - monodevelop: 16384
+> > > > >    - tectonic: 524288
+> > > > >    - openshift origin: 65536
+> > > > > 
+> > > > > Each watch point adds an inotify_inode_mark structure to an inode to
+> > > > > be watched. It also pins the watched inode as well as an inotify fdinfo
+> > > > > procfs file.
+> > > > > 
+> > > > > Modeled after the epoll.max_user_watches behavior to adjust the default
+> > > > > value according to the amount of addressable memory available, make
+> > > > > inotify.max_user_watches behave in a similar way to make it use no more
+> > > > > than 1% of addressable memory within the range [8192, 1048576].
+> > > > > 
+> > > > > For 64-bit archs, inotify_inode_mark plus 2 inode have a size close
+> > > > > to 2 kbytes. That means a system with 196GB or more memory should have
+> > > > > the maximum value of 1048576 for inotify.max_user_watches. This default
+> > > > > should be big enough for most use cases.
+> > > > > 
+> > > > > With my x86-64 config, the size of xfs_inode, proc_inode and
+> > > > > inotify_inode_mark is 1680 bytes. The estimated INOTIFY_WATCH_COST is
+> > > > > 1760 bytes.
+> > > > > 
+> > > > > [v2: increase inotify watch cost as suggested by Amir and Honza]
+> > > > > 
+> > > > > Signed-off-by: Waiman Long <longman@redhat.com>
+> > > > > ---
+> > > > >    fs/notify/inotify/inotify_user.c | 24 +++++++++++++++++++++++-
+> > > > >    1 file changed, 23 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> > > > > index 186722ba3894..37d9f09c226f 100644
+> > > > > --- a/fs/notify/inotify/inotify_user.c
+> > > > > +++ b/fs/notify/inotify/inotify_user.c
+> > > > > @@ -37,6 +37,16 @@
+> > > > > 
+> > > > >    #include <asm/ioctls.h>
+> > > > > 
+> > > > > +/*
+> > > > > + * An inotify watch requires allocating an inotify_inode_mark structure as
+> > > > > + * well as pinning the watched inode and adding inotify fdinfo procfs file.
+> > > > Maybe you misunderstood me.
+> > > > There is no procfs file per watch.
+> > > > There is a procfs file per inotify_init() fd.
+> > > > The fdinfo of that procfile lists all the watches of that inotify instance.
+> > > Thanks for the clarification. Yes, I probably had misunderstood you
+> > > because of the 2 * sizeof(inode) figure you provided.
+> > > > > + * The increase in size of a filesystem inode versus a VFS inode varies
+> > > > > + * depending on the filesystem. An extra 512 bytes is added as rough
+> > > > > + * estimate of the additional filesystem inode cost.
+> > > > > + */
+> > > > > +#define INOTIFY_WATCH_COST     (sizeof(struct inotify_inode_mark) + \
+> > > > > +                                2 * sizeof(struct inode) + 512)
+> > > > > +
+> > > > I would consider going with double the sizeof inode as rough approximation for
+> > > > filesystem inode size.
+> > > > 
+> > > > It is a bit less arbitrary than 512 and it has some rationale behind it -
+> > > > Some kernel config options will grow struct inode (debug, smp)
+> > > > The same config options may also grow the filesystem part of the inode.
+> > > > 
+> > > > And this approximation can be pretty accurate at times.
+> > > > For example, on Ubuntu 18.04 kernel 5.4.0:
+> > > > inode_cache        608
+> > > > nfs_inode_cache      1088
+> > > > btrfs_inode            1168
+> > > > xfs_inode              1024
+> > > > ext4_inode_cache   1096
+> > > Just to clarify, is your original 2 * sizeof(struct inode) figure
+> > > include the filesystem inode overhead or there is an additional inode
+> > > somewhere that I needs to go to 4 * sizeof(struct inode)?
+> > No additional inode.
+> > 
+> > #define INOTIFY_WATCH_COST     (sizeof(struct inotify_inode_mark) + \
+> >                                                        2 * sizeof(struct inode))
+> > 
+> > Not sure if the inotify_inode_mark part matters, but it doesn't hurt.
+> > Do note that Jan had a different proposal for fs inode size estimation (1K).
+> > I have no objection to this estimation if Jan insists.
+> > 
+> > Thanks,
+> > Amir.
+> > 
+> Thanks for the confirmation. 2*sizeof(struct inode) is more than 1k. Besides
+> with debugging turned on, the size will increase more. So that figure is
+> good enough.
 
-Yeah, I haven't tested the remapping overhead of reserving a hugetlb
-page. I can do that. But the overhead is not on the allocation/freeing of
-each hugetlb page, it is only once when we reserve some hugetlb pages
-through /proc/sys/vm/nr_hugepages. Once the reservation is successful,
-the subsequent allocation, freeing and using are the same as before
-(not patched). So I think that the overhead is acceptable.
+Yeah, the 2*sizeof(struct inode) is fine by me as well. Please don't forget
+to update the comment explaining INOTIFY_WATCH_COST. Thanks!
 
-Thanks.
-
->
-> Thanks!
-> --
-> Michal Hocko
-> SUSE Labs
-
-
-
+								Honza
 -- 
-Yours,
-Muchun
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
