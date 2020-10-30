@@ -2,156 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E022A04EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 13:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 490412A0504
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 13:08:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbgJ3MCJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 08:02:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39709 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbgJ3MCJ (ORCPT
+        id S1726527AbgJ3MI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 08:08:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53376 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726413AbgJ3MIY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 08:02:09 -0400
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kYT6V-0006JV-Px; Fri, 30 Oct 2020 12:01:59 +0000
-Date:   Fri, 30 Oct 2020 13:01:57 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <james.bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-Message-ID: <20201030120157.exz4rxmebruh7bgp@wittgenstein>
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <8E455D54-FED4-4D06-8CB7-FC6291C64259@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8E455D54-FED4-4D06-8CB7-FC6291C64259@amacapital.net>
+        Fri, 30 Oct 2020 08:08:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604059702;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KxlJ8Mwn0Tke0WPb8nHZ6w8mEJXEo5j2Z00nnV/ApfQ=;
+        b=Wmzq52KaSQ1+YGSIS2RnmLNb3RBhkISIVRfYUkZD3drb5hVPL6ZHSLaIkwEkzC6f4AtRzv
+        u8PSSLINt2sRK0NDCAf1TwxjGErLbPeBJoIzfgqiDrq1xDxXkNzyNmZId1gffnhcKflG/a
+        cOlYaXdcNwOyNPQV1iNDqQFVsqN0Gjo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-50-AzIfXLJtNRSF2-f3T9HVoQ-1; Fri, 30 Oct 2020 08:08:18 -0400
+X-MC-Unique: AzIfXLJtNRSF2-f3T9HVoQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1A88A101F000;
+        Fri, 30 Oct 2020 12:08:17 +0000 (UTC)
+Received: from ovpn-66-212.rdu2.redhat.com (ovpn-66-212.rdu2.redhat.com [10.10.66.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F238219C71;
+        Fri, 30 Oct 2020 12:08:15 +0000 (UTC)
+Message-ID: <be8410fb81e6908457a524bc8e1df83a648d38f1.camel@redhat.com>
+Subject: Re: kernel BUG at mm/page-writeback.c:2241 [
+ BUG_ON(PageWriteback(page); ]
+From:   Qian Cai <cai@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-mm@kvack.org
+Date:   Fri, 30 Oct 2020 08:08:15 -0400
+In-Reply-To: <20201022171243.GX20115@casper.infradead.org>
+References: <645a3f332f37e09057c10bc32f4f298ce56049bb.camel@lca.pw>
+         <20201022004906.GQ20115@casper.infradead.org>
+         <7ec15e2710db02be81a6c47afc57abed4bf8016c.camel@lca.pw>
+         <20201022171243.GX20115@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 29, 2020 at 02:58:55PM -0700, Andy Lutomirski wrote:
-> 
-> 
-> > On Oct 28, 2020, at 5:35 PM, Christian Brauner <christian.brauner@ubuntu.com> wrote:
+On Thu, 2020-10-22 at 18:12 +0100, Matthew Wilcox wrote:
+> On Thu, Oct 22, 2020 at 11:35:26AM -0400, Qian Cai wrote:
+> > On Thu, 2020-10-22 at 01:49 +0100, Matthew Wilcox wrote:
+> > > On Wed, Oct 21, 2020 at 08:30:18PM -0400, Qian Cai wrote:
+> > > > Today's linux-next starts to trigger this wondering if anyone has any
+> > > > clue.
+> > > 
+> > > I've seen that occasionally too.  I changed that BUG_ON to VM_BUG_ON_PAGE
+> > > to try to get a clue about it.  Good to know it's not the THP patches
+> > > since they aren't in linux-next.
+> > > 
+> > > I don't understand how it can happen.  We have the page locked, and then
+> > > we
+> > > do:
+> > > 
+> > >                         if (PageWriteback(page)) {
+> > >                                 if (wbc->sync_mode != WB_SYNC_NONE)
+> > >                                         wait_on_page_writeback(page);
+> > >                                 else
+> > >                                         goto continue_unlock;
+> > >                         }
+> > > 
+> > >                         VM_BUG_ON_PAGE(PageWriteback(page), page);
+> > > 
+> > > Nobody should be able to put this page under writeback while we have it
+> > > locked ... right?  The page can be redirtied by the code that's supposed
+> > > to be writing it back, but I don't see how anyone can make PageWriteback
+> > > true while we're holding the page lock.
 > > 
-> > ﻿Hey everyone,
+> > It happened again on today's linux-next:
 > > 
-> > I vanished for a little while to focus on this work here so sorry for
-> > not being available by mail for a while.
-> > 
-> > Since quite a long time we have issues with sharing mounts between
-> > multiple unprivileged containers with different id mappings, sharing a
-> > rootfs between multiple containers with different id mappings, and also
-> > sharing regular directories and filesystems between users with different
-> > uids and gids. The latter use-cases have become even more important with
-> > the availability and adoption of systemd-homed (cf. [1]) to implement
-> > portable home directories.
-> > 
-> > The solutions we have tried and proposed so far include the introduction
-> > of fsid mappings, a tiny overlay based filesystem, and an approach to
-> > call override creds in the vfs. None of these solutions have covered all
-> > of the above use-cases.
-> > 
-> > The solution proposed here has it's origins in multiple discussions
-> > during Linux Plumbers 2017 during and after the end of the containers
-> > microconference.
-> > To the best of my knowledge this involved Aleksa, Stéphane, Eric, David,
-> > James, and myself. A variant of the solution proposed here has also been
-> > discussed, again to the best of my knowledge, after a Linux conference
-> > in St. Petersburg in Russia between Christoph, Tycho, and myself in 2017
-> > after Linux Plumbers.
-> > I've taken the time to finally implement a working version of this
-> > solution over the last weeks to the best of my abilities. Tycho has
-> > signed up for this sligthly crazy endeavour as well and he has helped
-> > with the conversion of the xattr codepaths.
-> > 
-> > The core idea is to make idmappings a property of struct vfsmount
-> > instead of tying it to a process being inside of a user namespace which
-> > has been the case for all other proposed approaches.
-> > It means that idmappings become a property of bind-mounts, i.e. each
-> > bind-mount can have a separate idmapping. This has the obvious advantage
-> > that idmapped mounts can be created inside of the initial user
-> > namespace, i.e. on the host itself instead of requiring the caller to be
-> > located inside of a user namespace. This enables such use-cases as e.g.
-> > making a usb stick available in multiple locations with different
-> > idmappings (see the vfat port that is part of this patch series).
-> > 
-> > The vfsmount struct gains a new struct user_namespace member. The
-> > idmapping of the user namespace becomes the idmapping of the mount. A
-> > caller that is either privileged with respect to the user namespace of
-> > the superblock of the underlying filesystem or a caller that is
-> > privileged with respect to the user namespace a mount has been idmapped
-> > with can create a new bind-mount and mark it with a user namespace.
+> > [ 7613.579890][T55770] page:00000000a4b35e02 refcount:3 mapcount:0
+> > mapping:00000000457ceb87 index:0x3e pfn:0x1cef4e
+> > [ 7613.590594][T55770] aops:xfs_address_space_operations ino:805d85a dentry
+> > name:"doio.f1.55762"
+> > [ 7613.599192][T55770] flags:
+> > 0xbfffc0000000bf(locked|waiters|referenced|uptodate|dirty|lru|active)
+> > [ 7613.608596][T55770] raw: 00bfffc0000000bf ffffea0005027d48
+> > ffff88810eaec030 ffff888231f3a6a8
+> > [ 7613.617101][T55770] raw: 000000000000003e 0000000000000000
+> > 00000003ffffffff ffff888143724000
+> > [ 7613.625590][T55770] page dumped because:
+> > VM_BUG_ON_PAGE(PageWriteback(page))
+> > [ 7613.632695][T55770] page->mem_cgroup:ffff888143724000
 > 
-> So one way of thinking about this is that a user namespace that has an idmapped mount can, effectively, create or chown files with *any* on-disk uid or gid by doing it directly (if that uid exists in-namespace, which is likely for interesting ids like 0) or by creating a new userns with that id inside.
+> Seems like it reproduces for you pretty quickly.  I have no luck ;-(
 > 
-> For a file system that is private to a container, this seems moderately safe, although this may depend on what exactly “private” means. We probably want a mechanism such that, if you are outside the namespace, a reference to a file with the namespace’s vfsmnt does not confer suid privilege.
-> 
-> Imagine the following attack: user creates a namespace with a root user and arranges to get an idmapped fs, e.g. by inserting an ext4 usb stick or using whatever container management tool does this.  Inside the namespace, the user creates a suid-root file.
-> 
-> Now, outside the namespace, the user has privilege over the namespace.  (I’m assuming there is some tool that will idmap things in a namespace owned by an unprivileged user, which seems likely.). So the user makes a new bind mount and if maps it to the init namespace. Game over.
-> 
-> So I think we need to have some control to mitigate this in a comprehensible way. A big hammer would be to require nosuid. A smaller hammer might be to say that you can’t create a new idmapped mount unless you have privilege over the userns that you want to use for the idmap and to say that a vfsmnt’s paths don’t do suid outside the idmap namespace.  We already do the latter for the vfsmnt’s mntns’s userns.
+> Can you add this?
 
-With this series, in order to create an idmapped mount the user must
-either be cap_sys_admin in the superblock of the underlying filesystem
-or if the mount is already idmapped and they want to create another
-idmapped mount from it they must have cap_sys_admin in the userns that
-the mount is currrently marked with. It is also not possible to change
-an idmapped mount once it has been idmapped, i.e. the user must create a
-new detached bind-mount first.
+It turns out I had no luck for the last a few days. I'll keep running and report
+back if it triggers again.
 
 > 
-> Hmm.  What happens if we require that an idmap userns equal the vfsmnt’s mntns’s userns?  Is that too limiting?
+> +++ b/mm/page-writeback.c
+> @@ -2774,6 +2774,7 @@ int __test_set_page_writeback(struct page *page, bool
+> keep_write)
+>         struct address_space *mapping = page_mapping(page);
+>         int ret, access_ret;
+>  
+> +       VM_BUG_ON_PAGE(!PageLocked(page), page);
+>         lock_page_memcg(page);
+>         if (mapping && mapping_use_writeback_tags(mapping)) {
+>                 XA_STATE(xas, &mapping->i_pages, page_index(page));
 > 
-> I hope that whatever solution gets used is straightforward enough to wrap one’s head around.
+> This is the only place (afaict) that sets PageWriteback, so that will
+> tell us whether someone is setting Writeback without holding the lock,
+> or whether we're suffering from a spurious wakeup.
 > 
-> > When a file/inode is accessed through an idmapped mount the i_uid and
-> > i_gid of the inode will be remapped according to the user namespace the
-> > mount has been marked with. When a new object is created based on the
-> > fsuid and fsgid of the caller they will similarly be remapped according
-> > to the user namespace of the mount they care created from.
-> 
-> By “mapped according to”, I presume you mean that the on-disk uid/gid is the gid as seen in the user namespace in question.
 
-If I understand you correctly, then yes.
