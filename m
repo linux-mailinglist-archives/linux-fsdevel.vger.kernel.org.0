@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 548A82A071A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:54:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CDCB2A071C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:54:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbgJ3Nx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 09:53:59 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:22003 "EHLO
+        id S1726853AbgJ3NyA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 09:54:00 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21997 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbgJ3NxA (ORCPT
+        with ESMTP id S1726829AbgJ3NxA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 30 Oct 2020 09:53:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604065979; x=1635601979;
+  t=1604065980; x=1635601980;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=75fAmRUO5nDwJooOw48asWhVJ81jKELWO2GhE82J9JA=;
-  b=Li3HndKnO0hj7Cj1HfHxewe5w//qmq4DilNR3snq85hiDun+x9EML6m5
-   HNKJlK2Hcgd9ifthS7yNPIfEssxp/8zja4nKdRZnh5bJ/gos3cleU/9Lt
-   WkqjqZik1sjTCm0uf+733+v3jUAXCK3o5fDun0cHu0K3IeqZnkkSBbiSK
-   ihuEHr71xGiKw5tRJENfIjRZzmsm/1RP71ahB7u28V7NSvj2aQqj1B9+C
-   yhdMsxvesIarSAsMSrkINSJK9fT8pbokmkrvUlAcV/CeZIWK+HvbA7rvA
-   eCgGFTNCR2T6lQSF352SVmZAjfnd+Jmw6aKQ5kTWML/xtuwWKX7oxl2Ib
+  bh=/cg2DzInArlfMYW+0mqyb64wEUNBbmYmeZFAkD9V3Lk=;
+  b=lksMgdxQz9uCMCSDH10k8J8lwOYXA8A+neyr1xjO1s+l6PhTQDAzhiVJ
+   tc54xqegHbyA+RBpA7/tXoyEhWejXi2N06fvHhcMzXQamCk7fKrrTJnXI
+   ZcdzjzDP3k2kqRVVaNYE7lKzHTl92MUxa/4SfMHkCqAgF5rzQww2XiMyG
+   RXw69AV1l5LdTVFnIdPJs4etDyDRRTX3exd8FF5o4mjNNsUHJ9t/IQDEv
+   Z7z2hixbeEfnBtX8fUz/xyzVgaVAz9leEsJS2DQZMgdHll9Tvm4KrBKtn
+   4HdW5BBNBnvtIeOfsHBxg9dC5A0WgIhJ3QPhE3JhbMbm0Y1SXMfz153m0
    Q==;
-IronPort-SDR: FkfNQi74RMkd8mKnOLAUtGlPsEhhQZrg9qSNssiE95ai4rlXynXeli9MtBzqzyAXd//mhD7Rfl
- 8biYlkkVadkCwnWssgZ2NTX8uXT4KJYiIQDdSOqppQ1gdPAWzFk/YC2gjhwRYr4YjT3cGlM8D/
- c3OHXSGdS4VQJIxo4Me+xhPfHPVgQlGwr/JwyeaJ7QI50o3xzhvx95IDyArOQHkpo9FSQRY/VF
- 4ClM8/BIk1m0LavoV37oDq78MTE1rdIXe3Y4IPoGUKYSrH8i3kJ/gKseVN1AcSYhSS+/OKGQ9b
- CaY=
+IronPort-SDR: kIjpCCyqp8pkbPsJ03gDW3w46htLTFN6SScqrjBrlVd0pjHltdX5SHt65Diqv+otgF58OF8vSB
+ CqYY5Dx/NDeM3yz5i/vjlSU2Owjj9P1ETXSvBGrZNc6g8fw3RelXFtqCI+naJ1yCpXjL4mBg8h
+ GJAU37qo3x1lQ+2T+4pShDToLZr3TFoJ8Ysro9xBckN0UvlExrNHmNKU1luogeOideI7G60xIX
+ /kX7LiLk0+84QEg0xxlJ/WVK1anG+pH9/Pj8Mbqi0Xbc3offLWUvCgEVVOz6cN5NlOavw0kJ6w
+ 2ZU=
 X-IronPort-AV: E=Sophos;i="5.77,433,1596470400"; 
-   d="scan'208";a="155806617"
+   d="scan'208";a="155806618"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Oct 2020 21:52:46 +0800
-IronPort-SDR: M0qOG84xUQNT8jZ5h8W+xABVZgnJCU/Kx4YtUCVJsYwJjWU1lWMQrcXd4DsgYmiTUtMQxHuTDu
- bY0FB3VYXOu/pTYq/dwwvwO9cdTT2rOW9fiFzaP61Td2kf1czRwWhld1ejvBQrhEqXlisTTLx7
- JY1QlTudBdhijgvsQgvJ0hqBrO0IOvVg879iCMIuVBYOqW/89weeuUea2jpcKEGJSvdkunKhwH
- 9jGKMQWg2XNLhTn5XLQ9DH9zRTjvokB/88OzmFf3oIbwkiI6884DWFMB29z63Q9TIibb+FFMsc
- NDEyKeUEH1GZnZB7yidWC7gR
+  by ob1.hgst.iphmx.com with ESMTP; 30 Oct 2020 21:52:47 +0800
+IronPort-SDR: gtdhnsQgnpz3JABo1rlHhkZzFaIA8nLyGWCnorvblNnB7F7wFly1CIyj5TQm7U0kjN03P0q34N
+ GKtb4E124+s9OWscw3rPoWBIgaGHVoWJz7Ja+YvC55B/PRoueWzYnz/6wEs3VRLO/LJU4OOa/u
+ aSh9MfASvpEY2tl6skUjRTcKYk611xBOIYDqJBk1jHqXwdtGcmMfCecJDy5JeLuW1l5tG3a16N
+ W+S6r6aVUd/2fk/SoX05OYxHko6tXduSa8oV+Cx+ciwq4RjXeAQcwQDsXGgn0z39A2sZrIKN+o
+ UTG6lxo2xNELuVCjQ6wvH9qs
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 06:39:00 -0700
-IronPort-SDR: e7JzAysIXUEdQsx08XAZNIWGtmSWDB2UU/6Fde7TDpSfPeXFryEhu6+P7/PeVo7SVYLoitatSD
- TZ3MRXbAm+AFRExCIdeVPlP+DgYMQlUVK8wtzov2G7pF7AIpKSzJyK0SpHNrVcER7cAphRad6c
- /RUWGmr6vmtVP84TuybPlCZqeTR9Wpasrv1WBPNx+2XvBlSwprn9Zw2QMBjAPD97cdByGhhimk
- W0yIDJnmAol0zK1kYFUqFs3OIOe74DQ3FbinnWZjIcFuwVJi+Pmw0RW0fosRFKcETR5HDIsfI1
- G68=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 06:39:01 -0700
+IronPort-SDR: gc6grznEYiQ0EhePSrcSmMP6rq0bqeyklibjuKLDmIByYmbn1ECNyHYQzV8q7DHFGtKfywFNwU
+ GG2ySYnmqIi9v6dcmHjAR/VqtMDojNHOmR1JvfjcUefH6COahKYLrctB5shg6nw8DccOy7cKfV
+ mQCiL7mzITqfjuzz1svuWmhfUMCeu765tTQFAO1cZVFj2MI3j2OSfx2j8h8uIKM5K+/gbJHxGD
+ uG170cGAqteQAj5P6Oh7UrK5e2rfkrBUcGOwzf/L19NQW7tzKDVvDrsOcpq3017yOi+IqaESN1
+ cKE=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 30 Oct 2020 06:52:45 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Oct 2020 06:52:46 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v9 20/41] btrfs: extract page adding function
-Date:   Fri, 30 Oct 2020 22:51:27 +0900
-Message-Id: <da2dba415cc94f271f0693b30296d9cc4f583f03.1604065695.git.naohiro.aota@wdc.com>
+Subject: [PATCH v9 21/41] btrfs: use bio_add_zone_append_page for zoned btrfs
+Date:   Fri, 30 Oct 2020 22:51:28 +0900
+Message-Id: <ad4c16f2fff58ea4c6bd034e782b1c354521d696.1604065695.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
 References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
@@ -65,97 +65,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commit extract page adding to bio part from submit_extent_page(). The
-page is added only when bio_flags are the same, contiguous and the added
-page fits in the same stripe as pages in the bio.
+Zoned device has its own hardware restrictions e.g. max_zone_append_size
+when using REQ_OP_ZONE_APPEND. To follow the restrictions, use
+bio_add_zone_append_page() instead of bio_add_page(). We need target device
+to use bio_add_zone_append_page(), so this commit reads the chunk
+information to memoize the target device to btrfs_io_bio(bio)->device.
 
-Condition checkings are reordered to allow early return to avoid possibly
-heavy btrfs_bio_fits_in_stripe() calling.
+Currently, zoned btrfs only supports SINGLE profile. In the feature,
+btrfs_io_bio can hold extent_map and check the restrictions for all the
+devices the bio will be mapped.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/extent_io.c | 55 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 40 insertions(+), 15 deletions(-)
+ fs/btrfs/extent_io.c | 37 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 3 deletions(-)
 
 diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index e91c504fe973..17285048fb5a 100644
+index 17285048fb5a..764257eb658f 100644
 --- a/fs/btrfs/extent_io.c
 +++ b/fs/btrfs/extent_io.c
-@@ -3012,6 +3012,43 @@ struct bio *btrfs_bio_clone_partial(struct bio *orig, int offset, int size)
- 	return bio;
+@@ -3032,6 +3032,7 @@ bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+ {
+ 	sector_t sector = logical >> SECTOR_SHIFT;
+ 	bool contig;
++	int ret;
+ 
+ 	if (prev_bio_flags != bio_flags)
+ 		return false;
+@@ -3046,7 +3047,19 @@ bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+ 	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
+ 		return false;
+ 
+-	return bio_add_page(bio, page, size, pg_offset) == size;
++	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
++		struct bio orig_bio;
++
++		memset(&orig_bio, 0, sizeof(orig_bio));
++		bio_copy_dev(&orig_bio, bio);
++		bio_set_dev(bio, btrfs_io_bio(bio)->device->bdev);
++		ret = bio_add_zone_append_page(bio, page, size, pg_offset);
++		bio_copy_dev(bio, &orig_bio);
++	} else {
++		ret = bio_add_page(bio, page, size, pg_offset);
++	}
++
++	return ret == size;
  }
  
-+/**
-+ * btrfs_bio_add_page	-	attempt to add a page to bio
-+ * @bio:	destination bio
-+ * @page:	page to add to the bio
-+ * @logical:	offset of the new bio or to check whether we are adding
-+ *              a contiguous page to the previous one
-+ * @pg_offset:	starting offset in the page
-+ * @size:	portion of page that we want to write
-+ * @prev_bio_flags:  flags of previous bio to see if we can merge the current one
-+ * @bio_flags:	flags of the current bio to see if we can merge them
-+ *
-+ * Attempt to add a page to bio considering stripe alignment etc. Return
-+ * true if successfully page added. Otherwise, return false.
-+ */
-+bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
-+			unsigned int size, unsigned int pg_offset,
-+			unsigned long prev_bio_flags, unsigned long bio_flags)
-+{
-+	sector_t sector = logical >> SECTOR_SHIFT;
-+	bool contig;
-+
-+	if (prev_bio_flags != bio_flags)
-+		return false;
-+
-+	if (prev_bio_flags & EXTENT_BIO_COMPRESSED)
-+		contig = bio->bi_iter.bi_sector == sector;
-+	else
-+		contig = bio_end_sector(bio) == sector;
-+	if (!contig)
-+		return false;
-+
-+	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
-+		return false;
-+
-+	return bio_add_page(bio, page, size, pg_offset) == size;
-+}
-+
  /*
-  * @opf:	bio REQ_OP_* and REQ_* flags as one value
-  * @wbc:	optional writeback control for io accounting
-@@ -3040,27 +3077,15 @@ static int submit_extent_page(unsigned int opf,
+@@ -3077,7 +3090,9 @@ static int submit_extent_page(unsigned int opf,
  	int ret = 0;
  	struct bio *bio;
  	size_t page_size = min_t(size_t, size, PAGE_SIZE);
--	sector_t sector = offset >> 9;
- 	struct extent_io_tree *tree = &BTRFS_I(page->mapping->host)->io_tree;
+-	struct extent_io_tree *tree = &BTRFS_I(page->mapping->host)->io_tree;
++	struct btrfs_inode *inode = BTRFS_I(page->mapping->host);
++	struct extent_io_tree *tree = &inode->io_tree;
++	struct btrfs_fs_info *fs_info = inode->root->fs_info;
  
  	ASSERT(bio_ret);
  
- 	if (*bio_ret) {
--		bool contig;
--		bool can_merge = true;
--
- 		bio = *bio_ret;
--		if (prev_bio_flags & EXTENT_BIO_COMPRESSED)
--			contig = bio->bi_iter.bi_sector == sector;
--		else
--			contig = bio_end_sector(bio) == sector;
--
--		if (btrfs_bio_fits_in_stripe(page, page_size, bio, bio_flags))
--			can_merge = false;
--
--		if (prev_bio_flags != bio_flags || !contig || !can_merge ||
--		    force_bio_submit ||
--		    bio_add_page(bio, page, page_size, pg_offset) < page_size) {
-+		if (force_bio_submit ||
-+		    !btrfs_bio_add_page(bio, page, offset, page_size, pg_offset,
-+					prev_bio_flags, bio_flags)) {
- 			ret = submit_one_bio(bio, mirror_num, prev_bio_flags);
- 			if (ret < 0) {
- 				*bio_ret = NULL;
+@@ -3108,11 +3123,27 @@ static int submit_extent_page(unsigned int opf,
+ 	if (wbc) {
+ 		struct block_device *bdev;
+ 
+-		bdev = BTRFS_I(page->mapping->host)->root->fs_info->fs_devices->latest_bdev;
++		bdev = fs_info->fs_devices->latest_bdev;
+ 		bio_set_dev(bio, bdev);
+ 		wbc_init_bio(wbc, bio);
+ 		wbc_account_cgroup_owner(wbc, page, page_size);
+ 	}
++	if (btrfs_is_zoned(fs_info) &&
++	    bio_op(bio) == REQ_OP_ZONE_APPEND) {
++		struct extent_map *em;
++		struct map_lookup *map;
++
++		em = btrfs_get_chunk_map(fs_info, offset, page_size);
++		if (IS_ERR(em))
++			return PTR_ERR(em);
++
++		map = em->map_lookup;
++		/* only support SINGLE profile for now */
++		ASSERT(map->num_stripes == 1);
++		btrfs_io_bio(bio)->device = map->stripes[0].dev;
++
++		free_extent_map(em);
++	}
+ 
+ 	*bio_ret = bio;
+ 
 -- 
 2.27.0
 
