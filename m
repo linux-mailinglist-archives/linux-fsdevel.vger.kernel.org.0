@@ -2,151 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3BD62A021A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 11:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C48872A02BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 11:25:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgJ3KGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 06:06:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49996 "EHLO
+        id S1726312AbgJ3KZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 06:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbgJ3KGn (ORCPT
+        with ESMTP id S1726284AbgJ3KZF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 06:06:43 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13935C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 03:06:43 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id 63so2509651qva.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 03:06:43 -0700 (PDT)
+        Fri, 30 Oct 2020 06:25:05 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626AFC0613D4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 03:25:03 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id f38so4830787pgm.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 03:25:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tELbhXfQariElQPBOqAGKxNGlZL8E/ZXdebHFJy/Swk=;
-        b=dELZIPtiqtXpHQ7fjyuo6GNNLMPs9DWb1SMjCY5eGwM76MPPy2eDyZ83N4PcOAIdw4
-         azxWdm/nMgQB+vwbL7e+vM6rC8RxvpnG8J0HI2DVrPTRokppZTH1IRHAaNNtdbJ4e0fl
-         QTjg0w+zCa3J9iS69rMs9evPg5HihkvUxD4Gjqi5UdZzKfYHq3qWqGxmzlkLTAmQ4yO8
-         2/lSCoVhAhMykIiGXz2yfbE0KeBjUBSU/4mPnf76/PzSPtX3LigZ4+mYrLTFUNo2W1sY
-         huVfAUajc8PLsdlzL+Zec2BKncYiE/5Gp8Um1ls03omFXuz23v8lQvEhHYlf5mRRJTI6
-         B9Vg==
+        bh=k3BGkHyMUAcPWaiYElJuGkin/Ch6RoeIDSf/cjT/XKY=;
+        b=lKwLLt4dLJrwYKz1isaaQyrg51qniG2bO9YO+gcQpxSKGHXbaqagOs5Xi28UmxmT8+
+         y54t5hh34z1betgNgZdy7j5Qp9nHohzQ+5lIzDf0xKNl/sgbY5WfNgm5zFYRTVCGEoW+
+         M5WK5W83RIkmiZrTrRXoooavnPTUqq2z6ThXPcQpe7LseuTflVuAIbIW+lk4lzU0fNpE
+         eO7Pb82pw58h64VKr3dt+77B3cvRaU1A6fhTkoYUONfYYMOkk7fYfKVmLys/v6RKU983
+         +8RODoyILxdxifNbcJRBHEuFgr9ZDWWbC0yvWPfVdHFsfjIfUtzUNaKT37paV15J7hrr
+         UX0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tELbhXfQariElQPBOqAGKxNGlZL8E/ZXdebHFJy/Swk=;
-        b=krYR7IjjL9lpAAvBDPwIX/4jJCfCLJKqUazS47EtQNUzzRsb1rOZVw4zvcAp9iLxce
-         wVDeu3v9XtzxysehZBOTGpnG2Q6HqMQU4yudxwqjASXLEgkAzHlRX/BCQVudXvqtYhWA
-         n7JbaHVpX6vMAaNrzHAkU9ueOEWW5frpN/1GBtg/TfuZBGk1nKTKxuPsfXBHs5gKcSIG
-         QxBDg4AYqyCWlEv4EsqZ2KWtPb3ZPJcmo8FBYFilb7KOHKxlVchh9M45zNW21aJ4tVsx
-         wILf8KyxyIqYpqeV9AA+C3f8vcCGHO54YzH51M+c0frp390M67G8jiFLjbAUcU1Z6CbQ
-         o2nA==
-X-Gm-Message-State: AOAM533XrNTpyzeLtncGG3q5gCWhBhomNJXoWPC8FpP3nrG1ce0gtlBO
-        R6sh6gX166LZTlpGXqUb6rVWpmR/5xKTb8DlT17ngQ==
-X-Google-Smtp-Source: ABdhPJwc1+7TcV9MSi+z6TcWtLeHmWbO58lYC2oSiF2SxLlKXLntRRFRSM9/doT/IR40mAYb6sLnwqstaBc+DrKnU/M=
-X-Received: by 2002:ad4:414d:: with SMTP id z13mr8680267qvp.37.1604052402013;
- Fri, 30 Oct 2020 03:06:42 -0700 (PDT)
+        bh=k3BGkHyMUAcPWaiYElJuGkin/Ch6RoeIDSf/cjT/XKY=;
+        b=KdLwulFL7fFxEnf/JWWVDAuWE067qHXYKOyXU6x4m/se88z2xCK/oNq9nUszCo5l2b
+         blYHCixiyzJL6wKwaBwtgw7KiOjqlABD50ZVHhjqnVth+nPZBmUOSx6lNAWQaSK4wui3
+         FcL1NIOCG4N0gV+OHLNXqiM7xNRU27eaSh4J83nvDDsZSmeFq0fuNhFZztWTEMGPHWEW
+         lo8d1EYhHyd81Vy/DeQiM2J8pwMtpAtNbEexVBgfHk1mhB2+2ecSVnz2b91XnXxBSWLS
+         T8/YKGY3vSZwRcTULwiQPJ6hoL+4t3X+BZxErLmM1/ZSfecVDMkg1uqQ/oKz0W+nD5ZC
+         q75A==
+X-Gm-Message-State: AOAM53221hZsQGmtmfbPoQ4KDDS5DdncvvaKKTYIPFJAt7rlC7T/lw0x
+        pN8kf6WyIUajdNZYF+02DrbJQEB/FCAhLk4zoO7TYQ==
+X-Google-Smtp-Source: ABdhPJwyjzUykhJBgO4xRIxz/zsV9eOTOu6Kknf9mk+qKBEDABpYQ3M+M9v2OBxghVmkxo89DPwXn0OjWqLJPuxH/hg=
+X-Received: by 2002:a17:90b:198d:: with SMTP id mv13mr2031860pjb.13.1604053502754;
+ Fri, 30 Oct 2020 03:25:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <00000000000030a45905aedd879d@google.com> <20200909134317.19732-1-hdanton@sina.com>
- <4d55d988-d45e-ba36-fed7-342e0a6ab16e@kernel.dk> <20200909153235.joqj6hjyxug3wtwv@steredhat>
-In-Reply-To: <20200909153235.joqj6hjyxug3wtwv@steredhat>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 30 Oct 2020 11:06:30 +0100
-Message-ID: <CACT4Y+ZpzjQgFCaOD00oP17sFcsFNvFyShY-ydoJGQnGEKri1w@mail.gmail.com>
-Subject: Re: INFO: task hung in io_sq_thread_stop
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+3c23789ea938faaef049@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
+References: <20201026145114.59424-1-songmuchun@bytedance.com> <20201030091445.GF1478@dhcp22.suse.cz>
+In-Reply-To: <20201030091445.GF1478@dhcp22.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 30 Oct 2020 18:24:25 +0800
+Message-ID: <CAMZfGtUoEeJTBYwxYjWJEreHefcO81WhhnvRO7vTb_k+zPCHrg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v2 00/19] Free some vmemmap pages of
+ hugetlb page
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 9, 2020 at 5:32 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
+On Fri, Oct 30, 2020 at 5:14 PM Michal Hocko <mhocko@suse.com> wrote:
 >
-> On Wed, Sep 09, 2020 at 08:05:33AM -0600, Jens Axboe wrote:
-> > On 9/9/20 7:43 AM, Hillf Danton wrote:
-> > >
-> > > On Wed, 9 Sep 2020 12:03:55 +0200 Stefano Garzarella wrote:
-> > >> On Wed, Sep 09, 2020 at 01:49:22AM -0700, syzbot wrote:
-> > >>> Hello,
-> > >>>
-> > >>> syzbot found the following issue on:
-> > >>>
-> > >>> HEAD commit:    dff9f829 Add linux-next specific files for 20200908
-> > >>> git tree:       linux-next
-> > >>> console output: https://syzkaller.appspot.com/x/log.txt?x=112f880d900000
-> > >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=37b3426c77bda44c
-> > >>> dashboard link: https://syzkaller.appspot.com/bug?extid=3c23789ea938faaef049
-> > >>> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> > >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c082a5900000
-> > >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1474f5f9900000
-> > >>>
-> > >>> Bisection is inconclusive: the first bad commit could be any of:
-> > >>>
-> > >>> d730b1a2 io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
-> > >>> 7ec3d1dd io_uring: allow disabling rings during the creation
-> > >>
-> > >> I'm not sure it is related, but while rebasing I forgot to update the
-> > >> right label in the error path.
-> > >>
-> > >> Since the check of ring state is after the increase of ctx refcount, we
-> > >> need to decrease it jumping to 'out' label instead of 'out_fput':
-> > >
-> > > I think we need to fix 6a7bb9ff5744 ("io_uring: remove need for
-> > > sqd->ctx_lock in io_sq_thread()") because the syzbot report
-> > > indicates the io_sq_thread has to wake up the kworker before
-> > > scheduling, and in turn the kworker has the chance to unpark it.
-> > >
-> > > Below is the minimum walkaround I can have because it can't
-> > > ensure the parker will be waken in every case.
-> > >
-> > > --- a/fs/io_uring.c
-> > > +++ b/fs/io_uring.c
-> > > @@ -6834,6 +6834,10 @@ static int io_sq_thread(void *data)
-> > >                     io_sq_thread_drop_mm();
-> > >             }
-> > >
-> > > +           if (kthread_should_park()) {
-> > > +                   /* wake up parker before scheduling */
-> > > +                   continue;
-> > > +           }
-> > >             if (ret & SQT_SPIN) {
-> > >                     io_run_task_work();
-> > >                     cond_resched();
-> > >
-> >
-> > I think this should go in the slow path:
-> >
-> >
-> > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > index 652cc53432d4..1c4fa2a0fd82 100644
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -6839,6 +6839,8 @@ static int io_sq_thread(void *data)
-> >               } else if (ret == SQT_IDLE) {
-> >                       list_for_each_entry(ctx, &sqd->ctx_list, sqd_list)
-> >                               io_ring_set_wakeup_flag(ctx);
-> > +                     if (kthread_should_park())
-> > +                             continue;
-> >                       schedule();
-> >                       start_jiffies = jiffies;
-> >               }
-> >
+> On Mon 26-10-20 22:50:55, Muchun Song wrote:
+> > If we uses the 1G hugetlbpage, we can save 4095 pages. This is a very
+> > substantial gain. On our server, run some SPDK/QEMU applications which
+> > will use 1000GB hugetlbpage. With this feature enabled, we can save
+> > ~16GB(1G hugepage)/~11GB(2MB hugepage) memory.
+> [...]
+> >  15 files changed, 1091 insertions(+), 165 deletions(-)
+> >  create mode 100644 include/linux/bootmem_info.h
+> >  create mode 100644 mm/bootmem_info.c
 >
-> Yes, I agree since only in this case the kthread is not rescheduled.
+> This is a neat idea but the code footprint is really non trivial. To a
+> very tricky code which hugetlb is unfortunately.
 >
-> Thanks both for the fix :-)
-> Feel free to add my R-b:
+> Saving 1,6% of memory is definitely interesting especially for 1GB pages
+> which tend to be more static and where the savings are more visible.
 >
-> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> Anyway, I haven't seen any runtime overhead analysis here. What is the
+> price to modify the vmemmap page tables and make them pte rather than
+> pmd based (especially for 2MB hugetlb). Also, how expensive is the
+> vmemmap page tables reconstruction on the freeing path?
 
-What happened with this fix?
-The bug is marked as fixed with commit "io_uring: don't sleep schedule
-in SQPOLL thread if we need to park":
-https://syzkaller.appspot.com/bug?id=d0cf0b29fc5520a8987b28f1a7b63264ae02535e
-But such commit cannot be found in any tree.
+Yeah, I haven't tested the remapping overhead of reserving a hugetlb
+page. I can do that. But the overhead is not on the allocation/freeing of
+each hugetlb page, it is only once when we reserve some hugetlb pages
+through /proc/sys/vm/nr_hugepages. Once the reservation is successful,
+the subsequent allocation, freeing and using are the same as before
+(not patched). So I think that the overhead is acceptable.
+
+Thanks.
+
+>
+> Thanks!
+> --
+> Michal Hocko
+> SUSE Labs
+
+
+
+-- 
+Yours,
+Muchun
