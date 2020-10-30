@@ -2,188 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D6F2A0EEB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 20:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0B22A0F8D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 21:34:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbgJ3T42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 15:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57838 "EHLO
+        id S1727234AbgJ3Ued (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 16:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbgJ3T41 (ORCPT
+        with ESMTP id S1727649AbgJ3UdP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 15:56:27 -0400
-Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4000C0613D8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 12:56:27 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id i17so1269586qvp.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 12:56:27 -0700 (PDT)
+        Fri, 30 Oct 2020 16:33:15 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B505EC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 13:33:15 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id r10so6167694pgb.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 Oct 2020 13:33:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xCXdIDDEOQ4sp35BxxEEwDK4u7wEsOXSjw7fR5lQ1JM=;
-        b=vSrIWJfPbZcyzboU1vKIyWhst9w6jkZcPg2Fd/Tyr/+5CsiSbu6ptsTz5Soh4jBnSD
-         3d1HnaDhJZn9EjJglKvv49w7CobE+jurkMtZr4ontDfkag7fi8SMbKRE9K9iDEHM8d/r
-         b8PaN2BYUxO4vhprE3ysd+Nz+bafxOlSE52B/xKdBxRMgEE82BqyuUTkV/sN9j1nm33W
-         5pwRVCFeS/MgH+7kB9uvyyhPHbpiukb9ZrmJCP4YffU4dVFLpi0rS8nLvgsZQvkPSGxm
-         A0+7Vg38JWaO54eyWDMDNHz8l0xAi5gk8+WQSphC/9CaBpqNYnuF2s2KwntRGphDdthR
-         J1Ig==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZUMZnZrv3DNPK13JwZfcoujpzkEHK3LguFa4dVLLup0=;
+        b=r3PeCdqiSugEFLqlJoHQqglokJqiYiHlgE5831zwqovtVsQs4oJ+iYam9uaNrkG+/o
+         dVTYF8JRTxdJeEyuZt4UCYDdWbNvdp8ymNFg/JFMd3/fNDXscSkNz7E1EtLRtOJ1+B9m
+         6E3UuSTuj8DkzgZDtodWILJedvlrZ1gDccwW7gxgEgwMIkffv+BpMqs0fdrzbB3Dv2Wd
+         TtLA5z9xX3Eu9a02tO2bPWvSYJGq/69FONdyzvF2G5R5Qg3YGZ9m6qpI8waCvmYBKWP/
+         v/m8ohBMEmwa+Z0jEc5tYuPTIM/WM0eZA2XTP8az8uWSt7N88yqvTk4ulgfRkdYeE3ii
+         ucWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xCXdIDDEOQ4sp35BxxEEwDK4u7wEsOXSjw7fR5lQ1JM=;
-        b=C264nSxslhxml03lcoyGlaO7JQHlZp3142r2nKLhHTear9Da5iUlkSuejSoXcIRXkm
-         5IIcnGCE+zY/BCQa+KXDmNktvXPPoPPFv/66QcpvAjXwBOOkR6T5iTtCqjcZ+fSyMyXB
-         t8LL5tPZ9e0JiJvNUqRgZSoXSv6T19dXRK7z8CYYGHW/Ks0fbVlXTDIbQwmibSqQAWs1
-         YSjl2zkApq71B5RSlv9LFr1YeYhHprCACs5mBS65UGiBiAvQcSz7jH6xbb/jR26NtdCP
-         /NZJ6r60B5nuZ9lPXsQkX+/ppj5Sm4J7WiJgS3dIk558x4vi4KqX5Rf0p04F4ahhr1R7
-         U+5A==
-X-Gm-Message-State: AOAM533QYIyGR1/4OtLccSYq/nIs3XT4NkKnEaxbxKCiczyLXajyJFJU
-        raeciiPl2OH6HvJir1kEtYbLpI0sokVLDJWKt70PfA==
-X-Google-Smtp-Source: ABdhPJxs/TiX12vaQ2OCHQSHT0seDFqKNQ1HIDLofONsrmnhk8Sokx0OyG77Wl1u033wcuYrmkJaHnokNGqh8OxS2bo=
-X-Received: by 2002:a0c:8d8b:: with SMTP id t11mr11297208qvb.13.1604087786355;
- Fri, 30 Oct 2020 12:56:26 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZUMZnZrv3DNPK13JwZfcoujpzkEHK3LguFa4dVLLup0=;
+        b=XxVW3Tsa6ZdfEsM+WwAugIhJ2g0AiQaa2pGSfY03Ce399td0FSkbk4RSj5/MlC+30h
+         EsGBYE7XBQh6i9OAK4hJUR2wCJ3Z/cU8cFVK0OIFFlh+u1x7CXDDPvtAmE9D8jf+ctFR
+         2h2be8OPDSgD9hjzAtVIKxMxcQ4O6YOiNudlCMZ1AXej6ttt622nnMwnezxoqOBzpseh
+         UqXZZyc2gGZHxAOr1sBFKbkwIsNrL4VmkNxJrIT3MO6lrT5UnpLvRzELyxQDY/JJPGqH
+         pyyaPYDh0r2Sx/qHol0G5KconPY13O9YNNAEV9UmAdYGvk3mn5Xtm/nqfjAlPliAY802
+         nVyw==
+X-Gm-Message-State: AOAM533dBhy7U1jiNf6ymI++FkSEIR1YLS9JoPIpDm4FW+kUwaQpwIva
+        icGc0LXJdZ87L1bq0dQCHNXVNWTGA06etQ==
+X-Google-Smtp-Source: ABdhPJyY1X/JJm1IsePYvXdKYbS1l5wR/8Wne0KBg8tx8JtXi8nI4oC6hmMAkkBJ4kUD1vZ8yHxpTA==
+X-Received: by 2002:a17:90b:1204:: with SMTP id gl4mr4146839pjb.157.1604089995058;
+        Fri, 30 Oct 2020 13:33:15 -0700 (PDT)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id w31sm4233793pjj.32.2020.10.30.13.33.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Oct 2020 13:33:14 -0700 (PDT)
+Subject: Re: [PATCH -next] fs: Fix memory leaks in do_renameat2() error paths
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Qian Cai <cai@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20201030152407.43598-1-cai@redhat.com>
+ <20201030184255.GP3576660@ZenIV.linux.org.uk>
+ <ad9357e9-8364-a316-392d-7504af614cac@kernel.dk>
+ <20201030184918.GQ3576660@ZenIV.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d858ba48-624f-43be-93cf-07d94f0ebefd@kernel.dk>
+Date:   Fri, 30 Oct 2020 14:33:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <0000000000008caae305ab9a5318@google.com> <000000000000a726a405ada4b6cf@google.com>
- <CAFqZXNvQcjp201ahjLBhYJJCuYqZrYLGDA-wE3hXiJpRNgbTKg@mail.gmail.com>
- <CAJfpegtzQB09ind8tkYzaiu6ODJvhMKj3myxVS75vbjTcOxU8g@mail.gmail.com>
- <CACT4Y+Yyxdju4FR-E3bc5ERM6xhecnos6mkJR5==xS+RS_DUuw@mail.gmail.com> <CAJfpegsAabASuHYtoi_DoooV1vM7Evfrd8ESZDDTx2oXHiR6cw@mail.gmail.com>
-In-Reply-To: <CAJfpegsAabASuHYtoi_DoooV1vM7Evfrd8ESZDDTx2oXHiR6cw@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 30 Oct 2020 20:56:14 +0100
-Message-ID: <CACT4Y+a2aSoEZpytAGKnx77a012z0yzOSu6P2rKQpoBYFBzBDg@mail.gmail.com>
-Subject: Re: general protection fault in security_inode_getattr
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        KP Singh <kpsingh@chromium.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        network dev <netdev@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Song Liu <songliubraving@fb.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Yonghong Song <yhs@fb.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201030184918.GQ3576660@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 8:21 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > On Mon, Aug 24, 2020 at 11:00 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > >
-> > > > On Mon, Aug 24, 2020 at 9:37 PM syzbot
-> > > > <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com> wrote:
-> > > > > syzbot has found a reproducer for the following issue on:
-> > > >
-> > > > Looping in fsdevel and OverlayFS maintainers, as this seems to be
-> > > > FS/OverlayFS related...
-> > >
-> > > Hmm, the oopsing code is always something like:
-> > >
-> > > All code
-> > > ========
-> > >    0: 1b fe                sbb    %esi,%edi
-> > >    2: 49 8d 5e 08          lea    0x8(%r14),%rbx
-> > >    6: 48 89 d8              mov    %rbx,%rax
-> > >    9: 48 c1 e8 03          shr    $0x3,%rax
-> > >    d: 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1)
-> > >   12: 74 08                je     0x1c
-> > >   14: 48 89 df              mov    %rbx,%rdi
-> > >   17: e8 bc b4 5b fe        callq  0xfffffffffe5bb4d8
-> > >   1c: 48 8b 1b              mov    (%rbx),%rbx
-> > >   1f: 48 83 c3 68          add    $0x68,%rbx
-> > >   23: 48 89 d8              mov    %rbx,%rax
-> > >   26: 48 c1 e8 03          shr    $0x3,%rax
-> > >   2a:* 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-> > >   2f: 74 08                je     0x39
-> > >   31: 48 89 df              mov    %rbx,%rdi
-> > >   34: e8 9f b4 5b fe        callq  0xfffffffffe5bb4d8
-> > >   39: 48 8b 1b              mov    (%rbx),%rbx
-> > >   3c: 48 83 c3 0c          add    $0xc,%rbx
-> > >
-> > >
-> > > And that looks (to me) like the unrolled loop in call_int_hook().  I
-> > > don't see how that could be related to overlayfs, though it's
-> > > definitely interesting why it only triggers from
-> > > overlay->vfs_getattr()->security_inode_getattr()...
-> >
-> >
-> > >   26: 48 c1 e8 03          shr    $0x3,%rax
-> > >   2a:* 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-> >
-> >
-> > This access is part of KASAN check. But the original address kernel
-> > tries to access is NULL, so it's not an issue with KASAN.
-> >
-> > The line is this:
-> >
-> > int security_inode_getattr(const struct path *path)
-> > {
-> >     if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
-> >         return 0;
-> >
-> > So it's either path is NULL, or something in d_backing_inode
-> > dereferences NULL path->dentry.
-> >
-> > The reproducer does involve overlayfs:
-> >
-> > mkdir(&(0x7f0000000240)='./file1\x00', 0x0)
-> > mkdir(&(0x7f0000000300)='./bus\x00', 0x0)
-> > r0 = creat(&(0x7f00000000c0)='./bus/file1\x00', 0x0)
-> > mkdir(&(0x7f0000000080)='./file0\x00', 0x0)
-> > mount$overlay(0x400002, &(0x7f0000000000)='./bus\x00',
-> > &(0x7f0000000100)='overlay\x00', 0x0,
-> > &(0x7f00000003c0)=ANY=[@ANYBLOB='upperdir=./file1,lowerdir=./bus,workdir=./file0,metacopy=on'])
-> > link(&(0x7f0000000200)='./bus/file1\x00', &(0x7f00000002c0)='./bus/file0\x00')
-> > write$RDMA_USER_CM_CMD_RESOLVE_ADDR(r0, 0x0, 0x0)
-> > acct(&(0x7f0000000040)='./bus/file0\x00')
-> >
-> > Though, it may be overlayfs-related, or it may be a generic bug that
-> > requires a tricky reproducer and the only reproducer syzbot come up
-> > with happened to involve overlayfs.
-> > But there are 4 reproducers on syzbot dashboard and all of them
-> > involve overlayfs and they are somewhat different. So my bet would be
-> > on overlayfs.
->
-> Seems there's no C reproducer, though.   Can this be reproduced
-> without KASAN obfuscating the oops?
+On 10/30/20 12:49 PM, Al Viro wrote:
+> On Fri, Oct 30, 2020 at 12:46:26PM -0600, Jens Axboe wrote:
+> 
+>> See other reply, it's being posted soon, just haven't gotten there yet
+>> and it wasn't ready.
+>>
+>> It's a prep patch so we can call do_renameat2 and pass in a filename
+>> instead. The intent is not to have any functional changes in that prep
+>> patch. But once we can pass in filenames instead of user pointers, it's
+>> usable from io_uring.
+> 
+> You do realize that pathname resolution is *NOT* offloadable to helper
+> threads, I hope...
 
-I guess so.
-If you are interest in what exact field is NULL, I think there is
-enough info in the asm already:
+How so? If we have all the necessary context assigned, what's preventing
+it from working?
 
-> > >    2: 49 8d 5e 08          lea    0x8(%r14),%rbx
-> > >    6: 48 89 d8              mov    %rbx,%rax
-> > >    9: 48 c1 e8 03          shr    $0x3,%rax
-> > >    d: 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1)
-> > >   12: 74 08                je     0x1c
-> > >   14: 48 89 df              mov    %rbx,%rdi
-> > >   17: e8 bc b4 5b fe        callq  0xfffffffffe5bb4d8
-> > >   1c: 48 8b 1b              mov    (%rbx),%rbx
-> > >   1f: 48 83 c3 68          add    $0x68,%rbx
-> > >   23: 48 89 d8              mov    %rbx,%rax
-> > >   26: 48 c1 e8 03          shr    $0x3,%rax
-> > >   2a:* 42 80 3c 38 00        cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+-- 
+Jens Axboe
 
-The access via the NULL pointer happens with offset 0x68:
-
-> > >   1f: 48 83 c3 68          add    $0x68,%rbx
-
-So we just need to find what's here accesses with offset 0x68:
-
-> >     if (unlikely(IS_PRIVATE(d_backing_inode(path->dentry))))
-
-And that pointer itself was loaded from something at offset 0x8 previously:
-
-> > >    2: 49 8d 5e 08          lea    0x8(%r14),%rbx
