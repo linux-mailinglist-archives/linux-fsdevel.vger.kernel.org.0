@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FCFD2A06E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E18F2A06DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Oct 2020 14:52:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgJ3Nwn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 09:52:43 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21993 "EHLO
+        id S1726790AbgJ3Nwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 09:52:42 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:21995 "EHLO
         esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbgJ3Nwg (ORCPT
+        with ESMTP id S1726776AbgJ3Nwh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 09:52:36 -0400
+        Fri, 30 Oct 2020 09:52:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604065956; x=1635601956;
+  t=1604065957; x=1635601957;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PkrhCLMh+cLYYbzmzrzC+XSkx4Bp5UCvF06uxBlfBXI=;
-  b=GxaNK088cTv2O2WSjMY6CfUiOAdfkHpZdcz+sasvwL+kNd+UYW5Acw/O
-   2YZZwykVL19s07AKITvHjVscRyspjrwpvSaX2uBuU6nV3atD7fGm9hLM/
-   qwh7X+kB2nN9AKah4zA8oKGnL0UobZYmwQeKgiyWRzPCFl6NAVcF7yWiH
-   K4tzAG9aHrkSBJYU8vRaoEyLd3in9eBZc1SGOMoJv4fPsjkv5xTFxoQuP
-   rD4FMlR84nPeEMqf7m5xMrgeVlnFADLQlpomwbrTVWBuxUKXKLKiM6tTb
-   C0fiNsUawNA/VK93C61Oai/21ioURiKvKuncNjDlKskbUKS9Iol8tW1sV
-   A==;
-IronPort-SDR: gTBMOQWuSuNQ2RyeRC4M4coZPmx0pV/Ce8MTPnBtIS88nR5NbzmWC+Em+AFAutLwAEI8nK3XsI
- CXh4cI5wgP9R06E+coOWqxbcrJG0P+KFS84ZdaaeXNzVaaaEYR3Ugz+cwpgReXL7sAkMksgDBu
- 8qF9S00/zdOdexqzwGSoP/tAXPI784QYiwwzNJCJNvVU+z7EQp3buXDg5/29m0f1bHxkPaoe+d
- 2P5QU5+nlOOonb80Ha0VuF21jhpdp70dIWni40LBSkYqXB0bvDNbEPcuYwyvTGx6W0+WktDYA4
- zIQ=
+  bh=j9RI4cuvMYsYdA8lB0pQaYj9A77UyrACkFd8ci2YJh0=;
+  b=O4xjYi6VtV4aWrJ7INdkhcBOhkkY9htvjBSc46jgmcrg2s2gbPhb+mrh
+   CUz9qfZwYpsFD7/RhIFxu7zvZG0KSs5xNAdHWSJxA8d5AEQuiICY1h62e
+   oc2RgP7Pppw9v8rbGqGk+U7fcsJYa26MLPLvla6xrbdTkYP3ZCd0K6ynm
+   PJpGQuQ5UGJ9WMiklpWSAR6/oQsKa5wqWSY45ExdOg7O83VfRqHIayW9x
+   TXWmOg9iHSguC2VTEwIHuq8Avr1kUmkab40AZRSCPbcd+mQkU7hJQNXza
+   ZievT+1+EYFurI0gO7epHPlXeCXaeZ/7X+FdNVJhSInc/RozkReAz/qTk
+   w==;
+IronPort-SDR: S4LsaqxuqUs0W/LLlfPSI+8VB3M0mJt4vh9hzcBYdDMtyUtfr8eHVcctWWGE8GDP+BWPULux22
+ hCs1I3UDH5nkPjQ3cezBScUvGCcsvVFPEL4M+jk+BPzHh0U/sXHAA+UK/ZwYTXV+QvcEvNeNAe
+ oFaMoj9yt/HLjheBKMW1vTtMYXruJfQMtp1K3s5qUZWeowUiC+gATjB4cOl6KYoVKQfjAUcxiU
+ 9M1DB8GnSgCnL1sHvdhiIBUjQY4k5z8To6aJdnWTjHs7bq55gOKkwr3bYnk0wFAtDmgQZRCO3J
+ RtY=
 X-IronPort-AV: E=Sophos;i="5.77,433,1596470400"; 
-   d="scan'208";a="155806595"
+   d="scan'208";a="155806601"
 Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Oct 2020 21:52:35 +0800
-IronPort-SDR: 7r6ymJ5cxaOqmpcQ0+xhSnnmY2xiUhLRFaQdPeVHOki9F4B/22yKq0gxDQeTVdVu6TX+vq4y2w
- 9tIk53eO+qZSMU4n6U6DsJehNyMO44EvxrW53WU0WBESEupIRbiYDtm4MBayDjPGJ54Kf5bIEC
- JlODouP/JzRuHPeMgdqzPpW+N2IQGs1zuK6tmmVMm4aVEPfrmljPsq8PUMRKLrifdooyrR0rvU
- waYHFcst5s4CdYNbX4yWD775xOJoSh6DkqJOEoCsvzPIe8OcDwu7Bahw3MjxK505FLtmXkVANO
- fIO2OHwSeTOZgQmZTrDjV+Wp
+  by ob1.hgst.iphmx.com with ESMTP; 30 Oct 2020 21:52:36 +0800
+IronPort-SDR: rH1oLBdY8+IRLNr/RlP3mviSSZHqAxdNHgaPtgxYiIPuPvodgPgIyfZOHavCh43SE+1MzSLfr/
+ Su4xJwB3KiGB+UKGNKZ3sRaHQTt3t9LLTStaQnnElOC8VJ5dsPphH3UTGUwP/ssdnm1n/sPVP5
+ 930qPyj466BrAPTIde1ofOe1WQ0kYlqyu4WeichdSvv7K1z6xeAReT2ezpdu4gw6QUAmz9cHwi
+ lZLzhx1ZNHcvbsuZEZz9VIkxPyfxIG4GrKmuJC0FB+caMUhMlK5DXzqX/i0Qtct6nvOTZt0ADc
+ mrEXfBg/934VS4Jr+w/dcXfk
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 06:38:49 -0700
-IronPort-SDR: QQNb1+mV7F0bEp5DzcC6N/YfNtAPvUrQm6pUqZSixIrIrXiQ5uxf0huMehbXTzPnuIvlgjuh5N
- 8pftCyTphnMWV3l76mn9CbaeA+4ow2Y8AenpvJN8RiFwNDOlsuQ192fRwrGsZP8H1Hf865CFP1
- fhop9EXcKV4lreLjg3dcrDN7Hv4JzSxM5f8enn3ALYLoQn1GPInJVlXR8vWbwSFGxagOHpUJ/1
- mgJk0n6SJJ+SS2oJ9f6me3Mb8TrOuGpVAGkazrw1ZRekeBZX1I/fqAlzUgcRoS18hrsyggER9N
- WcI=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 06:38:51 -0700
+IronPort-SDR: atCstIp7u82V1nPi+ST9BZI1SjC+tTaPpDY2xEjlvJ01qusMxYKa44B6p5aJtRJ2ZuuKOZGX7W
+ TJjgii7++d1oHEYoh/JxF60ajTDcZ+Po6BU6vkfroKAaO54Q28jTDswfuwv//skls1lWagq1kQ
+ 6BDl2wTdxOlRIUnMqEyykf8B0wbdif2pUhBM2eJbZKuHQm74wQlpgkWsbl8ZCO6Est/VWSKC9N
+ AcZ3yr9TSaiG8QHAya/aBXnsXAWWmJxo64VYvjwUzSGRh2ZzqJPRfCWPr4VEOl4ZfUrQwZ60gV
+ 3nM=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 30 Oct 2020 06:52:34 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP; 30 Oct 2020 06:52:36 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v9 11/41] btrfs: implement log-structured superblock for ZONED mode
-Date:   Fri, 30 Oct 2020 22:51:18 +0900
-Message-Id: <eca26372a84d8b8ec2b59d3390f172810ed6f3e4.1604065695.git.naohiro.aota@wdc.com>
+Subject: [PATCH v9 12/41] btrfs: implement zoned chunk allocator
+Date:   Fri, 30 Oct 2020 22:51:19 +0900
+Message-Id: <5b9798f6e4c317e6a2c433ef88ffeabe00b93bb3.1604065695.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
 References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
@@ -65,669 +65,433 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Superblock (and its copies) is the only data structure in btrfs which has a
-fixed location on a device. Since we cannot overwrite in a sequential write
-required zone, we cannot place superblock in the zone. One easy solution is
-limiting superblock and copies to be placed only in conventional zones.
-However, this method has two downsides: one is reduced number of superblock
-copies. The location of the second copy of superblock is 256GB, which is in
-a sequential write required zone on typical devices in the market today.
-So, the number of superblock and copies is limited to be two.  Second
-downside is that we cannot support devices which have no conventional zones
-at all.
+This commit implements a zoned chunk/dev_extent allocator. The zoned
+allocator aligns the device extents to zone boundaries, so that a zone
+reset affects only the device extent and does not change the state of
+blocks in the neighbor device extents.
 
-To solve these two problems, we employ superblock log writing. It uses two
-zones as a circular buffer to write updated superblocks. Once the first
-zone is filled up, start writing into the second buffer. Then, when the
-both zones are filled up and before start writing to the first zone again,
-it reset the first zone.
-
-We can determine the position of the latest superblock by reading write
-pointer information from a device. One corner case is when the both zones
-are full. For this situation, we read out the last superblock of each
-zone, and compare them to determine which zone is older.
-
-The following zones are reserved as the circular buffer on ZONED btrfs.
-
-- The primary superblock: zones 0 and 1
-- The first copy: zones 16 and 17
-- The second copy: zones 1024 or zone at 256GB which is minimum, and next
-  to it
-
-If these reserved zones are conventional, superblock is written fixed at
-the start of the zone without logging.
+Also, it checks that a region allocation is not overlapping any of the
+super block zones, and ensures the region is empty.
 
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/block-group.c |   9 ++
- fs/btrfs/disk-io.c     |  41 +++++-
- fs/btrfs/scrub.c       |   3 +
- fs/btrfs/volumes.c     |  21 ++-
- fs/btrfs/zoned.c       | 311 +++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/zoned.h       |  40 ++++++
- 6 files changed, 413 insertions(+), 12 deletions(-)
+ fs/btrfs/volumes.c | 131 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/volumes.h |   1 +
+ fs/btrfs/zoned.c   | 126 +++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h   |  30 +++++++++++
+ 4 files changed, 288 insertions(+)
 
-diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-index c0f1d6818df7..e989c66aa764 100644
---- a/fs/btrfs/block-group.c
-+++ b/fs/btrfs/block-group.c
-@@ -1723,6 +1723,7 @@ int btrfs_rmap_block(struct btrfs_fs_info *fs_info, u64 chunk_start,
- static int exclude_super_stripes(struct btrfs_block_group *cache)
- {
- 	struct btrfs_fs_info *fs_info = cache->fs_info;
-+	bool zoned = btrfs_is_zoned(fs_info);
- 	u64 bytenr;
- 	u64 *logical;
- 	int stripe_len;
-@@ -1744,6 +1745,14 @@ static int exclude_super_stripes(struct btrfs_block_group *cache)
- 		if (ret)
- 			return ret;
- 
-+		/* shouldn't have super stripes in sequential zones */
-+		if (zoned && nr) {
-+			btrfs_err(fs_info,
-+				  "Zoned btrfs's block group %llu should not have super blocks",
-+				  cache->start);
-+			return -EUCLEAN;
-+		}
-+
- 		while (nr--) {
- 			u64 len = min_t(u64, stripe_len,
- 				cache->start + cache->length - logical[nr]);
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 9bc51cff48b8..fd8b970ee92c 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3423,10 +3423,17 @@ struct btrfs_super_block *btrfs_read_dev_one_super(struct block_device *bdev,
- {
- 	struct btrfs_super_block *super;
- 	struct page *page;
--	u64 bytenr;
-+	u64 bytenr, bytenr_orig;
- 	struct address_space *mapping = bdev->bd_inode->i_mapping;
-+	int ret;
-+
-+	bytenr_orig = btrfs_sb_offset(copy_num);
-+	ret = btrfs_sb_log_location_bdev(bdev, copy_num, READ, &bytenr);
-+	if (ret == -ENOENT)
-+		return ERR_PTR(-EINVAL);
-+	else if (ret)
-+		return ERR_PTR(ret);
- 
--	bytenr = btrfs_sb_offset(copy_num);
- 	if (bytenr + BTRFS_SUPER_INFO_SIZE >= i_size_read(bdev->bd_inode))
- 		return ERR_PTR(-EINVAL);
- 
-@@ -3440,7 +3447,7 @@ struct btrfs_super_block *btrfs_read_dev_one_super(struct block_device *bdev,
- 		return ERR_PTR(-ENODATA);
- 	}
- 
--	if (btrfs_super_bytenr(super) != bytenr) {
-+	if (btrfs_super_bytenr(super) != bytenr_orig) {
- 		btrfs_release_disk_super(super);
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -3495,7 +3502,8 @@ static int write_dev_supers(struct btrfs_device *device,
- 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
- 	int i;
- 	int errors = 0;
--	u64 bytenr;
-+	int ret;
-+	u64 bytenr, bytenr_orig;
- 
- 	if (max_mirrors == 0)
- 		max_mirrors = BTRFS_SUPER_MIRROR_MAX;
-@@ -3507,12 +3515,21 @@ static int write_dev_supers(struct btrfs_device *device,
- 		struct bio *bio;
- 		struct btrfs_super_block *disk_super;
- 
--		bytenr = btrfs_sb_offset(i);
-+		bytenr_orig = btrfs_sb_offset(i);
-+		ret = btrfs_sb_log_location(device, i, WRITE, &bytenr);
-+		if (ret == -ENOENT)
-+			continue;
-+		else if (ret < 0) {
-+			btrfs_err(device->fs_info, "couldn't get super block location for mirror %d",
-+				  i);
-+			errors++;
-+			continue;
-+		}
- 		if (bytenr + BTRFS_SUPER_INFO_SIZE >=
- 		    device->commit_total_bytes)
- 			break;
- 
--		btrfs_set_super_bytenr(sb, bytenr);
-+		btrfs_set_super_bytenr(sb, bytenr_orig);
- 
- 		crypto_shash_digest(shash, (const char *)sb + BTRFS_CSUM_SIZE,
- 				    BTRFS_SUPER_INFO_SIZE - BTRFS_CSUM_SIZE,
-@@ -3557,6 +3574,7 @@ static int write_dev_supers(struct btrfs_device *device,
- 			bio->bi_opf |= REQ_FUA;
- 
- 		btrfsic_submit_bio(bio);
-+		btrfs_advance_sb_log(device, i);
- 	}
- 	return errors < i ? 0 : -1;
- }
-@@ -3573,6 +3591,7 @@ static int wait_dev_supers(struct btrfs_device *device, int max_mirrors)
- 	int i;
- 	int errors = 0;
- 	bool primary_failed = false;
-+	int ret;
- 	u64 bytenr;
- 
- 	if (max_mirrors == 0)
-@@ -3581,7 +3600,15 @@ static int wait_dev_supers(struct btrfs_device *device, int max_mirrors)
- 	for (i = 0; i < max_mirrors; i++) {
- 		struct page *page;
- 
--		bytenr = btrfs_sb_offset(i);
-+		ret = btrfs_sb_log_location(device, i, READ, &bytenr);
-+		if (ret == -ENOENT)
-+			break;
-+		else if (ret < 0) {
-+			errors++;
-+			if (i == 0)
-+				primary_failed = true;
-+			continue;
-+		}
- 		if (bytenr + BTRFS_SUPER_INFO_SIZE >=
- 		    device->commit_total_bytes)
- 			break;
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index cf63f1e27a27..aa1b36cf5c88 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -20,6 +20,7 @@
- #include "rcu-string.h"
- #include "raid56.h"
- #include "block-group.h"
-+#include "zoned.h"
- 
- /*
-  * This is only the first step towards a full-features scrub. It reads all
-@@ -3704,6 +3705,8 @@ static noinline_for_stack int scrub_supers(struct scrub_ctx *sctx,
- 		if (bytenr + BTRFS_SUPER_INFO_SIZE >
- 		    scrub_dev->commit_total_bytes)
- 			break;
-+		if (!btrfs_check_super_location(scrub_dev, bytenr))
-+			continue;
- 
- 		ret = scrub_pages(sctx, bytenr, BTRFS_SUPER_INFO_SIZE, bytenr,
- 				  scrub_dev, BTRFS_EXTENT_FLAG_SUPER, gen, i,
 diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 10827892c086..db884b96a5ea 100644
+index db884b96a5ea..78c62ef02e6f 100644
 --- a/fs/btrfs/volumes.c
 +++ b/fs/btrfs/volumes.c
-@@ -1282,7 +1282,8 @@ void btrfs_release_disk_super(struct btrfs_super_block *super)
+@@ -1416,6 +1416,14 @@ static bool contains_pending_extent(struct btrfs_device *device, u64 *start,
+ 	return false;
  }
  
- static struct btrfs_super_block *btrfs_read_disk_super(struct block_device *bdev,
--						       u64 bytenr)
-+						       u64 bytenr,
-+						       u64 bytenr_orig)
- {
- 	struct btrfs_super_block *disk_super;
- 	struct page *page;
-@@ -1313,7 +1314,7 @@ static struct btrfs_super_block *btrfs_read_disk_super(struct block_device *bdev
- 	/* align our pointer to the offset of the super block */
- 	disk_super = p + offset_in_page(bytenr);
- 
--	if (btrfs_super_bytenr(disk_super) != bytenr ||
-+	if (btrfs_super_bytenr(disk_super) != bytenr_orig ||
- 	    btrfs_super_magic(disk_super) != BTRFS_MAGIC) {
- 		btrfs_release_disk_super(p);
- 		return ERR_PTR(-EINVAL);
-@@ -1348,7 +1349,8 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags,
- 	bool new_device_added = false;
- 	struct btrfs_device *device = NULL;
- 	struct block_device *bdev;
--	u64 bytenr;
-+	u64 bytenr, bytenr_orig;
-+	int ret;
- 
- 	lockdep_assert_held(&uuid_mutex);
- 
-@@ -1358,14 +1360,18 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, fmode_t flags,
- 	 * So, we need to add a special mount option to scan for
- 	 * later supers, using BTRFS_SUPER_MIRROR_MAX instead
- 	 */
--	bytenr = btrfs_sb_offset(0);
- 	flags |= FMODE_EXCL;
- 
- 	bdev = blkdev_get_by_path(path, flags, holder);
- 	if (IS_ERR(bdev))
- 		return ERR_CAST(bdev);
- 
--	disk_super = btrfs_read_disk_super(bdev, bytenr);
-+	bytenr_orig = btrfs_sb_offset(0);
-+	ret = btrfs_sb_log_location_bdev(bdev, 0, READ, &bytenr);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	disk_super = btrfs_read_disk_super(bdev, bytenr, bytenr_orig);
- 	if (IS_ERR(disk_super)) {
- 		device = ERR_CAST(disk_super);
- 		goto error_bdev_put;
-@@ -2029,6 +2035,11 @@ void btrfs_scratch_superblocks(struct btrfs_fs_info *fs_info,
- 		if (IS_ERR(disk_super))
- 			continue;
- 
-+		if (bdev_is_zoned(bdev)) {
-+			btrfs_reset_sb_log_zones(bdev, copy_num);
-+			continue;
-+		}
-+
- 		memset(&disk_super->magic, 0, sizeof(disk_super->magic));
- 
- 		page = virt_to_page(disk_super);
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index ae509699da14..d5487cba203b 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -20,6 +20,25 @@ static int copy_zone_info_cb(struct blk_zone *zone, unsigned int idx,
- 	return 0;
- }
- 
-+static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zone,
-+			    u64 *wp_ret);
-+
-+static inline u32 sb_zone_number(u8 shift, int mirror)
++static inline u64 dev_extent_search_start_zoned(struct btrfs_device *device,
++						u64 start)
 +{
-+	ASSERT(mirror < BTRFS_SUPER_MIRROR_MAX);
-+
-+	switch (mirror) {
-+	case 0:
-+		return 0;
-+	case 1:
-+		return 16;
-+	case 2:
-+		return min(btrfs_sb_offset(mirror) >> shift, 1024ULL);
-+	}
-+
-+	return 0;
++	start = max_t(u64, start,
++		      max_t(u64, device->zone_info->zone_size, SZ_1M));
++	return btrfs_zone_align(device, start);
 +}
 +
- static int btrfs_get_dev_zones(struct btrfs_device *device, u64 pos,
- 			       struct blk_zone *zones, unsigned int *nr_zones)
+ static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
  {
-@@ -123,6 +142,49 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
- 		goto out;
+ 	switch (device->fs_devices->chunk_alloc_policy) {
+@@ -1426,11 +1434,57 @@ static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
+ 		 * make sure to start at an offset of at least 1MB.
+ 		 */
+ 		return max_t(u64, start, SZ_1M);
++	case BTRFS_CHUNK_ALLOC_ZONED:
++		return dev_extent_search_start_zoned(device, start);
+ 	default:
+ 		BUG();
  	}
+ }
  
-+	/* validate superblock log */
-+	nr_zones = 2;
-+	for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
-+		u32 sb_zone = sb_zone_number(zone_info->zone_size_shift, i);
-+		u64 sb_wp;
++static bool dev_extent_hole_check_zoned(struct btrfs_device *device,
++					u64 *hole_start, u64 *hole_size,
++					u64 num_bytes)
++{
++	u64 zone_size = device->zone_info->zone_size;
++	u64 pos;
++	int ret;
++	int changed = 0;
 +
-+		if (sb_zone + 1 >= zone_info->nr_zones)
-+			continue;
++	ASSERT(IS_ALIGNED(*hole_start, zone_size));
 +
-+		sector = sb_zone << (zone_info->zone_size_shift - SECTOR_SHIFT);
-+		ret = btrfs_get_dev_zones(device, sector << SECTOR_SHIFT,
-+					  &zone_info->sb_zones[2 * i],
-+					  &nr_zones);
-+		if (ret)
-+			goto out;
-+		if (nr_zones != 2) {
-+			btrfs_err_in_rcu(device->fs_info,
-+			"failed to read SB log zone info at device %s zone %u",
-+					 rcu_str_deref(device->name), sb_zone);
-+			ret = -EIO;
-+			goto out;
++	while (*hole_size > 0) {
++		pos = btrfs_find_allocatable_zones(device, *hole_start,
++						   *hole_start + *hole_size,
++						   num_bytes);
++		if (pos != *hole_start) {
++			*hole_size = *hole_start + *hole_size - pos;
++			*hole_start = pos;
++			changed = 1;
++			if (*hole_size < num_bytes)
++				break;
 +		}
 +
-+		/*
-+		 * If zones[0] is conventional, always use the beggining of
-+		 * the zone to record superblock. No need to validate in
-+		 * that case.
-+		 */
-+		if (zone_info->sb_zones[2 * i].type == BLK_ZONE_TYPE_CONVENTIONAL)
-+			continue;
++		ret = btrfs_ensure_empty_zones(device, pos, num_bytes);
 +
-+		ret = sb_write_pointer(device->bdev,
-+				       &zone_info->sb_zones[2 * i], &sb_wp);
-+		if (ret != -ENOENT && ret) {
-+			btrfs_err_in_rcu(device->fs_info,
-+				"SB log zone corrupted: device %s zone %u",
-+					 rcu_str_deref(device->name), sb_zone);
-+			ret = -EUCLEAN;
-+			goto out;
++		/* range is ensured to be empty */
++		if (!ret)
++			return changed;
++
++		/* given hole range was invalid (outside of device) */
++		if (ret == -ERANGE) {
++			*hole_start += *hole_size;
++			*hole_size = 0;
++			return 1;
 +		}
++
++		*hole_start += zone_size;
++		*hole_size -= zone_size;
++		changed = 1;
 +	}
 +
++	return changed;
++}
 +
- 	kfree(zones);
+ /**
+  * dev_extent_hole_check - check if specified hole is suitable for allocation
+  * @device:	the device which we have the hole
+@@ -1463,6 +1517,10 @@ static bool dev_extent_hole_check(struct btrfs_device *device, u64 *hole_start,
+ 	case BTRFS_CHUNK_ALLOC_REGULAR:
+ 		/* No extra check */
+ 		break;
++	case BTRFS_CHUNK_ALLOC_ZONED:
++		changed |= dev_extent_hole_check_zoned(device, hole_start,
++						       hole_size, num_bytes);
++		break;
+ 	default:
+ 		BUG();
+ 	}
+@@ -1517,6 +1575,9 @@ static int find_free_dev_extent_start(struct btrfs_device *device,
  
- 	device->zone_info = zone_info;
-@@ -296,3 +358,252 @@ int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
+ 	search_start = dev_extent_search_start(device, search_start);
  
++	WARN_ON(device->zone_info &&
++		!IS_ALIGNED(num_bytes, device->zone_info->zone_size));
++
+ 	path = btrfs_alloc_path();
+ 	if (!path)
+ 		return -ENOMEM;
+@@ -4907,6 +4968,37 @@ static void init_alloc_chunk_ctl_policy_regular(
+ 	ctl->dev_extent_min = BTRFS_STRIPE_LEN * ctl->dev_stripes;
+ }
+ 
++static void
++init_alloc_chunk_ctl_policy_zoned(struct btrfs_fs_devices *fs_devices,
++				  struct alloc_chunk_ctl *ctl)
++{
++	u64 zone_size = fs_devices->fs_info->zone_size;
++	u64 limit;
++	int min_num_stripes = ctl->devs_min * ctl->dev_stripes;
++	int min_data_stripes = (min_num_stripes - ctl->nparity) / ctl->ncopies;
++	u64 min_chunk_size = min_data_stripes * zone_size;
++	u64 type = ctl->type;
++
++	ctl->max_stripe_size = zone_size;
++	if (type & BTRFS_BLOCK_GROUP_DATA) {
++		ctl->max_chunk_size = round_down(BTRFS_MAX_DATA_CHUNK_SIZE,
++						 zone_size);
++	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
++		ctl->max_chunk_size = ctl->max_stripe_size;
++	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
++		ctl->max_chunk_size = 2 * ctl->max_stripe_size;
++		ctl->devs_max = min_t(int, ctl->devs_max,
++				      BTRFS_MAX_DEVS_SYS_CHUNK);
++	}
++
++	/* We don't want a chunk larger than 10% of writable space */
++	limit = max(round_down(div_factor(fs_devices->total_rw_bytes, 1),
++			       zone_size),
++		    min_chunk_size);
++	ctl->max_chunk_size = min(limit, ctl->max_chunk_size);
++	ctl->dev_extent_min = zone_size * ctl->dev_stripes;
++}
++
+ static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
+ 				 struct alloc_chunk_ctl *ctl)
+ {
+@@ -4927,6 +5019,9 @@ static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
+ 	case BTRFS_CHUNK_ALLOC_REGULAR:
+ 		init_alloc_chunk_ctl_policy_regular(fs_devices, ctl);
+ 		break;
++	case BTRFS_CHUNK_ALLOC_ZONED:
++		init_alloc_chunk_ctl_policy_zoned(fs_devices, ctl);
++		break;
+ 	default:
+ 		BUG();
+ 	}
+@@ -5053,6 +5148,40 @@ static int decide_stripe_size_regular(struct alloc_chunk_ctl *ctl,
  	return 0;
  }
-+
-+static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
-+			    u64 *wp_ret)
+ 
++static int decide_stripe_size_zoned(struct alloc_chunk_ctl *ctl,
++				    struct btrfs_device_info *devices_info)
 +{
-+	bool empty[2];
-+	bool full[2];
-+	sector_t sector;
-+
-+	ASSERT(zones[0].type != BLK_ZONE_TYPE_CONVENTIONAL &&
-+	       zones[1].type != BLK_ZONE_TYPE_CONVENTIONAL);
-+
-+	empty[0] = zones[0].cond == BLK_ZONE_COND_EMPTY;
-+	empty[1] = zones[1].cond == BLK_ZONE_COND_EMPTY;
-+	full[0] = zones[0].cond == BLK_ZONE_COND_FULL;
-+	full[1] = zones[1].cond == BLK_ZONE_COND_FULL;
++	u64 zone_size = devices_info[0].dev->zone_info->zone_size;
++	/* number of stripes that count for block group size */
++	int data_stripes;
 +
 +	/*
-+	 * Possible state of log buffer zones
-+	 *
-+	 *   E I F
-+	 * E * x 0
-+	 * I 0 x 0
-+	 * F 1 1 C
-+	 *
-+	 * Row: zones[0]
-+	 * Col: zones[1]
-+	 * State:
-+	 *   E: Empty, I: In-Use, F: Full
-+	 * Log position:
-+	 *   *: Special case, no superblock is written
-+	 *   0: Use write pointer of zones[0]
-+	 *   1: Use write pointer of zones[1]
-+	 *   C: Compare SBs from zones[0] and zones[1], use the newer one
-+	 *   x: Invalid state
++	 * It should hold because:
++	 *    dev_extent_min == dev_extent_want == zone_size * dev_stripes
 +	 */
++	ASSERT(devices_info[ctl->ndevs - 1].max_avail == ctl->dev_extent_min);
 +
-+	if (empty[0] && empty[1]) {
-+		/* special case to distinguish no superblock to read */
-+		*wp_ret = zones[0].start << SECTOR_SHIFT;
-+		return -ENOENT;
-+	} else if (full[0] && full[1]) {
-+		/* Compare two super blocks */
-+		struct address_space *mapping = bdev->bd_inode->i_mapping;
-+		struct page *page[2];
-+		struct btrfs_super_block *super[2];
-+		int i;
++	ctl->stripe_size = zone_size;
++	ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
++	data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
 +
-+		for (i = 0; i < 2; i++) {
-+			u64 bytenr = ((zones[i].start + zones[i].len) << SECTOR_SHIFT) -
-+				BTRFS_SUPER_INFO_SIZE;
-+
-+			page[i] = read_cache_page_gfp(mapping, bytenr >> PAGE_SHIFT, GFP_NOFS);
-+			if (IS_ERR(page[i])) {
-+				if (i == 1)
-+					btrfs_release_disk_super(super[0]);
-+				return PTR_ERR(page[i]);
-+			}
-+			super[i] = page_address(page[i]);
-+		}
-+
-+		if (super[0]->generation > super[1]->generation)
-+			sector = zones[1].start;
-+		else
-+			sector = zones[0].start;
-+
-+		for (i = 0; i < 2; i++)
-+			btrfs_release_disk_super(super[i]);
-+	} else if (!full[0] && (empty[1] || full[1])) {
-+		sector = zones[0].wp;
-+	} else if (full[0]) {
-+		sector = zones[1].wp;
-+	} else {
-+		return -EUCLEAN;
++	/*
++	 * stripe_size is fixed in ZONED. Reduce ndevs instead.
++	 */
++	if (ctl->stripe_size * data_stripes > ctl->max_chunk_size) {
++		ctl->ndevs = div_u64(div_u64(ctl->max_chunk_size * ctl->ncopies,
++					     ctl->stripe_size) + ctl->nparity,
++				     ctl->dev_stripes);
++		ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
++		data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
++		ASSERT(ctl->stripe_size * data_stripes <= ctl->max_chunk_size);
 +	}
-+	*wp_ret = sector << SECTOR_SHIFT;
++
++	ctl->chunk_size = ctl->stripe_size * data_stripes;
++
 +	return 0;
 +}
 +
-+static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
-+			   int rw, u64 *bytenr_ret)
-+{
-+	u64 wp;
-+	int ret;
-+
-+	if (zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL) {
-+		*bytenr_ret = zones[0].start << SECTOR_SHIFT;
-+		return 0;
-+	}
-+
-+	ret = sb_write_pointer(bdev, zones, &wp);
-+	if (ret != -ENOENT && ret < 0)
-+		return ret;
-+
-+	if (rw == WRITE) {
-+		struct blk_zone *reset = NULL;
-+
-+		if (wp == zones[0].start << SECTOR_SHIFT)
-+			reset = &zones[0];
-+		else if (wp == zones[1].start << SECTOR_SHIFT)
-+			reset = &zones[1];
-+
-+		if (reset && reset->cond != BLK_ZONE_COND_EMPTY) {
-+			ASSERT(reset->cond == BLK_ZONE_COND_FULL);
-+
-+			ret = blkdev_zone_mgmt(bdev, REQ_OP_ZONE_RESET,
-+					       reset->start, reset->len,
-+					       GFP_NOFS);
-+			if (ret)
-+				return ret;
-+
-+			reset->cond = BLK_ZONE_COND_EMPTY;
-+			reset->wp = reset->start;
-+		}
-+	} else if (ret != -ENOENT) {
-+		/* For READ, we want the precious one */
-+		if (wp == zones[0].start << SECTOR_SHIFT)
-+			wp = (zones[1].start + zones[1].len) << SECTOR_SHIFT;
-+		wp -= BTRFS_SUPER_INFO_SIZE;
-+	}
-+
-+	*bytenr_ret = wp;
-+	return 0;
-+
-+}
-+
-+int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, int rw,
-+			       u64 *bytenr_ret)
-+{
-+	struct blk_zone zones[2];
-+	unsigned int zone_sectors;
-+	u32 sb_zone;
-+	int ret;
-+	u64 zone_size;
-+	u8 zone_sectors_shift;
-+	sector_t nr_sectors = bdev->bd_part->nr_sects;
-+	u32 nr_zones;
-+
-+	if (!bdev_is_zoned(bdev)) {
-+		*bytenr_ret = btrfs_sb_offset(mirror);
-+		return 0;
-+	}
-+
-+	ASSERT(rw == READ || rw == WRITE);
-+
-+	zone_sectors = bdev_zone_sectors(bdev);
-+	if (!is_power_of_2(zone_sectors))
-+		return -EINVAL;
-+	zone_size = zone_sectors << SECTOR_SHIFT;
-+	zone_sectors_shift = ilog2(zone_sectors);
-+	nr_zones = nr_sectors >> zone_sectors_shift;
-+
-+	sb_zone = sb_zone_number(zone_sectors_shift + SECTOR_SHIFT, mirror);
-+	if (sb_zone + 1 >= nr_zones)
-+		return -ENOENT;
-+
-+	ret = blkdev_report_zones(bdev, sb_zone << zone_sectors_shift, 2,
-+				  copy_zone_info_cb, zones);
-+	if (ret < 0)
-+		return ret;
-+	if (ret != 2)
-+		return -EIO;
-+
-+	return sb_log_location(bdev, zones, rw, bytenr_ret);
-+}
-+
-+int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
-+			  u64 *bytenr_ret)
-+{
-+	struct btrfs_zoned_device_info *zinfo = device->zone_info;
-+	u32 zone_num;
-+
-+	if (!zinfo) {
-+		*bytenr_ret = btrfs_sb_offset(mirror);
-+		return 0;
-+	}
-+
-+	zone_num = sb_zone_number(zinfo->zone_size_shift, mirror);
-+	if (zone_num + 1 >= zinfo->nr_zones)
-+		return -ENOENT;
-+
-+	return sb_log_location(device->bdev, &zinfo->sb_zones[2 * mirror], rw,
-+			       bytenr_ret);
-+}
-+
-+static inline bool is_sb_log_zone(struct btrfs_zoned_device_info *zinfo,
-+				  int mirror)
-+{
-+	u32 zone_num;
-+
-+	if (!zinfo)
-+		return false;
-+
-+	zone_num = sb_zone_number(zinfo->zone_size_shift, mirror);
-+	if (zone_num + 1 >= zinfo->nr_zones)
-+		return false;
-+
-+	if (!test_bit(zone_num, zinfo->seq_zones))
-+		return false;
-+
-+	return true;
-+}
-+
-+void btrfs_advance_sb_log(struct btrfs_device *device, int mirror)
-+{
-+	struct btrfs_zoned_device_info *zinfo = device->zone_info;
-+	struct blk_zone *zone;
-+
-+	if (!is_sb_log_zone(zinfo, mirror))
-+		return;
-+
-+	zone = &zinfo->sb_zones[2 * mirror];
-+	if (zone->cond != BLK_ZONE_COND_FULL) {
-+		if (zone->cond == BLK_ZONE_COND_EMPTY)
-+			zone->cond = BLK_ZONE_COND_IMP_OPEN;
-+		zone->wp += (BTRFS_SUPER_INFO_SIZE >> SECTOR_SHIFT);
-+		if (zone->wp == zone->start + zone->len)
-+			zone->cond = BLK_ZONE_COND_FULL;
-+		return;
-+	}
-+
-+	zone++;
-+	ASSERT(zone->cond != BLK_ZONE_COND_FULL);
-+	if (zone->cond == BLK_ZONE_COND_EMPTY)
-+		zone->cond = BLK_ZONE_COND_IMP_OPEN;
-+	zone->wp += (BTRFS_SUPER_INFO_SIZE >> SECTOR_SHIFT);
-+	if (zone->wp == zone->start + zone->len)
-+		zone->cond = BLK_ZONE_COND_FULL;
-+}
-+
-+int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror)
-+{
-+	sector_t zone_sectors;
-+	sector_t nr_sectors = bdev->bd_part->nr_sects;
-+	u8 zone_sectors_shift;
-+	u32 sb_zone;
-+	u32 nr_zones;
-+
-+	zone_sectors = bdev_zone_sectors(bdev);
-+	zone_sectors_shift = ilog2(zone_sectors);
-+	nr_zones = nr_sectors >> zone_sectors_shift;
-+
-+	sb_zone = sb_zone_number(zone_sectors_shift + SECTOR_SHIFT, mirror);
-+	if (sb_zone + 1 >= nr_zones)
-+		return -ENOENT;
-+
-+	return blkdev_zone_mgmt(bdev, REQ_OP_ZONE_RESET,
-+				sb_zone << zone_sectors_shift, zone_sectors * 2,
-+				GFP_NOFS);
-+}
-diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-index 0b7756a7104d..447c4e5ffcbb 100644
---- a/fs/btrfs/zoned.h
-+++ b/fs/btrfs/zoned.h
-@@ -4,6 +4,8 @@
- #define BTRFS_ZONED_H
+ static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
+ 			      struct alloc_chunk_ctl *ctl,
+ 			      struct btrfs_device_info *devices_info)
+@@ -5080,6 +5209,8 @@ static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
+ 	switch (fs_devices->chunk_alloc_policy) {
+ 	case BTRFS_CHUNK_ALLOC_REGULAR:
+ 		return decide_stripe_size_regular(ctl, devices_info);
++	case BTRFS_CHUNK_ALLOC_ZONED:
++		return decide_stripe_size_zoned(ctl, devices_info);
+ 	default:
+ 		BUG();
+ 	}
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index 9c07b97a2260..0249aca668fb 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -213,6 +213,7 @@ BTRFS_DEVICE_GETSET_FUNCS(bytes_used);
  
- #include <linux/blkdev.h>
-+#include "volumes.h"
-+#include "disk-io.h"
- 
- struct btrfs_zoned_device_info {
- 	/*
-@@ -16,6 +18,7 @@ struct btrfs_zoned_device_info {
- 	u32 nr_zones;
- 	unsigned long *seq_zones;
- 	unsigned long *empty_zones;
-+	struct blk_zone sb_zones[2 * BTRFS_SUPER_MIRROR_MAX];
+ enum btrfs_chunk_allocation_policy {
+ 	BTRFS_CHUNK_ALLOC_REGULAR,
++	BTRFS_CHUNK_ALLOC_ZONED,
  };
  
- #ifdef CONFIG_BLK_DEV_ZONED
-@@ -25,6 +28,12 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device);
- void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
- int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
- int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info);
-+int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, int rw,
-+			       u64 *bytenr_ret);
-+int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
-+			  u64 *bytenr_ret);
-+void btrfs_advance_sb_log(struct btrfs_device *device, int mirror);
-+int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror);
+ struct btrfs_fs_devices {
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index d5487cba203b..4411d786597a 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -1,11 +1,13 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++#include <linux/bitops.h>
+ #include <linux/slab.h>
+ #include <linux/blkdev.h>
+ #include "ctree.h"
+ #include "volumes.h"
+ #include "zoned.h"
+ #include "rcu-string.h"
++#include "disk-io.h"
+ 
+ /* Maximum number of zones to report per blkdev_report_zones() call */
+ #define BTRFS_REPORT_NR_ZONES   4096
+@@ -328,6 +330,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+ 
+ 	fs_info->zone_size = zone_size;
+ 	fs_info->max_zone_append_size = max_zone_append_size;
++	fs_info->fs_devices->chunk_alloc_policy = BTRFS_CHUNK_ALLOC_ZONED;
+ 
+ 	btrfs_info(fs_info, "ZONED mode enabled, zone size %llu B",
+ 		   fs_info->zone_size);
+@@ -607,3 +610,126 @@ int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror)
+ 				sb_zone << zone_sectors_shift, zone_sectors * 2,
+ 				GFP_NOFS);
+ }
++
++/*
++ * btrfs_check_allocatable_zones - find allocatable zones within give region
++ * @device:	the device to allocate a region
++ * @hole_start: the position of the hole to allocate the region
++ * @num_bytes:	the size of wanted region
++ * @hole_size:	the size of hole
++ *
++ * Allocatable region should not contain any superblock locations.
++ */
++u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
++				 u64 hole_end, u64 num_bytes)
++{
++	struct btrfs_zoned_device_info *zinfo = device->zone_info;
++	u8 shift = zinfo->zone_size_shift;
++	u64 nzones = num_bytes >> shift;
++	u64 pos = hole_start;
++	u64 begin, end;
++	u64 sb_pos;
++	bool have_sb;
++	int i;
++
++	ASSERT(IS_ALIGNED(hole_start, zinfo->zone_size));
++	ASSERT(IS_ALIGNED(num_bytes, zinfo->zone_size));
++
++	while (pos < hole_end) {
++		begin = pos >> shift;
++		end = begin + nzones;
++
++		if (end > zinfo->nr_zones)
++			return hole_end;
++
++		/* check if zones in the region are all empty */
++		if (btrfs_dev_is_sequential(device, pos) &&
++		    find_next_zero_bit(zinfo->empty_zones, end, begin) != end) {
++			pos += zinfo->zone_size;
++			continue;
++		}
++
++		have_sb = false;
++		for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
++			sb_pos = sb_zone_number(zinfo->zone_size, i);
++			if (!(end < sb_pos || sb_pos + 1 < begin)) {
++				have_sb = true;
++				pos = (sb_pos + 2) << shift;
++				break;
++			}
++		}
++		if (!have_sb)
++			break;
++	}
++
++	return pos;
++}
++
++int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
++			    u64 length, u64 *bytes)
++{
++	int ret;
++
++	*bytes = 0;
++	ret = blkdev_zone_mgmt(device->bdev, REQ_OP_ZONE_RESET,
++			       physical >> SECTOR_SHIFT, length >> SECTOR_SHIFT,
++			       GFP_NOFS);
++	if (ret)
++		return ret;
++
++	*bytes = length;
++	while (length) {
++		btrfs_dev_set_zone_empty(device, physical);
++		physical += device->zone_info->zone_size;
++		length -= device->zone_info->zone_size;
++	}
++
++	return 0;
++}
++
++int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size)
++{
++	struct btrfs_zoned_device_info *zinfo = device->zone_info;
++	u8 shift = zinfo->zone_size_shift;
++	unsigned long begin = start >> shift;
++	unsigned long end = (start + size) >> shift;
++	u64 pos;
++	int ret;
++
++	ASSERT(IS_ALIGNED(start, zinfo->zone_size));
++	ASSERT(IS_ALIGNED(size, zinfo->zone_size));
++
++	if (end > zinfo->nr_zones)
++		return -ERANGE;
++
++	/* all the zones are conventional */
++	if (find_next_bit(zinfo->seq_zones, begin, end) == end)
++		return 0;
++
++	/* all the zones are sequential and empty */
++	if (find_next_zero_bit(zinfo->seq_zones, begin, end) == end &&
++	    find_next_zero_bit(zinfo->empty_zones, begin, end) == end)
++		return 0;
++
++	for (pos = start; pos < start + size; pos += zinfo->zone_size) {
++		u64 reset_bytes;
++
++		if (!btrfs_dev_is_sequential(device, pos) ||
++		    btrfs_dev_is_empty_zone(device, pos))
++			continue;
++
++		/* free regions should be empty */
++		btrfs_warn_in_rcu(
++			device->fs_info,
++			"resetting device %s zone %llu for allocation",
++			rcu_str_deref(device->name), pos >> shift);
++		WARN_ON_ONCE(1);
++
++		ret = btrfs_reset_device_zone(device, pos, zinfo->zone_size,
++					      &reset_bytes);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
+diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+index 447c4e5ffcbb..24dd0c9561f9 100644
+--- a/fs/btrfs/zoned.h
++++ b/fs/btrfs/zoned.h
+@@ -34,6 +34,11 @@ int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
+ 			  u64 *bytenr_ret);
+ void btrfs_advance_sb_log(struct btrfs_device *device, int mirror);
+ int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror);
++u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
++				 u64 hole_end, u64 num_bytes);
++int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
++			    u64 length, u64 *bytes);
++int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size);
  #else /* CONFIG_BLK_DEV_ZONED */
  static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
  				     struct blk_zone *zone)
-@@ -48,6 +57,26 @@ static inline int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
+@@ -77,6 +82,23 @@ static inline int btrfs_reset_sb_log_zones(struct block_device *bdev,
  {
  	return 0;
  }
-+static inline int btrfs_sb_log_location_bdev(struct block_device *bdev,
-+					     int mirror, int rw,
-+					     u64 *bytenr_ret)
++static inline u64 btrfs_find_allocatable_zones(struct btrfs_device *device,
++					       u64 hole_start, u64 hole_end,
++					       u64 num_bytes)
 +{
-+	*bytenr_ret = btrfs_sb_offset(mirror);
++	return hole_start;
++}
++static inline int btrfs_reset_device_zone(struct btrfs_device *device,
++					  u64 physical, u64 length, u64 *bytes)
++{
++	*bytes = 0;
 +	return 0;
 +}
-+static inline int btrfs_sb_log_location(struct btrfs_device *device, int mirror,
-+					int rw, u64 *bytenr_ret)
-+{
-+	*bytenr_ret = btrfs_sb_offset(mirror);
-+	return 0;
-+}
-+static inline void btrfs_advance_sb_log(struct btrfs_device *device,
-+					int mirror) { }
-+static inline int btrfs_reset_sb_log_zones(struct block_device *bdev,
-+					   int mirror)
++static inline int btrfs_ensure_empty_zones(struct btrfs_device *device,
++					   u64 start, u64 size)
 +{
 +	return 0;
 +}
  #endif
  
  static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
-@@ -115,4 +144,15 @@ static inline bool btrfs_check_device_zone_type(struct btrfs_fs_info *fs_info,
- 	return bdev_zoned_model(bdev) != BLK_ZONED_HM;
+@@ -155,4 +177,12 @@ static inline bool btrfs_check_super_location(struct btrfs_device *device,
+ 	       !btrfs_dev_is_sequential(device, pos);
  }
  
-+static inline bool btrfs_check_super_location(struct btrfs_device *device,
-+					      u64 pos)
++static inline u64 btrfs_zone_align(struct btrfs_device *device, u64 pos)
 +{
-+	/*
-+	 * On a non-zoned device, any address is OK. On a zoned device,
-+	 * non-SEQUENTIAL WRITE REQUIRED zones are capable.
-+	 */
-+	return device->zone_info == NULL ||
-+	       !btrfs_dev_is_sequential(device, pos);
++	if (!device->zone_info)
++		return pos;
++
++	return ALIGN(pos, device->zone_info->zone_size);
 +}
 +
  #endif
