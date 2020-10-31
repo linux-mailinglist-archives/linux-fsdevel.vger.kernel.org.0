@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAF42A148B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Oct 2020 10:13:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F8B12A1491
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Oct 2020 10:15:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbgJaJNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Oct 2020 05:13:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38668 "EHLO
+        id S1726487AbgJaJP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Oct 2020 05:15:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbgJaJNP (ORCPT
+        with ESMTP id S1726424AbgJaJP0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Oct 2020 05:13:15 -0400
+        Sat, 31 Oct 2020 05:15:26 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0009CC0613D5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Oct 2020 02:13:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7736C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Oct 2020 02:15:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=7D2NpM41epKpom692Wn+SfTL8DLMRgNwbln8pAHhUis=; b=c5X+sjhI68xlbZ1w7KORhijPsf
-        jnC2yfRf5D+ZUxC1O/ezGE3NhlmevxUfgQqVlay+zN3Y4cv47JpomS28Ex7PLuUcBAOjqCro48sgv
-        U6laupoVWz/V6D7jyV97uZTMeGrqP4R1I/i2Hd0BsjbrsFrxUGLDTxzF6mS7sNrevGIraFHa9x7vJ
-        IK2ek5hxZcCk19ILMoXQhJU5rVxCtk/SLfkacMh1OJ836UglD7AyHFJqDoak9sfgFKDhP1Xws01S1
-        fEI+Hs+A/s2M6vZt8eUPBC+e52j2tefcdFBcpSevRAK8/96MlvSJIg9WmWVTTnGpJzpWyVRSxWmdZ
-        B+rX4DIg==;
+        bh=w7pP6ZwoBFCgYWc3JUgMBAPIvDyVUgvDwMandxHayiQ=; b=q/5iaxo7WNboQxCOEfk/hZZKVn
+        lsOCR6oywpH+8Q85yuTc4j6w6RUrKjDYY9Yp/oEVqqgDBB5UUrUKXvwLSMJuTUCgR5fvjvkmywmw0
+        LK8pbVDmYAWjwr4omJ4hPvYfzqE11pKgHLcMS/3XapoBYtpO7FZrLwoxn/vA/kEkG1y8SKUdT5koP
+        wsLb0OmJ3lPbuEsRxW0GkOfXHLSAKEtgSYLtpjTFV3NNDsyW4rvrQX75CaAmhoynw8xD/JXfAQNEQ
+        gju31KMDTItTMPfvJl99M9THTaSjHSEmTzhcKo9IWonpBr2KyjVAoEGR6vpkq05SnSIZRGue6jFO/
+        WNc3pkOA==;
 Received: from 089144193201.atnat0002.highway.a1.net ([89.144.193.201] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kYmwh-0007jC-Vm; Sat, 31 Oct 2020 09:13:12 +0000
+        id 1kYmyp-0007tB-0l; Sat, 31 Oct 2020 09:15:23 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 05/13] mm: simplify generic_file_buffered_read_no_cached_page
-Date:   Sat, 31 Oct 2020 09:59:56 +0100
-Message-Id: <20201031090004.452516-6-hch@lst.de>
+Subject: [PATCH 06/13] mm: factor out a filemap_find_get_pages helper
+Date:   Sat, 31 Oct 2020 09:59:57 +0100
+Message-Id: <20201031090004.452516-7-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201031090004.452516-1-hch@lst.de>
 References: <20201031090004.452516-1-hch@lst.de>
@@ -46,110 +46,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Return an errno and add a new by reference argument for the allocated
-page, which allows to cleanup the error unwindining in the function
-and the caller.  Also rename the function to filemap_new_page which is
-both shorter and more descriptive.
+Factor out a helper to lookup a range of contiguous pages from
+generic_file_buffered_read_get_pages.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/filemap.c | 53 ++++++++++++++++------------------------------------
- 1 file changed, 16 insertions(+), 37 deletions(-)
+ mm/filemap.c | 47 +++++++++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 20 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 5cdf8090d4e12c..9e1cc18afe1134 100644
+index 9e1cc18afe1134..0af7ddaa0fe7ba 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2300,41 +2300,27 @@ static int filemap_make_page_uptodate(struct kiocb *iocb, struct iov_iter *iter,
- 	return error;
+@@ -2323,39 +2323,46 @@ static int filemap_new_page(struct kiocb *iocb, struct iov_iter *iter,
+ 	return filemap_readpage(iocb, *page);
  }
  
--static struct page *
--generic_file_buffered_read_no_cached_page(struct kiocb *iocb,
--					  struct iov_iter *iter)
-+static int filemap_new_page(struct kiocb *iocb, struct iov_iter *iter,
-+		struct page **page)
++static int filemap_find_get_pages(struct kiocb *iocb, struct iov_iter *iter,
++		struct page **pages, unsigned int nr)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
++	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE - 1) >>
++			PAGE_SHIFT;
++	int nr_pages;
++
++	nr = min_t(unsigned long, last_index - index, nr);
++	nr_pages = find_get_pages_contig(mapping, index, nr, pages);
++	if (nr_pages)
++		return nr_pages;
++
++	if (iocb->ki_flags & IOCB_NOIO)
++		return -EAGAIN;
++	page_cache_sync_readahead(mapping, &iocb->ki_filp->f_ra, iocb->ki_filp,
++			index, last_index - index);
++	return find_get_pages_contig(mapping, index, nr, pages);
++}
++
+ static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
+ 						struct iov_iter *iter,
+ 						struct page **pages,
+ 						unsigned int nr)
  {
 -	struct file *filp = iocb->ki_filp;
 -	struct address_space *mapping = filp->f_mapping;
-+	struct address_space *mapping = iocb->ki_filp->f_mapping;
-+	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
+-	struct file_ra_state *ra = &filp->f_ra;
  	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
--	struct page *page;
- 	int error;
+-	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
+ 	int i, j, nr_got, err = 0;
  
- 	if (iocb->ki_flags & IOCB_NOIO)
--		return ERR_PTR(-EAGAIN);
-+		return -EAGAIN;
+-	nr = min_t(unsigned long, last_index - index, nr);
+ find_page:
+ 	if (fatal_signal_pending(current))
+ 		return -EINTR;
  
--	/*
--	 * Ok, it wasn't cached, so we need to create a new
--	 * page..
--	 */
--	page = page_cache_alloc(mapping);
-+	*page = page_cache_alloc(mapping);
- 	if (!page)
--		return ERR_PTR(-ENOMEM);
+-	nr_got = find_get_pages_contig(mapping, index, nr, pages);
+-	if (nr_got)
+-		goto got_pages;
 -
--	error = add_to_page_cache_lru(page, mapping, index,
--				      mapping_gfp_constraint(mapping, GFP_KERNEL));
-+		return -ENOMEM;
-+	error = add_to_page_cache_lru(*page, mapping, index, gfp);
- 	if (error) {
--		put_page(page);
--		return error != -EEXIST ? ERR_PTR(error) : NULL;
-+		put_page(*page);
-+		return error;
- 	}
- 
--	error = filemap_readpage(iocb, page);
--	if (error) {
--		if (error == AOP_TRUNCATED_PAGE)
--			return NULL;
--		return ERR_PTR(error);
--	}
--	return page;
-+	return filemap_readpage(iocb, *page);
- }
- 
- static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
-@@ -2366,18 +2352,14 @@ static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
- 	nr_got = find_get_pages_contig(mapping, index, nr, pages);
- 	if (nr_got)
- 		goto got_pages;
+-	if (iocb->ki_flags & IOCB_NOIO)
+-		return -EAGAIN;
 -
--	pages[0] = generic_file_buffered_read_no_cached_page(iocb, iter);
--	err = PTR_ERR_OR_ZERO(pages[0]);
--	if (!IS_ERR_OR_NULL(pages[0]))
-+	err = filemap_new_page(iocb, iter, &pages[0]);
-+	if (!err)
- 		nr_got = 1;
- got_pages:
+-	page_cache_sync_readahead(mapping, ra, filp, index, last_index - index);
++	nr_got = filemap_find_get_pages(iocb, iter, pages, nr);
++	if (!nr_got) {
++		err = filemap_new_page(iocb, iter, &pages[0]);
++		if (!err)
++			nr_got = 1;
++	}
+ 
+-	nr_got = find_get_pages_contig(mapping, index, nr, pages);
+-	if (nr_got)
+-		goto got_pages;
+-	err = filemap_new_page(iocb, iter, &pages[0]);
+-	if (!err)
+-		nr_got = 1;
+-got_pages:
  	for (i = 0; i < nr_got; i++) {
  		err = filemap_make_page_uptodate(iocb, iter, pages[i],
  				index + i, i == 0);
- 		if (err) {
--			if (err == AOP_TRUNCATED_PAGE)
--				err = 0;
- 			for (j = i + 1; j < nr_got; j++)
- 				put_page(pages[j]);
- 			nr_got = i;
-@@ -2387,12 +2369,9 @@ static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
- 
- 	if (likely(nr_got))
- 		return nr_got;
--	if (err)
--		return err;
--	/*
--	 * No pages and no error means we raced and should retry:
--	 */
--	goto find_page;
-+	if (err == -EEXIST || err == AOP_TRUNCATED_PAGE)
-+		goto find_page;
-+	return err;
- }
- 
- /**
 -- 
 2.28.0
 
