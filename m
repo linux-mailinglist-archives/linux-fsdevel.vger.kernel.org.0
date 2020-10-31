@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34A262A14CD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Oct 2020 10:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CA22A14D3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Oct 2020 10:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbgJaJ2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Oct 2020 05:28:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41014 "EHLO
+        id S1726614AbgJaJao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Oct 2020 05:30:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgJaJ2c (ORCPT
+        with ESMTP id S1726424AbgJaJan (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Oct 2020 05:28:32 -0400
+        Sat, 31 Oct 2020 05:30:43 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03F6AC0613D5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Oct 2020 02:28:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196C5C0613D5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 31 Oct 2020 02:30:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=UVuvskOd7u+cW+9FE21ypaPGl+5Mur2FVKlFNoSP4LQ=; b=V1HLFl0izdyBDWpSlqawDTXJBs
-        lx0AQba6PUflfbCt/aXdj3P9hEhRFmOX0nIvYzjVrxdYakRh/KdB9IP9dEe7BFFKPABHYC2mWsUZz
-        MkwnCvpJnGsknEcAS4m8uoNclTZ74jKhnWs+NMHpomVWYSW+g+sE8yEOApDN81REUWy8jQctMaiLW
-        QbmFRs6JKG/Pz5IDeGiZPHcGnze/0a8M4kjy7VuJV5EYHmJtIyOmeWk9IAxiC/l/allMzZ2aEUoBH
-        3kvECAUgROf0RyGUd11QVEVGGE/flivZLWFOczbtVRVKBH4NEmwBsNoOnwDj1SfocEK8I/kII1k3n
-        k8xSTmgw==;
+        bh=RqDbAgPgOvB5taFEIjSsWqsN4HVXXWmvRa4haI7RAX8=; b=stLdkSElJhmp/NOrYLuOswpaFS
+        vWKFOJTu0qPiEwqjxbmSwqe2Y1bunTE+cJi/2vMuql6PsHL7PfrvZNdM13wVSozXIQ2BaAWQ2ZuLk
+        p+iNUn1h3MG5yZww9C660AnIbBBLO2vQbR43OIHXwwFqczRkMaOFW/JDJcy4ApeIGorKHLTAaTjJi
+        O+m3fWZ28aOEncW2VPTmxBYeYHor8+xCyZ1PuyPR8BIXRJPJXhLVhdfcR/H1Q+Jk4FzGuZ/0xOCcy
+        xsbqSWzPe2WjBhNkd2Mx7oZUYDBl+EgWQQ1e4SAC2fwlG0GKFqmpv38EJNjsYFHlYQwPseG5aAHUG
+        ib/JAB0A==;
 Received: from 089144193201.atnat0002.highway.a1.net ([89.144.193.201] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kYnBV-0000CU-Fv; Sat, 31 Oct 2020 09:28:29 +0000
+        id 1kYnDc-0000Mr-Mf; Sat, 31 Oct 2020 09:30:41 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/13] mm: rename generic_file_buffered_read to filemap_read
-Date:   Sat, 31 Oct 2020 10:00:03 +0100
-Message-Id: <20201031090004.452516-13-hch@lst.de>
+Subject: [PATCH 13/13] mm: simplify generic_file_read_iter
+Date:   Sat, 31 Oct 2020 10:00:04 +0100
+Message-Id: <20201031090004.452516-14-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201031090004.452516-1-hch@lst.de>
 References: <20201031090004.452516-1-hch@lst.de>
@@ -46,123 +46,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rename generic_file_buffered_read to match the naming of filemap_fault,
-also update the written parameter to a more descriptive name and
-improve the kerneldoc comment.
+Avoid the pointless goto out just for returning retval.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/file.c    |  2 +-
- include/linux/fs.h |  4 ++--
- mm/filemap.c       | 34 ++++++++++++++++------------------
- 3 files changed, 19 insertions(+), 21 deletions(-)
+ mm/filemap.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 87355a38a65470..1a4913e1fd1289 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -3633,7 +3633,7 @@ static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 			return ret;
- 	}
- 
--	return generic_file_buffered_read(iocb, to, ret);
-+	return filemap_read(iocb, to, ret);
- }
- 
- const struct file_operations btrfs_file_operations = {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8d559d43f2af92..a79f65607236ae 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2948,8 +2948,8 @@ extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
- extern int generic_write_check_limits(struct file *file, loff_t pos,
- 		loff_t *count);
- extern int generic_file_rw_checks(struct file *file_in, struct file *file_out);
--extern ssize_t generic_file_buffered_read(struct kiocb *iocb,
--		struct iov_iter *to, ssize_t already_read);
-+ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *to,
-+		ssize_t already_read);
- extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
- extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 904b0a4fb9e008..743d764f3eab1c 100644
+index 743d764f3eab1c..b45f0bafdbaebf 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2372,23 +2372,21 @@ static int filemap_read_pages(struct kiocb *iocb, struct iov_iter *iter,
- }
+@@ -2531,7 +2531,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	ssize_t retval = 0;
  
- /**
-- * generic_file_buffered_read - generic file read routine
-- * @iocb:	the iocb to read
-- * @iter:	data destination
-- * @written:	already copied
-+ * filemap_read - read data from the page cache
-+ * @iocb:		the iocb to read
-+ * @iter:		data destination
-+ * @already_read:	number of bytes already read by the caller
-  *
-- * This is a generic file read routine, and uses the
-- * mapping->a_ops->readpage() function for the actual low-level stuff.
-- *
-- * This is really ugly. But the goto's actually try to clarify some
-- * of the logic when it comes to error handling etc.
-+ * Read data from the pagecache using the ->readpage address space
-+ * operation.
-  *
-  * Return:
-- * * total number of bytes copied, including those the were already @written
-- * * negative error code if nothing was copied
-+ *  Total number of bytes copied, including those already read by the caller as
-+ *  passed in the @already_read argument.  Negative error code if an error
-+ *  happened before any bytes were copied.
-  */
--ssize_t generic_file_buffered_read(struct kiocb *iocb,
--		struct iov_iter *iter, ssize_t written)
-+ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
-+		ssize_t already_read)
- {
- 	struct file *filp = iocb->ki_filp;
- 	struct file_ra_state *ra = &filp->f_ra;
-@@ -2422,7 +2420,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		 * can no longer safely return -EIOCBQUEUED. Hence mark
- 		 * an async read NOWAIT at that point.
+ 	if (!count)
+-		goto out; /* skip atime */
++		return 0; /* skip atime */
+ 
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+ 		struct file *file = iocb->ki_filp;
+@@ -2549,7 +2549,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 						iocb->ki_pos,
+ 					        iocb->ki_pos + count - 1);
+ 			if (retval < 0)
+-				goto out;
++				return retval;
+ 		}
+ 
+ 		file_accessed(file);
+@@ -2572,12 +2572,10 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
  		 */
--		if ((iocb->ki_flags & IOCB_WAITQ) && written)
-+		if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
- 			iocb->ki_flags |= IOCB_NOWAIT;
- 
- 		i = 0;
-@@ -2482,7 +2480,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
- 			copied = copy_page_to_iter(pages[i], offset, bytes, iter);
- 
--			written += copied;
-+			already_read += copied;
- 			iocb->ki_pos += copied;
- 			ra->prev_pos = iocb->ki_pos;
- 
-@@ -2501,9 +2499,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	if (pages != pages_onstack)
- 		kfree(pages);
- 
--	return written ? written : error;
-+	return already_read ? already_read : error;
- }
--EXPORT_SYMBOL_GPL(generic_file_buffered_read);
-+EXPORT_SYMBOL_GPL(filemap_read);
- 
- /**
-  * generic_file_read_iter - generic filesystem read routine
-@@ -2577,7 +2575,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 			goto out;
+ 		if (retval < 0 || !count || iocb->ki_pos >= size ||
+ 		    IS_DAX(inode))
+-			goto out;
++			return retval;
  	}
  
--	retval = generic_file_buffered_read(iocb, iter, retval);
-+	retval = filemap_read(iocb, iter, retval);
- out:
- 	return retval;
+-	retval = filemap_read(iocb, iter, retval);
+-out:
+-	return retval;
++	return filemap_read(iocb, iter, retval);
  }
+ EXPORT_SYMBOL(generic_file_read_iter);
+ 
 -- 
 2.28.0
 
