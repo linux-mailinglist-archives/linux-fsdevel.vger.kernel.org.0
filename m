@@ -2,160 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C639B2A118A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Oct 2020 00:24:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 757002A121A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Oct 2020 01:45:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726182AbgJ3XYC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Oct 2020 19:24:02 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44452 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbgJ3XYB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Oct 2020 19:24:01 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09UNJZxn180925;
-        Fri, 30 Oct 2020 23:23:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=ADVugUv0bTu4BMg6qD29TxXNTGOmcqzEqsMPhSTlEEI=;
- b=wUxANNHzh26uDxsSjMxD8uoiN3iDv6gKIidP21l7JeWnb3OWpUCh1gLMrLdDvkeVqV3J
- b2TGt4rXfP8Twi8wIK+XkuOjurXJdKEnNcJ9IGwcvqwi0uNIeB5cw6zbvR7WFC8guKPA
- PNQrzEKTdEiOyoXLSWUzh0XBU1pDDBH4opTgtUQ94Ovo4qXF53DYkBBeHhNs8BKUOJD0
- Xx86UsbSz8BrbbUCOqFFD2re3GnOr0PS47PxcbDT/osfsu2fcXTBsbtcfZB5pT2LWBde
- K4nY+0BBNLvm45hU9czh6iWyjaFcOwMs5AfW17XswLIHtKG99LM1AnJlX/AEJLfzaCRW 0Q== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 34dgm4hk5n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Oct 2020 23:23:58 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 09UNKkZv056022;
-        Fri, 30 Oct 2020 23:23:58 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 34cwurg3ja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Oct 2020 23:23:58 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 09UNNvVj016466;
-        Fri, 30 Oct 2020 23:23:57 GMT
-Received: from [192.168.1.226] (/67.1.244.254)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 30 Oct 2020 16:23:57 -0700
-Subject: Re: [PATCH v2 3/3] iomap: clean up writeback state logic on writepage
- error
-To:     Brian Foster <bfoster@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org
-References: <20201029132325.1663790-1-bfoster@redhat.com>
- <20201029132325.1663790-4-bfoster@redhat.com>
-From:   Allison Henderson <allison.henderson@oracle.com>
-Message-ID: <072e1601-ae80-024b-48d8-cde43ede8c05@oracle.com>
-Date:   Fri, 30 Oct 2020 16:23:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1725768AbgJaApW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Oct 2020 20:45:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725446AbgJaApW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 30 Oct 2020 20:45:22 -0400
+Received: from sol.attlocal.net (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2303C2076D;
+        Sat, 31 Oct 2020 00:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604105122;
+        bh=cdd9+Pv9fufUcYB0lU28QpkU85Hlo6TrQs3OVc65FyU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=zPMgj+BWXzPuhbtqPJPbMDrfooqbpVw8ORW9pJMLfvVFtgGfhymYBWnBe50Ts5d/o
+         lMhUCQMs5tNPfxrIn/cWpoD2J+39D9HXze1PjoGjPdZMfxHbq2TIMNxvvKYCo/Mdci
+         vd+udcONf6rK9UuSVN7xB7fDM9BMSGOiiqqpsxXc=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [PATCH] fs/inode.c: make inode_init_always() initialize i_ino to 0
+Date:   Fri, 30 Oct 2020 17:44:20 -0700
+Message-Id: <20201031004420.87678-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.29.1
 MIME-Version: 1.0
-In-Reply-To: <20201029132325.1663790-4-bfoster@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9790 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 bulkscore=0
- spamscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010300176
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9790 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 bulkscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- suspectscore=0 clxscore=1015 mlxscore=0 malwarescore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010300176
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Eric Biggers <ebiggers@google.com>
 
+Currently inode_init_always() doesn't initialize i_ino to 0.  This is
+unexpected because unlike the other inode fields that aren't initialized
+by inode_init_always(), i_ino isn't guaranteed to end up back at its
+initial value after the inode is freed.  Only one filesystem (XFS)
+actually sets set i_ino back to 0 when freeing its inodes.
 
-On 10/29/20 6:23 AM, Brian Foster wrote:
-> The iomap writepage error handling logic is a mash of old and
-> slightly broken XFS writepage logic. When keepwrite writeback state
-> tracking was introduced in XFS in commit 0d085a529b42 ("xfs: ensure
-> WB_SYNC_ALL writeback handles partial pages correctly"), XFS had an
-> additional cluster writeback context that scanned ahead of
-> ->writepage() to process dirty pages over the current ->writepage()
-> extent mapping. This context expected a dirty page and required
-> retention of the TOWRITE tag on partial page processing so the
-> higher level writeback context would revisit the page (in contrast
-> to ->writepage(), which passes a page with the dirty bit already
-> cleared).
-> 
-> The cluster writeback mechanism was eventually removed and some of
-> the error handling logic folded into the primary writeback path in
-> commit 150d5be09ce4 ("xfs: remove xfs_cancel_ioend"). This patch
-> accidentally conflated the two contexts by using the keepwrite logic
-> in ->writepage() without accounting for the fact that the page is
-> not dirty. Further, the keepwrite logic has no practical effect on
-> the core ->writepage() caller (write_cache_pages()) because it never
-> revisits a page in the current function invocation.
-> 
-> Technically, the page should be redirtied for the keepwrite logic to
-> have any effect. Otherwise, write_cache_pages() may find the tagged
-> page but will skip it since it is clean. Even if the page was
-> redirtied, however, there is still no practical effect to keepwrite
-> since write_cache_pages() does not wrap around within a single
-> invocation of the function. Therefore, the dirty page would simply
-> end up retagged on the next writeback sequence over the associated
-> range.
-> 
-> All that being said, none of this really matters because redirtying
-> a partially processed page introduces a potential infinite redirty
-> -> writeback failure loop that deviates from the current design
-> principle of clearing the dirty state on writepage failure to avoid
-> building up too much dirty, unreclaimable memory on the system.
-> Therefore, drop the spurious keepwrite usage and dirty state
-> clearing logic from iomap_writepage_map(), treat the partially
-> processed page the same as a fully processed page, and let the
-> imminent ioend failure clean up the writeback state.
-> 
-Ok, thanks for all the explaining.  Makes sense :-)
-Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
+So, callers of new_inode() see some random previous i_ino.  Normally
+that's fine, since normally i_ino isn't accessed before being set.
+There can be edge cases where that isn't necessarily true, though.
 
-> Signed-off-by: Brian Foster <bfoster@redhat.com>
-> ---
->   fs/iomap/buffered-io.c | 15 ++-------------
->   1 file changed, 2 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index d1f04eabc7e4..e3a4568f6c2e 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1404,6 +1404,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->   	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
->   	WARN_ON_ONCE(!PageLocked(page));
->   	WARN_ON_ONCE(PageWriteback(page));
-> +	WARN_ON_ONCE(PageDirty(page));
->   
->   	/*
->   	 * We cannot cancel the ioend directly here on error.  We may have
-> @@ -1425,21 +1426,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->   			unlock_page(page);
->   			goto done;
->   		}
-> -
-> -		/*
-> -		 * If the page was not fully cleaned, we need to ensure that the
-> -		 * higher layers come back to it correctly.  That means we need
-> -		 * to keep the page dirty, and for WB_SYNC_ALL writeback we need
-> -		 * to ensure the PAGECACHE_TAG_TOWRITE index mark is not removed
-> -		 * so another attempt to write this page in this writeback sweep
-> -		 * will be made.
-> -		 */
-> -		set_page_writeback_keepwrite(page);
-> -	} else {
-> -		clear_page_dirty_for_io(page);
-> -		set_page_writeback(page);
->   	}
->   
-> +	set_page_writeback(page);
->   	unlock_page(page);
->   
->   	/*
-> 
+The one I've run into is that on ext4, when creating an encrypted file,
+the new file's encryption key has to be set up prior to the jbd2
+transaction, and thus prior to i_ino being set.  If something goes
+wrong, fs/crypto/ may log warning or error messages, which normally
+include i_ino.  So it needs to know whether it is valid to include i_ino
+yet or not.  Also, on some files i_ino needs to be hashed for use in the
+crypto, so fs/crypto/ needs to know whether that can be done yet or not.
+
+There are ways this could be worked around, either in fs/crypto/ or in
+fs/ext4/.  But, it seems there's no reason not to just fix
+inode_init_always() to do the expected thing and initialize i_ino to 0.
+
+So, do that, and also remove the initialization in jfs_fill_super() that
+becomes redundant.
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/inode.c     | 1 +
+ fs/jfs/super.c | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d78c37b00b81..eb001129f157c 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	atomic_set(&inode->i_count, 1);
+ 	inode->i_op = &empty_iops;
+ 	inode->i_fop = &no_open_fops;
++	inode->i_ino = 0;
+ 	inode->__i_nlink = 1;
+ 	inode->i_opflags = 0;
+ 	if (sb->s_xattr)
+diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+index b2dc4d1f9dcc5..1f0ffabbde566 100644
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -551,7 +551,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		ret = -ENOMEM;
+ 		goto out_unload;
+ 	}
+-	inode->i_ino = 0;
+ 	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
+ 	inode->i_mapping->a_ops = &jfs_metapage_aops;
+ 	inode_fake_hash(inode);
+
+base-commit: 5fc6b075e165f641fbc366b58b578055762d5f8c
+-- 
+2.29.1
+
