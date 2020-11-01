@@ -2,140 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5145C2A2014
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 18:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B12D2A21E4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 22:28:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbgKARG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Nov 2020 12:06:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727028AbgKARG1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Nov 2020 12:06:27 -0500
-Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 911202223F;
-        Sun,  1 Nov 2020 17:06:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604250386;
-        bh=fWxkbZL/5LT7MVmydGQvto+yiZVxeeiLovyNTt2+nMQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vz7hlCOfEKvhdYdVx02tccXCR69Tgvys6SCSJ/AwADwwmLCxWzCZRFA3N4DSZ0TNf
-         NMj2sjlY5sUvwwkqZVyNWvWsIKsoWRy4e5mWYOTcjMU9Z7iDHW/BBbA5ZKDtLBao9Y
-         XcPPJPO0UL5x9C2pQixh7DUbitUwk4/sJ48l2D4E=
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH v2 13/13] m68k: deprecate DISCONTIGMEM
-Date:   Sun,  1 Nov 2020 19:04:54 +0200
-Message-Id: <20201101170454.9567-14-rppt@kernel.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201101170454.9567-1-rppt@kernel.org>
-References: <20201101170454.9567-1-rppt@kernel.org>
+        id S1727175AbgKAV1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Nov 2020 16:27:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbgKAV1u (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Nov 2020 16:27:50 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE33C061A04
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Nov 2020 13:27:44 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id i2so12864019ljg.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Nov 2020 13:27:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jasiak-xyz.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=IUm+02MidsojlW5fyhf8cyxyEKcWd8Rt8ToY5UOJ6+c=;
+        b=r/6jxWRTfzY9FsqcnXJQy77Mw37FtnqSARc80Oobr0rtdIVwtgVg75l9ciELrr/LAt
+         jUo/l/eofutem8pjSyUxCJdGEHkMjF6+tAzpG4rkYg0xpM1YUwfVpc4d4w5iiQNXq5Cl
+         VmYCqtVQoOOGzGqox79vueHBsBu+2Vi4zPGfGD34xkJnuM1Z8SpLGfyLfsignymSVGk5
+         CdxH+YhXMuDcbbfRlbn5pIHIKHouQmwvrcE6ilwMKo0PwXCbHb7AiIib2DzxC/RYcP+F
+         8nXgy8SGw5U61oxJopexk2Gl0YjnwC0XFlL1Mc6MuXO3Ke81Z9AVJDO5TASv7DTjSOXZ
+         TsqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=IUm+02MidsojlW5fyhf8cyxyEKcWd8Rt8ToY5UOJ6+c=;
+        b=QWFCxIA9HHSWHgtmwUci8TKqFdTKDQcUGy5ulKeSrLilbZnW4P43tNTpgeRSZqsbWX
+         Z37rX69hN1OvfdztS/l5i72cv/Yn5PRKxxSaES5Skr60kcTK9vk0U3v4c64TBc/hTS8j
+         bisCC0Usd8hQQEqwy4FjE71JuJXmJZXidUDYKvAxE8pyt65F4bdn2+bd6sjotsNaH/0n
+         Nv7CDy5loFougAm+HO2l/9F/J+NVpNWXqBeYjmAYJ+qg3bTVVwsEszYWfoT3QcmoJzXL
+         iRL0Mq7jQCZvLjwx1caBDNtF3qThb1scxau3jET8UznCtFgoas92TLWsQoRFsWpSY8ur
+         9i8Q==
+X-Gm-Message-State: AOAM533jivDSkcgjkyaos8YdOu2Y8YqmQfg/MbO7UX1cZCpsgdq/Bt9b
+        rIPcWYJrAdvRPC07x5szaoegzISYPtvYYQ==
+X-Google-Smtp-Source: ABdhPJzPz1K0xAIQ9G2rQTJ0KBMzkQ/TPdrCQS2OVtoOx476LDxuemQYL2EAPVFjzj/bIj+hfBRsWg==
+X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr4936139ljc.90.1604266061480;
+        Sun, 01 Nov 2020 13:27:41 -0800 (PST)
+Received: from gmail.com (wireless-nat-78.ip4.greenlan.pl. [185.56.211.78])
+        by smtp.gmail.com with ESMTPSA id k2sm1545519lfm.13.2020.11.01.13.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Nov 2020 13:27:40 -0800 (PST)
+Date:   Sun, 1 Nov 2020 22:27:38 +0100
+From:   =?utf-8?B?UGF3ZcWC?= Jasiak <pawel@jasiak.xyz>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, jack@suse.cz
+Subject: PROBLEM: fanotify_mark EFAULT on x86
+Message-ID: <20201101212738.GA16924@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
 
-DISCONTIGMEM was intended to provide more efficient support for systems
-with holes in their physical address space that FLATMEM did.
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yet, it's overhead in terms of the memory consumption seems to overweight
-the savings on the unused memory map.
+I am trying to run examples from man fanotify.7 but fanotify_mark always
+fail with errno =3D EFAULT.
 
-For a ARAnyM system with 16 MBytes of FastRAM configured, the memory usage
-reported after page allocator initialization is
+fanotify_mark declaration is
 
-Memory: 23828K/30720K available (3206K kernel code, 535K rwdata, 936K rodata, 768K init, 193K bss, 6892K reserved, 0K cma-reserved)
+SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
+			      __u64, mask, int, dfd,
+			      const char  __user *, pathname)
 
-and with DISCONTIGMEM disabled and with relatively large hole in the memory
-map it is:
+When=20
 
-Memory: 23864K/30720K available (3197K kernel code, 516K rwdata, 936K rodata, 764K init, 179K bss, 6856K reserved, 0K cma-reserved)
+fanotify_mark(4, FAN_MARK_ADD | FAN_MARK_ONLYDIR,
+              FAN_CREATE | FAN_ONDIR, AT_FDCWD, 0xdeadc0de)
 
-Moreover, since m68k already has custom pfn_valid() it is possible to
-define HAVE_ARCH_PFN_VALID to enable freeing of unused memory map. The
-minimal size of a hole that can be freed should not be less than
-MAX_ORDER_NR_PAGES so to achieve more substantial memory savings let m68k
-also define custom FORCE_MAX_ZONEORDER.
+is called on kernel side I can see in do_syscall_32_irqs_on that CPU
+context is
+    bx =3D 0x4        =3D 4
+    cx =3D 0x9        =3D FAN_MARK_ADD | FAN_MARK_ONLYDIR,
+    dx =3D 0x40000100 =3D FAN_CREATE | FAN_ONDIR
+    si =3D 0x0
+    di =3D 0xffffff9c =3D AT_FDCWD
+    bp =3D 0xdeadc0de
+    ax =3D 0xffffffda
+    orix_ax =3D 0x153
 
-With FORCE_MAX_ZONEORDER set to 9 memory usage becomes:
+I am not sure if it is ok because third argument is uint64_t so if I
+understand correctly mask should be divided into two registers (dx and
+si).
 
-Memory: 23880K/30720K available (3197K kernel code, 516K rwdata, 936K rodata, 764K init, 179K bss, 6840K reserved, 0K cma-reserved)
+But in fanotify_mark we get
+    fanotify_fd =3D 4          =3D bx
+    flags       =3D 0x9        =3D cx
+    mask        =3D 0x40000100 =3D dx
+    dfd         =3D 0          =3D si
+    pathname    =3D 0xffffff9c =3D di
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- arch/m68k/Kconfig.cpu | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+I believe that correct order is
+    fanotify_fd =3D 4          =3D bx
+    flags       =3D 0x9        =3D cx
+    mask        =3D 0x40000100 =3D (si << 32) | dx
+    dfd         =3D 0xffffff9c =3D di
+    pathname    =3D 0xdeadc0de =3D bp
 
-diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
-index b8884af365ae..3e70fb7a8d83 100644
---- a/arch/m68k/Kconfig.cpu
-+++ b/arch/m68k/Kconfig.cpu
-@@ -20,6 +20,7 @@ choice
- 
- config M68KCLASSIC
- 	bool "Classic M68K CPU family support"
-+	select HAVE_ARCH_PFN_VALID
- 
- config COLDFIRE
- 	bool "Coldfire CPU family support"
-@@ -377,11 +378,34 @@ config SINGLE_MEMORY_CHUNK
- 	help
- 	  Ignore all but the first contiguous chunk of physical memory for VM
- 	  purposes.  This will save a few bytes kernel size and may speed up
--	  some operations.  Say N if not sure.
-+	  some operations.
-+	  When this option os set to N, you may want to lower "Maximum zone
-+	  order" to save memory that could be wasted for unused memory map.
-+	  Say N if not sure.
- 
- config ARCH_DISCONTIGMEM_ENABLE
-+	depends on BROKEN
- 	def_bool MMU && !SINGLE_MEMORY_CHUNK
- 
-+config FORCE_MAX_ZONEORDER
-+	int "Maximum zone order" if ADVANCED
-+	depends on !SINGLE_MEMORY_CHUNK
-+	default "11"
-+	help
-+	  The kernel memory allocator divides physically contiguous memory
-+	  blocks into "zones", where each zone is a power of two number of
-+	  pages.  This option selects the largest power of two that the kernel
-+	  keeps in the memory allocator.  If you need to allocate very large
-+	  blocks of physically contiguous memory, then you may need to
-+	  increase this value.
-+
-+	  For systems that have holes in their physical address space this
-+	  value also defines the minimal size of the hole that allows
-+	  freeing unused memory map.
-+
-+	  This config option is actually maximum order plus one. For example,
-+	  a value of 11 means that the largest free memory block is 2^10 pages.
-+
- config 060_WRITETHROUGH
- 	bool "Use write-through caching for 68060 supervisor accesses"
- 	depends on ADVANCED && M68060
--- 
-2.28.0
+I think that we should call COMPAT version of fanotify_mark here
 
+COMPAT_SYSCALL_DEFINE6(fanotify_mark,
+				int, fanotify_fd, unsigned int, flags,
+				__u32, mask0, __u32, mask1, int, dfd,
+				const char  __user *, pathname)
+
+or something wrong is with 64-bits arguments.
+
+I am running Linux 5.9.2 i686 on Pentium III (Coppermine).
+For tests I am using Debian sid on qemu with 5.9.2 and default kernel
+=66rom repositories.
+
+Everything works fine on 5.5 and 5.4.
+
+--=20
+
+Pawe=C5=82 Jasiak
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEENIqkLxDcCMlLMdi0FzfmQudzVTgFAl+fKEYACgkQFzfmQudz
+VTiEgQ//aiyjua4unpQBiXkKTTNgv1ICPmPSvR1YO26NKiF5oIW/EZDf1aKOdd4h
+zCUR+rt74wtxbKlwIwMYokS9PJveh1H8WgWie+hmGCxR8shPZhKR3YthtuzTR6TO
+t6PR2IWUA6S7gPxdh0aWrq6cQMTLJEQ5fO8W9lCBpwE5FAZH4phki5a5/K1a9YGN
+uT4o++BUha1txqsnd7syKpT3o0buY2/92U2lQJQJt3Vyu1FRjif1qXIr2cyzaWPe
+EmbQP9+9I8k92JycO6trj4Yd9NbtUZk+/215p9255r6yuQ4RLSkBRehfBRzPTEbp
+FvKEeVQZX0tYM1B3WO+A5xqaGHKFItQOmsBJ8Bc7052ljZe4jk2GdaFc4EShUMd/
+5QJpH8O+GCxbeZX5vY7ieftyRBxWIcWVPaevngpv6OV7sY3NY3ZmbIfcbbHoZkBL
+PzFfvEsfEqabaL9qHV0+ZQowNxO+RFtwEwPlXCdeYBNibP16disvzzLZ81tHf8xj
+6sJKUwS/aAQ3vLnk1/2b04/QVCu81wvi8GgOd/tQxHWHimjvl0i6ukC8iQlO94bU
+jsZPuVtVFYbREwimgqGtI9R5vd37gGeS9Bd0o6Kyz0+PdYlo33K/GoV987djeG2P
+HAPCyn5SDD7lV24x+O3/3WdxwSnsZyGqw3kXuqFPMU5OvUmHgwc=
+=9KzB
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
