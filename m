@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 352272A1FF0
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 18:06:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86AB82A1FF3
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 18:06:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbgKARFp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Nov 2020 12:05:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39580 "EHLO mail.kernel.org"
+        id S1727239AbgKARFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Nov 2020 12:05:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727220AbgKARFn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Nov 2020 12:05:43 -0500
+        id S1727233AbgKARFt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Nov 2020 12:05:49 -0500
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C24ED208B6;
-        Sun,  1 Nov 2020 17:05:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0898422242;
+        Sun,  1 Nov 2020 17:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604250342;
-        bh=XipFZ9Gk+9MwwOjLDX33Y4z9wXHWMYFSkxcbyoqGVRQ=;
+        s=default; t=1604250348;
+        bh=BP7DmwJKn81ZIeGVeKy2Y93BUEFg6s///fIAFdqxqhs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wxxGuLrLX+ICvuwbdx16n7qfBsgXoKkEYEoyvWVCGniESk0SE/dR+Vo6y93Q46RLf
-         CBmi5IVXLjXJpzj5ZLc4QTH2S2JtGVEeh0R0uQk+k4LYCQ/3hf/2AyIZSFpEaCt9qs
-         nE8+9aBPzssmUqbJgjPdDSaQe68GVbzAJNvF4c8g=
+        b=jaTEbszp1CuUiJ+yaWla9bTyg/px5q89SxSWFAassJH80NOGLuWEEseD4BDDrsmfa
+         EDZ7FlUm2Zw4TDjzYuGnFF8/TcBZD2f+rKYXNrWWj+NWVZCio/El+dWlObCBXmvq0g
+         zY/ay84z1xQ7e1YX0J51Ko/cyispsqNnXb/bdmq4=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH v2 06/13] ia64: forbid using VIRTUAL_MEM_MAP with FLATMEM
-Date:   Sun,  1 Nov 2020 19:04:47 +0200
-Message-Id: <20201101170454.9567-7-rppt@kernel.org>
+Subject: [PATCH v2 07/13] ia64: make SPARSEMEM default and disable DISCONTIGMEM
+Date:   Sun,  1 Nov 2020 19:04:48 +0200
+Message-Id: <20201101170454.9567-8-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201101170454.9567-1-rppt@kernel.org>
 References: <20201101170454.9567-1-rppt@kernel.org>
@@ -57,159 +57,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-Virtual memory map was intended to avoid wasting memory on the memory map
-on systems with large holes in the physical memory layout. Long ago it been
-superseded first by DISCONTIGMEM and then by SPARSEMEM. Moreover,
-SPARSEMEM_VMEMMAP provide the same functionality in much more portable way.
+SPARSEMEM memory model suitable for systems with large holes in their
+phyiscal memory layout. With SPARSEMEM_VMEMMAP enabled it provides
+pfn_to_page() and page_to_pfn() as fast as FLATMEM.
 
-As the first step to removing the VIRTUAL_MEM_MAP forbid it's usage with
-FLATMEM and panic on systems with large holes in the physical memory
-layout that try to run FLATMEM kernels.
+Make it the default memory model for IA-64 and disable DISCONTIGMEM which
+is considered obsolete for quite some time.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- arch/ia64/Kconfig               |  2 +-
- arch/ia64/include/asm/meminit.h |  2 --
- arch/ia64/mm/contig.c           | 48 +++++++++++++++------------------
- arch/ia64/mm/init.c             | 14 ----------
- 4 files changed, 22 insertions(+), 44 deletions(-)
+ arch/ia64/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index 12aae706cb27..83de0273d474 100644
+index 83de0273d474..6e67d6110249 100644
 --- a/arch/ia64/Kconfig
 +++ b/arch/ia64/Kconfig
-@@ -329,7 +329,7 @@ config NODES_SHIFT
- # VIRTUAL_MEM_MAP has been retained for historical reasons.
- config VIRTUAL_MEM_MAP
- 	bool "Virtual mem map"
--	depends on !SPARSEMEM
-+	depends on !SPARSEMEM && !FLATMEM
- 	default y
+@@ -288,6 +288,7 @@ config ARCH_SELECT_MEMORY_MODEL
+ 
+ config ARCH_DISCONTIGMEM_ENABLE
+ 	def_bool y
++	depends on BROKEN
  	help
- 	  Say Y to compile the kernel with support for a virtual mem map.
-diff --git a/arch/ia64/include/asm/meminit.h b/arch/ia64/include/asm/meminit.h
-index 092f1c91b36c..e789c0818edb 100644
---- a/arch/ia64/include/asm/meminit.h
-+++ b/arch/ia64/include/asm/meminit.h
-@@ -59,10 +59,8 @@ extern int reserve_elfcorehdr(u64 *start, u64 *end);
- extern int register_active_ranges(u64 start, u64 len, int nid);
+ 	  Say Y to support efficient handling of discontiguous physical memory,
+ 	  for architectures which are either NUMA (Non-Uniform Memory Access)
+@@ -299,12 +300,11 @@ config ARCH_FLATMEM_ENABLE
  
- #ifdef CONFIG_VIRTUAL_MEM_MAP
--# define LARGE_GAP	0x40000000 /* Use virtual mem map if hole is > than this */
-   extern unsigned long VMALLOC_END;
-   extern struct page *vmem_map;
--  extern int find_largest_hole(u64 start, u64 end, void *arg);
-   extern int create_mem_map_page_table(u64 start, u64 end, void *arg);
-   extern int vmemmap_find_next_valid_pfn(int, int);
- #else
-diff --git a/arch/ia64/mm/contig.c b/arch/ia64/mm/contig.c
-index ba81d8cb0059..bfc4ecd0a2ab 100644
---- a/arch/ia64/mm/contig.c
-+++ b/arch/ia64/mm/contig.c
-@@ -19,15 +19,12 @@
- #include <linux/mm.h>
- #include <linux/nmi.h>
- #include <linux/swap.h>
-+#include <linux/sizes.h>
+ config ARCH_SPARSEMEM_ENABLE
+ 	def_bool y
+-	depends on ARCH_DISCONTIGMEM_ENABLE
+ 	select SPARSEMEM_VMEMMAP_ENABLE
  
- #include <asm/meminit.h>
- #include <asm/sections.h>
- #include <asm/mca.h>
+-config ARCH_DISCONTIGMEM_DEFAULT
++config ARCH_SPARSEMEM_DEFAULT
+ 	def_bool y
+-	depends on ARCH_DISCONTIGMEM_ENABLE
++	depends on ARCH_SPARSEMEM_ENABLE
  
--#ifdef CONFIG_VIRTUAL_MEM_MAP
--static unsigned long max_gap;
--#endif
--
- /* physical address where the bootmem map is located */
- unsigned long bootmap_start;
- 
-@@ -166,33 +163,30 @@ find_memory (void)
- 	alloc_per_cpu_data();
- }
- 
--static void __init virtual_map_init(void)
-+static int __init find_largest_hole(u64 start, u64 end, void *arg)
- {
--#ifdef CONFIG_VIRTUAL_MEM_MAP
--	efi_memmap_walk(find_largest_hole, (u64 *)&max_gap);
--	if (max_gap < LARGE_GAP) {
--		vmem_map = (struct page *) 0;
--	} else {
--		unsigned long map_size;
-+	u64 *max_gap = arg;
- 
--		/* allocate virtual_mem_map */
-+	static u64 last_end = PAGE_OFFSET;
- 
--		map_size = PAGE_ALIGN(ALIGN(max_low_pfn, MAX_ORDER_NR_PAGES) *
--			sizeof(struct page));
--		VMALLOC_END -= map_size;
--		vmem_map = (struct page *) VMALLOC_END;
--		efi_memmap_walk(create_mem_map_page_table, NULL);
-+	/* NOTE: this algorithm assumes efi memmap table is ordered */
- 
--		/*
--		 * alloc_node_mem_map makes an adjustment for mem_map
--		 * which isn't compatible with vmem_map.
--		 */
--		NODE_DATA(0)->node_mem_map = vmem_map +
--			find_min_pfn_with_active_regions();
-+	if (*max_gap < (start - last_end))
-+		*max_gap = start - last_end;
-+	last_end = end;
-+	return 0;
-+}
- 
--		printk("Virtual mem_map starts at 0x%p\n", mem_map);
--	}
--#endif /* !CONFIG_VIRTUAL_MEM_MAP */
-+static void __init verify_gap_absence(void)
-+{
-+	unsigned long max_gap;
-+
-+	/* Forbid FLATMEM if hole is > than 1G */
-+	efi_memmap_walk(find_largest_hole, (u64 *)&max_gap);
-+	if (max_gap >= SZ_1G)
-+		panic("Cannot use FLATMEM with %ldMB hole\n"
-+		      "Please switch over to SPARSEMEM\n",
-+		      (max_gap >> 20));
- }
- 
- /*
-@@ -210,7 +204,7 @@ paging_init (void)
- 	max_zone_pfns[ZONE_DMA32] = max_dma;
- 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
- 
--	virtual_map_init();
-+	verify_gap_absence();
- 
- 	free_area_init(max_zone_pfns);
- 	zero_page_memmap_ptr = virt_to_page(ia64_imva(empty_zero_page));
-diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
-index ef12e097f318..9b5acf8fb092 100644
---- a/arch/ia64/mm/init.c
-+++ b/arch/ia64/mm/init.c
-@@ -574,20 +574,6 @@ ia64_pfn_valid (unsigned long pfn)
- }
- EXPORT_SYMBOL(ia64_pfn_valid);
- 
--int __init find_largest_hole(u64 start, u64 end, void *arg)
--{
--	u64 *max_gap = arg;
--
--	static u64 last_end = PAGE_OFFSET;
--
--	/* NOTE: this algorithm assumes efi memmap table is ordered */
--
--	if (*max_gap < (start - last_end))
--		*max_gap = start - last_end;
--	last_end = end;
--	return 0;
--}
--
- #endif /* CONFIG_VIRTUAL_MEM_MAP */
- 
- int __init register_active_ranges(u64 start, u64 len, int nid)
+ config NUMA
+ 	bool "NUMA support"
 -- 
 2.28.0
 
