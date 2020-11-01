@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E792A1FF9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 18:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75C342A2000
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 18:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbgKARF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Nov 2020 12:05:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
+        id S1727065AbgKARGE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Nov 2020 12:06:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727252AbgKARF5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Nov 2020 12:05:57 -0500
+        id S1727264AbgKARGC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Nov 2020 12:06:02 -0500
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B3262223F;
-        Sun,  1 Nov 2020 17:05:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3855208B6;
+        Sun,  1 Nov 2020 17:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604250355;
-        bh=Le2j2RNv1p6gtOVynTEu5nqxJHam5RooQAhygJjLGG8=;
+        s=default; t=1604250361;
+        bh=+ecFmVmt/rsUVyb3hVXQX25qqx1MNuz8K3wp7M/7+rI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N8BgJk5GaE41n0FbXxjobvJXBoCMVDBWlMYuZDhyNQW1ihjW/VrjISlyqhE/kjtt5
-         acWYBwNWTDuu4QWqYXFkmHIR2nR5vy//ooIG+dyBpYJFX52TTThlNsVTI6dOTXUbso
-         VC0xmSdyxNPFVzsCifXfHo5RO4zLpr0TTrhVWKbM=
+        b=u2/jIlBir/DJpSgEuwwICHipzapnBrfJ5wgziKCe76dN6IQWf2VbZfLeQF3gTGhwc
+         WCe6bIomXH+NoQ8agQkqUr7qOeSyy/W9VGgaEx48N/Pq869PCjWfU+m5Dwbpvc5Kq3
+         dYnfu7SqwADLLoQ0AmV0d1mb669IMNoEiY77DXKE=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-Subject: [PATCH v2 08/13] arm: remove CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
-Date:   Sun,  1 Nov 2020 19:04:49 +0200
-Message-Id: <20201101170454.9567-9-rppt@kernel.org>
+Subject: [PATCH v2 09/13] arm, arm64: move free_unused_memmap() to generic mm
+Date:   Sun,  1 Nov 2020 19:04:50 +0200
+Message-Id: <20201101170454.9567-10-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201101170454.9567-1-rppt@kernel.org>
 References: <20201101170454.9567-1-rppt@kernel.org>
@@ -57,272 +57,365 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-ARM is the only architecture that defines CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
-which in turn enables memmap_valid_within() function that is intended to
-verify existence  of struct page associated with a pfn when there are holes
-in the memory map.
+ARM and ARM64 free unused parts of the memory map just before the
+initialization of the page allocator. To allow holes in the memory map both
+architectures overload pfn_valid() and define HAVE_ARCH_PFN_VALID.
 
-However, the ARCH_HAS_HOLES_MEMORYMODEL also enables HAVE_ARCH_PFN_VALID
-and arch-specific pfn_valid() implementation that also deals with the holes
-in the memory map.
+Allowing holes in the memory map for FLATMEM may be useful for small
+machines, such as ARC and m68k and will enable those architectures to cease
+using DISCONTIGMEM and still support more than one memory bank.
 
-The only two users of memmap_valid_within() call this function after
-a call to pfn_valid() so the memmap_valid_within() check becomes redundant.
-
-Remove CONFIG_ARCH_HAS_HOLES_MEMORYMODEL and memmap_valid_within() and rely
-entirely on ARM's implementation of pfn_valid() that is now enabled
-unconditionally.
+Move the functions that free unused memory map to generic mm and enable
+them in case HAVE_ARCH_PFN_VALID=y.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- Documentation/vm/memory-model.rst |  3 +--
- arch/arm/Kconfig                  |  8 ++------
- arch/arm/mach-bcm/Kconfig         |  1 -
- arch/arm/mach-davinci/Kconfig     |  1 -
- arch/arm/mach-exynos/Kconfig      |  1 -
- arch/arm/mach-highbank/Kconfig    |  1 -
- arch/arm/mach-omap2/Kconfig       |  1 -
- arch/arm/mach-s5pv210/Kconfig     |  1 -
- arch/arm/mach-tango/Kconfig       |  1 -
- fs/proc/kcore.c                   |  2 --
- include/linux/mmzone.h            | 31 -------------------------------
- mm/mmzone.c                       | 14 --------------
- mm/vmstat.c                       |  4 ----
- 13 files changed, 3 insertions(+), 66 deletions(-)
+ arch/Kconfig         |  3 ++
+ arch/arm/Kconfig     |  4 +--
+ arch/arm/mm/init.c   | 78 ------------------------------------------
+ arch/arm64/Kconfig   |  4 +--
+ arch/arm64/mm/init.c | 68 -------------------------------------
+ mm/memblock.c        | 80 ++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 85 insertions(+), 152 deletions(-)
 
-diff --git a/Documentation/vm/memory-model.rst b/Documentation/vm/memory-model.rst
-index 9daadf9faba1..ce398a7dc6cd 100644
---- a/Documentation/vm/memory-model.rst
-+++ b/Documentation/vm/memory-model.rst
-@@ -51,8 +51,7 @@ call :c:func:`free_area_init` function. Yet, the mappings array is not
- usable until the call to :c:func:`memblock_free_all` that hands all the
- memory to the page allocator.
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 56b6ccc0e32d..d715da18a8a9 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -1028,6 +1028,9 @@ config HAVE_STATIC_CALL_INLINE
+ 	bool
+ 	depends on HAVE_STATIC_CALL
  
--If an architecture enables `CONFIG_ARCH_HAS_HOLES_MEMORYMODEL` option,
--it may free parts of the `mem_map` array that do not cover the
-+An architecture may free parts of the `mem_map` array that do not cover the
- actual physical pages. In such case, the architecture specific
- :c:func:`pfn_valid` implementation should take the holes in the
- `mem_map` into account.
++config HAVE_ARCH_PFN_VALID
++	bool
++
+ source "kernel/gcov/Kconfig"
+ 
+ source "scripts/gcc-plugins/Kconfig"
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index fe2f17eb2b50..83adc46c1e67 100644
+index 83adc46c1e67..495d42c5ecec 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -25,7 +25,7 @@ config ARM
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAVE_CUSTOM_GPIO_H
- 	select ARCH_HAS_GCOV_PROFILE_ALL
--	select ARCH_KEEP_MEMBLOCK if HAVE_ARCH_PFN_VALID || KEXEC
-+	select ARCH_KEEP_MEMBLOCK
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_NO_SG_CHAIN if !ARM_HAS_SG_CHAIN
- 	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-@@ -519,7 +519,6 @@ config ARCH_S3C24XX
- config ARCH_OMAP1
- 	bool "TI OMAP1"
- 	depends on MMU
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_OMAP
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
-@@ -1479,9 +1478,6 @@ config OABI_COMPAT
- 	  UNPREDICTABLE (in fact it can be predicted that it won't work
- 	  at all). If in doubt say N.
- 
--config ARCH_HAS_HOLES_MEMORYMODEL
--	bool
--
- config ARCH_SELECT_MEMORY_MODEL
+@@ -68,6 +68,7 @@ config ARM
+ 	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU
+ 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
+ 	select HAVE_ARCH_MMAP_RND_BITS if MMU
++	select HAVE_ARCH_PFN_VALID
+ 	select HAVE_ARCH_SECCOMP
+ 	select HAVE_ARCH_SECCOMP_FILTER if AEABI && !OABI_COMPAT
+ 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+@@ -1488,9 +1489,6 @@ config ARCH_SPARSEMEM_ENABLE
  	bool
- 
-@@ -1493,7 +1489,7 @@ config ARCH_SPARSEMEM_ENABLE
  	select SPARSEMEM_STATIC if SPARSEMEM
  
- config HAVE_ARCH_PFN_VALID
--	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
-+	def_bool y
- 
+-config HAVE_ARCH_PFN_VALID
+-	def_bool y
+-
  config HIGHMEM
  	bool "High Memory Support"
-diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-index ae790908fc74..9b594ae98153 100644
---- a/arch/arm/mach-bcm/Kconfig
-+++ b/arch/arm/mach-bcm/Kconfig
-@@ -211,7 +211,6 @@ config ARCH_BRCMSTB
- 	select BCM7038_L1_IRQ
- 	select BRCMSTB_L2_IRQ
- 	select BCM7120_L2_IRQ
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ZONE_DMA if ARM_LPAE
- 	select SOC_BRCMSTB
- 	select SOC_BUS
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index f56ff8c24043..de11030748d0 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -5,7 +5,6 @@ menuconfig ARCH_DAVINCI
- 	depends on ARCH_MULTI_V5
- 	select DAVINCI_TIMER
- 	select ZONE_DMA
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select PM_GENERIC_DOMAINS if PM
- 	select PM_GENERIC_DOMAINS_OF if PM && OF
- 	select REGMAP_MMIO
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index d2d249706ebb..56d272967fc0 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -8,7 +8,6 @@
- menuconfig ARCH_EXYNOS
- 	bool "Samsung Exynos"
- 	depends on ARCH_MULTI_V7
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_SUPPORTS_BIG_ENDIAN
- 	select ARM_AMBA
- 	select ARM_GIC
-diff --git a/arch/arm/mach-highbank/Kconfig b/arch/arm/mach-highbank/Kconfig
-index 1bc68913d62c..9de38ce8124f 100644
---- a/arch/arm/mach-highbank/Kconfig
-+++ b/arch/arm/mach-highbank/Kconfig
-@@ -2,7 +2,6 @@
- config ARCH_HIGHBANK
- 	bool "Calxeda ECX-1000/2000 (Highbank/Midway)"
- 	depends on ARCH_MULTI_V7
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_SUPPORTS_BIG_ENDIAN
- 	select ARM_AMBA
- 	select ARM_ERRATA_764369 if SMP
-diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
-index 3ee7bdff86b2..89fe1572c142 100644
---- a/arch/arm/mach-omap2/Kconfig
-+++ b/arch/arm/mach-omap2/Kconfig
-@@ -94,7 +94,6 @@ config SOC_DRA7XX
- config ARCH_OMAP2PLUS
- 	bool
- 	select ARCH_HAS_BANDGAP
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select ARCH_OMAP
- 	select CLKSRC_MMIO
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 95d4e8284866..d644b45bc29d 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -8,7 +8,6 @@
- config ARCH_S5PV210
- 	bool "Samsung S5PV210/S5PC110"
- 	depends on ARCH_MULTI_V7
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARM_VIC
- 	select CLKSRC_SAMSUNG_PWM
- 	select COMMON_CLK_SAMSUNG
-diff --git a/arch/arm/mach-tango/Kconfig b/arch/arm/mach-tango/Kconfig
-index 25b2fd434861..a9eeda36aeb1 100644
---- a/arch/arm/mach-tango/Kconfig
-+++ b/arch/arm/mach-tango/Kconfig
-@@ -3,7 +3,6 @@ config ARCH_TANGO
- 	bool "Sigma Designs Tango4 (SMP87xx)"
- 	depends on ARCH_MULTI_V7
- 	# Cortex-A9 MPCore r3p0, PL310 r3p2
--	select ARCH_HAS_HOLES_MEMORYMODEL
- 	select ARM_ERRATA_754322
- 	select ARM_ERRATA_764369 if SMP
- 	select ARM_ERRATA_775420
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e502414b3556..4d2e64e9016c 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -193,8 +193,6 @@ kclist_add_private(unsigned long pfn, unsigned long nr_pages, void *arg)
- 		return 1;
- 
- 	p = pfn_to_page(pfn);
--	if (!memmap_valid_within(pfn, p, page_zone(p)))
--		return 1;
- 
- 	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
- 	if (!ent)
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 876600a6e891..7385871768d4 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1440,37 +1440,6 @@ void sparse_init(void);
- #define pfn_valid_within(pfn) (1)
- #endif
- 
--#ifdef CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
--/*
-- * pfn_valid() is meant to be able to tell if a given PFN has valid memmap
-- * associated with it or not. This means that a struct page exists for this
-- * pfn. The caller cannot assume the page is fully initialized in general.
-- * Hotplugable pages might not have been onlined yet. pfn_to_online_page()
-- * will ensure the struct page is fully online and initialized. Special pages
-- * (e.g. ZONE_DEVICE) are never onlined and should be treated accordingly.
-- *
-- * In FLATMEM, it is expected that holes always have valid memmap as long as
-- * there is valid PFNs either side of the hole. In SPARSEMEM, it is assumed
-- * that a valid section has a memmap for the entire section.
-- *
-- * However, an ARM, and maybe other embedded architectures in the future
-- * free memmap backing holes to save memory on the assumption the memmap is
-- * never used. The page_zone linkages are then broken even though pfn_valid()
-- * returns true. A walker of the full memmap must then do this additional
-- * check to ensure the memmap they are looking at is sane by making sure
-- * the zone and PFN linkages are still valid. This is expensive, but walkers
-- * of the full memmap are extremely rare.
-- */
--bool memmap_valid_within(unsigned long pfn,
--					struct page *page, struct zone *zone);
--#else
--static inline bool memmap_valid_within(unsigned long pfn,
--					struct page *page, struct zone *zone)
--{
--	return true;
--}
--#endif /* CONFIG_ARCH_HAS_HOLES_MEMORYMODEL */
--
- #endif /* !__GENERATING_BOUNDS.H */
- #endif /* !__ASSEMBLY__ */
- #endif /* _LINUX_MMZONE_H */
-diff --git a/mm/mmzone.c b/mm/mmzone.c
-index 4686fdc23bb9..f337831affc2 100644
---- a/mm/mmzone.c
-+++ b/mm/mmzone.c
-@@ -72,20 +72,6 @@ struct zoneref *__next_zones_zonelist(struct zoneref *z,
- 	return z;
+ 	depends on MMU
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index d57112a276f5..a04ac5ea7641 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -267,83 +267,6 @@ static inline void poison_init_mem(void *s, size_t count)
+ 		*p++ = 0xe7fddef0;
  }
  
--#ifdef CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
--bool memmap_valid_within(unsigned long pfn,
--					struct page *page, struct zone *zone)
+-static inline void __init
+-free_memmap(unsigned long start_pfn, unsigned long end_pfn)
 -{
--	if (page_to_pfn(page) != pfn)
--		return false;
+-	struct page *start_pg, *end_pg;
+-	phys_addr_t pg, pgend;
 -
--	if (page_zone(page) != zone)
--		return false;
+-	/*
+-	 * Convert start_pfn/end_pfn to a struct page pointer.
+-	 */
+-	start_pg = pfn_to_page(start_pfn - 1) + 1;
+-	end_pg = pfn_to_page(end_pfn - 1) + 1;
 -
--	return true;
+-	/*
+-	 * Convert to physical addresses, and
+-	 * round start upwards and end downwards.
+-	 */
+-	pg = PAGE_ALIGN(__pa(start_pg));
+-	pgend = __pa(end_pg) & PAGE_MASK;
+-
+-	/*
+-	 * If there are free pages between these,
+-	 * free the section of the memmap array.
+-	 */
+-	if (pg < pgend)
+-		memblock_free_early(pg, pgend - pg);
 -}
--#endif /* CONFIG_ARCH_HAS_HOLES_MEMORYMODEL */
 -
- void lruvec_init(struct lruvec *lruvec)
+-/*
+- * The mem_map array can get very big.  Free the unused area of the memory map.
+- */
+-static void __init free_unused_memmap(void)
+-{
+-	unsigned long start, end, prev_end = 0;
+-	int i;
+-
+-	/*
+-	 * This relies on each bank being in address order.
+-	 * The banks are sorted previously in bootmem_init().
+-	 */
+-	for_each_mem_pfn_range(i, MAX_NUMNODES, &start, &end, NULL) {
+-#ifdef CONFIG_SPARSEMEM
+-		/*
+-		 * Take care not to free memmap entries that don't exist
+-		 * due to SPARSEMEM sections which aren't present.
+-		 */
+-		start = min(start,
+-				 ALIGN(prev_end, PAGES_PER_SECTION));
+-#else
+-		/*
+-		 * Align down here since the VM subsystem insists that the
+-		 * memmap entries are valid from the bank start aligned to
+-		 * MAX_ORDER_NR_PAGES.
+-		 */
+-		start = round_down(start, MAX_ORDER_NR_PAGES);
+-#endif
+-		/*
+-		 * If we had a previous bank, and there is a space
+-		 * between the current bank and the previous, free it.
+-		 */
+-		if (prev_end && prev_end < start)
+-			free_memmap(prev_end, start);
+-
+-		/*
+-		 * Align up here since the VM subsystem insists that the
+-		 * memmap entries are valid from the bank end aligned to
+-		 * MAX_ORDER_NR_PAGES.
+-		 */
+-		prev_end = ALIGN(end, MAX_ORDER_NR_PAGES);
+-	}
+-
+-#ifdef CONFIG_SPARSEMEM
+-	if (!IS_ALIGNED(prev_end, PAGES_PER_SECTION))
+-		free_memmap(prev_end,
+-			    ALIGN(prev_end, PAGES_PER_SECTION));
+-#endif
+-}
+-
+ static void __init free_highpages(void)
  {
- 	enum lru_list lru;
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 698bc0bc18d1..e292e63afebf 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1503,10 +1503,6 @@ static void pagetypeinfo_showblockcount_print(struct seq_file *m,
- 		if (!page)
- 			continue;
+ #ifdef CONFIG_HIGHMEM
+@@ -385,7 +308,6 @@ void __init mem_init(void)
+ 	set_max_mapnr(pfn_to_page(max_pfn) - mem_map);
  
--		/* Watch for unexpected holes punched in the memmap */
--		if (!memmap_valid_within(pfn, page, zone))
--			continue;
+ 	/* this will put all unused low memory onto the freelists */
+-	free_unused_memmap();
+ 	memblock_free_all();
+ 
+ #ifdef CONFIG_SA1111
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index f858c352f72a..b7e6a0c09d12 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -138,6 +138,7 @@ config ARM64
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_MMAP_RND_BITS
+ 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
++	select HAVE_ARCH_PFN_VALID
+ 	select HAVE_ARCH_PREL32_RELOCATIONS
+ 	select HAVE_ARCH_SECCOMP_FILTER
+ 	select HAVE_ARCH_STACKLEAK
+@@ -1021,9 +1022,6 @@ config ARCH_SELECT_MEMORY_MODEL
+ config ARCH_FLATMEM_ENABLE
+ 	def_bool !NUMA
+ 
+-config HAVE_ARCH_PFN_VALID
+-	def_bool y
 -
- 		if (page_zone(page) != zone)
- 			continue;
+ config HW_PERF_EVENTS
+ 	def_bool y
+ 	depends on ARM_PMU
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 095540667f0f..3d8328277bec 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -430,71 +430,6 @@ void __init bootmem_init(void)
+ 	memblock_dump_all();
+ }
  
+-#ifndef CONFIG_SPARSEMEM_VMEMMAP
+-static inline void free_memmap(unsigned long start_pfn, unsigned long end_pfn)
+-{
+-	struct page *start_pg, *end_pg;
+-	unsigned long pg, pgend;
+-
+-	/*
+-	 * Convert start_pfn/end_pfn to a struct page pointer.
+-	 */
+-	start_pg = pfn_to_page(start_pfn - 1) + 1;
+-	end_pg = pfn_to_page(end_pfn - 1) + 1;
+-
+-	/*
+-	 * Convert to physical addresses, and round start upwards and end
+-	 * downwards.
+-	 */
+-	pg = (unsigned long)PAGE_ALIGN(__pa(start_pg));
+-	pgend = (unsigned long)__pa(end_pg) & PAGE_MASK;
+-
+-	/*
+-	 * If there are free pages between these, free the section of the
+-	 * memmap array.
+-	 */
+-	if (pg < pgend)
+-		memblock_free(pg, pgend - pg);
+-}
+-
+-/*
+- * The mem_map array can get very big. Free the unused area of the memory map.
+- */
+-static void __init free_unused_memmap(void)
+-{
+-	unsigned long start, end, prev_end = 0;
+-	int i;
+-
+-	for_each_mem_pfn_range(i, MAX_NUMNODES, &start, &end, NULL) {
+-#ifdef CONFIG_SPARSEMEM
+-		/*
+-		 * Take care not to free memmap entries that don't exist due
+-		 * to SPARSEMEM sections which aren't present.
+-		 */
+-		start = min(start, ALIGN(prev_end, PAGES_PER_SECTION));
+-#endif
+-		/*
+-		 * If we had a previous bank, and there is a space between the
+-		 * current bank and the previous, free it.
+-		 */
+-		if (prev_end && prev_end < start)
+-			free_memmap(prev_end, start);
+-
+-		/*
+-		 * Align up here since the VM subsystem insists that the
+-		 * memmap entries are valid from the bank end aligned to
+-		 * MAX_ORDER_NR_PAGES.
+-		 */
+-		prev_end = ALIGN(end, MAX_ORDER_NR_PAGES);
+-	}
+-
+-#ifdef CONFIG_SPARSEMEM
+-	if (!IS_ALIGNED(prev_end, PAGES_PER_SECTION))
+-		free_memmap(prev_end, ALIGN(prev_end, PAGES_PER_SECTION));
+-#endif
+-}
+-#endif	/* !CONFIG_SPARSEMEM_VMEMMAP */
+-
+ /*
+  * mem_init() marks the free areas in the mem_map and tells us how much memory
+  * is free.  This is done after various parts of the system have claimed their
+@@ -510,9 +445,6 @@ void __init mem_init(void)
+ 
+ 	set_max_mapnr(max_pfn - PHYS_PFN_OFFSET);
+ 
+-#ifndef CONFIG_SPARSEMEM_VMEMMAP
+-	free_unused_memmap();
+-#endif
+ 	/* this will put all unused low memory onto the freelists */
+ 	memblock_free_all();
+ 
+diff --git a/mm/memblock.c b/mm/memblock.c
+index b68ee86788af..049df4163a97 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1926,6 +1926,85 @@ static int __init early_memblock(char *p)
+ }
+ early_param("memblock", early_memblock);
+ 
++static void __init free_memmap(unsigned long start_pfn, unsigned long end_pfn)
++{
++	struct page *start_pg, *end_pg;
++	phys_addr_t pg, pgend;
++
++	/*
++	 * Convert start_pfn/end_pfn to a struct page pointer.
++	 */
++	start_pg = pfn_to_page(start_pfn - 1) + 1;
++	end_pg = pfn_to_page(end_pfn - 1) + 1;
++
++	/*
++	 * Convert to physical addresses, and round start upwards and end
++	 * downwards.
++	 */
++	pg = PAGE_ALIGN(__pa(start_pg));
++	pgend = __pa(end_pg) & PAGE_MASK;
++
++	/*
++	 * If there are free pages between these, free the section of the
++	 * memmap array.
++	 */
++	if (pg < pgend)
++		memblock_free(pg, pgend - pg);
++}
++
++/*
++ * The mem_map array can get very big.  Free the unused area of the memory map.
++ */
++static void __init free_unused_memmap(void)
++{
++	unsigned long start, end, prev_end = 0;
++	int i;
++
++	if (!IS_ENABLED(CONFIG_HAVE_ARCH_PFN_VALID) ||
++	    IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP))
++		return;
++
++	/*
++	 * This relies on each bank being in address order.
++	 * The banks are sorted previously in bootmem_init().
++	 */
++	for_each_mem_pfn_range(i, MAX_NUMNODES, &start, &end, NULL) {
++#ifdef CONFIG_SPARSEMEM
++		/*
++		 * Take care not to free memmap entries that don't exist
++		 * due to SPARSEMEM sections which aren't present.
++		 */
++		start = min(start, ALIGN(prev_end, PAGES_PER_SECTION));
++#else
++		/*
++		 * Align down here since the VM subsystem insists that the
++		 * memmap entries are valid from the bank start aligned to
++		 * MAX_ORDER_NR_PAGES.
++		 */
++		start = round_down(start, MAX_ORDER_NR_PAGES);
++#endif
++
++		/*
++		 * If we had a previous bank, and there is a space
++		 * between the current bank and the previous, free it.
++		 */
++		if (prev_end && prev_end < start)
++			free_memmap(prev_end, start);
++
++		/*
++		 * Align up here since the VM subsystem insists that the
++		 * memmap entries are valid from the bank end aligned to
++		 * MAX_ORDER_NR_PAGES.
++		 */
++		prev_end = ALIGN(end, MAX_ORDER_NR_PAGES);
++	}
++
++#ifdef CONFIG_SPARSEMEM
++	if (!IS_ALIGNED(prev_end, PAGES_PER_SECTION))
++		free_memmap(prev_end, ALIGN(prev_end, PAGES_PER_SECTION));
++#endif
++}
++
+ static void __init __free_pages_memory(unsigned long start, unsigned long end)
+ {
+ 	int order;
+@@ -2012,6 +2091,7 @@ unsigned long __init memblock_free_all(void)
+ {
+ 	unsigned long pages;
+ 
++	free_unused_memmap();
+ 	reset_all_zones_managed_pages();
+ 
+ 	pages = free_low_memory_core_early();
 -- 
 2.28.0
 
