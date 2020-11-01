@@ -2,117 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B21432A1BD9
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 05:42:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0912A1D3E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Nov 2020 11:29:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbgKAEm2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Nov 2020 00:42:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53448 "EHLO mail.kernel.org"
+        id S1726308AbgKAK3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Nov 2020 05:29:10 -0500
+Received: from verein.lst.de ([213.95.11.211]:58318 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbgKAEm2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Nov 2020 00:42:28 -0400
-Received: from sol.attlocal.net (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2A0620678;
-        Sun,  1 Nov 2020 04:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604205747;
-        bh=jaDVORNfce3uwBZhrp0NbElg6KSzhRQETmn1s9n7b9c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LK7DWHWkVw0uoAUW6iGRATcZgj6scZnqYXGoGNN/dDadPVEt4pBAp5d9a7KgV4pUm
-         4yEX2IMzdShuWUPQ6E3shi08Nf2G9EG0OJvVCBVxOn8UDMpauozDCIq69M5PJnC/kz
-         Y1QgLpduhBeSKUhJ2TyyEdONgXKJoi/1Q6Ub0EV0=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Miklos Szeredi <miklos@szeredi.hu>
-Subject: [PATCH] fs/namespace.c: WARN if mnt_count has become negative
-Date:   Sat, 31 Oct 2020 21:40:21 -0700
-Message-Id: <20201101044021.1604670-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.29.1
+        id S1726138AbgKAK3K (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 1 Nov 2020 05:29:10 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 8ACD36736F; Sun,  1 Nov 2020 11:29:08 +0100 (CET)
+Date:   Sun, 1 Nov 2020 11:29:08 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 05/13] mm: simplify
+ generic_file_buffered_read_no_cached_page
+Message-ID: <20201101102908.GB26447@lst.de>
+References: <20201031090004.452516-1-hch@lst.de> <20201031090004.452516-6-hch@lst.de> <20201031162813.GS27442@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201031162813.GS27442@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Sat, Oct 31, 2020 at 04:28:13PM +0000, Matthew Wilcox wrote:
+> On Sat, Oct 31, 2020 at 09:59:56AM +0100, Christoph Hellwig wrote:
+> > +static int filemap_new_page(struct kiocb *iocb, struct iov_iter *iter,
+> > +		struct page **page)
+> 
+> I don't like this calling convention.  It's too easy to get it wrong,
+> as you demonstrated.  I preferred the way Kent had it with returning
+> an ERR_PTR.
 
-Missing calls to mntget() (or equivalently, too many calls to mntput())
-are hard to detect because mntput() delays freeing mounts using
-task_work_add(), then again using call_rcu().  As a result, mnt_count
-can often be decremented to -1 without getting a KASAN use-after-free
-report.  Such cases are still bugs though, and they point to real
-use-after-frees being possible.
+I guess for this function we can do that, here is the untested patch
+on top of my series to show what we'd end up with:
 
-For an example of this, see the bug fixed by commit 1b0b9cc8d379
-("vfs: fsmount: add missing mntget()"), discussed at
-https://lkml.kernel.org/linux-fsdevel/20190605135401.GB30925@lakrids.cambridge.arm.com/T/#u.
-This bug *should* have been trivial to find.  But actually, it wasn't
-found until syzkaller happened to use fchdir() to manipulate the
-reference count just right for the bug to be noticeable.
-
-Address this by making mntput_no_expire() issue a WARN if mnt_count has
-become negative.
-
-Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/namespace.c | 9 ++++++---
- fs/pnode.h     | 2 +-
- 2 files changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index cebaa3e817940..93006abe7946a 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -156,10 +156,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
- /*
-  * vfsmount lock must be held for write
-  */
--unsigned int mnt_get_count(struct mount *mnt)
-+int mnt_get_count(struct mount *mnt)
- {
- #ifdef CONFIG_SMP
--	unsigned int count = 0;
-+	int count = 0;
- 	int cpu;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index b45f0bafdbaebf..1ac1fcd0067bf1 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2281,38 +2281,40 @@ static int filemap_make_page_uptodate(struct kiocb *iocb, struct iov_iter *iter,
+ 	return 0;
+ }
  
- 	for_each_possible_cpu(cpu) {
-@@ -1139,6 +1139,7 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
- static void mntput_no_expire(struct mount *mnt)
+-static int filemap_new_page(struct kiocb *iocb, struct iov_iter *iter,
+-		struct page **page)
++static struct page *filemap_new_page(struct kiocb *iocb, struct iov_iter *iter)
  {
- 	LIST_HEAD(list);
-+	int count;
+ 	struct address_space *mapping = iocb->ki_filp->f_mapping;
+ 	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
+ 	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
++	struct page *page;
+ 	int error;
  
- 	rcu_read_lock();
- 	if (likely(READ_ONCE(mnt->mnt_ns))) {
-@@ -1162,7 +1163,9 @@ static void mntput_no_expire(struct mount *mnt)
- 	 */
- 	smp_mb();
- 	mnt_add_count(mnt, -1);
--	if (mnt_get_count(mnt)) {
-+	count = mnt_get_count(mnt);
-+	if (count != 0) {
-+		WARN_ON(count < 0);
- 		rcu_read_unlock();
- 		unlock_mount_hash();
- 		return;
-diff --git a/fs/pnode.h b/fs/pnode.h
-index 49a058c73e4c7..26f74e092bd98 100644
---- a/fs/pnode.h
-+++ b/fs/pnode.h
-@@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
- void propagate_mount_unlock(struct mount *);
- void mnt_release_group_id(struct mount *);
- int get_dominating_id(struct mount *mnt, const struct path *root);
--unsigned int mnt_get_count(struct mount *mnt);
-+int mnt_get_count(struct mount *mnt);
- void mnt_set_mountpoint(struct mount *, struct mountpoint *,
- 			struct mount *);
- void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
-
-base-commit: c2dc4c073fb71b50904493657a7622b481b346e3
--- 
-2.29.1
-
+ 	if (iocb->ki_flags & IOCB_NOIO)
+-		return -EAGAIN;
++		return ERR_PTR(-EAGAIN);
+ 
+-	*page = page_cache_alloc(mapping);
++	page = page_cache_alloc(mapping);
+ 	if (!page)
+-		return -ENOMEM;
+-	error = add_to_page_cache_lru(*page, mapping, index, gfp);
++		return ERR_PTR(-ENOMEM);
++	error = add_to_page_cache_lru(page, mapping, index, gfp);
+ 	if (error)
+ 		goto put_page;
+-	error = filemap_readpage(iocb, *page);
++	error = filemap_readpage(iocb, page);
+ 	if (error)
+ 		goto put_page;
+-	if (PageReadahead(*page)) {
++	if (PageReadahead(page)) {
+ 		error = -EAGAIN;
+ 		if (iocb->ki_flags & IOCB_NOIO)
+ 			goto put_page;
+ 		page_cache_async_readahead(mapping, &iocb->ki_filp->f_ra,
+-				iocb->ki_filp, *page, index,
++				iocb->ki_filp, page, index,
+ 				(iter->count + PAGE_SIZE - 1) >> PAGE_SHIFT);
+ 	}
+ 	return 0;
+ put_page:
+-	put_page(*page);
+-	return error;
++	put_page(page);
++	if (error == -EEXIST || error == AOP_TRUNCATED_PAGE)
++		return NULL;
++	return ERR_PTR(error);
+ }
+ 
+ static int filemap_find_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+@@ -2347,28 +2349,30 @@ static int filemap_read_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 		return -EINTR;
+ 
+ 	nr_pages = filemap_find_get_pages(iocb, iter, pages, nr);
+-	if (nr_pages) {
+-		for (i = 0; i < nr_pages; i++) {
+-			err = filemap_make_page_uptodate(iocb, iter, pages[i],
+-					index + i, i == 0);
+-			if (err) {
+-				for (j = i; j < nr_pages; j++)
+-					put_page(pages[j]);
+-				nr_pages = i;
+-				break;
+-			}
++	if (!nr_pages) {
++		pages[0] = filemap_new_page(iocb, iter);
++		if (pages[0] == NULL)
++			goto retry;
++		if (IS_ERR(pages[0]))
++			return PTR_ERR(pages[0]);
++		return 1;
++	}
++
++	for (i = 0; i < nr_pages; i++) {
++		err = filemap_make_page_uptodate(iocb, iter, pages[i],
++				index + i, i == 0);
++		if (err) {
++			for (j = i; j < nr_pages; j++)
++				put_page(pages[j]);
++			if (likely(i > 0))
++				return i;
++			if (err == AOP_TRUNCATED_PAGE)
++				goto retry;
++			return err;
+ 		}
+-	} else {
+-		err = filemap_new_page(iocb, iter, &pages[0]);
+-		if (!err)
+-			nr_pages = 1;
+ 	}
+ 
+-	if (likely(nr_pages))
+-		return nr_pages;
+-	if (err == -EEXIST || err == AOP_TRUNCATED_PAGE)
+-		goto retry;
+-	return err;
++	return nr_pages;
+ }
+ 
+ /**
