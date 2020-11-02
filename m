@@ -2,215 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C862A31BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 18:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDEDF2A31C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 18:39:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbgKBRij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 12:38:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50332 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727749AbgKBRii (ORCPT
+        id S1726045AbgKBRjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 12:39:12 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:32071 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbgKBRjJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 12:38:38 -0500
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF390C061A04
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Nov 2020 09:38:38 -0800 (PST)
-Received: by mail-io1-xd44.google.com with SMTP id y20so15800169iod.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Nov 2020 09:38:38 -0800 (PST)
+        Mon, 2 Nov 2020 12:39:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1604338748; x=1635874748;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=dX2nglVKDO2DF3nOIB0zWDHD7eMI/nCi9qf6n6jELZM=;
+  b=OGphKMiPbxhWnaMS0mSox8bswwo5RiGTPd4AxZ2sTymr1B88pV5+4BoO
+   lOv7snZrp9E1juHdxErrEKbsjUTlOetgaEpYflbATFoe3LJ7cABOl6pRC
+   LoO8UD6x143UasGxJYvX/m90RS8U3F35b0rl3+xvZHhL2nb9ju4onWg1I
+   Jj5zSM69hsCKg92ZwQLqTLmFOihaxAnr4p8ANcDeJqRddDig34htXUswp
+   lYDRqGdwEmnrwBQ58DffjaVLe2KDEqCFArkc5cnY1xaP40/LpIPKCU0Ly
+   Qe1lX6nY1TzgKtq7y8nHsrFCCqBm+bELVJLcRIHJp4NnjuXqZ/Evt/cYX
+   A==;
+IronPort-SDR: KLz42KXcrw6Tn1UI4h2bV2ShuLuT6Ag/L2+OxU0ewLBRwJZaUfIxyEZsOxnLg9sv/uPJfkbE1a
+ nHk0pG4mXrC9u/PtJ1LxS+v6yF0BGc3s+KDJpUU72fAwl7gSL0Kcnj4pB7GiyDIt64Ra/V+HO+
+ e2fbV1OXun2jLMOSC+gFIx31G6A7JWZSfJS+j7i/Y12IzSVoq7DyZBZ+AY3Vj3H6qn0ohs690+
+ c4Lj7t3dcAzAVp5kZIlYhxufe26Z/Qgb4cUUqK6GmGwvIT6r4lFtl1BM69fsOs2wTXqzIlHeqY
+ doc=
+X-IronPort-AV: E=Sophos;i="5.77,445,1596470400"; 
+   d="scan'208";a="151469030"
+Received: from mail-bl2nam02lp2050.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.50])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Nov 2020 01:39:06 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hYgykEq0vjaG3HVEuWl43X4ziOL7JzSMZobAbKQrA7DWN7Qn+cN15w2g2I1mg4bRsdnl0KaPZ6j31TH/z+7UJZvBv/9D2Ccm8UHic/kP759fwhuTGDSJhYbA6Ud3Qjf9Gig0EApIctQGdzepAx+1cnkXpsF2OBT1WLexpq7wWYZAlJvFb8Wd+NPycnBtpwFs6iqnG01+7vOjmPBO7iB5RX5+C5zaL/zEIsU9KRFYYU6Dd6j6nqcILbR29sfGGGbNV6gCP2KORAKHy5lWjUlnFSEbAfPNVXIs8ulbC6j2AHxSuA/pRG83CFXpAlL+Vd8rA9zNjgi2wOqc7gJ80ThDYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dX2nglVKDO2DF3nOIB0zWDHD7eMI/nCi9qf6n6jELZM=;
+ b=kXD0CxVZN/Sy5MtTa1ARgTNLzFq0A1AOIbLqzbMOG0wHJDaQU/q2XYKdJN0GU1RDmwOWqmzgUQi8hbfcercugN/ngdMPc6xeu69ZrndjwYrX04srg0gCVPWKS0nh/IbkqrJ95CtlH+X24sW1IiKQ/tN8WR5I5tiwfFcHZ25Hisxi+Nxx0mXCtPOawP8hdkeaJdyBTRMYGJN9j35n2PvchMkFJzdmtBSicvg9n/sAMsk7wSuw5F3l/9b0e3TnhGzohVnOcVBtIvT1c9Tfyb3LpNbNc5DzXJogbLaKh6KgmztszQNM69xyZ7khgJkeag4NBkArdOyonatu0/BZKUdlwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=XgHK+n73DGSjTlF4tReOQabxZrHP7prERV8ecq6Sut4=;
-        b=zjCJWGvRvEzzaS5KGlJUC1dFqwplLVJk01FNJYHeRqNkbT9zkXeL/ae9FSPhpyp1q0
-         nFn3GVmuHBfpz93h5PAflmCKQzU9LmiD0wZuY+IWuD1p+yQV/Lpdl8T/xukIcpeOF40T
-         nb2DsGZz0ffUJliV4/uN3XSrcPRI11fm+o/2+UZsYHDzdoHlzkT7F/XchGZEmpk9mXsB
-         oMcrMfPvAUPdUJF6XuZMg3TG6Xj97zvLFDCJRZN9eNkAKnMv/jzMrGTnZD5FWjF78GO1
-         h8QUgiawSnLNGi8qLiljhEoD5G1rK+YgIlNCHbrhx6S5M1s4g+QtZXEnL4ycaqbt8eYt
-         4tog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XgHK+n73DGSjTlF4tReOQabxZrHP7prERV8ecq6Sut4=;
-        b=NlJSm5kazA4/p5pL8hZ8qmIi1bLNwDvgn7cHcGOldikiGOZwMbVo2LHx59fr/VvL9G
-         mTSWxPtw/AyP6vt5zbE5vt5bQ2cDSRa7AtI9Wv7yfj/iAVtx2EnvTO9x0oqOzQKnfTv4
-         Wyx7sJtqboGy+Uyr/IGgdPSayFcVkFHCaoMqY43lv77JMLjggUJbj9RkkoMlnJQe8UOC
-         k0BiwJJ6cAS+vWC8IzFGnE8jrh6mrQaRqkgxoLVQPTfzNwqDzVr4VXCqyBbDIX+v5dXr
-         BpLtL/OsHhMtZn/axtonMF1TColYFSHQ6XNrZ7mr1P8af2K0gFMNQkW4i4NcQ+Dfni6O
-         5mHQ==
-X-Gm-Message-State: AOAM531NQK3zj26xK/Fh0z3HcIWmCspY7iz2XMoGn4i7jRXui2l8NcSu
-        P3Y7P5eqDSx/Tw4PyY8GpNWpVg==
-X-Google-Smtp-Source: ABdhPJzLYKP4xBEydsBHfpr2/aVGTAX5oAa8OeKplgO09s2gpfHx4JJivnwZhV4NWx5yRt0KLomPpA==
-X-Received: by 2002:a05:6602:2c41:: with SMTP id x1mr11554294iov.58.1604338717964;
-        Mon, 02 Nov 2020 09:38:37 -0800 (PST)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id f203sm10313277ioa.23.2020.11.02.09.38.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Nov 2020 09:38:37 -0800 (PST)
-Subject: Re: KASAN: null-ptr-deref Write in kthread_use_mm
-To:     syzbot <syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
-References: <00000000000008604f05b31e6867@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d74a8b22-bd5e-102f-e896-79e66b09a4a4@kernel.dk>
-Date:   Mon, 2 Nov 2020 10:38:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <00000000000008604f05b31e6867@google.com>
-Content-Type: text/plain; charset=utf-8
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dX2nglVKDO2DF3nOIB0zWDHD7eMI/nCi9qf6n6jELZM=;
+ b=aNxe7YOqRJcgmPDarLhw9KQ/WJ6IMu7uUcdKoszMv673UTgJnjZUHS9Z70G5lB5K8bR5wE97GKnARhPhsVos7FJpjxnEwqR5ytMqVT7N3rctOTObqflV2RWSoOlKJlHvopKeS04+d6irrVBirdUvWj/FkWyFm6rrSbQ5g1QMWOs=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN6PR04MB4686.namprd04.prod.outlook.com
+ (2603:10b6:805:b0::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Mon, 2 Nov
+ 2020 17:39:05 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::619a:567c:d053:ce25]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::619a:567c:d053:ce25%6]) with mapi id 15.20.3499.030; Mon, 2 Nov 2020
+ 17:39:05 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH v9 02/41] iomap: support REQ_OP_ZONE_APPEND
+Thread-Topic: [PATCH v9 02/41] iomap: support REQ_OP_ZONE_APPEND
+Thread-Index: AQHWrsQvkXsfd1KoB0aviZWNwhsa1g==
+Date:   Mon, 2 Nov 2020 17:39:05 +0000
+Message-ID: <SN4PR0401MB35981FB3BD32C8C2200BA3169B100@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
+ <cb409918a22b8f15ec20d7efad2281cb4c99d18c.1604065694.git.naohiro.aota@wdc.com>
+ <20201102165502.GA7123@magnolia>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: oracle.com; dkim=none (message not signed)
+ header.d=none;oracle.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: be73e225-6184-4ab1-1f50-08d87f5631fa
+x-ms-traffictypediagnostic: SN6PR04MB4686:
+x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN6PR04MB4686AC708CCE6411D57AB2029B100@SN6PR04MB4686.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:3276;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: J2z/ZaJliOhx9LWCW/w5Z30kTcprgPtfH6dOnrYEPsCRlPKGcufASqgvMzf7VDnZsV5RJ/0L9zzEFolO9wKEdG1mKFhS2HwlnEl1aJspXXKBa4VRZ/wLaXihD88guKgPQuGGxggCxw+kyqCIf46KyXTyDyvyd86wQo6K/smaqcyWWGYYerKYEzQMF1iGmrstl9ZcYyjKvFbMCGsQK9eh4QkWmqU+3Rd8o5gTed6LsVUDi5V6XL/jMEGa7WG800rSm+/ujGEdZj/L4ArCsJ3D1Dt/+kdd/PlYDnBX2pETws0iGGzCIXf720LVd69dRepUwWEqlqsbbo7K3fwrp+TP2w==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(136003)(366004)(376002)(396003)(110136005)(54906003)(66446008)(4326008)(64756008)(8676002)(8936002)(66946007)(86362001)(66556008)(66476007)(316002)(76116006)(91956017)(55016002)(2906002)(478600001)(53546011)(6506007)(7696005)(26005)(71200400001)(558084003)(6636002)(33656002)(52536014)(9686003)(5660300002)(186003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: eEtMVuDxg7WAghPg5JbcV6UI72g2/33chgBOlFUBVS2levUgL6qXeKIt+EQ7nbrn68I320WFBJ2mM3ZkU+H5XxcvvqFBnxcoc/hKPL6w47Cf+FiMs191/ht6iS0DkgTZFuj01g0TmhZS/Lvw4iTkf6ACXTaaRacRfxbk5JDbibP0CghXXQrMTSfU9nkOXWzJqo4Hgssuu+UqXcnwzHiEytzqmY8Wzp8vGx6fSLsAqcxdtYN8/JOP+Ri3VpABGws1HHDoga+E6T/+KB80bsE+z33Ewm2jbbNXfvP6k8ZR3NhMCq9brblGEiI9uGTU2r4SFYuia1n8+Q4wN08Gc6GtKx6ETp3AcKvPzEKNANCOihirsDwT0nrlKGuHgmMCKczuz5KuqIg+KDTn73j+BKaCTwoxqcbMTMNacdJUyvl9s8BiScnN/j9I0tSQ9tKfuwJGGEbuPGHnVJgEpxmn9U/m1IKjC98+PtePtdgd77R+SLV5F4exKXA1rkcsS/blhFdvTaryNTM320VvD5NXtH4/hSq/DGp4iHbbEaGOS1f//NiRxACqSfNgD0XsXysgZGReOloyYbCFVaFZ3fDqHSXm3JQTBxXfV27h2sTVQSbyQbGoypRoZj0pRiF09w14KIDYVLiDepR5tTwIDo9WnZaUlA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be73e225-6184-4ab1-1f50-08d87f5631fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2020 17:39:05.4287
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: I/OIs40p0go0HmziupnQB723uDh9GK2NyTmpzUCGP2vLAJzZ9Ykj1qwZHUf0m54YU8KjOI8bVEeBOQj4q76VM+cKsMBhYF4qZZ14bdyfjUc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4686
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/2/20 4:54 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4e78c578 Add linux-next specific files for 20201030
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148969d4500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=83318758268dc331
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b57abf7ee60829090495
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e1346c500000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388fbca500000
-> 
-> The issue was bisected to:
-> 
-> commit 4d004099a668c41522242aa146a38cc4eb59cb1e
-> Author: Peter Zijlstra <peterz@infradead.org>
-> Date:   Fri Oct 2 09:04:21 2020 +0000
-> 
->     lockdep: Fix lockdep recursion
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1354e614500000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d4e614500000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1754e614500000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com
-> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-> BUG: KASAN: null-ptr-deref in mmgrab include/linux/sched/mm.h:36 [inline]
-> BUG: KASAN: null-ptr-deref in kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
-> Write of size 4 at addr 0000000000000060 by task io_uring-sq/26191
-> 
-> CPU: 1 PID: 26191 Comm: io_uring-sq Not tainted 5.10.0-rc1-next-20201030-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x107/0x163 lib/dump_stack.c:118
->  __kasan_report mm/kasan/report.c:549 [inline]
->  kasan_report.cold+0x5/0x37 mm/kasan/report.c:562
->  check_memory_region_inline mm/kasan/generic.c:186 [inline]
->  check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
->  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
->  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
->  mmgrab include/linux/sched/mm.h:36 [inline]
->  kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
->  __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
->  __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
->  io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
->  io_init_req fs/io_uring.c:6661 [inline]
->  io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
->  __io_sq_thread fs/io_uring.c:6904 [inline]
->  io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
->  kthread+0x3af/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> ==================================================================
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 1 PID: 26191 Comm: io_uring-sq Tainted: G    B             5.10.0-rc1-next-20201030-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x107/0x163 lib/dump_stack.c:118
->  panic+0x306/0x73d kernel/panic.c:231
->  end_report+0x58/0x5e mm/kasan/report.c:106
->  __kasan_report mm/kasan/report.c:552 [inline]
->  kasan_report.cold+0xd/0x37 mm/kasan/report.c:562
->  check_memory_region_inline mm/kasan/generic.c:186 [inline]
->  check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
->  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
->  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
->  mmgrab include/linux/sched/mm.h:36 [inline]
->  kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
->  __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
->  __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
->  io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
->  io_init_req fs/io_uring.c:6661 [inline]
->  io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
->  __io_sq_thread fs/io_uring.c:6904 [inline]
->  io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
->  kthread+0x3af/0x4a0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-
-I think this should fix it - we could _probably_ get by with a
-READ_ONCE() of the task mm for this case, but let's play it safe and
-lock down the task for a guaranteed consistent view of the current
-state.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dd2ee77feec6..610332f443bd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -995,20 +995,33 @@ static void io_sq_thread_drop_mm(void)
- 	if (mm) {
- 		kthread_unuse_mm(mm);
- 		mmput(mm);
-+		current->mm = NULL;
- 	}
- }
- 
- static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
- {
--	if (!current->mm) {
--		if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL) ||
--			     !ctx->sqo_task->mm ||
--			     !mmget_not_zero(ctx->sqo_task->mm)))
--			return -EFAULT;
--		kthread_use_mm(ctx->sqo_task->mm);
-+	struct mm_struct *mm;
-+
-+	if (current->mm)
-+		return 0;
-+
-+	/* Should never happen */
-+	if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL)))
-+		return -EFAULT;
-+
-+	task_lock(ctx->sqo_task);
-+	mm = ctx->sqo_task->mm;
-+	if (unlikely(!mm || !mmget_not_zero(mm)))
-+		mm = NULL;
-+	task_unlock(ctx->sqo_task);
-+
-+	if (mm) {
-+		kthread_use_mm(mm);
-+		return 0;
- 	}
- 
--	return 0;
-+	return -EFAULT;
- }
- 
- static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
-
--- 
-Jens Axboe
-
+On 02/11/2020 17:55, Darrick J. Wong wrote:=0A=
+> Also, I think this should be hoisted into a separate helper to return=0A=
+> bi_opf rather than making iomap_dio_bio_actor even longer...=0A=
+=0A=
+=0A=
+Fixed up, thanks.=0A=
+=0A=
+(Speaking for Naohiro here)=0A=
