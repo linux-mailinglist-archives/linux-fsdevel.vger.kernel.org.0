@@ -2,791 +2,468 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3719C2A3632
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 22:59:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6B52A3665
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 23:21:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726018AbgKBV7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 16:59:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34842 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgKBV7T (ORCPT
+        id S1726671AbgKBWVv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 17:21:51 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:2280 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbgKBWVv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 16:59:19 -0500
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78454C0617A6;
-        Mon,  2 Nov 2020 13:59:18 -0800 (PST)
-Received: by mail-wr1-x443.google.com with SMTP id g12so16286726wrp.10;
-        Mon, 02 Nov 2020 13:59:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TN02E/EzDiWYUi25ADZPJnC38R9CzThFYlGpaPZAgOo=;
-        b=qXlfvMvB2x88RF3V/E944969uEcGZ+euKPty9tCy2FYxvRElgk6F14mBRGRDovBFqk
-         8OXPEdxE1RRh/MWP+5DMCwea/anM/NIHNw1xbvLs5KeVtuhvkpUP8dvVtmhCuSFfobpO
-         WiCExph0Ljp6233JWsYHyZfwFCRsCGGoa1b8P0r3I2kLEoKOcwf9MJTXd+SeUwJF+Ih+
-         oP1FT9tSApHTHOl5A+g9MwaeZDVdcRalrQ9bwZho9GmNJKYOsdXsl6FUR5qwLwyIiSA7
-         Qsn7VbXRo+oOR18Khjx8u4V9q1FhscxVraozdXbHOSklHYWh6UWrRbzldGzKqIfLbybV
-         tRtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TN02E/EzDiWYUi25ADZPJnC38R9CzThFYlGpaPZAgOo=;
-        b=IRfkHkbFVSyHGo1fT8ogVMaM4MVgl/fZXzAX5ummbhvxIRgpCREceK26OvuHL7IvDw
-         /qIYdH+lTekucM4i1R34ZIjDhEeamECiGcidvjNEPTUwVOhH9SPpJbheRMIKWOxd3Y6A
-         pL8y4fdHR5+fDmQorsgMjUBffQfHBQo4hzaoBssgBu4pWhxTAwZJiY3fjmEYJ2haYfW2
-         7lBbtaGnqevMQPlY6FqrcgFK79yxBrzZOFp20shqMnohKq3oUUSUG/NoKZi4lBZo6boc
-         WdtItXbNXOcpTD7UWlYt6VqR0y7gxId0wYvxXvF08Yz+S2ncjwc0MR1c+CpHZ4DeyQbN
-         w+hg==
-X-Gm-Message-State: AOAM533RJeRFQCEAUc1doAnGO0ETF6P5OaDgUbvypQaFqQdnU87CWJFd
-        bKyx4Szp80j0FedsWyMnSM/KgSuB1pw=
-X-Google-Smtp-Source: ABdhPJwFY4UHbKDF/9fs2mCucxC4DftqK3f0W/sQvA0eLcXxhoWPhdGfXRLKwY3lo/xO+Pw+illBow==
-X-Received: by 2002:adf:f1c8:: with SMTP id z8mr24196689wro.371.1604354356936;
-        Mon, 02 Nov 2020 13:59:16 -0800 (PST)
-Received: from localhost.localdomain ([170.253.60.68])
-        by smtp.googlemail.com with ESMTPSA id f5sm770837wmh.16.2020.11.02.13.59.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2020 13:59:16 -0800 (PST)
-From:   Alejandro Colomar <colomar.6.4.3@gmail.com>
-To:     Benjamin LaHaise <bcrl@kvack.org>
-Cc:     Alejandro Colomar <colomar.6.4.3@gmail.com>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fs/aio.c: Cosmetic
-Date:   Mon,  2 Nov 2020 22:58:10 +0100
-Message-Id: <20201102215809.17312-1-colomar.6.4.3@gmail.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201102152439.315640-1-colomar.6.4.3@gmail.com>
-References: <20201102152439.315640-1-colomar.6.4.3@gmail.com>
+        Mon, 2 Nov 2020 17:21:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1604355710; x=1635891710;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dTFvMUUMYOuHYP6C6sjwvOno8z3vF+b+NZoTf9DliaE=;
+  b=iu2IdcGHPiCkzmWm9o5c9Ylmz8uw8pwgpr+dNg+DBuaDAO+yOAx1uJnS
+   67LHkxlfigFof862lzwIKxVKbgpyHLabZM0cNHCotfgQmiXg5GcdeKkxN
+   gOyyRDewGaEIzebCE7N+Xeh4p45zv3axAxIzdyilsVmUzm6WV2gOKGxCw
+   VWJDDEvZWewnWw87Gsn/450vBi5b3MvhuvihC4Xti9KQx55UzVIlpmzCy
+   8D5XLqaAU2aYq78p11kIuGMY4YEfRg8PG6sceaJrwzHZtyBxMVtaX23EV
+   Hd8CqDgQQyJEP5semryYlsTNMVsSqskt2Z1+/sEXmvAYLPCeGavgiGjAi
+   Q==;
+IronPort-SDR: CBFDdCTJOLWtC7+tShjWXuCrb2TllQY4mXffBOyHlwRn08tn/l+mYlYW+cMX9me9Chbqt5Evcq
+ 4E6bAR3Z3uwOHOYEC8yoJi1naA9fSCzUpXb4KECLg+b7yxL1P7tVjBTPp8tIyPxbCOoq7G2s/S
+ /kgAHLoxG49n7jcI2wMyfpw0hU+iHpwQG7GQu0gUiPUYoVXP1hUW7mia+woFycMr86R1IsqbuO
+ oGEYIUSkAV7ipG0TkKeqar37I6bJGTGJ9cGjaxI/q57O5vE4G0eutlH2TWSZngjoPCzOdVkEuu
+ czU=
+X-IronPort-AV: E=Sophos;i="5.77,446,1596470400"; 
+   d="scan'208";a="152793775"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Nov 2020 06:21:50 +0800
+IronPort-SDR: Yf6tTYqM2sFAr+rei6vfJw2AfVOs23sAPwjTeYAga19yxIVNdaL2yu4gMBKgERS2FKEkvmZzhV
+ h22wD8OnEVED5/ga4UHmlNNI7f9UZ/E4QhOYv3OPCsoYQG6yV+qT5hsyAWlHzsQI9/rsyuuWTo
+ WnVKimOOh51rgfNtZEwwFVZiDRm3/DT8V+r/sRqEhfBpJWD44ip2oyc2TAqIk0nf81E4CUz/iL
+ QIr9T/q4VFuv6jw3V3d5nIWKke+smbzKFy2eftkn/ChJfyQcj0FFHM5ntPGL6sOZbywCb/8VrC
+ LCSSptI3wWda7C2OK8q00h/V
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2020 14:06:49 -0800
+IronPort-SDR: xV3oDOPIEYBXNA0fiiiluucEd6nXOTETB8XnWSZP4w7pB/9GIa4FQcLzgQtWT8dtCFEKw8kSAh
+ iVl6JB3INjyfCpI1034uPdz4oJrjzMde1hli4te0ZJBi5F+JTsmM6p/88nFkEs0sfsAzaT5+tj
+ 05okwvq3CqMWo7HwWLIPuVltQJHVxv91pDh89UwpZ8dwp11/4obXPQVrJpiuDLiXmBVBnvK71i
+ fqGf6SBQLSLWrjb/ssVVBml/xBGewLNMuAEIFw0am6Oj0pjylnxzLgb3JPWkxcrLYqWr/Hdmt2
+ gDg=
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip02.wdc.com with SMTP; 02 Nov 2020 14:21:49 -0800
+Received: (nullmailer pid 3794692 invoked by uid 1000);
+        Mon, 02 Nov 2020 22:21:48 -0000
+Date:   Tue, 3 Nov 2020 07:21:48 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 12/41] btrfs: implement zoned chunk allocator
+Message-ID: <20201102222148.tc4e3li6qu4gmxeh@naota.dhcp.fujisawa.hgst.com>
+References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
+ <5b9798f6e4c317e6a2c433ef88ffeabe00b93bb3.1604065695.git.naohiro.aota@wdc.com>
+ <54c78c27-37ad-7b42-7d0a-2b1b46c69dac@toxicpanda.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <54c78c27-37ad-7b42-7d0a-2b1b46c69dac@toxicpanda.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changes:
-- Consistently use 'unsigned int', instead of 'unsigned'.
-- Add a blank line after variable declarations.
-- Move variable declarations to the top of functions.
-- Add a blank line at the top of functions if there are no declarations.
-- Invert logic of 'if's to reduce indentation and simplify function logic.
-	- Add goto tags when needed.
-	- Early return when appropriate.
-- Add braces to 'else' if the corresponding 'if' used braces.
-- Replace spaces by tabs
+On Mon, Nov 02, 2020 at 03:09:58PM -0500, Josef Bacik wrote:
+>On 10/30/20 9:51 AM, Naohiro Aota wrote:
+>>This commit implements a zoned chunk/dev_extent allocator. The zoned
+>>allocator aligns the device extents to zone boundaries, so that a zone
+>>reset affects only the device extent and does not change the state of
+>>blocks in the neighbor device extents.
+>>
+>>Also, it checks that a region allocation is not overlapping any of the
+>>super block zones, and ensures the region is empty.
+>>
+>>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+>>---
+>>  fs/btrfs/volumes.c | 131 +++++++++++++++++++++++++++++++++++++++++++++
+>>  fs/btrfs/volumes.h |   1 +
+>>  fs/btrfs/zoned.c   | 126 +++++++++++++++++++++++++++++++++++++++++++
+>>  fs/btrfs/zoned.h   |  30 +++++++++++
+>>  4 files changed, 288 insertions(+)
+>>
+>>diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+>>index db884b96a5ea..78c62ef02e6f 100644
+>>--- a/fs/btrfs/volumes.c
+>>+++ b/fs/btrfs/volumes.c
+>>@@ -1416,6 +1416,14 @@ static bool contains_pending_extent(struct btrfs_device *device, u64 *start,
+>>  	return false;
+>>  }
+>>+static inline u64 dev_extent_search_start_zoned(struct btrfs_device *device,
+>>+						u64 start)
+>>+{
+>>+	start = max_t(u64, start,
+>>+		      max_t(u64, device->zone_info->zone_size, SZ_1M));
+>>+	return btrfs_zone_align(device, start);
+>>+}
+>>+
+>>  static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
+>>  {
+>>  	switch (device->fs_devices->chunk_alloc_policy) {
+>>@@ -1426,11 +1434,57 @@ static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
+>>  		 * make sure to start at an offset of at least 1MB.
+>>  		 */
+>>  		return max_t(u64, start, SZ_1M);
+>>+	case BTRFS_CHUNK_ALLOC_ZONED:
+>>+		return dev_extent_search_start_zoned(device, start);
+>>  	default:
+>>  		BUG();
+>>  	}
+>>  }
+>>+static bool dev_extent_hole_check_zoned(struct btrfs_device *device,
+>>+					u64 *hole_start, u64 *hole_size,
+>>+					u64 num_bytes)
+>>+{
+>>+	u64 zone_size = device->zone_info->zone_size;
+>>+	u64 pos;
+>>+	int ret;
+>>+	int changed = 0;
+>>+
+>>+	ASSERT(IS_ALIGNED(*hole_start, zone_size));
+>>+
+>>+	while (*hole_size > 0) {
+>>+		pos = btrfs_find_allocatable_zones(device, *hole_start,
+>>+						   *hole_start + *hole_size,
+>>+						   num_bytes);
+>>+		if (pos != *hole_start) {
+>>+			*hole_size = *hole_start + *hole_size - pos;
+>>+			*hole_start = pos;
+>>+			changed = 1;
+>>+			if (*hole_size < num_bytes)
+>>+				break;
+>>+		}
+>>+
+>>+		ret = btrfs_ensure_empty_zones(device, pos, num_bytes);
+>>+
+>>+		/* range is ensured to be empty */
+>>+		if (!ret)
+>>+			return changed;
+>>+
+>>+		/* given hole range was invalid (outside of device) */
+>>+		if (ret == -ERANGE) {
+>>+			*hole_start += *hole_size;
+>>+			*hole_size = 0;
+>>+			return 1;
+>>+		}
+>>+
+>>+		*hole_start += zone_size;
+>>+		*hole_size -= zone_size;
+>>+		changed = 1;
+>>+	}
+>>+
+>>+	return changed;
+>>+}
+>>+
+>>  /**
+>>   * dev_extent_hole_check - check if specified hole is suitable for allocation
+>>   * @device:	the device which we have the hole
+>>@@ -1463,6 +1517,10 @@ static bool dev_extent_hole_check(struct btrfs_device *device, u64 *hole_start,
+>>  	case BTRFS_CHUNK_ALLOC_REGULAR:
+>>  		/* No extra check */
+>>  		break;
+>>+	case BTRFS_CHUNK_ALLOC_ZONED:
+>>+		changed |= dev_extent_hole_check_zoned(device, hole_start,
+>>+						       hole_size, num_bytes);
+>I'm confused here, we check to make sure the pending stuff doesn't 
+>overlap with non-empty zones.  However we don't ever actually mark 
+>zones as non-empty except on mount.  I realize that if we allocate 
+>this zone then it appears pending and thus we won't allocate with this 
+>zone again while the fs is mounted, but it took me a while to realize 
+>this.  Is there a reason to not mark a zone as non-empty when we 
+>allocate from it?
 
-This patch does not introduce any actual changes in behavior.
+It's marking the zones as non-empty. Allocated zones eventually
+construct a block group in btrfs_make_block_group(). The function calls
+btrfs_load_block_group_zone_info() and that will clear the empty flag.
 
-Signed-off-by: Alejandro Colomar <colomar.6.4.3@gmail.com>
----
+>
+>
+>>+		break;
+>>  	default:
+>>  		BUG();
+>>  	}
+>>@@ -1517,6 +1575,9 @@ static int find_free_dev_extent_start(struct btrfs_device *device,
+>>  	search_start = dev_extent_search_start(device, search_start);
+>>+	WARN_ON(device->zone_info &&
+>>+		!IS_ALIGNED(num_bytes, device->zone_info->zone_size));
+>>+
+>>  	path = btrfs_alloc_path();
+>>  	if (!path)
+>>  		return -ENOMEM;
+>>@@ -4907,6 +4968,37 @@ static void init_alloc_chunk_ctl_policy_regular(
+>>  	ctl->dev_extent_min = BTRFS_STRIPE_LEN * ctl->dev_stripes;
+>>  }
+>>+static void
+>>+init_alloc_chunk_ctl_policy_zoned(struct btrfs_fs_devices *fs_devices,
+>>+				  struct alloc_chunk_ctl *ctl)
+>>+{
+>>+	u64 zone_size = fs_devices->fs_info->zone_size;
+>>+	u64 limit;
+>>+	int min_num_stripes = ctl->devs_min * ctl->dev_stripes;
+>>+	int min_data_stripes = (min_num_stripes - ctl->nparity) / ctl->ncopies;
+>>+	u64 min_chunk_size = min_data_stripes * zone_size;
+>>+	u64 type = ctl->type;
+>>+
+>>+	ctl->max_stripe_size = zone_size;
+>>+	if (type & BTRFS_BLOCK_GROUP_DATA) {
+>>+		ctl->max_chunk_size = round_down(BTRFS_MAX_DATA_CHUNK_SIZE,
+>>+						 zone_size);
+>>+	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
+>>+		ctl->max_chunk_size = ctl->max_stripe_size;
+>>+	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
+>>+		ctl->max_chunk_size = 2 * ctl->max_stripe_size;
+>>+		ctl->devs_max = min_t(int, ctl->devs_max,
+>>+				      BTRFS_MAX_DEVS_SYS_CHUNK);
+>>+	}
+>>+
+>>+	/* We don't want a chunk larger than 10% of writable space */
+>>+	limit = max(round_down(div_factor(fs_devices->total_rw_bytes, 1),
+>>+			       zone_size),
+>>+		    min_chunk_size);
+>>+	ctl->max_chunk_size = min(limit, ctl->max_chunk_size);
+>>+	ctl->dev_extent_min = zone_size * ctl->dev_stripes;
+>>+}
+>>+
+>>  static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
+>>  				 struct alloc_chunk_ctl *ctl)
+>>  {
+>>@@ -4927,6 +5019,9 @@ static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
+>>  	case BTRFS_CHUNK_ALLOC_REGULAR:
+>>  		init_alloc_chunk_ctl_policy_regular(fs_devices, ctl);
+>>  		break;
+>>+	case BTRFS_CHUNK_ALLOC_ZONED:
+>>+		init_alloc_chunk_ctl_policy_zoned(fs_devices, ctl);
+>>+		break;
+>>  	default:
+>>  		BUG();
+>>  	}
+>>@@ -5053,6 +5148,40 @@ static int decide_stripe_size_regular(struct alloc_chunk_ctl *ctl,
+>>  	return 0;
+>>  }
+>>+static int decide_stripe_size_zoned(struct alloc_chunk_ctl *ctl,
+>>+				    struct btrfs_device_info *devices_info)
+>>+{
+>>+	u64 zone_size = devices_info[0].dev->zone_info->zone_size;
+>>+	/* number of stripes that count for block group size */
+>>+	int data_stripes;
+>>+
+>>+	/*
+>>+	 * It should hold because:
+>>+	 *    dev_extent_min == dev_extent_want == zone_size * dev_stripes
+>>+	 */
+>>+	ASSERT(devices_info[ctl->ndevs - 1].max_avail == ctl->dev_extent_min);
+>>+
+>>+	ctl->stripe_size = zone_size;
+>>+	ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
+>>+	data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
+>>+
+>>+	/*
+>>+	 * stripe_size is fixed in ZONED. Reduce ndevs instead.
+>>+	 */
+>>+	if (ctl->stripe_size * data_stripes > ctl->max_chunk_size) {
+>>+		ctl->ndevs = div_u64(div_u64(ctl->max_chunk_size * ctl->ncopies,
+>>+					     ctl->stripe_size) + ctl->nparity,
+>>+				     ctl->dev_stripes);
+>>+		ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
+>>+		data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
+>>+		ASSERT(ctl->stripe_size * data_stripes <= ctl->max_chunk_size);
+>>+	}
+>>+
+>>+	ctl->chunk_size = ctl->stripe_size * data_stripes;
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>  static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
+>>  			      struct alloc_chunk_ctl *ctl,
+>>  			      struct btrfs_device_info *devices_info)
+>>@@ -5080,6 +5209,8 @@ static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
+>>  	switch (fs_devices->chunk_alloc_policy) {
+>>  	case BTRFS_CHUNK_ALLOC_REGULAR:
+>>  		return decide_stripe_size_regular(ctl, devices_info);
+>>+	case BTRFS_CHUNK_ALLOC_ZONED:
+>>+		return decide_stripe_size_zoned(ctl, devices_info);
+>>  	default:
+>>  		BUG();
+>>  	}
+>>diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+>>index 9c07b97a2260..0249aca668fb 100644
+>>--- a/fs/btrfs/volumes.h
+>>+++ b/fs/btrfs/volumes.h
+>>@@ -213,6 +213,7 @@ BTRFS_DEVICE_GETSET_FUNCS(bytes_used);
+>>  enum btrfs_chunk_allocation_policy {
+>>  	BTRFS_CHUNK_ALLOC_REGULAR,
+>>+	BTRFS_CHUNK_ALLOC_ZONED,
+>>  };
+>>  struct btrfs_fs_devices {
+>>diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+>>index d5487cba203b..4411d786597a 100644
+>>--- a/fs/btrfs/zoned.c
+>>+++ b/fs/btrfs/zoned.c
+>>@@ -1,11 +1,13 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>>+#include <linux/bitops.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/blkdev.h>
+>>  #include "ctree.h"
+>>  #include "volumes.h"
+>>  #include "zoned.h"
+>>  #include "rcu-string.h"
+>>+#include "disk-io.h"
+>>  /* Maximum number of zones to report per blkdev_report_zones() call */
+>>  #define BTRFS_REPORT_NR_ZONES   4096
+>>@@ -328,6 +330,7 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+>>  	fs_info->zone_size = zone_size;
+>>  	fs_info->max_zone_append_size = max_zone_append_size;
+>>+	fs_info->fs_devices->chunk_alloc_policy = BTRFS_CHUNK_ALLOC_ZONED;
+>>  	btrfs_info(fs_info, "ZONED mode enabled, zone size %llu B",
+>>  		   fs_info->zone_size);
+>>@@ -607,3 +610,126 @@ int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror)
+>>  				sb_zone << zone_sectors_shift, zone_sectors * 2,
+>>  				GFP_NOFS);
+>>  }
+>>+
+>>+/*
+>>+ * btrfs_check_allocatable_zones - find allocatable zones within give region
+>>+ * @device:	the device to allocate a region
+>>+ * @hole_start: the position of the hole to allocate the region
+>>+ * @num_bytes:	the size of wanted region
+>>+ * @hole_size:	the size of hole
+>>+ *
+>>+ * Allocatable region should not contain any superblock locations.
+>>+ */
+>>+u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
+>>+				 u64 hole_end, u64 num_bytes)
+>>+{
+>>+	struct btrfs_zoned_device_info *zinfo = device->zone_info;
+>>+	u8 shift = zinfo->zone_size_shift;
+>>+	u64 nzones = num_bytes >> shift;
+>>+	u64 pos = hole_start;
+>>+	u64 begin, end;
+>>+	u64 sb_pos;
+>>+	bool have_sb;
+>>+	int i;
+>>+
+>>+	ASSERT(IS_ALIGNED(hole_start, zinfo->zone_size));
+>>+	ASSERT(IS_ALIGNED(num_bytes, zinfo->zone_size));
+>>+
+>>+	while (pos < hole_end) {
+>>+		begin = pos >> shift;
+>>+		end = begin + nzones;
+>>+
+>>+		if (end > zinfo->nr_zones)
+>>+			return hole_end;
+>>+
+>>+		/* check if zones in the region are all empty */
+>>+		if (btrfs_dev_is_sequential(device, pos) &&
+>>+		    find_next_zero_bit(zinfo->empty_zones, end, begin) != end) {
+>>+			pos += zinfo->zone_size;
+>>+			continue;
+>>+		}
+>>+
+>>+		have_sb = false;
+>>+		for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
+>>+			sb_pos = sb_zone_number(zinfo->zone_size, i);
+>>+			if (!(end < sb_pos || sb_pos + 1 < begin)) {
+>>+				have_sb = true;
+>>+				pos = (sb_pos + 2) << shift;
+>>+				break;
+>>+			}
+>>+		}
+>>+		if (!have_sb)
+>>+			break;
+>>+	}
+>>+
+>>+	return pos;
+>>+}
+>>+
+>>+int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
+>>+			    u64 length, u64 *bytes)
+>>+{
+>>+	int ret;
+>>+
+>>+	*bytes = 0;
+>>+	ret = blkdev_zone_mgmt(device->bdev, REQ_OP_ZONE_RESET,
+>>+			       physical >> SECTOR_SHIFT, length >> SECTOR_SHIFT,
+>>+			       GFP_NOFS);
+>>+	if (ret)
+>>+		return ret;
+>>+
+>>+	*bytes = length;
+>>+	while (length) {
+>>+		btrfs_dev_set_zone_empty(device, physical);
+>>+		physical += device->zone_info->zone_size;
+>>+		length -= device->zone_info->zone_size;
+>>+	}
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>+int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size)
+>>+{
+>>+	struct btrfs_zoned_device_info *zinfo = device->zone_info;
+>>+	u8 shift = zinfo->zone_size_shift;
+>>+	unsigned long begin = start >> shift;
+>>+	unsigned long end = (start + size) >> shift;
+>>+	u64 pos;
+>>+	int ret;
+>>+
+>>+	ASSERT(IS_ALIGNED(start, zinfo->zone_size));
+>>+	ASSERT(IS_ALIGNED(size, zinfo->zone_size));
+>>+
+>>+	if (end > zinfo->nr_zones)
+>>+		return -ERANGE;
+>>+
+>>+	/* all the zones are conventional */
+>>+	if (find_next_bit(zinfo->seq_zones, begin, end) == end)
+>>+		return 0;
+>>+
+>
+>This check is duplicated below.
+>
 
-I forgot to add a few lines to the patch, so v1 was incorrect
-(I had the changes in my tree, but I sent an old patch).
+This one checks if bits from begin to end is all cleared (= all zones are
+conventional). OTOH, the below checks if all the bits are set (= all zones
+are sequential).
 
-Changes since v1:
+>>+	/* all the zones are sequential and empty */
+>>+	if (find_next_zero_bit(zinfo->seq_zones, begin, end) == end &&
+>>+	    find_next_zero_bit(zinfo->empty_zones, begin, end) == end)
+>>+		return 0;
+>>+
+>>+	for (pos = start; pos < start + size; pos += zinfo->zone_size) {
+>>+		u64 reset_bytes;
+>>+
+>>+		if (!btrfs_dev_is_sequential(device, pos) ||
+>>+		    btrfs_dev_is_empty_zone(device, pos))
+>>+			continue;
+>>+
+>>+		/* free regions should be empty */
+>>+		btrfs_warn_in_rcu(
+>>+			device->fs_info,
+>>+			"resetting device %s zone %llu for allocation",
+>>+			rcu_str_deref(device->name), pos >> shift);
+>>+		WARN_ON_ONCE(1);
+>>+
+>>+		ret = btrfs_reset_device_zone(device, pos, zinfo->zone_size,
+>>+					      &reset_bytes);
+>>+		if (ret)
+>>+			return ret;
+>
+>This seems bad, as we could just have corruption right?  So we're 
+>resetting the zone which could lose us data right?  Shouldn't we just 
+>bail here?  Thanks,
+>
+>Josef
 
-- Move variable declarations to the top of functions,
-  to remove warnings about mixing declarations and code.
-
- fs/aio.c | 392 +++++++++++++++++++++++++++++--------------------------
- 1 file changed, 210 insertions(+), 182 deletions(-)
-
-diff --git a/fs/aio.c b/fs/aio.c
-index d5ec30385566..8517ba94c507 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -55,16 +55,16 @@
- #define AIO_RING_COMPAT_FEATURES	1
- #define AIO_RING_INCOMPAT_FEATURES	0
- struct aio_ring {
--	unsigned	id;	/* kernel internal index number */
--	unsigned	nr;	/* number of io_events */
--	unsigned	head;	/* Written to by userland or under ring_lock
-+	unsigned int	id;	/* kernel internal index number */
-+	unsigned int	nr;	/* number of io_events */
-+	unsigned int	head;	/* Written to by userland or under ring_lock
- 				 * mutex by aio_read_events_ring(). */
--	unsigned	tail;
-+	unsigned int	tail;
- 
--	unsigned	magic;
--	unsigned	compat_features;
--	unsigned	incompat_features;
--	unsigned	header_length;	/* size of aio_ring */
-+	unsigned int	magic;
-+	unsigned int	compat_features;
-+	unsigned int	incompat_features;
-+	unsigned int	header_length;	/* size of aio_ring */
- 
- 
- 	struct io_event		io_events[];
-@@ -80,12 +80,12 @@ struct aio_ring {
- 
- struct kioctx_table {
- 	struct rcu_head		rcu;
--	unsigned		nr;
-+	unsigned int		nr;
- 	struct kioctx __rcu	*table[];
- };
- 
- struct kioctx_cpu {
--	unsigned		reqs_available;
-+	unsigned int		reqs_available;
- };
- 
- struct ctx_rq_wait {
-@@ -107,7 +107,7 @@ struct kioctx {
- 	 * For percpu reqs_available, number of slots we move to/from global
- 	 * counter at a time:
- 	 */
--	unsigned		req_batch;
-+	unsigned int		req_batch;
- 	/*
- 	 * This is what userspace passed to io_setup(), it's not used for
- 	 * anything but counting against the global max_reqs quota.
-@@ -115,10 +115,10 @@ struct kioctx {
- 	 * The real limit is nr_events - 1, which will be larger (see
- 	 * aio_setup_ring())
- 	 */
--	unsigned		max_reqs;
-+	unsigned int		max_reqs;
- 
- 	/* Size of ringbuffer, in units of struct io_event */
--	unsigned		nr_events;
-+	unsigned int		nr_events;
- 
- 	unsigned long		mmap_base;
- 	unsigned long		mmap_size;
-@@ -156,15 +156,15 @@ struct kioctx {
- 	} ____cacheline_aligned_in_smp;
- 
- 	struct {
--		unsigned	tail;
--		unsigned	completed_events;
-+		unsigned int	tail;
-+		unsigned int	completed_events;
- 		spinlock_t	completion_lock;
- 	} ____cacheline_aligned_in_smp;
- 
- 	struct page		*internal_pages[AIO_RING_PAGES];
- 	struct file		*aio_ring_file;
- 
--	unsigned		id;
-+	unsigned int		id;
- };
- 
- /*
-@@ -236,6 +236,7 @@ static struct file *aio_private_file(struct kioctx *ctx, loff_t nr_pages)
- {
- 	struct file *file;
- 	struct inode *inode = alloc_anon_inode(aio_mnt->mnt_sb);
-+
- 	if (IS_ERR(inode))
- 		return ERR_CAST(inode);
- 
-@@ -252,6 +253,7 @@ static struct file *aio_private_file(struct kioctx *ctx, loff_t nr_pages)
- 
- static int aio_init_fs_context(struct fs_context *fc)
- {
-+
- 	if (!init_pseudo(fc, AIO_RING_MAGIC))
- 		return -ENOMEM;
- 	fc->s_iflags |= SB_I_NOEXEC;
-@@ -269,6 +271,7 @@ static int __init aio_setup(void)
- 		.init_fs_context = aio_init_fs_context,
- 		.kill_sb	= kill_anon_super,
- 	};
-+
- 	aio_mnt = kern_mount(&aio_fs);
- 	if (IS_ERR(aio_mnt))
- 		panic("Failed to create aio fs mount.");
-@@ -284,18 +287,19 @@ static void put_aio_ring_file(struct kioctx *ctx)
- 	struct file *aio_ring_file = ctx->aio_ring_file;
- 	struct address_space *i_mapping;
- 
--	if (aio_ring_file) {
--		truncate_setsize(file_inode(aio_ring_file), 0);
-+	if (!aio_ring_file)
-+		return;
- 
--		/* Prevent further access to the kioctx from migratepages */
--		i_mapping = aio_ring_file->f_mapping;
--		spin_lock(&i_mapping->private_lock);
--		i_mapping->private_data = NULL;
--		ctx->aio_ring_file = NULL;
--		spin_unlock(&i_mapping->private_lock);
-+	truncate_setsize(file_inode(aio_ring_file), 0);
- 
--		fput(aio_ring_file);
--	}
-+	/* Prevent further access to the kioctx from migratepages */
-+	i_mapping = aio_ring_file->f_mapping;
-+	spin_lock(&i_mapping->private_lock);
-+	i_mapping->private_data = NULL;
-+	ctx->aio_ring_file = NULL;
-+	spin_unlock(&i_mapping->private_lock);
-+
-+	fput(aio_ring_file);
- }
- 
- static void aio_free_ring(struct kioctx *ctx)
-@@ -363,6 +367,7 @@ static const struct vm_operations_struct aio_ring_vm_ops = {
- 
- static int aio_ring_mmap(struct file *file, struct vm_area_struct *vma)
- {
-+
- 	vma->vm_flags |= VM_DONTEXPAND;
- 	vma->vm_ops = &aio_ring_vm_ops;
- 	return 0;
-@@ -413,8 +418,9 @@ static int aio_migratepage(struct address_space *mapping, struct page *new,
- 		/* Make sure the old page hasn't already been changed */
- 		if (ctx->ring_pages[idx] != old)
- 			rc = -EAGAIN;
--	} else
-+	} else {
- 		rc = -EINVAL;
-+	}
- 
- 	if (rc != 0)
- 		goto out_unlock;
-@@ -632,7 +638,7 @@ static void free_ioctx_users(struct percpu_ref *ref)
- 
- static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
- {
--	unsigned i, new_nr;
-+	unsigned int i, new_nr;
- 	struct kioctx_table *table, *old;
- 	struct aio_ring *ring;
- 
-@@ -640,23 +646,27 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
- 	table = rcu_dereference_raw(mm->ioctx_table);
- 
- 	while (1) {
--		if (table)
--			for (i = 0; i < table->nr; i++)
--				if (!rcu_access_pointer(table->table[i])) {
--					ctx->id = i;
--					rcu_assign_pointer(table->table[i], ctx);
--					spin_unlock(&mm->ioctx_lock);
--
--					/* While kioctx setup is in progress,
--					 * we are protected from page migration
--					 * changes ring_pages by ->ring_lock.
--					 */
--					ring = kmap_atomic(ctx->ring_pages[0]);
--					ring->id = ctx->id;
--					kunmap_atomic(ring);
--					return 0;
--				}
--
-+		if (!table)
-+			goto new_table;
-+
-+		for (i = 0; i < table->nr; i++) {
-+			if (rcu_access_pointer(table->table[i]))
-+				continue;
-+
-+			ctx->id = i;
-+			rcu_assign_pointer(table->table[i], ctx);
-+			spin_unlock(&mm->ioctx_lock);
-+
-+			/* While kioctx setup is in progress,
-+			 * we are protected from page migration
-+			 * changes ring_pages by ->ring_lock.
-+			 */
-+			ring = kmap_atomic(ctx->ring_pages[0]);
-+			ring->id = ctx->id;
-+			kunmap_atomic(ring);
-+			return 0;
-+		}
-+new_table:
- 		new_nr = (table ? table->nr : 1) * 4;
- 		spin_unlock(&mm->ioctx_lock);
- 
-@@ -685,8 +695,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
- 	}
- }
- 
--static void aio_nr_sub(unsigned nr)
-+static void aio_nr_sub(unsigned int nr)
- {
-+
- 	spin_lock(&aio_nr_lock);
- 	if (WARN_ON(aio_nr - nr > aio_nr))
- 		aio_nr = 0;
-@@ -698,7 +709,7 @@ static void aio_nr_sub(unsigned nr)
- /* ioctx_alloc
-  *	Allocates and initializes an ioctx.  Returns an ERR_PTR if it failed.
-  */
--static struct kioctx *ioctx_alloc(unsigned nr_events)
-+static struct kioctx *ioctx_alloc(unsigned int nr_events)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct kioctx *ctx;
-@@ -899,7 +910,7 @@ void exit_aio(struct mm_struct *mm)
- 	kfree(table);
- }
- 
--static void put_reqs_available(struct kioctx *ctx, unsigned nr)
-+static void put_reqs_available(struct kioctx *ctx, unsigned int nr)
- {
- 	struct kioctx_cpu *kcpu;
- 	unsigned long flags;
-@@ -921,24 +932,27 @@ static bool __get_reqs_available(struct kioctx *ctx)
- 	struct kioctx_cpu *kcpu;
- 	bool ret = false;
- 	unsigned long flags;
-+	int old, avail;
- 
- 	local_irq_save(flags);
- 	kcpu = this_cpu_ptr(ctx->cpu);
--	if (!kcpu->reqs_available) {
--		int old, avail = atomic_read(&ctx->reqs_available);
-+	if (kcpu->reqs_available)
-+		goto kcpu_reqs_avail;
-+
-+	avail = atomic_read(&ctx->reqs_available);
- 
--		do {
--			if (avail < ctx->req_batch)
--				goto out;
-+	do {
-+		if (avail < ctx->req_batch)
-+			goto out;
- 
--			old = avail;
--			avail = atomic_cmpxchg(&ctx->reqs_available,
--					       avail, avail - ctx->req_batch);
--		} while (avail != old);
-+		old = avail;
-+		avail = atomic_cmpxchg(&ctx->reqs_available,
-+				       avail, avail - ctx->req_batch);
-+	} while (avail != old);
- 
--		kcpu->reqs_available += ctx->req_batch;
--	}
-+	kcpu->reqs_available += ctx->req_batch;
- 
-+kcpu_reqs_avail:
- 	ret = true;
- 	kcpu->reqs_available--;
- out:
-@@ -953,10 +967,10 @@ static bool __get_reqs_available(struct kioctx *ctx)
-  *	from aio_get_req() (the we're out of events case).  It must be
-  *	called holding ctx->completion_lock.
-  */
--static void refill_reqs_available(struct kioctx *ctx, unsigned head,
--                                  unsigned tail)
-+static void refill_reqs_available(struct kioctx *ctx, unsigned int head,
-+				  unsigned int tail)
- {
--	unsigned events_in_ring, completed;
-+	unsigned int events_in_ring, completed;
- 
- 	/* Clamp head since userland can write to it. */
- 	head %= ctx->nr_events;
-@@ -984,32 +998,34 @@ static void refill_reqs_available(struct kioctx *ctx, unsigned head,
-  */
- static void user_refill_reqs_available(struct kioctx *ctx)
- {
-+	struct aio_ring *ring;
-+	unsigned int head;
-+
- 	spin_lock_irq(&ctx->completion_lock);
--	if (ctx->completed_events) {
--		struct aio_ring *ring;
--		unsigned head;
--
--		/* Access of ring->head may race with aio_read_events_ring()
--		 * here, but that's okay since whether we read the old version
--		 * or the new version, and either will be valid.  The important
--		 * part is that head cannot pass tail since we prevent
--		 * aio_complete() from updating tail by holding
--		 * ctx->completion_lock.  Even if head is invalid, the check
--		 * against ctx->completed_events below will make sure we do the
--		 * safe/right thing.
--		 */
--		ring = kmap_atomic(ctx->ring_pages[0]);
--		head = ring->head;
--		kunmap_atomic(ring);
-+	if (!ctx->completed_events)
-+		goto out;
- 
--		refill_reqs_available(ctx, head, ctx->tail);
--	}
-+	/* Access of ring->head may race with aio_read_events_ring()
-+	 * here, but that's okay since whether we read the old version
-+	 * or the new version, and either will be valid.  The important
-+	 * part is that head cannot pass tail since we prevent
-+	 * aio_complete() from updating tail by holding
-+	 * ctx->completion_lock.  Even if head is invalid, the check
-+	 * against ctx->completed_events below will make sure we do the
-+	 * safe/right thing.
-+	 */
-+	ring = kmap_atomic(ctx->ring_pages[0]);
-+	head = ring->head;
-+	kunmap_atomic(ring);
- 
-+	refill_reqs_available(ctx, head, ctx->tail);
-+out:
- 	spin_unlock_irq(&ctx->completion_lock);
- }
- 
- static bool get_reqs_available(struct kioctx *ctx)
- {
-+
- 	if (__get_reqs_available(ctx))
- 		return true;
- 	user_refill_reqs_available(ctx);
-@@ -1050,7 +1066,7 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- 	struct mm_struct *mm = current->mm;
- 	struct kioctx *ctx, *ret = NULL;
- 	struct kioctx_table *table;
--	unsigned id;
-+	unsigned int id;
- 
- 	if (get_user(id, &ring->id))
- 		return NULL;
-@@ -1074,6 +1090,7 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- 
- static inline void iocb_destroy(struct aio_kiocb *iocb)
- {
-+
- 	if (iocb->ki_eventfd)
- 		eventfd_ctx_put(iocb->ki_eventfd);
- 	if (iocb->ki_filp)
-@@ -1090,7 +1107,7 @@ static void aio_complete(struct aio_kiocb *iocb)
- 	struct kioctx	*ctx = iocb->ki_ctx;
- 	struct aio_ring	*ring;
- 	struct io_event	*ev_page, *event;
--	unsigned tail, pos, head;
-+	unsigned int	tail, pos, head;
- 	unsigned long	flags;
- 
- 	/*
-@@ -1160,10 +1177,11 @@ static void aio_complete(struct aio_kiocb *iocb)
- 
- static inline void iocb_put(struct aio_kiocb *iocb)
- {
--	if (refcount_dec_and_test(&iocb->ki_refcnt)) {
--		aio_complete(iocb);
--		iocb_destroy(iocb);
--	}
-+
-+	if (!refcount_dec_and_test(&iocb->ki_refcnt))
-+		return;
-+	aio_complete(iocb);
-+	iocb_destroy(iocb);
- }
- 
- /* aio_read_events_ring
-@@ -1174,7 +1192,7 @@ static long aio_read_events_ring(struct kioctx *ctx,
- 				 struct io_event __user *event, long nr)
- {
- 	struct aio_ring *ring;
--	unsigned head, tail, pos;
-+	unsigned int head, tail, pos;
- 	long ret = 0;
- 	int copy_ret;
- 
-@@ -1309,7 +1327,7 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
-  *	pointer is passed for ctxp.  Will fail with -ENOSYS if not
-  *	implemented.
-  */
--SYSCALL_DEFINE2(io_setup, unsigned, nr_events, aio_context_t __user *, ctxp)
-+SYSCALL_DEFINE2(io_setup, unsigned int, nr_events, aio_context_t __user *, ctxp)
- {
- 	struct kioctx *ioctx = NULL;
- 	unsigned long ctx;
-@@ -1328,19 +1346,19 @@ SYSCALL_DEFINE2(io_setup, unsigned, nr_events, aio_context_t __user *, ctxp)
- 
- 	ioctx = ioctx_alloc(nr_events);
- 	ret = PTR_ERR(ioctx);
--	if (!IS_ERR(ioctx)) {
--		ret = put_user(ioctx->user_id, ctxp);
--		if (ret)
--			kill_ioctx(current->mm, ioctx, NULL);
--		percpu_ref_put(&ioctx->users);
--	}
-+	if (IS_ERR(ioctx))
-+		goto out;
-+	ret = put_user(ioctx->user_id, ctxp);
-+	if (ret)
-+		kill_ioctx(current->mm, ioctx, NULL);
-+	percpu_ref_put(&ioctx->users);
- 
- out:
- 	return ret;
- }
- 
- #ifdef CONFIG_COMPAT
--COMPAT_SYSCALL_DEFINE2(io_setup, unsigned, nr_events, u32 __user *, ctx32p)
-+COMPAT_SYSCALL_DEFINE2(io_setup, unsigned int, nr_events, u32 __user *, ctx32p)
- {
- 	struct kioctx *ioctx = NULL;
- 	unsigned long ctx;
-@@ -1359,13 +1377,13 @@ COMPAT_SYSCALL_DEFINE2(io_setup, unsigned, nr_events, u32 __user *, ctx32p)
- 
- 	ioctx = ioctx_alloc(nr_events);
- 	ret = PTR_ERR(ioctx);
--	if (!IS_ERR(ioctx)) {
--		/* truncating is ok because it's a user address */
--		ret = put_user((u32)ioctx->user_id, ctx32p);
--		if (ret)
--			kill_ioctx(current->mm, ioctx, NULL);
--		percpu_ref_put(&ioctx->users);
--	}
-+	if (IS_ERR(ioctx))
-+		goto out;
-+	/* truncating is ok because it's a user address */
-+	ret = put_user((u32)ioctx->user_id, ctx32p);
-+	if (ret)
-+		kill_ioctx(current->mm, ioctx, NULL);
-+	percpu_ref_put(&ioctx->users);
- 
- out:
- 	return ret;
-@@ -1381,31 +1399,32 @@ COMPAT_SYSCALL_DEFINE2(io_setup, unsigned, nr_events, u32 __user *, ctx32p)
- SYSCALL_DEFINE1(io_destroy, aio_context_t, ctx)
- {
- 	struct kioctx *ioctx = lookup_ioctx(ctx);
--	if (likely(NULL != ioctx)) {
--		struct ctx_rq_wait wait;
--		int ret;
-+	struct ctx_rq_wait wait;
-+	int ret;
- 
--		init_completion(&wait.comp);
--		atomic_set(&wait.count, 1);
-+	if (unlikely(!ioctx)) {
-+		pr_debug("EINVAL: invalid context id\n");
-+		return -EINVAL;
-+	}
- 
--		/* Pass requests_done to kill_ioctx() where it can be set
--		 * in a thread-safe way. If we try to set it here then we have
--		 * a race condition if two io_destroy() called simultaneously.
--		 */
--		ret = kill_ioctx(current->mm, ioctx, &wait);
--		percpu_ref_put(&ioctx->users);
-+	init_completion(&wait.comp);
-+	atomic_set(&wait.count, 1);
- 
--		/* Wait until all IO for the context are done. Otherwise kernel
--		 * keep using user-space buffers even if user thinks the context
--		 * is destroyed.
--		 */
--		if (!ret)
--			wait_for_completion(&wait.comp);
-+	/* Pass requests_done to kill_ioctx() where it can be set
-+	 * in a thread-safe way. If we try to set it here then we have
-+	 * a race condition if two io_destroy() called simultaneously.
-+	 */
-+	ret = kill_ioctx(current->mm, ioctx, &wait);
-+	percpu_ref_put(&ioctx->users);
- 
--		return ret;
--	}
--	pr_debug("EINVAL: invalid context id\n");
--	return -EINVAL;
-+	/* Wait until all IO for the context are done. Otherwise kernel
-+	 * keep using user-space buffers even if user thinks the context
-+	 * is destroyed.
-+	 */
-+	if (!ret)
-+		wait_for_completion(&wait.comp);
-+
-+	return ret;
- }
- 
- static void aio_remove_iocb(struct aio_kiocb *iocb)
-@@ -1466,8 +1485,9 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
- 		}
- 
- 		req->ki_ioprio = iocb->aio_reqprio;
--	} else
-+	} else {
- 		req->ki_ioprio = get_current_ioprio();
-+	}
- 
- 	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
- 	if (unlikely(ret))
-@@ -1499,6 +1519,7 @@ static ssize_t aio_setup_rw(int rw, const struct iocb *iocb,
- 
- static inline void aio_rw_done(struct kiocb *req, ssize_t ret)
- {
-+
- 	switch (ret) {
- 	case -EIOCBQUEUED:
- 		break;
-@@ -1567,21 +1588,23 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
- 	if (ret < 0)
- 		return ret;
- 	ret = rw_verify_area(WRITE, file, &req->ki_pos, iov_iter_count(&iter));
--	if (!ret) {
--		/*
--		 * Open-code file_start_write here to grab freeze protection,
--		 * which will be released by another thread in
--		 * aio_complete_rw().  Fool lockdep by telling it the lock got
--		 * released so that it doesn't complain about the held lock when
--		 * we return to userspace.
--		 */
--		if (S_ISREG(file_inode(file)->i_mode)) {
--			__sb_start_write(file_inode(file)->i_sb, SB_FREEZE_WRITE, true);
--			__sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
--		}
--		req->ki_flags |= IOCB_WRITE;
--		aio_rw_done(req, call_write_iter(file, req, &iter));
-+	if (ret)
-+		goto out;
-+
-+	/*
-+	 * Open-code file_start_write here to grab freeze protection,
-+	 * which will be released by another thread in
-+	 * aio_complete_rw().  Fool lockdep by telling it the lock got
-+	 * released so that it doesn't complain about the held lock when
-+	 * we return to userspace.
-+	 */
-+	if (S_ISREG(file_inode(file)->i_mode)) {
-+		__sb_start_write(file_inode(file)->i_sb, SB_FREEZE_WRITE, true);
-+		__sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
- 	}
-+	req->ki_flags |= IOCB_WRITE;
-+	aio_rw_done(req, call_write_iter(file, req, &iter));
-+out:
- 	kfree(iovec);
- 	return ret;
- }
-@@ -1674,13 +1697,14 @@ static int aio_poll_cancel(struct kiocb *iocb)
- 	return 0;
- }
- 
--static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
--		void *key)
-+static int aio_poll_wake(struct wait_queue_entry *wait, unsigned int mode,
-+		int sync, void *key)
- {
- 	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
- 	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
- 	__poll_t mask = key_to_poll(key);
- 	unsigned long flags;
-+	struct kioctx *ctx;
- 
- 	/* for instances that support it check for an event match first: */
- 	if (mask && !(mask & req->events))
-@@ -1688,29 +1712,31 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 
- 	list_del_init(&req->wait.entry);
- 
--	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
--		struct kioctx *ctx = iocb->ki_ctx;
-+	if (!(mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags))) {
-+		schedule_work(&req->work);
-+		return 1;
-+	}
-+
-+	ctx = iocb->ki_ctx;
- 
--		/*
--		 * Try to complete the iocb inline if we can. Use
--		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
--		 * call this function with IRQs disabled and because IRQs
--		 * have to be disabled before ctx_lock is obtained.
--		 */
--		list_del(&iocb->ki_list);
--		iocb->ki_res.res = mangle_poll(mask);
--		req->done = true;
--		if (iocb->ki_eventfd && eventfd_signal_count()) {
--			iocb = NULL;
--			INIT_WORK(&req->work, aio_poll_put_work);
--			schedule_work(&req->work);
--		}
--		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
--		if (iocb)
--			iocb_put(iocb);
--	} else {
-+	/*
-+	 * Try to complete the iocb inline if we can. Use
-+	 * irqsave/irqrestore because not all filesystems (e.g. fuse)
-+	 * call this function with IRQs disabled and because IRQs
-+	 * have to be disabled before ctx_lock is obtained.
-+	 */
-+	list_del(&iocb->ki_list);
-+	iocb->ki_res.res = mangle_poll(mask);
-+	req->done = true;
-+	if (iocb->ki_eventfd && eventfd_signal_count()) {
-+		iocb = NULL;
-+		INIT_WORK(&req->work, aio_poll_put_work);
- 		schedule_work(&req->work);
- 	}
-+	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-+	if (iocb)
-+		iocb_put(iocb);
-+
- 	return 1;
- }
- 
-@@ -1770,24 +1796,25 @@ static int aio_poll(struct aio_kiocb *aiocb, const struct iocb *iocb)
- 
- 	mask = vfs_poll(req->file, &apt.pt) & req->events;
- 	spin_lock_irq(&ctx->ctx_lock);
--	if (likely(req->head)) {
--		spin_lock(&req->head->lock);
--		if (unlikely(list_empty(&req->wait.entry))) {
--			if (apt.error)
--				cancel = true;
--			apt.error = 0;
--			mask = 0;
--		}
--		if (mask || apt.error) {
--			list_del_init(&req->wait.entry);
--		} else if (cancel) {
--			WRITE_ONCE(req->cancelled, true);
--		} else if (!req->done) { /* actually waiting for an event */
--			list_add_tail(&aiocb->ki_list, &ctx->active_reqs);
--			aiocb->ki_cancel = aio_poll_cancel;
--		}
--		spin_unlock(&req->head->lock);
-+	if (unlikely(!req->head))
-+		goto out;
-+	spin_lock(&req->head->lock);
-+	if (unlikely(list_empty(&req->wait.entry))) {
-+		if (apt.error)
-+			cancel = true;
-+		apt.error = 0;
-+		mask = 0;
-+	}
-+	if (mask || apt.error) {
-+		list_del_init(&req->wait.entry);
-+	} else if (cancel) {
-+		WRITE_ONCE(req->cancelled, true);
-+	} else if (!req->done) { /* actually waiting for an event */
-+		list_add_tail(&aiocb->ki_list, &ctx->active_reqs);
-+		aiocb->ki_cancel = aio_poll_cancel;
- 	}
-+	spin_unlock(&req->head->lock);
-+out:
- 	if (mask) { /* no async, we'd stolen it */
- 		aiocb->ki_res.res = mangle_poll(mask);
- 		apt.error = 0;
-@@ -2058,11 +2085,12 @@ static long do_io_getevents(aio_context_t ctx_id,
- 	struct kioctx *ioctx = lookup_ioctx(ctx_id);
- 	long ret = -EINVAL;
- 
--	if (likely(ioctx)) {
--		if (likely(min_nr <= nr && min_nr >= 0))
--			ret = read_events(ioctx, min_nr, nr, events, until);
--		percpu_ref_put(&ioctx->users);
--	}
-+	if (unlikely(!ioctx))
-+		return -EINVAL;
-+
-+	if (likely(min_nr <= nr && min_nr >= 0))
-+		ret = read_events(ioctx, min_nr, nr, events, until);
-+	percpu_ref_put(&ioctx->users);
- 
- 	return ret;
- }
--- 
-2.28.0
-
+Yes.. This happens 1) when we freed up the region but forget to reset the
+zones, or 2) when we lost the allocation information. For the first case, it's
+OK to reset the zones here. For the second case, it's still as much
+dangerous as regular device since the regular btrfs will overwrite the
+data in that case anyway. I admit it's much safer to bail out here, so I
+can change this to error exiting.
