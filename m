@@ -2,350 +2,281 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6EFF2A273C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 10:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D70662A28C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 12:10:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbgKBJoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 04:44:06 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48882 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728004AbgKBJoG (ORCPT
+        id S1728491AbgKBLKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 06:10:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbgKBLKj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 04:44:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604310243;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kn31uEVM3N2sjYmZw9PL6ElgXwL4Hs7/D2Hi6HLxB6k=;
-        b=guzci8buxCqix33OQd1RhvC/5q5s/nqzF6s2voG/GGdFVO4KgOH4SGQ0qM+gakfyTvVDl/
-        uAlTqoZs9sh3H8feCUA4dE1YGbPmWle14ZX8XvuYJ9zooukBpi28fyNTFQqd7IhkOD5+p3
-        yrekiKCzH1wBkb9ccmsqg/IdehPM2eI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-525-OFKv3v7rMuiwfziyc0lf8Q-1; Mon, 02 Nov 2020 04:44:01 -0500
-X-MC-Unique: OFKv3v7rMuiwfziyc0lf8Q-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C345F809DC6;
-        Mon,  2 Nov 2020 09:43:57 +0000 (UTC)
-Received: from [10.36.113.163] (ovpn-113-163.ams2.redhat.com [10.36.113.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8CEA460CCC;
-        Mon,  2 Nov 2020 09:43:51 +0000 (UTC)
-Subject: Re: [PATCH v2 08/13] arm: remove CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
-To:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-References: <20201101170454.9567-1-rppt@kernel.org>
- <20201101170454.9567-9-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <81410b81-b773-b4a2-5f03-e9f1a6a8e8e9@redhat.com>
-Date:   Mon, 2 Nov 2020 10:43:50 +0100
+        Mon, 2 Nov 2020 06:10:39 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB8ACC0617A6;
+        Mon,  2 Nov 2020 03:10:38 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id k18so9082378wmj.5;
+        Mon, 02 Nov 2020 03:10:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sxjcCP6si6Tl9h62sUyxPBfkzd5l3RzDnZNrpaInHVU=;
+        b=I+iDSdKE7GBoS8mnD3WM/L5lBFqGcpYi5dttlTqFs9EpW6KppgD/jMiSe5SH6/oSeK
+         9cdqZ/4XBXKWbETyMpp1gNy7LbjWk+GuCzARE7gieEDH1KsROOGhwk95ghNu3a//BQVP
+         N9Jv0x5EgGDcqZDagnqwOoVvBgiNUF5TURqykJe6I7a/EtLgVd4wZ2krNv/ldMZBfnPr
+         TrH+jefo7BtT4gP8VZSk6eHuVq24lF3lxn8K/5nZA6LC0HIN5/IMCxE+bwD3Y2REWz7M
+         BaqY5p/LDpkHuWe7vtPYw866yW4hVPjXcPa47ZL0/IfHBGAShJeK4s8FFxPaFa0wtxSR
+         6ixg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=sxjcCP6si6Tl9h62sUyxPBfkzd5l3RzDnZNrpaInHVU=;
+        b=HjAEicQf3hFFjhlQ1AXnXMy5AdiL2yN7MRSY4y6pbZXOhKLKeLfEQQfm4RpnYahZp5
+         RmUOVQAnNYt+4hQECWxGixh1fMRn8fmPkTnCYAsee7UhHagRzqptg/SPFE4eL4wCEvuJ
+         j4zmVf20U8i/N4m+j2t6lyZnIvmY3U4a4YAbldALb3SU88JSlHRJEa6xtFiLLeP37YTg
+         ICwaELHnpCJYHky7wTioEP0kWjwxc06G3RsM6qMmzGag6OY/A15GWZAMVrckHx8zjkhe
+         nkJr136ZKo3tsRsg5CZmdkolNZMZ8liyTr3IoVxEpJl3fmf3WKrRGA55FoqMmO8df2EM
+         IUzw==
+X-Gm-Message-State: AOAM533bfCBusEUdxKNiFk6b2yyXuG5rgH1vs+8zzqJU4VJOXapg/XFo
+        rS6mPNNn28V3jGjrKDLlp3pMvevHgA0=
+X-Google-Smtp-Source: ABdhPJxGq6upZESzs4tu8Ca1DZIfP+RHgRUq/HREdloRIM9x6gW9FLEz1kumV3F61pFJ3AZcxUBO5w==
+X-Received: by 2002:a1c:e087:: with SMTP id x129mr16744444wmg.2.1604315437439;
+        Mon, 02 Nov 2020 03:10:37 -0800 (PST)
+Received: from [192.168.1.203] (host109-152-100-164.range109-152.btcentralplus.com. [109.152.100.164])
+        by smtp.gmail.com with ESMTPSA id r18sm23873953wrj.50.2020.11.02.03.10.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2020 03:10:36 -0800 (PST)
+Subject: Re: [PATCH RFC] io_uring: support ioctl
+To:     Hao Xu <haoxu@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>,
+        io-uring@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Joseph Qi <joseph.qi@linux.alibaba.com>
+References: <1604303041-184595-1-git-send-email-haoxu@linux.alibaba.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <a328aab5-4005-8fe9-9cea-0913f5bab269@gmail.com>
+Date:   Mon, 2 Nov 2020 11:07:36 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201101170454.9567-9-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1604303041-184595-1-git-send-email-haoxu@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01.11.20 18:04, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
+On 02/11/2020 07:44, Hao Xu wrote:
+> Async ioctl is necessary for some scenarios like nonblocking
+> single-threaded model
+
+Once I fell for it myself, see Jann explained why that's a bad idea.
+https://lore.kernel.org/io-uring/CAG48ez0N_b+kjbddhHe+BUvSnOSvpm1vdfQ9cv+cgTLuCMXqug@mail.gmail.com/
+
 > 
-> ARM is the only architecture that defines CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
-> which in turn enables memmap_valid_within() function that is intended to
-> verify existence  of struct page associated with a pfn when there are holes
-> in the memory map.
-> 
-> However, the ARCH_HAS_HOLES_MEMORYMODEL also enables HAVE_ARCH_PFN_VALID
-> and arch-specific pfn_valid() implementation that also deals with the holes
-> in the memory map.
-> 
-> The only two users of memmap_valid_within() call this function after
-> a call to pfn_valid() so the memmap_valid_within() check becomes redundant.
-> 
-> Remove CONFIG_ARCH_HAS_HOLES_MEMORYMODEL and memmap_valid_within() and rely
-> entirely on ARM's implementation of pfn_valid() that is now enabled
-> unconditionally.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
 > ---
->   Documentation/vm/memory-model.rst |  3 +--
->   arch/arm/Kconfig                  |  8 ++------
->   arch/arm/mach-bcm/Kconfig         |  1 -
->   arch/arm/mach-davinci/Kconfig     |  1 -
->   arch/arm/mach-exynos/Kconfig      |  1 -
->   arch/arm/mach-highbank/Kconfig    |  1 -
->   arch/arm/mach-omap2/Kconfig       |  1 -
->   arch/arm/mach-s5pv210/Kconfig     |  1 -
->   arch/arm/mach-tango/Kconfig       |  1 -
->   fs/proc/kcore.c                   |  2 --
->   include/linux/mmzone.h            | 31 -------------------------------
->   mm/mmzone.c                       | 14 --------------
->   mm/vmstat.c                       |  4 ----
->   13 files changed, 3 insertions(+), 66 deletions(-)
+> I've written corresponding liburing tests for this feature. Currently
+> just a simple test for BLKGETSIZE operation. I'll release it later soon
+> when it gets better.
 > 
-> diff --git a/Documentation/vm/memory-model.rst b/Documentation/vm/memory-model.rst
-> index 9daadf9faba1..ce398a7dc6cd 100644
-> --- a/Documentation/vm/memory-model.rst
-> +++ b/Documentation/vm/memory-model.rst
-> @@ -51,8 +51,7 @@ call :c:func:`free_area_init` function. Yet, the mappings array is not
->   usable until the call to :c:func:`memblock_free_all` that hands all the
->   memory to the page allocator.
->   
-> -If an architecture enables `CONFIG_ARCH_HAS_HOLES_MEMORYMODEL` option,
-> -it may free parts of the `mem_map` array that do not cover the
-> +An architecture may free parts of the `mem_map` array that do not cover the
->   actual physical pages. In such case, the architecture specific
->   :c:func:`pfn_valid` implementation should take the holes in the
->   `mem_map` into account.
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index fe2f17eb2b50..83adc46c1e67 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -25,7 +25,7 @@ config ARM
->   	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
->   	select ARCH_HAVE_CUSTOM_GPIO_H
->   	select ARCH_HAS_GCOV_PROFILE_ALL
-> -	select ARCH_KEEP_MEMBLOCK if HAVE_ARCH_PFN_VALID || KEXEC
-> +	select ARCH_KEEP_MEMBLOCK
->   	select ARCH_MIGHT_HAVE_PC_PARPORT
->   	select ARCH_NO_SG_CHAIN if !ARM_HAS_SG_CHAIN
->   	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-> @@ -519,7 +519,6 @@ config ARCH_S3C24XX
->   config ARCH_OMAP1
->   	bool "TI OMAP1"
->   	depends on MMU
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ARCH_OMAP
->   	select CLKDEV_LOOKUP
->   	select CLKSRC_MMIO
-> @@ -1479,9 +1478,6 @@ config OABI_COMPAT
->   	  UNPREDICTABLE (in fact it can be predicted that it won't work
->   	  at all). If in doubt say N.
->   
-> -config ARCH_HAS_HOLES_MEMORYMODEL
-> -	bool
+>  fs/io_uring.c                 | 56 +++++++++++++++++++++++++++++++++++++++++++
+>  fs/ioctl.c                    |  4 ++--
+>  include/linux/fs.h            |  3 ++-
+>  include/uapi/linux/io_uring.h |  1 +
+>  4 files changed, 61 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index b42dfa0243bf..c8ab6b6d2d70 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -539,6 +539,13 @@ struct io_statx {
+>  	struct statx __user		*buffer;
+>  };
+>  
+> +struct io_ioctl {
+> +	struct file			*file;
+> +	unsigned int                    fd;
+> +	unsigned int                    cmd;
+> +	unsigned long                   arg;
+> +};
+> +
+>  struct io_completion {
+>  	struct file			*file;
+>  	struct list_head		list;
+> @@ -665,6 +672,7 @@ struct io_kiocb {
+>  		struct io_splice	splice;
+>  		struct io_provide_buf	pbuf;
+>  		struct io_statx		statx;
+> +		struct io_ioctl         ioctl;
+>  		/* use only after cleaning per-op data, see io_clean_op() */
+>  		struct io_completion	compl;
+>  	};
+> @@ -932,6 +940,10 @@ struct io_op_def {
+>  		.hash_reg_file		= 1,
+>  		.unbound_nonreg_file	= 1,
+>  	},
+> +	[IORING_OP_IOCTL] = {
+> +		.needs_file             = 1,
+> +		.work_flags             = IO_WQ_WORK_MM | IO_WQ_WORK_FILES
+> +	},
+>  };
+>  
+>  enum io_mem_account {
+> @@ -4819,6 +4831,45 @@ static int io_connect(struct io_kiocb *req, bool force_nonblock,
+>  }
+>  #endif /* CONFIG_NET */
+>  
+> +static int io_ioctl_prep(struct io_kiocb *req,
+> +			 const struct io_uring_sqe *sqe)
+> +{
+> +	if (sqe->ioprio || sqe->buf_index || sqe->rw_flags)
+> +		return -EINVAL;
+> +	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+> +		return -EINVAL;
+> +
+> +	req->ioctl.fd = READ_ONCE(sqe->fd);
+> +	req->ioctl.cmd = READ_ONCE(sqe->len);
+> +	req->ioctl.arg = READ_ONCE(sqe->addr);
+> +	return 0;
+> +}
+> +
+> +static int io_ioctl(struct io_kiocb *req, bool force_nonblock)
+> +{
+> +	int ret;
+> +
+> +	if (force_nonblock)
+> +		return -EAGAIN;
+> +
+> +	if (!req->file)
+> +		return -EBADF;
+> +
+> +	ret = security_file_ioctl(req->file, req->ioctl.cmd, req->ioctl.arg);
+> +	if (ret)
+> +		goto out;
+> +
+> +	ret = do_vfs_ioctl(req->file, req->ioctl.fd, req->ioctl.cmd, req->ioctl.arg);
+> +	if (ret == -ENOIOCTLCMD)
+> +		ret = vfs_ioctl(req->file, req->ioctl.cmd, req->ioctl.arg);
+> +
+> +out:
+> +	if (ret)
+> +		req_set_fail_links(req);
+> +	io_req_complete(req, ret);
+> +	return 0;
+> +}
+> +
+>  struct io_poll_table {
+>  	struct poll_table_struct pt;
+>  	struct io_kiocb *req;
+> @@ -5742,6 +5793,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  		return io_remove_buffers_prep(req, sqe);
+>  	case IORING_OP_TEE:
+>  		return io_tee_prep(req, sqe);
+> +	case IORING_OP_IOCTL:
+> +		return io_ioctl_prep(req, sqe);
+>  	}
+>  
+>  	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
+> @@ -5985,6 +6038,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
+>  	case IORING_OP_TEE:
+>  		ret = io_tee(req, force_nonblock);
+>  		break;
+> +	case IORING_OP_IOCTL:
+> +		ret = io_ioctl(req, force_nonblock);
+> +		break;
+>  	default:
+>  		ret = -EINVAL;
+>  		break;
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 4e6cc0a7d69c..4ff2eb0d8ee0 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -664,8 +664,8 @@ static int ioctl_file_dedupe_range(struct file *file,
+>   * When you add any new common ioctls to the switches above and below,
+>   * please ensure they have compatible arguments in compat mode.
+>   */
+> -static int do_vfs_ioctl(struct file *filp, unsigned int fd,
+> -			unsigned int cmd, unsigned long arg)
+> +int do_vfs_ioctl(struct file *filp, unsigned int fd,
+> +		unsigned int cmd, unsigned long arg)
+>  {
+>  	void __user *argp = (void __user *)arg;
+>  	struct inode *inode = file_inode(filp);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 0bd126418bb6..ad62aa6f6136 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1732,7 +1732,8 @@ int vfs_mkobj(struct dentry *, umode_t,
+>  int vfs_utimes(const struct path *path, struct timespec64 *times);
+>  
+>  extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
 > -
->   config ARCH_SELECT_MEMORY_MODEL
->   	bool
->   
-> @@ -1493,7 +1489,7 @@ config ARCH_SPARSEMEM_ENABLE
->   	select SPARSEMEM_STATIC if SPARSEMEM
->   
->   config HAVE_ARCH_PFN_VALID
-> -	def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
-> +	def_bool y
->   
->   config HIGHMEM
->   	bool "High Memory Support"
-> diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
-> index ae790908fc74..9b594ae98153 100644
-> --- a/arch/arm/mach-bcm/Kconfig
-> +++ b/arch/arm/mach-bcm/Kconfig
-> @@ -211,7 +211,6 @@ config ARCH_BRCMSTB
->   	select BCM7038_L1_IRQ
->   	select BRCMSTB_L2_IRQ
->   	select BCM7120_L2_IRQ
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ZONE_DMA if ARM_LPAE
->   	select SOC_BRCMSTB
->   	select SOC_BUS
-> diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-> index f56ff8c24043..de11030748d0 100644
-> --- a/arch/arm/mach-davinci/Kconfig
-> +++ b/arch/arm/mach-davinci/Kconfig
-> @@ -5,7 +5,6 @@ menuconfig ARCH_DAVINCI
->   	depends on ARCH_MULTI_V5
->   	select DAVINCI_TIMER
->   	select ZONE_DMA
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select PM_GENERIC_DOMAINS if PM
->   	select PM_GENERIC_DOMAINS_OF if PM && OF
->   	select REGMAP_MMIO
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index d2d249706ebb..56d272967fc0 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -8,7 +8,6 @@
->   menuconfig ARCH_EXYNOS
->   	bool "Samsung Exynos"
->   	depends on ARCH_MULTI_V7
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ARCH_SUPPORTS_BIG_ENDIAN
->   	select ARM_AMBA
->   	select ARM_GIC
-> diff --git a/arch/arm/mach-highbank/Kconfig b/arch/arm/mach-highbank/Kconfig
-> index 1bc68913d62c..9de38ce8124f 100644
-> --- a/arch/arm/mach-highbank/Kconfig
-> +++ b/arch/arm/mach-highbank/Kconfig
-> @@ -2,7 +2,6 @@
->   config ARCH_HIGHBANK
->   	bool "Calxeda ECX-1000/2000 (Highbank/Midway)"
->   	depends on ARCH_MULTI_V7
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ARCH_SUPPORTS_BIG_ENDIAN
->   	select ARM_AMBA
->   	select ARM_ERRATA_764369 if SMP
-> diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
-> index 3ee7bdff86b2..89fe1572c142 100644
-> --- a/arch/arm/mach-omap2/Kconfig
-> +++ b/arch/arm/mach-omap2/Kconfig
-> @@ -94,7 +94,6 @@ config SOC_DRA7XX
->   config ARCH_OMAP2PLUS
->   	bool
->   	select ARCH_HAS_BANDGAP
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ARCH_HAS_RESET_CONTROLLER
->   	select ARCH_OMAP
->   	select CLKSRC_MMIO
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 95d4e8284866..d644b45bc29d 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -8,7 +8,6 @@
->   config ARCH_S5PV210
->   	bool "Samsung S5PV210/S5PC110"
->   	depends on ARCH_MULTI_V7
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ARM_VIC
->   	select CLKSRC_SAMSUNG_PWM
->   	select COMMON_CLK_SAMSUNG
-> diff --git a/arch/arm/mach-tango/Kconfig b/arch/arm/mach-tango/Kconfig
-> index 25b2fd434861..a9eeda36aeb1 100644
-> --- a/arch/arm/mach-tango/Kconfig
-> +++ b/arch/arm/mach-tango/Kconfig
-> @@ -3,7 +3,6 @@ config ARCH_TANGO
->   	bool "Sigma Designs Tango4 (SMP87xx)"
->   	depends on ARCH_MULTI_V7
->   	# Cortex-A9 MPCore r3p0, PL310 r3p2
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
->   	select ARM_ERRATA_754322
->   	select ARM_ERRATA_764369 if SMP
->   	select ARM_ERRATA_775420
-> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-> index e502414b3556..4d2e64e9016c 100644
-> --- a/fs/proc/kcore.c
-> +++ b/fs/proc/kcore.c
-> @@ -193,8 +193,6 @@ kclist_add_private(unsigned long pfn, unsigned long nr_pages, void *arg)
->   		return 1;
->   
->   	p = pfn_to_page(pfn);
-> -	if (!memmap_valid_within(pfn, p, page_zone(p)))
-> -		return 1;
->   
->   	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
->   	if (!ent)
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 876600a6e891..7385871768d4 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -1440,37 +1440,6 @@ void sparse_init(void);
->   #define pfn_valid_within(pfn) (1)
->   #endif
->   
-> -#ifdef CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
-> -/*
-> - * pfn_valid() is meant to be able to tell if a given PFN has valid memmap
-> - * associated with it or not. This means that a struct page exists for this
-> - * pfn. The caller cannot assume the page is fully initialized in general.
-> - * Hotplugable pages might not have been onlined yet. pfn_to_online_page()
-> - * will ensure the struct page is fully online and initialized. Special pages
-> - * (e.g. ZONE_DEVICE) are never onlined and should be treated accordingly.
-> - *
-> - * In FLATMEM, it is expected that holes always have valid memmap as long as
-> - * there is valid PFNs either side of the hole. In SPARSEMEM, it is assumed
-> - * that a valid section has a memmap for the entire section.
-> - *
-> - * However, an ARM, and maybe other embedded architectures in the future
-> - * free memmap backing holes to save memory on the assumption the memmap is
-> - * never used. The page_zone linkages are then broken even though pfn_valid()
-> - * returns true. A walker of the full memmap must then do this additional
-> - * check to ensure the memmap they are looking at is sane by making sure
-> - * the zone and PFN linkages are still valid. This is expensive, but walkers
-> - * of the full memmap are extremely rare.
-> - */
-> -bool memmap_valid_within(unsigned long pfn,
-> -					struct page *page, struct zone *zone);
-> -#else
-> -static inline bool memmap_valid_within(unsigned long pfn,
-> -					struct page *page, struct zone *zone)
-> -{
-> -	return true;
-> -}
-> -#endif /* CONFIG_ARCH_HAS_HOLES_MEMORYMODEL */
-> -
->   #endif /* !__GENERATING_BOUNDS.H */
->   #endif /* !__ASSEMBLY__ */
->   #endif /* _LINUX_MMZONE_H */
-> diff --git a/mm/mmzone.c b/mm/mmzone.c
-> index 4686fdc23bb9..f337831affc2 100644
-> --- a/mm/mmzone.c
-> +++ b/mm/mmzone.c
-> @@ -72,20 +72,6 @@ struct zoneref *__next_zones_zonelist(struct zoneref *z,
->   	return z;
->   }
->   
-> -#ifdef CONFIG_ARCH_HAS_HOLES_MEMORYMODEL
-> -bool memmap_valid_within(unsigned long pfn,
-> -					struct page *page, struct zone *zone)
-> -{
-> -	if (page_to_pfn(page) != pfn)
-> -		return false;
-> -
-> -	if (page_zone(page) != zone)
-> -		return false;
-> -
-> -	return true;
-> -}
-> -#endif /* CONFIG_ARCH_HAS_HOLES_MEMORYMODEL */
-> -
->   void lruvec_init(struct lruvec *lruvec)
->   {
->   	enum lru_list lru;
-> diff --git a/mm/vmstat.c b/mm/vmstat.c
-> index 698bc0bc18d1..e292e63afebf 100644
-> --- a/mm/vmstat.c
-> +++ b/mm/vmstat.c
-> @@ -1503,10 +1503,6 @@ static void pagetypeinfo_showblockcount_print(struct seq_file *m,
->   		if (!page)
->   			continue;
->   
-> -		/* Watch for unexpected holes punched in the memmap */
-> -		if (!memmap_valid_within(pfn, page, zone))
-> -			continue;
-> -
-
-Right, pfn_to_online_page() -> pfn_valid() / pfn_valid_within() should 
-handle that.
-
-Acked-by: David Hildenbrand <david@redhat.com>
+> +extern int do_vfs_ioctl(struct file *filp, unsigned int fd,
+> +			unsigned int cmd, unsigned long arg);
+>  #ifdef CONFIG_COMPAT
+>  extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+>  					unsigned long arg);
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 98d8e06dea22..4919b4e94c12 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -132,6 +132,7 @@ enum {
+>  	IORING_OP_PROVIDE_BUFFERS,
+>  	IORING_OP_REMOVE_BUFFERS,
+>  	IORING_OP_TEE,
+> +	IORING_OP_IOCTL,
+>  
+>  	/* this goes last, obviously */
+>  	IORING_OP_LAST,
+> 
 
 -- 
-Thanks,
-
-David / dhildenb
-
+Pavel Begunkov
