@@ -2,117 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 752982A2AA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 13:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B70E2A2B64
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 14:23:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbgKBM0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 07:26:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56060 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728359AbgKBM0k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 07:26:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 8F070AFE1;
-        Mon,  2 Nov 2020 12:26:38 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3A9C21E12FB; Mon,  2 Nov 2020 13:26:38 +0100 (CET)
-Date:   Mon, 2 Nov 2020 13:26:38 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     =?utf-8?B?UGF3ZcWC?= Jasiak <pawel@jasiak.xyz>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        jack@suse.cz, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: PROBLEM: fanotify_mark EFAULT on x86
-Message-ID: <20201102122638.GB23988@quack2.suse.cz>
-References: <20201101212738.GA16924@gmail.com>
+        id S1728520AbgKBNXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 08:23:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48567 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbgKBNXu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Nov 2020 08:23:50 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kZZoC-00072k-J9; Mon, 02 Nov 2020 13:23:40 +0000
+Date:   Mon, 2 Nov 2020 14:23:38 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        St??phane Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH 07/34] capability: handle idmapped mounts
+Message-ID: <20201102132338.ocq7z4oyn3aholi4@wittgenstein>
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+ <20201029003252.2128653-8-christian.brauner@ubuntu.com>
+ <20201101144809.GE23378@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201101212738.GA16924@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201101144809.GE23378@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 01-11-20 22:27:38, Paweł Jasiak wrote:
-> I am trying to run examples from man fanotify.7 but fanotify_mark always
-> fail with errno = EFAULT.
+On Sun, Nov 01, 2020 at 02:48:09PM +0000, Christoph Hellwig wrote:
+> >  /**
+> >   * capable_wrt_inode_uidgid - Check nsown_capable and uid and gid mapped
+> >   * @inode: The inode in question
+> > @@ -501,9 +513,7 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *
+> >   */
+> >  bool capable_wrt_inode_uidgid(const struct inode *inode, int cap)
+> >  {
+> > +	return capable_wrt_mapped_inode_uidgid(&init_user_ns, inode, cap);
+> >  }
+> >  EXPORT_SYMBOL(capable_wrt_inode_uidgid);
 > 
-> fanotify_mark declaration is
-> 
-> SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
-> 			      __u64, mask, int, dfd,
-> 			      const char  __user *, pathname)
-> 
-> When 
-> 
-> fanotify_mark(4, FAN_MARK_ADD | FAN_MARK_ONLYDIR,
->               FAN_CREATE | FAN_ONDIR, AT_FDCWD, 0xdeadc0de)
-> 
-> is called on kernel side I can see in do_syscall_32_irqs_on that CPU
-> context is
->     bx = 0x4        = 4
->     cx = 0x9        = FAN_MARK_ADD | FAN_MARK_ONLYDIR,
->     dx = 0x40000100 = FAN_CREATE | FAN_ONDIR
->     si = 0x0
->     di = 0xffffff9c = AT_FDCWD
->     bp = 0xdeadc0de
->     ax = 0xffffffda
->     orix_ax = 0x153
-> 
-> I am not sure if it is ok because third argument is uint64_t so if I
-> understand correctly mask should be divided into two registers (dx and
-> si).
-> 
-> But in fanotify_mark we get
->     fanotify_fd = 4          = bx
->     flags       = 0x9        = cx
->     mask        = 0x40000100 = dx
->     dfd         = 0          = si
->     pathname    = 0xffffff9c = di
-> 
-> I believe that correct order is
->     fanotify_fd = 4          = bx
->     flags       = 0x9        = cx
->     mask        = 0x40000100 = (si << 32) | dx
->     dfd         = 0xffffff9c = di
->     pathname    = 0xdeadc0de = bp
-> 
-> I think that we should call COMPAT version of fanotify_mark here
-> 
-> COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-> 				int, fanotify_fd, unsigned int, flags,
-> 				__u32, mask0, __u32, mask1, int, dfd,
-> 				const char  __user *, pathname)
-> 
-> or something wrong is with 64-bits arguments.
-> 
-> I am running Linux 5.9.2 i686 on Pentium III (Coppermine).
-> For tests I am using Debian sid on qemu with 5.9.2 and default kernel
-> from repositories.
-> 
-> Everything works fine on 5.5 and 5.4.
+> Please avoid these silly wrappers and just switch all callers to pass
+> the namespaces instead of creating boilerplate code.  Same for the other
+> functions where you do this even even worse the method calls.
 
-Strange. Thanks for report. Looks like some issue got created / exposed
-somewhere between 5.5 and 5.9 (actually probably between 5.5 and 5.7
-because the Linaro report you mentioned [1] is from 5.7-rc6). There were
-no changes in this area in fanotify, I think it must have been some x86
-change that triggered this. Hum, looking into x86 changelog in that time
-range there was a series rewriting 32-bit ABI [2] that got merged into
-5.7-rc1. Can you perhaps check whether 5.6 is good and 5.7-rc1 is bad?
+Christoph,
 
-Brian, any idea whether your series could regress fanotify_mark(2) syscall?
-Do we have somewhere documented which syscalls need compat wrappers and how
-they should look like?
+Thanks for the review!  
 
-								Honza
-
-[1] https://lists.linux.it/pipermail/ltp/2020-June/017436.html
-[2] https://lore.kernel.org/lkml/20200313195144.164260-1-brgerst@gmail.com/
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Ok, so I'll switch:
+- all helpers to take an additional argument
+  (capable_wrt_inode_uidgid()/inode_permission()/vfs_*() etc.)
+- all inode method calls to take an additional argument (I assume that's
+  what you're referring to: ->create()/->mknod()/->mkdir() etc.)
+  I've always assumed that this is what we'd be doing in the end anyway
+  (I've mentioned it in the commit message for the inode_operations
+  method's. This will be a bit of work but we can get that done!)
