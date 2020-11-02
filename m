@@ -2,191 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C852A257A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 08:44:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C782A25F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 09:18:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbgKBHoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 02:44:14 -0500
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:45986 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726819AbgKBHoN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 02:44:13 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=haoxu@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UDvXTOv_1604303042;
-Received: from e18g09479.et15sqa.tbsite.net(mailfrom:haoxu@linux.alibaba.com fp:SMTPD_---0UDvXTOv_1604303042)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 02 Nov 2020 15:44:09 +0800
-From:   Hao Xu <haoxu@linux.alibaba.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH RFC] io_uring: support ioctl
-Date:   Mon,  2 Nov 2020 15:44:01 +0800
-Message-Id: <1604303041-184595-1-git-send-email-haoxu@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1728051AbgKBISr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 03:18:47 -0500
+Received: from verein.lst.de ([213.95.11.211]:60357 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727802AbgKBISr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Nov 2020 03:18:47 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 902F267373; Mon,  2 Nov 2020 09:18:44 +0100 (CET)
+Date:   Mon, 2 Nov 2020 09:18:44 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/13] mm: handle readahead in
+ generic_file_buffered_read_pagenotuptodate
+Message-ID: <20201102081844.GA12752@lst.de>
+References: <20201031090004.452516-1-hch@lst.de> <20201031090004.452516-5-hch@lst.de> <20201031170646.GT27442@casper.infradead.org> <20201101103144.GC26447@lst.de> <20201101104958.GU27442@casper.infradead.org> <20201101105112.GA26860@lst.de> <20201101105158.GA26874@lst.de> <20201101110406.GV27442@casper.infradead.org> <20201101115217.GA27488@lst.de> <20201101145507.GZ27442@casper.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201101145507.GZ27442@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Async ioctl is necessary for some scenarios like nonblocking
-single-threaded model
+On Sun, Nov 01, 2020 at 02:55:07PM +0000, Matthew Wilcox wrote:
+> Hm?  I have this:
 
-Signed-off-by: Hao Xu <haoxu@linux.alibaba.com>
----
-I've written corresponding liburing tests for this feature. Currently
-just a simple test for BLKGETSIZE operation. I'll release it later soon
-when it gets better.
+Yes, this looks fine.  Not sure if I saw an earlier version or was
+just confused.
 
- fs/io_uring.c                 | 56 +++++++++++++++++++++++++++++++++++++++++++
- fs/ioctl.c                    |  4 ++--
- include/linux/fs.h            |  3 ++-
- include/uapi/linux/io_uring.h |  1 +
- 4 files changed, 61 insertions(+), 3 deletions(-)
+> > mm/filemap: Change calling convention for buffered read functions
+> > 
+> >  - please also drop the mapping argument to the various functions while
+> >    you're at it
+> 
+> Not sure I see the point to it.  Sure, they _can_ retrieve it with
+> iocb->ki_filp->f_mapping, but usually we like to pass the mapping
+> argument to functions which do something with the mapping.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index b42dfa0243bf..c8ab6b6d2d70 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -539,6 +539,13 @@ struct io_statx {
- 	struct statx __user		*buffer;
- };
- 
-+struct io_ioctl {
-+	struct file			*file;
-+	unsigned int                    fd;
-+	unsigned int                    cmd;
-+	unsigned long                   arg;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -665,6 +672,7 @@ struct io_kiocb {
- 		struct io_splice	splice;
- 		struct io_provide_buf	pbuf;
- 		struct io_statx		statx;
-+		struct io_ioctl         ioctl;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -932,6 +940,10 @@ struct io_op_def {
- 		.hash_reg_file		= 1,
- 		.unbound_nonreg_file	= 1,
- 	},
-+	[IORING_OP_IOCTL] = {
-+		.needs_file             = 1,
-+		.work_flags             = IO_WQ_WORK_MM | IO_WQ_WORK_FILES
-+	},
- };
- 
- enum io_mem_account {
-@@ -4819,6 +4831,45 @@ static int io_connect(struct io_kiocb *req, bool force_nonblock,
- }
- #endif /* CONFIG_NET */
- 
-+static int io_ioctl_prep(struct io_kiocb *req,
-+			 const struct io_uring_sqe *sqe)
-+{
-+	if (sqe->ioprio || sqe->buf_index || sqe->rw_flags)
-+		return -EINVAL;
-+	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
-+		return -EINVAL;
-+
-+	req->ioctl.fd = READ_ONCE(sqe->fd);
-+	req->ioctl.cmd = READ_ONCE(sqe->len);
-+	req->ioctl.arg = READ_ONCE(sqe->addr);
-+	return 0;
-+}
-+
-+static int io_ioctl(struct io_kiocb *req, bool force_nonblock)
-+{
-+	int ret;
-+
-+	if (force_nonblock)
-+		return -EAGAIN;
-+
-+	if (!req->file)
-+		return -EBADF;
-+
-+	ret = security_file_ioctl(req->file, req->ioctl.cmd, req->ioctl.arg);
-+	if (ret)
-+		goto out;
-+
-+	ret = do_vfs_ioctl(req->file, req->ioctl.fd, req->ioctl.cmd, req->ioctl.arg);
-+	if (ret == -ENOIOCTLCMD)
-+		ret = vfs_ioctl(req->file, req->ioctl.cmd, req->ioctl.arg);
-+
-+out:
-+	if (ret)
-+		req_set_fail_links(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- struct io_poll_table {
- 	struct poll_table_struct pt;
- 	struct io_kiocb *req;
-@@ -5742,6 +5793,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_remove_buffers_prep(req, sqe);
- 	case IORING_OP_TEE:
- 		return io_tee_prep(req, sqe);
-+	case IORING_OP_IOCTL:
-+		return io_ioctl_prep(req, sqe);
- 	}
- 
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -5985,6 +6038,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
- 	case IORING_OP_TEE:
- 		ret = io_tee(req, force_nonblock);
- 		break;
-+	case IORING_OP_IOCTL:
-+		ret = io_ioctl(req, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 4e6cc0a7d69c..4ff2eb0d8ee0 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -664,8 +664,8 @@ static int ioctl_file_dedupe_range(struct file *file,
-  * When you add any new common ioctls to the switches above and below,
-  * please ensure they have compatible arguments in compat mode.
-  */
--static int do_vfs_ioctl(struct file *filp, unsigned int fd,
--			unsigned int cmd, unsigned long arg)
-+int do_vfs_ioctl(struct file *filp, unsigned int fd,
-+		unsigned int cmd, unsigned long arg)
- {
- 	void __user *argp = (void __user *)arg;
- 	struct inode *inode = file_inode(filp);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0bd126418bb6..ad62aa6f6136 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1732,7 +1732,8 @@ int vfs_mkobj(struct dentry *, umode_t,
- int vfs_utimes(const struct path *path, struct timespec64 *times);
- 
- extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
--
-+extern int do_vfs_ioctl(struct file *filp, unsigned int fd,
-+			unsigned int cmd, unsigned long arg);
- #ifdef CONFIG_COMPAT
- extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
- 					unsigned long arg);
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 98d8e06dea22..4919b4e94c12 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -132,6 +132,7 @@ enum {
- 	IORING_OP_PROVIDE_BUFFERS,
- 	IORING_OP_REMOVE_BUFFERS,
- 	IORING_OP_TEE,
-+	IORING_OP_IOCTL,
- 
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
--- 
-1.8.3.1
+There really isn't any point in passing an extra argument that can
+trivially be derived.
 
+> > Also I think the messy list of uptodate checks could now be simplified
+> > down to:
+> > 
+> > 	if (!PageUptodate(page)) {
+> > 		if (inode->i_blkbits <= PAGE_SHIFT &&
+> 
+> I've been wondering about this test's usefulness in the presence
+> of THP.  Do we want to make it 'if (inode->i_blkbits < (thp_order(page)
+> + PAGE_SHIFT)'?  It doesn't make sense to leave it as it is because then
+> a 1kB and 4kB blocksize filesystem will behave differently.
+
+Yeah, the partially uptodate checks would make sense for huge pages.
+Just make sure that the iomap version does the right thing for this
+case first.
+
+> 
+> > 		    mapping->a_ops->is_partially_uptodate &&
+> > 		    !iov_iter_is_pipe(iter)) {
+> > 			if (!page->mapping)
+> > 				goto truncated;
+> > 			if (mapping->a_ops->is_partially_uptodate(page,
+> > 					pos & (thp_size(page) - 1), count))
+> > 				goto uptodate;
+> > 		}
+> 
+> Now that you've rearranged it like this, it's obvious that the truncated
+> check is in the wrong place.  We don't want to call filemap_read_page()
+> if the page has been truncated either.
+
+True.
+
+> A later patch hoists the put_page to the caller, so I think you'll like
+> where it ends up.
+
+I still find the result in the callers a little weird as it doesn't
+follow the normal jump to the end for exceptions flow, but that is
+just another tiny nitpick.
+
+> 
+> > mm/filemap: Restructure filemap_get_pages
+> > 
+> >  - I have to say I still like my little helper here for
+> >    the two mapping_get_read_thps calls plus page_cache_sync_readahead
+> 
+> I'll take a look at that.
+> 
+> Looking at all this again, I think I want to pull the IOCB checks out
+> of filemap_read_page() and just pass a struct file to it.  It'll make
+> it more clear that NOIO, NOWAIT and WAITQ can't get to calling ->readpage.
+
+filemap_update_page alread exits early for NOWAIT, so it would just
+need the NOIO check.  filemap_create_page checks NOIO early, but
+allocating the page for NOWAIT also seems rather pointless.  So yes,
+I think this would be an improvement.
