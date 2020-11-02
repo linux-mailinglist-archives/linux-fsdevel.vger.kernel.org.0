@@ -2,145 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 285412A2A1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 12:56:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 752982A2AA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 13:26:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbgKBLyV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 06:54:21 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:47954 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728717AbgKBLyU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 06:54:20 -0500
-Received: by mail-il1-f198.google.com with SMTP id u16so949185ilq.14
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Nov 2020 03:54:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Jif07879xIdqk8preXUlJynIzSJslPiVsHNblnvjy0g=;
-        b=Q2iZNox4oJfciysMtCfiAJHVPuTLOBFqcfo9pccIVDWcAHIEj17ol4ZMDqcbQw6fei
-         6y7q0UzOU944jyrgSKHsuVEAJxAigKfheswlN/+etE8u5bosB01toVfeHPcQz8s/69l0
-         2+lpfUtT+j3BMDChpsT3AJ5P8TL9nqSp0DTjm6SvZRW7RmFiEzBAs2SqoZ0eUgO96REW
-         Vnx6CqsLevzq/H6l52nhzFmq/BK2HILnG44CMGTO309S0m+DP2w0UdlnISyUPKpMOKil
-         PszRSDhyhAI+3WbyJSKTLwSZxU6kPF/jcHShQQmwmREn7aAiS9UvrxIrSFjOXJsjUzld
-         hBSA==
-X-Gm-Message-State: AOAM533jzyEbqHyANaGCq46pLdtRH+WISumrax/TW3QRr3dKgvWYwKa3
-        Kzx+/w1BRBWQDsXSbleYEEsUQZrLFdve+2g2GExeiLQYcfB4
-X-Google-Smtp-Source: ABdhPJxXCVhnlFwd644zkajZIE1B8kF0ijJjuc8EwzFzxiIWmswVFPBj5V4F9nulsIbuz9bZq6taBWf2a8o6jZr87DJCBiLlRtRB
+        id S1728625AbgKBM0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 07:26:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56060 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728359AbgKBM0k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 2 Nov 2020 07:26:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8F070AFE1;
+        Mon,  2 Nov 2020 12:26:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3A9C21E12FB; Mon,  2 Nov 2020 13:26:38 +0100 (CET)
+Date:   Mon, 2 Nov 2020 13:26:38 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     =?utf-8?B?UGF3ZcWC?= Jasiak <pawel@jasiak.xyz>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: PROBLEM: fanotify_mark EFAULT on x86
+Message-ID: <20201102122638.GB23988@quack2.suse.cz>
+References: <20201101212738.GA16924@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:3b57:: with SMTP id i23mr11915552jaf.110.1604318059322;
- Mon, 02 Nov 2020 03:54:19 -0800 (PST)
-Date:   Mon, 02 Nov 2020 03:54:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000008604f05b31e6867@google.com>
-Subject: KASAN: null-ptr-deref Write in kthread_use_mm
-From:   syzbot <syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201101212738.GA16924@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun 01-11-20 22:27:38, Paweł Jasiak wrote:
+> I am trying to run examples from man fanotify.7 but fanotify_mark always
+> fail with errno = EFAULT.
+> 
+> fanotify_mark declaration is
+> 
+> SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
+> 			      __u64, mask, int, dfd,
+> 			      const char  __user *, pathname)
+> 
+> When 
+> 
+> fanotify_mark(4, FAN_MARK_ADD | FAN_MARK_ONLYDIR,
+>               FAN_CREATE | FAN_ONDIR, AT_FDCWD, 0xdeadc0de)
+> 
+> is called on kernel side I can see in do_syscall_32_irqs_on that CPU
+> context is
+>     bx = 0x4        = 4
+>     cx = 0x9        = FAN_MARK_ADD | FAN_MARK_ONLYDIR,
+>     dx = 0x40000100 = FAN_CREATE | FAN_ONDIR
+>     si = 0x0
+>     di = 0xffffff9c = AT_FDCWD
+>     bp = 0xdeadc0de
+>     ax = 0xffffffda
+>     orix_ax = 0x153
+> 
+> I am not sure if it is ok because third argument is uint64_t so if I
+> understand correctly mask should be divided into two registers (dx and
+> si).
+> 
+> But in fanotify_mark we get
+>     fanotify_fd = 4          = bx
+>     flags       = 0x9        = cx
+>     mask        = 0x40000100 = dx
+>     dfd         = 0          = si
+>     pathname    = 0xffffff9c = di
+> 
+> I believe that correct order is
+>     fanotify_fd = 4          = bx
+>     flags       = 0x9        = cx
+>     mask        = 0x40000100 = (si << 32) | dx
+>     dfd         = 0xffffff9c = di
+>     pathname    = 0xdeadc0de = bp
+> 
+> I think that we should call COMPAT version of fanotify_mark here
+> 
+> COMPAT_SYSCALL_DEFINE6(fanotify_mark,
+> 				int, fanotify_fd, unsigned int, flags,
+> 				__u32, mask0, __u32, mask1, int, dfd,
+> 				const char  __user *, pathname)
+> 
+> or something wrong is with 64-bits arguments.
+> 
+> I am running Linux 5.9.2 i686 on Pentium III (Coppermine).
+> For tests I am using Debian sid on qemu with 5.9.2 and default kernel
+> from repositories.
+> 
+> Everything works fine on 5.5 and 5.4.
 
-syzbot found the following issue on:
+Strange. Thanks for report. Looks like some issue got created / exposed
+somewhere between 5.5 and 5.9 (actually probably between 5.5 and 5.7
+because the Linaro report you mentioned [1] is from 5.7-rc6). There were
+no changes in this area in fanotify, I think it must have been some x86
+change that triggered this. Hum, looking into x86 changelog in that time
+range there was a series rewriting 32-bit ABI [2] that got merged into
+5.7-rc1. Can you perhaps check whether 5.6 is good and 5.7-rc1 is bad?
 
-HEAD commit:    4e78c578 Add linux-next specific files for 20201030
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=148969d4500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=83318758268dc331
-dashboard link: https://syzkaller.appspot.com/bug?extid=b57abf7ee60829090495
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e1346c500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388fbca500000
+Brian, any idea whether your series could regress fanotify_mark(2) syscall?
+Do we have somewhere documented which syscalls need compat wrappers and how
+they should look like?
 
-The issue was bisected to:
+								Honza
 
-commit 4d004099a668c41522242aa146a38cc4eb59cb1e
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Fri Oct 2 09:04:21 2020 +0000
+[1] https://lists.linux.it/pipermail/ltp/2020-June/017436.html
+[2] https://lore.kernel.org/lkml/20200313195144.164260-1-brgerst@gmail.com/
 
-    lockdep: Fix lockdep recursion
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1354e614500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d4e614500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1754e614500000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com
-Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
-
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
-BUG: KASAN: null-ptr-deref in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-BUG: KASAN: null-ptr-deref in mmgrab include/linux/sched/mm.h:36 [inline]
-BUG: KASAN: null-ptr-deref in kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
-Write of size 4 at addr 0000000000000060 by task io_uring-sq/26191
-
-CPU: 1 PID: 26191 Comm: io_uring-sq Not tainted 5.10.0-rc1-next-20201030-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- __kasan_report mm/kasan/report.c:549 [inline]
- kasan_report.cold+0x5/0x37 mm/kasan/report.c:562
- check_memory_region_inline mm/kasan/generic.c:186 [inline]
- check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
- instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
- atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
- mmgrab include/linux/sched/mm.h:36 [inline]
- kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
- __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
- __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
- io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
- io_init_req fs/io_uring.c:6661 [inline]
- io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
- __io_sq_thread fs/io_uring.c:6904 [inline]
- io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 26191 Comm: io_uring-sq Tainted: G    B             5.10.0-rc1-next-20201030-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- panic+0x306/0x73d kernel/panic.c:231
- end_report+0x58/0x5e mm/kasan/report.c:106
- __kasan_report mm/kasan/report.c:552 [inline]
- kasan_report.cold+0xd/0x37 mm/kasan/report.c:562
- check_memory_region_inline mm/kasan/generic.c:186 [inline]
- check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
- instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
- atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
- mmgrab include/linux/sched/mm.h:36 [inline]
- kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
- __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
- __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
- io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
- io_init_req fs/io_uring.c:6661 [inline]
- io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
- __io_sq_thread fs/io_uring.c:6904 [inline]
- io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
