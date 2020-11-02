@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 513032A2B81
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 14:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B69802A2B98
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 14:33:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725815AbgKBN3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 08:29:40 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:48786 "EHLO
+        id S1725903AbgKBNdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 08:33:38 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:48935 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbgKBN3k (ORCPT
+        with ESMTP id S1725791AbgKBNdi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 08:29:40 -0500
+        Mon, 2 Nov 2020 08:33:38 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kZZtu-0007a7-Ep; Mon, 02 Nov 2020 13:29:34 +0000
-Date:   Mon, 2 Nov 2020 14:29:32 +0100
+        id 1kZZxl-0007ym-Lt; Mon, 02 Nov 2020 13:33:33 +0000
+Date:   Mon, 2 Nov 2020 14:33:31 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,91 +55,63 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org
-Subject: Re: [PATCH 05/34] fs: introduce MOUNT_ATTR_IDMAP
-Message-ID: <20201102132932.pseijsddvxo5hgpf@wittgenstein>
+Subject: Re: [PATCH 01/34] namespace: take lock_mount_hash() directly when
+ changing flags
+Message-ID: <20201102133331.66v4hxtmlnjrucnn@wittgenstein>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <20201029003252.2128653-6-christian.brauner@ubuntu.com>
- <20201101144544.GC23378@infradead.org>
+ <20201029003252.2128653-2-christian.brauner@ubuntu.com>
+ <20201101144108.GA23378@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201101144544.GC23378@infradead.org>
+In-Reply-To: <20201101144108.GA23378@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 01, 2020 at 02:45:44PM +0000, Christoph Hellwig wrote:
-> On Thu, Oct 29, 2020 at 01:32:23AM +0100, Christian Brauner wrote:
-> > Introduce a new mount bind mount property to allow idmapping mounts. The
-> > MOUNT_ATTR_IDMAP flag can be set via the new mount_setattr() syscall
-> > together with a file descriptor referring to a user namespace.
+On Sun, Nov 01, 2020 at 02:41:08PM +0000, Christoph Hellwig wrote:
+> > index cebaa3e81794..20ee291a7af4 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -463,7 +463,6 @@ static int mnt_make_readonly(struct mount *mnt)
+> >  {
+> >  	int ret = 0;
+> >  
+> > -	lock_mount_hash();
 > 
-> Shouldn't this go to the end of the series once all the infrastructure
-> is in place?
+> What about adding a lockdep_assert_lock_held in all the functions
+> that used to take the lock to document the assumptions?
 
-Yeah, good idea. (I mostly did it to keep compile-times short when
-rebasing.)
-
-> 
-> > +config IDMAP_MOUNTS
-> > +	bool "Support id mappings per mount"
-> > +	default n
-> 
-> n is the default default.
-
-Ah, thanks.
+Good idea and will do. I wanted to do this but then didn't because I
+haven't seen widespread use of lockdep assert in fs/namespace.c.
 
 > 
-> But why do we need a config option here anyway?
+> >  static int __mnt_unmake_readonly(struct mount *mnt)
+> >  {
+> > -	lock_mount_hash();
+> >  	mnt->mnt.mnt_flags &= ~MNT_READONLY;
+> > -	unlock_mount_hash();
+> >  	return 0;
+> 
+> This helper is rather pointless now.
 
-My main concern was people complaining about code they want to compile
-out. I've been burnt by that before but I'm happy to remove the config
-option and make this unconditional.
+Ok, will remove.
 
 > 
-> > +#ifdef CONFIG_IDMAP_MOUNTS
-> > +		if (kattr->attr_set & MNT_IDMAPPED) {
-> > +			struct user_namespace *user_ns;
-> > +			struct vfsmount *vmnt;
+> >  static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+> >  {
+> > -	lock_mount_hash();
+> >  	mnt_flags |= mnt->mnt.mnt_flags & ~MNT_USER_SETTABLE_MASK;
+> >  	mnt->mnt.mnt_flags = mnt_flags;
+> >  	touch_mnt_namespace(mnt->mnt_ns);
+> > -	unlock_mount_hash();
 > 
-> All the code here looks like it should go into a helper.
+> In linux-next there is an additional notify_mount after the unlock here.
 
-Will do.
-
-> 
-> > +				struct user_namespace *user_ns = READ_ONCE(m->mnt.mnt_user_ns);
-> > +				WRITE_ONCE(m->mnt.mnt_user_ns, get_user_ns(kattr->userns));
-> 
-> More unreadable long lines.
-
-Will wrap. I have somewhat adapted to the more lax 100 limit but I'm
-happy to stick to 80.
+Thanks! I can try rebasing on -next.
 
 > 
-> > +	if (attr->attr_set & MOUNT_ATTR_IDMAP) {
-> > +		struct ns_common *ns;
-> > +		struct user_namespace *user_ns;
-> > +		struct file *file;
-> > +
-> > +		file = fget(attr->userns);
-> 
-> The code here looks like another candidate for a self contained helper.
+> Also while you touch this lock_mount_hash/unlock_mount_hash could be
+> moved to namespace.c and maked static now.
 
-Noted.
-
-> 
-> > +
-> > +static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
-> > +{
-> > +#ifdef CONFIG_IDMAP_MOUNTS
-> > +	return READ_ONCE(mnt->mnt_user_ns);
-> > +#else
-> > +	return &init_user_ns;
-> > +#endif
-> 
-> How is the READ_ONCE on a pointer going to work?
-
-Honestly, this is me following a pattern I've seen in other places and
-it's mostly about visually indicating concurrency but I'll drop it.
-
-Christian
+Ok, will try to do that.
