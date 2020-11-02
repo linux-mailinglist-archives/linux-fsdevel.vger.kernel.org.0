@@ -2,166 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7022A3603
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 22:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B8B2A3616
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 22:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726055AbgKBVdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 16:33:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59020 "EHLO
+        id S1725933AbgKBVjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 16:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725833AbgKBVdC (ORCPT
+        with ESMTP id S1725833AbgKBVjg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 16:33:02 -0500
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C76C061A04
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Nov 2020 13:33:02 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id j18so12316831pfa.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Nov 2020 13:33:02 -0800 (PST)
+        Mon, 2 Nov 2020 16:39:36 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88850C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Nov 2020 13:39:35 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id 62so4628141pgg.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Nov 2020 13:39:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=GDcKw+qqVKSI21MY7F3hRGjD3Q4OuR+vQvg5noEYSh8=;
-        b=jhGcwOg47+zV7o8xt4hQ6Huidr9VOglsti6uNMpzIa85RgOEC1Hp4n2H1k2/V7v2F0
-         KtAsZ5m0B49jO5Dex8h6aed5meJNcGjhHcmYMYcnoYx9I5uOiQ4qIgjqZsFDON3IZA85
-         nWkG6FHddOJqHnpsRlEq/qKQlKSraG3+D0aCakwW5E3eGaJIliNWJ30SzouU9RICWsq/
-         AJM2KNvRHf3xQA2koS/36NS8loaZr9ePuEf+ZY93+oINmdY4mwUwQvKpJB5xTIUTaNrJ
-         SWYngp52k5yVHao/BmvXyRDvrM8S0E+NFlWFehhlemDIL+i6hdqRpnB8Juojbn8t7BQc
-         mceQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FtSibvsdvA5rUVREdfoxJ1vc1kri00NcSUIMa32id/s=;
+        b=ycjCRV279Di6GZducEQavbrEZb8VCpkB+B+XTo94i7BUa+daWWB+xqYhjBBgKK4fh/
+         8cEojishyWBfJt4Ky2n8BpKLe9NV8dDt8NCJaZ8zEKTcXNmgtqkDRjNnY7A/duwn32hJ
+         hTodV7RxYvyoCoz915HcGS5p+bdQANEW5X3bIHy0Ys5NpQgE2KpLYbuEhVPFEqgqU2mT
+         mUO+wUtaTmJLopzszFpyNpl5oClyoULw+3Y6QbAQwhFviBWyvsgUFete4SGPDZZuzUzd
+         iCLnrY1KDd+CuXo6iosCuWvM2ifwbL6qmrg5elVsJXA5kYy1W8Q7PPjv0PbR5x5a/jV8
+         j+4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=GDcKw+qqVKSI21MY7F3hRGjD3Q4OuR+vQvg5noEYSh8=;
-        b=mzjYxwXMjzmu8mEHvzBHXZ7D8WP9p/Hruj9zk3I+gODUXDnWQueNRD6McObQVMhKC+
-         mkKAGHKBDf0LgsuF3A73WM9QROZB5E3AWFE+CxgYEC3AZu9Rmlgg+cVdUgsT5bAqFnJ5
-         ZZ8zKrt7ICFE9FmtiQr1ocuoUIfZF32fLpowfF+vlS1R46ZeylHSqJhKBsjaDOCjlDnk
-         NcoOn1keGL0Cfnj/rXAoxrcLhKhxOK+9b+khRbLCpcGQNN+YQgjYPaRTHK/qH7mnr7LQ
-         KKWfBlV1B+icPuFVTyki3odZirUD5UTBl5aVtA3Lq+pK6B/UFQJOyWSDUmc/KdUfcF6s
-         QXOQ==
-X-Gm-Message-State: AOAM533lHTfa7AZyxrjk6SsbtLRS7eRP9vQ0Fhn0oQlVGbKRI2rWMHHH
-        QSwCiiVBB0L9J3ff1jYFVyKYGw==
-X-Google-Smtp-Source: ABdhPJzJG6NvztWZ/pLxxAdKe+eSw0RfaB/LnZLYy9xMQn1Kc9i6wazzrg3SUU/6Ea/h6dTA1cVvsw==
-X-Received: by 2002:a62:dd16:0:b029:18a:b228:649 with SMTP id w22-20020a62dd160000b029018ab2280649mr11657996pff.33.1604352781928;
-        Mon, 02 Nov 2020 13:33:01 -0800 (PST)
-Received: from [192.168.10.160] (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id jy19sm446275pjb.9.2020.11.02.13.33.00
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Nov 2020 13:33:01 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <97FAFCC7-C12E-408A-A53C-8914C0472046@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_D12A7FF8-F7AD-4798-8693-73699021FF96";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH 2/2] quota: Sanity-check quota file headers on load
-Date:   Mon, 2 Nov 2020 14:32:59 -0700
-In-Reply-To: <20201102172733.23444-3-jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-To:     Jan Kara <jack@suse.cz>
-References: <20201102172733.23444-1-jack@suse.cz>
- <20201102172733.23444-3-jack@suse.cz>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FtSibvsdvA5rUVREdfoxJ1vc1kri00NcSUIMa32id/s=;
+        b=EHQsoxS1Lu0JPfXovhGy5l6boYiec3W237dAk/yf44LCFrmhen69gAHCPN6QD4Tbp3
+         8IBJyyvesRyoKPuZFOiWzPLdUT/1ib+vjgT+gDzKB7tp7Tzp8nqpzolCV16nvL+8jVRO
+         VChCU8YAzUj0Zv6PLuvZJCcLWtxaTRqYANDytI3fNKO7e1ECN4CSEcuyMX346fwD04hs
+         JRIjbca6BWT9k8lEjCQgS/CuzNunwalE9OILBEtKDy5Qz/9OVwLogdcF5tG2VoevXFRM
+         e3pVeeOHCphRg1qtoPO75KBd2vrJsikvOwngRdU2cx0qe5hwm8TIq3O71hdC/4WqSB2H
+         hBqA==
+X-Gm-Message-State: AOAM533MWDZIRcYMfStBInwt8zQg3/xOA6CzxiGsCpPoQVLX1MUrSIt7
+        cx3ePs7+hPtqJxY0A+tOsobiZw==
+X-Google-Smtp-Source: ABdhPJwIWV5qLDMLpsaxZ1JpfY8hZganSzwNcbYL9T+70ZBF+NS40V/oYgHHkjldaZleNZmuf/jaNg==
+X-Received: by 2002:a17:90a:a595:: with SMTP id b21mr184058pjq.3.1604353174988;
+        Mon, 02 Nov 2020 13:39:34 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id z10sm403283pjz.49.2020.11.02.13.39.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2020 13:39:34 -0800 (PST)
+Subject: Re: [PATCH -next] fs: Fix memory leaks in do_renameat2() error paths
+From:   Jens Axboe <axboe@kernel.dk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20201030152407.43598-1-cai@redhat.com>
+ <20201030184255.GP3576660@ZenIV.linux.org.uk>
+ <ad9357e9-8364-a316-392d-7504af614cac@kernel.dk>
+ <20201030184918.GQ3576660@ZenIV.linux.org.uk>
+ <d858ba48-624f-43be-93cf-07d94f0ebefd@kernel.dk>
+ <20201030222213.GR3576660@ZenIV.linux.org.uk>
+ <a1e17902-a204-f03d-2a51-469633eca751@kernel.dk>
+ <87eelba7ai.fsf@x220.int.ebiederm.org>
+ <f33a6b5e-ecc9-2bef-ab40-6bd8cc2030c2@kernel.dk>
+ <87k0v38qlw.fsf@x220.int.ebiederm.org>
+ <d77e2d82-22da-a7a0-54e0-f5d315f32a75@kernel.dk>
+Message-ID: <3abc1742-733e-c682-5476-c6337a630e05@kernel.dk>
+Date:   Mon, 2 Nov 2020 14:39:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <d77e2d82-22da-a7a0-54e0-f5d315f32a75@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 11/2/20 1:31 PM, Jens Axboe wrote:
+> On 11/2/20 1:12 PM, Eric W. Biederman wrote:
+>> Jens Axboe <axboe@kernel.dk> writes:
+>>
+>>> On 11/2/20 12:27 PM, Eric W. Biederman wrote:
+>>>> Jens Axboe <axboe@kernel.dk> writes:
+>>>>
+>>>>> On 10/30/20 4:22 PM, Al Viro wrote:
+>>>>>> On Fri, Oct 30, 2020 at 02:33:11PM -0600, Jens Axboe wrote:
+>>>>>>> On 10/30/20 12:49 PM, Al Viro wrote:
+>>>>>>>> On Fri, Oct 30, 2020 at 12:46:26PM -0600, Jens Axboe wrote:
+>>>>>>>>
+>>>>>>>>> See other reply, it's being posted soon, just haven't gotten there yet
+>>>>>>>>> and it wasn't ready.
+>>>>>>>>>
+>>>>>>>>> It's a prep patch so we can call do_renameat2 and pass in a filename
+>>>>>>>>> instead. The intent is not to have any functional changes in that prep
+>>>>>>>>> patch. But once we can pass in filenames instead of user pointers, it's
+>>>>>>>>> usable from io_uring.
+>>>>>>>>
+>>>>>>>> You do realize that pathname resolution is *NOT* offloadable to helper
+>>>>>>>> threads, I hope...
+>>>>>>>
+>>>>>>> How so? If we have all the necessary context assigned, what's preventing
+>>>>>>> it from working?
+>>>>>>
+>>>>>> Semantics of /proc/self/..., for starters (and things like /proc/mounts, etc.
+>>>>>> *do* pass through that, /dev/stdin included)
+>>>>>
+>>>>> Don't we just need ->thread_pid for that to work?
+>>>>
+>>>> No.  You need ->signal.
+>>>>
+>>>> You need ->signal->pids[PIDTYPE_TGID].  It is only for /proc/thread-self
+>>>> that ->thread_pid is needed.
+>>>>
+>>>> Even more so than ->thread_pid, it is a kernel invariant that ->signal
+>>>> does not change.
+>>>
+>>> I don't care about the pid itself, my suggestion was to assign ->thread_pid
+>>> over the lookup operation to ensure that /proc/self/ worked the way that
+>>> you'd expect.
+>>
+>> I understand that.
+>>
+>> However /proc/self/ refers to the current process not to the current
+>> thread.  So ->thread_pid is not what you need to assign to make that
+>> happen.  What the code looks at is: ->signal->pids[PIDTYPE_TGID].
+>>
+>> It will definitely break invariants to assign to ->signal.
+>>
+>> Currently only exchange_tids assigns ->thread_pid and it is nasty.  It
+>> results in code that potentially results in infinite loops in
+>> kernel/signal.c
+>>
+>> To my knowledge nothing assigns ->signal->pids[PIDTYPE_TGID].  At best
+>> it might work but I expect the it would completely confuse something in
+>> the pid to task or pid to process mappings.  Which is to say even if it
+>> does work it would be an extremely fragile solution.
+> 
+> Thanks Eric, that's useful. Sounds to me like we're better off, at least
+> for now, to just expressly forbid async lookup of /proc/self/. Which
+> isn't really the end of the world as far as I'm concerned.
 
---Apple-Mail=_D12A7FF8-F7AD-4798-8693-73699021FF96
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Nov 2, 2020, at 10:27 AM, Jan Kara <jack@suse.cz> wrote:
->=20
-> Perform basic sanity checks of quota headers to avoid kernel crashes =
-on
-> corrupted quota files.
->=20
-> CC: stable@vger.kernel.org
-> Reported-by: syzbot+f816042a7ae2225f25ba@syzkaller.appspotmail.com
-> Signed-off-by: Jan Kara <jack@suse.cz>
-
-Looks reasonable.
-
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-
-> ---
-> fs/quota/quota_v2.c | 19 +++++++++++++++++++
-> 1 file changed, 19 insertions(+)
->=20
-> diff --git a/fs/quota/quota_v2.c b/fs/quota/quota_v2.c
-> index e69a2bfdd81c..c21106557a37 100644
-> --- a/fs/quota/quota_v2.c
-> +++ b/fs/quota/quota_v2.c
-> @@ -157,6 +157,25 @@ static int v2_read_file_info(struct super_block =
-*sb, int type)
-> 		qinfo->dqi_entry_size =3D sizeof(struct =
-v2r1_disk_dqblk);
-> 		qinfo->dqi_ops =3D &v2r1_qtree_ops;
-> 	}
-> +	ret =3D -EUCLEAN;
-> +	/* Some sanity checks of the read headers... */
-> +	if ((loff_t)qinfo->dqi_blocks << qinfo->dqi_blocksize_bits >
-> +	    i_size_read(sb_dqopt(sb)->files[type])) {
-> +		quota_error(sb, "Number of blocks too big for quota file =
-size (%llu > %llu).",
-> +		    (loff_t)qinfo->dqi_blocks << =
-qinfo->dqi_blocksize_bits,
-> +		    i_size_read(sb_dqopt(sb)->files[type]));
-> +		goto out;
-> +	}
-> +	if (qinfo->dqi_free_blk >=3D qinfo->dqi_blocks) {
-> +		quota_error(sb, "Free block number too big (%u >=3D =
-%u).",
-> +			    qinfo->dqi_free_blk, qinfo->dqi_blocks);
-> +		goto out;
-> +	}
-> +	if (qinfo->dqi_free_entry >=3D qinfo->dqi_blocks) {
-> +		quota_error(sb, "Block with free entry too big (%u >=3D =
-%u).",
-> +			    qinfo->dqi_free_entry, qinfo->dqi_blocks);
-> +		goto out;
-> +	}
-> 	ret =3D 0;
-> out:
-> 	up_read(&dqopt->dqio_sem);
-> --
-> 2.16.4
->=20
+Alternatively, we just teach task_pid_ptr() where to look for an
+alternate, if current->flags & PF_IO_WORKER is true. Then we don't have
+to assign anything that's visible in task_struct, and in fact the async
+worker can retain this stuff on the stack. As all requests are killed
+before a task is allowed to exit, that should be safe.
 
 
-Cheers, Andreas
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 74ddbff1a6ba..5fd421a4864c 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -42,6 +42,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task.h>
+ #include <linux/idr.h>
++#include <linux/io_uring.h>
+ #include <net/sock.h>
+ #include <uapi/linux/pidfd.h>
+ 
+@@ -320,6 +321,12 @@ EXPORT_SYMBOL_GPL(find_vpid);
+ 
+ static struct pid **task_pid_ptr(struct task_struct *task, enum pid_type type)
+ {
++	if ((task->flags & PF_IO_WORKER) && task->io_uring) {
++		return (type == PIDTYPE_PID) ?
++			&task->io_uring->thread_pid :
++			&task->io_uring->pids[type];
++	}
++
+ 	return (type == PIDTYPE_PID) ?
+ 		&task->thread_pid :
+ 		&task->signal->pids[type];
 
+-- 
+Jens Axboe
 
-
-
-
-
---Apple-Mail=_D12A7FF8-F7AD-4798-8693-73699021FF96
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl+gewsACgkQcqXauRfM
-H+ALTg/9GWmMTMkOn/bz014uzOxCaToWVNMRzlcath0V9HftVKT2aY50SVXW/+Gg
-gvTVIGrpVEk/wbyels5zOpymMKNuoVUP9TEUdwobPLkoaskjU4Q/5xXcGKahB/4d
-DBZhSWxXOWF806NNU3aLOPEn8o/GpatB13RKzd10iI7ImI9ijWOR7Mg3EO/7vjQm
-yyeoTXlXSVdqOHbwjudmlhUZDgjS7Q/G55sSt3/Xu5fAcHvIAX6C3yGFlbTMDzSI
-pZ8tUxLiCpJCulhWDUKeh8d7NU3c7I9RPPEXT6XuhNMN3yfpawlcof7AQNFr7kxk
-JsfiXvaQ8Sobezq2EfRvtWEJoT10QU0+/OqXQE/ZxAvzpLih3IpwLm+H7/KR2wDr
-WadeCKqP+rv1/CJ3KRcv6dyHoS5g5f78MuTmaY7+e6EaFi8Px+2Xdi1HndHYMnO3
-gbt7kqmH8o60PcogIiCWGRmieMAakZs+Ah87J/YCK2K1hBkGqBaTlfMBWLKvxL/6
-5UuB7cGn3ocODRLxWqsovodVv/7a5wr+N3dXaid9qhFWWK0AMltIXW4MmIntkrdZ
-7oVKMK7oh4S5/NnbkrY2y4W0dUskRCUk9ilZVYRjHEzWuL9tVTDrL9kkm8P4UMNz
-79C6o6v31XIXGA+Ki7jDZgWL/WSzurLHfVtYYFTHEtbzkhmbBOc=
-=pChP
------END PGP SIGNATURE-----
-
---Apple-Mail=_D12A7FF8-F7AD-4798-8693-73699021FF96--
