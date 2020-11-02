@@ -2,116 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0547F2A31B8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 18:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C862A31BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Nov 2020 18:38:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbgKBRh7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Nov 2020 12:37:59 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:40152 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbgKBRh7 (ORCPT
+        id S1727881AbgKBRij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Nov 2020 12:38:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50332 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727749AbgKBRii (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Nov 2020 12:37:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604338678; x=1635874678;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=2amOSHNx07MWIfpDcHeRBx/Nja66DFU6c5FPDcJv604=;
-  b=E3NGmo7BJqpNEDkkTxUagq0rYXDF29UkA8bRCEpALgM2Qepmdxvam1l1
-   x35H/Bpht3vy8loG5Kvid29nS4glNK7+EYhuHiQo141ZCmcoPAllRqvT3
-   Pvrhg3U2ql58bG6KyEoCC8Nm86CNhNbvqlmMTtoK0UU5uZvimzynVFKc8
-   ZZVbD4tPjuUzE8E2iwGa6cN2T3+4GflxUiGaGEdgMiKRvxqlT/j26ds/4
-   Z7ZQEmxgSfCIXRjbr+6zX/dWuBJ9/iVDIUESiCBAl7RIly+NosY7koQvY
-   U4gf3uz2heu9wVA8vSe6EzUWKYFqUeMUKMLrTe+FFKIWcDgVYmKwb+7LY
-   Q==;
-IronPort-SDR: 0H3oS9Md1/BPwrBU901nbqCBmLlzJHmXDpm1NbpLmbMQ2H0b2i8qTQ7Si1iZQ2Hp2etC5Lhk2q
- yQ4Ir3ngFWs1HfhRHzunl8QRUyCFQO+i6Xl0YDg6InixcMU5AyCTXCmQZfovPJItx+TD+o0YyF
- Q1GdReccWmuMQNZ11l1zJXuM7V5RZni2P4FxPoZi0SXSyLG4u+l6xLkh6RAcH4nWoiFmAOdu9g
- rE4F1EfucJaAqJ3YYFTC2edWRVoGpKauNE+5RpT9lWgCcd8y4YdkIj5Vp2KVdoWedhLqgSdK2n
- lBk=
-X-IronPort-AV: E=Sophos;i="5.77,445,1596470400"; 
-   d="scan'208";a="156008911"
-Received: from mail-bn8nam08lp2044.outbound.protection.outlook.com (HELO NAM04-BN8-obe.outbound.protection.outlook.com) ([104.47.74.44])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Nov 2020 01:37:55 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XBBtNCp+k149nbfU07DPikc8V51IYgyuB4IgCrf13OeL9WWZkJMTBBkSpe7QiN9NGKNCeS0S8BlE606kxDYdamnm4x0mixppQe5bCFb2d9zY3flP58QG5QxbjO1Ee5Y+zjQJ0GHr8OMW7/8aL55KI7As+GbnQJaQy38mWDgZYMGETWvP4Ff+vrTsJrvEBuRzzxVVvsRXb5G00ulT2TX6vwOjeIEklca/sUcj0LuR6snNaLlgcuWyQTqqD0chOyCe/WbpLYZW3LBL8t90YVKSMqT3eBoUWI+dl0b9p2Ccl91ALTJfWMdxIxfuHrAIUZ/mbC5vwIrgOEamSMTT2+ndZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2amOSHNx07MWIfpDcHeRBx/Nja66DFU6c5FPDcJv604=;
- b=UROEVPfALQFziGuYAsTXbWQrafyM8bXjS0t9Se23dE8AkrJ4tLWOTjWsJEh2S0fd8qM0AuKDLQeyQsiHrZ4K0JjEexX2GvVG04VlrZCERue0JDl8RV9+RyU4gsFgr9LcWVlOh7atHSlvJuPjmtEvMq7/gI094Nak9Zt6sMtvOYUYCuW87zLMWBZNOFxJRv0+ASaL2rSQYdx8rwLRse5+tMCDE/HH7Vd2twQf/+9c6S5badg2MhD0XtKpBb+6y/5cj0aCpWwmThSDsu4OWoV29dytOXVfEuG1yJwkw75hOId8G/2EHurmoTFA8SChFeyrIlNtSy6GhE38KQ8bOXWO9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 2 Nov 2020 12:38:38 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF390C061A04
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Nov 2020 09:38:38 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id y20so15800169iod.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Nov 2020 09:38:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2amOSHNx07MWIfpDcHeRBx/Nja66DFU6c5FPDcJv604=;
- b=MTVU30JXXiKqtTtC2SyOXcYlCFfI36HhNyC3PXX8c4dpNl1hSlW4467d7n0V3hwKv1n4hZvlCWNIjSWHIugK1LfSG/2g6LfSKOoC8W+hkE9/e+UZATAU87GFY2G0cHxjwDTK3PWNi54IhJuvPolmYQmDnsJpAlnh1kmQuEyLP/Q=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN6PR04MB4686.namprd04.prod.outlook.com
- (2603:10b6:805:b0::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Mon, 2 Nov
- 2020 17:37:52 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::619a:567c:d053:ce25]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::619a:567c:d053:ce25%6]) with mapi id 15.20.3499.030; Mon, 2 Nov 2020
- 17:37:52 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>
-CC:     "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v9 07/41] btrfs: disallow space_cache in ZONED mode
-Thread-Topic: [PATCH v9 07/41] btrfs: disallow space_cache in ZONED mode
-Thread-Index: AQHWrsP+2e1f8RuAsUqKrkts9lcv+w==
-Date:   Mon, 2 Nov 2020 17:37:52 +0000
-Message-ID: <SN4PR0401MB3598C23CC8FFD406852AAF4E9B100@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <f0a4ae9168940bf1756f89a140cabedb8972e0d1.1604065695.git.naohiro.aota@wdc.com>
- <4a2f90c0-e595-1a0f-5373-80517f9b9843@toxicpanda.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: toxicpanda.com; dkim=none (message not signed)
- header.d=none;toxicpanda.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [129.253.240.72]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: a46f7569-63f9-4210-7722-08d87f560654
-x-ms-traffictypediagnostic: SN6PR04MB4686:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR04MB468643725356E32A5B3211709B100@SN6PR04MB4686.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:843;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: VbpwbNnRfOLflsVZTwCXLo5a9pJZiy5wUUjYbhaj7E3SAFsRyvET+PetPpBtasAQi3E+InxmE2dHLVOrkI+AaLl9KXgJ9VwyrTBGwrM8b3zPqhLjsH0OjGiK3PDXKdNkqoZIbm88/7CiCTaWlaXfTTNlLXvmot8p0se5XMOKCdp7EIjjG7EicGj7kfAmcU7IhmcDBlxp+MZ7Eeqx2cW9aZtSnspiBeeIW0M/b0VnlqYjEJWIAIZuG6Z0LxtKLXfrf3bFUbtSGTt+8sNC56sKXcFQxXB6RTXqfw2Kj6KK+vWRvWyvr5s+tUh4jHdVt092+LChWZ3mNeTeOhnO903DuA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(39860400002)(136003)(366004)(376002)(396003)(110136005)(54906003)(66446008)(4326008)(64756008)(8676002)(8936002)(66946007)(86362001)(66556008)(66476007)(316002)(76116006)(91956017)(55016002)(2906002)(478600001)(53546011)(6506007)(7696005)(26005)(71200400001)(558084003)(33656002)(52536014)(9686003)(5660300002)(186003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: 23s5DVIs0pKYh8h0v26A5V4VLb4UXTrVCeqo3zVLJJ5d+Osz5QNTQ1nkRujtb197HRoUpptPNAQbsLy5dHKUuHsUmzOKWodep6Px8PML3y9BgktYHNA/1IfeXMdi67978p7izXeys3ilVUwj73tvl8ROQx7qbEbetX2yLC9kDr7elc7JWGaKYRSDk2B/yrsdVTPNOOmSgC/z8eXUNpwV/F4paF60zq6WiiNWMqGI6YWbYDUXMFMC+HaSrXnlDrT3FNnDTED6hY783GbcdK54SgeKqThQJ+D140BPwQrx0OIjjPfB2WqAa5Y9nlWQP0Ct8zo6lf71crsOUkZKhPTe9MEbmZmIoWKdwebHLMYH24I3gN8SSQQ6mi6QOtiWj6tYtOd14a0YDkua85XRqL/5PAol2KH5U22ZjEeF3BJ7lw9qhHpiPtYxLjLnmpBSbg0uoVMNjw2etiolnMDNN2C2kRldHx64FzEnU+C7qYGlBJ6jYRSuhfqZg+VCTIJvvHsAEe7m7MsL/Qff1wmTJxFtTqFJbx1nM5SDLQ8o6/eub8nlhy8aou33bMmKINr+s/XQXio7FuBBk5amEgF2/3o4kRYa5ROPGPGXEnIRxB1faNzrR7MKc2Xq8w1u+1+D1Rpo5sr85iPmjXZVpH3BcFrOvw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=XgHK+n73DGSjTlF4tReOQabxZrHP7prERV8ecq6Sut4=;
+        b=zjCJWGvRvEzzaS5KGlJUC1dFqwplLVJk01FNJYHeRqNkbT9zkXeL/ae9FSPhpyp1q0
+         nFn3GVmuHBfpz93h5PAflmCKQzU9LmiD0wZuY+IWuD1p+yQV/Lpdl8T/xukIcpeOF40T
+         nb2DsGZz0ffUJliV4/uN3XSrcPRI11fm+o/2+UZsYHDzdoHlzkT7F/XchGZEmpk9mXsB
+         oMcrMfPvAUPdUJF6XuZMg3TG6Xj97zvLFDCJRZN9eNkAKnMv/jzMrGTnZD5FWjF78GO1
+         h8QUgiawSnLNGi8qLiljhEoD5G1rK+YgIlNCHbrhx6S5M1s4g+QtZXEnL4ycaqbt8eYt
+         4tog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XgHK+n73DGSjTlF4tReOQabxZrHP7prERV8ecq6Sut4=;
+        b=NlJSm5kazA4/p5pL8hZ8qmIi1bLNwDvgn7cHcGOldikiGOZwMbVo2LHx59fr/VvL9G
+         mTSWxPtw/AyP6vt5zbE5vt5bQ2cDSRa7AtI9Wv7yfj/iAVtx2EnvTO9x0oqOzQKnfTv4
+         Wyx7sJtqboGy+Uyr/IGgdPSayFcVkFHCaoMqY43lv77JMLjggUJbj9RkkoMlnJQe8UOC
+         k0BiwJJ6cAS+vWC8IzFGnE8jrh6mrQaRqkgxoLVQPTfzNwqDzVr4VXCqyBbDIX+v5dXr
+         BpLtL/OsHhMtZn/axtonMF1TColYFSHQ6XNrZ7mr1P8af2K0gFMNQkW4i4NcQ+Dfni6O
+         5mHQ==
+X-Gm-Message-State: AOAM531NQK3zj26xK/Fh0z3HcIWmCspY7iz2XMoGn4i7jRXui2l8NcSu
+        P3Y7P5eqDSx/Tw4PyY8GpNWpVg==
+X-Google-Smtp-Source: ABdhPJzLYKP4xBEydsBHfpr2/aVGTAX5oAa8OeKplgO09s2gpfHx4JJivnwZhV4NWx5yRt0KLomPpA==
+X-Received: by 2002:a05:6602:2c41:: with SMTP id x1mr11554294iov.58.1604338717964;
+        Mon, 02 Nov 2020 09:38:37 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id f203sm10313277ioa.23.2020.11.02.09.38.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Nov 2020 09:38:37 -0800 (PST)
+Subject: Re: KASAN: null-ptr-deref Write in kthread_use_mm
+To:     syzbot <syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org
+References: <00000000000008604f05b31e6867@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d74a8b22-bd5e-102f-e896-79e66b09a4a4@kernel.dk>
+Date:   Mon, 2 Nov 2020 10:38:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a46f7569-63f9-4210-7722-08d87f560654
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Nov 2020 17:37:52.2080
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lXMflfupxgqXsjZ/ZM0ztUF//gyGnmbfE4Oi3be1FaryFMnYOckPAW0gCkQ+eD4HRnUsmdlK2Mh7WoEo0NgNQdrKIMlVTy+d27IxUOs2/Lg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4686
+In-Reply-To: <00000000000008604f05b31e6867@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02/11/2020 18:02, Josef Bacik wrote:=0A=
-> 'clearing', and then you can add=0A=
-=0A=
-Fixed up, thanks=0A=
+On 11/2/20 4:54 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4e78c578 Add linux-next specific files for 20201030
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=148969d4500000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=83318758268dc331
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b57abf7ee60829090495
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e1346c500000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1388fbca500000
+> 
+> The issue was bisected to:
+> 
+> commit 4d004099a668c41522242aa146a38cc4eb59cb1e
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Fri Oct 2 09:04:21 2020 +0000
+> 
+>     lockdep: Fix lockdep recursion
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1354e614500000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d4e614500000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1754e614500000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b57abf7ee60829090495@syzkaller.appspotmail.com
+> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
+> 
+> ==================================================================
+> BUG: KASAN: null-ptr-deref in instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
+> BUG: KASAN: null-ptr-deref in mmgrab include/linux/sched/mm.h:36 [inline]
+> BUG: KASAN: null-ptr-deref in kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
+> Write of size 4 at addr 0000000000000060 by task io_uring-sq/26191
+> 
+> CPU: 1 PID: 26191 Comm: io_uring-sq Not tainted 5.10.0-rc1-next-20201030-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x107/0x163 lib/dump_stack.c:118
+>  __kasan_report mm/kasan/report.c:549 [inline]
+>  kasan_report.cold+0x5/0x37 mm/kasan/report.c:562
+>  check_memory_region_inline mm/kasan/generic.c:186 [inline]
+>  check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
+>  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+>  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
+>  mmgrab include/linux/sched/mm.h:36 [inline]
+>  kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
+>  __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
+>  __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
+>  io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
+>  io_init_req fs/io_uring.c:6661 [inline]
+>  io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
+>  __io_sq_thread fs/io_uring.c:6904 [inline]
+>  io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
+>  kthread+0x3af/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> ==================================================================
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 26191 Comm: io_uring-sq Tainted: G    B             5.10.0-rc1-next-20201030-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x107/0x163 lib/dump_stack.c:118
+>  panic+0x306/0x73d kernel/panic.c:231
+>  end_report+0x58/0x5e mm/kasan/report.c:106
+>  __kasan_report mm/kasan/report.c:552 [inline]
+>  kasan_report.cold+0xd/0x37 mm/kasan/report.c:562
+>  check_memory_region_inline mm/kasan/generic.c:186 [inline]
+>  check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
+>  instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+>  atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
+>  mmgrab include/linux/sched/mm.h:36 [inline]
+>  kthread_use_mm+0x11c/0x2a0 kernel/kthread.c:1257
+>  __io_sq_thread_acquire_mm fs/io_uring.c:1092 [inline]
+>  __io_sq_thread_acquire_mm+0x1c4/0x220 fs/io_uring.c:1085
+>  io_sq_thread_acquire_mm_files.isra.0+0x125/0x180 fs/io_uring.c:1104
+>  io_init_req fs/io_uring.c:6661 [inline]
+>  io_submit_sqes+0x89d/0x25f0 fs/io_uring.c:6757
+>  __io_sq_thread fs/io_uring.c:6904 [inline]
+>  io_sq_thread+0x462/0x1630 fs/io_uring.c:6971
+>  kthread+0x3af/0x4a0 kernel/kthread.c:292
+>  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+
+I think this should fix it - we could _probably_ get by with a
+READ_ONCE() of the task mm for this case, but let's play it safe and
+lock down the task for a guaranteed consistent view of the current
+state.
+
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index dd2ee77feec6..610332f443bd 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -995,20 +995,33 @@ static void io_sq_thread_drop_mm(void)
+ 	if (mm) {
+ 		kthread_unuse_mm(mm);
+ 		mmput(mm);
++		current->mm = NULL;
+ 	}
+ }
+ 
+ static int __io_sq_thread_acquire_mm(struct io_ring_ctx *ctx)
+ {
+-	if (!current->mm) {
+-		if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL) ||
+-			     !ctx->sqo_task->mm ||
+-			     !mmget_not_zero(ctx->sqo_task->mm)))
+-			return -EFAULT;
+-		kthread_use_mm(ctx->sqo_task->mm);
++	struct mm_struct *mm;
++
++	if (current->mm)
++		return 0;
++
++	/* Should never happen */
++	if (unlikely(!(ctx->flags & IORING_SETUP_SQPOLL)))
++		return -EFAULT;
++
++	task_lock(ctx->sqo_task);
++	mm = ctx->sqo_task->mm;
++	if (unlikely(!mm || !mmget_not_zero(mm)))
++		mm = NULL;
++	task_unlock(ctx->sqo_task);
++
++	if (mm) {
++		kthread_use_mm(mm);
++		return 0;
+ 	}
+ 
+-	return 0;
++	return -EFAULT;
+ }
+ 
+ static int io_sq_thread_acquire_mm(struct io_ring_ctx *ctx,
+
+-- 
+Jens Axboe
+
