@@ -2,105 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F5F2A4AB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 17:03:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 979A22A4AB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 17:04:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbgKCQDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 11:03:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33902 "EHLO
+        id S1728082AbgKCQEm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 11:04:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbgKCQDv (ORCPT
+        with ESMTP id S1727941AbgKCQEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 11:03:51 -0500
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7ECEC061A48
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 08:03:50 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CQZMm1C8kzlhqv5;
-        Tue,  3 Nov 2020 17:03:48 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4CQZMk0bzXzlh8TS;
-        Tue,  3 Nov 2020 17:03:46 +0100 (CET)
-Subject: Re: [PATCH v22 07/12] landlock: Support filesystem access-control
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20201027200358.557003-1-mic@digikod.net>
- <20201027200358.557003-8-mic@digikod.net>
- <CAG48ez1xMfxkwhXK4b1BB4GrTVauNzfwPoCutn9axKt_PFRSVQ@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <056d8f1a-b45f-379f-d81a-8c13a1536c3f@digikod.net>
-Date:   Tue, 3 Nov 2020 17:03:45 +0100
-User-Agent: 
+        Tue, 3 Nov 2020 11:04:41 -0500
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F754C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 08:04:40 -0800 (PST)
+Received: by mail-qt1-x843.google.com with SMTP id t5so3373403qtp.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 08:04:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+8c/7MWJ1/1ydorj82YmUDLF+xLcZaJ0p+mtwbUVJL4=;
+        b=XluJx3AuL7HKe2iLQAuXA5FZQcnA8v6SKHNX3aKD+PdUBSXnYoPtczizV1TSDD2Exk
+         7up5n2T4bwAdDO8LFqM0j/tYyLzSTiATpIDhx+Kn8EkG/WmoBcFCq71k3EG/GAdlWiT3
+         1R9KdB/pCFmfkVZQD2tYmaKl3B0QADl5ikJ6dFBKjQlywt5TjeF1HPQfeWSa4f+GO4EQ
+         UyKzKdLbSzp7UygwbKoFHaFOwXxpwaGE5oT1dEfFcpjyKvblmv0oHcLdxxoQyHX1gwP0
+         cxUmNc1DeCxJ5R/qFDq77Gl3p+vXcpOt8Ff1UtvggjN5xo+OAukJLg440L5gMonZvSXo
+         3K9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+8c/7MWJ1/1ydorj82YmUDLF+xLcZaJ0p+mtwbUVJL4=;
+        b=ULpaKoHWih5Yw4dKcquMwr85dSJUpdtuvgCsbeSStyrqL7+uyg7MHv6SeP5tiSxL4U
+         8dKmvlrBAXNlQOsGLwVzueEmPMT8KLGNvUVKqNZxeQ974AdLPyY2GJm1fUg9JNqk6Ic/
+         dZfRR+8DxgoLpxDC39aW4aw2Vt79KjPKV8Dbg79McroyPAn8aSem9kRz74YWGF3CiUp3
+         lEVQkslE8rfaMuWE/yJpB2ZCVg0DwW5HnJwokGmJ9bZKfkQmWNzjAo24ZL0pz4BhqgUd
+         Xo3PtyqA9ydp05DCeNChR9KqAfUsxJrIgi2L4EWBy8vsRx69hUUTPUOSUS3ONAUIHKXQ
+         LLeA==
+X-Gm-Message-State: AOAM533AayAP4FWfgGR/r5sEMw8fVqCXBT5C6XKnXtjLgeL23fQxPn47
+        GBI57G4ZKhRcznTkYZm486WzWk0JZEjBFN05
+X-Google-Smtp-Source: ABdhPJyXMCh9ZBXzscP8jpmY4t+YjYLMuhVYnHKq2+lx9mL09K5BwNUinxmuAqzEqMczVRvoNklGjg==
+X-Received: by 2002:ac8:540e:: with SMTP id b14mr20033831qtq.136.1604419479417;
+        Tue, 03 Nov 2020 08:04:39 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id w9sm10596364qkw.103.2020.11.03.08.04.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Nov 2020 08:04:38 -0800 (PST)
+Subject: Re: [PATCH v9 28/41] btrfs: serialize meta IOs on ZONED mode
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org
+References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
+ <61771fe28bda89abcdb55b2a00be05eb82d2216e.1604065695.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <e3107657-aa88-7682-cece-83fac2b93d16@toxicpanda.com>
+Date:   Tue, 3 Nov 2020 11:04:37 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez1xMfxkwhXK4b1BB4GrTVauNzfwPoCutn9axKt_PFRSVQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <61771fe28bda89abcdb55b2a00be05eb82d2216e.1604065695.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 29/10/2020 02:06, Jann Horn wrote:
-> (On Tue, Oct 27, 2020 at 9:04 PM Mickaël Salaün <mic@digikod.net> wrote:
-
->> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> [...]
->> +static inline u32 get_file_access(const struct file *const file)
->> +{
->> +       u32 access = 0;
->> +
->> +       if (file->f_mode & FMODE_READ) {
->> +               /* A directory can only be opened in read mode. */
->> +               if (S_ISDIR(file_inode(file)->i_mode))
->> +                       return LANDLOCK_ACCESS_FS_READ_DIR;
->> +               access = LANDLOCK_ACCESS_FS_READ_FILE;
->> +       }
->> +       /*
->> +        * A LANDLOCK_ACCESS_FS_APPEND could be added but we also need to check
->> +        * fcntl(2).
->> +        */
+On 10/30/20 9:51 AM, Naohiro Aota wrote:
+> We cannot use zone append for writing metadata, because the B-tree nodes
+> have references to each other using the logical address. Without knowing
+> the address in advance, we cannot construct the tree in the first place.
+> So we need to serialize write IOs for metadata.
 > 
-> Once https://lore.kernel.org/linux-api/20200831153207.GO3265@brightrain.aerifal.cx/
-> lands, pwritev2() with RWF_NOAPPEND will also be problematic for
-> classifying "write" vs "append"; you may want to include that in the
-> comment. (Or delete the comment.)
-
-Contrary to fcntl(2), pwritev2(2) doesn't seems to modify the file
-description. Otherwise, other LSMs would need to be patched.
-I'll remove this comment anyway.
-
+> We cannot add a mutex around allocation and submission because metadata
+> blocks are allocated in an earlier stage to build up B-trees.
 > 
->> +       if (file->f_mode & FMODE_WRITE)
->> +               access |= LANDLOCK_ACCESS_FS_WRITE_FILE;
->> +       /* __FMODE_EXEC is indeed part of f_flags, not f_mode. */
->> +       if (file->f_flags & __FMODE_EXEC)
->> +               access |= LANDLOCK_ACCESS_FS_EXECUTE;
->> +       return access;
->> +}
-> [...]
+> Add a zoned_meta_io_lock and hold it during metadata IO submission in
+> btree_write_cache_pages() to serialize IOs. Furthermore, this add a
+> per-block group metadata IO submission pointer "meta_write_pointer" to
+> ensure sequential writing, which can be caused when writing back blocks in
+> an unfinished transaction.
 > 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/block-group.h |  1 +
+>   fs/btrfs/ctree.h       |  1 +
+>   fs/btrfs/disk-io.c     |  1 +
+>   fs/btrfs/extent_io.c   | 27 ++++++++++++++++++++++-
+>   fs/btrfs/zoned.c       | 50 ++++++++++++++++++++++++++++++++++++++++++
+>   fs/btrfs/zoned.h       | 31 ++++++++++++++++++++++++++
+>   6 files changed, 110 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
+> index 401e9bcefaec..b2a8a3beceac 100644
+> --- a/fs/btrfs/block-group.h
+> +++ b/fs/btrfs/block-group.h
+> @@ -190,6 +190,7 @@ struct btrfs_block_group {
+>   	 */
+>   	u64 alloc_offset;
+>   	u64 zone_unusable;
+> +	u64 meta_write_pointer;
+>   };
+>   
+>   static inline u64 btrfs_block_group_end(struct btrfs_block_group *block_group)
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index 383c83a1f5b5..736f679f1310 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -955,6 +955,7 @@ struct btrfs_fs_info {
+>   	};
+>   	/* max size to emit ZONE_APPEND write command */
+>   	u64 max_zone_append_size;
+> +	struct mutex zoned_meta_io_lock;
+>   
+>   #ifdef CONFIG_BTRFS_FS_REF_VERIFY
+>   	spinlock_t ref_verify_lock;
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 778716e223ff..f02b121d8213 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -2652,6 +2652,7 @@ void btrfs_init_fs_info(struct btrfs_fs_info *fs_info)
+>   	mutex_init(&fs_info->delete_unused_bgs_mutex);
+>   	mutex_init(&fs_info->reloc_mutex);
+>   	mutex_init(&fs_info->delalloc_root_mutex);
+> +	mutex_init(&fs_info->zoned_meta_io_lock);
+>   	seqlock_init(&fs_info->profiles_lock);
+>   
+>   	INIT_LIST_HEAD(&fs_info->dirty_cowonly_roots);
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index 3f49febafc69..3cce444d5dbb 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -25,6 +25,7 @@
+>   #include "backref.h"
+>   #include "disk-io.h"
+>   #include "zoned.h"
+> +#include "block-group.h"
+>   
+>   static struct kmem_cache *extent_state_cache;
+>   static struct kmem_cache *extent_buffer_cache;
+> @@ -4001,6 +4002,7 @@ int btree_write_cache_pages(struct address_space *mapping,
+>   				   struct writeback_control *wbc)
+>   {
+>   	struct extent_buffer *eb, *prev_eb = NULL;
+> +	struct btrfs_block_group *cache = NULL;
+>   	struct extent_page_data epd = {
+>   		.bio = NULL,
+>   		.extent_locked = 0,
+> @@ -4035,6 +4037,7 @@ int btree_write_cache_pages(struct address_space *mapping,
+>   		tag = PAGECACHE_TAG_TOWRITE;
+>   	else
+>   		tag = PAGECACHE_TAG_DIRTY;
+> +	btrfs_zoned_meta_io_lock(fs_info);
+>   retry:
+>   	if (wbc->sync_mode == WB_SYNC_ALL)
+>   		tag_pages_for_writeback(mapping, index, end);
+> @@ -4077,12 +4080,30 @@ int btree_write_cache_pages(struct address_space *mapping,
+>   			if (!ret)
+>   				continue;
+>   
+> +			if (!btrfs_check_meta_write_pointer(fs_info, eb,
+> +							    &cache)) {
+> +				/*
+> +				 * If for_sync, this hole will be filled with
+> +				 * trasnsaction commit.
+> +				 */
+> +				if (wbc->sync_mode == WB_SYNC_ALL &&
+> +				    !wbc->for_sync)
+> +					ret = -EAGAIN;
+> +				else
+> +					ret = 0;
+> +				done = 1;
+> +				free_extent_buffer(eb);
+> +				break;
+> +			}
+> +
+>   			prev_eb = eb;
+>   			ret = lock_extent_buffer_for_io(eb, &epd);
+>   			if (!ret) {
+> +				btrfs_revert_meta_write_pointer(cache, eb);
+>   				free_extent_buffer(eb);
+>   				continue;
+>   			} else if (ret < 0) {
+> +				btrfs_revert_meta_write_pointer(cache, eb);
+>   				done = 1;
+>   				free_extent_buffer(eb);
+>   				break;
+> @@ -4115,10 +4136,12 @@ int btree_write_cache_pages(struct address_space *mapping,
+>   		index = 0;
+>   		goto retry;
+>   	}
+> +	if (cache)
+> +		btrfs_put_block_group(cache);
+>   	ASSERT(ret <= 0);
+>   	if (ret < 0) {
+>   		end_write_bio(&epd, ret);
+> -		return ret;
+> +		goto out;
+>   	}
+>   	/*
+>   	 * If something went wrong, don't allow any metadata write bio to be
+> @@ -4153,6 +4176,8 @@ int btree_write_cache_pages(struct address_space *mapping,
+>   		ret = -EROFS;
+>   		end_write_bio(&epd, ret);
+>   	}
+> +out:
+> +	btrfs_zoned_meta_io_unlock(fs_info);
+>   	return ret;
+>   }
+>   
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index 50393d560c9a..15bc7d451348 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -989,6 +989,9 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache)
+>   		ret = -EIO;
+>   	}
+>   
+> +	if (!ret)
+> +		cache->meta_write_pointer = cache->alloc_offset + cache->start;
+> +
+>   	kfree(alloc_offsets);
+>   	free_extent_map(em);
+>   
+> @@ -1120,3 +1123,50 @@ void btrfs_rewrite_logical_zoned(struct btrfs_ordered_extent *ordered)
+>   	kfree(logical);
+>   	bdput(bdev);
+>   }
+> +
+> +bool btrfs_check_meta_write_pointer(struct btrfs_fs_info *fs_info,
+> +				    struct extent_buffer *eb,
+> +				    struct btrfs_block_group **cache_ret)
+> +{
+> +	struct btrfs_block_group *cache;
+> +
+> +	if (!btrfs_is_zoned(fs_info))
+> +		return true;
+> +
+> +	cache = *cache_ret;
+> +
+> +	if (cache && (eb->start < cache->start ||
+> +		      cache->start + cache->length <= eb->start)) {
+> +		btrfs_put_block_group(cache);
+> +		cache = NULL;
+> +		*cache_ret = NULL;
+> +	}
+> +
+> +	if (!cache)
+> +		cache = btrfs_lookup_block_group(fs_info, eb->start);
+> +
+> +	if (cache) {
+> +		*cache_ret = cache;
+
+Don't set this here, set it after the if statement.
+
+> +
+> +		if (cache->meta_write_pointer != eb->start) {
+> +			btrfs_put_block_group(cache);
+> +			cache = NULL;
+> +			*cache_ret = NULL;
+
+And delete these two lines.  Then you can add
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+Thanks,
+
+Josef
