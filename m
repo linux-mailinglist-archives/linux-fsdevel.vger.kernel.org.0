@@ -2,107 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65E772A4567
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 13:44:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7B62A458C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 13:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbgKCMo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 07:44:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728027AbgKCMo2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 07:44:28 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5FAC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 04:44:26 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id o3so13571351pgr.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 04:44:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NwDp0C7YI6k612GwfI4IM2HXDY84RMHgpYFcSMQpWgA=;
-        b=eN3U2ROS4supbV5REMqmzQqVGcgqDgCl2EnQP8V4BJRhjfA/IAuqIK8D1aaBOyOPuH
-         QZSg66R4sk1It7k22jIcpUuvhk09J81hxnUGr1Q1AfFEEBJHYElaGxHDjTcnWqmVve0u
-         6X8g345zprT8GcXmDoxFMAV8NekajjfkM06S2WiIkNr9qoOPqQ9a9wkCh87vfF53pURS
-         tOZnMZkRt7exPMwKZZr4D/8sNcWtjul8lYTERqrdomo1Fz5k4Aw7WELsgVSlv1bV84Dl
-         yb51/qPbNlYvHUzYMdox7vEEXb3cyS9Uq2wMC6vquVap8QXeJu6cxtN/UgOzSOw/tBfi
-         HUOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NwDp0C7YI6k612GwfI4IM2HXDY84RMHgpYFcSMQpWgA=;
-        b=YXQ3tUfjWLXRh0KaffmbgEQcAdaKpLDCYRrPJpbKU067An55DTM/Wh8AYRMAJbHlB5
-         P6syOZefIYgIYiSDK3SLGhFO/5+mb6owugrBRFwUAWjvgHiKu0fJaN2mirzYT56JaJC7
-         lLw9cPkaH2XEQXUwf+nDAdzWkys1obkfHqazuV8LoIDkhL7itLo7xpKuLFnxy281BuRU
-         B/ZV9DIf6z4Qs8/0HchQosjpLLuZnyjJimRJHvYypZLFkbYdeUIx17XyE/Dk4tjOt1To
-         +PaRiSNWvRrhUMGIkIlp5/zQhQkXANS5NkFCS57NvHkt49FmfSnpZce+Kt/Rg+X7NYO7
-         OF9Q==
-X-Gm-Message-State: AOAM533xdWA1rZ68aPHUOf2oMWDv60Zwb0LfT+Rh1vTHveaevUu8j9Sf
-        6IruAyD/P0u8YhyNGImKbN4=
-X-Google-Smtp-Source: ABdhPJwHZ9ijrJh/hRxytIpCrAljWuuvWebttvbku+IGUZjeDpMiNG/KEKvghnD44G+DH57UFN7UzA==
-X-Received: by 2002:a62:3687:0:b029:18a:ec6b:6a50 with SMTP id d129-20020a6236870000b029018aec6b6a50mr9425179pfa.58.1604407466020;
-        Tue, 03 Nov 2020 04:44:26 -0800 (PST)
-Received: from DESKTOP-FCFI5AT.localdomain ([125.131.156.99])
-        by smtp.gmail.com with ESMTPSA id x19sm3007928pjk.25.2020.11.03.04.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 04:44:25 -0800 (PST)
-From:   Wonhyuk Yang <vvghjk1234@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Wonhyuk Yang <vvghjk1234@gmail.com>
-Subject: [PATCH] fuse: fix panic in __readahead_batch()
-Date:   Tue,  3 Nov 2020 21:43:49 +0900
-Message-Id: <20201103124349.16722-1-vvghjk1234@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S1728168AbgKCMuP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 07:50:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49338 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726388AbgKCMuP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Nov 2020 07:50:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6CEF7ABF4;
+        Tue,  3 Nov 2020 12:50:13 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 628DCDA7D2; Tue,  3 Nov 2020 13:48:35 +0100 (CET)
+Date:   Tue, 3 Nov 2020 13:48:34 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 07/41] btrfs: disallow space_cache in ZONED mode
+Message-ID: <20201103124834.GR6756@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org
+References: <cover.1604065156.git.naohiro.aota@wdc.com>
+ <f0a4ae9168940bf1756f89a140cabedb8972e0d1.1604065695.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f0a4ae9168940bf1756f89a140cabedb8972e0d1.1604065695.git.naohiro.aota@wdc.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-According to xarray.h, xas_for_each's entry can be RETRY_ENTRY.
-RETRY_ENTRY is defined as 0x402 and accessing that address
-results in panic.
+On Fri, Oct 30, 2020 at 10:51:14PM +0900, Naohiro Aota wrote:
+> INODE_MAP_CACHE inode.
+> 
+> In summary, ZONED will disable:
+> 
+> | Disabled features | Reason                                              |
+> |-------------------+-----------------------------------------------------|
+> | RAID/Dup          | Cannot handle two zone append writes to different   |
+> |                   | zones                                               |
+> |-------------------+-----------------------------------------------------|
+> | space_cache (v1)  | In-place updating                                   |
+> | NODATACOW         | In-place updating                                   |
+> |-------------------+-----------------------------------------------------|
+> | fallocate         | Reserved extent will be a write hole                |
+> | INODE_MAP_CACHE   | Need pre-allocation. (and will be deprecated?)      |
 
-BUG: kernel NULL pointer dereference, address: 0000000000000402
-kernel: RIP: 0010:fuse_readahead+0x152/0x470 [fuse]
-CR2: 0000000000000402
+space_cache is deprecated and actually in current dev cycle (5.11)
 
-Call Trace:
-read_pages+0x83/0x270
-page_cache_readahead_unbounded+0x197/0x230
-generic_file_buffered_read+0x57a/0xa20
-new_sync_read+0x112/0x1a0
-vfs_read+0xf8/0x180
-ksys_read+0x5f/0xe0
-do_syscall_64+0x33/0x80
-entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> |-------------------+-----------------------------------------------------|
+> | MIXED_BG          | Allocated metadata region will be write holes for   |
+> |                   | data writes                                         |
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  fs/btrfs/super.c | 12 ++++++++++--
+>  fs/btrfs/zoned.c | 18 ++++++++++++++++++
+>  fs/btrfs/zoned.h |  5 +++++
+>  3 files changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 3312fe08168f..9064ca62b0a0 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -525,8 +525,14 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>  	cache_gen = btrfs_super_cache_generation(info->super_copy);
+>  	if (btrfs_fs_compat_ro(info, FREE_SPACE_TREE))
+>  		btrfs_set_opt(info->mount_opt, FREE_SPACE_TREE);
+> -	else if (cache_gen)
+> -		btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+> +	else if (cache_gen) {
+> +		if (btrfs_is_zoned(info)) {
+> +			btrfs_info(info,
+> +			"clearring existing space cache in ZONED mode");
 
-Signed-off-by: Wonhyuk Yang <vvghjk1234@gmail.com>
----
- include/linux/pagemap.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+			"zoned: clearing existing space cache"
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index c77b7c31b2e4..4c9f29bbdace 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -906,6 +906,12 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
- 	xas_set(&xas, rac->_index);
- 	rcu_read_lock();
- 	xas_for_each(&xas, page, rac->_index + rac->_nr_pages - 1) {
-+		if (xas_retry(&xas, page))
-+			continue;
-+
-+		if (!xa_is_value(page))
-+			continue;
-+
- 		VM_BUG_ON_PAGE(!PageLocked(page), page);
- 		VM_BUG_ON_PAGE(PageTail(page), page);
- 		array[i++] = page;
--- 
-2.25.1
+Is it clearing or just invalidating it? We have the same problem with
+enabling v2 so this could share some code once Boris' patches are
+merged.
 
+> +			btrfs_set_super_cache_generation(info->super_copy, 0);
+> +		} else
+
+		} else {
+
+> +			btrfs_set_opt(info->mount_opt, SPACE_CACHE);
+
+		}
+> +	}
+>  
+>  	/*
+>  	 * Even the options are empty, we still need to do extra check
+
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -265,3 +265,21 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+>  out:
+>  	return ret;
+>  }
+> +
+> +int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
+> +{
+> +	if (!btrfs_is_zoned(info))
+> +		return 0;
+> +
+> +	/*
+> +	 * SPACE CACHE writing is not CoWed. Disable that to avoid write
+
+	 * Space cache writing is nod COWed. ...
+
+> +	 * errors in sequential zones.
+> +	 */
+> +	if (btrfs_test_opt(info, SPACE_CACHE)) {
+> +		btrfs_err(info,
+> +			  "space cache v1 not supportted in ZONED mode");
+
+		"zoned: space cache v1 is not supported"
+
+> +		return -EOPNOTSUPP;
+
+This should be EINVAL, like invalid cobination. EOPNOTSUPP is for cases
+where it's not supported but could be if implemented.
+
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+> index a63f6177f9ee..0b7756a7104d 100644
+> --- a/fs/btrfs/zoned.h
+> +++ b/fs/btrfs/zoned.h
+> @@ -24,6 +24,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>  int btrfs_get_dev_zone_info(struct btrfs_device *device);
+>  void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
+>  int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
+> +int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info);
+>  #else /* CONFIG_BLK_DEV_ZONED */
+>  static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>  				     struct blk_zone *zone)
+> @@ -43,6 +44,10 @@ static inline int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+>  	btrfs_err(fs_info, "Zoned block devices support is not enabled");
+>  	return -EOPNOTSUPP;
+>  }
+
+newline
+
+> +static inline int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
+> +{
+> +	return 0;
+> +}
+
+newline
+
+>  #endif
+>  
+>  static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
