@@ -2,158 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43B5E2A59D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 23:12:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F34422A5A61
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 23:58:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbgKCWK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 17:10:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34936 "EHLO
+        id S1729594AbgKCW6B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 17:58:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729665AbgKCWK7 (ORCPT
+        with ESMTP id S1728712AbgKCW6B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 17:10:59 -0500
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6474EC0613D1;
-        Tue,  3 Nov 2020 14:10:59 -0800 (PST)
-Received: by mail-ot1-x343.google.com with SMTP id k3so5610329otp.12;
-        Tue, 03 Nov 2020 14:10:59 -0800 (PST)
+        Tue, 3 Nov 2020 17:58:01 -0500
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF61EC0613D1;
+        Tue,  3 Nov 2020 14:57:59 -0800 (PST)
+Received: by mail-pf1-x42f.google.com with SMTP id 13so15642180pfy.4;
+        Tue, 03 Nov 2020 14:57:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KgLn3hUv3gYrguGStHj2z/QNkPC6HZO8mh7+qaePmiI=;
-        b=MQsUcEHdYVN4zQsL8GuUbfNoJbvKNwW5Vqbhkk5QX5OCOvh+2GD143EBDF9faVTvu2
-         oSf2BHDg3p99AgOSyw9IuH0WoqJr6wVTTnaLNIWRaae/Yfjy1yOOWe14pMEvGnoiK8uY
-         sapkqh2gpw3awfQn6zuLFHWWgLm6MaCrh3G6i5R1jtkjNKL+xvUrPjlQBuPetFs5ycF6
-         CukqwhFB7kJvahaEgkFfH25d7xBvIdzGOLjq0Ux1obSRMB39Zt6ZNYbBqTeYZcVybpKv
-         ajK+r0OtX3LWmmWB/kkJ5T8nqmk+1x1McSRqhW+mtD1tmtkREA/RSiFLItw00hT+fv0Q
-         pwQQ==
+        bh=p1h/LKIjKhwCaZN5JW6lQr8X/bwNTpcCZCyLALzsZSg=;
+        b=tr5vPjWUjAouhWvPxTC7MBVgGO79ny7u55kLEr8RCRj6bxH1t3gSkiC71IMTkzC2Uq
+         tewnvHi/iikOF9VEI0TnR6StnqdbjbcTMYc6+bRCLaFZGXkz4lp/gubVHAELLmPwekr7
+         BapanDlC20YtC+zgNpcKEiddgqI3Ntl0Ls3ZK5Syh2j22luIaJbsj1n0Uqzu0HPkpUPt
+         O0Pb9O+WEsZTY/rpInmKULg+gW42UB3akBmakChPrjkaO2R6R4dUk4LKibSeEkN7M48u
+         9pptgIOUotK2/wmU0/izcuCDPjwnCTvHUgEX3lwdm/fQMdUMM4mb3ZNR+cZV0CP1Bxnr
+         wD6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KgLn3hUv3gYrguGStHj2z/QNkPC6HZO8mh7+qaePmiI=;
-        b=srRPIQ9k76N7q96sQKKyEeGX4JNDT2ZZJyew7pQGgOYGdM+y5sSOHYHkFG5M01uRgJ
-         MN3dGCCkX+CNlM3ges9zt7v9NSNShJ6EaW3s6Ra5mz25OP61D+7KshHPLzge0/gRJJa2
-         RzbB2lVa5GlxeMItspGgoSdbsZnERtPwtXnOHUo8dztdkV/2HYQy0A5P1MqkWSewq93l
-         DsMo1nYMqx1X0ACdmWKW5fNajcimag3LGVR94XnIxoIUg1y8Z15mNvx1yTXM/s6+NlMA
-         vx5Zjy6bmFPIEKh7Rw1gFeHcjlqZbUxeIs7uuEmlvbLGbsShgaoq9kTXUu7w2Hu12XEz
-         u/gA==
-X-Gm-Message-State: AOAM532SRzYvSgyq60g55d6sGXlbsU0/Rlfkmxnzw10Iud+nkjC/oyS0
-        2q4DqvgyeXZaUjS1M7u+6nMZmyVKgMsPkqJWKX4=
-X-Google-Smtp-Source: ABdhPJw2uaDZ9K5GrMj/qXY+5kafw0kbu8rXKbS4ba+lc4MGddpH0RVm9ZKVPPwmhkbrocOaQ7TYSd+XSaY45agmD5w=
-X-Received: by 2002:a9d:3d44:: with SMTP id a62mr15867052otc.254.1604441458839;
- Tue, 03 Nov 2020 14:10:58 -0800 (PST)
+        bh=p1h/LKIjKhwCaZN5JW6lQr8X/bwNTpcCZCyLALzsZSg=;
+        b=RQJcsHzgDAT1oLIJ+1grHWw2GzhOu5t7D0pULav87B1HQmVzOaEv19k18RFZJcWFXW
+         aP3a10KbRa5gd2dIKb9ntPTTa6jLoMixBm9L3fo6gAbVeDgjFfWb0ycVcHdnev+dcVzU
+         9d0UT6VP2HwdGh9oZlD7BwUei97au3ZTy62L/2Vt3mxni4ItQQgqsOuw/eErbDht9xSk
+         QivvrobedQfaNcu8WPq71pVhpR65hp4eg8921RK3s2DwVtBPLyQvexS/hYRagSeYjXcw
+         DoUf5U/KguB2rkX5fokCIujJfDntgSQUFL0gyUEXQVspATL0FM5H0mAK93T5QYnJGAQo
+         MySw==
+X-Gm-Message-State: AOAM532Bj5vz+EJM59rfw9mfbvaHDBSJVIaFlJGUPvOpxSk63jJmACO2
+        Hv+zsxi84cI0iKD/VoI+6BkGc2ZRirDffMzpMiYxqrAFRGgLIt2M
+X-Google-Smtp-Source: ABdhPJwkXme79PXXaAAJZqprDS/IXxVAL1qJl21a7ycKClcO4oEFYkx0WsiNs9Cv6sHUdW9jMxDhxoZdQCzEH6J6Q4E=
+X-Received: by 2002:a63:fb11:: with SMTP id o17mr19448546pgh.109.1604444279120;
+ Tue, 03 Nov 2020 14:57:59 -0800 (PST)
 MIME-Version: 1.0
-References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <71b8f94034f04da6f69f1ea0720825aabc852a54.1604065695.git.naohiro.aota@wdc.com>
- <502ce12d-1ba6-5e3c-9aab-3b1b42a16bcf@toxicpanda.com>
-In-Reply-To: <502ce12d-1ba6-5e3c-9aab-3b1b42a16bcf@toxicpanda.com>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Tue, 3 Nov 2020 14:10:47 -0800
-Message-ID: <CAE1WUT7r5EKbRUqQWZ_u3Jb49FapCSdUDEOT2OgFmJM9+=j+Jw@mail.gmail.com>
-Subject: Re: [PATCH v9 37/41] btrfs: split alloc_log_tree()
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, hare@suse.com,
-        linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20201007152355.2446741-1-Kenny.Ho@amd.com> <CAOWid-d=a1Q3R92s7GrzxWhXx7_dc8NQvQg7i7RYTVv3+jHxkQ@mail.gmail.com>
+ <20201103053244.khibmr66p7lhv7ge@ast-mbp.dhcp.thefacebook.com>
+ <CAOWid-eQSPru0nm8+Xo3r6C0pJGq+5r8mzM8BL2dgNn2c9mt2Q@mail.gmail.com>
+ <CAADnVQKuoZDB-Xga5STHdGSxvSP=B6jQ40kLdpL1u+J98bv65A@mail.gmail.com>
+ <CAOWid-czZphRz6Y-H3OcObKCH=bLLC3=bOZaSB-6YBE56+Qzrg@mail.gmail.com> <20201103210418.q7hddyl7rvdplike@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20201103210418.q7hddyl7rvdplike@ast-mbp.dhcp.thefacebook.com>
+From:   Kenny Ho <y2kenny@gmail.com>
+Date:   Tue, 3 Nov 2020 17:57:47 -0500
+Message-ID: <CAOWid-djQ_NRfCbOTnZQ-A8Pr7jMP7KuZEJDSsvzWkdw7qc=yA@mail.gmail.com>
+Subject: Re: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Kenny Ho <Kenny.Ho@amd.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>, bpf <bpf@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 3, 2020 at 2:06 PM Josef Bacik <josef@toxicpanda.com> wrote:
+On Tue, Nov 3, 2020 at 4:04 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> On 10/30/20 9:51 AM, Naohiro Aota wrote:
-> > This is a preparation for the next patch. This commit split
-> > alloc_log_tree() to allocating tree structure part (remains in
-> > alloc_log_tree()) and allocating tree node part (moved in
-> > btrfs_alloc_log_tree_node()). The latter part is also exported to be used
-> > in the next patch.
-> >
-> > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > ---
-> >   fs/btrfs/disk-io.c | 31 +++++++++++++++++++++++++------
-> >   fs/btrfs/disk-io.h |  2 ++
-> >   2 files changed, 27 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> > index 2b30ef8a7034..70885f3d3321 100644
-> > --- a/fs/btrfs/disk-io.c
-> > +++ b/fs/btrfs/disk-io.c
-> > @@ -1211,7 +1211,6 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
-> >                                        struct btrfs_fs_info *fs_info)
-> >   {
-> >       struct btrfs_root *root;
-> > -     struct extent_buffer *leaf;
-> >
-> >       root = btrfs_alloc_root(fs_info, BTRFS_TREE_LOG_OBJECTID, GFP_NOFS);
-> >       if (!root)
-> > @@ -1221,6 +1220,14 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
-> >       root->root_key.type = BTRFS_ROOT_ITEM_KEY;
-> >       root->root_key.offset = BTRFS_TREE_LOG_OBJECTID;
-> >
-> > +     return root;
-> > +}
-> > +
-> > +int btrfs_alloc_log_tree_node(struct btrfs_trans_handle *trans,
-> > +                           struct btrfs_root *root)
-> > +{
-> > +     struct extent_buffer *leaf;
-> > +
-> >       /*
-> >        * DON'T set SHAREABLE bit for log trees.
-> >        *
-> > @@ -1233,26 +1240,31 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
-> >
-> >       leaf = btrfs_alloc_tree_block(trans, root, 0, BTRFS_TREE_LOG_OBJECTID,
-> >                       NULL, 0, 0, 0, BTRFS_NESTING_NORMAL);
-> > -     if (IS_ERR(leaf)) {
-> > -             btrfs_put_root(root);
-> > -             return ERR_CAST(leaf);
-> > -     }
-> > +     if (IS_ERR(leaf))
-> > +             return PTR_ERR(leaf);
-> >
-> >       root->node = leaf;
-> >
-> >       btrfs_mark_buffer_dirty(root->node);
-> >       btrfs_tree_unlock(root->node);
-> > -     return root;
-> > +
-> > +     return 0;
-> >   }
-> >
-> >   int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
-> >                            struct btrfs_fs_info *fs_info)
-> >   {
-> >       struct btrfs_root *log_root;
-> > +     int ret;
-> >
-> >       log_root = alloc_log_tree(trans, fs_info);
-> >       if (IS_ERR(log_root))
+> On Tue, Nov 03, 2020 at 02:19:22PM -0500, Kenny Ho wrote:
+> > On Tue, Nov 3, 2020 at 12:43 AM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > > On Mon, Nov 2, 2020 at 9:39 PM Kenny Ho <y2kenny@gmail.com> wrote:
 >
-> newline.
->
-> >               return PTR_ERR(log_root);
-> > +     ret = btrfs_alloc_log_tree_node(trans, log_root);
-> > +     if (ret) {
-> > +             kfree(log_root);
->
-> btrfs_put_root(log_root);
->
-> > +             return ret;
-> > +     }
->
-> newline.  Thanks,
->
-> Josef
+> Sounds like either bpf_lsm needs to be made aware of cgv2 (which would
+> be a great thing to have regardless) or cgroup-bpf needs a drm/gpu specific hook.
+> I think generic ioctl hook is too broad for this use case.
+> I suspect drm/gpu internal state would be easier to access inside
+> bpf program if the hook is next to gpu/drm. At ioctl level there is 'file'.
+> It's probably too abstract for the things you want to do.
+> Like how VRAM/shader/etc can be accessed through file?
+> Probably possible through a bunch of lookups and dereferences, but
+> if the hook is custom to GPU that info is likely readily available.
+> Then such cgroup-bpf check would be suitable in execution paths where
+> ioctl-based hook would be too slow.
+Just to clarify, when you say drm specific hook, did you mean just a
+unique attach_type or a unique prog_type+attach_type combination?  (I
+am still a bit fuzzy on when a new prog type is needed vs a new attach
+type.  I think prog type is associated with a unique type of context
+that the bpf prog will get but I could be missing some nuances.)
 
-These should've shown up on the patch formatter... was it simply not run,
-or did the patch formatter not catch it?
+When I was thinking of doing an ioctl wide hook, the file would be the
+device file and the thinking was to have a helper function provided by
+device drivers to further disambiguate.  For our (AMD's) driver, we
+have a bunch of ioctls for set/get/create/destroy
+(https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c#L1763)
+so the bpf prog can make the decision after the disambiguation.  For
+example, we have an ioctl called "kfd_ioctl_set_cu_mask."  You can
+think of cu_mask like cpumask but for the cores/compute-unit inside a
+GPU.  The ioctl hook will get the file, the bpf prog will call a
+helper function from the amdgpu driver to return some data structure
+specific to the driver and then the bpf prog can make a decision on
+gating the ioctl or not.  From what you are saying, sounds like this
+kind of back and forth lookup and dereferencing should be avoided for
+performance considerations?
 
-Best regards,
-Amy Parker
-(they/them)
+Having a DRM specific hook is certainly an alternative.  I just wasn't
+sure which level of trade off on abstraction/generic is acceptable.  I
+am guessing a new BPF_PROG_TYPE_CGROUP_AMDGPU is probably too
+specific?  But sounds like BPF_PROG_TYPE_CGROUP_DRM may be ok?
+
+Regards,
+Kenny
