@@ -2,212 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3FC2A488B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 15:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C71502A4889
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 15:47:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbgKCOrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 09:47:18 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:46146 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728103AbgKCOpZ (ORCPT
+        id S1727688AbgKCOrO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 09:47:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49776 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728109AbgKCOpl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 09:45:25 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kZxYp-002xC6-Om; Tue, 03 Nov 2020 07:45:23 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kZxYo-009i9o-Gg; Tue, 03 Nov 2020 07:45:23 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Qian Cai <cai@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201030152407.43598-1-cai@redhat.com>
-        <20201030184255.GP3576660@ZenIV.linux.org.uk>
-        <ad9357e9-8364-a316-392d-7504af614cac@kernel.dk>
-        <20201030184918.GQ3576660@ZenIV.linux.org.uk>
-        <d858ba48-624f-43be-93cf-07d94f0ebefd@kernel.dk>
-        <20201030222213.GR3576660@ZenIV.linux.org.uk>
-        <a1e17902-a204-f03d-2a51-469633eca751@kernel.dk>
-        <87eelba7ai.fsf@x220.int.ebiederm.org>
-        <f33a6b5e-ecc9-2bef-ab40-6bd8cc2030c2@kernel.dk>
-        <87k0v38qlw.fsf@x220.int.ebiederm.org>
-        <d77e2d82-22da-a7a0-54e0-f5d315f32a75@kernel.dk>
-        <3abc1742-733e-c682-5476-c6337a630e05@kernel.dk>
-Date:   Tue, 03 Nov 2020 08:45:21 -0600
-In-Reply-To: <3abc1742-733e-c682-5476-c6337a630e05@kernel.dk> (Jens Axboe's
-        message of "Mon, 2 Nov 2020 14:39:32 -0700")
-Message-ID: <87mtzy7b3y.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 3 Nov 2020 09:45:41 -0500
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAB3C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 06:45:40 -0800 (PST)
+Received: by mail-qk1-x742.google.com with SMTP id l2so14862211qkf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 06:45:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=acx1EKinqTQzg1gTQ/aclm89N3SLLibIPDLvZWE1PtI=;
+        b=L4h0xMcTzd+NF2hL70xrh88PrKeUpmo2pyh+hxeCdIDOKuFe728ZYNNrAxf3TLszHI
+         ecVPmoC62YlPVmTQ/9KdDMdrUk4/yIhrHYWh3rmhBqjMbs3WnJzGFlUrmZfytXCevkgn
+         7fTtAxmLvCi6HWp6mDX2EUcEsImliV0D5T18p8GLpHDr4fGzKBD7hLqFT1GzLWkYbgTz
+         hg2Nj2o8Db/GA0ErfKkwFRmpQa7tz068JAeqfGbskJfd1bpuOQqIMnW0aBObyEVl0EDf
+         qlKe0IyOIX0DE+mOiztudJlRgJylFKJJ786mgJcij6sV//7Yxhfjw/5RGTC4LPH32xp9
+         23Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=acx1EKinqTQzg1gTQ/aclm89N3SLLibIPDLvZWE1PtI=;
+        b=OVjjcTT5R3J+XPlV5m3D+VI//Z6k1Xm7D8yAa9+Q7hEirxfBYL7L5TYgSOCk9Qy50M
+         SHTSTCTDqR8geWRdFnzWxSNI5pVR4qwH0NBYO4vVDGQB7GPXbFUCny+8FdosjgTif6t8
+         VlZHuTzq6I3ON6HdJM2X8FP7P9HTRv9z4DXAr3E5xjjkcL3o0A9qEqtcy0x4A6Ip2SSm
+         m5oa7zHCglSPXOdVeqH+DKVxg+mNRuwm7f4eu6KpnyA26C1GAwr/P+F4niVJUDwWwFzP
+         2PEk677o1st6FHFjSSZMedJzV6zUnr0WlSZmEt7gQyocwwY7/Di+dlxinPVFRKjinZWD
+         jJSQ==
+X-Gm-Message-State: AOAM532AH+FRQL9b0r2kRJFqBSnU89Wj37nyVx4bthJ7wO3sT8i+7oiP
+        8HH5bHeOCuLl4UM4sdXF+wbQXB536XqoJ1ee
+X-Google-Smtp-Source: ABdhPJyoydsxT+XEr+Ctz1uul/Nhvge/2PHjO289vjn0i8n2dQjgqbrS68O9iExA7CVG4aevjseUzg==
+X-Received: by 2002:a05:620a:1322:: with SMTP id p2mr19708892qkj.211.1604414738875;
+        Tue, 03 Nov 2020 06:45:38 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id x22sm9552937qkn.125.2020.11.03.06.45.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Nov 2020 06:45:38 -0800 (PST)
+Subject: Re: [PATCH v9 20/41] btrfs: extract page adding function
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org
+References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
+ <da2dba415cc94f271f0693b30296d9cc4f583f03.1604065695.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <9ca75255-4b2e-a5b0-b16d-2be9cea415f4@toxicpanda.com>
+Date:   Tue, 3 Nov 2020 09:45:37 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kZxYo-009i9o-Gg;;;mid=<87mtzy7b3y.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18vnl8MzKekN9Gx+3u0DKOS0AFAE+He3Vg=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,T_TooManySym_03,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4996]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Jens Axboe <axboe@kernel.dk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 523 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (2.0%), b_tie_ro: 9 (1.8%), parse: 0.96 (0.2%),
-         extract_message_metadata: 13 (2.6%), get_uri_detail_list: 3.0 (0.6%),
-        tests_pri_-1000: 4.6 (0.9%), tests_pri_-950: 1.28 (0.2%),
-        tests_pri_-900: 0.98 (0.2%), tests_pri_-90: 101 (19.4%), check_bayes:
-        99 (19.0%), b_tokenize: 11 (2.1%), b_tok_get_all: 12 (2.3%),
-        b_comp_prob: 3.8 (0.7%), b_tok_touch_all: 68 (13.1%), b_finish: 0.94
-        (0.2%), tests_pri_0: 375 (71.6%), check_dkim_signature: 0.55 (0.1%),
-        check_dkim_adsp: 2.1 (0.4%), poll_dns_idle: 0.50 (0.1%), tests_pri_10:
-        2.0 (0.4%), tests_pri_500: 10 (1.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH -next] fs: Fix memory leaks in do_renameat2() error paths
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <da2dba415cc94f271f0693b30296d9cc4f583f03.1604065695.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jens Axboe <axboe@kernel.dk> writes:
+On 10/30/20 9:51 AM, Naohiro Aota wrote:
+> This commit extract page adding to bio part from submit_extent_page(). The
+> page is added only when bio_flags are the same, contiguous and the added
+> page fits in the same stripe as pages in the bio.
+> 
+> Condition checkings are reordered to allow early return to avoid possibly
+> heavy btrfs_bio_fits_in_stripe() calling.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/extent_io.c | 55 ++++++++++++++++++++++++++++++++------------
+>   1 file changed, 40 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index e91c504fe973..17285048fb5a 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -3012,6 +3012,43 @@ struct bio *btrfs_bio_clone_partial(struct bio *orig, int offset, int size)
+>   	return bio;
+>   }
+>   
+> +/**
+> + * btrfs_bio_add_page	-	attempt to add a page to bio
+> + * @bio:	destination bio
+> + * @page:	page to add to the bio
+> + * @logical:	offset of the new bio or to check whether we are adding
+> + *              a contiguous page to the previous one
+> + * @pg_offset:	starting offset in the page
+> + * @size:	portion of page that we want to write
+> + * @prev_bio_flags:  flags of previous bio to see if we can merge the current one
+> + * @bio_flags:	flags of the current bio to see if we can merge them
+> + *
+> + * Attempt to add a page to bio considering stripe alignment etc. Return
+> + * true if successfully page added. Otherwise, return false.
+> + */
+> +bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+> +			unsigned int size, unsigned int pg_offset,
+> +			unsigned long prev_bio_flags, unsigned long bio_flags)
 
-> On 11/2/20 1:31 PM, Jens Axboe wrote:
->> On 11/2/20 1:12 PM, Eric W. Biederman wrote:
->>> Jens Axboe <axboe@kernel.dk> writes:
->>>
->>>> On 11/2/20 12:27 PM, Eric W. Biederman wrote:
->>>>> Jens Axboe <axboe@kernel.dk> writes:
->>>>>
->>>>>> On 10/30/20 4:22 PM, Al Viro wrote:
->>>>>>> On Fri, Oct 30, 2020 at 02:33:11PM -0600, Jens Axboe wrote:
->>>>>>>> On 10/30/20 12:49 PM, Al Viro wrote:
->>>>>>>>> On Fri, Oct 30, 2020 at 12:46:26PM -0600, Jens Axboe wrote:
->>>>>>>>>
->>>>>>>>>> See other reply, it's being posted soon, just haven't gotten there yet
->>>>>>>>>> and it wasn't ready.
->>>>>>>>>>
->>>>>>>>>> It's a prep patch so we can call do_renameat2 and pass in a filename
->>>>>>>>>> instead. The intent is not to have any functional changes in that prep
->>>>>>>>>> patch. But once we can pass in filenames instead of user pointers, it's
->>>>>>>>>> usable from io_uring.
->>>>>>>>>
->>>>>>>>> You do realize that pathname resolution is *NOT* offloadable to helper
->>>>>>>>> threads, I hope...
->>>>>>>>
->>>>>>>> How so? If we have all the necessary context assigned, what's preventing
->>>>>>>> it from working?
->>>>>>>
->>>>>>> Semantics of /proc/self/..., for starters (and things like /proc/mounts, etc.
->>>>>>> *do* pass through that, /dev/stdin included)
->>>>>>
->>>>>> Don't we just need ->thread_pid for that to work?
->>>>>
->>>>> No.  You need ->signal.
->>>>>
->>>>> You need ->signal->pids[PIDTYPE_TGID].  It is only for /proc/thread-self
->>>>> that ->thread_pid is needed.
->>>>>
->>>>> Even more so than ->thread_pid, it is a kernel invariant that ->signal
->>>>> does not change.
->>>>
->>>> I don't care about the pid itself, my suggestion was to assign ->thread_pid
->>>> over the lookup operation to ensure that /proc/self/ worked the way that
->>>> you'd expect.
->>>
->>> I understand that.
->>>
->>> However /proc/self/ refers to the current process not to the current
->>> thread.  So ->thread_pid is not what you need to assign to make that
->>> happen.  What the code looks at is: ->signal->pids[PIDTYPE_TGID].
->>>
->>> It will definitely break invariants to assign to ->signal.
->>>
->>> Currently only exchange_tids assigns ->thread_pid and it is nasty.  It
->>> results in code that potentially results in infinite loops in
->>> kernel/signal.c
->>>
->>> To my knowledge nothing assigns ->signal->pids[PIDTYPE_TGID].  At best
->>> it might work but I expect the it would completely confuse something in
->>> the pid to task or pid to process mappings.  Which is to say even if it
->>> does work it would be an extremely fragile solution.
->> 
->> Thanks Eric, that's useful. Sounds to me like we're better off, at least
->> for now, to just expressly forbid async lookup of /proc/self/. Which
->> isn't really the end of the world as far as I'm concerned.
->
-> Alternatively, we just teach task_pid_ptr() where to look for an
-> alternate, if current->flags & PF_IO_WORKER is true. Then we don't have
-> to assign anything that's visible in task_struct, and in fact the async
-> worker can retain this stuff on the stack. As all requests are killed
-> before a task is allowed to exit, that should be safe.
+This should be static, once you change that you can add
 
-That seems assumes task_pid_ptr is always called on current.
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-When you are looking at the task through the proc filesystem you want
-things like /proc/<pid>/stat and /proc/<pid>/status to be able to
-display the pids without problem.  More than that it is desirable that
-readdir does not get the view for the PF_IO_WORKER.
+Thanks,
 
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 74ddbff1a6ba..5fd421a4864c 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -42,6 +42,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/sched/task.h>
->  #include <linux/idr.h>
-> +#include <linux/io_uring.h>
->  #include <net/sock.h>
->  #include <uapi/linux/pidfd.h>
->  
-> @@ -320,6 +321,12 @@ EXPORT_SYMBOL_GPL(find_vpid);
->  
->  static struct pid **task_pid_ptr(struct task_struct *task, enum pid_type type)
->  {
-> +	if ((task->flags & PF_IO_WORKER) && task->io_uring) {
-> +		return (type == PIDTYPE_PID) ?
-> +			&task->io_uring->thread_pid :
-> +			&task->io_uring->pids[type];
-> +	}
-> +
->  	return (type == PIDTYPE_PID) ?
->  		&task->thread_pid :
->  		&task->signal->pids[type];
-
-The only thing I can think of that might work convincingly is to split
-get_current() into two functions get_context() and get_task().  Maybe
-accessed as current_context and current_task.
-
-With get_context() returning just a pointer to the fields that are safe
-to use in io_uring, and get_task returning the other fields.
-
-With exit and exec invaliding the pending work on the contexts it should
-be safe to just return a pointer to the context that invoked io_uring.
-Data in the context would either need to be read-only or be modified
-and read in a multi-thread safe way.
-
-The rest of the data in the task_struct by default could be assume it is
-only modified by the task.
-
-That would give type-safety and something avoids playing whack-a-mole
-with every new piece of context that userspace accesses.
-
-Eric
-
-
+Josef
