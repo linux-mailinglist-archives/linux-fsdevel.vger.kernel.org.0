@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF2A2A482F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 15:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE1452A4853
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 15:36:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbgKCOae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 09:30:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47190 "EHLO
+        id S1728014AbgKCOgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 09:36:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729571AbgKCO3B (ORCPT
+        with ESMTP id S1727975AbgKCOeX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 09:29:01 -0500
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67580C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 06:29:01 -0800 (PST)
-Received: by mail-qk1-x742.google.com with SMTP id b18so14745699qkc.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 06:29:01 -0800 (PST)
+        Tue, 3 Nov 2020 09:34:23 -0500
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E51FC0617A6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 06:34:22 -0800 (PST)
+Received: by mail-qt1-x841.google.com with SMTP id t5so3130604qtp.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 06:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TOlkltDeMWiHpxhxjB+NtRek+OXrY4CzXqQq5l2DQf0=;
-        b=1Z5fUf3igTnFYyRdWghFPecYmRHSJCNe0LOOOUafIhr4V8EhBrx/DsBP+MrhsS9l8x
-         DWp61nw+MQa0yR3bkyKY5bfYj/7q6q1vZEEGUOxRfo6S5uI8qGlvAiOjMjdrQ09qylv2
-         et0O0ApQ7/x3abLZrxVlpe72Qs/jad3HvF7AjHD8ePryqvF99SNLTfu5eJy5MfBuUmaC
-         d5VkMbi2JnRLXWhwBPEsoyPqzxSN8l0Gsue7LfCWU5og+J8/FWEcIULMqCjhtaNo/+Ip
-         V9N5hwe4WPMMkYSDkeQ7eZ0NbLBYtKZjfOL0HQc0uJBGYHGafGTKoP1Fi01N62U44dPA
-         SPGw==
+        bh=22aa1okkGGeNR5qHFFPrAKCxtCSUJVpZYiTdFVWRmVk=;
+        b=IZoVo25vIlDA2mBXZjmD1SypY1c06z35brJjr+8/+Nc28tmVWIJ2OrhCQOzIeYU3ys
+         pG+4cL2v2RfHPvtx0Zs/YW+0NX+XABT5u/EHsQCJyGMNJSUIQj08cwJA58DxKA//NiOt
+         JfkgyKdXqWdmecM+/D0Jkn5+sXr7S8quNOXttUQ1yXj4lDBIlB5GcZ1Zhy8F0LP5xCvw
+         5slIGVCKDZVNgEG8s/7U3AuTVe845/w6qXSLu6T+v+CApVcU5HtKx2OKtEhzSp2ZdclJ
+         +Cz5iYwG+1N5WfIpCZObb1ePHdfxdDLkI4KTuBqbA/J37C134lBoDXB2wsxWCywWtOaL
+         B8xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=TOlkltDeMWiHpxhxjB+NtRek+OXrY4CzXqQq5l2DQf0=;
-        b=m5KMrr5axVX3wdqh7GlwFje3DsKQEtG9ohOetEsEThcDt3x7Z23we85ulWn4FjOMp0
-         aEHiN9bIF7k3NjRJ5fj4yumBYP1bw8DW3ujwM89KrrA4MUyzv6lvC0CIR3ioftsBUOC2
-         eDvkHhfo5nq8ZYezc5WF81YhTBNjFL1EcynNnOLyMLrzSd/SI0q0ZigpIkezKK8q35Qp
-         8gc+MGdvTW4nWZ+QOdael0wQz/0cDKnkSNPuXPApEcRAaJmtXbD51pXLVlE5lvLNATvi
-         AbNV7F/nXiaiTZbDTI7KG2hOhPxSBBKSqX6H1E/hErfjW8xVgVp2/Dt4KvrfDvVjifyC
-         RsIA==
-X-Gm-Message-State: AOAM531FV/BZIb264D0oOH6r09hU1IP+YK1TMA8BXZL/RJdpmvBgH32K
-        OJrFnboFOkqCeVhBnyZGKzGu3p7hlm1WU1uP
-X-Google-Smtp-Source: ABdhPJy7k3BKKR8Ex+ucPR35FrMI7hP23NIWikLnLZEgLna+MOMwW6fMlPz248Vz2LqfNFMELjjtyQ==
-X-Received: by 2002:a37:bdc5:: with SMTP id n188mr19684610qkf.95.1604413740147;
-        Tue, 03 Nov 2020 06:29:00 -0800 (PST)
+        bh=22aa1okkGGeNR5qHFFPrAKCxtCSUJVpZYiTdFVWRmVk=;
+        b=mmXH2KP1wBDBzxhJ41gtn/sx90UKItQd79aObnYEnDczbq9OrV2CKNO/fiCfbYrEPl
+         qoqzwS667rxAd1wT8EPCXLe8+DEZsFoUenL4wTY2eOJBj+qCxYU+b6cjza3eaMkGscDh
+         wNg/qIOepcFarKE2238IAmbcQHwEiRZDl72DT3Ot86EBCASQY8VQmb2fro9OaYFTxW0U
+         fNvwtC3BAGxmRCydeCBLP+/ZzoMIisjYFXwEZmic9WD12VfDXi3n6X1ykGc31ZuZqTz6
+         cXh1ujhWBP8EH5hwtkuEERPecLwEV59wRRdmN9/6fT4yMywqNgN1vNAr2uxlYt9wE4vm
+         Cvmw==
+X-Gm-Message-State: AOAM533+FGwzIzY4YXzFzWn4u1kBqLEwARnUARPfmJAlguUcc2khPwXV
+        axBOv6RrF/BQpwhL8Q0qbJgfPutbq8K4e14q
+X-Google-Smtp-Source: ABdhPJyly1kr4qPGTwruPOvh9MX+jzOcPsSFq8O86KmQitSVrW/ZMQNVgRFAos/IjP/Hd3Zp7TmIDg==
+X-Received: by 2002:ac8:7b82:: with SMTP id p2mr19833503qtu.48.1604414061158;
+        Tue, 03 Nov 2020 06:34:21 -0800 (PST)
 Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id m2sm5705682qtu.62.2020.11.03.06.28.59
+        by smtp.gmail.com with ESMTPSA id z16sm5776035qka.18.2020.11.03.06.34.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Nov 2020 06:28:59 -0800 (PST)
-Subject: Re: [PATCH v9 17/41] btrfs: do sequential extent allocation in ZONED
- mode
+        Tue, 03 Nov 2020 06:34:20 -0800 (PST)
+Subject: Re: [PATCH v9 18/41] btrfs: reset zones of unused block groups
 To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org
 References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <0b0775b15f3fd97b04b3b3f1650701330e9392b5.1604065695.git.naohiro.aota@wdc.com>
+ <575e495d534c44aded9e6ae042a9d6bda5c84162.1604065695.git.naohiro.aota@wdc.com>
 From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <ac6b5232-bb16-5cfa-7683-0eaba72d7892@toxicpanda.com>
-Date:   Tue, 3 Nov 2020 09:28:58 -0500
+Message-ID: <7b48d9f1-53d8-2526-e628-13331e4fe344@toxicpanda.com>
+Date:   Tue, 3 Nov 2020 09:34:19 -0500
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <0b0775b15f3fd97b04b3b3f1650701330e9392b5.1604065695.git.naohiro.aota@wdc.com>
+In-Reply-To: <575e495d534c44aded9e6ae042a9d6bda5c84162.1604065695.git.naohiro.aota@wdc.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,21 +70,84 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 10/30/20 9:51 AM, Naohiro Aota wrote:
-> This commit implements a sequential extent allocator for the ZONED mode.
-> This allocator just needs to check if there is enough space in the block
-> group. Therefor the allocator never manages bitmaps or clusters. Also add
-> ASSERTs to the corresponding functions.
-> 
-> Actually, with zone append writing, it is unnecessary to track the
-> allocation offset. It only needs to check space availability. But, by
-> tracking the offset and returning the offset as an allocated region, we can
-> skip modification of ordered extents and checksum information when there is
-> no IO reordering.
+> For an ZONED volume, a block group maps to a zone of the device. For
+> deleted unused block groups, the zone of the block group can be reset to
+> rewind the zone write pointer at the start of the zone.
 > 
 > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/block-group.c |  8 ++++++--
+>   fs/btrfs/extent-tree.c | 17 ++++++++++++-----
+>   fs/btrfs/zoned.h       | 16 ++++++++++++++++
+>   3 files changed, 34 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
+> index d67f9cabe5c1..82d556368c85 100644
+> --- a/fs/btrfs/block-group.c
+> +++ b/fs/btrfs/block-group.c
+> @@ -1468,8 +1468,12 @@ void btrfs_delete_unused_bgs(struct btrfs_fs_info *fs_info)
+>   		if (!async_trim_enabled && btrfs_test_opt(fs_info, DISCARD_ASYNC))
+>   			goto flip_async;
+>   
+> -		/* DISCARD can flip during remount */
+> -		trimming = btrfs_test_opt(fs_info, DISCARD_SYNC);
+> +		/*
+> +		 * DISCARD can flip during remount. In ZONED mode, we need
+> +		 * to reset sequential required zones.
+> +		 */
+> +		trimming = btrfs_test_opt(fs_info, DISCARD_SYNC) ||
+> +				btrfs_is_zoned(fs_info);
+>   
+>   		/* Implicit trim during transaction commit. */
+>   		if (trimming)
+> diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
+> index 5e6b4d1712f2..c134746d7417 100644
+> --- a/fs/btrfs/extent-tree.c
+> +++ b/fs/btrfs/extent-tree.c
+> @@ -1331,6 +1331,9 @@ int btrfs_discard_extent(struct btrfs_fs_info *fs_info, u64 bytenr,
+>   
+>   		stripe = bbio->stripes;
+>   		for (i = 0; i < bbio->num_stripes; i++, stripe++) {
+> +			struct btrfs_device *dev = stripe->dev;
+> +			u64 physical = stripe->physical;
+> +			u64 length = stripe->length;
+>   			u64 bytes;
+>   			struct request_queue *req_q;
+>   
+> @@ -1338,14 +1341,18 @@ int btrfs_discard_extent(struct btrfs_fs_info *fs_info, u64 bytenr,
+>   				ASSERT(btrfs_test_opt(fs_info, DEGRADED));
+>   				continue;
+>   			}
+> +
+>   			req_q = bdev_get_queue(stripe->dev->bdev);
+> -			if (!blk_queue_discard(req_q))
+> +			/* zone reset in ZONED mode */
+> +			if (btrfs_can_zone_reset(dev, physical, length))
+> +				ret = btrfs_reset_device_zone(dev, physical,
+> +							      length, &bytes);
+> +			else if (blk_queue_discard(req_q))
+> +				ret = btrfs_issue_discard(dev->bdev, physical,
+> +							  length, &bytes);
+> +			else
+>   				continue;
+>   
+> -			ret = btrfs_issue_discard(stripe->dev->bdev,
+> -						  stripe->physical,
+> -						  stripe->length,
+> -						  &bytes);
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+The problem is you have
 
-Thanks,
+if (btrfs_test_opt(fs_info, DISCARD_SYNC))
+	ret = btrfs_discard_extent(fs_info, start,
+				   end + 1 - start, NULL);
+
+in btrfs_finish_extent_commit, so even if you add support here, you aren't 
+actually discarding anything because the transaction commit won't call discard 
+for this range.
+
+You're going to have to rework this logic to allow for discard to be called 
+everywhere it checks DISCARD_SYNC, but then you also need to go and make sure 
+you don't actually allow discards to happen at non-bg aligned ranges.  Thanks,
 
 Josef
