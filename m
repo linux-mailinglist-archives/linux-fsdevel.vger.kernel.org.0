@@ -2,131 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D0D12A4508
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 13:25:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E772A4567
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 13:44:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgKCMZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 07:25:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728168AbgKCMZq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 07:25:46 -0500
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EAE822403;
-        Tue,  3 Nov 2020 12:25:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604406345;
-        bh=JnG9AEM3urtQJZbyh27ncRK5xtNjXhkMpT9pLY6ruAw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=S3ilUxfLmh/0Pv4skyGqFEAG0vwDSS5i5psimoXmAELMEWHSH2fW4IuM4Z+qMebRf
-         WAXWrrJnkn0me0BHoC6LmAQbdfefgrg1IUndUDBw+RKZdCT9Ym0K7hlLMGCU1lFFO3
-         Zsx6vPAhW90E/61D8322HI52wvm4X0FuC5QxUJR0=
-Received: by mail-wr1-f50.google.com with SMTP id k10so17011011wrw.13;
-        Tue, 03 Nov 2020 04:25:44 -0800 (PST)
-X-Gm-Message-State: AOAM531fAqcyHHSv2U9CZ9dP3oPogr0zh4cTugMzh94Ysy/X6sIGtfQM
-        XykDjgWFCFOGJqS5maLpA0+4zpavr1VWgO7H7Fg=
-X-Google-Smtp-Source: ABdhPJzaMTU0V4sDEP7WFi1D19pueRl5ySNY/GA/QmiGvW8mi19ZpCI6gDmcGIwe2rHXpOPoRB6cN5TL6gD3Vvt/QEU=
-X-Received: by 2002:adf:eb4f:: with SMTP id u15mr19654094wrn.165.1604406343518;
- Tue, 03 Nov 2020 04:25:43 -0800 (PST)
+        id S1728246AbgKCMo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 07:44:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59144 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbgKCMo2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Nov 2020 07:44:28 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5FAC0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 04:44:26 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id o3so13571351pgr.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 04:44:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NwDp0C7YI6k612GwfI4IM2HXDY84RMHgpYFcSMQpWgA=;
+        b=eN3U2ROS4supbV5REMqmzQqVGcgqDgCl2EnQP8V4BJRhjfA/IAuqIK8D1aaBOyOPuH
+         QZSg66R4sk1It7k22jIcpUuvhk09J81hxnUGr1Q1AfFEEBJHYElaGxHDjTcnWqmVve0u
+         6X8g345zprT8GcXmDoxFMAV8NekajjfkM06S2WiIkNr9qoOPqQ9a9wkCh87vfF53pURS
+         tOZnMZkRt7exPMwKZZr4D/8sNcWtjul8lYTERqrdomo1Fz5k4Aw7WELsgVSlv1bV84Dl
+         yb51/qPbNlYvHUzYMdox7vEEXb3cyS9Uq2wMC6vquVap8QXeJu6cxtN/UgOzSOw/tBfi
+         HUOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NwDp0C7YI6k612GwfI4IM2HXDY84RMHgpYFcSMQpWgA=;
+        b=YXQ3tUfjWLXRh0KaffmbgEQcAdaKpLDCYRrPJpbKU067An55DTM/Wh8AYRMAJbHlB5
+         P6syOZefIYgIYiSDK3SLGhFO/5+mb6owugrBRFwUAWjvgHiKu0fJaN2mirzYT56JaJC7
+         lLw9cPkaH2XEQXUwf+nDAdzWkys1obkfHqazuV8LoIDkhL7itLo7xpKuLFnxy281BuRU
+         B/ZV9DIf6z4Qs8/0HchQosjpLLuZnyjJimRJHvYypZLFkbYdeUIx17XyE/Dk4tjOt1To
+         +PaRiSNWvRrhUMGIkIlp5/zQhQkXANS5NkFCS57NvHkt49FmfSnpZce+Kt/Rg+X7NYO7
+         OF9Q==
+X-Gm-Message-State: AOAM533xdWA1rZ68aPHUOf2oMWDv60Zwb0LfT+Rh1vTHveaevUu8j9Sf
+        6IruAyD/P0u8YhyNGImKbN4=
+X-Google-Smtp-Source: ABdhPJwHZ9ijrJh/hRxytIpCrAljWuuvWebttvbku+IGUZjeDpMiNG/KEKvghnD44G+DH57UFN7UzA==
+X-Received: by 2002:a62:3687:0:b029:18a:ec6b:6a50 with SMTP id d129-20020a6236870000b029018aec6b6a50mr9425179pfa.58.1604407466020;
+        Tue, 03 Nov 2020 04:44:26 -0800 (PST)
+Received: from DESKTOP-FCFI5AT.localdomain ([125.131.156.99])
+        by smtp.gmail.com with ESMTPSA id x19sm3007928pjk.25.2020.11.03.04.44.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2020 04:44:25 -0800 (PST)
+From:   Wonhyuk Yang <vvghjk1234@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Wonhyuk Yang <vvghjk1234@gmail.com>
+Subject: [PATCH] fuse: fix panic in __readahead_batch()
+Date:   Tue,  3 Nov 2020 21:43:49 +0900
+Message-Id: <20201103124349.16722-1-vvghjk1234@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20201103092712.714480842@linutronix.de> <20201103095857.078043987@linutronix.de>
-In-Reply-To: <20201103095857.078043987@linutronix.de>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 3 Nov 2020 13:25:27 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3q1O=vTLHpjkufNhspj+OJFn0BkMD6XaPZvN_0D+=FFQ@mail.gmail.com>
-Message-ID: <CAK8P3a3q1O=vTLHpjkufNhspj+OJFn0BkMD6XaPZvN_0D+=FFQ@mail.gmail.com>
-Subject: Re: [patch V3 05/37] asm-generic: Provide kmap_size.h
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        "open list:SYNOPSYS ARC ARCHITECTURE" 
-        <linux-snps-arc@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-csky@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Nick Hu <nickhu@andestech.com>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org, Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Roland Scheidegger <sroland@vmware.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
-        ML nouveau <nouveau@lists.freedesktop.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 3, 2020 at 10:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> kmap_types.h is a misnomer because the old atomic MAP based array does not
-> exist anymore and the whole indirection of architectures including
-> kmap_types.h is inconinstent and does not allow to provide guard page
-> debugging for this misfeature.
->
-> Add a common header file which defines the mapping stack size for all
-> architectures. Will be used when converting architectures over to a
-> generic kmap_local/atomic implementation.
->
-> The array size is chosen with the following constraints in mind:
->
->     - The deepest nest level in one context is 3 according to code
->       inspection.
->
->     - The worst case nesting for the upcoming reemptible version would be:
->
->       2 maps in task context and a fault inside
->       2 maps in the fault handler
->       3 maps in softirq
->       2 maps in interrupt
->
-> So a total of 16 is sufficient and probably overestimated.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+According to xarray.h, xas_for_each's entry can be RETRY_ENTRY.
+RETRY_ENTRY is defined as 0x402 and accessing that address
+results in panic.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+BUG: kernel NULL pointer dereference, address: 0000000000000402
+kernel: RIP: 0010:fuse_readahead+0x152/0x470 [fuse]
+CR2: 0000000000000402
+
+Call Trace:
+read_pages+0x83/0x270
+page_cache_readahead_unbounded+0x197/0x230
+generic_file_buffered_read+0x57a/0xa20
+new_sync_read+0x112/0x1a0
+vfs_read+0xf8/0x180
+ksys_read+0x5f/0xe0
+do_syscall_64+0x33/0x80
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Signed-off-by: Wonhyuk Yang <vvghjk1234@gmail.com>
+---
+ include/linux/pagemap.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index c77b7c31b2e4..4c9f29bbdace 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -906,6 +906,12 @@ static inline unsigned int __readahead_batch(struct readahead_control *rac,
+ 	xas_set(&xas, rac->_index);
+ 	rcu_read_lock();
+ 	xas_for_each(&xas, page, rac->_index + rac->_nr_pages - 1) {
++		if (xas_retry(&xas, page))
++			continue;
++
++		if (!xa_is_value(page))
++			continue;
++
+ 		VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 		VM_BUG_ON_PAGE(PageTail(page), page);
+ 		array[i++] = page;
+-- 
+2.25.1
+
