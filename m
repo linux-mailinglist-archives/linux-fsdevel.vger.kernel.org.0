@@ -2,124 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBDEE2A44F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 13:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D0D12A4508
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 13:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbgKCMSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 07:18:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52148 "EHLO mx2.suse.de"
+        id S1728993AbgKCMZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 07:25:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728982AbgKCMSI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 07:18:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 081E6ABF4;
-        Tue,  3 Nov 2020 12:18:07 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 67DC9DA7D2; Tue,  3 Nov 2020 13:16:29 +0100 (CET)
-Date:   Tue, 3 Nov 2020 13:16:29 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 06/41] btrfs: introduce max_zone_append_size
-Message-ID: <20201103121629.GQ6756@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
-        linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org
-References: <cover.1604065156.git.naohiro.aota@wdc.com>
- <066af35477cd9dd3a096128df4aef3b583e93f52.1604065695.git.naohiro.aota@wdc.com>
+        id S1728168AbgKCMZq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Nov 2020 07:25:46 -0500
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EAE822403;
+        Tue,  3 Nov 2020 12:25:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604406345;
+        bh=JnG9AEM3urtQJZbyh27ncRK5xtNjXhkMpT9pLY6ruAw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=S3ilUxfLmh/0Pv4skyGqFEAG0vwDSS5i5psimoXmAELMEWHSH2fW4IuM4Z+qMebRf
+         WAXWrrJnkn0me0BHoC6LmAQbdfefgrg1IUndUDBw+RKZdCT9Ym0K7hlLMGCU1lFFO3
+         Zsx6vPAhW90E/61D8322HI52wvm4X0FuC5QxUJR0=
+Received: by mail-wr1-f50.google.com with SMTP id k10so17011011wrw.13;
+        Tue, 03 Nov 2020 04:25:44 -0800 (PST)
+X-Gm-Message-State: AOAM531fAqcyHHSv2U9CZ9dP3oPogr0zh4cTugMzh94Ysy/X6sIGtfQM
+        XykDjgWFCFOGJqS5maLpA0+4zpavr1VWgO7H7Fg=
+X-Google-Smtp-Source: ABdhPJzaMTU0V4sDEP7WFi1D19pueRl5ySNY/GA/QmiGvW8mi19ZpCI6gDmcGIwe2rHXpOPoRB6cN5TL6gD3Vvt/QEU=
+X-Received: by 2002:adf:eb4f:: with SMTP id u15mr19654094wrn.165.1604406343518;
+ Tue, 03 Nov 2020 04:25:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <066af35477cd9dd3a096128df4aef3b583e93f52.1604065695.git.naohiro.aota@wdc.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+References: <20201103092712.714480842@linutronix.de> <20201103095857.078043987@linutronix.de>
+In-Reply-To: <20201103095857.078043987@linutronix.de>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Tue, 3 Nov 2020 13:25:27 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3q1O=vTLHpjkufNhspj+OJFn0BkMD6XaPZvN_0D+=FFQ@mail.gmail.com>
+Message-ID: <CAK8P3a3q1O=vTLHpjkufNhspj+OJFn0BkMD6XaPZvN_0D+=FFQ@mail.gmail.com>
+Subject: Re: [patch V3 05/37] asm-generic: Provide kmap_size.h
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        "open list:SYNOPSYS ARC ARCHITECTURE" 
+        <linux-snps-arc@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-csky@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Nick Hu <nickhu@andestech.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org, Ingo Molnar <mingo@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
+        ML nouveau <nouveau@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 10:51:13PM +0900, Naohiro Aota wrote:
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -953,6 +953,8 @@ struct btrfs_fs_info {
->  		u64 zone_size;
->  		u64 zoned;
->  	};
-> +	/* max size to emit ZONE_APPEND write command */
+On Tue, Nov 3, 2020 at 10:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> kmap_types.h is a misnomer because the old atomic MAP based array does not
+> exist anymore and the whole indirection of architectures including
+> kmap_types.h is inconinstent and does not allow to provide guard page
+> debugging for this misfeature.
+>
+> Add a common header file which defines the mapping stack size for all
+> architectures. Will be used when converting architectures over to a
+> generic kmap_local/atomic implementation.
+>
+> The array size is chosen with the following constraints in mind:
+>
+>     - The deepest nest level in one context is 3 according to code
+>       inspection.
+>
+>     - The worst case nesting for the upcoming reemptible version would be:
+>
+>       2 maps in task context and a fault inside
+>       2 maps in the fault handler
+>       3 maps in softirq
+>       2 maps in interrupt
+>
+> So a total of 16 is sufficient and probably overestimated.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-	/* Max size ... */
-
-> +	u64 max_zone_append_size;
->  
->  #ifdef CONFIG_BTRFS_FS_REF_VERIFY
->  	spinlock_t ref_verify_lock;
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index e1cdff5af3a3..1b42e13b8227 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -47,6 +47,7 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
->  {
->  	struct btrfs_zoned_device_info *zone_info = NULL;
->  	struct block_device *bdev = device->bdev;
-> +	struct request_queue *q = bdev_get_queue(bdev);
-
-No single letter variables (exception is 'i' for indexing)
-
->  	sector_t nr_sectors = bdev->bd_part->nr_sects;
->  	sector_t sector = 0;
->  	struct blk_zone *zones = NULL;
-> @@ -70,6 +71,8 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device)
->  	ASSERT(is_power_of_2(zone_sectors));
->  	zone_info->zone_size = (u64)zone_sectors << SECTOR_SHIFT;
->  	zone_info->zone_size_shift = ilog2(zone_info->zone_size);
-> +	zone_info->max_zone_append_size =
-> +		(u64)queue_max_zone_append_sectors(q) << SECTOR_SHIFT;
->  	zone_info->nr_zones = nr_sectors >> ilog2(bdev_zone_sectors(bdev));
->  	if (!IS_ALIGNED(nr_sectors, zone_sectors))
->  		zone_info->nr_zones++;
-> @@ -182,7 +185,8 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
->  	u64 hmzoned_devices = 0;
->  	u64 nr_devices = 0;
->  	u64 zone_size = 0;
-> -	int incompat_zoned = btrfs_is_zoned(fs_info);
-> +	u64 max_zone_append_size = 0;
-> +	bool incompat_zoned = btrfs_is_zoned(fs_info);
-
-	const bool
-
->  	int ret = 0;
->  
->  	/* Count zoned devices */
-> @@ -195,15 +199,23 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
->  		model = bdev_zoned_model(device->bdev);
->  		if (model == BLK_ZONED_HM ||
->  		    (model == BLK_ZONED_HA && incompat_zoned)) {
-> +			struct btrfs_zoned_device_info *zone_info =
-> +				device->zone_info;
-> +
->  			hmzoned_devices++;
-
-I must have missed in some previous patch, 'hmzoned' should be zoned?
-
->  			if (!zone_size) {
-> -				zone_size = device->zone_info->zone_size;
-> -			} else if (device->zone_info->zone_size != zone_size) {
-> +				zone_size = zone_info->zone_size;
-> +			} else if (zone_info->zone_size != zone_size) {
->  				btrfs_err(fs_info,
->  					  "Zoned block devices must have equal zone sizes");
-
-				"zoned: devices must have equal zone sizes, have %u found %u"
-
->  				ret = -EINVAL;
->  				goto out;
->  			}
-> +			if (!max_zone_append_size ||
-> +			    (zone_info->max_zone_append_size &&
-> +			     zone_info->max_zone_append_size < max_zone_append_size))
-> +				max_zone_append_size =
-> +					zone_info->max_zone_append_size;
->  		}
->  		nr_devices++;
->  	}
+Acked-by: Arnd Bergmann <arnd@arndb.de>
