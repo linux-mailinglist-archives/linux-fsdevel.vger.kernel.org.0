@@ -2,37 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8B32A42B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAF32A42EF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbgKCKeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 05:34:08 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:39508 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728495AbgKCKeC (ORCPT
+        id S1728743AbgKCKfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 05:35:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728513AbgKCKeE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 05:34:02 -0500
-Message-Id: <20201103095859.335366302@linutronix.de>
+        Tue, 3 Nov 2020 05:34:04 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A24FC0613D1;
+        Tue,  3 Nov 2020 02:34:04 -0800 (PST)
+Message-Id: <20201103095859.429620021@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1604399636;
+        s=2020; t=1604399637;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=A9fIQi2MIxDLlGKHATeOlK6WSHzl9bMxA6Vy6WK4kFg=;
-        b=EFq00YaC2cfZ3tRBXG1AYeQj6Sgd3q/sRky5nMpbjN5ek1aWLKVPUv+JvoHWa6vjJFl3Ww
-        awzO+FzbND5FKjPGN7gNTnp5Mb1tq9qO15q652V8S0pc9Ce+oaGECW/jZPsmCvsiKGY+B3
-        KwlcTL/aSMXp1KJx2nFOb6gxG+DhM4n5p7kt5iTVZXpFOkBEw1cbStLJ+/3gWYcjPH26QY
-        Sbv7PLzlBaetuHp8ai5dMyYUIWrRveb5P6ybl5UfTZhOpH3MacNEiFaKtx28E2gAmPiYft
-        OZoB88IwwamuMjukOjyOm6rKIPayv2itPmrCw7QTvAcv81mGKSLdYHUqSDcl3Q==
+        bh=K8tv6h9J8+1UjPWtbytb7n5SLceTF9zssV9oZox9W+U=;
+        b=jlx8Ex5HCWlxXvrnli8/QwvyuSFPzsuFrOckZnFstrBk6aYnaxCTE/6eIpzUyy3HTFA9dN
+        j2MhhyK0rzrnVOQ277ubDpOdBu8/ePvDTWcYkFn67cFtyw9jv6pUAD7YSvQ2mlOaf0dtF/
+        pHfOJ4qnMNrsWT5Blx8qbKTjW4qwZRparaSaimAWnAEl7Ugw1vjOoGWZEEMX6/kMY4xvm4
+        Run48zgUaP3VverUvyAteqfjoP06jefJKul2RFnRd4pDzuc3AmboC5oIeMYQGIVL4MQT1u
+        v0/E2lNjgVb2i25uzJEr9A1NWYgTnWrFPcuC8jA8qwqSrF/+ReNLpCdWbCjAfg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1604399636;
+        s=2020e; t=1604399637;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=A9fIQi2MIxDLlGKHATeOlK6WSHzl9bMxA6Vy6WK4kFg=;
-        b=MNJFQ16TWMWokWTa10gHMVVbsQOpiB2QfbpOViNefBGxmMK6yL/K8NxBWEF2+7F4dQI9lX
-        SBoVS11NJaJ9FoCQ==
-Date:   Tue, 03 Nov 2020 10:27:39 +0100
+        bh=K8tv6h9J8+1UjPWtbytb7n5SLceTF9zssV9oZox9W+U=;
+        b=dVvfT1TwOkonT78xNAJPVdoIKohkvh+HLW+i9zfm8hjJfQ/wzEekIVlHbnLgxURHEJHa93
+        KSDbl/WiRJPwtbCA==
+Date:   Tue, 03 Nov 2020 10:27:40 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -40,6 +43,8 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Paul McKenney <paulmck@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-mips@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>,
@@ -52,8 +57,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
         linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
         Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        linux-mips@vger.kernel.org, Nick Hu <nickhu@andestech.com>,
+        Nick Hu <nickhu@andestech.com>,
         Greentime Hu <green.hu@gmail.com>,
         Vincent Chen <deanbo422@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
@@ -85,7 +89,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         intel-gfx@lists.freedesktop.org
-Subject: [patch V3 27/37] x86/crashdump/32: Simplify copy_oldmem_page()
+Subject: [patch V3 28/37] mips/crashdump: Simplify copy_oldmem_page()
 References: <20201103092712.714480842@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -101,46 +105,46 @@ Remove the indirection of the dump page and the related cruft which is not
 longer required.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org
 ---
 V3: New patch
 ---
- arch/x86/kernel/crash_dump_32.c |   48 ++++++++--------------------------------
- 1 file changed, 10 insertions(+), 38 deletions(-)
+ arch/mips/kernel/crash_dump.c |   42 +++++++-----------------------------------
+ 1 file changed, 7 insertions(+), 35 deletions(-)
 
---- a/arch/x86/kernel/crash_dump_32.c
-+++ b/arch/x86/kernel/crash_dump_32.c
-@@ -13,8 +13,6 @@
- 
+--- a/arch/mips/kernel/crash_dump.c
++++ b/arch/mips/kernel/crash_dump.c
+@@ -5,8 +5,6 @@
  #include <linux/uaccess.h>
+ #include <linux/slab.h>
  
 -static void *kdump_buf_page;
 -
- static inline bool is_crashed_pfn_valid(unsigned long pfn)
- {
- #ifndef CONFIG_X86_PAE
-@@ -41,15 +39,11 @@ static inline bool is_crashed_pfn_valid(
+ /**
+  * copy_oldmem_page - copy one page from "oldmem"
+  * @pfn: page frame number to be copied
+@@ -17,51 +15,25 @@ static void *kdump_buf_page;
   * @userbuf: if set, @buf is in user address space, use copy_to_user(),
   *	otherwise @buf is in kernel address space, use memcpy().
   *
 - * Copy a page from "oldmem". For this page, there is no pte mapped
-- * in the current kernel. We stitch up a pte, similar to kmap_atomic.
++ * Copy a page from "oldmem". For this page, there might be no pte mapped
+  * in the current kernel.
 - *
 - * Calling copy_to_user() in atomic context is not desirable. Hence first
 - * copying the data to a pre-allocated kernel page and then copying to user
 - * space in non-atomic context.
-+ * Copy a page from "oldmem". For this page, there might be no pte mapped
-+ * in the current kernel.
   */
 -ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
--                               size_t csize, unsigned long offset, int userbuf)
+-			 size_t csize, unsigned long offset, int userbuf)
 +ssize_t copy_oldmem_page(unsigned long pfn, char *buf, size_t csize,
 +			 unsigned long offset, int userbuf)
  {
  	void  *vaddr;
  
-@@ -59,38 +53,16 @@ ssize_t copy_oldmem_page(unsigned long p
- 	if (!is_crashed_pfn_valid(pfn))
- 		return -EFAULT;
+ 	if (!csize)
+ 		return 0;
  
 -	vaddr = kmap_atomic_pfn(pfn);
 +	vaddr = kmap_local_pfn(pfn);
@@ -151,9 +155,8 @@ V3: New patch
 +		memcpy(buf, vaddr + offset, csize);
  	} else {
 -		if (!kdump_buf_page) {
--			printk(KERN_WARNING "Kdump: Kdump buffer page not"
--				" allocated\n");
--			kunmap_atomic(vaddr);
+-			pr_warn("Kdump: Kdump buffer page not allocated\n");
+-
 -			return -EFAULT;
 -		}
 -		copy_page(kdump_buf_page, vaddr);
@@ -164,23 +167,20 @@ V3: New patch
 +			csize = -EFAULT;
  	}
  
--	return csize;
--}
-+	kunmap_local(vaddr);
- 
+ 	return csize;
+ }
+-
 -static int __init kdump_buf_page_init(void)
 -{
 -	int ret = 0;
 -
 -	kdump_buf_page = kmalloc(PAGE_SIZE, GFP_KERNEL);
 -	if (!kdump_buf_page) {
--		printk(KERN_WARNING "Kdump: Failed to allocate kdump buffer"
--			 " page\n");
+-		pr_warn("Kdump: Failed to allocate kdump buffer page\n");
 -		ret = -ENOMEM;
 -	}
 -
 -	return ret;
-+	return csize;
- }
+-}
 -arch_initcall(kdump_buf_page_init);
 
