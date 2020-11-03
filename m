@@ -2,182 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83F1B2A58E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 23:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 349992A592A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 23:05:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730673AbgKCWBB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 17:01:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
+        id S1730487AbgKCWFZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 17:05:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730603AbgKCWAz (ORCPT
+        with ESMTP id S1730549AbgKCUmg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 17:00:55 -0500
-Received: from mail-pl1-x64a.google.com (mail-pl1-x64a.google.com [IPv6:2607:f8b0:4864:20::64a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A38C061A4E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 14:00:53 -0800 (PST)
-Received: by mail-pl1-x64a.google.com with SMTP id k6so11425378pls.22
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 14:00:53 -0800 (PST)
+        Tue, 3 Nov 2020 15:42:36 -0500
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34639C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 12:42:36 -0800 (PST)
+Received: by mail-qk1-x743.google.com with SMTP id r7so16501222qkf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 12:42:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=5MfBywdxMmsLRrplRDwjfeuNu4Dz7M8KwUBLUxZj6xM=;
-        b=udaQgtvyrunQ/CMzN8Xk1IupaOPWUZBksj6LPEJBbqUq0NnJlcBoPovdQ789qBRsN5
-         SJoma5dEVWU4sz/3ILN2w3Vk4tQD+DjTVUo3ut+k9a+xr5lty4GvEe+phRftibB0Wa/u
-         gJAmkO3kpZHqBgu22n8ZJIGZ+QSxJ8qtc//1EWon96YmBC8zN1K2YIUtTEQ0NOZii1/+
-         OBtUDZL/qPbNFDV/nko3qMAArLcvK6oyiJxvehGhKW4ezFBdwrmtRYlBCcqKEMQHhaxP
-         MN8n2VC22GpAWN1JERlZLWGzmhVq7rOuyrgD4kSMFO10RFq4rywPvgNYh+R7xhpK6C9A
-         Jq4Q==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GBxKGog+qQpjWU9k5zT7DztWd+7mJRuZvrbzWn1+YpE=;
+        b=bvD31TNl8jfM0wpwHCWI/u8CybLpHKDKV1OrnBfeLjBZYEkT/iaLgoMReKEIQXCBq7
+         J8Hl7oWbGjsdfsCwtpGTDksNZQHZ9igOwCq2GWMlB8hYOwVN4NZ3DnSCt3AsfuqlgdPh
+         m9C8FpoKTWuEoTaTWv89h9rLbyjj372GsPcdhqSUVv6ZZDPKFr/8761mSkJfobGCfR0s
+         H8NL0O4pnsr3zIKlyiXeGZgLhHUxAbxfMJx70i5Wg7vrUuto2ndVJ18N98rQC98QZn2k
+         hzKFgi26gncPDXT00ZlSJHELNpR6qHS8gcj12ChdHOYed37ybp4b02M4t8OO0qK3dXHR
+         urxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=5MfBywdxMmsLRrplRDwjfeuNu4Dz7M8KwUBLUxZj6xM=;
-        b=LOf8KHnZ3ofekHmZaITqaKw6LNdZosmqTyqyAAOIV5AiFPro2uGNtEqRznJKphiIiT
-         fGNXNusZnN4yqrrUCYl7fnnPidI65tS8+heW/Adz3qblRUxX1i6aK97b03PwgoiYaxRy
-         aL/9Mf/ijNP+pq8eVvX9xO6024E/rP3G0CWGB/qN18s6+ej4rjsCWt8M5+icIJAKzU/j
-         G4eByoHipz9CCoG/hgZ24NIXVTALPTwGOFoc9pBTWUoBphIZqda27yvX0u70GClBqayu
-         yDl2HT0/LJRDfTvUO9nTPJeZxmQPSYAyRGMwEzRKh109ZjTYfilhGi4YOsM+O+PLcY1Z
-         VB8Q==
-X-Gm-Message-State: AOAM530aZLLsCyS03mO+41bOF4X2w2D4lobxHJ4tHZro+qyTPnh8S211
-        eezkbJlycJYrRkTcpOVXejTPkcKnEYWmsyVxjw==
-X-Google-Smtp-Source: ABdhPJyAOAyaXh2xZzoHs7/ZBCmt8D42Q2k0vfbMoTbMpRBhGybVkxXxBcnAzulcfDtjqseSbtRBcpDsBFbYgvG5vQ==
-Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
-X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a17:90a:678a:: with SMTP id
- o10mr1283056pjj.180.1604440852797; Tue, 03 Nov 2020 14:00:52 -0800 (PST)
-Date:   Tue,  3 Nov 2020 14:00:20 -0800
-In-Reply-To: <20201103220020.2399003-1-lokeshgidra@google.com>
-Message-Id: <20201103220020.2399003-4-lokeshgidra@google.com>
-Mime-Version: 1.0
-References: <20201103220020.2399003-1-lokeshgidra@google.com>
-X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
-Subject: [PATCH v10 3/3] Use secure anon inodes for userfaultfd
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        nnk@google.com, jeffv@google.com, kernel-team@android.com,
-        linux-mm@kvack.org, Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GBxKGog+qQpjWU9k5zT7DztWd+7mJRuZvrbzWn1+YpE=;
+        b=XNpWU8rW0F5qaXFDkTzYCf8IlMTWKlbplMoTkjUiWQcD16IV2K54/SjiLtzC0irbDY
+         42C8s+oQcicEjSehfioiKjRWsKnPDiWGo/ePEuqAFaU2UqfrQiRyNLYw7vaJiuvb+GW1
+         OHfhFaZ7mrb4MRU8ZjH/rg1qbzHitU0hnCJ93RTej1WLg7iIiOu5MXGpuJRjEH0jKlK0
+         wiy6CpetmBUDqALVoxXilEwmK6qKtWmletyvBjShFtE6WkNmtxh/DHMba+DZ466w8Gt0
+         fz1fWm8mOly1vuIwZrFifN7HDEXN91tjVxmMPYHyOTRTmi4KLRI91QX8f3H4f5xBFMVy
+         DwLg==
+X-Gm-Message-State: AOAM5331KJ8KFeUxeH+AkNKBVpdrOdG1g1Tn64Fseq8N0oX6t/WTwQEO
+        DwW/OqCx2oKYM2yx2qyDTrav7Q==
+X-Google-Smtp-Source: ABdhPJzuAuR+JwbkxT48lDDAwx/QhvJqsgSA+R6S/C1bTiCIdKcgawgk5ZLUnavIVGbGB/Z6PlKj1A==
+X-Received: by 2002:a05:620a:40f:: with SMTP id 15mr21280972qkp.398.1604436155345;
+        Tue, 03 Nov 2020 12:42:35 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id n127sm10047169qke.92.2020.11.03.12.42.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Nov 2020 12:42:34 -0800 (PST)
+Subject: Re: [PATCH v9 37/41] btrfs: split alloc_log_tree()
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
+ <71b8f94034f04da6f69f1ea0720825aabc852a54.1604065695.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <502ce12d-1ba6-5e3c-9aab-3b1b42a16bcf@toxicpanda.com>
+Date:   Tue, 3 Nov 2020 15:42:33 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.4.0
+MIME-Version: 1.0
+In-Reply-To: <71b8f94034f04da6f69f1ea0720825aabc852a54.1604065695.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Daniel Colascione <dancol@google.com>
+On 10/30/20 9:51 AM, Naohiro Aota wrote:
+> This is a preparation for the next patch. This commit split
+> alloc_log_tree() to allocating tree structure part (remains in
+> alloc_log_tree()) and allocating tree node part (moved in
+> btrfs_alloc_log_tree_node()). The latter part is also exported to be used
+> in the next patch.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>   fs/btrfs/disk-io.c | 31 +++++++++++++++++++++++++------
+>   fs/btrfs/disk-io.h |  2 ++
+>   2 files changed, 27 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index 2b30ef8a7034..70885f3d3321 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -1211,7 +1211,6 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
+>   					 struct btrfs_fs_info *fs_info)
+>   {
+>   	struct btrfs_root *root;
+> -	struct extent_buffer *leaf;
+>   
+>   	root = btrfs_alloc_root(fs_info, BTRFS_TREE_LOG_OBJECTID, GFP_NOFS);
+>   	if (!root)
+> @@ -1221,6 +1220,14 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
+>   	root->root_key.type = BTRFS_ROOT_ITEM_KEY;
+>   	root->root_key.offset = BTRFS_TREE_LOG_OBJECTID;
+>   
+> +	return root;
+> +}
+> +
+> +int btrfs_alloc_log_tree_node(struct btrfs_trans_handle *trans,
+> +			      struct btrfs_root *root)
+> +{
+> +	struct extent_buffer *leaf;
+> +
+>   	/*
+>   	 * DON'T set SHAREABLE bit for log trees.
+>   	 *
+> @@ -1233,26 +1240,31 @@ static struct btrfs_root *alloc_log_tree(struct btrfs_trans_handle *trans,
+>   
+>   	leaf = btrfs_alloc_tree_block(trans, root, 0, BTRFS_TREE_LOG_OBJECTID,
+>   			NULL, 0, 0, 0, BTRFS_NESTING_NORMAL);
+> -	if (IS_ERR(leaf)) {
+> -		btrfs_put_root(root);
+> -		return ERR_CAST(leaf);
+> -	}
+> +	if (IS_ERR(leaf))
+> +		return PTR_ERR(leaf);
+>   
+>   	root->node = leaf;
+>   
+>   	btrfs_mark_buffer_dirty(root->node);
+>   	btrfs_tree_unlock(root->node);
+> -	return root;
+> +
+> +	return 0;
+>   }
+>   
+>   int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
+>   			     struct btrfs_fs_info *fs_info)
+>   {
+>   	struct btrfs_root *log_root;
+> +	int ret;
+>   
+>   	log_root = alloc_log_tree(trans, fs_info);
+>   	if (IS_ERR(log_root))
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+newline.
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+>   		return PTR_ERR(log_root);
+> +	ret = btrfs_alloc_log_tree_node(trans, log_root);
+> +	if (ret) {
+> +		kfree(log_root);
 
-[Remove owner inode from userfaultfd_ctx]
-[Use anon_inode_getfd_secure() instead of anon_inode_getfile_secure()
- in userfaultfd syscall]
-[Use inode of file in userfaultfd_read() in resolve_userfault_fork()]
+btrfs_put_root(log_root);
 
-Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
----
- fs/userfaultfd.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+> +		return ret;
+> +	}
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 0e4a3837da52..918535b49475 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -978,14 +978,14 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
- 
- static const struct file_operations userfaultfd_fops;
- 
--static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
--				  struct userfaultfd_ctx *new,
-+static int resolve_userfault_fork(struct userfaultfd_ctx *new,
-+				  struct inode *inode,
- 				  struct uffd_msg *msg)
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-+			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -995,7 +995,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- }
- 
- static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
--				    struct uffd_msg *msg)
-+				    struct uffd_msg *msg, struct inode *inode)
- {
- 	ssize_t ret;
- 	DECLARE_WAITQUEUE(wait, current);
-@@ -1106,7 +1106,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 	spin_unlock_irq(&ctx->fd_wqh.lock);
- 
- 	if (!ret && msg->event == UFFD_EVENT_FORK) {
--		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
-+		ret = resolve_userfault_fork(fork_nctx, inode, msg);
- 		spin_lock_irq(&ctx->event_wqh.lock);
- 		if (!list_empty(&fork_event)) {
- 			/*
-@@ -1166,6 +1166,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	ssize_t _ret, ret = 0;
- 	struct uffd_msg msg;
- 	int no_wait = file->f_flags & O_NONBLOCK;
-+	struct inode *inode = file_inode(file);
- 
- 	if (ctx->state == UFFD_STATE_WAIT_API)
- 		return -EINVAL;
-@@ -1173,7 +1174,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	for (;;) {
- 		if (count < sizeof(msg))
- 			return ret ? ret : -EINVAL;
--		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg);
-+		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
- 		if (_ret < 0)
- 			return ret ? ret : _ret;
- 		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-@@ -1995,8 +1996,8 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-+			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
--- 
-2.28.0.1011.ga647a8990f-goog
+newline.  Thanks,
 
+Josef
