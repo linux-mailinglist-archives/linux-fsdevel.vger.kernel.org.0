@@ -2,40 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71CBF2A42DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37D0F2A42D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbgKCKfD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 05:35:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728543AbgKCKeI (ORCPT
+        id S1728659AbgKCKe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 05:34:56 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40032 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728038AbgKCKeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 05:34:08 -0500
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF58C0613D1;
-        Tue,  3 Nov 2020 02:34:08 -0800 (PST)
-Message-Id: <20201103095859.726187546@linutronix.de>
+        Tue, 3 Nov 2020 05:34:10 -0500
+Message-Id: <20201103095859.836711767@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1604399641;
+        s=2020; t=1604399643;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=r3bRNSPyDxqBB2q1RmPpZiq/s1h+pWiITk0Gb+X4YiE=;
-        b=BWJY7YL9koWIqQGO6oJX8GMg2970+m6CUIohd/XJevMmQ80PB19bJDJ6iS8RO72tFyrU5a
-        zermc/VLuhpDSGwb6AlQ+XUnPAk/ooP0r2CdnCXy7SbeJDAVykp+GhIB7O+PeOHtxIB/kQ
-        kGAzLI/8Albxroia7VjhmBhPwLPYvYm7buHcNBklvKblOslUE8GFJQxCNSKNTUzn67UA6c
-        dCL9UHwiUeuSbb9mKfvGa5CyJx9FEPWWAQv536xf3Kv7je840+HegrNr76dqY6DZp1xmcI
-        hfpxU76xevyfk1dRUoZcIUQ3vKAJLr6y/fVXGv/9UWFE20X3bXjqdNO7IqY7sQ==
+        bh=yUxHC0cakBFRwhud8xMOIDvuAaJvgwuFtrBz27XdsEs=;
+        b=cAh//GKsz39P8xqXnJcqDaA3W/edzWVdAqwjKoXA5Js/x368VRmdM0h2fj6bQZPAll8hmr
+        yl8q8CcCNvb+2SfFaIo7cnx8vW2iPoTlWRNGNB06KJ1ERTQlqVwbp+qakHsf3DKm3O66rB
+        +8+R2pAlCb2SMbZCBSyvPjBwiK1AVT7Wn6TtWs6GsMiR2cmkq8EcpYI90/EI8cGq7Q0K6k
+        PWjm7m4uZQ4xtBGqzKEndSPHHSWqIlOOUtSiYkKMXa6yxfM8jl2K7omhkCJJofz/LjfJ5M
+        Q/MfbNPI/NbAKfCFzA8vjy9XJtarFWdneKuOU4n/OP2w4gxAPRJI0FNbRKwq8Q==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1604399641;
+        s=2020e; t=1604399643;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=r3bRNSPyDxqBB2q1RmPpZiq/s1h+pWiITk0Gb+X4YiE=;
-        b=W6vWFt0HyJmTC8mcOcU1LotSVA5E0cTby+uitrXhlUWJjwzfnwYugo9E0ZaVshQFT42zsP
-        ckJmRhJkQSF0aCCw==
-Date:   Tue, 03 Nov 2020 10:27:43 +0100
+        bh=yUxHC0cakBFRwhud8xMOIDvuAaJvgwuFtrBz27XdsEs=;
+        b=FQTjFZ+ZYdRELu4iTMN0YYBNgOsOxBJVlxyxuynko9bscI/OxppLps2A/EThS2XSvqYRg0
+        nAwEXgV5JRubDDDA==
+Date:   Tue, 03 Nov 2020 10:27:44 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -43,8 +40,9 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Paul McKenney <paulmck@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>, David Airlie <airlied@linux.ie>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
@@ -77,8 +75,8 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Roland Scheidegger <sroland@vmware.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
         Dave Airlie <airlied@redhat.com>,
         Gerd Hoffmann <kraxel@redhat.com>,
         virtualization@lists.linux-foundation.org,
@@ -88,7 +86,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         intel-gfx@lists.freedesktop.org
-Subject: [patch V3 31/37] drm/ttm: Replace kmap_atomic() usage
+Subject: [patch V3 32/37] drm/vmgfx: Replace kmap_atomic()
 References: <20201103092712.714480842@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -108,57 +106,87 @@ address for valid pages and the return was bogus anyway as it would have
 left preemption and pagefaults disabled.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Christian Koenig <christian.koenig@amd.com>
-Cc: Huang Rui <ray.huang@amd.com>
+Cc: VMware Graphics <linux-graphics-maintainer@vmware.com>
+Cc: Roland Scheidegger <sroland@vmware.com>
 Cc: David Airlie <airlied@linux.ie>
 Cc: Daniel Vetter <daniel@ffwll.ch>
 Cc: dri-devel@lists.freedesktop.org
 ---
 V3: New patch
 ---
- drivers/gpu/drm/ttm/ttm_bo_util.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_blit.c |   30 ++++++++++++------------------
+ 1 file changed, 12 insertions(+), 18 deletions(-)
 
---- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-@@ -181,13 +181,15 @@ static int ttm_copy_io_ttm_page(struct t
- 		return -ENOMEM;
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_blit.c
+@@ -375,12 +375,12 @@ static int vmw_bo_cpu_blit_line(struct v
+ 		copy_size = min_t(u32, copy_size, PAGE_SIZE - src_page_offset);
  
- 	src = (void *)((unsigned long)src + (page << PAGE_SHIFT));
--	dst = kmap_atomic_prot(d, prot);
--	if (!dst)
--		return -ENOMEM;
-+	/*
-+	 * Ensure that a highmem page is mapped with the correct
-+	 * pgprot. For non highmem the mapping is already there.
-+	 */
-+	dst = kmap_local_page_prot(d, prot);
+ 		if (unmap_src) {
+-			kunmap_atomic(d->src_addr);
++			kunmap_local(d->src_addr);
+ 			d->src_addr = NULL;
+ 		}
  
- 	memcpy_fromio(dst, src, PAGE_SIZE);
+ 		if (unmap_dst) {
+-			kunmap_atomic(d->dst_addr);
++			kunmap_local(d->dst_addr);
+ 			d->dst_addr = NULL;
+ 		}
  
--	kunmap_atomic(dst);
-+	kunmap_local(dst);
+@@ -388,12 +388,8 @@ static int vmw_bo_cpu_blit_line(struct v
+ 			if (WARN_ON_ONCE(dst_page >= d->dst_num_pages))
+ 				return -EINVAL;
  
- 	return 0;
- }
-@@ -203,13 +205,15 @@ static int ttm_copy_ttm_io_page(struct t
- 		return -ENOMEM;
+-			d->dst_addr =
+-				kmap_atomic_prot(d->dst_pages[dst_page],
+-						 d->dst_prot);
+-			if (!d->dst_addr)
+-				return -ENOMEM;
+-
++			d->dst_addr = kmap_local_page_prot(d->dst_pages[dst_page],
++							   d->dst_prot);
+ 			d->mapped_dst = dst_page;
+ 		}
  
- 	dst = (void *)((unsigned long)dst + (page << PAGE_SHIFT));
--	src = kmap_atomic_prot(s, prot);
--	if (!src)
--		return -ENOMEM;
-+	/*
-+	 * Ensure that a highmem page is mapped with the correct
-+	 * pgprot. For non highmem the mapping is already there.
-+	 */
-+	src = kmap_local_page_prot(s, prot);
+@@ -401,12 +397,8 @@ static int vmw_bo_cpu_blit_line(struct v
+ 			if (WARN_ON_ONCE(src_page >= d->src_num_pages))
+ 				return -EINVAL;
  
- 	memcpy_toio(dst, src, PAGE_SIZE);
+-			d->src_addr =
+-				kmap_atomic_prot(d->src_pages[src_page],
+-						 d->src_prot);
+-			if (!d->src_addr)
+-				return -ENOMEM;
+-
++			d->src_addr = kmap_local_page_prot(d->src_pages[src_page],
++							   d->src_prot);
+ 			d->mapped_src = src_page;
+ 		}
+ 		diff->do_cpy(diff, d->dst_addr + dst_page_offset,
+@@ -436,8 +428,10 @@ static int vmw_bo_cpu_blit_line(struct v
+  *
+  * Performs a CPU blit from one buffer object to another avoiding a full
+  * bo vmap which may exhaust- or fragment vmalloc space.
+- * On supported architectures (x86), we're using kmap_atomic which avoids
+- * cross-processor TLB- and cache flushes and may, on non-HIGHMEM systems
++ *
++ * On supported architectures (x86), we're using kmap_local_prot() which
++ * avoids cross-processor TLB- and cache flushes. kmap_local_prot() will
++ * either map a highmem page with the proper pgprot on HIGHMEM=y systems or
+  * reference already set-up mappings.
+  *
+  * Neither of the buffer objects may be placed in PCI memory
+@@ -500,9 +494,9 @@ int vmw_bo_cpu_blit(struct ttm_buffer_ob
+ 	}
+ out:
+ 	if (d.src_addr)
+-		kunmap_atomic(d.src_addr);
++		kunmap_local(d.src_addr);
+ 	if (d.dst_addr)
+-		kunmap_atomic(d.dst_addr);
++		kunmap_local(d.dst_addr);
  
--	kunmap_atomic(src);
-+	kunmap_local(src);
- 
- 	return 0;
+ 	return ret;
  }
 
