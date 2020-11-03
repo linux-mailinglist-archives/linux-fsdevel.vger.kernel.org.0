@@ -2,106 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 874D32A4784
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 15:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8585A2A47D4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 15:17:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729600AbgKCOMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 09:12:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54510 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729582AbgKCOMP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 09:12:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 257E0AD1A;
-        Tue,  3 Nov 2020 14:12:13 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 432A8DA7D2; Tue,  3 Nov 2020 15:10:35 +0100 (CET)
-Date:   Tue, 3 Nov 2020 15:10:35 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 11/41] btrfs: implement log-structured superblock for
- ZONED mode
-Message-ID: <20201103141035.GZ6756@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
-        linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org
-References: <cover.1604065156.git.naohiro.aota@wdc.com>
- <eca26372a84d8b8ec2b59d3390f172810ed6f3e4.1604065695.git.naohiro.aota@wdc.com>
+        id S1729462AbgKCORC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 09:17:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45170 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729359AbgKCOQC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Nov 2020 09:16:02 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9492CC0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 06:16:02 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id 126so22348477lfi.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 06:16:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=a9gv5kRF1TAOEsPNy0ASAI0MDTfRXeZ38ProsMVeXYQ=;
+        b=1uKcWqxfPVgTGjaKzWFN4y0aYEYIe1k4mmfFhSdUGVJOFcCfQ3DrLY+HLkBKHcDKoG
+         lHzl0qSMqjBvoDValimJMHTzHKRCdnHz5TuqMSyBCbuslc8bU252nXn7TbJ1pDf0Q3AH
+         YRbEACl602dG9U7kfPad0ol6nyKbuXjecC15cgO/VGbHW+KgpHToZOnTXl+IkxgE0RvU
+         NON1vvvtWBo0tjp8/DmyC0Aft7uNBf9Z/97/OESA5gTEukHUf4cxWnY36m3L4zjQucGw
+         oY7CLxiiKPvWOeYbDT3XzNz+2avuo2DvciQ8XvhcAF4MFul3rlz0Y/ma8pBpfdylCY6Y
+         SVEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=a9gv5kRF1TAOEsPNy0ASAI0MDTfRXeZ38ProsMVeXYQ=;
+        b=LB6J1KpfeF8f299y/QEVIt9tvdyYL4WNeJYOnMH6kpl/Ke7y/GfIkr13dtt8AkH0ia
+         8ekJ6R/SkbGZt/IldKtsikILGtanVF7xf+igKseXqlM8dT1BqODvS8qxHZMRMGr4Gomb
+         beRYSFnCodS+3D0uhBUEKOCl7sL6AykJSJOLG8hdGrBjbw+NP8ddEyeJdEEpj7w0kbdE
+         VpHS7tgt/e/+TtAFnT1Prhg4fq4is877AEFs1H5eoGharDOpjPhzkcpaZGLtwmTeBz8x
+         jn/2tlcf+wI0R1X1x+jSwVZQqd//MWFv9BQBvWcewLEMRY2O4zsFkmH2tSdYjEqfDRIp
+         NtJQ==
+X-Gm-Message-State: AOAM5311T8TCBHOpSBoSkTEsx0CBscadWubfXTuytDljGK2NVRAjlSrO
+        afAE24dk0C24zWNKwOuoKTkArQ6J1UIYqQ==
+X-Google-Smtp-Source: ABdhPJwnyyyrroqZF05jvl4O9xQ5ovDUuXNo/iH48fqaU94GprB7snvK5YYvvDCUsa6cndaeDB+ZKA==
+X-Received: by 2002:a19:7cf:: with SMTP id 198mr8412275lfh.266.1604412961000;
+        Tue, 03 Nov 2020 06:16:01 -0800 (PST)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id e10sm4314433ljl.41.2020.11.03.06.16.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2020 06:16:00 -0800 (PST)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id A5E6D10231C; Tue,  3 Nov 2020 17:16:01 +0300 (+03)
+Date:   Tue, 3 Nov 2020 17:16:01 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 05/19] mm/filemap: Rename generic_file_buffered_read
+ subfunctions
+Message-ID: <20201103141601.4szfbauqg33xbyzm@box>
+References: <20201029193405.29125-1-willy@infradead.org>
+ <20201029193405.29125-6-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eca26372a84d8b8ec2b59d3390f172810ed6f3e4.1604065695.git.naohiro.aota@wdc.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20201029193405.29125-6-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 10:51:18PM +0900, Naohiro Aota wrote:
-> Superblock (and its copies) is the only data structure in btrfs which has a
-> fixed location on a device. Since we cannot overwrite in a sequential write
-> required zone, we cannot place superblock in the zone. One easy solution is
-> limiting superblock and copies to be placed only in conventional zones.
-> However, this method has two downsides: one is reduced number of superblock
-> copies. The location of the second copy of superblock is 256GB, which is in
-> a sequential write required zone on typical devices in the market today.
-> So, the number of superblock and copies is limited to be two.  Second
-> downside is that we cannot support devices which have no conventional zones
-> at all.
-> 
-> To solve these two problems, we employ superblock log writing. It uses two
-> zones as a circular buffer to write updated superblocks. Once the first
-> zone is filled up, start writing into the second buffer. Then, when the
-> both zones are filled up and before start writing to the first zone again,
-> it reset the first zone.
-> 
-> We can determine the position of the latest superblock by reading write
-> pointer information from a device. One corner case is when the both zones
-> are full. For this situation, we read out the last superblock of each
-> zone, and compare them to determine which zone is older.
-> 
-> The following zones are reserved as the circular buffer on ZONED btrfs.
-> 
-> - The primary superblock: zones 0 and 1
-> - The first copy: zones 16 and 17
-> - The second copy: zones 1024 or zone at 256GB which is minimum, and next
->   to it
-> 
-> If these reserved zones are conventional, superblock is written fixed at
-> the start of the zone without logging.
+On Thu, Oct 29, 2020 at 07:33:51PM +0000, Matthew Wilcox (Oracle) wrote:
+> generic_file_buffered_read_readpage -> gfbr_read_page
+> generic_file_buffered_read_pagenotuptodate -> gfbr_update_page
+> generic_file_buffered_read_no_cached_page -> gfbr_create_page
+> generic_file_buffered_read_get_pages -> gfbr_get_pages
 
-I don't have a clear picture here.
+Oh.. I hate this. "gfbr" is something you see in a spoon of letter soup.
 
-In case there's a conventional zone covering 0 and 1st copy (64K and
-64M) it'll be overwritten. What happens for 2nd copy that's at 256G?
-sb-log?
+Maybe just drop few of these words? "buffered_read_" or "file_read_"?
 
-For all-sequential drive, the 0 and 1st copy are in the first zone.
-You say 0 and 1, but how come if the minimum zone size we ever expect is
-256M?
-
-The circular buffer comprises zones covering all superblock copies? I
-mean one buffer for 2 or more sb copies? The problem is that we'll have
-just one copy of the current superblock. Or I misunderstood.
-
-My idea is that we have primary zone, unfortunatelly covering 2
-superblocks but let it be. Second zone contains 2nd superblock copy
-(256G), we can assume that devices will be bigger than that.
-
-Then the circular buffers happen in each zone, so first one will go from
-offset 64K up to the zone size (256M or 1G).  Second zone rotates from
-offset 0 to end of the zone.
-
-The positive outcome of that is that both zones contain the latest
-superblock after succesful write and their write pointer is slightly out
-of sync, so they never have to be reset at the same time.
-
-In numbers:
-- first zone 64K .. 256M, 65520 superblocks
-- second zone 256G .. 245G+256M, 65536 superblocks
-
-The difference is 16 superblock updates, which should be enough to let
-the zone resets happen far apart.
+-- 
+ Kirill A. Shutemov
