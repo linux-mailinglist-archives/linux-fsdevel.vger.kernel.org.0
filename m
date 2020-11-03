@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 599B92A429E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 787BC2A4326
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:44:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbgKCKdk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 05:33:40 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:37854 "EHLO
+        id S1728855AbgKCKgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 05:36:53 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38268 "EHLO
         galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbgKCKdj (ORCPT
+        with ESMTP id S1728341AbgKCKdj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 3 Nov 2020 05:33:39 -0500
-Message-Id: <20201103095857.582196476@linutronix.de>
+Message-Id: <20201103095857.681196473@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1604399615;
+        s=2020; t=1604399616;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=dZfU5WvA7bT8kKOcQdwTPZyFVOxz/HVbc1gjCkahXR4=;
-        b=JFMhUSy54MI+jHIQIKjZSSAmW2SZMQKBSJTNDRkZ7wKd1SlTkxs9Mc7tHsX7XUAa1zDs6T
-        bHiWrPqTdhpVLkn080h0V6s14ZD7ZCgYeBGaguu0z3ubNPLloc0ihmwd8kMq0OhVZomojj
-        K5Zl8BY2mhYkg9xLSyC4eC1/Jhplv+fXLxoke6g3+VU/zCL3vpjqX++2MTaO9ATdo+4pDg
-        pfDK7THpXHeK8k4gsPOo0xXoBnpw+k1VA5unzS9gLu4Eys0+I/rKgCEC7V2aXDU046/XWh
-        OCsfmjePuS1i8ANNGtAdmg9MeaguWhSBSj94XGYphJgGx1tbE9+28Su2iHugjg==
+        bh=9zfWJBESkC89ZM3wXi9RpcYi0kqs7Y++H87KJDM1PsA=;
+        b=FM+6iGu/X6o10mq/FtDQCiRN7zTRF3r0s7Ss+igapV9ttM5H7pYB9Wje8MGF3i4YSPxAhK
+        25KKcscHcfgXak4e88H/ht4KlbCfLV+0zHOakSsxZy5/qBn7n2qUPGEJXY392Q1xlELmJo
+        NblwLDaZEYb14PR5t1vVPqhWlETKeRLogBWSuEdl+nicahgGjme8XOjFq5RonDKoVE8y3N
+        wzDbheHIZNB47+lThJbtB6qAeeRtyiUKkaoGgv+wOchAPMwUg1W4ue/fJgRLfbfX4eu5kI
+        HEdlHJNf7HxB2vsO8pVfZinxI+Fmi8cfatioLdXGdXxAnzKppg7jyhwAaFAASA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1604399615;
+        s=2020e; t=1604399616;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=dZfU5WvA7bT8kKOcQdwTPZyFVOxz/HVbc1gjCkahXR4=;
-        b=NUYcywDhlX06ORkIQCkflIkutfZxVFAkFqAS5HD9DXoWKhi+k+uMgYZhBPjmXE1kBLC1Ns
-        oKpVYSVqJ76AjhCg==
-Date:   Tue, 03 Nov 2020 10:27:22 +0100
+        bh=9zfWJBESkC89ZM3wXi9RpcYi0kqs7Y++H87KJDM1PsA=;
+        b=QWVzJVj2VvqtXcIZwtvJwhwpHQqxRIV9wytN6gScTp4DI1FqFOrSCxUaik507DE6SqoDSo
+        C5jxssGHP4ej70Cg==
+Date:   Tue, 03 Nov 2020 10:27:23 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -40,9 +40,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Paul McKenney <paulmck@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        linux-csky@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>,
@@ -50,7 +48,10 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         x86@kernel.org, Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org, linux-csky@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Michal Simek <monstr@monstr.eu>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-mips@vger.kernel.org, Nick Hu <nickhu@andestech.com>,
@@ -85,7 +86,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         intel-gfx@lists.freedesktop.org
-Subject: [patch V3 10/37] ARM: highmem: Switch to generic kmap atomic
+Subject: [patch V3 11/37] csky/mm/highmem: Switch to generic kmap atomic
 References: <20201103092712.714480842@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -97,198 +98,99 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 No reason having the same code in every architecture.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-csky@vger.kernel.org
 ---
-V3: Remove the kmap types cruft
+V3: Does not compile with gcc 10
 ---
- arch/arm/Kconfig                  |    1 
- arch/arm/include/asm/fixmap.h     |    4 -
- arch/arm/include/asm/highmem.h    |   33 +++++++---
- arch/arm/include/asm/kmap_types.h |   10 ---
- arch/arm/mm/Makefile              |    1 
- arch/arm/mm/highmem.c             |  121 --------------------------------------
- 6 files changed, 26 insertions(+), 144 deletions(-)
+ arch/csky/Kconfig               |    1 
+ arch/csky/include/asm/fixmap.h  |    4 +-
+ arch/csky/include/asm/highmem.h |    6 ++-
+ arch/csky/mm/highmem.c          |   75 ----------------------------------------
+ 4 files changed, 8 insertions(+), 78 deletions(-)
 
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1498,6 +1498,7 @@ config HAVE_ARCH_PFN_VALID
+--- a/arch/csky/Kconfig
++++ b/arch/csky/Kconfig
+@@ -286,6 +286,7 @@ config NR_CPUS
  config HIGHMEM
  	bool "High Memory Support"
- 	depends on MMU
+ 	depends on !CPU_CK610
 +	select KMAP_LOCAL
- 	help
- 	  The address space of ARM processors is only 4 Gigabytes large
- 	  and it has to accommodate user address space, kernel address
---- a/arch/arm/include/asm/fixmap.h
-+++ b/arch/arm/include/asm/fixmap.h
-@@ -7,14 +7,14 @@
- #define FIXADDR_TOP		(FIXADDR_END - PAGE_SIZE)
+ 	default y
  
- #include <linux/pgtable.h>
+ config FORCE_MAX_ZONEORDER
+--- a/arch/csky/include/asm/fixmap.h
++++ b/arch/csky/include/asm/fixmap.h
+@@ -8,7 +8,7 @@
+ #include <asm/memory.h>
+ #ifdef CONFIG_HIGHMEM
+ #include <linux/threads.h>
 -#include <asm/kmap_types.h>
 +#include <asm/kmap_size.h>
+ #endif
  
  enum fixed_addresses {
- 	FIX_EARLYCON_MEM_BASE,
- 	__end_of_permanent_fixed_addresses,
- 
- 	FIX_KMAP_BEGIN = __end_of_permanent_fixed_addresses,
+@@ -17,7 +17,7 @@ enum fixed_addresses {
+ #endif
+ #ifdef CONFIG_HIGHMEM
+ 	FIX_KMAP_BEGIN,
 -	FIX_KMAP_END = FIX_KMAP_BEGIN + (KM_TYPE_NR * NR_CPUS) - 1,
 +	FIX_KMAP_END = FIX_KMAP_BEGIN + (KM_MAX_IDX * NR_CPUS) - 1,
- 
- 	/* Support writing RO kernel text via kprobes, jump labels, etc. */
- 	FIX_TEXT_POKE0,
---- a/arch/arm/include/asm/highmem.h
-+++ b/arch/arm/include/asm/highmem.h
-@@ -2,7 +2,7 @@
- #ifndef _ASM_HIGHMEM_H
- #define _ASM_HIGHMEM_H
- 
+ #endif
+ 	__end_of_fixed_addresses
+ };
+--- a/arch/csky/include/asm/highmem.h
++++ b/arch/csky/include/asm/highmem.h
+@@ -9,7 +9,7 @@
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/uaccess.h>
 -#include <asm/kmap_types.h>
 +#include <asm/kmap_size.h>
+ #include <asm/cache.h>
  
- #define PKMAP_BASE		(PAGE_OFFSET - PMD_SIZE)
- #define LAST_PKMAP		PTRS_PER_PTE
-@@ -46,19 +46,32 @@ extern pte_t *pkmap_page_table;
+ /* undef for production */
+@@ -32,10 +32,12 @@ extern pte_t *pkmap_page_table;
  
- #ifdef ARCH_NEEDS_KMAP_HIGH_GET
- extern void *kmap_high_get(struct page *page);
--#else
-+
-+static inline void *arch_kmap_local_high_get(struct page *page)
-+{
-+	if (IS_ENABLED(CONFIG_DEBUG_HIGHMEM) && !cache_is_vivt())
-+		return NULL;
-+	return kmap_high_get(page);
-+}
-+#define arch_kmap_local_high_get arch_kmap_local_high_get
-+
-+#else /* ARCH_NEEDS_KMAP_HIGH_GET */
- static inline void *kmap_high_get(struct page *page)
- {
- 	return NULL;
- }
--#endif
-+#endif /* !ARCH_NEEDS_KMAP_HIGH_GET */
- 
--/*
-- * The following functions are already defined by <linux/highmem.h>
-- * when CONFIG_HIGHMEM is not set.
-- */
--#ifdef CONFIG_HIGHMEM
+ #define ARCH_HAS_KMAP_FLUSH_TLB
+ extern void kmap_flush_tlb(unsigned long addr);
 -extern void *kmap_atomic_pfn(unsigned long pfn);
--#endif
-+#define arch_kmap_local_post_map(vaddr, pteval)				\
-+	local_flush_tlb_kernel_page(vaddr)
+ 
+ #define flush_cache_kmaps() do {} while (0)
+ 
++#define arch_kmap_local_post_map(vaddr, pteval)	kmap_flush_tlb(vaddr)
++#define arch_kmap_local_post_unmap(vaddr)	kmap_flush_tlb(vaddr)
 +
-+#define arch_kmap_local_pre_unmap(vaddr)				\
-+do {									\
-+	if (cache_is_vivt())						\
-+		__cpuc_flush_dcache_area((void *)vaddr, PAGE_SIZE);	\
-+} while (0)
-+
-+#define arch_kmap_local_post_unmap(vaddr)				\
-+	local_flush_tlb_kernel_page(vaddr)
+ extern void kmap_init(void);
  
- #endif
---- a/arch/arm/include/asm/kmap_types.h
-+++ /dev/null
-@@ -1,10 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __ARM_KMAP_TYPES_H
--#define __ARM_KMAP_TYPES_H
--
--/*
-- * This is the "bare minimum".  AIO seems to require this.
-- */
--#define KM_TYPE_NR 16
--
--#endif
---- a/arch/arm/mm/Makefile
-+++ b/arch/arm/mm/Makefile
-@@ -19,7 +19,6 @@ obj-$(CONFIG_MODULES)		+= proc-syms.o
- obj-$(CONFIG_DEBUG_VIRTUAL)	+= physaddr.o
+ #endif /* __KERNEL__ */
+--- a/arch/csky/mm/highmem.c
++++ b/arch/csky/mm/highmem.c
+@@ -9,8 +9,6 @@
+ #include <asm/tlbflush.h>
+ #include <asm/cacheflush.h>
  
- obj-$(CONFIG_ALIGNMENT_TRAP)	+= alignment.o
--obj-$(CONFIG_HIGHMEM)		+= highmem.o
- obj-$(CONFIG_HUGETLB_PAGE)	+= hugetlbpage.o
- obj-$(CONFIG_ARM_PV_FIXUP)	+= pv-fixup-asm.o
+-static pte_t *kmap_pte;
+-
+ unsigned long highstart_pfn, highend_pfn;
  
---- a/arch/arm/mm/highmem.c
-+++ /dev/null
-@@ -1,121 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * arch/arm/mm/highmem.c -- ARM highmem support
-- *
-- * Author:	Nicolas Pitre
-- * Created:	september 8, 2008
-- * Copyright:	Marvell Semiconductors Inc.
-- */
--
--#include <linux/module.h>
--#include <linux/highmem.h>
--#include <linux/interrupt.h>
--#include <asm/fixmap.h>
--#include <asm/cacheflush.h>
--#include <asm/tlbflush.h>
--#include "mm.h"
--
--static inline void set_fixmap_pte(int idx, pte_t pte)
--{
--	unsigned long vaddr = __fix_to_virt(idx);
--	pte_t *ptep = virt_to_kpte(vaddr);
--
--	set_pte_ext(ptep, pte, 0);
--	local_flush_tlb_kernel_page(vaddr);
--}
--
--static inline pte_t get_fixmap_pte(unsigned long vaddr)
--{
--	pte_t *ptep = virt_to_kpte(vaddr);
--
--	return *ptep;
--}
--
+ void kmap_flush_tlb(unsigned long addr)
+@@ -19,67 +17,7 @@ void kmap_flush_tlb(unsigned long addr)
+ }
+ EXPORT_SYMBOL(kmap_flush_tlb);
+ 
 -void *kmap_atomic_high_prot(struct page *page, pgprot_t prot)
 -{
--	unsigned int idx;
 -	unsigned long vaddr;
--	void *kmap;
--	int type;
--
--#ifdef CONFIG_DEBUG_HIGHMEM
--	/*
--	 * There is no cache coherency issue when non VIVT, so force the
--	 * dedicated kmap usage for better debugging purposes in that case.
--	 */
--	if (!cache_is_vivt())
--		kmap = NULL;
--	else
--#endif
--		kmap = kmap_high_get(page);
--	if (kmap)
--		return kmap;
+-	int idx, type;
 -
 -	type = kmap_atomic_idx_push();
--
--	idx = FIX_KMAP_BEGIN + type + KM_TYPE_NR * smp_processor_id();
--	vaddr = __fix_to_virt(idx);
+-	idx = type + KM_TYPE_NR*smp_processor_id();
+-	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
 -#ifdef CONFIG_DEBUG_HIGHMEM
--	/*
--	 * With debugging enabled, kunmap_atomic forces that entry to 0.
--	 * Make sure it was indeed properly unmapped.
--	 */
--	BUG_ON(!pte_none(get_fixmap_pte(vaddr)));
+-	BUG_ON(!pte_none(*(kmap_pte - idx)));
 -#endif
--	/*
--	 * When debugging is off, kunmap_atomic leaves the previous mapping
--	 * in place, so the contained TLB flush ensures the TLB is updated
--	 * with the new mapping.
--	 */
--	set_fixmap_pte(idx, mk_pte(page, prot));
+-	set_pte(kmap_pte-idx, mk_pte(page, prot));
+-	flush_tlb_one((unsigned long)vaddr);
 -
 -	return (void *)vaddr;
 -}
@@ -297,47 +199,63 @@ V3: Remove the kmap types cruft
 -void kunmap_atomic_high(void *kvaddr)
 -{
 -	unsigned long vaddr = (unsigned long) kvaddr & PAGE_MASK;
--	int idx, type;
+-	int idx;
 -
--	if (kvaddr >= (void *)FIXADDR_START) {
--		type = kmap_atomic_idx();
--		idx = FIX_KMAP_BEGIN + type + KM_TYPE_NR * smp_processor_id();
+-	if (vaddr < FIXADDR_START)
+-		return;
 -
--		if (cache_is_vivt())
--			__cpuc_flush_dcache_area((void *)vaddr, PAGE_SIZE);
 -#ifdef CONFIG_DEBUG_HIGHMEM
--		BUG_ON(vaddr != __fix_to_virt(idx));
--		set_fixmap_pte(idx, __pte(0));
+-	idx = KM_TYPE_NR*smp_processor_id() + kmap_atomic_idx();
+-
+-	BUG_ON(vaddr != __fix_to_virt(FIX_KMAP_BEGIN + idx));
+-
+-	pte_clear(&init_mm, vaddr, kmap_pte - idx);
+-	flush_tlb_one(vaddr);
 -#else
--		(void) idx;  /* to kill a warning */
+-	(void) idx; /* to kill a warning */
 -#endif
--		kmap_atomic_idx_pop();
--	} else if (vaddr >= PKMAP_ADDR(0) && vaddr < PKMAP_ADDR(LAST_PKMAP)) {
--		/* this address was obtained through kmap_high_get() */
--		kunmap_high(pte_page(pkmap_page_table[PKMAP_NR(vaddr)]));
--	}
+-	kmap_atomic_idx_pop();
 -}
 -EXPORT_SYMBOL(kunmap_atomic_high);
 -
+-/*
+- * This is the same as kmap_atomic() but can map memory that doesn't
+- * have a struct page associated with it.
+- */
 -void *kmap_atomic_pfn(unsigned long pfn)
 -{
 -	unsigned long vaddr;
 -	int idx, type;
--	struct page *page = pfn_to_page(pfn);
 -
--	preempt_disable();
 -	pagefault_disable();
--	if (!PageHighMem(page))
--		return page_address(page);
 -
 -	type = kmap_atomic_idx_push();
--	idx = FIX_KMAP_BEGIN + type + KM_TYPE_NR * smp_processor_id();
--	vaddr = __fix_to_virt(idx);
--#ifdef CONFIG_DEBUG_HIGHMEM
--	BUG_ON(!pte_none(get_fixmap_pte(vaddr)));
--#endif
--	set_fixmap_pte(idx, pfn_pte(pfn, kmap_prot));
+-	idx = type + KM_TYPE_NR*smp_processor_id();
+-	vaddr = __fix_to_virt(FIX_KMAP_BEGIN + idx);
+-	set_pte(kmap_pte-idx, pfn_pte(pfn, PAGE_KERNEL));
+-	flush_tlb_one(vaddr);
 -
--	return (void *)vaddr;
+-	return (void *) vaddr;
+-}
+-
+-static void __init kmap_pages_init(void)
++void __init kmap_init(void)
+ {
+ 	unsigned long vaddr;
+ 	pgd_t *pgd;
+@@ -96,14 +34,3 @@ static void __init kmap_pages_init(void)
+ 	pte = pte_offset_kernel(pmd, vaddr);
+ 	pkmap_page_table = pte;
+ }
+-
+-void __init kmap_init(void)
+-{
+-	unsigned long vaddr;
+-
+-	kmap_pages_init();
+-
+-	vaddr = __fix_to_virt(FIX_KMAP_BEGIN);
+-
+-	kmap_pte = pte_offset_kernel((pmd_t *)pgd_offset_k(vaddr), vaddr);
 -}
 
