@@ -2,73 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34D512A48D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 16:02:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1B32A48E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 16:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgKCPAU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 10:00:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51852 "EHLO
+        id S1728068AbgKCPEK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 10:04:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728045AbgKCO7J (ORCPT
+        with ESMTP id S1728293AbgKCPCt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 09:59:09 -0500
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 696E1C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 06:59:06 -0800 (PST)
-Received: by mail-oi1-x231.google.com with SMTP id m143so9295476oig.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 06:59:06 -0800 (PST)
+        Tue, 3 Nov 2020 10:02:49 -0500
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D059AC0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 07:02:47 -0800 (PST)
+Received: by mail-oi1-x243.google.com with SMTP id m143so9309081oig.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 07:02:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=XgwA0kfD5euhArPMwDakM5tznPe6JUSWz2QPkoCQaFM=;
-        b=JYvVyN/lQoii51ZQfR6GHH/yXmY0wgRytoa/Ok1veaC/9N4xCvniTrxbRPzIkPBeAL
-         j1qQk1RM2SSZqN49zsghBlpc/IDQSViHN9UPG5S5i6BrJN7zvepG4LwKpKWpSFKhiu3V
-         +KBg4HQVmg1sYm6bz5DntUoy4+XJ0WyUe8+q1i0Hvn3vhoP5OagZr7usJ/0tcKZNphGU
-         t01cEdg1cBFn520CSdOXoG2nGGXlMmLntnzloYXPzszSgUMBkDG48n++DtTD/eH+HJ60
-         VpbyqabDKR75gxJH6hCUMGoTUVTdnspxhX10qB+PsWOqmpONcA/EAcHvhN9H29HGw7rj
-         ThXw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5cSj1qyXPcAnIprjkzrJyn0tLU6UO+RSsAyudL3znpE=;
+        b=A0ueR2whzabPvobC83uA8Ecpb5mhETm5xYuhVKX/pA6/uuZJeIrE5mL1i5k6/j08Cj
+         I7tWWvYQNEL2QWJMcgLlTTUnhJjBemK4BMO1zlXGSjn6HI746Q24v/Hy7q+nIcInzY/o
+         EO400+F8h0igJ9oUbr9dWb3553af6m95x/wsErcPJXszDlC6eGxbjuBNoSWfEqyd6ofK
+         34mu8ffPfQwuNWC5r9UUu9H6OHzUkFfHnYfTFsI71yDNn9lwKHnU7FJ3/OjZrsgjGapG
+         XNKcBIdfD4604AnahM/p9cqNIhv8cJWK5wIuclybFcjh3kzMO9YREsu8m3D67/hJqYJC
+         E57g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=XgwA0kfD5euhArPMwDakM5tznPe6JUSWz2QPkoCQaFM=;
-        b=lAsWOamOOlLLz8Y6d2a2Mcavc/vsA07i3cQ4bAMPX3AqMrktZZ5EKIuQoeIO9pcUF9
-         jODdrJr90mqAXexmZ217d7EeEOdBRa1NGRN6QFXLFm5DVkn8cBnL7bTj/QO2v9A7ycr9
-         59ixaMbAveXoHMG03+1OVMsbQcYOdIxXl7dmoTEBpS34Gnj0n+NQtT/52CrKUtqrDw64
-         ntFTmTY7C41KfkR/TyQicW98HCBGIELEGMNRzbBLWmConNNGqPF+IKt7ArHkzQB/LdVn
-         ImG4uGDbBVk5+mTqWd1NA6kCPkSJz+xg4Zlq62RtSl/Zwp+De0Z+K7raMKLaJ3+iG/pZ
-         fcnQ==
-X-Gm-Message-State: AOAM530XzNdDdzNPHvjA+/h2bAqQl/eybbULZkmrUb4p0EHALAGKXAgL
-        AIVE2/ExMMnzxwNg8cXG7xZY2n+1fH76ryUoPBsxb4t+Q7A5eA==
-X-Google-Smtp-Source: ABdhPJz0DQkAkUvjKgC7Abm/TYge7++ZTeZGlXlQzayklHyBgKBgNHIg9UCSCcGp0Vnm6Iq+xszB3MadmN/anKZYx9o=
-X-Received: by 2002:aca:2111:: with SMTP id 17mr60966oiz.139.1604415545624;
- Tue, 03 Nov 2020 06:59:05 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5cSj1qyXPcAnIprjkzrJyn0tLU6UO+RSsAyudL3znpE=;
+        b=NQ8KJWNh/Ab6WT3QbNf0rwGKJw/Aj8bX34lhY+uAb4HWCc39ce+5Nb0QFZeoHCRQRp
+         su259s1Wt/3IcrFJuTtbwUyRA4sOBlcvrjKEtOxFEEOPo53Q4/B4OXlN5c26370wQFS7
+         rQr9GSWfg9MbDQsxhyj3kHDxdE6mY6K7BddXpk6vARP8FUx2a/H6m/2ZpUVxHUvDbavZ
+         /thgmi5xfsi3GDxZuTd38mCra0GJeGF5cumil8Byn1t7WMMVTMLDWaSx9RV/9fhEIMci
+         odK/kvBf81/aepRy4cwJmNsEzBFcCWaCF7qBj53vSv0qXkkbZQ0CmDyNbyVenlK0tKxy
+         l8MQ==
+X-Gm-Message-State: AOAM531mMNLRBljvaqr7vTT4N5PsBRdkDpe0FcnzcLUsAD6QG6A4aQwz
+        /+zx1EIagwluQ3e7H3I+9GIC54BAjZYKTAgSLAA/4CtY8t0=
+X-Google-Smtp-Source: ABdhPJz3SXex+eqBK9cJWVNs2PeRmh1EbeSIyFf4MDZEYfI7pO6vgtipWtAumPk+ebuoP60Rj8x1+OzJPjyaZucz0VY=
+X-Received: by 2002:aca:cc08:: with SMTP id c8mr67114oig.161.1604415767222;
+ Tue, 03 Nov 2020 07:02:47 -0800 (PST)
 MIME-Version: 1.0
+References: <20201102184312.25926-1-willy@infradead.org> <20201102184312.25926-2-willy@infradead.org>
+ <20201103072700.GA8389@lst.de> <20201103145250.GX27442@casper.infradead.org>
+In-Reply-To: <20201103145250.GX27442@casper.infradead.org>
 From:   Amy Parker <enbyamy@gmail.com>
-Date:   Tue, 3 Nov 2020 06:58:55 -0800
-Message-ID: <CAE1WUT6Q2-fC5Zo-dmjt9FJEt6ADmy1rijYX41aBmWwtO6Dp6Q@mail.gmail.com>
-Subject: befs: TODO needs updating
-To:     linux-fsdevel@vger.kernel.org
+Date:   Tue, 3 Nov 2020 07:02:36 -0800
+Message-ID: <CAE1WUT4h6OcDo193Lur63AtK4zgcBJDVPuJP65dPfG1J19kZ8Q@mail.gmail.com>
+Subject: Re: [PATCH 01/17] mm/filemap: Rename generic_file_buffered_read subfunctions
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, kent.overstreet@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The current TODO in fs/befs/TODO is horrendously out of date. The last
-time it was updated was with the merge of 2.6.12-rc2 back in 2005.
+On Tue, Nov 3, 2020 at 6:53 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Tue, Nov 03, 2020 at 08:27:00AM +0100, Christoph Hellwig wrote:
+> > On Mon, Nov 02, 2020 at 06:42:56PM +0000, Matthew Wilcox (Oracle) wrote:
+> > > The recent split of generic_file_buffered_read() created some very
+> > > long function names which are hard to distinguish from each other.
+> > > Rename as follows:
+> > >
+> > > generic_file_buffered_read_readpage -> filemap_read_page
+> > > generic_file_buffered_read_pagenotuptodate -> filemap_update_page
+> > > generic_file_buffered_read_no_cached_page -> filemap_create_page
+> > > generic_file_buffered_read_get_pages -> filemap_get_pages
+> >
+> > Find with me, although I think filemap_find_get_pages would be a better
+> > name for filemap_get_pages.
+>
+> To me, 'find' means 'starting from this position, search forward in the
+> array for the next page', but we don't want to do that, we just want to
+> get a batch of pages starting _at_ this index.  Arguably it'd be better
+> named filemap_get_or_create_batch().
 
-Some examples of points in the TODO that need a glance (I have no clue
-if these have been resolved as no one has updated the TODO in 20
-years):
-
-> Befs_fs.h has gotten big and messy. No reason not to break it up into smaller peices.
-On top of the spelling fix, fs/befs/Befs_fs.h no longer exists. When
-did this last exist?
-
-> See if Alexander Viro's option parser made it into the kernel tree. Use that if we can. (include/linux/parser.h)
-This parser is now at include/linux/fs_parser.h. It did make it in. Is
-such a shift still needed? Such header is never included in any files
-in fs/befs.
-
+filemap_get_or_crerate_batch() would be a better name, as to me, find
+entails "begin here and continue looking for the next instance" (in this
+case, an instance would be a page).
 
 Best regards,
 Amy Parker
