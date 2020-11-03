@@ -2,328 +2,461 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2FC2A461B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 14:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED8E2A4642
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 14:25:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729190AbgKCNSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 08:18:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729161AbgKCNSd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 08:18:33 -0500
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31A7C0613D1;
-        Tue,  3 Nov 2020 05:18:32 -0800 (PST)
-Received: by mail-ot1-x341.google.com with SMTP id h62so15865726oth.9;
-        Tue, 03 Nov 2020 05:18:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qv1wGdsij+9w5z85zBACLm0WGUMqCz1dz7LNa3UTDtk=;
-        b=nLL1uzXCYA1FaoNOMbGrHfODfoC31v1Tm0VUBWwPlAjqM5N7X4FEuuaqNMkVlzqdV6
-         +ICaG0vi2MvwTlbA2/ErhlMIAuD3CDu0IELcctFzBMhETIiKqwTVyVNDQqHgPsn2cDi+
-         7/w+v42iu1bGbtA+1vHMETVIiPA0vJMqxtd5R8QdOBxpBKfnhIrFBj4X/PmMyGoxBMou
-         rbzy/2m+ag5FWc4IV2LbPnYeneq2dBZzXvUgzFkA7Q78PhPoP49zXPJ29/co+ASfwt99
-         TESDvAhHJWWxe7GlUU9J/Qegb23xy4RUltF/4ow00JzI9495kDNre72fqsdbVKF6Iqqr
-         C7Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Qv1wGdsij+9w5z85zBACLm0WGUMqCz1dz7LNa3UTDtk=;
-        b=WDEGQlAsgbiv7JGDbZojnPwrr4a1a95x44ol3Sjtyp46BQlQDa6fsDdWu3YJxasN+D
-         fu/rI9qmATNFaRB3hpNEazFJeIskNZvpTvCObMdrEfy05DUlt2euo8wwrzA7ilPkfNcW
-         /YjIL5dCaJHF2li/im1G9txN2xvYfgJgDH7nlnOqPfrU9gSogxPR3FhP5Zysl4AAiL4q
-         V/KF1OUdwwGfGkEEh/k+dcW9k9s+8If1nW4g6NDnNXWFGr53CcRTIwOYDC4wx6TJG6G9
-         4VHwTEu2LJYsXOnLqJsRxl+4PV87oaHjvok1f5WyuxuZjUybsOOipQAmBoJ0GSV1pjCX
-         b2VQ==
-X-Gm-Message-State: AOAM530PJQaPn11f6I8wqFm8xsUgPjocsZJO9isRsGuA4nrDJ+l/IvIa
-        zNXsQ8P/wI1BWX3yZDwuBO8=
-X-Google-Smtp-Source: ABdhPJyXf4V3twjJit4yagiweFA1fx+ddVWP5CNLhVwvuGxduXs0ohrKBigLkgLPtmMkz8WCmOBXuw==
-X-Received: by 2002:a9d:7419:: with SMTP id n25mr15724612otk.183.1604409512309;
-        Tue, 03 Nov 2020 05:18:32 -0800 (PST)
-Received: from localhost.localdomain ([50.236.19.102])
-        by smtp.gmail.com with ESMTPSA id f18sm4396138otf.55.2020.11.03.05.18.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Nov 2020 05:18:31 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v8 resend 2/2] xfs: avoid transaction reservation recursion
-Date:   Tue,  3 Nov 2020 21:17:54 +0800
-Message-Id: <20201103131754.94949-3-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <20201103131754.94949-1-laoar.shao@gmail.com>
-References: <20201103131754.94949-1-laoar.shao@gmail.com>
+        id S1729189AbgKCNZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 08:25:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36008 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729043AbgKCNZg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 3 Nov 2020 08:25:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AF3DAAB0E;
+        Tue,  3 Nov 2020 13:25:33 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id E52BFDA7D2; Tue,  3 Nov 2020 14:23:55 +0100 (CET)
+Date:   Tue, 3 Nov 2020 14:23:55 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 12/41] btrfs: implement zoned chunk allocator
+Message-ID: <20201103132355.GW6756@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org
+References: <cover.1604065156.git.naohiro.aota@wdc.com>
+ <5b9798f6e4c317e6a2c433ef88ffeabe00b93bb3.1604065695.git.naohiro.aota@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b9798f6e4c317e6a2c433ef88ffeabe00b93bb3.1604065695.git.naohiro.aota@wdc.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PF_FSTRANS which is used to avoid transaction reservation recursion, is
-dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-means to avoid filesystem reclaim recursion. That change is subtle.
-Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-PF_MEMALLOC_NOFS is not proper.
-Below comment is quoted from Dave,
-> It wasn't for memory allocation recursion protection in XFS - it was for
-> transaction reservation recursion protection by something trying to flush
-> data pages while holding a transaction reservation. Doing
-> this could deadlock the journal because the existing reservation
-> could prevent the nested reservation for being able to reserve space
-> in the journal and that is a self-deadlock vector.
-> IOWs, this check is not protecting against memory reclaim recursion
-> bugs at all (that's the previous check [1]). This check is
-> protecting against the filesystem calling writepages directly from a
-> context where it can self-deadlock.
-> So what we are seeing here is that the PF_FSTRANS ->
-> PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> about what type of error this check was protecting against.
+On Fri, Oct 30, 2020 at 10:51:19PM +0900, Naohiro Aota wrote:
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -1416,6 +1416,14 @@ static bool contains_pending_extent(struct btrfs_device *device, u64 *start,
+>  	return false;
+>  }
+>  
+> +static inline u64 dev_extent_search_start_zoned(struct btrfs_device *device,
+> +						u64 start)
+> +{
+> +	start = max_t(u64, start,
+> +		      max_t(u64, device->zone_info->zone_size, SZ_1M));
 
-As a result, we should reintroduce PF_FSTRANS. As current->journal_info
-isn't used in XFS, we can reuse it to indicate whehter the task is in
-fstrans or not, Per Willy. To achieve that, four new helpers are introduce
-in this patch, per Dave:
-- xfs_trans_context_set()
-  Used in xfs_trans_alloc()
-- xfs_trans_context_clear()
-  Used in xfs_trans_commit() and xfs_trans_cancel()
-- xfs_trans_context_update()
-  Used in xfs_trans_roll()
-- xfs_trans_context_active()
-  To check whehter current is in fs transcation or not
-[1]. Below check is to avoid memory reclaim recursion.
-if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
-        PF_MEMALLOC))
-        goto redirty;
+Can you rewrite that as ifs?
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Michal Hocko <mhocko@kernel.org>
----
- fs/iomap/buffered-io.c |  7 -------
- fs/xfs/xfs_aops.c      | 23 +++++++++++++++++++++--
- fs/xfs/xfs_linux.h     |  4 ----
- fs/xfs/xfs_trans.c     | 19 +++++++++----------
- fs/xfs/xfs_trans.h     | 30 ++++++++++++++++++++++++++++++
- 5 files changed, 60 insertions(+), 23 deletions(-)
+> +	return btrfs_zone_align(device, start);
+> +}
+> +
+>  static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
+>  {
+>  	switch (device->fs_devices->chunk_alloc_policy) {
+> @@ -1426,11 +1434,57 @@ static u64 dev_extent_search_start(struct btrfs_device *device, u64 start)
+>  		 * make sure to start at an offset of at least 1MB.
+>  		 */
+>  		return max_t(u64, start, SZ_1M);
+> +	case BTRFS_CHUNK_ALLOC_ZONED:
+> +		return dev_extent_search_start_zoned(device, start);
+>  	default:
+>  		BUG();
+>  	}
+>  }
+>  
+> +static bool dev_extent_hole_check_zoned(struct btrfs_device *device,
+> +					u64 *hole_start, u64 *hole_size,
+> +					u64 num_bytes)
+> +{
+> +	u64 zone_size = device->zone_info->zone_size;
+> +	u64 pos;
+> +	int ret;
+> +	int changed = 0;
+> +
+> +	ASSERT(IS_ALIGNED(*hole_start, zone_size));
+> +
+> +	while (*hole_size > 0) {
+> +		pos = btrfs_find_allocatable_zones(device, *hole_start,
+> +						   *hole_start + *hole_size,
+> +						   num_bytes);
+> +		if (pos != *hole_start) {
+> +			*hole_size = *hole_start + *hole_size - pos;
+> +			*hole_start = pos;
+> +			changed = 1;
+> +			if (*hole_size < num_bytes)
+> +				break;
+> +		}
+> +
+> +		ret = btrfs_ensure_empty_zones(device, pos, num_bytes);
+> +
+> +		/* range is ensured to be empty */
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8180061..2f090b6 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1469,13 +1469,6 @@ static void iomap_writepage_end_bio(struct bio *bio)
- 		goto redirty;
- 
- 	/*
--	 * Given that we do not allow direct reclaim to call us, we should
--	 * never be called in a recursive filesystem reclaim context.
--	 */
--	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
--		goto redirty;
--
--	/*
- 	 * Is this page beyond the end of the file?
- 	 *
- 	 * The page index is less than the end_index, adjust the end_offset
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 55d126d..b25196a 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -62,7 +62,8 @@ static inline bool xfs_ioend_is_append(struct iomap_ioend *ioend)
- 	 * We hand off the transaction to the completion thread now, so
- 	 * clear the flag here.
- 	 */
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_clear(tp);
-+
- 	return 0;
- }
- 
-@@ -125,7 +126,7 @@ static inline bool xfs_ioend_is_append(struct iomap_ioend *ioend)
- 	 * thus we need to mark ourselves as being in a transaction manually.
- 	 * Similarly for freeze protection.
- 	 */
--	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_set(tp);
- 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
- 
- 	/* we abort the update if there was an IO error */
-@@ -564,6 +565,16 @@ static inline bool xfs_ioend_needs_workqueue(struct iomap_ioend *ioend)
- {
- 	struct xfs_writepage_ctx wpc = { };
- 
-+	/*
-+	 * Given that we do not allow direct reclaim to call us, we should
-+	 * never be called while in a filesystem transaction.
-+	 */
-+	if (xfs_trans_context_active()) {
-+		redirty_page_for_writepage(wbc, page);
-+		unlock_page(page);
-+		return 0;
-+	}
-+
- 	return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
- }
- 
-@@ -575,6 +586,14 @@ static inline bool xfs_ioend_needs_workqueue(struct iomap_ioend *ioend)
- 	struct xfs_writepage_ctx wpc = { };
- 
- 	xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
-+
-+	/*
-+	 * Given that we do not allow direct reclaim to call us, we should
-+	 * never be called while in a filesystem transaction.
-+	 */
-+	if (xfs_trans_context_active())
-+		return 0;
-+
- 	return iomap_writepages(mapping, wbc, &wpc.ctx, &xfs_writeback_ops);
- }
- 
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index 5b7a1e2..6ab0f80 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -102,10 +102,6 @@
- #define xfs_cowb_secs		xfs_params.cowb_timer.val
- 
- #define current_cpu()		(raw_smp_processor_id())
--#define current_set_flags_nested(sp, f)		\
--		(*(sp) = current->flags, current->flags |= (f))
--#define current_restore_flags_nested(sp, f)	\
--		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
- 
- #define NBBY		8		/* number of bits per byte */
- 
-diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-index c94e71f..b272d07 100644
---- a/fs/xfs/xfs_trans.c
-+++ b/fs/xfs/xfs_trans.c
-@@ -153,8 +153,6 @@
- 	int			error = 0;
- 	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
- 
--	/* Mark this thread as being in a transaction */
--	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
- 
- 	/*
- 	 * Attempt to reserve the needed disk blocks by decrementing
-@@ -163,10 +161,8 @@
- 	 */
- 	if (blocks > 0) {
- 		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
--		if (error != 0) {
--			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+		if (error != 0)
- 			return -ENOSPC;
--		}
- 		tp->t_blk_res += blocks;
- 	}
- 
-@@ -241,8 +237,6 @@
- 		tp->t_blk_res = 0;
- 	}
- 
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
--
- 	return error;
- }
- 
-@@ -284,6 +278,8 @@
- 	INIT_LIST_HEAD(&tp->t_dfops);
- 	tp->t_firstblock = NULLFSBLOCK;
- 
-+	/* Mark this thread as being in a transaction */
-+	xfs_trans_context_set(tp);
- 	error = xfs_trans_reserve(tp, resp, blocks, rtextents);
- 	if (error) {
- 		xfs_trans_cancel(tp);
-@@ -878,7 +874,8 @@
- 
- 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
- 
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	if (!regrant)
-+		xfs_trans_context_clear(tp);
- 	xfs_trans_free(tp);
- 
- 	/*
-@@ -910,7 +907,8 @@
- 			xfs_log_ticket_ungrant(mp->m_log, tp->t_ticket);
- 		tp->t_ticket = NULL;
- 	}
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+
-+	xfs_trans_context_clear(tp);
- 	xfs_trans_free_items(tp, !!error);
- 	xfs_trans_free(tp);
- 
-@@ -971,7 +969,7 @@
- 	}
- 
- 	/* mark this thread as no longer being in a transaction */
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_clear(tp);
- 
- 	xfs_trans_free_items(tp, dirty);
- 	xfs_trans_free(tp);
-@@ -1013,6 +1011,7 @@
- 	if (error)
- 		return error;
- 
-+	xfs_trans_context_update(trans, *tpp);
- 	/*
- 	 * Reserve space in the log for the next transaction.
- 	 * This also pushes items in the "AIL", the list of logged items,
-diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-index 0846589..c4877afc 100644
---- a/fs/xfs/xfs_trans.h
-+++ b/fs/xfs/xfs_trans.h
-@@ -268,4 +268,34 @@ void		xfs_trans_buf_copy_type(struct xfs_buf *dst_bp,
- 	return lip->li_ops->iop_relog(lip, tp);
- }
- 
-+static inline void
-+xfs_trans_context_set(struct xfs_trans *tp)
-+{
-+	ASSERT(!current->journal_info);
-+	current->journal_info = tp;
-+	tp->t_pflags = memalloc_nofs_save();
-+}
-+
-+static inline void
-+xfs_trans_context_update(struct xfs_trans *old, struct xfs_trans *new)
-+{
-+	ASSERT(current->journal_info == old);
-+	current->journal_info = new;
-+}
-+
-+static inline void
-+xfs_trans_context_clear(struct xfs_trans *tp)
-+{
-+	ASSERT(current->journal_info == tp);
-+	current->journal_info = NULL;
-+	memalloc_nofs_restore(tp->t_pflags);
-+}
-+
-+static inline bool
-+xfs_trans_context_active(void)
-+{
-+	/* Use journal_info to indicate current is in a transaction */
-+	return current->journal_info != NULL;
-+}
-+
- #endif	/* __XFS_TRANS_H__ */
--- 
-1.8.3.1
+		/* Range ... */
 
+> +		if (!ret)
+> +			return changed;
+> +
+> +		/* given hole range was invalid (outside of device) */
+
+		/* Given ... */
+
+> +		if (ret == -ERANGE) {
+> +			*hole_start += *hole_size;
+> +			*hole_size = 0;
+> +			return 1;
+> +		}
+> +
+> +		*hole_start += zone_size;
+> +		*hole_size -= zone_size;
+> +		changed = 1;
+> +	}
+> +
+> +	return changed;
+> +}
+> +
+>  /**
+>   * dev_extent_hole_check - check if specified hole is suitable for allocation
+>   * @device:	the device which we have the hole
+> @@ -1463,6 +1517,10 @@ static bool dev_extent_hole_check(struct btrfs_device *device, u64 *hole_start,
+>  	case BTRFS_CHUNK_ALLOC_REGULAR:
+>  		/* No extra check */
+>  		break;
+> +	case BTRFS_CHUNK_ALLOC_ZONED:
+> +		changed |= dev_extent_hole_check_zoned(device, hole_start,
+> +						       hole_size, num_bytes);
+> +		break;
+>  	default:
+>  		BUG();
+>  	}
+> @@ -1517,6 +1575,9 @@ static int find_free_dev_extent_start(struct btrfs_device *device,
+>  
+>  	search_start = dev_extent_search_start(device, search_start);
+>  
+> +	WARN_ON(device->zone_info &&
+> +		!IS_ALIGNED(num_bytes, device->zone_info->zone_size));
+> +
+>  	path = btrfs_alloc_path();
+>  	if (!path)
+>  		return -ENOMEM;
+> @@ -4907,6 +4968,37 @@ static void init_alloc_chunk_ctl_policy_regular(
+>  	ctl->dev_extent_min = BTRFS_STRIPE_LEN * ctl->dev_stripes;
+>  }
+>  
+> +static void
+> +init_alloc_chunk_ctl_policy_zoned(struct btrfs_fs_devices *fs_devices,
+> +				  struct alloc_chunk_ctl *ctl)
+
+static void init_alloc_chunk_ctl_policy_zoned(
+
+Ie. type and name on one line
+
+> +{
+> +	u64 zone_size = fs_devices->fs_info->zone_size;
+> +	u64 limit;
+> +	int min_num_stripes = ctl->devs_min * ctl->dev_stripes;
+> +	int min_data_stripes = (min_num_stripes - ctl->nparity) / ctl->ncopies;
+> +	u64 min_chunk_size = min_data_stripes * zone_size;
+> +	u64 type = ctl->type;
+> +
+> +	ctl->max_stripe_size = zone_size;
+> +	if (type & BTRFS_BLOCK_GROUP_DATA) {
+> +		ctl->max_chunk_size = round_down(BTRFS_MAX_DATA_CHUNK_SIZE,
+> +						 zone_size);
+> +	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
+> +		ctl->max_chunk_size = ctl->max_stripe_size;
+> +	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
+> +		ctl->max_chunk_size = 2 * ctl->max_stripe_size;
+> +		ctl->devs_max = min_t(int, ctl->devs_max,
+> +				      BTRFS_MAX_DEVS_SYS_CHUNK);
+> +	}
+> +
+> +	/* We don't want a chunk larger than 10% of writable space */
+> +	limit = max(round_down(div_factor(fs_devices->total_rw_bytes, 1),
+> +			       zone_size),
+> +		    min_chunk_size);
+> +	ctl->max_chunk_size = min(limit, ctl->max_chunk_size);
+> +	ctl->dev_extent_min = zone_size * ctl->dev_stripes;
+> +}
+> +
+>  static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
+>  				 struct alloc_chunk_ctl *ctl)
+>  {
+> @@ -4927,6 +5019,9 @@ static void init_alloc_chunk_ctl(struct btrfs_fs_devices *fs_devices,
+>  	case BTRFS_CHUNK_ALLOC_REGULAR:
+>  		init_alloc_chunk_ctl_policy_regular(fs_devices, ctl);
+>  		break;
+> +	case BTRFS_CHUNK_ALLOC_ZONED:
+> +		init_alloc_chunk_ctl_policy_zoned(fs_devices, ctl);
+> +		break;
+>  	default:
+>  		BUG();
+>  	}
+> @@ -5053,6 +5148,40 @@ static int decide_stripe_size_regular(struct alloc_chunk_ctl *ctl,
+>  	return 0;
+>  }
+>  
+> +static int decide_stripe_size_zoned(struct alloc_chunk_ctl *ctl,
+> +				    struct btrfs_device_info *devices_info)
+> +{
+> +	u64 zone_size = devices_info[0].dev->zone_info->zone_size;
+> +	/* number of stripes that count for block group size */
+
+	/* Number ... */
+
+> +	int data_stripes;
+> +
+> +	/*
+> +	 * It should hold because:
+> +	 *    dev_extent_min == dev_extent_want == zone_size * dev_stripes
+> +	 */
+> +	ASSERT(devices_info[ctl->ndevs - 1].max_avail == ctl->dev_extent_min);
+> +
+> +	ctl->stripe_size = zone_size;
+> +	ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
+> +	data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
+> +
+> +	/*
+> +	 * stripe_size is fixed in ZONED. Reduce ndevs instead.
+
+/* One line comment if it fits to 80 cols */
+
+> +	 */
+> +	if (ctl->stripe_size * data_stripes > ctl->max_chunk_size) {
+> +		ctl->ndevs = div_u64(div_u64(ctl->max_chunk_size * ctl->ncopies,
+> +					     ctl->stripe_size) + ctl->nparity,
+> +				     ctl->dev_stripes);
+> +		ctl->num_stripes = ctl->ndevs * ctl->dev_stripes;
+> +		data_stripes = (ctl->num_stripes - ctl->nparity) / ctl->ncopies;
+> +		ASSERT(ctl->stripe_size * data_stripes <= ctl->max_chunk_size);
+> +	}
+> +
+> +	ctl->chunk_size = ctl->stripe_size * data_stripes;
+> +
+> +	return 0;
+> +}
+> +
+>  static int decide_stripe_size(struct btrfs_fs_devices *fs_devices,
+>  			      struct alloc_chunk_ctl *ctl,
+>  			      struct btrfs_device_info *devices_info)
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -607,3 +610,126 @@ int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror)
+>  				sb_zone << zone_sectors_shift, zone_sectors * 2,
+>  				GFP_NOFS);
+>  }
+> +
+> +/*
+> + * btrfs_check_allocatable_zones - find allocatable zones within give region
+> + * @device:	the device to allocate a region
+> + * @hole_start: the position of the hole to allocate the region
+> + * @num_bytes:	the size of wanted region
+> + * @hole_size:	the size of hole
+> + *
+> + * Allocatable region should not contain any superblock locations.
+> + */
+> +u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
+> +				 u64 hole_end, u64 num_bytes)
+> +{
+> +	struct btrfs_zoned_device_info *zinfo = device->zone_info;
+> +	u8 shift = zinfo->zone_size_shift;
+> +	u64 nzones = num_bytes >> shift;
+> +	u64 pos = hole_start;
+> +	u64 begin, end;
+> +	u64 sb_pos;
+> +	bool have_sb;
+> +	int i;
+> +
+> +	ASSERT(IS_ALIGNED(hole_start, zinfo->zone_size));
+> +	ASSERT(IS_ALIGNED(num_bytes, zinfo->zone_size));
+> +
+> +	while (pos < hole_end) {
+> +		begin = pos >> shift;
+> +		end = begin + nzones;
+> +
+> +		if (end > zinfo->nr_zones)
+> +			return hole_end;
+> +
+> +		/* check if zones in the region are all empty */
+
+		/* Check ... */
+
+> +		if (btrfs_dev_is_sequential(device, pos) &&
+> +		    find_next_zero_bit(zinfo->empty_zones, end, begin) != end) {
+> +			pos += zinfo->zone_size;
+> +			continue;
+> +		}
+> +
+> +		have_sb = false;
+> +		for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; i++) {
+> +			sb_pos = sb_zone_number(zinfo->zone_size, i);
+> +			if (!(end < sb_pos || sb_pos + 1 < begin)) {
+> +				have_sb = true;
+> +				pos = (sb_pos + 2) << shift;
+> +				break;
+> +			}
+> +		}
+> +		if (!have_sb)
+> +			break;
+> +	}
+> +
+> +	return pos;
+> +}
+> +
+> +int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
+> +			    u64 length, u64 *bytes)
+> +{
+> +	int ret;
+> +
+> +	*bytes = 0;
+> +	ret = blkdev_zone_mgmt(device->bdev, REQ_OP_ZONE_RESET,
+> +			       physical >> SECTOR_SHIFT, length >> SECTOR_SHIFT,
+> +			       GFP_NOFS);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*bytes = length;
+> +	while (length) {
+> +		btrfs_dev_set_zone_empty(device, physical);
+> +		physical += device->zone_info->zone_size;
+> +		length -= device->zone_info->zone_size;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size)
+> +{
+> +	struct btrfs_zoned_device_info *zinfo = device->zone_info;
+> +	u8 shift = zinfo->zone_size_shift;
+> +	unsigned long begin = start >> shift;
+> +	unsigned long end = (start + size) >> shift;
+> +	u64 pos;
+> +	int ret;
+> +
+> +	ASSERT(IS_ALIGNED(start, zinfo->zone_size));
+> +	ASSERT(IS_ALIGNED(size, zinfo->zone_size));
+> +
+> +	if (end > zinfo->nr_zones)
+> +		return -ERANGE;
+> +
+> +	/* all the zones are conventional */
+
+	/* All ... */
+
+> +	if (find_next_bit(zinfo->seq_zones, begin, end) == end)
+> +		return 0;
+> +
+> +	/* all the zones are sequential and empty */
+
+	/* All ... */
+
+> +	if (find_next_zero_bit(zinfo->seq_zones, begin, end) == end &&
+> +	    find_next_zero_bit(zinfo->empty_zones, begin, end) == end)
+> +		return 0;
+> +
+> +	for (pos = start; pos < start + size; pos += zinfo->zone_size) {
+> +		u64 reset_bytes;
+> +
+> +		if (!btrfs_dev_is_sequential(device, pos) ||
+> +		    btrfs_dev_is_empty_zone(device, pos))
+> +			continue;
+> +
+> +		/* free regions should be empty */
+
+		/* Free ... */
+
+> +		btrfs_warn_in_rcu(
+> +			device->fs_info,
+> +			"resetting device %s zone %llu for allocation",
+
+		"zoned: resetting device %s (devid %llu) zone %llu for allocation
+
+> +			rcu_str_deref(device->name), pos >> shift);
+> +		WARN_ON_ONCE(1);
+> +
+> +		ret = btrfs_reset_device_zone(device, pos, zinfo->zone_size,
+> +					      &reset_bytes);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+> index 447c4e5ffcbb..24dd0c9561f9 100644
+> --- a/fs/btrfs/zoned.h
+> +++ b/fs/btrfs/zoned.h
+> @@ -34,6 +34,11 @@ int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
+>  			  u64 *bytenr_ret);
+>  void btrfs_advance_sb_log(struct btrfs_device *device, int mirror);
+>  int btrfs_reset_sb_log_zones(struct block_device *bdev, int mirror);
+> +u64 btrfs_find_allocatable_zones(struct btrfs_device *device, u64 hole_start,
+> +				 u64 hole_end, u64 num_bytes);
+> +int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
+> +			    u64 length, u64 *bytes);
+> +int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size);
+>  #else /* CONFIG_BLK_DEV_ZONED */
+>  static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>  				     struct blk_zone *zone)
+> @@ -77,6 +82,23 @@ static inline int btrfs_reset_sb_log_zones(struct block_device *bdev,
+>  {
+>  	return 0;
+>  }
+
+newline
+
+> +static inline u64 btrfs_find_allocatable_zones(struct btrfs_device *device,
+> +					       u64 hole_start, u64 hole_end,
+> +					       u64 num_bytes)
+> +{
+> +	return hole_start;
+> +}
+
+newline
+
+> +static inline int btrfs_reset_device_zone(struct btrfs_device *device,
+> +					  u64 physical, u64 length, u64 *bytes)
+> +{
+> +	*bytes = 0;
+> +	return 0;
+> +}
+
+newline
+
+> +static inline int btrfs_ensure_empty_zones(struct btrfs_device *device,
+> +					   u64 start, u64 size)
+> +{
+> +	return 0;
+> +}
+
+newline
+
+>  #endif
+>  
+>  static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+> @@ -155,4 +177,12 @@ static inline bool btrfs_check_super_location(struct btrfs_device *device,
+>  	       !btrfs_dev_is_sequential(device, pos);
+>  }
+>  
+> +static inline u64 btrfs_zone_align(struct btrfs_device *device, u64 pos)
+
+I can't tell from the name what it does, something like
+btrfs_align_offset_to_zone would be more clear.
+
+> +{
+> +	if (!device->zone_info)
+> +		return pos;
+> +
+> +	return ALIGN(pos, device->zone_info->zone_size);
+> +}
+> +
+>  #endif
+> -- 
+> 2.27.0
