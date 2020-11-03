@@ -2,66 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26A862A4A17
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 16:42:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FD042A4A68
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 16:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgKCPmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 10:42:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58778 "EHLO
+        id S1727986AbgKCPza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 10:55:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbgKCPmg (ORCPT
+        with ESMTP id S1726690AbgKCPza (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 10:42:36 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA9FCC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 07:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pFgyl3GrEZYaf8JQc2yA1SIpCFCjDU9Ec1IBTDiqJ1I=; b=MADYyCRNOSDjuQi9beNoE1jpa1
-        IDNFvx9m3rOnrCbVCwj8nlHD34lZaoU2Qnec4eLiQvhTd4jdOnfmnSS6TWJ/WtXN6xE46MWKf8Qyf
-        TnIAKCawD8BHlztZwcatXo0g/2fgT7SNwwGlX4OhdH3XuKJdwi6+Y0/xZACJp7duD7+wHDtctgCq3
-        1C4yFHLXt2npRFS6Su1MahLcOvUhc0anYNMw1Jm8C/PvBOwcKsxjb9Jvg2S/rmThpYiDyJfB5asLp
-        AIJGmXPv9LqtDcJb8ppbkHzms2Bi4zsAaxtp7yKEriO44oFa3qj9HGpAptBgl04bjHz87qIWUaXVr
-        2+Hd+c0A==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kZyS9-0000C5-Vo; Tue, 03 Nov 2020 15:42:34 +0000
-Date:   Tue, 3 Nov 2020 15:42:33 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        kent.overstreet@gmail.com
-Subject: Re: [PATCH 11/17] mm/filemap: Add filemap_range_uptodate
-Message-ID: <20201103154233.GC27442@casper.infradead.org>
-References: <20201102184312.25926-1-willy@infradead.org>
- <20201102184312.25926-12-willy@infradead.org>
- <20201103074944.GK8389@lst.de>
- <20201103151847.GZ27442@casper.infradead.org>
- <20201103153118.GC10928@lst.de>
+        Tue, 3 Nov 2020 10:55:30 -0500
+Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3215C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 07:55:28 -0800 (PST)
+Received: by mail-qv1-xf42.google.com with SMTP id e5so4321094qvr.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 07:55:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xntI1Eh9eVZ6JRxBdXbXC8WJsIu2fowBRTDPt6GSCek=;
+        b=iheDPy/1LDw3gOT5myZy8oQu83yskwZbKNqX8AM+j4cQ+K7LpyUFnWoEI3J+UTKULD
+         clwl2CafijxvWOTnBR+3WmDooQbIuGbuPWk3+BUP3bNZs5FE7mQ/RFG1hbLE4s5YpdoB
+         hiuTNfrPgWHYwvYl89C6l3X43K/SH6g1P0erj6oi3khX+QtkzWd1MSy2thjzoUmGr3kv
+         TYMqIDa26o3MJB1ZiU+MSN/tnyurGKGXIRkos5K4y0ha2waGCV2yRZbWTGFOqiif0rWY
+         36xkeRY/HtOwEj9Iwel3boqWQkfjeyEIoCVA0kA05EENw0yBzR8YQr10Xi8IL4b7TfOz
+         iiYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xntI1Eh9eVZ6JRxBdXbXC8WJsIu2fowBRTDPt6GSCek=;
+        b=ZygrsBVfNdJsM5eIpfRXjiJnE6PZ5GEXSJEqYOnduIdLZpTPUNHuJu1fOadVGBD+5O
+         NNsgBPHm0szC+reuwXzkndmWj0YefZeCWrmNgDK0pzrHEPTXxY2W4aRils+htisvH0CL
+         824tzy1uGbFVyVDOuLUS2N3jeF5NLvfJaSyUrL7KU0a9hfj/v0fZaIEI187ztuZ9RfOM
+         B6PfTDudtLyU+VLY7ZPLoWXr84amUtnSVbVORbfZW1SJh9zHglBAFNHgsNHPGB1F3lcV
+         M00qhZKwWa4AHTquX4yaZYGq8XmX4CKeJtgGDT3YY9POOdhmNYXQxi0QRKLJ5YiI4m0j
+         csRw==
+X-Gm-Message-State: AOAM531D2RT5ZU+PEPjCTiE0JzGk6qZjsrmbXjXXVxoEVXJTgUjVei4n
+        uZkUvWUATUXp4YUYQvPqaViO1Q==
+X-Google-Smtp-Source: ABdhPJyJe7L2bBqeKx348QnpfIwy4XjQ9JkwLVS8hE4oJ3f3VKgn3OLBALKOZ5rx0RJ6IChiyFaPyQ==
+X-Received: by 2002:ad4:4e34:: with SMTP id dm20mr20662286qvb.40.1604418927964;
+        Tue, 03 Nov 2020 07:55:27 -0800 (PST)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id q70sm10384537qka.87.2020.11.03.07.55.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Nov 2020 07:55:27 -0800 (PST)
+Subject: Re: [PATCH v9 25/41] btrfs: use ZONE_APPEND write for ZONED btrfs
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
+ <51cdc96d68f84eb93a310a96b6b7ad6e070dd1ac.1604065695.git.naohiro.aota@wdc.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <85ca7f8a-5d7c-d00c-2f34-4d5966b332f8@toxicpanda.com>
+Date:   Tue, 3 Nov 2020 10:55:26 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201103153118.GC10928@lst.de>
+In-Reply-To: <51cdc96d68f84eb93a310a96b6b7ad6e070dd1ac.1604065695.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 04:31:18PM +0100, Christoph Hellwig wrote:
-> On Tue, Nov 03, 2020 at 03:18:47PM +0000, Matthew Wilcox wrote:
-> > I have a simplification in mind that gets rid of the awkward 'first'
-> > parameter.  In filemap_get_pages(), do:
-> > 
-> >                 if ((iocb->ki_flags & IOCB_WAITQ) && (pagevec_count(pvec) > 1))
-> >                         iocb->ki_flags |= IOCB_NOWAIT;
-> > 
-> > before calling filemap_update_page().  That matches what Kent did in
-> > filemap_read():
+On 10/30/20 9:51 AM, Naohiro Aota wrote:
+> This commit enables zone append writing for zoned btrfs. When using zone
+> append, a bio is issued to the start of a target zone and the device
+> decides to place it inside the zone. Upon completion the device reports
+> the actual written position back to the host.
 > 
-> Yes, that makes a lot of sense.  No need for the second pair of inner
-> braces, though :)
+> Three parts are necessary to enable zone append in btrfs. First, modify
+> the bio to use REQ_OP_ZONE_APPEND in btrfs_submit_bio_hook() and adjust
+> the bi_sector to point the beginning of the zone.
+> 
+> Secondly, records the returned physical address (and disk/partno) to the
+> ordered extent in end_bio_extent_writepage() after the bio has been
+> completed. We cannot resolve the physical address to the logical address
+> because we can neither take locks nor allocate a buffer in this end_bio
+> context. So, we need to record the physical address to resolve it later in
+> btrfs_finish_ordered_io().
+> 
+> And finally, rewrites the logical addresses of the extent mapping and
+> checksum data according to the physical address (using __btrfs_rmap_block).
+> If the returned address matches the originally allocated address, we can
+> skip this rewriting process.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I wrote it as
-		if ((iocb->ki_flags & IOCB_WAITQ) && pagevec_count(pvec) > 1)
-originally, and then talked myself into putting the unnecessary brackets
-in to make it look more symmetric ;-)
+I hate this, but I suppose its better than forcing us to wait for ordered 
+extents in order of submission, and I can't really think of anything better,
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+Thanks,
+
+Josef
+
