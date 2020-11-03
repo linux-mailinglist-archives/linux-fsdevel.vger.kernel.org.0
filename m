@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA422A42E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FFA2A42E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Nov 2020 11:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbgKCKfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 05:35:18 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:40032 "EHLO
+        id S1728705AbgKCKfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 05:35:12 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:38330 "EHLO
         galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbgKCKeG (ORCPT
+        with ESMTP id S1728519AbgKCKeH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 05:34:06 -0500
-Message-Id: <20201103095859.538827102@linutronix.de>
+        Tue, 3 Nov 2020 05:34:07 -0500
+Message-Id: <20201103095859.632601906@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1604399639;
+        s=2020; t=1604399640;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=37l2/9hMoX995irJwwZT0VNkjmk/OwZo72GhT72QTX4=;
-        b=UCiLeToK4AIC+9Dmx7LG5rV2mjuvYVd6Coif2Sdjhi7Si2K86UL165usKvCu+1M57a5ZTs
-        3lGdAzYJonKcTuvyMgrOXNx+UrIY8LVcTVNso2JLtpbkE1oygEe/wl748JnAW6AS6EsTrD
-        c2VWZi0Trd4Jp1S58g19SzXtzA+u8eA2qRCth6y4qBL25KfIk14Y8/pIC7Pk9xx9opLe+Y
-        fYTupCtZR4FQC2/b1qBabqi8Jfeh2ZKqUrq+V0zmNc17uiUhxxjlvxwBR152OCIcLA02mF
-        vb+4tkvTlRO1TXdeUxGxjDkLW4Yer0R+EYHQyA+pAWiyVIPp/wbrw75o+T0ZJw==
+        bh=BkU+tnLkRKR9tWKe3hevtehunqdIqgczXq1AHqpv3q4=;
+        b=KJf8zms3zcTUg/g/XiQKKwBV2+EGVfb2u6h4vllDaW1ez/6EBzhuUPcV5jYjkgK7/2tTNT
+        qa9meb2s93/KBKnvJtf7CaHAT8ZFpd7v/uDOmyc6h4+65DvAL8nMOPTgxeMwXec71wKviC
+        gz+l4oJdNdRF681hb02MgaZ8n1LTFM12pOX0R3Y6kTHEtlSnwJNnKuWAQNeTkLaIi8i7t3
+        B7yCZDHpTZLzl/MKlFABrQ2M+t1vry/EDo/Dfbd7n6CnEj3z8AhqyHdXDUxHJtlLsKb9Iy
+        +K2WT76685XP/mxAZ6mzKSlMAP/ZbKhBPVY2/azsvsrUQ/qHyD8kIOTXSXqhkQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1604399639;
+        s=2020e; t=1604399640;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:  references:references;
-        bh=37l2/9hMoX995irJwwZT0VNkjmk/OwZo72GhT72QTX4=;
-        b=iNcZKx8Fg9QYlTcIp7Z3u6IBgHA5T+EwXNMLuSSTvrJb/3r4DH72OAUwbFyp58bawCPYfQ
-        dJ5wikkjaG3JOhAw==
-Date:   Tue, 03 Nov 2020 10:27:41 +0100
+        bh=BkU+tnLkRKR9tWKe3hevtehunqdIqgczXq1AHqpv3q4=;
+        b=VFptQlcVWRmmzZcgWUr7xM35WWw+Igz4v/KmNvEZ7Y4AvSm9gz9Y19AW04WlVkG++aOR3h
+        ADLKc+FsTUi0cTDA==
+Date:   Tue, 03 Nov 2020 10:27:42 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
@@ -40,8 +40,6 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Paul McKenney <paulmck@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Benjamin LaHaise <bcrl@kvack.org>,
@@ -49,8 +47,11 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         x86@kernel.org, Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-csky@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        linux-snps-arc@lists.infradead.org,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+        Michal Simek <monstr@monstr.eu>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         linux-mips@vger.kernel.org, Nick Hu <nickhu@andestech.com>,
         Greentime Hu <green.hu@gmail.com>,
@@ -84,7 +85,7 @@ Cc:     Linus Torvalds <torvalds@linuxfoundation.org>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         intel-gfx@lists.freedesktop.org
-Subject: [patch V3 29/37] ARM: mm: Replace kmap_atomic_pfn()
+Subject: [patch V3 30/37] highmem: Remove kmap_atomic_pfn()
 References: <20201103092712.714480842@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -93,63 +94,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no requirement to disable pagefaults and preemption for these
-cache management mappings.
-
-Replace kmap_atomic_pfn() with kmap_local_pfn(). This allows to remove
-kmap_atomic_pfn() in the next step.
+No more users.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
 ---
 V3: New patch
 ---
- arch/arm/mm/cache-feroceon-l2.c |    6 +++---
- arch/arm/mm/cache-xsc3l2.c      |    4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ include/linux/highmem-internal.h |   12 ------------
+ 1 file changed, 12 deletions(-)
 
---- a/arch/arm/mm/cache-feroceon-l2.c
-+++ b/arch/arm/mm/cache-feroceon-l2.c
-@@ -49,9 +49,9 @@ static inline unsigned long l2_get_va(un
- 	 * we simply install a virtual mapping for it only for the
- 	 * TLB lookup to occur, hence no need to flush the untouched
- 	 * memory mapping afterwards (note: a cache flush may happen
--	 * in some circumstances depending on the path taken in kunmap_atomic).
-+	 * in some circumstances depending on the path taken in kunmap_local).
- 	 */
--	void *vaddr = kmap_atomic_pfn(paddr >> PAGE_SHIFT);
-+	void *vaddr = kmap_local_pfn(paddr >> PAGE_SHIFT);
- 	return (unsigned long)vaddr + (paddr & ~PAGE_MASK);
- #else
- 	return __phys_to_virt(paddr);
-@@ -61,7 +61,7 @@ static inline unsigned long l2_get_va(un
- static inline void l2_put_va(unsigned long vaddr)
- {
- #ifdef CONFIG_HIGHMEM
--	kunmap_atomic((void *)vaddr);
-+	kunmap_local((void *)vaddr);
- #endif
+--- a/include/linux/highmem-internal.h
++++ b/include/linux/highmem-internal.h
+@@ -99,13 +99,6 @@ static inline void *kmap_atomic(struct p
+ 	return kmap_atomic_prot(page, kmap_prot);
  }
  
---- a/arch/arm/mm/cache-xsc3l2.c
-+++ b/arch/arm/mm/cache-xsc3l2.c
-@@ -59,7 +59,7 @@ static inline void l2_unmap_va(unsigned
+-static inline void *kmap_atomic_pfn(unsigned long pfn)
+-{
+-	preempt_disable();
+-	pagefault_disable();
+-	return __kmap_local_pfn_prot(pfn, kmap_prot);
+-}
+-
+ static inline void __kunmap_atomic(void *addr)
  {
- #ifdef CONFIG_HIGHMEM
- 	if (va != -1)
--		kunmap_atomic((void *)va);
-+		kunmap_local((void *)va);
- #endif
+ 	kunmap_local_indexed(addr);
+@@ -193,11 +186,6 @@ static inline void *kmap_atomic_prot(str
+ 	return kmap_atomic(page);
  }
  
-@@ -75,7 +75,7 @@ static inline unsigned long l2_map_va(un
- 		 * in place for it.
- 		 */
- 		l2_unmap_va(prev_va);
--		va = (unsigned long)kmap_atomic_pfn(pa >> PAGE_SHIFT);
-+		va = (unsigned long)kmap_local_pfn(pa >> PAGE_SHIFT);
- 	}
- 	return va + (pa_offset >> (32 - PAGE_SHIFT));
- #else
+-static inline void *kmap_atomic_pfn(unsigned long pfn)
+-{
+-	return kmap_atomic(pfn_to_page(pfn));
+-}
+-
+ static inline void __kunmap_atomic(void *addr)
+ {
+ #ifdef ARCH_HAS_FLUSH_ON_KUNMAP
 
