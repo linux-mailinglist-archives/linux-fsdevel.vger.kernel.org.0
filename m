@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FE4C2A602C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 10:07:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B25762A603A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 10:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729216AbgKDJHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Nov 2020 04:07:16 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7141 "EHLO
+        id S1728045AbgKDJH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Nov 2020 04:07:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7142 "EHLO
         szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729182AbgKDJHD (ORCPT
+        with ESMTP id S1726434AbgKDJHt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Nov 2020 04:07:03 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CR14H2dyYz15PbD;
-        Wed,  4 Nov 2020 17:06:55 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Wed, 4 Nov 2020
- 17:06:47 +0800
+        Wed, 4 Nov 2020 04:07:49 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CR15D2Zclz15Ny8;
+        Wed,  4 Nov 2020 17:07:44 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Wed, 4 Nov 2020
+ 17:07:40 +0800
 From:   Liu Shixin <liushixin2@huawei.com>
 To:     Markus Elfring <Markus.Elfring@web.de>,
         <linux-fsdevel@vger.kernel.org>
 CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         Liu Shixin <liushixin2@huawei.com>
-Subject: [PATCH] fs/binfmt_elf: free interpreter in load_elf_binary
-Date:   Wed, 4 Nov 2020 17:33:39 +0800
-Message-ID: <20201104093339.178724-1-liushixin2@huawei.com>
+Subject: [PATCH v2] fs/binfmt_elf: free interpreter in load_elf_binary
+Date:   Wed, 4 Nov 2020 17:34:31 +0800
+Message-ID: <20201104093431.178880-1-liushixin2@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <5bfc1c45-668d-9070-fddc-d15dbe39d12e@web.de>
 References: <5bfc1c45-668d-9070-fddc-d15dbe39d12e@web.de>
