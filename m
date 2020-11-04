@@ -2,95 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 775142A6DDD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 20:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9742A6E6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 21:00:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731065AbgKDTan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Nov 2020 14:30:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36586 "EHLO
+        id S1731030AbgKDT7v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Nov 2020 14:59:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbgKDTan (ORCPT
+        with ESMTP id S1727013AbgKDT7v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Nov 2020 14:30:43 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35680C0613D3;
-        Wed,  4 Nov 2020 11:30:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3CAUqs5j3DsZpEzWXVNgPMK/4eRfDvaX4jGpcM9i5e0=; b=UmUl3uppN1ZChdV0qJD3ilF63L
-        DNOBVSBbQCa1pQCsI3eZKUKKMguVW/tuY24VmmftqDsM80YmtIbVs+ni4pKiWlvdwHrEaPTvz8x4Y
-        /Q/a2YVNyos53BQe3j1hIgUVIyfx6qJlMy7ey3tJdEz7uvSKSSnXl5OrG0hrTrhxF+ueTmY1NZa91
-        a5tBmSX2yylxr7M7sx4E0vbW2KZ8dY0o9R59rAfr/No14qymSEpfTDAfbpsonvqauZ7oUgQOjUJut
-        UMoUX6WKXdL1kYGdfOopsWOfj1jSlJiH7aGKcQqOzw0vBqVGF4KVX4Ymy3JWatZ4Yy2DAmOqX+tNL
-        6WMDrJYQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kaOUO-000090-EU; Wed, 04 Nov 2020 19:30:36 +0000
-Date:   Wed, 4 Nov 2020 19:30:36 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     "xiaofeng.yan" <xiaofeng.yan2012@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dledford@redhat.com, oulijun@huawei.com, yanxiaofeng7@jd.com
-Subject: Re: [PATCH 2/2] infiniband: Modify the reference to xa_store_irq()
- because the parameter of this function  has changed
-Message-ID: <20201104193036.GD17076@casper.infradead.org>
-References: <20201104023213.760-1-xiaofeng.yan2012@gmail.com>
- <20201104023213.760-2-xiaofeng.yan2012@gmail.com>
- <20201104185843.GV36674@ziepe.ca>
+        Wed, 4 Nov 2020 14:59:51 -0500
+X-Greylist: delayed 393 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 04 Nov 2020 11:59:50 PST
+Received: from vulcan.natalenko.name (vulcan.natalenko.name [IPv6:2001:19f0:6c00:8846:5400:ff:fe0c:dfa0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC6BC0613D3;
+        Wed,  4 Nov 2020 11:59:50 -0800 (PST)
+Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id 8B8D988844B;
+        Wed,  4 Nov 2020 20:53:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1604519583;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hiZt2WITfKG7+QNvYDbl1KNbn6nbu5pALnEYxLoMuDo=;
+        b=uY54IW8QF7niyKZ3TIoHQiz4ES7gQf81HJS8GQmQ9Mm5ocWUd+lLseZxIsdG36cuGrTRsP
+        6FH4rgyUqLvLFVcIVxz3seCOeHI4CIidRhHBy6d6NbizfubJSLNywH/cdp+i+63QOsNDfE
+        pgUozdVlnRWF77W4RegEFUkkdGXJXNc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104185843.GV36674@ziepe.ca>
+Date:   Wed, 04 Nov 2020 20:53:03 +0100
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: bcachefs-for-review
+In-Reply-To: <20201027200433.GA449905@moria.home.lan>
+References: <20201027200433.GA449905@moria.home.lan>
+User-Agent: Roundcube Webmail/1.4.9
+Message-ID: <913f15a9f74615d6243391452206db53@natalenko.name>
+X-Sender: oleksandr@natalenko.name
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 02:58:43PM -0400, Jason Gunthorpe wrote:
-> >  static void cm_finalize_id(struct cm_id_private *cm_id_priv)
-> >  {
-> >  	xa_store_irq(&cm.local_id_table, cm_local_id(cm_id_priv->id.local_id),
-> > -		     cm_id_priv, GFP_KERNEL);
-> > +		     cm_id_priv);
-> >  }
-> 
-> This one is almost a bug, the entry is preallocated with NULL though:
-> 
-> 	ret = xa_alloc_cyclic_irq(&cm.local_id_table, &id, NULL, xa_limit_32b,
-> 				  &cm.local_id_next, GFP_KERNEL);
-> 
-> so it should never allocate here:
-> 
-> static int cm_req_handler(struct cm_work *work)
-> {
-> 	spin_lock_irq(&cm_id_priv->lock);
-> 	cm_finalize_id(cm_id_priv);
+Hi.
 
-Uhm.  I think you want a different debugging check from this.  The actual
-bug here is that you'll get back from calling cm_finalize_id() with
-interrupts enabled.  Can you switch to xa_store(), or do we need an
-xa_store_irqsave()?
+On 27.10.2020 21:04, Kent Overstreet wrote:
+> Here's where bcachefs is at and what I'd like to get merged:
+> 
+> https://evilpiepirate.org/git/bcachefs.git/log/?h=bcachefs-for-review
 
-> Still, woops.
-> 
-> Matt, maybe a might_sleep is deserved in here someplace?
-> 
-> @@ -1534,6 +1534,8 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
->         XA_STATE(xas, xa, index);
->         void *curr;
->  
-> +       might_sleep_if(gfpflags_allow_blocking(gfp));
-> +
->         if (WARN_ON_ONCE(xa_is_advanced(entry)))
->                 return XA_ERROR(-EINVAL);
->         if (xa_track_free(xa) && !entry)
-> 
-> And similar in the other places that conditionally call __xas_nomem()
-> ?
-> 
-> I also still wish there was a proper 'xa store in already allocated
-> but null' idiom - I remember you thought about using gfp flags == 0 at
-> one point.
+Please excuse my ignorance if I missed things in other discussions, but 
+if this is what's expected to be reviewed, why the submission is not 
+splitted into reviewable patches?
 
-An xa_replace(), perhaps?
+> 
+> Non bcachefs prep patches:
+> 
+>       Compiler Attributes: add __flatten
+>       locking: SIX locks (shared/intent/exclusive)
+>       mm: export find_get_pages_range()
+>       mm: Add a mechanism to disable faults for a specific mapping
+>       mm: Bring back vmalloc_exec
+>       fs: insert_inode_locked2()
+>       fs: factor out d_mark_tmpfile()
+>       block: Add some exports for bcachefs
+>       block: Add blk_status_to_str()
+>       bcache: move closures to lib/
+>       closures: closure_wait_event()
+> 
+>  block/bio.c                                    |   2 +
+>  block/blk-core.c                               |  13 +-
+>  drivers/md/bcache/Kconfig                      |  10 +-
+>  drivers/md/bcache/Makefile                     |   4 +-
+>  drivers/md/bcache/bcache.h                     |   2 +-
+>  drivers/md/bcache/super.c                      |   1 -
+>  drivers/md/bcache/util.h                       |   3 +-
+>  fs/dcache.c                                    |  10 +-
+>  fs/inode.c                                     |  40 ++
+>  include/linux/blkdev.h                         |   1 +
+>  {drivers/md/bcache => include/linux}/closure.h |  39 +-
+>  include/linux/compiler_attributes.h            |   5 +
+>  include/linux/dcache.h                         |   1 +
+>  include/linux/fs.h                             |   1 +
+>  include/linux/sched.h                          |   1 +
+>  include/linux/six.h                            | 197 +++++++++
+>  include/linux/vmalloc.h                        |   1 +
+>  init/init_task.c                               |   1 +
+>  kernel/Kconfig.locks                           |   3 +
+>  kernel/locking/Makefile                        |   1 +
+>  kernel/locking/six.c                           | 553 
+> +++++++++++++++++++++++++
+>  kernel/module.c                                |   4 +-
+>  lib/Kconfig                                    |   3 +
+>  lib/Kconfig.debug                              |   9 +
+>  lib/Makefile                                   |   2 +
+>  {drivers/md/bcache => lib}/closure.c           |  35 +-
+>  mm/filemap.c                                   |   1 +
+>  mm/gup.c                                       |   7 +
+>  mm/nommu.c                                     |  18 +
+>  mm/vmalloc.c                                   |  21 +
+>  30 files changed, 937 insertions(+), 52 deletions(-)
+>  rename {drivers/md/bcache => include/linux}/closure.h (94%)
+>  create mode 100644 include/linux/six.h
+>  create mode 100644 kernel/locking/six.c
+>  rename {drivers/md/bcache => lib}/closure.c (89%)
+> 
+> New since last posting that's relevant to the rest of the kernel:
+>  - Re: the DIO cache coherency issue, we finally have a solution that 
+> hopefully
+>    everyone will find palatable. We no longer try to do any fancy 
+> recursive
+>    locking stuff: if userspace issues a DIO read/write where the buffer 
+> points
+>    to the same address space as the file being read/written to, we just 
+> return
+>    an error.
+> 
+>    This requires a small change to gup.c, to add the check after the 
+> VMA lookup.
+>    My patch passes the mapping to check against via a new task_struct 
+> member,
+>    which is ugly because plumbing a new argument all the way to 
+> __get_user_pages
+>    is also going to be ugly and if I have to do that I'm likely to go 
+> on a
+>    refactoring binge, which gup.c looks like it needs anyways.
+> 
+>  - vmalloc_exec() is needed because bcachefs dynamically generates x86 
+> machine
+>    code - per btree node unpack functions.
+> 
+> Bcachefs changes since last posting:
+>  - lots
+>  - reflink is done
+>  - erasure coding (reed solomon raid5/6) is maturing; I have declared 
+> it ready
+>    for beta testers and gotten some _very_ positive feedback on its 
+> performance.
+>  - btree key cache code is done and merged, big improvements to 
+> multithreaded
+>    write workloads
+>  - inline data extents
+>  - major improvements to how the btree code handles extents (still 
+> todo:
+>    re-implement extent merging)
+>  - huge improvements to mount/unmount times on huge filesystems
+>  - many, many bugfixes; bug reports are slowing and the bugs that are 
+> being
+>    reported look less and less concerning. In particular repair code is 
+> getting
+>    better and more polished.
+> 
+> TODO:
+>  - scrub, repair of replicated data when one of the replicas fail the 
+> checksum
+>    check
+>  - erasure coding needs repair code (it'll do reconstruct reads, but we 
+> don't
+>    have code to rewrite bad blocks in a stripe yet. this is going to be 
+> a hassle
+>    until we get backpointers)
+>  - fsck isn't checking refcounts of reflinked extents yet
+>  - bcachefs tests in ktest need to be moved to xfstests
+>  - user docs are still very minimal
+> 
+> So that's roughly where things are at. I think erasure coding is going 
+> to to be
+> bcachefs's killer feature (or at least one of them), and I'm pretty 
+> excited
+> about it: it's a completely new approach unlike ZFS and btrfs, no write 
+> hole (we
+> don't update existing stripes in place) and we don't have to fragment 
+> writes
+> either like ZFS does. Add to that the caching that we already do and 
+> it's
+> turning into a pretty amazing tool for managing a whole bunch of mixed 
+> storage.
+
+-- 
+   Oleksandr Natalenko (post-factum)
