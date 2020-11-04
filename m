@@ -2,64 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBC752A5CC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 03:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B57192A5D42
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 05:00:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbgKDCgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 21:36:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47748 "EHLO
+        id S1728351AbgKDEAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 23:00:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbgKDCgP (ORCPT
+        with ESMTP id S1727688AbgKDEAC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 21:36:15 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB5BEC061A4D;
-        Tue,  3 Nov 2020 18:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hx1MzWTXdeEOxgEkbR+wZtVBswYPWYPzzP51xACphZ8=; b=wHXo56TLGfXXsvN4PGIA7lqw1L
-        mlc2SznGv7CFGKAMLwOc0i5Lz/H1P3HznLlV9ambuv03R0MCBafKRUSRe8gdLAlxBkVcPU79kTJBP
-        +mUtdmocJcUsakQQxxKwrvXN1K1Db6Ke3eV6xH8L0Yijnt/cr+o7x5QkMtOWydK1LmtWeZuwWH63Z
-        9f4ZvCbP4odCFBBwP5wyZpbL61BusKMmnYgxIWMD+FkrdQGCzFFUvMYkcIG2XvEx4XsGK9hqC/sTW
-        LeljmphmCrtR7UTSGPOfGj/ihC/XECI2l5rKqE4yg2uKQ4sccJUqN5MdIxkLpsmfjlV9EILQTy0lS
-        Gy7Oh96A==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ka8ee-0002tw-El; Wed, 04 Nov 2020 02:36:08 +0000
-Date:   Wed, 4 Nov 2020 02:36:08 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "xiaofeng.yan" <xiaofeng.yan2012@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dledford@redhat.com, jgg@ziepe.ca, oulijun@huawei.com,
-        yanxiaofeng7@jd.com
-Subject: Re: [PATCH 1/2] [xarry]:Fixed an issue with memory allocated using
- the GFP_KERNEL flag in spinlocks
-Message-ID: <20201104023608.GK27442@casper.infradead.org>
-References: <20201104023213.760-1-xiaofeng.yan2012@gmail.com>
+        Tue, 3 Nov 2020 23:00:02 -0500
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EAA2C061A4D
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 20:00:02 -0800 (PST)
+Received: by mail-oi1-x242.google.com with SMTP id m13so11749472oih.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 20:00:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LPUivy6G/3y/UroF9ZxK5NSi1QTvT70rLMi2Ek7DgK8=;
+        b=dIYeodvKjWgoSDouF7I/spHxpLTaLxx/sU/fweJy6VfuZCyZhtEWMIXzXiuwxagOgw
+         z/0rN06t+OtTfT6YOyF8piHUdRGuOsHQazvBnQY/G6ZhqI0x0qmR8Naj95Fy1z6zwT1W
+         dbg0nJwNGOsMpxYw83aJvf8QMuWM66MOjRMY9QHyKhBj4pYhMbU1W0kjgphO8OF7ffgQ
+         ZtW4BGognt/s6aT8jcoRk0Gd9ka1D+HWjlbcqgc4h/3rBWWO6PH9PmYc2jfbbPY7mgok
+         B39g5H7ntQmNBC9U3gFpJaD3llNLpRDp40czyKNOTE/hRidNSThsXmjmTzgXCwFpX8EH
+         RTmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LPUivy6G/3y/UroF9ZxK5NSi1QTvT70rLMi2Ek7DgK8=;
+        b=FLLGuShpV+eYBBEPPBcXX93juZRJGTy9/T0YJKo76HdCtbXe9qe9mrzZCDeIQSjlFI
+         lb6EDsceQKu+KdHTG2YacY0zLV5FYdjxJfJG+J/ksqb04M3aDVA90Vke7euwZpyz63kB
+         25mdOJsyM6rpxJoyxQ0KSx+ugt0gnCl+HyeoN34mdc9v+CyzqWLjqj1773AQcaVDlzZS
+         yR+irKSDyzXMGxiMrifs6Co59gD1Ru7YlGN45eN5RkZXdYpt2i6FjU+BfhGJocmwzadp
+         uc/xXbx+ecZ44ahjk+qOQxchQxCZUF2QaCXLJmtocDziLiyMWqA02T4jY0oCrYhTskUM
+         LBPA==
+X-Gm-Message-State: AOAM531y8uAewEZzVzvCqwvDDiKT6+Zl7I/tKr/cdBd2CosgDqk82r6q
+        hkaz4KNJnl/ZjTTtIY8+VQE/bvo40KRlKFmqEFw=
+X-Google-Smtp-Source: ABdhPJz5uTBKFNV+/j4Q1sw8dr+Hg681+E53y9ebcxLGIrRTKWl4/i2FpMvOW3Y9rYMAsyIZEi3+GMlDISIXoPxvwG4=
+X-Received: by 2002:a05:6808:2c4:: with SMTP id a4mr1404383oid.114.1604462401809;
+ Tue, 03 Nov 2020 20:00:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104023213.760-1-xiaofeng.yan2012@gmail.com>
+References: <20201103143828.GU27442@casper.infradead.org> <20201104012017.19311-1-vvghjk1234@gmail.com>
+In-Reply-To: <20201104012017.19311-1-vvghjk1234@gmail.com>
+From:   Amy Parker <enbyamy@gmail.com>
+Date:   Tue, 3 Nov 2020 19:59:51 -0800
+Message-ID: <CAE1WUT6aMytHrWpyM2r-YgOjRyfNXYm-E+Ye=360v6T3AV_Q0w@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix panic in __readahead_batch()
+To:     Wonhuyk Yang <vvghjk1234@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 10:32:12AM +0800, xiaofeng.yan wrote:
->  	xa_lock_irq(xa);
-> -	curr = __xa_store(xa, index, entry, gfp);
-> +	curr = __xa_store(xa, index, entry, GFP_ATOMIC);
->  	xa_unlock_irq(xa);
+On Tue, Nov 3, 2020 at 5:21 PM Wonhuyk Yang <vvghjk1234@gmail.com> wrote:
+>
+> From: Wonhyuk Yang <vvghjk1234@gmail.com>
+>
+> Thank you for your reply.
+>
+> > By the way, this isn't right.  You meant 'if (xa_is_value(page))'.
+>
+> I think you missed a ! operator. Actually I was not sure that there
+> are other internal entries except retry entry and zero entry in
+> the xas_for_each().
+>
+> > The reason we can see a retry entry here is that we did a readahead of a
+> > single page at index 0.  Between that page being inserted and the lookup,
+> > another page was removed from the file (maybe the file was truncated
+> > down) and this caused the node to be removed, and the pointer to the
+> > page got moved into the root of the tree.  The pointer in the node was
+> > replaced with a retry entry, indicating that the page is still valid,
+> > it just isn't here any more.  And so we retry the lookup.
+>
+> It's a little difficult for me, but thank you for your specific explanation.
 
-You haven't actually seen a bug, have you?  You just read the code
-wrongly.
+Could you link the earlier thread for reference? You forgot to include
+it in your
+email subtext.
 
-void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
-...
-        } while (__xas_nomem(&xas, gfp));
-...
-        if (gfpflags_allow_blocking(gfp)) {
-                xas_unlock_type(xas, lock_type);
-                xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
-                xas_lock_type(xas, lock_type);
-
+Best regards,
+Amy Parker
+(they/them)
