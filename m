@@ -2,109 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE702A63B1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 12:56:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2608F2A6411
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 13:18:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbgKDLzU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Nov 2020 06:55:20 -0500
-Received: from sender3-pp-o92.zoho.com.cn ([124.251.121.251]:25308 "EHLO
-        sender3-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729647AbgKDLyg (ORCPT
+        id S1729488AbgKDMSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Nov 2020 07:18:09 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:48462 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbgKDMSJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Nov 2020 06:54:36 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1604490844; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=geXj8u/m7Ws6zbELpHVN95/G7vnpUUW/TLt//xuLM06R9QwOAO3d6J789fng2gBaum9KPfa47QZPqkrLofIOi9dEr9q2SGI8PH59rFHonc7CF9HcHSBmkgHR8n1F/+NsVMgRz87Zbrof1aLInZVGH0PYpfJQG+FVFue1RkT+7bM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1604490844; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
-        bh=HjbaZP/VD3k0TwNvh+V6Jl8V603qjIGXZ3A46Nl+JPQ=; 
-        b=qSb24Fj+dgYXOMz4xc6Q7KpCigCQPO9EWFPTyaq8DXlJYX3num7P77GoO7ZzQAKN0bO3LB7ZcZ0gdWvvSVfxWdHeHSKx2W/u6TtV5tpOwT1kqjQJYMAgellWO0AfMa0uRlikC43JSpeXNvzbMp53tqkOXoM01j6j8PwDGeXesYg=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1604490844;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        bh=HjbaZP/VD3k0TwNvh+V6Jl8V603qjIGXZ3A46Nl+JPQ=;
-        b=UeW0OJMd8zjV3QHJV37JRvwMVqTE8Yw8HFuMIml+MbUx2pr4IyQFCevwppNttXux
-        mzBf1J9Xo4fs/JwzpPOtObYBW/GItttsT7vmSeToGbQBZYYFTBhMqN8DCRFs2QmC5eL
-        7MPW0Fy2LN7W1lBKY3IqpdRVvIh5HX9x3YGL5SEE=
-Received: from mail.baihui.com by mx.zoho.com.cn
-        with SMTP id 1604490843017826.2109278233713; Wed, 4 Nov 2020 19:54:03 +0800 (CST)
-Date:   Wed, 04 Nov 2020 19:54:03 +0800
-From:   Chengguang Xu <cgxu519@mykernel.net>
-Reply-To: cgxu519@mykernel.net
-To:     "Jan Kara" <jack@suse.cz>
-Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
-        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "cgxu519" <cgxu519@mykernel.net>,
-        "charliecgxu" <charliecgxu@tencent.com>
-Message-ID: <175931b5387.1349cecf47061.3904278910555065520@mykernel.net>
-In-Reply-To: <20201102173052.GF23988@quack2.suse.cz>
-References: <20201025034117.4918-1-cgxu519@mykernel.net>
- <20201025034117.4918-6-cgxu519@mykernel.net> <20201102173052.GF23988@quack2.suse.cz>
-Subject: Re: [RFC PATCH v2 5/8] ovl: mark overlayfs' inode dirty on shared
- writable mmap
+        Wed, 4 Nov 2020 07:18:09 -0500
+Received: by mail-il1-f200.google.com with SMTP id o5so10105161ilh.15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Nov 2020 04:18:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=+3EjKaDTd8bhaaIGhp9ZVJ/VUs7Zj0b/Msvp2PVH4gg=;
+        b=AypqWN+KLlg9KARRH6K3JuvP+ipWsfPqrYe8I4x05byGxdJC45QIlwZoyVsMGZ8zwS
+         v1sSwjC8m9mukaLHZHUmkUfCR+Dv2KHmfpt90q/DBszGuKD/LzL/y6G1k0W6GSfqy+hq
+         hyACaDzbfD1NBtV6+tkHl3bW0xdcrQgIdgUWNjmLPVlMp2HDul7xQXlFzyN/urh6GnE+
+         jtCoec7w2AT6vlfs+h/ucuAPZuAM2SmN58jCHW62NyRu4RWpqqOmvyNRkAhB0jrP8i+P
+         KKOUDPX4kmHbC2IylcYXM/O0KalJefmNoPuVjG/XM9s1TjH8/fSZ5DYC3v5oszmskYeU
+         IJbQ==
+X-Gm-Message-State: AOAM533lqbayoRR517qZWf+NXU+BqTOS5Ko+9aq21oMGKIVkW9iMiwut
+        aDl8p58r9hRqSleLCGQGOfPGZvVAwrnbHEmh2VKzeZqxb5aD
+X-Google-Smtp-Source: ABdhPJx43kLEHlPlcB2tF4af+p51UNM9dagQ/w/3EDMbobnb0+j3mIWJht6+ajpgiMpjQbM7TAl0eyXZmtWS3Bt5hZGQs7pYhJLn
 MIME-Version: 1.0
+X-Received: by 2002:a92:ba5c:: with SMTP id o89mr17503306ili.248.1604492288180;
+ Wed, 04 Nov 2020 04:18:08 -0800 (PST)
+Date:   Wed, 04 Nov 2020 04:18:08 -0800
+In-Reply-To: <0000000000009d056805b252e883@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e1c72705b346f8e6@google.com>
+Subject: Re: possible deadlock in send_sigurg (2)
+From:   syzbot <syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com>
+To:     bfields@fieldses.org, boqun.feng@gmail.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: ZohoCN Mail
-X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2020-11-03 01:30:52 Jan Kara <=
-jack@suse.cz> =E6=92=B0=E5=86=99 ----
- > On Sun 25-10-20 11:41:14, Chengguang Xu wrote:
- > > Overlayfs cannot be notified when mmapped area gets dirty,
- > > so we need to proactively mark inode dirty in ->mmap operation.
- > >=20
- > > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
- > > ---
- > >  fs/overlayfs/file.c | 4 ++++
- > >  1 file changed, 4 insertions(+)
- > >=20
- > > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
- > > index efccb7c1f9bc..cd6fcdfd81a9 100644
- > > --- a/fs/overlayfs/file.c
- > > +++ b/fs/overlayfs/file.c
- > > @@ -486,6 +486,10 @@ static int ovl_mmap(struct file *file, struct vm_=
-area_struct *vma)
- > >          /* Drop reference count from new vm_file value */
- > >          fput(realfile);
- > >      } else {
- > > +        if (vma->vm_flags & (VM_SHARED|VM_MAYSHARE) &&
- > > +            vma->vm_flags & (VM_WRITE|VM_MAYWRITE))
- > > +            ovl_mark_inode_dirty(file_inode(file));
- > > +
- >=20
- > But does this work reliably? I mean once writeback runs, your inode (as
- > well as upper inode) is cleaned. Then a page fault comes so file has dir=
-ty
- > pages again and would need flushing but overlayfs inode stays clean? Am =
-I
- > missing something?
- >=20
+syzbot has bisected this issue to:
 
-Yeah, this is key point of this approach, in order to  fix the issue I expl=
-icitly set=20
-I_DIRTY_SYNC flag in ovl_mark_inode_dirty(), so what i mean is during write=
-back
-we will call into ->write_inode() by this flag(I_DIRTY_SYNC) and at that pl=
-ace
-we get chance to check mapping and re-dirty overlay's inode. The code logic
-like below in ovl_write_inode().
+commit e918188611f073063415f40fae568fa4d86d9044
+Author: Boqun Feng <boqun.feng@gmail.com>
+Date:   Fri Aug 7 07:42:20 2020 +0000
 
-    if (mapping_writably_mapped(upper->i_mapping) ||
-         mapping_tagged(upper->i_mapping, PAGECACHE_TAG_WRITEBACK))
-                 iflag |=3D I_DIRTY_PAGES;=20
+    locking: More accurate annotations for read_lock()
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14142732500000
+start commit:   4ef8451b Merge tag 'perf-tools-for-v5.10-2020-11-03' of gi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16142732500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12142732500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61033507391c77ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=c5e32344981ad9f33750
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15197862500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c59f6c500000
 
+Reported-by: syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com
+Fixes: e918188611f0 ("locking: More accurate annotations for read_lock()")
 
-
-Thanks,
-Chengguang
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
