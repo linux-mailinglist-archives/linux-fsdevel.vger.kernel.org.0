@@ -2,144 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3292A5A8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 00:28:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DE22A5AE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Nov 2020 01:10:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbgKCX2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Nov 2020 18:28:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46862 "EHLO
+        id S1729796AbgKDAJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Nov 2020 19:09:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbgKCX2J (ORCPT
+        with ESMTP id S1728479AbgKDAJ6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Nov 2020 18:28:09 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C74C0613D1;
-        Tue,  3 Nov 2020 15:28:09 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id x13so14929503pgp.7;
-        Tue, 03 Nov 2020 15:28:09 -0800 (PST)
+        Tue, 3 Nov 2020 19:09:58 -0500
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54198C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Nov 2020 16:09:56 -0800 (PST)
+Received: by mail-qk1-x743.google.com with SMTP id p3so17213900qkk.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Nov 2020 16:09:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=eRl//7At+Wm2EvC4VlJ9A50IgrwQOr/jqI3Y/MXhPxg=;
-        b=kmZVUoU/Ml29s2vai8g/wNXjAaEbkI2ty7/6v1tIWH/TsVrRa4VJjMGFgMG6+GfqOd
-         9YUZ70jBPbJJsjQW/+jbVP+kYL/cKNZnzawk7FKkjXECBfHU0twg+Y03hcoyYt1HAV4r
-         dwuVHNxylpag7OCuMJnFlLe/C1x/Gtlnr/dRj2KKStNq7iQecKuIkiwlgblsw44EQOCi
-         +u/IO3JItZUNB9dcbEqwcJ6zSBEnqh3W7zEq03ns+7jyjKspZ61r4pdJQZGsqvvgg8Rt
-         oeJ/OCsatIzsx20LV3rXcQ4JRKe03TqSXJu1lX8dMm4zOhLKyK9wt7RGo0qAPkfiqv6S
-         cdoA==
+        d=cs.unc.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NYojc7vmSWu8GGbZzz8wSzFwi9UD9yKVFssMaSFOz4E=;
+        b=XoFqBsYAqL+CmBvKIOcJ8rojcXXEQbIr1wWWNyIDQDm+JCKm6rJxn1ViLr0pzjARCU
+         VTwB16zKG/j9yQ/O7zEm3bzjtG1ZUs/0mBfvdo37fxkYk/WaEia32OyQQwmkz4SeKOUD
+         eXGjqArvNdCliYvooX0ckqAHgbvA5gE0YZgNA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eRl//7At+Wm2EvC4VlJ9A50IgrwQOr/jqI3Y/MXhPxg=;
-        b=PpDYWBpft5QfqqDUOiW0aB0i+brG0Lt9ZC1YaiIPzwHmu2WrNNo/wZCUVMzJLMqhOJ
-         B3rt2xvc2uEe0OfHDyHx/J7A0YeC0JoSK6HYvsrOhT402fopcCEFd95MDar4OqSInD5V
-         2FDX6yCpElEw5vW3QrM7cPN0yeKrmvNNRFBru4QshYJBr+GFeM8qWAmijF8QcKj1vtsX
-         fSbmGz5R+m5MvWoJsv9VLPlOWoA0HXDx5b0kkuY6ClO7DamhE7FBeNbW3XRHtjgRdJNh
-         MQrtgJk3FH9SH0hPq2uNOnEXzLDaGqGP9var9GzLwqbZ3XGwiwF1LiMUqZdrNSax9zUM
-         EBCA==
-X-Gm-Message-State: AOAM531ILp624++hlI6MXOk72A0peev0YvUd8J1NT497jvDloDWQLLZG
-        q3D1bvq4ZW1qLGfE0GengZI=
-X-Google-Smtp-Source: ABdhPJwA1Y3V3bXAbq5RWgN0tRPA1Lm5ZwU9tdZvWFuGd5NX2rWIgARC5HkbuwN5Li8owzB81DvZcw==
-X-Received: by 2002:a63:5153:: with SMTP id r19mr18783989pgl.130.1604446089195;
-        Tue, 03 Nov 2020 15:28:09 -0800 (PST)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:4055])
-        by smtp.gmail.com with ESMTPSA id w19sm209327pff.6.2020.11.03.15.28.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NYojc7vmSWu8GGbZzz8wSzFwi9UD9yKVFssMaSFOz4E=;
+        b=N2goj4PXub8NQ3rce/VxPvppml7KIc3lOqfII82hRxBFWaAP1W4sstKuOmoPGaQ2LW
+         hcz0FaJA55dqugt+G8hMog9Yrklhn/lXV4m4/sygAdXbhSDKu2QCkjuxo8mJUa8WScRo
+         4nOhk6pyYMYr75Hf8iEgQGvlEJovdTHaYTqL9bW1lOsbkNmJ3B8GA3tdKEEjE36F3284
+         4+/fwE5JZ/OEzvbuRdaRcg1T2kLjQDD3pL1x67EhhP9G1wASkB5lvMQSGh4nJFN0qSQx
+         Ktm+ruam3zsQmuYuTpgMcsnksZqRzXBW6GY2aC9N7QA2x5mFGlLMbQIfvH1hXW4Bhlbc
+         Yhlg==
+X-Gm-Message-State: AOAM531h1K4ca6jHBbmRQAvRO4D0gk/qru5++jh2KwpR1dB25fzCs2Fl
+        LTkjVEzlipf5GLbD4tEOLcX4cA==
+X-Google-Smtp-Source: ABdhPJzsaO5Jjftr+mIe2epKX6LtZrXcLRkAX4K97vVHjm6AsPbKhuziuQZCn1q+0iw6Pon4kPu5bw==
+X-Received: by 2002:a37:b241:: with SMTP id b62mr12176047qkf.209.1604448595391;
+        Tue, 03 Nov 2020 16:09:55 -0800 (PST)
+Received: from yamaha.cs.unc.edu (yamaha.cs.unc.edu. [152.2.129.229])
+        by smtp.gmail.com with ESMTPSA id r190sm523861qkf.101.2020.11.03.16.09.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2020 15:28:08 -0800 (PST)
-Date:   Tue, 3 Nov 2020 15:28:05 -0800
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kenny Ho <y2kenny@gmail.com>
-Cc:     Kenny Ho <Kenny.Ho@amd.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>, bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>
-Subject: Re: [RFC] Add BPF_PROG_TYPE_CGROUP_IOCTL
-Message-ID: <20201103232805.6uq4zg3gdvw2iiki@ast-mbp.dhcp.thefacebook.com>
-References: <20201007152355.2446741-1-Kenny.Ho@amd.com>
- <CAOWid-d=a1Q3R92s7GrzxWhXx7_dc8NQvQg7i7RYTVv3+jHxkQ@mail.gmail.com>
- <20201103053244.khibmr66p7lhv7ge@ast-mbp.dhcp.thefacebook.com>
- <CAOWid-eQSPru0nm8+Xo3r6C0pJGq+5r8mzM8BL2dgNn2c9mt2Q@mail.gmail.com>
- <CAADnVQKuoZDB-Xga5STHdGSxvSP=B6jQ40kLdpL1u+J98bv65A@mail.gmail.com>
- <CAOWid-czZphRz6Y-H3OcObKCH=bLLC3=bOZaSB-6YBE56+Qzrg@mail.gmail.com>
- <20201103210418.q7hddyl7rvdplike@ast-mbp.dhcp.thefacebook.com>
- <CAOWid-djQ_NRfCbOTnZQ-A8Pr7jMP7KuZEJDSsvzWkdw7qc=yA@mail.gmail.com>
+        Tue, 03 Nov 2020 16:09:54 -0800 (PST)
+From:   Joshua Bakita <jbakita@cs.unc.edu>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joshua Bakita <jbakita@cs.unc.edu>
+Subject: [PATCH] binfmt_elf: Fix regression limiting ELF program header size
+Date:   Tue,  3 Nov 2020 19:09:30 -0500
+Message-Id: <20201104000930.155577-1-jbakita@cs.unc.edu>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOWid-djQ_NRfCbOTnZQ-A8Pr7jMP7KuZEJDSsvzWkdw7qc=yA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 05:57:47PM -0500, Kenny Ho wrote:
-> On Tue, Nov 3, 2020 at 4:04 PM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Tue, Nov 03, 2020 at 02:19:22PM -0500, Kenny Ho wrote:
-> > > On Tue, Nov 3, 2020 at 12:43 AM Alexei Starovoitov
-> > > <alexei.starovoitov@gmail.com> wrote:
-> > > > On Mon, Nov 2, 2020 at 9:39 PM Kenny Ho <y2kenny@gmail.com> wrote:
-> >
-> > Sounds like either bpf_lsm needs to be made aware of cgv2 (which would
-> > be a great thing to have regardless) or cgroup-bpf needs a drm/gpu specific hook.
-> > I think generic ioctl hook is too broad for this use case.
-> > I suspect drm/gpu internal state would be easier to access inside
-> > bpf program if the hook is next to gpu/drm. At ioctl level there is 'file'.
-> > It's probably too abstract for the things you want to do.
-> > Like how VRAM/shader/etc can be accessed through file?
-> > Probably possible through a bunch of lookups and dereferences, but
-> > if the hook is custom to GPU that info is likely readily available.
-> > Then such cgroup-bpf check would be suitable in execution paths where
-> > ioctl-based hook would be too slow.
-> Just to clarify, when you say drm specific hook, did you mean just a
-> unique attach_type or a unique prog_type+attach_type combination?  (I
-> am still a bit fuzzy on when a new prog type is needed vs a new attach
-> type.  I think prog type is associated with a unique type of context
-> that the bpf prog will get but I could be missing some nuances.)
-> 
-> When I was thinking of doing an ioctl wide hook, the file would be the
-> device file and the thinking was to have a helper function provided by
-> device drivers to further disambiguate.  For our (AMD's) driver, we
-> have a bunch of ioctls for set/get/create/destroy
-> (https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c#L1763)
-> so the bpf prog can make the decision after the disambiguation.  For
-> example, we have an ioctl called "kfd_ioctl_set_cu_mask."  You can
+Commit 6a8d38945cf4 ("binfmt_elf: Hoist ELF program header loading to a
+function") merged load_elf_binary and load_elf_interp into
+load_elf_phdrs. This change imposed a limit that the program headers of
+all ELF binaries are smaller than ELF_MIN_ALIGN. This is a mistake for
+two reasons:
+1. load_elf_binary previously had no such constraint, meaning that
+   previously valid ELF program headers are now rejected by the kernel as
+   oversize and invalid.
+2. The ELF interpreter's program headers should never have been limited to
+   ELF_MIN_ALIGN (and previously PAGE_SIZE) in the first place. Commit
+   057f54fbba73 ("Import 1.1.54") introduced this limit to the ELF
+   interpreter alongside the initial ELF parsing support without any
+   explanation.
+This patch removes the ELF_MIN_ALIGN size constraint in favor of only
+relying on an earlier check that the allocation will be less than 64KiB.
+(It's worth mentioning that the 64KiB limit is also unnecessarily strict,
+but that's not addressed here for simplicity. The ELF manpage says that
+the program header size is supposed to have at most 64 thousand entries,
+not less than 64 thousand bytes.)
 
-Thanks for the pointer.
-That's one monster ioctl. So much copy_from_user.
-BPF prog would need to be sleepable to able to examine the args in such depth.
-After quick glance at the code I would put a new hook into
-kfd_ioctl() right before
-retcode = func(filep, process, kdata);
-At this point kdata is already copied from user space 
-and usize, that is cmd specific, is known.
-So bpf prog wouldn't need to copy that data again.
-That will save one copy.
-To drill into details of kfd_ioctl_set_cu_mask() the prog would
-need to be sleepable to do second copy_from_user of cu_mask.
-At least it's not that big.
-Yes, the attachment point will be amd driver specific,
-but the program doesn't need to be.
-It can be generic tracing prog that is agumented to use BTF.
-Something like writeable tracepoint with BTF support would do.
-So on the bpf side there will be minimal amount of changes.
-And in the driver you'll add one or few writeable tracepoints
-and the result of the tracepoint will gate
-retcode = func(filep, process, kdata);
-call in kfd_ioctl().
-The writeable tracepoint would need to be cgroup-bpf based.
-So that's the only tricky part. BPF infra doesn't have
-cgroup+tracepoint scheme. It's probably going to be useful
-in other cases like this. See trace_nbd_send_request.
+Fixes: 6a8d38945cf4 ("binfmt_elf: Hoist ELF program header loading to a function")
+Signed-off-by: Joshua Bakita <jbakita@cs.unc.edu>
+---
+ fs/binfmt_elf.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 2472af2798c7..55162056590f 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -412,15 +412,11 @@ static struct elf_phdr *load_elf_phdrs(struct elfhdr *elf_ex,
+ 	/* Sanity check the number of program headers... */
+ 	if (elf_ex->e_phnum < 1 ||
+ 		elf_ex->e_phnum > 65536U / sizeof(struct elf_phdr))
+ 		goto out;
+ 
+-	/* ...and their total size. */
+ 	size = sizeof(struct elf_phdr) * elf_ex->e_phnum;
+-	if (size > ELF_MIN_ALIGN)
+-		goto out;
+-
+ 	elf_phdata = kmalloc(size, GFP_KERNEL);
+ 	if (!elf_phdata)
+ 		goto out;
+ 
+ 	/* Read in the program headers */
+-- 
+2.25.1
+
