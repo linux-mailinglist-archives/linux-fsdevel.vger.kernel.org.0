@@ -2,225 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A32B82A7EE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 13:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 606AC2A7F6C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 14:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbgKEMp6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Nov 2020 07:45:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730139AbgKEMp5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Nov 2020 07:45:57 -0500
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B1D520756;
-        Thu,  5 Nov 2020 12:45:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604580356;
-        bh=1GelF9aRS5tVKsklgGIdwFZL8G7WthPJK6xM7HDfius=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Wfjm6yzetyE7/MEg7l1Bp+8URz4uvYNPafBAJo4vL6C9HMYp1Fsjs8PnGCu9yhASy
-         SLnPFPXFj06J2Wg8jrE6tveEgqi/H9454LvbeEdfAR9KhU31vF4zgJ/9MevMK0SYyw
-         hSOoIFQLO+87HdDHMpd+tI+KQW53JOiT33qhztrg=
-Message-ID: <d09ae090e7ec770cf799f1072a59cafe4efb6150.camel@kernel.org>
-Subject: Re: possible deadlock in send_sigurg (2)
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Boqun Feng <boqun.feng@gmail.com>,
-        syzbot <syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com>
-Cc:     bfields@fieldses.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-Date:   Thu, 05 Nov 2020 07:45:54 -0500
-In-Reply-To: <20201105062351.GA2840779@boqun-archlinux>
-References: <0000000000009d056805b252e883@google.com>
-         <000000000000e1c72705b346f8e6@google.com>
-         <20201105062351.GA2840779@boqun-archlinux>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+        id S1730429AbgKENFB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Nov 2020 08:05:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729992AbgKENFA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Nov 2020 08:05:00 -0500
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73451C0613CF;
+        Thu,  5 Nov 2020 05:04:59 -0800 (PST)
+Received: by mail-il1-x142.google.com with SMTP id y17so1304921ilg.4;
+        Thu, 05 Nov 2020 05:04:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JZXQ3BAddNN3gYrfwjUK8hjD6WjwUEDBLj1eNYEOzUo=;
+        b=pO6y9W7YRw3qCKIWJKv7KZ5gPH5HAp3M0yP7f3VXh/iCV2RltcdOM+NZMmK+Lr6WAG
+         bJAR8Py8WsSCI0QAyk+8oFNjw/b8qmB44FFdIACEWpcu2gvFaflNUqgOmr1dAYQ5WzUL
+         JKhlX0+EzqmRcvtWgitpsmPUMsatZVa+9VJiF22i786f4JmuJM0zkGNME1HKOzSK/aRu
+         BQnPNvMGhSGbSPtpMYXm1M1u2Cw9YF2pKiVAPxZxDbbf91KXXtLR13ClcVPE0zPWSByk
+         f10H23ydhFYmul63BdYVywg3N1sGTA7+tsmqNguEutZ9RsJsBRw701fvMoeJOwJx0lC+
+         wMoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JZXQ3BAddNN3gYrfwjUK8hjD6WjwUEDBLj1eNYEOzUo=;
+        b=TJNCnIUYMo7I3IAYbaN3OeebjG0neukjAW+q61WmZ5LugmKNffWshztCcTT9mWSTHD
+         kM7ylbnJdH3t2oM5t8mP//pIk2ST0G1Sc/z1y7J0pf4OqcB2wuEdE/Tidoz0dUXpyrSW
+         epReaAQl5hekmC+cbI3KtDL3ctM7C9oFMqToeGgiMFul3rxCuNhdXo4kjT1rRt3DcBq8
+         dFG/4CzPA1/XJEMfW+fsnyy+4Hp9j2ZsG2Nz+8e3L+I/dxEk5kX1ohmz+vv/RhnUSZaQ
+         8x+EOWiyExWG4UpA/OJ/Epc/o3t3EKH08ImpLhuAwE/cuvWS1U4Mlge7nLpmDEl52tAv
+         vvag==
+X-Gm-Message-State: AOAM533pXas4P36JugDaodvU2cP17fDnBhh9PcBygN3zOmZTSDI/MjDo
+        m/wZw14CLjJvh23km5VoD+ESRcHoV9wUtKcp9MQ=
+X-Google-Smtp-Source: ABdhPJxDmC0wfjLJrqd5m/AlPqEkfeGyCmP9jd4qeKTe5TycmK1XIO774yC4d5EC1LAMCmHsJzoFb5yFBg6q19YBHMo=
+X-Received: by 2002:a92:3003:: with SMTP id x3mr1690953ile.93.1604581498765;
+ Thu, 05 Nov 2020 05:04:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201103131754.94949-1-laoar.shao@gmail.com> <20201103131754.94949-2-laoar.shao@gmail.com>
+ <20201103194819.GM7123@magnolia> <CALOAHbBbMdmq0UFy9gWikXufzSdZmSjdUa8Pbkwr31ZdvnodQQ@mail.gmail.com>
+ <20201104162640.GD7115@magnolia>
+In-Reply-To: <20201104162640.GD7115@magnolia>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 5 Nov 2020 21:04:22 +0800
+Message-ID: <CALOAHbAy8WeNgrk3RDF41N2KbEj-2FUOOPbwBrBMDotjRimdRw@mail.gmail.com>
+Subject: Re: [PATCH v8 resend 1/2] mm: Add become_kswapd and restore_kswapd
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linux MM <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-11-05 at 14:23 +0800, Boqun Feng wrote:
-> Hi,
-> 
-> On Wed, Nov 04, 2020 at 04:18:08AM -0800, syzbot wrote:
-> > syzbot has bisected this issue to:
-> > 
-> > commit e918188611f073063415f40fae568fa4d86d9044
-> > Author: Boqun Feng <boqun.feng@gmail.com>
-> > Date:   Fri Aug 7 07:42:20 2020 +0000
-> > 
-> >     locking: More accurate annotations for read_lock()
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14142732500000
-> > start commit:   4ef8451b Merge tag 'perf-tools-for-v5.10-2020-11-03' of gi..
-> > git tree:       upstream
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=16142732500000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12142732500000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=61033507391c77ff
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=c5e32344981ad9f33750
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15197862500000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c59f6c500000
-> > 
-> > Reported-by: syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com
-> > Fixes: e918188611f0 ("locking: More accurate annotations for read_lock()")
-> > 
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> Thanks for reporting this, and this is actually a deadlock potential
-> detected by the newly added recursive read deadlock detection as my
-> analysis:
-> 
-> 	https://lore.kernel.org/lkml/20200910071523.GF7922@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net
-> 
-> Besides, other reports[1][2] are caused by the same problem. I made a
-> fix for this, please have a try and see if it's get fixed.
-> 
-> Regards,
-> Boqun
-> 
-> [1]: https://lore.kernel.org/lkml/000000000000d7136005aee14bf9@google.com
-> [2]: https://lore.kernel.org/lkml/0000000000006e29ed05b3009b04@google.com
-> 
-> ----------------------------------------------------->8
-> From 7fbe730fcff2d7909be034cf6dc8bf0604d0bf14 Mon Sep 17 00:00:00 2001
-> From: Boqun Feng <boqun.feng@gmail.com>
-> Date: Thu, 5 Nov 2020 14:02:57 +0800
-> Subject: [PATCH] fs/fcntl: Fix potential deadlock in send_sig{io, urg}()
-> 
-> Syzbot reports a potential deadlock found by the newly added recursive
-> read deadlock detection in lockdep:
-> 
-> [...] ========================================================
-> [...] WARNING: possible irq lock inversion dependency detected
-> [...] 5.9.0-rc2-syzkaller #0 Not tainted
-> [...] --------------------------------------------------------
-> [...] syz-executor.1/10214 just changed the state of lock:
-> [...] ffff88811f506338 (&f->f_owner.lock){.+..}-{2:2}, at: send_sigurg+0x1d/0x200
-> [...] but this lock was taken by another, HARDIRQ-safe lock in the past:
-> [...]  (&dev->event_lock){-...}-{2:2}
-> [...]
-> [...]
-> [...] and interrupts could create inverse lock ordering between them.
-> [...]
-> [...]
-> [...] other info that might help us debug this:
-> [...] Chain exists of:
-> [...]   &dev->event_lock --> &new->fa_lock --> &f->f_owner.lock
-> [...]
-> [...]  Possible interrupt unsafe locking scenario:
-> [...]
-> [...]        CPU0                    CPU1
-> [...]        ----                    ----
-> [...]   lock(&f->f_owner.lock);
-> [...]                                local_irq_disable();
-> [...]                                lock(&dev->event_lock);
-> [...]                                lock(&new->fa_lock);
-> [...]   <Interrupt>
-> [...]     lock(&dev->event_lock);
-> [...]
-> [...]  *** DEADLOCK ***
-> 
-> The corresponding deadlock case is as followed:
-> 
-> 	CPU 0		CPU 1		CPU 2
-> 	read_lock(&fown->lock);
-> 			spin_lock_irqsave(&dev->event_lock, ...)
-> 					write_lock_irq(&filp->f_owner.lock); // wait for the lock
-> 			read_lock(&fown-lock); // have to wait until the writer release
-> 					       // due to the fairness
-> 	<interrupted>
-> 	spin_lock_irqsave(&dev->event_lock); // wait for the lock
-> 
-> The lock dependency on CPU 1 happens if there exists a call sequence:
-> 
-> 	input_inject_event():
-> 	  spin_lock_irqsave(&dev->event_lock,...);
-> 	  input_handle_event():
-> 	    input_pass_values():
-> 	      input_to_handler():
-> 	        handler->event(): // evdev_event()
-> 	          evdev_pass_values():
-> 	            spin_lock(&client->buffer_lock);
-> 	            __pass_event():
-> 	              kill_fasync():
-> 	                kill_fasync_rcu():
-> 	                  read_lock(&fa->fa_lock);
-> 	                  send_sigio():
-> 	                    read_lock(&fown->lock);
-> 
-> To fix this, make the reader in send_sigurg() and send_sigio() use
-> read_lock_irqsave() and read_lock_irqrestore().
-> 
-> Reported-by: syzbot+22e87cdf94021b984aa6@syzkaller.appspotmail.com
-> Reported-by: syzbot+c5e32344981ad9f33750@syzkaller.appspotmail.com
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
->  fs/fcntl.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 19ac5baad50f..05b36b28f2e8 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -781,9 +781,10 @@ void send_sigio(struct fown_struct *fown, int fd, int band)
->  {
->  	struct task_struct *p;
->  	enum pid_type type;
-> +	unsigned long flags;
->  	struct pid *pid;
->  	
-> -	read_lock(&fown->lock);
-> +	read_lock_irqsave(&fown->lock, flags);
->  
-> 
->  	type = fown->pid_type;
->  	pid = fown->pid;
-> @@ -804,7 +805,7 @@ void send_sigio(struct fown_struct *fown, int fd, int band)
->  		read_unlock(&tasklist_lock);
->  	}
->   out_unlock_fown:
-> -	read_unlock(&fown->lock);
-> +	read_unlock_irqrestore(&fown->lock, flags);
->  }
->  
-> 
->  static void send_sigurg_to_task(struct task_struct *p,
-> @@ -819,9 +820,10 @@ int send_sigurg(struct fown_struct *fown)
->  	struct task_struct *p;
->  	enum pid_type type;
->  	struct pid *pid;
-> +	unsigned long flags;
->  	int ret = 0;
->  	
-> -	read_lock(&fown->lock);
-> +	read_lock_irqsave(&fown->lock, flags);
->  
-> 
->  	type = fown->pid_type;
->  	pid = fown->pid;
-> @@ -844,7 +846,7 @@ int send_sigurg(struct fown_struct *fown)
->  		read_unlock(&tasklist_lock);
->  	}
->   out_unlock_fown:
-> -	read_unlock(&fown->lock);
-> +	read_unlock_irqrestore(&fown->lock, flags);
->  	return ret;
->  }
->  
-> 
+On Thu, Nov 5, 2020 at 12:26 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+>
+> On Wed, Nov 04, 2020 at 10:17:16PM +0800, Yafang Shao wrote:
+> > On Wed, Nov 4, 2020 at 3:48 AM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > >
+> > > On Tue, Nov 03, 2020 at 09:17:53PM +0800, Yafang Shao wrote:
+> > > > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > > >
+> > > > Since XFS needs to pretend to be kswapd in some of its worker threads,
+> > > > create methods to save & restore kswapd state.  Don't bother restoring
+> > > > kswapd state in kswapd -- the only time we reach this code is when we're
+> > > > exiting and the task_struct is about to be destroyed anyway.
+> > > >
+> > > > Cc: Dave Chinner <david@fromorbit.com>
+> > > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > > > ---
+> > > >  fs/xfs/libxfs/xfs_btree.c | 14 ++++++++------
+> > > >  include/linux/sched/mm.h  | 23 +++++++++++++++++++++++
+> > > >  mm/vmscan.c               | 16 +---------------
+> > > >  3 files changed, 32 insertions(+), 21 deletions(-)
+> > > >
+> > > > diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+> > > > index 2d25bab..a04a442 100644
+> > > > --- a/fs/xfs/libxfs/xfs_btree.c
+> > > > +++ b/fs/xfs/libxfs/xfs_btree.c
+> > > > @@ -2813,8 +2813,9 @@ struct xfs_btree_split_args {
+> > > >  {
+> > > >       struct xfs_btree_split_args     *args = container_of(work,
+> > > >                                               struct xfs_btree_split_args, work);
+> > > > +     bool                    is_kswapd = args->kswapd;
+> > > >       unsigned long           pflags;
+> > > > -     unsigned long           new_pflags = PF_MEMALLOC_NOFS;
+> > > > +     int                     memalloc_nofs;
+> > > >
+> > > >       /*
+> > > >        * we are in a transaction context here, but may also be doing work
+> > > > @@ -2822,16 +2823,17 @@ struct xfs_btree_split_args {
+> > > >        * temporarily to ensure that we don't block waiting for memory reclaim
+> > > >        * in any way.
+> > > >        */
+> > > > -     if (args->kswapd)
+> > > > -             new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
+> > > > -
+> > > > -     current_set_flags_nested(&pflags, new_pflags);
+> > > > +     if (is_kswapd)
+> > > > +             pflags = become_kswapd();
+> > > > +     memalloc_nofs = memalloc_nofs_save();
+> > > >
+> > > >       args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
+> > > >                                        args->key, args->curp, args->stat);
+> > > >       complete(args->done);
+> > > >
+> > > > -     current_restore_flags_nested(&pflags, new_pflags);
+> > > > +     memalloc_nofs_restore(memalloc_nofs);
+> > > > +     if (is_kswapd)
+> > > > +             restore_kswapd(pflags);
+> > >
+> > > Note that there's a trivial merge conflict with the mrlock_t removal
+> > > series.  I'll carry the fix in the tree, assuming that everything
+> > > passes.
+> > >
+> >
+> > This patchset is based on Andrew's tree currently.
+> > Seems I should rebase this patchset on your tree instead of Andrew's tree ?
+>
+> That depends on whether or not you want me to push these two patches
+> through the xfs tree or if they're going through Andrew (Morton?)'s
+> quiltset.
+>
+> Frankly I'd rather take them via xfs since most of the diff is xfs...
+>
 
-Thanks Boqun,
+Sure, I will rebase in on the xfs tree.
 
-This looks sane to me. I'll go ahead and pull it into -next for now, and
-it should make v5.11. Let me know if you think it needs to go in sooner.
+> > >
+> > > >  }
+> > > >
+> > > >  /*
+> > > > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> > > > index d5ece7a..2faf03e 100644
+> > > > --- a/include/linux/sched/mm.h
+> > > > +++ b/include/linux/sched/mm.h
+> > > > @@ -278,6 +278,29 @@ static inline void memalloc_nocma_restore(unsigned int flags)
+> > > >  }
+> > > >  #endif
+> > > >
+> > > > +/*
+> > > > + * Tell the memory management code that this thread is working on behalf
+> > > > + * of background memory reclaim (like kswapd).  That means that it will
+> > > > + * get access to memory reserves should it need to allocate memory in
+> > > > + * order to make forward progress.  With this great power comes great
+> > > > + * responsibility to not exhaust those reserves.
+> > > > + */
+> > > > +#define KSWAPD_PF_FLAGS              (PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD)
+> > > > +
+> > > > +static inline unsigned long become_kswapd(void)
+> > > > +{
+> > > > +     unsigned long flags = current->flags & KSWAPD_PF_FLAGS;
+> > > > +
+> > > > +     current->flags |= KSWAPD_PF_FLAGS;
+> > > > +
+> > > > +     return flags;
+> > > > +}
+> > > > +
+> > > > +static inline void restore_kswapd(unsigned long flags)
+> > > > +{
+> > > > +     current->flags &= ~(flags ^ KSWAPD_PF_FLAGS);
+> > > > +}
+> > > > +
+> > > >  #ifdef CONFIG_MEMCG
+> > > >  DECLARE_PER_CPU(struct mem_cgroup *, int_active_memcg);
+> > > >  /**
+> > > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > > index 1b8f0e0..77bc1dd 100644
+> > > > --- a/mm/vmscan.c
+> > > > +++ b/mm/vmscan.c
+> > > > @@ -3869,19 +3869,7 @@ static int kswapd(void *p)
+> > > >       if (!cpumask_empty(cpumask))
+> > > >               set_cpus_allowed_ptr(tsk, cpumask);
+> > > >
+> > > > -     /*
+> > > > -      * Tell the memory management that we're a "memory allocator",
+> > > > -      * and that if we need more memory we should get access to it
+> > > > -      * regardless (see "__alloc_pages()"). "kswapd" should
+> > > > -      * never get caught in the normal page freeing logic.
+> > > > -      *
+> > > > -      * (Kswapd normally doesn't need memory anyway, but sometimes
+> > > > -      * you need a small amount of memory in order to be able to
+> > > > -      * page out something else, and this flag essentially protects
+> > > > -      * us from recursively trying to free more memory as we're
+> > > > -      * trying to free the first piece of memory in the first place).
+> > > > -      */
+> > > > -     tsk->flags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
+> > > > +     become_kswapd();
+> > > >       set_freezable();
+> > > >
+> > > >       WRITE_ONCE(pgdat->kswapd_order, 0);
+> > > > @@ -3931,8 +3919,6 @@ static int kswapd(void *p)
+> > > >                       goto kswapd_try_sleep;
+> > > >       }
+> > > >
+> > > > -     tsk->flags &= ~(PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD);
+> > > > -
+> > > >       return 0;
+> > > >  }
+> > > >
+> > > > --
+> > > > 1.8.3.1
+> > > >
+> >
+> >
+> >
+> > --
+> > Thanks
+> > Yafang
 
-Thanks!
+
+
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Thanks
+Yafang
