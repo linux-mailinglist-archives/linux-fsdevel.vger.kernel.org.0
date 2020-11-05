@@ -2,267 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A742A8318
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 17:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 294612A8333
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 17:14:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbgKEQJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Nov 2020 11:09:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbgKEQJC (ORCPT
+        id S1731103AbgKEQO0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Nov 2020 11:14:26 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:44638 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730822AbgKEQOT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Nov 2020 11:09:02 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61E3CC0613D2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Nov 2020 08:09:02 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id t18so1007869plo.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Nov 2020 08:09:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DNv8EosKffE1C3jvJ0rJJftgCHCwNxl7hTu0xBgm/Zs=;
-        b=pThxNC2iJ8WFGX/CGhbMOz/uQOkRR402aJuKaha93Pq/6th/4+9b3EQxZYmYMja8bt
-         JGNVYLyczLTg2hqy5qZBWT3Qlql1DyFTk1DUA3WPaJxLhLn+HdXlsk1pmfYlKC32a0Ki
-         zHxNATnnT6UY5TqJcf94WHtNHakHxKdieBbEnx3OasXX7Q21307PjKgIZSG5WzPjd5Ha
-         nMA1b85jwYf6oFl3eUW1PUHpKY341qDdil2h3EQX+oGvUp1GvL6FUtzf5k9K2pB3+nAc
-         RahaqWpJdCTC5R7p6o0Pm5Sl5Wsj+YZmm+yJOrvelDAt2iswhlHggy22P1C3OpaM7QAB
-         friA==
+        Thu, 5 Nov 2020 11:14:19 -0500
+Received: by mail-il1-f198.google.com with SMTP id s70so1434555ili.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Nov 2020 08:14:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DNv8EosKffE1C3jvJ0rJJftgCHCwNxl7hTu0xBgm/Zs=;
-        b=C05xoFASWvca1FiIktTXHzNq6DipnpabS1vkPuB9oILHvegEFkhflT6NRzDQEuWGob
-         W3OZh2sTxBQv1e1I2QlDGFuv6qy3b9rcYpq97l3OaJoNKKchwH4EUGanp3IildTaBPQe
-         BX43Xs1tkODZHmUXSzPjVUemhmfPKjlurT9xV5LpSuGXK7C66Fe/Dwl56Yuu7bSXnLlV
-         nGSiL4Py0eXH5QbV8+OSQPaKrxXnBiZNyzTMUeoxURS3Nu3xRT0zRVZLURS5BGKm7BvC
-         tjZhC6u6NFZo8UQgaU3xCpFrXqMLpLmrlmw9xlMehMTyCDbaK7suXGnRIIirCzYW36LI
-         33Hw==
-X-Gm-Message-State: AOAM533KJw/aixTg1RZH+yICZPr+0/vLeoKJ7/CiU9UPzzaMUxVG8cbM
-        LhoM4iFUIsEVtejjFKHc0QQzHq51m1ek5Aj6aDWXlA==
-X-Google-Smtp-Source: ABdhPJyfkwi9gxSQB/Njp7wQRtuErG+nc9B9XUg+PiBnL0eCmyKFJMhKuJYI9/DMyjHpnFYTEqRY9c+gEThQzv17YF8=
-X-Received: by 2002:a17:902:aa86:b029:d6:99d8:3fff with SMTP id
- d6-20020a170902aa86b02900d699d83fffmr2954337plr.34.1604592541785; Thu, 05 Nov
- 2020 08:09:01 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=mRJ15N3DTTcwfnKBXtFSdL2/0uB3J/4P0TWhY34qaus=;
+        b=MIoL90LPRtuzhrZcaD0/4ZTHMp5aVGW1GqGlffCy914n+WeWTBDw+usPJYVg/UYDgm
+         e4TImArXYssu0HwDI8NBCd5oVDfQMFuZVQJHqrt0JJGBKiv2SdsIWbxIqX6ziRl5bwB7
+         fy7heULa9d2km39WWRC0AQ1Afb12W9Z18TbuDCu774PA/HSjAI0md/ZnHDCaHpYXYqig
+         AYFuskdFlI0Kdz/Yo1bMiJjtZFJYx2t25oK6zOfshnzRRPAjhgUkTb95dTK8hrUjgR0i
+         xIAWZ7FW06Zja1RdSA+i6GwGIjFp3VhPybA9axssrlxmdYlfjU4p00EjwnLBlkJklB25
+         cSoA==
+X-Gm-Message-State: AOAM533oXtqLdnkEbMN56Fw5VFLyBC5AdtKapsGQGA42sBRrjkEy9ce6
+        EUnIVHgashiYZFZiUJn14uKYNvwl1ULe+WTlDFJFChZw/Yx4
+X-Google-Smtp-Source: ABdhPJwLhWGbogXRqjhwQml+B8efWoNtMrljpjzWu0QzWfV2m/Zk1JUfZIsMzGtOVuUnmpVJTSprT1FUMfjy1kbsO+UPSygQiiyx
 MIME-Version: 1.0
-References: <20201026145114.59424-1-songmuchun@bytedance.com>
- <20201026145114.59424-6-songmuchun@bytedance.com> <20201105132337.GA7552@linux>
-In-Reply-To: <20201105132337.GA7552@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 6 Nov 2020 00:08:22 +0800
-Message-ID: <CAMZfGtXwKJ3uCuNC3mxHQLNJqTcUzj7Gd2-JRuOWEjZ1C7Oh=A@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2 05/19] mm/hugetlb: Introduce pgtable
- allocation/freeing helpers
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+X-Received: by 2002:a92:a808:: with SMTP id o8mr2173202ilh.35.1604592856371;
+ Thu, 05 Nov 2020 08:14:16 -0800 (PST)
+Date:   Thu, 05 Nov 2020 08:14:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003698a305b35e63fb@google.com>
+Subject: KASAN: use-after-free Read in io_uring_show_cred
+From:   syzbot <syzbot+65731228192d0cafab77@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 5, 2020 at 9:23 PM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Mon, Oct 26, 2020 at 10:51:00PM +0800, Muchun Song wrote:
-> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-> > +#define VMEMMAP_HPAGE_SHIFT                  PMD_SHIFT
-> > +#define arch_vmemmap_support_huge_mapping()  boot_cpu_has(X86_FEATURE_PSE)
->
-> I do not think you need this.
-> We already have hugepages_supported().
+Hello,
 
-Maybe some architectures support hugepage, but the vmemmap do not
-use the hugepage map. In  this case, we need it. But I am not sure if it
-exists in the real world. At least, x86 can reuse hugepages_supported.
+syzbot found the following issue on:
 
->
-> > +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-> > +#ifndef arch_vmemmap_support_huge_mapping
-> > +static inline bool arch_vmemmap_support_huge_mapping(void)
-> > +{
-> > +     return false;
-> > +}
->
-> Same as above
->
-> >  static inline unsigned int nr_free_vmemmap(struct hstate *h)
-> >  {
-> >       return h->nr_free_vmemmap_pages;
-> >  }
-> >
-> > +static inline unsigned int nr_vmemmap(struct hstate *h)
-> > +{
-> > +     return nr_free_vmemmap(h) + RESERVE_VMEMMAP_NR;
-> > +}
-> > +
-> > +static inline unsigned long nr_vmemmap_size(struct hstate *h)
-> > +{
-> > +     return (unsigned long)nr_vmemmap(h) << PAGE_SHIFT;
-> > +}
-> > +
-> > +static inline unsigned int nr_pgtable(struct hstate *h)
-> > +{
-> > +     unsigned long vmemmap_size = nr_vmemmap_size(h);
-> > +
-> > +     if (!arch_vmemmap_support_huge_mapping())
-> > +             return 0;
-> > +
-> > +     /*
-> > +      * No need pre-allocate page tabels when there is no vmemmap pages
-> > +      * to free.
-> > +      */
-> > +     if (!nr_free_vmemmap(h))
-> > +             return 0;
-> > +
-> > +     return ALIGN(vmemmap_size, VMEMMAP_HPAGE_SIZE) >> VMEMMAP_HPAGE_SHIFT;
-> > +}
->
-> IMHO, Mike's naming suggestion fit much better.
+HEAD commit:    4ef8451b Merge tag 'perf-tools-for-v5.10-2020-11-03' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10238e2a500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61033507391c77ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=65731228192d0cafab77
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f42732500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=175fbb82500000
 
-I will do that.
+The issue was bisected to:
 
->
-> > +static void vmemmap_pgtable_deposit(struct page *page, pte_t *pte_p)
-> > +{
-> > +     pgtable_t pgtable = virt_to_page(pte_p);
-> > +
-> > +     /* FIFO */
-> > +     if (!page_huge_pte(page))
-> > +             INIT_LIST_HEAD(&pgtable->lru);
-> > +     else
-> > +             list_add(&pgtable->lru, &page_huge_pte(page)->lru);
-> > +     page_huge_pte(page) = pgtable;
-> > +}
->
-> I think it would make more sense if this took a pgtable argument
-> instead of a pte_t *.
+commit 1e6fa5216a0e59ef02e8b6b40d553238a3b81d49
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Thu Oct 15 14:46:24 2020 +0000
 
-Will do. Thanks for your suggestions.
+    io_uring: COW io_identity on mismatch
 
->
-> > +static pte_t *vmemmap_pgtable_withdraw(struct page *page)
-> > +{
-> > +     pgtable_t pgtable;
-> > +
-> > +     /* FIFO */
-> > +     pgtable = page_huge_pte(page);
-> > +     if (unlikely(!pgtable))
-> > +             return NULL;
->
-> AFAICS, above check only needs to be run once.
-> It think we can move it to vmemmap_pgtable_free, can't we?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13e38e2a500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10138e2a500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e38e2a500000
 
-Yeah, we can. Thanks.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+65731228192d0cafab77@syzkaller.appspotmail.com
+Fixes: 1e6fa5216a0e ("io_uring: COW io_identity on mismatch")
 
->
-> > +     page_huge_pte(page) = list_first_entry_or_null(&pgtable->lru,
-> > +                                                    struct page, lru);
-> > +     if (page_huge_pte(page))
-> > +             list_del(&pgtable->lru);
-> > +     return page_to_virt(pgtable);
-> > +}
->
-> At the risk of adding more code, I think it would be nice to return a
-> pagetable_t?
-> So it is more coherent with the name of the function and with what
-> we are doing.
+==================================================================
+BUG: KASAN: use-after-free in io_uring_show_cred+0x5bb/0x5f0 fs/io_uring.c:8921
+Read of size 8 at addr ffff8880132a04a0 by task syz-executor141/8511
 
-Yeah.
+CPU: 0 PID: 8511 Comm: syz-executor141 Not tainted 5.10.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x4c8 mm/kasan/report.c:385
+ __kasan_report mm/kasan/report.c:545 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:562
+ io_uring_show_cred+0x5bb/0x5f0 fs/io_uring.c:8921
+ idr_for_each+0x113/0x220 lib/idr.c:208
+ __io_uring_show_fdinfo fs/io_uring.c:8974 [inline]
+ io_uring_show_fdinfo+0x923/0xda0 fs/io_uring.c:8996
+ seq_show+0x4a8/0x700 fs/proc/fd.c:65
+ seq_read+0x432/0x1070 fs/seq_file.c:208
+ do_loop_readv_writev fs/read_write.c:761 [inline]
+ do_loop_readv_writev fs/read_write.c:748 [inline]
+ do_iter_read+0x48e/0x6e0 fs/read_write.c:803
+ vfs_readv+0xe5/0x150 fs/read_write.c:921
+ do_preadv fs/read_write.c:1013 [inline]
+ __do_sys_preadv fs/read_write.c:1063 [inline]
+ __se_sys_preadv fs/read_write.c:1058 [inline]
+ __x64_sys_preadv+0x231/0x310 fs/read_write.c:1058
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4403b9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffedd6269c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007ffedd6269d0 RCX: 00000000004403b9
+RDX: 0000000000000001 RSI: 0000000020001400 RDI: 0000000000000004
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 65732f636f72702f
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401c20
+R13: 0000000000401cb0 R14: 0000000000000000 R15: 0000000000000000
 
->
-> It is a pity we cannot converge these and pgtable_trans_huge_*.
-> They share some code but it is different enough.
->
-> > +static int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
-> > +{
-> > +     int i;
-> > +     pte_t *pte_p;
-> > +     unsigned int nr = nr_pgtable(h);
-> > +
-> > +     if (!nr)
-> > +             return 0;
-> > +
-> > +     vmemmap_pgtable_init(page);
->
-> Maybe just open code this one?
+Allocated by task 4887:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xc2/0xd0 mm/kasan/common.c:461
+ kmalloc include/linux/slab.h:557 [inline]
+ kzalloc include/linux/slab.h:664 [inline]
+ tomoyo_encode2.part.0+0xe9/0x3a0 security/tomoyo/realpath.c:45
+ tomoyo_encode2 security/tomoyo/realpath.c:31 [inline]
+ tomoyo_encode+0x28/0x50 security/tomoyo/realpath.c:80
+ tomoyo_realpath_from_path+0x186/0x620 security/tomoyo/realpath.c:288
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x21b/0x400 security/tomoyo/file.c:822
+ security_inode_getattr+0xcf/0x140 security/security.c:1279
+ vfs_getattr fs/stat.c:121 [inline]
+ vfs_fstat+0x43/0xb0 fs/stat.c:146
+ __do_sys_newfstat+0x81/0x100 fs/stat.c:386
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Sorry. I don't quite understand what it means. Could you explain?
+Freed by task 4887:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0x102/0x140 mm/kasan/common.c:422
+ slab_free_hook mm/slub.c:1544 [inline]
+ slab_free_freelist_hook+0x5d/0x150 mm/slub.c:1577
+ slab_free mm/slub.c:3142 [inline]
+ kfree+0xdb/0x360 mm/slub.c:4124
+ tomoyo_path_perm+0x23d/0x400 security/tomoyo/file.c:842
+ security_inode_getattr+0xcf/0x140 security/security.c:1279
+ vfs_getattr fs/stat.c:121 [inline]
+ vfs_fstat+0x43/0xb0 fs/stat.c:146
+ __do_sys_newfstat+0x81/0x100 fs/stat.c:386
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff8880132a0480
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 32 bytes inside of
+ 96-byte region [ffff8880132a0480, ffff8880132a04e0)
+The buggy address belongs to the page:
+page:000000005ad008dd refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x132a0
+flags: 0xfff00000000200(slab)
+raw: 00fff00000000200 ffffea0000935fc0 0000000700000007 ffff888010041780
+raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff8880132a0380: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880132a0400: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+>ffff8880132a0480: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                               ^
+ ffff8880132a0500: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff8880132a0580: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+==================================================================
 
 
->
-> > +static inline void vmemmap_pgtable_free(struct hstate *h, struct page *page)
-> > +{
-> > +     pte_t *pte_p;
-> > +
-> > +     if (!nr_pgtable(h))
-> > +             return;
-> > +
-> > +     while ((pte_p = vmemmap_pgtable_withdraw(page)))
-> > +             pte_free_kernel(&init_mm, pte_p);
->
-> As mentioned above, move the pgtable_t check from vmemmap_pgtable_withdraw
-> in here.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-OK.
-
->
->
-> >  static void prep_new_huge_page(struct hstate *h, struct page *page, int nid)
-> >  {
-> > +     /* Must be called before the initialization of @page->lru */
-> > +     vmemmap_pgtable_free(h, page);
-> > +
-> >       INIT_LIST_HEAD(&page->lru);
-> >       set_compound_page_dtor(page, HUGETLB_PAGE_DTOR);
-> >       set_hugetlb_cgroup(page, NULL);
-> > @@ -1783,6 +1892,14 @@ static struct page *alloc_fresh_huge_page(struct hstate *h,
-> >       if (!page)
-> >               return NULL;
-> >
-> > +     if (vmemmap_pgtable_prealloc(h, page)) {
-> > +             if (hstate_is_gigantic(h))
-> > +                     free_gigantic_page(page, huge_page_order(h));
-> > +             else
-> > +                     put_page(page);
-> > +             return NULL;
-> > +     }
-> > +
->
-> I must confess I am bit puzzled.
->
-> IIUC, in this patch we are just adding the helpers to create/tear the page
-> tables.
-> I do not think we actually need to call vmemmap_pgtable_prealloc/vmemmap_pgtable_free, do we?
-> In the end, we are just allocating pages for pagetables and then free them shortly.
->
-> I think it would make more sense to add the calls when they need to be?
-
-OK,  will do. Thanks very much.
-
->
->
-> --
-> Oscar Salvador
-> SUSE L3
-
-
-
---
-Yours,
-Muchun
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
