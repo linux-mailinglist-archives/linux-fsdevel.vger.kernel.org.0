@@ -2,114 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBCA2A8928
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 22:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C3D2A898B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 23:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732533AbgKEVeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Nov 2020 16:34:22 -0500
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53071 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732046AbgKEVeW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Nov 2020 16:34:22 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 8BE3B3AC7B4;
-        Fri,  6 Nov 2020 08:34:17 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kamtb-0085O1-As; Fri, 06 Nov 2020 08:34:15 +1100
-Date:   Fri, 6 Nov 2020 08:34:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        fdmanana@kernel.org
-Subject: Re: [RFC PATCH] vfs: remove lockdep bogosity in __sb_start_write
-Message-ID: <20201105213415.GD7391@dread.disaster.area>
-References: <20201103173300.GF7123@magnolia>
- <20201103173921.GA32219@infradead.org>
- <20201103183444.GH7123@magnolia>
- <20201103184659.GA19623@infradead.org>
- <20201103193750.GK7123@magnolia>
+        id S1732581AbgKEWHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Nov 2020 17:07:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732517AbgKEWHt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 5 Nov 2020 17:07:49 -0500
+Received: from gmail.com (unknown [104.132.1.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 466352078E;
+        Thu,  5 Nov 2020 22:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604614069;
+        bh=178huzaFZ/hAY5sYLanFhkUTFNiQNJfZdx7VDjMneC0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jNn8K5XKu30RZm07Z9rmMLpJnTPLp3iYQl7n6KByggBgD6eZc83m8qrNMdo2DKd5I
+         WYq6t+0VFTFz3CbRrj/XbZ5bHumeWHXdz5ugvtxA/L8lFwt0fAQrULxT/HK2YwM/eP
+         FRs44fyFm7R4UDIqefkUUCi3IxmH3d7AcwGltpgI=
+Date:   Thu, 5 Nov 2020 14:07:45 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        hch@infradead.org
+Subject: Re: [PATCH v11 1/4] security: add inode_init_security_anon() LSM hook
+Message-ID: <20201105220745.GB2555324@gmail.com>
+References: <20201105213324.3111570-1-lokeshgidra@google.com>
+ <20201105213324.3111570-2-lokeshgidra@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201103193750.GK7123@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=nNwsprhYR40A:10 a=7-415B0cAAAA:8
-        a=3DOAYw_nkP5Yn2ZDAVAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20201105213324.3111570-2-lokeshgidra@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 11:37:50AM -0800, Darrick J. Wong wrote:
-> On Tue, Nov 03, 2020 at 06:46:59PM +0000, Christoph Hellwig wrote:
-> > On Tue, Nov 03, 2020 at 10:34:44AM -0800, Darrick J. Wong wrote:
-> > > > Please split the function into __sb_start_write and
-> > > > __sb_start_write_trylock while you're at it..
-> > > 
-> > > Any thoughts on this patch itself?  I don't feel like I have 100% of the
-> > > context to know whether the removal is a good idea for non-xfs
-> > > filesystems, though I'm fairly sure the current logic is broken.
-> > 
-> > The existing logic looks pretty bogus to me as well.  Did you try to find
-> > the discussion that lead to it?
+On Thu, Nov 05, 2020 at 01:33:21PM -0800, Lokesh Gidra wrote:
+> This change adds a new LSM hook, inode_init_security_anon(), that
+> will be used while creating secure anonymous inodes.
+
+Will be used to do what?  To assign a security context to the inode and to
+allow/deny creating it, right?
+
 > 
-> TBH I don't know where the discussion happened.  The "convert to
-> trylock" behavior first appeared as commit 5accdf82ba25c back in 2012;
-> that commit seems to have come from v6 of a patch[1] that Jan Kara sent
-> to try to fix fs freeze handling back in 2012.  The behavior was not in
-> the v5[0] patch, nor was there any discussion for any of the v5 patches
-> that would suggest why things changed from v5 to v6.
-> 
-> Dave and I were talking about this on IRC yesterday, and his memory
-> thought that this was lockdep trying to handle xfs taking intwrite
-> protection while handling a write (or page_mkwrite) operation.  I'm not
-> sure where "XFS for example gets freeze protection on internal level
-> twice in some cases" would actually happen -- did xfs support nested
-> transactions in the past?  We definitely don't now, so I don't think the
-> comment is valid anymore.
-> 
-> The last commit to touch this area was f4b554af9931 (in 2015), which
-> says that Dave explained that the trylock hack + comment could be
-> removed, but the patch author never did that, and lore doesn't seem to
-> know where or when Dave actually said that?
+> The new hook accepts an optional context_inode parameter that
+> callers can use to provide additional contextual information to
+> security modules for granting/denying permission to create an anon-
+> inode of the same type.
 
-I'm pretty sure this "nesting internal freeze references" stems from
-the fact we log and flush the superblock after fulling freezing the
-filesystem to dirty the journal so recovery after a crash while
-frozen handles unlinked inodes.
+It looks like the hook also uses the context_inode parameter to assign a
+security context to the inode.  Is that correct?  It looks like that's what the
+code does, so if you could get the commit messages in sync, that would be
+helpful.  I'm actually still not completely sure I'm understanding the intent
+here, given that different places say different things.
 
-The high level VFS freeze annotations were not able to handle
-running this transaction when transactions were supposed to already
-be blocked and drained, so there was a special hack to hide it from
-lockdep. Then we ended up hiding it from the VFS via
-XFS_TRANS_NO_WRITECOUNT in xfs_sync_sb() because we needed it in
-more places than just freeze (e.g. the log covering code
-run by the background log worker). It's kinda documented here:
-
-/*
- * xfs_sync_sb
- *
- * Sync the superblock to disk.
- *
- * Note that the caller is responsible for checking the frozen state of the
- * filesystem. This procedure uses the non-blocking transaction allocator and
- * thus will allow modifications to a frozen fs. This is required because this
- * code can be called during the process of freezing where use of the high-level
- * allocator would deadlock.
- */
-
-So, AFAICT, the whole "XFS nests internal transactions" lockdep 
-handling in __sb_start_write() has been unnecessary for quite a few
-years now....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+- Eric
