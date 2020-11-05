@@ -2,122 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 612612A8ABE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 00:28:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD7B02A8B04
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 00:49:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732619AbgKEX2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Nov 2020 18:28:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        id S1731965AbgKEXtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Nov 2020 18:49:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732577AbgKEX2p (ORCPT
+        with ESMTP id S1726801AbgKEXtT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Nov 2020 18:28:45 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8994C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Nov 2020 15:28:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=pFL+M6HtjcUDtRHTDpu2lDM6F4WkBnUB2GcZyuAE2/4=; b=EB5x//Loba6VdnTbxMax6ALOg6
-        pu0ApAc+x8IDCQkk9qsik1pglSsE0UiIfXzfvO3ZaQaK7Defa5N/ddWMBLTZZ5Wh5/MzKLZH33z0e
-        2Ksexz2U0jEE3Zhmj7eSi0ZNCD42dlTO2tjsKd1xh9iQPuI+41xwBxFQY1fMTNe+d+t/vVIhGUDzZ
-        aHG8fsif6Abt3G17YBXZ1X10ODRuN/aITOBsUWubJzptEQjdsDEUEcev2e054fJtvbPM72WHyb/lr
-        s7YY4HrcqQfZfX/TEgr2nfirTZfJMyADo1TqxILr4hSzmAZd3bItPMfUkqmSWO7tBkHNxRneIbV+q
-        OIuVRMNg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kaogN-00062i-Do; Thu, 05 Nov 2020 23:28:43 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH v2 3/3] bcachefs: Use attach_page_private and detach_page_private
-Date:   Thu,  5 Nov 2020 23:28:39 +0000
-Message-Id: <20201105232839.23100-4-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20201105232839.23100-1-willy@infradead.org>
+        Thu, 5 Nov 2020 18:49:19 -0500
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C47C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Nov 2020 15:49:19 -0800 (PST)
+Received: by mail-qv1-xf44.google.com with SMTP id ed14so1616678qvb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Nov 2020 15:49:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=DgoUim0RE7VTsBQkLODxQAwVVEN9jPOMsmq/urN5h1E=;
+        b=iNRh/yc9uT4ydg+RmJQG5qK52zw+7ZSfW/zgRk8lB/8B5p6xN9PMLIwTFOW//sZ4fn
+         Jhs+VtK2428HW9x+CzbIwA1D4Hd7qEiJf9tOgYMYFQ5N4p0pL05Yq/BT2KnAEZtL2hw9
+         izP/lI3s+bCyfx12i0/bcKF2lNccwjyxEzgaQqcFMOLSGc++k9d2nbahKVmISQXbTT40
+         4m5ME50Rnut7y0J1jpPo8bErpn1ALM3qjWxp11e0cECHVMIxfUxSCtbHo2RVAewce2rO
+         KTdIi9mHYtkcNBc0ToYCCw4YizYYl9BAOqpOj817TI7wgGCzJgVLjLTXPuA+xYEfLfkp
+         wzOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DgoUim0RE7VTsBQkLODxQAwVVEN9jPOMsmq/urN5h1E=;
+        b=cq/s1Hlu3LxHzV5RKTtouH4f9KRwrwAlEqbEU2FbaWJOdGM6YdEo5yQb5OHsi3F0eK
+         bqlagKSZE5hmS5fjd3S2hCSlRAHZ0nYOL1xUrTgQDC13XWX4Hvcp++Qav3FyUnV/fOzg
+         moxRxSiJtC4/reRq+QryruE3M7woD5cKnutYDNyDXEuL1tH0c4mlx2MihZPjUoSrSGln
+         m6PbC3RO2Rl+i7km83NHBKcMwgqfQ3CoEGxz+PO5S8H09vveGP7uoIIp5EF48xZg/wBJ
+         c03LX2KZysiXD2itOiLKQambQhlcT1a4fMiEfE9KS0JzOYLHUdFCijzBBRAC2ySve9p8
+         zeKg==
+X-Gm-Message-State: AOAM531wrr7pMLJt6KTsylj9+tAN/P5FWs8dn6CMYLR/HtpKLpvVJfpO
+        pf1lC3hKLDGsPd55TgEqiQ==
+X-Google-Smtp-Source: ABdhPJyeAMvJkFh50vMnXayDBR6yNOZTMAsb9BhGoLa4qcWzo554sQa6xeq2bqFl/0w9No2YUE6v3g==
+X-Received: by 2002:a0c:b525:: with SMTP id d37mr4704602qve.31.1604620158685;
+        Thu, 05 Nov 2020 15:49:18 -0800 (PST)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id o20sm1877106qtw.30.2020.11.05.15.49.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Nov 2020 15:49:18 -0800 (PST)
+Date:   Thu, 5 Nov 2020 18:49:16 -0500
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] bcachefs: Convert to readahead
+Message-ID: <20201105234916.GC3365678@moria.home.lan>
 References: <20201105232839.23100-1-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201105232839.23100-1-willy@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These recently added helpers simplify the code.
+On Thu, Nov 05, 2020 at 11:28:36PM +0000, Matthew Wilcox (Oracle) wrote:
+> This version actually passes xfstests as opposed to freezing on
+> the first time you use readahead like v1 did.  I think there are
+> further simplifications that can be made, but this works.
+> 
+> Matthew Wilcox (Oracle) (3):
+>   bcachefs: Convert to readahead
+>   bcachefs: Remove page_state_init_for_read
+>   bcachefs: Use attach_page_private and detach_page_private
+> 
+>  fs/bcachefs/fs-io.c | 112 +++++++++-----------------------------------
+>  fs/bcachefs/fs-io.h |   3 +-
+>  fs/bcachefs/fs.c    |   2 +-
+>  3 files changed, 23 insertions(+), 94 deletions(-)
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/bcachefs/fs-io.c | 39 ++++++---------------------------------
- 1 file changed, 6 insertions(+), 33 deletions(-)
-
-diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
-index 46abf3bdf489..1eb69ed38b10 100644
---- a/fs/bcachefs/fs-io.c
-+++ b/fs/bcachefs/fs-io.c
-@@ -265,28 +265,13 @@ static inline struct bch_page_state *bch2_page_state(struct page *page)
- /* for newly allocated pages: */
- static void __bch2_page_state_release(struct page *page)
- {
--	struct bch_page_state *s = __bch2_page_state(page);
--
--	if (!s)
--		return;
--
--	ClearPagePrivate(page);
--	set_page_private(page, 0);
--	put_page(page);
--	kfree(s);
-+	kfree(detach_page_private(page));
- }
- 
- static void bch2_page_state_release(struct page *page)
- {
--	struct bch_page_state *s = bch2_page_state(page);
--
--	if (!s)
--		return;
--
--	ClearPagePrivate(page);
--	set_page_private(page, 0);
--	put_page(page);
--	kfree(s);
-+	EBUG_ON(!PageLocked(page));
-+	__bch2_page_state_release(page);
- }
- 
- /* for newly allocated pages: */
-@@ -300,13 +285,7 @@ static struct bch_page_state *__bch2_page_state_create(struct page *page,
- 		return NULL;
- 
- 	spin_lock_init(&s->lock);
--	/*
--	 * migrate_page_move_mapping() assumes that pages with private data
--	 * have their count elevated by 1.
--	 */
--	get_page(page);
--	set_page_private(page, (unsigned long) s);
--	SetPagePrivate(page);
-+	attach_page_private(page, s);
- 	return s;
- }
- 
-@@ -608,14 +587,8 @@ int bch2_migrate_page(struct address_space *mapping, struct page *newpage,
- 	if (ret != MIGRATEPAGE_SUCCESS)
- 		return ret;
- 
--	if (PagePrivate(page)) {
--		ClearPagePrivate(page);
--		get_page(newpage);
--		set_page_private(newpage, page_private(page));
--		set_page_private(page, 0);
--		put_page(page);
--		SetPagePrivate(newpage);
--	}
-+	if (PagePrivate(page))
-+		attach_page_private(newpage, detach_page_private(page));
- 
- 	if (mode != MIGRATE_SYNC_NO_COPY)
- 		migrate_page_copy(newpage, page);
--- 
-2.28.0
-
+Thanks! Applied.
