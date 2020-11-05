@@ -2,114 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 125F22A73A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 01:16:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B04FD2A74F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Nov 2020 02:33:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732648AbgKEAPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Nov 2020 19:15:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52592 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733094AbgKEANH (ORCPT
+        id S1732782AbgKEBdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Nov 2020 20:33:46 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7591 "EHLO
+        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731131AbgKEBdq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Nov 2020 19:13:07 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E78C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Nov 2020 16:13:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SEQAqZtKm/3mthF4BjoqrZXyqbdphKwVws9Ga2oR7lc=; b=uEFqFxLI3jl0UIRvF09syqWnrz
-        igKMq8bnPY40xYM0fU1/aRkd8oGyNTRVjK59xJTmW9gQlD/cpYpnUyq2w0sFjy5RIwHLnBGUC1+BW
-        VU7dJA/7FLUrX7QEuz9N5tkPN2duai46gXLVNm6gX7s06swynlmdIjBXFoGg+cAEUeaKl6DK3ciXc
-        4eLhhvSBdXiaHKa81NCCIplBlv5RS6QVMNNzmYyIltP9zGwWllplJwBHkHSTueqTWmVuhIoGPbpfB
-        aOl0DOznxoOaS78Hw5cYz/BtVPbZm8n3Bwb17EQ9v6LEh1H0s/V6DJzzz+35rcqomMZ1uMqx33crc
-        GLL+Ttag==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kaSti-0001rh-E1; Thu, 05 Nov 2020 00:13:02 +0000
-Date:   Thu, 5 Nov 2020 00:13:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, hch@lst.de
-Subject: Re: [PATCH v2 02/18] mm/filemap: Remove dynamically allocated array
- from filemap_read
-Message-ID: <20201105001302.GF17076@casper.infradead.org>
-References: <20201104204219.23810-1-willy@infradead.org>
- <20201104204219.23810-3-willy@infradead.org>
- <20201104213005.GB3365678@moria.home.lan>
+        Wed, 4 Nov 2020 20:33:46 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CRQyp4Cb7zLpG5;
+        Thu,  5 Nov 2020 09:33:38 +0800 (CST)
+Received: from [127.0.0.1] (10.174.176.238) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.487.0; Thu, 5 Nov 2020
+ 09:33:34 +0800
+Subject: Re: [PATCH] fuse: check whether fuse_request_alloc returns NULL in
+ fuse_simple_request
+From:   Zhiqiang Liu <liuzhiqiang26@huawei.com>
+To:     <miklos@szeredi.hu>, <mszeredi@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        linfeilong <linfeilong@huawei.com>,
+        lihaotian <lihaotian9@huawei.com>
+References: <ffefa3f4-4090-f7dd-97d4-27b8a8cb262f@huawei.com>
+Message-ID: <b99b141d-acb8-954e-c932-7d7f402db9b3@huawei.com>
+Date:   Thu, 5 Nov 2020 09:33:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201104213005.GB3365678@moria.home.lan>
+In-Reply-To: <ffefa3f4-4090-f7dd-97d4-27b8a8cb262f@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.176.238]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 04, 2020 at 04:30:05PM -0500, Kent Overstreet wrote:
-> On Wed, Nov 04, 2020 at 08:42:03PM +0000, Matthew Wilcox (Oracle) wrote:
-> > Increasing the batch size runs into diminishing returns.  It's probably
-> > better to make, eg, three calls to filemap_get_pages() than it is to
-> > call into kmalloc().
-> 
-> I have to disagree. Working with PAGEVEC_SIZE pages is eventually going to be
-> like working with 4k pages today, and have you actually read the slub code for
-> the kmalloc fast path? It's _really_ fast, there's no atomic operations and it
-> doesn't even have to disable preemption - which is why you never see it showing
-> up in profiles ever since we switched to slub.
-> 
-> It would however be better to have a standard abstraction for this rather than
-> open coding it - perhaps adding it to the pagevec code. Please don't just drop
-> it, though.
+ping ...
 
-I have the beginnings of a patch for that, but I got busy with other stuff
-and didn't finish it.
+On 2020/10/22 21:13, Zhiqiang Liu wrote:
+> 
+> In fuse_simple_request func, we will call fuse_request_alloc func to alloc
+> one request from fuse_req_cachep when args->force is true. However, the
+> return value of fuse_request_alloc func is not checked whether it is NULL.
+> If allocating request fails, access-NULL-pointer problem will occur.
+> 
+> Here, we check the return value of fuse_request_alloc func.
+> 
+> Fixes: 7213394c4e18 ("fuse: simplify request allocation")
+> Signed-off-by: Zhiqiang Liu <liuzhiqiang26@huawei.com>
+> Signed-off-by: Haotian Li <lihaotian9@huawei.com>
+> ---
+>  fs/fuse/dev.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 02b3c36b3676..f7dd33ae8e31 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -481,6 +481,8 @@ ssize_t fuse_simple_request(struct fuse_conn *fc, struct fuse_args *args)
+>  	if (args->force) {
+>  		atomic_inc(&fc->num_waiting);
+>  		req = fuse_request_alloc(GFP_KERNEL | __GFP_NOFAIL);
+> +		if (!req)
+> +			return -ENOMEM;
+> 
+>  		if (!args->nocreds)
+>  			fuse_force_creds(fc, req);
+> 
 
-diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
-index 081d934eda64..b067d8aab874 100644
---- a/include/linux/pagevec.h
-+++ b/include/linux/pagevec.h
-@@ -18,13 +18,21 @@ struct page;
- struct address_space;
- 
- struct pagevec {
--	unsigned char nr;
--	bool percpu_pvec_drained;
--	struct page *pages[PAGEVEC_SIZE];
-+	union {
-+		struct {
-+			unsigned char sz;
-+			unsigned char nr;
-+			bool percpu_pvec_drained;
-+			struct page *pages[];
-+		};
-+		void *__p[PAGEVEC_SIZE + 1];
-+	};
- };
- 
- void __pagevec_release(struct pagevec *pvec);
- void __pagevec_lru_add(struct pagevec *pvec);
-+struct pagevec *pagevec_alloc(unsigned int sz, gfp_t gfp);
-+void pagevec_free(struct pagevec *);
- unsigned pagevec_lookup_entries(struct pagevec *pvec,
- 				struct address_space *mapping,
- 				pgoff_t start, unsigned nr_entries,
-@@ -54,6 +62,7 @@ static inline unsigned pagevec_lookup_tag(struct pagevec *pvec,
- 
- static inline void pagevec_init(struct pagevec *pvec)
- {
-+	pvec->sz = PAGEVEC_SIZE;
- 	pvec->nr = 0;
- 	pvec->percpu_pvec_drained = false;
- }
-@@ -63,6 +72,11 @@ static inline void pagevec_reinit(struct pagevec *pvec)
- 	pvec->nr = 0;
- }
- 
-+static inline unsigned pagevec_size(struct pagevec *pvec)
-+{
-+	return pvec->sz;
-+}
-+
- static inline unsigned pagevec_count(struct pagevec *pvec)
- {
- 	return pvec->nr;
