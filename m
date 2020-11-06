@@ -2,94 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C9422AA156
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Nov 2020 00:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9576A2AA174
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Nov 2020 00:35:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbgKFXaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 18:30:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23807 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729331AbgKFXaE (ORCPT
+        id S1728220AbgKFXfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 18:35:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45228 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728214AbgKFXfo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 18:30:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604705402;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CNqa8rLlNR/p/YGNQDszmC868RyLFwjPjKeEsnCQpCE=;
-        b=d0D+csuJCHb4znGoACO2b/rFFoCC5E34VURf6Ovm49wxEHYyDRBws2zNzwdFvB+30DRvQ8
-        KpcFeV+see2R1Ixug6O5rbELsjOVfqy6UHn1lFBtnLaiO/xTDMttP5XmdxX7pSE8ibZ3R+
-        f5dNaE5RbyQvTjXeS1G1A1xoiSHyo7M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-141-iEbX96z9Mg-s24SOSMQm6g-1; Fri, 06 Nov 2020 18:29:59 -0500
-X-MC-Unique: iEbX96z9Mg-s24SOSMQm6g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69AD68049D0;
-        Fri,  6 Nov 2020 23:29:57 +0000 (UTC)
-Received: from x1.home (ovpn-112-213.phx2.redhat.com [10.3.112.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB4215D9CD;
-        Fri,  6 Nov 2020 23:29:56 +0000 (UTC)
-Date:   Fri, 6 Nov 2020 16:29:56 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        "Bonzini, Paolo" <pbonzini@redhat.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] vfio/virqfd: Drain events from eventfd in
- virqfd_wakeup()
-Message-ID: <20201106162956.5821c536@x1.home>
-In-Reply-To: <20201027135523.646811-3-dwmw2@infradead.org>
-References: <1faa5405-3640-f4ad-5cd9-89a9e5e834e9@redhat.com>
- <20201027135523.646811-1-dwmw2@infradead.org>
- <20201027135523.646811-3-dwmw2@infradead.org>
-Organization: Red Hat
+        Fri, 6 Nov 2020 18:35:44 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715DAC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Nov 2020 15:35:43 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id i6so4257239lfd.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 15:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eMoRYBx4DAMN87q/Qxn/vkeSV0JGOokfdGoi2qdQtlk=;
+        b=VQ+L+ATYA/FZIZUCETHW1K7D8w79F/MTq60EL9Ec3V4gnL9IJk8F3eb9idwCVvlRrc
+         8Ei7CiqYZhn9fJsh+UeL/UiWhSlZBoGexP7WNISG75CFbsrLzos5TPu5Mh5YQxnnOPjp
+         G1doOAZS+cP9vHOV84ZoEALRhSaqHK+v2uXvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eMoRYBx4DAMN87q/Qxn/vkeSV0JGOokfdGoi2qdQtlk=;
+        b=cFMPYl79DKd8ZAPu83m8k0ZK9CXyUTrMBHbr7Szfbxaekb+Od1BC5F5XJ5/TyqqY8z
+         VKuqUFj6jfCS8pBkgtjcpdyzzc+shTgaMncmFomdXBu6exYbtQLIZE83ipmGYO8Fdodl
+         LsoQptHxPvkk5FpxkSW1U+D6U393ex73OhjTOh2XKTdRZkaDlxKh4DSHjTp2GaWt4oMJ
+         lqc2koJYGqNpGYULIfcmAkeMO/8t4LtHNsX1aJjE5yh/bAwMfK2V5ARCZqKdiKu/BxgD
+         rluS8JJ6YHmLtzk481ikpG6ytVf6bu6ASA34nUgonD1ntbmRi7TXrIMzZAgHThrl1RG1
+         W/BQ==
+X-Gm-Message-State: AOAM530mZ+3175VR/mvXcfzOEJG0Tk2++umqlyKkq9DDOVbsnR2GLlb8
+        hzOgIdA7Yffh9SiU3/BVIjWqvlTf012qbQ==
+X-Google-Smtp-Source: ABdhPJwuwGiTYHTD3usHvytCWIsJ8MnThpRzM43uPDxsY0Edu5YpOUiAHTbmTQ6HKmlEmAH2XT/7Xg==
+X-Received: by 2002:ac2:5f93:: with SMTP id r19mr388603lfe.166.1604705741437;
+        Fri, 06 Nov 2020 15:35:41 -0800 (PST)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id q1sm313740lfj.306.2020.11.06.15.35.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Nov 2020 15:35:39 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id 74so4242871lfo.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 15:35:38 -0800 (PST)
+X-Received: by 2002:a19:4815:: with SMTP id v21mr1885811lfa.603.1604705738619;
+ Fri, 06 Nov 2020 15:35:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20201106231635.3528496-1-soheil.kdev@gmail.com>
+In-Reply-To: <20201106231635.3528496-1-soheil.kdev@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 6 Nov 2020 15:35:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whM-Cm52o1kBQD4eS3Wx=XWr_z7sq=H88pmyeK_9L0=VQ@mail.gmail.com>
+Message-ID: <CAHk-=whM-Cm52o1kBQD4eS3Wx=XWr_z7sq=H88pmyeK_9L0=VQ@mail.gmail.com>
+Subject: Re: [PATCH 0/8] simplify ep_poll
+To:     Soheil Hassas Yeganeh <soheil.kdev@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        Guantao Liu <guantaol@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 27 Oct 2020 13:55:22 +0000
-David Woodhouse <dwmw2@infradead.org> wrote:
+On Fri, Nov 6, 2020 at 3:17 PM Soheil Hassas Yeganeh
+<soheil.kdev@gmail.com> wrote:
+>
+> The first patch in the series is a fix for the epoll race in
+> presence of timeouts, so that it can be cleanly backported to all
+> affected stable kernels.
+>
+> The rest of the patch series simplify the ep_poll() implementation.
+> Some of these simplifications result in minor performance enhancements
+> as well.  We have kept these changes under self tests and internal
+> benchmarks for a few days, and there are minor (1-2%) performance
+> enhancements as a result.
 
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> Don't allow the events to accumulate in the eventfd counter, drain them
-> as they are handled.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
+From just looking at the patches (not the end result - I didn't
+actually apply them), it looks sane to me.
 
-Acked-by: Alex Williamson <alex.williamson@redhat.com>
-
-Paolo, I assume you'll add this to your queue.  Thanks,
-
-Alex
-
->  drivers/vfio/virqfd.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/vfio/virqfd.c b/drivers/vfio/virqfd.c
-> index 997cb5d0a657..414e98d82b02 100644
-> --- a/drivers/vfio/virqfd.c
-> +++ b/drivers/vfio/virqfd.c
-> @@ -46,6 +46,9 @@ static int virqfd_wakeup(wait_queue_entry_t *wait, unsigned mode, int sync, void
->  	__poll_t flags = key_to_poll(key);
->  
->  	if (flags & EPOLLIN) {
-> +		u64 cnt;
-> +		eventfd_ctx_do_read(virqfd->eventfd, &cnt);
-> +
->  		/* An event has been signaled, call function */
->  		if ((!virqfd->handler ||
->  		     virqfd->handler(virqfd->opaque, virqfd->data)) &&
-
+             Linus
