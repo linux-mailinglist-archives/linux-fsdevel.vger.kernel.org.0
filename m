@@ -2,86 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E66A2A92B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 10:29:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B607A2A92CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 10:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbgKFJ3l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 04:29:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53114 "EHLO
+        id S1726654AbgKFJce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 04:32:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbgKFJ3k (ORCPT
+        with ESMTP id S1725868AbgKFJce (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 04:29:40 -0500
-Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58B48C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Nov 2020 01:29:40 -0800 (PST)
-Received: by mail-vk1-xa2f.google.com with SMTP id m184so102749vkb.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 01:29:40 -0800 (PST)
+        Fri, 6 Nov 2020 04:32:34 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F98C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Nov 2020 01:32:34 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id z24so511505pgk.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 01:32:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cj9aU3bU6Mlez1/jNuR19+XJKdPcL+MH8EXhEAlY4Uo=;
-        b=lol22UeLwiMXamApuDJFhU2xmyUymt91OXHzV2LUp33ZXuJpYQgpx6XtX1QJ6WmtCC
-         OZYJnZAuJI/irOUzVyzDgJlNyZ7+w+mSX4A3mORO2OG2i9eJqfgqx8LAU5/d0gfnjsHV
-         iVMnqrg5+zRNArjxud2hqEv5d2S6/ypVev6HY=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PxvV9u6M80cl4hcgbDJhd9HztGYBoR3NGSphqmqlCWw=;
+        b=AlLe/9RfaBW00flnUeevAYon649rL1Cwp17puWi68VuZFne3RN8s7hRonCVnE47SaR
+         SwuEqNpfRJx05e997/hdgEU0YfTnBiwIEBNQ6+qTaHyt+0YATVgHwNCMKeACF0oJFNBu
+         I4YhWPtEe1/NkVW8LtSESqMyUNuEE4VX+nunwIL3ZUQ09ym0FrGl6PytrF/g9JgcTDe+
+         DByA1qbrLlXiRNfSZpHL503DDCFXxeIarMiScGPn6aKIDOQoraM8T9l8nggq1W2jX6Fn
+         99Liok8D9cswCnav23j1MkAbEaXQSxFSpltnnxk6q5gLc8T2mwacx2SfBfq2ns6XXpS8
+         E0sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cj9aU3bU6Mlez1/jNuR19+XJKdPcL+MH8EXhEAlY4Uo=;
-        b=aHFLyVtx/Xoazltwk9Tx9et3JRNHvoKZkRsvQ2NlvFplgquRMsge55olsBZ4HCbWWe
-         /c337QIRPfxciISzTVrivK7SGNLOW/cqKjdNsKDXVmEJYgCVNbNvc2hB6q2eltmBgoF0
-         6e01NoxPxW9nIfD27+pGc8krxC2Gtp969YY7sGi3zlY5I2FUBIUFqCwPoNyd44Yq2AoP
-         xZ/z06hSSwwZPfnli8S8SN0YSInxqjh4gGk4JpsXMI4UpVAjzCaotsHt3vqR7OxU4A6V
-         4KwqWCxXBR60PfABqJFJC/xe+31+dZyuA3XwO5hIuZqsfkdOa5ROcmFgaLyhmYE3x7Vk
-         LM9Q==
-X-Gm-Message-State: AOAM531QnbfZ7LoNBW9nA6pbdoMizB7Rxwi34PalTSkwpxVb9PntZH8e
-        Lg+ewrIeVOXkfvH+mLkhs23nNdhgHTZ3TeApYNwH0g==
-X-Google-Smtp-Source: ABdhPJwYMBk6DgsNBPwPBzdMrNTso1k3rWC9JOmOv5gtlW3KF8WbhOME+GBbu7AT/j3IwLPruz/DpS+rTdRepgo7JhY=
-X-Received: by 2002:ac5:c80e:: with SMTP id y14mr426190vkl.3.1604654979446;
- Fri, 06 Nov 2020 01:29:39 -0800 (PST)
-MIME-Version: 1.0
-References: <c4cb4b41655bc890b9dbf40bd2c133cbcbef734d.camel@redhat.com>
- <89f0dbf6713ebd44ec519425e3a947e71f7aed55.camel@redhat.com>
- <CAJfpegv4jLewQ4G_GdxraTE8fGHy7-d52gPSi4ZAOp0N4aYJnw@mail.gmail.com> <77529e99ca9c2d228a67dd8d789d83afdcd1ace3.camel@redhat.com>
-In-Reply-To: <77529e99ca9c2d228a67dd8d789d83afdcd1ace3.camel@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 6 Nov 2020 10:29:28 +0100
-Message-ID: <CAJfpegsuYAW+W7xN3QGdfzEHROdMhVOJS5K=u8JQe-_WaY8VsA@mail.gmail.com>
-Subject: Re: WARN_ON(fuse_insert_writeback(root, wpa)) in tree_insert()
-To:     Qian Cai <cai@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PxvV9u6M80cl4hcgbDJhd9HztGYBoR3NGSphqmqlCWw=;
+        b=qDnlNLJ2KPo451Rnbp/oNoduFe2aeEd+/nwWPfNFNgK1hps95VRHZHz2GZrcOR+RAV
+         PoWMew1D2+rx7hzvWrDsX+dJBblmcMATy+eS5JGmKg0VeU0MRaokLUEkbucHmyMIfCIc
+         KxiW3T9ZFpBL5o7r5z1mqDBl3lublgNP8fL8GCCiWrsP7GdIOhseSI/wBdA6mKRHjMnr
+         ZGBFlxLv5MUveMIMg2J/RElUKDdx2aMy+Gv7SyE+6vWEFje9uWiLl9OTa60cJSX7uk/S
+         D1qKAA80zJMC7Fw1KtW/AtK1b1+oHA7MeHtJHrSrwxBijWs0Lf7SqZFBVh7chX3Cc0PF
+         hbrg==
+X-Gm-Message-State: AOAM531sERfscYVh6zkTQGA8WZwY0NT5GnAOhFkekRCnI178nnQWiwzg
+        GtkKZ8P0VFgrhBi7Poz2IQ==
+X-Google-Smtp-Source: ABdhPJwJEUHbzxywpowgU1LuAJjhUc6GsVtkqPxgRT3D6ZEOx9E2gWVW2INhaeKCuvYeiUUxOfbvnA==
+X-Received: by 2002:a17:90a:7089:: with SMTP id g9mr1624385pjk.47.1604655153897;
+        Fri, 06 Nov 2020 01:32:33 -0800 (PST)
+Received: from he-cluster.localdomain (67.216.221.250.16clouds.com. [67.216.221.250])
+        by smtp.gmail.com with ESMTPSA id a24sm1374678pfl.174.2020.11.06.01.32.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Nov 2020 01:32:33 -0800 (PST)
+From:   xiakaixu1987@gmail.com
+X-Google-Original-From: kaixuxia@tencent.com
+To:     viro@zeniv.linux.org.uk, hch@lst.de
+Cc:     linux-fsdevel@vger.kernel.org, Kaixu Xia <kaixuxia@tencent.com>
+Subject: [PATCH] fs: Use true,false for bool variable
+Date:   Fri,  6 Nov 2020 17:32:28 +0800
+Message-Id: <1604655148-1542-1-git-send-email-kaixuxia@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 2, 2020 at 3:26 PM Qian Cai <cai@redhat.com> wrote:
->
-> On Thu, 2020-10-29 at 16:20 +0100, Miklos Szeredi wrote:
-> > On Thu, Oct 29, 2020 at 4:02 PM Qian Cai <cai@redhat.com> wrote:
-> > > On Wed, 2020-10-07 at 16:08 -0400, Qian Cai wrote:
-> > > > Running some fuzzing by a unprivileged user on virtiofs could trigger the
-> > > > warning below. The warning was introduced not long ago by the commit
-> > > > c146024ec44c ("fuse: fix warning in tree_insert() and clean up writepage
-> > > > insertion").
-> > > >
-> > > > From the logs, the last piece of the fuzzing code is:
-> > > >
-> > > > fgetxattr(fd=426, name=0x7f39a69af000, value=0x7f39a8abf000, size=1)
-> > >
-> > > I can still reproduce it on today's linux-next. Any idea on how to debug it
-> > > further?
-> >
-> > Can you please try the attached patch?
->
-> It has survived the testing over the weekend. There is a issue that virtiofsd
-> hung, but it looks like a separate issue.
+From: Kaixu Xia <kaixuxia@tencent.com>
 
-Thanks very much for the testing.   Queued up the patch.
+Fix the following coccinelle reports:
 
-Miklos
+./fs/ioctl.c:355:4-12: WARNING: Assignment of 0/1 to bool variable
+
+Signed-off-by: Kaixu Xia <kaixuxia@tencent.com>
+---
+ fs/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ioctl.c b/fs/ioctl.c
+index 4e6cc0a7d69c..732876e302b5 100644
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -352,7 +352,7 @@ static int __generic_block_fiemap(struct inode *inode,
+ 			 */
+ 			if (!past_eof &&
+ 			    blk_to_logical(inode, start_blk) >= isize)
+-				past_eof = 1;
++				past_eof = true;
+ 
+ 			/*
+ 			 * First hole after going past the EOF, this is our
+-- 
+2.20.0
+
