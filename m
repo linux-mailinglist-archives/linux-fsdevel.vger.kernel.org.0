@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C78232A986D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 16:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 910012A986A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 16:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbgKFPVc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 10:21:32 -0500
-Received: from raptor.unsafe.ru ([5.9.43.93]:49014 "EHLO raptor.unsafe.ru"
+        id S1727395AbgKFPVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 10:21:31 -0500
+Received: from raptor.unsafe.ru ([5.9.43.93]:49018 "EHLO raptor.unsafe.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbgKFPVc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 10:21:32 -0500
+        id S1726813AbgKFPVa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Nov 2020 10:21:30 -0500
 Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-103-122-167.net.upcbroadband.cz [89.103.122.167])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 41BAB20A04;
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 8542620A0A;
         Fri,  6 Nov 2020 15:15:23 +0000 (UTC)
 From:   Alexey Gladkov <gladkov.alexey@gmail.com>
 To:     LKML <linux-kernel@vger.kernel.org>,
@@ -23,9 +23,9 @@ To:     LKML <linux-kernel@vger.kernel.org>,
 Cc:     Alexey Gladkov <legion@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Kees Cook <keescook@chromium.org>
-Subject: [PATCH v4 1/3] proc: Relax check of mount visibility
-Date:   Fri,  6 Nov 2020 16:15:10 +0100
-Message-Id: <6ab3588965e4451cc01a80da7ae4c82f9701465d.1604675649.git.gladkov.alexey@gmail.com>
+Subject: [PATCH v4 2/3] proc: Show /proc/self/net only for CAP_NET_ADMIN
+Date:   Fri,  6 Nov 2020 16:15:11 +0100
+Message-Id: <8b31b58cd5331f86e6f5a927168ce3b8e97ca760.1604675649.git.gladkov.alexey@gmail.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <cover.1604675649.git.gladkov.alexey@gmail.com>
 References: <cover.1604675649.git.gladkov.alexey@gmail.com>
@@ -36,129 +36,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow to mount of procfs with subset=pid option even if the entire
-procfs is not fully accessible to the user.
+Cache the mounters credentials and make access to the net directories
+contingent of the permissions of the mounter of proc.
+
+Show /proc/self/net only if mounter has CAP_NET_ADMIN and if proc is
+mounted with subset=pid option.
 
 Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
 ---
- fs/namespace.c     | 27 ++++++++++++++++-----------
- fs/proc/root.c     | 17 ++++++++++-------
- include/linux/fs.h |  1 +
- 3 files changed, 27 insertions(+), 18 deletions(-)
+ fs/proc/proc_net.c      | 8 ++++++++
+ fs/proc/root.c          | 7 +++++++
+ include/linux/proc_fs.h | 1 +
+ 3 files changed, 16 insertions(+)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 4a0f600a3328..ab9d607921da 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3949,18 +3949,23 @@ static bool mnt_already_visible(struct mnt_namespace *ns,
- 		    ((mnt_flags & MNT_ATIME_MASK) != (new_flags & MNT_ATIME_MASK)))
- 			continue;
+diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+index dba63b2429f0..c43fc5c907db 100644
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -26,6 +26,7 @@
+ #include <linux/uidgid.h>
+ #include <net/net_namespace.h>
+ #include <linux/seq_file.h>
++#include <linux/security.h>
  
--		/* This mount is not fully visible if there are any
--		 * locked child mounts that cover anything except for
--		 * empty directories.
-+		/* If this filesystem is completely dynamic, then it
-+		 * makes no sense to check for any child mounts.
- 		 */
--		list_for_each_entry(child, &mnt->mnt_mounts, mnt_child) {
--			struct inode *inode = child->mnt_mountpoint->d_inode;
--			/* Only worry about locked mounts */
--			if (!(child->mnt.mnt_flags & MNT_LOCKED))
--				continue;
--			/* Is the directory permanetly empty? */
--			if (!is_empty_dir_inode(inode))
--				goto next;
-+		if (!(sb->s_iflags & SB_I_DYNAMIC)) {
-+			/* This mount is not fully visible if there are any
-+			 * locked child mounts that cover anything except for
-+			 * empty directories.
-+			 */
-+			list_for_each_entry(child, &mnt->mnt_mounts, mnt_child) {
-+				struct inode *inode = child->mnt_mountpoint->d_inode;
-+				/* Only worry about locked mounts */
-+				if (!(child->mnt.mnt_flags & MNT_LOCKED))
-+					continue;
-+				/* Is the directory permanetly empty? */
-+				if (!is_empty_dir_inode(inode))
-+					goto next;
-+			}
- 		}
- 		/* Preserve the locked attributes */
- 		*new_mnt_flags |= mnt_flags & (MNT_LOCK_READONLY | \
+ #include "internal.h"
+ 
+@@ -275,6 +276,7 @@ static struct net *get_proc_task_net(struct inode *dir)
+ 	struct task_struct *task;
+ 	struct nsproxy *ns;
+ 	struct net *net = NULL;
++	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
+ 
+ 	rcu_read_lock();
+ 	task = pid_task(proc_pid(dir), PIDTYPE_PID);
+@@ -287,6 +289,12 @@ static struct net *get_proc_task_net(struct inode *dir)
+ 	}
+ 	rcu_read_unlock();
+ 
++	if (net && (fs_info->pidonly == PROC_PIDONLY_ON) &&
++	    security_capable(fs_info->mounter_cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) < 0) {
++		put_net(net);
++		net = NULL;
++	}
++
+ 	return net;
+ }
+ 
 diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 5e444d4f9717..051ffe5e67ce 100644
+index 051ffe5e67ce..0ab90e24d9ae 100644
 --- a/fs/proc/root.c
 +++ b/fs/proc/root.c
-@@ -145,18 +145,22 @@ static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	return 0;
- }
- 
--static void proc_apply_options(struct proc_fs_info *fs_info,
-+static void proc_apply_options(struct super_block *s,
- 			       struct fs_context *fc,
- 			       struct user_namespace *user_ns)
- {
- 	struct proc_fs_context *ctx = fc->fs_private;
-+	struct proc_fs_info *fs_info = proc_sb_info(s);
- 
- 	if (ctx->mask & (1 << Opt_gid))
- 		fs_info->pid_gid = make_kgid(user_ns, ctx->gid);
- 	if (ctx->mask & (1 << Opt_hidepid))
- 		fs_info->hide_pid = ctx->hidepid;
--	if (ctx->mask & (1 << Opt_subset))
-+	if (ctx->mask & (1 << Opt_subset)) {
-+		if (ctx->pidonly == PROC_PIDONLY_ON)
-+			s->s_iflags |= SB_I_DYNAMIC;
- 		fs_info->pidonly = ctx->pidonly;
-+	}
- }
- 
- static int proc_fill_super(struct super_block *s, struct fs_context *fc)
-@@ -170,9 +174,6 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 	if (!fs_info)
- 		return -ENOMEM;
- 
--	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
--	proc_apply_options(fs_info, fc, current_user_ns());
--
- 	/* User space would break if executables or devices appear on proc */
- 	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
- 	s->s_flags |= SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
-@@ -183,6 +184,9 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 	s->s_time_gran = 1;
+@@ -185,6 +185,8 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
  	s->s_fs_info = fs_info;
  
-+	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
-+	proc_apply_options(s, fc, current_user_ns());
+ 	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
++	fs_info->mounter_cred = get_cred(fc->cred);
 +
+ 	proc_apply_options(s, fc, current_user_ns());
+ 
  	/*
- 	 * procfs isn't actually a stacking filesystem; however, there is
- 	 * too much magic going on inside it to permit stacking things on
-@@ -216,11 +220,10 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+@@ -220,9 +222,13 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
  static int proc_reconfigure(struct fs_context *fc)
  {
  	struct super_block *sb = fc->root->d_sb;
--	struct proc_fs_info *fs_info = proc_sb_info(sb);
++	struct proc_fs_info *fs_info = proc_sb_info(sb);
  
  	sync_filesystem(sb);
  
--	proc_apply_options(fs_info, fc, current_user_ns());
-+	proc_apply_options(sb, fc, current_user_ns());
++	put_cred(fs_info->mounter_cred);
++	fs_info->mounter_cred = get_cred(fc->cred);
++
+ 	proc_apply_options(sb, fc, current_user_ns());
  	return 0;
  }
+@@ -277,6 +283,7 @@ static void proc_kill_sb(struct super_block *sb)
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5abba86107d..aff5ed9e8f82 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1413,6 +1413,7 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
- #define SB_I_IMA_UNVERIFIABLE_SIGNATURE	0x00000020
- #define SB_I_UNTRUSTED_MOUNTER		0x00000040
-+#define SB_I_DYNAMIC			0x00000080
+ 	kill_anon_super(sb);
+ 	put_pid_ns(fs_info->pid_ns);
++	put_cred(fs_info->mounter_cred);
+ 	kfree(fs_info);
+ }
  
- #define SB_I_SKIP_SYNC	0x00000100	/* Skip superblock at global sync */
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index d1eed1b43651..ce00560789f6 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -63,6 +63,7 @@ struct proc_fs_info {
+ 	kgid_t pid_gid;
+ 	enum proc_hidepid hide_pid;
+ 	enum proc_pidonly pidonly;
++	const struct cred *mounter_cred;
+ };
  
+ static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
 -- 
 2.25.4
 
