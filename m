@@ -2,113 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B8B2A9801
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 16:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AF632A9831
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 16:13:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbgKFPBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 10:01:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48932 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbgKFPBj (ORCPT
+        id S1727566AbgKFPLS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 10:11:18 -0500
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:48938 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726422AbgKFPLR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 10:01:39 -0500
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57E1AC0613D2
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Nov 2020 07:01:39 -0800 (PST)
-Received: by mail-qk1-x742.google.com with SMTP id y197so1281912qkb.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 07:01:39 -0800 (PST)
+        Fri, 6 Nov 2020 10:11:17 -0500
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 2C11A82227;
+        Fri,  6 Nov 2020 18:11:15 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gv3NhhJYilcQa5FbCjmuJ9ZNgOEq1qCdNDP7mOzTP3g=;
-        b=WU1eEvkrTkBTE+n8eEWxQ7t4CBoEp4URQy7JP1a1k9Czq+v54nRfN89kKywfWiARJf
-         onLSgfzeVVoeFx18ODMtiYvv9qJAKFbzjXwckCnepqv9aCy5Z9W7/UOjBJWiDjwgMiLp
-         CjDxzs6IKTpTX73qIgseUXYS31GE4j71VYyYOJMYEH89tRzrG7SsQhwBjp2ZTnHhhZL2
-         BVhHUVBMo7j8GzYj1NqOnCU2nZK8KKOcnGPujf7d5bAzvmf8dRFB4fTJXLFcgdzCo00a
-         L1w9fbil1t7ItJMz16+ax37ekokN2DRKbx4U/FGENTUbLb0CzP+0hIli945CO7+oKrnO
-         Bu9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gv3NhhJYilcQa5FbCjmuJ9ZNgOEq1qCdNDP7mOzTP3g=;
-        b=EOFWuLWhHPirNF95Gabb2j7oQ6l9mcdDGT3hCDvIzbKsHe+j7w5NH5Zz0yOGAyHmJO
-         mCMVuD9I4tKoZrXVO/onrcpjpAs3K4nr5SICvURBPwY7rejep/gtPSfVplNrH6k8HD9l
-         IBjjg3BOCzlZvkPWpHtDLzIBo5LKZF4JKZ4ozwReSDXBucoRcUNQWWQJcwnLLnjOqZv1
-         sCbv4u0621lbFRxV4BDNJROCEfzby28UATfqwOTWpkxWHG+iLjUARgbiORMdWYqn3RTX
-         GCAiYtXUYF3+DcFmUdPRQdFliP/X1TvN6aTIME6+RZFm4bQ9eVVoZChJjQqXBMa8XqKl
-         4z8A==
-X-Gm-Message-State: AOAM532A/MnjQPQWjI7ZYGlk+vDkc0CTlWJbcjp+tzPq2Kshk63akl7J
-        gJ61gB2A12k00kLVLDUX2+Reo/d9qvIWWKet
-X-Google-Smtp-Source: ABdhPJyeFHZKR/8/Q5FCvuY4JuRkTxXlu3v+50Wgld2madreMoowiskbrhsFw78NGNkjN6Z1+NssaQ==
-X-Received: by 2002:a05:620a:c9a:: with SMTP id q26mr1008263qki.272.1604674897939;
-        Fri, 06 Nov 2020 07:01:37 -0800 (PST)
-Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id p5sm687353qtu.13.2020.11.06.07.01.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Nov 2020 07:01:36 -0800 (PST)
-Subject: Re: [PATCH v9 19/41] btrfs: redirty released extent buffers in ZONED
- mode
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>
-Cc:     "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <b2c1ee9a3c4067b9f8823604e4c4c5c96d3abc61.1604065695.git.naohiro.aota@wdc.com>
- <6d61ed1d-1801-5710-beac-03d363871ec8@toxicpanda.com>
- <SN4PR0401MB35981D8500BE7FAF931F1AEE9BED0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <eb12c0db-28e0-13a6-ebaa-2f19bd1be6ee@toxicpanda.com>
-Date:   Fri, 6 Nov 2020 10:01:35 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.4.0
+        d=paragon-software.com; s=mail; t=1604675475;
+        bh=5kf8LB/BnmLRZlhR/PjfyLiNkCNTBmA5cycs21FGq5E=;
+        h=From:To:CC:Subject:Date;
+        b=SSMse6pcylmJXAmRyGX0qyNCyXm6tp0P71lBVmnlrs20+L6v/1M43CKq6qJs4O5a9
+         sD8kB/nG7DYyIrOyCuLF8s6UFYnyNccmilqkzeeuiFZaRv1mmRr7DFBH7yEziB8ltK
+         c/1yj5KREvO1umovhRT2LER0J4r/6w86kuEEFAE4=
+Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 6 Nov 2020 18:11:14 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
+        <pali@kernel.org>, <dsterba@suse.cz>, <aaptel@suse.com>,
+        <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
+        <mark@harmstone.com>, <nborisov@suse.com>,
+        <linux-ntfs-dev@lists.sourceforge.net>, <anton@tuxera.com>,
+        <dan.carpenter@oracle.com>, <hch@lst.de>, <ebiggers@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v12 00/10] NTFS read-write driver GPL implementation by Paragon Software
+Date:   Fri, 6 Nov 2020 18:08:59 +0300
+Message-ID: <20201106150909.1779040-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <SN4PR0401MB35981D8500BE7FAF931F1AEE9BED0@SN4PR0401MB3598.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.30.114.105]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/6/20 4:11 AM, Johannes Thumshirn wrote:
-> On 03/11/2020 15:43, Josef Bacik wrote:
->> This is a lot of work when you could just add
->>
->> if (btrfs_is_zoned(fs_info))
->> 	return;
->>
->> to btrfs_clean_tree_block().  The dirty secret is we don't actually unset the
->> bits in the transaction io tree because it would require memory allocation
->> sometimes, so you don't even need to mess with ->dirty_pages in the first place.
->>    The only thing you need is to keep from clearing the EB dirty.  In fact you
->> could just do
->>
->> if (btrfs_is_zoned(fs_info)) {
->> 	memzero_extent_buffer(eb, 0, eb->len);
->> 	set_bit(EXTENT_BUFFER_NO_CHECK, &eb->bflags);
->> }
->>
->> to btrfs_clean_tree_block() and then in btrfs_free_tree_block() make sure we
->> always pin the extent if we're zoned.  Thanks,
-> 
-> As much as I'd love the simple solution you described it unfortunately didn't work
-> in our testing [1]. So unless I did something completely stupid [2] (which always
-> is an option) I don't think we can go with the easy solution here, unfortunately.
-> 
+This patch adds NTFS Read-Write driver to fs/ntfs3.
 
-Actually it's because we're calling btrfs_clean_tree_block() in 
-btrfs_init_new_buffer(), so any new block is now getting marked as 
-BUFFER_NO_CHECk, hence everything blowing up.
+Having decades of expertise in commercial file systems development and huge
+test coverage, we at Paragon Software GmbH want to make our contribution to
+the Open Source Community by providing implementation of NTFS Read-Write
+driver for the Linux Kernel.
 
-I think first you push btrfs_clean_tree_block() into btrfs_free_tree_block() and 
-kill all other callers, because we're just marking it no longer dirty.  In fact 
-I'd rename it as btrfs_mark_extent_buffer_clean() or something like that.  Then 
-your patch should work just fine.  Thanks,
+This is fully functional NTFS Read-Write driver. Current version works with
+NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
 
-Josef
+We plan to support this version after the codebase once merged, and add new
+features and fix bugs. For example, full journaling support over JBD will be
+added in later updates.
+
+v2:
+ - patch splitted to chunks (file-wise)
+ - build issues fixed
+ - sparse and checkpatch.pl errors fixed
+ - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
+ - cosmetics + code cleanup
+
+v3:
+ - added acl, noatime, no_acs_rules, prealloc mount options
+ - added fiemap support
+ - fixed encodings support
+ - removed typedefs
+ - adapted Kernel-way logging mechanisms
+ - fixed typos and corner-case issues
+
+v4:
+ - atomic_open() refactored
+ - code style updated
+ - bugfixes
+
+v5:
+- nls/nls_alt mount options added
+- Unicode conversion fixes
+- Improved very fragmented files operations
+- logging cosmetics
+
+v6:
+- Security Descriptors processing changed
+  added system.ntfs_security xattr to set
+  SD
+- atomic_open() optimized
+- cosmetics
+
+v7:
+- Security Descriptors validity checks added (by Mark Harmstone)
+- atomic_open() fixed for the compressed file creation with directio
+  case
+- remount support
+- temporarily removed readahead usage
+- cosmetics
+
+v8:
+- Compressed files operations fixed
+
+v9:
+- Further cosmetics applied as suggested
+by Joe Perches
+
+v10:
+- operations with compressed/sparse files on very fragmented volumes improved
+- reduced memory consumption for above cases
+
+v11:
+- further compressed files optimizations: reads/writes are now skipping bufferization
+- journal wipe to the initial state optimized (bufferization is also skipped)
+- optimized run storage (re-packing cluster metainformation)
+- fixes based on Matthew Wilcox feedback to the v10
+- compressed/sparse/normal could be set for empty files with 'system.ntfs_attrib' xattr
+
+v12:
+- nls_alt mount option removed after discussion with Pali Rohar
+- fixed ni_repack()
+- fixed resident files transition to non-resident when size increasing
+
+Konstantin Komarov (10):
+  fs/ntfs3: Add headers and misc files
+  fs/ntfs3: Add initialization of super block
+  fs/ntfs3: Add bitmap
+  fs/ntfs3: Add file operations and implementation
+  fs/ntfs3: Add attrib operations
+  fs/ntfs3: Add compression
+  fs/ntfs3: Add NTFS journal
+  fs/ntfs3: Add Kconfig, Makefile and doc
+  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+  fs/ntfs3: Add MAINTAINERS
+
+ Documentation/filesystems/ntfs3.rst |  112 +
+ MAINTAINERS                         |    7 +
+ fs/Kconfig                          |    1 +
+ fs/Makefile                         |    1 +
+ fs/ntfs3/Kconfig                    |   23 +
+ fs/ntfs3/Makefile                   |   11 +
+ fs/ntfs3/attrib.c                   | 1395 +++++++
+ fs/ntfs3/attrlist.c                 |  463 +++
+ fs/ntfs3/bitfunc.c                  |  135 +
+ fs/ntfs3/bitmap.c                   | 1504 ++++++++
+ fs/ntfs3/debug.h                    |   61 +
+ fs/ntfs3/dir.c                      |  568 +++
+ fs/ntfs3/file.c                     | 1146 ++++++
+ fs/ntfs3/frecord.c                  | 2697 ++++++++++++++
+ fs/ntfs3/fslog.c                    | 5221 +++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2565 +++++++++++++
+ fs/ntfs3/index.c                    | 2665 ++++++++++++++
+ fs/ntfs3/inode.c                    | 2115 +++++++++++
+ fs/ntfs3/lznt.c                     |  452 +++
+ fs/ntfs3/namei.c                    |  576 +++
+ fs/ntfs3/ntfs.h                     | 1262 +++++++
+ fs/ntfs3/ntfs_fs.h                  |  989 +++++
+ fs/ntfs3/record.c                   |  613 ++++
+ fs/ntfs3/run.c                      | 1192 ++++++
+ fs/ntfs3/super.c                    | 1467 ++++++++
+ fs/ntfs3/upcase.c                   |   77 +
+ fs/ntfs3/xattr.c                    | 1073 ++++++
+ 27 files changed, 28391 insertions(+)
+ create mode 100644 Documentation/filesystems/ntfs3.rst
+ create mode 100644 fs/ntfs3/Kconfig
+ create mode 100644 fs/ntfs3/Makefile
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/bitfunc.c
+ create mode 100644 fs/ntfs3/bitmap.c
+ create mode 100644 fs/ntfs3/debug.h
+ create mode 100644 fs/ntfs3/dir.c
+ create mode 100644 fs/ntfs3/file.c
+ create mode 100644 fs/ntfs3/frecord.c
+ create mode 100644 fs/ntfs3/fslog.c
+ create mode 100644 fs/ntfs3/fsntfs.c
+ create mode 100644 fs/ntfs3/index.c
+ create mode 100644 fs/ntfs3/inode.c
+ create mode 100644 fs/ntfs3/lznt.c
+ create mode 100644 fs/ntfs3/namei.c
+ create mode 100644 fs/ntfs3/ntfs.h
+ create mode 100644 fs/ntfs3/ntfs_fs.h
+ create mode 100644 fs/ntfs3/record.c
+ create mode 100644 fs/ntfs3/run.c
+ create mode 100644 fs/ntfs3/super.c
+ create mode 100644 fs/ntfs3/upcase.c
+ create mode 100644 fs/ntfs3/xattr.c
+
+-- 
+2.25.4
 
