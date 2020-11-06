@@ -2,104 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A192A9B3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 18:52:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7EF2A9B53
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 18:56:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbgKFRwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 12:52:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726034AbgKFRwI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 12:52:08 -0500
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C12C206F4;
-        Fri,  6 Nov 2020 17:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604685127;
-        bh=+rTplTiRHCg1rSJZZILvtbrGwQkXqYXlY1s1r0lYRj8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F+nspiyMoaHUdjgkHdvyFN7TjbEJuDH6E5/gsmZuQpTJ6Mks2/ZX4fEULddQILtyV
-         C7jt0GUYyptvY1wCY7opIUGuK05/rWJKZ2Nq2AKh4tIxtV2snaP7LPmb7Zl/GVdo80
-         PcEgKyh7Eeuuc2cdyoVGCZzROsapb3faNVR4/9Wg=
-Date:   Fri, 6 Nov 2020 09:52:05 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] fs/inode.c: make inode_init_always() initialize i_ino to
- 0
-Message-ID: <20201106175205.GE845@sol.localdomain>
-References: <20201031004420.87678-1-ebiggers@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201031004420.87678-1-ebiggers@kernel.org>
+        id S1727652AbgKFR4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 12:56:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48650 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbgKFR4i (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 6 Nov 2020 12:56:38 -0500
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8868C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Nov 2020 09:56:37 -0800 (PST)
+Received: by mail-ot1-x343.google.com with SMTP id j14so2024862ots.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 09:56:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=3m3w3/fMOlXDJm+N0Zej/RJjQZ0pYPZ00tCtiQEUSdU=;
+        b=fovs4N3RKV79lvUTx8jz3MnziHYdcUaz1I+/LXTF08aaL01hiRrss+ZRqyQTKh93QX
+         CowdktADguXo614na/wuq7Fe6Cb+fq9tDGC50xsWjjm4QqWv9uYZILCqjUdIe3lutkY/
+         zltAIoitQnvXDw9GTrf5cRkiB/rPlIIAQ3aNM0CDChoxsSdsq8MzA+M3+iTp2AkSKfJk
+         mM53fD7VNawuTuq7JUgf6t8gggLz5RP2JmxnueU8TGXNxNszhEY6BVGJh5+1nQKZfmwm
+         PMB/yZKferQUdqYC8VWtZyAZsi9bKT2wvzbDMfAus6p46rHH9QM2LRetmOD1xvhpupmx
+         wx4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=3m3w3/fMOlXDJm+N0Zej/RJjQZ0pYPZ00tCtiQEUSdU=;
+        b=FWXEzhPwo+CuB8OJRDAzKnvEz3OKNs8vmLSnqfIJWwrwgC26PqAWKWPVwDy6llD5Bg
+         6AHfKSo9SBJQ5lMbT4BZ4mBBghYA7Xf+KHQSiXJt8TxJCRwR35o4XzbLNSkQXN7vGlok
+         9quYWeukOeoHZpvtvvuvs+BwPPtFGii73gs7ei/GgoYxGRwe/oxK+s2KpdyuWZ7pi9p6
+         63wYLu6eoNzoeA1HZ36CPar5LINLJmaQduGJpqf78BiSyZ50KvdZaBd48hYtkRLh2vq0
+         5iBEdC1tKfydULcmBwY/y2UAc3AxyNjFQhvV9fw374EWsOs5GvDZmOLnpDD7L2l2VBjo
+         zDdA==
+X-Gm-Message-State: AOAM5315Fq61n/T+cA2ryBNxl9NhaTh5C4rAbju319HJv/teD0vnP0Cq
+        WiGAItMtXQ04m2jQkYN1eViptw==
+X-Google-Smtp-Source: ABdhPJwa2jH0nyfQTVUAb/Jl6YC01h0VQZTP9j6ZoS9GeipGQbVBWQWaGN7Xs8TLDolQKCHe1D7iGg==
+X-Received: by 2002:a9d:590e:: with SMTP id t14mr1960910oth.230.1604685397160;
+        Fri, 06 Nov 2020 09:56:37 -0800 (PST)
+Received: from vyachessmacbook.attlocal.net ([2600:1700:42f0:6600:714b:383:8655:34f6])
+        by smtp.gmail.com with ESMTPSA id u22sm466162oor.13.2020.11.06.09.56.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Nov 2020 09:56:36 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [PATCH] fs/hfs: remove unused macro to tame gcc
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <1604634457-3954-1-git-send-email-alex.shi@linux.alibaba.com>
+Date:   Fri, 6 Nov 2020 09:56:31 -0800
+Cc:     Linux FS devel list <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7FF53100-8B2A-4267-AB70-97D28A325F06@dubeyko.com>
+References: <1604634457-3954-1-git-send-email-alex.shi@linux.alibaba.com>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 30, 2020 at 05:44:20PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Currently inode_init_always() doesn't initialize i_ino to 0.  This is
-> unexpected because unlike the other inode fields that aren't initialized
-> by inode_init_always(), i_ino isn't guaranteed to end up back at its
-> initial value after the inode is freed.  Only one filesystem (XFS)
-> actually sets set i_ino back to 0 when freeing its inodes.
-> 
-> So, callers of new_inode() see some random previous i_ino.  Normally
-> that's fine, since normally i_ino isn't accessed before being set.
-> There can be edge cases where that isn't necessarily true, though.
-> 
-> The one I've run into is that on ext4, when creating an encrypted file,
-> the new file's encryption key has to be set up prior to the jbd2
-> transaction, and thus prior to i_ino being set.  If something goes
-> wrong, fs/crypto/ may log warning or error messages, which normally
-> include i_ino.  So it needs to know whether it is valid to include i_ino
-> yet or not.  Also, on some files i_ino needs to be hashed for use in the
-> crypto, so fs/crypto/ needs to know whether that can be done yet or not.
-> 
-> There are ways this could be worked around, either in fs/crypto/ or in
-> fs/ext4/.  But, it seems there's no reason not to just fix
-> inode_init_always() to do the expected thing and initialize i_ino to 0.
-> 
-> So, do that, and also remove the initialization in jfs_fill_super() that
-> becomes redundant.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+
+> On Nov 5, 2020, at 7:47 PM, Alex Shi <alex.shi@linux.alibaba.com> =
+wrote:
+>=20
+> Couple macro are duplicated defined and they are not used. So
+> to tame gcc, let's remove them.
+>=20
+> fs/hfsplus/part_tbl.c:26:0: warning: macro "HFS_DRVR_DESC_MAGIC" is =
+not
+> used [-Wunused-macros]
+> fs/hfsplus/part_tbl.c:30:0: warning: macro "HFS_MFS_SUPER_MAGIC" is =
+not
+> used [-Wunused-macros]
+> fs/hfsplus/part_tbl.c:21:0: warning: macro "HFS_DD_BLK" is not used
+> [-Wunused-macros]
+> net/l2tp/l2tp_core.c:73:0: warning: macro "L2TP_HDRFLAG_P" is not used
+> [-Wunused-macros]
+>=20
+
+
+Sorry, but this patch doesn=E2=80=99t make sense at all, from my point =
+of view.
+It is the declaration of magics that could take place on the volume.
+Even if these declarations haven=E2=80=99t been used in the code, then
+it is important to be aware about this. I don=E2=80=99t think that it =
+make sense
+to follow to the compiler=E2=80=99s complains in this case. I believe =
+that
+it needs to keep these declarations.
+
+Thanks,
+Viacheslav Dubeyko.=20
+
+
+> Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+> Cc: linux-fsdevel@vger.kernel.org=20
+> Cc: linux-kernel@vger.kernel.org=20
 > ---
->  fs/inode.c     | 1 +
->  fs/jfs/super.c | 1 -
->  2 files changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 9d78c37b00b81..eb001129f157c 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
->  	atomic_set(&inode->i_count, 1);
->  	inode->i_op = &empty_iops;
->  	inode->i_fop = &no_open_fops;
-> +	inode->i_ino = 0;
->  	inode->__i_nlink = 1;
->  	inode->i_opflags = 0;
->  	if (sb->s_xattr)
-> diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-> index b2dc4d1f9dcc5..1f0ffabbde566 100644
-> --- a/fs/jfs/super.c
-> +++ b/fs/jfs/super.c
-> @@ -551,7 +551,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
->  		ret = -ENOMEM;
->  		goto out_unload;
->  	}
-> -	inode->i_ino = 0;
->  	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
->  	inode->i_mapping->a_ops = &jfs_metapage_aops;
->  	inode_fake_hash(inode);
-> 
+> fs/hfs/hfs.h          | 2 --
+> fs/hfsplus/part_tbl.c | 2 --
+> 2 files changed, 4 deletions(-)
+>=20
+> diff --git a/fs/hfs/hfs.h b/fs/hfs/hfs.h
+> index 6f194d0768b6..12a807d9dbc0 100644
+> --- a/fs/hfs/hfs.h
+> +++ b/fs/hfs/hfs.h
+> @@ -15,11 +15,9 @@
+> #define HFS_MDB_BLK		2 /* Block (w/i partition) of MDB */
+>=20
+> /* magic numbers for various disk blocks */
+> -#define HFS_DRVR_DESC_MAGIC	0x4552 /* "ER": driver descriptor map */
+> #define HFS_OLD_PMAP_MAGIC	0x5453 /* "TS": old-type partition map =
+*/
+> #define HFS_NEW_PMAP_MAGIC	0x504D /* "PM": new-type partition map =
+*/
+> #define HFS_SUPER_MAGIC		0x4244 /* "BD": HFS MDB (super =
+block) */
+> -#define HFS_MFS_SUPER_MAGIC	0xD2D7 /* MFS MDB (super block) */
+>=20
+> /* various FIXED size parameters */
+> #define HFS_SECTOR_SIZE		512    /* size of an HFS sector =
+*/
+> diff --git a/fs/hfsplus/part_tbl.c b/fs/hfsplus/part_tbl.c
+> index 63164ebc52fa..ecda671d56a8 100644
+> --- a/fs/hfsplus/part_tbl.c
+> +++ b/fs/hfsplus/part_tbl.c
+> @@ -23,11 +23,9 @@
+> #define HFS_MDB_BLK		2 /* Block (w/i partition) of MDB */
+>=20
+> /* magic numbers for various disk blocks */
+> -#define HFS_DRVR_DESC_MAGIC	0x4552 /* "ER": driver descriptor map */
+> #define HFS_OLD_PMAP_MAGIC	0x5453 /* "TS": old-type partition map =
+*/
+> #define HFS_NEW_PMAP_MAGIC	0x504D /* "PM": new-type partition map =
+*/
+> #define HFS_SUPER_MAGIC		0x4244 /* "BD": HFS MDB (super =
+block) */
+> -#define HFS_MFS_SUPER_MAGIC	0xD2D7 /* MFS MDB (super block) */
+>=20
+> /*
+>  * The new style Mac partition map
+> --=20
+> 1.8.3.1
+>=20
 
-Al, any thoughts on this?
-
-- Eric
