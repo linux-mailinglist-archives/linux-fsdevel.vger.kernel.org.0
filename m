@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A77A2A9D33
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 20:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BCB82A9D24
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 20:04:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbgKFTFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 14:05:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59398 "EHLO
+        id S1728227AbgKFTEx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 14:04:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728191AbgKFTEt (ORCPT
+        with ESMTP id S1728126AbgKFTEv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 14:04:49 -0500
+        Fri, 6 Nov 2020 14:04:51 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091BEC0613D2;
-        Fri,  6 Nov 2020 11:04:49 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A2A2C0613D3;
+        Fri,  6 Nov 2020 11:04:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=MupYDI4l/YovZ7RWUiZbIkKTEoIVA+KjloyNnUiTimo=; b=iiGVfdCIPPX+IkfTbBzmxkNClz
-        t982+XiX0rLzTMHY8HFo1Fp5Mtn7rK+diWNO+RHxxMdKcJUTti2/wcEDk1JuKfU/o4+K8dKleodTE
-        HTiaGtNCpYoo9vb3GGX4aLbLQQjLGGtNWkpDZpYqEwfuTn9hbBczupYDxFhREBpBASbSx6M7Lze9e
-        iKaTzCv7Ayt/qABbDvowSzznAcYB/VzFYgYnipTJO4suLkefkpjbVL2Cs7whyJwZIOchXyT0sQa+l
-        gQuWBa19/ZwoPZGFHeWQytUlRCgvx6EJq35hta2jU2txOK4i/ZI7bcgxRU7PROSuEa2OkMTwR08Xi
-        9io2po4w==;
+        bh=1TxDi4JZHiUiFIihFWdfLGUjoSsTps8w2H/ZcwkuUgM=; b=Nn+BVDYVvQjkrPNv/cuyIRiZPT
+        3lEBXr+QivjMh5e4l/ao1VWygxVyXgb1GaEszoEv7k0V4mDQl4Q558fFjWlIp5zja4skDHErGtVSp
+        UazzhRWUeqOaZF3BD6OBDPLbIVX8kVtVQNkhl1fmu2B68Gte2LOkphKfMcyhwK+VcOtW25btBkWV6
+        zqDCSn9jzGsf/k9VbPpmVDu9CIfQvBntbCmhNM15v0xLxzXvs5anzeTd73+N0ndrVdf3GlCLjFmvi
+        5AEKf4IRVxwZE6cQKKKLk7ce4QfJMaGBbLCFQqB8pdhqsPi3eteFIE5suw4d4lzdD5Ph0CyZ2P7Z4
+        CljTjCVw==;
 Received: from [2001:4bb8:184:9a8d:9e34:f7f4:e59e:ad6f] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kb72H-00017b-Qy; Fri, 06 Nov 2020 19:04:34 +0000
+        id 1kb72J-00017x-7W; Fri, 06 Nov 2020 19:04:35 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -48,9 +48,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 23/24] virtio-blk: remove a spurious call to revalidate_disk_size
-Date:   Fri,  6 Nov 2020 20:03:35 +0100
-Message-Id: <20201106190337.1973127-24-hch@lst.de>
+Subject: [PATCH 24/24] block: unexport revalidate_disk_size
+Date:   Fri,  6 Nov 2020 20:03:36 +0100
+Message-Id: <20201106190337.1973127-25-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201106190337.1973127-1-hch@lst.de>
 References: <20201106190337.1973127-1-hch@lst.de>
@@ -61,27 +61,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-revalidate_disk_size just updates the block device size from the disk
-size.  Thus calling it from revalidate_disk_size doesn't actually do
-anything.
+revalidate_disk_size is not only called from set_capacity_and_notify,
+so drop the export.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/virtio_blk.c | 1 -
+ fs/block_dev.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
-index 3e812b4c32e669..145606dc52db1e 100644
---- a/drivers/block/virtio_blk.c
-+++ b/drivers/block/virtio_blk.c
-@@ -598,7 +598,6 @@ static void virtblk_update_cache_mode(struct virtio_device *vdev)
- 	struct virtio_blk *vblk = vdev->priv;
- 
- 	blk_queue_write_cache(vblk->disk->queue, writeback, false);
--	revalidate_disk_size(vblk->disk, true);
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 66ebf594c97f47..d8664f5c1ff669 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1362,7 +1362,6 @@ void revalidate_disk_size(struct gendisk *disk, bool verbose)
+ 		bdput(bdev);
+ 	}
  }
+-EXPORT_SYMBOL(revalidate_disk_size);
  
- static const char *const virtblk_cache_types[] = {
+ void bd_set_nr_sectors(struct block_device *bdev, sector_t sectors)
+ {
 -- 
 2.28.0
 
