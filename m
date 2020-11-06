@@ -2,186 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14EA62A98E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 16:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 070662A98F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Nov 2020 17:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgKFP4y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Nov 2020 10:56:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbgKFP4v (ORCPT
+        id S1726620AbgKFQAl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Nov 2020 11:00:41 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56596 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726034AbgKFQAl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Nov 2020 10:56:51 -0500
-Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7EB7C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Nov 2020 07:56:51 -0800 (PST)
-Received: by mail-pl1-x649.google.com with SMTP id bb2so1085502plb.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Nov 2020 07:56:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=WDkvhhk+gB3QxGd+Be5zd3cestt1bSfFZfMdeZMOFkc=;
-        b=RsQT+l1Cceiubd2ysLWUV8h2As7XbKgBn+u4sFmyjyhXGIMVBe6DeRx88flcGo8KR5
-         sl4O41xriDhKiN7umZyVgbPP7suEytMVsyPLWoRrN+8dPEx5fGUYYAauV7AcPfwFeILG
-         YfpSyiF/Xb4+rnv8rl3bb8jdRbPq2PTUklekvsdHWSGtsz506hPYmFjiO7wOILQjhLWf
-         pruQuuRngXqqcx2P4k/jVpbn414Xqvkp0FEof2WvYhJioCjk82tStmDHF/kgs65P9Kpq
-         aYf0/rfT57riU5y656ZoKcC9PuV/Mttvwyzwlp1vQzkrxpQaFbp4xYQkbtW5gWN1zL5S
-         mwjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=WDkvhhk+gB3QxGd+Be5zd3cestt1bSfFZfMdeZMOFkc=;
-        b=Yg7Fy78ZbF9+QhdapdBxjMHGb30DS7ro9j9TF07UFwbj5yGbnhjS4MEcOb9PhOKWEX
-         ehm+3cVkQpUmouzvejDuW3bR2ON6IpiHHwUBoFF/Zp++Hvcg17SL7Uq9HDh5d6X7KT90
-         aj5moOZ+ab0az5fQy8rqE2LPicLdSZzhR7TEQkXIWyziiDqtXLZYvRiKv8qNMlTdIQKp
-         elQNdIXxKxX4FpieNe/X3CkLeDzPaycTPd+8VXNosqfItblQw9KovASLEAO/gXKb5cFy
-         YsPDI91xHZch4LiYEqYPP1PdQbNbPnSXsAMH3PXAVS3HK1/TmYyt6clE6Dn21wLt/TLN
-         xgPA==
-X-Gm-Message-State: AOAM533Np6+Veijn6JTz/XC0rOldrlH8lJ6DSEYSjU3I/d17+vL0bi/W
-        nnoSE2Y342Q6fF5ZUyilJ7Yg+pWYz1W1L6ez/w==
-X-Google-Smtp-Source: ABdhPJyr6d4kWf9xCCa5Q5B2Li129pMxIihfl7MrB7NAAAhzq/yphrSlonTBTACs7Hm/3feKqNqDhVnqI0/i8x7rGQ==
-Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
-X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a17:902:ee85:b029:d6:c43e:2321 with
- SMTP id a5-20020a170902ee85b02900d6c43e2321mr2200868pld.29.1604678211192;
- Fri, 06 Nov 2020 07:56:51 -0800 (PST)
-Date:   Fri,  6 Nov 2020 07:56:26 -0800
-In-Reply-To: <20201106155626.3395468-1-lokeshgidra@google.com>
-Message-Id: <20201106155626.3395468-5-lokeshgidra@google.com>
-Mime-Version: 1.0
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
-X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
-Subject: [PATCH v12 4/4] userfaultfd: use secure anon inodes for userfaultfd
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        nnk@google.com, jeffv@google.com, kernel-team@android.com,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        hch@infradead.org, Daniel Colascione <dancol@google.com>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 6 Nov 2020 11:00:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604678439;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xnyte+HD5nVWcDfsLMpgif14Xkcr9VPpCQQrMIeJvJQ=;
+        b=FYJ50LRSOiOsOg7yy4R6HzfnPKr6JbIQzC1aY7ip9gMeuLhQZoyLeiXKNFVELoD+2sC+5P
+        rOrsSR1EtYyADg1JhFBF472BfhLWIFh9/Jgs6qB6LNVUBLmqeP9aRhA7xHQo2XwQq8z6ys
+        hBatcIvet862awOYw0i0gIEVFf6/ABM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-328-c9JScbzoNBWOwNAN8b-KtQ-1; Fri, 06 Nov 2020 11:00:38 -0500
+X-MC-Unique: c9JScbzoNBWOwNAN8b-KtQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2976C6D580;
+        Fri,  6 Nov 2020 16:00:37 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-167.rdu2.redhat.com [10.10.115.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D297917511;
+        Fri,  6 Nov 2020 16:00:16 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C3F64225FCD; Fri,  6 Nov 2020 11:00:15 -0500 (EST)
+Date:   Fri, 6 Nov 2020 11:00:15 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>
+Subject: Re: [PATCH v3 5/6] fuse: Add a flag FUSE_OPEN_KILL_PRIV for open()
+ request
+Message-ID: <20201106160015.GD1436035@redhat.com>
+References: <20201009181512.65496-1-vgoyal@redhat.com>
+ <20201009181512.65496-6-vgoyal@redhat.com>
+ <CAJfpegvhK+5-Zze7qZFrXkUkXbN_4M1CpEqyL9Rq9UNOtb2ckg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvhK+5-Zze7qZFrXkUkXbN_4M1CpEqyL9Rq9UNOtb2ckg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Daniel Colascione <dancol@google.com>
+On Fri, Nov 06, 2020 at 02:55:11PM +0100, Miklos Szeredi wrote:
+> On Fri, Oct 9, 2020 at 8:16 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > With FUSE_HANDLE_KILLPRIV_V2 support, server will need to kill
+> > suid/sgid/security.capability on open(O_TRUNC), if server supports
+> > FUSE_ATOMIC_O_TRUNC.
+> >
+> > But server needs to kill suid/sgid only if caller does not have
+> > CAP_FSETID. Given server does not have this information, client
+> > needs to send this info to server.
+> >
+> > So add a flag FUSE_OPEN_KILL_PRIV to fuse_open_in request which tells
+> > server to kill suid/sgid(only if group execute is set).
+> 
+> This is needed for FUSE_CREATE as well (which may act as a normal open
+> in case the file exists, and no O_EXCL was specified), right?
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+Hi Miklos,
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+IIUC, In current code we seem to use FUSE_CREATE only if file does not exist.
+If file exists, then we probably will take FUSE_OPEN path.
 
-[Remove owner inode from userfaultfd_ctx]
-[Use anon_inode_getfd_secure() instead of anon_inode_getfile_secure()
- in userfaultfd syscall]
-[Use inode of file in userfaultfd_read() in resolve_userfault_fork()]
+Are you concerned about future proofing where somebody decides to use
+FUSE_CREATE for create + open on a file which exists. If yes, I agree that
+patching FUSE_CREATE makes sense.
 
-Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
----
- fs/userfaultfd.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> I can edit the patch, if you agree.
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 000b457ad087..dd78daf06de6 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -972,14 +972,14 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
- 
- static const struct file_operations userfaultfd_fops;
- 
--static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
--				  struct userfaultfd_ctx *new,
-+static int resolve_userfault_fork(struct userfaultfd_ctx *new,
-+				  struct inode *inode,
- 				  struct uffd_msg *msg)
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-+			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -989,7 +989,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- }
- 
- static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
--				    struct uffd_msg *msg)
-+				    struct uffd_msg *msg, struct inode *inode)
- {
- 	ssize_t ret;
- 	DECLARE_WAITQUEUE(wait, current);
-@@ -1100,7 +1100,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 	spin_unlock_irq(&ctx->fd_wqh.lock);
- 
- 	if (!ret && msg->event == UFFD_EVENT_FORK) {
--		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
-+		ret = resolve_userfault_fork(fork_nctx, inode, msg);
- 		spin_lock_irq(&ctx->event_wqh.lock);
- 		if (!list_empty(&fork_event)) {
- 			/*
-@@ -1160,6 +1160,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	ssize_t _ret, ret = 0;
- 	struct uffd_msg msg;
- 	int no_wait = file->f_flags & O_NONBLOCK;
-+	struct inode *inode = file_inode(file);
- 
- 	if (ctx->state == UFFD_STATE_WAIT_API)
- 		return -EINVAL;
-@@ -1167,7 +1168,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	for (;;) {
- 		if (count < sizeof(msg))
- 			return ret ? ret : -EINVAL;
--		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg);
-+		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
- 		if (_ret < 0)
- 			return ret ? ret : _ret;
- 		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-@@ -1985,8 +1986,8 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-+			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
--- 
-2.29.1.341.ge80a0c044ae-goog
+Please do.
+
+Thanks
+Vivek
 
