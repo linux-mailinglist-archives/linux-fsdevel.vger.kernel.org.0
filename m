@@ -2,71 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5C582AA4E5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Nov 2020 13:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE9D22AA640
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Nov 2020 16:30:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbgKGMKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 Nov 2020 07:10:09 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:51878 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbgKGMKI (ORCPT
+        id S1726284AbgKGPaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 Nov 2020 10:30:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50986 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbgKGPaT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 Nov 2020 07:10:08 -0500
-Received: by mail-io1-f69.google.com with SMTP id r7so2949416ioh.18
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Nov 2020 04:10:06 -0800 (PST)
+        Sat, 7 Nov 2020 10:30:19 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2EF9C0613CF;
+        Sat,  7 Nov 2020 07:30:18 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id x23so2369470plr.6;
+        Sat, 07 Nov 2020 07:30:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9NXH+Ms7XkWHFZBe4Cvg39ykSyyKv7UXBKIHhl19iEo=;
+        b=FRmLSBi0+GDidM3ZaJpQ6FPDJhqM5IibBL6livR2q8y9+Z93auYFYRTnKx/QhHPfon
+         qHV6T3V7FEnXf8oWwYAbMWSa7NWdA1yyhfVKSQm6oL9CaUSy6NMgBcYV0JLs0P86ZqAi
+         7Gr29uUJ5+bgs1ze8gDKv9iiIcQqRXWPf3lmloWObxrA7BeOhC/vz7cOqxuTZlORcdZh
+         d3QTUgmC7GUsL6oe+W7ki1PkIk6RxJdSWObwx5bEK93U7IZHWxErN4FretyTbyvsGfQh
+         AzD6kv5cEGbXvbdda1k/wbNGAyOHgPjje3EW9a8MaiUQGpuiSmsGXGmQmhoclnb0siRv
+         kCrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=bEPCOFw5S5rBelNwysXtchmzidY5p8w+fdQ9rPQh+s4=;
-        b=UyvNfRCMy9pLrmLvh0YYk4AdXMRptwpHUn2NYwJCIi1YbujrQNh91WyIZ9DbmflgXR
-         dwswKJ0BA9QOfp0a28pQWa3nPbhqFY3MUhAfDoKJ8xgjNt06Vw57p4y6U45X2STt7q+I
-         MGiLKOrL1th03w5pr1moH4mL8SXfnKdZZe2DfepDW5f5qzyh35a48AT8MOYbvz4Skpcs
-         U2sSb9FXdjZ1NLtA7UgHqAwrnRuCktT9Q4PPJ1yUEgTWGHd3yzqh5XcmxhSEb6UV2GfQ
-         pL31UjDqkkSsbjfW1w/9jbr3vbQtxdKdCmYVzpGYwyDGUq9LakUUQJIpvWxhSbASk9GE
-         28Ng==
-X-Gm-Message-State: AOAM530k/tbFemqpUk9gurKVymHzWv7FR7iT64ZemDKEW3oGzAkpt0j1
-        NBPCsXehycnlF+TnxsJVcqF3MgG+UjRMG+8YM9h3yogSAb27
-X-Google-Smtp-Source: ABdhPJy/fr/95Krh7za4yiITJhgfJeU+W90NQEYDsQN2T1cH8wGjrelyVfzoWNnPmSrQoa+mWN3xe4S+Mr6tLRiC6Ft6svXkCXrw
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:11a4:: with SMTP id 4mr359864ilj.141.1604751006170;
- Sat, 07 Nov 2020 04:10:06 -0800 (PST)
-Date:   Sat, 07 Nov 2020 04:10:06 -0800
-In-Reply-To: <000000000000d03eea0571adfe83@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ad052105b383350a@google.com>
-Subject: Re: possible deadlock in mnt_want_write
-From:   syzbot <syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, ast@kernel.org, dvyukov@google.com,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, mszeredi@redhat.com, rgoldwyn@suse.de,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, zohar@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9NXH+Ms7XkWHFZBe4Cvg39ykSyyKv7UXBKIHhl19iEo=;
+        b=CRRb4bZmPRPdt6qVa99RB4LF6EsuV6IXN+U2KKPqKE8+oqH4TKxal4wMAOQi7yXQbv
+         Boo0vJ28Rdg0CKQTh4ZIzdK3g6YYNPEsNXOojp7KMNSWZOWZn2gWwFzf+fwQp6NdIkyV
+         jPzEamMoseo/2Ntc0s27v4vtLqMOS8tWHQSV47IEJa8jAGknJxPHt32JZTVq/+OH2a5x
+         4kGpRWWIid82/qgBSGSf/jS/2uh+DIFxi/ygKG4WTHsyfiMxK5XQNFj2EZ44JJPcbQYp
+         LCc7IO8dYClKoPfn52YP2ku0L+h+qxWH38PkL9ouE9D5c7N+o89yBqj1+4qzojxUgJIW
+         ISmg==
+X-Gm-Message-State: AOAM530+7fLws6EXSfVkFaFmF659dv+qvQiUEKWSu2SlAjRTpwrgoKOQ
+        wYJE/7Sk72z+ECyoN65bRmo5AIv5KeRA
+X-Google-Smtp-Source: ABdhPJwq37eTVs9NlA7M/eF5J2yHMnTVyNXkWu4QuZzoIdgh08llFivFr7vyvR7F8xQqcMDHCHU5ng==
+X-Received: by 2002:a17:902:56e:b029:d5:d861:6b17 with SMTP id 101-20020a170902056eb02900d5d8616b17mr5810449plf.17.1604763018332;
+        Sat, 07 Nov 2020 07:30:18 -0800 (PST)
+Received: from he-cluster.localdomain (67.216.221.250.16clouds.com. [67.216.221.250])
+        by smtp.gmail.com with ESMTPSA id w70sm4816913pfc.11.2020.11.07.07.30.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 07 Nov 2020 07:30:17 -0800 (PST)
+From:   xiakaixu1987@gmail.com
+X-Google-Original-From: kaixuxia@tencent.com
+To:     adobriyan@gmail.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kaixu Xia <kaixuxia@tencent.com>
+Subject: [PATCH] proc: fix comparison to bool warning
+Date:   Sat,  7 Nov 2020 23:30:11 +0800
+Message-Id: <1604763011-7972-1-git-send-email-kaixuxia@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+From: Kaixu Xia <kaixuxia@tencent.com>
 
-commit 146d62e5a5867fbf84490d82455718bfb10fe824
-Author: Amir Goldstein <amir73il@gmail.com>
-Date:   Thu Apr 18 14:42:08 2019 +0000
+Fix the following coccicheck warning:
 
-    ovl: detect overlapping layers
+./fs/proc/generic.c:370:5-31: WARNING: Comparison to bool
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11e40184500000
-start commit:   6d906f99 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=856fc6d0fbbeede9
-dashboard link: https://syzkaller.appspot.com/bug?extid=ae82084b07d0297e566b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111767b7200000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1611ab2d200000
+Reported-by: Tosk Robot <tencent_os_robot@tencent.com>
+Signed-off-by: Kaixu Xia <kaixuxia@tencent.com>
+---
+ fs/proc/generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 2f9fa179194d..4533eb826af7 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -367,7 +367,7 @@ struct proc_dir_entry *proc_register(struct proc_dir_entry *dir,
+ 
+ 	write_lock(&proc_subdir_lock);
+ 	dp->parent = dir;
+-	if (pde_subdir_insert(dir, dp) == false) {
++	if (!pde_subdir_insert(dir, dp)) {
+ 		WARN(1, "proc_dir_entry '%s/%s' already registered\n",
+ 		     dir->name, dp->name);
+ 		write_unlock(&proc_subdir_lock);
+-- 
+2.20.0
 
-#syz fix: ovl: detect overlapping layers
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
