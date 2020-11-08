@@ -2,708 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 077382AA93F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Nov 2020 06:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4CE52AA98B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Nov 2020 06:42:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728411AbgKHFSq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Nov 2020 00:18:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728237AbgKHFRn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Nov 2020 00:17:43 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B1FC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 Nov 2020 21:17:42 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id d12so3818979wrr.13
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Nov 2020 21:17:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZPwKown6rijKU/resMLFof1ybZMsa9hdWjNdijK4IAw=;
-        b=RvN77/FvPkL6ELFkVcuruawPUUXs4Eu10q4/IZ6LpvyQCFbiPmpj0Wf3cgy/jtUEHs
-         Akx12E217/MGNzn9lVAg7vEDzZYiUbU5pDg26PplcF3K1djfumBGFHfuPRERkrmr3RI3
-         PBb1ofww63bA4DMzg8EyJaW2EAWMSyk9403bVeYKpzKRx7o8w9Dn3y9G5DcPYI9FDFth
-         7dEZSBl+k1SEmZogo4t9At872yn55qEW7I7jhwNOXvXzTEW7mNMP/OvrB1J+95aQNkIA
-         7nxaX//Vnh8h3fkO4ZCxa/BFZdwVDCFpRXeu0ZeG/KLl+X9JohexfL1q91qOK5ltNBXB
-         f9UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZPwKown6rijKU/resMLFof1ybZMsa9hdWjNdijK4IAw=;
-        b=ucI7INkNuyPbPBoGU4NcnfqB+EEO8dHOv/K150szYu6u1fi/cSwLpMh3Zkkg6XgI5t
-         a9NjofpQYtFjQXYKk//VlXlhksZDbHMPL87yN8Hg5TA86slJVqsQlWodFGqHniPZVLvR
-         k64vVisweNxLckkCj1dwvhLYC1vfejEO+Y1hsokEfNpuNQ8L9dEn89GFjwZpYlYj2tKX
-         H3oURKOpFy9Lf6+Ufc2TF1+TuPJc1SP4F7uFU9X1t37lVQKW8H/ZLCeRa8X2Hgdasmyc
-         +jrq99Ymefs3+941emsVmsU/ZuwvhatcQT6KRAV2bQfjfcwFPPuAYz1AkWOq1mNevekm
-         sP3Q==
-X-Gm-Message-State: AOAM532vjgjuqbsroUgmM+AiU1q1owwuqzf5btj9MGUGT/abZcnUwZVW
-        tvOywE+3Bb07jjw2Lv2IREarjw==
-X-Google-Smtp-Source: ABdhPJyvjbxB3tO4xoXQp6c0Dk8Z3ZzcKlQNG9KtKIWo3F60nja7VGVDZsep5sLmwwdbU6AQ74VhWQ==
-X-Received: by 2002:a05:6000:1:: with SMTP id h1mr4145677wrx.127.1604812661018;
-        Sat, 07 Nov 2020 21:17:41 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
-        by smtp.gmail.com with ESMTPSA id r10sm8378462wmg.16.2020.11.07.21.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Nov 2020 21:17:40 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Guo Ren <guoren@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "David S. Miller" <davem@davemloft.net>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/19] elf/vdso: Reuse arch_setup_additional_pages() parameters
-Date:   Sun,  8 Nov 2020 05:17:16 +0000
-Message-Id: <20201108051730.2042693-7-dima@arista.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201108051730.2042693-1-dima@arista.com>
-References: <20201108051730.2042693-1-dima@arista.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727332AbgKHFla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Nov 2020 00:41:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726030AbgKHFla (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Nov 2020 00:41:30 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC22820897;
+        Sun,  8 Nov 2020 05:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604814089;
+        bh=L1jfJp3rMEmMkwKNW8sxEP62KZhIy72ys9f+psh/Vmg=;
+        h=Date:From:To:Subject:From;
+        b=X8fN70uORv0hn7HRQ2ehz1hUyaGXGgtpPvx5DEmhmL7cEyv6WSrXuwfP1MOgc/rq6
+         QjB2Cz/2GTHgSaRe6Lk3m4cbqMROMqXu/1hZ8EUbntwv5OYn34jG7fr0gq529l4sxW
+         R9io5WAGa6uIziHzcOyW/AbvTgqAr1qyKDQ3uOz0=
+Date:   Sat, 07 Nov 2020 21:41:28 -0800
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2020-11-07-21-40 uploaded
+Message-ID: <20201108054128.qhRi-EaDH%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Both parameters of arch_setup_additional_pages() are currently unused.
-commit fc5243d98ac2 ("[S390] arch_setup_additional_pages arguments")
-tried to introduce useful arguments, but they still are not used.
+The mm-of-the-moment snapshot 2020-11-07-21-40 has been uploaded to
 
-Remove old parameters and introduce sysinfo_ehdr argument that will be
-used to return vdso address to put as AT_SYSINFO_EHDR tag in auxiliary
-vector. The reason to do it is that many architecture have vDSO pointer
-saved in their mm->context with the only purpose to use it later
-in ARCH_DLINFO. That's the macro for elf loader to setup sysinfo_ehdr
-tag.
+   https://www.ozlabs.org/~akpm/mmotm/
 
-Return sysinfo_ehdr address that will be later used by ARCH_DLINFO as
-an argument. That will allow to drop vDSO pointer from mm.context
-and any code responsible to track vDSO position on platforms that
-don't use vDSO as a landing in userspace (arm/s390/sparc).
+mmotm-readme.txt says
 
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- arch/arm/include/asm/vdso.h        |  6 ++++--
- arch/arm/kernel/process.c          |  4 ++--
- arch/arm/kernel/vdso.c             | 10 +++++++---
- arch/arm64/kernel/vdso.c           | 17 ++++++++--------
- arch/csky/kernel/vdso.c            |  3 ++-
- arch/hexagon/kernel/vdso.c         |  3 ++-
- arch/mips/kernel/vdso.c            |  3 ++-
- arch/nds32/kernel/vdso.c           |  3 ++-
- arch/nios2/mm/init.c               |  2 +-
- arch/powerpc/kernel/vdso.c         |  3 ++-
- arch/riscv/kernel/vdso.c           |  9 +++++----
- arch/s390/kernel/vdso.c            |  3 ++-
- arch/sh/kernel/vsyscall/vsyscall.c |  3 ++-
- arch/sparc/vdso/vma.c              | 15 +++++++-------
- arch/x86/entry/vdso/vma.c          | 32 +++++++++++++++++-------------
- arch/x86/um/vdso/vma.c             |  2 +-
- fs/binfmt_elf.c                    |  3 ++-
- fs/binfmt_elf_fdpic.c              |  3 ++-
- include/linux/elf.h                | 17 +++++++++++-----
- 19 files changed, 84 insertions(+), 57 deletions(-)
+README for mm-of-the-moment:
 
-diff --git a/arch/arm/include/asm/vdso.h b/arch/arm/include/asm/vdso.h
-index 5b85889f82ee..6b2b3b1fe833 100644
---- a/arch/arm/include/asm/vdso.h
-+++ b/arch/arm/include/asm/vdso.h
-@@ -10,13 +10,15 @@ struct mm_struct;
- 
- #ifdef CONFIG_VDSO
- 
--void arm_install_vdso(struct mm_struct *mm, unsigned long addr);
-+void arm_install_vdso(struct mm_struct *mm, unsigned long addr,
-+		      unsigned long *sysinfo_ehdr);
- 
- extern unsigned int vdso_total_pages;
- 
- #else /* CONFIG_VDSO */
- 
--static inline void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
-+static inline void arm_install_vdso(struct mm_struct *mm, unsigned long addr,
-+				    unsigned long *sysinfo_ehdr)
- {
- }
- 
-diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
-index d0220da1d1b1..0e90cba8ac7a 100644
---- a/arch/arm/kernel/process.c
-+++ b/arch/arm/kernel/process.c
-@@ -389,7 +389,7 @@ static const struct vm_special_mapping sigpage_mapping = {
- 	.mremap = sigpage_mremap,
- };
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
-@@ -430,7 +430,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	 * to be fatal to the process, so no error check needed
- 	 * here.
- 	 */
--	arm_install_vdso(mm, addr + PAGE_SIZE);
-+	arm_install_vdso(mm, addr + PAGE_SIZE, sysinfo_ehdr);
- 
-  up_fail:
- 	mmap_write_unlock(mm);
-diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
-index 3408269d19c7..710e5ca99a53 100644
---- a/arch/arm/kernel/vdso.c
-+++ b/arch/arm/kernel/vdso.c
-@@ -233,7 +233,8 @@ static int install_vvar(struct mm_struct *mm, unsigned long addr)
- }
- 
- /* assumes mmap_lock is write-locked */
--void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
-+void arm_install_vdso(struct mm_struct *mm, unsigned long addr,
-+		      unsigned long *sysinfo_ehdr)
- {
- 	struct vm_area_struct *vma;
- 	unsigned long len;
-@@ -254,7 +255,10 @@ void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
- 		VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
- 		&vdso_text_mapping);
- 
--	if (!IS_ERR(vma))
--		mm->context.vdso = addr;
-+	if (IS_ERR(vma))
-+		return;
-+
-+	mm->context.vdso = addr;
-+	*sysinfo_ehdr = addr;
- }
- 
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 1b710deb84d6..666338724a07 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -213,8 +213,7 @@ static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
- 
- static int __setup_additional_pages(enum vdso_abi abi,
- 				    struct mm_struct *mm,
--				    struct linux_binprm *bprm,
--				    int uses_interp)
-+				    unsigned long *sysinfo_ehdr)
- {
- 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
- 	unsigned long gp_flags = 0;
-@@ -250,6 +249,8 @@ static int __setup_additional_pages(enum vdso_abi abi,
- 	if (IS_ERR(ret))
- 		goto up_fail;
- 
-+	*sysinfo_ehdr = vdso_base;
-+
- 	return 0;
- 
- up_fail:
-@@ -401,8 +402,7 @@ static int aarch32_sigreturn_setup(struct mm_struct *mm)
- 	return PTR_ERR_OR_ZERO(ret);
- }
- 
--static int aarch32_setup_additional_pages(struct linux_binprm *bprm,
--					  int uses_interp)
-+static int aarch32_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	int ret;
-@@ -412,8 +412,7 @@ static int aarch32_setup_additional_pages(struct linux_binprm *bprm,
- 		return ret;
- 
- 	if (IS_ENABLED(CONFIG_COMPAT_VDSO)) {
--		ret = __setup_additional_pages(VDSO_ABI_AA32, mm, bprm,
--					       uses_interp);
-+		ret = __setup_additional_pages(VDSO_ABI_AA32, mm, sysinfo_ehdr);
- 		if (ret)
- 			return ret;
- 	}
-@@ -447,7 +446,7 @@ static int __init vdso_init(void)
- }
- arch_initcall(vdso_init);
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	int ret;
-@@ -456,9 +455,9 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 		return -EINTR;
- 
- 	if (is_compat_task())
--		ret = aarch32_setup_additional_pages(bprm, uses_interp);
-+		ret = aarch32_setup_additional_pages(sysinfo_ehdr);
- 	else
--		ret = __setup_additional_pages(VDSO_ABI_AA64, mm, bprm, uses_interp);
-+		ret = __setup_additional_pages(VDSO_ABI_AA64, mm, sysinfo_ehdr);
- 
- 	mmap_write_unlock(mm);
- 
-diff --git a/arch/csky/kernel/vdso.c b/arch/csky/kernel/vdso.c
-index abc3dbc658d4..f72f76915c59 100644
---- a/arch/csky/kernel/vdso.c
-+++ b/arch/csky/kernel/vdso.c
-@@ -44,7 +44,7 @@ static int __init init_vdso(void)
- }
- subsys_initcall(init_vdso);
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	int ret;
- 	unsigned long addr;
-@@ -68,6 +68,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 		goto up_fail;
- 
- 	mm->context.vdso = (void *)addr;
-+	*sysinfo_ehdr = addr;
- 
- up_fail:
- 	mmap_write_unlock(mm);
-diff --git a/arch/hexagon/kernel/vdso.c b/arch/hexagon/kernel/vdso.c
-index b70970ac809f..39e78fe82b99 100644
---- a/arch/hexagon/kernel/vdso.c
-+++ b/arch/hexagon/kernel/vdso.c
-@@ -46,7 +46,7 @@ arch_initcall(vdso_init);
- /*
-  * Called from binfmt_elf.  Create a VMA for the vDSO page.
-  */
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	int ret;
- 	unsigned long vdso_base;
-@@ -74,6 +74,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 		goto up_fail;
- 
- 	mm->context.vdso = (void *)vdso_base;
-+	*sysinfo_ehdr = vdso_base;
- 
- up_fail:
- 	mmap_write_unlock(mm);
-diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
-index 242dc5e83847..a4a321252df6 100644
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -86,7 +86,7 @@ static unsigned long vdso_base(void)
- 	return base;
- }
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mips_vdso_image *image = current->thread.abi->vdso;
- 	struct mm_struct *mm = current->mm;
-@@ -184,6 +184,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	}
- 
- 	mm->context.vdso = (void *)vdso_addr;
-+	*sysinfo_ehdr = vdso_addr;
- 	ret = 0;
- 
- out:
-diff --git a/arch/nds32/kernel/vdso.c b/arch/nds32/kernel/vdso.c
-index e16009a07971..530164221166 100644
---- a/arch/nds32/kernel/vdso.c
-+++ b/arch/nds32/kernel/vdso.c
-@@ -111,7 +111,7 @@ unsigned long inline vdso_random_addr(unsigned long vdso_mapping_len)
- 	return addr;
- }
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
-@@ -176,6 +176,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	/*Map vdso to user space */
- 	vdso_base += PAGE_SIZE;
- 	mm->context.vdso = (void *)vdso_base;
-+	*sysinfo_ehdr = vdso_base;
- 	vma = _install_special_mapping(mm, vdso_base, vdso_text_len,
- 				       VM_READ | VM_EXEC |
- 				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
-diff --git a/arch/nios2/mm/init.c b/arch/nios2/mm/init.c
-index 61862dbb0e32..e09e54198ac6 100644
---- a/arch/nios2/mm/init.c
-+++ b/arch/nios2/mm/init.c
-@@ -104,7 +104,7 @@ static int alloc_kuser_page(void)
- }
- arch_initcall(alloc_kuser_page);
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	int ret;
-diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
-index 8dad44262e75..0ec3bbe7fb36 100644
---- a/arch/powerpc/kernel/vdso.c
-+++ b/arch/powerpc/kernel/vdso.c
-@@ -122,7 +122,7 @@ struct lib64_elfinfo
-  * This is called from binfmt_elf, we create the special vma for the
-  * vDSO and insert it into the mm struct tree
-  */
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct page **vdso_pagelist;
-@@ -211,6 +211,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	}
- 
- 	mmap_write_unlock(mm);
-+	*sysinfo_ehdr = vdso_base;
- 	return 0;
- 
-  fail_mmapsem:
-diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
-index 678204231700..d5c741e3cde6 100644
---- a/arch/riscv/kernel/vdso.c
-+++ b/arch/riscv/kernel/vdso.c
-@@ -56,11 +56,10 @@ static int __init vdso_init(void)
- }
- arch_initcall(vdso_init);
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm,
--	int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
--	unsigned long vdso_base, vdso_len;
-+	unsigned long vdso_base, vvar_base, vdso_len;
- 	int ret;
- 
- 	vdso_len = (vdso_pages + 1) << PAGE_SHIFT;
-@@ -89,12 +88,14 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
- 		goto end;
- 	}
- 
--	vdso_base += (vdso_pages << PAGE_SHIFT);
-+	vvar_base = vdso_base + (vdso_pages << PAGE_SHIFT);
- 	ret = install_special_mapping(mm, vdso_base, PAGE_SIZE,
- 		(VM_READ | VM_MAYREAD), &vdso_pagelist[vdso_pages]);
- 
- 	if (unlikely(ret))
- 		mm->context.vdso = NULL;
-+	else
-+		*sysinfo_ehdr = vdso_base;
- end:
- 	mmap_write_unlock(mm);
- 	return ret;
-diff --git a/arch/s390/kernel/vdso.c b/arch/s390/kernel/vdso.c
-index 6c9ec9521203..810b72f8985c 100644
---- a/arch/s390/kernel/vdso.c
-+++ b/arch/s390/kernel/vdso.c
-@@ -150,7 +150,7 @@ void vdso_free_per_cpu(struct lowcore *lowcore)
-  * This is called from binfmt_elf, we create the special vma for the
-  * vDSO and insert it into the mm struct tree
-  */
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
-@@ -205,6 +205,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	}
- 
- 	current->mm->context.vdso_base = vdso_base;
-+	*sysinfo_ehdr = vdso_base;
- 	rc = 0;
- 
- out_up:
-diff --git a/arch/sh/kernel/vsyscall/vsyscall.c b/arch/sh/kernel/vsyscall/vsyscall.c
-index 1bd85a6949c4..de8df3261b4f 100644
---- a/arch/sh/kernel/vsyscall/vsyscall.c
-+++ b/arch/sh/kernel/vsyscall/vsyscall.c
-@@ -55,7 +55,7 @@ int __init vsyscall_init(void)
- }
- 
- /* Setup a VMA at program startup for the vsyscall page */
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	unsigned long addr;
-@@ -78,6 +78,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 		goto up_fail;
- 
- 	current->mm->context.vdso = (void *)addr;
-+	*sysinfo_ehdr = addr;
- 
- up_fail:
- 	mmap_write_unlock(mm);
-diff --git a/arch/sparc/vdso/vma.c b/arch/sparc/vdso/vma.c
-index cc19e09b0fa1..bf9195fe9bcc 100644
---- a/arch/sparc/vdso/vma.c
-+++ b/arch/sparc/vdso/vma.c
-@@ -346,8 +346,6 @@ static int __init init_vdso(void)
- }
- subsys_initcall(init_vdso);
- 
--struct linux_binprm;
--
- /* Shuffle the vdso up a bit, randomly. */
- static unsigned long vdso_addr(unsigned long start, unsigned int len)
- {
-@@ -359,7 +357,8 @@ static unsigned long vdso_addr(unsigned long start, unsigned int len)
- }
- 
- static int map_vdso(const struct vdso_image *image,
--		struct vm_special_mapping *vdso_mapping)
-+		    struct vm_special_mapping *vdso_mapping,
-+		    unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
-@@ -421,12 +420,14 @@ static int map_vdso(const struct vdso_image *image,
- up_fail:
- 	if (ret)
- 		current->mm->context.vdso = NULL;
-+	else
-+		*sysinfo_ehdr = text_start;
- 
- 	mmap_write_unlock(mm);
- 	return ret;
- }
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 
- 	if (!vdso_enabled)
-@@ -434,11 +435,11 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 
- #if defined CONFIG_COMPAT
- 	if (!(is_32bit_task()))
--		return map_vdso(&vdso_image_64_builtin, &vdso_mapping64);
-+		return map_vdso(&vdso_image_64_builtin, &vdso_mapping64, sysinfo_ehdr);
- 	else
--		return map_vdso(&vdso_image_32_builtin, &vdso_mapping32);
-+		return map_vdso(&vdso_image_32_builtin, &vdso_mapping32, sysinfo_ehdr);
- #else
--	return map_vdso(&vdso_image_64_builtin, &vdso_mapping64);
-+	return map_vdso(&vdso_image_64_builtin, &vdso_mapping64, sysinfo_ehdr);
- #endif
- 
- }
-diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
-index aace862ed9a1..5b9020742e66 100644
---- a/arch/x86/entry/vdso/vma.c
-+++ b/arch/x86/entry/vdso/vma.c
-@@ -243,7 +243,8 @@ static const struct vm_special_mapping vvar_mapping = {
-  * @image          - blob to map
-  * @addr           - request a specific address (zero to map at free addr)
-  */
--static int map_vdso(const struct vdso_image *image, unsigned long addr)
-+static int map_vdso(const struct vdso_image *image, unsigned long addr,
-+		    unsigned long *sysinfo_ehdr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
-@@ -290,6 +291,7 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
- 	} else {
- 		current->mm->context.vdso = (void __user *)text_start;
- 		current->mm->context.vdso_image = image;
-+		*sysinfo_ehdr = text_start;
- 	}
- 
- up_fail:
-@@ -342,11 +344,12 @@ static unsigned long vdso_addr(unsigned long start, unsigned len)
- 	return addr;
- }
- 
--static int map_vdso_randomized(const struct vdso_image *image)
-+static int map_vdso_randomized(const struct vdso_image *image,
-+			       unsigned long *sysinfo_ehdr)
- {
- 	unsigned long addr = vdso_addr(current->mm->start_stack, image->size-image->sym_vvar_start);
- 
--	return map_vdso(image, addr);
-+	return map_vdso(image, addr, sysinfo_ehdr);
- }
- #endif
- 
-@@ -354,6 +357,7 @@ int map_vdso_once(const struct vdso_image *image, unsigned long addr)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
-+	unsigned long unused;
- 
- 	mmap_write_lock(mm);
- 	/*
-@@ -372,19 +376,19 @@ int map_vdso_once(const struct vdso_image *image, unsigned long addr)
- 	}
- 	mmap_write_unlock(mm);
- 
--	return map_vdso(image, addr);
-+	return map_vdso(image, addr, &unused);
- }
- 
- #if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
--static int load_vdso_ia32(void)
-+static int load_vdso_ia32(unsigned long *sysinfo_ehdr)
- {
- 	if (vdso32_enabled != 1)  /* Other values all mean "disabled" */
- 		return 0;
- 
--	return map_vdso(&vdso_image_32, 0);
-+	return map_vdso(&vdso_image_32, 0, sysinfo_ehdr);
- }
- #else
--static int load_vdso_ia32(void)
-+static int load_vdso_ia32(unsigned long *sysinfo_ehdr)
- {
- 	WARN_ON_ONCE(1);
- 	return -ENODATA;
-@@ -392,32 +396,32 @@ static int load_vdso_ia32(void)
- #endif
- 
- #ifdef CONFIG_X86_64
--static int load_vdso_64(void)
-+static int load_vdso_64(unsigned long *sysinfo_ehdr)
- {
- 	if (!vdso64_enabled)
- 		return 0;
- 
- #ifdef CONFIG_X86_X32_ABI
- 	if (in_x32_syscall())
--		return map_vdso_randomized(&vdso_image_x32);
-+		return map_vdso_randomized(&vdso_image_x32, sysinfo_ehdr);
- #endif
- 
--	return map_vdso_randomized(&vdso_image_64);
-+	return map_vdso_randomized(&vdso_image_64, sysinfo_ehdr);
- }
- #else
--static int load_vdso_64(void)
-+static int load_vdso_64(unsigned long *sysinfo_ehdr)
- {
- 	WARN_ON_ONCE(1);
- 	return -ENODATA;
- }
- #endif
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	if (in_ia32_syscall())
--		return load_vdso_ia32();
-+		return load_vdso_ia32(sysinfo_ehdr);
- 
--	return load_vdso_64();
-+	return load_vdso_64(sysinfo_ehdr);
- }
- 
- #ifdef CONFIG_X86_64
-diff --git a/arch/x86/um/vdso/vma.c b/arch/x86/um/vdso/vma.c
-index 76d9f6ce7a3d..77488065f7cc 100644
---- a/arch/x86/um/vdso/vma.c
-+++ b/arch/x86/um/vdso/vma.c
-@@ -50,7 +50,7 @@ static int __init init_vdso(void)
- }
- subsys_initcall(init_vdso);
- 
--int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
-+int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
- {
- 	int err;
- 	struct mm_struct *mm = current->mm;
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index b9adbeb59101..049ff514aa19 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -833,6 +833,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	unsigned long interp_load_addr = 0;
- 	unsigned long start_code, end_code, start_data, end_data;
- 	unsigned long reloc_func_desc __maybe_unused = 0;
-+	unsigned long sysinfo_ehdr = 0;
- 	int executable_stack = EXSTACK_DEFAULT;
- 	struct elfhdr *elf_ex = (struct elfhdr *)bprm->buf;
- 	struct elfhdr *interp_elf_ex = NULL;
-@@ -1249,7 +1250,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- 	set_binfmt(&elf_format);
- 
--	retval = arch_setup_additional_pages(bprm, !!interpreter);
-+	retval = arch_setup_additional_pages(&sysinfo_ehdr);
- 	if (retval < 0)
- 		goto out;
- 
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index b9a6d1b2b5bb..c9ee3c240855 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -183,6 +183,7 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
- {
- 	struct elf_fdpic_params exec_params, interp_params;
- 	struct pt_regs *regs = current_pt_regs();
-+	unsigned long sysinfo_ehdr = 0;
- 	struct elf_phdr *phdr;
- 	unsigned long stack_size, entryaddr;
- #ifdef ELF_FDPIC_PLAT_INIT
-@@ -375,7 +376,7 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
- 	if (retval < 0)
- 		goto error;
- 
--	retval = arch_setup_additional_pages(bprm, !!interpreter_name);
-+	retval = arch_setup_additional_pages(&sysinfo_ehdr);
- 	if (retval < 0)
- 		goto error;
- #endif
-diff --git a/include/linux/elf.h b/include/linux/elf.h
-index 95bf7a1abaef..f9b561bb395d 100644
---- a/include/linux/elf.h
-+++ b/include/linux/elf.h
-@@ -104,13 +104,20 @@ static inline int arch_elf_adjust_prot(int prot,
- }
- #endif
- 
--struct linux_binprm;
- #ifdef CONFIG_ARCH_HAS_SETUP_ADDITIONAL_PAGES
--extern int arch_setup_additional_pages(struct linux_binprm *bprm,
--				       int uses_interp);
-+/**
-+ * arch_setup_additional_pages - Premap VMAs in a new-execed process
-+ * @sysinfo_ehdr:	Returns vDSO position to be set in the initial
-+ *			auxiliary vector (tag AT_SYSINFO_EHDR) by binfmt
-+ *			loader. On failure isn't initialized.
-+ *			As address == 0 is never used, it allows to check
-+ *			if the tag should be set.
-+ *
-+ * Return: Zero if successful, or a negative error code on failure.
-+ */
-+extern int arch_setup_additional_pages(unsigned long *sysinfo_ehdr);
- #else
--static inline int arch_setup_additional_pages(struct linux_binprm *bprm,
--				       int uses_interp)
-+static inline int arch_setup_additional_pages(unsigned long *sysinfo_ehdr);
- {
- 	return 0;
- }
--- 
-2.28.0
+https://www.ozlabs.org/~akpm/mmotm/
 
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+https://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.10-rc2:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-compaction-count-pages-and-stop-correctly-during-page-isolation.patch
+* mm-compaction-stop-isolation-if-too-many-pages-are-isolated-and-we-have-pages-to-migrate.patch
+* mm-vmscan-fix-nr_isolated_file-corruption-on-64-bit.patch
+* mailmap-fix-entry-for-dmitry-baryshkov-eremin-solenikov.patch
+* mm-slub-fix-panic-in-slab_alloc_node.patch
+* mm-gup-use-unpin_user_pages-in-__gup_longterm_locked.patch
+* compilerh-fix-barrier_data-on-clang.patch
+* compilerh-fix-barrier_data-on-clang-fix.patch
+* revert-kernel-rebootc-convert-simple_strtoul-to-kstrtoint.patch
+* reboot-fix-overflow-parsing-reboot-cpu-number.patch
+* mm-fix-phys_to_target_node-and-memory_add_physaddr_to_nid-exports.patch
+* mm-fix-phys_to_target_node-and-memory_add_physaddr_to_nid-exports-v4.patch
+* mm-fix-readahead_page_batch-for-retry-entries.patch
+* mm-filemap-add-static-for-function-__add_to_page_cache_locked.patch
+* kernel-watchdog-fix-watchdog_allowed_mask-not-used-warning.patch
+* mm-memcontrol-fix-missing-wakeup-polling-thread.patch
+* hugetlbfs-fix-anon-huge-page-migration-race.patch
+* mm-zsmalloc-include-sparsememh-for-max_physmem_bits.patch
+* panic-dont-dump-stack-twice-on-warn.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* kthread-add-kthread_work-tracepoints.patch
+* kthread_worker-document-cpu-hotplug-handling.patch
+* kthread_worker-document-cpu-hotplug-handling-fix.patch
+* uapi-move-constants-from-linux-kernelh-to-linux-consth.patch
+* fs-ocfs2-remove-unneeded-break.patch
+* ocfs2-ratelimit-the-max-lookup-times-reached-notice.patch
+* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
+* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
+* ramfs-support-o_tmpfile.patch
+* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
+  mm.patch
+* mmslab_common-use-list_for_each_entry-in-dump_unreclaimable_slab.patch
+* mm-slub-use-kmem_cache_debug_flags-in-deactivate_slab.patch
+* device-dax-kmem-use-struct_size.patch
+* mm-fix-page_owner-initializing-issue-for-arm32.patch
+* fs-break-generic_file_buffered_read-up-into-multiple-functions.patch
+* fs-generic_file_buffered_read-now-uses-find_get_pages_contig.patch
+* mm-msync-exit-early-when-the-flags-is-an-ms_async-and-start-vm_start.patch
+* mm-gup_benchmark-rename-to-mm-gup_test.patch
+* selftests-vm-use-a-common-gup_testh.patch
+* selftests-vm-rename-run_vmtests-run_vmtestssh.patch
+* selftests-vm-minor-cleanup-makefile-and-gup_testc.patch
+* selftests-vm-only-some-gup_test-items-are-really-benchmarks.patch
+* selftests-vm-gup_test-introduce-the-dump_pages-sub-test.patch
+* selftests-vm-run_vmtestssh-update-and-clean-up-gup_test-invocation.patch
+* selftests-vm-hmm-tests-remove-the-libhugetlbfs-dependency.patch
+* selftests-vm-2x-speedup-for-run_vmtestssh.patch
+* mm-gup_benchmark-mark-gup_benchmark_init-as-__init-function.patch
+* mm-gup_benchmark-gup_benchmark-depends-on-debug_fs.patch
+* mm-handle-zone-device-pages-in-release_pages.patch
+* mm-swapfilec-use-helper-function-swap_count-in-add_swap_count_continuation.patch
+* mm-swap_state-skip-meaningless-swap-cache-readahead-when-ra_infowin-==-0.patch
+* mm-swap_state-skip-meaningless-swap-cache-readahead-when-ra_infowin-==-0-fix.patch
+* mm-swapfilec-remove-unnecessary-out-label-in-__swap_duplicate.patch
+* mm-swap-use-memset-to-fill-the-swap_map-with-swap_has_cache.patch
+* mmthpshmem-limit-shmem-thp-alloc-gfp_mask.patch
+* mmthpshm-limit-gfp-mask-to-no-more-than-specified.patch
+* mm-memcontrol-add-file_thp-shmem_thp-to-memorystat.patch
+* mm-memcontrol-add-file_thp-shmem_thp-to-memorystat-fix.patch
+* mm-memcontrol-remove-unused-mod_memcg_obj_state.patch
+* mm-memcontrol-eliminate-redundant-check-in-__mem_cgroup_insert_exceeded.patch
+* mm-memcontrol-use-helpers-to-read-pages-memcg-data.patch
+* mm-memcontrol-slab-use-helpers-to-access-slab-pages-memcg_data.patch
+* mm-introduce-page-memcg-flags.patch
+* mm-convert-page-kmemcg-type-to-a-page-memcg-flag.patch
+* mm-memcg-slab-fix-return-child-memcg-objcg-for-root-memcg.patch
+* mm-memcg-bail-early-from-swap-accounting-if-memcg-disabled.patch
+* mm-memcg-warning-on-memcg-after-readahead-page-charged.patch
+* mm-rmap-always-do-ttu_ignore_access.patch
+* mm-kvm-account-kvm_vcpu_mmap-to-kmemcg.patch
+* mm-memcg-remove-unused-definitions.patch
+* mm-memcg-update-page-struct-member-in-comments.patch
+* xen-unpopulated-alloc-consolidate-pgmap-manipulation.patch
+* kselftests-vm-add-mremap-tests.patch
+* mm-speedup-mremap-on-1gb-or-larger-regions.patch
+* arm64-mremap-speedup-enable-have_move_pud.patch
+* x86-mremap-speedup-enable-have_move_pud.patch
+* mm-cleanup-remove-unused-tsk-arg-from-__access_remote_vm.patch
+* mm-unexport-follow_pte_pmd.patch
+* mm-simplify-follow_ptepmd.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* mm-mremap-account-memory-on-do_munmap-failure.patch
+* mm-mremap-for-mremap_dontunmap-check-security_vm_enough_memory_mm.patch
+* mremap-dont-allow-mremap_dontunmap-on-special_mappings-and-aio.patch
+* vm_ops-rename-split-callback-to-may_split.patch
+* mremap-check-if-its-possible-to-split-original-vma.patch
+* mm-forbid-splitting-special-mappings.patch
+* mm-vmallocc-__vmalloc_area_node-avoid-32-bit-overflow.patch
+* mm-vmalloc-fix-kasan-shadow-poisoning-size.patch
+* mm-introduce-debug_pagealloc_map_pages-helper.patch
+* pm-hibernate-make-direct-map-manipulations-more-explicit.patch
+* arch-mm-restore-dependency-of-__kernel_map_pages-of-debug_pagealloc.patch
+* arch-mm-make-kernel_page_present-always-available.patch
+* alpha-switch-from-discontigmem-to-sparsemem.patch
+* ia64-remove-custom-__early_pfn_to_nid.patch
+* ia64-remove-ifdef-config_zone_dma32-statements.patch
+* ia64-discontig-paging_init-remove-local-max_pfn-calculation.patch
+* ia64-split-virtual-map-initialization-out-of-paging_init.patch
+* ia64-forbid-using-virtual_mem_map-with-flatmem.patch
+* ia64-make-sparsemem-default-and-disable-discontigmem.patch
+* arm-remove-config_arch_has_holes_memorymodel.patch
+* arm-arm64-move-free_unused_memmap-to-generic-mm.patch
+* arc-use-flatmem-with-freeing-of-unused-memory-map-instead-of-discontigmem.patch
+* m68k-mm-make-node-data-and-node-setup-depend-on-config_discontigmem.patch
+* m68k-mm-enable-use-of-generic-memory_modelh-for-discontigmem.patch
+* m68k-deprecate-discontigmem.patch
+* mm-hugetlbc-just-use-put_page_testzero-instead-of-page_count.patch
+* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
+* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
+* include-linux-huge_mmh-remove-extern-keyword.patch
+* mm-dont-wake-kswapd-prematurely-when-watermark-boosting-is-disabled.patch
+* mm-vmscan-drop-unneeded-assignment-in-kswapd.patch
+* mm-compaction-rename-start_pfn-to-iteration_start_pfn-in-compact_zone.patch
+* mm-oom_kill-change-comment-and-rename-is_dump_unreclaim_slabs.patch
+* mm-migrate-fix-comment-spelling.patch
+* mm-optimize-migrate_vma_pages-mmu-notifier.patch
+* mm-cmac-remove-redundant-cma_mutex-lock.patch
+* mm-page_alloc-do-not-rely-on-the-order-of-page_poison-and-init_on_alloc-free-parameters.patch
+* mm-page_poison-use-static-key-more-efficiently.patch
+* kernel-power-allow-hibernation-with-page_poison-sanity-checking.patch
+* mm-page_poison-remove-config_page_poisoning_no_sanity.patch
+* mm-page_poison-remove-config_page_poisoning_zero.patch
+* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings.patch
+* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings-fix.patch
+* mm-vmstat-fix-proc-sys-vm-stat_refresh-generating-false-warnings-fix-2.patch
+* tool-selftests-fix-spelling-typo-of-writting.patch
+* mm-zswap-make-struct-kernel_param_ops-definitions-const.patch
+* mm-zswap-fix-passing-zero-to-ptr_err-warning.patch
+* mm-zswap-move-to-use-crypto_acomp-api-for-hardware-acceleration.patch
+* zsmalloc-rework-the-list_add-code-in-insert_zspage.patch
+* mm-process_vm_access-remove-redundant-initialization-of-iov_r.patch
+* zram-support-a-page-writeback.patch
+* page-flags-remove-unused-__pageprivate.patch
+* mm-add-kernel-electric-fence-infrastructure.patch
+* mm-add-kernel-electric-fence-infrastructure-fix.patch
+* x86-kfence-enable-kfence-for-x86.patch
+* arm64-kfence-enable-kfence-for-arm64.patch
+* kfence-use-pt_regs-to-generate-stack-trace-on-faults.patch
+* mm-kfence-insert-kfence-hooks-for-slab.patch
+* mm-kfence-insert-kfence-hooks-for-slub.patch
+* kfence-kasan-make-kfence-compatible-with-kasan.patch
+* kfence-documentation-add-kfence-documentation.patch
+* kfence-add-test-suite.patch
+* maintainers-add-entry-for-kfence.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* procfs-delete-duplicated-words-other-fixes.patch
+* proc-provide-details-on-indirect-branch-speculation.patch
+* proc-provide-details-on-indirect-branch-speculation-v2.patch
+* proc-sysctl-make-protected_-world-readable.patch
+* asm-generic-force-inlining-of-get_order-to-work-around-gcc10-poor-decision.patch
+* kernelh-split-out-mathematical-helpers.patch
+* kernelh-split-out-mathematical-helpers-fix.patch
+* treewide-remove-stringification-from-__alias-macro-definition.patch
+* acctc-use-elif-instead-of-end-and-elif.patch
+* reboot-refactor-and-comment-the-cpu-selection-code.patch
+* bitmap-convert-bitmap_empty-bitmap_full-to-return-boolean.patch
+* lib-stackdepot-add-support-to-configure-stack_hash_size.patch
+* lib-test_free_pages-add-basic-progress-indicators.patch
+* lib-stackdepotc-replace-one-element-array-with-flexible-array-member.patch
+* lib-stackdepotc-use-flex_array_size-helper-in-memcpy.patch
+* lib-stackdepotc-use-array_size-helper-in-jhash2.patch
+* lib-test_lockup-minimum-fix-to-get-it-compiled-on-preempt_rt.patch
+* lib-optimize-cpumask_local_spread.patch
+* bitops-introduce-the-for_each_set_clump-macro.patch
+* lib-test_bitmapc-add-for_each_set_clump-test-cases.patch
+* lib-test_bitmapc-add-for_each_set_clump-test-cases-checkpatch-fixes.patch
+* gpio-thunderx-utilize-for_each_set_clump-macro.patch
+* gpio-xilinx-utilize-generic-bitmap_get_value-and-_set_value.patch
+* checkpatch-add-new-exception-to-repeated-word-check.patch
+* checkpatch-fix-false-positives-in-repeated_word-warning.patch
+* checkpatch-ignore-generated-camelcase-defines-and-enum-values.patch
+* checkpatch-prefer-static-const-declarations.patch
+* checkpatch-allow-fix-removal-of-unnecessary-break-statements.patch
+* checkpatch-extend-attributes-check-to-handle-more-patterns.patch
+* checkpatch-add-a-fixer-for-missing-newline-at-eof.patch
+* checkpatch-update-__attribute__sectionname-quote-removal.patch
+* checkpatch-update-__attribute__sectionname-quote-removal-v2.patch
+* checkpatch-add-fix-option-for-gerrit_change_id.patch
+* checkpatch-add-__alias-and-__weak-to-suggested-__attribute__-conversions.patch
+* reiserfs-add-check-for-an-invalid-ih_entry_count.patch
+* kdump-append-uts_namespacename-offset-to-vmcoreinfo.patch
+* aio-simplify-read_events.patch
+* fault-injection-handle-ei_etype_true.patch
+* lib-lzo-make-lzogeneric1x_1_compress-static.patch
+  linux-next.patch
+* compiler-clang-remove-version-check-for-bpf-tracing.patch
+* mmap-locking-api-dont-check-locking-if-the-mm-isnt-live-yet.patch
+* mm-gup-assert-that-the-mmap-lock-is-held-in-__get_user_pages.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
+  linux-next-git-rejects.patch
