@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4E62AAB5D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Nov 2020 15:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E43BC2AAB60
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Nov 2020 15:12:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbgKHOMC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Nov 2020 09:12:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
+        id S1728590AbgKHOMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Nov 2020 09:12:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728482AbgKHOMB (ORCPT
+        with ESMTP id S1728540AbgKHOML (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Nov 2020 09:12:01 -0500
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEAFC0613D2
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Nov 2020 06:12:01 -0800 (PST)
-Received: by mail-pj1-x1041.google.com with SMTP id gi3so1893421pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Nov 2020 06:12:01 -0800 (PST)
+        Sun, 8 Nov 2020 09:12:11 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1FFC0613D2
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Nov 2020 06:12:11 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id z1so3249888plo.12
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Nov 2020 06:12:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Yl6+SJF9ldn739CCgiYUc2ELWybi9wl11V9jgMTWzRM=;
-        b=1qwUPf+4WDCtRZPJhdoDvf2qYVo64FMSRgpIxtyEK7wweIbYOPZN9+314JMlifOKlO
-         N/3BBE1NenJI8/fOa3LhBK/G6ig7Djo96Txmi9QBrkFscMYFnjyvF3BmIgC+iXYgv/1I
-         VuvFZzDJcRW1AvYRh8UcF52hdqmCbVXr3IsivR0+UBczyIS+fna6Wa/lGkY6LZb+wHjv
-         wmy0TbCH2OOpawuTnkNuQt2W1uvPFnl34i9SK1QSH/aMQ5bf5tP1swlYDMi+eQ2fzcqz
-         N5VR4PB5mTUazCudUxX+xz/ihBuzlVIpJ1+QFMisAYTqyOmX293NuGXC7fH0SKsTsv7+
-         S43g==
+        bh=7V5l6iVptpyNChOEqgaC9UYBunmQshAPJJMGH6oVOO8=;
+        b=o0HEIRih4qIk8FKiaCrU/8jPPZ5TYT6PQWg9ap++vRxQ08ObrhpaevX4214Ob2VCY2
+         bHwFHgK7NR9A1or3FsJjDVthim8iB3WkhekAJ3nEByhI9pBN6luYwVbGAUs/2G+uay5s
+         gooJjeKFBKWzlkf2GamyV+vc4R6VeS43+OqoTKNV73tC1vCFejqm9W4GiKyrG5+yHeM3
+         xd7pwh2QL62pQA13zHEZhVG27MtZ23E0H1cdnwbg4gAxNqun3pYYuoLtce5HF2bN6yCH
+         HE4blj+ArUxxMH33jBUNT0HzpGNcmth0I2XO7RFjfCMZqNitjz16k+F4CXTTflMWN6uF
+         mbGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Yl6+SJF9ldn739CCgiYUc2ELWybi9wl11V9jgMTWzRM=;
-        b=RUqseoV9sU3D9Tt9jGlWH2r7D/+kQ/bU/5+kB+1fn0kYgyBDvq1JbHyR/p1ZuTVO2z
-         9rXaZKTLTjbQmJgXrq5yzkZ+5RrA1YPYrBcpI8L4rwT0Pik5vWSBdzYYGfMWXTyZNr0g
-         qapFbwfxNKGad3RcpYLs8NL7xU03UG9JAtjb6tEWSoGgj6gYm3hNdINhVGvhZT3K8bl0
-         Sm4o8326HFtXu8pgS2sjuKdYQ4NuKOX+VL9blu4ASUru26VmUZve2gC6eJ9Dgvuntddd
-         6fKurc0cGuzdpk9GJDIFoQpzANGksurTjZPIva1b6h8cGDT/n49bT9augPsWlr/abyrz
-         8BqQ==
-X-Gm-Message-State: AOAM5324lKeR+TCm9FlrUNS+kK2frXIB9z8qkXu8WyQ7DRFyImTmlZ37
-        NnfeCGisJ9hnZ3VxSDtC9N5Ttw==
-X-Google-Smtp-Source: ABdhPJzmdHHFnoW3gcj23YuvnESkzoLYirGY7Wy32hA3OjJt2nJtMAvfzjpram5L+8eJJeetNpAGBA==
-X-Received: by 2002:a17:90a:154b:: with SMTP id y11mr6942974pja.75.1604844721214;
-        Sun, 08 Nov 2020 06:12:01 -0800 (PST)
+        bh=7V5l6iVptpyNChOEqgaC9UYBunmQshAPJJMGH6oVOO8=;
+        b=EhU9hHMnQHZzuo7ExADzyi1uJdDWrbNb1y47IfHrbPdreNV+dzHZJI4u98AE4gWtMT
+         vN9bRQDlofp4ZQBLniaGaGGlyxWFLfjMlNGRr1sF/UkvSutHdZh2L8yFDQFEop57hPpS
+         5XyFYwtOhpIARbzAlKB6fqFuo0sTcF+eInwr4jv5JnjCFCAeJHPWhV2M2bJZ1tt6vm6o
+         +qEHveucbYonf5p8WO3aUPnDFiT2b4XEGrRM2YSdGrwBqMw1F2aiz/a5C80ESI5UTg+D
+         m3NTXlWAElb3hSvdUZG/VaAKPTdKFAgrGQSpfFTehVhXpgrjj5t/UETS6oIBvigBsEAy
+         FC4g==
+X-Gm-Message-State: AOAM533nl52CZKWMsHGpO5ghh2Rtf7fWWmahSOnzBXYSMthe0hUeYrV4
+        anwvQ7yUZbgAAtosz0KufaRaFw==
+X-Google-Smtp-Source: ABdhPJwKM/CCRKYOI1UvT8sA6mZlrIw7idUpNoiTVHntW3fTsKokmQ5P/+hpT6dCP1V9Wu+5WLqwkg==
+X-Received: by 2002:a17:902:7049:b029:d7:e413:8aba with SMTP id h9-20020a1709027049b02900d7e4138abamr284690plt.30.1604844731474;
+        Sun, 08 Nov 2020 06:12:11 -0800 (PST)
 Received: from localhost.localdomain ([103.136.220.94])
-        by smtp.gmail.com with ESMTPSA id z11sm8754047pfk.52.2020.11.08.06.11.51
+        by smtp.gmail.com with ESMTPSA id z11sm8754047pfk.52.2020.11.08.06.12.01
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Nov 2020 06:12:00 -0800 (PST)
+        Sun, 08 Nov 2020 06:12:10 -0800 (PST)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -62,9 +62,9 @@ Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v3 02/21] mm/memory_hotplug: Move {get,put}_page_bootmem() to bootmem_info.c
-Date:   Sun,  8 Nov 2020 22:10:54 +0800
-Message-Id: <20201108141113.65450-3-songmuchun@bytedance.com>
+Subject: [PATCH v3 03/21] mm/hugetlb: Introduce a new config HUGETLB_PAGE_FREE_VMEMMAP
+Date:   Sun,  8 Nov 2020 22:10:55 +0800
+Message-Id: <20201108141113.65450-4-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20201108141113.65450-1-songmuchun@bytedance.com>
 References: <20201108141113.65450-1-songmuchun@bytedance.com>
@@ -74,172 +74,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the later patch, we will use {get,put}_page_bootmem() to initialize
-the page for vmemmap or free vmemmap page to buddy. So move them out of
-CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code movement without any
-functional change.
+The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
+whether to enable the feature of freeing unused vmemmap associated
+with HugeTLB pages. Now only support x86.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- arch/x86/mm/init_64.c          |  2 +-
- include/linux/bootmem_info.h   | 13 +++++++++++++
- include/linux/memory_hotplug.h |  4 ----
- mm/bootmem_info.c              | 26 ++++++++++++++++++++++++++
- mm/memory_hotplug.c            | 27 ---------------------------
- mm/sparse.c                    |  1 +
- 6 files changed, 41 insertions(+), 32 deletions(-)
+ arch/x86/mm/init_64.c |  2 +-
+ fs/Kconfig            | 16 ++++++++++++++++
+ mm/bootmem_info.c     |  3 +--
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index c7f7ad55b625..0a45f062826e 100644
+index 0a45f062826e..0435bee2e172 100644
 --- a/arch/x86/mm/init_64.c
 +++ b/arch/x86/mm/init_64.c
-@@ -1572,7 +1572,7 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
- 	return err;
- }
+@@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
  
--#if defined(CONFIG_MEMORY_HOTPLUG_SPARSE) && defined(CONFIG_HAVE_BOOTMEM_INFO_NODE)
-+#ifdef CONFIG_HAVE_BOOTMEM_INFO_NODE
- void register_page_bootmem_memmap(unsigned long section_nr,
- 				  struct page *start_page, unsigned long nr_pages)
+ static void __init register_page_bootmem_info(void)
  {
-diff --git a/include/linux/bootmem_info.h b/include/linux/bootmem_info.h
-index 65bb9b23140f..4ed6dee1adc9 100644
---- a/include/linux/bootmem_info.h
-+++ b/include/linux/bootmem_info.h
-@@ -18,10 +18,23 @@ enum {
+-#ifdef CONFIG_NUMA
++#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
+ 	int i;
  
- #ifdef CONFIG_HAVE_BOOTMEM_INFO_NODE
- void __init register_page_bootmem_info_node(struct pglist_data *pgdat);
-+
-+void get_page_bootmem(unsigned long info, struct page *page,
-+		      unsigned long type);
-+void put_page_bootmem(struct page *page);
- #else
- static inline void register_page_bootmem_info_node(struct pglist_data *pgdat)
- {
- }
-+
-+static inline void put_page_bootmem(struct page *page)
-+{
-+}
-+
-+static inline void get_page_bootmem(unsigned long info, struct page *page,
-+				    unsigned long type)
-+{
-+}
- #endif
+ 	for_each_online_node(i)
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 976e8b9033c4..21b8d39a9715 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -245,6 +245,22 @@ config HUGETLBFS
+ config HUGETLB_PAGE
+ 	def_bool HUGETLBFS
  
- #endif /* __LINUX_BOOTMEM_INFO_H */
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 19e5d067294c..c9f3361fe84b 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -197,10 +197,6 @@ static inline void arch_refresh_nodedata(int nid, pg_data_t *pgdat)
- #endif /* CONFIG_NUMA */
- #endif /* CONFIG_HAVE_ARCH_NODEDATA_EXTENSION */
- 
--extern void put_page_bootmem(struct page *page);
--extern void get_page_bootmem(unsigned long ingo, struct page *page,
--			     unsigned long type);
--
- void get_online_mems(void);
- void put_online_mems(void);
++config HUGETLB_PAGE_FREE_VMEMMAP
++	bool "Free unused vmemmap associated with HugeTLB pages"
++	default y
++	depends on X86
++	depends on HUGETLB_PAGE
++	depends on SPARSEMEM_VMEMMAP
++	depends on HAVE_BOOTMEM_INFO_NODE
++	help
++	  There are many struct page structures associated with each HugeTLB
++	  page. But we only use a few struct page structures. In this case,
++	  it wastes some memory. It is better to free the unused struct page
++	  structures to buddy system which can save some memory. For
++	  architectures that support it, say Y here.
++
++	  If unsure, say N.
++
+ config MEMFD_CREATE
+ 	def_bool TMPFS || HUGETLBFS
  
 diff --git a/mm/bootmem_info.c b/mm/bootmem_info.c
-index 39fa8fc120bc..d276e96e487f 100644
+index d276e96e487f..fcab5a3f8cc0 100644
 --- a/mm/bootmem_info.c
 +++ b/mm/bootmem_info.c
-@@ -10,6 +10,32 @@
+@@ -10,8 +10,7 @@
  #include <linux/bootmem_info.h>
  #include <linux/memory_hotplug.h>
  
-+void get_page_bootmem(unsigned long info,  struct page *page,
-+		      unsigned long type)
-+{
-+	page->freelist = (void *)type;
-+	SetPagePrivate(page);
-+	set_page_private(page, info);
-+	page_ref_inc(page);
-+}
-+
-+void put_page_bootmem(struct page *page)
-+{
-+	unsigned long type;
-+
-+	type = (unsigned long) page->freelist;
-+	BUG_ON(type < MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE ||
-+	       type > MEMORY_HOTPLUG_MAX_BOOTMEM_TYPE);
-+
-+	if (page_ref_dec_return(page) == 1) {
-+		page->freelist = NULL;
-+		ClearPagePrivate(page);
-+		set_page_private(page, 0);
-+		INIT_LIST_HEAD(&page->lru);
-+		free_reserved_page(page);
-+	}
-+}
-+
- #ifndef CONFIG_SPARSEMEM_VMEMMAP
- static void register_page_bootmem_info_section(unsigned long start_pfn)
- {
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 2da4ad071456..ae57eedc341f 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -21,7 +21,6 @@
- #include <linux/memory.h>
- #include <linux/memremap.h>
- #include <linux/memory_hotplug.h>
--#include <linux/bootmem_info.h>
- #include <linux/highmem.h>
- #include <linux/vmalloc.h>
- #include <linux/ioport.h>
-@@ -142,32 +141,6 @@ static void release_memory_resource(struct resource *res)
- }
- 
- #ifdef CONFIG_MEMORY_HOTPLUG_SPARSE
 -void get_page_bootmem(unsigned long info,  struct page *page,
 -		      unsigned long type)
--{
--	page->freelist = (void *)type;
--	SetPagePrivate(page);
--	set_page_private(page, info);
--	page_ref_inc(page);
--}
--
--void put_page_bootmem(struct page *page)
--{
--	unsigned long type;
--
--	type = (unsigned long) page->freelist;
--	BUG_ON(type < MEMORY_HOTPLUG_MIN_BOOTMEM_TYPE ||
--	       type > MEMORY_HOTPLUG_MAX_BOOTMEM_TYPE);
--
--	if (page_ref_dec_return(page) == 1) {
--		page->freelist = NULL;
--		ClearPagePrivate(page);
--		set_page_private(page, 0);
--		INIT_LIST_HEAD(&page->lru);
--		free_reserved_page(page);
--	}
--}
--
- static int check_pfn_span(unsigned long pfn, unsigned long nr_pages,
- 		const char *reason)
++void get_page_bootmem(unsigned long info, struct page *page, unsigned long type)
  {
-diff --git a/mm/sparse.c b/mm/sparse.c
-index b25ad8e64839..a4138410d890 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -13,6 +13,7 @@
- #include <linux/vmalloc.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/bootmem_info.h>
- 
- #include "internal.h"
- #include <asm/dma.h>
+ 	page->freelist = (void *)type;
+ 	SetPagePrivate(page);
 -- 
 2.11.0
 
