@@ -2,93 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D25962AAD26
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Nov 2020 20:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD7D2AAEA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 02:16:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbgKHTIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Nov 2020 14:08:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbgKHTH7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Nov 2020 14:07:59 -0500
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A2152222A
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Nov 2020 19:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604862478;
-        bh=xHtls6lXIezqo3MY4JofvqKy4eD3Tg/zP3T1SVhh14M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PyQhSvWt72Htcg3N8GZXEEEl5gR4FJI6JEuNsNbSVIC5yZMIAKs1XQF1mLRB5jCwf
-         J68uoFFpHEdLgW/eOxvZPg2K4I3vQuuKTqPUkM88ukz3L4M+jc3gIKz8i3j/HbRRQm
-         +rQOnaPgYmSmHXUDr40yLQfsd65+yArsGzZXfWrY=
-Received: by mail-lf1-f54.google.com with SMTP id d17so5744322lfq.10
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Nov 2020 11:07:58 -0800 (PST)
-X-Gm-Message-State: AOAM530I1CszTljqNfvOZSu0Qqi8yrBQ6UMZDD/LLZIaIX9ZsO5k95PZ
-        qeWp0E3ZHI0vfpxaLkDxfld70voxAZB7/cCZduNGlw==
-X-Google-Smtp-Source: ABdhPJzhIeYsh6ImqBo3MO13jFnDXj/3CxHcgilHtBOIs01JZKqESrAhAXBK5n9FiqSo+pApvOkp93Dmq6I76qqKv1w=
-X-Received: by 2002:adf:f0c2:: with SMTP id x2mr7511599wro.184.1604862475870;
- Sun, 08 Nov 2020 11:07:55 -0800 (PST)
+        id S1728038AbgKIBQH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Nov 2020 20:16:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52584 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727979AbgKIBQH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 8 Nov 2020 20:16:07 -0500
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EB29C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Nov 2020 17:16:07 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id u127so8606656oib.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Nov 2020 17:16:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=2/k++WtMKcdAwUJoZnUHARNnkvDkyVkfviJV8vQ0AXc=;
+        b=Sb/V1Rh5clTWSq/YDAk+HsgCFqbWxE6dcSidSePur9n/v0jNkJAmPLaOaFN6Bh/7ha
+         X4Fv+8jzOhUTIOsFDlwGAwDB/eGAV6JBVzMWT6Zv/0sDsFr29ai8Z4+8Uh84ihWfeUBv
+         rnd20sQN/vsVmzU/f00Gz0ABpMOH0XbIwB14V95zah3Xlr2wGoM9cWrbHC+CXo0z6I97
+         DdfLHZR2oGnrhvCVN7VBw3XcJv2gdO+/IUroAYTe3GTBqiS8XJH7MtliGzkXoeOz6v5C
+         QXAA7XOci3yZqTrF6QenpbIW37Zn6jJcBqhh757d8Lg559K8ZW1r/zRAe33+01e1F60s
+         sVGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=2/k++WtMKcdAwUJoZnUHARNnkvDkyVkfviJV8vQ0AXc=;
+        b=MOHnZeNsDYd3MFcJlg/Hqrhp6nMc5io5DwPapUaCHEwjZnhesF1LPmY23wAu1gs8Ly
+         gWM4zSbeHTY8mR00D7j/E+XoeRa1XS4ffO1CQpJV2cw7VqnGhr7rkFUTSlNA3FBxnD8N
+         WDkHiQibCB384RdwriewQrRu+JmNJF3+mQZw5AOuLoq/40srH1uReJZrW1Y8krorZt1t
+         yYlMwxnLrmvJgQ3j+oIgp5smV3R7NVXUg6TE2P21aP9dOz6sfiDeS1StEKzEzP9OG8rT
+         QUY4aBKfMOkaFdguv4fWScxD+EKnM0oVH7LgDsLEOFr4hJdeUBz+dybb1z6JWh+WVxVh
+         2+oA==
+X-Gm-Message-State: AOAM530T6/7jqeqwrLavSyCfIIkxoM+kW1cPLka168IwU69l+rGcURrl
+        hPFZUFomOxcPjuo7ya4XaK0sWWzRQxrunEeFeWcwfnSGst/71g==
+X-Google-Smtp-Source: ABdhPJzO+xGFTUHJ0xu9qUxdaV0uv2eHULnJc9pbzR/MzJWxzg5gALpbmiBlOBqy454JfLCwf+Q2xiG56xNDcJXPh5E=
+X-Received: by 2002:a05:6808:2c4:: with SMTP id a4mr7341812oid.114.1604884566155;
+ Sun, 08 Nov 2020 17:16:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20201108051730.2042693-1-dima@arista.com>
-In-Reply-To: <20201108051730.2042693-1-dima@arista.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 8 Nov 2020 11:07:44 -0800
-X-Gmail-Original-Message-ID: <CALCETrW-hHyh3nF3ATmy61PCy1iFqVhVYX+-ptBCMP5Bf7aJ0w@mail.gmail.com>
-Message-ID: <CALCETrW-hHyh3nF3ATmy61PCy1iFqVhVYX+-ptBCMP5Bf7aJ0w@mail.gmail.com>
-Subject: Re: [PATCH 00/19] Add generic user_landing tracking
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Guo Ren <guoren@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "David S. Miller" <davem@davemloft.net>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>
+From:   Amy Parker <enbyamy@gmail.com>
+Date:   Sun, 8 Nov 2020 17:15:55 -0800
+Message-ID: <CAE1WUT6O6uP12YMU1NaU-4CR-AaxRUhhWHY=zUtNXpHUfxrF=A@mail.gmail.com>
+Subject: Best solution for shifting DAX_ZERO_PAGE to XA_ZERO_ENTRY
+To:     linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        Matthew Wilcox <willy@infradead.org>, dan.j.williams@intel.com,
+        Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 7, 2020 at 9:17 PM Dmitry Safonov <dima@arista.com> wrote:
->
-> Started from discussion [1], where was noted that currently a couple of
-> architectures support mremap() for vdso/sigpage, but not munmap().
-> If an application maps something on the ex-place of vdso/sigpage,
-> later after processing signal it will land there (good luck!)
->
-> Patches set is based on linux-next (next-20201106) and it depends on
-> changes in x86/cleanups (those reclaim TIF_IA32/TIF_X32) and also
-> on my changes in akpm (fixing several mremap() issues).
->
-> Logically, the patches set divides on:
-> - patch       1: cleanup for patches in x86/cleanups
-> - patches  2-11: cleanups for arch_setup_additional_pages()
+I've been writing a patch to migrate the defined DAX_ZERO_PAGE
+to XA_ZERO_ENTRY for representing holes in files. XA_ZERO_ENTRY
+is defined in include/linux/xarray.h, where it's defined using
+xa_mk_internal(257). This function returns a void pointer, which
+is incompatible with the bitwise arithmetic it is performed on with.
 
-I like these cleanups, although I think you should stop using terms
-like "new-born".  A task being exec'd is not newborn at all -- it's in
-the middle of a transformation.
+Currently, DAX_ZERO_PAGE is defined as an unsigned long,
+so I considered typecasting it. Typecasting every time would be
+repetitive and inefficient. I thought about making a new definition
+for it which has the typecast, but this breaks the original point of
+using already defined terms.
 
---Andy
+Should we go the route of adding a new definition, we might as
+well just change the definition of DAX_ZERO_PAGE. This would
+break the simplicity of the current DAX bit definitions:
+
+#define DAX_LOCKED      (1UL << 0)
+#define DAX_PMD               (1UL << 1)
+#define DAX_ZERO_PAGE  (1UL << 2)
+#define DAX_EMPTY      (1UL << 3)
+
+Any thoughts on this, and what could be the best solution here?
+
+Best regards,
+Amy Parker
+(they/them)
