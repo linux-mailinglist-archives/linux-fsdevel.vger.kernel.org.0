@@ -2,145 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3892AAF63
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 03:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C86DA2AAFF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 04:34:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbgKICRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Nov 2020 21:17:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60079 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729381AbgKICRi (ORCPT
+        id S1728866AbgKIDeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Nov 2020 22:34:18 -0500
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25369 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728038AbgKIDeS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Nov 2020 21:17:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604888256;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=i30PpoZ3ncDE41feRaeC6jT4a2UBvss9Fqk6sZ2j5No=;
-        b=GzrMfroHYbWHCvj7Ei22kO5Jd/iYkUpOuYJA9slizVurhl97UeAD0Ja9wZLBYuTYYZXkOb
-        LD9cK0NfKarPO4xOtl7sL8FsA0Ggbbk6mWoeFeJNAYyMtwzYDHdiJD+/8vIeOxBK7h7/2y
-        zmDNfTIxkhrjy1ubh+6fVz1+ADPwCRA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-436-8eRDGP6kPiunpNCEztr0-Q-1; Sun, 08 Nov 2020 21:17:34 -0500
-X-MC-Unique: 8eRDGP6kPiunpNCEztr0-Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 88317107464F;
-        Mon,  9 Nov 2020 02:17:33 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-113-56.rdu2.redhat.com [10.10.113.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C12091002391;
-        Mon,  9 Nov 2020 02:17:29 +0000 (UTC)
-Subject: Re: [PATCH v3] inotify: Increase default inotify.max_user_watches
- limit to 1048576
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luca BRUNO <lucab@redhat.com>
-References: <20201029194256.7954-1-longman@redhat.com>
- <20201030105752.GB19757@quack2.suse.cz>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <abca71ed-79c5-7485-3053-6eca0bddc53e@redhat.com>
-Date:   Sun, 8 Nov 2020 21:17:29 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Sun, 8 Nov 2020 22:34:18 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1604892838; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=kBlhXktWR+Qe1wFN+TDLfgEUQha2sZ8VH3Fp41EClbH3oREJEalKrjjPSsjzdtBvifOj/zagCfjBGOzLo6YB8ZpymEMoF29GF+B7KBcFSgfuwCmsR6TGO3ogCrQ9RniOtWnlJlw1g1ShF7+41OCR45d3EfCqspX1d5ulpGjd5K0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1604892838; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=2FYXm/brPVetiXORzb8kEOXQkLAdKQUH2WjsHHLMans=; 
+        b=InydZBUy/KxT47H18mjPg2WsL504WwfjrnV2GusBVcIXWQLVXNkcVDME7NhWR90pSgrK4VwDtABL2t6Yqo5B71TDsrVAlFUGRu+tceP3htYu7VHDiW4S1BWLT0FErI9Ww/28XPhxCwWU9m6lQQ1g7sCT1m0ddLZGYagAjLIRP0k=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1604892838;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=2FYXm/brPVetiXORzb8kEOXQkLAdKQUH2WjsHHLMans=;
+        b=KwsnJKvpd2hCXIdOgQQQDLUPTq/7kNrnqj/5PeoM9MbmvXHbDDnpZKrZ1LEBit3k
+        AHGm06odJ9C2dclqnlYLXcal3YFt0MjBvVAEuKAG1YE6jmZxbmsPdP/mUhya2QCF2Hm
+        K7WVJsvVkcJtJNu+yNB8oyk6gqeYBI61hxF33Ujo=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1604892837359899.1502857498393; Mon, 9 Nov 2020 11:33:57 +0800 (CST)
+Date:   Mon, 09 Nov 2020 11:33:57 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Chengguang Xu" <cgxu519@mykernel.net>
+Cc:     "miklos" <miklos@szeredi.hu>, "jack" <jack@suse.cz>,
+        "amir73il" <amir73il@gmail.com>,
+        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
+Message-ID: <175ab1145ed.108462b5a912.9181293177019474923@mykernel.net>
+In-Reply-To: <20201108140307.1385745-10-cgxu519@mykernel.net>
+References: <20201108140307.1385745-1-cgxu519@mykernel.net> <20201108140307.1385745-10-cgxu519@mykernel.net>
+Subject: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D:[RFC_PATCH_v3_09/10]_ovl:_introduce_?=
+ =?UTF-8?Q?helper_of_syncfs_writeback_inode_waiting?=
 MIME-Version: 1.0
-In-Reply-To: <20201030105752.GB19757@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/30/20 6:57 AM, Jan Kara wrote:
-> On Thu 29-10-20 15:42:56, Waiman Long wrote:
->> The default value of inotify.max_user_watches sysctl parameter was set
->> to 8192 since the introduction of the inotify feature in 2005 by
->> commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
->> small for many modern usage. As a result, users have to explicitly set
->> it to a larger value to make it work.
->>
->> After some searching around the web, these are the
->> inotify.max_user_watches values used by some projects:
->>   - vscode:  524288
->>   - dropbox support: 100000
->>   - users on stackexchange: 12228
->>   - lsyncd user: 2000000
->>   - code42 support: 1048576
->>   - monodevelop: 16384
->>   - tectonic: 524288
->>   - openshift origin: 65536
->>
->> Each watch point adds an inotify_inode_mark structure to an inode to
->> be watched. It also pins the watched inode.
->>
->> Modeled after the epoll.max_user_watches behavior to adjust the default
->> value according to the amount of addressable memory available, make
->> inotify.max_user_watches behave in a similar way to make it use no more
->> than 1% of addressable memory within the range [8192, 1048576].
->>
->> For 64-bit archs, inotify_inode_mark plus 2 vfs inode have a size that
->> is a bit over 1 kbytes (1284 bytes with my x86-64 config).  That means
->> a system with 128GB or more memory will likely have the maximum value
->> of 1048576 for inotify.max_user_watches. This default should be big
->> enough for most use cases.
->>
->> [v3: increase inotify watch cost as suggested by Amir and Honza]
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Overall this looks fine. Some remaining nits below.
->
->> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
->> index 186722ba3894..f8065eda3a02 100644
->> --- a/fs/notify/inotify/inotify_user.c
->> +++ b/fs/notify/inotify/inotify_user.c
->> @@ -37,6 +37,15 @@
->>   
->>   #include <asm/ioctls.h>
->>   
->> +/*
->> + * An inotify watch requires allocating an inotify_inode_mark structure as
->> + * well as pinning the watched inode. Doubling the size of a VFS inode
->> + * should be more than enough to cover the additional filesystem inode
->> + * size increase.
->> + */
->> +#define INOTIFY_WATCH_COST	(sizeof(struct inotify_inode_mark) + \
->> +				 2 * sizeof(struct inode))
->> +
->>   /* configurable via /proc/sys/fs/inotify/ */
->>   static int inotify_max_queued_events __read_mostly;
->>   
->> @@ -801,6 +810,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
->>    */
->>   static int __init inotify_user_setup(void)
->>   {
->> +	unsigned int watches_max;
->> +	struct sysinfo si;
->> +
->> +	si_meminfo(&si);
->> +	/*
->> +	 * Allow up to 1% of addressible memory to be allocated for inotify
-> 			     ^^^^ addressable
->
->> +	 * watches (per user) limited to the range [8192, 1048576].
->> +	 */
->> +	watches_max = (((si.totalram - si.totalhigh) / 100) << PAGE_SHIFT) /
->> +			INOTIFY_WATCH_COST;
-> 			^^^ So for machines with > 1TB of memory
-> watches_max would overflow. So you probably need to use ulong for that.
->
->
->> +	watches_max = min(1048576U, max(watches_max, 8192U));
-> 			^^^ use clamp() here?
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E6=97=A5, 2020-11-08 22:03:06 Chengguang=
+ Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
+ > Introduce a helper ovl_wait_wb_inodes() to wait until all
+ > target upper inodes finish writeback.
+ >=20
+ > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+ > ---
+ >  fs/overlayfs/super.c | 30 ++++++++++++++++++++++++++++++
+ >  1 file changed, 30 insertions(+)
+ >=20
+ > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+ > index e5607a908d82..9a535fc11221 100644
+ > --- a/fs/overlayfs/super.c
+ > +++ b/fs/overlayfs/super.c
+ > @@ -255,6 +255,36 @@ static void ovl_put_super(struct super_block *sb)
+ >      ovl_free_fs(ofs);
+ >  }
+ > =20
+ > +void ovl_wait_wb_inodes(struct ovl_fs *ofs)
+ > +{
+ > +    LIST_HEAD(tmp_list);
+ > +    struct ovl_inode *oi;
+ > +    struct inode *upper;
+ > +
+ > +    spin_lock(&ofs->syncfs_wait_list_lock);
+ > +    list_splice_init(&ofs->syncfs_wait_list, &tmp_list);
+ > +
+ > +    while (!list_empty(&tmp_list)) {
+ > +        oi =3D list_first_entry(&tmp_list, struct ovl_inode, wait_list)=
+;
+ > +        list_del_init(&oi->wait_list);
+ > +        ihold(&oi->vfs_inode);
 
-Yes, it will be easier to read to use clamp() here. Will send out v4 
-withat those changes.
+Maybe I overlooked race condition with inode eviction, so still need to int=
+roduce
+OVL_EVICT_PENDING flag just like we did in old syncfs efficiency patch seri=
+es.
 
-Thanks,
-Longman
 
+Thanks=EF=BC=8C
+Chengguang
