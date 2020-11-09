@@ -2,103 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 672AA2ABFCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 16:27:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1A12AC147
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 17:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbgKIP1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 10:27:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbgKIP1R (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 10:27:17 -0500
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B73FC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 07:27:17 -0800 (PST)
-Received: by mail-ua1-x942.google.com with SMTP id w3so2902566uau.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Nov 2020 07:27:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QC5FHZ1X1/PZam+NsCeIUtWUr/OiX3u5F7vj8wTQSIo=;
-        b=TZWdpaXR4wUJwMonwNlSo3OTC/qsDxggW35onf1TCvbd0i4foe92Hz3iCpRVYUSeML
-         N3TQ+m24KYVG0TZnSUuP+yGO7twvVzionzcpAQgM3GSDOF9RyxFKEA6C/RWvtJ2Fp0zs
-         VY0A4waw4GTL53Ka756yCaYI6rHyKvxTC0XGI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QC5FHZ1X1/PZam+NsCeIUtWUr/OiX3u5F7vj8wTQSIo=;
-        b=LFnGxGhdIpH5bcEDowMXDlU14tELj6HT44tFGSQRbmRLe/RRY7+hn7PgIG7+VwVJ7p
-         bPzUi7F6YgVKrwOpkOXeVJf8iOtfsH9NNXxa13PXzsItG/7ailf9DhEdOAn5JrpK2UXW
-         YV49C/2AtYPKowzpxA+Ozu+eBncJIENQ8QIgp/oADVHcXORgXibYKh/Oyw1bqUVyMncX
-         DSFlQxt5iVwr5YGAJm8d3wo7SHzWKIMv2p62ltqPFS2AVQi7Vmx9Se8NygFYM4rE/wCS
-         SnQsg+pqvkhmLgwbYzfTJ84OT/VcKUeDsjET8NsOCNsyCVx1bw5fplpq5KUqAmUkqv5W
-         D3vA==
-X-Gm-Message-State: AOAM530sG+OpW1ArrdI3PeeTfjjiDHsKpcxMlofOrnTsIGvPYUmXVEMT
-        4f90p0L7d3XO4j9Fk2BnpKP7ovrFlADzWvBCvkpTdw==
-X-Google-Smtp-Source: ABdhPJz/FTpDS76pZAZFnZy1tGyA7dVPU97SCg5t6g94cDAJBjoVD31hS9aBGwCLPSfehAKXtrOmhVT4uPQ8oVyN4as=
-X-Received: by 2002:ab0:2a11:: with SMTP id o17mr7023753uar.8.1604935636368;
- Mon, 09 Nov 2020 07:27:16 -0800 (PST)
+        id S1730558AbgKIQsf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 11:48:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48196 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730467AbgKIQsf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Nov 2020 11:48:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 066FEAB95;
+        Mon,  9 Nov 2020 16:48:33 +0000 (UTC)
+Date:   Mon, 9 Nov 2020 17:48:29 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 04/21] mm/hugetlb: Introduce nr_free_vmemmap_pages in
+ the struct hstate
+Message-ID: <20201109164825.GA17356@linux>
+References: <20201108141113.65450-1-songmuchun@bytedance.com>
+ <20201108141113.65450-5-songmuchun@bytedance.com>
 MIME-Version: 1.0
-References: <1e796f9e008fb78fb96358ff74f39bd4865a7c88.1604926010.git.gladkov.alexey@gmail.com>
-In-Reply-To: <1e796f9e008fb78fb96358ff74f39bd4865a7c88.1604926010.git.gladkov.alexey@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 9 Nov 2020 16:27:05 +0100
-Message-ID: <CAJfpegua_ahmNa4p0me6R10wtcPpQVKNiKQOVKjuNW67RHFOOA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3] fuse: Abort waiting for a response if the
- daemon receives a fatal signal
-To:     Alexey Gladkov <gladkov.alexey@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        Alexey Gladkov <legion@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201108141113.65450-5-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 9, 2020 at 1:48 PM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
->
-> This patch removes one kind of the deadlocks inside the fuse daemon. The
-> problem appear when the fuse daemon itself makes a file operation on its
-> filesystem and receives a fatal signal.
->
-> This deadlock can be interrupted via fusectl filesystem. But if you have
-> many fuse mountpoints, it will be difficult to figure out which
-> connection to break.
->
-> This patch aborts the connection if the fuse server receives a fatal
-> signal.
+On Sun, Nov 08, 2020 at 10:10:56PM +0800, Muchun Song wrote:
+> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+> +/*
+> + * There are 512 struct page structs(8 pages) associated with each 2MB
+> + * hugetlb page. For tail pages, the value of compound_dtor is the same.
+I gess you meant "For tail pages, the value of compound_head ...", right?
 
-The patch itself might be acceptable, but I have some questions.
+> + * So we can reuse first page of tail page structs. We map the virtual
+> + * addresses of the remaining 6 pages of tail page structs to the first
+> + * tail page struct, and then free these 6 pages. Therefore, we need to
+> + * reserve at least 2 pages as vmemmap areas.
+> + */
+> +#define RESERVE_VMEMMAP_NR	2U
+> +
+> +static void __init hugetlb_vmemmap_init(struct hstate *h)
+> +{
+> +	unsigned int order = huge_page_order(h);
+> +	unsigned int vmemmap_pages;
+> +
+> +	vmemmap_pages = ((1 << order) * sizeof(struct page)) >> PAGE_SHIFT;
+> +	/*
+> +	 * The head page and the first tail page not free to buddy system,
 
-To logic of this patch says:
+"The head page and the first tail page are not to be freed to..." better?
 
-"If a task having the fuse device open in it's fd table receives
-SIGKILL (and filesystem was initially mounted in a non-init user
-namespace), then abort the filesystem operation"
 
-You just say "server" instead of "task having the fuse device open in
-it's fd table" which is sloppy to say the least.  It might also lead
-to regressions, although I agree that it's unlikely.
+> +	 * the others page will map to the first tail page. So there are
+> +	 * (@vmemmap_pages - RESERVE_VMEMMAP_NR) pages can be freed.
+						      ^^^
+                                                      that
 
-Also how is this solving any security issue?   Just create the request
-loop using two fuse filesystems and the deadlock avoidance has just
-been circumvented.   So AFAICS "selling" this as a CVE fix is not
-appropriate.
+> +	else
+> +		h->nr_free_vmemmap_pages = 0;
 
-What's the reason for making this user-ns only?   If we drop the
-security aspect, then I don't see any reason not to do this
-unconditionally.
+I would specify that this is not expected to happen.
+(At least I could not come up with a real scenario unless the system is
+corrupted)
+So, I would drop a brief comment pointing out that it is only a safety
+net.
 
-Also note, there's a proper solution for making fuse requests always
-killable, and that is to introduce a shadow locking that ensures
-correct fs operation in the face of requests that have returned and
-released their respective VFS locks.   Now this would be a much more
-complex solution, but also a much more correct one, not having issues
-with correctly defining what a server is (which is not a solvable
-problem).
 
-Thanks,
-Miklos
+Unrelated to this patch but related in general, I am not sure about Mike but
+would it be cleaner to move all the vmemmap functions to hugetlb_vmemmap.c?
+hugetlb code is quite tricky, so I am not sure about stuffing more code
+in there.
+
+-- 
+Oscar Salvador
+SUSE L3
