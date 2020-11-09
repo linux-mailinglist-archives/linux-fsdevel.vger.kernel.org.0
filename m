@@ -2,124 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E41D12AB1A8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 08:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DB82AB1EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 08:54:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbgKIHLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 02:11:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbgKIHLV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 02:11:21 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C51BC0613CF;
-        Sun,  8 Nov 2020 23:11:21 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id t9so4190666edq.8;
-        Sun, 08 Nov 2020 23:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=UfP7NvLo6S+A1T4P52kCNANXDGDMhGjiqRkXf0+vq8s=;
-        b=V8s9PjVuXRHQUnumeZE/K6/4rUWKfmFosECHfDoCiXn77p6ESRxpFAb/h0PabSJ+3F
-         Tv+GegeUwQsNPyAkOfJh8lkfwSX9E89hHXTJRbG/+qdXYpY5sa/jcbsAimTV584v6oxv
-         PIJ59dglSJByveZKSbe9liAekwljB7udNNe0JXGiaLtwBKrEItYieIbK0iFoAwqjwsdq
-         ifVG2kd+cH/OmpEYlk/iy0YyuTxgblK/S3BG6jP98OljusWhPblKhnfQMGXQ4UHRKFHV
-         XaSH+45hN6Vc9q3p2T/L2OQ/VXYG+Ail46zk+MMn3krMk7WgjVI3ism+31fo8/GlXdAb
-         VKeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UfP7NvLo6S+A1T4P52kCNANXDGDMhGjiqRkXf0+vq8s=;
-        b=TIvr3B9IyzcxqIJS6FaNPhJ+4f6WuHWyPYANRo7fuBFQ18CG697afrUnyhWEVyAQRF
-         pBEHinZ0Z57Of1OIMd/lg9UAAibMcSo93ILzN0J91S7wvIZD0c2RpWvZwsCBxRPHBKr7
-         Gmp/FNBOLJDtKnC9GBtqKeJ0am2rFF02CDo18utCUMSuLKeQFp3weA5MBfHRWILs0lPi
-         ipfMu+Xlq8cs0w74KEIdzbYpQyYvNxN0syMJuew/nbcbnDrI/2gmXLpVcRa083/WGZf1
-         WiSsoz5t8FMymjSPy+gwqRlIwIw7iL4cLT6Fiy4ucYLOHEOOBuhbi0RChEOEJ5E8JqWd
-         O4kA==
-X-Gm-Message-State: AOAM5319FkqHL21uVr+13krFv1UfhpkSKLTo4GLHaYrjVY1xDLtE+Yf+
-        peW0qZCQbTpoe4Hkw9FNuAc=
-X-Google-Smtp-Source: ABdhPJzhHR+67E+DYO2yePXQ7qtu/vPbRWHs85ceZqGD85nEPjCdQnX1S3utiJyuNpq5GiAY+nK5Ww==
-X-Received: by 2002:a50:eb87:: with SMTP id y7mr14459918edr.187.1604905879680;
-        Sun, 08 Nov 2020 23:11:19 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2dd6:1d00:28e2:5274:acbe:6374])
-        by smtp.gmail.com with ESMTPSA id s3sm8066314ejv.97.2020.11.08.23.11.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Nov 2020 23:11:18 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Tom Rix <trix@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] sysctl: move local variable in proc_do_large_bitmap() to proper scope
-Date:   Mon,  9 Nov 2020 08:11:07 +0100
-Message-Id: <20201109071107.22560-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729684AbgKIHyC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 02:54:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34394 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728904AbgKIHyB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Nov 2020 02:54:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E44CAABAE;
+        Mon,  9 Nov 2020 07:53:59 +0000 (UTC)
+Subject: Re: [PATCH 03/24] nvme: let set_capacity_revalidate_and_notify update
+ the bdev size
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Justin Sanders <justin@coraid.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20201106190337.1973127-1-hch@lst.de>
+ <20201106190337.1973127-4-hch@lst.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <1d06cdfa-a904-30be-f3ec-08ae2fa85cbd@suse.de>
+Date:   Mon, 9 Nov 2020 08:53:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+MIME-Version: 1.0
+In-Reply-To: <20201106190337.1973127-4-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-make clang-analyzer caught my attention with:
+On 11/6/20 8:03 PM, Christoph Hellwig wrote:
+> There is no good reason to call revalidate_disk_size separately.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/nvme/host/core.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index 376096bfc54a83..4e86c9aafd88a7 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -2053,7 +2053,7 @@ static void nvme_update_disk_info(struct gendisk *disk,
+>   			capacity = 0;
+>   	}
+>   
+> -	set_capacity_revalidate_and_notify(disk, capacity, false);
+> +	set_capacity_revalidate_and_notify(disk, capacity, true);
+>   
+>   	nvme_config_discard(disk, ns);
+>   	nvme_config_write_zeroes(disk, ns);
+> @@ -2136,7 +2136,6 @@ static int nvme_update_ns_info(struct nvme_ns *ns, struct nvme_id_ns *id)
+>   		blk_stack_limits(&ns->head->disk->queue->limits,
+>   				 &ns->queue->limits, 0);
+>   		blk_queue_update_readahead(ns->head->disk->queue);
+> -		nvme_update_bdev_size(ns->head->disk);
+>   		blk_mq_unfreeze_queue(ns->head->disk->queue);
+>   	}
+>   #endif
 
-  kernel/sysctl.c:1511:4: warning: Value stored to 'first' is never read \
-  [clang-analyzer-deadcode.DeadStores]
-                          first = 0;
-                          ^
+Hold on.
+This, at the very least, should be a separate patch.
+With this you are changing the behaviour of nvme multipath.
 
-Commit 9f977fb7ae9d ("sysctl: add proc_do_large_bitmap") introduced
-proc_do_large_bitmap(), where the variable first is only effectively used
-when write is false; when write is true, the variable first is only used in
-a dead assignment.
+Originally nvme multipath would update/change the size of the multipath 
+device according to the underlying path devices.
+With this patch the size of the multipath device will _not_ change if 
+there is a change on the underlying devices.
 
-So, simply remove this dead assignment and put the variable in local scope.
+While personally I would _love_ to have this patch, we should at least 
+document this by making it a separate patch.
+And we possibly should check if both sizes are the same, and think of 
+what we should be doing if they are not.
 
-As compilers will detect this unneeded assignment and optimize this anyway,
-the resulting object code is identical before and after this change.
+Cheers,
 
-No functional change. No change to object code.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-applies cleanly on v5.10-rc3 and next-20201106
-
-Luis, Kees, Iurii, please pick this minor non-urgent clean-up patch.
-
- kernel/sysctl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ce75c67572b9..cc274a431d91 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1423,7 +1423,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
- 			 void *buffer, size_t *lenp, loff_t *ppos)
- {
- 	int err = 0;
--	bool first = 1;
- 	size_t left = *lenp;
- 	unsigned long bitmap_len = table->maxlen;
- 	unsigned long *bitmap = *(unsigned long **) table->data;
-@@ -1508,12 +1507,12 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
- 			}
- 
- 			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
--			first = 0;
- 			proc_skip_char(&p, &left, '\n');
- 		}
- 		left += skipped;
- 	} else {
- 		unsigned long bit_a, bit_b = 0;
-+		bool first = 1;
- 
- 		while (left) {
- 			bit_a = find_next_bit(bitmap, bitmap_len, bit_b);
+Hannes
 -- 
-2.17.1
-
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
