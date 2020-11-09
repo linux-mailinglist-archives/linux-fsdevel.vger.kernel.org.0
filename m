@@ -2,79 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2EC2AC359
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:11:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 597DA2AC376
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730583AbgKISLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 13:11:11 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48958 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730691AbgKISLL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 13:11:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 15554AD2F;
-        Mon,  9 Nov 2020 18:11:09 +0000 (UTC)
-Date:   Mon, 9 Nov 2020 19:11:04 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 08/21] mm/vmemmap: Initialize page table lock for
- vmemmap
-Message-ID: <20201109181104.GC17356@linux>
-References: <20201108141113.65450-1-songmuchun@bytedance.com>
- <20201108141113.65450-9-songmuchun@bytedance.com>
+        id S1729723AbgKISQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 13:16:55 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:54958 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729119AbgKISQy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Nov 2020 13:16:54 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9I9pZo120449;
+        Mon, 9 Nov 2020 18:16:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=DrY95ZEYCvkKcuGJulq2EUOjlqD79ffG/X3fYNYMaBg=;
+ b=OFiMZ2Y9J07gF3lRLQqZamXSP/vjxqCfPkecne9lBAlTY1m/q68vcoF309a5MTCe9EME
+ mNpFXY+86XsaWXNIie8a5nlzq7IAjo/AGQfIlYlO1NZW1Dhd79H7vtBx0U6hJbrWO1UZ
+ vHYlJrn4rWOGgFNOCNAAn6XOIKtoOnbnpqDZYYCa6pI/KLl2HUM3XHKSH98JO6Q+BQyx
+ 3N2P7Hoew7Lm+kN9bhtGcFyTewEQi3TEAaW/8eW8G8/aLbS9/zli+PKu0zoI8eTZQ/GP
+ XJseGSGGLkfwPYjERmc8/A3SUEjJOXZm4DolHo71C/C5XT/CM6C8WEs8lw65y4BVmcJ3 bA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 34nh3aqn4p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 09 Nov 2020 18:16:47 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9IB9Cq195309;
+        Mon, 9 Nov 2020 18:16:46 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 34p55m9mt2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Nov 2020 18:16:46 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0A9IGjfr009811;
+        Mon, 9 Nov 2020 18:16:45 GMT
+Received: from localhost (/10.159.239.129)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Nov 2020 10:16:45 -0800
+Subject: [PATCH v3 0/3] vfs: remove lockdep fs freeze weirdness
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     darrick.wong@oracle.com
+Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, hch@lst.de, fdmanana@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Mon, 09 Nov 2020 10:16:44 -0800
+Message-ID: <160494580419.772573.9286165021627298770.stgit@magnolia>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201108141113.65450-9-songmuchun@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9800 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011090126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9800 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
+ clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 impostorscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011090126
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 08, 2020 at 10:11:00PM +0800, Muchun Song wrote:
-> In the register_page_bootmem_memmap, the slab allocator is not ready
-> yet. So when ALLOC_SPLIT_PTLOCKS, we use init_mm.page_table_lock.
-> otherwise we use per page table lock(page->ptl). In the later patch,
-> we will use the vmemmap page table lock to guard the splitting of
-> the vmemmap huge PMD.
+Hi all,
 
-I am not sure about this one.
-Grabbing init_mm's pagetable lock for specific hugetlb operations does not
-seem like a good idea, and we do not know how contented is that one.
+A long time ago, XFS got tangled up with lockdep because the last thing
+it does during a fs freeze is use a transaction to flush the superblock
+to disk.  Transactions require int(ernal) write freeze protection, which
+implies a recursive grab of the intwrite lock and makes lockdep all sad.
 
-I think a better fit would be to find another hook to initialize
-page_table_lock at a later stage.
-Anyway, we do not need till we are going to perform an operation
-on the range, right?
+This was "solved" in lockdep back in 2012 as commit 5accdf82ba25c by
+adding a "convert XFS' blocking fsfreeze lock attempts into a trylock"
+behavior in v6 of a patch[1] that Jan Kara sent to try to fix fs freeze
+handling.  The behavior was not in the v5[0] patch, nor was there any
+discussion for any of the v5 patches that would suggest why things
+changed from v5 to v6.
 
-Unless I am missing something, this should be doable in hugetlb_init.
+Commit f4b554af9931 in 2015 created the current weird logic in
+__sb_start_write, which converts recursive freeze lock grabs into
+trylocks whose return values are ignored(!!!).  XFS solved the problem
+by creating a variant of transactions (XFS_TRANS_NO_WRITECOUNT) that
+don't grab intwrite freeze protection, thus making lockdep's solution
+unnecessary.  The commit claims that Dave Chinner explained that the
+trylock hack + comment could be removed, but the patch author never did
+that, and lore doesn't seem to know where or when Dave actually said
+that?
 
-hugetlb_init is part from a init_call that gets called during do_initcalls.
-At this time, slab is fully operative.
+Now it's 2020, and still nobody removed this from __sb_start_write.
+Worse yet, nowadays lock_is_held returns 1 if lockdep is built-in but
+offline.  This causes attempts to grab the pagefaults freeze lock
+synchronously to turn into unchecked trylocks!  Hilarity ensues if a
+page fault races with fsfreeze and loses, which causes us to break the
+locking model.
 
-start_kernel
- kmem_cache_init_late
- kmem_cache_init_late
- ...
- arch_call_rest_init
-  rest_init
-   kernel_init_freeable
-    do_basic_setup
-     do_initcalls
-      hugetlb_init
+This finally came to a head in 5.10-rc1 because the new lockdep bugs
+introduced during the merge window caused this maintainer to hit the
+weird case where sb_start_pagefault can return without having taken the
+freeze lock, leading to test failures and memory corruption.
 
--- 
-Oscar Salvador
-SUSE L3
+Since this insanity is dangerous and hasn't been needed by xfs since the
+late 2.6(???) days, kill it with fire.
+
+v2: refactor helpers to be more cohesive
+v3: move more cohesive helpers to header files
+
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
+
+This is an extraordinary way to destroy everything.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=remove-freeze-weirdness-5.11
+---
+ fs/aio.c           |    2 +-
+ fs/io_uring.c      |    3 +--
+ fs/super.c         |   49 -------------------------------------------------
+ include/linux/fs.h |   38 +++++++++++++++++++++++++++-----------
+ 4 files changed, 29 insertions(+), 63 deletions(-)
+
