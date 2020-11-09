@@ -2,133 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1491E2AB191
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 08:07:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E41D12AB1A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 08:11:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729542AbgKIHHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 02:07:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50280 "EHLO
+        id S1729313AbgKIHLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 02:11:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728038AbgKIHHa (ORCPT
+        with ESMTP id S1728873AbgKIHLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 02:07:30 -0500
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA34C0613CF;
-        Sun,  8 Nov 2020 23:07:30 -0800 (PST)
-Received: by mail-il1-x143.google.com with SMTP id p10so7349436ile.3;
-        Sun, 08 Nov 2020 23:07:30 -0800 (PST)
+        Mon, 9 Nov 2020 02:11:21 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C51BC0613CF;
+        Sun,  8 Nov 2020 23:11:21 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id t9so4190666edq.8;
+        Sun, 08 Nov 2020 23:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=eG6PDRMgdaOWDPjMSdECrbgLcwRxlu8sWLc5eLe8ooU=;
-        b=nR1h6okH0FZy0FJMqTzsjcvKHYUdxin3H9YC3hVW2J51w8JXkHT9L9MXQmIqhXP7hw
-         A8EB+U8fug9n3vEourwmcM2qM2pwqPwHyJphYF2vE65y+iGddYdV6lMUmxuwb4WxbRIH
-         dSZb5exGUVIvD5Cjg1ymiu58DB4tjiKJn3ZGnHOZ6E/ZOro5JGQiL3zEP1YjCXplfp+b
-         eJhsJyMf44GD1xkR9ELv4lpePuMT7N0fXlD7FSVo2ZbxIqx9j4Vh7dFJvrJh196rZXIR
-         2soDO4KeC2S0K5thnxVDOZNtLbS7xtSeTsewwfJvi6GbvPaDHYdG6hiPer7vhxd56Zmo
-         sZVQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=UfP7NvLo6S+A1T4P52kCNANXDGDMhGjiqRkXf0+vq8s=;
+        b=V8s9PjVuXRHQUnumeZE/K6/4rUWKfmFosECHfDoCiXn77p6ESRxpFAb/h0PabSJ+3F
+         Tv+GegeUwQsNPyAkOfJh8lkfwSX9E89hHXTJRbG/+qdXYpY5sa/jcbsAimTV584v6oxv
+         PIJ59dglSJByveZKSbe9liAekwljB7udNNe0JXGiaLtwBKrEItYieIbK0iFoAwqjwsdq
+         ifVG2kd+cH/OmpEYlk/iy0YyuTxgblK/S3BG6jP98OljusWhPblKhnfQMGXQ4UHRKFHV
+         XaSH+45hN6Vc9q3p2T/L2OQ/VXYG+Ail46zk+MMn3krMk7WgjVI3ism+31fo8/GlXdAb
+         VKeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=eG6PDRMgdaOWDPjMSdECrbgLcwRxlu8sWLc5eLe8ooU=;
-        b=Bff1aF+p2D1SZz/FO3jyexD1VuzgjlquC6cIR7YjXX2vWp0uNNhzfi+hk2OEby7B8f
-         tEXqV4tU7gotFbD1cEyPwu3yXBhWqjfzXbeix82XlKVLiLy9wqSnooeZ6UJWhKNCnBC1
-         UnfPsrB5lWJND3oODT6k0gkgjQFKFYbpfYPb+fPSEc42uWTUm4/F5rFgmVwHno7UxYYL
-         G79m2U/IWKlEHVp7zHdJ1dZ3z+X7f16zSNgQWIHWyCISFs3SaLKCzfu2KIdLdObLn02N
-         13I/7V33rwpmNIy3RFMOLeZTDHB0cMbGb3r5I33TtRQSirRNnYyTpnxUDIbVJ6KVraWU
-         Ik+g==
-X-Gm-Message-State: AOAM531Q2g6VtGB2IWeeqDYW274Ye8WUvYxEJqRuz0lSoYXTTQI+ArvC
-        6BsnrJYlX+cUdXWMrh8Gb0QPRPM/j3gdBm2tNi4=
-X-Google-Smtp-Source: ABdhPJyjWPxQoWh4VHWQCbd4B9J8TZHQXm9xTCxugxDrEU65MgJbTHCOWThtrdaBuFKDa/WTklht4eiQhojGnOLyDx4=
-X-Received: by 2002:a05:6e02:c1:: with SMTP id r1mr9312773ilq.250.1604905649940;
- Sun, 08 Nov 2020 23:07:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20201108140307.1385745-1-cgxu519@mykernel.net>
- <20201108140307.1385745-10-cgxu519@mykernel.net> <175ab1145ed.108462b5a912.9181293177019474923@mykernel.net>
-In-Reply-To: <175ab1145ed.108462b5a912.9181293177019474923@mykernel.net>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 9 Nov 2020 09:07:18 +0200
-Message-ID: <CAOQ4uxhVQC_PDPaYvO9KTSJ6Vrnds-yHmsyt631TSkBq6kqQ5g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 09/10] ovl: introduce helper of syncfs writeback
- inode waiting
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     miklos <miklos@szeredi.hu>, jack <jack@suse.cz>,
-        linux-unionfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UfP7NvLo6S+A1T4P52kCNANXDGDMhGjiqRkXf0+vq8s=;
+        b=TIvr3B9IyzcxqIJS6FaNPhJ+4f6WuHWyPYANRo7fuBFQ18CG697afrUnyhWEVyAQRF
+         pBEHinZ0Z57Of1OIMd/lg9UAAibMcSo93ILzN0J91S7wvIZD0c2RpWvZwsCBxRPHBKr7
+         Gmp/FNBOLJDtKnC9GBtqKeJ0am2rFF02CDo18utCUMSuLKeQFp3weA5MBfHRWILs0lPi
+         ipfMu+Xlq8cs0w74KEIdzbYpQyYvNxN0syMJuew/nbcbnDrI/2gmXLpVcRa083/WGZf1
+         WiSsoz5t8FMymjSPy+gwqRlIwIw7iL4cLT6Fiy4ucYLOHEOOBuhbi0RChEOEJ5E8JqWd
+         O4kA==
+X-Gm-Message-State: AOAM5319FkqHL21uVr+13krFv1UfhpkSKLTo4GLHaYrjVY1xDLtE+Yf+
+        peW0qZCQbTpoe4Hkw9FNuAc=
+X-Google-Smtp-Source: ABdhPJzhHR+67E+DYO2yePXQ7qtu/vPbRWHs85ceZqGD85nEPjCdQnX1S3utiJyuNpq5GiAY+nK5Ww==
+X-Received: by 2002:a50:eb87:: with SMTP id y7mr14459918edr.187.1604905879680;
+        Sun, 08 Nov 2020 23:11:19 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2dd6:1d00:28e2:5274:acbe:6374])
+        by smtp.gmail.com with ESMTPSA id s3sm8066314ejv.97.2020.11.08.23.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Nov 2020 23:11:18 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Tom Rix <trix@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com,
+        kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] sysctl: move local variable in proc_do_large_bitmap() to proper scope
+Date:   Mon,  9 Nov 2020 08:11:07 +0100
+Message-Id: <20201109071107.22560-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 9, 2020 at 5:34 AM Chengguang Xu <cgxu519@mykernel.net> wrote:
->
->  ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E6=97=A5, 2020-11-08 22:03:06 Chenggua=
-ng Xu <cgxu519@mykernel.net> =E6=92=B0=E5=86=99 ----
->  > Introduce a helper ovl_wait_wb_inodes() to wait until all
->  > target upper inodes finish writeback.
->  >
->  > Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
->  > ---
->  >  fs/overlayfs/super.c | 30 ++++++++++++++++++++++++++++++
->  >  1 file changed, 30 insertions(+)
->  >
->  > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
->  > index e5607a908d82..9a535fc11221 100644
->  > --- a/fs/overlayfs/super.c
->  > +++ b/fs/overlayfs/super.c
->  > @@ -255,6 +255,36 @@ static void ovl_put_super(struct super_block *sb)
->  >      ovl_free_fs(ofs);
->  >  }
->  >
->  > +void ovl_wait_wb_inodes(struct ovl_fs *ofs)
->  > +{
->  > +    LIST_HEAD(tmp_list);
->  > +    struct ovl_inode *oi;
->  > +    struct inode *upper;
->  > +
->  > +    spin_lock(&ofs->syncfs_wait_list_lock);
->  > +    list_splice_init(&ofs->syncfs_wait_list, &tmp_list);
->  > +
->  > +    while (!list_empty(&tmp_list)) {
->  > +        oi =3D list_first_entry(&tmp_list, struct ovl_inode, wait_lis=
-t);
->  > +        list_del_init(&oi->wait_list);
->  > +        ihold(&oi->vfs_inode);
->
-> Maybe I overlooked race condition with inode eviction, so still need to i=
-ntroduce
-> OVL_EVICT_PENDING flag just like we did in old syncfs efficiency patch se=
-ries.
->
+make clang-analyzer caught my attention with:
 
-I am not sure why you added the ovl wait list.
+  kernel/sysctl.c:1511:4: warning: Value stored to 'first' is never read \
+  [clang-analyzer-deadcode.DeadStores]
+                          first = 0;
+                          ^
 
-I think you misunderstood Jan's suggestion.
-I think what Jan meant is that ovl_sync_fs() should call
-wait_sb_inodes(upper_sb)
-to wait for writeback of ALL upper inodes after sync_filesystem()
-started writeback
-only on this ovl instance upper inodes.
+Commit 9f977fb7ae9d ("sysctl: add proc_do_large_bitmap") introduced
+proc_do_large_bitmap(), where the variable first is only effectively used
+when write is false; when write is true, the variable first is only used in
+a dead assignment.
 
-I am not sure if this is acceptable or not - it is certainly an improvement=
- over
-current situation, but I have a feeling that on a large scale (many
-containers) it
-won't be enough.
+So, simply remove this dead assignment and put the variable in local scope.
 
-The idea was to keep it simple without over optimizing, since anyway
-you are going for the "correct" solution long term (ovl inode aops),
-so I wouldn't
-add the wait list.
+As compilers will detect this unneeded assignment and optimize this anyway,
+the resulting object code is identical before and after this change.
 
-As long as the upper inode is still dirty, we can keep the ovl inode in cac=
-he,
-so the worst outcome is that drop_caches needs to get called twice before t=
-he
-ovl inode can be evicted, no?
+No functional change. No change to object code.
 
-Thanks,
-Amir.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+applies cleanly on v5.10-rc3 and next-20201106
+
+Luis, Kees, Iurii, please pick this minor non-urgent clean-up patch.
+
+ kernel/sysctl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ce75c67572b9..cc274a431d91 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1423,7 +1423,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 			 void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	int err = 0;
+-	bool first = 1;
+ 	size_t left = *lenp;
+ 	unsigned long bitmap_len = table->maxlen;
+ 	unsigned long *bitmap = *(unsigned long **) table->data;
+@@ -1508,12 +1507,12 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
+ 			}
+ 
+ 			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
+-			first = 0;
+ 			proc_skip_char(&p, &left, '\n');
+ 		}
+ 		left += skipped;
+ 	} else {
+ 		unsigned long bit_a, bit_b = 0;
++		bool first = 1;
+ 
+ 		while (left) {
+ 			bit_a = find_next_bit(bitmap, bitmap_len, bit_b);
+-- 
+2.17.1
+
