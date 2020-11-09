@@ -2,148 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF8182ABB1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 14:28:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 254DE2ABBB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 14:32:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbgKINYZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 08:24:25 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:42738 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387577AbgKINYZ (ORCPT
+        id S1732476AbgKIN3q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 08:29:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730134AbgKIN3p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 08:24:25 -0500
-Received: by mail-io1-f69.google.com with SMTP id p67so5584743iod.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Nov 2020 05:24:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fgNK6IoDTp7K+SNgN+daalRgnaKA+Oq/DJ1GpYsB9Dc=;
-        b=bY4jpn845TT+clo7OaUQhxti1YdVs8lmWL0hwhtKrLqhwtUCk07LzszrQpNqcaJGNF
-         uEMRJz3ckM/fxPwV8IEeHbcTaRhg7sXlEwAgbHj1lssf6jybCNKdy7OBgh+bRivxlljc
-         Xdzkr0/MaT3x9WSPRpIi7+OJHI5BupNWCpqK/82s8HYcYYOqVKXn/ONrFTOgg+qH1n/Y
-         5hy6neunJkbfui8bO7pLouokBEtYkjB5snn57IPQnNBsAHzmzqTNLFnUeO8L9ZOWrwO/
-         dJCJjZGlOGTP7yPNtbfOJhJJwQygpqyOKw42vCigGcUZ7DVNdrdfU4SuXC0DIlMx9D7e
-         GFjQ==
-X-Gm-Message-State: AOAM532OFWdyoulJQV1//w6z37RfIkMx1CzhCAHB8dRTJ4y46bfB89Fn
-        MO8twZilVLxvFCM9AKzjpNI92r306XlFjZV/QPREOzdwN9lf
-X-Google-Smtp-Source: ABdhPJwRf+LLWeynIjNgtro0+TsBTph5slLzNSjXYeomUh6GB81RlI6r47zWR/i4zHM1g9FTrsGhUTOidJxVA7Mmx4DDyCNifaOZ
+        Mon, 9 Nov 2020 08:29:45 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFEE4C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 05:29:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NS2a1pD9Wqpg1Yiz1D4KYgVHI/WjaHvVakpdehgr1oE=; b=eUYnzm+rzLOYf+Fj8s9E1XdsHU
+        2pArMGi8q6wCvN81EU0SK1kL/B5qnbL9yXX5xqrCX2P9lUuyslAQLnWrpMJc0139iXTMdaWQbebte
+        T/GErrfnX9guPpaMBKWHfYVt5pnxGDqhHhqnkTUdWqNWN4E5hKZbliOV8v4i0Kt7fo9NSj7BisFLq
+        tBO0FqDioJ0MAVuVP7EZqsj2WqiIt18EnLnhn/xwSMyglynUIgRrwGOo/MmuNC5RG+5zSCCkMsYNB
+        Qj5O6ZHdcw/mdOsEe6vkNbJo0Ilwu6ADUQme98d/RLBYiad5EQRzC3u3nhWWtyavyX5cjbzb9Ob+c
+        Tun+kldA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kc7Es-0005ty-15; Mon, 09 Nov 2020 13:29:42 +0000
+Date:   Mon, 9 Nov 2020 13:29:41 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        kent.overstreet@gmail.com
+Subject: Re: [PATCH v2 11/18] mm/filemap: Convert filemap_update_page to
+ return an errno
+Message-ID: <20201109132941.GA17076@casper.infradead.org>
+References: <20201104204219.23810-1-willy@infradead.org>
+ <20201104204219.23810-12-willy@infradead.org>
+ <20201106081420.GF31585@lst.de>
+ <20201106083746.GA720@lst.de>
 MIME-Version: 1.0
-X-Received: by 2002:a02:6a5b:: with SMTP id m27mr11336069jaf.58.1604928262165;
- Mon, 09 Nov 2020 05:24:22 -0800 (PST)
-Date:   Mon, 09 Nov 2020 05:24:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f4db7805b3ac7a65@google.com>
-Subject: memory leak in anon_inode_getfile
-From:   syzbot <syzbot+05d57384ff3551e412be@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201106083746.GA720@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Nov 06, 2020 at 09:37:46AM +0100, Christoph Hellwig wrote:
+>  
+> -	error = AOP_TRUNCATED_PAGE;
+> -	if (!page->mapping)
+> -		goto unlock;
+> -	if (filemap_range_uptodate(iocb, mapping, iter, page)) {
+> +	if (!page->mapping) {
+>  		unlock_page(page);
+> -		return 0;
+> +		put_page(page);
+> +		return AOP_TRUNCATED_PAGE;
+>  	}
+>  
+> -	error = -EAGAIN;
+> -	if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT | IOCB_WAITQ))
+> -		goto unlock;
+> +	if (!filemap_range_uptodate(iocb, mapping, iter, page)) {
+> +		error = -EAGAIN;
+> +		if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT | IOCB_WAITQ))
+> +			goto unlock;
+> +		return filemap_read_page(iocb->ki_filp, mapping, page);
+> +	}
+>  
+> -	error = filemap_read_page(iocb->ki_filp, mapping, page);
+> -	if (error)
+> -		goto error;
+> -	return 0;
+>  unlock:
+>  	unlock_page(page);
+> -error:
+> -	put_page(page);
+>  	return error;
+>  }
 
-syzbot found the following issue on:
+It works out to be a little more complicated than that because
+filemap_read_page() can also return AOP_TRUNCATED_PAGE.  Here's what I
+currently have:
 
-HEAD commit:    9dbc1c03 Merge tag 'xfs-5.10-fixes-3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14554746500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=da948f64bffc0baf
-dashboard link: https://syzkaller.appspot.com/bug?extid=05d57384ff3551e412be
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10db2f92500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1698d134500000
+        if (!page->mapping)
+                goto truncated;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+05d57384ff3551e412be@syzkaller.appspotmail.com
+        error = 0;
+        if (filemap_range_uptodate(iocb, mapping, iter, page))
+                goto unlock;
 
-BUG: memory leak
-unreferenced object 0xffff8881019e6d00 (size 256):
-  comm "syz-executor550", pid 8486, jiffies 4294950527 (age 34.300s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    a0 e0 fd 40 81 88 ff ff c0 96 fc 0f 81 88 ff ff  ...@............
-  backtrace:
-    [<00000000e44e21fc>] kmem_cache_zalloc include/linux/slab.h:654 [inline]
-    [<00000000e44e21fc>] __alloc_file+0x1f/0x130 fs/file_table.c:101
-    [<00000000d4a5a020>] alloc_empty_file+0x69/0x120 fs/file_table.c:151
-    [<00000000eb40cf42>] alloc_file+0x33/0x1b0 fs/file_table.c:193
-    [<000000001c6c0501>] alloc_file_pseudo+0xb2/0x140 fs/file_table.c:233
-    [<00000000acbecb3c>] anon_inode_getfile fs/anon_inodes.c:91 [inline]
-    [<00000000acbecb3c>] anon_inode_getfile+0xaa/0x120 fs/anon_inodes.c:74
-    [<0000000047c0be97>] io_uring_get_fd fs/io_uring.c:9172 [inline]
-    [<0000000047c0be97>] io_uring_create fs/io_uring.c:9351 [inline]
-    [<0000000047c0be97>] io_uring_setup+0x1139/0x1640 fs/io_uring.c:9385
-    [<0000000079584e06>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-    [<000000009e5ef977>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+        error = -EAGAIN;
+        if (iocb->ki_flags & (IOCB_NOIO | IOCB_NOWAIT | IOCB_WAITQ))
+                goto unlock;
 
-BUG: memory leak
-unreferenced object 0xffff888110e3ce58 (size 24):
-  comm "syz-executor550", pid 8486, jiffies 4294950527 (age 34.300s)
-  hex dump (first 24 bytes):
-    00 00 00 00 00 00 00 00 b0 4e 93 00 81 88 ff ff  .........N......
-    00 00 00 00 00 00 00 00                          ........
-  backtrace:
-    [<00000000c78e23d5>] kmem_cache_zalloc include/linux/slab.h:654 [inline]
-    [<00000000c78e23d5>] lsm_file_alloc security/security.c:568 [inline]
-    [<00000000c78e23d5>] security_file_alloc+0x2a/0xb0 security/security.c:1456
-    [<000000000d394d00>] __alloc_file+0x5d/0x130 fs/file_table.c:106
-    [<00000000d4a5a020>] alloc_empty_file+0x69/0x120 fs/file_table.c:151
-    [<00000000eb40cf42>] alloc_file+0x33/0x1b0 fs/file_table.c:193
-    [<000000001c6c0501>] alloc_file_pseudo+0xb2/0x140 fs/file_table.c:233
-    [<00000000acbecb3c>] anon_inode_getfile fs/anon_inodes.c:91 [inline]
-    [<00000000acbecb3c>] anon_inode_getfile+0xaa/0x120 fs/anon_inodes.c:74
-    [<0000000047c0be97>] io_uring_get_fd fs/io_uring.c:9172 [inline]
-    [<0000000047c0be97>] io_uring_create fs/io_uring.c:9351 [inline]
-    [<0000000047c0be97>] io_uring_setup+0x1139/0x1640 fs/io_uring.c:9385
-    [<0000000079584e06>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-    [<000000009e5ef977>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff888101abb840 (size 168):
-  comm "syz-executor550", pid 8473, jiffies 4294952674 (age 12.830s)
-  hex dump (first 32 bytes):
-    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<0000000046ab9583>] prepare_creds+0x25/0x390 kernel/cred.c:258
-    [<00000000064d32d3>] copy_creds+0x3a/0x230 kernel/cred.c:358
-    [<00000000d2f3a3f7>] copy_process+0x66f/0x2510 kernel/fork.c:1971
-    [<00000000e82686f8>] kernel_clone+0xf3/0x670 kernel/fork.c:2456
-    [<00000000bbc67aa6>] __do_sys_clone+0x76/0xa0 kernel/fork.c:2573
-    [<0000000079584e06>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-    [<000000009e5ef977>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff888101716600 (size 256):
-  comm "syz-executor550", pid 8502, jiffies 4294952674 (age 12.830s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    a0 e0 fd 40 81 88 ff ff 80 fd fd 0f 81 88 ff ff  ...@............
-  backtrace:
-    [<00000000e44e21fc>] kmem_cache_zalloc include/linux/slab.h:654 [inline]
-    [<00000000e44e21fc>] __alloc_file+0x1f/0x130 fs/file_table.c:101
-    [<00000000d4a5a020>] alloc_empty_file+0x69/0x120 fs/file_table.c:151
-    [<00000000eb40cf42>] alloc_file+0x33/0x1b0 fs/file_table.c:193
-    [<000000001c6c0501>] alloc_file_pseudo+0xb2/0x140 fs/file_table.c:233
-    [<00000000acbecb3c>] anon_inode_getfile fs/anon_inodes.c:91 [inline]
-    [<00000000acbecb3c>] anon_inode_getfile+0xaa/0x120 fs/anon_inodes.c:74
-    [<0000000047c0be97>] io_uring_get_fd fs/io_uring.c:9172 [inline]
-    [<0000000047c0be97>] io_uring_create fs/io_uring.c:9351 [inline]
-    [<0000000047c0be97>] io_uring_setup+0x1139/0x1640 fs/io_uring.c:9385
-    [<0000000079584e06>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-    [<000000009e5ef977>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+        error = filemap_read_page(iocb->ki_filp, mapping, page);
+        if (error == AOP_TRUNCATED_PAGE)
+                put_page(page);
+        return error;
+truncated:
+        error = AOP_TRUNCATED_PAGE;
+        put_page(page);
+unlock:
+        unlock_page(page);
+        return error;
+}
 
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
