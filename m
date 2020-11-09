@@ -2,96 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0129C2AB389
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 10:25:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF94E2AB44A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 11:03:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbgKIJZ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 04:25:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48186 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbgKIJZZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 04:25:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CA23CABCC;
-        Mon,  9 Nov 2020 09:25:23 +0000 (UTC)
-Subject: Re: [PATCH 03/24] nvme: let set_capacity_revalidate_and_notify update
- the bdev size
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20201106190337.1973127-1-hch@lst.de>
- <20201106190337.1973127-4-hch@lst.de>
- <1d06cdfa-a904-30be-f3ec-08ae2fa85cbd@suse.de>
- <20201109085340.GB27483@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <e79f9a96-ef53-d6ea-f6e7-e141bdd2e2d2@suse.de>
-Date:   Mon, 9 Nov 2020 10:25:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S1728917AbgKIKD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 05:03:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49570 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728016AbgKIKD6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Nov 2020 05:03:58 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22B6C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 02:03:57 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id z3so7631480pfb.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Nov 2020 02:03:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nT84IJPZ6Yllu6oKed6wOIn5E2EhP/PiBG9gGknUnr8=;
+        b=fnJBwrsAYc0CtQOtAnXUA1euHgEwLpqKr1z8X9MFFTC56/1m73saU79sAH8S2OOGqT
+         vIGPLNToxbCZGKL01eXeMtdVLrWzq2PfsW7rZgtSdKUf3zFDSSHqyDuRTRha3K9vg+l5
+         V41UpR5FS1r/ZpBORPVaEBn2F4QuLm5Hj4Kkc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nT84IJPZ6Yllu6oKed6wOIn5E2EhP/PiBG9gGknUnr8=;
+        b=mvKOiC+ynP/An5oxi3r5d6ev9Bxa/7QayHPws+G8/tuYpANvLCLjLtV61hSt9yhjMQ
+         Hc8QTkB8GvCuH+xK+wFfT2teWglNyFaSpJALfH35YQtIGdCSqColF6rxicgDUg0+GJd4
+         BONUoTiyCmrTp4ipIYFCUbBaZhffDVAUbnNU1CQEStpx6gc9OqQi3MXpzLU1y4dx4Kse
+         xnikwRVkjS092CLtvC2tpt+sp1Jrb57wn9mR9bAvWsFaPYwE1ypI/jraxqtX1dXd2UOG
+         u01TEBmxDUFRutMtV+J72MYiyLKSW1XHngiZlP9jGqvZPNLqmd5WiryLB7IoHQYG1RJv
+         QeaA==
+X-Gm-Message-State: AOAM533jNqLx0Hb9NaZeMIIRWHXGRRD7mgZSAgHZlcVvWTf8nvj+JtvA
+        /88bpbzTUYX3TKdfbAmrtU4Wrw==
+X-Google-Smtp-Source: ABdhPJw4wkGL2q7D7KNa3l1u0IX4VF8hlI8vpc+gWlei9cyL6+1799Uk8fR0peHXY6TFiQDsL+/AZA==
+X-Received: by 2002:a63:6484:: with SMTP id y126mr12568762pgb.320.1604916237577;
+        Mon, 09 Nov 2020 02:03:57 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:f693:9fff:fef4:2537])
+        by smtp.gmail.com with ESMTPSA id a11sm10787210pfn.125.2020.11.09.02.03.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Nov 2020 02:03:56 -0800 (PST)
+From:   Chirantan Ekbote <chirantan@chromium.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel@lists.sourceforge.net,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCH 0/2] Support for O_TMPFILE in fuse
+Date:   Mon,  9 Nov 2020 19:03:41 +0900
+Message-Id: <20201109100343.3958378-1-chirantan@chromium.org>
+X-Mailer: git-send-email 2.29.2.222.g5d2a92d10f8-goog
 MIME-Version: 1.0
-In-Reply-To: <20201109085340.GB27483@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/9/20 9:53 AM, Christoph Hellwig wrote:
-> On Mon, Nov 09, 2020 at 08:53:58AM +0100, Hannes Reinecke wrote:
->>> index 376096bfc54a83..4e86c9aafd88a7 100644
->>> --- a/drivers/nvme/host/core.c
->>> +++ b/drivers/nvme/host/core.c
->>> @@ -2053,7 +2053,7 @@ static void nvme_update_disk_info(struct gendisk *disk,
->>>    			capacity = 0;
-[ .. ]
->> Originally nvme multipath would update/change the size of the multipath
->> device according to the underlying path devices.
->> With this patch the size of the multipath device will _not_ change if there
->> is a change on the underlying devices.
-> 
-> Yes, it will.  Take a close look at nvme_update_disk_info and how it is
-> called.
-> 
-Okay, then: What would be the correct way of handling a size update for 
-NVMe multipath?
-Assuming we're getting an AEN for each path signalling the size change
-(or a controller reset leading to a size change).
-So if we're updating the size of the multipath device together with the 
-path device at the first AEN/reset we'll end up with the other paths 
-having a different size than the multipath device (and the path we've 
-just been updating).
-- Do we care, or cross fingers and hope for the best?
-- Shouldn't we detect the case where we won't get a size update for the 
-other paths, or, indeed, we have a genuine device size mismatch due to a 
-misconfiguration on the target?
+This series adds support for O_TMPFILE to fuse. This wasn't supported
+previously because  even though it's just another flag for open(2),
+there is a separate handler for it in the inode_operations struct.
 
-IE shouldn't we have a flag 'size update pending' for the other paths,, 
-to take them out ouf use temporarily until the other AENs/resets have 
-been processed?
+The implementation re-uses the existing infrastructure for creating new
+entries in a directory (currently used by mknod, symlink, and mkdir).
+I'm not sure if this requires a new minor version so I've just added the
+new message definitions without changing the version number.
 
-Cheers,
+Chirantan Ekbote (2):
+  uapi/fuse.h: Add message definitions for O_TMPFILE
+  fuse: Implement O_TMPFILE support
 
-Hannes
+ fs/fuse/dir.c             | 21 +++++++++++++++++++++
+ fs/fuse/file.c            |  3 ++-
+ include/uapi/linux/fuse.h |  7 +++++++
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+
 -- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+2.29.2.222.g5d2a92d10f8-goog
+
