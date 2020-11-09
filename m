@@ -2,146 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C492AC42B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:51:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 355C62AC436
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbgKISvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 13:51:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43674 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729292AbgKISvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 13:51:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9B3C3AB95;
-        Mon,  9 Nov 2020 18:51:42 +0000 (UTC)
-Date:   Mon, 9 Nov 2020 19:51:38 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 09/21] mm/hugetlb: Free the vmemmap pages associated
- with each hugetlb page
-Message-ID: <20201109185138.GD17356@linux>
-References: <20201108141113.65450-1-songmuchun@bytedance.com>
- <20201108141113.65450-10-songmuchun@bytedance.com>
+        id S1729810AbgKISys (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 13:54:48 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:58140 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729451AbgKISys (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Nov 2020 13:54:48 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kcCJS-000ISx-Bh; Mon, 09 Nov 2020 11:54:46 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kcCJQ-0003GV-Vx; Mon, 09 Nov 2020 11:54:45 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Alexey Gladkov <legion@kernel.org>
+References: <1e796f9e008fb78fb96358ff74f39bd4865a7c88.1604926010.git.gladkov.alexey@gmail.com>
+        <CAJfpegua_ahmNa4p0me6R10wtcPpQVKNiKQOVKjuNW67RHFOOA@mail.gmail.com>
+Date:   Mon, 09 Nov 2020 12:54:36 -0600
+In-Reply-To: <CAJfpegua_ahmNa4p0me6R10wtcPpQVKNiKQOVKjuNW67RHFOOA@mail.gmail.com>
+        (Miklos Szeredi's message of "Mon, 9 Nov 2020 16:27:05 +0100")
+Message-ID: <87v9ee2wer.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201108141113.65450-10-songmuchun@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-XM-SPF: eid=1kcCJQ-0003GV-Vx;;;mid=<87v9ee2wer.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/d2S5mWTCu4h6MXhqaa47cMXFJAUb7ZKI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Miklos Szeredi <miklos@szeredi.hu>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 742 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 3.8 (0.5%), b_tie_ro: 2.5 (0.3%), parse: 1.07
+        (0.1%), extract_message_metadata: 12 (1.6%), get_uri_detail_list: 2.7
+        (0.4%), tests_pri_-1000: 3.4 (0.5%), tests_pri_-950: 1.09 (0.1%),
+        tests_pri_-900: 0.80 (0.1%), tests_pri_-90: 89 (12.1%), check_bayes:
+        88 (11.8%), b_tokenize: 6 (0.7%), b_tok_get_all: 7 (1.0%),
+        b_comp_prob: 2.1 (0.3%), b_tok_touch_all: 70 (9.4%), b_finish: 0.80
+        (0.1%), tests_pri_0: 295 (39.7%), check_dkim_signature: 0.38 (0.1%),
+        check_dkim_adsp: 23 (3.2%), poll_dns_idle: 339 (45.7%), tests_pri_10:
+        2.2 (0.3%), tests_pri_500: 331 (44.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RESEND PATCH v3] fuse: Abort waiting for a response if the daemon receives a fatal signal
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 08, 2020 at 10:11:01PM +0800, Muchun Song wrote:
-> +static inline int freed_vmemmap_hpage(struct page *page)
-> +{
-> +	return atomic_read(&page->_mapcount) + 1;
-> +}
-> +
-> +static inline int freed_vmemmap_hpage_inc(struct page *page)
-> +{
-> +	return atomic_inc_return_relaxed(&page->_mapcount) + 1;
-> +}
-> +
-> +static inline int freed_vmemmap_hpage_dec(struct page *page)
-> +{
-> +	return atomic_dec_return_relaxed(&page->_mapcount) + 1;
-> +}
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-Are these relaxed any different that the normal ones on x86_64? 
-I got confused following the macros.
+> On Mon, Nov 9, 2020 at 1:48 PM Alexey Gladkov <gladkov.alexey@gmail.com> wrote:
+>>
+>> This patch removes one kind of the deadlocks inside the fuse daemon. The
+>> problem appear when the fuse daemon itself makes a file operation on its
+>> filesystem and receives a fatal signal.
+>>
+>> This deadlock can be interrupted via fusectl filesystem. But if you have
+>> many fuse mountpoints, it will be difficult to figure out which
+>> connection to break.
+>>
+>> This patch aborts the connection if the fuse server receives a fatal
+>> signal.
+>
+> The patch itself might be acceptable, but I have some questions.
+>
+> To logic of this patch says:
+>
+> "If a task having the fuse device open in it's fd table receives
+> SIGKILL (and filesystem was initially mounted in a non-init user
+> namespace), then abort the filesystem operation"
+>
+> You just say "server" instead of "task having the fuse device open in
+> it's fd table" which is sloppy to say the least.  It might also lead
+> to regressions, although I agree that it's unlikely.
+>
+> Also how is this solving any security issue?   Just create the request
+> loop using two fuse filesystems and the deadlock avoidance has just
+> been circumvented.   So AFAICS "selling" this as a CVE fix is not
+> appropriate.
 
-> +static void __free_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
-> +					 unsigned long start,
-> +					 unsigned int nr_free,
-> +					 struct list_head *free_pages)
-> +{
-> +	/* Make the tail pages are mapped read-only. */
-> +	pgprot_t pgprot = PAGE_KERNEL_RO;
-> +	pte_t entry = mk_pte(reuse, pgprot);
-> +	unsigned long addr;
-> +	unsigned long end = start + (nr_free << PAGE_SHIFT);
+The original report came in with a CVE on it.  So referencing that CVE
+seems reasonable.  Even if the issue isn't particularly serious.  It is
+very annoying not to be able to kill processes with SIGKILL or the OOM
+killer.
 
-See below.
+You have a good point about the looping issue.  I wonder if there is a
+way to enhance this comparatively simple approach to prevent the more
+complex scenario you mention.
 
-> +static void __free_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
-> +					 unsigned long addr,
-> +					 struct list_head *free_pages)
-> +{
-> +	unsigned long next;
-> +	unsigned long start = addr + RESERVE_VMEMMAP_NR * PAGE_SIZE;
-> +	unsigned long end = addr + vmemmap_pages_size_per_hpage(h);
-> +	struct page *reuse = NULL;
-> +
-> +	addr = start;
-> +	do {
-> +		unsigned int nr_pages;
-> +		pte_t *ptep;
-> +
-> +		ptep = pte_offset_kernel(pmd, addr);
-> +		if (!reuse)
-> +			reuse = pte_page(ptep[-1]);
+Does tweaking the code to close every connection represented by a fuse
+file descriptor after a SIGKILL has been delevered create any problems?
 
-Can we define a proper name for that instead of -1?
-
-e.g: TAIL_PAGE_REUSE or something like that. 
-
-> +
-> +		next = vmemmap_hpage_addr_end(addr, end);
-> +		nr_pages = (next - addr) >> PAGE_SHIFT;
-> +		__free_huge_page_pte_vmemmap(reuse, ptep, addr, nr_pages,
-> +					     free_pages);
-
-Why not passing next instead of nr_pages? I think it makes more sense.
-As a bonus we can kill the variable.
-
-> +static void split_vmemmap_huge_page(struct hstate *h, struct page *head,
-> +				    pmd_t *pmd)
-> +{
-> +	pgtable_t pgtable;
-> +	unsigned long start = (unsigned long)head & VMEMMAP_HPAGE_MASK;
-> +	unsigned long addr = start;
-> +	unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
-> +
-> +	while (nr-- && (pgtable = vmemmap_pgtable_withdraw(head))) {
-
-The same with previous patches, I would scrap "nr" and its use.
-
-> +		VM_BUG_ON(freed_vmemmap_hpage(pgtable));
-
-I guess here we want to check whether we already call free_huge_page_vmemmap
-on this range?
-For this to have happened, the locking should have failed, right?
-
-> +static void free_huge_page_vmemmap(struct hstate *h, struct page *head)
-> +{
-> +	pmd_t *pmd;
-> +	spinlock_t *ptl;
-> +	LIST_HEAD(free_pages);
-> +
-> +	if (!free_vmemmap_pages_per_hpage(h))
-> +		return;
-> +
-> +	pmd = vmemmap_to_pmd(head);
-> +	ptl = vmemmap_pmd_lock(pmd);
-> +	if (vmemmap_pmd_huge(pmd)) {
-> +		VM_BUG_ON(!pgtable_pages_to_prealloc_per_hpage(h));
-
-I think that checking for free_vmemmap_pages_per_hpage is enough.
-In the end, pgtable_pages_to_prealloc_per_hpage uses free_vmemmap_pages_per_hpage.
+> What's the reason for making this user-ns only?  If we drop the
+> security aspect, then I don't see any reason not to do this
+> unconditionally.
 
 
--- 
-Oscar Salvador
-SUSE L3
+> Also note, there's a proper solution for making fuse requests always
+> killable, and that is to introduce a shadow locking that ensures
+> correct fs operation in the face of requests that have returned and
+> released their respective VFS locks.   Now this would be a much more
+> complex solution, but also a much more correct one, not having issues
+> with correctly defining what a server is (which is not a solvable
+> problem).
+
+Is this the solution that was removed at some point from fuse,
+or are you talking about something else?
+
+I think you are talking about adding a set of fuse specific locks
+so fuse does not need to rely on the vfs locks.  I don't quite have
+enough insight to see that bigger problem so if you can expand in more
+detail I would appreciate it.
+
+Eric
+
