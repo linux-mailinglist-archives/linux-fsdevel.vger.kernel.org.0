@@ -2,125 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADA9B2AAED8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 02:54:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF3892AAF63
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 03:18:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbgKIBy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Nov 2020 20:54:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728006AbgKIByZ (ORCPT
+        id S1729399AbgKICRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Nov 2020 21:17:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60079 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729381AbgKICRi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Nov 2020 20:54:25 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A902CC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Nov 2020 17:54:25 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id i18so7497630ots.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Nov 2020 17:54:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZuEbJd/rC1DWMKE3T/Ch6Xoh1cqdm6Mb9Oh+kDQM/38=;
-        b=XPGt9iSfnLtzThbKpkfUu9on6i/kTxpXQzvCrOAPuXUVK8L4wiSUQCyPuIrFFrWfC0
-         0tnXRL3f3zh6MB+ilA0+vUAathZIkEtL9DyUbHp82Ri6zELrg53TXORqlAG8N5WwzGPG
-         MNQdwfdv8B4f+iLfSf7Q/DTWSC3/Qug6EirZWRke8eljiWVh4TbQiLAAghEttswIpHIc
-         NnebFuoY9AHVkeER2RK/9tlL1+cKTwye3poChnNOH/TQVI9Rp8ea5hs0WQNLKEvCNeEE
-         DTMFI8/ZTaODhE0KU69Kcq8Zgyou8Ll8p7++qAQZTI1nIRVGyoHejepZ7QLcsJVZQvi8
-         V9kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZuEbJd/rC1DWMKE3T/Ch6Xoh1cqdm6Mb9Oh+kDQM/38=;
-        b=bAw8YtH2eodtVtXUBOPOpoFX4WB1G6El97fOy4A9nxy2vDC8l2dASazRqyl8zpRFvr
-         0L5RCyzC1oJ9DQ1CyWYZu80lhwkMKQ0cSDs/dstgQq6EfI6bliIbdzfmYUW8GkWeJe2p
-         sRnErfKL6um8pNjD2rki85x4SHUGkKJSnNoTGUNWl+Hwusq+7Ax4hGfw0zq1nnLAjDgc
-         hl0zEVO1gNO/nmKb1/eon6nGpsJnUgGTFpHdtziZH46RFJRCssWDLK2EYhadrslXrdTD
-         /uow0qdUxtlJWHb9kbi7l6Ia5n5cRrzLw2AUN9Ax3jAuEe0JcHZjUONxUA3vCu6zPRAY
-         Vqng==
-X-Gm-Message-State: AOAM5331LA3QgIG7gSxs2hlKUA1aDP+Leajc/FNBBeC8rzl/e+H9QJDF
-        ZGx30G8gKbKmDDoyKC93PA3433et21HDiwTuR4A/iF9WkoK5EQ==
-X-Google-Smtp-Source: ABdhPJwHfE+dlPM0iWt4PF2iejUc2DO6Beo90SBNvuX2L1LPbTXt+i/TQjSSaSIcIG6YHVd4NormZqKAaWtWGfUQdwQ=
-X-Received: by 2002:a9d:1b2:: with SMTP id e47mr8146282ote.45.1604886864960;
- Sun, 08 Nov 2020 17:54:24 -0800 (PST)
+        Sun, 8 Nov 2020 21:17:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1604888256;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=i30PpoZ3ncDE41feRaeC6jT4a2UBvss9Fqk6sZ2j5No=;
+        b=GzrMfroHYbWHCvj7Ei22kO5Jd/iYkUpOuYJA9slizVurhl97UeAD0Ja9wZLBYuTYYZXkOb
+        LD9cK0NfKarPO4xOtl7sL8FsA0Ggbbk6mWoeFeJNAYyMtwzYDHdiJD+/8vIeOxBK7h7/2y
+        zmDNfTIxkhrjy1ubh+6fVz1+ADPwCRA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-436-8eRDGP6kPiunpNCEztr0-Q-1; Sun, 08 Nov 2020 21:17:34 -0500
+X-MC-Unique: 8eRDGP6kPiunpNCEztr0-Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 88317107464F;
+        Mon,  9 Nov 2020 02:17:33 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-113-56.rdu2.redhat.com [10.10.113.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C12091002391;
+        Mon,  9 Nov 2020 02:17:29 +0000 (UTC)
+Subject: Re: [PATCH v3] inotify: Increase default inotify.max_user_watches
+ limit to 1048576
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luca BRUNO <lucab@redhat.com>
+References: <20201029194256.7954-1-longman@redhat.com>
+ <20201030105752.GB19757@quack2.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <abca71ed-79c5-7485-3053-6eca0bddc53e@redhat.com>
+Date:   Sun, 8 Nov 2020 21:17:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <CAE1WUT6O6uP12YMU1NaU-4CR-AaxRUhhWHY=zUtNXpHUfxrF=A@mail.gmail.com>
- <20201109013322.GA9685@magnolia> <20201109015001.GX17076@casper.infradead.org>
-In-Reply-To: <20201109015001.GX17076@casper.infradead.org>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Sun, 8 Nov 2020 17:54:14 -0800
-Message-ID: <CAE1WUT7LBAKYoZ=-UxEdt1OdoirwcKMU_A=6TAKPo7HxwnS+zw@mail.gmail.com>
-Subject: Re: Best solution for shifting DAX_ZERO_PAGE to XA_ZERO_ENTRY
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201030105752.GB19757@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 8, 2020 at 5:50 PM Matthew Wilcox <willy@infradead.org> wrote:
+On 10/30/20 6:57 AM, Jan Kara wrote:
+> On Thu 29-10-20 15:42:56, Waiman Long wrote:
+>> The default value of inotify.max_user_watches sysctl parameter was set
+>> to 8192 since the introduction of the inotify feature in 2005 by
+>> commit 0eeca28300df ("[PATCH] inotify"). Today this value is just too
+>> small for many modern usage. As a result, users have to explicitly set
+>> it to a larger value to make it work.
+>>
+>> After some searching around the web, these are the
+>> inotify.max_user_watches values used by some projects:
+>>   - vscode:  524288
+>>   - dropbox support: 100000
+>>   - users on stackexchange: 12228
+>>   - lsyncd user: 2000000
+>>   - code42 support: 1048576
+>>   - monodevelop: 16384
+>>   - tectonic: 524288
+>>   - openshift origin: 65536
+>>
+>> Each watch point adds an inotify_inode_mark structure to an inode to
+>> be watched. It also pins the watched inode.
+>>
+>> Modeled after the epoll.max_user_watches behavior to adjust the default
+>> value according to the amount of addressable memory available, make
+>> inotify.max_user_watches behave in a similar way to make it use no more
+>> than 1% of addressable memory within the range [8192, 1048576].
+>>
+>> For 64-bit archs, inotify_inode_mark plus 2 vfs inode have a size that
+>> is a bit over 1 kbytes (1284 bytes with my x86-64 config).  That means
+>> a system with 128GB or more memory will likely have the maximum value
+>> of 1048576 for inotify.max_user_watches. This default should be big
+>> enough for most use cases.
+>>
+>> [v3: increase inotify watch cost as suggested by Amir and Honza]
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+> Overall this looks fine. Some remaining nits below.
 >
-> On Sun, Nov 08, 2020 at 05:33:22PM -0800, Darrick J. Wong wrote:
-> > On Sun, Nov 08, 2020 at 05:15:55PM -0800, Amy Parker wrote:
-> > > I've been writing a patch to migrate the defined DAX_ZERO_PAGE
-> > > to XA_ZERO_ENTRY for representing holes in files.
-> >
-> > Why?  IIRC XA_ZERO_ENTRY ("no mapping in the address space") isn't the
-> > same as DAX_ZERO_PAGE ("the zero page is mapped into the address space
-> > because we took a read fault on a sparse file hole").
+>> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+>> index 186722ba3894..f8065eda3a02 100644
+>> --- a/fs/notify/inotify/inotify_user.c
+>> +++ b/fs/notify/inotify/inotify_user.c
+>> @@ -37,6 +37,15 @@
+>>   
+>>   #include <asm/ioctls.h>
+>>   
+>> +/*
+>> + * An inotify watch requires allocating an inotify_inode_mark structure as
+>> + * well as pinning the watched inode. Doubling the size of a VFS inode
+>> + * should be more than enough to cover the additional filesystem inode
+>> + * size increase.
+>> + */
+>> +#define INOTIFY_WATCH_COST	(sizeof(struct inotify_inode_mark) + \
+>> +				 2 * sizeof(struct inode))
+>> +
+>>   /* configurable via /proc/sys/fs/inotify/ */
+>>   static int inotify_max_queued_events __read_mostly;
+>>   
+>> @@ -801,6 +810,18 @@ SYSCALL_DEFINE2(inotify_rm_watch, int, fd, __s32, wd)
+>>    */
+>>   static int __init inotify_user_setup(void)
+>>   {
+>> +	unsigned int watches_max;
+>> +	struct sysinfo si;
+>> +
+>> +	si_meminfo(&si);
+>> +	/*
+>> +	 * Allow up to 1% of addressible memory to be allocated for inotify
+> 			     ^^^^ addressable
 >
-> There's no current user of XA_ZERO_ENTRY in i_pages, whether it be
-> DAX or non-DAX.
+>> +	 * watches (per user) limited to the range [8192, 1048576].
+>> +	 */
+>> +	watches_max = (((si.totalram - si.totalhigh) / 100) << PAGE_SHIFT) /
+>> +			INOTIFY_WATCH_COST;
+> 			^^^ So for machines with > 1TB of memory
+> watches_max would overflow. So you probably need to use ulong for that.
 >
-> > > XA_ZERO_ENTRY
-> > > is defined in include/linux/xarray.h, where it's defined using
-> > > xa_mk_internal(257). This function returns a void pointer, which
-> > > is incompatible with the bitwise arithmetic it is performed on with.
 >
-> We don't really perform bitwise arithmetic on it, outside of:
->
-> static int dax_is_zero_entry(void *entry)
-> {
->         return xa_to_value(entry) & DAX_ZERO_PAGE;
-> }
+>> +	watches_max = min(1048576U, max(watches_max, 8192U));
+> 			^^^ use clamp() here?
 
-We also have:
+Yes, it will be easier to read to use clamp() here. Will send out v4 
+withat those changes.
 
-if (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE)) {
-       unsigned long index = xas->xa_index;
-       /* we are replacing a zero page with block mapping */
-       if (dax_is_pmd_entry(entry))
-              unmap_mapping_pages(mapping, index & ~PG_PMD_COLOUR,
-                            PG_PMD_NR, false);
-       else /* pte entry */
-              unmap_mapping_pages(mapping, index, 1, false);
-}
+Thanks,
+Longman
 
-and:
-
-*entry = dax_insert_entry(xas, mapping, vmf, *entry, pfn,
-              DAX_PMD | DAX_ZERO_PAGE, false);
-
->
-> > > Currently, DAX_ZERO_PAGE is defined as an unsigned long,
-> > > so I considered typecasting it. Typecasting every time would be
-> > > repetitive and inefficient. I thought about making a new definition
-> > > for it which has the typecast, but this breaks the original point of
-> > > using already defined terms.
-> > >
-> > > Should we go the route of adding a new definition, we might as
-> > > well just change the definition of DAX_ZERO_PAGE. This would
-> > > break the simplicity of the current DAX bit definitions:
-> > >
-> > > #define DAX_LOCKED      (1UL << 0)
-> > > #define DAX_PMD               (1UL << 1)
-> > > #define DAX_ZERO_PAGE  (1UL << 2)
-> > > #define DAX_EMPTY      (1UL << 3)
->
-> I was proposing deleting the entire bit and shifting DAX_EMPTY down.
-
-That'd probably be a better idea - so what should we do about the type
-issue? Not typecasting it causes it not to compile.
