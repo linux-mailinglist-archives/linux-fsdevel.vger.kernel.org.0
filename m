@@ -2,156 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECAA02AC37C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C492AC42B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbgKISRO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 13:17:14 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:58950 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbgKISRN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 13:17:13 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9I9DYI112566;
-        Mon, 9 Nov 2020 18:17:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=QeScwIhwnzSF8a9zop6RGxI+oNni8aCPT3nzu77fEyI=;
- b=cuER5DpvPc6aVPCiciZ4g32Z/yBgBUF/o3d/nWW/z5f7EnYCeZFS0EwTiUCq+RyvH/wm
- cKkjBWfGwtFB+LDMHyVJzr401SAPNT9cFp2tys4hQclA2JaUBUi4B66YWBL3yhgzcSSu
- UR2xiUNmaoflo96gFFHvrN34vRIoNt0cCMCscTZRdXhVkqrmmlw6CQkCfZcwwzB7JHxn
- O94HOd9IqEUqAM25j2M8McCabD9dz9TWcUECjN56gQDcuh2PX8sIj9G8Gfm6CXbberiD
- uEIYgLFTWJdeYjIB8jT2H6olVbsBFQ3bZrEDEGB54uJ5x3yr9b+gzUxk/CfAAVbqV4JO 9Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 34p72edmur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 09 Nov 2020 18:17:06 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9IAnKo157251;
-        Mon, 9 Nov 2020 18:17:06 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 34p5fy1gy2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Nov 2020 18:17:06 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0A9IH5iB010033;
-        Mon, 9 Nov 2020 18:17:05 GMT
-Received: from localhost (/10.159.239.129)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Nov 2020 10:17:05 -0800
-Subject: [PATCH 3/3] vfs: move __sb_{start,end}_write* to fs.h
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     darrick.wong@oracle.com
-Cc:     linux-xfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
-        fdmanana@kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 09 Nov 2020 10:17:04 -0800
-Message-ID: <160494582399.772573.10836748188202532335.stgit@magnolia>
-In-Reply-To: <160494580419.772573.9286165021627298770.stgit@magnolia>
-References: <160494580419.772573.9286165021627298770.stgit@magnolia>
-User-Agent: StGit/0.19
+        id S1729879AbgKISvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 13:51:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43674 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729292AbgKISvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 9 Nov 2020 13:51:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 9B3C3AB95;
+        Mon,  9 Nov 2020 18:51:42 +0000 (UTC)
+Date:   Mon, 9 Nov 2020 19:51:38 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        mhocko@suse.com, duanxiongchun@bytedance.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 09/21] mm/hugetlb: Free the vmemmap pages associated
+ with each hugetlb page
+Message-ID: <20201109185138.GD17356@linux>
+References: <20201108141113.65450-1-songmuchun@bytedance.com>
+ <20201108141113.65450-10-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9800 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 malwarescore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 suspectscore=1
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011090126
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9800 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011090126
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201108141113.65450-10-songmuchun@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+On Sun, Nov 08, 2020 at 10:11:01PM +0800, Muchun Song wrote:
+> +static inline int freed_vmemmap_hpage(struct page *page)
+> +{
+> +	return atomic_read(&page->_mapcount) + 1;
+> +}
+> +
+> +static inline int freed_vmemmap_hpage_inc(struct page *page)
+> +{
+> +	return atomic_inc_return_relaxed(&page->_mapcount) + 1;
+> +}
+> +
+> +static inline int freed_vmemmap_hpage_dec(struct page *page)
+> +{
+> +	return atomic_dec_return_relaxed(&page->_mapcount) + 1;
+> +}
 
-Now that we've straightened out the callers, move these three functions
-to fs.h since they're fairly trivial.
+Are these relaxed any different that the normal ones on x86_64? 
+I got confused following the macros.
 
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/super.c         |   30 ------------------------------
- include/linux/fs.h |   21 ++++++++++++++++++---
- 2 files changed, 18 insertions(+), 33 deletions(-)
+> +static void __free_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
+> +					 unsigned long start,
+> +					 unsigned int nr_free,
+> +					 struct list_head *free_pages)
+> +{
+> +	/* Make the tail pages are mapped read-only. */
+> +	pgprot_t pgprot = PAGE_KERNEL_RO;
+> +	pte_t entry = mk_pte(reuse, pgprot);
+> +	unsigned long addr;
+> +	unsigned long end = start + (nr_free << PAGE_SHIFT);
+
+See below.
+
+> +static void __free_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
+> +					 unsigned long addr,
+> +					 struct list_head *free_pages)
+> +{
+> +	unsigned long next;
+> +	unsigned long start = addr + RESERVE_VMEMMAP_NR * PAGE_SIZE;
+> +	unsigned long end = addr + vmemmap_pages_size_per_hpage(h);
+> +	struct page *reuse = NULL;
+> +
+> +	addr = start;
+> +	do {
+> +		unsigned int nr_pages;
+> +		pte_t *ptep;
+> +
+> +		ptep = pte_offset_kernel(pmd, addr);
+> +		if (!reuse)
+> +			reuse = pte_page(ptep[-1]);
+
+Can we define a proper name for that instead of -1?
+
+e.g: TAIL_PAGE_REUSE or something like that. 
+
+> +
+> +		next = vmemmap_hpage_addr_end(addr, end);
+> +		nr_pages = (next - addr) >> PAGE_SHIFT;
+> +		__free_huge_page_pte_vmemmap(reuse, ptep, addr, nr_pages,
+> +					     free_pages);
+
+Why not passing next instead of nr_pages? I think it makes more sense.
+As a bonus we can kill the variable.
+
+> +static void split_vmemmap_huge_page(struct hstate *h, struct page *head,
+> +				    pmd_t *pmd)
+> +{
+> +	pgtable_t pgtable;
+> +	unsigned long start = (unsigned long)head & VMEMMAP_HPAGE_MASK;
+> +	unsigned long addr = start;
+> +	unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
+> +
+> +	while (nr-- && (pgtable = vmemmap_pgtable_withdraw(head))) {
+
+The same with previous patches, I would scrap "nr" and its use.
+
+> +		VM_BUG_ON(freed_vmemmap_hpage(pgtable));
+
+I guess here we want to check whether we already call free_huge_page_vmemmap
+on this range?
+For this to have happened, the locking should have failed, right?
+
+> +static void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+> +{
+> +	pmd_t *pmd;
+> +	spinlock_t *ptl;
+> +	LIST_HEAD(free_pages);
+> +
+> +	if (!free_vmemmap_pages_per_hpage(h))
+> +		return;
+> +
+> +	pmd = vmemmap_to_pmd(head);
+> +	ptl = vmemmap_pmd_lock(pmd);
+> +	if (vmemmap_pmd_huge(pmd)) {
+> +		VM_BUG_ON(!pgtable_pages_to_prealloc_per_hpage(h));
+
+I think that checking for free_vmemmap_pages_per_hpage is enough.
+In the end, pgtable_pages_to_prealloc_per_hpage uses free_vmemmap_pages_per_hpage.
 
 
-diff --git a/fs/super.c b/fs/super.c
-index 59aa59279133..98bb0629ee10 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1631,36 +1631,6 @@ int super_setup_bdi(struct super_block *sb)
- }
- EXPORT_SYMBOL(super_setup_bdi);
- 
--/*
-- * This is an internal function, please use sb_end_{write,pagefault,intwrite}
-- * instead.
-- */
--void __sb_end_write(struct super_block *sb, int level)
--{
--	percpu_up_read(sb->s_writers.rw_sem + level-1);
--}
--EXPORT_SYMBOL(__sb_end_write);
--
--/*
-- * This is an internal function, please use sb_start_{write,pagefault,intwrite}
-- * instead.
-- */
--void __sb_start_write(struct super_block *sb, int level)
--{
--	percpu_down_read(sb->s_writers.rw_sem + level - 1);
--}
--EXPORT_SYMBOL(__sb_start_write);
--
--/*
-- * This is an internal function, please use sb_start_{write,pagefault,intwrite}
-- * instead.
-- */
--bool __sb_start_write_trylock(struct super_block *sb, int level)
--{
--	return percpu_down_read_trylock(sb->s_writers.rw_sem + level - 1);
--}
--EXPORT_SYMBOL_GPL(__sb_start_write_trylock);
--
- /**
-  * sb_wait_write - wait until all writers to given file system finish
-  * @sb: the super for which we wait
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 305989afd49c..6dabd019cab0 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1580,9 +1580,24 @@ extern struct timespec64 current_time(struct inode *inode);
-  * Snapshotting support.
-  */
- 
--void __sb_end_write(struct super_block *sb, int level);
--void __sb_start_write(struct super_block *sb, int level);
--bool __sb_start_write_trylock(struct super_block *sb, int level);
-+/*
-+ * These are internal functions, please use sb_start_{write,pagefault,intwrite}
-+ * instead.
-+ */
-+static inline void __sb_end_write(struct super_block *sb, int level)
-+{
-+	percpu_up_read(sb->s_writers.rw_sem + level-1);
-+}
-+
-+static inline void __sb_start_write(struct super_block *sb, int level)
-+{
-+	percpu_down_read(sb->s_writers.rw_sem + level - 1);
-+}
-+
-+static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
-+{
-+	return percpu_down_read_trylock(sb->s_writers.rw_sem + level - 1);
-+}
- 
- #define __sb_writers_acquired(sb, lev)	\
- 	percpu_rwsem_acquire(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
-
+-- 
+Oscar Salvador
+SUSE L3
