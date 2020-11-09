@@ -2,128 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 597DA2AC376
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C4E22AC37A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Nov 2020 19:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbgKISQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 13:16:55 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:54958 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729119AbgKISQy (ORCPT
+        id S1730115AbgKISRC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 13:17:02 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58756 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730035AbgKISRB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 13:16:54 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9I9pZo120449;
-        Mon, 9 Nov 2020 18:16:47 GMT
+        Mon, 9 Nov 2020 13:17:01 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9I9ihL113375;
+        Mon, 9 Nov 2020 18:16:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=DrY95ZEYCvkKcuGJulq2EUOjlqD79ffG/X3fYNYMaBg=;
- b=OFiMZ2Y9J07gF3lRLQqZamXSP/vjxqCfPkecne9lBAlTY1m/q68vcoF309a5MTCe9EME
- mNpFXY+86XsaWXNIie8a5nlzq7IAjo/AGQfIlYlO1NZW1Dhd79H7vtBx0U6hJbrWO1UZ
- vHYlJrn4rWOGgFNOCNAAn6XOIKtoOnbnpqDZYYCa6pI/KLl2HUM3XHKSH98JO6Q+BQyx
- 3N2P7Hoew7Lm+kN9bhtGcFyTewEQi3TEAaW/8eW8G8/aLbS9/zli+PKu0zoI8eTZQ/GP
- XJseGSGGLkfwPYjERmc8/A3SUEjJOXZm4DolHo71C/C5XT/CM6C8WEs8lw65y4BVmcJ3 bA== 
+ cc : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=L8CBYQV4P4s2bxK8vs2Sx/iljdBfIt6H46S+OgitivI=;
+ b=ck26avDY+1tLiHo0ktm2ufeNQWDD16fBrOdVopOtipiWXL6OvfGBOSNxoKBCJGqsDCWO
+ uBMDgr7ilA5xBLQvDWo3TD9FdvDCZNRfC7YvsBR4FRM7G9i+duC5/pOIe8pf31s1rSYi
+ ZKzvu81j4N2aSbjinsepv6itjuTH17qPheogeL4vuDrNdryLkXjOY5sJXad6D+p3dngo
+ ScZ7LnlPOjHZL3UFvUxFb9FrJIs1/H9lW6OGo1m52B2K5J3UCF+86edlkuZeOOwPCn+H
+ 9/bKCkSSqHAtu7T3X39ME98sZV1WpRuZPDhRDg0HylLMSwyH42hw9kovjG0/HJAgs9CH kw== 
 Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 34nh3aqn4p-1
+        by userp2120.oracle.com with ESMTP id 34p72edmtp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 09 Nov 2020 18:16:47 +0000
+        Mon, 09 Nov 2020 18:16:53 +0000
 Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9IB9Cq195309;
-        Mon, 9 Nov 2020 18:16:46 GMT
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0A9IB9bC195311;
+        Mon, 9 Nov 2020 18:16:52 GMT
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 34p55m9mt2-1
+        by aserp3030.oracle.com with ESMTP id 34p55m9mx9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Nov 2020 18:16:46 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0A9IGjfr009811;
-        Mon, 9 Nov 2020 18:16:45 GMT
+        Mon, 09 Nov 2020 18:16:52 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0A9IGqFm009922;
+        Mon, 9 Nov 2020 18:16:52 GMT
 Received: from localhost (/10.159.239.129)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Nov 2020 10:16:45 -0800
-Subject: [PATCH v3 0/3] vfs: remove lockdep fs freeze weirdness
+        with ESMTP ; Mon, 09 Nov 2020 10:16:52 -0800
+Subject: [PATCH 1/3] vfs: remove lockdep bogosity in __sb_start_write
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     darrick.wong@oracle.com
 Cc:     Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
         david@fromorbit.com, hch@lst.de, fdmanana@kernel.org,
         linux-fsdevel@vger.kernel.org
-Date:   Mon, 09 Nov 2020 10:16:44 -0800
-Message-ID: <160494580419.772573.9286165021627298770.stgit@magnolia>
+Date:   Mon, 09 Nov 2020 10:16:50 -0800
+Message-ID: <160494581071.772573.10466314698408344068.stgit@magnolia>
+In-Reply-To: <160494580419.772573.9286165021627298770.stgit@magnolia>
+References: <160494580419.772573.9286165021627298770.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9800 signatures=668682
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=1
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2011090126
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9800 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 phishscore=0 adultscore=0 bulkscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
  definitions=main-2011090126
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-A long time ago, XFS got tangled up with lockdep because the last thing
-it does during a fs freeze is use a transaction to flush the superblock
-to disk.  Transactions require int(ernal) write freeze protection, which
-implies a recursive grab of the intwrite lock and makes lockdep all sad.
+__sb_start_write has some weird looking lockdep code that claims to
+exist to handle nested freeze locking requests from xfs.  The code as
+written seems broken -- if we think we hold a read lock on any of the
+higher freeze levels (e.g. we hold SB_FREEZE_WRITE and are trying to
+lock SB_FREEZE_PAGEFAULT), it converts a blocking lock attempt into a
+trylock.
 
-This was "solved" in lockdep back in 2012 as commit 5accdf82ba25c by
-adding a "convert XFS' blocking fsfreeze lock attempts into a trylock"
-behavior in v6 of a patch[1] that Jan Kara sent to try to fix fs freeze
-handling.  The behavior was not in the v5[0] patch, nor was there any
-discussion for any of the v5 patches that would suggest why things
-changed from v5 to v6.
+However, it's not correct to downgrade a blocking lock attempt to a
+trylock unless the downgrading code or the callers are prepared to deal
+with that situation.  Neither __sb_start_write nor its callers handle
+this at all.  For example:
 
-Commit f4b554af9931 in 2015 created the current weird logic in
-__sb_start_write, which converts recursive freeze lock grabs into
-trylocks whose return values are ignored(!!!).  XFS solved the problem
-by creating a variant of transactions (XFS_TRANS_NO_WRITECOUNT) that
-don't grab intwrite freeze protection, thus making lockdep's solution
+sb_start_pagefault ignores the return value completely, with the result
+that if xfs_filemap_fault loses a race with a different thread trying to
+fsfreeze, it will proceed without pagefault freeze protection (thereby
+breaking locking rules) and then unlocks the pagefault freeze lock that
+it doesn't own on its way out (thereby corrupting the lock state), which
+leads to a system hang shortly afterwards.
+
+Normally, this won't happen because our ownership of a read lock on a
+higher freeze protection level blocks fsfreeze from grabbing a write
+lock on that higher level.  *However*, if lockdep is offline,
+lock_is_held_type unconditionally returns 1, which means that
+percpu_rwsem_is_held returns 1, which means that __sb_start_write
+unconditionally converts blocking freeze lock attempts into trylocks,
+even when we *don't* hold anything that would block a fsfreeze.
+
+Apparently this all held together until 5.10-rc1, when bugs in lockdep
+caused lockdep to shut itself off early in an fstests run, and once
+fstests gets to the "race writes with freezer" tests, kaboom.  This
+might explain the long trail of vanishingly infrequent livelocks in
+fstests after lockdep goes offline that I've never been able to
+diagnose.
+
+We could fix it by spinning on the trylock if wait==true, but AFAICT the
+locking works fine if lockdep is not built at all (and I didn't see any
+complaints running fstests overnight), so remove this snippet entirely.
+
+NOTE: Commit f4b554af9931 in 2015 created the current weird logic (which
+used to exist in a different form in commit 5accdf82ba25c from 2012) in
+__sb_start_write.  XFS solved this whole problem in the late 2.6 era by
+creating a variant of transactions (XFS_TRANS_NO_WRITECOUNT) that don't
+grab intwrite freeze protection, thus making lockdep's solution
 unnecessary.  The commit claims that Dave Chinner explained that the
-trylock hack + comment could be removed, but the patch author never did
-that, and lore doesn't seem to know where or when Dave actually said
-that?
+trylock hack + comment could be removed, but nobody ever did.
 
-Now it's 2020, and still nobody removed this from __sb_start_write.
-Worse yet, nowadays lock_is_held returns 1 if lockdep is built-in but
-offline.  This causes attempts to grab the pagefaults freeze lock
-synchronously to turn into unchecked trylocks!  Hilarity ensues if a
-page fault races with fsfreeze and loses, which causes us to break the
-locking model.
-
-This finally came to a head in 5.10-rc1 because the new lockdep bugs
-introduced during the merge window caused this maintainer to hit the
-weird case where sb_start_pagefault can return without having taken the
-freeze lock, leading to test failures and memory corruption.
-
-Since this insanity is dangerous and hasn't been needed by xfs since the
-late 2.6(???) days, kill it with fire.
-
-v2: refactor helpers to be more cohesive
-v3: move more cohesive helpers to header files
-
-If you're going to start using this mess, you probably ought to just
-pull from my git trees, which are linked below.
-
-This is an extraordinary way to destroy everything.  Enjoy!
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=remove-freeze-weirdness-5.11
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/aio.c           |    2 +-
- fs/io_uring.c      |    3 +--
- fs/super.c         |   49 -------------------------------------------------
- include/linux/fs.h |   38 +++++++++++++++++++++++++++-----------
- 4 files changed, 29 insertions(+), 63 deletions(-)
+ fs/super.c |   33 ++++-----------------------------
+ 1 file changed, 4 insertions(+), 29 deletions(-)
+
+
+diff --git a/fs/super.c b/fs/super.c
+index a51c2083cd6b..e1fd667454d4 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1647,36 +1647,11 @@ EXPORT_SYMBOL(__sb_end_write);
+  */
+ int __sb_start_write(struct super_block *sb, int level, bool wait)
+ {
+-	bool force_trylock = false;
+-	int ret = 1;
++	if (!wait)
++		return percpu_down_read_trylock(sb->s_writers.rw_sem + level-1);
+ 
+-#ifdef CONFIG_LOCKDEP
+-	/*
+-	 * We want lockdep to tell us about possible deadlocks with freezing
+-	 * but it's it bit tricky to properly instrument it. Getting a freeze
+-	 * protection works as getting a read lock but there are subtle
+-	 * problems. XFS for example gets freeze protection on internal level
+-	 * twice in some cases, which is OK only because we already hold a
+-	 * freeze protection also on higher level. Due to these cases we have
+-	 * to use wait == F (trylock mode) which must not fail.
+-	 */
+-	if (wait) {
+-		int i;
+-
+-		for (i = 0; i < level - 1; i++)
+-			if (percpu_rwsem_is_held(sb->s_writers.rw_sem + i)) {
+-				force_trylock = true;
+-				break;
+-			}
+-	}
+-#endif
+-	if (wait && !force_trylock)
+-		percpu_down_read(sb->s_writers.rw_sem + level-1);
+-	else
+-		ret = percpu_down_read_trylock(sb->s_writers.rw_sem + level-1);
+-
+-	WARN_ON(force_trylock && !ret);
+-	return ret;
++	percpu_down_read(sb->s_writers.rw_sem + level-1);
++	return 1;
+ }
+ EXPORT_SYMBOL(__sb_start_write);
+ 
 
