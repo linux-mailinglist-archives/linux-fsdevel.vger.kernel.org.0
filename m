@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FF62ACBE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 04:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CAEF2ACBEB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 04:37:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730921AbgKJDhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 22:37:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44238 "EHLO
+        id S1731253AbgKJDhM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 22:37:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbgKJDhI (ORCPT
+        with ESMTP id S1730996AbgKJDhJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 22:37:08 -0500
+        Mon, 9 Nov 2020 22:37:09 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F2C0C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 19:37:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55BEBC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 19:37:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=0WgTAjyCsNlpTBvR7hpK1MJfnGK7KKLu7MHBBLK3GK8=; b=fCVUFUauFd0G5jCz6rogNGGklH
-        D+pO9i5yZ85mgACRkjrM0UCdMOqvUpCsZsX1s3PamAX6Sqs0vFrQSHcuZb3rB/8pT1ncg1Ys8ibi3
-        4T7RAthHX96X12OWET2XV9Y4EtaQFmGrPX4QFhEJ0zfXj3t0A4DjziUFkLsNPo5+rq3UURpO7zfbB
-        66GksatDq2oh+upeUOCpKo7onwWukgRNaoChWbxxcCvvMTNeEf4VOxafWzEDB80eq5Dd5ynIiNSxY
-        inVlpiK7cPkBaUOksYSbnB8YH/TaprvjZxAuQrKtgHxBjFtntJfWMN4gmlnXFQ+MoDrkcwcEMEFkd
-        u1u8hzCQ==;
+        bh=sAk2iPDmgDrkuXdUQEndLNJREGzccA9usOH+oh9Jb8U=; b=ldOrxuV2BVzlXEsdJD07j0oDfe
+        9NMPabP+PrEh2rlUEaxVDpQuSd+lqs/wb3AqV21//R6KjwsH0R2N3rznJ+qgGa/gqaMokhCs4xLd0
+        JKjQPC/3bjvvMY+rvuc1vFf2uPxr5dWBdBODjJElmpxXV0+wbjpXdIJc5jKoMuw9ikZe/0H7pAaSl
+        qcfMTxMqB0mLmV0UZZSbAXnACzmpHk9+UYXKsQ43bdnrm7RG3d8b77cmICLIP3s+UHNQxbPYF0AMY
+        knJfN3/K83/QiaXqDbhLzb2k66aUD3XT13vdiP88FVHK0LRcMdHqNf/2q8+RBmEtLh1S3m+6L+/zh
+        dqMD0tNg==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kcKSw-00064b-B1; Tue, 10 Nov 2020 03:37:06 +0000
+        id 1kcKSx-00064s-0a; Tue, 10 Nov 2020 03:37:07 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, hch@lst.de,
         kent.overstreet@gmail.com
-Subject: [PATCH v3 03/18] mm/filemap: Convert filemap_get_pages to take a pagevec
-Date:   Tue, 10 Nov 2020 03:36:48 +0000
-Message-Id: <20201110033703.23261-4-willy@infradead.org>
+Subject: [PATCH v3 04/18] mm/filemap: Use THPs in generic_file_buffered_read
+Date:   Tue, 10 Nov 2020 03:36:49 +0000
+Message-Id: <20201110033703.23261-5-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201110033703.23261-1-willy@infradead.org>
 References: <20201110033703.23261-1-willy@infradead.org>
@@ -43,198 +43,238 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Using a pagevec lets us keep the pages and the number of pages together
-which simplifies a lot of the calling conventions.
+Add filemap_get_read_batch() which returns the THPs which represent a
+contiguous array of bytes in the file.  It also stops when encountering
+a page marked as Readahead or !Uptodate (but does return that page)
+so it can be handled appropriately by filemap_get_pages().  That lets us
+remove the loop in filemap_get_pages() and check only the last page.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Kent Overstreet <kent.overstreet@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/filemap.c | 82 ++++++++++++++++++++++++----------------------------
- 1 file changed, 38 insertions(+), 44 deletions(-)
+ mm/filemap.c | 122 +++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 85 insertions(+), 37 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index bb1c42d0223c..bd02820601f8 100644
+index bd02820601f8..1de586eb377e 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2323,22 +2323,22 @@ static struct page *filemap_create_page(struct kiocb *iocb,
+@@ -2176,6 +2176,51 @@ static int lock_page_for_iocb(struct kiocb *iocb, struct page *page)
+ 		return lock_page_killable(page);
  }
  
- static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
--		struct page **pages, unsigned int nr)
-+		struct pagevec *pvec)
++/*
++ * filemap_get_read_batch - Get a batch of pages for read
++ *
++ * Get a batch of pages which represent a contiguous range of bytes
++ * in the file.  No tail pages will be returned.  If @index is in the
++ * middle of a THP, the entire THP will be returned.  The last page in
++ * the batch may have Readahead set or be not Uptodate so that the
++ * caller can take the appropriate action.
++ */
++static void filemap_get_read_batch(struct address_space *mapping,
++		pgoff_t index, pgoff_t max, struct pagevec *pvec)
++{
++	XA_STATE(xas, &mapping->i_pages, index);
++	struct page *head;
++
++	rcu_read_lock();
++	for (head = xas_load(&xas); head; head = xas_next(&xas)) {
++		if (xas_retry(&xas, head))
++			continue;
++		if (xas.xa_index > max || xa_is_value(head))
++			break;
++		if (!page_cache_get_speculative(head))
++			goto retry;
++
++		/* Has the page moved or been split? */
++		if (unlikely(head != xas_reload(&xas)))
++			goto put_page;
++
++		if (!pagevec_add(pvec, head))
++			break;
++		if (!PageUptodate(head))
++			break;
++		if (PageReadahead(head))
++			break;
++		xas.xa_index = head->index + thp_nr_pages(head) - 1;
++		xas.xa_offset = (xas.xa_index >> xas.xa_shift) & XA_CHUNK_MASK;
++		continue;
++put_page:
++		put_page(head);
++retry:
++		xas_reset(&xas);
++	}
++	rcu_read_unlock();
++}
++
+ static struct page *filemap_read_page(struct kiocb *iocb, struct file *filp,
+ 		struct address_space *mapping, struct page *page)
  {
- 	struct file *filp = iocb->ki_filp;
+@@ -2329,15 +2374,15 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
  	struct address_space *mapping = filp->f_mapping;
  	struct file_ra_state *ra = &filp->f_ra;
  	pgoff_t index = iocb->ki_pos >> PAGE_SHIFT;
- 	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
--	int i, j, nr_got, err = 0;
-+	unsigned int nr = min_t(unsigned long, last_index - index, PAGEVEC_SIZE);
-+	int i, j, err = 0;
+-	pgoff_t last_index = (iocb->ki_pos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
+-	unsigned int nr = min_t(unsigned long, last_index - index, PAGEVEC_SIZE);
+-	int i, j, err = 0;
++	pgoff_t last_index;
++	int err = 0;
  
--	nr = min_t(unsigned long, last_index - index, nr);
++	last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count, PAGE_SIZE);
  find_page:
  	if (fatal_signal_pending(current))
  		return -EINTR;
  
--	nr_got = find_get_pages_contig(mapping, index, nr, pages);
--	if (nr_got)
-+	pvec->nr = find_get_pages_contig(mapping, index, nr, pvec->pages);
-+	if (pvec->nr)
+-	pvec->nr = find_get_pages_contig(mapping, index, nr, pvec->pages);
++	filemap_get_read_batch(mapping, index, last_index, pvec);
+ 	if (pvec->nr)
  		goto got_pages;
  
- 	if (iocb->ki_flags & IOCB_NOIO)
-@@ -2346,17 +2346,17 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+@@ -2346,29 +2391,30 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
  
  	page_cache_sync_readahead(mapping, ra, filp, index, last_index - index);
  
--	nr_got = find_get_pages_contig(mapping, index, nr, pages);
--	if (nr_got)
-+	pvec->nr = find_get_pages_contig(mapping, index, nr, pvec->pages);
-+	if (pvec->nr)
+-	pvec->nr = find_get_pages_contig(mapping, index, nr, pvec->pages);
++	filemap_get_read_batch(mapping, index, last_index, pvec);
+ 	if (pvec->nr)
  		goto got_pages;
  
--	pages[0] = filemap_create_page(iocb, iter);
--	err = PTR_ERR_OR_ZERO(pages[0]);
--	if (!IS_ERR_OR_NULL(pages[0]))
--		nr_got = 1;
-+	pvec->pages[0] = filemap_create_page(iocb, iter);
-+	err = PTR_ERR_OR_ZERO(pvec->pages[0]);
-+	if (!IS_ERR_OR_NULL(pvec->pages[0]))
-+		pvec->nr = 1;
+ 	pvec->pages[0] = filemap_create_page(iocb, iter);
+ 	err = PTR_ERR_OR_ZERO(pvec->pages[0]);
+-	if (!IS_ERR_OR_NULL(pvec->pages[0]))
+-		pvec->nr = 1;
++	if (IS_ERR_OR_NULL(pvec->pages[0]))
++		goto err;
++	pvec->nr = 1;
++	return 0;
  got_pages:
--	for (i = 0; i < nr_got; i++) {
--		struct page *page = pages[i];
-+	for (i = 0; i < pvec->nr; i++) {
-+		struct page *page = pvec->pages[i];
- 		pgoff_t pg_index = index + i;
+-	for (i = 0; i < pvec->nr; i++) {
+-		struct page *page = pvec->pages[i];
+-		pgoff_t pg_index = index + i;
++	{
++		struct page *page = pvec->pages[pvec->nr - 1];
++		pgoff_t pg_index = page->index;
  		loff_t pg_pos = max(iocb->ki_pos,
  				    (loff_t) pg_index << PAGE_SHIFT);
-@@ -2364,9 +2364,9 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 		loff_t pg_count = iocb->ki_pos + iter->count - pg_pos;
  
  		if (PageReadahead(page)) {
  			if (iocb->ki_flags & IOCB_NOIO) {
--				for (j = i; j < nr_got; j++)
--					put_page(pages[j]);
--				nr_got = i;
-+				for (j = i; j < pvec->nr; j++)
-+					put_page(pvec->pages[j]);
-+				pvec->nr = i;
+-				for (j = i; j < pvec->nr; j++)
+-					put_page(pvec->pages[j]);
+-				pvec->nr = i;
++				put_page(page);
++				pvec->nr--;
  				err = -EAGAIN;
- 				break;
+-				break;
++				goto err;
  			}
-@@ -2377,9 +2377,9 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 			page_cache_async_readahead(mapping, ra, filp, page,
+ 					pg_index, last_index - pg_index);
+@@ -2376,26 +2422,23 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 
  		if (!PageUptodate(page)) {
  			if ((iocb->ki_flags & IOCB_NOWAIT) ||
- 			    ((iocb->ki_flags & IOCB_WAITQ) && i)) {
--				for (j = i; j < nr_got; j++)
--					put_page(pages[j]);
--				nr_got = i;
-+				for (j = i; j < pvec->nr; j++)
-+					put_page(pvec->pages[j]);
-+				pvec->nr = i;
+-			    ((iocb->ki_flags & IOCB_WAITQ) && i)) {
+-				for (j = i; j < pvec->nr; j++)
+-					put_page(pvec->pages[j]);
+-				pvec->nr = i;
++			    ((iocb->ki_flags & IOCB_WAITQ) && pvec->nr > 1)) {
++				put_page(page);
++				pvec->nr--;
  				err = -EAGAIN;
- 				break;
+-				break;
++				goto err;
  			}
-@@ -2387,17 +2387,17 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 
  			page = filemap_update_page(iocb, filp, iter, page,
  					pg_pos, pg_count);
  			if (IS_ERR_OR_NULL(page)) {
--				for (j = i + 1; j < nr_got; j++)
--					put_page(pages[j]);
--				nr_got = i;
-+				for (j = i + 1; j < pvec->nr; j++)
-+					put_page(pvec->pages[j]);
-+				pvec->nr = i;
+-				for (j = i + 1; j < pvec->nr; j++)
+-					put_page(pvec->pages[j]);
+-				pvec->nr = i;
++				pvec->nr--;
  				err = PTR_ERR_OR_ZERO(page);
- 				break;
+-				break;
  			}
  		}
  	}
  
--	if (likely(nr_got))
--		return nr_got;
-+	if (likely(pvec->nr))
-+		return 0;
++err:
+ 	if (likely(pvec->nr))
+ 		return 0;
  	if (err)
- 		return err;
- 	/*
-@@ -2429,11 +2429,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	struct file_ra_state *ra = &filp->f_ra;
- 	struct address_space *mapping = filp->f_mapping;
- 	struct inode *inode = mapping->host;
--	struct page *pages[PAGEVEC_SIZE];
--	unsigned int nr_pages = min_t(unsigned int, PAGEVEC_SIZE,
--			((iocb->ki_pos + iter->count + PAGE_SIZE - 1) >> PAGE_SHIFT) -
--			(iocb->ki_pos >> PAGE_SHIFT));
--	int i, pg_nr, error = 0;
-+	struct pagevec pvec;
-+	int i, error = 0;
- 	bool writably_mapped;
- 	loff_t isize, end_offset;
+@@ -2437,6 +2480,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
+ 		return 0;
+ 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
++	pagevec_init(pvec);
  
-@@ -2452,12 +2449,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		if ((iocb->ki_flags & IOCB_WAITQ) && written)
- 			iocb->ki_flags |= IOCB_NOWAIT;
- 
--		i = 0;
--		pg_nr = filemap_get_pages(iocb, iter, pages, nr_pages);
--		if (pg_nr < 0) {
--			error = pg_nr;
-+		error = filemap_get_pages(iocb, iter, &pvec);
-+		if (error < 0)
- 			break;
--		}
- 
- 		/*
- 		 * i_size must be checked after we know the pages are Uptodate.
-@@ -2473,9 +2467,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
+ 	do {
+ 		cond_resched();
+@@ -2464,13 +2508,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		isize = i_size_read(inode);
+ 		if (unlikely(iocb->ki_pos >= isize))
+ 			goto put_pages;
+-
  		end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
  
--		while ((iocb->ki_pos >> PAGE_SHIFT) + pg_nr >
-+		while ((iocb->ki_pos >> PAGE_SHIFT) + pvec.nr >
- 		       (end_offset + PAGE_SIZE - 1) >> PAGE_SHIFT)
--			put_page(pages[--pg_nr]);
-+			put_page(pvec.pages[--pvec.nr]);
- 
+-		while ((iocb->ki_pos >> PAGE_SHIFT) + pvec.nr >
+-		       (end_offset + PAGE_SIZE - 1) >> PAGE_SHIFT)
+-			put_page(pvec.pages[--pvec.nr]);
+-
  		/*
  		 * Once we start copying data, we don't want to be touching any
-@@ -2489,11 +2483,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		 */
+ 		 * cachelines that might be contended:
+@@ -2484,24 +2523,32 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
  		if (iocb->ki_pos >> PAGE_SHIFT !=
  		    ra->prev_pos >> PAGE_SHIFT)
--			mark_page_accessed(pages[0]);
--		for (i = 1; i < pg_nr; i++)
--			mark_page_accessed(pages[i]);
-+			mark_page_accessed(pvec.pages[0]);
-+		for (i = 1; i < pagevec_count(&pvec); i++)
-+			mark_page_accessed(pvec.pages[i]);
+ 			mark_page_accessed(pvec.pages[0]);
+-		for (i = 1; i < pagevec_count(&pvec); i++)
+-			mark_page_accessed(pvec.pages[i]);
  
--		for (i = 0; i < pg_nr; i++) {
-+		for (i = 0; i < pagevec_count(&pvec); i++) {
- 			unsigned int offset = iocb->ki_pos & ~PAGE_MASK;
- 			unsigned int bytes = min_t(loff_t, end_offset - iocb->ki_pos,
- 						   PAGE_SIZE - offset);
-@@ -2505,9 +2499,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 		for (i = 0; i < pagevec_count(&pvec); i++) {
+-			unsigned int offset = iocb->ki_pos & ~PAGE_MASK;
+-			unsigned int bytes = min_t(loff_t, end_offset - iocb->ki_pos,
+-						   PAGE_SIZE - offset);
+-			unsigned int copied;
++			struct page *page = pvec.pages[i];
++			size_t page_size = thp_size(page);
++			size_t offset = iocb->ki_pos & (page_size - 1);
++			size_t bytes = min_t(loff_t, end_offset - iocb->ki_pos,
++					     page_size - offset);
++			size_t copied;
+ 
++			if (end_offset < page_offset(page))
++				break;
++			if (i > 0)
++				mark_page_accessed(page);
+ 			/*
+ 			 * If users can be writing to this page using arbitrary
+ 			 * virtual addresses, take care about potential aliasing
  			 * before reading the page on the kernel side.
  			 */
- 			if (writably_mapped)
--				flush_dcache_page(pages[i]);
-+				flush_dcache_page(pvec.pages[i]);
+-			if (writably_mapped)
+-				flush_dcache_page(pvec.pages[i]);
++			if (writably_mapped) {
++				int j;
++
++				for (j = 0; j < thp_nr_pages(page); j++)
++					flush_dcache_page(page + j);
++			}
  
--			copied = copy_page_to_iter(pages[i], offset, bytes, iter);
-+			copied = copy_page_to_iter(pvec.pages[i], offset, bytes, iter);
+-			copied = copy_page_to_iter(pvec.pages[i], offset, bytes, iter);
++			copied = copy_page_to_iter(page, offset, bytes, iter);
  
  			written += copied;
  			iocb->ki_pos += copied;
-@@ -2519,8 +2513,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 			}
- 		}
+@@ -2515,6 +2562,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
  put_pages:
--		for (i = 0; i < pg_nr; i++)
--			put_page(pages[i]);
-+		for (i = 0; i < pagevec_count(&pvec); i++)
-+			put_page(pvec.pages[i]);
+ 		for (i = 0; i < pagevec_count(&pvec); i++)
+ 			put_page(pvec.pages[i]);
++		pagevec_reinit(pvec);
  	} while (iov_iter_count(iter) && iocb->ki_pos < isize && !error);
  
  	file_accessed(filp);
