@@ -2,133 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 100B02ACA0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 02:08:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F7F12ACA35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 02:14:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731095AbgKJBIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 20:08:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49516 "EHLO
+        id S1731878AbgKJBOM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 20:14:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727311AbgKJBIT (ORCPT
+        with ESMTP id S1731267AbgKJBOA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 20:08:19 -0500
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9709C0613CF;
-        Mon,  9 Nov 2020 17:08:19 -0800 (PST)
-Received: by mail-qk1-x743.google.com with SMTP id 11so9977575qkd.5;
-        Mon, 09 Nov 2020 17:08:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jfYrdTPKMZbK96SOWjVC+rX+6K1DHm/KzMlUaGqdCkw=;
-        b=pUdpifgoK3w/lahMuT6WcZmrX4aQ2ovlJSJoTrIARtJQbPBh83RGgcVvTlBrAsaUV5
-         u8Vk+QKxnbN7lKUsNHc4qJxvQq3P2iPRLc4GFr7foKh/io6u6OlPuBetXNzJdFMYUwcB
-         SUfer6LTAEtgrkjvorvT+2Vg5kW082G8yBNdg8M3c1EhYm3l8A1zBWbRBSIgaC0BvfS8
-         CG0Os63C5a0pOtHwc6FF2Gl6eS+0yecZPNb/a58bWNx7yj7+xunAZeUNGDFUXcgorjTV
-         lRlnHSxKw4LHtbs241np/7yGP77pdl7x305N2DAIcJaI+pyn2Fn3aTcRcPGH12u17m1m
-         d0YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jfYrdTPKMZbK96SOWjVC+rX+6K1DHm/KzMlUaGqdCkw=;
-        b=hLTL4HXhQoANiBkURr+Jo9c29pL9HDNFd54BFhXxpdhizFGyptelhNvwg18orp50Ve
-         72Dy7I2M0UKWb/aJaYjIaGIFGvJ/LXI9Lg5scvCyFn73uCS2ztN4cCErA40kZUO/PJe0
-         sKIfZtqBjs+B1pWnNSQaaUsVnwmJaON/naAAeaaL5Lg+cotnnzLJlDT57WN2IKCcNiUh
-         aRpQ1nZrvHLipkNweoKrIvLEvV+DjEoOrWm4oyi6jWKyYduewTrVPyEKBz9U/+5Mg4oG
-         IGDZyrwKHhPsMaOdkJQEQdv9La1XffzSQQJP9FGKrOqS9zlSWyE/OoWne3lfWkvVLSJe
-         8ndA==
-X-Gm-Message-State: AOAM533iNhjIj7FFNqBDEhk//mwagrWdIQ1sdiREX1UwTt/aHpaqw7zQ
-        ftwZjfITCctb19S3SpEec10=
-X-Google-Smtp-Source: ABdhPJzJVAFILxIYtGbynUNUhQHwI2fH9uUHuUb1MdMFmdDbiekSZtZNli0tzavpO8qg98IXWDJc+A==
-X-Received: by 2002:a37:8c9:: with SMTP id 192mr7524631qki.428.1604970498896;
-        Mon, 09 Nov 2020 17:08:18 -0800 (PST)
-Received: from ubuntu-m3-large-x86 ([2604:1380:45f1:1d00::1])
-        by smtp.gmail.com with ESMTPSA id k3sm6774156qtj.84.2020.11.09.17.08.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2020 17:08:18 -0800 (PST)
-Date:   Mon, 9 Nov 2020 18:08:16 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, Tom Rix <trix@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sysctl: move local variable in proc_do_large_bitmap() to
- proper scope
-Message-ID: <20201110010816.GA2018112@ubuntu-m3-large-x86>
-References: <20201109071107.22560-1-lukas.bulwahn@gmail.com>
+        Mon, 9 Nov 2020 20:14:00 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE2DC0613CF;
+        Mon,  9 Nov 2020 17:13:59 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1604970836;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UkwosGD4CNwpr5O4mn7FToWEjHCGounmVIqa5vjwzhQ=;
+        b=DRjXCHfaWTV+37wSriT1BjBgrVPE6jdQ5QSgYOIapfxJkFIwaFOAyxB9axkmnF7jwFoYyj
+        IwVALzvZ0PuA7RxNph9leDCS6B9rTa4rL3nKcIBy/Am24PTMh01e/A2SQWp6LTkOQfBaj6
+        TPNYDFf29DCqNiv3sgD8nE6enYeIlsYkCGyKDzwB1FGN01/Y3vKoJQtpchwkYWrvNb9W70
+        4PCnBA8S0oYM/XwkwwZotKzR9vmT9oC6FdGvh5lMI1bLUaS0qdB+ZPTGprUeJSBjnvH0Xv
+        xyRk7zOTS6b0OUuDBNt+X1xYcMB1KSB7gGowiPoSA5hPR5omsqQ5g20Kt4+uKg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1604970836;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UkwosGD4CNwpr5O4mn7FToWEjHCGounmVIqa5vjwzhQ=;
+        b=acv/dHWHYYmtT1/z0brDNSAmBtlvEk8c07ItXmS/RUDap25yEm8biO9jTMWItRsTlNRTeF
+        x/KI3sqvslL8SkDg==
+To:     ira.weiny@intel.com, Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-efi@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-um@lists.infradead.org, linux-ntfs-dev@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, cluster-devel@redhat.com,
+        ecryptfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-rdma@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-cachefs@redhat.com,
+        samba-technical@lists.samba.org, intel-wired-lan@lists.osuosl.org
+Subject: Re: [PATCH RFC PKS/PMEM 05/58] kmap: Introduce k[un]map_thread
+In-Reply-To: <20201009195033.3208459-6-ira.weiny@intel.com>
+References: <20201009195033.3208459-1-ira.weiny@intel.com> <20201009195033.3208459-6-ira.weiny@intel.com>
+Date:   Tue, 10 Nov 2020 02:13:56 +0100
+Message-ID: <87h7pyhv3f.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201109071107.22560-1-lukas.bulwahn@gmail.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 09, 2020 at 08:11:07AM +0100, Lukas Bulwahn wrote:
-> make clang-analyzer caught my attention with:
-> 
->   kernel/sysctl.c:1511:4: warning: Value stored to 'first' is never read \
->   [clang-analyzer-deadcode.DeadStores]
->                           first = 0;
->                           ^
-> 
-> Commit 9f977fb7ae9d ("sysctl: add proc_do_large_bitmap") introduced
-> proc_do_large_bitmap(), where the variable first is only effectively used
-> when write is false; when write is true, the variable first is only used in
-> a dead assignment.
-> 
-> So, simply remove this dead assignment and put the variable in local scope.
-> 
-> As compilers will detect this unneeded assignment and optimize this anyway,
-> the resulting object code is identical before and after this change.
-> 
-> No functional change. No change to object code.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Ira,
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+On Fri, Oct 09 2020 at 12:49, ira weiny wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+>
+> To correctly support the semantics of kmap() with Kernel protection keys
+> (PKS), kmap() may be required to set the protections on multiple
+> processors (globally).  Enabling PKS globally can be very expensive
+> depending on the requested operation.  Furthermore, enabling a domain
+> globally reduces the protection afforded by PKS.
+>
+> Most kmap() (Aprox 209 of 229) callers use the map within a single thread and
+> have no need for the protection domain to be enabled globally.  However, the
+> remaining callers do not follow this pattern and, as best I can tell, expect
+> the mapping to be 'global' and available to any thread who may access the
+> mapping.[1]
+>
+> We don't anticipate global mappings to pmem, however in general there is a
+> danger in changing the semantics of kmap().  Effectively, this would cause an
+> unresolved page fault with little to no information about why the failure
+> occurred.
+>
+> To resolve this a number of options were considered.
+>
+> 1) Attempt to change all the thread local kmap() calls to kmap_atomic()[2]
+> 2) Introduce a flags parameter to kmap() to indicate if the mapping should be
+>    global or not
+> 3) Change ~20 call sites to 'kmap_global()' to indicate that they require a
+>    global enablement of the pages.
+> 4) Change ~209 call sites to 'kmap_thread()' to indicate that the mapping is to
+>    be used within that thread of execution only
+>
+> Option 1 is simply not feasible.  Option 2 would require all of the call sites
+> of kmap() to change.  Option 3 seems like a good minimal change but there is a
+> danger that new code may miss the semantic change of kmap() and not get the
+> behavior the developer intended.  Therefore, #4 was chosen.
 
-> ---
-> applies cleanly on v5.10-rc3 and next-20201106
-> 
-> Luis, Kees, Iurii, please pick this minor non-urgent clean-up patch.
-> 
->  kernel/sysctl.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index ce75c67572b9..cc274a431d91 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1423,7 +1423,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
->  			 void *buffer, size_t *lenp, loff_t *ppos)
->  {
->  	int err = 0;
-> -	bool first = 1;
->  	size_t left = *lenp;
->  	unsigned long bitmap_len = table->maxlen;
->  	unsigned long *bitmap = *(unsigned long **) table->data;
-> @@ -1508,12 +1507,12 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
->  			}
->  
->  			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
-> -			first = 0;
->  			proc_skip_char(&p, &left, '\n');
->  		}
->  		left += skipped;
->  	} else {
->  		unsigned long bit_a, bit_b = 0;
-> +		bool first = 1;
->  
->  		while (left) {
->  			bit_a = find_next_bit(bitmap, bitmap_len, bit_b);
-> -- 
-> 2.17.1
-> 
+There is Option #5:
+
+Convert the thread local kmap() invocations to the proposed kmap_local()
+interface which is coming along [1].
+
+That solves a couple of issues:
+
+ 1) It relieves the current kmap_atomic() usage sites from the implict
+    pagefault/preempt disable semantics which apply even when
+    CONFIG_HIGHMEM is disabled. kmap_local() still can be invoked from
+    atomic context.
+
+ 2) Due to #1 it allows to replace the conditional usage of kmap() and
+    kmap_atomic() for purely thread local mappings.
+
+ 3) It puts the burden on the HIGHMEM inflicted systems
+
+ 4) It is actually more efficient for most of the pure thread local use
+    cases on HIGHMEM inflicted systems because it avoids the overhead of
+    the global lock and the potential kmap slot exhaustion. A potential
+    preemption will be more expensive, but that's not really the case we
+    want to optimize for.
+
+ 5) It solves the RT issue vs. kmap_atomic()
+
+So instead of creating yet another variety of kmap() which is just
+scratching the particular PKRS itch, can we please consolidate all of
+that on the wider reaching kmap_local() approach?
+
+Thanks,
+
+        tglx
+     
+[1] https://lore.kernel.org/lkml/20201103092712.714480842@linutronix.de/
+
