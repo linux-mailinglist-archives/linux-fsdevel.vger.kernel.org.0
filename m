@@ -2,65 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9722ACFB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 07:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AAA92ACFC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 07:33:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbgKJGas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 01:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37338 "EHLO mail.kernel.org"
+        id S1728905AbgKJGdb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 01:33:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53490 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbgKJGas (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 01:30:48 -0500
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF62D2065D;
-        Tue, 10 Nov 2020 06:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604989847;
-        bh=mcptvCebsSCjDgKOVGkf81jFMFKnLnqj4ODmHnBc//E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2USH059Sa2/Hm2sqAgOKMxWJpQGEg4mOqGSbq8GP8KatYwy/TYUD23P1PJj62N8m0
-         lMMcbwSh25O4ndsQzbYOa45JhQKysidCTWtojPGddE4nKb91vFUCiY+s93L0ZbQV3r
-         DHdSMb8hzNUUi2c5i3vB2gWZw7cjnsd2NQ2f8h+k=
-Date:   Tue, 10 Nov 2020 07:30:43 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.9 53/55] seq_file: add seq_read_iter
-Message-ID: <X6ozk98QAeZZ41Fm@kroah.com>
-References: <20201110035318.423757-1-sashal@kernel.org>
- <20201110035318.423757-53-sashal@kernel.org>
+        id S1726010AbgKJGda (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Nov 2020 01:33:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 6E1EEABCC;
+        Tue, 10 Nov 2020 06:33:29 +0000 (UTC)
+Date:   Tue, 10 Nov 2020 07:33:25 +0100
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [External] Re: [PATCH v3 05/21] mm/hugetlb: Introduce pgtable
+ allocation/freeing helpers
+Message-ID: <20201110063325.GA4286@localhost.localdomain>
+References: <CAMZfGtVm9buFPscDVn5F5nUE=Yq+y4NoL0ci74=hUyjaLAPQQg@mail.gmail.com>
+ <20201110054250.GA2906@localhost.localdomain>
+ <CAMZfGtWbGETq=3b5i0aentemXkZn2J2DNWu05mBs=4L8bJm1jg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201110035318.423757-53-sashal@kernel.org>
+In-Reply-To: <CAMZfGtWbGETq=3b5i0aentemXkZn2J2DNWu05mBs=4L8bJm1jg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 09, 2020 at 10:53:16PM -0500, Sasha Levin wrote:
-> From: Christoph Hellwig <hch@lst.de>
+On Tue, Nov 10, 2020 at 02:08:46PM +0800, Muchun Song wrote:
+> The check should be added here.
 > 
-> [ Upstream commit d4d50710a8b46082224376ef119a4dbb75b25c56 ]
+>            if (!pgtable)
+>                    return NULL;
 > 
-> iov_iter based variant for reading a seq_file.  seq_read is
-> reimplemented on top of the iter variant.
+> Just like my previous v2 patch does. In this case, we can drop those
+> checks. What do you think?
+
+It is too early for me, so bear with me.
+
+page_huge_pte will only return NULL in case we did not get to preallocate
+any pgtable right?
+
+What I was talimg about is that 
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Tested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/seq_file.c            | 45 ++++++++++++++++++++++++++++------------
->  include/linux/seq_file.h |  1 +
->  2 files changed, 33 insertions(+), 13 deletions(-)
+> >         page_huge_pte(page) = list_first_entry_or_null(&pgtable->lru,
+> >                                                        struct page, lru);
 
-This is not needed for anything older than 5.10, please drop.
+here we will get the either a pgtable entry or NULL in case we already consumed
+all entries from the list.
+If that is the case, we can return NULL and let the caller known that we
+are done.
 
-thanks,
+Am I missing anything?
 
-greg k-h
+
+-- 
+Oscar Salvador
+SUSE L3
