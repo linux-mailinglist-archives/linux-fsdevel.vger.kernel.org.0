@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59AA52AD9EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 16:15:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D57222AD9F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 16:15:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731294AbgKJPPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 10:15:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55938 "EHLO mail.kernel.org"
+        id S1732226AbgKJPPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 10:15:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730791AbgKJPPA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 10:15:00 -0500
+        id S1730231AbgKJPPJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Nov 2020 10:15:09 -0500
 Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A09120659;
-        Tue, 10 Nov 2020 15:14:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0848920BED;
+        Tue, 10 Nov 2020 15:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605021298;
-        bh=K6cy9a2ag23BSVHi1jaYoKMK6hkaa11Z2c9YlKuusZM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=S7osllAx7P+0NH0/mlLrA19hxvwNIOjNVpixXk7gUWB8wFTgQVXXahwMxx9dyLG6O
-         sjV5eU5/lWKVfjP6kU0eY4i8UtaZSqbzpJrO7WSn+p3OLEfNsYCi9I5YNjAOfEnpVI
-         X0V8DoN/FRsLofsvv2S1GVGpNuGFuWalJvj+Vybc=
+        s=default; t=1605021308;
+        bh=OLkQOPwpPNkO447yVMVm5zd/5Ppg8ePwSShqZnVfuJg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gxyXZTAu6zXRN9jvxvDXZa3s5FS2vUx6dUKpkJuyPX4KIcPwqWDzuW3+gNCVEYkU1
+         qYdTy0dyp1N5ZX9S7gZJkjtK6O+/jczp7BNZy9gUDpDvLssEzKsAE7l6Pfc6ScvRWW
+         6XkGXeA9A5LeitGTOph0/itI3qI/Z24H0bbkKBhM=
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -55,10 +55,12 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
         x86@kernel.org
-Subject: [PATCH v8 0/9] mm: introduce memfd_secret system call to create "secret" memory areas
-Date:   Tue, 10 Nov 2020 17:14:35 +0200
-Message-Id: <20201110151444.20662-1-rppt@kernel.org>
+Subject: [PATCH v8 1/9] mm: add definition of PMD_PAGE_ORDER
+Date:   Tue, 10 Nov 2020 17:14:36 +0200
+Message-Id: <20201110151444.20662-2-rppt@kernel.org>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201110151444.20662-1-rppt@kernel.org>
+References: <20201110151444.20662-1-rppt@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -67,156 +69,85 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mike Rapoport <rppt@linux.ibm.com>
 
-Hi,
+The definition of PMD_PAGE_ORDER denoting the number of base pages in the
+second-level leaf page is already used by DAX and maybe handy in other
+cases as well.
 
-This is an implementation of "secret" mappings backed by a file descriptor.
+Several architectures already have definition of PMD_ORDER as the size of
+second level page table, so to avoid conflict with these definitions use
+PMD_PAGE_ORDER name and update DAX respectively.
 
-The file descriptor backing secret memory mappings is created using a
-dedicated memfd_secret system call The desired protection mode for the
-memory is configured using flags parameter of the system call. The mmap()
-of the file descriptor created with memfd_secret() will create a "secret"
-memory mapping. The pages in that mapping will be marked as not present in
-the direct map and will have desired protection bits set in the user page
-table. For instance, current implementation allows uncached mappings.
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+---
+ fs/dax.c                | 11 ++++-------
+ include/linux/pgtable.h |  3 +++
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Although normally Linux userspace mappings are protected from other users,
-such secret mappings are useful for environments where a hostile tenant is
-trying to trick the kernel into giving them access to other tenants
-mappings.
-
-Additionally, in the future the secret mappings may be used as a mean to
-protect guest memory in a virtual machine host.
-
-For demonstration of secret memory usage we've created a userspace library
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jejb/secret-memory-preloader.git
-
-that does two things: the first is act as a preloader for openssl to
-redirect all the OPENSSL_malloc calls to secret memory meaning any secret
-keys get automatically protected this way and the other thing it does is
-expose the API to the user who needs it. We anticipate that a lot of the
-use cases would be like the openssl one: many toolkits that deal with
-secret keys already have special handling for the memory to try to give
-them greater protection, so this would simply be pluggable into the
-toolkits without any need for user application modification.
-
-Hiding secret memory mappings behind an anonymous file allows (ab)use of
-the page cache for tracking pages allocated for the "secret" mappings as
-well as using address_space_operations for e.g. page migration callbacks.
-
-The anonymous file may be also used implicitly, like hugetlb files, to
-implement mmap(MAP_SECRET) and use the secret memory areas with "native" mm
-ABIs in the future.
-
-To limit fragmentation of the direct map to splitting only PUD-size pages,
-I've added an amortizing cache of PMD-size pages to each file descriptor
-that is used as an allocation pool for the secret memory areas.
-
-As the memory allocated by secretmem becomes unmovable, we use CMA to back
-large page caches so that page allocator won't be surprised by failing attempt
-to migrate these pages.
-
-v8:
-* Use CMA for all secretmem allocations as David suggested
-* Update memcg accounting after transtion to CMA
-* Prevent hibernation when there are active secretmem users
-* Add zeroing of the memory before releasing it back to cma/page allocator
-* Rebase on v5.10-rc2-mmotm-2020-11-07-21-40
-
-v7: https://lore.kernel.org/lkml/20201026083752.13267-1-rppt@kernel.org
-* Use set_direct_map() instead of __kernel_map_pages() to ensure error
-  handling in case the direct map update fails
-* Add accounting of large pages used to reduce the direct map fragmentation
-* Teach get_user_pages() and frieds to refuse get/pin secretmem pages
-
-v6: https://lore.kernel.org/lkml/20200924132904.1391-1-rppt@kernel.org
-* Silence the warning about missing syscall, thanks to Qian Cai
-* Replace spaces with tabs in Kconfig additions, per Randy
-* Add a selftest.
-
-v5: https://lore.kernel.org/lkml/20200916073539.3552-1-rppt@kernel.org
-* rebase on v5.9-rc5
-* drop boot time memory reservation patch
-
-v4: https://lore.kernel.org/lkml/20200818141554.13945-1-rppt@kernel.org
-* rebase on v5.9-rc1
-* Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
-* Make secret mappings exclusive by default and only require flags to
-  memfd_secret() system call for uncached mappings, thanks again Kirill :)
-
-v3: https://lore.kernel.org/lkml/20200804095035.18778-1-rppt@kernel.org
-* Squash kernel-parameters.txt update into the commit that added the
-  command line option.
-* Make uncached mode explicitly selectable by architectures. For now enable
-  it only on x86.
-
-v2: https://lore.kernel.org/lkml/20200727162935.31714-1-rppt@kernel.org
-* Follow Michael's suggestion and name the new system call 'memfd_secret'
-* Add kernel-parameters documentation about the boot option
-* Fix i386-tinyconfig regression reported by the kbuild bot.
-  CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
-  from one side and still make it available unconditionally on
-  architectures that support SET_DIRECT_MAP.
-
-v1: https://lore.kernel.org/lkml/20200720092435.17469-1-rppt@kernel.org
-
-Mike Rapoport (9):
-  mm: add definition of PMD_PAGE_ORDER
-  mmap: make mlock_future_check() global
-  set_memory: allow set_direct_map_*_noflush() for multiple pages
-  mm: introduce memfd_secret system call to create "secret" memory areas
-  secretmem: use PMD-size pages to amortize direct map fragmentation
-  secretmem: add memcg accounting
-  PM: hibernate: disable when there are active secretmem users
-  arch, mm: wire up memfd_secret system call were relevant
-  secretmem: test: add basic selftest for memfd_secret(2)
-
- arch/Kconfig                              |   7 +
- arch/arm64/include/asm/cacheflush.h       |   4 +-
- arch/arm64/include/asm/unistd.h           |   2 +-
- arch/arm64/include/asm/unistd32.h         |   2 +
- arch/arm64/include/uapi/asm/unistd.h      |   1 +
- arch/arm64/mm/pageattr.c                  |  10 +-
- arch/riscv/include/asm/set_memory.h       |   4 +-
- arch/riscv/include/asm/unistd.h           |   1 +
- arch/riscv/mm/pageattr.c                  |   8 +-
- arch/x86/Kconfig                          |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl    |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl    |   1 +
- arch/x86/include/asm/set_memory.h         |   4 +-
- arch/x86/mm/pat/set_memory.c              |   8 +-
- fs/dax.c                                  |  11 +-
- include/linux/pgtable.h                   |   3 +
- include/linux/secretmem.h                 |  30 ++
- include/linux/set_memory.h                |   4 +-
- include/linux/syscalls.h                  |   1 +
- include/uapi/asm-generic/unistd.h         |   6 +-
- include/uapi/linux/magic.h                |   1 +
- include/uapi/linux/secretmem.h            |   8 +
- kernel/power/hibernate.c                  |   5 +-
- kernel/power/snapshot.c                   |   4 +-
- kernel/sys_ni.c                           |   2 +
- mm/Kconfig                                |   5 +
- mm/Makefile                               |   1 +
- mm/filemap.c                              |   2 +-
- mm/gup.c                                  |  10 +
- mm/internal.h                             |   3 +
- mm/mmap.c                                 |   5 +-
- mm/secretmem.c                            | 451 ++++++++++++++++++++++
- mm/vmalloc.c                              |   5 +-
- scripts/checksyscalls.sh                  |   4 +
- tools/testing/selftests/vm/.gitignore     |   1 +
- tools/testing/selftests/vm/Makefile       |   3 +-
- tools/testing/selftests/vm/memfd_secret.c | 298 ++++++++++++++
- tools/testing/selftests/vm/run_vmtests    |  17 +
- 38 files changed, 895 insertions(+), 39 deletions(-)
- create mode 100644 include/linux/secretmem.h
- create mode 100644 include/uapi/linux/secretmem.h
- create mode 100644 mm/secretmem.c
- create mode 100644 tools/testing/selftests/vm/memfd_secret.c
-
-
-base-commit: 9f8ce377d420db12b19d6a4f636fecbd88a725a5
+diff --git a/fs/dax.c b/fs/dax.c
+index 26d5dcd2d69e..0f109eb16196 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -49,9 +49,6 @@ static inline unsigned int pe_order(enum page_entry_size pe_size)
+ #define PG_PMD_COLOUR	((PMD_SIZE >> PAGE_SHIFT) - 1)
+ #define PG_PMD_NR	(PMD_SIZE >> PAGE_SHIFT)
+ 
+-/* The order of a PMD entry */
+-#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
+-
+ static wait_queue_head_t wait_table[DAX_WAIT_TABLE_ENTRIES];
+ 
+ static int __init init_dax_wait_table(void)
+@@ -98,7 +95,7 @@ static bool dax_is_locked(void *entry)
+ static unsigned int dax_entry_order(void *entry)
+ {
+ 	if (xa_to_value(entry) & DAX_PMD)
+-		return PMD_ORDER;
++		return PMD_PAGE_ORDER;
+ 	return 0;
+ }
+ 
+@@ -1470,7 +1467,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct address_space *mapping = vma->vm_file->f_mapping;
+-	XA_STATE_ORDER(xas, &mapping->i_pages, vmf->pgoff, PMD_ORDER);
++	XA_STATE_ORDER(xas, &mapping->i_pages, vmf->pgoff, PMD_PAGE_ORDER);
+ 	unsigned long pmd_addr = vmf->address & PMD_MASK;
+ 	bool write = vmf->flags & FAULT_FLAG_WRITE;
+ 	bool sync;
+@@ -1529,7 +1526,7 @@ static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+ 	 * entry is already in the array, for instance), it will return
+ 	 * VM_FAULT_FALLBACK.
+ 	 */
+-	entry = grab_mapping_entry(&xas, mapping, PMD_ORDER);
++	entry = grab_mapping_entry(&xas, mapping, PMD_PAGE_ORDER);
+ 	if (xa_is_internal(entry)) {
+ 		result = xa_to_internal(entry);
+ 		goto fallback;
+@@ -1695,7 +1692,7 @@ dax_insert_pfn_mkwrite(struct vm_fault *vmf, pfn_t pfn, unsigned int order)
+ 	if (order == 0)
+ 		ret = vmf_insert_mixed_mkwrite(vmf->vma, vmf->address, pfn);
+ #ifdef CONFIG_FS_DAX_PMD
+-	else if (order == PMD_ORDER)
++	else if (order == PMD_PAGE_ORDER)
+ 		ret = vmf_insert_pfn_pmd(vmf, pfn, FAULT_FLAG_WRITE);
+ #endif
+ 	else
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 71125a4676c4..7f718b8dc789 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -28,6 +28,9 @@
+ #define USER_PGTABLES_CEILING	0UL
+ #endif
+ 
++/* Number of base pages in a second level leaf page */
++#define PMD_PAGE_ORDER	(PMD_SHIFT - PAGE_SHIFT)
++
+ /*
+  * A page table page can be thought of an array like this: pXd_t[PTRS_PER_PxD]
+  *
 -- 
 2.28.0
 
