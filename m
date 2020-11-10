@@ -2,121 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B0EA2ACFD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 07:37:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C4F2ACFE4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 07:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbgKJGho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 01:37:44 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:8592 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbgKJGhn (ORCPT
+        id S1730877AbgKJGlc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 01:41:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726467AbgKJGlb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 01:37:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1604991419; x=1636527419;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fHEI12nauRKrqeL0CzD1Uo2SWafLY6cW1Z+aJTBLznY=;
-  b=dnA8ham9jPsAWIcxlNsjv2zV8V05g9yxpn49W00aft/3FV+AqaDpkW91
-   O+pstmv+aUZqrNl18RkmJ1AYYs7clFJNs1GQe+iJYcnU7thkT/YW+Of02
-   J8rallsWXl5cvIMgadOKz2vL5DHoYsQ2ls7z0gqhfks0mRXbU/NsGp356
-   5Ue8JvFPxAIRI+AIcZ7HpA1vbuixAA9pyWvtd/zvH5qqAU3Z6Tg0B9A7v
-   EftafupKbQGWxpNl46u9c8ueBnVOV/njuTUfpL/eM5GEYZjdicQWy/Fg+
-   aodu3aWvkn1ehAkCIKEJItZjzfIBHV+aOGo1S/WQZ88SMwG+N1hYvndFQ
-   A==;
-IronPort-SDR: Xud0SSXmQ3dS3ttf3tZJ9gz4MGhNuvuwIezHf/IJYtEO/TRlq8LaKXS5JZKIcaCIuGFQ+I/vat
- OZaqHJqgDryN/0O19Lx9Xd2lI9LaXLVUKnrfjAgGOxH8fvTLo/nQLGLdpoil5y7MVJlsbTU+/b
- 9FPyilLij5+crGNsV0ZnJSYq67G9PyqxSZ9y5RVUdYIqZSHgxT4v5kuY85kJq6594NvTPWsbKC
- qkTrTappFe8kI0rJSGbU/H3il6SoLpGuJQQwDrARagJ1r4QwJ7M4J+700EmSNwXRNqCeD9hwFz
- 3Gk=
-X-IronPort-AV: E=Sophos;i="5.77,465,1596470400"; 
-   d="scan'208";a="255811479"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 14:56:59 +0800
-IronPort-SDR: v9NspyWyS24Ko7oNCLcsaAN/qGOOgwVr8uI/7dgRbP484mO1btq+xBLBi0EqdsJtq34CKub88H
- ABvefZAkVyBuyc1nI22dNX8ILknwy7fIPNp+28u5g4VFMLJ9blMfFfvZ0tFEQ/1nAhZ4ByrjPI
- 9qtkT573nBJG9SvoQX5QYQBG7DXhXOd2XdoOmFPEOouV0wpGLDrKC55+oXjUyX88qeSlPFHRBO
- WGzBsmXNrvDxuslyBDQ/0v2GP3PQ5/1hO3L8HlYwnAwe3ygm0NDExwQX3+U/AxJuYTzLVX/Cz0
- NEo1YzcIDoAmse6I+PN5p4QM
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2020 22:22:30 -0800
-IronPort-SDR: YlThQWu/+X57Eijovqwx+efvDVCUqiA5WYLJTeTQX9H2njcb3Hwm14MS8v8wvAMJjIqeNR2ikV
- JdApWcyX9tdXB5tXFrdOAFcFWDmii0/KaoxCQOpJJ1drkzxzAu79S0T1QQlH5fVApZ+Y0iIMr6
- glY8Cpvw8ZI6ZKjU6iFEcK1qd5muQbcQpteoOIY81JOyBDGesy8k6a9GbGBBg8iZcmDESH5vmh
- pFC155O7O/LMH02TFBxeVQbYwALQyvpXP08jxWvG+O1FWrMyNCDiteqy5l9D4U7kuSUpjrgkb9
- wHg=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 09 Nov 2020 22:37:42 -0800
-Received: (nullmailer pid 1486946 invoked by uid 1000);
-        Tue, 10 Nov 2020 06:37:41 -0000
-Date:   Tue, 10 Nov 2020 15:37:41 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v9 38/41] btrfs: extend zoned allocator to use dedicated
- tree-log block group
-Message-ID: <20201110063741.reca4c72vglfylvw@naota.dhcp.fujisawa.hgst.com>
-References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <6640d3c034c9c347958860743501aff59da7a5a0.1604065695.git.naohiro.aota@wdc.com>
- <eb8f83f2-fb59-2b65-66e2-18cd0ecd1e02@toxicpanda.com>
+        Tue, 10 Nov 2020 01:41:31 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA0FC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 22:41:31 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id z24so9325339pgk.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Nov 2020 22:41:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0Geg8ga216EfQWJODZoPB/tADPTu5Ty/TnxqtFN8Hj0=;
+        b=MwT0BS1CEqMvujGC6+tdpVO9hRjWYfqyzXa6ua/F0hzskdgPD5LbnmQ9Det6MF1OP8
+         3Ah419OYIy7M4n/+h7Kr9enfI3NdOx4+4yreJSxWloDJ1SlsKj3SBpDuoS2m8PFV/Ezy
+         0I/HBFgQIJvBiWSU8Hq82ZEFd7Vs/EZi7HC9ryFvr+TNe1+Imc1AwS5cxrQvPZnzcAqT
+         5YHYdHwbebCo3lSSK74CmEc32eY/zAsbFAtiHi0AIvmddVUExyGTykizT69I/d1MZHA7
+         2lfk5lETJ2+N60GnQJNbk4IYmcJdMiIBh62dD12+GiBWrIiCDo4zO9WUxJxSgGuydFeg
+         OG0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Geg8ga216EfQWJODZoPB/tADPTu5Ty/TnxqtFN8Hj0=;
+        b=WCI/vDgoQqjuEMvAjfnpgKje3jPCEtEi9Px+UwnoWJhkFwHTGBeuL45KkYJ3EOLuJF
+         6REdNRAAewwD0yxorZpB6z8PPqUjVvfZixCtqAK45yQ4pdWuxVB07H+qBXCPlOI8hG+j
+         e43ZmpMOEfwaO4j32x8KCGnNP3v+P8UO3UW4WR9eDCTOJ4jfwyPWlB9EO7k39MFi8LBI
+         sZS4Gz4MgFoiEiRSE3rN44JNLkwhVMzau4PeFy5DAqvxcCTfGDTORsPLgcSeZC01XaDt
+         nZy8KzM5QjGPBFKX5dUuNt3Us3qlR4VCkJcbIKIL/JWGiSm0/ubZj+UNY8S4Ta11jCRN
+         rxuw==
+X-Gm-Message-State: AOAM531gMJi8bKbDHMRgKcJZBziKp9Hj6Nt9ItKuTciryE/tw7fvMEMA
+        OK0RSiWQe8NC0SAsybDhjuhqYE7l1/3s+8BZ4tk1yQ==
+X-Google-Smtp-Source: ABdhPJyKv0hduPw4n7bMCGrbf+Z7jY28oQybr8inCHTvwXZPj/t82bSlEumrVllRoDro/ckWIWNhgZ9mwbt/p6SnlS0=
+X-Received: by 2002:aa7:8287:0:b029:142:2501:39ec with SMTP id
+ s7-20020aa782870000b0290142250139ecmr16678994pfm.59.1604990490866; Mon, 09
+ Nov 2020 22:41:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <eb8f83f2-fb59-2b65-66e2-18cd0ecd1e02@toxicpanda.com>
+References: <20201108141113.65450-1-songmuchun@bytedance.com>
+ <20201108141113.65450-10-songmuchun@bytedance.com> <20201109185138.GD17356@linux>
+In-Reply-To: <20201109185138.GD17356@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 10 Nov 2020 14:40:54 +0800
+Message-ID: <CAMZfGtXpXoQ+zVi2Us__7ghSu_3U7+T3tx-EL+zfa=1Obn=55g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v3 09/21] mm/hugetlb: Free the vmemmap
+ pages associated with each hugetlb page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 03:47:33PM -0500, Josef Bacik wrote:
->On 10/30/20 9:51 AM, Naohiro Aota wrote:
->>This is the 1/3 patch to enable tree log on ZONED mode.
->>
->>The tree-log feature does not work on ZONED mode as is. Blocks for a
->>tree-log tree are allocated mixed with other metadata blocks, and btrfs
->>writes and syncs the tree-log blocks to devices at the time of fsync(),
->>which is different timing from a global transaction commit. As a result,
->>both writing tree-log blocks and writing other metadata blocks become
->>non-sequential writes that ZONED mode must avoid.
->>
->>We can introduce a dedicated block group for tree-log blocks so that
->>tree-log blocks and other metadata blocks can be separated write streams.
->>As a result, each write stream can now be written to devices separately.
->>"fs_info->treelog_bg" tracks the dedicated block group and btrfs assign
->>"treelog_bg" on-demand on tree-log block allocation time.
->>
->>This commit extends the zoned block allocator to use the block group.
->>
->>Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+On Tue, Nov 10, 2020 at 2:51 AM Oscar Salvador <osalvador@suse.de> wrote:
 >
->If you're going to remove an entire block group from being allowed to 
->be used for metadata you are going to need to account for it in the 
->space_info, otherwise we're going to end up with nasty ENOSPC corners 
->here.
-
-Indeed. I'll add a dedicated space_info for treelog or, at least, separate
-the block group from other metadata space_info. But, I'll address this
-later in v11.
-
+> On Sun, Nov 08, 2020 at 10:11:01PM +0800, Muchun Song wrote:
+> > +static inline int freed_vmemmap_hpage(struct page *page)
+> > +{
+> > +     return atomic_read(&page->_mapcount) + 1;
+> > +}
+> > +
+> > +static inline int freed_vmemmap_hpage_inc(struct page *page)
+> > +{
+> > +     return atomic_inc_return_relaxed(&page->_mapcount) + 1;
+> > +}
+> > +
+> > +static inline int freed_vmemmap_hpage_dec(struct page *page)
+> > +{
+> > +     return atomic_dec_return_relaxed(&page->_mapcount) + 1;
+> > +}
 >
->But this begs the question, do we want the tree log for zoned?  We 
->could just commit the transaction and call it good enough.  We lose 
->performance, but zoned isn't necessarily about performance.
+> Are these relaxed any different that the normal ones on x86_64?
+> I got confused following the macros.
 
-We have a large performance drop without tree-log (-o notreelog). Here is a
-dbench (32 clients) result on SMR HDD.
+A PTE table can contain 64 HugeTLB(2MB) page's struct page structures.
+So I use the freed_vmemmap_hpage to indicate how many HugeTLB pages
+that it's vmemmap pages are already freed to buddy.
 
-With treelog:    153.509  MB/s	
-Without treelog:  21.9651 MB/s
+Once vmemmap pages of a HugeTLB page are freed, we call the
+freed_vmemmap_hpage_inc, when freeing a HugeTLB to the buddy,
+we should call freed_vmemmap_hpage_dec.
 
-So, there is 85% drop of the throughput. I think this degradation is too large.
+If the freed_vmemmap_hpage hit zero when free HugeTLB, we try to merge
+the PTE table to PMD(now only support gigantic pages). This can refer to
+
+  [PATCH v3 19/21] mm/hugetlb: Merge pte to huge pmd only for gigantic
+
+Thanks.
 
 >
->If we do then at a minimum we're going to need to remove this block 
->group from the space info counters for metadata.  Thanks,
+> > +static void __free_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
+> > +                                      unsigned long start,
+> > +                                      unsigned int nr_free,
+> > +                                      struct list_head *free_pages)
+> > +{
+> > +     /* Make the tail pages are mapped read-only. */
+> > +     pgprot_t pgprot = PAGE_KERNEL_RO;
+> > +     pte_t entry = mk_pte(reuse, pgprot);
+> > +     unsigned long addr;
+> > +     unsigned long end = start + (nr_free << PAGE_SHIFT);
 >
->Josef
+> See below.
+>
+> > +static void __free_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
+> > +                                      unsigned long addr,
+> > +                                      struct list_head *free_pages)
+> > +{
+> > +     unsigned long next;
+> > +     unsigned long start = addr + RESERVE_VMEMMAP_NR * PAGE_SIZE;
+> > +     unsigned long end = addr + vmemmap_pages_size_per_hpage(h);
+> > +     struct page *reuse = NULL;
+> > +
+> > +     addr = start;
+> > +     do {
+> > +             unsigned int nr_pages;
+> > +             pte_t *ptep;
+> > +
+> > +             ptep = pte_offset_kernel(pmd, addr);
+> > +             if (!reuse)
+> > +                     reuse = pte_page(ptep[-1]);
+>
+> Can we define a proper name for that instead of -1?
+>
+> e.g: TAIL_PAGE_REUSE or something like that.
+
+OK, will do.
+
+>
+> > +
+> > +             next = vmemmap_hpage_addr_end(addr, end);
+> > +             nr_pages = (next - addr) >> PAGE_SHIFT;
+> > +             __free_huge_page_pte_vmemmap(reuse, ptep, addr, nr_pages,
+> > +                                          free_pages);
+>
+> Why not passing next instead of nr_pages? I think it makes more sense.
+> As a bonus we can kill the variable.
+
+Good catch. We can pass next instead of nr_pages. Thanks.
+
+
+>
+> > +static void split_vmemmap_huge_page(struct hstate *h, struct page *head,
+> > +                                 pmd_t *pmd)
+> > +{
+> > +     pgtable_t pgtable;
+> > +     unsigned long start = (unsigned long)head & VMEMMAP_HPAGE_MASK;
+> > +     unsigned long addr = start;
+> > +     unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
+> > +
+> > +     while (nr-- && (pgtable = vmemmap_pgtable_withdraw(head))) {
+>
+> The same with previous patches, I would scrap "nr" and its use.
+>
+> > +             VM_BUG_ON(freed_vmemmap_hpage(pgtable));
+>
+> I guess here we want to check whether we already call free_huge_page_vmemmap
+> on this range?
+> For this to have happened, the locking should have failed, right?
+
+Only the first HugeTLB page should split the PMD to PTE. The other 63
+HugeTLB pages
+do not need to split. Here I want to make sure we are the first.
+
+>
+> > +static void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+> > +{
+> > +     pmd_t *pmd;
+> > +     spinlock_t *ptl;
+> > +     LIST_HEAD(free_pages);
+> > +
+> > +     if (!free_vmemmap_pages_per_hpage(h))
+> > +             return;
+> > +
+> > +     pmd = vmemmap_to_pmd(head);
+> > +     ptl = vmemmap_pmd_lock(pmd);
+> > +     if (vmemmap_pmd_huge(pmd)) {
+> > +             VM_BUG_ON(!pgtable_pages_to_prealloc_per_hpage(h));
+>
+> I think that checking for free_vmemmap_pages_per_hpage is enough.
+> In the end, pgtable_pages_to_prealloc_per_hpage uses free_vmemmap_pages_per_hpage.
+
+The free_vmemmap_pages_per_hpage is not enough. See the comments above.
+
+Thanks.
+
+>
+>
+> --
+> Oscar Salvador
+> SUSE L3
+
+
+
+--
+Yours,
+Muchun
