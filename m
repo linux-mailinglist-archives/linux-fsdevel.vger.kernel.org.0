@@ -2,97 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B65D52AD523
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AAB52AD542
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:31:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732152AbgKJL3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 06:29:48 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:12030 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732166AbgKJL3p (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 06:29:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1605007785; x=1636543785;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HetSTPx+/iWbmDorkK+6Niy9oo3oHMHL4RCyAkTV0GM=;
-  b=J3HowSG7FlS0oH3TRXD9U0TqqwS44FEkkSODo2/63sbUS5Fkc7jdwCOF
-   zMoWDsVeJsZAmdDFhdym/r+kofQndqK5uqbLVLXngk/kFzpvr1gDB2VSN
-   wzwxYnHMEv+kKNiCm8GX8CWtGkcTMmrqVhTvJ67qgfPjckORdCKI3tgK1
-   cTpt1kGU0sws5ZzPpB+Cp8OeHn+AcXcUHfg9lyGK/auPnxtoUhc4aqi3J
-   9VTBXZqjOcOjyTWD4QUNtcRRkPM3wftVoC/ahlN2/JN7c3b8dp6b/iOxS
-   MqkYNvYI8BGJko/UaoDlTx/HHDE1jBWD7LgiPmwOzN2t+jkK9UjfUMVW5
-   w==;
-IronPort-SDR: yI9z9omTgOzNsXt9YfGOg+pBbjuMLk71clO/gjyQC+/ks+83RE7NZpebVe63SQO4Hr6+05eJtv
- /MMD5jxLRhJ6KepbHdcQskEMbV2LFxPmub2nfAs6Y3nVVEH0i0qliw2BpAai+bVfzf+VqukhU5
- hxQtT6TxZGgpy6mw2M/10ulTZNosmtKu0lgMqiemU08W0vi5nS/ASnGcMaJxZsK7pmTunlMkE7
- ahqL4jAmva+RnQHcCBaiv8wk7HrPIoHmTOP/bR4JurBs5Mhojh8zeCcWwutitakyCtgYhmEX0u
- ziA=
-X-IronPort-AV: E=Sophos;i="5.77,466,1596470400"; 
-   d="scan'208";a="152376751"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:29:12 +0800
-IronPort-SDR: jjGVshq6AY1TNMtxQobHumDbrbBIrcPy7El0dE0DkGPjaVZXuzETZqgx0lwIZDwvZ1CMLhegIi
- yU9XYGcAdtnplGwCShIVIa5XGqOOYOYSHwLS1Xi+IoREqCq0JI3IAC2tcZX5R/RRYdRYNur7F/
- 6h7ETQoMLjWr/N9sMC7+FTtsz0CPM1eWP8klbjPJFU+nTayAbEBkExxBGJA3PcdLbPGiOEjP9t
- 4QP/PSC6mK0TUH1TdiDbdQTNn/GFgpXp0WKT3o9dAtgYBofsQtVRlXHPukadfxBjN4hspg1eTo
- 0L4kDQGTP1pSfLkaAHWUsFMZ
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:15:13 -0800
-IronPort-SDR: dMJGR/j82JzHfEPDJ7iLDjyXhcY31sdScHrTfnd4a1qPvCylXcjwP2RMY1vXWiKVdaY2J6jVCq
- 2i0nquFZ2lYDNu7D86P3bd46l01Oijnl6+87zfrBKlwNZGyCML6t68i46UbyHGQsg9ag9r72wP
- Yuau1S1F4Z2fyBDzHKrjnDcC45rWcMzEvcnOTpekZhKjUbQVGBRv7LC7AJq4+GcDvaiNS4h3y6
- 5dDiSqvve7uvFMb+IYSvDzi+PYFfQola0yOEJytIVo9RHp07mS9FQXqhoPz9yr3rcBFWQihnta
- v/8=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:29:11 -0800
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v10 41/41] btrfs: enable to mount ZONED incompat flag
-Date:   Tue, 10 Nov 2020 20:26:44 +0900
-Message-Id: <9792b90dd95d44f86b5ddc3e25373286ec9fbf04.1605007037.git.naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <cover.1605007036.git.naohiro.aota@wdc.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
+        id S1729893AbgKJLb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 06:31:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38920 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726900AbgKJLb5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Nov 2020 06:31:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8E69FAC75;
+        Tue, 10 Nov 2020 11:31:55 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4AE121E130B; Tue, 10 Nov 2020 12:31:55 +0100 (CET)
+Date:   Tue, 10 Nov 2020 12:31:55 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, david@fromorbit.com, hch@lst.de,
+        fdmanana@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] vfs: remove lockdep bogosity in __sb_start_write
+Message-ID: <20201110113155.GB20780@quack2.suse.cz>
+References: <160463582157.1669281.13010940328517200152.stgit@magnolia>
+ <160463582800.1669281.17833985365149618163.stgit@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <160463582800.1669281.17833985365149618163.stgit@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This final patch adds the ZONED incompat flag to
-BTRFS_FEATURE_INCOMPAT_SUPP and enables btrfs to mount ZONED flagged file
-system.
+On Thu 05-11-20 20:10:28, Darrick J. Wong wrote:
+> From: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> __sb_start_write has some weird looking lockdep code that claims to
+> exist to handle nested freeze locking requests from xfs.  The code as
+> written seems broken -- if we think we hold a read lock on any of the
+> higher freeze levels (e.g. we hold SB_FREEZE_WRITE and are trying to
+> lock SB_FREEZE_PAGEFAULT), it converts a blocking lock attempt into a
+> trylock.
+> 
+> However, it's not correct to downgrade a blocking lock attempt to a
+> trylock unless the downgrading code or the callers are prepared to deal
+> with that situation.  Neither __sb_start_write nor its callers handle
+> this at all.  For example:
+> 
+> sb_start_pagefault ignores the return value completely, with the result
+> that if xfs_filemap_fault loses a race with a different thread trying to
+> fsfreeze, it will proceed without pagefault freeze protection (thereby
+> breaking locking rules) and then unlocks the pagefault freeze lock that
+> it doesn't own on its way out (thereby corrupting the lock state), which
+> leads to a system hang shortly afterwards.
+> 
+> Normally, this won't happen because our ownership of a read lock on a
+> higher freeze protection level blocks fsfreeze from grabbing a write
+> lock on that higher level.  *However*, if lockdep is offline,
+> lock_is_held_type unconditionally returns 1, which means that
+> percpu_rwsem_is_held returns 1, which means that __sb_start_write
+> unconditionally converts blocking freeze lock attempts into trylocks,
+> even when we *don't* hold anything that would block a fsfreeze.
+> 
+> Apparently this all held together until 5.10-rc1, when bugs in lockdep
+> caused lockdep to shut itself off early in an fstests run, and once
+> fstests gets to the "race writes with freezer" tests, kaboom.  This
+> might explain the long trail of vanishingly infrequent livelocks in
+> fstests after lockdep goes offline that I've never been able to
+> diagnose.
+> 
+> We could fix it by spinning on the trylock if wait==true, but AFAICT the
+> locking works fine if lockdep is not built at all (and I didn't see any
+> complaints running fstests overnight), so remove this snippet entirely.
+> 
+> NOTE: Commit f4b554af9931 in 2015 created the current weird logic (which
+> used to exist in a different form in commit 5accdf82ba25c from 2012) in
+> __sb_start_write.  XFS solved this whole problem in the late 2.6 era by
+> creating a variant of transactions (XFS_TRANS_NO_WRITECOUNT) that don't
+> grab intwrite freeze protection, thus making lockdep's solution
+> unnecessary.  The commit claims that Dave Chinner explained that the
+> trylock hack + comment could be removed, but nobody ever did.
+> 
+> Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+> ---
+>  fs/super.c |   33 ++++-----------------------------
+>  1 file changed, 4 insertions(+), 29 deletions(-)
 
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/btrfs/ctree.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks for cleaning this up. You can add:
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 2fd7e58343ce..935b3470a069 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -302,7 +302,8 @@ struct btrfs_super_block {
- 	 BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA |	\
- 	 BTRFS_FEATURE_INCOMPAT_NO_HOLES	|	\
- 	 BTRFS_FEATURE_INCOMPAT_METADATA_UUID	|	\
--	 BTRFS_FEATURE_INCOMPAT_RAID1C34)
-+	 BTRFS_FEATURE_INCOMPAT_RAID1C34	|	\
-+	 BTRFS_FEATURE_INCOMPAT_ZONED)
- 
- #define BTRFS_FEATURE_INCOMPAT_SAFE_SET			\
- 	(BTRFS_FEATURE_INCOMPAT_EXTENDED_IREF)
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+
+> 
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index a51c2083cd6b..e1fd667454d4 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1647,36 +1647,11 @@ EXPORT_SYMBOL(__sb_end_write);
+>   */
+>  int __sb_start_write(struct super_block *sb, int level, bool wait)
+>  {
+> -	bool force_trylock = false;
+> -	int ret = 1;
+> +	if (!wait)
+> +		return percpu_down_read_trylock(sb->s_writers.rw_sem + level-1);
+>  
+> -#ifdef CONFIG_LOCKDEP
+> -	/*
+> -	 * We want lockdep to tell us about possible deadlocks with freezing
+> -	 * but it's it bit tricky to properly instrument it. Getting a freeze
+> -	 * protection works as getting a read lock but there are subtle
+> -	 * problems. XFS for example gets freeze protection on internal level
+> -	 * twice in some cases, which is OK only because we already hold a
+> -	 * freeze protection also on higher level. Due to these cases we have
+> -	 * to use wait == F (trylock mode) which must not fail.
+> -	 */
+> -	if (wait) {
+> -		int i;
+> -
+> -		for (i = 0; i < level - 1; i++)
+> -			if (percpu_rwsem_is_held(sb->s_writers.rw_sem + i)) {
+> -				force_trylock = true;
+> -				break;
+> -			}
+> -	}
+> -#endif
+> -	if (wait && !force_trylock)
+> -		percpu_down_read(sb->s_writers.rw_sem + level-1);
+> -	else
+> -		ret = percpu_down_read_trylock(sb->s_writers.rw_sem + level-1);
+> -
+> -	WARN_ON(force_trylock && !ret);
+> -	return ret;
+> +	percpu_down_read(sb->s_writers.rw_sem + level-1);
+> +	return 1;
+>  }
+>  EXPORT_SYMBOL(__sb_start_write);
+>  
+> 
 -- 
-2.27.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
