@@ -2,116 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E362AE0C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 21:33:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 565BC2AE1D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 22:33:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731582AbgKJUdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 15:33:38 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:53548 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbgKJUdh (ORCPT
+        id S1731971AbgKJVc7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 16:32:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42290 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731795AbgKJVc7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 15:33:37 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AAKJm5L005825;
-        Tue, 10 Nov 2020 20:32:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=RT7z64OT2cF0627d3gcxVXgoifV1/qIO4IvouGljyV8=;
- b=ODHXo3gAY+hpzv3UOFyKd3WyR5o8AFJ8VSx2gWvhAvNL2+luZ6TLfSVQG9jLxjKOp8CF
- clpSSBNjYh0lms8yufqfoWlkCyhokg2iYz53m3/n7+7pDUaMyopS24GLg1aruuQD4QtR
- 6Fg9gAr5rCXBFQo+c702nDjGwPS55IP5H8Lb2FJp3khPCcacNpDEcRsmWRJaJIAiK2C0
- nFESfPJ721kbXF2gWrxr5RWv4XAwma1lZwM3JDX0S/Ci22r4sXcGEFsPPDBriaLlfOqD
- OakRBX6TgA25Zx/eR2PiIzkALF0eHMv/QwXJynB7mtSCO5GN1QYRWJi+s1+tdMmtrNHV WA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 34nkhkwqhd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Nov 2020 20:32:57 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AAKKBBa104831;
-        Tue, 10 Nov 2020 20:30:56 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 34p5gxfsjx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Nov 2020 20:30:56 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0AAKUpEX003358;
-        Tue, 10 Nov 2020 20:30:51 GMT
-Received: from [192.168.2.112] (/50.38.35.18)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Nov 2020 12:30:51 -0800
-Subject: Re: [PATCH v3 03/21] mm/hugetlb: Introduce a new config
- HUGETLB_PAGE_FREE_VMEMMAP
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Oscar Salvador <osalvador@suse.de>,
-        Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
-        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
-        mhocko@suse.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-References: <20201108141113.65450-1-songmuchun@bytedance.com>
- <20201108141113.65450-4-songmuchun@bytedance.com>
- <20201109135215.GA4778@localhost.localdomain>
- <ef564084-ea73-d579-9251-ec0440df2b48@oracle.com>
- <20201110195025.GN17076@casper.infradead.org>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <2aec4539-a55d-4df3-7753-75a33250b6b8@oracle.com>
-Date:   Tue, 10 Nov 2020 12:30:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 10 Nov 2020 16:32:59 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A687C0613D1;
+        Tue, 10 Nov 2020 13:32:59 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kcbG1-00347a-E4; Tue, 10 Nov 2020 21:32:53 +0000
+Date:   Tue, 10 Nov 2020 21:32:53 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
+Message-ID: <20201110213253.GV3576660@ZenIV.linux.org.uk>
+References: <20201104082738.1054792-1-hch@lst.de>
+ <20201104082738.1054792-2-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20201110195025.GN17076@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 phishscore=0 adultscore=0 malwarescore=0 suspectscore=2
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011100138
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
- mlxscore=0 suspectscore=2 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011100138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201104082738.1054792-2-hch@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/10/20 11:50 AM, Matthew Wilcox wrote:
-> On Tue, Nov 10, 2020 at 11:31:31AM -0800, Mike Kravetz wrote:
->> On 11/9/20 5:52 AM, Oscar Salvador wrote:
->>> On Sun, Nov 08, 2020 at 10:10:55PM +0800, Muchun Song wrote:
-> 
-> I don't like config options.  I like boot options even less.  I don't
-> know how to describe to an end-user whether they should select this
-> or not.  Is there a way to make this not a tradeoff?  Or make the
-> tradeoff so minimal as to be not worth describing?  (do we have numbers
-> for the worst possible situation when enabling this option?)
+On Wed, Nov 04, 2020 at 09:27:33AM +0100, Christoph Hellwig wrote:
 
-It is not exactly worst case, but Muchun provided some simple benchmarking
-results in the cover letter.  Quick summary is that hugetlb page creation
-and free time is "~2x slower".  At first glance, one would say that is
-terrible.  However, remember that the majority of use cases create hugetlb
-pages at or shortly after boot time and add them to the pool.  So, additional
-overhead is at pool creation time.  There is no change to 'normal run time'
-operations of getting a page from or returning a page to the pool (think
-page fault/unmap).
+>  ssize_t seq_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
+>  {
+> -	struct seq_file *m = file->private_data;
+> +	struct iovec iov = { .iov_base = buf, .iov_len = size};
+> +	struct kiocb kiocb;
+> +	struct iov_iter iter;
+> +	ssize_t ret;
+> +
+> +	init_sync_kiocb(&kiocb, file);
+> +	iov_iter_init(&iter, READ, &iov, 1, size);
+> +
+> +	kiocb.ki_pos = *ppos;
+> +	ret = seq_read_iter(&kiocb, &iter);
+> +	*ppos = kiocb.ki_pos;
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(seq_read);
 
-> I haven't read through these patches in detail, so maybe we do this
-> already, but when we free the pages to the buddy allocator, do we retain
-> the third page to use for the PTEs (and free pages 3-7), or do we allocate
-> a separate page for the PTES and free pages 2-7?
+This is basically an open-coded copy of new_sync_read()...
 
-I haven't got there in this latest series.  But, in previous revisions the
-code did allocate a separate page.
--- 
-Mike Kravetz
+>  	if (m->count) {
+>  		n = min(m->count, size);
+> -		err = copy_to_user(buf, m->buf + m->from, n);
+> -		if (err)
+> +		if (copy_to_iter(m->buf + m->from, n, iter) != n)
+>  			goto Efault;
+>  		m->count -= n;
+>  		m->from += n;
+>  		size -= n;
+> -		buf += n;
+>  		copied += n;
+>  		if (!size)
+>  			goto Done;
+
+>  	n = min(m->count, size);
+> -	err = copy_to_user(buf, m->buf, n);
+> -	if (err)
+> +	if (copy_to_iter(m->buf, n, iter) != n)
+>  		goto Efault;
+
+This is actually broken from generic_file_splice_read() POV; if you've
+already emitted something, you will end up with more data spewed into
+pipe than you report to caller.  You want something similar to
+copy_to_iter_full() here, with iterator _not_ advanced in case of
+failure.  The first call is not an issue (you have no data copied
+yet, so you'll end up with -EFAULT, aka "discard everything you've
+put there and return -EAGAIN"), but the second really is a problem.
+
+BTW, other ->read_iter() instances might need to be careful with that
+pattern as well; drivers/gpu/drm/drm_dp_aux_dev.c:auxdev_read_iter()
+would appear to have the same problem.
+
+<greps some more>
+                if (unlikely(iov_iter_is_pipe(iter))) {
+                        void *addr = kmap_atomic(page);
+
+                        written = copy_to_iter(addr, copy, iter);
+                        kunmap_atomic(addr);   
+                } else
+in fs/cifs/file.c looks... interesting, considering the fact that
+copy_to_iter() for pipe destination might very well have to do
+allocations.  With GFP_USER.  Under kmap_atomic()...
+
+Note that we have this:
+static inline int copy_linear_skb(struct sk_buff *skb, int len, int off,
+                                  struct iov_iter *to)
+{
+        int n;
+
+        n = copy_to_iter(skb->data + off, len, to);
+        if (n == len)
+                return 0;
+
+        iov_iter_revert(to, n);
+        return -EFAULT;
+}
+i.e. the same "do not advance on short copy" kind of thing.
+
+AFAICS, not all callers want that semantics, but I think it's worth
+a new primitive.  I'm not saying it should be a prereq for your
+series, but either that or an explicit iov_iter_revert() is needed.
