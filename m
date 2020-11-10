@@ -2,68 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0593C2ADCBF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 18:20:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF30F2ADCD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 18:25:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbgKJRU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 12:20:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59224 "EHLO
+        id S1730184AbgKJRZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 12:25:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgKJRU1 (ORCPT
+        with ESMTP id S1726467AbgKJRZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 12:20:27 -0500
+        Tue, 10 Nov 2020 12:25:41 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3653C0613CF;
-        Tue, 10 Nov 2020 09:20:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25842C0613CF;
+        Tue, 10 Nov 2020 09:25:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WtLvsd+PYLZ22ThXIUu3CAFmse0F4aW6/fbAcYoCw14=; b=FTUqYVwLnXUVDbRTL9D23EwKzL
-        nbr36rcEvhZXC/NWQTMlw0o1GdJwiczY3v6/zsoSJ0jdqUQBcngMIDDLJTCcGnHtgwb+3TKkhhavK
-        bDeB0n+obsqGwOs3lCcYmrMqS1HWzKP6o6vObJUo2cF+xnqLB48DWk4Vj9CurBd3aFSGQBc+sCV0o
-        k2UBaTZfrbtp3hNVINynswQf5LlpVtken9f6t1eHmD9wW8dHDcdjeFZHLElAtJ1TP9HorDSjucikO
-        vZN+l3F/rsenhjMkjquI3/Kym6OTMxbNMkfIQGGcVE37UrgtgCjBIdOyHYd3rsO0S1hbtMA+8MNCt
-        I4aEbBvA==;
+        bh=28HWKUwdnjtdHRGTZi8i0JiE0Srn9hHeE5n1l/oapiU=; b=MT2M8edc9/atGMnFZkwAidHNnQ
+        k0to/p1MLVrblLmCx+4ZVA+3OCdrLywoKOJvdHv2AFLAfWbVFSiOY0/eT37WYTRikan6+rXDvIgT7
+        iGKnMkVKeu82WNMGApgDqs8sXJi3aEb5/3JqokV7lqDANrlQ/PEyAXGLteZRSFBC/doIA//U2R/gP
+        EjKM+47pkaujjI/QQvdbAcErm58In0DvtSSp9r1iPuzhuT7rC0z0Lc/+MVjPPbEq90mAyhgRRoKMg
+        lusucSoQUCOQ5mvQCPjjQycum5xDUVqcN+6iyvGnZJbsNmetmJ504pJzVyL2i50zNB4/QU6I98kkw
+        wNIkZkog==;
 Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kcXJf-000622-RZ; Tue, 10 Nov 2020 17:20:23 +0000
-Date:   Tue, 10 Nov 2020 17:20:23 +0000
+        id 1kcXOk-0006OC-Oj; Tue, 10 Nov 2020 17:25:38 +0000
+Date:   Tue, 10 Nov 2020 17:25:38 +0000
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Naohiro Aota <naohiro.aota@wdc.com>
 Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
         linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH v10 01/41] block: add bio_add_zone_append_page
-Message-ID: <20201110172023.GA22758@infradead.org>
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
+Message-ID: <20201110172538.GB22758@infradead.org>
 References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <01fbaba7b2f2404489b5779e1719ebf3d062aadc.1605007036.git.naohiro.aota@wdc.com>
+ <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01fbaba7b2f2404489b5779e1719ebf3d062aadc.1605007036.git.naohiro.aota@wdc.com>
+In-Reply-To: <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +int bio_add_zone_append_page(struct bio *bio, struct page *page,
-> +			     unsigned int len, unsigned int offset)
-> +{
-> +	struct request_queue *q;
-> +	bool same_page = false;
-> +
-> +	if (WARN_ON_ONCE(bio_op(bio) != REQ_OP_ZONE_APPEND))
-> +		return 0;
-> +
-> +	if (WARN_ON_ONCE(!bio->bi_disk))
-> +		return 0;
+>  		struct iomap_dio *dio, struct iomap *iomap)
+> @@ -278,6 +306,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		bio->bi_private = dio;
+>  		bio->bi_end_io = iomap_dio_bio_end_io;
+>  
+> +		/*
+> +		 * Set the operation flags early so that bio_iov_iter_get_pages
+> +		 * can set up the page vector appropriately for a ZONE_APPEND
+> +		 * operation.
+> +		 */
+> +		bio->bi_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
 
-Do we need this check?  I'd rather just initialize q at declaration time
-and let the NULL pointer deref be the obvious sign for a grave
-programming error..
+We could just calculate the flags once before the loop if we touch
+this anyway.
 
-Except for that the patch looks good to me:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+But otherwise this looks ok to me.
