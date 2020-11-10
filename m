@@ -2,157 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3CF2AD3F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 11:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FC5B2AD3FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 11:42:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbgKJKkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 05:40:17 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:15418 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbgKJKkQ (ORCPT
+        id S1728345AbgKJKms (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 05:42:48 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:32599 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbgKJKms (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 05:40:16 -0500
+        Tue, 10 Nov 2020 05:42:48 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1605004816; x=1636540816;
+  t=1605005115; x=1636541115;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=KRik9TsieL0zDHLRaNMjc1xupMtRza0FrrGHU2hwDOw=;
-  b=g40rkMdvRXkO5i1jxVhfvho02gYZOBzHlZ2nIlPcCGgcLUYcyPYD6489
-   1hWgrtwPUrFv6I19MGz/+ipjqbXc47UFBsWf5hTiZhsg1tPafB5JjiYZh
-   KBnLouzMN6g+AVowv53mxiSullkf2ws+Lag5PWV8bih3Pc1n65x0CBCCa
-   nfByGItvRpolEJ14xVew4jfc8q26iDK2b3aK7rQWTg8UDOqU9JHuX+CXF
-   FrGWtQPrHEVC0qMWHTeRAJys/QABlLbslaLCLYyIWAXGyqywC9uU2iwEy
-   BiOFaMTPr8kgu67MyGvZxK4c7P08lvEwfK2x9fnEw/4JBtNSTtywzys36
-   Q==;
-IronPort-SDR: Ft9YUrxMdD8Hg/0KfWDRZMgie0czFJrHabfLoI1gRxHupkj1rDu8E8LQjDB6R4tanByWDdKQll
- xlKvPNNWt8C1P91l/xaUR2vHN0KUYvRkUQJ3eSXLoPTxd9WSyH4C/BSY2V3tRTnms5J7vQ5d/j
- hej6n9jIgMaBpzEmkbp9JqeQNummekXmVc+HfYh9KG7xrM+Eg7rxOLG+444CUeDwq4vM4kigQB
- xGAvZmimf7582wIwQkyNR0BUWJxpZR+ZqVrtXFmRZk05iS/vBy2Y1o3sFoBz14w3qu5c7iD2YT
- N+Q=
+  bh=IR6s48VUF79F7IHuTbSyeydOgtg3RNNnWrFvk1zoqUQ=;
+  b=ZtgBi0xrwtEqJiD7NjmAT+kVp9IB3cUEhHHv50WxRJDs6AOYvMJKlscx
+   qwlvlT+rIdb8mP4AynuLymSAJ2aFWECH6HvSvEyMHppsfcxRUNrsIQm1w
+   yRfFuBA8RiExngvirKff5gv1g5E4HQM4aHANpZqLgff4zZ0CWGezmc+qy
+   Hvv2fpd61c/DZ4i6ghH2yPqBGIbtqablm+wfMaSCvV2+2c32G1M8dA1hC
+   tdXFXwDYiYlR7Aiz0S+fqAXQuQaJ1nk02E1LQ9qYYe/D4Put2gg3wK7Dj
+   YS5U5C6Bcb+pZWhkM559pHdlwkpuoLtpCtHD5DhCSqMGEDPhthjeWtcyh
+   A==;
+IronPort-SDR: jvJFJTUSL7RpZR9BpINkaCymMs8ag4YScGu40UJO0Z2NhpjZ7M5GtFoKGEWZcoQjUTjmxPyzXN
+ atWb3qKSZTS1iCQrxHOlfs9zAKXgwSp5aMHGo6KKBttRopQOCLn/y1BazgEppyIDQ/c/ZAh+un
+ lcbOtFYVkcMusoTGfzFzma6bglHyNE8B+luFuHMOb8HaNtis9g8HmgbI/mEjaUqGQn8y+A6SED
+ jGJJBGFBsSy+Om4fp+4/ov931ioaOOc95TEqM7b4o3iykR6FIj3mJquX0fiUKg+nRy0BpKikUN
+ sGY=
 X-IronPort-AV: E=Sophos;i="5.77,466,1596470400"; 
-   d="scan'208";a="156751859"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 18:40:15 +0800
-IronPort-SDR: WxTC52HafalDt47lf038ddcoexQHCfAkdO2ysqIsLRXIgcjd41/j7XMdOQq0j908Xl9khr/i85
- sEAEiMfcOpAKySe7T04qokZL6mjRAWpHobE/Ci/aMbO/D9i3qH3TNalFs0GClfhWrPW9Ydg83K
- eK4lK6XdE2cm1ZecxqtRBRrE5dj9LCK4aoHkYUJahiqSWDIpVGWpQpG1MeU+BEhIxcuFqUM25T
- f3Y9TqelzbvL3CFikeXDP+5c3agLSXlFuVOZs0NRMB20lWTXermUKVFSM8sEMJeB93v/cV7S2H
- ZBVK2uWIvD+2kGkLPFG4htYV
+   d="scan'208";a="255828431"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 18:45:14 +0800
+IronPort-SDR: F9Gp/oKWQPNrU8ewbZqKyiUnSGDhyGbDeBB9hS7I57JydxDkZ2WTCU3jfqSAEgABJUn41DLdep
+ qwiIuXXfmcn5rHwLOHvlGpHGFpsChDcEZlOMrVF3EKhl1ROf2+LeUI1toCQ97jlxmwIQa9c0qF
+ oXnidcaFI4H/cPyNbQn306w+HYFUx9FLTnCIXyJE8omVf4PK+jHxHJxXQ7X6b+KCf9gTkcKAXS
+ 88By02lsfpvON77xYV1v4WD2M9K8yeG3K2IaIhrgmmWac81UkYJERQ1+iC/H2GKIj3gN/qysnw
+ 2/oaRWyGSJMwbtL3brL4I4Vf
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 02:25:03 -0800
-IronPort-SDR: bcGFf9FANijL4lj1Z3oz7PNuCMo9pEgDqsx0FzAjg1ZuuPFSdH47vE5mM+hAj0QlTvseADAbDE
- MAb7WR8pNwKQTdtg/no+0we+USGjkiEYCGePabnwfU7A/GgKuTSrW+oqC1mRRI6jM3WeIdVDAu
- ThyhMLaVOTlLoaBLNkXJ3TmNYMdMwOuyS9GVWsgAD3xqIlY97ZjzTKGYLrjyOx+nzQB//aiywf
- DCkWMlju0KPQ/NDkvSjRP+8QDAydi1hutuPli7bvfkTqQbYmQU0yivNzCWwPVefda9BfbDO3rW
- DAQ=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 02:28:47 -0800
+IronPort-SDR: R+WLjIUfVJnI/Z8Tadt2QcqFSYVkeU0j7XWeur53RHplpJZmktlg4d0OpREXtaFysDEnKVHCD2
+ 1Apmpk9iSkIOHV4XBBaioQ0LDBIOWYzhzHqmgcEy+6qNP83FF2AjV2138jJp2rM+50A6xqWEqA
+ 4W1mZQ8glhWbbrrqd7RRQfKilNNbbIDiqv925+RmPgQIFlH0UYarUxkvdTjt/91BhDJhCfl58W
+ PTezwyYMGnZ2563nmsbR++6/wMkFDD5Ny7wHtIercO0hkaB1944bJb5+OCjHXWxtOSg9cn9Qf3
+ XYQ=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 10 Nov 2020 02:40:13 -0800
-Received: (nullmailer pid 1896666 invoked by uid 1000);
-        Tue, 10 Nov 2020 10:40:14 -0000
-Date:   Tue, 10 Nov 2020 19:40:14 +0900
+  by uls-op-cesaip01.wdc.com with SMTP; 10 Nov 2020 02:42:44 -0800
+Received: (nullmailer pid 1897817 invoked by uid 1000);
+        Tue, 10 Nov 2020 10:42:45 -0000
+Date:   Tue, 10 Nov 2020 19:42:45 +0900
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     Josef Bacik <josef@toxicpanda.com>
 Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 18/41] btrfs: reset zones of unused block groups
-Message-ID: <20201110104014.drw776gqibt4sqn3@naota.dhcp.fujisawa.hgst.com>
+Subject: Re: [PATCH v9 21/41] btrfs: use bio_add_zone_append_page for zoned
+ btrfs
+Message-ID: <20201110104245.sk635cfxu5vjqedo@naota.dhcp.fujisawa.hgst.com>
 References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <575e495d534c44aded9e6ae042a9d6bda5c84162.1604065695.git.naohiro.aota@wdc.com>
- <7b48d9f1-53d8-2526-e628-13331e4fe344@toxicpanda.com>
+ <ad4c16f2fff58ea4c6bd034e782b1c354521d696.1604065695.git.naohiro.aota@wdc.com>
+ <0883ec98-4b59-5e74-ba81-d477ca4e185f@toxicpanda.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <7b48d9f1-53d8-2526-e628-13331e4fe344@toxicpanda.com>
+In-Reply-To: <0883ec98-4b59-5e74-ba81-d477ca4e185f@toxicpanda.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 09:34:19AM -0500, Josef Bacik wrote:
+On Tue, Nov 03, 2020 at 09:55:49AM -0500, Josef Bacik wrote:
 >On 10/30/20 9:51 AM, Naohiro Aota wrote:
->>For an ZONED volume, a block group maps to a zone of the device. For
->>deleted unused block groups, the zone of the block group can be reset to
->>rewind the zone write pointer at the start of the zone.
+>>Zoned device has its own hardware restrictions e.g. max_zone_append_size
+>>when using REQ_OP_ZONE_APPEND. To follow the restrictions, use
+>>bio_add_zone_append_page() instead of bio_add_page(). We need target device
+>>to use bio_add_zone_append_page(), so this commit reads the chunk
+>>information to memoize the target device to btrfs_io_bio(bio)->device.
+>>
+>>Currently, zoned btrfs only supports SINGLE profile. In the feature,
+>>btrfs_io_bio can hold extent_map and check the restrictions for all the
+>>devices the bio will be mapped.
 >>
 >>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 >>---
->>  fs/btrfs/block-group.c |  8 ++++++--
->>  fs/btrfs/extent-tree.c | 17 ++++++++++++-----
->>  fs/btrfs/zoned.h       | 16 ++++++++++++++++
->>  3 files changed, 34 insertions(+), 7 deletions(-)
+>>  fs/btrfs/extent_io.c | 37 ++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 34 insertions(+), 3 deletions(-)
 >>
->>diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
->>index d67f9cabe5c1..82d556368c85 100644
->>--- a/fs/btrfs/block-group.c
->>+++ b/fs/btrfs/block-group.c
->>@@ -1468,8 +1468,12 @@ void btrfs_delete_unused_bgs(struct btrfs_fs_info *fs_info)
->>  		if (!async_trim_enabled && btrfs_test_opt(fs_info, DISCARD_ASYNC))
->>  			goto flip_async;
->>-		/* DISCARD can flip during remount */
->>-		trimming = btrfs_test_opt(fs_info, DISCARD_SYNC);
->>+		/*
->>+		 * DISCARD can flip during remount. In ZONED mode, we need
->>+		 * to reset sequential required zones.
->>+		 */
->>+		trimming = btrfs_test_opt(fs_info, DISCARD_SYNC) ||
->>+				btrfs_is_zoned(fs_info);
->>  		/* Implicit trim during transaction commit. */
->>  		if (trimming)
->>diff --git a/fs/btrfs/extent-tree.c b/fs/btrfs/extent-tree.c
->>index 5e6b4d1712f2..c134746d7417 100644
->>--- a/fs/btrfs/extent-tree.c
->>+++ b/fs/btrfs/extent-tree.c
->>@@ -1331,6 +1331,9 @@ int btrfs_discard_extent(struct btrfs_fs_info *fs_info, u64 bytenr,
->>  		stripe = bbio->stripes;
->>  		for (i = 0; i < bbio->num_stripes; i++, stripe++) {
->>+			struct btrfs_device *dev = stripe->dev;
->>+			u64 physical = stripe->physical;
->>+			u64 length = stripe->length;
->>  			u64 bytes;
->>  			struct request_queue *req_q;
->>@@ -1338,14 +1341,18 @@ int btrfs_discard_extent(struct btrfs_fs_info *fs_info, u64 bytenr,
->>  				ASSERT(btrfs_test_opt(fs_info, DEGRADED));
->>  				continue;
->>  			}
+>>diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+>>index 17285048fb5a..764257eb658f 100644
+>>--- a/fs/btrfs/extent_io.c
+>>+++ b/fs/btrfs/extent_io.c
+>>@@ -3032,6 +3032,7 @@ bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+>>  {
+>>  	sector_t sector = logical >> SECTOR_SHIFT;
+>>  	bool contig;
+>>+	int ret;
+>>  	if (prev_bio_flags != bio_flags)
+>>  		return false;
+>>@@ -3046,7 +3047,19 @@ bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
+>>  	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
+>>  		return false;
+>>-	return bio_add_page(bio, page, size, pg_offset) == size;
+>>+	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+>>+		struct bio orig_bio;
 >>+
->>  			req_q = bdev_get_queue(stripe->dev->bdev);
->>-			if (!blk_queue_discard(req_q))
->>+			/* zone reset in ZONED mode */
->>+			if (btrfs_can_zone_reset(dev, physical, length))
->>+				ret = btrfs_reset_device_zone(dev, physical,
->>+							      length, &bytes);
->>+			else if (blk_queue_discard(req_q))
->>+				ret = btrfs_issue_discard(dev->bdev, physical,
->>+							  length, &bytes);
->>+			else
->>  				continue;
->>-			ret = btrfs_issue_discard(stripe->dev->bdev,
->>-						  stripe->physical,
->>-						  stripe->length,
->>-						  &bytes);
+>>+		memset(&orig_bio, 0, sizeof(orig_bio));
+>>+		bio_copy_dev(&orig_bio, bio);
+>>+		bio_set_dev(bio, btrfs_io_bio(bio)->device->bdev);
+>>+		ret = bio_add_zone_append_page(bio, page, size, pg_offset);
+>>+		bio_copy_dev(bio, &orig_bio);
 >
->The problem is you have
+>Why do we need this in the first place, since we're only supporting 
+>single right now?  latest_bdev should be the same, so this serves no 
+>purpose, right?
 >
->if (btrfs_test_opt(fs_info, DISCARD_SYNC))
->	ret = btrfs_discard_extent(fs_info, start,
->				   end + 1 - start, NULL);
->
->in btrfs_finish_extent_commit, so even if you add support here, you 
->aren't actually discarding anything because the transaction commit 
->won't call discard for this range.
-
-btrfs_discard_extent() is called for each deleted_bg on the BG area,
-regardless of the above pinned_extent's range.
-
->
->You're going to have to rework this logic to allow for discard to be 
->called everywhere it checks DISCARD_SYNC, but then you also need to go 
->and make sure you don't actually allow discards to happen at non-bg 
->aligned ranges.  Thanks,
+>And if it does, we need to figure out another solution, because right 
+>now this leaks references to the bio->bi_blkg, each copy inc's the 
+>refcount on the blkg for that bio so we're going to leak blkg's like 
+>crazy here.  Thanks,
 >
 >Josef
 
-We already ignore btrfs_discard_extent() which is not aligned to zone. So,
-I confirmed it worked fine with DISCARD_SYNC.
+True. I just tried to make it multipe device ready as much as possible.
 
+I'll drop this part for now, and will fix this when we add multipe device
+support.
