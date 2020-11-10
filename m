@@ -2,14 +2,14 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A07762AD50D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:29:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB6B2AD514
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:29:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731962AbgKJL3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 06:29:12 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:12024 "EHLO
+        id S1732110AbgKJL33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 06:29:29 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:12022 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728478AbgKJL3L (ORCPT
+        with ESMTP id S1731588AbgKJL3L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 10 Nov 2020 06:29:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
@@ -17,38 +17,38 @@ DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   t=1605007750; x=1636543750;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ymT8kV10Uka3PsUpR2UxtJE4fiKgqhZ9KbB4eo2cScc=;
-  b=NQsGEQYu8m/VEzl8qIyV6G84xy9ISaWrqS86MQrPXk0rM/vWnCDgJUa0
-   dBHNrKgXp94mArZnCN1KddXj9lr9a5TEAYPU1ReiXCkyBOtLGeSapIaG+
-   bWYNxPw1LaN+e5sMxroF6RXajTR0GDqzsO5JrpuALDHNXsnox2tGdP+9c
-   ugj4BVT/zWtQQVitFkkBcyyVI+9QvkTDia7OmRm9h+6uUs3g2HAO0kfvV
-   3PHfhAleBLAd5deVNEOYkShIL/mIr87Xcsqo0mGGfYI7k6ONlXWWjNR8m
-   Y+jqkLYDRLvb1Gsu5x9CSHWDaVbYW3uUTV/kZ+DfPh3kEt5FG7xxwZCN7
-   w==;
-IronPort-SDR: 1TvHuiJKDEh8Y6mh1o87kQERyyMzwvPJHgJXG6zCVg/ZTDwXdslw2le0luY3MzLco1RwGTQW/h
- pK0/CFxfl0D9/GzcGdz9LHovFFpY7r6svyavQBM06E5t+XRhYpzD68qizCap5FM1h/3WwtU243
- CcU0r5buDp4PCEdhuUK2hLCTlc7MQH5wvxxKyamx24YrTUVTHtwbpirmMuNH96eTaq2+IseXDr
- bYM7ks4Fu/WAezGAvAoFOgveoN4VBvctkyi3bNR36dgY58BY1nq06hzsK8eOm5eRG4ijfzEnf+
- nm0=
+  bh=wZjvAc327/RtuGLWgNBK72YschgrDw5lTDO/jaWYdfI=;
+  b=Y24ENbTHjSRcm7/0vxgFJe7Udy0zEruArZWF4pInaDZ4mR2K4gJm9vc0
+   zor2AvxDlS5mslKXtMGxLblzNzqE41TpPJiZJJGWiDwFDDsPrIGMyIRC4
+   7Se6f0fqN6gojWqbcl1FjTHQQHo0pakZbPtpqJWLieA+4UcqxQpCkcCkt
+   2fL/ek+gpr3oVOJiqzgmxGL8r8vMl217rVksN3KytStKBKZOIWsOSjTzF
+   MBuqpg0PGOnVtRggzIrbPUX/8+C54HojY9UriPB5suMMyt+v9NpotLkMl
+   P+2ipzWoIHQszui9S248nktZpGIhWqh1ADMSYsXyFARP3bratPVSot/PX
+   g==;
+IronPort-SDR: wZNpQv4ixTjLkS1zU7nOIwtbJr12NvBKUos6QuUtddVRQIsoAOg/Wy4OhJZt3JSo/YnfyhbmFa
+ OoMAgJ0/XyxicSlzHjTFBjM8OuV8rL4zZoCGSSykYy+XC7kjRq3iNELnLZWSryVeEA+jPeQxuk
+ TynOZDZODk+QKLtkVy1J4qnTo/Z3fiZ0v6juG4to1mXJF7bGEttAfizbmv6N7yWcJOIBl2QjHg
+ AQfbIK/hNEJlpshEXkqpYJwbanO4oq2R4Lipxgyi9lHzXkNC51Xn4a4tf+NX8FLTnSGyMLX1E7
+ ok8=
 X-IronPort-AV: E=Sophos;i="5.77,466,1596470400"; 
-   d="scan'208";a="152376630"
+   d="scan'208";a="152376640"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:28:52 +0800
-IronPort-SDR: 4s3uOVPdiMfu/Tx5pakkngVkDEi3Jb40VgWBy9V2yFPvyelTDjnYJtAfja74buOPMMhTpJBhW9
- XQ1SQ5zs5aUpqF1KofdA+lcQhKvVo/NSI3YEsPlrJe0QinKueP92aEquU88Hiv3wKNnAOV6FE2
- QFGQKh7xvjoXM5VvbkGAXvNxw+TU/YAru9KOJzNqc3mo0NiSduWlWKEieCUficKvnWz109sFMs
- 3+/rqm1uNiBfWcsZVN3a8+3yxuEaoOVCZDAwCAB7ct3VSo3zKQui0DX/FeLjlbT67TvEDV6/ad
- zE1cMiuX1SL0tRDhEMEcBhZM
+  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:28:54 +0800
+IronPort-SDR: s9JcY7SGNh/ebHR0UVpZ4MjeXpBF2GYPsv5obAYQMfpVktUMi87h9h2PMVQ2iqe7KUYkrGzi4i
+ xNCZRGHUcIjdHQuN+mwM5AOpQpXdoFUkbk2qQxtakyrhihQtz3Aib8dkuzs1ZX8787N4dzpH9d
+ pBimBhtrJ05kYI5O3WlQjqRWewf3yh2zvdZZuPlijQe3eW6VOYXOlJpQZSZHKvi5/kMSZncPvy
+ zaQyJhEz8F+4xB1EDHomcZbCm9KrByQffWpwcdI7H4nPWiB+LIy4yyQRWoXl5lL1tL+/wUZSEE
+ 1R3u39JVtyuXhRMtSY3zJ9Kj
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:14:53 -0800
-IronPort-SDR: VLNZ2HUDN4pvAE2uhCYoFMLgcZ8YEKiMKK0ugtH9ln1WNG410aMsp7vFhMOZXue/oXA0w355P7
- 04iWboKDl46dTH2Hkr18tth54hsgtVaONRq0M5silZM4zbkTMhh1bO9KzJggK+m/0ev/aqY2nC
- gjscoV4sjZ4BSUvAgxD5Ueh9SW8ArJuOCvvQDLpg/zq65ASSy3mPjqeBHqDy/i8/g6iGaT6IjX
- K6OpkrwArU+SZIdvVnYfXJ0w6dQEW1qXLT9UK6L07gtC60fBj5AfaZLGvsc5CeNAlq6DtxLv6c
- wEI=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:14:55 -0800
+IronPort-SDR: 6kdp1V+9FmFFPT0pjavFEQq1SR7ggm96q6rlz5AnlI1bmr3PphbwiyhAWAgzn3VMrEsbpJsXmQ
+ V9AOJy1djzorbLxSotSnEew1Mha0z6uSvzMincc3ZbuC8/kGAp9Vf9u2mN1j/dSTwLkPx1AyIM
+ f5LkWX0/Cu/NXFmcGHa/i7YqqQ+w0ea1AIOvE09nqHMg+mNg0lFT3aal2chyIq1aGtZKu/7EL5
+ cwBtizP88C30EjJNd0Wabt4SViCYsHEqnNvXlfM8hINFKZOrx3uoOjXseorhTlGRxFgcIHvvzv
+ mJQ=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:28:51 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:28:53 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         Naohiro Aota <naohiro.aota@wdc.com>,
         Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v10 29/41] btrfs: wait existing extents before truncating
-Date:   Tue, 10 Nov 2020 20:26:32 +0900
-Message-Id: <47aba0c9cc8686ad4807de22c555f4d13db5dc9a.1605007037.git.naohiro.aota@wdc.com>
+Subject: [PATCH v10 30/41] btrfs: avoid async metadata checksum on ZONED mode
+Date:   Tue, 10 Nov 2020 20:26:33 +0900
+Message-Id: <88b50c919c7ee1e85c97430a9d53b68610c32fa8.1605007037.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1605007036.git.naohiro.aota@wdc.com>
 References: <cover.1605007036.git.naohiro.aota@wdc.com>
@@ -69,40 +69,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When truncating a file, file buffers which have already been allocated but
-not yet written may be truncated.  Truncating these buffers could cause
-breakage of a sequential write pattern in a block group if the truncated
-blocks are for example followed by blocks allocated to another file. To
-avoid this problem, always wait for write out of all unwritten buffers
-before proceeding with the truncate execution.
+In ZONED, btrfs uses per-FS zoned_meta_io_lock to serialize the metadata
+write IOs.
 
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Even with these serialization, write bios sent from btree_write_cache_pages
+can be reordered by async checksum workers as these workers are per CPU and
+not per zone.
+
+To preserve write BIO ordering, we can disable async metadata checksum on
+ZONED.  This does not result in lower performance with HDDs as a single CPU
+core is fast enough to do checksum for a single zone write stream with the
+maximum possible bandwidth of the device. If multiple zones are being
+written simultaneously, HDD seek overhead lowers the achievable maximum
+bandwidth, resulting again in a per zone checksum serialization not
+affecting performance.
+
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/inode.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/btrfs/disk-io.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 991ef2bf018f..992aa963592d 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4955,6 +4955,16 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
- 		btrfs_drew_write_unlock(&root->snapshot_lock);
- 		btrfs_end_transaction(trans);
- 	} else {
-+		struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-+
-+		if (btrfs_is_zoned(fs_info)) {
-+			ret = btrfs_wait_ordered_range(
-+				inode,
-+				ALIGN(newsize, fs_info->sectorsize),
-+				(u64)-1);
-+			if (ret)
-+				return ret;
-+		}
- 
- 		/*
- 		 * We're truncating a file that used to have good data down to
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 66f90ebfc01f..9490dbbbdb2a 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -813,6 +813,8 @@ static blk_status_t btree_submit_bio_start(void *private_data, struct bio *bio,
+ static int check_async_write(struct btrfs_fs_info *fs_info,
+ 			     struct btrfs_inode *bi)
+ {
++	if (btrfs_is_zoned(fs_info))
++		return 0;
+ 	if (atomic_read(&bi->sync_writers))
+ 		return 0;
+ 	if (test_bit(BTRFS_FS_CSUM_IMPL_FAST, &fs_info->flags))
 -- 
 2.27.0
 
