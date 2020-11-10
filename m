@@ -2,128 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BB542AD836
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 15:01:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E27782AD9DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 16:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730473AbgKJOBf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 09:01:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56158 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730070AbgKJOBe (ORCPT
+        id S1731661AbgKJPMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 10:12:55 -0500
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25384 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731450AbgKJPMz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 09:01:34 -0500
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8102C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 06:01:32 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id g7so11519965pfc.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 06:01:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jw4xoyFdbdHuyEb63lDnIpWG8CFdqBLB9T72UopL8mM=;
-        b=KUTCW6u4yJgzk/3g97x8JENk0StNEPh+Ev3Tbja/6QsmlHWhyUmBLM15CC5JCckM4p
-         Thg486qv7XBHc73yt3G8SOJLuxaMj6LfKEznKD1HQjgWMEFl5hCZoW6oWkgBmLbzyrlb
-         lhdjGAdtXxYfRyYCA/MDASkkV7GE8Bfnw4rfeD0w3VZohQ5l/4krYQejJIVRnjP36ao3
-         VBzN2ZY+YVwG9fNU8Ij42g4dtLtGm8hBIzh5EX/VOKuBv/DALtVPZfBPlp/PnY47kjKE
-         EIxmHdeZFvVaL+GgwfYOk1aagoY+DfWPfDzotkVBCAgTL/GtvpgvVvviGlSPQMO78L5w
-         2Wuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jw4xoyFdbdHuyEb63lDnIpWG8CFdqBLB9T72UopL8mM=;
-        b=jTlgUsuVpS4Xtaj5xge9DZ/i7T+RauuopWyTWj3oHxZYZZpnmJFWlziQ2wTHIRu5L+
-         qr87EpOyWsnMJCSQ/PB00Y6RvlEGvqoKs70+6xj8eyuzlhYRHnVNor3cA3wEFncD5TQ+
-         kZ4adBTVyMk0Lb8/lHMF1Qf5GR0/REgobfvXSRg4Mr4ktGZWsqAwqNVvb/CYoz8CgJpd
-         4w887kwUIrI0bOlUcaIDBSe0FQj47z8Ack5Le0wZqoz08WbVVEiZNhiTaHLAfnLItWz5
-         sJBwSEGN3+VkfIjTdUdBSulofUBw9FE03gcuMsd5dV+Co+DP7uIGtdmXfQk43O/trTZg
-         ZG1A==
-X-Gm-Message-State: AOAM532/zB2fH96Ayua7Z7wedpfJ+qeCicEJZY+0MDP9KrshLgWNmRMP
-        jXRXeInPS8tHPT6FvLQTs2vAVDZN94hObuA0xneeLQ==
-X-Google-Smtp-Source: ABdhPJwU5QwCR2xxeNCT+mxLPbRxLxEnLOBux7J6tk0BgWSB9XQhZ9lxcE9XknqXnntajm6hRB/D3w3Tu4YYTa6PF2o=
-X-Received: by 2002:a62:e116:0:b029:18b:d325:153f with SMTP id
- q22-20020a62e1160000b029018bd325153fmr13323150pfh.2.1605016892290; Tue, 10
- Nov 2020 06:01:32 -0800 (PST)
+        Tue, 10 Nov 2020 10:12:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1605021136; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=PCd8n3BhtypUfdMXLYROsIHlStU7SIYkym127tuRof830GVxcFtINnsO90GW5sXXIVBYus/S9KYAW1YqrJW2jreaMSR8m0iNoqAi9YvyCrx0KlVQA9qvsD8WP7xtZUpZogOm0wa2PT8hHs2hAr4Yej/V9OoAUfWwrerYTqizWGE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1605021136; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:References:Subject:To; 
+        bh=LJ6AsdiD74STNa1twe5St3ZMGrmg4LjQXeZILt1GPR8=; 
+        b=OC5azQ6sk9oYg8y4ytUvzsDfVqE7aRYFsGNU28PAg3kkVdwY9t9E7CKL2YK50LH7xjj+A9XCoO1mJ0OLLjRgmzG9QbyaUMHmVwm+S0Y730lm/g//flG6CBseZ7kUkkjSH844Zug6V+kW7cTh2qhumRcfQXha51LcvsQPBad37EQ=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1605021136;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=Date:From:Reply-To:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        bh=LJ6AsdiD74STNa1twe5St3ZMGrmg4LjQXeZILt1GPR8=;
+        b=Gio28/1/+6JfXhMbRK9ZCPgAf30wPSlHvkuKo48fROuZz7nuCy1zTlLJSQ1UL98b
+        rWzPaTduI4pCB1YT4iLLs1dy8dCbO7H0mZngalteiV4yjtuX8lcrUhyjIm5fNr3wpGH
+        uUYGI2rPDPuHkRN9cRboBQvUy6+Hwk3UOquVgYZg=
+Received: from mail.baihui.com by mx.zoho.com.cn
+        with SMTP id 1605021134656930.2158116996183; Tue, 10 Nov 2020 23:12:14 +0800 (CST)
+Date:   Tue, 10 Nov 2020 23:12:14 +0800
+From:   Chengguang Xu <cgxu519@mykernel.net>
+Reply-To: cgxu519@mykernel.net
+To:     "Jan Kara" <jack@suse.cz>
+Cc:     "miklos" <miklos@szeredi.hu>, "amir73il" <amir73il@gmail.com>,
+        "linux-unionfs" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
+Message-ID: <175b2b6ef3d.11f9425843834.4407023737229017217@mykernel.net>
+In-Reply-To: <20201110134551.GA28132@quack2.suse.cz>
+References: <20201108140307.1385745-1-cgxu519@mykernel.net>
+ <20201108140307.1385745-8-cgxu519@mykernel.net> <20201110134551.GA28132@quack2.suse.cz>
+Subject: Re: [RFC PATCH v3 07/10] ovl: implement overlayfs' ->write_inode
+ operation
 MIME-Version: 1.0
-References: <20201108141113.65450-1-songmuchun@bytedance.com>
- <20201108141113.65450-10-songmuchun@bytedance.com> <20201109185138.GD17356@linux>
- <CAMZfGtXpXoQ+zVi2Us__7ghSu_3U7+T3tx-EL+zfa=1Obn=55g@mail.gmail.com>
- <20201110094830.GA25373@linux> <CAMZfGtW0nwhdgwUwwq5SXgEAk3+6cyDfM5n28UerVuAxatwj4g@mail.gmail.com>
- <20201110135210.GA29463@linux>
-In-Reply-To: <20201110135210.GA29463@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 10 Nov 2020 22:00:55 +0800
-Message-ID: <CAMZfGtU=fhXc0R052hjRRdREShGHv5YUYfuBJpAT0qbwge_FEQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v3 09/21] mm/hugetlb: Free the vmemmap
- pages associated with each hugetlb page
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: ZohoCN Mail
+X-Mailer: ZohoCN Mail
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 9:52 PM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Tue, Nov 10, 2020 at 06:47:08PM +0800, Muchun Song wrote:
-> > > That only refers to gigantic pages, right?
-> >
-> > Yeah, now it only refers to gigantic pages. Originally, I also wanted to merge
-> > vmemmap PTE to PMD for normal 2MB HugeTLB pages. So I introduced
-> > those macros(e.g. freed_vmemmap_hpage). For 2MB HugeTLB pages, I
-> > haven't found an elegant solution. Hopefully, when you or someone have
-> > read all of the patch series, we can come up with an elegant solution to
-> > merge PTE.
->
-> Well, it is quite a lot of "tricky" code, so it takes some time.
->
-> > > > > > +static void free_huge_page_vmemmap(struct hstate *h, struct page *head)
-> > > > > > +{
-> > > > > > +     pmd_t *pmd;
-> > > > > > +     spinlock_t *ptl;
-> > > > > > +     LIST_HEAD(free_pages);
-> > > > > > +
-> > > > > > +     if (!free_vmemmap_pages_per_hpage(h))
-> > > > > > +             return;
-> > > > > > +
-> > > > > > +     pmd = vmemmap_to_pmd(head);
-> > > > > > +     ptl = vmemmap_pmd_lock(pmd);
->
-> I forgot about this one.
-> You might want to check whether vmemmap_to_pmd returns NULL or not.
-> If it does means that something went wrong anyways, but still we should handle
-> such case (and print a fat warning or something like that).
+ ---- =E5=9C=A8 =E6=98=9F=E6=9C=9F=E4=BA=8C, 2020-11-10 21:45:51 Jan Kara <=
+jack@suse.cz> =E6=92=B0=E5=86=99 ----
+ > On Sun 08-11-20 22:03:04, Chengguang Xu wrote:
+ > > +static int ovl_write_inode(struct inode *inode,
+ > > +               struct writeback_control *wbc)
+ > > +{
+ > > +    struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
+ > > +    struct inode *upper =3D ovl_inode_upper(inode);
+ > > +    unsigned long iflag =3D 0;
+ > > +    int ret =3D 0;
+ > > +
+ > > +    if (!upper)
+ > > +        return 0;
+ > > +
+ > > +    if (!ovl_should_sync(ofs))
+ > > +        return 0;
+ > > +
+ > > +    if (upper->i_sb->s_op->write_inode)
+ > > +        ret =3D upper->i_sb->s_op->write_inode(inode, wbc);
+ > > +
+ > > +    iflag |=3D upper->i_state & I_DIRTY_ALL;
+ > > +
+ > > +    if (mapping_writably_mapped(upper->i_mapping) ||
+ > > +        mapping_tagged(upper->i_mapping, PAGECACHE_TAG_WRITEBACK))
+ > > +        iflag |=3D I_DIRTY_PAGES;
+ > > +
+ > > +    if (iflag)
+ > > +        ovl_mark_inode_dirty(inode);
+ >=20
+ > I think you didn't incorporate feedback we were speaking about in the la=
+st
+ > version of the series. May comment in [1] still applies - you can miss
+ > inodes dirtied through mmap when you decide to clean the inode here. So
+ > IMHO you need something like:
+ >=20
+ >     if (inode_is_open_for_write(inode))
+ >         ovl_mark_inode_dirty(inode);
+ >=20
+ > here to keep inode dirty while it is open for write (and not based on up=
+per
+ > inode state which is unreliable).
 
-Yeah, maybe add a BUG_ON or WARN_ON. Do you think which one
-would be more suitable?
+Hi Jan,
+
+I not only checked upper inode state but also checked upper inode mmap(shar=
+ed) state
+using  mapping_writably_mapped(upper->i_mapping). Maybe it's better to move=
+ i_state check
+after mmap check but isn't above checks enough for mmapped file?=20
+
+Below code is the definition of mmapping_writably_mapped(), I think it will=
+ check shared mmap
+regardless write or read permission though the function name is quite confu=
+sable.
+
+static inline int mapping_writably_mapped(struct address_space *mapping)
+{
+=09return atomic_read(&mapping->i_mmap_writable) > 0;
+}
 
 
->
->
-> --
-> Oscar Salvador
-> SUSE L3
+
+Thanks,
+Chengguang
 
 
-
---
-Yours,
-Muchun
+ >=20
+ >                                 Honza
+ >=20
+ > [1] https://lore.kernel.org/linux-fsdevel/20201105140332.GG32718@quack2.=
+suse.cz/
+ >=20
+ > > +
+ > > +    return ret;
+ > > +}
+ > > +
+ > >  static void ovl_evict_inode(struct inode *inode)
+ > >  {
+ > >      struct ovl_fs *ofs =3D inode->i_sb->s_fs_info;
+ > > @@ -411,6 +440,7 @@ static const struct super_operations ovl_super_ope=
+rations =3D {
+ > >      .destroy_inode    =3D ovl_destroy_inode,
+ > >      .drop_inode    =3D generic_delete_inode,
+ > >      .evict_inode    =3D ovl_evict_inode,
+ > > +    .write_inode    =3D ovl_write_inode,
+ > >      .put_super    =3D ovl_put_super,
+ > >      .sync_fs    =3D ovl_sync_fs,
+ > >      .statfs        =3D ovl_statfs,
+ > > --=20
+ > > 2.26.2
+ > >=20
+ > >=20
+ > --=20
+ > Jan Kara <jack@suse.com>
+ > SUSE Labs, CR
+ >=20
