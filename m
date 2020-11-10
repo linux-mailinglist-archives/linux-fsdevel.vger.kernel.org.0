@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A932C2AD4E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC9E2AD4E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:28:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbgKJL2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 06:28:15 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:11940 "EHLO
+        id S1729826AbgKJL2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 06:28:16 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:11943 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730054AbgKJL2H (ORCPT
+        with ESMTP id S1726152AbgKJL2K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 06:28:07 -0500
+        Tue, 10 Nov 2020 06:28:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1605007686; x=1636543686;
+  t=1605007689; x=1636543689;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=8NoeNl3Tt1JCx8RCbgz8L4axYDCtVntSuJmZVeke6U8=;
-  b=Bu5RM2iMagQPJynknSYcAIo5kmb0jaVGonl9ZusHcJ41kjd+/SRGqkYy
-   zuMM2pO74l1Xpfy7lW3sq98T5Y3zMtvX2jEZmWryT5q4x5cthdydhXKlj
-   A72meH38yNl8cm+nbM04Te/2dBEFZIpyAISHUneHbzkcqZCjH82tWJW94
-   Ri7Cr1KUIJkTdL4SaDKGD83t2pLjYxp1WWDF55o6nYol3cjZMCmtwGDgm
-   o97ypGWX0TsYdoSlfi3+1RBvKgMRAKyDA8GgLT0p00fpMBKhpmS5ni3Qm
-   rvd8XbjKTB8tHgfAgnzy6IfAw/1oidMen34nMKZvE0W5ymum4XCg7WgVu
-   g==;
-IronPort-SDR: mgBRpTl31GmQPUtCVCtM0feR7WQupWIsrgALLN0dsJsj5wm/FlFUp16CeZT4bDnl139XKff8Xr
- uf0rQsWHJ3kQljgL0A8NqPA66RoG2caukfMDFAOJT7FTwKoroStd4zM4OjEExVx2pTq7ftvpJq
- lZKou9qcC2XG8N8CXew42/uizxBR+oyt3hZ9IY3sH9zlQywNtA9QURqEikRd1B5mOPKLXatH/h
- kk9cTZ53GrRyfP4SfQVWf4w6GWO7hSCnUaghUGd2NzXX8uqzr0jkaUum/It2kHQhirRdl7CLlh
- fs4=
+  bh=JURNtChtu4jU2Kkb/XX8ESd3HK5ZuzHxwYwetvjZgvM=;
+  b=RL/akRa3O1zn/QBbaqt3qaRWosLq2YLrgtXN2dUk077VgHUkNgrU+PQf
+   Yg6rIk7i0T8hfx3lq7RGunJo/NmmRNiIJx3J6TyZeryMi3g93kbHc4+TI
+   XqV66rJUMaf4h9qbQGKH0WZ4lSwWWXg2opfVqvc40WNQFpYGizAGzxXrv
+   Txh9ui5VcTYvhSBlUNp939XOPhXj7Rqqf8DPu4qCfn5gFV8S50FkxWPMK
+   1gNVNgC1J3N2nCt8wvho/Fpm8lQCa4RYMrhZguFCnX0fwj+zSo9NNgunS
+   hhssB6rt02ilSsug/gXR7dR2IZCLWAU9hDJBaqwhYb7Q0bm3oSeXRksRS
+   w==;
+IronPort-SDR: 1KOfDF8W92K8jSnDPTD8dqyFv45tOp38lGNUB9Sb+gDPLdN4nEcvPr0XJ8rtBDiMY+/RN0ERvs
+ oZm3OI9fZ+cOJQ/kfXYL67v8lyI4XOlamaqSrDMqK5wy2oidrWOj+6f/WYe9goRcJlv61fe2ft
+ PPK/vNosEocG5eCXeO7SzUKRk2nfblJUniFIm3wusiqhzQ98aktqdKNb7SxQr1C7OvJz1YFYEv
+ atGS2qa9Lqlbv5me6+kxXTdUfTw29s9m2YFNFdSDgoNmfgdvA3l2yDB/n3BV2jEVtAPd4/5Y6S
+ qQQ=
 X-IronPort-AV: E=Sophos;i="5.77,466,1596470400"; 
-   d="scan'208";a="152376411"
+   d="scan'208";a="152376413"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:28:06 +0800
-IronPort-SDR: KIGBsKzPCuMDD6Fadu7IlJJ56/68Bucj5/tLMqD7YFhiGV70IPEyCUumcs/mdbuW+QsxBzqef3
- vha1ldAdelEgBBohJJhyVtDizL1HE8znp0p/1qOurXk7VKiiOnAvndDnNTUBTqJwynQlcn4+eP
- zXh05ZdD4/+E33tZIeFTddKWaMIHGTZ3uFGSxyJlQGTTy3/bEAVDvlTqbf6UOWDVuqYsoHg+fq
- 3kSXF5mgg4GR03YvG6a61KLkOpeL8OCyXYaKGnx7Z70nhHRMckKw7wbdI98v1MNNDCv6xl2v/J
- ybQNEz/Fh+XQfa7CKSkzFUd4
+  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:28:09 +0800
+IronPort-SDR: JCEgWA8K6dgPaHHZViuZLkAXBDIvg45tald8hMZVJjrlY8t+QewflVNoXzHaFdjQ62ao9LOyyX
+ 1kkR2aTHPUIauozsaR6paTcqIEIR96GcjUtPI0yBZ5Lona3w8F4RLgTwkSwGMY6zPfD6+tY88K
+ JhMVl5lMk0QUSqqPb8sVxs1pxa8i5KD+YOl2/l0Tx/HyJNPQgPdns2z+04WilO6s5y9TE6iAUQ
+ ar0NfsSNjuNmpD3qYPMLup+uH2FMLX98CMQDWfjEvacpvl8mC9YXXvbQwEEfyVh+fkieEVkTZV
+ FEsPBhYB2PBqZM68bz91xli9
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:14:07 -0800
-IronPort-SDR: 8bfWCJKgm7ywL4SpSw2b7WVFlH18SBGc1bZ5XNTIz7ciYqQ7TzyaaGiWTB/NmgDB0pTdrSVrHH
- 7H1pfVMsT8J8cxCT7yJeHY4yGh9PAgrK+4GpIsWxgOZRGmCF20R3aOFz70rkbIa/eRiGgRKRMW
- ORCccDMk2gYxHnd8QGfky6Cdmzd35VcuTm/RVA/WkJ1j2P6n1Tf89iJrmQUrV4UtTtUIBdl9bw
- MSfEeVQKfTZGQx9kCw39JzB6Ovd1+zPZCr1isalMYeeN7L9ETON3qGzVp21UNMSITEFh3XjIKJ
- t68=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:14:10 -0800
+IronPort-SDR: G/5wE+L+D6oY4teJBwHVyS0eq0M9Gtqk4Q9cPJjposUxfyUXIF0XreHpRjIiycfK6YDV+XYH+K
+ tZtjAsxb/7Z2OnNHW20DYYm6N9AWSst2GC1vfEiQsuFTEDcaeqrrutQxM82BA1dWNIdDxE2kJB
+ 9LUz3L5kiw+LfuRTqjIpCEM6rs1lIxZPuowcj9QmwaY9b7UtCcm51WmxTTwyKsDUneb4g0cFO/
+ E2B/RsFfU3TL8wLWUNHUmCQj/Naq4roeYED7tFeR4M/7tEnjdiIXYpP4twTi8g+Izcu/6XWyIO
+ /sA=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:28:05 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:28:07 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
-Date:   Tue, 10 Nov 2020 20:26:05 +0900
-Message-Id: <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v10 03/41] btrfs: introduce ZONED feature flag
+Date:   Tue, 10 Nov 2020 20:26:06 +0900
+Message-Id: <5abeb08ecb3fe5776b359d318641ef5078467070.1605007036.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <cover.1605007036.git.naohiro.aota@wdc.com>
 References: <cover.1605007036.git.naohiro.aota@wdc.com>
@@ -68,102 +71,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A ZONE_APPEND bio must follow hardware restrictions (e.g. not exceeding
-max_zone_append_sectors) not to be split. bio_iov_iter_get_pages builds
-such restricted bio using __bio_iov_append_get_pages if bio_op(bio) ==
-REQ_OP_ZONE_APPEND.
+This patch introduces the ZONED incompat flag. The flag indicates that the
+volume management will satisfy the constraints imposed by host-managed
+zoned block devices.
 
-To utilize it, we need to set the bio_op before calling
-bio_iov_iter_get_pages(). This commit introduces IOMAP_F_ZONE_APPEND, so
-that iomap user can set the flag to indicate they want REQ_OP_ZONE_APPEND
-and restricted bio.
-
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/iomap/direct-io.c  | 41 +++++++++++++++++++++++++++++++++++------
- include/linux/iomap.h |  1 +
- 2 files changed, 36 insertions(+), 6 deletions(-)
+ fs/btrfs/sysfs.c           | 2 ++
+ include/uapi/linux/btrfs.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index c1aafb2ab990..f04572a55a09 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -200,6 +200,34 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
- 	iomap_dio_submit_bio(dio, iomap, bio, pos);
- }
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index 279d9262b676..828006020bbd 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -263,6 +263,7 @@ BTRFS_FEAT_ATTR_INCOMPAT(no_holes, NO_HOLES);
+ BTRFS_FEAT_ATTR_INCOMPAT(metadata_uuid, METADATA_UUID);
+ BTRFS_FEAT_ATTR_COMPAT_RO(free_space_tree, FREE_SPACE_TREE);
+ BTRFS_FEAT_ATTR_INCOMPAT(raid1c34, RAID1C34);
++BTRFS_FEAT_ATTR_INCOMPAT(zoned, ZONED);
  
-+/*
-+ * Figure out the bio's operation flags from the dio request, the
-+ * mapping, and whether or not we want FUA.  Note that we can end up
-+ * clearing the WRITE_FUA flag in the dio request.
-+ */
-+static inline unsigned int
-+iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
-+{
-+	unsigned int opflags = REQ_SYNC | REQ_IDLE;
-+
-+	if (!(dio->flags & IOMAP_DIO_WRITE)) {
-+		WARN_ON_ONCE(iomap->flags & IOMAP_F_ZONE_APPEND);
-+		return REQ_OP_READ;
-+	}
-+
-+	if (iomap->flags & IOMAP_F_ZONE_APPEND)
-+		opflags |= REQ_OP_ZONE_APPEND;
-+	else
-+		opflags |= REQ_OP_WRITE;
-+
-+	if (use_fua)
-+		opflags |= REQ_FUA;
-+	else
-+		dio->flags &= ~IOMAP_DIO_WRITE_FUA;
-+
-+	return opflags;
-+}
-+
- static loff_t
- iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		struct iomap_dio *dio, struct iomap *iomap)
-@@ -278,6 +306,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		bio->bi_private = dio;
- 		bio->bi_end_io = iomap_dio_bio_end_io;
+ static struct attribute *btrfs_supported_feature_attrs[] = {
+ 	BTRFS_FEAT_ATTR_PTR(mixed_backref),
+@@ -278,6 +279,7 @@ static struct attribute *btrfs_supported_feature_attrs[] = {
+ 	BTRFS_FEAT_ATTR_PTR(metadata_uuid),
+ 	BTRFS_FEAT_ATTR_PTR(free_space_tree),
+ 	BTRFS_FEAT_ATTR_PTR(raid1c34),
++	BTRFS_FEAT_ATTR_PTR(zoned),
+ 	NULL
+ };
  
-+		/*
-+		 * Set the operation flags early so that bio_iov_iter_get_pages
-+		 * can set up the page vector appropriately for a ZONE_APPEND
-+		 * operation.
-+		 */
-+		bio->bi_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
-+
- 		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
- 		if (unlikely(ret)) {
- 			/*
-@@ -292,14 +327,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
+index 2c39d15a2beb..5df73001aad4 100644
+--- a/include/uapi/linux/btrfs.h
++++ b/include/uapi/linux/btrfs.h
+@@ -307,6 +307,7 @@ struct btrfs_ioctl_fs_info_args {
+ #define BTRFS_FEATURE_INCOMPAT_NO_HOLES		(1ULL << 9)
+ #define BTRFS_FEATURE_INCOMPAT_METADATA_UUID	(1ULL << 10)
+ #define BTRFS_FEATURE_INCOMPAT_RAID1C34		(1ULL << 11)
++#define BTRFS_FEATURE_INCOMPAT_ZONED		(1ULL << 12)
  
- 		n = bio->bi_iter.bi_size;
- 		if (dio->flags & IOMAP_DIO_WRITE) {
--			bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
--			if (use_fua)
--				bio->bi_opf |= REQ_FUA;
--			else
--				dio->flags &= ~IOMAP_DIO_WRITE_FUA;
- 			task_io_account_write(n);
- 		} else {
--			bio->bi_opf = REQ_OP_READ;
- 			if (dio->flags & IOMAP_DIO_DIRTY)
- 				bio_set_pages_dirty(bio);
- 		}
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 4d1d3c3469e9..1bccd1880d0d 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -54,6 +54,7 @@ struct vm_fault;
- #define IOMAP_F_SHARED		0x04
- #define IOMAP_F_MERGED		0x08
- #define IOMAP_F_BUFFER_HEAD	0x10
-+#define IOMAP_F_ZONE_APPEND	0x20
- 
- /*
-  * Flags set by the core iomap code during operations:
+ struct btrfs_ioctl_feature_flags {
+ 	__u64 compat_flags;
 -- 
 2.27.0
 
