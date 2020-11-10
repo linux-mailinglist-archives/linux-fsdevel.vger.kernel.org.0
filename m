@@ -2,270 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 617932ADC57
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 17:44:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0774C2ADC63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 17:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbgKJQn7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 11:43:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53560 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgKJQn6 (ORCPT
+        id S1727018AbgKJQtj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 11:49:39 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:59476 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbgKJQtj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 11:43:58 -0500
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45031C0613CF;
-        Tue, 10 Nov 2020 08:43:57 -0800 (PST)
-Received: by mail-qk1-x742.google.com with SMTP id v143so7515985qkb.2;
-        Tue, 10 Nov 2020 08:43:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KMWbx+wIxMX04mmHKghtNOC/ct04FiRyKuQcjWAwzKs=;
-        b=iuy6TNkJfVl4KRJAAXU3cRxOhTgpOpMfrvfPrjqAq3tYmcwwGUYoWRWfdrQz53DQhY
-         1pX2A0ZppZy4jBbgGJMT5MsYZQBUo/4exWtSrFd1m/+QG2roenv6S5cCHVd84FY89FHk
-         cgw5uSXrV5KRFP6x46UIW/Y0Gs1B9zziaPSRh26Dqqii3jstNfH+m+ej/4G6XdhPCyqg
-         pEywf4FT5zpzwIDo7NSzq/HRFpwQ/YYBpQlSTZPNpQAvJLPNus0RD/dYgpPfp8Mr4u2r
-         z51FsWqIzLcEe0O2iSXpHiBjXVPsPBoIJhR2IykVDe1xqlte3po0L88kAQFGTbKCWXW0
-         5rsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KMWbx+wIxMX04mmHKghtNOC/ct04FiRyKuQcjWAwzKs=;
-        b=L9ca8HUb8/UrYUpBlA49E4JpZ09DgG4LODWZnY4/o+NuG5AQELRssmDOQRtxjeHL3p
-         EfEI5obhncJJ4/5UBDzWcc4VZgMypd6543EbNdBZQ4Kpac1c6yDxUZzZjD0q7HeuKsP0
-         Fs5rhK6dt70du/NG3njwgs3G95//R2OiSPMXYCPpF+Q/9eoimJhdUfs70YXsOf9f+lk8
-         xv29fX70qtOsKs0mt6HCsN9Lod7WH9l5r1AMko43MC/NF17paSpsdmzJOPJuQekApcev
-         vbIs1+EptLbYtFE87yKa0LnSCRgDcG5p93hX7RnjFQzLj5vrmctMzJAHrf1qMnPkU0N7
-         GAVw==
-X-Gm-Message-State: AOAM532rd1nla18NdMpcBMxrx6szr1IGJcQqPLE+jSqL8M2QAdk0zJSI
-        HLQLPyVXqJaJQqDQKAqjHa4DTS3AQDlpbUaJDEE=
-X-Google-Smtp-Source: ABdhPJzTc9sxKnRjrg7FKVq/43ru2290b3tBpeWO2ZPxM+yD/pJT0fep5GYvuJ6Lo1jRarTGzYX3I5JzxrAp+oi9OWU=
-X-Received: by 2002:a37:e207:: with SMTP id g7mr8515729qki.44.1605026635907;
- Tue, 10 Nov 2020 08:43:55 -0800 (PST)
+        Tue, 10 Nov 2020 11:49:39 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AAGhn3l139108;
+        Tue, 10 Nov 2020 16:49:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=hdMMQUz3nXcemNcGh9uBePlGg+AV9ZP3u4MKFuh3gXg=;
+ b=g0Wd7bmAEhcqx9rXBOM8U2zElOPtdE+h7p4Xg+Ns4tcjE73KJfw2rLXUsF9Z9vFXB79a
+ PyjKbmRKRSHt5MI4kRiXO4vO5RyV6wDoyfotAuVoQ6lzPyMcmROoyKKaymjtvSgYyv0n
+ 74LSZe9JNCCxI2w5jeOQWqZzjvOm8MVIB4zW9ZpB34kYFZUhRrpO6vY6HW9n9e3jk7wi
+ EV9kClaZocABM/e3QXkvNkzmw1SLb0D/LJV+EEQv4EoFPsw6qZghxFgpMSMy6lheU70U
+ pIGAupBSjpuaedHa/URboibreFbhrcDDBqKk2STojEQj+o+Qmh9boV1BIiWSqCpb6SzF 6w== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 34nkhkvkmy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Nov 2020 16:49:24 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AAGk91n087025;
+        Tue, 10 Nov 2020 16:49:24 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 34p5gx6r5g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Nov 2020 16:49:24 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AAGnLsq008053;
+        Tue, 10 Nov 2020 16:49:21 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 10 Nov 2020 08:49:21 -0800
+Date:   Tue, 10 Nov 2020 08:49:19 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Filipe Manana <fdmanana@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        David Sterba <dsterba@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC] fs: Avoid to use lockdep information if it's turned off
+Message-ID: <20201110164919.GC9685@magnolia>
+References: <20201110013739.686731-1-boqun.feng@gmail.com>
+ <20201110014925.GB9685@magnolia>
+ <20201110054016.GC286534@boqun-archlinux>
 MIME-Version: 1.0
-References: <20201102174737.2740-1-sargun@sargun.me>
-In-Reply-To: <20201102174737.2740-1-sargun@sargun.me>
-From:   Alban Crequy <alban.crequy@gmail.com>
-Date:   Tue, 10 Nov 2020 17:43:44 +0100
-Message-ID: <CAMXgnP5cVoLKTGPOAO+aLEAGLpkjACy1e4iLBKkfp8Gv1U77xA@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] NFS: Fix interaction between fs_context and user namespaces
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Anna Schumaker <schumaker.anna@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mauricio@kinvolk.io
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201110054016.GC286534@boqun-archlinux>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011100119
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011100119
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, Nov 10, 2020 at 01:40:16PM +0800, Boqun Feng wrote:
+> On Mon, Nov 09, 2020 at 05:49:25PM -0800, Darrick J. Wong wrote:
+> > On Tue, Nov 10, 2020 at 09:37:37AM +0800, Boqun Feng wrote:
+> > > Filipe Manana reported a warning followed by task hanging after attempts
+> > > to freeze a filesystem[1]. The problem happened in a LOCKDEP=y kernel,
+> > > and percpu_rwsem_is_held() provided incorrect results when
+> > > debug_locks == 0. Although the behavior is caused by commit 4d004099a668
+> > > ("lockdep: Fix lockdep recursion"): after that lock_is_held() and its
+> > > friends always return true if debug_locks == 0. However, one could argue
+> > 
+> > ...the silent trylock conversion with no checking of the return value is
+> > completely broken.  I already sent a patch to tear all this out:
+> > 
+> > https://lore.kernel.org/linux-fsdevel/160494580419.772573.9286165021627298770.stgit@magnolia/T/#t
+> > 
+> 
+> Thanks! That looks good to me. I'm all for removing that piece of code.
+> 
+> While we are at it, I have to ask, when you hit the original problem
+> (warning after trylock in __start_sb_write()), did you see any lockdep
+> splat happened previously?
 
-I tested the patches on top of 5.10.0-rc3+ and I could mount an NFS
-share with a different user namespace. fsopen() is done in the
-container namespaces (user, mnt and net namespaces) while fsconfig(),
-fsmount() and move_mount() are done on the host namespaces. The mount
-on the host is available in the container via mount propagation from
-the host mount.
+Yes.  Every time I hit this there had been a lockdep splat earlier in the
+fstests run, along with lockdep declaring that it was going offline.
 
-With this, the files on the NFS server with uid 0 are available in the
-container with uid 0. On the host, they are available with uid
-4294967294 (make_kuid(&init_user_ns, -2)).
+--D
 
-The code to reproduce my test is available at:
-https://github.com/kinvolk/nfs-mount-in-userns
-And the results and traces are attached at the end.
-
-While the basic feature works, I have some thoughts.
-
-First, doing the fsopen() in the container namespaces implements two
-features in one step:
-1. Selection of the userns for the id mapping translation.
-2. Selection of the netns for the connection to the NFS server.
-
-I was wondering if this only considers the scenario where the user
-wants to make the connection to the NFS server from the network
-namespace of the container. I think there is another valid use case to
-use the userns of the container but the netns of the host or a
-third-party netns. We can use the correct set of setns() to do the
-fsopen() in the container userns but in the host netns, but then we=E2=80=
-=99d
-be in a netns that does not belong to the current userns, so we would
-not have any capability over it. In my tests, that seems to work fine
-when the netns and the userns of the fs_context are not related.
-
-Still, I would find the API cleaner if the userns and netns were
-selected explicitly with something like:
-
-sfd =3D fsopen("nfs4", FSOPEN_CLOEXEC);
-usernsfd =3D pidfd_open(...); or usernsfd =3D open(=E2=80=9C/proc/pid/ns/us=
-er=E2=80=9D)
-fsconfig(sfd, FSCONFIG_SET_FD, "userns", NULL, usernsfd);
-netnsfd =3D pidfd_open(...); or netnsfd =3D open(=E2=80=9C/proc/pid/ns/net=
-=E2=80=9D)
-fsconfig(sfd, FSCONFIG_SET_FD, "netns", NULL, netnsfd);
-
-This would avoid the need for fd passing after the fsopen(). This
-would require fsconfig() (possibly in nfs_fs_context_parse_param()) to
-do the capability check but making it more explicit sounds better to
-me.
-
-Second, the capability check in fsopen() is the following:
-  if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
-
-This means that we cannot just create a temporary userns with the
-desired id mapping, but we additionally need to enter a mntns owned by
-the userns. However the code in fsopen() does not seem to do anything
-with the mntns (The new mount will only be associated with the current
-mntns at move_mount() time), so we could just create a temporary
-userns + mntns. It seems weird to me that the capability check is done
-in relation to the current mntns even though the code does not do
-anything with it.
-
-In Kubernetes, the NFS mount is done before creating the user
-namespace. pkg/kubelet/kubelet.go Kubelet's syncPod() will do the
-following in this order:
-1. Mount the volumes with CSI or other volume implementations:
-WaitForAttachAndMount() line 1667
-2. Call the CRI's createPodSandbox via kl.containerRuntime.SyncPod()
-line 1678 to create the user namespace and network namespace.
-
-This means that at the time of the NFS mount, we have not yet created
-the user namespace or the network namespace, and even less configured
-it with the CNI plugin. With this API where the id mapping for the NFS
-mount is decided at the superblock level, we would need to refactor
-the Kubelet code to be able to call the CSI mount after the creation
-of the sandbox, and after the configuration with CNI. This will be
-more complicated to integrate in Kubernetes than the idmapped mounts
-patch set where the id mapping is set at the bind mount level
-(https://lists.linuxfoundation.org/pipermail/containers/2020-October/042477=
-.html).
-However, it is less invasive.
-
-This approach works for NFS volumes in Kubernetes but would not work
-with other volumes like hostPath (bind mount from the host) where we
-don=E2=80=99t have a new superblock.
-
-Lastly, I checked the implementation of nfs_compare_super() and it
-seems fine. In Kubernetes, we want to be able to create several
-Kubernetes pods with different userns and mount the same NFS share in
-several pods. The kernel will have to create different NFS superblocks
-for that scenario and it does that correctly in nfs_compare_super() by
-comparing the userns and comparing the netns as well.
-
------
-
-Running ./nfs-mount-in-userns
-strace: Process 4022 attached
-[pid  4022] fsopen("nfs4", FSOPEN_CLOEXEC) =3D 6
-[pid  4022] +++ exited with 0 +++
---- SIGCHLD {si_signo=3DSIGCHLD, si_code=3DCLD_EXITED, si_pid=3D4022,
-si_uid=3D0, si_status=3D0, si_utime=3D0, si_stime=3D0} ---
-fsconfig(7, FSCONFIG_SET_STRING, "source", "127.0.0.1:/server", 0) =3D 0
-fsconfig(7, FSCONFIG_SET_STRING, "vers", "4.2", 0) =3D 0
-fsconfig(7, FSCONFIG_SET_STRING, "addr", "127.0.0.1", 0) =3D 0
-fsconfig(7, FSCONFIG_SET_STRING, "clientaddr", "127.0.0.1", 0) =3D 0
-fsconfig(7, FSCONFIG_CMD_CREATE, NULL, NULL, 0) =3D 0
-fsmount(7, FSMOUNT_CLOEXEC, 0)          =3D 6
-move_mount(6, "", AT_FDCWD, "/mnt/nfs", MOVE_MOUNT_F_EMPTY_PATH) =3D 0
-+++ exited with 0 +++
-./nfs-mount-in-userns returned 0
-last dmesg line about nfs4_create_server
-[55258.702256] nfs4_create_server: Using creds from non-init userns
-459 55 0:40 / /mnt/nfs rw,relatime shared:187 - nfs4 127.0.0.1:/server
-rw,vers=3D4.2,rsize=3D524288,wsize=3D524288,namlen=3D255,hard,proto=3Dtcp,t=
-imeo=3D600,retrans=3D2,sec=3Dsys,clientaddr=3D127.0.0.1,local_lock=3Dnone,a=
-ddr=3D127.0.0.1
-
-+ : 'Files on the NFS server:'
-+ ls -lani /server/
-total 20
-1048578 drwxr-xr-x.  5    0    0 4096 Nov 10 09:19 .
-      2 dr-xr-xr-x. 21    0    0 4096 Nov  9 14:25 ..
-1048582 drwx------.  2    0    0 4096 Nov 10 09:19 dir-0
-1048583 drwx------.  2 1000 1000 4096 Nov 10 09:19 dir-1000
-1048584 drwx------.  2 3000 3000 4096 Nov 10 09:19 dir-3000
-1048579 -rw-------.  1    0    0    0 Nov 10 09:19 file-0
-1048580 -rw-------.  1 1000 1000    0 Nov 10 09:19 file-1000
-1048581 -rw-------.  1 3000 3000    0 Nov 10 09:19 file-3000
-
-+ : 'Files on the NFS mountpoint (from container PoV):'
-+ nsenter -U -m -n -t 4002 sh -c 'ls -lani /mnt/nfs'
-total 20
-1048578 drwxr-xr-x. 5     0     0 4096 Nov 10 09:19 .
- 786433 drwxr-xr-x. 3 65534 65534 4096 May 16 16:08 ..
-1048582 drwx------. 2     0     0 4096 Nov 10 09:19 dir-0
-1048583 drwx------. 2 65534 65534 4096 Nov 10 09:19 dir-1000
-1048584 drwx------. 2 65534 65534 4096 Nov 10 09:19 dir-3000
-1048579 -rw-------. 1     0     0    0 Nov 10 09:19 file-0
-1048580 -rw-------. 1 65534 65534    0 Nov 10 09:19 file-1000
-1048581 -rw-------. 1 65534 65534    0 Nov 10 09:19 file-3000
-
-+ : 'Files on the NFS mountpoint (from host PoV):'
-+ ls -lani /mnt/nfs/
-total 20
-1048578 drwxr-xr-x. 5       1000       1000 4096 Nov 10 09:19 .
- 786433 drwxr-xr-x. 3          0          0 4096 May 16 16:08 ..
-1048582 drwx------. 2       1000       1000 4096 Nov 10 09:19 dir-0
-1048583 drwx------. 2 4294967294 4294967294 4096 Nov 10 09:19 dir-1000
-1048584 drwx------. 2 4294967294 4294967294 4096 Nov 10 09:19 dir-3000
-1048579 -rw-------. 1       1000       1000    0 Nov 10 09:19 file-0
-1048580 -rw-------. 1 4294967294 4294967294    0 Nov 10 09:19 file-1000
-1048581 -rw-------. 1 4294967294 4294967294    0 Nov 10 09:19 file-3000
-
-Alban
-
-On Mon, 2 Nov 2020 at 18:48, Sargun Dhillon <sargun@sargun.me> wrote:
->
-> This is effectively a resend, but re-based atop Anna's current tree. I ca=
-n
-> add the samples back in an another patchset.
->
-> Right now, it is possible to mount NFS with an non-matching super block
-> user ns, and NFS sunrpc user ns. This (for the user) results in an awkwar=
-d
-> set of interactions if using anything other than auth_null, where the UID=
-s
-> being sent to the server are different than the local UIDs being checked.
-> This can cause "breakage", where if you try to communicate with the NFS
-> server with any other set of mappings, it breaks.
->
-> This is after the initial v5.10 merge window, so hopefully this patchset
-> can be reconsidered, and maybe we can make forward progress? I think that
-> it takes a relatively conservative approach in enabling user namespaces,
-> and it prevents the case where someone is using auth_gss (for now), as th=
-e
-> mappings are non-trivial.
->
-> Changes since v3:
->   * Rebase atop Anna's tree
-> Changes since v2:
->   * Removed samples
->   * Split out NFSv2/v3 patchset from NFSv4 patchset
->   * Added restrictions around use
-> Changes since v1:
->   * Added samples
->
-> Sargun Dhillon (2):
->   NFS: NFSv2/NFSv3: Use cred from fs_context during mount
->   NFSv4: Refactor NFS to use user namespaces
->
->  fs/nfs/client.c     | 10 ++++++++--
->  fs/nfs/nfs4client.c | 27 ++++++++++++++++++++++++++-
->  fs/nfs/nfs4idmap.c  |  2 +-
->  fs/nfs/nfs4idmap.h  |  3 ++-
->  4 files changed, 37 insertions(+), 5 deletions(-)
->
->
-> base-commit: 8c39076c276be0b31982e44654e2c2357473258a
-> --
-> 2.25.1
->
+> Or just like Filipe, you hit that without
+> seeing any lockdep splat happened before? Thanks! I'm trying to track
+> down the silent lockdep turn-off.
+> 
+> Regards,
+> Boqun
+> 
+> > --D
+> > 
+> > > that querying the lock holding information regardless if the lockdep
+> > > turn-off status is inappropriate in the first place. Therefore instead
+> > > of reverting lock_is_held() and its friends to the previous semantics,
+> > > add the explicit checking in fs code to avoid use the lock holding
+> > > information if lockdpe is turned off. And since the original problem
+> > > also happened with a silent lockdep turn-off, put a warning if
+> > > debug_locks is 0, which will help us spot the silent lockdep turn-offs.
+> > > 
+> > > [1]: https://lore.kernel.org/lkml/a5cf643b-842f-7a60-73c7-85d738a9276f@suse.com/
+> > > 
+> > > Reported-by: Filipe Manana <fdmanana@gmail.com>
+> > > Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
+> > > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Jan Kara <jack@suse.cz>
+> > > Cc: David Sterba <dsterba@suse.com>
+> > > Cc: Nikolay Borisov <nborisov@suse.com>
+> > > Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > > ---
+> > > Hi Filipe,
+> > > 
+> > > I use the slightly different approach to fix this problem, and I think
+> > > it should have the similar effect with my previous fix[2], except that
+> > > you will hit a warning if the problem happens now. The warning is added
+> > > on purpose because I don't want to miss a silent lockdep turn-off.
+> > > 
+> > > Could you and other fs folks give this a try?
+> > > 
+> > > Regards,
+> > > Boqun
+> > > 
+> > > [2]: https://lore.kernel.org/lkml/20201103140828.GA2713762@boqun-archlinux/
+> > > 
+> > >  fs/super.c | 11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > > 
+> > > diff --git a/fs/super.c b/fs/super.c
+> > > index a51c2083cd6b..1803c8d999e9 100644
+> > > --- a/fs/super.c
+> > > +++ b/fs/super.c
+> > > @@ -1659,12 +1659,23 @@ int __sb_start_write(struct super_block *sb, int level, bool wait)
+> > >  	 * twice in some cases, which is OK only because we already hold a
+> > >  	 * freeze protection also on higher level. Due to these cases we have
+> > >  	 * to use wait == F (trylock mode) which must not fail.
+> > > +	 *
+> > > +	 * Note: lockdep can only prove correct information if debug_locks != 0
+> > >  	 */
+> > >  	if (wait) {
+> > >  		int i;
+> > >  
+> > >  		for (i = 0; i < level - 1; i++)
+> > >  			if (percpu_rwsem_is_held(sb->s_writers.rw_sem + i)) {
+> > > +				/*
+> > > +				 * XXX: the WARN_ON_ONCE() here is to help
+> > > +				 * track down silent lockdep turn-off, i.e.
+> > > +				 * this warning is triggered, but no lockdep
+> > > +				 * splat is reported.
+> > > +				 */
+> > > +				if (WARN_ON_ONCE(!debug_locks))
+> > > +					break;
+> > > +
+> > >  				force_trylock = true;
+> > >  				break;
+> > >  			}
+> > > -- 
+> > > 2.29.2
+> > > 
