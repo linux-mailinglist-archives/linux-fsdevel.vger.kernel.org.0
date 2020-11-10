@@ -2,127 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC5B2AD3FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 11:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C4882AD408
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 11:47:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbgKJKms (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 05:42:48 -0500
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:32599 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbgKJKms (ORCPT
+        id S1726467AbgKJKrp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 05:47:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54244 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbgKJKrp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 05:42:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1605005115; x=1636541115;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IR6s48VUF79F7IHuTbSyeydOgtg3RNNnWrFvk1zoqUQ=;
-  b=ZtgBi0xrwtEqJiD7NjmAT+kVp9IB3cUEhHHv50WxRJDs6AOYvMJKlscx
-   qwlvlT+rIdb8mP4AynuLymSAJ2aFWECH6HvSvEyMHppsfcxRUNrsIQm1w
-   yRfFuBA8RiExngvirKff5gv1g5E4HQM4aHANpZqLgff4zZ0CWGezmc+qy
-   Hvv2fpd61c/DZ4i6ghH2yPqBGIbtqablm+wfMaSCvV2+2c32G1M8dA1hC
-   tdXFXwDYiYlR7Aiz0S+fqAXQuQaJ1nk02E1LQ9qYYe/D4Put2gg3wK7Dj
-   YS5U5C6Bcb+pZWhkM559pHdlwkpuoLtpCtHD5DhCSqMGEDPhthjeWtcyh
-   A==;
-IronPort-SDR: jvJFJTUSL7RpZR9BpINkaCymMs8ag4YScGu40UJO0Z2NhpjZ7M5GtFoKGEWZcoQjUTjmxPyzXN
- atWb3qKSZTS1iCQrxHOlfs9zAKXgwSp5aMHGo6KKBttRopQOCLn/y1BazgEppyIDQ/c/ZAh+un
- lcbOtFYVkcMusoTGfzFzma6bglHyNE8B+luFuHMOb8HaNtis9g8HmgbI/mEjaUqGQn8y+A6SED
- jGJJBGFBsSy+Om4fp+4/ov931ioaOOc95TEqM7b4o3iykR6FIj3mJquX0fiUKg+nRy0BpKikUN
- sGY=
-X-IronPort-AV: E=Sophos;i="5.77,466,1596470400"; 
-   d="scan'208";a="255828431"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 18:45:14 +0800
-IronPort-SDR: F9Gp/oKWQPNrU8ewbZqKyiUnSGDhyGbDeBB9hS7I57JydxDkZ2WTCU3jfqSAEgABJUn41DLdep
- qwiIuXXfmcn5rHwLOHvlGpHGFpsChDcEZlOMrVF3EKhl1ROf2+LeUI1toCQ97jlxmwIQa9c0qF
- oXnidcaFI4H/cPyNbQn306w+HYFUx9FLTnCIXyJE8omVf4PK+jHxHJxXQ7X6b+KCf9gTkcKAXS
- 88By02lsfpvON77xYV1v4WD2M9K8yeG3K2IaIhrgmmWac81UkYJERQ1+iC/H2GKIj3gN/qysnw
- 2/oaRWyGSJMwbtL3brL4I4Vf
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 02:28:47 -0800
-IronPort-SDR: R+WLjIUfVJnI/Z8Tadt2QcqFSYVkeU0j7XWeur53RHplpJZmktlg4d0OpREXtaFysDEnKVHCD2
- 1Apmpk9iSkIOHV4XBBaioQ0LDBIOWYzhzHqmgcEy+6qNP83FF2AjV2138jJp2rM+50A6xqWEqA
- 4W1mZQ8glhWbbrrqd7RRQfKilNNbbIDiqv925+RmPgQIFlH0UYarUxkvdTjt/91BhDJhCfl58W
- PTezwyYMGnZ2563nmsbR++6/wMkFDD5Ny7wHtIercO0hkaB1944bJb5+OCjHXWxtOSg9cn9Qf3
- XYQ=
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 10 Nov 2020 02:42:44 -0800
-Received: (nullmailer pid 1897817 invoked by uid 1000);
-        Tue, 10 Nov 2020 10:42:45 -0000
-Date:   Tue, 10 Nov 2020 19:42:45 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v9 21/41] btrfs: use bio_add_zone_append_page for zoned
- btrfs
-Message-ID: <20201110104245.sk635cfxu5vjqedo@naota.dhcp.fujisawa.hgst.com>
-References: <d9a0a445560db3a9eb240c6535f8dd1bbd0abd96.1604065694.git.naohiro.aota@wdc.com>
- <ad4c16f2fff58ea4c6bd034e782b1c354521d696.1604065695.git.naohiro.aota@wdc.com>
- <0883ec98-4b59-5e74-ba81-d477ca4e185f@toxicpanda.com>
+        Tue, 10 Nov 2020 05:47:45 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C2B3C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 02:47:45 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id w4so9789152pgg.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 02:47:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Toc/1e3XZP6E3Q/GS14/EKWrJmH5Dil0O7B9AgVB8fQ=;
+        b=xIqtmtgc4HMmDQO5cYNvT9oenNFNyBm4de07RNrCAmKL8NA+vkKWnUbTECqmYwJPbj
+         /5FguZIa4jebLRz+my6Vov85DE2kLM8TIvUACojHoUCrNs636FkjcUejZtgkY2NxCcxN
+         zC2RNDRLhy6ZAsouPM4Pq7Fk4HBxloDh1pkE/9uKEj6B6O/6if/W77dKY+mqAaffupRk
+         M+lqp3qgD2QoMasQUEhfk/x2Hw7Qk+i2eKwrYFP+FEIetLn5CyGbAsM3+fxQPmEYKz/n
+         qtUCNwd1JruN3PvyiKRJ9dJD89ldVlGc7dFWOvJd1GBJsyNJ5e5Si1fkw3+s3A0Ncm9G
+         jqaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Toc/1e3XZP6E3Q/GS14/EKWrJmH5Dil0O7B9AgVB8fQ=;
+        b=G4Plbm5V/hRRu/kwQaszz3rxiGG2jF+uAiSbNb6fuUTl3YRkKCZ8SZGcyGfNou9Chq
+         3tfy1YOAjxElOvYBJp+rJCnRGugkE4lhE7NNwBnBvLp+dF2XI/iBWUSnZXwQdq3D6wfC
+         10s1PgGmosxIVG9B8OYx8jDeTffAX0MQm7eDJUBrI6eEjjM6x91keydyKJkKra8hRZOr
+         MNeV+SOklubI/Ec/2no8g9ZFGhhKtcm3z/uLEQPhFlorcCyBCu0jWsTYO8XMr+jQpLVt
+         Sk0IfP5ZUAqvcGKlQ1CqZK26MS/bPrKOhVrf/Wc6nZjdbdQgWCuAZKzhkkZJhq77EGvd
+         Q2cg==
+X-Gm-Message-State: AOAM532EQto9LvW1AKgkd8iWDXGCtWyKv7dhW4Q03Skh3j1hh/Ubtsr8
+        V+2tszgS8NKKVUGKgSjUbiMaknFCERmOJSHdGhroFg==
+X-Google-Smtp-Source: ABdhPJx9kEy0Q3xDZ+PnVrlGbMTy6IdowDw+7yOHeSag6XbBXToDQ8IysFZVAeKrB0UhrKWsZW0NnmBu0qOPbrRJtN8=
+X-Received: by 2002:a63:7408:: with SMTP id p8mr16100765pgc.273.1605005264696;
+ Tue, 10 Nov 2020 02:47:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <0883ec98-4b59-5e74-ba81-d477ca4e185f@toxicpanda.com>
+References: <20201108141113.65450-1-songmuchun@bytedance.com>
+ <20201108141113.65450-10-songmuchun@bytedance.com> <20201109185138.GD17356@linux>
+ <CAMZfGtXpXoQ+zVi2Us__7ghSu_3U7+T3tx-EL+zfa=1Obn=55g@mail.gmail.com> <20201110094830.GA25373@linux>
+In-Reply-To: <20201110094830.GA25373@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 10 Nov 2020 18:47:08 +0800
+Message-ID: <CAMZfGtW0nwhdgwUwwq5SXgEAk3+6cyDfM5n28UerVuAxatwj4g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v3 09/21] mm/hugetlb: Free the vmemmap
+ pages associated with each hugetlb page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 03, 2020 at 09:55:49AM -0500, Josef Bacik wrote:
->On 10/30/20 9:51 AM, Naohiro Aota wrote:
->>Zoned device has its own hardware restrictions e.g. max_zone_append_size
->>when using REQ_OP_ZONE_APPEND. To follow the restrictions, use
->>bio_add_zone_append_page() instead of bio_add_page(). We need target device
->>to use bio_add_zone_append_page(), so this commit reads the chunk
->>information to memoize the target device to btrfs_io_bio(bio)->device.
->>
->>Currently, zoned btrfs only supports SINGLE profile. In the feature,
->>btrfs_io_bio can hold extent_map and check the restrictions for all the
->>devices the bio will be mapped.
->>
->>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->>---
->>  fs/btrfs/extent_io.c | 37 ++++++++++++++++++++++++++++++++++---
->>  1 file changed, 34 insertions(+), 3 deletions(-)
->>
->>diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
->>index 17285048fb5a..764257eb658f 100644
->>--- a/fs/btrfs/extent_io.c
->>+++ b/fs/btrfs/extent_io.c
->>@@ -3032,6 +3032,7 @@ bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
->>  {
->>  	sector_t sector = logical >> SECTOR_SHIFT;
->>  	bool contig;
->>+	int ret;
->>  	if (prev_bio_flags != bio_flags)
->>  		return false;
->>@@ -3046,7 +3047,19 @@ bool btrfs_bio_add_page(struct bio *bio, struct page *page, u64 logical,
->>  	if (btrfs_bio_fits_in_stripe(page, size, bio, bio_flags))
->>  		return false;
->>-	return bio_add_page(bio, page, size, pg_offset) == size;
->>+	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
->>+		struct bio orig_bio;
->>+
->>+		memset(&orig_bio, 0, sizeof(orig_bio));
->>+		bio_copy_dev(&orig_bio, bio);
->>+		bio_set_dev(bio, btrfs_io_bio(bio)->device->bdev);
->>+		ret = bio_add_zone_append_page(bio, page, size, pg_offset);
->>+		bio_copy_dev(bio, &orig_bio);
+On Tue, Nov 10, 2020 at 5:48 PM Oscar Salvador <osalvador@suse.de> wrote:
 >
->Why do we need this in the first place, since we're only supporting 
->single right now?  latest_bdev should be the same, so this serves no 
->purpose, right?
+> On Tue, Nov 10, 2020 at 02:40:54PM +0800, Muchun Song wrote:
+> > Only the first HugeTLB page should split the PMD to PTE. The other 63
+> > HugeTLB pages
+> > do not need to split. Here I want to make sure we are the first.
 >
->And if it does, we need to figure out another solution, because right 
->now this leaks references to the bio->bi_blkg, each copy inc's the 
->refcount on the blkg for that bio so we're going to leak blkg's like 
->crazy here.  Thanks,
+> I think terminology is loosing me here.
 >
->Josef
+> Say you allocate a 2MB HugeTLB page at ffffea0004100000.
+>
+> The vmemmap range that the represents this is ffffea0004000000 - ffffea0004200000.
+> That is a 2MB chunk PMD-mapped.
+> So, in order to free some of those vmemmap pages, we need to break down
+> that area, remapping it to PTE-based.
+> I know what you mean, but we are not really splitting hugetlg pages, but
+> the memmap range they are represented with.
 
-True. I just tried to make it multipe device ready as much as possible.
+Yeah, you are right. We are splitting the vmemmap instead of hugetlb.
+Sorry for the confusion.
 
-I'll drop this part for now, and will fix this when we add multipe device
-support.
+>
+> About:
+>
+> "Only the first HugeTLB page should split the PMD to PTE. The other 63
+> HugeTLB pages
+> do not need to split. Here I want to make sure we are the first."
+>
+> That only refers to gigantic pages, right?
+
+Yeah, now it only refers to gigantic pages. Originally, I also wanted to merge
+vmemmap PTE to PMD for normal 2MB HugeTLB pages. So I introduced
+those macros(e.g. freed_vmemmap_hpage). For 2MB HugeTLB pages, I
+haven't found an elegant solution. Hopefully, when you or someone have
+read all of the patch series, we can come up with an elegant solution to
+merge PTE.
+
+Thanks.
+
+>
+> > > > +static void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+> > > > +{
+> > > > +     pmd_t *pmd;
+> > > > +     spinlock_t *ptl;
+> > > > +     LIST_HEAD(free_pages);
+> > > > +
+> > > > +     if (!free_vmemmap_pages_per_hpage(h))
+> > > > +             return;
+> > > > +
+> > > > +     pmd = vmemmap_to_pmd(head);
+> > > > +     ptl = vmemmap_pmd_lock(pmd);
+> > > > +     if (vmemmap_pmd_huge(pmd)) {
+> > > > +             VM_BUG_ON(!pgtable_pages_to_prealloc_per_hpage(h));
+> > >
+> > > I think that checking for free_vmemmap_pages_per_hpage is enough.
+> > > In the end, pgtable_pages_to_prealloc_per_hpage uses free_vmemmap_pages_per_hpage.
+> >
+> > The free_vmemmap_pages_per_hpage is not enough. See the comments above.
+>
+> My comment was about the VM_BUG_ON.
+
+Sorry, yeah, we can drop it. Thanks.
+
+>
+>
+> --
+> Oscar Salvador
+> SUSE L3
+
+
+
+-- 
+Yours,
+Muchun
