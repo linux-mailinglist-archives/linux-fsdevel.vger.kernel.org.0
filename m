@@ -2,100 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 644C92ACBEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 04:37:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B162ACBE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 04:37:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731355AbgKJDhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 22:37:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
+        id S1730520AbgKJDhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 22:37:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731087AbgKJDhK (ORCPT
+        with ESMTP id S1729706AbgKJDhH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 22:37:10 -0500
+        Mon, 9 Nov 2020 22:37:07 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD029C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 19:37:10 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E279EC0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 19:37:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=+S0FIkOgSwV58iPjqMAeIZmxUl9T/7Do9UD2c+elmSw=; b=doNRLcNhJNoIcekY1BM+VTUwdS
-        8eorL//tbpj8SmLOSa8NgwMPdm+j1MMHkaPb/ZxTq24IyahHtZvMUuYsbeNT3VdHZO3BHH+aqAo3h
-        WokffqQS12nh3HUq6WIkhwWN/XGKZ5lImN082vW5kPeXT+nOzclx+yErcgd1ylUx7GYM5dPiCUU1m
-        kFZxT9w0eaSITAOsVPw0HT0/x/2ChS0AF6WZdV4Nwf2fOcEYIsSeELIx4rQPAEHAjzyZme7tMZuvt
-        IV0GXIXDpogOz1X5hQzOY3+hvNakOv1qyYnLRSrkqSXLYlHMxQIw88N3ebB+muscvA6NYNIe11E0o
-        MzSY8k/w==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=obfMMHdQIANHMdZvpP1HFoeuMZsOOwUrMgjktC9GoWA=; b=PiDuxR54Mp+2e3vcKZROT9MGdU
+        ggeoMQiAQ+WpTOfzWI1k/Vc1zj/0SL3eLztJs10egq4Br4iGO124niDn6p/uGaWxVgIt4x5wAz9Hw
+        CHFiGTLzJObcK/Ul4v4Lg/iCRgTBUAXOlHj4dZqiDoAyZNQ8exg920J/W0eBhb22UflyuegQDgTWp
+        YKx/t+dKdEP/SK+fnPRzCj+cign3HbyAWZKDjDf6Ena7V19y81VOAKmX0jG+eqjjdDsxKS0ae1DAG
+        +U2ex9w9PyUAL3Xon3pMLdSJ9jBvnnpa9ik6HDnEepjFVLjt4XRJs2pifFhUk4tn+l7Yf4FnwkO5J
+        79exdg/g==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kcKSu-00064K-MD; Tue, 10 Nov 2020 03:37:04 +0000
+        id 1kcKSv-00064P-9v; Tue, 10 Nov 2020 03:37:05 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, hch@lst.de,
         kent.overstreet@gmail.com
-Subject: [PATCH v3 00/18] Refactor generic_file_buffered_read
-Date:   Tue, 10 Nov 2020 03:36:45 +0000
-Message-Id: <20201110033703.23261-1-willy@infradead.org>
+Subject: [PATCH v3 01/18] mm/filemap: Rename generic_file_buffered_read subfunctions
+Date:   Tue, 10 Nov 2020 03:36:46 +0000
+Message-Id: <20201110033703.23261-2-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
+In-Reply-To: <20201110033703.23261-1-willy@infradead.org>
+References: <20201110033703.23261-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a combination of Christoph's work to refactor
-generic_file_buffered_read() and my THP support on top of Kent's patches
-which are currently in -mm.  I really like where this ended up.
+The recent split of generic_file_buffered_read() created some very
+long function names which are hard to distinguish from each other.
+Rename as follows:
 
-v3:
- - Fixed missing put_page for readahead with IOCB_NOIO (hch)
- - Fixed commit message for lock_page_for_iocb (nborisov)
- - Kent has agreed to reduce to PAGEVEC_SIZE entries per iteration,
-   since we can go up to larger pagevecs later if needed.
-v2:
- - Added pagevec conversion upfront and rebased other patches on top of
-   it (me)
- - Limit page search by max pgoff_t rather than by number of pages (me)
- - Renamed mapping_get_read_thps() to filemap_get_read_batch() (hch/me)
- - Added doc for filemap_get_read_batch() (hch/me)
- - Removed 'first' parameter from filemap_update_page() (me)
- - Folded "Remove parameters from filemap_update_page()" into an earlier
-   patch (hch)
- - Restructured filemap_update_page() error handling flow (hch/me)
- - Pass the pagevec to filemap_create_page() (hch)
- - Renamed 'find_page' label to 'retry' (hch)
- - Explicitly check for AOP_TRUNCATED_PAGE instead of assuming err > 0
-   means retry (hch)
- - Move mark_page_accessed() and handling of i_size into main copy loop (me)
+generic_file_buffered_read_readpage -> filemap_read_page
+generic_file_buffered_read_pagenotuptodate -> filemap_update_page
+generic_file_buffered_read_no_cached_page -> filemap_create_page
+generic_file_buffered_read_get_pages -> filemap_get_pages
 
-Christoph Hellwig (2):
-  mm/filemap: Rename generic_file_buffered_read to filemap_read
-  mm/filemap: Simplify generic_file_read_iter
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Kent Overstreet <kent.overstreet@gmail.com>
+---
+ mm/filemap.c | 44 +++++++++++++++-----------------------------
+ 1 file changed, 15 insertions(+), 29 deletions(-)
 
-Matthew Wilcox (Oracle) (16):
-  mm/filemap: Rename generic_file_buffered_read subfunctions
-  mm/filemap: Remove dynamically allocated array from filemap_read
-  mm/filemap: Convert filemap_get_pages to take a pagevec
-  mm/filemap: Use THPs in generic_file_buffered_read
-  mm/filemap: Pass a sleep state to put_and_wait_on_page_locked
-  mm/filemap: Support readpage splitting a page
-  mm/filemap: Inline __wait_on_page_locked_async into caller
-  mm/filemap: Don't call ->readpage if IOCB_WAITQ is set
-  mm/filemap: Change filemap_read_page calling conventions
-  mm/filemap: Change filemap_create_page calling conventions
-  mm/filemap: Convert filemap_update_page to return an errno
-  mm/filemap: Move the iocb checks into filemap_update_page
-  mm/filemap: Add filemap_range_uptodate
-  mm/filemap: Split filemap_readahead out of filemap_get_pages
-  mm/filemap: Restructure filemap_get_pages
-  mm/filemap: Don't relock the page after calling readpage
-
- fs/btrfs/file.c         |   2 +-
- include/linux/fs.h      |   4 +-
- include/linux/pagemap.h |   3 +-
- mm/filemap.c            | 568 ++++++++++++++++++----------------------
- mm/huge_memory.c        |   4 +-
- mm/migrate.c            |   4 +-
- 6 files changed, 270 insertions(+), 315 deletions(-)
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index a68516ddeddc..23e3781b3aef 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2176,11 +2176,8 @@ static int lock_page_for_iocb(struct kiocb *iocb, struct page *page)
+ 		return lock_page_killable(page);
+ }
+ 
+-static struct page *
+-generic_file_buffered_read_readpage(struct kiocb *iocb,
+-				    struct file *filp,
+-				    struct address_space *mapping,
+-				    struct page *page)
++static struct page *filemap_read_page(struct kiocb *iocb, struct file *filp,
++		struct address_space *mapping, struct page *page)
+ {
+ 	struct file_ra_state *ra = &filp->f_ra;
+ 	int error;
+@@ -2231,12 +2228,9 @@ generic_file_buffered_read_readpage(struct kiocb *iocb,
+ 	return page;
+ }
+ 
+-static struct page *
+-generic_file_buffered_read_pagenotuptodate(struct kiocb *iocb,
+-					   struct file *filp,
+-					   struct iov_iter *iter,
+-					   struct page *page,
+-					   loff_t pos, loff_t count)
++static struct page *filemap_update_page(struct kiocb *iocb, struct file *filp,
++		struct iov_iter *iter, struct page *page, loff_t pos,
++		loff_t count)
+ {
+ 	struct address_space *mapping = filp->f_mapping;
+ 	struct inode *inode = mapping->host;
+@@ -2299,12 +2293,11 @@ generic_file_buffered_read_pagenotuptodate(struct kiocb *iocb,
+ 		return page;
+ 	}
+ 
+-	return generic_file_buffered_read_readpage(iocb, filp, mapping, page);
++	return filemap_read_page(iocb, filp, mapping, page);
+ }
+ 
+-static struct page *
+-generic_file_buffered_read_no_cached_page(struct kiocb *iocb,
+-					  struct iov_iter *iter)
++static struct page *filemap_create_page(struct kiocb *iocb,
++		struct iov_iter *iter)
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
+@@ -2315,10 +2308,6 @@ generic_file_buffered_read_no_cached_page(struct kiocb *iocb,
+ 	if (iocb->ki_flags & IOCB_NOIO)
+ 		return ERR_PTR(-EAGAIN);
+ 
+-	/*
+-	 * Ok, it wasn't cached, so we need to create a new
+-	 * page..
+-	 */
+ 	page = page_cache_alloc(mapping);
+ 	if (!page)
+ 		return ERR_PTR(-ENOMEM);
+@@ -2330,13 +2319,11 @@ generic_file_buffered_read_no_cached_page(struct kiocb *iocb,
+ 		return error != -EEXIST ? ERR_PTR(error) : NULL;
+ 	}
+ 
+-	return generic_file_buffered_read_readpage(iocb, filp, mapping, page);
++	return filemap_read_page(iocb, filp, mapping, page);
+ }
+ 
+-static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
+-						struct iov_iter *iter,
+-						struct page **pages,
+-						unsigned int nr)
++static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
++		struct page **pages, unsigned int nr)
+ {
+ 	struct file *filp = iocb->ki_filp;
+ 	struct address_space *mapping = filp->f_mapping;
+@@ -2363,7 +2350,7 @@ static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
+ 	if (nr_got)
+ 		goto got_pages;
+ 
+-	pages[0] = generic_file_buffered_read_no_cached_page(iocb, iter);
++	pages[0] = filemap_create_page(iocb, iter);
+ 	err = PTR_ERR_OR_ZERO(pages[0]);
+ 	if (!IS_ERR_OR_NULL(pages[0]))
+ 		nr_got = 1;
+@@ -2397,8 +2384,8 @@ static int generic_file_buffered_read_get_pages(struct kiocb *iocb,
+ 				break;
+ 			}
+ 
+-			page = generic_file_buffered_read_pagenotuptodate(iocb,
+-					filp, iter, page, pg_pos, pg_count);
++			page = filemap_update_page(iocb, filp, iter, page,
++					pg_pos, pg_count);
+ 			if (IS_ERR_OR_NULL(page)) {
+ 				for (j = i + 1; j < nr_got; j++)
+ 					put_page(pages[j]);
+@@ -2474,8 +2461,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+ 			iocb->ki_flags |= IOCB_NOWAIT;
+ 
+ 		i = 0;
+-		pg_nr = generic_file_buffered_read_get_pages(iocb, iter,
+-							     pages, nr_pages);
++		pg_nr = filemap_get_pages(iocb, iter, pages, nr_pages);
+ 		if (pg_nr < 0) {
+ 			error = pg_nr;
+ 			break;
 -- 
 2.28.0
 
