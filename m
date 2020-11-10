@@ -2,221 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7B92ADEFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 20:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3B752ADF2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 20:18:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbgKJTB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 14:01:26 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:48398 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731407AbgKJTB0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 14:01:26 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AAIjUYv114259;
-        Tue, 10 Nov 2020 19:01:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=WomUBXYcW3MMo/wHNQjAX9ECCs2k7NsK3RibhhVDtME=;
- b=kL6IFyAV43t1jfI1lqXnYbcXk1BZVtyz14NZTq0zKXwQj5E+SyoBlH6IQji4WR8eV3IE
- vgqsb7TlyzJmy9YwhZdhBymBw4nm1pEgt6MRyWKaeY49adm/iOmxc4Ek1V/LfSKZ7/XJ
- 1QFJkGrwXUJirxhaNW03GuxiZ/jU2R1hLxUL74buftrsmDdLH8d+d+vJGL4XsHK2VbCH
- h3ib5RTP/zD8GGo8PTYK+iBhlBNBoPwOTQ896z5q5my2zR4HO+Cz6+qUmWerRYibTOdW
- ES17xpy1XK6yLts8hPmHt3zLV7/prDVoCY5CijKJkSj7l9KY6Yvu4J+716xyhxKsJvOo Dw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 34p72ekhd3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Nov 2020 19:01:17 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AAIjCnW145273;
-        Tue, 10 Nov 2020 19:01:12 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 34p55p0jg2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Nov 2020 19:01:12 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0AAJ18OA018935;
-        Tue, 10 Nov 2020 19:01:08 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Nov 2020 11:01:08 -0800
-Date:   Tue, 10 Nov 2020 11:01:03 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
-Message-ID: <20201110190103.GE9685@magnolia>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
- <20201110185506.GD9685@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201110185506.GD9685@magnolia>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=1
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011100129
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9801 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 suspectscore=1 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011100129
+        id S1730894AbgKJTSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 14:18:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56916 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbgKJTSn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 10 Nov 2020 14:18:43 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3D512054F;
+        Tue, 10 Nov 2020 19:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605035923;
+        bh=QyaQj8nTAcAePgBxv8GT7EUTzLqnjFIqlPDgD7W/gko=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SXutxCxmOb4O7uW0nfSaG1esxskxJHgmpeYeSOOdlK9bujKeiUkijwgWvglSsfH0h
+         0UwJokCJsFTeHzDyS9tjtVxZEGXnYqzVLL2tQiOYsSse7EbDhsIVYigP4j4vK0GN2u
+         7zR074kr/3rwJbZkU/7M7V3lLz8Fw8aV1K2BKEj4=
+Date:   Tue, 10 Nov 2020 11:18:42 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Yicong Yang <yangyicong@hisilicon.com>
+Cc:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <akinobu.mita@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <prime.zeng@huawei.com>
+Subject: Re: [RESEND PATCH] libfs: fix error cast of negative value in
+ simple_attr_write()
+Message-Id: <20201110111842.1bc76e9def94279d4453ff67@linux-foundation.org>
+In-Reply-To: <1605000324-7428-1-git-send-email-yangyicong@hisilicon.com>
+References: <1605000324-7428-1-git-send-email-yangyicong@hisilicon.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 10:55:06AM -0800, Darrick J. Wong wrote:
-> On Tue, Nov 10, 2020 at 08:26:05PM +0900, Naohiro Aota wrote:
-> > A ZONE_APPEND bio must follow hardware restrictions (e.g. not exceeding
-> > max_zone_append_sectors) not to be split. bio_iov_iter_get_pages builds
-> > such restricted bio using __bio_iov_append_get_pages if bio_op(bio) ==
-> > REQ_OP_ZONE_APPEND.
-> > 
-> > To utilize it, we need to set the bio_op before calling
-> > bio_iov_iter_get_pages(). This commit introduces IOMAP_F_ZONE_APPEND, so
-> > that iomap user can set the flag to indicate they want REQ_OP_ZONE_APPEND
-> > and restricted bio.
-> > 
-> > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > ---
-> >  fs/iomap/direct-io.c  | 41 +++++++++++++++++++++++++++++++++++------
-> >  include/linux/iomap.h |  1 +
-> >  2 files changed, 36 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index c1aafb2ab990..f04572a55a09 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -200,6 +200,34 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
-> >  	iomap_dio_submit_bio(dio, iomap, bio, pos);
-> >  }
-> >  
-> > +/*
-> > + * Figure out the bio's operation flags from the dio request, the
-> > + * mapping, and whether or not we want FUA.  Note that we can end up
-> > + * clearing the WRITE_FUA flag in the dio request.
-> > + */
-> > +static inline unsigned int
-> > +iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
-> 
-> Hmm, just to check my understanding of what iomap has to do to support
-> all this:
-> 
-> When we're wanting to use a ZONE_APPEND command, the @iomap structure
-> has to have IOMAP_F_ZONE_APPEND set in iomap->flags, iomap->type is set
-> to IOMAP_MAPPED, but what should iomap->addr be set to?
-> 
-> I gather from what I see in zonefs and the relevant NVME proposal that
-> iomap->addr should be set to the (byte) address of the zone we want to
-> append to?  And if we do that, then bio->bi_iter.bi_sector will be set
-> to sector address of iomap->addr, right?
-> 
-> (I got lost trying to figure out how btrfs sets ->addr for appends.)
-> 
-> Then when the IO completes, the block layer sets bio->bi_iter.bi_sector
-> to wherever the drive told it that it actually wrote the bio, right?
-> 
-> If that's true, then that implies that need_zeroout must always be false
-> for an append operation, right?  Does that also mean that the directio
-> request has to be aligned to an fs block and not just the sector size?
-> 
-> Can userspace send a directio append that crosses a zone boundary?  If
-> so, what happens if a direct append to a lower address fails but a
-> direct append to a higher address succeeds?
+On Tue, 10 Nov 2020 17:25:24 +0800 Yicong Yang <yangyicong@hisilicon.com> wrote:
 
-Bleh, vim tomfoolery == missing sentence.  Change the above paragraph to
-read:
+> The attr->set() receive a value of u64, but simple_strtoll() is used
+> for doing the conversion. It will lead to the error cast if user inputs
+> a negative value.
+> 
+> Use kstrtoull() instead of simple_strtoll() to convert a string got
+> from the user to an unsigned value. The former will return '-EINVAL' if
+> it gets a negetive value, but the latter can't handle the situation
+> correctly.
+> 
+> ...
+>
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -977,7 +977,9 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+>  		goto out;
+>  
+>  	attr->set_buf[size] = '\0';
+> -	val = simple_strtoll(attr->set_buf, NULL, 0);
+> +	ret = kstrtoull(attr->set_buf, 0, &val);
+> +	if (ret)
+> +		goto out;
+>  	ret = attr->set(attr->data, val);
+>  	if (ret == 0)
+>  		ret = len; /* on success, claim we got the whole input */
 
-Can userspace send a directio append that crosses a zone boundary?  Can
-we issue multiple bios for a single append write?  What happens if a
-direct append to a lower address fails but a direct append to a higher
-address succeeds?
+kstrtoull() takes an `unsigned long long *', but `val' is a u64.
 
---D
+I think this probably works OK on all architectures (ie, no 64-bit
+architectures are using `unsigned long' for u64).  But perhaps `val'
+should have type `unsigned long long'?
 
-> > +{
-> > +	unsigned int opflags = REQ_SYNC | REQ_IDLE;
-> > +
-> > +	if (!(dio->flags & IOMAP_DIO_WRITE)) {
-> > +		WARN_ON_ONCE(iomap->flags & IOMAP_F_ZONE_APPEND);
-> > +		return REQ_OP_READ;
-> > +	}
-> > +
-> > +	if (iomap->flags & IOMAP_F_ZONE_APPEND)
-> > +		opflags |= REQ_OP_ZONE_APPEND;
-> > +	else
-> > +		opflags |= REQ_OP_WRITE;
-> > +
-> > +	if (use_fua)
-> > +		opflags |= REQ_FUA;
-> > +	else
-> > +		dio->flags &= ~IOMAP_DIO_WRITE_FUA;
-> > +
-> > +	return opflags;
-> > +}
-> > +
-> >  static loff_t
-> >  iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
-> >  		struct iomap_dio *dio, struct iomap *iomap)
-> > @@ -278,6 +306,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
-> >  		bio->bi_private = dio;
-> >  		bio->bi_end_io = iomap_dio_bio_end_io;
-> >  
-> > +		/*
-> > +		 * Set the operation flags early so that bio_iov_iter_get_pages
-> > +		 * can set up the page vector appropriately for a ZONE_APPEND
-> > +		 * operation.
-> > +		 */
-> > +		bio->bi_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
-> 
-> I'm also vaguely wondering how to communicate the write location back to
-> the filesystem when the bio completes?  btrfs handles the bio completion
-> completely so it doesn't have a problem, but for other filesystems
-> (cough future xfs cough) either we'd have to add a new callback for
-> append operations; or I guess everyone could hook the bio endio.
-> 
-> Admittedly that's not really your problem, and for all I know hch is
-> already working on this.
-> 
-> --D
-> 
-> > +
-> >  		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
-> >  		if (unlikely(ret)) {
-> >  			/*
-> > @@ -292,14 +327,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
-> >  
-> >  		n = bio->bi_iter.bi_size;
-> >  		if (dio->flags & IOMAP_DIO_WRITE) {
-> > -			bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
-> > -			if (use_fua)
-> > -				bio->bi_opf |= REQ_FUA;
-> > -			else
-> > -				dio->flags &= ~IOMAP_DIO_WRITE_FUA;
-> >  			task_io_account_write(n);
-> >  		} else {
-> > -			bio->bi_opf = REQ_OP_READ;
-> >  			if (dio->flags & IOMAP_DIO_DIRTY)
-> >  				bio_set_pages_dirty(bio);
-> >  		}
-> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > index 4d1d3c3469e9..1bccd1880d0d 100644
-> > --- a/include/linux/iomap.h
-> > +++ b/include/linux/iomap.h
-> > @@ -54,6 +54,7 @@ struct vm_fault;
-> >  #define IOMAP_F_SHARED		0x04
-> >  #define IOMAP_F_MERGED		0x08
-> >  #define IOMAP_F_BUFFER_HEAD	0x10
-> > +#define IOMAP_F_ZONE_APPEND	0x20
-> >  
-> >  /*
-> >   * Flags set by the core iomap code during operations:
-> > -- 
-> > 2.27.0
-> > 
