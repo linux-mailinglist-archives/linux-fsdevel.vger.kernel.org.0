@@ -2,507 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 006652AD4E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:28:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 982942AD4E1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 12:28:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbgKJL2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 06:28:09 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:11932 "EHLO
+        id S1729679AbgKJL2H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 06:28:07 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:11933 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727731AbgKJL2F (ORCPT
+        with ESMTP id S1729772AbgKJL2G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 06:28:05 -0500
+        Tue, 10 Nov 2020 06:28:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1605007683; x=1636543683;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2sGQvOyzZvMlFC5/QhIOPQlqQcPJQ9Ly32nla/AgVsA=;
-  b=T8vBrp3G+UUqxSxM148DS9vZ8l8O0eXERO66Ks//avIFPpXdBmdCQWbN
-   EjLQ8aXtUMT75Z5M+CoLw5zZJ1QxNTSX6fu+Kl/h77aV9H7+w3SMX37fK
-   R9xSqdWD4Or4ecIOl9usMSjxKUYOKWa2pFCH+xohmPnqZQasI1XGC4emY
-   rOVD0BBIuH9RH1Kw86B0WU9JgZC5b7KRaf+4KWqiNc6Io3OzTPfuxaBTT
-   Tm5q4fh4cmV6PeeuzlL7jRq7TWu0B0CXWT5ACCLxmM9sEi8419xrZsyTp
-   PVXYBxy4SC4m/mp7w+PngtgH+WLu9+OCQxvJf4CjrABK4E7hAcQcbb5k0
-   w==;
-IronPort-SDR: z97JWDpJlH5gFkTVZVxPYHmWWayAzUc9EKG6IGP9hD63mwUcrR6j9rxs8UQeRY2m5Y5NyT1V9N
- 4K5PtdBz28ua9TnpVtB5IBMi4ZftCTQq7++94HAHqvf64PJQ0X6A/FP9RpkB0F7xn4DGuupq31
- Ync29WL41JTf6g2Tsf0zY/tVenBCXTT8K4rE3IgFKIFHMqxAeOU7Z0oVf2SDnD5r+FBDL3IoUx
- x08puyzbiXXNDQOX8n4mwSrjjyE9cenuL6AXqdOZ05NH0daWK8FI87a7v+mGcLyJMm+D6LuGT0
- tn8=
+  t=1605007685; x=1636543685;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BuRFMbf+ahickXV6NT593M5CLgBwFnCrpXMYcWjKFAM=;
+  b=HHl1qV5DTGWW6CMwx+X+TqhjQRsKDyEnO1ecNUpGdWZs9C3MKa9dhQoo
+   sVFt2QDDV9SG04jklXl9W7orvWDWle3kp2U6up/06ZCgtsbWZohQAuGij
+   H0Lg+qEIYEg5cN3ewyAX4eil2hRLUECMmmQ5iVTCLWKgg8dQsZmtED4eO
+   2COuMNARmgS1DdxFLXVmka4WuA83ev21+uz4ozdguUv2xYJGEowIxMG22
+   G33aslcn49qDzk9kGgdbHyKWLNBEOCN2KqLYZAQPmnWztY+wPHN31rX+w
+   RXx/Jjd4THdGLgnoG5qz/riSoBGHQMjnhpiqKond28sfuqGVkukM4i4z4
+   g==;
+IronPort-SDR: f1wjh3C4aRlXuh2ieCU6DBi2L6dbDqq27ZoUbt9pa+BcrPsX1it0rS8z6KCyaNzQpxDGn/CEr9
+ fXeoMq1oDo4TrHO8Zvl5NE0LNIyYVGcvECrfJyZMCOsv7ir7e05L5hyaQl2GlOb15AZVyDtMga
+ aYtL0ZuJju2Qg+LKFdfWBem1SezcISzeBruDtXuYqnGo9lZvJNIDoYMay+WTYsNwOj/xdziPcD
+ 1hSPAs3ulAFjWrO4SAhspuhYH3SvsOnb9Uvy3xPM7OqMiqgMuZj7WtoZ1QqaJJzGlggOq9s9zr
+ LVc=
 X-IronPort-AV: E=Sophos;i="5.77,466,1596470400"; 
-   d="scan'208";a="152376407"
+   d="scan'208";a="152376409"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:28:03 +0800
-IronPort-SDR: OOh/vWUFlFo6J2ox/BdiUmIaD7m2OPO37VrRXtsmTSvgBqL5fuRMbp+WPHQdnBA7ofNyemSsuN
- bYmWbf0TMJEaNEZLKN+V2ElqtIkwfe4aQBwtPmBIitzzfE6dzaccS6++vrMGeaYlwXzA9O974d
- jD/0ji6OLWnym5AtRAp+Pyt81UrpH5ZrtW5sZ3P7SQRkzpa1tfLaGT37wbD9a3vVrqGX2YK8FK
- mU8Y+Nw3MlkJsDB44A/OuDPGG77cNtQ/95e4JAuavux5wVXN+8ByaQYsY20u43j33GjYor/V19
- oF1SaxC6X/OV1W3qCraljI9j
+  by ob1.hgst.iphmx.com with ESMTP; 10 Nov 2020 19:28:05 +0800
+IronPort-SDR: ae5CWyyuLvH0bNoQZn09RNCV5PfrhrdK7182PdqR5OGAS7Aa0BzQIARri/1vtYmoMAelmPh5GT
+ wFvbbIioXV1OlqI0OKZSf8LCKIhxqLS6CJ94zDaiSZIKKDuviDH3UqYa3eDEf4GubCLT2G5yhZ
+ n3SxsDJkMqG7Sry8nHPpyNl8chT3s6ldyaoTFx7nzFYYMQ7GPoVtcggK5jCeFF4Tjly6QE4cv4
+ Jt1wrif+nccL57eZ2fSX5FZp1ciKBDERDjaIKRgUeL+6V0/UM2x5mPYy5PtN1XOIsQMA2VZGlW
+ YhuPhIfjgmBn4fcCqfX7IXmc
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:14:04 -0800
-IronPort-SDR: 9aFqwn9bckaCIdC/Y0Lin9lBaVmYPqUBI3Vof6hntyAsB9VB8SGO/RFDBhddULZ66AlwkZfU1T
- VPV7yVa0zYEwOrqVztvWg8cEfIxSnb03yXhBo0cDbW7twZBVZCHYTc79IFrQzKSsO18BKLIFmF
- ISJgaRNrMPUPFY2EVIo+BvhkYupZ44uDIHEXblZCQ1TjMJLqfx92KK3EPEcUk1MlB0JJcXnHY6
- ApKI4DaZkdImOS1YgZzdqUpxPQeiHltYS54nYZRj8GpBFvuAxo4P9NJjjb2HW0nf/h0fl9f09L
- y58=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 03:14:06 -0800
+IronPort-SDR: tw16f9TXcwu7AadHvvBEUstkeljEO2GSMLkNdJjpJ0enwCGlG1rFFEHdz2fiKLCHHpuVc+pkk+
+ qCkVMkHezCXMRQpuSVfiSejc1/W6rxAWHZLMMhyDfdN7qps11mM1So3WZzURbu9j9OdA6W5glw
+ GWb8DzvIb0mIb60XjhwIY9CywY77TK8A4DvLj9ovg3oxAfMy3ojAoXDHVBH4b0bKHsSVZ3yuCt
+ 3s8ZL722HMXdKVTmNsUtLByHrpSWXxxK/dOOouIFQdSpMjmbxVvYaXc88uGDbAaFss+37yYYtt
+ +BI=
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:28:02 -0800
+  by uls-op-cesaip01.wdc.com with ESMTP; 10 Nov 2020 03:28:04 -0800
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, dsterba@suse.com
 Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v10 00/41] btrfs: zoned block device support
-Date:   Tue, 10 Nov 2020 20:26:03 +0900
-Message-Id: <cover.1605007036.git.naohiro.aota@wdc.com>
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v10 01/41] block: add bio_add_zone_append_page
+Date:   Tue, 10 Nov 2020 20:26:04 +0900
+Message-Id: <01fbaba7b2f2404489b5779e1719ebf3d062aadc.1605007036.git.naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <cover.1605007036.git.naohiro.aota@wdc.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This series adds zoned block device support to btrfs.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-This series is also available on github.
-Kernel   https://github.com/naota/linux/tree/btrfs-zoned-v10
-Userland https://github.com/naota/btrfs-progs/tree/btrfs-zoned
-xfstests https://github.com/naota/fstests/tree/btrfs-zoned
+Add bio_add_zone_append_page(), a wrapper around bio_add_hw_page() which
+is intended to be used by file systems that directly add pages to a bio
+instead of using bio_iov_iter_get_pages().
 
-Userland tool depends on patched util-linux (libblkid and wipefs) to handle
-log-structured superblock. To ease the testing, pre-compiled static linked
-userland tools are available here:
-https://wdc.app.box.com/s/fnhqsb3otrvgkstq66o6bvdw6tk525kp
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ block/bio.c         | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/bio.h |  2 ++
+ 2 files changed, 40 insertions(+)
 
-This v10 still leaves the following issues left for later fix. But, the
-first part of the series should be good shape to be merged.
-- Bio submission path & splitting an ordered extent
-- Redirtying freed tree blocks
-  - Switch to keeping it dirty
-    - Not working correctly for now
-- Dedicated tree-log block group
-  - We need tree-log for zoned device
-    - Dbench (32 clients) is 85% slower with "-o notreelog"
-  - Need to separate tree-log block group from other metadata space_info
-- Relocation
-  - Use normal write command for relocation
-  - Relocated device extents must be reset
-    - It should be discarded on regular btrfs too though
-
-Changes from v9:
-  - Extract iomap_dio_bio_opflags() to set the proper bi_opf flag
-  - write pointer emulation
-    - Rewrite using btrfs_previous_extent_item()
-    - Convert ASSERT() to runtime check
-  - Exclude regular superblock positions
-  - Fix an error on writing to conventional zones
-  - Take the transaction lock in mark_block_group_to_copy()
-  - Rename 'hmzoned_devices' to 'zoned_devices' in btrfs_check_zoned_mode()
-  - Add do_discard_extent() helper
-  - Move zoned check into fetch_cluster_info()
-  - Drop setting bdev to bio in btrfs_bio_add_page() (will fix later once
-    we support multiple devices)
-  - Subtract bytes_zone_unusable properly when removing a block group
-  - Add "struct block_device *bdev" directly to btrfs_rmap_block()
-  - Rename btrfs_zone_align to btrfs_align_offset_to_zone
-  - Add comment to use pr_info in place of btrfs_info
-  - Add comment for superblock log zones
-  - Fix coding style
-  - Fix typos
-
-btrfs-progs and xfstests series will follow.
-
-This version of ZONED btrfs switched from normal write command to zone
-append write command. You do not need to specify LBA (at the write pointer)
-to write for zone append write command. Instead, you only select a zone to
-write with its start LBA. Then the device (NVMe ZNS), or the emulation of
-zone append command in the sd driver in the case of SAS or SATA HDDs,
-automatically writes the data at the write pointer position and return the
-written LBA as a command reply.
-
-The benefit of using the zone append write command is that write command
-issuing order does not matter. So, we can eliminate block group lock and
-utilize asynchronous checksum, which can reorder the IOs.
-
-Eliminating the lock improves performance. In particular, on a workload
-with massive competing to the same zone [1], we observed 36% performance
-improvement compared to normal write.
-
-[1] Fio running 16 jobs with 4KB random writes for 5 minutes
-
-However, there are some limitations. We cannot use the non-SINGLE profile.
-Supporting non-SINGLE profile with zone append writing is not trivial. For
-example, in the DUP profile, we send a zone append writing IO to two zones
-on a device. The device reply with written LBAs for the IOs. If the offsets
-of the returned addresses from the beginning of the zone are different,
-then it results in different logical addresses.
-
-For the same reason, we cannot issue multiple IOs for one ordered extent.
-Thus, the size of an ordered extent is limited under max_zone_append_size.
-This limitation will cause fragmentation and increased usage of metadata.
-In the future, we can add optimization to merge ordered extents after
-end_bio.
-
-* Patch series description
-
-A zoned block device consists of a number of zones. Zones are either
-conventional and accepting random writes or sequential and requiring
-that writes be issued in LBA order from each zone write pointer
-position. This patch series ensures that the sequential write
-constraint of sequential zones is respected while fundamentally not
-changing BtrFS block and I/O management for block stored in
-conventional zones.
-
-To achieve this, the default chunk size of btrfs is changed on zoned
-block devices so that chunks are always aligned to a zone. Allocation
-of blocks within a chunk is changed so that the allocation is always
-sequential from the beginning of the chunks. To do so, an allocation
-pointer is added to block groups and used as the allocation hint.  The
-allocation changes also ensure that blocks freed below the allocation
-pointer are ignored, resulting in sequential block allocation
-regardless of the chunk usage.
-
-The zone of a chunk is reset to allow reuse of the zone only when the
-block group is being freed, that is, when all the chunks of the block
-group are unused.
-
-For btrfs volumes composed of multiple zoned disks, a restriction is
-added to ensure that all disks have the same zone size. This
-restriction matches the existing constraint that all chunks in a block
-group must have the same size.
-
-* Enabling tree-log
-
-The tree-log feature does not work on ZONED mode as is. Blocks for a
-tree-log tree are allocated mixed with other metadata blocks, and btrfs
-writes and syncs the tree-log blocks to devices at the time of fsync(),
-which is different timing than a global transaction commit. As a result,
-both writing tree-log blocks and writing other metadata blocks become
-non-sequential writes which ZONED mode must avoid.
-
-This series introduces a dedicated block group for tree-log blocks to
-create two metadata writing streams, one for tree-log blocks and the
-other for metadata blocks. As a result, each write stream can now be
-written to devices separately and sequentially.
-
-* Log-structured superblock
-
-Superblock (and its copies) is the only data structure in btrfs which
-has a fixed location on a device. Since we cannot overwrite in a
-sequential write required zone, we cannot place superblock in the
-zone.
-
-This series implements superblock log writing. It uses two zones as a
-circular buffer to write updated superblocks. Once the first zone is filled
-up, start writing into the second zone. The first zone will be reset once
-both zones are filled. We can determine the postion of the latest
-superblock by reading the write pointer information from a device.
-
-* Patch series organization
-
-Patches 1 and 2 are preparing patches for block and iomap layer.
-
-Patch 3 introduces the ZONED incompatible feature flag to indicate that the
-btrfs volume was formatted for use on zoned block devices.
-
-Patches 4 to 6 implement functions to gather information on the zones of
-the device (zones type, write pointer position, and max_zone_append_size).
-
-Patches 7 to 10 disable features which are not compatible with the
-sequential write constraints of zoned block devices. These includes
-space_cache, NODATACOW, fallocate, and MIXED_BG.
-
-Patch 11 implements the log-structured superblock writing.
-
-Patches 12 and 13 tweak the device extent allocation for ZONED mode and add
-verification to check if a device extent is properly aligned to zones.
-
-Patches 14 to 17 implements sequential block allocator for ZONED mode.
-
-Patch 18 implement a zone reset for unused block groups.
-
-Patches 19 to 30 implement the writing path for several types of IO
-(non-compressed data, direct IO, and metadata). These include re-dirtying
-once-freed metadata blocks to prevent write holes.
-
-Patches 31 to 40 tweak some btrfs features work with ZONED mode. These
-include device-replace, relocation, repairing IO error, and tree-log.
-
-Finally, patch 41 adds the ZONED feature to the list of supported features.
-
-* Patch testing note
-
-** Zone-aware util-linux
-
-Since the log-structured superblock feature changed the location of
-superblock magic, the current util-linux (libblkid) cannot detect ZONED
-btrfs anymore. You need to apply a to-be posted patch to util-linux to make
-it "zone aware".
-
-** Testing device
-
-You need devices with zone append writing command support to run ZONED
-btrfs.
-
-Other than real devices, null_blk supports zone append write command. You
-can use memory backed null_blk to run the test on it. Following script
-creates 12800 MB /dev/nullb0.
-
-    sysfs=/sys/kernel/config/nullb/nullb0
-    size=12800 # MB
-    
-    # drop nullb0
-    if [[ -d $sysfs ]]; then
-            echo 0 > "${sysfs}"/power
-            rmdir $sysfs
-    fi
-    lsmod | grep -q null_blk && rmmod null_blk
-    modprobe null_blk nr_devices=0
-    
-    mkdir "${sysfs}"
-    
-    echo "${size}" > "${sysfs}"/size
-    echo 1 > "${sysfs}"/zoned
-    echo 0 > "${sysfs}"/zone_nr_conv
-    echo 1 > "${sysfs}"/memory_backed
-    
-    echo 1 > "${sysfs}"/power
-    udevadm settle
-
-Zoned SCSI devices such as SMR HDDs or scsi_debug also support the zone
-append command as an emulated command within the SCSI sd driver. This
-emulation is completely transparent to the user and provides the same
-semantic as a NVMe ZNS native drive support.
-
-Also, there is a qemu patch available to enable NVMe ZNS device.
-
-** xfstests
-
-We ran xfstests on ZONED btrfs, and, if we omit some cases that are known
-to fail currently, all test cases pass.
-
-Cases that can be ignored:
-1) failing also with the regular btrfs on regular devices,
-2) trying to test fallocate feature without testing with
-   "_require_xfs_io_command "falloc"",
-3) trying to test incompatible features for ZONED btrfs (e.g. RAID5/6)
-4) trying to use incompatible setup for ZONED btrfs (e.g. dm-linear not
-   aligned to zone boundary, swap)
-5) trying to create a file system with too small size, (we require at least
-   9 zones to initiate a ZONED btrfs)
-6) dropping original MKFS_OPTIONS ("-O zoned"), so it cannot create ZONED
-   btrfs (btrfs/003)
-7) having ENOSPC which incurred by larger metadata block group size
-
-I will send a patch series for xfstests to handle these cases (2-6)
-properly.
-
-Patched xfstests is available here:
-
-https://github.com/naota/fstests/tree/btrfs-zoned
-
-Also, you need to apply the following patch if you run xfstests with
-tcmu devices. xfstests btrfs/003 failed to "_devmgt_add" after
-"_devmgt_remove" without this patch.
-
-https://marc.info/?l=linux-scsi&m=156498625421698&w=2
-
-v9 https://lore.kernel.org/linux-btrfs/cover.1604065156.git.naohiro.aota@wdc.com/
-v8 https://lore.kernel.org/linux-btrfs/cover.1601572459.git.naohiro.aota@wdc.com/
-v7 https://lore.kernel.org/linux-btrfs/20200911123259.3782926-1-naohiro.aota@wdc.com/
-v6 https://lore.kernel.org/linux-btrfs/20191213040915.3502922-1-naohiro.aota@wdc.com/
-v5 https://lore.kernel.org/linux-btrfs/20191204082513.857320-1-naohiro.aota@wdc.com/
-v4 https://lwn.net/Articles/797061/
-v3 https://lore.kernel.org/linux-btrfs/20190808093038.4163421-1-naohiro.aota@wdc.com/
-v2 https://lore.kernel.org/linux-btrfs/20190607131025.31996-1-naohiro.aota@wdc.com/
-v1 https://lore.kernel.org/linux-btrfs/20180809180450.5091-1-naota@elisp.net/
-
-Changelog
-v9
- - Direct-IO path now follow several hardware restrictions (other than
-   max_zone_append_size) by using ZONE_APPEND support of iomap
- - introduces union of fs_info->zone_size and fs_info->zoned [Johannes]
-   - and use btrfs_is_zoned(fs_info) in place of btrfs_fs_incompat(fs_info, ZONED)
- - print if zoned is enabled or not when printing module info [Johannes]
- - drop patch of disabling inode_cache on ZONED
- - moved for_teelog flag to a proper location [Johannes]
- - Code style fixes [Johannes]
- - Add comment about adding physical layer things to ordered extent
-   structure
- - Pass file_offset explicitly to extract_ordered_extent() instead of
-   determining it from bio
- - Bug fixes
-   - write out fsync region so that the logical address of ordered extents
-     and checksums are properly finalized
-   - free zone_info at umount time
-   - fix superblock log handling when entering zones[1] in the first time
-   - fixes double free of log-tree roots [Johannes] 
-   - Drop erroneous ASSERT in do_allocation_zoned()
-v8
- - Use bio_add_hw_page() to build up bio to honor hardware restrictions
-   - add bio_add_zone_append_page() as a wrapper of the function
- - Split file extent on submitting bio
-   - If bio_add_zone_append_page() fails, split the file extent and send
-     out bio
-   - so, we can ensure one bio == one file extent
- - Fix build bot issues
- - Rebased on misc-next
-v7:
- - Use zone append write command instead of normal write command
-   - Bio issuing order does not matter
-   - No need to use lock anymore
-   - Can use asynchronous checksum
- - Removed RAID support for now
- - Rename HMZONED to ZONED
- - Split some patches
- - Rebased on kdave/for-5.9-rc3 + iomap direct IO
-v6:
- - Use bitmap helpers (Johannes)
- - Code cleanup (Johannes)
- - Rebased on kdave/for-5.5
- - Enable the tree-log feature.
- - Treat conventional zones as sequential zones, so we can now allow
-   mixed allocation of conventional zone and sequential write required
-   zone to construct a block group.
- - Implement log-structured superblock
-   - No need for one conventional zone at the beginning of a device.
- - Fix deadlock of direct IO writing
- - Fix building with !CONFIG_BLK_DEV_ZONED (Johannes)
- - Fix leak of zone_info (Johannes)
-v5:
- - Rebased on kdave/for-5.5
- - Enable the tree-log feature.
- - Treat conventional zones as sequential zones, so we can now allow
-   mixed allocation of conventional zone and sequential write required
-   zone to construct a block group.
- - Implement log-structured superblock
-   - No need for one conventional zone at the beginning of a device.
- - Fix deadlock of direct IO writing
- - Fix building with !CONFIG_BLK_DEV_ZONED (Johannes)
- - Fix leak of zone_info (Johannes)
-v4:
- - Move memory allcation of zone informattion out of
-   btrfs_get_dev_zones() (Anand)
- - Add disabled features table in commit log (Anand)
- - Ensure "max_chunk_size >= devs_min * data_stripes * zone_size"
-v3:
- - Serialize allocation and submit_bio instead of bio buffering in
-   btrfs_map_bio().
- -- Disable async checksum/submit in HMZONED mode
- - Introduce helper functions and hmzoned.c/h (Josef, David)
- - Add support for repairing IO failure
- - Add support for NOCOW direct IO write (Josef)
- - Disable preallocation entirely
- -- Disable INODE_MAP_CACHE
- -- relocation is reworked not to rely on preallocation in HMZONED mode
- - Disable NODATACOW
- -Disable MIXED_BG
- - Device extent that cover super block position is banned (David)
-v2:
- - Add support for dev-replace
- -- To support dev-replace, moved submit_buffer one layer up. It now
-    handles bio instead of btrfs_bio.
- -- Mark unmirrored Block Group readonly only when there are writable
-    mirrored BGs. Necessary to handle degraded RAID.
- - Expire worker use vanilla delayed_work instead of btrfs's async-thread
- - Device extent allocator now ensure that region is on the same zone type.
- - Add delayed allocation shrinking.
- - Rename btrfs_drop_dev_zonetypes() to btrfs_destroy_dev_zonetypes
- - Fix
- -- Use SECTOR_SHIFT (Nikolay)
- -- Use btrfs_err (Nikolay)
-
-
-Johannes Thumshirn (1):
-  block: add bio_add_zone_append_page
-
-Naohiro Aota (40):
-  iomap: support REQ_OP_ZONE_APPEND
-  btrfs: introduce ZONED feature flag
-  btrfs: get zone information of zoned block devices
-  btrfs: check and enable ZONED mode
-  btrfs: introduce max_zone_append_size
-  btrfs: disallow space_cache in ZONED mode
-  btrfs: disallow NODATACOW in ZONED mode
-  btrfs: disable fallocate in ZONED mode
-  btrfs: disallow mixed-bg in ZONED mode
-  btrfs: implement log-structured superblock for ZONED mode
-  btrfs: implement zoned chunk allocator
-  btrfs: verify device extent is aligned to zone
-  btrfs: load zone's alloction offset
-  btrfs: emulate write pointer for conventional zones
-  btrfs: track unusable bytes for zones
-  btrfs: do sequential extent allocation in ZONED mode
-  btrfs: reset zones of unused block groups
-  btrfs: redirty released extent buffers in ZONED mode
-  btrfs: extract page adding function
-  btrfs: use bio_add_zone_append_page for zoned btrfs
-  btrfs: handle REQ_OP_ZONE_APPEND as writing
-  btrfs: split ordered extent when bio is sent
-  btrfs: extend btrfs_rmap_block for specifying a device
-  btrfs: use ZONE_APPEND write for ZONED btrfs
-  btrfs: enable zone append writing for direct IO
-  btrfs: introduce dedicated data write path for ZONED mode
-  btrfs: serialize meta IOs on ZONED mode
-  btrfs: wait existing extents before truncating
-  btrfs: avoid async metadata checksum on ZONED mode
-  btrfs: mark block groups to copy for device-replace
-  btrfs: implement cloning for ZONED device-replace
-  btrfs: implement copying for ZONED device-replace
-  btrfs: support dev-replace in ZONED mode
-  btrfs: enable relocation in ZONED mode
-  btrfs: relocate block group to repair IO failure in ZONED
-  btrfs: split alloc_log_tree()
-  btrfs: extend zoned allocator to use dedicated tree-log block group
-  btrfs: serialize log transaction on ZONED mode
-  btrfs: reorder log node allocation
-  btrfs: enable to mount ZONED incompat flag
-
- block/bio.c                       |   38 +
- fs/btrfs/Makefile                 |    1 +
- fs/btrfs/block-group.c            |   84 +-
- fs/btrfs/block-group.h            |   18 +-
- fs/btrfs/ctree.h                  |   20 +-
- fs/btrfs/dev-replace.c            |  195 +++++
- fs/btrfs/dev-replace.h            |    3 +
- fs/btrfs/disk-io.c                |   93 ++-
- fs/btrfs/disk-io.h                |    2 +
- fs/btrfs/extent-tree.c            |  218 ++++-
- fs/btrfs/extent_io.c              |  130 ++-
- fs/btrfs/extent_io.h              |    2 +
- fs/btrfs/file.c                   |    6 +-
- fs/btrfs/free-space-cache.c       |   58 ++
- fs/btrfs/free-space-cache.h       |    2 +
- fs/btrfs/inode.c                  |  164 +++-
- fs/btrfs/ioctl.c                  |   13 +
- fs/btrfs/ordered-data.c           |   79 ++
- fs/btrfs/ordered-data.h           |   10 +
- fs/btrfs/relocation.c             |   35 +-
- fs/btrfs/scrub.c                  |  145 ++++
- fs/btrfs/space-info.c             |   13 +-
- fs/btrfs/space-info.h             |    4 +-
- fs/btrfs/super.c                  |   19 +-
- fs/btrfs/sysfs.c                  |    4 +
- fs/btrfs/tests/extent-map-tests.c |    2 +-
- fs/btrfs/transaction.c            |   10 +
- fs/btrfs/transaction.h            |    3 +
- fs/btrfs/tree-log.c               |   52 +-
- fs/btrfs/volumes.c                |  322 +++++++-
- fs/btrfs/volumes.h                |    7 +
- fs/btrfs/zoned.c                  | 1272 +++++++++++++++++++++++++++++
- fs/btrfs/zoned.h                  |  295 +++++++
- fs/iomap/direct-io.c              |   41 +-
- include/linux/bio.h               |    2 +
- include/linux/iomap.h             |    1 +
- include/uapi/linux/btrfs.h        |    1 +
- 37 files changed, 3246 insertions(+), 118 deletions(-)
- create mode 100644 fs/btrfs/zoned.c
- create mode 100644 fs/btrfs/zoned.h
-
+diff --git a/block/bio.c b/block/bio.c
+index 58d765400226..c8943201c26c 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -853,6 +853,44 @@ int bio_add_pc_page(struct request_queue *q, struct bio *bio,
+ }
+ EXPORT_SYMBOL(bio_add_pc_page);
+ 
++/**
++ * bio_add_zone_append_page - attempt to add page to zone-append bio
++ * @bio: destination bio
++ * @page: page to add
++ * @len: vec entry length
++ * @offset: vec entry offset
++ *
++ * Attempt to add a page to the bio_vec maplist of a bio that will be submitted
++ * for a zone-append request. This can fail for a number of reasons, such as the
++ * bio being full or the target block device is not a zoned block device or
++ * other limitations of the target block device. The target block device must
++ * allow bio's up to PAGE_SIZE, so it is always possible to add a single page
++ * to an empty bio.
++ *
++ * Returns: number of bytes added to the bio, or 0 in case of a failure.
++ */
++int bio_add_zone_append_page(struct bio *bio, struct page *page,
++			     unsigned int len, unsigned int offset)
++{
++	struct request_queue *q;
++	bool same_page = false;
++
++	if (WARN_ON_ONCE(bio_op(bio) != REQ_OP_ZONE_APPEND))
++		return 0;
++
++	if (WARN_ON_ONCE(!bio->bi_disk))
++		return 0;
++
++	q = bio->bi_disk->queue;
++
++	if (WARN_ON_ONCE(!blk_queue_is_zoned(q)))
++		return 0;
++
++	return bio_add_hw_page(q, bio, page, len, offset,
++			       queue_max_zone_append_sectors(q), &same_page);
++}
++EXPORT_SYMBOL_GPL(bio_add_zone_append_page);
++
+ /**
+  * __bio_try_merge_page - try appending data to an existing bvec.
+  * @bio: destination bio
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index c6d765382926..7ef300cb4e9a 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -442,6 +442,8 @@ void bio_chain(struct bio *, struct bio *);
+ extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
+ extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+ 			   unsigned int, unsigned int);
++int bio_add_zone_append_page(struct bio *bio, struct page *page,
++			     unsigned int len, unsigned int offset);
+ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+ 		unsigned int len, unsigned int off, bool *same_page);
+ void __bio_add_page(struct bio *bio, struct page *page,
 -- 
 2.27.0
 
