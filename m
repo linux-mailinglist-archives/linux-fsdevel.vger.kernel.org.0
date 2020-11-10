@@ -2,108 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D10E2ACB69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 03:59:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5661F2ACB85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Nov 2020 04:12:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbgKJC7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Nov 2020 21:59:17 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:64516 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729243AbgKJC7R (ORCPT
+        id S1729452AbgKJDMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Nov 2020 22:12:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728607AbgKJDMr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Nov 2020 21:59:17 -0500
-X-IronPort-AV: E=Sophos;i="5.77,465,1596470400"; 
-   d="scan'208";a="101126857"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 10 Nov 2020 10:59:11 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 1D2124CE4BB7;
-        Tue, 10 Nov 2020 10:59:09 +0800 (CST)
-Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Tue, 10 Nov 2020 10:59:08 +0800
-Received: from localhost.localdomain (10.167.225.206) by
- G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Tue, 10 Nov 2020 10:59:08 +0800
-From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
-To:     <torvalds@linux-foundation.org>
-CC:     <jack@suse.cz>, <ira.weiny@intel.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-xfs@vger.kernel.org>
-Subject: [PATCH] fs: Kill DCACHE_DONTCACHE dentry even if DCACHE_REFERENCED is set
-Date:   Tue, 10 Nov 2020 10:59:07 +0800
-Message-ID: <20201110025907.5237-1-lihao2018.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.28.0
+        Mon, 9 Nov 2020 22:12:47 -0500
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE510C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Nov 2020 19:12:46 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id cw8so15363456ejb.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Nov 2020 19:12:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xzmJsWC6dWZQj1XvWO6xJYEz8vIsIxpieR4F7Jap3XY=;
+        b=dxZP5LurjoMY+67L6FJnXmxEHoYPw16qhZAeOyWG1ERPn886+jasIPgXr/LCZ57Mps
+         Isrxb9tNDyGDxpGtiHj+f3ObDkYNk1lcDzVOMJTkdsVyy69uePT5mT6b2prUhBEMf024
+         ZNmPI5b/9pt22TjuKOK87RYl1qeaY7H7dDPx+F1W5i84695rG+cWGjtTREBoaZu3K95S
+         /h81TSnDH8J9EozxG6K23XEfvG23QiG3MgIk3K6fv0sLD6LIA7YnvdtHeZPAxNUjFgoo
+         yrIRf9S9ue3GKiGjICrWDc7M+Yo0DoY1r1tx6/iSYoWEd/TIccktxDGww6KuTXOg4gR2
+         nwfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xzmJsWC6dWZQj1XvWO6xJYEz8vIsIxpieR4F7Jap3XY=;
+        b=pb2MJd6nINu4S3ZIixo2Odgv1paZ/z9+CzqMTjh6xBKII39JSCynYoSIhNi70UgH87
+         T80cY0G/lkzShkN2iCiFD2LzuRxFBmfySbYhzTZDzx+HKmpJKxAOlLBxZNjrLX67+l2O
+         noQeEkd9H4h/rdWk/wksrn8FR2CRgPZO///dulXIlw4CmQh1QhfaRRFt5LET3UDLyzUY
+         jFlx8z4X8fcjcPrwdnL59GRwTghJ7K0tjrkLhg+OVBW3Gab+c0gihIACYjPj8w6+7Ly2
+         kRigsEnvf+9Zs7KzVfimQFM2K9S2sinCRXzrCY7ajtcXQKS0vBM+v9dGc3gUn39wrWwK
+         /21g==
+X-Gm-Message-State: AOAM531MxXl/u4SzeHhdWpxH3v70fXQC88TK+l/DwmzItzufPgwmAgmC
+        0q1XmvvMMfpnUJUu0iy+hRxv8qIxeH5qBBx0bdtJ
+X-Google-Smtp-Source: ABdhPJwwIF3MO5LzJ511u4gGvvNF5oo9ZS75tqCLNPpgISHowPuMkNw8MRxvsVJXmkkSV3eBigJKDIMAg0vIkBWE8KU=
+X-Received: by 2002:a17:906:c096:: with SMTP id f22mr17581308ejz.488.1604977965148;
+ Mon, 09 Nov 2020 19:12:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 1D2124CE4BB7.AC907
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
-X-Spam-Status: No
+References: <20201106155626.3395468-1-lokeshgidra@google.com> <20201106155626.3395468-4-lokeshgidra@google.com>
+In-Reply-To: <20201106155626.3395468-4-lokeshgidra@google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 9 Nov 2020 22:12:33 -0500
+Message-ID: <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        hch@infradead.org, Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If DCACHE_REFERENCED is set, fast_dput() will return true, and then
-retain_dentry() have no chance to check DCACHE_DONTCACHE. As a result,
-the dentry won't be killed and the corresponding inode can't be evicted.
-In the following example, the DAX policy can't take effects unless we
-do a drop_caches manually.
+On Fri, Nov 6, 2020 at 10:56 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
+>
+> From: Daniel Colascione <dancol@google.com>
+>
+> This change uses the anon_inodes and LSM infrastructure introduced in
+> the previous patches to give SELinux the ability to control
+> anonymous-inode files that are created using the new
+> anon_inode_getfd_secure() function.
+>
+> A SELinux policy author detects and controls these anonymous inodes by
+> adding a name-based type_transition rule that assigns a new security
+> type to anonymous-inode files created in some domain. The name used
+> for the name-based transition is the name associated with the
+> anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> "[perf_event]".
+>
+> Example:
+>
+> type uffd_t;
+> type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+> allow sysadm_t uffd_t:anon_inode { create };
+>
+> (The next patch in this series is necessary for making userfaultfd
+> support this new interface.  The example above is just
+> for exposition.)
+>
+> Signed-off-by: Daniel Colascione <dancol@google.com>
+> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> ---
+>  security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
+>  security/selinux/include/classmap.h |  2 ++
+>  2 files changed, 55 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 6b1826fc3658..1c0adcdce7a8 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+>         return 0;
+>  }
+>
+> +static int selinux_inode_init_security_anon(struct inode *inode,
+> +                                           const struct qstr *name,
+> +                                           const struct inode *context_inode)
+> +{
+> +       const struct task_security_struct *tsec = selinux_cred(current_cred());
+> +       struct common_audit_data ad;
+> +       struct inode_security_struct *isec;
+> +       int rc;
+> +
+> +       if (unlikely(!selinux_initialized(&selinux_state)))
+> +               return 0;
+> +
+> +       isec = selinux_inode(inode);
+> +
+> +       /*
+> +        * We only get here once per ephemeral inode.  The inode has
+> +        * been initialized via inode_alloc_security but is otherwise
+> +        * untouched.
+> +        */
+> +
+> +       if (context_inode) {
+> +               struct inode_security_struct *context_isec =
+> +                       selinux_inode(context_inode);
+> +               isec->sclass = context_isec->sclass;
+> +               isec->sid = context_isec->sid;
 
-  # DCACHE_LRU_LIST will be set
-  echo abcdefg > test.txt
+I suppose this isn't a major concern given the limited usage at the
+moment, but I wonder if it would be a good idea to make sure the
+context_inode's SELinux label is valid before we assign it to the
+anonymous inode?  If it is invalid, what should we do?  Do we attempt
+to (re)validate it?  Do we simply fallback to the transition approach?
 
-  # DCACHE_REFERENCED will be set and DCACHE_DONTCACHE can't do anything
-  xfs_io -c 'chattr +x' test.txt
+> +       } else {
+> +               isec->sclass = SECCLASS_ANON_INODE;
+> +               rc = security_transition_sid(
+> +                       &selinux_state, tsec->sid, tsec->sid,
+> +                       isec->sclass, name, &isec->sid);
+> +               if (rc)
+> +                       return rc;
+> +       }
+> +
+> +       isec->initialized = LABEL_INITIALIZED;
+> +
+> +       /*
+> +        * Now that we've initialized security, check whether we're
+> +        * allowed to actually create this type of anonymous inode.
+> +        */
+> +
+> +       ad.type = LSM_AUDIT_DATA_INODE;
+> +       ad.u.inode = inode;
+> +
+> +       return avc_has_perm(&selinux_state,
+> +                           tsec->sid,
+> +                           isec->sid,
+> +                           isec->sclass,
+> +                           FILE__CREATE,
 
-  # Drop caches to make DAX changing take effects
-  echo 2 > /proc/sys/vm/drop_caches
+I believe you want to use ANON_INODE__CREATE here instead of FILE__CREATE, yes?
 
-What this patch does is preventing fast_dput() from returning true if
-DCACHE_DONTCACHE is set. Then retain_dentry() will detect the
-DCACHE_DONTCACHE and will return false. As a result, the dentry will be
-killed and the inode will be evicted. In this way, if we change per-file
-DAX policy, it will take effects automatically after this file is closed
-by all processes.
+This brings up another question, and requirement - what testing are
+you doing for this patchset?  We require that new SELinux kernel
+functionality includes additions to the SELinux test suite to help
+verify the functionality.  I'm also *strongly* encouraging that new
+contributions come with updates to The SELinux Notebook.  If you are
+unsure about what to do for either, let us know and we can help get
+you started.
 
-I also add some comments to make the code more clear.
+* https://github.com/SELinuxProject/selinux-testsuite
+* https://github.com/SELinuxProject/selinux-notebook
 
-Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
----
-This patch may have been forgotten.
-Original patch: https://lore.kernel.org/linux-fsdevel/20200924055958.825515-1-lihao2018.fnst@cn.fujitsu.com/
+> +                           &ad);
+> +}
+> +
+>  static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
+>  {
+>         return may_create(dir, dentry, SECCLASS_FILE);
+> @@ -6992,6 +7044,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>
+>         LSM_HOOK_INIT(inode_free_security, selinux_inode_free_security),
+>         LSM_HOOK_INIT(inode_init_security, selinux_inode_init_security),
+> +       LSM_HOOK_INIT(inode_init_security_anon, selinux_inode_init_security_anon),
+>         LSM_HOOK_INIT(inode_create, selinux_inode_create),
+>         LSM_HOOK_INIT(inode_link, selinux_inode_link),
+>         LSM_HOOK_INIT(inode_unlink, selinux_inode_unlink),
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 40cebde62856..ba2e01a6955c 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -249,6 +249,8 @@ struct security_class_mapping secclass_map[] = {
+>           {"open", "cpu", "kernel", "tracepoint", "read", "write"} },
+>         { "lockdown",
+>           { "integrity", "confidentiality", NULL } },
+> +       { "anon_inode",
+> +         { COMMON_FILE_PERMS, NULL } },
+>         { NULL }
+>    };
+>
 
- fs/dcache.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index ea0485861d93..97e81a844a96 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -793,10 +793,17 @@ static inline bool fast_dput(struct dentry *dentry)
- 	 * a reference to the dentry and change that, but
- 	 * our work is done - we can leave the dentry
- 	 * around with a zero refcount.
-+	 *
-+	 * Nevertheless, there are two cases that we should kill
-+	 * the dentry anyway.
-+	 * 1. free disconnected dentries as soon as their refcount
-+	 *    reached zero.
-+	 * 2. free dentries if they should not be cached.
- 	 */
- 	smp_rmb();
- 	d_flags = READ_ONCE(dentry->d_flags);
--	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
-+	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST |
-+			DCACHE_DISCONNECTED | DCACHE_DONTCACHE;
- 
- 	/* Nothing to do? Dropping the reference was all we needed? */
- 	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
 -- 
-2.28.0
-
-
-
+paul moore
+www.paul-moore.com
