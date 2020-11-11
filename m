@@ -2,174 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3E42AEC69
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:53:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 789C82AED68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 10:24:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbgKKIxN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 03:53:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37542 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbgKKIxM (ORCPT
+        id S1726606AbgKKJYD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 04:24:03 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2081 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbgKKJYB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 03:53:12 -0500
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A180AC0613D1;
-        Wed, 11 Nov 2020 00:53:12 -0800 (PST)
-Received: by mail-ot1-x343.google.com with SMTP id f16so1421538otl.11;
-        Wed, 11 Nov 2020 00:53:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iTt8eNsbTj2hc7Fsdm5FJVkGnzmgKMJ/Dp/lxggjlCM=;
-        b=VxqvT1DYKk7ExwW0O1/Fn95ePohINSTuLkDRIOq/IBsLepZqdOb8Era4egV1DESrLH
-         9cbmCrntKBTtPiha5EQ6BkhsLW5RNAstB1kauuxMdWgMtYIpqSavkSuqQcBO3ZF/jxt6
-         vUtSYhW8gx6S1pXHhRYSOmRsEJ72M7fdPgWpzHGb1eQzo6xUdYuh/+tbexorkxCjmi5k
-         I5Tkkse3u+noQUMr2bF48DO+2J8Oi3BXmFACx95eqp5Ph7hmnPBQ7p4/ffPB0R4nk9rs
-         cW7OyGO2Mee7PWzpywRsSSInBTMRkJgbZ24KSdPORrMmvCJz6zWYq/PRJYw5KqDFU5Xr
-         V25A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iTt8eNsbTj2hc7Fsdm5FJVkGnzmgKMJ/Dp/lxggjlCM=;
-        b=hiZ545X8egQlQZoucArAWOah7ExAl0LF/QB56MkB7Df5zLcM58iZkppu/kAvlBhhOs
-         kEi9dN7v0N662wKJWieN+g+wdSlkeO2ZkgmGOBO6iVQu96vAKgFmDebAW8mIR7L+q+3B
-         tjvxsUznr9nc/05lgfbencpUGxLLV76hGS6H0TnkNNPbSv/amUE7LFZjpXg+BpvtfHHS
-         KHOvWIFjGOA9eNNzJtNGTQzP0AxGVeBVZzEvFWKFTH+p2GGVd3kdLaZJThQUbCYxqo5o
-         EFY14usgYo10bCGXiobG+kLrb0Jha9oKmsyogXswlAIpA6piEluJip+ur0kOhN5Vovta
-         P0mQ==
-X-Gm-Message-State: AOAM532O40u92d6PGAOrpKCeOm000LC90+DMjXgXYQEk+k+giszZ4ipI
-        TKTStaR8xf4wKwtd27R8ovVB68OL+D4iw/UYYm29hyO3
-X-Google-Smtp-Source: ABdhPJy46xXTjsmLDFcW4tpOV6yPUcL32I2W0uehIXffxh5SO8nOCxmP1r1WSgfdLjSOH0hlKP/B9eO2+vz4kmPz2lc=
-X-Received: by 2002:a9d:7ac4:: with SMTP id m4mr3607149otn.116.1605084792081;
- Wed, 11 Nov 2020 00:53:12 -0800 (PST)
+        Wed, 11 Nov 2020 04:24:01 -0500
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CWK4Z46Nvz67Jr3;
+        Wed, 11 Nov 2020 17:22:06 +0800 (CST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.161)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Wed, 11 Nov 2020 10:23:58 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 00/11] evm: Improve usability of portable signatures
+Date:   Wed, 11 Nov 2020 10:22:51 +0100
+Message-ID: <20201111092302.1589-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.27.GIT
 MIME-Version: 1.0
-References: <cover.1602093760.git.yuleixzhang@tencent.com> <aa553faf9e97ee9306ecd5a67d3324a34f9ed4be.1602093760.git.yuleixzhang@tencent.com>
- <20201110200411.GU3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201110200411.GU3576660@ZenIV.linux.org.uk>
-From:   yulei zhang <yulei.kernel@gmail.com>
-Date:   Wed, 11 Nov 2020 16:53:00 +0800
-Message-ID: <CACZOiM1L2W+neaF-rd=k9cJTnQfNBLx2k9GLZydYuQiJqr=iXg@mail.gmail.com>
-Subject: Re: [PATCH 01/35] fs: introduce dmemfs module
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        Haiwei Li <lihaiwei.kernel@gmail.com>,
-        Yulei Zhang <yuleixzhang@tencent.com>,
-        Xiao Guangrong <gloryxiao@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.65.161]
+X-ClientProxiedBy: lhreml735-chm.china.huawei.com (10.201.108.86) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 4:04 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Oct 08, 2020 at 03:53:51PM +0800, yulei.kernel@gmail.com wrote:
->
-> > +static struct inode *
-> > +dmemfs_get_inode(struct super_block *sb, const struct inode *dir, umode_t mode,
-> > +              dev_t dev);
->
-> WTF is 'dev' for?
->
-> > +static int
-> > +dmemfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
-> > +{
-> > +     struct inode *inode = dmemfs_get_inode(dir->i_sb, dir, mode, dev);
-> > +     int error = -ENOSPC;
-> > +
-> > +     if (inode) {
-> > +             d_instantiate(dentry, inode);
-> > +             dget(dentry);   /* Extra count - pin the dentry in core */
-> > +             error = 0;
-> > +             dir->i_mtime = dir->i_ctime = current_time(inode);
-> > +     }
-> > +     return error;
-> > +}
->
-> ... same here, seeing that you only call that thing from the next two functions
-> and you do *not* provide ->mknod() as a method (unsurprisingly - what would
-> device nodes do there?)
->
+EVM portable signatures are particularly suitable for the protection of
+metadata of immutable files where metadata is signed by a software vendor.
+They can be used for example in conjunction with an IMA policy that
+appraises only executed and memory mapped files.
 
-Thanks for pointing this out. we may need support the mknod method, otherwise
-the dev is redundant  and need to be removed.
+However, some usability issues are still unsolved, especially when EVM is
+used without loading an HMAC key. This patch set attempts to fix the open
+issues.
 
-> > +static int dmemfs_create(struct inode *dir, struct dentry *dentry,
-> > +                      umode_t mode, bool excl)
-> > +{
-> > +     return dmemfs_mknod(dir, dentry, mode | S_IFREG, 0);
-> > +}
-> > +
-> > +static int dmemfs_mkdir(struct inode *dir, struct dentry *dentry,
-> > +                     umode_t mode)
-> > +{
-> > +     int retval = dmemfs_mknod(dir, dentry, mode | S_IFDIR, 0);
-> > +
-> > +     if (!retval)
-> > +             inc_nlink(dir);
-> > +     return retval;
-> > +}
->
-> > +int dmemfs_file_mmap(struct file *file, struct vm_area_struct *vma)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct file_operations dmemfs_file_operations = {
-> > +     .mmap = dmemfs_file_mmap,
-> > +};
->
-> Er...  Is that a placeholder for later in the series?  Because as it is,
-> it makes no sense whatsoever - "it can be mmapped, but any access to the
-> mapped area will segfault".
->
+Patch 1 allows EVM to be used without loading an HMAC key. Patch 2 avoids
+appraisal verification of public keys (they are already verified by the key
+subsystem).
 
-Yes, we seperate the full implementation for dmemfs_file_mmap into
-patch 05/35, it
-will assign the interfaces to handle the page fault.
+Patches 3-5 allow metadata verification to be turned off when no HMAC key
+is loaded and to use this mode in a safe way (by ensuring that IMA
+revalidates metadata when there is a change).
 
-> > +struct inode *dmemfs_get_inode(struct super_block *sb,
-> > +                            const struct inode *dir, umode_t mode, dev_t dev)
-> > +{
-> > +     struct inode *inode = new_inode(sb);
-> > +
-> > +     if (inode) {
-> > +             inode->i_ino = get_next_ino();
-> > +             inode_init_owner(inode, dir, mode);
-> > +             inode->i_mapping->a_ops = &empty_aops;
-> > +             mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> > +             mapping_set_unevictable(inode->i_mapping);
-> > +             inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
-> > +             switch (mode & S_IFMT) {
-> > +             default:
-> > +                     init_special_inode(inode, mode, dev);
-> > +                     break;
-> > +             case S_IFREG:
-> > +                     inode->i_op = &dmemfs_file_inode_operations;
-> > +                     inode->i_fop = &dmemfs_file_operations;
-> > +                     break;
-> > +             case S_IFDIR:
-> > +                     inode->i_op = &dmemfs_dir_inode_operations;
-> > +                     inode->i_fop = &simple_dir_operations;
-> > +
-> > +                     /*
-> > +                      * directory inodes start off with i_nlink == 2
-> > +                      * (for "." entry)
-> > +                      */
-> > +                     inc_nlink(inode);
-> > +                     break;
-> > +             case S_IFLNK:
-> > +                     inode->i_op = &page_symlink_inode_operations;
-> > +                     break;
->
-> Where would symlinks come from?  Or anything other than regular files and
-> directories, for that matter...
+Patches 6-8 make portable signatures more usable if metadata verification
+is not turned off, by ignoring the INTEGRITY_NOLABEL error when no HMAC key
+is loaded, by accepting any metadata modification until signature
+verification succeeds (useful when xattrs/attrs are copied sequentially
+from a source) and by allowing operations that don't change metadata.
 
-You are right, so far it just supports regular files and directories.
+Patch 9 makes it possible to use portable signatures when the IMA policy
+requires file signatures and patch 10 shows portable signatures in the
+measurement list when the ima-sig template is selected.
+
+Lastly, patch 11 avoids undesired removal of security.ima when a file is
+not selected by the IMA policy.
+
+Roberto Sassu (11):
+  evm: Execute evm_inode_init_security() only when an HMAC key is loaded
+  evm: Load EVM key in ima_load_x509() to avoid appraisal
+  evm: Refuse EVM_ALLOW_METADATA_WRITES only if an HMAC key is loaded
+  ima: Move ima_reset_appraise_flags() call to post hooks
+  evm: Introduce evm_status_revalidate()
+  evm: Ignore INTEGRITY_NOLABEL if no HMAC key is loaded
+  evm: Allow xattr/attr operations for portable signatures
+  evm: Allow setxattr() and setattr() for unmodified metadata
+  ima: Allow imasig requirement to be satisfied by EVM portable
+    signatures
+  ima: Introduce template field evmsig and write to field sig as
+    fallback
+  ima: Don't remove security.ima if file must not be appraised
+
+ Documentation/ABI/testing/evm             |   5 +-
+ Documentation/security/IMA-templates.rst  |   4 +-
+ fs/xattr.c                                |   2 +
+ include/linux/evm.h                       |   6 +
+ include/linux/ima.h                       |  19 ++-
+ include/linux/integrity.h                 |   1 +
+ security/integrity/evm/evm_main.c         | 178 ++++++++++++++++++++--
+ security/integrity/evm/evm_secfs.c        |   2 +-
+ security/integrity/iint.c                 |   2 +
+ security/integrity/ima/ima_appraise.c     |  52 +++++--
+ security/integrity/ima/ima_init.c         |   4 +
+ security/integrity/ima/ima_template.c     |   2 +
+ security/integrity/ima/ima_template_lib.c |  32 +++-
+ security/integrity/ima/ima_template_lib.h |   2 +
+ security/security.c                       |   4 +-
+ 15 files changed, 275 insertions(+), 40 deletions(-)
+
+-- 
+2.27.GIT
+
