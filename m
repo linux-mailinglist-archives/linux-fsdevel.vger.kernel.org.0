@@ -2,179 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 656E32AE70B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 04:28:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45EE72AE715
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 04:30:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbgKKD2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Nov 2020 22:28:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41392 "EHLO
+        id S1726216AbgKKDaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Nov 2020 22:30:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbgKKD2w (ORCPT
+        with ESMTP id S1725983AbgKKDaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Nov 2020 22:28:52 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DC19C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 19:28:52 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id f18so546313pgi.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 19:28:52 -0800 (PST)
+        Tue, 10 Nov 2020 22:30:22 -0500
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BC9C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 19:30:22 -0800 (PST)
+Received: by mail-il1-x143.google.com with SMTP id e17so745234ili.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Nov 2020 19:30:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=r3BEc/AcxRK2fgyz5arC0mp2ZjamSggoiwDFPHzDeFM=;
-        b=L3KGqh9FA7CRMvMuluDNn1yrWpbYh9l/nhP2/JazcH9HggGmW4y80NLxhjP0T9GKkq
-         xkMfnenxGtsg2F20N8LjeD9GIk8DqqxK4lh2DuEqcedd641cfWIb6CvMHrWQZToxc2hF
-         ZaboK3GoLW4oPPSdWetfJ0Xs4ZfcCpHAyJSHdEq83hsrp6idro+N/J9Kl10Ue9wXRNWc
-         WKoEmW2t18MuoeJ8AcbbQdo9qpHrA0xJ9wJysGo4MPQKeV5njYZXbbzEiQIPiKJRb4sv
-         IeEpp7KW3yDsb4Pgi+Pq19hFxrukqNFbb3Cbn571RJXDmmb0PhG/i1FUGsioMaI+IAjP
-         17mg==
+        bh=zoTFRJAIMA31qT21kOie4hLHdFOnrBP6JkMlSYwvnXI=;
+        b=qPqD9xJ15agGALdrbfTaEKsO9t0BJdhVFUe0x+i7ee/umFU4twQYB7dWW8pPh8hIoY
+         Dxwh3C++Z1NVuJzD5KbagTyBNBdcFW5EnhRdvStAUC0PQ0f3/bB6h3YTYRECqLvO676z
+         QQi5TNwiPRsYz0ekahfr0ZOcjJLH/pU3Hcbae5v+YQKiHYoAF+HCDzkHzOZZ0/+94XJb
+         gd6fd8edTbeAJ5n1o8PnO0PRi52I97T3hjuT8ZFjhQo68dZTqgu7j7avR32qPGQ3l1Pz
+         HP+Cs/gv8tr/439GLUoD+Au86pHpxQ4lDLQlCVMEF/QIVX3Tmos2hm0/GIk3l/JEm+5l
+         fplA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=r3BEc/AcxRK2fgyz5arC0mp2ZjamSggoiwDFPHzDeFM=;
-        b=l8qKz8qqGMV6ez05JJF0xg7hIw9eVVNnknLgditpkwzYy666G+o7q2UJXyMPjwqRn9
-         sLLsP69qxwQkmJqqDRWPz39VkZdaCiCqCA8+wmgEWg32iZuTV/Xr+JR7gF/CkPl8ol9A
-         /9oMFCd1k6gcdyjXbl1vx/n5QKQpeKpKcM6h+x+IiiJYMLykL7d4t8e75ilESkoLtPgW
-         59dvqlBL/sB84RzsT1TZh1sEG23fFnt+dTNWGaX88jEO1CMXK8G1RMZzMNO6DTNpvc6T
-         AgKDr9peOztbQ2NnN8DoJgq2vj+XUaSkzOLF1ODm3EKbVLLHAKV9eVOfsWFq/iKObzxt
-         kZYA==
-X-Gm-Message-State: AOAM533CTMuk3beVnB1rHFyLMe2a6G4nyDVbc2YTdBvZRNDWYxJx7nH1
-        YidOMF/l1jQGA+TKw8qz02q5kqgZE1BrNi8VINC0kA==
-X-Google-Smtp-Source: ABdhPJyge7KPG4O/LDfk3XbDVrfOMI46A1+WfWZbvMnhVcpAif+MMWM7ip2u+Ce+OLWyjnbFzey3qwpStDLHcJAUAkY=
-X-Received: by 2002:a62:e116:0:b029:18b:d325:153f with SMTP id
- q22-20020a62e1160000b029018bd325153fmr15902234pfh.2.1605065331686; Tue, 10
- Nov 2020 19:28:51 -0800 (PST)
+        bh=zoTFRJAIMA31qT21kOie4hLHdFOnrBP6JkMlSYwvnXI=;
+        b=SEmvkLEvLLozZOZIKyWPBDdvB3mnOuDTghfdh1REtBrItCpz94Q9Nsy12bJzYHHEmI
+         1i5slSGsntyvfD+xOdVgrizJTDXMyQzuBzmjVD1fU9dlA0JrxvIygo+Y7mEqeQMe3y9Y
+         JFHjbRI/ybWi1ka9GlRdgSb2iRnj1gzEgcPJLA/ftprMVFCShqFRl59WIO1jBjy/+I73
+         ITRAN7oj40kjdAZFE+P7mBmZM4z4NRaYL9jnujYdsvqqUAxRXU+LBxI5MsaQWykX4hiE
+         oYSqY6sXqMhRqfYEIbOcXvLo2wOgOYzAOuVweC4aOsD0wN8vN7K9GlLCGkWVX6YXxm4h
+         Q/8A==
+X-Gm-Message-State: AOAM530nbgsavy87izW9qu5hP7z57TsEm7b5uHbI/Ql8pw6a8tAwsTyT
+        cVz52kBegex3zmZQLKqp/uWTWuaeITG6jjmZ3KOvhw==
+X-Google-Smtp-Source: ABdhPJxK2Fi5zChFPjMF2Pn/NLuggjJUhsrqW9BIJNVd99uJhLXv9EktO5IEFPyPZvq0aC8iNVh/WmZqVika8Ky+Ta4=
+X-Received: by 2002:a92:8b4e:: with SMTP id i75mr14330378ild.43.1605065420914;
+ Tue, 10 Nov 2020 19:30:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20201108141113.65450-1-songmuchun@bytedance.com>
- <20201108141113.65450-4-songmuchun@bytedance.com> <20201109135215.GA4778@localhost.localdomain>
- <ef564084-ea73-d579-9251-ec0440df2b48@oracle.com>
-In-Reply-To: <ef564084-ea73-d579-9251-ec0440df2b48@oracle.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 11 Nov 2020 11:28:15 +0800
-Message-ID: <CAMZfGtUx-Lpcbv4saLBH7p+pgwVNSJpZnFtmp6nuL1CiNNG+gg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v3 03/21] mm/hugetlb: Introduce a new
- config HUGETLB_PAGE_FREE_VMEMMAP
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Oscar Salvador <osalvador@suse.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com> <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+In-Reply-To: <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+From:   Lokesh Gidra <lokeshgidra@google.com>
+Date:   Tue, 10 Nov 2020 19:30:09 -0800
+Message-ID: <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Daniel Colascione <dancol@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 3:31 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+On Tue, Nov 10, 2020 at 6:13 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> On 11/9/20 5:52 AM, Oscar Salvador wrote:
-> > On Sun, Nov 08, 2020 at 10:10:55PM +0800, Muchun Song wrote:
-> >> The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> >> whether to enable the feature of freeing unused vmemmap associated
-> >> with HugeTLB pages. Now only support x86.
-> >>
-> >> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> >> ---
-> >>  arch/x86/mm/init_64.c |  2 +-
-> >>  fs/Kconfig            | 16 ++++++++++++++++
-> >>  mm/bootmem_info.c     |  3 +--
-> >>  3 files changed, 18 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> >> index 0a45f062826e..0435bee2e172 100644
-> >> --- a/arch/x86/mm/init_64.c
-> >> +++ b/arch/x86/mm/init_64.c
-> >> @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
-> >>
-> >>  static void __init register_page_bootmem_info(void)
-> >>  {
-> >> -#ifdef CONFIG_NUMA
-> >> +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
-> >>      int i;
-> >>
-> >>      for_each_online_node(i)
-> >> diff --git a/fs/Kconfig b/fs/Kconfig
-> >> index 976e8b9033c4..21b8d39a9715 100644
-> >> --- a/fs/Kconfig
-> >> +++ b/fs/Kconfig
-> >> @@ -245,6 +245,22 @@ config HUGETLBFS
-> >>  config HUGETLB_PAGE
-> >>      def_bool HUGETLBFS
-> >>
-> >> +config HUGETLB_PAGE_FREE_VMEMMAP
-> >> +    bool "Free unused vmemmap associated with HugeTLB pages"
-> >> +    default y
-> >> +    depends on X86
-> >> +    depends on HUGETLB_PAGE
-> >> +    depends on SPARSEMEM_VMEMMAP
-> >> +    depends on HAVE_BOOTMEM_INFO_NODE
-> >> +    help
-> >> +      There are many struct page structures associated with each HugeTLB
-> >> +      page. But we only use a few struct page structures. In this case,
-> >> +      it wastes some memory. It is better to free the unused struct page
-> >> +      structures to buddy system which can save some memory. For
-> >> +      architectures that support it, say Y here.
-> >> +
-> >> +      If unsure, say N.
+> On Tue, Nov 10, 2020 at 1:24 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > On Mon, Nov 9, 2020 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Fri, Nov 6, 2020 at 10:56 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > > >
+> > > > From: Daniel Colascione <dancol@google.com>
+> > > >
+> > > > This change uses the anon_inodes and LSM infrastructure introduced in
+> > > > the previous patches to give SELinux the ability to control
+> > > > anonymous-inode files that are created using the new
+> > > > anon_inode_getfd_secure() function.
+> > > >
+> > > > A SELinux policy author detects and controls these anonymous inodes by
+> > > > adding a name-based type_transition rule that assigns a new security
+> > > > type to anonymous-inode files created in some domain. The name used
+> > > > for the name-based transition is the name associated with the
+> > > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> > > > "[perf_event]".
+> > > >
+> > > > Example:
+> > > >
+> > > > type uffd_t;
+> > > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+> > > > allow sysadm_t uffd_t:anon_inode { create };
+> > > >
+> > > > (The next patch in this series is necessary for making userfaultfd
+> > > > support this new interface.  The example above is just
+> > > > for exposition.)
+> > > >
+> > > > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > > ---
+> > > >  security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
+> > > >  security/selinux/include/classmap.h |  2 ++
+> > > >  2 files changed, 55 insertions(+)
+> > > >
+> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > > index 6b1826fc3658..1c0adcdce7a8 100644
+> > > > --- a/security/selinux/hooks.c
+> > > > +++ b/security/selinux/hooks.c
+> > > > @@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+> > > >         return 0;
+> > > >  }
+> > > >
+> > > > +static int selinux_inode_init_security_anon(struct inode *inode,
+> > > > +                                           const struct qstr *name,
+> > > > +                                           const struct inode *context_inode)
+> > > > +{
+> > > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > > > +       struct common_audit_data ad;
+> > > > +       struct inode_security_struct *isec;
+> > > > +       int rc;
+> > > > +
+> > > > +       if (unlikely(!selinux_initialized(&selinux_state)))
+> > > > +               return 0;
+> > > > +
+> > > > +       isec = selinux_inode(inode);
+> > > > +
+> > > > +       /*
+> > > > +        * We only get here once per ephemeral inode.  The inode has
+> > > > +        * been initialized via inode_alloc_security but is otherwise
+> > > > +        * untouched.
+> > > > +        */
+> > > > +
+> > > > +       if (context_inode) {
+> > > > +               struct inode_security_struct *context_isec =
+> > > > +                       selinux_inode(context_inode);
+> > > > +               isec->sclass = context_isec->sclass;
+> > > > +               isec->sid = context_isec->sid;
+> > >
+> > > I suppose this isn't a major concern given the limited usage at the
+> > > moment, but I wonder if it would be a good idea to make sure the
+> > > context_inode's SELinux label is valid before we assign it to the
+> > > anonymous inode?  If it is invalid, what should we do?  Do we attempt
+> > > to (re)validate it?  Do we simply fallback to the transition approach?
 > >
-> > I am not sure the above is useful for someone who needs to decide
-> > whether he needs/wants to enable this or not.
-> > I think the above fits better in a Documentation part.
+> > Frankly, I'm not too familiar with SELinux. Originally this patch
+> > series was developed by Daniel, in consultation with Stephen Smalley.
+> > In my (probably naive) opinion we should fallback to transition
+> > approach. But I'd request you to tell me if this needs to be addressed
+> > now, and if so then what's the right approach.
 > >
-> > I suck at this, but what about the following, or something along those
-> > lines?
-> >
-> > "
-> > When using SPARSEMEM_VMEMMAP, the system can save up some memory
-> > from pre-allocated HugeTLB pages when they are not used.
-> > 6 pages per 2MB HugeTLB page and 4095 per 1GB HugeTLB page.
-> > When the pages are going to be used or freed up, the vmemmap
-> > array representing that range needs to be remapped again and
-> > the pages we discarded earlier need to be rellocated again.
-> > Therefore, this is a trade-off between saving memory and
-> > increasing time in allocation/free path.
-> > "
-> >
-> > It would be also great to point out that this might be a
-> > trade-off between saving up memory and increasing the cost
-> > of certain operations on allocation/free path.
-> > That is why I mentioned it there.
+> > If the decision is to address this now, then what's the best way to
+> > check the SELinux label validity?
 >
-> Yes, this is somewhat a trade-off.
+> You can check to see if an inode's label is valid by looking at the
+> isec->initialized field; if it is LABEL_INITIALIZED then it is all
+> set, if it is any other value then the label isn't entirely correct.
+> It may have not have ever been fully initialized (and has a default
+> value) or it may have live on a remote filesystem where the host has
+> signaled that the label has changed (and the label is now outdated).
 >
-> As a config option, this is something that would likely be decided by
-> distros.  I almost hate to suggest this, but is it something that an
-> end user would want to decide?  Is this something that perhaps should
-> be a boot/kernel command line option?
-
-Yeah, it already has a boot/kernel command line option named
-"hugetlb_free_vmemmap". We can refer to
-
-  [PATCH v3 18/21] mm/hugetlb: Add a kernel parameter hugetlb_free_vmemmap
-
-Thanks :)
-
-
+> This patchset includes support for userfaultfd, which means we don't
+> really have to worry about the remote fs problem, but the
+> never-fully-initialized problem could be real in this case.  Normally
+> we would revalidate an inode in SELinux by calling
+> __inode_security_revalidate() which requires either a valid dentry or
+> one that can be found via the inode; does d_find_alias() work on
+> userfaultfd inodes?
 >
+> If all else fails, it seems like the safest approach would be to
+> simply fail the selinux_inode_init_security_anon() call if a
+> context_inode was supplied and the label wasn't valid.  If we later
+> decide to change it to falling back to the transition approach we can
+> do that, we can't go the other way (from transition to error).
+>
+I'm not sure about d_find_alias() on userfaultfd inodes. But it seems
+ok to fail selinux_inode_init_security_anon() to begin with.
+
+> > > > +       } else {
+> > > > +               isec->sclass = SECCLASS_ANON_INODE;
+> > > > +               rc = security_transition_sid(
+> > > > +                       &selinux_state, tsec->sid, tsec->sid,
+> > > > +                       isec->sclass, name, &isec->sid);
+> > > > +               if (rc)
+> > > > +                       return rc;
+> > > > +       }
+> > > > +
+> > > > +       isec->initialized = LABEL_INITIALIZED;
+> > > > +
+> > > > +       /*
+> > > > +        * Now that we've initialized security, check whether we're
+> > > > +        * allowed to actually create this type of anonymous inode.
+> > > > +        */
+> > > > +
+> > > > +       ad.type = LSM_AUDIT_DATA_INODE;
+> > > > +       ad.u.inode = inode;
+> > > > +
+> > > > +       return avc_has_perm(&selinux_state,
+> > > > +                           tsec->sid,
+> > > > +                           isec->sid,
+> > > > +                           isec->sclass,
+> > > > +                           FILE__CREATE,
+> > >
+> > > I believe you want to use ANON_INODE__CREATE here instead of FILE__CREATE, yes?
+> >
+> > ANON_INODE__CREATE definitely seems more appropriate. I'll change it
+> > in the next revision.
+> >
+> > > This brings up another question, and requirement - what testing are
+> > > you doing for this patchset?  We require that new SELinux kernel
+> > > functionality includes additions to the SELinux test suite to help
+> > > verify the functionality.  I'm also *strongly* encouraging that new
+> > > contributions come with updates to The SELinux Notebook.  If you are
+> > > unsure about what to do for either, let us know and we can help get
+> > > you started.
+> > >
+> > > * https://github.com/SELinuxProject/selinux-testsuite
+> > > * https://github.com/SELinuxProject/selinux-notebook
+> > >
+> > I'd definitely need help with both of these. Kindly guide how to proceed.
+>
+> Well, perhaps the best way to start is to explain how you have been
+> testing this so far and then using that information to draft a test
+> for the testsuite.
+>
+As I said in my previous reply, Daniel worked on this patch along with
+Stephan Smalley. Here's the conversation regarding testing from back
+then:
+https://lore.kernel.org/lkml/CAEjxPJ4iquFSBfEj+UEFLUFHPsezuQ-Bzv09n+WgOWk38Nyw3w@mail.gmail.com/
+
+There have been only minor changes (fixing comments/coding-style),
+except for addressing a double free issue with userfaultfd_ctx since
+last time it was tested as per the link above.
+
 > --
-> Mike Kravetz
-
-
-
---
-Yours,
-Muchun
+> paul moore
+> www.paul-moore.com
