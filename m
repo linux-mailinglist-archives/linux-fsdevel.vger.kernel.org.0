@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A382AEB8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:29:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB392AEB8A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:29:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbgKKI1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 03:27:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33534 "EHLO
+        id S1726534AbgKKI1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 03:27:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbgKKI12 (ORCPT
+        with ESMTP id S1726416AbgKKI13 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 03:27:28 -0500
+        Wed, 11 Nov 2020 03:27:29 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E067C0617A6;
-        Wed, 11 Nov 2020 00:27:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DF4C0617A7;
+        Wed, 11 Nov 2020 00:27:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=bgbs5emPj5p7gTWcmnEuks79StD6TA5roIn47mScHH4=; b=fBt6QhZHrv17/Y1zEBZjou8nag
-        /S9UF+dPlT5bEmXhZ0AkX3Des+z44TDZwhlLf8UZwm1bya/Tw1ihVWQ1eo0/wpa9jcmRthywUSjkC
-        a5WCNVJjuCks8OG28CqM1W4KLfPlPhhxQn2JdcTB6we015wUZWKRrDnDkhahK+xL2QOV8g1e7VDFb
-        R8OvQOpZICV1BZy/htkG1su/uosUSegQuLRvZZFjPgBFD8n7wOMK+yVOakCbK2S5b4ZCm7OCaoLMu
-        rE0BnJF3Xca/1n6MGkXXTyg53AWbOj3IBct9gJs8ljT/56L365ZklV7NkghnJYSHb0UpMIe95v8XT
-        ZTecf9FA==;
+        bh=aTYccYixW8gbHYOBakp7ukQbj8m53SZz7oZSluFWVGc=; b=u/ozI6WBA8REfAwdRvhywExuNr
+        JLlsRRFbzxUvhpbOhxUj8/yRTolc2kh0ts2NzCUCtvtIGjt7R+mL86s4iNKKy19DxPdRahEdhs7pR
+        VWtl3HgZF75ovljLu1zA3T/5X+fFn3rmuS8w2OpsYFgzn7J0YuXm5T5t2THdt8scAYc5+kG47mtie
+        yNOj6g1hD19a3zBv5h1AdD75GWTJEyW2t6w6Ar1OufkGiHlajaAgfjYMc64Hrs99tQQwSRtuKeGPk
+        C900mkX+WRHnV1MWMEPhCqV0DdkzBlCFAXPcCILEVO5ocQBjNPNvC67NrkhDk+Rw1ZN2Zzateo5JG
+        8ZYIrJAA==;
 Received: from [2001:4bb8:180:6600:bcde:334f:863c:27b8] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kclTG-0007bi-W8; Wed, 11 Nov 2020 08:27:15 +0000
+        id 1kclTI-0007c0-C4; Wed, 11 Nov 2020 08:27:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -48,9 +48,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/24] aoe: don't call set_capacity from irq context
-Date:   Wed, 11 Nov 2020 09:26:46 +0100
-Message-Id: <20201111082658.3401686-13-hch@lst.de>
+Subject: [PATCH 13/24] dm: use set_capacity_and_notify
+Date:   Wed, 11 Nov 2020 09:26:47 +0100
+Message-Id: <20201111082658.3401686-14-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111082658.3401686-1-hch@lst.de>
 References: <20201111082658.3401686-1-hch@lst.de>
@@ -61,58 +61,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Updating the block device size from irq context can lead to torn
-writes of the 64-bit value, and prevents us from using normal
-process context locking primitives to serialize access to the 64-bit
-nr_sectors value.  Defer the set_capacity to the already existing
-workqueue handler, where it can be merged with the update of the
-block device size by using set_capacity_and_notify.  As an extra
-bonus this also adds proper uevent notifications for the resize.
+Use set_capacity_and_notify to set the size of both the disk and block
+device.  This also gets the uevent notifications for the resize for free.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/aoe/aoecmd.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ drivers/md/dm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/block/aoe/aoecmd.c b/drivers/block/aoe/aoecmd.c
-index 313f0b946fe2b3..ac720bdcd983e7 100644
---- a/drivers/block/aoe/aoecmd.c
-+++ b/drivers/block/aoe/aoecmd.c
-@@ -890,19 +890,13 @@ void
- aoecmd_sleepwork(struct work_struct *work)
- {
- 	struct aoedev *d = container_of(work, struct aoedev, work);
--	struct block_device *bd;
--	u64 ssize;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index c18fc25485186d..62ad44925e73ec 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1971,8 +1971,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
+ 	if (size != dm_get_size(md))
+ 		memset(&md->geometry, 0, sizeof(md->geometry));
  
- 	if (d->flags & DEVFL_GDALLOC)
- 		aoeblk_gdalloc(d);
+-	set_capacity(md->disk, size);
+-	bd_set_nr_sectors(md->bdev, size);
++	set_capacity_and_notify(md->disk, size);
  
- 	if (d->flags & DEVFL_NEWSIZE) {
--		ssize = get_capacity(d->gd);
--		bd = bdget_disk(d->gd, 0);
--		if (bd) {
--			bd_set_nr_sectors(bd, ssize);
--			bdput(bd);
--		}
-+		set_capacity_and_notify(d->gd, d->ssize);
-+
- 		spin_lock_irq(&d->lock);
- 		d->flags |= DEVFL_UP;
- 		d->flags &= ~DEVFL_NEWSIZE;
-@@ -971,10 +965,9 @@ ataid_complete(struct aoedev *d, struct aoetgt *t, unsigned char *id)
- 	d->geo.start = 0;
- 	if (d->flags & (DEVFL_GDALLOC|DEVFL_NEWSIZE))
- 		return;
--	if (d->gd != NULL) {
--		set_capacity(d->gd, ssize);
-+	if (d->gd != NULL)
- 		d->flags |= DEVFL_NEWSIZE;
--	} else
-+	else
- 		d->flags |= DEVFL_GDALLOC;
- 	schedule_work(&d->work);
- }
+ 	dm_table_event_callback(t, event_callback, md);
+ 
 -- 
 2.28.0
 
