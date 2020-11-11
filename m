@@ -2,184 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFCE42AEF48
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 12:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A12F2AEF6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 12:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgKKLMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 06:12:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59832 "EHLO
+        id S1726300AbgKKLTK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 06:19:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgKKLMl (ORCPT
+        with ESMTP id S1726352AbgKKLSj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 06:12:41 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866E0C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 03:12:40 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id n129so1870634iod.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 03:12:40 -0800 (PST)
+        Wed, 11 Nov 2020 06:18:39 -0500
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6337C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 03:18:32 -0800 (PST)
+Received: by mail-qt1-x844.google.com with SMTP id v11so955539qtq.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 03:18:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d0GfdO7JXkiEcLNK6+4nDT65yhOpVcfU3tMJUKAFX/Y=;
-        b=jafUJjOqF5iuCiNKamzhXZfEZ2b/KMJSV/69Aov1fbD58v8fUzXzme/k77v5/PTBtq
-         IZ8QYN2UjmF2OEApFLD9HSnQFavdr4UUDX7cpXt0w3tCrPn1m6Eoyfl6901jVQGwiYym
-         cFr29OMMYLb3oXnjmecSGsiRxF37VX406vLxs=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BXYC2kW2Ds9O4Nh+KWAHh8xMvJkVmyy/COi0eqVK5Os=;
+        b=DmJM0qkEm2nDrGG4rzLAHcIxueKFTC/abgSivXYx6KnBVXCdGf4mH77Huj7aUXdjfm
+         l64b+cXDCluUsOwFIc7YdSTrLzhKp5Ipcjk4BHHoBe4S8xm9akA6hPjmkngZhwQsvzI0
+         h/EpoSw6VMF9N1SbWkvn3Mn8mdbp0Dy1jgqwzMr4+dqb1xtQMNbsckDiWwBJ1iUQP6ML
+         Im8oGD7KX+Q89KxronQ9TkHpw1/VJ4nSpBdkG9pyQZIAlEmiE05b8V8CYaS4L+RfiQk1
+         JSy1YztuSfMW+8fMtdWThprsN49Gn3CkSOWs9M32va84IVWXU6QPQqfp6nYMJZRBX++0
+         WC5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=d0GfdO7JXkiEcLNK6+4nDT65yhOpVcfU3tMJUKAFX/Y=;
-        b=BzOIsovxoibYyQ3WhKoHy+UEqVk73Jf5RvBDuE9fgcEVQBBU5MkM5CSEcHx8lkelkv
-         GjsPWwp/OSvwQ/3vne74I/AI6Xm6HZ3u7CHpyoi2Z7Dv0GXn7rCRq4/1F2BaFtzXzqcc
-         XxPiopqDHtSBmcRTqGdT5nRXnh4FgHzhqxUcRFDrkz81QwbQopzHM/dpAaWZXiH508PB
-         AMmfT0uRPih4y7HJRe+6DHZCBssBCQEoaGl3WeIn3bkF0tYwysldFEG4AF02DQtiFnfk
-         Sw8NtTqvS+5tvtIKbSs0h4Qn139OW7ctMXp2QXC2Nt50iJOupMkqiP2sarj3bj65BJXs
-         784A==
-X-Gm-Message-State: AOAM532rgnRSU0qQMSbekP1FFd4ZX0yztqT/omQuaSITS+IFra95ATZx
-        LTI7HH4QiIiHRTjQ4oYBsbhbhw==
-X-Google-Smtp-Source: ABdhPJx24PI5gINDAmGN9cKsbgQ8QJ/4C3dXJyR8HTMiufSH56fhugdT1cUZE1UKaMsItJ8xsCSweA==
-X-Received: by 2002:a02:c884:: with SMTP id m4mr9701932jao.43.1605093159708;
-        Wed, 11 Nov 2020 03:12:39 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id z11sm1094793iop.22.2020.11.11.03.12.38
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Nov 2020 03:12:38 -0800 (PST)
-Date:   Wed, 11 Nov 2020 11:12:36 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "alban.crequy@gmail.com" <alban.crequy@gmail.com>,
-        "mauricio@kinvolk.io" <mauricio@kinvolk.io>,
-        "smayhew@redhat.com" <smayhew@redhat.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "schumaker.anna@gmail.com" <schumaker.anna@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
-Subject: Re: [PATCH v4 0/2] NFS: Fix interaction between fs_context and user
- namespaces
-Message-ID: <20201111111233.GA21917@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201102174737.2740-1-sargun@sargun.me>
- <CAMXgnP5cVoLKTGPOAO+aLEAGLpkjACy1e4iLBKkfp8Gv1U77xA@mail.gmail.com>
- <f6d86006ccd19d4d101097de309eb21bbbf96e43.camel@hammerspace.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BXYC2kW2Ds9O4Nh+KWAHh8xMvJkVmyy/COi0eqVK5Os=;
+        b=ifaCMqJVePrjW924+ifyL/HjerorWUfTQI7cruV5/5ww+Vj79QaLcSStLhJqqyikr2
+         MBIVzwIUUN/X+ezXZ9YLBH4+e7AzQv+qOohuwxlAwjfyZzSF3axBNj03hDpn9xZy9hmw
+         QEtR382ChDaEC/38VgtCDpawSITOH6YmC0O/fOZn99tDC9zF/9Sqg8Trylb83yKE44bQ
+         qI67zsJkiE01mN5W/X0lSOgjwzlGVYGIZ/kDdvnKzSyUbA8Ll1QzbKa0hWg8Hovu97/X
+         EdQSF0OolTAEQPqBp01HoNxD5QB2WIgZvBWzJ8didDd/aZhkV8aRAwr5mcK22H1kCtOy
+         IN1A==
+X-Gm-Message-State: AOAM532iBoJB7Xo6Bm0LHFXwqbHa4pwx26dRi/qdQcEghqlz+gxyOkND
+        kE3X6gaE4m2hML5CaLqx6DfcpuItjh7loQRCLzjijdkT4+ZN2Q==
+X-Google-Smtp-Source: ABdhPJxFpYdl3Svxjlxyb2lDwXiuwj2rn969GU4XaV0QtEY6n7dMdKYchMbrTDheUspnnHnTAsRSns42JGTaP5fURPE=
+X-Received: by 2002:ac8:c04:: with SMTP id k4mr23409836qti.66.1605093511590;
+ Wed, 11 Nov 2020 03:18:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f6d86006ccd19d4d101097de309eb21bbbf96e43.camel@hammerspace.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <0000000000006226c805adf16cb8@google.com>
+In-Reply-To: <0000000000006226c805adf16cb8@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 11 Nov 2020 12:18:20 +0100
+Message-ID: <CACT4Y+b5imco8=HO4NKHUZzQ0=Nq99yQNUAica0yC8OHSKWvtg@mail.gmail.com>
+Subject: Re: WARNING: ODEBUG bug in exit_to_user_mode_prepare
+To:     syzbot <syzbot+fbd7ba7207767ed15165@syzkaller.appspotmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, maz@kernel.org,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 08:12:01PM +0000, Trond Myklebust wrote:
-> On Tue, 2020-11-10 at 17:43 +0100, Alban Crequy wrote:
-> > Hi,
-> > 
-> > I tested the patches on top of 5.10.0-rc3+ and I could mount an NFS
-> > share with a different user namespace. fsopen() is done in the
-> > container namespaces (user, mnt and net namespaces) while fsconfig(),
-> > fsmount() and move_mount() are done on the host namespaces. The mount
-> > on the host is available in the container via mount propagation from
-> > the host mount.
-> > 
-> > With this, the files on the NFS server with uid 0 are available in
-> > the
-> > container with uid 0. On the host, they are available with uid
-> > 4294967294 (make_kuid(&init_user_ns, -2)).
-> > 
-> 
-> Can someone please tell me what is broken with the _current_ design
-> before we start trying to push "fixes" that clearly break it?
-Currently the mechanism of mounting nfs4 in a user namespace is as follows:
+On Fri, Aug 28, 2020 at 5:08 PM syzbot
+<syzbot+fbd7ba7207767ed15165@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    d012a719 Linux 5.9-rc2
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15e9e90e900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=978db74cb30aa994
+> dashboard link: https://syzkaller.appspot.com/bug?extid=fbd7ba7207767ed15165
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f81666900000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15abb10e900000
+>
+> The issue was bisected to:
+>
+> commit a9ed4a6560b8562b7e2e2bed9527e88001f7b682
+> Author: Marc Zyngier <maz@kernel.org>
+> Date:   Wed Aug 19 16:12:17 2020 +0000
+>
+>     epoll: Keep a reference on files added to the check list
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=130823a9900000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=108823a9900000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=170823a9900000
 
-Parent: fork()
-Child: setns(userns)
-C: fsopen("nfs4") = 3
-C->P: Send FD 3
-P: FSConfig...
-P: fsmount... (This is where the CAP_SYS_ADMIN check happens))
+#syz fix:
+fix regression in "epoll: Keep a reference on files added to the check list"
 
-
-Right now, when you mount an NFS filesystem in a non-init user
-namespace, and you have UIDs / GIDs on, the UIDs / GIDs which
-are sent to the server are not the UIDs from the mounting namespace,
-instead they are the UIDs from the init user ns.
-
-The reason for this is that you can call fsopen("nfs4") in the unprivileged 
-namespace, and that configures fs_context with all the right information for 
-that user namespace, but we currently require CAP_SYS_ADMIN in the init user 
-namespace to call fsmount. This means that the superblock's user namespace is 
-set "correctly" to the container, but there's absolutely no way nfs4uidmap
-to consume an unprivileged user namespace.
-
-This behaviour happens "the other way" as well, where the UID in the container
-may be 0, but the corresponding kuid is 1000. When a response from an NFS
-server comes in we decode it according to the idmap userns[1]. The userns
-used to get create idmap is generated at fsmount time, and not as fsopen
-time. So, even if the filesystem is in the user namespace, and the server
-responds with UID 0, it'll come up with an unmapped UID.
-
-This is because we do
-Server UID 0 -> idmap make_kuid(init_user_ns, 0) -> VFS from_kuid(container_ns, 0) -> invalid uid
-
-This is broken behaviour, in my humble opinion as is it makes it impossible to 
-use NFSv4 (and v3 for that matter) out of the box with unprivileged user 
-namespaces. At least in our environment, using usernames / GSS isn't an option,
-so we have to rely on UIDs being set correctly [at least from the container's
-perspective].
-
-
-> 
-> The current design assumes that the user namespace being used is the one where 
-> the mount itself is performed. That means that the uids and gids or usernames 
-> and groupnames that go on the wire match the uids and gids of the container in 
-> which the mount occurred.
-> 
-
-Right now, NFS does not have the ability for the fsmount() call to be
-called in an unprivileged user namespace. We can change that behaviour
-elsewhere if we want, but it's orthogonal to this.
-
-> The assumption is that the server has authenticated that client as
-> belonging to a domain that it recognises (either through strong
-> RPCSEC_GSS/krb5 authentication, or through weaker matching of IP
-> addresses to a list of acceptable clients).
-> 
-I added a rejection for upcalls because upcalls can happen in the init 
-namespaces. We can drop that restriction from the nfs4 patch if you'd like. I
-*believe* (and I'm not a little out of my depth) that the request-key
-handler gets called with the *network namespace* of the NFS mount,
-but the userns is a privileged one, allowing for potential hazards.
-
-The reason I added that block there is that I didn't imagine anyone was running 
-NFS in an unprivileged user namespace, and relying on upcalls (potentially into 
-privileged namespaces) in order to do authz.
-
-
-> If you go ahead and change the user namespace on the client without
-> going through the mount process again to mount a different super block
-> with a different user namespace, then you will now get the exact same
-> behaviour as if you do that with any other filesystem.
-
-Not exactly, because other filesystems *only* use the s_user_ns for conversion 
-of UIDs, whereas NFS uses the currend_cred() acquired at mount time, which 
-doesn't match s_user_ns, leading to this behaviour.
-
-1. Mistranslated UIDs in encoding RPCs
-2. The UID / GID exposed to VFS do not match the user ns.
-
-> 
-> -- 
-> Trond Myklebust
-> Linux NFS client maintainer, Hammerspace
-> trond.myklebust@hammerspace.com
-> 
-> 
--Thanks,
-Sargun
-
-[1]: https://elixir.bootlin.com/linux/v5.9.8/source/fs/nfs/nfs4idmap.c#L782
-[2]: https://elixir.bootlin.com/linux/v5.9.8/source/fs/nfs/nfs4client.c#L1154
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+fbd7ba7207767ed15165@syzkaller.appspotmail.com
+> Fixes: a9ed4a6560b8 ("epoll: Keep a reference on files added to the check list")
+>
+> ------------[ cut here ]------------
+> ODEBUG: free active (active state 1) object type: rcu_head hint: 0x0
+> WARNING: CPU: 1 PID: 10170 at lib/debugobjects.c:485 debug_print_object+0x160/0x250 lib/debugobjects.c:485
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 10170 Comm: syz-executor403 Not tainted 5.9.0-rc2-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x18f/0x20d lib/dump_stack.c:118
+>  panic+0x2e3/0x75c kernel/panic.c:231
+>  __warn.cold+0x20/0x4a kernel/panic.c:600
+>  report_bug+0x1bd/0x210 lib/bug.c:198
+>  handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+>  exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
+>  asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
+> RIP: 0010:debug_print_object+0x160/0x250 lib/debugobjects.c:485
+> Code: dd e0 26 94 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 bf 00 00 00 48 8b 14 dd e0 26 94 88 48 c7 c7 40 1c 94 88 e8 82 3b a6 fd <0f> 0b 83 05 83 54 13 07 01 48 83 c4 20 5b 5d 41 5c 41 5d c3 48 89
+> RSP: 0018:ffffc9000dabfdd0 EFLAGS: 00010082
+> RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+> RDX: ffff888093ada540 RSI: ffffffff815dafc7 RDI: fffff52001b57fac
+> RBP: 0000000000000001 R08: 0000000000000001 R09: ffff8880ae720f8b
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff89bd6780
+> R13: 0000000000000000 R14: dead000000000100 R15: dffffc0000000000
+>  __debug_check_no_obj_freed lib/debugobjects.c:967 [inline]
+>  debug_check_no_obj_freed+0x301/0x41c lib/debugobjects.c:998
+>  kmem_cache_free.part.0+0x16d/0x1f0 mm/slab.c:3692
+>  task_work_run+0xdd/0x190 kernel/task_work.c:141
+>  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:140 [inline]
+>  exit_to_user_mode_prepare+0x195/0x1c0 kernel/entry/common.c:167
+>  syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:242
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x447849
+> Code: e8 9c e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 bb 04 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f37799a7db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e9
+> RAX: 0000000000000000 RBX: 00000000006ddc68 RCX: 0000000000447849
+> RDX: 0000000000000003 RSI: 0000000000000001 RDI: 0000000000000004
+> RBP: 00000000006ddc60 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000020000000 R11: 0000000000000246 R12: 00000000006ddc6c
+> R13: 00007ffcdbf7f6bf R14: 00007f37799a89c0 R15: 0000000000000000
+> Shutting down cpus with NMI
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> syzbot can test patches for this issue, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000006226c805adf16cb8%40google.com.
