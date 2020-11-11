@@ -2,295 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B11FB2AF89D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 19:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF212AF8B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 20:10:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgKKS5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 13:57:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47920 "EHLO
+        id S1726157AbgKKTKP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 14:10:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbgKKS5c (ORCPT
+        with ESMTP id S1726101AbgKKTKP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 13:57:32 -0500
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6399C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 10:57:31 -0800 (PST)
-Received: by mail-io1-xd43.google.com with SMTP id u21so3334876iol.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 10:57:31 -0800 (PST)
+        Wed, 11 Nov 2020 14:10:15 -0500
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D40C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 11:10:14 -0800 (PST)
+Received: by mail-qk1-x72f.google.com with SMTP id t191so2796230qka.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 11:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8DKuDB5LEEiDs+HKBVBurFjvTqncsTKUmAwonf+c4kk=;
-        b=iQC2M+ydj+IdRnNKU1Bq4uRd1PSu/wbVcdQBf/5ys2NMbeX6thY4YmEJOZBEeBiILh
-         bf3uCKWYh7jhgAQGH0n0+GgfS2nvC00u4GyzBFiKncZIH25Gxp8PGRWGZ+XRwVG3Wbnb
-         8i/7dGOqJzh3h/k+JvYVjHlomliOq6hqoDeb0=
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition;
+        bh=cH6LNs9+cy6NhhojxHn+bJDceuxIsC3lzgFjv7Z9HHA=;
+        b=ZVAL0rCtGLF+9e546YLqKRAxr8EVypwfUht9RdBC2dBa4vpFk2fdPl0kEvRCWXfbVC
+         qgf6Ia6FbOgYTkPS+VEhp1fOXejujTD0e1p6Zv+GjWkHTjL6b2FrDXZI29/IFedTEUDL
+         Uw5WFdcyDbzJi/FVV44FTPiNwj9ytoKkSekzulV9xeE4mZ1+CEjiEG9kQIQg1p74+HUO
+         lkaonQEla0IaykDU5OwfsgzQrdHvuDSRjCFlmF+JB4Q7/nVAAnBMz583IHk7aP4o2Z6l
+         hHAWnLuPa6wXquTPMv7jb7kR7sksPIExiB+8i2swll3btHL/SrFUNYr9mkulLONT74H+
+         Udww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8DKuDB5LEEiDs+HKBVBurFjvTqncsTKUmAwonf+c4kk=;
-        b=JxSkKGaATGtKlhIncwJt8aJU/fVQTDGnih1QCyCsXoeoR3yaI+pBHC2iNvO+f/Moo5
-         Mhe7O3gJYY3eoAWB/J7n74NlvGMAbMv0MDi0NXACOddZOG9tq5zLO9T4oErgc79YPary
-         IHLMcVUgwo4sVYXrHlXBORo2OzR5826iaq1N8PM0SAfSrcB3kvoo5vQi8nV5yG//8O76
-         yYpuogFnmI/ilq/Y7vCG6LY7I/DC3F47OfWM4gjFIqyTXTKFswBWWjawP2chOq5Ae7Y1
-         o3BmVA7mJaTc4xl+LH/YZI5Oa9yJH+8/W9hrPPiTWIlN9a2Zlxr3xF+myhxTkyM1KmH3
-         LR3Q==
-X-Gm-Message-State: AOAM531Dobe49atq8UsyUmBp1XQfN48R5z5ZRQZEeLX08N9jbwo84YEs
-        or/JHDVYw12SC4tSrW0+H0TA4XMx5IGd1pMj
-X-Google-Smtp-Source: ABdhPJzI4P23JL1hsAmkxeShiPup7VXJMrqqKoyBvNA/MDImyGOvOCz2EpOJdjwtPjy0et2hRqrx9Q==
-X-Received: by 2002:a02:6a59:: with SMTP id m25mr21258822jaf.132.1605121050913;
-        Wed, 11 Nov 2020 10:57:30 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id n4sm1565046iox.6.2020.11.11.10.57.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Nov 2020 10:57:30 -0800 (PST)
-Date:   Wed, 11 Nov 2020 18:57:28 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "smayhew@redhat.com" <smayhew@redhat.com>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "schumaker.anna@gmail.com" <schumaker.anna@gmail.com>,
-        "alban.crequy@gmail.com" <alban.crequy@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mauricio@kinvolk.io" <mauricio@kinvolk.io>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH v4 0/2] NFS: Fix interaction between fs_context and user
- namespaces
-Message-ID: <20201111185727.GA27945@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201102174737.2740-1-sargun@sargun.me>
- <CAMXgnP5cVoLKTGPOAO+aLEAGLpkjACy1e4iLBKkfp8Gv1U77xA@mail.gmail.com>
- <f6d86006ccd19d4d101097de309eb21bbbf96e43.camel@hammerspace.com>
- <20201111111233.GA21917@ircssh-2.c.rugged-nimbus-611.internal>
- <8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com>
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition;
+        bh=cH6LNs9+cy6NhhojxHn+bJDceuxIsC3lzgFjv7Z9HHA=;
+        b=NebzOQT3u8t4gRAKd8mQS5e8kSwBe7791besJeyPUBxixsxTsgjFs5mA3DsdBfn6f2
+         baoVEe4GDpPJT1Lel5z8tUZrM9wJwM/G8HTgE5ehmOY9Eme8mS6v6Lija4AWODWaMs0B
+         z/zhPhKHGy0hxwK9jqkg8wbUrYohodOvON2FqvwDoONHtkippSXKKV3L7fxdUpiGIO3O
+         +NBOxWxn59FSkrWHDUQ6wqH5Ypbzd55jLATgYeLkBfHAaFlBUgh9I5zDI3iFlCubuZ5x
+         /RPi0DAfM3qjvreFPl2P/RqqBo/sGpPdT/DdRsOyyVz8SLSY3UYGwe8aPHvxcIB9AV3N
+         4QrQ==
+X-Gm-Message-State: AOAM532VmOAZ59zrf322C/KiUiqh7n75IqKjLLZMYTA4KxZGjFTqLtAR
+        OswPXs8Q5YDOF1rVud9e93Ga/XtgzMwj
+X-Google-Smtp-Source: ABdhPJzacAtM5omJEG/IfRfFTS1qoxSGRTJecF81Eo3GtC5VDYwaDUBrNvBqJb0vgIF6uiZswAblag==
+X-Received: by 2002:a37:73c6:: with SMTP id o189mr26369469qkc.216.1605121813719;
+        Wed, 11 Nov 2020 11:10:13 -0800 (PST)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id q28sm3111493qkn.39.2020.11.11.11.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Nov 2020 11:10:13 -0800 (PST)
+Date:   Wed, 11 Nov 2020 14:10:11 -0500
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: DIO & page cache coherency locking + deadlock prevention
+Message-ID: <20201111191011.GE3365678@moria.home.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 02:38:11PM +0000, Trond Myklebust wrote:
-> On Wed, 2020-11-11 at 11:12 +0000, Sargun Dhillon wrote:
-> > On Tue, Nov 10, 2020 at 08:12:01PM +0000, Trond Myklebust wrote:
-> > > On Tue, 2020-11-10 at 17:43 +0100, Alban Crequy wrote:
-> > > > Hi,
-> > > > 
-> > > > I tested the patches on top of 5.10.0-rc3+ and I could mount an
-> > > > NFS
-> > > > share with a different user namespace. fsopen() is done in the
-> > > > container namespaces (user, mnt and net namespaces) while
-> > > > fsconfig(),
-> > > > fsmount() and move_mount() are done on the host namespaces. The
-> > > > mount
-> > > > on the host is available in the container via mount propagation
-> > > > from
-> > > > the host mount.
-> > > > 
-> > > > With this, the files on the NFS server with uid 0 are available
-> > > > in
-> > > > the
-> > > > container with uid 0. On the host, they are available with uid
-> > > > 4294967294 (make_kuid(&init_user_ns, -2)).
-> > > > 
-> > > 
-> > > Can someone please tell me what is broken with the _current_ design
-> > > before we start trying to push "fixes" that clearly break it?
-> > Currently the mechanism of mounting nfs4 in a user namespace is as
-> > follows:
-> > 
-> > Parent: fork()
-> > Child: setns(userns)
-> > C: fsopen("nfs4") = 3
-> > C->P: Send FD 3
-> > P: FSConfig...
-> > P: fsmount... (This is where the CAP_SYS_ADMIN check happens))
-> > 
-> > 
-> > Right now, when you mount an NFS filesystem in a non-init user
-> > namespace, and you have UIDs / GIDs on, the UIDs / GIDs which
-> > are sent to the server are not the UIDs from the mounting namespace,
-> > instead they are the UIDs from the init user ns.
-> > 
-> > The reason for this is that you can call fsopen("nfs4") in the
-> > unprivileged 
-> > namespace, and that configures fs_context with all the right
-> > information for 
-> > that user namespace, but we currently require CAP_SYS_ADMIN in the
-> > init user 
-> > namespace to call fsmount. This means that the superblock's user
-> > namespace is 
-> > set "correctly" to the container, but there's absolutely no way
-> > nfs4uidmap
-> > to consume an unprivileged user namespace.
-> > 
-> > This behaviour happens "the other way" as well, where the UID in the
-> > container
-> > may be 0, but the corresponding kuid is 1000. When a response from an
-> > NFS
-> > server comes in we decode it according to the idmap userns[1]. The
-> > userns
-> > used to get create idmap is generated at fsmount time, and not as
-> > fsopen
-> > time. So, even if the filesystem is in the user namespace, and the
-> > server
-> > responds with UID 0, it'll come up with an unmapped UID.
-> > 
-> > This is because we do
-> > Server UID 0 -> idmap make_kuid(init_user_ns, 0) -> VFS
-> > from_kuid(container_ns, 0) -> invalid uid
-> > 
-> > This is broken behaviour, in my humble opinion as is it makes it
-> > impossible to 
-> > use NFSv4 (and v3 for that matter) out of the box with unprivileged
-> > user 
-> > namespaces. At least in our environment, using usernames / GSS isn't
-> > an option,
-> > so we have to rely on UIDs being set correctly [at least from the
-> > container's
-> > perspective].
-> > 
-> 
-> The current code for setting server->cred was developed independently
-> of fsopen() (and predates it actually). I'm fine with the change to
-> have server->cred be the cred of the user that called fsopen(). That's
-> in line with what we used to do for sys_mount().
-> 
-Just curious, without FS_USERNS, how were you mounting NFSv4 in an
-unprivileged user ns?
+Background: for bcachefs I've been trying to solve the dio page cache coherency
+problem. In short, existing filesystems to varying degrees have a problem with
+operations that modify file data while bypassing the page cache, because while
+we can shoot down/invalidate regions of the page cache just fine, and the inode
+lock will prevent reads and writes from syscalls from pulling those pages back
+into the page cache - page faults are a different story.
+
+And where this gets really tricky is that direct IO via gup() invokes the page
+fault handler, meaning that if the page fault handler is taking the same lock
+that the dio write path is using to prevent the pages it invalidated from being
+faulted back in - and it kinda has to - oops, deadlock.
+
+The standard approach to these kinds of deadlocks is to check for a lock
+ordering violation when taking the 2nd/additional locks, and then if there is a
+lock ordering violation and trylock fails - drop and retake locks in the correct
+order, and unwind and retry from the top because whatever state we had locked
+may have changed.
+
+This means on lock ordering violation the fault handler has to tell the dio
+write code that's calling gup() that it has to re-shoot down the page cache and
+retry.
+
+I finally got around to implementing all this for bcachefs, and it turned out to
+be a lot less nasty than I expected - and I've got it passing a torture test
+that tries to hit this deadlock, where I've got 3 different processes all doing
+dio writes to one file from a buffer that's mapped from the next processes's
+file.
+
+So, I'm posting the code to see if there's any interest in having this locking
+for other filesystems. In my bcachefs tree I've got this all in fs/bcachefs/,
+minus adding one entry to task_struct so we can pass info from the dio write
+path to the fault handler. But if this is of interest to other filesystems it
+needs to be in generic code in filemap.c, for obvious reasons.
+
+The code below is on top of the existing bcachefs code that implements
+ei_pagecache_lock, all it adds is the deadlock detection/handling but it should
+be enough to show the general approach:
 
 
-> However all the other stuff to throw errors when the user namespace is
-> not init_user_ns introduces massive regressions.
-> 
+commit 2872719261668fa9f0cffe04f4895686c8207778
+Author: Kent Overstreet <kent.overstreet@gmail.com>
+Date:   Wed Nov 11 12:33:12 2020 -0500
 
-I can remove that and respin the patch. How do you feel about that?  I would 
-still like to keep the log lines though because it is a uapi change. I am 
-worried that someone might exercise this path with GSS and allow for upcalls 
-into the main namespaces by accident -- or be confused of why they're seeing 
-upcalls "in a different namespace".
+    bcachefs: Deadlock prevention for ei_pagecache_lock
 
-Are you okay with picking up ("NFS: NFSv2/NFSv3: Use cred from fs_context during 
-mount") without any changes?
-
-I can respin ("NFSv4: Refactor NFS to use user namespaces") without:
-/*
- * nfs4idmap is not fully isolated by user namespaces. It is currently
- * only network namespace aware. If upcalls never happen, we do not
- * need to worry as nfs_client instances aren't shared between
- * user namespaces.
- */
-if (idmap_userns(server->nfs_client->cl_idmap) != &init_user_ns && 
-	!(server->caps & NFS_CAP_UIDGID_NOMAP)) {
-	error = -EINVAL;
-	errorf(fc, "Mount credentials are from non init user namespace and ID mapping is enabled. This is not allowed.");
-	goto error;
-}
-
-(and making it so we can call idmap_userns)
-
-> > > 
-> > > The current design assumes that the user namespace being used is
-> > > the one where 
-> > > the mount itself is performed. That means that the uids and gids or
-> > > usernames 
-> > > and groupnames that go on the wire match the uids and gids of the
-> > > container in 
-> > > which the mount occurred.
-> > > 
-> > 
-> > Right now, NFS does not have the ability for the fsmount() call to be
-> > called in an unprivileged user namespace. We can change that
-> > behaviour
-> > elsewhere if we want, but it's orthogonal to this.
-> > 
-> > > The assumption is that the server has authenticated that client as
-> > > belonging to a domain that it recognises (either through strong
-> > > RPCSEC_GSS/krb5 authentication, or through weaker matching of IP
-> > > addresses to a list of acceptable clients).
-> > > 
-> > I added a rejection for upcalls because upcalls can happen in the
-> > init 
-> > namespaces. We can drop that restriction from the nfs4 patch if you'd
-> > like. I
-> > *believe* (and I'm not a little out of my depth) that the request-key
-> > handler gets called with the *network namespace* of the NFS mount,
-> > but the userns is a privileged one, allowing for potential hazards.
-> > 
-> 
-> The idmapper already rejects upcalls to the keyring '/sbin/request-key'
-> utility if you're running with your own user namespace.
-> 
-> Quite frankly, switching to using the keyring was a mistake which I'd
-> undo if I could. Aside from not supporting containers, it is horribly
-> slow due to requiring a full process startup/teardown for every upcall,
-> so it scales poorly to large numbers of identities (particularly with
-> an operation like readdir() in which you're doing serial upcalls).
-> 
-> However nothing stops you from using the old NFSv4 idmapper daemon
-> (a.k.a. rpc.idmapd) in the context of the container that called
-> fsopen() so that it can translate identities correctly using whatever
-> userspace tools (ldap, sssd, winbind...) that the container has
-> configured.
-> 
-
-1. We see this as a potential security risk [this being upcalls] into the 
-unconfined portion of the system. Although, I'm sure that the userspace handlers 
-are written perfectly well, it allows for information leakage to occur.
-
-2. Is there a way to do this for NFSv3? 
-
-3. Can rpc.idmapd get the user namespace that the call is from (and is the 
-keyring per-userns?). In general, I think that this change follows the principal 
-of least surprise.
-
-> > The reason I added that block there is that I didn't imagine anyone
-> > was running 
-> > NFS in an unprivileged user namespace, and relying on upcalls
-> > (potentially into 
-> > privileged namespaces) in order to do authz.
-> > 
-> > 
-> > > If you go ahead and change the user namespace on the client without
-> > > going through the mount process again to mount a different super
-> > > block
-> > > with a different user namespace, then you will now get the exact
-> > > same
-> > > behaviour as if you do that with any other filesystem.
-> > 
-> > Not exactly, because other filesystems *only* use the s_user_ns for
-> > conversion 
-> > of UIDs, whereas NFS uses the currend_cred() acquired at mount time,
-> > which 
-> > doesn't match s_user_ns, leading to this behaviour.
-> > 
-> > 1. Mistranslated UIDs in encoding RPCs
-> > 2. The UID / GID exposed to VFS do not match the user ns.
-> > 
-> > > 
-> > > -- 
-> > > Trond Myklebust
-> > > Linux NFS client maintainer, Hammerspace
-> > > trond.myklebust@hammerspace.com
-> > > 
-> > > 
-> > -Thanks,
-> > Sargun
-> > 
-> > [1]:  
-> > https://elixir.bootlin.com/linux/v5.9.8/source/fs/nfs/nfs4idmap.c#L782
-> > [2]:  
-> > https://elixir.bootlin.com/linux/v5.9.8/source/fs/nfs/nfs4client.c#L1154
-> 
-> -- 
-> Trond Myklebust
-> Linux NFS client maintainer, Hammerspace
-> trond.myklebust@hammerspace.com
-> 
-> 
+diff --git a/fs/bcachefs/fs-io.c b/fs/bcachefs/fs-io.c
+index 1eb69ed38b..0278e7c156 100644
+--- a/fs/bcachefs/fs-io.c
++++ b/fs/bcachefs/fs-io.c
+@@ -35,6 +35,22 @@
+ #include <trace/events/bcachefs.h>
+ #include <trace/events/writeback.h>
+ 
++static inline struct address_space *faults_disabled_mapping(void)
++{
++	return (void *) (((unsigned long) current->faults_disabled_mapping) & (~0UL << 1));
++}
++
++static inline void set_fdm_dropped_locks(void)
++{
++	current->faults_disabled_mapping =
++		(void *) (((unsigned long) current->faults_disabled_mapping)|1);
++}
++
++static inline bool fdm_dropped_locks(void)
++{
++	return ((unsigned long) current->faults_disabled_mapping) & 1;
++}
++
+ struct quota_res {
+ 	u64				sectors;
+ };
+@@ -493,10 +509,35 @@ static void bch2_set_page_dirty(struct bch_fs *c,
+ vm_fault_t bch2_page_fault(struct vm_fault *vmf)
+ {
+ 	struct file *file = vmf->vma->vm_file;
++	struct address_space *mapping = file->f_mapping;
++	struct address_space *fdm = faults_disabled_mapping();
+ 	struct bch_inode_info *inode = file_bch_inode(file);
+ 	int ret;
+ 
++	if (fdm == mapping)
++		return VM_FAULT_SIGBUS;
++
++	/* Lock ordering: */
++	if (fdm > mapping) {
++		struct bch_inode_info *fdm_host = to_bch_ei(fdm->host);
++
++		if (bch2_pagecache_add_tryget(&inode->ei_pagecache_lock))
++			goto got_lock;
++
++		bch2_pagecache_block_put(&fdm_host->ei_pagecache_lock);
++
++		bch2_pagecache_add_get(&inode->ei_pagecache_lock);
++		bch2_pagecache_add_put(&inode->ei_pagecache_lock);
++
++		bch2_pagecache_block_get(&fdm_host->ei_pagecache_lock);
++
++		/* Signal that lock has been dropped: */
++		set_fdm_dropped_locks();
++		return VM_FAULT_SIGBUS;
++	}
++
+ 	bch2_pagecache_add_get(&inode->ei_pagecache_lock);
++got_lock:
+ 	ret = filemap_fault(vmf);
+ 	bch2_pagecache_add_put(&inode->ei_pagecache_lock);
+ 
+@@ -1742,14 +1783,16 @@ static long bch2_dio_write_loop(struct dio_write *dio)
+ 	struct bio *bio = &dio->op.wbio.bio;
+ 	struct bvec_iter_all iter;
+ 	struct bio_vec *bv;
+-	unsigned unaligned;
+-	bool sync = dio->sync;
++	unsigned unaligned, iter_count;
++	bool sync = dio->sync, dropped_locks;
+ 	long ret;
+ 
+ 	if (dio->loop)
+ 		goto loop;
+ 
+ 	while (1) {
++		iter_count = dio->iter.count;
++
+ 		if (kthread)
+ 			kthread_use_mm(dio->mm);
+ 		BUG_ON(current->faults_disabled_mapping);
+@@ -1757,13 +1800,34 @@ static long bch2_dio_write_loop(struct dio_write *dio)
+ 
+ 		ret = bio_iov_iter_get_pages(bio, &dio->iter);
+ 
++		dropped_locks = fdm_dropped_locks();
++
+ 		current->faults_disabled_mapping = NULL;
+ 		if (kthread)
+ 			kthread_unuse_mm(dio->mm);
+ 
++		/*
++		 * If the fault handler returned an error but also signalled
++		 * that it dropped & retook ei_pagecache_lock, we just need to
++		 * re-shoot down the page cache and retry:
++		 */
++		if (dropped_locks && ret)
++			ret = 0;
++
+ 		if (unlikely(ret < 0))
+ 			goto err;
+ 
++		if (unlikely(dropped_locks)) {
++			ret = write_invalidate_inode_pages_range(mapping,
++					req->ki_pos,
++					req->ki_pos + iter_count - 1);
++			if (unlikely(ret))
++				goto err;
++
++			if (!bio->bi_iter.bi_size)
++				continue;
++		}
++
+ 		unaligned = bio->bi_iter.bi_size & (block_bytes(c) - 1);
+ 		bio->bi_iter.bi_size -= unaligned;
+ 		iov_iter_revert(&dio->iter, unaligned);
