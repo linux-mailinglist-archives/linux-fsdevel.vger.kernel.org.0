@@ -2,101 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E102AEAD0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95CB72AEBD5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:29:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbgKKIFi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 03:05:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57090 "EHLO
+        id S1726960AbgKKI3e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 03:29:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbgKKIFg (ORCPT
+        with ESMTP id S1726321AbgKKI1W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 03:05:36 -0500
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B278CC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 00:05:36 -0800 (PST)
-Received: by mail-ua1-x942.google.com with SMTP id a10so445511uan.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 00:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T52zolihXR5yVqpLPyKqfWvMWU33QxIhE3DUTqobAyk=;
-        b=KdW1JirNzZixAW0y6k03W4n0oUx1mwgYHoRio7qxTLAW1sQch9eFg3FdNoi1F44WGb
-         4AkF+mvvdOPJ70KxK4PyyiX26OuZGXP9KqvLg7dG2TAWats96jew/pbpzo7MCLUbTZPq
-         1xzv974+79AmgYpqdDxT/LcxLdiwKZL43xtFw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T52zolihXR5yVqpLPyKqfWvMWU33QxIhE3DUTqobAyk=;
-        b=Xg234m7UPejbSBOVRkfJvGJp+/GolSIFRiPqH2yrL0uJqE09GmA5pCOkZgiOCqhHhg
-         aVigN+Uo1V9olB29EfsaOCmSmwptcKD70ZAipjDB+dlk8eTeHQ2yU74hDtP/Oeso/PqF
-         AlROgD4JwPCzHnPvvZZj464bFS1V5winkh6qZROokEyCRdxlQ2XfKecUK33IzELw9GUo
-         mTXixjl4ynDuEYPd/wiuULodWGyRf8O0/524kZaDuHd/c+cFTrmxCRndElx68wKv/gaw
-         bnohOJ2FUtHPYBH44nEUcaRQJQTYzZdby0CGqIxDuqHS7Bb0suDqVNHSP37AietOqgBX
-         vYCA==
-X-Gm-Message-State: AOAM532WFWSKHz+PHvOQfVT9gGOA8cUw87itG7BXaJyIlTpbwreIf5AT
-        lT1SgdIm3sbKd8hBSq/gNSUeWCSyDJpWR35uwow/gw==
-X-Google-Smtp-Source: ABdhPJyVOGS5SgFT01Xc25kGbuYM8gjuJNx097W3WndVTFEeW06YEX0O0gClxTuu7GxCB3YblpehRMUpXUIJCHBBoc0=
-X-Received: by 2002:ab0:6f54:: with SMTP id r20mr9470960uat.9.1605081935843;
- Wed, 11 Nov 2020 00:05:35 -0800 (PST)
+        Wed, 11 Nov 2020 03:27:22 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AD76C0613D6;
+        Wed, 11 Nov 2020 00:27:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=JAKJjNQpsrrbjmsxnYVVJRTgGHrM34ycZR/npT/boCU=; b=b1ddQnGWc2jtHoKywAuScN8Zdh
+        JpUZaUqXCtKuY0r1wvcQJho9I5LlxQ+Jf1PeuV9MT8HozEqz08MjPlQ2bflOzs5jN6AtnzX9UZLvR
+        TP+ksdGoX+zMrKqAYf6UV/230oaeX+lnludtn/sFHHGEZUrrgeMSlNkGj8LNwkKSIL8M1BtpRD8QW
+        JHnmwoGSdoYRlX13Qq80Wbx/PB+8AMxck1eRfIb4ZyOL7mf/BnfhPUzDrVsEYY2/hN12f5r+V4/aB
+        CJTa0r5tvV0A5l4JwwqEcBTVEhomL9IDTnuaOQ3CyD1joSKU5ImqC0esiM6bTSJ+Tq3LxQEN03v+h
+        /wjoDc/w==;
+Received: from [2001:4bb8:180:6600:bcde:334f:863c:27b8] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kclT1-0007Z4-Lb; Wed, 11 Nov 2020 08:27:00 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Justin Sanders <justin@coraid.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: cleanup updating the size of block devices v2
+Date:   Wed, 11 Nov 2020 09:26:34 +0100
+Message-Id: <20201111082658.3401686-1-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <1e796f9e008fb78fb96358ff74f39bd4865a7c88.1604926010.git.gladkov.alexey@gmail.com>
- <CAJfpegua_ahmNa4p0me6R10wtcPpQVKNiKQOVKjuNW67RHFOOA@mail.gmail.com>
- <87v9ee2wer.fsf@x220.int.ebiederm.org> <CAJfpegugWh7r=h9T+fbb7FKrz2JpWtA==ck2iYq1DYJ25_-WyA@mail.gmail.com>
- <87d00ks5jg.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87d00ks5jg.fsf@x220.int.ebiederm.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 11 Nov 2020 09:05:24 +0100
-Message-ID: <CAJfpeguyFLOKWgrU_7oUHgWkqUzBOf8zPRnL8aqGK3g0sghk=w@mail.gmail.com>
-Subject: Re: [RESEND PATCH v3] fuse: Abort waiting for a response if the
- daemon receives a fatal signal
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Alexey Gladkov <gladkov.alexey@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Alexey Gladkov <legion@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 8:42 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> writes:
+Hi Jens,
 
-> > Okay, so the problem with making the wait_event() at the end of
-> > request_wait_answer() killable is that it would allow compromising the
-> > server's integrity by unlocking the VFS level lock (which protects the
-> > fs) while the server hasn't yet finished the request.
-> >
-> > The way this would be solvable is to add a fuse level lock for each
-> > VFS level lock.   That lock would be taken before the request is sent
-> > to userspace and would be released when the answer is received.
-> > Normally there would be zero contention on these shadow locks, but if
-> > a request is forcibly killed, then the VFS lock is released and the
-> > shadow lock now protects the filesystem.
-> >
-> > This wouldn't solve the case where a fuse fs is deadlocked on a VFS
-> > lock (e.g. task B), but would allow tasks blocked directly on a fuse
-> > filesystem to be killed (e.g. task A or C, both of which would unwind
-> > the deadlock).
->
-> Are we just talking the inode lock here?
->
-> I am trying to figure out if this is a straight forward change.
-> Or if it will take a fair amount of work.
+this series builds on top of the work that went into the last merge window,
+and make sure we have a single coherent interfac for updating the size of a
+block device.
 
-Inode lock and cross directory rename lock should suffice, I think.
+Changes since v1:
+ - minor spelling fixes
 
-One issue is that we are losing normal ref on dentry+mount, so in case
-the process is killed we need to take a ref on the inode.
-
-Since multiple inode locks can be held for one op, we need to take
-care of ordering the shadow locks as well.
-
-It's not a trivial change, but I'd be much happier if we would take
-this instead of the hackish one.
-
-Thanks,
-Miklos
+Diffstat:
+ block/genhd.c                  |   16 +++----
+ drivers/block/aoe/aoecmd.c     |   15 +-----
+ drivers/block/drbd/drbd_main.c |    6 --
+ drivers/block/loop.c           |   36 ++--------------
+ drivers/block/nbd.c            |   88 +++++++++++++----------------------------
+ drivers/block/pktcdvd.c        |    3 -
+ drivers/block/rbd.c            |    3 -
+ drivers/block/rnbd/rnbd-clt.c  |    3 -
+ drivers/block/virtio_blk.c     |    3 -
+ drivers/block/xen-blkfront.c   |    2 
+ drivers/block/zram/zram_drv.c  |    7 ---
+ drivers/md/dm-raid.c           |    3 -
+ drivers/md/dm.c                |    3 -
+ drivers/md/md-cluster.c        |    8 ---
+ drivers/md/md-linear.c         |    3 -
+ drivers/md/md.c                |   24 ++++-------
+ drivers/nvme/host/core.c       |   18 --------
+ drivers/scsi/sd.c              |    9 +---
+ fs/block_dev.c                 |    7 ---
+ include/linux/genhd.h          |    3 -
+ 20 files changed, 76 insertions(+), 184 deletions(-)
