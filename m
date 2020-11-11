@@ -2,98 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0660C2AFABF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 22:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F2AE2AFB1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 23:09:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgKKVwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 16:52:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46694 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbgKKVwc (ORCPT
+        id S1726151AbgKKWJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 17:09:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52445 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725933AbgKKWJ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 16:52:32 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A362C0613D4;
-        Wed, 11 Nov 2020 13:52:32 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kcy2O-003qBZ-LL; Wed, 11 Nov 2020 21:52:20 +0000
-Date:   Wed, 11 Nov 2020 21:52:20 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
-Message-ID: <20201111215220.GA3576660@ZenIV.linux.org.uk>
-References: <20201104082738.1054792-1-hch@lst.de>
- <20201104082738.1054792-2-hch@lst.de>
- <20201110213253.GV3576660@ZenIV.linux.org.uk>
- <20201110213511.GW3576660@ZenIV.linux.org.uk>
- <20201110232028.GX3576660@ZenIV.linux.org.uk>
- <CAHk-=whTqr4Lp0NYR6k3yc2EbiF0RR17=TJPa4JBQATMR__XqA@mail.gmail.com>
+        Wed, 11 Nov 2020 17:09:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605132596;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NNT6Y3XAEtQP7E6raROQBlth0CgSqTiy+VetRwWd9MQ=;
+        b=J4CUHzqbXoU2o4CkyUPLwElvarQ/dBZvkjue1nY3sWrGy+af4wobw5g54fCjRpZ1SxW1Op
+        SGh7P1rlrQezYO70ECeWp60w2zjbiXXIsCuypioUvXGPaeanbwX44fBdDK2uyWH/zOZEnY
+        7T04NEH8Q88MohMDaitOgNwVG3pbIo0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-469-HCJXeB7oPKmXp8IQc5GOZg-1; Wed, 11 Nov 2020 17:09:54 -0500
+X-MC-Unique: HCJXeB7oPKmXp8IQc5GOZg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6C73C64088;
+        Wed, 11 Nov 2020 22:09:53 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-158.rdu2.redhat.com [10.10.115.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 20A845DA79;
+        Wed, 11 Nov 2020 22:09:50 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 8F8E1220203; Wed, 11 Nov 2020 17:09:49 -0500 (EST)
+Date:   Wed, 11 Nov 2020 17:09:49 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>
+Subject: Re: [PATCH v3 3/6] fuse: setattr should set FATTR_KILL_PRIV upon
+ size change
+Message-ID: <20201111220949.GB1577294@redhat.com>
+References: <20201009181512.65496-1-vgoyal@redhat.com>
+ <20201009181512.65496-4-vgoyal@redhat.com>
+ <CAJfpegu=ooDmc3hT9cOe2WEUHQN=twX01xbV+YfPQPJUHFMs-g@mail.gmail.com>
+ <20201106171843.GA1445528@redhat.com>
+ <CAJfpegvvGL=GJX0a+cDUVhX754NibudTvHvtrBrCnk-FEnfQ6A@mail.gmail.com>
+ <CAJfpegvoqBS-uXnPFkxViYanJUCi_s29bajyn1z7Vcd7owJVpg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whTqr4Lp0NYR6k3yc2EbiF0RR17=TJPa4JBQATMR__XqA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <CAJfpegvoqBS-uXnPFkxViYanJUCi_s29bajyn1z7Vcd7owJVpg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 09:54:12AM -0800, Linus Torvalds wrote:
-> On Tue, Nov 10, 2020 at 3:20 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > Any objections to the following?
+On Wed, Nov 11, 2020 at 05:24:22PM +0100, Miklos Szeredi wrote:
+> On Wed, Nov 11, 2020 at 2:54 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 > 
-> Well, I don't _object_, but I find it ugly.
+> > How about FUSE_*KILL_SUIDGID (FUSE_WRITE_KILL_SUIDGID being an alias
+> > for FUSE_WRITE_KILL_PRIV)?
 > 
-> And I think both the old and the "fixed" code is wrong when an EFAULT
-> happens in the middle.
-> 
-> Yes, we can just return EFAULT. But for read() and write() we really
-> try to do the proper partial returns in other places, why not here?
-> 
-> IOW, why isn't the proper fix just something like this:
-> 
->     diff --git a/fs/seq_file.c b/fs/seq_file.c
->     index 3b20e21604e7..ecc6909b71f5 100644
->     --- a/fs/seq_file.c
->     +++ b/fs/seq_file.c
->     @@ -209,7 +209,8 @@ ssize_t seq_read_iter(struct kiocb *iocb,
-> struct iov_iter *iter)
->         /* if not empty - flush it first */
->         if (m->count) {
->                 n = min(m->count, size);
->     -           if (copy_to_iter(m->buf + m->from, n, iter) != n)
->     +           n = copy_to_iter(m->buf + m->from, n, iter);
->     +           if (!n)
->                         goto Efault;
->                 m->count -= n;
->                 m->from += n;
-> 
-> which should get the "efault in the middle" case roughly right (ie the
-> usual "exact byte alignment and page crosser" caveats apply).
+> Series pushed to #for-next with these changes.  Please take a look and test.
 
-Look at the loop after that one, specifically the "it doesn't fit,
-allocate a bigger one" part:
-                kvfree(m->buf);
-                m->count = 0;
-                m->buf = seq_buf_alloc(m->size <<= 1);
-It really depends upon having m->buf empty at the beginning of
-the loop.  Your variant will lose the data, unless we copy the
-"old" part of buffer (from before the ->show()) into the
-larger one.
+Thanks Miklos. I looked at the patches quickly and they look good. I am
+now fixing qemu virtiofsd side and will test.
 
-That can be done, but I would rather go with
-		n = copy_to_iter(m->buf + m->from, m->count, iter);
-		m->count -= n;
-		m->from += n;
-                copied += n;
-                if (!size)
-                        goto Done;
-		if (m->count)
-			goto Efault;
-if we do it that way.  Let me see if I can cook something
-reasonable along those lines...
+Thanks
+Vivek
+
