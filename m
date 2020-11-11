@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CB392AEB8A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:29:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7842AEB8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 09:29:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbgKKI1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 03:27:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33540 "EHLO
+        id S1726594AbgKKI1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 03:27:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbgKKI13 (ORCPT
+        with ESMTP id S1725960AbgKKI1c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 03:27:29 -0500
+        Wed, 11 Nov 2020 03:27:32 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DF4C0617A7;
-        Wed, 11 Nov 2020 00:27:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A111C061A04;
+        Wed, 11 Nov 2020 00:27:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=aTYccYixW8gbHYOBakp7ukQbj8m53SZz7oZSluFWVGc=; b=u/ozI6WBA8REfAwdRvhywExuNr
-        JLlsRRFbzxUvhpbOhxUj8/yRTolc2kh0ts2NzCUCtvtIGjt7R+mL86s4iNKKy19DxPdRahEdhs7pR
-        VWtl3HgZF75ovljLu1zA3T/5X+fFn3rmuS8w2OpsYFgzn7J0YuXm5T5t2THdt8scAYc5+kG47mtie
-        yNOj6g1hD19a3zBv5h1AdD75GWTJEyW2t6w6Ar1OufkGiHlajaAgfjYMc64Hrs99tQQwSRtuKeGPk
-        C900mkX+WRHnV1MWMEPhCqV0DdkzBlCFAXPcCILEVO5ocQBjNPNvC67NrkhDk+Rw1ZN2Zzateo5JG
-        8ZYIrJAA==;
+        bh=lumJq5B2fyOOj2vqJR3cb92lXUnjwfkYYs/CdjVL7AE=; b=uDrlBIhMK6T1RnrpgvD/pKf6sG
+        QV1Sp6TudbRl1mWifO0nZnLE7QfG2iw/OPgIhCSja3Blj4/cJ1bCXgyh4CGVU8X7dkAknvMZodl4b
+        2ynoRHYB66K72oZd5MYRpOB7ObAcIAq2+HyK+1Hr2mJ91JL6kHn0bBGu17bSqY+tlRCoT0t+bpnhq
+        rRarLOFqySYCDRZZr894GHJCn0WJl3x59Oz4tbjlcJPFDeufbZN7qJ20G6JYSqW+cnntCFsKfgQj/
+        oMJ4UPFDhi1LuO4RUOy54Y+XqGoQnfQDGHb+DJOLJYIoYZZrMsBLtPkmlQJdVt/k6Enfm2GLnM3Zj
+        Ld3eXzpQ==;
 Received: from [2001:4bb8:180:6600:bcde:334f:863c:27b8] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kclTI-0007c0-C4; Wed, 11 Nov 2020 08:27:16 +0000
+        id 1kclTJ-0007cE-Po; Wed, 11 Nov 2020 08:27:18 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -48,9 +48,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 13/24] dm: use set_capacity_and_notify
-Date:   Wed, 11 Nov 2020 09:26:47 +0100
-Message-Id: <20201111082658.3401686-14-hch@lst.de>
+Subject: [PATCH 14/24] pktcdvd: use set_capacity_and_notify
+Date:   Wed, 11 Nov 2020 09:26:48 +0100
+Message-Id: <20201111082658.3401686-15-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201111082658.3401686-1-hch@lst.de>
 References: <20201111082658.3401686-1-hch@lst.de>
@@ -66,23 +66,23 @@ device.  This also gets the uevent notifications for the resize for free.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/dm.c | 3 +--
+ drivers/block/pktcdvd.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index c18fc25485186d..62ad44925e73ec 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1971,8 +1971,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
- 	if (size != dm_get_size(md))
- 		memset(&md->geometry, 0, sizeof(md->geometry));
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 467dbd06b7cdb1..4326401cede445 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -2130,8 +2130,7 @@ static int pkt_open_dev(struct pktcdvd_device *pd, fmode_t write)
+ 	}
  
--	set_capacity(md->disk, size);
--	bd_set_nr_sectors(md->bdev, size);
-+	set_capacity_and_notify(md->disk, size);
+ 	set_capacity(pd->disk, lba << 2);
+-	set_capacity(pd->bdev->bd_disk, lba << 2);
+-	bd_set_nr_sectors(pd->bdev, lba << 2);
++	set_capacity_and_notify(pd->bdev->bd_disk, lba << 2);
  
- 	dm_table_event_callback(t, event_callback, md);
- 
+ 	q = bdev_get_queue(pd->bdev);
+ 	if (write) {
 -- 
 2.28.0
 
