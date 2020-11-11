@@ -2,121 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 287F12AEE78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 11:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 268EA2AEEA5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 11:18:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgKKKHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 05:07:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbgKKKGz (ORCPT
+        id S1727212AbgKKKSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 05:18:40 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:7881 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbgKKKSj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 05:06:55 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53A67C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 02:06:55 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id za3so1980659ejb.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 02:06:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.ionos.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8BVYeCUTuKi3mlr+D1JejV3WQ4DReZqKao2un+osJdI=;
-        b=EWvaurrQLE5Q4yXlmvtPWeVGE0dkpLilBhFACYcpJh5SLgD4k2LHFrfA3fg/phe+gw
-         pOXsWhTko+6vmsPMUys1ydyafND8sfafc/BhJ0cLDqzJH5wv7CFdS4PBi4SJJirndEDo
-         I3sopJwAoMSpcvKBGOBbJDfAHPo19nxrr5mYxmaUjZAtoeSEinoAPgcqf0tp4SGruWUm
-         s+puyVNd/9QM59nJCHGxgwiF4Uhv/qkw3Bh4E6NoIJN/jPJN6bl5siKGHhBBHVdEhBTl
-         i9cN1zoK+m/ZDFXKRJbDKDgS4Hb/xEaLU1cJNAhSo0nBcfuCpt/4xbdL/4qVB2KjPelC
-         haxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8BVYeCUTuKi3mlr+D1JejV3WQ4DReZqKao2un+osJdI=;
-        b=LzXByHfQobrFFGtftZE2Ol8cImkRbShtNBqbkOGeBwTgpslI0kHcTZpXp6uUS46VR9
-         A5on+RX3g39Xj8++phTVh8usaAVBKYAKLDCTq+s1idYMEfuEVABRM/RDY0SDetH7mUOB
-         vrIymogJiTyrVwsXVkDIAa6g7tWewy/3DePrZpFLcJ4jhA9O02ipPL6BeNQ5LBtCRNMh
-         8z1STOBjKjv3aVbe8l+UKdkEoWzextktMG/pABmvlKaCj6J1KHKYIPkAgzQNUUdz1vKQ
-         +r/UmYxPZ5RWF2XApVhxnpUrg4Togq+zT+DZ/2a4aQ7IvUaPdaqBcqtYNlzUogzcvMg/
-         kZjA==
-X-Gm-Message-State: AOAM532l48xXkyBlOC6AmVcpRrkDbXQXKUOGNlv05k7Bi7c1HlB0Dm4r
-        B5Na2Qv9IySRPekcDvFvHtQbMrvKmNDzDx3eWZrxyA==
-X-Google-Smtp-Source: ABdhPJzsSG4n+ejxAi7LIm+JtRF2XZ0Zmfdo/Dim1Bn2zjoT1vntwc6k1ciTHUd7GwTXoyYPdOeDF7UWMmfnel/IKPk=
-X-Received: by 2002:a17:907:c05:: with SMTP id ga5mr19170455ejc.212.1605089213881;
- Wed, 11 Nov 2020 02:06:53 -0800 (PST)
+        Wed, 11 Nov 2020 05:18:39 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CWLKc4TR8z6xQ3;
+        Wed, 11 Nov 2020 18:18:28 +0800 (CST)
+Received: from [10.65.58.147] (10.65.58.147) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Wed, 11 Nov 2020
+ 18:18:28 +0800
+Subject: Re: [RESEND PATCH] libfs: fix error cast of negative value in
+ simple_attr_write()
+To:     Andrew Morton <akpm@linux-foundation.org>
+References: <1605000324-7428-1-git-send-email-yangyicong@hisilicon.com>
+ <20201110111842.1bc76e9def94279d4453ff67@linux-foundation.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <akinobu.mita@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <prime.zeng@huawei.com>
+From:   Yicong Yang <yangyicong@hisilicon.com>
+Message-ID: <0b3954a4-1ac9-c454-a0ea-1fa1be5975b8@hisilicon.com>
+Date:   Wed, 11 Nov 2020 18:18:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-References: <20201111082658.3401686-1-hch@lst.de> <20201111082658.3401686-18-hch@lst.de>
- <CAOi1vP-JjnNdAUqd9Gy6YdFgi8Ev4_Jt3zcB9DhAmdAvQhG7Eg@mail.gmail.com>
-In-Reply-To: <CAOi1vP-JjnNdAUqd9Gy6YdFgi8Ev4_Jt3zcB9DhAmdAvQhG7Eg@mail.gmail.com>
-From:   Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Date:   Wed, 11 Nov 2020 11:06:43 +0100
-Message-ID: <CAMGffEmU1ezUo68zF8DS4CRZZMosqhmDw3h7uiWzh2nL8tUs9g@mail.gmail.com>
-Subject: Re: [PATCH 17/24] rbd: use set_capacity_and_notify
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Justin Sanders <justin@coraid.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Lars Ellenberg <drbd-dev@lists.linbit.com>,
-        nbd@other.debian.org,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        xen-devel@lists.xenproject.org,
-        linux-raid <linux-raid@vger.kernel.org>,
-        linux-nvme@lists.infradead.org,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201110111842.1bc76e9def94279d4453ff67@linux-foundation.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.58.147]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 11, 2020 at 10:55 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+Hi,
+
+Thanks for reviewing this.
+
+
+On 2020/11/11 3:18, Andrew Morton wrote:
+> On Tue, 10 Nov 2020 17:25:24 +0800 Yicong Yang <yangyicong@hisilicon.com> wrote:
 >
-> On Wed, Nov 11, 2020 at 9:27 AM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > Use set_capacity_and_notify to set the size of both the disk and block
-> > device.  This also gets the uevent notifications for the resize for free.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > Acked-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-> > ---
-> >  drivers/block/rbd.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> > index f84128abade319..b7a194ffda55b4 100644
-> > --- a/drivers/block/rbd.c
-> > +++ b/drivers/block/rbd.c
-> > @@ -4920,8 +4920,7 @@ static void rbd_dev_update_size(struct rbd_device *rbd_dev)
-> >             !test_bit(RBD_DEV_FLAG_REMOVING, &rbd_dev->flags)) {
-> >                 size = (sector_t)rbd_dev->mapping.size / SECTOR_SIZE;
-> >                 dout("setting size to %llu sectors", (unsigned long long)size);
-> > -               set_capacity(rbd_dev->disk, size);
-> > -               revalidate_disk_size(rbd_dev->disk, true);
-> > +               set_capacity_and_notify(rbd_dev->disk, size);
-> >         }
-> >  }
-> >
-> > --
-> > 2.28.0
-> >
+>> The attr->set() receive a value of u64, but simple_strtoll() is used
+>> for doing the conversion. It will lead to the error cast if user inputs
+>> a negative value.
+>>
+>> Use kstrtoull() instead of simple_strtoll() to convert a string got
+>> from the user to an unsigned value. The former will return '-EINVAL' if
+>> it gets a negetive value, but the latter can't handle the situation
+>> correctly.
+>>
+>> ...
+>>
+>> --- a/fs/libfs.c
+>> +++ b/fs/libfs.c
+>> @@ -977,7 +977,9 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+>>  		goto out;
+>>  
+>>  	attr->set_buf[size] = '\0';
+>> -	val = simple_strtoll(attr->set_buf, NULL, 0);
+>> +	ret = kstrtoull(attr->set_buf, 0, &val);
+>> +	if (ret)
+>> +		goto out;
+>>  	ret = attr->set(attr->data, val);
+>>  	if (ret == 0)
+>>  		ret = len; /* on success, claim we got the whole input */
+> kstrtoull() takes an `unsigned long long *', but `val' is a u64.
 >
-> Hi Christoph,
+> I think this probably works OK on all architectures (ie, no 64-bit
+> architectures are using `unsigned long' for u64).  But perhaps `val'
+> should have type `unsigned long long'?
+
+the attr->set() takes 'val' as u64, so maybe we can stay it unchanged here
+if it works well.
+
+Thanks,
+Yicong
+
+
+> .
 >
-> The Acked-by is wrong here.  I acked this patch (17/24, rbd), and Jack
-> acked the next one (18/24, rnbd).
-right. :)
->
-> Thanks,
->
->                 Ilya
+
