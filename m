@@ -2,19 +2,19 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A24E02AED6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 10:24:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98D092AED7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Nov 2020 10:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbgKKJYE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 04:24:04 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2082 "EHLO
+        id S1727096AbgKKJY3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Nov 2020 04:24:29 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2083 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbgKKJYC (ORCPT
+        with ESMTP id S1726134AbgKKJYC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 11 Nov 2020 04:24:02 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CWK4w3zX1z67KXd;
-        Wed, 11 Nov 2020 17:22:24 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CWK583sbfz67JlR;
+        Wed, 11 Nov 2020 17:22:36 +0800 (CST)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.161)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -25,11 +25,10 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v3 01/11] evm: Execute evm_inode_init_security() only when an HMAC key is loaded
-Date:   Wed, 11 Nov 2020 10:22:52 +0100
-Message-ID: <20201111092302.1589-2-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 02/11] evm: Load EVM key in ima_load_x509() to avoid appraisal
+Date:   Wed, 11 Nov 2020 10:22:53 +0100
+Message-ID: <20201111092302.1589-3-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
 In-Reply-To: <20201111092302.1589-1-roberto.sassu@huawei.com>
 References: <20201111092302.1589-1-roberto.sassu@huawei.com>
@@ -44,46 +43,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-evm_inode_init_security() requires an HMAC key to calculate the HMAC on
-initial xattrs provided by LSMs. However, it checks generically whether a
-key has been loaded, including also public keys, which is not correct as
-public keys are not suitable to calculate the HMAC.
+Public keys do not need to be appraised by IMA as the restriction on the
+IMA/EVM keyrings ensures that a key can be loaded only if it is signed with
+a key in the primary or secondary keyring.
 
-Originally, support for signature verification was introduced to verify a
-possibly immutable initial ram disk, when no new files are created, and to
-switch to HMAC for the root filesystem. By that time, an HMAC key should
-have been loaded and usable to calculate HMACs for new files.
+However, when evm_load_x509() is called, appraisal is already enabled and
+a valid IMA signature must be added to the EVM key to pass verification.
 
-More recently support for requiring an HMAC key was removed from the
-kernel, so that signature verification can be used alone. Since this is a
-legitimate use case, evm_inode_init_security() should not return an error
-when no HMAC key has been loaded.
+Since the restriction is applied on both IMA and EVM keyrings, it is safe
+to disable appraisal also when the EVM key is loaded. This patch calls
+evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
 
-This patch fixes this problem by replacing the evm_key_loaded() check with
-a check of the EVM_INIT_HMAC flag in evm_initialized.
-
-Cc: stable@vger.kernel.org # 4.5.x
-Fixes: 26ddabfe96b ("evm: enable EVM when X509 certificate is loaded")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/evm/evm_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/integrity/iint.c         | 2 ++
+ security/integrity/ima/ima_init.c | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 76d19146d74b..001e001eae01 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -530,7 +530,8 @@ int evm_inode_init_security(struct inode *inode,
- 	struct evm_xattr *xattr_data;
- 	int rc;
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 1d20003243c3..7d08c31c612f 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -200,7 +200,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+ void __init integrity_load_keys(void)
+ {
+ 	ima_load_x509();
++#ifndef CONFIG_IMA_LOAD_X509
+ 	evm_load_x509();
++#endif
+ }
  
--	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
-+	if (!(evm_initialized & EVM_INIT_HMAC) ||
-+	    !evm_protected_xattr(lsm_xattr->name))
- 		return 0;
+ static int __init integrity_fs_init(void)
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 4902fe7bd570..9d29a1680da8 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -106,6 +106,10 @@ void __init ima_load_x509(void)
  
- 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
+ 	ima_policy_flag &= ~unset_flags;
+ 	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
++
++	/* load also EVM key to avoid appraisal */
++	evm_load_x509();
++
+ 	ima_policy_flag |= unset_flags;
+ }
+ #endif
 -- 
 2.27.GIT
 
