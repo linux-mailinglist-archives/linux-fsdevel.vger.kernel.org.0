@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 663C62B05AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 14:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D511F2B05A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 14:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbgKLNA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 08:00:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40142 "EHLO
+        id S1728386AbgKLNAx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 08:00:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30789 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728407AbgKLM7K (ORCPT
+        by vger.kernel.org with ESMTP id S1728531AbgKLNAt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 07:59:10 -0500
+        Thu, 12 Nov 2020 08:00:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605185948;
+        s=mimecast20190719; t=1605186047;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SIMOin/av7q3MUxt47nGrwOjr3mQiZb4LuG2UAH2unI=;
-        b=hr35b+1ib6ExD2PEG9+3tneDFoqJAjHmNO/1ZqGdOxcVaqktU7KPx3nVHRrEwUyfW3iPUU
-        0SMnoVL0OwjQommqhy5/7MUKpqui9NZFGRi92LiQn+5xtjSfSwh4nueEcnQjb0lMiBA/pN
-        5xHbXgUGw25lhdaUmp68MTN9rJFVqFg=
+        bh=AenMsUHNek1p9GbSntFVDq8v3nHDim3WZP0WdDpuhRI=;
+        b=WJNBx2fNyo5KOX7t74Nu1USJUrgTu4gIaZnIpYFcDu4/94pVaA7Q0MW6DWAxAMtx7I2ByB
+        b3S7OkL0VegY5VLZ7mGGa3SQgQo7dkqcrL0XDYz/EdaixEeI9EEI7hnz4pURwjRvaJaOeE
+        TfIzqGEB5Om2nt3RZ1Hkw25qH2VW+MU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-7-jQGw346-PjuIWaBBSUW1BA-1; Thu, 12 Nov 2020 07:59:03 -0500
-X-MC-Unique: jQGw346-PjuIWaBBSUW1BA-1
+ us-mta-322-jf8QS1iPOoejZOZYgMYiWQ-1; Thu, 12 Nov 2020 08:00:43 -0500
+X-MC-Unique: jf8QS1iPOoejZOZYgMYiWQ-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A3C48801FDF;
-        Thu, 12 Nov 2020 12:59:01 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3ADC380A1BE;
+        Thu, 12 Nov 2020 13:00:40 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-47.rdu2.redhat.com [10.10.115.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1C3B5D9E4;
-        Thu, 12 Nov 2020 12:58:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 41EAF5D98F;
+        Thu, 12 Nov 2020 13:00:06 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/18] crypto/krb5: Implement the AES enctypes from rfc8009
+Subject: [PATCH 17/18] rxrpc: rxgk: Implement connection rekeying
 From:   David Howells <dhowells@redhat.com>
 To:     herbert@gondor.apana.org.au, bfields@fieldses.org
 Cc:     dhowells@redhat.com, trond.myklebust@hammerspace.com,
@@ -46,8 +46,8 @@ Cc:     dhowells@redhat.com, trond.myklebust@hammerspace.com,
         linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Thu, 12 Nov 2020 12:58:58 +0000
-Message-ID: <160518593886.2277919.4740986612401034649.stgit@warthog.procyon.org.uk>
+Date:   Thu, 12 Nov 2020 13:00:05 +0000
+Message-ID: <160518600537.2277919.5458566746685787619.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
 References: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -59,345 +59,240 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement the aes128-cts-hmac-sha256-128 and aes256-cts-hmac-sha384-192
-enctypes from rfc8009, overriding the rfc3961 kerberos 5 simplified crypto
-scheme.
+Implement rekeying of connections with the RxGK security class.  This
+involves regenerating the keys with a different key number as part of the
+input data after a certain amount of time or a certain amount of bytes
+encrypted.  Rekeying may be triggered by either end.
+
+The LSW of the key number is inserted into the security-specific field in
+the RX header, and we try and expand it to 32-bits to make it last longer.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/krb5/Kconfig        |    2 
- crypto/krb5/Makefile       |    3 -
- crypto/krb5/internal.h     |    6 +
- crypto/krb5/main.c         |    2 
- crypto/krb5/rfc8009_aes2.c |  239 ++++++++++++++++++++++++++++++++++++++++++++
- include/crypto/krb5.h      |    4 +
- 6 files changed, 255 insertions(+), 1 deletion(-)
- create mode 100644 crypto/krb5/rfc8009_aes2.c
+ net/rxrpc/ar-internal.h |    6 ++
+ net/rxrpc/conn_object.c |    2 +
+ net/rxrpc/rxgk.c        |  156 +++++++++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 157 insertions(+), 7 deletions(-)
 
-diff --git a/crypto/krb5/Kconfig b/crypto/krb5/Kconfig
-index e2eba1d689ab..5607c0c81049 100644
---- a/crypto/krb5/Kconfig
-+++ b/crypto/krb5/Kconfig
-@@ -4,6 +4,8 @@ config CRYPTO_KRB5
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_HASH_INFO
- 	select CRYPTO_SHA1
-+	select CRYPTO_SHA256
-+	select CRYPTO_SHA512
- 	select CRYPTO_CBC
- 	select CRYPTO_CTS
- 	select CRYPTO_AES
-diff --git a/crypto/krb5/Makefile b/crypto/krb5/Makefile
-index b7da03cae6d1..85763131f7b6 100644
---- a/crypto/krb5/Makefile
-+++ b/crypto/krb5/Makefile
-@@ -7,7 +7,8 @@ krb5-y += \
- 	kdf.o \
- 	main.o \
- 	rfc3961_simplified.o \
--	rfc3962_aes.o
-+	rfc3962_aes.o \
-+	rfc8009_aes2.o
+diff --git a/net/rxrpc/ar-internal.h b/net/rxrpc/ar-internal.h
+index efdb3334ad88..3f2469714422 100644
+--- a/net/rxrpc/ar-internal.h
++++ b/net/rxrpc/ar-internal.h
+@@ -462,11 +462,15 @@ struct rxrpc_connection {
+ 			u32	nonce;		/* response re-use preventer */
+ 		} rxkad;
+ 		struct {
+-			struct rxgk_context *keys[1];
++			struct rxgk_context *keys[4]; /* (Re-)keying buffer */
+ 			u64	start_time;	/* The start time for TK derivation */
+ 			u8	nonce[20];	/* Response re-use preventer */
++			u32	key_number;	/* Current key number */
+ 		} rxgk;
+ 	};
++	rwlock_t		security_lock;	/* Lock allowing modification of security */
++	struct mutex		rekeying_lock;	/* Lock allowing rekeying */
++
+ 	unsigned long		flags;
+ 	unsigned long		events;
+ 	unsigned long		idle_timestamp;	/* Time at which last became idle */
+diff --git a/net/rxrpc/conn_object.c b/net/rxrpc/conn_object.c
+index 8dd1ef25b98f..ff60526d0e0f 100644
+--- a/net/rxrpc/conn_object.c
++++ b/net/rxrpc/conn_object.c
+@@ -47,6 +47,8 @@ struct rxrpc_connection *rxrpc_alloc_connection(gfp_t gfp)
+ 		INIT_LIST_HEAD(&conn->link);
+ 		skb_queue_head_init(&conn->rx_queue);
+ 		conn->security = &rxrpc_no_security;
++		rwlock_init(&conn->security_lock);
++		mutex_init(&conn->rekeying_lock);
+ 		spin_lock_init(&conn->state_lock);
+ 		conn->debug_id = atomic_inc_return(&rxrpc_debug_id);
+ 		conn->size_align = 4;
+diff --git a/net/rxrpc/rxgk.c b/net/rxrpc/rxgk.c
+index 703e46e8b508..0aa6da93b8d4 100644
+--- a/net/rxrpc/rxgk.c
++++ b/net/rxrpc/rxgk.c
+@@ -90,11 +90,153 @@ static void rxgk_describe_server_key(const struct key *key, struct seq_file *m)
+ 		seq_printf(m, ": %s", krb5->name);
+ }
  
- krb5-$(CONFIG_CRYPTO_KRB5_SELFTESTS) += \
- 	selftest.o \
-diff --git a/crypto/krb5/internal.h b/crypto/krb5/internal.h
-index 47424b433778..e64f5e58199f 100644
---- a/crypto/krb5/internal.h
-+++ b/crypto/krb5/internal.h
-@@ -158,6 +158,12 @@ int rfc3961_verify_mic(const struct krb5_enctype *krb5,
- extern const struct krb5_enctype krb5_aes128_cts_hmac_sha1_96;
- extern const struct krb5_enctype krb5_aes256_cts_hmac_sha1_96;
- 
 +/*
-+ * rfc8009_aes2.c
-+ */
-+extern const struct krb5_enctype krb5_aes128_cts_hmac_sha256_128;
-+extern const struct krb5_enctype krb5_aes256_cts_hmac_sha384_192;
-+
- /*
-  * selftest.c
-  */
-diff --git a/crypto/krb5/main.c b/crypto/krb5/main.c
-index b79127027551..9914d3417c21 100644
---- a/crypto/krb5/main.c
-+++ b/crypto/krb5/main.c
-@@ -20,6 +20,8 @@ MODULE_LICENSE("GPL");
- static const struct krb5_enctype *const krb5_supported_enctypes[] = {
- 	&krb5_aes128_cts_hmac_sha1_96,
- 	&krb5_aes256_cts_hmac_sha1_96,
-+	&krb5_aes128_cts_hmac_sha256_128,
-+	&krb5_aes256_cts_hmac_sha384_192,
- };
- 
- /**
-diff --git a/crypto/krb5/rfc8009_aes2.c b/crypto/krb5/rfc8009_aes2.c
-new file mode 100644
-index 000000000000..9f0f0f410d91
---- /dev/null
-+++ b/crypto/krb5/rfc8009_aes2.c
-@@ -0,0 +1,239 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* rfc8009 AES Encryption with HMAC-SHA2 for Kerberos 5
++ * Handle rekeying the connection when the we see our limits overrun or when
++ * the far side decided to rekey.
 + *
-+ * Copyright (C) 2020 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
++ * Returns a ref on the context if successful or -ESTALE if the key is out of
++ * date.
 + */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <crypto/skcipher.h>
-+#include <crypto/hash.h>
-+#include <linux/slab.h>
-+#include "internal.h"
-+
-+static const struct krb5_buffer rfc8009_no_context = { .len = 0, .data = "" };
-+
-+/*
-+ * Calculate the key derivation function KDF-HMAC-SHA2(key, label, [context,] k)
-+ *
-+ *	KDF-HMAC-SHA2(key, label, [context,] k) = k-truncate(K1)
-+ *
-+ *	Using the appropriate one of:
-+ *		K1 = HMAC-SHA-256(key, 0x00000001 | label | 0x00 | k)
-+ *		K1 = HMAC-SHA-384(key, 0x00000001 | label | 0x00 | k)
-+ *		K1 = HMAC-SHA-256(key, 0x00000001 | label | 0x00 | context | k)
-+ *		K1 = HMAC-SHA-384(key, 0x00000001 | label | 0x00 | context | k)
-+ *	[rfc8009 sec 3]
-+ */
-+static int rfc8009_calc_KDF_HMAC_SHA2(const struct krb5_enctype *krb5,
-+				      const struct krb5_buffer *key,
-+				      const struct krb5_buffer *label,
-+				      const struct krb5_buffer *context,
-+				      unsigned int k,
-+				      struct krb5_buffer *result,
-+				      gfp_t gfp)
++static struct rxgk_context *rxgk_rekey(struct rxrpc_connection *conn,
++				       const u16 *specific_key_number)
 +{
-+	struct crypto_shash *shash;
-+	struct krb5_buffer K1, data;
-+	struct shash_desc *desc;
-+	__be32 tmp;
-+	size_t bsize;
-+	void *buffer;
-+	u8 *p;
-+	int ret = -ENOMEM;
++	struct rxgk_context *gk, *dead = NULL;
++	unsigned int key_number, current_key, mask = ARRAY_SIZE(conn->rxgk.keys) - 1;
++	bool crank = false;
 +
-+	if (WARN_ON(result->len != k / 8))
-+		return -EINVAL;
++	_enter("%d", specific_key_number ? *specific_key_number : -1);
 +
-+	shash = crypto_alloc_shash(krb5->cksum_name, 0, 0);
-+	if (IS_ERR(shash))
-+		return (PTR_ERR(shash) == -ENOENT) ? -ENOPKG : PTR_ERR(shash);
-+	ret = crypto_shash_setkey(shash, key->data, key->len);
-+	if (ret < 0)
-+		goto error_shash;
++	mutex_lock(&conn->rekeying_lock);
 +
-+	ret = -EINVAL;
-+	if (WARN_ON(crypto_shash_digestsize(shash) * 8 < k))
-+		goto error_shash;
++	current_key = conn->rxgk.key_number;
++	if (!specific_key_number) {
++		key_number = current_key;
++	} else {
++		if (*specific_key_number == (u16)current_key)
++			key_number = current_key;
++		else if (*specific_key_number == (u16)(current_key - 1))
++			key_number = current_key - 1;
++		else if (*specific_key_number == (u16)(current_key + 1))
++			goto crank_window;
++		else
++			goto bad_key;
++	}
 +
-+	ret = -ENOMEM;
-+	data.len = 4 + label->len + 1 + context->len + 4;
-+	bsize = krb5_shash_size(shash) +
-+		krb5_digest_size(shash) +
-+		crypto_roundup(data.len);
-+	buffer = kzalloc(bsize, GFP_NOFS);
-+	if (!buffer)
-+		goto error_shash;
++	gk = conn->rxgk.keys[key_number & mask];
++	if (!gk)
++		goto generate_key;
++	if (!specific_key_number &&
++	    test_bit(RXGK_TK_NEEDS_REKEY, &gk->flags))
++		goto crank_window;
 +
-+	desc = buffer;
-+	desc->tfm = shash;
-+	ret = crypto_shash_init(desc);
-+	if (ret < 0)
-+		goto error;
++grab:
++	refcount_inc(&gk->usage);
++	mutex_unlock(&conn->rekeying_lock);
++	rxgk_put(dead);
++	return gk;
 +
-+	p = data.data = buffer +
-+		krb5_shash_size(shash) +
-+		krb5_digest_size(shash);
-+	*(__be32 *)p = htonl(0x00000001);
-+	p += 4;
-+	memcpy(p, label->data, label->len);
-+	p += label->len;
-+	*p++ = 0;
-+	memcpy(p, context->data, context->len);
-+	p += context->len;
-+	tmp = htonl(k);
-+	memcpy(p, &tmp, 4);
-+	p += 4;
++crank_window:
++	if (current_key == UINT_MAX)
++		goto bad_key;
++	if (current_key + 1 == UINT_MAX)
++		set_bit(RXRPC_CONN_DONT_REUSE, &conn->flags);
 +
-+	ret = -EINVAL;
-+	if (WARN_ON(p - (u8 *)data.data != data.len))
-+		goto error;
++	key_number = current_key + 1;
++	if (WARN_ON(conn->rxgk.keys[key_number & mask]))
++		goto bad_key;
++	crank = true;
 +
-+	K1.len = crypto_shash_digestsize(shash);
-+	K1.data = buffer +
-+		krb5_shash_size(shash);
++generate_key:
++	gk = conn->rxgk.keys[current_key & mask];
++	gk = rxgk_generate_transport_key(conn, gk->key, key_number, GFP_NOFS);
++	if (IS_ERR(gk)) {
++		mutex_unlock(&conn->rekeying_lock);
++		return gk;
++	}
 +
-+	ret = crypto_shash_finup(desc, data.data, data.len, K1.data);
-+	if (ret < 0)
-+		goto error;
++	write_lock(&conn->security_lock);
++	if (crank) {
++		current_key++;
++		conn->rxgk.key_number = current_key;
++		dead = conn->rxgk.keys[(current_key - 2) & mask];
++		conn->rxgk.keys[(current_key - 2) & mask] = NULL;
++	}
++	conn->rxgk.keys[current_key & mask] = gk;
++	write_unlock(&conn->security_lock);
++	goto grab;
 +
-+	memcpy(result->data, K1.data, result->len);
-+
-+error:
-+	kfree_sensitive(buffer);
-+error_shash:
-+	crypto_free_shash(shash);
-+	return ret;
++bad_key:
++	mutex_unlock(&conn->rekeying_lock);
++	return ERR_PTR(-ESTALE);
 +}
 +
 +/*
-+ * Calculate the pseudo-random function, PRF().
++ * Get the specified keying context.
 + *
-+ *	PRF = KDF-HMAC-SHA2(input-key, "prf", octet-string, 256)
-+ *	PRF = KDF-HMAC-SHA2(input-key, "prf", octet-string, 384)
-+ *
-+ *      The "prfconstant" used in the PRF operation is the three-octet string
-+ *      "prf".
-+ *      [rfc8009 sec 5]
++ * Returns a ref on the context if successful or -ESTALE if the key is out of
++ * date.
 + */
-+static int rfc8009_calc_PRF(const struct krb5_enctype *krb5,
-+			    const struct krb5_buffer *input_key,
-+			    const struct krb5_buffer *octet_string,
-+			    struct krb5_buffer *result,
-+			    gfp_t gfp)
-+{
-+	static const struct krb5_buffer prfconstant = { 3, "prf" };
+ static struct rxgk_context *rxgk_get_key(struct rxrpc_connection *conn,
+-					 u16 *specific_key_number)
++					 const u16 *specific_key_number)
+ {
+-	refcount_inc(&conn->rxgk.keys[0]->usage);
+-	return conn->rxgk.keys[0];
++	struct rxgk_context *gk;
++	unsigned int key_number, current_key, mask = ARRAY_SIZE(conn->rxgk.keys) - 1;
 +
-+	return rfc8009_calc_KDF_HMAC_SHA2(krb5, input_key, &prfconstant,
-+					  octet_string, krb5->prf_len * 8,
-+					  result, gfp);
-+}
++	_enter("{%u},%d",
++	       conn->rxgk.key_number, specific_key_number ? *specific_key_number : -1);
 +
-+/*
-+ * Derive Ke.
-+ *	Ke = KDF-HMAC-SHA2(base-key, usage | 0xAA, 128)
-+ *	Ke = KDF-HMAC-SHA2(base-key, usage | 0xAA, 256)
-+ *      [rfc8009 sec 5]
-+ */
-+static int rfc8009_calc_Ke(const struct krb5_enctype *krb5,
-+			   const struct krb5_buffer *base_key,
-+			   const struct krb5_buffer *usage_constant,
-+			   struct krb5_buffer *result,
-+			   gfp_t gfp)
-+{
-+	return rfc8009_calc_KDF_HMAC_SHA2(krb5, base_key, usage_constant,
-+					  &rfc8009_no_context, krb5->key_bytes * 8,
-+					  result, gfp);
-+}
++	read_lock(&conn->security_lock);
 +
-+/*
-+ * Derive Kc/Ki
-+ *	Kc = KDF-HMAC-SHA2(base-key, usage | 0x99, 128)
-+ *	Ki = KDF-HMAC-SHA2(base-key, usage | 0x55, 128)
-+ *	Kc = KDF-HMAC-SHA2(base-key, usage | 0x99, 192)
-+ *	Ki = KDF-HMAC-SHA2(base-key, usage | 0x55, 192)
-+ *      [rfc8009 sec 5]
-+ */
-+static int rfc8009_calc_Ki(const struct krb5_enctype *krb5,
-+			   const struct krb5_buffer *base_key,
-+			   const struct krb5_buffer *usage_constant,
-+			   struct krb5_buffer *result,
-+			   gfp_t gfp)
-+{
-+	return rfc8009_calc_KDF_HMAC_SHA2(krb5, base_key, usage_constant,
-+					  &rfc8009_no_context, krb5->cksum_len * 8,
-+					  result, gfp);
-+}
++	current_key = conn->rxgk.key_number;
++	if (!specific_key_number) {
++		key_number = current_key;
++	} else {
++		/* Only the bottom 16 bits of the key number are exposed in the
++		 * header, so we try and keep the upper 16 bits in step.  The
++		 * whole 32 bits are used to generate the TK.
++		 */
++		if (*specific_key_number == (u16)current_key)
++			key_number = current_key;
++		else if (*specific_key_number == (u16)(current_key - 1))
++			key_number = current_key - 1;
++		else if (*specific_key_number == (u16)(current_key + 1))
++			goto rekey;
++		else
++			goto bad_key;
++	}
 +
-+/*
-+ * AES random-to-key function.  For AES, this is an identity operation.
-+ */
-+static int rfc8009_random_to_key(const struct krb5_enctype *krb5,
-+				 const struct krb5_buffer *randombits,
-+				 struct krb5_buffer *result)
-+{
-+	if (randombits->len != 16 && randombits->len != 32)
-+		return -EINVAL;
++	gk = conn->rxgk.keys[key_number & mask];
++	if (!gk)
++		goto slow_path;
++	if (!specific_key_number &&
++	    key_number < UINT_MAX) {
++		if (time_after(jiffies, gk->expiry) ||
++		    gk->bytes_remaining < 0) {
++			set_bit(RXGK_TK_NEEDS_REKEY, &gk->flags);
++			goto slow_path;
++		}
 +
-+	if (result->len != randombits->len)
-+		return -EINVAL;
++		if (test_bit(RXGK_TK_NEEDS_REKEY, &gk->flags))
++			goto slow_path;
++	}
 +
-+	memcpy(result->data, randombits->data, randombits->len);
-+	return 0;
-+}
++	refcount_inc(&gk->usage);
++	read_unlock(&conn->security_lock);
++	return gk;
 +
-+static const struct krb5_crypto_profile rfc8009_crypto_profile = {
-+	.calc_PRF	= rfc8009_calc_PRF,
-+	.calc_Kc	= rfc8009_calc_Ki,
-+	.calc_Ke	= rfc8009_calc_Ke,
-+	.calc_Ki	= rfc8009_calc_Ki,
-+	.encrypt	= NULL, //rfc8009_encrypt,
-+	.decrypt	= NULL, //rfc8009_decrypt,
-+	.get_mic	= rfc3961_get_mic,
-+	.verify_mic	= rfc3961_verify_mic,
-+};
-+
-+const struct krb5_enctype krb5_aes128_cts_hmac_sha256_128 = {
-+	.etype		= KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128,
-+	.ctype		= KRB5_CKSUMTYPE_HMAC_SHA256_128_AES128,
-+	.name		= "aes128-cts-hmac-sha256-128",
-+	.encrypt_name	= "cts(cbc(aes))",
-+	.cksum_name	= "hmac(sha256)",
-+	.hash_name	= "sha256",
-+	.key_bytes	= 16,
-+	.key_len	= 16,
-+	.Kc_len		= 16,
-+	.Ke_len		= 16,
-+	.Ki_len		= 16,
-+	.block_len	= 16,
-+	.conf_len	= 16,
-+	.cksum_len	= 16,
-+	.hash_len	= 20,
-+	.prf_len	= 32,
-+	.keyed_cksum	= true,
-+	.random_to_key	= rfc8009_random_to_key,
-+	.profile	= &rfc8009_crypto_profile,
-+};
-+
-+const struct krb5_enctype krb5_aes256_cts_hmac_sha384_192 = {
-+	.etype		= KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192,
-+	.ctype		= KRB5_CKSUMTYPE_HMAC_SHA384_192_AES256,
-+	.name		= "aes256-cts-hmac-sha384-192",
-+	.encrypt_name	= "cts(cbc(aes))",
-+	.cksum_name	= "hmac(sha384)",
-+	.hash_name	= "sha384",
-+	.key_bytes	= 32,
-+	.key_len	= 32,
-+	.Kc_len		= 24,
-+	.Ke_len		= 32,
-+	.Ki_len		= 24,
-+	.block_len	= 16,
-+	.conf_len	= 16,
-+	.cksum_len	= 24,
-+	.hash_len	= 20,
-+	.prf_len	= 48,
-+	.keyed_cksum	= true,
-+	.random_to_key	= rfc8009_random_to_key,
-+	.profile	= &rfc8009_crypto_profile,
-+};
-diff --git a/include/crypto/krb5.h b/include/crypto/krb5.h
-index b83d3d487753..f38a5b4d97ee 100644
---- a/include/crypto/krb5.h
-+++ b/include/crypto/krb5.h
-@@ -32,6 +32,8 @@ struct scatterlist;
- #define KRB5_ENCTYPE_DES3_CBC_SHA1		0x0010
- #define KRB5_ENCTYPE_AES128_CTS_HMAC_SHA1_96	0x0011
- #define KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96	0x0012
-+#define KRB5_ENCTYPE_AES128_CTS_HMAC_SHA256_128	0x0013
-+#define KRB5_ENCTYPE_AES256_CTS_HMAC_SHA384_192	0x0014
- #define KRB5_ENCTYPE_ARCFOUR_HMAC		0x0017
- #define KRB5_ENCTYPE_ARCFOUR_HMAC_EXP		0x0018
- #define KRB5_ENCTYPE_UNKNOWN			0x01ff
-@@ -46,6 +48,8 @@ struct scatterlist;
- #define KRB5_CKSUMTYPE_HMAC_SHA1_DES3		0x000c
- #define KRB5_CKSUMTYPE_HMAC_SHA1_96_AES128	0x000f
- #define KRB5_CKSUMTYPE_HMAC_SHA1_96_AES256	0x0010
-+#define KRB5_CKSUMTYPE_HMAC_SHA256_128_AES128	0x0013
-+#define KRB5_CKSUMTYPE_HMAC_SHA384_192_AES256	0x0014
- #define KRB5_CKSUMTYPE_HMAC_MD5_ARCFOUR		-138 /* Microsoft md5 hmac cksumtype */
++rekey:
++	_debug("rekey");
++	if (current_key == UINT_MAX)
++		goto bad_key;
++	gk = conn->rxgk.keys[current_key & mask];
++	if (gk)
++		set_bit(RXGK_TK_NEEDS_REKEY, &gk->flags);
++slow_path:
++	read_unlock(&conn->security_lock);
++	return rxgk_rekey(conn, specific_key_number);
++bad_key:
++	read_unlock(&conn->security_lock);
++	return ERR_PTR(-ESTALE);
+ }
  
  /*
+@@ -106,7 +248,8 @@ static int rxgk_init_connection_security(struct rxrpc_connection *conn,
+ 	struct rxgk_context *gk;
+ 	int ret;
+ 
+-	_enter("{%d},{%x}", conn->debug_id, key_serial(conn->params.key));
++	_enter("{%d,%u},{%x}",
++	       conn->debug_id, conn->rxgk.key_number, key_serial(conn->params.key));
+ 
+ 	conn->security_ix = token->security_index;
+ 	conn->params.security_level = token->rxgk->level;
+@@ -116,10 +259,11 @@ static int rxgk_init_connection_security(struct rxrpc_connection *conn,
+ 		do_div(conn->rxgk.start_time, 100);
+ 	}
+ 
+-	gk = rxgk_generate_transport_key(conn, token->rxgk, 0, GFP_NOFS);
++	gk = rxgk_generate_transport_key(conn, token->rxgk, conn->rxgk.key_number,
++					 GFP_NOFS);
+ 	if (IS_ERR(gk))
+ 		return PTR_ERR(gk);
+-	conn->rxgk.keys[0] = gk;
++	conn->rxgk.keys[gk->key_number & 3] = gk;
+ 
+ 	switch (conn->params.security_level) {
+ 	case RXRPC_SECURITY_PLAIN:
 
 
