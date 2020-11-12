@@ -2,153 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 879052B08DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 16:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A5842B09D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 17:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbgKLPtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 10:49:25 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:49316 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbgKLPtX (ORCPT
+        id S1729074AbgKLQWV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 11:22:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:52606 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729070AbgKLQWT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 10:49:23 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACFTOcY091503;
-        Thu, 12 Nov 2020 15:49:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=bD1V5q95i6+ADV+YeAFQt2s8ENYs/W7Au47fsVzm170=;
- b=I+c7hO+bjcs00L2rQ4D9vhfLswmZuCqk8qj2Zy513vtnws9SiGwmfaAz+zOmv0gRqTSo
- Yl2cnvrFzhNjuZychmZGau0YrII9Ro+yhj+BD2XvIQ+khyK+s8kZ+LbbXgL8halL1px4
- Uozki8PMlSG60yqLJDKEeExb45H4jKL8F8e8CVFlIpylUYUQhAAO2n3uUgyiR65IY0Bw
- TpBPXFKJYSvkWq96Y3iegUx8Y9eBA+2p/DtC+CcSWXdUxvEDxhPS00SUB980D+1QtW21
- X6pMiCC78K0BL7hJ9vVX1vWNaN38N0iuyxkfBrnUeVA8evI2IPwpe0JcterNmlbbCs5p uA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 34p72ev7f9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Nov 2020 15:49:09 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACFVCnl133264;
-        Thu, 12 Nov 2020 15:49:08 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 34rt5686x6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Nov 2020 15:49:08 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ACFn5ll005827;
-        Thu, 12 Nov 2020 15:49:05 GMT
-Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Nov 2020 07:49:05 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
-Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <2380561.1605195776@warthog.procyon.org.uk>
-Date:   Thu, 12 Nov 2020 10:49:03 -0500
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        linux-crypto@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <22138FE2-9E79-4E24-99FC-74A35651B0C1@oracle.com>
-References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
- <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
- <2380561.1605195776@warthog.procyon.org.uk>
-To:     David Howells <dhowells@redhat.com>
-X-Mailer: Apple Mail (2.3608.120.23.2.4)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011120093
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011120093
+        Thu, 12 Nov 2020 11:22:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605198137;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZW4Cjdd1Y3wnZ8yyT80IuYNIT2MC5nPP7PSwDghDV1Q=;
+        b=NEZQgmYo85TTjpcF52kzhlxScWrst6z9esMx+i5EwXxrIS3msnsQjVGcL7tFMMqx4sIH3k
+        tGNLm17SZpOM3NkWWalzbEYCG52owE8pc5rYln6ehsO5Js7yh6W78KCOi8zhCRiBlYUG2D
+        CWOO5exy241iIVLe6zU3iz09mfPXtPw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-330-hg3tEq1OPgmdqYl9GCjLuQ-1; Thu, 12 Nov 2020 11:22:13 -0500
+X-MC-Unique: hg3tEq1OPgmdqYl9GCjLuQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB783100F7A6;
+        Thu, 12 Nov 2020 16:22:08 +0000 (UTC)
+Received: from [10.36.115.61] (ovpn-115-61.ams2.redhat.com [10.36.115.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B6D5B6EF48;
+        Thu, 12 Nov 2020 16:22:01 +0000 (UTC)
+Subject: Re: [PATCH v8 2/9] mmap: make mlock_future_check() global
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+References: <20201110151444.20662-1-rppt@kernel.org>
+ <20201110151444.20662-3-rppt@kernel.org>
+ <9e2fafd7-abb0-aa79-fa66-cd8662307446@redhat.com>
+ <20201110180648.GB4758@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <3194b507-a85f-965a-e0eb-512a79ede6a9@redhat.com>
+Date:   Thu, 12 Nov 2020 17:22:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
+MIME-Version: 1.0
+In-Reply-To: <20201110180648.GB4758@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 10.11.20 19:06, Mike Rapoport wrote:
+> On Tue, Nov 10, 2020 at 06:17:26PM +0100, David Hildenbrand wrote:
+>> On 10.11.20 16:14, Mike Rapoport wrote:
+>>> From: Mike Rapoport <rppt@linux.ibm.com>
+>>>
+>>> It will be used by the upcoming secret memory implementation.
+>>>
+>>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+>>> ---
+>>>    mm/internal.h | 3 +++
+>>>    mm/mmap.c     | 5 ++---
+>>>    2 files changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/mm/internal.h b/mm/internal.h
+>>> index c43ccdddb0f6..ae146a260b14 100644
+>>> --- a/mm/internal.h
+>>> +++ b/mm/internal.h
+>>> @@ -348,6 +348,9 @@ static inline void munlock_vma_pages_all(struct vm_area_struct *vma)
+>>>    extern void mlock_vma_page(struct page *page);
+>>>    extern unsigned int munlock_vma_page(struct page *page);
+>>> +extern int mlock_future_check(struct mm_struct *mm, unsigned long flags,
+>>> +			      unsigned long len);
+>>> +
+>>>    /*
+>>>     * Clear the page's PageMlocked().  This can be useful in a situation where
+>>>     * we want to unconditionally remove a page from the pagecache -- e.g.,
+>>> diff --git a/mm/mmap.c b/mm/mmap.c
+>>> index 61f72b09d990..c481f088bd50 100644
+>>> --- a/mm/mmap.c
+>>> +++ b/mm/mmap.c
+>>> @@ -1348,9 +1348,8 @@ static inline unsigned long round_hint_to_min(unsigned long hint)
+>>>    	return hint;
+>>>    }
+>>> -static inline int mlock_future_check(struct mm_struct *mm,
+>>> -				     unsigned long flags,
+>>> -				     unsigned long len)
+>>> +int mlock_future_check(struct mm_struct *mm, unsigned long flags,
+>>> +		       unsigned long len)
+>>>    {
+>>>    	unsigned long locked, lock_limit;
+>>>
+>>
+>> So, an interesting question is if you actually want to charge secretmem
+>> pages against mlock now, or if you want a dedicated secretmem cgroup
+>> controller instead?
+> 
+> Well, with the current implementation there are three limits an
+> administrator can use to control secretmem limits: mlock, memcg and
+> kernel parameter.
+> 
+> The kernel parameter puts a global upper limit for secretmem usage,
+> memcg accounts all secretmem allocations, including the unused memory in
+> large pages caching and mlock allows per task limit for secretmem
+> mappings, well, like mlock does.
+> 
+> I didn't consider a dedicated cgroup, as it seems we already have enough
+> existing knobs and a new one would be unnecessary.
 
+To me it feels like the mlock() limit is a wrong fit for secretmem. But 
+maybe there are other cases of using the mlock() limit without actually 
+doing mlock() that I am not aware of (most probably :) )?
 
-> On Nov 12, 2020, at 10:42 AM, David Howells <dhowells@redhat.com> =
-wrote:
->=20
-> Chuck Lever <chuck.lever@oracle.com> wrote:
->=20
->>> There are three main interfaces to it:
->>>=20
->>> (*) I/O crypto: encrypt, decrypt, get_mic and verify_mic.
->>>=20
->>>    These all do in-place crypto, using an sglist to define the =
-buffer
->>>    with the data in it.  Is it necessary to make it able to take =
-separate
->>>    input and output buffers?
->>=20
->> Hi David, Wondering if these "I/O" APIs use synchronous or async
->> crypto under the covers. For small data items like MICs, synchronous
->> might be a better choice, especially if asynchronous crypto could
->> result in incoming requests getting re-ordered and falling out of
->> the GSS sequence number window.
->>=20
->> What say ye?
->=20
-> For the moment I'm using synchronous APIs as that's what sunrpc is =
-using (I
-> borrowed the basic code from there).
+I mean, my concern is not earth shattering, this can be reworked later. 
+As I said, it just feels wrong.
 
-Really? My understanding of the Linux kernel SUNRPC implementation is
-that it uses asynchronous, even for small data items. Maybe I'm using
-the terminology incorrectly.
+-- 
+Thanks,
 
-The problem that arises is on the server. The asynchronous API can
-schedule, and if the server has other work to do, that can delay a
-verify_mic long enough that the request drops out of the GSS sequence
-number window (even a large window).
-
-Whatever the mechanism, we need to have deterministic ordering, at
-least on the server-side.
-
-
-> It would be interesting to consider using async, but there's a =
-potential
-> issue.  For the simplified profile, encryption and integrity checksum
-> generation can be done simultaneously, but decryption and verification =
-can't.
-> For the AES-2 profile, the reverse is true.
->=20
-> For my purposes in rxrpc, async mode isn't actually that useful since =
-I'm only
-> doing the contents of a UDP packet at a time.  Either I'm encrypting =
-with the
-> intention of immediate transmission or decrypting with the intention =
-of
-> immediately using the data, so I'm in a context where I can wait =
-anyway.
->=20
-> What might get me more of a boost would be to encrypt the app data =
-directly
-> into a UDP packet and decrypt the UDP packet directly into the app =
-buffers.
-> This is easier said than done, though, as there's typically security =
-metadata
-> inserted into the packet inside the encrypted region.
-
-
---
-Chuck Lever
-
-
+David / dhildenb
 
