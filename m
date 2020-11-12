@@ -2,40 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5B7C2B035D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 12:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 605D02B038A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 12:09:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbgKLLD0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 06:03:26 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:43832 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbgKLLDY (ORCPT
+        id S1728078AbgKLLIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 06:08:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727890AbgKLLHe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 06:03:24 -0500
-From:   Thomas Gleixner <tglx@linutronix.de>
+        Thu, 12 Nov 2020 06:07:34 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B564AC0613D1;
+        Thu, 12 Nov 2020 03:07:33 -0800 (PST)
+Date:   Thu, 12 Nov 2020 12:07:29 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1605179001;
+        s=2020; t=1605179252;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RyoQNma1D4GVgEfBEnD9HpKfLsmdKQZ2swCCbsJ89u4=;
-        b=IyNoaFaiD+NM5KphnaangmvfL0El+UAOD+w5h3trf2Yyosfdrv/YLVOkMULOW/ZGBhg+Y/
-        CdApJJvXGBIZ5Y44ibFQmafGLFWCU3g2FoxBkEzR7mbT6bdJj8sJZKMh9WrX346Yk/RRPA
-        ObPEWbP1WIFj7Nu0oQW4DAuIZK/gvLY9xJn27pRRcuIRXasgXoUZIFo7CFG246Z8CyXPW3
-        lDFsIyNmic0931dDytsaIyKfHvx6VLixbP2g5wvqVZcSxNyP0kB6LHCFDa/PWmE2zunoqs
-        ONbIDGQXkPDZeN2NEzrt5DA5ZmFd/tf+3b4Z7uRwEDxb+zVSTZJFZcQwZtL5UA==
+        bh=GScfsa8nOXUlNCCC/0bnPZszGImDlkAqoVu5Twbqets=;
+        b=zZ3ortjpGyVdT6l5Epo+oXEihOo3YsbgeWmCO4SNBn297T52hhepV9lm5suD/944+Sz1gu
+        BkYylnk8pMKlYkb4csofMkEGSrhcQcyIn5AL1i1pw3/utYozF/zdo6+bRfmnph5PP7xve1
+        PpOVvXxebOQE5U3JtIzNhA0Fc1104xhNai+afx4A4y2O3Fs5x58WbqWTdn5gkAWgcM/duh
+        sMgxr+wPIZY9f8FrD3RrbmLqGk62lK9VfUOJuVBmyG+rJup0NYxJRRrKBRd/enHEx2zhIx
+        UfbLWY8NE5CqXAlPHU3T/T5B/66csi1W6K2Uz4Y5UeWB8lzg0bfoVIlYejlz5w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1605179001;
+        s=2020e; t=1605179252;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RyoQNma1D4GVgEfBEnD9HpKfLsmdKQZ2swCCbsJ89u4=;
-        b=3CYfPdTtsJ7bzsqrZTQJEvt1hjj5oOsRpY9HRk4W6lYOEOtLJxrx+ZTCMYthtsl9eIeQcX
-        u0l5A2sNhnUsiqCg==
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     linux-aio@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        bh=GScfsa8nOXUlNCCC/0bnPZszGImDlkAqoVu5Twbqets=;
+        b=IHlNPa7GPp5Ilh/x3NSZBuxoBCag1CyU3lSY94fXEHyvLJqz7JXMYGP0aqsiN8HGB3WFr5
+        ZFMQ/3qvo+nJiyAQ==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-aio@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>,
         dri-devel@lists.freedesktop.org,
         virtualization@lists.linux-foundation.org,
         Huang Rui <ray.huang@amd.com>, sparclinux@vger.kernel.org,
@@ -61,27 +65,22 @@ Cc:     linux-aio@kvack.org, Peter Zijlstra <peterz@infradead.org>,
         linux-btrfs@vger.kernel.org,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Subject: Re: [patch V3 10/37] ARM: highmem: Switch to generic kmap atomic
-In-Reply-To: <c07bae0c-68dd-2693-948f-00e8a50f3053@samsung.com>
-References: <20201103092712.714480842@linutronix.de> <20201103095857.582196476@linutronix.de> <CGME20201112081036eucas1p14e135a370d3bccab311727fd2e89f4df@eucas1p1.samsung.com> <c07bae0c-68dd-2693-948f-00e8a50f3053@samsung.com>
-Date:   Thu, 12 Nov 2020 12:03:20 +0100
-Message-ID: <87v9ean8g7.fsf@nanos.tec.linutronix.de>
+Message-ID: <20201112110729.vx4xebavy6gpzuef@linutronix.de>
+References: <20201103092712.714480842@linutronix.de>
+ <20201103095857.582196476@linutronix.de>
+ <CGME20201112081036eucas1p14e135a370d3bccab311727fd2e89f4df@eucas1p1.samsung.com>
+ <c07bae0c-68dd-2693-948f-00e8a50f3053@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c07bae0c-68dd-2693-948f-00e8a50f3053@samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Marek,
-
-On Thu, Nov 12 2020 at 09:10, Marek Szyprowski wrote:
-> On 03.11.2020 10:27, Thomas Gleixner wrote:
->
+On 2020-11-12 09:10:34 [+0100], Marek Szyprowski wrote:
 > I can do more tests to help fixing this issue. Just let me know what to do.
 
-Just sent out the fix before I saw your report.
+-> https://lkml.kernel.org/r/87y2j6n8mj.fsf@nanos.tec.linutronix.de
 
-     https://lore.kernel.org/r/87y2j6n8mj.fsf@nanos.tec.linutronix.de
-
-Thanks,
-
-        tglx
+Sebastian
