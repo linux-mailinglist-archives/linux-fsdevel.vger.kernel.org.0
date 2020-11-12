@@ -2,193 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAA822B0AC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 17:54:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2251E2B0B72
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 18:42:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729046AbgKLQyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 11:54:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32842 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728646AbgKLQyS (ORCPT
+        id S1726236AbgKLRl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 12:41:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgKLRl7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 11:54:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605200056;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HGrk85a0VZVfDIo9MNpIfHt62UYe1QlF3HTUKbfYRUc=;
-        b=d5Oi5ngkHEgB1eyy0pN2AjI/QRfXs4ELKN6xXKoZpB4UhBhnrk0bP2kAYZ1hQZv0hW5mec
-        eJ6mxIP0cDwgzZMaqL+Vk+82MK6pJhsFVcJlScG0KOglVjtJVfpRWN5t9hFgfT7Qxfkzhj
-        QIpbP+aC7RL+551+jxyOMg3MbkW9PTQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-359-Qnmvm0OEMaqqpFKUqCkxbg-1; Thu, 12 Nov 2020 11:54:11 -0500
-X-MC-Unique: Qnmvm0OEMaqqpFKUqCkxbg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77D7A6D254;
-        Thu, 12 Nov 2020 16:54:09 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-47.rdu2.redhat.com [10.10.115.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D55EB5D993;
-        Thu, 12 Nov 2020 16:54:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <22138FE2-9E79-4E24-99FC-74A35651B0C1@oracle.com>
-References: <22138FE2-9E79-4E24-99FC-74A35651B0C1@oracle.com> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <2380561.1605195776@warthog.procyon.org.uk>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     dhowells@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        linux-crypto@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-afs@lists.infradead.org
-Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
+        Thu, 12 Nov 2020 12:41:59 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F5BC0613D1;
+        Thu, 12 Nov 2020 09:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=eaX1+ATZFX5QaZboVsjA3nZdkItK9osiOb9syEljGl4=; b=Uj8oHNbSuyqpEQWRlw8PlugXFK
+        x7uOsrfD57/4YXq/Ovu8hrqbA/PHGjQC5k6mm1/wC7/4uqolMu9lxkxtJd7pIx+xiSISFW6beSVlr
+        fd1RCLn7PzPDAwgtoD5H1y1zC7zu1T5hDdD651ERepHfnbkMkGxVM8SVMa8prsSm2AWfqeTpuPcTA
+        zdTQ95X5WI0i0i4neQ0di7zSYTzKCtOU/c18Z6wW8XKYDJVXfQ6MWUR439Ng9+iOu0g6cEU9xL5OV
+        2f3tSz5ExLhNngGnWV6YO/jrjYLYulNPCP5vKNAuU6sHK7WWb8UF9utT3MS/X/ML+G3C2WqMbKu+U
+        u1bWu1Sw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kdGbW-0001cV-FZ; Thu, 12 Nov 2020 17:41:50 +0000
+Date:   Thu, 12 Nov 2020 17:41:50 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v3 01/12] mm: Make pagecache tagged lookups return only
+ head pages
+Message-ID: <20201112174150.GC17076@casper.infradead.org>
+References: <20201026041408.25230-1-willy@infradead.org>
+ <20201026041408.25230-2-willy@infradead.org>
+ <20201028075056.GB1362354@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2422486.1605200046.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 12 Nov 2020 16:54:06 +0000
-Message-ID: <2422487.1605200046@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201028075056.GB1362354@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chuck Lever <chuck.lever@oracle.com> wrote:
+On Wed, Oct 28, 2020 at 09:50:56AM +0200, Mike Rapoport wrote:
+> > @@ -2074,8 +2074,8 @@ EXPORT_SYMBOL(find_get_pages_contig);
+> >   * @nr_pages:	the maximum number of pages
+> >   * @pages:	where the resulting pages are placed
+> >   *
+> > - * Like find_get_pages, except we only return pages which are tagged with
+> > - * @tag.   We update @index to index the next page for the traversal.
+> > + * Like find_get_pages(), except we only return head pages which are tagged
+> > + * with @tag.   We update @index to index the next page for the traversal.
+> 
+> Nit:                                           ^ next head page
 
-> Really? My understanding of the Linux kernel SUNRPC implementation is
-> that it uses asynchronous, even for small data items. Maybe I'm using
-> the terminology incorrectly.
+I don't love the sentence anyway.  How about:
 
-Seems to be synchronous, at least in its use of skcipher:
-
-grep -e skcipher *
-gss_krb5_crypto.c:#include <crypto/skcipher.h>
-gss_krb5_crypto.c:	struct crypto_sync_skcipher *tfm,
-gss_krb5_crypto.c:	if (length % crypto_sync_skcipher_blocksize(tfm) !=3D 0=
-)
-gss_krb5_crypto.c:	if (crypto_sync_skcipher_ivsize(tfm) > GSS_KRB5_MAX_BLO=
-CKSIZE) {
-gss_krb5_crypto.c:			crypto_sync_skcipher_ivsize(tfm));
-gss_krb5_crypto.c:		memcpy(local_iv, iv, crypto_sync_skcipher_ivsize(tfm))=
-;
-gss_krb5_crypto.c:	skcipher_request_set_sync_tfm(req, tfm);
-gss_krb5_crypto.c:	skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:	skcipher_request_set_crypt(req, sg, sg, length, local_i=
-v);
-gss_krb5_crypto.c:	ret =3D crypto_skcipher_encrypt(req);
-gss_krb5_crypto.c:	skcipher_request_zero(req);
-gss_krb5_crypto.c:     struct crypto_sync_skcipher *tfm,
-gss_krb5_crypto.c:	if (length % crypto_sync_skcipher_blocksize(tfm) !=3D 0=
-)
-gss_krb5_crypto.c:	if (crypto_sync_skcipher_ivsize(tfm) > GSS_KRB5_MAX_BLO=
-CKSIZE) {
-gss_krb5_crypto.c:			crypto_sync_skcipher_ivsize(tfm));
-gss_krb5_crypto.c:		memcpy(local_iv, iv, crypto_sync_skcipher_ivsize(tfm))=
-;
-gss_krb5_crypto.c:	skcipher_request_set_sync_tfm(req, tfm);
-gss_krb5_crypto.c:	skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:	skcipher_request_set_crypt(req, sg, sg, length, local_i=
-v);
-gss_krb5_crypto.c:	ret =3D crypto_skcipher_decrypt(req);
-gss_krb5_crypto.c:	skcipher_request_zero(req);
-gss_krb5_crypto.c:	struct skcipher_request *req;
-gss_krb5_crypto.c:	struct crypto_sync_skcipher *tfm =3D
-gss_krb5_crypto.c:		crypto_sync_skcipher_reqtfm(desc->req);
-gss_krb5_crypto.c:	fraglen =3D thislen & (crypto_sync_skcipher_blocksize(t=
-fm) - 1);
-gss_krb5_crypto.c:	skcipher_request_set_crypt(desc->req, desc->infrags, de=
-sc->outfrags,
-gss_krb5_crypto.c:	ret =3D crypto_skcipher_encrypt(desc->req);
-gss_krb5_crypto.c:gss_encrypt_xdr_buf(struct crypto_sync_skcipher *tfm, st=
-ruct xdr_buf *buf,
-gss_krb5_crypto.c:	BUG_ON((buf->len - offset) % crypto_sync_skcipher_block=
-size(tfm) !=3D 0);
-gss_krb5_crypto.c:	skcipher_request_set_sync_tfm(req, tfm);
-gss_krb5_crypto.c:	skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:	skcipher_request_zero(req);
-gss_krb5_crypto.c:	struct skcipher_request *req;
-gss_krb5_crypto.c:	struct crypto_sync_skcipher *tfm =3D
-gss_krb5_crypto.c:		crypto_sync_skcipher_reqtfm(desc->req);
-gss_krb5_crypto.c:	fraglen =3D thislen & (crypto_sync_skcipher_blocksize(t=
-fm) - 1);
-gss_krb5_crypto.c:	skcipher_request_set_crypt(desc->req, desc->frags, desc=
-->frags,
-gss_krb5_crypto.c:	ret =3D crypto_skcipher_decrypt(desc->req);
-gss_krb5_crypto.c:gss_decrypt_xdr_buf(struct crypto_sync_skcipher *tfm, st=
-ruct xdr_buf *buf,
-gss_krb5_crypto.c:	BUG_ON((buf->len - offset) % crypto_sync_skcipher_block=
-size(tfm) !=3D 0);
-gss_krb5_crypto.c:	skcipher_request_set_sync_tfm(req, tfm);
-gss_krb5_crypto.c:	skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:	skcipher_request_zero(req);
-gss_krb5_crypto.c:gss_krb5_cts_crypt(struct crypto_sync_skcipher *cipher, =
-struct xdr_buf *buf,
-gss_krb5_crypto.c:	skcipher_request_set_sync_tfm(req, cipher);
-gss_krb5_crypto.c:	skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:	skcipher_request_set_crypt(req, sg, sg, len, iv);
-gss_krb5_crypto.c:		ret =3D crypto_skcipher_encrypt(req);
-gss_krb5_crypto.c:		ret =3D crypto_skcipher_decrypt(req);
-gss_krb5_crypto.c:	skcipher_request_zero(req);
-gss_krb5_crypto.c:	struct crypto_sync_skcipher *cipher, *aux_cipher;
-gss_krb5_crypto.c:	blocksize =3D crypto_sync_skcipher_blocksize(cipher);
-gss_krb5_crypto.c:		skcipher_request_set_sync_tfm(req, aux_cipher);
-gss_krb5_crypto.c:		skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:		skcipher_request_zero(req);
-gss_krb5_crypto.c:	struct crypto_sync_skcipher *cipher, *aux_cipher;
-gss_krb5_crypto.c:	blocksize =3D crypto_sync_skcipher_blocksize(cipher);
-gss_krb5_crypto.c:		skcipher_request_set_sync_tfm(req, aux_cipher);
-gss_krb5_crypto.c:		skcipher_request_set_callback(req, 0, NULL, NULL);
-gss_krb5_crypto.c:		skcipher_request_zero(req);
-gss_krb5_keys.c:#include <crypto/skcipher.h>
-gss_krb5_keys.c:	struct crypto_sync_skcipher *cipher;
-gss_krb5_keys.c:	cipher =3D crypto_alloc_sync_skcipher(gk5e->encrypt_name,=
- 0, 0);
-gss_krb5_keys.c:	if (crypto_sync_skcipher_setkey(cipher, inkey->data, inke=
-y->len))
-gss_krb5_keys.c:	crypto_free_sync_skcipher(cipher);
-gss_krb5_mech.c:#include <crypto/skcipher.h>
-gss_krb5_mech.c:	struct krb5_ctx *ctx, struct crypto_sync_skcipher **res)
-gss_krb5_mech.c:	*res =3D crypto_alloc_sync_skcipher(ctx->gk5e->encrypt_na=
-me, 0, 0);
-gss_krb5_mech.c:	if (crypto_sync_skcipher_setkey(*res, key.data, key.len))=
- {
-gss_krb5_mech.c:	crypto_free_sync_skcipher(*res);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(ctx->seq);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(ctx->enc);
-gss_krb5_mech.c:static struct crypto_sync_skcipher *
-gss_krb5_mech.c:	struct crypto_sync_skcipher *cp;
-gss_krb5_mech.c:	cp =3D crypto_alloc_sync_skcipher(cname, 0, 0);
-gss_krb5_mech.c:	if (crypto_sync_skcipher_setkey(cp, key, ctx->gk5e->keyle=
-ngth)) {
-gss_krb5_mech.c:		crypto_free_sync_skcipher(cp);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(ctx->enc);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(ctx->seq);
-gss_krb5_mech.c:			crypto_free_sync_skcipher(ctx->initiator_enc_aux);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(ctx->acceptor_enc);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(ctx->initiator_enc);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(kctx->seq);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(kctx->enc);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(kctx->acceptor_enc);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(kctx->initiator_enc);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(kctx->acceptor_enc_aux);
-gss_krb5_mech.c:	crypto_free_sync_skcipher(kctx->initiator_enc_aux);
-gss_krb5_seqnum.c:#include <crypto/skcipher.h>
-gss_krb5_seqnum.c:		struct crypto_sync_skcipher *key,
-gss_krb5_seqnum.c:	struct crypto_sync_skcipher *key =3D kctx->seq;
-gss_krb5_wrap.c:#include <crypto/skcipher.h>
-gss_krb5_wrap.c:	blocksize =3D crypto_sync_skcipher_blocksize(kctx->enc);
-gss_krb5_wrap.c:	blocksize =3D crypto_sync_skcipher_blocksize(kctx->enc);
-
-David
+ * Like find_get_pages(), except we only return head pages which are tagged
+ * with @tag.  @index is updated to the index immediately after the last
+ * page we return, ready for the next iteration.
 
