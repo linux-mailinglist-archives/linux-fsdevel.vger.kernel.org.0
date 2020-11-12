@@ -2,108 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EA272B0278
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 11:03:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3E742B0287
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 11:10:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgKLKDc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 05:03:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45858 "EHLO
+        id S1727855AbgKLKKS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 05:10:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbgKLKDc (ORCPT
+        with ESMTP id S1727315AbgKLKKR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 05:03:32 -0500
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C75C0613D1;
-        Thu, 12 Nov 2020 02:03:32 -0800 (PST)
-Received: by mail-ot1-x342.google.com with SMTP id n15so5019958otl.8;
-        Thu, 12 Nov 2020 02:03:32 -0800 (PST)
+        Thu, 12 Nov 2020 05:10:17 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266DDC0613D4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 02:10:17 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id b63so462148pfg.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 02:10:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AQZyFP+icQ6Gn+nIuSyMic/jsZR6XqrBTW4Q4kxWbsc=;
-        b=ta+ZqYqNIy9QGI0x10rsJEncrpVQ1T2zSQKnOUL7XSKQ3ge+yq7y70/fHmgJ4ix1ek
-         DD7qGiiv4+8NTvbCfXlfTKUEcUrYFOenButeYWUcClxi54CvqFfJXHdmtGqVp7P+8RvF
-         pTDzp57IVEQDqeI8f6GiFCDuRzNVBMVaoV++VGtTjm8yM5TKNdVFq0kCPdLWAVVosuZ+
-         dxOmJmhltDVrEz6/h8Ui5Yj5sp9C7coAA/hrvU55xgDlqwFnzx9521SN1Oa8Za7oBRvK
-         aLqczMJfeF0E/EHvHYjYHZHJn/038E+kdW42Shf1JyljgiyLs0SpHTsmDJb+pyT5VJR2
-         eDEg==
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZXrDzR3SLORDW5B7BUxvaBnQDDjG2dXfGiE5xVAIxC0=;
+        b=nBow6u9tPZA43FN3nCgtszIoqhqbBJjGt0CmSFIvvOYVwRXDr7SihjVAAtnWPjQdp0
+         dX+sebVqnQfw8LbuxSnfYoDc4g46kXifVQEDtx5fWi9C/6MJcfmSrqN04DOPYU6EYdeR
+         ctU7Eht15V2KESPM+8lqAhTQh4Goj8IhT07k4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AQZyFP+icQ6Gn+nIuSyMic/jsZR6XqrBTW4Q4kxWbsc=;
-        b=ouPchq5eBV6vzaWvy1Y5rxANt9sn5dnwrgVD3jIAy8HsdJR0gzgdbhtWVOrpZk6Sgd
-         fEUMn0/9E17XnqhMFksTCyKrXf67L0cJ6K2LotfcWftkAxVPFIroVybcBCBdL5Ygztn4
-         rhKsEEenBN3N14YNkNDDKDathmi4rlS80vfczjP25nIK6XcxMNdqH/pHIHJ54RZULK+7
-         HUd+6XSNzTtDAhe4aJsX/m8VbpSq+9+tz+0gfiqB7tVX19vaWN3NQaCP+lqYz6tctKdX
-         NaFMPUabW6vx99Xy4nR6PYtkRUDrml+cXJm2IHjs9DO41t1AB8IvFn3OKB1VukDb1tJn
-         hYNg==
-X-Gm-Message-State: AOAM532hVN8VE+g4Pfyp3PEqz/Pg+R6pMeRzlGodRBJnsnq5P4CCEmcO
-        5sXzEycPOKNNSb6KOFb8xGrSY0NdHW3FrO9m58puGc4O
-X-Google-Smtp-Source: ABdhPJwF+g7BGINLx5YfFrAql9wFqg+kDoGOXoeW7JztQPV3niNCwoEjwDHQ8ldgk6hAr+rNnEN+atz+PjlXneaw/o0=
-X-Received: by 2002:a9d:12ab:: with SMTP id g40mr21957319otg.369.1605175411617;
- Thu, 12 Nov 2020 02:03:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZXrDzR3SLORDW5B7BUxvaBnQDDjG2dXfGiE5xVAIxC0=;
+        b=NtjqN1qyf9a5kvWiqoOAx8r78Obl4yuefhur6onlDZVEJEU1UpiWplOPUWeABb/5f/
+         rxCWd2ckLtDYFGSkkps9SX9I6ExUvGcDqDzAlMEMaN4Dz3P6rGTUdt2oEgCc6c1oCt71
+         h9B72q+eMoJm8bEWRhb16HF6SzNivEzzV+yom6Eu8dEIQAEglgPkVMEubEKOqBcVMUUS
+         G6arfsp7YuE/1kC3tu7NZu+WzRL24Eu5TZuIiEutSiRLn0wmSuTX57d1bA3WdtYTrRcG
+         BlEC2eES2Ps1aB51hwK6SE461Ril3TF7LttDOBQS2PdWlivdoKnZaHhJ/UjkvCjLhqRz
+         qJMA==
+X-Gm-Message-State: AOAM533E7Ye9GaUCQfOp1yuWnRMwgtjaR2mrbFhYHA9WdkFaSVzqtr+b
+        7wpRjxJ7sZwn8dx3sggQtWCMqYuNcpKK2lZjwPE=
+X-Google-Smtp-Source: ABdhPJwB7gExvcWWZhLfWtnNMQ/JrrgUkIyGe5YvETA35aU+CCtIA0OUTuMLrMSotsd7uhY9aqguBg==
+X-Received: by 2002:a17:90b:512:: with SMTP id r18mr8949419pjz.149.1605175816341;
+        Thu, 12 Nov 2020 02:10:16 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id n1sm5577060pfu.211.2020.11.12.02.10.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2020 02:10:15 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     "J . Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Cc:     mauricio@kinvolk.io, Alban Crequy <alban.crequy@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kyle Anderson <kylea@netflix.com>
+Subject: [PATCH v5 0/2] NFS: Fix interaction between fs_context and user namespaces
+Date:   Thu, 12 Nov 2020 02:09:50 -0800
+Message-Id: <20201112100952.3514-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <cover.1602093760.git.yuleixzhang@tencent.com> <aa553faf9e97ee9306ecd5a67d3324a34f9ed4be.1602093760.git.yuleixzhang@tencent.com>
- <20201110200411.GU3576660@ZenIV.linux.org.uk> <CACZOiM1L2W+neaF-rd=k9cJTnQfNBLx2k9GLZydYuQiJqr=iXg@mail.gmail.com>
- <20201111230908.GC3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201111230908.GC3576660@ZenIV.linux.org.uk>
-From:   yulei zhang <yulei.kernel@gmail.com>
-Date:   Thu, 12 Nov 2020 18:03:20 +0800
-Message-ID: <CACZOiM0SH_Uo9F5jOGtpXSnkHarH=E-BA-7eUFFKsb2onP2yOw@mail.gmail.com>
-Subject: Re: [PATCH 01/35] fs: introduce dmemfs module
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        Haiwei Li <lihaiwei.kernel@gmail.com>,
-        Yulei Zhang <yuleixzhang@tencent.com>,
-        Xiao Guangrong <gloryxiao@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 7:09 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Nov 11, 2020 at 04:53:00PM +0800, yulei zhang wrote:
->
-> > > ... same here, seeing that you only call that thing from the next two functions
-> > > and you do *not* provide ->mknod() as a method (unsurprisingly - what would
-> > > device nodes do there?)
-> > >
-> >
-> > Thanks for pointing this out. we may need support the mknod method, otherwise
-> > the dev is redundant  and need to be removed.
->
-> I'd suggest turning that into (static) __create_file(....) with
->
-> static int dmemfs_create(struct inode *dir, struct dentry *dentry,
->                          umode_t mode, bool excl)
-> {
->         return __create_file(dir, dentry, mode | S_IFREG);
-> }
->
-> static int dmemfs_mkdir(struct inode *dir, struct dentry *dentry,
->                          umode_t mode)
-> {
->         return __create_file(dir, dentry, mode | S_IFDIR);
-> }
->
-> (i.e. even inc_nlink() of parent folded into that).
->
-> [snip]
->
-> > Yes, we seperate the full implementation for dmemfs_file_mmap into
-> > patch 05/35, it
-> > will assign the interfaces to handle the page fault.
->
-> It would be less confusing to move the introduction of ->mmap() to that patch,
-> then.
+Right now, it is possible to mount NFS with an non-matching super block
+user ns, and NFS sunrpc user ns. This (for the user) results in an awkward
+set of interactions if using anything other than auth_null, where the UIDs
+being sent to the server are different than the local UIDs being checked.
+This can cause "breakage", where if you try to communicate with the NFS
+server with any other set of mappings, it breaks.
 
-Thanks for the suggestion. will refactor the patches accordingly.
+The reason for this is that you can call fsopen("nfs4") in the unprivileged
+namespace, and that configures fs_context with all the right information
+for that user namespace. In addition, it also keeps a gets a cred object
+associated with the caller -- which should match the user namespace.
+Unfortunately, the mount has to be finished in the init_user_ns because we
+currently require CAP_SYS_ADMIN in the init user namespace to call fsmount.
+This means that the superblock's user namespace is set "correctly" to the
+container, but there's absolutely no way nfs4idmap to consume an
+unprivileged user namespace because the cred / user_ns that's passed down
+to nfs4idmap is the one at fsmount.
+
+How this actually exhibits is let's say that the UID 0 in the user
+namespace is mapped to UID 1000 in the init user ns (and kuid space). What
+will happen is that nfs4idmap will translate the UID 1000 into UID 0 on the
+wire, even if the mount is in entirely in the mount / user namespace of the
+container.
+
+So, it looks something like this
+Client in unprivileged User NS (UID: 0, KUID: 0)
+	->Perform open()
+		...VFS / NFS bits...
+		nfs_map_uid_to_name ->
+			from_kuid_munged(init_user_ns, uid) (returns 0)
+				RPC with UID 0
+
+This behaviour happens "the other way" as well, where the UID in the
+container may be 0, but the corresponding kuid is 1000. When a response
+from an NFS server comes in we decode it according to the idmap userns.
+The way this exhibits is even more odd.
+
+Server responds with file attribute (UID: 0, GID: 0)
+	->nfs_map_name_to_uid(..., 0)
+		->make_kuid(init_user_ns, id) (returns 0)
+			....VFS / NFS Bits...
+			->from_kuid(container_ns, 0) -> invalid uid
+				-> EOVERFLOW
+
+This changes the nfs server to use the cred / userns from fs_context, which
+is how idmap is constructed. This subsequently is used in the above
+described flow of converting uids back-and-forth.
+
+Trond gave the feedback that this behaviour [implemented by this patch] is
+how the legacy sys_mount() behaviour worked[1], and that the intended
+behaviour is for UIDs to be plumbed through entirely, where the user
+namespaces UIDs are what is sent over the wire, and not the init user ns.
+
+[1]: https://lore.kernel.org/linux-nfs/8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com/
+
+Sargun Dhillon (2):
+  NFS: NFSv2/NFSv3: Use cred from fs_context during mount
+  NFSv4: Refactor to use user namespaces for nfs4idmap
+
+ fs/nfs/client.c     | 4 ++--
+ fs/nfs/nfs4client.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+
+base-commit: 8c39076c276be0b31982e44654e2c2357473258a
+-- 
+2.25.1
+
