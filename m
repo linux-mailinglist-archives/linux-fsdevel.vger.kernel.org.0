@@ -2,164 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7B92B104D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 22:27:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 646C12B12D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 00:34:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbgKLV0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 16:26:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbgKLV0x (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 16:26:53 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E28AC0613D1;
-        Thu, 12 Nov 2020 13:26:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=qbzmVFagUCXYcU5rqtSiOvPsAwsTj6kZyDh1iXpm+g8=; b=crwQX+ofqsb4dwJIDejthD3rlI
-        DfM1w6S4JFiJhDoILV7BLJ8eA/dmU2eThfVU39XCsCt23dHYcQlwEWw1EIKOnK6lp1fDK9mQaElvX
-        A9/hA1zBksSTeN0qL4XJIdgBUSS/CMxV6eqidkNLja4FT+ciQzk38m622FhtcyOc8Uoo/YguzCf4w
-        +z1pPgjU0XhG/Zq5hcbrE3oQa7CkaK5hPqRk1gMLI3XldOygpSoHx/6diRSxUhNxWMuRd/7mdTdjZ
-        ZndubeNT/0NmVYgvpWR1LSOzUS5QiIoySacMtm8rz+Yaepr/jS4xKWHfCs0d17D9qV6wj1dlZLwlC
-        jFrOHkXg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kdK7H-0007Hx-A1; Thu, 12 Nov 2020 21:26:51 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        akpm@linux-foundation.org, hughd@google.com, hch@lst.de,
-        hannes@cmpxchg.org, yang.shi@linux.alibaba.com,
-        dchinner@redhat.com, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: [PATCH v4 16/16] mm/filemap: Return only head pages from find_get_entries
-Date:   Thu, 12 Nov 2020 21:26:41 +0000
-Message-Id: <20201112212641.27837-17-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20201112212641.27837-1-willy@infradead.org>
-References: <20201112212641.27837-1-willy@infradead.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726096AbgKLXeF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 18:34:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725894AbgKLXeF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Nov 2020 18:34:05 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1760216C4;
+        Thu, 12 Nov 2020 23:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605224044;
+        bh=nIRSdK3tKYO0dB96JMwbQCTv9g20dpAdzhZB7YmaRK0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=O4o/eT8S3rHpaYU2ovTaREn4x63NGmbuebMoRLeUHo9nku9A4UDKJKGKX8cZU62ga
+         DObxWaQbPaDHtEg2VzM01UKzs94oXvo7yItjoUm1HAP0U+Uh0TWzkNs4pxdcHFcSIE
+         ok0JdHWG9sKSUz0hBZjtCuCMpsvv0dZZ9suFRQ4o=
+Date:   Thu, 12 Nov 2020 15:34:03 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Yicong Yang <yangyicong@hisilicon.com>
+Cc:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <akinobu.mita@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <prime.zeng@huawei.com>
+Subject: Re: [RESEND PATCH] libfs: fix error cast of negative value in
+ simple_attr_write()
+Message-Id: <20201112153403.ea479704feb70d99dc114a10@linux-foundation.org>
+In-Reply-To: <0b3954a4-1ac9-c454-a0ea-1fa1be5975b8@hisilicon.com>
+References: <1605000324-7428-1-git-send-email-yangyicong@hisilicon.com>
+        <20201110111842.1bc76e9def94279d4453ff67@linux-foundation.org>
+        <0b3954a4-1ac9-c454-a0ea-1fa1be5975b8@hisilicon.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All callers now expect head (and base) pages, and can handle multiple
-head pages in a single batch, so make find_get_entries() behave that way.
-Also take the opportunity to make it use the pagevec infrastructure
-instead of open-coding how pvecs behave.  This has the side-effect of
-being able to append to a pagevec with existing contents, although we
-don't make use of that functionality anywhere yet.
+On Wed, 11 Nov 2020 18:18:31 +0800 Yicong Yang <yangyicong@hisilicon.com> wrote:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
----
- include/linux/pagemap.h |  2 --
- mm/filemap.c            | 36 ++++++++----------------------------
- mm/internal.h           |  2 ++
- 3 files changed, 10 insertions(+), 30 deletions(-)
+> Hi,
+> 
+> Thanks for reviewing this.
+> 
+> 
+> On 2020/11/11 3:18, Andrew Morton wrote:
+> > On Tue, 10 Nov 2020 17:25:24 +0800 Yicong Yang <yangyicong@hisilicon.com> wrote:
+> >
+> >> The attr->set() receive a value of u64, but simple_strtoll() is used
+> >> for doing the conversion. It will lead to the error cast if user inputs
+> >> a negative value.
+> >>
+> >> Use kstrtoull() instead of simple_strtoll() to convert a string got
+> >> from the user to an unsigned value. The former will return '-EINVAL' if
+> >> it gets a negetive value, but the latter can't handle the situation
+> >> correctly.
+> >>
+> >> ...
+> >>
+> >> --- a/fs/libfs.c
+> >> +++ b/fs/libfs.c
+> >> @@ -977,7 +977,9 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+> >>  		goto out;
+> >>  
+> >>  	attr->set_buf[size] = '\0';
+> >> -	val = simple_strtoll(attr->set_buf, NULL, 0);
+> >> +	ret = kstrtoull(attr->set_buf, 0, &val);
+> >> +	if (ret)
+> >> +		goto out;
+> >>  	ret = attr->set(attr->data, val);
+> >>  	if (ret == 0)
+> >>  		ret = len; /* on success, claim we got the whole input */
+> > kstrtoull() takes an `unsigned long long *', but `val' is a u64.
+> >
+> > I think this probably works OK on all architectures (ie, no 64-bit
+> > architectures are using `unsigned long' for u64).  But perhaps `val'
+> > should have type `unsigned long long'?
+> 
+> the attr->set() takes 'val' as u64, so maybe we can stay it unchanged here
+> if it works well.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 46d4b1704770..65ef8db8eaab 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -448,8 +448,6 @@ static inline struct page *find_subpage(struct page *head, pgoff_t index)
- 	return head + (index & (thp_nr_pages(head) - 1));
- }
- 
--unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
--		pgoff_t end, struct pagevec *pvec, pgoff_t *indices);
- unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- 			pgoff_t end, unsigned int nr_pages,
- 			struct page **pages);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 479cbbadd93b..f8c294905e8d 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1878,49 +1878,29 @@ static inline struct page *find_get_entry(struct xa_state *xas, pgoff_t max,
-  * the mapping.  The entries are placed in @pvec.  find_get_entries()
-  * takes a reference on any actual pages it returns.
-  *
-- * The search returns a group of mapping-contiguous page cache entries
-- * with ascending indexes.  There may be holes in the indices due to
-- * not-present pages.
-+ * The entries have ascending indexes.  The indices may not be consecutive
-+ * due to not-present entries or THPs.
-  *
-  * Any shadow entries of evicted pages, or swap entries from
-  * shmem/tmpfs, are included in the returned array.
-  *
-- * If it finds a Transparent Huge Page, head or tail, find_get_entries()
-- * stops at that page: the caller is likely to have a better way to handle
-- * the compound page as a whole, and then skip its extent, than repeatedly
-- * calling find_get_entries() to return all its tails.
-- *
-- * Return: the number of pages and shadow entries which were found.
-+ * Return: The number of entries which were found.
-  */
- unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
- 		pgoff_t end, struct pagevec *pvec, pgoff_t *indices)
- {
- 	XA_STATE(xas, &mapping->i_pages, start);
- 	struct page *page;
--	unsigned int ret = 0;
--	unsigned nr_entries = PAGEVEC_SIZE;
- 
- 	rcu_read_lock();
- 	while ((page = find_get_entry(&xas, end, XA_PRESENT))) {
--		/*
--		 * Terminate early on finding a THP, to allow the caller to
--		 * handle it all at once; but continue if this is hugetlbfs.
--		 */
--		if (!xa_is_value(page) && PageTransHuge(page) &&
--				!PageHuge(page)) {
--			page = find_subpage(page, xas.xa_index);
--			nr_entries = ret + 1;
--		}
--
--		indices[ret] = xas.xa_index;
--		pvec->pages[ret] = page;
--		if (++ret == nr_entries)
-+		indices[pvec->nr] = xas.xa_index;
-+		if (!pagevec_add(pvec, page))
- 			break;
- 	}
- 	rcu_read_unlock();
- 
--	pvec->nr = ret;
--	return ret;
-+	return pagevec_count(pvec);
- }
- 
- /**
-@@ -1939,8 +1919,8 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
-  * not returned.
-  *
-  * The entries have ascending indexes.  The indices may not be consecutive
-- * due to not-present entries, THP pages, pages which could not be locked
-- * or pages under writeback.
-+ * due to not-present entries, THPs, pages which could not be locked or
-+ * pages under writeback.
-  *
-  * Return: The number of entries which were found.
-  */
-diff --git a/mm/internal.h b/mm/internal.h
-index cb7487efa856..1f137a5d66bb 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -60,6 +60,8 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
- 	force_page_cache_ra(&ractl, &file->f_ra, nr_to_read);
- }
- 
-+unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
-+		pgoff_t end, struct pagevec *pvec, pgoff_t *indices);
- unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
- 		pgoff_t end, struct pagevec *pvec, pgoff_t *indices);
- 
--- 
-2.28.0
+Sure.  But the compiler will convert an unsigned long long into a u64
+quite happily, regardless of how u64 was actually implemented.
+
+However the compiler will not convert a `u64 *' into an `unsigned long
+long *' if the underlying type of u64 happens to be `unsigned long'. 
+It will warn.
 
