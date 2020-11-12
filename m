@@ -2,99 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E22A2B08A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 16:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 879052B08DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 16:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbgKLPnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 10:43:04 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56316 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728218AbgKLPnD (ORCPT
+        id S1728533AbgKLPtZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 10:49:25 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:49316 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbgKLPtX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 10:43:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605195782;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dxbxgJ3l9w064dkJ4nmc+S2zoOeV0z0h2c6CrYTGwuU=;
-        b=gKaO+KYUWGL8SwtMgccw4VwaC9B8kABH/4nYK4c2sd7vm8YuBEaJwEh4wd0R74f6LIuguo
-        oj43NhPaQRLRAvKZXKvhW2dWIKOPK+bCs11114a9BYIdZkpY6zF+GugNV8QgRBoDfYBD7o
-        oNfkUDQyOazYPnzfNvlhczMaMRa2ImI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-274-WWPp6-O5Ocm8dUXKMSFVfw-1; Thu, 12 Nov 2020 10:43:00 -0500
-X-MC-Unique: WWPp6-O5Ocm8dUXKMSFVfw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F2C6680365A;
-        Thu, 12 Nov 2020 15:42:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-47.rdu2.redhat.com [10.10.115.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D47A760C0F;
-        Thu, 12 Nov 2020 15:42:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
-References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     dhowells@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
+        Thu, 12 Nov 2020 10:49:23 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACFTOcY091503;
+        Thu, 12 Nov 2020 15:49:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=bD1V5q95i6+ADV+YeAFQt2s8ENYs/W7Au47fsVzm170=;
+ b=I+c7hO+bjcs00L2rQ4D9vhfLswmZuCqk8qj2Zy513vtnws9SiGwmfaAz+zOmv0gRqTSo
+ Yl2cnvrFzhNjuZychmZGau0YrII9Ro+yhj+BD2XvIQ+khyK+s8kZ+LbbXgL8halL1px4
+ Uozki8PMlSG60yqLJDKEeExb45H4jKL8F8e8CVFlIpylUYUQhAAO2n3uUgyiR65IY0Bw
+ TpBPXFKJYSvkWq96Y3iegUx8Y9eBA+2p/DtC+CcSWXdUxvEDxhPS00SUB980D+1QtW21
+ X6pMiCC78K0BL7hJ9vVX1vWNaN38N0iuyxkfBrnUeVA8evI2IPwpe0JcterNmlbbCs5p uA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 34p72ev7f9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Nov 2020 15:49:09 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACFVCnl133264;
+        Thu, 12 Nov 2020 15:49:08 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 34rt5686x6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Nov 2020 15:49:08 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ACFn5ll005827;
+        Thu, 12 Nov 2020 15:49:05 GMT
+Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Nov 2020 07:49:05 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <2380561.1605195776@warthog.procyon.org.uk>
+Date:   Thu, 12 Nov 2020 10:49:03 -0500
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
         Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
         Trond Myklebust <trond.myklebust@hammerspace.com>,
         Bruce Fields <bfields@fieldses.org>,
-        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-afs@lists.infradead.org
-Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2380560.1605195776.1@warthog.procyon.org.uk>
-Date:   Thu, 12 Nov 2020 15:42:56 +0000
-Message-ID: <2380561.1605195776@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <22138FE2-9E79-4E24-99FC-74A35651B0C1@oracle.com>
+References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
+ <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
+ <2380561.1605195776@warthog.procyon.org.uk>
+To:     David Howells <dhowells@redhat.com>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011120093
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011120093
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chuck Lever <chuck.lever@oracle.com> wrote:
 
-> > There are three main interfaces to it:
-> > 
-> > (*) I/O crypto: encrypt, decrypt, get_mic and verify_mic.
-> > 
-> >     These all do in-place crypto, using an sglist to define the buffer
-> >     with the data in it.  Is it necessary to make it able to take separate
-> >     input and output buffers?
-> 
-> Hi David, Wondering if these "I/O" APIs use synchronous or async
-> crypto under the covers. For small data items like MICs, synchronous
-> might be a better choice, especially if asynchronous crypto could
-> result in incoming requests getting re-ordered and falling out of
-> the GSS sequence number window.
-> 
-> What say ye?
 
-For the moment I'm using synchronous APIs as that's what sunrpc is using (I
-borrowed the basic code from there).
+> On Nov 12, 2020, at 10:42 AM, David Howells <dhowells@redhat.com> =
+wrote:
+>=20
+> Chuck Lever <chuck.lever@oracle.com> wrote:
+>=20
+>>> There are three main interfaces to it:
+>>>=20
+>>> (*) I/O crypto: encrypt, decrypt, get_mic and verify_mic.
+>>>=20
+>>>    These all do in-place crypto, using an sglist to define the =
+buffer
+>>>    with the data in it.  Is it necessary to make it able to take =
+separate
+>>>    input and output buffers?
+>>=20
+>> Hi David, Wondering if these "I/O" APIs use synchronous or async
+>> crypto under the covers. For small data items like MICs, synchronous
+>> might be a better choice, especially if asynchronous crypto could
+>> result in incoming requests getting re-ordered and falling out of
+>> the GSS sequence number window.
+>>=20
+>> What say ye?
+>=20
+> For the moment I'm using synchronous APIs as that's what sunrpc is =
+using (I
+> borrowed the basic code from there).
 
-It would be interesting to consider using async, but there's a potential
-issue.  For the simplified profile, encryption and integrity checksum
-generation can be done simultaneously, but decryption and verification can't.
-For the AES-2 profile, the reverse is true.
+Really? My understanding of the Linux kernel SUNRPC implementation is
+that it uses asynchronous, even for small data items. Maybe I'm using
+the terminology incorrectly.
 
-For my purposes in rxrpc, async mode isn't actually that useful since I'm only
-doing the contents of a UDP packet at a time.  Either I'm encrypting with the
-intention of immediate transmission or decrypting with the intention of
-immediately using the data, so I'm in a context where I can wait anyway.
+The problem that arises is on the server. The asynchronous API can
+schedule, and if the server has other work to do, that can delay a
+verify_mic long enough that the request drops out of the GSS sequence
+number window (even a large window).
 
-What might get me more of a boost would be to encrypt the app data directly
-into a UDP packet and decrypt the UDP packet directly into the app buffers.
-This is easier said than done, though, as there's typically security metadata
-inserted into the packet inside the encrypted region.
+Whatever the mechanism, we need to have deterministic ordering, at
+least on the server-side.
 
-David
+
+> It would be interesting to consider using async, but there's a =
+potential
+> issue.  For the simplified profile, encryption and integrity checksum
+> generation can be done simultaneously, but decryption and verification =
+can't.
+> For the AES-2 profile, the reverse is true.
+>=20
+> For my purposes in rxrpc, async mode isn't actually that useful since =
+I'm only
+> doing the contents of a UDP packet at a time.  Either I'm encrypting =
+with the
+> intention of immediate transmission or decrypting with the intention =
+of
+> immediately using the data, so I'm in a context where I can wait =
+anyway.
+>=20
+> What might get me more of a boost would be to encrypt the app data =
+directly
+> into a UDP packet and decrypt the UDP packet directly into the app =
+buffers.
+> This is easier said than done, though, as there's typically security =
+metadata
+> inserted into the packet inside the encrypted region.
+
+
+--
+Chuck Lever
+
+
 
