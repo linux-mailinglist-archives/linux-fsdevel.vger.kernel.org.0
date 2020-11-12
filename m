@@ -2,44 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CE402B0569
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 13:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D7DF02B0568
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 13:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728382AbgKLM65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 07:58:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25833 "EHLO
+        id S1728346AbgKLM6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 07:58:55 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22142 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728324AbgKLM6m (ORCPT
+        by vger.kernel.org with ESMTP id S1728185AbgKLM6u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 07:58:42 -0500
+        Thu, 12 Nov 2020 07:58:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605185920;
+        s=mimecast20190719; t=1605185928;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=F9/Aivm7UY4Jytt/W9rNpmH3aylT9UiLECcuGtPXRFQ=;
-        b=jO7zDhbDnu/moViO3cCQJGgGxUiaJ2IwbnRBwnb7vIcMSh0i4pzOCwKchJZfKIrSy7UPIr
-        K0hH4KXMAWA+u85tqVXj5Wi+d2jl7FXVFwlnO88RW9r0eyRQyk1exPCjmbWGnytnvxs661
-        QK1Se29puAZ3kE5wAnznB0tJ9jBWUY4=
+        bh=HPWihtbjJWUbWPVbAr1/ioOfbP8rP3X1VCCFWfzZRq4=;
+        b=KuIKSeJgqssCECwI0wua2qih2KJsFbjoPHQD7Qlb0qo3lZ5i35uNqj29L9q2un6Ui0zDLG
+        lmCVaKO1QNjCQdbOpyPMHfkQns8LuZWbZryG/qr8nVuOuo6fiSJC5gl4Gh29nSBIzXLsN9
+        hpKlT4rMBUnsT96jMbdQP7+k07Wp+jE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-303-W4ve4Mf7PUSviEIJUghsjA-1; Thu, 12 Nov 2020 07:58:38 -0500
-X-MC-Unique: W4ve4Mf7PUSviEIJUghsjA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-322-PyE3nt7zNTyv5KaVKob2SA-1; Thu, 12 Nov 2020 07:58:46 -0500
+X-MC-Unique: PyE3nt7zNTyv5KaVKob2SA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08EF9804777;
-        Thu, 12 Nov 2020 12:58:37 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 427B0101AFB6;
+        Thu, 12 Nov 2020 12:58:45 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-47.rdu2.redhat.com [10.10.115.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D754127CC1;
-        Thu, 12 Nov 2020 12:58:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 214485B4AD;
+        Thu, 12 Nov 2020 12:58:42 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 06/18] crypto/krb5: Implement the Kerberos5 rfc3961 get_mic
- and verify_mic
+Subject: [PATCH 07/18] crypto/krb5: Implement the AES enctypes from rfc3962
 From:   David Howells <dhowells@redhat.com>
 To:     herbert@gondor.apana.org.au, bfields@fieldses.org
 Cc:     dhowells@redhat.com, trond.myklebust@hammerspace.com,
@@ -47,302 +46,217 @@ Cc:     dhowells@redhat.com, trond.myklebust@hammerspace.com,
         linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Thu, 12 Nov 2020 12:58:34 +0000
-Message-ID: <160518591404.2277919.10560122154909780177.stgit@warthog.procyon.org.uk>
+Date:   Thu, 12 Nov 2020 12:58:42 +0000
+Message-ID: <160518592226.2277919.16458400030521324547.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
 References: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add functions that sign and verify a piece of an skbuff according to
-rfc3961 sec 5.4, using Kc to generate a checksum and insert it into the MIC
-field in the skbuff in the sign phase then checksum the data and compare it
-to the MIC in the verify phase.
+Implement the aes128-cts-hmac-sha1-96 and aes256-cts-hmac-sha1-96 enctypes
+from rfc3962, using the rfc3961 kerberos 5 simplified crypto scheme.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/krb5/internal.h           |   11 +++
- crypto/krb5/main.c               |   70 ++++++++++++++++++++
- crypto/krb5/rfc3961_simplified.c |  134 ++++++++++++++++++++++++++++++++++++++
- include/crypto/krb5.h            |   12 +++
- 4 files changed, 227 insertions(+)
+ crypto/krb5/Makefile      |    3 +
+ crypto/krb5/internal.h    |    6 ++
+ crypto/krb5/main.c        |    2 +
+ crypto/krb5/rfc3962_aes.c |  140 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 150 insertions(+), 1 deletion(-)
+ create mode 100644 crypto/krb5/rfc3962_aes.c
 
+diff --git a/crypto/krb5/Makefile b/crypto/krb5/Makefile
+index 67824c44aac3..b81e2efac3c8 100644
+--- a/crypto/krb5/Makefile
++++ b/crypto/krb5/Makefile
+@@ -6,6 +6,7 @@
+ krb5-y += \
+ 	kdf.o \
+ 	main.o \
+-	rfc3961_simplified.o
++	rfc3961_simplified.o \
++	rfc3962_aes.o
+ 
+ obj-$(CONFIG_CRYPTO_KRB5) += krb5.o
 diff --git a/crypto/krb5/internal.h b/crypto/krb5/internal.h
-index ce07decf19f0..20b506327491 100644
+index 20b506327491..5d55a574536e 100644
 --- a/crypto/krb5/internal.h
 +++ b/crypto/krb5/internal.h
-@@ -109,3 +109,14 @@ int rfc3961_decrypt(const struct krb5_enctype *krb5,
- 		    struct scatterlist *sg, unsigned nr_sg,
- 		    size_t *_offset, size_t *_len,
- 		    int *_error_code);
-+ssize_t rfc3961_get_mic(const struct krb5_enctype *krb5,
-+			struct crypto_shash *shash,
-+			const struct krb5_buffer *metadata,
-+			struct scatterlist *sg, unsigned nr_sg, size_t sg_len,
-+			size_t data_offset, size_t data_len);
-+int rfc3961_verify_mic(const struct krb5_enctype *krb5,
-+		       struct crypto_shash *shash,
-+		       const struct krb5_buffer *metadata,
-+		       struct scatterlist *sg, unsigned nr_sg,
-+		       size_t *_offset, size_t *_len,
-+		       int *_error_code);
+@@ -120,3 +120,9 @@ int rfc3961_verify_mic(const struct krb5_enctype *krb5,
+ 		       struct scatterlist *sg, unsigned nr_sg,
+ 		       size_t *_offset, size_t *_len,
+ 		       int *_error_code);
++
++/*
++ * rfc3962_aes.c
++ */
++extern const struct krb5_enctype krb5_aes128_cts_hmac_sha1_96;
++extern const struct krb5_enctype krb5_aes256_cts_hmac_sha1_96;
 diff --git a/crypto/krb5/main.c b/crypto/krb5/main.c
-index db3fc34be272..97b28e40f6d7 100644
+index 97b28e40f6d7..bce47580c33f 100644
 --- a/crypto/krb5/main.c
 +++ b/crypto/krb5/main.c
-@@ -142,3 +142,73 @@ int crypto_krb5_decrypt(const struct krb5_enctype *krb5,
- 				      _offset, _len, _error_code);
- }
- EXPORT_SYMBOL(crypto_krb5_decrypt);
-+
-+/**
-+ * crypto_krb5_get_mic - Apply Kerberos integrity checksum.
-+ * @krb5: The encoding to use.
-+ * @shash: The keyed hash to use.
-+ * @metadata: Metadata to add into the hash before adding the data.
-+ * @sg: Scatterlist defining the crypto buffer.
-+ * @nr_sg: The number of elements in @sg.
-+ * @sg_len: The size of the buffer.
-+ * @data_offset: The offset of the data in the @sg buffer.
-+ * @data_len: The length of the data.
-+ *
-+ * Using the specified Kerberos encoding, calculate and insert an integrity
-+ * checksum into the buffer.
-+ *
-+ * The buffer must include space for the checksum at the front.
-+ *
-+ * Returns the size of the secure blob if successful, -ENOMEM on an allocation
-+ * failure, -EFAULT if there is insufficient space, -EMSGSIZE if the gap for
-+ * the checksum is too short.  Other errors may also be returned from the
-+ * crypto layer.
-+ */
-+ssize_t crypto_krb5_get_mic(const struct krb5_enctype *krb5,
-+			    struct crypto_shash *shash,
-+			    const struct krb5_buffer *metadata,
-+			    struct scatterlist *sg, unsigned nr_sg, size_t sg_len,
-+			    size_t data_offset, size_t data_len)
-+{
-+	if (WARN_ON(data_offset > sg_len ||
-+		    data_len > sg_len ||
-+		    data_offset > sg_len - data_len))
-+		return -EMSGSIZE;
-+	return krb5->profile->get_mic(krb5, shash, metadata, sg, nr_sg, sg_len,
-+				      data_offset, data_len);
-+}
-+EXPORT_SYMBOL(crypto_krb5_get_mic);
-+
-+/**
-+ * crypto_krb5_verify_mic - Validate and remove Kerberos integrity checksum.
-+ * @krb5: The encoding to use.
-+ * @shash: The keyed hash to use.
-+ * @metadata: Metadata to add into the hash before adding the data.
-+ * @sg: Scatterlist defining the crypto buffer.
-+ * @nr_sg: The number of elements in @sg.
-+ * @_offset: Offset of the secure blob in the buffer; updated to data offset.
-+ * @_len: The length of the secure blob; updated to data length.
-+ * @_error_code: Set to a Kerberos error code for parsing/validation errors.
-+ *
-+ * Using the specified Kerberos encoding, check and remove the integrity
-+ * checksum.
-+ *
-+ * If successful, @_offset and @_len are updated to outline the region in which
-+ * the data is stored.
-+ *
-+ * Returns the 0 if successful, -ENOMEM on an allocation failure; sets
-+ * *_error_code and returns -EPROTO if the data cannot be parsed or if the
-+ * integrity checksum doesn't match).  Other errors may also be returned from
-+ * the crypto layer.
-+ */
-+int crypto_krb5_verify_mic(const struct krb5_enctype *krb5,
-+			   struct crypto_shash *shash,
-+			   const struct krb5_buffer *metadata,
-+			   struct scatterlist *sg, unsigned nr_sg,
-+			   size_t *_offset, size_t *_len,
-+			   int *_error_code)
-+{
-+	return krb5->profile->verify_mic(krb5, shash, metadata, sg, nr_sg,
-+					 _offset, _len, _error_code);
-+}
-+EXPORT_SYMBOL(crypto_krb5_verify_mic);
-diff --git a/crypto/krb5/rfc3961_simplified.c b/crypto/krb5/rfc3961_simplified.c
-index 0a5c19b83f51..f779f962b921 100644
---- a/crypto/krb5/rfc3961_simplified.c
-+++ b/crypto/krb5/rfc3961_simplified.c
-@@ -588,6 +588,138 @@ int rfc3961_decrypt(const struct krb5_enctype *krb5,
- 	return ret;
- }
+@@ -18,6 +18,8 @@ MODULE_AUTHOR("Red Hat, Inc.");
+ MODULE_LICENSE("GPL");
  
-+/*
-+ * Generate a checksum over some metadata and part of an skbuff and insert the
-+ * MIC into the skbuff immediately prior to the data.
-+ */
-+ssize_t rfc3961_get_mic(const struct krb5_enctype *krb5,
-+			struct crypto_shash *shash,
-+			const struct krb5_buffer *metadata,
-+			struct scatterlist *sg, unsigned nr_sg, size_t sg_len,
-+			size_t data_offset, size_t data_len)
-+{
-+	struct shash_desc *desc;
-+	ssize_t ret, done;
-+	size_t bsize;
-+	void *buffer, *digest;
-+
-+	if (WARN_ON(data_offset != krb5->cksum_len))
-+		return -EMSGSIZE;
-+
-+	bsize = krb5_shash_size(shash) +
-+		krb5_digest_size(shash);
-+	buffer = kzalloc(bsize, GFP_NOFS);
-+	if (!buffer)
-+		return -ENOMEM;
-+
-+	/* Calculate the MIC with key Kc and store it into the skb */
-+	desc = buffer;
-+	desc->tfm = shash;
-+	ret = crypto_shash_init(desc);
-+	if (ret < 0)
-+		goto error;
-+
-+	if (metadata) {
-+		ret = crypto_shash_update(desc, metadata->data, metadata->len);
-+		if (ret < 0)
-+			goto error;
-+	}
-+
-+	ret = crypto_shash_update_sg(desc, sg, data_offset, data_len);
-+	if (ret < 0)
-+		goto error;
-+
-+	digest = buffer + krb5_shash_size(shash);
-+	ret = crypto_shash_final(desc, digest);
-+	if (ret < 0)
-+		goto error;
-+
-+	ret = -EFAULT;
-+	done = sg_pcopy_from_buffer(sg, nr_sg, digest, krb5->cksum_len,
-+				    data_offset - krb5->cksum_len);
-+	if (done != krb5->cksum_len)
-+		goto error;
-+
-+	ret = krb5->cksum_len + data_len;
-+
-+error:
-+	kfree_sensitive(buffer);
-+	return ret;
-+}
-+
-+/*
-+ * Check the MIC on a region of an skbuff.  The offset and length are updated
-+ * to reflect the actual content of the secure region.
-+ */
-+int rfc3961_verify_mic(const struct krb5_enctype *krb5,
-+		       struct crypto_shash *shash,
-+		       const struct krb5_buffer *metadata,
-+		       struct scatterlist *sg, unsigned nr_sg,
-+		       size_t *_offset, size_t *_len,
-+		       int *_error_code)
-+{
-+	struct shash_desc *desc;
-+	ssize_t done;
-+	size_t bsize, data_offset, data_len, offset = *_offset, len = *_len;
-+	void *buffer = NULL;
-+	int ret;
-+	u8 *cksum, *cksum2;
-+
-+	if (len < krb5->cksum_len) {
-+		*_error_code = 1; //RXGK_SEALED_INCON;
-+		return -EPROTO;
-+	}
-+	data_offset = offset + krb5->cksum_len;
-+	data_len = len - krb5->cksum_len;
-+
-+	bsize = krb5_shash_size(shash) +
-+		krb5_digest_size(shash) * 2;
-+	buffer = kzalloc(bsize, GFP_NOFS);
-+	if (!buffer)
-+		return -ENOMEM;
-+
-+	cksum = buffer +
-+		krb5_shash_size(shash);
-+	cksum2 = buffer +
-+		krb5_shash_size(shash) +
-+		krb5_digest_size(shash);
-+
-+	/* Calculate the MIC */
-+	desc = buffer;
-+	desc->tfm = shash;
-+	ret = crypto_shash_init(desc);
-+	if (ret < 0)
-+		goto error;
-+
-+	if (metadata) {
-+		ret = crypto_shash_update(desc, metadata->data, metadata->len);
-+		if (ret < 0)
-+			goto error;
-+	}
-+
-+	crypto_shash_update_sg(desc, sg, data_offset, data_len);
-+	crypto_shash_final(desc, cksum);
-+
-+	ret = -EFAULT;
-+	done = sg_pcopy_to_buffer(sg, nr_sg, cksum2, krb5->cksum_len, offset);
-+	if (done != krb5->cksum_len)
-+		goto error;
-+
-+	if (memcmp(cksum, cksum2, krb5->cksum_len) != 0) {
-+		*_error_code = 1; //RXGK_SEALED_INCON;
-+		ret = -EPROTO;
-+		goto error;
-+	}
-+
-+	*_offset += krb5->cksum_len;
-+	*_len -= krb5->cksum_len;
-+	ret = 0;
-+
-+error:
-+	kfree_sensitive(buffer);
-+	return ret;
-+}
-+
- const struct krb5_crypto_profile rfc3961_simplified_profile = {
- 	.calc_PRF	= rfc3961_calc_PRF,
- 	.calc_Kc	= rfc3961_calc_DK,
-@@ -595,4 +727,6 @@ const struct krb5_crypto_profile rfc3961_simplified_profile = {
- 	.calc_Ki	= rfc3961_calc_DK,
- 	.encrypt	= rfc3961_encrypt,
- 	.decrypt	= rfc3961_decrypt,
-+	.get_mic	= rfc3961_get_mic,
-+	.verify_mic	= rfc3961_verify_mic,
+ static const struct krb5_enctype *const krb5_supported_enctypes[] = {
++	&krb5_aes128_cts_hmac_sha1_96,
++	&krb5_aes256_cts_hmac_sha1_96,
  };
-diff --git a/include/crypto/krb5.h b/include/crypto/krb5.h
-index fb77f70117c1..b83d3d487753 100644
---- a/include/crypto/krb5.h
-+++ b/include/crypto/krb5.h
-@@ -115,6 +115,18 @@ extern int crypto_krb5_decrypt(const struct krb5_enctype *krb5,
- 			       struct scatterlist *sg, unsigned nr_sg,
- 			       size_t *_offset, size_t *_len,
- 			       int *_error_code);
-+extern ssize_t crypto_krb5_get_mic(const struct krb5_enctype *krb5,
-+				   struct crypto_shash *shash,
-+				   const struct krb5_buffer *metadata,
-+				   struct scatterlist *sg, unsigned nr_sg, size_t sg_len,
-+				   size_t data_offset, size_t data_len);
-+extern int crypto_krb5_verify_mic(const struct krb5_enctype *krb5,
-+				  struct crypto_shash *shash,
-+				  const struct krb5_buffer *metadata,
-+				  struct scatterlist *sg, unsigned nr_sg,
-+				  size_t *_offset, size_t *_len,
-+				  int *_error_code);
+ 
+ /**
+diff --git a/crypto/krb5/rfc3962_aes.c b/crypto/krb5/rfc3962_aes.c
+new file mode 100644
+index 000000000000..99297a698178
+--- /dev/null
++++ b/crypto/krb5/rfc3962_aes.c
+@@ -0,0 +1,140 @@
++/* rfc3962 Advanced Encryption Standard (AES) Encryption for Kerberos 5
++ *
++ * Parts borrowed from net/sunrpc/auth_gss/.
++ */
++/*
++ * COPYRIGHT (c) 2008
++ * The Regents of the University of Michigan
++ * ALL RIGHTS RESERVED
++ *
++ * Permission is granted to use, copy, create derivative works
++ * and redistribute this software and such derivative works
++ * for any purpose, so long as the name of The University of
++ * Michigan is not used in any advertising or publicity
++ * pertaining to the use of distribution of this software
++ * without specific, written prior authorization.  If the
++ * above copyright notice or any other identification of the
++ * University of Michigan is included in any copy of any
++ * portion of this software, then the disclaimer below must
++ * also be included.
++ *
++ * THIS SOFTWARE IS PROVIDED AS IS, WITHOUT REPRESENTATION
++ * FROM THE UNIVERSITY OF MICHIGAN AS TO ITS FITNESS FOR ANY
++ * PURPOSE, AND WITHOUT WARRANTY BY THE UNIVERSITY OF
++ * MICHIGAN OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
++ * WITHOUT LIMITATION THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
++ * REGENTS OF THE UNIVERSITY OF MICHIGAN SHALL NOT BE LIABLE
++ * FOR ANY DAMAGES, INCLUDING SPECIAL, INDIRECT, INCIDENTAL, OR
++ * CONSEQUENTIAL DAMAGES, WITH RESPECT TO ANY CLAIM ARISING
++ * OUT OF OR IN CONNECTION WITH THE USE OF THE SOFTWARE, EVEN
++ * IF IT HAS BEEN OR IS HEREAFTER ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGES.
++ */
 +
- /*
-  * kdf.c
-  */
++/*
++ * Copyright (C) 1998 by the FundsXpress, INC.
++ *
++ * All rights reserved.
++ *
++ * Export of this software from the United States of America may require
++ * a specific license from the United States Government.  It is the
++ * responsibility of any person or organization contemplating export to
++ * obtain such a license before exporting.
++ *
++ * WITHIN THAT CONSTRAINT, permission to use, copy, modify, and
++ * distribute this software and its documentation for any purpose and
++ * without fee is hereby granted, provided that the above copyright
++ * notice appear in all copies and that both that copyright notice and
++ * this permission notice appear in supporting documentation, and that
++ * the name of FundsXpress. not be used in advertising or publicity pertaining
++ * to distribution of the software without specific, written prior
++ * permission.  FundsXpress makes no representations about the suitability of
++ * this software for any purpose.  It is provided "as is" without express
++ * or implied warranty.
++ *
++ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
++ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
++ */
++
++/*
++ * RxGK bits:
++ * Copyright (C) 2020 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <crypto/skcipher.h>
++#include <crypto/hash.h>
++#include <linux/net.h>
++#include <linux/skbuff.h>
++#include <linux/key-type.h>
++#include <linux/slab.h>
++#include <linux/lcm.h>
++#include <linux/ctype.h>
++#include "internal.h"
++
++/*
++ * AES random-to-key function.  For AES, this is an identity operation.
++ */
++static int rfc3962_random_to_key(const struct krb5_enctype *krb5,
++				 const struct krb5_buffer *randombits,
++				 struct krb5_buffer *result)
++{
++	if (randombits->len != 16 && randombits->len != 32)
++		return -EINVAL;
++
++	if (result->len != randombits->len)
++		return -EINVAL;
++
++	memcpy(result->data, randombits->data, randombits->len);
++	return 0;
++}
++
++const struct krb5_enctype krb5_aes128_cts_hmac_sha1_96 = {
++	.etype		= KRB5_ENCTYPE_AES128_CTS_HMAC_SHA1_96,
++	.ctype		= KRB5_CKSUMTYPE_HMAC_SHA1_96_AES128,
++	.name		= "aes128-cts-hmac-sha1-96",
++	.encrypt_name	= "cts(cbc(aes))",
++	.cksum_name	= "hmac(sha1)",
++	.hash_name	= "sha1",
++	.key_bytes	= 16,
++	.key_len	= 16,
++	.Kc_len		= 16,
++	.Ke_len		= 16,
++	.Ki_len		= 16,
++	.block_len	= 16,
++	.conf_len	= 16,
++	.cksum_len	= 12,
++	.hash_len	= 20,
++	.prf_len	= 16,
++	.keyed_cksum	= true,
++	.pad		= true,
++	.random_to_key	= rfc3962_random_to_key,
++	.profile	= &rfc3961_simplified_profile,
++};
++
++const struct krb5_enctype krb5_aes256_cts_hmac_sha1_96 = {
++	.etype		= KRB5_ENCTYPE_AES256_CTS_HMAC_SHA1_96,
++	.ctype		= KRB5_CKSUMTYPE_HMAC_SHA1_96_AES256,
++	.name		= "aes256-cts-hmac-sha1-96",
++	.encrypt_name	= "cts(cbc(aes))",
++	.cksum_name	= "hmac(sha1)",
++	.hash_name	= "sha1",
++	.key_bytes	= 32,
++	.key_len	= 32,
++	.Kc_len		= 32,
++	.Ke_len		= 32,
++	.Ki_len		= 32,
++	.block_len	= 16,
++	.conf_len	= 16,
++	.cksum_len	= 12,
++	.hash_len	= 20,
++	.prf_len	= 16,
++	.keyed_cksum	= true,
++	.pad		= true,
++	.random_to_key	= rfc3962_random_to_key,
++	.profile	= &rfc3961_simplified_profile,
++};
 
 
