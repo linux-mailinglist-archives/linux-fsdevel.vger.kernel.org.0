@@ -2,157 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F492AFD11
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 02:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29EC22AFE76
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 06:38:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbgKLBcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Nov 2020 20:32:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44356 "EHLO
+        id S1728883AbgKLFiT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 00:38:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbgKLAoj (ORCPT
+        with ESMTP id S1728564AbgKLByE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Nov 2020 19:44:39 -0500
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC16C061A51
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 16:42:31 -0800 (PST)
-Received: by mail-io1-xd43.google.com with SMTP id s24so4201171ioj.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 16:42:31 -0800 (PST)
+        Wed, 11 Nov 2020 20:54:04 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6333CC061A04
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 17:54:04 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id k7so4215139ybm.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Nov 2020 17:54:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=hVMls448WtiCHmEYYiwgm9q9rutrUQBdLNWKWdqqFcU=;
-        b=Zi58cWkSVR+SHmfNL35r+95ic21DnWOrCIrUzgP8XqgEbrE8/SsMjAHoNYLanGHwpf
-         dh0HZ06DEUcM/BBFwfvqMTRTvMd4sRZ4YvZqqao3Rmm/QbqPSJjAAPR8pxkfAJ/f6FXq
-         XMfXVbLuP6z/C4mPfYvUIOlzehmw7vpmWEB7w=
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=jTdS5qD6Cs9spAbYdY/Y3qiyvOeoxSwh4Xr7vha7mcg=;
+        b=dpamQo0R6nrhSTmxCkRKiC1S89iAq3sss5Kiv2a6XarKjuK3+EubjqCft+NNU1H7IC
+         x2gBDgyR5iTp4mXOzjYVMKH0rxAdd6zdG6XrlKFe1dzrvlpu2Y9ujzE3nnP7YKKf6LMV
+         UrELwuRxw4AyprYz+CJODn4usi8UFJr/uXAYYX6jla+Aob5qkEECdtBJWWY/0a1Lt1UW
+         PKHCuDhtQlbL10Nh1y5MBK3U7oGj0/+r2AKZwWwTIZgr+4G3BQnhQsFjOX43FiQxyc6F
+         X/f/BGPh2byzOAI+h8HtktaCiFDrdBDMXgZ4CW+II/WvSC3vaz/sUizCHC65B/ngJOAz
+         fg2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=hVMls448WtiCHmEYYiwgm9q9rutrUQBdLNWKWdqqFcU=;
-        b=nVLicXTMPY/xLR4pF0BvchuKX3j5qcZWmnY+AjiTws2jP3V0ndwq9t5L2lI09jJwTo
-         PyS2M9sNu/BwDP6e1YVaXtALRcxzL1gb4JSvTR3Ug90ZAcMuV6FayOZMagFMeY2agRRX
-         9u6Nqztcx2wb5ULQwmPAFu83t7QZdCjcR/Tp3ze9heB+p9Vo8ZmfcSlXLdSdc5N5b70A
-         UKT3OZPbRwpTcFT/mYD4ShV7QVUUtYIvl0mQzlbb2Fm7GRcFsIGAjBJd9P3FzYY2cG4G
-         z/pYuEOg42olLgBbE3Nb8OIHYg2/23bn6xo+6bDlg7J4lfxxCIPhXZJI0NWNWmstvGze
-         uptQ==
-X-Gm-Message-State: AOAM532LpRg56VGMDWsDfeMZmtafKYqkQOrgl+3c3ZCYmg8O4NSbGglm
-        T0MHTVb1lLAW/T60scfLALSVRw==
-X-Google-Smtp-Source: ABdhPJyu4kzjNlE/3+zoxJPDn7rR6SX7QbtDmZGQHGsO4qttKjaX5ffav4Yal9zr/bH8X3ruhnY0MQ==
-X-Received: by 2002:a5e:8206:: with SMTP id l6mr20266636iom.126.1605141750643;
-        Wed, 11 Nov 2020 16:42:30 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id z18sm1829584iol.32.2020.11.11.16.42.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Nov 2020 16:42:29 -0800 (PST)
-Date:   Thu, 12 Nov 2020 00:42:28 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "smayhew@redhat.com" <smayhew@redhat.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "schumaker.anna@gmail.com" <schumaker.anna@gmail.com>,
-        "alban.crequy@gmail.com" <alban.crequy@gmail.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "mauricio@kinvolk.io" <mauricio@kinvolk.io>,
-        "bfields@fieldses.org" <bfields@fieldses.org>
-Subject: Re: [PATCH v4 0/2] NFS: Fix interaction between fs_context and user
- namespaces
-Message-ID: <20201112004227.GB351@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201102174737.2740-1-sargun@sargun.me>
- <CAMXgnP5cVoLKTGPOAO+aLEAGLpkjACy1e4iLBKkfp8Gv1U77xA@mail.gmail.com>
- <f6d86006ccd19d4d101097de309eb21bbbf96e43.camel@hammerspace.com>
- <20201111111233.GA21917@ircssh-2.c.rugged-nimbus-611.internal>
- <8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com>
- <20201111185727.GA27945@ircssh-2.c.rugged-nimbus-611.internal>
- <17d0e6c2e30d5b28cc1cb0313822e5ca39a2245c.camel@hammerspace.com>
- <20201112003056.GA351@ircssh-2.c.rugged-nimbus-611.internal>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201112003056.GA351@ircssh-2.c.rugged-nimbus-611.internal>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=jTdS5qD6Cs9spAbYdY/Y3qiyvOeoxSwh4Xr7vha7mcg=;
+        b=MUCE1/a66gEDRYyBNO8a0IdB6LaKb/sGiVBw8BH7LsKWhOKoG4U0BK+wio3St2HqJ5
+         dhIAbxICvcVvR5HpVs5BALOnvX5MU97KSpNJEdrDUXTVNAf6TVrKRUB6Kh1joIUkwc58
+         uHwlqP2u44A5gd+DEU3VSAKTfHoY5uELI8Q3GPYEJPhSxDMVTEWar7ht/ZDsFABdMIQ2
+         XNLs7LK3srrTblHrfeMcD4pznb5Zvcry/inqXH/PuRmwhMc1q2ewMs/jfwsQL7KpjO4d
+         nhYZ6X9z3WDMsG1v/tLXliTF8GVMrZ6yOiODa1YfPpTfgoLSpTJz7/4Hn/0F5RDaYQh/
+         Ra8w==
+X-Gm-Message-State: AOAM533n4AhdV0zbrzGGNtLZcDYMeN6CKJQiLTrap4w+FNrY1pVIQdKo
+        WrBvrXUIgfL+Dbltxt1G06EHbpa87xHNlrD2Fg==
+X-Google-Smtp-Source: ABdhPJy9JsUpQkdSRUHfTzJh2hR6ARIfiVnUI96HsBjT1we1tvudMgQHBXcHU/wLeqsd4JC8oh1Ogf5NpN6GjIekTQ==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a25:4cc7:: with SMTP id
+ z190mr38493734yba.405.1605146043522; Wed, 11 Nov 2020 17:54:03 -0800 (PST)
+Date:   Wed, 11 Nov 2020 17:53:55 -0800
+Message-Id: <20201112015359.1103333-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
+Subject: [PATCH v13 0/4] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 12:30:56AM +0000, Sargun Dhillon wrote:
-> On Wed, Nov 11, 2020 at 08:03:18PM +0000, Trond Myklebust wrote:
-> > On Wed, 2020-11-11 at 18:57 +0000, Sargun Dhillon wrote:
-> > > On Wed, Nov 11, 2020 at 02:38:11PM +0000, Trond Myklebust wrote:
-> > > > On Wed, 2020-11-11 at 11:12 +0000, Sargun Dhillon wrote:
-> > > > 
-> > > > The current code for setting server->cred was developed
-> > > > independently
-> > > > of fsopen() (and predates it actually). I'm fine with the change to
-> > > > have server->cred be the cred of the user that called fsopen().
-> > > > That's
-> > > > in line with what we used to do for sys_mount().
-> > > > 
-> > > Just curious, without FS_USERNS, how were you mounting NFSv4 in an
-> > > unprivileged user ns?
-> > 
-> > The code was originally developed on a 5.1 kernel. So all my testing
-> > has been with ordinary sys_mount() calls in a container that had
-> > CAP_SYS_ADMIN privileges.
-> > 
-> > > > However all the other stuff to throw errors when the user namespace
-> > > > is
-> > > > not init_user_ns introduces massive regressions.
-> > > > 
-> > > 
-> > > I can remove that and respin the patch. How do you feel about that? 
-> > > I would 
-> > > still like to keep the log lines though because it is a uapi change.
-> > > I am 
-> > > worried that someone might exercise this path with GSS and allow for
-> > > upcalls 
-> > > into the main namespaces by accident -- or be confused of why they're
-> > > seeing 
-> > > upcalls "in a different namespace".
-> > > 
-> > > Are you okay with picking up ("NFS: NFSv2/NFSv3: Use cred from
-> > > fs_context during 
-> > > mount") without any changes?
-> > 
-> > Why do we need the dprintk()s? It seems to me that either they should
-> > be reporting something that the user needs to know (in which case they
-> > should be real printk()s) or they are telling us something that we
-> > should already know. To me they seem to fit more in the latter
-> > category.
-> > 
-> > > 
-> > > I can respin ("NFSv4: Refactor NFS to use user namespaces") without:
-> > > /*
-> > >  * nfs4idmap is not fully isolated by user namespaces. It is
-> > > currently
-> > >  * only network namespace aware. If upcalls never happen, we do not
-> > >  * need to worry as nfs_client instances aren't shared between
-> > >  * user namespaces.
-> > >  */
-> > > if (idmap_userns(server->nfs_client->cl_idmap) != &init_user_ns && 
-> > >         !(server->caps & NFS_CAP_UIDGID_NOMAP)) {
-> > >         error = -EINVAL;
-> > >         errorf(fc, "Mount credentials are from non init user
-> > > namespace and ID mapping is enabled. This is not allowed.");
-> > >         goto error;
-> > > }
-> > > 
-> > > (and making it so we can call idmap_userns)
-> > > 
-> > 
-> > Yes. That would be acceptable. Again, though, I'd like to see the
-> > dprintk()s gone.
-> > 
-> 
-> I can drop the dprintks, but given this is a uapi change, does it make sense to 
-> pr_info_once? Especially, because this can have security impact?
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-Spending 5 minutes thinking about this, I think that best go out in another patch
-that I can spin, and we can discuss there.
+With SELinux managed userfaultfd, an admin can control creation and
+movement of the file descriptors. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the corresponding
+security_ptrace_access_check() checks. For privacy, the admin may
+want to deny such accesses, which is possible with SELinux support.
+
+Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+allows callers to opt into this SELinux management. In this new "secure"
+mode, anon_inodes create new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
+
+This patch series is one of two fork of [1] and is an
+alternative to [2].
+
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
+
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+Changes from the sixth version of the patch:
+
+  - Removed definition of anon_inode_getfile_secure() as there are no
+    callers.
+  - Simplified function description of anon_inode_getfd_secure().
+  - Elaborated more on the purpose of 'context_inode' in commit message.
+
+Changes from the seventh version of the patch:
+
+  - Fixed error handling in _anon_inode_getfile().
+  - Fixed minor comment and indentation related issues.
+
+Changes from the eighth version of the patch:
+
+  - Replaced selinux_state.initialized with selinux_state.initialized
+
+Changes from the ninth version of the patch:
+
+  - Fixed function names in fs/anon_inodes.c
+  - Fixed comment of anon_inode_getfd_secure()
+  - Fixed name of the patch wherein userfaultfd code uses
+    anon_inode_getfd_secure()
+
+Changes from the tenth version of the patch:
+
+  - Split first patch into VFS and LSM specific patches
+  - Fixed comments in fs/anon_inodes.c
+  - Fixed comment of alloc_anon_inode()
+
+Changes from the eleventh version of the patch:
+
+  - Removed comment of alloc_anon_inode() for consistency with the code
+  - Fixed explanation of LSM hook in the commit message
+
+Changes from the twelfth version of the patch:
+  - Replaced FILE__CREATE with ANON_INODE__CREATE while initializing
+    anon-inode's SELinux security struct.
+  - Check context_inode's SELinux label and return -EACCES if it's
+    invalid.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  fs: add LSM-supporting anon-inode interface
+  selinux: teach SELinux about anonymous inodes
+  userfaultfd: use secure anon inodes for userfaultfd
+
+Lokesh Gidra (1):
+  security: add inode_init_security_anon() LSM hook
+
+ fs/anon_inodes.c                    | 150 ++++++++++++++++++++--------
+ fs/libfs.c                          |   5 -
+ fs/userfaultfd.c                    |  19 ++--
+ include/linux/anon_inodes.h         |   5 +
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   9 ++
+ include/linux/security.h            |  10 ++
+ security/security.c                 |   8 ++
+ security/selinux/hooks.c            |  56 +++++++++++
+ security/selinux/include/classmap.h |   2 +
+ 10 files changed, 212 insertions(+), 54 deletions(-)
+
+-- 
+2.29.2.299.gdc1121823c-goog
+
