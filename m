@@ -2,71 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2251E2B0B72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 18:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 279C02B0CCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 19:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbgKLRl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 12:41:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60672 "EHLO
+        id S1726492AbgKLShS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 13:37:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbgKLRl7 (ORCPT
+        with ESMTP id S1726148AbgKLShS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 12:41:59 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F5BC0613D1;
-        Thu, 12 Nov 2020 09:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=eaX1+ATZFX5QaZboVsjA3nZdkItK9osiOb9syEljGl4=; b=Uj8oHNbSuyqpEQWRlw8PlugXFK
-        x7uOsrfD57/4YXq/Ovu8hrqbA/PHGjQC5k6mm1/wC7/4uqolMu9lxkxtJd7pIx+xiSISFW6beSVlr
-        fd1RCLn7PzPDAwgtoD5H1y1zC7zu1T5hDdD651ERepHfnbkMkGxVM8SVMa8prsSm2AWfqeTpuPcTA
-        zdTQ95X5WI0i0i4neQ0di7zSYTzKCtOU/c18Z6wW8XKYDJVXfQ6MWUR439Ng9+iOu0g6cEU9xL5OV
-        2f3tSz5ExLhNngGnWV6YO/jrjYLYulNPCP5vKNAuU6sHK7WWb8UF9utT3MS/X/ML+G3C2WqMbKu+U
-        u1bWu1Sw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kdGbW-0001cV-FZ; Thu, 12 Nov 2020 17:41:50 +0000
-Date:   Thu, 12 Nov 2020 17:41:50 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v3 01/12] mm: Make pagecache tagged lookups return only
- head pages
-Message-ID: <20201112174150.GC17076@casper.infradead.org>
-References: <20201026041408.25230-1-willy@infradead.org>
- <20201026041408.25230-2-willy@infradead.org>
- <20201028075056.GB1362354@kernel.org>
+        Thu, 12 Nov 2020 13:37:18 -0500
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AD0CC0613D1;
+        Thu, 12 Nov 2020 10:37:18 -0800 (PST)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id CB93C1E3B; Thu, 12 Nov 2020 13:37:17 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org CB93C1E3B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1605206237;
+        bh=Ig7MoAhTLZXaNQ4E5S7TOqyF6MAcb4TbDz8tkp3ULV4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NSOjEa8OJOqemBTKNSUMH9tbkGbtDT33jE35eFxfkaA1/Mw7Zp4fMtsBEgZEbjYef
+         te6bVwm4WSrBylhHkrZB84kR006+dyyCR722LipKqxYjqxeg113qWIhK8d0WDegYXa
+         Ds9Ls2BVkx3HxWMmt1Mqd1EhSspO9o9DQ1Qa9ZmQ=
+Date:   Thu, 12 Nov 2020 13:37:17 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     herbert@gondor.apana.org.au, trond.myklebust@hammerspace.com,
+        linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
+Message-ID: <20201112183717.GH9243@fieldses.org>
+References: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201028075056.GB1362354@kernel.org>
+In-Reply-To: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 28, 2020 at 09:50:56AM +0200, Mike Rapoport wrote:
-> > @@ -2074,8 +2074,8 @@ EXPORT_SYMBOL(find_get_pages_contig);
-> >   * @nr_pages:	the maximum number of pages
-> >   * @pages:	where the resulting pages are placed
-> >   *
-> > - * Like find_get_pages, except we only return pages which are tagged with
-> > - * @tag.   We update @index to index the next page for the traversal.
-> > + * Like find_get_pages(), except we only return head pages which are tagged
-> > + * with @tag.   We update @index to index the next page for the traversal.
+On Thu, Nov 12, 2020 at 12:57:45PM +0000, David Howells wrote:
 > 
-> Nit:                                           ^ next head page
+> Hi Herbert, Bruce,
+> 
+> Here's my first cut at a generic Kerberos crypto library in the kernel so
+> that I can share code between rxrpc and sunrpc (and cifs?).
+> 
+> I derived some of the parts from the sunrpc gss library and added more
+> advanced AES and Camellia crypto.  I haven't ported across the DES-based
+> crypto yet - I figure that can wait a bit till the interface is sorted.
+> 
+> Whilst I have put it into a directory under crypto/, I haven't made an
+> interface that goes and loads it (analogous to crypto_alloc_skcipher,
+> say).  Instead, you call:
+> 
+>         const struct krb5_enctype *crypto_krb5_find_enctype(u32 enctype);
+> 
+> to go and get a handler table and then use a bunch of accessor functions to
+> jump through the hoops.  This is basically the way the sunrpc gsslib does
+> things.  It might be worth making it so you do something like:
+> 
+> 	struct crypto_mech *ctx = crypto_mech_alloc("krb5(18)");
+> 
+> to get enctype 18, but I'm not sure if it's worth the effort.  Also, I'm
+> not sure if there are any alternatives to kerberos we will need to support.
 
-I don't love the sentence anyway.  How about:
+We did have code for a non-krb5 mechanism at some point, but it was torn
+out.  So I don't think that's a priority.
 
- * Like find_get_pages(), except we only return head pages which are tagged
- * with @tag.  @index is updated to the index immediately after the last
- * page we return, ready for the next iteration.
+(Chuck, will RPC-over-SSL need a new non-krb5 mechanism?)
 
+> There are three main interfaces to it:
+> 
+>  (*) I/O crypto: encrypt, decrypt, get_mic and verify_mic.
+> 
+>      These all do in-place crypto, using an sglist to define the buffer
+>      with the data in it.  Is it necessary to make it able to take separate
+>      input and output buffers?
+
+I don't know.  My memory is that the buffer management in the existing
+rpcsec_gss code is complex and fragile.  See e.g. the long comment in
+gss_krb5_remove_padding.
+
+--b.
+
+>  (*) PRF+ calculation for key derivation.
+>  (*) Kc, Ke, Ki derivation.
+> 
+>      These use krb5_buffer structs to pass objects around.  This is akin to
+>      the xdr_netobj, but has a void* instead of a u8* data pointer.
+> 
+> In terms of rxrpc's rxgk, there's another step in key derivation that isn't
+> part of the kerberos standard, but uses the PRF+ function to generate a key
+> that is then used to generate Kc, Ke and Ki.  Is it worth putting this into
+> the directory or maybe having a callout to insert an intermediate step in
+> key derivation?
+> 
+> Note that, for purposes of illustration, I've included some rxrpc patches
+> that use this interface to implement the rxgk Rx security class.  The
+> branch also is based on some rxrpc patches that are a prerequisite for
+> this, but the crypto patches don't need it.
+> 
+> ---
+> The patches can be found here also:
+> 
+> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=crypto-krb5
+> 
+> David
+> ---
+> David Howells (18):
+>       crypto/krb5: Implement Kerberos crypto core
+>       crypto/krb5: Add some constants out of sunrpc headers
+>       crypto/krb5: Provide infrastructure and key derivation
+>       crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
+>       crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt functions
+>       crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and verify_mic
+>       crypto/krb5: Implement the AES enctypes from rfc3962
+>       crypto/krb5: Implement crypto self-testing
+>       crypto/krb5: Implement the AES enctypes from rfc8009
+>       crypto/krb5: Implement the AES encrypt/decrypt from rfc8009
+>       crypto/krb5: Add the AES self-testing data from rfc8009
+>       crypto/krb5: Implement the Camellia enctypes from rfc6803
+>       rxrpc: Add the security index for yfs-rxgk
+>       rxrpc: Add YFS RxGK (GSSAPI) security class
+>       rxrpc: rxgk: Provide infrastructure and key derivation
+>       rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)
+>       rxrpc: rxgk: Implement connection rekeying
+>       rxgk: Support OpenAFS's rxgk implementation
+> 
+> 
+>  crypto/krb5/Kconfig              |    9 +
+>  crypto/krb5/Makefile             |   11 +-
+>  crypto/krb5/internal.h           |  101 +++
+>  crypto/krb5/kdf.c                |  223 ++++++
+>  crypto/krb5/main.c               |  190 +++++
+>  crypto/krb5/rfc3961_simplified.c |  732 ++++++++++++++++++
+>  crypto/krb5/rfc3962_aes.c        |  140 ++++
+>  crypto/krb5/rfc6803_camellia.c   |  249 ++++++
+>  crypto/krb5/rfc8009_aes2.c       |  440 +++++++++++
+>  crypto/krb5/selftest.c           |  543 +++++++++++++
+>  crypto/krb5/selftest_data.c      |  289 +++++++
+>  fs/afs/misc.c                    |   13 +
+>  include/crypto/krb5.h            |  100 +++
+>  include/keys/rxrpc-type.h        |   17 +
+>  include/trace/events/rxrpc.h     |    4 +
+>  include/uapi/linux/rxrpc.h       |   17 +
+>  net/rxrpc/Kconfig                |   10 +
+>  net/rxrpc/Makefile               |    5 +
+>  net/rxrpc/ar-internal.h          |   20 +
+>  net/rxrpc/conn_object.c          |    2 +
+>  net/rxrpc/key.c                  |  319 ++++++++
+>  net/rxrpc/rxgk.c                 | 1232 ++++++++++++++++++++++++++++++
+>  net/rxrpc/rxgk_app.c             |  424 ++++++++++
+>  net/rxrpc/rxgk_common.h          |  164 ++++
+>  net/rxrpc/rxgk_kdf.c             |  271 +++++++
+>  net/rxrpc/security.c             |    6 +
+>  26 files changed, 5530 insertions(+), 1 deletion(-)
+>  create mode 100644 crypto/krb5/kdf.c
+>  create mode 100644 crypto/krb5/rfc3961_simplified.c
+>  create mode 100644 crypto/krb5/rfc3962_aes.c
+>  create mode 100644 crypto/krb5/rfc6803_camellia.c
+>  create mode 100644 crypto/krb5/rfc8009_aes2.c
+>  create mode 100644 crypto/krb5/selftest.c
+>  create mode 100644 crypto/krb5/selftest_data.c
+>  create mode 100644 net/rxrpc/rxgk.c
+>  create mode 100644 net/rxrpc/rxgk_app.c
+>  create mode 100644 net/rxrpc/rxgk_common.h
+>  create mode 100644 net/rxrpc/rxgk_kdf.c
+> 
