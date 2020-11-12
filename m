@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A53A2B105E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 22:28:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3859C2B104C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 22:27:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbgKLV0w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 16:26:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39444 "EHLO
+        id S1727417AbgKLV0x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 16:26:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbgKLV0w (ORCPT
+        with ESMTP id S1727440AbgKLV0w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 12 Nov 2020 16:26:52 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B43CAC0613D4;
-        Thu, 12 Nov 2020 13:26:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711D0C0613D1;
+        Thu, 12 Nov 2020 13:26:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=MOhcev08Qr0q0WFBcUAlxQv3z5m+M7Jp4y+munP9EsA=; b=CHIbihY1P2M/Ip+chUtSUhnj3r
-        elD6u7bsS9+RzgTnl0LJCsB2RDtvlKb/+FO69euC9vy1E3NlerVYFVjsiEGnTP1A4MWEdMHWHygHD
-        Ndv51Z65hEpInchnaYCGWnWG4KLGe9ZLqfKTKBcyboFB7bk0ORTAmoDL4oDne4UWWwNduDwKrtcuk
-        tp3f+pO5bImAQqt9oneNQYyOXWiubs66lAQ+73plyA/m5OTZUTNw+ElLdntFoQ/S1zRiV28vyBUjX
-        ypR0pp2gkQttKWVfxGupREgDAXSNa2Bq9G3sYKzOJQ8ZekiODCTlFjvA5W3dsslgQmn8diNXHHsQs
-        RuC5wYfw==;
+        bh=nPDvTHk8PjzTj2XUJS83GH14pU+C7s3G9UCa3yq16Gg=; b=WMwLcRRLIzEY/GjJ+G32FgsHx5
+        KiaxlnHD6t77xFQx7BG9Nkim1OczitEh18vJdbN5RQSEcy5cpy946x77uW8wHJzzcUrDXtGJnooDn
+        /VK0mHBye057ztpFIfZupOhzLaSeIaLx3CmnDdU7ykPw6xYaPW4jgNe0S4+SVWdTc26UB4JRpbc0m
+        09HHSiGae29bQ/CP5vrWPYtrof0GN2+umIWSmmhoYCMr9TxGsNCtGEpN57E3mgAc56usPr2rXhHAw
+        HgE+hSvH0QHqfRxw9E4zkvthMYQYXpYcA5NXJ91BD7uLoaIed5wBaueEzQY9HheNRcQ1xmGP7s3R3
+        oucS1wQA==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kdK7F-0007Ha-GX; Thu, 12 Nov 2020 21:26:49 +0000
+        id 1kdK7G-0007Hj-8A; Thu, 12 Nov 2020 21:26:50 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         dchinner@redhat.com, linux-kernel@vger.kernel.org,
         Jan Kara <jack@suse.cz>,
         William Kucharski <william.kucharski@oracle.com>
-Subject: [PATCH v4 13/16] mm: Pass pvec directly to find_get_entries
-Date:   Thu, 12 Nov 2020 21:26:38 +0000
-Message-Id: <20201112212641.27837-14-willy@infradead.org>
+Subject: [PATCH v4 14/16] mm: Remove pagevec_lookup_entries
+Date:   Thu, 12 Nov 2020 21:26:39 +0000
+Message-Id: <20201112212641.27837-15-willy@infradead.org>
 X-Mailer: git-send-email 2.21.3
 In-Reply-To: <20201112212641.27837-1-willy@infradead.org>
 References: <20201112212641.27837-1-willy@infradead.org>
@@ -47,120 +47,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All callers of find_get_entries() use a pvec, so pass it directly
-instead of manipulating it in the caller.
+pagevec_lookup_entries() is now just a wrapper around find_get_entries()
+so remove it and convert all its callers.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 ---
- include/linux/pagemap.h |  3 +--
- mm/filemap.c            | 21 +++++++++------------
- mm/shmem.c              |  5 ++---
- mm/swap.c               |  4 +---
- 4 files changed, 13 insertions(+), 20 deletions(-)
+ include/linux/pagevec.h |  3 ---
+ mm/swap.c               | 36 ++----------------------------------
+ mm/truncate.c           |  4 ++--
+ 3 files changed, 4 insertions(+), 39 deletions(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index c7c26a902743..46d4b1704770 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -449,8 +449,7 @@ static inline struct page *find_subpage(struct page *head, pgoff_t index)
- }
+diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
+index ce77724a2ab7..a45bea4b4d08 100644
+--- a/include/linux/pagevec.h
++++ b/include/linux/pagevec.h
+@@ -25,9 +25,6 @@ struct pagevec {
  
- unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
--		pgoff_t end, unsigned int nr_entries, struct page **entries,
+ void __pagevec_release(struct pagevec *pvec);
+ void __pagevec_lru_add(struct pagevec *pvec);
+-unsigned pagevec_lookup_entries(struct pagevec *pvec,
+-		struct address_space *mapping, pgoff_t start, pgoff_t end,
 -		pgoff_t *indices);
-+		pgoff_t end, struct pagevec *pvec, pgoff_t *indices);
- unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- 			pgoff_t end, unsigned int nr_pages,
- 			struct page **pages);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index b3b89a62ab1a..479cbbadd93b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1871,14 +1871,12 @@ static inline struct page *find_get_entry(struct xa_state *xas, pgoff_t max,
-  * @mapping:	The address_space to search
-  * @start:	The starting page cache index
-  * @end:	The final page index (inclusive).
-- * @nr_entries:	The maximum number of entries
-- * @entries:	Where the resulting entries are placed
-+ * @pvec:	Where the resulting entries are placed.
-  * @indices:	The cache indices corresponding to the entries in @entries
-  *
-- * find_get_entries() will search for and return a group of up to
-- * @nr_entries entries in the mapping.  The entries are placed at
-- * @entries.  find_get_entries() takes a reference against any actual
-- * pages it returns.
-+ * find_get_entries() will search for and return a batch of entries in
-+ * the mapping.  The entries are placed in @pvec.  find_get_entries()
-+ * takes a reference on any actual pages it returns.
-  *
-  * The search returns a group of mapping-contiguous page cache entries
-  * with ascending indexes.  There may be holes in the indices due to
-@@ -1895,15 +1893,12 @@ static inline struct page *find_get_entry(struct xa_state *xas, pgoff_t max,
-  * Return: the number of pages and shadow entries which were found.
-  */
- unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
--		pgoff_t end, unsigned int nr_entries, struct page **entries,
--		pgoff_t *indices)
-+		pgoff_t end, struct pagevec *pvec, pgoff_t *indices)
- {
- 	XA_STATE(xas, &mapping->i_pages, start);
- 	struct page *page;
- 	unsigned int ret = 0;
--
--	if (!nr_entries)
--		return 0;
-+	unsigned nr_entries = PAGEVEC_SIZE;
- 
- 	rcu_read_lock();
- 	while ((page = find_get_entry(&xas, end, XA_PRESENT))) {
-@@ -1918,11 +1913,13 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
- 		}
- 
- 		indices[ret] = xas.xa_index;
--		entries[ret] = page;
-+		pvec->pages[ret] = page;
- 		if (++ret == nr_entries)
- 			break;
- 	}
- 	rcu_read_unlock();
-+
-+	pvec->nr = ret;
- 	return ret;
- }
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 7a62dc967d7d..e01457988dd6 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -965,9 +965,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 	while (index < end) {
- 		cond_resched();
- 
--		pvec.nr = find_get_entries(mapping, index, end - 1,
--				PAGEVEC_SIZE, pvec.pages, indices);
--		if (!pvec.nr) {
-+		if (!find_get_entries(mapping, index, end - 1, &pvec,
-+				indices)) {
- 			/* If all gone or hole-punch or unfalloc, we're done */
- 			if (index == start || end != -1)
- 				break;
+ void pagevec_remove_exceptionals(struct pagevec *pvec);
+ unsigned pagevec_lookup_range(struct pagevec *pvec,
+ 			      struct address_space *mapping,
 diff --git a/mm/swap.c b/mm/swap.c
-index 9a562f7fd200..7cf585223566 100644
+index 7cf585223566..14c3bac607a6 100644
 --- a/mm/swap.c
 +++ b/mm/swap.c
-@@ -1102,9 +1102,7 @@ unsigned pagevec_lookup_entries(struct pagevec *pvec,
- 		struct address_space *mapping, pgoff_t start, pgoff_t end,
- 		pgoff_t *indices)
- {
--	pvec->nr = find_get_entries(mapping, start, end, PAGEVEC_SIZE,
--				    pvec->pages, indices);
--	return pagevec_count(pvec);
-+	return find_get_entries(mapping, start, end, pvec, indices);
+@@ -1073,44 +1073,12 @@ void __pagevec_lru_add(struct pagevec *pvec)
+ 	pagevec_lru_move_fn(pvec, __pagevec_lru_add_fn, NULL);
  }
  
+-/**
+- * pagevec_lookup_entries - gang pagecache lookup
+- * @pvec:	Where the resulting entries are placed
+- * @mapping:	The address_space to search
+- * @start:	The starting entry index
+- * @end:	The highest index to return (inclusive).
+- * @nr_entries:	The maximum number of pages
+- * @indices:	The cache indices corresponding to the entries in @pvec
+- *
+- * pagevec_lookup_entries() will search for and return a group of up
+- * to @nr_pages pages and shadow entries in the mapping.  All
+- * entries are placed in @pvec.  pagevec_lookup_entries() takes a
+- * reference against actual pages in @pvec.
+- *
+- * The search returns a group of mapping-contiguous entries with
+- * ascending indexes.  There may be holes in the indices due to
+- * not-present entries.
+- *
+- * Only one subpage of a Transparent Huge Page is returned in one call:
+- * allowing truncate_inode_pages_range() to evict the whole THP without
+- * cycling through a pagevec of extra references.
+- *
+- * pagevec_lookup_entries() returns the number of entries which were
+- * found.
+- */
+-unsigned pagevec_lookup_entries(struct pagevec *pvec,
+-		struct address_space *mapping, pgoff_t start, pgoff_t end,
+-		pgoff_t *indices)
+-{
+-	return find_get_entries(mapping, start, end, pvec, indices);
+-}
+-
  /**
+  * pagevec_remove_exceptionals - pagevec exceptionals pruning
+  * @pvec:	The pagevec to prune
+  *
+- * pagevec_lookup_entries() fills both pages and exceptional radix
+- * tree entries into the pagevec.  This function prunes all
++ * find_get_entries() fills both pages and XArray value entries (aka
++ * exceptional entries) into the pagevec.  This function prunes all
+  * exceptionals from @pvec without leaving holes, so that it can be
+  * passed on to page-only pagevec operations.
+  */
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 50d160700b7d..68b7630e1fc4 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -376,7 +376,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 	index = start;
+ 	for ( ; ; ) {
+ 		cond_resched();
+-		if (!pagevec_lookup_entries(&pvec, mapping, index, end - 1,
++		if (!find_get_entries(mapping, index, end - 1, &pvec,
+ 				indices)) {
+ 			/* If all gone from start onwards, we're done */
+ 			if (index == start)
+@@ -632,7 +632,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 
+ 	pagevec_init(&pvec);
+ 	index = start;
+-	while (pagevec_lookup_entries(&pvec, mapping, index, end, indices)) {
++	while (find_get_entries(mapping, index, end, &pvec, indices)) {
+ 		for (i = 0; i < pagevec_count(&pvec); i++) {
+ 			struct page *page = pvec.pages[i];
+ 
 -- 
 2.28.0
 
