@@ -2,123 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B97C2B0237
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 10:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA272B0278
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 11:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbgKLJqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 04:46:32 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:47454 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbgKLJqc (ORCPT
+        id S1727223AbgKLKDc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 05:03:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726061AbgKLKDc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 04:46:32 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AC9UBgu048173;
-        Thu, 12 Nov 2020 09:46:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=O+ykYzp0ZE9cVThHzRPU9L4M92wvga6cLzUpbqdXUfk=;
- b=r6D3EWPtZvSF5V4eKlaYsNjuaPzyQwfiXCWDPU76+/VcMNrPXcci4KHO15Jdjnrn9egW
- ug3Xw3HktkZD84/nGy3d3/+r69a10OyO73NTxUQrySP1G3LCW1sVUaeq2vrb7Idia4HZ
- F0+Hl9+QcHgVZ69i5+xrzNKD7nUcxlnOeEuJhzN1bB33caodmLqEjJjrqkmqm16EFemw
- /h7bqBvs6TNNeFmgApQpAo8UUmWTpwYjruH3h62BitjK7GJlrxSi2N7YcSAHOM77YAq0
- CFvLGXjX1dL4F0uDm5kHClQx5WbdbkE8nNF3T0PrGOUavE8ClKOONsHHvZFpC/K69ikq CA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 34nh3b4kyc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Nov 2020 09:46:19 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AC9VYTi004181;
-        Thu, 12 Nov 2020 09:44:19 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 34p55qytx7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Nov 2020 09:44:19 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AC9iIZ6029413;
-        Thu, 12 Nov 2020 09:44:18 GMT
-Received: from [192.168.1.102] (/39.109.186.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Nov 2020 01:44:18 -0800
-Subject: Re: [PATCH v10 04/41] btrfs: get zone information of zoned block
- devices
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>
-Cc:     "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <cf46f0aef5a214cae8bacb2be231efed5febef5f.1605007036.git.naohiro.aota@wdc.com>
- <6df7390f-6656-4795-ac54-a99fdaf67ac6@oracle.com>
- <SN4PR0401MB35981D84D03C4D54A3EF627F9BE70@SN4PR0401MB3598.namprd04.prod.outlook.com>
- <BL0PR04MB6514AAB6133006372B04711DE7E70@BL0PR04MB6514.namprd04.prod.outlook.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <4a796bcd-ebac-eff2-6085-346a102b5952@oracle.com>
-Date:   Thu, 12 Nov 2020 17:44:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.3
+        Thu, 12 Nov 2020 05:03:32 -0500
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C75C0613D1;
+        Thu, 12 Nov 2020 02:03:32 -0800 (PST)
+Received: by mail-ot1-x342.google.com with SMTP id n15so5019958otl.8;
+        Thu, 12 Nov 2020 02:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AQZyFP+icQ6Gn+nIuSyMic/jsZR6XqrBTW4Q4kxWbsc=;
+        b=ta+ZqYqNIy9QGI0x10rsJEncrpVQ1T2zSQKnOUL7XSKQ3ge+yq7y70/fHmgJ4ix1ek
+         DD7qGiiv4+8NTvbCfXlfTKUEcUrYFOenButeYWUcClxi54CvqFfJXHdmtGqVp7P+8RvF
+         pTDzp57IVEQDqeI8f6GiFCDuRzNVBMVaoV++VGtTjm8yM5TKNdVFq0kCPdLWAVVosuZ+
+         dxOmJmhltDVrEz6/h8Ui5Yj5sp9C7coAA/hrvU55xgDlqwFnzx9521SN1Oa8Za7oBRvK
+         aLqczMJfeF0E/EHvHYjYHZHJn/038E+kdW42Shf1JyljgiyLs0SpHTsmDJb+pyT5VJR2
+         eDEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AQZyFP+icQ6Gn+nIuSyMic/jsZR6XqrBTW4Q4kxWbsc=;
+        b=ouPchq5eBV6vzaWvy1Y5rxANt9sn5dnwrgVD3jIAy8HsdJR0gzgdbhtWVOrpZk6Sgd
+         fEUMn0/9E17XnqhMFksTCyKrXf67L0cJ6K2LotfcWftkAxVPFIroVybcBCBdL5Ygztn4
+         rhKsEEenBN3N14YNkNDDKDathmi4rlS80vfczjP25nIK6XcxMNdqH/pHIHJ54RZULK+7
+         HUd+6XSNzTtDAhe4aJsX/m8VbpSq+9+tz+0gfiqB7tVX19vaWN3NQaCP+lqYz6tctKdX
+         NaFMPUabW6vx99Xy4nR6PYtkRUDrml+cXJm2IHjs9DO41t1AB8IvFn3OKB1VukDb1tJn
+         hYNg==
+X-Gm-Message-State: AOAM532hVN8VE+g4Pfyp3PEqz/Pg+R6pMeRzlGodRBJnsnq5P4CCEmcO
+        5sXzEycPOKNNSb6KOFb8xGrSY0NdHW3FrO9m58puGc4O
+X-Google-Smtp-Source: ABdhPJwF+g7BGINLx5YfFrAql9wFqg+kDoGOXoeW7JztQPV3niNCwoEjwDHQ8ldgk6hAr+rNnEN+atz+PjlXneaw/o0=
+X-Received: by 2002:a9d:12ab:: with SMTP id g40mr21957319otg.369.1605175411617;
+ Thu, 12 Nov 2020 02:03:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <BL0PR04MB6514AAB6133006372B04711DE7E70@BL0PR04MB6514.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011120058
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9802 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011120058
+References: <cover.1602093760.git.yuleixzhang@tencent.com> <aa553faf9e97ee9306ecd5a67d3324a34f9ed4be.1602093760.git.yuleixzhang@tencent.com>
+ <20201110200411.GU3576660@ZenIV.linux.org.uk> <CACZOiM1L2W+neaF-rd=k9cJTnQfNBLx2k9GLZydYuQiJqr=iXg@mail.gmail.com>
+ <20201111230908.GC3576660@ZenIV.linux.org.uk>
+In-Reply-To: <20201111230908.GC3576660@ZenIV.linux.org.uk>
+From:   yulei zhang <yulei.kernel@gmail.com>
+Date:   Thu, 12 Nov 2020 18:03:20 +0800
+Message-ID: <CACZOiM0SH_Uo9F5jOGtpXSnkHarH=E-BA-7eUFFKsb2onP2yOw@mail.gmail.com>
+Subject: Re: [PATCH 01/35] fs: introduce dmemfs module
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Xiao Guangrong <xiaoguangrong.eric@gmail.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        Haiwei Li <lihaiwei.kernel@gmail.com>,
+        Yulei Zhang <yuleixzhang@tencent.com>,
+        Xiao Guangrong <gloryxiao@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Nov 12, 2020 at 7:09 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Nov 11, 2020 at 04:53:00PM +0800, yulei zhang wrote:
+>
+> > > ... same here, seeing that you only call that thing from the next two functions
+> > > and you do *not* provide ->mknod() as a method (unsurprisingly - what would
+> > > device nodes do there?)
+> > >
+> >
+> > Thanks for pointing this out. we may need support the mknod method, otherwise
+> > the dev is redundant  and need to be removed.
+>
+> I'd suggest turning that into (static) __create_file(....) with
+>
+> static int dmemfs_create(struct inode *dir, struct dentry *dentry,
+>                          umode_t mode, bool excl)
+> {
+>         return __create_file(dir, dentry, mode | S_IFREG);
+> }
+>
+> static int dmemfs_mkdir(struct inode *dir, struct dentry *dentry,
+>                          umode_t mode)
+> {
+>         return __create_file(dir, dentry, mode | S_IFDIR);
+> }
+>
+> (i.e. even inc_nlink() of parent folded into that).
+>
+> [snip]
+>
+> > Yes, we seperate the full implementation for dmemfs_file_mmap into
+> > patch 05/35, it
+> > will assign the interfaces to handle the page fault.
+>
+> It would be less confusing to move the introduction of ->mmap() to that patch,
+> then.
 
-
-On 12/11/20 3:44 pm, Damien Le Moal wrote:
-> On 2020/11/12 16:35, Johannes Thumshirn wrote:
->> On 12/11/2020 08:00, Anand Jain wrote:
->>>> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
->>>> index 8840a4fa81eb..ed55014fd1bd 100644
->>>> --- a/fs/btrfs/super.c
->>>> +++ b/fs/btrfs/super.c
->>>> @@ -2462,6 +2462,11 @@ static void __init btrfs_print_mod_info(void)
->>>>    #endif
->>>>    #ifdef CONFIG_BTRFS_FS_REF_VERIFY
->>>>    			", ref-verify=on"
->>>> +#endif
->>>> +#ifdef CONFIG_BLK_DEV_ZONED
->>>> +			", zoned=yes"
->>>> +#else
->>>> +			", zoned=no"
->>>>    #endif
->>> IMO, we don't need this, as most of the generic kernel will be compiled
->>> with the CONFIG_BLK_DEV_ZONED defined.
->>> For review purpose we may want to know if the mounted device
->>> is a zoned device. So log of zone device and its type may be useful
->>> when we have verified the zoned devices in the open_ctree().
->>>
->>
->> David explicitly asked for this in [1] so we included it.
->>
->> [1] https://lore.kernel.org/linux-btrfs/20201013155301.GE6756@twin.jikos.cz
->>
-> 
-> And as of now, not all generic kernels are compiled with CONFIG_BLK_DEV_ZONED.
-> E.g. RHEL and CentOS. That may change in the future, but it should not be
-> assumed that CONFIG_BLK_DEV_ZONED is always enabled.
-> 
-
-Ok. My comment was from the long term perspective. I am fine if you want 
-to keep it.
+Thanks for the suggestion. will refactor the patches accordingly.
