@@ -2,250 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDDD32B0CD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 19:39:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6C922B0D73
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Nov 2020 20:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726348AbgKLSjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 13:39:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:36178 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726194AbgKLSjo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 13:39:44 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACIXxQs063414;
-        Thu, 12 Nov 2020 18:39:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=9JLSz7F4U072mTMc6WX+QwBtdSQiyj3GqHJlm84YjTU=;
- b=MJviSqG3mZC3Y6hnGuNh+Pt6nl2P6zf3BLfZeNVGflbPidFJmlTUGvEWA9nP7zd9noWW
- JI2COY2mYzZuB/fhGg1BZq2yem2DiPcKqDbpvj5X88CKUHScRhMi/OwBpY6M6/DSosZE
- XlrZtE033nNzFMw1SsjMDA4gstzVOsU05KqyHKUVHFt+wBI35KXt8CLvZg7KvvKERLvT
- 6uQ/wDk9PZVokL9v7wtIJB8WPVOvgBUAaPFaKGWguAHyNIrN7Q3CAieLeLaybBDx5AI0
- 4961tS2Fk3ONtDzCHC8QoCnwWHdnFCwRrFN7vppoLrw8kFXfG9I50wL8FEfZ0wOFYM0h LQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 34nh3b7799-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Nov 2020 18:39:30 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ACIZERl074559;
-        Thu, 12 Nov 2020 18:39:29 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 34rt56gu8j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Nov 2020 18:39:29 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0ACIdSOM027841;
-        Thu, 12 Nov 2020 18:39:28 GMT
-Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Nov 2020 10:39:28 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
-Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20201112183717.GH9243@fieldses.org>
-Date:   Thu, 12 Nov 2020 13:39:26 -0500
-Cc:     David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <824E8418-4903-46D6-A20C-8890C399C2D8@oracle.com>
-References: <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
- <20201112183717.GH9243@fieldses.org>
-To:     Bruce Fields <bfields@fieldses.org>
-X-Mailer: Apple Mail (2.3608.120.23.2.4)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011120109
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 phishscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011120109
+        id S1726478AbgKLTIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 14:08:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbgKLTIo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 12 Nov 2020 14:08:44 -0500
+Received: from kernel.org (unknown [77.125.7.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8D5220B80;
+        Thu, 12 Nov 2020 19:08:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605208123;
+        bh=xV//yxXQnSWrF+/xUfBz0sg6IFqo/YMvvh+jTSmycog=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AJ2VewNYER4w3booQ/KucmJAPZK4Nm1reG5FJeJdC37e1oDo0gYmUR751y+nFk/Fk
+         KTZnkXVxvIaPUC+PE+K9dv1EbVW82mMGVB67vT5tdx3BmBSmhgCrAaqtZp5v8kMCfS
+         p3TcAbQ8jXyADENOO6QdpyUsgBOodjaN9MdE79nU=
+Date:   Thu, 12 Nov 2020 21:08:27 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v8 2/9] mmap: make mlock_future_check() global
+Message-ID: <20201112190827.GP4758@kernel.org>
+References: <20201110151444.20662-1-rppt@kernel.org>
+ <20201110151444.20662-3-rppt@kernel.org>
+ <9e2fafd7-abb0-aa79-fa66-cd8662307446@redhat.com>
+ <20201110180648.GB4758@kernel.org>
+ <3194b507-a85f-965a-e0eb-512a79ede6a9@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3194b507-a85f-965a-e0eb-512a79ede6a9@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Nov 12, 2020 at 05:22:00PM +0100, David Hildenbrand wrote:
+> On 10.11.20 19:06, Mike Rapoport wrote:
+> > On Tue, Nov 10, 2020 at 06:17:26PM +0100, David Hildenbrand wrote:
+> > > On 10.11.20 16:14, Mike Rapoport wrote:
+> > > > From: Mike Rapoport <rppt@linux.ibm.com>
+> > > > 
+> > > > It will be used by the upcoming secret memory implementation.
+> > > > 
+> > > > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> > > > ---
+> > > >    mm/internal.h | 3 +++
+> > > >    mm/mmap.c     | 5 ++---
+> > > >    2 files changed, 5 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/mm/internal.h b/mm/internal.h
+> > > > index c43ccdddb0f6..ae146a260b14 100644
+> > > > --- a/mm/internal.h
+> > > > +++ b/mm/internal.h
+> > > > @@ -348,6 +348,9 @@ static inline void munlock_vma_pages_all(struct vm_area_struct *vma)
+> > > >    extern void mlock_vma_page(struct page *page);
+> > > >    extern unsigned int munlock_vma_page(struct page *page);
+> > > > +extern int mlock_future_check(struct mm_struct *mm, unsigned long flags,
+> > > > +			      unsigned long len);
+> > > > +
+> > > >    /*
+> > > >     * Clear the page's PageMlocked().  This can be useful in a situation where
+> > > >     * we want to unconditionally remove a page from the pagecache -- e.g.,
+> > > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > > index 61f72b09d990..c481f088bd50 100644
+> > > > --- a/mm/mmap.c
+> > > > +++ b/mm/mmap.c
+> > > > @@ -1348,9 +1348,8 @@ static inline unsigned long round_hint_to_min(unsigned long hint)
+> > > >    	return hint;
+> > > >    }
+> > > > -static inline int mlock_future_check(struct mm_struct *mm,
+> > > > -				     unsigned long flags,
+> > > > -				     unsigned long len)
+> > > > +int mlock_future_check(struct mm_struct *mm, unsigned long flags,
+> > > > +		       unsigned long len)
+> > > >    {
+> > > >    	unsigned long locked, lock_limit;
+> > > > 
+> > > 
+> > > So, an interesting question is if you actually want to charge secretmem
+> > > pages against mlock now, or if you want a dedicated secretmem cgroup
+> > > controller instead?
+> > 
+> > Well, with the current implementation there are three limits an
+> > administrator can use to control secretmem limits: mlock, memcg and
+> > kernel parameter.
+> > 
+> > The kernel parameter puts a global upper limit for secretmem usage,
+> > memcg accounts all secretmem allocations, including the unused memory in
+> > large pages caching and mlock allows per task limit for secretmem
+> > mappings, well, like mlock does.
+> > 
+> > I didn't consider a dedicated cgroup, as it seems we already have enough
+> > existing knobs and a new one would be unnecessary.
+> 
+> To me it feels like the mlock() limit is a wrong fit for secretmem. But
+> maybe there are other cases of using the mlock() limit without actually
+> doing mlock() that I am not aware of (most probably :) )?
 
+Secretmem does not explicitly calls to mlock() but it does what mlock()
+does and a bit more. Citing mlock(2):
 
-> On Nov 12, 2020, at 1:37 PM, J. Bruce Fields <bfields@fieldses.org> =
-wrote:
->=20
-> On Thu, Nov 12, 2020 at 12:57:45PM +0000, David Howells wrote:
->>=20
->> Hi Herbert, Bruce,
->>=20
->> Here's my first cut at a generic Kerberos crypto library in the =
-kernel so
->> that I can share code between rxrpc and sunrpc (and cifs?).
->>=20
->> I derived some of the parts from the sunrpc gss library and added =
-more
->> advanced AES and Camellia crypto.  I haven't ported across the =
-DES-based
->> crypto yet - I figure that can wait a bit till the interface is =
-sorted.
->>=20
->> Whilst I have put it into a directory under crypto/, I haven't made =
-an
->> interface that goes and loads it (analogous to crypto_alloc_skcipher,
->> say).  Instead, you call:
->>=20
->>        const struct krb5_enctype *crypto_krb5_find_enctype(u32 =
-enctype);
->>=20
->> to go and get a handler table and then use a bunch of accessor =
-functions to
->> jump through the hoops.  This is basically the way the sunrpc gsslib =
-does
->> things.  It might be worth making it so you do something like:
->>=20
->> 	struct crypto_mech *ctx =3D crypto_mech_alloc("krb5(18)");
->>=20
->> to get enctype 18, but I'm not sure if it's worth the effort.  Also, =
-I'm
->> not sure if there are any alternatives to kerberos we will need to =
-support.
->=20
-> We did have code for a non-krb5 mechanism at some point, but it was =
-torn
-> out.  So I don't think that's a priority.
->=20
-> (Chuck, will RPC-over-SSL need a new non-krb5 mechanism?)
+  mlock(),  mlock2(),  and  mlockall()  lock  part  or all of the calling
+  process's virtual address space into RAM, preventing that  memory  from
+  being paged to the swap area.
 
-No, RPC-over-TLS does not involve the GSS infrastructure in any way.
+So, based on that secretmem pages are not swappable, I think that
+RLIMIT_MEMLOCK is appropriate here.
 
+> I mean, my concern is not earth shattering, this can be reworked later. As I
+> said, it just feels wrong.
+> 
+> -- 
+> Thanks,
+> 
+> David / dhildenb
+> 
 
->> There are three main interfaces to it:
->>=20
->> (*) I/O crypto: encrypt, decrypt, get_mic and verify_mic.
->>=20
->>     These all do in-place crypto, using an sglist to define the =
-buffer
->>     with the data in it.  Is it necessary to make it able to take =
-separate
->>     input and output buffers?
->=20
-> I don't know.  My memory is that the buffer management in the existing
-> rpcsec_gss code is complex and fragile.  See e.g. the long comment in
-> gss_krb5_remove_padding.
-
-And even worse, the buffer handling is slightly different in the NFS
-client and server code paths.
-
-
-> --b.
->=20
->> (*) PRF+ calculation for key derivation.
->> (*) Kc, Ke, Ki derivation.
->>=20
->>     These use krb5_buffer structs to pass objects around.  This is =
-akin to
->>     the xdr_netobj, but has a void* instead of a u8* data pointer.
->>=20
->> In terms of rxrpc's rxgk, there's another step in key derivation that =
-isn't
->> part of the kerberos standard, but uses the PRF+ function to generate =
-a key
->> that is then used to generate Kc, Ke and Ki.  Is it worth putting =
-this into
->> the directory or maybe having a callout to insert an intermediate =
-step in
->> key derivation?
->>=20
->> Note that, for purposes of illustration, I've included some rxrpc =
-patches
->> that use this interface to implement the rxgk Rx security class.  The
->> branch also is based on some rxrpc patches that are a prerequisite =
-for
->> this, but the crypto patches don't need it.
->>=20
->> ---
->> The patches can be found here also:
->>=20
->> 	=
-http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=3D=
-crypto-krb5
->>=20
->> David
->> ---
->> David Howells (18):
->>      crypto/krb5: Implement Kerberos crypto core
->>      crypto/krb5: Add some constants out of sunrpc headers
->>      crypto/krb5: Provide infrastructure and key derivation
->>      crypto/krb5: Implement the Kerberos5 rfc3961 key derivation
->>      crypto/krb5: Implement the Kerberos5 rfc3961 encrypt and decrypt =
-functions
->>      crypto/krb5: Implement the Kerberos5 rfc3961 get_mic and =
-verify_mic
->>      crypto/krb5: Implement the AES enctypes from rfc3962
->>      crypto/krb5: Implement crypto self-testing
->>      crypto/krb5: Implement the AES enctypes from rfc8009
->>      crypto/krb5: Implement the AES encrypt/decrypt from rfc8009
->>      crypto/krb5: Add the AES self-testing data from rfc8009
->>      crypto/krb5: Implement the Camellia enctypes from rfc6803
->>      rxrpc: Add the security index for yfs-rxgk
->>      rxrpc: Add YFS RxGK (GSSAPI) security class
->>      rxrpc: rxgk: Provide infrastructure and key derivation
->>      rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)
->>      rxrpc: rxgk: Implement connection rekeying
->>      rxgk: Support OpenAFS's rxgk implementation
->>=20
->>=20
->> crypto/krb5/Kconfig              |    9 +
->> crypto/krb5/Makefile             |   11 +-
->> crypto/krb5/internal.h           |  101 +++
->> crypto/krb5/kdf.c                |  223 ++++++
->> crypto/krb5/main.c               |  190 +++++
->> crypto/krb5/rfc3961_simplified.c |  732 ++++++++++++++++++
->> crypto/krb5/rfc3962_aes.c        |  140 ++++
->> crypto/krb5/rfc6803_camellia.c   |  249 ++++++
->> crypto/krb5/rfc8009_aes2.c       |  440 +++++++++++
->> crypto/krb5/selftest.c           |  543 +++++++++++++
->> crypto/krb5/selftest_data.c      |  289 +++++++
->> fs/afs/misc.c                    |   13 +
->> include/crypto/krb5.h            |  100 +++
->> include/keys/rxrpc-type.h        |   17 +
->> include/trace/events/rxrpc.h     |    4 +
->> include/uapi/linux/rxrpc.h       |   17 +
->> net/rxrpc/Kconfig                |   10 +
->> net/rxrpc/Makefile               |    5 +
->> net/rxrpc/ar-internal.h          |   20 +
->> net/rxrpc/conn_object.c          |    2 +
->> net/rxrpc/key.c                  |  319 ++++++++
->> net/rxrpc/rxgk.c                 | 1232 =
-++++++++++++++++++++++++++++++
->> net/rxrpc/rxgk_app.c             |  424 ++++++++++
->> net/rxrpc/rxgk_common.h          |  164 ++++
->> net/rxrpc/rxgk_kdf.c             |  271 +++++++
->> net/rxrpc/security.c             |    6 +
->> 26 files changed, 5530 insertions(+), 1 deletion(-)
->> create mode 100644 crypto/krb5/kdf.c
->> create mode 100644 crypto/krb5/rfc3961_simplified.c
->> create mode 100644 crypto/krb5/rfc3962_aes.c
->> create mode 100644 crypto/krb5/rfc6803_camellia.c
->> create mode 100644 crypto/krb5/rfc8009_aes2.c
->> create mode 100644 crypto/krb5/selftest.c
->> create mode 100644 crypto/krb5/selftest_data.c
->> create mode 100644 net/rxrpc/rxgk.c
->> create mode 100644 net/rxrpc/rxgk_app.c
->> create mode 100644 net/rxrpc/rxgk_common.h
->> create mode 100644 net/rxrpc/rxgk_kdf.c
-
---
-Chuck Lever
-
-
-
+-- 
+Sincerely yours,
+Mike.
