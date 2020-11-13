@@ -2,76 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C3BB72B259E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 21:35:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD56A2B271C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 22:36:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgKMUfw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 15:35:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60538 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgKMUfw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 15:35:52 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D9DC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 12:35:52 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id z21so15887095lfe.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 12:35:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=NckPtgXfN6MS9MFfgiNpJS/JgzuVpE4Dg5TdNsKgarI=;
-        b=s/XG/nTa6i9hMd64JgLKI9ZnaxJoKzw9A8E7r2fcjEWxtlGB+CPxpZo3Lhl4XGN60+
-         XQkFa2u7C0JqS4x8Tzwk/4EGO+IzHvejoCutt5gcoNziOY66Q++Yz8D8WkDvXeHH+5ZS
-         XyMFySQG+LjLp+Q0UzG3HrJ5lnWpW95hL4BecAYOyF54OuerSqZqUgbXf9DnMUgSXRQF
-         75rTvqNGpOA+lsmWSBNTtGMFgW58dLEnjhqsXVpXlFQv6G2c+RNmM7noYekaA6hR+gnJ
-         yVPzUBQFDs5lCf0buEZ5k7fSc6zewMoQ+qa4Krpl5To2rYDmDyWTX821VX1gQ+GXSYKH
-         2Cow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=NckPtgXfN6MS9MFfgiNpJS/JgzuVpE4Dg5TdNsKgarI=;
-        b=JfNIh1Ii3hjWmzYpicf2vv5rfsciFCb3Vnc4+EkRQkyOhaeWbGieLKsgKfEfSJf/zC
-         DeQA/aLcaKVqlMfrv/UE1qrTm/RHONeIU7F8dA4F08oziyxmwF+Bgb47rxDM4MaQ76bY
-         pM1ql1KDr7//ZVv5TKjt/eI/XX3OU68thMTmIBqRsEk1CEkrwYB/GD5nDa5nZdfsfTqp
-         PZtm2XM7iCvqL9/Gk6VBosuVcaw2boYpvt3yyGwazfjs8KU1fB2Ya8o0+7+UiJLIELMh
-         nEGXZ3wgTdy3AJ1KWaiQ4QVeKjECPCR2LI/j1CkCU81rTS3IBjFi0/5p0eOGZhChfjdu
-         a2xg==
-X-Gm-Message-State: AOAM533f+OYTyX8CMnXdxU56i3V/LT8JU+k/FlS+pQjkHI1B+NNsx7S2
-        737u800XgAP36MjehRPTx2zNGeJkRvstfh9f7jJmLpNyqAM=
-X-Google-Smtp-Source: ABdhPJy1hPZWV78BKrUdqhFIgdQ/PJdiYSM1pxfUsbsVNghwssM2LIGc8nRY5d6CpzZkmgjs8NVc80YapKPBnclrXD4=
-X-Received: by 2002:ac2:5185:: with SMTP id u5mr1432545lfi.433.1605299750309;
- Fri, 13 Nov 2020 12:35:50 -0800 (PST)
+        id S1726107AbgKMVgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 16:36:36 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36586 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726268AbgKMVgf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Nov 2020 16:36:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 4F01BABD9;
+        Fri, 13 Nov 2020 21:36:33 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 0344ADA87A; Fri, 13 Nov 2020 22:34:49 +0100 (CET)
+Date:   Fri, 13 Nov 2020 22:34:49 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Anand Jain <anand.jain@oracle.com>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH v10 04/41] btrfs: get zone information of zoned block
+ devices
+Message-ID: <20201113213449.GH6756@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Anand Jain <anand.jain@oracle.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "hare@suse.com" <hare@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <cf46f0aef5a214cae8bacb2be231efed5febef5f.1605007036.git.naohiro.aota@wdc.com>
+ <6df7390f-6656-4795-ac54-a99fdaf67ac6@oracle.com>
+ <SN4PR0401MB35981D84D03C4D54A3EF627F9BE70@SN4PR0401MB3598.namprd04.prod.outlook.com>
+ <BL0PR04MB6514AAB6133006372B04711DE7E70@BL0PR04MB6514.namprd04.prod.outlook.com>
+ <4a796bcd-ebac-eff2-6085-346a102b5952@oracle.com>
 MIME-Version: 1.0
-From:   Igor Zhbanov <izh1979@gmail.com>
-Date:   Fri, 13 Nov 2020 23:35:45 +0300
-Message-ID: <CAEUiM9PxZSCuBPSuwkcWxZ2Q-=WFfMU461u2WUnXCw8UBN6x6w@mail.gmail.com>
-Subject: Proposal for the new mount options: no_symlink and no_new_symlink
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a796bcd-ebac-eff2-6085-346a102b5952@oracle.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Nov 12, 2020 at 05:44:11PM +0800, Anand Jain wrote:
+> On 12/11/20 3:44 pm, Damien Le Moal wrote:
+> > On 2020/11/12 16:35, Johannes Thumshirn wrote:
+> >> On 12/11/2020 08:00, Anand Jain wrote:
+> >>>> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> >>>> index 8840a4fa81eb..ed55014fd1bd 100644
+> >>>> --- a/fs/btrfs/super.c
+> >>>> +++ b/fs/btrfs/super.c
+> >>>> @@ -2462,6 +2462,11 @@ static void __init btrfs_print_mod_info(void)
+> >>>>    #endif
+> >>>>    #ifdef CONFIG_BTRFS_FS_REF_VERIFY
+> >>>>    			", ref-verify=on"
+> >>>> +#endif
+> >>>> +#ifdef CONFIG_BLK_DEV_ZONED
+> >>>> +			", zoned=yes"
+> >>>> +#else
+> >>>> +			", zoned=no"
+> >>>>    #endif
+> >>> IMO, we don't need this, as most of the generic kernel will be compiled
+> >>> with the CONFIG_BLK_DEV_ZONED defined.
+> >>> For review purpose we may want to know if the mounted device
+> >>> is a zoned device. So log of zone device and its type may be useful
+> >>> when we have verified the zoned devices in the open_ctree().
+> >>>
+> >>
+> >> David explicitly asked for this in [1] so we included it.
+> >>
+> >> [1] https://lore.kernel.org/linux-btrfs/20201013155301.GE6756@twin.jikos.cz
+> >>
+> > 
+> > And as of now, not all generic kernels are compiled with CONFIG_BLK_DEV_ZONED.
+> > E.g. RHEL and CentOS. That may change in the future, but it should not be
+> > assumed that CONFIG_BLK_DEV_ZONED is always enabled.
+> 
+> Ok. My comment was from the long term perspective. I am fine if you want 
+> to keep it.
 
-I want to implement 2 new mount options: "no_symlink" and "no_new_symlink".
-The "nosymlink" option will act like "nodev", i.e. it will ignore all created
-symbolic links.
-
-And the option "no_new_symlink" is for more relaxed configuration. It will
-allow to follow already existing symbolic links but forbid to create new.
-It could be useful to remount filesystem after system upgrade with this option.
-
-The idea behind these options is that a user controlled symbolic link could
-affect poorly designed applications or system services that are using fixed
-paths to read/write their data. Such a place could be: /tmp (or similar)
-directory, unknown USB drive with ext4 or user home.
-
-I.e. it would be possible to mount external storage with hardened
-"-o nosuid,nodev,no_symlink" to be sure that it contain only regular files.
-
-What do you think about this?
-The patch-set is simple. But I would like to know your opinion first.
-
-Thank you.
+The idea is to let the module announce which conditionally built
+features are there according to fs/btrfs/Makefile and Kconfig. Besides
+ACLs that should be always on and self-tests that run right after module
+load, all other are there and we should keep the list up to date.
