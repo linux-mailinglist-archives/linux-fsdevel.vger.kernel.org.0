@@ -2,96 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2A32B1555
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 06:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6672B15DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 07:35:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbgKMFTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 00:19:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56682 "EHLO
+        id S1726133AbgKMGfi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 01:35:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgKMFTT (ORCPT
+        with ESMTP id S1725971AbgKMGfi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 00:19:19 -0500
-Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D37C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 21:19:19 -0800 (PST)
-Received: by mail-yb1-xb44.google.com with SMTP id l14so3504722ybq.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 21:19:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gQx1O4i3ZrL+8FHNvLnh8t1v5SRwdDb4uqSCMA77DHk=;
-        b=H6YyBttpxPK6Aw+eczVUy4cY3MYNYqutY9Dyv4mkVPaHdywuzy3Z/s6VDeCN3zaD59
-         Y+ntoRKTdhzJpKx5csPGlPP+kZxhSHesxrmyGUBuQbcmc+Vui0udtu+fFn/WjiJc49G9
-         yLMzbT1glrwC9LoZAp4qJCWbCm1BS6pRJwg2w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gQx1O4i3ZrL+8FHNvLnh8t1v5SRwdDb4uqSCMA77DHk=;
-        b=Vim2gwYE2y1HVjo4Xq1UCfqkB08ldmD5gfDKuY46MSK/B7T8Qe1VArbTw63SIwYqRj
-         3biy2Y8adxbYP2o70tW2vfZ6S+9hqkWVsLSt68LPQqBAzNysn5Ug9bj00GYLRejGkVrE
-         geUmHH/0z5BrhtVL5h0+D7UE79Vo9ajIicm05Te0ZcQkXk6R88oP5anokULFkGsQ2Vc4
-         von5H2qvr/Vb4aR5eMDCaXc8y7FW3bm5oG2jQa/W++AQ/KtxtXqgJhkG1LgwKJL4kH57
-         Rr3AKyv5myJhmlSI+ii6HdaULWpgNIywKajcUoY15y6S6iz9/TFzGs/UE/f3bDm+MTr9
-         BrIA==
-X-Gm-Message-State: AOAM532KJlT1FS+z/spngm/R7mKNiBvGhRUkTgOGBI20v8et47ap9NXF
-        j/tIYupKMgHRXIompKiZI1YfQqQ/Mt2lN2hxIVvUzQ==
-X-Google-Smtp-Source: ABdhPJxRGeaGCIdaZOcIzHbyPamkV8U5sivH6x49gcThVhqMWybJaVhHfbTDFyR226o479KxmPZKAnPvwibfvC6Fwmg=
-X-Received: by 2002:a25:3792:: with SMTP id e140mr681258yba.277.1605244758745;
- Thu, 12 Nov 2020 21:19:18 -0800 (PST)
+        Fri, 13 Nov 2020 01:35:38 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42983C0613D1;
+        Thu, 12 Nov 2020 22:35:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=G6RtqFfqrHffqPSTAr1sy7qZDytGoAeAFWB5/2KH9jI=; b=KDNSwbmjSKN34SqQ/TZz8pduVs
+        6Ydn11YPQUpUZ3L0+OYO9+xhEN1G8J+7Ky7AhYV/iGuIasKDJqjd3s7WTVsMASgNZFAm1g+XJUbJr
+        dgdaX96m5sV+ZgRnb7FA5/Ssmtyx0HZCCwyHI5TQCK+dSsxvyvlluCfD+VgkXPoR12b+DwbA3Md+C
+        2pgcqg4IWckbwclxa+0Ze47hqg/MDVZX1hjE+IOPNcIXx7Ym7wOfO4c6PpfTj0zzyQ1KXjejp4uUY
+        bMuhyViEn3QrHoEvm56m3c5709PfUcw6faBvMOQ6UOIWhBKqDrcoPEngc3JK1kquNKh8mydb1DQvs
+        zwXb/+KA==;
+Received: from [2601:1c0:6280:3f0::662d]
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kdSgF-0001Mg-PI; Fri, 13 Nov 2020 06:35:32 +0000
+Subject: Re: mmotm 2020-11-12-20-01 uploaded (mm/secretmem.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Mike Rapoport <rppt@kernel.org>
+References: <20201113040226.fZi_OALm7%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <fde20745-96fc-4e89-51e5-1f1620cb9ce3@infradead.org>
+Date:   Thu, 12 Nov 2020 22:35:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-References: <20201109100343.3958378-1-chirantan@chromium.org>
- <20201109100343.3958378-3-chirantan@chromium.org> <CAJfpegv5DdgCqdtSzUS43P9JQeUg9fSyuRXETLNy47=cZyLtuQ@mail.gmail.com>
- <CAJFHJrqZMg6A_QnoOL3e5gNZtYquUPSr4B0ZLZMSKQH6o7sxag@mail.gmail.com> <CAJfpegsjeRSeabJK5xLr4g7mDkwT88u+iOnhwCj_78-HT+HVqA@mail.gmail.com>
-In-Reply-To: <CAJfpegsjeRSeabJK5xLr4g7mDkwT88u+iOnhwCj_78-HT+HVqA@mail.gmail.com>
-From:   Chirantan Ekbote <chirantan@chromium.org>
-Date:   Fri, 13 Nov 2020 14:19:07 +0900
-Message-ID: <CAJFHJroPwxB3EW+wFg=NgYsKiQAswd7MNm6Ha3jUAPdp6PMMsg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: Implement O_TMPFILE support
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201113040226.fZi_OALm7%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 4:52 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Tue, Nov 10, 2020 at 4:33 AM Chirantan Ekbote <chirantan@chromium.org> wrote:
->
-> > That's not the behavior I observed.  Without this, the O_TMPFILE flag
-> > gets passed through to the server.  The call stack is:
-> >
-> > - do_filp_open
-> >     - path_openat
-> >         - do_tmpfile
-> >             - vfs_tmpfile
-> >                 - dir->i_op->tmpfile
-> >             - finish_open
-> >                 - do_dentry_open
-> >                     - f->f_op->open
-> >
-> > and I didn't see O_TMPFILE being removed anywhere in there.
->
-> Ah, indeed.
->
-> The reason I missed this is because IMO the way it *should* work is
-> that FUSE_TMPFILE creates and opens the file in one go.  We shouldn't
-> need two separate request.
->
-> Not sure how we should go about this... The ->atomic_open() API is
-> sufficient, but maybe we want a new ->atomic_tmpfile().
->
+On 11/12/20 8:02 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2020-11-12-20-01 has been uploaded to
+> 
+>    https://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> https://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> https://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
 
-I think I agree with you that it should probably be a single request
-but at this point is it worth adding an ->atomic_tmpfile() that's only
-used by fuse?  Unlike regular file creation, it's not like the tmpfile
-entry is accessible via any other mechanism so other than latency I
-don't think there's any real harm with having it be 2 separate
-requests.
+Lots of build errors like this:
+
+when CONFIG_MEMCG is not set/enabled:
+
+../mm/secretmem.c:72:4: error: ‘struct page’ has no member named ‘memcg_data’
+../mm/secretmem.c:72:23: error: ‘struct page’ has no member named ‘memcg_data’
+../mm/secretmem.c:86:4: error: ‘struct page’ has no member named ‘memcg_data’
+
+
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
