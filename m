@@ -2,141 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E6222B1CFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 15:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 461932B1E73
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 16:20:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgKMORG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 09:17:06 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36999 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbgKMORF (ORCPT
+        id S1726647AbgKMPUC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 10:20:02 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10947 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgKMPUB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 09:17:05 -0500
-Received: by mail-pg1-f194.google.com with SMTP id h6so7183440pgk.4;
-        Fri, 13 Nov 2020 06:17:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=muGv9UA2yOWJO8OBFbyd4k8hs7CA6S1+a06CR/bKjo0=;
-        b=a7snw+4SwNswVwSyh8ObbHjccJGc4woMjHl2HUvI66uOyW3Mkp98hqma1Ccz3hZYKu
-         BjPL3jDRFnq7M+kJZ81EtJSGSoPxSbJGso8uK0WEqnolwpPo1+uv4BauW6Ir6xRbgX69
-         xmsvcmuS+vOapwQAOOKir4HMSgT8ZHW4IVKC+CEazLQnh0OgtVq+M445JCWc4NrP9kGl
-         jPplIEIbLTt12bWiHJ0DdLpr7fMItDam+tK8jRXcpAaHhjxq6/8ehEds6RPPLEE1W+Zm
-         3z2Mp1RoE/yBASMFmAEsNzfdrZVshII8k1g5eHpr3VH1ZRYd0jnaMko4qDZ1lknaNoy4
-         borg==
-X-Gm-Message-State: AOAM531aacbHgKIdqi48ByQ6SpRRm4ziRiBLUJMI8FV7l79E4liT4Lvx
-        xtvOM1MbE9pKzS+RVNxUVwQ=
-X-Google-Smtp-Source: ABdhPJwf+kmdqj5fHCuVENwx3brb/hOK2x7YpCjn9y4whApg85xDwT+NwgTnI+3VzgDEqylCFRsE5Q==
-X-Received: by 2002:a05:6a00:c8:b029:18b:b0e:e51 with SMTP id e8-20020a056a0000c8b029018b0b0e0e51mr2143971pfj.37.1605277024230;
-        Fri, 13 Nov 2020 06:17:04 -0800 (PST)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id mt2sm11475078pjb.7.2020.11.13.06.17.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Nov 2020 06:17:03 -0800 (PST)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 3854240715; Fri, 13 Nov 2020 14:17:02 +0000 (UTC)
-Date:   Fri, 13 Nov 2020 14:17:02 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Tom Rix <trix@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-safety@lists.elisa.tech,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sysctl: move local variable in proc_do_large_bitmap() to
- proper scope
-Message-ID: <20201113141702.GI4332@42.do-not-panic.com>
-References: <20201109071107.22560-1-lukas.bulwahn@gmail.com>
- <e0cf83dc-2978-70ce-aeb2-37873cc81c03@redhat.com>
+        Fri, 13 Nov 2020 10:20:01 -0500
+Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
+        id <B5faea41a0000>; Fri, 13 Nov 2020 07:19:54 -0800
+Received: from [10.2.162.52] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
+ 2020 15:20:00 +0000
+From:   Zi Yan <ziy@nvidia.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
+Subject: Re: Are THPs the right model for the pagecache?
+Date:   Fri, 13 Nov 2020 10:19:56 -0500
+X-Mailer: MailMate (1.13.2r5673)
+Message-ID: <40BFC0F6-6099-4AFB-857F-7F908833F9C9@nvidia.com>
+In-Reply-To: <20201113044652.GD17076@casper.infradead.org>
+References: <20201113044652.GD17076@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e0cf83dc-2978-70ce-aeb2-37873cc81c03@redhat.com>
+Content-Type: multipart/signed;
+        boundary="=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1605280794; bh=r/40XSvVpf+iVNHyw0mRUaeXV9B2xH2GWBUjgziZ14Q=;
+        h=From:To:CC:Subject:Date:X-Mailer:Message-ID:In-Reply-To:
+         References:MIME-Version:Content-Type:X-Originating-IP:
+         X-ClientProxiedBy;
+        b=L7+0bHr9XKfWo+tz9GdBE0/NAAt3hLJh8sUZ9VP53IWDOPbzNuEeNTCm7XCUM6Jpq
+         /wlM1H19luDYnT+/vdkpkZ4KJIjdHXb8mNwLlENXoHC2EcGh6H0QOCRLOKQdW2LSXq
+         BGWmXOXbHC5pjgp++0t64Jx0vNJ3X+5O9WQ4d59uE9Ow1dB2PZzG3Bdh95oY1wIN6a
+         0KMfsI0TN/dGlMNdh8PG7qUxFF3crDA9AeotQF905mhDcSigL/wIC9WE7z+U6huVo1
+         JTcu/Nt3s+7azPHm8kcqUtFCtlPkPAwRaDGjYZQTRNBAJztxYymKILg/feMXrhwZeI
+         L9sLgv4wRkPAA==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 09, 2020 at 05:26:37PM -0800, Tom Rix wrote:
-> 
-> On 11/8/20 11:11 PM, Lukas Bulwahn wrote:
-> > make clang-analyzer caught my attention with:
-> >
-> >   kernel/sysctl.c:1511:4: warning: Value stored to 'first' is never read \
-> >   [clang-analyzer-deadcode.DeadStores]
-> >                           first = 0;
-> >                           ^
-> >
-> > Commit 9f977fb7ae9d ("sysctl: add proc_do_large_bitmap") introduced
-> > proc_do_large_bitmap(), where the variable first is only effectively used
-> > when write is false; when write is true, the variable first is only used in
-> > a dead assignment.
-> >
-> > So, simply remove this dead assignment and put the variable in local scope.
-> >
-> > As compilers will detect this unneeded assignment and optimize this anyway,
-> > the resulting object code is identical before and after this change.
-> >
-> > No functional change. No change to object code.
-> >
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> > ---
-> > applies cleanly on v5.10-rc3 and next-20201106
-> >
-> > Luis, Kees, Iurii, please pick this minor non-urgent clean-up patch.
-> >
-> >  kernel/sysctl.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index ce75c67572b9..cc274a431d91 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -1423,7 +1423,6 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
-> >  			 void *buffer, size_t *lenp, loff_t *ppos)
-> >  {
-> >  	int err = 0;
-> > -	bool first = 1;
-> >  	size_t left = *lenp;
-> >  	unsigned long bitmap_len = table->maxlen;
-> >  	unsigned long *bitmap = *(unsigned long **) table->data;
-> > @@ -1508,12 +1507,12 @@ int proc_do_large_bitmap(struct ctl_table *table, int write,
-> >  			}
-> >  
-> >  			bitmap_set(tmp_bitmap, val_a, val_b - val_a + 1);
-> > -			first = 0;
-> >  			proc_skip_char(&p, &left, '\n');
-> >  		}
-> >  		left += skipped;
-> >  	} else {
-> >  		unsigned long bit_a, bit_b = 0;
-> > +		bool first = 1;
-> 
-> This looks fine, but while you are here how about setting, to match the type
-> 
-> first = true
-> 
-> And then only clearing first once
-> 
-> if (!first)                                                                            
->   proc_put_char(&buffer, &left, ',');
-> 
-> else
-> 
->   first = false
-> 
-> Instead of at every loop iteraction
+--=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch Lukas!
+On 12 Nov 2020, at 23:46, Matthew Wilcox wrote:
 
-Agreed, please resend with that change as requested by Tom. And also
-please add Andrew Morton <akpm@linux-foundation.org> to your To address.
+> When I started working on using larger pages in the page cache, I was
+> thinking about calling them large pages or lpages.  As I worked my way
+> through the code, I switched to simply adopting the transparent huge
+> page terminology that is used by anonymous and shmem.  I just changed
+> the definition so that a thp is a page of arbitrary order.
+>
+> But now I'm wondering if that expediency has brought me to the right
+> place.  To enable THP, you have to select CONFIG_TRANSPARENT_HUGEPAGE,
+> which is only available on architectures which support using larger TLB=
 
-  Luis
+> entries to map PMD-sized pages.  Fair enough, since that was the origin=
+al
+> definition, but the point of suppoting larger page sizes in the page
+> cache is to reduce software overhead.  Why shouldn't Alpha or m68k use
+> large pages in the page cache, even if they can't use them in their TLB=
+s?
+
+I think the issue might come from the mixture of physical page sizes and
+page table entry sizes. THP in fact has two parts: the ability of managin=
+g
+a group of pages using just PageHead and the support for larger than
+PTE (the smallest virtual address range mapped by a page table entry) pag=
+e
+table entry mappings. The first part should be independent of the second
+one, but the second part relies on the first one. Maybe it is possible
+to pull out the code for managing physical pages from CONFIG_TRANSPARENT_=
+HUGEPAGE
+and enable it unconditionally, so any arch can take the advantage of
+large pages.
+
+=E2=80=94
+Best Regards,
+Yan Zi
+
+--=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl+upB0PHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqKBgUQAI5HfUZYADX/CCxDx09+W71Q4CJ9+iVSJJCA
+tNBN1TYGpl5AsQLWAYQ7UHPnfvZZg2nM9eq/tW0cDebkuID61qOBdux3fAicFcPg
+J89JJB0o/FuNIbDUkN45kZ2qC4QtqI0pfIHxAuaietfaKG7zEH2m5FW/ifRJYjKA
+Jg+w2cPEdWA4XHPDw/3iZmun3hjEeZ0YqEWgC63p8Z9xDGWO6Kb5zpwFWZd91Ceo
+BDF9o+dXOji42ZkXwfv8tDXS3SlEwJHvXiX7RRok3x6EA/xIgdRusttvad6NFvTt
+E1nwxJplXZXJlHfBm8Et2i48xlGKhCcvcgjAi7+f0dnZj94jJEivkUnBnBZA98+l
+IRQFQX76UNoaOafF4xGSgjWYh7DEHmPgi++mWXYIEYfRagp9A5aWQRNKjmFB/mug
+W95e5KQHYXZHn+mITaIC+vHKV/+okQFm+44+yeb/7yl9FQKaYA1dNOSIgOwbmc2v
+fIvcn4fsQWrF2hI/lnNwTrt4T//4DdUdM/oCTzFoqKyhc27vubrUa8yFUo0R58F0
+Y94/uEbHrS2/njhdraeTFiYew3xwb1cAnnajA0yUKdfIqc8Y69HPnXIll2392a8y
+ve3Rw21wqvsMne8BiyS/1G5RKEzI3vUEt6XQf7nVMHxY6rSv0FqG9QI5NzGD/2DM
+C5BY3A+c
+=M25A
+-----END PGP SIGNATURE-----
+
+--=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=--
