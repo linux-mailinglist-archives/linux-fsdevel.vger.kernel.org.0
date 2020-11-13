@@ -2,90 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4F182B1CBC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 14:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 616652B1CCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 15:01:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbgKMNy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 08:54:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53308 "EHLO
+        id S1726774AbgKMN7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 08:59:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbgKMNy6 (ORCPT
+        with ESMTP id S1726418AbgKMN7R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 08:54:58 -0500
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058B6C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 05:54:58 -0800 (PST)
-Received: by mail-vs1-xe44.google.com with SMTP id z123so5240753vsb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 05:54:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MzyuFGFAEl0SqGEx5Ds16+rNu416H174NpUD7uDreDo=;
-        b=E6MhJsb2kYnAwltuHkXGBWkBMzhBXhlNnxVFnih4UkdIEmv1Ah5877MUxARzPPpA8b
-         it7q4/L/krMvIDaToXGIA8cIUTZxezAO0bwIa+nWvS60vlUbmk/KkDJTiHdPL61VMiCM
-         3F+kkRXHrvaH8MNLNI3aaKycGIgIFBtZEiFPA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MzyuFGFAEl0SqGEx5Ds16+rNu416H174NpUD7uDreDo=;
-        b=phxUazeLqv9OTjvqIE9kEvWTcee6z/Zt7tpZzO03T5oWixdsJC6Tc5ZZZwZhFCzaOq
-         T6cLctiTz0oOq2MWNZvQ0KH8v/EADHlEpTmRFVoDxu2XwOjD5aEA8Tp4XX6owuk4KN79
-         q85jT9li0WPjIS07P7b4Ql3mEaKi5ub20ULqQKT2Qbm12nyYOzNWht07Rtp62kQzupak
-         2zLY3fD44bKvxTCCsHOSDdX3K/8qw0T2VuvDqOs1CECzh6dGJpg+Yp9eqKibsca3XHwy
-         lVCWH9zofhOWoShRdY81vmH/RSxMTGne+YEToX7JFFDJYF3JcHEKsUryB6pCpEVlFN+3
-         gVtg==
-X-Gm-Message-State: AOAM532WCLV8t6TY84BcBE4l1eo2ZoXbC6dkncSutuczOqM4UpFr27XQ
-        y9yFWsRB+18vBCho56vNj8Cpi8uESzVE+cyTQwWZxg==
-X-Google-Smtp-Source: ABdhPJy4ZWNqIru0TtUBfQK9+6Bzpu/3dIgRwPD6KMT6JmZEMQ001BiY5MlGbny81V7iD8c/+24ESVj0fK3A/nqYLX0=
-X-Received: by 2002:a05:6102:3203:: with SMTP id r3mr1047638vsf.21.1605275697236;
- Fri, 13 Nov 2020 05:54:57 -0800 (PST)
+        Fri, 13 Nov 2020 08:59:17 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B427C0613D1;
+        Fri, 13 Nov 2020 05:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kLz22mCweLR//KhTGZZOStZT7C8x0TEcQ4+GK8a3nck=; b=hxEERjlxxEGjzKsTREmAdvVMX3
+        IS8qSDrsGEqirPWQHguhpGtopsaES8pCsNt+5gHN8a/l860hbWdnv6UVaJOHhGDnFQnRtRL9NEZwl
+        2fcVThumtrCipwpdqKaCwPmlfcghO0WScHCRcAU1iMyaTWAGG/jBa37pH6nsqY35UG7jilrUB+aWP
+        Cf/AoroggY7hCjRgzQQcjmCTa0hZmV6VXmztqO0wdT3NMa5zgbf/5yIxQaBty5jexorzuyz41NXfF
+        d6LgpX1xryRRN/FkiBND/OVPDPCEATMfBEwLPQlSYWYq21IP2C/aDonZmnwPhyokSwlrknmvJAjZ8
+        ZU/3bYeQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kdZbE-0003f3-8l; Fri, 13 Nov 2020 13:58:48 +0000
+Date:   Fri, 13 Nov 2020 13:58:48 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>
+Subject: Re: [PATCH v8 4/9] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <20201113135848.GF17076@casper.infradead.org>
+References: <20201110151444.20662-1-rppt@kernel.org>
+ <20201110151444.20662-5-rppt@kernel.org>
 MIME-Version: 1.0
-References: <20201109100343.3958378-1-chirantan@chromium.org>
- <20201109100343.3958378-3-chirantan@chromium.org> <CAJfpegv5DdgCqdtSzUS43P9JQeUg9fSyuRXETLNy47=cZyLtuQ@mail.gmail.com>
- <CAJFHJrqZMg6A_QnoOL3e5gNZtYquUPSr4B0ZLZMSKQH6o7sxag@mail.gmail.com>
- <CAJfpegsjeRSeabJK5xLr4g7mDkwT88u+iOnhwCj_78-HT+HVqA@mail.gmail.com>
- <CAJFHJroPwxB3EW+wFg=NgYsKiQAswd7MNm6Ha3jUAPdp6PMMsg@mail.gmail.com>
- <CAJfpegv4X2m=-N69iB+Q_6fneeX_0uMNyzkVqfU+qQXdqXSUNw@mail.gmail.com> <20201113122845.GG3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201113122845.GG3576660@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 13 Nov 2020 14:54:46 +0100
-Message-ID: <CAJfpegvsCQ+rJv2rSk3mUMsX_N26ardW=MYbHxifO5DU7uSYqA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fuse: Implement O_TMPFILE support
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Chirantan Ekbote <chirantan@chromium.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201110151444.20662-5-rppt@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 1:28 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, Nov 13, 2020 at 11:52:09AM +0100, Miklos Szeredi wrote:
->
-> > It's the wrong interface, and we'll have to live with it forever if we
-> > go this route.
-> >
-> > Better get the interface right and *then* think about the
-> > implementation.  I don't think adding ->atomic_tmpfile() would be that
-> > of a big deal, and likely other distributed fs would start using it in
-> > the future.
->
-> Let me think about it; I'm very unhappy with the amount of surgery it has
-> taken to somewhat sanitize the results of ->atomic_open() introduction, so
-> I'd prefer to do it reasonably clean or not at all.
+On Tue, Nov 10, 2020 at 05:14:39PM +0200, Mike Rapoport wrote:
+> +static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> +{
+> +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+> +	struct inode *inode = file_inode(vmf->vma->vm_file);
+> +	pgoff_t offset = vmf->pgoff;
+> +	unsigned long addr;
+> +	struct page *page;
+> +	int ret = 0;
+> +
+> +	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+> +		return vmf_error(-EINVAL);
+> +
+> +	page = find_get_entry(mapping, offset);
 
-The minimal VFS change for fuse to be able to do tmpfile with one
-request would be to pass open_flags to ->tmpfile().  That way the
-private data for the open file would need to be temporarily stored in
-the inode and ->open() would just pick it up from there without
-sending another request.  Not the cleanest, but I really don't care as
-long as the public interface is the right one.
+Why did you decide to use find_get_entry() here?  You don't handle
+swap or shadow entries.
 
-Thanks,
-Miklos
+> +	if (!page) {
+> +		page = secretmem_alloc_page(vmf->gfp_mask);
+> +		if (!page)
+> +			return vmf_error(-EINVAL);
+
+Why is this EINVAL and not ENOMEM?
+
+> +		ret = add_to_page_cache(page, mapping, offset, vmf->gfp_mask);
+> +		if (unlikely(ret))
+> +			goto err_put_page;
+> +
+> +		ret = set_direct_map_invalid_noflush(page, 1);
+> +		if (ret)
+> +			goto err_del_page_cache;
+> +
+> +		addr = (unsigned long)page_address(page);
+> +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
+> +
+> +		__SetPageUptodate(page);
+> +
+> +		ret = VM_FAULT_LOCKED;
+> +	}
+> +
+> +	vmf->page = page;
+> +	return ret;
+
+Does sparse not warn you about this abuse of vm_fault_t?  Separate out
+'ret' and 'err'.
+
+
+Andrew, please fold in this fix.  I suspect Mike will want to fix
+the other things I mention above.
+
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 3dfdbd85ba00..09ca27f21661 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -172,7 +172,7 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+ 	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+ 		return vmf_error(-EINVAL);
+ 
+-	page = find_get_entry(mapping, offset);
++	page = find_get_page(mapping, offset);
+ 	if (!page) {
+ 		page = secretmem_alloc_page(ctx, vmf->gfp_mask);
+ 		if (!page)
