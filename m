@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE6E2B19D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 12:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CAE92B19E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 12:17:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbgKMLQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 06:16:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54160 "EHLO
+        id S1726547AbgKMLQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 06:16:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbgKMLDx (ORCPT
+        with ESMTP id S1726536AbgKMLDr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 06:03:53 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C25A5C061A52
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 03:03:12 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id y22so4389857plr.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 03:03:12 -0800 (PST)
+        Fri, 13 Nov 2020 06:03:47 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8E61C08E864
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 03:03:23 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id y7so7305526pfq.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 03:03:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=VTBEkY0EWBbMy5iIzZRtsaqCivtCwTiUQlKtEZa+cOQ=;
-        b=HXMyr8XazQ6oTzSEwqXN6zTDQfzwHhzhGI9vF9dhhvZ4EyuBVJKj33LuCIeBNL1WJO
-         4i49MSS3mHAOPKlaowtPqF0hKSFYc4DeNeZ23+FxCSvgVL2UY1vA8cA1GIU1y2S+2ue9
-         k6Iu3xWN0uVnmNNobJsIPiB+23J/BOF1qLmkb4JCArM4HrZPkL+KiAupM8r28sq2B8lh
-         pp61KKhCKGP1P5j3i6Cxtv+tIxo76J3d8L52b65YJ6wPS5KYhdcV1Y5Jt8XOpRSYH3dL
-         pDXGANFAs3AGL8HGfeynfn023qG7xQviy2/sFmuKnR6+Rm4EFS+fquD+urXexrFetu8+
-         g+Gw==
+        bh=SX/i7Qyg4EeyUbzxMmXSVQWEWDSzbgT6hhsWUt63V1U=;
+        b=aGk77ho777Ou5HKsMp4MLx10GBvaNnVTXQ5XKeHBPmU6a/rGunCtgJxW+iegljbe9B
+         HYThHErweWzFAlZxpir6SbXMVsfFc4pWbJs8RbotA9e3eLIcVZK5UDrKGvl+QYTfqkNg
+         hBdez0L+yQAUvxLt/CGMqRjzch0M4uQIJnO78Yv79HH5Yl3Q4yCr83lmQnNo0tFliJ+F
+         IhHM5zhlKNOGHNuWZAJxPO/+7uTfK7qIubaKw+nrwIk0cYDXMHpR1bqu3JhE0Z+ga03j
+         OCKTW13nMPchxVUWO2w0C3bW6p7eli74kPQcVj3NfNso1yWOZSbiOSqPczO8QjTHhkJp
+         dByw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=VTBEkY0EWBbMy5iIzZRtsaqCivtCwTiUQlKtEZa+cOQ=;
-        b=uXS30YY56GXSDnn19G8O2gRkB16sF3AGdTTVbKmjjE0ky8BsMOZuV0frTHVrLTfYmo
-         UnZpfFgYBiVRP38ax8Wg7PYiS+RjssM3jnGqhbSnkRMSBPvh/vPl9rgAPUt90tyvUYSA
-         q3WJM2UfRs7IJ1EuhQexnO3uLg9Ik0VQCpMKWCrzhLeD3zRhBw2uavDPKKECDq94PO7t
-         qccHQqyVw2JMpdQNb7M+fpfCPyJKMxz+1fVQH8bdMjp1YFEq2A8nLXoIm/tkWagftCHh
-         60PcYtFcYa1SxdCr9sfaOPjiarGtNSmoGmL384mO61O1RcQpRkfjr8IallASXezuVOjh
-         Rg5w==
-X-Gm-Message-State: AOAM53150AD50InfEObHwWjqJUis6lZN+L0hfXOz2ZnUdNOD3H8h6gTV
-        P2YAhZrmEAFuhs3D5r79TLzfew==
-X-Google-Smtp-Source: ABdhPJzrYDT5xoZpsO3M+6yIguGxa3HMCUVuWgvEDjS67lXujwXi8LjnpKOLMdYhmMzRef8jrVTIfw==
-X-Received: by 2002:a17:902:7487:b029:d6:c03b:bce4 with SMTP id h7-20020a1709027487b02900d6c03bbce4mr1570873pll.36.1605265392353;
-        Fri, 13 Nov 2020 03:03:12 -0800 (PST)
+        bh=SX/i7Qyg4EeyUbzxMmXSVQWEWDSzbgT6hhsWUt63V1U=;
+        b=mpD+YMKnetyzGhKZw5Fs695d4aQ93S3v1QsuCwOMo/RlQPA3RbrkSQbhpLUbb+zECq
+         8kVmD9FCWsaK6O9uF1BWjYrIMmEAu70HjJYYdObAVlFCIv2D0V70y9sfNKrSVqsNpMVD
+         GQycjhX8OLdEFT8u/jvlm2NmfGym4DGgBwfK+yerFdV7AUJTOliTzcoA685Wu4VaqJHB
+         gAPRntcixhfyo9XpaSNzYqmUfShoprEGHUPISA6+dgkSbOPZMya6urY7/aNH71SBeCJW
+         d0p/rB8kLGdmDMC+cx9xHcVRpbf1XIRHkyMJVJ9NBl3t+MWZHDrWSYH80QIypJyAJYV0
+         lP/w==
+X-Gm-Message-State: AOAM531d3G00QOvkH8HMr+tF9RKGn+AFyTsC5WrZMRz7pf/6lYBC980l
+        VKyCK9Amn3TQFME8e6Te2QpF3w==
+X-Google-Smtp-Source: ABdhPJwQeGgpDvfFR9ELb9n7ojrevOtBi4ecXD9eqeAxem6yL+RhNnapjzGSGHmQx41LzOsy0em5AQ==
+X-Received: by 2002:a17:90b:3884:: with SMTP id mu4mr2431364pjb.157.1605265403481;
+        Fri, 13 Nov 2020 03:03:23 -0800 (PST)
 Received: from localhost.localdomain ([61.120.150.78])
-        by smtp.gmail.com with ESMTPSA id f1sm8909959pfc.56.2020.11.13.03.03.01
+        by smtp.gmail.com with ESMTPSA id f1sm8909959pfc.56.2020.11.13.03.03.12
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Nov 2020 03:03:11 -0800 (PST)
+        Fri, 13 Nov 2020 03:03:22 -0800 (PST)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -62,9 +62,9 @@ Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v4 12/21] mm/hugetlb: Introduce remap_huge_page_pmd_vmemmap helper
-Date:   Fri, 13 Nov 2020 18:59:43 +0800
-Message-Id: <20201113105952.11638-13-songmuchun@bytedance.com>
+Subject: [PATCH v4 13/21] mm/hugetlb: Use PG_slab to indicate split pmd
+Date:   Fri, 13 Nov 2020 18:59:44 +0800
+Message-Id: <20201113105952.11638-14-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20201113105952.11638-1-songmuchun@bytedance.com>
 References: <20201113105952.11638-1-songmuchun@bytedance.com>
@@ -74,169 +74,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The __free_huge_page_pmd_vmemmap and __remap_huge_page_pmd_vmemmap are
-almost the same code. So introduce remap_free_huge_page_pmd_vmemmap
-helper to simplify the code.
+When we allocate hugetlb page from buddy, we may need split huge pmd
+to pte. When we free the hugetlb page, we can merge pte to pmd. So
+we need to distinguish whether the previous pmd has been split. The
+page table is not allocated from slab. So we can reuse the PG_slab
+to indicate that the pmd has been split.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- mm/hugetlb_vmemmap.c | 108 +++++++++++++++++++++------------------------------
- 1 file changed, 45 insertions(+), 63 deletions(-)
+ mm/hugetlb_vmemmap.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
 diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-index 9918dc63c062..ae9dbfb682ab 100644
+index ae9dbfb682ab..58bff13a2301 100644
 --- a/mm/hugetlb_vmemmap.c
 +++ b/mm/hugetlb_vmemmap.c
-@@ -221,6 +221,47 @@ static inline int freed_vmemmap_hpage_dec(struct page *page)
- 	return atomic_dec_return_relaxed(&page->_mapcount) + 1;
+@@ -262,6 +262,25 @@ static void remap_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
+ 	flush_tlb_kernel_range(start, end);
  }
  
-+static inline void free_vmemmap_page_list(struct list_head *list)
++static inline bool pmd_split(pmd_t *pmd)
 +{
-+	struct page *page, *next;
-+
-+	list_for_each_entry_safe(page, next, list, lru) {
-+		list_del(&page->lru);
-+		free_vmemmap_page(page);
-+	}
++	return PageSlab(pmd_page(*pmd));
 +}
 +
-+typedef void (*remap_pte_fn)(struct page *reuse, pte_t *ptep,
-+			     unsigned long start, unsigned long end,
-+			     struct list_head *pages);
-+
-+static void remap_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
-+					unsigned long addr,
-+					struct list_head *pages,
-+					remap_pte_fn remap_fn)
++static inline void set_pmd_split(pmd_t *pmd)
 +{
-+	unsigned long next;
-+	unsigned long start = addr + RESERVE_VMEMMAP_SIZE;
-+	unsigned long end = addr + vmemmap_pages_size_per_hpage(h);
-+	struct page *reuse = NULL;
++	/*
++	 * We should not use slab for page table allocation. So we can set
++	 * PG_slab to indicate that the pmd has been split.
++	 */
++	__SetPageSlab(pmd_page(*pmd));
++}
 +
-+	flush_cache_vunmap(start, end);
-+
-+	addr = start;
-+	do {
-+		pte_t *ptep;
-+
-+		ptep = pte_offset_kernel(pmd, addr);
-+		if (!reuse)
-+			reuse = pte_page(ptep[TAIL_PAGE_REUSE]);
-+
-+		next = vmemmap_hpage_addr_end(addr, end);
-+		remap_fn(reuse, ptep, addr, next, pages);
-+	} while (pmd++, addr = next, addr != end);
-+
-+	flush_tlb_kernel_range(start, end);
++static inline void clear_pmd_split(pmd_t *pmd)
++{
++	__ClearPageSlab(pmd_page(*pmd));
 +}
 +
  static void __remap_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
  					  unsigned long start,
  					  unsigned long end,
-@@ -255,31 +296,6 @@ static void __remap_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
+@@ -326,11 +345,12 @@ void alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
+ 	ptl = vmemmap_pmd_lock(pmd);
+ 	remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &remap_pages,
+ 				    __remap_huge_page_pte_vmemmap);
+-	if (!freed_vmemmap_hpage_dec(pmd_page(*pmd))) {
++	if (!freed_vmemmap_hpage_dec(pmd_page(*pmd)) && pmd_split(pmd)) {
+ 		/*
+ 		 * Todo:
+ 		 * Merge pte to huge pmd if it has ever been split.
+ 		 */
++		clear_pmd_split(pmd);
  	}
+ 	spin_unlock(ptl);
  }
- 
--static void __remap_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
--					  unsigned long addr,
--					  struct list_head *remap_pages)
--{
--	unsigned long next;
--	unsigned long start = addr + RESERVE_VMEMMAP_SIZE;
--	unsigned long end = addr + vmemmap_pages_size_per_hpage(h);
--	struct page *reuse = NULL;
--
--	addr = start;
--	do {
--		pte_t *ptep;
--
--		ptep = pte_offset_kernel(pmd, addr);
--		if (!reuse)
--			reuse = pte_page(ptep[TAIL_PAGE_REUSE]);
--
--		next = vmemmap_hpage_addr_end(addr, end);
--		__remap_huge_page_pte_vmemmap(reuse, ptep, addr, next,
--					      remap_pages);
--	} while (pmd++, addr = next, addr != end);
--
--	flush_tlb_kernel_range(start, end);
--}
--
- static inline void alloc_vmemmap_pages(struct hstate *h, struct list_head *list)
- {
- 	int i;
-@@ -308,8 +324,8 @@ void alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
+@@ -412,8 +432,10 @@ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
  	BUG_ON(!pmd);
  
  	ptl = vmemmap_pmd_lock(pmd);
--	__remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head,
--				      &remap_pages);
-+	remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &remap_pages,
-+				    __remap_huge_page_pte_vmemmap);
- 	if (!freed_vmemmap_hpage_dec(pmd_page(*pmd))) {
- 		/*
- 		 * Todo:
-@@ -319,16 +335,6 @@ void alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
- 	spin_unlock(ptl);
- }
- 
--static inline void free_vmemmap_page_list(struct list_head *list)
--{
--	struct page *page, *next;
--
--	list_for_each_entry_safe(page, next, list, lru) {
--		list_del(&page->lru);
--		free_vmemmap_page(page);
--	}
--}
--
- static void __free_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
- 					 unsigned long start,
- 					 unsigned long end,
-@@ -351,31 +357,6 @@ static void __free_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
- 	}
- }
- 
--static void __free_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
--					 unsigned long addr,
--					 struct list_head *free_pages)
--{
--	unsigned long next;
--	unsigned long start = addr + RESERVE_VMEMMAP_SIZE;
--	unsigned long end = addr + vmemmap_pages_size_per_hpage(h);
--	struct page *reuse = NULL;
--
--	addr = start;
--	do {
--		pte_t *ptep;
--
--		ptep = pte_offset_kernel(pmd, addr);
--		if (!reuse)
--			reuse = pte_page(ptep[TAIL_PAGE_REUSE]);
--
--		next = vmemmap_hpage_addr_end(addr, end);
--		__free_huge_page_pte_vmemmap(reuse, ptep, addr, next,
--					     free_pages);
--	} while (pmd++, addr = next, addr != end);
--
--	flush_tlb_kernel_range(start, end);
--}
--
- static void split_vmemmap_pmd(pmd_t *pmd, pte_t *pte_p, unsigned long addr)
- {
- 	int i;
-@@ -434,7 +415,8 @@ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
- 	if (vmemmap_pmd_huge(pmd))
+-	if (vmemmap_pmd_huge(pmd))
++	if (vmemmap_pmd_huge(pmd)) {
  		split_vmemmap_huge_page(head, pmd);
++		set_pmd_split(pmd);
++	}
  
--	__free_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &free_pages);
-+	remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &free_pages,
-+				    __free_huge_page_pte_vmemmap);
- 	freed_vmemmap_hpage_inc(pmd_page(*pmd));
- 	spin_unlock(ptl);
- 
+ 	remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &free_pages,
+ 				    __free_huge_page_pte_vmemmap);
 -- 
 2.11.0
 
