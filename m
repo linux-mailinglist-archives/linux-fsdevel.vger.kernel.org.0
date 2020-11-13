@@ -2,113 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD8B2B15E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 07:39:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A09B2B15FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 07:57:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbgKMGjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 01:39:11 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9516 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgKMGjL (ORCPT
+        id S1726293AbgKMG5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 01:57:06 -0500
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17153 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726133AbgKMG5E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 01:39:11 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fae2a120000>; Thu, 12 Nov 2020 22:39:14 -0800
-Received: from [10.2.88.49] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
- 2020 06:39:10 +0000
-Subject: Re: Are THPs the right model for the pagecache?
-To:     Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20201113044652.GD17076@casper.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <1c1fa264-41d8-49a4-e5ff-2a5bf03e711e@nvidia.com>
-Date:   Thu, 12 Nov 2020 22:39:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101
- Thunderbird/83.0
+        Fri, 13 Nov 2020 01:57:04 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1605250595; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=d8SVfRMlRvTv/gvVU0n0D5yum+27aMzwqAk6cgLKW3KBr5BzoYZK4KMxiABYblYkXXzSCgampD6BcAeIyGs7m+nkrR/tPXo3xKrs0JfH9F+Sa3KErVzWjL+2ZVEaYz1yAhy1PKZ8u+907fnlIPFXPA7dubSGaYQmhKCSG2bziYo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1605250595; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=HxnW2o/ZiMA0JoKkrGmmcEKfxuMUeWTTJ+LdciOaLEA=; 
+        b=L7eQyCNHm70b5Ny+rOHHoXEWEHv4HCx7v0WrwoPdJKqzKOjGla2W8A6iuaH0fyJx6FvgHdCQKMbY0yDCPajIhUu7FVCQNoRmv0KHPchM3Kfcu13XNzKjkFT9jWTSUB98ii1MWWVHRxBZw7kKwHim3meo1q/zLd4SYskAIffan/Q=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net> header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1605250595;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=HxnW2o/ZiMA0JoKkrGmmcEKfxuMUeWTTJ+LdciOaLEA=;
+        b=VeUW74lJ57ZC3ln+7wf3I7Zn5WMf46MR5lnBjV7VAaljhR8o02HhOSx2b169/jrT
+        qGLtKPJyq8yvDsxaXvizQvTUlKKpSHOziU1OzCd6taPLfgVYPp05a8rZKsR+QVQIPVa
+        ek5ONwmj27X36YnysC62QKGlaquOfNoMRmRbryoQ=
+Received: from localhost.localdomain (116.30.195.173 [116.30.195.173]) by mx.zoho.com.cn
+        with SMTPS id 1605250593882528.8161161598881; Fri, 13 Nov 2020 14:56:33 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+To:     miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com
+Cc:     linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Chengguang Xu <cgxu519@mykernel.net>
+Message-ID: <20201113065555.147276-1-cgxu519@mykernel.net>
+Subject: [RFC PATCH v4 0/9] implement containerized syncfs for overlayfs
+Date:   Fri, 13 Nov 2020 14:55:46 +0800
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <20201113044652.GD17076@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605249554; bh=+1vV61r7aJj+On/1WUVh0pXSx4Oswbb+NFAZtUFkoBE=;
-        h=Subject:To:References:From:Message-ID:Date:User-Agent:
-         MIME-Version:In-Reply-To:Content-Type:Content-Language:
-         Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy;
-        b=LQdZl2eFaox5PQyMRMTZgGaXiEf1gUoev0CGO+NElMFQgz8hdeAi+wH9/f+zdLgxp
-         uXIs3boyp3RSESOB5Q6WDaVrGBQam7aKbTI5hpEKihINCg9NxGIVWRmQ14HjD6WdB3
-         vKLKDrm83uOGWy57cVPlGzZMR14jrrR9qPuFctCpETtGTM5LaDxLgcencYww/rJLfs
-         FNd20+OxZmirH6JbFiA72pszP2ZQC4ExwBcgd2FL1Fs6Epe0RXEcrkPlc9kiXbm24O
-         qXOOoYW8+npPsys/vTVH21sfLfzhJAiaHqiUoYQDqIaAny9I9CnDg6Rc9SdGjsUm5N
-         O/e5Xo06Khk5Q==
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/12/20 8:46 PM, Matthew Wilcox wrote:
-> When I started working on using larger pages in the page cache, I was
-> thinking about calling them large pages or lpages.  As I worked my way
-> through the code, I switched to simply adopting the transparent huge
-> page terminology that is used by anonymous and shmem.  I just changed
-> the definition so that a thp is a page of arbitrary order.
-> 
-> But now I'm wondering if that expediency has brought me to the right
-> place.  To enable THP, you have to select CONFIG_TRANSPARENT_HUGEPAGE,
-> which is only available on architectures which support using larger TLB
-> entries to map PMD-sized pages.  Fair enough, since that was the original
-> definition, but the point of suppoting larger page sizes in the page
-> cache is to reduce software overhead.  Why shouldn't Alpha or m68k use
-> large pages in the page cache, even if they can't use them in their TLBs?
-> 
-> I'm also thinking about the number of asserts about
-> PageHead/PageTail/PageCompound and the repeated invocations of
-> compound_head().  If we had a different type for large pages, we could use
-> the compiler to assert these things instead of putting in runtime asserts.
+Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
+on upper_sb to synchronize whole dirty inodes in upper filesystem
+regardless of the overlay ownership of the inode. In the use case of
+container, when multiple containers using the same underlying upper
+filesystem, it has some shortcomings as below.
 
-This seems like a really good idea to me, anyway. Even in the fairly
-small area of gup.c, some type safety (normal pages vs. large pages)
-would have helped keep things straight when I was fooling around with
-pinning pages.
+(1) Performance
+Synchronization is probably heavy because it actually syncs unnecessary
+inodes for target overlayfs.
+
+(2) Interference
+Unplanned synchronization will probably impact IO performance of
+unrelated container processes on the other overlayfs.
+
+This series try to implement containerized syncfs for overlayfs so that
+only sync target dirty upper inodes which are belong to specific overlayfs
+instance. By doing this, it is able to reduce cost of synchronization and
+will not seriously impact IO performance of unrelated processes.
+
+v1->v2:
+- Mark overlayfs' inode dirty itself instead of adding notification
+  mechanism to vfs inode.
+
+v2->v3:
+- Introduce overlayfs' extra syncfs wait list to wait target upper inodes
+in ->sync_fs.
+
+v3->v4:
+- Using wait_sb_inodes() to wait syncing upper inodes.
+- Mark overlay inode dirty only when having upper inode and  VM_SHARED
+flag in ovl_mmap().
+- Check upper i_state after checking upper mmap state
+in ovl_write_inode.
+
+Chengguang Xu (9):
+  ovl: setup overlayfs' private bdi
+  ovl: implement ->writepages operation
+  ovl: implement overlayfs' ->evict_inode operation
+  ovl: mark overlayfs' inode dirty on modification
+  ovl: mark overlayfs' inode dirty on shared mmap
+  ovl: implement overlayfs' ->write_inode operation
+  ovl: cache dirty overlayfs' inode
+  fs: export wait_sb_inodes()
+  ovl: implement containerized syncfs for overlayfs
+
+ fs/fs-writeback.c         |  3 +-
+ fs/overlayfs/file.c       |  3 ++
+ fs/overlayfs/inode.c      | 15 ++++++++++
+ fs/overlayfs/overlayfs.h  |  4 +++
+ fs/overlayfs/super.c      | 63 ++++++++++++++++++++++++++++++++++++---
+ fs/overlayfs/util.c       | 14 +++++++++
+ include/linux/writeback.h |  1 +
+ 7 files changed, 98 insertions(+), 5 deletions(-)
+
+--=20
+2.26.2
 
 
-> 
-> IOWs, something like this:
-> 
-> struct lpage {
-> 	struct page subpages[4];
-> };
-> 
-> static inline struct lpage *page_lpage(struct page *page)
-> {
-> 	unsigned long head = READ_ONCE(page->compound_head);
-> 
-> 	if (unlikely(head & 1))
-> 		return (struct lpage *)(head - 1);
-> 	return (struct lpage *)page;
-> }
-
-This is really a "get_head_page()" function, not a "get_large_page()"
-function. But even renaming it doesn't seem quite right, because
-wouldn't it be better to avoid discarding that tail bit information? In
-other words, you might be looking at 3 cases, one of which is *not*
-involving large pages at all:
-
-     The page is a single, non-compound page.
-     The page is a head page of a compound page
-     The page is a tail page of a compound page
-
-...but this function returns a type of "large page", even for the first
-case. That's misleading, isn't it?
-
-Given that you've said we could get compile time asserts, I guess you're
-not envisioning writing any code that could get the first case at
-runtime?
-
-thanks,
--- 
-John Hubbard
-NVIDIA
