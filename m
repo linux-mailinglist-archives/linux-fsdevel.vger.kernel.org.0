@@ -2,256 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED7B92B130F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 01:13:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C9162B1353
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 01:39:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbgKMANC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 19:13:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbgKMANB (ORCPT
+        id S1726007AbgKMAjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Nov 2020 19:39:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:33068 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725894AbgKMAjB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 19:13:01 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A0CFC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 16:13:01 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id p93so8578193edd.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 16:13:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2DjY6XkqhlITuoym201ff+iT5LHP6KrjkxHpOYjOgco=;
-        b=ahMflSkrxJR5Zuhl4NUIQ124OwkN1LA6lmuJvLMid7FM2wLDllvvQRc1+k+XiXAblG
-         eO1o3Imld2j1XySYdp1IxdzHHxv+xKPHNIDhgo6L3KOtg2ggfRsdRH9Sh6fcrbu1JKsB
-         JpK+dOSmbRCshBLb5q+1w9pW+LWdC6PlGmlNhUh1X9rfOw/KhBwG0AuOqLOlttd9kqYD
-         ym3TyvLcJM64I1JrR0Cc+eFhdvHG8hZ/Rwh7lyPLKjYfWfEPtA1i1IjFlXkwEd0DYNia
-         f9IEkw2JFzOj5XEroVEj/6OTwSlddWQd7x4d3SAJwvUdRlnbw9+o8ATkS9I0ZpleY0w7
-         e/Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2DjY6XkqhlITuoym201ff+iT5LHP6KrjkxHpOYjOgco=;
-        b=RoXTjyz6HpGH8KKBNPWswGpQxJMZuHbOXW0nNJWI941pPfURgUfDBp4lai/VAudWuv
-         +1RVfvUnC8pvEsqpJhcFpqIeCqorjBkf/SbBGTubDWu+WPbU/c/fh7NvxTako6YVjsfr
-         aLqYLJFgVOC32ZV5fcpFfr6Z/8VfeRcGg1SRH+ZfkYDOAcbWdvE+2le3UplB/7ZbLlGC
-         RQAEMyF1HPAh1pN25Je03+7SCJXnVSnKURnZAGfitRI7QO9Z/9AoREyjFFVlo5vF1T6F
-         6LAtQeHqptG3bbZyuOZlOJcYh2217KgMKEI6LzG8YHhxVjN9gpFyVz0OLxj0qohmRYB/
-         LK6w==
-X-Gm-Message-State: AOAM531YMevyNvUc89HbUSqG2kceAygeIwuCZpMsyk+PkyxIA3v/oL+m
-        WwHlriazzm8g/U0SJ9nPwAnqkBCIoWifCCGBxK8g
-X-Google-Smtp-Source: ABdhPJyLe5Wsyx3ZTidlTWm5cVl+5L72KjbFcxrTxF7K5Pnlk8CCOe5rJ0VvothYSb7coXyY6KaB3KRYBkLE/gqRD3Q=
-X-Received: by 2002:a05:6402:44b:: with SMTP id p11mr2671067edw.164.1605226379951;
- Thu, 12 Nov 2020 16:12:59 -0800 (PST)
+        Thu, 12 Nov 2020 19:39:01 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AD0YJlx079300;
+        Fri, 13 Nov 2020 00:38:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=Ls3C+uNNlHIbuho6jGERwpcS+sJKtiHr3wMQuYv16Ds=;
+ b=YCeiW20RQFn8tEVQpgvHwULhb8qIGG/OzvhX65Yw1TO8cYMXXKMYn5Kn1UXLhdkyx9CI
+ OfAVCgL4LBPS52h72FkHkPfgodq0zj1DnsZbfK0mriUPNDJl1/qdjfD0wB9Zr2ONYh6R
+ jnOSSPn+HitKUy6LobCVKMnxy5hBMqzJP/dZWwAAekg27OGAm9Zlc7m6wDBLtXIuWdrZ
+ qsiG7qLNpFQZGpq6SiIPlsvaQu9MpxBSkW9yBcTzA+n+vOfUXCRrG4nc2QvLUbNFQf9V
+ ahgyPEpbxVtRMWSIXZUEpOhGvCUrbn+ZK1WUmqMY8Tntel8mM2GNFYIu7XweSHFtNXXl Cg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 34nh3b8hp3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Nov 2020 00:38:18 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AD0aGTw113147;
+        Fri, 13 Nov 2020 00:36:17 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 34rtksp808-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Nov 2020 00:36:17 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AD0a3Br024500;
+        Fri, 13 Nov 2020 00:36:03 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Nov 2020 16:36:03 -0800
+Subject: Re: [External] Re: [PATCH v3 05/21] mm/hugetlb: Introduce pgtable
+ allocation/freeing helpers
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20201108141113.65450-1-songmuchun@bytedance.com>
+ <20201108141113.65450-6-songmuchun@bytedance.com>
+ <9dc62874-379f-b126-94a7-5bd477529407@oracle.com>
+ <CAMZfGtV+_vP66N1WagwNfxs4r3QGwnrYoR60yimwutTs=awXag@mail.gmail.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <b7c16e3f-d906-1a11-dbd5-dc4199d70821@oracle.com>
+Date:   Thu, 12 Nov 2020 16:35:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
- <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
- <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
- <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com> <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
-In-Reply-To: <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 12 Nov 2020 19:12:48 -0500
-Message-ID: <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMZfGtV+_vP66N1WagwNfxs4r3QGwnrYoR60yimwutTs=awXag@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ suspectscore=2 bulkscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011130001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9803 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 priorityscore=1501
+ clxscore=1015 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=2
+ mlxlogscore=999 impostorscore=0 phishscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011130001
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 10:30 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> On Tue, Nov 10, 2020 at 6:13 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Nov 10, 2020 at 1:24 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > On Mon, Nov 9, 2020 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Fri, Nov 6, 2020 at 10:56 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > > >
-> > > > > From: Daniel Colascione <dancol@google.com>
-> > > > >
-> > > > > This change uses the anon_inodes and LSM infrastructure introduced in
-> > > > > the previous patches to give SELinux the ability to control
-> > > > > anonymous-inode files that are created using the new
-> > > > > anon_inode_getfd_secure() function.
-> > > > >
-> > > > > A SELinux policy author detects and controls these anonymous inodes by
-> > > > > adding a name-based type_transition rule that assigns a new security
-> > > > > type to anonymous-inode files created in some domain. The name used
-> > > > > for the name-based transition is the name associated with the
-> > > > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
-> > > > > "[perf_event]".
-> > > > >
-> > > > > Example:
-> > > > >
-> > > > > type uffd_t;
-> > > > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
-> > > > > allow sysadm_t uffd_t:anon_inode { create };
-> > > > >
-> > > > > (The next patch in this series is necessary for making userfaultfd
-> > > > > support this new interface.  The example above is just
-> > > > > for exposition.)
-> > > > >
-> > > > > Signed-off-by: Daniel Colascione <dancol@google.com>
-> > > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > > > > ---
-> > > > >  security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
-> > > > >  security/selinux/include/classmap.h |  2 ++
-> > > > >  2 files changed, 55 insertions(+)
-> > > > >
-> > > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > > > > index 6b1826fc3658..1c0adcdce7a8 100644
-> > > > > --- a/security/selinux/hooks.c
-> > > > > +++ b/security/selinux/hooks.c
-> > > > > @@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
-> > > > >         return 0;
-> > > > >  }
-> > > > >
-> > > > > +static int selinux_inode_init_security_anon(struct inode *inode,
-> > > > > +                                           const struct qstr *name,
-> > > > > +                                           const struct inode *context_inode)
-> > > > > +{
-> > > > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
-> > > > > +       struct common_audit_data ad;
-> > > > > +       struct inode_security_struct *isec;
-> > > > > +       int rc;
-> > > > > +
-> > > > > +       if (unlikely(!selinux_initialized(&selinux_state)))
-> > > > > +               return 0;
-> > > > > +
-> > > > > +       isec = selinux_inode(inode);
-> > > > > +
-> > > > > +       /*
-> > > > > +        * We only get here once per ephemeral inode.  The inode has
-> > > > > +        * been initialized via inode_alloc_security but is otherwise
-> > > > > +        * untouched.
-> > > > > +        */
-> > > > > +
-> > > > > +       if (context_inode) {
-> > > > > +               struct inode_security_struct *context_isec =
-> > > > > +                       selinux_inode(context_inode);
-> > > > > +               isec->sclass = context_isec->sclass;
-> > > > > +               isec->sid = context_isec->sid;
-> > > >
-> > > > I suppose this isn't a major concern given the limited usage at the
-> > > > moment, but I wonder if it would be a good idea to make sure the
-> > > > context_inode's SELinux label is valid before we assign it to the
-> > > > anonymous inode?  If it is invalid, what should we do?  Do we attempt
-> > > > to (re)validate it?  Do we simply fallback to the transition approach?
-> > >
-> > > Frankly, I'm not too familiar with SELinux. Originally this patch
-> > > series was developed by Daniel, in consultation with Stephen Smalley.
-> > > In my (probably naive) opinion we should fallback to transition
-> > > approach. But I'd request you to tell me if this needs to be addressed
-> > > now, and if so then what's the right approach.
-> > >
-> > > If the decision is to address this now, then what's the best way to
-> > > check the SELinux label validity?
-> >
-> > You can check to see if an inode's label is valid by looking at the
-> > isec->initialized field; if it is LABEL_INITIALIZED then it is all
-> > set, if it is any other value then the label isn't entirely correct.
-> > It may have not have ever been fully initialized (and has a default
-> > value) or it may have live on a remote filesystem where the host has
-> > signaled that the label has changed (and the label is now outdated).
-> >
-> > This patchset includes support for userfaultfd, which means we don't
-> > really have to worry about the remote fs problem, but the
-> > never-fully-initialized problem could be real in this case.  Normally
-> > we would revalidate an inode in SELinux by calling
-> > __inode_security_revalidate() which requires either a valid dentry or
-> > one that can be found via the inode; does d_find_alias() work on
-> > userfaultfd inodes?
-> >
-> > If all else fails, it seems like the safest approach would be to
-> > simply fail the selinux_inode_init_security_anon() call if a
-> > context_inode was supplied and the label wasn't valid.  If we later
-> > decide to change it to falling back to the transition approach we can
-> > do that, we can't go the other way (from transition to error).
->
-> I'm not sure about d_find_alias() on userfaultfd inodes. But it seems
-> ok to fail selinux_inode_init_security_anon() to begin with.
+On 11/10/20 7:41 PM, Muchun Song wrote:
+> On Wed, Nov 11, 2020 at 8:47 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>>
+>> On 11/8/20 6:10 AM, Muchun Song wrote:
+>> I am reading the code incorrectly it does not appear page->lru (of the huge
+>> page) is being used for this purpose.  Is that correct?
+>>
+>> If it is correct, would using page->lru of the huge page make this code
+>> simpler?  I am just missing the reason why you are using
+>> page_huge_pte(page)->lru
+> 
+> For 1GB HugeTLB pages, we should pre-allocate more than one page
+> table. So I use a linked list. The page_huge_pte(page) is the list head.
+> Because the page->lru shares storage with page->pmd_huge_pte.
 
-I'm okay with simply failing here, but I'm growing a bit concerned
-that this patchset hasn't been well tested.  That is a problem.
+Sorry, but I do not understand the statement page->lru shares storage with
+page->pmd_huge_pte.  Are you saying they are both in head struct page of
+the huge page?
 
-> > > > This brings up another question, and requirement - what testing are
-> > > > you doing for this patchset?  We require that new SELinux kernel
-> > > > functionality includes additions to the SELinux test suite to help
-> > > > verify the functionality.  I'm also *strongly* encouraging that new
-> > > > contributions come with updates to The SELinux Notebook.  If you are
-> > > > unsure about what to do for either, let us know and we can help get
-> > > > you started.
-> > > >
-> > > > * https://github.com/SELinuxProject/selinux-testsuite
-> > > > * https://github.com/SELinuxProject/selinux-notebook
-> > > >
-> > > I'd definitely need help with both of these. Kindly guide how to proceed.
-> >
-> > Well, perhaps the best way to start is to explain how you have been
-> > testing this so far and then using that information to draft a test
-> > for the testsuite.
->
-> As I said in my previous reply, Daniel worked on this patch along with
-> Stephan Smalley. Here's the conversation regarding testing from back
-> then:
-> https://lore.kernel.org/lkml/CAEjxPJ4iquFSBfEj+UEFLUFHPsezuQ-Bzv09n+WgOWk38Nyw3w@mail.gmail.com/
->
-> There have been only minor changes (fixing comments/coding-style),
-> except for addressing a double free issue with userfaultfd_ctx since
-> last time it was tested as per the link above.
+Here is what I was suggesting.  If we just use page->lru for the list
+then vmemmap_pgtable_prealloc() could be coded like the following:
 
-I should probably be more clear.  I honestly don't care who originally
-wrote the patch, the simple fact is that you are the one who is
-posting it *now* for inclusion in the kernel; at the very least I
-expect you to be able to demonstrate that you are able to reliably
-test this functionality and prove it is working.  While being able to
-test this submission initially is important, it is far more important
-to have the tests and docs necessary to maintain this functionality
-long term.  Perhaps you and/or Google will continue to contribute and
-support this functionality long term, but it would be irresponsible of
-me to assume that to be true; both people and companies come and go
-but code has a tendency to live forever.
+static int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
+{
+	struct page *pte_page, *t_page;
+	unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
 
-Let's start again; how have you been testing this code?
+	if (!nr)
+		return 0;
 
+	/* Store preallocated pages on huge page lru list */
+	INIT_LIST_HEAD(&page->lru);
+
+	while (nr--) {
+		pte_t *pte_p;
+
+		pte_p = pte_alloc_one_kernel(&init_mm);
+		if (!pte_p)
+			goto out;
+		list_add(&virt_to_page(pte_p)->lru, &page->lru);
+	}
+
+	return 0;
+out:
+	list_for_each_entry_safe(pte_page, t_page, &page->lru, lru)
+		pte_free_kernel(&init_mm, page_to_virt(pte_page));
+	return -ENOMEM;
+}
+
+By doing this we could eliminate the routines,
+vmemmap_pgtable_init()
+vmemmap_pgtable_deposit()
+vmemmap_pgtable_withdraw()
+and simply use the list manipulation routines.
+
+To me, that looks simpler than the proposed code in this patch.
 -- 
-paul moore
-www.paul-moore.com
+Mike Kravetz
