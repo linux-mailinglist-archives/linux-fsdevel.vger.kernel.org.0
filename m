@@ -2,113 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 461932B1E73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 16:20:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE362B21D8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 18:17:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbgKMPUC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 10:20:02 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10947 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbgKMPUB (ORCPT
+        id S1726279AbgKMRRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 12:17:19 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:48418 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbgKMRRT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 10:20:01 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5faea41a0000>; Fri, 13 Nov 2020 07:19:54 -0800
-Received: from [10.2.162.52] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 13 Nov
- 2020 15:20:00 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
-Subject: Re: Are THPs the right model for the pagecache?
-Date:   Fri, 13 Nov 2020 10:19:56 -0500
-X-Mailer: MailMate (1.13.2r5673)
-Message-ID: <40BFC0F6-6099-4AFB-857F-7F908833F9C9@nvidia.com>
-In-Reply-To: <20201113044652.GD17076@casper.infradead.org>
-References: <20201113044652.GD17076@casper.infradead.org>
+        Fri, 13 Nov 2020 12:17:19 -0500
+Received: by mail-il1-f200.google.com with SMTP id o5so7014558ilh.15
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Nov 2020 09:17:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=AoVMm0F0BfO3BX7DOFKEUiRvpD+PX2QeLVOvFi7bkcM=;
+        b=rEKnZGWOO891MvayJFEa4CmH6W4oagHFSvPseVAgZOZFaA5nOVx/9boBodjnSoUc04
+         8JU6cZxUz737Dto+CgrrBp6YSTtfvJUC0utCG5tERIXIkdUDjXWocP/gvtVacf7ooG4P
+         IyMG4KG6rMq63jykYkfWPBw5V8Q8JcxWlnztQDxNsU6nG0kLtb1Lrg3Crn9wPnc8Obzc
+         zfOIKySCH1SlVO06XdVc6k+Ci6P11yTKQXdcP2hLAqCo6xx1KrP0qMWgIYr7fMyGcPd7
+         1gPoMIBRTBVuZZSfM6brm0aEh8UDsYjPUZPqBm0wkqhvzK1o5c1k/CdW5VSC7iNaN7RF
+         Sy+A==
+X-Gm-Message-State: AOAM531nIYQZbm8X+UKus+aT7URGIabLItzthh0MudqAroXHjoFkq2g+
+        l++zZf2+9/JdhZgo7GUqctxrrW18cx2M5vp8mIRJkMImOWtg
+X-Google-Smtp-Source: ABdhPJypk6Mtb4JhlkbUSWPQMaAGnlH+/9mixnEt5vFWHVLIpKop1ODS3gSu6+q8vsEchftOxQ2/+1UhED8lELPES0ZXN6qO9ZV5
 MIME-Version: 1.0
-Content-Type: multipart/signed;
-        boundary="=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605280794; bh=r/40XSvVpf+iVNHyw0mRUaeXV9B2xH2GWBUjgziZ14Q=;
-        h=From:To:CC:Subject:Date:X-Mailer:Message-ID:In-Reply-To:
-         References:MIME-Version:Content-Type:X-Originating-IP:
-         X-ClientProxiedBy;
-        b=L7+0bHr9XKfWo+tz9GdBE0/NAAt3hLJh8sUZ9VP53IWDOPbzNuEeNTCm7XCUM6Jpq
-         /wlM1H19luDYnT+/vdkpkZ4KJIjdHXb8mNwLlENXoHC2EcGh6H0QOCRLOKQdW2LSXq
-         BGWmXOXbHC5pjgp++0t64Jx0vNJ3X+5O9WQ4d59uE9Ow1dB2PZzG3Bdh95oY1wIN6a
-         0KMfsI0TN/dGlMNdh8PG7qUxFF3crDA9AeotQF905mhDcSigL/wIC9WE7z+U6huVo1
-         JTcu/Nt3s+7azPHm8kcqUtFCtlPkPAwRaDGjYZQTRNBAJztxYymKILg/feMXrhwZeI
-         L9sLgv4wRkPAA==
+X-Received: by 2002:a92:cf51:: with SMTP id c17mr641766ilr.113.1605287851739;
+ Fri, 13 Nov 2020 09:17:31 -0800 (PST)
+Date:   Fri, 13 Nov 2020 09:17:31 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002a530d05b400349b@google.com>
+Subject: memory leak in generic_parse_monolithic
+From:   syzbot <syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-On 12 Nov 2020, at 23:46, Matthew Wilcox wrote:
+syzbot found the following issue on:
 
-> When I started working on using larger pages in the page cache, I was
-> thinking about calling them large pages or lpages.  As I worked my way
-> through the code, I switched to simply adopting the transparent huge
-> page terminology that is used by anonymous and shmem.  I just changed
-> the definition so that a thp is a page of arbitrary order.
->
-> But now I'm wondering if that expediency has brought me to the right
-> place.  To enable THP, you have to select CONFIG_TRANSPARENT_HUGEPAGE,
-> which is only available on architectures which support using larger TLB=
+HEAD commit:    af5043c8 Merge tag 'acpi-5.10-rc4' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e8c906500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a3f13716fa0212fd
+dashboard link: https://syzkaller.appspot.com/bug?extid=86dc6632faaca40133ab
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102a57dc500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129ca3d6500000
 
-> entries to map PMD-sized pages.  Fair enough, since that was the origin=
-al
-> definition, but the point of suppoting larger page sizes in the page
-> cache is to reduce software overhead.  Why shouldn't Alpha or m68k use
-> large pages in the page cache, even if they can't use them in their TLB=
-s?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com
 
-I think the issue might come from the mixture of physical page sizes and
-page table entry sizes. THP in fact has two parts: the ability of managin=
-g
-a group of pages using just PageHead and the support for larger than
-PTE (the smallest virtual address range mapped by a page table entry) pag=
-e
-table entry mappings. The first part should be independent of the second
-one, but the second part relies on the first one. Maybe it is possible
-to pull out the code for managing physical pages from CONFIG_TRANSPARENT_=
-HUGEPAGE
-and enable it unconditionally, so any arch can take the advantage of
-large pages.
+Warning: Permanently added '10.128.0.84' (ECDSA) to the list of known hosts.
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff888111f15a80 (size 32):
+  comm "syz-executor841", pid 8507, jiffies 4294942125 (age 14.070s)
+  hex dump (first 32 bytes):
+    25 5e 5d 24 5b 2b 25 5d 28 24 7b 3a 0f 6b 5b 29  %^]$[+%](${:.k[)
+    2d 3a 00 00 00 00 00 00 00 00 00 00 00 00 00 00  -:..............
+  backtrace:
+    [<000000005c6f565d>] kmemdup_nul+0x2d/0x70 mm/util.c:151
+    [<0000000054985c27>] vfs_parse_fs_string+0x6e/0xd0 fs/fs_context.c:155
+    [<0000000077ef66e4>] generic_parse_monolithic+0xe0/0x130 fs/fs_context.c:201
+    [<00000000d4d4a652>] do_new_mount fs/namespace.c:2871 [inline]
+    [<00000000d4d4a652>] path_mount+0xbbb/0x1170 fs/namespace.c:3205
+    [<00000000f43f0071>] do_mount fs/namespace.c:3218 [inline]
+    [<00000000f43f0071>] __do_sys_mount fs/namespace.c:3426 [inline]
+    [<00000000f43f0071>] __se_sys_mount fs/namespace.c:3403 [inline]
+    [<00000000f43f0071>] __x64_sys_mount+0x18e/0x1d0 fs/namespace.c:3403
+    [<00000000dc5fffd5>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+    [<000000004e665669>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-=E2=80=94
-Best Regards,
-Yan Zi
 
---=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl+upB0PHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKBgUQAI5HfUZYADX/CCxDx09+W71Q4CJ9+iVSJJCA
-tNBN1TYGpl5AsQLWAYQ7UHPnfvZZg2nM9eq/tW0cDebkuID61qOBdux3fAicFcPg
-J89JJB0o/FuNIbDUkN45kZ2qC4QtqI0pfIHxAuaietfaKG7zEH2m5FW/ifRJYjKA
-Jg+w2cPEdWA4XHPDw/3iZmun3hjEeZ0YqEWgC63p8Z9xDGWO6Kb5zpwFWZd91Ceo
-BDF9o+dXOji42ZkXwfv8tDXS3SlEwJHvXiX7RRok3x6EA/xIgdRusttvad6NFvTt
-E1nwxJplXZXJlHfBm8Et2i48xlGKhCcvcgjAi7+f0dnZj94jJEivkUnBnBZA98+l
-IRQFQX76UNoaOafF4xGSgjWYh7DEHmPgi++mWXYIEYfRagp9A5aWQRNKjmFB/mug
-W95e5KQHYXZHn+mITaIC+vHKV/+okQFm+44+yeb/7yl9FQKaYA1dNOSIgOwbmc2v
-fIvcn4fsQWrF2hI/lnNwTrt4T//4DdUdM/oCTzFoqKyhc27vubrUa8yFUo0R58F0
-Y94/uEbHrS2/njhdraeTFiYew3xwb1cAnnajA0yUKdfIqc8Y69HPnXIll2392a8y
-ve3Rw21wqvsMne8BiyS/1G5RKEzI3vUEt6XQf7nVMHxY6rSv0FqG9QI5NzGD/2DM
-C5BY3A+c
-=M25A
------END PGP SIGNATURE-----
-
---=_MailMate_2BF5E816-9261-4E28-A0D5-42AC62C3A970_=--
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
