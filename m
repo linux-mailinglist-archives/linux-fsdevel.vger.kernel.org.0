@@ -2,109 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA612B1ABF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 13:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD45B2B1B12
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 13:25:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbgKMMFI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Nov 2020 07:05:08 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:23464 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726520AbgKML1s (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Nov 2020 06:27:48 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-74-q55dkbMJN9iy_mSgtJxHNQ-1; Fri, 13 Nov 2020 11:27:42 +0000
-X-MC-Unique: q55dkbMJN9iy_mSgtJxHNQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 13 Nov 2020 11:27:41 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 13 Nov 2020 11:27:41 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Yicong Yang' <yangyicong@hisilicon.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "akinobu.mita@gmail.com" <akinobu.mita@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "prime.zeng@huawei.com" <prime.zeng@huawei.com>
-Subject: RE: [PATCH v2] libfs: fix error cast of negative value in
- simple_attr_write()
-Thread-Topic: [PATCH v2] libfs: fix error cast of negative value in
- simple_attr_write()
-Thread-Index: AQHWuaN2HYrg6O40uUKH2XiBcGhEHanF7BWQ
-Date:   Fri, 13 Nov 2020 11:27:41 +0000
-Message-ID: <accad76be7dd4b20a3206bbb4ee86688@AcuMS.aculab.com>
-References: <1605261369-551-1-git-send-email-yangyicong@hisilicon.com>
-In-Reply-To: <1605261369-551-1-git-send-email-yangyicong@hisilicon.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726533AbgKMMZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 07:25:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726507AbgKMMZR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 13 Nov 2020 07:25:17 -0500
+Received: from gaia (unknown [2.26.170.190])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90DDC206CA;
+        Fri, 13 Nov 2020 12:25:10 +0000 (UTC)
+Date:   Fri, 13 Nov 2020 12:25:08 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Palmer Dabbelt <palmerdabbelt@google.com>
+Subject: Re: [PATCH v8 8/9] arch, mm: wire up memfd_secret system call were
+ relevant
+Message-ID: <20201113122507.GC3212@gaia>
+References: <20201110151444.20662-1-rppt@kernel.org>
+ <20201110151444.20662-9-rppt@kernel.org>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201110151444.20662-9-rppt@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Yicong Yang
-> Sent: 13 November 2020 09:56
-> The attr->set() receive a value of u64, but simple_strtoll() is used
-> for doing the conversion. It will lead to the error cast if user inputs
-> a negative value.
-> 
-> Use kstrtoull() instead of simple_strtoll() to convert a string got
-> from the user to an unsigned value. The former will return '-EINVAL' if
-> it gets a negetive value, but the latter can't handle the situation
-> correctly.
-> 
-> Fixes: f7b88631a897 ("fs/libfs.c: fix simple_attr_write() on 32bit machines")
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
-> Change since v1:
-> - address the compile warning for non-64 bit platform
-> 
->  fs/libfs.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index fc34361..3a0d99c 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -977,7 +977,9 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
->  		goto out;
-> 
->  	attr->set_buf[size] = '\0';
-> -	val = simple_strtoll(attr->set_buf, NULL, 0);
-> +	ret = kstrtoull(attr->set_buf, 0, (unsigned long long *)&val);
+Hi Mike,
 
-That cast is horrid.
-Casting 'pointer to integer' types is just asking for trouble.
-You either need to change the type of 'val' or use an
-intermediary variable of the correct type.
+On Tue, Nov 10, 2020 at 05:14:43PM +0200, Mike Rapoport wrote:
+> diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+> index 6c1dcca067e0..c71c3fe0b6cd 100644
+> --- a/arch/arm64/include/asm/unistd32.h
+> +++ b/arch/arm64/include/asm/unistd32.h
+> @@ -891,6 +891,8 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
+>  __SYSCALL(__NR_process_madvise, sys_process_madvise)
+>  #define __NR_watch_mount 441
+>  __SYSCALL(__NR_watch_mount, sys_watch_mount)
+> +#define __NR_memfd_secret 442
+> +__SYSCALL(__NR_memfd_secret, sys_memfd_secret)
 
-	David
+arch/arm doesn't select ARCH_HAS_SET_DIRECT_MAP and doesn't support
+memfd_secret(), so I wouldn't add it to the compat layer.
 
-> +	if (ret)
-> +		goto out;
->  	ret = attr->set(attr->data, val);
->  	if (ret == 0)
->  		ret = len; /* on success, claim we got the whole input */
-> --
-> 2.8.1
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+Catalin
