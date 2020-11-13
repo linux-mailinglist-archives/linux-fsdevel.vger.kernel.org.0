@@ -2,100 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF61D2B152B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 05:46:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2A32B1555
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Nov 2020 06:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726104AbgKMEqy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Nov 2020 23:46:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51638 "EHLO
+        id S1726187AbgKMFTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Nov 2020 00:19:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgKMEqy (ORCPT
+        with ESMTP id S1726054AbgKMFTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Nov 2020 23:46:54 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071BEC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 20:46:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=5XkRS8SQi9lZ8xBy4p7uZlvNXOyVuyNr1Qx3lDzm30s=; b=OIkfBs7EidbKhFO+6xVRa4W1ss
-        ht7YRsIJ/fkKyxjdOxBNMlMqD8toUGAkWWsDD2k+nLoURjK65fDQLkjjNpWDnBjZzXXh/2J198a93
-        rrMwBcE0CQKbZKJbO/UYSIsw6QfR6eGKPYNVf4p2b5QUeX5aMHkUQYKK3JwJ5D94WUA0IHR/KN4co
-        nwS3q7DdbcLTPBpdEnHOTaFNZr231G6Wyh/IPLf26RYCNmQXgl7DmHcRX6vABdzx9gpZP0a+15KJE
-        PxNpaYl+BlOVafynuLOin0uCQGTZ8W5kczD4L0oLDoRebs/3Un63QnBo49sMvUg/TxhXrXr5jqSrU
-        51FOETjg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kdQz6-0004Td-AM; Fri, 13 Nov 2020 04:46:52 +0000
-Date:   Fri, 13 Nov 2020 04:46:52 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Are THPs the right model for the pagecache?
-Message-ID: <20201113044652.GD17076@casper.infradead.org>
+        Fri, 13 Nov 2020 00:19:19 -0500
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D37C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 21:19:19 -0800 (PST)
+Received: by mail-yb1-xb44.google.com with SMTP id l14so3504722ybq.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Nov 2020 21:19:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gQx1O4i3ZrL+8FHNvLnh8t1v5SRwdDb4uqSCMA77DHk=;
+        b=H6YyBttpxPK6Aw+eczVUy4cY3MYNYqutY9Dyv4mkVPaHdywuzy3Z/s6VDeCN3zaD59
+         Y+ntoRKTdhzJpKx5csPGlPP+kZxhSHesxrmyGUBuQbcmc+Vui0udtu+fFn/WjiJc49G9
+         yLMzbT1glrwC9LoZAp4qJCWbCm1BS6pRJwg2w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gQx1O4i3ZrL+8FHNvLnh8t1v5SRwdDb4uqSCMA77DHk=;
+        b=Vim2gwYE2y1HVjo4Xq1UCfqkB08ldmD5gfDKuY46MSK/B7T8Qe1VArbTw63SIwYqRj
+         3biy2Y8adxbYP2o70tW2vfZ6S+9hqkWVsLSt68LPQqBAzNysn5Ug9bj00GYLRejGkVrE
+         geUmHH/0z5BrhtVL5h0+D7UE79Vo9ajIicm05Te0ZcQkXk6R88oP5anokULFkGsQ2Vc4
+         von5H2qvr/Vb4aR5eMDCaXc8y7FW3bm5oG2jQa/W++AQ/KtxtXqgJhkG1LgwKJL4kH57
+         Rr3AKyv5myJhmlSI+ii6HdaULWpgNIywKajcUoY15y6S6iz9/TFzGs/UE/f3bDm+MTr9
+         BrIA==
+X-Gm-Message-State: AOAM532KJlT1FS+z/spngm/R7mKNiBvGhRUkTgOGBI20v8et47ap9NXF
+        j/tIYupKMgHRXIompKiZI1YfQqQ/Mt2lN2hxIVvUzQ==
+X-Google-Smtp-Source: ABdhPJxRGeaGCIdaZOcIzHbyPamkV8U5sivH6x49gcThVhqMWybJaVhHfbTDFyR226o479KxmPZKAnPvwibfvC6Fwmg=
+X-Received: by 2002:a25:3792:: with SMTP id e140mr681258yba.277.1605244758745;
+ Thu, 12 Nov 2020 21:19:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20201109100343.3958378-1-chirantan@chromium.org>
+ <20201109100343.3958378-3-chirantan@chromium.org> <CAJfpegv5DdgCqdtSzUS43P9JQeUg9fSyuRXETLNy47=cZyLtuQ@mail.gmail.com>
+ <CAJFHJrqZMg6A_QnoOL3e5gNZtYquUPSr4B0ZLZMSKQH6o7sxag@mail.gmail.com> <CAJfpegsjeRSeabJK5xLr4g7mDkwT88u+iOnhwCj_78-HT+HVqA@mail.gmail.com>
+In-Reply-To: <CAJfpegsjeRSeabJK5xLr4g7mDkwT88u+iOnhwCj_78-HT+HVqA@mail.gmail.com>
+From:   Chirantan Ekbote <chirantan@chromium.org>
+Date:   Fri, 13 Nov 2020 14:19:07 +0900
+Message-ID: <CAJFHJroPwxB3EW+wFg=NgYsKiQAswd7MNm6Ha3jUAPdp6PMMsg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] fuse: Implement O_TMPFILE support
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When I started working on using larger pages in the page cache, I was
-thinking about calling them large pages or lpages.  As I worked my way
-through the code, I switched to simply adopting the transparent huge
-page terminology that is used by anonymous and shmem.  I just changed
-the definition so that a thp is a page of arbitrary order.
+On Tue, Nov 10, 2020 at 4:52 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Tue, Nov 10, 2020 at 4:33 AM Chirantan Ekbote <chirantan@chromium.org> wrote:
+>
+> > That's not the behavior I observed.  Without this, the O_TMPFILE flag
+> > gets passed through to the server.  The call stack is:
+> >
+> > - do_filp_open
+> >     - path_openat
+> >         - do_tmpfile
+> >             - vfs_tmpfile
+> >                 - dir->i_op->tmpfile
+> >             - finish_open
+> >                 - do_dentry_open
+> >                     - f->f_op->open
+> >
+> > and I didn't see O_TMPFILE being removed anywhere in there.
+>
+> Ah, indeed.
+>
+> The reason I missed this is because IMO the way it *should* work is
+> that FUSE_TMPFILE creates and opens the file in one go.  We shouldn't
+> need two separate request.
+>
+> Not sure how we should go about this... The ->atomic_open() API is
+> sufficient, but maybe we want a new ->atomic_tmpfile().
+>
 
-But now I'm wondering if that expediency has brought me to the right
-place.  To enable THP, you have to select CONFIG_TRANSPARENT_HUGEPAGE,
-which is only available on architectures which support using larger TLB
-entries to map PMD-sized pages.  Fair enough, since that was the original
-definition, but the point of suppoting larger page sizes in the page
-cache is to reduce software overhead.  Why shouldn't Alpha or m68k use
-large pages in the page cache, even if they can't use them in their TLBs?
-
-I'm also thinking about the number of asserts about
-PageHead/PageTail/PageCompound and the repeated invocations of
-compound_head().  If we had a different type for large pages, we could use
-the compiler to assert these things instead of putting in runtime asserts.
-
-IOWs, something like this:
-
-struct lpage {
-	struct page subpages[4];
-};
-
-static inline struct lpage *page_lpage(struct page *page)
-{
-	unsigned long head = READ_ONCE(page->compound_head);
-
-	if (unlikely(head & 1))
-		return (struct lpage *)(head - 1);
-	return (struct lpage *)page;
-}
-
-We can then work our way through the code, distinguishing between
-functions which really want to get an lpage (ie ones which currently
-assert that they see only a PageHead) and functions which want to get
-a particular subpage.
-
-Some functions are going to need to be split.  eg pagecache_get_page()
-currently takes an FGP_HEAD flag which determines whether it returns
-a head page or the subpage for the index.  FGP_HEAD will have to
-go away in favour of having separate pagecache_get_subpage() and
-pagecache_get_lpage().  Or preferably, all callers of pagecache_get_page()
-get converted to use lpages and they can call find_subpage() all by
-themselves, if they need it.
-
-Feels like a lot of work, but it can be done gradually.  My fear with
-the current code is that filesystem writers who want to convert to
-supporting THPs are not going to understand which interfaces expect a
-THP and which expect a subpage.  For example, vmf->page (in the mkwrite
-handler) is a subpage.  But the page passed to ->readpage is a THP.
-I don't think we're going to be able to switch either of those any time
-soon, so distinguishing them with a type seems only fair to fs authors.
-See, for example, Darrick's reasonable question here:
-https://lore.kernel.org/linux-fsdevel/20201014161216.GE9832@magnolia/
-
-I'm not volunteering to do any of this in time for the next merge window!
-I have lots of patches to get approved by various maintainers in the
-next two weeks!
+I think I agree with you that it should probably be a single request
+but at this point is it worth adding an ->atomic_tmpfile() that's only
+used by fuse?  Unlike regular file creation, it's not like the tmpfile
+entry is accessible via any other mechanism so other than latency I
+don't think there's any real harm with having it be 2 separate
+requests.
