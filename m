@@ -2,62 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 765D42B2BDD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Nov 2020 08:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E1A72B2C0D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Nov 2020 09:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgKNHAc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Nov 2020 02:00:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbgKNHAb (ORCPT
+        id S1726543AbgKNILM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Nov 2020 03:11:12 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:7899 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbgKNILM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Nov 2020 02:00:31 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9674AC0613D1;
-        Fri, 13 Nov 2020 23:00:30 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kdpXt-005eQp-NU; Sat, 14 Nov 2020 07:00:25 +0000
-Date:   Sat, 14 Nov 2020 07:00:25 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        wei.liu@kernel.org, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
-Message-ID: <20201114070025.GO3576660@ZenIV.linux.org.uk>
-References: <CAHk-=whTqr4Lp0NYR6k3yc2EbiF0RR17=TJPa4JBQATMR__XqA@mail.gmail.com>
- <20201111215220.GA3576660@ZenIV.linux.org.uk>
- <20201111222116.GA919131@ZenIV.linux.org.uk>
- <20201113235453.GA227700@ubuntu-m3-large-x86>
- <20201114011754.GL3576660@ZenIV.linux.org.uk>
- <20201114030124.GA236@Ryzen-9-3900X.localdomain>
- <20201114035453.GM3576660@ZenIV.linux.org.uk>
- <20201114041420.GA231@Ryzen-9-3900X.localdomain>
- <20201114055048.GN3576660@ZenIV.linux.org.uk>
- <20201114061934.GA658@Ryzen-9-3900X.localdomain>
+        Sat, 14 Nov 2020 03:11:12 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CY7Lt2sNFz761H;
+        Sat, 14 Nov 2020 16:10:46 +0800 (CST)
+Received: from localhost.localdomain (10.67.165.24) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.487.0; Sat, 14 Nov 2020 16:10:48 +0800
+From:   Yicong Yang <yangyicong@hisilicon.com>
+To:     <viro@zeniv.linux.org.uk>, <akpm@linux-foundation.org>,
+        <David.Laight@ACULAB.COM>, <linux-fsdevel@vger.kernel.org>
+CC:     <akinobu.mita@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <prime.zeng@huawei.com>,
+        <yangyicong@hisilicon.com>
+Subject: [PATCH v3] libfs: fix error cast of negative value in simple_attr_write()
+Date:   Sat, 14 Nov 2020 16:09:16 +0800
+Message-ID: <1605341356-11872-1-git-send-email-yangyicong@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201114061934.GA658@Ryzen-9-3900X.localdomain>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
+X-Originating-IP: [10.67.165.24]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 11:19:34PM -0700, Nathan Chancellor wrote:
+The attr->set() receive a value of u64, but simple_strtoll() is used
+for doing the conversion. It will lead to the error cast if user inputs
+a negative value.
 
-> Assuming so, I have attached the output both with and without the
-> WARN_ON. Looks like mountinfo is what is causing the error?
+Use kstrtoull() instead of simple_strtoll() to convert a string got
+from the user to an unsigned value. The former will return '-EINVAL' if
+it gets a negetive value, but the latter can't handle the situation
+correctly. Make 'val' unsigned long long as what kstrtoull() takes, this
+will eliminate the compile warning on no 64-bit architectures.
 
-Cute...  FWIW, on #origin + that commit with fix folded in I don't
-see anything unusual in reads from mountinfo ;-/  OTOH, they'd
-obviously been... creative with readv(2) arguments, so it would
-be very interesting to see what it is they are passing to it.
+Fixes: f7b88631a897 ("fs/libfs.c: fix simple_attr_write() on 32bit machines")
+Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+---
+Change since v1:
+- address the compile warning for non-64 bit platform.
+Change since v2:
+Link: https://lore.kernel.org/linux-fsdevel/1605000324-7428-1-git-send-email-yangyicong@hisilicon.com/
+- make 'val' unsigned long long and mentioned in the commit
+Link: https://lore.kernel.org/linux-fsdevel/1605261369-551-1-git-send-email-yangyicong@hisilicon.com/
 
-I'm half-asleep right now; will try to cook something to gather
-that information tomorrow morning.  'Later...
+ fs/libfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/libfs.c b/fs/libfs.c
+index fc34361..7124c2e 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -959,7 +959,7 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+ 			  size_t len, loff_t *ppos)
+ {
+ 	struct simple_attr *attr;
+-	u64 val;
++	unsigned long long val;
+ 	size_t size;
+ 	ssize_t ret;
+ 
+@@ -977,7 +977,9 @@ ssize_t simple_attr_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 
+ 	attr->set_buf[size] = '\0';
+-	val = simple_strtoll(attr->set_buf, NULL, 0);
++	ret = kstrtoull(attr->set_buf, 0, &val);
++	if (ret)
++		goto out;
+ 	ret = attr->set(attr->data, val);
+ 	if (ret == 0)
+ 		ret = len; /* on success, claim we got the whole input */
+-- 
+2.8.1
+
