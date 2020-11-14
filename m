@@ -2,64 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 884892B2DE7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Nov 2020 16:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2722B2ED2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Nov 2020 18:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbgKNPWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Nov 2020 10:22:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbgKNPWz (ORCPT
+        id S1726217AbgKNRQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Nov 2020 12:16:00 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44414 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726094AbgKNRP7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Nov 2020 10:22:55 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F1AC0613D1;
-        Sat, 14 Nov 2020 07:22:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6JrlagLDzZmUvhluP8XB/lv8Ud+95jz6vB9eZHvFliQ=; b=a8teAqDFl+rInAIZaN9hsHpPFa
-        q8JEPPQrGvab2DAIvKwqKR24il+FYBW02+W16dHNN5m+Hu1qGWokX9ClibtYB7goEYW8xilz0IpU2
-        A54vxIbH15PMQl8t5U53vxwUPPC4Se2eTxzaphTJHOdFbKK6PAL0RBV8fbYB+NiVAgQKH8nu3hVtP
-        XiCq3E15OLZYYX78Q85vZeuQLZ+5X+UZ5XjJ3y46qYpDwqfBp1JqpqLljlwS+NbXd3TNKFPWalSFH
-        qjc85gxlEJfuk/IMkSxM6aoItIvLqY+XWBNW97uM9lx1CYsuUT0gAvq9Rhm9fi/+NgM7nGYit/Vmm
-        N5IWgaiQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kdxO9-0001Qp-1m; Sat, 14 Nov 2020 15:22:53 +0000
-Date:   Sat, 14 Nov 2020 15:22:52 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, hughd@google.com, hannes@cmpxchg.org,
-        yang.shi@linux.alibaba.com, dchinner@redhat.com,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v4 13/16] mm: Pass pvec directly to find_get_entries
-Message-ID: <20201114152252.GM17076@casper.infradead.org>
-References: <20201112212641.27837-1-willy@infradead.org>
- <20201112212641.27837-14-willy@infradead.org>
- <20201114102133.GN19102@lst.de>
+        Sat, 14 Nov 2020 12:15:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605374158;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=YQLowdxGlMEyZdFvJbR1bzJYwIvZNLk9X1xruKsNhMI=;
+        b=TGFZfMXQtYr6APyHrgETdZuzGRXc31zgn17q+7sWS0IRyPtjGbU//BlQUyDBSIMAkF542L
+        Ge0xWTKQbGsNdfIb30O6ysyijUJpdI9WKMj7tonmpK9vICunQaWXHo0VE3ypl3kqupvdi3
+        qlo2hqo8D+3Kl96Od/PhFIfFbAsHZ8c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-113-if28wJAQMB2-_D8HdYYYRg-1; Sat, 14 Nov 2020 12:15:54 -0500
+X-MC-Unique: if28wJAQMB2-_D8HdYYYRg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3DC9157052;
+        Sat, 14 Nov 2020 17:15:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-47.rdu2.redhat.com [10.10.115.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 348802C31E;
+        Sat, 14 Nov 2020 17:15:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix afs_write_end() when called with copied == 0
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sat, 14 Nov 2020 17:15:51 +0000
+Message-ID: <160537415141.3024088.7100009150583164795.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201114102133.GN19102@lst.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 14, 2020 at 11:21:33AM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 12, 2020 at 09:26:38PM +0000, Matthew Wilcox (Oracle) wrote:
-> > +	pvec->nr = ret;
-> >  	return ret;
-> 
-> Do we need to return the number of found entries in addition to storing
-> it in the pagevec?
+When afs_write_end() is called with copied == 0, it tries to set the dirty
+region, but there's no way to actually encode a 0-length region in the
+encoding in page->private.  "0,0", for example, indicates a 1-byte region
+at offset 0.  The maths miscalculates this and sets it incorrectly.
 
-We really only need a bool -- is pvec->nr zero or not.  But we have the
-number calculated so we may as well return it.  All the current find_*()
-behave this way and I haven't seen enough reason to change it yet.
-Making it return void just makes the callers uglier.  I have a batch of
-patches to do something similar for find_get_pages / find_get_pages_range
-/ pagevec_lookup / pagevec_lookup_range, but I don't need them for the
-THP patchset, so I haven't sent them yet.
+Fix it to just do nothing but unlock and put the page in this case.  We
+don't actually need to mark the page dirty as nothing presumably changed.
+
+Fixes: 65dd2d6072d3 ("afs: Alter dirty range encoding in page->private")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/write.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 50371207f327..f34d13d294fa 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -174,6 +174,9 @@ int afs_write_end(struct file *file, struct address_space *mapping,
+ 	_enter("{%llx:%llu},{%lx}",
+ 	       vnode->fid.vid, vnode->fid.vnode, page->index);
+ 
++	if (copied == 0)
++		goto out;
++
+ 	maybe_i_size = pos + copied;
+ 
+ 	i_size = i_size_read(&vnode->vfs_inode);
+
+
