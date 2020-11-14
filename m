@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D2F2B30BA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Nov 2020 21:51:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 211EF2B310F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Nov 2020 22:45:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgKNUuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Nov 2020 15:50:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57736 "EHLO
+        id S1726275AbgKNVow (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Nov 2020 16:44:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbgKNUuM (ORCPT
+        with ESMTP id S1726112AbgKNVov (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Nov 2020 15:50:12 -0500
+        Sat, 14 Nov 2020 16:44:51 -0500
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E48DC0613D1;
-        Sat, 14 Nov 2020 12:50:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA833C0613D1;
+        Sat, 14 Nov 2020 13:44:50 -0800 (PST)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ke2Ui-0061hp-LP; Sat, 14 Nov 2020 20:50:01 +0000
-Date:   Sat, 14 Nov 2020 20:50:00 +0000
+        id 1ke3LZ-0063sy-Tb; Sat, 14 Nov 2020 21:44:38 +0000
+Date:   Sat, 14 Nov 2020 21:44:37 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Nathan Chancellor <natechancellor@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -29,63 +29,151 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
         wei.liu@kernel.org, linux-hyperv@vger.kernel.org
 Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
-Message-ID: <20201114205000.GP3576660@ZenIV.linux.org.uk>
-References: <20201111215220.GA3576660@ZenIV.linux.org.uk>
+Message-ID: <20201114214437.GQ3576660@ZenIV.linux.org.uk>
+References: <20201104082738.1054792-1-hch@lst.de>
+ <20201104082738.1054792-2-hch@lst.de>
+ <20201110213253.GV3576660@ZenIV.linux.org.uk>
+ <20201110213511.GW3576660@ZenIV.linux.org.uk>
+ <20201110232028.GX3576660@ZenIV.linux.org.uk>
+ <CAHk-=whTqr4Lp0NYR6k3yc2EbiF0RR17=TJPa4JBQATMR__XqA@mail.gmail.com>
+ <20201111215220.GA3576660@ZenIV.linux.org.uk>
  <20201111222116.GA919131@ZenIV.linux.org.uk>
  <20201113235453.GA227700@ubuntu-m3-large-x86>
- <20201114011754.GL3576660@ZenIV.linux.org.uk>
- <20201114030124.GA236@Ryzen-9-3900X.localdomain>
- <20201114035453.GM3576660@ZenIV.linux.org.uk>
- <20201114041420.GA231@Ryzen-9-3900X.localdomain>
- <20201114055048.GN3576660@ZenIV.linux.org.uk>
- <20201114061934.GA658@Ryzen-9-3900X.localdomain>
- <20201114070025.GO3576660@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201114070025.GO3576660@ZenIV.linux.org.uk>
+In-Reply-To: <20201113235453.GA227700@ubuntu-m3-large-x86>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 14, 2020 at 07:00:25AM +0000, Al Viro wrote:
-> On Fri, Nov 13, 2020 at 11:19:34PM -0700, Nathan Chancellor wrote:
+On Fri, Nov 13, 2020 at 04:54:53PM -0700, Nathan Chancellor wrote:
+> Hi Al,
 > 
-> > Assuming so, I have attached the output both with and without the
-> > WARN_ON. Looks like mountinfo is what is causing the error?
+> On Wed, Nov 11, 2020 at 10:21:16PM +0000, Al Viro wrote:
+> > On Wed, Nov 11, 2020 at 09:52:20PM +0000, Al Viro wrote:
+> > 
+> > > That can be done, but I would rather go with
+> > > 		n = copy_to_iter(m->buf + m->from, m->count, iter);
+> > > 		m->count -= n;
+> > > 		m->from += n;
+> > >                 copied += n;
+> > >                 if (!size)
+> > >                         goto Done;
+> > > 		if (m->count)
+> > > 			goto Efault;
+> > > if we do it that way.  Let me see if I can cook something
+> > > reasonable along those lines...
+> > 
+> > Something like below (build-tested only):
+> > 
+> > diff --git a/fs/seq_file.c b/fs/seq_file.c
+> > index 3b20e21604e7..07b33c1f34a9 100644
+> > --- a/fs/seq_file.c
+> > +++ b/fs/seq_file.c
+> > @@ -168,7 +168,6 @@ EXPORT_SYMBOL(seq_read);
+> >  ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  {
+> >  	struct seq_file *m = iocb->ki_filp->private_data;
+> > -	size_t size = iov_iter_count(iter);
+> >  	size_t copied = 0;
+> >  	size_t n;
+> >  	void *p;
+> > @@ -208,14 +207,11 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  	}
+> >  	/* if not empty - flush it first */
+> >  	if (m->count) {
+> > -		n = min(m->count, size);
+> > -		if (copy_to_iter(m->buf + m->from, n, iter) != n)
+> > -			goto Efault;
+> > +		n = copy_to_iter(m->buf + m->from, m->count, iter);
+> >  		m->count -= n;
+> >  		m->from += n;
+> > -		size -= n;
+> >  		copied += n;
+> > -		if (!size)
+> > +		if (!iov_iter_count(iter) || m->count)
+> >  			goto Done;
+> >  	}
+> >  	/* we need at least one record in buffer */
+> > @@ -249,6 +245,7 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  	goto Done;
+> >  Fill:
+> >  	/* they want more? let's try to get some more */
+> > +	/* m->count is positive and there's space left in iter */
+> >  	while (1) {
+> >  		size_t offs = m->count;
+> >  		loff_t pos = m->index;
+> > @@ -263,7 +260,7 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  			err = PTR_ERR(p);
+> >  			break;
+> >  		}
+> > -		if (m->count >= size)
+> > +		if (m->count >= iov_iter_count(iter))
+> >  			break;
+> >  		err = m->op->show(m, p);
+> >  		if (seq_has_overflowed(m) || err) {
+> > @@ -273,16 +270,14 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  		}
+> >  	}
+> >  	m->op->stop(m, p);
+> > -	n = min(m->count, size);
+> > -	if (copy_to_iter(m->buf, n, iter) != n)
+> > -		goto Efault;
+> > +	n = copy_to_iter(m->buf, m->count, iter);
+> >  	copied += n;
+> >  	m->count -= n;
+> >  	m->from = n;
+> >  Done:
+> > -	if (!copied)
+> > -		copied = err;
+> > -	else {
+> > +	if (unlikely(!copied)) {
+> > +		copied = m->count ? -EFAULT : err;
+> > +	} else {
+> >  		iocb->ki_pos += copied;
+> >  		m->read_pos += copied;
+> >  	}
+> > @@ -291,9 +286,6 @@ ssize_t seq_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> >  Enomem:
+> >  	err = -ENOMEM;
+> >  	goto Done;
+> > -Efault:
+> > -	err = -EFAULT;
+> > -	goto Done;
+> >  }
+> >  EXPORT_SYMBOL(seq_read_iter);
+> >  
 > 
-> Cute...  FWIW, on #origin + that commit with fix folded in I don't
-> see anything unusual in reads from mountinfo ;-/  OTOH, they'd
-> obviously been... creative with readv(2) arguments, so it would
-> be very interesting to see what it is they are passing to it.
+> This patch in -next (6a9f696d1627bacc91d1cebcfb177f474484e8ba) breaks
+> WSL2's interoperability feature, where Windows paths automatically get
+> added to PATH on start up so that Windows binaries can be accessed from
+> within Linux (such as clip.exe to pipe output to the clipboard). Before,
+> I would see a bunch of Linux + Windows folders in $PATH but after, I
+> only see the Linux folders (I can give you the actual PATH value if you
+> care but it is really long).
 > 
-> I'm half-asleep right now; will try to cook something to gather
-> that information tomorrow morning.  'Later...
+> I am not at all familiar with the semantics of this patch or how
+> Microsoft would be using it to inject folders into PATH (they have some
+> documentation on it here:
+> https://docs.microsoft.com/en-us/windows/wsl/interop) and I am not sure
+> how to go about figuring that out to see why this patch breaks something
+> (unless you have an idea). I have added the Hyper-V maintainers and list
+> to CC in case they know someone who could help.
 
-OK, so let's do this: fix in seq_read_iter() + in do_loop_readv_writev()
-(on entry) the following (racy as hell, but will do for debugging):
-
-	bool weird = false;
-
-	if (unlikely(memcmp(file->f_path.dentry->d_name.name, "mountinfo", 10))) {
-		int i;
-
-		for (i = 0; i < iter->nr_segs; i++)
-			if (!iter->iov[i].iov_len)
-				weird = true;
-		if (weird) {
-			printk(KERN_ERR "[%s]: weird readv on %p4D (%ld) ",
-				current->comm, filp, (long)filp->f_pos);
-			for (i = 0; i < iter->nr_segs; i++)
-				printk(KERN_CONT "%c%zd", i ? ':' : '<',
-					iter->iov[i].iov_len);
-			printk(KERN_CONT "> ");
-		}
-	}
-and in the end (just before return)
-	if (weird)
-		printk(KERN_CONT "-> %zd\n", ret);
-
-Preferably along with the results of cat /proc/<whatever it is>/mountinfo both
-on that and on the working kernel...
+FWIW, just to make sure:
+	1) does reverting just that commit recover the desired behaviour?
+	2) could you verify that your latest tests had been done with
+the incremental I'd posted (shifting the if (....) goto Done; out of the if
+body)?
+	3) does the build with that commit reverted produce any warnings
+related to mountinfo?
+	4) your posted log with WARN_ON unfortunately starts *after*
+the mountinfo accesses; could you check which process had been doing those?
+The Comm: ... part in there, that is.
+	5) in the "I don't believe that could happen, but let's make sure"
+department: turn the
+        /* m->count is positive and there's space left in iter */
+comment in seq_read_iter() into an outright
+	BUG_ON(!m->count || !iov_iter_count(iter));
