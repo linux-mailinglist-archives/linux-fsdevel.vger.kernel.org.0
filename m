@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6512B342A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 11:48:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D530C2B345F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 11:49:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbgKOKr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Nov 2020 05:47:58 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:59797 "EHLO
+        id S1727152AbgKOKtP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Nov 2020 05:49:15 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59962 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbgKOKrj (ORCPT
+        with ESMTP id S1727139AbgKOKtO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Nov 2020 05:47:39 -0500
+        Sun, 15 Nov 2020 05:49:14 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1keFRS-0000Kt-Ok; Sun, 15 Nov 2020 10:39:31 +0000
+        id 1keFRW-0000Kt-5S; Sun, 15 Nov 2020 10:39:34 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 25/39] init: handle idmapped mounts
-Date:   Sun, 15 Nov 2020 11:37:04 +0100
-Message-Id: <20201115103718.298186-26-christian.brauner@ubuntu.com>
+Subject: [PATCH v2 26/39] ioctl: handle idmapped mounts
+Date:   Sun, 15 Nov 2020 11:37:05 +0100
+Message-Id: <20201115103718.298186-27-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201115103718.298186-1-christian.brauner@ubuntu.com>
 References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
@@ -65,7 +65,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable the init helpers to handle idmapped mounts by passing down the mount's
+Enable generic ioctls to handle idmapped mounts by passing down the mount's
 user namespace.
 
 Cc: Christoph Hellwig <hch@lst.de>
@@ -77,49 +77,46 @@ Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 /* v2 */
 patch introduced
 ---
- fs/init.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/remap_range.c   | 7 +++++--
+ fs/verity/enable.c | 2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/init.c b/fs/init.c
-index 76f493600030..334e4c9c07eb 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -49,7 +49,7 @@ int __init init_chdir(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, path.dentry->d_inode,
-+	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
- 				 MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &path);
-@@ -65,7 +65,7 @@ int __init init_chroot(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, path.dentry->d_inode,
-+	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
- 				 MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
-@@ -120,7 +120,7 @@ int __init init_eaccess(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, d_inode(path.dentry),
-+	error = inode_permission(mnt_user_ns(path.mnt), d_inode(path.dentry),
- 				 MAY_ACCESS);
- 	path_put(&path);
- 	return error;
-@@ -190,7 +190,7 @@ int __init init_link(const char *oldname, const char *newname)
- 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
- 	if (error)
- 		goto out_dput;
--	error = vfs_link(old_path.dentry, &init_user_ns, 
-+	error = vfs_link(old_path.dentry, &init_user_ns,
- 			 new_path.dentry->d_inode, new_dentry, NULL);
- out_dput:
- 	done_path_create(&new_path, new_dentry);
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index 9e5b27641756..fe7f07228462 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -432,13 +432,16 @@ EXPORT_SYMBOL(vfs_clone_file_range);
+ /* Check whether we are allowed to dedupe the destination file */
+ static bool allow_file_dedupe(struct file *file)
+ {
++	struct user_namespace *user_ns = mnt_user_ns(file->f_path.mnt);
++	struct inode *inode = file_inode(file);
++
+ 	if (capable(CAP_SYS_ADMIN))
+ 		return true;
+ 	if (file->f_mode & FMODE_WRITE)
+ 		return true;
+-	if (uid_eq(current_fsuid(), file_inode(file)->i_uid))
++	if (uid_eq(current_fsuid(), i_uid_into_mnt(user_ns, inode)))
+ 		return true;
+-	if (!inode_permission(&init_user_ns, file_inode(file), MAY_WRITE))
++	if (!inode_permission(user_ns, inode, MAY_WRITE))
+ 		return true;
+ 	return false;
+ }
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 7449ef0050f4..8b9ea0f0850f 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
+ 	 * has verity enabled, and to stabilize the data being hashed.
+ 	 */
+ 
+-	err = inode_permission(&init_user_ns, inode, MAY_WRITE);
++	err = inode_permission(mnt_user_ns(filp->f_path.mnt), inode, MAY_WRITE);
+ 	if (err)
+ 		return err;
+ 
 -- 
 2.29.2
 
