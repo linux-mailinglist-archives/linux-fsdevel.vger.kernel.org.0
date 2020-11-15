@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 696F62B3305
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 09:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F1362B330B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 09:55:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbgKOIqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Nov 2020 03:46:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59768 "EHLO mail.kernel.org"
+        id S1726807AbgKOIxs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Nov 2020 03:53:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726600AbgKOIpz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Nov 2020 03:45:55 -0500
+        id S1726644AbgKOIxb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Nov 2020 03:53:31 -0500
 Received: from kernel.org (unknown [77.125.7.142])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC352223FB;
-        Sun, 15 Nov 2020 08:45:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E7962242E;
+        Sun, 15 Nov 2020 08:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605429954;
-        bh=I2e6oiG56Ipc+LYVEf48Tzpdu9e5X2SPeAjMkXGJ+FY=;
+        s=default; t=1605430403;
+        bh=zogKbmLR5WuYYhS1A9PyjE2BBFUNYgIBXxOPOFu4jUs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mvUrkC8DbWSBeGtX5LmBQbQw3erYKhs5cOaKJid6GDJMPM7nXXubIxoNcBB3oGNe7
-         rCwIs49LamtntTc1amgIjfXRya2sb8UfoqlV6jooN7E3J+NN/S80wRZL4M8ZXWanKD
-         tXrCqT3L+M5TGE/FDZPfoLrZTF0AQQmH6gi3Hxpk=
-Date:   Sun, 15 Nov 2020 10:45:39 +0200
+        b=lX2fpz594y7d/5i/mEef+AbbnIJzikgvOzNnoqSfFlQrJb9q90Elp66aOiMYcs1zs
+         TTHjnJQu5Da13GIKSCOa/J3DAETZs6oYZ3AL3AqwfPmxmxZFENcF3lAkHuh559m70/
+         7Mni0kOKQphJSxWriCKyHTtX74+IDbuZ2lYSWHfw=
+Date:   Sun, 15 Nov 2020 10:53:07 +0200
 From:   Mike Rapoport <rppt@kernel.org>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -57,45 +57,90 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>
 Subject: Re: [PATCH v8 4/9] mm: introduce memfd_secret system call to create
  "secret" memory areas
-Message-ID: <20201115084539.GU4758@kernel.org>
+Message-ID: <20201115085307.GV4758@kernel.org>
 References: <20201110151444.20662-1-rppt@kernel.org>
  <20201110151444.20662-5-rppt@kernel.org>
- <20201113140656.GG17076@casper.infradead.org>
+ <20201113135848.GF17076@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201113140656.GG17076@casper.infradead.org>
+In-Reply-To: <20201113135848.GF17076@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 02:06:56PM +0000, Matthew Wilcox wrote:
+On Fri, Nov 13, 2020 at 01:58:48PM +0000, Matthew Wilcox wrote:
 > On Tue, Nov 10, 2020 at 05:14:39PM +0200, Mike Rapoport wrote:
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index c89c5444924b..d8d170fa5210 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -884,4 +884,7 @@ config ARCH_HAS_HUGEPD
-> >  config MAPPING_DIRTY_HELPERS
-> >          bool
-> >  
-> > +config SECRETMEM
-> > +	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+> > +static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+> > +{
+> > +	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+> > +	struct inode *inode = file_inode(vmf->vma->vm_file);
+> > +	pgoff_t offset = vmf->pgoff;
+> > +	unsigned long addr;
+> > +	struct page *page;
+> > +	int ret = 0;
+> > +
+> > +	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+> > +		return vmf_error(-EINVAL);
+> > +
+> > +	page = find_get_entry(mapping, offset);
 > 
-> So I now have to build this in, whether I want it or not?
+> Why did you decide to use find_get_entry() here?  You don't handle
+> swap or shadow entries.
 
-Why wouldn't anybody want this nice feature? ;-)
+Right, I've missed that. 
 
-Now, seriously, I hesitated a lot about having a prompt here, but in the
-end I've decided to go without it.
+> > +	if (!page) {
+> > +		page = secretmem_alloc_page(vmf->gfp_mask);
+> > +		if (!page)
+> > +			return vmf_error(-EINVAL);
+> 
+> Why is this EINVAL and not ENOMEM?
 
-The added footprint is not so big, with x86 defconfig it's less than 8K
-and with distro (I've checked with Fedora) config the difference is less
-than 1k because they anyway have CMA=y.
+Ah, I was annoyed by OOMs I got when I simulated various allocation
+failures, so I changed it to get SIGBUS instead and than forgot to restore.
+Will fix.
 
-As this is "security" feature, disros most probably would have this
-enabled anyway, and I believe users that will see something like "Allow
-hiding memory from the kernel" will hit Y there.
+> > +		ret = add_to_page_cache(page, mapping, offset, vmf->gfp_mask);
+> > +		if (unlikely(ret))
+> > +			goto err_put_page;
+> > +
+> > +		ret = set_direct_map_invalid_noflush(page, 1);
+> > +		if (ret)
+> > +			goto err_del_page_cache;
+> > +
+> > +		addr = (unsigned long)page_address(page);
+> > +		flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
+> > +
+> > +		__SetPageUptodate(page);
+> > +
+> > +		ret = VM_FAULT_LOCKED;
+> > +	}
+> > +
+> > +	vmf->page = page;
+> > +	return ret;
+> 
+> Does sparse not warn you about this abuse of vm_fault_t?  Separate out
+> 'ret' and 'err'.
+ 
+Will fix.
+
+> Andrew, please fold in this fix.  I suspect Mike will want to fix
+> the other things I mention above.
+> 
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 3dfdbd85ba00..09ca27f21661 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -172,7 +172,7 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+>  	if (((loff_t)vmf->pgoff << PAGE_SHIFT) >= i_size_read(inode))
+>  		return vmf_error(-EINVAL);
+>  
+> -	page = find_get_entry(mapping, offset);
+> +	page = find_get_page(mapping, offset);
+>  	if (!page) {
+>  		page = secretmem_alloc_page(ctx, vmf->gfp_mask);
+>  		if (!page)
 
 -- 
 Sincerely yours,
