@@ -2,91 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F62A2B36D9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 17:57:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EEF72B38B0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 20:31:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbgKOQ5F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Nov 2020 11:57:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbgKOQ5F (ORCPT
+        id S1727557AbgKOTaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Nov 2020 14:30:22 -0500
+Received: from mail-il1-f199.google.com ([209.85.166.199]:56425 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbgKOTaU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Nov 2020 11:57:05 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D884C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 08:57:05 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id z21so21434749lfe.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 08:57:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7ZhWNdmrv7uNC+shuTB5UrdMpVq8cOfsO/67ny1dABo=;
-        b=GKe8HtSGVpql7itwBeLIkBdzeQTDlLA/NMjuNvTbYEKWXB7yyVUDwFWl9MTbBscdEJ
-         hObKcjWJK90+BTLO+zgzmCcH+qCmtS9aZD909pSoyW/0/+CSK0ggGgVgQQGW5k7uiBQQ
-         9/PazKzHsYQiacJMrzhtp0dCF64qWviUt14wA=
+        Sun, 15 Nov 2020 14:30:20 -0500
+Received: by mail-il1-f199.google.com with SMTP id g2so10390769ilb.23
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 11:30:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7ZhWNdmrv7uNC+shuTB5UrdMpVq8cOfsO/67ny1dABo=;
-        b=C+MZTUXJUfOyoBcVRiGBJTKdxQ1mzYIiXM7QxCYj2iA9rcWbrBZ3vshRBJvcN3SP4r
-         4/uwtAsyeU/V4tBGIzIfZruZ1ZVPEws8uOinPqPJy5IrcrzT2O9iKZTKgUeNor/6Jr9J
-         IGPbnPip13clhKD5I75e2QVP6kzQYsqk42daNQ9jy83LVeudAdetsdy/WvWB0wlhbcnM
-         v46MwpDIz3f8wbdK8HIHi9Gykj3Jb/qLANYRq20ZIlQHzTxq7a/MFHAEXSin+vA/FhTi
-         2jhO/fhZFJEGfTBMQpNdY4wG0agPDsK2sIzMkim99R+jSApk5JjYBYpaI9yW+pnJdd2/
-         Cw1A==
-X-Gm-Message-State: AOAM532muoa+T3TotYf6YFBG2y0R2dyS9julPxmPSHXUgduVak/xpQ9D
-        Lw3DdIB5juvgf4P/aE03vLK9gmzLmPW4rw==
-X-Google-Smtp-Source: ABdhPJypeQD4QH9rROfEOleIGF+3S26geBUMpVWNXQx1uLYiIaltDg1ZVVK9O4cexU20XxyvK8yQXg==
-X-Received: by 2002:a19:f207:: with SMTP id q7mr3942912lfh.588.1605459423151;
-        Sun, 15 Nov 2020 08:57:03 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id o17sm331869lfi.85.2020.11.15.08.57.00
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Nov 2020 08:57:01 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id w142so21425278lff.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 08:57:00 -0800 (PST)
-X-Received: by 2002:a19:7f55:: with SMTP id a82mr4592052lfd.603.1605459420530;
- Sun, 15 Nov 2020 08:57:00 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=reAnx4O5xXKHBeW4ynKl5kqLTK0jD87c4+XTK2E/3PY=;
+        b=ML7abgCIRZimuI6W5pjP8p5dA+3R/c+IeXgyIokGAqJ2j7px/GwkjYIRAHXh7o2lf+
+         AOSkGKx1yIiW9JJXTzY9ysEwxiuKZ4BSJFoqnp0UDWdIcUzO2OmSyoVIZtno0wPwqbfc
+         NjVh6zjCbUsEfl2SK0lRO9HuIsslnXNFswgQNY99/4yFGnQ6kWOQapBipgPwX6lajDFu
+         khFcas5fkwHFccSMtgmSHNhmL1u7izWCFPZD41oI42jwmMkLYAS70kOvzyMQSJfL0UN3
+         uRJc/KeiyhqX54OEU4Po6XMRv9tGHh3U2QxXIlTs9Kkt+Gym4nJF0X2l+MPhGl6TsuEU
+         6bTQ==
+X-Gm-Message-State: AOAM531YakeIuZ8nGgbCTk0eZeMBN/DfSCQ3vAoIhMsRWIQG98XRZgw1
+        fFIG0U3VRJrrzpeUFHHJN17WZZr/fAQMsRiBGn8oxo9lENjy
+X-Google-Smtp-Source: ABdhPJzqD4vyX/EdogezQiQ5Xvd4V9S+DHxX9WUcRpflKMxt0ReqC5doZIALYMLab0OUqwzcl+hNaR0GnaVogNEHgIQOmMixWcHV
 MIME-Version: 1.0
-References: <20201111222116.GA919131@ZenIV.linux.org.uk> <20201113235453.GA227700@ubuntu-m3-large-x86>
- <20201114011754.GL3576660@ZenIV.linux.org.uk> <20201114030124.GA236@Ryzen-9-3900X.localdomain>
- <20201114035453.GM3576660@ZenIV.linux.org.uk> <20201114041420.GA231@Ryzen-9-3900X.localdomain>
- <20201114055048.GN3576660@ZenIV.linux.org.uk> <20201114061934.GA658@Ryzen-9-3900X.localdomain>
- <20201114070025.GO3576660@ZenIV.linux.org.uk> <20201114205000.GP3576660@ZenIV.linux.org.uk>
- <20201115155355.GR3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201115155355.GR3576660@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 15 Nov 2020 08:56:44 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wisaN3QOEYq6XBSKyW_74X5GhdbyE5AnbLkh9krarhDAA@mail.gmail.com>
-Message-ID: <CAHk-=wisaN3QOEYq6XBSKyW_74X5GhdbyE5AnbLkh9krarhDAA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kys@microsoft.com, haiyangz@microsoft.com,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, linux-hyperv@vger.kernel.org
+X-Received: by 2002:a02:a15b:: with SMTP id m27mr8620665jah.116.1605468619654;
+ Sun, 15 Nov 2020 11:30:19 -0800 (PST)
+Date:   Sun, 15 Nov 2020 11:30:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c5d1f605b42a4a6e@google.com>
+Subject: WARNING: suspicious RCU usage in unmap_page_range
+From:   syzbot <syzbot+4ca458af025542e76123@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 15, 2020 at 7:54 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> OK, I think I understand what's going on.  Could you check if
-> reverting the variant in -next and applying the following instead
-> fixes what you are seeing?
+Hello,
 
-Side note: if this ends up working, can you add a lot of comments
-about this thing (both in the code and the commit message)? It
-confused both Christoph and me, and clearly you were stumped too.
-That's not a great sign.
+syzbot found the following issue on:
 
-                  Linus
+HEAD commit:    eccc8767 Merge branch 'fixes' of git://git.kernel.org/pub/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=115b9a26500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=86ae89f992df998f
+dashboard link: https://syzkaller.appspot.com/bug?extid=4ca458af025542e76123
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4ca458af025542e76123@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+5.10.0-rc3-syzkaller #0 Not tainted
+-----------------------------
+kernel/sched/core.c:7264 Illegal context switch in RCU-sched read-side critical section!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 0
+2 locks held by udevd/9816:
+ #0: ffff8880124f5b40 (&sig->cred_guard_mutex){+.+.}-{3:3}, at: prepare_bprm_creds fs/exec.c:1449 [inline]
+ #0: ffff8880124f5b40 (&sig->cred_guard_mutex){+.+.}-{3:3}, at: bprm_execve+0x1c6/0x1b70 fs/exec.c:1791
+ #1: ffff8880124f5bd0 (&sig->exec_update_mutex){+.+.}-{3:3}, at: exec_mmap fs/exec.c:984 [inline]
+ #1: ffff8880124f5bd0 (&sig->exec_update_mutex){+.+.}-{3:3}, at: begin_new_exec+0xa89/0x2ac0 fs/exec.c:1276
+
+stack backtrace:
+CPU: 1 PID: 9816 Comm: udevd Not tainted 5.10.0-rc3-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x107/0x163 lib/dump_stack.c:118
+ ___might_sleep+0x25d/0x2b0 kernel/sched/core.c:7264
+ zap_pte_range mm/memory.c:1323 [inline]
+ zap_pmd_range mm/memory.c:1357 [inline]
+ zap_pud_range mm/memory.c:1386 [inline]
+ zap_p4d_range mm/memory.c:1407 [inline]
+ unmap_page_range+0xfd2/0x2640 mm/memory.c:1428
+ unmap_single_vma+0x198/0x300 mm/memory.c:1473
+ unmap_vmas+0x168/0x2e0 mm/memory.c:1505
+ exit_mmap+0x2b1/0x530 mm/mmap.c:3222
+ __mmput+0x122/0x470 kernel/fork.c:1079
+ mmput+0x53/0x60 kernel/fork.c:1100
+ exec_mmap fs/exec.c:1030 [inline]
+ begin_new_exec+0xdc3/0x2ac0 fs/exec.c:1276
+ load_elf_binary+0x159d/0x4a60 fs/binfmt_elf.c:998
+ search_binary_handler fs/exec.c:1703 [inline]
+ exec_binprm fs/exec.c:1744 [inline]
+ bprm_execve+0x9d7/0x1b70 fs/exec.c:1820
+ do_execveat_common+0x626/0x7c0 fs/exec.c:1915
+ do_execve fs/exec.c:1983 [inline]
+ __do_sys_execve fs/exec.c:2059 [inline]
+ __se_sys_execve fs/exec.c:2054 [inline]
+ __x64_sys_execve+0x8f/0xc0 fs/exec.c:2054
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7f13375e8207
+Code: Unable to access opcode bytes at RIP 0x7f13375e81dd.
+RSP: 002b:00007ffc9f06eb68 EFLAGS: 00000202 ORIG_RAX: 000000000000003b
+RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007f13375e8207
+RDX: 0000000001df1ee0 RSI: 00007ffc9f06ec60 RDI: 00007ffc9f06fc70
+RBP: 0000000000625500 R08: 00000000000025c3 R09: 00000000000025c3
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000001df1ee0
+R13: 0000000000000007 R14: 0000000001c60030 R15: 0000000000000005
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
