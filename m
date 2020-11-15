@@ -2,186 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 098572B32F8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 09:32:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 696F62B3305
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Nov 2020 09:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgKOIbP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Nov 2020 03:31:15 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:41028 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726781AbgKOIa1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Nov 2020 03:30:27 -0500
-Received: by mail-il1-f199.google.com with SMTP id z4so1455331ilh.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 00:30:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=yhkV3/tMrdtrAvS4lOhoJ4CXfHY/S2nMAz1BiG29sHE=;
-        b=gdfs+Z/0fVrg4lOAKYqNYB0drtrDDQACugV7FTVwf9NIHbJCJiVNYe101EgdOWZCl2
-         7MUU62QmH591/hVynfktx27sJhnfylyTJpokJmSMXEswyAdORO6Hpe5+w4cdwosFRkBN
-         Xrm1gjvuWLepqBH7fsA9hdrrdenBxiE981phgUA0ikLAN2PAcuKPKIyYtHTGLza9a2Fe
-         B7c9ryGZBXF+lpx6eNFuFLezc+xisqr5AXe+fikL0mg8nHxkry4B3R12rq4ODyets2gm
-         X5g1T54mn4XaTjkrwPQupJPJqfW0Hp+gKS6POw6c4ThrW3qCFvAfM/NNnXRQiAgJuFpE
-         Usfw==
-X-Gm-Message-State: AOAM532q9Yyjbw38ywJdjk9tL5mjciDjySXS6NKoLh3S1k+AC5lOVYZa
-        NWGHOz64UPk1QhO5UuCeht5agrKM/VuRsYAJrVMHqy2x+qQ6
-X-Google-Smtp-Source: ABdhPJxB4tGvsT6KSYHfr3uk8XxX/ci2Mz2uXfftosTElsPfwco9Y95M1vtZ8gYkOc9x5FPPeEtK1ZsKBshZvkErMMvLMgajHrOW
+        id S1726746AbgKOIqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Nov 2020 03:46:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726600AbgKOIpz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 15 Nov 2020 03:45:55 -0500
+Received: from kernel.org (unknown [77.125.7.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC352223FB;
+        Sun, 15 Nov 2020 08:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605429954;
+        bh=I2e6oiG56Ipc+LYVEf48Tzpdu9e5X2SPeAjMkXGJ+FY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mvUrkC8DbWSBeGtX5LmBQbQw3erYKhs5cOaKJid6GDJMPM7nXXubIxoNcBB3oGNe7
+         rCwIs49LamtntTc1amgIjfXRya2sb8UfoqlV6jooN7E3J+NN/S80wRZL4M8ZXWanKD
+         tXrCqT3L+M5TGE/FDZPfoLrZTF0AQQmH6gi3Hxpk=
+Date:   Sun, 15 Nov 2020 10:45:39 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Hagen Paul Pfeifer <hagen@jauu.net>
+Subject: Re: [PATCH v8 4/9] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <20201115084539.GU4758@kernel.org>
+References: <20201110151444.20662-1-rppt@kernel.org>
+ <20201110151444.20662-5-rppt@kernel.org>
+ <20201113140656.GG17076@casper.infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:a488:: with SMTP id d8mr7123849jam.55.1605429016154;
- Sun, 15 Nov 2020 00:30:16 -0800 (PST)
-Date:   Sun, 15 Nov 2020 00:30:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000038569805b4211287@google.com>
-Subject: INFO: task can't die in io_sq_thread_stop
-From:   syzbot <syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201113140656.GG17076@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Nov 13, 2020 at 02:06:56PM +0000, Matthew Wilcox wrote:
+> On Tue, Nov 10, 2020 at 05:14:39PM +0200, Mike Rapoport wrote:
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index c89c5444924b..d8d170fa5210 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -884,4 +884,7 @@ config ARCH_HAS_HUGEPD
+> >  config MAPPING_DIRTY_HELPERS
+> >          bool
+> >  
+> > +config SECRETMEM
+> > +	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+> 
+> So I now have to build this in, whether I want it or not?
 
-syzbot found the following issue on:
+Why wouldn't anybody want this nice feature? ;-)
 
-HEAD commit:    6dd65e60 Add linux-next specific files for 20201110
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14727d42500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4fab43daf5c54712
-dashboard link: https://syzkaller.appspot.com/bug?extid=03beeb595f074db9cfd1
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+Now, seriously, I hesitated a lot about having a prompt here, but in the
+end I've decided to go without it.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The added footprint is not so big, with x86 defconfig it's less than 8K
+and with distro (I've checked with Fedora) config the difference is less
+than 1k because they anyway have CMA=y.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com
+As this is "security" feature, disros most probably would have this
+enabled anyway, and I believe users that will see something like "Allow
+hiding memory from the kernel" will hit Y there.
 
-INFO: task syz-executor.2:12399 can't die for more than 143 seconds.
-task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:3773 [inline]
- __schedule+0x893/0x2170 kernel/sched/core.c:4522
- schedule+0xcf/0x270 kernel/sched/core.c:4600
- schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
- kthread_stop+0x17a/0x720 kernel/kthread.c:596
- io_put_sq_data fs/io_uring.c:7193 [inline]
- io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
- io_finish_async fs/io_uring.c:7297 [inline]
- io_sq_offload_create fs/io_uring.c:8015 [inline]
- io_uring_create fs/io_uring.c:9433 [inline]
- io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45deb9
-Code: Unable to access opcode bytes at RIP 0x45de8f.
-RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
-RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
-RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
-R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
-INFO: task syz-executor.2:12399 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:3773 [inline]
- __schedule+0x893/0x2170 kernel/sched/core.c:4522
- schedule+0xcf/0x270 kernel/sched/core.c:4600
- schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
- kthread_stop+0x17a/0x720 kernel/kthread.c:596
- io_put_sq_data fs/io_uring.c:7193 [inline]
- io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
- io_finish_async fs/io_uring.c:7297 [inline]
- io_sq_offload_create fs/io_uring.c:8015 [inline]
- io_uring_create fs/io_uring.c:9433 [inline]
- io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45deb9
-Code: Unable to access opcode bytes at RIP 0x45de8f.
-RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
-RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
-RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
-R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1653:
- #0: ffffffff8b3386a0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6253
-1 lock held by systemd-journal/4873:
-1 lock held by in:imklog/8167:
- #0: ffff88801c86e0f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1653 Comm: khungtaskd Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
- watchdog+0xd89/0xf30 kernel/hung_task.c:338
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events nsim_dev_trap_report_work
-RIP: 0010:mark_lock+0x30/0x24c0 kernel/locking/lockdep.c:4371
-Code: 41 54 41 89 d4 48 ba 00 00 00 00 00 fc ff df 55 53 48 81 ec 18 01 00 00 48 8d 5c 24 38 48 89 3c 24 48 c7 44 24 38 b3 8a b5 41 <48> c1 eb 03 48 c7 44 24 40 30 1b c6 8a 48 8d 04 13 48 c7 44 24 48
-RSP: 0018:ffffc90000ca7988 EFLAGS: 00000096
-RAX: 0000000000000004 RBX: ffffc90000ca79c0 RCX: ffffffff8155b947
-RDX: dffffc0000000000 RSI: ffff888010d20918 RDI: ffff888010d20000
-RBP: 0000000000000006 R08: 0000000000000000 R09: ffffffff8ebb477f
-R10: fffffbfff1d768ef R11: 000000004fb6aa4b R12: 0000000000000006
-R13: dffffc0000000000 R14: ffff888010d20918 R15: 0000000000000022
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8ffcf99000 CR3: 000000001b2e7000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- mark_held_locks+0x9f/0xe0 kernel/locking/lockdep.c:4011
- __trace_hardirqs_on_caller kernel/locking/lockdep.c:4037 [inline]
- lockdep_hardirqs_on_prepare kernel/locking/lockdep.c:4097 [inline]
- lockdep_hardirqs_on_prepare+0x28b/0x400 kernel/locking/lockdep.c:4049
- trace_hardirqs_on+0x5b/0x1c0 kernel/trace/trace_preemptirq.c:49
- __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
- _raw_spin_unlock_irqrestore+0x42/0x50 kernel/locking/spinlock.c:191
- extract_crng drivers/char/random.c:1026 [inline]
- _get_random_bytes+0x229/0x670 drivers/char/random.c:1562
- nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:538 [inline]
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:568 [inline]
- nsim_dev_trap_report_work+0x740/0xbd0 drivers/net/netdevsim/dev.c:609
- process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Sincerely yours,
+Mike.
