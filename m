@@ -2,78 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C2D2B4E04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 18:48:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B6472B4ECD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 19:04:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387579AbgKPRlh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 12:41:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46494 "EHLO
+        id S2387484AbgKPSDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 13:03:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387673AbgKPRle (ORCPT
+        with ESMTP id S1731246AbgKPSDa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 12:41:34 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7FFC0613CF;
-        Mon, 16 Nov 2020 09:41:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jXhYiraeCvEjgtp4Al1Jja9wRZjk54jdQVNIIz1mtNI=; b=DJ4JRqLbCnxL7oV46eew1i513o
-        cuizmUxtJNSsbEo/J7T6unlPPjbVcPfPHf7PEy6C4HL42PdN2meHxNJqdVEh9o6Qd5c3kGMsCRZPY
-        7DgN1CTRMw9CX90r4EprheOKWoTjCkfD8FGZ/NxD+4ghMRRkbOJM/AFS6IKNsybRVRGEGzy7aA+a5
-        IKdlZCwL79FzxVE6bFdihZ05OG5Ph3WDVHIV0JmRn6s2T95xG3usEQE8da8xbEyzqPe0E4Se596fY
-        hPSJ/dXtrulN/kouNf7LnzZHhkhqTVzBc7IEPlnbRKoVclBnuq1pjPMlp68L1LoJhR5F9AzO93B/o
-        cZTocpbg==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1keiVL-0001Fe-6A; Mon, 16 Nov 2020 17:41:27 +0000
-Date:   Mon, 16 Nov 2020 17:41:27 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
- ima_calc_file_hash()
-Message-ID: <20201116174127.GA4578@infradead.org>
-References: <20201113080132.16591-1-roberto.sassu@huawei.com>
- <20201114111057.GA16415@infradead.org>
- <0fd0fb3360194d909ba48f13220f9302@huawei.com>
- <20201116162202.GA15010@infradead.org>
- <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
- <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
+        Mon, 16 Nov 2020 13:03:30 -0500
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B3F6C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 10:03:30 -0800 (PST)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4CZcPp1w58zQlK6;
+        Mon, 16 Nov 2020 19:03:26 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id 0Q5bsH1rgBPM; Mon, 16 Nov 2020 19:03:22 +0100 (CET)
+Date:   Tue, 17 Nov 2020 05:03:14 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Igor Zhbanov <izh1979@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: Proposal for the new mount options: no_symlink and no_new_symlink
+Message-ID: <20201116180314.5w5xlw7g63i43c3a@yavin.dot.cyphar.com>
+References: <CAEUiM9PxZSCuBPSuwkcWxZ2Q-=WFfMU461u2WUnXCw8UBN6x6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gp5zf5xeyxw6wrah"
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAEUiM9PxZSCuBPSuwkcWxZ2Q-=WFfMU461u2WUnXCw8UBN6x6w@mail.gmail.com>
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -7.00 / 15.00 / 15.00
+X-Rspamd-Queue-Id: E7A8F171F
+X-Rspamd-UID: d4d781
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 09:37:32AM -0800, Linus Torvalds wrote:
-> > This discussion seems to be going down the path of requiring an IMA
-> > filesystem hook for reading the file, again.  That solution was
-> > rejected, not by me.  What is new this time?
-> 
-> You can't read a non-read-opened file. Not even IMA can.
-> 
-> So don't do that then.
-> 
-> IMA is doing something wrong. Why would you ever read a file that can't be read?
-> 
-> Fix whatever "open" function instead of trying to work around the fact
-> that you opened it wrong.
 
-The "issue" with IMA is that it uses security hooks to hook into the
-VFS and then wants to read every file that gets opened on a real file
-system to "measure" the contents vs a hash stashed away somewhere.
-Which has always been rather sketchy.
+--gp5zf5xeyxw6wrah
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2020-11-13, Igor Zhbanov <izh1979@gmail.com> wrote:
+> I want to implement 2 new mount options: "no_symlink" and "no_new_symlink=
+".
+> The "nosymlink" option will act like "nodev", i.e. it will ignore all cre=
+ated
+> symbolic links.
+
+nosymlink has already been implemented (though the name "nosymfollow"
+was used to match that corresponding FreeBSD mount option) by Ross
+Zwisler and is in Al's tree[1].
+
+> And the option "no_new_symlink" is for more relaxed configuration. It will
+> allow to follow already existing symbolic links but forbid to create new.
+> It could be useful to remount filesystem after system upgrade with this o=
+ption.
+
+This seems less generally useful than nosymfollow and it doesn't really
+match any other inode-type-blocking mount options. You could also
+implement this using existing facilities (seccomp and AppArmor), so I'm
+not sure much is gained by making this a separate mount option.
+
+[1]: https://lkml.kernel.org/lkml/20200827201015.GC1236603@ZenIV.linux.org.=
+uk/
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--gp5zf5xeyxw6wrah
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCX7K+4AAKCRCdlLljIbnQ
+EjlkAP0eatNNn4XX9r3cVz+YZjx1XfgESRgJkqeLpwyoV0GsCwD+KERFK3QsYi4f
+eHw+qpJcspTWrwSXyTW/xyw8jK5TSAg=
+=vl0c
+-----END PGP SIGNATURE-----
+
+--gp5zf5xeyxw6wrah--
