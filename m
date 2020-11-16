@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7754E2B484C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:07:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8552B4774
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:06:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbgKPPD7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 10:03:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49008 "EHLO
+        id S1730772AbgKPO7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 09:59:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730736AbgKPO65 (ORCPT
+        with ESMTP id S1730719AbgKPO7A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 09:58:57 -0500
+        Mon, 16 Nov 2020 09:59:00 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89985C0613CF;
-        Mon, 16 Nov 2020 06:58:57 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FB7BC0613D3;
+        Mon, 16 Nov 2020 06:59:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=2MZ7rG2SVw4WzYTKnpU/EThu7I42ye4vtM6air7UEg8=; b=PyHnyUh0PPkH+yqLagQ19OvvC+
-        FlSpzlSdg1OQunPTCAeDu0gQH1vPQJCoApDX7VxN6c/WOIqI0ic8Iv/M87Km2qTOlzCX+eJxIcK7t
-        9gT+KgnonlrqeWO8HGhDmNKS9d2N8KcELAEcVJYOp2xLKPiY9VrDekD0EQIUvZfvsG5kAL+aHRVDf
-        MrC5YNsHcLZkbfWU7+tWXI2XVoRl2stXpjIpNroEOB5aMcrebGwmReG2yS2Hcvy4gcX3e++R2ckwp
-        3uA1SKy8JuMioxo6fxMdKZXrCHsKzlw8Gr1OG0+awbEELu9T1276RdekSFGCRODCHQGNUgKXtUJAu
-        o8MV8THA==;
+        bh=9xKkbsaYgLwhE10hNLQkbULUUrvPvOI5lAnm4OXLvPs=; b=oYdX9nzKoJif6AkXObIozxVfvj
+        7cGF/f/pUnJJHDQ6T2624151wrdwaTi3mmORA1Sk4dkNQXTLpvcPq6k6KdWEaLJxRF4lDmEXm8qw9
+        oYE1wB5V9C5rcNG0vg2/s/RZq7WpvPXksRbrz6BhFVFbp3fgW6Cu8Ei10wVmFRzzU2lZbNkryPPwp
+        UyZEBLPwZzIDOtCGDnQaZ/yC0WN3H+ttyOeryQQMS7541LF9/8zj21iM7fknwF/oyMb92PdRg+U+/
+        bjDqshSNF4XCVwta4ehBG8dKT/cx10oylnvhgVmCv3gk5lCpRUkUrEy9iufHfdIZqR7G/SymA4RHz
+        LVTtFmtA==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefxr-0003sC-Nh; Mon, 16 Nov 2020 14:58:44 +0000
+        id 1kefxu-0003sm-C6; Mon, 16 Nov 2020 14:58:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -47,11 +47,10 @@ Cc:     Justin Sanders <justin@coraid.com>,
         drbd-dev@lists.linbit.com, nbd@other.debian.org,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 24/78] mtd_blkdevs: don't override BLKFLSBUF
-Date:   Mon, 16 Nov 2020 15:57:15 +0100
-Message-Id: <20201116145809.410558-25-hch@lst.de>
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 26/78] block: add a new set_read_only method
+Date:   Mon, 16 Nov 2020 15:57:17 +0100
+Message-Id: <20201116145809.410558-27-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -62,59 +61,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-BLKFLSBUF is not supposed to actually send a flush command to the device,
-but to tear down buffer cache structures.  Remove the mtd_blkdevs
-implementation and just use the default semantics instead.
+Add a new method to allow for driver-specific processing when setting or
+clearing the block device read-only state.  This allows to replace the
+cumbersome and error-prone override of the whole ioctl implementation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Richard Weinberger <richard@nod.at>
 ---
- drivers/mtd/mtd_blkdevs.c | 28 ----------------------------
- 1 file changed, 28 deletions(-)
+ block/ioctl.c          | 5 +++++
+ include/linux/blkdev.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index 0c05f77f9b216e..fb8e12d590a13a 100644
---- a/drivers/mtd/mtd_blkdevs.c
-+++ b/drivers/mtd/mtd_blkdevs.c
-@@ -298,38 +298,10 @@ static int blktrans_getgeo(struct block_device *bdev, struct hd_geometry *geo)
- 	return ret;
+diff --git a/block/ioctl.c b/block/ioctl.c
+index c6d8863f040945..a6fa16b9770593 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -389,6 +389,11 @@ static int blkdev_roset(struct block_device *bdev, fmode_t mode,
+ 		return ret;
+ 	if (get_user(n, (int __user *)arg))
+ 		return -EFAULT;
++	if (bdev->bd_disk->fops->set_read_only) {
++		ret = bdev->bd_disk->fops->set_read_only(bdev, n);
++		if (ret)
++			return ret;
++	}
+ 	set_device_ro(bdev, n);
+ 	return 0;
  }
- 
--static int blktrans_ioctl(struct block_device *bdev, fmode_t mode,
--			      unsigned int cmd, unsigned long arg)
--{
--	struct mtd_blktrans_dev *dev = blktrans_dev_get(bdev->bd_disk);
--	int ret = -ENXIO;
--
--	if (!dev)
--		return ret;
--
--	mutex_lock(&dev->lock);
--
--	if (!dev->mtd)
--		goto unlock;
--
--	switch (cmd) {
--	case BLKFLSBUF:
--		ret = dev->tr->flush ? dev->tr->flush(dev) : 0;
--		break;
--	default:
--		ret = -ENOTTY;
--	}
--unlock:
--	mutex_unlock(&dev->lock);
--	blktrans_dev_put(dev);
--	return ret;
--}
--
- static const struct block_device_operations mtd_block_ops = {
- 	.owner		= THIS_MODULE,
- 	.open		= blktrans_open,
- 	.release	= blktrans_release,
--	.ioctl		= blktrans_ioctl,
- 	.getgeo		= blktrans_getgeo,
- };
- 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 639cae2c158b59..5c1ba8a8d2bc7e 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1850,6 +1850,7 @@ struct block_device_operations {
+ 	void (*unlock_native_capacity) (struct gendisk *);
+ 	int (*revalidate_disk) (struct gendisk *);
+ 	int (*getgeo)(struct block_device *, struct hd_geometry *);
++	int (*set_read_only)(struct block_device *bdev, bool ro);
+ 	/* this callback is with swap_lock and sometimes page table lock held */
+ 	void (*swap_slot_free_notify) (struct block_device *, unsigned long);
+ 	int (*report_zones)(struct gendisk *, sector_t sector,
 -- 
 2.29.2
 
