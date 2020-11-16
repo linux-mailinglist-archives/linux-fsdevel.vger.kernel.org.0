@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 524CD2B4691
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 15:59:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C10C62B4694
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 15:59:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730642AbgKPO6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 09:58:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48944 "EHLO
+        id S1730662AbgKPO6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 09:58:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730591AbgKPO6m (ORCPT
+        with ESMTP id S1730586AbgKPO6n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 09:58:42 -0500
+        Mon, 16 Nov 2020 09:58:43 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE1CC0613CF;
-        Mon, 16 Nov 2020 06:58:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FD29C0613CF;
+        Mon, 16 Nov 2020 06:58:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=j/0/qXcDYvQ/KRFTCfbeLrD6BKftlYW1jMJrLTQknrA=; b=byXWvuFWUAS6lZPm5Zeq7p8bBe
-        us/bzllqhkru2czyVVokQTTeYL+/3nVsuU4/rDhYvEj/ImRfWDgds8ciFSHt3DJegL3w+3AQaGHag
-        PKasBfLdKS5E4pWdTFh6/4uyvJRFiUdVWjcV1a5aQvY/kBYNo4iLxhmPSh2kdJdTp7A4ixInIx3wo
-        JpWIePokKzvwp8PcbSTxxumquRpS137WC1RZjgyVjiJeOwfVg8ecKo6rYbXAhcQrObDK5SeQ3EIfa
-        OTrz4SZ5xlHtXA94sJkOV0q/92afNyn3WLIhIoPBbXq1zA8kztmL78I31XmGh7QR7o5AcHIy7rcAn
-        HnC1nGVw==;
+        bh=/Imzh1mtRC/4MzK3hbPZY3ezfjbBAXF+4uATbyQG9tw=; b=dBQLE+OXBD+j477XeVCLVsEYMc
+        RcEmj1V7WI2hhE1ic5DNIFG4NASPB/YphyPWVi7Xq1LFghc+xDtYP8gnsZoG77DfNVesQgpmfkhvc
+        fRwObxyPEZK/z1Ciz1aZPB7p7sncrnoVPvsbR1T3r36wVT6Dggw6kq20tBT9oOGKs7N8awXlr/4dD
+        vSByTZgMJWOqjW2HVCrSuJQGs+W4TB0ER5Ppk1IPUgTtfrMT+MCFmU3g27MhXzwXsmuaY0EkY4/zY
+        y2h6fT5m4m5EipT6NUGe0exghgq3sxrlH/h+qqCes57dPolMGfQloQ8v6PU+P54LeLSCXbzWWejRV
+        yilzQCOg==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefxb-0003mp-ER; Mon, 16 Nov 2020 14:58:27 +0000
+        id 1kefxe-0003nT-5J; Mon, 16 Nov 2020 14:58:30 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -48,9 +48,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 13/78] pktcdvd: use set_capacity_and_notify
-Date:   Mon, 16 Nov 2020 15:57:04 +0100
-Message-Id: <20201116145809.410558-14-hch@lst.de>
+Subject: [PATCH 15/78] drbd: use set_capacity_and_notify
+Date:   Mon, 16 Nov 2020 15:57:06 +0100
+Message-Id: <20201116145809.410558-16-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -66,23 +66,33 @@ device.  This also gets the uevent notifications for the resize for free.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/pktcdvd.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/block/drbd/drbd_main.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index 467dbd06b7cdb1..4326401cede445 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -2130,8 +2130,7 @@ static int pkt_open_dev(struct pktcdvd_device *pd, fmode_t write)
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index 65b95aef8dbc95..1c8c18b2a25f33 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -2036,8 +2036,7 @@ void drbd_set_my_capacity(struct drbd_device *device, sector_t size)
+ {
+ 	char ppb[10];
+ 
+-	set_capacity(device->vdisk, size);
+-	revalidate_disk_size(device->vdisk, false);
++	set_capacity_and_notify(device->vdisk, size);
+ 
+ 	drbd_info(device, "size = %s (%llu KB)\n",
+ 		ppsize(ppb, size>>1), (unsigned long long)size>>1);
+@@ -2068,8 +2067,7 @@ void drbd_device_cleanup(struct drbd_device *device)
  	}
+ 	D_ASSERT(device, first_peer_device(device)->connection->net_conf == NULL);
  
- 	set_capacity(pd->disk, lba << 2);
--	set_capacity(pd->bdev->bd_disk, lba << 2);
--	bd_set_nr_sectors(pd->bdev, lba << 2);
-+	set_capacity_and_notify(pd->bdev->bd_disk, lba << 2);
- 
- 	q = bdev_get_queue(pd->bdev);
- 	if (write) {
+-	set_capacity(device->vdisk, 0);
+-	revalidate_disk_size(device->vdisk, false);
++	set_capacity_and_notify(device->vdisk, 0);
+ 	if (device->bitmap) {
+ 		/* maybe never allocated. */
+ 		drbd_bm_resize(device, 0, 1);
 -- 
 2.29.2
 
