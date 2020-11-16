@@ -2,86 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD022B4C43
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 18:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E642B4D83
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 18:39:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732607AbgKPRLd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 12:11:33 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:42727 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732195AbgKPRLc (ORCPT
+        id S2387503AbgKPRh4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 12:37:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387492AbgKPRhy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 12:11:32 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-86-D4jR3JQ7M8irR6fMM85TtA-1; Mon, 16 Nov 2020 17:11:24 +0000
-X-MC-Unique: D4jR3JQ7M8irR6fMM85TtA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 16 Nov 2020 17:11:24 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 16 Nov 2020 17:11:24 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Soheil Hassas Yeganeh" <soheil.kdev@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Shuo Chen" <shuochen@google.com>
-Subject: RE: [PATCH v2] epoll: add nsec timeout support
-Thread-Topic: [PATCH v2] epoll: add nsec timeout support
-Thread-Index: AQHWvDp1Tk9JlMrT10ixC6C535CccanK/krw
-Date:   Mon, 16 Nov 2020 17:11:24 +0000
-Message-ID: <eead2765ea5e417abe616950b4e5d02f@AcuMS.aculab.com>
-References: <20201116161001.1606608-1-willemdebruijn.kernel@gmail.com>
- <20201116161930.GF29991@casper.infradead.org>
- <CA+FuTSdifgNAYe4DAfpRJxCO08y-sOi=XhOeMhd9mKbA3aPOug@mail.gmail.com>
-In-Reply-To: <CA+FuTSdifgNAYe4DAfpRJxCO08y-sOi=XhOeMhd9mKbA3aPOug@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 16 Nov 2020 12:37:54 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01112C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 09:37:53 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id y16so21101494ljh.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 09:37:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0hFcYQjYTxN6TPp3Kdg1NeqlnTpUC7G+cLOAuMz+zHE=;
+        b=HKbDpA8RbHc7R9WeYnYhMYC3gxw9weFs3lMu3SDaX0XkAID5B1sf9E42rWBynbT+Sx
+         yT3uEIqvHZJzSY1G2ko5rQ9hLa877Siaz6/opPHEMxfi0DtcEJEuWQQNCPcD356BV5kx
+         d7ODwPPcAS09cbveKqn/VdCocdxDt/vjlquyU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0hFcYQjYTxN6TPp3Kdg1NeqlnTpUC7G+cLOAuMz+zHE=;
+        b=HY0AiLhz1AIk1DqN1V0J2INOU2I2VOJfrrB8AObZRIU7MTmutBWTDAqB8Ko3Zmk9M7
+         4XR3xZvd5amgM/wlYOkdWVUgJiwi/RBvz2aBofsNFsDASS5xdUM3EVqiAPx2Czb+84zE
+         3r2kurYuKn2toUBTFzPLt5z80Tyef/fBDv8wNt10gcq/cQAvv5avdb84Rqe6fYbYbZpc
+         bJwYRYTn7Ewza3wX9c+YMqr9iTGzmTwuh9oe6ivV5ke3qc7MHnbJIjpOKlIngiXimo/F
+         DuVzfsCg5BrcBIm1e4AJBF+wRVphig88a82rI2uxn6RfZwvAbx7sbBcXU91Z5v9w2RV9
+         rY2g==
+X-Gm-Message-State: AOAM531BpNNoSlro4+4nxDUDqJMVoiFR3GTEnxZ1UwNZ7Nj448JVxYGu
+        Wu7JFYkNvzhpNMpaSHsySrTStiN7wJLGJg==
+X-Google-Smtp-Source: ABdhPJx2/49HbM+o9ayPP+oWQKfVESVhvYNKOJBBrdRe4WsxjyA6K79o+HtiEvjlypsW/ljeMx0j/Q==
+X-Received: by 2002:a05:651c:1214:: with SMTP id i20mr210984lja.324.1605548271742;
+        Mon, 16 Nov 2020 09:37:51 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id n5sm2822691lfl.175.2020.11.16.09.37.48
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Nov 2020 09:37:49 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id y16so21101289ljh.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 09:37:48 -0800 (PST)
+X-Received: by 2002:a05:651c:2cb:: with SMTP id f11mr153620ljo.371.1605548268341;
+ Mon, 16 Nov 2020 09:37:48 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20201113080132.16591-1-roberto.sassu@huawei.com>
+ <20201114111057.GA16415@infradead.org> <0fd0fb3360194d909ba48f13220f9302@huawei.com>
+ <20201116162202.GA15010@infradead.org> <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
+In-Reply-To: <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 16 Nov 2020 09:37:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
+Message-ID: <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
+Subject: Re: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in ima_calc_file_hash()
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogV2lsbGVtIGRlIEJydWlqbg0KPiBTZW50OiAxNiBOb3ZlbWJlciAyMDIwIDE3OjAxDQo+
-IA0KPiBPbiBNb24sIE5vdiAxNiwgMjAyMCBhdCAxMToxOSBBTSBNYXR0aGV3IFdpbGNveCA8d2ls
-bHlAaW5mcmFkZWFkLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBPbiBNb24sIE5vdiAxNiwgMjAyMCBh
-dCAxMToxMDowMUFNIC0wNTAwLCBXaWxsZW0gZGUgQnJ1aWpuIHdyb3RlOg0KPiA+ID4gZGlmZiAt
-LWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC9ldmVudHBvbGwuaCBiL2luY2x1ZGUvdWFwaS9saW51
-eC9ldmVudHBvbGwuaA0KPiA+ID4gaW5kZXggOGEzNDMyZDBmMGRjLi5mNmVmOWM5ZjhhYzIgMTAw
-NjQ0DQo+ID4gPiAtLS0gYS9pbmNsdWRlL3VhcGkvbGludXgvZXZlbnRwb2xsLmgNCj4gPiA+ICsr
-KyBiL2luY2x1ZGUvdWFwaS9saW51eC9ldmVudHBvbGwuaA0KPiA+ID4gQEAgLTIxLDYgKzIxLDcg
-QEANCj4gPiA+DQo+ID4gPiAgLyogRmxhZ3MgZm9yIGVwb2xsX2NyZWF0ZTEuICAqLw0KPiA+ID4g
-ICNkZWZpbmUgRVBPTExfQ0xPRVhFQyBPX0NMT0VYRUMNCj4gPiA+ICsjZGVmaW5lIEVQT0xMX05T
-VElNRU8gMHgxDQo+ID4gPg0KPiA+ID4gIC8qIFZhbGlkIG9wY29kZXMgdG8gaXNzdWUgdG8gc3lz
-X2Vwb2xsX2N0bCgpICovDQo+ID4gPiAgI2RlZmluZSBFUE9MTF9DVExfQUREIDENCj4gPg0KPiA+
-IE5vdCBhIHByb2JsZW0gd2l0aCB5b3VyIHBhdGNoLCBidXQgdGhpcyBjb25jZXJucyBtZS4gIE9f
-Q0xPRVhFQyBpcw0KPiA+IGRlZmluZWQgZGlmZmVyZW50bHkgZm9yIGVhY2ggYXJjaGl0ZWN0dXJl
-LCBzbyB3ZSBuZWVkIHRvIHN0YXkgb3V0IG9mDQo+ID4gc2V2ZXJhbCBkaWZmZXJlbnQgYml0cyB3
-aGVuIHdlIGRlZmluZSBuZXcgZmxhZ3MgZm9yIEVQT0xMXyouICBNYXliZQ0KPiA+IHRoaXM6DQo+
-ID4NCj4gPiAvKg0KPiA+ICAqIEZsYWdzIGZvciBlcG9sbF9jcmVhdGUxLiAgT19DTE9FWEVDIG1h
-eSBiZSBkaWZmZXJlbnQgYml0cywgZGVwZW5kaW5nDQo+ID4gICogb24gdGhlIENQVSBhcmNoaXRl
-Y3R1cmUuICBSZXNlcnZlIHRoZSBrbm93biBvbmVzLg0KPiA+ICAqLw0KPiA+ICNkZWZpbmUgRVBP
-TExfQ0xPRVhFQyAgICAgICAgICAgT19DTE9FWEVDDQo+ID4gI2RlZmluZSBFUE9MTF9SRVNFUlZF
-RF9GTEFHUyAgICAweDAwNjgwMDAwDQo+ID4gI2RlZmluZSBFUE9MTF9OU1RJTUVPICAgICAgICAg
-ICAweDAwMDAwMDAxDQo+IA0KPiBUaGFua3MuIEdvb2QgcG9pbnQsIEknbGwgYWRkIHRoYXQgaW4g
-djMuDQoNCllvdSBjb3VsZCBhbHNvIGFkZCBhIGNvbXBpbGUgYXNzZXJ0IHRvIGNoZWNrIHRoYXQg
-dGhlIGZsYWcgaXMgcmVzZXJ2ZWQuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3Mg
-TGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQ
-VCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On Mon, Nov 16, 2020 at 8:47 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> This discussion seems to be going down the path of requiring an IMA
+> filesystem hook for reading the file, again.  That solution was
+> rejected, not by me.  What is new this time?
 
+You can't read a non-read-opened file. Not even IMA can.
+
+So don't do that then.
+
+IMA is doing something wrong. Why would you ever read a file that can't be read?
+
+Fix whatever "open" function instead of trying to work around the fact
+that you opened it wrong.
+
+             Linus
