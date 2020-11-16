@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E37E2B450E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 14:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C1172B457A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 15:03:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729510AbgKPNw3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 08:52:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38150 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbgKPNw3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 08:52:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id ED952AC48;
-        Mon, 16 Nov 2020 13:52:27 +0000 (UTC)
-Date:   Mon, 16 Nov 2020 14:52:24 +0100
-From:   Oscar Salvador <osalvador@suse.de>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        mhocko@suse.com, duanxiongchun@bytedance.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 02/21] mm/memory_hotplug: Move
- {get,put}_page_bootmem() to bootmem_info.c
-Message-ID: <20201116135224.GC32129@linux>
-References: <20201113105952.11638-1-songmuchun@bytedance.com>
- <20201113105952.11638-3-songmuchun@bytedance.com>
+        id S1730160AbgKPODN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 09:03:13 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7251 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbgKPODN (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Nov 2020 09:03:13 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4CZW4C3l4wzkZDy;
+        Mon, 16 Nov 2020 22:02:51 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Mon, 16 Nov 2020
+ 22:03:07 +0800
+From:   Zhihao Cheng <chengzhihao1@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+Subject: [PATCH v2] binfmt_elf_fdpic: return corresponding errcode if create_elf_fdpic_tables() fail
+Date:   Mon, 16 Nov 2020 22:06:44 +0800
+Message-ID: <20201116140644.2360816-1-chengzhihao1@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201113105952.11638-3-songmuchun@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 13, 2020 at 06:59:33PM +0800, Muchun Song wrote:
-> In the later patch, we will use {get,put}_page_bootmem() to initialize
-> the page for vmemmap or free vmemmap page to buddy. So move them out of
-> CONFIG_MEMORY_HOTPLUG_SPARSE. This is just code movement without any
-> functional change.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+Function load_elf_fdpic_binary() may return 0 to caller if
+create_elf_fdpic_tables() fail, which will misslead caller
+to continue running without handling errors.
 
-The change itself makes sense.
-I tried to check the possibles scenarios with different CONFIG_ options
-toggled, but I will trust you that you ran the checks :-)
+Fixes: 1da177e4c3f41524e886 ("Linux-2.6.12-rc2")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+---
+ fs/binfmt_elf_fdpic.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-
-
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index be4062b8ba75..6243abf3f8f3 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -434,8 +434,9 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
+ 	current->mm->start_stack = current->mm->start_brk + stack_size;
+ #endif
+ 
+-	if (create_elf_fdpic_tables(bprm, current->mm,
+-				    &exec_params, &interp_params) < 0)
++	retval = create_elf_fdpic_tables(bprm, current->mm,
++				    &exec_params, &interp_params);
++	if (retval < 0)
+ 		goto error;
+ 
+ 	kdebug("- start_code  %lx", current->mm->start_code);
 -- 
-Oscar Salvador
-SUSE L3
+2.25.4
+
