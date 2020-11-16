@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DFAB2B485B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 159462B4763
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:06:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731225AbgKPPEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 10:04:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48938 "EHLO
+        id S1730656AbgKPO6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 09:58:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730624AbgKPO6k (ORCPT
+        with ESMTP id S1728038AbgKPO6p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 09:58:40 -0500
+        Mon, 16 Nov 2020 09:58:45 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D23CC0613CF;
-        Mon, 16 Nov 2020 06:58:40 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0B8C0613D1;
+        Mon, 16 Nov 2020 06:58:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=79ABHzAqAgUDi+r50gNTM9KzgxZfWtsd0Ks61Se8Jjk=; b=iXlgdH+JkeL6roCvy9N8OmOptV
-        1Ll+Te6ItuycUsm1mpg5y8MmMvSDVgOMN0DW4BJjUzEL2YXMUw9FI/gCg+GglIDP+2ssWuLid2fb0
-        cJZnJp4fVhOgNW619uL3/Kd6hYd61L2NdpCEsJu2r2sYtsuKn5OWNCme31Wn3/FHGbzcF/v5kYRm2
-        JnXQsbwRBlyoUcHtnndvHGCnGiJjghxupsGPmu0u5FKR/+UjbjsAeA9OHsZoDrRaOzkGH06M+kWrS
-        F/Df603StVMFLWH3uWTjYYJHcHqMIvbijKLsxzszv3RzSONMJItnrjbuYjjQ6SdDQT1ZrHiZj6i2L
-        17QgIiog==;
+        bh=CN10BGv9dKVd+RKbbdTxT2BvIyv06ZDMhow0ngUqFVs=; b=Wf8/hkFaNLSd+gPM2W2r4fv5vP
+        kTvVoS3zDf7gbVd/+sUJtkyAqA5lUq9yQxOzaZbEyDVX2S9VcEH6akrikD/EHAskWC5e3u5GFwo94
+        pvyK6vF1xv0yoWZW0Trp2YhTMDwX2yOQJVSOA1j8iKDivtRGQvmQELbe3fJn2yUvmr1OA274aOkkL
+        de9bCAvfPrVUPcqJAHSKnKZg7g+R46oLX8YCc9Mk8CdlBH2cDMS5JaO9BjoWNQj8G+Bge/APmZ6vq
+        FKHpBXoJF7X4vPleICzEeG/Mc88InJcGvDP+Fhh9lnoF/XRSuvgZLsqj2YVXvQLELtvaQnptV5v8a
+        VOhU/gOA==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefxa-0003md-8r; Mon, 16 Nov 2020 14:58:26 +0000
+        id 1kefxc-0003nE-NO; Mon, 16 Nov 2020 14:58:29 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -49,9 +49,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Hannes Reinecke <hare@suse.de>
-Subject: [PATCH 12/78] dm: use set_capacity_and_notify
-Date:   Mon, 16 Nov 2020 15:57:03 +0100
-Message-Id: <20201116145809.410558-13-hch@lst.de>
+Subject: [PATCH 14/78] nvme: use set_capacity_and_notify in nvme_set_queue_dying
+Date:   Mon, 16 Nov 2020 15:57:05 +0100
+Message-Id: <20201116145809.410558-15-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -62,29 +62,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use set_capacity_and_notify to set the size of both the disk and block
-device.  This also gets the uevent notifications for the resize for free.
+Use the block layer helper to update both the disk and block device
+sizes.  Contrary to the name no notification is sent in this case,
+as a size 0 is special cased.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- drivers/md/dm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/nvme/host/core.c | 13 +------------
+ 1 file changed, 1 insertion(+), 12 deletions(-)
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index c18fc25485186d..62ad44925e73ec 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1971,8 +1971,7 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
- 	if (size != dm_get_size(md))
- 		memset(&md->geometry, 0, sizeof(md->geometry));
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 6c144e748f8cae..bc89e8659c403f 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -93,16 +93,6 @@ static void nvme_put_subsystem(struct nvme_subsystem *subsys);
+ static void nvme_remove_invalid_namespaces(struct nvme_ctrl *ctrl,
+ 					   unsigned nsid);
  
--	set_capacity(md->disk, size);
--	bd_set_nr_sectors(md->bdev, size);
-+	set_capacity_and_notify(md->disk, size);
+-static void nvme_update_bdev_size(struct gendisk *disk)
+-{
+-	struct block_device *bdev = bdget_disk(disk, 0);
+-
+-	if (bdev) {
+-		bd_set_nr_sectors(bdev, get_capacity(disk));
+-		bdput(bdev);
+-	}
+-}
+-
+ /*
+  * Prepare a queue for teardown.
+  *
+@@ -119,8 +109,7 @@ static void nvme_set_queue_dying(struct nvme_ns *ns)
+ 	blk_set_queue_dying(ns->queue);
+ 	blk_mq_unquiesce_queue(ns->queue);
  
- 	dm_table_event_callback(t, event_callback, md);
+-	set_capacity(ns->disk, 0);
+-	nvme_update_bdev_size(ns->disk);
++	set_capacity_and_notify(ns->disk, 0);
+ }
  
+ static void nvme_queue_scan(struct nvme_ctrl *ctrl)
 -- 
 2.29.2
 
