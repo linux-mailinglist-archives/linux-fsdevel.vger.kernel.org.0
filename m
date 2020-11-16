@@ -2,89 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B7E32B51E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 21:06:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EBB92B5253
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 21:19:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730655AbgKPUEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 15:04:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48478 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729869AbgKPUEr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 15:04:47 -0500
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48216221FD;
-        Mon, 16 Nov 2020 20:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605557086;
-        bh=6m3Hm0M7z8JLs3AXYQDdPFq1hJZ5K0jqwk59qapiEkg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=wW4l1rpNZXB065nORFIwHSaDsYE/usuSPVeDzFkvvWLgfIPOxRJuigNB0u2DSOl/U
-         T9nDeMHuL1+BwtLxtJYZTooAXUYosx2vIE6H5Vt/SOKYrLP+wH2zc42hBphSE9OH0B
-         i5q/peQigXwQeY4WogtaT5k8IZyAgGURXijWqwQQ=
-Date:   Mon, 16 Nov 2020 12:04:45 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, soheil.kdev@gmail.com, arnd@arndb.de,
-        shuochen@google.com, Willem de Bruijn <willemb@google.com>
-Subject: Re: [PATCH v2] epoll: add nsec timeout support
-Message-Id: <20201116120445.7359b0053778c1a4492d1057@linux-foundation.org>
-In-Reply-To: <20201116161001.1606608-1-willemdebruijn.kernel@gmail.com>
-References: <20201116161001.1606608-1-willemdebruijn.kernel@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1732142AbgKPUSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 15:18:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbgKPUSR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 16 Nov 2020 15:18:17 -0500
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C090C0613CF;
+        Mon, 16 Nov 2020 12:18:16 -0800 (PST)
+Received: by mail-il1-x141.google.com with SMTP id h6so12827084ilj.8;
+        Mon, 16 Nov 2020 12:18:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y5tWyVQqyVOPnOnbKCKzBaCUixD0HHPocwip/42dsIc=;
+        b=Xp/Jnh0Qrn4cKldL/3hsCP1XVq99BIBBI1I6GST2XcF9F534R29F/7KHEPIbD8fbLQ
+         bLRA4NUMci+CGdK/a66oqkebK7y2uJ+bA6n848i2Xh3T0otHNhhzI/55hID+y0pXGx32
+         RfYUeBlcndLzmR4DbWBEx1tviDYBUcbJ9WXQUI1j3FALl6d9V1qN7BE0SgRcfmFpz53v
+         qfLTIl6dsl6jYR4r4A+AXd83oAQlKi6EJ/D7S1ZzZbLP+MUJtRN5mDPqJ7tx6jyQ0kkq
+         4diyyzEahEz1PrMytrrMyTQCfP/P26VJ1S5IQzbxyxIjAHkuTSbXVo041THgly1TWvyC
+         9Xyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y5tWyVQqyVOPnOnbKCKzBaCUixD0HHPocwip/42dsIc=;
+        b=LO3TX8stXYPcicnyJ0RLx6kMddRKe50W34q4/eazcRrPkfEeTyNd3d8Eb6KVh4fd7j
+         9wFQVEC5LWDjEnc+2c8Ro1Cv/iCRG4VVCowtl8dSUmITRcbjpm3YK1jgBulUl+VALnV5
+         BXjunjWvHLjTMy6PxxkJTPwYDpzCdTx/mfY/8xRMqn5yHXLhFWG7+RTDFhUQd3989OPv
+         K/k4GG8sZhG0lyHUk4vx4X7gScR3vK76vHBH6J8lciYAowk4h9peL2u0DTWIRPgnd81S
+         dZiN+jYkG9PzDHuqH8pUjtwKPVflEfcVKfmHNjim9w0ayNdHieU109tgGjFNf3M2oEUP
+         Ke9g==
+X-Gm-Message-State: AOAM533H7ylC+TSocqrTyuIb2s2PUKmJlA6cm8cRB1y8zWDMIXNqlJhY
+        auXYwul9YBJc+g1XH7O6GZZBtFCfzU6BwelUKMmmDO4V
+X-Google-Smtp-Source: ABdhPJwN1DUWR9fjlvLzAAnRDb10aAPagg3wsxFP1tgMwwqjRPwz8kE0aVQnqwssOLqnyFRWFV/RIGhgjISa5pfNMAQ=
+X-Received: by 2002:a92:bac5:: with SMTP id t66mr9736955ill.250.1605557895397;
+ Mon, 16 Nov 2020 12:18:15 -0800 (PST)
+MIME-Version: 1.0
+References: <20201116045758.21774-1-sargun@sargun.me> <20201116045758.21774-4-sargun@sargun.me>
+ <20201116144240.GA9190@redhat.com> <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
+ <20201116163615.GA17680@redhat.com>
+In-Reply-To: <20201116163615.GA17680@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 16 Nov 2020 22:18:03 +0200
+Message-ID: <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
+ directories when safe
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Chengguang Xu <cgxu519@mykernel.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 16 Nov 2020 11:10:01 -0500 Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+On Mon, Nov 16, 2020 at 6:36 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Mon, Nov 16, 2020 at 05:20:04PM +0200, Amir Goldstein wrote:
+> > On Mon, Nov 16, 2020 at 4:42 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > On Sun, Nov 15, 2020 at 08:57:58PM -0800, Sargun Dhillon wrote:
+> > > > Overlayfs added the ability to setup mounts where all syncs could be
+> > > > short-circuted in (2a99ddacee43: ovl: provide a mount option "volatile").
+> > > >
+> > > > A user might want to remount this fs, but we do not let the user because
+> > > > of the "incompat" detection feature. In the case of volatile, it is safe
+> > > > to do something like[1]:
+> > > >
+> > > > $ sync -f /root/upperdir
+> > > > $ rm -rf /root/workdir/incompat/volatile
+> > > >
+> > > > There are two ways to go about this. You can call sync on the underlying
+> > > > filesystem, check the error code, and delete the dirty file if everything
+> > > > is clean. If you're running lots of containers on the same filesystem, or
+> > > > you want to avoid all unnecessary I/O, this may be suboptimal.
+> > > >
+> > >
+> > > Hi Sargun,
+> > >
+> > > I had asked bunch of questions in previous mail thread to be more
+> > > clear on your requirements but never got any response. It would
+> > > have helped understanding your requirements better.
+> > >
+> > > How about following patch set which seems to sync only dirty inodes of
+> > > upper belonging to a particular overlayfs instance.
+> > >
+> > > https://lore.kernel.org/linux-unionfs/20201113065555.147276-1-cgxu519@mykernel.net/
+> > >
+> > > So if could implement a mount option which ignores fsync but upon
+> > > syncfs, only syncs dirty inodes of that overlayfs instance, it will
+> > > make sure we are not syncing whole of the upper fs. And we could
+> > > do this syncing on unmount of overlayfs and remove dirty file upon
+> > > successful sync.
+> > >
+> > > Looks like this will be much simpler method and should be able to
+> > > meet your requirements (As long as you are fine with syncing dirty
+> > > upper inodes of this overlay instance on unmount).
+> > >
+> >
+> > Do note that the latest patch set by Chengguang not only syncs dirty
+> > inodes of this overlay instance, but also waits for in-flight writeback on
+> > all the upper fs inodes and I think that with !ovl_should_sync(ofs)
+> > we will not re-dirty the ovl inodes and lose track of the list of dirty
+> > inodes - maybe that can be fixed.
+> >
+> > Also, I am not sure anymore that we can safely remove the dirty file after
+> > sync dirty inodes sync_fs and umount. If someone did sync_fs before us
+> > and consumed the error, we may have a copied up file in upper whose
+> > data is not on disk, but when we sync_fs on unmount we won't get an
+> > error? not sure.
+>
+> May be we can save errseq_t when mounting overlay and compare with
+> errseq_t stored in upper sb after unmount. That will tell us whether
+> error has happened since we mounted overlay. (Similar to what Sargun
+> is doing).
+>
 
-> From: Willem de Bruijn <willemb@google.com>
-> 
-> Add epoll_create1 flag EPOLL_NSTIMEO. When passed, this changes the
-> interpretation of argument timeout in epoll_wait from msec to nsec.
-> 
-> Use cases such as datacenter networking operate on timescales well
-> below milliseconds. Shorter timeouts bounds their tail latency.
-> The underlying hrtimer is already programmed with nsec resolution.
+I suppose so.
 
-hm, maybe.  It's not very nice to be using one syscall to alter the
-interpretation of another syscall's argument in this fashion.  For
-example, one wonders how strace(1) is to properly interpret & display
-this argument?
+> In fact, if this is a concern, we have this issue with user space
+> "sync <upper>" too? Other sync might fail and this one succeeds
+> and we will think upper is just fine. May be container tools can
+> keep a file/dir open at the time of mount and call syncfs using
+> that fd instead. (And that should catch errors since that fd
+> was opened, I am assuming).
+>
 
-Did you consider adding epoll_wait2()/epoll_pwait2() syscalls which
-take a nsec timeout?  Seems simpler.
+Did not understand the problem with userspace sync.
 
-Either way, we'd be interested in seeing the proposed manpage updates
-alongside this change.
+> >
+> > I am less concerned about ways to allow re-mount of volatile
+> > overlayfs than I am about turning volatile overlayfs into non-volatile.
+>
+> If we are not interested in converting volatile containers into
+> non-volatile, then whole point of these patch series is to detect
+> if any writeback error has happened or not. If writeback error has
+> happened, then we detect that at remount and possibly throw away
+> container.
+>
+> What happens today if writeback error has happened. Is that page thrown
+> away from page cache and read back from disk? IOW, will user lose
+> the data it had written in page cache because writeback failed. I am
+> assuming we can't keep the dirty page around for very long otherwise
+> it has potential to fill up all the available ram with dirty pages which
+> can't be written back.
+>
 
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -225,6 +225,9 @@ struct eventpoll {
->  	unsigned int napi_id;
->  #endif
->  
-> +	/* Accept timeout in ns resolution (EPOLL_NSTIMEO) */
-> +	unsigned int nstimeout:1;
-> +
+Right. the resulting data is undefined after error.
 
+> Why is it important to detect writeback error only during remount. What
+> happens if container overlay instance is already mounted and writeback
+> error happens. We will not detct that, right?
+>
+> IOW, if capturing writeback error is important for volatile containers,
+> then capturing it only during remount time is not enough. Normally
+> fsync/syncfs should catch it and now we have skipped those, so in
+> the process we lost mechanism to detect writeback errrors for
+> volatile containers?
+>
 
-Why a bitfield?  This invites other developers to add new bitfields to
-the same word.  And if that happens, we'll need to consider the locking
-rules for that word - I don't think the compiler provides any
-protection against concurrent modifications to the bitfields which
-share a machine word.  If we add a rule
+Yes, you are right.
+It's an issue with volatile that we should probably document.
 
-/*
- * per eventpoll flags.  Initialized at creation time, never changes
- * thereafter
- */
+I think upper files data can "evaporate" even as the overlay is still mounted.
 
-then that would cover it.  Or just make the thing a `bool'?
-
-
+Thanks,
+Amir.
