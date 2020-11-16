@@ -2,191 +2,303 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C75082B53CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 22:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8819A2B53D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 22:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbgKPV0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 16:26:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:28021 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727893AbgKPV0u (ORCPT
+        id S1729476AbgKPV2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 16:28:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729366AbgKPV2J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 16:26:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605562008;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2r6L44Nl5+Pbu4wJO4MR1XauSUxoxlZbYCr6RB5qwBs=;
-        b=Plmwk4FaI78hv9xYjRVOKChgqj048Eic8CU6pBzZJnogYHvazPmuserSY4TmVfG+PiNCt4
-        vcWMXin10gWC6Prn7Bxqp3V0qKk7qtpbuQVYa7POXDNMkwjfm5UEXeEZgYbBPFInuiVKix
-        nusN7KFdzkBrWi/il6vNTSv37VtD4Vw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-Lndy82dEPm6rMMbehlmgEA-1; Mon, 16 Nov 2020 16:26:46 -0500
-X-MC-Unique: Lndy82dEPm6rMMbehlmgEA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3FEEE802B7E;
-        Mon, 16 Nov 2020 21:26:45 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-114-201.rdu2.redhat.com [10.10.114.201])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D750A10013BD;
-        Mon, 16 Nov 2020 21:26:44 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 6A0F0220BCF; Mon, 16 Nov 2020 16:26:44 -0500 (EST)
-Date:   Mon, 16 Nov 2020 16:26:44 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
- directories when safe
-Message-ID: <20201116212644.GE9190@redhat.com>
-References: <20201116045758.21774-1-sargun@sargun.me>
- <20201116045758.21774-4-sargun@sargun.me>
- <20201116144240.GA9190@redhat.com>
- <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
- <20201116163615.GA17680@redhat.com>
- <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
+        Mon, 16 Nov 2020 16:28:09 -0500
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19105C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 13:28:09 -0800 (PST)
+Received: by mail-ot1-x344.google.com with SMTP id n89so17445467otn.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 13:28:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=xbx+XzcPct/46zaNl1olGwUlxfEGJ/8djflBdlJjy9s=;
+        b=uanpSTuRyE6qBHQPB9Uzp1JeNZCVlz9ZnTZjVNE17hT3vF1opz2Iu22yaD8LvRPOl2
+         1FC/kdUyLbX2jcGvS60cnowHpo/Uj1A3Kg14sgt7K6Jhs0+ttpaUmnwOlFN+isKv82Df
+         vYWiOJ00WWE6cpvywFEJ3Rdv3Z5fG5iJkJixs+V5sqKybgg+sSKf2F0Aygb96k0PAex9
+         WbDdCOnUP+AzZpF4vX6W7TE+a0CRC0RyQE3394IC4m5YWDHwGjZROy6lJYo+PBWMpeCR
+         Vp4i/kBxiLWfa0mW8PGGqvznjf/UKdnsB/4yHSE4f0Oe7rBN1JF8s2ZX0nok87/6dCo1
+         l79w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=xbx+XzcPct/46zaNl1olGwUlxfEGJ/8djflBdlJjy9s=;
+        b=bdKldgzoFMourm78aa9zrFwZIv1UUur1IO1hVDDyOD27JF2RpLY/fdF7Hb7cVHNt8F
+         387C/M4sqfY2XwzZYMHxkJQUWhBNGNDw1Z82OCs2l7beeysfLkvR4g4icxk8J1we5Nay
+         wWm5g7dFcwoiZP90gHS0jpSRRANoLkl7WUyIt5tYnvKNy5EwzgOasvAxXDTU2fcqy0Zw
+         sGfeK6LtaoLKNhH5uAT5YG+TTw8twE4x2879xjKT95iLF15t+ULT0cnixqB8gtbQ6ofT
+         aTTrILTCLR33D71EiaAszvGPJYHJp6+F8/XiT0RCB+GDaduz+B996ja5EOMKZUcx0Xh9
+         zQPw==
+X-Gm-Message-State: AOAM533JT6VVhAld3KPnYYsJw2pwKRx7BaePjk+Hdno3gsiWhb7YvMti
+        7RI5hBNBnnghK6r7VC8fuWiKEA==
+X-Google-Smtp-Source: ABdhPJwLCs4aAHTGw/t7fwa4Lc3WRXdKVDyfGTyNBrrOzucIHBytPaP212fyMahz0+2uVmNg+4Di4w==
+X-Received: by 2002:a9d:69d5:: with SMTP id v21mr985210oto.176.1605562087950;
+        Mon, 16 Nov 2020 13:28:07 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id m17sm5053643otq.57.2020.11.16.13.28.05
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Mon, 16 Nov 2020 13:28:06 -0800 (PST)
+Date:   Mon, 16 Nov 2020 13:27:47 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Rik van Riel <riel@surriel.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, hch@lst.de,
+        hannes@cmpxchg.org, yang.shi@linux.alibaba.com,
+        dchinner@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
+In-Reply-To: <20201116151444.GB29991@casper.infradead.org>
+Message-ID: <alpine.LSU.2.11.2011161145320.1071@eggly.anvils>
+References: <20201112212641.27837-1-willy@infradead.org> <alpine.LSU.2.11.2011160128001.1206@eggly.anvils> <20201116151444.GB29991@casper.infradead.org>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 10:18:03PM +0200, Amir Goldstein wrote:
-> On Mon, Nov 16, 2020 at 6:36 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Mon, Nov 16, 2020 at 05:20:04PM +0200, Amir Goldstein wrote:
-> > > On Mon, Nov 16, 2020 at 4:42 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > On Sun, Nov 15, 2020 at 08:57:58PM -0800, Sargun Dhillon wrote:
-> > > > > Overlayfs added the ability to setup mounts where all syncs could be
-> > > > > short-circuted in (2a99ddacee43: ovl: provide a mount option "volatile").
-> > > > >
-> > > > > A user might want to remount this fs, but we do not let the user because
-> > > > > of the "incompat" detection feature. In the case of volatile, it is safe
-> > > > > to do something like[1]:
-> > > > >
-> > > > > $ sync -f /root/upperdir
-> > > > > $ rm -rf /root/workdir/incompat/volatile
-> > > > >
-> > > > > There are two ways to go about this. You can call sync on the underlying
-> > > > > filesystem, check the error code, and delete the dirty file if everything
-> > > > > is clean. If you're running lots of containers on the same filesystem, or
-> > > > > you want to avoid all unnecessary I/O, this may be suboptimal.
-> > > > >
-> > > >
-> > > > Hi Sargun,
-> > > >
-> > > > I had asked bunch of questions in previous mail thread to be more
-> > > > clear on your requirements but never got any response. It would
-> > > > have helped understanding your requirements better.
-> > > >
-> > > > How about following patch set which seems to sync only dirty inodes of
-> > > > upper belonging to a particular overlayfs instance.
-> > > >
-> > > > https://lore.kernel.org/linux-unionfs/20201113065555.147276-1-cgxu519@mykernel.net/
-> > > >
-> > > > So if could implement a mount option which ignores fsync but upon
-> > > > syncfs, only syncs dirty inodes of that overlayfs instance, it will
-> > > > make sure we are not syncing whole of the upper fs. And we could
-> > > > do this syncing on unmount of overlayfs and remove dirty file upon
-> > > > successful sync.
-> > > >
-> > > > Looks like this will be much simpler method and should be able to
-> > > > meet your requirements (As long as you are fine with syncing dirty
-> > > > upper inodes of this overlay instance on unmount).
-> > > >
-> > >
-> > > Do note that the latest patch set by Chengguang not only syncs dirty
-> > > inodes of this overlay instance, but also waits for in-flight writeback on
-> > > all the upper fs inodes and I think that with !ovl_should_sync(ofs)
-> > > we will not re-dirty the ovl inodes and lose track of the list of dirty
-> > > inodes - maybe that can be fixed.
-> > >
-> > > Also, I am not sure anymore that we can safely remove the dirty file after
-> > > sync dirty inodes sync_fs and umount. If someone did sync_fs before us
-> > > and consumed the error, we may have a copied up file in upper whose
-> > > data is not on disk, but when we sync_fs on unmount we won't get an
-> > > error? not sure.
-> >
-> > May be we can save errseq_t when mounting overlay and compare with
-> > errseq_t stored in upper sb after unmount. That will tell us whether
-> > error has happened since we mounted overlay. (Similar to what Sargun
-> > is doing).
-> >
+On Mon, 16 Nov 2020, Matthew Wilcox wrote:
+> On Mon, Nov 16, 2020 at 02:34:34AM -0800, Hugh Dickins wrote:
+> > On Thu, 12 Nov 2020, Matthew Wilcox (Oracle) wrote:
+> > 
+> > > This THP prep patchset changes several page cache iteration APIs to only
+> > > return head pages.
+> > > 
+> > >  - It's only possible to tag head pages in the page cache, so only
+> > >    return head pages, not all their subpages.
+> > >  - Factor a lot of common code out of the various batch lookup routines
+> > >  - Add mapping_seek_hole_data()
+> > >  - Unify find_get_entries() and pagevec_lookup_entries()
+> > >  - Make find_get_entries only return head pages, like find_get_entry().
+> > > 
+> > > These are only loosely connected, but they seem to make sense together
+> > > as a series.
+> > > 
+> > > v4:
+> > >  - Add FGP_ENTRY, remove find_get_entry and find_lock_entry
+> > >  - Rename xas_find_get_entry to find_get_entry
+> > >  - Add "Optimise get_shadow_from_swap_cache"
+> > >  - Move "iomap: Use mapping_seek_hole_data" to this patch series
+> > >  - Rebase against next-20201112
+> > 
+> > I hope next-20201112 had nothing vital for this series, I applied
+> > it to v5.10-rc3, and have been busy testing huge tmpfs on that.
 > 
-> I suppose so.
-> 
-> > In fact, if this is a concern, we have this issue with user space
-> > "sync <upper>" too? Other sync might fail and this one succeeds
-> > and we will think upper is just fine. May be container tools can
-> > keep a file/dir open at the time of mount and call syncfs using
-> > that fd instead. (And that should catch errors since that fd
-> > was opened, I am assuming).
-> >
-> 
-> Did not understand the problem with userspace sync.
-> 
-> > >
-> > > I am less concerned about ways to allow re-mount of volatile
-> > > overlayfs than I am about turning volatile overlayfs into non-volatile.
-> >
-> > If we are not interested in converting volatile containers into
-> > non-volatile, then whole point of these patch series is to detect
-> > if any writeback error has happened or not. If writeback error has
-> > happened, then we detect that at remount and possibly throw away
-> > container.
-> >
-> > What happens today if writeback error has happened. Is that page thrown
-> > away from page cache and read back from disk? IOW, will user lose
-> > the data it had written in page cache because writeback failed. I am
-> > assuming we can't keep the dirty page around for very long otherwise
-> > it has potential to fill up all the available ram with dirty pages which
-> > can't be written back.
-> >
-> 
-> Right. the resulting data is undefined after error.
-> 
-> > Why is it important to detect writeback error only during remount. What
-> > happens if container overlay instance is already mounted and writeback
-> > error happens. We will not detct that, right?
-> >
-> > IOW, if capturing writeback error is important for volatile containers,
-> > then capturing it only during remount time is not enough. Normally
-> > fsync/syncfs should catch it and now we have skipped those, so in
-> > the process we lost mechanism to detect writeback errrors for
-> > volatile containers?
-> >
-> 
-> Yes, you are right.
-> It's an issue with volatile that we should probably document.
-> 
-> I think upper files data can "evaporate" even as the overlay is still mounted.
+> Thank you.  It's plain I'm not able to hit these cases ... I do run
+> xfstests against shmem, but that's obviously not good enough.  Can
+> you suggest something I should be running to improve my coverage?
 
-I think assumption of volatile containers was that data will remain
-valid as long as machine does not crash/shutdown. We missed the case
-of possibility of writeback errors during those discussions. 
+Not quickly.
 
-And if data can evaporate without anyway to know that somehthing
-is gone wrong, I don't know how that's useful for applications.
+I'll send you a builds.tar.xz of my tmpfs kernel builds swapping load,
+like I sent Alex Shi for his lru_lock testing back in March: but no
+point in resending exactly that, before I've updated its source patch
+to suit less ancient compilers.  Sometime in the next week.  It's hard
+to get working usefully in new environments: probably better as source
+of ideas (like building kernel in ext4 on loop on huge tmpfs while
+swapping) than as something to duplicate and run directly.
 
-Also, first we need to fix the case of writeback error handling
-for volatile containers while it is mounted before one tries to fix it
-for writeback error detection during remount, IMHO.
+I haven't tried LTP on your series yet, will do so later today.
+I install into a huge tmpfs mounted at /opt/ltp and run it there,
+with /sys/kernel/mm/transparent_hugepage/shmem_enabled "force"
+and khugepaged expedited.  Doesn't usually find anything, but
+well worth a go.  I'll be doing it based on 5.10-rc3 or rc4:
+avoiding mmotm or linux-next at the moment, because I've noticed
+that Rik's shmem THP gfp_mask mods have severely limited the use
+of huge pages in my testing there: maybe I just need to tweak defrag,
+or maybe I'll want the patches adjusted - I just haven't looked yet,
+making your series safe took priority.  (And aside from Rik's, there
+seemed to be something else affecting the use of huge pages in mmotm,
+not investigated yet.)
 
-Thanks
-Vivek
+xfstests: awkward time to ask, since I'm amidst transitioning from
+my old internal hack for user xattrs to what I had hoped to get into
+next release (enabling them, but restricting to the nr_inodes space),
+but too late for that now.  So I have a few workaround patches to the
+xfstests tree, and a few tmpfs patches to the kernel tree, but in flux
+at the moment.  Not that user xattrs are much related to your series.
+If you've got xfstests going on tmpfs, probably the easiest thing to
+add is /sys/kernel/mm/transparent_hugepage/shmem_enabled "force",
+so that mounts are huge=always by default.
 
+I do have six xfstests failing with your series, that passed before;
+but I have not had time to analyse those yet, and don't even want to
+enumerate them yet.  Some will probably be "not run"s in a standard
+tree, so hard for you to try; and maybe all of them will turn out to
+depend on different interpretations of small holes in huge pages -
+not necessarily anything to worry about.  But I wonder if they might
+relate to failures to split: your truncate_inode_partial_page() work
+is very nice, but for better or worse it does skip all the retries
+implicit in the previous way of proceeding.
+
+> 
+> > Fix to [PATCH v4 06/16] mm/filemap: Add helper for finding pages.
+> > I hit that VM_BUG_ON_PAGE(!thp_contains) when swapping, it is not
+> > safe without page lock, during the interval when shmem is moving a
+> > page between page cache and swap cache.  It could be tightened by
+> > passing in a new FGP to distinguish whether searching page or swap
+> > cache, but I think never tight enough in the swap case - because there
+> > is no rule for persisting page->private as there is for page->index.
+> > The best I could do is:
+> 
+> I'll just move this out to the caller who actually locks the page:
+> 
+> +++ b/mm/filemap.c
+> @@ -1839,7 +1839,6 @@ static inline struct page *find_get_entry(struct xa_state *xas, pgoff_t max,
+>                 put_page(page);
+>                 goto reset;
+>         }
+> -       VM_BUG_ON_PAGE(!thp_contains(page, xas->xa_index), page);
+>  
+>         return page;
+>  reset:
+> @@ -1923,6 +1922,8 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
+>                                 goto put;
+>                         if (page->mapping != mapping || PageWriteback(page))
+>                                 goto unlock;
+> +                       VM_BUG_ON_PAGE(!thp_contains(page, xas->xa_index),
+> +                                       page);
+>                 }
+>                 indices[pvec->nr] = xas.xa_index;
+>                 if (!pagevec_add(pvec, page))
+> 
+
+Okay, up to you: that's obviously much cleaner-looking than what I did;
+and if it covers all the cases you're most concerned about, fine (but
+your original placing did check some other usages, and I didn't want to
+weaken them - though now I notice that e.g. mapping_get_entry() has no
+equivalent check, so the find_get_entry() check was exceptional).
+
+> > Fix to [PATCH v4 07/16] mm/filemap: Add mapping_seek_hole_data.
+> > Crashed on a swap entry 0x2ff09, fairly obvious...
+> 
+> Whoops.  Thanks.
+> 
+> > Fix to [PATCH v4 15/16] mm/truncate,shmem: Handle truncates that split THPs.
+> > One machine ran fine, swapping and building in ext4 on loop0 on huge tmpfs;
+> > one machine got occasional pages of zeros in its .os; one machine couldn't
+> > get started because of ext4_find_dest_de errors on the newly mkfs'ed fs.
+> > The partial_end case was decided by PAGE_SIZE, when there might be a THP
+> > there.  The below patch has run well (for not very long), but I could
+> > easily have got it slightly wrong, off-by-one or whatever; and I have
+> > not looked into the similar code in mm/truncate.c, maybe that will need
+> > a similar fix or maybe not.
+> > 
+> > --- 5103w/mm/shmem.c	2020-11-12 15:46:21.075254036 -0800
+> > +++ 5103wh/mm/shmem.c	2020-11-16 01:09:35.431677308 -0800
+> > @@ -874,7 +874,7 @@ static void shmem_undo_range(struct inod
+> >  	long nr_swaps_freed = 0;
+> >  	pgoff_t index;
+> >  	int i;
+> > -	bool partial_end;
+> > +	bool same_page;
+> >  
+> >  	if (lend == -1)
+> >  		end = -1;	/* unsigned, so actually very big */
+> > @@ -907,16 +907,12 @@ static void shmem_undo_range(struct inod
+> >  		index++;
+> >  	}
+> >  
+> > -	partial_end = ((lend + 1) % PAGE_SIZE) > 0;
+> > +	same_page = (lstart >> PAGE_SHIFT) == end;
+> >  	page = NULL;
+> >  	shmem_getpage(inode, lstart >> PAGE_SHIFT, &page, SGP_READ);
+> >  	if (page) {
+> > -		bool same_page;
+> > -
+> >  		page = thp_head(page);
+> >  		same_page = lend < page_offset(page) + thp_size(page);
+> > -		if (same_page)
+> > -			partial_end = false;
+> 
+> I don't object to this patch at all, at least partly because it's shorter
+> and simpler!  I don't understand what it's solving, though.  The case
+> where there's a THP which covers partial_end is supposed to be handled
+> by the three lines above.
+
+I'm glad to hear it's not obvious to you,
+I was ashamed of how long it took me to see.  The initial
+	partial_end = ((lend + 1) % PAGE_SIZE) > 0;
+left partial_end false if the end is nicely PAGE_SIZE aligned.
+
+If the lstart shmem_getpage() finds a page, THP or small,
+and the lend is covered by the same page, all is well.  But if 
+the lend is covered by a THP, PAGE_SIZE aligned but not page_size()
+aligned (forgive my eliding off-by-ones wrt lend), then partial_end
+remains false, so there's no shmem_getpage() of the end, no discovery
+that it's a THP, and no attempt to split it as intended.
+
+I think then "end" goes forward unadjusted, and that whole ending THP
+will be truncated out: when it should have been split, and only its
+first pages removed.  Hence zeroes appearing where they should not.
+
+> 
+> > Fix to [PATCH v4 15/16] mm/truncate,shmem: Handle truncates that split THPs.
+> > xfstests generic/012 on huge tmpfs hit this every time (when checking
+> > xfs_io commands available: later decides "not run" because no "fiemap").
+> > I grabbed this line unthinkingly from one of your later series, it fixes
+> > the crash; but once I actually thought about it when trying to track down
+> > weirder behaviours, realize that the kmap_atomic() and flush_dcache_page()
+> > in zero_user_segments() are not prepared for a THP - so highmem and
+> > flush_dcache_page architectures will be disappointed. If I searched
+> > through your other series, I might find the complete fix; or perhaps
+> > it's already there in linux-next, I haven't looked.
+> 
+> zero_user_segments() is fixed by "mm: Support THPs in zero_user_segments".
+> I think most recently posted here:
+> https://lore.kernel.org/linux-mm/20201026183136.10404-2-willy@infradead.org/
+> 
+> My fault for not realising this patch depended on that patch.  I did
+> test these patches stand-alone, but it didn't trigger this problem.
+> 
+> flush_dcache_page() needs to be called once for each sub-page.  We
+> really need a flush_dcache_thp() so that architectures can optimise this.
+
+Right.
+
+> Although maybe now that's going to be called flush_dcache_folio().
+
+Yes, I was delighted to notice the return of "folio":
+https://lore.kernel.org/linux-mm/Pine.LNX.4.21.0107051737340.1577-100000@localhost.localdomain/
+
+> 
+> > I also had noise from the WARN_ON(page_to_index(page) != index)
+> > in invalidate_inode_pages2_range(): but that's my problem, since
+> > for testing I add a dummy shmem_direct_IO() (return 0): for that
+> > I've now added a shmem_mapping() check at the head of pages2_range().
+> 
+> Ah, I have a later fix for invalidate_inode_pages2_range():
+> https://lore.kernel.org/linux-mm/20201026183136.10404-6-willy@infradead.org/
+> 
+> I didn't post it earlier because there aren't any filesystems currently
+> which use THPs and directIO ;-)
+
+Yes, I'd seen your exchange with Jan about that.  And initially I ported
+in your later fix; but later decided it was better to decouple my testing
+mods from whatever is decided in your series.  If tmpfs does (pretend to)
+support directIO, it is correct that invalidate_inode_pages2_range() do
+nothing on it: because the pretended IO is to and from the tmpfs backing
+store, which is the page cache.
+
+> 
+> > That's all for now: I'll fire off more overnight testing.
+> 
+> Thanks!
+
+All running fine.
+
+Hugh
