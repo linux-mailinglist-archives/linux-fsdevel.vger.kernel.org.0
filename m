@@ -2,100 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D534D2B3BD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 04:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3032F2B3C3A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 05:46:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbgKPD3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Nov 2020 22:29:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55884 "EHLO
+        id S1726362AbgKPEql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Nov 2020 23:46:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbgKPD3t (ORCPT
+        with ESMTP id S1726016AbgKPEqk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Nov 2020 22:29:49 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B79C0613CF;
-        Sun, 15 Nov 2020 19:29:48 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1keVD4-006zpa-RU; Mon, 16 Nov 2020 03:29:43 +0000
-Date:   Mon, 16 Nov 2020 03:29:42 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        wei.liu@kernel.org, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH 1/6] seq_file: add seq_read_iter
-Message-ID: <20201116032942.GV3576660@ZenIV.linux.org.uk>
-References: <20201114055048.GN3576660@ZenIV.linux.org.uk>
- <20201114061934.GA658@Ryzen-9-3900X.localdomain>
- <20201114070025.GO3576660@ZenIV.linux.org.uk>
- <20201114205000.GP3576660@ZenIV.linux.org.uk>
- <20201115155355.GR3576660@ZenIV.linux.org.uk>
- <20201115214125.GA317@Ryzen-9-3900X.localdomain>
- <20201115233814.GT3576660@ZenIV.linux.org.uk>
- <20201115235149.GA252@Ryzen-9-3900X.localdomain>
- <20201116002513.GU3576660@ZenIV.linux.org.uk>
- <20201116003416.GA345@Ryzen-9-3900X.localdomain>
+        Sun, 15 Nov 2020 23:46:40 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E04BC0613CF;
+        Sun, 15 Nov 2020 20:46:40 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id 142so5018985ljj.10;
+        Sun, 15 Nov 2020 20:46:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fiFFw8zZGY52pauMdMlJ7C+qqSJV0zI5XLyCjwLxVG8=;
+        b=ML0tql6h3lq5fjkMps+DkEhlc+KeXgVwHVIwUA+Adsh8nf4Y+0E3NJkAc1lPbbZpFD
+         yYHe3U15EiyDf5uKzw1ygu5wHQcMalPODYEJd4COfjyEXODKuHTWJTHrOs1SA1QBZaky
+         6CXWM+9G9TR1aXqb5qwRZwkkrhemj8kO4RD3rMLBROsn3TMLujcYVkdJ9e7ymuaT03Fr
+         K9kCO9/gMh77ySpaH+iV5eYS+rImFN4BWNrJUCKqBCtLwiYMPu2qaCSG2GG6ujQssEru
+         IzABWSsEnMD/CZ8eyYvNVUYk8/h9VH+T1h575f5wc7n62MH1bSisgadCiAfNP/zlTffe
+         qrew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fiFFw8zZGY52pauMdMlJ7C+qqSJV0zI5XLyCjwLxVG8=;
+        b=GNpcVVyGk6TB3W1x3eB3WkruPWzz2pnuDxxEjMWhua8OqML6+EEaNz5XJZmwIRKySH
+         8ycepOlpUPT3cfktzlsUmCEKJLxgcYIbwstn991+8cRSUgVS0cj9vE5Xfb7UG04wkgwu
+         ThFKOBO0DpDqPe40gSpkF1iZ/CrBb+nWP83W+nmKlHpUvRZ1hioUti56i1FOBkwuJZqd
+         pJzcbg8W8aln9H2bYUEpkFIAfESER9upp2vmcXCsPFkv1Rt6B1kAj4xIAvR7P4o8BYTh
+         jBt86bKxX6jOpXtpCmYeQCL6YgNVXoixdxRlsk7TZvqbA73M492K7zeEYnKTjwExhQMM
+         Xttg==
+X-Gm-Message-State: AOAM533ZEb/+dkUiuWr0wEdQlgA7X1FS/cq3hIIdROWsR6NNNmkdBX7b
+        8UWw++RELvIrvw5FRoS42Am32iCRxwXWOQ==
+X-Google-Smtp-Source: ABdhPJxVwQX5xdmxAmLkQ+IZQM67yiaDthWtolAOzfl7N1mWBQdRdnCSTzuXX/q+qQ4cDckzxMml3w==
+X-Received: by 2002:a2e:86c8:: with SMTP id n8mr5420282ljj.43.1605501998801;
+        Sun, 15 Nov 2020 20:46:38 -0800 (PST)
+Received: from carbon.v ([94.143.149.146])
+        by smtp.googlemail.com with ESMTPSA id d7sm2572781lji.114.2020.11.15.20.46.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Nov 2020 20:46:38 -0800 (PST)
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     io-uring@vger.kernel.org
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org,
+        Dmitry Kadashev <dkadashev@gmail.com>
+Subject: [PATCH 0/2] io_uring: add mkdirat support
+Date:   Mon, 16 Nov 2020 11:45:27 +0700
+Message-Id: <20201116044529.1028783-1-dkadashev@gmail.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201116003416.GA345@Ryzen-9-3900X.localdomain>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 15, 2020 at 05:34:16PM -0700, Nathan Chancellor wrote:
- 
-> Still good.
-> 
-> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+This adds mkdirat support to io_uring and is heavily based on recently
+added renameat() / unlinkat() support.
 
-Pushed into #fixes
+The first patch is preparation with no functional changes, makes
+do_mkdirat accept struct filename pointer rather than the user string.
 
-> > BTW, is that call of readv() really coming from init?  And if it
-> > is, what version of init are you using?
-> 
-> I believe that it is but since this is WSL2, I believe that /init is a
-> proprietary Microsoft implementation, rather than systemd or another
-> init system:
-> 
-> https://wiki.ubuntu.com/WSL#Keeping_Ubuntu_Updated_in_WSL
-> 
-> So I am not sure how possible it is to see exactly what is going on or
-> getting it improved.
+The second one leverages that to implement mkdirat in io_uring.
 
-Oh, well...  Anyway, as a regression test it's interesting:
+Based on for-5.11/io_uring.
 
-#include <sys/uio.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-main()
-{
-	static char s[1024];
-	static struct iovec v[2] = {{NULL, 0}, {s, 1024}};
+Dmitry Kadashev (2):
+  fs: make do_mkdirat() take struct filename
+  io_uring: add support for IORING_OP_MKDIRAT
 
-	for(;;) {
-		ssize_t n = readv(0, v, 2), m, w;
+ fs/internal.h                 |  1 +
+ fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
+ fs/namei.c                    | 20 ++++++++----
+ include/uapi/linux/io_uring.h |  1 +
+ 4 files changed, 74 insertions(+), 6 deletions(-)
 
-		if (n < 0) {
-			perror("readv");
-			return -1;
-		}
-		if (!n)
-			return 0;
-		for (m = 0; m < n; m += w) {
-			w = write(1, s + m, n - m);
-			if (w < 0)
-				perror("write");
-		}
-	}
-}
+-- 
+2.28.0
 
-which ought to copy stdin to stdout; with this bug it would (on sufficiently
-large seq_file-based files) fail with "readv: Bad address" (-EFAULT, that is).
