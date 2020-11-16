@@ -2,201 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B59912B3C3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 05:47:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F392B3C45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 05:58:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbgKPEqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Nov 2020 23:46:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39358 "EHLO
+        id S1726456AbgKPE6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Nov 2020 23:58:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726431AbgKPEqs (ORCPT
+        with ESMTP id S1726136AbgKPE6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Nov 2020 23:46:48 -0500
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0036AC0613CF;
-        Sun, 15 Nov 2020 20:46:47 -0800 (PST)
-Received: by mail-lj1-x244.google.com with SMTP id s9so18600164ljo.11;
-        Sun, 15 Nov 2020 20:46:47 -0800 (PST)
+        Sun, 15 Nov 2020 23:58:08 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59149C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 20:58:07 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id w14so12997279pfd.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 20:58:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=sargun.me; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HAgiP+hNE9bnfUbQCsMJCLQYCDs2zp5i3DlpcOV9mMs=;
-        b=AmfDQRRSgWaRtL8B2fp+hO/H+/VRQOS43v76tLKc/3ZMB7+3j/MNBcoeRdGTeR3Mvn
-         qnckZWoIFYfHoeFQj9aFk+C5op6LNCzgPYXpIgKu9SsTSNn2bdlLHQ9JQdOaMaP/GysL
-         LihhzzorfkAcMRJidUP2DTA9FGopg/mguwyMH9LkZcMMFSrhJBVUV4H7JEqa3mHYoNBT
-         2bvbUcNAG+hvjQybhWmcaOK92dlIgF/A6XfCbzf9Iuo/ba5kJzlIL7w4kCqNJ5xlhE/F
-         bUG1k/ljUrHIq3p8wCclolgBNL0WSYaFEesNDgx0EexeW45IHbjvysGWKnlQ+n4BoMW3
-         QN2Q==
+        bh=9ztFiUedUTg5J0aZhxtXkB0phLulrQA7s3Fbdqug+y0=;
+        b=SbXZ7A4pi/U4Y/V4yRmC+emnIOamVUyOGqmbpdqs+2We9Sli/YF7LoNhnAw6bJ7niO
+         gAJZTULXAAWBt/dxaJj4NYmilGniGWAilGvmNyaCEtqSOWYArkJMSHpnbQsEN4J1gM28
+         D8RV0z0EvXSR6tcbV6qxczx7wZU3bN8DNpbsg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HAgiP+hNE9bnfUbQCsMJCLQYCDs2zp5i3DlpcOV9mMs=;
-        b=IZTJTapjTFhEl9vuR3cHd866+3nzz8v38SYERSNz3TVIKC+Gud4iV2LG9uokt6mafu
-         bW5s/nDPcuE6sn8DLFTEuXikULTnJP+rFryPBf1UvagEUUCaw9EvIlFqQjVGOdnPShPq
-         Zj6ne5e0lzC4QB9iz+8lUe8ljQhXc0KTmmt5QQPz8nMoF8XYKoiSZRJIKZcuSZVCLWi5
-         tVKKrzsJ9q25d59szptlAd4Tp6wk9rEdWmTlYKfQiwPYCExQUaJWbEfmw47T62JEVs0E
-         wCy3kOY7Q5hLnDPHtGBRTg5Twoh5jbnUiyphaBSek2k6LaaztMl0ZFZL76AZYqTafv5T
-         DAzA==
-X-Gm-Message-State: AOAM5328DSgMUaf/mS3N/8r/DFozRJI2cDre/YwKyZ+YfIkbr+tbTs1k
-        iBPyRaxYhzodP2+9i3ySr/nVImLuDxcQlA==
-X-Google-Smtp-Source: ABdhPJxe0uG7neDafoOCTPoHQKI/QZKq1ybgTT3sMY5lq95XT/KxoQXQvzntwGM1ILUuGOvmE36xdg==
-X-Received: by 2002:a2e:701a:: with SMTP id l26mr6589992ljc.378.1605502006254;
-        Sun, 15 Nov 2020 20:46:46 -0800 (PST)
-Received: from carbon.v ([94.143.149.146])
-        by smtp.googlemail.com with ESMTPSA id d7sm2572781lji.114.2020.11.15.20.46.45
+        bh=9ztFiUedUTg5J0aZhxtXkB0phLulrQA7s3Fbdqug+y0=;
+        b=IjiEsh6n2LjIIxyjcZc4eFF3ezSh6z8kQvh/YuBO/14CvQspi7Or3hIvimHmXg6Pv/
+         i1o8rSGsqVnniCCtSyCwPD3WskPGlRQaEHklqYW5/aFUaupaTVunmdD4VHzo7hsRV6D7
+         jgFjxeHpPRtzZQpYLDg9rkBnlL+wN2xK1ZesOCSKPlvITsk6wKbTQ9zZF7epcO3AeIS6
+         chkWVgDvM0tXV3TSjMAM3mreMB/eAc83/CLjqDpHzbVpJjL5rSyRnxmT3P2HpnkO3wtC
+         r75Ezk7dzeNzXBEKsrE+SGNlKBEn7rzlYIL5/155U5cnbJLPq/PWValZ5wmwG1fAeb77
+         t+vg==
+X-Gm-Message-State: AOAM5314H6kkHqmV00Db9nRXcMPuBJ+YYvjHAkPya6HkfLrTBJOMhxZB
+        GvoN0SvT3FG48sZjVyEXVSZijg==
+X-Google-Smtp-Source: ABdhPJwqEND9qF0a2sitG/FvfTRXWBCTnv0Tsh4REDBK9tig6k8Z3xgcVxl2WYGd8k5m1d8iSbcrIA==
+X-Received: by 2002:a63:2945:: with SMTP id p66mr11921494pgp.419.1605502686837;
+        Sun, 15 Nov 2020 20:58:06 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id v23sm16465284pjh.46.2020.11.15.20.58.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Nov 2020 20:46:45 -0800 (PST)
-From:   Dmitry Kadashev <dkadashev@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org,
-        Dmitry Kadashev <dkadashev@gmail.com>
-Subject: [PATCH 2/2] io_uring: add support for IORING_OP_MKDIRAT
-Date:   Mon, 16 Nov 2020 11:45:29 +0700
-Message-Id: <20201116044529.1028783-3-dkadashev@gmail.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201116044529.1028783-1-dkadashev@gmail.com>
-References: <20201116044529.1028783-1-dkadashev@gmail.com>
+        Sun, 15 Nov 2020 20:58:06 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH 1/3] fs: Add s_instance_id field to superblock for unique identification
+Date:   Sun, 15 Nov 2020 20:57:56 -0800
+Message-Id: <20201116045758.21774-2-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201116045758.21774-1-sargun@sargun.me>
+References: <20201116045758.21774-1-sargun@sargun.me>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-IORING_OP_MKDIRAT behaves like mkdirat(2) and takes the same flags
-and arguments.
+This assigns a per-boot unique number to each superblock. This allows
+other components to know whether a filesystem has been remounted
+since they last interacted with it.
 
-Signed-off-by: Dmitry Kadashev <dkadashev@gmail.com>
+At every boot it is reset to 0. There is no specific reason it is set to 0,
+other than repeatability versus using some random starting number. Because
+of this, you must store it along some other piece of data which is
+initialized at boot time.
+
+This doesn't have any of the overhead of idr, and a u64 wont wrap any time
+soon. There is no forward lookup requirement, so an idr is not needed.
+
+In the future, we may want to expose this to userspace. Userspace programs
+can benefit from this if they have large chunks of dirty or mmaped memory
+that they're interacting with, and they want to see if that volume has been
+unmounted, and remounted. Along with this, and a mechanism to inspect the
+superblock's errseq a user can determine whether they need to throw away
+their cache or similar. This is another benefit in comparison to just
+using a pointer to the superblock to uniquely identify it.
+
+Although this doesn't expose an ioctl or similar yet, in the future we
+could add an ioctl that allows for fetching the s_instance_id for a given
+cache, and inspection of the errseq associated with that.
+
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org
 ---
- fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  1 +
- 2 files changed, 59 insertions(+)
+ fs/super.c              | 3 +++
+ include/linux/fs.h      | 7 +++++++
+ include/uapi/linux/fs.h | 2 ++
+ 3 files changed, 12 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 365a583033c5..0848b6c18fa6 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -565,6 +565,13 @@ struct io_unlink {
- 	struct filename			*filename;
- };
+diff --git a/fs/super.c b/fs/super.c
+index 904459b35119..e47ace7f8c3d 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -42,6 +42,7 @@
  
-+struct io_mkdir {
-+	struct file			*file;
-+	int				dfd;
-+	umode_t				mode;
-+	struct filename			*filename;
-+};
-+
- struct io_completion {
- 	struct file			*file;
- 	struct list_head		list;
-@@ -692,6 +699,7 @@ struct io_kiocb {
- 		struct io_shutdown	shutdown;
- 		struct io_rename	rename;
- 		struct io_unlink	unlink;
-+		struct io_mkdir		mkdir;
- 		/* use only after cleaning per-op data, see io_clean_op() */
- 		struct io_completion	compl;
- 	};
-@@ -979,6 +987,10 @@ static const struct io_op_def io_op_defs[] = {
- 		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
- 						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
- 	},
-+	[IORING_OP_MKDIRAT] = {
-+		.work_flags		= IO_WQ_WORK_MM | IO_WQ_WORK_FILES |
-+						IO_WQ_WORK_FS | IO_WQ_WORK_BLKCG,
-+	},
- };
+ static int thaw_super_locked(struct super_block *sb);
  
- enum io_mem_account {
-@@ -3745,6 +3757,44 @@ static int io_unlinkat(struct io_kiocb *req, bool force_nonblock)
- 	return 0;
- }
++static u64 s_instance_id_counter;
+ static LIST_HEAD(super_blocks);
+ static DEFINE_SPINLOCK(sb_lock);
  
-+static int io_mkdirat_prep(struct io_kiocb *req,
-+			    const struct io_uring_sqe *sqe)
-+{
-+	struct io_mkdir *mkd = &req->mkdir;
-+	const char __user *fname;
-+
-+	if (unlikely(req->flags & REQ_F_FIXED_FILE))
-+		return -EBADF;
-+
-+	mkd->dfd = READ_ONCE(sqe->fd);
-+	mkd->mode = READ_ONCE(sqe->len);
-+
-+	fname = u64_to_user_ptr(READ_ONCE(sqe->addr));
-+	mkd->filename = getname(fname);
-+	if (IS_ERR(mkd->filename))
-+		return PTR_ERR(mkd->filename);
-+
-+	req->flags |= REQ_F_NEED_CLEANUP;
-+	return 0;
-+}
-+
-+static int io_mkdirat(struct io_kiocb *req, bool force_nonblock)
-+{
-+	struct io_mkdir *mkd = &req->mkdir;
-+	int ret;
-+
-+	if (force_nonblock)
-+		return -EAGAIN;
-+
-+	ret = do_mkdirat(mkd->dfd, mkd->filename, mkd->mode);
-+
-+	req->flags &= ~REQ_F_NEED_CLEANUP;
-+	if (ret < 0)
-+		req_set_fail_links(req);
-+	io_req_complete(req, ret);
-+	return 0;
-+}
-+
- static int io_shutdown_prep(struct io_kiocb *req,
- 			    const struct io_uring_sqe *sqe)
- {
-@@ -5956,6 +6006,8 @@ static int io_req_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		return io_renameat_prep(req, sqe);
- 	case IORING_OP_UNLINKAT:
- 		return io_unlinkat_prep(req, sqe);
-+	case IORING_OP_MKDIRAT:
-+		return io_mkdirat_prep(req, sqe);
- 	}
+@@ -546,6 +547,7 @@ struct super_block *sget_fc(struct fs_context *fc,
+ 	s->s_iflags |= fc->s_iflags;
+ 	strlcpy(s->s_id, s->s_type->name, sizeof(s->s_id));
+ 	list_add_tail(&s->s_list, &super_blocks);
++	s->s_instance_id = s_instance_id_counter++;
+ 	hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
+ 	spin_unlock(&sb_lock);
+ 	get_filesystem(s->s_type);
+@@ -625,6 +627,7 @@ struct super_block *sget(struct file_system_type *type,
+ 	s->s_type = type;
+ 	strlcpy(s->s_id, type->name, sizeof(s->s_id));
+ 	list_add_tail(&s->s_list, &super_blocks);
++	s->s_instance_id = s_instance_id_counter++;
+ 	hlist_add_head(&s->s_instances, &type->fs_supers);
+ 	spin_unlock(&sb_lock);
+ 	get_filesystem(type);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index dbbeb52ce5f3..642847c3673f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1472,6 +1472,13 @@ struct super_block {
+ 	char			s_id[32];	/* Informational name */
+ 	uuid_t			s_uuid;		/* UUID */
  
- 	printk_once(KERN_WARNING "io_uring: unhandled opcode %d\n",
-@@ -6099,6 +6151,9 @@ static void __io_clean_op(struct io_kiocb *req)
- 		case IORING_OP_UNLINKAT:
- 			putname(req->unlink.filename);
- 			break;
-+		case IORING_OP_MKDIRAT:
-+			putname(req->mkdir.filename);
-+			break;
- 		}
- 		req->flags &= ~REQ_F_NEED_CLEANUP;
- 	}
-@@ -6214,6 +6269,9 @@ static int io_issue_sqe(struct io_kiocb *req, bool force_nonblock,
- 	case IORING_OP_UNLINKAT:
- 		ret = io_unlinkat(req, force_nonblock);
- 		break;
-+	case IORING_OP_MKDIRAT:
-+		ret = io_mkdirat(req, force_nonblock);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 6bb8229de892..bc256eab7809 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -137,6 +137,7 @@ enum {
- 	IORING_OP_SHUTDOWN,
- 	IORING_OP_RENAMEAT,
- 	IORING_OP_UNLINKAT,
-+	IORING_OP_MKDIRAT,
++	/*
++	 * ID identifying this particular instance of the superblock. It can
++	 * be used to determine if a particular filesystem has been remounted.
++	 * It may be exposed to userspace.
++	 */
++	u64			s_instance_id;
++
+ 	unsigned int		s_max_links;
+ 	fmode_t			s_mode;
  
- 	/* this goes last, obviously */
- 	IORING_OP_LAST,
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index f44eb0a04afd..f2b126656c22 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -13,6 +13,7 @@
+ #include <linux/limits.h>
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
++#include <linux/uuid.h>
+ #ifndef __KERNEL__
+ #include <linux/fscrypt.h>
+ #endif
+@@ -203,6 +204,7 @@ struct fsxattr {
+ 
+ #define	FS_IOC_GETFLAGS			_IOR('f', 1, long)
+ #define	FS_IOC_SETFLAGS			_IOW('f', 2, long)
++#define FS_IOC_GET_SB_INSTANCE		_IOR('f', 3, uuid_t)
+ #define	FS_IOC_GETVERSION		_IOR('v', 1, long)
+ #define	FS_IOC_SETVERSION		_IOW('v', 2, long)
+ #define FS_IOC_FIEMAP			_IOWR('f', 11, struct fiemap)
 -- 
-2.28.0
+2.25.1
 
