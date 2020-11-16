@@ -2,171 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81D7A2B3C51
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 06:08:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6869B2B3F26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 09:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgKPFIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 00:08:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42636 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgKPFIT (ORCPT
+        id S1728290AbgKPIwW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 03:52:22 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2104 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbgKPIwW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 00:08:19 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B093C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 21:08:19 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id l5so17356224edq.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 Nov 2020 21:08:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gSADVCrwuW6pljevvcMQIsFsXVk+O5kueFxo5o6oC2U=;
-        b=Kjx6CArvtgoTb5cyfQ6FW3Kqfuqw16Cy4185JE92p8KAoyLxdIhPsivEB4Yvw2olBe
-         awl9bIyCyt3Qo6ElD/B07owFpy8Q0SoGclEMCRSzXokKzv1q0/+r46IpE8rBoIvS6bue
-         tBHkl2n+8FhDDjEt0tivyW+1XrIC0fqxPSj1I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gSADVCrwuW6pljevvcMQIsFsXVk+O5kueFxo5o6oC2U=;
-        b=kiB3HbCNdOQ5g3lvKoIJCb4zZ4PxvA90AejN5hhXPv8cBFtvojE1kChJUk9ttIBdKP
-         CmBs4Mm0QnHVXPvhbmy7q0/VaVZ8QsUP0iLiUA13LIAlCTEfQ4cIWCh1O7Q54rvpgAG+
-         EN4mtLUvL/8zlLzjVLtZW/fqLDbkvC7BFc6XYdNRVl+ZzI/ME8Ak+DBec2uPVybyMM1K
-         KE5Y7BX4HA3+zPekOE34rNNq1FSotdd/OhZwBG5Tbmy7RWCFiuoGtSKPpBfKZNwag3lI
-         Anv4QcCbmTtDJkavJ0XSyYfMnmRkL1fTyuv6fcdNXeXU3C9HTMhJDBodgMQEU6rIyG61
-         E3Mg==
-X-Gm-Message-State: AOAM53080k0xMGVwzQVA2Yt4/b7FKpoXXe0j+jOesGCanxoq09v69E6q
-        QjTOe93kM6+U6BsYKk8nkX1aCEfCmsx+kef5iSTi6Q==
-X-Google-Smtp-Source: ABdhPJz27VjxU1Y/RsC+srSnav3shAf1hUwEEUva0AB7XJzwN8AzkRknK5xznyNSo+DD/2o/HvQ/jRNh7/UIds/7kxU=
-X-Received: by 2002:a50:cd09:: with SMTP id z9mr14409916edi.152.1605503297860;
- Sun, 15 Nov 2020 21:08:17 -0800 (PST)
+        Mon, 16 Nov 2020 03:52:22 -0500
+Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CZN7s3tFrz67DF4;
+        Mon, 16 Nov 2020 16:50:33 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Mon, 16 Nov 2020 09:52:19 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Mon, 16 Nov 2020 09:52:19 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Thread-Topic: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Thread-Index: AQHWuZM+vbqfejrqe02000rC0h3xoqnHabyAgAMLzKA=
+Date:   Mon, 16 Nov 2020 08:52:19 +0000
+Message-ID: <0fd0fb3360194d909ba48f13220f9302@huawei.com>
+References: <20201113080132.16591-1-roberto.sassu@huawei.com>
+ <20201114111057.GA16415@infradead.org>
+In-Reply-To: <20201114111057.GA16415@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20201116045758.21774-1-sargun@sargun.me> <20201116045758.21774-2-sargun@sargun.me>
-In-Reply-To: <20201116045758.21774-2-sargun@sargun.me>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Sun, 15 Nov 2020 21:07:42 -0800
-Message-ID: <CAMp4zn88ggSTdaAA=Nj9xMDNbQVHXg1BPyZwO6g22TuMqhodog@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] fs: Add s_instance_id field to superblock for
- unique identification
-To:     overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Giuseppe Scrivano <gscrivan@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 15, 2020 at 8:58 PM Sargun Dhillon <sargun@sargun.me> wrote:
->
-> This assigns a per-boot unique number to each superblock. This allows
-> other components to know whether a filesystem has been remounted
-> since they last interacted with it.
->
-> At every boot it is reset to 0. There is no specific reason it is set to 0,
-> other than repeatability versus using some random starting number. Because
-> of this, you must store it along some other piece of data which is
-> initialized at boot time.
->
-> This doesn't have any of the overhead of idr, and a u64 wont wrap any time
-> soon. There is no forward lookup requirement, so an idr is not needed.
->
-> In the future, we may want to expose this to userspace. Userspace programs
-> can benefit from this if they have large chunks of dirty or mmaped memory
-> that they're interacting with, and they want to see if that volume has been
-> unmounted, and remounted. Along with this, and a mechanism to inspect the
-> superblock's errseq a user can determine whether they need to throw away
-> their cache or similar. This is another benefit in comparison to just
-> using a pointer to the superblock to uniquely identify it.
->
-> Although this doesn't expose an ioctl or similar yet, in the future we
-> could add an ioctl that allows for fetching the s_instance_id for a given
-> cache, and inspection of the errseq associated with that.
->
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> ---
->  fs/super.c              | 3 +++
->  include/linux/fs.h      | 7 +++++++
->  include/uapi/linux/fs.h | 2 ++
->  3 files changed, 12 insertions(+)
->
-> diff --git a/fs/super.c b/fs/super.c
-> index 904459b35119..e47ace7f8c3d 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -42,6 +42,7 @@
->
->  static int thaw_super_locked(struct super_block *sb);
->
-> +static u64 s_instance_id_counter;
->  static LIST_HEAD(super_blocks);
->  static DEFINE_SPINLOCK(sb_lock);
->
-> @@ -546,6 +547,7 @@ struct super_block *sget_fc(struct fs_context *fc,
->         s->s_iflags |= fc->s_iflags;
->         strlcpy(s->s_id, s->s_type->name, sizeof(s->s_id));
->         list_add_tail(&s->s_list, &super_blocks);
-> +       s->s_instance_id = s_instance_id_counter++;
->         hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
->         spin_unlock(&sb_lock);
->         get_filesystem(s->s_type);
-> @@ -625,6 +627,7 @@ struct super_block *sget(struct file_system_type *type,
->         s->s_type = type;
->         strlcpy(s->s_id, type->name, sizeof(s->s_id));
->         list_add_tail(&s->s_list, &super_blocks);
-> +       s->s_instance_id = s_instance_id_counter++;
->         hlist_add_head(&s->s_instances, &type->fs_supers);
->         spin_unlock(&sb_lock);
->         get_filesystem(type);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index dbbeb52ce5f3..642847c3673f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1472,6 +1472,13 @@ struct super_block {
->         char                    s_id[32];       /* Informational name */
->         uuid_t                  s_uuid;         /* UUID */
->
-> +       /*
-> +        * ID identifying this particular instance of the superblock. It can
-> +        * be used to determine if a particular filesystem has been remounted.
-> +        * It may be exposed to userspace.
-> +        */
-> +       u64                     s_instance_id;
-> +
->         unsigned int            s_max_links;
->         fmode_t                 s_mode;
->
+> From: Christoph Hellwig [mailto:hch@infradead.org]
+> Sent: Saturday, November 14, 2020 12:11 PM
+> On Fri, Nov 13, 2020 at 09:01:32AM +0100, Roberto Sassu wrote:
+> > Commit a1f9b1c0439db ("integrity/ima: switch to using __kernel_read")
+> > replaced the __vfs_read() call in integrity_kernel_read() with
+> > __kernel_read(), a new helper introduced by commit 61a707c543e2a ("fs:
+> add
+> > a __kernel_read helper").
+> >
+> > Since the new helper requires that also the FMODE_CAN_READ flag is set
+> in
+> > file->f_mode, this patch saves the original f_mode and sets the flag if the
+> > the file descriptor has the necessary file operation. Lastly, it restores
+> > the original f_mode at the end of ima_calc_file_hash().
+> 
+> This looks bogus.  FMODE_CAN_READ has a pretty clear definition and
+> you can't just go and read things if it is not set.  Also f_mode
+> manipulations on a life file are racy.
 
-Hit send a little too quickly. Please ignore this hunk as part of the RFC.
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index f44eb0a04afd..f2b126656c22 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -13,6 +13,7 @@
->  #include <linux/limits.h>
->  #include <linux/ioctl.h>
->  #include <linux/types.h>
-> +#include <linux/uuid.h>
->  #ifndef __KERNEL__
->  #include <linux/fscrypt.h>
->  #endif
-> @@ -203,6 +204,7 @@ struct fsxattr {
->
->  #define        FS_IOC_GETFLAGS                 _IOR('f', 1, long)
->  #define        FS_IOC_SETFLAGS                 _IOW('f', 2, long)
-> +#define FS_IOC_GET_SB_INSTANCE         _IOR('f', 3, uuid_t)
->  #define        FS_IOC_GETVERSION               _IOR('v', 1, long)
->  #define        FS_IOC_SETVERSION               _IOW('v', 2, long)
->  #define FS_IOC_FIEMAP                  _IOWR('f', 11, struct fiemap)
-> --
-> 2.25.1
->
+FMODE_CAN_READ was not set because f_mode does not have
+FMODE_READ. In the patch, I check if the former can be set
+similarly to the way it is done in file_table.c and open.c.
+
+Is there a better way to read a file when the file was not opened
+for reading and a new file descriptor cannot be created?
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> > Cc: stable@vger.kernel.org # 5.8.x
+> > Fixes: a1f9b1c0439db ("integrity/ima: switch to using __kernel_read")
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  security/integrity/ima/ima_crypto.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/security/integrity/ima/ima_crypto.c
+> b/security/integrity/ima/ima_crypto.c
+> > index 21989fa0c107..22ed86a0c964 100644
+> > --- a/security/integrity/ima/ima_crypto.c
+> > +++ b/security/integrity/ima/ima_crypto.c
+> > @@ -537,6 +537,7 @@ int ima_calc_file_hash(struct file *file, struct
+> ima_digest_data *hash)
+> >  	loff_t i_size;
+> >  	int rc;
+> >  	struct file *f = file;
+> > +	fmode_t saved_mode;
+> >  	bool new_file_instance = false, modified_mode = false;
+> >
+> >  	/*
+> > @@ -550,7 +551,7 @@ int ima_calc_file_hash(struct file *file, struct
+> ima_digest_data *hash)
+> >  	}
+> >
+> >  	/* Open a new file instance in O_RDONLY if we cannot read */
+> > -	if (!(file->f_mode & FMODE_READ)) {
+> > +	if (!(file->f_mode & FMODE_READ) || !(file->f_mode &
+> FMODE_CAN_READ)) {
+> >  		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
+> >  				O_TRUNC | O_CREAT | O_NOCTTY |
+> O_EXCL);
+> >  		flags |= O_RDONLY;
+> > @@ -562,7 +563,10 @@ int ima_calc_file_hash(struct file *file, struct
+> ima_digest_data *hash)
+> >  			 */
+> >  			pr_info_ratelimited("Unable to reopen file for
+> reading.\n");
+> >  			f = file;
+> > +			saved_mode = f->f_mode;
+> >  			f->f_mode |= FMODE_READ;
+> > +			if (likely(file->f_op->read || file->f_op->read_iter))
+> > +				f->f_mode |= FMODE_CAN_READ;
+> >  			modified_mode = true;
+> >  		} else {
+> >  			new_file_instance = true;
+> > @@ -582,7 +586,7 @@ int ima_calc_file_hash(struct file *file, struct
+> ima_digest_data *hash)
+> >  	if (new_file_instance)
+> >  		fput(f);
+> >  	else if (modified_mode)
+> > -		f->f_mode &= ~FMODE_READ;
+> > +		f->f_mode = saved_mode;
+> >  	return rc;
+> >  }
+> >
+> > --
+> > 2.27.GIT
+> >
+> ---end quoted text---
