@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF01E2B47FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A150B2B47EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:07:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731192AbgKPPAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 10:00:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49300 "EHLO
+        id S1730296AbgKPPAP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 10:00:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731140AbgKPPAL (ORCPT
+        with ESMTP id S1731152AbgKPPAN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 10:00:11 -0500
+        Mon, 16 Nov 2020 10:00:13 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C13C0613CF;
-        Mon, 16 Nov 2020 07:00:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85461C0613CF;
+        Mon, 16 Nov 2020 07:00:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=hht0IJxm0Atonm6wFAUEQs4XOgcCelxMQ4knV7FOtuU=; b=OnR7Hl4Gn8Cqes4fUGZG09Ou5b
-        wkdlpWME3XUZyniKD0u6+LvQEZ4jfV5KI0bvgOdKoKy/avRVN1ICpG3ayLr7y9f7mbweYvyb5dtf9
-        LB6vxsD9CHKtKypIkEHeVB91GzwQLjRfxlTFqOarpX4O1io/JrahYaGlAejJ9Wdq1/ICyENnWPCND
-        K6zRNnIdtyLJMuh8Hr4Sfe2rN4rdYR4DXOl0KacL5GfpL0QuIaqSWtKXdNYNYLVFnm5vnjYokZj+O
-        0vQqQ4fnqy8Lr9QzB4VCWPgAQgxp0yphr6N7aK0gOpCB0lKFL+g2IP94YJiiFkRNGuFpsWI78KvwO
-        vmSnReZw==;
+        bh=YfjTrndpak8c8C7A2Wr6OEv1ltyYeLktzUiwQ2pu+CA=; b=sSbJyd5Z5KD2Jm06fbaragik+M
+        U4XXVDpuxMNv4/WjvlIpVZ5hUtJVUjJwX0o6moSI38FP1aoBNjPnqu8o8kZG9K4b+WNesnRErmT0w
+        c6uY7DfOfd9C5ydCEyUMR677DxoiIxYLRbGGQfJ2J5j6waIzphSYMTKUR+nE58YtYY8s0sKyBH3Ag
+        gi1DVUl5tW1CH54AIrFJbhR7wa+qgoeCULdOKd8s1qQnapCkGCpIt0k3E1/tTPjMNE85mVQKwftyC
+        EQD17+/p3VVrTmL/7uawHNQSIdYnwo33SsrBvTjwr6J9LQP9HpQU2Rf1rToCbxKxVr+U/txNCS6he
+        amu9O3qQ==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefz6-0004Ja-4t; Mon, 16 Nov 2020 15:00:00 +0000
+        id 1kefz7-0004KI-Jc; Mon, 16 Nov 2020 15:00:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -48,9 +48,9 @@ Cc:     Justin Sanders <justin@coraid.com>,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 76/78] filemap: use ->f_mapping over ->i_mapping consistently
-Date:   Mon, 16 Nov 2020 15:58:07 +0100
-Message-Id: <20201116145809.410558-77-hch@lst.de>
+Subject: [PATCH 77/78] fs: simplify the get_super_thawed interface
+Date:   Mon, 16 Nov 2020 15:58:08 +0100
+Message-Id: <20201116145809.410558-78-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201116145809.410558-1-hch@lst.de>
 References: <20201116145809.410558-1-hch@lst.de>
@@ -61,56 +61,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use file->f_mapping in all functions that have a struct file available
-to properly handle the case where file_inode(file)->i_mapping !=
-inode->i_mapping.
+Merge get_super_thawed and get_super_exclusive_thawed into a single
+function.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/filemap.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/quota/quota.c   |  4 ++--
+ fs/super.c         | 42 +++++++++++-------------------------------
+ include/linux/fs.h |  3 +--
+ 3 files changed, 14 insertions(+), 35 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d5e7c2029d16b4..3e3531a757f8db 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2887,13 +2887,13 @@ EXPORT_SYMBOL(filemap_map_pages);
- vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index 9af95c7a0bbe3c..21d43933213965 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -876,9 +876,9 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
+ 	if (IS_ERR(bdev))
+ 		return ERR_CAST(bdev);
+ 	if (quotactl_cmd_onoff(cmd))
+-		sb = get_super_exclusive_thawed(bdev);
++		sb = get_super_thawed(bdev, true);
+ 	else if (quotactl_cmd_write(cmd))
+-		sb = get_super_thawed(bdev);
++		sb = get_super_thawed(bdev, false);
+ 	else
+ 		sb = get_super(bdev);
+ 	bdput(bdev);
+diff --git a/fs/super.c b/fs/super.c
+index b327a82bc1946b..50995f8abd1bf1 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -789,8 +789,17 @@ struct super_block *get_super(struct block_device *bdev)
+ }
+ EXPORT_SYMBOL(get_super);
+ 
+-static struct super_block *__get_super_thawed(struct block_device *bdev,
+-					      bool excl)
++/**
++ * get_super_thawed - get thawed superblock of a device
++ * @bdev: device to get the superblock for
++ * @excl: lock s_umount exclusive if %true, else shared.
++ *
++ * Scans the superblock list and finds the superblock of the file system mounted
++ * on the device.  The superblock is returned with s_umount held once it is
++ * thawed (or immediately if it was not frozen), or %NULL if no superblock was
++ * found.
++ */
++struct super_block *get_super_thawed(struct block_device *bdev, bool excl)
  {
- 	struct page *page = vmf->page;
--	struct inode *inode = file_inode(vmf->vma->vm_file);
-+	struct inode *inode = vmf->vma->vm_file->f_mapping->host;
- 	vm_fault_t ret = VM_FAULT_LOCKED;
+ 	while (1) {
+ 		struct super_block *s = __get_super(bdev, excl);
+@@ -805,37 +814,8 @@ static struct super_block *__get_super_thawed(struct block_device *bdev,
+ 		put_super(s);
+ 	}
+ }
+-
+-/**
+- *	get_super_thawed - get thawed superblock of a device
+- *	@bdev: device to get the superblock for
+- *
+- *	Scans the superblock list and finds the superblock of the file system
+- *	mounted on the device. The superblock is returned once it is thawed
+- *	(or immediately if it was not frozen). %NULL is returned if no match
+- *	is found.
+- */
+-struct super_block *get_super_thawed(struct block_device *bdev)
+-{
+-	return __get_super_thawed(bdev, false);
+-}
+ EXPORT_SYMBOL(get_super_thawed);
  
- 	sb_start_pagefault(inode->i_sb);
- 	file_update_time(vmf->vma->vm_file);
- 	lock_page(page);
--	if (page->mapping != inode->i_mapping) {
-+	if (page->mapping != vmf->vma->vm_file->f_mapping) {
- 		unlock_page(page);
- 		ret = VM_FAULT_NOPAGE;
- 		goto out;
-@@ -3149,10 +3149,9 @@ void dio_warn_stale_pagecache(struct file *filp)
- {
- 	static DEFINE_RATELIMIT_STATE(_rs, 86400 * HZ, DEFAULT_RATELIMIT_BURST);
- 	char pathname[128];
--	struct inode *inode = file_inode(filp);
- 	char *path;
- 
--	errseq_set(&inode->i_mapping->wb_err, -EIO);
-+	errseq_set(&filp->f_mapping->wb_err, -EIO);
- 	if (__ratelimit(&_rs)) {
- 		path = file_path(filp, pathname, sizeof(pathname));
- 		if (IS_ERR(path))
-@@ -3179,7 +3178,7 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 	if (iocb->ki_flags & IOCB_NOWAIT) {
- 		/* If there are pages to writeback, return */
--		if (filemap_range_has_page(inode->i_mapping, pos,
-+		if (filemap_range_has_page(file->f_mapping, pos,
- 					   pos + write_len - 1))
- 			return -EAGAIN;
- 	} else {
+-/**
+- *	get_super_exclusive_thawed - get thawed superblock of a device
+- *	@bdev: device to get the superblock for
+- *
+- *	Scans the superblock list and finds the superblock of the file system
+- *	mounted on the device. The superblock is returned once it is thawed
+- *	(or immediately if it was not frozen) and s_umount semaphore is held
+- *	in exclusive mode. %NULL is returned if no match is found.
+- */
+-struct super_block *get_super_exclusive_thawed(struct block_device *bdev)
+-{
+-	return __get_super_thawed(bdev, true);
+-}
+-EXPORT_SYMBOL(get_super_exclusive_thawed);
+-
+ /**
+  * get_active_super - get an active reference to the superblock of a device
+  * @bdev: device to get the superblock for
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8667d0cdc71e76..d026d177a526bf 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3132,8 +3132,7 @@ extern struct file_system_type *get_filesystem(struct file_system_type *fs);
+ extern void put_filesystem(struct file_system_type *fs);
+ extern struct file_system_type *get_fs_type(const char *name);
+ extern struct super_block *get_super(struct block_device *);
+-extern struct super_block *get_super_thawed(struct block_device *);
+-extern struct super_block *get_super_exclusive_thawed(struct block_device *bdev);
++struct super_block *get_super_thawed(struct block_device *bdev, bool excl);
+ extern struct super_block *get_active_super(struct block_device *bdev);
+ extern void drop_super(struct super_block *sb);
+ extern void drop_super_exclusive(struct super_block *sb);
 -- 
 2.29.2
 
