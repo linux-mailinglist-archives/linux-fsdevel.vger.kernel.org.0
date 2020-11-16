@@ -2,127 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0422D2B4F1F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 19:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 535582B4F31
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 19:26:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732154AbgKPSVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 13:21:30 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52476 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729555AbgKPSVa (ORCPT
+        id S1732268AbgKPS0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 13:26:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53508 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729555AbgKPS0A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 13:21:30 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0AGI1UuT186530;
-        Mon, 16 Nov 2020 13:21:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=wsTuE6Zzrnrn5c2WufKfrNoKmg3P4Ge4J3WtTTDx828=;
- b=lA788sEMYgducpArP8W68NqRrDv+feJLItaf3ZAXUBbMDo43GrPlu5F9q0s8RgPykDtZ
- 2ZqkKntnmTiJ3z1GB+JgpnlCjgbt8rSStCH/a/WFop6RRc2X80qkN47Urcs4ZFyJ7T27
- xWZ84GM+nq8LSOYnQu7pwiAbbxxrYQHI7k10kzKtN/ESF41DcK7mMT54XkzWyUyvScud
- qMoO+7k2WfOrs6wEbrkqhsyI4bnbLmJHe99NMSiyZV6NKLPTeRJpScvCy44Y570Anxvv
- v2GlOXoPW7CGNrh6XP6tTqA0F0+3K3DH0NL+bAEZ2QbZb6L0wFMaN7hrztzgOqT3rAgp 6Q== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 34uvav46t2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Nov 2020 13:21:17 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0AGIIn9B001136;
-        Mon, 16 Nov 2020 18:21:16 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 34t6gh2cn3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Nov 2020 18:21:15 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0AGILDZY2228744
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Nov 2020 18:21:13 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1C7842049;
-        Mon, 16 Nov 2020 18:21:13 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E4C842041;
-        Mon, 16 Nov 2020 18:21:11 +0000 (GMT)
-Received: from sig-9-65-243-37.ibm.com (unknown [9.65.243.37])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 16 Nov 2020 18:21:10 +0000 (GMT)
-Message-ID: <51b4f4f119a80827fcc539de68ec9fa3df16d94d.camel@linux.ibm.com>
-Subject: Re: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
- ima_calc_file_hash()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date:   Mon, 16 Nov 2020 13:21:10 -0500
-In-Reply-To: <20201116174127.GA4578@infradead.org>
-References: <20201113080132.16591-1-roberto.sassu@huawei.com>
-         <20201114111057.GA16415@infradead.org>
-         <0fd0fb3360194d909ba48f13220f9302@huawei.com>
-         <20201116162202.GA15010@infradead.org>
-         <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
-         <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
-         <20201116174127.GA4578@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-16_09:2020-11-13,2020-11-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=3
- priorityscore=1501 mlxscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- malwarescore=0 impostorscore=0 adultscore=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011160102
+        Mon, 16 Nov 2020 13:26:00 -0500
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 811CCC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 10:25:59 -0800 (PST)
+Received: by mail-io1-xd43.google.com with SMTP id s24so18387369ioj.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Nov 2020 10:25:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ybp2lGYsCpYLD2ZxzCT4S2lSwLIWcsy7OzzHyM/RGf8=;
+        b=YwPpgI1MksMZqyu/f1jaPnaFGitj4hRlOHr2mZBFAdD99QCLBKvSGQ9uJndruX6jXz
+         GpdfQUG21qqgSj1Q/SbrIUtPuofEGGZGUFdJj6m7F31areJhqxc6E9NLsqytEERWX3/a
+         KuTFiRjwCR4KTb1vQd1hJBY05qjONxQ+GIoV4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ybp2lGYsCpYLD2ZxzCT4S2lSwLIWcsy7OzzHyM/RGf8=;
+        b=HTSQL3O9vlY6z+JL4zS01u+evC0hK0Z436qq+ixOXg0sOfgpbfD9Z7KiPVuiAhw7Ze
+         esnhdZRjvpo3zqsyEy5SiyO4Z3mgIvdyjYqVjHf1A6VZWFo9Fsu/+hwrsmvnWCFRF9O7
+         SrIGzjN5dCG3jmdbj7EKM0elXUQ1eYvK6x6uKF6zhvFq/wmuyQLncwqR43S1Kpk4GDDI
+         f4KoJPM8dRu/rPwo5rZAii4y91ofVZoAnjpNuMTqqi823rJ1ogll4QOvqJYi+XLYRytF
+         rLRoS+TwEzobtTDCrk5UoKdwnTVhi5+t+cq5N+583VTCiPVDY4hmEcapWK3/yqGqcJqU
+         hLYA==
+X-Gm-Message-State: AOAM533WrGPB4mpn0ic0wjWGxQ2TRXhHer9ChDculfJAfyDg8c1pFUoD
+        1YKzQBH2NtQG/CFqbyfjPZMh3g==
+X-Google-Smtp-Source: ABdhPJyXZzoXN17Z3To3UgmHepzKhW3v0rEGzn+By/dU/EIEEeQPDWuQOy3oKEYo1F6HFM9QPEHNTQ==
+X-Received: by 2002:a05:6638:d0b:: with SMTP id q11mr742466jaj.16.1605551158808;
+        Mon, 16 Nov 2020 10:25:58 -0800 (PST)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id n4sm10239102iox.6.2020.11.16.10.25.58
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Nov 2020 10:25:58 -0800 (PST)
+Date:   Mon, 16 Nov 2020 18:25:56 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Chengguang Xu <cgxu519@mykernel.net>
+Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
+ directories when safe
+Message-ID: <20201116182553.GB18698@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20201116045758.21774-1-sargun@sargun.me>
+ <20201116045758.21774-4-sargun@sargun.me>
+ <20201116144240.GA9190@redhat.com>
+ <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
+ <20201116163615.GA17680@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201116163615.GA17680@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-11-16 at 17:41 +0000, Christoph Hellwig wrote:
-> On Mon, Nov 16, 2020 at 09:37:32AM -0800, Linus Torvalds wrote:
-> > > This discussion seems to be going down the path of requiring an IMA
-> > > filesystem hook for reading the file, again.  That solution was
-> > > rejected, not by me.  What is new this time?
+On Mon, Nov 16, 2020 at 11:36:15AM -0500, Vivek Goyal wrote:
+> On Mon, Nov 16, 2020 at 05:20:04PM +0200, Amir Goldstein wrote:
+> > On Mon, Nov 16, 2020 at 4:42 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > On Sun, Nov 15, 2020 at 08:57:58PM -0800, Sargun Dhillon wrote:
+> > > > Overlayfs added the ability to setup mounts where all syncs could be
+> > > > short-circuted in (2a99ddacee43: ovl: provide a mount option "volatile").
+> > > >
+> > > > A user might want to remount this fs, but we do not let the user because
+> > > > of the "incompat" detection feature. In the case of volatile, it is safe
+> > > > to do something like[1]:
+> > > >
+> > > > $ sync -f /root/upperdir
+> > > > $ rm -rf /root/workdir/incompat/volatile
+> > > >
+> > > > There are two ways to go about this. You can call sync on the underlying
+> > > > filesystem, check the error code, and delete the dirty file if everything
+> > > > is clean. If you're running lots of containers on the same filesystem, or
+> > > > you want to avoid all unnecessary I/O, this may be suboptimal.
+> > > >
+> > >
+> > > Hi Sargun,
+> > >
+> > > I had asked bunch of questions in previous mail thread to be more
+> > > clear on your requirements but never got any response. It would
+> > > have helped understanding your requirements better.
+> > >
+> > > How about following patch set which seems to sync only dirty inodes of
+> > > upper belonging to a particular overlayfs instance.
+> > >
+> > > https://lore.kernel.org/linux-unionfs/20201113065555.147276-1-cgxu519@mykernel.net/
+> > >
+> > > So if could implement a mount option which ignores fsync but upon
+> > > syncfs, only syncs dirty inodes of that overlayfs instance, it will
+> > > make sure we are not syncing whole of the upper fs. And we could
+> > > do this syncing on unmount of overlayfs and remove dirty file upon
+> > > successful sync.
+> > >
+> > > Looks like this will be much simpler method and should be able to
+> > > meet your requirements (As long as you are fine with syncing dirty
+> > > upper inodes of this overlay instance on unmount).
+> > >
 > > 
-> > You can't read a non-read-opened file. Not even IMA can.
+> > Do note that the latest patch set by Chengguang not only syncs dirty
+> > inodes of this overlay instance, but also waits for in-flight writeback on
+> > all the upper fs inodes and I think that with !ovl_should_sync(ofs)
+> > we will not re-dirty the ovl inodes and lose track of the list of dirty
+> > inodes - maybe that can be fixed.
 > > 
-> > So don't do that then.
-> > 
-> > IMA is doing something wrong. Why would you ever read a file that can't be read?
-> > 
-> > Fix whatever "open" function instead of trying to work around the fact
-> > that you opened it wrong.
+> > Also, I am not sure anymore that we can safely remove the dirty file after
+> > sync dirty inodes sync_fs and umount. If someone did sync_fs before us
+> > and consumed the error, we may have a copied up file in upper whose
+> > data is not on disk, but when we sync_fs on unmount we won't get an
+> > error? not sure.
 > 
-> The "issue" with IMA is that it uses security hooks to hook into the
-> VFS and then wants to read every file that gets opened on a real file
-> system to "measure" the contents vs a hash stashed away somewhere.
-> Which has always been rather sketchy.
+> May be we can save errseq_t when mounting overlay and compare with
+> errseq_t stored in upper sb after unmount. That will tell us whether
+> error has happened since we mounted overlay. (Similar to what Sargun
+> is doing).
+> 
+> In fact, if this is a concern, we have this issue with user space
+> "sync <upper>" too? Other sync might fail and this one succeeds
+> and we will think upper is just fine. May be container tools can
+> keep a file/dir open at the time of mount and call syncfs using
+> that fd instead. (And that should catch errors since that fd
+> was opened, I am assuming).
+> 
+> > 
+> > I am less concerned about ways to allow re-mount of volatile
+> > overlayfs than I am about turning volatile overlayfs into non-volatile.
+> 
+> If we are not interested in converting volatile containers into
+> non-volatile, then whole point of these patch series is to detect
+> if any writeback error has happened or not. If writeback error has
+> happened, then we detect that at remount and possibly throw away
+> container.
+> 
+> What happens today if writeback error has happened. Is that page thrown
+> away from page cache and read back from disk? IOW, will user lose
+> the data it had written in page cache because writeback failed. I am
+> assuming we can't keep the dirty page around for very long otherwise
+> it has potential to fill up all the available ram with dirty pages which
+> can't be written back.
+> 
+> Why is it important to detect writeback error only during remount. What
+> happens if container overlay instance is already mounted and writeback
+> error happens. We will not detct that, right?
+> 
+> IOW, if capturing writeback error is important for volatile containers,
+> then capturing it only during remount time is not enough. Normally
+> fsync/syncfs should catch it and now we have skipped those, so in
+> the process we lost mechanism to detect writeback errrors for
+> volatile containers?
+> 
+> Thanks
+> Vivek
+> 
 
-There are security hooks, where IMA is co-located, but there are also
-IMA hooks where there isn't an IMA hook (e.g. ima_file_check).  In all
-cases, the file needs to be read in order to calculate the file hash,
-which is then used for verifying file signatures (equivalent of secure
-boot) and extending the TPM (equivalent of trusted boot).  Only after
-measuring and verifying the file integrity, should access be granted to
-the file.
+At least for my use case, any kind of syncing is generally bad unless
+it can be controlled, and:
+1. Generate a limited set of IOPs
+2. Not block metadata operatons
+----
 
-Whether filesystems can and should be trusted to provide the real file
-hashes is a separate issue.
+This is a challenge that is left up to the filesystem developers that hasn't 
+really been addressed yet. The closest we've seen is individual block devices 
+per upper dir using something like device mapper, and throttling at that level.
 
-The decision as to which files should be measured or the signature
-verified is based on policy.
+I liken this to "eatmydata". I think it makes sense to force the user to go from 
+volatile -> volatile. I do think that adding the safety feature which explicitly 
+warns users that their system is a state where they may be experiencing data 
+loss (checking errseq_t) is useful. Although, we emit the error via dmesg today, 
+if we move over to the new mount API, we could emit the error from the fsfd, 
+either forcing the user to set another flag, "reallyvolatile" or deleting the 
+dirty bit on disk. I'm partial to the flag approach because it involves less
+API surface area.
 
-thanks,
-
-Mimi
-
+Partially because one of the overall use cases I want to be able to implement
+is LXC-style seccomp-fd based mount syscall interception, and the fewer
+things to juggle (and corner cases to handle), the better.
