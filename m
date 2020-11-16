@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 119282B4866
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BDAB2B4870
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Nov 2020 16:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731127AbgKPPE6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Nov 2020 10:04:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48910 "EHLO
+        id S1731415AbgKPPFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Nov 2020 10:05:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730484AbgKPO6e (ORCPT
+        with ESMTP id S1726236AbgKPO6d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Nov 2020 09:58:34 -0500
+        Mon, 16 Nov 2020 09:58:33 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07508C0617A6;
-        Mon, 16 Nov 2020 06:58:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC847C0613CF;
+        Mon, 16 Nov 2020 06:58:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=dr8Nr8dbB7J11PqXo+7/b7tximxSHcvF1HcCKGt1IiI=; b=TpTZ5F4/AmdsxM2Cu94cy7eEas
-        3X7DT8n5Y9HTYUNPKGh1eqWOrzm0xYcV10TWm7qZ2DAYxl9FZdzB5TSQwbJco0DGEH8GHNaKj4/uO
-        UapJemi5kTz7ILke6BFMPk1Qp+enisOjgnM5WI66jPW/Vmd0viYdg1qSGiqiQimTL89OKOdtd5INW
-        I0maxo/xPZ0nKatsoAF7NrHgoNRWlnrSm1gKMxhQmVA8vJCsPu08PgWB0cu99api4IM/dOgYmUa59
-        BLoaxWXKPrvz0+ejgB6cVN2tLjQDwxy7EgSet0pUC1cws2cyKk57iZ+SQrQfZqgWnLnZ1UKD1blpx
-        ffC4VyOw==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=k53tbKeUbVsb5uwUbGW8UpW/h79If5n0w+H4eZR3xSU=; b=tuJMnQttaybo9F4t8cP+N2hLQq
+        RXrM7+cD1yLqquFQbtlx4GxTcGrgpRY8HWo0g3CxND1nv1GYyQPkp8q3K2wzD/dngpDWkkquqHkp4
+        sHuLCh62/kacnFU017uJ6lg3sIxNoOE/FenrUxQsyI4PysSw0WPutcnk5f8h8OTz6qITqDy4OBoNX
+        j839YHJ1VKl6fCqCZwFmQOwQQf+y4oyipnv0MRAtvY48Ogo6z5wy5t7KJxz/QqkUnQuTFox/n8y/r
+        oz3SnuiJlz5Z/j6oveEA/Y/B74scFktzTg4AjYglEkJ4LnQzCz3bmbG+4ANwTszKKWHBb195E+1pa
+        yP5eNyVA==;
 Received: from [2001:4bb8:180:6600:255b:7def:a93:4a09] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kefxK-0003iO-GD; Mon, 16 Nov 2020 14:58:10 +0000
+        id 1kefxM-0003ii-UU; Mon, 16 Nov 2020 14:58:13 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
@@ -47,11 +47,14 @@ Cc:     Justin Sanders <justin@coraid.com>,
         drbd-dev@lists.linbit.com, nbd@other.debian.org,
         ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: cleanup updating the size of block devices v3
-Date:   Mon, 16 Nov 2020 15:56:51 +0100
-Message-Id: <20201116145809.410558-1-hch@lst.de>
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>
+Subject: [PATCH 02/78] loop: let set_capacity_revalidate_and_notify update the bdev size
+Date:   Mon, 16 Nov 2020 15:56:53 +0100
+Message-Id: <20201116145809.410558-3-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201116145809.410558-1-hch@lst.de>
+References: <20201116145809.410558-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
@@ -59,17 +62,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens,
+There is no good reason to call revalidate_disk_size separately.
 
-this series builds on top of the work that went into the last merge window,
-and make sure we have a single coherent interfac for updating the size of a
-block device.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+---
+ drivers/block/loop.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Changes since v2:
- - rebased to the set_capacity_revalidate_and_notify in mainline
- - keep the loop_set_size function
- - fix two mixed up acks
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index a58084c2ed7ceb..0a0c0c3a68ec4c 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -251,12 +251,8 @@ loop_validate_block_size(unsigned short bsize)
+  */
+ static void loop_set_size(struct loop_device *lo, loff_t size)
+ {
+-	struct block_device *bdev = lo->lo_device;
+-
+-	bd_set_nr_sectors(bdev, size);
+-
+-	if (!set_capacity_revalidate_and_notify(lo->lo_disk, size, false))
+-		kobject_uevent(&disk_to_dev(bdev->bd_disk)->kobj, KOBJ_CHANGE);
++	if (!set_capacity_revalidate_and_notify(lo->lo_disk, size, true))
++		kobject_uevent(&disk_to_dev(lo->lo_disk)->kobj, KOBJ_CHANGE);
+ }
  
-Changes since v1:
- - minor spelling fixes
+ static inline int
+-- 
+2.29.2
 
