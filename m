@@ -2,302 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93FAF2B6A08
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 17:30:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E0EE2B6A0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 17:30:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbgKQQ3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727078AbgKQQ3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 11:29:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbgKQQ3t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 17 Nov 2020 11:29:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbgKQQ3t (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 11:29:49 -0500
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDCA9C0617A6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 08:29:47 -0800 (PST)
-Received: by mail-pj1-x1042.google.com with SMTP id gi3so773222pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 08:29:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A3QTWUzTvUT9gxMoshGLtqPLDCXqi6pfAh27cLWuKoY=;
-        b=oF6O0GItwqng2CH4SIbYH2aWyQ0yc6lC98D8jhxQh/Z/K6wGgSrCp+VelucrtJYIN+
-         yfrPeJi0WnWoX5NjeJg7eGFqFQH7j+0A/kup3R4Gpm/Na2hqHBDTwGnqDR8yqmKMDFxB
-         jWQsbr+qnzpVfnxrIHMriUpUcKtH1Ei4VI4pdgcMN8m7OKjz1fLIvEICdudJz+MTX8Hb
-         pur0CMetqz1ZfpjWZf0ixQoiXRCmCJ970vKWlb7PggfovGKJFPkHgRalGrdCYI7ATCYB
-         EHeAV57hqAfhxZP2iYYglDOS2Q99Zw+xdno1A/n+4pWJdBqnLMHxUGUnCQa1wcQUc5t9
-         OL3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3QTWUzTvUT9gxMoshGLtqPLDCXqi6pfAh27cLWuKoY=;
-        b=Zu2sdgBB9tLMviiA583ZVwt1o6Y4T4DAiuGYuD3zcsDthuBIDFLR8ESXVh4ivKC2U6
-         ooZupDbEX6qpyOTAGQxzsiXMNWB4apX04QK7F/JiVDzVTjmMiJLSZpK+ARCexZ5XWZcl
-         U6PsCpEoLTc77CJhz+LWMZCvVhLqFguYCJ+J0MWXl9gbKaNpxpKblfR2LRU+1j9TA1aj
-         lrSVGy+BGrtkpYy2ZW0F+20onwT1IU+ipOGBpkFx3H8APsElvtJa/bwVKBO4xS96+gNf
-         8SRBPG3w9DEn1XL4saetSM3Usw/vXFUZf43KvecY6/aTD7AtHQD+g4Pw5KDp0Luvpd+o
-         zZIg==
-X-Gm-Message-State: AOAM530Re4Q2dhx8QUj0n3MzJfLn8R7XZsZ3zOk411btJE/5piapvRBf
-        Rvz2mNCMksI7do/ssymPxx/PqNhewVaOqNgiYI1SBg==
-X-Google-Smtp-Source: ABdhPJyKdXILrrCSaxnUg7OSQj7ryLePl/Z4V9HWSFy1zzwaaUm05L7FiTmkFJslcslXKPtsd9XP4QPPRhSICbNSWHs=
-X-Received: by 2002:a17:902:c14b:b029:d6:ab18:108d with SMTP id
- 11-20020a170902c14bb02900d6ab18108dmr314927plj.20.1605630587256; Tue, 17 Nov
- 2020 08:29:47 -0800 (PST)
+Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C78A24248;
+        Tue, 17 Nov 2020 16:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605630587;
+        bh=PUMsznmhk7oXz8nE3sFP/6QhUxa4UbgFIwp3Uby85Us=;
+        h=From:To:Cc:Subject:Date:From;
+        b=e/kSdrFqnAqjvgVJ2SfdwinhStSwrllid0kALNzFaTygy+5/kvUA07mFwWoEpdOe4
+         VrtGaycgSPytcR19KphlF+PX6QW9S4+VTtmi5HGQIRbpSZKs3NWqFKtjI87SsxUQpg
+         gzvH+t4ZAkM0Srh++wzOgAJ5JMx7ZXzx2ngv7T3c=
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: [PATCH v9 0/9] mm: introduce memfd_secret system call to create "secret" memory areas
+Date:   Tue, 17 Nov 2020 18:29:23 +0200
+Message-Id: <20201117162932.13649-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <20201113105952.11638-1-songmuchun@bytedance.com>
- <349168819c1249d4bceea26597760b0a@hisilicon.com> <CAMZfGtUVDJ4QHYRCKnPTkgcKGJ38s2aOOktH+8Urz7oiVfimww@mail.gmail.com>
- <714ae7d701d446259ab269f14a030fe9@hisilicon.com>
-In-Reply-To: <714ae7d701d446259ab269f14a030fe9@hisilicon.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 18 Nov 2020 00:29:07 +0800
-Message-ID: <CAMZfGtWNa=abZdN6HmWE1VBFHfGCbsW9D0zrN-F5zrhn6s=ErA@mail.gmail.com>
-Subject: Re: [External] RE: [PATCH v4 00/21] Free some vmemmap pages of
- hugetlb page
-To:     "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
-Cc:     "corbet@lwn.net" <corbet@lwn.net>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
-        "pawan.kumar.gupta@linux.intel.com" 
-        <pawan.kumar.gupta@linux.intel.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "oneukum@suse.com" <oneukum@suse.com>,
-        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "almasrymina@google.com" <almasrymina@google.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "duanxiongchun@bytedance.com" <duanxiongchun@bytedance.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 7:08 PM Song Bao Hua (Barry Song)
-<song.bao.hua@hisilicon.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Muchun Song [mailto:songmuchun@bytedance.com]
-> > Sent: Tuesday, November 17, 2020 11:50 PM
-> > To: Song Bao Hua (Barry Song) <song.bao.hua@hisilicon.com>
-> > Cc: corbet@lwn.net; mike.kravetz@oracle.com; tglx@linutronix.de;
-> > mingo@redhat.com; bp@alien8.de; x86@kernel.org; hpa@zytor.com;
-> > dave.hansen@linux.intel.com; luto@kernel.org; peterz@infradead.org;
-> > viro@zeniv.linux.org.uk; akpm@linux-foundation.org; paulmck@kernel.org;
-> > mchehab+huawei@kernel.org; pawan.kumar.gupta@linux.intel.com;
-> > rdunlap@infradead.org; oneukum@suse.com; anshuman.khandual@arm.com;
-> > jroedel@suse.de; almasrymina@google.com; rientjes@google.com;
-> > willy@infradead.org; osalvador@suse.de; mhocko@suse.com;
-> > duanxiongchun@bytedance.com; linux-doc@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > linux-fsdevel@vger.kernel.org
-> > Subject: Re: [External] RE: [PATCH v4 00/21] Free some vmemmap pages of
-> > hugetlb page
-> >
-> > On Tue, Nov 17, 2020 at 6:16 PM Song Bao Hua (Barry Song)
-> > <song.bao.hua@hisilicon.com> wrote:
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: owner-linux-mm@kvack.org [mailto:owner-linux-mm@kvack.org] On
-> > > > Behalf Of Muchun Song
-> > > > Sent: Saturday, November 14, 2020 12:00 AM
-> > > > To: corbet@lwn.net; mike.kravetz@oracle.com; tglx@linutronix.de;
-> > > > mingo@redhat.com; bp@alien8.de; x86@kernel.org; hpa@zytor.com;
-> > > > dave.hansen@linux.intel.com; luto@kernel.org; peterz@infradead.org;
-> > > > viro@zeniv.linux.org.uk; akpm@linux-foundation.org; paulmck@kernel.org;
-> > > > mchehab+huawei@kernel.org; pawan.kumar.gupta@linux.intel.com;
-> > > > rdunlap@infradead.org; oneukum@suse.com;
-> > anshuman.khandual@arm.com;
-> > > > jroedel@suse.de; almasrymina@google.com; rientjes@google.com;
-> > > > willy@infradead.org; osalvador@suse.de; mhocko@suse.com
-> > > > Cc: duanxiongchun@bytedance.com; linux-doc@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > > > linux-fsdevel@vger.kernel.org; Muchun Song
-> > <songmuchun@bytedance.com>
-> > > > Subject: [PATCH v4 00/21] Free some vmemmap pages of hugetlb page
-> > > >
-> > > > Hi all,
-> > > >
-> > > > This patch series will free some vmemmap pages(struct page structures)
-> > > > associated with each hugetlbpage when preallocated to save memory.
-> > > >
-> > > > Nowadays we track the status of physical page frames using struct page
-> > > > structures arranged in one or more arrays. And here exists one-to-one
-> > > > mapping between the physical page frame and the corresponding struct
-> > page
-> > > > structure.
-> > > >
-> > > > The HugeTLB support is built on top of multiple page size support that
-> > > > is provided by most modern architectures. For example, x86 CPUs normally
-> > > > support 4K and 2M (1G if architecturally supported) page sizes. Every
-> > > > HugeTLB has more than one struct page structure. The 2M HugeTLB has
-> > 512
-> > > > struct page structure and 1G HugeTLB has 4096 struct page structures. But
-> > > > in the core of HugeTLB only uses the first 4 (Use of first 4 struct page
-> > > > structures comes from HUGETLB_CGROUP_MIN_ORDER.) struct page
-> > > > structures to
-> > > > store metadata associated with each HugeTLB. The rest of the struct page
-> > > > structures are usually read the compound_head field which are all the same
-> > > > value. If we can free some struct page memory to buddy system so that we
-> > > > can save a lot of memory.
-> > > >
-> > > > When the system boot up, every 2M HugeTLB has 512 struct page
-> > structures
-> > > > which size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
-> > > >
-> > > >    hugetlbpage                  struct pages(8 pages)          page
-> > > > frame(8 pages)
-> > > >   +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
-> > > >   |           |                     |     0     | -------------> |
-> > 0
-> > > > |
-> > > >   |           |                     |     1     | -------------> |
-> > 1
-> > > > |
-> > > >   |           |                     |     2     | -------------> |
-> > 2
-> > > > |
-> > > >   |           |                     |     3     | -------------> |
-> > 3
-> > > > |
-> > > >   |           |                     |     4     | -------------> |
-> > 4
-> > > > |
-> > > >   |     2M    |                     |     5     | -------------> |
-> > > > 5     |
-> > > >   |           |                     |     6     | -------------> |
-> > 6
-> > > > |
-> > > >   |           |                     |     7     | -------------> |
-> > 7
-> > > > |
-> > > >   |           |                     +-----------+
-> > > > +-----------+
-> > > >   |           |
-> > > >   |           |
-> > > >   +-----------+
-> > > >
-> > > >
-> > > > When a hugetlbpage is preallocated, we can change the mapping from
-> > above
-> > > > to
-> > > > bellow.
-> > > >
-> > > >    hugetlbpage                  struct pages(8 pages)          page
-> > > > frame(8 pages)
-> > > >   +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
-> > > >   |           |                     |     0     | -------------> |
-> > 0
-> > > > |
-> > > >   |           |                     |     1     | -------------> |
-> > 1
-> > > > |
-> > > >   |           |                     |     2     | ------------->
-> > > > +-----------+
-> > > >   |           |                     |     3     | -----------------^ ^
-> > ^ ^
-> > > > ^
-> > > >   |           |                     |     4     | -------------------+
-> > | |
-> > > > |
-> > > >   |     2M    |                     |     5     |
-> > ---------------------+ |
-> > > > |
-> > > >   |           |                     |     6     |
-> > -----------------------+ |
-> > > >   |           |                     |     7     |
-> > -------------------------+
-> > > >   |           |                     +-----------+
-> > > >   |           |
-> > > >   |           |
-> > > >   +-----------+
-> > > >
-> > > > For tail pages, the value of compound_head is the same. So we can reuse
-> > > > first page of tail page structs. We map the virtual addresses of the
-> > > > remaining 6 pages of tail page structs to the first tail page struct,
-> > > > and then free these 6 pages. Therefore, we need to reserve at least 2
-> > > > pages as vmemmap areas.
-> > > >
-> > > > When a hugetlbpage is freed to the buddy system, we should allocate six
-> > > > pages for vmemmap pages and restore the previous mapping relationship.
-> > > >
-> > > > If we uses the 1G hugetlbpage, we can save 4088 pages(There are 4096
-> > pages
-> > > > for
-> > > > struct page structures, we reserve 2 pages for vmemmap and 8 pages for
-> > page
-> > > > tables. So we can save 4088 pages). This is a very substantial gain. On our
-> > > > server, run some SPDK/QEMU applications which will use 1024GB
-> > hugetlbpage.
-> > > > With this feature enabled, we can save ~16GB(1G hugepage)/~11GB(2MB
-> > > > hugepage)
-> > >
-> > > Hi Muchun,
-> > >
-> > > Do we really save 11GB for 2MB hugepage?
-> > > How much do we save if we only get one 2MB hugetlb from one 128MB
-> > mem_section?
-> > > It seems we need to get at least one page for the PTEs since we are splitting
-> > PMD of
-> > > vmemmap into PTE?
-> >
-> > There are 524288(1024GB/2MB) 2MB HugeTLB pages. We can save 6 pages for
-> > each
-> > 2MB HugeTLB page. So we can save 3145728 pages. But we need to split PMD
-> > page
-> > table for every one 128MB mem_section and every section need one page
-> > as PTE page
-> > table. So we need 8192(1024GB/128MB) pages as PTE page tables.
-> > Finally, we can save
-> > 3137536(3145728-8192) pages which is 11.97GB.
->
-> The worst case I can see is that:
-> if we get 100 hugetlb with 2MB size, but the 100 hugetlb comes from different
-> mem_section, we won't save 11.97GB. we only save 5/8 * 16GB=10GB.
->
-> Anyway, it seems 11GB is in the middle of 10GB and 11.97GB,
-> so sounds sensible :-)
->
-> ideally, we should be able to free PageTail if we change struct page in some way.
-> Then we will save much more for 2MB hugetlb. but it seems it is not easy.
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-Now for the 2MB HugrTLB page, we only free 6 vmemmap pages.
-But your words woke me up. Maybe we really can free 7 vmemmap
-pages. In this case, we can see 8 of the 512 struct page structures
-has beed set PG_head flag. If we can adjust compound_head()
-slightly and make compound_head() return the real head struct
-page when the parameter is the tail struct page but with PG_head
-flag set. I will start an investigation and a test.
+Hi,
 
-Thanks.
+This is an implementation of "secret" mappings backed by a file descriptor.
 
->
-> Thanks
-> Barry
+The file descriptor backing secret memory mappings is created using a
+dedicated memfd_secret system call The desired protection mode for the
+memory is configured using flags parameter of the system call. The mmap()
+of the file descriptor created with memfd_secret() will create a "secret"
+memory mapping. The pages in that mapping will be marked as not present in
+the direct map and will have desired protection bits set in the user page
+table. For instance, current implementation allows uncached mappings.
+
+Although normally Linux userspace mappings are protected from other users,
+such secret mappings are useful for environments where a hostile tenant is
+trying to trick the kernel into giving them access to other tenants
+mappings.
+
+Additionally, in the future the secret mappings may be used as a mean to
+protect guest memory in a virtual machine host.
+
+For demonstration of secret memory usage we've created a userspace library
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jejb/secret-memory-preloader.git
+
+that does two things: the first is act as a preloader for openssl to
+redirect all the OPENSSL_malloc calls to secret memory meaning any secret
+keys get automatically protected this way and the other thing it does is
+expose the API to the user who needs it. We anticipate that a lot of the
+use cases would be like the openssl one: many toolkits that deal with
+secret keys already have special handling for the memory to try to give
+them greater protection, so this would simply be pluggable into the
+toolkits without any need for user application modification.
+
+Hiding secret memory mappings behind an anonymous file allows (ab)use of
+the page cache for tracking pages allocated for the "secret" mappings as
+well as using address_space_operations for e.g. page migration callbacks.
+
+The anonymous file may be also used implicitly, like hugetlb files, to
+implement mmap(MAP_SECRET) and use the secret memory areas with "native" mm
+ABIs in the future.
+
+To limit fragmentation of the direct map to splitting only PUD-size pages,
+I've added an amortizing cache of PMD-size pages to each file descriptor
+that is used as an allocation pool for the secret memory areas.
+
+As the memory allocated by secretmem becomes unmovable, we use CMA to back
+large page caches so that page allocator won't be surprised by failing attempt
+to migrate these pages.
+
+v9:
+* Fix build with and without CONFIG_MEMCG
+* Update memcg accounting to avoid copying memcg_data, per Roman comments
+* Fix issues in secretmem_fault(), thanks Matthew
+* Do not wire up syscall in arm64 compatibility layer
+
+v8: https://lore.kernel.org/lkml/20201110151444.20662-1-rppt@kernel.org
+* Use CMA for all secretmem allocations as David suggested
+* Update memcg accounting after transtion to CMA
+* Prevent hibernation when there are active secretmem users
+* Add zeroing of the memory before releasing it back to cma/page allocator
+* Rebase on v5.10-rc2-mmotm-2020-11-07-21-40
+
+v7: https://lore.kernel.org/lkml/20201026083752.13267-1-rppt@kernel.org
+* Use set_direct_map() instead of __kernel_map_pages() to ensure error
+  handling in case the direct map update fails
+* Add accounting of large pages used to reduce the direct map fragmentation
+* Teach get_user_pages() and frieds to refuse get/pin secretmem pages
+
+v6: https://lore.kernel.org/lkml/20200924132904.1391-1-rppt@kernel.org
+* Silence the warning about missing syscall, thanks to Qian Cai
+* Replace spaces with tabs in Kconfig additions, per Randy
+* Add a selftest.
+
+v5: https://lore.kernel.org/lkml/20200916073539.3552-1-rppt@kernel.org
+* rebase on v5.9-rc5
+* drop boot time memory reservation patch
+
+v4: https://lore.kernel.org/lkml/20200818141554.13945-1-rppt@kernel.org
+* rebase on v5.9-rc1
+* Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
+* Make secret mappings exclusive by default and only require flags to
+  memfd_secret() system call for uncached mappings, thanks again Kirill :)
+
+v3: https://lore.kernel.org/lkml/20200804095035.18778-1-rppt@kernel.org
+* Squash kernel-parameters.txt update into the commit that added the
+  command line option.
+* Make uncached mode explicitly selectable by architectures. For now enable
+  it only on x86.
+
+v2: https://lore.kernel.org/lkml/20200727162935.31714-1-rppt@kernel.org
+* Follow Michael's suggestion and name the new system call 'memfd_secret'
+* Add kernel-parameters documentation about the boot option
+* Fix i386-tinyconfig regression reported by the kbuild bot.
+  CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
+  from one side and still make it available unconditionally on
+  architectures that support SET_DIRECT_MAP.
+
+v1: https://lore.kernel.org/lkml/20200720092435.17469-1-rppt@kernel.org
+
+Mike Rapoport (9):
+  mm: add definition of PMD_PAGE_ORDER
+  mmap: make mlock_future_check() global
+  set_memory: allow set_direct_map_*_noflush() for multiple pages
+  mm: introduce memfd_secret system call to create "secret" memory areas
+  secretmem: use PMD-size pages to amortize direct map fragmentation
+  secretmem: add memcg accounting
+  PM: hibernate: disable when there are active secretmem users
+  arch, mm: wire up memfd_secret system call were relevant
+  secretmem: test: add basic selftest for memfd_secret(2)
+
+ arch/Kconfig                              |   7 +
+ arch/arm64/include/asm/cacheflush.h       |   4 +-
+ arch/arm64/include/asm/unistd.h           |   2 +-
+ arch/arm64/include/asm/unistd32.h         |   2 +
+ arch/arm64/include/uapi/asm/unistd.h      |   1 +
+ arch/arm64/mm/pageattr.c                  |  10 +-
+ arch/riscv/include/asm/set_memory.h       |   4 +-
+ arch/riscv/include/asm/unistd.h           |   1 +
+ arch/riscv/mm/pageattr.c                  |   8 +-
+ arch/x86/Kconfig                          |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl    |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl    |   1 +
+ arch/x86/include/asm/set_memory.h         |   4 +-
+ arch/x86/mm/pat/set_memory.c              |   8 +-
+ fs/dax.c                                  |  11 +-
+ include/linux/pgtable.h                   |   3 +
+ include/linux/secretmem.h                 |  30 ++
+ include/linux/set_memory.h                |   4 +-
+ include/linux/syscalls.h                  |   1 +
+ include/uapi/asm-generic/unistd.h         |   6 +-
+ include/uapi/linux/magic.h                |   1 +
+ include/uapi/linux/secretmem.h            |   8 +
+ kernel/power/hibernate.c                  |   5 +-
+ kernel/power/snapshot.c                   |   4 +-
+ kernel/sys_ni.c                           |   2 +
+ mm/Kconfig                                |   5 +
+ mm/Makefile                               |   1 +
+ mm/filemap.c                              |   3 +-
+ mm/gup.c                                  |  10 +
+ mm/internal.h                             |   3 +
+ mm/mmap.c                                 |   5 +-
+ mm/secretmem.c                            | 446 ++++++++++++++++++++++
+ mm/vmalloc.c                              |   5 +-
+ scripts/checksyscalls.sh                  |   4 +
+ tools/testing/selftests/vm/.gitignore     |   1 +
+ tools/testing/selftests/vm/Makefile       |   3 +-
+ tools/testing/selftests/vm/memfd_secret.c | 298 +++++++++++++++
+ tools/testing/selftests/vm/run_vmtests    |  17 +
+ 38 files changed, 891 insertions(+), 39 deletions(-)
+ create mode 100644 include/linux/secretmem.h
+ create mode 100644 include/uapi/linux/secretmem.h
+ create mode 100644 mm/secretmem.c
+ create mode 100644 tools/testing/selftests/vm/memfd_secret.c
 
 
-
+base-commit: 9f8ce377d420db12b19d6a4f636fecbd88a725a5
 -- 
-Yours,
-Muchun
+2.28.0
+
