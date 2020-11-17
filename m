@@ -2,120 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87FE82B68E0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94DB82B6937
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbgKQPlB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 10:41:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24533 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725943AbgKQPlB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 10:41:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605627659;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xKDdrSI/aSHcVUy/06h/d1EYaudf4mxgMxIcCKQFIac=;
-        b=cs187l6Cj6VwTGjnnvgZztI5M8g/Aw3pF5jXRtRWl3cKIdsPX+pFO+aGnD0XUYn854a1H7
-        5I/MEpJJ9xsNH2Ypzhkq0A6X0GkfvIlaDl9WOc03QJxtpsDTgA9aW9K+L1zALwsRaiPtbP
-        +n8/2qifY5agNIv5XyGulesuZfgmksw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-421-w8bKMC-_NviOUMKimRinhg-1; Tue, 17 Nov 2020 10:40:56 -0500
-X-MC-Unique: w8bKMC-_NviOUMKimRinhg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726821AbgKQP6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 10:58:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725767AbgKQP6m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Nov 2020 10:58:42 -0500
+Received: from kernel.org (unknown [77.125.7.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4938C1075621;
-        Tue, 17 Nov 2020 15:40:54 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-186.rdu2.redhat.com [10.10.116.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AC4B660C04;
-        Tue, 17 Nov 2020 15:40:51 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id CDDF4220BCF; Tue, 17 Nov 2020 10:40:50 -0500 (EST)
-Date:   Tue, 17 Nov 2020 10:40:50 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B60238E6;
+        Tue, 17 Nov 2020 15:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605628721;
+        bh=9is+MjALfTGepw57FVx0JouySPxlzfHt3CDVLQ4Unmk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p8sWlliyDkUNYoXZjFWSoiuQvdgEZNX+2SxP4AeRu3E6J1nQ7q1oTfz+6Ip2yE0wn
+         cmwAFaK1S/AmhU4S6q0bHx0jhCupiexg9VCuzKWD3rTOMD16YOJ0wT4exivwNxppfK
+         VG9oFzcdjadQK9Y3xyHqBPePYLUqwIL58wy/neZo=
+Date:   Tue, 17 Nov 2020 17:58:29 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
- directories when safe
-Message-ID: <20201117154050.GB78221@redhat.com>
-References: <20201116045758.21774-1-sargun@sargun.me>
- <20201116045758.21774-4-sargun@sargun.me>
- <20201116144240.GA9190@redhat.com>
- <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
- <20201116163615.GA17680@redhat.com>
- <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
- <20201116210950.GD9190@redhat.com>
- <CAOQ4uxhkRauEM46nbhZuGdJmP8UGQpe+fw_FtXy+S4eaR4uxTA@mail.gmail.com>
- <20201117144857.GA78221@redhat.com>
- <CAOQ4uxg1ZNSid58LLsGC2tJLk_fpJfu13oOzCz5ScEi6y_4Nnw@mail.gmail.com>
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v8 2/9] mmap: make mlock_future_check() global
+Message-ID: <20201117155829.GJ370813@kernel.org>
+References: <20201112190827.GP4758@kernel.org>
+ <7A16CA44-782D-4ABA-8D93-76BDD0A90F94@redhat.com>
+ <20201115082625.GT4758@kernel.org>
+ <d47fdd2e-a8fa-6792-ca8f-e529be76340c@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxg1ZNSid58LLsGC2tJLk_fpJfu13oOzCz5ScEi6y_4Nnw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d47fdd2e-a8fa-6792-ca8f-e529be76340c@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 05:24:33PM +0200, Amir Goldstein wrote:
-> > > I guess if we change fsync and syncfs to do nothing but return
-> > > error if any writeback error happened since mount we will be ok?
-> >
-> > I guess that will not be sufficient. Because overlay fsync/syncfs can
-> > only retrun any error which has happened so far. It is still possible
-> > that error happens right after this fsync call and application still
-> > reads back old/corrupted data.
-> >
-> > So this proposal reduces the race window but does not completely
-> > eliminate it.
-> >
+On Tue, Nov 17, 2020 at 04:09:39PM +0100, David Hildenbrand wrote:
+> On 15.11.20 09:26, Mike Rapoport wrote:
+> > On Thu, Nov 12, 2020 at 09:15:18PM +0100, David Hildenbrand wrote:
+
+...
+
+> > My thinking was that since secretmem does what mlock() does wrt
+> > swapability, it should at least obey the same limit, i.e.
+> > RLIMIT_MEMLOCK.
 > 
-> That's true.
+> Right, but at least currently, it behaves like any other CMA allocation
+> (IIRC they are all unmovable and, therefore, not swappable). In the future,
+> if pages would be movable (but not swappable), I guess it might makes more
+> sense. I assume we never ever want to swap secretmem.
 > 
-> > We probably will have to sync upper/ and if there are no errors reported,
-> > then it should be ok to consume data back.
-> >
-> > This leads back to same issue of doing fsync/sync which we are trying
-> > to avoid with volatile containers. So we have two options.
-> >
-> > A. Build volatile containers should sync upper and then pack upper/ into
-> >   an image. if final sync returns error, throw away the container and
-> >   rebuild image. This will avoid intermediate fsync calls but does not
-> >   eliminate final syncfs requirement on upper. Now one can either choose
-> >   to do syncfs on upper/ or implement a more optimized syncfs through
-> >   overlay so that selctives dirty inodes are synced instead.
-> >
-> > B. Alternatively, live dangerously and know that it is possible that
-> >   writeback error happens and you read back corrupted data.
-> >
+> "man getrlimit" states for RLIMIT_MEMLOCK:
 > 
-> C. "shutdown" the filesystem if writeback errors happened and return
->      EIO from any read, like some blockdev filesystems will do in face
->      of metadata write errors
+> "This is the maximum number of bytes of memory that may be
+>  locked into RAM.  [...] This limit affects
+>  mlock(2), mlockall(2), and the mmap(2) MAP_LOCKED operation.
+>  Since Linux 2.6.9, it also affects the shmctl(2) SHM_LOCK op‐
+>  eration [...]"
+> 
+> So that place has to be updated as well I guess? Otherwise this might come
+> as a surprise for users.
+
+Sure.
+
+> > 
+> > > E.g., we also don‘t
+> > > account for gigantic pages - which might be allocated from CMA and are
+> > > not swappable.
+> > Do you mean gigantic pages in hugetlbfs?
+> 
+> Yes
+> 
+> > It seems to me that hugetlbfs accounting is a completely different
+> > story.
+> 
+> I'd say it is right now comparable to secretmem - which is why I though
+> similar accounting would make sense.
+
+IMHO, using RLIMIT_MEMLOCK and memcg is a more straightforward way than
+a custom cgroup.
+
+And if we'll see a need for additional mechanism, we can always add it.
+ 
+> -- 
+> Thanks,
+> 
+> David / dhildenb
+> 
 > 
 
-Option C sounds interesting. If data writeback fails, shutdown overlay
-filesystem and that way image build should fail, container manager
-can throw away container and rebuild. And we avoid all the fysnc/syncfs
-as we wanted to.
-
-> I happen to have a branch ready for that ;-)
-> https://github.com/amir73il/linux/commits/ovl-shutdown
-
-I will check it out.
-
-Thanks
-Vivek
-
+-- 
+Sincerely yours,
+Mike.
