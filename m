@@ -2,108 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F4DA2B596F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 06:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C78CB2B59B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 07:24:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726316AbgKQFlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 00:41:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45070 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbgKQFlv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 00:41:51 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF9FC0613CF;
-        Mon, 16 Nov 2020 21:41:51 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id y18so10240864ilp.13;
-        Mon, 16 Nov 2020 21:41:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4uP0R4NMek+c9p+edkiMYaC2lOlHd67i9h4rSBZ4QGE=;
-        b=YIt1jnPD4pcSqM6gNNrslEYZqoa3Wm8d4SYuvafhQWRR0bNNdIiBKkGFz3mLsZjiw3
-         XovPQMcH1m2EZ7Cs+Ifs6YPdroHxMzwxd6nicwF11L1rxHiUCB493IJvdJMUpvaRNg3L
-         8SOBy8NVKl1+teRICIP2SVo2B7+DXnZ5QwWE2TnEgcC8e4RYz+WMtXGuakpF/aH0AUKT
-         C4lumr3ipiz1trXE3IfBHbbU4UcLYqF5/JhIhwERAnhoZm9Dwya/H2GN40jYyBdjOIxq
-         sFjhQSc910VRZhYkcqG2vozEyh4S6oqbA5HAECeKOqkeQtOhJn3ZdeRSYKkY4ZYK0nU9
-         AcJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4uP0R4NMek+c9p+edkiMYaC2lOlHd67i9h4rSBZ4QGE=;
-        b=jo6z2G/8RwGv2MIrrh2oMOqiQksXJNAin1/zPrXGzUtZnkk15XsHBJjtS8kaz2tcRs
-         hSGTUZd/1Q/8YCK226YWaZlI410VOXfzS7xMT4TzvI0BE71KMs9ptsODetvqKZ4H0HMW
-         WOs6Ds0ydq0l4sqDlCwFHWs8pA27HqX2ztwjLR+VA6wFXn0GhALdEepvlEyxXpTsPTJO
-         wjhpnGk3izAONv6rZEqDIun9buaY6LsadkXITxq5zbhvySTBGor6EwzzcKsOcfNpjZTH
-         BcGp8yQZ9qzCA21zYSwv1HiTMh9A9DraxfRjklw5LTKOiVmq+hYa6xfjrnaTX4JbBxMR
-         N0vA==
-X-Gm-Message-State: AOAM5332m661LrPpnaT9XPO2chYyMRy6Vb3LxEaLz1R8A3E8z5Gn2eNP
-        cu6wO4LcxI/KXVHpHFwOEqABD5ICmc71vak4/v4=
-X-Google-Smtp-Source: ABdhPJw1PmowWRS71CiSsLwz4ShaMDnkL1iLcri2fbmdXbqb9K34Ui9UH2LpgeTnv8pCeUoaXqMwdOltuo6tw/feqtg=
-X-Received: by 2002:a92:bac5:: with SMTP id t66mr11045762ill.250.1605591711122;
- Mon, 16 Nov 2020 21:41:51 -0800 (PST)
+        id S1726756AbgKQGX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 01:23:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725355AbgKQGX1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Nov 2020 01:23:27 -0500
+Received: from kernel.org (unknown [77.125.7.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DA1C223AB;
+        Tue, 17 Nov 2020 06:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605594206;
+        bh=i6knV0DMO2RXQJYhiZxatZGtoKHulkxOl5sSaGDS0gM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qAUA5RVCTP0npaeRBIO8YpdBuUTgIPD0QBwHOr2UeiElqlVtKRczsIc13jS9qXhSM
+         /m8cTkIY+QMvxEbuFwI36fTIAAvpIJ9fhQtB5SdUWJTnAGZetOklMyr9EQ9DA4BJIQ
+         QteWhvERMCEW1EUrOIOHXVbp4uevZfdG2TI7hGQ8=
+Date:   Tue, 17 Nov 2020 08:23:16 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
+Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
+Message-ID: <20201117062316.GB370813@kernel.org>
+References: <20201101170454.9567-1-rppt@kernel.org>
+ <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
 MIME-Version: 1.0
-References: <20201116045758.21774-1-sargun@sargun.me> <20201116045758.21774-4-sargun@sargun.me>
- <20201116144240.GA9190@redhat.com> <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
- <20201116163615.GA17680@redhat.com> <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
- <20201116212644.GE9190@redhat.com> <20201116221401.GA21744@ircssh-2.c.rugged-nimbus-611.internal>
-In-Reply-To: <20201116221401.GA21744@ircssh-2.c.rugged-nimbus-611.internal>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 17 Nov 2020 07:41:39 +0200
-Message-ID: <CAOQ4uxijv8JiJzZ+Sxt8iXfZVbZvDNzK1PJRLexMAHnVdJEg=g@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
- directories when safe
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Chengguang Xu <cgxu519@mykernel.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > I think upper files data can "evaporate" even as the overlay is still mounted.
-> >
-> > I think assumption of volatile containers was that data will remain
-> > valid as long as machine does not crash/shutdown. We missed the case
-> > of possibility of writeback errors during those discussions.
-> >
-> > And if data can evaporate without anyway to know that somehthing
-> > is gone wrong, I don't know how that's useful for applications.
-> >
-> > Also, first we need to fix the case of writeback error handling
-> > for volatile containers while it is mounted before one tries to fix it
-> > for writeback error detection during remount, IMHO.
-> >
-> > Thanks
-> > Vivek
-> >
->
-> I feel like this is an infamous Linux problem, and lots[1][2][3][4] has been said
-> on the topic, and there's not really a general purpose solution to it. I think that
-> most filesystems offer a choice of "continue" or "fail-stop" (readonly), and if
-> the upperdir lives on that filesystem, we will get the feedback from it.
->
-> I can respin my patch with just the "boot id" and superblock ID check if folks
-> are fine with that, and we can figure out how to resolve the writeback issues
-> later.
->
+Hi Adrian,
 
-On the contrary. Your code for error check is very valuable and more
-important than the remount feature.
+On Tue, Nov 17, 2020 at 06:24:51AM +0100, John Paul Adrian Glaubitz wrote:
+> Hi!
+> 
+> On 11/1/20 6:04 PM, Mike Rapoport wrote:
+> > It's been a while since DISCONTIGMEM is generally considered deprecated,
+> > but it is still used by four architectures. This set replaces DISCONTIGMEM
+> > with a different way to handle holes in the memory map and marks
+> > DISCONTIGMEM configuration as BROKEN in Kconfigs of these architectures with
+> > the intention to completely remove it in several releases.
+> > 
+> > While for 64-bit alpha and ia64 the switch to SPARSEMEM is quite obvious
+> > and was a matter of moving some bits around, for smaller 32-bit arc and
+> > m68k SPARSEMEM is not necessarily the best thing to do.
+> > 
+> > On 32-bit machines SPARSEMEM would require large sections to make section
+> > index fit in the page flags, but larger sections mean that more memory is
+> > wasted for unused memory map.
+> > 
+> > Besides, pfn_to_page() and page_to_pfn() become less efficient, at least on
+> > arc.
+> > 
+> > So I've decided to generalize arm's approach for freeing of unused parts of
+> > the memory map with FLATMEM and enable it for both arc and m68k. The
+> > details are in the description of patches 10 (arc) and 13 (m68k).
+> 
+> Apologies for the late reply. Is this still relevant for testing?
+> 
+> I have already successfully tested v1 of the patch set, shall I test v2?
 
-If you change ovl_should_sync() to check for error since mount and
-return error in that case, which all callers will check, then I think you
-fix the evaporating files issue and that needs to come first with
-stable kernel backport IMO.
+There were minor differences only for m68k between the versions. I've
+verified them on ARAnyM but if you have a real machine a run there would
+be nice.
 
-Thanks,
-Amir.
+> Adrian
+> 
+> -- 
+>  .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer - glaubitz@debian.org
+> `. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+>   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
