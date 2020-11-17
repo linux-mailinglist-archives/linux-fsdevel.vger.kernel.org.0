@@ -2,107 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 348AD2B68DD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87FE82B68E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:41:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbgKQPj4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 10:39:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgKQPjz (ORCPT
+        id S1726387AbgKQPlB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 10:41:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24533 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725943AbgKQPlB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 10:39:55 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED73C0613CF;
-        Tue, 17 Nov 2020 07:39:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QFlYdiYc0xmhkx8fR9s7buBYTCO5I402/gNcSckf2XE=; b=rMgmU2PghbmqKsBILzyfNyG/uK
-        wtKPHb8W3lOiQ0jK3tEgZmJbD0uWyQhHqbkgOtXV1pfZk6VNhBEBFcFzgluA8lunGyA1PkUDIKNug
-        u9r6TJx+T90hxL/6JcPMUVleD94i/5LlyUZNBRcrWU2FruLCQtXpeGMU+dpI0r+1rWb32v8Q25fP8
-        569yO0zojtHq/kT0rA+ZIA7wZXBnr5gkPOFioUxBm5Cz/yYNc9iqogtCDGL4hm/k01KLdThm+gVZC
-        BiP0DKLjsdsfb7aVmG2I52zS1UgU49AZtni9RKRtRJyfPIbuURoNAk2TJWLFXTBFHc/LgPPQMO+WA
-        tvMCtQ+A==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kf359-0006RE-Cb; Tue, 17 Nov 2020 15:39:47 +0000
-Date:   Tue, 17 Nov 2020 15:39:47 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, hch@lst.de,
-        hannes@cmpxchg.org, yang.shi@linux.alibaba.com,
-        dchinner@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
-Message-ID: <20201117153947.GL29991@casper.infradead.org>
-References: <20201112212641.27837-1-willy@infradead.org>
- <alpine.LSU.2.11.2011160128001.1206@eggly.anvils>
+        Tue, 17 Nov 2020 10:41:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605627659;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xKDdrSI/aSHcVUy/06h/d1EYaudf4mxgMxIcCKQFIac=;
+        b=cs187l6Cj6VwTGjnnvgZztI5M8g/Aw3pF5jXRtRWl3cKIdsPX+pFO+aGnD0XUYn854a1H7
+        5I/MEpJJ9xsNH2Ypzhkq0A6X0GkfvIlaDl9WOc03QJxtpsDTgA9aW9K+L1zALwsRaiPtbP
+        +n8/2qifY5agNIv5XyGulesuZfgmksw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-421-w8bKMC-_NviOUMKimRinhg-1; Tue, 17 Nov 2020 10:40:56 -0500
+X-MC-Unique: w8bKMC-_NviOUMKimRinhg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4938C1075621;
+        Tue, 17 Nov 2020 15:40:54 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-186.rdu2.redhat.com [10.10.116.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC4B660C04;
+        Tue, 17 Nov 2020 15:40:51 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id CDDF4220BCF; Tue, 17 Nov 2020 10:40:50 -0500 (EST)
+Date:   Tue, 17 Nov 2020 10:40:50 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Chengguang Xu <cgxu519@mykernel.net>
+Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
+ directories when safe
+Message-ID: <20201117154050.GB78221@redhat.com>
+References: <20201116045758.21774-1-sargun@sargun.me>
+ <20201116045758.21774-4-sargun@sargun.me>
+ <20201116144240.GA9190@redhat.com>
+ <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
+ <20201116163615.GA17680@redhat.com>
+ <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
+ <20201116210950.GD9190@redhat.com>
+ <CAOQ4uxhkRauEM46nbhZuGdJmP8UGQpe+fw_FtXy+S4eaR4uxTA@mail.gmail.com>
+ <20201117144857.GA78221@redhat.com>
+ <CAOQ4uxg1ZNSid58LLsGC2tJLk_fpJfu13oOzCz5ScEi6y_4Nnw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.2011160128001.1206@eggly.anvils>
+In-Reply-To: <CAOQ4uxg1ZNSid58LLsGC2tJLk_fpJfu13oOzCz5ScEi6y_4Nnw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 16, 2020 at 02:34:34AM -0800, Hugh Dickins wrote:
-> Fix to [PATCH v4 15/16] mm/truncate,shmem: Handle truncates that split THPs.
-> One machine ran fine, swapping and building in ext4 on loop0 on huge tmpfs;
-> one machine got occasional pages of zeros in its .os; one machine couldn't
-> get started because of ext4_find_dest_de errors on the newly mkfs'ed fs.
-> The partial_end case was decided by PAGE_SIZE, when there might be a THP
-> there.  The below patch has run well (for not very long), but I could
-> easily have got it slightly wrong, off-by-one or whatever; and I have
-> not looked into the similar code in mm/truncate.c, maybe that will need
-> a similar fix or maybe not.
+On Tue, Nov 17, 2020 at 05:24:33PM +0200, Amir Goldstein wrote:
+> > > I guess if we change fsync and syncfs to do nothing but return
+> > > error if any writeback error happened since mount we will be ok?
+> >
+> > I guess that will not be sufficient. Because overlay fsync/syncfs can
+> > only retrun any error which has happened so far. It is still possible
+> > that error happens right after this fsync call and application still
+> > reads back old/corrupted data.
+> >
+> > So this proposal reduces the race window but does not completely
+> > eliminate it.
+> >
+> 
+> That's true.
+> 
+> > We probably will have to sync upper/ and if there are no errors reported,
+> > then it should be ok to consume data back.
+> >
+> > This leads back to same issue of doing fsync/sync which we are trying
+> > to avoid with volatile containers. So we have two options.
+> >
+> > A. Build volatile containers should sync upper and then pack upper/ into
+> >   an image. if final sync returns error, throw away the container and
+> >   rebuild image. This will avoid intermediate fsync calls but does not
+> >   eliminate final syncfs requirement on upper. Now one can either choose
+> >   to do syncfs on upper/ or implement a more optimized syncfs through
+> >   overlay so that selctives dirty inodes are synced instead.
+> >
+> > B. Alternatively, live dangerously and know that it is possible that
+> >   writeback error happens and you read back corrupted data.
+> >
+> 
+> C. "shutdown" the filesystem if writeback errors happened and return
+>      EIO from any read, like some blockdev filesystems will do in face
+>      of metadata write errors
+> 
 
-Thank you for the explanation in your later email!  There is indeed an
-off-by-one, although in the safe direction.
+Option C sounds interesting. If data writeback fails, shutdown overlay
+filesystem and that way image build should fail, container manager
+can throw away container and rebuild. And we avoid all the fysnc/syncfs
+as we wanted to.
 
-> --- 5103w/mm/shmem.c	2020-11-12 15:46:21.075254036 -0800
-> +++ 5103wh/mm/shmem.c	2020-11-16 01:09:35.431677308 -0800
-> @@ -874,7 +874,7 @@ static void shmem_undo_range(struct inod
->  	long nr_swaps_freed = 0;
->  	pgoff_t index;
->  	int i;
-> -	bool partial_end;
-> +	bool same_page;
->  
->  	if (lend == -1)
->  		end = -1;	/* unsigned, so actually very big */
-> @@ -907,16 +907,12 @@ static void shmem_undo_range(struct inod
->  		index++;
->  	}
->  
-> -	partial_end = ((lend + 1) % PAGE_SIZE) > 0;
-> +	same_page = (lstart >> PAGE_SHIFT) == end;
+> I happen to have a branch ready for that ;-)
+> https://github.com/amir73il/linux/commits/ovl-shutdown
 
-'end' is exclusive, so this is always false.  Maybe something "obvious":
+I will check it out.
 
-	same_page = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
+Thanks
+Vivek
 
-(lend is inclusive, so lend in 0-4095 are all on the same page)
-
->  	page = NULL;
->  	shmem_getpage(inode, lstart >> PAGE_SHIFT, &page, SGP_READ);
->  	if (page) {
-> -		bool same_page;
-> -
->  		page = thp_head(page);
->  		same_page = lend < page_offset(page) + thp_size(page);
-> -		if (same_page)
-> -			partial_end = false;
->  		set_page_dirty(page);
->  		if (!truncate_inode_partial_page(page, lstart, lend)) {
->  			start = page->index + thp_nr_pages(page);
-> @@ -928,7 +924,7 @@ static void shmem_undo_range(struct inod
->  		page = NULL;
->  	}
->  
-> -	if (partial_end)
-> +	if (!same_page)
->  		shmem_getpage(inode, end, &page, SGP_READ);
->  	if (page) {
->  		page = thp_head(page);
