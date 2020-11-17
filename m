@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E352B726F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 00:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C270A2B7283
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 00:38:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbgKQXaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 18:30:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41474 "EHLO
+        id S1728768AbgKQXgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 18:36:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgKQXaS (ORCPT
+        with ESMTP id S1728750AbgKQXgw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 18:30:18 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A84C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:30:18 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id v144so230765lfa.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:30:18 -0800 (PST)
+        Tue, 17 Nov 2020 18:36:52 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D70C7C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:36:50 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id b17so242989ljf.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:36:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Em64QPCkGCLXZWoLObSIBhUC3x5oAVxDwnh90HcLMak=;
-        b=HeuQ3NoSPHMV5vKQqErsUpbPU0jCzVO1YYw049IBFq1aeufNNpzqJb5qaTS2ZHfFe+
-         WcUWdn6RMYtlbpqWvhE+FKQgR+SjxTvXaBlD3AxqZuA+NUcWqZcWsAHAfKnyuWsrg+Kw
-         I+44mfRUd+9oWmJWHMV2sPLHW/pUwKHciZkoM=
+        bh=D0kv/TGZCBjgkfEmVlmQGbddq7Vuqk22W0hkuqKhgPg=;
+        b=ZfCK9fE5KEx2c6LJVDvCKbk18EHOGfANhut79KLdPiY11VCpPSw0vPYJaLCzYbWfN7
+         rxR97+wOKkrhlTSFjVmx0Ens33MZNx+ydmyDkcSx3o5aSc4rS+WnAeqjoTEjOy+8p4IX
+         mcTfZ1lbMzrFtnx5GPNlU5oqnxJmpNU4bc8o8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Em64QPCkGCLXZWoLObSIBhUC3x5oAVxDwnh90HcLMak=;
-        b=ZoL84W7iRP778cSKR+N2HYgJ8PWGOshJClz0d6VTAZl4GNpu9bB1W5rXZO5mm3M2xi
-         r6RCF2lXDR8rLU4kzUF7Cp8I1DjcM9tyiDUTrhuFydKuZBmdwHLl/zxZCky01AqGGAhm
-         ZslPWV46mbSLFokZAd6sQnEsQ3GckWckKiOKID+uDQqYgILI3yZYRcJVfG+y8l7M5RYd
-         1WbOQs8TquKlVix6WByoT8UChl9P8m6rNydFSfmefGfwVCuecby4CsNE4b1Cor2famcD
-         PYyjZNzGALIlNnVJGcis6rPBRECFtrXlZP0RBogjmitX4jqflPM6kGAYaabIjzmHKz2N
-         pu/A==
-X-Gm-Message-State: AOAM530FqNgOaSK64QCfVtmuhgYZhZk6V0RZpcQob3jRgqhugahGeoq1
-        Dzk3h0U/K9m6kt8kr7HTeIDAmh1g9mVHyQ==
-X-Google-Smtp-Source: ABdhPJybMLKvI5fcDaA+WyfJK+JSa/FLcJgIOGq5jP9sgmSybfYKr+XkR8XuUa1QmzptZzZK2nxivw==
-X-Received: by 2002:a19:2291:: with SMTP id i139mr2854183lfi.592.1605655816688;
-        Tue, 17 Nov 2020 15:30:16 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id r141sm3327364lff.55.2020.11.17.15.30.11
+        bh=D0kv/TGZCBjgkfEmVlmQGbddq7Vuqk22W0hkuqKhgPg=;
+        b=NT0imXR0qpDaHoHxDAgpytGP38oHDqxJNCNYFH2MEtUtCbt9EItEfOCyRuaOxHsmbZ
+         5w9uoqWJZJLqRbNtSi0SnMxCFH0CiTxUzFoqNT6areSvLPwwrJKMAHYWiKBDN//54Bt2
+         Az0E6yrlJVYK9QA37rjfaB0a/pcJnbgf8u1ayf5Rcko4XJ3VUNkcbMUCgH+AJlpMqYdp
+         tRnNBHmvNtBkJkteuRyiI4tM3mCBQB5A4PTHekv3g6tn0yGN3ri+tsuxMvvpnQ4wBaDq
+         Jckq4Ypswfjo1PwQ+Uz/vFeUG/1RD1tCaqkSTI7WqPxBeOEq+zd507FvkyrejjL0T263
+         Zf4Q==
+X-Gm-Message-State: AOAM531/hH5G1P+4d9bliZ5JDinYJgD4e4h9mSqIdXA6ZRTzdyJ0XSPd
+        VN/F0pFwjPDEK4pVd0aEaaFCPChMmdkjwQ==
+X-Google-Smtp-Source: ABdhPJyprh8c9BbHggl2KCtV2rAJ11CVKdSoOFRc9IyuOcmQq12MGAH/cxZ70aAKbtSQBZFe8b94dQ==
+X-Received: by 2002:a2e:2419:: with SMTP id k25mr2648295ljk.422.1605656209036;
+        Tue, 17 Nov 2020 15:36:49 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id j2sm3313352lfe.23.2020.11.17.15.36.47
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2020 15:30:11 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id s9so233141ljo.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:30:11 -0800 (PST)
-X-Received: by 2002:a2e:8701:: with SMTP id m1mr2679618lji.314.1605655810863;
- Tue, 17 Nov 2020 15:30:10 -0800 (PST)
+        Tue, 17 Nov 2020 15:36:47 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 11so302919ljf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:36:47 -0800 (PST)
+X-Received: by 2002:a2e:80c7:: with SMTP id r7mr1059615ljg.285.1605656206837;
+ Tue, 17 Nov 2020 15:36:46 -0800 (PST)
 MIME-Version: 1.0
 References: <20201113080132.16591-1-roberto.sassu@huawei.com>
  <20201114111057.GA16415@infradead.org> <0fd0fb3360194d909ba48f13220f9302@huawei.com>
@@ -57,12 +57,13 @@ References: <20201113080132.16591-1-roberto.sassu@huawei.com>
  <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
  <20201116174127.GA4578@infradead.org> <CAHk-=wjd0RNthZQTLVsnK_d9SFYH0rug2tkezLLB0J-YZzVC+Q@mail.gmail.com>
  <3f8cc7c9462353ac2eef58e39beee079bdd9c7b4.camel@linux.ibm.com>
- <CAHk-=wih-ibNUxeiKpuKrw3Rd2=QEAZ8zgRWt_CORAjbZykRWQ@mail.gmail.com> <5d8fa26d376999f703aac9103166a572fc0df437.camel@linux.ibm.com>
-In-Reply-To: <5d8fa26d376999f703aac9103166a572fc0df437.camel@linux.ibm.com>
+ <CAHk-=wih-ibNUxeiKpuKrw3Rd2=QEAZ8zgRWt_CORAjbZykRWQ@mail.gmail.com>
+ <5d8fa26d376999f703aac9103166a572fc0df437.camel@linux.ibm.com> <CAHk-=wiPfWZYsAqhQry=mhAbKei8bHZDyVPJS0XHZz_FH9Jymw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiPfWZYsAqhQry=mhAbKei8bHZDyVPJS0XHZz_FH9Jymw@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Nov 2020 15:29:55 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiPfWZYsAqhQry=mhAbKei8bHZDyVPJS0XHZz_FH9Jymw@mail.gmail.com>
-Message-ID: <CAHk-=wiPfWZYsAqhQry=mhAbKei8bHZDyVPJS0XHZz_FH9Jymw@mail.gmail.com>
+Date:   Tue, 17 Nov 2020 15:36:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjinHpYRk_F1qiaXbXcMtn-ZHKkPkBvZpDJHjoN_2o4ag@mail.gmail.com>
+Message-ID: <CAHk-=wjinHpYRk_F1qiaXbXcMtn-ZHKkPkBvZpDJHjoN_2o4ag@mail.gmail.com>
 Subject: Re: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in ima_calc_file_hash()
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -80,14 +81,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 3:24 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Tue, Nov 17, 2020 at 3:29 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I really wish it wasn't needed.
+> On Tue, Nov 17, 2020 at 3:24 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >
+> > I really wish it wasn't needed.
+>
+> Seriously, I get the feeling that IMA is completely mis-designed, and
+> is doing actively bad things.
+>
+> Who uses this "feature", and who cares? Because I would suggest you
+> just change the policy and be done with it.
 
-Seriously, I get the feeling that IMA is completely mis-designed, and
-is doing actively bad things.
+Another alternative is to change the policy and say "any write-only
+open gets turned into a read-write open".
 
-Who uses this "feature", and who cares? Because I would suggest you
-just change the policy and be done with it.
+But it needs to be done at *OPEN* time, not randomly afterwards by
+just lying to the 'struct file'.
 
-            Linus
+Why? Because the open has told the filesystem that it's only for
+writing, and a filesystem could validly do things that make reading
+invalid. The simplest example of this is a network filesystem, where
+the server might simply not *allow* reads, because the open was for
+writing only.
+
+See? IMA really does something fundamentally quite wrong when it tries
+to read from a non-readable file. It might "work" by accident, but I
+really do think that commit a1f9b1c0439db didn't "break" IMA - it
+showed that IMA was doing something fundamentally wrong.
+
+           Linus
