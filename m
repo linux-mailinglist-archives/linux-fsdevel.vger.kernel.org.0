@@ -2,105 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED8EC2B5F18
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 13:30:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C07EF2B5FDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 14:00:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgKQM36 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 07:29:58 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2116 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbgKQM36 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 07:29:58 -0500
-Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Cb4w04p1dz67F1g;
-        Tue, 17 Nov 2020 20:27:44 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 17 Nov 2020 13:29:55 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 17 Nov 2020 13:29:55 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Mimi Zohar <zohar@linux.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
- ima_calc_file_hash()
-Thread-Topic: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
- ima_calc_file_hash()
-Thread-Index: AQHWuZM+vbqfejrqe02000rC0h3xoqnHabyAgAMLzKCAAG/IAIAABvEAgAAOKACAAAjEgIABPphg
-Date:   Tue, 17 Nov 2020 12:29:55 +0000
-Message-ID: <945773097832444ca31847c830b0053c@huawei.com>
-References: <20201113080132.16591-1-roberto.sassu@huawei.com>
- <20201114111057.GA16415@infradead.org>
- <0fd0fb3360194d909ba48f13220f9302@huawei.com>
- <20201116162202.GA15010@infradead.org>
- <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
- <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
- <20201116180855.GX3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201116180855.GX3576660@ZenIV.linux.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728602AbgKQM5V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 07:57:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728594AbgKQM5S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Nov 2020 07:57:18 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCF6F2225E;
+        Tue, 17 Nov 2020 12:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605617836;
+        bh=TQqz/JTZpMMa0VZc/TvCcTMU2ZwN+aA6Hkoh4FRvUeA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SC0QZuGElEFCJF5R39lOURgz7D9Ns3xHWuepNUqJcuKrce93owhpCh7GJ+qHOKBB5
+         qp8fHXowl74Fq29r75ZzUeHschzgjGZWkOTCGdJ55tQLi4n9AZ0W0EYsP9RVHww8md
+         gu9gy4uDVRxPnQc2uq6ZPNCM3tdWCq0Z/W+AlLSw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.9 15/21] vfs: remove lockdep bogosity in __sb_start_write
+Date:   Tue, 17 Nov 2020 07:56:46 -0500
+Message-Id: <20201117125652.599614-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201117125652.599614-1-sashal@kernel.org>
+References: <20201117125652.599614-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Al Viro [mailto:viro@ftp.linux.org.uk] On Behalf Of Al Viro
-> Sent: Monday, November 16, 2020 7:09 PM
-> On Mon, Nov 16, 2020 at 09:37:32AM -0800, Linus Torvalds wrote:
-> > On Mon, Nov 16, 2020 at 8:47 AM Mimi Zohar <zohar@linux.ibm.com>
-> wrote:
-> > >
-> > > This discussion seems to be going down the path of requiring an IMA
-> > > filesystem hook for reading the file, again.  That solution was
-> > > rejected, not by me.  What is new this time?
-> >
-> > You can't read a non-read-opened file. Not even IMA can.
-> >
-> > So don't do that then.
-> >
-> > IMA is doing something wrong. Why would you ever read a file that can't
-> be read?
-> >
-> > Fix whatever "open" function instead of trying to work around the fact
-> > that you opened it wrong.
-> 
-> IMA pulls that crap on _every_ open(2), including O_WRONLY.  As far as I'm
-> concerned, the only sane answer is not enabling that thing on your builds;
-> they are deeply special and I hadn't been able to reason with them no
-> matter how much I tried ;-/
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
-A file-based protection mechanism against offline attacks would require
-to verify the current HMAC also before writing and to update the HMAC
-after the write.
+[ Upstream commit 22843291efc986ce7722610073fcf85a39b4cb13 ]
 
-One of the reasons why dentry_open() cannot be used and IMA switches
-to the old method of changing the mode of the current file descriptor is
-that the current process does not have enough privileges to do the
-operation.
+__sb_start_write has some weird looking lockdep code that claims to
+exist to handle nested freeze locking requests from xfs.  The code as
+written seems broken -- if we think we hold a read lock on any of the
+higher freeze levels (e.g. we hold SB_FREEZE_WRITE and are trying to
+lock SB_FREEZE_PAGEFAULT), it converts a blocking lock attempt into a
+trylock.
 
-If we find a way to read the file that always works, without reducing the
-security, the old method can be removed.
+However, it's not correct to downgrade a blocking lock attempt to a
+trylock unless the downgrading code or the callers are prepared to deal
+with that situation.  Neither __sb_start_write nor its callers handle
+this at all.  For example:
 
-Roberto
+sb_start_pagefault ignores the return value completely, with the result
+that if xfs_filemap_fault loses a race with a different thread trying to
+fsfreeze, it will proceed without pagefault freeze protection (thereby
+breaking locking rules) and then unlocks the pagefault freeze lock that
+it doesn't own on its way out (thereby corrupting the lock state), which
+leads to a system hang shortly afterwards.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+Normally, this won't happen because our ownership of a read lock on a
+higher freeze protection level blocks fsfreeze from grabbing a write
+lock on that higher level.  *However*, if lockdep is offline,
+lock_is_held_type unconditionally returns 1, which means that
+percpu_rwsem_is_held returns 1, which means that __sb_start_write
+unconditionally converts blocking freeze lock attempts into trylocks,
+even when we *don't* hold anything that would block a fsfreeze.
+
+Apparently this all held together until 5.10-rc1, when bugs in lockdep
+caused lockdep to shut itself off early in an fstests run, and once
+fstests gets to the "race writes with freezer" tests, kaboom.  This
+might explain the long trail of vanishingly infrequent livelocks in
+fstests after lockdep goes offline that I've never been able to
+diagnose.
+
+We could fix it by spinning on the trylock if wait==true, but AFAICT the
+locking works fine if lockdep is not built at all (and I didn't see any
+complaints running fstests overnight), so remove this snippet entirely.
+
+NOTE: Commit f4b554af9931 in 2015 created the current weird logic (which
+used to exist in a different form in commit 5accdf82ba25c from 2012) in
+__sb_start_write.  XFS solved this whole problem in the late 2.6 era by
+creating a variant of transactions (XFS_TRANS_NO_WRITECOUNT) that don't
+grab intwrite freeze protection, thus making lockdep's solution
+unnecessary.  The commit claims that Dave Chinner explained that the
+trylock hack + comment could be removed, but nobody ever did.
+
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/super.c | 33 ++++-----------------------------
+ 1 file changed, 4 insertions(+), 29 deletions(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 904459b351199..3a0777612c49b 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1645,36 +1645,11 @@ EXPORT_SYMBOL(__sb_end_write);
+  */
+ int __sb_start_write(struct super_block *sb, int level, bool wait)
+ {
+-	bool force_trylock = false;
+-	int ret = 1;
++	if (!wait)
++		return percpu_down_read_trylock(sb->s_writers.rw_sem + level-1);
+ 
+-#ifdef CONFIG_LOCKDEP
+-	/*
+-	 * We want lockdep to tell us about possible deadlocks with freezing
+-	 * but it's it bit tricky to properly instrument it. Getting a freeze
+-	 * protection works as getting a read lock but there are subtle
+-	 * problems. XFS for example gets freeze protection on internal level
+-	 * twice in some cases, which is OK only because we already hold a
+-	 * freeze protection also on higher level. Due to these cases we have
+-	 * to use wait == F (trylock mode) which must not fail.
+-	 */
+-	if (wait) {
+-		int i;
+-
+-		for (i = 0; i < level - 1; i++)
+-			if (percpu_rwsem_is_held(sb->s_writers.rw_sem + i)) {
+-				force_trylock = true;
+-				break;
+-			}
+-	}
+-#endif
+-	if (wait && !force_trylock)
+-		percpu_down_read(sb->s_writers.rw_sem + level-1);
+-	else
+-		ret = percpu_down_read_trylock(sb->s_writers.rw_sem + level-1);
+-
+-	WARN_ON(force_trylock && !ret);
+-	return ret;
++	percpu_down_read(sb->s_writers.rw_sem + level-1);
++	return 1;
+ }
+ EXPORT_SYMBOL(__sb_start_write);
+ 
+-- 
+2.27.0
+
