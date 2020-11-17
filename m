@@ -2,112 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B67532B68A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAB2B2B68B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbgKQPYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 10:24:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        id S1730293AbgKQPa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 10:30:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728606AbgKQPYp (ORCPT
+        with ESMTP id S1729831AbgKQPa0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 10:24:45 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95207C0613CF;
-        Tue, 17 Nov 2020 07:24:45 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id r12so21526675iot.4;
-        Tue, 17 Nov 2020 07:24:45 -0800 (PST)
+        Tue, 17 Nov 2020 10:30:26 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B2FC0617A7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 07:30:25 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id d17so8886432plr.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 07:30:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=J5hhP1Qz4OqnuXkQImzekUc7rxgR4/7wJfcySJ5XKyk=;
-        b=opCZJVOjmHtEDKDRq5CMDJEdEMjCvJ9PBBDeF8LhyLJA9/IaUdQVy8awoZUvg0sd5M
-         BhpA50tQYfHT1K1hTwEthRtxFgmr3trj00ecZUwVvIAD9B/LYzk4VbAa+qbORBacIv21
-         la12NqT/z3RQIS5XFdpBkuCU4nUani2zeXAC8Rkz8gUUWWtvZS9OuCEGZFf4rghz+WZV
-         RUgcRZlullgcDqwIJmZAzxocNEewmTtsv8bihfZcp7E65BAV47HGW52UTLWSKNmwzDDg
-         yPHAvHfhfOGjo8vJIjmyB5QN2Zswzz66VuiFJtm9CGCwkDP29Ae7CNdKSA5D7lTkKhRB
-         9UTA==
+        bh=qIvZeddIQ2d7OXVk2Uvs8VZdn+XX8s/0AnrjeK+3CsU=;
+        b=bhwrJmc0GjcqgX8OVmcbGhlIi+xRPTfFufg6IrO2IlzzbU2Ro3Dn1DorKGtrkbUhEY
+         HfnFy5EeLrIq4OJNeRGdwTMen1DVJO+eQ9C7cHlEv+AzRolv5nul5z0n+C2yOfDcXnEc
+         /wLam43UU7fEiHh4i7hNQOZNJ5Q0tk3KYhHoLz7WhPJiv3X2623wQ0g8ZvVZ3VeE3sFF
+         yPpUA+21czYfv1dFNgXKviqcQPaRVTpcydWad4DAdlQ2fQxVYFTbG0R+HRg13t9aqvCx
+         92e93IxrRQspe2wBpWSCgI6jZi9VTzWlxzJ8zPyZPVjGAlxrtzGQWafIqKPs99SMpGxA
+         bNKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J5hhP1Qz4OqnuXkQImzekUc7rxgR4/7wJfcySJ5XKyk=;
-        b=SfM5iVL0f8E4xB6vUIPF+c96OtpSkjqj6azaMsBs+vIb6J35rf8i6tbfIHJS0CyadQ
-         n5U9j8zv/PLIVeBynkeCV+6wXnbDkx71PI1ckCSjJJO/QyFKBL1kyr7jbOtEUkJfmKet
-         SjWkuHuDTVZ6eaJCcpp3eA0IZ8OoVEF3qbwdC513nvlxy0LeuTa69QkS7X3G6rgZdyi4
-         woNIOcZ7JBtBvwrhrn1yrQGrTGhXabjT+4IYIofcsjtBtEyQ0TqwvXTMKSJ7TV0qVTdK
-         4u2NGDSyw1G2MCc1SrChammaGjDGzLrYYytdThRdUH/gZT1ik6mAQ2S+bE0p6uUiy4YN
-         8VeQ==
-X-Gm-Message-State: AOAM533gYbcVERdyhCqmjOZF9wYWWLyBau/YsTydtaLl3IrX9fieXhVf
-        p+B4mO+kgNgKpB6qW8t2p8PyHTTXYyYc/mcLXok=
-X-Google-Smtp-Source: ABdhPJyBD4DSKNz3tDbg1HK7GJz+jBiIBdB5wj8jkHQVzl7Cqha5MUfRLAA4mEIhDqaW+tGdtHC1OhY1FCYJMtpvgEI=
-X-Received: by 2002:a6b:5809:: with SMTP id m9mr11850583iob.186.1605626684997;
- Tue, 17 Nov 2020 07:24:44 -0800 (PST)
+        bh=qIvZeddIQ2d7OXVk2Uvs8VZdn+XX8s/0AnrjeK+3CsU=;
+        b=XIwXc3WN2Tf5xppbHzWoM0cSXnLeAyGEI8d6V4pXLJiAC+dIDa/uFa+OABwZnk29n2
+         RG1+BQAPhwhcJAHOBNuhH/d3nt04tzk+PGQq8Igycr7OSsKwEExXH8RKz+ARKBXTdLxq
+         MqeFmLFtcnZS/767xsVSpa63LoA75lsuM96+zRiu4W+BeOBZEKMmZampbLDU304z6pf8
+         3mb0vBl97C7sXuNJA0vCrjuqWV7q46lP9gomfIOG20hyV1jv6I8qw8QY2C+0W+81s5jR
+         s9jdipDDWpBIHiTICMZ+arEnSIQ6xibF/+xQW+pNX1g4dIsrjKqMju3Lata2QfD2zff6
+         fYhw==
+X-Gm-Message-State: AOAM530ayEfhOyD2UwEEgMIUCoNoysicAhrWEFLgxYrYU9N6untBOK0X
+        GDuTe6QsPvZ48FBskG+TNr7egsPc7jhC+vfsdghCmQ==
+X-Google-Smtp-Source: ABdhPJwIhciLv1sUAGBmks9JTdZrzhMo5xSdPzoc5eR6bFAjo9blSdT+iwLKdn8nt0XnjcldUMgbZHy6/eG17MNR+nw=
+X-Received: by 2002:a17:90b:88b:: with SMTP id bj11mr5214598pjb.229.1605627024793;
+ Tue, 17 Nov 2020 07:30:24 -0800 (PST)
 MIME-Version: 1.0
-References: <20201116045758.21774-1-sargun@sargun.me> <20201116045758.21774-4-sargun@sargun.me>
- <20201116144240.GA9190@redhat.com> <CAOQ4uxgMmxhT1fef9OtivDjxx7FYNpm7Y=o_C-zx5F+Do3kQSA@mail.gmail.com>
- <20201116163615.GA17680@redhat.com> <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
- <20201116210950.GD9190@redhat.com> <CAOQ4uxhkRauEM46nbhZuGdJmP8UGQpe+fw_FtXy+S4eaR4uxTA@mail.gmail.com>
- <20201117144857.GA78221@redhat.com>
-In-Reply-To: <20201117144857.GA78221@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 17 Nov 2020 17:24:33 +0200
-Message-ID: <CAOQ4uxg1ZNSid58LLsGC2tJLk_fpJfu13oOzCz5ScEi6y_4Nnw@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
- directories when safe
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Chengguang Xu <cgxu519@mykernel.net>
+References: <20201113105952.11638-1-songmuchun@bytedance.com>
+ <20201113105952.11638-6-songmuchun@bytedance.com> <20201117150604.GA15679@linux>
+In-Reply-To: <20201117150604.GA15679@linux>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Tue, 17 Nov 2020 23:29:45 +0800
+Message-ID: <CAMZfGtWPu2GKquUfNusVBD7LsiYSB6t6+ugoAcKRkpLeQd+bQQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v4 05/21] mm/hugetlb: Introduce pgtable
+ allocation/freeing helpers
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > I guess if we change fsync and syncfs to do nothing but return
-> > error if any writeback error happened since mount we will be ok?
+On Tue, Nov 17, 2020 at 11:06 PM Oscar Salvador <osalvador@suse.de> wrote:
 >
-> I guess that will not be sufficient. Because overlay fsync/syncfs can
-> only retrun any error which has happened so far. It is still possible
-> that error happens right after this fsync call and application still
-> reads back old/corrupted data.
->
-> So this proposal reduces the race window but does not completely
-> eliminate it.
->
+> On Fri, Nov 13, 2020 at 06:59:36PM +0800, Muchun Song wrote:
+> > +#define page_huge_pte(page)          ((page)->pmd_huge_pte)
 
-That's true.
+Yeah, I forgot to remove it. Thanks.
 
-> We probably will have to sync upper/ and if there are no errors reported,
-> then it should be ok to consume data back.
 >
-> This leads back to same issue of doing fsync/sync which we are trying
-> to avoid with volatile containers. So we have two options.
+> Seems you do not need this one anymore.
 >
-> A. Build volatile containers should sync upper and then pack upper/ into
->   an image. if final sync returns error, throw away the container and
->   rebuild image. This will avoid intermediate fsync calls but does not
->   eliminate final syncfs requirement on upper. Now one can either choose
->   to do syncfs on upper/ or implement a more optimized syncfs through
->   overlay so that selctives dirty inodes are synced instead.
+> > +void vmemmap_pgtable_free(struct page *page)
+> > +{
+> > +     struct page *pte_page, *t_page;
+> > +
+> > +     list_for_each_entry_safe(pte_page, t_page, &page->lru, lru) {
+> > +             list_del(&pte_page->lru);
+> > +             pte_free_kernel(&init_mm, page_to_virt(pte_page));
+> > +     }
+> > +}
+> > +
+> > +int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
+> > +{
+> > +     unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
+> > +
+> > +     /* Store preallocated pages on huge page lru list */
+> > +     INIT_LIST_HEAD(&page->lru);
+> > +
+> > +     while (nr--) {
+> > +             pte_t *pte_p;
+> > +
+> > +             pte_p = pte_alloc_one_kernel(&init_mm);
+> > +             if (!pte_p)
+> > +                     goto out;
+> > +             list_add(&virt_to_page(pte_p)->lru, &page->lru);
+> > +     }
 >
-> B. Alternatively, live dangerously and know that it is possible that
->   writeback error happens and you read back corrupted data.
->
+> Definetely this looks better and easier to handle.
+> Btw, did you explore Matthew's hint about instead of allocating a new page,
+> using one of the ones you are going to free to store the ptes?
 
-C. "shutdown" the filesystem if writeback errors happened and return
-     EIO from any read, like some blockdev filesystems will do in face
-     of metadata write errors
+Oh, sorry for missing his reply. It is a good idea. I will start an
+investigation.
+Thanks for reminding me.
 
-I happen to have a branch ready for that ;-)
-https://github.com/amir73il/linux/commits/ovl-shutdown
+> I am not sure whether it is feasible at all though.
+>
+>
+> > --- a/mm/hugetlb_vmemmap.h
+> > +++ b/mm/hugetlb_vmemmap.h
+> > @@ -9,12 +9,24 @@
+> >  #ifndef _LINUX_HUGETLB_VMEMMAP_H
+> >  #define _LINUX_HUGETLB_VMEMMAP_H
+> >  #include <linux/hugetlb.h>
+> > +#include <linux/mm.h>
+>
+> why do we need this here?
 
-Thanks,
-Amir.
+Yeah, also can remove:).
+
+
+>
+> --
+> Oscar Salvador
+> SUSE L3
+
+
+
+--
+Yours,
+Muchun
