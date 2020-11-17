@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B01402B5FA7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 14:00:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207D32B5FB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 14:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbgKQM5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 07:57:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54836 "EHLO mail.kernel.org"
+        id S1728779AbgKQM5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 07:57:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728704AbgKQM5l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 07:57:41 -0500
+        id S1728766AbgKQM5y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Nov 2020 07:57:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF0222464E;
-        Tue, 17 Nov 2020 12:57:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 387622468E;
+        Tue, 17 Nov 2020 12:57:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605617859;
-        bh=Ofn5+l4aFZujNxXf/KQMbzBU4VqQFQBRQL/CqU7/CWs=;
+        s=default; t=1605617873;
+        bh=zFsIwQxGU2AXdRj4s6bsCEluAalWvU+ma3Q3H77MrLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WOlu9JwZ08P8gKjQr3MtvLLcnKiBbsc1liKP4zOP0Svx5dglaLMRB8kIwuQSvaFif
-         w1r5kWkBqmD2FPi9Lx6BxVGe/DPZ5spRQeWTTuRsls50jMI2YFse83fwvKk9XVMxY1
-         QWR/tFbtpFX4XLyB/OsVIkt5OpazAf7jfAsfA5Rg=
+        b=FHipAgzfs7H8CV3tiz5r9wwwM4uDuckUT/Mm5PrTzP7ozMfytprLg6qpQcXpMFPhN
+         V4LiTNk+OiQ6YD3G4rUKf2OuFmjxRnl08QNH4dHHZNBDZiklthmbhsOT/EZS+29KgH
+         SvBoUAfipBQPAsCkt5OHCpTecylFUkBeeV7D22X4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
         Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 09/11] vfs: remove lockdep bogosity in __sb_start_write
-Date:   Tue, 17 Nov 2020 07:57:23 -0500
-Message-Id: <20201117125725.599833-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 6/6] vfs: remove lockdep bogosity in __sb_start_write
+Date:   Tue, 17 Nov 2020 07:57:43 -0500
+Message-Id: <20201117125743.599974-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201117125725.599833-1-sashal@kernel.org>
-References: <20201117125725.599833-1-sashal@kernel.org>
+In-Reply-To: <20201117125743.599974-1-sashal@kernel.org>
+References: <20201117125743.599974-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -101,10 +101,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 29 deletions(-)
 
 diff --git a/fs/super.c b/fs/super.c
-index a288cd60d2aed..877532baf513d 100644
+index f3a8c008e1643..9fb4553c46e63 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -1647,36 +1647,11 @@ EXPORT_SYMBOL(__sb_end_write);
+@@ -1360,36 +1360,11 @@ EXPORT_SYMBOL(__sb_end_write);
   */
  int __sb_start_write(struct super_block *sb, int level, bool wait)
  {
