@@ -2,101 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3531B2B7037
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 21:36:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA3C2B7042
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 21:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbgKQUgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 15:36:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25184 "EHLO
+        id S1728643AbgKQUiU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 15:38:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23998 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726278AbgKQUgV (ORCPT
+        by vger.kernel.org with ESMTP id S1726020AbgKQUiU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 15:36:21 -0500
+        Tue, 17 Nov 2020 15:38:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605645379;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=G8/wxJoq12QfdqHJtRO4GIpzD5Y227qifeERfdJXT9A=;
-        b=V4xYwmr1OVnshCWUb7xlnE4JS5i4KBtq5Uio3ktcB7fwdTiwbmQ6WkAr7rQWTn04Mnutye
-        FihFLVTJ2vS/gJz7l0suN+9e/1pb+NhTYWE/hBLGUCNPAxsnp0AHWH4iY69tVhQpuhWkg9
-        Vj5W3T1N3EEMO0geaUmvsSkNJEZu4/w=
+        s=mimecast20190719; t=1605645499;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DUPF+9bNm2EMgx4/e8UDCTy5nIDtLC2Xx5lpaZyO1mg=;
+        b=H//Sn4Qi9cNn+OAcnXRsXZh4bXiW4P39l4n6YA11j+CyvBK0tTJs7+wYMYgZCjYE9cTwMh
+        /Wo/YEBiMeAViHtOxI/50bohlmvFvyuPhKyRngKl8QvSIfSte40vkfdpmmvoFWTFAIXUDh
+        53c55pfALUycFrGFh6MAG7k7y/KcQ/8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-107-zg-lqcXVP2uA9_nkr76IBA-1; Tue, 17 Nov 2020 15:36:18 -0500
-X-MC-Unique: zg-lqcXVP2uA9_nkr76IBA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-479-Yc2ClJHKP9Oiq52U406y-w-1; Tue, 17 Nov 2020 15:38:15 -0500
+X-MC-Unique: Yc2ClJHKP9Oiq52U406y-w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 28A918030DA;
-        Tue, 17 Nov 2020 20:36:17 +0000 (UTC)
-Received: from sulaco.redhat.com (ovpn-112-190.rdu2.redhat.com [10.10.112.190])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9180E5C1CF;
-        Tue, 17 Nov 2020 20:36:16 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B8085F9E3;
+        Tue, 17 Nov 2020 20:38:13 +0000 (UTC)
+Received: from [10.10.112.190] (ovpn-112-190.rdu2.redhat.com [10.10.112.190])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C00E35B4A2;
+        Tue, 17 Nov 2020 20:38:12 +0000 (UTC)
+Reply-To: tasleson@redhat.com
+Subject: Re: [PATCH] buffer_io_error: Use dev_err_ratelimited
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20201026155730.542020-1-tasleson@redhat.com>
+ <CAHp75Vfno9LULSfvwYA+4bEz4kW1Z7c=65HTy-O0fgLrzVA24g@mail.gmail.com>
+ <71148b03-d880-8113-bd91-25dadef777c7@redhat.com>
+ <ec93ba9e-ead9-f49a-d569-abf4c06a60eb@redhat.com>
+ <CAHp75VfngLah7nkARydc-BAivtyCQbHhcEGFLHLRHpXFSE_PwQ@mail.gmail.com>
 From:   Tony Asleson <tasleson@redhat.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [v2] buffer_io_error: Use dev_err_ratelimited
-Date:   Tue, 17 Nov 2020 14:36:16 -0600
-Message-Id: <20201117203616.307787-1-tasleson@redhat.com>
+Organization: Red Hat
+Message-ID: <8fc251fd-4ec5-b5d5-8193-c8a59e30b6fa@redhat.com>
+Date:   Tue, 17 Nov 2020 14:38:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <CAHp75VfngLah7nkARydc-BAivtyCQbHhcEGFLHLRHpXFSE_PwQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace printk_ratelimited with dev_err_ratelimited which
-adds dev_printk meta data. This is used by journald to
-add disk ID information to the journal entry.
+On 10/28/20 6:22 PM, Andy Shevchenko wrote:
+> Staled documentation. You may send a patch to fix it (I Cc'ed
+> Christoph and Jonathan).
+> It means that it doesn't go under this category and the example should
+> be changed to something else.
 
-Signed-off-by: Tony Asleson <tasleson@redhat.com>
----
+I'm looking into a suitable replacement example.  Will post
+documentation patch when I find one.
 
-V2: 
-
-- Move change log to after marker line (Andy Shevchenko)
-- Remove printk cast (Andy Shevchenko)
-    
-V1: 
-
-This re-worked change is from a different patch series
-and utilizes the following suggestions.
-    
-- Reduce indentation level (Andy Shevchenko)
-- Remove unneeded () for conditional operator (Sergei Shtylyov)
-
- fs/buffer.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 50bbc99e3d96..32f237e350bf 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -125,10 +125,17 @@ EXPORT_SYMBOL(__wait_on_buffer);
- 
- static void buffer_io_error(struct buffer_head *bh, char *msg)
- {
--	if (!test_bit(BH_Quiet, &bh->b_state))
--		printk_ratelimited(KERN_ERR
--			"Buffer I/O error on dev %pg, logical block %llu%s\n",
--			bh->b_bdev, (unsigned long long)bh->b_blocknr, msg);
-+	struct device *gendev;
-+
-+	if (test_bit(BH_Quiet, &bh->b_state))
-+		return;
-+
-+	gendev = bh->b_bdev->bd_disk ?
-+		disk_to_dev(bh->b_bdev->bd_disk) : NULL;
-+
-+	dev_err_ratelimited(gendev,
-+		"Buffer I/O error, logical block %llu%s\n",
-+		bh->b_blocknr, msg);
- }
- 
- /*
-
-base-commit: bbf5c979011a099af5dc76498918ed7df445635b
--- 
-2.26.2
+Thanks,
+Tony
 
