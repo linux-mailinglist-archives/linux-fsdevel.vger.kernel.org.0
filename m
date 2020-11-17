@@ -2,60 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB2B2B68B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C99AF2B68D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 16:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730293AbgKQPa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 10:30:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51156 "EHLO
+        id S1725964AbgKQPf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 10:35:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729831AbgKQPa0 (ORCPT
+        with ESMTP id S1725814AbgKQPf7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 10:30:26 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B2FC0617A7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 07:30:25 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id d17so8886432plr.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 07:30:25 -0800 (PST)
+        Tue, 17 Nov 2020 10:35:59 -0500
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3543AC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 07:35:59 -0800 (PST)
+Received: by mail-pl1-x642.google.com with SMTP id s2so10410436plr.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 07:35:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qIvZeddIQ2d7OXVk2Uvs8VZdn+XX8s/0AnrjeK+3CsU=;
-        b=bhwrJmc0GjcqgX8OVmcbGhlIi+xRPTfFufg6IrO2IlzzbU2Ro3Dn1DorKGtrkbUhEY
-         HfnFy5EeLrIq4OJNeRGdwTMen1DVJO+eQ9C7cHlEv+AzRolv5nul5z0n+C2yOfDcXnEc
-         /wLam43UU7fEiHh4i7hNQOZNJ5Q0tk3KYhHoLz7WhPJiv3X2623wQ0g8ZvVZ3VeE3sFF
-         yPpUA+21czYfv1dFNgXKviqcQPaRVTpcydWad4DAdlQ2fQxVYFTbG0R+HRg13t9aqvCx
-         92e93IxrRQspe2wBpWSCgI6jZi9VTzWlxzJ8zPyZPVjGAlxrtzGQWafIqKPs99SMpGxA
-         bNKg==
+        bh=hptfVDhp17lNG0zTY32jtB2ORRoWKMoYJw0mGzRFDYU=;
+        b=nUVsC2+9jIY0quFTo/Ulukf3VUuU1nHVOeXU3jB/pV+YhS7xXtH3IKlRvLx0ObzOWO
+         DFe+fr+fz+KjwT+YERHo4TsJ045U5KRwFYrqEZMTpgVkgnS4iWksZ22Z5OEUFPxDKGMJ
+         eLntD23iYtJBYmehuQcIvl5/VDMxMsP8LGOAU9xpC+D7nIzqpC7G81XgCsoXHYAuG9Mj
+         RQ+oLGpJpCJeNThKY06vrzlCKBxi9S2nKqY8KayRRfjKM2sL2Hd/B17jOYFiP/d0hBKI
+         SOAwSIxeumw6Fdu0RFV5flWlGtSmE4OL223//7brUSNLcCibmXJ41E+Sk7ZYDkc7oEQA
+         ox0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qIvZeddIQ2d7OXVk2Uvs8VZdn+XX8s/0AnrjeK+3CsU=;
-        b=XIwXc3WN2Tf5xppbHzWoM0cSXnLeAyGEI8d6V4pXLJiAC+dIDa/uFa+OABwZnk29n2
-         RG1+BQAPhwhcJAHOBNuhH/d3nt04tzk+PGQq8Igycr7OSsKwEExXH8RKz+ARKBXTdLxq
-         MqeFmLFtcnZS/767xsVSpa63LoA75lsuM96+zRiu4W+BeOBZEKMmZampbLDU304z6pf8
-         3mb0vBl97C7sXuNJA0vCrjuqWV7q46lP9gomfIOG20hyV1jv6I8qw8QY2C+0W+81s5jR
-         s9jdipDDWpBIHiTICMZ+arEnSIQ6xibF/+xQW+pNX1g4dIsrjKqMju3Lata2QfD2zff6
-         fYhw==
-X-Gm-Message-State: AOAM530ayEfhOyD2UwEEgMIUCoNoysicAhrWEFLgxYrYU9N6untBOK0X
-        GDuTe6QsPvZ48FBskG+TNr7egsPc7jhC+vfsdghCmQ==
-X-Google-Smtp-Source: ABdhPJwIhciLv1sUAGBmks9JTdZrzhMo5xSdPzoc5eR6bFAjo9blSdT+iwLKdn8nt0XnjcldUMgbZHy6/eG17MNR+nw=
-X-Received: by 2002:a17:90b:88b:: with SMTP id bj11mr5214598pjb.229.1605627024793;
- Tue, 17 Nov 2020 07:30:24 -0800 (PST)
+        bh=hptfVDhp17lNG0zTY32jtB2ORRoWKMoYJw0mGzRFDYU=;
+        b=QFrs8zeqmCFLd59j0PV4A5Y8nSeJMkzftJdPzZepv57NwFvNVRTEIPH0wesnV2ZN9d
+         JxUvsA2R6cTMe+gfvjAN5l16q8yrk2M2NjuRY8PKp7TOk2GWy19S+Dj3+MhPTHhjcRAa
+         MdfMcmeUf0xVeLs/A7q/UpOZaA9y8cGP/ZOyooT4wkcsX30ROdlAC1FkjJEf0DU94lHt
+         yz+SmT/yWVHUgJHGirzooNhsAf26wqL3duxjvn/GgeOzepUtVQmYkbetkI83LKbz8md1
+         Xfd8AWSXd5NWzjMKZ0KtGuiSWtSOE74kPDDtd8kn8Hfpm3D5SQVFaeOFyMg6SjZXZlQG
+         HaTg==
+X-Gm-Message-State: AOAM531PJuaP5PCnkx5i03TL5CjI/FFeWnybm0nutZ5Bsj+RYaRsEljJ
+        mhKaAoWkcXSP5muAtn/k69PxMB7YxkhQ6UdbjO4ToA==
+X-Google-Smtp-Source: ABdhPJwwhxoNvmlzPdAoSMicIpSAuvKb4FDamsz7ABcccu4oUhkRg96zse1OAo2A7X/R+bLoM37GT5VBN2K7h/qnIGg=
+X-Received: by 2002:a17:902:c14b:b029:d6:ab18:108d with SMTP id
+ 11-20020a170902c14bb02900d6ab18108dmr93696plj.20.1605627358702; Tue, 17 Nov
+ 2020 07:35:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20201113105952.11638-1-songmuchun@bytedance.com>
- <20201113105952.11638-6-songmuchun@bytedance.com> <20201117150604.GA15679@linux>
-In-Reply-To: <20201117150604.GA15679@linux>
+References: <20201108141113.65450-1-songmuchun@bytedance.com>
+ <20201108141113.65450-4-songmuchun@bytedance.com> <20201109135215.GA4778@localhost.localdomain>
+ <ef564084-ea73-d579-9251-ec0440df2b48@oracle.com> <20201110195025.GN17076@casper.infradead.org>
+In-Reply-To: <20201110195025.GN17076@casper.infradead.org>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 17 Nov 2020 23:29:45 +0800
-Message-ID: <CAMZfGtWPu2GKquUfNusVBD7LsiYSB6t6+ugoAcKRkpLeQd+bQQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v4 05/21] mm/hugetlb: Introduce pgtable
- allocation/freeing helpers
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
+Date:   Tue, 17 Nov 2020 23:35:19 +0800
+Message-ID: <CAMZfGtU=NM3H6X3HzFHNPS8Eekk0RHQ3WqKVER23bK-aBD8CCQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v3 03/21] mm/hugetlb: Introduce a new
+ config HUGETLB_PAGE_FREE_VMEMMAP
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Jonathan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
         bp@alien8.de, x86@kernel.org, hpa@zytor.com,
         dave.hansen@linux.intel.com, luto@kernel.org,
@@ -66,7 +69,6 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         anshuman.khandual@arm.com, jroedel@suse.de,
         Mina Almasry <almasrymina@google.com>,
         David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
         Michal Hocko <mhocko@suse.com>,
         Xiongchun duan <duanxiongchun@bytedance.com>,
         linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
@@ -77,73 +79,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 11:06 PM Oscar Salvador <osalvador@suse.de> wrote:
+On Wed, Nov 11, 2020 at 3:50 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> On Fri, Nov 13, 2020 at 06:59:36PM +0800, Muchun Song wrote:
-> > +#define page_huge_pte(page)          ((page)->pmd_huge_pte)
-
-Yeah, I forgot to remove it. Thanks.
-
+> On Tue, Nov 10, 2020 at 11:31:31AM -0800, Mike Kravetz wrote:
+> > On 11/9/20 5:52 AM, Oscar Salvador wrote:
+> > > On Sun, Nov 08, 2020 at 10:10:55PM +0800, Muchun Song wrote:
+> > >> The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
+> > >> whether to enable the feature of freeing unused vmemmap associated
+> > >> with HugeTLB pages. Now only support x86.
+> > >>
+> > >> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > >> ---
+> > >>  arch/x86/mm/init_64.c |  2 +-
+> > >>  fs/Kconfig            | 16 ++++++++++++++++
+> > >>  mm/bootmem_info.c     |  3 +--
+> > >>  3 files changed, 18 insertions(+), 3 deletions(-)
+> > >>
+> > >> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> > >> index 0a45f062826e..0435bee2e172 100644
+> > >> --- a/arch/x86/mm/init_64.c
+> > >> +++ b/arch/x86/mm/init_64.c
+> > >> @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
+> > >>
+> > >>  static void __init register_page_bootmem_info(void)
+> > >>  {
+> > >> -#ifdef CONFIG_NUMA
+> > >> +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
+> > >>    int i;
+> > >>
+> > >>    for_each_online_node(i)
+> > >> diff --git a/fs/Kconfig b/fs/Kconfig
+> > >> index 976e8b9033c4..21b8d39a9715 100644
+> > >> --- a/fs/Kconfig
+> > >> +++ b/fs/Kconfig
+> > >> @@ -245,6 +245,22 @@ config HUGETLBFS
+> > >>  config HUGETLB_PAGE
+> > >>    def_bool HUGETLBFS
+> > >>
+> > >> +config HUGETLB_PAGE_FREE_VMEMMAP
+> > >> +  bool "Free unused vmemmap associated with HugeTLB pages"
+> > >> +  default y
+> > >> +  depends on X86
+> > >> +  depends on HUGETLB_PAGE
+> > >> +  depends on SPARSEMEM_VMEMMAP
+> > >> +  depends on HAVE_BOOTMEM_INFO_NODE
+> > >> +  help
+> > >> +    There are many struct page structures associated with each HugeTLB
+> > >> +    page. But we only use a few struct page structures. In this case,
+> > >> +    it wastes some memory. It is better to free the unused struct page
+> > >> +    structures to buddy system which can save some memory. For
+> > >> +    architectures that support it, say Y here.
+> > >> +
+> > >> +    If unsure, say N.
+> > >
+> > > I am not sure the above is useful for someone who needs to decide
+> > > whether he needs/wants to enable this or not.
+> > > I think the above fits better in a Documentation part.
+> > >
+> > > I suck at this, but what about the following, or something along those
+> > > lines?
+> > >
+> > > "
+> > > When using SPARSEMEM_VMEMMAP, the system can save up some memory
+> > > from pre-allocated HugeTLB pages when they are not used.
+> > > 6 pages per 2MB HugeTLB page and 4095 per 1GB HugeTLB page.
+> > > When the pages are going to be used or freed up, the vmemmap
+> > > array representing that range needs to be remapped again and
+> > > the pages we discarded earlier need to be rellocated again.
+> > > Therefore, this is a trade-off between saving memory and
+> > > increasing time in allocation/free path.
+> > > "
+> > >
+> > > It would be also great to point out that this might be a
+> > > trade-off between saving up memory and increasing the cost
+> > > of certain operations on allocation/free path.
+> > > That is why I mentioned it there.
+> >
+> > Yes, this is somewhat a trade-off.
+> >
+> > As a config option, this is something that would likely be decided by
+> > distros.  I almost hate to suggest this, but is it something that an
+> > end user would want to decide?  Is this something that perhaps should
+> > be a boot/kernel command line option?
 >
-> Seems you do not need this one anymore.
+> I don't like config options.  I like boot options even less.  I don't
+> know how to describe to an end-user whether they should select this
+> or not.  Is there a way to make this not a tradeoff?  Or make the
+> tradeoff so minimal as to be not worth describing?  (do we have numbers
+> for the worst possible situation when enabling this option?)
 >
-> > +void vmemmap_pgtable_free(struct page *page)
-> > +{
-> > +     struct page *pte_page, *t_page;
-> > +
-> > +     list_for_each_entry_safe(pte_page, t_page, &page->lru, lru) {
-> > +             list_del(&pte_page->lru);
-> > +             pte_free_kernel(&init_mm, page_to_virt(pte_page));
-> > +     }
-> > +}
-> > +
-> > +int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
-> > +{
-> > +     unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
-> > +
-> > +     /* Store preallocated pages on huge page lru list */
-> > +     INIT_LIST_HEAD(&page->lru);
-> > +
-> > +     while (nr--) {
-> > +             pte_t *pte_p;
-> > +
-> > +             pte_p = pte_alloc_one_kernel(&init_mm);
-> > +             if (!pte_p)
-> > +                     goto out;
-> > +             list_add(&virt_to_page(pte_p)->lru, &page->lru);
-> > +     }
->
-> Definetely this looks better and easier to handle.
-> Btw, did you explore Matthew's hint about instead of allocating a new page,
-> using one of the ones you are going to free to store the ptes?
+> I haven't read through these patches in detail, so maybe we do this
+> already, but when we free the pages to the buddy allocator, do we retain
+> the third page to use for the PTEs (and free pages 3-7), or do we allocate
+> a separate page for the PTES and free pages 2-7?
 
-Oh, sorry for missing his reply. It is a good idea. I will start an
-investigation.
-Thanks for reminding me.
-
-> I am not sure whether it is feasible at all though.
->
->
-> > --- a/mm/hugetlb_vmemmap.h
-> > +++ b/mm/hugetlb_vmemmap.h
-> > @@ -9,12 +9,24 @@
-> >  #ifndef _LINUX_HUGETLB_VMEMMAP_H
-> >  #define _LINUX_HUGETLB_VMEMMAP_H
-> >  #include <linux/hugetlb.h>
-> > +#include <linux/mm.h>
->
-> why do we need this here?
-
-Yeah, also can remove:).
-
-
->
-> --
-> Oscar Salvador
-> SUSE L3
+Sorry for missing this reply. It is a good idea. I will start an investigation
+and implement this. Thanks Matthew.
 
 
 
---
+-- 
 Yours,
 Muchun
