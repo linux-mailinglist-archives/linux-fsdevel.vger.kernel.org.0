@@ -2,142 +2,302 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 119432B69FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 17:27:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FAF2B6A08
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 17:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726981AbgKQQ03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 11:26:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59880 "EHLO
+        id S1727013AbgKQQ3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 11:29:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbgKQQ03 (ORCPT
+        with ESMTP id S1726182AbgKQQ3t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 11:26:29 -0500
-Received: from mail-oo1-xc41.google.com (mail-oo1-xc41.google.com [IPv6:2607:f8b0:4864:20::c41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E0EC0617A6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 08:26:28 -0800 (PST)
-Received: by mail-oo1-xc41.google.com with SMTP id y3so4867597ooq.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 08:26:28 -0800 (PST)
+        Tue, 17 Nov 2020 11:29:49 -0500
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDCA9C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 08:29:47 -0800 (PST)
+Received: by mail-pj1-x1042.google.com with SMTP id gi3so773222pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 08:29:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=z75qkcvTDD7D5ZVAs+uCqlqVE13UoCxrYrBW5Z0YsDk=;
-        b=NbWG5mavXseC8TwQhZgdUwUaEBWIg13azPa/dMhqYJ71H7R1Z/qeTEhVaPbUVfXyE7
-         cuuDbCoMHIkFBt9qXX+uZsQB+89riqdLmQ+Ffxx0ad4LOr351/dC7ap3Si3KFvSK4Mbu
-         qKKfB3tCkpSSeKQ40lQuoVQzZYl8KLmUe7l8MnAJpt/8rqT5/DrPdYZfW0upTES0dNdI
-         a6Yxcj79g/bjpQENWeUZUTpbfKlPhhN0tzEyTZrTW7+jaOqhRfIEw5d0vt2cZc8xGLWG
-         VGnbiU/hV7wmCd9cvERoCxcrALe9HXxE5vyEiqOzyoKTFOR/LBmkiop+NMI7MROxwuoU
-         oyAg==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A3QTWUzTvUT9gxMoshGLtqPLDCXqi6pfAh27cLWuKoY=;
+        b=oF6O0GItwqng2CH4SIbYH2aWyQ0yc6lC98D8jhxQh/Z/K6wGgSrCp+VelucrtJYIN+
+         yfrPeJi0WnWoX5NjeJg7eGFqFQH7j+0A/kup3R4Gpm/Na2hqHBDTwGnqDR8yqmKMDFxB
+         jWQsbr+qnzpVfnxrIHMriUpUcKtH1Ei4VI4pdgcMN8m7OKjz1fLIvEICdudJz+MTX8Hb
+         pur0CMetqz1ZfpjWZf0ixQoiXRCmCJ970vKWlb7PggfovGKJFPkHgRalGrdCYI7ATCYB
+         EHeAV57hqAfhxZP2iYYglDOS2Q99Zw+xdno1A/n+4pWJdBqnLMHxUGUnCQa1wcQUc5t9
+         OL3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=z75qkcvTDD7D5ZVAs+uCqlqVE13UoCxrYrBW5Z0YsDk=;
-        b=kncr3UtKM+Y239RywvSRN4Lwivk/yVcfzgHzRtNqjw/ebc0LPQSOuRhzVs7YqikP7p
-         seN6zqICNuTxqdEYngs5sRZsY+dScg5aViXwSJupuHYXrs6iQp7w7phY935GGxCNivRW
-         ILKlLgxwNVU6W5jiyv+iJ9G4yG9IrsxPNojOio2WewqeAqU1LP3GnyJIcfy0LOYjKRxH
-         EilYyYqn4VO8KrjhyLVwLTv3nySCWsfqszDcQJYqYFGWGmcqVRNQJ4KTJeFuFRcvXpQ8
-         89z3D2gKHGUHDQElBwlybbL6TgRCMKCxa2UI1d4QrhvqiHSfHm1j1/0fECbheVJKfh0m
-         RPPA==
-X-Gm-Message-State: AOAM530PeoiPI/UuCUgvledNW5XIRjnniBm1fLdRWor/WT7ZPbaPGiMl
-        Ne8WwDfdTp8fjj3V4JDpxhdJlw==
-X-Google-Smtp-Source: ABdhPJwEbtJaSAIffWbfsiQiaPRdu+CN3ysGQxSh48oJAho68bZkA6+kWULhGCBChKSe1hVhZ9aP1w==
-X-Received: by 2002:a4a:e5ce:: with SMTP id r14mr3587297oov.11.1605630387621;
-        Tue, 17 Nov 2020 08:26:27 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id b123sm6262913oii.47.2020.11.17.08.26.25
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Tue, 17 Nov 2020 08:26:26 -0800 (PST)
-Date:   Tue, 17 Nov 2020 08:26:03 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, hch@lst.de,
-        hannes@cmpxchg.org, yang.shi@linux.alibaba.com,
-        dchinner@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
-In-Reply-To: <20201117153947.GL29991@casper.infradead.org>
-Message-ID: <alpine.LSU.2.11.2011170820030.1014@eggly.anvils>
-References: <20201112212641.27837-1-willy@infradead.org> <alpine.LSU.2.11.2011160128001.1206@eggly.anvils> <20201117153947.GL29991@casper.infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A3QTWUzTvUT9gxMoshGLtqPLDCXqi6pfAh27cLWuKoY=;
+        b=Zu2sdgBB9tLMviiA583ZVwt1o6Y4T4DAiuGYuD3zcsDthuBIDFLR8ESXVh4ivKC2U6
+         ooZupDbEX6qpyOTAGQxzsiXMNWB4apX04QK7F/JiVDzVTjmMiJLSZpK+ARCexZ5XWZcl
+         U6PsCpEoLTc77CJhz+LWMZCvVhLqFguYCJ+J0MWXl9gbKaNpxpKblfR2LRU+1j9TA1aj
+         lrSVGy+BGrtkpYy2ZW0F+20onwT1IU+ipOGBpkFx3H8APsElvtJa/bwVKBO4xS96+gNf
+         8SRBPG3w9DEn1XL4saetSM3Usw/vXFUZf43KvecY6/aTD7AtHQD+g4Pw5KDp0Luvpd+o
+         zZIg==
+X-Gm-Message-State: AOAM530Re4Q2dhx8QUj0n3MzJfLn8R7XZsZ3zOk411btJE/5piapvRBf
+        Rvz2mNCMksI7do/ssymPxx/PqNhewVaOqNgiYI1SBg==
+X-Google-Smtp-Source: ABdhPJyKdXILrrCSaxnUg7OSQj7ryLePl/Z4V9HWSFy1zzwaaUm05L7FiTmkFJslcslXKPtsd9XP4QPPRhSICbNSWHs=
+X-Received: by 2002:a17:902:c14b:b029:d6:ab18:108d with SMTP id
+ 11-20020a170902c14bb02900d6ab18108dmr314927plj.20.1605630587256; Tue, 17 Nov
+ 2020 08:29:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+References: <20201113105952.11638-1-songmuchun@bytedance.com>
+ <349168819c1249d4bceea26597760b0a@hisilicon.com> <CAMZfGtUVDJ4QHYRCKnPTkgcKGJ38s2aOOktH+8Urz7oiVfimww@mail.gmail.com>
+ <714ae7d701d446259ab269f14a030fe9@hisilicon.com>
+In-Reply-To: <714ae7d701d446259ab269f14a030fe9@hisilicon.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 18 Nov 2020 00:29:07 +0800
+Message-ID: <CAMZfGtWNa=abZdN6HmWE1VBFHfGCbsW9D0zrN-F5zrhn6s=ErA@mail.gmail.com>
+Subject: Re: [External] RE: [PATCH v4 00/21] Free some vmemmap pages of
+ hugetlb page
+To:     "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
+        "pawan.kumar.gupta@linux.intel.com" 
+        <pawan.kumar.gupta@linux.intel.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "almasrymina@google.com" <almasrymina@google.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "duanxiongchun@bytedance.com" <duanxiongchun@bytedance.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 17 Nov 2020, Matthew Wilcox wrote:
-> On Mon, Nov 16, 2020 at 02:34:34AM -0800, Hugh Dickins wrote:
-> > Fix to [PATCH v4 15/16] mm/truncate,shmem: Handle truncates that split THPs.
-> > One machine ran fine, swapping and building in ext4 on loop0 on huge tmpfs;
-> > one machine got occasional pages of zeros in its .os; one machine couldn't
-> > get started because of ext4_find_dest_de errors on the newly mkfs'ed fs.
-> > The partial_end case was decided by PAGE_SIZE, when there might be a THP
-> > there.  The below patch has run well (for not very long), but I could
-> > easily have got it slightly wrong, off-by-one or whatever; and I have
-> > not looked into the similar code in mm/truncate.c, maybe that will need
-> > a similar fix or maybe not.
-> 
-> Thank you for the explanation in your later email!  There is indeed an
-> off-by-one, although in the safe direction.
-> 
-> > --- 5103w/mm/shmem.c	2020-11-12 15:46:21.075254036 -0800
-> > +++ 5103wh/mm/shmem.c	2020-11-16 01:09:35.431677308 -0800
-> > @@ -874,7 +874,7 @@ static void shmem_undo_range(struct inod
-> >  	long nr_swaps_freed = 0;
-> >  	pgoff_t index;
-> >  	int i;
-> > -	bool partial_end;
-> > +	bool same_page;
-> >  
-> >  	if (lend == -1)
-> >  		end = -1;	/* unsigned, so actually very big */
-> > @@ -907,16 +907,12 @@ static void shmem_undo_range(struct inod
-> >  		index++;
-> >  	}
-> >  
-> > -	partial_end = ((lend + 1) % PAGE_SIZE) > 0;
-> > +	same_page = (lstart >> PAGE_SHIFT) == end;
-> 
-> 'end' is exclusive, so this is always false.  Maybe something "obvious":
-> 
-> 	same_page = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
-> 
-> (lend is inclusive, so lend in 0-4095 are all on the same page)
+On Tue, Nov 17, 2020 at 7:08 PM Song Bao Hua (Barry Song)
+<song.bao.hua@hisilicon.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Muchun Song [mailto:songmuchun@bytedance.com]
+> > Sent: Tuesday, November 17, 2020 11:50 PM
+> > To: Song Bao Hua (Barry Song) <song.bao.hua@hisilicon.com>
+> > Cc: corbet@lwn.net; mike.kravetz@oracle.com; tglx@linutronix.de;
+> > mingo@redhat.com; bp@alien8.de; x86@kernel.org; hpa@zytor.com;
+> > dave.hansen@linux.intel.com; luto@kernel.org; peterz@infradead.org;
+> > viro@zeniv.linux.org.uk; akpm@linux-foundation.org; paulmck@kernel.org;
+> > mchehab+huawei@kernel.org; pawan.kumar.gupta@linux.intel.com;
+> > rdunlap@infradead.org; oneukum@suse.com; anshuman.khandual@arm.com;
+> > jroedel@suse.de; almasrymina@google.com; rientjes@google.com;
+> > willy@infradead.org; osalvador@suse.de; mhocko@suse.com;
+> > duanxiongchun@bytedance.com; linux-doc@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > linux-fsdevel@vger.kernel.org
+> > Subject: Re: [External] RE: [PATCH v4 00/21] Free some vmemmap pages of
+> > hugetlb page
+> >
+> > On Tue, Nov 17, 2020 at 6:16 PM Song Bao Hua (Barry Song)
+> > <song.bao.hua@hisilicon.com> wrote:
+> > >
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: owner-linux-mm@kvack.org [mailto:owner-linux-mm@kvack.org] On
+> > > > Behalf Of Muchun Song
+> > > > Sent: Saturday, November 14, 2020 12:00 AM
+> > > > To: corbet@lwn.net; mike.kravetz@oracle.com; tglx@linutronix.de;
+> > > > mingo@redhat.com; bp@alien8.de; x86@kernel.org; hpa@zytor.com;
+> > > > dave.hansen@linux.intel.com; luto@kernel.org; peterz@infradead.org;
+> > > > viro@zeniv.linux.org.uk; akpm@linux-foundation.org; paulmck@kernel.org;
+> > > > mchehab+huawei@kernel.org; pawan.kumar.gupta@linux.intel.com;
+> > > > rdunlap@infradead.org; oneukum@suse.com;
+> > anshuman.khandual@arm.com;
+> > > > jroedel@suse.de; almasrymina@google.com; rientjes@google.com;
+> > > > willy@infradead.org; osalvador@suse.de; mhocko@suse.com
+> > > > Cc: duanxiongchun@bytedance.com; linux-doc@vger.kernel.org;
+> > > > linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > > > linux-fsdevel@vger.kernel.org; Muchun Song
+> > <songmuchun@bytedance.com>
+> > > > Subject: [PATCH v4 00/21] Free some vmemmap pages of hugetlb page
+> > > >
+> > > > Hi all,
+> > > >
+> > > > This patch series will free some vmemmap pages(struct page structures)
+> > > > associated with each hugetlbpage when preallocated to save memory.
+> > > >
+> > > > Nowadays we track the status of physical page frames using struct page
+> > > > structures arranged in one or more arrays. And here exists one-to-one
+> > > > mapping between the physical page frame and the corresponding struct
+> > page
+> > > > structure.
+> > > >
+> > > > The HugeTLB support is built on top of multiple page size support that
+> > > > is provided by most modern architectures. For example, x86 CPUs normally
+> > > > support 4K and 2M (1G if architecturally supported) page sizes. Every
+> > > > HugeTLB has more than one struct page structure. The 2M HugeTLB has
+> > 512
+> > > > struct page structure and 1G HugeTLB has 4096 struct page structures. But
+> > > > in the core of HugeTLB only uses the first 4 (Use of first 4 struct page
+> > > > structures comes from HUGETLB_CGROUP_MIN_ORDER.) struct page
+> > > > structures to
+> > > > store metadata associated with each HugeTLB. The rest of the struct page
+> > > > structures are usually read the compound_head field which are all the same
+> > > > value. If we can free some struct page memory to buddy system so that we
+> > > > can save a lot of memory.
+> > > >
+> > > > When the system boot up, every 2M HugeTLB has 512 struct page
+> > structures
+> > > > which size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
+> > > >
+> > > >    hugetlbpage                  struct pages(8 pages)          page
+> > > > frame(8 pages)
+> > > >   +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+> > > >   |           |                     |     0     | -------------> |
+> > 0
+> > > > |
+> > > >   |           |                     |     1     | -------------> |
+> > 1
+> > > > |
+> > > >   |           |                     |     2     | -------------> |
+> > 2
+> > > > |
+> > > >   |           |                     |     3     | -------------> |
+> > 3
+> > > > |
+> > > >   |           |                     |     4     | -------------> |
+> > 4
+> > > > |
+> > > >   |     2M    |                     |     5     | -------------> |
+> > > > 5     |
+> > > >   |           |                     |     6     | -------------> |
+> > 6
+> > > > |
+> > > >   |           |                     |     7     | -------------> |
+> > 7
+> > > > |
+> > > >   |           |                     +-----------+
+> > > > +-----------+
+> > > >   |           |
+> > > >   |           |
+> > > >   +-----------+
+> > > >
+> > > >
+> > > > When a hugetlbpage is preallocated, we can change the mapping from
+> > above
+> > > > to
+> > > > bellow.
+> > > >
+> > > >    hugetlbpage                  struct pages(8 pages)          page
+> > > > frame(8 pages)
+> > > >   +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+> > > >   |           |                     |     0     | -------------> |
+> > 0
+> > > > |
+> > > >   |           |                     |     1     | -------------> |
+> > 1
+> > > > |
+> > > >   |           |                     |     2     | ------------->
+> > > > +-----------+
+> > > >   |           |                     |     3     | -----------------^ ^
+> > ^ ^
+> > > > ^
+> > > >   |           |                     |     4     | -------------------+
+> > | |
+> > > > |
+> > > >   |     2M    |                     |     5     |
+> > ---------------------+ |
+> > > > |
+> > > >   |           |                     |     6     |
+> > -----------------------+ |
+> > > >   |           |                     |     7     |
+> > -------------------------+
+> > > >   |           |                     +-----------+
+> > > >   |           |
+> > > >   |           |
+> > > >   +-----------+
+> > > >
+> > > > For tail pages, the value of compound_head is the same. So we can reuse
+> > > > first page of tail page structs. We map the virtual addresses of the
+> > > > remaining 6 pages of tail page structs to the first tail page struct,
+> > > > and then free these 6 pages. Therefore, we need to reserve at least 2
+> > > > pages as vmemmap areas.
+> > > >
+> > > > When a hugetlbpage is freed to the buddy system, we should allocate six
+> > > > pages for vmemmap pages and restore the previous mapping relationship.
+> > > >
+> > > > If we uses the 1G hugetlbpage, we can save 4088 pages(There are 4096
+> > pages
+> > > > for
+> > > > struct page structures, we reserve 2 pages for vmemmap and 8 pages for
+> > page
+> > > > tables. So we can save 4088 pages). This is a very substantial gain. On our
+> > > > server, run some SPDK/QEMU applications which will use 1024GB
+> > hugetlbpage.
+> > > > With this feature enabled, we can save ~16GB(1G hugepage)/~11GB(2MB
+> > > > hugepage)
+> > >
+> > > Hi Muchun,
+> > >
+> > > Do we really save 11GB for 2MB hugepage?
+> > > How much do we save if we only get one 2MB hugetlb from one 128MB
+> > mem_section?
+> > > It seems we need to get at least one page for the PTEs since we are splitting
+> > PMD of
+> > > vmemmap into PTE?
+> >
+> > There are 524288(1024GB/2MB) 2MB HugeTLB pages. We can save 6 pages for
+> > each
+> > 2MB HugeTLB page. So we can save 3145728 pages. But we need to split PMD
+> > page
+> > table for every one 128MB mem_section and every section need one page
+> > as PTE page
+> > table. So we need 8192(1024GB/128MB) pages as PTE page tables.
+> > Finally, we can save
+> > 3137536(3145728-8192) pages which is 11.97GB.
+>
+> The worst case I can see is that:
+> if we get 100 hugetlb with 2MB size, but the 100 hugetlb comes from different
+> mem_section, we won't save 11.97GB. we only save 5/8 * 16GB=10GB.
+>
+> Anyway, it seems 11GB is in the middle of 10GB and 11.97GB,
+> so sounds sensible :-)
+>
+> ideally, we should be able to free PageTail if we change struct page in some way.
+> Then we will save much more for 2MB hugetlb. but it seems it is not easy.
 
-My brain is not yet in gear this morning, so I haven't given this the
-necessary thought: but I do have to question what you say there, and
-throw it back to you for the further thought -
+Now for the 2MB HugrTLB page, we only free 6 vmemmap pages.
+But your words woke me up. Maybe we really can free 7 vmemmap
+pages. In this case, we can see 8 of the 512 struct page structures
+has beed set PG_head flag. If we can adjust compound_head()
+slightly and make compound_head() return the real head struct
+page when the parameter is the tail struct page but with PG_head
+flag set. I will start an investigation and a test.
 
-the first shmem_getpage(inode, lstart >> PAGE_SHIFT, &page, SGP_READ);
-the second shmem_getpage(inode, end, &page, SGP_READ).
-So same_page = (lstart >> PAGE_SHIFT) == end
-had seemed right to me.
+Thanks.
 
-> 
-> >  	page = NULL;
-> >  	shmem_getpage(inode, lstart >> PAGE_SHIFT, &page, SGP_READ);
-> >  	if (page) {
-> > -		bool same_page;
-> > -
-> >  		page = thp_head(page);
-> >  		same_page = lend < page_offset(page) + thp_size(page);
-> > -		if (same_page)
-> > -			partial_end = false;
-> >  		set_page_dirty(page);
-> >  		if (!truncate_inode_partial_page(page, lstart, lend)) {
-> >  			start = page->index + thp_nr_pages(page);
-> > @@ -928,7 +924,7 @@ static void shmem_undo_range(struct inod
-> >  		page = NULL;
-> >  	}
-> >  
-> > -	if (partial_end)
-> > +	if (!same_page)
-> >  		shmem_getpage(inode, end, &page, SGP_READ);
-> >  	if (page) {
-> >  		page = thp_head(page);
-> 
+>
+> Thanks
+> Barry
+
+
+
+-- 
+Yours,
+Muchun
