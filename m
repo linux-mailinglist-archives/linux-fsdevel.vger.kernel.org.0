@@ -2,91 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA342B716A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Nov 2020 23:19:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6451C2B7215
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 00:19:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbgKQWTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 17:19:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbgKQWTT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 17:19:19 -0500
-Received: from kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net (c-67-180-217-166.hsd1.ca.comcast.net [67.180.217.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17315206B6;
-        Tue, 17 Nov 2020 22:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605651557;
-        bh=GHrSTxL7y3OT9VIhqMi4Mq1l4vD6ZvPCLHA7AVK0P+Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0gbGqcecJOh+OuHZeLlQZ3w2i+xeQKPcOORZrxJCrb/uEJlakRM+cizA6CGkYf6Hr
-         Wji5N+xTP+/p8dUX/3ehUQtUgvOr/0NqFj7YTAjLIkQTaOuH6fljIuYUVsj29DdmRw
-         +Vwr/jq1XwjWyrM1HI/eEAvNkAFeEKOXVLBBoVJM=
-Date:   Tue, 17 Nov 2020 14:19:14 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Ben Segall <bsegall@google.com>,
-        Colin Cross <ccross@android.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Jan Kara <jack@suse.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Matt Porter <mporter@kernel.crashing.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Mel Gorman <mgorman@suse.de>, Mike Rapoport <rppt@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Gong <richard.gong@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Will Drewry <wad@chromium.org>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        linux-ext4@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, target-devel@vger.kernel.org
-Subject: Re: [PATCH v4 00/27]Fix several bad kernel-doc markups
-Message-ID: <20201117141914.73056d1f@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
-In-Reply-To: <cover.1605521731.git.mchehab+huawei@kernel.org>
-References: <cover.1605521731.git.mchehab+huawei@kernel.org>
+        id S1727234AbgKQXTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 18:19:11 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:53142 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbgKQXTL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Nov 2020 18:19:11 -0500
+Received: by mail-il1-f198.google.com with SMTP id o18so133802ilg.19
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 15:19:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=sCJOc52f+ykN2k2Nsk4q5GEkZUdIbCHBG3TzWEYybVs=;
+        b=ix4Nop9vBBIO97zOBZIRCJxMr9MjT1bt1KzX+7689Vcn3vfSYv1sCu1VADSSJlTSEP
+         is3vG/eJpX4Pe4KiL1bxlO30d3uh1aASZDVBmkRWEn2FyCQWmWHFaiQBkAFn571a3xHv
+         ccsMorjzYg+jFPRsze/rzm60UzbtmMPnZHTchgvmSGN0bqk4DDH/h7sylartfUDeAMhw
+         LXO2Qb6nMcvgEzEImSStMhG4GvAG96GtG0Uin3Q4TK2jbXKLUMjb2Y2NY8ZXpFfISGu8
+         kUY4yUjBI7tXeBmKXe8e9RBFaEf05VT0RFMgqV9bF3CFgxRzmyXe8LRf7rtKjOSVaEMr
+         cwPQ==
+X-Gm-Message-State: AOAM530EW/l2WRjI+uhRuL3MH2RcXmO7WWCc6QEG1mPe5BPz1yAkfPJS
+        /n8w0gNOjpt7Ul1DDngMarLhRoHsc9ukMNgfQuy9JV8rzd7s
+X-Google-Smtp-Source: ABdhPJxChT34/B8KR5M9iyDfeWrPy5FLGPrzPfIfrP0j6CGCmLNUnK5X6P3va84cfBm0fFQ6ORDCOH2TTHVDnJZpXsuI7FTYs+Ub
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c70b:: with SMTP id a11mr5696524ilp.151.1605655150607;
+ Tue, 17 Nov 2020 15:19:10 -0800 (PST)
+Date:   Tue, 17 Nov 2020 15:19:10 -0800
+In-Reply-To: <0000000000009c775805b0c1b811@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e2437705b455b8bb@google.com>
+Subject: Re: possible deadlock in kill_fasync
+From:   syzbot <syzbot+3e12e14ee01b675e1af2@syzkaller.appspotmail.com>
+To:     bfields@fieldses.org, boqun.feng@gmail.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 16 Nov 2020 11:17:56 +0100 Mauro Carvalho Chehab wrote:
-> Kernel-doc has always be limited to a probably bad documented
-> rule:
-> 
-> The kernel-doc markups should appear *imediatelly before* the
-> function or data structure that it documents.
+syzbot has bisected this issue to:
 
-Applied 1-3 to net-next, thanks!
+commit e918188611f073063415f40fae568fa4d86d9044
+Author: Boqun Feng <boqun.feng@gmail.com>
+Date:   Fri Aug 7 07:42:20 2020 +0000
+
+    locking: More accurate annotations for read_lock()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b46429500000
+start commit:   7c8ca812 Add linux-next specific files for 20201117
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12b46429500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b46429500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ff4bc71371dc5b13
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e12e14ee01b675e1af2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b1dba6500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12de8636500000
+
+Reported-by: syzbot+3e12e14ee01b675e1af2@syzkaller.appspotmail.com
+Fixes: e918188611f0 ("locking: More accurate annotations for read_lock()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
