@@ -2,175 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CDD92B7FB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 15:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDBCD2B7FDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 15:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbgKROqb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 09:46:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41562 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgKROq0 (ORCPT
+        id S1726519AbgKROzc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 09:55:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56282 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725446AbgKROzb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 09:46:26 -0500
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37654C0613D4;
-        Wed, 18 Nov 2020 06:46:26 -0800 (PST)
-Received: by mail-qt1-x844.google.com with SMTP id p12so1742665qtp.7;
-        Wed, 18 Nov 2020 06:46:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bpJw+6GQDkHrI+U7oYKu3KUyHi+2aDVppoVqit5UpRE=;
-        b=CbTSGd8Fc28xIGZDo2GxItE8kcIhTi6mo253AyBAM094s2tNuh1F686SiwMLyXzDyI
-         1dAKY9kHtX4rXFt8lhxibN9n1Qed5hFw6LrvWnfTkUj5ZS/lNgRf3/r8KUcg8VjuUFCt
-         atYFtVTVRFiNPcuZWFDSh6K2oweaIj3K30IPQPH1Qqwr0FPm/p4adZwdd2zrRE5jZ14G
-         Ei6veZ77ySi1vEsn2WBhUm3afHIIU3NCkAWnj6d4Ab/ZJ9Xi9W3JgsRyOIp72dNt7NqC
-         jMtPywkLxQwBRt2/6wZXHKKQL0A7bHolT/dZFDWYvRj+BA0NVtRPwcanOntbCdk3frqe
-         eqQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bpJw+6GQDkHrI+U7oYKu3KUyHi+2aDVppoVqit5UpRE=;
-        b=jL8/iThyLCj6VGz5HwGDJEQPgsA3NiZUGAzqvIrmeGVXccB+ttbOWThc444LszLuUr
-         T08Ab4FLy6x9lTvw6A/S0zg9bkcGQjzGJNFh2fEr5EvNzT6AQ4Z0PBCKop1UNX/ZjxD8
-         0ZeXhQzEiFOgzVQDDCVMIuqBU1GK6bh0S/MBDXnwygjOeF93VBpjrG1efX2lkDp0gH/x
-         pV/PqRmtgd/AsHL0hKYZWHiEK7Uutt/366Unv+P8ujXRp6XLH7qxXgYfUHka1SBQSny4
-         HgEvtOng9wMjzapV1gIoVV+D2S0q58OFfFSKd4cKT8eOr40zY48RxmguBA3QFLsUQGFG
-         6xuw==
-X-Gm-Message-State: AOAM531eYmjZe+oJM8f4Te/FuKWrhjJ5ILRqob5QN30opE5YOASt7eXm
-        //ftnk1wJjKryqqsvh75sn1sH1ITI0c=
-X-Google-Smtp-Source: ABdhPJzaRKlLVWmU7nYmuhhnkbEeGnVEa8Xy5qPoVhS5k1IEm7WKFpZN614rM9JJjd4LuvrDqmlQMQ==
-X-Received: by 2002:ac8:6c28:: with SMTP id k8mr4266052qtu.316.1605710784994;
-        Wed, 18 Nov 2020 06:46:24 -0800 (PST)
-Received: from willemb.nyc.corp.google.com ([2620:0:1003:312:f693:9fff:fef4:3e8a])
-        by smtp.gmail.com with ESMTPSA id k188sm4910810qkd.98.2020.11.18.06.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 06:46:24 -0800 (PST)
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, soheil.kdev@gmail.com, arnd@arndb.de,
-        shuochen@google.com, linux-man@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>
-Subject: [PATCH v3 2/2] selftests/filesystems: expand epoll with epoll_pwait2
-Date:   Wed, 18 Nov 2020 09:46:17 -0500
-Message-Id: <20201118144617.986860-4-willemdebruijn.kernel@gmail.com>
-X-Mailer: git-send-email 2.29.2.454.gaff20da3a2-goog
-In-Reply-To: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com>
-References: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com>
+        Wed, 18 Nov 2020 09:55:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605711330;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EOTnAlTVJB8vZQ2NNRax/Wvq87dM7jDFni19traWN1Y=;
+        b=Rzkmf859NLcpqSwyVDgUvo0N9CKt1u9Ele0etgi/Z823kus1n3ygL9wTmZ9TLb7FqCTk3v
+        /vc5DaMWJtR2MjioDqMOPxf7zIEZtSIiRBb+xAoCmccW7dSZrlIWo2XzJE4w+v27D4ihLN
+        ZxuRb+rXxGOhhZE9uq5GNDvPwRlStOo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-416-9nGUG89mP7uX4JpsSOlABg-1; Wed, 18 Nov 2020 09:55:26 -0500
+X-MC-Unique: 9nGUG89mP7uX4JpsSOlABg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 32DD41084C92;
+        Wed, 18 Nov 2020 14:55:25 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-117-157.rdu2.redhat.com [10.10.117.157])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BC37A5D9CA;
+        Wed, 18 Nov 2020 14:55:23 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 35C28220203; Wed, 18 Nov 2020 09:55:23 -0500 (EST)
+Date:   Wed, 18 Nov 2020 09:55:23 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Chengguang Xu <cgxu519@mykernel.net>
+Subject: Re: [RFC PATCH 3/3] overlay: Add the ability to remount volatile
+ directories when safe
+Message-ID: <20201118145523.GA111728@redhat.com>
+References: <20201116163615.GA17680@redhat.com>
+ <CAOQ4uxgTXHR3J6HueS_TO5La890bCfsWUeMXKgGnvUth26h29Q@mail.gmail.com>
+ <20201116210950.GD9190@redhat.com>
+ <CAOQ4uxhkRauEM46nbhZuGdJmP8UGQpe+fw_FtXy+S4eaR4uxTA@mail.gmail.com>
+ <20201117144857.GA78221@redhat.com>
+ <CAOQ4uxg1ZNSid58LLsGC2tJLk_fpJfu13oOzCz5ScEi6y_4Nnw@mail.gmail.com>
+ <20201117164600.GC78221@redhat.com>
+ <CAOQ4uxgi-8sn4S3pRr0NQC5sjp9fLmVsfno1nSa2ugfM2KQLLQ@mail.gmail.com>
+ <20201117182940.GA91497@redhat.com>
+ <CAOQ4uxjkmooYY-NAVrSZOU9BDP0azmbrrmkKNKgyQOURR6eqEg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjkmooYY-NAVrSZOU9BDP0azmbrrmkKNKgyQOURR6eqEg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+On Wed, Nov 18, 2020 at 09:24:04AM +0200, Amir Goldstein wrote:
+> On Tue, Nov 17, 2020 at 8:29 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Tue, Nov 17, 2020 at 08:03:16PM +0200, Amir Goldstein wrote:
+> > > > > C. "shutdown" the filesystem if writeback errors happened and return
+> > > > >      EIO from any read, like some blockdev filesystems will do in face
+> > > > >      of metadata write errors
+> > > > >
+> > > > > I happen to have a branch ready for that ;-)
+> > > > > https://github.com/amir73il/linux/commits/ovl-shutdown
+> > > >
+> > > >
+> > > > This branch seems to implement shutdown ioctl. So it will still need
+> > > > glue code to detect writeback failure in upper/ and trigger shutdown
+> > > > internally?
+> > > >
+> > >
+> > > Yes.
+> > > ovl_get_acess() can check both the administrative ofs->goingdown
+> > > command and the upper writeback error condition for volatile ovl
+> > > or something like that.
+> >
+> > This approach will not help mmaped() pages though, if I do.
+> >
+> > - Store to addr
+> > - msync
+> > - Load from addr
+> >
+> > There is a chance that I can still read back old data.
+> >
+> 
+> msync does not go through overlay. It goes directly to upper fs,
+> so it will sync pages and return error on volatile overlay as well.
 
-Code coverage for the epoll_pwait2 syscall.
+Ok. Its because vma->vm_file points to realfile.
 
-epoll62: Repeat basic test epoll1, but exercising the new syscall.
-epoll63: Pass a timespec and exercise the timeout wakeup path.
+So even for volatile containers we only avoid fsync/syncfs and not msync.
+msync will directly call into upper/. 
 
-Signed-off-by: Willem de Bruijn <willemb@google.com>
----
- .../filesystems/epoll/epoll_wakeup_test.c     | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
+> 
+> Maybe there will still be weird corner cases, but the shutdown approach
+> should cover most or all of the interesting cases.
 
-diff --git a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-index 8f82f99f7748..4d5656978746 100644
---- a/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-+++ b/tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
- #define _GNU_SOURCE
-+#include <asm/unistd.h>
- #include <poll.h>
- #include <unistd.h>
- #include <assert.h>
-@@ -21,6 +22,18 @@ struct epoll_mtcontext
- 	pthread_t waiter;
- };
- 
-+#ifndef __NR_epoll_pwait2
-+#define __NR_epoll_pwait2 -1
-+#endif
-+
-+static inline int sys_epoll_pwait2(int fd, struct epoll_event *events,
-+				   int maxevents,
-+				   const struct timespec *timeout,
-+				   const sigset_t *sigset)
-+{
-+	return syscall(__NR_epoll_pwait2, fd, events, maxevents, timeout, sigset);
-+}
-+
- static void signal_handler(int signum)
- {
- }
-@@ -3377,4 +3390,61 @@ TEST(epoll61)
- 	close(ctx.evfd);
- }
- 
-+/* Equivalent to basic test epoll1, but exercising epoll_pwait2. */
-+TEST(epoll62)
-+{
-+	int efd;
-+	int sfd[2];
-+	struct epoll_event e;
-+
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sfd), 0);
-+
-+	efd = epoll_create(1);
-+	ASSERT_GE(efd, 0);
-+
-+	e.events = EPOLLIN;
-+	ASSERT_EQ(epoll_ctl(efd, EPOLL_CTL_ADD, sfd[0], &e), 0);
-+
-+	ASSERT_EQ(write(sfd[1], "w", 1), 1);
-+
-+	EXPECT_EQ(sys_epoll_pwait2(efd, &e, 1, NULL, NULL), 1);
-+	EXPECT_EQ(sys_epoll_pwait2(efd, &e, 1, NULL, NULL), 1);
-+
-+	close(efd);
-+	close(sfd[0]);
-+	close(sfd[1]);
-+}
-+
-+/* Epoll_pwait2 basic timeout test. */
-+TEST(epoll63)
-+{
-+	const int cfg_delay_ms = 10;
-+	unsigned long long tdiff;
-+	struct timespec ts;
-+	int efd;
-+	int sfd[2];
-+	struct epoll_event e;
-+
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sfd), 0);
-+
-+	efd = epoll_create(1);
-+	ASSERT_GE(efd, 0);
-+
-+	e.events = EPOLLIN;
-+	ASSERT_EQ(epoll_ctl(efd, EPOLL_CTL_ADD, sfd[0], &e), 0);
-+
-+	ts.tv_sec = 0;
-+	ts.tv_nsec = cfg_delay_ms * 1000 * 1000;
-+
-+	tdiff = msecs();
-+	EXPECT_EQ(sys_epoll_pwait2(efd, &e, 1, &ts, NULL), 0);
-+	tdiff = msecs() - tdiff;
-+
-+	EXPECT_GE(tdiff, cfg_delay_ms);
-+
-+	close(efd);
-+	close(sfd[0]);
-+	close(sfd[1]);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.29.2.454.gaff20da3a2-goog
+Agreed.
+
+Vivek
 
