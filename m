@@ -2,137 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0C72B8297
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 18:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4912A2B8339
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 18:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbgKRRDR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 12:03:17 -0500
-Received: from twin.jikos.cz ([91.219.245.39]:37771 "EHLO twin.jikos.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbgKRRDR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 12:03:17 -0500
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Nov 2020 12:03:14 EST
-Received: from twin.jikos.cz (dave@localhost [127.0.0.1])
-        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id 0AIGm1ih027570
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 18 Nov 2020 17:48:02 +0100
-Received: (from dave@localhost)
-        by twin.jikos.cz (8.13.6/8.13.6/Submit) id 0AIGm0pS027563;
-        Wed, 18 Nov 2020 17:48:00 +0100
-Date:   Wed, 18 Nov 2020 17:48:00 +0100
-From:   David Sterba <dave@jikos.cz>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>
-Subject: Re: [PATCH] vfs: fix fsconfig(2) LSM mount option handling for btrfs
-Message-ID: <20201118164800.GD17322@twin.jikos.cz>
-Reply-To: dave@jikos.cz
-Mail-Followup-To: Casey Schaufler <casey@schaufler-ca.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>
-References: <20201118102342.154277-1-omosnace@redhat.com>
- <a2454627-88ec-9e36-445c-baef82568aaa@schaufler-ca.com>
+        id S1727852AbgKRRjv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 12:39:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbgKRRjv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 12:39:51 -0500
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB16DC0613D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 09:39:50 -0800 (PST)
+Received: by mail-vk1-xa35.google.com with SMTP id o73so668017vka.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 09:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=/yv51F3vwzB9OEqoFeaGWnr5PcKyz2F1XhnDGz2Gpz4=;
+        b=U67mVy7LQo3jpNFhzI4kpgCVDixcbcNublS58u8LQDA4ae3z6TXBBQ/aIL3FIJd1lu
+         mafPuDJUo5urGi2Pl3cx5AdwEIQy81OSbOveJklogBplhb+vaXQ5rTe/qHA1IAFiEgti
+         ngdkNPe/l7WTeYH1avZ0pwNJjdTRM7OIU295xfWszMbl/Brlo5lY4SI6wowKUledvj/b
+         8giBEqxQ/Tn8/Hd1J6klKUyhxADaMIuJzMVUH3qIkHknRcelBt+TDEh8q2HBWlWGQdci
+         gPPIsim83kJsY1qu1hMZvMrwU11Jp2+okKMvqBUnhPBOd+/3EU+6/c9EBKqiFCI83Hpk
+         MJlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:content-transfer-encoding;
+        bh=/yv51F3vwzB9OEqoFeaGWnr5PcKyz2F1XhnDGz2Gpz4=;
+        b=YUhd2u7LFAXBgffKr98HCGfA6ebkQ3TiKKovqpCaM3sxuzYScMQY4Y5pGOGakYUm19
+         U4+92kjemU4FX6UPQdpX53MweXUmvVNG68W2OL2OpDEyJCvOQY7JiudYcwjq3A/kIVQQ
+         f8agUHG42QFTGHdQ4GatXhyzzc/ezQQO5y6iUTvYQeGWdiHINSSXybQaLJhRLfC/TcmD
+         8ojpejZr8mJ/slcU+UgZ+0nxGtGeQLoitCpxSYUJaR/kp3HuFZMmgWTHuzRt2DF1YvnW
+         /d2z/Zh+so15Y83eB3SyxsFQ5q6wLT0JcAEyvW0GivUvP+AvQlyvBYdQCRI+L+knh6uA
+         MJNw==
+X-Gm-Message-State: AOAM532CBPsoWbZ2AoF2LnLZKmJirABgQogC4VJmDAoJMaDOZJgaGV5e
+        rTLh+lbNUvIsuC7No9cLbtJtQK30eWGs1qX0p1A=
+X-Google-Smtp-Source: ABdhPJwWBR1hhpsQ8u29kRb67d8QNUJ4N6ICYJ7iY+DpPY3DSfn7+5eeLE6A82FO5gklVXLKGWs4gqIYMSq73jpimvQ=
+X-Received: by 2002:a1f:2f48:: with SMTP id v69mr4233466vkv.23.1605721190044;
+ Wed, 18 Nov 2020 09:39:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2454627-88ec-9e36-445c-baef82568aaa@schaufler-ca.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Sender: estelleherve03@gmail.com
+Received: by 2002:a67:2045:0:0:0:0:0 with HTTP; Wed, 18 Nov 2020 09:39:49
+ -0800 (PST)
+From:   Adams Elena <elenaadams577@gmail.com>
+Date:   Wed, 18 Nov 2020 11:39:49 -0600
+X-Google-Sender-Auth: EHm69PyEC1e37kEck1eowG7EOmk
+Message-ID: <CAHKQgstw2vaLPsUE4DbbCQFEAi0sYvVi6B0gHHEHhdKHNtmz-g@mail.gmail.com>
+Subject: Urgent Attention Needed....
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 08:39:14AM -0800, Casey Schaufler wrote:
-> On 11/18/2020 2:23 AM, Ondrej Mosnacek wrote:
-> > When SELinux security options are passed to btrfs via fsconfig(2) rather
-> > than via mount(2), the operation aborts with an error. What happens is
-> > roughly this sequence:
-> >
-> > 1. vfs_parse_fs_param() eats away the LSM options and parses them into
-> >    fc->security.
-> > 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
-> >    nothing to btrfs.
-> > [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
-> >  that for simplicity]
-> > 3. btrfs calls security_sb_set_mnt_opts() with empty options.
-> > 4. vfs_get_tree() then calls its own security_sb_set_mnt_opts() with the
-> >    options stashed in fc->security.
-> > 5. SELinux doesn't like that different options were used for the same
-> >    superblock and returns -EINVAL.
-> >
-> > In the case of mount(2), the options are parsed by
-> > legacy_parse_monolithic(), which skips the eating away of security
-> > opts because of the FS_BINARY_MOUNTDATA flag, so they are passed to the
-> > FS via ctx->legacy_data. The second call to security_sb_set_mnt_opts()
-> > (from vfs_get_tree()) now passes empty opts, but the non-empty -> empty
-> > sequence is allowed by SELinux for the FS_BINARY_MOUNTDATA case.
-> >
-> > It is a total mess, but the only sane fix for now seems to be to skip
-> > processing the security opts in vfs_parse_fs_param() if the fc has
-> > legacy opts set AND the fs specfies the FS_BINARY_MOUNTDATA flag. This
-> > combination currently matches only btrfs and coda. For btrfs this fixes
-> > the fsconfig(2) behavior, and for coda it makes setting security opts
-> > via fsconfig(2) fail the same way as it would with mount(2) (because
-> > FS_BINARY_MOUNTDATA filesystems are expected to call the mount opts LSM
-> > hooks themselves, but coda never cared enough to do that). I believe
-> > that is an acceptable state until both filesystems (or at least btrfs)
-> > are converted to the new mount API (at which point btrfs won't need to
-> > pretend it takes binary mount data any more and also won't need to call
-> > the LSM hooks itself, assuming it will pass the fc->security information
-> > properly).
-> >
-> > Note that we can't skip LSM opts handling in vfs_parse_fs_param() solely
-> > based on FS_BINARY_MOUNTDATA because that would break NFS.
-> >
-> > See here for the original report and reproducer:
-> > https://lore.kernel.org/selinux/c02674c970fa292610402aa866c4068772d9ad4e.camel@btinternet.com/
-> >
-> > Reported-by: Richard Haines <richard_c_haines@btinternet.com>
-> > Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >  fs/fs_context.c | 28 ++++++++++++++++++++++------
-> >  1 file changed, 22 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/fs_context.c b/fs/fs_context.c
-> > index 2834d1afa6e80..cfc5ee2e381ef 100644
-> > --- a/fs/fs_context.c
-> > +++ b/fs/fs_context.c
-> > @@ -106,12 +106,28 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
-> >  	if (ret != -ENOPARAM)
-> >  		return ret;
-> >  
-> > -	ret = security_fs_context_parse_param(fc, param);
-> > -	if (ret != -ENOPARAM)
-> > -		/* Param belongs to the LSM or is disallowed by the LSM; so
-> > -		 * don't pass to the FS.
-> > -		 */
-> > -		return ret;
-> > +	/*
-> > +	 * In the legacy+binary mode, skip the security_fs_context_parse_param()
-> > +	 * call and let the legacy handler process also the security options.
-> > +	 * It will format them into the monolithic string, where the FS can
-> > +	 * process them (with FS_BINARY_MOUNTDATA it is expected to do it).
-> > +	 *
-> > +	 * Currently, this matches only btrfs and coda. Coda is broken with
-> > +	 * fsconfig(2) anyway, because it does actually take binary data. Btrfs
-> > +	 * only *pretends* to take binary data to work around the SELinux's
-> > +	 * no-remount-with-different-options check, so this allows it to work
-> > +	 * with fsconfig(2) properly.
-> > +	 *
-> > +	 * Once btrfs is ported to the new mount API, this hack can be reverted.
-> 
-> If the real fix is to port btrfs to the new mount API why not do that instead?
+My Donation To You in good faith.
 
-Porting to the new API is much more work compared to this fix, which can
-be also backported to older stable trees if needed. The port will
-happen eventually but nobody is working on it right now.
+May the peace of the Almighty God be with you and your Family,
+
+With Due Respect and Humility, I was compelled to write you under
+humanitarian ground. My name is Mrs Elena Adams, the Wife of Engineer
+Ralph Alphonso Adams from United State Of America. I have took a
+personal decision to donate what I inherited from my late husband to
+the Charity, less privilege, I am 68 years old and I was diagnosed for
+Lung and bronchial cancer since the past 4 years, immediately after
+the death of my husband. We were both married for many years without a
+child, I took this decision because I don't have any child that will
+inherit this money  and rather to allow my husband relatives use my
+husband hard-earned funds  in ungodly ways  I have decided  to donate
+all I inherited from my late husband to you for good work of God.
+
+I and My late husband based here in Burkina Faso West Africa since
+eighteen years ago dealing with gold exportation and Sales. I have
+decided to donate a fund through Credit Account =E2=82=AC4.700.000.00 Four
+Million Seven Hundred Thousand Euros to you for this assignment,
+Charity, less privilege, building of schools, hospitals and also for
+the assistance of the poor widows, Motherless babies, Charity
+organization, CHRISTIAN OR MUSLIM, and orphans. I don't know you in
+person but God knows you, so contacting you for this assignment is a
+direction from the holy spirit of God to donate this fund outside this
+country through you as my late husband has already donated a lot in
+this country,
+
+so you have to make sure that you use this donation fund as I have
+directed so that the name of the Almighty God will be glorify forever.
+Your urgent response is required in this matter due to my present
+critical condition of my health, it was a Sister nurse working in this
+hospital that helped me to type this message, because I am loosing
+strength every minutes of the day. All I need from you is prayers that
+GOD will accept my soul in case I didn't survive this surgery. Also
+pray for the soul of my late Husband to rest in peace.
+
+Please always be prayerful all through your life, we are visitors on
+this earth and we must be very careful in whatever we do so that our
+soul will not be a waste. I wish you all the best and may God bless
+you abundantly.  I will give you more details about this orphanage
+home, as soon as i receive your reply in my private
+email(elenaadams577@gmail.com) to handle this project because I do not
+want to state all here until I see your reply, desire and commitment
+to handle this project. I AM WAITING FOR YOUR URGENT REPLY
+
+Remain blessed in God.
+
+Yours Sister.
+Mrs Elena Adams.
