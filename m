@@ -2,85 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D3212B7A95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 10:46:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B7F2B7ACB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 10:57:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbgKRJp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 04:45:29 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51609 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbgKRJp3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 04:45:29 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kfK1c-0001pZ-AY; Wed, 18 Nov 2020 09:45:17 +0000
-Date:   Wed, 18 Nov 2020 10:45:13 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-audit@redhat.com,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 00/39] fs: idmapped mounts
-Message-ID: <20201118094513.itchk5nx75er6wh6@wittgenstein>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201117165433.316f5625@lwn.net>
+        id S1727271AbgKRJzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 04:55:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52186 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbgKRJzr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 04:55:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8DCB7ABDE;
+        Wed, 18 Nov 2020 09:55:46 +0000 (UTC)
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Richard Weinberger <richard@nod.at>, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-bcache@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-20-hch@lst.de>
+ <e7f826fd-cb9c-b4ab-fae8-dad398c14eed@suse.de> <X7TlIzxJPfa2p+Da@kroah.com>
+From:   Coly Li <colyli@suse.de>
+Subject: Re: [PATCH 19/20] bcache: remove a superflous lookup_bdev all
+Message-ID: <24c818c2-6aba-098c-0c73-0a5081175c06@suse.de>
+Date:   Wed, 18 Nov 2020 17:55:38 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:78.0)
+ Gecko/20100101 Thunderbird/78.4.3
 MIME-Version: 1.0
+In-Reply-To: <X7TlIzxJPfa2p+Da@kroah.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201117165433.316f5625@lwn.net>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 04:54:33PM -0700, Jonathan Corbet wrote:
-> On Sun, 15 Nov 2020 11:36:39 +0100
-> Christian Brauner <christian.brauner@ubuntu.com> wrote:
+On 11/18/20 5:10 PM, Greg KH wrote:
+> On Wed, Nov 18, 2020 at 04:54:51PM +0800, Coly Li wrote:
+>> On 11/18/20 4:47 PM, Christoph Hellwig wrote:
+>>> Don't bother to call lookup_bdev for just a slightly different error
+>>> message without any functional change.
+>>>
+>>> Signed-off-by: Christoph Hellwig <hch@lst.de>ist
+>>
+>> Hi Christoph,
+>>
+>> NACK. This removing error message is frequently triggered and observed,
+>> and distinct a busy device and an already registered device is important
+>> (the first one is critical error and second one is not).
+>>
+>> Remove such error message will be a functional regression.
 > 
-> One quick question...
-> 
-> > I have written a simple tool available at
-> > https://github.com/brauner/mount-idmapped that allows to create idmapped
-> > mounts so people can play with this patch series.
-> 
-> I spent a while looking at that tool.  When actually setting the namespace
-> for the mapping, it uses MOUNT_ATTR_SHIFT rather than MOUNT_ATTR_IDMAP.
-> The value is the same, so I expect it works...:)  But did that perhaps not
-> get updated to reflect a name change?
+> What normal operation causes this error message to be emitted?  And what
+> can a user do with it?
 
-Yep, that was my mistake. I'll fix it up in the repo for that tool now
-and maybe improve it a little too! :)
+When there was bug and the caching or backing device was not
+unregistered successfully, people could see "device busy"; and if it was
+because the device registered again, it could be "already registered".
+Without the different message, people may think the device is always
+busy but indeed it isn't.
 
-Christian
+he motivation of the patch is OK to me, but we need to make the logical
+consistent, otherwise we will have similar bug report for bogus warning
+dmesg from bcache users in soon future.
+
+Coly Li
