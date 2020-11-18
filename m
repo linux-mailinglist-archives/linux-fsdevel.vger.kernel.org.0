@@ -2,134 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2B072B7A42
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 10:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A01672B7A4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 10:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgKRJTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 04:19:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52496 "EHLO mx2.suse.de"
+        id S1726343AbgKRJXx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 04:23:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57968 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbgKRJTT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 04:19:19 -0500
+        id S1725774AbgKRJXx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 04:23:53 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1605691432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mPuZTYIAwAqalq/3PBMt9FUGU5aCOv8nZscLB8ryTqE=;
+        b=i0CTyeL1nWw+YANGFV2rMzpIxuK6HpHkslVxAt1+sbizisxFXYmthJpOtqYWv5OEwI8nEF
+        5up2ifEYyQez4h2UgcHFo2aze20C95gWGI0urEOXhGszYfyJOCLUL6zcVAJa/mzXzhiIoD
+        LlL4BiGABS8D6M/Aksgo6qs6jBauHxs=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2E198ABDE;
-        Wed, 18 Nov 2020 09:19:18 +0000 (UTC)
-Received: by lion.mk-sys.cz (Postfix, from userid 1000)
-        id E59BD603F9; Wed, 18 Nov 2020 10:19:17 +0100 (CET)
-Message-Id: <8a4f07e6ec47b681a32c6df5d463857e67bfc965.1605690824.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH] eventfd: convert to ->write_iter()
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 18 Nov 2020 10:19:17 +0100 (CET)
+        by mx2.suse.de (Postfix) with ESMTP id 004B0ABDE;
+        Wed, 18 Nov 2020 09:23:51 +0000 (UTC)
+Subject: Re: merge struct block_device and struct hd_struct
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <22ca5396-0253-f286-9eab-d417b2e0b3ad@suse.com>
+ <20201118085804.GA20384@lst.de>
+ <1ded2079-f1be-6d5d-01df-65754447df78@suse.com> <X7Tky/6dDN8+DrU7@kroah.com>
+From:   Jan Beulich <jbeulich@suse.com>
+Message-ID: <61044f85-cd41-87b5-3f41-36e3dffb6f2a@suse.com>
+Date:   Wed, 18 Nov 2020 10:23:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.3
+MIME-Version: 1.0
+In-Reply-To: <X7Tky/6dDN8+DrU7@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While eventfd ->read() callback was replaced by ->read_iter() recently,
-it still provides ->write() for writes. Since commit 4d03e3cc5982 ("fs:
-don't allow kernel reads and writes without iter ops"), this prevents
-kernel_write() to be used for eventfd and with set_fs() removal,
-->write() cannot be easily called directly with a kernel buffer.
+On 18.11.2020 10:09, Greg KH wrote:
+> On Wed, Nov 18, 2020 at 10:04:04AM +0100, Jan Beulich wrote:
+>> On 18.11.2020 09:58, Christoph Hellwig wrote:
+>>> On Wed, Nov 18, 2020 at 09:56:11AM +0100, Jan Beulich wrote:
+>>>> since this isn't the first series from you recently spamming
+>>>> xen-devel, may I ask that you don't Cc entire series to lists
+>>>> which are involved with perhaps just one out of the many patches?
+>>>> IMO Cc lists should be compiled on a per-patch basis; the cover
+>>>> letter may of course be sent to the union of all of them.
+>>>
+>>> No way.  Individual CCs are completely broken as they don't provide
+>>> the reviewer a context.
+>>
+>> That's the view of some people, but not all. Context can be easily
+>> established by those who care going to one of the many archives on
+>> which the entire series lands. Getting spammed, however, can't be
+>> avoided by the dozens or hundreds of list subscribers.
+> 
+> kernel patches are never "spam", sorry, but for developers to try to
+> determine which lists/maintainers want to see the whole series and which
+> do not is impossible.
+> 
+> Patches in a series are easily deleted from sane mail clients with a
+> single click/keystroke all at once, they aren't a problem that needs to
+> be reduced in volume.
 
-According to eventfd(2), eventfd descriptors are supposed to be (also)
-used by kernel to notify userspace applications of events which now
-requires ->write_iter() op to be available (and ->write() not to be).
-Therefore convert eventfd_write() to ->write_iter() semantics. This
-patch also cleans up the code in a similar way as commit 12aceb89b0bc
-("eventfd: convert to f_op->read_iter()") did in read_iter().
+This doesn't scale, neither in the dimension of recipients nor in
+the dimension of possible sources of such series.
 
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- fs/eventfd.c | 43 +++++++++++++++++++++----------------------
- 1 file changed, 21 insertions(+), 22 deletions(-)
+While it may seem small, it's also a waste of resources to have mails
+sent to hundreds of even thousands of people. So while from a
+technical content perspective I surely agree with you saying 'kernel
+patches are never "spam"', they still are from the perspective of
+what "spam mail" originally means: Mail the recipients did not want
+to receive.
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index df466ef81ddd..35973d216847 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -261,35 +261,36 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
- 	return sizeof(ucnt);
- }
- 
--static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
--			     loff_t *ppos)
-+static ssize_t eventfd_write(struct kiocb *iocb, struct iov_iter *from)
- {
-+	struct file *file = iocb->ki_filp;
- 	struct eventfd_ctx *ctx = file->private_data;
--	ssize_t res;
- 	__u64 ucnt;
- 	DECLARE_WAITQUEUE(wait, current);
- 
--	if (count < sizeof(ucnt))
-+	if (iov_iter_count(from) < sizeof(ucnt))
- 		return -EINVAL;
--	if (copy_from_user(&ucnt, buf, sizeof(ucnt)))
-+	if (unlikely(!copy_from_iter_full(&ucnt, sizeof(ucnt), from)))
- 		return -EFAULT;
- 	if (ucnt == ULLONG_MAX)
- 		return -EINVAL;
- 	spin_lock_irq(&ctx->wqh.lock);
--	res = -EAGAIN;
--	if (ULLONG_MAX - ctx->count > ucnt)
--		res = sizeof(ucnt);
--	else if (!(file->f_flags & O_NONBLOCK)) {
-+	if (ULLONG_MAX - ctx->count <= ucnt) {
-+		if ((file->f_flags & O_NONBLOCK) ||
-+		    (iocb->ki_flags & IOCB_NOWAIT)) {
-+			spin_unlock_irq(&ctx->wqh.lock);
-+			return -EAGAIN;
-+		}
- 		__add_wait_queue(&ctx->wqh, &wait);
--		for (res = 0;;) {
-+		for (;;) {
- 			set_current_state(TASK_INTERRUPTIBLE);
--			if (ULLONG_MAX - ctx->count > ucnt) {
--				res = sizeof(ucnt);
-+			if (ULLONG_MAX - ctx->count > ucnt)
- 				break;
--			}
- 			if (signal_pending(current)) {
--				res = -ERESTARTSYS;
--				break;
-+				__remove_wait_queue(&ctx->wqh, &wait);
-+				__set_current_state(TASK_RUNNING);
-+				spin_unlock_irq(&ctx->wqh.lock);
-+				return -ERESTARTSYS;
- 			}
- 			spin_unlock_irq(&ctx->wqh.lock);
- 			schedule();
-@@ -298,14 +299,12 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 		__remove_wait_queue(&ctx->wqh, &wait);
- 		__set_current_state(TASK_RUNNING);
- 	}
--	if (likely(res > 0)) {
--		ctx->count += ucnt;
--		if (waitqueue_active(&ctx->wqh))
--			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
--	}
-+	ctx->count += ucnt;
-+	if (waitqueue_active(&ctx->wqh))
-+		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
- 	spin_unlock_irq(&ctx->wqh.lock);
- 
--	return res;
-+	return sizeof(ucnt);
- }
- 
- #ifdef CONFIG_PROC_FS
-@@ -328,7 +327,7 @@ static const struct file_operations eventfd_fops = {
- 	.release	= eventfd_release,
- 	.poll		= eventfd_poll,
- 	.read_iter	= eventfd_read,
--	.write		= eventfd_write,
-+	.write_iter	= eventfd_write,
- 	.llseek		= noop_llseek,
- };
- 
--- 
-2.29.2
-
+Jan
