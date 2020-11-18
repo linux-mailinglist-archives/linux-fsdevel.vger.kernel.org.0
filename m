@@ -2,109 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 173872B7A72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 10:35:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3212B7A95
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 10:46:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbgKRJcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 04:32:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbgKRJcR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 04:32:17 -0500
-Received: from localhost (unknown [89.205.136.214])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 651A320855;
-        Wed, 18 Nov 2020 09:32:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1605691936;
-        bh=z9AARqxEifx27ZSfSqyQtp5/QTEI/AENwIGCm/wc71c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fFTiyRf+lNKL9ST4txcSeaDrCIqy8sGZqtdcsNAnsGly1+5GYCQkd5b0dJtsVNXW7
-         Ty+UOKz4POaIjvZvW72SkGo52lChY2pkhIjug9dEhWmDqtz52fKjvNwDSvPQKw5/EX
-         XjQbNqUIRf7iTd7GfCLBQpWa8uhdec/9xDR/QuiU=
-Date:   Wed, 18 Nov 2020 10:32:12 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jan Beulich <jbeulich@suse.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: merge struct block_device and struct hd_struct
-Message-ID: <X7TqHNotTX6W/bmT@kroah.com>
-References: <20201118084800.2339180-1-hch@lst.de>
- <22ca5396-0253-f286-9eab-d417b2e0b3ad@suse.com>
- <20201118085804.GA20384@lst.de>
- <1ded2079-f1be-6d5d-01df-65754447df78@suse.com>
- <X7Tky/6dDN8+DrU7@kroah.com>
- <61044f85-cd41-87b5-3f41-36e3dffb6f2a@suse.com>
+        id S1726298AbgKRJp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 04:45:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51609 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726249AbgKRJp3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 04:45:29 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kfK1c-0001pZ-AY; Wed, 18 Nov 2020 09:45:17 +0000
+Date:   Wed, 18 Nov 2020 10:45:13 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-audit@redhat.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v2 00/39] fs: idmapped mounts
+Message-ID: <20201118094513.itchk5nx75er6wh6@wittgenstein>
+References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
+ <20201117165433.316f5625@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <61044f85-cd41-87b5-3f41-36e3dffb6f2a@suse.com>
+In-Reply-To: <20201117165433.316f5625@lwn.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 10:23:51AM +0100, Jan Beulich wrote:
-> On 18.11.2020 10:09, Greg KH wrote:
-> > On Wed, Nov 18, 2020 at 10:04:04AM +0100, Jan Beulich wrote:
-> >> On 18.11.2020 09:58, Christoph Hellwig wrote:
-> >>> On Wed, Nov 18, 2020 at 09:56:11AM +0100, Jan Beulich wrote:
-> >>>> since this isn't the first series from you recently spamming
-> >>>> xen-devel, may I ask that you don't Cc entire series to lists
-> >>>> which are involved with perhaps just one out of the many patches?
-> >>>> IMO Cc lists should be compiled on a per-patch basis; the cover
-> >>>> letter may of course be sent to the union of all of them.
-> >>>
-> >>> No way.  Individual CCs are completely broken as they don't provide
-> >>> the reviewer a context.
-> >>
-> >> That's the view of some people, but not all. Context can be easily
-> >> established by those who care going to one of the many archives on
-> >> which the entire series lands. Getting spammed, however, can't be
-> >> avoided by the dozens or hundreds of list subscribers.
-> > 
-> > kernel patches are never "spam", sorry, but for developers to try to
-> > determine which lists/maintainers want to see the whole series and which
-> > do not is impossible.
-> > 
-> > Patches in a series are easily deleted from sane mail clients with a
-> > single click/keystroke all at once, they aren't a problem that needs to
-> > be reduced in volume.
+On Tue, Nov 17, 2020 at 04:54:33PM -0700, Jonathan Corbet wrote:
+> On Sun, 15 Nov 2020 11:36:39 +0100
+> Christian Brauner <christian.brauner@ubuntu.com> wrote:
 > 
-> This doesn't scale, neither in the dimension of recipients nor in
-> the dimension of possible sources of such series.
+> One quick question...
+> 
+> > I have written a simple tool available at
+> > https://github.com/brauner/mount-idmapped that allows to create idmapped
+> > mounts so people can play with this patch series.
+> 
+> I spent a while looking at that tool.  When actually setting the namespace
+> for the mapping, it uses MOUNT_ATTR_SHIFT rather than MOUNT_ATTR_IDMAP.
+> The value is the same, so I expect it works...:)  But did that perhaps not
+> get updated to reflect a name change?
 
-Again, trying to figure out what subsystem does, and does not, want
-stuff like this does not scale either.  Remember, we had 4000 developers
-last year, how are you going to tell all of them what the special rules
-are for your subsystem and how they differ from any other subsystem?
+Yep, that was my mistake. I'll fix it up in the repo for that tool now
+and maybe improve it a little too! :)
 
-And why does it matter?  We are all working on the same project, why
-wouldn't you want to see core block device handling patches?  What
-hurts with that, someone might notice something in one of them that a
-different developer did not.
-
-> While it may seem small, it's also a waste of resources to have mails
-> sent to hundreds of even thousands of people. So while from a
-> technical content perspective I surely agree with you saying 'kernel
-> patches are never "spam"', they still are from the perspective of
-> what "spam mail" originally means: Mail the recipients did not want
-> to receive.
-
-Anyone on a kernel subsystem mailing list should expect to see kernel
-patches, that's part of the process, and always has been.
-
-Kernel subsystems are not silos, people on them should be aware of what
-else is going on in order to stay informed.  And again, if it's a huge
-problem, one click/keystroke and they are gone, no waste.
-
-thanks,
-
-greg k-h
+Christian
