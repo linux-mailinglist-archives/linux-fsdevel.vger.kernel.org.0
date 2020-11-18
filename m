@@ -2,96 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 355ED2B8159
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 17:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC2C2B81A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 17:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbgKRP7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 10:59:38 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:42118 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726532AbgKRP7h (ORCPT
+        id S1726733AbgKRQWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 11:22:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgKRQWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 10:59:37 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-185--CpBF4jRNLeF2EmBffFv5g-1; Wed, 18 Nov 2020 15:59:33 +0000
-X-MC-Unique: -CpBF4jRNLeF2EmBffFv5g-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 18 Nov 2020 15:59:33 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 18 Nov 2020 15:59:33 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Arnd Bergmann' <arnd@kernel.org>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        Wed, 18 Nov 2020 11:22:00 -0500
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B9BDC061A48
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 08:22:00 -0800 (PST)
+Received: by mail-vs1-xe43.google.com with SMTP id h185so1308236vsc.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 08:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K8RmJ6583kn36tl0y/pk4VUasnmo3J+EkhpquBGIyPY=;
+        b=Su7vdk+6Pxa70+YWzlJJRhYHAX+NkgMlwLd1krqBnxjE8W+xsLtD0Y3jd/v/ltbDJZ
+         1ur16lR1idrNj7+br4H30Vh25RwzSDxvJN4rkYApjeXwlGBVTLj+kj4s7ZADOtAZlq4b
+         +jLdEsmRUqhweHgdzxzkrIm7M1rwhsFVMegPg+lDK8R1r/kNTdaP8Bjz1iCyLLkHAIUv
+         UDkgW4bRqgtNAsznQR2cg1rkWroKPpuKz50g8emoJArV9W8nvzQQ6kgYTO17Sga3UVyB
+         ++nqQ9isEzgUJRCrvZ0KI7k6zgNGJAFv73g/ygu3rKn8Rr0ubHeJuLjqZs+yRfFF9aNV
+         esuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K8RmJ6583kn36tl0y/pk4VUasnmo3J+EkhpquBGIyPY=;
+        b=TBVjiYIw+g1HAPZ9+0EwlwqeVtldUqJtjsWyfPPUWBzrXjM4/OLvtLdOPbkJp9EfeM
+         Wz6pvtUORyqg3t1VbxwhaD87RnmAN1yD8KgsDJPcoz/sSeV+AyR7aSxJRsqOnDmAedYh
+         IZ7c4b48Uue0dHO4P7R24kno0tmowLdCXQBvGXqf+4QdiU7poRqh3L1C1TjJf7n1E/aA
+         DE2t0mTz7SGC2HpsnP2w9DJDFQGIVf/HkU3Vx0u0kJBlv7Oa1tDY9rMGpoXgAwWOy8dB
+         uPQy1DI7PPNIeHf3gq26CG76/VcxhjyIDGHTQf3YDU3i9zQyNV3TgD4HAIc8pc5PnFyE
+         TROQ==
+X-Gm-Message-State: AOAM532AKFBS3JGhrwkJ8rXkzGI4O+QDQZUJ8budyKmixSZVgY1rAPRB
+        L90TFzarA4Js5efjJyqWc4ZwJ1uOwqQ=
+X-Google-Smtp-Source: ABdhPJxbeLY//WSwLdGzt9nPQq1/gk1XW7uCP6+OmBvN+58YDs2qtYHQ/CgH+4KmedKaTn+soGP8Dg==
+X-Received: by 2002:a05:6102:5fb:: with SMTP id w27mr3844375vsf.24.1605716518614;
+        Wed, 18 Nov 2020 08:21:58 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id 11sm3002837vkz.42.2020.11.18.08.21.57
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Nov 2020 08:21:57 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id q68so856560uaq.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 08:21:57 -0800 (PST)
+X-Received: by 2002:ab0:16da:: with SMTP id g26mr3072595uaf.122.1605716516969;
+ Wed, 18 Nov 2020 08:21:56 -0800 (PST)
+MIME-Version: 1.0
+References: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com> <20201118144617.986860-2-willemdebruijn.kernel@gmail.com>
+In-Reply-To: <20201118144617.986860-2-willemdebruijn.kernel@gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 18 Nov 2020 11:21:19 -0500
+X-Gmail-Original-Message-ID: <CA+FuTSdFTDFwOVyws19CaAP_6+c5gTrvA0ybvDo3LJ-VhPz1eQ@mail.gmail.com>
+Message-ID: <CA+FuTSdFTDFwOVyws19CaAP_6+c5gTrvA0ybvDo3LJ-VhPz1eQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] epoll: add nsec timeout support with epoll_pwait2
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Soheil Hassas Yeganeh <soheil.kdev@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>, Shuo Chen <shuochen@google.com>,
-        linux-man <linux-man@vger.kernel.org>
-Subject: RE: [PATCH v3 1/2] epoll: add nsec timeout support with epoll_pwait2
-Thread-Topic: [PATCH v3 1/2] epoll: add nsec timeout support with epoll_pwait2
-Thread-Index: AQHWvcDieFOOUR5p5U6TdCRQART+IqnOC5Tw
-Date:   Wed, 18 Nov 2020 15:59:32 +0000
-Message-ID: <893e8ed21e544d048bff7933013332a0@AcuMS.aculab.com>
-References: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com>
- <20201118144617.986860-2-willemdebruijn.kernel@gmail.com>
- <20201118150041.GF29991@casper.infradead.org>
- <CA+FuTSdxNBvNMy341EHeiKOWZ19H++aw-tfr6Fx1mFmbg-z4zQ@mail.gmail.com>
- <CAK8P3a0t02o77+8QNZwXF2k1pY3Xrm5bydv8Vx1TW060P7BKqA@mail.gmail.com>
-In-Reply-To: <CAK8P3a0t02o77+8QNZwXF2k1pY3Xrm5bydv8Vx1TW060P7BKqA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        linux-man@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAxOCBOb3ZlbWJlciAyMDIwIDE1OjM4DQo+IA0K
-PiBPbiBXZWQsIE5vdiAxOCwgMjAyMCBhdCA0OjEwIFBNIFdpbGxlbSBkZSBCcnVpam4NCj4gPHdp
-bGxlbWRlYnJ1aWpuLmtlcm5lbEBnbWFpbC5jb20+IHdyb3RlOg0KPiA+IE9uIFdlZCwgTm92IDE4
-LCAyMDIwIGF0IDEwOjAwIEFNIE1hdHRoZXcgV2lsY294IDx3aWxseUBpbmZyYWRlYWQub3JnPiB3
-cm90ZToNCj4gPiA+DQo+ID4gPiBPbiBXZWQsIE5vdiAxOCwgMjAyMCBhdCAwOTo0NjoxNUFNIC0w
-NTAwLCBXaWxsZW0gZGUgQnJ1aWpuIHdyb3RlOg0KPiA+ID4gPiAtc3RhdGljIGlubGluZSBzdHJ1
-Y3QgdGltZXNwZWM2NCBlcF9zZXRfbXN0aW1lb3V0KGxvbmcgbXMpDQo+ID4gPiA+ICtzdGF0aWMg
-aW5saW5lIHN0cnVjdCB0aW1lc3BlYzY0IGVwX3NldF9uc3RpbWVvdXQoczY0IHRpbWVvdXQpDQo+
-ID4gPiA+ICB7DQo+ID4gPiA+IC0gICAgIHN0cnVjdCB0aW1lc3BlYzY0IG5vdywgdHMgPSB7DQo+
-ID4gPiA+IC0gICAgICAgICAgICAgLnR2X3NlYyA9IG1zIC8gTVNFQ19QRVJfU0VDLA0KPiA+ID4g
-PiAtICAgICAgICAgICAgIC50dl9uc2VjID0gTlNFQ19QRVJfTVNFQyAqIChtcyAlIE1TRUNfUEVS
-X1NFQyksDQo+ID4gPiA+IC0gICAgIH07DQo+ID4gPiA+ICsgICAgIHN0cnVjdCB0aW1lc3BlYzY0
-IG5vdywgdHM7DQo+ID4gPiA+DQo+ID4gPiA+ICsgICAgIHRzID0gbnNfdG9fdGltZXNwZWM2NCh0
-aW1lb3V0KTsNCj4gPiA+ID4gICAgICAga3RpbWVfZ2V0X3RzNjQoJm5vdyk7DQo+ID4gPiA+ICAg
-ICAgIHJldHVybiB0aW1lc3BlYzY0X2FkZF9zYWZlKG5vdywgdHMpOw0KPiA+ID4gPiAgfQ0KPiA+
-ID4NCj4gPiA+IFdoeSBkbyB5b3UgcGFzcyBhcm91bmQgYW4gczY0IGZvciB0aW1lb3V0LCBjb252
-ZXJ0aW5nIGl0IHRvIGFuZCBmcm9tDQo+ID4gPiBhIHRpbWVzcGVjNjQgaW5zdGVhZCBvZiBwYXNz
-aW5nIGFyb3VuZCBhIHRpbWVzcGVjNjQ/DQo+ID4NCj4gPiBJIGltcGxlbWVudGVkIGJvdGggYXBw
-cm9hY2hlcy4gVGhlIGFsdGVybmF0aXZlIHdhcyBubyBzaW1wbGVyLg0KPiA+IENvbnZlcnNpb24g
-aW4gZXhpc3RpbmcgZXBvbGxfd2FpdCwgZXBvbGxfcHdhaXQgYW5kIGVwb2xsX3B3YWl0DQo+ID4g
-KGNvbXBhdCkgYmVjb21lcyBhIGJpdCBtb3JlIGNvbXBsZXggYW5kIGFkZHMgYSBzdGFjayB2YXJp
-YWJsZSB0aGVyZSBpZg0KPiA+IHBhc3NpbmcgdGhlIHRpbWVzcGVjNjQgYnkgcmVmZXJlbmNlLiBB
-bmQgaW4gZXBfcG9sbCB0aGUgdGVybmFyeQ0KPiA+IHRpbWVvdXQgdGVzdCA+IDAsIDAsIDwgMCBu
-b3cgcmVxdWlyZXMgY2hlY2tpbmcgYm90aCB0dl9zZWNzIGFuZA0KPiA+IHR2X25zZWNzLiBCYXNl
-ZCBvbiB0aGF0LCBJIGZvdW5kIHRoaXMgc2ltcGxlci4gQnV0IG5vIHN0cm9uZw0KPiA+IHByZWZl
-cmVuY2UuDQo+IA0KPiBUaGUgNjQtYml0IGRpdmlzaW9uIGNhbiBiZSBmYWlybHkgZXhwZW5zaXZl
-IG9uIDMyLWJpdCBhcmNoaXRlY3R1cmVzLA0KPiBhdCBsZWFzdCB3aGVuIGl0IGRvZXNuJ3QgZ2V0
-IG9wdGltaXplZCBpbnRvIGEgbXVsdGlwbHkrc2hpZnQuDQoNCkknZCBoYXZlIHRob3VnaHQgeW91
-J2Qgd2FudCB0byBkbyBldmVyeXRoaW5nIGluIDY0Yml0IG5hbm9zZWNzLg0KQ29udmVyc2lvbnMg
-dG8vZnJvbSBhbnkgb2YgdGhlICd0aW1lc3BlYycgc3RydWN0dXJlIGFyZSBleHBlbnNpdmUuDQoN
-CglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwg
-TW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzog
-MTM5NzM4NiAoV2FsZXMpDQo=
+On Wed, Nov 18, 2020 at 9:46 AM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> From: Willem de Bruijn <willemb@google.com>
+>
+> Add syscall epoll_pwait2, an epoll_wait variant with nsec resolution
+> that replaces int timeout with struct timespec. It is equivalent
+> otherwise.
+>
+>     int epoll_pwait2(int fd, struct epoll_event *events,
+>                      int maxevents,
+>                      const struct timespec *timeout,
+>                      const sigset_t *sigset);
+>
+> The underlying hrtimer is already programmed with nsec resolution.
+> pselect and ppoll also set nsec resolution timeout with timespec.
+>
+> The sigset_t in epoll_pwait has a compat variant. epoll_pwait2 needs
+> the same.
+>
+> For timespec, only support this new interface on 2038 aware platforms
+> that define __kernel_timespec_t. So no CONFIG_COMPAT_32BIT_TIME.
+>
+> Changes
+>   v3:
+>   - rewrite: add epoll_pwait2 syscall instead of epoll_create1 flag
+>   v2:
+>   - cast to s64: avoid overflow on 32-bit platforms (Shuo Chen)
+>   - minor commit message rewording
+>
+> Signed-off-by: Willem de Bruijn <willemb@google.com>
+>
+> ---
 
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 109e6681b8fa..9a4e8ec207fc 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -447,3 +447,4 @@
+>  440    i386    process_madvise         sys_process_madvise
+>  441    i386    watch_mount             sys_watch_mount
+>  442    i386    memfd_secret            sys_memfd_secret
+> +443    i386    epoll_pwait2            sys_epoll_pwait2                compat_sys_epoll_pwait2
+
+I should have caught this sooner, but this does not work as intended.
+
+x86 will still call epoll_pwait2 with old_timespec32.
+
+One approach is a separate epoll_pwait2_time64 syscall, similar to
+ppoll_time64. But that was added to work around legacy 32-bit ppoll.
+Not needed for a new API.
+
+In libc, ppoll_time64 is declared with type struct __timespec64. That
+type is not defined in Linux uapi. Will need to look at this some
+more.
