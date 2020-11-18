@@ -2,35 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A40182B77B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 09:00:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E799C2B77BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 09:00:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbgKRH5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 02:57:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35650 "EHLO mail.kernel.org"
+        id S1727236AbgKRH5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 02:57:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727179AbgKRH5l (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 02:57:41 -0500
+        id S1727181AbgKRH5m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 02:57:42 -0500
 Received: from sol.attlocal.net (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01736246B3;
-        Wed, 18 Nov 2020 07:57:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72022246B2;
+        Wed, 18 Nov 2020 07:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1605686261;
-        bh=D+Kyjii18F0waqpkVXSX3zdRISdLOoxWag/Zq/plDfg=;
+        bh=FaJPS+4AhsPK9Hjqvyuvxb/1dnxymbnVlmZfAPn5gcU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wciZgUxRsT4BpUHM/xK7x+itYlwScHX5JDV4LPcCZe9NsPUlgYTrKiN3zfYXLus8i
-         zSemoz4gBJxKD8n9MO4HB9NPQsGOvh+QR8JnCfwKXnzA/JeCOdF3AUjT4gsXrv0t/I
-         UpASd0HyCEVENL+ByuFX13YPNCschjAJ91tiyRiw=
+        b=ETs/fepezweXiR3RVvD/V08ZO2J+3w+axT1045ZXG0ySoHoOPkv8KQGhsYkhLcqGs
+         xVfQzJxdV+6XoMxfSSp/QZ/D0rjuhBJeN1gE+7S7o11NaQpjRy4O4ZLCXloc3aUcTV
+         L4jkljPJYdapxPjojPTtKPw+RVYI5VVc0BNtD4bQ=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4/5] ubifs: prevent creating duplicate encrypted filenames
-Date:   Tue, 17 Nov 2020 23:56:08 -0800
-Message-Id: <20201118075609.120337-5-ebiggers@kernel.org>
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 5/5] fscrypt: remove unnecessary calls to fscrypt_require_key()
+Date:   Tue, 17 Nov 2020 23:56:09 -0800
+Message-Id: <20201118075609.120337-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201118075609.120337-1-ebiggers@kernel.org>
 References: <20201118075609.120337-1-ebiggers@kernel.org>
@@ -42,83 +41,85 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-As described in "fscrypt: add fscrypt_is_nokey_name()", it's possible to
-create a duplicate filename in an encrypted directory by creating a file
-concurrently with adding the directory's encryption key.
+In an encrypted directory, a regular dentry (one that doesn't have the
+no-key name flag) can only be created if the directory's encryption key
+is available.
 
-Fix this bug on ubifs by rejecting no-key dentries in ubifs_create(),
-ubifs_mkdir(), ubifs_mknod(), and ubifs_symlink().
+Therefore the calls to fscrypt_require_key() in __fscrypt_prepare_link()
+and __fscrypt_prepare_rename() are unnecessary, as these functions
+already check that the dentries they're given aren't no-key names.
 
-Note that ubifs doesn't actually report the duplicate filenames from
-readdir, but rather it seems to replace the original dentry with a new
-one (which is still wrong, just a different effect from ext4).
+Remove these unnecessary calls to fscrypt_require_key().
 
-On ubifs, this fixes xfstest generic/595 as well as the new xfstest I
-wrote specifically for this bug.
-
-Fixes: f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
-Cc: stable@vger.kernel.org
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ubifs/dir.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ fs/crypto/hooks.c       | 26 ++++++++------------------
+ include/linux/fscrypt.h |  3 +--
+ 2 files changed, 9 insertions(+), 20 deletions(-)
 
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 155521e51ac5..08fde777c324 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -270,6 +270,15 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
- 	return d_splice_alias(inode, dentry);
- }
- 
-+static int ubifs_prepare_create(struct inode *dir, struct dentry *dentry,
-+				struct fscrypt_name *nm)
-+{
-+	if (fscrypt_is_nokey_name(dentry))
-+		return -ENOKEY;
-+
-+	return fscrypt_setup_filename(dir, &dentry->d_name, 0, nm);
-+}
-+
- static int ubifs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 			bool excl)
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index 061418be4b08..c582e2ddb39c 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -54,15 +54,12 @@ EXPORT_SYMBOL_GPL(fscrypt_file_open);
+ int __fscrypt_prepare_link(struct inode *inode, struct inode *dir,
+ 			   struct dentry *dentry)
  {
-@@ -293,7 +302,7 @@ static int ubifs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 	if (err)
- 		return err;
+-	int err;
+-
+-	err = fscrypt_require_key(dir);
+-	if (err)
+-		return err;
+-
+-	/* ... in case we looked up no-key name before key was added */
+ 	if (fscrypt_is_nokey_name(dentry))
+ 		return -ENOKEY;
++	/*
++	 * We don't need to separately check that the directory inode's key is
++	 * available, as it's implied by the dentry not being a no-key name.
++	 */
  
--	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
-+	err = ubifs_prepare_create(dir, dentry, &nm);
- 	if (err)
- 		goto out_budg;
+ 	if (!fscrypt_has_permitted_context(dir, inode))
+ 		return -EXDEV;
+@@ -75,20 +72,13 @@ int __fscrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 			     struct inode *new_dir, struct dentry *new_dentry,
+ 			     unsigned int flags)
+ {
+-	int err;
+-
+-	err = fscrypt_require_key(old_dir);
+-	if (err)
+-		return err;
+-
+-	err = fscrypt_require_key(new_dir);
+-	if (err)
+-		return err;
+-
+-	/* ... in case we looked up no-key name(s) before key was added */
+ 	if (fscrypt_is_nokey_name(old_dentry) ||
+ 	    fscrypt_is_nokey_name(new_dentry))
+ 		return -ENOKEY;
++	/*
++	 * We don't need to separately check that the directory inodes' keys are
++	 * available, as it's implied by the dentries not being no-key names.
++	 */
  
-@@ -953,7 +962,7 @@ static int ubifs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 	if (err)
- 		return err;
- 
--	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
-+	err = ubifs_prepare_create(dir, dentry, &nm);
- 	if (err)
- 		goto out_budg;
- 
-@@ -1038,7 +1047,7 @@ static int ubifs_mknod(struct inode *dir, struct dentry *dentry,
- 		return err;
- 	}
- 
--	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
-+	err = ubifs_prepare_create(dir, dentry, &nm);
- 	if (err) {
- 		kfree(dev);
- 		goto out_budg;
-@@ -1122,7 +1131,7 @@ static int ubifs_symlink(struct inode *dir, struct dentry *dentry,
- 	if (err)
- 		return err;
- 
--	err = fscrypt_setup_filename(dir, &dentry->d_name, 0, &nm);
-+	err = ubifs_prepare_create(dir, dentry, &nm);
- 	if (err)
- 		goto out_budg;
- 
+ 	if (old_dir != new_dir) {
+ 		if (IS_ENCRYPTED(new_dir) &&
+diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+index 8e1d31c959bf..0c9e64969b73 100644
+--- a/include/linux/fscrypt.h
++++ b/include/linux/fscrypt.h
+@@ -710,8 +710,7 @@ static inline int fscrypt_require_key(struct inode *inode)
+  *
+  * A new link can only be added to an encrypted directory if the directory's
+  * encryption key is available --- since otherwise we'd have no way to encrypt
+- * the filename.  Therefore, we first set up the directory's encryption key (if
+- * not already done) and return an error if it's unavailable.
++ * the filename.
+  *
+  * We also verify that the link will not violate the constraint that all files
+  * in an encrypted directory tree use the same encryption policy.
 -- 
 2.29.2
 
