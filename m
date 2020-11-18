@@ -2,203 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B532B73FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 02:56:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33ADF2B7449
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 03:45:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbgKRB4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 20:56:14 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:58509 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726363AbgKRB4O (ORCPT
+        id S1726527AbgKRCnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 21:43:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbgKRCnw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 20:56:14 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UFlUPVT_1605664568;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFlUPVT_1605664568)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 18 Nov 2020 09:56:09 +0800
-Subject: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     axboe@kernel.dk, hch@infradead.org, ming.lei@redhat.com,
-        linux-block@vger.kernel.org, io-uring@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, linux-fsdevel@vger.kernel.org
-References: <20201117075625.46118-1-jefflexu@linux.alibaba.com>
- <20201117075625.46118-3-jefflexu@linux.alibaba.com>
- <20201117173718.GB9688@magnolia>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <5be2803d-d26b-d381-2fdf-a277e7bbbf6e@linux.alibaba.com>
-Date:   Wed, 18 Nov 2020 09:56:08 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+        Tue, 17 Nov 2020 21:43:52 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAED0C061A48
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 18:43:50 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id t37so87787pga.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 18:43:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cIZ+YWWP5aqalUoRio2QtJMh5XCbXXDA9kJRwC7+zv8=;
+        b=bbch85ddNZ7XzpLUOYzExmTsbmLKMUrE9yX+1sYtLTuQIw8ozlyrK0AUfruD2uMB8P
+         6FNZterRPoL/JxxCQOE66gZrVVt84KUGv3FnJx3SDvodbBi6iowaXhCLd2TA5DOMSGe0
+         SRjy4IuV5OTslaeKmbzNIBAIPNtEt56wYcPKmVdWyiYt8CJHgfVPWHmSHxAkIWO4apO4
+         qTmvP8l8gWp7CKIOdxDrhM2uWcMO4rKs9rRpPQFiEbYc0Ei/qlaJeWdKQTN6s1ppRauD
+         /PioS9bT+LFuJ5NT2IoOvE18sAWFzx3ej5zoGL2Ax7RG5rNSntedlGRaoxDAHdUinMyW
+         M+wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cIZ+YWWP5aqalUoRio2QtJMh5XCbXXDA9kJRwC7+zv8=;
+        b=hepVv8cwU9Goc5vKBllsmYFLySGZHeVFZT0r4dszEh6pikmx84ktIIdynJ5Gaty9NB
+         0/7qtcldqsHhz4ULKLLHAUOQ/Lw6BnWtJ5RgkA3PU3aXNqqp5M5WZvJmyiW1zpP0i+OV
+         xkvPaITCQjwhqKMJEVcMwP9x7O0++ghEL2ZhgSkjLsEAUu350Ydd/R+h9/4H57Gf6gPn
+         NOzDkcR7mAqySzId6DgcXWxSQqqeujWmAkaalpalkJTck81tsHDGRn/wdR1oHfbuqrKj
+         r2H9E+uyFYBOwQtJtjsj2KBb3uBF3XAsp6lILlPSP7f9CnCwG9sJAhG2/92X8g7G5qq2
+         Nftw==
+X-Gm-Message-State: AOAM531lWLuyY50IUupZ55HTuIzISYhYgg7ftC+1coE9cJImGgymsWKU
+        VTyIle+Og4DTCe/iR19Qwh92C2HEWx6fibjRE816mg==
+X-Google-Smtp-Source: ABdhPJxGDISMqn2bIRZh7wORdl/cIXS0Q2etgc5JYSCpx/B0Jr1Wza3ya52gTSkwn/Ea57CTkeoqexeqyVXu0Ud+DQE=
+X-Received: by 2002:a62:16c1:0:b029:18c:8a64:fc04 with SMTP id
+ 184-20020a6216c10000b029018c8a64fc04mr2397649pfw.59.1605667430141; Tue, 17
+ Nov 2020 18:43:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201117173718.GB9688@magnolia>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20201113105952.11638-1-songmuchun@bytedance.com>
+ <349168819c1249d4bceea26597760b0a@hisilicon.com> <CAMZfGtUVDJ4QHYRCKnPTkgcKGJ38s2aOOktH+8Urz7oiVfimww@mail.gmail.com>
+ <714ae7d701d446259ab269f14a030fe9@hisilicon.com> <CAMZfGtWNa=abZdN6HmWE1VBFHfGCbsW9D0zrN-F5zrhn6s=ErA@mail.gmail.com>
+ <20201117192223.GW29991@casper.infradead.org>
+In-Reply-To: <20201117192223.GW29991@casper.infradead.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 18 Nov 2020 10:43:06 +0800
+Message-ID: <CAMZfGtUsqkk1Td3YBb-Ap6M_Hg59te1uORCPLVk4QeaFt7U0cw@mail.gmail.com>
+Subject: Re: [External] RE: [PATCH v4 00/21] Free some vmemmap pages of
+ hugetlb page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
+        "pawan.kumar.gupta@linux.intel.com" 
+        <pawan.kumar.gupta@linux.intel.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "almasrymina@google.com" <almasrymina@google.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "duanxiongchun@bytedance.com" <duanxiongchun@bytedance.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 11/18/20 1:37 AM, Darrick J. Wong wrote:
-> On Tue, Nov 17, 2020 at 03:56:25PM +0800, Jeffle Xu wrote:
->> Both blkdev fs and iomap-based fs (ext4, xfs, etc.) currently support
-> $ ./scripts/get_maintainer.pl fs/iomap/direct-io.c
-> Christoph Hellwig <hch@infradead.org> (supporter:IOMAP FILESYSTEM LIBRARY)
-> "Darrick J. Wong" <darrick.wong@oracle.com> (supporter:IOMAP FILESYSTEM LIBRARY)
-> linux-xfs@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
-> linux-fsdevel@vger.kernel.org (supporter:IOMAP FILESYSTEM LIBRARY)
-> linux-kernel@vger.kernel.org (open list)
+On Wed, Nov 18, 2020 at 3:22 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> Please cc both iomap maintainers and the appropriate lists when you
-> propose changes to fs/iomap/.  At a bare minimum cc linux-fsdevel for
-> changes under fs/.
-Got it.
+> On Wed, Nov 18, 2020 at 12:29:07AM +0800, Muchun Song wrote:
+> > > ideally, we should be able to free PageTail if we change struct page in some way.
+> > > Then we will save much more for 2MB hugetlb. but it seems it is not easy.
+> >
+> > Now for the 2MB HugrTLB page, we only free 6 vmemmap pages.
+> > But your words woke me up. Maybe we really can free 7 vmemmap
+> > pages. In this case, we can see 8 of the 512 struct page structures
+> > has beed set PG_head flag. If we can adjust compound_head()
+> > slightly and make compound_head() return the real head struct
+> > page when the parameter is the tail struct page but with PG_head
+> > flag set. I will start an investigation and a test.
 >
->> sync iopoll. One single bio can contain at most BIO_MAX_PAGES, i.e. 256
->> bio_vec. If the input iov_iter contains more than 256 segments, then
->> one dio will be split into multiple bios, which may cause potential
->> deadlock for sync iopoll.
->>
->> When it comes to sync iopoll, the bio is submitted without REQ_NOWAIT
->> flag set and the process may hang in blk_mq_get_tag() if the dio needs
->> to be split into multiple bios and thus can rapidly exhausts the queue
->> depth. The process has to wait for the completion of the previously
->> allocated requests, which should be reaped by the following sync
->> polling, and thus causing a potential deadlock.
->>
->> In fact there's a subtle difference of handling of HIPRI IO between
->> blkdev fs and iomap-based fs, when dio need to be split into multiple
->> bios. blkdev fs will set REQ_HIPRI for only the last split bio, leaving
->> the previous bios queued into normal hardware queues, and not causing
->> the trouble described above. iomap-based fs will set REQ_HIPRI for all
->> split bios, and thus may cause the potential deadlock described above.
->>
->> Noted that though the analysis described above, currently blkdev fs and
->> iomap-based fs won't trigger this potential deadlock. Because only
->> preadv2(2)/pwritev2(2) are capable of *sync* polling as only these two
->> can set RWF_NOWAIT.
+> What are you thinking?
+>
+> static inline struct page *compound_head(struct page *page)
+> {
+>         unsigned long head = READ_ONCE(page->compound_head);
+>
+>         if (unlikely(head & 1))
+>                 return (struct page *) (head - 1);
+> +       if (unlikely(page->flags & PG_head))
+> +               return (struct page *)(page[1]->compound_head - 1)
 
-s/RWF_NOWAIT/RWF_HIPRI
+Yeah, I think so too. Maybe adding an align check is better.
 
++         if ((test_bit(PG_head, &page->flags) &&
++              IS_ALIGNED((unsigned long)page, PAGE_SIZE))
 
->>   Currently the maximum number of iovecs of one single
->> preadv2(2)/pwritev2(2) call is UIO_MAXIOV, i.e. 1024, while the minimum
->> queue depth is BLKDEV_MIN_RQ i.e. 4. That means one
->> preadv2(2)/pwritev2(2) call can submit at most 4 bios, which will fill
->> up the queue depth *exactly* and thus there's no deadlock in this case.
->>
->> However this constraint can be fragile. Disable iopoll when one dio need
->> to be split into multiple bios.Though blkdev fs may not suffer this issue,
->> still it may not make much sense to iopoll for big IO, since iopoll is
->> initially for small size, latency sensitive IO.
->>
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->> ---
->>   fs/block_dev.c       |  9 +++++++++
->>   fs/iomap/direct-io.c | 10 ++++++++++
->>   2 files changed, 19 insertions(+)
->>
->> diff --git a/fs/block_dev.c b/fs/block_dev.c
->> index 9e84b1928b94..ed3f46e8fa91 100644
->> --- a/fs/block_dev.c
->> +++ b/fs/block_dev.c
->> @@ -436,6 +436,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
->>   			break;
->>   		}
->>   
->> +		/*
->> +		 * The current dio needs to be split into multiple bios here.
->> +		 * iopoll for split bio will cause subtle trouble such as
->> +		 * hang when doing sync polling, while iopoll is initially
->> +		 * for small size, latency sensitive IO. Thus disable iopoll
->> +		 * if split needed.
->> +		 */
->> +		iocb->ki_flags &= ~IOCB_HIPRI;
->> +
->>   		if (!dio->multi_bio) {
->>   			/*
->>   			 * AIO needs an extra reference to ensure the dio
->> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
->> index 933f234d5bec..396ac0f91a43 100644
->> --- a/fs/iomap/direct-io.c
->> +++ b/fs/iomap/direct-io.c
->> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->>   		copied += n;
->>   
->>   		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
->> +		/*
->> +		 * The current dio needs to be split into multiple bios here.
->> +		 * iopoll for split bio will cause subtle trouble such as
->> +		 * hang when doing sync polling, while iopoll is initially
->> +		 * for small size, latency sensitive IO. Thus disable iopoll
->> +		 * if split needed.
->> +		 */
->> +		if (nr_pages)
->> +			dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> Hmm, I was about to ask what happens if the user's HIPRI request gets
-> downgraded from polling mode, but the manpage doesn't say anything about
-> the kernel having to return an error if it can't use polling mode, so I
-> guess downgrading is...fine?
+>         return page;
+> }
+>
+> ... because if it's that, there are code paths which also just test
+> PageHead, and so we'd actually need to change PageHead to be something
+> like:
 
-Yes if the block device doesn't support iopoll, then HIPRI pread/pwrite 
-will automatically
+Yeah, I also think that rework compound_head() and PageHead() is enough.
 
-gets downgraded from polling mode.
-
-
-> Well, maybe it isn't, since this also results in a downgrade when I send
-> a 1MB polled pwrite to my otherwise idle MegaSSD that has thousands of
-> queue depth.  I think?  <shrug> I'm not the one who uses polling mode,
-> fwiw.
-
-Indeed that's true. iopoll gets disabled once the dio gets split,
-even though the block device has thousands of queue depth. This
-design is chose just because it is the simplest one..., though
-this one should have no big problem.
-
-As I described in the comment, iopoll is initially for small size
-IO. We have ever tested the latency of Optane SSD
-
-bs | latency (us)
-
----- | ----
-
-read 4k | 14
-
-read 128k | 68
-
-write 4k | 17
-
-write 128k | 75
-
-
-The overhead of interrupt is about several (under 10) microseconds. The 
-overhead of
-
-interrupt when doing 128k IO may not be as important as that of small 
-size IO, thus
-
-the performance gain of iopoll will decreased a lot at least for 128k IO.
-
-
-In my computer, @max_sectors of one nvme SSD is 128k, so the split bio 
-is much
-
-likely larger than 128k, in which case the performance loss should be 
-acceptable
-
-(though I have not test it).
-
+Thanks.
 
 >
->> +
->>   		iomap_dio_submit_bio(dio, iomap, bio, pos);
->>   		pos += n;
->>   	} while (nr_pages);
->> -- 
->> 2.27.0
->>
+> static inline bool PageHead(struct page *page)
+> {
+>         return (page->flags & PG_head) &&
+>                 (page[1]->compound_head == (unsigned long)page + 1);
+> }
+>
+> I'm not sure if that's worth doing -- there may be other things I
+> haven't thought of.
+
+
+
 -- 
-Thanks,
-Jeffle
-
+Yours,
+Muchun
