@@ -2,221 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A261A2B74C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 04:29:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A562B74BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 04:29:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727571AbgKRD3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Nov 2020 22:29:06 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:58395 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725808AbgKRD3F (ORCPT
+        id S1727446AbgKRD2g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Nov 2020 22:28:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726544AbgKRD2g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Nov 2020 22:29:05 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R811e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xiaoguang.wang@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UFlQ429_1605670141;
-Received: from 30.225.32.174(mailfrom:xiaoguang.wang@linux.alibaba.com fp:SMTPD_---0UFlQ429_1605670141)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 18 Nov 2020 11:29:01 +0800
-Subject: Re: INFO: task can't die in io_sq_thread_stop
-From:   Xiaoguang Wang <xiaoguang.wang@linux.alibaba.com>
-To:     syzbot <syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com>,
-        axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000038569805b4211287@google.com>
- <39be8d01-6550-ee8a-5a8d-2707b372b711@linux.alibaba.com>
-Message-ID: <d57f9c10-e640-08f5-4c20-2553768aff65@linux.alibaba.com>
-Date:   Wed, 18 Nov 2020 11:27:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.3
+        Tue, 17 Nov 2020 22:28:36 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E7EC061A4D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 19:28:34 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id t8so523651pfg.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 19:28:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vnppsZ7cWIbTMEPsAbpATqFowYN5orqZc7MbBDjuppY=;
+        b=Z0Pooym/oNFad9Fe/S4QBekCIl4pMLqIVpkTAhSBjg8q8MTG2Hs2M2yTtaycmXUXMB
+         DCWzShQbQD9VmvWsQar+Ba/TElkxIPONZ2xofnFJio2KvPpZU+7BpCOc3foRauQMCAQR
+         b4qMuD8ipbbNSmgB2zuq4ltocv8d/92XOLEIg+9BURbLZVuJnhTCbpVcXpGJeLE23Zsh
+         mNP5Yciiw7lqdZ7FmXJSDoSJDfTPZi9HzUNzYUiNSJMOKHyN0axH+F6Zbxsqf8864OlL
+         BptbzgToMZ9iYyY2bFLg/dsjLr3/UvVWv1JYOMp3vP0raDRG2vtMfNH6Xq166w7wxiku
+         AXiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vnppsZ7cWIbTMEPsAbpATqFowYN5orqZc7MbBDjuppY=;
+        b=PUMcwgqxEaABmySTEDm4C7LbsQi0tWhgKeyck+wUKo5w4/7x3gJkhz2LgRIjnlV/97
+         rOZUBMXNFNHFKZgo2QlsBlDf+KuI+DnYP498bufTEcKmpDHQTyIAi4m0G6nHzGYkIMsr
+         pKEUHssHznJXMreoHPGJaN6jjilcK/+ZMTc2PMYgdPiy3G7Qd/dLOtGn79ZM8cZRZHwb
+         MIYaFBv78wVIsOcIAKWhgD9F3Ey95/Z/q6pB7MqUklDHITu5V7ly051hk7z0+EdlBIlT
+         ZKJu4EHtu3JWR/PoqRxdH111tAalUqrxug7qGc0dH6PO+OgQwKthbfZXyqf66SW1hmUb
+         +fSA==
+X-Gm-Message-State: AOAM531GUTR62P/cbkM9ZvVH8MYZrTkkX4hvtjBm2Uf2dMzS6JxymIYz
+        I/A32Gv98gFRYL9vCi+SvZlEQe0e/k/4nofurUvE8g==
+X-Google-Smtp-Source: ABdhPJxFg2bZDDYdW5cu+c+X8qxklQebDNJ6tYNq3D6DCb4Egzt6LNdC6SdIChwp4gckYFi19M+npXEa9Q6dvYouWMU=
+X-Received: by 2002:a62:e116:0:b029:18b:d325:153f with SMTP id
+ q22-20020a62e1160000b029018bd325153fmr2647216pfh.2.1605670114278; Tue, 17 Nov
+ 2020 19:28:34 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <39be8d01-6550-ee8a-5a8d-2707b372b711@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20201113105952.11638-1-songmuchun@bytedance.com>
+ <349168819c1249d4bceea26597760b0a@hisilicon.com> <CAMZfGtUVDJ4QHYRCKnPTkgcKGJ38s2aOOktH+8Urz7oiVfimww@mail.gmail.com>
+ <714ae7d701d446259ab269f14a030fe9@hisilicon.com> <CAMZfGtWNa=abZdN6HmWE1VBFHfGCbsW9D0zrN-F5zrhn6s=ErA@mail.gmail.com>
+ <d04fdbf6c955054fddb152c78bc53db6@suse.de>
+In-Reply-To: <d04fdbf6c955054fddb152c78bc53db6@suse.de>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 18 Nov 2020 11:27:50 +0800
+Message-ID: <CAMZfGtWMF7ZbPHOZg69VNNO0oiVf=i3pAEVmwsmV32wpbAHYxw@mail.gmail.com>
+Subject: Re: [External] RE: [PATCH v4 00/21] Free some vmemmap pages of
+ hugetlb page
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hi,
+On Wed, Nov 18, 2020 at 3:45 AM Oscar Salvador <osalvador@suse.de> wrote:
+>
+> On 2020-11-17 17:29, Muchun Song wrote:
+> > Now for the 2MB HugrTLB page, we only free 6 vmemmap pages.
+> > But your words woke me up. Maybe we really can free 7 vmemmap
+> > pages. In this case, we can see 8 of the 512 struct page structures
+> > has beed set PG_head flag. If we can adjust compound_head()
+> > slightly and make compound_head() return the real head struct
+> > page when the parameter is the tail struct page but with PG_head
+> > flag set. I will start an investigation and a test.
+>
+> I would not overcomplicate things at this stage, but rather keep it
+> simple as the code is already tricky enough(without counting the LOC
+> thatvit adds).
+> We can always build on top later on in order to improve things.
 
-A gentle reminder, in case you overlooked this syzbot report.
+I think that this improvement can be a separate patch. In this case,
+it can make the code evolution route clearer.
 
-Regards,
-Xiaoguang Wang
+Thanks.
 
-> hi jens,
-> 
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    6dd65e60 Add linux-next specific files for 20201110
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=14727d42500000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=4fab43daf5c54712
->> dashboard link: https://syzkaller.appspot.com/bug?extid=03beeb595f074db9cfd1
->> compiler:       gcc (GCC) 10.1.0-syz 20200507
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+03beeb595f074db9cfd1@syzkaller.appspotmail.com
->>
->> INFO: task syz-executor.2:12399 can't die for more than 143 seconds.
->> task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
->> Call Trace:
->>   context_switch kernel/sched/core.c:3773 [inline]
->>   __schedule+0x893/0x2170 kernel/sched/core.c:4522
->>   schedule+0xcf/0x270 kernel/sched/core.c:4600
->>   schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
->>   do_wait_for_common kernel/sched/completion.c:85 [inline]
->>   __wait_for_common kernel/sched/completion.c:106 [inline]
->>   wait_for_common kernel/sched/completion.c:117 [inline]
->>   wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
->>   kthread_stop+0x17a/0x720 kernel/kthread.c:596
->>   io_put_sq_data fs/io_uring.c:7193 [inline]
->>   io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
->>   io_finish_async fs/io_uring.c:7297 [inline]
->>   io_sq_offload_create fs/io_uring.c:8015 [inline]
->>   io_uring_create fs/io_uring.c:9433 [inline]
->>   io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
->>   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> I also don't have a reproducer yet, but seems that there is a race
-> in current codes:                  |
-> => io_put_sq_data                  |
-> ==> kthread_park(sqd->thread);     |
->                                     | T1: sq thread is parked now.
-> ==> kthread_stop(sqd->thread);     |
-> ===> kthread_unpark(k);            |
->                                     | T2: sq thread is now unpared, can run again
->                                     |
->                                     | T3: sq thread is now preempted out.
->                                     |
-> ===> wake_up_process(k);           |
->                                     |
->                                     | T4: Since sqd ctx list is empty, needs_sched will be true,
->                                     | then sq thread sets task state to TASK_INTERRUPTIBLE,
->                                     | and schedule, now sq thread will never be waken up.
-> ===> wait_for_completion           |
-> 
-> I have artificially used mdelay() to simulate above race, will get same stack like
-> this syzbot report.
-> 
-> -               if (kthread_should_park())
-> +               if (kthread_should_park()) {
->                          kthread_parkme();
-> +                       if (kthread_should_stop())
-> +                               break;
-> +               }
-> this diff can fix this issue, and if ctx_list is empty, we don't need to call schedule().
-> 
-> Regards,
-> Xiaoguang Wang
-> 
-> 
->> RIP: 0033:0x45deb9
->> Code: Unable to access opcode bytes at RIP 0x45de8f.
->> RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
->> RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
->> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
->> RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
->> R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
->> INFO: task syz-executor.2:12399 blocked for more than 143 seconds.
->>        Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.2  state:D stack:28744 pid:12399 ppid:  8504 flags:0x00004004
->> Call Trace:
->>   context_switch kernel/sched/core.c:3773 [inline]
->>   __schedule+0x893/0x2170 kernel/sched/core.c:4522
->>   schedule+0xcf/0x270 kernel/sched/core.c:4600
->>   schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1847
->>   do_wait_for_common kernel/sched/completion.c:85 [inline]
->>   __wait_for_common kernel/sched/completion.c:106 [inline]
->>   wait_for_common kernel/sched/completion.c:117 [inline]
->>   wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
->>   kthread_stop+0x17a/0x720 kernel/kthread.c:596
->>   io_put_sq_data fs/io_uring.c:7193 [inline]
->>   io_sq_thread_stop+0x452/0x570 fs/io_uring.c:7290
->>   io_finish_async fs/io_uring.c:7297 [inline]
->>   io_sq_offload_create fs/io_uring.c:8015 [inline]
->>   io_uring_create fs/io_uring.c:9433 [inline]
->>   io_uring_setup+0x19b7/0x3730 fs/io_uring.c:9507
->>   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> RIP: 0033:0x45deb9
->> Code: Unable to access opcode bytes at RIP 0x45de8f.
->> RSP: 002b:00007f174e51ac78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
->> RAX: ffffffffffffffda RBX: 0000000000008640 RCX: 000000000045deb9
->> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 00000000000050e5
->> RBP: 000000000118bf58 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
->> R13: 00007ffed9ca723f R14: 00007f174e51b9c0 R15: 000000000118bf2c
->>
->> Showing all locks held in the system:
->> 1 lock held by khungtaskd/1653:
->>   #0: ffffffff8b3386a0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6253
->> 1 lock held by systemd-journal/4873:
->> 1 lock held by in:imklog/8167:
->>   #0: ffff88801c86e0f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
->>
->> =============================================
->>
->> NMI backtrace for cpu 1
->> CPU: 1 PID: 1653 Comm: khungtaskd Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Call Trace:
->>   __dump_stack lib/dump_stack.c:77 [inline]
->>   dump_stack+0x107/0x163 lib/dump_stack.c:118
->>   nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
->>   nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
->>   trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
->>   check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
->>   watchdog+0xd89/0xf30 kernel/hung_task.c:338
->>   kthread+0x3af/0x4a0 kernel/kthread.c:292
->>   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
->> Sending NMI from CPU 1 to CPUs 0:
->> NMI backtrace for cpu 0
->> CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.10.0-rc3-next-20201110-syzkaller #0
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> Workqueue: events nsim_dev_trap_report_work
->> RIP: 0010:mark_lock+0x30/0x24c0 kernel/locking/lockdep.c:4371
->> Code: 41 54 41 89 d4 48 ba 00 00 00 00 00 fc ff df 55 53 48 81 ec 18 01 00 00 48 8d 5c 24 38 48 89 3c 24 48 c7 44 24 38 b3 8a b5 41 <48> c1 eb 03 48 c7 44 24 40 30 1b c6 8a 48 8d 04 13 48 c7 44 24 48
->> RSP: 0018:ffffc90000ca7988 EFLAGS: 00000096
->> RAX: 0000000000000004 RBX: ffffc90000ca79c0 RCX: ffffffff8155b947
->> RDX: dffffc0000000000 RSI: ffff888010d20918 RDI: ffff888010d20000
->> RBP: 0000000000000006 R08: 0000000000000000 R09: ffffffff8ebb477f
->> R10: fffffbfff1d768ef R11: 000000004fb6aa4b R12: 0000000000000006
->> R13: dffffc0000000000 R14: ffff888010d20918 R15: 0000000000000022
->> FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 00007f8ffcf99000 CR3: 000000001b2e7000 CR4: 00000000001506f0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>   mark_held_locks+0x9f/0xe0 kernel/locking/lockdep.c:4011
->>   __trace_hardirqs_on_caller kernel/locking/lockdep.c:4037 [inline]
->>   lockdep_hardirqs_on_prepare kernel/locking/lockdep.c:4097 [inline]
->>   lockdep_hardirqs_on_prepare+0x28b/0x400 kernel/locking/lockdep.c:4049
->>   trace_hardirqs_on+0x5b/0x1c0 kernel/trace/trace_preemptirq.c:49
->>   __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
->>   _raw_spin_unlock_irqrestore+0x42/0x50 kernel/locking/spinlock.c:191
->>   extract_crng drivers/char/random.c:1026 [inline]
->>   _get_random_bytes+0x229/0x670 drivers/char/random.c:1562
->>   nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:538 [inline]
->>   nsim_dev_trap_report drivers/net/netdevsim/dev.c:568 [inline]
->>   nsim_dev_trap_report_work+0x740/0xbd0 drivers/net/netdevsim/dev.c:609
->>   process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
->>   worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
->>   kthread+0x3af/0x4a0 kernel/kthread.c:292
->>   ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
->>
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>
+
+>
+> --
+> Oscar Salvador
+> SUSE L3
+
+
+
+-- 
+Yours,
+Muchun
