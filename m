@@ -2,387 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 864032B766C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 07:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24C962B768B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 07:55:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbgKRGm5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 01:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbgKRGmz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 01:42:55 -0500
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6CBC061A4D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 22:42:55 -0800 (PST)
-Received: by mail-pf1-x449.google.com with SMTP id t10so605344pfh.19
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Nov 2020 22:42:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=eIKyJoJ4Gi2fx2f4spCzwy9XjlKRevxwj2k2EH/6CwM=;
-        b=pNtN6+9csjaLC8Uu7+HDO2O/iMhqOcfQENg6e9wakyF8tet/MbuS0J9Hs+NinaMaGn
-         qNfGA1DZF9FFEZ0E3RhhW70fTn5ERPYWtw3O0ze5hzbcxRmeY1ZheJWYVkeLFMEsSdVi
-         zLpFFandWUtLov9SNhkdpCNxy2AMMu2Q/sQUik7d/VoOGXw4LtWmzbwwWM3W8uMhCuE0
-         HyLfSd8zC+3+3vL61A33N4OP0ldn3+bv47cHGcL82o8c5prAFNirnTvuGf8Gqrp2lAf9
-         Z+yMmrNXkVeI8G1cz5RFBM9ck4GYX1ODJn8wTfA5fqOV+MNMVdG7uuzoy0dycYpLwPL/
-         Y66A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=eIKyJoJ4Gi2fx2f4spCzwy9XjlKRevxwj2k2EH/6CwM=;
-        b=IRwS2oMkrXPB/cEjnoFwPN9e22adDvB5kAOwhz623kOx0vYoZO15sIbdR5pfNJmBx+
-         kjpZnvYfI6nMtq6s502iOp+fHNZ+SRW2Lc2lW4ed5LeM+nrkrHptB4kmcTnqvOVSjqcg
-         FiIptOyM8dBsPj+icdoQLyhe/UdzugbO7QAvauzOwm73jVrt3CM3scmkiE3aljWnQ9OH
-         KKEdyI0dCPllVusLvNV8/H5tHP/AAK0HEqs52YLNC0sQjtmmCZDTzKalseepDXkwT2lb
-         uCgKyvgZcKrNVY9mxEFg2zRcwkqgkeuXd3r3d8dbB2r6OQ4W0H0LNFKdkJidojAzqUx7
-         QEzg==
-X-Gm-Message-State: AOAM533Q0RWOl0BXzRin/qUHAcE35GrYeyDJVcLazckGdJQj3b01q3cI
-        ZxjeGqQ6tZhTU6y3zT4EqFQcJ7j4Zuo=
-X-Google-Smtp-Source: ABdhPJxxWNWt1b8w6O+fwRzNtV210v40fRe5HtIcmjY6IOzyhPIMfv6clHZUbQQMKSkQZTRwM1axc67u7a8=
-Sender: "drosen via sendgmr" <drosen@drosen.c.googlers.com>
-X-Received: from drosen.c.googlers.com ([fda3:e722:ac3:10:24:72f4:c0a8:4e6f])
- (user=drosen job=sendgmr) by 2002:a17:90a:e658:: with SMTP id
- ep24mr2771964pjb.171.1605681775281; Tue, 17 Nov 2020 22:42:55 -0800 (PST)
-Date:   Wed, 18 Nov 2020 06:42:45 +0000
-In-Reply-To: <20201118064245.265117-1-drosen@google.com>
-Message-Id: <20201118064245.265117-4-drosen@google.com>
-Mime-Version: 1.0
-References: <20201118064245.265117-1-drosen@google.com>
-X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
-Subject: [PATCH v3 3/3] f2fs: Handle casefolding with Encryption
-From:   Daniel Rosenberg <drosen@google.com>
-To:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Chao Yu <chao@kernel.org>,
+        id S1726545AbgKRGz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 01:55:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbgKRGz0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 01:55:26 -0500
+Received: from kernel.org (unknown [77.125.7.142])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6554424655;
+        Wed, 18 Nov 2020 06:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605682525;
+        bh=ijXF7PUCZPM+SCn0c+6woTjKwc8l6BuK+EQkKzOZoH8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oiKSsv9RDCQm1S/HmggqtrPvdJmgXqMRBK6MAHqh9Yd/MlSYNip+OwN+JVDWvyw4j
+         PaowVWNf6v5Qw5aC1zUcALKjA0MeiiAKYuhFd5N18H92PtIsqdOsAxh4AC1cLHAVVu
+         7NvCS9CGGb6cKrHrwQ+X3wdidxAmVeF4uLboBzI8=
+Date:   Wed, 18 Nov 2020 08:55:09 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v9 6/9] secretmem: add memcg accounting
+Message-ID: <20201118065509.GK370813@kernel.org>
+References: <20201117162932.13649-1-rppt@kernel.org>
+ <20201117162932.13649-7-rppt@kernel.org>
+ <20201117193358.GB109785@carbon.dhcp.thefacebook.com>
+ <CALvZod5mJnR2DXoYTbp9RX4uR7zVyqAPfD+XKpqXKgxaNyJ1VA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod5mJnR2DXoYTbp9RX4uR7zVyqAPfD+XKpqXKgxaNyJ1VA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Expand f2fs's casefolding support to include encrypted directories.  To
-index casefolded+encrypted directories, we use the SipHash of the
-casefolded name, keyed by a key derived from the directory's fscrypt
-master key.  This ensures that the dirhash doesn't leak information
-about the plaintext filenames.
+On Tue, Nov 17, 2020 at 12:02:01PM -0800, Shakeel Butt wrote:
+> On Tue, Nov 17, 2020 at 11:49 AM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > On Tue, Nov 17, 2020 at 06:29:29PM +0200, Mike Rapoport wrote:
+> > > From: Mike Rapoport <rppt@linux.ibm.com>
+> > >
+> > > Account memory consumed by secretmem to memcg. The accounting is updated
+> > > when the memory is actually allocated and freed.
+> > >
+> > > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> [snip]
+> > >
+> > > +static int secretmem_account_pages(struct page *page, gfp_t gfp, int order)
+> > > +{
+> > > +     int err;
+> > > +
+> > > +     err = memcg_kmem_charge_page(page, gfp, order);
+> 
+> I haven't looked at the whole series but it seems like these pages
+> will be mapped into the userspace, so this patch has dependency on
+> Roman's "mm: allow mapping
+> accounted kernel pages to userspace" patch series.
 
-Encryption keys are unavailable during roll-forward recovery, so we
-can't compute the dirhash when recovering a new dentry in an encrypted +
-casefolded directory.  To avoid having to force a checkpoint when a new
-file is fsync'ed, store the dirhash on-disk appended to i_name.
+Yes, that's why I rebased the patches on top of mmotm.
 
-This patch incorporates work by Eric Biggers <ebiggers@google.com>
-and Jaegeuk Kim <jaegeuk@kernel.org>.
-
-Co-developed-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/f2fs/dir.c      | 98 +++++++++++++++++++++++++++++++++++-----------
- fs/f2fs/f2fs.h     |  8 ++--
- fs/f2fs/hash.c     | 11 +++++-
- fs/f2fs/inline.c   |  4 ++
- fs/f2fs/recovery.c | 12 +++++-
- fs/f2fs/super.c    |  6 ---
- 6 files changed, 106 insertions(+), 33 deletions(-)
-
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 71fdf5076461..82b58d1f80eb 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-  */
-+#include <asm/unaligned.h>
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include <linux/sched/signal.h>
-@@ -206,30 +207,55 @@ static struct f2fs_dir_entry *find_in_block(struct inode *dir,
- /*
-  * Test whether a case-insensitive directory entry matches the filename
-  * being searched for.
-+ *
-+ * Returns 1 for a match, 0 for no match, and -errno on an error.
-  */
--static bool f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
-+static int f2fs_match_ci_name(const struct inode *dir, const struct qstr *name,
- 			       const u8 *de_name, u32 de_name_len)
- {
- 	const struct super_block *sb = dir->i_sb;
- 	const struct unicode_map *um = sb->s_encoding;
-+	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
- 	struct qstr entry = QSTR_INIT(de_name, de_name_len);
- 	int res;
- 
-+	if (IS_ENCRYPTED(dir)) {
-+		const struct fscrypt_str encrypted_name =
-+			FSTR_INIT((u8 *)de_name, de_name_len);
-+
-+		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(dir)))
-+			return -EINVAL;
-+
-+		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-+		if (!decrypted_name.name)
-+			return -ENOMEM;
-+		res = fscrypt_fname_disk_to_usr(dir, 0, 0, &encrypted_name,
-+						&decrypted_name);
-+		if (res < 0)
-+			goto out;
-+		entry.name = decrypted_name.name;
-+		entry.len = decrypted_name.len;
-+	}
-+
- 	res = utf8_strncasecmp_folded(um, name, &entry);
--	if (res < 0) {
--		/*
--		 * In strict mode, ignore invalid names.  In non-strict mode,
--		 * fall back to treating them as opaque byte sequences.
--		 */
--		if (sb_has_strict_encoding(sb) || name->len != entry.len)
--			return false;
--		return !memcmp(name->name, entry.name, name->len);
-+	/*
-+	 * In strict mode, ignore invalid names.  In non-strict mode,
-+	 * fall back to treating them as opaque byte sequences.
-+	 */
-+	if (res < 0 && !sb_has_strict_encoding(sb)) {
-+		res = name->len == entry.len &&
-+				memcmp(name->name, entry.name, name->len) == 0;
-+	} else {
-+		/* utf8_strncasecmp_folded returns 0 on match */
-+		res = (res == 0);
- 	}
--	return res == 0;
-+out:
-+	kfree(decrypted_name.name);
-+	return res;
- }
- #endif /* CONFIG_UNICODE */
- 
--static inline bool f2fs_match_name(const struct inode *dir,
-+static inline int f2fs_match_name(const struct inode *dir,
- 				   const struct f2fs_filename *fname,
- 				   const u8 *de_name, u32 de_name_len)
- {
-@@ -256,6 +282,7 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
- 	struct f2fs_dir_entry *de;
- 	unsigned long bit_pos = 0;
- 	int max_len = 0;
-+	int res = 0;
- 
- 	if (max_slots)
- 		*max_slots = 0;
-@@ -273,10 +300,15 @@ struct f2fs_dir_entry *f2fs_find_target_dentry(const struct f2fs_dentry_ptr *d,
- 			continue;
- 		}
- 
--		if (de->hash_code == fname->hash &&
--		    f2fs_match_name(d->inode, fname, d->filename[bit_pos],
--				    le16_to_cpu(de->name_len)))
--			goto found;
-+		if (de->hash_code == fname->hash) {
-+			res = f2fs_match_name(d->inode, fname,
-+					      d->filename[bit_pos],
-+					      le16_to_cpu(de->name_len));
-+			if (res < 0)
-+				return ERR_PTR(res);
-+			if (res)
-+				goto found;
-+		}
- 
- 		if (max_slots && max_len > *max_slots)
- 			*max_slots = max_len;
-@@ -326,7 +358,11 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
- 		}
- 
- 		de = find_in_block(dir, dentry_page, fname, &max_slots);
--		if (de) {
-+		if (IS_ERR(de)) {
-+			*res_page = ERR_CAST(de);
-+			de = NULL;
-+			break;
-+		} else if (de) {
- 			*res_page = dentry_page;
- 			break;
- 		}
-@@ -448,17 +484,39 @@ void f2fs_set_link(struct inode *dir, struct f2fs_dir_entry *de,
- 	f2fs_put_page(page, 1);
- }
- 
--static void init_dent_inode(const struct f2fs_filename *fname,
-+static void init_dent_inode(struct inode *dir, struct inode *inode,
-+			    const struct f2fs_filename *fname,
- 			    struct page *ipage)
- {
- 	struct f2fs_inode *ri;
- 
-+	if (!fname) /* tmpfile case? */
-+		return;
-+
- 	f2fs_wait_on_page_writeback(ipage, NODE, true, true);
- 
- 	/* copy name info. to this inode page */
- 	ri = F2FS_INODE(ipage);
- 	ri->i_namelen = cpu_to_le32(fname->disk_name.len);
- 	memcpy(ri->i_name, fname->disk_name.name, fname->disk_name.len);
-+	if (IS_ENCRYPTED(dir)) {
-+		file_set_enc_name(inode);
-+		/*
-+		 * Roll-forward recovery doesn't have encryption keys available,
-+		 * so it can't compute the dirhash for encrypted+casefolded
-+		 * filenames.  Append it to i_name if possible.  Else, disable
-+		 * roll-forward recovery of the dentry (i.e., make fsync'ing the
-+		 * file force a checkpoint) by setting LOST_PINO.
-+		 */
-+		if (IS_CASEFOLDED(dir)) {
-+			if (fname->disk_name.len + sizeof(f2fs_hash_t) <=
-+			    F2FS_NAME_LEN)
-+				put_unaligned(fname->hash, (f2fs_hash_t *)
-+					&ri->i_name[fname->disk_name.len]);
-+			else
-+				file_lost_pino(inode);
-+		}
-+	}
- 	set_page_dirty(ipage);
- }
- 
-@@ -541,11 +599,7 @@ struct page *f2fs_init_inode_metadata(struct inode *inode, struct inode *dir,
- 			return page;
- 	}
- 
--	if (fname) {
--		init_dent_inode(fname, page);
--		if (IS_ENCRYPTED(dir))
--			file_set_enc_name(inode);
--	}
-+	init_dent_inode(dir, inode, fname, page);
- 
- 	/*
- 	 * This file should be checkpointed during fsync.
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 62b4f31d30e2..878308736761 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -533,9 +533,11 @@ struct f2fs_filename {
- #ifdef CONFIG_UNICODE
- 	/*
- 	 * For casefolded directories: the casefolded name, but it's left NULL
--	 * if the original name is not valid Unicode or if the filesystem is
--	 * doing an internal operation where usr_fname is also NULL.  In these
--	 * cases we fall back to treating the name as an opaque byte sequence.
-+	 * if the original name is not valid Unicode, if the directory is both
-+	 * casefolded and encrypted and its encryption key is unavailable, or if
-+	 * the filesystem is doing an internal operation where usr_fname is also
-+	 * NULL.  In all these cases we fall back to treating the name as an
-+	 * opaque byte sequence.
- 	 */
- 	struct fscrypt_str cf_name;
- #endif
-diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-index de841aaf3c43..e3beac546c63 100644
---- a/fs/f2fs/hash.c
-+++ b/fs/f2fs/hash.c
-@@ -111,7 +111,9 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname)
- 		 * If the casefolded name is provided, hash it instead of the
- 		 * on-disk name.  If the casefolded name is *not* provided, that
- 		 * should only be because the name wasn't valid Unicode, so fall
--		 * back to treating the name as an opaque byte sequence.
-+		 * back to treating the name as an opaque byte sequence.  Note
-+		 * that to handle encrypted directories, the fallback must use
-+		 * usr_fname (plaintext) rather than disk_name (ciphertext).
- 		 */
- 		WARN_ON_ONCE(!fname->usr_fname->name);
- 		if (fname->cf_name.name) {
-@@ -121,6 +123,13 @@ void f2fs_hash_filename(const struct inode *dir, struct f2fs_filename *fname)
- 			name = fname->usr_fname->name;
- 			len = fname->usr_fname->len;
- 		}
-+		if (IS_ENCRYPTED(dir)) {
-+			struct qstr tmp = QSTR_INIT(name, len);
-+
-+			fname->hash =
-+				cpu_to_le32(fscrypt_fname_siphash(dir, &tmp));
-+			return;
-+		}
- 	}
- #endif
- 	fname->hash = cpu_to_le32(TEA_hash_name(name, len));
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 70384e31788d..92e9852d316a 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -332,6 +332,10 @@ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
- 	make_dentry_ptr_inline(dir, &d, inline_dentry);
- 	de = f2fs_find_target_dentry(&d, fname, NULL);
- 	unlock_page(ipage);
-+	if (IS_ERR(de)) {
-+		*res_page = ERR_CAST(de);
-+		de = NULL;
-+	}
- 	if (de)
- 		*res_page = ipage;
- 	else
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 4f12ade6410a..0947d36af1a8 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-  *             http://www.samsung.com/
-  */
-+#include <asm/unaligned.h>
- #include <linux/fs.h>
- #include <linux/f2fs_fs.h>
- #include "f2fs.h"
-@@ -128,7 +129,16 @@ static int init_recovered_filename(const struct inode *dir,
- 	}
- 
- 	/* Compute the hash of the filename */
--	if (IS_CASEFOLDED(dir)) {
-+	if (IS_ENCRYPTED(dir) && IS_CASEFOLDED(dir)) {
-+		/*
-+		 * In this case the hash isn't computable without the key, so it
-+		 * was saved on-disk.
-+		 */
-+		if (fname->disk_name.len + sizeof(f2fs_hash_t) > F2FS_NAME_LEN)
-+			return -EINVAL;
-+		fname->hash = get_unaligned((f2fs_hash_t *)
-+				&raw_inode->i_name[fname->disk_name.len]);
-+	} else if (IS_CASEFOLDED(dir)) {
- 		err = f2fs_init_casefolded_name(dir, fname);
- 		if (err)
- 			return err;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index f51d52591c99..42293b7ceaf2 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3399,12 +3399,6 @@ static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
- 		struct unicode_map *encoding;
- 		__u16 encoding_flags;
- 
--		if (f2fs_sb_has_encrypt(sbi)) {
--			f2fs_err(sbi,
--				"Can't mount with encoding and encryption");
--			return -EINVAL;
--		}
--
- 		if (f2fs_sb_read_encoding(sbi->raw_super, &encoding_info,
- 					  &encoding_flags)) {
- 			f2fs_err(sbi,
 -- 
-2.29.2.454.gaff20da3a2-goog
-
+Sincerely yours,
+Mike.
