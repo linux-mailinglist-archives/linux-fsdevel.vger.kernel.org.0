@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 190E72B7910
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 09:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7882B7913
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 09:48:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbgKRIsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1727005AbgKRIsZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 18 Nov 2020 03:48:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42860 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbgKRIsY (ORCPT
+        with ESMTP id S1726107AbgKRIsZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 03:48:24 -0500
+        Wed, 18 Nov 2020 03:48:25 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCEE7C0613D4;
-        Wed, 18 Nov 2020 00:48:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14745C0613D4;
+        Wed, 18 Nov 2020 00:48:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=JcB9e14ZTBoVWi3xdlC8mpSR3JW9dN3IR752p30j0qE=; b=NU91cq3Thn62+S87BXdw/AgTnO
-        9uK6cfXrVF9yEmA7gnhhmrl2MGNUcw9zuMUuI9hT67RLy+rD4GPNSaJHyxowUOAxm138/fc2plNb4
-        XuymtZouAkEWfW9SYiaTL1h8ium+W1M+d0plwtKeHozF9b78iR3IbJAH7THKQ5q9+EOEA67NxaQ+a
-        sRuv7GeCq8Iai/OUyr+UoOseqMpOlQBsZuaoZRCTte5XcJjQ0cWOaWQaAJct5Q6R49nWqcs+mT/qa
-        3mreP00X2BL79i88S4UYKH6hvnklYD2z0TokXDz3qFO3qzztG5kmXwkN8YZHjWH1I0vBdaXznVot0
-        Kok8pY9Q==;
+        bh=TGRxj3P5fN3QWbEKVTDt35+3igPcA4rCa+2EvBLtC8g=; b=PneJaAwHQHJWZMHR7k5+0kk3SW
+        A637+tLVo0+wFYquvEJFrDmJGArQtG1KOZwaGCDcb5uwjoCpzXm5p38WC3Z79c3W1Swj1SNUBRNa6
+        rcFaHgHlsCggXHjqeabUB4vl/TxH3BbslIfvIWOw76bNGryHFS0oOO6QGe02Z/szHszDuZfZaVGF7
+        23TDL9jueG8glTxv5jhe+z4KkCNXNKIuP3jUqJ8Fp21K4ZBhqs9AfHyhYybRkG2we41vboVqG0XXs
+        mAy1tiCpbrwoXa0Ibko7TJrxx/UZnZMUdAbbu4bn9DFirVnGNcjP7fIL0fwtGBVYjU1KM/a0NOzqV
+        GyvwqgEA==;
 Received: from [2001:4bb8:18c:31ba:32b1:ec66:5459:36a] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kfJ8G-0007kK-3j; Wed, 18 Nov 2020 08:48:04 +0000
+        id 1kfJ8H-0007kQ-Oc; Wed, 18 Nov 2020 08:48:06 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
@@ -38,9 +38,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 01/20] blk-cgroup: fix a hd_struct leak in blkcg_fill_root_iostats
-Date:   Wed, 18 Nov 2020 09:47:41 +0100
-Message-Id: <20201118084800.2339180-2-hch@lst.de>
+Subject: [PATCH 02/20] block: remove a duplicate __disk_get_part prototype
+Date:   Wed, 18 Nov 2020 09:47:42 +0100
+Message-Id: <20201118084800.2339180-3-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201118084800.2339180-1-hch@lst.de>
 References: <20201118084800.2339180-1-hch@lst.de>
@@ -51,26 +51,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-disk_get_part needs to be paired with a disk_put_part.
-
-Fixes: ef45fe470e1 ("blk-cgroup: show global disk stats in root cgroup io.stat")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/blk-cgroup.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/genhd.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index c68bdf58c9a6e1..54fbe1e80cc41a 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -849,6 +849,7 @@ static void blkcg_fill_root_iostats(void)
- 			blkg_iostat_set(&blkg->iostat.cur, &tmp);
- 			u64_stats_update_end(&blkg->iostat.sync);
- 		}
-+		disk_put_part(part);
- 	}
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 46553d6d602563..22f5b9fd96f8bf 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -250,7 +250,6 @@ static inline dev_t part_devt(struct hd_struct *part)
+ 	return part_to_dev(part)->devt;
  }
  
+-extern struct hd_struct *__disk_get_part(struct gendisk *disk, int partno);
+ extern struct hd_struct *disk_get_part(struct gendisk *disk, int partno);
+ 
+ static inline void disk_put_part(struct hd_struct *part)
 -- 
 2.29.2
 
