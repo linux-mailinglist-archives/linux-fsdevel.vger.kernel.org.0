@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4259E2B84B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 20:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBFD2B84BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 20:19:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbgKRTTR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 14:19:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
+        id S1727288AbgKRTTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 14:19:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbgKRTTQ (ORCPT
+        with ESMTP id S1727273AbgKRTTS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 14:19:16 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CDDC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 11:19:16 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id 5so1527695plj.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 11:19:16 -0800 (PST)
+        Wed, 18 Nov 2020 14:19:18 -0500
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D4B0C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 11:19:18 -0800 (PST)
+Received: by mail-pg1-x543.google.com with SMTP id t21so1870943pgl.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 11:19:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=26N9VK0p5cJDz5jy+y4kzcNpExO8G7FO7M93wxXu0UU=;
-        b=tSKDlvfhTgTzL5lokM5AI2dcEugmR/E9HDpNCOTivrWdxD/qz4lK0H37LL+0rK7ZIC
-         FctY+zpUH3tLvRQcOuG3k8JbbMWl0D6Pgc+Epr4rKcHfE5nJ1KHxjpjelPt9Xm+F2o4v
-         qa7fVlKEzWV9QVQexhqatvev+UC2CuLhYpG2NZ4VY6f00TPG7aJpGcX1GlQBc64X5abY
-         uwaYFhnR2/A4Gn53cg2jt97U45Ckl4Cg4shzqx0h0cwNu0zDEEALT7NCGlTnHMWo0eJy
-         45ZgBDiE229Zg0PoWrjuVS/iopvJoSYUTy7zL936nnvi8v1TTeCkIi2jnJViEB5cCEj8
-         OdNg==
+        bh=/zsxWF6lVDz+7AA3ZWvsvy5Wo7+pjmYoohRaGzOoct0=;
+        b=fMZQHOtxQhH+Wm6oQayF/Jis6x8CMcwPmGIwI8unHPGZdxEVNgU4wmCUbheZf7k+Qs
+         tVHAWpCOqeqNRIUY+MwW4e2wg1vf+nLmG2elJL6T6gogP69u/KqwDN7HJYoUV3dKcXPk
+         ZLeWJFBHkup16/cVKeUktQS+XbU0FguStreRV7/+pBwNMuoQW2RivtqCmakePUfS3mP9
+         omigH4NPnNBh9Ndb7T8MQXbTkTBTvNfsJxvAWl0+D343EQBGRsZymWMB5i8s2mvmvM12
+         nAJPJhNm9wTZoRkVAepPHbjTUklp+Byk4ossFZRVftpgNzqOyp2xzHNXh8SkxEHb5OvM
+         BZng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=26N9VK0p5cJDz5jy+y4kzcNpExO8G7FO7M93wxXu0UU=;
-        b=Azu7moTF30boGWDMG64+kBtVqT4s4pN1c/l+ns/zZsfMJn0Q4l06Rr7ZZ2stPoYo3t
-         irkhcKXN9atmSBt9IbbyEHu6iP95+2gVsdxy/f8es9vl5CjVNy/JircqE01dJI1m+v5U
-         oSb5EH6hpNwE0oAe824laVvQWUUfXxUkl4iccJgFkvdUdBSgBPe6n8y2QNRqQKWrcMA+
-         BAt/B1ZAi4fWrtl+TO6I0jEmrVInsfQQoCHhvhHkeCs7UZkk4rrkhOOA4daZsBtJphLs
-         S2dv7TgNyGR/ZhqSbiwbjVZ+HSlgU81mY2FU3GLBopnNiXcjqrlZ1bkZepVmfoozSLMi
-         9M0A==
-X-Gm-Message-State: AOAM531bm5UsLjjfWtcpbtaMEfKfRu/1MdPK2iqZdv5krU1i1YcS9KtC
-        hX1psKPtxhXmYg/NetOL3eDrmA==
-X-Google-Smtp-Source: ABdhPJwOzZpCBLIh+2XGUvA4XyTM1PJb6t6LcUd1nFPlredd6XVqU325+opbjlvlVe5hyiElPyY1Iw==
-X-Received: by 2002:a17:902:eb42:b029:d6:ba60:ba41 with SMTP id i2-20020a170902eb42b02900d6ba60ba41mr5653407pli.0.1605727155762;
-        Wed, 18 Nov 2020 11:19:15 -0800 (PST)
+        bh=/zsxWF6lVDz+7AA3ZWvsvy5Wo7+pjmYoohRaGzOoct0=;
+        b=ngNubyGDN7UDfzDKwT3YYGqLDPhMhSFXMmmHDyp2eytYGtR5tzjsJRYhY/9TNOOrYt
+         p1XdjxGbE6PxU2o8lIq5yIt+QoAeEAvPxNfBP7mqL0ZPXVYZ/cyy0cqia8/Jj2ylYt7Z
+         J01JkxWqWKRusv70+Wx+2Q8GX+mkwjZIjC3/SnwM1/dxW33Xw/iDD3ktEEbOpIc+p+U6
+         RGo9AYndsYzNAORP/meo9kmHUI5Op5hsp3KS3plioO2cQQuEKRVQ+DAE7LvpheBccNNt
+         CglZuELA0jZ0M7dXO22iMSMapbaud35xekOtWUKrzugAb5hH4dwHbppiXuwSRwLedJht
+         4ELg==
+X-Gm-Message-State: AOAM533OwDWQ27FeE2fPGYKqOTuUddHGwIPyVTdVUDhD3af/7wHtTGIY
+        6pKx5vTs4ZHlnL8mOeI7wudi3w==
+X-Google-Smtp-Source: ABdhPJzQACKgpEvQnGNJzbC9MgeDK/K2QmXPVpbgyKh4g6Zq+LKBixy7Ekh0P/zAGAtJVkLPSRDxFw==
+X-Received: by 2002:a17:90a:154a:: with SMTP id y10mr535452pja.6.1605727158044;
+        Wed, 18 Nov 2020 11:19:18 -0800 (PST)
 Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:8b43])
-        by smtp.gmail.com with ESMTPSA id l9sm3197221pjy.10.2020.11.18.11.19.13
+        by smtp.gmail.com with ESMTPSA id l9sm3197221pjy.10.2020.11.18.11.19.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 11:19:14 -0800 (PST)
+        Wed, 18 Nov 2020 11:19:17 -0800 (PST)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH v2 2/5] btrfs: send: write larger chunks when using stream v2
-Date:   Wed, 18 Nov 2020 11:18:46 -0800
-Message-Id: <ea4b519738e34068c3558000555b5e8f2d40c3b5.1605723600.git.osandov@fb.com>
+Subject: [PATCH v2 03/13] btrfs-progs: receive: dynamically allocate sctx->read_buf
+Date:   Wed, 18 Nov 2020 11:18:47 -0800
+Message-Id: <0621eb3c44c2057b35ceb1ce5c1270a4c9c8edc5.1605723745.git.osandov@osandov.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <cover.1605723600.git.osandov@fb.com>
 References: <cover.1605723600.git.osandov@fb.com>
@@ -63,81 +63,150 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: Boris Burkov <boris@bur.io>
 
-The length field of the send stream TLV header is 16 bits. This means
-that the maximum amount of data that can be sent for one write is 64k
-minus one. However, encoded writes must be able to send the maximum
-compressed extent (128k) in one command. To support this, send stream
-version 2 encodes the DATA attribute differently: it has no length
-field, and the length is implicitly up to the end of containing command
-(which has a 32-bit length field). Although this is necessary for
-encoded writes, normal writes can benefit from it, too.
+In send stream v2, write commands can now be an arbitrary size. For that
+reason, we can no longer allocate a fixed array in sctx for read_cmd.
+Instead, read_cmd dynamically allocates sctx->read_buf. To avoid
+needless reallocations, we reuse read_buf between read_cmd calls by also
+keeping track of the size of the allocated buffer in sctx->read_buf_sz.
 
-For v2, let's bump up the send buffer to the maximum compressed extent
-size plus 16k for the other metadata (144k total). Since this will most
-likely be vmalloc'd (and always will be after the next commit), we round
-it up to the next page since we might as well use the rest of the page
-on systems with >16k pages.
+We do the first allocation of the old default size at the start of
+processing the stream, and we only reallocate if we encounter a command
+that needs a larger buffer.
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Boris Burkov <boris@bur.io>
 ---
- fs/btrfs/send.c | 34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ common/send-stream.c | 55 ++++++++++++++++++++++++++++----------------
+ send.h               |  2 +-
+ 2 files changed, 36 insertions(+), 21 deletions(-)
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index 3cd090c3ffda..822458e6ffae 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -4918,14 +4918,27 @@ static inline u64 max_send_read_size(const struct send_ctx *sctx)
+diff --git a/common/send-stream.c b/common/send-stream.c
+index 3bd21d3f..51a6a94a 100644
+--- a/common/send-stream.c
++++ b/common/send-stream.c
+@@ -36,10 +36,10 @@ struct btrfs_send_attribute {
  
- static int put_data_header(struct send_ctx *sctx, u32 len)
- {
--	struct btrfs_tlv_header *hdr;
-+	if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
-+		/*
-+		 * In v2, the data attribute header doesn't include a length; it
-+		 * is implicitly to the end of the command.
-+		 */
-+		if (sctx->send_max_size - sctx->send_size < 2 + len)
-+			return -EOVERFLOW;
-+		put_unaligned_le16(BTRFS_SEND_A_DATA,
-+				   sctx->send_buf + sctx->send_size);
-+		sctx->send_size += 2;
-+	} else {
-+		struct btrfs_tlv_header *hdr;
+ struct btrfs_send_stream {
+ 	int fd;
+-	char read_buf[BTRFS_SEND_BUF_SIZE];
++	char *read_buf;
++	size_t read_buf_sz;
  
--	if (sctx->send_max_size - sctx->send_size < sizeof(*hdr) + len)
--		return -EOVERFLOW;
--	hdr = (struct btrfs_tlv_header *)(sctx->send_buf + sctx->send_size);
--	put_unaligned_le16(BTRFS_SEND_A_DATA, &hdr->tlv_type);
--	put_unaligned_le16(len, &hdr->tlv_len);
--	sctx->send_size += sizeof(*hdr);
-+		if (sctx->send_max_size - sctx->send_size < sizeof(*hdr) + len)
-+			return -EOVERFLOW;
-+		hdr = (struct btrfs_tlv_header *)(sctx->send_buf +
-+						  sctx->send_size);
-+		put_unaligned_le16(BTRFS_SEND_A_DATA, &hdr->tlv_type);
-+		put_unaligned_le16(len, &hdr->tlv_len);
-+		sctx->send_size += sizeof(*hdr);
+ 	int cmd;
+-	struct btrfs_cmd_header *cmd_hdr;
+ 	struct btrfs_send_attribute cmd_attrs[BTRFS_SEND_A_MAX + 1];
+ 	u32 version;
+ 
+@@ -111,11 +111,12 @@ static int read_cmd(struct btrfs_send_stream *sctx)
+ 	u32 pos;
+ 	u32 crc;
+ 	u32 crc2;
++	struct btrfs_cmd_header *cmd_hdr;
++	size_t buf_len;
+ 
+ 	memset(sctx->cmd_attrs, 0, sizeof(sctx->cmd_attrs));
+ 
+-	ASSERT(sizeof(*sctx->cmd_hdr) <= sizeof(sctx->read_buf));
+-	ret = read_buf(sctx, sctx->read_buf, sizeof(*sctx->cmd_hdr));
++	ret = read_buf(sctx, sctx->read_buf, sizeof(*cmd_hdr));
+ 	if (ret < 0)
+ 		goto out;
+ 	if (ret) {
+@@ -124,18 +125,22 @@ static int read_cmd(struct btrfs_send_stream *sctx)
+ 		goto out;
+ 	}
+ 
+-	sctx->cmd_hdr = (struct btrfs_cmd_header *)sctx->read_buf;
+-	cmd = le16_to_cpu(sctx->cmd_hdr->cmd);
+-	cmd_len = le32_to_cpu(sctx->cmd_hdr->len);
+-
+-	if (cmd_len + sizeof(*sctx->cmd_hdr) >= sizeof(sctx->read_buf)) {
+-		ret = -EINVAL;
+-		error("command length %u too big for buffer %zu",
+-				cmd_len, sizeof(sctx->read_buf));
+-		goto out;
++	cmd_hdr = (struct btrfs_cmd_header *)sctx->read_buf;
++	cmd_len = le32_to_cpu(cmd_hdr->len);
++	cmd = le16_to_cpu(cmd_hdr->cmd);
++	buf_len = sizeof(*cmd_hdr) + cmd_len;
++	if (sctx->read_buf_sz < buf_len) {
++		sctx->read_buf = realloc(sctx->read_buf, buf_len);
++		if (!sctx->read_buf) {
++			ret = -ENOMEM;
++			error("failed to reallocate read buffer for cmd");
++			goto out;
++		}
++		sctx->read_buf_sz = buf_len;
++		/* We need to reset cmd_hdr after realloc of sctx->read_buf */
++		cmd_hdr = (struct btrfs_cmd_header *)sctx->read_buf;
+ 	}
+-
+-	data = sctx->read_buf + sizeof(*sctx->cmd_hdr);
++	data = sctx->read_buf + sizeof(*cmd_hdr);
+ 	ret = read_buf(sctx, data, cmd_len);
+ 	if (ret < 0)
+ 		goto out;
+@@ -145,11 +150,12 @@ static int read_cmd(struct btrfs_send_stream *sctx)
+ 		goto out;
+ 	}
+ 
+-	crc = le32_to_cpu(sctx->cmd_hdr->crc);
+-	sctx->cmd_hdr->crc = 0;
++	crc = le32_to_cpu(cmd_hdr->crc);
++	/* in send, crc is computed with header crc = 0, replicate that */
++	cmd_hdr->crc = 0;
+ 
+ 	crc2 = crc32c(0, (unsigned char*)sctx->read_buf,
+-			sizeof(*sctx->cmd_hdr) + cmd_len);
++			sizeof(*cmd_hdr) + cmd_len);
+ 
+ 	if (crc != crc2) {
+ 		ret = -EINVAL;
+@@ -524,19 +530,28 @@ int btrfs_read_and_process_send_stream(int fd,
+ 		goto out;
+ 	}
+ 
++	sctx.read_buf = malloc(BTRFS_SEND_BUF_SIZE_V1);
++	if (!sctx.read_buf) {
++		ret = -ENOMEM;
++		error("unable to allocate send stream read buffer");
++		goto out;
 +	}
- 	return 0;
- }
++	sctx.read_buf_sz = BTRFS_SEND_BUF_SIZE_V1;
++
+ 	while (1) {
+ 		ret = read_and_process_cmd(&sctx);
+ 		if (ret < 0) {
+ 			last_err = ret;
+ 			errors++;
+ 			if (max_errors > 0 && errors >= max_errors)
+-				goto out;
++				break;
+ 		} else if (ret > 0) {
+ 			if (!honor_end_cmd)
+ 				ret = 0;
+-			goto out;
++			break;
+ 		}
+ 	}
++	free(sctx.read_buf);
  
-@@ -7255,7 +7268,12 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+ out:
+ 	if (last_err && !ret)
+diff --git a/send.h b/send.h
+index 8dd865ec..228928a0 100644
+--- a/send.h
++++ b/send.h
+@@ -33,7 +33,7 @@ extern "C" {
+ #define BTRFS_SEND_STREAM_MAGIC "btrfs-stream"
+ #define BTRFS_SEND_STREAM_VERSION 1
  
- 	sctx->clone_roots_cnt = arg->clone_sources_count;
+-#define BTRFS_SEND_BUF_SIZE SZ_64K
++#define BTRFS_SEND_BUF_SIZE_V1 SZ_64K
+ #define BTRFS_SEND_READ_SIZE (1024 * 48)
  
--	sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
-+	if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
-+		sctx->send_max_size = ALIGN(SZ_16K + BTRFS_MAX_COMPRESSED,
-+					    PAGE_SIZE);
-+	} else {
-+		sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
-+	}
- 	sctx->send_buf = kvmalloc(sctx->send_max_size, GFP_KERNEL);
- 	if (!sctx->send_buf) {
- 		ret = -ENOMEM;
+ enum btrfs_tlv_type {
 -- 
 2.29.2
 
