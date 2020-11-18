@@ -2,140 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A9702B7E6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 14:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0B652B7F21
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Nov 2020 15:10:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbgKRNik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 08:38:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42872 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725790AbgKRNik (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 08:38:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605706718;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GVUanouneBkgZu23QQLjtjHhi4h+JZ5xuyDpQF39nTs=;
-        b=L26G0aKPUFMPLrd5XfktGNG8wwZqpg3COrtXfrmZBrC2HqTOheDAiokVS3SZAdWilqGCP3
-        bw+/pgjSmFJyniE6kWPLilYtSP1FMoL9ern3/kP+/+esQzS1PW+T1XNKtRXhj6WQghMuuF
-        bL0mWCif5k5i2qQsPrrwdr/8XKhFSsQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-519-qk5WILKIOxCB2TWzC_mkgw-1; Wed, 18 Nov 2020 08:38:34 -0500
-X-MC-Unique: qk5WILKIOxCB2TWzC_mkgw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3AE7ECE64B;
-        Wed, 18 Nov 2020 13:38:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-246.rdu2.redhat.com [10.10.112.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AD6805B4BE;
-        Wed, 18 Nov 2020 13:38:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201118124826.GA17850@nautica>
-References: <20201118124826.GA17850@nautica> <1514086.1605697347@warthog.procyon.org.uk>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     dhowells@redhat.com, Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] 9p: Convert to new fscache API
+        id S1726830AbgKROJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 09:09:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60148 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726721AbgKROJF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Nov 2020 09:09:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E3BF2AC90;
+        Wed, 18 Nov 2020 14:09:03 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5DDFD1E130B; Wed, 18 Nov 2020 15:09:03 +0100 (CET)
+Date:   Wed, 18 Nov 2020 15:09:03 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 01/20] blk-cgroup: fix a hd_struct leak in
+ blkcg_fill_root_iostats
+Message-ID: <20201118140903.GF1981@quack2.suse.cz>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1561010.1605706707.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 18 Nov 2020 13:38:27 +0000
-Message-ID: <1561011.1605706707@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201118084800.2339180-2-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dominique Martinet <asmadeus@codewreck.org> wrote:
+On Wed 18-11-20 09:47:41, Christoph Hellwig wrote:
+> disk_get_part needs to be paired with a disk_put_part.
+> 
+> Fixes: ef45fe470e1 ("blk-cgroup: show global disk stats in root cgroup io.stat")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-> What's the current schedule/plan for the fscache branch merging? Will
-> you be trying this merge window next month?
+Looks good to me. You can add:
 
-That's the aim.  We have afs, ceph and nfs are about ready; I've had a go =
-at
-doing the 9p conversion, which I'll have to leave to you now, I think, and=
- am
-having a poke at cifs.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> >  (*) I have made an assumption that 9p_client_read() and write can han=
-dle I/Os
-> >      larger than a page.  If this is not the case, v9fs_req_ops will n=
-eed
-> >      clamp_length() implementing.
-> =
+								Honza
 
-> There's a max driven by the client's msize
-
-The netfs read helpers provide you with a couple of options here:
-
- (1) You can use ->clamp_length() to do multiple slices of at least 1 byte
-     each.  The assumption being that these represent parallel operations.=
-  A
-     new subreq will be generated for each slice.
-
- (2) You can go with large slices that are larger than msize, and just rea=
-d
-     part of it with each read.  After reading, the netfs helper will keep
-     calling you again to read some more of it, provided you didn't return=
- an
-     error and you at least read something.
-
-> (client->msize - P9_IOHDRSZ ; unfortunately msize is just guaranted to b=
-e >=3D
-> 4k so that means the actual IO size would be smaller in that case even i=
-f
-> that's not intended to be common)
-
-Does that mean you might be limited to reads of less than PAGE_SIZE on som=
-e
-systems (ppc64 for example)?  This isn't a problem for the read helper, bu=
-t
-might be an issue for writing from THPs.
-
-> >  (*) The cache needs to be invalidated if a 3rd-party change happens, =
-but I
-> >      haven't done that.
-> =
-
-> There's no concurrent access logic in 9p as far as I'm aware (like NFS
-> does if the mtime changes for example), so I assume we can keep ignoring
-> this.
-
-By that, I presume you mean concurrent accesses are just not permitted?
-
-> >  (*) If 9p supports DIO writes, it should invalidate a cache object wi=
-th
-> >      FSCACHE_INVAL_DIO_WRITE when one happens - thereby stopping cachi=
-ng for
-> >      that file until all file handles on it are closed.
-> =
-
-> Not 100% sure actually there is some code about it but comment says it's
-> disabled when cache is active; I'll check just found another problem
-> with some queued patch that need fixing first...
-
-Ok.
-
-> > I forgot something: netfs_subreq_terminated() needs to be called when
-> > the read is complete.  If p9_client_read() is synchronous, then that
-> > would be here,
-> =
-
-> (it is synchronous; I'll add that suggestion)
-
-Thanks.
-
-David
-
+> ---
+>  block/blk-cgroup.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+> index c68bdf58c9a6e1..54fbe1e80cc41a 100644
+> --- a/block/blk-cgroup.c
+> +++ b/block/blk-cgroup.c
+> @@ -849,6 +849,7 @@ static void blkcg_fill_root_iostats(void)
+>  			blkg_iostat_set(&blkg->iostat.cur, &tmp);
+>  			u64_stats_update_end(&blkg->iostat.sync);
+>  		}
+> +		disk_put_part(part);
+>  	}
+>  }
+>  
+> -- 
+> 2.29.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
