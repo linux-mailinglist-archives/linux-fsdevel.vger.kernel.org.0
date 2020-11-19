@@ -2,81 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64CE22B9E53
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 00:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C22ED2B9E56
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 00:32:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbgKSX14 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 18:27:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34134 "EHLO
+        id S1726619AbgKSX17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 18:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbgKSX1z (ORCPT
+        with ESMTP id S1726123AbgKSX15 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 18:27:55 -0500
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A94BC0613D4;
-        Thu, 19 Nov 2020 15:27:55 -0800 (PST)
-Received: by mail-ed1-x529.google.com with SMTP id cf17so4082243edb.2;
-        Thu, 19 Nov 2020 15:27:55 -0800 (PST)
+        Thu, 19 Nov 2020 18:27:57 -0500
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF33BC0613CF;
+        Thu, 19 Nov 2020 15:27:56 -0800 (PST)
+Received: by mail-ej1-x641.google.com with SMTP id i19so10313667ejx.9;
+        Thu, 19 Nov 2020 15:27:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Hj6U2aqGAiaI2X5w6M5RELHnxU1dby3I3F3VGsbvfn0=;
-        b=YFLwQAGTE0YpnLDSLCme7/+JVeZ7mWbhq9+csV8NsKd+ryYUi5Hx01YOWp+oPJ1El/
-         +xxyeMi5FgXjF57YEVnInu/cqd2Vn0fkKXtH8JqRJnivSnrdbhY54Qbb7cub16oP/Ksz
-         qevMWC0cZBdbSSyQsjevL1kvW8bctwx8v+WJyosuZ//JCPvbHWoSeMShntMl6EE0sLye
-         gpk9+dDQRjTPelPC6rnP5vH4vtvL1FEibTIyDbAEFMr+GwT9JsBVXhPPWQLY3R6dMpG/
-         7KWVGNZFG7jaxWDiAudkX9hUcjvUDPdlBRlcXydwySvhzvaPbWBLv3aQfKgx1nEYofj3
-         E8iA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vG0la9jq/M1aNuNVjI3CB3YTuTYiHqFptMWAHHu2/GY=;
+        b=jLyRdwi89tUGez6ZXP1Zywcgv/TYl9a3cfj3c82Sur0K7xQFtnLPahePEpIYWZDVdF
+         7kvhQAGbvUH17EwLsLHkIZZFl0BGshnpbFpvKVJkNRq2X1aeikzGVMRhcPABOdxdMGpx
+         TzCJ94gKzQqJ3B1FBH8wCMAQkDkOW5itOgxtv/NjfOBzzM7SBE9NvKbI9e7g2GnRyHrN
+         95l3s4xCF8TWXAOoC/ZYStJ5sXeiw41DXYWTQvoKj9IIjYB56ePcXTw/FaIqsHwBAFjp
+         YYctGqoBLXIs4wOAqrnyRWDxMPhWkXs+g55kmStCfqOt3jsWP4b3amGodWCJTJb0TD//
+         yG9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Hj6U2aqGAiaI2X5w6M5RELHnxU1dby3I3F3VGsbvfn0=;
-        b=GsMZa6wVBRT0n5391/oNhdheqA743PvCJiUOeOeuWJ5xHh+vwRRp3EJMp9aUflP1Br
-         li/o+io3aXarCigGMf/IfSijrpLj7ijh5PFOxkbDJ4Lrq7yRCvlrQWUcvEq0IgXInLlQ
-         ZAI26S+oDPZXW9sMxfqZ/ktxSKv2vJH2sdSvlhc4n5E4yzFhkTrs7Pb4vVl41HhC9R8H
-         zAJ2ddjfD8Op1tNs4yO2ZdlpcBRRv2NhohQVYHaIt2W0r97lxW9cFI102JGj6Bh/mqjb
-         U09JqR/SnmmLIytnMGrRsSsJChfLV/nsVRjO5aTD/wXeRZWXHIIhuaMftIIYe4S8zUnj
-         W1lw==
-X-Gm-Message-State: AOAM531UiwZhKczQbmJ+pAt2Pm35Cxn1mzhtPtlBYJTAX1Cp7gqZiKb8
-        uLDwFG3fg7hcyJgue2744u4jVavA3t31yA==
-X-Google-Smtp-Source: ABdhPJy4D6cf8mozz2d2ydDUDACHAh8kZkwGzJLcpUD9Dqsv7d200oKbilZ2sCLSm0pjDN/FhwhDRg==
-X-Received: by 2002:a05:6402:1acb:: with SMTP id ba11mr32018948edb.48.1605828473982;
-        Thu, 19 Nov 2020 15:27:53 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vG0la9jq/M1aNuNVjI3CB3YTuTYiHqFptMWAHHu2/GY=;
+        b=MtMdY9427WIioUBm4ozazEJKhcnLN/5FkF9PJRuoFdENIaWEyuZYt1SXhz/u5blNAw
+         OIe3LKh7UteWshh9ty7HAR45pWu9cEdOAcvcJESWk5920ija1sQpI4TKy25wfBAofO4h
+         RpVe1vAtRLno8Yt2LcdL7ZJQ9g4KFgwJKcsIJ4qrpmcHITVWaYFLyjxTwL84ram/YAYu
+         Wu3fmQ14jYCgOCYo45feqL0L7AXH3n4otTxCxxa8T17LktiC6RzaNztxwqloIBlwNhQP
+         3pz7Bf89q7QII4WVg4v8EE5cKfhezq2a6rFy69/M3eEp/sGoN3QUT7JhMfhpv/u+J2/6
+         IpKw==
+X-Gm-Message-State: AOAM531zevsaea3rxDO0J3aP+v2FxUOlFlQHcLGd06UuCB0ryaMSqox4
+        M0INettBwsVRrhvPq6n0dndtKKbHApMQZQ==
+X-Google-Smtp-Source: ABdhPJymWkJd80yAzlT02yp+AoXi45G9dWs64mgBWGw9Jv3MS5mr+duBUJXA8o5Mvk37jtI/ITmgxA==
+X-Received: by 2002:a17:906:a195:: with SMTP id s21mr29337444ejy.146.1605828474887;
+        Thu, 19 Nov 2020 15:27:54 -0800 (PST)
 Received: from localhost.localdomain (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id n3sm458114ejl.33.2020.11.19.15.27.53
+        by smtp.gmail.com with ESMTPSA id n3sm458114ejl.33.2020.11.19.15.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2020 15:27:53 -0800 (PST)
+        Thu, 19 Nov 2020 15:27:54 -0800 (PST)
 From:   Pavel Begunkov <asml.silence@gmail.com>
 To:     linux-fsdevel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] optimise iov_iter
-Date:   Thu, 19 Nov 2020 23:24:37 +0000
-Message-Id: <cover.1605827965.git.asml.silence@gmail.com>
+Subject: [PATCH v2 1/2] iov_iter: optimise iov_iter_npages for bvec
+Date:   Thu, 19 Nov 2020 23:24:38 +0000
+Message-Id: <ab04202d0f8c1424da47251085657c436d762785.1605827965.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1605827965.git.asml.silence@gmail.com>
+References: <cover.1605827965.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The first patch optimises iov_iter_npages() for the bvec case, and the
-second helps code generation to kill unreachable code.
+The block layer spends quite a while in iov_iter_npages(), but for the
+bvec case the number of pages is already known and stored in
+iter->nr_segs, so it can be returned immediately as an optimisation
 
-v2: same code, stylistic message changes
-    + Reviewed-by
+Perf for an io_uring benchmark with registered buffers (i.e. bvec) shows
+~1.5-2.0% total cycle count spent in iov_iter_npages(), that's dropped
+by this patch to ~0.2%.
 
-Pavel Begunkov (2):
-  iov_iter: optimise iov_iter_npages for bvec
-  iov_iter: optimise iter type checking
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ lib/iov_iter.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
- include/linux/uio.h | 10 +++++-----
- lib/iov_iter.c      | 10 +++++-----
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 1635111c5bd2..0fa7ac330acf 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1594,6 +1594,8 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+ 		return 0;
+ 	if (unlikely(iov_iter_is_discard(i)))
+ 		return 0;
++	if (unlikely(iov_iter_is_bvec(i)))
++		return min_t(int, i->nr_segs, maxpages);
+ 
+ 	if (unlikely(iov_iter_is_pipe(i))) {
+ 		struct pipe_inode_info *pipe = i->pipe;
+@@ -1614,11 +1616,9 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+ 			- p / PAGE_SIZE;
+ 		if (npages >= maxpages)
+ 			return maxpages;
+-	0;}),({
+-		npages++;
+-		if (npages >= maxpages)
+-			return maxpages;
+-	}),({
++	0;}),
++		0 /* bvecs are handled above */
++	,({
+ 		unsigned long p = (unsigned long)v.iov_base;
+ 		npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
+ 			- p / PAGE_SIZE;
 -- 
 2.24.0
 
