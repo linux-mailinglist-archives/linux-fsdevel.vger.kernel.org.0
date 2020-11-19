@@ -2,163 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4902B9054
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 11:45:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7DE2B913A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 12:43:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbgKSKnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 05:43:08 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:49962 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbgKSKnI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 05:43:08 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AJAfU5F022945;
-        Thu, 19 Nov 2020 10:42:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=DTOE+XSushUDSfqfyx9hff7Q2wdQPamXkFT+tBHMqBY=;
- b=EfJsme9lRXmaDogMd8C7qS8NGL82inkjmWUJkVvbcyJb96DBogU99I0Q+b8LHF1Meofv
- XWJGnisbiNCkwtDmMNrf4W5Dni/AYK39Bdmu8M5e950H1oDZYLk9yrQcm2v+cW+IHarE
- P+Oo5exoYjqLuZ2tvuVNB4i00VvdJGvorMyh3Fg/QSmgWl9KavqwmZYtx0/4Evz5HYTt
- /rEwOfBrj0vIzh3je9fiUS2CVmnfWKRLMZyq2t7i4rM5u2zVDMBInBocsxP8i0alJ8Mu
- qOfhCMPLpqYBW7X6KO1TMfVcvt6UDWXrLNeXL5edu+CbTOcTXhUU9P4LZe2Oxba8rn+N 6w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 34t4rb4v1w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Nov 2020 10:42:58 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AJAdZGY142124;
-        Thu, 19 Nov 2020 10:42:57 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 34ts0tjhe3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Nov 2020 10:42:57 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AJAgsrA001792;
-        Thu, 19 Nov 2020 10:42:54 GMT
-Received: from [192.168.1.102] (/39.109.186.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Nov 2020 02:42:54 -0800
-Subject: Re: [PATCH v10 07/41] btrfs: disallow space_cache in ZONED mode
-To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com
-Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <2276011f71705fff9e6a20966e7f6c601867ecbc.1605007036.git.naohiro.aota@wdc.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <f922fa0e-1c9f-dd2a-2595-fcd88d29420e@oracle.com>
-Date:   Thu, 19 Nov 2020 18:42:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.3
+        id S1726867AbgKSLik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 06:38:40 -0500
+Received: from mout.gmx.net ([212.227.17.21]:41155 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbgKSLij (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Nov 2020 06:38:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1605785908;
+        bh=+xqA5h04p1WJic/U4SY2QEmnuC6Dx95ArMxFz5fjUyo=;
+        h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:References;
+        b=eCD1t1ZUpoOWbCrt3KdIrg9jZ273VyjK7VFa8pKBBcgeKu759csrcpXNFowzyIXRI
+         pzxDtzECbhZIbtiSdl+UK37zJhyLI1ziJxqqJISBJlIoJpNIJ6G5YGDM4EyVTQsCb2
+         Qq3cBdUB2QEzVs1wZNi055UBk+RJi1xARw/T9eOo=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [172.26.22.105] ([213.196.212.61]) by mail.gmx.com (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M4b1y-1ke4NJ3nHy-001gGY; Thu, 19
+ Nov 2020 12:38:28 +0100
+Date:   Thu, 19 Nov 2020 12:38:28 +0100 (CET)
+From:   Johannes Schindelin <Johannes.Schindelin@gmx.de>
+X-X-Sender: virtualbox@gitforwindows.org
+To:     =?UTF-8?Q?=C3=86var_Arnfj=C3=B6r=C3=B0_Bjarmason?= 
+        <avarab@gmail.com>
+cc:     Johannes Sixt <j6t@kdbg.org>, git@vger.kernel.org, tytso@mit.edu,
+        Junio C Hamano <gitster@pobox.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when
+ core.fsyncObjectFiles
+In-Reply-To: <87a6xii5gs.fsf@evledraar.gmail.com>
+Message-ID: <nycvar.QRO.7.76.6.2011191232490.56@tvgsbejvaqbjf.bet>
+References: <87sgbghdbp.fsf@evledraar.gmail.com> <20200917112830.26606-2-avarab@gmail.com> <64358b70-4fff-5dc8-6e63-2fc916bea6af@kdbg.org> <87a6xii5gs.fsf@evledraar.gmail.com>
+User-Agent: Alpine 2.21.1 (DEB 209 2017-03-23)
 MIME-Version: 1.0
-In-Reply-To: <2276011f71705fff9e6a20966e7f6c601867ecbc.1605007036.git.naohiro.aota@wdc.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9809 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- bulkscore=0 suspectscore=2 spamscore=0 malwarescore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011190079
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9809 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 phishscore=0 suspectscore=2 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011190079
+Content-Type: multipart/mixed; boundary="8323328-1223025787-1605785909=:56"
+X-Provags-ID: V03:K1:gOh0H5Gz6G1RkKrYeVDIdBa9rtyFyL5XmnK5NL2kZKhk69VFjdP
+ rzF2a6rLkkqoCTVx2JAbnwkSMfQhT5ocWaMPOmML9XshUY4l9a7YMlQIB5lwk2eF1MJlGTS
+ wbv6h0PAn03AVOmQ5b2PR5LuJ16CAK1RE8/jMRyoKnvLo4LYs59g3A2hAMCwcZxe66sBTZ1
+ re92vdGKzmBOV0CBjZFpQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kBk1mPaWx04=:AaTP7xlzDzG4aNhrPKTLak
+ zi4s0Nedr/lLtgZWCAVieSGfrXmNLawxBBIpCAhTnJhVkIQs44sEUqqcZt3/JalIFwUZIZO7H
+ nrcsdS79e+QFq2jCPSfB/Q0MU5Ej5DrTlSPgAzU45EHhAYhinjffy35aDbzkJLZ3adYL2rlx2
+ u/rFmPK7kw98gwSNiWL1uqzA29hYhpAthGeogI0Gp50tlpfcCdCv5zU5JPugVb/Ilc46UuHGL
+ cHemKO+XtuJTAjHBTL/0l4Ik72SBVAlaXGnyvp2ha/CH0a/id3au6Wxek4PWpoMR9q3LC+qxX
+ Oz2FXF9fLfxT8TSZEKwC4qp8W+ckW8sYnjbqYDR69OALeu4hxdb30r3ikqOJvPLjNuPpdUCpW
+ 8AQTDnKXrjc3J4f6gI33wNASB3p8WKP59fE0DsOPZ9DugZPClQmpHsR3sVCHGorFsXuN9WACu
+ IBCZWr9kMB57xGTj30GdNZlSLI860xoOufuCsoJ0Sg7l0b9NLxKnaUns+0CkQVFS+fz3vBKr4
+ IAH1/1WQ/mzg0TveI++j5gv3MrNrey08fh8L2/+9MTWHm6TDMJZwvVVjfVdmOokxsrth6OHpg
+ clK6NEkUxQkzdkHMgo4Bz87bO69flHtvPLDuOAxUu99imHPVBs6pUZJuff8Z5c+nIhvJVo4U8
+ uMyO/QpIvTN7+1RCCZ5S06T0ApqZ/dOJYVMWVw7Uf7s5ph4hZh62O3o/up5MghKD8+ocFC8Vm
+ SutogZym6XBG42uSQRCZbS4dqH3PECuF8TkjGQKxJTaGU4JrlK82DfdI4EEMz8No1RuElSeO6
+ lWR/S4lTGr97ZVbyJ7oDt5N7JaLn7UA/vPycjPsWQoYbUx3ZcnLZFnUL/HwLOVDIxuZDGqyd4
+ o++EoDm9aBNFma9zWYXxBlLklt3uYKihWkpXDde9U=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323328-1223025787-1605785909=:56
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> @@ -985,6 +992,8 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
->   		ret = -EINVAL;
->   
->   	}
-> +	if (!ret)
-> +		ret = btrfs_check_mountopts_zoned(info);
->   	if (!ret && btrfs_test_opt(info, SPACE_CACHE))
->   		btrfs_info(info, "disk space caching is enabled");
->   	if (!ret && btrfs_test_opt(info, FREE_SPACE_TREE))
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index 2897432eb43c..d6b8165e2c91 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -274,3 +274,21 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
->   out:
->   	return ret;
->   }
-> +
-> +int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
-> +{
-> +	if (!btrfs_is_zoned(info))
-> +		return 0;
-> +
-> +	/*
-> +	 * Space cache writing is not COWed. Disable that to avoid write
-> +	 * errors in sequential zones.
-> +	 */
-> +	if (btrfs_test_opt(info, SPACE_CACHE)) {
-> +		btrfs_err(info,
-> +			  "zoned: space cache v1 is not supported");
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-> index 52aa6af5d8dc..81c00a3ed202 100644
-> --- a/fs/btrfs/zoned.h
-> +++ b/fs/btrfs/zoned.h
-> @@ -25,6 +25,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
->   int btrfs_get_dev_zone_info(struct btrfs_device *device);
->   void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
->   int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
-> +int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info);
->   #else /* CONFIG_BLK_DEV_ZONED */
->   static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
->   				     struct blk_zone *zone)
-> @@ -48,6 +49,11 @@ static inline int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
->   	return -EOPNOTSUPP;
->   }
->   
-> +static inline int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
-> +{
-> +	return 0;
-> +}
-> +
->   #endif
->   
->   static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
-> 
+Hi =C3=86var,
 
-The whole of the above code can be replaced by..
+On Tue, 22 Sep 2020, =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason wrote:
 
--------------------
-@@ -810,8 +810,15 @@ int btrfs_parse_options(struct btrfs_fs_info *info, 
-char *options,
-                         break;
-                 case Opt_space_cache:
-                 case Opt_space_cache_version:
-                         if (token == Opt_space_cache ||
-                             strcmp(args[0].from, "v1") == 0) {
-+                               if (btrfs_is_zoned(info)) {
-+                                       btrfs_err(info,
-+                                       "zoned: space cache v1 is not 
-supported");
-+                                       ret = -EINVAL;
-+                                       goto out;
-+                               }
-                                 btrfs_clear_opt(info->mount_opt,
-                                                 FREE_SPACE_TREE);
-                                 btrfs_set_and_info(info, SPACE_CACHE,
--------------------
+> On Thu, Sep 17 2020, Johannes Sixt wrote:
+>
+> > Am 17.09.20 um 13:28 schrieb =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason:
+> >> Change the behavior of core.fsyncObjectFiles to also sync the
+> >> directory entry. I don't have a case where this broke, just going by
+> >> paranoia and the fsync(2) manual page's guarantees about its behavior=
+.
+> >>
+> >> Signed-off-by: =C3=86var Arnfj=C3=B6r=C3=B0 Bjarmason <avarab@gmail.c=
+om>
+> >> ---
+> >>  sha1-file.c | 19 ++++++++++++++-----
+> >>  1 file changed, 14 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/sha1-file.c b/sha1-file.c
+> >> index dd65bd5c68..d286346921 100644
+> >> --- a/sha1-file.c
+> >> +++ b/sha1-file.c
+> >> @@ -1784,10 +1784,14 @@ int hash_object_file(const struct git_hash_al=
+go *algo, const void *buf,
+> >>  }
+> >>
+> >>  /* Finalize a file on disk, and close it. */
+> >> -static void close_loose_object(int fd)
+> >> +static void close_loose_object(int fd, const struct strbuf *dirname)
+> >>  {
+> >> -	if (fsync_object_files)
+> >> +	int dirfd;
+> >> +	if (fsync_object_files) {
+> >>  		fsync_or_die(fd, "loose object file");
+> >> +		dirfd =3D xopen(dirname->buf, O_RDONLY);
+> >> +		fsync_or_die(dirfd, "loose object directory");
+> >
+> > Did you have the opportunity to verify that this works on Windows?
+> > Opening a directory with open(2), I mean: It's disallowed according to
+> > the docs:
+> > https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/open-=
+wopen?view=3Dvs-2019#return-value
+>
+> I did not, just did a quick hack for an RFC discussion (didn't even
+> close() that fd), but if I pursue this I'll do it properly.
+>
+> Doing some research on it now reveals that we should probably have some
+> Windows-specific code here, e.g. browsing GNUlib's source code reveals
+> that it uses FlushFileBuffers(), and that code itself is taken from
+> sqlite. SQLite also has special-case code for some Unix warts,
+> e.g. OSX's and AIX's special fsync behaviors in its src/os_unix.c
 
-Thanks.
+If I understand correctly, the idea to `fsync()` directories is to ensure
+that metadata updates (such as renames) are flushed, too?
+
+If so (and please note that my understanding of NTFS is not super deep in
+this regard), I think that we need not worry on Windows. I have come to
+believe that the `rename()` operations are flushed pretty much
+immediately, without any `FlushFileBuffers()` (or `_commit()`, as we
+actually do in `compat/mingw.h`, to convince yourself see
+https://github.com/git/git/blob/v2.29.2/compat/mingw.h#L135-L136).
+
+Directories are not mentioned in `FlushFileBuffers()`'s documentation
+(https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-flu=
+shfilebuffers)
+nor in the documentation of `_commit()`:
+https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/commit?vi=
+ew=3Dmsvc-160
+
+Therefore, I believe that there is not even a Win32 equivalent of
+`fsync()`ing directories.
+
+Ciao,
+Dscho
+
+>
+> >> +	} if (close(fd) !=3D 0) die_errno(_("error when closing loose objec=
+t
+> >> file")); }
+> >
+> > -- Hannes
+>
+>
+>
+
+--8323328-1223025787-1605785909=:56--
