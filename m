@@ -2,133 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5646F2B9A49
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 19:02:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5B672B9A51
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 19:06:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgKSSAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 13:00:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44800 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727016AbgKSSAV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 13:00:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D4904AC2D;
-        Thu, 19 Nov 2020 18:00:19 +0000 (UTC)
-Received: by lion.mk-sys.cz (Postfix, from userid 1000)
-        id 99F9D603F9; Thu, 19 Nov 2020 19:00:19 +0100 (CET)
-Message-Id: <ed4484a3dc8297296bfcd16810f7dc1976d6f7d0.1605808477.git.mkubecek@suse.cz>
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH v2] eventfd: convert to ->write_iter()
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        id S1729406AbgKSSDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 13:03:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbgKSSDS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Nov 2020 13:03:18 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F13C0613CF;
+        Thu, 19 Nov 2020 10:03:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/T+8AFyLl36EP0BJCpl/7y0TJdJH2AjtO1rZ2kV15Ho=; b=dp022ZLCgTAUhuPA52+TqG9Dq8
+        pT8vqGrYW1pWTS8qo2oRay9oXZ3bZQ4RTr3pMkcdUlYXPGyf4w0od2HZRkMFimWQ9hGdFcFdWf0PI
+        3BmJkKNKOTLfBYRmKt1HYZa6293WVZUtSLdP0SOKMqyoBHesPqyyV0T23Jo3KISkOuiOHumMU0rLs
+        6Nmtusy6xH/OnEdqZ0UfaydbgXXN0w3sJBd8/HOUzJUW7rAvuWskRYw/ZDNeB9kux4iUjCpHcKYjI
+        tYK8CydDWwAPscox0LN28xB3z9tAVH4Ngupja5uOw3XUgkegiTTMC8iVOug8Jz1Sf4BTL+TD9tdwp
+        QH06PwFA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kfoH5-0006S6-Qy; Thu, 19 Nov 2020 18:03:15 +0000
+Date:   Thu, 19 Nov 2020 18:03:15 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         linux-kernel@vger.kernel.org
-Date:   Thu, 19 Nov 2020 19:00:19 +0100 (CET)
+Subject: Re: [PATCH v2] eventfd: convert to ->write_iter()
+Message-ID: <20201119180315.GB24054@infradead.org>
+References: <ed4484a3dc8297296bfcd16810f7dc1976d6f7d0.1605808477.git.mkubecek@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ed4484a3dc8297296bfcd16810f7dc1976d6f7d0.1605808477.git.mkubecek@suse.cz>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While eventfd ->read() callback was replaced by ->read_iter() recently by
-commit 12aceb89b0bc ("eventfd: convert to f_op->read_iter()"), ->write()
-was not replaced.
+On Thu, Nov 19, 2020 at 07:00:19PM +0100, Michal Kubecek wrote:
+> While eventfd ->read() callback was replaced by ->read_iter() recently by
+> commit 12aceb89b0bc ("eventfd: convert to f_op->read_iter()"), ->write()
+> was not replaced.
+> 
+> Convert also ->write() to ->write_iter() to make the interface more
+> consistent and allow non-blocking writes from e.g. io_uring. Also
+> reorganize the code and return value handling in a similar way as it was
+> done in eventfd_read().
 
-Convert also ->write() to ->write_iter() to make the interface more
-consistent and allow non-blocking writes from e.g. io_uring. Also
-reorganize the code and return value handling in a similar way as it was
-done in eventfd_read().
-
-v2: different reasoning in commit message (no code change)
-
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
----
- fs/eventfd.c | 43 +++++++++++++++++++++----------------------
- 1 file changed, 21 insertions(+), 22 deletions(-)
-
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index df466ef81ddd..35973d216847 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -261,35 +261,36 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
- 	return sizeof(ucnt);
- }
- 
--static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
--			     loff_t *ppos)
-+static ssize_t eventfd_write(struct kiocb *iocb, struct iov_iter *from)
- {
-+	struct file *file = iocb->ki_filp;
- 	struct eventfd_ctx *ctx = file->private_data;
--	ssize_t res;
- 	__u64 ucnt;
- 	DECLARE_WAITQUEUE(wait, current);
- 
--	if (count < sizeof(ucnt))
-+	if (iov_iter_count(from) < sizeof(ucnt))
- 		return -EINVAL;
--	if (copy_from_user(&ucnt, buf, sizeof(ucnt)))
-+	if (unlikely(!copy_from_iter_full(&ucnt, sizeof(ucnt), from)))
- 		return -EFAULT;
- 	if (ucnt == ULLONG_MAX)
- 		return -EINVAL;
- 	spin_lock_irq(&ctx->wqh.lock);
--	res = -EAGAIN;
--	if (ULLONG_MAX - ctx->count > ucnt)
--		res = sizeof(ucnt);
--	else if (!(file->f_flags & O_NONBLOCK)) {
-+	if (ULLONG_MAX - ctx->count <= ucnt) {
-+		if ((file->f_flags & O_NONBLOCK) ||
-+		    (iocb->ki_flags & IOCB_NOWAIT)) {
-+			spin_unlock_irq(&ctx->wqh.lock);
-+			return -EAGAIN;
-+		}
- 		__add_wait_queue(&ctx->wqh, &wait);
--		for (res = 0;;) {
-+		for (;;) {
- 			set_current_state(TASK_INTERRUPTIBLE);
--			if (ULLONG_MAX - ctx->count > ucnt) {
--				res = sizeof(ucnt);
-+			if (ULLONG_MAX - ctx->count > ucnt)
- 				break;
--			}
- 			if (signal_pending(current)) {
--				res = -ERESTARTSYS;
--				break;
-+				__remove_wait_queue(&ctx->wqh, &wait);
-+				__set_current_state(TASK_RUNNING);
-+				spin_unlock_irq(&ctx->wqh.lock);
-+				return -ERESTARTSYS;
- 			}
- 			spin_unlock_irq(&ctx->wqh.lock);
- 			schedule();
-@@ -298,14 +299,12 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 		__remove_wait_queue(&ctx->wqh, &wait);
- 		__set_current_state(TASK_RUNNING);
- 	}
--	if (likely(res > 0)) {
--		ctx->count += ucnt;
--		if (waitqueue_active(&ctx->wqh))
--			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
--	}
-+	ctx->count += ucnt;
-+	if (waitqueue_active(&ctx->wqh))
-+		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
- 	spin_unlock_irq(&ctx->wqh.lock);
- 
--	return res;
-+	return sizeof(ucnt);
- }
- 
- #ifdef CONFIG_PROC_FS
-@@ -328,7 +327,7 @@ static const struct file_operations eventfd_fops = {
- 	.release	= eventfd_release,
- 	.poll		= eventfd_poll,
- 	.read_iter	= eventfd_read,
--	.write		= eventfd_write,
-+	.write_iter	= eventfd_write,
- 	.llseek		= noop_llseek,
- };
- 
--- 
-2.29.2
-
+But this patch does not allow non-blocking writes.  I'm really
+suspicious as you're obviously trying to hide something from us.
