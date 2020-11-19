@@ -2,108 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F0482B8923
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 01:42:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D87BF2B8A30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 03:58:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgKSAmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 19:42:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49552 "EHLO
+        id S1726216AbgKSC6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 21:58:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbgKSAmn (ORCPT
+        with ESMTP id S1726199AbgKSC6J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 19:42:43 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6AAC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 16:42:42 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id s2so1973980plr.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 16:42:42 -0800 (PST)
+        Wed, 18 Nov 2020 21:58:09 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48A1C061A04
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 18:58:07 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id j19so2888612pgg.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 18:58:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vwvOdNltri8QeG/8NJREwvHkCBGEECJcvZZE736hY4g=;
-        b=lhpPTrHGYU5nVBFNX5ArJFc05EAOTtLgysWxOa4ciurgWUviyxGN4iZV78F5KktPe6
-         J4MCAKsgOFCcyJ2VT/JZ6qLQzJG2+we59Dz3bsFjpDv9ABcKElxQLjX7Vt9Bn3ob86gh
-         ok5v0yLYNsdq+N0xo7w+un75v7trNkUBSw0TY=
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nMDyMKTQeFRc7yeGhXHo8zHPJWY1P6b/K25pZmIgFYk=;
+        b=EfXFS93VEaptGzfoi7iQxHBA+fqlyRqA84rwc/Dhoi7kvNk2u5QrUVyxb80KKEGi1C
+         JJIRX7w2Xz7F90CSAjum4I26DjDKqOhx4WwXaUg8mkQMd8r8f4MMYGmqY8Yf5XMnDUjg
+         pDipGbKTkFVsWPZTeRMSM/0jR6exchpPeaGJkpeGnKQKQaDzJ4qRHsSwwnAmApe1Uwld
+         PJNack2y/Y2wbnEUfJDZ3zebg8Hu/StYU8EjyBH/9g19KITMcSBSrOOobga7IucPLiag
+         SRNdUL69P3fuEL5xMzXwCZVzYYe0CrJU5uCppQPlIWTkwrkn8BpmnieOepvTdYW2IRHI
+         Z6Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vwvOdNltri8QeG/8NJREwvHkCBGEECJcvZZE736hY4g=;
-        b=Ds60BnkBK6b9hU2udJdXCieGLgAIvn26w4HqcACxhLDFBG4o+VqFdG6xHFxsAYLZxX
-         ZlPFcjhhQYBGmzW+tf8iVAz2F+V7ewR5vBls0x1balT51LWadDSemq1v8q5pK8NcEzi6
-         ZwhmJqsSyoT879QAGG0JUJXy69Z8QVTeoz/ItS4Kg8wzjyQop6jOBFEtw7SKnky9vOLo
-         SlVgwDd83PkC5phtWi442AwVznEgVoQWYRo4jBbDbaSzBDGTohVUw2pQPHDIGDL6FGTj
-         W6JD0SZvj1i1Xu0VfBYxHmfE57ck/TI2U6i2+W9aSFzFhtG4inwyuR+oq46jF+63HiN8
-         sGBQ==
-X-Gm-Message-State: AOAM530ZZX+97zaDBMeNHP++oo6Mz/lYz/0+W3WmSA34R8tsSFIDnBF8
-        BIlkxFgmQelbxESUcqPmxjCJCQ==
-X-Google-Smtp-Source: ABdhPJyTII3cKUvBoUVCBDit8YdMBKcwl776/hYEqYpBNBBnaf7gugKq37j+rUmyQ9DOz0Nk5sJ4bg==
-X-Received: by 2002:a17:902:9689:b029:d8:e310:2fa2 with SMTP id n9-20020a1709029689b02900d8e3102fa2mr7104334plp.42.1605746562426;
-        Wed, 18 Nov 2020 16:42:42 -0800 (PST)
-Received: from localhost (2001-44b8-111e-5c00-a5b9-f4da-efe6-5d34.static.ipv6.internode.on.net. [2001:44b8:111e:5c00:a5b9:f4da:efe6:5d34])
-        by smtp.gmail.com with ESMTPSA id y5sm3754343pja.52.2020.11.18.16.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2020 16:42:41 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     David.Laight@ACULAB.COM, hch@infradead.org,
-        Daniel Axtens <dja@axtens.net>
-Subject: [PATCH RESEND v2] fs/select.c: batch user writes in do_sys_poll
-Date:   Thu, 19 Nov 2020 11:42:35 +1100
-Message-Id: <20201119004235.173373-1-dja@axtens.net>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nMDyMKTQeFRc7yeGhXHo8zHPJWY1P6b/K25pZmIgFYk=;
+        b=TO8ld6bvLz6AtW/PSRHRykbOKPrqPAVM0MAoEHINDcU9mtjKvmJ2vaE1bPDUzjwHZ4
+         brSFMPar21xwnGjF+LGHFQFgO53F3sJgXyo6zWKyRRY4+UkYF8Aqe/GtVAlUviu3vJ/A
+         p/KkSTu24fz9R+S3PapbjnmjTnQgRY/DxhVw0P79VWR9+EexL1Gi2+LYXeknh0cehpML
+         iyMbMyGW//lNBJYKinGBYBsBjWNwbru8Vw+RKuyGoevyX53YDJ/ifVeFd3lnxxIB+BwU
+         sXGpZ1TOJYMEKCFOgAsKkDY5r99jj+7gf4SLR0RfvadCpnp+rbxKkaKFYu1AMtn9OpdM
+         c/4w==
+X-Gm-Message-State: AOAM533+HzmITD2xLXF3mQODqDFBKApgsBjpG5JGttbmrVuzwn49HdY2
+        B1w8F9YEkmbDrne3sPq+hebthU/JGcb1bLUUNaTIYg==
+X-Google-Smtp-Source: ABdhPJz4TyvVow/bo1K81Z+vBi5tNHWEfGc/bR90jI2nZwU8E3rePDbcio8+1u/XpwDH+CzmBWGMYqJYSsw5rLAuOnw=
+X-Received: by 2002:aa7:8105:0:b029:18e:c8d9:2c24 with SMTP id
+ b5-20020aa781050000b029018ec8d92c24mr7167536pfi.49.1605754686646; Wed, 18 Nov
+ 2020 18:58:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201113105952.11638-1-songmuchun@bytedance.com>
+ <20201113105952.11638-4-songmuchun@bytedance.com> <697ee4b7-edcc-e3b8-676c-935ec445c05d@oracle.com>
+In-Reply-To: <697ee4b7-edcc-e3b8-676c-935ec445c05d@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Thu, 19 Nov 2020 10:57:28 +0800
+Message-ID: <CAMZfGtW6f-zPxT6m7vvhEaq8R9GnwZFar39NOgYTbhLPBJEq5Q@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v4 03/21] mm/hugetlb: Introduce a new
+ config HUGETLB_PAGE_FREE_VMEMMAP
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When returning results to userspace, do_sys_poll repeatedly calls
-put_user() - once per fd that it's watching.
+On Thu, Nov 19, 2020 at 6:39 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 11/13/20 2:59 AM, Muchun Song wrote:
+> > The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
+> > whether to enable the feature of freeing unused vmemmap associated
+> > with HugeTLB pages. Now only support x86.
+> >
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  arch/x86/mm/init_64.c |  2 +-
+> >  fs/Kconfig            | 14 ++++++++++++++
+> >  2 files changed, 15 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> > index 0a45f062826e..0435bee2e172 100644
+> > --- a/arch/x86/mm/init_64.c
+> > +++ b/arch/x86/mm/init_64.c
+> > @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
+> >
+> >  static void __init register_page_bootmem_info(void)
+> >  {
+> > -#ifdef CONFIG_NUMA
+> > +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
+> >       int i;
+> >
+> >       for_each_online_node(i)
+> > diff --git a/fs/Kconfig b/fs/Kconfig
+> > index 976e8b9033c4..67e1bc99574f 100644
+> > --- a/fs/Kconfig
+> > +++ b/fs/Kconfig
+> > @@ -245,6 +245,20 @@ config HUGETLBFS
+> >  config HUGETLB_PAGE
+> >       def_bool HUGETLBFS
+> >
+> > +config HUGETLB_PAGE_FREE_VMEMMAP
+> > +     def_bool HUGETLB_PAGE
+> > +     depends on X86
+> > +     depends on SPARSEMEM_VMEMMAP
+> > +     depends on HAVE_BOOTMEM_INFO_NODE
+> > +     help
+> > +       When using SPARSEMEM_VMEMMAP, the system can save up some memory
+>
+> Should that read,
+>
+>         When using HUGETLB_PAGE_FREE_VMEMMAP, ...
+>
+> as the help message is for this config option.
 
-This means that on architectures that support some form of
-kernel-to-userspace access protection, we end up enabling and disabling
-access once for each file descripter we're watching. This is inefficent
-and we can improve things. We could do careful batching of the opening
-and closing of the access window, or we could just copy the entire walk
-entries structure. While that copies more data, it potentially does so
-more efficiently, and the overhead is much less than the lock/unlock
-overhead.
+Got it. Thanks
 
-Unscientific benchmarking with the poll2_threads microbenchmark from
-will-it-scale, run as `./poll2_threads -t 1 -s 15`:
+>
+> --
+> Mike Kravetz
 
-  - Bare-metal Power9 with KUAP: ~49% speed-up
-  - VM on amd64 laptop with SMAP: ~25% speed-up
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
----
- fs/select.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/fs/select.c b/fs/select.c
-index ebfebdfe5c69..4a74d1353ccb 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -1012,12 +1012,10 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
- 	poll_freewait(&table);
- 
- 	for (walk = head; walk; walk = walk->next) {
--		struct pollfd *fds = walk->entries;
--		int j;
--
--		for (j = 0; j < walk->len; j++, ufds++)
--			if (__put_user(fds[j].revents, &ufds->revents))
--				goto out_fds;
-+		if (copy_to_user(ufds, walk->entries,
-+				 sizeof(struct pollfd) * walk->len))
-+			goto out_fds;
-+		ufds += walk->len;
-   	}
- 
- 	err = fdcount;
 -- 
-2.25.1
-
+Yours,
+Muchun
