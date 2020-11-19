@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D87BF2B8A30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 03:58:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 353AB2B8A37
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 04:00:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbgKSC6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Nov 2020 21:58:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42044 "EHLO
+        id S1726255AbgKSDAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Nov 2020 22:00:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgKSC6J (ORCPT
+        with ESMTP id S1725964AbgKSDAr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Nov 2020 21:58:09 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48A1C061A04
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 18:58:07 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id j19so2888612pgg.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 18:58:07 -0800 (PST)
+        Wed, 18 Nov 2020 22:00:47 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23C50C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 19:00:46 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id 34so2881963pgp.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 19:00:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nMDyMKTQeFRc7yeGhXHo8zHPJWY1P6b/K25pZmIgFYk=;
-        b=EfXFS93VEaptGzfoi7iQxHBA+fqlyRqA84rwc/Dhoi7kvNk2u5QrUVyxb80KKEGi1C
-         JJIRX7w2Xz7F90CSAjum4I26DjDKqOhx4WwXaUg8mkQMd8r8f4MMYGmqY8Yf5XMnDUjg
-         pDipGbKTkFVsWPZTeRMSM/0jR6exchpPeaGJkpeGnKQKQaDzJ4qRHsSwwnAmApe1Uwld
-         PJNack2y/Y2wbnEUfJDZ3zebg8Hu/StYU8EjyBH/9g19KITMcSBSrOOobga7IucPLiag
-         SRNdUL69P3fuEL5xMzXwCZVzYYe0CrJU5uCppQPlIWTkwrkn8BpmnieOepvTdYW2IRHI
-         Z6Nw==
+        bh=rRdwwTYB3THrODEV2neHSr1r681wlaqYPsv7e09Hwos=;
+        b=LM92KKlORG+zZ7ND3In9NvLTUuK9re084Me4WdGG6FNQ/FegfXF8bEDKTnKVS8A54b
+         bBZYilNcw10GGxe98u61T7cHexzpuGG9oumoCCgI0cTCI8hi9HcmJNw0aJuVCfn5eNtH
+         PhSKFNxOIv1A4Xtht3ctoaHXv66tBIz/sPAckb0N6dszngr9dU5iHarjcO2qpFmEnAHL
+         leBBlyeB/4Nl9L4E5XMn4pBxymZsMlRFFCPA3aDCRchZMPJMvhuw8LyaUFMDp5BOyuUw
+         +WMxlr72ywZgxXAuhdDi0izJsqaZRJ+FtUrpGsk+5oLU6DLyGoDvE2jZBy9Qi3pRoYYo
+         jpCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nMDyMKTQeFRc7yeGhXHo8zHPJWY1P6b/K25pZmIgFYk=;
-        b=TO8ld6bvLz6AtW/PSRHRykbOKPrqPAVM0MAoEHINDcU9mtjKvmJ2vaE1bPDUzjwHZ4
-         brSFMPar21xwnGjF+LGHFQFgO53F3sJgXyo6zWKyRRY4+UkYF8Aqe/GtVAlUviu3vJ/A
-         p/KkSTu24fz9R+S3PapbjnmjTnQgRY/DxhVw0P79VWR9+EexL1Gi2+LYXeknh0cehpML
-         iyMbMyGW//lNBJYKinGBYBsBjWNwbru8Vw+RKuyGoevyX53YDJ/ifVeFd3lnxxIB+BwU
-         sXGpZ1TOJYMEKCFOgAsKkDY5r99jj+7gf4SLR0RfvadCpnp+rbxKkaKFYu1AMtn9OpdM
-         c/4w==
-X-Gm-Message-State: AOAM533+HzmITD2xLXF3mQODqDFBKApgsBjpG5JGttbmrVuzwn49HdY2
-        B1w8F9YEkmbDrne3sPq+hebthU/JGcb1bLUUNaTIYg==
-X-Google-Smtp-Source: ABdhPJz4TyvVow/bo1K81Z+vBi5tNHWEfGc/bR90jI2nZwU8E3rePDbcio8+1u/XpwDH+CzmBWGMYqJYSsw5rLAuOnw=
-X-Received: by 2002:aa7:8105:0:b029:18e:c8d9:2c24 with SMTP id
- b5-20020aa781050000b029018ec8d92c24mr7167536pfi.49.1605754686646; Wed, 18 Nov
- 2020 18:58:06 -0800 (PST)
+        bh=rRdwwTYB3THrODEV2neHSr1r681wlaqYPsv7e09Hwos=;
+        b=RdOS4v4czHZlnxhG9lDWqJflBaP6NibzTUEXwTTyMQDF3snuyFw0vw1vNCLq5vKzEk
+         Hj+kCoCNTSxW9uba5mNViMj+JdQ83X0+xFVaty3nzbyCFc9NIzYyG6vpMcH505A+2FfX
+         HX5i7DH+fT4LFp49+iDAudDQWXkPETHXSZnddWnYhA78Wn0Jwh+TaEsZDWFKF1CUhcoz
+         Qrab7i5LVWDLsOQn78soE2JvVaxPoHsVVgid4CgjSd7YMlVlS+9mFOqMn6W+Ctig5+ba
+         oFLH4dQidgN8r7/+To5fidt/HZpDyqHtnFR5yGMj5XT31Jdfuk7VKKSUGkEk1HUelgOt
+         eD4g==
+X-Gm-Message-State: AOAM531fVfSU4iEw4JgZOwfxjSYvuYKdvh/muefKXvT5j4sbmr7FZ9mt
+        sn4GwMfO2uLmACUu3J2lO1Ose/gpQPO0wqwpcgf7xg==
+X-Google-Smtp-Source: ABdhPJwDXbhX5HRqxoUbDoFpK+cRpKc7xoI2mgS53bPJI3up3v6EqKVj7uqMndhkyNIuEMh+3AsTFluC7FJRlufAaGY=
+X-Received: by 2002:a62:16c1:0:b029:18c:8a64:fc04 with SMTP id
+ 184-20020a6216c10000b029018c8a64fc04mr7238875pfw.59.1605754845606; Wed, 18
+ Nov 2020 19:00:45 -0800 (PST)
 MIME-Version: 1.0
 References: <20201113105952.11638-1-songmuchun@bytedance.com>
- <20201113105952.11638-4-songmuchun@bytedance.com> <697ee4b7-edcc-e3b8-676c-935ec445c05d@oracle.com>
-In-Reply-To: <697ee4b7-edcc-e3b8-676c-935ec445c05d@oracle.com>
+ <20201113105952.11638-5-songmuchun@bytedance.com> <88af8545-14b7-08de-f121-e12295d5d5b9@oracle.com>
+In-Reply-To: <88af8545-14b7-08de-f121-e12295d5d5b9@oracle.com>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 19 Nov 2020 10:57:28 +0800
-Message-ID: <CAMZfGtW6f-zPxT6m7vvhEaq8R9GnwZFar39NOgYTbhLPBJEq5Q@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v4 03/21] mm/hugetlb: Introduce a new
- config HUGETLB_PAGE_FREE_VMEMMAP
+Date:   Thu, 19 Nov 2020 11:00:07 +0800
+Message-ID: <CAMZfGtXRqTpqJoGonMdTcE4HjPEy98FBFiry3Rry5=Jpfen1xw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v4 04/21] mm/hugetlb: Introduce
+ nr_free_vmemmap_pages in the struct hstate
 To:     Mike Kravetz <mike.kravetz@oracle.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
@@ -78,56 +78,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 6:39 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+On Thu, Nov 19, 2020 at 7:48 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
 >
 > On 11/13/20 2:59 AM, Muchun Song wrote:
-> > The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> > whether to enable the feature of freeing unused vmemmap associated
-> > with HugeTLB pages. Now only support x86.
-> >
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  arch/x86/mm/init_64.c |  2 +-
-> >  fs/Kconfig            | 14 ++++++++++++++
-> >  2 files changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> > index 0a45f062826e..0435bee2e172 100644
-> > --- a/arch/x86/mm/init_64.c
-> > +++ b/arch/x86/mm/init_64.c
-> > @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
-> >
-> >  static void __init register_page_bootmem_info(void)
-> >  {
-> > -#ifdef CONFIG_NUMA
-> > +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
-> >       int i;
-> >
-> >       for_each_online_node(i)
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 976e8b9033c4..67e1bc99574f 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -245,6 +245,20 @@ config HUGETLBFS
-> >  config HUGETLB_PAGE
-> >       def_bool HUGETLBFS
-> >
-> > +config HUGETLB_PAGE_FREE_VMEMMAP
-> > +     def_bool HUGETLB_PAGE
-> > +     depends on X86
-> > +     depends on SPARSEMEM_VMEMMAP
-> > +     depends on HAVE_BOOTMEM_INFO_NODE
-> > +     help
-> > +       When using SPARSEMEM_VMEMMAP, the system can save up some memory
+> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > new file mode 100644
+> > index 000000000000..a6c9948302e2
+> > --- /dev/null
+> > +++ b/mm/hugetlb_vmemmap.c
+> > @@ -0,0 +1,108 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Free some vmemmap pages of HugeTLB
+> > + *
+> > + * Copyright (c) 2020, Bytedance. All rights reserved.
+> > + *
+> > + *     Author: Muchun Song <songmuchun@bytedance.com>
+> > + *
 >
-> Should that read,
->
->         When using HUGETLB_PAGE_FREE_VMEMMAP, ...
->
-> as the help message is for this config option.
+> Oscar has already made some suggestions to change comments.  I would suggest
+> changing the below text to something like the following.
 
-Got it. Thanks
+Thanks Mike. I will change the below comments.
 
+>
+> > + * Nowadays we track the status of physical page frames using struct page
+> > + * structures arranged in one or more arrays. And here exists one-to-one
+> > + * mapping between the physical page frame and the corresponding struct page
+> > + * structure.
+> > + *
+> > + * The HugeTLB support is built on top of multiple page size support that
+> > + * is provided by most modern architectures. For example, x86 CPUs normally
+> > + * support 4K and 2M (1G if architecturally supported) page sizes. Every
+> > + * HugeTLB has more than one struct page structure. The 2M HugeTLB has 512
+> > + * struct page structure and 1G HugeTLB has 4096 struct page structures. But
+> > + * in the core of HugeTLB only uses the first 4 (Use of first 4 struct page
+> > + * structures comes from HUGETLB_CGROUP_MIN_ORDER.) struct page structures to
+> > + * store metadata associated with each HugeTLB. The rest of the struct page
+> > + * structures are usually read the compound_head field which are all the same
+> > + * value. If we can free some struct page memory to buddy system so that we
+> > + * can save a lot of memory.
+> > + *
+>
+> struct page structures (page structs) are used to describe a physical page
+> frame.  By default, there is a one-to-one mapping from a page frame to
+> it's corresponding page struct.
+>
+> HugeTLB pages consist of multiple base page size pages and is supported by
+> many architectures. See hugetlbpage.rst in the Documentation directory for
+> more details.  On the x86 architecture, HugeTLB pages of size 2MB and 1GB
+> are currently supported.  Since the base page size on x86 is 4KB, a 2MB
+> HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
+> 4096 base pages.  For each base page, there is a corresponding page struct.
+>
+> Within the HugeTLB subsystem, only the first 4 page structs are used to
+> contain unique information about a HugeTLB page.  HUGETLB_CGROUP_MIN_ORDER
+> provides this upper limit.  The only 'useful' information in the remaining
+> page structs is the compound_head field, and this field is the same for all
+> tail pages.
+>
+> By removing redundant page structs for HugeTLB pages, memory can returned
+> to the buddy allocator for other uses.
+>
+> > + * When the system boot up, every 2M HugeTLB has 512 struct page structures
+> > + * which size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
+> > + *
+> > + *    HugeTLB                  struct pages(8 pages)         page frame(8 pages)
+> > + * +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+> > + * |           |                     |     0     | -------------> |     0     |
+> > + * |           |                     |     1     | -------------> |     1     |
+> > + * |           |                     |     2     | -------------> |     2     |
+> > + * |           |                     |     3     | -------------> |     3     |
+> > + * |           |                     |     4     | -------------> |     4     |
+> > + * |     2M    |                     |     5     | -------------> |     5     |
+> > + * |           |                     |     6     | -------------> |     6     |
+> > + * |           |                     |     7     | -------------> |     7     |
+> > + * |           |                     +-----------+                +-----------+
+> > + * |           |
+> > + * |           |
+> > + * +-----------+
+> > + *
+> > + *
+>
+> I think we want the description before the next diagram.
+>
+> Reworded description here:
+>
+> The value of compound_head is the same for all tail pages.  The first page of
+> page structs (page 0) associated with the HugeTLB page contains the 4 page
+> structs necessary to describe the HugeTLB.  The only use of the remaining pages
+> of page structs (page 1 to page 7) is to point to compound_head.  Therefore,
+> we can remap pages 2 to 7 to page 1.  Only 2 pages of page structs will be used
+> for each HugeTLB page.  This will allow us to free the remaining 6 pages to
+> the buddy allocator.
+>
+> Here is how things look after remapping.
+>
+> > + *
+> > + *    HugeTLB                  struct pages(8 pages)         page frame(8 pages)
+> > + * +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+> > + * |           |                     |     0     | -------------> |     0     |
+> > + * |           |                     |     1     | -------------> |     1     |
+> > + * |           |                     |     2     | -------------> +-----------+
+> > + * |           |                     |     3     | -----------------^ ^ ^ ^ ^
+> > + * |           |                     |     4     | -------------------+ | | |
+> > + * |     2M    |                     |     5     | ---------------------+ | |
+> > + * |           |                     |     6     | -----------------------+ |
+> > + * |           |                     |     7     | -------------------------+
+> > + * |           |                     +-----------+
+> > + * |           |
+> > + * |           |
+> > + * +-----------+
 >
 > --
 > Mike Kravetz
