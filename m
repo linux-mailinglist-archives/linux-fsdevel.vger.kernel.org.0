@@ -2,151 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED17B2B8B7E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 07:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24B522B8BE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 08:04:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbgKSGSD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 01:18:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44482 "EHLO
+        id S1726107AbgKSHDG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 02:03:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgKSGSC (ORCPT
+        with ESMTP id S1725857AbgKSHDF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 01:18:02 -0500
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F30FC0617A7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 22:18:01 -0800 (PST)
-Received: by mail-pg1-x544.google.com with SMTP id q28so3304957pgk.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Nov 2020 22:18:01 -0800 (PST)
+        Thu, 19 Nov 2020 02:03:05 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B93C0613CF;
+        Wed, 18 Nov 2020 23:03:05 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id i9so4865794ioo.2;
+        Wed, 18 Nov 2020 23:03:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7pQ2zj7Jlr1PXAZIscOwv68xrKkz77uBgfi3u8q3/iE=;
-        b=SlQ9yXcPGWcqpNgsvUA5elpHwLWom+AQYZiYOdSgGaRs4scyCqq6tE/AKEJ5uZ5b81
-         lF/hyH+57tlZdv2coRV+X45arqUqjkR0aAKl7EvCtUTrgZP+Uzms/5sBiY3pTURzH+NC
-         6Jq2WJzC83rdSI2D2P+t4I2rC91XAWEmdYYGuaTMprvtZR9RngYuSZDfDBvCIalkaajC
-         YNIP91xlct/SLzjaBBdRAp3jZjyj7Tb1pv7IN8kaOASxqS7Gh8Z/TBedIdlo1Q/pY6JQ
-         cWKq1j2A4i2DOxMN3dAlM7OXOublT36ylMrsTYwjHxLJk5ZpCUi0cAvL165vdMl/2bDy
-         oXXQ==
+        bh=eZf0XT6FOpH4UgmSqNaoQWJcJUEUxG030KkkVYX8Ays=;
+        b=Lm5YT6xLwtIktkI6IW71JqU1PBnDOR78a2eROaT+qT1Zlwx4wOkc0IeHckxEYzavXB
+         53zy1iYnizAExLbHuhpOaQh8QcXZT5gYepJdpYd5peRVJmq1DGFc2uXEfzVQbfuvk7so
+         VqizpHDq4DvG6PrSXeeiCE+qtQYt/QFpFbarvjgJ7c+dHjVjRsxp+FGCogCDbJIcv7lU
+         l5X/dxVovVuM+vs30kURinsspudy4GjNCMojDN/KqcHpwhanwywXxDSJkw3d7jWN49AI
+         gCxBVFU6Kw4mTxvCdQvDbdWdpsFCOsE8GDa/jEgbg/6JsYqho9G7i9jEq3psqQsALV4M
+         xhtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7pQ2zj7Jlr1PXAZIscOwv68xrKkz77uBgfi3u8q3/iE=;
-        b=as6MxB/QF6WvjFULLPNWPwO65h5pABAI3TQ1d5evxILsdsroQ8XCzOljycV30NJm7E
-         GirK0VEc6OFq9XK+vCDV05z8ijQgP6leU4eN0f8wVVvjunNHVfFXx6CgXAbal91omaNu
-         3KjJg6v+Wp3R9hlQTHNg/BWzF6dbwNR31+uqphYlN4AVuv1TQVoEn5p0oglryVUhQiSO
-         0Q+a1B1IRdYoeTi70EwidLY22q/ji2okrCN1IO9PBs8/Ll6xZWEe30Squg7clOwuPPll
-         ODqdDd8V6cf+jOFVj3Vc4D++OB8nAg4l+L5mo6TJHsDqgcaXWIN0L1HgO3ptkVxp2qsn
-         D3cw==
-X-Gm-Message-State: AOAM533twfW/x18jpdfTINCBbgZSuoAZM1zQu8t9hmo/JMG/4LL5C9Co
-        GIdkuOJ0DKnDoxHnP7wPYCDWSoLYK+e/La/Ncj3Bkg==
-X-Google-Smtp-Source: ABdhPJzMCPjAh/2kqnjwOxyzOIsWkWSrhvfMsYkNgJM3IRKRm7eO5+zvHPlxtMjOwCYAaHDaqSWr4Tkcrzo6Lbmbiss=
-X-Received: by 2002:a17:90b:88b:: with SMTP id bj11mr2853956pjb.229.1605766680507;
- Wed, 18 Nov 2020 22:18:00 -0800 (PST)
+        bh=eZf0XT6FOpH4UgmSqNaoQWJcJUEUxG030KkkVYX8Ays=;
+        b=mYi+DinJSpa6qJ9K5IIncaXC8aRF40Ubeg9cAGFNyPigyt/n/7DzaldIVSh/rNSvZ8
+         JJcxxKPeEmii6g9rnYI9klqf95DDn438FTDg+OIy7fhmddKWzMTQ6J9IkbAlaHUECr6G
+         kOtelz6+ncMuFNfzM2EwyI7GXge+WjDKojzwTdiZtdBDYjrT46XnZtAYixghJVwzM3il
+         KS1M/lmgOLGEq9HWfQ5AGHwUMR30gUx40qgr47CW8y1po3VFR3y8EKMFJ9n/mvVwUMle
+         7nUxSW86Sdr/oxrASHOSHwUcWKfXj4GxhJwLE7Uv34XuIOfB07b+KelbsKSPmkEAYfWC
+         mI9w==
+X-Gm-Message-State: AOAM533IYFitpvv93qcD1QzcVeo6rF5bVPbv/1jTnM58iSTKQq0K7vDX
+        MVTkpLvjGRFgSiGPGYW6qAU56KXdeI58ztdVvEE=
+X-Google-Smtp-Source: ABdhPJw3iXSESWTX903d/nKwuPvu0+X+wTsglA0N1q1VryZJj9NwZpzQdAG7uiq4L6m+cOg5VSJ55vm1FKHDqS6dR0Y=
+X-Received: by 2002:a6b:7841:: with SMTP id h1mr19706750iop.72.1605769384703;
+ Wed, 18 Nov 2020 23:03:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20201113105952.11638-1-songmuchun@bytedance.com>
- <20201113105952.11638-6-songmuchun@bytedance.com> <20201117150604.GA15679@linux>
-In-Reply-To: <20201117150604.GA15679@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Thu, 19 Nov 2020 14:17:21 +0800
-Message-ID: <CAMZfGtW=Oyaoooow9_i+R1LkvGpcFoUjBxYzGqBZsOa-t-sFsg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v4 05/21] mm/hugetlb: Introduce pgtable
- allocation/freeing helpers
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <cover.1605723568.git.osandov@fb.com> <977fd16687d8b0474fd9c442f79c23f53783e403.1605723568.git.osandov@fb.com>
+In-Reply-To: <977fd16687d8b0474fd9c442f79c23f53783e403.1605723568.git.osandov@fb.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 19 Nov 2020 09:02:53 +0200
+Message-ID: <CAOQ4uxiaWAT6kOkxgMgeYEcOBMsc=HtmSwssMXg0Nn=rbkZRGA@mail.gmail.com>
+Subject: Re: [PATCH v6 02/11] fs: add O_ALLOW_ENCODED open flag
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 17, 2020 at 11:06 PM Oscar Salvador <osalvador@suse.de> wrote:
+On Wed, Nov 18, 2020 at 9:18 PM Omar Sandoval <osandov@osandov.com> wrote:
 >
-> On Fri, Nov 13, 2020 at 06:59:36PM +0800, Muchun Song wrote:
-> > +#define page_huge_pte(page)          ((page)->pmd_huge_pte)
+> From: Omar Sandoval <osandov@fb.com>
 >
-> Seems you do not need this one anymore.
+> The upcoming RWF_ENCODED operation introduces some security concerns:
 >
-> > +void vmemmap_pgtable_free(struct page *page)
-> > +{
-> > +     struct page *pte_page, *t_page;
-> > +
-> > +     list_for_each_entry_safe(pte_page, t_page, &page->lru, lru) {
-> > +             list_del(&pte_page->lru);
-> > +             pte_free_kernel(&init_mm, page_to_virt(pte_page));
-> > +     }
-> > +}
-> > +
-> > +int vmemmap_pgtable_prealloc(struct hstate *h, struct page *page)
-> > +{
-> > +     unsigned int nr = pgtable_pages_to_prealloc_per_hpage(h);
-> > +
-> > +     /* Store preallocated pages on huge page lru list */
-> > +     INIT_LIST_HEAD(&page->lru);
-> > +
-> > +     while (nr--) {
-> > +             pte_t *pte_p;
-> > +
-> > +             pte_p = pte_alloc_one_kernel(&init_mm);
-> > +             if (!pte_p)
-> > +                     goto out;
-> > +             list_add(&virt_to_page(pte_p)->lru, &page->lru);
-> > +     }
+> 1. Compressed writes will pass arbitrary data to decompression
+>    algorithms in the kernel.
+> 2. Compressed reads can leak truncated/hole punched data.
 >
-> Definetely this looks better and easier to handle.
-> Btw, did you explore Matthew's hint about instead of allocating a new page,
-> using one of the ones you are going to free to store the ptes?
-> I am not sure whether it is feasible at all though.
+> Therefore, we need to require privilege for RWF_ENCODED. It's not
+> possible to do the permissions checks at the time of the read or write
+> because, e.g., io_uring submits IO from a worker thread. So, add an open
+> flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
+> fcntl(). The flag is not cleared in any way on fork or exec. It must be
+> combined with O_CLOEXEC when opening to avoid accidental leaks (if
+> needed, it may be set without O_CLOEXEC by using fnctl()).
+>
+> Note that the usual issue that unknown open flags are ignored doesn't
+> really matter for O_ALLOW_ENCODED; if the kernel doesn't support
+> O_ALLOW_ENCODED, then it doesn't support RWF_ENCODED, either.
+>
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> ---
+>  arch/alpha/include/uapi/asm/fcntl.h  |  1 +
+>  arch/parisc/include/uapi/asm/fcntl.h |  1 +
+>  arch/sparc/include/uapi/asm/fcntl.h  |  1 +
+>  fs/fcntl.c                           | 10 ++++++++--
+>  fs/namei.c                           |  4 ++++
+>  fs/open.c                            |  7 +++++++
+>  include/linux/fcntl.h                |  2 +-
+>  include/uapi/asm-generic/fcntl.h     |  4 ++++
+>  8 files changed, 27 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/alpha/include/uapi/asm/fcntl.h b/arch/alpha/include/uapi/asm/fcntl.h
+> index 50bdc8e8a271..391e0d112e41 100644
+> --- a/arch/alpha/include/uapi/asm/fcntl.h
+> +++ b/arch/alpha/include/uapi/asm/fcntl.h
+> @@ -34,6 +34,7 @@
+>
+>  #define O_PATH         040000000
+>  #define __O_TMPFILE    0100000000
+> +#define O_ALLOW_ENCODED        0200000000
+>
+>  #define F_GETLK                7
+>  #define F_SETLK                8
+> diff --git a/arch/parisc/include/uapi/asm/fcntl.h b/arch/parisc/include/uapi/asm/fcntl.h
+> index 03dee816cb13..72ea9bdf5f04 100644
+> --- a/arch/parisc/include/uapi/asm/fcntl.h
+> +++ b/arch/parisc/include/uapi/asm/fcntl.h
+> @@ -19,6 +19,7 @@
+>
+>  #define O_PATH         020000000
+>  #define __O_TMPFILE    040000000
+> +#define O_ALLOW_ENCODED        100000000
+>
+>  #define F_GETLK64      8
+>  #define F_SETLK64      9
+> diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/uapi/asm/fcntl.h
+> index 67dae75e5274..ac3e8c9cb32c 100644
+> --- a/arch/sparc/include/uapi/asm/fcntl.h
+> +++ b/arch/sparc/include/uapi/asm/fcntl.h
+> @@ -37,6 +37,7 @@
+>
+>  #define O_PATH         0x1000000
+>  #define __O_TMPFILE    0x2000000
+> +#define O_ALLOW_ENCODED        0x8000000
+>
+>  #define F_GETOWN       5       /*  for sockets. */
+>  #define F_SETOWN       6       /*  for sockets. */
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index 19ac5baad50f..9302f68fe698 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -30,7 +30,8 @@
+>  #include <asm/siginfo.h>
+>  #include <linux/uaccess.h>
+>
+> -#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME)
+> +#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME | \
+> +                   O_ALLOW_ENCODED)
+>
+>  static int setfl(int fd, struct file * filp, unsigned long arg)
+>  {
+> @@ -49,6 +50,11 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+>                 if (!inode_owner_or_capable(inode))
+>                         return -EPERM;
+>
+> +       /* O_ALLOW_ENCODED can only be set by superuser */
+> +       if ((arg & O_ALLOW_ENCODED) && !(filp->f_flags & O_ALLOW_ENCODED) &&
+> +           !capable(CAP_SYS_ADMIN))
+> +               return -EPERM;
+> +
+>         /* required for strict SunOS emulation */
+>         if (O_NONBLOCK != O_NDELAY)
+>                if (arg & O_NDELAY)
+> @@ -1033,7 +1039,7 @@ static int __init fcntl_init(void)
+>          * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+>          * is defined as O_NONBLOCK on some platforms and not on others.
+>          */
+> -       BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+> +       BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+>                 HWEIGHT32(
+>                         (VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+>                         __FMODE_EXEC | __FMODE_NONOTIFY));
+> diff --git a/fs/namei.c b/fs/namei.c
+> index d4a6dd772303..fbf64ce61088 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2890,6 +2890,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>         if (flag & O_NOATIME && !inode_owner_or_capable(inode))
+>                 return -EPERM;
+>
+> +       /* O_ALLOW_ENCODED can only be set by superuser */
+> +       if ((flag & O_ALLOW_ENCODED) && !capable(CAP_SYS_ADMIN))
+> +               return -EPERM;
+> +
+>         return 0;
+>  }
+>
+> diff --git a/fs/open.c b/fs/open.c
+> index 9af548fb841b..f2863aaf78e7 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -1040,6 +1040,13 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+>                 acc_mode = 0;
+>         }
+>
+> +       /*
+> +        * O_ALLOW_ENCODED must be combined with O_CLOEXEC to avoid accidentally
+> +        * leaking encoded I/O privileges.
+> +        */
+> +       if ((how->flags & (O_ALLOW_ENCODED | O_CLOEXEC)) == O_ALLOW_ENCODED)
+> +               return -EINVAL;
+> +
 
-Hi Oscar and Matthew,
 
-I have started an investigation about this. Finally, I think that it
-may not be feasible. If we use a vmemmap page frame as a
-page table when we split the PMD table firstly, in this stage,
-we need to set 512 pte entry to the vmemmap page frame. If
-someone reads the tail struct page struct of the HugeTLB,
-it can get the arbitrary value (I am not sure it actually exists,
-maybe the memory compaction module can do this). So on
-the safe side, I think that allocating a new page is a good
-choice.
+dup() can also result in accidental leak.
+We could fail dup() of fd without O_CLOEXEC. Should we?
 
-Thanks.
+If we should than what error code should it be? We could return EPERM,
+but since we do allow to clear O_CLOEXEC or set O_ALLOW_ENCODED
+after open, EPERM seems a tad harsh.
+EINVAL seems inappropriate because the error has nothing to do with
+input args of dup() and EBADF would also be confusing.
 
->
->
-> > --- a/mm/hugetlb_vmemmap.h
-> > +++ b/mm/hugetlb_vmemmap.h
-> > @@ -9,12 +9,24 @@
-> >  #ifndef _LINUX_HUGETLB_VMEMMAP_H
-> >  #define _LINUX_HUGETLB_VMEMMAP_H
-> >  #include <linux/hugetlb.h>
-> > +#include <linux/mm.h>
->
-> why do we need this here?
->
-> --
-> Oscar Salvador
-> SUSE L3
-
-
-
--- 
-Yours,
-Muchun
+Thanks,
+Amir.
