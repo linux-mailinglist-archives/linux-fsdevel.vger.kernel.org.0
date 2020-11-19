@@ -2,138 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F2662B9498
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 15:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 887762B9496
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 15:31:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbgKSO1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 09:27:06 -0500
-Received: from lilium.sigma-star.at ([109.75.188.150]:58536 "EHLO
+        id S1727645AbgKSO1F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 09:27:05 -0500
+Received: from lilium.sigma-star.at ([109.75.188.150]:58532 "EHLO
         lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727214AbgKSO1E (ORCPT
+        with ESMTP id S1727106AbgKSO1E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 19 Nov 2020 09:27:04 -0500
+X-Greylist: delayed 516 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Nov 2020 09:27:03 EST
 Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 3FE14181C88E8;
+        by lilium.sigma-star.at (Postfix) with ESMTP id 898CF181C8900;
         Thu, 19 Nov 2020 15:18:26 +0100 (CET)
 Received: from lilium.sigma-star.at ([127.0.0.1])
         by localhost (lilium.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id KYEAPqzs0CVc; Thu, 19 Nov 2020 15:18:25 +0100 (CET)
+        with ESMTP id 7yQ7veX_WR98; Thu, 19 Nov 2020 15:18:26 +0100 (CET)
 Received: from lilium.sigma-star.at ([127.0.0.1])
         by localhost (lilium.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id OqOEmPr6IOK7; Thu, 19 Nov 2020 15:18:25 +0100 (CET)
+        with ESMTP id Dx73T873WR7e; Thu, 19 Nov 2020 15:18:26 +0100 (CET)
 From:   Richard Weinberger <richard@nod.at>
 To:     miklos@szeredi.hu
 Cc:     miquel.raynal@bootlin.com, vigneshr@ti.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 0/5] [RFC] MUSE: Userspace backed MTD
-Date:   Thu, 19 Nov 2020 15:16:54 +0100
-Message-Id: <20201119141659.26176-1-richard@nod.at>
+Subject: [PATCH 1/5] fuse: Rename FUSE_DIO_CUSE
+Date:   Thu, 19 Nov 2020 15:16:55 +0100
+Message-Id: <20201119141659.26176-2-richard@nod.at>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20201119141659.26176-1-richard@nod.at>
+References: <20201119141659.26176-1-richard@nod.at>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When working with flash devices a common task is emulating them to run va=
-rious
-tests or inspect dumps from real hardware. To achieve that we have plenty=
- of
-emulators in the mtd subsystem: mtdram, block2mtd, nandsim.
+MUSE needs to use this flag too, rename it to
+FUSE_DIO_NOFS to denote that the DIO operation has no FUSE backed
+inode.
 
-Each of them implements a adhoc MTD and have various drawbacks.
-Over the last years some developers tried to extend them but these attemp=
-ts
-often got rejected because they added just more adhoc feature instead of
-addressing overall problems.
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ fs/fuse/cuse.c   | 4 ++--
+ fs/fuse/file.c   | 4 ++--
+ fs/fuse/fuse_i.h | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-MUSE is a novel approach to address the need of advanced MTD emulators.
-Advanced means in this context supporting different (vendor specific) ima=
-ge
-formats, different ways for fault injection (fuzzing) and recoding/replay=
-ing
-IOs to emulate power cuts.
-
-The core goal of MUSE is having the complexity on the userspace side and
-only a small MTD driver in kernelspace.
-While playing with different approaches I realized that FUSE offers every=
-thing
-we need. So MUSE is a little like CUSE except that it does not implement =
-a
-bare character device but an MTD.
-
-To get early feedback I'm sending this series as RFC, so don't consider i=
-t as
-ready to merge yet.
-
-Open issues are:
-
-1. Dummy file object
-The logic around fuse_direct_io() expects a file object.
-Unlike FUSE or CUSE we don't have such an object in MUSE because usually =
-an
-MTD is not opened by userspace. The kernel uses the MTD and makes it avai=
-lable
-to filesystems or other layers such as mtdblock, mtdchar or UBI.
-Currently a anon inode is (ab)used for that.
-Maybe there is a better way?
-
-2. Init parameter passing
-Currently parameter passing borrowed the logic from CUSE and parameters a=
-re
-passed as stringy key value pairs.
-Most MTD paramerters are numbers (erase size, etc..) so passing them via
-struct muse_init_out seems more natural.
-But I plan to pass also pure string parameters such as an mtdparts comman=
-d line.
-What is the perffered way these days in FUSE?
-Am I allowed to embed structs such as struct mtd_info_user (mtd-abi.h) in
-muse_init_out?
-
-3. MUSE specific FUSE ops
-At this time MUSE_INIT, FUSE_READ, FUSE_WRITE, FUSE_FSYNC and MUSE_ERASE =
-are
-used.
-
-I plan to get rid of FUSE_READ and FUSE_WRITE too. On NAND'ish MTDs there=
- is
-out of band (OOB) data which can be read and written. Strictly speaking f=
-or
-testing UBI/UBIFS OOB is not needed but for JFFS2 it is.
-
-FUSE_READ/WRITE also consider every non-zero return code as fatal and abo=
-rt
-the transfer. In MTD, -EUCLEAN and -EBADMSG are not fatal, a driver is
-expected to return possible corrupted data and let the next layer deal
-with it.
-So far I found no good way how to encode this in FUSE_READ. Maybe you can
-point me in the right direction?
-
-This series can also be found at:
-git://git.kernel.org/pub/scm/linux/kernel/git/rw/misc.git muse_v1
-
-Richard Weinberger (5):
-  fuse: Rename FUSE_DIO_CUSE
-  fuse: Export fuse_simple_request
-  fuse: Make cuse_parse_one a common helper
-  mtd: Add MTD_MUSE flag
-  fuse: Implement MUSE: MTD in userspace
-
- fs/fuse/Kconfig            |  15 ++
- fs/fuse/Makefile           |   2 +
- fs/fuse/cuse.c             |  62 +----
- fs/fuse/dev.c              |   1 +
- fs/fuse/file.c             |   4 +-
- fs/fuse/fuse_i.h           |   7 +-
- fs/fuse/helper.c           |  68 ++++++
- fs/fuse/muse.c             | 450 +++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h  |  25 ++-
- include/uapi/mtd/mtd-abi.h |   1 +
- 10 files changed, 571 insertions(+), 64 deletions(-)
- create mode 100644 fs/fuse/helper.c
- create mode 100644 fs/fuse/muse.c
-
+diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+index 45082269e698..55744430b0f0 100644
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -96,7 +96,7 @@ static ssize_t cuse_read_iter(struct kiocb *kiocb, stru=
+ct iov_iter *to)
+ 	struct fuse_io_priv io =3D FUSE_IO_PRIV_SYNC(kiocb);
+ 	loff_t pos =3D 0;
+=20
+-	return fuse_direct_io(&io, to, &pos, FUSE_DIO_CUSE);
++	return fuse_direct_io(&io, to, &pos, FUSE_DIO_NOFS);
+ }
+=20
+ static ssize_t cuse_write_iter(struct kiocb *kiocb, struct iov_iter *fro=
+m)
+@@ -108,7 +108,7 @@ static ssize_t cuse_write_iter(struct kiocb *kiocb, s=
+truct iov_iter *from)
+ 	 * responsible for locking and sanity checks.
+ 	 */
+ 	return fuse_direct_io(&io, from, &pos,
+-			      FUSE_DIO_WRITE | FUSE_DIO_CUSE);
++			      FUSE_DIO_WRITE | FUSE_DIO_NOFS);
+ }
+=20
+ static int cuse_open(struct inode *inode, struct file *file)
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index c03034e8c152..697e79032c73 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1409,7 +1409,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, str=
+uct iov_iter *iter,
+ 		       loff_t *ppos, int flags)
+ {
+ 	int write =3D flags & FUSE_DIO_WRITE;
+-	int cuse =3D flags & FUSE_DIO_CUSE;
++	int nofs =3D flags & FUSE_DIO_NOFS;
+ 	struct file *file =3D io->iocb->ki_filp;
+ 	struct inode *inode =3D file->f_mapping->host;
+ 	struct fuse_file *ff =3D file->private_data;
+@@ -1430,7 +1430,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, str=
+uct iov_iter *iter,
+ 		return -ENOMEM;
+=20
+ 	ia->io =3D io;
+-	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
++	if (!nofs && fuse_range_is_writeback(inode, idx_from, idx_to)) {
+ 		if (!write)
+ 			inode_lock(inode);
+ 		fuse_sync_writes(inode);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index d51598017d13..637caddff2a8 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1140,8 +1140,8 @@ int fuse_do_open(struct fuse_mount *fm, u64 nodeid,=
+ struct file *file,
+ /** If set, it is WRITE; otherwise - READ */
+ #define FUSE_DIO_WRITE (1 << 0)
+=20
+-/** CUSE pass fuse_direct_io() a file which f_mapping->host is not from =
+FUSE */
+-#define FUSE_DIO_CUSE  (1 << 1)
++/** CUSE and MUSE pass fuse_direct_io() a file which f_mapping->host is =
+not from FUSE */
++#define FUSE_DIO_NOFS  (1 << 1)
+=20
+ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
+ 		       loff_t *ppos, int flags);
 --=20
 2.26.2
 
