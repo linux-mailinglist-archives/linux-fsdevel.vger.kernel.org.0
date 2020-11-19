@@ -2,100 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF032B902E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 11:35:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF4902B9054
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Nov 2020 11:45:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbgKSKc4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 05:32:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34386 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726274AbgKSKc4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 05:32:56 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3937FACBA;
-        Thu, 19 Nov 2020 10:32:54 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D5CBE1E130B; Thu, 19 Nov 2020 11:32:53 +0100 (CET)
-Date:   Thu, 19 Nov 2020 11:32:53 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 13/20] block: remove ->bd_contains
-Message-ID: <20201119103253.GV1981@quack2.suse.cz>
-References: <20201118084800.2339180-1-hch@lst.de>
- <20201118084800.2339180-14-hch@lst.de>
+        id S1726580AbgKSKnI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 05:43:08 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49962 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbgKSKnI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Nov 2020 05:43:08 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AJAfU5F022945;
+        Thu, 19 Nov 2020 10:42:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=DTOE+XSushUDSfqfyx9hff7Q2wdQPamXkFT+tBHMqBY=;
+ b=EfJsme9lRXmaDogMd8C7qS8NGL82inkjmWUJkVvbcyJb96DBogU99I0Q+b8LHF1Meofv
+ XWJGnisbiNCkwtDmMNrf4W5Dni/AYK39Bdmu8M5e950H1oDZYLk9yrQcm2v+cW+IHarE
+ P+Oo5exoYjqLuZ2tvuVNB4i00VvdJGvorMyh3Fg/QSmgWl9KavqwmZYtx0/4Evz5HYTt
+ /rEwOfBrj0vIzh3je9fiUS2CVmnfWKRLMZyq2t7i4rM5u2zVDMBInBocsxP8i0alJ8Mu
+ qOfhCMPLpqYBW7X6KO1TMfVcvt6UDWXrLNeXL5edu+CbTOcTXhUU9P4LZe2Oxba8rn+N 6w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 34t4rb4v1w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Nov 2020 10:42:58 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AJAdZGY142124;
+        Thu, 19 Nov 2020 10:42:57 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 34ts0tjhe3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Nov 2020 10:42:57 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AJAgsrA001792;
+        Thu, 19 Nov 2020 10:42:54 GMT
+Received: from [192.168.1.102] (/39.109.186.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Nov 2020 02:42:54 -0800
+Subject: Re: [PATCH v10 07/41] btrfs: disallow space_cache in ZONED mode
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <2276011f71705fff9e6a20966e7f6c601867ecbc.1605007036.git.naohiro.aota@wdc.com>
+From:   Anand Jain <anand.jain@oracle.com>
+Message-ID: <f922fa0e-1c9f-dd2a-2595-fcd88d29420e@oracle.com>
+Date:   Thu, 19 Nov 2020 18:42:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201118084800.2339180-14-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2276011f71705fff9e6a20966e7f6c601867ecbc.1605007036.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9809 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 suspectscore=2 spamscore=0 malwarescore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011190079
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9809 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 phishscore=0 suspectscore=2 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011190079
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 18-11-20 09:47:53, Christoph Hellwig wrote:
-> Now that each hd_struct has a reference to the corresponding
-> block_device, there is no need for the bd_contains pointer.  Add
-> a bdev_whole() helper to look up the whole device block_device
-> struture instead.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Just two nits below. Otherwise feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-> @@ -1521,7 +1510,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, void *holder,
->  		if (bdev->bd_bdi == &noop_backing_dev_info)
->  			bdev->bd_bdi = bdi_get(disk->queue->backing_dev_info);
->  	} else {
-> -		if (bdev->bd_contains == bdev) {
-> +		if (!bdev->bd_partno) {
-
-This should be !bdev_is_partition(bdev) for consistency, right?
-
->  			ret = 0;
->  			if (bdev->bd_disk->fops->open)
->  				ret = bdev->bd_disk->fops->open(bdev, mode);
-...
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index 0069bee992063e..453b940b87d8e9 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -32,7 +32,6 @@ struct block_device {
->  #ifdef CONFIG_SYSFS
->  	struct list_head	bd_holder_disks;
->  #endif
-> -	struct block_device *	bd_contains;
->  	u8			bd_partno;
->  	struct hd_struct *	bd_part;
->  	/* number of times partitions within this device have been opened. */
-> @@ -48,6 +47,9 @@ struct block_device {
->  	struct mutex		bd_fsfreeze_mutex;
->  } __randomize_layout;
->  
-> +#define bdev_whole(_bdev) \
-> +	((_bdev)->bd_disk->part0.bdev)
+> @@ -985,6 +992,8 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+>   		ret = -EINVAL;
+>   
+>   	}
+> +	if (!ret)
+> +		ret = btrfs_check_mountopts_zoned(info);
+>   	if (!ret && btrfs_test_opt(info, SPACE_CACHE))
+>   		btrfs_info(info, "disk space caching is enabled");
+>   	if (!ret && btrfs_test_opt(info, FREE_SPACE_TREE))
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index 2897432eb43c..d6b8165e2c91 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -274,3 +274,21 @@ int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+>   out:
+>   	return ret;
+>   }
 > +
->  #define bdev_kobj(_bdev) \
->  	(&part_to_dev((_bdev)->bd_part)->kobj)
+> +int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
+> +{
+> +	if (!btrfs_is_zoned(info))
+> +		return 0;
+> +
+> +	/*
+> +	 * Space cache writing is not COWed. Disable that to avoid write
+> +	 * errors in sequential zones.
+> +	 */
+> +	if (btrfs_test_opt(info, SPACE_CACHE)) {
+> +		btrfs_err(info,
+> +			  "zoned: space cache v1 is not supported");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+> index 52aa6af5d8dc..81c00a3ed202 100644
+> --- a/fs/btrfs/zoned.h
+> +++ b/fs/btrfs/zoned.h
+> @@ -25,6 +25,7 @@ int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>   int btrfs_get_dev_zone_info(struct btrfs_device *device);
+>   void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
+>   int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
+> +int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info);
+>   #else /* CONFIG_BLK_DEV_ZONED */
+>   static inline int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>   				     struct blk_zone *zone)
+> @@ -48,6 +49,11 @@ static inline int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info)
+>   	return -EOPNOTSUPP;
+>   }
+>   
+> +static inline int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info)
+> +{
+> +	return 0;
+> +}
+> +
+>   #endif
+>   
+>   static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, u64 pos)
+> 
 
-I'd somewhat prefer if these helpers could actually be inline functions and
-not macros. I guess they are macros because hd_struct isn't in blk_types.h.
-But if we moved helpers to blkdev.h, we'd have all definitions we need...
-Is that a problem for some users?
+The whole of the above code can be replaced by..
 
-								Honza
+-------------------
+@@ -810,8 +810,15 @@ int btrfs_parse_options(struct btrfs_fs_info *info, 
+char *options,
+                         break;
+                 case Opt_space_cache:
+                 case Opt_space_cache_version:
+                         if (token == Opt_space_cache ||
+                             strcmp(args[0].from, "v1") == 0) {
++                               if (btrfs_is_zoned(info)) {
++                                       btrfs_err(info,
++                                       "zoned: space cache v1 is not 
+supported");
++                                       ret = -EINVAL;
++                                       goto out;
++                               }
+                                 btrfs_clear_opt(info->mount_opt,
+                                                 FREE_SPACE_TREE);
+                                 btrfs_set_and_info(info, SPACE_CACHE,
+-------------------
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks.
