@@ -2,165 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD8602BAA56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 13:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C8B2BAA91
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 13:52:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbgKTMla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 07:41:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbgKTMla (ORCPT
+        id S1728048AbgKTMwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 07:52:04 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2136 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbgKTMwD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 07:41:30 -0500
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABA2C061A04
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 04:41:30 -0800 (PST)
-Received: by mail-pg1-x543.google.com with SMTP id r18so7190635pgu.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 04:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2xmKB7TKmyuJqAeHaXMBy48tPAGfs/Dc4x/Ex91iYPg=;
-        b=QtGGwEfCUUfQtF6A4LP4HRak+3zHqLMer9XuFEfRr7YiX37HK0ez2RQIKrjEKckYk0
-         LlQ5hEPW49q3qOwBrRHEE9T6kimslhXPXCIt8+xP6cguuYLGRbjwn/oquxWnwlwi3+6D
-         cHPYyX6fg6/P5NVhLIjQ0409FlWkJ1a1MqS7P3vsxtyLDLnQo/wmrut9s9wyXCd1naMo
-         BOdclSR5a3Gev9lqt3duFEdBgSFQA0vIBxgTRHEq36RKzQicNOdOpBpn/aqvTBIxYAnS
-         gwRz5YivYvPPMiw6p16AwteVC8H1QpCWuQhLCXAmRFAgv8ybc/1uURlnaafFFttStnga
-         cXPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2xmKB7TKmyuJqAeHaXMBy48tPAGfs/Dc4x/Ex91iYPg=;
-        b=G5g0ZK10TPew03efl5FauvdfVMRSC+L0450gJlpYOtU0Eqzx0HhUgCQumHUH7dJbeU
-         mbddkknSai74o4a60IeAJCe2ImOfxoVZrefCJ4tvPKQJ7rS6BTCudXxr2lCiXYCFwEVH
-         smbG0wiXXSz7qvrj4iflHc/TNJfGEU8/GXcW5lEl/ICFeNIOZFYQ+p+lX7g/rbuWvJMb
-         LGwXBT0ggC3pSVB2WmU5h7nmZUwxPJg0vk6XBvSur7m238zO155kdtzm0itMtIJiRTIu
-         qWwO4GFd59hh70rhnRpn9YuqTv21fv/VN+2JxvjIiM67J3QKRTKWs0qlow0KkXbHNzep
-         QYhQ==
-X-Gm-Message-State: AOAM533IX+ZM3x/ea8sBmIyIrHuew5cALOL98ZKU1HBC1rWS3TcJHEXc
-        wInEY8nKCVxMRKnPgcCpfCpZ2t/4UPS2dcmyOhuljw==
-X-Google-Smtp-Source: ABdhPJzaMHjGp7RmlCC2dPw3XwN836wo8cYS+yqSHJ8vjWJsnq+Pj+Qa4bwNtUmvR7lSR54QIGbJwmaQW9nRh3wcRQQ=
-X-Received: by 2002:aa7:9aaf:0:b029:197:c3e4:88e8 with SMTP id
- x15-20020aa79aaf0000b0290197c3e488e8mr5849185pfi.2.1605876089605; Fri, 20 Nov
- 2020 04:41:29 -0800 (PST)
+        Fri, 20 Nov 2020 07:52:03 -0500
+Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CcxGl1WXgz67Fvf;
+        Fri, 20 Nov 2020 20:50:23 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Fri, 20 Nov 2020 13:52:00 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Fri, 20 Nov 2020 13:52:00 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Casey Schaufler" <casey@schaufler-ca.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Micah Morton" <mortonm@chromium.org>
+Subject: RE: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Thread-Topic: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Thread-Index: AQHWuZM+vbqfejrqe02000rC0h3xoqnHabyAgAMLzKCAAG/IAIAABvEAgAAOKACAAAEYgIAAB9QAgAAHL4CAAY8zAIAAU72AgAABvoCAAAHXAIAD/8pw
+Date:   Fri, 20 Nov 2020 12:52:00 +0000
+Message-ID: <6dafff7889d34bc799b4c5bfd0bfebc8@huawei.com>
+References: <20201113080132.16591-1-roberto.sassu@huawei.com>
+ <20201114111057.GA16415@infradead.org>
+ <0fd0fb3360194d909ba48f13220f9302@huawei.com>
+ <20201116162202.GA15010@infradead.org>
+ <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
+ <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
+ <20201116174127.GA4578@infradead.org>
+ <CAHk-=wjd0RNthZQTLVsnK_d9SFYH0rug2tkezLLB0J-YZzVC+Q@mail.gmail.com>
+ <3f8cc7c9462353ac2eef58e39beee079bdd9c7b4.camel@linux.ibm.com>
+ <CAHk-=wih-ibNUxeiKpuKrw3Rd2=QEAZ8zgRWt_CORAjbZykRWQ@mail.gmail.com>
+ <5d8fa26d376999f703aac9103166a572fc0df437.camel@linux.ibm.com>
+ <CAHk-=wiPfWZYsAqhQry=mhAbKei8bHZDyVPJS0XHZz_FH9Jymw@mail.gmail.com>
+ <CAHk-=wjinHpYRk_F1qiaXbXcMtn-ZHKkPkBvZpDJHjoN_2o4ag@mail.gmail.com>
+In-Reply-To: <CAHk-=wjinHpYRk_F1qiaXbXcMtn-ZHKkPkBvZpDJHjoN_2o4ag@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20201120064325.34492-1-songmuchun@bytedance.com> <20201120084202.GJ3200@dhcp22.suse.cz>
-In-Reply-To: <20201120084202.GJ3200@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 20 Nov 2020 20:40:46 +0800
-Message-ID: <CAMZfGtWJXni21J=Yn55gksKy9KZnDScCjKmMasNz5XUwx3OcKw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v5 00/21] Free some vmemmap pages of
- hugetlb page
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 4:42 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Fri 20-11-20 14:43:04, Muchun Song wrote:
-> [...]
->
-> Thanks for improving the cover letter and providing some numbers. I have
-> only glanced through the patchset because I didn't really have more time
-> to dive depply into them.
->
-> Overall it looks promissing. To summarize. I would prefer to not have
-> the feature enablement controlled by compile time option and the kernel
-> command line option should be opt-in. I also do not like that freeing
-> the pool can trigger the oom killer or even shut the system down if no
-> oom victim is eligible.
-
-Hi Michal,
-
-I have replied to you about those questions on the other mail thread.
-
-Thanks.
-
->
-> One thing that I didn't really get to think hard about is what is the
-> effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
-> invalid when racing with the split. How do we enforce that this won't
-> blow up?
-
-This feature depends on the CONFIG_SPARSEMEM_VMEMMAP,
-in this case, the pfn_to_page can work. The return value of the
-pfn_to_page is actually the address of it's struct page struct.
-I can not figure out where the problem is. Can you describe the
-problem in detail please? Thanks.
-
->
-> I have also asked in a previous version whether the vmemmap manipulation
-> should be really unconditional. E.g. shortlived hugetlb pages allocated
-> from the buddy allocator directly rather than for a pool. Maybe it
-> should be restricted for the pool allocation as those are considered
-> long term and therefore the overhead will be amortized and freeing path
-> restrictions better understandable.
-
-Yeah, I agree with you. This can be an optimization. And we can
-add it to the todo list and implement it in the future. Now the patch
-series is already huge.
-
->
-> >  Documentation/admin-guide/kernel-parameters.txt |   9 +
-> >  Documentation/admin-guide/mm/hugetlbpage.rst    |   3 +
-> >  arch/x86/include/asm/hugetlb.h                  |  17 +
-> >  arch/x86/include/asm/pgtable_64_types.h         |   8 +
-> >  arch/x86/mm/init_64.c                           |   7 +-
-> >  fs/Kconfig                                      |  14 +
-> >  include/linux/bootmem_info.h                    |  78 +++
-> >  include/linux/hugetlb.h                         |  19 +
-> >  include/linux/hugetlb_cgroup.h                  |  15 +-
-> >  include/linux/memory_hotplug.h                  |  27 -
-> >  mm/Makefile                                     |   2 +
-> >  mm/bootmem_info.c                               | 124 ++++
-> >  mm/hugetlb.c                                    | 163 ++++-
-> >  mm/hugetlb_vmemmap.c                            | 765 ++++++++++++++++++++++++
-> >  mm/hugetlb_vmemmap.h                            | 103 ++++
->
-> I will need to look closer but I suspect that a non-trivial part of the
-> vmemmap manipulation really belongs to mm/sparse-vmemmap.c because the
-> split and remapping shouldn't really be hugetlb specific. Sure hugetlb
-> knows how to split but all the splitting should be implemented in
-> vmemmap proper.
->
-> >  mm/memory_hotplug.c                             | 116 ----
-> >  mm/sparse.c                                     |   5 +-
-> >  17 files changed, 1295 insertions(+), 180 deletions(-)
-> >  create mode 100644 include/linux/bootmem_info.h
-> >  create mode 100644 mm/bootmem_info.c
-> >  create mode 100644 mm/hugetlb_vmemmap.c
-> >  create mode 100644 mm/hugetlb_vmemmap.h
->
-> Thanks!
-> --
-> Michal Hocko
-> SUSE Labs
-
-
-
--- 
-Yours,
-Muchun
+PiBGcm9tOiBMaW51cyBUb3J2YWxkcyBbbWFpbHRvOnRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24u
+b3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDE4LCAyMDIwIDEyOjM3IEFNDQo+IE9u
+IFR1ZSwgTm92IDE3LCAyMDIwIGF0IDM6MjkgUE0gTGludXMgVG9ydmFsZHMNCj4gPHRvcnZhbGRz
+QGxpbnV4LWZvdW5kYXRpb24ub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9uIFR1ZSwgTm92IDE3LCAy
+MDIwIGF0IDM6MjQgUE0gTWltaSBab2hhciA8em9oYXJAbGludXguaWJtLmNvbT4NCj4gd3JvdGU6
+DQo+ID4gPg0KPiA+ID4gSSByZWFsbHkgd2lzaCBpdCB3YXNuJ3QgbmVlZGVkLg0KPiA+DQo+ID4g
+U2VyaW91c2x5LCBJIGdldCB0aGUgZmVlbGluZyB0aGF0IElNQSBpcyBjb21wbGV0ZWx5IG1pcy1k
+ZXNpZ25lZCwgYW5kDQo+ID4gaXMgZG9pbmcgYWN0aXZlbHkgYmFkIHRoaW5ncy4NCj4gPg0KPiA+
+IFdobyB1c2VzIHRoaXMgImZlYXR1cmUiLCBhbmQgd2hvIGNhcmVzPyBCZWNhdXNlIEkgd291bGQg
+c3VnZ2VzdCB5b3UNCj4gPiBqdXN0IGNoYW5nZSB0aGUgcG9saWN5IGFuZCBiZSBkb25lIHdpdGgg
+aXQuDQo+IA0KPiBBbm90aGVyIGFsdGVybmF0aXZlIGlzIHRvIGNoYW5nZSB0aGUgcG9saWN5IGFu
+ZCBzYXkgImFueSB3cml0ZS1vbmx5DQo+IG9wZW4gZ2V0cyB0dXJuZWQgaW50byBhIHJlYWQtd3Jp
+dGUgb3BlbiIuDQoNCk9uZSBpc3N1ZSB0aGF0IHdvdWxkIGFyaXNlIGZyb20gZG9pbmcgaXQgaXMg
+dGhhdCBzZWN1cml0eSBwb2xpY2llcyBuZWVkDQp0byBiZSBtb2RpZmllZCB0byBncmFudCB0aGUg
+YWRkaXRpb25hbCByZWFkIHBlcm1pc3Npb24uIElmIHRoZSBvcGVuDQpmbGFnIGlzIGFkZGVkIGVh
+cmx5LCB0aGUgTFNNIGhvb2sgc2VjdXJpdHlfZmlsZV9vcGVuKCkgd2lsbCBzZWUgaXQuDQoNClRo
+aXMgc29sdXRpb24gc2VlbXMgbm90IG9wdGltYWwsIGFzIHdlIGFyZSBnaXZpbmcgdG8gcHJvY2Vz
+c2VzIGENCnBlcm1pc3Npb24gdGhhdCB0aGV5IHdvdWxkbid0IHJlYWxseSB0YWtlIGFkdmFudGFn
+ZSBvZiwgc2luY2UgdGhlDQpjb250ZW50IHJlYWQgcmVtYWlucyBpbiBrZXJuZWwgc3BhY2UuIEFu
+ZCBhbiBhZGRpdGlvbmFsIHBlcm1pc3Npb24NCmlzIGEgcGVybWlzc2lvbiB0aGF0IGNhbiBiZSBl
+eHBsb2l0ZWQuDQoNCkFzIE1pbWkgc2FpZCwgd2UgYWxyZWFkeSBoYXZlIGEgc2Vjb25kIG9wZW4g
+d2l0aCBkZW50cnlfb3BlbigpIHdoZW4NCnRoZSBvcmlnaW5hbCBmaWxlIGRlc2NyaXB0b3IgaXMg
+bm90IHN1aXRhYmxlLiBUaGUgb25seSBwcm9ibGVtLCB3aGljaCBpcw0Kd2h5IGNoYW5naW5nIHRo
+ZSBtb2RlIGlzIHN0aWxsIHRoZXJlLCBpcyB0aGF0IGEgcHJvY2VzcyBzdGlsbCBtaWdodCBub3QN
+CmhhdmUgdGhlIHByaXZpbGVnZSB0byByZWFkLCBhbmQgdGhpcyBpcyBhIGxlZ2l0aW1hdGUgY2Fz
+ZS4NCg0KV2UgY291bGQgYXNzaWduIGEgbW9yZSBwb3dlcmZ1bCBjcmVkZW50aWFsIHRvIHRoZSBw
+cm9jZXNzLCBzaW5jZQ0KZGVudHJ5X29wZW4oKSBhY2NlcHRzIGEgY3JlZGVudGlhbCBhcyBhbiBh
+cmd1bWVudC4gV2UgY291bGQgb2J0YWluDQpzdWNoIHBvd2VyZnVsIGNyZWRlbnRpYWwgZnJvbSBw
+cmVwYXJlX2tlcm5lbF9jcmVkKCkuIFRoaXMgb3B0aW9uDQpoYXMgYmV0dGVyIGNoYW5jZXMgdG8g
+d29yayB3aXRob3V0IG1vZGlmeWluZyBleGlzdGluZyBzZWN1cml0eSBwb2xpY2llcw0KYXMgbGlr
+ZWx5IHRob3NlIHBvbGljaWVzIGFscmVhZHkgYXNzaWduZWQgdGhlIHJlcXVpcmVkIHByaXZpbGVn
+ZSB0byB0aGUNCmtlcm5lbC4gSG93ZXZlciwgZG9pbmcgc28gbWlnaHQgbm90IGJlIHdoYXQgTFNN
+IHBlb3BsZSByZWNvbW1lbmQuDQoNCkFueSBzdWdnZXN0aW9uPw0KDQpUaGFua3MNCg0KUm9iZXJ0
+bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFu
+YWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
