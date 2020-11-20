@@ -2,163 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CBA72BB1E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 19:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C635E2BB217
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 19:10:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbgKTSAg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 13:00:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25672 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727215AbgKTSAf (ORCPT
+        id S1729657AbgKTSHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 13:07:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728918AbgKTSHY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 13:00:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605895233;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JxskEXwutt4P1nZSKgawl/xEgyUPfquuR5hR5qwSjZM=;
-        b=YAofb6qXRZb424IaniSlwERtCoNEUtaY7B5h73IDegWhCecykWHJKmr0i/bJPGtBYiFc24
-        wCKHF4rwNgVk0RMWjBdVXK+uLZumMhWmzgirwZ/n4hzgfRdRT1EO0rfTE9CZ097NtwLmZw
-        MGdEvpKqaQKTdXltp/K68k08lKT3N54=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-245-KXpfjzaZNAWdTW2OD65koQ-1; Fri, 20 Nov 2020 13:00:27 -0500
-X-MC-Unique: KXpfjzaZNAWdTW2OD65koQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6C42D100C601;
-        Fri, 20 Nov 2020 18:00:23 +0000 (UTC)
-Received: from [10.36.114.78] (ovpn-114-78.ams2.redhat.com [10.36.114.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BCE8260862;
-        Fri, 20 Nov 2020 18:00:16 +0000 (UTC)
-Subject: Re: [PATCH v5 00/21] Free some vmemmap pages of hugetlb page
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>
-Cc:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
-        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
-        willy@infradead.org, osalvador@suse.de, song.bao.hua@hisilicon.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120084202.GJ3200@dhcp22.suse.cz>
- <6b1533f7-69c6-6f19-fc93-c69750caaecc@redhat.com>
- <20201120093912.GM3200@dhcp22.suse.cz>
- <eda50930-05b5-0ad9-2985-8b6328f92cec@redhat.com>
- <55e53264-a07a-a3ec-4253-e72c718b4ee6@oracle.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <af95bcad-80dd-d2a4-0178-b9d2869e97cf@redhat.com>
-Date:   Fri, 20 Nov 2020 19:00:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Fri, 20 Nov 2020 13:07:24 -0500
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA491C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 10:07:23 -0800 (PST)
+Received: by mail-qt1-x842.google.com with SMTP id f15so4252468qto.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 10:07:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qzxXYsRioiP+WS2W7+JqANiIkJuxsiB0XH0K0d6+qtg=;
+        b=kVX4x5fpgWWco5Ty/z9+LAK78NhaMagv/tDBnm6DUUeCWaj1HGUIBbp2aJhNnNEDUX
+         3IMNQ6fbdY/PqyJeGpV5XT5MgmuXF/v6yWfNDjhcSQMDpwtr4+hJbu4qzdlNIbE032j8
+         N6WJP4W+ttGh8C6hBS0bHnuTG8JeA6PqV00NQ1bEloyaSOSySEoGweqsuBTnHZ5oOVe5
+         XKsn1y3u4gVoVT0r8VMZFNv/f6Pn/mmX1yQCnK2oUwYxk5go3vzZ3Bk/GbZSg3FiOcOx
+         72YuC+2VxZ6koXFYbos9ZFiX1/r83F90VF+cOVa4au/lfdem40sM6v1eigLfygQrHcDA
+         NXpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qzxXYsRioiP+WS2W7+JqANiIkJuxsiB0XH0K0d6+qtg=;
+        b=k3rBKl21ytEutWZEpZWwwJPh6XtdvnR6oorUIkUcXPq1Dmc2f/sp4ZonlM2b3o5gs2
+         bcZLpFq5ODEpxGg66VxoPBdORr7CEGcGjTPou4HjAm7FVm4+FBVft0l3eBSJ8gbA6Sbf
+         UXqC6KvfMGE7GmalU9X45dRxlSYqb3+ymv4TTIQnGnrCQzhycZNy/zMV7IQLCVSpDt1N
+         SGSNJB7koJmE9eNLBZQNvisFtq6yserPeWLVaR9Om/wJII8O7m+vWibYnFoEkyJzwEm3
+         0eVOS2yeUF4nB02zDP3RqAK4HC2mI52xs3fJgABdd/j355YXokmcYLeAP3pXW5LWNxni
+         TrTg==
+X-Gm-Message-State: AOAM531CzLwgZuqnKxP+PJW2w35+jAx9Pe6jiwDb+tntkVYLkyv8+Yxy
+        lvJdmNtc3I8/f9qRQU5Gw+wkVHX7HsbHYDGF
+X-Google-Smtp-Source: ABdhPJz17n7O3IQoUnG1lr3Y+t6u4VkEghZe6VwPVl7Std3Wem+S+IGdLYrv/xtqRZWsm/mbwrw9gw==
+X-Received: by 2002:ac8:6a16:: with SMTP id t22mr16861888qtr.304.1605895641688;
+        Fri, 20 Nov 2020 10:07:21 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id q15sm2444862qki.13.2020.11.20.10.07.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2020 10:07:20 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1kgAoZ-008uHM-Rm; Fri, 20 Nov 2020 14:07:19 -0400
+Date:   Fri, 20 Nov 2020 14:07:19 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Michel Lespinasse <walken@google.com>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dave Chinner <david@fromorbit.com>, Qian Cai <cai@lca.pw>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/3] mm: Extract might_alloc() debug check
+Message-ID: <20201120180719.GO244516@ziepe.ca>
+References: <20201120095445.1195585-1-daniel.vetter@ffwll.ch>
+ <20201120095445.1195585-3-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <55e53264-a07a-a3ec-4253-e72c718b4ee6@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201120095445.1195585-3-daniel.vetter@ffwll.ch>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.11.20 18:45, Mike Kravetz wrote:
-> On 11/20/20 1:43 AM, David Hildenbrand wrote:
->> On 20.11.20 10:39, Michal Hocko wrote:
->>> On Fri 20-11-20 10:27:05, David Hildenbrand wrote:
->>>> On 20.11.20 09:42, Michal Hocko wrote:
->>>>> On Fri 20-11-20 14:43:04, Muchun Song wrote:
->>>>> [...]
->>>>>
->>>>> Thanks for improving the cover letter and providing some numbers. I have
->>>>> only glanced through the patchset because I didn't really have more time
->>>>> to dive depply into them.
->>>>>
->>>>> Overall it looks promissing. To summarize. I would prefer to not have
->>>>> the feature enablement controlled by compile time option and the kernel
->>>>> command line option should be opt-in. I also do not like that freeing
->>>>> the pool can trigger the oom killer or even shut the system down if no
->>>>> oom victim is eligible.
->>>>>
->>>>> One thing that I didn't really get to think hard about is what is the
->>>>> effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
->>>>> invalid when racing with the split. How do we enforce that this won't
->>>>> blow up?
->>>>
->>>> I have the same concerns - the sections are online the whole time and
->>>> anybody with pfn_to_online_page() can grab them
->>>>
->>>> I think we have similar issues with memory offlining when removing the
->>>> vmemmap, it's just very hard to trigger and we can easily protect by
->>>> grabbing the memhotplug lock.
->>>
->>> I am not sure we can/want to span memory hotplug locking out to all pfn
->>> walkers. But you are right that the underlying problem is similar but
->>> much harder to trigger because vmemmaps are only removed when the
->>> physical memory is hotremoved and that happens very seldom. Maybe it
->>> will happen more with virtualization usecases. But this work makes it
->>> even more tricky. If a pfn walker races with a hotremove then it would
->>> just blow up when accessing the unmapped physical address space. For
->>> this feature a pfn walker would just grab a real struct page re-used for
->>> some unpredictable use under its feet. Any failure would be silent and
->>> hard to debug.
->>
->> Right, we don't want the memory hotplug locking, thus discussions regarding rcu. Luckily, for now I never saw a BUG report regarding this - maybe because the time between memory offlining (offline_pages()) and memory/vmemmap getting removed (try_remove_memory()) is just too long. Someone would have to sleep after pfn_to_online_page() for quite a while to trigger it.
->>
->>>
->>> [...]
->>>> To keep things easy, maybe simply never allow to free these hugetlb pages
->>>> again for now? If they were reserved during boot and the vmemmap condensed,
->>>> then just let them stick around for all eternity.
->>>
->>> Not sure I understand. Do you propose to only free those vmemmap pages
->>> when the pool is initialized during boot time and never allow to free
->>> them up? That would certainly make it safer and maybe even simpler wrt
->>> implementation.
->>
->> Exactly, let's keep it simple for now. I guess most use cases of this (virtualization, databases, ...) will allocate hugepages during boot and never free them.
-> 
-> Not sure if I agree with that last statement.  Database and virtualization
-> use cases from my employer allocate allocate hugetlb pages after boot.  It
-> is shortly after boot, but still not from boot/kernel command line.
+On Fri, Nov 20, 2020 at 10:54:43AM +0100, Daniel Vetter wrote:
+> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> index d5ece7a9a403..f94405d43fd1 100644
+> --- a/include/linux/sched/mm.h
+> +++ b/include/linux/sched/mm.h
+> @@ -180,6 +180,22 @@ static inline void fs_reclaim_acquire(gfp_t gfp_mask) { }
+>  static inline void fs_reclaim_release(gfp_t gfp_mask) { }
+>  #endif
+>  
+> +/**
+> + * might_alloc - Marks possible allocation sites
+> + * @gfp_mask: gfp_t flags that would be use to allocate
+> + *
+> + * Similar to might_sleep() and other annotations this can be used in functions
+> + * that might allocate, but often dont. Compiles to nothing without
+> + * CONFIG_LOCKDEP. Includes a conditional might_sleep() if @gfp allows blocking.
+> + */
+> +static inline void might_alloc(gfp_t gfp_mask)
+> +{
+> +	fs_reclaim_acquire(gfp_mask);
+> +	fs_reclaim_release(gfp_mask);
+> +
+> +	might_sleep_if(gfpflags_allow_blocking(gfp_mask));
+> +}
 
-Right, but the ones that care about this optimization for now could be 
-converted, I assume? I mean we are talking about "opt-in" from 
-sysadmins, so requiring to specify a different cmdline parameter does 
-not sound to weird to me. And it should simplify a first version quite a 
-lot.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-The more I think about this, the more I believe doing these vmemmap 
-modifications after boot are very dangerous.
+Oh, I just had a another thread with Matt about xarray, this would be
+perfect to add before xas_nomem():
 
-> 
-> Somewhat related, but not exactly addressing this issue ...
-> 
-> One idea discussed in a previous patch set was to disable PMD/huge page
-> mapping of vmemmap if this feature was enabled.  This would eliminate a bunch
-> of the complex code doing page table manipulation.  It does not address
-> the issue of struct page pages going away which is being discussed here,
-> but it could be a way to simply the first version of this code.  If this
-> is going to be an 'opt in' feature as previously suggested, then eliminating
-> the  PMD/huge page vmemmap mapping may be acceptable.  My guess is that
-> sysadmins would only 'opt in' if they expect most of system memory to be used
-> by hugetlb pages.  We certainly have database and virtualization use cases
-> where this is true.
-
-It sounds like a hack to me, which does not fully solve the problem. But 
-yeah, it's a simplification.
-
--- 
-Thanks,
-
-David / dhildenb
-
+diff --git a/lib/idr.c b/lib/idr.c
+index f4ab4f4aa3c7f5..722d9ddff53221 100644
+--- a/lib/idr.c
++++ b/lib/idr.c
+@@ -391,6 +391,8 @@ int ida_alloc_range(struct ida *ida, unsigned int min, unsigned int max,
+ 	if ((int)max < 0)
+ 		max = INT_MAX;
+ 
++	might_alloc(gfp);
++
+ retry:
+ 	xas_lock_irqsave(&xas, flags);
+ next:
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 5fa51614802ada..dd260ee7dcae9a 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1534,6 +1534,8 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
+ 	XA_STATE(xas, xa, index);
+ 	void *curr;
+ 
++	might_alloc(gfp);
++
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+ 		return XA_ERROR(-EINVAL);
+ 	if (xa_track_free(xa) && !entry)
+@@ -1600,6 +1602,8 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
+ 	XA_STATE(xas, xa, index);
+ 	void *curr;
+ 
++	might_alloc(gfp);
++
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+ 		return XA_ERROR(-EINVAL);
+ 
+@@ -1637,6 +1641,8 @@ int __xa_insert(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
+ 	XA_STATE(xas, xa, index);
+ 	void *curr;
+ 
++	might_alloc(gfp);
++
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+ 		return -EINVAL;
+ 	if (!entry)
+@@ -1806,6 +1812,8 @@ int __xa_alloc(struct xarray *xa, u32 *id, void *entry,
+ {
+ 	XA_STATE(xas, xa, 0);
+ 
++	might_alloc(gfp);
++
+ 	if (WARN_ON_ONCE(xa_is_advanced(entry)))
+ 		return -EINVAL;
+ 	if (WARN_ON_ONCE(!xa_track_free(xa)))
