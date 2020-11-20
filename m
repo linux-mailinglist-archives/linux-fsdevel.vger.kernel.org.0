@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF852BBA11
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 00:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F28252BB9FE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 00:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbgKTXUa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 18:20:30 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:35918 "EHLO
+        id S1729474AbgKTXUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 18:20:04 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:36090 "EHLO
         out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729153AbgKTXT6 (ORCPT
+        with ESMTP id S1729453AbgKTXUE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 18:19:58 -0500
+        Fri, 20 Nov 2020 18:20:04 -0500
 Received: from in02.mta.xmission.com ([166.70.13.52])
         by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1kgFh7-006UXu-5g; Fri, 20 Nov 2020 16:19:57 -0700
+        id 1kgFhC-006UZk-Ow; Fri, 20 Nov 2020 16:20:02 -0700
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.int.ebiederm.org)
         by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1kgFeC-00EG00-P7; Fri, 20 Nov 2020 16:16:57 -0700
+        id 1kgFeG-00EG00-6u; Fri, 20 Nov 2020 16:17:00 -0700
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
@@ -47,110 +47,138 @@ Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
         John Fastabend <john.fastabend@gmail.com>,
         KP Singh <kpsingh@chromium.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Fri, 20 Nov 2020 17:14:34 -0600
-Message-Id: <20201120231441.29911-17-ebiederm@xmission.com>
+Date:   Fri, 20 Nov 2020 17:14:35 -0600
+Message-Id: <20201120231441.29911-18-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <87r1on1v62.fsf@x220.int.ebiederm.org>
 References: <87r1on1v62.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-XM-SPF: eid=1kgFeC-00EG00-P7;;;mid=<20201120231441.29911-17-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+YX8Zsom0xDVILDApQN2Ck0BtX/4RimOo=
+X-XM-SPF: eid=1kgFeG-00EG00-6u;;;mid=<20201120231441.29911-18-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/WN8YoHfI/03jv7EktJCZELxhOW1eGhBc=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TooManySym_01,T_TooManySym_02,XMSubLong
-        autolearn=disabled version=3.4.2
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TooManySym_01 autolearn=disabled version=3.4.2
 X-Spam-Virus: No
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
         *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
 X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: ;linux-kernel@vger.kernel.org
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 504 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 4.0 (0.8%), b_tie_ro: 2.8 (0.6%), parse: 0.81
-        (0.2%), extract_message_metadata: 11 (2.2%), get_uri_detail_list: 1.49
-        (0.3%), tests_pri_-1000: 21 (4.1%), tests_pri_-950: 1.12 (0.2%),
-        tests_pri_-900: 0.86 (0.2%), tests_pri_-90: 251 (49.9%), check_bayes:
-        250 (49.6%), b_tokenize: 7 (1.4%), b_tok_get_all: 7 (1.5%),
-        b_comp_prob: 1.77 (0.3%), b_tok_touch_all: 231 (45.7%), b_finish: 0.75
-        (0.1%), tests_pri_0: 205 (40.7%), check_dkim_signature: 0.36 (0.1%),
-        check_dkim_adsp: 2.2 (0.4%), poll_dns_idle: 0.89 (0.2%), tests_pri_10:
-        1.53 (0.3%), tests_pri_500: 5 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v2 17/24] proc/fd: In fdinfo seq_show don't use get_files_struct
+X-Spam-Timing: total 547 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 4.3 (0.8%), b_tie_ro: 2.9 (0.5%), parse: 1.36
+        (0.2%), extract_message_metadata: 14 (2.6%), get_uri_detail_list: 2.9
+        (0.5%), tests_pri_-1000: 20 (3.6%), tests_pri_-950: 1.06 (0.2%),
+        tests_pri_-900: 0.84 (0.2%), tests_pri_-90: 184 (33.6%), check_bayes:
+        182 (33.3%), b_tokenize: 8 (1.5%), b_tok_get_all: 8 (1.5%),
+        b_comp_prob: 2.2 (0.4%), b_tok_touch_all: 160 (29.3%), b_finish: 0.79
+        (0.1%), tests_pri_0: 309 (56.6%), check_dkim_signature: 0.42 (0.1%),
+        check_dkim_adsp: 2.5 (0.5%), poll_dns_idle: 1.21 (0.2%), tests_pri_10:
+        2.6 (0.5%), tests_pri_500: 6 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v2 18/24] file: Merge __fd_install into fd_install
 X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When discussing[1] exec and posix file locks it was realized that none
-of the callers of get_files_struct fundamentally needed to call
-get_files_struct, and that by switching them to helper functions
-instead it will both simplify their code and remove unnecessary
-increments of files_struct.count.  Those unnecessary increments can
-result in exec unnecessarily unsharing files_struct which breaking
-posix locks, and it can result in fget_light having to fallback to
-fget reducing system performance.
+The function __fd_install was added to support binder[1].  With binder
+fixed[2] there are no more users.
 
-Instead hold task_lock for the duration that task->files needs to be
-stable in seq_show.  The task_lock was already taken in
-get_files_struct, and so skipping get_files_struct performs less work
-overall, and avoids the problems with the files_struct reference
-count.
+As fd_install just calls __fd_install with "files=current->files",
+merge them together by transforming the files parameter into a
+local variable initialized to current->files.
 
-[1] https://lkml.kernel.org/r/20180915160423.GA31461@redhat.com
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
+[1] f869e8a7f753 ("expose a low-level variant of fd_install() for binder")
+[2] 44d8047f1d87 ("binder: use standard functions to allocate fds")
 Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-v1: https://lkml.kernel.org/r/20200817220425.9389-12-ebiederm@xmission.com
+v1:https://lkml.kernel.org/r/20200817220425.9389-14-ebiederm@xmission.com
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/proc/fd.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/file.c               | 25 ++++++-------------------
+ include/linux/fdtable.h |  2 --
+ 2 files changed, 6 insertions(+), 21 deletions(-)
 
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index 72c1525b4b3e..cb51763ed554 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -28,9 +28,8 @@ static int seq_show(struct seq_file *m, void *v)
- 	if (!task)
- 		return -ENOENT;
+diff --git a/fs/file.c b/fs/file.c
+index 23b888a4acbe..0d4ec0fa23b3 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -158,7 +158,7 @@ static int expand_fdtable(struct files_struct *files, unsigned int nr)
+ 	spin_unlock(&files->file_lock);
+ 	new_fdt = alloc_fdtable(nr);
  
--	files = get_files_struct(task);
--	put_task_struct(task);
+-	/* make sure all __fd_install() have seen resize_in_progress
++	/* make sure all fd_install() have seen resize_in_progress
+ 	 * or have finished their rcu_read_lock_sched() section.
+ 	 */
+ 	if (atomic_read(&files->count) > 1)
+@@ -181,7 +181,7 @@ static int expand_fdtable(struct files_struct *files, unsigned int nr)
+ 	rcu_assign_pointer(files->fdt, new_fdt);
+ 	if (cur_fdt != &files->fdtab)
+ 		call_rcu(&cur_fdt->rcu, free_fdtable_rcu);
+-	/* coupled with smp_rmb() in __fd_install() */
++	/* coupled with smp_rmb() in fd_install() */
+ 	smp_wmb();
+ 	return 1;
+ }
+@@ -584,17 +584,13 @@ EXPORT_SYMBOL(put_unused_fd);
+  * It should never happen - if we allow dup2() do it, _really_ bad things
+  * will follow.
+  *
+- * NOTE: __fd_install() variant is really, really low-level; don't
+- * use it unless you are forced to by truly lousy API shoved down
+- * your throat.  'files' *MUST* be either current->files or obtained
+- * by get_files_struct(current) done by whoever had given it to you,
+- * or really bad things will happen.  Normally you want to use
+- * fd_install() instead.
++ * This consumes the "file" refcount, so callers should treat it
++ * as if they had called fput(file).
+  */
+ 
+-void __fd_install(struct files_struct *files, unsigned int fd,
+-		struct file *file)
++void fd_install(unsigned int fd, struct file *file)
+ {
++	struct files_struct *files = current->files;
+ 	struct fdtable *fdt;
+ 
+ 	rcu_read_lock_sched();
+@@ -616,15 +612,6 @@ void __fd_install(struct files_struct *files, unsigned int fd,
+ 	rcu_read_unlock_sched();
+ }
+ 
+-/*
+- * This consumes the "file" refcount, so callers should treat it
+- * as if they had called fput(file).
+- */
+-void fd_install(unsigned int fd, struct file *file)
+-{
+-	__fd_install(current->files, fd, file);
+-}
 -
-+	task_lock(task);
-+	files = task->files;
- 	if (files) {
- 		unsigned int fd = proc_fd(m->private);
+ EXPORT_SYMBOL(fd_install);
  
-@@ -47,8 +46,9 @@ static int seq_show(struct seq_file *m, void *v)
- 			ret = 0;
- 		}
- 		spin_unlock(&files->file_lock);
--		put_files_struct(files);
- 	}
-+	task_unlock(task);
-+	put_task_struct(task);
+ static struct file *pick_file(struct files_struct *files, unsigned fd)
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index cf6c52dae3a1..a5ec736d74a5 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -126,8 +126,6 @@ int iterate_fd(struct files_struct *, unsigned,
  
- 	if (ret)
- 		return ret;
-@@ -57,6 +57,7 @@ static int seq_show(struct seq_file *m, void *v)
- 		   (long long)file->f_pos, f_flags,
- 		   real_mount(file->f_path.mnt)->mnt_id);
- 
-+	/* show_fd_locks() never deferences files so a stale value is safe */
- 	show_fd_locks(m, file, files);
- 	if (seq_has_overflowed(m))
- 		goto out;
+ extern int __alloc_fd(struct files_struct *files,
+ 		      unsigned start, unsigned end, unsigned flags);
+-extern void __fd_install(struct files_struct *files,
+-		      unsigned int fd, struct file *file);
+ extern int __close_fd(struct files_struct *files,
+ 		      unsigned int fd);
+ extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
 -- 
 2.25.0
 
