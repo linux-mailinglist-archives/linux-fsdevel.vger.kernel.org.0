@@ -2,70 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C04A2B9FF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 02:50:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B03D2BA004
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 02:54:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbgKTBtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 20:49:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbgKTBtF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 20:49:05 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF375C0613CF;
-        Thu, 19 Nov 2020 17:49:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=aCnObJvanylUzSHbyrk5pjgW+5BJZ8hJiRxhinDSbCQ=; b=BTMTZWXzdMDLtvnsQyQgR7khjI
-        t4M0tkRbFadRF7P2Vw/aoQPWZDVBUDr0WMCue2HcMbhHYV5miCI5bwr6MD357l0FBiII/8MzIo8hV
-        1RhXzUtcvH74P1f76XK7y953kJd7o1/WxfPg0VVHdHdBYW/lDmuHOaiwoZXr+1W5wl3O4ysPkbVTp
-        v4lOMzUvCg1JvVjHYNQHhIqOVA0ArbD75E8bkTM0M70rSR26IVe0yhxgIzd6qcnejLl4aG47N3xqJ
-        GcB2ucZuocCmpiSF6/536D+/oVGXYq9vC1lGyu1+OXP1Lk0WKnI60BcDdIviwGj2JgioTZj2mwTP7
-        lsqcke9A==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kfvXs-0006VP-4z; Fri, 20 Nov 2020 01:49:04 +0000
-Date:   Fri, 20 Nov 2020 01:49:04 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iov_iter: optimise iov_iter_npages for bvec
-Message-ID: <20201120014904.GK29991@casper.infradead.org>
-References: <cover.1605827965.git.asml.silence@gmail.com>
- <ab04202d0f8c1424da47251085657c436d762785.1605827965.git.asml.silence@gmail.com>
- <20201120012017.GJ29991@casper.infradead.org>
- <35d5db17-f6f6-ec32-944e-5ecddcbcb0f1@gmail.com>
+        id S1726365AbgKTBxc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 20:53:32 -0500
+Received: from namei.org ([65.99.196.166]:54324 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbgKTBxb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Nov 2020 20:53:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 0AK1qcDI017804;
+        Fri, 20 Nov 2020 01:52:38 GMT
+Date:   Fri, 20 Nov 2020 12:52:38 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Jann Horn <jannh@google.com>
+cc:     "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v24 02/12] landlock: Add ruleset and domain management
+In-Reply-To: <20201112205141.775752-3-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.2011201251010.15634@namei.org>
+References: <20201112205141.775752-1-mic@digikod.net> <20201112205141.775752-3-mic@digikod.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <35d5db17-f6f6-ec32-944e-5ecddcbcb0f1@gmail.com>
+Content-Type: multipart/mixed; boundary="1665246916-1401825409-1605837159=:15634"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 01:39:05AM +0000, Pavel Begunkov wrote:
-> On 20/11/2020 01:20, Matthew Wilcox wrote:
-> > On Thu, Nov 19, 2020 at 11:24:38PM +0000, Pavel Begunkov wrote:
-> >> The block layer spends quite a while in iov_iter_npages(), but for the
-> >> bvec case the number of pages is already known and stored in
-> >> iter->nr_segs, so it can be returned immediately as an optimisation
-> > 
-> > Er ... no, it doesn't.  nr_segs is the number of bvecs.  Each bvec can
-> > store up to 4GB of contiguous physical memory.
-> 
-> Ah, really, missed min() with PAGE_SIZE in bvec_iter_len(), then it's a
-> stupid statement. Thanks!
-> 
-> Are there many users of that? All these iterators are a huge burden,
-> just to count one 4KB page in bvec it takes 2% of CPU time for me.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-__bio_try_merge_page() will create multipage BIOs, and that's
-called from a number of places including
-bio_try_merge_hw_seg(), bio_add_page(), and __bio_iov_iter_get_pages()
+--1665246916-1401825409-1605837159=:15634
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-so ... yeah, it's used a lot.
+On Thu, 12 Nov 2020, Mickaël Salaün wrote:
+
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> ---
+> 
+> Changes since v23:
+> * Always intersect access rights.  Following the filesystem change
+>   logic, make ruleset updates more consistent by always intersecting
+>   access rights (boolean AND) instead of combining them (boolean OR) for
+>   the same layer.  This defensive approach could also help avoid user
+>   space to inadvertently allow multiple access rights for the same
+>   object (e.g.  write and execute access on a path hierarchy) instead of
+>   dealing with such inconsistency.  This can happen when there is no
+>   deduplication of objects (e.g. paths and underlying inodes) whereas
+>   they get different access rights with landlock_add_rule(2).
+> * Add extra checks to make sure that:
+>   - there is always an (allocated) object in each used rules;
+>   - when updating a ruleset with a new rule (i.e. not merging two
+>     rulesets), the ruleset doesn't contain multiple layers.
+> * Hide merge parameter from the public landlock_insert_rule() API.  This
+>   helps avoid misuse of this function.
+> * Replace a remaining hardcoded 1 with SINGLE_DEPTH_NESTING.
+
+Jann: any chance you could review this patch again given the changes 
+above?
+
+Thanks.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--1665246916-1401825409-1605837159=:15634--
