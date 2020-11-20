@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B532BA635
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:32:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C0C2BA653
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:38:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbgKTJbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 04:31:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42180 "EHLO
+        id S1727145AbgKTJhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 04:37:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727633AbgKTJbK (ORCPT
+        with ESMTP id S1726321AbgKTJhv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 04:31:10 -0500
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E80C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 01:31:10 -0800 (PST)
-Received: by mail-pg1-x541.google.com with SMTP id r18so6812760pgu.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 01:31:10 -0800 (PST)
+        Fri, 20 Nov 2020 04:37:51 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC67AC0617A7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 01:37:51 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id v21so6843631pgi.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 01:37:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=oOtWTRWUacCV4afBAmB0uz1HPtJWEPOQW4mb7oZY5Lc=;
-        b=sqBBFahKA/fWvvT6v0hWx9OTS0y3W0Pch9RhXjiAujkFb2wZDebmdh4H/dIgkQwMdh
-         zjXM/S8s20+UeBMZEUO+imZ9K18Bhz3HIMh4eoe274VbCtgQNRPcDlwBcFh6xNbsx9NM
-         rq/M0ZAqb/GbPrcvxM58dkKlX+EGOmCxGvjZ/Koljpog8ws+9Nez4m2crpKLLDhmpP+E
-         atZGgxJQxbC+ZcBg+cA3vzOCyb+GITC7PEf65rliKp6AJHBFwEME7x/syO0uxKc7r+jZ
-         P6vpz7oB5n0o8O9XPwlKNDlq9F0o7ve1MCE+UblxrBROFhlmkW4aYBxAQ0zWmQ7XUVyV
-         /LLQ==
+        bh=Irqz9SDqUIDSV5L/8FdFdXAurDYsnyc+HWaKMTHel6Y=;
+        b=SYxcW6HISIb8Awuh3nmJxgBqMNn6Q5GeMGaNN4zWGoyErVEU+AZ6B7m7JrV2+aVg/I
+         qKv9JPOYAWnCAT+77ENHbA0k0suOlxx8gRsdjzajNwuUzaTKLTJVooMbRGtWd+194Fhs
+         3CwBMuEyoIWueQNySRtc0S3biNBTuMrHggzoUWAFee8WLDSUVlmcpjvOHU3ma2hNKn49
+         2j//Ku7/vTvBvqjgtoS3EE8Z4UzTujVrgtrGX1iCL0LyE0sM6+rYkiGPliBe1aickIOt
+         fTrJTmvKQkEes7ltwtIat40s17xslYkJu7DhUKLTElLqX7NCeVbEIlMeij/RqzE1BiW9
+         piiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=oOtWTRWUacCV4afBAmB0uz1HPtJWEPOQW4mb7oZY5Lc=;
-        b=eOMzHWUDZPki2hQjiCrMqWITb+iSrPfSrOwHT7bpelqh74nmaZ21Qr9Krevg/D/DIX
-         zVAXYmAOS7UkN9Z8nAGibkHQs7sHZKXfrFtiHn7viVKDasayb3BYnb1WYjTSUoW7w/nT
-         OhpxgVmipRf/uAGhPYeqLZbKuc59+DDXJl2lLXsaToKdEBCQe/0Peo7VCShzRIroYUUd
-         RUDZm7Ag0QnaHzeRaFJvPuO4t2tJybG95S0f0ybHtTJCDJrm7OmuCxwlEz7ZEIRaBaqx
-         tloeAd1xi9yhGfMO+s22GGI7W6M23Y0LVX9V5OhtWDTQeQwDtM2gfPYCER/APhJMhqDE
-         lqgA==
-X-Gm-Message-State: AOAM533cV31ySszC9uACy/XW/iJ0KGnO/aDICz80EvRPma/fEOcha4TF
-        vfLLHYR3Ugm69gbTD5N06KfvMYKjC/RlL8tAYC6PUw==
-X-Google-Smtp-Source: ABdhPJzUrWQJPe2coyaCpG5TNvaEojKLO8WAH7jZ5NPrvrro/woXmv5lXw0Cz4SHGWe1FgYGyudNgCWSGaUyxNltC3g=
-X-Received: by 2002:a17:90b:88b:: with SMTP id bj11mr9514004pjb.229.1605864670167;
- Fri, 20 Nov 2020 01:31:10 -0800 (PST)
+        bh=Irqz9SDqUIDSV5L/8FdFdXAurDYsnyc+HWaKMTHel6Y=;
+        b=ZyG22lXRmJqyuktW6j9FKA6bw5Fi5bFBnqKVne+mPRnPyZaecQq1TBFV7VWztADpFL
+         YygwSGQYFzYlSa1onmWdUfiNNIMssFKdSJFd3KCTAx3t8kpFmBxeCbCkzJAw9Hg0tvj5
+         sXXSb9etPQQ9XBH+NB9UbZOxzHbUzG7F0/6LcIOTCXIA6IezrKtOcjcsapP3Jx859r+L
+         4F62g9Yatk2bulGAVaPjNiiPgT3ORoPzusqdElqrqkJVym/dcBqYDPKNixAECncxksiW
+         W1S6ROUbdaW+EhMmA71YzNqNl5uOb/QFtI2Qso3r4sHIjeZs/9deKzKikqrTC0qhhKd/
+         yWAA==
+X-Gm-Message-State: AOAM532gd0cmVY/L0OnbhHK/d9a8MtXKB0o0ioUfTTaQr0I5b0uWFQEd
+        StUXZ2/uC2Rf0Iq1KNl97N0CWMdHANAUgD0BQczC6w==
+X-Google-Smtp-Source: ABdhPJw9yspq9j/qG1NKAt5aapXI1Q0GtnvJsXQ+8BEuEA6w4nEfVelDgROJG5yjDGSXPqb9X0CBLn7z1ViZeLeqFp4=
+X-Received: by 2002:a17:90b:941:: with SMTP id dw1mr9250411pjb.147.1605865071332;
+ Fri, 20 Nov 2020 01:37:51 -0800 (PST)
 MIME-Version: 1.0
 References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120064325.34492-14-songmuchun@bytedance.com> <20201120081638.GD3200@dhcp22.suse.cz>
-In-Reply-To: <20201120081638.GD3200@dhcp22.suse.cz>
+ <20201120064325.34492-12-songmuchun@bytedance.com> <20201120081123.GC3200@dhcp22.suse.cz>
+ <CAMZfGtWVxCPpL7=0dfHa7_qtakmGDMLP0twWoyM=gVou=HRmEg@mail.gmail.com> <20201120092826.GL3200@dhcp22.suse.cz>
+In-Reply-To: <20201120092826.GL3200@dhcp22.suse.cz>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 20 Nov 2020 17:30:27 +0800
-Message-ID: <CAMZfGtX3DUJggAzz_06Z2atHPknkCir6a49a983TsWOHt5ZQUQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v5 13/21] mm/hugetlb: Use PG_slab to
- indicate split pmd
+Date:   Fri, 20 Nov 2020 17:37:09 +0800
+Message-ID: <CAMZfGtVPNdykd=E2bEje0GCdZT9ksLy2BdaRZ41eRDbGQp0_rg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 11/21] mm/hugetlb: Allocate the vmemmap
+ pages associated with each hugetlb page
 To:     Michal Hocko <mhocko@suse.com>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
@@ -78,104 +79,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 4:16 PM Michal Hocko <mhocko@suse.com> wrote:
+On Fri, Nov 20, 2020 at 5:28 PM Michal Hocko <mhocko@suse.com> wrote:
 >
-> On Fri 20-11-20 14:43:17, Muchun Song wrote:
-> > When we allocate hugetlb page from buddy, we may need split huge pmd
-> > to pte. When we free the hugetlb page, we can merge pte to pmd. So
-> > we need to distinguish whether the previous pmd has been split. The
-> > page table is not allocated from slab. So we can reuse the PG_slab
-> > to indicate that the pmd has been split.
+> On Fri 20-11-20 16:51:59, Muchun Song wrote:
+> > On Fri, Nov 20, 2020 at 4:11 PM Michal Hocko <mhocko@suse.com> wrote:
+> > >
+> > > On Fri 20-11-20 14:43:15, Muchun Song wrote:
+> > > [...]
+> > > > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> > > > index eda7e3a0b67c..361c4174e222 100644
+> > > > --- a/mm/hugetlb_vmemmap.c
+> > > > +++ b/mm/hugetlb_vmemmap.c
+> > > > @@ -117,6 +117,8 @@
+> > > >  #define RESERVE_VMEMMAP_NR           2U
+> > > >  #define RESERVE_VMEMMAP_SIZE         (RESERVE_VMEMMAP_NR << PAGE_SHIFT)
+> > > >  #define TAIL_PAGE_REUSE                      -1
+> > > > +#define GFP_VMEMMAP_PAGE             \
+> > > > +     (GFP_KERNEL | __GFP_NOFAIL | __GFP_MEMALLOC)
+> > >
+> > > This is really dangerous! __GFP_MEMALLOC would allow a complete memory
+> > > depletion. I am not even sure triggering the OOM killer is a reasonable
+> > > behavior. It is just unexpected that shrinking a hugetlb pool can have
+> > > destructive side effects. I believe it would be more reasonable to
+> > > simply refuse to shrink the pool if we cannot free those pages up. This
+> > > sucks as well but it isn't destructive at least.
+> >
+> > I find the instructions of __GFP_MEMALLOC from the kernel doc.
+> >
+> > %__GFP_MEMALLOC allows access to all memory. This should only be used when
+> > the caller guarantees the allocation will allow more memory to be freed
+> > very shortly.
+> >
+> > Our situation is in line with the description above. We will free a HugeTLB page
+> > to the buddy allocator which is much larger than that we allocated shortly.
 >
-> PageSlab is used outside of the slab allocator proper and that code
-> might get confused by this AFAICS.
+> Yes that is a part of the description. But read it in its full entirety.
+>  * %__GFP_MEMALLOC allows access to all memory. This should only be used when
+>  * the caller guarantees the allocation will allow more memory to be freed
+>  * very shortly e.g. process exiting or swapping. Users either should
+>  * be the MM or co-ordinating closely with the VM (e.g. swap over NFS).
+>  * Users of this flag have to be extremely careful to not deplete the reserve
+>  * completely and implement a throttling mechanism which controls the
+>  * consumption of the reserve based on the amount of freed memory.
+>  * Usage of a pre-allocated pool (e.g. mempool) should be always considered
+>  * before using this flag.
+>
+> GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_HIGH
 
-I got your concerns. Maybe we can use PG_private instead of the
-PG_slab.
+We want to free the HugeTLB page to the buddy allocator, but before that,
+we need to allocate some pages as vmemmap pages, so here we cannot
+handle allocation failures. I think that we should replace the
+__GFP_RETRY_MAYFAIL to __GFP_NOFAIL.
+
+GFP_KERNEL | __GFP_NOFAIL | __GFP_HIGH
+
+This meets our needs here. Thanks.
 
 >
-> From the above description it is not really clear why this is needed
-> though. Who is supposed to use this? Say you are allocating a fresh
-> hugetlb page. Once you have it, nobody else can be interfering. It is
-> exclusive to the caller. The later machinery can check the vmemmap page
-> tables to find out whether a split is needed or not. Or do I miss
-> something?
-
-Yeah, the commit log needs some improvement. The vmemmap pages
-can use huge page mapping or basepage(e.g. 4KB) mapping. These two
-cases may exist at the same time. I want to know which page size the
-vmemmap pages mapping to. If we have split a PMD page table then
-we set the flag, when we free the HugeTLB and the flag is set, we want
-to merge the PTE page table to PMD. If the flag is not set, we do nothing
-about the PTE page table.
-
-Thanks.
-
->
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  mm/hugetlb_vmemmap.c | 26 ++++++++++++++++++++++++--
-> >  1 file changed, 24 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> > index 06e2b8a7b7c8..e2ddc73ce25f 100644
-> > --- a/mm/hugetlb_vmemmap.c
-> > +++ b/mm/hugetlb_vmemmap.c
-> > @@ -293,6 +293,25 @@ static void remap_huge_page_pmd_vmemmap(struct hstate *h, pmd_t *pmd,
-> >       flush_tlb_kernel_range(start, end);
-> >  }
-> >
-> > +static inline bool pmd_split(pmd_t *pmd)
-> > +{
-> > +     return PageSlab(pmd_page(*pmd));
-> > +}
-> > +
-> > +static inline void set_pmd_split(pmd_t *pmd)
-> > +{
-> > +     /*
-> > +      * We should not use slab for page table allocation. So we can set
-> > +      * PG_slab to indicate that the pmd has been split.
-> > +      */
-> > +     __SetPageSlab(pmd_page(*pmd));
-> > +}
-> > +
-> > +static inline void clear_pmd_split(pmd_t *pmd)
-> > +{
-> > +     __ClearPageSlab(pmd_page(*pmd));
-> > +}
-> > +
-> >  static void __remap_huge_page_pte_vmemmap(struct page *reuse, pte_t *ptep,
-> >                                         unsigned long start,
-> >                                         unsigned long end,
-> > @@ -357,11 +376,12 @@ void alloc_huge_page_vmemmap(struct hstate *h, struct page *head)
-> >       ptl = vmemmap_pmd_lock(pmd);
-> >       remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &remap_pages,
-> >                                   __remap_huge_page_pte_vmemmap);
-> > -     if (!freed_vmemmap_hpage_dec(pmd_page(*pmd))) {
-> > +     if (!freed_vmemmap_hpage_dec(pmd_page(*pmd)) && pmd_split(pmd)) {
-> >               /*
-> >                * Todo:
-> >                * Merge pte to huge pmd if it has ever been split.
-> >                */
-> > +             clear_pmd_split(pmd);
-> >       }
-> >       spin_unlock(ptl);
-> >  }
-> > @@ -443,8 +463,10 @@ void free_huge_page_vmemmap(struct hstate *h, struct page *head)
-> >       BUG_ON(!pmd);
-> >
-> >       ptl = vmemmap_pmd_lock(pmd);
-> > -     if (vmemmap_pmd_huge(pmd))
-> > +     if (vmemmap_pmd_huge(pmd)) {
-> >               split_vmemmap_huge_page(head, pmd);
-> > +             set_pmd_split(pmd);
-> > +     }
-> >
-> >       remap_huge_page_pmd_vmemmap(h, pmd, (unsigned long)head, &free_pages,
-> >                                   __free_huge_page_pte_vmemmap);
-> > --
-> > 2.11.0
-> >
+> sounds like a more reasonable fit to me.
 >
 > --
 > Michal Hocko
