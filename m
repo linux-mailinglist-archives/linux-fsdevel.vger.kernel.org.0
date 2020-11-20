@@ -2,201 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D12B52BA715
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 11:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C00122BA782
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 11:36:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbgKTKJb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 05:09:31 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:38480 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726334AbgKTKJa (ORCPT
+        id S1726483AbgKTKdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 05:33:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51810 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbgKTKdR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 05:09:30 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0UFzUuLV_1605866968;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UFzUuLV_1605866968)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 20 Nov 2020 18:09:28 +0800
-Subject: Fwd: Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
-References: <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-fsdevel@vger.kernel.org
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-X-Forwarded-Message-Id: <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
-Message-ID: <7f78d262-81ef-a3ac-2076-1001f7c855a2@linux.alibaba.com>
-Date:   Fri, 20 Nov 2020 18:09:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.12.1
+        Fri, 20 Nov 2020 05:33:17 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 496ABC0617A7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 02:33:17 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id c66so7461016pfa.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 02:33:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UsS6BwELHQFBs6wYocFk33SI0hNJVApsWPqjjwO0pIg=;
+        b=MXukd6hdqebfCVmvaC32gdmcgYyA7hCeC+66VEc/xj+GYVdeI7SmMc9yfOaKn2grMJ
+         QSI0j4cqgRutOMouMjuv4tGNmiOJ+NUw9s391xQJJqjs5P9XVGISyx2680WhGChty4Xc
+         ORvQzynmtkhN0WHynNb2WJFv1f/mSDSjsRYrwNdU2/NrwpocFeTfrxh8IpylO5uZF2HB
+         QiQBcvmmJFIAbUATdSXgNh0A+BMqBCcesIh7ZQCDkwzb4+gCiYuXPDcIrHZAFE2Yr6UV
+         w5gsqc6JxQ3N7NzWfLDuD+VTwZUTnUKW9DLkgD6wZUv0ElJ9HX3frAWbb1Mgqgie6pgi
+         56hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UsS6BwELHQFBs6wYocFk33SI0hNJVApsWPqjjwO0pIg=;
+        b=njMbIpVF5kWGpOkCbRe+fmfxiFXLEVnUdJwpcp+nEJxD24UnVXgkp8MvA/eKIljZcd
+         mHAsXaMJXm+UgwkhhVnHpfQ3vgvUs9wFGX2QpFEQX4kSqqvsbKmf9pgwdreUgudvlMiQ
+         LAAVlLa0OVtflA6v3e1D0rHPYpbQ6fBPogc1ZXr5VOHvj6EL2y3jB428v8otln3Dgryc
+         vhzvVYfgCsfjVtOfTsU3W0/CzH2yOMrsenxBANDwSUMpjnrMeHbCbGHIbsWre8hJF5oM
+         kvA1vIpu6M3kxPNU6ndw8V5sNDO8CJh5F4Mj8k8jSbt7UrPx+rhEMmP3HmxlfMMqRemc
+         +GPQ==
+X-Gm-Message-State: AOAM531uGXHkn3VZMd13XiBmtsaxuvoXzYmzb35Yn3+Twb2+fj/S628p
+        STNPDEBAmZNAVhiJy6WqZbJZJ7ijpa+ssd8B3eEcgw==
+X-Google-Smtp-Source: ABdhPJxfv45R/dS1L8+h3jIhMzMxG7gkHNSADvlzeP3zS+xAY8Bn0OgWgJ4R3njDshhjg8x0srlDY4mieIZF69vDhdc=
+X-Received: by 2002:a17:90b:941:: with SMTP id dw1mr9467911pjb.147.1605868396746;
+ Fri, 20 Nov 2020 02:33:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ed355fc8-6fc8-5ffd-f1e9-6ba19f761a09@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120064325.34492-16-songmuchun@bytedance.com> <20201120081940.GE3200@dhcp22.suse.cz>
+In-Reply-To: <20201120081940.GE3200@dhcp22.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 20 Nov 2020 18:32:34 +0800
+Message-ID: <CAMZfGtUZJ2dCtVa67X9ackjbxVVJSn=7Y4DtUJzG4yNghDnNCQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 15/21] mm/hugetlb: Set the PageHWPoison
+ to the raw error page
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Nov 20, 2020 at 4:19 PM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Fri 20-11-20 14:43:19, Muchun Song wrote:
+> > Because we reuse the first tail page, if we set PageHWPosion on a
+> > tail page. It indicates that we may set PageHWPoison on a series
+> > of pages. So we can use the head[4].mapping to record the real
+> > error page index and set the raw error page PageHWPoison later.
+>
+> This really begs more explanation. Maybe I misremember but If there
+> is a HWPoison hole in a hugepage then the whole page is demolished, no?
+> If that is the case then why do we care about tail pages?
 
+It seems like that I should make the commit log more clear. If there is
+a HWPoison hole in a HugeTLB, we should dissolve the HugeTLB page.
+It means that we set the HWPoison on the raw error page(not the head
+page) and free the HugeTLB to the buddy allocator. Then we will remove
+only one HWPoison page from the buddy free list. You can see the
+take_page_off_buddy() for more details. Thanks.
 
+>
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  mm/hugetlb.c         | 11 +++--------
+> >  mm/hugetlb_vmemmap.h | 39 +++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 42 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 055604d07046..b853aacd5c16 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -1383,6 +1383,7 @@ static void __free_hugepage(struct hstate *h, struct page *page)
+> >       int i;
+> >
+> >       alloc_huge_page_vmemmap(h, page);
+> > +     subpage_hwpoison_deliver(page);
+> >
+> >       for (i = 0; i < pages_per_huge_page(h); i++) {
+> >               page[i].flags &= ~(1 << PG_locked | 1 << PG_error |
+> > @@ -1944,14 +1945,8 @@ int dissolve_free_huge_page(struct page *page)
+> >               int nid = page_to_nid(head);
+> >               if (h->free_huge_pages - h->resv_huge_pages == 0)
+> >                       goto out;
+> > -             /*
+> > -              * Move PageHWPoison flag from head page to the raw error page,
+> > -              * which makes any subpages rather than the error page reusable.
+> > -              */
+> > -             if (PageHWPoison(head) && page != head) {
+> > -                     SetPageHWPoison(page);
+> > -                     ClearPageHWPoison(head);
+> > -             }
+> > +
+> > +             set_subpage_hwpoison(head, page);
+> >               list_del(&head->lru);
+> >               h->free_huge_pages--;
+> >               h->free_huge_pages_node[nid]--;
+> > diff --git a/mm/hugetlb_vmemmap.h b/mm/hugetlb_vmemmap.h
+> > index 779d3cb9333f..65e94436ffff 100644
+> > --- a/mm/hugetlb_vmemmap.h
+> > +++ b/mm/hugetlb_vmemmap.h
+> > @@ -20,6 +20,29 @@ void __init gather_vmemmap_pgtable_init(struct huge_bootmem_page *m,
+> >  void alloc_huge_page_vmemmap(struct hstate *h, struct page *head);
+> >  void free_huge_page_vmemmap(struct hstate *h, struct page *head);
+> >
+> > +static inline void subpage_hwpoison_deliver(struct page *head)
+> > +{
+> > +     struct page *page = head;
+> > +
+> > +     if (PageHWPoison(head))
+> > +             page = head + page_private(head + 4);
+> > +
+> > +     /*
+> > +      * Move PageHWPoison flag from head page to the raw error page,
+> > +      * which makes any subpages rather than the error page reusable.
+> > +      */
+> > +     if (page != head) {
+> > +             SetPageHWPoison(page);
+> > +             ClearPageHWPoison(head);
+> > +     }
+> > +}
+> > +
+> > +static inline void set_subpage_hwpoison(struct page *head, struct page *page)
+> > +{
+> > +     if (PageHWPoison(head))
+> > +             set_page_private(head + 4, page - head);
+> > +}
+> > +
+> >  static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
+> >  {
+> >       return h->nr_free_vmemmap_pages;
+> > @@ -56,6 +79,22 @@ static inline void free_huge_page_vmemmap(struct hstate *h, struct page *head)
+> >  {
+> >  }
+> >
+> > +static inline void subpage_hwpoison_deliver(struct page *head)
+> > +{
+> > +}
+> > +
+> > +static inline void set_subpage_hwpoison(struct page *head, struct page *page)
+> > +{
+> > +     /*
+> > +      * Move PageHWPoison flag from head page to the raw error page,
+> > +      * which makes any subpages rather than the error page reusable.
+> > +      */
+> > +     if (PageHWPoison(head) && page != head) {
+> > +             SetPageHWPoison(page);
+> > +             ClearPageHWPoison(head);
+> > +     }
+> > +}
+> > +
+> >  static inline unsigned int free_vmemmap_pages_per_hpage(struct hstate *h)
+> >  {
+> >       return 0;
+> > --
+> > 2.11.0
+> >
+>
+> --
+> Michal Hocko
+> SUSE Labs
 
--------- Forwarded Message --------
-Subject: 	Re: [PATCH v4 2/2] block,iomap: disable iopoll when split needed
-Date: 	Fri, 20 Nov 2020 18:06:54 +0800
-From: 	JeffleXu <jefflexu@linux.alibaba.com>
-To: 	Christoph Hellwig <hch@infradead.org>
-CC: 	axboe@kernel.dk, ming.lei@redhat.com, linux-block@vger.kernel.org, 
-io-uring@vger.kernel.org, joseph.qi@linux.alibaba.com
-
-
-
-
-On 11/20/20 1:55 AM, Christoph Hellwig wrote:
->> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
->> index 933f234d5bec..396ac0f91a43 100644
->> --- a/fs/iomap/direct-io.c
->> +++ b/fs/iomap/direct-io.c
->> @@ -309,6 +309,16 @@ iomap_dio_bio_actor(struct inode *inode, loff_t 
->> pos, loff_t length,
->> copied += n;
->> nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
->> + /*
->> + * The current dio needs to be split into multiple bios here.
->> + * iopoll for split bio will cause subtle trouble such as
->> + * hang when doing sync polling, while iopoll is initially
->> + * for small size, latency sensitive IO. Thus disable iopoll
->> + * if split needed.
->> + */
->> + if (nr_pages)
->> + dio->iocb->ki_flags &= ~IOCB_HIPRI;
-> I think this is confusing two things.
-
-Indeed there's two level of split concerning this issue when doing sync 
-iopoll.
-
-
-The first is that one bio got split in block-core, and patch 1 of this 
-patch set just fixes this.
-
-
-Second is that one dio got split into multiple bios in fs layer, and 
-patch 2 fixes this.
-
-
-> One is that we don't handle
-> polling well when there are multiple bios. For this I think we should
-> only call bio_set_polled when we know there is a single bio.
-
-
-How about the following patch:
-
-
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -60,12 +60,12 @@ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin)
-  EXPORT_SYMBOL_GPL(iomap_dio_iopoll);
-
-  static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap 
-*iomap,
--               struct bio *bio, loff_t pos)
-+               struct bio *bio, loff_t pos, bool split)
-  {
-         atomic_inc(&dio->ref);
-
-         if (dio->iocb->ki_flags & IOCB_HIPRI)
--               bio_set_polled(bio, dio->iocb);
-+               bio_set_polled(bio, dio->iocb, split);
-
-         dio->submit.last_queue = bdev_get_queue(iomap->bdev);
-         if (dio->dops && dio->dops->submit_io)
-@@ -214,6 +214,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, 
-loff_t length,
-         int nr_pages, ret = 0;
-         size_t copied = 0;
-         size_t orig_count;
-+       bool split = false;
-
-         if ((pos | length | align) & ((1 << blkbits) - 1))
-                 return -EINVAL;
-@@ -309,7 +310,17 @@ iomap_dio_bio_actor(struct inode *inode, loff_t 
-pos, loff_t length,
-                 copied += n;
-
-                 nr_pages = iov_iter_npages(dio->submit.iter, 
-BIO_MAX_PAGES);
--               iomap_dio_submit_bio(dio, iomap, bio, pos);
-+               /*
-+                * The current dio needs to be split into multiple bios 
-here.
-+                * iopoll for split bio will cause subtle trouble such as
-+                * hang when doing sync polling, while iopoll is initially
-+                * for small size, latency sensitive IO. Thus disable iopoll
-+                * if split needed.
-+                */
-+               if (nr_pages)
-+                       split = true;
-+
-+               iomap_dio_submit_bio(dio, iomap, bio, pos, split);
-                 pos += n;
-         } while (nr_pages);
-
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index c6d765382926..21f772f98878 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -806,9 +806,11 @@ static inline int bio_integrity_add_page(struct bio 
-*bio, struct page *page,
-   * must be found by the caller. This is different than IRQ driven IO, 
-where
-   * it's safe to wait for IO to complete.
-   */
--static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb)
-+static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb, 
-bool split)
-  {
--       bio->bi_opf |= REQ_HIPRI;
-+       if (!split)
-+               bio->bi_opf |= REQ_HIPRI;
-+
-         if (!is_sync_kiocb(kiocb))
-                 bio->bi_opf |= REQ_NOWAIT;
-  }
-
-
-After this patch, bio will be polled only one dio maps to one single bio.
-
-Noted that this change applies to both sync and async IO, though async 
-routine doesn't
-
-suffer the hang described in this patch set. Since the performance gain 
-of iopoll may be
-
-trivial when one dio got split, also disable iopoll for async routine.
-
-
-We need keep REQ_NOWAIT for async routine even when the dio split happened,
-
-because io_uring doesn't expect blocking. Though the original REQ_NOWAIT
-
-should gets from iocb->ki_flags & IOCB_NOWAIT. Currently iomap doesn't 
-inherit
-
-bio->bi_opf's REQ_NOWAIT from iocb->ki_flags's IOCB_NOWAI. This bug should
-
-be fixed by 
-https://lore.kernel.org/linux-fsdevel/1605685931-207023-1-git-send-email-haoxu@linux.alibaba.com/T/#t
-
-
-Maybe we could include this fix (of missing inheritance of IOCB_NOWAI) 
-into this patch
-
-set and then refactor the fix I mentioned in this patch?
-
-
->   But it
-> has nothing to do with a bio being split, as we can't know that at this
-> level.
 
 
 -- 
-Thanks,
-Jeffle
-
+Yours,
+Muchun
