@@ -2,100 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 979902BB52E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C8E2BB52A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:25:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbgKTTYZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 14:24:25 -0500
-Received: from www2.webmail.pair.com ([66.39.3.96]:55516 "EHLO
-        www2.webmail.pair.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729495AbgKTTYY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 14:24:24 -0500
-X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Nov 2020 14:24:24 EST
-Received: from rc.webmail.pair.com (localhost [127.0.0.1])
-        by www2.webmail.pair.com (Postfix) with ESMTP id 37DFF1C0101
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 14:16:58 -0500 (EST)
+        id S1726640AbgKTTXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 14:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43098 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbgKTTXp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 14:23:45 -0500
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BA2D22254;
+        Fri, 20 Nov 2020 19:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1605900224;
+        bh=6utPp8y2IfYmogUP7teaB/ARZBuClgZZ+lpoxaOZ1Tw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HdzUkH8aXfOx06ArXihJtVhMjRyBFPYN5WiUGxcu+uPOQwa+qRego7DIDxlrJpc3z
+         OnrL5XHCOB41fkEHRIq3W14m0i86yIC+Tb33nzfNVX3cDP5OLf1l/SGmMjmtrmKjd/
+         j6GJmogIJy3tnclRF3JshyrxKDgf52CK8xvmW8wU=
+Received: by mail-oi1-f169.google.com with SMTP id a130so3538242oif.7;
+        Fri, 20 Nov 2020 11:23:44 -0800 (PST)
+X-Gm-Message-State: AOAM531F5d/sd2XemslXtgynMkG062nPnvri8ssuerARqx3JvwRFmShL
+        aEbv4nYPEarRmvrXCwCxmSZpjPFObNJB4YFib0Q=
+X-Google-Smtp-Source: ABdhPJy3M4r4RIwLPKw4jM9j70Gq7pe8ELR64/eLX4GDAY/+QnF48WsYtKd8QomkWGuoX98DlbImVcer5fOZAV1UTlk=
+X-Received: by 2002:aca:180a:: with SMTP id h10mr7112996oih.4.1605900223419;
+ Fri, 20 Nov 2020 11:23:43 -0800 (PST)
 MIME-Version: 1.0
-Date:   Fri, 20 Nov 2020 13:16:58 -0600
-From:   "K.R. Foley" <kr@cybsft.com>
-To:     linux-fsdevel@vger.kernel.org
-Subject: BUG triggers running lsof
-User-Agent: Roundcube Webmail/1.4.9
-Message-ID: <de8c0e6b73c9fc8f22880f0e368ecb0b@cybsft.com>
-X-Sender: kr@cybsft.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20201118144617.986860-1-willemdebruijn.kernel@gmail.com>
+ <20201118144617.986860-2-willemdebruijn.kernel@gmail.com> <20201118150041.GF29991@casper.infradead.org>
+ <CA+FuTSdxNBvNMy341EHeiKOWZ19H++aw-tfr6Fx1mFmbg-z4zQ@mail.gmail.com>
+ <CAK8P3a0t02o77+8QNZwXF2k1pY3Xrm5bydv8Vx1TW060P7BKqA@mail.gmail.com>
+ <893e8ed21e544d048bff7933013332a0@AcuMS.aculab.com> <CAF=yD-+arBFuZCU3UDx0XKmUGaEz8P1EaDLPK0YFCz82MdwBcg@mail.gmail.com>
+ <20201119143131.GG29991@casper.infradead.org> <CAK8P3a1SwQ=L_qA1BmeAt=Xc-Q9Mv4V+J5LFLB5R6rMDST8UiA@mail.gmail.com>
+ <CAF=yD-Kd-6f9wAYLD=dP1pk4qncWim424Fu6Hgj=ZrnUtEPORA@mail.gmail.com>
+ <CAK8P3a21JRFUJrz1+TYWcVL8s4uSfeSFyoMkGsqUPbV+F=r_yw@mail.gmail.com> <CAF=yD-Lzu9j6T4ubRjawF-EKOC3pkQTkpigg=PugWwybY-1ZyQ@mail.gmail.com>
+In-Reply-To: <CAF=yD-Lzu9j6T4ubRjawF-EKOC3pkQTkpigg=PugWwybY-1ZyQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Fri, 20 Nov 2020 20:23:27 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1cJf7+b5HCmFiLq+FdM+D+37rHYaftRgRYbhTyjwR6wg@mail.gmail.com>
+Message-ID: <CAK8P3a1cJf7+b5HCmFiLq+FdM+D+37rHYaftRgRYbhTyjwR6wg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] epoll: add nsec timeout support with epoll_pwait2
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Soheil Hassas Yeganeh <soheil.kdev@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Shuo Chen <shuochen@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I have found an issue that triggers by running lsof. The problem is 
-reproducible, but not consistently. I have seen this issue occur on 
-multiple versions of the kernel (5.0.10, 5.2.8 and now 5.4.77). It looks 
-like it could be a race condition or the file pointer is being 
-corrupted. Any pointers on how to track this down? What additional 
-information can I provide?
+On Fri, Nov 20, 2020 at 5:01 PM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> On Fri, Nov 20, 2020 at 3:13 AM Arnd Bergmann <arnd@kernel.org> wrote:
+> >
+> > On Thu, Nov 19, 2020 at 9:13 PM Willem de Bruijn
+> > <willemdebruijn.kernel@gmail.com> wrote:
+> > > On Thu, Nov 19, 2020 at 10:45 AM Arnd Bergmann <arnd@kernel.org> wrote:
 
-[ 8057.297159] BUG: unable to handle page fault for address: 31376f63
-[ 8057.297163] #PF: supervisor read access in kernel mode
-[ 8057.297164] #PF: error_code(0x0000) - not-present page
-[ 8057.297166] *pde = 00000000
-[ 8057.297168] Oops: 0000 [#1] SMP
-[ 8057.297171] CPU: 1 PID: 461 Comm: lsof Tainted: P           O      
-5.4.77-PRD.1.5 #3
-[ 8057.297172] Hardware name: Incredible Technologies Inc. 
-Nighthawk/IMBM-B75A-A20-IT01, BIOS 0404 03/14/2014
-[ 8057.297175] EIP: 0x31376f63
-[ 8057.297176] Code: Bad RIP value.
-[ 8057.297177] EAX: f55962d0 EBX: f55962d0 ECX: 31376f63 EDX: f69ddd80
-[ 8057.297179] ESI: f69ddd80 EDI: f6899b00 EBP: c2621e88 ESP: c2621e5c
-[ 8057.297180] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 
-00010206
-[ 8057.297182] CR0: 80050033 CR2: 31376f59 CR3: 046e1000 CR4: 000406d0
-[ 8057.297183] Call Trace:
-[ 8057.297189]  ? seq_show+0xfe/0x138
-[ 8057.297191]  seq_read+0x144/0x3da
-[ 8057.297193]  ? seq_lseek+0x171/0x171
-[ 8057.297196]  __vfs_read+0x2d/0x1ba
-[ 8057.297198]  ? __do_sys_fstat64+0x49/0x50
-[ 8057.297200]  vfs_read+0x7a/0xfc
-[ 8057.297203]  ksys_read+0x4c/0xb0
-[ 8057.297203]  ksys_read+0x4c/0xb0
-[ 8057.297205]  sys_read+0x11/0x13
-[ 8057.297207]  do_fast_syscall_32+0x8f/0x1de
-[ 8057.297210]  entry_SYSENTER_32+0xa2/0xf5
-[ 8057.297211] EIP: 0xb7f578e5
-[ 8057.297213] Code: d9 89 da 89 f3 e8 17 00 00 00 89 d3 eb dd b8 40 42 
-0f 00 eb c7 8b 04 24 c3 8b 1c 24 c3 8b 34 24 c3 51 52 55 89 e5 0f 34 cd 
-80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
-[ 8057.297215] EAX: ffffffda EBX: 00000007 ECX: 09e54490 EDX: 00000400
-[ 8057.297216] ESI: 09e36a90 EDI: b7f43000 EBP: bf9fde18 ESP: bf9fddb0
-[ 8057.297217] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 
-00000246
-[ 8057.297219] Modules linked in: ITXico7100Module(O) ITDongle1Module(O) 
-ITIOBoard2BootLoaderModule(O) ITIOBoard1Module(O) ITBiosWormModule(O) 
-it87 hwmon_vid ipv6 cfg80211 evdev snd_hda_codec_realtek 
-snd_hda_codec_generic snd_hda_codec_hdmi fuse ledtrig_audio 
-snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm_oss 
-nvidia_drm(PO) snd_pcm nvidia_modeset(PO) nvidia(PO) snd_mixer_oss 
-ti_usb_3410_5052 snd_timer iTCO_wdt realtek usbserial 
-iTCO_vendor_support snd sg r8169 serio_raw lpc_ich x86_pkg_temp_thermal 
-i2c_i801 coretemp libphy mii xhci_pci xhci_hcd ehci_pci ext4 jbd2 ext2 
-mbcache uhci_hcd ehci_hcd sd_mod ata_piix [last unloaded: 
-ITXico7100Module]
-[ 8057.297241] CR2: 0000000031376f63
-[ 8057.297244] ---[ end trace 455c8cdc1bacfeda ]---
-[ 8057.297245] EIP: 0x31376f63
-[ 8057.297246] Code: Bad RIP value.
-[ 8057.297247] EAX: f55962d0 EBX: f55962d0 ECX: 31376f63 EDX: f69ddd80
-[ 8057.297248] ESI: f69ddd80 EDI: f6899b00 EBP: c2621e88 ESP: c2621e5c
-[ 8057.297250] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 
-00010206
-[ 8057.297251] CR0: 80050033 CR2: 31376f59 CR3: 046e1000 CR4: 000406d0
+> Thanks for the suggestion.
+>
+> I do have an initial patchset. As expected, it does involve quite a
+> bit of code churn to pass slack through the callers. I'll take a look
+> at your suggestion to simplify it.
+>
+> As is, the patchset is not ready to send to the list for possible
+> merge. In the meantime, I did push the patchset to github at
+> https://github.com/wdebruij/linux/commits/epoll-nstimeo-1 . I can send
+> a version marked RFC to the list if that's easier.
 
+Looks all good to me, just two small things I noticed that you can
+address before sending the new series:
 
--- 
-Regards,
-K.R. Foley
+* The div_u64_rem() in ep_timeout_to_timespec() looks wrong, as
+  you are actually dividing a 'long' that does not need it.
+
+* In "epoll: wire up syscall epoll_pwait2", the alpha syscall has the
+wrong number, it
+   should be 110 higher than the others, not 109.
+
+> Btw, the other change, to convert epoll implementation to timespec64
+> before adding the syscall, equally adds some code churn compared to
+> patch v3. But perhaps the end state is cleaner and more consistent.
+
+Right, that's what I meant. If it causes too much churn, don't worry
+about it it.
+
+       Arndd
