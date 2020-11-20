@@ -2,107 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46ECF2BB454
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:00:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 292B82BB460
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbgKTSud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 13:50:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33818 "EHLO mail.kernel.org"
+        id S1732018AbgKTSwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 13:52:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728797AbgKTSuc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 13:50:32 -0500
+        id S1731956AbgKTSvh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 13:51:37 -0500
 Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CF212242B;
-        Fri, 20 Nov 2020 18:50:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D52482245F;
+        Fri, 20 Nov 2020 18:51:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605898231;
-        bh=2GkBOMd7CukxlpckOlpmJEVMrKsNhNOcejaVCTvUEd8=;
+        s=default; t=1605898297;
+        bh=Zi5R/IrNJ++v065Rk+eCxJwy7T6kpjNexLrMDu6ov6s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AOuM++Ph1LRNJ05RYsUSv2UYNrSZhccF+8xm6t+9i34VXG1PO74yNE1BfXT4AHyqX
-         oHWo54HGrtQ+yDawTJW4EPoeNz2tyM/m3vnbueOtTl+dDGDm1057IJpMJnr89AGJFK
-         HNmlziosh1mLEznp39Ay23JobXpuKCCCKkV067qk=
-Date:   Fri, 20 Nov 2020 10:50:30 -0800
+        b=lhqTtJZ55a7wpKg1uBZZP7aYzrYJeXXJBAxFEq8CkvBo4DjlwYRACyXTNNfoUSiyg
+         4JfDf8Nyw7KMbrU31fbnMVyA5uRaufbyukUJmwODeG2i2VuvdDUvZF020KXF2enUYK
+         D1DQW/zVkNFBIU/VoQ8+iVr3J4EQvhr4SBIYk1E8=
+Date:   Fri, 20 Nov 2020 10:51:35 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] fs/inode.c: make inode_init_always() initialize i_ino to
- 0
-Message-ID: <X7gP9iuTuRp9MHpP@sol.localdomain>
-References: <20201031004420.87678-1-ebiggers@kernel.org>
- <20201106175205.GE845@sol.localdomain>
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH] fs/namespace.c: WARN if mnt_count has become negative
+Message-ID: <X7gQN3T+4rPSXg0B@sol.localdomain>
+References: <20201101044021.1604670-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201106175205.GE845@sol.localdomain>
+In-Reply-To: <20201101044021.1604670-1-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 06, 2020 at 09:52:05AM -0800, Eric Biggers wrote:
-> On Fri, Oct 30, 2020 at 05:44:20PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Currently inode_init_always() doesn't initialize i_ino to 0.  This is
-> > unexpected because unlike the other inode fields that aren't initialized
-> > by inode_init_always(), i_ino isn't guaranteed to end up back at its
-> > initial value after the inode is freed.  Only one filesystem (XFS)
-> > actually sets set i_ino back to 0 when freeing its inodes.
-> > 
-> > So, callers of new_inode() see some random previous i_ino.  Normally
-> > that's fine, since normally i_ino isn't accessed before being set.
-> > There can be edge cases where that isn't necessarily true, though.
-> > 
-> > The one I've run into is that on ext4, when creating an encrypted file,
-> > the new file's encryption key has to be set up prior to the jbd2
-> > transaction, and thus prior to i_ino being set.  If something goes
-> > wrong, fs/crypto/ may log warning or error messages, which normally
-> > include i_ino.  So it needs to know whether it is valid to include i_ino
-> > yet or not.  Also, on some files i_ino needs to be hashed for use in the
-> > crypto, so fs/crypto/ needs to know whether that can be done yet or not.
-> > 
-> > There are ways this could be worked around, either in fs/crypto/ or in
-> > fs/ext4/.  But, it seems there's no reason not to just fix
-> > inode_init_always() to do the expected thing and initialize i_ino to 0.
-> > 
-> > So, do that, and also remove the initialization in jfs_fill_super() that
-> > becomes redundant.
-> > 
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > ---
-> >  fs/inode.c     | 1 +
-> >  fs/jfs/super.c | 1 -
-> >  2 files changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 9d78c37b00b81..eb001129f157c 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
-> >  	atomic_set(&inode->i_count, 1);
-> >  	inode->i_op = &empty_iops;
-> >  	inode->i_fop = &no_open_fops;
-> > +	inode->i_ino = 0;
-> >  	inode->__i_nlink = 1;
-> >  	inode->i_opflags = 0;
-> >  	if (sb->s_xattr)
-> > diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-> > index b2dc4d1f9dcc5..1f0ffabbde566 100644
-> > --- a/fs/jfs/super.c
-> > +++ b/fs/jfs/super.c
-> > @@ -551,7 +551,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
-> >  		ret = -ENOMEM;
-> >  		goto out_unload;
-> >  	}
-> > -	inode->i_ino = 0;
-> >  	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
-> >  	inode->i_mapping->a_ops = &jfs_metapage_aops;
-> >  	inode_fake_hash(inode);
-> > 
+On Sat, Oct 31, 2020 at 09:40:21PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Al, any thoughts on this?
+> Missing calls to mntget() (or equivalently, too many calls to mntput())
+> are hard to detect because mntput() delays freeing mounts using
+> task_work_add(), then again using call_rcu().  As a result, mnt_count
+> can often be decremented to -1 without getting a KASAN use-after-free
+> report.  Such cases are still bugs though, and they point to real
+> use-after-frees being possible.
+> 
+> For an example of this, see the bug fixed by commit 1b0b9cc8d379
+> ("vfs: fsmount: add missing mntget()"), discussed at
+> https://lkml.kernel.org/linux-fsdevel/20190605135401.GB30925@lakrids.cambridge.arm.com/T/#u.
+> This bug *should* have been trivial to find.  But actually, it wasn't
+> found until syzkaller happened to use fchdir() to manipulate the
+> reference count just right for the bug to be noticeable.
+> 
+> Address this by making mntput_no_expire() issue a WARN if mnt_count has
+> become negative.
+> 
+> Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/namespace.c | 9 ++++++---
+>  fs/pnode.h     | 2 +-
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index cebaa3e817940..93006abe7946a 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -156,10 +156,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
+>  /*
+>   * vfsmount lock must be held for write
+>   */
+> -unsigned int mnt_get_count(struct mount *mnt)
+> +int mnt_get_count(struct mount *mnt)
+>  {
+>  #ifdef CONFIG_SMP
+> -	unsigned int count = 0;
+> +	int count = 0;
+>  	int cpu;
+>  
+>  	for_each_possible_cpu(cpu) {
+> @@ -1139,6 +1139,7 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
+>  static void mntput_no_expire(struct mount *mnt)
+>  {
+>  	LIST_HEAD(list);
+> +	int count;
+>  
+>  	rcu_read_lock();
+>  	if (likely(READ_ONCE(mnt->mnt_ns))) {
+> @@ -1162,7 +1163,9 @@ static void mntput_no_expire(struct mount *mnt)
+>  	 */
+>  	smp_mb();
+>  	mnt_add_count(mnt, -1);
+> -	if (mnt_get_count(mnt)) {
+> +	count = mnt_get_count(mnt);
+> +	if (count != 0) {
+> +		WARN_ON(count < 0);
+>  		rcu_read_unlock();
+>  		unlock_mount_hash();
+>  		return;
+> diff --git a/fs/pnode.h b/fs/pnode.h
+> index 49a058c73e4c7..26f74e092bd98 100644
+> --- a/fs/pnode.h
+> +++ b/fs/pnode.h
+> @@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
+>  void propagate_mount_unlock(struct mount *);
+>  void mnt_release_group_id(struct mount *);
+>  int get_dominating_id(struct mount *mnt, const struct path *root);
+> -unsigned int mnt_get_count(struct mount *mnt);
+> +int mnt_get_count(struct mount *mnt);
+>  void mnt_set_mountpoint(struct mount *, struct mountpoint *,
+>  			struct mount *);
+>  void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
 > 
 
 Ping?
