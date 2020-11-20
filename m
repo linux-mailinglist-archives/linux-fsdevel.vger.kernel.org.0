@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 297842BA37A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 08:38:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE542BA387
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 08:38:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbgKTHhT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 02:37:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59174 "EHLO mx2.suse.de"
+        id S1727058AbgKTHiH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 02:38:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60176 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbgKTHhS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 02:37:18 -0500
+        id S1726754AbgKTHiG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 02:38:06 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id DA874AC23;
-        Fri, 20 Nov 2020 07:37:16 +0000 (UTC)
-Subject: Re: [PATCH 60/78] zram: remove the claim mechanism
+        by mx2.suse.de (Postfix) with ESMTP id 4661CAC83;
+        Fri, 20 Nov 2020 07:38:04 +0000 (UTC)
+Subject: Re: [PATCH 61/78] zram: do not call set_blocksize
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -36,14 +36,14 @@ Cc:     Justin Sanders <justin@coraid.com>,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <20201116145809.410558-1-hch@lst.de>
- <20201116145809.410558-61-hch@lst.de>
+ <20201116145809.410558-62-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <317d324a-f4a2-7fc4-3546-0048c38c55da@suse.de>
-Date:   Fri, 20 Nov 2020 08:37:15 +0100
+Message-ID: <e6f89f0b-602b-f297-87f5-86b7c1b353f0@suse.de>
+Date:   Fri, 20 Nov 2020 08:38:03 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201116145809.410558-61-hch@lst.de>
+In-Reply-To: <20201116145809.410558-62-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -52,16 +52,14 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/16/20 3:57 PM, Christoph Hellwig wrote:
-> The zram claim mechanism was added to ensure no new opens come in
-> during teardown.  But the proper way to archive that is to call
-> del_gendisk first, which takes care of all that.  Once del_gendisk
-> is called in the right place, the reset side can also be simplified
-> as no I/O can be outstanding on a block device that is not open.
+> set_blocksize is used by file systems to use their preferred buffer cache
+> block size.  Block drivers should not set it.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   drivers/block/zram/zram_drv.c | 76 ++++++++++-------------------------
->   1 file changed, 21 insertions(+), 55 deletions(-)
+>   drivers/block/zram/zram_drv.c | 11 +----------
+>   drivers/block/zram/zram_drv.h |  1 -
+>   2 files changed, 1 insertion(+), 11 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
