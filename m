@@ -2,119 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 292B82BB460
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:00:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 979902BB52E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:25:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732018AbgKTSwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 13:52:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731956AbgKTSvh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 13:51:37 -0500
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D52482245F;
-        Fri, 20 Nov 2020 18:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605898297;
-        bh=Zi5R/IrNJ++v065Rk+eCxJwy7T6kpjNexLrMDu6ov6s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lhqTtJZ55a7wpKg1uBZZP7aYzrYJeXXJBAxFEq8CkvBo4DjlwYRACyXTNNfoUSiyg
-         4JfDf8Nyw7KMbrU31fbnMVyA5uRaufbyukUJmwODeG2i2VuvdDUvZF020KXF2enUYK
-         D1DQW/zVkNFBIU/VoQ8+iVr3J4EQvhr4SBIYk1E8=
-Date:   Fri, 20 Nov 2020 10:51:35 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] fs/namespace.c: WARN if mnt_count has become negative
-Message-ID: <X7gQN3T+4rPSXg0B@sol.localdomain>
-References: <20201101044021.1604670-1-ebiggers@kernel.org>
+        id S1730376AbgKTTYZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 14:24:25 -0500
+Received: from www2.webmail.pair.com ([66.39.3.96]:55516 "EHLO
+        www2.webmail.pair.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729495AbgKTTYY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 14:24:24 -0500
+X-Greylist: delayed 446 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Nov 2020 14:24:24 EST
+Received: from rc.webmail.pair.com (localhost [127.0.0.1])
+        by www2.webmail.pair.com (Postfix) with ESMTP id 37DFF1C0101
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 14:16:58 -0500 (EST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201101044021.1604670-1-ebiggers@kernel.org>
+Date:   Fri, 20 Nov 2020 13:16:58 -0600
+From:   "K.R. Foley" <kr@cybsft.com>
+To:     linux-fsdevel@vger.kernel.org
+Subject: BUG triggers running lsof
+User-Agent: Roundcube Webmail/1.4.9
+Message-ID: <de8c0e6b73c9fc8f22880f0e368ecb0b@cybsft.com>
+X-Sender: kr@cybsft.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 31, 2020 at 09:40:21PM -0700, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Missing calls to mntget() (or equivalently, too many calls to mntput())
-> are hard to detect because mntput() delays freeing mounts using
-> task_work_add(), then again using call_rcu().  As a result, mnt_count
-> can often be decremented to -1 without getting a KASAN use-after-free
-> report.  Such cases are still bugs though, and they point to real
-> use-after-frees being possible.
-> 
-> For an example of this, see the bug fixed by commit 1b0b9cc8d379
-> ("vfs: fsmount: add missing mntget()"), discussed at
-> https://lkml.kernel.org/linux-fsdevel/20190605135401.GB30925@lakrids.cambridge.arm.com/T/#u.
-> This bug *should* have been trivial to find.  But actually, it wasn't
-> found until syzkaller happened to use fchdir() to manipulate the
-> reference count just right for the bug to be noticeable.
-> 
-> Address this by making mntput_no_expire() issue a WARN if mnt_count has
-> become negative.
-> 
-> Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  fs/namespace.c | 9 ++++++---
->  fs/pnode.h     | 2 +-
->  2 files changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index cebaa3e817940..93006abe7946a 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -156,10 +156,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
->  /*
->   * vfsmount lock must be held for write
->   */
-> -unsigned int mnt_get_count(struct mount *mnt)
-> +int mnt_get_count(struct mount *mnt)
->  {
->  #ifdef CONFIG_SMP
-> -	unsigned int count = 0;
-> +	int count = 0;
->  	int cpu;
->  
->  	for_each_possible_cpu(cpu) {
-> @@ -1139,6 +1139,7 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
->  static void mntput_no_expire(struct mount *mnt)
->  {
->  	LIST_HEAD(list);
-> +	int count;
->  
->  	rcu_read_lock();
->  	if (likely(READ_ONCE(mnt->mnt_ns))) {
-> @@ -1162,7 +1163,9 @@ static void mntput_no_expire(struct mount *mnt)
->  	 */
->  	smp_mb();
->  	mnt_add_count(mnt, -1);
-> -	if (mnt_get_count(mnt)) {
-> +	count = mnt_get_count(mnt);
-> +	if (count != 0) {
-> +		WARN_ON(count < 0);
->  		rcu_read_unlock();
->  		unlock_mount_hash();
->  		return;
-> diff --git a/fs/pnode.h b/fs/pnode.h
-> index 49a058c73e4c7..26f74e092bd98 100644
-> --- a/fs/pnode.h
-> +++ b/fs/pnode.h
-> @@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
->  void propagate_mount_unlock(struct mount *);
->  void mnt_release_group_id(struct mount *);
->  int get_dominating_id(struct mount *mnt, const struct path *root);
-> -unsigned int mnt_get_count(struct mount *mnt);
-> +int mnt_get_count(struct mount *mnt);
->  void mnt_set_mountpoint(struct mount *, struct mountpoint *,
->  			struct mount *);
->  void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
-> 
+I have found an issue that triggers by running lsof. The problem is 
+reproducible, but not consistently. I have seen this issue occur on 
+multiple versions of the kernel (5.0.10, 5.2.8 and now 5.4.77). It looks 
+like it could be a race condition or the file pointer is being 
+corrupted. Any pointers on how to track this down? What additional 
+information can I provide?
 
-Ping?
+[ 8057.297159] BUG: unable to handle page fault for address: 31376f63
+[ 8057.297163] #PF: supervisor read access in kernel mode
+[ 8057.297164] #PF: error_code(0x0000) - not-present page
+[ 8057.297166] *pde = 00000000
+[ 8057.297168] Oops: 0000 [#1] SMP
+[ 8057.297171] CPU: 1 PID: 461 Comm: lsof Tainted: P           O      
+5.4.77-PRD.1.5 #3
+[ 8057.297172] Hardware name: Incredible Technologies Inc. 
+Nighthawk/IMBM-B75A-A20-IT01, BIOS 0404 03/14/2014
+[ 8057.297175] EIP: 0x31376f63
+[ 8057.297176] Code: Bad RIP value.
+[ 8057.297177] EAX: f55962d0 EBX: f55962d0 ECX: 31376f63 EDX: f69ddd80
+[ 8057.297179] ESI: f69ddd80 EDI: f6899b00 EBP: c2621e88 ESP: c2621e5c
+[ 8057.297180] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 
+00010206
+[ 8057.297182] CR0: 80050033 CR2: 31376f59 CR3: 046e1000 CR4: 000406d0
+[ 8057.297183] Call Trace:
+[ 8057.297189]  ? seq_show+0xfe/0x138
+[ 8057.297191]  seq_read+0x144/0x3da
+[ 8057.297193]  ? seq_lseek+0x171/0x171
+[ 8057.297196]  __vfs_read+0x2d/0x1ba
+[ 8057.297198]  ? __do_sys_fstat64+0x49/0x50
+[ 8057.297200]  vfs_read+0x7a/0xfc
+[ 8057.297203]  ksys_read+0x4c/0xb0
+[ 8057.297203]  ksys_read+0x4c/0xb0
+[ 8057.297205]  sys_read+0x11/0x13
+[ 8057.297207]  do_fast_syscall_32+0x8f/0x1de
+[ 8057.297210]  entry_SYSENTER_32+0xa2/0xf5
+[ 8057.297211] EIP: 0xb7f578e5
+[ 8057.297213] Code: d9 89 da 89 f3 e8 17 00 00 00 89 d3 eb dd b8 40 42 
+0f 00 eb c7 8b 04 24 c3 8b 1c 24 c3 8b 34 24 c3 51 52 55 89 e5 0f 34 cd 
+80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
+[ 8057.297215] EAX: ffffffda EBX: 00000007 ECX: 09e54490 EDX: 00000400
+[ 8057.297216] ESI: 09e36a90 EDI: b7f43000 EBP: bf9fde18 ESP: bf9fddb0
+[ 8057.297217] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 
+00000246
+[ 8057.297219] Modules linked in: ITXico7100Module(O) ITDongle1Module(O) 
+ITIOBoard2BootLoaderModule(O) ITIOBoard1Module(O) ITBiosWormModule(O) 
+it87 hwmon_vid ipv6 cfg80211 evdev snd_hda_codec_realtek 
+snd_hda_codec_generic snd_hda_codec_hdmi fuse ledtrig_audio 
+snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm_oss 
+nvidia_drm(PO) snd_pcm nvidia_modeset(PO) nvidia(PO) snd_mixer_oss 
+ti_usb_3410_5052 snd_timer iTCO_wdt realtek usbserial 
+iTCO_vendor_support snd sg r8169 serio_raw lpc_ich x86_pkg_temp_thermal 
+i2c_i801 coretemp libphy mii xhci_pci xhci_hcd ehci_pci ext4 jbd2 ext2 
+mbcache uhci_hcd ehci_hcd sd_mod ata_piix [last unloaded: 
+ITXico7100Module]
+[ 8057.297241] CR2: 0000000031376f63
+[ 8057.297244] ---[ end trace 455c8cdc1bacfeda ]---
+[ 8057.297245] EIP: 0x31376f63
+[ 8057.297246] Code: Bad RIP value.
+[ 8057.297247] EAX: f55962d0 EBX: f55962d0 ECX: 31376f63 EDX: f69ddd80
+[ 8057.297248] ESI: f69ddd80 EDI: f6899b00 EBP: c2621e88 ESP: c2621e5c
+[ 8057.297250] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 
+00010206
+[ 8057.297251] CR0: 80050033 CR2: 31376f59 CR3: 046e1000 CR4: 000406d0
+
+
+-- 
+Regards,
+K.R. Foley
