@@ -2,96 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 455252BA5A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:14:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9934C2BA5B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbgKTJNF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 04:13:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbgKTJND (ORCPT
+        id S1727395AbgKTJPs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 04:15:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54025 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725789AbgKTJPp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 04:13:03 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1E24C0613CF;
-        Fri, 20 Nov 2020 01:13:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=mNLnU8cl44VoAwmtF3N/cVr4YIhMWVFWr0ATljQRTes=; b=TTIb8ohQ+PwDq74N++0bgk2zll
-        V4Tj1uTEh1nLpZA5CWmWqyId5ggC5fFNgj0pboCtHDqY3L67GCyZNuDKPhIyDglg/E86QFfp03+bI
-        wGOy+rZdGneSYckkAgLWS4Lquu6jKns1/3RDzJtgxPXaG/cApFOXbxrjmFwxID+CMkn8bfg2ariPD
-        q8PRJnZIyL/pF1pJzmkrZOIsiNWxi9EqbnrSKptOWKTutDymxTvJ3MTHzpDBEzdVC/iFZdmds1m9/
-        d0Edw6QH1c1pHG3bkB/sYhvaimIvfkENpPeia3BDp903NdAOst0DSmCRA3GxWKsouD7etMiOrv1DU
-        Mvs7rk4A==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kg2TH-0003xV-Ap; Fri, 20 Nov 2020 09:12:47 +0000
-Date:   Fri, 20 Nov 2020 09:12:47 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        St??phane Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-audit@redhat.com,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 00/39] fs: idmapped mounts
-Message-ID: <20201120091247.GA14894@infradead.org>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201120023309.GH9685@magnolia>
- <20201120091044.ofkzgiwoyru23vc4@wittgenstein>
+        Fri, 20 Nov 2020 04:15:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605863743;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PwuP1reil3EHDjEAdkxJz3A0u+9v93EU1GsEwtmmEUI=;
+        b=V1v8aBFAJmQcGmJWbXs3RudZ87M098c7DNpvrDHqEPigw957Rj7ZibtkHEEYNO1k+ok8K6
+        hzoXsKUTL6ash/CKmmzJPmPqNDHFNUNfDw7AL6o47WOl13TZm8JOzH1SMzGfZ/j1jRGidt
+        ytbckQb8WyNr20zQTPO0DzCv3cF1qxI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-567-XqBTzF7ZPumVNm0YPi5lsg-1; Fri, 20 Nov 2020 04:15:41 -0500
+X-MC-Unique: XqBTzF7ZPumVNm0YPi5lsg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69A038797DA;
+        Fri, 20 Nov 2020 09:15:37 +0000 (UTC)
+Received: from [10.36.114.78] (ovpn-114-78.ams2.redhat.com [10.36.114.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 589225D6AD;
+        Fri, 20 Nov 2020 09:15:31 +0000 (UTC)
+Subject: Re: [PATCH v5 21/21] mm/hugetlb: Disable freeing vmemmap if struct
+ page size is not power of two
+To:     Michal Hocko <mhocko@suse.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        osalvador@suse.de, song.bao.hua@hisilicon.com,
+        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120064325.34492-22-songmuchun@bytedance.com>
+ <20201120082552.GI3200@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <9b26c749-3bb6-4b16-d1fc-da7ec5d1e8a5@redhat.com>
+Date:   Fri, 20 Nov 2020 10:15:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201120091044.ofkzgiwoyru23vc4@wittgenstein>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20201120082552.GI3200@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 10:10:44AM +0100, Christian Brauner wrote:
-> Maybe you didn't see this or you're referring to xfstests but this
-> series contains a >=4000 lines long test-suite that validates all core
-> features with and without idmapped mounts. It's the last patch in this
-> version of the series and it's located in:
-> tools/testing/selftests/idmap_mounts.
+On 20.11.20 09:25, Michal Hocko wrote:
+> On Fri 20-11-20 14:43:25, Muchun Song wrote:
+>> We only can free the unused vmemmap to the buddy system when the
+>> size of struct page is a power of two.
 > 
-> Everytime a filesystem is added this test-suite will be updated. We
-> would perfer if this test would be shipped with the kernel itself and
-> not in a separate test-suite such as xfstests. But we're happy to add
-> patches for the latter at some point too.
+> Can we actually have !power_of_2 struct pages?
 
-selftests is a complete pain to use, partialy because it is not
-integrated with the framework we file system developers use (xfstests)
-and partially because having the test suite in the kernel tree really
-breaks a lot of the typical use cases.  So I think we'll need to wire
-this up in the proper place instead.
+AFAIK multiples of 8 bytes (56, 64, 72) are possible.
+
+
+-- 
+Thanks,
+
+David / dhildenb
+
