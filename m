@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F1F62BB9F6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 00:22:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96FF82BB9FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 00:22:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbgKTXUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 18:20:00 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:49098 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbgKTXT5 (ORCPT
+        id S1729440AbgKTXUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 18:20:03 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:47076 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729358AbgKTXUC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 18:19:57 -0500
+        Fri, 20 Nov 2020 18:20:02 -0500
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1kgFh6-006Xzd-1h; Fri, 20 Nov 2020 16:19:56 -0700
+        id 1kgFhA-002Rc7-V7; Fri, 20 Nov 2020 16:20:01 -0700
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.int.ebiederm.org)
         by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1kgFe5-00EG00-JV; Fri, 20 Nov 2020 16:16:50 -0700
+        id 1kgFe9-00EG00-8Y; Fri, 20 Nov 2020 16:16:54 -0700
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
@@ -46,47 +46,48 @@ Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
         Andrii Nakryiko <andriin@fb.com>,
         John Fastabend <john.fastabend@gmail.com>,
         KP Singh <kpsingh@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andy Lavr <andy.lavr@gmail.com>
-Date:   Fri, 20 Nov 2020 17:14:32 -0600
-Message-Id: <20201120231441.29911-15-ebiederm@xmission.com>
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Fri, 20 Nov 2020 17:14:33 -0600
+Message-Id: <20201120231441.29911-16-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <87r1on1v62.fsf@x220.int.ebiederm.org>
 References: <87r1on1v62.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-XM-SPF: eid=1kgFe5-00EG00-JV;;;mid=<20201120231441.29911-15-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+q5zppczWnIGjDjmGmiwzeRnfW/aWDbwE=
+X-XM-SPF: eid=1kgFe9-00EG00-8Y;;;mid=<20201120231441.29911-16-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/UiNkGFJP+cwxvIGMAiHgWENa406BND64=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
 X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+X-Spam-Status: No, score=2.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
         DCC_CHECK_NEGATIVE,T_TooManySym_01,XMGappySubj_01,XMGappySubj_02,
-        XMSubLong autolearn=disabled version=3.4.2
+        XMSubLong,XM_B_SpammyWords autolearn=disabled version=3.4.2
+X-Spam-Virus: No
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
-        *  1.0 XMGappySubj_02 Gappier still
         *  0.5 XMGappySubj_01 Very gappy subject
         *  0.7 XMSubLong Long Subject
+        *  1.0 XMGappySubj_02 Gappier still
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: **;linux-kernel@vger.kernel.org
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 587 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 11 (1.8%), b_tie_ro: 9 (1.6%), parse: 1.13 (0.2%),
-         extract_message_metadata: 13 (2.2%), get_uri_detail_list: 2.4 (0.4%),
-        tests_pri_-1000: 15 (2.6%), tests_pri_-950: 1.35 (0.2%),
-        tests_pri_-900: 1.09 (0.2%), tests_pri_-90: 126 (21.5%), check_bayes:
-        124 (21.1%), b_tokenize: 10 (1.8%), b_tok_get_all: 9 (1.4%),
-        b_comp_prob: 4.1 (0.7%), b_tok_touch_all: 97 (16.5%), b_finish: 0.99
-        (0.2%), tests_pri_0: 407 (69.4%), check_dkim_signature: 0.90 (0.2%),
-        check_dkim_adsp: 2.5 (0.4%), poll_dns_idle: 0.88 (0.2%), tests_pri_10:
-        2.2 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH v2 15/24] proc/fd: In proc_readfd_common use task_lookup_next_fd_rcu
+X-Spam-Timing: total 524 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.5 (0.9%), b_tie_ro: 3.0 (0.6%), parse: 1.58
+        (0.3%), extract_message_metadata: 12 (2.4%), get_uri_detail_list: 4.2
+        (0.8%), tests_pri_-1000: 12 (2.2%), tests_pri_-950: 1.02 (0.2%),
+        tests_pri_-900: 0.84 (0.2%), tests_pri_-90: 87 (16.6%), check_bayes:
+        85 (16.3%), b_tokenize: 10 (2.0%), b_tok_get_all: 11 (2.1%),
+        b_comp_prob: 3.1 (0.6%), b_tok_touch_all: 58 (11.0%), b_finish: 0.74
+        (0.1%), tests_pri_0: 391 (74.7%), check_dkim_signature: 0.46 (0.1%),
+        check_dkim_adsp: 2.4 (0.5%), poll_dns_idle: 1.05 (0.2%), tests_pri_10:
+        2.7 (0.5%), tests_pri_500: 8 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v2 16/24] bpf/task_iter: In task_file_seq_get_next use task_lookup_next_fd_rcu
 X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
@@ -102,77 +103,167 @@ result in exec unnecessarily unsharing files_struct which breaking
 posix locks, and it can result in fget_light having to fallback to
 fget reducing system performance.
 
-Using task_lookup_next_fd_rcu simplifies proc_readfd_common, by moving
-the checking for the maximum file descritor into the generic code, and
-by remvoing the need for capturing and releasing a reference on
-files_struct.
+Using task_lookup_next_fd_rcu simplifies task_file_seq_get_next, by
+moving the checking for the maximum file descritor into the generic
+code, and by remvoing the need for capturing and releasing a reference
+on files_struct.  As the reference count of files_struct no longer
+needs to be maintained bpf_iter_seq_task_file_info can have it's files
+member removed and task_file_seq_get_next no longer needs it's fstruct
+argument.
 
-As task_lookup_fd_rcu may update the fd ctx->pos has been changed
-to be the fd +2 after task_lookup_fd_rcu returns.
+The curr_fd local variable does need to become unsigned to be used
+with fnext_task.  As curr_fd is assigned from and assigned a u32
+making curr_fd an unsigned int won't cause problems and might prevent
+them.
 
 [1] https://lkml.kernel.org/r/20180915160423.GA31461@redhat.com
 Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Tested-by: Andy Lavr <andy.lavr@gmail.com>
-v1: https://lkml.kernel.org/r/20200817220425.9389-10-ebiederm@xmission.com
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+v1: https://lkml.kernel.org/r/20200817220425.9389-11-ebiederm@xmission.com
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/proc/fd.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+ kernel/bpf/task_iter.c | 44 ++++++++++--------------------------------
+ 1 file changed, 10 insertions(+), 34 deletions(-)
 
-diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-index c1a984f3c4df..72c1525b4b3e 100644
---- a/fs/proc/fd.c
-+++ b/fs/proc/fd.c
-@@ -217,7 +217,6 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- 			      instantiate_t instantiate)
- {
- 	struct task_struct *p = get_proc_task(file_inode(file));
+diff --git a/kernel/bpf/task_iter.c b/kernel/bpf/task_iter.c
+index 5ab2ccfb96cb..4ec63170c741 100644
+--- a/kernel/bpf/task_iter.c
++++ b/kernel/bpf/task_iter.c
+@@ -130,45 +130,33 @@ struct bpf_iter_seq_task_file_info {
+ 	 */
+ 	struct bpf_iter_seq_task_common common;
+ 	struct task_struct *task;
 -	struct files_struct *files;
- 	unsigned int fd;
+ 	u32 tid;
+ 	u32 fd;
+ };
  
- 	if (!p)
-@@ -225,22 +224,18 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ static struct file *
+ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info,
+-		       struct task_struct **task, struct files_struct **fstruct)
++		       struct task_struct **task)
+ {
+ 	struct pid_namespace *ns = info->common.ns;
+-	u32 curr_tid = info->tid, max_fds;
+-	struct files_struct *curr_files;
++	u32 curr_tid = info->tid;
+ 	struct task_struct *curr_task;
+-	int curr_fd = info->fd;
++	unsigned int curr_fd = info->fd;
  
- 	if (!dir_emit_dots(file, ctx))
- 		goto out;
--	files = get_files_struct(p);
--	if (!files)
--		goto out;
+ 	/* If this function returns a non-NULL file object,
+-	 * it held a reference to the task/files_struct/file.
++	 * it held a reference to the task/file.
+ 	 * Otherwise, it does not hold any reference.
+ 	 */
+ again:
+ 	if (*task) {
+ 		curr_task = *task;
+-		curr_files = *fstruct;
+ 		curr_fd = info->fd;
+ 	} else {
+ 		curr_task = task_seq_get_next(ns, &curr_tid, true);
+ 		if (!curr_task)
+ 			return NULL;
+ 
+-		curr_files = get_files_struct(curr_task);
+-		if (!curr_files) {
+-			put_task_struct(curr_task);
+-			curr_tid = ++(info->tid);
+-			info->fd = 0;
+-			goto again;
+-		}
+-
+-		/* set *fstruct, *task and info->tid */
+-		*fstruct = curr_files;
++		/* set *task and info->tid */
+ 		*task = curr_task;
+ 		if (curr_tid == info->tid) {
+ 			curr_fd = info->fd;
+@@ -179,13 +167,11 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info,
+ 	}
  
  	rcu_read_lock();
--	for (fd = ctx->pos - 2;
--	     fd < files_fdtable(files)->max_fds;
--	     fd++, ctx->pos++) {
-+	for (fd = ctx->pos - 2;; fd++) {
+-	max_fds = files_fdtable(curr_files)->max_fds;
+-	for (; curr_fd < max_fds; curr_fd++) {
++	for (;; curr_fd++) {
  		struct file *f;
- 		struct fd_data data;
- 		char name[10 + 1];
- 		unsigned int len;
- 
--		f = files_lookup_fd_rcu(files, fd);
-+		f = task_lookup_next_fd_rcu(p, &fd);
-+		ctx->pos = fd + 2LL;
+-
+-		f = files_lookup_fd_rcu(curr_files, curr_fd);
++		f = task_lookup_next_fd_rcu(curr_task, &curr_fd);
  		if (!f)
 -			continue;
 +			break;
- 		data.mode = f->f_mode;
- 		rcu_read_unlock();
- 		data.fd = fd;
-@@ -249,13 +244,11 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
- 		if (!proc_fill_cache(file, ctx,
- 				     name, len, instantiate, p,
- 				     &data))
--			goto out_fd_loop;
-+			goto out;
- 		cond_resched();
- 		rcu_read_lock();
- 	}
+ 		if (!get_file_rcu(f))
+ 			continue;
+ 
+@@ -197,10 +183,8 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info,
+ 
+ 	/* the current task is done, go to the next task */
  	rcu_read_unlock();
--out_fd_loop:
--	put_files_struct(files);
- out:
- 	put_task_struct(p);
- 	return 0;
+-	put_files_struct(curr_files);
+ 	put_task_struct(curr_task);
+ 	*task = NULL;
+-	*fstruct = NULL;
+ 	info->fd = 0;
+ 	curr_tid = ++(info->tid);
+ 	goto again;
+@@ -209,13 +193,11 @@ task_file_seq_get_next(struct bpf_iter_seq_task_file_info *info,
+ static void *task_file_seq_start(struct seq_file *seq, loff_t *pos)
+ {
+ 	struct bpf_iter_seq_task_file_info *info = seq->private;
+-	struct files_struct *files = NULL;
+ 	struct task_struct *task = NULL;
+ 	struct file *file;
+ 
+-	file = task_file_seq_get_next(info, &task, &files);
++	file = task_file_seq_get_next(info, &task);
+ 	if (!file) {
+-		info->files = NULL;
+ 		info->task = NULL;
+ 		return NULL;
+ 	}
+@@ -223,7 +205,6 @@ static void *task_file_seq_start(struct seq_file *seq, loff_t *pos)
+ 	if (*pos == 0)
+ 		++*pos;
+ 	info->task = task;
+-	info->files = files;
+ 
+ 	return file;
+ }
+@@ -231,22 +212,19 @@ static void *task_file_seq_start(struct seq_file *seq, loff_t *pos)
+ static void *task_file_seq_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+ 	struct bpf_iter_seq_task_file_info *info = seq->private;
+-	struct files_struct *files = info->files;
+ 	struct task_struct *task = info->task;
+ 	struct file *file;
+ 
+ 	++*pos;
+ 	++info->fd;
+ 	fput((struct file *)v);
+-	file = task_file_seq_get_next(info, &task, &files);
++	file = task_file_seq_get_next(info, &task);
+ 	if (!file) {
+-		info->files = NULL;
+ 		info->task = NULL;
+ 		return NULL;
+ 	}
+ 
+ 	info->task = task;
+-	info->files = files;
+ 
+ 	return file;
+ }
+@@ -295,9 +273,7 @@ static void task_file_seq_stop(struct seq_file *seq, void *v)
+ 		(void)__task_file_seq_show(seq, v, true);
+ 	} else {
+ 		fput((struct file *)v);
+-		put_files_struct(info->files);
+ 		put_task_struct(info->task);
+-		info->files = NULL;
+ 		info->task = NULL;
+ 	}
+ }
 -- 
 2.25.0
 
