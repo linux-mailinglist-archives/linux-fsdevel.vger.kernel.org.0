@@ -2,84 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF502BB5FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 20:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A3E2BB640
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 21:08:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbgKTTvt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 14:51:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50657 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729624AbgKTTvt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 14:51:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605901908;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FnDEod9S9GP35ZJdcDmtV6IFJeO62QQ63RGfcLkybLk=;
-        b=Am+c5jZKUQwwNRd+JdK+QBxphc1CWt8Cwc0oWhR5IIqaDGSy78FjyRGSs3DBBDUwPEg/Ek
-        bnas3DGbnaNQlnooR2fDret41JtZo5Zko/ZwBQmPzPmWc93L+/0XoWkNULjNF/AfvAxZFh
-        JcBR5/t97iuHu+80Bi7kxkwivQUA+x8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-142-hXDQ-YY-NAKgRrsQq4Ia6g-1; Fri, 20 Nov 2020 14:51:46 -0500
-X-MC-Unique: hXDQ-YY-NAKgRrsQq4Ia6g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 39C951DDED;
-        Fri, 20 Nov 2020 19:51:45 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C9D5010013C0;
-        Fri, 20 Nov 2020 19:51:44 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     "K.R. Foley" <kr@cybsft.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: BUG triggers running lsof
-References: <de8c0e6b73c9fc8f22880f0e368ecb0b@cybsft.com>
-        <4cc7a530-41ed-81f4-82cd-6a3a93661dce@infradead.org>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Fri, 20 Nov 2020 14:51:48 -0500
-In-Reply-To: <4cc7a530-41ed-81f4-82cd-6a3a93661dce@infradead.org> (Randy
-        Dunlap's message of "Fri, 20 Nov 2020 11:42:48 -0800")
-Message-ID: <x49im9zn6wb.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1730326AbgKTUFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 15:05:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40090 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730136AbgKTUFu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 15:05:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 2C646AE1F;
+        Fri, 20 Nov 2020 20:05:49 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C910C1E1319; Fri, 20 Nov 2020 21:05:48 +0100 (CET)
+Date:   Fri, 20 Nov 2020 21:05:48 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 14/20] block: remove the nr_sects field in struct
+ hd_struct
+Message-ID: <20201120200548.GA27360@quack2.suse.cz>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-15-hch@lst.de>
+ <20201119120525.GW1981@quack2.suse.cz>
+ <20201120090820.GD21715@lst.de>
+ <20201120112121.GB15537@quack2.suse.cz>
+ <20201120153253.GA18990@lst.de>
+ <20201120155956.GB4327@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201120155956.GB4327@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
+On Fri 20-11-20 15:59:56, Matthew Wilcox wrote:
+> On Fri, Nov 20, 2020 at 04:32:53PM +0100, Christoph Hellwig wrote:
+> > On Fri, Nov 20, 2020 at 12:21:21PM +0100, Jan Kara wrote:
+> > > > > AFAICT bd_size_lock is pointless after these changes so we can just remove
+> > > > > it?
+> > > > 
+> > > > I don't think it is, as reuqiring bd_mutex for size updates leads to
+> > > > rather awkward lock ordering problems.
+> > > 
+> > > OK, let me ask differently: What is bd_size_lock protecting now? Ah, I see,
+> > > on 32-bit it is needed to prevent torn writes to i_size, right?
+> > 
+> > Exactly.  In theory we could skip it for 64-bit, but as updating the
+> > size isn't a fast path, and struct block_device isn't super size critical
+> > I'd rather keep the same code for 32 vs 64-bit builds.
+> 
+> Is it better to switch to i_size_write() / i_size_read()?
 
-> On 11/20/20 11:16 AM, K.R. Foley wrote:
->> I have found an issue that triggers by running lsof. The problem is
->> reproducible, but not consistently. I have seen this issue occur on
->> multiple versions of the kernel (5.0.10, 5.2.8 and now 5.4.77). It
->> looks like it could be a race condition or the file pointer is being
->> corrupted. Any pointers on how to track this down? What additional
->> information can I provide?
->
-> Hi,
->
-> 2 things in general:
->
-> a) Can you test with a more recent kernel?
->
-> b) Can you reproduce this without loading the proprietary & out-of-tree
-> kernel modules?  They should never have been loaded after bootup.
-> I.e., don't just unload them -- that could leave something bad behind.
+The code is already switched to it AFAICT (the lock is really only used in
+the two places that write i_size). But the problem is that in theory two
+i_size_write() calls can race in a way that the resulting stored i_size is a
+mix of two stored sizes. Now I have hard time imagining how this could
+happen for a block device and if two reconfigurations of a block device
+could race like that we'd have a large problems anyway...
 
-Heh, the EIP contains part of the name of one of the modules:
+								Honza
 
->
->> [ 8057.297159] BUG: unable to handle page fault for address: 31376f63
-                                                                ^^^^^^^^
-
->> [ 8057.297219] Modules linked in: ITXico7100Module(O)
-                                         ^^^^
--Jeff
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
