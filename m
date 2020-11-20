@@ -2,168 +2,287 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D872BB90F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 23:37:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE34C2BB9C9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 00:19:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728818AbgKTWfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 17:35:05 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17681 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbgKTWfE (ORCPT
+        id S1728407AbgKTXQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 18:16:06 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:33402 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728123AbgKTXQG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 17:35:04 -0500
-Received: from hqmail.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, AES256-SHA)
-        id <B5fb8448d0002>; Fri, 20 Nov 2020 14:34:53 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Nov
- 2020 22:35:04 +0000
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
- by HQMAIL109.nvidia.com (172.20.187.15) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Fri, 20 Nov 2020 22:35:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iWB6J1PQbO0iZqN72KkWiBYaXKDTUgROTCgXgbV7juEXo2cZOqQ7iMch1ZC22JDnJkdv0h0bnhrooW5PGJAxbUXoeyVsb/aQ2C9Eb4WqEhZSVxiRtnInY3bac02ApktSV9FA+NYZObeLM89+RhgV69eAkhu16+y1WcxcoOMc83N9BxMQuMTpT8haHpod9I0dPfkwOhYZ0eSYlqlZdvnmARb/ZbH/Ht6qqiiBcbpEAHxD4iynOa5BAAUnC3by99lClCBJHQaIaxqug2GyONPYWWMoaPhZCABWPPou6ajo13cGcNVM0tBVtxd8sWUXdnBTQAzKPd/Ztegx2ic+N7daKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5eGr3PF1NwScgvjZsvTqybd8jKIsHUobSCaqfZAic7M=;
- b=QiLCQLdjwS301eO/mhGuIoIt7tJMsPnU0i+mBbW9qIpyeQ1wbJl2qDIi69PyCKxpE5VvzEmFA4qYk9lb8K1ofIhi7nGawELg+RupDYHpit6C56hs/+Wi/sL5D4qKoq8ojREar2m2qIASQb9W+aYZ2TGTPEVjscVf1xp3E/gbtsIMsD4u8/Ny9awSlUCTHTHa4rlqyc/Kek8TcCr1jYJvL4kovwz5wHWwrCm2p/TVl8WAhrXZkHV5PoBMyiFQD76QF8wwXHdoUrTPynqrHV0LcG9gJUstc95M8qnBG8R30HwFLX50bWIOppZP9pMKpr4scenn/vkQJTw5grlpB/MFug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-Received: from DM6PR12MB3385.namprd12.prod.outlook.com (2603:10b6:5:39::16) by
- DM5PR12MB2392.namprd12.prod.outlook.com (2603:10b6:4:b1::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3589.25; Fri, 20 Nov 2020 22:35:01 +0000
-Received: from DM6PR12MB3385.namprd12.prod.outlook.com
- ([fe80::ddfe:5f48:eeff:1eef]) by DM6PR12MB3385.namprd12.prod.outlook.com
- ([fe80::ddfe:5f48:eeff:1eef%3]) with mapi id 15.20.3589.022; Fri, 20 Nov 2020
- 22:35:01 +0000
-From:   Ken Schalk <kschalk@nvidia.com>
-To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>
-CC:     Miklos Szeredi <miklos@szeredi.hu>
-Subject: [RESEND PATCH] fuse : Improve file open behavior for recently
- created/unlinked files
-Thread-Topic: [RESEND PATCH] fuse : Improve file open behavior for recently
- created/unlinked files
-Thread-Index: Ada/jOUnsNReeTLtSJe5vgGZMLyUGA==
-Date:   Fri, 20 Nov 2020 22:35:00 +0000
-Message-ID: <DM6PR12MB3385BD749DF7B07275AAD703DDFF0@DM6PR12MB3385.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Enabled=True;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SiteId=43083d15-7273-40c1-b7db-39efd9ccc17a;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Owner=kschalk@nvidia.com;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_SetDate=2020-09-08T14:32:02.8214678Z;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Name=Unrestricted;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_ActionId=aa700f7f-192c-4b7d-a282-bb83baf0ab47;
- MSIP_Label_6b558183-044c-4105-8d9c-cea02a2a3d86_Extended_MSFT_Method=Automatic
-authentication-results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=nvidia.com;
-x-originating-ip: [12.46.106.164]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 249fe5e5-ea74-405b-2048-08d88da484ab
-x-ms-traffictypediagnostic: DM5PR12MB2392:
-x-microsoft-antispam-prvs: <DM5PR12MB2392E789B8F76B6FB164523EDDFF0@DM5PR12MB2392.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XjGS2jcns9VSVFYrw9HuBkUtFD/AMeqkG26TSg2rM2M8fPurI8D/AHHu8Wep1v8sd8Uaa8XiwjgEDhI+Tvsw7SVUVChRUTJbOVW/7fhlwCaY3NDeB1BbOSNfAXjblxfVr7rV3Y1Fq8FwGCwBYLBHb6O84IcWrDb1gS86J0KBMLi6SUoaeKRW/um9qDCeo/J+b30S7XcqsFSan0KJb1zkE5aBO9RKaZwaMrt3X8+eHzukXdVOvddXcvK+lQAlZiUrZKfQQmMpwQVrtMDqK5nUGtMRO6/dIOpADyw4PcRM2xrCS+R/S4l/a3y1aR9R2yUos/C3RJAXJ//hV+XOqNf6Ew==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3385.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(366004)(39860400002)(396003)(136003)(316002)(186003)(110136005)(33656002)(8936002)(4326008)(9686003)(8676002)(26005)(6506007)(478600001)(7696005)(55016002)(71200400001)(2906002)(5660300002)(52536014)(66446008)(64756008)(66476007)(66946007)(83380400001)(76116006)(66556008)(86362001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: uhw5IZoNRXwOZPnjt415S7JYsbPqKRVLXsnAyDj/UgfKaFK72+YQ7MDicK5rgDBn5rbUXRqvfAtHLavT4d18thuD9dmfb6/cOAfHr3gICsGKdcoNAvWAfL8Ce3TJRBaHJqEYnN1K4hdL82hmtBi0J+ozUGIRvqFWTN7DyIgUOIF5ECR+pCPO6CboSU/TTIhzq9HKfYeCk1lYJPCBU15aOn2sBuljwMiEPegCxQ0vTNCXX3gn2whySZu+Y33NQf+r7RaqcrrYB1NVxJtEzJdYQtiSvym93ovB9Qg4pwtlXxl9sG2tTvj0+YFkRPQpCudK9xIEbzAlKbJwPugsz949xj2uwt9Pt1P4m6vF7Z3aUKkMOr1MsSZFHIDUXalAuawogBUdhNBKl/knvbMI/B8HFuZ8QtSD41xRajVrYvbogEPsEnR4HGu0dHCovXJUoijk9wicpiPQMvhgBXy6LFIKAE0jClMYXuLzIykfRSSLyn9Xy0B+27l+LhgTwm1aqn6v4M//xHwra7PLtRqSXEvUole6r4GF6q6Xy3eYlcv34VewuRh9QtAo0moOVq1SoP1YVu2t/P4+7bhlFrR/KoAnCnfYWxnx19n1ixVw3qX9sdG1vyzVq08OKcRfPBmTDBobOsARe0CfsnT9AtH0mQ1h2Q==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 20 Nov 2020 18:16:06 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kgFdH-006Tmb-H0; Fri, 20 Nov 2020 16:15:59 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.int.ebiederm.org)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kgFdG-00EG00-3B; Fri, 20 Nov 2020 16:15:59 -0700
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
+        bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        =?UTF-8?q?Daniel=20P=20=2E=20Berrang=C3=A9?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Date:   Fri, 20 Nov 2020 17:14:18 -0600
+Message-Id: <20201120231441.29911-1-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <87r1on1v62.fsf@x220.int.ebiederm.org>
+References: <87r1on1v62.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3385.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 249fe5e5-ea74-405b-2048-08d88da484ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2020 22:35:01.1366
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WvPmGu7+q7N3PewR+aGU6yT77auCoxlBBEVEO41vmPWmHoBptngt5W/9bhcPeqCntYHfES+2gGtG3UDyS1Bl7Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2392
-X-OriginatorOrg: Nvidia.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1605911693; bh=5eGr3PF1NwScgvjZsvTqybd8jKIsHUobSCaqfZAic7M=;
-        h=ARC-Seal:ARC-Message-Signature:ARC-Authentication-Results:From:To:
-         CC:Subject:Thread-Topic:Thread-Index:Date:Message-ID:
-         Accept-Language:Content-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:msip_labels:authentication-results:
-         x-originating-ip:x-ms-publictraffictype:
-         x-ms-office365-filtering-correlation-id:x-ms-traffictypediagnostic:
-         x-microsoft-antispam-prvs:x-ms-oob-tlc-oobclassifiers:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam:
-         x-microsoft-antispam-message-info:x-forefront-antispam-report:
-         x-ms-exchange-antispam-messagedata:x-ms-exchange-transport-forked:
-         Content-Type:Content-Transfer-Encoding:MIME-Version:
-         X-MS-Exchange-CrossTenant-AuthAs:
-         X-MS-Exchange-CrossTenant-AuthSource:
-         X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-CrossTenant-userprincipalname:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg;
-        b=CEmeI5GtXZ8mfxqCGXZFrZuIzuuNpHSXRTTDZBEo7HOCHYDjScc6/qkLXCAGW8ePF
-         /U+sPgDPpbH2Rh2Lg62G1bpi6RRqfPranAyKclDO5eidQJqG0N2diPzdWh1kfunMcv
-         Bz8CVcFJmQmrnpC3lfS8iyN79gr0mo4hmDO7UIrTogy22INDbltAC4eC5Jn8ceeraD
-         5ie6sGk5cp39hs0vzAHg5gB/t0bh+tfjMPbFd+1BLYVgohDytZKFo9rT6iCDJ7hfCJ
-         VlYaGIWmSYkJcKEstUfW9B5F4EJhOyq++/adgx7whNQTgJ6KmpnqgVfdtfuIxO1n5J
-         kgaoZBUZZjlzw==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-XM-SPF: eid=1kgFdG-00EG00-3B;;;mid=<20201120231441.29911-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/Dk4BkOwsyT/FgOO6bO2TIPLXxxbBOHLc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,FVGT_m_MULTI_ODD,LotsOfNums_01,T_TooManySym_01,
+        XMSubLong,XM_B_SpammyWords,XM_B_Unicode,XM_B_Unicode3
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 XM_B_Unicode3 BODY: Testing for specific types of unicode
+        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;linux-kernel@vger.kernel.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 687 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 11 (1.6%), b_tie_ro: 9 (1.4%), parse: 1.32 (0.2%),
+         extract_message_metadata: 20 (2.9%), get_uri_detail_list: 7 (1.0%),
+        tests_pri_-1000: 15 (2.2%), tests_pri_-950: 1.33 (0.2%),
+        tests_pri_-900: 1.10 (0.2%), tests_pri_-90: 85 (12.4%), check_bayes:
+        83 (12.1%), b_tokenize: 18 (2.7%), b_tok_get_all: 16 (2.3%),
+        b_comp_prob: 4.2 (0.6%), b_tok_touch_all: 41 (6.0%), b_finish: 0.78
+        (0.1%), tests_pri_0: 538 (78.3%), check_dkim_signature: 0.63 (0.1%),
+        check_dkim_adsp: 11 (1.6%), poll_dns_idle: 0.41 (0.1%), tests_pri_10:
+        2.2 (0.3%), tests_pri_500: 8 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH v2 01/24] exec: Move unshare_files to fix posix file locking during exec
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When a dentry exists for the path argument to an open with O_CREAT or
-a negative dentry exists for the path argument to any open, make a
-lookup request to the user-space daemon to verify the
-existence/non-existence of the path.
+Many moons ago the binfmts were doing some very questionable things
+with file descriptors and an unsharing of the file descriptor table
+was added to make things better[1][2].  The helper steal_lockss was
+added to avoid breaking the userspace programs[3][4][6].
 
-This improves file open behavior for a FUSE filesystem where changes
-may be made without going through the mount point, such as a
-distributed filesystem accessed concurrently from multiple hosts.
-Specifically:
+Unfortunately it turned out that steal_locks did not work for network
+file systems[5], so it was removed to see if anyone would
+complain[7][8].  It was thought at the time that NPTL would not be
+affected as the unshare_files happened after the other threads were
+killed[8].  Unfortunately because there was an unshare_files in
+binfmt_elf.c before the threads were killed this analysis was
+incorrect.
 
-- For an open with O_CREAT of a path with a cached dentry, the
-  user-space daemon is able to report a recent unlink of a file
-  allowing it to be re-created rather than either the open failing
-  with EEXIST (when O_EXCL is used) or a FUSE open request causing the
-  open to fail with ENOENT (when O_EXCL is not used).
+This unshare_files in binfmt_elf.c resulted in the unshares_files
+happening whenever threads were present.  Which led to unshare_files
+being moved to the start of do_execve[9].
 
-- For an open of a path with a cached negative dentry, the user-space
-  daemon is able to report the recent creation of a file allowing it
-  to be opened rather than the open failing with ENOENT.
+Later the problems were rediscovered and the suggested approach was to
+readd steal_locks under a different name[10].  I happened to be
+reviewing patches and I noticed that this approach was a step
+backwards[11].
 
-This is intended to be functionally equivalent to behavior in the NFS
-client which re-validates a cached dentry on file open.
+I proposed simply moving unshare_files[12] and it was pointed
+out that moving unshare_files without auditing the code was
+also unsafe[13].
 
-Signed-off-by: Kenneth C Schalk <kschalk@nvidia.com>
+There were then several attempts to solve this[14][15][16] and I even
+posted this set of changes[17].  Unfortunately because auditing all of
+execve is time consuming this change did not make it in at the time.
+
+Well now that I am cleaning up exec I have made the time to read
+through all of the binfmts and the only playing with file descriptors
+is either the security modules closing them in
+security_bprm_committing_creds or is in the generic code in fs/exec.c.
+None of it happens before begin_new_exec is called.
+
+So move unshare_files into begin_new_exec, after the point of no
+return.  If memory is very very very low and the application calling
+exec is sharing file descriptor tables between processes we might fail
+past the point of no return.  Which is unfortunate but no different
+than any of the other places where we allocate memory after the point
+of no return.
+
+This movement allows another process that shares the file table, or
+another thread of the same process and that closes files or changes
+their close on exec behavior and races with execve to cause some
+unexpected things to happen.  There is only one time of check to time
+of use race and it is just there so that execve fails instead of
+an interpreter failing when it tries to open the file it is supposed
+to be interpreting.   Failing later if userspace is being silly is
+not a problem.
+
+With this change it the following discription from the removal
+of steal_locks[8] finally becomes true.
+
+    Apps using NPTL are not affected, since all other threads are killed before
+    execve.
+
+    Apps using LinuxThreads are only affected if they
+
+      - have multiple threads during exec (LinuxThreads doesn't kill other
+        threads, the app may do it with pthread_kill_other_threads_np())
+      - rely on POSIX locks being inherited across exec
+
+    Both conditions are documented, but not their interaction.
+
+    Apps using clone() natively are affected if they
+
+      - use clone(CLONE_FILES)
+      - rely on POSIX locks being inherited across exec
+
+I have investigated some paths to make it possible to solve this
+without moving unshare_files but they all look more complicated[18].
+
+Reported-by: Daniel P. Berrangé <berrange@redhat.com>
+Reported-by: Jeff Layton <jlayton@redhat.com>
+History-tree: git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+[1] 02cda956de0b ("[PATCH] unshare_files"
+[2] 04e9bcb4d106 ("[PATCH] use new unshare_files helper")
+[3] 088f5d7244de ("[PATCH] add steal_locks helper")
+[4] 02c541ec8ffa ("[PATCH] use new steal_locks helper")
+[5] https://lkml.kernel.org/r/E1FLIlF-0007zR-00@dorka.pomaz.szeredi.hu
+[6] https://lkml.kernel.org/r/0060321191605.GB15997@sorel.sous-sol.org
+[7] https://lkml.kernel.org/r/E1FLwjC-0000kJ-00@dorka.pomaz.szeredi.hu
+[8] c89681ed7d0e ("[PATCH] remove steal_locks()")
+[9] fd8328be874f ("[PATCH] sanitize handling of shared descriptor tables in failing execve()")
+[10] https://lkml.kernel.org/r/20180317142520.30520-1-jlayton@kernel.org
+[11] https://lkml.kernel.org/r/87r2nwqk73.fsf@xmission.com
+[12] https://lkml.kernel.org/r/87bmfgvg8w.fsf@xmission.com
+[13] https://lkml.kernel.org/r/20180322111424.GE30522@ZenIV.linux.org.uk
+[14] https://lkml.kernel.org/r/20180827174722.3723-1-jlayton@kernel.org
+[15] https://lkml.kernel.org/r/20180830172423.21964-1-jlayton@kernel.org
+[16] https://lkml.kernel.org/r/20180914105310.6454-1-jlayton@kernel.org
+[17] https://lkml.kernel.org/r/87a7ohs5ow.fsf@xmission.com
+[18] https://lkml.kernel.org/r/87pn8c1uj6.fsf_-_@x220.int.ebiederm.org
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+v1: https://lkml.kernel.org/r/20200817220425.9389-1-ebiederm@xmission.com
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- fs/fuse/dir.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/exec.c | 29 +++++++++++++++--------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 5d43af1..eab0288 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -205,7 +205,8 @@ static int fuse_dentry_revalidate(struct dentry *entry,=
- unsigned int flags)
-        if (inode && is_bad_inode(inode))
-                goto invalid;
-        else if (time_before64(fuse_dentry_time(entry), get_jiffies_64()) |=
-|
--                (flags & (LOOKUP_EXCL | LOOKUP_REVAL))) {
-+                (!inode && (flags & LOOKUP_OPEN)) ||
-+                (flags & (LOOKUP_CREATE | LOOKUP_REVAL))) {
-                struct fuse_entry_out outarg;
-                FUSE_ARGS(args);
-                struct fuse_forget_link *forget;
---
-2.9.2
+diff --git a/fs/exec.c b/fs/exec.c
+index 547a2390baf5..fa788988efe9 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1238,6 +1238,7 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ int begin_new_exec(struct linux_binprm * bprm)
+ {
+ 	struct task_struct *me = current;
++	struct files_struct *displaced;
+ 	int retval;
+ 
+ 	/* Once we are committed compute the creds */
+@@ -1257,6 +1258,13 @@ int begin_new_exec(struct linux_binprm * bprm)
+ 	if (retval)
+ 		goto out;
+ 
++	/* Ensure the files table is not shared. */
++	retval = unshare_files(&displaced);
++	if (retval)
++		goto out;
++	if (displaced)
++		put_files_struct(displaced);
++
+ 	/*
+ 	 * Must be called _before_ exec_mmap() as bprm->mm is
+ 	 * not visibile until then. This also enables the update
+@@ -1776,7 +1784,6 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 		       int fd, struct filename *filename, int flags)
+ {
+ 	struct file *file;
+-	struct files_struct *displaced;
+ 	int retval;
+ 
+ 	/*
+@@ -1784,13 +1791,9 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 	 */
+ 	io_uring_task_cancel();
+ 
+-	retval = unshare_files(&displaced);
+-	if (retval)
+-		return retval;
+-
+ 	retval = prepare_bprm_creds(bprm);
+ 	if (retval)
+-		goto out_files;
++		return retval;
+ 
+ 	check_unsafe_exec(bprm);
+ 	current->in_execve = 1;
+@@ -1805,8 +1808,12 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 	bprm->file = file;
+ 	/*
+ 	 * Record that a name derived from an O_CLOEXEC fd will be
+-	 * inaccessible after exec. Relies on having exclusive access to
+-	 * current->files (due to unshare_files above).
++	 * inaccessible after exec.  This allows the code in exec to
++	 * choose to fail when the executable is not mmaped into the
++	 * interpreter and an open file descriptor is not passed to
++	 * the interpreter.  This makes for a better user experience
++	 * than having the interpreter start and then immediately fail
++	 * when it finds the executable is inaccessible.
+ 	 */
+ 	if (bprm->fdpath &&
+ 	    close_on_exec(fd, rcu_dereference_raw(current->files->fdt)))
+@@ -1827,8 +1834,6 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 	rseq_execve(current);
+ 	acct_update_integrals(current);
+ 	task_numa_free(current, false);
+-	if (displaced)
+-		put_files_struct(displaced);
+ 	return retval;
+ 
+ out:
+@@ -1845,10 +1850,6 @@ static int bprm_execve(struct linux_binprm *bprm,
+ 	current->fs->in_exec = 0;
+ 	current->in_execve = 0;
+ 
+-out_files:
+-	if (displaced)
+-		reset_files_struct(displaced);
+-
+ 	return retval;
+ }
+ 
+-- 
+2.25.0
+
