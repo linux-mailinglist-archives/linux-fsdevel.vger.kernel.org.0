@@ -2,313 +2,704 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5B872BACDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 16:06:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 256952BACE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 16:06:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbgKTPGP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 10:06:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:42734 "EHLO
+        id S1728729AbgKTPGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 10:06:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:21009 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728706AbgKTPGO (ORCPT
+        by vger.kernel.org with ESMTP id S1728330AbgKTPGc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 10:06:14 -0500
+        Fri, 20 Nov 2020 10:06:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605884771;
+        s=mimecast20190719; t=1605884789;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=3cmElf377VV5pCaI3ZacaDWr2Vk1dfkCNkh+Zy78XCE=;
-        b=VDm4iLJLK7XBZkoEzOrWil6EeuNPkhm0ZYWx53uaiziTvjE5vOC2D+Q6DSJbyWsrp82hBh
-        /aRJU4d3cq3iPxeMnHUrd9T21uDijKlvtmNY0cI/KD+rUauD8Pwr62+Y/DPhMrqPjuFcld
-        jzGUDUOAgrv5EAfFHeZNqMpBZWv6G5A=
+        bh=9xwcEKuW4WfG4WiPWL1/gATo5sx7vYu1cDXiemYomFc=;
+        b=H5BkhikUSOa25I6pF/UE6B6Zj9jpQhh+H9lBRj3UIZ8U5IHcNJXa11t1jmTSvHjyFU3T7a
+        3P58UPxVn9wwp7SNKZ0lE7B/NJswMXIpc3aCQhdlkdC0ILZJeoAWhmegFkj8CAc4xZzNBR
+        f2G7mW6GRjo3V9DDelKaYUl5JnfctIE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-10-DZ7F8qW9NdqT_zr_ech__A-1; Fri, 20 Nov 2020 10:06:09 -0500
-X-MC-Unique: DZ7F8qW9NdqT_zr_ech__A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-286-zZG0MiVdPFqRsaR6Ih6J4Q-1; Fri, 20 Nov 2020 10:06:26 -0500
+X-MC-Unique: zZG0MiVdPFqRsaR6Ih6J4Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B098100C612;
-        Fri, 20 Nov 2020 15:06:08 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 017188797DC;
+        Fri, 20 Nov 2020 15:06:24 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-246.rdu2.redhat.com [10.10.112.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4391F60C15;
-        Fri, 20 Nov 2020 15:06:01 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 223A75C1D5;
+        Fri, 20 Nov 2020 15:06:13 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 16/76] cachefiles: Change %p in format strings to
- something else
+Subject: [RFC PATCH 17/76] iov_iter: Add ITER_XARRAY
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
         Dominique Martinet <asmadeus@codewreck.org>
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
+Cc:     Matthew Wilcox <willy@infradead.org>, dhowells@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 20 Nov 2020 15:06:00 +0000
-Message-ID: <160588476042.3465195.6837847445880367183.stgit@warthog.procyon.org.uk>
+Date:   Fri, 20 Nov 2020 15:06:13 +0000
+Message-ID: <160588477334.3465195.3608963255682568730.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk>
 References: <160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change plain %p in format strings in cachefiles code to something more
-useful, since %p is now hashed before printing and thus no longer matches
-the contents of an oops register dump.
+Add an iterator, ITER_XARRAY, that walks through a set of pages attached to
+an xarray, starting at a given page and offset and walking for the
+specified amount of bytes.  The iterator supports transparent huge pages.
+
+The caller must guarantee that the pages are all present and they must be
+locked using PG_locked, PG_writeback or PG_fscache to prevent them from
+going away or being migrated whilst they're being accessed.
+
+This is useful for copying data from socket buffers to inodes in network
+filesystems and for transferring data between those inodes and the cache
+using direct I/O.
+
+Whilst it is true that ITER_BVEC could be used instead, that would require
+a bio_vec array to be allocated to refer to all the pages - which should be
+redundant if inode->i_pages also points to all these pages.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
 ---
 
- fs/cachefiles/bind.c      |    2 --
- fs/cachefiles/interface.c |    6 +++---
- fs/cachefiles/key.c       |    2 +-
- fs/cachefiles/namei.c     |   46 +++++++++++++++++++++------------------------
- fs/cachefiles/xattr.c     |    4 ++--
- 5 files changed, 27 insertions(+), 33 deletions(-)
+ include/linux/uio.h |   11 ++
+ lib/iov_iter.c      |  312 +++++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 300 insertions(+), 23 deletions(-)
 
-diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
-index dfb14dbddf51..2e9d01a9d53f 100644
---- a/fs/cachefiles/bind.c
-+++ b/fs/cachefiles/bind.c
-@@ -108,8 +108,6 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
- 	atomic_set(&fsdef->usage, 1);
- 	fsdef->type = FSCACHE_COOKIE_TYPE_INDEX;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 72d88566694e..08b186df54ac 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -10,6 +10,7 @@
+ #include <uapi/linux/uio.h>
  
--	_debug("- fsdef %p", fsdef);
--
- 	/* look up the directory at the root of the cache */
- 	ret = kern_path(cache->rootdirname, LOOKUP_DIRECTORY, &path);
- 	if (ret < 0)
-diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index 99f42d216ef7..7e10793352fd 100644
---- a/fs/cachefiles/interface.c
-+++ b/fs/cachefiles/interface.c
-@@ -27,7 +27,7 @@ static struct fscache_object *cachefiles_alloc_object(
+ struct page;
++struct address_space;
+ struct pipe_inode_info;
  
- 	cache = container_of(_cache, struct cachefiles_cache, cache);
+ struct kvec {
+@@ -24,6 +25,7 @@ enum iter_type {
+ 	ITER_BVEC = 16,
+ 	ITER_PIPE = 32,
+ 	ITER_DISCARD = 64,
++	ITER_XARRAY = 128,
+ };
  
--	_enter("{%s},%p,", cache->cache.identifier, cookie);
-+	_enter("{%s},%x,", cache->cache.identifier, cookie->debug_id);
+ struct iov_iter {
+@@ -39,6 +41,7 @@ struct iov_iter {
+ 		const struct iovec *iov;
+ 		const struct kvec *kvec;
+ 		const struct bio_vec *bvec;
++		struct xarray *xarray;
+ 		struct pipe_inode_info *pipe;
+ 	};
+ 	union {
+@@ -47,6 +50,7 @@ struct iov_iter {
+ 			unsigned int head;
+ 			unsigned int start_head;
+ 		};
++		loff_t xarray_start;
+ 	};
+ };
  
- 	/* create a new object record and a temporary leaf image */
- 	object = kmem_cache_alloc(cachefiles_object_jar, cachefiles_gfp);
-@@ -68,7 +68,7 @@ static struct fscache_object *cachefiles_alloc_object(
- 
- 	object->lookup_key = key;
- 
--	_leave(" = %p [%s]", &object->fscache, key);
-+	_leave(" = %x [%s]", object->fscache.debug_id, key);
- 	return &object->fscache;
- 
- nomem_key:
-@@ -301,7 +301,7 @@ static void cachefiles_sync_cache(struct fscache_cache *_cache)
- 	const struct cred *saved_cred;
- 	int ret;
- 
--	_enter("%p", _cache);
-+	_enter("%s", _cache->tag->name);
- 
- 	cache = container_of(_cache, struct cachefiles_cache, cache);
- 
-diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
-index be96f5fc5cac..7f94efc97e23 100644
---- a/fs/cachefiles/key.c
-+++ b/fs/cachefiles/key.c
-@@ -150,6 +150,6 @@ char *cachefiles_cook_key(const u8 *raw, int keylen, uint8_t type)
- 	key[len++] = 0;
- 	key[len] = 0;
- 
--	_leave(" = %p %d", key, len);
-+	_leave(" = %s %d", key, len);
- 	return key;
+@@ -80,6 +84,11 @@ static inline bool iov_iter_is_discard(const struct iov_iter *i)
+ 	return iov_iter_type(i) == ITER_DISCARD;
  }
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 924042e8cced..2f37451691b0 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -38,17 +38,17 @@ void __cachefiles_printk_object(struct cachefiles_object *object,
- 	       object->fscache.events, object->fscache.event_mask);
- 	pr_err("%sops=%u\n",
- 	       prefix, object->fscache.n_ops);
--	pr_err("%sparent=%p\n",
--	       prefix, object->fscache.parent);
-+	pr_err("%sparent=%x\n",
-+	       prefix, object->fscache.parent ? object->fscache.parent->debug_id : 0);
  
- 	spin_lock(&object->fscache.lock);
- 	cookie = object->fscache.cookie;
- 	if (cookie) {
--		pr_err("%scookie=%p [pr=%p fl=%lx]\n",
-+		pr_err("%scookie=%x [pr=%x fl=%lx]\n",
- 		       prefix,
--		       object->fscache.cookie,
--		       object->fscache.cookie->parent,
--		       object->fscache.cookie->flags);
-+		       cookie->debug_id,
-+		       cookie->parent ? cookie->parent->debug_id : 0,
-+		       cookie->flags);
- 		pr_err("%skey=[%u] '", prefix, cookie->key_len);
- 		k = (cookie->key_len <= sizeof(cookie->inline_key)) ?
- 			cookie->inline_key : cookie->key;
-@@ -108,7 +108,7 @@ static void cachefiles_mark_object_buried(struct cachefiles_cache *cache,
++static inline bool iov_iter_is_xarray(const struct iov_iter *i)
++{
++	return iov_iter_type(i) == ITER_XARRAY;
++}
++
+ static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+ {
+ 	return i->type & (READ | WRITE);
+@@ -221,6 +230,8 @@ void iov_iter_bvec(struct iov_iter *i, unsigned int direction, const struct bio_
+ void iov_iter_pipe(struct iov_iter *i, unsigned int direction, struct pipe_inode_info *pipe,
+ 			size_t count);
+ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count);
++void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *xarray,
++		     loff_t start, size_t count);
+ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+ 			size_t maxsize, unsigned maxpages, size_t *start);
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 1635111c5bd2..6edf0f290159 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -78,7 +78,44 @@
+ 	}						\
+ }
  
- 	/* found the dentry for  */
- found_dentry:
--	kdebug("preemptive burial: OBJ%x [%s] %p",
-+	kdebug("preemptive burial: OBJ%x [%s] %pd",
- 	       object->fscache.debug_id,
- 	       object->fscache.state->name,
- 	       dentry);
-@@ -138,7 +138,7 @@ static int cachefiles_mark_object_active(struct cachefiles_cache *cache,
- 	struct rb_node **_p, *_parent = NULL;
- 	struct dentry *dentry;
+-#define iterate_all_kinds(i, n, v, I, B, K) {			\
++#define iterate_xarray(i, n, __v, skip, STEP) {		\
++	struct page *head = NULL;				\
++	size_t wanted = n, seg, offset;				\
++	loff_t start = i->xarray_start + skip;			\
++	pgoff_t index = start >> PAGE_SHIFT;			\
++	int j;							\
++								\
++	XA_STATE(xas, i->xarray, index);			\
++								\
++	rcu_read_lock();						\
++	xas_for_each(&xas, head, ULONG_MAX) {				\
++		if (xas_retry(&xas, head))				\
++			continue;					\
++		if (WARN_ON(xa_is_value(head)))				\
++			break;						\
++		if (WARN_ON(PageHuge(head)))				\
++			break;						\
++		for (j = (head->index < index) ? index - head->index : 0; \
++		     j < thp_nr_pages(head); j++) {			\
++			__v.bv_page = head + j;				\
++			offset = (i->xarray_start + skip) & ~PAGE_MASK;	\
++			seg = PAGE_SIZE - offset;			\
++			__v.bv_offset = offset;				\
++			__v.bv_len = min(n, seg);			\
++			(void)(STEP);					\
++			n -= __v.bv_len;				\
++			skip += __v.bv_len;				\
++			if (n == 0)					\
++				break;					\
++		}							\
++		if (n == 0)						\
++			break;						\
++	}							\
++	rcu_read_unlock();					\
++	n = wanted - n;						\
++}
++
++#define iterate_all_kinds(i, n, v, I, B, K, X) {		\
+ 	if (likely(n)) {					\
+ 		size_t skip = i->iov_offset;			\
+ 		if (unlikely(i->type & ITER_BVEC)) {		\
+@@ -90,6 +127,9 @@
+ 			struct kvec v;				\
+ 			iterate_kvec(i, n, v, kvec, skip, (K))	\
+ 		} else if (unlikely(i->type & ITER_DISCARD)) {	\
++		} else if (unlikely(i->type & ITER_XARRAY)) {	\
++			struct bio_vec v;			\
++			iterate_xarray(i, n, v, skip, (X));	\
+ 		} else {					\
+ 			const struct iovec *iov;		\
+ 			struct iovec v;				\
+@@ -98,7 +138,7 @@
+ 	}							\
+ }
  
--	_enter(",%p", object);
-+	_enter(",%x", object->fscache.debug_id);
+-#define iterate_and_advance(i, n, v, I, B, K) {			\
++#define iterate_and_advance(i, n, v, I, B, K, X) {		\
+ 	if (unlikely(i->count < n))				\
+ 		n = i->count;					\
+ 	if (i->count) {						\
+@@ -123,6 +163,9 @@
+ 			i->kvec = kvec;				\
+ 		} else if (unlikely(i->type & ITER_DISCARD)) {	\
+ 			skip += n;				\
++		} else if (unlikely(i->type & ITER_XARRAY)) {	\
++			struct bio_vec v;			\
++			iterate_xarray(i, n, v, skip, (X))	\
+ 		} else {					\
+ 			const struct iovec *iov;		\
+ 			struct iovec v;				\
+@@ -636,7 +679,9 @@ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+ 		copyout(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
+ 		memcpy_to_page(v.bv_page, v.bv_offset,
+ 			       (from += v.bv_len) - v.bv_len, v.bv_len),
+-		memcpy(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len)
++		memcpy(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
++		memcpy_to_page(v.bv_page, v.bv_offset,
++			       (from += v.bv_len) - v.bv_len, v.bv_len)
+ 	)
  
- try_again:
- 	write_lock(&cache->active_lock);
-@@ -296,8 +296,6 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
- 
- 	_enter(",'%pd','%pd'", dir, rep);
- 
--	_debug("remove %p from %p", rep, dir);
--
- 	/* non-directories can just be unlinked */
- 	if (!d_is_dir(rep)) {
- 		_debug("unlink stale object");
-@@ -436,7 +434,7 @@ int cachefiles_delete_object(struct cachefiles_cache *cache,
- 	struct dentry *dir;
- 	int ret;
- 
--	_enter(",OBJ%x{%p}", object->fscache.debug_id, object->dentry);
-+	_enter(",OBJ%x{%pd}", object->fscache.debug_id, object->dentry);
- 
- 	ASSERT(object->dentry);
- 	ASSERT(d_backing_inode(object->dentry));
-@@ -489,7 +487,7 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 	const char *name;
- 	int ret, nlen;
- 
--	_enter("OBJ%x{%p},OBJ%x,%s,",
-+	_enter("OBJ%x{%pd},OBJ%x,%s,",
- 	       parent->fscache.debug_id, parent->dentry,
- 	       object->fscache.debug_id, key);
- 
-@@ -534,7 +532,7 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 
- 	inode = d_backing_inode(next);
- 	trace_cachefiles_lookup(object, next, inode);
--	_debug("next -> %p %s", next, inode ? "positive" : "negative");
-+	_debug("next -> %pd %s", next, inode ? "positive" : "negative");
- 
- 	if (!key)
- 		object->new = !inode;
-@@ -572,8 +570,8 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 			}
- 			ASSERT(d_backing_inode(next));
- 
--			_debug("mkdir -> %p{%p{ino=%lu}}",
--			       next, d_backing_inode(next), d_backing_inode(next)->i_ino);
-+			_debug("mkdir -> %pd{ino=%lu}",
-+			       next, d_backing_inode(next)->i_ino);
- 
- 		} else if (!d_can_lookup(next)) {
- 			pr_err("inode %lu is not a directory\n",
-@@ -602,8 +600,8 @@ int cachefiles_walk_to_object(struct cachefiles_object *parent,
- 
- 			ASSERT(d_backing_inode(next));
- 
--			_debug("create -> %p{%p{ino=%lu}}",
--			       next, d_backing_inode(next), d_backing_inode(next)->i_ino);
-+			_debug("create -> %pd{ino=%lu}",
-+			       next, d_backing_inode(next)->i_ino);
- 
- 		} else if (!d_can_lookup(next) &&
- 			   !d_is_reg(next)
-@@ -772,7 +770,7 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 		goto lookup_error;
- 	}
- 
--	_debug("subdir -> %p %s",
-+	_debug("subdir -> %pd %s",
- 	       subdir, d_backing_inode(subdir) ? "positive" : "negative");
- 
- 	/* we need to create the subdir if it doesn't exist yet */
-@@ -798,10 +796,8 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
+ 	return bytes;
+@@ -752,6 +797,15 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+ 			bytes = curr_addr - s_addr - rem;
+ 			return bytes;
  		}
- 		ASSERT(d_backing_inode(subdir));
++		}),
++		({
++		rem = copy_mc_to_page(v.bv_page, v.bv_offset,
++				      (from += v.bv_len) - v.bv_len, v.bv_len);
++		if (rem) {
++			curr_addr = (unsigned long) from;
++			bytes = curr_addr - s_addr - rem;
++			return bytes;
++		}
+ 		})
+ 	)
  
--		_debug("mkdir -> %p{%p{ino=%lu}}",
--		       subdir,
--		       d_backing_inode(subdir),
--		       d_backing_inode(subdir)->i_ino);
-+		_debug("mkdir -> %pd{ino=%lu}",
-+		       subdir, d_backing_inode(subdir)->i_ino);
+@@ -773,7 +827,9 @@ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+ 		copyin((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+ 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+ 				 v.bv_offset, v.bv_len),
+-		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
++		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
++		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
++				 v.bv_offset, v.bv_len)
+ 	)
+ 
+ 	return bytes;
+@@ -799,7 +855,9 @@ bool _copy_from_iter_full(void *addr, size_t bytes, struct iov_iter *i)
+ 		0;}),
+ 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+ 				 v.bv_offset, v.bv_len),
+-		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
++		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
++		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
++				 v.bv_offset, v.bv_len)
+ 	)
+ 
+ 	iov_iter_advance(i, bytes);
+@@ -819,7 +877,9 @@ size_t _copy_from_iter_nocache(void *addr, size_t bytes, struct iov_iter *i)
+ 					 v.iov_base, v.iov_len),
+ 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+ 				 v.bv_offset, v.bv_len),
+-		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
++		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
++		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
++				 v.bv_offset, v.bv_len)
+ 	)
+ 
+ 	return bytes;
+@@ -854,7 +914,9 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
+ 		memcpy_page_flushcache((to += v.bv_len) - v.bv_len, v.bv_page,
+ 				 v.bv_offset, v.bv_len),
+ 		memcpy_flushcache((to += v.iov_len) - v.iov_len, v.iov_base,
+-			v.iov_len)
++			v.iov_len),
++		memcpy_page_flushcache((to += v.bv_len) - v.bv_len, v.bv_page,
++				 v.bv_offset, v.bv_len)
+ 	)
+ 
+ 	return bytes;
+@@ -878,7 +940,9 @@ bool _copy_from_iter_full_nocache(void *addr, size_t bytes, struct iov_iter *i)
+ 		0;}),
+ 		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
+ 				 v.bv_offset, v.bv_len),
+-		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
++		memcpy((to += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
++		memcpy_from_page((to += v.bv_len) - v.bv_len, v.bv_page,
++				 v.bv_offset, v.bv_len)
+ 	)
+ 
+ 	iov_iter_advance(i, bytes);
+@@ -915,7 +979,7 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+ {
+ 	if (unlikely(!page_copy_sane(page, offset, bytes)))
+ 		return 0;
+-	if (i->type & (ITER_BVEC|ITER_KVEC)) {
++	if (i->type & (ITER_BVEC | ITER_KVEC | ITER_XARRAY)) {
+ 		void *kaddr = kmap_atomic(page);
+ 		size_t wanted = copy_to_iter(kaddr + offset, bytes, i);
+ 		kunmap_atomic(kaddr);
+@@ -938,7 +1002,7 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+ 		WARN_ON(1);
+ 		return 0;
  	}
+-	if (i->type & (ITER_BVEC|ITER_KVEC)) {
++	if (i->type & (ITER_BVEC | ITER_KVEC | ITER_XARRAY)) {
+ 		void *kaddr = kmap_atomic(page);
+ 		size_t wanted = _copy_from_iter(kaddr + offset, bytes, i);
+ 		kunmap_atomic(kaddr);
+@@ -982,7 +1046,8 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
+ 	iterate_and_advance(i, bytes, v,
+ 		clear_user(v.iov_base, v.iov_len),
+ 		memzero_page(v.bv_page, v.bv_offset, v.bv_len),
+-		memset(v.iov_base, 0, v.iov_len)
++		memset(v.iov_base, 0, v.iov_len),
++		memzero_page(v.bv_page, v.bv_offset, v.bv_len)
+ 	)
  
- 	inode_unlock(d_inode(dir));
-@@ -879,7 +875,7 @@ static struct dentry *cachefiles_check_active(struct cachefiles_cache *cache,
- 	if (IS_ERR(victim))
- 		goto lookup_error;
+ 	return bytes;
+@@ -1006,7 +1071,9 @@ size_t iov_iter_copy_from_user_atomic(struct page *page,
+ 		copyin((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
+ 		memcpy_from_page((p += v.bv_len) - v.bv_len, v.bv_page,
+ 				 v.bv_offset, v.bv_len),
+-		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len)
++		memcpy((p += v.iov_len) - v.iov_len, v.iov_base, v.iov_len),
++		memcpy_from_page((p += v.bv_len) - v.bv_len, v.bv_page,
++				 v.bv_offset, v.bv_len)
+ 	)
+ 	kunmap_atomic(kaddr);
+ 	return bytes;
+@@ -1077,7 +1144,12 @@ void iov_iter_advance(struct iov_iter *i, size_t size)
+ 		i->count -= size;
+ 		return;
+ 	}
+-	iterate_and_advance(i, size, v, 0, 0, 0)
++	if (unlikely(iov_iter_is_xarray(i))) {
++		i->iov_offset += size;
++		i->count -= size;
++		return;
++	}
++	iterate_and_advance(i, size, v, 0, 0, 0, 0)
+ }
+ EXPORT_SYMBOL(iov_iter_advance);
  
--	//_debug("victim -> %p %s",
-+	//_debug("victim -> %pd %s",
- 	//       victim, d_backing_inode(victim) ? "positive" : "negative");
- 
- 	/* if the object is no longer there then we probably retired the object
-@@ -910,7 +906,7 @@ static struct dentry *cachefiles_check_active(struct cachefiles_cache *cache,
- 
- 	read_unlock(&cache->active_lock);
- 
--	//_leave(" = %p", victim);
-+	//_leave(" = %pd", victim);
- 	return victim;
- 
- object_in_use:
-@@ -956,7 +952,7 @@ int cachefiles_cull(struct cachefiles_cache *cache, struct dentry *dir,
- 	if (IS_ERR(victim))
- 		return PTR_ERR(victim);
- 
--	_debug("victim -> %p %s",
-+	_debug("victim -> %pd %s",
- 	       victim, d_backing_inode(victim) ? "positive" : "negative");
- 
- 	/* okay... the victim is not being used so we can cull it
-diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
-index a4f1eddebe6f..46913d4157dd 100644
---- a/fs/cachefiles/xattr.c
-+++ b/fs/cachefiles/xattr.c
-@@ -41,7 +41,7 @@ int cachefiles_check_object_type(struct cachefiles_object *object)
+@@ -1121,7 +1193,12 @@ void iov_iter_revert(struct iov_iter *i, size_t unroll)
+ 		return;
+ 	}
+ 	unroll -= i->iov_offset;
+-	if (iov_iter_is_bvec(i)) {
++	if (iov_iter_is_xarray(i)) {
++		BUG(); /* We should never go beyond the start of the specified
++			* range since we might then be straying into pages that
++			* aren't pinned.
++			*/
++	} else if (iov_iter_is_bvec(i)) {
+ 		const struct bio_vec *bvec = i->bvec;
+ 		while (1) {
+ 			size_t n = (--bvec)->bv_len;
+@@ -1158,9 +1235,9 @@ size_t iov_iter_single_seg_count(const struct iov_iter *i)
+ 		return i->count;	// it is a silly place, anyway
+ 	if (i->nr_segs == 1)
+ 		return i->count;
+-	if (unlikely(iov_iter_is_discard(i)))
++	if (unlikely(iov_iter_is_discard(i) || iov_iter_is_xarray(i)))
+ 		return i->count;
+-	else if (iov_iter_is_bvec(i))
++	if (iov_iter_is_bvec(i))
+ 		return min(i->count, i->bvec->bv_len - i->iov_offset);
  	else
- 		snprintf(type, 3, "%02x", object->fscache.cookie->type);
+ 		return min(i->count, i->iov->iov_len - i->iov_offset);
+@@ -1208,6 +1285,31 @@ void iov_iter_pipe(struct iov_iter *i, unsigned int direction,
+ }
+ EXPORT_SYMBOL(iov_iter_pipe);
  
--	_enter("%p{%s}", object, type);
-+	_enter("%x{%s}", object->fscache.debug_id, type);
++/**
++ * iov_iter_xarray - Initialise an I/O iterator to use the pages in an xarray
++ * @i: The iterator to initialise.
++ * @direction: The direction of the transfer.
++ * @xarray: The xarray to access.
++ * @start: The start file position.
++ * @count: The size of the I/O buffer in bytes.
++ *
++ * Set up an I/O iterator to either draw data out of the pages attached to an
++ * inode or to inject data into those pages.  The pages *must* be prevented
++ * from evaporation, either by taking a ref on them or locking them by the
++ * caller.
++ */
++void iov_iter_xarray(struct iov_iter *i, unsigned int direction,
++		     struct xarray *xarray, loff_t start, size_t count)
++{
++	BUG_ON(direction & ~1);
++	i->type = ITER_XARRAY | (direction & (READ | WRITE));
++	i->xarray = xarray;
++	i->xarray_start = start;
++	i->count = count;
++	i->iov_offset = 0;
++}
++EXPORT_SYMBOL(iov_iter_xarray);
++
+ /**
+  * iov_iter_discard - Initialise an I/O iterator that discards data
+  * @i: The iterator to initialise.
+@@ -1241,7 +1343,8 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
+ 	iterate_all_kinds(i, size, v,
+ 		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
+ 		res |= v.bv_offset | v.bv_len,
+-		res |= (unsigned long)v.iov_base | v.iov_len
++		res |= (unsigned long)v.iov_base | v.iov_len,
++		res |= v.bv_offset | v.bv_len
+ 	)
+ 	return res;
+ }
+@@ -1263,7 +1366,9 @@ unsigned long iov_iter_gap_alignment(const struct iov_iter *i)
+ 		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
+ 			(size != v.bv_len ? size : 0)),
+ 		(res |= (!res ? 0 : (unsigned long)v.iov_base) |
+-			(size != v.iov_len ? size : 0))
++			(size != v.iov_len ? size : 0)),
++		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
++			(size != v.bv_len ? size : 0))
+ 		);
+ 	return res;
+ }
+@@ -1313,6 +1418,75 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+ 	return __pipe_get_pages(i, min(maxsize, capacity), pages, iter_head, start);
+ }
  
- 	/* attempt to install a type label directly */
- 	ret = vfs_setxattr(dentry, cachefiles_xattr_cache, type, 2,
-@@ -112,7 +112,7 @@ int cachefiles_set_object_xattr(struct cachefiles_object *object,
- 	if (!dentry)
- 		return -ESTALE;
++static ssize_t iter_xarray_copy_pages(struct page **pages, struct xarray *xa,
++				       pgoff_t index, unsigned int nr_pages)
++{
++	XA_STATE(xas, xa, index);
++	struct page *page;
++	unsigned int ret = 0;
++
++	rcu_read_lock();
++	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
++		if (xas_retry(&xas, page))
++			continue;
++
++		/* Has the page moved or been split? */
++		if (unlikely(page != xas_reload(&xas))) {
++			xas_reset(&xas);
++			continue;
++		}
++
++		pages[ret] = find_subpage(page, xas.xa_index);
++		get_page(pages[ret]);
++		if (++ret == nr_pages)
++			break;
++	}
++	rcu_read_unlock();
++	return ret;
++}
++
++static ssize_t iter_xarray_get_pages(struct iov_iter *i,
++				     struct page **pages, size_t maxsize,
++				     unsigned maxpages, size_t *_start_offset)
++{
++	unsigned nr, offset;
++	pgoff_t index, count;
++	size_t size = maxsize, actual;
++	loff_t pos;
++
++	if (!size || !maxpages)
++		return 0;
++
++	pos = i->xarray_start + i->iov_offset;
++	index = pos >> PAGE_SHIFT;
++	offset = pos & ~PAGE_MASK;
++	*_start_offset = offset;
++
++	count = 1;
++	if (size > PAGE_SIZE - offset) {
++		size -= PAGE_SIZE - offset;
++		count += size >> PAGE_SHIFT;
++		size &= ~PAGE_MASK;
++		if (size)
++			count++;
++	}
++
++	if (count > maxpages)
++		count = maxpages;
++
++	nr = iter_xarray_copy_pages(pages, i->xarray, index, count);
++	if (nr == 0)
++		return 0;
++
++	actual = PAGE_SIZE * nr;
++	actual -= offset;
++	if (nr == count && size > 0) {
++		unsigned last_offset = (nr > 1) ? 0 : offset;
++		actual -= PAGE_SIZE - (last_offset + size);
++	}
++	return actual;
++}
++
+ ssize_t iov_iter_get_pages(struct iov_iter *i,
+ 		   struct page **pages, size_t maxsize, unsigned maxpages,
+ 		   size_t *start)
+@@ -1322,6 +1496,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
  
--	_enter("%p,#%d", object, len);
-+	_enter("%x,#%d", object->fscache.debug_id, len);
+ 	if (unlikely(iov_iter_is_pipe(i)))
+ 		return pipe_get_pages(i, pages, maxsize, maxpages, start);
++	if (unlikely(iov_iter_is_xarray(i)))
++		return iter_xarray_get_pages(i, pages, maxsize, maxpages, start);
+ 	if (unlikely(iov_iter_is_discard(i)))
+ 		return -EFAULT;
  
- 	buf = kmalloc(sizeof(struct cachefiles_xattr) + len, GFP_KERNEL);
- 	if (!buf)
+@@ -1348,7 +1524,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
+ 		return v.bv_len;
+ 	}),({
+ 		return -EFAULT;
+-	})
++	}),
++	0
+ 	)
+ 	return 0;
+ }
+@@ -1392,6 +1569,51 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+ 	return n;
+ }
+ 
++static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
++					   struct page ***pages, size_t maxsize,
++					   size_t *_start_offset)
++{
++	struct page **p;
++	unsigned nr, offset;
++	pgoff_t index, count;
++	size_t size = maxsize, actual;
++	loff_t pos;
++
++	if (!size)
++		return 0;
++
++	pos = i->xarray_start + i->iov_offset;
++	index = pos >> PAGE_SHIFT;
++	offset = pos & ~PAGE_MASK;
++	*_start_offset = offset;
++
++	count = 1;
++	if (size > PAGE_SIZE - offset) {
++		size -= PAGE_SIZE - offset;
++		count += size >> PAGE_SHIFT;
++		size &= ~PAGE_MASK;
++		if (size)
++			count++;
++	}
++
++	p = get_pages_array(count);
++	if (!p)
++		return -ENOMEM;
++	*pages = p;
++
++	nr = iter_xarray_copy_pages(p, i->xarray, index, count);
++	if (nr == 0)
++		return 0;
++
++	actual = PAGE_SIZE * nr;
++	actual -= offset;
++	if (nr == count && size > 0) {
++		unsigned last_offset = (nr > 1) ? 0 : offset;
++		actual -= PAGE_SIZE - (last_offset + size);
++	}
++	return actual;
++}
++
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
+ 		   size_t *start)
+@@ -1403,6 +1625,8 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 
+ 	if (unlikely(iov_iter_is_pipe(i)))
+ 		return pipe_get_pages_alloc(i, pages, maxsize, start);
++	if (unlikely(iov_iter_is_xarray(i)))
++		return iter_xarray_get_pages_alloc(i, pages, maxsize, start);
+ 	if (unlikely(iov_iter_is_discard(i)))
+ 		return -EFAULT;
+ 
+@@ -1435,7 +1659,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		return v.bv_len;
+ 	}),({
+ 		return -EFAULT;
+-	})
++	}), 0
+ 	)
+ 	return 0;
+ }
+@@ -1473,6 +1697,13 @@ size_t csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
+ 				      v.iov_base, v.iov_len,
+ 				      sum, off);
+ 		off += v.iov_len;
++	}), ({
++		char *p = kmap_atomic(v.bv_page);
++		sum = csum_and_memcpy((to += v.bv_len) - v.bv_len,
++				      p + v.bv_offset, v.bv_len,
++				      sum, off);
++		kunmap_atomic(p);
++		off += v.bv_len;
+ 	})
+ 	)
+ 	*csum = sum;
+@@ -1514,6 +1745,13 @@ bool csum_and_copy_from_iter_full(void *addr, size_t bytes, __wsum *csum,
+ 				      v.iov_base, v.iov_len,
+ 				      sum, off);
+ 		off += v.iov_len;
++	}), ({
++		char *p = kmap_atomic(v.bv_page);
++		sum = csum_and_memcpy((to += v.bv_len) - v.bv_len,
++				      p + v.bv_offset, v.bv_len,
++				      sum, off);
++		kunmap_atomic(p);
++		off += v.bv_len;
+ 	})
+ 	)
+ 	*csum = sum;
+@@ -1559,6 +1797,13 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *csump,
+ 				     (from += v.iov_len) - v.iov_len,
+ 				     v.iov_len, sum, off);
+ 		off += v.iov_len;
++	}), ({
++		char *p = kmap_atomic(v.bv_page);
++		sum = csum_and_memcpy(p + v.bv_offset,
++				      (from += v.bv_len) - v.bv_len,
++				      v.bv_len, sum, off);
++		kunmap_atomic(p);
++		off += v.bv_len;
+ 	})
+ 	)
+ 	*csum = sum;
+@@ -1608,6 +1853,21 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+ 		npages = pipe_space_for_user(iter_head, pipe->tail, pipe);
+ 		if (npages >= maxpages)
+ 			return maxpages;
++	} else if (unlikely(iov_iter_is_xarray(i))) {
++		unsigned offset;
++
++		offset = (i->xarray_start + i->iov_offset) & ~PAGE_MASK;
++
++		npages = 1;
++		if (size > PAGE_SIZE - offset) {
++			size -= PAGE_SIZE - offset;
++			npages += size >> PAGE_SHIFT;
++			size &= ~PAGE_MASK;
++			if (size)
++				npages++;
++		}
++		if (npages >= maxpages)
++			return maxpages;
+ 	} else iterate_all_kinds(i, size, v, ({
+ 		unsigned long p = (unsigned long)v.iov_base;
+ 		npages += DIV_ROUND_UP(p + v.iov_len, PAGE_SIZE)
+@@ -1624,7 +1884,8 @@ int iov_iter_npages(const struct iov_iter *i, int maxpages)
+ 			- p / PAGE_SIZE;
+ 		if (npages >= maxpages)
+ 			return maxpages;
+-	})
++	}),
++	0
+ 	)
+ 	return npages;
+ }
+@@ -1637,7 +1898,7 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
+ 		WARN_ON(1);
+ 		return NULL;
+ 	}
+-	if (unlikely(iov_iter_is_discard(new)))
++	if (unlikely(iov_iter_is_discard(new) || iov_iter_is_xarray(new)))
+ 		return NULL;
+ 	if (iov_iter_is_bvec(new))
+ 		return new->bvec = kmemdup(new->bvec,
+@@ -1842,7 +2103,12 @@ int iov_iter_for_each_range(struct iov_iter *i, size_t bytes,
+ 		kunmap(v.bv_page);
+ 		err;}), ({
+ 		w = v;
+-		err = f(&w, context);})
++		err = f(&w, context);}), ({
++		w.iov_base = kmap(v.bv_page) + v.bv_offset;
++		w.iov_len = v.bv_len;
++		err = f(&w, context);
++		kunmap(v.bv_page);
++		err;})
+ 	)
+ 	return err;
+ }
 
 
