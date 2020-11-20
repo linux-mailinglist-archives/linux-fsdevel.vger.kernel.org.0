@@ -2,83 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F22222BA5B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:17:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DBF22BA5C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:17:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbgKTJPx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 04:15:53 -0500
-Received: from verein.lst.de ([213.95.11.211]:42108 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbgKTJPw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 04:15:52 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8D37C67373; Fri, 20 Nov 2020 10:15:47 +0100 (CET)
-Date:   Fri, 20 Nov 2020 10:15:46 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 15/20] block: merge struct block_device and struct
- hd_struct
-Message-ID: <20201120091546.GE21715@lst.de>
-References: <20201118084800.2339180-1-hch@lst.de> <20201118084800.2339180-16-hch@lst.de> <20201119143921.GX1981@quack2.suse.cz>
+        id S1727714AbgKTJQ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 04:16:59 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51974 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727707AbgKTJQ5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 04:16:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1605863816;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ITZXc1TXvVFkkNpcVLTYs8BZNWT7SU+qlHrGasDetMo=;
+        b=OK68O1v94Z0x+4hiG6TKq4tHsivtd7GNNDtskageJTFYZBYZct2Tdks+PbHBhnNnkMaTiI
+        ny89x1F0lYD492Ta28Ki4kKMrHGXi25gQxywdywdKlM+xmxS/oAKeTQuuc2P0WWo3kf1Q7
+        TckIFf0++gAHbZaO65G2ylf30f5jAYk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-443-y8ps-3dMPUGoeQojge184g-1; Fri, 20 Nov 2020 04:16:54 -0500
+X-MC-Unique: y8ps-3dMPUGoeQojge184g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9D0CD1DDF2;
+        Fri, 20 Nov 2020 09:16:49 +0000 (UTC)
+Received: from [10.36.114.78] (ovpn-114-78.ams2.redhat.com [10.36.114.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A02919725;
+        Fri, 20 Nov 2020 09:16:44 +0000 (UTC)
+Subject: Re: [PATCH v5 21/21] mm/hugetlb: Disable freeing vmemmap if struct
+ page size is not power of two
+To:     Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        mike.kravetz@oracle.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com
+Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120064325.34492-22-songmuchun@bytedance.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <dc77d433-b5f0-0f4a-a4e9-f888b079618a@redhat.com>
+Date:   Fri, 20 Nov 2020 10:16:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201119143921.GX1981@quack2.suse.cz>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20201120064325.34492-22-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 03:39:21PM +0100, Jan Kara wrote:
-> This patch is kind of difficult to review due to the size of mostly
-> mechanical changes mixed with not completely mechanical changes. Can we
-> perhaps split out the mechanical bits? E.g. the rq->part => rq->bdev
-> renaming is mechanical and notable part of the patch. Similarly the
-> part->foo => part->bd_foo bits...
-
-We'd end with really weird patches that way.  Never mind that I'm not
-even sure how we could mechnically do the renaming.
-
+On 20.11.20 07:43, Muchun Song wrote:
+> We only can free the unused vmemmap to the buddy system when the
+> size of struct page is a power of two.
 > 
-> Also I'm kind of wondering: AFAIU the new lifetime rules, gendisk holds
-> bdev reference and bdev is created on gendisk allocation so bdev lifetime is
-> strictly larger than gendisk lifetime. But what now keeps bdev->bd_disk
-> reference safe in presence device hot unplug? In most cases we are still
-> protected by gendisk reference taken in __blkdev_get() but how about
-> disk->lookup_sem and disk->flags dereferences before we actually grab the
-> reference?
-
-Good question.  I'll need to think about this a bit more.
-
-> Also I find it rather non-obvious (although elegant ;) that bdev->bd_device
-> rules the lifetime of gendisk. Can you perhaps explain this in the
-> changelog and probably also add somewhere to source a documentation about
-> the new lifetime rules?
-
-Yes.
-
-> > -struct hd_struct *__disk_get_part(struct gendisk *disk, int partno);
-> > +static inline struct block_device *__bdget_disk(struct gendisk *disk,
-> > +		int partno)
-> > +{
-> > +	struct disk_part_tbl *ptbl = rcu_dereference(disk->part_tbl);
-> > +
-> > +	if (unlikely(partno < 0 || partno >= ptbl->len))
-> > +		return NULL;
-> > +	return rcu_dereference(ptbl->part[partno]);
-> > +}
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>   mm/hugetlb_vmemmap.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> I understand this is lower-level counterpart of bdget_disk() but it is
-> confusing to me that this has 'bdget' in the name and returns no bdev
-> reference. Can we call it like __bdev_from_disk() or something like that?
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index c3b3fc041903..7bb749a3eea2 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -671,7 +671,8 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
+>   	unsigned int order = huge_page_order(h);
+>   	unsigned int vmemmap_pages;
+>   
+> -	if (hugetlb_free_vmemmap_disabled) {
+> +	if (hugetlb_free_vmemmap_disabled ||
+> +	    !is_power_of_2(sizeof(struct page))) {
+>   		pr_info("disable free vmemmap pages for %s\n", h->name);
+>   		return;
+>   	}
+> 
 
-Sure.
+This patch should be merged into the original patch that introduced 
+vmemmap freeing.
+
+-- 
+Thanks,
+
+David / dhildenb
+
