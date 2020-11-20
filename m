@@ -2,21 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF1D2BA32B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 08:28:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB1972BA33D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 08:32:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbgKTH0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 02:26:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51624 "EHLO mx2.suse.de"
+        id S1726656AbgKTHby (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 02:31:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55066 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbgKTH0Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 02:26:24 -0500
+        id S1726483AbgKTHby (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 02:31:54 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2A51FAB3D;
-        Fri, 20 Nov 2020 07:26:23 +0000 (UTC)
-Subject: Re: [PATCH 55/78] block: change the hash used for looking up block
- devices
+        by mx2.suse.de (Postfix) with ESMTP id 48C4FAC23;
+        Fri, 20 Nov 2020 07:31:52 +0000 (UTC)
+Subject: Re: [PATCH 56/78] init: refactor name_to_dev_t
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Justin Sanders <justin@coraid.com>,
         Josef Bacik <josef@toxicpanda.com>,
@@ -37,14 +36,14 @@ Cc:     Justin Sanders <justin@coraid.com>,
         linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <20201116145809.410558-1-hch@lst.de>
- <20201116145809.410558-56-hch@lst.de>
+ <20201116145809.410558-57-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <75f4c397-ac03-2c5f-d620-0e619ad78fe8@suse.de>
-Date:   Fri, 20 Nov 2020 08:26:22 +0100
+Message-ID: <a98ac74a-d1c4-776f-145f-583a1d56eed3@suse.de>
+Date:   Fri, 20 Nov 2020 08:31:51 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201116145809.410558-56-hch@lst.de>
+In-Reply-To: <20201116145809.410558-57-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -53,64 +52,13 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/16/20 3:57 PM, Christoph Hellwig wrote:
-> Adding the minor to the major creates tons of pointless conflicts. Just
-> use the dev_t itself, which is 32-bits and thus is guaranteed to fit
-> into ino_t.
+> Split each case into a self-contained helper.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   fs/block_dev.c | 26 ++------------------------
->   1 file changed, 2 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index d8664f5c1ff669..29db12c3bb501c 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -870,35 +870,12 @@ void __init bdev_cache_init(void)
->   	blockdev_superblock = bd_mnt->mnt_sb;   /* For writeback */
->   }
->   
-> -/*
-> - * Most likely _very_ bad one - but then it's hardly critical for small
-> - * /dev and can be fixed when somebody will need really large one.
-> - * Keep in mind that it will be fed through icache hash function too.
-> - */
-> -static inline unsigned long hash(dev_t dev)
-> -{
-> -	return MAJOR(dev)+MINOR(dev);
-> -}
-> -
-> -static int bdev_test(struct inode *inode, void *data)
-> -{
-> -	return BDEV_I(inode)->bdev.bd_dev == *(dev_t *)data;
-> -}
-> -
-> -static int bdev_set(struct inode *inode, void *data)
-> -{
-> -	BDEV_I(inode)->bdev.bd_dev = *(dev_t *)data;
-> -	return 0;
-> -}
-> -
->   static struct block_device *bdget(dev_t dev)
->   {
->   	struct block_device *bdev;
->   	struct inode *inode;
->   
-> -	inode = iget5_locked(blockdev_superblock, hash(dev),
-> -			bdev_test, bdev_set, &dev);
-> -
-> +	inode = iget_locked(blockdev_superblock, dev);
->   	if (!inode)
->   		return NULL;
->   
-> @@ -910,6 +887,7 @@ static struct block_device *bdget(dev_t dev)
->   		bdev->bd_super = NULL;
->   		bdev->bd_inode = inode;
->   		bdev->bd_part_count = 0;
-> +		bdev->bd_dev = dev;
->   		inode->i_mode = S_IFBLK;
->   		inode->i_rdev = dev;
->   		inode->i_bdev = bdev;
+>   include/linux/genhd.h |   7 +-
+>   init/do_mounts.c      | 183 +++++++++++++++++++++---------------------
+>   2 files changed, 91 insertions(+), 99 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
