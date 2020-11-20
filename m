@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B89C2BAE3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 16:23:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D11D52BAE41
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 16:23:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729252AbgKTPOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 10:14:23 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44640 "EHLO
+        id S1729256AbgKTPOd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 10:14:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20617 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728727AbgKTPOX (ORCPT
+        by vger.kernel.org with ESMTP id S1728727AbgKTPOc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 10:14:23 -0500
+        Fri, 20 Nov 2020 10:14:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605885260;
+        s=mimecast20190719; t=1605885271;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NV690iUMEnxK+4gUww+IKcSHW1+hyouq6s5YjtFQLMA=;
-        b=EjFyIiiCDj6V2r7fb67THOY2VKryBoz99G28/0D1c4xUIXJLUqS9byFXubBS0tOfdP6RyZ
-        wQcZ8qcXZNN2HnAOfNMLXhsRHp9aQi+g2v12GhQg5Z2O7qSqbiYpX0YeMX2osrVVhQaztD
-        iBhqEpyl6WgYnHvO5Rv2rM8x40gVt70=
+        bh=kHfpulYYWv1XYUZpZHjx8JJlCiKyf38JLaCifjX8p1U=;
+        b=Db031zoUcy8XAV/QNbz9AXbsvjPZXHzSuID+oxnS7/3Tr+QULYb28LVHFPJBPrNzmKCsxZ
+        3YUorw9XHH1ywdMtmv9vJ7MJDIzJR22NJsND/w0z4FV2zwSzmAThDjcdz7yQVytnKP4twD
+        Fy7CtFIcPTuARBtIk5wGfA2i/ipdSlw=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-433-jRPao_cVPEi0xV4NPdlp3g-1; Fri, 20 Nov 2020 10:14:16 -0500
-X-MC-Unique: jRPao_cVPEi0xV4NPdlp3g-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-231-ccBDG6boPhmWPz0l6NQG8A-1; Fri, 20 Nov 2020 10:14:28 -0500
+X-MC-Unique: ccBDG6boPhmWPz0l6NQG8A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A4C5E1005D5A;
-        Fri, 20 Nov 2020 15:14:14 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9862B8144F1;
+        Fri, 20 Nov 2020 15:14:26 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-246.rdu2.redhat.com [10.10.112.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F5EF60BD8;
-        Fri, 20 Nov 2020 15:14:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA2336085D;
+        Fri, 20 Nov 2020 15:14:20 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 54/76] fscache: Provide resize operation
+Subject: [RFC PATCH 55/76] fscache: Remove the update operation
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -51,248 +51,199 @@ Cc:     dhowells@redhat.com, Jeff Layton <jlayton@redhat.com>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 20 Nov 2020 15:14:07 +0000
-Message-ID: <160588524777.3465195.17942558956161670737.stgit@warthog.procyon.org.uk>
+Date:   Fri, 20 Nov 2020 15:14:19 +0000
+Message-ID: <160588525990.3465195.11175224125263070400.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk>
 References: <160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a cache operation to resize an object.  This is intended to be run
-synchronously rather than being deferred as it really needs to run inside
-the inode lock on the netfs inode from ->setattr() to correctly order with
-respect to other truncates and writes.
+Remove the cache-side of the object update operation as it doesn't
+serialise with other setattr, O_TRUNC and write operations.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/interface.c      |   31 +++++++++++++++++++++++++++++++
- fs/fscache/internal.h          |    3 +++
- fs/fscache/io.c                |   28 ++++++++++++++++++++++++++++
- fs/fscache/stats.c             |    9 +++++++--
- include/linux/fscache-cache.h  |    2 ++
- include/linux/fscache.h        |   18 ++++++++++++++++++
- include/trace/events/fscache.h |   26 ++++++++++++++++++++++++++
- 7 files changed, 115 insertions(+), 2 deletions(-)
+ fs/cachefiles/interface.c     |   59 -----------------------------------------
+ fs/fscache/internal.h         |    2 -
+ fs/fscache/obj.c              |   14 ----------
+ fs/fscache/stats.c            |    6 +---
+ include/linux/fscache-cache.h |    2 -
+ 5 files changed, 2 insertions(+), 81 deletions(-)
 
 diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index 56ae8d956174..aca08e4227b9 100644
+index aca08e4227b9..3609ff2fb491 100644
 --- a/fs/cachefiles/interface.c
 +++ b/fs/cachefiles/interface.c
-@@ -249,6 +249,36 @@ static bool cachefiles_shorten_object(struct cachefiles_object *object, loff_t n
- 	return true;
+@@ -150,64 +150,6 @@ struct fscache_object *cachefiles_grab_object(struct fscache_object *_object,
+ 	return &object->fscache;
  }
  
-+/*
-+ * Resize the backing object.
-+ */
-+static void cachefiles_resize_object(struct fscache_object *_object, loff_t new_size)
-+{
-+	struct cachefiles_object *object =
-+		container_of(_object, struct cachefiles_object, fscache);
-+	struct cachefiles_cache *cache =
-+		container_of(object->fscache.cache, struct cachefiles_cache, cache);
-+	const struct cred *saved_cred;
-+	loff_t old_size = object->fscache.cookie->object_size;
-+
-+	_enter("%llu->%llu", old_size, new_size);
-+
-+	if (new_size < old_size) {
-+		cachefiles_begin_secure(cache, &saved_cred);
-+		cachefiles_shorten_content_map(object, new_size);
-+		cachefiles_shorten_object(object, new_size);
-+		cachefiles_end_secure(cache, saved_cred);
-+		object->fscache.cookie->object_size = new_size;
-+		return;
-+	}
-+
-+	/* The file is being expanded.  We don't need to do anything
-+	 * particularly.  cookie->initial_size doesn't change and so the point
-+	 * at which we have to download before doesn't change.
-+	 */
-+	object->fscache.cookie->object_size = new_size;
-+}
-+
+-/*
+- * update the auxiliary data for an object object on disk
+- */
+-static void cachefiles_update_object(struct fscache_object *_object)
+-{
+-	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
+-	const struct cred *saved_cred;
+-	struct inode *inode;
+-	loff_t object_size, i_size;
+-	int ret;
+-
+-	_enter("{OBJ%x}", _object->debug_id);
+-
+-	object = container_of(_object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache, struct cachefiles_cache,
+-			     cache);
+-
+-	cachefiles_begin_secure(cache, &saved_cred);
+-
+-	object_size = object->fscache.cookie->object_size;
+-	inode = d_inode(object->dentry);
+-	i_size = i_size_read(inode);
+-	if (i_size > object_size) {
+-		struct path path = {
+-			.mnt	= cache->mnt,
+-			.dentry	= object->dentry
+-		};
+-		_debug("trunc %llx -> %llx", i_size, object_size);
+-		trace_cachefiles_trunc(object, inode, i_size, object_size);
+-		ret = vfs_truncate(&path, object_size);
+-		if (ret < 0) {
+-			cachefiles_io_error_obj(object, "Trunc-to-size failed");
+-			cachefiles_remove_object_xattr(cache, object->dentry);
+-			goto out;
+-		}
+-
+-		object_size = round_up(object_size, CACHEFILES_DIO_BLOCK_SIZE);
+-		i_size = i_size_read(inode);
+-		_debug("trunc %llx -> %llx", i_size, object_size);
+-		if (i_size < object_size) {
+-			trace_cachefiles_trunc(object, inode, i_size, object_size);
+-			ret = vfs_truncate(&path, object_size);
+-			if (ret < 0) {
+-				cachefiles_io_error_obj(object, "Trunc-to-dio-size failed");
+-				cachefiles_remove_object_xattr(cache, object->dentry);
+-				goto out;
+-			}
+-		}
+-	}
+-
+-	cachefiles_set_object_xattr(object);
+-
+-out:
+-	cachefiles_end_secure(cache, saved_cred);
+-	_leave("");
+-}
+-
  /*
-  * Trim excess stored data off of an object.
-  */
-@@ -652,6 +682,7 @@ const struct fscache_cache_ops cachefiles_cache_ops = {
+  * Shorten the backing object to discard any dirty data and free up
+  * any unused granules.
+@@ -681,7 +623,6 @@ const struct fscache_cache_ops cachefiles_cache_ops = {
+ 	.lookup_object		= cachefiles_lookup_object,
  	.free_lookup_data	= cachefiles_free_lookup_data,
  	.grab_object		= cachefiles_grab_object,
- 	.update_object		= cachefiles_update_object,
-+	.resize_object		= cachefiles_resize_object,
+-	.update_object		= cachefiles_update_object,
+ 	.resize_object		= cachefiles_resize_object,
  	.invalidate_object	= cachefiles_invalidate_object,
  	.drop_object		= cachefiles_drop_object,
- 	.put_object		= cachefiles_put_object,
 diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-index 3c408da2c837..ff193f61a4c5 100644
+index ff193f61a4c5..510f166103bf 100644
 --- a/fs/fscache/internal.h
 +++ b/fs/fscache/internal.h
-@@ -194,6 +194,9 @@ extern atomic_t fscache_n_updates_run;
+@@ -189,7 +189,6 @@ extern atomic_t fscache_n_acquires_oom;
+ extern atomic_t fscache_n_invalidates;
+ 
+ extern atomic_t fscache_n_updates;
+-extern atomic_t fscache_n_updates_run;
+ 
  extern atomic_t fscache_n_relinquishes;
  extern atomic_t fscache_n_relinquishes_retire;
- 
-+extern atomic_t fscache_n_resizes;
-+extern atomic_t fscache_n_resizes_null;
-+
- extern atomic_t fscache_n_cookie_index;
- extern atomic_t fscache_n_cookie_data;
- extern atomic_t fscache_n_cookie_special;
-diff --git a/fs/fscache/io.c b/fs/fscache/io.c
-index f13a7729bad3..5401c9ed347b 100644
---- a/fs/fscache/io.c
-+++ b/fs/fscache/io.c
-@@ -232,3 +232,31 @@ void fscache_put_super(struct super_block *sb,
- 	}
+@@ -214,7 +213,6 @@ extern atomic_t fscache_n_cop_alloc_object;
+ extern atomic_t fscache_n_cop_lookup_object;
+ extern atomic_t fscache_n_cop_create_object;
+ extern atomic_t fscache_n_cop_invalidate_object;
+-extern atomic_t fscache_n_cop_update_object;
+ extern atomic_t fscache_n_cop_drop_object;
+ extern atomic_t fscache_n_cop_put_object;
+ extern atomic_t fscache_n_cop_sync_cache;
+diff --git a/fs/fscache/obj.c b/fs/fscache/obj.c
+index a36de6af2182..2b0c99095a42 100644
+--- a/fs/fscache/obj.c
++++ b/fs/fscache/obj.c
+@@ -54,14 +54,6 @@ static int fscache_do_create_object(struct fscache_object *object, void *data)
+ 	return ret;
  }
- EXPORT_SYMBOL(fscache_put_super);
-+
-+/*
-+ * Change the size of a backing object.
-+ */
-+void __fscache_resize_cookie(struct fscache_cookie *cookie, loff_t new_size)
-+{
-+	struct fscache_op_resources opr;
-+
-+	ASSERT(cookie->type != FSCACHE_COOKIE_TYPE_INDEX);
-+
-+	trace_fscache_resize(cookie, new_size);
-+	if (fscache_begin_operation(cookie, &opr, FSCACHE_WANT_WRITE) != -ENOBUFS) {
-+		struct fscache_object *object = opr.object;
-+
-+		fscache_stat(&fscache_n_resizes);
-+		set_bit(FSCACHE_OBJECT_NEEDS_UPDATE, &object->flags);
-+
-+		/* We cannot defer a resize as we need to do it inside the
-+		 * netfs's inode lock so that we're serialised with respect to
-+		 * writes.
-+		 */
-+		object->cache->ops->resize_object(object, new_size);
-+		fscache_end_operation(&opr);
-+	} else {
-+		fscache_stat(&fscache_n_resizes_null);
-+	}
-+}
-+EXPORT_SYMBOL(__fscache_resize_cookie);
+ 
+-static void fscache_do_update_object(struct fscache_object *object)
+-{
+-	fscache_stat(&fscache_n_updates_run);
+-	fscache_stat(&fscache_n_cop_update_object);
+-	object->cache->ops->update_object(object);
+-	fscache_stat_d(&fscache_n_cop_update_object);
+-}
+-
+ static void fscache_do_drop_object(struct fscache_cache *cache,
+ 				   struct fscache_object *object,
+ 				   bool invalidate)
+@@ -291,12 +283,6 @@ void fscache_drop_object(struct fscache_cookie *cookie,
+ 	_enter("{o=%08x,%d},%u",
+ 	       object->debug_id, object->n_children, invalidate);
+ 
+-	if (!invalidate &&
+-	    test_bit(FSCACHE_OBJECT_NEEDS_UPDATE, &object->flags)) {
+-		_debug("final update");
+-		fscache_do_update_object(object);
+-	}
+-
+ 	spin_lock(&cache->object_list_lock);
+ 	list_del_init(&object->cache_link);
+ 	spin_unlock(&cache->object_list_lock);
 diff --git a/fs/fscache/stats.c b/fs/fscache/stats.c
-index 952214305853..2a2df9d1649e 100644
+index 2a2df9d1649e..350e65870dff 100644
 --- a/fs/fscache/stats.c
 +++ b/fs/fscache/stats.c
-@@ -28,6 +28,9 @@ atomic_t fscache_n_updates_run;
- atomic_t fscache_n_relinquishes;
- atomic_t fscache_n_relinquishes_retire;
- 
-+atomic_t fscache_n_resizes;
-+atomic_t fscache_n_resizes_null;
-+
- atomic_t fscache_n_cookie_index;
- atomic_t fscache_n_cookie_data;
- atomic_t fscache_n_cookie_special;
-@@ -99,9 +102,11 @@ static int fscache_stats_show(struct seq_file *m, void *v)
+@@ -102,9 +102,8 @@ static int fscache_stats_show(struct seq_file *m, void *v)
  	seq_printf(m, "Invals : n=%u\n",
  		   atomic_read(&fscache_n_invalidates));
  
--	seq_printf(m, "Updates: n=%u run=%u\n",
-+	seq_printf(m, "Updates: n=%u nul=%u rsz=%u rsn=%u\n",
+-	seq_printf(m, "Updates: n=%u nul=%u rsz=%u rsn=%u\n",
++	seq_printf(m, "Updates: n=%u rsz=%u rsn=%u\n",
  		   atomic_read(&fscache_n_updates),
--		   atomic_read(&fscache_n_updates_run));
-+		   atomic_read(&fscache_n_updates_run),
-+		   atomic_read(&fscache_n_resizes),
-+		   atomic_read(&fscache_n_resizes_null));
+-		   atomic_read(&fscache_n_updates_run),
+ 		   atomic_read(&fscache_n_resizes),
+ 		   atomic_read(&fscache_n_resizes_null));
  
- 	seq_printf(m, "Relinqs: n=%u rtr=%u\n",
- 		   atomic_read(&fscache_n_relinquishes),
+@@ -115,9 +114,8 @@ static int fscache_stats_show(struct seq_file *m, void *v)
+ 	seq_printf(m, "CacheOp: alo=%d luo=%d\n",
+ 		   atomic_read(&fscache_n_cop_alloc_object),
+ 		   atomic_read(&fscache_n_cop_lookup_object));
+-	seq_printf(m, "CacheOp: inv=%d upo=%d dro=%d pto=%d atc=%d syn=%d\n",
++	seq_printf(m, "CacheOp: inv=%d dro=%d pto=%d atc=%d syn=%d\n",
+ 		   atomic_read(&fscache_n_cop_invalidate_object),
+-		   atomic_read(&fscache_n_cop_update_object),
+ 		   atomic_read(&fscache_n_cop_drop_object),
+ 		   atomic_read(&fscache_n_cop_put_object),
+ 		   atomic_read(&fscache_n_cop_attr_changed),
 diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index eb303deb39c1..958fa899917d 100644
+index 958fa899917d..74a09738c899 100644
 --- a/include/linux/fscache-cache.h
 +++ b/include/linux/fscache-cache.h
-@@ -117,6 +117,8 @@ struct fscache_cache_ops {
+@@ -115,8 +115,6 @@ struct fscache_cache_ops {
+ 	/* unpin an object in the cache */
+ 	void (*unpin_object)(struct fscache_object *object);
  
- 	/* store the updated auxiliary data on an object */
- 	void (*update_object)(struct fscache_object *object);
-+	/* Change the size of a data object */
-+	void (*resize_object)(struct fscache_object *object, loff_t new_size);
+-	/* store the updated auxiliary data on an object */
+-	void (*update_object)(struct fscache_object *object);
+ 	/* Change the size of a data object */
+ 	void (*resize_object)(struct fscache_object *object, loff_t new_size);
  
- 	/* Invalidate an object */
- 	bool (*invalidate_object)(struct fscache_object *object,
-diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index 3c173fb660a6..1c1ea3558421 100644
---- a/include/linux/fscache.h
-+++ b/include/linux/fscache.h
-@@ -221,6 +221,7 @@ extern int __fscache_begin_operation(struct fscache_cookie *, struct fscache_op_
- 				     enum fscache_want_stage);
- extern void __fscache_relinquish_cookie(struct fscache_cookie *, bool);
- extern void __fscache_update_cookie(struct fscache_cookie *, const void *, const loff_t *);
-+extern void __fscache_resize_cookie(struct fscache_cookie *, loff_t);
- extern void __fscache_invalidate(struct fscache_cookie *, const void *, loff_t, unsigned int);
- extern void fscache_put_super(struct super_block *,
- 			      struct fscache_cookie *(*get_cookie)(struct inode *));
-@@ -417,6 +418,23 @@ void fscache_update_cookie(struct fscache_cookie *cookie, const void *aux_data,
- 		__fscache_update_cookie(cookie, aux_data, object_size);
- }
- 
-+/**
-+ * fscache_resize_cookie - Request that a cache object be resized
-+ * @cookie: The cookie representing the cache object
-+ * @new_size: The new size of the object (may be NULL)
-+ *
-+ * Request that the size of an object be changed.
-+ *
-+ * See Documentation/filesystems/caching/netfs-api.txt for a complete
-+ * description.
-+ */
-+static inline
-+void fscache_resize_cookie(struct fscache_cookie *cookie, loff_t new_size)
-+{
-+	if (fscache_cookie_enabled(cookie))
-+		__fscache_resize_cookie(cookie, new_size);
-+}
-+
- /**
-  * fscache_pin_cookie - Pin a data-storage cache object in its cache
-  * @cookie: The cookie representing the cache object
-diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
-index adb5618ce0c1..20bf21d12d0c 100644
---- a/include/trace/events/fscache.h
-+++ b/include/trace/events/fscache.h
-@@ -219,6 +219,32 @@ TRACE_EVENT(fscache_invalidate,
- 		      __entry->cookie, __entry->new_size)
- 	    );
- 
-+TRACE_EVENT(fscache_resize,
-+	    TP_PROTO(struct fscache_cookie *cookie, loff_t new_size),
-+
-+	    TP_ARGS(cookie, new_size),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		cookie		)
-+		    __field(loff_t,			old_size	)
-+		    __field(loff_t,			zero_point	)
-+		    __field(loff_t,			new_size	)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->cookie	= cookie->debug_id;
-+		    __entry->old_size	= cookie->object_size;
-+		    __entry->zero_point	= cookie->zero_point;
-+		    __entry->new_size	= new_size;
-+			   ),
-+
-+	    TP_printk("c=%08x os=%08llx zp=%08llx sz=%08llx",
-+		      __entry->cookie,
-+		      __entry->old_size,
-+		      __entry->zero_point,
-+		      __entry->new_size)
-+	    );
-+
- #endif /* _TRACE_FSCACHE_H */
- 
- /* This part must be outside protection */
 
 
