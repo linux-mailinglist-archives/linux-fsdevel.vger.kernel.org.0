@@ -2,130 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00FE02BA8BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 12:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 035C82BA8E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 12:22:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgKTLKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 06:10:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43916 "EHLO mx2.suse.de"
+        id S1727335AbgKTLVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 06:21:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57330 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728274AbgKTLKg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 06:10:36 -0500
+        id S1727197AbgKTLVX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 06:21:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1605870634; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YvUigKSfUEdsuDoUnt1ux1Q4ET6cZRqyZToM55lmzhg=;
-        b=WTaANqbRhP0FIEZwkNlDTvoDL+jcjiVUAef9SUW/lhFoIR1bPxtgIqQBI1IN29xoYHcXbW
-        VrR90wuc+6gZkcsX7B/08V5gSORVq4EwBGrtBPs4HbmCnrRoEMC4prwAdNh2Es9vI2eS0S
-        rk+OMWUniuxvyqcF8dZ0M2pogy3stBo=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7971BAF37;
-        Fri, 20 Nov 2020 11:10:34 +0000 (UTC)
-Date:   Fri, 20 Nov 2020 12:10:33 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v5 11/21] mm/hugetlb: Allocate the vmemmap
- pages associated with each hugetlb page
-Message-ID: <20201120111033.GN3200@dhcp22.suse.cz>
-References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120064325.34492-12-songmuchun@bytedance.com>
- <20201120081123.GC3200@dhcp22.suse.cz>
- <CAMZfGtWVxCPpL7=0dfHa7_qtakmGDMLP0twWoyM=gVou=HRmEg@mail.gmail.com>
- <20201120092826.GL3200@dhcp22.suse.cz>
- <CAMZfGtVPNdykd=E2bEje0GCdZT9ksLy2BdaRZ41eRDbGQp0_rg@mail.gmail.com>
+        by mx2.suse.de (Postfix) with ESMTP id C4C79AED9;
+        Fri, 20 Nov 2020 11:21:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2825E1E130B; Fri, 20 Nov 2020 12:21:21 +0100 (CET)
+Date:   Fri, 20 Nov 2020 12:21:21 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 14/20] block: remove the nr_sects field in struct
+ hd_struct
+Message-ID: <20201120112121.GB15537@quack2.suse.cz>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-15-hch@lst.de>
+ <20201119120525.GW1981@quack2.suse.cz>
+ <20201120090820.GD21715@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMZfGtVPNdykd=E2bEje0GCdZT9ksLy2BdaRZ41eRDbGQp0_rg@mail.gmail.com>
+In-Reply-To: <20201120090820.GD21715@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 20-11-20 17:37:09, Muchun Song wrote:
-> On Fri, Nov 20, 2020 at 5:28 PM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Fri 20-11-20 16:51:59, Muchun Song wrote:
-> > > On Fri, Nov 20, 2020 at 4:11 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > >
-> > > > On Fri 20-11-20 14:43:15, Muchun Song wrote:
-> > > > [...]
-> > > > > diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> > > > > index eda7e3a0b67c..361c4174e222 100644
-> > > > > --- a/mm/hugetlb_vmemmap.c
-> > > > > +++ b/mm/hugetlb_vmemmap.c
-> > > > > @@ -117,6 +117,8 @@
-> > > > >  #define RESERVE_VMEMMAP_NR           2U
-> > > > >  #define RESERVE_VMEMMAP_SIZE         (RESERVE_VMEMMAP_NR << PAGE_SHIFT)
-> > > > >  #define TAIL_PAGE_REUSE                      -1
-> > > > > +#define GFP_VMEMMAP_PAGE             \
-> > > > > +     (GFP_KERNEL | __GFP_NOFAIL | __GFP_MEMALLOC)
-> > > >
-> > > > This is really dangerous! __GFP_MEMALLOC would allow a complete memory
-> > > > depletion. I am not even sure triggering the OOM killer is a reasonable
-> > > > behavior. It is just unexpected that shrinking a hugetlb pool can have
-> > > > destructive side effects. I believe it would be more reasonable to
-> > > > simply refuse to shrink the pool if we cannot free those pages up. This
-> > > > sucks as well but it isn't destructive at least.
-> > >
-> > > I find the instructions of __GFP_MEMALLOC from the kernel doc.
-> > >
-> > > %__GFP_MEMALLOC allows access to all memory. This should only be used when
-> > > the caller guarantees the allocation will allow more memory to be freed
-> > > very shortly.
-> > >
-> > > Our situation is in line with the description above. We will free a HugeTLB page
-> > > to the buddy allocator which is much larger than that we allocated shortly.
-> >
-> > Yes that is a part of the description. But read it in its full entirety.
-> >  * %__GFP_MEMALLOC allows access to all memory. This should only be used when
-> >  * the caller guarantees the allocation will allow more memory to be freed
-> >  * very shortly e.g. process exiting or swapping. Users either should
-> >  * be the MM or co-ordinating closely with the VM (e.g. swap over NFS).
-> >  * Users of this flag have to be extremely careful to not deplete the reserve
-> >  * completely and implement a throttling mechanism which controls the
-> >  * consumption of the reserve based on the amount of freed memory.
-> >  * Usage of a pre-allocated pool (e.g. mempool) should be always considered
-> >  * before using this flag.
-> >
-> > GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_HIGH
+On Fri 20-11-20 10:08:20, Christoph Hellwig wrote:
+> On Thu, Nov 19, 2020 at 01:05:25PM +0100, Jan Kara wrote:
+> > > @@ -613,7 +613,7 @@ void guard_bio_eod(struct bio *bio)
+> > >  	rcu_read_lock();
+> > >  	part = __disk_get_part(bio->bi_disk, bio->bi_partno);
+> > >  	if (part)
+> > > -		maxsector = part_nr_sects_read(part);
+> > > +		maxsector = bdev_nr_sectors(part->bdev);
+> > >  	else
+> > >  		maxsector = get_capacity(bio->bi_disk);
+> > 
+> > I have to say that after these changes I find it a bit confusing that we
+> > have get/set_capacity() and bdev_nr_sectors() / bdev_set_nr_sectors() and
+> > they are all the same thing (i_size of the bdev). Is there a reason for the
+> > distinction?
 > 
-> We want to free the HugeTLB page to the buddy allocator, but before that,
-> we need to allocate some pages as vmemmap pages, so here we cannot
-> handle allocation failures.
-
-Why cannot you simply refuse to shrink the pool size?
-
-> I think that we should replace the
-> __GFP_RETRY_MAYFAIL to __GFP_NOFAIL.
+> get_capacity/set_capacity are the existing unchanged interfaces that
+> work on struct gendisk, and unchanged from what we had before.  They also
+> have lots of users which makes them kinda awkward to touch.
 > 
-> GFP_KERNEL | __GFP_NOFAIL | __GFP_HIGH
+> bdev_nr_sectors is the public interface to query the size for any
+> kind of struct block device, to be used by consumers of the block
+> device interface.
 > 
-> This meets our needs here. Thanks.
+> bdev_set_nr_sectors is a private helper for the partitions core that
+> avoids duplicating a bit of code, and works on partitions.
 
-Please read again my concern about the disruptive behavior or explain
-why it is desirable.
+OK, I guess I'll get used to this...
 
+> > > @@ -38,6 +38,16 @@ static void disk_add_events(struct gendisk *disk);
+> > >  static void disk_del_events(struct gendisk *disk);
+> > >  static void disk_release_events(struct gendisk *disk);
+> > >  
+> > > +void set_capacity(struct gendisk *disk, sector_t sectors)
+> > > +{
+> > > +	struct block_device *bdev = disk->part0.bdev;
+> > > +
+> > > +	spin_lock(&bdev->bd_size_lock);
+> > > +	i_size_write(bdev->bd_inode, (loff_t)sectors << SECTOR_SHIFT);
+> > > +	spin_unlock(&bdev->bd_size_lock);
+> > 
+> > AFAICT bd_size_lock is pointless after these changes so we can just remove
+> > it?
+> 
+> I don't think it is, as reuqiring bd_mutex for size updates leads to
+> rather awkward lock ordering problems.
+
+OK, let me ask differently: What is bd_size_lock protecting now? Ah, I see,
+on 32-bit it is needed to prevent torn writes to i_size, right?
+
+> > >  	if (capacity != size && capacity != 0 && size != 0) {
+> > >  		char *envp[] = { "RESIZE=1", NULL };
+> > >  
+> > > +		pr_info("%s: detected capacity change from %lld to %lld\n",
+> > > +		       disk->disk_name, size, capacity);
+> > 
+> > So we are now missing above message for transitions from / to 0 capacity?
+> > Is there any other notification in the kernel log when e.g. media is
+> > inserted into a CD-ROM drive? I remember using these messages for detecting
+> > that...
+> 
+> True, I guess we should keep the messages for that case at least under
+> some circumstances.  Let me take a closer look at what could make sense.
+> 
+> > Also what about GENHD_FL_HIDDEN devices? Are we sure we never set capacity
+> > for them?
+> 
+> We absolutely set the capacity for them, as we have to.  And even use
+> this interface.  But yes, I think we should skip sending the uevent for
+> them.
+
+Also previously we were not printing any messages for hidden devices and
+now we do. I'm not sure whether that's intended or not.
+
+								Honza
 -- 
-Michal Hocko
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
