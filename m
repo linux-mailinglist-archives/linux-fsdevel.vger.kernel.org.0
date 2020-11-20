@@ -2,55 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC512B9FA1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 02:21:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C772B9FA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 02:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbgKTBUT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Nov 2020 20:20:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbgKTBUT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Nov 2020 20:20:19 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF11C0613CF;
-        Thu, 19 Nov 2020 17:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=uIhwjMF8P8Wim+68g+Wg+Y0WkmC51lm2aFjKZAFLUHw=; b=CDPtdmi2TwIsopN4OrHcC5a+Ol
-        xwDv/KAULowchwLaDmA0FuPTQi1p6n1E6rkBhYF65NGb//BicvmFLdABvs/LqsszMa4yjTJ7UifjZ
-        fl81nGEvMFhF9rYgA7G3KAB9hEa+zWojt5uGKY/t0xXVDPbQTgIOWeduZmIrJXuMJC5jY0Xwdo+Gw
-        ixavW9jmYBMOocsqciTAPLfrXevPJpUr9G/uFT0v0O7GwQCdMpb1IJAJT9JvEZhBHGD+poDS3lnxw
-        rUadSTuON+Ps44svtP0CaiZumid7G0smKNbfGJJE5/nKttwiNOx2qhPVdAkfoKRhj6fhSLAoHbfgw
-        MHLhzSCg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kfv61-0005D5-3O; Fri, 20 Nov 2020 01:20:17 +0000
-Date:   Fri, 20 Nov 2020 01:20:17 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org,
+        id S1726602AbgKTBWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Nov 2020 20:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbgKTBWH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Nov 2020 20:22:07 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E467922254;
+        Fri, 20 Nov 2020 01:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1605835326;
+        bh=oyL8tyDHbJ3qIIoumYURc5U/JKtxezYzrlsKEz9We3g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=06OIwS6dO1uCJbzpKkAfU0LgV6NR0sEh63PDccOurGJc8jcYZca+MbtftmA4ozfT1
+         +XWNisle68uETojyIOjBOHcLdc5F81GbfN4/OJEnDpwW/QdD7GwGISM0/GjwiJ3A9K
+         lKnSoOzPVM7CBZkxQMlPAerewzNfZHktmX2nl7Go=
+Date:   Thu, 19 Nov 2020 17:22:04 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, Peter Xu <peterx@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iov_iter: optimise iov_iter_npages for bvec
-Message-ID: <20201120012017.GJ29991@casper.infradead.org>
-References: <cover.1605827965.git.asml.silence@gmail.com>
- <ab04202d0f8c1424da47251085657c436d762785.1605827965.git.asml.silence@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab04202d0f8c1424da47251085657c436d762785.1605827965.git.asml.silence@gmail.com>
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Jerome Glisse <jglisse@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH v6 0/2] Control over userfaultfd kernel-fault handling
+Message-Id: <20201119172204.6787046c9036d0bbdcbc2dfc@linux-foundation.org>
+In-Reply-To: <CA+EESO7N7gFkG_Vqy5j1oCZif8RaiCJ146GrQAKq3P1SCUi+ng@mail.gmail.com>
+References: <20201026210052.3775167-1-lokeshgidra@google.com>
+        <CA+EESO7N7gFkG_Vqy5j1oCZif8RaiCJ146GrQAKq3P1SCUi+ng@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 19, 2020 at 11:24:38PM +0000, Pavel Begunkov wrote:
-> The block layer spends quite a while in iov_iter_npages(), but for the
-> bvec case the number of pages is already known and stored in
-> iter->nr_segs, so it can be returned immediately as an optimisation
+On Thu, 19 Nov 2020 12:39:15 -0800 Lokesh Gidra <lokeshgidra@google.com> wrote:
 
-Er ... no, it doesn't.  nr_segs is the number of bvecs.  Each bvec can
-store up to 4GB of contiguous physical memory.
+> It's been quite some time since this patch-series has received
+> 'Reviewed-by' by Andrea. Please let me know if anything is blocking it
+> from taking forward.
 
+This series has not been shared with linux-mm@kvack.kernel.org, so many
+of the people who are familiar with userfaultfd will never have seen
+it.
+
+Please fix that and resend, and we'll see how it goes?
