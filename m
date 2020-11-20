@@ -2,173 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B58B52BA4BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 09:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 745FB2BA4E4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 09:43:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725824AbgKTIgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 03:36:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbgKTIf7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 03:35:59 -0500
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CBD4C0617A7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 00:35:59 -0800 (PST)
-Received: by mail-pf1-x441.google.com with SMTP id q5so7182386pfk.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 00:35:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v8+mXQPphnEalmROxh/i56omdGOqj/p5Ii14lIEaDXc=;
-        b=y56aEgz7bs4GaAyDTrLBYqViMqxej7ZiXuaI4A7Y82jFPMu4C0G1GOGfoK39NqZu0J
-         44J4qDdpeFais5XnAu7FsZJcejS94IyDqJ82BLgq3qHL5UQCXYnAx+Skwu70mXMBR8wa
-         oLiZkB+NrihfcRK+/wCV6LpooBJm2feHkUJ5YPbEYncR4snTvn2gBbM7UDBjZJpKH4bZ
-         WN4qbfLNOhGOpPwOJWEmAeC2caSUnlYcgrAdd/g89rcxcZWVCKAyo6Hl/SkOLm3xgqNh
-         qgrNz1ZOOcNINEaj3vKcDr7HTjoSfbxrrexuEzTO4NwxqB72mRVdmdjJyyAGF1Ri7rBd
-         yqIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v8+mXQPphnEalmROxh/i56omdGOqj/p5Ii14lIEaDXc=;
-        b=gb8zUdUzbOi6E7uz3p0mM0rcTsmKGvYnJpTBEyxYJ/fK9/ySQfqAXaLShfSscfJhNq
-         RBNTdoH9hwVGD0YcJypP0tCPw/sFjpCC1gXtKGaKw3mPxcyAa7g4e3+FvMkxHICcxaEE
-         cU+LpBXAHcJ8NNu5FYFtUwiFHIE725i9P4zmTrP3IneeS7rIhRV6+tSzNrDlXIyaV/iC
-         BdxpVRge8dAcSjEWXgF8kWgGWSCMDuF06Lie9sALJs6hhFeFPSzDpNlIG+FYQNOgDff3
-         1JX25YTwWFKARR2/cGglurOw5dj/TP1Pw8J6G3wLNcujYEKw5XEUbqy6mN20BgnxnvnG
-         8lWw==
-X-Gm-Message-State: AOAM533EuhxmxYMPf/yN7p0c5DyQYqGFaR23cutWsJ4TLlADaTlFVDMZ
-        vibqL9QH4zaB6NAFbOQJiyf8pL56iw8kj1intINrSA==
-X-Google-Smtp-Source: ABdhPJzY472bsCYM6XW2O521h+JXC9KpHBxbY6cz52QULFVtH4t2TDj/9BfSmdxmuvEjiO7bZe0KIe0KIZyLWMDKe0I=
-X-Received: by 2002:a17:90b:88b:: with SMTP id bj11mr9288264pjb.229.1605861358891;
- Fri, 20 Nov 2020 00:35:58 -0800 (PST)
-MIME-Version: 1.0
+        id S1727205AbgKTImF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 03:42:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55920 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbgKTImF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 03:42:05 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1605861723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MNOFiQtIQ/Y0rDgNN5kTTR1VqVa93kqccMa8KF0RIG4=;
+        b=GDiMTJsC4HaxfVv0+8YSZSejokk+wM15yKilSV79cAMmGEld8iatqZpL7x05RKawd1r7EA
+        CeEXdJtWgXQaKN9jeEQSbHEYtl0KboYq6AM21k4jrWN51rd55Vz+0E3gxx9SL/z3x0Jdle
+        ZWFxIELplvVBCkbBX8K4Z0O/KzYE2B0=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7DECDACBA;
+        Fri, 20 Nov 2020 08:42:03 +0000 (UTC)
+Date:   Fri, 20 Nov 2020 09:42:02 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        osalvador@suse.de, song.bao.hua@hisilicon.com,
+        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 00/21] Free some vmemmap pages of hugetlb page
+Message-ID: <20201120084202.GJ3200@dhcp22.suse.cz>
 References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120064325.34492-4-songmuchun@bytedance.com> <20201120074950.GB3200@dhcp22.suse.cz>
-In-Reply-To: <20201120074950.GB3200@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 20 Nov 2020 16:35:16 +0800
-Message-ID: <CAMZfGtWuCuuR+N8h-509BbDL8CN+s_djsodPN0Wb1+YHbF9PHw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v5 03/21] mm/hugetlb: Introduce a new
- config HUGETLB_PAGE_FREE_VMEMMAP
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201120064325.34492-1-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 3:49 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Fri 20-11-20 14:43:07, Muchun Song wrote:
-> > The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> > whether to enable the feature of freeing unused vmemmap associated
-> > with HugeTLB pages. Now only support x86.
->
-> Why is the config option necessary? Are code savings with the feature
-> disabled really worth it? I can see that your later patch adds a kernel
-> command line option. I believe that is a more reasonable way to control
-> the feature. I would argue that this should be an opt-in rather than
-> opt-out though. Think of users of pre-built (e.g. distribution kernels)
-> who might be interested in the feature. Yet you cannot assume that such
-> a kernel would enable the feature with its overhead to all hugetlb
-> users.
+On Fri 20-11-20 14:43:04, Muchun Song wrote:
+[...]
 
-Now the config option may be necessary. Because the feature only
-supports x86. While other architectures need some code to support
-this feature. In the future, we will implement it on other architectures.
-Then, we can remove this option.
+Thanks for improving the cover letter and providing some numbers. I have
+only glanced through the patchset because I didn't really have more time
+to dive depply into them.
 
-Also, this config option is not optional. It is default by the
-CONFIG_HUGETLB_PAGE. If the kernel selects the
-CONFIG_HUGETLB_PAGE, the CONFIG_ HUGETLB_PAGE_FREE_VMEMMAP
-is also selected. The user only can disable this feature by
-boot command line :).
+Overall it looks promissing. To summarize. I would prefer to not have
+the feature enablement controlled by compile time option and the kernel
+command line option should be opt-in. I also do not like that freeing
+the pool can trigger the oom killer or even shut the system down if no
+oom victim is eligible.
 
-Thanks.
+One thing that I didn't really get to think hard about is what is the
+effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
+invalid when racing with the split. How do we enforce that this won't
+blow up?
 
->
-> That being said, unless there are huge advantages to introduce a
-> config option I would rather not add it because our config space is huge
-> already and the more we add the more future code maintainance that will
-> add. If you want the config just for dependency checks then fine by me.
+I have also asked in a previous version whether the vmemmap manipulation
+should be really unconditional. E.g. shortlived hugetlb pages allocated
+from the buddy allocator directly rather than for a pool. Maybe it
+should be restricted for the pool allocation as those are considered
+long term and therefore the overhead will be amortized and freeing path
+restrictions better understandable.
 
-Yeah, it is only for dependency checks :)
+>  Documentation/admin-guide/kernel-parameters.txt |   9 +
+>  Documentation/admin-guide/mm/hugetlbpage.rst    |   3 +
+>  arch/x86/include/asm/hugetlb.h                  |  17 +
+>  arch/x86/include/asm/pgtable_64_types.h         |   8 +
+>  arch/x86/mm/init_64.c                           |   7 +-
+>  fs/Kconfig                                      |  14 +
+>  include/linux/bootmem_info.h                    |  78 +++
+>  include/linux/hugetlb.h                         |  19 +
+>  include/linux/hugetlb_cgroup.h                  |  15 +-
+>  include/linux/memory_hotplug.h                  |  27 -
+>  mm/Makefile                                     |   2 +
+>  mm/bootmem_info.c                               | 124 ++++
+>  mm/hugetlb.c                                    | 163 ++++-
+>  mm/hugetlb_vmemmap.c                            | 765 ++++++++++++++++++++++++
+>  mm/hugetlb_vmemmap.h                            | 103 ++++
 
->
-> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > ---
-> >  arch/x86/mm/init_64.c |  2 +-
-> >  fs/Kconfig            | 14 ++++++++++++++
-> >  2 files changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> > index 0a45f062826e..0435bee2e172 100644
-> > --- a/arch/x86/mm/init_64.c
-> > +++ b/arch/x86/mm/init_64.c
-> > @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
-> >
-> >  static void __init register_page_bootmem_info(void)
-> >  {
-> > -#ifdef CONFIG_NUMA
-> > +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
-> >       int i;
-> >
-> >       for_each_online_node(i)
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 976e8b9033c4..4961dd488444 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -245,6 +245,20 @@ config HUGETLBFS
-> >  config HUGETLB_PAGE
-> >       def_bool HUGETLBFS
-> >
-> > +config HUGETLB_PAGE_FREE_VMEMMAP
-> > +     def_bool HUGETLB_PAGE
-> > +     depends on X86
-> > +     depends on SPARSEMEM_VMEMMAP
-> > +     depends on HAVE_BOOTMEM_INFO_NODE
-> > +     help
-> > +       When using HUGETLB_PAGE_FREE_VMEMMAP, the system can save up some
-> > +       memory from pre-allocated HugeTLB pages when they are not used.
-> > +       6 pages per 2MB HugeTLB page and 4094 per 1GB HugeTLB page.
-> > +
-> > +       When the pages are going to be used or freed up, the vmemmap array
-> > +       representing that range needs to be remapped again and the pages
-> > +       we discarded earlier need to be rellocated again.
-> > +
-> >  config MEMFD_CREATE
-> >       def_bool TMPFS || HUGETLBFS
-> >
-> > --
-> > 2.11.0
->
-> --
-> Michal Hocko
-> SUSE Labs
+I will need to look closer but I suspect that a non-trivial part of the
+vmemmap manipulation really belongs to mm/sparse-vmemmap.c because the
+split and remapping shouldn't really be hugetlb specific. Sure hugetlb
+knows how to split but all the splitting should be implemented in
+vmemmap proper.
 
+>  mm/memory_hotplug.c                             | 116 ----
+>  mm/sparse.c                                     |   5 +-
+>  17 files changed, 1295 insertions(+), 180 deletions(-)
+>  create mode 100644 include/linux/bootmem_info.h
+>  create mode 100644 mm/bootmem_info.c
+>  create mode 100644 mm/hugetlb_vmemmap.c
+>  create mode 100644 mm/hugetlb_vmemmap.h
 
-
---
-Yours,
-Muchun
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
