@@ -2,121 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 572492BA3D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 08:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB4A2BA3E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 08:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725956AbgKTHty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 02:49:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40334 "EHLO mx2.suse.de"
+        id S1726704AbgKTHud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 02:50:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40876 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbgKTHty (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 02:49:54 -0500
+        id S1726618AbgKTHud (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 02:50:33 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1605858593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JFvwpWs+I7VuMZUnQ/M4/DdrXRj39dZAkTCNQ3+7/8A=;
-        b=MSBzqEZLMEN+gaZEtO/cfHVZBm5k4R1ZQbopfPyPqkDcH0wFI9n0P2DeIJpYxBDGgW5g6p
-        U6YUsrEPzs3nG68yJDBPvGIcynTAGESGi0tDZKxWWXEIQaJyfcUN9vGfT8MHzudXCzfgAS
-        UOmJnox8Zr4nNsFQMlCv31/N2sC7lQQ=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D5A8BAC0C;
-        Fri, 20 Nov 2020 07:49:52 +0000 (UTC)
-Date:   Fri, 20 Nov 2020 08:49:50 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        paulmck@kernel.org, mchehab+huawei@kernel.org,
-        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
-        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
-        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
-        osalvador@suse.de, song.bao.hua@hisilicon.com,
-        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 03/21] mm/hugetlb: Introduce a new config
- HUGETLB_PAGE_FREE_VMEMMAP
-Message-ID: <20201120074950.GB3200@dhcp22.suse.cz>
-References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120064325.34492-4-songmuchun@bytedance.com>
+        by mx2.suse.de (Postfix) with ESMTP id 55C9CAC23;
+        Fri, 20 Nov 2020 07:50:31 +0000 (UTC)
+Subject: Re: [PATCH 66/78] block: keep a block_device reference for each
+ hd_struct
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Justin Sanders <justin@coraid.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        dm-devel@redhat.com, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20201116145809.410558-1-hch@lst.de>
+ <20201116145809.410558-67-hch@lst.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <23914ef5-5245-b468-4168-bc1584e979d2@suse.de>
+Date:   Fri, 20 Nov 2020 08:50:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201120064325.34492-4-songmuchun@bytedance.com>
+In-Reply-To: <20201116145809.410558-67-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 20-11-20 14:43:07, Muchun Song wrote:
-> The purpose of introducing HUGETLB_PAGE_FREE_VMEMMAP is to configure
-> whether to enable the feature of freeing unused vmemmap associated
-> with HugeTLB pages. Now only support x86.
-
-Why is the config option necessary? Are code savings with the feature
-disabled really worth it? I can see that your later patch adds a kernel
-command line option. I believe that is a more reasonable way to control
-the feature. I would argue that this should be an opt-in rather than
-opt-out though. Think of users of pre-built (e.g. distribution kernels)
-who might be interested in the feature. Yet you cannot assume that such
-a kernel would enable the feature with its overhead to all hugetlb
-users.
-
-That being said, unless there are huge advantages to introduce a
-config option I would rather not add it because our config space is huge
-already and the more we add the more future code maintainance that will
-add. If you want the config just for dependency checks then fine by me.
- 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->  arch/x86/mm/init_64.c |  2 +-
->  fs/Kconfig            | 14 ++++++++++++++
->  2 files changed, 15 insertions(+), 1 deletion(-)
+On 11/16/20 3:57 PM, Christoph Hellwig wrote:
+> To simplify block device lookup and a few other upcomdin areas, make sure
+> that we always have a struct block_device available for each disk and
+> each partition.  The only downside of this is that each device and
+> partition uses a little more memories.  The upside will be that a lot of
+> code can be simplified.
 > 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 0a45f062826e..0435bee2e172 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
->  
->  static void __init register_page_bootmem_info(void)
->  {
-> -#ifdef CONFIG_NUMA
-> +#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
->  	int i;
->  
->  	for_each_online_node(i)
-> diff --git a/fs/Kconfig b/fs/Kconfig
-> index 976e8b9033c4..4961dd488444 100644
-> --- a/fs/Kconfig
-> +++ b/fs/Kconfig
-> @@ -245,6 +245,20 @@ config HUGETLBFS
->  config HUGETLB_PAGE
->  	def_bool HUGETLBFS
->  
-> +config HUGETLB_PAGE_FREE_VMEMMAP
-> +	def_bool HUGETLB_PAGE
-> +	depends on X86
-> +	depends on SPARSEMEM_VMEMMAP
-> +	depends on HAVE_BOOTMEM_INFO_NODE
-> +	help
-> +	  When using HUGETLB_PAGE_FREE_VMEMMAP, the system can save up some
-> +	  memory from pre-allocated HugeTLB pages when they are not used.
-> +	  6 pages per 2MB HugeTLB page and 4094 per 1GB HugeTLB page.
-> +
-> +	  When the pages are going to be used or freed up, the vmemmap array
-> +	  representing that range needs to be remapped again and the pages
-> +	  we discarded earlier need to be rellocated again.
-> +
->  config MEMFD_CREATE
->  	def_bool TMPFS || HUGETLBFS
->  
-> -- 
-> 2.11.0
+> With that all we need to look up the block device is to lookup the inode
+> and do a few sanity checks on the gendisk, instead of the separate lookup
+> for the gendisk.
+> 
+> As part of the change switch bdget() to only find existing block devices,
+> given that we know that the block_device structure must be allocated at
+> probe / partition scan time.
+> 
+> blk-cgroup needed a bit of a special treatment as the only place that
+> wanted to lookup a gendisk outside of the normal blkdev_get path.  It is
+> switched to lookup using the block device hash now that this is the
+> primary lookup path.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   block/blk-cgroup.c         |  42 ++++-----
+>   block/blk-iocost.c         |  36 +++----
+>   block/blk.h                |   1 -
+>   block/genhd.c              | 188 +++----------------------------------
+>   block/partitions/core.c    |  28 +++---
+>   fs/block_dev.c             | 133 +++++++++++++++-----------
+>   include/linux/blk-cgroup.h |   4 +-
+>   include/linux/blkdev.h     |   3 +
+>   include/linux/genhd.h      |   4 +-
+>   9 files changed, 153 insertions(+), 286 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
+Cheers,
+
+Hannes
 -- 
-Michal Hocko
-SUSE Labs
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
