@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E5C42BA47F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 09:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 810992BA486
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 09:22:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgKTIUr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 03:20:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36012 "EHLO mx2.suse.de"
+        id S1727087AbgKTIWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 03:22:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38614 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbgKTIUr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 03:20:47 -0500
+        id S1726559AbgKTIWP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 03:22:15 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1605860446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1605860534; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=4a0fEP6U1rgdeJLoiRQjCZPEdSZnqyYQTwOxKSahTFU=;
-        b=QCl/dZLWlQ0gGmXIhnT6rpxMxOTHOvjzTUyMWbXOaxsOb9PpWd6pVoVAFO+Lpp8o+ypglr
-        PhtBPPjzanRlbJBqzsDouPaG0zOhdx0ZN8jW7tk9d+6ULQiBs3wLiblKYPWWXpQz6R5Aeh
-        NzbqKnHIPQeEW3Fbs9KU3A02JR13XxE=
+        bh=rUWjaY/+C4/6mXNmnlJHLKENTydPJvcWDaqoKy/+AxE=;
+        b=p2XZg5MGbqcIH9+gJr/UY0TtqQN1xa16G6tXYzAYrZ2AA7tuiXFa31IuvEppxtLLOF5kPR
+        5IgmuM1D3vxPsWQ9LUUS+e8bDEGBS4w53qh9+3VuibKpd4lt9nfLbFaeZ8kAUbSeEAeZ/j
+        tK5AzmtT01vq/WDbRwSFRHv85NzQzuU=
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A9C44ACB0;
-        Fri, 20 Nov 2020 08:20:45 +0000 (UTC)
-Date:   Fri, 20 Nov 2020 09:20:44 +0100
+        by mx2.suse.de (Postfix) with ESMTP id 1C3ADACB0;
+        Fri, 20 Nov 2020 08:22:14 +0000 (UTC)
+Date:   Fri, 20 Nov 2020 09:22:12 +0100
 From:   Michal Hocko <mhocko@suse.com>
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
@@ -38,83 +38,108 @@ Cc:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 16/21] mm/hugetlb: Flush work when dissolving hugetlb
- page
-Message-ID: <20201120082044.GF3200@dhcp22.suse.cz>
+Subject: Re: [PATCH v5 17/21] mm/hugetlb: Add a kernel parameter
+ hugetlb_free_vmemmap
+Message-ID: <20201120082212.GG3200@dhcp22.suse.cz>
 References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120064325.34492-17-songmuchun@bytedance.com>
+ <20201120064325.34492-18-songmuchun@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201120064325.34492-17-songmuchun@bytedance.com>
+In-Reply-To: <20201120064325.34492-18-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 20-11-20 14:43:20, Muchun Song wrote:
-> We should flush work when dissolving a hugetlb page to make sure that
-> the hugetlb page is freed to the buddy.
+On Fri 20-11-20 14:43:21, Muchun Song wrote:
+> Add a kernel parameter hugetlb_free_vmemmap to disable the feature of
+> freeing unused vmemmap pages associated with each hugetlb page on boot.
 
-Why? This explanation on its own doen't really help to understand what
-is the point of the patch.
+As replied to the config patch. This is fine but I would argue that the
+default should be flipped. Saving memory is nice but it comes with
+overhead and therefore should be an opt-in. The config option should
+only guard compile time dependencies not a user choice.
 
-> 
 > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 > ---
->  mm/hugetlb.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+>  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
+>  Documentation/admin-guide/mm/hugetlbpage.rst    |  3 +++
+>  mm/hugetlb_vmemmap.c                            | 21 +++++++++++++++++++++
+>  3 files changed, 33 insertions(+)
 > 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index b853aacd5c16..9aad0b63d369 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -1328,6 +1328,12 @@ static void update_hpage_vmemmap_workfn(struct work_struct *work)
->  }
->  static DECLARE_WORK(hpage_update_work, update_hpage_vmemmap_workfn);
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 5debfe238027..ccf07293cb63 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1551,6 +1551,15 @@
+>  			Documentation/admin-guide/mm/hugetlbpage.rst.
+>  			Format: size[KMG]
 >  
-> +static inline void flush_hpage_update_work(struct hstate *h)
+> +	hugetlb_free_vmemmap=
+> +			[KNL] When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set,
+> +			this controls freeing unused vmemmap pages associated
+> +			with each HugeTLB page.
+> +			Format: { on (default) | off }
+> +
+> +			on:  enable the feature
+> +			off: disable the feature
+> +
+>  	hung_task_panic=
+>  			[KNL] Should the hung task detector generate panics.
+>  			Format: 0 | 1
+> diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
+> index f7b1c7462991..7d6129ee97dd 100644
+> --- a/Documentation/admin-guide/mm/hugetlbpage.rst
+> +++ b/Documentation/admin-guide/mm/hugetlbpage.rst
+> @@ -145,6 +145,9 @@ default_hugepagesz
+>  
+>  	will all result in 256 2M huge pages being allocated.  Valid default
+>  	huge page size is architecture dependent.
+> +hugetlb_free_vmemmap
+> +	When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this disables freeing
+> +	unused vmemmap pages associated each HugeTLB page.
+>  
+>  When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
+>  indicates the current number of pre-allocated huge pages of the default size.
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index 3629165d8158..c958699d1393 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -144,6 +144,22 @@ static inline bool vmemmap_pmd_huge(pmd_t *pmd)
+>  }
+>  #endif
+>  
+> +static bool hugetlb_free_vmemmap_disabled __initdata;
+> +
+> +static int __init early_hugetlb_free_vmemmap_param(char *buf)
 > +{
-> +	if (free_vmemmap_pages_per_hpage(h))
-> +		flush_work(&hpage_update_work);
+> +	if (!buf)
+> +		return -EINVAL;
+> +
+> +	if (!strcmp(buf, "off"))
+> +		hugetlb_free_vmemmap_disabled = true;
+> +	else if (strcmp(buf, "on"))
+> +		return -EINVAL;
+> +
+> +	return 0;
 > +}
+> +early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
 > +
->  static inline void __update_and_free_page(struct hstate *h, struct page *page)
+>  static inline unsigned int vmemmap_pages_per_hpage(struct hstate *h)
 >  {
->  	/* No need to allocate vmemmap pages */
-> @@ -1928,6 +1934,7 @@ static int free_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
->  int dissolve_free_huge_page(struct page *page)
->  {
->  	int rc = -EBUSY;
-> +	struct hstate *h = NULL;
+>  	return free_vmemmap_pages_per_hpage(h) + RESERVE_VMEMMAP_NR;
+> @@ -541,6 +557,11 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
+>  	unsigned int order = huge_page_order(h);
+>  	unsigned int vmemmap_pages;
 >  
->  	/* Not to disrupt normal path by vainly holding hugetlb_lock */
->  	if (!PageHuge(page))
-> @@ -1941,8 +1948,9 @@ int dissolve_free_huge_page(struct page *page)
->  
->  	if (!page_count(page)) {
->  		struct page *head = compound_head(page);
-> -		struct hstate *h = page_hstate(head);
->  		int nid = page_to_nid(head);
+> +	if (hugetlb_free_vmemmap_disabled) {
+> +		pr_info("disable free vmemmap pages for %s\n", h->name);
+> +		return;
+> +	}
 > +
-> +		h = page_hstate(head);
->  		if (h->free_huge_pages - h->resv_huge_pages == 0)
->  			goto out;
->  
-> @@ -1956,6 +1964,14 @@ int dissolve_free_huge_page(struct page *page)
->  	}
->  out:
->  	spin_unlock(&hugetlb_lock);
-> +
-> +	/*
-> +	 * We should flush work before return to make sure that
-> +	 * the HugeTLB page is freed to the buddy.
-> +	 */
-> +	if (!rc && h)
-> +		flush_hpage_update_work(h);
-> +
->  	return rc;
->  }
->  
+>  	vmemmap_pages = ((1 << order) * sizeof(struct page)) >> PAGE_SHIFT;
+>  	/*
+>  	 * The head page and the first tail page are not to be freed to buddy
 > -- 
 > 2.11.0
 
