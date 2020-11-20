@@ -2,110 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18DA02BA555
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 09:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 718BB2BA563
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Nov 2020 10:02:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbgKTI6o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 03:58:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48036 "EHLO mx2.suse.de"
+        id S1727347AbgKTJBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Nov 2020 04:01:47 -0500
+Received: from verein.lst.de ([213.95.11.211]:42034 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbgKTI6o (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 03:58:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 5CAD1AC23;
-        Fri, 20 Nov 2020 08:58:42 +0000 (UTC)
-Subject: Re: [PATCH 74/78] block: merge struct block_device and struct
- hd_struct
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Justin Sanders <justin@coraid.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
+        id S1727286AbgKTJBq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Nov 2020 04:01:46 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4C98067373; Fri, 20 Nov 2020 10:01:42 +0100 (CET)
+Date:   Fri, 20 Nov 2020 10:01:42 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20201116145809.410558-1-hch@lst.de>
- <20201116145809.410558-75-hch@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <f6e6b948-44c8-50f0-beea-921eb3a268dd@suse.de>
-Date:   Fri, 20 Nov 2020 09:58:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 13/20] block: remove ->bd_contains
+Message-ID: <20201120090142.GC21715@lst.de>
+References: <20201118084800.2339180-1-hch@lst.de> <20201118084800.2339180-14-hch@lst.de> <20201119103253.GV1981@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20201116145809.410558-75-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201119103253.GV1981@quack2.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/16/20 3:58 PM, Christoph Hellwig wrote:
-> Instead of having two structures that represent each block device with
-> different lift time rules merged them into a single one.  This also
-> greatly simplifies the reference counting rules, as we can use the inode
-> reference count as the main reference count for the new struct
-> block_device, with the device model reference front ending it for device
-> model interaction.  The percpu refcount in struct hd_struct is entirely
-> gone given that struct block_device must be opened and thus valid for
-> the duration of the I/O.
+On Thu, Nov 19, 2020 at 11:32:53AM +0100, Jan Kara wrote:
+> > @@ -1521,7 +1510,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode, void *holder,
+> >  		if (bdev->bd_bdi == &noop_backing_dev_info)
+> >  			bdev->bd_bdi = bdi_get(disk->queue->backing_dev_info);
+> >  	} else {
+> > -		if (bdev->bd_contains == bdev) {
+> > +		if (!bdev->bd_partno) {
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   block/bio.c                        |   6 +-
->   block/blk-cgroup.c                 |   9 +-
->   block/blk-core.c                   |  85 +++++-----
->   block/blk-flush.c                  |   2 +-
->   block/blk-lib.c                    |   2 +-
->   block/blk-merge.c                  |   6 +-
->   block/blk-mq.c                     |  11 +-
->   block/blk-mq.h                     |   5 +-
->   block/blk.h                        |  38 ++---
->   block/genhd.c                      | 242 +++++++++++------------------
->   block/ioctl.c                      |   4 +-
->   block/partitions/core.c            | 221 +++++++-------------------
->   drivers/block/drbd/drbd_receiver.c |   2 +-
->   drivers/block/drbd/drbd_worker.c   |   2 +-
->   drivers/block/zram/zram_drv.c      |   2 +-
->   drivers/md/bcache/request.c        |   4 +-
->   drivers/md/dm.c                    |   8 +-
->   drivers/md/md.c                    |   4 +-
->   drivers/nvme/target/admin-cmd.c    |  20 +--
->   drivers/s390/block/dasd.c          |   8 +-
->   fs/block_dev.c                     |  68 +++-----
->   fs/ext4/super.c                    |  18 +--
->   fs/ext4/sysfs.c                    |  10 +-
->   fs/f2fs/checkpoint.c               |   5 +-
->   fs/f2fs/f2fs.h                     |   2 +-
->   fs/f2fs/super.c                    |   6 +-
->   fs/f2fs/sysfs.c                    |   9 --
->   include/linux/blk_types.h          |  23 ++-
->   include/linux/blkdev.h             |  13 +-
->   include/linux/genhd.h              |  67 ++------
->   include/linux/part_stat.h          |  17 +-
->   init/do_mounts.c                   |  20 +--
->   kernel/trace/blktrace.c            |  54 ++-----
->   33 files changed, 351 insertions(+), 642 deletions(-)
+> This should be !bdev_is_partition(bdev) for consistency, right?
+
+Yes.  Same for the same check further up for the !bdev->bd_openers
+case.
+
+> > +#define bdev_whole(_bdev) \
+> > +	((_bdev)->bd_disk->part0.bdev)
+> > +
+> >  #define bdev_kobj(_bdev) \
+> >  	(&part_to_dev((_bdev)->bd_part)->kobj)
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> I'd somewhat prefer if these helpers could actually be inline functions and
+> not macros. I guess they are macros because hd_struct isn't in blk_types.h.
+> But if we moved helpers to blkdev.h, we'd have all definitions we need...
+> Is that a problem for some users?
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+As you pointed out the reason these are macros is that the obvious
+placement doesn't work.  My plan was to look into cleaning up the block
+headers, which are a complete mess between blk_types.h, bio.h, blkdev.h
+and genhd.h after I'm done making sense of the data structures, so for
+now I didn't want to move too much around.  Hopefully we'll be able to
+convert these helpers to inlines once I'm done.
