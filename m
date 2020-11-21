@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2153E2BBFC2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 15:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B43C2BBFC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 15:18:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbgKUOQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Nov 2020 09:16:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55437 "EHLO
+        id S1728332AbgKUOQZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Nov 2020 09:16:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58923 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728299AbgKUOQO (ORCPT
+        by vger.kernel.org with ESMTP id S1728330AbgKUOQY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Nov 2020 09:16:14 -0500
+        Sat, 21 Nov 2020 09:16:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605968172;
+        s=mimecast20190719; t=1605968183;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=bw9ipJWjx8AimfhLoz84wN1/imOFmg/xGA0Qomc1kTU=;
-        b=XE3kgxLo7vLZ769FdDzmVGibdQRXsPLf1/wWWj2bGULBbrvZK3HyBWQgmqwqzN2JLljChU
-        3XteXmPwaIrDL3++hIzKc8ApdD0saUvR2B4k+R/Z1uG6vns3BFtfkurdlrjeqoeeLa2Itl
-        QScSm/yz5gqjvd3Asnhl7WIeIKXKzvA=
+        bh=42Modz9lzLK9PgNIzmKcsfAc59EtrxVIzllSBW53iIs=;
+        b=Sqed8zDWESOw4gH1iTyS1uUALcnP+8r4/ffUPwqW9aIsuS7HhCNRdHb+ywIPCAqU2AvPEX
+        U+XuNM6QZgTSqQe0+whVBWRSnJ1UxKctdA523YAuKr6MhEBNWXAIM0B3iuh33cJ/DPEznJ
+        clFviZiwSUBurSnSwHoJszCHsl+/C6o=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-284-bkI6hkIANsCc6_3NDXBAfg-1; Sat, 21 Nov 2020 09:16:09 -0500
-X-MC-Unique: bkI6hkIANsCc6_3NDXBAfg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-495-zJzT5r59Ohu6bqsLNumyOA-1; Sat, 21 Nov 2020 09:16:17 -0500
+X-MC-Unique: zJzT5r59Ohu6bqsLNumyOA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 718DF814409;
-        Sat, 21 Nov 2020 14:16:08 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4435F1005D6D;
+        Sat, 21 Nov 2020 14:16:16 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-246.rdu2.redhat.com [10.10.112.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B7B305C22B;
-        Sat, 21 Nov 2020 14:16:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 758F56085D;
+        Sat, 21 Nov 2020 14:16:14 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 21/29] iov_iter: Split iov_iter_get_pages()
+Subject: [PATCH 22/29] iov_iter: Split iov_iter_get_pages_alloc()
 From:   David Howells <dhowells@redhat.com>
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -48,54 +48,55 @@ Cc:     dhowells@redhat.com,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Sat, 21 Nov 2020 14:16:05 +0000
-Message-ID: <160596816579.154728.8100196610696982437.stgit@warthog.procyon.org.uk>
+Date:   Sat, 21 Nov 2020 14:16:13 +0000
+Message-ID: <160596817368.154728.12568762587413499390.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
 References: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Split iov_iter_get_pages() by type.
+Split iov_iter_get_pages_alloc() by type.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- lib/iov_iter.c |   46 +++++++++++++++++++++++++++++-----------------
- 1 file changed, 29 insertions(+), 17 deletions(-)
+ lib/iov_iter.c |   48 +++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 31 insertions(+), 17 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 5744ddec854f..a2de201b947f 100644
+index a2de201b947f..a038bfbbbd53 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1611,6 +1611,8 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+@@ -1690,6 +1690,8 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
  	unsigned int iter_head, npages;
- 	size_t capacity;
+ 	ssize_t n;
  
 +	if (maxsize > i->count)
 +		maxsize = i->count;
  	if (!maxsize)
  		return 0;
  
-@@ -1625,19 +1627,14 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
- 	return __pipe_get_pages(i, min(maxsize, capacity), pages, iter_head, start);
+@@ -1715,7 +1717,7 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+ 	return n;
  }
  
--static ssize_t xxx_get_pages(struct iov_iter *i,
-+static ssize_t iovec_get_pages(struct iov_iter *i,
- 		   struct page **pages, size_t maxsize, unsigned maxpages,
+-static ssize_t xxx_get_pages_alloc(struct iov_iter *i,
++static ssize_t iovec_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
  		   size_t *start)
  {
+@@ -1724,12 +1726,7 @@ static ssize_t xxx_get_pages_alloc(struct iov_iter *i,
  	if (maxsize > i->count)
  		maxsize = i->count;
  
 -	if (unlikely(iov_iter_is_pipe(i)))
--		return pipe_get_pages(i, pages, maxsize, maxpages, start);
+-		return pipe_get_pages_alloc(i, pages, maxsize, start);
 -	if (unlikely(iov_iter_is_discard(i)))
 -		return -EFAULT;
 -
@@ -104,26 +105,31 @@ index 5744ddec854f..a2de201b947f 100644
  		unsigned long addr = (unsigned long)v.iov_base;
  		size_t len = v.iov_len + (*start = addr & (PAGE_SIZE - 1));
  		int n;
-@@ -1653,18 +1650,33 @@ static ssize_t xxx_get_pages(struct iov_iter *i,
- 		if (unlikely(res < 0))
- 			return res;
+@@ -1748,7 +1745,20 @@ static ssize_t xxx_get_pages_alloc(struct iov_iter *i,
+ 		}
+ 		*pages = p;
  		return (res == n ? len : res * PAGE_SIZE) - *start;
 -	0;}),({
 +	0;}));
 +	return 0;
 +}
 +
-+static ssize_t bvec_get_pages(struct iov_iter *i,
-+		   struct page **pages, size_t maxsize, unsigned maxpages,
++static ssize_t bvec_get_pages_alloc(struct iov_iter *i,
++		   struct page ***pages, size_t maxsize,
 +		   size_t *start)
 +{
++	struct page **p;
++
 +	if (maxsize > i->count)
 +		maxsize = i->count;
 +
 +	iterate_over_bvec(i, maxsize, v, ({
  		/* can't be more than PAGE_SIZE */
  		*start = v.bv_offset;
- 		get_page(*pages = v.bv_page);
+ 		*pages = p = get_pages_array(1);
+@@ -1756,13 +1766,17 @@ static ssize_t xxx_get_pages_alloc(struct iov_iter *i,
+ 			return -ENOMEM;
+ 		get_page(*p = v.bv_page);
  		return v.bv_len;
 -	}),({
 -		return -EFAULT;
@@ -133,60 +139,60 @@ index 5744ddec854f..a2de201b947f 100644
  	return 0;
  }
  
-+static ssize_t no_get_pages(struct iov_iter *i,
-+		   struct page **pages, size_t maxsize, unsigned maxpages,
++static ssize_t no_get_pages_alloc(struct iov_iter *i,
++		   struct page ***pages, size_t maxsize,
 +		   size_t *start)
 +{
 +	return -EFAULT;
 +}
 +
- static struct page **get_pages_array(size_t n)
+ static size_t xxx_csum_and_copy_from_iter(void *addr, size_t bytes, __wsum *csum,
+ 			       struct iov_iter *i)
  {
- 	return kvmalloc_array(n, sizeof(struct page *), GFP_KERNEL);
-@@ -2179,7 +2191,7 @@ static const struct iov_iter_ops iovec_iter_ops = {
- 	.zero				= iovec_zero,
+@@ -2192,7 +2206,7 @@ static const struct iov_iter_ops iovec_iter_ops = {
  	.alignment			= iovec_alignment,
  	.gap_alignment			= iovec_gap_alignment,
--	.get_pages			= xxx_get_pages,
-+	.get_pages			= iovec_get_pages,
- 	.get_pages_alloc		= xxx_get_pages_alloc,
+ 	.get_pages			= iovec_get_pages,
+-	.get_pages_alloc		= xxx_get_pages_alloc,
++	.get_pages_alloc		= iovec_get_pages_alloc,
  	.npages				= xxx_npages,
  	.dup_iter			= xxx_dup_iter,
-@@ -2213,7 +2225,7 @@ static const struct iov_iter_ops kvec_iter_ops = {
- 	.zero				= kvec_zero,
+ 	.for_each_range			= xxx_for_each_range,
+@@ -2226,7 +2240,7 @@ static const struct iov_iter_ops kvec_iter_ops = {
  	.alignment			= kvec_alignment,
  	.gap_alignment			= kvec_gap_alignment,
--	.get_pages			= xxx_get_pages,
-+	.get_pages			= no_get_pages,
- 	.get_pages_alloc		= xxx_get_pages_alloc,
+ 	.get_pages			= no_get_pages,
+-	.get_pages_alloc		= xxx_get_pages_alloc,
++	.get_pages_alloc		= no_get_pages_alloc,
  	.npages				= xxx_npages,
  	.dup_iter			= xxx_dup_iter,
-@@ -2247,7 +2259,7 @@ static const struct iov_iter_ops bvec_iter_ops = {
- 	.zero				= bvec_zero,
+ 	.for_each_range			= xxx_for_each_range,
+@@ -2260,7 +2274,7 @@ static const struct iov_iter_ops bvec_iter_ops = {
  	.alignment			= bvec_alignment,
  	.gap_alignment			= bvec_gap_alignment,
--	.get_pages			= xxx_get_pages,
-+	.get_pages			= bvec_get_pages,
- 	.get_pages_alloc		= xxx_get_pages_alloc,
+ 	.get_pages			= bvec_get_pages,
+-	.get_pages_alloc		= xxx_get_pages_alloc,
++	.get_pages_alloc		= bvec_get_pages_alloc,
  	.npages				= xxx_npages,
  	.dup_iter			= xxx_dup_iter,
-@@ -2281,7 +2293,7 @@ static const struct iov_iter_ops pipe_iter_ops = {
- 	.zero				= pipe_zero,
+ 	.for_each_range			= xxx_for_each_range,
+@@ -2294,7 +2308,7 @@ static const struct iov_iter_ops pipe_iter_ops = {
  	.alignment			= pipe_alignment,
  	.gap_alignment			= no_gap_alignment,
--	.get_pages			= xxx_get_pages,
-+	.get_pages			= pipe_get_pages,
- 	.get_pages_alloc		= xxx_get_pages_alloc,
+ 	.get_pages			= pipe_get_pages,
+-	.get_pages_alloc		= xxx_get_pages_alloc,
++	.get_pages_alloc		= pipe_get_pages_alloc,
  	.npages				= xxx_npages,
  	.dup_iter			= xxx_dup_iter,
-@@ -2315,7 +2327,7 @@ static const struct iov_iter_ops discard_iter_ops = {
- 	.zero				= discard_zero,
+ 	.for_each_range			= xxx_for_each_range,
+@@ -2328,7 +2342,7 @@ static const struct iov_iter_ops discard_iter_ops = {
  	.alignment			= no_alignment,
  	.gap_alignment			= no_gap_alignment,
--	.get_pages			= xxx_get_pages,
-+	.get_pages			= no_get_pages,
- 	.get_pages_alloc		= xxx_get_pages_alloc,
+ 	.get_pages			= no_get_pages,
+-	.get_pages_alloc		= xxx_get_pages_alloc,
++	.get_pages_alloc		= no_get_pages_alloc,
  	.npages				= xxx_npages,
  	.dup_iter			= xxx_dup_iter,
+ 	.for_each_range			= xxx_for_each_range,
 
 
