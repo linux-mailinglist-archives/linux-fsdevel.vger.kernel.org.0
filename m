@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A6A82BBFBE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 15:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30ED92BBFC0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 15:18:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbgKUOQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Nov 2020 09:16:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29764 "EHLO
+        id S1728314AbgKUOQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Nov 2020 09:16:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:37850 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728286AbgKUOQA (ORCPT
+        by vger.kernel.org with ESMTP id S1728295AbgKUOQI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Nov 2020 09:16:00 -0500
+        Sat, 21 Nov 2020 09:16:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1605968158;
+        s=mimecast20190719; t=1605968166;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=h4NEsUyJ94oX0w8CnfwZML3FMbcbOmVC869wx5bM3lA=;
-        b=MvB9o7kAMpzKHSKwG2fzW+67E7R5uBcuaVezrHok96lk4MYH+TKyFTH81P2AuhrOf9R1V4
-        xFIMZyNLG+3BiRLfHXKS7mqOzea8ORPLOTciGQwI6lA/AJLMmCbT2bRTR8KBTLeU379Fny
-        Uih1OqapZHHDXX2LpRtPWFv/NAyZG3g=
+        bh=O9qDylx4ewpBGOJoY7+LpQLGp85UBysg0NqjPw7tJrk=;
+        b=FDnj/pIdnd4aneh+mZg7IPbDBuvgN6Y98tOIgA9cihaanSrlsuers/9dkq7EH2Dp3FLl12
+        G6jrBFQH8AapYzSFjMRZKKepVlQe5p7S58VxXO+aQ7u77piexbOAmEFe52q/kMYLjfs+CK
+        lawq9D6WdFQ1IXBD6/prsXxfzsK3Ko4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-305-WRSH_fD4PlCHu0TtuMO4hQ-1; Sat, 21 Nov 2020 09:15:54 -0500
-X-MC-Unique: WRSH_fD4PlCHu0TtuMO4hQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-426-HeJl7aVjNTez9AGzqE1P7w-1; Sat, 21 Nov 2020 09:16:02 -0500
+X-MC-Unique: HeJl7aVjNTez9AGzqE1P7w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 029F61842142;
-        Sat, 21 Nov 2020 14:15:53 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 929DB1DDE7;
+        Sat, 21 Nov 2020 14:16:00 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-246.rdu2.redhat.com [10.10.112.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4BBB66085D;
-        Sat, 21 Nov 2020 14:15:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F15F55D6BA;
+        Sat, 21 Nov 2020 14:15:58 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 19/29] iov_iter: Split iov_iter_alignment()
+Subject: [PATCH 20/29] iov_iter: Split iov_iter_gap_alignment()
 From:   David Howells <dhowells@redhat.com>
 To:     Pavel Begunkov <asml.silence@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -48,139 +48,132 @@ Cc:     dhowells@redhat.com,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Sat, 21 Nov 2020 14:15:50 +0000
-Message-ID: <160596815051.154728.15434909811290333829.stgit@warthog.procyon.org.uk>
+Date:   Sat, 21 Nov 2020 14:15:58 +0000
+Message-ID: <160596815823.154728.8595962159705739709.stgit@warthog.procyon.org.uk>
 In-Reply-To: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
 References: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Split iov_iter_alignment() by type.
+Split iov_iter_gap_alignment() by type.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- lib/iov_iter.c |   59 ++++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 42 insertions(+), 17 deletions(-)
+ lib/iov_iter.c |   50 ++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 16 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 90291188ace5..d2a66e951995 100644
+index d2a66e951995..5744ddec854f 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1497,26 +1497,51 @@ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
+@@ -1542,27 +1542,45 @@ static unsigned long no_alignment(const struct iov_iter *i)
+ 	return 0;
  }
- EXPORT_SYMBOL(iov_iter_discard);
  
--static unsigned long xxx_alignment(const struct iov_iter *i)
-+static unsigned long iovec_alignment(const struct iov_iter *i)
+-static unsigned long xxx_gap_alignment(const struct iov_iter *i)
++static unsigned long iovec_gap_alignment(const struct iov_iter *i)
  {
  	unsigned long res = 0;
  	size_t size = i->count;
  
--	if (unlikely(iov_iter_is_pipe(i))) {
--		unsigned int p_mask = i->pipe->ring_size - 1;
+-	if (unlikely(iov_iter_is_pipe(i) || iov_iter_is_discard(i))) {
+-		WARN_ON(1);
+-		return ~0U;
+-	}
+-
+-	iterate_all_kinds(i, size, v,
 +	iterate_over_iovec(i, size, v,
-+		(res |= (unsigned long)v.iov_base | v.iov_len, 0));
+ 		(res |= (!res ? 0 : (unsigned long)v.iov_base) |
+-			(size != v.iov_len ? size : 0), 0),
++			(size != v.iov_len ? size : 0), 0));
 +	return res;
 +}
- 
--		if (size && i->iov_offset && allocated(&i->pipe->bufs[i->head & p_mask]))
--			return size | i->iov_offset;
--		return size;
--	}
--	iterate_all_kinds(i, size, v,
--		(res |= (unsigned long)v.iov_base | v.iov_len, 0),
--		res |= v.bv_offset | v.bv_len,
--		res |= (unsigned long)v.iov_base | v.iov_len
--	)
-+static unsigned long bvec_alignment(const struct iov_iter *i)
++
++static unsigned long bvec_gap_alignment(const struct iov_iter *i)
 +{
 +	unsigned long res = 0;
 +	size_t size = i->count;
 +
 +	iterate_over_bvec(i, size, v,
-+		res |= v.bv_offset | v.bv_len);
- 	return res;
- }
- 
-+static unsigned long kvec_alignment(const struct iov_iter *i)
+ 		(res |= (!res ? 0 : (unsigned long)v.bv_offset) |
+-			(size != v.bv_len ? size : 0)),
++			(size != v.bv_len ? size : 0)));
++	return res;
++}
++
++static unsigned long kvec_gap_alignment(const struct iov_iter *i)
 +{
 +	unsigned long res = 0;
 +	size_t size = i->count;
 +
 +	iterate_over_kvec(i, size, v,
-+		res |= (unsigned long)v.iov_base | v.iov_len);
-+	return res;
-+}
-+
-+static unsigned long pipe_alignment(const struct iov_iter *i)
+ 		(res |= (!res ? 0 : (unsigned long)v.iov_base) |
+-			(size != v.iov_len ? size : 0))
+-		);
++			(size != v.iov_len ? size : 0)));
+ 	return res;
+ }
+ 
++static unsigned long no_gap_alignment(const struct iov_iter *i)
 +{
-+	size_t size = i->count;
-+	unsigned int p_mask = i->pipe->ring_size - 1;
-+
-+	if (size && i->iov_offset && allocated(&i->pipe->bufs[i->head & p_mask]))
-+		return size | i->iov_offset;
-+	return size;
++	WARN_ON(1);
++	return ~0U;
 +}
 +
-+static unsigned long no_alignment(const struct iov_iter *i)
-+{
-+	return 0;
-+}
-+
- static unsigned long xxx_gap_alignment(const struct iov_iter *i)
- {
- 	unsigned long res = 0;
-@@ -2134,7 +2159,7 @@ static const struct iov_iter_ops iovec_iter_ops = {
- 	.csum_and_copy_from_iter_full	= xxx_csum_and_copy_from_iter_full,
+ static inline ssize_t __pipe_get_pages(struct iov_iter *i,
+ 				size_t maxsize,
+ 				struct page **pages,
+@@ -2160,7 +2178,7 @@ static const struct iov_iter_ops iovec_iter_ops = {
  
  	.zero				= iovec_zero,
--	.alignment			= xxx_alignment,
-+	.alignment			= iovec_alignment,
- 	.gap_alignment			= xxx_gap_alignment,
+ 	.alignment			= iovec_alignment,
+-	.gap_alignment			= xxx_gap_alignment,
++	.gap_alignment			= iovec_gap_alignment,
  	.get_pages			= xxx_get_pages,
  	.get_pages_alloc		= xxx_get_pages_alloc,
-@@ -2168,7 +2193,7 @@ static const struct iov_iter_ops kvec_iter_ops = {
- 	.csum_and_copy_from_iter_full	= xxx_csum_and_copy_from_iter_full,
+ 	.npages				= xxx_npages,
+@@ -2194,7 +2212,7 @@ static const struct iov_iter_ops kvec_iter_ops = {
  
  	.zero				= kvec_zero,
--	.alignment			= xxx_alignment,
-+	.alignment			= kvec_alignment,
- 	.gap_alignment			= xxx_gap_alignment,
+ 	.alignment			= kvec_alignment,
+-	.gap_alignment			= xxx_gap_alignment,
++	.gap_alignment			= kvec_gap_alignment,
  	.get_pages			= xxx_get_pages,
  	.get_pages_alloc		= xxx_get_pages_alloc,
-@@ -2202,7 +2227,7 @@ static const struct iov_iter_ops bvec_iter_ops = {
- 	.csum_and_copy_from_iter_full	= xxx_csum_and_copy_from_iter_full,
+ 	.npages				= xxx_npages,
+@@ -2228,7 +2246,7 @@ static const struct iov_iter_ops bvec_iter_ops = {
  
  	.zero				= bvec_zero,
--	.alignment			= xxx_alignment,
-+	.alignment			= bvec_alignment,
- 	.gap_alignment			= xxx_gap_alignment,
+ 	.alignment			= bvec_alignment,
+-	.gap_alignment			= xxx_gap_alignment,
++	.gap_alignment			= bvec_gap_alignment,
  	.get_pages			= xxx_get_pages,
  	.get_pages_alloc		= xxx_get_pages_alloc,
-@@ -2236,7 +2261,7 @@ static const struct iov_iter_ops pipe_iter_ops = {
- 	.csum_and_copy_from_iter_full	= xxx_csum_and_copy_from_iter_full,
+ 	.npages				= xxx_npages,
+@@ -2262,7 +2280,7 @@ static const struct iov_iter_ops pipe_iter_ops = {
  
  	.zero				= pipe_zero,
--	.alignment			= xxx_alignment,
-+	.alignment			= pipe_alignment,
- 	.gap_alignment			= xxx_gap_alignment,
+ 	.alignment			= pipe_alignment,
+-	.gap_alignment			= xxx_gap_alignment,
++	.gap_alignment			= no_gap_alignment,
  	.get_pages			= xxx_get_pages,
  	.get_pages_alloc		= xxx_get_pages_alloc,
-@@ -2270,7 +2295,7 @@ static const struct iov_iter_ops discard_iter_ops = {
- 	.csum_and_copy_from_iter_full	= xxx_csum_and_copy_from_iter_full,
+ 	.npages				= xxx_npages,
+@@ -2296,7 +2314,7 @@ static const struct iov_iter_ops discard_iter_ops = {
  
  	.zero				= discard_zero,
--	.alignment			= xxx_alignment,
-+	.alignment			= no_alignment,
- 	.gap_alignment			= xxx_gap_alignment,
+ 	.alignment			= no_alignment,
+-	.gap_alignment			= xxx_gap_alignment,
++	.gap_alignment			= no_gap_alignment,
  	.get_pages			= xxx_get_pages,
  	.get_pages_alloc		= xxx_get_pages_alloc,
+ 	.npages				= xxx_npages,
 
 
