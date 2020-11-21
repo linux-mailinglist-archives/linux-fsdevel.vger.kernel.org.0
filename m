@@ -2,161 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4115A2BBD19
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 05:56:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 229162BBD96
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Nov 2020 08:00:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgKUEzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Nov 2020 23:55:17 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:49154 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbgKUEzR (ORCPT
+        id S1726058AbgKUHAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Nov 2020 02:00:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44386 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgKUHAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Nov 2020 23:55:17 -0500
-Received: by mail-io1-f72.google.com with SMTP id v15so9112535ioq.16
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 20:55:16 -0800 (PST)
+        Sat, 21 Nov 2020 02:00:24 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93F8EC061A4A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 23:00:23 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id o24so12420100ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Nov 2020 23:00:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=X7o0m3hQXVmVofbCR6L473p8htdBcLYyTWc2pJqZOUM=;
+        b=NAf9nl2J7IrdmpQMU2t/+SODdOjUjzxQqsSksle5M3l6Ywri6/LWuLY60ItJmETxox
+         z2485qDtzcZq4U8ptX5mV32Ds+iGsHITL/G++mgluYxor/atna2PNO96gnuZ9eSDli3A
+         5YrOYozkM2esFvaUNe2lQ0jxlcdKo64nZZ8pWX8rKG3JIFhXACukB9nxastIxuNvxQwi
+         m72FEnkLoHzVUECvi7NKtdHoiQma263Ss/twJenvsetmtxc+Fz3/ib+Kowi86tegJZ9T
+         L5IzUl6TiURt6iNTyUYZjfH9tlL3oH6hVOmtT19/HgNgWR2EhrXZODwaZrS85DwyHUuy
+         aGmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Bc8DJgBNhzyknhToDKlCX+JkuaB11Va6geaeIXU01nE=;
-        b=Y+OwTgL4eyceVMoGtHQzqjmqsP26fnHkhn8RvD5BYnfZcv9TV7GWeje26xbfEOusTj
-         eIhDS1gRYJH7+DGV5ByAA842OWZc7GFoSbgTD1lVglFTmMwICL+/w9G9oKqZdNNGXmml
-         wlzfnsM12WnnCBM7IyP0wTi4IGPI+DGz6HE2vG3VSQ6XRhL3XZQeQCasd0U7fN70JQw8
-         vCT5ZCdSxlXyWknwlGRV3VN88rBSzw4r1wnm3hRi52Nx7nnLYd9hJSdot5qUSzf6aRDM
-         lQL6fpCsGDOGA7Vcj2ifWYV7YZWAiehHkGAes93PaiLInkqzu+1cOO7tYtFE4KSc/X3H
-         PVLw==
-X-Gm-Message-State: AOAM533D93wZ552HHJCtRK/J+p2qcvvNq3urRxp7FvYpzzZM8bpz055T
-        HI3wgZ7CJEpKDg1+d4wuCCOgm1rU0coB/wolalSYIjHhsqwq
-X-Google-Smtp-Source: ABdhPJy7jTsYFQbu+2stHEviHh2ADsNbk/5yIIh45u18OZoQ1AtChCr2ehXwg0NxNJ5eVesTx/pC19Olx6poLQCbggKPqLZyD3TN
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=X7o0m3hQXVmVofbCR6L473p8htdBcLYyTWc2pJqZOUM=;
+        b=XqMhJYSvkv922OYHjnea2BZERozhjVSPcpmGygPh9foHM1FkhU1nJAZa8bgf/aUtd5
+         tB/sy+gWouop/8ECaD6J6JevlQTuMX1zKFrxkuxPGXSy0Jp3pveEBTYHx+DMr1XJh7IW
+         O3P/gQI0ysGm+u5AwbXhKB9+867IAInc0qNYElHoteko5flSA7HjOzpKEf7BQ6BIV1PZ
+         yrfScxiY9MQKD+H8a96bPROxAhzTXNmr0Tw8qXwV81nBzJRSRH9cRkj4kjPsT6sRCKal
+         nmo3fXG6OYnnGnF4wix6mn0E7ZtMzeUd3htkL+QKvlUrztIiv5DBt5wSzVOWzV9RUTXK
+         3rLQ==
+X-Gm-Message-State: AOAM531+QeLnjMOuI4vV34tTb+7eDBkX3G5sxzLbAkysd55Lbc9OW15b
+        g4uSBWUO7q6JBfrbIGENRmq3tOenida2UvsS94Z6Jw==
+X-Google-Smtp-Source: ABdhPJyQlluKPoz0OIWNJejUmA2oBeD6J48fIKEWng63DXZFe9Wj5F7lo9xUW1sQakHx3A+Zc/rgyFU8fgOEwoYO4Ic=
+X-Received: by 2002:a2e:8350:: with SMTP id l16mr9449286ljh.47.1605942021665;
+ Fri, 20 Nov 2020 23:00:21 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b2c4:: with SMTP id b187mr28358647iof.187.1605934515653;
- Fri, 20 Nov 2020 20:55:15 -0800 (PST)
-Date:   Fri, 20 Nov 2020 20:55:15 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000056928205b496c43b@google.com>
-Subject: INFO: task hung in sync_inodes_sb (4)
-From:   syzbot <syzbot+7d50f1e54a12ba3aeae2@syzkaller.appspotmail.com>
-To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        davem@davemloft.net, emmanuel.grumbach@intel.com,
-        johannes.berg@intel.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luciano.coelho@intel.com,
-        mareklindner@neomailbox.ch, netdev@vger.kernel.org,
-        sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
+References: <20201112205141.775752-1-mic@digikod.net> <20201112205141.775752-2-mic@digikod.net>
+In-Reply-To: <20201112205141.775752-2-mic@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Sat, 21 Nov 2020 08:00:00 +0100
+Message-ID: <CAG48ez0GryN4i0xCP22utLTqF5_o5J3nMBs+VC0DpQ+s09Bx6g@mail.gmail.com>
+Subject: Re: [PATCH v24 01/12] landlock: Add object management
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Nov 12, 2020 at 9:51 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> A Landlock object enables to identify a kernel object (e.g. an inode).
+> A Landlock rule is a set of access rights allowed on an object.  Rules
+> are grouped in rulesets that may be tied to a set of processes (i.e.
+> subjects) to enforce a scoped access-control (i.e. a domain).
+>
+> Because Landlock's goal is to empower any process (especially
+> unprivileged ones) to sandbox themselves, we cannot rely on a
+> system-wide object identification such as file extended attributes.
+> Indeed, we need innocuous, composable and modular access-controls.
+>
+> The main challenge with these constraints is to identify kernel objects
+> while this identification is useful (i.e. when a security policy makes
+> use of this object).  But this identification data should be freed once
+> no policy is using it.  This ephemeral tagging should not and may not be
+> written in the filesystem.  We then need to manage the lifetime of a
+> rule according to the lifetime of its objects.  To avoid a global lock,
+> this implementation make use of RCU and counters to safely reference
+> objects.
+>
+> A following commit uses this generic object management for inodes.
+>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
 
-syzbot found the following issue on:
+Still looks good, except for one comment:
 
-HEAD commit:    03430750 Add linux-next specific files for 20201116
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17027fdc500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a1c4c3f27041fdb8
-dashboard link: https://syzkaller.appspot.com/bug?extid=7d50f1e54a12ba3aeae2
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124a8841500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a4fce2500000
+[...]
+> +       /**
+> +        * @lock: Guards against concurrent modifications.  This lock mig=
+ht be
+> +        * held from the time @usage drops to zero until any weak referen=
+ces
+> +        * from @underobj to this object have been cleaned up.
+> +        *
+> +        * Lock ordering: inode->i_lock nests inside this.
+> +        */
+> +       spinlock_t lock;
 
-The issue was bisected to:
-
-commit c68df2e7be0c1238ea3c281fd744a204ef3b15a0
-Author: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Date:   Thu Sep 15 13:30:02 2016 +0000
-
-    mac80211: allow using AP_LINK_PS with mac80211-generated TIM IE
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1445e981500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1645e981500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1245e981500000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7d50f1e54a12ba3aeae2@syzkaller.appspotmail.com
-Fixes: c68df2e7be0c ("mac80211: allow using AP_LINK_PS with mac80211-generated TIM IE")
-
-INFO: task syz-executor017:8513 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc3-next-20201116-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor017 state:D stack:27448 pid: 8513 ppid:  8507 flags:0x00004000
-Call Trace:
- context_switch kernel/sched/core.c:4269 [inline]
- __schedule+0x890/0x2030 kernel/sched/core.c:5019
- schedule+0xcf/0x270 kernel/sched/core.c:5098
- wb_wait_for_completion+0x17b/0x230 fs/fs-writeback.c:209
- sync_inodes_sb+0x1a6/0x9d0 fs/fs-writeback.c:2559
- __sync_filesystem fs/sync.c:34 [inline]
- sync_filesystem fs/sync.c:67 [inline]
- sync_filesystem+0x15c/0x260 fs/sync.c:48
- generic_shutdown_super+0x70/0x370 fs/super.c:448
- kill_block_super+0x97/0xf0 fs/super.c:1446
- deactivate_locked_super+0x94/0x160 fs/super.c:335
- deactivate_super+0xad/0xd0 fs/super.c:366
- cleanup_mnt+0x3a3/0x530 fs/namespace.c:1123
- task_work_run+0xdd/0x190 kernel/task_work.c:140
- tracehook_notify_resume include/linux/tracehook.h:188 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0x1f0/0x200 kernel/entry/common.c:199
- syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:274
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x44e0e7
-Code: Unable to access opcode bytes at RIP 0x44e0bd.
-RSP: 002b:00007fff42061288 EFLAGS: 00000206 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 00000000000cee4c RCX: 000000000044e0e7
-RDX: 0000000000400be0 RSI: 0000000000000002 RDI: 00007fff42061330
-RBP: 0000000000002142 R08: 0000000000000000 R09: 0000000000000009
-R10: 0000000000000005 R11: 0000000000000206 R12: 00007fff420623e0
-R13: 0000000001f67880 R14: 0000000000000000 R15: 0000000000000000
-
-Showing all locks held in the system:
-2 locks held by kworker/u4:5/225:
- #0: ffff8881413a4138 ((wq_completion)writeback){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff8881413a4138 ((wq_completion)writeback){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff8881413a4138 ((wq_completion)writeback){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff8881413a4138 ((wq_completion)writeback){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff8881413a4138 ((wq_completion)writeback){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff8881413a4138 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc9000191fda8 ((work_completion)(&(&wb->dwork)->work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-1 lock held by khungtaskd/1655:
- #0: ffffffff8b339ce0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6252
-1 lock held by in:imklog/8188:
- #0: ffff888017c8f4f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
-2 locks held by syz-executor017/8513:
- #0: ffff88801a8500e0 (&type->s_umount_key#49){+.+.}-{3:3}, at: deactivate_super+0xa5/0xd0 fs/super.c:365
- #1: ffff888143f5e708 (&bdi->wb_switch_rwsem){+.+.}-{3:3}, at: bdi_down_write_wb_switch_rwsem fs/fs-writeback.c:344 [inline]
- #1: ffff888143f5e708 (&bdi->wb_switch_rwsem){+.+.}-{3:3}, at: sync_inodes_sb+0x18c/0x9d0 fs/fs-writeback.c:2557
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 1655 Comm: khungtaskd Not tainted 5.10.0-rc3-next-20201116-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:120
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
- watchdog+0xd89/0xf30 kernel/hung_task.c:338
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:60 [inline]
-NMI backtrace for cpu 1 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:103 [inline]
-NMI backtrace for cpu 1 skipped: idling at acpi_safe_halt drivers/acpi/processor_idle.c:111 [inline]
-NMI backtrace for cpu 1 skipped: idling at acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:517
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Why did you change this to "might be held" (v22 had "must")? Is the
+"might" a typo?
