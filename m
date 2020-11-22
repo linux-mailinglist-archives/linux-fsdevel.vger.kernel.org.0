@@ -2,86 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B38392BC64A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 15:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAE722BC69B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 16:59:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbgKVO4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Nov 2020 09:56:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbgKVO4q (ORCPT
+        id S1727907AbgKVP5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Nov 2020 10:57:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25081 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727745AbgKVP5c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Nov 2020 09:56:46 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D0B7C0613CF;
-        Sun, 22 Nov 2020 06:56:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wxlelFGFCxCiVSAw6KoblZyEK+s/RwoBRdtshdQHcTA=; b=IHdP9cS5+aim9K2c8XsejJHGrM
-        +S6gdmtkdU0PTIkPZFY+qbqZ8sMUEbhQL8b8Qdm+o2+njoM1Cm2cM6mbD/iY0TNSwZxJRLByIjVzg
-        eNcrVpKlWHjnQQvQ1Go6iFjsUh68sqz8dumIdI2qfrFsd2XrVO5w3MRgBBmvjmOvnFaYJLzopUIl7
-        R6ZVO/KTc63YeijcPbeFNlRWdMYtVgUZuoprtKEH7yjNmV1uGOzQEbR4NJQpt6J1Nu3N9hq7ljiYQ
-        UIsENsOUDnACtwno8Bc2xaczmaEz8q4+sGKzgwN4pxETWG486xJZxN2UeB5LYfIlImw9WtEFIo9GQ
-        DSwauRxg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kgqn5-0000Ms-Pt; Sun, 22 Nov 2020 14:56:36 +0000
-Date:   Sun, 22 Nov 2020 14:56:35 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tom Rix <trix@redhat.com>
-Cc:     joe@perches.com, clang-built-linux@googlegroups.com,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, tboot-devel@lists.sourceforge.net,
-        kvm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@acpica.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, netdev@vger.kernel.org,
-        linux-media@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com,
-        linux-scsi@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-mtd@lists.infradead.org,
-        keyrings@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, alsa-devel@alsa-project.org,
-        bpf@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-nfs@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [RFC] MAINTAINERS tag for cleanup robot
-Message-ID: <20201122145635.GG4327@casper.infradead.org>
-References: <20201121165058.1644182-1-trix@redhat.com>
- <20201122032304.GE4327@casper.infradead.org>
- <ddb08a27-3ca1-fb2e-d51f-4b471f1a56a3@redhat.com>
+        Sun, 22 Nov 2020 10:57:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606060651;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4hBVsDBRvKdqTpz6pw325TDjwoGFHbZ/Qsf+L6Re3P4=;
+        b=ZS/szxnmOE1ABoSzdSlVMMy7sOGGQHO4aYrf4Fd/aLfWWPPLcPhdR88E4U+zyxxGEAkuQi
+        SI3NH69NrKiXUQiXhKgP8+I5udr+5Qnybf5bghcScXBtEBHJ6iVl4Mpio0tEIQfXPCNQVy
+        VibwDBHWDgk23H9Cahotj73gz2gq8b0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-OOqf_9IPPcubHJYNsA-MPg-1; Sun, 22 Nov 2020 10:57:27 -0500
+X-MC-Unique: OOqf_9IPPcubHJYNsA-MPg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CC0F81005D73;
+        Sun, 22 Nov 2020 15:57:25 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C344012D7E;
+        Sun, 22 Nov 2020 15:57:25 +0000 (UTC)
+Received: from zmail23.collab.prod.int.phx2.redhat.com (zmail23.collab.prod.int.phx2.redhat.com [10.5.83.28])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id AE78C18095C9;
+        Sun, 22 Nov 2020 15:57:25 +0000 (UTC)
+Date:   Sun, 22 Nov 2020 10:57:25 -0500 (EST)
+From:   Xiaoli Feng <xifeng@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <esandeen@redhat.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        ira weiny <ira.weiny@intel.com>,
+        Xiaoli Feng <fengxiaoli0714@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Message-ID: <1450940377.59255884.1606060645520.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20201121011516.GD3837269@magnolia>
+References: <20201121003331.21342-1-xifeng@redhat.com> <21890103-fce2-bb50-7fc2-6c6d509b982f@infradead.org> <20201121011516.GD3837269@magnolia>
+Subject: Re: [PATCH] fs/stat: set attributes_mask for STATX_ATTR_DAX
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddb08a27-3ca1-fb2e-d51f-4b471f1a56a3@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.68.5.20, 10.4.195.4]
+Thread-Topic: fs/stat: set attributes_mask for STATX_ATTR_DAX
+Thread-Index: UpJOH+7qV0HTw1EJ2RkbvKNCw/Hb9A==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 22, 2020 at 06:46:46AM -0800, Tom Rix wrote:
-> 
-> On 11/21/20 7:23 PM, Matthew Wilcox wrote:
-> > On Sat, Nov 21, 2020 at 08:50:58AM -0800, trix@redhat.com wrote:
-> >> The fixer review is
-> >> https://reviews.llvm.org/D91789
-> >>
-> >> A run over allyesconfig for x86_64 finds 62 issues, 5 are false positives.
-> >> The false positives are caused by macros passed to other macros and by
-> >> some macro expansions that did not have an extra semicolon.
-> >>
-> >> This cleans up about 1,000 of the current 10,000 -Wextra-semi-stmt
-> >> warnings in linux-next.
-> > Are any of them not false-positives?  It's all very well to enable
-> > stricter warnings, but if they don't fix any bugs, they're just churn.
-> >
-> While enabling additional warnings may be a side effect of this effort
-> 
-> the primary goal is to set up a cleaning robot. After that a refactoring robot.
+Hi,
 
-Why do we need such a thing?  Again, it sounds like more churn.
-It's really annoying when I'm working on something important that gets
-derailed by pointless churn.  Churn also makes it harder to backport
-patches to earlier kernels.
+Thanks for review.
+
+----- Original Message -----
+> From: "Darrick J. Wong" <darrick.wong@oracle.com>
+> To: "XiaoLi Feng" <xifeng@redhat.com>
+> Cc: "Randy Dunlap" <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, "ira weiny" <ira.weiny@intel.com>, "Xiaoli
+> Feng" <fengxiaoli0714@gmail.com>, "linux-fsdevel" <linux-fsdevel@vger.kernel.org>
+> Sent: Saturday, November 21, 2020 10:03:18 AM
+> Subject: Re: [PATCH] fs/stat: set attributes_mask for STATX_ATTR_DAX
+> 
+> [Adding fsdevel to cc since this is a filesystems question]
+> 
+> On Fri, Nov 20, 2020 at 04:58:09PM -0800, Randy Dunlap wrote:
+> > Hi,
+> > 
+> > I don't know this code, but:
+> > 
+> > On 11/20/20 4:33 PM, XiaoLi Feng wrote:
+> > > From: Xiaoli Feng <fengxiaoli0714@gmail.com>
+> > > 
+> > > keep attributes and attributes_mask are consistent for
+> > > STATX_ATTR_DAX.
+> > > ---
+> > >  fs/stat.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/stat.c b/fs/stat.c
+> > > index dacecdda2e79..914a61d256b0 100644
+> > > --- a/fs/stat.c
+> > > +++ b/fs/stat.c
+> > > @@ -82,7 +82,7 @@ int vfs_getattr_nosec(const struct path *path, struct
+> > > kstat *stat,
+> > >  
+> > >  	if (IS_DAX(inode))
+> > >  		stat->attributes |= STATX_ATTR_DAX;
+> > > -
+> > > +	stat->attributes_mask |= STATX_ATTR_DAX;
+> > 
+> > Why shouldn't that be:
+> > 
+> > 	if (IS_DAX(inode))
+> > 		stat->attributes_mask |= STATX_ATTR_DAX;
+> > 
+> > or combine them, like this:
+> > 
+> > 	if (IS_DAX(inode)) {
+> > 		stat->attributes |= STATX_ATTR_DAX;
+> > 		stat->attributes_mask |= STATX_ATTR_DAX;
+> > 	}
+> > 
+> > 
+> > and no need to delete that blank line.
+> 
+> Some filesystems could support DAX but not have it enabled for this
+> particular file, so this won't work.
+> 
+> General question: should filesystems that are /capable/ of DAX signal
+> this by setting the DAX bit in the attributes mask?  Or is this a VFS
+> feature and hence here is the appropriate place to be setting the mask?
+
+Actually I just see here set the attributes. Then set the attributes mask 
+after it.
+
+> 
+> Extra question: should we only set this in the attributes mask if
+> CONFIG_FS_DAX=y ?
+
+No, my origin patch always set this attributes mask. It's out of if condition.
+
+        if (IS_DAX(inode))
+                stat->attributes |= STATX_ATTR_DAX;
+-
++       stat->attributes_mask |= STATX_ATTR_DAX;
+
+
+> 
+> --D
+> 
+> > >  	if (inode->i_op->getattr)
+> > >  		return inode->i_op->getattr(path, stat, request_mask,
+> > >  					    query_flags);
+> > > 
+> > 
+> > thanks.
+> > --
+> > ~Randy
+> > 
+> 
+> 
+
