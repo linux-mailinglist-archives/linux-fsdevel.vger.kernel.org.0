@@ -2,187 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A262BC36D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 04:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC7C82BC39C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 05:46:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbgKVDfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Nov 2020 22:35:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726768AbgKVDfL (ORCPT
+        id S1727294AbgKVEps (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Nov 2020 23:45:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50890 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727276AbgKVEpr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Nov 2020 22:35:11 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E94C0613CF;
-        Sat, 21 Nov 2020 19:35:11 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id r17so15041604wrw.1;
-        Sat, 21 Nov 2020 19:35:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w0Ir48uXUbn/Bi4Gho+hGv8wN8dsN9/6Q1HYxJFr3xw=;
-        b=VBJIw6I648qXEaHdWXmirJcyQtJzrSMQvYFu4Jf4NGDA8eLnyYtNGb7Obqxblkeafq
-         D9kIpRnw17ISa6ymqBy2GcdCPYYnLPPSAF5qi5pP4PVCQQLgIkIaNwriyQDKETtpDMzj
-         PSdUcJRvP+/mqNb6MNOhdqNiOd/5RJRoCiKQ2fZ/2E80wNl7yKAewiu8LmjODVzyQjOD
-         nI+0ih7ehm46rYfU7MykclO+xt0GuiKsiB2O6LZ6zEIBRG6xcvXYG+ogiENExwWZnJoM
-         kl6xcyPkVdG2xKTHiYAT+3juWT0xCWgUUpCZ6IvlReHrMz2aT+RN6u6hbOIKlhLAZy3R
-         2i0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=w0Ir48uXUbn/Bi4Gho+hGv8wN8dsN9/6Q1HYxJFr3xw=;
-        b=tmLFm44EWJBK4V1dZH78SJiObVvrYT79kN76/MQE8UwR6wkDRNrwMdZDPJxEOQVxpG
-         P/SV9yyFfDyCHBVbd/2csAT8KwCy7aakFBNyCDmBE8IqOrbudA/BT7cYF3+pggCVPJO7
-         +sHGcvlkvvrKwYgCzi4RXL+e1AORWtUQGxKO6ix2XXTdmzYnfp2qSXo+ciXpidjd5uv9
-         P40KK5LpckwdxpWW01G0AXW0Prmt8VI19iNAgobX+WhUJ5X6UrWzyZ7y/wuSZrKRfh/P
-         4Rqbo399hBuWGovNWzhR8kY3IbagmuOIhea+JAnfWnmn+2LYG09zoSdgDfWrIyjJs49Z
-         0Kjw==
-X-Gm-Message-State: AOAM530hKoxDlowD0qmmE4OULXppKMj3eS+OIYqJ/SQmM4Toueh4NRdM
-        BOPt9c02zi8qnE4ZmdbHbFR4FRRvxReG2A==
-X-Google-Smtp-Source: ABdhPJw4KrbZQ2CoH5IWQyxqSSJ5P2QQWWYsGSajfT3a4SZQ6OVGKjlF9jzcII0CJcC+Ylup0AyX/w==
-X-Received: by 2002:a5d:6250:: with SMTP id m16mr24113282wrv.400.1606016109986;
-        Sat, 21 Nov 2020 19:35:09 -0800 (PST)
-Received: from [192.168.1.118] (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id c62sm8922375wme.22.2020.11.21.19.35.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Nov 2020 19:35:09 -0800 (PST)
-To:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-References: <0000000000002bea4605b4a5931d@google.com>
- <20201122030421.2088-1-hdanton@sina.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: INFO: task hung in __io_uring_files_cancel
-Message-ID: <0142d9e7-14ea-06b5-7983-a295a1883e2f@gmail.com>
-Date:   Sun, 22 Nov 2020 03:32:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Sat, 21 Nov 2020 23:45:47 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 7B56E1F442EC
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Chao Yu <chao@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, kernel-team@android.com,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH v4 2/3] fscrypt: Have filesystems handle their d_ops
+In-Reply-To: <20201119060904.463807-3-drosen@google.com> (Daniel Rosenberg's
+        message of "Thu, 19 Nov 2020 06:09:03 +0000")
+Organization: Collabora
+References: <20201119060904.463807-1-drosen@google.com>
+        <20201119060904.463807-3-drosen@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+Date:   Sat, 21 Nov 2020 23:45:41 -0500
+Message-ID: <87y2iuj8y2.fsf@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20201122030421.2088-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/11/2020 03:04, Hillf Danton wrote:
-> On Sat, 21 Nov 2020 14:35:15 -0800
->> syzbot found the following issue on:
->>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10401726500000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=12401726500000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=14401726500000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com
->> Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
->>
->> INFO: task syz-executor.0:9557 blocked for more than 143 seconds.
->>       Not tainted 5.10.0-rc4-next-20201117-syzkaller #0
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:syz-executor.0  state:D stack:28584 pid: 9557 ppid:  8485 flags:0x00004002
->> Call Trace:
->>  context_switch kernel/sched/core.c:4269 [inline]
->>  __schedule+0x890/0x2030 kernel/sched/core.c:5019
->>  schedule+0xcf/0x270 kernel/sched/core.c:5098
->>  io_uring_cancel_files fs/io_uring.c:8720 [inline]
->>  io_uring_cancel_task_requests fs/io_uring.c:8772 [inline]
->>  __io_uring_files_cancel+0xc4d/0x14b0 fs/io_uring.c:8868
->>  io_uring_files_cancel include/linux/io_uring.h:51 [inline]
->>  exit_files+0xe4/0x170 fs/file.c:456
->>  do_exit+0xb61/0x29f0 kernel/exit.c:818
->>  do_group_exit+0x125/0x310 kernel/exit.c:920
->>  get_signal+0x3ea/0x1f70 kernel/signal.c:2750
->>  arch_do_signal_or_restart+0x2a6/0x1ea0 arch/x86/kernel/signal.c:811
->>  handle_signal_work kernel/entry/common.c:145 [inline]
->>  exit_to_user_mode_loop kernel/entry/common.c:169 [inline]
->>  exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:199
->>  syscall_exit_to_user_mode+0x38/0x260 kernel/entry/common.c:274
->>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->> RIP: 0033:0x45deb9
->> Code: Unable to access opcode bytes at RIP 0x45de8f.
->> RSP: 002b:00007fa68397ccf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
->> RAX: fffffffffffffe00 RBX: 000000000118bf28 RCX: 000000000045deb9
->> RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000118bf28
->> RBP: 000000000118bf20 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bf2c
->> R13: 00007fff50acc9af R14: 00007fa68397d9c0 R15: 000000000118bf2c
->>
-...
-> 
-> Fix 311daef8013a ("io_uring: replace inflight_wait with tctx->wait")
-> by cutting the pre-condition to wakeup because waitqueue_active()
-> speaks the language in the East End while atomic_read() may speak
-> the language in Paris.
+Daniel Rosenberg <drosen@google.com> writes:
 
-Your description doesn't help, why do you think this is the problem?
-->in_idle is always set when io_uring_cancel_files() sleeps on it,
-and ->inflight_lock should guarantee ordering.
-
-> 
-> --- a/fs/io_uring.c
-> +++ b/fs/io_uring.c
-> @@ -6082,8 +6082,7 @@ static void io_req_drop_files(struct io_
+> This shifts the responsibility of setting up dentry operations from
+> fscrypt to the individual filesystems, allowing them to have their own
+> operations while still setting fscrypt's d_revalidate as appropriate.
+>
+> Most filesystems can just use generic_set_encrypted_ci_d_ops, unless
+> they have their own specific dentry operations as well. That operation
+> will set the minimal d_ops required under the circumstances.
+>
+> Since the fscrypt d_ops are set later on, we must set all d_ops there,
+> since we cannot adjust those later on. This should not result in any
+> change in behavior.
+>
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> Acked-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/crypto/fname.c           | 4 ----
+>  fs/crypto/fscrypt_private.h | 1 -
+>  fs/crypto/hooks.c           | 1 -
+>  fs/ext4/dir.c               | 7 -------
+>  fs/ext4/ext4.h              | 4 ----
+>  fs/ext4/namei.c             | 1 +
+>  fs/ext4/super.c             | 5 -----
+>  fs/f2fs/dir.c               | 7 -------
+>  fs/f2fs/f2fs.h              | 3 ---
+>  fs/f2fs/namei.c             | 1 +
+>  fs/f2fs/super.c             | 1 -
+>  fs/ubifs/dir.c              | 1 +
+>  include/linux/fscrypt.h     | 7 +++++--
+>  13 files changed, 8 insertions(+), 35 deletions(-)
+>
+> diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> index 1fbe6c24d705..cb3cfa6329ba 100644
+> --- a/fs/crypto/fname.c
+> +++ b/fs/crypto/fname.c
+> @@ -570,7 +570,3 @@ int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
+>  	return valid;
+>  }
+>  EXPORT_SYMBOL_GPL(fscrypt_d_revalidate);
+> -
+> -const struct dentry_operations fscrypt_d_ops = {
+> -	.d_revalidate = fscrypt_d_revalidate,
+> -};
+> diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+> index 4f5806a3b73d..df9c48c1fbf7 100644
+> --- a/fs/crypto/fscrypt_private.h
+> +++ b/fs/crypto/fscrypt_private.h
+> @@ -294,7 +294,6 @@ int fscrypt_fname_encrypt(const struct inode *inode, const struct qstr *iname,
+>  bool fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+>  				  u32 orig_len, u32 max_len,
+>  				  u32 *encrypted_len_ret);
+> -extern const struct dentry_operations fscrypt_d_ops;
 >  
->  	spin_lock_irqsave(&ctx->inflight_lock, flags);
->  	list_del(&req->inflight_entry);
-> -	if (atomic_read(&tctx->in_idle))
-> -		wake_up(&tctx->wait);
-> +	wake_up(&tctx->wait);
->  	spin_unlock_irqrestore(&ctx->inflight_lock, flags);
->  	req->flags &= ~REQ_F_INFLIGHT;
->  	put_files_struct(req->work.identity->files);
-> 
+>  /* hkdf.c */
+>  
+> diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+> index 20b0df47fe6a..9006fa983335 100644
+> --- a/fs/crypto/hooks.c
+> +++ b/fs/crypto/hooks.c
+> @@ -117,7 +117,6 @@ int __fscrypt_prepare_lookup(struct inode *dir, struct dentry *dentry,
+>  		spin_lock(&dentry->d_lock);
+>  		dentry->d_flags |= DCACHE_NOKEY_NAME;
+>  		spin_unlock(&dentry->d_lock);
+> -		d_set_d_op(dentry, &fscrypt_d_ops);
+>  	}
+>  	return err;
+>  }
+> diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
+> index ca50c90adc4c..e757319a4472 100644
+> --- a/fs/ext4/dir.c
+> +++ b/fs/ext4/dir.c
+> @@ -667,10 +667,3 @@ const struct file_operations ext4_dir_operations = {
+>  	.open		= ext4_dir_open,
+>  	.release	= ext4_release_dir,
+>  };
+> -
+> -#ifdef CONFIG_UNICODE
+> -const struct dentry_operations ext4_dentry_ops = {
+> -	.d_hash = generic_ci_d_hash,
+> -	.d_compare = generic_ci_d_compare,
+> -};
+> -#endif
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index bf9429484462..ad77f01d9e20 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3380,10 +3380,6 @@ static inline void ext4_unlock_group(struct super_block *sb,
+>  /* dir.c */
+>  extern const struct file_operations ext4_dir_operations;
+>  
+> -#ifdef CONFIG_UNICODE
+> -extern const struct dentry_operations ext4_dentry_ops;
+> -#endif
+> -
+>  /* file.c */
+>  extern const struct inode_operations ext4_file_inode_operations;
+>  extern const struct file_operations ext4_file_operations;
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index 33509266f5a0..12a417ff5648 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -1614,6 +1614,7 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
+>  	struct buffer_head *bh;
+>  
+>  	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
+> +	generic_set_encrypted_ci_d_ops(dentry);
+>  	if (err == -ENOENT)
+>  		return NULL;
+>  	if (err)
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 6633b20224d5..0288bedf46e1 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4968,11 +4968,6 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+>  		goto failed_mount4;
+>  	}
+>  
+> -#ifdef CONFIG_UNICODE
+> -	if (sb->s_encoding)
+> -		sb->s_d_op = &ext4_dentry_ops;
+> -#endif
+
+This change has the side-effect of removing the capability of the root
+directory from being case-insensitive.  It is not a backward
+incompatible change because there is no way to make the root directory
+CI at the moment (it is never empty). But this restriction seems
+artificial. Is there a real reason to prevent the root inode from being
+case-insensitive?
+
+> -
+>  	sb->s_root = d_make_root(root);
+>  	if (!sb->s_root) {
+>  		ext4_msg(sb, KERN_ERR, "get root dentry failed");
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 4b9ef8bbfa4a..71fdf5076461 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -1099,10 +1099,3 @@ const struct file_operations f2fs_dir_operations = {
+>  	.compat_ioctl   = f2fs_compat_ioctl,
+>  #endif
+>  };
+> -
+> -#ifdef CONFIG_UNICODE
+> -const struct dentry_operations f2fs_dentry_ops = {
+> -	.d_hash = generic_ci_d_hash,
+> -	.d_compare = generic_ci_d_compare,
+> -};
+> -#endif
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index cb700d797296..62b4f31d30e2 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3767,9 +3767,6 @@ static inline void f2fs_update_sit_info(struct f2fs_sb_info *sbi) {}
+>  #endif
+>  
+>  extern const struct file_operations f2fs_dir_operations;
+> -#ifdef CONFIG_UNICODE
+> -extern const struct dentry_operations f2fs_dentry_ops;
+> -#endif
+>  extern const struct file_operations f2fs_file_operations;
+>  extern const struct inode_operations f2fs_file_inode_operations;
+>  extern const struct address_space_operations f2fs_dblock_aops;
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 8fa37d1434de..6edb1ab579a1 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -497,6 +497,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+>  	}
+>  
+>  	err = f2fs_prepare_lookup(dir, dentry, &fname);
+> +	generic_set_encrypted_ci_d_ops(dentry);
+>  	if (err == -ENOENT)
+>  		goto out_splice;
+>  	if (err)
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 00eff2f51807..f51d52591c99 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -3427,7 +3427,6 @@ static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
+>  
+>  		sbi->sb->s_encoding = encoding;
+>  		sbi->sb->s_encoding_flags = encoding_flags;
+> -		sbi->sb->s_d_op = &f2fs_dentry_ops;
+>  	}
+>  #else
+>  	if (f2fs_sb_has_casefold(sbi)) {
+> diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+> index 155521e51ac5..7a920434d741 100644
+> --- a/fs/ubifs/dir.c
+> +++ b/fs/ubifs/dir.c
+> @@ -203,6 +203,7 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
+>  	dbg_gen("'%pd' in dir ino %lu", dentry, dir->i_ino);
+>  
+>  	err = fscrypt_prepare_lookup(dir, dentry, &nm);
+> +	generic_set_encrypted_ci_d_ops(dentry);
+>  	if (err == -ENOENT)
+>  		return d_splice_alias(NULL, dentry);
+>  	if (err)
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index a8f7a43f031b..e72f80482671 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -741,8 +741,11 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
+>   * directory's encryption key is available, then the lookup is assumed to be by
+>   * plaintext name; otherwise, it is assumed to be by no-key name.
+>   *
+> - * This also installs a custom ->d_revalidate() method which will invalidate the
+> - * dentry if it was created without the key and the key is later added.
+> + * This will set DCACHE_NOKEY_NAME on the dentry if the lookup is by no-key
+> + * name.  In this case the filesystem must assign the dentry a dentry_operations
+> + * which contains fscrypt_d_revalidate (or contains a d_revalidate method that
+> + * calls fscrypt_d_revalidate), so that the dentry will be invalidated if the
+> + * directory's encryption key is later added.
+>   *
+>   * Return: 0 on success; -ENOENT if the directory's key is unavailable but the
+>   * filename isn't a valid no-key name, so a negative dentry should be created;
 
 -- 
-Pavel Begunkov
+Gabriel Krisman Bertazi
