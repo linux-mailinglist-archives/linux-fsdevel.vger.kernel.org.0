@@ -2,134 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4D62BC3AA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 06:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 517812BC463
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 08:31:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbgKVFMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Nov 2020 00:12:41 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40439 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726350AbgKVFMj (ORCPT
+        id S1727364AbgKVHaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Nov 2020 02:30:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbgKVHaU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Nov 2020 00:12:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606021958;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kkf8a6qy5yhhSG9mvfioRD8ySsdwKXfzz3BkGnvDRY4=;
-        b=LNX7N2c6WjQeuGNKPFqXgYx78pr1YQDkbmySPne2IYAj6zJ8omkhZ7tIMwZgy4fnw7Iszc
-        /+z+dhbP966WtRX90uW1YqG3ucn1F6k9CEAKPWGNevtQxhctn8xA2pg1AgdaisHBXq27bt
-        yJyhIn3JiFwKsNndIg3OUp6E7oFL20g=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-351-fkQdgrWGNyiB5YpHNCYFrA-1; Sun, 22 Nov 2020 00:12:34 -0500
-X-MC-Unique: fkQdgrWGNyiB5YpHNCYFrA-1
-Received: by mail-pg1-f198.google.com with SMTP id i7so4885297pgn.22
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Nov 2020 21:12:34 -0800 (PST)
+        Sun, 22 Nov 2020 02:30:20 -0500
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9AD9C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Nov 2020 23:30:19 -0800 (PST)
+Received: by mail-pg1-x543.google.com with SMTP id w4so11268107pgg.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 Nov 2020 23:30:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KYx1eNdrI2dF7Hg46yl8EzwrSDaEmC+lVYIEoOmHAZg=;
+        b=MFWHJNoutPM2IP/2KjbFlh07dajFWsb4OR5iaq7tTrbrBiv1J9ipJHp7s2T+9CIqUs
+         G4Q2B02f6N6HpHvCZmvqQtAhRbHzDe2c2HX8d6nn6lyr7MFldRlwe3VFc76kEzpEFnr3
+         mR2UY7qxIURkaNtpi7Fe7OARFhB0wpuXwb9VXc6H0bou1ALOkYZ/uQGHUrupS9WLoMXf
+         5M6BxjInvATYW4fpAAuOvy+LXdyMt/KH+73/AFs47qzgS0SKPax1Ibz9IUB95OlHmniq
+         wWFiOvlDmmTkmoTGp/+lBpNToNGrirR0vKxUY6lW3s8vwZFHA4iDBaE97V8tnAi2klQb
+         mBPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kkf8a6qy5yhhSG9mvfioRD8ySsdwKXfzz3BkGnvDRY4=;
-        b=dLxRPsYqG4lTTJaPvwtp5EVQGUj1U3w2ZFQrMU8UrvVdGF7HJTLN33L+EDvW8hOwpu
-         Ne+r5Oi40jQNr79pAZo3mNN1oBcaqbZ0N/ot/kvmA85N+NQjDrGgCu1N+OzTOW+/7m2U
-         ZtrE5e5ZOlVAmbBnuC9WsaEENuLqtgSR/HTYW8UB0652uLdeu4ws8X5eEekGbcMXRzVC
-         7et+aB9Hzs153JO78ZgcU4Fsst1zzA1pA3KZ7l6EkKTG4/Al5PlmVhb9ByHjjhHaF5fF
-         ULs4t9kLjxhHHtopy6MmgB+38mjp351vUkYEsF/QbOlNW0zWDANnjj2Sr2fIZgmHeLJC
-         4hGw==
-X-Gm-Message-State: AOAM530TBm5zGIN5AOn74CKOJlJXpq9aSOamlpjbDTGNW5ngWLu8b718
-        BwUtJF8Cs8pwKV5BDY8hSCJalZXeLd2xY+82CBqy7OP7y6a40U7VJIIGA9GODeeFGB0WszNphEt
-        LbABjqCgjqwI4a2NaUlMaybOVAQ==
-X-Received: by 2002:a63:4513:: with SMTP id s19mr22764173pga.254.1606021953659;
-        Sat, 21 Nov 2020 21:12:33 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwhkBDDpVzvwVvP6QvR7b7bk5JCtZ4ytNenw2ZosC6tbrjTUa7xakgrk4oLyDhCHqqDiw3bXw==
-X-Received: by 2002:a63:4513:: with SMTP id s19mr22764154pga.254.1606021953454;
-        Sat, 21 Nov 2020 21:12:33 -0800 (PST)
-Received: from xiangao.remote.csb ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b21sm9346038pji.24.2020.11.21.21.12.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Nov 2020 21:12:33 -0800 (PST)
-Date:   Sun, 22 Nov 2020 13:12:18 +0800
-From:   Gao Xiang <hsiangkao@redhat.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Chao Yu <chao@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH v4 2/3] fscrypt: Have filesystems handle their d_ops
-Message-ID: <20201122051218.GA2717478@xiangao.remote.csb>
-References: <20201119060904.463807-1-drosen@google.com>
- <20201119060904.463807-3-drosen@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KYx1eNdrI2dF7Hg46yl8EzwrSDaEmC+lVYIEoOmHAZg=;
+        b=rpb1067GoZHmUdXxpWQy+tt6jmn1CdLLKcwV1fUd9CnCQ65jcArRrJOS4hesu1EqoJ
+         SrTmmt6YCF6bOiHGRfU4FDqZRnKsGcrZkNxYpUNuZei16l71tcuIgJwskcDWjCekYeAe
+         KxRCJ0oAdLmd++gqsqz1mZgI37vtGHg3Yz6ZfQjhpIkNhf7occkYogNmd4sTBrRFSxZJ
+         FsxP17xR1uLUgcQGjCR+pXjrCngZyhJvAkWWhdzh4t1ZzVHa9HbsA5G3OjzDIPoB76/w
+         vEFWaP7VJE2VN6DR2FgkD5Hd8DXIHz7IQhRD6ZfC324GiNmv7LJw7izYMLLCr9PP/CL0
+         dWHw==
+X-Gm-Message-State: AOAM531hC6YjC0098nw14i7CIMwSSOwQ0XZ8PrMyvvQ4zSpMdagHJC75
+        qD0RfHiGt3PhqVY8Ka1GwO9/uYvSYxvNxuyseU9xfg==
+X-Google-Smtp-Source: ABdhPJzwOPZM4fxIMmlJL214kfq5JIf5rNiHXammfFM4uFN7bttIzKgBVBMoHgWIZEjM9tTva2o+eVDdjfOFUivMjxk=
+X-Received: by 2002:a17:90a:ae14:: with SMTP id t20mr19309393pjq.13.1606030219110;
+ Sat, 21 Nov 2020 23:30:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201119060904.463807-3-drosen@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120084202.GJ3200@dhcp22.suse.cz> <6b1533f7-69c6-6f19-fc93-c69750caaecc@redhat.com>
+ <20201120093912.GM3200@dhcp22.suse.cz> <eda50930-05b5-0ad9-2985-8b6328f92cec@redhat.com>
+ <55e53264-a07a-a3ec-4253-e72c718b4ee6@oracle.com>
+In-Reply-To: <55e53264-a07a-a3ec-4253-e72c718b4ee6@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Sun, 22 Nov 2020 15:29:40 +0800
+Message-ID: <CAMZfGtUSc6QNTy34U5GQgFMzJ6_pcYJUFZwy4hNexrGN0f0hKA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 00/21] Free some vmemmap pages of
+ hugetlb page
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+On Sat, Nov 21, 2020 at 1:47 AM Mike Kravetz <mike.kravetz@oracle.com> wrot=
+e:
+>
+> On 11/20/20 1:43 AM, David Hildenbrand wrote:
+> > On 20.11.20 10:39, Michal Hocko wrote:
+> >> On Fri 20-11-20 10:27:05, David Hildenbrand wrote:
+> >>> On 20.11.20 09:42, Michal Hocko wrote:
+> >>>> On Fri 20-11-20 14:43:04, Muchun Song wrote:
+> >>>> [...]
+> >>>>
+> >>>> Thanks for improving the cover letter and providing some numbers. I =
+have
+> >>>> only glanced through the patchset because I didn't really have more =
+time
+> >>>> to dive depply into them.
+> >>>>
+> >>>> Overall it looks promissing. To summarize. I would prefer to not hav=
+e
+> >>>> the feature enablement controlled by compile time option and the ker=
+nel
+> >>>> command line option should be opt-in. I also do not like that freein=
+g
+> >>>> the pool can trigger the oom killer or even shut the system down if =
+no
+> >>>> oom victim is eligible.
+> >>>>
+> >>>> One thing that I didn't really get to think hard about is what is th=
+e
+> >>>> effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
+> >>>> invalid when racing with the split. How do we enforce that this won'=
+t
+> >>>> blow up?
+> >>>
+> >>> I have the same concerns - the sections are online the whole time and
+> >>> anybody with pfn_to_online_page() can grab them
+> >>>
+> >>> I think we have similar issues with memory offlining when removing th=
+e
+> >>> vmemmap, it's just very hard to trigger and we can easily protect by
+> >>> grabbing the memhotplug lock.
+> >>
+> >> I am not sure we can/want to span memory hotplug locking out to all pf=
+n
+> >> walkers. But you are right that the underlying problem is similar but
+> >> much harder to trigger because vmemmaps are only removed when the
+> >> physical memory is hotremoved and that happens very seldom. Maybe it
+> >> will happen more with virtualization usecases. But this work makes it
+> >> even more tricky. If a pfn walker races with a hotremove then it would
+> >> just blow up when accessing the unmapped physical address space. For
+> >> this feature a pfn walker would just grab a real struct page re-used f=
+or
+> >> some unpredictable use under its feet. Any failure would be silent and
+> >> hard to debug.
+> >
+> > Right, we don't want the memory hotplug locking, thus discussions regar=
+ding rcu. Luckily, for now I never saw a BUG report regarding this - maybe =
+because the time between memory offlining (offline_pages()) and memory/vmem=
+map getting removed (try_remove_memory()) is just too long. Someone would h=
+ave to sleep after pfn_to_online_page() for quite a while to trigger it.
+> >
+> >>
+> >> [...]
+> >>> To keep things easy, maybe simply never allow to free these hugetlb p=
+ages
+> >>> again for now? If they were reserved during boot and the vmemmap cond=
+ensed,
+> >>> then just let them stick around for all eternity.
+> >>
+> >> Not sure I understand. Do you propose to only free those vmemmap pages
+> >> when the pool is initialized during boot time and never allow to free
+> >> them up? That would certainly make it safer and maybe even simpler wrt
+> >> implementation.
+> >
+> > Exactly, let's keep it simple for now. I guess most use cases of this (=
+virtualization, databases, ...) will allocate hugepages during boot and nev=
+er free them.
+>
+> Not sure if I agree with that last statement.  Database and virtualizatio=
+n
+> use cases from my employer allocate allocate hugetlb pages after boot.  I=
+t
+> is shortly after boot, but still not from boot/kernel command line.
+>
+> Somewhat related, but not exactly addressing this issue ...
+>
+> One idea discussed in a previous patch set was to disable PMD/huge page
+> mapping of vmemmap if this feature was enabled.  This would eliminate a b=
+unch
+> of the complex code doing page table manipulation.  It does not address
+> the issue of struct page pages going away which is being discussed here,
+> but it could be a way to simply the first version of this code.  If this
+> is going to be an 'opt in' feature as previously suggested, then eliminat=
+ing
+> the  PMD/huge page vmemmap mapping may be acceptable.  My guess is that
+> sysadmins would only 'opt in' if they expect most of system memory to be =
+used
+> by hugetlb pages.  We certainly have database and virtualization use case=
+s
+> where this is true.
 
-On Thu, Nov 19, 2020 at 06:09:03AM +0000, Daniel Rosenberg wrote:
-> This shifts the responsibility of setting up dentry operations from
-> fscrypt to the individual filesystems, allowing them to have their own
-> operations while still setting fscrypt's d_revalidate as appropriate.
-> 
-> Most filesystems can just use generic_set_encrypted_ci_d_ops, unless
-> they have their own specific dentry operations as well. That operation
-> will set the minimal d_ops required under the circumstances.
-> 
-> Since the fscrypt d_ops are set later on, we must set all d_ops there,
-> since we cannot adjust those later on. This should not result in any
-> change in behavior.
-> 
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> Acked-by: Eric Biggers <ebiggers@google.com>
-> ---
+Hi Mike,
 
-...
+Yeah, I agree with you that the first version of this feature should be
+simply. I can do that (disable PMD/huge page mapping of vmemmap)
+in the next version patch. But I have another question: what the
+problem is when struct page pages go away? I have not understood
+the issues discussed here, hope you can answer for me. Thanks.
 
->  extern const struct file_operations ext4_dir_operations;
->  
-> -#ifdef CONFIG_UNICODE
-> -extern const struct dentry_operations ext4_dentry_ops;
-> -#endif
-> -
->  /* file.c */
->  extern const struct inode_operations ext4_file_inode_operations;
->  extern const struct file_operations ext4_file_operations;
-> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-> index 33509266f5a0..12a417ff5648 100644
-> --- a/fs/ext4/namei.c
-> +++ b/fs/ext4/namei.c
-> @@ -1614,6 +1614,7 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
->  	struct buffer_head *bh;
->  
->  	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
-> +	generic_set_encrypted_ci_d_ops(dentry);
+> --
+> Mike Kravetz
 
-One thing might be worth noticing is that currently overlayfs might
-not work properly when dentry->d_sb->s_encoding is set even only some
-subdirs are CI-enabled but the others not, see generic_set_encrypted_ci_d_ops(),
-ovl_mount_dir_noesc => ovl_dentry_weird()
 
-For more details, see:
-https://android-review.googlesource.com/c/device/linaro/hikey/+/1483316/2#message-2e1f6ab0010a3e35e7d8effea73f60341f84ee4d
 
-Just found it by chance (and not sure if it's vital for now), and
-a kind reminder about this.
-
-Thanks,
-Gao Xiang
-
+--=20
+Yours,
+Muchun
