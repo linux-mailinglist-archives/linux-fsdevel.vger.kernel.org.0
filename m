@@ -2,102 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B452BFC40
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 23:36:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 276732BFC50
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Nov 2020 23:36:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbgKVWeB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Nov 2020 17:34:01 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:50298 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbgKVWeB (ORCPT
+        id S1726871AbgKVWeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Nov 2020 17:34:44 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:24420 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725788AbgKVWeo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Nov 2020 17:34:01 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id A588721F21;
-        Sun, 22 Nov 2020 17:33:55 -0500 (EST)
-Date:   Mon, 23 Nov 2020 09:33:55 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Joe Perches <joe@perches.com>
-cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tom Rix <trix@redhat.com>,
+        Sun, 22 Nov 2020 17:34:44 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-137-fQDVZIgbMS2BrZY7UtebNg-1; Sun, 22 Nov 2020 22:34:38 +0000
+X-MC-Unique: fQDVZIgbMS2BrZY7UtebNg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sun, 22 Nov 2020 22:34:37 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sun, 22 Nov 2020 22:34:37 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+CC:     Pavel Begunkov <asml.silence@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
-        clang-built-linux@googlegroups.com, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        tboot-devel@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devel@acpica.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-media@vger.kernel.org,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-mtd@lists.infradead.org,
-        keyrings@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, alsa-devel@alsa-project.org,
-        bpf@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-nfs@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [RFC] MAINTAINERS tag for cleanup robot
-In-Reply-To: <dec07021e7fc11a02b14c98b713ae2c6e2a4ca00.camel@perches.com>
-Message-ID: <alpine.LNX.2.23.453.2011230810210.7@nippy.intranet>
-References: <20201121165058.1644182-1-trix@redhat.com>         <20201122032304.GE4327@casper.infradead.org>         <ddb08a27-3ca1-fb2e-d51f-4b471f1a56a3@redhat.com>         <20201122145635.GG4327@casper.infradead.org>         <0819ce06-c462-d4df-d3d9-14931dc5aefc@redhat.com>
-         <751803306cd957d0e7ef6a4fc3dbf12ebceaba92.camel@HansenPartnership.com> <dec07021e7fc11a02b14c98b713ae2c6e2a4ca00.camel@perches.com>
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 01/29] iov_iter: Switch to using a table of operations
+Thread-Topic: [PATCH 01/29] iov_iter: Switch to using a table of operations
+Thread-Index: AQHWwQTEMI88twW4zUSLxoYAnZFgBanUtsxQ
+Date:   Sun, 22 Nov 2020 22:34:37 +0000
+Message-ID: <3ba98abf0ddb4f16af7166db201fe9c1@AcuMS.aculab.com>
+References: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
+ <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
+ <CAHk-=wjttbQzVUR-jSW-Q42iOUJtu4zCxYe9HO3ovLGOQ_3jSA@mail.gmail.com>
+ <254318.1606051984@warthog.procyon.org.uk>
+ <CAHk-=wggLYmTe5jm7nWvywcNNxUd=Vm4eGFYq8MjNZizpOzBLw@mail.gmail.com>
+In-Reply-To: <CAHk-=wggLYmTe5jm7nWvywcNNxUd=Vm4eGFYq8MjNZizpOzBLw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjIgTm92ZW1iZXIgMjAyMCAxOToyMg0KPiBT
+dWJqZWN0OiBSZTogW1BBVENIIDAxLzI5XSBpb3ZfaXRlcjogU3dpdGNoIHRvIHVzaW5nIGEgdGFi
+bGUgb2Ygb3BlcmF0aW9ucw0KPiANCj4gT24gU3VuLCBOb3YgMjIsIDIwMjAgYXQgNTozMyBBTSBE
+YXZpZCBIb3dlbGxzIDxkaG93ZWxsc0ByZWRoYXQuY29tPiB3cm90ZToNCj4gPg0KPiA+IEkgZG9u
+J3Qga25vdyBlbm91Z2ggYWJvdXQgaG93IHNwZWN0cmUgdjIgd29ya3MgdG8gc2F5IGlmIHRoaXMg
+d291bGQgYmUgYQ0KPiA+IHByb2JsZW0gZm9yIHRoZSBvcHMtdGFibGUgYXBwcm9hY2gsIGJ1dCB3
+b3VsZG4ndCBpdCBhbHNvIGFmZmVjdCB0aGUgY2hhaW4gb2YNCj4gPiBjb25kaXRpb25hbCBicmFu
+Y2hlcyB0aGF0IHdlIGN1cnJlbnRseSB1c2UsIHNpbmNlIGl0J3MgYnJhbmNoLXByZWRpY3Rpb24N
+Cj4gPiBiYXNlZD8NCj4gDQo+IE5vLCByZWd1bGFyIGNvbmRpdGlvbmFsIGJyYW5jaGVzIGFyZW4n
+dCBhIHByb2JsZW0uIFllcywgdGhleSBtYXkNCj4gbWlzcHJlZGljdCwgYnV0IG91dHNpZGUgb2Yg
+YSBmZXcgdmVyeSByYXJlIGNhc2VzIHRoYXQgd2UgaGFuZGxlDQo+IHNwZWNpYWxseSwgdGhhdCdz
+IG5vdCBhbiBpc3N1ZS4NCj4gDQo+IFdoeT8gQmVjYXVzZSB0aGV5IGFsd2F5cyBtaXNwcmVkaWN0
+IHRvIG9uZSBvciB0aGUgb3RoZXIgc2lkZSwgc28gdGhlDQo+IGNvZGUgZmxvdyBtYXkgYmUgbWlz
+LXByZWRpY3RlZCwgYnV0IGl0IGlzIGZhaXJseSBjb250cm9sbGVkLg0KPiANCj4gSW4gY29udHJh
+c3QsIGFuIGluZGlyZWN0IGp1bXAgY2FuIG1pc3ByZWRpY3QgdGhlIHRhcmdldCwgYW5kIGJyYW5j
+aA0KPiBfYW55d2hlcmVfLCBhbmQgdGhlIGF0dGFjayB2ZWN0b3JzIGNhbiBwb2lzb24gdGhlIEJU
+QiAoYnJhbmNoIHRhcmdldA0KPiBidWZmZXIpLCBzbyBvdXIgbWl0aWdhdGlvbiBmb3IgdGhhdCBp
+cyB0aGF0IGV2ZXJ5IHNpbmdsZSBpbmRpcmVjdA0KPiBicmFuY2ggaXNuJ3QgcHJlZGljdGVkIGF0
+IGFsbCAodXNpbmcgInJldHBvbGluZSIpLg0KPiANCj4gU28gYSBjb25kaXRpb25hbCBicmFuY2gg
+dGFrZXMgemVybyBjeWNsZXMgd2hlbiBwcmVkaWN0ZWQgKGFuZCBtb3N0DQo+IHdpbGwgcHJlZGlj
+dCBxdWl0ZSB3ZWxsKS4gQW5kIGFzIERhdmlkIExhaWdodCBwb2ludGVkIG91dCBhIGNvbXBpbGVy
+DQo+IGNhbiBhbHNvIHR1cm4gYSBzZXJpZXMgb2YgY29uZGl0aW9uYWwgYnJhbmNoZXMgaW50byBh
+IHRyZWUsIG1lYW5zIHRoYXQNCj4gTiBjb25kaXRpb25hbCBicmFuY2hlcyBiYXNpY2FsbHkgb25s
+eSBuZWVkcyBsb2cyKE4pIGNvbmRpdGlvbmFscw0KPiBleGVjdXRlZC4NCg0KVGhlIGNvbXBpbGVy
+IGNhbiBjb252ZXJ0IGEgc3dpdGNoIHN0YXRlbWVudCBpbnRvIGEgYnJhbmNoIHRyZWUuDQpCdXQg
+SSBkb24ndCB0aGluayBpdCBjYW4gY29udmVydCB0aGUgJ2lmIGNoYWluJyBpbiB0aGUgY3VycmVu
+dCBjb2RlDQp0byBvbmUuDQoNClRoZXJlIGlzIGFsc28gdGhlIHByb2JsZW0gdGhhdCBzb21lIHg4
+NiBjcHUgY2FuJ3QgcHJlZGljdCBicmFuY2hlcw0KaWYgdG9vIG1hbnkgaGFwcGVuIGluIHRoZSBz
+YW1lIGNhY2hlIGxpbmUgKG9yIHNpbWlsYXIpLg0KDQo+IEluIGNvbnRyYXN0LCB3aXRoIHJldHBv
+bGluZSBpbiBwbGFjZSwgYW4gaW5kaXJlY3QgYnJhbmNoIHdpbGwNCj4gYmFzaWNhbGx5IGFsd2F5
+cyB0YWtlIHNvbWV0aGluZyBsaWtlIDI1LTMwIGN5Y2xlcywgYmVjYXVzZSBpdCBhbHdheXMNCj4g
+bWlzcHJlZGljdHMuDQoNCkkgYWxzbyB3b25kZXIgaWYgYSByZXRwb2xpbmUgYWxzbyB0cmFzaGVz
+IHRoZSByZXR1cm4gc3RhY2sgb3B0aW1pc2F0aW9uLg0KKElmIHRoYXQgaXMgZXZlciByZWFsbHkg
+YSBzaWduaWZpY2FudCBnYWluIGZvciByZWFsIGZ1bmN0aW9ucy4pDQogDQouLi4NCj4gU28gdGhp
+cyBpcyBub3QgaW4gYW55IHdheSAiaW5kaXJlY3QgYnJhbmNoZXMgYXJlIGJhZCIuIEl0J3MgbW9y
+ZSBvZiBhDQo+ICJpbmRpcmVjdCBicmFuY2hlcyByZWFsbHkgYXJlbid0IG5lY2Vzc2FyaWx5IGJl
+dHRlciB0aGFuIGEgY291cGxlIG9mDQo+IGNvbmRpdGlvbmFscywgYW5kIF9tYXlfIGJlIG11Y2gg
+d29yc2UiLg0KDQpFdmVuIHdpdGhvdXQgcmV0cG9saW5lcywgdGhlIGp1bXAgdGFibGUgaXMgbGlr
+ZWx5IHRvIGEgZGF0YS1jYWNoZQ0KbWlzcyAoYW5kIG1heWJlIGEgVExCIG1pc3MpIHVubGVzcyB5
+b3UgYXJlIHJ1bm5pbmcgaG90LWNhY2hlLg0KVGhhdCBpcyBwcm9iYWJseSBhbiBleHRyYSBjYWNo
+ZSBtaXNzIG9uIHRvcCBvZiB0aGUgSS1jYWNoZSBvbmVzLg0KRXZlbiB3b3JzZSBpZiB5b3UgZW5k
+IHVwIHdpdGggdGhlIGp1bXAgdGFibGUgbmVhciB0aGUgY29kZQ0Kc2luY2UgdGhlIGRhdGEgY2Fj
+aGUgbGluZSBhbmQgVExCIG1pZ2h0IG5ldmVyIGJlIHNoYXJlZC4NCg0KU28gYSB2ZXJ5IHNob3J0
+IHN3aXRjaCBzdGF0ZW1lbnQgaXMgbGlrZWx5IHRvIGJlIGJldHRlciBhcw0KY29uZGl0aW9uYWwg
+anVtcHMgYW55d2F5Lg0KDQo+IEZvciBleGFtcGxlLCBsb29rIGF0IHRoaXMgZ2NjIGJ1Z3ppbGxh
+Og0KPiANCj4gICAgIGh0dHBzOi8vZ2NjLmdudS5vcmcvYnVnemlsbGEvc2hvd19idWcuY2dpP2lk
+PTg2OTUyDQo+IA0KPiB3aGljaCBiYXNpY2FsbHkgaXMgYWJvdXQgdGhlIGNvbXBpbGVyIGdlbmVy
+YXRpbmcgYSBqdW1wIHRhYmxlIChpcyBhDQo+IHNpbmdsZSBpbmRpcmVjdCBicmFuY2gpIHZzIGEg
+c2VyaWVzIG9mIGNvbmRpdGlvbmFsIGJyYW5jaGVzLiBXaXRoDQo+IHJldHBvbGluZSwgdGhlIGNy
+b3NzLW92ZXIgcG9pbnQgaXMgYmFzaWNhbGx5IHdoZW4geW91IG5lZWQgdG8gaGF2ZQ0KPiBvdmVy
+IDEwIGNvbmRpdGlvbmFsIGJyYW5jaGVzIC0gYW5kIGJlY2F1c2Ugb2YgdGhlIGxvZzIoTikgYmVo
+YXZpb3IsDQo+IHRoYXQncyBhcm91bmQgYSB0aG91c2FuZCBjYXNlcyENCg0KVGhhdCB3YXMgYSBo
+b3QtY2FjaGUgdGVzdC4NCkNvbGQtY2FjaGUgaXMgbGlrZWx5IHRvIGZhdm91ciB0aGUgcmV0cG9s
+aW5lIGEgbGl0dGxlIHNvb25lci4NCihBbmQgdGhlIHJldHBvbGluZSAocHJvYmJhbHkpIHdvbid0
+IGJlIChtdWNoKSB3b3JzZSB0aGFuIHRoZQ0KbWlkLXByZWRpY3RlZCBpbmRpcmVjdCBqdW1wLg0K
+DQpJIGRvIHdvbmRlciBob3cgbXVjaCBvZiB0aGUga2VybmVsIGFjdHVhbGx5IHJ1bnMgaG90LWNh
+Y2hlPw0KRXhjZXB0IGZvciBwYXJ0cyB0aGF0IGV4cGxpY2l0bHkgcnVuIHRoaW5ncyBpbiBidXJz
+dHMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkg
+Um9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlv
+biBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-On Sun, 22 Nov 2020, Joe Perches wrote:
-
-> On Sun, 2020-11-22 at 08:49 -0800, James Bottomley wrote:
-> > We can enforce sysfs_emit going forwards
-> > using tools like checkpatch
-> 
-> It's not really possible for checkpatch to find or warn about
-> sysfs uses of sprintf. checkpatch is really just a trivial
-> line-by-line parser and it has no concept of code intent.
-> 
-
-Checkpatch does suffer from the limitations of regular expressions. But 
-that doesn't stop people from using it. Besides, Coccinelle can do 
-analyses that can't be done with regular expressions, so it's moot.
-
-> It just can't warn on every use of the sprintf family.
-> There are just too many perfectly valid uses.
-> 
-> > but there's no benefit and a lot of harm to
-> > be done by trying to churn the entire tree
-> 
-> Single uses of sprintf for sysfs is not really any problem.
-> 
-> But likely there are still several possible overrun sprintf/snprintf
-> paths in sysfs.  Some of them are very obscure and unlikely to be
-> found by a robot as the logic for sysfs buf uses can be fairly twisty.
-> 
-
-Logic errors of this kind are susceptible to fuzzing, formal methods, 
-symbolic execution etc. No doubt there are other techniques that I don't 
-know about.
-
-> But provably correct conversions IMO _should_ be done and IMO churn 
-> considerations should generally have less importance.
-> 
-
-Provably equivalent conversions are provably churn. So apparently you're 
-advocating changes that are not provably equivalent.
-
-These are patches for code not that's not been shown to be buggy. Code 
-which, after patching, can be shown to be free of a specific kind of 
-theoretical bug. Hardly "provably correct".
-
-The problem is, the class of theoretical bugs that can be avoided in this 
-way is probably limitless, as is the review cost and the risk of 
-accidental regressions. And the payoff is entirely theoretical.
-
-Moreover, the patch review workload for skilled humans is being generated 
-by the automation, which is completely backwards: the machine is supposed 
-to be helping.
