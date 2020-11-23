@@ -2,165 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C133A2C10C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 17:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0C72C1106
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 17:49:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390125AbgKWQhk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 11:37:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390135AbgKWQhk (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 11:37:40 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B4F1C061A4D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 08:37:38 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id t18so9126835plo.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 08:37:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=NPDzcaiioinbI0xutHnN4ITCAksvO7VM/A7YfnKL3t8=;
-        b=IWpb9+t2hLMs3fQI31fe2Fh2XpE6OdjGahRcNeGWK1DgJW8519oFS2F3XMpFF8Ss+b
-         n4hivcJix+7wt7lMfwfQRU23sddw6DmCK5J0ywMiEdvF/tUD+iWYsHWGJeqJRTKoVrUe
-         yRBKbdZLCvj55JXALrX8zd66EdyXLdcFn1h6WGpy+dveqIni2Sk4VAjm6X33y9oV5axh
-         elmG5Ek7a1hP5S/5Bh/aSH7q7z02o/6gKmT3pQWou8EznyZYsQnL/mcFl4TvS5rGsGyp
-         TvEEpVSzA3wp7AyKGqB7bLn2fYjX+q20+hDTOcAM23jti1baTGOqOQ4N7/wrpAyHiE/p
-         pqCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NPDzcaiioinbI0xutHnN4ITCAksvO7VM/A7YfnKL3t8=;
-        b=WijJU3K+WAWxxFOhvukDM2bIeG54/es5iJZH93IXMYNxxdsEilKdRY1qUmCVB2k0nO
-         4+HjpASpJ9ntVJ4k9WS+svpISAmFtV/PwVhxZitvG020+O59lDAd4f49clk/OTJmhATZ
-         /OTYV7AnaKGTx/htVv7tLWN/U8X1KudyqYexUFa2/AuhbXnbdKwc55DoznVyhQX9R3sn
-         31Vv2uPnb3pmdyJqODdKofB3GdkpqyflVfyCJoOICeW6Ve/ZXWqzKV1iZc0n9yxLXcZa
-         C2mPMzaxYvoW7cGSLJlyESI2OTHzph4r3oD4TJZcEJdZtdh7xpwA4v4SH4nDaOeYafkl
-         sArQ==
-X-Gm-Message-State: AOAM530NTeUT8P25+HcNs0E4bqh/ucOX0N9lcImMTFr3nNu1PEwsSYxJ
-        mVu2scd3J0HF7KTWdyItKLjsQw==
-X-Google-Smtp-Source: ABdhPJx3ImtYlkkbvp/jmFrOIcNG+vTvqV/MgveRUGMO+vUIm16Ij5kjths7BenX7cWWt8ifPFF1QA==
-X-Received: by 2002:a17:902:bc8c:b029:d8:efb7:ae74 with SMTP id bb12-20020a170902bc8cb02900d8efb7ae74mr306721plb.10.1606149457725;
-        Mon, 23 Nov 2020 08:37:37 -0800 (PST)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u6sm5647015pjn.56.2020.11.23.08.37.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2020 08:37:36 -0800 (PST)
-Subject: Re: inconsistent lock state in io_file_data_ref_zero
-To:     syzbot <syzbot+1f4ba1e5520762c523c6@syzkaller.appspotmail.com>,
-        davem@davemloft.net, io-uring@vger.kernel.org,
-        johannes.berg@intel.com, johannes@sipsolutions.net,
-        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <000000000000f3332805b4c330c3@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <948d2d3b-5f36-034d-28e6-7490343a5b59@kernel.dk>
-Date:   Mon, 23 Nov 2020 09:37:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S2390190AbgKWQqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 11:46:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46238 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732672AbgKWQqZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Nov 2020 11:46:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0C2A1AC24;
+        Mon, 23 Nov 2020 16:46:23 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A0FE81E130F; Mon, 23 Nov 2020 17:46:22 +0100 (CET)
+Date:   Mon, 23 Nov 2020 17:46:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     =?utf-8?B?UGF3ZcWC?= Jasiak <pawel@jasiak.xyz>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: PROBLEM: fanotify_mark EFAULT on x86
+Message-ID: <20201123164622.GJ27294@quack2.suse.cz>
+References: <20201101212738.GA16924@gmail.com>
+ <20201102122638.GB23988@quack2.suse.cz>
+ <20201103211747.GA3688@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <000000000000f3332805b4c330c3@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="Fba/0zbH8Xs+Fj9o"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201103211747.GA3688@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/23/20 2:55 AM, syzbot wrote:
-> Hello,
+
+--Fba/0zbH8Xs+Fj9o
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+On Tue 03-11-20 22:17:47, Paweł Jasiak wrote:
+> I have written small patch that fixes problem for me and doesn't break
+> x86_64.
+
+OK, with a help of Boris Petkov I think I have a fix that looks correct
+(attach). Can you please try whether it works for you? Thanks!
+
+								Honza
+
 > 
-> syzbot found the following issue on:
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 3e01d8f2ab90..cf0b97309975 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1285,12 +1285,27 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	return ret;
+>  }
+>  
+> +#if defined(CONFIG_X86) && !defined(CONFIG_64BIT)
+> +SYSCALL_DEFINE6(fanotify_mark,
+> +			int, fanotify_fd, unsigned int, flags, __u32, mask0,
+> +			__u32, mask1, int, dfd, const char  __user *, pathname)
+> +{
+> +	return do_fanotify_mark(fanotify_fd, flags,
+> +#ifdef __BIG_ENDIAN
+> +				((__u64)mask0 << 32) | mask1,
+> +#else
+> +				((__u64)mask1 << 32) | mask0,
+> +#endif
+> +				 dfd, pathname);
+> +}
+> +#else
+>  SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
+>  			      __u64, mask, int, dfd,
+>  			      const char  __user *, pathname)
+>  {
+>  	return do_fanotify_mark(fanotify_fd, flags, mask, dfd, pathname);
+>  }
+> +#endif
+>  
+>  #ifdef CONFIG_COMPAT
+>  COMPAT_SYSCALL_DEFINE6(fanotify_mark,
 > 
-> HEAD commit:    27bba9c5 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11041f1e500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=330f3436df12fd44
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1f4ba1e5520762c523c6
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d9b775500000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157e4f75500000
 > 
-> The issue was bisected to:
+> -- 
 > 
-> commit dcd479e10a0510522a5d88b29b8f79ea3467d501
-> Author: Johannes Berg <johannes.berg@intel.com>
-> Date:   Fri Oct 9 12:17:11 2020 +0000
-> 
->     mac80211: always wind down STA state
-
-Not sure what is going on with the syzbot bisects recently, they are way
-off into the weeds...
-
-Anyway, I think the below should fix it.
-
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 489ec7272b3e..0f2abbff7eec 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7194,9 +7181,9 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 	if (!data)
- 		return -ENXIO;
- 
--	spin_lock(&data->lock);
-+	spin_lock_bh(&data->lock);
- 	ref_node = data->node;
--	spin_unlock(&data->lock);
-+	spin_unlock_bh(&data->lock);
- 	if (ref_node)
- 		percpu_ref_kill(&ref_node->refs);
- 
-@@ -7578,7 +7565,7 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
- 	data = ref_node->file_data;
- 	ctx = data->ctx;
- 
--	spin_lock(&data->lock);
-+	spin_lock_bh(&data->lock);
- 	ref_node->done = true;
- 
- 	while (!list_empty(&data->ref_list)) {
-@@ -7590,7 +7577,7 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
- 		list_del(&ref_node->node);
- 		first_add |= llist_add(&ref_node->llist, &ctx->file_put_llist);
- 	}
--	spin_unlock(&data->lock);
-+	spin_unlock_bh(&data->lock);
- 
- 	if (percpu_ref_is_dying(&data->refs))
- 		delay = 0;
-@@ -7713,9 +7700,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	}
- 
- 	file_data->node = ref_node;
--	spin_lock(&file_data->lock);
-+	spin_lock_bh(&file_data->lock);
- 	list_add_tail(&ref_node->node, &file_data->ref_list);
--	spin_unlock(&file_data->lock);
-+	spin_unlock_bh(&file_data->lock);
- 	percpu_ref_get(&file_data->refs);
- 	return ret;
- out_fput:
-@@ -7872,10 +7859,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 
- 	if (needs_switch) {
- 		percpu_ref_kill(&data->node->refs);
--		spin_lock(&data->lock);
-+		spin_lock_bh(&data->lock);
- 		list_add_tail(&ref_node->node, &data->ref_list);
- 		data->node = ref_node;
--		spin_unlock(&data->lock);
-+		spin_unlock_bh(&data->lock);
- 		percpu_ref_get(&ctx->file_data->refs);
- 	} else
- 		destroy_fixed_file_ref_node(ref_node);
-
-
+> Paweł Jasiak
 -- 
-Jens Axboe
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
+--Fba/0zbH8Xs+Fj9o
+Content-Type: text/x-patch; charset=utf-8
+Content-Disposition: attachment; filename="0001-fanotify-Fix-fanotify_mark-on-32-bit-archs.patch"
+Content-Transfer-Encoding: 8bit
+
+From fc9104a50a774ec198c1e3a145372cde77df7967 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 23 Nov 2020 17:37:00 +0100
+Subject: [PATCH] fanotify: Fix fanotify_mark() on 32-bit archs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit converting syscalls taking 64-bit arguments to new scheme of compat
+handlers omitted converting fanotify_mark(2) which then broke the
+syscall for 32-bit ABI. Add missed conversion.
+
+CC: Brian Gerst <brgerst@gmail.com>
+Suggested-by: Borislav Petkov <bp@suse.de>
+Reported-by: Paweł Jasiak <pawel@jasiak.xyz>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Fixes: 121b32a58a3a ("x86/entry/32: Use IA32-specific wrappers for syscalls taking 64-bit arguments")
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
+ fs/notify/fanotify/fanotify_user.c     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 0d0667a9fbd7..b2ec6ff88307 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -350,7 +350,7 @@
+ 336	i386	perf_event_open		sys_perf_event_open
+ 337	i386	recvmmsg		sys_recvmmsg_time32		compat_sys_recvmmsg_time32
+ 338	i386	fanotify_init		sys_fanotify_init
+-339	i386	fanotify_mark		sys_fanotify_mark		compat_sys_fanotify_mark
++339	i386	fanotify_mark		sys_ia32_fanotify_mark
+ 340	i386	prlimit64		sys_prlimit64
+ 341	i386	name_to_handle_at	sys_name_to_handle_at
+ 342	i386	open_by_handle_at	sys_open_by_handle_at		compat_sys_open_by_handle_at
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 3e01d8f2ab90..e20e7b53a87f 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1293,7 +1293,7 @@ SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
+ }
+ 
+ #ifdef CONFIG_COMPAT
+-COMPAT_SYSCALL_DEFINE6(fanotify_mark,
++SYSCALL_DEFINE6(ia32_fanotify_mark,
+ 				int, fanotify_fd, unsigned int, flags,
+ 				__u32, mask0, __u32, mask1, int, dfd,
+ 				const char  __user *, pathname)
+-- 
+2.16.4
+
+
+--Fba/0zbH8Xs+Fj9o--
