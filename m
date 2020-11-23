@@ -2,121 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B02F12C0ED7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 16:33:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E65B2C0F63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 16:56:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732322AbgKWP2l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 10:28:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36794 "EHLO mail.kernel.org"
+        id S2387598AbgKWPwh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 10:52:37 -0500
+Received: from mga04.intel.com ([192.55.52.120]:3310 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732043AbgKWP2k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 10:28:40 -0500
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97678221F1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 15:28:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606145319;
-        bh=brIo8Xk+cpg0T6s0IpQa46LwLk4mVPqFLLwG7n90WGU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=NQZmlnHOZiaM7ybcSwWzusNQy1pIzNLZhcrN2FxiI5VI77KySCK6gXqHvbc4GeRrP
-         YSCkK4YhIEwNNqxjz0cYUoQdSP0hpYXSadkkeXAKDctf0PJDujPReGf2go++Ttg8qu
-         rA7cZa4607GuG26Tp3k6RmHtRqCHyFe1H0bZsEVY=
-Received: by mail-wm1-f44.google.com with SMTP id h21so17621387wmb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 07:28:39 -0800 (PST)
-X-Gm-Message-State: AOAM531lZBhQpQVrftL+cYRaXDWzRPcWw1Sq+rub6JTdoDyvovg7SAP+
-        0RUik/gs9Rj9n9IbaTj76ty4OpjI5FBKlz1x/rMMpw==
-X-Google-Smtp-Source: ABdhPJzEhjqlImvathm/jOwbcq17IbRsly+UVqGOW3wf5Zw5ZyQfK4pkOn8rE+oX1x7EWd6oQaZF3bxA3Eqxcxk30tI=
-X-Received: by 2002:a1c:e0c3:: with SMTP id x186mr24542133wmg.21.1606145315717;
- Mon, 23 Nov 2020 07:28:35 -0800 (PST)
+        id S1732814AbgKWPwg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Nov 2020 10:52:36 -0500
+IronPort-SDR: wdIVWjG4qt3kkvZFlTfNHJ1qSha0XKAk2CxPFx4fu9uvtz0EoQNlcxjxuegxxUzv7XWLNMv6N9
+ dwo6ar0lSANA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9813"; a="169224209"
+X-IronPort-AV: E=Sophos;i="5.78,363,1599548400"; 
+   d="scan'208";a="169224209"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 07:52:35 -0800
+IronPort-SDR: o6LRPZSLFHblJ72nLIxI7QtuEJsSPQd11jVZTPC9b01xjBsR6V5ML2IOh4GsWUUm1pKbyVJ0KQ
+ V9qBxJqg/0zw==
+X-IronPort-AV: E=Sophos;i="5.78,363,1599548400"; 
+   d="scan'208";a="546463497"
+Received: from suygunge-mobl.ger.corp.intel.com (HELO localhost) ([10.249.40.108])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 07:52:23 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        trix@redhat.com, joe@perches.com,
+        clang-built-linux@googlegroups.com
+Cc:     linux-hyperv@vger.kernel.org, kvm@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        platform-driver-x86@vger.kernel.org,
+        ibm-acpi-devel@lists.sourceforge.net, keyrings@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-scsi@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, cluster-devel@redhat.com,
+        linux-acpi@vger.kernel.org, tboot-devel@lists.sourceforge.net,
+        coreteam@netfilter.org, xen-devel@lists.xenproject.org,
+        MPT-FusionLinux.pdl@broadcom.com, linux-media@vger.kernel.org,
+        alsa-devel@alsa-project.org, intel-gfx@lists.freedesktop.org,
+        ecryptfs@vger.kernel.org, linux-omap@vger.kernel.org,
+        devel@acpica.org, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [RFC] MAINTAINERS tag for cleanup robot
+In-Reply-To: <5843ef910b0e86c00d9c0143dec20f93823b016b.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20201121165058.1644182-1-trix@redhat.com> <5843ef910b0e86c00d9c0143dec20f93823b016b.camel@HansenPartnership.com>
+Date:   Mon, 23 Nov 2020 17:52:20 +0200
+Message-ID: <87y2ism5or.fsf@intel.com>
 MIME-Version: 1.0
-References: <20201123095432.5860-1-rppt@kernel.org>
-In-Reply-To: <20201123095432.5860-1-rppt@kernel.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 23 Nov 2020 07:28:22 -0800
-X-Gmail-Original-Message-ID: <CALCETrXr-9ABs7rzXcCrh1VXn-15AfpwjA6bQA7aU9Ta7DR+bw@mail.gmail.com>
-Message-ID: <CALCETrXr-9ABs7rzXcCrh1VXn-15AfpwjA6bQA7aU9Ta7DR+bw@mail.gmail.com>
-Subject: Re: [PATCH v10 0/9] mm: introduce memfd_secret system call to create
- "secret" memory areas
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Roman Gushchin <guro@fb.com>, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-riscv@lists.infradead.org, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 23, 2020 at 1:54 AM Mike Rapoport <rppt@kernel.org> wrote:
+On Sat, 21 Nov 2020, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> On Sat, 2020-11-21 at 08:50 -0800, trix@redhat.com wrote:
+>> A difficult part of automating commits is composing the subsystem
+>> preamble in the commit log.  For the ongoing effort of a fixer
+>> producing
+>> one or two fixes a release the use of 'treewide:' does not seem
+>> appropriate.
+>> 
+>> It would be better if the normal prefix was used.  Unfortunately
+>> normal is
+>> not consistent across the tree.
+>> 
+>> 
+>> 	D: Commit subsystem prefix
+>> 
+>> ex/ for FPGA DFL DRIVERS
+>> 
+>> 	D: fpga: dfl:
+>> 
 >
-> From: Mike Rapoport <rppt@linux.ibm.com>
->
-> Hi,
->
-> This is an implementation of "secret" mappings backed by a file descriptor.
->
-> The file descriptor backing secret memory mappings is created using a
-> dedicated memfd_secret system call The desired protection mode for the
-> memory is configured using flags parameter of the system call. The mmap()
-> of the file descriptor created with memfd_secret() will create a "secret"
-> memory mapping. The pages in that mapping will be marked as not present in
-> the direct map and will have desired protection bits set in the user page
-> table. For instance, current implementation allows uncached mappings.
+> I've got to bet this is going to cause more issues than it solves.
 
-I'm still not ready to ACK uncached mappings on x86.  I'm fine with
-the concept of allowing privileged users to create UC memory on x86
-for testing and experimentation, but it's a big can of worms in
-general.  The issues that immediately come to mind are:
+Agreed.
 
-- Performance and DoS potential.  UC will have bizarre, architecture-
-and platform-dependent performance characteristics.  For all I know,
-even the access semantics might be architecture dependent.  I'm not
-convinced it's possible to write portable code in C using the uncached
-feature.  I'm also concerned that certain operation (unaligned locks,
-for example, and possibly any locked access) will trigger bus locks on
-x86, which, depending on CPU and kernel config will either DoS all
-other CPUs or send signals.  (Or cause the hypervisor to terminate or
-otherwise penalize the the VM, which would be nasty.)
+> SCSI uses scsi: <driver>: for drivers but not every driver has a
+> MAINTAINERS entry.  We use either scsi: or scsi: core: for mid layer
+> things, but we're not consistent.  Block uses blk-<something>: for all
+> of it's stuff but almost no <somtehing>s have a MAINTAINERS entry.  So
+> the next thing you're going to cause is an explosion of suggested
+> MAINTAINERs entries.
 
- - Correctness.  I have reports that different x86 hypervisors do
-different things with UC mappings, including treating them as regular
-WB mappings.  So the memory type you get out when you ask for
-"uncached" might not actually be uncached.
+On the one hand, adoption of new MAINTAINERS entries has been really
+slow. Look at B, C, or P, for instance. On the other hand, if this were
+to get adopted, you'll potentially get conflicting prefixes for patches
+touching multiple files. Then what?
 
-UC is really an MMIO feature, not a "protect my data" feature.
-Abusing it to protect data is certainly interesting, but I'm far from
-convinced that it's wise.  I'm especially unconvinced that
-monkey-patching a program to use uncached memory when it expects
-regular malloced memory is a reasonable thing to do.
+I'm guessing a script looking at git log could come up with better
+suggestions for prefixes via popularity contest than manually maintained
+MAINTAINERS entries. It might not always get it right, but then human
+outsiders aren't going to always get it right either.
+
+Now you'll only need Someone(tm) to write the script. ;)
+
+Something quick like this:
+
+git log --since={1year} --pretty=format:%s -- <FILES> |\
+	grep -v "^\(Merge\|Revert\)" |\
+        sed 's/:[^:]*$//' |\
+        sort | uniq -c | sort -rn | head -5
+
+already gives me results that really aren't worse than some of the
+prefixes invented by drive-by contributors.
+
+> Has anyone actually complained about treewide:?
+
+As Joe said, I'd feel silly applying patches to drivers with that
+prefix. If it gets applied by someone else higher up, literally
+treewide, then no complaints.
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
