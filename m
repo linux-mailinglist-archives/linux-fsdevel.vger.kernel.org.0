@@ -2,89 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B93C2BFDCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 01:54:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A649D2BFE8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 04:16:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgKWAyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Nov 2020 19:54:08 -0500
-Received: from smtprelay0002.hostedemail.com ([216.40.44.2]:50256 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725782AbgKWAyH (ORCPT
+        id S1727590AbgKWDPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Nov 2020 22:15:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727440AbgKWDPh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Nov 2020 19:54:07 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 2D37318029125;
-        Mon, 23 Nov 2020 00:54:05 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:4250:4321:4425:5007:6119:6691:6742:6743:7903:10004:10400:10848:11026:11232:11658:11914:12296:12297:12555:12740:12760:12895:13069:13161:13229:13311:13357:13439:14659:14721:21080:21433:21627:21740:30041:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: steam95_4513bd127361
-X-Filterd-Recvd-Size: 3177
-Received: from XPS-9350.home (unknown [47.151.128.180])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 23 Nov 2020 00:53:59 +0000 (UTC)
-Message-ID: <21826b6d513c4d9ccc795179c1edb0df2361d870.camel@perches.com>
-Subject: Re: [RFC] MAINTAINERS tag for cleanup robot
-From:   Joe Perches <joe@perches.com>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tom Rix <trix@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        clang-built-linux@googlegroups.com, linux-hyperv@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        tboot-devel@lists.sourceforge.net, kvm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-acpi@vger.kernel.org,
-        devel@acpica.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        netdev@vger.kernel.org, linux-media@vger.kernel.org,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        ibm-acpi-devel@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        ecryptfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-mtd@lists.infradead.org,
-        keyrings@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, alsa-devel@alsa-project.org,
-        bpf@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-nfs@vger.kernel.org, patches@opensource.cirrus.com
-Date:   Sun, 22 Nov 2020 16:53:58 -0800
-In-Reply-To: <alpine.LNX.2.23.453.2011230810210.7@nippy.intranet>
-References: <20201121165058.1644182-1-trix@redhat.com>
-                 <20201122032304.GE4327@casper.infradead.org>
-                 <ddb08a27-3ca1-fb2e-d51f-4b471f1a56a3@redhat.com>
-                 <20201122145635.GG4327@casper.infradead.org>
-                 <0819ce06-c462-d4df-d3d9-14931dc5aefc@redhat.com>
-         <751803306cd957d0e7ef6a4fc3dbf12ebceaba92.camel@HansenPartnership.com>
-         <dec07021e7fc11a02b14c98b713ae2c6e2a4ca00.camel@perches.com>
-         <alpine.LNX.2.23.453.2011230810210.7@nippy.intranet>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.38.1-1 
+        Sun, 22 Nov 2020 22:15:37 -0500
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39F2C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Nov 2020 19:15:36 -0800 (PST)
+Received: by mail-pg1-x544.google.com with SMTP id v21so12957485pgi.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Nov 2020 19:15:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1PkJLLTHTHGvD+6CtGT0JeNBynTOmH00lzXh1tBHgdk=;
+        b=AXE3qcuKn7MS7+bY1HUIYsfwTG1XJGA7xLViJTzXwgBVDETzOpmegz5ECIjDn2PI6h
+         zrcfQeSm3Vptg3QLVl59UvnleVo11+Y/AKzjtWAFtcwkXUVGQfDwiF7QYd4CD4cGmN4w
+         xioSYxW5L0BNvgRH3OJCAGFpx9iArOMLbfFhG0D78VIA8qMjQaKbSGu8OrRIJWaTFGzR
+         wxtcXQR5QVGAablFJ6/mYQWeToPYeHaoIkBTLfHglYGcZvgIorxjZUYtuAMzI/o7lyF6
+         0olX85dcFaO+Bt/dg9cNtpdq9kfu2AUcn0374Vr8dOaSvp90AbUGXjb3wimXzUg1dxyy
+         N/gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1PkJLLTHTHGvD+6CtGT0JeNBynTOmH00lzXh1tBHgdk=;
+        b=f4/rj6dxF41eYMEM61W8bNLXGPE2T8dfeGVlYBX3zNbTfXaR8E2X0icnYSzUhmXx4+
+         PlNqW8ss8PcwvSM+3T6b7gHe7w54UKhWRI0wmUUjYIjYWGqLK8SiYg8QgYa2GN2bg6iJ
+         87Hjte778Ib1lkXAg+h6ZWwa2Iac2ahtXi5EPjcEhvGPHZx8RpRUPDwdeE2etNBhDOCR
+         EsL+/Mg6KTQi0MsCqW9VlLqJGIIfl/KnigjqsZb8ZDDn2qh/Oi7Rc2wGb8bdk/8kyP+v
+         UPkA4hh1ZF5MWtHSFuoixu92aZLE+7IpkqQiiyZQt6+eAG9D3ysMEDgW+TsRKy9fRx+w
+         GoXg==
+X-Gm-Message-State: AOAM532Bo+hIR5mVF9GxSgSEQ2L5wWKwBnn4ZWqOGVshCuZVnbjHoGww
+        6hBgy2SQnpMzgFin9CuMMJHQzYVHsHl9mmeIvOmstw==
+X-Google-Smtp-Source: ABdhPJxKovdhcbkAgrBDEdjMU7ZJHmMEXN8Mq3F1RYkM6JeOu075ftsAAt6nPr79OpJpAUY1RCGxxxOksG4bUMsVeKQ=
+X-Received: by 2002:a63:594a:: with SMTP id j10mr25427312pgm.341.1606101336098;
+ Sun, 22 Nov 2020 19:15:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120064325.34492-22-songmuchun@bytedance.com> <20201120082552.GI3200@dhcp22.suse.cz>
+ <20201122190002.GH4327@casper.infradead.org>
+In-Reply-To: <20201122190002.GH4327@casper.infradead.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 23 Nov 2020 11:14:59 +0800
+Message-ID: <CAMZfGtW9drQ7OBhf0wMG4joVz=5UAN1d8P=GQxs2M4MjKoBwxw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 21/21] mm/hugetlb: Disable freeing
+ vmemmap if struct page size is not power of two
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-11-23 at 09:33 +1100, Finn Thain wrote:
-> On Sun, 22 Nov 2020, Joe Perches wrote:
+On Mon, Nov 23, 2020 at 3:00 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Nov 20, 2020 at 09:25:52AM +0100, Michal Hocko wrote:
+> > On Fri 20-11-20 14:43:25, Muchun Song wrote:
+> > > We only can free the unused vmemmap to the buddy system when the
+> > > size of struct page is a power of two.
+> >
+> > Can we actually have !power_of_2 struct pages?
+>
+> Yes.  On x86-64, if you don't enable MEMCG, it's 56 bytes.  On SPARC64,
+> if you do enable MEMCG, it's 72 bytes.  On 32-bit systems, it's
+> anything from 32-44 bytes, depending on MEMCG, WANT_PAGE_VIRTUAL and
+> LAST_CPUPID_NOT_IN_PAGE_FLAGS.
+>
 
-> > But provably correct conversions IMO _should_ be done and IMO churn 
-> > considerations should generally have less importance.
-[]
-> Moreover, the patch review workload for skilled humans is being generated 
-> by the automation, which is completely backwards: the machine is supposed 
-> to be helping.
-
-Which is why the provably correct matters.
-
-coccinelle transforms can be, but are not necessarily, provably correct.
-
-The _show transforms done via the sysfs_emit_dev.cocci script are correct
-as in commit aa838896d87a ("drivers core: Use sysfs_emit and sysfs_emit_at
-for show(device *...) functions")
-
-Worthwhile?  A different question, but I think yes as it reduces the
-overall question space of the existing other sprintf overrun possibilities.
+On x86-64, even if you do not enable MEMCG, it's also 64 bytes. Because
+CONFIG_HAVE_ALIGNED_STRUCT_PAGE is defined if we use SLUB.
 
 
+
+-- 
+Yours,
+Muchun
