@@ -2,165 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F2A2C1461
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 20:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D90B02C146D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 20:29:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731291AbgKWTR5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 14:17:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34252 "EHLO
+        id S1732302AbgKWTVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 14:21:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728896AbgKWTR4 (ORCPT
+        with ESMTP id S1729183AbgKWTVL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 14:17:56 -0500
+        Mon, 23 Nov 2020 14:21:11 -0500
 Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685D6C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 11:17:56 -0800 (PST)
-Received: by mail-ej1-x641.google.com with SMTP id oq3so24921678ejb.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 11:17:56 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A004C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 11:21:11 -0800 (PST)
+Received: by mail-ej1-x641.google.com with SMTP id i19so24918198ejx.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 11:21:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HdQbgY+fGm8jxB4Ao2qaLqB1m6FKX93p0ZpDSNmzhRg=;
-        b=ecz6nru9/eO/okMaZi3M1SqeAWBy3jSLMgd0jjhCQTgpbarec4ajNZc2z34SiLaYXP
-         QaJ9mapXUBOQPHDszmlLh7XP42arbTRfXumSHa93MXICjloDTusJOZUbBPLUWOXgbgKZ
-         pQ9+nKsc1i6ipcAuXP0mxabxLfUkdI0xLURbCfbeS8wWY5rV7x0QYGWPjdqiSV52K55x
-         r78U+tHwgUxkiwIykrn1oTB8ldikaa6SeVOhCeVlAv4TB8gcYfIO54wMnjufMeoPn641
-         F1cxLMBeI9aeXeCsYDbEt+ePAmXOLWf4j+g0oiKvF1rdE0jaZD3q/81yQfnX86AGm3aN
-         H+Cw==
+        bh=IDXip25iFNJyM0PQT3UUP9BSDp/9JtkjedehC7iQYgI=;
+        b=Yw2aQU9xEKztBeZFpgzdcCIMM0F7lTQYAdM0JHnjP4hY6mpUB8V8tRh5WOa76T2xZn
+         B1D9HaFeGSXAB9IPtUy8gP8yQitPaU5Epa1pIMOyO5nxNi6mRbogZsDTpv9Xhkhfuuvs
+         b8Z1itlSu7vABBV16xIdb7eU1FLhji8NhNjQSxzdcfbvlhMTsd8UqbT1OdabZJyBZbAW
+         Kg75RcoHpXHQJ+ndeWLo8CW6muNIxihUQo+Yrmmixvw+Q0ZLz5L3ZZXM7cXtigdf5XkT
+         Zmps8vvpm9sg4emPXqNaTMqnyULRtHIDz98Qt8GVJP7KqgH6Al67RYpPbOZDRLiVCGPZ
+         PX+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HdQbgY+fGm8jxB4Ao2qaLqB1m6FKX93p0ZpDSNmzhRg=;
-        b=lKQkKp7HRkz824TSOY+n+l3LmYE53tKAE14mMWY+uRundHM4qfieNY4Vt7OXz4pqjN
-         3J/NJWrE4VTUOT8vDc195+Ih80wU0Auj271xHUvIWyP3Crc0TCqlvCttYGd/vfX6IJgg
-         zVsUFsdTp/QO+vKJqEF4GYL5W+dYbnlNmW+ibVDZs2bhevY+1xAZuPYrG6yMuZKlCdIA
-         gdpZ+2nElTv4IRUxmEXhhNRyvEkPk8D4i4mXdO4kTSBk1CK/x8q2u/YhTJBcmQhgL5Au
-         geT7miTHtZjA1Xib+qHsFsvwCkGhgrwD4VkrjXI5Fn2uwut500Iapgiz5CaAwv/dg+OD
-         XOGA==
-X-Gm-Message-State: AOAM5339Pde5OerMGUC/9EU66kLO2fRyODW3tzB3d01rGiVA18l5iZZc
-        tmkgfyBmv2JXa4ZSugyeh/ssm10gfZzrLjs4UsBReQ==
-X-Google-Smtp-Source: ABdhPJxls2+tu09Rb1v/Dt0hKt61j+cTOrCnH79IazHpSsNU2scVK5iT+mwhaQK0QUof4aS2TvFYL72oX+JQ5QIXnVs=
-X-Received: by 2002:a17:906:c059:: with SMTP id bm25mr1009217ejb.20.1606159074807;
- Mon, 23 Nov 2020 11:17:54 -0800 (PST)
+        bh=IDXip25iFNJyM0PQT3UUP9BSDp/9JtkjedehC7iQYgI=;
+        b=MMz7PnGiWyaliyEtPjnAc8DBVW3LYa6EOPiswXsq7kAQT1y1l0O/q3KRcimEiSCgN4
+         QNfKuvwRZ27Yyjuc7YDYaYaSaZhDeqkGoxlD4UYP7MGWtfaOXqFmfcAqSqqIAtyE1yLH
+         TkZ7lgGbZv6/jtdTUeY7zgQy5CX3Y7aScm+hsut3d6spwwk3Zo4pq3+LjFrjKXQ9Ia0c
+         kC+RG7Ogy1y8lxQ2gTL/OQVCkuh+cIizSFLgMuIk6GHjulx03KtNGLYXzOd+rGCuNHPD
+         9NYR/4dEw7KRFroVTwcKaZo0pw9O4woZVVDMFE28ph+HeqtXXtL1buzmMeEHU38SQkBN
+         X4BA==
+X-Gm-Message-State: AOAM530I6htCfGGbccTzVHxiKOK3qrw2o23k4NRv4ox9n5rZWxM99HbP
+        qbsrqpTkmuHZ4foDMEhwTCKBZT3h0kDH/GuZe+A18A==
+X-Google-Smtp-Source: ABdhPJyAk0qU6rtTXOSnzSdut6i2VQ3kE6QNCZM4uiHTEAQJ9L6iAGGfXL9N+fu/hljow+r8JVhLjzMnXPAJLlg5eHc=
+X-Received: by 2002:a17:906:c312:: with SMTP id s18mr1030453ejz.185.1606159269816;
+ Mon, 23 Nov 2020 11:21:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20201120030411.2690816-1-lokeshgidra@google.com>
- <20201120030411.2690816-2-lokeshgidra@google.com> <20201120153337.431dc36c1975507bb1e44596@linux-foundation.org>
-In-Reply-To: <20201120153337.431dc36c1975507bb1e44596@linux-foundation.org>
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+ <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+ <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
+ <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
+ <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com> <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
 From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Mon, 23 Nov 2020 11:17:43 -0800
-Message-ID: <CA+EESO7xnnJAsPneuy1dNj6F47gViGiL-z8rajY5EoGdFWs+-A@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] Add UFFD_USER_MODE_ONLY
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+Date:   Mon, 23 Nov 2020 11:20:58 -0800
+Message-ID: <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
         Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
         "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Kalesh Singh <kaleshsingh@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
         Calin Juravle <calin@google.com>,
         Suren Baghdasaryan <surenb@google.com>,
         Jeffrey Vander Stoep <jeffv@google.com>,
         "Cc: Android Kernel" <kernel-team@android.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shaohua Li <shli@fb.com>, Jerome Glisse <jglisse@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Nitin Gupta <nigupta@nvidia.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-mm@kvack.kernel.org, Daniel Colascione <dancol@google.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 3:33 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+On Sun, Nov 22, 2020 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> On Thu, 19 Nov 2020 19:04:10 -0800 Lokesh Gidra <lokeshgidra@google.com> wrote:
+> On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > I have created a cuttlefish build and have tested with the attached
+> > userfaultfd program:
 >
-> > userfaultfd handles page faults from both user and kernel code.
-> > Add a new UFFD_USER_MODE_ONLY flag for userfaultfd(2) that makes
-> > the resulting userfaultfd object refuse to handle faults from kernel
-> > mode, treating these faults as if SIGBUS were always raised, causing
-> > the kernel code to fail with EFAULT.
-> >
-> > A future patch adds a knob allowing administrators to give some
-> > processes the ability to create userfaultfd file objects only if they
-> > pass UFFD_USER_MODE_ONLY, reducing the likelihood that these processes
-> > will exploit userfaultfd's ability to delay kernel page faults to open
-> > timing windows for future exploits.
+> Thanks, that's a good place to start, a few comments:
 >
-> Can we assume that an update to the userfaultfd(2) manpage is in the
-> works?
+> - While we support Android as a distribution, it isn't a platform that
+> we common use for development and testing.  At the moment, Fedora is
+> probably your best choice for that.
 >
-Yes, I'm working on it. Can the kernel version which will have these
-patches be known now so that I can mention it in the manpage?
+I tried setting up a debian/ubuntu system for testing using the
+instructions on the selinux-testsuite page, but the system kept
+freezing after 'setenforce 1'. I'll try with fedora now.
 
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -405,6 +405,13 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
-> >
-> >       if (ctx->features & UFFD_FEATURE_SIGBUS)
-> >               goto out;
-> > +     if ((vmf->flags & FAULT_FLAG_USER) == 0 &&
-> > +         ctx->flags & UFFD_USER_MODE_ONLY) {
-> > +             printk_once(KERN_WARNING "uffd: Set unprivileged_userfaultfd "
-> > +                     "sysctl knob to 1 if kernel faults must be handled "
-> > +                     "without obtaining CAP_SYS_PTRACE capability\n");
-> > +             goto out;
-> > +     }
-> >
-> >       /*
-> >        * If it's already released don't get it. This avoids to loop
-> > @@ -1965,10 +1972,11 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
-> >       BUG_ON(!current->mm);
-> >
-> >       /* Check the UFFD_* constants for consistency.  */
-> > +     BUILD_BUG_ON(UFFD_USER_MODE_ONLY & UFFD_SHARED_FCNTL_FLAGS);
+> - Your test program should be written in vanilla C for the
+> selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
+> should be a trivial conversion.
 >
-> Are we sure this is true for all architectures?
+> - I think you have a good start on a test for the selinux-testsuite,
+> please take a look at the test suite and submit a patch against that
+> repo.  Ondrej (CC'd) currently maintains the test suite and he may
+> have some additional thoughts.
+>
+> * https://github.com/SELinuxProject/selinux-testsuite
 
-Yes, none of the architectures are using the least-significant bit for
-O_CLOEXEC or O_NONBLOCK.
+Thanks a lot for the inputs. I'll start working on this.
 >
-> >       BUILD_BUG_ON(UFFD_CLOEXEC != O_CLOEXEC);
-> >       BUILD_BUG_ON(UFFD_NONBLOCK != O_NONBLOCK);
+> > 1) Without these kernel patches the program executes without any restrictions
 > >
-> > -     if (flags & ~UFFD_SHARED_FCNTL_FLAGS)
-> > +     if (flags & ~(UFFD_SHARED_FCNTL_FLAGS | UFFD_USER_MODE_ONLY))
-> >               return -EINVAL;
+> > vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
+> > api: 170
+> > features: 511
+> > ioctls: 9223372036854775811
 > >
-> >       ctx = kmem_cache_alloc(userfaultfd_ctx_cachep, GFP_KERNEL);
-> > diff --git a/include/uapi/linux/userfaultfd.h b/include/uapi/linux/userfaultfd.h
-> > index e7e98bde221f..5f2d88212f7c 100644
-> > --- a/include/uapi/linux/userfaultfd.h
-> > +++ b/include/uapi/linux/userfaultfd.h
-> > @@ -257,4 +257,13 @@ struct uffdio_writeprotect {
-> >       __u64 mode;
-> >  };
+> > read: Try again
 > >
-> > +/*
-> > + * Flags for the userfaultfd(2) system call itself.
-> > + */
-> > +
-> > +/*
-> > + * Create a userfaultfd that can handle page faults only in user mode.
-> > + */
-> > +#define UFFD_USER_MODE_ONLY 1
-> > +
-> >  #endif /* _LINUX_USERFAULTFD_H */
+> >
+> > 2) With these patches applied but without any policy the 'permission
+> > denied' is thrown
+> >
+> > vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
+> > syscall(userfaultfd): Permission denied
+> >
+> > with the following logcat message:
+> > 11-18 14:21:44.041  3130  3130 W userfaultfdSimp: type=1400
+> > audit(0.0:107): avc: denied { create } for dev="anon_inodefs"
+> > ino=45031 scontext=u:r:shell:s0 tcontext=u:object_r:shell:s0
+> > tclass=anon_inode permissive=0
+> >
+> >
+> > 3) With the attached .te policy file in place the following output is
+> > observed, confirming that the patch is working as intended.
+> > vsoc_x86_64:/ $ ./vendor/bin/userfaultfdSimple
+> > UFFDIO_API: Permission denied
+> >
+> > with the following logcat message:
+> > 11-18 14:33:29.142  2028  2028 W userfaultfdSimp: type=1400
+> > audit(0.0:104): avc: denied { ioctl } for
+> > path="anon_inode:[userfaultfd]" dev="anon_inodefs" ino=41169
+> > ioctlcmd=0xaa3f scontext=u:r:userfaultfdSimple:s0
+> > tcontext=u:object_r:uffd_t:s0 tclass=anon_inode permissive=0
 >
-> It would be nice to define this in include/linux/userfaultfd_k.h,
-> alongside the other flags.  But I guess it has to be here because it's
-> part of the userspace API.
+> --
+> paul moore
+> www.paul-moore.com
