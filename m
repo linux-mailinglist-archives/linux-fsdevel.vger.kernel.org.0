@@ -2,46 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E6E2C02B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 10:57:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEB22C02F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:09:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbgKWJzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 04:55:21 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:52882 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbgKWJzT (ORCPT
+        id S1728320AbgKWKFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 05:05:18 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:37572 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728301AbgKWKFR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 04:55:19 -0500
-Received: by mail-io1-f69.google.com with SMTP id i19so12309250ioa.19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 01:55:16 -0800 (PST)
+        Mon, 23 Nov 2020 05:05:17 -0500
+Received: by mail-io1-f71.google.com with SMTP id b4so12298522ioa.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 02:05:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zJ12j5pv5Az/S+9kY6tzef+qUz2WbuayYYPs6x7cqx8=;
-        b=sZPx2Pw/wMuYUq/LW8c898T2bl243cbx81QRuUh8Pj6BGK2mW91TJksA9UXXD5H92g
-         RtZ4n+7tJpvI1bF4kerNUxgxKUKRw9lxsT62Nu4oyD/PT8nZMX0nnNKgIVA6l2kMbHoQ
-         gQ3Ks3UBqSl9CFJK7U9XCkESyylT2/CWBKrfpz0+Nr9u+einLsdFQwJrecHlKlJmLjuf
-         alVcaty5IKye/EOrMx4YiG3PBO1Jo08TPqeqkF1F3dPZxtEwxgkl/m3H6N7iujsrxms7
-         5yXIBHDdpmDN2mD1CVkWHGJV4QlYIo2yXr6Y63srHE0PuR7JbkQtdJKI+myiBmbYCeGz
-         lBMg==
-X-Gm-Message-State: AOAM5318o7sCaeUqnb/VngD3QItrdiPgHm6Wsn39/fAf6xvbzhwiP8KY
-        TPvLJvCipbK+z/e59jMPJmGXf+8HS/QReXuzxLlhg/Xc5Uit
-X-Google-Smtp-Source: ABdhPJzND7DGe3RsHCRfdr6ZoSQhKLO7EnUQe2826jcG7IvxIqnA1/MNVQQbJcRJUfjOj9YEp/s9f+/Vj8OJIEh1cC5SePgOg+Wx
+        bh=WaUADOnuz3DDKLiV4eDIKdQIyofQv4t0rpE3AR0uVkg=;
+        b=GlqrE03WzvvhvcXhFFJPsTVTYZ6eAbxNPxnACXMlDVtkxy3rUu1ORXpYH7JXNrB3J+
+         QmmtSUQawrb9u8UllK/4GaUDbZg+xblp87vtNWw06oQm6gsE+Mk81zs9mh77o1p5Fgm8
+         5/fywFfVkaACFS6XLlIajUiAZrb856YOEFRRUA5H5umOfxo+KrECrhzwXi32Lfha1k9K
+         MzyXSKqVwC8jTv8ORC5LsNi8P88vPvOV3EZtkbd/2M/WZIFGFWazDF2YvDrZs50Dnddo
+         xEglZohGl504Fjqu8BX4ExI+ig2uy87oMLmtqjZ7yqt5wZc1uCQaH59FIA5damAXbT8k
+         HDPQ==
+X-Gm-Message-State: AOAM533OL4IVaCfZHdYscuYiGHwpQ1l7YdfAPsiEiHIMqSkCiT6WLwHG
+        AV4f7RSfKaJDqx9DW+auQuvP3HBasSXmI3Nef/4nXBpOLRN1
+X-Google-Smtp-Source: ABdhPJxbkk61mW4TMXkQn1ETeA0YcdXR+oc/w9eN25HD1JHpRsjqVmYmhzVPhAfXbNZh4aRDgaYVUX3tq9lJ+AIuZ0wu43ZxP6mb
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:283:: with SMTP id c3mr28349610jaq.134.1606125316419;
- Mon, 23 Nov 2020 01:55:16 -0800 (PST)
-Date:   Mon, 23 Nov 2020 01:55:16 -0800
+X-Received: by 2002:a02:6ccd:: with SMTP id w196mr27987669jab.133.1606125916931;
+ Mon, 23 Nov 2020 02:05:16 -0800 (PST)
+Date:   Mon, 23 Nov 2020 02:05:16 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f3332805b4c330c3@google.com>
-Subject: inconsistent lock state in io_file_data_ref_zero
-From:   syzbot <syzbot+1f4ba1e5520762c523c6@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, davem@davemloft.net, io-uring@vger.kernel.org,
-        johannes.berg@intel.com, johannes@sipsolutions.net,
-        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
+Message-ID: <000000000000be4c9505b4c35420@google.com>
+Subject: kernel BUG at fs/notify/dnotify/dnotify.c:LINE! (2)
+From:   syzbot <syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -53,119 +49,51 @@ syzbot found the following issue on:
 
 HEAD commit:    27bba9c5 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11041f1e500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b82225500000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=330f3436df12fd44
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f4ba1e5520762c523c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=f427adf9324b92652ccc
 compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d9b775500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157e4f75500000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d3f015500000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17162d4d500000
 
-The issue was bisected to:
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-commit dcd479e10a0510522a5d88b29b8f79ea3467d501
-Author: Johannes Berg <johannes.berg@intel.com>
-Date:   Fri Oct 9 12:17:11 2020 +0000
-
-    mac80211: always wind down STA state
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=130299a9500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=108299a9500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=170299a9500000
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16570525500000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15570525500000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11570525500000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1f4ba1e5520762c523c6@syzkaller.appspotmail.com
-Fixes: dcd479e10a05 ("mac80211: always wind down STA state")
+Reported-by: syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com
 
-================================
-WARNING: inconsistent lock state
-5.10.0-rc4-syzkaller #0 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-swapper/0/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
-ffff8880125202a8 (&file_data->lock){+.?.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-ffff8880125202a8 (&file_data->lock){+.?.}-{2:2}, at: io_file_data_ref_zero+0x75/0x480 fs/io_uring.c:7361
-{SOFTIRQ-ON-W} state was registered at:
-  lock_acquire kernel/locking/lockdep.c:5435 [inline]
-  lock_acquire+0x2a3/0x8c0 kernel/locking/lockdep.c:5400
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:354 [inline]
-  io_sqe_files_register fs/io_uring.c:7496 [inline]
-  __io_uring_register fs/io_uring.c:9660 [inline]
-  __do_sys_io_uring_register+0x343a/0x40d0 fs/io_uring.c:9750
-  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-irq event stamp: 131582
-hardirqs last  enabled at (131582): [<ffffffff88e80d52>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160 [inline]
-hardirqs last  enabled at (131582): [<ffffffff88e80d52>] _raw_spin_unlock_irqrestore+0x42/0x50 kernel/locking/spinlock.c:191
-hardirqs last disabled at (131581): [<ffffffff88e80b1e>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-hardirqs last disabled at (131581): [<ffffffff88e80b1e>] _raw_spin_lock_irqsave+0x4e/0x50 kernel/locking/spinlock.c:159
-softirqs last  enabled at (131566): [<ffffffff814279df>] irq_enter_rcu+0xcf/0xf0 kernel/softirq.c:360
-softirqs last disabled at (131567): [<ffffffff89000eaf>] asm_call_irq_on_stack+0xf/0x20
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&file_data->lock);
-  <Interrupt>
-    lock(&file_data->lock);
-
- *** DEADLOCK ***
-
-2 locks held by swapper/0/0:
- #0: ffffffff8b337700 (rcu_callback){....}-{0:0}, at: rcu_do_batch kernel/rcu/tree.c:2466 [inline]
- #0: ffffffff8b337700 (rcu_callback){....}-{0:0}, at: rcu_core+0x576/0xe80 kernel/rcu/tree.c:2711
- #1: ffffffff8b337820 (rcu_read_lock){....}-{1:2}, at: percpu_ref_put_many.constprop.0+0x0/0x250 net/netfilter/xt_cgroup.c:62
-
-stack backtrace:
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.10.0-rc4-syzkaller #0
+wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
+------------[ cut here ]------------
+kernel BUG at fs/notify/dnotify/dnotify.c:118!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 648 Comm: kworker/u4:4 Not tainted 5.10.0-rc4-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound fsnotify_mark_destroy_workfn
+RIP: 0010:dnotify_free_mark fs/notify/dnotify/dnotify.c:118 [inline]
+RIP: 0010:dnotify_free_mark+0x4b/0x60 fs/notify/dnotify/dnotify.c:112
+Code: 80 3c 02 00 75 26 48 83 bd 80 00 00 00 00 75 15 e8 0a d3 a0 ff 48 89 ee 48 8b 3d 68 8c 1d 0b 5d e9 aa 06 e2 ff e8 f5 d2 a0 ff <0f> 0b e8 ae 4d e2 ff eb d3 66 90 66 2e 0f 1f 84 00 00 00 00 00 41
+RSP: 0018:ffffc90002f1fc38 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffffffff8958ae60 RCX: 1ffff920005e3f95
+RDX: ffff888012601a40 RSI: ffffffff81cf5ceb RDI: ffff88801aea2080
+RBP: ffff88801aea2000 R08: 0000000000000001 R09: ffffffff8ebb170f
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880171a2000
+R13: ffffc90002f1fc98 R14: ffff88801aea2010 R15: ffff88801aea2018
+FS:  0000000000000000(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056045fa95978 CR3: 0000000012121000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:118
- print_usage_bug kernel/locking/lockdep.c:3738 [inline]
- valid_state kernel/locking/lockdep.c:3749 [inline]
- mark_lock_irq kernel/locking/lockdep.c:3952 [inline]
- mark_lock.cold+0x32/0x74 kernel/locking/lockdep.c:4409
- mark_usage kernel/locking/lockdep.c:4304 [inline]
- __lock_acquire+0x11b1/0x5c00 kernel/locking/lockdep.c:4784
- lock_acquire kernel/locking/lockdep.c:5435 [inline]
- lock_acquire+0x2a3/0x8c0 kernel/locking/lockdep.c:5400
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- io_file_data_ref_zero+0x75/0x480 fs/io_uring.c:7361
- percpu_ref_put_many.constprop.0+0x217/0x250 include/linux/percpu-refcount.h:322
- rcu_do_batch kernel/rcu/tree.c:2476 [inline]
- rcu_core+0x5df/0xe80 kernel/rcu/tree.c:2711
- __do_softirq+0x2a0/0x9f6 kernel/softirq.c:298
- asm_call_irq_on_stack+0xf/0x20
- </IRQ>
- __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
- run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
- do_softirq_own_stack+0xaa/0xd0 arch/x86/kernel/irq_64.c:77
- invoke_softirq kernel/softirq.c:393 [inline]
- __irq_exit_rcu kernel/softirq.c:423 [inline]
- irq_exit_rcu+0x132/0x200 kernel/softirq.c:435
- sysvec_apic_timer_interrupt+0x4d/0x100 arch/x86/kernel/apic/apic.c:1091
- asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:631
-RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:29 [inline]
-RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:79 [inline]
-RIP: 0010:arch_irqs_disabled arch/x86/include/asm/irqflags.h:169 [inline]
-RIP: 0010:acpi_safe_halt drivers/acpi/processor_idle.c:112 [inline]
-RIP: 0010:acpi_idle_do_entry+0x1c9/0x250 drivers/acpi/processor_idle.c:517
-Code: 8d 21 88 f8 84 db 75 ac e8 74 29 88 f8 e8 2f e8 8d f8 e9 0c 00 00 00 e8 65 29 88 f8 0f 00 2d 5e 74 c0 00 e8 59 29 88 f8 fb f4 <9c> 5b 81 e3 00 02 00 00 fa 31 ff 48 89 de e8 b4 21 88 f8 48 85 db
-RSP: 0018:ffffffff8b007d60 EFLAGS: 00000293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffffffff19d8ff9
-RDX: ffffffff8b09af80 RSI: ffffffff88e80687 RDI: 0000000000000000
-RBP: ffff88814141d064 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000001
-R13: ffff88814141d000 R14: ffff88814141d064 R15: ffff888014984004
- acpi_idle_enter+0x361/0x500 drivers/acpi/processor_idle.c:648
- cpuid
+ fsnotify_final_mark_destroy+0x71/0xb0 fs/notify/mark.c:205
+ fsnotify_mark_destroy_workfn+0x1eb/0x340 fs/notify/mark.c:840
+ process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
+ kthread+0x3af/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+Modules linked in:
 
 
 ---
