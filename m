@@ -2,160 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D71732BFCF3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 00:15:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BA082BFDA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 01:42:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725788AbgKVXOv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Nov 2020 18:14:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbgKVXOu (ORCPT
+        id S1726550AbgKWAl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Nov 2020 19:41:26 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:17257 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725782AbgKWAl0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Nov 2020 18:14:50 -0500
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B58BC061A4B
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Nov 2020 15:14:50 -0800 (PST)
-Received: by mail-ej1-x641.google.com with SMTP id o9so20819277ejg.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Nov 2020 15:14:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qrIV9Yoc1RpsJtPIVkFbz+NHNkiiYsOXEJ2yAt4fGM4=;
-        b=eAEDg4gusJ5cOG8GkLEsF1ZAHwn37356W/f3uiaob29/5FsdO0PDffI2+hWwsDxZNd
-         IoRtJkaNfBfkGTP4NOV0G9+ugO7r3kiZMr8CkVIMb9DdojQ6fOpVEvHw8ghAxUfFidiB
-         3i/pCAl+sd97icqGYzZ4sxJ4xe78yjP+jYSeQ3D1zKHG4dsYL3FAwtlPvQZReuDHK5jO
-         hHSGXkq/iD6nhrc5hp/rvPgIghfCSCLczJjsoWKaEphQRrTEy/TcIqI104ww2/q8PwKs
-         JWW/9SOxNKFPAqANRS6zH7/zQX6N/KvAvsVuVwldrwARApU7P/vVSrc/s8UgwcofPJqo
-         YyXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qrIV9Yoc1RpsJtPIVkFbz+NHNkiiYsOXEJ2yAt4fGM4=;
-        b=qVWK+Ky1iVJuHWLj2K663aJIjvgKMDPUc2ysHxm+8hZeMWUA1O0BOh+RCrG2o5QZO3
-         ryQdgmRt/RV3FIVmRaNXKAtOJhFVr3RXPH1cAyHbSHU2IiQQ8kaFL1aQh83/jyFDpWW4
-         SPh3CrIHRvKfxOyqwJnWLVE50ORRAb2fiEnNASxvAz6hM5poxKBuiAJAx/4iZpxPKrwi
-         4BNvGUK8Bqws/BX2txmAn9FixZ4r7kWsel/y7BYfMJhmb8XVSlUjelWs66rmYpDCmb+d
-         45lFF05LD1B+Y+QFWm0AHjTD4rhV+fedU6kp4xPjVw7kfWUlbjznH8GblvkrOsV2F9Pf
-         wytA==
-X-Gm-Message-State: AOAM532yyiCv+FgUBUFHxx+hFsTbaahOa+o/4NSjd8MuNKRRqeirEJkr
-        aqbb4adYLEvJHjBzwwpqfkWCR1UNf9UHcSXyR4VQ
-X-Google-Smtp-Source: ABdhPJxM8SoW5yL7VRfbqEbtaHLQg1xbRH2fsuHa1EhDIBWdhMTb0dsDtHUGa29ucrvGj8macTSk07Y8ott2k+Y4Zrs=
-X-Received: by 2002:a17:906:c096:: with SMTP id f22mr40380124ejz.488.1606086888699;
- Sun, 22 Nov 2020 15:14:48 -0800 (PST)
+        Sun, 22 Nov 2020 19:41:26 -0500
+X-IronPort-AV: E=Sophos;i="5.78,361,1599494400"; 
+   d="scan'208";a="101635228"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 23 Nov 2020 08:41:23 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id 03B5C48990F9;
+        Mon, 23 Nov 2020 08:41:18 +0800 (CST)
+Received: from G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.203) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Mon, 23 Nov 2020 08:41:16 +0800
+Received: from localhost.localdomain (10.167.225.141) by
+ G08CNEXCHPEKD05.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Mon, 23 Nov 2020 08:41:18 +0800
+From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
+        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@lst.de>, <song@kernel.org>,
+        <rgoldwyn@suse.de>, <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
+Subject: [RFC PATCH v2 0/6] fsdax: introduce fs query to support reflink
+Date:   Mon, 23 Nov 2020 08:41:10 +0800
+Message-ID: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
- <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
- <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
- <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
- <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
- <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com> <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
-In-Reply-To: <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 22 Nov 2020 18:14:37 -0500
-Message-ID: <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 03B5C48990F9.AE527
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> I have created a cuttlefish build and have tested with the attached
-> userfaultfd program:
+This patchset is a try to resolve the problem of tracking shared page
+for fsdax.
 
-Thanks, that's a good place to start, a few comments:
+Change from v1:
+  - Intorduce ->block_lost() for block device
+  - Support mapped device
+  - Add 'not available' warning for realtime device in XFS
+  - Rebased to v5.10-rc1
 
-- While we support Android as a distribution, it isn't a platform that
-we common use for development and testing.  At the moment, Fedora is
-probably your best choice for that.
+This patchset moves owner tracking from dax_assocaite_entry() to pmem
+device, by introducing an interface ->memory_failure() of struct
+pagemap.  The interface is called by memory_failure() in mm, and
+implemented by pmem device.  Then pmem device calls its ->block_lost()
+to find the filesystem which the damaged page located in, and call
+->storage_lost() to track files or metadata assocaited with this page.
+Finally we are able to try to fix the damaged data in filesystem and do
+other necessary processing, such as killing processes who are using the
+files affected.
 
-- Your test program should be written in vanilla C for the
-selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
-should be a trivial conversion.
+The call trace is like this:
+ memory_failure()
+   pgmap->ops->memory_failure()   => pmem_pgmap_memory_failure()
+    gendisk->fops->block_lost()   => pmem_block_lost() or
+                                         md_blk_block_lost()
+     sb->s_ops->storage_lost()    => xfs_fs_storage_lost()
+      xfs_rmap_query_range()
+       xfs_storage_lost_helper()
+        mf_recover_controller->recover_fn => \ 
+                            memory_failure_dev_pagemap_kill_procs()
 
-- I think you have a good start on a test for the selinux-testsuite,
-please take a look at the test suite and submit a patch against that
-repo.  Ondrej (CC'd) currently maintains the test suite and he may
-have some additional thoughts.
+The collect_procs() and kill_procs() are moved into a callback which
+is passed from memory_failure() to xfs_storage_lost_helper().  So we
+can call it when a file assocaited is found, instead of creating a
+file list and iterate it.
 
-* https://github.com/SELinuxProject/selinux-testsuite
+The fsdax & reflink support for XFS is not contained in this patchset.
 
-> 1) Without these kernel patches the program executes without any restrictions
->
-> vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
-> api: 170
-> features: 511
-> ioctls: 9223372036854775811
->
-> read: Try again
->
->
-> 2) With these patches applied but without any policy the 'permission
-> denied' is thrown
->
-> vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
-> syscall(userfaultfd): Permission denied
->
-> with the following logcat message:
-> 11-18 14:21:44.041  3130  3130 W userfaultfdSimp: type=1400
-> audit(0.0:107): avc: denied { create } for dev="anon_inodefs"
-> ino=45031 scontext=u:r:shell:s0 tcontext=u:object_r:shell:s0
-> tclass=anon_inode permissive=0
->
->
-> 3) With the attached .te policy file in place the following output is
-> observed, confirming that the patch is working as intended.
-> vsoc_x86_64:/ $ ./vendor/bin/userfaultfdSimple
-> UFFDIO_API: Permission denied
->
-> with the following logcat message:
-> 11-18 14:33:29.142  2028  2028 W userfaultfdSimp: type=1400
-> audit(0.0:104): avc: denied { ioctl } for
-> path="anon_inode:[userfaultfd]" dev="anon_inodefs" ino=41169
-> ioctlcmd=0xaa3f scontext=u:r:userfaultfdSimple:s0
-> tcontext=u:object_r:uffd_t:s0 tclass=anon_inode permissive=0
+(Rebased on v5.10-rc1)
+
+Shiyang Ruan (6):
+  fs: introduce ->storage_lost() for memory-failure
+  blk: introduce ->block_lost() to handle memory-failure
+  md: implement ->block_lost() for memory-failure
+  pagemap: introduce ->memory_failure()
+  mm, fsdax: refactor dax handler in memory-failure
+  fsdax: remove useless (dis)associate functions
+
+ block/genhd.c                 |  12 ++++
+ drivers/md/dm-linear.c        |   8 +++
+ drivers/md/dm.c               |  64 +++++++++++++++++
+ drivers/nvdimm/pmem.c         |  50 +++++++++++++
+ fs/block_dev.c                |  23 ++++++
+ fs/dax.c                      |  64 ++---------------
+ fs/xfs/xfs_super.c            |  87 +++++++++++++++++++++++
+ include/linux/blkdev.h        |   2 +
+ include/linux/dax.h           |   5 +-
+ include/linux/device-mapper.h |   2 +
+ include/linux/fs.h            |   2 +
+ include/linux/genhd.h         |   9 +++
+ include/linux/memremap.h      |   3 +
+ include/linux/mm.h            |  14 ++++
+ mm/memory-failure.c           | 127 +++++++++++++++++++++-------------
+ 15 files changed, 362 insertions(+), 110 deletions(-)
 
 -- 
-paul moore
-www.paul-moore.com
+2.29.2
+
+
+
