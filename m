@@ -2,107 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DEB22C02F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF37B2C0353
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:34:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbgKWKFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 05:05:18 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:37572 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728301AbgKWKFR (ORCPT
+        id S1727107AbgKWKb1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 05:31:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28613 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726819AbgKWKb1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 05:05:17 -0500
-Received: by mail-io1-f71.google.com with SMTP id b4so12298522ioa.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 02:05:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=WaUADOnuz3DDKLiV4eDIKdQIyofQv4t0rpE3AR0uVkg=;
-        b=GlqrE03WzvvhvcXhFFJPsTVTYZ6eAbxNPxnACXMlDVtkxy3rUu1ORXpYH7JXNrB3J+
-         QmmtSUQawrb9u8UllK/4GaUDbZg+xblp87vtNWw06oQm6gsE+Mk81zs9mh77o1p5Fgm8
-         5/fywFfVkaACFS6XLlIajUiAZrb856YOEFRRUA5H5umOfxo+KrECrhzwXi32Lfha1k9K
-         MzyXSKqVwC8jTv8ORC5LsNi8P88vPvOV3EZtkbd/2M/WZIFGFWazDF2YvDrZs50Dnddo
-         xEglZohGl504Fjqu8BX4ExI+ig2uy87oMLmtqjZ7yqt5wZc1uCQaH59FIA5damAXbT8k
-         HDPQ==
-X-Gm-Message-State: AOAM533OL4IVaCfZHdYscuYiGHwpQ1l7YdfAPsiEiHIMqSkCiT6WLwHG
-        AV4f7RSfKaJDqx9DW+auQuvP3HBasSXmI3Nef/4nXBpOLRN1
-X-Google-Smtp-Source: ABdhPJxbkk61mW4TMXkQn1ETeA0YcdXR+oc/w9eN25HD1JHpRsjqVmYmhzVPhAfXbNZh4aRDgaYVUX3tq9lJ+AIuZ0wu43ZxP6mb
+        Mon, 23 Nov 2020 05:31:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606127484;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a2z/wTVqHabYzS0sinajYT9PD1Lj3hHjwZuxraPE9e4=;
+        b=enyh4iQOpzFiIFPtPhyFzYHR4JUoVIDzCS0fH+vK7poMHXedRJpc6IWr/jz9PQcEBpfsXa
+        0nhazYyhAIlFbQjjhJFvLazep06kDuoGx1mJv7pXbOxZIfNYYm8AwFmctJAbC7zN0O6WJm
+        VvcIU+ZK9oJTfO+7eCtv2IPYb3IYd9c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-513-vQc1ymdZO6SkDI75tMfuEg-1; Mon, 23 Nov 2020 05:31:20 -0500
+X-MC-Unique: vQc1ymdZO6SkDI75tMfuEg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3D17051DD;
+        Mon, 23 Nov 2020 10:31:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-111.rdu2.redhat.com [10.10.112.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BB3256086F;
+        Mon, 23 Nov 2020 10:31:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201123080506.GA30578@infradead.org>
+References: <20201123080506.GA30578@infradead.org> <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk> <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Pavel Begunkov <asml.silence@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
 MIME-Version: 1.0
-X-Received: by 2002:a02:6ccd:: with SMTP id w196mr27987669jab.133.1606125916931;
- Mon, 23 Nov 2020 02:05:16 -0800 (PST)
-Date:   Mon, 23 Nov 2020 02:05:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000be4c9505b4c35420@google.com>
-Subject: kernel BUG at fs/notify/dnotify/dnotify.c:LINE! (2)
-From:   syzbot <syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <516983.1606127474.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 23 Nov 2020 10:31:14 +0000
+Message-ID: <516984.1606127474@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Christoph Hellwig <hch@infradead.org> wrote:
 
-syzbot found the following issue on:
+> Please run performance tests.  I think the indirect calls could totally
+> wreck things like high performance direct I/O, especially using io_uring
+> on x86.
 
-HEAD commit:    27bba9c5 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b82225500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=330f3436df12fd44
-dashboard link: https://syzkaller.appspot.com/bug?extid=f427adf9324b92652ccc
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d3f015500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17162d4d500000
+Here's an initial test using fio and null_blk.  I left null_blk in its def=
+ault
+configuration and used the following command line:
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+fio --ioengine=3Dlibaio --direct=3D1 --gtod_reduce=3D1 --name=3Dreadtest -=
+-filename=3D/dev/nullb0 --bs=3D4k --iodepth=3D128 --time_based --runtime=3D=
+120 --readwrite=3Drandread --iodepth_low=3D96 --iodepth_batch=3D16 --numjo=
+bs=3D4
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16570525500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15570525500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11570525500000
+I borrowed some of the parameters from an email I found online, so I'm not
+sure if they're that useful.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f427adf9324b92652ccc@syzkaller.appspotmail.com
+I tried three different sets of patches: none, just the first (which adds =
+the
+jump table without getting rid of the conditional branches), and all of th=
+em.
 
-wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
-------------[ cut here ]------------
-kernel BUG at fs/notify/dnotify/dnotify.c:118!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 648 Comm: kworker/u4:4 Not tainted 5.10.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: events_unbound fsnotify_mark_destroy_workfn
-RIP: 0010:dnotify_free_mark fs/notify/dnotify/dnotify.c:118 [inline]
-RIP: 0010:dnotify_free_mark+0x4b/0x60 fs/notify/dnotify/dnotify.c:112
-Code: 80 3c 02 00 75 26 48 83 bd 80 00 00 00 00 75 15 e8 0a d3 a0 ff 48 89 ee 48 8b 3d 68 8c 1d 0b 5d e9 aa 06 e2 ff e8 f5 d2 a0 ff <0f> 0b e8 ae 4d e2 ff eb d3 66 90 66 2e 0f 1f 84 00 00 00 00 00 41
-RSP: 0018:ffffc90002f1fc38 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffffff8958ae60 RCX: 1ffff920005e3f95
-RDX: ffff888012601a40 RSI: ffffffff81cf5ceb RDI: ffff88801aea2080
-RBP: ffff88801aea2000 R08: 0000000000000001 R09: ffffffff8ebb170f
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880171a2000
-R13: ffffc90002f1fc98 R14: ffff88801aea2010 R15: ffff88801aea2018
-FS:  0000000000000000(0000) GS:ffff8880b9f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056045fa95978 CR3: 0000000012121000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- fsnotify_final_mark_destroy+0x71/0xb0 fs/notify/mark.c:205
- fsnotify_mark_destroy_workfn+0x1eb/0x340 fs/notify/mark.c:840
- process_one_work+0x933/0x15a0 kernel/workqueue.c:2272
- worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Modules linked in:
+I'm not sure which stats are of particular interest here, so I took the tw=
+o
+summary stats from the output of fio and also added together the "issued r=
+wts:
+total=3Da,b,c,d" from each test thread (only the first of which is non-zer=
+o).
+
+The CPU is an Intel(R) Core(TM) i3-4170 CPU @ 3.70GHz, so 4 single-thread
+cores, and 16G of RAM.  No virtualisation is involved.
+
+Unpatched:
+
+   READ: bw=3D4109MiB/s (4308MB/s), 1025MiB/s-1029MiB/s (1074MB/s-1079MB/s=
+), io=3D482GiB (517GB), run=3D120001-120001msec
+   READ: bw=3D4097MiB/s (4296MB/s), 1020MiB/s-1029MiB/s (1070MB/s-1079MB/s=
+), io=3D480GiB (516GB), run=3D120001-120001msec
+   READ: bw=3D4113MiB/s (4312MB/s), 1025MiB/s-1031MiB/s (1075MB/s-1082MB/s=
+), io=3D482GiB (517GB), run=3D120001-120001msec
+   READ: bw=3D4125MiB/s (4325MB/s), 1028MiB/s-1033MiB/s (1078MB/s-1084MB/s=
+), io=3D483GiB (519GB), run=3D120001-120001msec
+
+  nullb0: ios=3D126017326/0, merge=3D53/0, ticks=3D3538817/0, in_queue=3D3=
+538817, util=3D100.00%
+  nullb0: ios=3D125655193/0, merge=3D55/0, ticks=3D3548157/0, in_queue=3D3=
+548157, util=3D100.00%
+  nullb0: ios=3D126133014/0, merge=3D58/0, ticks=3D3545621/0, in_queue=3D3=
+545621, util=3D100.00%
+  nullb0: ios=3D126512562/0, merge=3D57/0, ticks=3D3531600/0, in_queue=3D3=
+531600, util=3D100.00%
+
+  sum issued rwts =3D 126224632
+  sum issued rwts =3D 125861368
+  sum issued rwts =3D 126340344
+  sum issued rwts =3D 126718648
+
+Just first patch:
+
+   READ: bw=3D4106MiB/s (4306MB/s), 1023MiB/s-1030MiB/s (1073MB/s-1080MB/s=
+), io=3D481GiB (517GB), run=3D120001-120001msec
+   READ: bw=3D4126MiB/s (4327MB/s), 1029MiB/s-1034MiB/s (1079MB/s-1084MB/s=
+), io=3D484GiB (519GB), run=3D120001-120001msec
+   READ: bw=3D4109MiB/s (4308MB/s), 1025MiB/s-1029MiB/s (1075MB/s-1079MB/s=
+), io=3D481GiB (517GB), run=3D120001-120001msec
+   READ: bw=3D4097MiB/s (4296MB/s), 1023MiB/s-1025MiB/s (1073MB/s-1074MB/s=
+), io=3D480GiB (516GB), run=3D120001-120001msec
+
+  nullb0: ios=3D125939152/0, merge=3D62/0, ticks=3D3534917/0, in_queue=3D3=
+534917, util=3D100.00%
+  nullb0: ios=3D126554181/0, merge=3D61/0, ticks=3D3532067/0, in_queue=3D3=
+532067, util=3D100.00%
+  nullb0: ios=3D126012346/0, merge=3D54/0, ticks=3D3530504/0, in_queue=3D3=
+530504, util=3D100.00%
+  nullb0: ios=3D125653775/0, merge=3D54/0, ticks=3D3537438/0, in_queue=3D3=
+537438, util=3D100.00%
+
+  sum issued rwts =3D 126144952
+  sum issued rwts =3D 126765368
+  sum issued rwts =3D 126215928
+  sum issued rwts =3D 125864120
+
+All patches:
+  nullb0: ios=3D10477062/0, merge=3D2/0, ticks=3D284992/0, in_queue=3D2849=
+92, util=3D95.87%
+  nullb0: ios=3D10405246/0, merge=3D2/0, ticks=3D291886/0, in_queue=3D2918=
+86, util=3D99.82%
+  nullb0: ios=3D10425583/0, merge=3D1/0, ticks=3D291699/0, in_queue=3D2916=
+99, util=3D99.22%
+  nullb0: ios=3D10438845/0, merge=3D3/0, ticks=3D292445/0, in_queue=3D2924=
+45, util=3D99.31%
+
+   READ: bw=3D4118MiB/s (4318MB/s), 1028MiB/s-1032MiB/s (1078MB/s-1082MB/s=
+), io=3D483GiB (518GB), run=3D120001-120001msec
+   READ: bw=3D4109MiB/s (4308MB/s), 1024MiB/s-1030MiB/s (1073MB/s-1080MB/s=
+), io=3D481GiB (517GB), run=3D120001-120001msec
+   READ: bw=3D4108MiB/s (4308MB/s), 1026MiB/s-1029MiB/s (1076MB/s-1079MB/s=
+), io=3D481GiB (517GB), run=3D120001-120001msec
+   READ: bw=3D4112MiB/s (4312MB/s), 1025MiB/s-1031MiB/s (1075MB/s-1081MB/s=
+), io=3D482GiB (517GB), run=3D120001-120001msec
+
+  nullb0: ios=3D126282410/0, merge=3D58/0, ticks=3D3557384/0, in_queue=3D3=
+557384, util=3D100.00%
+  nullb0: ios=3D126004837/0, merge=3D67/0, ticks=3D3565235/0, in_queue=3D3=
+565235, util=3D100.00%
+  nullb0: ios=3D125988876/0, merge=3D59/0, ticks=3D3563026/0, in_queue=3D3=
+563026, util=3D100.00%
+  nullb0: ios=3D126118279/0, merge=3D57/0, ticks=3D3566122/0, in_queue=3D3=
+566122, util=3D100.00%
+
+  sum issued rwts =3D 126494904
+  sum issued rwts =3D 126214200
+  sum issued rwts =3D 126198200
+  sum issued rwts =3D 126328312
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+David
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
