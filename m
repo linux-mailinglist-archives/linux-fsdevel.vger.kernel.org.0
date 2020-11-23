@@ -2,128 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92DD62C0381
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C184F2C036E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:37:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728704AbgKWKkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 05:40:19 -0500
-Received: from mail.alarsen.net ([144.76.18.233]:33806 "EHLO mail.alarsen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728158AbgKWKkT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 05:40:19 -0500
-X-Greylist: delayed 336 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Nov 2020 05:40:19 EST
-Received: from oscar.alarsen.net (unknown [IPv6:2001:470:1f0b:246:3498:84b8:7f41:65f])
-        by joe.alarsen.net (Postfix) with ESMTPS id 390C32B81DD6;
-        Mon, 23 Nov 2020 11:34:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alarsen.net; s=joe;
-        t=1606127676; bh=5UB9gRi58YkHAOOWjzB9D1YFAVo+0c+fLBzMcSZK4U8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QNKUunmlzlzNV4NcVdTNxs63JDsbZramNjylAouJz6OB3/4kfkuavMIcsupl9imaS
-         xl/r06AgNhWNDQ6eX2KUMYe5ri5Bw+uv3Yszes+3wdozsEBG/4/y/4J1YyBoUrTlZ8
-         RevcyYx/tmZQQA44DMKlmbQfBWlw5X5qkSboAXbY=
-Received: by oscar.alarsen.net (Postfix, from userid 1000)
-        id 2A1B327C0CAF; Mon, 23 Nov 2020 11:34:36 +0100 (CET)
-From:   Anders Larsen <al@alarsen.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tong Zhang <ztong0001@gmail.com>
-Subject: [PATCH v2] qnx4_match: do not over run the buffer
-Date:   Mon, 23 Nov 2020 11:34:36 +0100
-Message-Id: <20201123103436.7056-1-al@alarsen.net>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201122012740.4814-1-ztong0001@gmail.com>
-References: <20201122012740.4814-1-ztong0001@gmail.com>
+        id S1727918AbgKWKhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 05:37:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbgKWKhP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Nov 2020 05:37:15 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E7EFC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 02:37:13 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id v5so10477827pff.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 02:37:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4eFIlDBCGuePrKXo7ssxRUnh/an23uWR8hRv/nfBrew=;
+        b=UTFKQgOoJYizpumITmdB9VlaPcXqQMrksxuklKmUZv6ApbQDov2zF5scuZArYl6A6Y
+         yd++i3f42p9lH3up/PA2WaDRuPwQVAlAVGj44ZMj/p0UxW8aMb/UDXzHAF/8F7bjBa92
+         bNWPUY6R2T4umft7PJYwJOFOPTOsAdzFQfZAkD+cIEIIb//UmiUZGZ33v4AVzaZhwBTj
+         td+K9uJO9oe3itDjbfRgjBVVceT1Wxzx39v5xAZ9+5rFZiJf0ZCiTgQdV7Do5bTaS6It
+         MOItu/J02q00pSJgoJsVqQaJlPL3pCB/UEdDyK5E5dY97QGYQUJWZ/U/NsRTqHV7m9pk
+         Gz8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4eFIlDBCGuePrKXo7ssxRUnh/an23uWR8hRv/nfBrew=;
+        b=SWyP5jvU/ighVcaktIhaP8GludqcDLpg1Wl0gFCycErDgxB4fYNCqYd6xrOrPWnIbD
+         jEUXwAOd2PEwiklh47DHrnNL1djJ2bxkzcK0hjB2yzzRKRO36zjTrZgUigtTatf0HDbn
+         5bDiYYMu76mD/KVv9qvZOn+r7xtAM/z4IwWXntc2E0HlePfnl3Tet3G4+wLb/LaQbRgL
+         KglN1burcUIGrkOf54Hy7+00nh8FMzRpictPt/RyOyR93W0dufB+v+1Dn1UHvn5J3XPh
+         5RtVisiLOiv8WjH/d6Jk+4F2NMBLQ9vARUJeHaRZfpMKzfR++m/3fdlOltklLsNpNyqP
+         Y1Rg==
+X-Gm-Message-State: AOAM531Edjn7qhxqt41SNLxOt6QSWbUHXz9sW2jQYgU3cFegakEBO7ce
+        1kMz9rbyOmth9HBTHQhEeXiOIziTXbJMYOPrgCT4lQ==
+X-Google-Smtp-Source: ABdhPJz8PxEYWSwkBesY8S8Gp7xJgr4OI3mDgYlO5QJdSzdxdF6WwhS7tyxFNc2WD1b+YhcyppNVwief6iy0SpHqQSI=
+X-Received: by 2002:a63:fe0c:: with SMTP id p12mr26221772pgh.31.1606127833192;
+ Mon, 23 Nov 2020 02:37:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120084202.GJ3200@dhcp22.suse.cz> <CAMZfGtWJXni21J=Yn55gksKy9KZnDScCjKmMasNz5XUwx3OcKw@mail.gmail.com>
+ <20201120131129.GO3200@dhcp22.suse.cz> <CAMZfGtWNDJWWTtpUDtngtgNiOoSd6sJpdAB6MnJW8KH0gePfYA@mail.gmail.com>
+ <20201123074046.GB27488@dhcp22.suse.cz> <CAMZfGtV9WBu0OVi0fw4ab=t4zzY-uVn3amsa5ZHQhZBy88exFw@mail.gmail.com>
+ <20201123094344.GG27488@dhcp22.suse.cz>
+In-Reply-To: <20201123094344.GG27488@dhcp22.suse.cz>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Mon, 23 Nov 2020 18:36:33 +0800
+Message-ID: <CAMZfGtUjsAKuQ_2NijKGPZYX7OBO_himtBDMKNkYb_0_o5CJGA@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v5 00/21] Free some vmemmap pages of
+ hugetlb page
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Tong Zhang <ztong0001@gmail.com>
+On Mon, Nov 23, 2020 at 5:43 PM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Mon 23-11-20 16:53:53, Muchun Song wrote:
+> > On Mon, Nov 23, 2020 at 3:40 PM Michal Hocko <mhocko@suse.com> wrote:
+> > >
+> > > On Fri 20-11-20 23:44:26, Muchun Song wrote:
+> > > > On Fri, Nov 20, 2020 at 9:11 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > >
+> > > > > On Fri 20-11-20 20:40:46, Muchun Song wrote:
+> > > > > > On Fri, Nov 20, 2020 at 4:42 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > > > >
+> > > > > > > On Fri 20-11-20 14:43:04, Muchun Song wrote:
+> > > > > > > [...]
+> > > > > > >
+> > > > > > > Thanks for improving the cover letter and providing some numbers. I have
+> > > > > > > only glanced through the patchset because I didn't really have more time
+> > > > > > > to dive depply into them.
+> > > > > > >
+> > > > > > > Overall it looks promissing. To summarize. I would prefer to not have
+> > > > > > > the feature enablement controlled by compile time option and the kernel
+> > > > > > > command line option should be opt-in. I also do not like that freeing
+> > > > > > > the pool can trigger the oom killer or even shut the system down if no
+> > > > > > > oom victim is eligible.
+> > > > > >
+> > > > > > Hi Michal,
+> > > > > >
+> > > > > > I have replied to you about those questions on the other mail thread.
+> > > > > >
+> > > > > > Thanks.
+> > > > > >
+> > > > > > >
+> > > > > > > One thing that I didn't really get to think hard about is what is the
+> > > > > > > effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
+> > > > > > > invalid when racing with the split. How do we enforce that this won't
+> > > > > > > blow up?
+> > > > > >
+> > > > > > This feature depends on the CONFIG_SPARSEMEM_VMEMMAP,
+> > > > > > in this case, the pfn_to_page can work. The return value of the
+> > > > > > pfn_to_page is actually the address of it's struct page struct.
+> > > > > > I can not figure out where the problem is. Can you describe the
+> > > > > > problem in detail please? Thanks.
+> > > > >
+> > > > > struct page returned by pfn_to_page might get invalid right when it is
+> > > > > returned because vmemmap could get freed up and the respective memory
+> > > > > released to the page allocator and reused for something else. See?
+> > > >
+> > > > If the HugeTLB page is already allocated from the buddy allocator,
+> > > > the struct page of the HugeTLB can be freed? Does this exist?
+> > >
+> > > Nope, struct pages only ever get deallocated when the respective memory
+> > > (they describe) is hotremoved via hotplug.
+> > >
+> > > > If yes, how to free the HugeTLB page to the buddy allocator
+> > > > (cannot access the struct page)?
+> > >
+> > > But I do not follow how that relates to my concern above.
+> >
+> > Sorry. I shouldn't understand your concerns.
+> >
+> > vmemmap pages                 page frame
+> > +-----------+   mapping to   +-----------+
+> > |           | -------------> |     0     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     1     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     2     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     3     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     4     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     5     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     6     |
+> > +-----------+                +-----------+
+> > |           | -------------> |     7     |
+> > +-----------+                +-----------+
+> >
+> > In this patch series, we will free the page frame 2-7 to the
+> > buddy allocator. You mean that pfn_to_page can return invalid
+> > value when the pfn is the page frame 2-7? Thanks.
+>
+> No I really mean that pfn_to_page will give you a struct page pointer
+> from pages which you release from the vmemmap page tables. Those pages
+> might get reused as soon sa they are freed to the page allocator.
 
-the di_fname may not terminated by '\0', use strnlen to prevent buffer
-overrun
+We will remap vmemmap pages 2-7 (virtual addresses) to page
+frame 1. And then we free page frame 2-7 to the buddy allocator.
+Then accessing the struct page pointer that returned by pfn_to_page
+will be reflected on page frame 1. I think that here is no problem.
 
-[  513.248784] qnx4_readdir: bread failed (3718095557)
-[  513.250880] ==================================================================
-[  513.251109] BUG: KASAN: use-after-free in strlen+0x1f/0x40
-[  513.251268] Read of size 1 at addr ffff888002700000 by task find/230
-[  513.251419]
-[  513.251677] CPU: 0 PID: 230 Comm: find Not tainted 5.10.0-rc4+ #64
-[  513.251805] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-48-gd84
-[  513.252069] Call Trace:
-[  513.252310]  dump_stack+0x7d/0xa3
-[  513.252443]  print_address_description.constprop.0+0x1e/0x220
-[  513.252572]  ? _raw_spin_lock_irqsave+0x7b/0xd0
-[  513.252681]  ? _raw_write_lock_irqsave+0xd0/0xd0
-[  513.252785]  ? strlen+0x1f/0x40
-[  513.252869]  ? strlen+0x1f/0x40
-[  513.252955]  kasan_report.cold+0x37/0x7c
-[  513.253059]  ? qnx4_block_map+0x130/0x1d0
-[  513.253152]  ? strlen+0x1f/0x40
-[  513.253237]  strlen+0x1f/0x40
-[  513.253329]  qnx4_lookup+0xab/0x220
-[  513.253431]  __lookup_slow+0x103/0x220
-[  513.253531]  ? vfs_unlink+0x2e0/0x2e0
-[  513.253626]  ? down_read+0xd8/0x190
-[  513.253721]  ? down_write_killable+0x110/0x110
-[  513.253823]  ? generic_permission+0x4c/0x240
-[  513.253929]  walk_component+0x214/0x2c0
-[  513.254035]  ? handle_dots.part.0+0x760/0x760
-[  513.254137]  ? walk_component+0x2c0/0x2c0
-[  513.254233]  ? path_init+0x546/0x6b0
-[  513.254327]  ? __kernel_text_address+0x9/0x30
-[  513.254430]  ? unwind_get_return_address+0x2a/0x40
-[  513.254538]  ? create_prof_cpu_mask+0x20/0x20
-[  513.254637]  ? arch_stack_walk+0x99/0xf0
-[  513.254736]  path_lookupat.isra.0+0xb0/0x240
-[  513.254840]  filename_lookup+0x128/0x250
-[  513.254939]  ? may_linkat+0xb0/0xb0
-[  513.255033]  ? __fput+0x199/0x3c0
-[  513.255127]  ? kasan_save_stack+0x32/0x40
-[  513.255224]  ? kasan_save_stack+0x1b/0x40
-[  513.255323]  ? kasan_unpoison_shadow+0x33/0x40
-[  513.255426]  ? __kasan_kmalloc.constprop.0+0xc2/0xd0
-[  513.255538]  ? getname_flags+0x100/0x2a0
-[  513.255635]  vfs_statx+0xd8/0x1d0
-[  513.255728]  ? vfs_getattr+0x40/0x40
-[  513.255821]  ? lockref_put_return+0xb2/0x120
-[  513.255922]  __do_sys_newfstatat+0x7d/0xd0
-[  513.256022]  ? __ia32_sys_newlstat+0x30/0x30
-[  513.256122]  ? __kasan_slab_free+0x121/0x150
-[  513.256222]  ? rcu_segcblist_enqueue+0x72/0x80
-[  513.256333]  ? fpregs_assert_state_consistent+0x4d/0x60
-[  513.256446]  ? exit_to_user_mode_prepare+0x2d/0xf0
-[  513.256551]  ? __x64_sys_newfstatat+0x39/0x60
-[  513.256651]  do_syscall_64+0x33/0x40
-[  513.256750]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Thanks.
 
-Co-Developed-by: Anders Larsen <al@alarsen.net>
-Signed-off-by: Tong Zhang <ztong0001@gmail.com>
-Signed-off-by: Anders Larsen <al@alarsen.net>
----
-v2: The name can grow longer than QNX4_SHORT_NAME_MAX if de is a
- QNX4_FILE_LINK type and de should points to a qnx4_link_info struct, so
- this is safe.  We also remove redundant checks in this version.
+> --
+> Michal Hocko
+> SUSE Labs
 
- fs/qnx4/namei.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/qnx4/namei.c b/fs/qnx4/namei.c
-index 8d72221735d7..2bcbbd7c772e 100644
---- a/fs/qnx4/namei.c
-+++ b/fs/qnx4/namei.c
-@@ -40,9 +40,7 @@ static int qnx4_match(int len, const char *name,
- 	} else {
- 		namelen = QNX4_SHORT_NAME_MAX;
- 	}
--	thislen = strlen( de->di_fname );
--	if ( thislen > namelen )
--		thislen = namelen;
-+	thislen = strnlen( de->di_fname, namelen );
- 	if (len != thislen) {
- 		return 0;
- 	}
+
 -- 
-2.29.2
-
+Yours,
+Muchun
