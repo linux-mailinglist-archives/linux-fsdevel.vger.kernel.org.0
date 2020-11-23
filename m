@@ -2,89 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2610F2C0380
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:41:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4159B2C0391
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbgKWKkP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 05:40:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728158AbgKWKkP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 05:40:15 -0500
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1505DC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 02:40:15 -0800 (PST)
-Received: by mail-vs1-xe43.google.com with SMTP id r5so8857668vsp.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 02:40:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jamAVoUCU+8fqygXmQmsc1NChi/+hIkgctg7KmhQF/Y=;
-        b=Yz0XxP/vbZZ2Bp1U1fJz8+K0B0BJdjNSuCile3vvm7Sr5yeNQh6UKhmv2RB3huq+XD
-         IKU4DOq9USspblp0z/SciYGA+bNvLR+puvuQaymzMcjq1kPG1GXeSIQcEwx30f1D7Nvg
-         IWRwwgGsvwr1ZqFpqKlv3KybYHOlEvSmGL4Dw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jamAVoUCU+8fqygXmQmsc1NChi/+hIkgctg7KmhQF/Y=;
-        b=Q+7qOOfjVNPHd29oe0dT8VNKw04+8WGPoCWgVkJiKaUXc1Sk9YuycLr6zQgFxWQKCe
-         LYbIb9fnDy/HRk5mt+BbMTOPzfWXOgGh4a60KGJL2PPVka+IDRq922VKaLNV1FJkvWNM
-         gfCxgVAT1g5Q9yysxYI7qV6wUKGWwj3Jbu2ixISOemAgA/Hj+E6hGB5udhVoJCotz+wx
-         W+CWz6go/x0U0jO44zDvIg30EHA/yARZmGo9NRHWFfUH9spo4lYZeL68DgdKbsFvLrhD
-         rSHmRfiSzT9DDfwLkn4ibNKU/490Fp2x5ynyaPmMYEkQaPOE/c+rroYI2+2cxsp5kPYx
-         goEg==
-X-Gm-Message-State: AOAM532Tzrh+amztO/j5/MUgxZhuazOh0jAGHtnleVA4Fr9u5vhnE0ee
-        VGGci847Q1y2lS1qWxOpBMyDU2mtyO+7BM90X3ag7w==
-X-Google-Smtp-Source: ABdhPJz6ZlgtfJVhkbeRGNZvAGKv7R937MF6nw1Pdfo9mXsGCoidasg7HSGhNPtZWqIyzUt8yKp25DQnfaM7T6IFAa8=
-X-Received: by 2002:a05:6102:3203:: with SMTP id r3mr17953733vsf.21.1606128014273;
- Mon, 23 Nov 2020 02:40:14 -0800 (PST)
+        id S1728620AbgKWKnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 05:43:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39626 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725907AbgKWKnB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Nov 2020 05:43:01 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1606128180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pFsAgqEF6rCorJPEzwduvsXSgM44bZXUvbIYui99MCA=;
+        b=DtL35ygUL3Uzf5GavQeNA+QTIh5N0c7udmZkQriWUhO5FMnjuGAXKRDfZd3V+VKKdLLp5l
+        TayBlp1wsYFV+BPvDH1ToIhuqojQSqFMlPKZl48S7JJwJe4hyTi4+vMxSTeOe3Zzgmjzsd
+        8AXQLYnutgm23bZAGnyR9o3Jt7Nv2SA=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id CF697ABCE;
+        Mon, 23 Nov 2020 10:42:59 +0000 (UTC)
+Date:   Mon, 23 Nov 2020 11:42:58 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [External] Re: [PATCH v5 00/21] Free some vmemmap pages of
+ hugetlb page
+Message-ID: <20201123104258.GJ27488@dhcp22.suse.cz>
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120084202.GJ3200@dhcp22.suse.cz>
+ <CAMZfGtWJXni21J=Yn55gksKy9KZnDScCjKmMasNz5XUwx3OcKw@mail.gmail.com>
+ <20201120131129.GO3200@dhcp22.suse.cz>
+ <CAMZfGtWNDJWWTtpUDtngtgNiOoSd6sJpdAB6MnJW8KH0gePfYA@mail.gmail.com>
+ <20201123074046.GB27488@dhcp22.suse.cz>
+ <CAMZfGtV9WBu0OVi0fw4ab=t4zzY-uVn3amsa5ZHQhZBy88exFw@mail.gmail.com>
+ <20201123094344.GG27488@dhcp22.suse.cz>
+ <CAMZfGtUjsAKuQ_2NijKGPZYX7OBO_himtBDMKNkYb_0_o5CJGA@mail.gmail.com>
 MIME-Version: 1.0
-References: <DM6PR12MB3385BD749DF7B07275AAD703DDFF0@DM6PR12MB3385.namprd12.prod.outlook.com>
-In-Reply-To: <DM6PR12MB3385BD749DF7B07275AAD703DDFF0@DM6PR12MB3385.namprd12.prod.outlook.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 23 Nov 2020 11:40:03 +0100
-Message-ID: <CAJfpegu57WwNfO7N1qJUMuFk_5pOUY-1DihYPySKc0LNHTm8JA@mail.gmail.com>
-Subject: Re: [RESEND PATCH] fuse : Improve file open behavior for recently
- created/unlinked files
-To:     Ken Schalk <kschalk@nvidia.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "fuse-devel@lists.sourceforge.net" <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMZfGtUjsAKuQ_2NijKGPZYX7OBO_himtBDMKNkYb_0_o5CJGA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 11:35 PM Ken Schalk <kschalk@nvidia.com> wrote:
->
-> When a dentry exists for the path argument to an open with O_CREAT or
-> a negative dentry exists for the path argument to any open, make a
-> lookup request to the user-space daemon to verify the
-> existence/non-existence of the path.
->
-> This improves file open behavior for a FUSE filesystem where changes
-> may be made without going through the mount point, such as a
-> distributed filesystem accessed concurrently from multiple hosts.
-> Specifically:
->
-> - For an open with O_CREAT of a path with a cached dentry, the
->   user-space daemon is able to report a recent unlink of a file
->   allowing it to be re-created rather than either the open failing
->   with EEXIST (when O_EXCL is used) or a FUSE open request causing the
->   open to fail with ENOENT (when O_EXCL is not used).
->
-> - For an open of a path with a cached negative dentry, the user-space
->   daemon is able to report the recent creation of a file allowing it
->   to be opened rather than the open failing with ENOENT.
->
-> This is intended to be functionally equivalent to behavior in the NFS
-> client which re-validates a cached dentry on file open.
+On Mon 23-11-20 18:36:33, Muchun Song wrote:
+> On Mon, Nov 23, 2020 at 5:43 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Mon 23-11-20 16:53:53, Muchun Song wrote:
+> > > On Mon, Nov 23, 2020 at 3:40 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > >
+> > > > On Fri 20-11-20 23:44:26, Muchun Song wrote:
+> > > > > On Fri, Nov 20, 2020 at 9:11 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > > >
+> > > > > > On Fri 20-11-20 20:40:46, Muchun Song wrote:
+> > > > > > > On Fri, Nov 20, 2020 at 4:42 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > > > > > >
+> > > > > > > > On Fri 20-11-20 14:43:04, Muchun Song wrote:
+> > > > > > > > [...]
+> > > > > > > >
+> > > > > > > > Thanks for improving the cover letter and providing some numbers. I have
+> > > > > > > > only glanced through the patchset because I didn't really have more time
+> > > > > > > > to dive depply into them.
+> > > > > > > >
+> > > > > > > > Overall it looks promissing. To summarize. I would prefer to not have
+> > > > > > > > the feature enablement controlled by compile time option and the kernel
+> > > > > > > > command line option should be opt-in. I also do not like that freeing
+> > > > > > > > the pool can trigger the oom killer or even shut the system down if no
+> > > > > > > > oom victim is eligible.
+> > > > > > >
+> > > > > > > Hi Michal,
+> > > > > > >
+> > > > > > > I have replied to you about those questions on the other mail thread.
+> > > > > > >
+> > > > > > > Thanks.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > One thing that I didn't really get to think hard about is what is the
+> > > > > > > > effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
+> > > > > > > > invalid when racing with the split. How do we enforce that this won't
+> > > > > > > > blow up?
+> > > > > > >
+> > > > > > > This feature depends on the CONFIG_SPARSEMEM_VMEMMAP,
+> > > > > > > in this case, the pfn_to_page can work. The return value of the
+> > > > > > > pfn_to_page is actually the address of it's struct page struct.
+> > > > > > > I can not figure out where the problem is. Can you describe the
+> > > > > > > problem in detail please? Thanks.
+> > > > > >
+> > > > > > struct page returned by pfn_to_page might get invalid right when it is
+> > > > > > returned because vmemmap could get freed up and the respective memory
+> > > > > > released to the page allocator and reused for something else. See?
+> > > > >
+> > > > > If the HugeTLB page is already allocated from the buddy allocator,
+> > > > > the struct page of the HugeTLB can be freed? Does this exist?
+> > > >
+> > > > Nope, struct pages only ever get deallocated when the respective memory
+> > > > (they describe) is hotremoved via hotplug.
+> > > >
+> > > > > If yes, how to free the HugeTLB page to the buddy allocator
+> > > > > (cannot access the struct page)?
+> > > >
+> > > > But I do not follow how that relates to my concern above.
+> > >
+> > > Sorry. I shouldn't understand your concerns.
+> > >
+> > > vmemmap pages                 page frame
+> > > +-----------+   mapping to   +-----------+
+> > > |           | -------------> |     0     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     1     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     2     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     3     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     4     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     5     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     6     |
+> > > +-----------+                +-----------+
+> > > |           | -------------> |     7     |
+> > > +-----------+                +-----------+
+> > >
+> > > In this patch series, we will free the page frame 2-7 to the
+> > > buddy allocator. You mean that pfn_to_page can return invalid
+> > > value when the pfn is the page frame 2-7? Thanks.
+> >
+> > No I really mean that pfn_to_page will give you a struct page pointer
+> > from pages which you release from the vmemmap page tables. Those pages
+> > might get reused as soon sa they are freed to the page allocator.
+> 
+> We will remap vmemmap pages 2-7 (virtual addresses) to page
+> frame 1. And then we free page frame 2-7 to the buddy allocator.
 
-You haven't replied to this:
+And this doesn't really happen in an atomic fashion from the pfn walker
+POV, right? So it is very well possible that 
 
-https://lore.kernel.org/linux-fsdevel/CAJfpegv5EckmJ_PCqHc2N3_jHaXfinMwvDNSttYNXcan1wr1fQ@mail.gmail.com/
-
-Thanks,
-Miklos
+struct page *page = pfn_to_page();
+// remapping happens here
+// page content is no longer valid because its backing memory can be
+// reused for whatever purpose.
+-- 
+Michal Hocko
+SUSE Labs
