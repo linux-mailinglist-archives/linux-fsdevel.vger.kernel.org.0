@@ -2,166 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4159B2C0391
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 11:46:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 644442C03E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 12:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728620AbgKWKnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 05:43:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39626 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbgKWKnB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 05:43:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1606128180; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        id S1728138AbgKWLOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 06:14:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24769 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727210AbgKWLOb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Nov 2020 06:14:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606130070;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=pFsAgqEF6rCorJPEzwduvsXSgM44bZXUvbIYui99MCA=;
-        b=DtL35ygUL3Uzf5GavQeNA+QTIh5N0c7udmZkQriWUhO5FMnjuGAXKRDfZd3V+VKKdLLp5l
-        TayBlp1wsYFV+BPvDH1ToIhuqojQSqFMlPKZl48S7JJwJe4hyTi4+vMxSTeOe3Zzgmjzsd
-        8AXQLYnutgm23bZAGnyR9o3Jt7Nv2SA=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id CF697ABCE;
-        Mon, 23 Nov 2020 10:42:59 +0000 (UTC)
-Date:   Mon, 23 Nov 2020 11:42:58 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
+        bh=P5lml5vZHauiXQibHImb0/7U2VYF7jHEppen3GS3U/U=;
+        b=UArDClm3bbQIwvqvbQQFE5Cv4a+nbpQJ4QO3HCVh6dA6PeqBVhe3jpcKbObAsmusFnW/Jq
+        2vtxcD6cjCJgEWWVD7OId7sIeOuiosI1xLPNVRrhE75xgU3vgXDEvviMpSSm/ZmOHMy+bN
+        Jr6dNE5zgdRQ8ROx4dhu4oPyfUx/Ky0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-55-9Ijj66mtOfeY6n0Ul4XQVQ-1; Mon, 23 Nov 2020 06:14:26 -0500
+X-MC-Unique: 9Ijj66mtOfeY6n0Ul4XQVQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAA8B106F6EC;
+        Mon, 23 Nov 2020 11:14:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-111.rdu2.redhat.com [10.10.112.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E4BE660C04;
+        Mon, 23 Nov 2020 11:14:22 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <516984.1606127474@warthog.procyon.org.uk>
+References: <516984.1606127474@warthog.procyon.org.uk> <20201123080506.GA30578@infradead.org> <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk> <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Pavel Begunkov <asml.silence@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [External] Re: [PATCH v5 00/21] Free some vmemmap pages of
- hugetlb page
-Message-ID: <20201123104258.GJ27488@dhcp22.suse.cz>
-References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120084202.GJ3200@dhcp22.suse.cz>
- <CAMZfGtWJXni21J=Yn55gksKy9KZnDScCjKmMasNz5XUwx3OcKw@mail.gmail.com>
- <20201120131129.GO3200@dhcp22.suse.cz>
- <CAMZfGtWNDJWWTtpUDtngtgNiOoSd6sJpdAB6MnJW8KH0gePfYA@mail.gmail.com>
- <20201123074046.GB27488@dhcp22.suse.cz>
- <CAMZfGtV9WBu0OVi0fw4ab=t4zzY-uVn3amsa5ZHQhZBy88exFw@mail.gmail.com>
- <20201123094344.GG27488@dhcp22.suse.cz>
- <CAMZfGtUjsAKuQ_2NijKGPZYX7OBO_himtBDMKNkYb_0_o5CJGA@mail.gmail.com>
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZfGtUjsAKuQ_2NijKGPZYX7OBO_himtBDMKNkYb_0_o5CJGA@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <519189.1606130062.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 23 Nov 2020 11:14:22 +0000
+Message-ID: <519190.1606130062@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 23-11-20 18:36:33, Muchun Song wrote:
-> On Mon, Nov 23, 2020 at 5:43 PM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Mon 23-11-20 16:53:53, Muchun Song wrote:
-> > > On Mon, Nov 23, 2020 at 3:40 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > >
-> > > > On Fri 20-11-20 23:44:26, Muchun Song wrote:
-> > > > > On Fri, Nov 20, 2020 at 9:11 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > > > >
-> > > > > > On Fri 20-11-20 20:40:46, Muchun Song wrote:
-> > > > > > > On Fri, Nov 20, 2020 at 4:42 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > > > > > >
-> > > > > > > > On Fri 20-11-20 14:43:04, Muchun Song wrote:
-> > > > > > > > [...]
-> > > > > > > >
-> > > > > > > > Thanks for improving the cover letter and providing some numbers. I have
-> > > > > > > > only glanced through the patchset because I didn't really have more time
-> > > > > > > > to dive depply into them.
-> > > > > > > >
-> > > > > > > > Overall it looks promissing. To summarize. I would prefer to not have
-> > > > > > > > the feature enablement controlled by compile time option and the kernel
-> > > > > > > > command line option should be opt-in. I also do not like that freeing
-> > > > > > > > the pool can trigger the oom killer or even shut the system down if no
-> > > > > > > > oom victim is eligible.
-> > > > > > >
-> > > > > > > Hi Michal,
-> > > > > > >
-> > > > > > > I have replied to you about those questions on the other mail thread.
-> > > > > > >
-> > > > > > > Thanks.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > One thing that I didn't really get to think hard about is what is the
-> > > > > > > > effect of vmemmap manipulation wrt pfn walkers. pfn_to_page can be
-> > > > > > > > invalid when racing with the split. How do we enforce that this won't
-> > > > > > > > blow up?
-> > > > > > >
-> > > > > > > This feature depends on the CONFIG_SPARSEMEM_VMEMMAP,
-> > > > > > > in this case, the pfn_to_page can work. The return value of the
-> > > > > > > pfn_to_page is actually the address of it's struct page struct.
-> > > > > > > I can not figure out where the problem is. Can you describe the
-> > > > > > > problem in detail please? Thanks.
-> > > > > >
-> > > > > > struct page returned by pfn_to_page might get invalid right when it is
-> > > > > > returned because vmemmap could get freed up and the respective memory
-> > > > > > released to the page allocator and reused for something else. See?
-> > > > >
-> > > > > If the HugeTLB page is already allocated from the buddy allocator,
-> > > > > the struct page of the HugeTLB can be freed? Does this exist?
-> > > >
-> > > > Nope, struct pages only ever get deallocated when the respective memory
-> > > > (they describe) is hotremoved via hotplug.
-> > > >
-> > > > > If yes, how to free the HugeTLB page to the buddy allocator
-> > > > > (cannot access the struct page)?
-> > > >
-> > > > But I do not follow how that relates to my concern above.
-> > >
-> > > Sorry. I shouldn't understand your concerns.
-> > >
-> > > vmemmap pages                 page frame
-> > > +-----------+   mapping to   +-----------+
-> > > |           | -------------> |     0     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     1     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     2     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     3     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     4     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     5     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     6     |
-> > > +-----------+                +-----------+
-> > > |           | -------------> |     7     |
-> > > +-----------+                +-----------+
-> > >
-> > > In this patch series, we will free the page frame 2-7 to the
-> > > buddy allocator. You mean that pfn_to_page can return invalid
-> > > value when the pfn is the page frame 2-7? Thanks.
-> >
-> > No I really mean that pfn_to_page will give you a struct page pointer
-> > from pages which you release from the vmemmap page tables. Those pages
-> > might get reused as soon sa they are freed to the page allocator.
-> 
-> We will remap vmemmap pages 2-7 (virtual addresses) to page
-> frame 1. And then we free page frame 2-7 to the buddy allocator.
+David Howells <dhowells@redhat.com> wrote:
 
-And this doesn't really happen in an atomic fashion from the pfn walker
-POV, right? So it is very well possible that 
+> I tried three different sets of patches: none, just the first (which add=
+s the
+> jump table without getting rid of the conditional branches), and all of =
+them.
 
-struct page *page = pfn_to_page();
-// remapping happens here
-// page content is no longer valid because its backing memory can be
-// reused for whatever purpose.
--- 
-Michal Hocko
-SUSE Labs
+And, I forgot to mention, I ran each test four times and then interleaved =
+the
+result lines for that set.
+
+David
+
