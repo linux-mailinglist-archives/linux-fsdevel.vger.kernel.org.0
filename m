@@ -2,115 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C742C010C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 09:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD6762C0117
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 09:09:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgKWICl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 03:02:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42862 "EHLO
+        id S1728188AbgKWIFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 03:05:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727717AbgKWICk (ORCPT
+        with ESMTP id S1725998AbgKWIFQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 03:02:40 -0500
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B2CC0613CF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 00:02:40 -0800 (PST)
-Received: by mail-pf1-x441.google.com with SMTP id w6so14196410pfu.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 00:02:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LjW5kf1b1Fcrz9tIggA1cpzx5YJFFwp+TEs9UtQIZsw=;
-        b=PsvMXAcoEQ4hU0UZyLqO+PoN3PXrPBxWC79QMPfmg/GeikUA+SP8/ijNRw21dSTXiJ
-         xNPNUGCNDUPwI6ifrInTqzcWJKex5iemykaV2fHR+J5/zcJTfvCdDZCgfwNA4YMJg1k0
-         pnW3LHjw4DSuK+4v91P6GJ270fMdQtRMW5csIIxjxrv0croy/8qu2J0TkgMk3qbqE4O+
-         Urs14aeqs+PCcTeQPCDHwqqTnM9TUgBa+NlQongfRf9g7OD17aGWB8RxYwznDsxCxu5Z
-         UJqU6o2Q7MvZRsBqPFfMaRzBB8oji3PoIckEUKR84XfDUAyhPSjqi4OR+g4Hd6uwP5B0
-         Yg2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LjW5kf1b1Fcrz9tIggA1cpzx5YJFFwp+TEs9UtQIZsw=;
-        b=tdynt0yAPzuauo0FhcmmnS36GJLbcauv9io4q/h+soQtplPpHX4MU206qI2jVuue+E
-         rjI9wQUaua0tEoXdTOx3IWEQKl3SaysgIpasP62M5huBptBggwJht1Z6fsbbMxUkMM01
-         +hO84YATPKFnS7fqqTlzW6w8YvOwYJWCRDDnvlQMBzI3fk1K19ABOJVaZ5YB/Q1QcA2F
-         L7UV5zvhQe9HIL2rh3B8SmCHSYTz7P7TZSRe9AP3EtNhe74K4QrqkHm6ubZrdjew6PT6
-         TX+RaxXU79e3mZvO2sHJQYyb29Hzb2W1NP7sI2mTvrlGhlJyeaBSrhfVtmS2yMCp+GjE
-         ivbg==
-X-Gm-Message-State: AOAM533YVpgSxvXUfmhPPliP6jXP/diwisrIem3HS/T0l0XN3Pljga+Y
-        uxnYyItv8OxySbFZIK+5UFzuK2dksGRjxrYue8a2sg==
-X-Google-Smtp-Source: ABdhPJz4q3i27WpndCtivA4jdkLBmsJFiWT7v+RK+RF8zB1bKuJ/sddH4D73BQja9ZIobFqLizBVKi+BNz073q7oDn8=
-X-Received: by 2002:aa7:8105:0:b029:18e:c8d9:2c24 with SMTP id
- b5-20020aa781050000b029018ec8d92c24mr23947117pfi.49.1606118559844; Mon, 23
- Nov 2020 00:02:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20201120064325.34492-1-songmuchun@bytedance.com>
- <20201120064325.34492-14-songmuchun@bytedance.com> <20201120081638.GD3200@dhcp22.suse.cz>
- <CAMZfGtX3DUJggAzz_06Z2atHPknkCir6a49a983TsWOHt5ZQUQ@mail.gmail.com> <20201123074804.GC27488@dhcp22.suse.cz>
-In-Reply-To: <20201123074804.GC27488@dhcp22.suse.cz>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 23 Nov 2020 16:01:59 +0800
-Message-ID: <CAMZfGtVvubZLuzYDC3x605jSSFO+JTk4xU0BVMwxmo26tOdHBg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v5 13/21] mm/hugetlb: Use PG_slab to
- indicate split pmd
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
+        Mon, 23 Nov 2020 03:05:16 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5584CC0613CF;
+        Mon, 23 Nov 2020 00:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6vGNH6/LtgD9H2B7jY2SC28nVQh3dS5TfEwthu4Yqq0=; b=ZAqo9NfKjGkL2SJi0Et2eFTHHn
+        SyVCEbdUmUIfwpdvBuuWvFBs+XXOd7k1xLJehh+E7u1OeHRW7tdsHvERCOFJ18rpuaDwZrh2Bpf4p
+        GHifpGgC0MOM2Cj739hSkfHtJxZ7U412O1Tzn65r8/mLOHMADt9YJdfREPFf2EtryGT+OIY+r4Nz1
+        WBeADPY66kCsCM8yUaREC77lOZ09vI2AT1QsaaFr1N1hHvNXhVevUpoQ2ZnJ531G4XlESqBTwNfAN
+        9Se0TiLHstfosyW2NcAEDqbCjU1U+jZvKjRy4hDToRxwrdt597/uGrDfWAgjbGxLFhVXqyo8FblrG
+        HduUcWMw==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kh6qQ-000852-Hy; Mon, 23 Nov 2020 08:05:06 +0000
+Date:   Mon, 23 Nov 2020 08:05:06 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
+Message-ID: <20201123080506.GA30578@infradead.org>
+References: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
+ <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 23, 2020 at 3:48 PM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Fri 20-11-20 17:30:27, Muchun Song wrote:
-> > On Fri, Nov 20, 2020 at 4:16 PM Michal Hocko <mhocko@suse.com> wrote:
-> > >
-> > > On Fri 20-11-20 14:43:17, Muchun Song wrote:
-> > > > When we allocate hugetlb page from buddy, we may need split huge pmd
-> > > > to pte. When we free the hugetlb page, we can merge pte to pmd. So
-> > > > we need to distinguish whether the previous pmd has been split. The
-> > > > page table is not allocated from slab. So we can reuse the PG_slab
-> > > > to indicate that the pmd has been split.
-> > >
-> > > PageSlab is used outside of the slab allocator proper and that code
-> > > might get confused by this AFAICS.
-> >
-> > I got your concerns. Maybe we can use PG_private instead of the
-> > PG_slab.
->
-> Reusing a page flag arbitrarily is not that easy. Hugetlb pages have a
-> lot of spare room in struct page so I would rather use something else.
+On Sat, Nov 21, 2020 at 02:13:30PM +0000, David Howells wrote:
+> Switch to using a table of operations.  In a future patch the individual
+> methods will be split up by type.  For the moment, however, the ops tables
+> just jump directly to the old functions - which are now static.  Inline
+> wrappers are provided to jump through the hooks.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
-This page is the PMD page table of vmemmap, not the vmemmap page
-of HugeTLB. And the page table does not use PG_private. Maybe it is
-enough. Thanks.
-
-> --
-> Michal Hocko
-> SUSE Labs
-
-
-
--- 
-Yours,
-Muchun
+Please run performance tests.  I think the indirect calls could totally
+wreck things like high performance direct I/O, especially using io_uring
+on x86.
