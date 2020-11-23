@@ -2,143 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9862C106B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 17:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C133A2C10C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 17:39:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732580AbgKWQbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 11:31:34 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:48269 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730953AbgKWQZc (ORCPT
+        id S2390125AbgKWQhk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 11:37:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390135AbgKWQhk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 11:25:32 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 74EC3580370;
-        Mon, 23 Nov 2020 11:24:39 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 23 Nov 2020 11:24:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=dCNTwpbrygdlSzzc2FSEUktQs4G
-        /tw8OZWUghu6D3ME=; b=mvdckROrTihded/w+9kbPJNVEi2oJxpsRMBdE13AueF
-        cwuXhp7Z5s5KniXQa1DndY9EPlaQ/d+ogqLn9NGqNE2FE+kWQsD3euvCwsXoTBpP
-        USZ80C2yJENk16vx6Z8MC7CQCKCEdRubyZ6tEy+777bHg7UrRf0xedXg983fDZ/6
-        MaLCVcqHB+IWEeO+Qsyz0Uh0vGjKXLrSrtxFjX9oZ/xGJyvd19EoeHXG6WRgD+0A
-        G7sHoeCQWvU2b5C3FOsujWiwg+cNqTPduzJqxAmcFfjCLx1tki5qvQlMV+zgsqZQ
-        LGY2MNjuc7pqYwmKhNfumxsz7ybtxtyNBy4d4QHxUPw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=dCNTwp
-        brygdlSzzc2FSEUktQs4G/tw8OZWUghu6D3ME=; b=ApOjkzVhfFeqlzdsO7tG0b
-        x2bQvq7ntcNEhFM0AFLCrw3ZO/EH2RGTygVpMrJ3dAP6MlKHkmTa+uP0MyrFtomH
-        5LAjlgtNQN09OTRea7p7pYONwGQAiVwp9Ax0WCv7exAeYjgFHgcAeCCe86kOOEBw
-        TxHIO8klW2S3Akyz3KykNiHdz1QbGkoVKP3HuUC5FxziM2P5ni1OV5BfU8lV8saq
-        2exDpozvp/Vgs0QTp5yJ7jm0oWt1ATsc/kFQ/EA/1DeayhNK2QO/GADZBALtBfgQ
-        pLJfM2SFh/XPPgSNRfFT5zUu4QQ+7nTbkavi+lKMIQZrLlCIK7q6VOh5Ds2FvUrw
-        ==
-X-ME-Sender: <xms:ROK7XwG4HmiTg6r-VtpaxQ8BUu5C7WtH7yBcDEY0pBc-xjHzCsqNmA>
-    <xme:ROK7X5VaR7V6uDdE9dSztt7S7p_Nppv_Cqmy0ebDwP52dvBRPHRpx0s9-CG7CcIa_
-    Gy7KnQpIy3MT8M_XjQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudegiedgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigthhho
-    ucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtffrrg
-    htthgvrhhnpeegkeefjeegkedtjefgfeduleekueetjeeghffhuefgffefleehgeeifedv
-    gfethfenucfkphepuddvkedruddtjedrvdeguddrudejgeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:ROK7X6LHf_mNExSBh-HxxcJKsQe01xb9FDOEOXarK8KYqYlrbdHcCA>
-    <xmx:ROK7XyH4_tINpnuCxhWINI4B9cIUYfNZv_XFfRLd4ZrRCLzGrQy2sw>
-    <xmx:ROK7X2UQLYJyie5vQRGBHgE4Xffguht8EUxvPlpHJ4ctfCLhIShHNg>
-    <xmx:R-K7Xw33IJLVlu-7Jj36Cl8q_gbpZ3FG0VNLOTRskavmAPFl1i_qcA>
-Received: from cisco (unknown [128.107.241.174])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 652D83280060;
-        Mon, 23 Nov 2020 11:24:30 -0500 (EST)
-Date:   Mon, 23 Nov 2020 11:24:28 -0500
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 07/39] mount: attach mappings to mounts
-Message-ID: <20201123162428.GA24807@cisco>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201115103718.298186-8-christian.brauner@ubuntu.com>
- <20201123154719.GD4025434@cisco>
+        Mon, 23 Nov 2020 11:37:40 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B4F1C061A4D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 08:37:38 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id t18so9126835plo.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 08:37:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=NPDzcaiioinbI0xutHnN4ITCAksvO7VM/A7YfnKL3t8=;
+        b=IWpb9+t2hLMs3fQI31fe2Fh2XpE6OdjGahRcNeGWK1DgJW8519oFS2F3XMpFF8Ss+b
+         n4hivcJix+7wt7lMfwfQRU23sddw6DmCK5J0ywMiEdvF/tUD+iWYsHWGJeqJRTKoVrUe
+         yRBKbdZLCvj55JXALrX8zd66EdyXLdcFn1h6WGpy+dveqIni2Sk4VAjm6X33y9oV5axh
+         elmG5Ek7a1hP5S/5Bh/aSH7q7z02o/6gKmT3pQWou8EznyZYsQnL/mcFl4TvS5rGsGyp
+         TvEEpVSzA3wp7AyKGqB7bLn2fYjX+q20+hDTOcAM23jti1baTGOqOQ4N7/wrpAyHiE/p
+         pqCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NPDzcaiioinbI0xutHnN4ITCAksvO7VM/A7YfnKL3t8=;
+        b=WijJU3K+WAWxxFOhvukDM2bIeG54/es5iJZH93IXMYNxxdsEilKdRY1qUmCVB2k0nO
+         4+HjpASpJ9ntVJ4k9WS+svpISAmFtV/PwVhxZitvG020+O59lDAd4f49clk/OTJmhATZ
+         /OTYV7AnaKGTx/htVv7tLWN/U8X1KudyqYexUFa2/AuhbXnbdKwc55DoznVyhQX9R3sn
+         31Vv2uPnb3pmdyJqODdKofB3GdkpqyflVfyCJoOICeW6Ve/ZXWqzKV1iZc0n9yxLXcZa
+         C2mPMzaxYvoW7cGSLJlyESI2OTHzph4r3oD4TJZcEJdZtdh7xpwA4v4SH4nDaOeYafkl
+         sArQ==
+X-Gm-Message-State: AOAM530NTeUT8P25+HcNs0E4bqh/ucOX0N9lcImMTFr3nNu1PEwsSYxJ
+        mVu2scd3J0HF7KTWdyItKLjsQw==
+X-Google-Smtp-Source: ABdhPJx3ImtYlkkbvp/jmFrOIcNG+vTvqV/MgveRUGMO+vUIm16Ij5kjths7BenX7cWWt8ifPFF1QA==
+X-Received: by 2002:a17:902:bc8c:b029:d8:efb7:ae74 with SMTP id bb12-20020a170902bc8cb02900d8efb7ae74mr306721plb.10.1606149457725;
+        Mon, 23 Nov 2020 08:37:37 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id u6sm5647015pjn.56.2020.11.23.08.37.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Nov 2020 08:37:36 -0800 (PST)
+Subject: Re: inconsistent lock state in io_file_data_ref_zero
+To:     syzbot <syzbot+1f4ba1e5520762c523c6@syzkaller.appspotmail.com>,
+        davem@davemloft.net, io-uring@vger.kernel.org,
+        johannes.berg@intel.com, johannes@sipsolutions.net,
+        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000f3332805b4c330c3@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <948d2d3b-5f36-034d-28e6-7490343a5b59@kernel.dk>
+Date:   Mon, 23 Nov 2020 09:37:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201123154719.GD4025434@cisco>
+In-Reply-To: <000000000000f3332805b4c330c3@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 23, 2020 at 10:47:19AM -0500, Tycho Andersen wrote:
-> On Sun, Nov 15, 2020 at 11:36:46AM +0100, Christian Brauner wrote:
-> > +static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
-> > +{
-> > +	return mnt->mnt_user_ns;
-> > +}
+On 11/23/20 2:55 AM, syzbot wrote:
+> Hello,
 > 
-> I think you might want a READ_ONCE() here. Right now it seems ok, since the
-> mnt_user_ns can't change, but if we ever allow it to change (and I see you have
-> a idmapped_mounts_wip_v2_allow_to_change_idmapping branch on your public tree
-> :D), the pattern of,
+> syzbot found the following issue on:
 > 
->         user_ns = mnt_user_ns(path->mnt);
->         if (mnt_idmapped(path->mnt)) {
->                 uid = kuid_from_mnt(user_ns, uid);
->                 gid = kgid_from_mnt(user_ns, gid);
->         }
+> HEAD commit:    27bba9c5 Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11041f1e500000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=330f3436df12fd44
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1f4ba1e5520762c523c6
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d9b775500000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157e4f75500000
 > 
-> could race.
+> The issue was bisected to:
+> 
+> commit dcd479e10a0510522a5d88b29b8f79ea3467d501
+> Author: Johannes Berg <johannes.berg@intel.com>
+> Date:   Fri Oct 9 12:17:11 2020 +0000
+> 
+>     mac80211: always wind down STA state
 
-Actually, isn't a race possible now?
+Not sure what is going on with the syzbot bisects recently, they are way
+off into the weeds...
 
-kuid_from_mnt(mnt_user_ns(path->mnt) /* &init_user_ns */);
-WRITE_ONCE(mnt->mnt.mnt_user_ns, user_ns);
-WRITE_ONCE(m->mnt.mnt_flags, flags);
-kgid_from_mnt(mnt_user_ns(path->mnt) /* the right user ns */);
+Anyway, I think the below should fix it.
 
-So maybe it should be:
 
-         if (mnt_idmapped(path->mnt)) {
-                 barrier();
-                 user_ns = mnt_user_ns(path->mnt);
-                 uid = kuid_from_mnt(user_ns, uid);
-                 gid = kgid_from_mnt(user_ns, gid);
-         }
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 489ec7272b3e..0f2abbff7eec 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7194,9 +7181,9 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
+ 	if (!data)
+ 		return -ENXIO;
+ 
+-	spin_lock(&data->lock);
++	spin_lock_bh(&data->lock);
+ 	ref_node = data->node;
+-	spin_unlock(&data->lock);
++	spin_unlock_bh(&data->lock);
+ 	if (ref_node)
+ 		percpu_ref_kill(&ref_node->refs);
+ 
+@@ -7578,7 +7565,7 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
+ 	data = ref_node->file_data;
+ 	ctx = data->ctx;
+ 
+-	spin_lock(&data->lock);
++	spin_lock_bh(&data->lock);
+ 	ref_node->done = true;
+ 
+ 	while (!list_empty(&data->ref_list)) {
+@@ -7590,7 +7577,7 @@ static void io_file_data_ref_zero(struct percpu_ref *ref)
+ 		list_del(&ref_node->node);
+ 		first_add |= llist_add(&ref_node->llist, &ctx->file_put_llist);
+ 	}
+-	spin_unlock(&data->lock);
++	spin_unlock_bh(&data->lock);
+ 
+ 	if (percpu_ref_is_dying(&data->refs))
+ 		delay = 0;
+@@ -7713,9 +7700,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
+ 	}
+ 
+ 	file_data->node = ref_node;
+-	spin_lock(&file_data->lock);
++	spin_lock_bh(&file_data->lock);
+ 	list_add_tail(&ref_node->node, &file_data->ref_list);
+-	spin_unlock(&file_data->lock);
++	spin_unlock_bh(&file_data->lock);
+ 	percpu_ref_get(&file_data->refs);
+ 	return ret;
+ out_fput:
+@@ -7872,10 +7859,10 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 
+ 	if (needs_switch) {
+ 		percpu_ref_kill(&data->node->refs);
+-		spin_lock(&data->lock);
++		spin_lock_bh(&data->lock);
+ 		list_add_tail(&ref_node->node, &data->ref_list);
+ 		data->node = ref_node;
+-		spin_unlock(&data->lock);
++		spin_unlock_bh(&data->lock);
+ 		percpu_ref_get(&ctx->file_data->refs);
+ 	} else
+ 		destroy_fixed_file_ref_node(ref_node);
 
-since there's no data dependency between mnt_idmapped() and
-mnt_user_ns()?
 
-Tycho
+-- 
+Jens Axboe
+
