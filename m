@@ -2,124 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 813B92C17C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 22:37:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A2C2C180E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Nov 2020 22:59:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731239AbgKWVhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 16:37:08 -0500
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57362 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730466AbgKWVhI (ORCPT
+        id S1731615AbgKWV5Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 16:57:24 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:57998 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729996AbgKWV5X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 16:37:08 -0500
-Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D38B658B8C4;
-        Tue, 24 Nov 2020 08:37:03 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1khJWA-00EJp0-PA; Tue, 24 Nov 2020 08:37:02 +1100
-Date:   Tue, 24 Nov 2020 08:37:02 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     XiaoLi Feng <xifeng@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, ira.weiny@intel.com,
-        Xiaoli Feng <fengxiaoli0714@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fs/stat: set attributes_mask for STATX_ATTR_DAX
-Message-ID: <20201123213702.GV7391@dread.disaster.area>
-References: <20201121003331.21342-1-xifeng@redhat.com>
- <21890103-fce2-bb50-7fc2-6c6d509b982f@infradead.org>
- <20201121011516.GD3837269@magnolia>
+        Mon, 23 Nov 2020 16:57:23 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ANLmhqb183588;
+        Mon, 23 Nov 2020 21:54:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=QS70EniYffD3NO8MOrygFxL3m3h1RyzaH/V0dC+MHjo=;
+ b=Hn3EFG/pozRIF94rlt1UjKxA3fNixYHqSUNMNWGUBaMEePuRnCeMT/TWH1DETIRTlJ54
+ p2T3B4R49Sof2BCWUOSiujuJxjnaynrk2umU+VfMdvuTUeHmjqNHZemtLCgmKxDrG1+A
+ XPt7ZTVYw4hYZIQ3ajqxRLeSkElT7k6BryAtLWIkA6y3cYZkxyQJkZsE/B1c2CGhhABp
+ bTlDmPKegynrlgePslwfjyWuZnwyATt+IlyuN6B8eH/j1/5z/oWKK2IOVplDJ9au/eef
+ yP4/SS4YVFS9TNFJkW5U6mpJRe/lQTUn7gAPMw6Q8Z3tIEOTuN3N7d20ILU5BILsuDYE dQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 34xrdaqs49-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Nov 2020 21:54:25 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0ANLpdB9006174;
+        Mon, 23 Nov 2020 21:52:25 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 34yx8j06x0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Nov 2020 21:52:25 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0ANLqHDG021845;
+        Mon, 23 Nov 2020 21:52:18 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 23 Nov 2020 13:52:17 -0800
+Subject: Re: [PATCH v5 00/21] Free some vmemmap pages of hugetlb page
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Muchun Song <songmuchun@bytedance.com>, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk,
+        akpm@linux-foundation.org, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        rdunlap@infradead.org, oneukum@suse.com, anshuman.khandual@arm.com,
+        jroedel@suse.de, almasrymina@google.com, rientjes@google.com,
+        willy@infradead.org, osalvador@suse.de, song.bao.hua@hisilicon.com,
+        duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+References: <20201120064325.34492-1-songmuchun@bytedance.com>
+ <20201120084202.GJ3200@dhcp22.suse.cz>
+ <6b1533f7-69c6-6f19-fc93-c69750caaecc@redhat.com>
+ <20201120093912.GM3200@dhcp22.suse.cz>
+ <eda50930-05b5-0ad9-2985-8b6328f92cec@redhat.com>
+ <55e53264-a07a-a3ec-4253-e72c718b4ee6@oracle.com>
+ <20201123073842.GA27488@dhcp22.suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <37f4bf02-c438-9fbd-32ea-8bedbe30c4da@oracle.com>
+Date:   Mon, 23 Nov 2020 13:52:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201121011516.GD3837269@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0 cx=a_idp_d
-        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
-        a=kj9zAlcOel0A:10 a=nNwsprhYR40A:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
-        a=zd7GPZmn2bw0TrGjmFEA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20201123073842.GA27488@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9814 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=2
+ bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011230139
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9814 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 impostorscore=0 mlxscore=0
+ mlxlogscore=999 spamscore=0 phishscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 adultscore=0 suspectscore=2 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011230139
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 06:03:18PM -0800, Darrick J. Wong wrote:
-> [Adding fsdevel to cc since this is a filesystems question]
+On 11/22/20 11:38 PM, Michal Hocko wrote:
+> On Fri 20-11-20 09:45:12, Mike Kravetz wrote:
+>> On 11/20/20 1:43 AM, David Hildenbrand wrote:
+> [...]
+>>>>> To keep things easy, maybe simply never allow to free these hugetlb pages
+>>>>> again for now? If they were reserved during boot and the vmemmap condensed,
+>>>>> then just let them stick around for all eternity.
+>>>>
+>>>> Not sure I understand. Do you propose to only free those vmemmap pages
+>>>> when the pool is initialized during boot time and never allow to free
+>>>> them up? That would certainly make it safer and maybe even simpler wrt
+>>>> implementation.
+>>>
+>>> Exactly, let's keep it simple for now. I guess most use cases of this (virtualization, databases, ...) will allocate hugepages during boot and never free them.
+>>
+>> Not sure if I agree with that last statement.  Database and virtualization
+>> use cases from my employer allocate allocate hugetlb pages after boot.  It
+>> is shortly after boot, but still not from boot/kernel command line.
 > 
-> On Fri, Nov 20, 2020 at 04:58:09PM -0800, Randy Dunlap wrote:
-> > Hi,
-> > 
-> > I don't know this code, but:
-> > 
-> > On 11/20/20 4:33 PM, XiaoLi Feng wrote:
-> > > From: Xiaoli Feng <fengxiaoli0714@gmail.com>
-> > > 
-> > > keep attributes and attributes_mask are consistent for
-> > > STATX_ATTR_DAX.
-> > > ---
-> > >  fs/stat.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/stat.c b/fs/stat.c
-> > > index dacecdda2e79..914a61d256b0 100644
-> > > --- a/fs/stat.c
-> > > +++ b/fs/stat.c
-> > > @@ -82,7 +82,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
-> > >  
-> > >  	if (IS_DAX(inode))
-> > >  		stat->attributes |= STATX_ATTR_DAX;
-> > > -
-> > > +	stat->attributes_mask |= STATX_ATTR_DAX;
-> > 
-> > Why shouldn't that be:
-> > 
-> > 	if (IS_DAX(inode))
-> > 		stat->attributes_mask |= STATX_ATTR_DAX;
-> > 
-> > or combine them, like this:
-> > 
-> > 	if (IS_DAX(inode)) {
-> > 		stat->attributes |= STATX_ATTR_DAX;
-> > 		stat->attributes_mask |= STATX_ATTR_DAX;
-> > 	}
-> > 
-> > 
-> > and no need to delete that blank line.
+> Is there any strong reason for that?
 > 
-> Some filesystems could support DAX but not have it enabled for this
-> particular file, so this won't work.
+
+The reason I have been given is that it is preferable to have SW compute
+the number of needed huge pages after boot based on total memory, rather
+than have a sysadmin calculate the number and add a boot parameter.
+
+>> Somewhat related, but not exactly addressing this issue ...
+>>
+>> One idea discussed in a previous patch set was to disable PMD/huge page
+>> mapping of vmemmap if this feature was enabled.  This would eliminate a bunch
+>> of the complex code doing page table manipulation.  It does not address
+>> the issue of struct page pages going away which is being discussed here,
+>> but it could be a way to simply the first version of this code.  If this
+>> is going to be an 'opt in' feature as previously suggested, then eliminating
+>> the  PMD/huge page vmemmap mapping may be acceptable.  My guess is that
+>> sysadmins would only 'opt in' if they expect most of system memory to be used
+>> by hugetlb pages.  We certainly have database and virtualization use cases
+>> where this is true.
 > 
-> General question: should filesystems that are /capable/ of DAX signal
-> this by setting the DAX bit in the attributes mask?
+> Would this simplify the code considerably? I mean, the vmemmap page
+> tables will need to be updated anyway. So that code has to stay. PMD
+> entry split shouldn't be the most complex part of that operation.  On
+> the other hand dropping large pages for all vmemmaps will likely have a
+> performance.
 
-I think so, yes. It could be set if the right bit on the inode is
-set, but it currently isn't so the bit in the mask is set but the
-bit in the attributes is not. i.e "DAX is valid status bit, but it
-is not set for this file".
-
-> Or is this a VFS
-> feature and hence here is the appropriate place to be setting the mask?
-
-Well, in the end it's a filesystem feature bit because the
-filesystem policy that decides whether DAX is used or not. e.g. if
-the block device is not DAX capable or dax=never mount option is
-set, we should not ever set STATX_ATTR_DAX in statx for either the
-attributes or attributes_mask field because the filesystem is not
-DAX capable. And given that we have filesystems with multiple block
-devices that can have different DAX capabilities, I think this
-statx() attr state (and mask) really has to come from the
-filesystem, not VFS...
-
-> Extra question: should we only set this in the attributes mask if
-> CONFIG_FS_DAX=y ?
-
-IMO, yes, because it will always be false on CONFIG_FS_DAX=n and so
-it may well as not be emitted as a supported bit in the mask.
-
-Cheers,
-
-Dave.
+I agree with your points.  This was just one way in which the patch set
+could be simplified.
 -- 
-Dave Chinner
-david@fromorbit.com
+Mike Kravetz
