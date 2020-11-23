@@ -2,63 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 162C72C1967
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 00:29:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BC82C198A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 00:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbgKWXYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 18:24:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
+        id S1726729AbgKWXpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 18:45:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbgKWXYt (ORCPT
+        with ESMTP id S1726626AbgKWXpq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 18:24:49 -0500
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11C7FC0613CF;
-        Mon, 23 Nov 2020 15:24:49 -0800 (PST)
-Received: by mail-wr1-x444.google.com with SMTP id s8so20447995wrw.10;
-        Mon, 23 Nov 2020 15:24:48 -0800 (PST)
+        Mon, 23 Nov 2020 18:45:46 -0500
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F9FC0613CF;
+        Mon, 23 Nov 2020 15:45:46 -0800 (PST)
+Received: by mail-wm1-x341.google.com with SMTP id w24so1153402wmi.0;
+        Mon, 23 Nov 2020 15:45:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:references:autocrypt:subject:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UnwtktLjTAV/jmHMTDv2SE7u5b+YrWXDA2YR3n/dS8I=;
-        b=YVpWE1GaOpI8em08mEaHrJnBNT6uQE2byOZ1I+KhF5VtYsMWVEfW02GrBPLG7ZdyQe
-         r4zsqDF8gJZ5DcInQuBhlYwaX32R1TbagnNkoVwOz5f6DKAVbvRiguHUv1MC8VbRj9Cb
-         I4cjlU2IZwikf1T6p7yJiyUN2vegfeq29xNnUA+t7Ko615ks5FSb6xCXfG6UYua0fqtD
-         DMwmHAkbayO8/eevzg/2qdNOnRze2zhWRjX/Wb8Cbyb4OAW3THIsHQuLHrOaCu7L8wTy
-         Zy6DC+ROQuvYjI3ns1Xv97AuQ2KHvetzM6JliET0oWRbMjpMOuDU0jmv+UPhldaRAYRJ
-         wyuA==
+        bh=cQ900KyYSRva3bIgqg60fU7D0QBGU+Gbv+Sjk3s4+f0=;
+        b=i/+UED9xOcvUxwpbwsrpjf6M3HfCQzjGiPW5HRCmWrSCUK5dyXrVR9jkfJSkIMu+su
+         20z8pF7jkVSO9ChOZxpwPB4jmtHimSVL4xFNhtCW6/Qc5WfHERD+gHcfWi2XWa/8V0xk
+         i1ROzRAA/cgfm/Mr8KORFGaVclra49ftmc5X2klfJqmz1ydieRr0PdQP0gK+M3QkzjgS
+         CSt6JQHPxu5HOIZH9F62i+sglOqovsM90/pnYEFegJyBpRUMWGFYsM7brbXZKHSqFCCy
+         Og4sOQWZG3LfY+WccAp+c9yEfXYpID97cmnRPdVBqG9Zxw++dCSYPa55tGZv6AE3z9ne
+         Pldw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=UnwtktLjTAV/jmHMTDv2SE7u5b+YrWXDA2YR3n/dS8I=;
-        b=NjHcgyYFLeraeYGqsc3vuaTkUHPZnvOPDK9+kO+nRWaihayJMl2pxikpqKLFao46di
-         QcSo8ATVI4R+h6/JvB1P44mxCyMz6xSLpzIUlMQzfXR2PfaNFZwOQAaNzXZTBZCEjFh8
-         UzDusuB9xQqlVHGRMGJRU19Cc/dy4ckj/zJSdpom3f28ooL2IPl7nPRmmtAf6YcAHIRc
-         pkM94wZQ8Jvndp/1pAgypVFAELNsq6Yn/B07KpPzoh/cnYDcfwHTiKsu3VA9kJrOoDSH
-         iKWN7PBkzgvH7VTUNO5MghesPeVcBJdFkAFE3cVy4zYaC/2EkPxT/3z0G/yU99mhxQf2
-         CvPg==
-X-Gm-Message-State: AOAM530vusXD6LmQOTSZ2UYooy+SdHnFkg9V1BjofVVq99t/Y6ovx4gM
-        B6F9ht56xb/QPMaWbkIQ2jPxbXS5kKhA3O5W
-X-Google-Smtp-Source: ABdhPJzSfKI604g1VoEX9+y3jkyeIYv24e/idimICuJQliWRsZ70cvfrppeGICa4AM+1XzzWxff6tQ==
-X-Received: by 2002:a5d:6310:: with SMTP id i16mr2060964wru.284.1606173887588;
-        Mon, 23 Nov 2020 15:24:47 -0800 (PST)
+        bh=cQ900KyYSRva3bIgqg60fU7D0QBGU+Gbv+Sjk3s4+f0=;
+        b=VS857HSX2aHKwCS6OPic1eS30+rveb066cKO1BicZKT4mJ8VjYuXe16i10NDBs+xdr
+         3/wUnwtvvI683I/3vtSzmbge37sO2QEOQi1cLGp0KxUtYd/4cziqrES+9O/EIjjotCzQ
+         RfgNowsZUwXw/WGSlwKLtdX68VgGKZG9r3sMsoqTj7ecRcHYg+NQGX/u1otCM1+A6RGz
+         D9P2lXQr9j071fBpUBRsCcTJ3iwRmS0KJ+Sq0qjzdigVG25UGRAp9IUYJ6qp5cVz/bkb
+         kbjnGRoADARgU24ujTIqVUy293KoCk6eXwaSL9UxE2eh94ishSJGFVofGcqfv9SdQuJ9
+         pcDQ==
+X-Gm-Message-State: AOAM533PuPO4fTp6B96cAsKV+GnotywJ3ayXpaj8nE6mGP+L2ZkEKTx/
+        f1ZduihXsMis51nwNeKKGPhG3b/nRrYJhXu2
+X-Google-Smtp-Source: ABdhPJzeSSY83t+PM8zMzDKCbilPaohyNklNag304tqIX8LZ+qyFFK06jFbR1W1hHKr1OjYdht5QUA==
+X-Received: by 2002:a1c:328a:: with SMTP id y132mr1272566wmy.134.1606175144387;
+        Mon, 23 Nov 2020 15:45:44 -0800 (PST)
 Received: from [192.168.1.42] (host109-152-100-135.range109-152.btcentralplus.com. [109.152.100.135])
-        by smtp.gmail.com with ESMTPSA id j14sm9151458wrs.49.2020.11.23.15.24.46
+        by smtp.gmail.com with ESMTPSA id c187sm1854796wmd.23.2020.11.23.15.45.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2020 15:24:47 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     David Howells <dhowells@redhat.com>
+        Mon, 23 Nov 2020 15:45:43 -0800 (PST)
+To:     David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>
 Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
+References: <20201123080506.GA30578@infradead.org>
+ <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk>
  <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk>
- <a23b9038-b553-fdc3-c461-384aeeddb6f3@gmail.com>
+ <516984.1606127474@warthog.procyon.org.uk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
  bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
@@ -103,12 +105,12 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
 Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
-Message-ID: <adc90511-2484-039e-f67f-486b2c3ea9f7@gmail.com>
-Date:   Mon, 23 Nov 2020 23:21:38 +0000
+Message-ID: <74f6fb34-c4c2-6a7e-3614-78c34246c6bd@gmail.com>
+Date:   Mon, 23 Nov 2020 23:42:35 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <a23b9038-b553-fdc3-c461-384aeeddb6f3@gmail.com>
+In-Reply-To: <516984.1606127474@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -116,37 +118,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 21/11/2020 14:31, Pavel Begunkov wrote:
-> On 21/11/2020 14:13, David Howells wrote:
->> Switch to using a table of operations.  In a future patch the individual
->> methods will be split up by type.  For the moment, however, the ops tables
->> just jump directly to the old functions - which are now static.  Inline
->> wrappers are provided to jump through the hooks.
->>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> ---
->>
->>  fs/io_uring.c       |    2 
->>  include/linux/uio.h |  241 ++++++++++++++++++++++++++++++++++--------
->>  lib/iov_iter.c      |  293 +++++++++++++++++++++++++++++++++++++++------------
->>  3 files changed, 422 insertions(+), 114 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 4ead291b2976..baa78f58ae5c 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -3192,7 +3192,7 @@ static void io_req_map_rw(struct io_kiocb *req, const struct iovec *iovec,
->>  	rw->free_iovec = iovec;
->>  	rw->bytes_done = 0;
->>  	/* can only be fixed buffers, no need to do anything */
->> -	if (iter->type == ITER_BVEC)
->> +	if (iov_iter_is_bvec(iter))
+On 23/11/2020 10:31, David Howells wrote:
+> Christoph Hellwig <hch@infradead.org> wrote:
 > 
-> Could you split this io_uring change and send for 5.10?
-> Or I can do it for you if you wish.
+>> Please run performance tests.  I think the indirect calls could totally
+>> wreck things like high performance direct I/O, especially using io_uring
+>> on x86.
+> 
+> Here's an initial test using fio and null_blk.  I left null_blk in its default
+> configuration and used the following command line:
 
-FYI, I stole this chunk with right attributes. It should go through
-io_uring 5.10, so shouldn't be a problem if you just drop it.
+I'd prefer something along no_sched=1 submit_queues=$(nproc) to reduce overhead.
+
+> 
+> fio --ioengine=libaio --direct=1 --gtod_reduce=1 --name=readtest --filename=/dev/nullb0 --bs=4k --iodepth=128 --time_based --runtime=120 --readwrite=randread --iodepth_low=96 --iodepth_batch=16 --numjobs=4
+
+fio is relatively heavy, I'd suggest to try fio/t/io_uring with nullblk
+
+> 
+> I borrowed some of the parameters from an email I found online, so I'm not
+> sure if they're that useful.
+> 
+> I tried three different sets of patches: none, just the first (which adds the
+> jump table without getting rid of the conditional branches), and all of them.
+> 
+> I'm not sure which stats are of particular interest here, so I took the two
+> summary stats from the output of fio and also added together the "issued rwts:
+> total=a,b,c,d" from each test thread (only the first of which is non-zero).
+> 
+> The CPU is an Intel(R) Core(TM) i3-4170 CPU @ 3.70GHz, so 4 single-thread
+> cores, and 16G of RAM.  No virtualisation is involved.
+> 
+> Unpatched:
+> 
+>    READ: bw=4109MiB/s (4308MB/s), 1025MiB/s-1029MiB/s (1074MB/s-1079MB/s), io=482GiB (517GB), run=120001-120001msec
+>    READ: bw=4097MiB/s (4296MB/s), 1020MiB/s-1029MiB/s (1070MB/s-1079MB/s), io=480GiB (516GB), run=120001-120001msec
+>    READ: bw=4113MiB/s (4312MB/s), 1025MiB/s-1031MiB/s (1075MB/s-1082MB/s), io=482GiB (517GB), run=120001-120001msec
+>    READ: bw=4125MiB/s (4325MB/s), 1028MiB/s-1033MiB/s (1078MB/s-1084MB/s), io=483GiB (519GB), run=120001-120001msec
+> 
+>   nullb0: ios=126017326/0, merge=53/0, ticks=3538817/0, in_queue=3538817, util=100.00%
+>   nullb0: ios=125655193/0, merge=55/0, ticks=3548157/0, in_queue=3548157, util=100.00%
+>   nullb0: ios=126133014/0, merge=58/0, ticks=3545621/0, in_queue=3545621, util=100.00%
+>   nullb0: ios=126512562/0, merge=57/0, ticks=3531600/0, in_queue=3531600, util=100.00%
+> 
+>   sum issued rwts = 126224632
+>   sum issued rwts = 125861368
+>   sum issued rwts = 126340344
+>   sum issued rwts = 126718648
+> 
+> Just first patch:
+> 
+>    READ: bw=4106MiB/s (4306MB/s), 1023MiB/s-1030MiB/s (1073MB/s-1080MB/s), io=481GiB (517GB), run=120001-120001msec
+>    READ: bw=4126MiB/s (4327MB/s), 1029MiB/s-1034MiB/s (1079MB/s-1084MB/s), io=484GiB (519GB), run=120001-120001msec
+>    READ: bw=4109MiB/s (4308MB/s), 1025MiB/s-1029MiB/s (1075MB/s-1079MB/s), io=481GiB (517GB), run=120001-120001msec
+>    READ: bw=4097MiB/s (4296MB/s), 1023MiB/s-1025MiB/s (1073MB/s-1074MB/s), io=480GiB (516GB), run=120001-120001msec
+> 
+>   nullb0: ios=125939152/0, merge=62/0, ticks=3534917/0, in_queue=3534917, util=100.00%
+>   nullb0: ios=126554181/0, merge=61/0, ticks=3532067/0, in_queue=3532067, util=100.00%
+>   nullb0: ios=126012346/0, merge=54/0, ticks=3530504/0, in_queue=3530504, util=100.00%
+>   nullb0: ios=125653775/0, merge=54/0, ticks=3537438/0, in_queue=3537438, util=100.00%
+> 
+>   sum issued rwts = 126144952
+>   sum issued rwts = 126765368
+>   sum issued rwts = 126215928
+>   sum issued rwts = 125864120
+> 
+> All patches:
+>   nullb0: ios=10477062/0, merge=2/0, ticks=284992/0, in_queue=284992, util=95.87%
+>   nullb0: ios=10405246/0, merge=2/0, ticks=291886/0, in_queue=291886, util=99.82%
+>   nullb0: ios=10425583/0, merge=1/0, ticks=291699/0, in_queue=291699, util=99.22%
+>   nullb0: ios=10438845/0, merge=3/0, ticks=292445/0, in_queue=292445, util=99.31%
+> 
+>    READ: bw=4118MiB/s (4318MB/s), 1028MiB/s-1032MiB/s (1078MB/s-1082MB/s), io=483GiB (518GB), run=120001-120001msec
+>    READ: bw=4109MiB/s (4308MB/s), 1024MiB/s-1030MiB/s (1073MB/s-1080MB/s), io=481GiB (517GB), run=120001-120001msec
+>    READ: bw=4108MiB/s (4308MB/s), 1026MiB/s-1029MiB/s (1076MB/s-1079MB/s), io=481GiB (517GB), run=120001-120001msec
+>    READ: bw=4112MiB/s (4312MB/s), 1025MiB/s-1031MiB/s (1075MB/s-1081MB/s), io=482GiB (517GB), run=120001-120001msec
+> 
+>   nullb0: ios=126282410/0, merge=58/0, ticks=3557384/0, in_queue=3557384, util=100.00%
+>   nullb0: ios=126004837/0, merge=67/0, ticks=3565235/0, in_queue=3565235, util=100.00%
+>   nullb0: ios=125988876/0, merge=59/0, ticks=3563026/0, in_queue=3563026, util=100.00%
+>   nullb0: ios=126118279/0, merge=57/0, ticks=3566122/0, in_queue=3566122, util=100.00%
+> 
+>   sum issued rwts = 126494904
+>   sum issued rwts = 126214200
+>   sum issued rwts = 126198200
+>   sum issued rwts = 126328312
+> 
+> 
+> David
+> 
 
 -- 
 Pavel Begunkov
