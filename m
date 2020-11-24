@@ -2,86 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B152C328D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 22:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEBC62C3381
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 22:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731368AbgKXVVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 16:21:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
+        id S2387585AbgKXVrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 16:47:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731133AbgKXVVV (ORCPT
+        with ESMTP id S1732515AbgKXVrA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 16:21:21 -0500
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EBDC0613D6;
-        Tue, 24 Nov 2020 13:21:19 -0800 (PST)
-Received: by mail-qk1-x743.google.com with SMTP id h20so549763qkk.4;
-        Tue, 24 Nov 2020 13:21:19 -0800 (PST)
+        Tue, 24 Nov 2020 16:47:00 -0500
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16BD3C061A4D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 13:47:00 -0800 (PST)
+Received: by mail-oi1-x242.google.com with SMTP id v202so345501oia.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 13:47:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=7Y3MLcmrdxWQffIhMnyKnSmG7B3ov7cDZAqFDsa+q7k=;
-        b=JkzooPxJ8GeNrayRsu98YvwsNpW2uc9rVRoj4imwYpA6JzY+Piu1EJS2IziPBdeDkF
-         Ow5qmzMcHaeZs2+oG1fSVsEAssWG0DO4F1vW/5P9q+2+DEbGyYUH1jozKg00Go0h3+ja
-         YVkgi/EGLciFHd/Iul8YpgRz7FCu1kfvXaFXbSFsbyZTqz8JAJ48o8dWwKmdI5uElByj
-         9UjvAnbnEBhxu3Tw7tEroOvSCxNENuu6nvEC1MTUGX0lcXIIF4ARzithi6KpCvnT/fAl
-         Mp0ipaM81mRq+veWggOWfzfqSyIb3Y60deO3bam/RyYuBfYbgPa2E9CAR1VR8pj1MpV8
-         kFEg==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=04YZn/oOi9cwlQjeUz6wAhKNr23VM3kG20feokh0qeg=;
+        b=VzQAooJ4hoEvvjBCc+1Qt2u70siZAJm6h9WtKGpP0ywmkQ1vspYXHydmfQoTf4ym3I
+         oqKJzcR5krrs+o2BlUzYp3kcBIpfa6E6ew96qdIC2DTZU5N5pj5QjitRF0O5vAP3DLm/
+         Rw71YTkXEZBmOi1/VFYN3Po6znE+JQDeN5AQ5GT8PpDyb4DUQYVH9RDLVPxXCtlzpqGL
+         NLPgS8k2q9XJZCcEqp0jixScddihjCkoUiurydf3GmXYEZPzwqkjXKYbEuCjos3F0Dgj
+         X3M8gEHfAlkVbtkko2WkcUF0RRIGEvajB3ukYdimzdhZa9OdqeypZLEs6CnYwqCUGZF7
+         gNSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=7Y3MLcmrdxWQffIhMnyKnSmG7B3ov7cDZAqFDsa+q7k=;
-        b=tqYW6H/GplPi0DfuAPOcrdaFX63IsRchs432+u1723lUqpz1hpEyQLXEn1S9o5e4IU
-         l7vljLaUSZD2Ufamo3LJrAG9n2ddwKwkYFQ7+U9nwWRp1e72e5ywIi0AyZtolI6jBqEv
-         Jr0WHLwZnjcYY8Rb3WYClSR2bukcbS7vvVMJsyuQP0AFBlKER6ZHKWBIrv2ioeTKrlcQ
-         /lreZaLGOxdJRn6I61WX+pbOGuOog1YG0/QY28vYAkNQAKqCShmWzWIQh98vSKqo1r2p
-         KNB9pB4zYlSxxk9ilxxCd/pmcgDzvu7Imq83+tGeq8Xxt4XMLgMajESTpGrX4NiWnA+N
-         aiDQ==
-X-Gm-Message-State: AOAM530lDTeOLM68sbiCGzfNAgOELSI593vn+G94W/l76j17T3yo+XJT
-        QzLJS9BE86+b3pMy1iWy3rw=
-X-Google-Smtp-Source: ABdhPJx26oBT8NwtvheSnoKT8jLyoQC45bZaDNVCxy9rquKXHNVFfdT0K9nlXQGVBdDZtOMR/OxmVA==
-X-Received: by 2002:a37:9ed3:: with SMTP id h202mr199931qke.126.1606252879118;
-        Tue, 24 Nov 2020 13:21:19 -0800 (PST)
-Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id y44sm292925qtb.50.2020.11.24.13.21.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 13:21:18 -0800 (PST)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 24 Nov 2020 16:20:56 -0500
-From:   Tejun Heo <tj@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 29/45] block: initialize struct block_device in bdev_alloc
-Message-ID: <X715OP+dR8KzH1wA@mtj.duckdns.org>
-References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-30-hch@lst.de>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=04YZn/oOi9cwlQjeUz6wAhKNr23VM3kG20feokh0qeg=;
+        b=q8nild6WAECZQ4jq6NKhWL7rWc6d5IcW8kKVLSAztuAB0ei148f3EQhzREq6hBykZ9
+         9LcsQbMGwZQVJn0L+O9BbgQ1SKxAIjEyeCIbPgH/OCIIn2R1/k+xbEhxiW8T2MK3W8j1
+         cAOwORTs1sZgLNEX3ZKMx6VyxoUgB0Mqovab78kaTUgznI4g1MAr/yLlRVAZ1EkIbLHD
+         soxuGdFfgLRg6/lpOyfyMZz538dbBecvaQiWk3cV3rjjp/1M5BqHmzLR0JIoRLslS3ZC
+         W63Iv/Zn/SVUyCSRD3dlm+tsXusoKRyia4eiBLRdoLC566Wz9KpC9OtBJBWH1QBW7tcm
+         SXJA==
+X-Gm-Message-State: AOAM532cQ84jYiACEMPk3EU9ob+UkVji4zuoy/A/ju7L3fZ9WeyMhpek
+        YYizg/dlJU2jp5WIeYR2xQrZrA==
+X-Google-Smtp-Source: ABdhPJxOVg+Bowm05sagrPqp3xv+YibTG16pRL9z0qkeXz1sv96JtkxPJaBWAFfkjlhlZQfRI/zZYw==
+X-Received: by 2002:aca:f5c8:: with SMTP id t191mr213734oih.40.1606254419120;
+        Tue, 24 Nov 2020 13:46:59 -0800 (PST)
+Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id a4sm139138otj.29.2020.11.24.13.46.56
+        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
+        Tue, 24 Nov 2020 13:46:58 -0800 (PST)
+Date:   Tue, 24 Nov 2020 13:46:44 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Theodore Ts'o <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
+In-Reply-To: <CAHk-=wj9n5y7pu=SVVGwd5-FbjMGS6uoFU4RpzVLbuOfwBifUA@mail.gmail.com>
+Message-ID: <alpine.LSU.2.11.2011241322540.1777@eggly.anvils>
+References: <000000000000d3a33205add2f7b2@google.com> <20200828100755.GG7072@quack2.suse.cz> <20200831100340.GA26519@quack2.suse.cz> <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com> <alpine.LSU.2.11.2011231928140.4305@eggly.anvils>
+ <20201124121912.GZ4327@casper.infradead.org> <alpine.LSU.2.11.2011240810470.1029@eggly.anvils> <20201124183351.GD4327@casper.infradead.org> <CAHk-=wjtGAUP5fydxR8iWbzB65p2XvM0BrHE=PkPLQcJ=kq_8A@mail.gmail.com> <20201124201552.GE4327@casper.infradead.org>
+ <CAHk-=wj9n5y7pu=SVVGwd5-FbjMGS6uoFU4RpzVLbuOfwBifUA@mail.gmail.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201124132751.3747337-30-hch@lst.de>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:27:35PM +0100, Christoph Hellwig wrote:
-> Don't play tricks with slab constructors as bdev structures tends to not
-> get reused very much, and this makes the code a lot less error prone.
+On Tue, 24 Nov 2020, Linus Torvalds wrote:
+> On Tue, Nov 24, 2020 at 12:16 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > So my s/if/while/ suggestion is wrong and we need to do something to
+> > prevent spurious wakeups.  Unless we bury the spurious wakeup logic
+> > inside wait_on_page_writeback() ...
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> We can certainly make the "if()" in that loop be a "while()'.
+> 
+> That's basically what the old code did - simply by virtue of the
+> wakeup not happening if the writeback bit was set in
+> wake_page_function():
+> 
+>         if (test_bit(key->bit_nr, &key->page->flags))
+>                 return -1;
+> 
+> of course, the race was still there - because the writeback bit might
+> be clear at that point, but another CPU would reallocate and dirty it,
+> and then autoremove_wake_function() would happen anyway.
+> 
+> But back in the bad old days, the wait_on_page_bit_common() code would
+> then double-check in a loop, so it would catch that case, re-insert
+> itself on the wait queue, and try again. Except for the DROP case,
+> which isn't used by writeback.
+> 
+> Anyway, making that "if()" be a "while()" in wait_on_page_writeback()
+> would basically re-introduce that old behavior. I don't really care,
+> because it was the lock bit that really mattered, the writeback bit is
+> not really all that interesting (except from a "let's fix this bug"
+> angle)
+> 
+> I'm not 100% sure I like the fragility of this writeback thing.
+> 
+> Anyway, I'm certainly happy with either model, whether it be an added
+> while() in wait_on_page_writeback(), or it be the page reference count
+> in end_page_writeback().
+> 
+> Strong opinions?
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Responding to "Strong opinions?" before having digested Matthew's
+DMA sequence (no, not his DNA sequence).
 
--- 
-tejun
+I think it comes down to whether my paranoia (about accessing an
+unreferenced struct page) is realistic or not: since I do hold
+that paranoia, I do prefer (whatever variant of) my patch.
+
+I'm not a memory hotremove guy. I did search mm/memory_hotplug.c
+for references to rcu or stop_machine(), but found none.  I can
+imagine that the memory containing the struct pages would be
+located elsewhere than the memory itself, with some strong
+barrier in between removals; but think there were patches posted
+just a few days ago, with intent to allocate struct pages from
+the same memory block.  It would be easy to forget this writeback
+issue when hotremove advances, if we don't fix it properly now.
+
+Another problem with the s/if/while/ solution: I think Matthew
+pointed to another patch needed, to prevent wake_up_page_bit()
+from doing an inappropriate ClearPageWaiters (I've not studied
+that patch); and would also need a further patch to deal with
+my PF_ONLY_HEAD VM_BUG_ON(PageTail).  More?
+
+I think the unreferenced struct page asks for trouble.
+
+Hugh
