@@ -2,92 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DC832C242D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 12:31:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 166762C24AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 12:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732865AbgKXLaC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 06:30:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732723AbgKXLaC (ORCPT
+        id S1732798AbgKXLit (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 06:38:49 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:42462 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730158AbgKXLit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 06:30:02 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320A9C0613D6;
-        Tue, 24 Nov 2020 03:30:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZZ2l4IESKUU682BRulh2Bd5uLxUPUcTi214dKXSiVxA=; b=ndo6Ljx/trPHysvjVeLBFgsGLR
-        +iCJhVTS60wRMqIzm5JXdrdKHX1JCpTJwGLcjmpVB6UY6CqXg7v8MwyZR1HdmdiO0vVXPEqs95sCL
-        d/ap4KZJvOiodxa3+XsJRJ0JnIdnL2fg5m/kz4L3D+7ipz0XYCgnvY8NAzYdJldM8zW4ErZ+pq4iM
-        G4uzgxHsrRF6WcM2ammZh51pCvKwokvQjaK3ylMCmuoTJq1xrDW/hzoiRivWCHBRS3jZPjsOggLd1
-        suI0Nli39LjgmjdcnUg2Wuh17xNPYipwrMORYzIJETntSnRv8r8fkv3twBp4Ysp5ib5V7mCMTGaUP
-        35MHHi1g==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1khWW9-0007Pq-8M; Tue, 24 Nov 2020 11:29:53 +0000
-Date:   Tue, 24 Nov 2020 11:29:53 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com, hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Tue, 24 Nov 2020 06:38:49 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AOBZId4116841;
+        Tue, 24 Nov 2020 11:38:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=+9cpHctWC39/LeAtaf1RPUoSnpc3cgQxN/BNyqZRqJ4=;
+ b=mYy/1Z/shF5nms/gW3FkKFFuf+Oevcx9lOjWdIL5gVsuVo2RpHFJPec50zqQpNPhObn7
+ V/N7xDx1/3VQHWTwFpzSoCxMAZIglPU86BBJIW5Sn1DnDRELXUfwFzjBs7HA8XNFy90c
+ XpYd16nU/qtH3LsV4tO11mEz87goUArnBuhlX7LjMSRNhkIgKh5fQdZkcfO5v4JCrMFU
+ JbCY6NwLiPGnTX8ZRywYcd5hl36ZuqFAklb84pnq77Gzy2XYpv0SzOqyLEpw48z2iory
+ ZNfrHy4j4BJAms8CaURi+R75QDOY1+W0zrsb5b/IdQq584oNBxWU0DA0/YkqH88ZjIUx qA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 34xtaqnp6r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Nov 2020 11:38:26 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AOBZei6174730;
+        Tue, 24 Nov 2020 11:36:25 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 34yx8jrfvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Nov 2020 11:36:25 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0AOBaNmC029687;
+        Tue, 24 Nov 2020 11:36:24 GMT
+Received: from [192.168.1.102] (/39.109.186.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 24 Nov 2020 03:36:23 -0800
+Subject: Re: [PATCH v10 12/41] btrfs: implement zoned chunk allocator
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
-Message-ID: <20201124112953.GA27727@infradead.org>
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
 References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
- <20201110185506.GD9685@magnolia>
+ <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
+From:   Anand Jain <anand.jain@oracle.com>
+Message-ID: <9cec3af1-4f2c-c94c-1506-07db2c66cc90@oracle.com>
+Date:   Tue, 24 Nov 2020 19:36:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201110185506.GD9685@magnolia>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9814 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011240072
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9814 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 clxscore=1015 suspectscore=0 lowpriorityscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011240072
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 10, 2020 at 10:55:06AM -0800, Darrick J. Wong wrote:
-> When we're wanting to use a ZONE_APPEND command, the @iomap structure
-> has to have IOMAP_F_ZONE_APPEND set in iomap->flags, iomap->type is set
-> to IOMAP_MAPPED, but what should iomap->addr be set to?
+On 10/11/20 7:26 pm, Naohiro Aota wrote:
+> This commit implements a zoned chunk/dev_extent allocator. The zoned
+> allocator aligns the device extents to zone boundaries, so that a zone
+> reset affects only the device extent and does not change the state of
+> blocks in the neighbor device extents.
 > 
-> I gather from what I see in zonefs and the relevant NVME proposal that
-> iomap->addr should be set to the (byte) address of the zone we want to
-> append to?  And if we do that, then bio->bi_iter.bi_sector will be set
-> to sector address of iomap->addr, right?
-
-Yes.
-
-> Then when the IO completes, the block layer sets bio->bi_iter.bi_sector
-> to wherever the drive told it that it actually wrote the bio, right?
-
-Yes.
-
-> If that's true, then that implies that need_zeroout must always be false
-> for an append operation, right?  Does that also mean that the directio
-> request has to be aligned to an fs block and not just the sector size?
-
-I think so, yes.
-
-> Can userspace send a directio append that crosses a zone boundary?  If
-> so, what happens if a direct append to a lower address fails but a
-> direct append to a higher address succeeds?
-
-Userspace doesn't know about zone boundaries.  It can send I/O larger
-than a zone, but the file system has to split it into multiple I/Os
-just like when it has to cross and AG boundary in XFS.
-
-> I'm also vaguely wondering how to communicate the write location back to
-> the filesystem when the bio completes?  btrfs handles the bio completion
-> completely so it doesn't have a problem, but for other filesystems
-> (cough future xfs cough) either we'd have to add a new callback for
-> append operations; or I guess everyone could hook the bio endio.
+> Also, it checks that a region allocation is not overlapping any of the
+> super block zones, and ensures the region is empty.
 > 
-> Admittedly that's not really your problem, and for all I know hch is
-> already working on this.
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I think any non-trivial file system needs to override the bio completion
-handler for writes anyway, so this seems reasonable.  It might be worth
-documenting, though.
+Looks good.
+
+Chunks and stripes are aligned to the zone_size. I guess zone_size won't
+change after the block device has been formatted with it? For testing,
+what if the device image is dumped onto another zoned device with a
+different zone_size?
+
+A small nit is below.
+
+> +static void init_alloc_chunk_ctl_policy_zoned(
+> +				      struct btrfs_fs_devices *fs_devices,
+> +				      struct alloc_chunk_ctl *ctl)
+> +{
+> +	u64 zone_size = fs_devices->fs_info->zone_size;
+> +	u64 limit;
+> +	int min_num_stripes = ctl->devs_min * ctl->dev_stripes;
+> +	int min_data_stripes = (min_num_stripes - ctl->nparity) / ctl->ncopies;
+> +	u64 min_chunk_size = min_data_stripes * zone_size;
+> +	u64 type = ctl->type;
+> +
+> +	ctl->max_stripe_size = zone_size;
+> +	if (type & BTRFS_BLOCK_GROUP_DATA) {
+> +		ctl->max_chunk_size = round_down(BTRFS_MAX_DATA_CHUNK_SIZE,
+> +						 zone_size);
+> +	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
+> +		ctl->max_chunk_size = ctl->max_stripe_size;
+> +	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
+> +		ctl->max_chunk_size = 2 * ctl->max_stripe_size;
+> +		ctl->devs_max = min_t(int, ctl->devs_max,
+> +				      BTRFS_MAX_DEVS_SYS_CHUNK);
+> +	}
+> +
+
+
+> +	/* We don't want a chunk larger than 10% of writable space */
+> +	limit = max(round_down(div_factor(fs_devices->total_rw_bytes, 1),
+
+  What's the purpose of dev_factor here?
+
+Thanks.
+
