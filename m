@@ -2,329 +2,709 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3FBD2C19F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 01:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90D242C1A0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 01:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbgKXA02 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 19:26:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
+        id S1730391AbgKXAa2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 19:30:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729107AbgKXA01 (ORCPT
+        with ESMTP id S1726844AbgKXA3p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 19:26:27 -0500
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1278C0613CF;
-        Mon, 23 Nov 2020 16:26:26 -0800 (PST)
-Received: by mail-pl1-x642.google.com with SMTP id k5so3291911plt.6;
-        Mon, 23 Nov 2020 16:26:26 -0800 (PST)
+        Mon, 23 Nov 2020 19:29:45 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4320EC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 16:29:45 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id p22so979880wmg.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 16:29:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:subject:to:cc:newsgroups:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Nt3WL/sMZDFdQ0jAbOhXhrOfUwobfRhA4oYHScZyEuA=;
-        b=Oc54z6HIkJQlFjkPTcr65cfgUp+grLzgjNRN4/CJ1+XKQWLG5D12r7elXf4hS19Uap
-         7S6Kbe4/Xau6BCwvExNeAoQ4jm1ZA49Ex76lhFBxxcLfCGTAyxqnZb6LJKtir5hanryj
-         W/novpTZ0kcl/7Lt3HhjbZQvL8hLnEMnJOKsGrNGGY5YxLoedCtMLiZFiKAIknj1sIGa
-         KrPYNf3D2q1jAzZACjf2b36x7EpsJwo6CLbMoQdRfFu0GzXwP7nwF6a8+bLz0HHwzQMu
-         tmwVtWgApsX8Jo00b+rsMZLa52Kfxozy1t4hV/QAvfnJtcI0Bn+XqCeK4LODz51vbCko
-         EE6w==
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=K2uIqfg4e35Wb6OMrBJU6kFlYPL6dnuBsqP+mEjVqqI=;
+        b=PuaZrNd6wlt4nb3+cGPxi10gjjNu1aoNmwos+71dBAka7GRY1eWMXldHLX7yhju1TC
+         Kl+2TSPkzqtJ6e3rBK4cZ99vpVRWApC1GBnxD22ehQAsWSS++aweE6FfayrJQzA6OQeg
+         pTFTxEWs2pwfbyFrRyjc4GcYIE9hax8ZSyTmjeZps+F+Ee5rQHxDpccAgFKsnZWVkHVn
+         LnynoAPq3CzsD3XJ9TMW9T9xpyR7ar+emIvwjvadn955KavFa65fknUNF0FIxDt/+XT1
+         6BhYAU+DRfnoqEfMuii+CHJmmM0ob3Lc3vYhMFLAFQdAYFOoLtiwxPPPnqjf3q0C177v
+         Q36g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:subject:to:cc:newsgroups:references
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Nt3WL/sMZDFdQ0jAbOhXhrOfUwobfRhA4oYHScZyEuA=;
-        b=QDnvEsDlhXDEISFft2AQ00JMVPWTDzAjYUv1/Y8LQKAg3cROlNUOPGtTPqzENe9QyY
-         gkHWJU9AVHBEbwan27uHgzPxi3zI3tduhh/3+21dYwcv1qdhcAdQFgtklFqtS4VNr5Ul
-         VDFNbdOfnfkIaJ3MHcFL7e9Quzf3TLR/ByHRaQVIusjRGcsQjGIC3WtvT/0smxc44LRf
-         zXEaO+qdDBMmslqGMVhVzV+0RCNq5W7A0KC3FZYqfIZ00wFCs9N0It32YQA8NBtJH/IG
-         fw9+cNfH565xpsZmSp18fOddVrkN6PffY9ZdCZPdik1LUObUThq3SaKkExrg9s/YbLTO
-         FVPw==
-X-Gm-Message-State: AOAM5334Figrq+D1EU+e3TO+sLnHRHxUr018MGNLBJA/T1Sd40QGulDU
-        b/W/5rHKW/I0t2nGhec7UWg=
-X-Google-Smtp-Source: ABdhPJxCEhCjGIy2PVAc5Q4JGQ5FebvcnHmsaAsAUqP8ddjKTbGi1i1Ua+KLRC8mYp1dd9Lt347RqA==
-X-Received: by 2002:a17:902:778e:b029:d8:d024:a9a with SMTP id o14-20020a170902778eb02900d8d0240a9amr1721810pll.12.1606177584778;
-        Mon, 23 Nov 2020 16:26:24 -0800 (PST)
-Received: from [192.168.50.50] (c-24-4-73-83.hsd1.ca.comcast.net. [24.4.73.83])
-        by smtp.gmail.com with ESMTPSA id ha21sm529493pjb.2.2020.11.23.16.26.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Nov 2020 16:26:24 -0800 (PST)
-Sender: Vineet Gupta <vineetg76@gmail.com>
-From:   Vineet Gupta <vgupta@synopsys.com>
-Subject: Re: [PATCH v2 10/13] arc: use FLATMEM with freeing of unused memory
- map instead of DISCONTIGMEM
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=K2uIqfg4e35Wb6OMrBJU6kFlYPL6dnuBsqP+mEjVqqI=;
+        b=BH1NFp3RqJU8L0uOud5+L83h3lonidc7VXfA9t8rKT3KH64Y57sspC+IXR4e/jzAlv
+         VZ+4lkg9ig51wA3b1L+8Ge1TCBGDfbabO76fX7AcJc9HI7QfdfxwRvAkvEarEk/86brt
+         nKKW7CifBJJ/I25tGhxwDdsR5W6VPr14RPfjY/wpXgklYKPS8kPyUktx9vhZ8XpeST8L
+         v1sBSQWMWLx3jdTaD3Fo+/IkGh7/iPEPVcGqCCGdB2kS2cuPN/KSrOjQHm3fL9fOtIiF
+         8/XVdFEOvKFLl/mjMnAlIho9czhNyWviTN/P4cku+ktZqnHkW3e+d5KMIuQpmsN1P8Uq
+         qM7Q==
+X-Gm-Message-State: AOAM533EmpYmPb20QwbAccYFECymy/MKDaaP4PMswnyWMjcNiffqViIc
+        0TNNlSpwwXDO+cgLuRY63SSNBA==
+X-Google-Smtp-Source: ABdhPJy9AgkaosVZgWREsp3j6Rk57emHTkZTBwHWfY7Yoooxcle8sKorWy3rHxE3OI8QfG5aqsdbaQ==
+X-Received: by 2002:a1c:4909:: with SMTP id w9mr1414666wma.15.1606177783902;
+        Mon, 23 Nov 2020 16:29:43 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id c6sm25047360wrh.74.2020.11.23.16.29.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2020 16:29:43 -0800 (PST)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Guo Ren <guoren@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
         Russell King <linux@armlinux.org.uk>,
-        Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>
-Newsgroups: gmane.linux.ports.ia64,gmane.linux.ports.alpha,gmane.linux.ports.arm.kernel,gmane.linux.documentation,gmane.linux.file-systems,gmane.linux.kernel,gmane.linux.kernel.mm
-References: <20201101170454.9567-1-rppt@kernel.org>
- <20201101170454.9567-11-rppt@kernel.org>
- <3a1ef201-611b-3eb0-1a8a-4fcb05634b85@synopsys.com>
- <20201117065708.GD370813@kernel.org>
-X-Mozilla-News-Host: news://news.gmane.io
-Message-ID: <dfbbfa6c-15ea-bc64-d163-5c96c1df43a3@synopsys.com>
-Date:   Mon, 23 Nov 2020 16:26:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will@kernel.org>, x86@kernel.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 06/19] elf/vdso: Reuse arch_setup_additional_pages() parameters
+Date:   Tue, 24 Nov 2020 00:29:19 +0000
+Message-Id: <20201124002932.1220517-7-dima@arista.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201124002932.1220517-1-dima@arista.com>
+References: <20201124002932.1220517-1-dima@arista.com>
 MIME-Version: 1.0
-In-Reply-To: <20201117065708.GD370813@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/16/20 10:57 PM, Mike Rapoport wrote:
-> On Tue, Nov 17, 2020 at 06:40:16AM +0000, Vineet Gupta wrote:
->> Hi Mike,
->>
->> On 11/1/20 9:04 AM, Mike Rapoport wrote:
->>> From: Mike Rapoport <rppt@linux.ibm.com>
->>>
->>> Currently ARC uses DISCONTIGMEM to cope with sparse physical memory address
->>> space on systems with 2 memory banks. While DISCONTIGMEM avoids wasting
->>> memory on unpopulated memory map, it adds both memory and CPU overhead
->>> relatively to FLATMEM. Moreover, DISCONTINGMEM is generally considered
->>> deprecated.
->>>
->>> The obvious replacement for DISCONTIGMEM would be SPARSEMEM, but it is also
->>> less efficient than FLATMEM in pfn_to_page() and page_to_pfn() conversions.
->>> Besides it requires tuning of SECTION_SIZE which is not trivial for
->>> possible ARC memory configuration.
->>>
->>> Since the memory map for both banks is always allocated from the "lowmem"
->>> bank, it is possible to use FLATMEM for two-bank configuration and simply
->>> free the unused hole in the memory map. All is required for that is to
->>> provide ARC-specific pfn_valid() that will take into account actual
->>> physical memory configuration and define HAVE_ARCH_PFN_VALID.
->>>
->>> The resulting kernel image configured with defconfig + HIGHMEM=y is
->>> smaller:
->>>
->>> $ size a/vmlinux b/vmlinux
->>>      text    data     bss     dec     hex filename
->>> 4673503 1245456  279756 6198715  5e95bb a/vmlinux
->>> 4658706 1246864  279756 6185326  5e616e b/vmlinux
->>>
->>> $ ./scripts/bloat-o-meter a/vmlinux b/vmlinux
->>> add/remove: 28/30 grow/shrink: 42/399 up/down: 10986/-29025 (-18039)
->>> ...
->>> Total: Before=4709315, After=4691276, chg -0.38%
->>>
->>> Booting nSIM with haps_ns.dts results in the following memory usage
->>> reports:
->>>
->>> a:
->>> Memory: 1559104K/1572864K available (3531K kernel code, 595K rwdata, 752K rodata, 136K init, 275K bss, 13760K reserved, 0K cma-reserved, 1048576K highmem)
->>>
->>> b:
->>> Memory: 1559112K/1572864K available (3519K kernel code, 594K rwdata, 752K rodata, 136K init, 280K bss, 13752K reserved, 0K cma-reserved, 1048576K highmem)
->>>
->>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Both parameters of arch_setup_additional_pages() are currently unused.
+commit fc5243d98ac2 ("[S390] arch_setup_additional_pages arguments")
+tried to introduce useful arguments, but they still are not used.
 
-To avoid any surprises later, I tested that highmem was actually working 
-on real hardware (HSDK-4xD dev platform) with modified hsdk.dts to 
-enable 2 GB of memory.
+Remove old parameters and introduce sysinfo_ehdr argument that will be
+used to return vdso address to put as AT_SYSINFO_EHDR tag in auxiliary
+vector. The reason to add this parameter is that many architecture
+have vDSO pointer saved in their mm->context with the only purpose
+to use it later in ARCH_DLINFO. That's the macro for elf loader
+to setup sysinfo_ehdr tag.
 
-        reg = <0x0 0x80000000 0x0 0x40000000    /* 1 GB low mem */
--         0x1 0x00000000 0x0 0x40000000>;  /* 1 GB highmem PAE */
-+         0x0 0x00000000 0x0 0x40000000>;  /* 1 GB highmem low phy mem*/
-         };
+Return sysinfo_ehdr address that will be later used by ARCH_DLINFO as
+an argument. That will allow to drop vDSO pointer from mm->context
+and any code responsible to track vDSO position on platforms that
+don't use vDSO as a landing in userspace (arm/s390/sparc).
 
-A simple malloc+memset program can allocate upto 1.98 GB of memory.
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ arch/arm/include/asm/vdso.h        |  6 ++++--
+ arch/arm/kernel/process.c          |  4 ++--
+ arch/arm/kernel/vdso.c             | 10 +++++++---
+ arch/arm64/kernel/vdso.c           | 17 ++++++++--------
+ arch/csky/kernel/vdso.c            |  3 ++-
+ arch/hexagon/kernel/vdso.c         |  3 ++-
+ arch/mips/kernel/vdso.c            |  3 ++-
+ arch/nds32/kernel/vdso.c           |  3 ++-
+ arch/nios2/mm/init.c               |  2 +-
+ arch/powerpc/kernel/vdso.c         |  3 ++-
+ arch/riscv/kernel/vdso.c           | 11 +++++-----
+ arch/s390/kernel/vdso.c            |  3 ++-
+ arch/sh/kernel/vsyscall/vsyscall.c |  3 ++-
+ arch/sparc/vdso/vma.c              | 15 +++++++-------
+ arch/x86/entry/vdso/vma.c          | 32 +++++++++++++++++-------------
+ arch/x86/um/vdso/vma.c             |  2 +-
+ fs/binfmt_elf.c                    |  3 ++-
+ fs/binfmt_elf_fdpic.c              |  3 ++-
+ include/linux/elf.h                | 17 +++++++++++-----
+ 19 files changed, 85 insertions(+), 58 deletions(-)
 
-# cat /proc/meminfo | grep Mem
-MemTotal:        2077984 kB
-MemFree:         2047512 kB
-MemAvailable:    2005712 kB
-
-# /oom 1000 &
-# malloc 1000 MB
-# Done memset, sleeping for 20 secs
-
-# cat /proc/meminfo | grep Mem
-MemTotal:        2077984 kB
-MemFree:         1163888 kB
-MemAvailable:    1122088 kB
-
-# /oom 980 &
-# malloc 980 MB
-# Done memset, sleeping for 20 secs
-
-# cat /proc/meminfo | grep Mem
-MemTotal:        2077984 kB
-MemFree:          239096 kB
-MemAvailable:     197296 kB
-
-# Done free.
-Done free.
-
-So this is all hunky-dory. Thanks for working on this Mike and improving 
-things.
-
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
-
--Vineet
-
->>
->> Sorry this fell through the cracks. Do you have a branch I can checkout
->> and do a quick test.
-> 
-> It's in mmotm and in my tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/rppt/linux.git memory-models/rm-discontig/v0
-> 
->> Thx,
->> -Vineet
->>
->>> ---
->>>    arch/arc/Kconfig            |  3 ++-
->>>    arch/arc/include/asm/page.h | 20 +++++++++++++++++---
->>>    arch/arc/mm/init.c          | 29 ++++++++++++++++++++++-------
->>>    3 files changed, 41 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
->>> index 0a89cc9def65..c874f8ab0341 100644
->>> --- a/arch/arc/Kconfig
->>> +++ b/arch/arc/Kconfig
->>> @@ -67,6 +67,7 @@ config GENERIC_CSUM
->>>    
->>>    config ARCH_DISCONTIGMEM_ENABLE
->>>    	def_bool n
->>> +	depends on BROKEN
->>>    
->>>    config ARCH_FLATMEM_ENABLE
->>>    	def_bool y
->>> @@ -506,7 +507,7 @@ config LINUX_RAM_BASE
->>>    
->>>    config HIGHMEM
->>>    	bool "High Memory Support"
->>> -	select ARCH_DISCONTIGMEM_ENABLE
->>> +	select HAVE_ARCH_PFN_VALID
->>>    	help
->>>    	  With ARC 2G:2G address split, only upper 2G is directly addressable by
->>>    	  kernel. Enable this to potentially allow access to rest of 2G and PAE
->>> diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
->>> index b0dfed0f12be..23e41e890eda 100644
->>> --- a/arch/arc/include/asm/page.h
->>> +++ b/arch/arc/include/asm/page.h
->>> @@ -82,11 +82,25 @@ typedef pte_t * pgtable_t;
->>>     */
->>>    #define virt_to_pfn(kaddr)	(__pa(kaddr) >> PAGE_SHIFT)
->>>    
->>> -#define ARCH_PFN_OFFSET		virt_to_pfn(CONFIG_LINUX_RAM_BASE)
->>> +/*
->>> + * When HIGHMEM is enabled we have holes in the memory map so we need
->>> + * pfn_valid() that takes into account the actual extents of the physical
->>> + * memory
->>> + */
->>> +#ifdef CONFIG_HIGHMEM
->>> +
->>> +extern unsigned long arch_pfn_offset;
->>> +#define ARCH_PFN_OFFSET		arch_pfn_offset
->>> +
->>> +extern int pfn_valid(unsigned long pfn);
->>> +#define pfn_valid		pfn_valid
->>>    
->>> -#ifdef CONFIG_FLATMEM
->>> +#else /* CONFIG_HIGHMEM */
->>> +
->>> +#define ARCH_PFN_OFFSET		virt_to_pfn(CONFIG_LINUX_RAM_BASE)
->>>    #define pfn_valid(pfn)		(((pfn) - ARCH_PFN_OFFSET) < max_mapnr)
->>> -#endif
->>> +
->>> +#endif /* CONFIG_HIGHMEM */
->>>    
->>>    /*
->>>     * __pa, __va, virt_to_page (ALERT: deprecated, don't use them)
->>> diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
->>> index 3a35b82a718e..ce07e697916c 100644
->>> --- a/arch/arc/mm/init.c
->>> +++ b/arch/arc/mm/init.c
->>> @@ -28,6 +28,8 @@ static unsigned long low_mem_sz;
->>>    static unsigned long min_high_pfn, max_high_pfn;
->>>    static phys_addr_t high_mem_start;
->>>    static phys_addr_t high_mem_sz;
->>> +unsigned long arch_pfn_offset;
->>> +EXPORT_SYMBOL(arch_pfn_offset);
->>>    #endif
->>>    
->>>    #ifdef CONFIG_DISCONTIGMEM
->>> @@ -98,16 +100,11 @@ void __init setup_arch_memory(void)
->>>    	init_mm.brk = (unsigned long)_end;
->>>    
->>>    	/* first page of system - kernel .vector starts here */
->>> -	min_low_pfn = ARCH_PFN_OFFSET;
->>> +	min_low_pfn = virt_to_pfn(CONFIG_LINUX_RAM_BASE);
->>>    
->>>    	/* Last usable page of low mem */
->>>    	max_low_pfn = max_pfn = PFN_DOWN(low_mem_start + low_mem_sz);
->>>    
->>> -#ifdef CONFIG_FLATMEM
->>> -	/* pfn_valid() uses this */
->>> -	max_mapnr = max_low_pfn - min_low_pfn;
->>> -#endif
->>> -
->>>    	/*------------- bootmem allocator setup -----------------------*/
->>>    
->>>    	/*
->>> @@ -153,7 +150,9 @@ void __init setup_arch_memory(void)
->>>    	 * DISCONTIGMEM in turns requires multiple nodes. node 0 above is
->>>    	 * populated with normal memory zone while node 1 only has highmem
->>>    	 */
->>> +#ifdef CONFIG_DISCONTIGMEM
->>>    	node_set_online(1);
->>> +#endif
->>>    
->>>    	min_high_pfn = PFN_DOWN(high_mem_start);
->>>    	max_high_pfn = PFN_DOWN(high_mem_start + high_mem_sz);
->>> @@ -161,8 +160,15 @@ void __init setup_arch_memory(void)
->>>    	max_zone_pfn[ZONE_HIGHMEM] = min_low_pfn;
->>>    
->>>    	high_memory = (void *)(min_high_pfn << PAGE_SHIFT);
->>> +
->>> +	arch_pfn_offset = min(min_low_pfn, min_high_pfn);
->>>    	kmap_init();
->>> -#endif
->>> +
->>> +#else /* CONFIG_HIGHMEM */
->>> +	/* pfn_valid() uses this when FLATMEM=y and HIGHMEM=n */
->>> +	max_mapnr = max_low_pfn - min_low_pfn;
->>> +
->>> +#endif /* CONFIG_HIGHMEM */
->>>    
->>>    	free_area_init(max_zone_pfn);
->>>    }
->>> @@ -190,3 +196,12 @@ void __init mem_init(void)
->>>    	highmem_init();
->>>    	mem_init_print_info(NULL);
->>>    }
->>> +
->>> +#ifdef CONFIG_HIGHMEM
->>> +int pfn_valid(unsigned long pfn)
->>> +{
->>> +	return (pfn >= min_high_pfn && pfn <= max_high_pfn) ||
->>> +		(pfn >= min_low_pfn && pfn <= max_low_pfn);
->>> +}
->>> +EXPORT_SYMBOL(pfn_valid);
->>> +#endif
->>
-> 
+diff --git a/arch/arm/include/asm/vdso.h b/arch/arm/include/asm/vdso.h
+index 5b85889f82ee..6b2b3b1fe833 100644
+--- a/arch/arm/include/asm/vdso.h
++++ b/arch/arm/include/asm/vdso.h
+@@ -10,13 +10,15 @@ struct mm_struct;
+ 
+ #ifdef CONFIG_VDSO
+ 
+-void arm_install_vdso(struct mm_struct *mm, unsigned long addr);
++void arm_install_vdso(struct mm_struct *mm, unsigned long addr,
++		      unsigned long *sysinfo_ehdr);
+ 
+ extern unsigned int vdso_total_pages;
+ 
+ #else /* CONFIG_VDSO */
+ 
+-static inline void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
++static inline void arm_install_vdso(struct mm_struct *mm, unsigned long addr,
++				    unsigned long *sysinfo_ehdr)
+ {
+ }
+ 
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index d0220da1d1b1..0e90cba8ac7a 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -389,7 +389,7 @@ static const struct vm_special_mapping sigpage_mapping = {
+ 	.mremap = sigpage_mremap,
+ };
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+@@ -430,7 +430,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	 * to be fatal to the process, so no error check needed
+ 	 * here.
+ 	 */
+-	arm_install_vdso(mm, addr + PAGE_SIZE);
++	arm_install_vdso(mm, addr + PAGE_SIZE, sysinfo_ehdr);
+ 
+  up_fail:
+ 	mmap_write_unlock(mm);
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index 3408269d19c7..710e5ca99a53 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -233,7 +233,8 @@ static int install_vvar(struct mm_struct *mm, unsigned long addr)
+ }
+ 
+ /* assumes mmap_lock is write-locked */
+-void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
++void arm_install_vdso(struct mm_struct *mm, unsigned long addr,
++		      unsigned long *sysinfo_ehdr)
+ {
+ 	struct vm_area_struct *vma;
+ 	unsigned long len;
+@@ -254,7 +255,10 @@ void arm_install_vdso(struct mm_struct *mm, unsigned long addr)
+ 		VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+ 		&vdso_text_mapping);
+ 
+-	if (!IS_ERR(vma))
+-		mm->context.vdso = addr;
++	if (IS_ERR(vma))
++		return;
++
++	mm->context.vdso = addr;
++	*sysinfo_ehdr = addr;
+ }
+ 
+diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
+index 1b710deb84d6..666338724a07 100644
+--- a/arch/arm64/kernel/vdso.c
++++ b/arch/arm64/kernel/vdso.c
+@@ -213,8 +213,7 @@ static vm_fault_t vvar_fault(const struct vm_special_mapping *sm,
+ 
+ static int __setup_additional_pages(enum vdso_abi abi,
+ 				    struct mm_struct *mm,
+-				    struct linux_binprm *bprm,
+-				    int uses_interp)
++				    unsigned long *sysinfo_ehdr)
+ {
+ 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
+ 	unsigned long gp_flags = 0;
+@@ -250,6 +249,8 @@ static int __setup_additional_pages(enum vdso_abi abi,
+ 	if (IS_ERR(ret))
+ 		goto up_fail;
+ 
++	*sysinfo_ehdr = vdso_base;
++
+ 	return 0;
+ 
+ up_fail:
+@@ -401,8 +402,7 @@ static int aarch32_sigreturn_setup(struct mm_struct *mm)
+ 	return PTR_ERR_OR_ZERO(ret);
+ }
+ 
+-static int aarch32_setup_additional_pages(struct linux_binprm *bprm,
+-					  int uses_interp)
++static int aarch32_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	int ret;
+@@ -412,8 +412,7 @@ static int aarch32_setup_additional_pages(struct linux_binprm *bprm,
+ 		return ret;
+ 
+ 	if (IS_ENABLED(CONFIG_COMPAT_VDSO)) {
+-		ret = __setup_additional_pages(VDSO_ABI_AA32, mm, bprm,
+-					       uses_interp);
++		ret = __setup_additional_pages(VDSO_ABI_AA32, mm, sysinfo_ehdr);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -447,7 +446,7 @@ static int __init vdso_init(void)
+ }
+ arch_initcall(vdso_init);
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	int ret;
+@@ -456,9 +455,9 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		return -EINTR;
+ 
+ 	if (is_compat_task())
+-		ret = aarch32_setup_additional_pages(bprm, uses_interp);
++		ret = aarch32_setup_additional_pages(sysinfo_ehdr);
+ 	else
+-		ret = __setup_additional_pages(VDSO_ABI_AA64, mm, bprm, uses_interp);
++		ret = __setup_additional_pages(VDSO_ABI_AA64, mm, sysinfo_ehdr);
+ 
+ 	mmap_write_unlock(mm);
+ 
+diff --git a/arch/csky/kernel/vdso.c b/arch/csky/kernel/vdso.c
+index abc3dbc658d4..f72f76915c59 100644
+--- a/arch/csky/kernel/vdso.c
++++ b/arch/csky/kernel/vdso.c
+@@ -44,7 +44,7 @@ static int __init init_vdso(void)
+ }
+ subsys_initcall(init_vdso);
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	int ret;
+ 	unsigned long addr;
+@@ -68,6 +68,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		goto up_fail;
+ 
+ 	mm->context.vdso = (void *)addr;
++	*sysinfo_ehdr = addr;
+ 
+ up_fail:
+ 	mmap_write_unlock(mm);
+diff --git a/arch/hexagon/kernel/vdso.c b/arch/hexagon/kernel/vdso.c
+index b70970ac809f..39e78fe82b99 100644
+--- a/arch/hexagon/kernel/vdso.c
++++ b/arch/hexagon/kernel/vdso.c
+@@ -46,7 +46,7 @@ arch_initcall(vdso_init);
+ /*
+  * Called from binfmt_elf.  Create a VMA for the vDSO page.
+  */
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	int ret;
+ 	unsigned long vdso_base;
+@@ -74,6 +74,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		goto up_fail;
+ 
+ 	mm->context.vdso = (void *)vdso_base;
++	*sysinfo_ehdr = vdso_base;
+ 
+ up_fail:
+ 	mmap_write_unlock(mm);
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index 7d0b91ad2581..e124c68322bb 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -86,7 +86,7 @@ static unsigned long vdso_base(void)
+ 	return base;
+ }
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mips_vdso_image *image = current->thread.abi->vdso;
+ 	struct mm_struct *mm = current->mm;
+@@ -184,6 +184,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	}
+ 
+ 	mm->context.vdso = (void *)vdso_addr;
++	*sysinfo_ehdr = vdso_addr;
+ 	ret = 0;
+ 
+ out:
+diff --git a/arch/nds32/kernel/vdso.c b/arch/nds32/kernel/vdso.c
+index e16009a07971..530164221166 100644
+--- a/arch/nds32/kernel/vdso.c
++++ b/arch/nds32/kernel/vdso.c
+@@ -111,7 +111,7 @@ unsigned long inline vdso_random_addr(unsigned long vdso_mapping_len)
+ 	return addr;
+ }
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	unsigned long vdso_base, vdso_text_len, vdso_mapping_len;
+@@ -176,6 +176,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	/*Map vdso to user space */
+ 	vdso_base += PAGE_SIZE;
+ 	mm->context.vdso = (void *)vdso_base;
++	*sysinfo_ehdr = vdso_base;
+ 	vma = _install_special_mapping(mm, vdso_base, vdso_text_len,
+ 				       VM_READ | VM_EXEC |
+ 				       VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+diff --git a/arch/nios2/mm/init.c b/arch/nios2/mm/init.c
+index 61862dbb0e32..e09e54198ac6 100644
+--- a/arch/nios2/mm/init.c
++++ b/arch/nios2/mm/init.c
+@@ -104,7 +104,7 @@ static int alloc_kuser_page(void)
+ }
+ arch_initcall(alloc_kuser_page);
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	int ret;
+diff --git a/arch/powerpc/kernel/vdso.c b/arch/powerpc/kernel/vdso.c
+index 8dad44262e75..0ec3bbe7fb36 100644
+--- a/arch/powerpc/kernel/vdso.c
++++ b/arch/powerpc/kernel/vdso.c
+@@ -122,7 +122,7 @@ struct lib64_elfinfo
+  * This is called from binfmt_elf, we create the special vma for the
+  * vDSO and insert it into the mm struct tree
+  */
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct page **vdso_pagelist;
+@@ -211,6 +211,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	}
+ 
+ 	mmap_write_unlock(mm);
++	*sysinfo_ehdr = vdso_base;
+ 	return 0;
+ 
+  fail_mmapsem:
+diff --git a/arch/riscv/kernel/vdso.c b/arch/riscv/kernel/vdso.c
+index 678204231700..55b6d36d42ec 100644
+--- a/arch/riscv/kernel/vdso.c
++++ b/arch/riscv/kernel/vdso.c
+@@ -56,11 +56,10 @@ static int __init vdso_init(void)
+ }
+ arch_initcall(vdso_init);
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm,
+-	int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+-	unsigned long vdso_base, vdso_len;
++	unsigned long vdso_base, vvar_base, vdso_len;
+ 	int ret;
+ 
+ 	vdso_len = (vdso_pages + 1) << PAGE_SHIFT;
+@@ -89,12 +88,14 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 		goto end;
+ 	}
+ 
+-	vdso_base += (vdso_pages << PAGE_SHIFT);
+-	ret = install_special_mapping(mm, vdso_base, PAGE_SIZE,
++	vvar_base = vdso_base + (vdso_pages << PAGE_SHIFT);
++	ret = install_special_mapping(mm, vvar_base, PAGE_SIZE,
+ 		(VM_READ | VM_MAYREAD), &vdso_pagelist[vdso_pages]);
+ 
+ 	if (unlikely(ret))
+ 		mm->context.vdso = NULL;
++	else
++		*sysinfo_ehdr = vdso_base;
+ end:
+ 	mmap_write_unlock(mm);
+ 	return ret;
+diff --git a/arch/s390/kernel/vdso.c b/arch/s390/kernel/vdso.c
+index 6c9ec9521203..810b72f8985c 100644
+--- a/arch/s390/kernel/vdso.c
++++ b/arch/s390/kernel/vdso.c
+@@ -150,7 +150,7 @@ void vdso_free_per_cpu(struct lowcore *lowcore)
+  * This is called from binfmt_elf, we create the special vma for the
+  * vDSO and insert it into the mm struct tree
+  */
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+@@ -205,6 +205,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 	}
+ 
+ 	current->mm->context.vdso_base = vdso_base;
++	*sysinfo_ehdr = vdso_base;
+ 	rc = 0;
+ 
+ out_up:
+diff --git a/arch/sh/kernel/vsyscall/vsyscall.c b/arch/sh/kernel/vsyscall/vsyscall.c
+index 1bd85a6949c4..de8df3261b4f 100644
+--- a/arch/sh/kernel/vsyscall/vsyscall.c
++++ b/arch/sh/kernel/vsyscall/vsyscall.c
+@@ -55,7 +55,7 @@ int __init vsyscall_init(void)
+ }
+ 
+ /* Setup a VMA at program startup for the vsyscall page */
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	unsigned long addr;
+@@ -78,6 +78,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 		goto up_fail;
+ 
+ 	current->mm->context.vdso = (void *)addr;
++	*sysinfo_ehdr = addr;
+ 
+ up_fail:
+ 	mmap_write_unlock(mm);
+diff --git a/arch/sparc/vdso/vma.c b/arch/sparc/vdso/vma.c
+index cc19e09b0fa1..bf9195fe9bcc 100644
+--- a/arch/sparc/vdso/vma.c
++++ b/arch/sparc/vdso/vma.c
+@@ -346,8 +346,6 @@ static int __init init_vdso(void)
+ }
+ subsys_initcall(init_vdso);
+ 
+-struct linux_binprm;
+-
+ /* Shuffle the vdso up a bit, randomly. */
+ static unsigned long vdso_addr(unsigned long start, unsigned int len)
+ {
+@@ -359,7 +357,8 @@ static unsigned long vdso_addr(unsigned long start, unsigned int len)
+ }
+ 
+ static int map_vdso(const struct vdso_image *image,
+-		struct vm_special_mapping *vdso_mapping)
++		    struct vm_special_mapping *vdso_mapping,
++		    unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+@@ -421,12 +420,14 @@ static int map_vdso(const struct vdso_image *image,
+ up_fail:
+ 	if (ret)
+ 		current->mm->context.vdso = NULL;
++	else
++		*sysinfo_ehdr = text_start;
+ 
+ 	mmap_write_unlock(mm);
+ 	return ret;
+ }
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 
+ 	if (!vdso_enabled)
+@@ -434,11 +435,11 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ 
+ #if defined CONFIG_COMPAT
+ 	if (!(is_32bit_task()))
+-		return map_vdso(&vdso_image_64_builtin, &vdso_mapping64);
++		return map_vdso(&vdso_image_64_builtin, &vdso_mapping64, sysinfo_ehdr);
+ 	else
+-		return map_vdso(&vdso_image_32_builtin, &vdso_mapping32);
++		return map_vdso(&vdso_image_32_builtin, &vdso_mapping32, sysinfo_ehdr);
+ #else
+-	return map_vdso(&vdso_image_64_builtin, &vdso_mapping64);
++	return map_vdso(&vdso_image_64_builtin, &vdso_mapping64, sysinfo_ehdr);
+ #endif
+ 
+ }
+diff --git a/arch/x86/entry/vdso/vma.c b/arch/x86/entry/vdso/vma.c
+index aace862ed9a1..5b9020742e66 100644
+--- a/arch/x86/entry/vdso/vma.c
++++ b/arch/x86/entry/vdso/vma.c
+@@ -243,7 +243,8 @@ static const struct vm_special_mapping vvar_mapping = {
+  * @image          - blob to map
+  * @addr           - request a specific address (zero to map at free addr)
+  */
+-static int map_vdso(const struct vdso_image *image, unsigned long addr)
++static int map_vdso(const struct vdso_image *image, unsigned long addr,
++		    unsigned long *sysinfo_ehdr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+@@ -290,6 +291,7 @@ static int map_vdso(const struct vdso_image *image, unsigned long addr)
+ 	} else {
+ 		current->mm->context.vdso = (void __user *)text_start;
+ 		current->mm->context.vdso_image = image;
++		*sysinfo_ehdr = text_start;
+ 	}
+ 
+ up_fail:
+@@ -342,11 +344,12 @@ static unsigned long vdso_addr(unsigned long start, unsigned len)
+ 	return addr;
+ }
+ 
+-static int map_vdso_randomized(const struct vdso_image *image)
++static int map_vdso_randomized(const struct vdso_image *image,
++			       unsigned long *sysinfo_ehdr)
+ {
+ 	unsigned long addr = vdso_addr(current->mm->start_stack, image->size-image->sym_vvar_start);
+ 
+-	return map_vdso(image, addr);
++	return map_vdso(image, addr, sysinfo_ehdr);
+ }
+ #endif
+ 
+@@ -354,6 +357,7 @@ int map_vdso_once(const struct vdso_image *image, unsigned long addr)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
++	unsigned long unused;
+ 
+ 	mmap_write_lock(mm);
+ 	/*
+@@ -372,19 +376,19 @@ int map_vdso_once(const struct vdso_image *image, unsigned long addr)
+ 	}
+ 	mmap_write_unlock(mm);
+ 
+-	return map_vdso(image, addr);
++	return map_vdso(image, addr, &unused);
+ }
+ 
+ #if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
+-static int load_vdso_ia32(void)
++static int load_vdso_ia32(unsigned long *sysinfo_ehdr)
+ {
+ 	if (vdso32_enabled != 1)  /* Other values all mean "disabled" */
+ 		return 0;
+ 
+-	return map_vdso(&vdso_image_32, 0);
++	return map_vdso(&vdso_image_32, 0, sysinfo_ehdr);
+ }
+ #else
+-static int load_vdso_ia32(void)
++static int load_vdso_ia32(unsigned long *sysinfo_ehdr)
+ {
+ 	WARN_ON_ONCE(1);
+ 	return -ENODATA;
+@@ -392,32 +396,32 @@ static int load_vdso_ia32(void)
+ #endif
+ 
+ #ifdef CONFIG_X86_64
+-static int load_vdso_64(void)
++static int load_vdso_64(unsigned long *sysinfo_ehdr)
+ {
+ 	if (!vdso64_enabled)
+ 		return 0;
+ 
+ #ifdef CONFIG_X86_X32_ABI
+ 	if (in_x32_syscall())
+-		return map_vdso_randomized(&vdso_image_x32);
++		return map_vdso_randomized(&vdso_image_x32, sysinfo_ehdr);
+ #endif
+ 
+-	return map_vdso_randomized(&vdso_image_64);
++	return map_vdso_randomized(&vdso_image_64, sysinfo_ehdr);
+ }
+ #else
+-static int load_vdso_64(void)
++static int load_vdso_64(unsigned long *sysinfo_ehdr)
+ {
+ 	WARN_ON_ONCE(1);
+ 	return -ENODATA;
+ }
+ #endif
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	if (in_ia32_syscall())
+-		return load_vdso_ia32();
++		return load_vdso_ia32(sysinfo_ehdr);
+ 
+-	return load_vdso_64();
++	return load_vdso_64(sysinfo_ehdr);
+ }
+ 
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/um/vdso/vma.c b/arch/x86/um/vdso/vma.c
+index 76d9f6ce7a3d..77488065f7cc 100644
+--- a/arch/x86/um/vdso/vma.c
++++ b/arch/x86/um/vdso/vma.c
+@@ -50,7 +50,7 @@ static int __init init_vdso(void)
+ }
+ subsys_initcall(init_vdso);
+ 
+-int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	int err;
+ 	struct mm_struct *mm = current->mm;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index b9adbeb59101..049ff514aa19 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -833,6 +833,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	unsigned long interp_load_addr = 0;
+ 	unsigned long start_code, end_code, start_data, end_data;
+ 	unsigned long reloc_func_desc __maybe_unused = 0;
++	unsigned long sysinfo_ehdr = 0;
+ 	int executable_stack = EXSTACK_DEFAULT;
+ 	struct elfhdr *elf_ex = (struct elfhdr *)bprm->buf;
+ 	struct elfhdr *interp_elf_ex = NULL;
+@@ -1249,7 +1250,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 
+ 	set_binfmt(&elf_format);
+ 
+-	retval = arch_setup_additional_pages(bprm, !!interpreter);
++	retval = arch_setup_additional_pages(&sysinfo_ehdr);
+ 	if (retval < 0)
+ 		goto out;
+ 
+diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+index b9a6d1b2b5bb..c9ee3c240855 100644
+--- a/fs/binfmt_elf_fdpic.c
++++ b/fs/binfmt_elf_fdpic.c
+@@ -183,6 +183,7 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
+ {
+ 	struct elf_fdpic_params exec_params, interp_params;
+ 	struct pt_regs *regs = current_pt_regs();
++	unsigned long sysinfo_ehdr = 0;
+ 	struct elf_phdr *phdr;
+ 	unsigned long stack_size, entryaddr;
+ #ifdef ELF_FDPIC_PLAT_INIT
+@@ -375,7 +376,7 @@ static int load_elf_fdpic_binary(struct linux_binprm *bprm)
+ 	if (retval < 0)
+ 		goto error;
+ 
+-	retval = arch_setup_additional_pages(bprm, !!interpreter_name);
++	retval = arch_setup_additional_pages(&sysinfo_ehdr);
+ 	if (retval < 0)
+ 		goto error;
+ #endif
+diff --git a/include/linux/elf.h b/include/linux/elf.h
+index 95bf7a1abaef..a8bea5611a4b 100644
+--- a/include/linux/elf.h
++++ b/include/linux/elf.h
+@@ -104,13 +104,20 @@ static inline int arch_elf_adjust_prot(int prot,
+ }
+ #endif
+ 
+-struct linux_binprm;
+ #ifdef CONFIG_ARCH_HAS_SETUP_ADDITIONAL_PAGES
+-extern int arch_setup_additional_pages(struct linux_binprm *bprm,
+-				       int uses_interp);
++/**
++ * arch_setup_additional_pages - Premap VMAs in a new-execed process
++ * @sysinfo_ehdr:	Returns vDSO position to be set in the initial
++ *			auxiliary vector (tag AT_SYSINFO_EHDR) by binfmt
++ *			loader. On failure isn't initialized.
++ *			As address == 0 is never used, it allows to check
++ *			if the tag should be set.
++ *
++ * Return: Zero if successful, or a negative error code on failure.
++ */
++extern int arch_setup_additional_pages(unsigned long *sysinfo_ehdr);
+ #else
+-static inline int arch_setup_additional_pages(struct linux_binprm *bprm,
+-				       int uses_interp)
++static inline int arch_setup_additional_pages(unsigned long *sysinfo_ehdr)
+ {
+ 	return 0;
+ }
+-- 
+2.29.2
 
