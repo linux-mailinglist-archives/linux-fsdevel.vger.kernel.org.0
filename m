@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC9DA2C2EBF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 18:38:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 935872C2EC5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 18:38:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403839AbgKXRhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 12:37:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44186 "EHLO
+        id S2403865AbgKXRhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 12:37:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733153AbgKXRhK (ORCPT
+        with ESMTP id S2403840AbgKXRhd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 12:37:10 -0500
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99B24C0613D6;
-        Tue, 24 Nov 2020 09:37:10 -0800 (PST)
-Received: by mail-qt1-x844.google.com with SMTP id f15so13163782qto.13;
-        Tue, 24 Nov 2020 09:37:10 -0800 (PST)
+        Tue, 24 Nov 2020 12:37:33 -0500
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60290C0613D6;
+        Tue, 24 Nov 2020 09:37:33 -0800 (PST)
+Received: by mail-qv1-xf43.google.com with SMTP id k3so4150760qvz.4;
+        Tue, 24 Nov 2020 09:37:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=RUiSFwuqBx5Z5RkIMV/LAo3IZ2wMWa1pe8Bi01kcv9s=;
-        b=I/ritBavAlEmXZYTdxsCZ3TKkeS+XbD2T5fSeuu+WAKjEs5fvGA2bMQkLo5MtRefva
-         qUl8yUxkVj+bBWUkgYhVfKpDhiO82hph16AQ0vGX7y+wlrcH9EWYcgfJQ+ri5yzcT/jj
-         ur3RBED4twIKVJJFDo/q0nmklKouT/Ot6KY5VSp33Mrn+/sIul4sQvPJjUYsLJ8PVoUi
-         uTUrhLlViP7uzPXo9Qlf/lrWs/mwSY/bN6T+YIT4kadfNOZMSiRbHdqwLGtEwY2FNG+a
-         TyAacskIalN0dBCzTDwuIzKGsDgNK5Z2Dd7niqvvN6G5G9OXmjSjKHmLzT22iYm6LIXb
-         z2wA==
+        bh=NMx3wGtNfY3eeaXC4utlwl41yJ4qPilA6BGetqYUorY=;
+        b=ttWPoi7SbGNczr/1HSKQP13JwOnnq6d51NvgAXrXOVbFUHDENikis8wgWQ/ICO4vWD
+         QXvXHNRrjPvcjtbRUNuU5kihbWk0IwxLYcoiLDd6H0sLjKI3e2qbtU5af/N7pFoOqAgC
+         h3xBKCRJvq/QDtB6ihgsX92WTCe21la5HoXVw91eRC04tEZopSMLMnfWKE1wWDcnWaYf
+         S2KXfW3yg0N/7LpsJ40fmTrf9EG2F6mG56V6rpZ8GyEnO0Ym+iYS/n4CBM7mxtRyxGrg
+         uQLw/J+qnYSYcVKcO0TGKVFY752sD2m6oYXQvW4fux2BOd14a3jTxvr52rzBLO0HCBoZ
+         teng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=RUiSFwuqBx5Z5RkIMV/LAo3IZ2wMWa1pe8Bi01kcv9s=;
-        b=QbL+amkyjRGsPzSHoqlUmj2p+MDb7sZxLxGNGiicJG7o45ptI2T1w0IJ0OFQhyoK6i
-         s5lxXiebV+xZrrzcrjp4AzW/fEsSAusjh4XiKEhOJDPGTWnbBxpeXDFSsjiPAjUUNVtm
-         SayyEX5AzBGnsM1HyUuG6rhiMnNcFoQS6AIy4SJvdOEDLtaO2RICOL4hPXLcUTP6lmRE
-         mKHlrLjxnUG7c0Tt2+QfKT3RU6KrKX7+kvZOGEmMgyOQsqBk76bdCc/kgJCRfTYLVbhE
-         nSshEKOsjpnfhAGTelQtkSdD917JBkYCA3XhIRKblg3v/NucafAEDI46+G79px8Jsp6u
-         /IQw==
-X-Gm-Message-State: AOAM531cCXwAn+is8U/5Q/z7/eNf7i6RHIUB8tiZUFUJFNYNnDAoe7d1
-        vnrsEDm+fTWegXSWPdUAjPA=
-X-Google-Smtp-Source: ABdhPJzns9py3D52IrNBrxEn0rk+MGg8bhauWe2r/6sVRsp+lUoI9EtR7DOBSR7jcCHuxmdt3gs4iQ==
-X-Received: by 2002:ac8:4802:: with SMTP id g2mr5435506qtq.235.1606239429633;
-        Tue, 24 Nov 2020 09:37:09 -0800 (PST)
+        bh=NMx3wGtNfY3eeaXC4utlwl41yJ4qPilA6BGetqYUorY=;
+        b=CO0xEOyAD2rKgeb4/796CJPJBkWAVoP6kI0NpWWzxKHu8o3a7/zoLHJ59ZtVjDuZHi
+         rtfvQmL2lw0ySJ29Pw/xy1/FUa/2EKKv9R/p++JPimaFIKbjJ2tS5udw/5Oni/UsdG6Q
+         DRCmjVKc+lGlYymDO3K/dMfjd67hygdN+LilkX303noRZR1MIuPfQFDLPXZiRYpFtlRR
+         u/wlaO5/BLrUUbjtmuNRX0vwG32n7nPgMz1NKcSkjFHlbtrFw0GaSdgmOOraP/jJDOIg
+         QSUu3WliKijBIB4d7CA3oYo7YGbBf5SWNz5ly7o3q2738fxAeKK4whw6/n64s7JRzQny
+         QrIg==
+X-Gm-Message-State: AOAM5302ZH6yv7Zgho8FgODKvj+TQpugfNPP7XOFUSEXZjoOVkXNGzDT
+        2f8fFFN8Nm+BZYy3EcUaHA4=
+X-Google-Smtp-Source: ABdhPJzX+Vh2Egxjq814YfOpUGajTbbALAhbpqH5gqFyQRlGy9nqyUOsvItkj0Gt+6yRJDRCbrF4QA==
+X-Received: by 2002:a05:6214:4e5:: with SMTP id cl5mr5723077qvb.42.1606239452550;
+        Tue, 24 Nov 2020 09:37:32 -0800 (PST)
 Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id 137sm13319731qkj.109.2020.11.24.09.37.08
+        by smtp.gmail.com with ESMTPSA id k70sm13834520qke.46.2020.11.24.09.37.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 09:37:08 -0800 (PST)
+        Tue, 24 Nov 2020 09:37:31 -0800 (PST)
 Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 24 Nov 2020 12:36:46 -0500
+Date:   Tue, 24 Nov 2020 12:37:09 -0500
 From:   Tejun Heo <tj@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
@@ -63,23 +63,22 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 11/45] block: remove a duplicate __disk_get_part prototype
-Message-ID: <X71ErqPWQu+CvXRI@mtj.duckdns.org>
+Subject: Re: [PATCH 12/45] block: remove a superflous check in blkpg_do_ioctl
+Message-ID: <X71ExfXNm5IC7xMq@mtj.duckdns.org>
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-12-hch@lst.de>
+ <20201124132751.3747337-13-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124132751.3747337-12-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-13-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:27:17PM +0100, Christoph Hellwig wrote:
+On Tue, Nov 24, 2020 at 02:27:18PM +0100, Christoph Hellwig wrote:
+> sector_t is now always a u64, so this check is not needed.
+> 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
 Acked-by: Tejun Heo <tj@kernel.org>
 
