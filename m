@@ -2,135 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C672C3031
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 19:52:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC9E2C307D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 20:08:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404154AbgKXSvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 13:51:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
+        id S2404415AbgKXTGW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 14:06:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729281AbgKXSu7 (ORCPT
+        with ESMTP id S2404379AbgKXTGV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 13:50:59 -0500
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A49C0613D6;
-        Tue, 24 Nov 2020 10:50:59 -0800 (PST)
-Received: by mail-lf1-x144.google.com with SMTP id a9so30370056lfh.2;
-        Tue, 24 Nov 2020 10:50:58 -0800 (PST)
+        Tue, 24 Nov 2020 14:06:21 -0500
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B917CC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 11:06:19 -0800 (PST)
+Received: by mail-ed1-x541.google.com with SMTP id k1so9109619eds.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 11:06:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R0c/j8cf2nONRA2feQDC3TPehXhvut6OEozhckJatQg=;
-        b=tlV+wnM4g4VAxsaddCvjmefIUTYV9ByW3YpTxHnnHOId0pZny8veyAKKUvd8l2qFOw
-         rHrnvqkXyxskNtCQcu1gVARTckemeR/UTIrlMsv6aaeXLXkCc1qllmZ4M6OCNfa5+cvR
-         hSubX+eoE20ZyG+VDCiK8jUnXF9U2uZHL9qfGII82YZI9vqkRDxjIs57xECz1GuBy59l
-         jGmBnUqAamJVMONCkHS7KhBz+ISXIsMXAAGEZYxdb6zIa/RwcTamE+VGm1gBI0/Ldi3J
-         fMjTGD5X+ybM4TzIldjLXkNzrxx00VayedVMuCljUoxcBPKup05EKZMvox5rCTWjs+GZ
-         cGBg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UJx0vHStpjdpABeEWpHqZ5R1kGbrDvDIbtQyZ0Zhqxc=;
+        b=dmXydy1iMYMcd0XA86NtUQBuK77rLN5v+kCemhoSI8sSKW0ZRUU4BOa40Nc/j8TZ1H
+         sUEPaPfvxYlaUXBxTnerkp0eTXuq+POTIYnXmeE1NOsrDnQWhHfi6trKluzdjlU1lbtI
+         5f/uYvPlgWdyj4CpKpPEHo4H4FSJGyyvBfUWQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R0c/j8cf2nONRA2feQDC3TPehXhvut6OEozhckJatQg=;
-        b=VDYnoYYIh3HU2rbZOTPbmHSIG6tcOKT77+inOC9IJtYMupIIXiR/WzkbYLfqj6cMv+
-         qcJkJZ0MuWcV365o5bNphOotDeJMst2r0Tu+OTvyqzPIi4UDYQGELqbupYHsb2kUnzPU
-         cGxTOlDmZb+c0GWf+sUPxsrj3CGjX/xWWnslkZvuog+sahHhvix/YDDTien7sViFMfsm
-         2/JOlMwNVGVpkbqd01NScDm+eZpFr1hyLVWnNjp8kY64AUit6lluqnKjtlrsFUKOYepS
-         TBJxeV47F4OIQnnUmWg3mXWJENzoBts9P77JS2tsmBoTZa6Ftj7PtTiBtAZ4/oTwWbUr
-         rZYg==
-X-Gm-Message-State: AOAM530N88MpccUhG9W5ph3pp/dahyOe6Yj4sOUSycSCvBfpqMXwEvyB
-        3R7N0L0SkGjRPbB0QQvaTcqyFu0PbQqV4WJ7jeo=
-X-Google-Smtp-Source: ABdhPJzt3TLdBN/P4Eq+DV7SDtt4yLBGLaOX/Hm1GZNn2g9gFOHpibQKVx+y8dvkGOMMAHQ8E2lmPw==
-X-Received: by 2002:a19:549:: with SMTP id 70mr2081436lff.112.1606243857364;
-        Tue, 24 Nov 2020 10:50:57 -0800 (PST)
-Received: from localhost.localdomain ([95.153.130.48])
-        by smtp.gmail.com with ESMTPSA id d11sm1820698lfa.143.2020.11.24.10.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 10:50:56 -0800 (PST)
-From:   Artem Labazov <123321artyom@gmail.com>
-Cc:     123321artyom@gmail.com, stable@vger.kernel.org,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] exfat: Avoid allocating upcase table using kcalloc()
-Date:   Tue, 24 Nov 2020 21:50:43 +0300
-Message-Id: <20201124185043.4037182-1-123321artyom@gmail.com>
-X-Mailer: git-send-email 2.26.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UJx0vHStpjdpABeEWpHqZ5R1kGbrDvDIbtQyZ0Zhqxc=;
+        b=Iw4wUH5hVetpNdZkLcj4a+dayFfJnP+zzJXLGUSsrm7qt5zMsRT2s78ccQotL5Sq+f
+         MNML40+R0VguAoxTTBV+pt8+evL529WWFbE1XJxffYb84wDgfHLPGpXKBafhj3k12gXs
+         R7JriIcxpKX2yxY0JZyTfXK9sbw9u1jffX8ksYhsppi6TJZaZDpFrNZGgpy/nxfA2S5K
+         ievt8TukEFXbe1KIkkQTP4eNoi5ZZwsU3dE0akpgq3ukEZkiu5FchECoojzb3mdUzciA
+         L9C1EpG7CMpSkfY385hRdNLXyuuqO/bO9ayYeMo8wxGD2ZMSVtjgvfwseTcbeAVDpV5G
+         09ew==
+X-Gm-Message-State: AOAM531y+G9JIrMc964sjzs+8vHB83OM/9+a4FqLnUZ3MV/HDNMH9CpY
+        Cyi5OzuY+cbCX4JeW2I+q3qhXH/OLnxq0g==
+X-Google-Smtp-Source: ABdhPJxD1y/5dnbgagpTPJuUEGJP9umA8xKyBBNzcCs3B04PMTmtJ40VJWo8RaoWmjorSIR5wsfb1g==
+X-Received: by 2002:a50:e18c:: with SMTP id k12mr5427673edl.58.1606244778154;
+        Tue, 24 Nov 2020 11:06:18 -0800 (PST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id s12sm7535853edu.28.2020.11.24.11.06.17
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Nov 2020 11:06:17 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id q3so22011561edr.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 11:06:17 -0800 (PST)
+X-Received: by 2002:a05:651c:339:: with SMTP id b25mr2577530ljp.285.1606244458511;
+ Tue, 24 Nov 2020 11:00:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+References: <000000000000d3a33205add2f7b2@google.com> <20200828100755.GG7072@quack2.suse.cz>
+ <20200831100340.GA26519@quack2.suse.cz> <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com>
+ <alpine.LSU.2.11.2011231928140.4305@eggly.anvils> <20201124121912.GZ4327@casper.infradead.org>
+ <alpine.LSU.2.11.2011240810470.1029@eggly.anvils> <20201124183351.GD4327@casper.infradead.org>
+In-Reply-To: <20201124183351.GD4327@casper.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 24 Nov 2020 11:00:42 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjtGAUP5fydxR8iWbzB65p2XvM0BrHE=PkPLQcJ=kq_8A@mail.gmail.com>
+Message-ID: <CAHk-=wjtGAUP5fydxR8iWbzB65p2XvM0BrHE=PkPLQcJ=kq_8A@mail.gmail.com>
+Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The table for Unicode upcase conversion requires an order-5 allocation,
-which may fail on a highly-fragmented system:
+On Tue, Nov 24, 2020 at 10:33 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> We could fix this by turning that 'if' into a 'while' in
+> write_cache_pages().
 
- pool-udisksd: page allocation failure: order:5, mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0
- CPU: 4 PID: 3756880 Comm: pool-udisksd Tainted: G     U            5.8.10-200.fc32.x86_64 #1
- Hardware name: Dell Inc. XPS 13 9360/0PVG6D, BIOS 2.13.0 11/14/2019
- Call Trace:
-  dump_stack+0x6b/0x88
-  warn_alloc.cold+0x75/0xd9
-  ? _cond_resched+0x16/0x40
-  ? __alloc_pages_direct_compact+0x144/0x150
-  __alloc_pages_slowpath.constprop.0+0xcfa/0xd30
-  ? __schedule+0x28a/0x840
-  ? __wait_on_bit_lock+0x92/0xa0
-  __alloc_pages_nodemask+0x2df/0x320
-  kmalloc_order+0x1b/0x80
-  kmalloc_order_trace+0x1d/0xa0
-  exfat_create_upcase_table+0x115/0x390 [exfat]
-  exfat_fill_super+0x3ef/0x7f0 [exfat]
-  ? sget_fc+0x1d0/0x240
-  ? exfat_init_fs_context+0x120/0x120 [exfat]
-  get_tree_bdev+0x15c/0x250
-  vfs_get_tree+0x25/0xb0
-  do_mount+0x7c3/0xaf0
-  ? copy_mount_options+0xab/0x180
-  __x64_sys_mount+0x8e/0xd0
-  do_syscall_64+0x4d/0x90
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+That might be the simplest patch indeed.
 
-Make the driver use vmalloc() to eliminate the issue.
+At the same time, I do worry about other cases like this: while
+spurious wakeup events are normal and happen in other places, this is
+a bit different.
 
-Cc: stable@vger.kernel.org # v5.7+
-Signed-off-by: Artem Labazov <123321artyom@gmail.com>
----
- fs/exfat/nls.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This is literally a wakeup that leaks from a previous use of a page,
+and makes us think that something could have happened to the new use.
 
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 675d0e7058c5..e415794e3ffc 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -6,6 +6,7 @@
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/buffer_head.h>
-+#include <linux/vmalloc.h>
- #include <asm/unaligned.h>
- 
- #include "exfat_raw.h"
-@@ -659,7 +660,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 	unsigned char skip = false;
- 	unsigned short *upcase_table;
- 
--	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
-+	upcase_table = vmalloc(UTBL_COUNT * sizeof(unsigned short));
- 	if (!upcase_table)
- 		return -ENOMEM;
- 
-@@ -715,7 +716,7 @@ static int exfat_load_default_upcase_table(struct super_block *sb)
- 	unsigned short uni = 0, *upcase_table;
- 	unsigned int index = 0;
- 
--	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
-+	upcase_table = vmalloc(UTBL_COUNT * sizeof(unsigned short));
- 	if (!upcase_table)
- 		return -ENOMEM;
- 
--- 
-2.26.2
+The unlock_page() case presumably never hits that, because even if we
+have some unlock without a page ref (which I don't think can happen,
+but whatever..), the exclusive nature of "lock_page()" means that no
+locker can care - once you get the lock, you own the page./
 
+The writeback code is special in that the writeback bit isn't some
+kind of exclusive bit, but this code kind of expected it to be that.
+
+So I'd _like_ to have something like
+
+        WARN_ON_ONCE(!page_count(page));
+
+in the wake_up_page_bit() function, to catch things that wake up a
+page that has already been released and might be reused..
+
+And that would require the "get_page()" to be done when we set the
+writeback bit and queue the page up for IO (so that then
+end_page_writeback() would clear the bit, do the wakeup, and then drop
+the ref).
+
+Hugh's second patch isn't pretty - I think the "get_page()" is
+conceptually in the wrong place - but it "works" in that it keeps that
+"implicit page reference" being kept by the PG_writeback bit, and then
+it takes an explicit page reference before it clears the bit.
+
+So while I don't love the whole "PG_writeback is an implicit reference
+to the page" model, Hugh's patch at least makes that model much more
+straightforward: we really either have that PG_writeback, _or_ we have
+a real ref to the page, and we never have that odd "we could actually
+lose the page" situation.
+
+So I think I prefer Hugh's two-liner over your one-liner suggestion.
+
+But your one-liner is technically not just smaller, it obviously also
+avoids the whole mucking with the atomic page ref.
+
+I don't _think_ that the extra get/put overhead could possibly really
+matter: doing the writeback is going to be a lot more expensive
+anyway. And an atomic access to a 'struct page' sounds expensive, but
+that cacheline is already likely dirty in the L1 cache because we've
+touch page->flags and done other things to it).
+
+So I'd personally be inclined to go with Hugh's patch. Comments?
+
+                 Linus
