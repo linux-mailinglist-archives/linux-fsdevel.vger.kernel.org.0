@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D02E02C2EEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 18:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14EFF2C2F06
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 18:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403951AbgKXRje (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 12:39:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
+        id S2403932AbgKXRl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 12:41:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403793AbgKXRjd (ORCPT
+        with ESMTP id S2403820AbgKXRl3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 12:39:33 -0500
-Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1190C0613D6;
-        Tue, 24 Nov 2020 09:39:33 -0800 (PST)
-Received: by mail-qk1-x744.google.com with SMTP id q22so21507289qkq.6;
-        Tue, 24 Nov 2020 09:39:33 -0800 (PST)
+        Tue, 24 Nov 2020 12:41:29 -0500
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23378C0613D6;
+        Tue, 24 Nov 2020 09:41:29 -0800 (PST)
+Received: by mail-qk1-x743.google.com with SMTP id l2so21578383qkf.0;
+        Tue, 24 Nov 2020 09:41:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=gccbgbDD7s/mdcXht2fL6iBUT8Prx6ozPAIi1oy24XY=;
-        b=iAaQvjyW2JnxhLhsfg8rCUwKx68+n4VYv+x/cr19/l2gHjZ5rqQ2eHUQa56Yyrf+V0
-         0EBO+8uJl3e7TpL8GOVdi3mPtP96tXMXp7if6adHqmGOPUC9KUkBCbpdOTkT7hALT+Ah
-         7EHhHu8GvT+6D/0VCKlT2valDN6Ru1DvIbYtbLzR9+yA8jAAqgTW92ZCQEl3Pxl49Unt
-         n/9PGjVy4f9zVoTzBvz1OlBcvmK214hyEQI6i4iF3fx4WQFt+rk4+OOUR5M42Vw6rBoM
-         uLOJwtqDc9FyseTQMx+P4zZsyxqAY70M/tC6pBQFw6EbxPD3Q0UbNVnIzJCU6WGu3JSB
-         P/Ww==
+        bh=4ibQynBLG5sCe4CZqYbUkQUaNNDbglWF2wLslYnfqek=;
+        b=jYivczMQqsxh7yyiSCMC+J2uq1jjrgFqCn4zGdT7y8l1tR+lBZj0zWSEvbd0W8jl8w
+         Gi4Cj5Zx4gKHsuI0fIL4rp4709gHxtA9wRWySVLNwDnlcHxfBP3hG6ecjPkRXqH0UxZp
+         xk0pqka3Sqe63I6EZOHEKoOfA/4WJiEaugJWCMjne3X9nHRMXe7fYlZPuOXRYu6gUE1t
+         VJ+e81XD/b5aNX2a+wyW4GmbUwrk6CKBJ/6iNXNyc9y/IvYXsxz32um6sHRBVWQzYyqm
+         IRQIL0vettN12q9xzjv+kftrmu3uKde1tlzjzfXundOzi243rFxdMC5NVy5kvvEXsk4Q
+         MK1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=gccbgbDD7s/mdcXht2fL6iBUT8Prx6ozPAIi1oy24XY=;
-        b=CIwk8obOrRmPDyrwEldzSxRcUVSS/yIMfV8/qHfDme86MWQlSJaJDszaO6CN8FqONA
-         im0L0izXEx8t94D0ZKm6nLkRTOgbmSqPW9Y/1RxjWFEVRa2hK/XE6wrBObewLOzuMF0D
-         947UvYs4qoiyllrOuj4V4u6igAYu+luN/WmAD/12xmXP1hSMFreiPdFyH9MomlewrCly
-         U8kMQYnN8GsWTASnRlGbexZyqVc07Cu8MR+UqJpLu2e3GzazzmVvUZtDDw3ar7eBCNcT
-         8ZCvRhkSZPUMxTL9c1g7icAzcUwJaXZX2iwXBEY/hZBHRIn6MYQCZjoD1ah6Y2W7TZne
-         GRLA==
-X-Gm-Message-State: AOAM533yNZFd5iRkM90lyZLeINgQGCczQFk0JRpJnVavkraEWuMIgYDI
-        eArLnxDacDgG5YaSKfdjIZE=
-X-Google-Smtp-Source: ABdhPJxIyQph6LZGahQWIRSjw01El8frTqGQNdMpj1StAekmqcFeaj8JjyjEpK9CN9Iflo08fhI4fA==
-X-Received: by 2002:a05:620a:a1d:: with SMTP id i29mr5820661qka.466.1606239572817;
-        Tue, 24 Nov 2020 09:39:32 -0800 (PST)
+        bh=4ibQynBLG5sCe4CZqYbUkQUaNNDbglWF2wLslYnfqek=;
+        b=XS4LVIoGLNdwz2c9kAAo9GS5QCeVabTl6QCGv+S2U+mbF5hihSZTvxl8h+wZgWzdHo
+         /FFgrfeyYTnkf+B7Ub8ovzW2IuPaGD+3W/LkQiAqJ/K/aD1M6XL4de/UKayGf8p8V/Qs
+         0jS23bEZIDypB3RHE8xci4Y46dhlavZOLnBO1s/bP6SrOSPhkZWbONE863jwJNsaOHbA
+         mbVqefLRLzv+4fdqkFbv+mt/nijjSa6T0QsmZsc2cwVkPOnbvQJVAxIw42AHa40COxWF
+         JWi0u953+NPfYwwJ9ntQ3kz9D9X5n9m3kYIBbkuYdBDfkvsTpOfu06n/MhLxdzkkNQgJ
+         MDtQ==
+X-Gm-Message-State: AOAM532hhyMC4o8bEBzuVFQfMOuYSLzrCVGDR28HJnQXkQ2l6VcFJ30u
+        4zoyxLAprIj8zeTNh4Pw8tY=
+X-Google-Smtp-Source: ABdhPJwbAXPcygkLKUFdmjuytzuRV0DzFXM5PwNCTshXeMizxUWtjVUL4UzMNPmTvdVp88+fUo1SSg==
+X-Received: by 2002:a37:8c41:: with SMTP id o62mr5500995qkd.240.1606239688196;
+        Tue, 24 Nov 2020 09:41:28 -0800 (PST)
 Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id e10sm13416860qkn.126.2020.11.24.09.39.31
+        by smtp.gmail.com with ESMTPSA id y3sm7003885qkl.110.2020.11.24.09.41.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 09:39:32 -0800 (PST)
+        Tue, 24 Nov 2020 09:41:27 -0800 (PST)
 Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 24 Nov 2020 12:39:10 -0500
+Date:   Tue, 24 Nov 2020 12:41:05 -0500
 From:   Tejun Heo <tj@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
@@ -63,27 +63,25 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 19/45] init: cleanup match_dev_by_uuid and
- match_dev_by_label
-Message-ID: <X71FPpCgw9t3JfIr@mtj.duckdns.org>
+Subject: Re: [PATCH 20/45] block: refactor __blkdev_put
+Message-ID: <X71FsRDFtHWxVJOg@mtj.duckdns.org>
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-20-hch@lst.de>
+ <20201124132751.3747337-21-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124132751.3747337-20-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-21-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:27:25PM +0100, Christoph Hellwig wrote:
-> Avoid a totally pointless goto label, and use the same style of
-> comparism for both helpers.
+On Tue, Nov 24, 2020 at 02:27:26PM +0100, Christoph Hellwig wrote:
+> Reorder the code to have one big section for the last close, and to use
+> bdev_is_partition.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
 Acked-by: Tejun Heo <tj@kernel.org>
 
