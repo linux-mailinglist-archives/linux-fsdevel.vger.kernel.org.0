@@ -2,33 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 304652C1DE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:10:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CD3A2C1DE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:10:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbgKXGIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 01:08:25 -0500
-Received: from mga01.intel.com ([192.55.52.88]:19536 "EHLO mga01.intel.com"
+        id S1729492AbgKXGIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 01:08:15 -0500
+Received: from mga07.intel.com ([134.134.136.100]:49979 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729446AbgKXGIM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 01:08:12 -0500
-IronPort-SDR: t8Cd/D38h5O7O4iGwmPBo1xW6SCsRP51veIaWGbKw5b8zo251aLgYehy17WrQYba8DHIEMgb3E
- RVikmEi5017w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="190018273"
+        id S1729436AbgKXGIN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 01:08:13 -0500
+IronPort-SDR: XRopqTVRsL0draeFH0naHaAZnGgc5EKZLi9o0wWX69p5E8B2oVgFgWdMgYfTcoOnrB90StRGJm
+ KTb4vBqLK/Yg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="236034477"
 X-IronPort-AV: E=Sophos;i="5.78,365,1599548400"; 
-   d="scan'208";a="190018273"
+   d="scan'208";a="236034477"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:12 -0800
-IronPort-SDR: qNw+swS2DnlAHVnC/90HMteyfrwtLJ4aJjU5/rJICAXxM7SUh0B0LW4TtqxJ5wrZ53ZhGJXSTj
- Bm8/GhwrlpRQ==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:12 -0800
+IronPort-SDR: 6fq6inSQX/KlDmMegekc45BwmII8REjo4Y07pTJ+nBMrPU95SWZeBxNufVfu+r+sktbQANwqv5
+ Rwz7L1nF4pvg==
 X-IronPort-AV: E=Sophos;i="5.78,365,1599548400"; 
-   d="scan'208";a="432504175"
+   d="scan'208";a="312448710"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:11 -0800
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:11 -0800
 From:   ira.weiny@intel.com
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>, Brian King <brking@us.ibm.com>,
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Dave Hansen <dave.hansen@intel.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -48,15 +49,15 @@ Cc:     Ira Weiny <ira.weiny@intel.com>, Brian King <brking@us.ibm.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
         Nicolas Pitre <nico@fluxnic.net>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian King <brking@us.ibm.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Kirti Wankhede <kwankhede@nvidia.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 14/17] drivers/scsi: Use memcpy_to_page()
-Date:   Mon, 23 Nov 2020 22:07:52 -0800
-Message-Id: <20201124060755.1405602-15-ira.weiny@intel.com>
+Subject: [PATCH 15/17] drivers/staging: Use memcpy_to/from_page()
+Date:   Mon, 23 Nov 2020 22:07:53 -0800
+Message-Id: <20201124060755.1405602-16-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201124060755.1405602-1-ira.weiny@intel.com>
 References: <20201124060755.1405602-1-ira.weiny@intel.com>
@@ -68,50 +69,36 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Remove kmap/mem*()/kunmap pattern and use memcpy_to_page()
+Remove kmap/mem*()/kunmap pattern and use memcpy_to/from_page()
 
-Cc: Brian King <brking@us.ibm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- drivers/scsi/ipr.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/staging/rts5208/rtsx_transport.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
-index b0aa58d117cc..3cdd8db24270 100644
---- a/drivers/scsi/ipr.c
-+++ b/drivers/scsi/ipr.c
-@@ -3912,7 +3912,6 @@ static int ipr_copy_ucode_buffer(struct ipr_sglist *sglist,
- {
- 	int bsize_elem, i, result = 0;
- 	struct scatterlist *sg;
--	void *kaddr;
+diff --git a/drivers/staging/rts5208/rtsx_transport.c b/drivers/staging/rts5208/rtsx_transport.c
+index 909a3e663ef6..e0e52bae953e 100644
+--- a/drivers/staging/rts5208/rtsx_transport.c
++++ b/drivers/staging/rts5208/rtsx_transport.c
+@@ -92,13 +92,13 @@ unsigned int rtsx_stor_access_xfer_buf(unsigned char *buffer,
+ 			while (sglen > 0) {
+ 				unsigned int plen = min(sglen, (unsigned int)
+ 						PAGE_SIZE - poff);
+-				unsigned char *ptr = kmap(page);
  
- 	/* Determine the actual number of bytes per element */
- 	bsize_elem = PAGE_SIZE * (1 << sglist->order);
-@@ -3923,10 +3922,7 @@ static int ipr_copy_ucode_buffer(struct ipr_sglist *sglist,
- 			buffer += bsize_elem) {
- 		struct page *page = sg_page(sg);
+ 				if (dir == TO_XFER_BUF)
+-					memcpy(ptr + poff, buffer + cnt, plen);
++					memcpy_to_page(page, poff,
++						       buffer + cnt, plen);
+ 				else
+-					memcpy(buffer + cnt, ptr + poff, plen);
+-				kunmap(page);
++					memcpy_from_page(buffer + cnt, page,
++							 poff, plen);
  
--		kaddr = kmap(page);
--		memcpy(kaddr, buffer, bsize_elem);
--		kunmap(page);
--
-+		memcpy_to_page(page, 0, buffer, bsize_elem);
- 		sg->length = bsize_elem;
- 
- 		if (result != 0) {
-@@ -3938,10 +3934,7 @@ static int ipr_copy_ucode_buffer(struct ipr_sglist *sglist,
- 	if (len % bsize_elem) {
- 		struct page *page = sg_page(sg);
- 
--		kaddr = kmap(page);
--		memcpy(kaddr, buffer, len % bsize_elem);
--		kunmap(page);
--
-+		memcpy_to_page(page, 0, buffer, len % bsize_elem);
- 		sg->length = len % bsize_elem;
- 	}
- 
+ 				/* Start at the beginning of the next page */
+ 				poff = 0;
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
