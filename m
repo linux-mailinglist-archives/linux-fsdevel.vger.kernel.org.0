@@ -2,132 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27BF12C3000
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 19:35:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14DF2C301B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 19:43:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404211AbgKXSd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 13:33:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53014 "EHLO
+        id S2390956AbgKXSms (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 13:42:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729291AbgKXSd6 (ORCPT
+        with ESMTP id S2390935AbgKXSmr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 13:33:58 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93594C0613D6;
-        Tue, 24 Nov 2020 10:33:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=tYzsIguZF1KzH8yF7YgXxi0wukPYn54G/R4/HvqYvBw=; b=GPn+9JAXTzYRQFP/tGUfh/zXs1
-        SAA3hxoM8fIrWUcQDhxDaR7HdvrLA1QTQMkytkLpbSOn3thdtvYU/U26jGgQqjzr2RDceiH4TUrkk
-        eULgQxje5WTdX9D3PFAf7a7JPOkM1n2aQOVEs03eaUN+Mx2YcwPjfCC7vSsLWmfhjg2Hzi+6x44D2
-        +kB2uMNKqCgu2UGWp6LY5dQGkZ0tFFAFuk6VcQfNOcb/nGW1U+0IYtoNH8iNrhmkiAYt5ug4J+w6A
-        84v3dC6uGzTrWND1VPGDm2QxFnIbPdfwVsycpb0M/UyxFVDntLu3DpxE8YhF2/WOQxTdX9pVR6I3O
-        IfC31lAA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1khd8R-0003CI-Ad; Tue, 24 Nov 2020 18:33:51 +0000
-Date:   Tue, 24 Nov 2020 18:33:51 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Theodore Ts'o <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
-Message-ID: <20201124183351.GD4327@casper.infradead.org>
-References: <000000000000d3a33205add2f7b2@google.com>
- <20200828100755.GG7072@quack2.suse.cz>
- <20200831100340.GA26519@quack2.suse.cz>
- <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com>
- <alpine.LSU.2.11.2011231928140.4305@eggly.anvils>
- <20201124121912.GZ4327@casper.infradead.org>
- <alpine.LSU.2.11.2011240810470.1029@eggly.anvils>
+        Tue, 24 Nov 2020 13:42:47 -0500
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177A8C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 10:42:47 -0800 (PST)
+Received: by mail-il1-x141.google.com with SMTP id r17so8345660ilo.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 10:42:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I66kGxStV/6CyvzIe7WIMGeh+u6UpZuKcXQ4/c5IVHM=;
+        b=QFVPduXV4LLsuiww/mzBj3avxGOXVnqoJHsAm1Is7inPRb4VVg6vQLRpYDU+6KIZqu
+         Mvafc0MXJ13dHa0Dm9qjB5bp4gbpQXHKV8bXbEkWR5nKWQsCM0TImLyz1gYveGac2aff
+         3mgCUGA/Qgb5Xopdfv77l7Y9GLtHxviSC7teg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I66kGxStV/6CyvzIe7WIMGeh+u6UpZuKcXQ4/c5IVHM=;
+        b=VQPkHtJWqIWjh90PxHlQyyl5Rcm8Uyk5Ei738OAUnobc7HXdlXmiDzKK1a/hf2Arp0
+         O+DmwRdAUt/oWonrYtw92SVY16dU2RgcHHlTDq973gffgB7G1qsKj0woMQ5Xf4/C+cXh
+         sRKINYTmVD1trZzSpw2q0dk+lXX0VSh/v1FLipZ8boI8m4kufBy3PF5b9jP9lciVRB8U
+         UecRKJGsHaTPIXcPTuRzZA4xfFdZkNBManMS4fprq4+xZfUjx6p1GH0pDOljLV3fiCZJ
+         kABpLQQ3tEwA4aebXXQEuvSde4vLb0tk7mK8XQKpR3HN4Ini9IZDEX5TP2abaXva0fsm
+         5RIA==
+X-Gm-Message-State: AOAM530jyw/jSjD50mT/aA0soZnT71JFrO1MBCeL/pXUJASyTeKpLVx7
+        kY0SJ2T3lv4fQ8c48TT5IRSSOQ==
+X-Google-Smtp-Source: ABdhPJyhOIr2YADL+wmq+g6pyY81mNUBUd1fsWI6u4ZHmtWiePd6acpDOLttwfvDnBAwozJHVPLUaQ==
+X-Received: by 2002:a92:de47:: with SMTP id e7mr5051906ilr.15.1606243366381;
+        Tue, 24 Nov 2020 10:42:46 -0800 (PST)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id u11sm8147517iol.51.2020.11.24.10.42.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 24 Nov 2020 10:42:45 -0800 (PST)
+Date:   Tue, 24 Nov 2020 18:42:44 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     "J . Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        David Howells <dhowells@redhat.com>,
+        Scott Mayhew <smayhew@redhat.com>
+Cc:     mauricio@kinvolk.io, Alban Crequy <alban.crequy@gmail.com>,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kyle Anderson <kylea@netflix.com>
+Subject: Re: [PATCH v5 0/2] NFS: Fix interaction between fs_context and user
+ namespaces
+Message-ID: <20201124184243.GA32491@ircssh-2.c.rugged-nimbus-611.internal>
+References: <20201112100952.3514-1-sargun@sargun.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.2011240810470.1029@eggly.anvils>
+In-Reply-To: <20201112100952.3514-1-sargun@sargun.me>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 08:28:16AM -0800, Hugh Dickins wrote:
-> On Tue, 24 Nov 2020, Matthew Wilcox wrote:
-> > On Mon, Nov 23, 2020 at 08:07:24PM -0800, Hugh Dickins wrote:
-> > > 
-> > > Then on crashing a second time, realized there's a stronger reason against
-> > > that approach.  If my testing just occasionally crashes on that check,
-> > > when the page is reused for part of a compound page, wouldn't it be much
-> > > more common for the page to get reused as an order-0 page before reaching
-> > > wake_up_page()?  And on rare occasions, might that reused page already be
-> > > marked PageWriteback by its new user, and already be waited upon?  What
-> > > would that look like?
-> > > 
-> > > It would look like BUG_ON(PageWriteback) after wait_on_page_writeback()
-> > > in write_cache_pages() (though I have never seen that crash myself).
-> > 
-> > I don't think this is it.  write_cache_pages() holds a reference to the
-> > page -- indeed, it holds the page lock!  So this particular race cannot
-> > cause the page to get recycled.  I still have no good ideas what this
-> > is :-(
+On Thu, Nov 12, 2020 at 02:09:50AM -0800, Sargun Dhillon wrote:
+> Right now, it is possible to mount NFS with an non-matching super block
+> user ns, and NFS sunrpc user ns. This (for the user) results in an awkward
+> set of interactions if using anything other than auth_null, where the UIDs
+> being sent to the server are different than the local UIDs being checked.
+> This can cause "breakage", where if you try to communicate with the NFS
+> server with any other set of mappings, it breaks.
 > 
-> It is confusing. I tried to explain that in the final paragraph:
+> The reason for this is that you can call fsopen("nfs4") in the unprivileged
+> namespace, and that configures fs_context with all the right information
+> for that user namespace. In addition, it also keeps a gets a cred object
+> associated with the caller -- which should match the user namespace.
+> Unfortunately, the mount has to be finished in the init_user_ns because we
+> currently require CAP_SYS_ADMIN in the init user namespace to call fsmount.
+> This means that the superblock's user namespace is set "correctly" to the
+> container, but there's absolutely no way nfs4idmap to consume an
+> unprivileged user namespace because the cred / user_ns that's passed down
+> to nfs4idmap is the one at fsmount.
 > 
-> > > Was there a chance of missed wakeups before, since a page freed before
-> > > reaching wake_up_page() would have PageWaiters cleared?  I think not,
-> > > because each waiter does hold a reference on the page: this bug comes
-> > > not from real waiters, but from when PageWaiters is a false positive.
+> How this actually exhibits is let's say that the UID 0 in the user
+> namespace is mapped to UID 1000 in the init user ns (and kuid space). What
+> will happen is that nfs4idmap will translate the UID 1000 into UID 0 on the
+> wire, even if the mount is in entirely in the mount / user namespace of the
+> container.
 > 
-> but got lost in between the original end_page_writeback() and the patched
-> version when writing that last part - false positive PageWaiters are not
-> relevant.  I'll try rewording that in the simpler version, following.
+> So, it looks something like this
+> Client in unprivileged User NS (UID: 0, KUID: 0)
+> 	->Perform open()
+> 		...VFS / NFS bits...
+> 		nfs_map_uid_to_name ->
+> 			from_kuid_munged(init_user_ns, uid) (returns 0)
+> 				RPC with UID 0
 > 
-> The BUG_ON(PageWriteback) would occur when the old use of the page, the
-> one we do TestClearPageWriteback on, had *no* waiters, so no additional
-> page reference beyond the page cache (and whoever racily frees it). The
-> reuse of the page definitely has a waiter holding a reference, as you
-> point out, and PageWriteback still set; but our belated wake_up_page()
-> has woken it to hit the BUG_ON.
+> This behaviour happens "the other way" as well, where the UID in the
+> container may be 0, but the corresponding kuid is 1000. When a response
+> from an NFS server comes in we decode it according to the idmap userns.
+> The way this exhibits is even more odd.
+> 
+> Server responds with file attribute (UID: 0, GID: 0)
+> 	->nfs_map_name_to_uid(..., 0)
+> 		->make_kuid(init_user_ns, id) (returns 0)
+> 			....VFS / NFS Bits...
+> 			->from_kuid(container_ns, 0) -> invalid uid
+> 				-> EOVERFLOW
+> 
+> This changes the nfs server to use the cred / userns from fs_context, which
+> is how idmap is constructed. This subsequently is used in the above
+> described flow of converting uids back-and-forth.
+> 
+> Trond gave the feedback that this behaviour [implemented by this patch] is
+> how the legacy sys_mount() behaviour worked[1], and that the intended
+> behaviour is for UIDs to be plumbed through entirely, where the user
+> namespaces UIDs are what is sent over the wire, and not the init user ns.
+> 
+> [1]: https://lore.kernel.org/linux-nfs/8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com/
+> 
+> Sargun Dhillon (2):
+>   NFS: NFSv2/NFSv3: Use cred from fs_context during mount
+>   NFSv4: Refactor to use user namespaces for nfs4idmap
+> 
+>  fs/nfs/client.c     | 4 ++--
+>  fs/nfs/nfs4client.c | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> 
+> base-commit: 8c39076c276be0b31982e44654e2c2357473258a
+> -- 
+> 2.25.1
+>
 
-I ... think I see.  Let me try to write it out:
 
-page is allocated, added to page cache, dirtied, writeback starts,
-
---- thread A ---
-filesystem calls end_page_writeback()
-	test_clear_page_writeback()
---- context switch to thread B ---
-truncate_inode_pages_range() finds the page, it doesn't have writeback set,
-we delete it from the page cache.  Page gets reallocated, dirtied, writeback
-starts again.  Then we call write_cache_pages(), see
-PageWriteback() set, call wait_on_page_writeback()
---- context switch back to thread A ---
-wake_up_page(page, PG_writeback);
-... thread B is woken, but because the wakeup was for the old use of
-the page, PageWriteback is still set.
-
-Devious.
-
-We could fix this by turning that 'if' into a 'while' in
-write_cache_pages().  Just accept that spurious wakeups can happen
-and they're harmless.  We do need to remove that check of PageWaiters
-in wake_up_page() -- as you say, we shouldn't be checking that after
-dropping the reference.  I had patches to do that ..
-
-https://lore.kernel.org/linux-mm/20200416220130.13343-1-willy@infradead.org/
-specifically:
-https://lore.kernel.org/linux-mm/20200416220130.13343-11-willy@infradead.org/
+Trond,
+Are there any other concerns you have before landing this, or do you want
+to wait until the v5.11 merge window?
