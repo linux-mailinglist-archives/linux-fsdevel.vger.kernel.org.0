@@ -2,153 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD23F2C22EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 11:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F371A2C22FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 11:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbgKXK2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 05:28:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgKXK2Q (ORCPT
+        id S1731911AbgKXKbT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 05:31:19 -0500
+Received: from szxga02-in.huawei.com ([45.249.212.188]:2442 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731488AbgKXKbT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 05:28:16 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE15C0613D6;
-        Tue, 24 Nov 2020 02:28:16 -0800 (PST)
-Received: from zn.tnic (p200300ec2f0e360052021be21853ebf1.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:3600:5202:1be2:1853:ebf1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7F96F1EC0258;
-        Tue, 24 Nov 2020 11:28:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1606213694;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c1iD6gApHU/j5+m+pR3M2pYpCc5CocFQKVTv8UeDApE=;
-        b=oxFEsy1xk2af1Zv9kcv9IDxeON6BmmZshHoR+RFqMzeKov/OtvquRS1f0VwWN7SDXZuTBs
-        3tmvJmv3fWOjuMnLqJVmfbIBkUULqOJ4TdxeeMraENvmrx9cehfmVe5TWqwx/pVeyfrgxS
-        i9wcUT2ECgbm5jEFSB/e5bSFj3iSOBw=
-Date:   Tue, 24 Nov 2020 11:28:14 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jan Kara <jack@suse.cz>
-Cc:     =?utf-8?B?UGF3ZcWC?= Jasiak <pawel@jasiak.xyz>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: PROBLEM: fanotify_mark EFAULT on x86
-Message-ID: <20201124102814.GE4009@zn.tnic>
-References: <20201101212738.GA16924@gmail.com>
- <20201102122638.GB23988@quack2.suse.cz>
- <20201103211747.GA3688@gmail.com>
- <20201123164622.GJ27294@quack2.suse.cz>
- <20201123224651.GA27809@gmail.com>
- <20201124084507.GA4009@zn.tnic>
- <20201124102033.GA19336@quack2.suse.cz>
+        Tue, 24 Nov 2020 05:31:19 -0500
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4CgKzx3Yjkz4xlG;
+        Tue, 24 Nov 2020 18:30:53 +0800 (CST)
+Received: from dggemi761-chm.china.huawei.com (10.1.198.147) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.487.0; Tue, 24 Nov 2020 18:31:13 +0800
+Received: from dggemi761-chm.china.huawei.com (10.1.198.147) by
+ dggemi761-chm.china.huawei.com (10.1.198.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 24 Nov 2020 18:31:12 +0800
+Received: from dggemi761-chm.china.huawei.com ([10.9.49.202]) by
+ dggemi761-chm.china.huawei.com ([10.9.49.202]) with mapi id 15.01.1913.007;
+ Tue, 24 Nov 2020 18:31:12 +0800
+From:   "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
+To:     Oscar Salvador <osalvador@suse.de>,
+        Muchun Song <songmuchun@bytedance.com>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
+        "pawan.kumar.gupta@linux.intel.com" 
+        <pawan.kumar.gupta@linux.intel.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "oneukum@suse.com" <oneukum@suse.com>,
+        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
+        "jroedel@suse.de" <jroedel@suse.de>,
+        "almasrymina@google.com" <almasrymina@google.com>,
+        "rientjes@google.com" <rientjes@google.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "duanxiongchun@bytedance.com" <duanxiongchun@bytedance.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH v6 07/16] x86/mm/64: Disable PMD page mapping of vmemmap
+Thread-Topic: [PATCH v6 07/16] x86/mm/64: Disable PMD page mapping of vmemmap
+Thread-Index: AQHWwkhOPqtKcyIq80+fWoEXOrKJHKnWjWGAgACFgQA=
+Date:   Tue, 24 Nov 2020 10:31:12 +0000
+Message-ID: <c938bb225ea84c06844b31023dad96c1@hisilicon.com>
+References: <20201124095259.58755-1-songmuchun@bytedance.com>
+ <20201124095259.58755-8-songmuchun@bytedance.com>
+ <20201124102441.GA24718@linux>
+In-Reply-To: <20201124102441.GA24718@linux>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.126.201.209]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201124102033.GA19336@quack2.suse.cz>
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 11:20:33AM +0100, Jan Kara wrote:
-> On Tue 24-11-20 09:45:07, Borislav Petkov wrote:
-> > On Mon, Nov 23, 2020 at 11:46:51PM +0100, Paweł Jasiak wrote:
-> > > On 23/11/20, Jan Kara wrote:
-> > > > OK, with a help of Boris Petkov I think I have a fix that looks correct
-> > > > (attach). Can you please try whether it works for you? Thanks!
-> > > 
-> > > Unfortunately I am getting a linker error.
-> > > 
-> > > ld: arch/x86/entry/syscall_32.o:(.rodata+0x54c): undefined reference to `__ia32_sys_ia32_fanotify_mark'
-> > 
-> > Because CONFIG_COMPAT is not set in your .config.
-> > 
-> > Jan, look at 121b32a58a3a and especially this hunk
-> > 
-> > diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> > index 9b294c13809a..b8f89f78b8cd 100644
-> > --- a/arch/x86/kernel/Makefile
-> > +++ b/arch/x86/kernel/Makefile
-> > @@ -53,6 +53,8 @@ obj-y                 += setup.o x86_init.o i8259.o irqinit.o
-> >  obj-$(CONFIG_JUMP_LABEL)       += jump_label.o
-> >  obj-$(CONFIG_IRQ_WORK)  += irq_work.o
-> >  obj-y                  += probe_roms.o
-> > +obj-$(CONFIG_X86_32)   += sys_ia32.o
-> > +obj-$(CONFIG_IA32_EMULATION)   += sys_ia32.o
-> > 
-> > how it enables the ia32 syscalls depending on those config items. Now,
-> > you have
-> > 
-> >  #ifdef CONFIG_COMPAT
-> > -COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-> > +SYSCALL_DEFINE6(ia32_fanotify_mark,
-> > 
-> > which is under CONFIG_COMPAT which is not set in Paweł's config.
-> > 
-> > config COMPAT
-> >         def_bool y
-> >         depends on IA32_EMULATION || X86_X32
-> > 
-> > but it depends on those two config items.
-> > 
-> > However, it looks to me like ia32_fanotify_mark's definition should be
-> > simply under CONFIG_X86_32 because:
-> > 
-> > IA32_EMULATION is 32-bit emulation on 64-bit kernels
-> > X86_X32 is for the x32 ABI
+
+
+> -----Original Message-----
+> From: owner-linux-mm@kvack.org [mailto:owner-linux-mm@kvack.org] On
+> Behalf Of Oscar Salvador
+> Sent: Tuesday, November 24, 2020 11:25 PM
+> To: Muchun Song <songmuchun@bytedance.com>
+> Cc: corbet@lwn.net; mike.kravetz@oracle.com; tglx@linutronix.de;
+> mingo@redhat.com; bp@alien8.de; x86@kernel.org; hpa@zytor.com;
+> dave.hansen@linux.intel.com; luto@kernel.org; peterz@infradead.org;
+> viro@zeniv.linux.org.uk; akpm@linux-foundation.org; paulmck@kernel.org;
+> mchehab+huawei@kernel.org; pawan.kumar.gupta@linux.intel.com;
+> rdunlap@infradead.org; oneukum@suse.com; anshuman.khandual@arm.com;
+> jroedel@suse.de; almasrymina@google.com; rientjes@google.com;
+> willy@infradead.org; mhocko@suse.com; Song Bao Hua (Barry Song)
+> <song.bao.hua@hisilicon.com>; duanxiongchun@bytedance.com;
+> linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> linux-fsdevel@vger.kernel.org
+> Subject: Re: [PATCH v6 07/16] x86/mm/64: Disable PMD page mapping of
+> vmemmap
 > 
-> Thanks for checking! I didn't realize I needed to change the ifdefs as well
-> (I missed that bit in 121b32a58a3a). So do I understand correctly that
-> whenever the kernel is 64-bit, 64-bit syscall args (e.g. defined as u64) are
-> passed just fine regardless of whether the userspace is 32-bit or not?
+> On Tue, Nov 24, 2020 at 05:52:50PM +0800, Muchun Song wrote:
+> > If we enable the CONFIG_HUGETLB_PAGE_FREE_VMEMMAP, we can just
+> > disbale PMD page mapping of vmemmap to simplify the code. In this
+> > case, we do not need complex code doing vmemmap page table
+> > manipulation. This is a way to simply the first version of this
+> > patch series. In the future, we can add some code doing page table
+> > manipulation.
 > 
-> Also how about other 32-bit archs? Because I now realized that
-> CONFIG_COMPAT as well as the COMPAT_SYSCALL_DEFINE6() is also utilized by
-> other 32-bit archs (I can see a reference to compat_sys_fanotify_mark e.g.
-> in sparc, powerpc, and other args). So I probably need to actually keep
-> that for other archs but do the modification only for x86, don't I?
+> IIRC, CONFIG_HUGETLB_PAGE_FREE_VMEMMAP was supposed to be enabled
+> by default,
+> right?
+> And we would control whether we __really__ want to this by a boot option,
+> which was disabled by default?
+> 
+> If you go for populating the memmap with basepages by checking
+> CONFIG_HUGETLB_PAGE_FREE_VMEMMAP, would not everybody, even the
+> ones that
+> did not enable this by the boot option be affected?
+> 
 
-Hmm, you raise a good point and looking at that commit again, the
-intention is to supply those ia32 wrappers as both 32-bit native *and*
-32-bit emulation ones.
+I would believe we could only bypass the pmd mapping of vmemmap while
+free_vmemmap is explicitly enabled.
+pmd mapping shouldn't be disabled in default. Would a cmdline of enabling
+vmemmap_free be used for the first patchset?
 
-So I think this
+> --
+> Oscar Salvador
+> SUSE L3
 
-> -#ifdef CONFIG_COMPAT
-> +#if defined(CONFIG_COMPAT) || defined(CONFIG_X86_32)
-> +#ifdef CONFIG_X86_32
-> +SYSCALL_DEFINE6(ia32_fanotify_mark,
-> +#elif CONFIG_COMPAT
->  COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-> +#endif
-
-should be
-
-if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
-SYSCALL_DEFINE6(ia32_fanotify_mark,
-#elif CONFIG_COMPAT
-COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-#endif
-
-or so.
-
-Meaning that 32-bit native or 32-bit emulation supplies
-ia32_fanotify_mark() as a syscall wrapper and other arches doing
-CONFIG_COMPAT, still do the COMPAT_SYSCALL_DEFINE6() thing.
-
-But I'd prefer if someone more knowledgeable than me in that whole
-syscall macros muck to have a look...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks
+Barry
