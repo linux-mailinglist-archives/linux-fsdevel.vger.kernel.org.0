@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F0F2C2740
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A26692C273E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388098AbgKXN23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2388103AbgKXN23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 24 Nov 2020 08:28:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33532 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388090AbgKXN2Z (ORCPT
+        with ESMTP id S2388071AbgKXN2Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 24 Nov 2020 08:28:25 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F67BC0617A6;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C5F6C0613D6;
         Tue, 24 Nov 2020 05:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=qOmzpRMb4vEzGwba4P3m5gENBKcm1ZKj8N5Pylgvbms=; b=QlVuTCTh45nrCbNvdsVoIgsOr3
-        o95XamtfFlHQdWoYLWTiXelkn0D+odqN40uheOBv3z0BV6r096cNZn1W0wS1mz+vFGmKDoLfxwB6t
-        9+zKNn1qt6dRi6yiiLqPQAL91CKDp2S6xsY83LfbwnAlo50KMLRzxrcqOmqiSsIMFl8Aw9XpdKS+R
-        WZJmPOjQKJSU2brvqFKaHLDst3ASHFCm++DZPoqCslNlR8eV59MkIXKBDS0vMEWNRPVQfY4/6dJR2
-        0yR6aoz6V/xEKpsBinRf0moR7ga9qiIpxc1qZCLa7UWzw8rxoOhDnTmEEP/Ho/mppNNW42sLXt019
-        r6XhQ5Zw==;
+        bh=qLuO7hD0TG0p9aylN+kHqBJxf5z3v4FVxxZ2M17hRmY=; b=cByrnVSUwNsV+8vL6OejYZMzYW
+        g8VICMIEorS+0pOBvVioVLf/hyD/zxobeo8PAet5DaDiGdRDYy0L5JNIcM3yD1NCnwpsR6gWUVB5i
+        Lptsh/7GyC3dYE+HryC4wV9CakS+3V2vvPvT4vRhVftfmO4XobgclczjV5yeEVlKRsJvJ9LwjX+8o
+        1vNw6Sl4pqdKC25En8sUougbgcvCNyLxzyGGHsEPu8enWgOfJoKU0RIKHjBkbhK7GxVxYfvwMvJI6
+        Vf9vnnAEkii3NBNG4XOnzwMMzJMYdhpc7IAUijTjrAXJlfebUq3ghdAO/ZeMpsZrhIZUAVgWmW/K4
+        kMYMHe4Q==;
 Received: from [2001:4bb8:180:5443:c70:4a89:bc61:3] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1khYMZ-0006VO-IX; Tue, 24 Nov 2020 13:28:08 +0000
+        id 1khYMb-0006Vh-99; Tue, 24 Nov 2020 13:28:09 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
@@ -41,9 +41,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 09/45] dm: simplify flush_bio initialization in __send_empty_flush
-Date:   Tue, 24 Nov 2020 14:27:15 +0100
-Message-Id: <20201124132751.3747337-10-hch@lst.de>
+Subject: [PATCH 10/45] dm: remove the block_device reference in struct mapped_device
+Date:   Tue, 24 Nov 2020 14:27:16 +0100
+Message-Id: <20201124132751.3747337-11-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201124132751.3747337-1-hch@lst.de>
 References: <20201124132751.3747337-1-hch@lst.de>
@@ -54,42 +54,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We don't really need the struct block_device to initialize a bio.  So
-switch from using bio_set_dev to manually setting up bi_disk (bi_partno
-will always be zero and has been cleared by bio_init already).
+Get rid of the long-lasting struct block_device reference in
+struct mapped_device.  The only remaining user is the freeze code,
+where we can trivially look up the block device at freeze time
+and release the reference at thaw time.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Mike Snitzer <snitzer@redhat.com>
 ---
- drivers/md/dm.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/md/dm-core.h |  2 --
+ drivers/md/dm.c      | 25 ++++++++++++++-----------
+ 2 files changed, 14 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
+index aace147effcacb..086d293c2b036c 100644
+--- a/drivers/md/dm-core.h
++++ b/drivers/md/dm-core.h
+@@ -102,8 +102,6 @@ struct mapped_device {
+ 	/* kobject and completion */
+ 	struct dm_kobject_holder kobj_holder;
+ 
+-	struct block_device *bdev;
+-
+ 	struct dm_stats stats;
+ 
+ 	/* for blk-mq request-based DM support */
 diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 50541d336c719b..ab0a8335f098d9 100644
+index ab0a8335f098d9..48051db006f30c 100644
 --- a/drivers/md/dm.c
 +++ b/drivers/md/dm.c
-@@ -1422,18 +1422,12 @@ static int __send_empty_flush(struct clone_info *ci)
- 	 */
- 	bio_init(&flush_bio, NULL, 0);
- 	flush_bio.bi_opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
-+	flush_bio.bi_disk = ci->io->md->disk;
-+	bio_associate_blkg(&flush_bio);
-+
- 	ci->bio = &flush_bio;
- 	ci->sector_count = 0;
+@@ -1744,11 +1744,6 @@ static void cleanup_mapped_device(struct mapped_device *md)
  
--	/*
--	 * Empty flush uses a statically initialized bio, as the base for
--	 * cloning.  However, blkg association requires that a bdev is
--	 * associated with a gendisk, which doesn't happen until the bdev is
--	 * opened.  So, blkg association is done at issue time of the flush
--	 * rather than when the device is created in alloc_dev().
--	 */
--	bio_set_dev(ci->bio, ci->io->md->bdev);
+ 	cleanup_srcu_struct(&md->io_barrier);
+ 
+-	if (md->bdev) {
+-		bdput(md->bdev);
+-		md->bdev = NULL;
+-	}
 -
- 	BUG_ON(bio_has_data(ci->bio));
- 	while ((ti = dm_table_get_target(ci->map, target_nr++)))
- 		__send_duplicate_bios(ci, ti, ti->num_flush_bios, NULL);
+ 	mutex_destroy(&md->suspend_lock);
+ 	mutex_destroy(&md->type_lock);
+ 	mutex_destroy(&md->table_devices_lock);
+@@ -1840,10 +1835,6 @@ static struct mapped_device *alloc_dev(int minor)
+ 	if (!md->wq)
+ 		goto bad;
+ 
+-	md->bdev = bdget_disk(md->disk, 0);
+-	if (!md->bdev)
+-		goto bad;
+-
+ 	dm_stats_init(&md->stats);
+ 
+ 	/* Populate the mapping, nobody knows we exist yet */
+@@ -2384,11 +2375,16 @@ struct dm_table *dm_swap_table(struct mapped_device *md, struct dm_table *table)
+  */
+ static int lock_fs(struct mapped_device *md)
+ {
++	struct block_device *bdev;
+ 	int r;
+ 
+ 	WARN_ON(test_bit(DMF_FROZEN, &md->flags));
+ 
+-	r = freeze_bdev(md->bdev);
++	bdev = bdget_disk(md->disk, 0);
++	if (!bdev)
++		return -ENOMEM;
++	r = freeze_bdev(bdev);
++	bdput(bdev);
+ 	if (!r)
+ 		set_bit(DMF_FROZEN, &md->flags);
+ 	return r;
+@@ -2396,9 +2392,16 @@ static int lock_fs(struct mapped_device *md)
+ 
+ static void unlock_fs(struct mapped_device *md)
+ {
++	struct block_device *bdev;
++
+ 	if (!test_bit(DMF_FROZEN, &md->flags))
+ 		return;
+-	thaw_bdev(md->bdev);
++
++	bdev = bdget_disk(md->disk, 0);
++	if (!bdev)
++		return;
++	thaw_bdev(bdev);
++	bdput(bdev);
+ 	clear_bit(DMF_FROZEN, &md->flags);
+ }
+ 
 -- 
 2.29.2
 
