@@ -2,126 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C55142C320E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 21:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 847E92C321E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 21:45:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbgKXUkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 15:40:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44408 "EHLO
+        id S1732117AbgKXUoo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 15:44:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbgKXUkQ (ORCPT
+        with ESMTP id S1732042AbgKXUon (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 15:40:16 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD9FC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:40:16 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id gj5so30435248ejb.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:40:15 -0800 (PST)
+        Tue, 24 Nov 2020 15:44:43 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F3DC061A4F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:44:43 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id t9so198339edq.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:44:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AEOjqbrPL7ThHmqZn4HHPdQNZCU9KRjN0OANoYqF+LI=;
-        b=YiUauuLl4oDGTRL45zuGDHR2J5VSlaFB7O6pBpiLin0jYi4oMDEyJ6WnB0ezsU1+lJ
-         /Xr+VMmFy6Yl0v0tfocLf0a2OpJoR4jkrZf+QWqP87nKzXSlOFC8xx9JTBLeqme23GEA
-         yBj2rHCTti3flo3PfXBjCwjdx6z70F417NynU=
+        bh=B/HM/8rFP5cAjqFnUXV5a+cyTGV1vdatCTE/hESO0uw=;
+        b=U7BMAGu6Hb0hKnA/oSKvqajGoBWD0yncJV3rhU6KciqAw4fR6XDauq4KVuQDRvOaer
+         P2lwNuAHrhxxVpgG6cjkfq6v70V4fwxSGaqHeHmFdAA1ED1uXEi7XEkplDoAYHnh1i7t
+         rI8Gkx51MM8Ud4I/HO+LRhiIcFWnJBIWoXMJ/8jwSLXWyr/g7YkOrM4p0QiKS2bkquxt
+         hkiqq9TGdbvwnVZg1znTFFF8rVLohdN4M1tv35av1QDiQxkdFSj6vgcgupUE6cMhxxI+
+         9segr/KIrj5dzjboN76fh2uBXToaniri7zVHFaOs1shKitGqxPvNnu1UQKQJJkZbs8up
+         2upw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AEOjqbrPL7ThHmqZn4HHPdQNZCU9KRjN0OANoYqF+LI=;
-        b=uExFntIw8VmD7z1Kt0fGCRPaoXIo8jZlPkeiYurU85eSgsIIsPqYVpbe20hJvuaY4T
-         3LBpfmp1mSrPvLcGaWkZ4YX5lR1kWZkI0YoLB6xlD1tjOUR65GcL6/iUUq42pFh4u4L+
-         J4MjBLoSd3wSWplJWXVyXdVLvpDo0uJFAwGSDUUnE0amE7Bs4hmg4fAp7iOq3NxSipf8
-         UHHMucttWR0gzghomc/Xib6hfQ5whvGd1PVo4fRKiGtHSxqVvZ/TiIqrCaE2DJtuYdLN
-         azKU/qNv+an8VtMV5qqm8ZZX8Q9d3j2Qo9HoI+j1B6NTSId8voTCmorPh48I8ZpzMNfc
-         18Ug==
-X-Gm-Message-State: AOAM5301pLe9reYJZCPVqKTcZUeMtTLlY7WmWXdSGrGj7+2JkaRJPD4K
-        gGWvx8nh8y9XFIe26Uj37C1ThAoRa0u9+g==
-X-Google-Smtp-Source: ABdhPJyeaeX5ydoCQAgkGrFhISg5BGv+65TSnWJ+RI8IoC726lRZShnWI4FMGbMI6TXngJz+GybIdg==
-X-Received: by 2002:a17:906:f84f:: with SMTP id ks15mr172221ejb.337.1606250414317;
-        Tue, 24 Nov 2020 12:40:14 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id w2sm48452ejc.109.2020.11.24.12.40.13
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Nov 2020 12:40:14 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id k9so15615181ejc.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:40:13 -0800 (PST)
-X-Received: by 2002:a2e:8701:: with SMTP id m1mr27321lji.314.1606250089295;
- Tue, 24 Nov 2020 12:34:49 -0800 (PST)
+        bh=B/HM/8rFP5cAjqFnUXV5a+cyTGV1vdatCTE/hESO0uw=;
+        b=tjC2IOMJ6vh7RxTRMIalTkH6EFUkvW8HIdD4blPpDHupI7UHV70TE5ZjEPit7itOOP
+         Yf0R4aRF9FT5YoLlmgegeqM9HcbqINwS+I9nGzvyEVRZ/ZkCeJSQJll7eu4eBLWpjwNi
+         I6Yso0sEIx4VT6irjDqTngQ0mRIsWjs7bANGn7X9oArsohPSnlQL54oDC0L/OWH6yZAg
+         duw9EMSaKXU9hazPGKPVBLZ4IoqNoyIpgb0hIJH1Sz5/OpAwWYQC73p7HqpaNDRobI5b
+         ALZERI/tlV60TVscPKVH2hQOwFHYf4IjaJw0VqObo/k3mMZjvbbsBJbaQsw1Poy9ZHuC
+         /Taw==
+X-Gm-Message-State: AOAM532QJp6MeLYHCdwj18+ycYle+NH4PhXjSHrfDqAbpl2d+F5T4/1b
+        CyrrtD2jBoycd032HAUbtHE7Fq5ZxVd3jf6WI8RJhA==
+X-Google-Smtp-Source: ABdhPJwZTfPGl9sCT1BVU2GvADqbE6pDiG1Xc1mtvTA/GsapyKzaYnyIr5d4QUAp0ZBQ4ukQby3tNlpzSAg6JpSsySA=
+X-Received: by 2002:a05:6402:176e:: with SMTP id da14mr311916edb.245.1606250681588;
+ Tue, 24 Nov 2020 12:44:41 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000d3a33205add2f7b2@google.com> <20200828100755.GG7072@quack2.suse.cz>
- <20200831100340.GA26519@quack2.suse.cz> <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com>
- <alpine.LSU.2.11.2011231928140.4305@eggly.anvils> <20201124121912.GZ4327@casper.infradead.org>
- <alpine.LSU.2.11.2011240810470.1029@eggly.anvils> <20201124183351.GD4327@casper.infradead.org>
- <CAHk-=wjtGAUP5fydxR8iWbzB65p2XvM0BrHE=PkPLQcJ=kq_8A@mail.gmail.com> <20201124201552.GE4327@casper.infradead.org>
-In-Reply-To: <20201124201552.GE4327@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 24 Nov 2020 12:34:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj9n5y7pu=SVVGwd5-FbjMGS6uoFU4RpzVLbuOfwBifUA@mail.gmail.com>
-Message-ID: <CAHk-=wj9n5y7pu=SVVGwd5-FbjMGS6uoFU4RpzVLbuOfwBifUA@mail.gmail.com>
-Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+ <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+ <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
+ <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
+ <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
+ <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
+ <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com> <CAHC9VhTtLj9QPqEqO5hHPDmMnWzUaD-2PwGw=bQ=SBxvV78Sxg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTtLj9QPqEqO5hHPDmMnWzUaD-2PwGw=bQ=SBxvV78Sxg@mail.gmail.com>
+From:   Lokesh Gidra <lokeshgidra@google.com>
+Date:   Tue, 24 Nov 2020 12:44:30 -0800
+Message-ID: <CA+EESO465UY7v5W4k6cqWHTDq6e6pb_NBnZZRMjawHPvfEOOLw@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 12:16 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Mon, Nov 23, 2020 at 2:43 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> So my s/if/while/ suggestion is wrong and we need to do something to
-> prevent spurious wakeups.  Unless we bury the spurious wakeup logic
-> inside wait_on_page_writeback() ...
+> On Mon, Nov 23, 2020 at 2:21 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > On Sun, Nov 22, 2020 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > > > I have created a cuttlefish build and have tested with the attached
+> > > > userfaultfd program:
+> > >
+> > > Thanks, that's a good place to start, a few comments:
+> > >
+> > > - While we support Android as a distribution, it isn't a platform that
+> > > we common use for development and testing.  At the moment, Fedora is
+> > > probably your best choice for that.
+> > >
+> > I tried setting up a debian/ubuntu system for testing using the
+> > instructions on the selinux-testsuite page, but the system kept
+> > freezing after 'setenforce 1'. I'll try with fedora now.
+>
+> I would expect you to have much better luck with Fedora.
 
-We can certainly make the "if()" in that loop be a "while()'.
+Yes. It worked!
+>
+> > > - Your test program should be written in vanilla C for the
+> > > selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
+> > > should be a trivial conversion.
+> > >
+> > > - I think you have a good start on a test for the selinux-testsuite,
+> > > please take a look at the test suite and submit a patch against that
+> > > repo.  Ondrej (CC'd) currently maintains the test suite and he may
+> > > have some additional thoughts.
+> > >
+> > > * https://github.com/SELinuxProject/selinux-testsuite
+> >
+> > Thanks a lot for the inputs. I'll start working on this.
+>
+> Great, let us know if you hit any problems.  I think we would all like
+> to see this upstream :)
+>
+I have the patch ready. I couldn't find any instructions on the
+testsuite site about patch submission. Can you please tell me how to
+proceed.
 
-That's basically what the old code did - simply by virtue of the
-wakeup not happening if the writeback bit was set in
-wake_page_function():
-
-        if (test_bit(key->bit_nr, &key->page->flags))
-                return -1;
-
-of course, the race was still there - because the writeback bit might
-be clear at that point, but another CPU would reallocate and dirty it,
-and then autoremove_wake_function() would happen anyway.
-
-But back in the bad old days, the wait_on_page_bit_common() code would
-then double-check in a loop, so it would catch that case, re-insert
-itself on the wait queue, and try again. Except for the DROP case,
-which isn't used by writeback.
-
-Anyway, making that "if()" be a "while()" in wait_on_page_writeback()
-would basically re-introduce that old behavior. I don't really care,
-because it was the lock bit that really mattered, the writeback bit is
-not really all that interesting (except from a "let's fix this bug"
-angle)
-
-I'm not 100% sure I like the fragility of this writeback thing.
-
-Anyway, I'm certainly happy with either model, whether it be an added
-while() in wait_on_page_writeback(), or it be the page reference count
-in end_page_writeback().
-
-Strong opinions?
-
-            Linus
+> --
+> paul moore
+> www.paul-moore.com
