@@ -2,120 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A0C2C268E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 13:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A96B2C26EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:14:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732512AbgKXMud (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 07:50:33 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:38422 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732709AbgKXMuc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 07:50:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606222231;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        id S2387963AbgKXNOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 08:14:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38082 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387878AbgKXNOj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 08:14:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1606223677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=85J5ydxTbt/EblYQnFmb9dU7jIz8RU2wol+TDenY5jI=;
-        b=jFaJ647b4z+TdWbjGmvUVooDB+7j7LUi8OmaE0RWgd6nZqSWf5PruZILeiZYf7pR5uFd5k
-        KvzIX4PEmGjkICrUd78SER4/BRHzUO7EjMSARMnVHEkdprqw/jKzJlFlZgNMXozlC+k6Io
-        JxOQ9im8Ox6v7NwqNMR0AKtb8sRjngc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-228-y8Fb6_MOMjGqGxjHxIppEg-1; Tue, 24 Nov 2020 07:50:27 -0500
-X-MC-Unique: y8Fb6_MOMjGqGxjHxIppEg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F5D0180DE0D;
-        Tue, 24 Nov 2020 12:50:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-111.rdu2.redhat.com [10.10.112.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F8DB60C64;
-        Tue, 24 Nov 2020 12:50:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <74f6fb34-c4c2-6a7e-3614-78c34246c6bd@gmail.com>
-References: <74f6fb34-c4c2-6a7e-3614-78c34246c6bd@gmail.com> <20201123080506.GA30578@infradead.org> <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk> <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk> <516984.1606127474@warthog.procyon.org.uk>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
+        bh=HqT93hPnj0lZKcD5jf1u3wzpiTA2s4b6ubLt/KHbxM8=;
+        b=Pc/Opv3aa3WAuV7rrBCPOrdnlDjYA+E02bHsIe2iDUefcYRCH3QKFA3INs1m1E2VAPmWPE
+        gXPJqsGzDZgiR1xyfkGlCbkWPTYhfAvLkopDie6KOSc5TSbB6K667GlWC+e5/P8E+eYnx3
+        VTkZ4ROgmeNsTrcATunjXRl0UTG+JK8=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 96937AC2D;
+        Tue, 24 Nov 2020 13:14:37 +0000 (UTC)
+Date:   Tue, 24 Nov 2020 14:14:36 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de,
+        Mina Almasry <almasrymina@google.com>,
+        David Rientjes <rientjes@google.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
+        Oscar Salvador <osalvador@suse.de>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [External] Re: [PATCH v6 09/16] mm/hugetlb: Defer freeing of
+ HugeTLB pages
+Message-ID: <20201124131436.GX27488@dhcp22.suse.cz>
+References: <20201124095259.58755-1-songmuchun@bytedance.com>
+ <20201124095259.58755-10-songmuchun@bytedance.com>
+ <20201124115109.GW27488@dhcp22.suse.cz>
+ <CAMZfGtV=_=f-AybncRDxyp9FB3e499RuPCz5B-8R2Or7285MrQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1155890.1606222222.1@warthog.procyon.org.uk>
-Date:   Tue, 24 Nov 2020 12:50:22 +0000
-Message-ID: <1155891.1606222222@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMZfGtV=_=f-AybncRDxyp9FB3e499RuPCz5B-8R2Or7285MrQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pavel Begunkov <asml.silence@gmail.com> wrote:
+On Tue 24-11-20 20:45:30, Muchun Song wrote:
+> On Tue, Nov 24, 2020 at 7:51 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Tue 24-11-20 17:52:52, Muchun Song wrote:
+> > > In the subsequent patch, we will allocate the vmemmap pages when free
+> > > HugeTLB pages. But update_and_free_page() is called from a non-task
+> > > context(and hold hugetlb_lock), so we can defer the actual freeing in
+> > > a workqueue to prevent use GFP_ATOMIC to allocate the vmemmap pages.
+> >
+> > This has been brought up earlier without any satisfying answer. Do we
+> > really have bother with the freeing from the pool and reconstructing the
+> > vmemmap page tables? Do existing usecases really require such a dynamic
+> > behavior? In other words, wouldn't it be much simpler to allow to use
+> 
+> If someone wants to free a HugeTLB page, there is no way to do that if we
+> do not allow this behavior.
 
-> fio is relatively heavy, I'd suggest to try fio/t/io_uring with nullblk
+Right. The question is how much that matters for the _initial_ feature
+submission. Is this restriction so important that it would render it
+unsuable?
 
-no patches:
+> When do we need this? On our server, we will
+> allocate a lot of HugeTLB pages for SPDK or virtualization. Sometimes,
+> we want to debug some issues and want to apt install some debug tools,
+> but if the host has little memory and the install operation can be failed
+> because of no memory. In this time, we can try to free some HugeTLB
+> pages to buddy in order to continue debugging. So maybe we need this.
 
-IOPS=885152, IOS/call=25/25, inflight=64 (64)
-IOPS=890400, IOS/call=25/25, inflight=32 (32)
-IOPS=890656, IOS/call=25/25, inflight=64 (64)
-IOPS=896096, IOS/call=25/25, inflight=96 (96)
-IOPS=876256, IOS/call=25/25, inflight=128 (128)
-IOPS=905056, IOS/call=25/25, inflight=128 (128)
-IOPS=882912, IOS/call=25/25, inflight=96 (96)
-IOPS=887392, IOS/call=25/25, inflight=64 (32)
-IOPS=897152, IOS/call=25/25, inflight=128 (128)
-IOPS=871392, IOS/call=25/25, inflight=32 (32)
-IOPS=865088, IOS/call=25/25, inflight=96 (96)
-IOPS=880032, IOS/call=25/25, inflight=32 (32)
-IOPS=905376, IOS/call=25/25, inflight=96 (96)
-IOPS=898016, IOS/call=25/25, inflight=128 (128)
-IOPS=885792, IOS/call=25/25, inflight=64 (64)
-IOPS=897632, IOS/call=25/25, inflight=96 (96)
+Or maybe you can still allocate hugetlb pages for debugging in runtime
+and try to free those when you need to.
 
-first patch only:
+> > hugetlb pages with sparse vmemmaps only for the boot time reservations
+> > and never allow them to be freed back to the allocator. This is pretty
+> > restrictive, no question about that, but it would drop quite some code
+> 
+> Yeah, if we do not allow freeing the HugeTLB page to buddy, it actually
+> can drop some code. But I think that it only drop this one and next one
+> patch. It seems not a lot. And if we drop this patch, we need to add some
+> another code to do the boot time reservations and other code to disallow
+> freeing HugeTLB pages.
 
-IOPS=876640, IOS/call=25/25, inflight=64 (64)
-IOPS=878208, IOS/call=25/25, inflight=64 (64)
-IOPS=884000, IOS/call=25/25, inflight=64 (64)
-IOPS=900864, IOS/call=25/25, inflight=64 (64)
-IOPS=878496, IOS/call=25/25, inflight=64 (64)
-IOPS=870944, IOS/call=25/25, inflight=32 (32)
-IOPS=900672, IOS/call=25/25, inflight=32 (32)
-IOPS=882368, IOS/call=25/25, inflight=128 (128)
-IOPS=877120, IOS/call=25/25, inflight=128 (128)
-IOPS=861856, IOS/call=25/25, inflight=64 (64)
-IOPS=892896, IOS/call=25/25, inflight=96 (96)
-IOPS=875808, IOS/call=25/25, inflight=128 (128)
-IOPS=887808, IOS/call=25/25, inflight=32 (80)
-IOPS=889984, IOS/call=25/25, inflight=128 (128)
+you need a per hugetlb page flag to note the sparse vmemmap anyway so
+the freeing path should be a trivial check for the flag. Early boot
+reservation. Special casing for the early boot reservation shouldn't be
+that hard either. But I haven't checked closely.
 
-all patches:
+> So why not support freeing now.
 
-IOPS=872192, IOS/call=25/25, inflight=96 (96)
-IOPS=887360, IOS/call=25/25, inflight=32 (32)
-IOPS=894432, IOS/call=25/25, inflight=128 (128)
-IOPS=884640, IOS/call=25/25, inflight=32 (32)
-IOPS=886784, IOS/call=25/25, inflight=32 (32)
-IOPS=884160, IOS/call=25/25, inflight=96 (96)
-IOPS=886944, IOS/call=25/25, inflight=96 (96)
-IOPS=903360, IOS/call=25/25, inflight=128 (128)
-IOPS=887744, IOS/call=25/25, inflight=64 (64)
-IOPS=891072, IOS/call=25/25, inflight=32 (32)
-IOPS=900512, IOS/call=25/25, inflight=128 (128)
-IOPS=888544, IOS/call=25/25, inflight=128 (128)
-IOPS=877312, IOS/call=25/25, inflight=128 (128)
-IOPS=895008, IOS/call=25/25, inflight=128 (128)
-IOPS=889376, IOS/call=25/25, inflight=128 (128)
+Because it adds some non trivial challenges which would be better to
+deal with with a stable and tested and feature limited implementation.
+The most obvious one is the problem with vmemmap allocations when
+freeing hugetlb page. Others like vmemmap manipulation is quite some
+code but no surprises. Btw. that should be implemented in vmemmap proper
+and ready for other potential users. But this is a minor detail.
 
-David
-
+-- 
+Michal Hocko
+SUSE Labs
