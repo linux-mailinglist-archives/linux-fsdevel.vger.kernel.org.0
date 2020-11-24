@@ -2,134 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15C112C28E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 15:02:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B772C291F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 15:14:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbgKXOAB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 09:00:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54719 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgKXOAA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 09:00:00 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1khYrD-0002SV-VO; Tue, 24 Nov 2020 13:59:48 +0000
-Date:   Tue, 24 Nov 2020 14:59:46 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
+        id S2388376AbgKXOOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 09:14:21 -0500
+Received: from twin.jikos.cz ([91.219.245.39]:42958 "EHLO twin.jikos.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730869AbgKXOOU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 09:14:20 -0500
+Received: from twin.jikos.cz (dave@localhost [127.0.0.1])
+        by twin.jikos.cz (8.13.6/8.13.6) with ESMTP id 0AOEClCG030282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 24 Nov 2020 15:12:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=jikos.cz; s=twin;
+        t=1606227168; bh=PInk95iJB4BVECBfcQcylUKN6Fo1ABglOvw3J2e7t1s=;
+        h=Received:Date:From:To:Cc:Subject:Message-ID:Reply-To:
+         Mail-Followup-To:References:MIME-Version:Content-Type:
+         Content-Disposition:In-Reply-To:User-Agent; b=5BxRzWxleBM+OsFJejP8
+        A/NY8kppzw3Gi3MOUSZTntibymbiGUB2Re2fCN7ENaXSQ6vtPRj7Xool7rJzo+ggSAP
+        oSD3bbBYOcjMLSdfg4G7YrtuDSx48ZMJnkcoWsw1/Om/muXZ2onQ1/Jq+k1erJ/pFcZ
+        QOmr8rMoHETBEH3Fc=
+Received: (from dave@localhost)
+        by twin.jikos.cz (8.13.6/8.13.6/Submit) id 0AOECiP7030275;
+        Tue, 24 Nov 2020 15:12:44 +0100
+Date:   Tue, 24 Nov 2020 15:12:44 +0100
+From:   David Sterba <dave@jikos.cz>
+To:     ira.weiny@intel.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
         David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 07/39] mount: attach mappings to mounts
-Message-ID: <20201124135946.27krt6za2qapyx43@wittgenstein>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201115103718.298186-8-christian.brauner@ubuntu.com>
- <20201123154719.GD4025434@cisco>
- <20201123162428.GA24807@cisco>
- <20201124123035.hbv4sstyoucht7xp@wittgenstein>
- <20201124133740.GA52954@cisco>
- <20201124134035.2l36avuaqp6gxyum@wittgenstein>
- <20201124134459.GB52954@cisco>
+        Steve French <sfrench@samba.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Brian King <brking@us.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 05/17] fs/btrfs: Convert to memzero_page()
+Message-ID: <20201124141244.GE17322@twin.jikos.cz>
+Reply-To: dave@jikos.cz
+Mail-Followup-To: ira.weiny@intel.com,
+        Andrew Morton <akpm@linux-foundation.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Steve French <sfrench@samba.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>, Nicolas Pitre <nico@fluxnic.net>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Brian King <brking@us.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20201124060755.1405602-1-ira.weiny@intel.com>
+ <20201124060755.1405602-6-ira.weiny@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124134459.GB52954@cisco>
+In-Reply-To: <20201124060755.1405602-6-ira.weiny@intel.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 08:44:59AM -0500, Tycho Andersen wrote:
-> On Tue, Nov 24, 2020 at 02:40:35PM +0100, Christian Brauner wrote:
-> > On Tue, Nov 24, 2020 at 08:37:40AM -0500, Tycho Andersen wrote:
-> > > On Tue, Nov 24, 2020 at 01:30:35PM +0100, Christian Brauner wrote:
-> > > > On Mon, Nov 23, 2020 at 11:24:28AM -0500, Tycho Andersen wrote:
-> > > > > On Mon, Nov 23, 2020 at 10:47:19AM -0500, Tycho Andersen wrote:
-> > > > > > On Sun, Nov 15, 2020 at 11:36:46AM +0100, Christian Brauner wrote:
-> > > > > > > +static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
-> > > > > > > +{
-> > > > > > > +	return mnt->mnt_user_ns;
-> > > > > > > +}
-> > > > > > 
-> > > > > > I think you might want a READ_ONCE() here. Right now it seems ok, since the
-> > > > > > mnt_user_ns can't change, but if we ever allow it to change (and I see you have
-> > > > > > a idmapped_mounts_wip_v2_allow_to_change_idmapping branch on your public tree
-> > > > > > :D), the pattern of,
-> > > > > > 
-> > > > > >         user_ns = mnt_user_ns(path->mnt);
-> > > > > >         if (mnt_idmapped(path->mnt)) {
-> > > > > >                 uid = kuid_from_mnt(user_ns, uid);
-> > > > > >                 gid = kgid_from_mnt(user_ns, gid);
-> > > > > >         }
-> > > > > > 
-> > > > > > could race.
-> > > > > 
-> > > > > Actually, isn't a race possible now?
-> > > > > 
-> > > > > kuid_from_mnt(mnt_user_ns(path->mnt) /* &init_user_ns */);
-> > > > > WRITE_ONCE(mnt->mnt.mnt_user_ns, user_ns);
-> > > > > WRITE_ONCE(m->mnt.mnt_flags, flags);
-> > > > > kgid_from_mnt(mnt_user_ns(path->mnt) /* the right user ns */);
-> > > > > 
-> > > > > So maybe it should be:
-> > > > > 
-> > > > >          if (mnt_idmapped(path->mnt)) {
-> > > > >                  barrier();
-> > > > >                  user_ns = mnt_user_ns(path->mnt);
-> > > > >                  uid = kuid_from_mnt(user_ns, uid);
-> > > > >                  gid = kgid_from_mnt(user_ns, gid);
-> > > > >          }
-> > > > > 
-> > > > > since there's no data dependency between mnt_idmapped() and
-> > > > > mnt_user_ns()?
-> > > > 
-> > > > I think I had something to handle this case in another branch of mine.
-> > > > The READ_ONCE() you mentioned in another patch I had originally dropped
-> > > > because I wasn't sure whether it works on pointers but after talking to
-> > > > Jann and David it seems that it handles pointers fine.
-> > > > Let me take a look and fix it in the next version. I just finished
-> > > > porting the test suite to xfstests as Christoph requested and I'm
-> > > > looking at this now.
-> > > 
-> > > Another way would be to just have mnt_idmapped() test
-> > > mnt_user_ns() != &init_user_ns instead of the flags; then I think you
-> > > get the data dependency and thus correct ordering for free.
-> > 
-> > I indeed dropped mnt_idmapped() which is unnecessary. :)
+On Mon, Nov 23, 2020 at 10:07:43PM -0800, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> It still might be a nice helper to prevent people from checking the
-> flags and forgetting that there's a memory ordering issue, though.
+> Remove the kmap/memset()/kunmap pattern and use the new memzero_page()
+> call where possible.
+> 
+> Cc: Chris Mason <clm@fb.com>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: David Sterba <dsterba@suse.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  fs/btrfs/inode.c | 21 +++++----------------
 
-I just mentioned this offline but for the record: the flag is gone since
-we can rely on the pointer alone. :)
-
-Christian
+The patch converts the pattern only in inode.c, but there's more in
+compression.c, extent_io.c, zlib.c,d zstd.c (kmap_atomic) and reflink.c,
+send.c (kmap).
