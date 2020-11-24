@@ -2,173 +2,657 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC032C28B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:53:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 847562C28A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:51:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388640AbgKXNuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 08:50:46 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:39255 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388478AbgKXNp5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 08:45:57 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id BF80658088F;
-        Tue, 24 Nov 2020 08:45:17 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 24 Nov 2020 08:45:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=ICi3xGmyU3rUTgE9Z8EkpSjYA46
-        p82e0AHaf1vgqc2E=; b=cKsAEMFFYuOAZzrmzVuS6fDaUdnOlWfJzkxXkSJO9Qe
-        4cPiabvCXG6yJevVlNt4UrBnhnM0oAjUCKFFTuiIP7KHkNqf6wAkJ1AGkr4y8R8F
-        rshUTX7y/HGl4fDGx++8ZJ8B6vtl63FtXbpf/OVRf2eLIrr6d5Xgprn9bsV5H/hc
-        9HhzXpI0HlbN51t3O3r9ZYlv9IOtYlExB/SMGqvdTunWU6XcwAgzBGlIQe2rSTW7
-        X7ovYra3a1oSR47nZWVdudMNKQtPD32D8Y836jecithq2pdamn29HzkVmL8scqJb
-        ewbh/XND3Cf49DNyIIsIt5so+/Xp0AT9ETHPbNNIZNA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=ICi3xG
-        myU3rUTgE9Z8EkpSjYA46p82e0AHaf1vgqc2E=; b=rE0LoylzT/qyJu2DBs+yai
-        0QTR0Lw04fwyDVaPS1SIlsrWZ3D8qygcvuLQ0lTlybxYdeskf/8F8p5IvV4QcJng
-        q/1hU9484JxUfjHiQ7wTCfZZpvGcpjBBPrP/v1/XjQCkCieLN7ky9TWOnLfN42M3
-        G74z61K75HbJqkrtvsc7O10emOLD9pKCmH2ZE0v63EaN1bs2NKDLdx5vv+4F4sXe
-        qruYWcanFZ9LoRjo+8qZuQVKRGIdXmo0kzVF6DfbkMvZUdiH/ITNmdMY9WNO18iC
-        HP+d5mUkfTPR/M4TP6ZK/VXAm/rZAl2sCZQ4h2xqevt37qG1w1zz1h8qTKXk6WNg
-        ==
-X-ME-Sender: <xms:aA69X0Br1YILh_lXkRpx6LvvNOyNIehv8gRzNfgaKgTD0Ir56Adu9g>
-    <xme:aA69X2hGMBre_4tf5voL5KWoXk5miZboMJ_r4hRSR0iPmcgRrOeNHNz02iRiH6CaH
-    FR43LExlh7_tn0p4Bg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudegkedgheeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigthhho
-    ucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtffrrg
-    htthgvrhhnpeegkeefjeegkedtjefgfeduleekueetjeeghffhuefgffefleehgeeifedv
-    gfethfenucfkphepuddvkedruddtjedrvdeguddrudeivdenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:aA69X3nCD5UHn1DWni0QLB36nA7OKZhoPm3JyIpKOfV1C4IJ25HRZw>
-    <xmx:aA69X6zv3RpXS_6aagJ9CwWeSqjxwh94E5ITSOnTET0v3RYeZzlCAA>
-    <xmx:aA69X5RYpyxLz0joaGNnnGZ-97JJOnWWSeQhgTIfS8NjKJCfehMkgQ>
-    <xmx:bQ69X5wpFI1gmfBKssSD-Pp-ZlRMS83wma-FmpyGoCDeYlEyJzhB7A>
-Received: from cisco (unknown [128.107.241.162])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5D0B13064AB4;
-        Tue, 24 Nov 2020 08:45:06 -0500 (EST)
-Date:   Tue, 24 Nov 2020 08:44:59 -0500
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 07/39] mount: attach mappings to mounts
-Message-ID: <20201124134459.GB52954@cisco>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201115103718.298186-8-christian.brauner@ubuntu.com>
- <20201123154719.GD4025434@cisco>
- <20201123162428.GA24807@cisco>
- <20201124123035.hbv4sstyoucht7xp@wittgenstein>
- <20201124133740.GA52954@cisco>
- <20201124134035.2l36avuaqp6gxyum@wittgenstein>
+        id S2388456AbgKXNtT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 08:49:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53342 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388424AbgKXNtT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 08:49:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 2AD8CAC2D;
+        Tue, 24 Nov 2020 13:49:17 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E3C761E130F; Tue, 24 Nov 2020 14:49:16 +0100 (CET)
+Date:   Tue, 24 Nov 2020 14:49:16 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+Message-ID: <20201124134916.GC19336@quack2.suse.cz>
+References: <20201109180016.80059-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124134035.2l36avuaqp6gxyum@wittgenstein>
+In-Reply-To: <20201109180016.80059-1-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:40:35PM +0100, Christian Brauner wrote:
-> On Tue, Nov 24, 2020 at 08:37:40AM -0500, Tycho Andersen wrote:
-> > On Tue, Nov 24, 2020 at 01:30:35PM +0100, Christian Brauner wrote:
-> > > On Mon, Nov 23, 2020 at 11:24:28AM -0500, Tycho Andersen wrote:
-> > > > On Mon, Nov 23, 2020 at 10:47:19AM -0500, Tycho Andersen wrote:
-> > > > > On Sun, Nov 15, 2020 at 11:36:46AM +0100, Christian Brauner wrote:
-> > > > > > +static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
-> > > > > > +{
-> > > > > > +	return mnt->mnt_user_ns;
-> > > > > > +}
-> > > > > 
-> > > > > I think you might want a READ_ONCE() here. Right now it seems ok, since the
-> > > > > mnt_user_ns can't change, but if we ever allow it to change (and I see you have
-> > > > > a idmapped_mounts_wip_v2_allow_to_change_idmapping branch on your public tree
-> > > > > :D), the pattern of,
-> > > > > 
-> > > > >         user_ns = mnt_user_ns(path->mnt);
-> > > > >         if (mnt_idmapped(path->mnt)) {
-> > > > >                 uid = kuid_from_mnt(user_ns, uid);
-> > > > >                 gid = kgid_from_mnt(user_ns, gid);
-> > > > >         }
-> > > > > 
-> > > > > could race.
-> > > > 
-> > > > Actually, isn't a race possible now?
-> > > > 
-> > > > kuid_from_mnt(mnt_user_ns(path->mnt) /* &init_user_ns */);
-> > > > WRITE_ONCE(mnt->mnt.mnt_user_ns, user_ns);
-> > > > WRITE_ONCE(m->mnt.mnt_flags, flags);
-> > > > kgid_from_mnt(mnt_user_ns(path->mnt) /* the right user ns */);
-> > > > 
-> > > > So maybe it should be:
-> > > > 
-> > > >          if (mnt_idmapped(path->mnt)) {
-> > > >                  barrier();
-> > > >                  user_ns = mnt_user_ns(path->mnt);
-> > > >                  uid = kuid_from_mnt(user_ns, uid);
-> > > >                  gid = kgid_from_mnt(user_ns, gid);
-> > > >          }
-> > > > 
-> > > > since there's no data dependency between mnt_idmapped() and
-> > > > mnt_user_ns()?
-> > > 
-> > > I think I had something to handle this case in another branch of mine.
-> > > The READ_ONCE() you mentioned in another patch I had originally dropped
-> > > because I wasn't sure whether it works on pointers but after talking to
-> > > Jann and David it seems that it handles pointers fine.
-> > > Let me take a look and fix it in the next version. I just finished
-> > > porting the test suite to xfstests as Christoph requested and I'm
-> > > looking at this now.
-> > 
-> > Another way would be to just have mnt_idmapped() test
-> > mnt_user_ns() != &init_user_ns instead of the flags; then I think you
-> > get the data dependency and thus correct ordering for free.
+Hi Amir!
+
+Thanks for the patch and sorry for a delay in my response.
+
+On Mon 09-11-20 20:00:16, Amir Goldstein wrote:
+> A filesystem view is a subtree of a filesystem accessible from a specific
+> mount point.  When marking an FS view, user expects to get events on all
+> inodes that are accessible from the marked mount, even if the events
+> were generated from another mount.
 > 
-> I indeed dropped mnt_idmapped() which is unnecessary. :)
+> In particular, the events such as FAN_CREATE, FAN_MOVE, FAN_DELETE that
+> are not delivered to a mount mark can be delivered to an FS view mark.
+> 
+> One example of a filesystem view is btrfs subvolume, which cannot be
+> marked with a regular filesystem mark.
+> 
+> Another example of a filesystem view is a bind mount, not on the root of
+> the filesystem, such as the bind mounts used for containers.
+> 
+> A filesystem view mark is composed of a heads sb mark and an sb_view mark.
+> The filesystem view mark is connected to the head sb mark and the head
+> sb mark is connected to the sb object. The mask of the head sb mask is
+> a cumulative mask of all the associated sb_view mark masks.
+> 
+> Filesystem view marks cannot co-exist with a regular filesystem mark on
+> the same filesystem.
+> 
+> When an event is generated on the head sb mark, fsnotify iterates the
+> list of associated sb_view marks and filter events that happen outside
+> of the sb_view mount's root.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-It still might be a nice helper to prevent people from checking the
-flags and forgetting that there's a memory ordering issue, though.
+I gave this just a high-level look (no detailed review) and here are my
+thoughts:
 
-> I think we should still use smp_store_release() in mnt_user_ns() paired
-> with smp_load_acquire() in do_idmap_mount() thought.
+1) I like the functionality. IMO this is what a lot of people really want
+when looking for "filesystem wide fs monitoring".
 
-Sounds reasonable.
+2) I don't quite like the API you propose though. IMO it exposes details of
+implementation in the API. I'd rather like to have API the same as for
+mount marks but with a dedicated mark type flag in the API - like
+FAN_MARK_FILESYSTEM_SUBTREE (or we can keep VIEW if you like it but I think
+the less terms the better ;). Then internally we'd auto-create a sb mark as
+needed, we could possibly reuse the sb mark if there are multiple subtree
+marks for the same sb but that's just an internal optimization we could do
+(looking at the code now, that basically seems what you already do so maybe
+I just misunderstood the changelog). Also I don't see the need for the
+restriction that subtree marks cannot coexist with ordinary sb marks. That
+just seems unnecessarily confusing to users. Why is that?
 
-Tycho
+3) I think the d_ancestor() checks are racy (need some kind of rename /
+reclaim protection). Also I think this is going to get expensive
+(e.g. imagine each write to page cache having to traverse potentially deep
+tree hierarchy potentially multiple times - once for each subtree). My
+suspicion should be verified with actual performance measurement but if I'm
+right and the overhead is indeed noticeable, I think we'll need to employ
+some caching or so to avoid repeated lookups...
+
+But overall as I already wrote, I like the idea.
+
+								Honza
+> ---
+> 
+> Jan,
+> 
+> I started to play with ideas of filtering events by subtree.
+> My first approach was to do that in userspace.
+> 
+> This becomes quite easy if you are able to create a bind mount on the
+> subtree of interest - you use a 'mount_fd' from within the bind mount
+> for open_by_handle_at() of the dirfid and the magic symlink in /proc
+> resolves that fd to / for dirs outside the bind mount path.
+> 
+> Having done that, it seems pretty silly to go to userspace and back to
+> kernel for the filtering, so many wasted cycles when we can do the same
+> filtering much sooner.
+> 
+> The name "fs view" is inspired by Mark's proposal of the same name [1].
+> We do not have to restrict the "fs view" points to mount points, but it
+> created conventient semantics and I pretty much like the idea that
+> FAN_MARK_MOUNT|FAN_MARK_FILESYSTEM gives you this new hybrid thing.
+> 
+> This is just a POC that I sketched with obvious missing pieces, but at
+> least with a single fs view mark that I tested it works.
+> 
+> Thoughts?
+> 
+> Amir.
+> 
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20180508180436.716-2-mfasheh@suse.de/
+> 
+>  fs/notify/fanotify/fanotify_user.c | 115 ++++++++++++++++++++++++++---
+>  fs/notify/fdinfo.c                 |   9 +++
+>  fs/notify/fsnotify.c               |  37 +++++++++-
+>  fs/notify/fsnotify.h               |   8 ++
+>  fs/notify/group.c                  |   2 +-
+>  fs/notify/mark.c                   |  11 ++-
+>  include/linux/fanotify.h           |   1 +
+>  include/linux/fsnotify_backend.h   |  44 +++++++++--
+>  include/uapi/linux/fanotify.h      |   2 +
+>  9 files changed, 207 insertions(+), 22 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 3e01d8f2ab90..1a46898a1bc8 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -760,7 +760,7 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
+>  
+>  	removed = fanotify_mark_remove_from_mask(fsn_mark, mask, flags,
+>  						 umask, &destroy_mark);
+> -	if (removed & fsnotify_conn_mask(fsn_mark->connector))
+> +	if (!mask || (removed & fsnotify_conn_mask(fsn_mark->connector)))
+>  		fsnotify_recalc_mask(fsn_mark->connector);
+>  	if (destroy_mark)
+>  		fsnotify_detach_mark(fsn_mark);
+> @@ -781,6 +781,35 @@ static int fanotify_remove_vfsmount_mark(struct fsnotify_group *group,
+>  				    mask, flags, umask);
+>  }
+>  
+> +static int fanotify_remove_sb_view_mark(struct fsnotify_group *group,
+> +					struct vfsmount *mnt, __u32 mask,
+> +					unsigned int flags, __u32 umask)
+> +{
+> +	struct fsnotify_mark *sb_mark;
+> +	int ret;
+> +
+> +	/* Find the head sb mark */
+> +	mutex_lock(&group->mark_mutex);
+> +	sb_mark = fsnotify_find_mark(&mnt->mnt_sb->s_fsnotify_marks, group);
+> +	mutex_unlock(&group->mark_mutex);
+> +	/* Cannot have both sb mark and sb_view marks on the same sb */
+> +	if (!sb_mark || !(sb_mark->flags & FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD)) {
+> +		if (sb_mark)
+> +			fsnotify_put_mark(sb_mark);
+> +		return -ENOENT;
+> +	}
+> +
+> +	/* Update or destroy the sb_view mark */
+> +	ret = fanotify_remove_mark(group, &fsnotify_sbv_mark(sb_mark)->sbv_marks,
+> +				   mask, flags, umask);
+> +	fsnotify_put_mark(sb_mark);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Remove mask 0 to update or destroy the head sb mark */
+> +	return fanotify_remove_mark(group, &mnt->mnt_sb->s_fsnotify_marks, 0, flags, umask);
+> +}
+> +
+>  static int fanotify_remove_sb_mark(struct fsnotify_group *group,
+>  				   struct super_block *sb, __u32 mask,
+>  				   unsigned int flags, __u32 umask)
+> @@ -833,6 +862,7 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
+>  		return ERR_PTR(-ENOMEM);
+>  
+>  	fsnotify_init_mark(mark, group);
+> +	fsnotify_sbv_mark(mark)->mnt = NULL;
+>  	ret = fsnotify_add_mark_locked(mark, connp, type, 0, fsid);
+>  	if (ret) {
+>  		fsnotify_put_mark(mark);
+> @@ -843,13 +873,19 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
+>  }
+>  
+>  
+> -static int fanotify_add_mark(struct fsnotify_group *group,
+> +/* Returns fsnotify_mark with elevated refcount */
+> +static struct fsnotify_mark *__fanotify_add_mark(struct fsnotify_group *group,
+>  			     fsnotify_connp_t *connp, unsigned int type,
+>  			     __u32 mask, unsigned int flags,
+> -			     __kernel_fsid_t *fsid)
+> +			     __kernel_fsid_t *fsid, struct vfsmount *mnt)
+>  {
+>  	struct fsnotify_mark *fsn_mark;
+>  	__u32 added;
+> +	unsigned int sb_view_head = 0;
+> +
+> +	if (type == FSNOTIFY_OBJ_TYPE_SB &&
+> +	    (flags & FAN_MARK_FS_VIEW) == FAN_MARK_FS_VIEW)
+> +		sb_view_head = FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD;
+>  
+>  	mutex_lock(&group->mark_mutex);
+>  	fsn_mark = fsnotify_find_mark(connp, group);
+> @@ -857,14 +893,38 @@ static int fanotify_add_mark(struct fsnotify_group *group,
+>  		fsn_mark = fanotify_add_new_mark(group, connp, type, fsid);
+>  		if (IS_ERR(fsn_mark)) {
+>  			mutex_unlock(&group->mark_mutex);
+> -			return PTR_ERR(fsn_mark);
+> +			return fsn_mark;
+>  		}
+> +		if (type == FSNOTIFY_OBJ_TYPE_SB_VIEW)
+> +			fsnotify_sbv_mark(fsn_mark)->mnt = mnt;
+> +		else
+> +			fsn_mark->flags |= sb_view_head;
+> +
+> +	} else if ((fsn_mark->flags & FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD) != sb_view_head) {
+> +		/* Cannot have both sb mark and sb_view marks on the same sb */
+> +		mutex_unlock(&group->mark_mutex);
+> +		fsnotify_put_mark(fsn_mark);
+> +		return ERR_PTR(-EEXIST);
+>  	}
+>  	added = fanotify_mark_add_to_mask(fsn_mark, mask, flags);
+> -	if (added & ~fsnotify_conn_mask(fsn_mark->connector))
+> +	if (!mask || (added & ~fsnotify_conn_mask(fsn_mark->connector)))
+>  		fsnotify_recalc_mask(fsn_mark->connector);
+>  	mutex_unlock(&group->mark_mutex);
+>  
+> +	return fsn_mark;
+> +}
+> +
+> +static int fanotify_add_mark(struct fsnotify_group *group,
+> +			     fsnotify_connp_t *connp, unsigned int type,
+> +			     __u32 mask, unsigned int flags,
+> +			     __kernel_fsid_t *fsid, struct vfsmount *mnt)
+> +{
+> +	struct fsnotify_mark *fsn_mark;
+> +
+> +	fsn_mark = __fanotify_add_mark(group, connp, type, mask, flags, fsid, mnt);
+> +	if (IS_ERR(fsn_mark))
+> +		return PTR_ERR(fsn_mark);
+> +
+>  	fsnotify_put_mark(fsn_mark);
+>  	return 0;
+>  }
+> @@ -874,7 +934,31 @@ static int fanotify_add_vfsmount_mark(struct fsnotify_group *group,
+>  				      unsigned int flags, __kernel_fsid_t *fsid)
+>  {
+>  	return fanotify_add_mark(group, &real_mount(mnt)->mnt_fsnotify_marks,
+> -				 FSNOTIFY_OBJ_TYPE_VFSMOUNT, mask, flags, fsid);
+> +				 FSNOTIFY_OBJ_TYPE_VFSMOUNT, mask, flags, fsid, NULL);
+> +}
+> +
+> +static int fanotify_add_sb_view_mark(struct fsnotify_group *group,
+> +				     struct vfsmount *mnt, __u32 mask,
+> +				     unsigned int flags, __kernel_fsid_t *fsid)
+> +{
+> +	struct fsnotify_mark *sb_mark;
+> +	int ret;
+> +
+> +	sb_mark = __fanotify_add_mark(group, &mnt->mnt_sb->s_fsnotify_marks,
+> +				      FSNOTIFY_OBJ_TYPE_SB, mask, flags, fsid, mnt);
+> +	if (IS_ERR(sb_mark))
+> +		return PTR_ERR(sb_mark);
+> +
+> +	/* Add to sb_view mark */
+> +	ret = fanotify_add_mark(group, &fsnotify_sbv_mark(sb_mark)->sbv_marks,
+> +				FSNOTIFY_OBJ_TYPE_SB_VIEW, mask, flags, fsid, mnt);
+> +	fsnotify_put_mark(sb_mark);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Add mask 0 to re-calc the sb object mask after updating the sb view head mark mask */
+> +	return fanotify_add_mark(group, &mnt->mnt_sb->s_fsnotify_marks, FSNOTIFY_OBJ_TYPE_SB, 0,
+> +				 flags, fsid, mnt);
+>  }
+>  
+>  static int fanotify_add_sb_mark(struct fsnotify_group *group,
+> @@ -882,7 +966,7 @@ static int fanotify_add_sb_mark(struct fsnotify_group *group,
+>  				unsigned int flags, __kernel_fsid_t *fsid)
+>  {
+>  	return fanotify_add_mark(group, &sb->s_fsnotify_marks,
+> -				 FSNOTIFY_OBJ_TYPE_SB, mask, flags, fsid);
+> +				 FSNOTIFY_OBJ_TYPE_SB, mask, flags, fsid, NULL);
+>  }
+>  
+>  static int fanotify_add_inode_mark(struct fsnotify_group *group,
+> @@ -902,7 +986,7 @@ static int fanotify_add_inode_mark(struct fsnotify_group *group,
+>  		return 0;
+>  
+>  	return fanotify_add_mark(group, &inode->i_fsnotify_marks,
+> -				 FSNOTIFY_OBJ_TYPE_INODE, mask, flags, fsid);
+> +				 FSNOTIFY_OBJ_TYPE_INODE, mask, flags, fsid, NULL);
+>  }
+>  
+>  static struct fsnotify_event *fanotify_alloc_overflow_event(void)
+> @@ -1116,7 +1200,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	struct path path;
+>  	__kernel_fsid_t __fsid, *fsid = NULL;
+>  	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+> -	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+> +	unsigned int mark_type = FANOTIFY_MARK_TYPE(flags);
+>  	bool ignored = flags & FAN_MARK_IGNORED_MASK;
+>  	unsigned int obj_type, fid_mode;
+>  	u32 umask = 0;
+> @@ -1139,6 +1223,9 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	case FAN_MARK_MOUNT:
+>  		obj_type = FSNOTIFY_OBJ_TYPE_VFSMOUNT;
+>  		break;
+> +	case FAN_MARK_FS_VIEW:
+> +		obj_type = FSNOTIFY_OBJ_TYPE_SB_VIEW;
+> +		break;
+>  	case FAN_MARK_FILESYSTEM:
+>  		obj_type = FSNOTIFY_OBJ_TYPE_SB;
+>  		break;
+> @@ -1205,6 +1292,8 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  		ret = 0;
+>  		if (mark_type == FAN_MARK_MOUNT)
+>  			fsnotify_clear_vfsmount_marks_by_group(group);
+> +		else if (mark_type == FAN_MARK_FS_VIEW)
+> +			fsnotify_clear_sb_view_marks_by_group(group);
+>  		else if (mark_type == FAN_MARK_FILESYSTEM)
+>  			fsnotify_clear_sb_marks_by_group(group);
+>  		else
+> @@ -1256,6 +1345,9 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  		if (mark_type == FAN_MARK_MOUNT)
+>  			ret = fanotify_add_vfsmount_mark(group, mnt, mask,
+>  							 flags, fsid);
+> +		else if (mark_type == FAN_MARK_FS_VIEW)
+> +			ret = fanotify_add_sb_view_mark(group, mnt, mask,
+> +							flags, fsid);
+>  		else if (mark_type == FAN_MARK_FILESYSTEM)
+>  			ret = fanotify_add_sb_mark(group, mnt->mnt_sb, mask,
+>  						   flags, fsid);
+> @@ -1267,6 +1359,9 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  		if (mark_type == FAN_MARK_MOUNT)
+>  			ret = fanotify_remove_vfsmount_mark(group, mnt, mask,
+>  							    flags, umask);
+> +		else if (mark_type == FAN_MARK_FS_VIEW)
+> +			ret = fanotify_remove_sb_view_mark(group, mnt, mask,
+> +							   flags, umask);
+>  		else if (mark_type == FAN_MARK_FILESYSTEM)
+>  			ret = fanotify_remove_sb_mark(group, mnt->mnt_sb, mask,
+>  						      flags, umask);
+> @@ -1318,7 +1413,7 @@ static int __init fanotify_user_setup(void)
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+>  
+> -	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+> +	fanotify_mark_cache = KMEM_CACHE(fsnotify_sb_view_mark,
+>  					 SLAB_PANIC|SLAB_ACCOUNT);
+>  	fanotify_fid_event_cachep = KMEM_CACHE(fanotify_fid_event,
+>  					       SLAB_PANIC);
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index f0d6b54be412..4b00575e9bd1 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -115,6 +115,9 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+>  
+>  	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
+>  		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
+> +	if (mark->connector->type == FSNOTIFY_OBJ_TYPE_SB_VIEW ||
+> +	    (mark->flags & FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD))
+> +		mflags |= FAN_MARK_FS_VIEW;
+>  
+>  	if (mark->connector->type == FSNOTIFY_OBJ_TYPE_INODE) {
+>  		inode = igrab(fsnotify_conn_inode(mark->connector));
+> @@ -131,6 +134,12 @@ static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+>  
+>  		seq_printf(m, "fanotify mnt_id:%x mflags:%x mask:%x ignored_mask:%x\n",
+>  			   mnt->mnt_id, mflags, mark->mask, mark->ignored_mask);
+> +	} else if (mark->connector->type == FSNOTIFY_OBJ_TYPE_SB_VIEW) {
+> +		struct vfsmount *mnt = fsnotify_sbv_mark(mark)->mnt;
+> +
+> +		seq_printf(m, "fanotify sdev:%x mnt_id:%x mflags:%x mask:%x ignored_mask:%x\n",
+> +			   mnt->mnt_sb->s_dev, real_mount(mnt)->mnt_id, mflags, mark->mask,
+> +			   mark->ignored_mask);
+>  	} else if (mark->connector->type == FSNOTIFY_OBJ_TYPE_SB) {
+>  		struct super_block *sb = fsnotify_conn_sb(mark->connector);
+>  
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 8d3ad5ef2925..7af2132372fc 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -275,6 +275,9 @@ static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
+>  	return ops->handle_inode_event(child_mark, mask, inode, NULL, NULL);
+>  }
+>  
+> +static struct fsnotify_mark *fsnotify_first_mark(struct fsnotify_mark_connector **connp);
+> +static struct fsnotify_mark *fsnotify_next_mark(struct fsnotify_mark *mark);
+> +
+>  static int send_to_group(__u32 mask, const void *data, int data_type,
+>  			 struct inode *dir, const struct qstr *file_name,
+>  			 u32 cookie, struct fsnotify_iter_info *iter_info)
+> @@ -305,9 +308,39 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+>  		if (!fsnotify_iter_should_report_type(iter_info, type))
+>  			continue;
+>  		mark = iter_info->marks[type];
+> +		if (!mark)
+> +			continue;
+> +
+>  		/* does the object mark tell us to do something? */
+> -		if (mark) {
+> -			group = mark->group;
+> +		group = mark->group;
+> +		if (type == FSNOTIFY_OBJ_TYPE_SB && mark &&
+> +		     (mark->flags & FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD)) {
+> +			const struct path *path = fsnotify_data_path(data, data_type);
+> +			struct fsnotify_sb_view_mark *sbv_mark = (void *)mark;
+> +
+> +			/* TODO: pass FSNOTIFY_EVENT_DENTRY data type for dir modify events */
+> +			if (!path || !sbv_mark->sbv_marks)
+> +				continue;
+> +
+> +			/*
+> +			 * Iterate sb_view marks and apply masks if victim is under mnt root.
+> +			 * We already have rcu read lock and d_ancestor is accurate enough
+> +			 * for our needs - if any of the ancestors have been moved in or out
+> +			 * of the mnt root path, we may either send the event or not.
+> +			 * The important thing is that if ancestry was always under mnt root
+> +			 * we will send the event.
+> +			 */
+> +			for (sbv_mark = (void *)fsnotify_first_mark(&sbv_mark->sbv_marks);
+> +			     sbv_mark; sbv_mark = (void *)fsnotify_next_mark((void *)sbv_mark)) {
+> +				if ((!(test_mask & sbv_mark->fsn_mark.mask) &&
+> +				     !(test_mask & sbv_mark->fsn_mark.ignored_mask)) ||
+> +				    !d_ancestor(sbv_mark->mnt->mnt_root, path->dentry))
+> +					continue;
+> +
+> +				marks_mask |= sbv_mark->fsn_mark.mask;
+> +				marks_ignored_mask |= sbv_mark->fsn_mark.ignored_mask;
+> +			}
+> +		} else {
+>  			marks_mask |= mark->mask;
+>  			marks_ignored_mask |= mark->ignored_mask;
+>  		}
+> diff --git a/fs/notify/fsnotify.h b/fs/notify/fsnotify.h
+> index ff2063ec6b0f..5aaabf2bee31 100644
+> --- a/fs/notify/fsnotify.h
+> +++ b/fs/notify/fsnotify.h
+> @@ -21,6 +21,12 @@ static inline struct mount *fsnotify_conn_mount(
+>  	return container_of(conn->obj, struct mount, mnt_fsnotify_marks);
+>  }
+>  
+> +static inline struct fsnotify_sb_view_mark *fsnotify_conn_sb_view_mark(
+> +				struct fsnotify_mark_connector *conn)
+> +{
+> +	return container_of(conn->obj, struct fsnotify_sb_view_mark, sbv_marks);
+> +}
+> +
+>  static inline struct super_block *fsnotify_conn_sb(
+>  				struct fsnotify_mark_connector *conn)
+>  {
+> @@ -48,11 +54,13 @@ static inline void fsnotify_clear_marks_by_inode(struct inode *inode)
+>  static inline void fsnotify_clear_marks_by_mount(struct vfsmount *mnt)
+>  {
+>  	fsnotify_destroy_marks(&real_mount(mnt)->mnt_fsnotify_marks);
+> +	/* TODO: clear sb_view marks associated with this mnt */
+>  }
+>  /* run the list of all marks associated with sb and destroy them */
+>  static inline void fsnotify_clear_marks_by_sb(struct super_block *sb)
+>  {
+>  	fsnotify_destroy_marks(&sb->s_fsnotify_marks);
+> +	/* TODO: clear sb_view marks associated with this sb */
+>  }
+>  
+>  /*
+> diff --git a/fs/notify/group.c b/fs/notify/group.c
+> index a4a4b1c64d32..a5367b66f33a 100644
+> --- a/fs/notify/group.c
+> +++ b/fs/notify/group.c
+> @@ -58,7 +58,7 @@ void fsnotify_destroy_group(struct fsnotify_group *group)
+>  	fsnotify_group_stop_queueing(group);
+>  
+>  	/* Clear all marks for this group and queue them for destruction */
+> -	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_ALL_TYPES_MASK);
+> +	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_ALL_TYPES_MASK, 0);
+>  
+>  	/*
+>  	 * Some marks can still be pinned when waiting for response from
+> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+> index 8387937b9d01..81825de6a6a9 100644
+> --- a/fs/notify/mark.c
+> +++ b/fs/notify/mark.c
+> @@ -103,6 +103,8 @@ static __u32 *fsnotify_conn_mask_p(struct fsnotify_mark_connector *conn)
+>  		return &fsnotify_conn_inode(conn)->i_fsnotify_mask;
+>  	else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT)
+>  		return &fsnotify_conn_mount(conn)->mnt_fsnotify_mask;
+> +	else if (conn->type == FSNOTIFY_OBJ_TYPE_SB_VIEW)
+> +		return &fsnotify_conn_sb_view_mark(conn)->fsn_mark.mask;
+>  	else if (conn->type == FSNOTIFY_OBJ_TYPE_SB)
+>  		return &fsnotify_conn_sb(conn)->s_fsnotify_mask;
+>  	return NULL;
+> @@ -185,6 +187,8 @@ static void *fsnotify_detach_connector_from_object(
+>  		atomic_long_inc(&inode->i_sb->s_fsnotify_inode_refs);
+>  	} else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
+>  		fsnotify_conn_mount(conn)->mnt_fsnotify_mask = 0;
+> +	} else if (conn->type == FSNOTIFY_OBJ_TYPE_SB_VIEW) {
+> +		fsnotify_conn_sb_view_mark(conn)->fsn_mark.mask = 0;
+>  	} else if (conn->type == FSNOTIFY_OBJ_TYPE_SB) {
+>  		fsnotify_conn_sb(conn)->s_fsnotify_mask = 0;
+>  	}
+> @@ -720,9 +724,9 @@ struct fsnotify_mark *fsnotify_find_mark(fsnotify_connp_t *connp,
+>  }
+>  EXPORT_SYMBOL_GPL(fsnotify_find_mark);
+>  
+> -/* Clear any marks in a group with given type mask */
+> +/* Clear any marks in a group with given type mask or given flags */
+>  void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
+> -				   unsigned int type_mask)
+> +				   unsigned int type_mask, unsigned int flags_mask)
+>  {
+>  	struct fsnotify_mark *lmark, *mark;
+>  	LIST_HEAD(to_free);
+> @@ -744,7 +748,8 @@ void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
+>  	 */
+>  	mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
+>  	list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
+> -		if ((1U << mark->connector->type) & type_mask)
+> +		if (((1U << mark->connector->type) & type_mask) ||
+> +		    (mark->flags & flags_mask))
+>  			list_move(&mark->g_list, &to_free);
+>  	}
+>  	mutex_unlock(&group->mark_mutex);
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index 3e9c56ee651f..6f36bece5518 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -27,6 +27,7 @@
+>  
+>  #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+>  				 FAN_MARK_FILESYSTEM)
+> +#define FANOTIFY_MARK_TYPE(flags) ((flags) & FANOTIFY_MARK_TYPE_BITS)
+>  
+>  #define FANOTIFY_MARK_FLAGS	(FANOTIFY_MARK_TYPE_BITS | \
+>  				 FAN_MARK_ADD | \
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index f8529a3a2923..441b3d5d9241 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -279,6 +279,7 @@ enum fsnotify_obj_type {
+>  	FSNOTIFY_OBJ_TYPE_INODE,
+>  	FSNOTIFY_OBJ_TYPE_CHILD,
+>  	FSNOTIFY_OBJ_TYPE_VFSMOUNT,
+> +	FSNOTIFY_OBJ_TYPE_SB_VIEW,
+>  	FSNOTIFY_OBJ_TYPE_SB,
+>  	FSNOTIFY_OBJ_TYPE_COUNT,
+>  	FSNOTIFY_OBJ_TYPE_DETACHED = FSNOTIFY_OBJ_TYPE_COUNT
+> @@ -287,6 +288,7 @@ enum fsnotify_obj_type {
+>  #define FSNOTIFY_OBJ_TYPE_INODE_FL	(1U << FSNOTIFY_OBJ_TYPE_INODE)
+>  #define FSNOTIFY_OBJ_TYPE_CHILD_FL	(1U << FSNOTIFY_OBJ_TYPE_CHILD)
+>  #define FSNOTIFY_OBJ_TYPE_VFSMOUNT_FL	(1U << FSNOTIFY_OBJ_TYPE_VFSMOUNT)
+> +#define FSNOTIFY_OBJ_TYPE_SB_VIEW_FL	(1U << FSNOTIFY_OBJ_TYPE_SB_VIEW)
+>  #define FSNOTIFY_OBJ_TYPE_SB_FL		(1U << FSNOTIFY_OBJ_TYPE_SB)
+>  #define FSNOTIFY_OBJ_ALL_TYPES_MASK	((1U << FSNOTIFY_OBJ_TYPE_COUNT) - 1)
+>  
+> @@ -403,9 +405,30 @@ struct fsnotify_mark {
+>  #define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY	0x01
+>  #define FSNOTIFY_MARK_FLAG_ALIVE		0x02
+>  #define FSNOTIFY_MARK_FLAG_ATTACHED		0x04
+> +#define FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD		0x08
+>  	unsigned int flags;		/* flags [mark->lock] */
+>  };
+>  
+> +/*
+> + * The head sb_view mark is connected to an sb objects and the rest of the
+> + * sb_view marks are connected to the head mark.
+> + * The mask on the head mark is the cumulative mask of all sb_view marks.
+> + */
+> +struct fsnotify_sb_view_mark {
+> +	struct fsnotify_mark fsn_mark;
+> +	union {
+> +		/* sb_view marks connected to this head sb mark */
+> +		struct fsnotify_mark_connector __rcu *sbv_marks;
+> +		/* mntpoint associated with this sb view mark */
+> +		struct vfsmount *mnt;
+> +	};
+> +};
+> +
+> +static inline struct fsnotify_sb_view_mark *fsnotify_sbv_mark(struct fsnotify_mark *fsn_mark)
+> +{
+> +	return container_of(fsn_mark, struct fsnotify_sb_view_mark, fsn_mark);
+> +}
+> +
+>  #ifdef CONFIG_FSNOTIFY
+>  
+>  /* called from the vfs helpers */
+> @@ -552,22 +575,31 @@ extern void fsnotify_detach_mark(struct fsnotify_mark *mark);
+>  extern void fsnotify_free_mark(struct fsnotify_mark *mark);
+>  /* Wait until all marks queued for destruction are destroyed */
+>  extern void fsnotify_wait_marks_destroyed(void);
+> -/* run all the marks in a group, and clear all of the marks attached to given object type */
+> -extern void fsnotify_clear_marks_by_group(struct fsnotify_group *group, unsigned int type);
+> +/* run all the marks in a group, and clear all of the marks by object type and flags */
+> +extern void fsnotify_clear_marks_by_group(struct fsnotify_group *group, unsigned int type,
+> +					  unsigned int flags);
+>  /* run all the marks in a group, and clear all of the vfsmount marks */
+>  static inline void fsnotify_clear_vfsmount_marks_by_group(struct fsnotify_group *group)
+>  {
+> -	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_VFSMOUNT_FL);
+> +	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_VFSMOUNT_FL, 0);
+>  }
+>  /* run all the marks in a group, and clear all of the inode marks */
+>  static inline void fsnotify_clear_inode_marks_by_group(struct fsnotify_group *group)
+>  {
+> -	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_INODE_FL);
+> +	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_INODE_FL, 0);
+> +}
+> +/* run all the marks in a group, and clear all of the sb view marks */
+> +static inline void fsnotify_clear_sb_view_marks_by_group(struct fsnotify_group *group)
+> +{
+> +	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_SB_VIEW_FL, 0);
+> +	/* Clear all sb marks associated with sb view marks */
+> +	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_SB_FL,
+> +				      FSNOTIFY_MARK_FLAG_SB_VIEW_HEAD);
+>  }
+> -/* run all the marks in a group, and clear all of the sn marks */
+> +/* run all the marks in a group, and clear all of the sb marks */
+>  static inline void fsnotify_clear_sb_marks_by_group(struct fsnotify_group *group)
+>  {
+> -	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_SB_FL);
+> +	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_SB_FL, 0);
+>  }
+>  extern void fsnotify_get_mark(struct fsnotify_mark *mark);
+>  extern void fsnotify_put_mark(struct fsnotify_mark *mark);
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index fbf9c5c7dd59..c8e43c0ed89b 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -79,6 +79,8 @@
+>  #define FAN_MARK_INODE		0x00000000
+>  #define FAN_MARK_MOUNT		0x00000010
+>  #define FAN_MARK_FILESYSTEM	0x00000100
+> +/* FS View is a subtree of a filesystem accessible from a specific mount point */
+> +#define FAN_MARK_FS_VIEW	(FAN_MARK_FILESYSTEM | FAN_MARK_MOUNT)
+>  
+>  /* Deprecated - do not use this in programs and do not add new flags here! */
+>  #define FAN_ALL_MARK_FLAGS	(FAN_MARK_ADD |\
+> -- 
+> 2.25.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
