@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DA5F2C328B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 22:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B152C328D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 22:22:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbgKXVUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 16:20:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50646 "EHLO
+        id S1731368AbgKXVVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 16:21:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731133AbgKXVUm (ORCPT
+        with ESMTP id S1731133AbgKXVVV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 16:20:42 -0500
+        Tue, 24 Nov 2020 16:21:21 -0500
 Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F25DC0613D6;
-        Tue, 24 Nov 2020 13:20:42 -0800 (PST)
-Received: by mail-qk1-x743.google.com with SMTP id i199so536598qke.5;
-        Tue, 24 Nov 2020 13:20:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5EBDC0613D6;
+        Tue, 24 Nov 2020 13:21:19 -0800 (PST)
+Received: by mail-qk1-x743.google.com with SMTP id h20so549763qkk.4;
+        Tue, 24 Nov 2020 13:21:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ev/F4l5kU0JVd8J9T+Hn7/Emi68DyGqwAl9VsbylUp0=;
-        b=ZNSLo8JoXJqjP5o+nIXl1wDfRlZM34G4UajJItZyFsuYjmXMkUKdp9TKdu4qQVAcH5
-         1UtlzvL9QAOsVwNuRmLXs7qTazgrsdlD0c9Fg5jpMS46JIBuEyExozrq6Rpy6KkznpEk
-         LK8bE886olCSw1TOZhi4r5Dvu6oUxUSyqj8CgYwDqSKsVWJ+RHfjDuv3hkDpzS8EceZD
-         HTuSBVL4noo6GQEfe1lNegiK98NcOs7S2p1t2MSFBRzQhrkn/44t1OAHb6UpUFPD3EHa
-         FTBQsVjSYGJSYiOLAEycBszTag6Jbur7U/Yzxl9519cveNmQk/zw99cBH024rHQM0vOy
-         HpHw==
+        bh=7Y3MLcmrdxWQffIhMnyKnSmG7B3ov7cDZAqFDsa+q7k=;
+        b=JkzooPxJ8GeNrayRsu98YvwsNpW2uc9rVRoj4imwYpA6JzY+Piu1EJS2IziPBdeDkF
+         Ow5qmzMcHaeZs2+oG1fSVsEAssWG0DO4F1vW/5P9q+2+DEbGyYUH1jozKg00Go0h3+ja
+         YVkgi/EGLciFHd/Iul8YpgRz7FCu1kfvXaFXbSFsbyZTqz8JAJ48o8dWwKmdI5uElByj
+         9UjvAnbnEBhxu3Tw7tEroOvSCxNENuu6nvEC1MTUGX0lcXIIF4ARzithi6KpCvnT/fAl
+         Mp0ipaM81mRq+veWggOWfzfqSyIb3Y60deO3bam/RyYuBfYbgPa2E9CAR1VR8pj1MpV8
+         kFEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=ev/F4l5kU0JVd8J9T+Hn7/Emi68DyGqwAl9VsbylUp0=;
-        b=SCVW++YQgqkL3kmZnygfBU5BbEAq5TisprmNGr7rvv3Vo2ypwWaOTUS4V3wYF8j/zy
-         c7uXumP8IpCxjFgDC67m84EJTF0VkbzJrdrb688mGfSWZ6c+icUTq2hN6YJT8EqecDMn
-         xyJGEyf9AC7Iy/ZkkrJPA3o+pUqp02K5MpEhyMvc6coeg8DrjZQwguvcwTNPtm1mzCCv
-         qNHnlDwP+5m+zcf4oazvPX2T2zcfUO96qfSuqdSgi3tXovTyPRe96uCZJxv+ggVFQ12z
-         +iQQQOsX9bo6IPwPZgml/2PPiHpQZgrjrjQAvUuJWSgIZgwC2FXSoasxdCVfXVxjbiY8
-         hfTA==
-X-Gm-Message-State: AOAM5304G34svIz7BWm4Ipp9X58tooAbk9Tq+rv4e4KqHvrx+aAOxOrQ
-        Z4PIkyQISn/X93gIDG26ltk=
-X-Google-Smtp-Source: ABdhPJxVPExCrpl6SBnHr8hh5lACFOCmcWgKuDYnGDx1xBxinXihB0MFiLxOfh+ARQAqrCZ49K/lyA==
-X-Received: by 2002:a37:7481:: with SMTP id p123mr176688qkc.424.1606252841332;
-        Tue, 24 Nov 2020 13:20:41 -0800 (PST)
+        bh=7Y3MLcmrdxWQffIhMnyKnSmG7B3ov7cDZAqFDsa+q7k=;
+        b=tqYW6H/GplPi0DfuAPOcrdaFX63IsRchs432+u1723lUqpz1hpEyQLXEn1S9o5e4IU
+         l7vljLaUSZD2Ufamo3LJrAG9n2ddwKwkYFQ7+U9nwWRp1e72e5ywIi0AyZtolI6jBqEv
+         Jr0WHLwZnjcYY8Rb3WYClSR2bukcbS7vvVMJsyuQP0AFBlKER6ZHKWBIrv2ioeTKrlcQ
+         /lreZaLGOxdJRn6I61WX+pbOGuOog1YG0/QY28vYAkNQAKqCShmWzWIQh98vSKqo1r2p
+         KNB9pB4zYlSxxk9ilxxCd/pmcgDzvu7Imq83+tGeq8Xxt4XMLgMajESTpGrX4NiWnA+N
+         aiDQ==
+X-Gm-Message-State: AOAM530lDTeOLM68sbiCGzfNAgOELSI593vn+G94W/l76j17T3yo+XJT
+        QzLJS9BE86+b3pMy1iWy3rw=
+X-Google-Smtp-Source: ABdhPJx26oBT8NwtvheSnoKT8jLyoQC45bZaDNVCxy9rquKXHNVFfdT0K9nlXQGVBdDZtOMR/OxmVA==
+X-Received: by 2002:a37:9ed3:: with SMTP id h202mr199931qke.126.1606252879118;
+        Tue, 24 Nov 2020 13:21:19 -0800 (PST)
 Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id b33sm298244qta.62.2020.11.24.13.20.40
+        by smtp.gmail.com with ESMTPSA id y44sm292925qtb.50.2020.11.24.13.21.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 13:20:40 -0800 (PST)
+        Tue, 24 Nov 2020 13:21:18 -0800 (PST)
 Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 24 Nov 2020 16:20:18 -0500
+Date:   Tue, 24 Nov 2020 16:20:56 -0500
 From:   Tejun Heo <tj@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
@@ -63,21 +63,21 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 28/45] block: simplify part_to_disk
-Message-ID: <X715EkY5mafgeJWZ@mtj.duckdns.org>
+Subject: Re: [PATCH 29/45] block: initialize struct block_device in bdev_alloc
+Message-ID: <X715OP+dR8KzH1wA@mtj.duckdns.org>
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-29-hch@lst.de>
+ <20201124132751.3747337-30-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124132751.3747337-29-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-30-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:27:34PM +0100, Christoph Hellwig wrote:
-> Now that struct hd_struct has a block_device pointer use that to
-> find the disk.
+On Tue, Nov 24, 2020 at 02:27:35PM +0100, Christoph Hellwig wrote:
+> Don't play tricks with slab constructors as bdev structures tends to not
+> get reused very much, and this makes the code a lot less error prone.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
