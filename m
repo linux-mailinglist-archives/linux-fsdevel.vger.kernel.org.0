@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 026852C274D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:29:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93F0F2C2740
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 14:29:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbgKXN2g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 08:28:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33566 "EHLO
+        id S2388098AbgKXN23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 08:28:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388014AbgKXN2e (ORCPT
+        with ESMTP id S2388090AbgKXN2Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 08:28:34 -0500
+        Tue, 24 Nov 2020 08:28:25 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436A2C0613D6;
-        Tue, 24 Nov 2020 05:28:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F67BC0617A6;
+        Tue, 24 Nov 2020 05:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=2AKcef4DY6iJcprvQynjGgbCIgh8d3+qztu8J6nwbBU=; b=ZoLAX4IygcjKDDGL+R/L/NGfMA
-        YlwR4qVUSVXjC/FQMPi9yNLQklagBSMZXN97OugbTjH0foML7tKuGRsO8QpQgajPY1ljXymAqnVGj
-        hBYSVVrFavzJRjAMnvihP4CU0J0lD++Ohhxbd0ATXtBWfXwjb/MhAMjN2LmALGIzwn1CsBVK8t7wz
-        SLIy4zz38tAxtqZlDxVQ3r1Vyfx0sAlWysmBq2CqEt2VFhQHpxjxBLAjG2dhmtEJWNshJafCuVX9Q
-        8FnIDbA6123YSNJdoCn/kvc5rA13f5YX11HXcmevu5u8KVx9s1pGUvc4r6ukRByzfoXWk785N632H
-        EJ0mLWSQ==;
+        bh=qOmzpRMb4vEzGwba4P3m5gENBKcm1ZKj8N5Pylgvbms=; b=QlVuTCTh45nrCbNvdsVoIgsOr3
+        o95XamtfFlHQdWoYLWTiXelkn0D+odqN40uheOBv3z0BV6r096cNZn1W0wS1mz+vFGmKDoLfxwB6t
+        9+zKNn1qt6dRi6yiiLqPQAL91CKDp2S6xsY83LfbwnAlo50KMLRzxrcqOmqiSsIMFl8Aw9XpdKS+R
+        WZJmPOjQKJSU2brvqFKaHLDst3ASHFCm++DZPoqCslNlR8eV59MkIXKBDS0vMEWNRPVQfY4/6dJR2
+        0yR6aoz6V/xEKpsBinRf0moR7ga9qiIpxc1qZCLa7UWzw8rxoOhDnTmEEP/Ho/mppNNW42sLXt019
+        r6XhQ5Zw==;
 Received: from [2001:4bb8:180:5443:c70:4a89:bc61:3] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1khYMY-0006VC-60; Tue, 24 Nov 2020 13:28:06 +0000
+        id 1khYMZ-0006VO-IX; Tue, 24 Nov 2020 13:28:08 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
@@ -41,9 +41,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 08/45] loop: do not call set_blocksize
-Date:   Tue, 24 Nov 2020 14:27:14 +0100
-Message-Id: <20201124132751.3747337-9-hch@lst.de>
+Subject: [PATCH 09/45] dm: simplify flush_bio initialization in __send_empty_flush
+Date:   Tue, 24 Nov 2020 14:27:15 +0100
+Message-Id: <20201124132751.3747337-10-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201124132751.3747337-1-hch@lst.de>
 References: <20201124132751.3747337-1-hch@lst.de>
@@ -54,28 +54,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-set_blocksize is used by file systems to use their preferred buffer cache
-block size.  Block drivers should not set it.
+We don't really need the struct block_device to initialize a bio.  So
+switch from using bio_set_dev to manually setting up bi_disk (bi_partno
+will always be zero and has been cleared by bio_init already).
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Mike Snitzer <snitzer@redhat.com>
 ---
- drivers/block/loop.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/md/dm.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 9a27d4f1c08aac..b42c728620c9e4 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1164,9 +1164,6 @@ static int loop_configure(struct loop_device *lo, fmode_t mode,
- 	size = get_loop_size(lo, file);
- 	loop_set_size(lo, size);
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 50541d336c719b..ab0a8335f098d9 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1422,18 +1422,12 @@ static int __send_empty_flush(struct clone_info *ci)
+ 	 */
+ 	bio_init(&flush_bio, NULL, 0);
+ 	flush_bio.bi_opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
++	flush_bio.bi_disk = ci->io->md->disk;
++	bio_associate_blkg(&flush_bio);
++
+ 	ci->bio = &flush_bio;
+ 	ci->sector_count = 0;
  
--	set_blocksize(bdev, S_ISBLK(inode->i_mode) ?
--		      block_size(inode->i_bdev) : PAGE_SIZE);
+-	/*
+-	 * Empty flush uses a statically initialized bio, as the base for
+-	 * cloning.  However, blkg association requires that a bdev is
+-	 * associated with a gendisk, which doesn't happen until the bdev is
+-	 * opened.  So, blkg association is done at issue time of the flush
+-	 * rather than when the device is created in alloc_dev().
+-	 */
+-	bio_set_dev(ci->bio, ci->io->md->bdev);
 -
- 	lo->lo_state = Lo_bound;
- 	if (part_shift)
- 		lo->lo_flags |= LO_FLAGS_PARTSCAN;
+ 	BUG_ON(bio_has_data(ci->bio));
+ 	while ((ti = dm_table_get_target(ci->map, target_nr++)))
+ 		__send_duplicate_bios(ci, ti, ti->num_flush_bios, NULL);
 -- 
 2.29.2
 
