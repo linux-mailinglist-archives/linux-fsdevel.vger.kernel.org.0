@@ -2,112 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3244E2C23F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 12:15:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DC832C242D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 12:31:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731896AbgKXLOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 06:14:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
+        id S1732865AbgKXLaC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 06:30:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgKXLOY (ORCPT
+        with ESMTP id S1732723AbgKXLaC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 06:14:24 -0500
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0B1FC0613D6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 03:14:24 -0800 (PST)
-Received: by mail-pg1-x544.google.com with SMTP id s63so7301208pgc.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 03:14:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v/sot8C2WsjzLbiXIhxi+5cp9rKmtAFXiiGvcKf+TbE=;
-        b=S510g7kb5vjSscjz2aQWVET1/qXviVXD2YCzJUVzQGY1FWvp9RWqUzYO9kykrDBSBU
-         qufXQya3b+g2T8LrFfnd/CZHuwh8CPyZvElR50o4yNB6cyYWz0cWZhcHaQWPMQ8hbEOa
-         m9UlcQXNdJSSywxcKqHN/OIHiC8/mFJLshrwTypZV3z6/WWtcQ0N4AUWnsBQkvyGn4fT
-         hRaVjfuRJQDQA/nqTO6moD3WeYsyR06s4kN+lfkBmgtXegNiM5AgRXlUWUibck8hq795
-         OehpHHbmzF8wrw4YJm2cBicnzqhlktXZRZgpAFJFxDxwu+55nF9BjzIFmk7/4IIPTjDG
-         /obQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v/sot8C2WsjzLbiXIhxi+5cp9rKmtAFXiiGvcKf+TbE=;
-        b=Gr9mN19UvyP2KfGASRMqbuw30Mb0fAuJRMtPtOPLDr96P9yEZ+7tFnH1SYsI6uEouT
-         lV3rNerpL1Oeog7zwyO79NznmOLYMl5LOLnbc5VCL+c0SK7tr/vPDgcqzdPqPOSKhU6l
-         YOBP87h3FUjafSIZBIzh1Lyqa+m4Z++W1ORIPPW1PetTNM2WDJfSAjuTGL+zFhdm5KW/
-         0Bnqqq8riiFKfjXYGjzUL0jS872TU1LdIgKAbXGASjBmOQ3kI1pgoNE8fsR3NF4cuk87
-         Q7pPVqf6z88MsvQ8fakenllN/hJSunGRFhSdd6bGCeks9fMPHS8wViKUSxU2K1R+K1dP
-         CDWQ==
-X-Gm-Message-State: AOAM533I39HUbH98rDwf5VyDQ72MuQBXpdhyUadxi3gKEPtuAYR+35eZ
-        3MgZIDc5hPlcFLbTW3v9UXmyag0dsrmBwL2zKfU5pg==
-X-Google-Smtp-Source: ABdhPJwZQyY7kH8gIqzhnKBbLHHF3RPAiMy6aiswptBAfQVUw6PtBUQ54ClI+tM+sA0E0N7Y9Z5aGZQA2c9JBp3BKdU=
-X-Received: by 2002:a17:90b:941:: with SMTP id dw1mr4338471pjb.147.1606216464411;
- Tue, 24 Nov 2020 03:14:24 -0800 (PST)
+        Tue, 24 Nov 2020 06:30:02 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320A9C0613D6;
+        Tue, 24 Nov 2020 03:30:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZZ2l4IESKUU682BRulh2Bd5uLxUPUcTi214dKXSiVxA=; b=ndo6Ljx/trPHysvjVeLBFgsGLR
+        +iCJhVTS60wRMqIzm5JXdrdKHX1JCpTJwGLcjmpVB6UY6CqXg7v8MwyZR1HdmdiO0vVXPEqs95sCL
+        d/ap4KZJvOiodxa3+XsJRJ0JnIdnL2fg5m/kz4L3D+7ipz0XYCgnvY8NAzYdJldM8zW4ErZ+pq4iM
+        G4uzgxHsrRF6WcM2ammZh51pCvKwokvQjaK3ylMCmuoTJq1xrDW/hzoiRivWCHBRS3jZPjsOggLd1
+        suI0Nli39LjgmjdcnUg2Wuh17xNPYipwrMORYzIJETntSnRv8r8fkv3twBp4Ysp5ib5V7mCMTGaUP
+        35MHHi1g==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1khWW9-0007Pq-8M; Tue, 24 Nov 2020 11:29:53 +0000
+Date:   Tue, 24 Nov 2020 11:29:53 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com, hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
+Message-ID: <20201124112953.GA27727@infradead.org>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
+ <20201110185506.GD9685@magnolia>
 MIME-Version: 1.0
-References: <20201124095259.58755-1-songmuchun@bytedance.com>
- <20201124095259.58755-8-songmuchun@bytedance.com> <20201124102441.GA24718@linux>
-In-Reply-To: <20201124102441.GA24718@linux>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 24 Nov 2020 19:13:47 +0800
-Message-ID: <CAMZfGtVRywVmfWSLPwy4HFPa8O9--Acx+Tsd+tiJa3U3gwF-sQ@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v6 07/16] x86/mm/64: Disable PMD page
- mapping of vmemmap
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
-        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de,
-        Mina Almasry <almasrymina@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201110185506.GD9685@magnolia>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 6:24 PM Oscar Salvador <osalvador@suse.de> wrote:
->
-> On Tue, Nov 24, 2020 at 05:52:50PM +0800, Muchun Song wrote:
-> > If we enable the CONFIG_HUGETLB_PAGE_FREE_VMEMMAP, we can just
-> > disbale PMD page mapping of vmemmap to simplify the code. In this
-> > case, we do not need complex code doing vmemmap page table
-> > manipulation. This is a way to simply the first version of this
-> > patch series. In the future, we can add some code doing page table
-> > manipulation.
->
-> IIRC, CONFIG_HUGETLB_PAGE_FREE_VMEMMAP was supposed to be enabled by default,
-> right?
-> And we would control whether we __really__ want to this by a boot option,
-> which was disabled by default?
->
-> If you go for populating the memmap with basepages by checking
-> CONFIG_HUGETLB_PAGE_FREE_VMEMMAP, would not everybody, even the ones that
-> did not enable this by the boot option be affected?
+On Tue, Nov 10, 2020 at 10:55:06AM -0800, Darrick J. Wong wrote:
+> When we're wanting to use a ZONE_APPEND command, the @iomap structure
+> has to have IOMAP_F_ZONE_APPEND set in iomap->flags, iomap->type is set
+> to IOMAP_MAPPED, but what should iomap->addr be set to?
+> 
+> I gather from what I see in zonefs and the relevant NVME proposal that
+> iomap->addr should be set to the (byte) address of the zone we want to
+> append to?  And if we do that, then bio->bi_iter.bi_sector will be set
+> to sector address of iomap->addr, right?
 
-Yeah, this should be improved. We should enable the basepage mapping
-of vmemmap only when this feature is enabled via boot command line.
-I will apply the suggestions mentioned by Barry. Thanks.
+Yes.
 
->
-> --
-> Oscar Salvador
-> SUSE L3
+> Then when the IO completes, the block layer sets bio->bi_iter.bi_sector
+> to wherever the drive told it that it actually wrote the bio, right?
 
+Yes.
 
+> If that's true, then that implies that need_zeroout must always be false
+> for an append operation, right?  Does that also mean that the directio
+> request has to be aligned to an fs block and not just the sector size?
 
--- 
-Yours,
-Muchun
+I think so, yes.
+
+> Can userspace send a directio append that crosses a zone boundary?  If
+> so, what happens if a direct append to a lower address fails but a
+> direct append to a higher address succeeds?
+
+Userspace doesn't know about zone boundaries.  It can send I/O larger
+than a zone, but the file system has to split it into multiple I/Os
+just like when it has to cross and AG boundary in XFS.
+
+> I'm also vaguely wondering how to communicate the write location back to
+> the filesystem when the bio completes?  btrfs handles the bio completion
+> completely so it doesn't have a problem, but for other filesystems
+> (cough future xfs cough) either we'd have to add a new callback for
+> append operations; or I guess everyone could hook the bio endio.
+> 
+> Admittedly that's not really your problem, and for all I know hch is
+> already working on this.
+
+I think any non-trivial file system needs to override the bio completion
+handler for writes anyway, so this seems reasonable.  It might be worth
+documenting, though.
