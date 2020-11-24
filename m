@@ -2,142 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 426A82C1CEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 05:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA75D2C1D2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 06:00:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbgKXEhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Nov 2020 23:37:51 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42594 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729212AbgKXEhv (ORCPT
+        id S1726725AbgKXE7M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Nov 2020 23:59:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbgKXE7M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Nov 2020 23:37:51 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id D57A11F4481C
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Gao Xiang <hsiangkao@redhat.com>,
-        Daniel Rosenberg <drosen@google.com>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Chao Yu <chao@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, kernel-team@android.com
-Subject: Re: [PATCH v4 2/3] fscrypt: Have filesystems handle their d_ops
-Organization: Collabora
-References: <20201119060904.463807-1-drosen@google.com>
-        <20201119060904.463807-3-drosen@google.com>
-        <20201122051218.GA2717478@xiangao.remote.csb>
-        <X7w9AO0x8vG85JQU@sol.localdomain>
-Date:   Mon, 23 Nov 2020 23:37:45 -0500
-In-Reply-To: <X7w9AO0x8vG85JQU@sol.localdomain> (Eric Biggers's message of
-        "Mon, 23 Nov 2020 14:51:44 -0800")
-Message-ID: <877dqbpdye.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Mon, 23 Nov 2020 23:59:12 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9EC2C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 20:59:11 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id j10so8114096lja.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 20:59:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=39gr2tFdgeuXdCwWbn22GRnP3K3VvibhIlGf9k17rGw=;
+        b=SwaVIz6ZuT6iXE5tagOrwT7N6KNmmSkcEsDFfOdmzj5yjFEuDkdXhaHbzf22ipogzf
+         zWRWhpolqbEMbnZmb7w8SY8YssaOfvRbra2P6MvkDrdQIcceCNS8eCPycSxvqCyBE/Wt
+         Aogcb79k9z8ri+jJ6nmyXvkP8hv8F792ZSl3g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=39gr2tFdgeuXdCwWbn22GRnP3K3VvibhIlGf9k17rGw=;
+        b=RI37azlJMgzV6SEBkNAfgltUAbEg38SP4rp73jYzCDJMOMFc84D4Vrh17ZG++lpOKF
+         xrO0tH0bF/USfEE0uV1dnTzqRZl2H0q+xk05ONEmy/em6y1riOektwjQTF/6S+y6jabE
+         jcM9kHjiRm7LWYjC+tvR+AL+m7SqxqlxwmX3yZn7p/185ZU0x9BxIs0/k9uBynXyEeYQ
+         X1OM66AuvkUjaZOHgTtyEFfITEYhp1dzYbCWRh3wqqjKDddmK7Z1iGF2gMNtlUWHRAha
+         pSF39tGyPG2Usojaz9QwDcxe0KE+5wwwjEHhnEbEfyVe5TI/FgAXF16FXn9NTlw9UYN4
+         cgJg==
+X-Gm-Message-State: AOAM5332cPy+X8+C1lEruPf+5tbniel7R4/lAGVkO6udzfQgtC3QEl3T
+        +RFzTvCq4EXSJZQsDQmRi1+qlQZ1pYlZCg==
+X-Google-Smtp-Source: ABdhPJypaHa1pcaaPPs6Re5z4ht9BWDXu2fkrNP/C5O3xHR1nnDeSU3yuhAUUCmrrTtLFWhz0FOBWw==
+X-Received: by 2002:a2e:904b:: with SMTP id n11mr1154112ljg.301.1606193950041;
+        Mon, 23 Nov 2020 20:59:10 -0800 (PST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id i13sm1655536lfo.240.2020.11.23.20.59.09
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Nov 2020 20:59:09 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id b17so20508689ljf.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 20:59:09 -0800 (PST)
+X-Received: by 2002:a19:ae06:: with SMTP id f6mr1057406lfc.133.1606193616810;
+ Mon, 23 Nov 2020 20:53:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <000000000000d3a33205add2f7b2@google.com> <20200828100755.GG7072@quack2.suse.cz>
+ <20200831100340.GA26519@quack2.suse.cz> <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com>
+ <alpine.LSU.2.11.2011231928140.4305@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2011231928140.4305@eggly.anvils>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 Nov 2020 20:53:20 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whYO5v09E8oHoYQDn7qqV0hBu713AjF+zxJ9DCr1+WOtQ@mail.gmail.com>
+Message-ID: <CAHk-=whYO5v09E8oHoYQDn7qqV0hBu713AjF+zxJ9DCr1+WOtQ@mail.gmail.com>
+Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
-
-> On Sun, Nov 22, 2020 at 01:12:18PM +0800, Gao Xiang wrote:
->> Hi all,
->> 
->> On Thu, Nov 19, 2020 at 06:09:03AM +0000, Daniel Rosenberg wrote:
->> > This shifts the responsibility of setting up dentry operations from
->> > fscrypt to the individual filesystems, allowing them to have their own
->> > operations while still setting fscrypt's d_revalidate as appropriate.
->> > 
->> > Most filesystems can just use generic_set_encrypted_ci_d_ops, unless
->> > they have their own specific dentry operations as well. That operation
->> > will set the minimal d_ops required under the circumstances.
->> > 
->> > Since the fscrypt d_ops are set later on, we must set all d_ops there,
->> > since we cannot adjust those later on. This should not result in any
->> > change in behavior.
->> > 
->> > Signed-off-by: Daniel Rosenberg <drosen@google.com>
->> > Acked-by: Eric Biggers <ebiggers@google.com>
->> > ---
->> 
->> ...
->> 
->> >  extern const struct file_operations ext4_dir_operations;
->> >  
->> > -#ifdef CONFIG_UNICODE
->> > -extern const struct dentry_operations ext4_dentry_ops;
->> > -#endif
->> > -
->> >  /* file.c */
->> >  extern const struct inode_operations ext4_file_inode_operations;
->> >  extern const struct file_operations ext4_file_operations;
->> > diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
->> > index 33509266f5a0..12a417ff5648 100644
->> > --- a/fs/ext4/namei.c
->> > +++ b/fs/ext4/namei.c
->> > @@ -1614,6 +1614,7 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
->> >  	struct buffer_head *bh;
->> >  
->> >  	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
->> > +	generic_set_encrypted_ci_d_ops(dentry);
->> 
->> One thing might be worth noticing is that currently overlayfs might
->> not work properly when dentry->d_sb->s_encoding is set even only some
->> subdirs are CI-enabled but the others not, see generic_set_encrypted_ci_d_ops(),
->> ovl_mount_dir_noesc => ovl_dentry_weird()
->> 
->> For more details, see:
->> https://android-review.googlesource.com/c/device/linaro/hikey/+/1483316/2#message-2e1f6ab0010a3e35e7d8effea73f60341f84ee4d
->> 
->> Just found it by chance (and not sure if it's vital for now), and
->> a kind reminder about this.
->> 
+On Mon, Nov 23, 2020 at 8:07 PM Hugh Dickins <hughd@google.com> wrote:
 >
-> Yes, overlayfs doesn't work on ext4 or f2fs filesystems that have the casefold
-> feature enabled, regardless of which directories are actually using casefolding.
-> This is an existing limitation which was previously discussed, e.g. at
-> https://lkml.kernel.org/linux-ext4/CAOQ4uxgPXBazE-g2v=T_vOvnr_f0ZHyKYZ4wvn7A3ePatZrhnQ@mail.gmail.com/T/#u
-> and
-> https://lkml.kernel.org/linux-ext4/20191203051049.44573-1-drosen@google.com/T/#u.
+> Then on crashing a second time, realized there's a stronger reason against
+> that approach.  If my testing just occasionally crashes on that check,
+> when the page is reused for part of a compound page, wouldn't it be much
+> more common for the page to get reused as an order-0 page before reaching
+> wake_up_page()?  And on rare occasions, might that reused page already be
+> marked PageWriteback by its new user, and already be waited upon?  What
+> would that look like?
 >
-> Gabriel and Daniel, is one of you still looking into fixing this?
+> It would look like BUG_ON(PageWriteback) after wait_on_page_writeback()
+> in write_cache_pages() (though I have never seen that crash myself).
 
-Eric,
+So looking more at the patch, I started looking at this part:
 
-overlayfs+CI has been on my todo list for over a year now, as I have a
-customer who wants to mix them, but I haven't been able to get to it.
-I'm sure I won't be able to get to it until mid next year, so if anyone
-wants to tackle it, feel free to do it.
+> +       writeback = TestClearPageWriteback(page);
+> +       /* No need for smp_mb__after_atomic() after TestClear */
+> +       waiters = PageWaiters(page);
+> +       if (waiters) {
+> +               /*
+> +                * Writeback doesn't hold a page reference on its own, relying
+> +                * on truncation to wait for the clearing of PG_writeback.
+> +                * We could safely wake_up_page_bit(page, PG_writeback) here,
+> +                * while holding i_pages lock: but that would be a poor choice
+> +                * if the page is on a long hash chain; so instead choose to
+> +                * get_page+put_page - though atomics will add some overhead.
+> +                */
+> +               get_page(page);
+> +       }
 
+and thinking more about this, my first reaction was "but that has the
+same race, just a smaller window".
 
-> IIUC, the current thinking is that when the casefolding flag is set on
-> a directory, it's too late to assign dentry_operations at that point.
+And then reading the comment more, I realize you relied on the i_pages
+lock, and that this odd ordering was to avoid the possible latency.
 
-yes
+But what about the non-mapping case? I'm not sure how that happens,
+but this does seem very fragile.
 
-> But what if all child dentries (which must be negative) are
-> invalidated first,
+I'm wondering why you didn't want to just do the get_page()
+unconditionally and early. Is avoiding the refcount really such a big
+optimization?
 
-I recall I tried this approach when I quickly looked over this last
-year, but my limited vfs knowledge prevented me from getting something
-working.  But it makes sense.
-
-> and also the filesystem forbids setting the casefold flag on encrypted
-> directories that are accessed via a no-key name (so that
-> fscrypt_d_revalidate isn't needed -- i.e. the directory would only go
-> from "no d_ops" to "generic_ci_dentry_ops", not from
-> "generic_encrypted_dentry_ops" to "generic_encrypted_ci_dentry_ops")?
-
-
-
-
--- 
-Gabriel Krisman Bertazi
+            Linus
