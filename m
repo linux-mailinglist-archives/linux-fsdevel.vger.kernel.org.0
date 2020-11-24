@@ -2,162 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 604802C1E80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:50:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C43082C1EBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 08:17:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbgKXGtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 01:49:50 -0500
-Received: from m42-4.mailgun.net ([69.72.42.4]:45374 "EHLO m42-4.mailgun.net"
+        id S1729968AbgKXHQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 02:16:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39578 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729856AbgKXGtu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 01:49:50 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1606200589; h=References: In-Reply-To: References:
- In-Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=UDO+Y8s0zbY40OPyGLj6G8krTvl3bn+bwk439waak+c=; b=W4kM7fykYA8KS2VSxiKtwCM3oRyKZKh9Bmkk3iDJd7xuZvwgWr4C6uoJpKA1Qa2XHu114G1q
- 7oC+bbZWc1eqj6l28I/UyyMlAtUE/qMqPhYhKl0gubryoizk/6+pZ+QhEgxVFnMSGAYThHZQ
- 7c94ASp0KVkrN/tzixRL06eYGMc=
-X-Mailgun-Sending-Ip: 69.72.42.4
-X-Mailgun-Sid: WyIxOTQxNiIsICJsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZyIsICJiZTllNGEiXQ==
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 5fbcad0d1b731a5d9c07b84f (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 24 Nov 2020 06:49:49
- GMT
-Sender: cgoldswo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2C2DBC43463; Tue, 24 Nov 2020 06:49:48 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,SPF_FAIL,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
-Received: from cgoldswo-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: cgoldswo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4DEE4C43460;
-        Tue, 24 Nov 2020 06:49:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4DEE4C43460
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=cgoldswo@codeaurora.org
-From:   Chris Goldsworthy <cgoldswo@codeaurora.org>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david@redhat.com, Laura Abbott <lauraa@codeaurora.org>,
-        Chris Goldsworthy <cgoldswo@codeaurora.org>
-Subject: [PATCH] fs/buffer.c: Revoke LRU when trying to drop buffers
-Date:   Mon, 23 Nov 2020 22:49:38 -0800
-Message-Id: <1fe5d53722407a2651eeeada3a422c117041bf1d.1606194703.git.cgoldswo@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1606194703.git.cgoldswo@codeaurora.org>
-References: <cover.1606194703.git.cgoldswo@codeaurora.org>
-In-Reply-To: <cover.1606194703.git.cgoldswo@codeaurora.org>
-References: <cover.1606194703.git.cgoldswo@codeaurora.org>
+        id S1729941AbgKXHQc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 02:16:32 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id DC181AD3F;
+        Tue, 24 Nov 2020 07:16:30 +0000 (UTC)
+Subject: Re: [PATCH v10 11/41] btrfs: implement log-structured superblock for
+ ZONED mode
+To:     Anand Jain <anand.jain@oracle.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-btrfs@vger.kernel.org, dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <5aa30b45e2e29018e19e47181586f3f436759b69.1605007036.git.naohiro.aota@wdc.com>
+ <69855ff1-4737-3d4c-f191-f31f8307fe88@oracle.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <d2976430-83d3-7524-dede-fe46bda14f87@suse.de>
+Date:   Tue, 24 Nov 2020 08:16:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+MIME-Version: 1.0
+In-Reply-To: <69855ff1-4737-3d4c-f191-f31f8307fe88@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Laura Abbott <lauraa@codeaurora.org>
+On 11/24/20 7:46 AM, Anand Jain wrote:
+> On 10/11/20 7:26 pm, Naohiro Aota wrote:
+>> Superblock (and its copies) is the only data structure in btrfs which 
+>> has a
+>> fixed location on a device. Since we cannot overwrite in a sequential 
+>> write
+>> required zone, we cannot place superblock in the zone. One easy 
+>> solution is
+>> limiting superblock and copies to be placed only in conventional zones.
+>> However, this method has two downsides: one is reduced number of 
+>> superblock
+>> copies. The location of the second copy of superblock is 256GB, which 
+>> is in
+>> a sequential write required zone on typical devices in the market today.
+>> So, the number of superblock and copies is limited to be two.  Second
+>> downside is that we cannot support devices which have no conventional 
+>> zones
+>> at all.
+>>
+> 
+> 
+>> To solve these two problems, we employ superblock log writing. It uses 
+>> two
+>> zones as a circular buffer to write updated superblocks. Once the first
+>> zone is filled up, start writing into the second buffer. Then, when the
+>> both zones are filled up and before start writing to the first zone 
+>> again,
+>> it reset the first zone.
+>>
+>> We can determine the position of the latest superblock by reading write
+>> pointer information from a device. One corner case is when the both zones
+>> are full. For this situation, we read out the last superblock of each
+>> zone, and compare them to determine which zone is older.
+>>
+>> The following zones are reserved as the circular buffer on ZONED btrfs.
+>>
+>> - The primary superblock: zones 0 and 1
+>> - The first copy: zones 16 and 17
+>> - The second copy: zones 1024 or zone at 256GB which is minimum, and next
+>>    to it
+> 
+> Superblock log approach needs a non-deterministic and inconsistent
+> number of blocks to be read to find copy #0. And, to use 4K bytes
+> we are reserving a lot more space. But I don't know any better way.
+> I am just checking with you...
+> 
+> At the time of mkfs, is it possible to format the block device to
+> add conventional zones as needed to support our sb LBAs?
 
-When a buffer is added to the LRU list, a reference is taken which is
-not dropped until the buffer is evicted from the LRU list. This is the
-correct behavior, however this LRU reference will prevent the buffer
-from being dropped. This means that the buffer can't actually be dropped
-until it is selected for eviction. There's no bound on the time spent
-on the LRU list, which means that the buffer may be undroppable for
-very long periods of time. Given that migration involves dropping
-buffers, the associated page is now unmigratible for long periods of
-time as well. CMA relies on being able to migrate a specific range
-of pages, so these types of failures make CMA significantly
-less reliable, especially under high filesystem usage.
+No. The number of conventional zones (if any) are a drive characteristic 
+and one cannot assume that the number can be modified.
 
-Rather than waiting for the LRU algorithm to eventually kick out
-the buffer, explicitly remove the buffer from the LRU list when trying
-to drop it. There is still the possibility that the buffer
-could be added back on the list, but that indicates the buffer is
-still in use and would probably have other 'in use' indicates to
-prevent dropping.
+>   OR
+> For superblock zones why not reset the write pointer before the
+> transaction commit?
+> 
+A write pointer reset is equivalent to clearing the contents of the 
+zone, so we would lose the previous information there.
 
-Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
-Signed-off-by: Chris Goldsworthy <cgoldswo@codeaurora.org>
----
- fs/buffer.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+HTH.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 64564ac..1751f0b 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1471,12 +1471,48 @@ static bool has_bh_in_lru(int cpu, void *dummy)
- 	return false;
- }
- 
-+static void __evict_bh_lru(void *arg)
-+{
-+	struct bh_lru *b = &get_cpu_var(bh_lrus);
-+	struct buffer_head *bh = arg;
-+	int i;
-+
-+	for (i = 0; i < BH_LRU_SIZE; i++) {
-+		if (b->bhs[i] == bh) {
-+			brelse(b->bhs[i]);
-+			b->bhs[i] = NULL;
-+			goto out;
-+		}
-+	}
-+out:
-+	put_cpu_var(bh_lrus);
-+}
-+
-+static bool bh_exists_in_lru(int cpu, void *arg)
-+{
-+	struct bh_lru *b = per_cpu_ptr(&bh_lrus, cpu);
-+	struct buffer_head *bh = arg;
-+	int i;
-+
-+	for (i = 0; i < BH_LRU_SIZE; i++) {
-+		if (b->bhs[i] == bh)
-+			return true;
-+	}
-+
-+	return false;
-+
-+}
- void invalidate_bh_lrus(void)
- {
- 	on_each_cpu_cond(has_bh_in_lru, invalidate_bh_lru, NULL, 1);
- }
- EXPORT_SYMBOL_GPL(invalidate_bh_lrus);
- 
-+static void evict_bh_lrus(struct buffer_head *bh)
-+{
-+	on_each_cpu_cond(bh_exists_in_lru, __evict_bh_lru, bh, 1);
-+}
-+
- void set_bh_page(struct buffer_head *bh,
- 		struct page *page, unsigned long offset)
- {
-@@ -3245,8 +3281,15 @@ drop_buffers(struct page *page, struct buffer_head **buffers_to_free)
- 
- 	bh = head;
- 	do {
--		if (buffer_busy(bh))
--			goto failed;
-+		if (buffer_busy(bh)) {
-+			/*
-+			 * Check if the busy failure was due to an
-+			 * outstanding LRU reference
-+			 */
-+			evict_bh_lrus(bh);
-+			if (buffer_busy(bh))
-+				goto failed;
-+		}
- 		bh = bh->b_this_page;
- 	} while (bh != head);
- 
+Cheers,
+
+Hannes
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
