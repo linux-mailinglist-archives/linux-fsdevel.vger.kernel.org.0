@@ -2,275 +2,350 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33C392C21CE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 10:40:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9718E2C222D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 10:57:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731477AbgKXJjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 04:39:20 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:46483 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731438AbgKXJjR (ORCPT
+        id S1731326AbgKXJ4p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 04:56:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729839AbgKXJ4n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 04:39:17 -0500
-Received: by mail-io1-f71.google.com with SMTP id a2so15145681iod.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 01:39:16 -0800 (PST)
+        Tue, 24 Nov 2020 04:56:43 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369E4C0617A6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 01:56:42 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id t8so17979543pfg.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 01:56:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9irewWWAXS1K0LRQaKGUSz0xUU5ZH/1PZ5gomqdzAl0=;
+        b=s8uzRkZo6P6YfalrCih9vQKbxcMevMRf9PGLdroIygEYZ+h7MHZeMtefKxwN7wsIeo
+         LiE436OsKwVUN62ho/kt+DE+vKdsoSKKYKj41hZs1+hz5XiSnC5dWtYCyqtj6hm5PrY5
+         mwdGB4rHrFCZ+ifAX90+bZlQCfPBWcVrV8Ry3SZLvLnI2/cawzrlUOYq0xkWauz2smsS
+         ZgoJBzFevpRaYw6yrmDkEHQPR2YppEyUJFak2VGhBRzsu+52XRB9FmsfK6GAyOLfB9p/
+         ptnAwR7xHaj3ufxh+k++RcBaHMQKcCN9q4vCfjhErguOaBvl4Cs5M5hgSsDCmliQV92W
+         z6vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=oc7pctaeQ/N0g9YU6MzeOraJ/pitkOzDnbqGSnGuQfI=;
-        b=Nk/501QAHsAUn7DRVYJ1V4zIUn8NNNPlDyLqE5ixr7+fdGKb32xSezo+ZeIHIFayre
-         IT2n6EoOIKdqG1oIHyYIlh0vt6vV+8SxdNIfyAyQAZCyYLpIeCqyMxaywqaYnKsYPT36
-         gtQhdJavfFGg7sOeNDOKoVRhDogPv6nHp0p0rPXKVUq3Q2p0m/dPgauaT6jwyFK//V+c
-         Ndg7cGFI/f5fIGENu/9wpkPbkzdlf0u3eKZ6VuZTUMsjNuhqsu9hwNvC/xzgYJee68xN
-         uCIUyn3kc+BcXfMNXXdAs3lecrqSDjfNtN73U3DWFGJglIrsdZI98MmdbvPJA+Xjy11u
-         Yu2Q==
-X-Gm-Message-State: AOAM531/DyRCjSf2wQMcgdKRbtoJr4OidaHfRG4lhETl/qepHRsB5s99
-        kVmCP6k3iYLV10eGe7NWd3bCM/TUZQIfezvXFLg7o7Hg9opv
-X-Google-Smtp-Source: ABdhPJxjj7PeAqElqFdgdrGvoF64/zchsL9gMRulbX5Dj591+VmJoYT7iJBCOcW244LVqVoZBdjYGqi9slSyeUQYn3/3T+Sd5BxG
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9irewWWAXS1K0LRQaKGUSz0xUU5ZH/1PZ5gomqdzAl0=;
+        b=BvMoKuVmAW7lopdlTxJ0yE72LAyEUl46X3oP5Z3amiBbKUdATQJqPFopmmRHdyRqQE
+         VjozYhL978MKQy3XnwuAf8dEFC9uVm1KO5kRyVqRZnUq8cIlisXRp/eseVCVkiFh/42h
+         zjVhkfS8TjHME1PuOSrFk2IFXoc7W0PZh8Hx5mkAv4SRXUorIAc9gz/Q5XI+f2NotsYH
+         QiYCLSAS1vJeHf5e6LC/pgjsPmJ9MkipSwPX8Hd4tz0te6zW5hlZMO1ijnKPbgxNgweW
+         x/dqR+wqGNqfLUR1KpYBDwNSJF11GmXQArBDH++HvDpnOmWpDNdtdxt7zujq851kXBHz
+         wMtQ==
+X-Gm-Message-State: AOAM532hpEhAF+nGqx/Hp1n6QzhsAt4RKUwE/kbOmrYcUTFn/1aHprKE
+        OXZ+lMbXQsH0S2Qu9W9AkKHljQ==
+X-Google-Smtp-Source: ABdhPJwNOmCsOjovTAjJweAtgOY9ULwqs7pdmcDSFGJ2LlermRMQH2lO086ud+B3i74yjWbTR3zKXQ==
+X-Received: by 2002:a17:90b:154:: with SMTP id em20mr3989991pjb.114.1606211801436;
+        Tue, 24 Nov 2020 01:56:41 -0800 (PST)
+Received: from localhost.localdomain ([103.136.220.120])
+        by smtp.gmail.com with ESMTPSA id t20sm2424562pjg.25.2020.11.24.01.56.31
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Nov 2020 01:56:40 -0800 (PST)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com, willy@infradead.org,
+        osalvador@suse.de, mhocko@suse.com, song.bao.hua@hisilicon.com
+Cc:     duanxiongchun@bytedance.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v6 00/16] Free some vmemmap pages of hugetlb page
+Date:   Tue, 24 Nov 2020 17:52:43 +0800
+Message-Id: <20201124095259.58755-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-X-Received: by 2002:a02:6c09:: with SMTP id w9mr3533269jab.135.1606210755947;
- Tue, 24 Nov 2020 01:39:15 -0800 (PST)
-Date:   Tue, 24 Nov 2020 01:39:15 -0800
-In-Reply-To: <0000000000002bea4605b4a5931d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008af43105b4d71509@google.com>
-Subject: Re: INFO: task hung in __io_uring_files_cancel
-From:   syzbot <syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, hdanton@sina.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, mingo@redhat.com,
-        peterz@infradead.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+Hi all,
 
-HEAD commit:    62918e6f Add linux-next specific files for 20201123
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16efe369500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c3a457d7bf812a8
-dashboard link: https://syzkaller.appspot.com/bug?extid=c0d52d0b3c0c3ffb9525
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153ffcae500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b2120d500000
+This patch series will free some vmemmap pages(struct page structures)
+associated with each hugetlbpage when preallocated to save memory.
 
-The issue was bisected to:
+In order to reduce the difficulty of the first version of code review.
+From this version, we disable PMD/huge page mapping of vmemmap if this
+feature was enabled. This accutualy eliminate a bunch of the complex code
+doing page table manipulation. When this patch series is solid, we cam add
+the code of vmemmap page table manipulation in the future.
 
-commit 4d004099a668c41522242aa146a38cc4eb59cb1e
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Fri Oct 2 09:04:21 2020 +0000
+The struct page structures (page structs) are used to describe a physical
+page frame. By default, there is a one-to-one mapping from a page frame to
+it's corresponding page struct.
 
-    lockdep: Fix lockdep recursion
+The HugeTLB pages consist of multiple base page size pages and is supported
+by many architectures. See hugetlbpage.rst in the Documentation directory
+for more details. On the x86 architecture, HugeTLB pages of size 2MB and 1GB
+are currently supported. Since the base page size on x86 is 4KB, a 2MB
+HugeTLB page consists of 512 base pages and a 1GB HugeTLB page consists of
+4096 base pages. For each base page, there is a corresponding page struct.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10401726500000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12401726500000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14401726500000
+Within the HugeTLB subsystem, only the first 4 page structs are used to
+contain unique information about a HugeTLB page. HUGETLB_CGROUP_MIN_ORDER
+provides this upper limit. The only 'useful' information in the remaining
+page structs is the compound_head field, and this field is the same for all
+tail pages.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c0d52d0b3c0c3ffb9525@syzkaller.appspotmail.com
-Fixes: 4d004099a668 ("lockdep: Fix lockdep recursion")
+By removing redundant page structs for HugeTLB pages, memory can returned to
+the buddy allocator for other uses.
 
-INFO: task syz-executor136:9222 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc4-next-20201123-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor136 state:D stack:28952 pid: 9222 ppid:  8504 flags:0x00004000
-Call Trace:
- context_switch kernel/sched/core.c:4316 [inline]
- __schedule+0x896/0x2050 kernel/sched/core.c:5067
- schedule+0xcf/0x270 kernel/sched/core.c:5146
- io_uring_cancel_files fs/io_uring.c:8745 [inline]
- io_uring_cancel_task_requests fs/io_uring.c:8797 [inline]
- __io_uring_files_cancel+0xc4d/0x14b0 fs/io_uring.c:8893
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- exit_files+0xe4/0x170 fs/file.c:456
- do_exit+0xb61/0x29f0 kernel/exit.c:818
- do_group_exit+0x125/0x310 kernel/exit.c:920
- get_signal+0x3ec/0x2010 kernel/signal.c:2770
- arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
- handle_signal_work kernel/entry/common.c:144 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
- exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:198
- syscall_exit_to_user_mode+0x36/0x260 kernel/entry/common.c:275
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x446c69
-RSP: 002b:00007f96da049da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dbc58 RCX: 0000000000446c69
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc58
-RBP: 00000000006dbc50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc5c
-R13: 0000000000000004 R14: 00007f96da04a9c0 R15: 000000000000002d
-INFO: task syz-executor136:9685 blocked for more than 143 seconds.
-      Not tainted 5.10.0-rc4-next-20201123-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor136 state:D stack:28712 pid: 9685 ppid:  8502 flags:0x00004000
-Call Trace:
- context_switch kernel/sched/core.c:4316 [inline]
- __schedule+0x896/0x2050 kernel/sched/core.c:5067
- schedule+0xcf/0x270 kernel/sched/core.c:5146
- io_uring_cancel_files fs/io_uring.c:8745 [inline]
- io_uring_cancel_task_requests fs/io_uring.c:8797 [inline]
- __io_uring_files_cancel+0xc4d/0x14b0 fs/io_uring.c:8893
- io_uring_files_cancel include/linux/io_uring.h:51 [inline]
- exit_files+0xe4/0x170 fs/file.c:456
- do_exit+0xb61/0x29f0 kernel/exit.c:818
- do_group_exit+0x125/0x310 kernel/exit.c:920
- get_signal+0x3ec/0x2010 kernel/signal.c:2770
- arch_do_signal_or_restart+0x2a8/0x1eb0 arch/x86/kernel/signal.c:811
- handle_signal_work kernel/entry/common.c:144 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
- exit_to_user_mode_prepare+0x124/0x200 kernel/entry/common.c:198
- syscall_exit_to_user_mode+0x36/0x260 kernel/entry/common.c:275
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x446c69
-RSP: 002b:00007f96da049da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dbc58 RCX: 0000000000446c69
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc58
-RBP: 00000000006dbc50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc5c
-R13: 0000000000000004 R14: 00007f96da04a9c0 R15: 000000000000002d
+When the system boot up, every 2M HugeTLB has 512 struct page structs which
+size is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
 
-Showing all locks held in the system:
-2 locks held by kworker/u4:3/102:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffff8880b9f20088 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x305/0x440 kernel/sched/psi.c:833
-1 lock held by khungtaskd/1644:
- #0: ffffffff8b339e60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6254
-1 lock held by in:imklog/8173:
- #0: ffff8880209594f0 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:932
-2 locks held by kworker/u4:0/8560:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc900018efda8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:11/28297:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90003797da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:13/28309:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc900037b7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:15/28331:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90003567da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:16/28341:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90003987da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:17/28345:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc900038f7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:18/28349:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc900039b7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:19/28360:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc900038e7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:20/28362:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc900039d7da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-2 locks held by kworker/u4:21/28363:
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic64_set include/asm-generic/atomic-instrumented.h:856 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: atomic_long_set include/asm-generic/atomic-long.h:41 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_data kernel/workqueue.c:616 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: set_work_pool_and_clear_pending kernel/workqueue.c:643 [inline]
- #0: ffff888010069138 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x821/0x15a0 kernel/workqueue.c:2243
- #1: ffffc90003787da8 ((work_completion)(&ctx->exit_work)){+.+.}-{0:0}, at: process_one_work+0x854/0x15a0 kernel/workqueue.c:2247
-3 locks held by syz-executor136/28466:
+    HugeTLB                  struct pages(8 pages)         page frame(8 pages)
+ +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+ |           |                     |     0     | -------------> |     0     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     1     | -------------> |     1     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     2     | -------------> |     2     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     3     | -------------> |     3     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     4     | -------------> |     4     |
+ |    2MB    |                     +-----------+                +-----------+
+ |           |                     |     5     | -------------> |     5     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     6     | -------------> |     6     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     7     | -------------> |     7     |
+ |           |                     +-----------+                +-----------+
+ |           |
+ |           |
+ |           |
+ +-----------+
 
-=============================================
+The value of page->compound_head is the same for all tail pages. The first
+page of page structs (page 0) associated with the HugeTLB page contains the 4
+page structs necessary to describe the HugeTLB. The only use of the remaining
+pages of page structs (page 1 to page 7) is to point to page->compound_head.
+Therefore, we can remap pages 2 to 7 to page 1. Only 2 pages of page structs
+will be used for each HugeTLB page. This will allow us to free the remaining
+6 pages to the buddy allocator.
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 1644 Comm: khungtaskd Not tainted 5.10.0-rc4-next-20201123-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x107/0x163 lib/dump_stack.c:120
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x230 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
- watchdog+0xd89/0xf30 kernel/hung_task.c:338
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 28469 Comm: io_wqe_worker-0 Not tainted 5.10.0-rc4-next-20201123-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:get_current arch/x86/include/asm/current.h:15 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x0/0x60 kernel/kcov.c:196
-Code: fc ff ff 48 c7 c7 c0 01 39 8b 48 89 54 24 08 48 89 34 24 e8 d2 7a 60 02 48 8b 54 24 08 48 8b 34 24 e9 a1 fd ff ff 0f 1f 40 00 <65> 48 8b 14 25 00 f0 01 00 65 8b 05 90 64 91 7e a9 00 01 ff 00 48
-RSP: 0018:ffffc90003e3fc48 EFLAGS: 00000046
-RAX: 0000000000000000 RBX: ffffc90003e3fd58 RCX: ffffffff81600e1b
-RDX: 0000000000000000 RSI: ffff888147e63580 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffffffff8ced564f
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffffc90003e3fd60 R14: 0000000000000293 R15: ffff888147e1c800
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002001d06c CR3: 0000000013499000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __hlist_del include/linux/list.h:835 [inline]
- detach_timer kernel/time/timer.c:825 [inline]
- detach_if_pending+0xee/0x470 kernel/time/timer.c:844
- try_to_del_timer_sync+0xaa/0x110 kernel/time/timer.c:1232
- del_timer_sync+0xf5/0x160 kernel/time/timer.c:1378
- schedule_timeout+0x150/0x250 kernel/time/timer.c:1879
- io_wqe_worker+0x5b4/0x10e0 fs/io-wq.c:625
- kthread+0x3b1/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+Here is how things look after remapping.
+
+    HugeTLB                  struct pages(8 pages)         page frame(8 pages)
+ +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+ |           |                     |     0     | -------------> |     0     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     1     | -------------> |     1     |
+ |           |                     +-----------+                +-----------+
+ |           |                     |     2     | ----------------^ ^ ^ ^ ^ ^
+ |           |                     +-----------+                   | | | | |
+ |           |                     |     3     | ------------------+ | | | |
+ |           |                     +-----------+                     | | | |
+ |           |                     |     4     | --------------------+ | | |
+ |    2MB    |                     +-----------+                       | | |
+ |           |                     |     5     | ----------------------+ | |
+ |           |                     +-----------+                         | |
+ |           |                     |     6     | ------------------------+ |
+ |           |                     +-----------+                           |
+ |           |                     |     7     | --------------------------+
+ |           |                     +-----------+
+ |           |
+ |           |
+ |           |
+ +-----------+
+
+When a HugeTLB is freed to the buddy system, we should allocate 6 pages for
+vmemmap pages and restore the previous mapping relationship.
+
+Apart from 2MB HugeTLB page, we also have 1GB HugeTLB page. It is similar
+to the 2MB HugeTLB page. We also can use this approach to free the vmemmap
+pages.
+
+In this case, for the 1GB HugeTLB page, we can save 4088 pages(There are
+4096 pages for struct page structs, we reserve 2 pages for vmemmap and 8
+pages for page tables. So we can save 4088 pages). This is a very substantial
+gain. On our server, run some SPDK/QEMU applications which will use 1024GB
+hugetlbpage. With this feature enabled, we can save ~16GB(1G hugepage)/~11GB
+(2MB hugepage, the worst case is 10GB while the best is 12GB) memory.
+
+Because there are vmemmap page tables reconstruction on the freeing/allocating
+path, it increases some overhead. Here are some overhead analysis.
+
+1) Allocating 10240 2MB hugetlb pages.
+
+   a) With this patch series applied:
+   # time echo 10240 > /proc/sys/vm/nr_hugepages
+
+   real     0m0.166s
+   user     0m0.000s
+   sys      0m0.166s
+
+   # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; } kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
+
+   @latency:
+   [8K, 16K)           8360 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [16K, 32K)          1868 |@@@@@@@@@@@                                         |
+   [32K, 64K)            10 |                                                    |
+   [64K, 128K)            2 |                                                    |
+
+   b) Without this patch series:
+   # time echo 10240 > /proc/sys/vm/nr_hugepages
+
+   real     0m0.066s
+   user     0m0.000s
+   sys      0m0.066s
+
+   # bpftrace -e 'kprobe:alloc_fresh_huge_page { @start[tid] = nsecs; } kretprobe:alloc_fresh_huge_page /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
+
+   @latency:
+   [4K, 8K)           10176 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [8K, 16K)             62 |                                                    |
+   [16K, 32K)             2 |                                                    |
+
+   Summarize: this feature is about ~2x slower than before.
+
+2) Freeing 10240 2MB hugetlb pages.
+
+   a) With this patch series applied:
+   # time echo 0 > /proc/sys/vm/nr_hugepages
+
+   real     0m0.004s
+   user     0m0.000s
+   sys      0m0.002s
+
+   # bpftrace -e 'kprobe:__free_hugepage { @start[tid] = nsecs; } kretprobe:__free_hugepage /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
+
+   @latency:
+   [16K, 32K)         10240 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+
+   b) Without this patch series:
+   # time echo 0 > /proc/sys/vm/nr_hugepages
+
+   real     0m0.077s
+   user     0m0.001s
+   sys      0m0.075s
+
+   # bpftrace -e 'kprobe:__free_hugepage { @start[tid] = nsecs; } kretprobe:__free_hugepage /@start[tid]/ { @latency = hist(nsecs - @start[tid]); delete(@start[tid]); }'
+   Attaching 2 probes...
+
+   @latency:
+   [4K, 8K)            9950 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+   [8K, 16K)            287 |@                                                   |
+   [16K, 32K)             3 |                                                    |
+
+   Summarize: The overhead of __free_hugepage is about ~2-4x slower than before.
+              But according to the allocation test above, I think that here is
+	      also ~2x slower than before.
+
+              But why the 'real' time of patched is smaller than before? Because
+	      In this patch series, the freeing hugetlb is asynchronous(through
+	      kwoker).
+
+Although the overhead has increased, the overhead is not significant. Like Mike
+said, "However, remember that the majority of use cases create hugetlb pages at
+or shortly after boot time and add them to the pool. So, additional overhead is
+at pool creation time. There is no change to 'normal run time' operations of
+getting a page from or returning a page to the pool (think page fault/unmap)".
+
+Todo:
+  1. Free all of the tail vmemmap pages
+     Now for the 2MB HugrTLB page, we only free 6 vmemmap pages. we really can
+     free 7 vmemmap pages. In this case, we can see 8 of the 512 struct page
+     structures has beed set PG_head flag. If we can adjust compound_head()
+     slightly and make compound_head() return the real head struct page when
+     the parameter is the tail struct page but with PG_head flag set.
+
+     In order to make the code evolution route clearer. This feature can can be
+     a separate patch after this patchset is solid.
+  2. Support for other architectures (e.g. aarch64).
+  3. Enable PMD/huge page mapping of vmemmap even if this feature was enabled.
+
+  Changelog in v6:
+  1. Disable PMD/huge page mapping of vmemmap if this feature was enabled.
+  2. Simplify the first version code.
+
+  Changelog in v5:
+  1. Rework somme comments and code in the [PATCH v4 04/21] and [PATCH v4 05/21].
+     Thanks to Mike and Oscar's suggestions.
+
+  Changelog in v4:
+  1. Move all the vmemmap functions to hugetlb_vmemmap.c.
+  2. Make the CONFIG_HUGETLB_PAGE_FREE_VMEMMAP default to y, if we want to
+     disable this feature, we should disable it by a boot/kernel command line.
+  3. Remove vmemmap_pgtable_{init, deposit, withdraw}() helper functions.
+  4. Initialize page table lock for vmemmap through core_initcall mechanism.
+
+  Thanks for Mike and Oscar's suggestions.
+
+  Changelog in v3:
+  1. Rename some helps function name. Thanks Mike.
+  2. Rework some code. Thanks Mike and Oscar.
+  3. Remap the tail vmemmap page with PAGE_KERNEL_RO instead of
+     PAGE_KERNEL. Thanks Matthew.
+  4. Add some overhead analysis in the cover letter.
+  5. Use vmemap pmd table lock instead of a hugetlb specific global lock.
+
+  Changelog in v2:
+  1. Fix do not call dissolve_compound_page in alloc_huge_page_vmemmap().
+  2. Fix some typo and code style problems.
+  3. Remove unused handle_vmemmap_fault().
+  4. Merge some commits to one commit suggested by Mike.
+
+Muchun Song (16):
+  mm/memory_hotplug: Move bootmem info registration API to
+    bootmem_info.c
+  mm/memory_hotplug: Move {get,put}_page_bootmem() to bootmem_info.c
+  mm/hugetlb: Introduce a new config HUGETLB_PAGE_FREE_VMEMMAP
+  mm/hugetlb: Introduce nr_free_vmemmap_pages in the struct hstate
+  mm/bootmem_info: Introduce {free,prepare}_vmemmap_page()
+  mm/hugetlb: Disable freeing vmemmap if struct page size is not power
+    of two
+  x86/mm/64: Disable PMD page mapping of vmemmap
+  mm/hugetlb: Free the vmemmap pages associated with each hugetlb page
+  mm/hugetlb: Defer freeing of HugeTLB pages
+  mm/hugetlb: Allocate the vmemmap pages associated with each hugetlb
+    page
+  mm/hugetlb: Introduce remap_huge_page_pmd_vmemmap helper
+  mm/hugetlb: Set the PageHWPoison to the raw error page
+  mm/hugetlb: Flush work when dissolving hugetlb page
+  mm/hugetlb: Add a kernel parameter hugetlb_free_vmemmap
+  mm/hugetlb: Gather discrete indexes of tail page
+  mm/hugetlb: Add BUILD_BUG_ON to catch invalid usage of tail struct
+    page
+
+ Documentation/admin-guide/kernel-parameters.txt |   9 +
+ Documentation/admin-guide/mm/hugetlbpage.rst    |   3 +
+ arch/x86/include/asm/pgtable_64_types.h         |   8 +
+ arch/x86/mm/init_64.c                           |  12 +-
+ fs/Kconfig                                      |  14 +
+ include/linux/bootmem_info.h                    |  64 +++++
+ include/linux/hugetlb.h                         |  16 ++
+ include/linux/hugetlb_cgroup.h                  |  15 +-
+ include/linux/memory_hotplug.h                  |  27 --
+ mm/Makefile                                     |   2 +
+ mm/bootmem_info.c                               | 124 ++++++++
+ mm/hugetlb.c                                    | 144 ++++++++--
+ mm/hugetlb_vmemmap.c                            | 365 ++++++++++++++++++++++++
+ mm/hugetlb_vmemmap.h                            |  79 +++++
+ mm/memory_hotplug.c                             | 116 --------
+ mm/sparse.c                                     |   1 +
+ 16 files changed, 820 insertions(+), 179 deletions(-)
+ create mode 100644 include/linux/bootmem_info.h
+ create mode 100644 mm/bootmem_info.c
+ create mode 100644 mm/hugetlb_vmemmap.c
+ create mode 100644 mm/hugetlb_vmemmap.h
+
+-- 
+2.11.0
 
