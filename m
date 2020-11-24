@@ -2,34 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 999802C1DE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 304652C1DE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:10:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbgKXGIM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 01:08:12 -0500
-Received: from mga05.intel.com ([192.55.52.43]:21151 "EHLO mga05.intel.com"
+        id S1729519AbgKXGIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 01:08:25 -0500
+Received: from mga01.intel.com ([192.55.52.88]:19536 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbgKXGIL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 01:08:11 -0500
-IronPort-SDR: ICaA16cn1+bjeTk8rTrQvus1leZ5p+xVkHr1OPV7Ua9tr063k+pDWrIcZwUM10KnGCIJO9/V1/
- RwtNHSJYGutw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="256605368"
+        id S1729446AbgKXGIM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 01:08:12 -0500
+IronPort-SDR: t8Cd/D38h5O7O4iGwmPBo1xW6SCsRP51veIaWGbKw5b8zo251aLgYehy17WrQYba8DHIEMgb3E
+ RVikmEi5017w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="190018273"
 X-IronPort-AV: E=Sophos;i="5.78,365,1599548400"; 
-   d="scan'208";a="256605368"
+   d="scan'208";a="190018273"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:11 -0800
-IronPort-SDR: nxOA9JzerR2df98ZEZCOtQOv4YxKKey5Z+ptd/fz+0d5s84KFhcL2FX9m4me8mvLGLPHx9Zpgh
- v8YxPHFT6dWg==
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:12 -0800
+IronPort-SDR: qNw+swS2DnlAHVnC/90HMteyfrwtLJ4aJjU5/rJICAXxM7SUh0B0LW4TtqxJ5wrZ53ZhGJXSTj
+ Bm8/GhwrlpRQ==
 X-IronPort-AV: E=Sophos;i="5.78,365,1599548400"; 
-   d="scan'208";a="402819429"
+   d="scan'208";a="432504175"
 Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:10 -0800
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 22:08:11 -0800
 From:   ira.weiny@intel.com
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+Cc:     Ira Weiny <ira.weiny@intel.com>, Brian King <brking@us.ibm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Dave Hansen <dave.hansen@intel.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -48,16 +47,16 @@ Cc:     Ira Weiny <ira.weiny@intel.com>,
         Steve French <sfrench@samba.org>,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
         Nicolas Pitre <nico@fluxnic.net>,
-        Brian King <brking@us.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Kirti Wankhede <kwankhede@nvidia.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 13/17] drivers/target: Convert to mem*_page()
-Date:   Mon, 23 Nov 2020 22:07:51 -0800
-Message-Id: <20201124060755.1405602-14-ira.weiny@intel.com>
+Subject: [PATCH 14/17] drivers/scsi: Use memcpy_to_page()
+Date:   Mon, 23 Nov 2020 22:07:52 -0800
+Message-Id: <20201124060755.1405602-15-ira.weiny@intel.com>
 X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 In-Reply-To: <20201124060755.1405602-1-ira.weiny@intel.com>
 References: <20201124060755.1405602-1-ira.weiny@intel.com>
@@ -69,77 +68,50 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Ira Weiny <ira.weiny@intel.com>
 
-Remove the kmap/mem*()/kunmap patter and use the new mem*_page()
-functions.
+Remove kmap/mem*()/kunmap pattern and use memcpy_to_page()
 
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Brian King <brking@us.ibm.com>
 Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
- drivers/target/target_core_rd.c        |  6 ++----
- drivers/target/target_core_transport.c | 10 +++-------
- 2 files changed, 5 insertions(+), 11 deletions(-)
+ drivers/scsi/ipr.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
-index bf936bbeccfe..30bf0fcae519 100644
---- a/drivers/target/target_core_rd.c
-+++ b/drivers/target/target_core_rd.c
-@@ -18,6 +18,7 @@
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/pagemap.h>
- #include <scsi/scsi_proto.h>
- 
- #include <target/target_core_base.h>
-@@ -117,7 +118,6 @@ static int rd_allocate_sgl_table(struct rd_dev *rd_dev, struct rd_dev_sg_table *
- 				sizeof(struct scatterlist));
- 	struct page *pg;
+diff --git a/drivers/scsi/ipr.c b/drivers/scsi/ipr.c
+index b0aa58d117cc..3cdd8db24270 100644
+--- a/drivers/scsi/ipr.c
++++ b/drivers/scsi/ipr.c
+@@ -3912,7 +3912,6 @@ static int ipr_copy_ucode_buffer(struct ipr_sglist *sglist,
+ {
+ 	int bsize_elem, i, result = 0;
  	struct scatterlist *sg;
--	unsigned char *p;
+-	void *kaddr;
  
- 	while (total_sg_needed) {
- 		unsigned int chain_entry = 0;
-@@ -159,9 +159,7 @@ static int rd_allocate_sgl_table(struct rd_dev *rd_dev, struct rd_dev_sg_table *
- 			sg_assign_page(&sg[j], pg);
- 			sg[j].length = PAGE_SIZE;
+ 	/* Determine the actual number of bytes per element */
+ 	bsize_elem = PAGE_SIZE * (1 << sglist->order);
+@@ -3923,10 +3922,7 @@ static int ipr_copy_ucode_buffer(struct ipr_sglist *sglist,
+ 			buffer += bsize_elem) {
+ 		struct page *page = sg_page(sg);
  
--			p = kmap(pg);
--			memset(p, init_payload, PAGE_SIZE);
--			kunmap(pg);
-+			memset_page(pg, init_payload, 0, PAGE_SIZE);
- 		}
- 
- 		page_offset += sg_per_table;
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index ff26ab0a5f60..4fec5c728344 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -22,6 +22,7 @@
- #include <linux/module.h>
- #include <linux/ratelimit.h>
- #include <linux/vmalloc.h>
-+#include <linux/pagemap.h>
- #include <asm/unaligned.h>
- #include <net/sock.h>
- #include <net/tcp.h>
-@@ -1689,15 +1690,10 @@ int target_submit_cmd_map_sgls(struct se_cmd *se_cmd, struct se_session *se_sess
- 		 */
- 		if (!(se_cmd->se_cmd_flags & SCF_SCSI_DATA_CDB) &&
- 		     se_cmd->data_direction == DMA_FROM_DEVICE) {
--			unsigned char *buf = NULL;
- 
- 			if (sgl)
--				buf = kmap(sg_page(sgl)) + sgl->offset;
+-		kaddr = kmap(page);
+-		memcpy(kaddr, buffer, bsize_elem);
+-		kunmap(page);
 -
--			if (buf) {
--				memset(buf, 0, sgl->length);
--				kunmap(sg_page(sgl));
--			}
-+				memzero_page(sg_page(sgl), sgl->offset,
-+					     sgl->length);
- 		}
++		memcpy_to_page(page, 0, buffer, bsize_elem);
+ 		sg->length = bsize_elem;
  
- 		rc = transport_generic_map_mem_to_cmd(se_cmd, sgl, sgl_count,
+ 		if (result != 0) {
+@@ -3938,10 +3934,7 @@ static int ipr_copy_ucode_buffer(struct ipr_sglist *sglist,
+ 	if (len % bsize_elem) {
+ 		struct page *page = sg_page(sg);
+ 
+-		kaddr = kmap(page);
+-		memcpy(kaddr, buffer, len % bsize_elem);
+-		kunmap(page);
+-
++		memcpy_to_page(page, 0, buffer, len % bsize_elem);
+ 		sg->length = len % bsize_elem;
+ 	}
+ 
 -- 
 2.28.0.rc0.12.gb6a658bd00c9
 
