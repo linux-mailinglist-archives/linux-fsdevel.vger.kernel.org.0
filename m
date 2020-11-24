@@ -2,183 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 856862C1E4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9163B2C1E7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 07:50:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729812AbgKXGea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 01:34:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54010 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbgKXGe3 (ORCPT
+        id S1729440AbgKXGs7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 01:48:59 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:54734 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbgKXGs7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 01:34:29 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302AEC0617A6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 22:34:28 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id f11so22664851oij.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Nov 2020 22:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=NRH6VONBYNIxV3zO4nNRr9V11VXjtGQdzP+hrNGAm3A=;
-        b=qhe1mkmWMwhGuf8fqGpCpj+e8tRFPMtqWbixqm50z4cHkRXVBUsZ7CU1/j/3vZBSEx
-         i02OxFKXk2LaAEF2fZz5tPHf9/q0ss9DbDxNVwhC7LKVfn+oQXptj0CFmw2v7eEfmSFJ
-         M86CkeLLA/t8Wn0Nn9rrOWw8p4ZUls/7JJw8vEpy+N6au2YzdMd/T4PwcEHuveafA3sq
-         zxAujieBdrx0MmJ2WiNkfYcYGM5h/HaN0/81OBBEE+PaVIft5zJvVBg0mxu7bj5mV/zF
-         0CCxa96dPF8hFwabQ+wMVg+QK5D/GRETSm2SsNTVmgVJ6yDhF5p3QGC7wnIvZr2Oad3A
-         aq6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=NRH6VONBYNIxV3zO4nNRr9V11VXjtGQdzP+hrNGAm3A=;
-        b=T6cbmWobyD0mEe6npkDuF9Fl07889h5D1jGwYdj/71YAfQ1JqSeYTELeifZV8HTJRJ
-         cVnDp6v8f5YV1NBuhLp6ljQwqO3hWnDpKZLNVHOI8PN1bpkSS8kruQq9Otc8z1WK/hru
-         pWcrDkdmrorMdLIqp+VU0T3ze5bwEVUWKa4rxlL3obAZ2LEoEz6HyHf94L8qifDMsFUb
-         wtlCLQZCYeZxkEoLoxwgMt95E1HYQwUl9V2GPFJfP6dXi7hQwbotMXj5yoenMNVJ1rY/
-         9U6SZCgiXdAvKtJ0KD2KhSsBPlUe2Epbo6IGsSFHUATYKfIlYPtb1DXcXBZg3iFLoJI0
-         00ew==
-X-Gm-Message-State: AOAM5327vMJp1Orqvt4wopKXdR8ZpIrthghizs+Qcl9Z+2aMn9QkAd+y
-        763KfkZUI/hRfi/I4n4K9QIdzw==
-X-Google-Smtp-Source: ABdhPJyQ+wMmSncaYJbGrsIp+MuAFAXtXoBkYvhGm11e160LsNcAa3QgtmSHaVmvUvzrXb/dS3G0lQ==
-X-Received: by 2002:aca:3087:: with SMTP id w129mr1737657oiw.78.1606199667073;
-        Mon, 23 Nov 2020 22:34:27 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id m65sm8116677otm.40.2020.11.23.22.34.24
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Mon, 23 Nov 2020 22:34:25 -0800 (PST)
-Date:   Mon, 23 Nov 2020 22:34:12 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Theodore Ts'o <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        William Kucharski <william.kucharski@oracle.com>,
+        Tue, 24 Nov 2020 01:48:59 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AO6YUdL072498;
+        Tue, 24 Nov 2020 06:48:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=NgLwLhDoHtKt48FPe5ehFzKg373bxotg3X+/Q5tBLnY=;
+ b=AA/XK03JNFsgTtsMiRQvOaKtrJsxXO6sXXKdyJT2yoR/GOSFRvPQTq28cftJLLd0qi+N
+ pdKIcJZLHBWGJyc9EGAEa9qhSjnAx9ANqRBnVSqDJ0YkEWENJiPnkhmt8L4dq9eily4q
+ KR+XsvaMlkqG6UABSLx0Bk3rzElkLIY1+m2w/WasmpMVb7UHW67AHteoOj9hE1FphUgY
+ jZeojMHlNFL6MICF+AKAZEgnIG9JBpcN1IbRsdaq+JUC1CidwHAtYVgykkmbYbjoG7WA
+ drqZdb1mKVMldj9SDxqutHHQYRm3zxuwNGFH2nC3xq4dtDu1m6igiegb63STm9HK4kNt gQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 34xtum0udw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Nov 2020 06:48:43 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AO6Zp91109720;
+        Tue, 24 Nov 2020 06:46:43 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 34ycns2ae8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Nov 2020 06:46:42 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AO6kbur003203;
+        Tue, 24 Nov 2020 06:46:38 GMT
+Received: from [192.168.1.102] (/39.109.186.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 23 Nov 2020 22:46:37 -0800
+Subject: Re: [PATCH v10 11/41] btrfs: implement log-structured superblock for
+ ZONED mode
+To:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        dsterba@suse.com
+Cc:     hare@suse.com, linux-fsdevel@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
-In-Reply-To: <CAHk-=whYO5v09E8oHoYQDn7qqV0hBu713AjF+zxJ9DCr1+WOtQ@mail.gmail.com>
-Message-ID: <alpine.LSU.2.11.2011232209540.5235@eggly.anvils>
-References: <000000000000d3a33205add2f7b2@google.com> <20200828100755.GG7072@quack2.suse.cz> <20200831100340.GA26519@quack2.suse.cz> <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com> <alpine.LSU.2.11.2011231928140.4305@eggly.anvils>
- <CAHk-=whYO5v09E8oHoYQDn7qqV0hBu713AjF+zxJ9DCr1+WOtQ@mail.gmail.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <5aa30b45e2e29018e19e47181586f3f436759b69.1605007036.git.naohiro.aota@wdc.com>
+From:   Anand Jain <anand.jain@oracle.com>
+Message-ID: <69855ff1-4737-3d4c-f191-f31f8307fe88@oracle.com>
+Date:   Tue, 24 Nov 2020 14:46:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <5aa30b45e2e29018e19e47181586f3f436759b69.1605007036.git.naohiro.aota@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9814 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
+ mlxlogscore=999 phishscore=0 spamscore=0 malwarescore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011240038
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9814 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 spamscore=0 mlxscore=0
+ phishscore=0 clxscore=1015 suspectscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011240038
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 23 Nov 2020, Linus Torvalds wrote:
-> On Mon, Nov 23, 2020 at 8:07 PM Hugh Dickins <hughd@google.com> wrote:
-> >
-> > The problem is that PageWriteback is not accompanied by a page reference
-> > (as the NOTE at the end of test_clear_page_writeback() acknowledges): as
-> > soon as TestClearPageWriteback has been done, that page could be removed
-> > from page cache, freed, and reused for something else by the time that
-> > wake_up_page() is reached.
+On 10/11/20 7:26 pm, Naohiro Aota wrote:
+> Superblock (and its copies) is the only data structure in btrfs which has a
+> fixed location on a device. Since we cannot overwrite in a sequential write
+> required zone, we cannot place superblock in the zone. One easy solution is
+> limiting superblock and copies to be placed only in conventional zones.
+> However, this method has two downsides: one is reduced number of superblock
+> copies. The location of the second copy of superblock is 256GB, which is in
+> a sequential write required zone on typical devices in the market today.
+> So, the number of superblock and copies is limited to be two.  Second
+> downside is that we cannot support devices which have no conventional zones
+> at all.
 > 
-> Ugh.
-> 
-> Would it be possible to instead just make PageWriteback take the ref?
-> 
-> I don't hate your patch per se, but looking at that long explanation,
-> and looking at the gyrations end_page_writeback() does, I go "why
-> don't we do that?"
-> 
-> IOW, why couldn't we just make the __test_set_page_writeback()
-> increment the page count if the writeback flag wasn't already set, and
-> then make the end_page_writeback() do a put_page() after it all?
 
-Right, that should be a lot simpler, and will not require any of the
-cleanup (much as I liked that).  If you're reasonably confident that
-adding the extra get_page+put_page to every writeback (instead of
-just to the waited case, which I presume significantly less common)
-will get lost in the noise - I was not confident of that, nor
-confident of devising realistic tests to decide it.
 
-What I did look into before sending, was whether in the filesystems
-there was a pattern of doing a put_page() after *set_page_writeback(),
-when it would just be a matter of deleting that put_page() and doing
-it instead at the end of end_page_writeback().  But no: there were a
-few cases like that, but in general no such pattern.
+> To solve these two problems, we employ superblock log writing. It uses two
+> zones as a circular buffer to write updated superblocks. Once the first
+> zone is filled up, start writing into the second buffer. Then, when the
+> both zones are filled up and before start writing to the first zone again,
+> it reset the first zone.
+> 
+> We can determine the position of the latest superblock by reading write
+> pointer information from a device. One corner case is when the both zones
+> are full. For this situation, we read out the last superblock of each
+> zone, and compare them to determine which zone is older.
+> 
+> The following zones are reserved as the circular buffer on ZONED btrfs.
+> 
+> - The primary superblock: zones 0 and 1
+> - The first copy: zones 16 and 17
+> - The second copy: zones 1024 or zone at 256GB which is minimum, and next
+>    to it
 
-Though, what I think I'll try is not quite what you suggest there,
-but instead do both get_page() and put_page() in end_page_writeback().
-The reason being, there are a number of places (in mm at least) where
-we judge what to do by the expected refcount: places that know to add
-1 on when PagePrivate is set (for buffers), but do not expect to add
-1 on when PageWriteback is set.  Now, all of those places probably
-have to have their own wait_on_page_writeback() too, but I'd rather
-narrow the window when the refcount is raised, than work through
-what if any change would be needed in those places.
+Superblock log approach needs a non-deterministic and inconsistent
+number of blocks to be read to find copy #0. And, to use 4K bytes
+we are reserving a lot more space. But I don't know any better way.
+I am just checking with you...
 
-> >
-> > Then on crashing a second time, realized there's a stronger reason against
-> > that approach.  If my testing just occasionally crashes on that check,
-> > when the page is reused for part of a compound page, wouldn't it be much
-> > more common for the page to get reused as an order-0 page before reaching
-> > wake_up_page()?  And on rare occasions, might that reused page already be
-> > marked PageWriteback by its new user, and already be waited upon?  What
-> > would that look like?
-> >
-> > It would look like BUG_ON(PageWriteback) after wait_on_page_writeback()
-> > in write_cache_pages() (though I have never seen that crash myself).
-> 
-> So looking more at the patch, I started looking at this part:
-> 
-> > +       writeback = TestClearPageWriteback(page);
-> > +       /* No need for smp_mb__after_atomic() after TestClear */
-> > +       waiters = PageWaiters(page);
-> > +       if (waiters) {
-> > +               /*
-> > +                * Writeback doesn't hold a page reference on its own, relying
-> > +                * on truncation to wait for the clearing of PG_writeback.
-> > +                * We could safely wake_up_page_bit(page, PG_writeback) here,
-> > +                * while holding i_pages lock: but that would be a poor choice
-> > +                * if the page is on a long hash chain; so instead choose to
-> > +                * get_page+put_page - though atomics will add some overhead.
-> > +                */
-> > +               get_page(page);
-> > +       }
-> 
-> and thinking more about this, my first reaction was "but that has the
-> same race, just a smaller window".
-> 
-> And then reading the comment more, I realize you relied on the i_pages
-> lock, and that this odd ordering was to avoid the possible latency.
+At the time of mkfs, is it possible to format the block device to
+add conventional zones as needed to support our sb LBAs?
+  OR
+For superblock zones why not reset the write pointer before the
+transaction commit?
 
-Yes.  I decided to send the get_page+put_page variant, rather than the
-wake_up_page_bit while holding i_pages variant (also tested), in part
-because it's easier to edit the get_page+put_page one to the other.
+Thanks.
+
+
+> If these reserved zones are conventional, superblock is written fixed at
+> the start of the zone without logging.
+
 
 > 
-> But what about the non-mapping case? I'm not sure how that happens,
-> but this does seem very fragile.
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-I don't see how the non-mapping case would ever occur: I think it
-probably comes from a general pattern of caution about NULL mapping
-when akpm (I think) originally wrote these functions.
 
-> 
-> I'm wondering why you didn't want to just do the get_page()
-> unconditionally and early. Is avoiding the refcount really such a big
-> optimization?
 
-I don't know: I trust your judgement more than mine.
-
-Hugh
