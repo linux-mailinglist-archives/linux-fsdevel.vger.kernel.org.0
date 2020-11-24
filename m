@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14EFF2C2F06
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 18:42:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB2F12C2F87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 19:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403932AbgKXRl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 12:41:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44858 "EHLO
+        id S2404137AbgKXSEB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 13:04:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403820AbgKXRl3 (ORCPT
+        with ESMTP id S1728945AbgKXSEB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 12:41:29 -0500
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23378C0613D6;
-        Tue, 24 Nov 2020 09:41:29 -0800 (PST)
-Received: by mail-qk1-x743.google.com with SMTP id l2so21578383qkf.0;
-        Tue, 24 Nov 2020 09:41:29 -0800 (PST)
+        Tue, 24 Nov 2020 13:04:01 -0500
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB08C0613D6;
+        Tue, 24 Nov 2020 10:04:00 -0800 (PST)
+Received: by mail-qk1-x741.google.com with SMTP id l2so21723413qkf.0;
+        Tue, 24 Nov 2020 10:04:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=4ibQynBLG5sCe4CZqYbUkQUaNNDbglWF2wLslYnfqek=;
-        b=jYivczMQqsxh7yyiSCMC+J2uq1jjrgFqCn4zGdT7y8l1tR+lBZj0zWSEvbd0W8jl8w
-         Gi4Cj5Zx4gKHsuI0fIL4rp4709gHxtA9wRWySVLNwDnlcHxfBP3hG6ecjPkRXqH0UxZp
-         xk0pqka3Sqe63I6EZOHEKoOfA/4WJiEaugJWCMjne3X9nHRMXe7fYlZPuOXRYu6gUE1t
-         VJ+e81XD/b5aNX2a+wyW4GmbUwrk6CKBJ/6iNXNyc9y/IvYXsxz32um6sHRBVWQzYyqm
-         IRQIL0vettN12q9xzjv+kftrmu3uKde1tlzjzfXundOzi243rFxdMC5NVy5kvvEXsk4Q
-         MK1Q==
+        bh=8qZ2mbF42a4EoCPjpueBEzfe9XOwF2IptTReGgUwObs=;
+        b=is4ScJMtRgB8A67gco8/ShkniDzY10n7rMewX714/9E8uwhLChpIiLuhS9NYdAwKZO
+         wwPFFE1umeJEQtu7KDxbrmdClPTpQcYjr1RpDpjnuZBK1iq0PQfGRfm19X+XI49NQayK
+         8lAFgH0g1BclA/vf2p2mEb1VckBHMRHQuZY2MAZGNuGYbRuKC1k7RL8V45KondL8dAgu
+         pkggwpY/K/3AGEFSp3YuAHk/ID2wYfhEWzIb5TQJq39NiNddKNAmZTO9FhKaayKgBddH
+         Z4wiCaTnVN8dlV2LZgcg+T7QWmffCA0edb1cuImXXMdzH67nJfiqgEY4ncID7PjQAYKh
+         /ZGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=4ibQynBLG5sCe4CZqYbUkQUaNNDbglWF2wLslYnfqek=;
-        b=XS4LVIoGLNdwz2c9kAAo9GS5QCeVabTl6QCGv+S2U+mbF5hihSZTvxl8h+wZgWzdHo
-         /FFgrfeyYTnkf+B7Ub8ovzW2IuPaGD+3W/LkQiAqJ/K/aD1M6XL4de/UKayGf8p8V/Qs
-         0jS23bEZIDypB3RHE8xci4Y46dhlavZOLnBO1s/bP6SrOSPhkZWbONE863jwJNsaOHbA
-         mbVqefLRLzv+4fdqkFbv+mt/nijjSa6T0QsmZsc2cwVkPOnbvQJVAxIw42AHa40COxWF
-         JWi0u953+NPfYwwJ9ntQ3kz9D9X5n9m3kYIBbkuYdBDfkvsTpOfu06n/MhLxdzkkNQgJ
-         MDtQ==
-X-Gm-Message-State: AOAM532hhyMC4o8bEBzuVFQfMOuYSLzrCVGDR28HJnQXkQ2l6VcFJ30u
-        4zoyxLAprIj8zeTNh4Pw8tY=
-X-Google-Smtp-Source: ABdhPJwbAXPcygkLKUFdmjuytzuRV0DzFXM5PwNCTshXeMizxUWtjVUL4UzMNPmTvdVp88+fUo1SSg==
-X-Received: by 2002:a37:8c41:: with SMTP id o62mr5500995qkd.240.1606239688196;
-        Tue, 24 Nov 2020 09:41:28 -0800 (PST)
+        bh=8qZ2mbF42a4EoCPjpueBEzfe9XOwF2IptTReGgUwObs=;
+        b=d6DHjdJRsXIAyhuzzQGB2cDDK00FvW9xeTKRd83jonBdF9eoKqZzxhmT6x4wf6CiKR
+         KtCvmbkH+opxH/7hGXHcbsdeYeg2DiPDrxK/mJ2/ELOOtwR78z7fsy1O6Sy3xsBm4f19
+         gxwjskdO8UBHzQbS6A/i7pqX3LB+yljDKK+qEarY4BbWZbH7Ru4SJSbm+L/hNMyQqd7j
+         QM6tdjqb+7UHqm245XR616UxE11dC3z66CwtT7h78BqmTk8M+03AzVIwY1VUH+JuP0AG
+         akNV6Kfl/lvo5ufsnRdb8H4BpScyAv6wucPcf8Ae2J9Lz0w4dQSZfxgyR7UwpK/eX/Zt
+         mxfA==
+X-Gm-Message-State: AOAM530RuBpKSjUPia7QYvlM6BfxKqblNzYmsMwxaag/tzut7mZRGcOx
+        QcREZjSMyfF4lB3ZAzzYrlw=
+X-Google-Smtp-Source: ABdhPJypHMVf10j8dqLbG3/kMc2wzxScN+9Rw3Fm44OZCed30V+ovAuzBFJQGc76NiRl6CUPNsyaww==
+X-Received: by 2002:ae9:e007:: with SMTP id m7mr5836885qkk.416.1606241040110;
+        Tue, 24 Nov 2020 10:04:00 -0800 (PST)
 Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
-        by smtp.gmail.com with ESMTPSA id y3sm7003885qkl.110.2020.11.24.09.41.27
+        by smtp.gmail.com with ESMTPSA id c14sm13621716qko.29.2020.11.24.10.03.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 09:41:27 -0800 (PST)
+        Tue, 24 Nov 2020 10:03:59 -0800 (PST)
 Sender: Tejun Heo <htejun@gmail.com>
-Date:   Tue, 24 Nov 2020 12:41:05 -0500
+Date:   Tue, 24 Nov 2020 13:03:36 -0500
 From:   Tejun Heo <tj@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
@@ -63,27 +63,32 @@ Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 20/45] block: refactor __blkdev_put
-Message-ID: <X71FsRDFtHWxVJOg@mtj.duckdns.org>
+Subject: Re: [PATCH 21/45] block: refactor blkdev_get
+Message-ID: <X71K+JS+xnGs+EPF@mtj.duckdns.org>
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-21-hch@lst.de>
+ <20201124132751.3747337-22-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124132751.3747337-21-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-22-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:27:26PM +0100, Christoph Hellwig wrote:
-> Reorder the code to have one big section for the last close, and to use
-> bdev_is_partition.
+On Tue, Nov 24, 2020 at 02:27:27PM +0100, Christoph Hellwig wrote:
+> Move more code that is only run on the outer open but not the open of
+> the underlying whole device when opening a partition into blkdev_get,
+> which leads to a much easier to follow structure.
+> 
+> This allows to simplify the disk and module refcounting so that one
+> reference is held for each open, similar to what we do with normal
+> file operations.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
 
 Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
 
 -- 
 tejun
