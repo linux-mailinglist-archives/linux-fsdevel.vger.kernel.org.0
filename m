@@ -2,144 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B14DF2C301B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 19:43:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C672C3031
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 19:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390956AbgKXSms (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 13:42:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54364 "EHLO
+        id S2404154AbgKXSvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 13:51:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390935AbgKXSmr (ORCPT
+        with ESMTP id S1729281AbgKXSu7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 13:42:47 -0500
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177A8C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 10:42:47 -0800 (PST)
-Received: by mail-il1-x141.google.com with SMTP id r17so8345660ilo.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 10:42:47 -0800 (PST)
+        Tue, 24 Nov 2020 13:50:59 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A49C0613D6;
+        Tue, 24 Nov 2020 10:50:59 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id a9so30370056lfh.2;
+        Tue, 24 Nov 2020 10:50:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I66kGxStV/6CyvzIe7WIMGeh+u6UpZuKcXQ4/c5IVHM=;
-        b=QFVPduXV4LLsuiww/mzBj3avxGOXVnqoJHsAm1Is7inPRb4VVg6vQLRpYDU+6KIZqu
-         Mvafc0MXJ13dHa0Dm9qjB5bp4gbpQXHKV8bXbEkWR5nKWQsCM0TImLyz1gYveGac2aff
-         3mgCUGA/Qgb5Xopdfv77l7Y9GLtHxviSC7teg=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R0c/j8cf2nONRA2feQDC3TPehXhvut6OEozhckJatQg=;
+        b=tlV+wnM4g4VAxsaddCvjmefIUTYV9ByW3YpTxHnnHOId0pZny8veyAKKUvd8l2qFOw
+         rHrnvqkXyxskNtCQcu1gVARTckemeR/UTIrlMsv6aaeXLXkCc1qllmZ4M6OCNfa5+cvR
+         hSubX+eoE20ZyG+VDCiK8jUnXF9U2uZHL9qfGII82YZI9vqkRDxjIs57xECz1GuBy59l
+         jGmBnUqAamJVMONCkHS7KhBz+ISXIsMXAAGEZYxdb6zIa/RwcTamE+VGm1gBI0/Ldi3J
+         fMjTGD5X+ybM4TzIldjLXkNzrxx00VayedVMuCljUoxcBPKup05EKZMvox5rCTWjs+GZ
+         cGBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I66kGxStV/6CyvzIe7WIMGeh+u6UpZuKcXQ4/c5IVHM=;
-        b=VQPkHtJWqIWjh90PxHlQyyl5Rcm8Uyk5Ei738OAUnobc7HXdlXmiDzKK1a/hf2Arp0
-         O+DmwRdAUt/oWonrYtw92SVY16dU2RgcHHlTDq973gffgB7G1qsKj0woMQ5Xf4/C+cXh
-         sRKINYTmVD1trZzSpw2q0dk+lXX0VSh/v1FLipZ8boI8m4kufBy3PF5b9jP9lciVRB8U
-         UecRKJGsHaTPIXcPTuRzZA4xfFdZkNBManMS4fprq4+xZfUjx6p1GH0pDOljLV3fiCZJ
-         kABpLQQ3tEwA4aebXXQEuvSde4vLb0tk7mK8XQKpR3HN4Ini9IZDEX5TP2abaXva0fsm
-         5RIA==
-X-Gm-Message-State: AOAM530jyw/jSjD50mT/aA0soZnT71JFrO1MBCeL/pXUJASyTeKpLVx7
-        kY0SJ2T3lv4fQ8c48TT5IRSSOQ==
-X-Google-Smtp-Source: ABdhPJyhOIr2YADL+wmq+g6pyY81mNUBUd1fsWI6u4ZHmtWiePd6acpDOLttwfvDnBAwozJHVPLUaQ==
-X-Received: by 2002:a92:de47:: with SMTP id e7mr5051906ilr.15.1606243366381;
-        Tue, 24 Nov 2020 10:42:46 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id u11sm8147517iol.51.2020.11.24.10.42.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 24 Nov 2020 10:42:45 -0800 (PST)
-Date:   Tue, 24 Nov 2020 18:42:44 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     "J . Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        David Howells <dhowells@redhat.com>,
-        Scott Mayhew <smayhew@redhat.com>
-Cc:     mauricio@kinvolk.io, Alban Crequy <alban.crequy@gmail.com>,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kyle Anderson <kylea@netflix.com>
-Subject: Re: [PATCH v5 0/2] NFS: Fix interaction between fs_context and user
- namespaces
-Message-ID: <20201124184243.GA32491@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201112100952.3514-1-sargun@sargun.me>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R0c/j8cf2nONRA2feQDC3TPehXhvut6OEozhckJatQg=;
+        b=VDYnoYYIh3HU2rbZOTPbmHSIG6tcOKT77+inOC9IJtYMupIIXiR/WzkbYLfqj6cMv+
+         qcJkJZ0MuWcV365o5bNphOotDeJMst2r0Tu+OTvyqzPIi4UDYQGELqbupYHsb2kUnzPU
+         cGxTOlDmZb+c0GWf+sUPxsrj3CGjX/xWWnslkZvuog+sahHhvix/YDDTien7sViFMfsm
+         2/JOlMwNVGVpkbqd01NScDm+eZpFr1hyLVWnNjp8kY64AUit6lluqnKjtlrsFUKOYepS
+         TBJxeV47F4OIQnnUmWg3mXWJENzoBts9P77JS2tsmBoTZa6Ftj7PtTiBtAZ4/oTwWbUr
+         rZYg==
+X-Gm-Message-State: AOAM530N88MpccUhG9W5ph3pp/dahyOe6Yj4sOUSycSCvBfpqMXwEvyB
+        3R7N0L0SkGjRPbB0QQvaTcqyFu0PbQqV4WJ7jeo=
+X-Google-Smtp-Source: ABdhPJzt3TLdBN/P4Eq+DV7SDtt4yLBGLaOX/Hm1GZNn2g9gFOHpibQKVx+y8dvkGOMMAHQ8E2lmPw==
+X-Received: by 2002:a19:549:: with SMTP id 70mr2081436lff.112.1606243857364;
+        Tue, 24 Nov 2020 10:50:57 -0800 (PST)
+Received: from localhost.localdomain ([95.153.130.48])
+        by smtp.gmail.com with ESMTPSA id d11sm1820698lfa.143.2020.11.24.10.50.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 10:50:56 -0800 (PST)
+From:   Artem Labazov <123321artyom@gmail.com>
+Cc:     123321artyom@gmail.com, stable@vger.kernel.org,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] exfat: Avoid allocating upcase table using kcalloc()
+Date:   Tue, 24 Nov 2020 21:50:43 +0300
+Message-Id: <20201124185043.4037182-1-123321artyom@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201112100952.3514-1-sargun@sargun.me>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 12, 2020 at 02:09:50AM -0800, Sargun Dhillon wrote:
-> Right now, it is possible to mount NFS with an non-matching super block
-> user ns, and NFS sunrpc user ns. This (for the user) results in an awkward
-> set of interactions if using anything other than auth_null, where the UIDs
-> being sent to the server are different than the local UIDs being checked.
-> This can cause "breakage", where if you try to communicate with the NFS
-> server with any other set of mappings, it breaks.
-> 
-> The reason for this is that you can call fsopen("nfs4") in the unprivileged
-> namespace, and that configures fs_context with all the right information
-> for that user namespace. In addition, it also keeps a gets a cred object
-> associated with the caller -- which should match the user namespace.
-> Unfortunately, the mount has to be finished in the init_user_ns because we
-> currently require CAP_SYS_ADMIN in the init user namespace to call fsmount.
-> This means that the superblock's user namespace is set "correctly" to the
-> container, but there's absolutely no way nfs4idmap to consume an
-> unprivileged user namespace because the cred / user_ns that's passed down
-> to nfs4idmap is the one at fsmount.
-> 
-> How this actually exhibits is let's say that the UID 0 in the user
-> namespace is mapped to UID 1000 in the init user ns (and kuid space). What
-> will happen is that nfs4idmap will translate the UID 1000 into UID 0 on the
-> wire, even if the mount is in entirely in the mount / user namespace of the
-> container.
-> 
-> So, it looks something like this
-> Client in unprivileged User NS (UID: 0, KUID: 0)
-> 	->Perform open()
-> 		...VFS / NFS bits...
-> 		nfs_map_uid_to_name ->
-> 			from_kuid_munged(init_user_ns, uid) (returns 0)
-> 				RPC with UID 0
-> 
-> This behaviour happens "the other way" as well, where the UID in the
-> container may be 0, but the corresponding kuid is 1000. When a response
-> from an NFS server comes in we decode it according to the idmap userns.
-> The way this exhibits is even more odd.
-> 
-> Server responds with file attribute (UID: 0, GID: 0)
-> 	->nfs_map_name_to_uid(..., 0)
-> 		->make_kuid(init_user_ns, id) (returns 0)
-> 			....VFS / NFS Bits...
-> 			->from_kuid(container_ns, 0) -> invalid uid
-> 				-> EOVERFLOW
-> 
-> This changes the nfs server to use the cred / userns from fs_context, which
-> is how idmap is constructed. This subsequently is used in the above
-> described flow of converting uids back-and-forth.
-> 
-> Trond gave the feedback that this behaviour [implemented by this patch] is
-> how the legacy sys_mount() behaviour worked[1], and that the intended
-> behaviour is for UIDs to be plumbed through entirely, where the user
-> namespaces UIDs are what is sent over the wire, and not the init user ns.
-> 
-> [1]: https://lore.kernel.org/linux-nfs/8feccf45f6575a204da03e796391cc135283eb88.camel@hammerspace.com/
-> 
-> Sargun Dhillon (2):
->   NFS: NFSv2/NFSv3: Use cred from fs_context during mount
->   NFSv4: Refactor to use user namespaces for nfs4idmap
-> 
->  fs/nfs/client.c     | 4 ++--
->  fs/nfs/nfs4client.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> 
-> base-commit: 8c39076c276be0b31982e44654e2c2357473258a
-> -- 
-> 2.25.1
->
+The table for Unicode upcase conversion requires an order-5 allocation,
+which may fail on a highly-fragmented system:
 
+ pool-udisksd: page allocation failure: order:5, mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0
+ CPU: 4 PID: 3756880 Comm: pool-udisksd Tainted: G     U            5.8.10-200.fc32.x86_64 #1
+ Hardware name: Dell Inc. XPS 13 9360/0PVG6D, BIOS 2.13.0 11/14/2019
+ Call Trace:
+  dump_stack+0x6b/0x88
+  warn_alloc.cold+0x75/0xd9
+  ? _cond_resched+0x16/0x40
+  ? __alloc_pages_direct_compact+0x144/0x150
+  __alloc_pages_slowpath.constprop.0+0xcfa/0xd30
+  ? __schedule+0x28a/0x840
+  ? __wait_on_bit_lock+0x92/0xa0
+  __alloc_pages_nodemask+0x2df/0x320
+  kmalloc_order+0x1b/0x80
+  kmalloc_order_trace+0x1d/0xa0
+  exfat_create_upcase_table+0x115/0x390 [exfat]
+  exfat_fill_super+0x3ef/0x7f0 [exfat]
+  ? sget_fc+0x1d0/0x240
+  ? exfat_init_fs_context+0x120/0x120 [exfat]
+  get_tree_bdev+0x15c/0x250
+  vfs_get_tree+0x25/0xb0
+  do_mount+0x7c3/0xaf0
+  ? copy_mount_options+0xab/0x180
+  __x64_sys_mount+0x8e/0xd0
+  do_syscall_64+0x4d/0x90
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Trond,
-Are there any other concerns you have before landing this, or do you want
-to wait until the v5.11 merge window?
+Make the driver use vmalloc() to eliminate the issue.
+
+Cc: stable@vger.kernel.org # v5.7+
+Signed-off-by: Artem Labazov <123321artyom@gmail.com>
+---
+ fs/exfat/nls.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index 675d0e7058c5..e415794e3ffc 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -6,6 +6,7 @@
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/buffer_head.h>
++#include <linux/vmalloc.h>
+ #include <asm/unaligned.h>
+ 
+ #include "exfat_raw.h"
+@@ -659,7 +660,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
+ 	unsigned char skip = false;
+ 	unsigned short *upcase_table;
+ 
+-	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
++	upcase_table = vmalloc(UTBL_COUNT * sizeof(unsigned short));
+ 	if (!upcase_table)
+ 		return -ENOMEM;
+ 
+@@ -715,7 +716,7 @@ static int exfat_load_default_upcase_table(struct super_block *sb)
+ 	unsigned short uni = 0, *upcase_table;
+ 	unsigned int index = 0;
+ 
+-	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
++	upcase_table = vmalloc(UTBL_COUNT * sizeof(unsigned short));
+ 	if (!upcase_table)
+ 		return -ENOMEM;
+ 
+-- 
+2.26.2
+
