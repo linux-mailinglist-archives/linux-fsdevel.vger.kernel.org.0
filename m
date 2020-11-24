@@ -2,204 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A684D2C29BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 15:34:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C752C2A4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 15:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389010AbgKXOeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 09:34:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43882 "EHLO
+        id S2389398AbgKXOr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 09:47:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388854AbgKXOeQ (ORCPT
+        with ESMTP id S2388174AbgKXOrz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 09:34:16 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEF08C061A4D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 06:34:15 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id i2so3498381wrs.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 06:34:15 -0800 (PST)
+        Tue, 24 Nov 2020 09:47:55 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA035C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 06:47:54 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id x15so3838030ilq.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 06:47:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YQpCas1RNfDZEcGYI04yEm6odPOACipDcEuTBaoIULk=;
-        b=UhV7hB9LJySyibtoHRqaxMir8P7FnhXAU96E4aHd3ofIMEZCRtLh+zeMX/RZH2wp/d
-         ASfb7zsWToxZhdhECdglvYGnSj/gHkK+a128+ByWw8EqQuvRvEHVa/6FGH0Q/PMdeY8p
-         cOVbuuXQq/r/33GWKbTOqEjjjzE0whLpLoOC4=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MyLF3pAg9adsFn6sdARR6rKqhoun4ds98Q4xdLKAV80=;
+        b=IVXhRhx6U1BViXo1WdAcN+eYE6qE0QWDlRENq1afFlACQvNMr7WVqZFiJh1LnyIbwZ
+         iQWvZV9Cvy/KVilFeiVLil413sgBugjF7uAV+1ny0prk1T7JTiz62/4BPA14apJpwAEx
+         SbaPK1iz26WqE2LYg9hllIV8FgqgjJol7Ylt0mBFXNFIvFjZZ1pf3A+vsJkbwPholfsM
+         EX2AZX9ZGVJUuHHuCwsEvu9XYhWrVvsHNR46IRpKKhyyDYEK9WHFg0bgrDWCesE8yCjs
+         EHOkwtb1xFvIDTaBX85k/Jzyao/bfl9EO+INDFGyTa2Z6HP4UoVezPy/CaxgQgJiSdPZ
+         58JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=YQpCas1RNfDZEcGYI04yEm6odPOACipDcEuTBaoIULk=;
-        b=F32xo09kDZiKJCifqA/fkDQPLSWrLHl+THXXeTCA4aLk8B0CCSOWKa3pynRBBtsFlj
-         26u3QwSnF3ejex3GW8GpddnEP6hVcEiEFRirFvxlo/TRsVHxpm1MCGORPH1yPZfY+Hn8
-         4PeKh5IH2cgSHuaD2n1yFEy10P9sPK3QwlxHNB/Ir+IxoBx61Vl/ZTKGi60fbuaNXZiI
-         1+Y3DYSQXkgsNkoHD3wXm+g+lFeOLSMbr0XCBVCtTZsprpKhB+GXZPp7AEmjd88AYUWl
-         pXlel2lw5zZVJzTdPNgPJvELhFZFCmTwrtuLdYTZ1ywrvOJhFOf3mJCVZBEavGXyvdeh
-         2z9g==
-X-Gm-Message-State: AOAM531ka+qjT2lmgjHmWDjmUzlyLk8GhQkENtMYCuHLDshm37WCs+Rx
-        c/ui+XR7/vzfO+z4hwICg6TYcg==
-X-Google-Smtp-Source: ABdhPJz6iTrOgvt95IAsr45xzCdl3M2C2ca0X4EFZPlX+gugzV3LnRN6/oGeySsazf01z6hbldI7qw==
-X-Received: by 2002:a5d:50d1:: with SMTP id f17mr5715898wrt.264.1606228454425;
-        Tue, 24 Nov 2020 06:34:14 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id m18sm27135410wru.37.2020.11.24.06.34.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2020 06:34:13 -0800 (PST)
-Date:   Tue, 24 Nov 2020 15:34:11 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michel Lespinasse <walken@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, Qian Cai <cai@lca.pw>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/3] mm: Extract might_alloc() debug check
-Message-ID: <20201124143411.GN401619@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michel Lespinasse <walken@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, Qian Cai <cai@lca.pw>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20201120095445.1195585-1-daniel.vetter@ffwll.ch>
- <20201120095445.1195585-3-daniel.vetter@ffwll.ch>
- <20201120180719.GO244516@ziepe.ca>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MyLF3pAg9adsFn6sdARR6rKqhoun4ds98Q4xdLKAV80=;
+        b=ipl6vOqEokdcTndmNq8HsVKG3pYH6L8JyPfl4lUqg7aPaAfR8Ss5+tf/JIpO1AdII4
+         SnF/q/n8QeuSGgXo9dNgsRV37hxR22HNdxuIHvKazLOSocNRO7eZpQDJPL4cEQqAeTZK
+         NhR+QjD40zYyNgBskUU8g8O5b6C+MHw4ifqpravla6pzx4YV7jV0+SbzCWl0Qtgc6zP2
+         Gpw8BhZXZrgoEs9vEkxOe/cL+vixMicYo11k5gv8eIOWl0fJW3CFCtXcNrIMM73S1Ye1
+         NeuGTsM43IMz00n2jqJzgA9lILvhSuZ29mjq9wwW4AN8VVsUkSMEnFrK3ozdEki/dreN
+         /BAg==
+X-Gm-Message-State: AOAM530yn4UUKCbtg5RKZw5c5mjUyTqGAMkBe4g+FrtuwRonEzz+EDqX
+        5KEkRbRhiy1jgyvC1OYA07Rhb1t2TfJrqOrJcUOc0b1Xms8=
+X-Google-Smtp-Source: ABdhPJxNCUwBMMmn7cM8g3ftrXrnJ8EpScVmoHNMrflqTXF0OUTy/6QoicFPUCyMscMeKv+JIkZjfK+ZKr0IOlWtPKs=
+X-Received: by 2002:a92:5e42:: with SMTP id s63mr4577603ilb.250.1606229272993;
+ Tue, 24 Nov 2020 06:47:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201120180719.GO244516@ziepe.ca>
-X-Operating-System: Linux phenom 5.7.0-1-amd64 
+References: <20201109180016.80059-1-amir73il@gmail.com> <20201124134916.GC19336@quack2.suse.cz>
+In-Reply-To: <20201124134916.GC19336@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 24 Nov 2020 16:47:41 +0200
+Message-ID: <CAOQ4uxiJz-j8GA7kMYRTGMmE9SFXCQ-xZxidOU1GzjAN33Txdg@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 02:07:19PM -0400, Jason Gunthorpe wrote:
-> On Fri, Nov 20, 2020 at 10:54:43AM +0100, Daniel Vetter wrote:
-> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> > index d5ece7a9a403..f94405d43fd1 100644
-> > --- a/include/linux/sched/mm.h
-> > +++ b/include/linux/sched/mm.h
-> > @@ -180,6 +180,22 @@ static inline void fs_reclaim_acquire(gfp_t gfp_mask) { }
-> >  static inline void fs_reclaim_release(gfp_t gfp_mask) { }
-> >  #endif
-> >  
-> > +/**
-> > + * might_alloc - Marks possible allocation sites
-> > + * @gfp_mask: gfp_t flags that would be use to allocate
-> > + *
-> > + * Similar to might_sleep() and other annotations this can be used in functions
-> > + * that might allocate, but often dont. Compiles to nothing without
-> > + * CONFIG_LOCKDEP. Includes a conditional might_sleep() if @gfp allows blocking.
-> > + */
-> > +static inline void might_alloc(gfp_t gfp_mask)
-> > +{
-> > +	fs_reclaim_acquire(gfp_mask);
-> > +	fs_reclaim_release(gfp_mask);
-> > +
-> > +	might_sleep_if(gfpflags_allow_blocking(gfp_mask));
-> > +}
-> 
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> 
-> Oh, I just had a another thread with Matt about xarray, this would be
-> perfect to add before xas_nomem():
+On Tue, Nov 24, 2020 at 3:49 PM Jan Kara <jack@suse.cz> wrote:
+>
+> Hi Amir!
+>
+> Thanks for the patch and sorry for a delay in my response.
+>
+> On Mon 09-11-20 20:00:16, Amir Goldstein wrote:
+> > A filesystem view is a subtree of a filesystem accessible from a specific
+> > mount point.  When marking an FS view, user expects to get events on all
+> > inodes that are accessible from the marked mount, even if the events
+> > were generated from another mount.
+> >
+> > In particular, the events such as FAN_CREATE, FAN_MOVE, FAN_DELETE that
+> > are not delivered to a mount mark can be delivered to an FS view mark.
+> >
+> > One example of a filesystem view is btrfs subvolume, which cannot be
+> > marked with a regular filesystem mark.
+> >
+> > Another example of a filesystem view is a bind mount, not on the root of
+> > the filesystem, such as the bind mounts used for containers.
+> >
+> > A filesystem view mark is composed of a heads sb mark and an sb_view mark.
+> > The filesystem view mark is connected to the head sb mark and the head
+> > sb mark is connected to the sb object. The mask of the head sb mask is
+> > a cumulative mask of all the associated sb_view mark masks.
+> >
+> > Filesystem view marks cannot co-exist with a regular filesystem mark on
+> > the same filesystem.
+> >
+> > When an event is generated on the head sb mark, fsnotify iterates the
+> > list of associated sb_view marks and filter events that happen outside
+> > of the sb_view mount's root.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> I gave this just a high-level look (no detailed review) and here are my
+> thoughts:
+>
+> 1) I like the functionality. IMO this is what a lot of people really want
+> when looking for "filesystem wide fs monitoring".
+>
+> 2) I don't quite like the API you propose though. IMO it exposes details of
+> implementation in the API. I'd rather like to have API the same as for
+> mount marks but with a dedicated mark type flag in the API - like
+> FAN_MARK_FILESYSTEM_SUBTREE (or we can keep VIEW if you like it but I think
+> the less terms the better ;).
 
-Yeah I think there's plenty of places where this will be useful. Want to
-slap a sob onto this diff so I can include it for the next round, or will
-you or Matt send this out when my might_alloc has landed?
--Daniel
+Sure, FAN_MARK_FS_VIEW is a dedicated mark type.
+The fact that is it a bitwise OR of MOUNT and FILESYSTEM is just a fun fact.
+Sorry if that wasn't clear.
+FAN_MARK_FILESYSTEM_SUBTREE sounds better for uapi.
 
-> 
-> diff --git a/lib/idr.c b/lib/idr.c
-> index f4ab4f4aa3c7f5..722d9ddff53221 100644
-> --- a/lib/idr.c
-> +++ b/lib/idr.c
-> @@ -391,6 +391,8 @@ int ida_alloc_range(struct ida *ida, unsigned int min, unsigned int max,
->  	if ((int)max < 0)
->  		max = INT_MAX;
->  
-> +	might_alloc(gfp);
-> +
->  retry:
->  	xas_lock_irqsave(&xas, flags);
->  next:
-> diff --git a/lib/xarray.c b/lib/xarray.c
-> index 5fa51614802ada..dd260ee7dcae9a 100644
-> --- a/lib/xarray.c
-> +++ b/lib/xarray.c
-> @@ -1534,6 +1534,8 @@ void *__xa_store(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
->  	XA_STATE(xas, xa, index);
->  	void *curr;
->  
-> +	might_alloc(gfp);
-> +
->  	if (WARN_ON_ONCE(xa_is_advanced(entry)))
->  		return XA_ERROR(-EINVAL);
->  	if (xa_track_free(xa) && !entry)
-> @@ -1600,6 +1602,8 @@ void *__xa_cmpxchg(struct xarray *xa, unsigned long index,
->  	XA_STATE(xas, xa, index);
->  	void *curr;
->  
-> +	might_alloc(gfp);
-> +
->  	if (WARN_ON_ONCE(xa_is_advanced(entry)))
->  		return XA_ERROR(-EINVAL);
->  
-> @@ -1637,6 +1641,8 @@ int __xa_insert(struct xarray *xa, unsigned long index, void *entry, gfp_t gfp)
->  	XA_STATE(xas, xa, index);
->  	void *curr;
->  
-> +	might_alloc(gfp);
-> +
->  	if (WARN_ON_ONCE(xa_is_advanced(entry)))
->  		return -EINVAL;
->  	if (!entry)
-> @@ -1806,6 +1812,8 @@ int __xa_alloc(struct xarray *xa, u32 *id, void *entry,
->  {
->  	XA_STATE(xas, xa, 0);
->  
-> +	might_alloc(gfp);
-> +
->  	if (WARN_ON_ONCE(xa_is_advanced(entry)))
->  		return -EINVAL;
->  	if (WARN_ON_ONCE(!xa_track_free(xa)))
+But I suppose you also meant that we should not limit the subtree root
+to bind mount points?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+The reason I used a reference to mnt for a sb_view and not dentry
+is because we have fsnotify_clear_marks_by_mount() callback to
+handle cleanup of the sb_view marks (which I left as TODO).
+
+Alternatively, we can play cache pinning games with the subtree root dentry
+like the case with inode mark, but I didn't want to get into that nor did I know
+if we should - if subtree mark requires CAP_SYS_ADMIN anyway, why not
+require a bind mount as its target, which is something much more visible to
+admins.
+
+> Then internally we'd auto-create a sb mark as
+> needed, we could possibly reuse the sb mark if there are multiple subtree
+> marks for the same sb but that's just an internal optimization we could do
+> (looking at the code now, that basically seems what you already do so maybe
+> I just misunderstood the changelog).
+
+Yes, that is what I did.
+
+> Also I don't see the need for the
+> restriction that subtree marks cannot coexist with ordinary sb marks. That
+> just seems unnecessarily confusing to users. Why is that?
+
+No need. It was just to simplify the POC (less corner cases to handle).
+
+>
+> 3) I think the d_ancestor() checks are racy (need some kind of rename /
+> reclaim protection).
+
+Yes, I noticed that shortly after posting.
+
+> Also I think this is going to get expensive
+> (e.g. imagine each write to page cache having to traverse potentially deep
+> tree hierarchy potentially multiple times - once for each subtree). My
+> suspicion should be verified with actual performance measurement but if I'm
+> right and the overhead is indeed noticeable, I think we'll need to employ
+> some caching or so to avoid repeated lookups...
+>
+
+It's true, but here is a different angle to analyse the overhead - claim:
+"If users don't have kernel subtree mark, they will use filesystem mark
+ and filter is userspace". If that claim is true, than one can argue that
+this is fair - let the listener process pay the CPU overhead which can be
+contained inside a cgroup and not everyone else. But what is the cost that
+everyone else will be paying in that case?
+Everyone will still pay the cost of the fanotify backend callback including
+allocate, pack and queue the event.
+The question then becomes, what is cheaper? The d_ancestor() traversal
+or all the fanotify backend handler code?
+Note that the former can be lockless and the latter does take locks.
+
+I have a pretty good bet on the answer, but as you say only actual performance
+benchmarks can tell.
+
+From my experience, real life fsevent listeners do not listen on FAN_MODIFY
+but they listen on FAN_CLOSE_WRITE, because the the former is too noisy.
+
+The best case scenario is that users step forward to say that they want to
+use fanotify but need the subtree filterting and can provide us with real life
+performance measurement of the userspace vs. kernel alternatives (in terms
+of penalty on the rest of the system).
+
+> But overall as I already wrote, I like the idea.
+>
+
+Glad to hear that :)
+Thanks for the feedback!
+
+Amir.
