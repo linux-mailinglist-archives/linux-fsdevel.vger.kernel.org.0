@@ -2,149 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 847E92C321E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 21:45:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F7E02C327A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Nov 2020 22:22:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732117AbgKXUoo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 15:44:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45112 "EHLO
+        id S1730834AbgKXVTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 16:19:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732042AbgKXUon (ORCPT
+        with ESMTP id S1730537AbgKXVTO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 15:44:43 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F3DC061A4F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:44:43 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id t9so198339edq.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 12:44:43 -0800 (PST)
+        Tue, 24 Nov 2020 16:19:14 -0500
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87980C0613D6;
+        Tue, 24 Nov 2020 13:19:14 -0800 (PST)
+Received: by mail-qv1-xf44.google.com with SMTP id x13so11347052qvk.8;
+        Tue, 24 Nov 2020 13:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B/HM/8rFP5cAjqFnUXV5a+cyTGV1vdatCTE/hESO0uw=;
-        b=U7BMAGu6Hb0hKnA/oSKvqajGoBWD0yncJV3rhU6KciqAw4fR6XDauq4KVuQDRvOaer
-         P2lwNuAHrhxxVpgG6cjkfq6v70V4fwxSGaqHeHmFdAA1ED1uXEi7XEkplDoAYHnh1i7t
-         rI8Gkx51MM8Ud4I/HO+LRhiIcFWnJBIWoXMJ/8jwSLXWyr/g7YkOrM4p0QiKS2bkquxt
-         hkiqq9TGdbvwnVZg1znTFFF8rVLohdN4M1tv35av1QDiQxkdFSj6vgcgupUE6cMhxxI+
-         9segr/KIrj5dzjboN76fh2uBXToaniri7zVHFaOs1shKitGqxPvNnu1UQKQJJkZbs8up
-         2upw==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=sg9SO3UStMfqHkCvNI1YBGGkjTmKJ7UaheqYby9uxnM=;
+        b=OzhyL5qOUmNMCmaqmA0AJ7YTZnOa5s8lOvdGSd5gsRFwIjVjcK9RMkEdmOZVvPKHkC
+         HEfwzTPFGhRpcwv4Zdi1eKZAQCSJDqL9242nm6t+004qxnjr2Wo1RG+dvaQzjYpDTlFJ
+         y4MEeMckfEdVhdL9TeWxoL3uJseLhfNpPNLJKI+4lWddjQrQSYtmPS6DbLtZKSCyuI0M
+         VPOnBALIPZDz9HaljCXz/QtzQMoFkORQ/oSOcQG0yJ5cuTGS83XWqbo7FaIck74bBkz3
+         zSrrMusanZp5T2dH6BfcuYD799YU+BVDp+VbnKu/pAzjL4fvbG44Apq0OxYfntbUtAy3
+         IgsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B/HM/8rFP5cAjqFnUXV5a+cyTGV1vdatCTE/hESO0uw=;
-        b=tjC2IOMJ6vh7RxTRMIalTkH6EFUkvW8HIdD4blPpDHupI7UHV70TE5ZjEPit7itOOP
-         Yf0R4aRF9FT5YoLlmgegeqM9HcbqINwS+I9nGzvyEVRZ/ZkCeJSQJll7eu4eBLWpjwNi
-         I6Yso0sEIx4VT6irjDqTngQ0mRIsWjs7bANGn7X9oArsohPSnlQL54oDC0L/OWH6yZAg
-         duw9EMSaKXU9hazPGKPVBLZ4IoqNoyIpgb0hIJH1Sz5/OpAwWYQC73p7HqpaNDRobI5b
-         ALZERI/tlV60TVscPKVH2hQOwFHYf4IjaJw0VqObo/k3mMZjvbbsBJbaQsw1Poy9ZHuC
-         /Taw==
-X-Gm-Message-State: AOAM532QJp6MeLYHCdwj18+ycYle+NH4PhXjSHrfDqAbpl2d+F5T4/1b
-        CyrrtD2jBoycd032HAUbtHE7Fq5ZxVd3jf6WI8RJhA==
-X-Google-Smtp-Source: ABdhPJwZTfPGl9sCT1BVU2GvADqbE6pDiG1Xc1mtvTA/GsapyKzaYnyIr5d4QUAp0ZBQ4ukQby3tNlpzSAg6JpSsySA=
-X-Received: by 2002:a05:6402:176e:: with SMTP id da14mr311916edb.245.1606250681588;
- Tue, 24 Nov 2020 12:44:41 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=sg9SO3UStMfqHkCvNI1YBGGkjTmKJ7UaheqYby9uxnM=;
+        b=n1g0JJ/RP4SqAk6Mdjy3JiroCAh092BbKP4Eja5VZuIY35pQMygfzj/LJ9aq7Ku0gW
+         qKjJZRIJ+bxGeonBTfcdjCfZmk5BXzfblqDqpSp/59EzixJMNHfaTaopzyHQesBaEE6z
+         vk30+zdRANglw/sfmUOgMOZ4hjtgY3POPGRta9bSQQd2cLyI4k5y+r4X0VR0iHgMm8bi
+         AEfKHo6li6zxq63NxPk2PenHHjvc0tpeCelzId80ze8T7rCh5hU02JvF6w1wrqbnxkFu
+         qaDDWBoV7YpD0Rgw00kLn9OE7S/9zQJFtkMHqq48iZr6n5X8X3ySPnzpY/w49q9u6yCh
+         IOuQ==
+X-Gm-Message-State: AOAM532NXsdJBNG+KTnvZF/WK4ktYltxuDwbcdFCMKmiNuHSlY2jmeb2
+        1AQF5ZjcRbJDe5WfHdR5adg=
+X-Google-Smtp-Source: ABdhPJymsM7t3QC8HGlAx0p+5Wt4X/uLuUZsX3zmVjKyK1/8swtwKOE7/+uzSFJWv6qwdRjGjoCR5w==
+X-Received: by 2002:a0c:fa08:: with SMTP id q8mr548456qvn.25.1606252753574;
+        Tue, 24 Nov 2020 13:19:13 -0800 (PST)
+Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
+        by smtp.gmail.com with ESMTPSA id c27sm387614qkk.57.2020.11.24.13.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 13:19:12 -0800 (PST)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Tue, 24 Nov 2020 16:18:49 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 25/45] block: reference struct block_device from struct
+ hd_struct
+Message-ID: <X714udEyPuGarVYp@mtj.duckdns.org>
+References: <20201124132751.3747337-1-hch@lst.de>
+ <20201124132751.3747337-26-hch@lst.de>
 MIME-Version: 1.0
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
- <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
- <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
- <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
- <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
- <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
- <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
- <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
- <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com> <CAHC9VhTtLj9QPqEqO5hHPDmMnWzUaD-2PwGw=bQ=SBxvV78Sxg@mail.gmail.com>
-In-Reply-To: <CAHC9VhTtLj9QPqEqO5hHPDmMnWzUaD-2PwGw=bQ=SBxvV78Sxg@mail.gmail.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Tue, 24 Nov 2020 12:44:30 -0800
-Message-ID: <CA+EESO465UY7v5W4k6cqWHTDq6e6pb_NBnZZRMjawHPvfEOOLw@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201124132751.3747337-26-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 23, 2020 at 2:43 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Nov 23, 2020 at 2:21 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > On Sun, Nov 22, 2020 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > > I have created a cuttlefish build and have tested with the attached
-> > > > userfaultfd program:
-> > >
-> > > Thanks, that's a good place to start, a few comments:
-> > >
-> > > - While we support Android as a distribution, it isn't a platform that
-> > > we common use for development and testing.  At the moment, Fedora is
-> > > probably your best choice for that.
-> > >
-> > I tried setting up a debian/ubuntu system for testing using the
-> > instructions on the selinux-testsuite page, but the system kept
-> > freezing after 'setenforce 1'. I'll try with fedora now.
->
-> I would expect you to have much better luck with Fedora.
+Hello,
 
-Yes. It worked!
->
-> > > - Your test program should be written in vanilla C for the
-> > > selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
-> > > should be a trivial conversion.
-> > >
-> > > - I think you have a good start on a test for the selinux-testsuite,
-> > > please take a look at the test suite and submit a patch against that
-> > > repo.  Ondrej (CC'd) currently maintains the test suite and he may
-> > > have some additional thoughts.
-> > >
-> > > * https://github.com/SELinuxProject/selinux-testsuite
-> >
-> > Thanks a lot for the inputs. I'll start working on this.
->
-> Great, let us know if you hit any problems.  I think we would all like
-> to see this upstream :)
->
-I have the patch ready. I couldn't find any instructions on the
-testsuite site about patch submission. Can you please tell me how to
-proceed.
+Please see lkml.kernel.org/r/X708BTJ5njtbC2z1@mtj.duckdns.org for a few nits
+on the previous version.
 
-> --
-> paul moore
-> www.paul-moore.com
+On Tue, Nov 24, 2020 at 02:27:31PM +0100, Christoph Hellwig wrote:
+> To simplify block device lookup and a few other upcoming areas, make sure
+> that we always have a struct block_device available for each disk and
+> each partition.  The only downside of this is that each device and
+> partition uses a little more memory.  The upside will be that a lot of
+> code can be simplified.
+> 
+> With that all we need to look up the block device is to lookup the inode
+> and do a few sanity checks on the gendisk, instead of the separate lookup
+> for the gendisk.  These checks are in a new RCU critical section and
+> the disk is now freed using kfree_rcu().
+
+I might be confused but am wondering whether RCU is needed. It's currently
+used to ensure that gendisk is accessible in the blkdev_get path but
+wouldn't it be possible to simply pin gendisk from block_devices? The
+gendisk and hd_structs hold the base refs of the block_devices and in turn
+the block_devices pin the gendisk. When the gendisk gets deleted, it puts
+the base refs of the block devices but stays around while the block devices
+are being accessed.
+
+Also, would it make sense to separate out lookup_sem removal? I *think* it's
+there to ensure that the same bdev doesn't get associated with old and new
+gendisks at the same time but can't wrap my head around how it works
+exactly. I can see that this may not be needed once the lifetimes of gendisk
+and block_devices are tied together but that may warrant a bit more
+explanation.
+
+Thanks.
+
+-- 
+tejun
