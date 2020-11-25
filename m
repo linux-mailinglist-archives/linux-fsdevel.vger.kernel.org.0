@@ -2,96 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 920382C3700
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 04:12:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9348D2C37A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 04:41:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbgKYC44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 21:56:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbgKYC44 (ORCPT
+        id S1726595AbgKYD1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 22:27:41 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:8400 "EHLO
+        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbgKYD1k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 21:56:56 -0500
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D556C0613D6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 18:56:46 -0800 (PST)
-Received: by mail-ot1-x342.google.com with SMTP id f16so902006otl.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Nov 2020 18:56:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=+FWpHbem/CPK/Y2WEWVDIbPrtpce00d3aqKaeRn35jw=;
-        b=u3ik/jOXlZPtuxZsymmgfKUaDyjjoSfE2RNE/6etm2mObkDL0KcbpGpsN3W0qUdmtN
-         xxEiEPwiifMvSuQzP0luk3QNSRu99ftZMDeEsmLWWCSKYKWzrKqYM28K9URkcbKsQXEY
-         Z8xkRxhzfSFYmR0JpOar1wKSuCWytUXJX8dTjXkRcHVjvZf8xjGW5PY4d5I5EDfziCTe
-         JbSyEYifGpWuB2Qlux+LoD2IfjNipZpPKE4UuGRd6KVWK8/dP4neO1QXOp1h338gfh3g
-         o0SqbxmUI9NY0sxppH7O/cS8kTG4jbViat5ED8qweuXWlCvuZX0yyG0Tdg6OdW4v5iuD
-         swyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=+FWpHbem/CPK/Y2WEWVDIbPrtpce00d3aqKaeRn35jw=;
-        b=dorU732vYuyfhylEkEIhQwN8kJwDNlAptfJF8mPsM4d1VdvelWIMNXwha/xJgWqdLj
-         4eEQgPZbE+hN0bycihprENUBZsH5SHKob64QracmwnJVwWKv3t+xIXSLSdkZKOdnHM1q
-         VL1p/toOSf6Y6FNIcmDvIITjPWO+8TJMhgJlwhUeE/V0hXi+3ljJ6Np/65lJH2M6Yftn
-         AwliiOZK7rGxVCK2ABTA26PxC66bqqG0bWpeCWL02wxz5EPE/de9JT7ccShhMFYnQKVh
-         D/B/md3GOasVm9crotUjbHsdf+rsiUJTK/xbnXhQXxgf1NHnezb4a3pmm0RxbmLGdEXM
-         iiOw==
-X-Gm-Message-State: AOAM530MztjH90nrHJjuGfEDmd5C9eH6yookqiV2ibXxvNOB12cgTSHY
-        FNNsajGZn1D9GL/KdrK4AAq4UA==
-X-Google-Smtp-Source: ABdhPJzxVX94z8ieBTDByVy3UTLQt9z+rZTaAlxMAHgu+ZCnxtIpuauUnDVwsmyVJDy60Q5m8gthsw==
-X-Received: by 2002:a9d:72dc:: with SMTP id d28mr1362880otk.110.1606273005462;
-        Tue, 24 Nov 2020 18:56:45 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 19sm531313oth.63.2020.11.24.18.56.43
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Tue, 24 Nov 2020 18:56:44 -0800 (PST)
-Date:   Tue, 24 Nov 2020 18:56:31 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, hch@lst.de,
-        hannes@cmpxchg.org, yang.shi@linux.alibaba.com,
-        dchinner@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
-In-Reply-To: <alpine.LSU.2.11.2011241838400.3026@eggly.anvils>
-Message-ID: <alpine.LSU.2.11.2011241854140.3099@eggly.anvils>
-References: <20201112212641.27837-1-willy@infradead.org> <alpine.LSU.2.11.2011160128001.1206@eggly.anvils> <20201117153947.GL29991@casper.infradead.org> <alpine.LSU.2.11.2011170820030.1014@eggly.anvils> <20201117191513.GV29991@casper.infradead.org>
- <20201117234302.GC29991@casper.infradead.org> <20201125023234.GH4327@casper.infradead.org> <alpine.LSU.2.11.2011241838400.3026@eggly.anvils>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Tue, 24 Nov 2020 22:27:40 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CgmXj4Fxsz6vSK;
+        Wed, 25 Nov 2020 11:27:17 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 25 Nov
+ 2020 11:27:35 +0800
+Subject: Re: [PATCH 09/17] fs/f2fs: Remove f2fs_copy_page()
+To:     <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>
+CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Steve French <sfrench@samba.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Brian King" <brking@us.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+References: <20201124060755.1405602-1-ira.weiny@intel.com>
+ <20201124060755.1405602-10-ira.weiny@intel.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <31cd27dc-71af-2a55-f9d6-ce11ff3dc19b@huawei.com>
+Date:   Wed, 25 Nov 2020 11:27:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20201124060755.1405602-10-ira.weiny@intel.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.136.114.67]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 24 Nov 2020, Hugh Dickins wrote:
-> On Wed, 25 Nov 2020, Matthew Wilcox wrote:
-> > On Tue, Nov 17, 2020 at 11:43:02PM +0000, Matthew Wilcox wrote:
-> > > On Tue, Nov 17, 2020 at 07:15:13PM +0000, Matthew Wilcox wrote:
-> > > > I find both of these functions exceptionally confusing.  Does this
-> > > > make it easier to understand?
-> > > 
-> > > Never mind, this is buggy.  I'll send something better tomorrow.
-> > 
-> > That took a week, not a day.  *sigh*.  At least this is shorter.
+On 2020/11/24 14:07, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
 > 
-> Thanks, I'll give it a try (along with the other 4, on top of the 12:
+> The new common function memcpy_page() provides this exactly
+> functionality.  Remove the local f2fs_copy_page() and call memcpy_page()
+> instead.
+> 
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 
-s/12/16/
+Acked-by: Chao Yu <yuchao0@huawei.com>
 
-> maybe on -rc5, maybe on today's mmotm, I'll decide that later).
-> 
-> Shorter you say, that's good: I was disheartened by the way it got
-> more complicated, after your initial truncate_inode_partial_page()
-> neatness.  Any hints on what was wrong with my simple fixup to that?
-> (But I didn't spend any more time trying to prove or disprove it.)
-> 
-> Hugh
-> 
+Thanks,
