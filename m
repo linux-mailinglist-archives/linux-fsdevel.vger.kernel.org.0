@@ -2,100 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF8A02C3F51
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 12:51:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D19512C3F98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 13:10:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbgKYLug (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 06:50:36 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:38620 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbgKYLuf (ORCPT
+        id S1727982AbgKYMKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 07:10:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbgKYMKK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 06:50:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1606305035; x=1637841035;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1528qdtQvDekfaSQWQ3/RaKGxVHeNOafHT1DPKSWueE=;
-  b=ieU2i/3v+QSAR8WqxQ3xiOLMTole9ttk1bO1voTeeE2OxGIyjdg+FxfR
-   dNWpHtfOISayxL3TLrLI1F2kF8FYYy9zaO8G6D2bi5shDa0C6UTkV8+8F
-   EgV2Rsy8/jrd+HhVyTEGU08ow0u9viljGjMA0tWXoyN213swomaOn28Sz
-   mNBmNoRMIsVmDSOCwkT3vofu1wvIaLMH1UpUm6WJWnfVok/T1vW1k/4B0
-   cz3e1FDGfhYp4C06EF0qbl3eMEoLpiBZOZkWF/XLeiIED1Ol9RlIBClhj
-   cGyEPthLTeer5YpF5oorlKHBWODQF8GgIg9Hm4EtTgTHEpU79qyb+Uk6Q
-   A==;
-IronPort-SDR: ka0fZKLiVzXW8mCgoBvwgqKQv/NTLXRG7bJ96ZqFdrwJVms4ZGlu42XJBrMKW/WgQGAAIj4i/b
- gqAV3C+z8IzclbNlFzEZ73E7nz44y1on1YP+901r4VOyiJyRh6iQYfuk7lZ+v2/A7Th1kLAwnM
- qZBKRrF1FZy5dhQbwRmhCPuNT5OwdfBhJIQp0DsZr/UVDEr7OGhr3qJBQ3GBH0iPRwNQG0ojNh
- A32NDHCcqkUVBAhirFEKXx8P80lq8KXE6MMBU91SkemNPjjQgBb0v705CT8heEFJDRoNp0Sh4W
- Cew=
-X-IronPort-AV: E=Sophos;i="5.78,368,1599494400"; 
-   d="scan'208";a="153380121"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 25 Nov 2020 19:50:34 +0800
-IronPort-SDR: UFq61Tze2pIMEVxZeSMBzflRk6QW8FGrfj6k1/cc5/AU7MhFFrOTO0wxrpQ3IUeI25lIbxd3gk
- 0mRQr3Iz8avdsvPcLhLaKNdbmhrwKNgW8=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2020 03:34:57 -0800
-IronPort-SDR: LQBZFqJRtReuUsqkBx4x0syc6JvVzTSGes5UTo7GWh39js03mlaz3ZicGbLYsLW2QIldRlZDb1
- PI2cLecUU+Eg==
-WDCIronportException: Internal
-Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip01.wdc.com with SMTP; 25 Nov 2020 03:50:33 -0800
-Received: (nullmailer pid 3139992 invoked by uid 1000);
-        Wed, 25 Nov 2020 11:50:32 -0000
-Date:   Wed, 25 Nov 2020 20:50:32 +0900
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     Graham Cobb <g.btrfs@cobb.uk.net>
-Cc:     Anand Jain <anand.jain@oracle.com>, linux-btrfs@vger.kernel.org,
-        dsterba@suse.com, hare@suse.com, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [PATCH v10 12/41] btrfs: implement zoned chunk allocator
-Message-ID: <20201125115032.f4eng536pxshee5c@naota.dhcp.fujisawa.hgst.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
- <9cec3af1-4f2c-c94c-1506-07db2c66cc90@oracle.com>
- <20201125015740.conrettvmrgwebus@naota.dhcp.fujisawa.hgst.com>
- <a97ef4b3-4973-1078-8537-5e814a24ef32@cobb.uk.net>
+        Wed, 25 Nov 2020 07:10:10 -0500
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E914FC0613D4;
+        Wed, 25 Nov 2020 04:10:09 -0800 (PST)
+Received: by mail-io1-xd2c.google.com with SMTP id i9so1915327ioo.2;
+        Wed, 25 Nov 2020 04:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7Gu8dfUtFbW1JkuoI0JsJxuRwdXnhq5kHzNpgpg59Vg=;
+        b=qBMGf8ZlpGBDrQf4OZ1U5hpBWVyNLxT8t7mb89EQfIXn+CYHj49+4NspUMpFZN+IBb
+         ow2ADzA501Y4hGPFKjrnnAGIPGi9hyvAwwXtpDtFAkYj7ksmhQny5Q5+xlY6jtJjsSvN
+         iA9i5fMRanrtfyZfe3+dWZgmeaV0x4lRD+7LgXZczkfB+RbnQDZrkTxOZ7Es8MQAef6B
+         e5RRaQ3t+46Lg0Zd/h/8g8StzDseAQGAZgvUuKfsUJH8/o4saKvewPtw+57G9TyZa/BY
+         /ViJEbywwBG8XKFF7bgqckI6jrquPx5+GfHPK5ghMTcJ5KumQuJnVjVzT50eAtnQOxE9
+         Uwfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=7Gu8dfUtFbW1JkuoI0JsJxuRwdXnhq5kHzNpgpg59Vg=;
+        b=MLwT3DvGDNNdaho0bgCfxDiEvEcF/8omAvMvJwMnWRwRqGeYQ7HQJzC5OwOE+d40HF
+         e/5ZJ6b0qb55APBJbO/ljQrUKB1tB+Yz1nvLjzQcNVZ/fxTMUq3qzuu3iBS88DoyGCys
+         Sf0fwcsSdHPR1ETn72K5ITs4KmdrOfyDo3GEjGCgAf0kIMFUSt+6LgJx9s7O8h9ZFvnv
+         wcwt/um60nQPYlggbGTWJFgMNM0/DOL+RSFxw6TeOrzW1ZYviKTeMKFMyKSevOe4aTX1
+         pjy565Nd7v0tWLN8cMj7K7QVFRuyRab/gIPqiH80I/1A7D+XTO3ndWrMAxlIUfpuiz6N
+         zBsw==
+X-Gm-Message-State: AOAM531jN58DsRFqE2+6YGl97jGUyu5OEgqiO8tQNAD3ovJJhbZAcCC9
+        91Hq+bhq2lrVdfabWdio10o=
+X-Google-Smtp-Source: ABdhPJzrP+6qlAsvVf6NJAz9IW3W/tDwuPyEzkZeYfjLrVcKdFZvzQhG4Xm+JItZe22HwNKBFUD46g==
+X-Received: by 2002:a5e:8206:: with SMTP id l6mr2327550iom.126.1606306209079;
+        Wed, 25 Nov 2020 04:10:09 -0800 (PST)
+Received: from localhost (dhcp-6c-ae-f6-dc-d8-61.cpe.echoes.net. [72.28.8.195])
+        by smtp.gmail.com with ESMTPSA id v85sm1343250ilk.50.2020.11.25.04.10.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2020 04:10:08 -0800 (PST)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Wed, 25 Nov 2020 07:09:46 -0500
+From:   Tejun Heo <tj@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 11/20] block: reference struct block_device from struct
+ hd_struct
+Message-ID: <X75JitlWvZieqIR3@mtj.duckdns.org>
+References: <20201118084800.2339180-1-hch@lst.de>
+ <20201118084800.2339180-12-hch@lst.de>
+ <X708BTJ5njtbC2z1@mtj.duckdns.org>
+ <20201125114044.GC16944@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a97ef4b3-4973-1078-8537-5e814a24ef32@cobb.uk.net>
+In-Reply-To: <20201125114044.GC16944@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 25, 2020 at 09:59:40AM +0000, Graham Cobb wrote:
->On 25/11/2020 01:57, Naohiro Aota wrote:
->> On Tue, Nov 24, 2020 at 07:36:18PM +0800, Anand Jain wrote:
->>> On 10/11/20 7:26 pm, Naohiro Aota wrote:
->>>> This commit implements a zoned chunk/dev_extent allocator. The zoned
->>>> allocator aligns the device extents to zone boundaries, so that a zone
->>>> reset affects only the device extent and does not change the state of
->>>> blocks in the neighbor device extents.
->>>>
->>>> Also, it checks that a region allocation is not overlapping any of the
->>>> super block zones, and ensures the region is empty.
->>>>
->>>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->>>
->>> Looks good.
->>>
->>> Chunks and stripes are aligned to the zone_size. I guess zone_size won't
->>> change after the block device has been formatted with it? For testing,
->>> what if the device image is dumped onto another zoned device with a
->>> different zone_size?
->>
->> Zone size is a drive characteristic, so it never change on the same device.
->>
->> Dump/restore on another device with a different zone_size should be banned,
->> because we cannot ensure device extents are aligned to zone boundaries.
->
->Does this mean 'btrfs replace' is banned as well? Or is it allowed to a
->similar-enough device? What about 'add' followed by 'remove'?
+Hey, Jan,
 
-Replacing is allowed if the zone size is the same. Adding a disk is the
-same. This restriction is checked in btrfs_init_new_device() (patch 5).
+On Wed, Nov 25, 2020 at 12:40:44PM +0100, Jan Kara wrote:
+> > I don't think this is necessary now that the bdev and inode lifetimes are
+> > one. Before, punching out the association early was necessary because we
+> > could be in a situation where we can successfully look up a part from idr
+> > and then try to pin the associated disk which may already be freed. With the
+> > new code, the lookup is through the inode whose lifetime is one and the same
+> > with gendisk, so use-after-free isn't possible and __blkdev_get() will
+> > reliably reject such open attempts.
+> 
+> I think the remove_inode_hash() call is actually still needed. Consider a
+> situation when the disk is unplugged, gendisk gets destroyed, bdev still
+> lives on (e.g. because it is still open). Device gets re-plugged, gendisk
+> for the same device number gets created. But we really need new bdev for
+> this because from higher level POV this is completely new device. And the
+> old bdev needs to live on as long as it is open. So IMO we still need to
+> just unhash the inode and leave it lingering in the background.
+
+You're absolutely right. I was only thinking about the lifetime problem
+described in the comment. So, it just needs an updated comment there, I
+think.
+
+Thanks.
+
+-- 
+tejun
