@@ -2,23 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B78492C38EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 07:08:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C42E2C38F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 07:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgKYGH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 01:07:59 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:7981 "EHLO
+        id S1727718AbgKYGK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 01:10:26 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:7982 "EHLO
         szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbgKYGH7 (ORCPT
+        with ESMTP id S1725838AbgKYGKZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 01:07:59 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cgr5m3R7Vzhh8Q;
-        Wed, 25 Nov 2020 14:07:40 +0800 (CST)
+        Wed, 25 Nov 2020 01:10:25 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cgr8c4ZrLzhYVP;
+        Wed, 25 Nov 2020 14:10:08 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 25 Nov
- 2020 14:07:42 +0800
-Subject: Re: [PATCH 04/45] fs: simplify freeze_bdev/thaw_bdev
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 25 Nov
+ 2020 14:10:21 +0800
+Subject: Re: [PATCH 30/45] block: remove the nr_sects field in struct
+ hd_struct
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 CC:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
@@ -32,14 +33,14 @@ CC:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         <linux-mtd@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-mm@kvack.org>
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-5-hch@lst.de>
+ <20201124132751.3747337-31-hch@lst.de>
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <4ae2d8ca-e858-e5df-67ef-d14852978976@huawei.com>
-Date:   Wed, 25 Nov 2020 14:07:41 +0800
+Message-ID: <fe5b2763-a7c7-98dd-d87e-d3fa6767eebb@huawei.com>
+Date:   Wed, 25 Nov 2020 14:10:20 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201124132751.3747337-5-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-31-hch@lst.de>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -50,17 +51,29 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020/11/24 21:27, Christoph Hellwig wrote:
-> Store the frozen superblock in struct block_device to avoid the awkward
-> interface that can return a sb only used a cookie, an ERR_PTR or NULL.
+> Now that the hd_struct always has a block device attached to it, there is
+> no need for having two size field that just get out of sync.
 > 
-> Signed-off-by: Christoph Hellwig<hch@lst.de>
+> Additional the field in hd_struct did not use proper serializiation,
+> possibly allowing for torn writes.  By only using the block_device field
+> this problem also gets fixed.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
->   drivers/md/dm-core.h      |  5 -----
->   drivers/md/dm.c           | 20 ++++++--------------
->   fs/block_dev.c            | 39 ++++++++++++++++-----------------------
->   fs/buffer.c               |  2 +-
->   fs/ext4/ioctl.c           |  2 +-
->   fs/f2fs/file.c            | 14 +++++---------
+>   block/bio.c                        |  4 +-
+>   block/blk-core.c                   |  2 +-
+>   block/blk.h                        | 53 ----------------------
+>   block/genhd.c                      | 55 +++++++++++-----------
+>   block/partitions/core.c            | 17 ++++---
+>   drivers/block/loop.c               |  1 -
+>   drivers/block/nbd.c                |  2 +-
+>   drivers/block/xen-blkback/common.h |  4 +-
+>   drivers/md/bcache/super.c          |  2 +-
+>   drivers/s390/block/dasd_ioctl.c    |  4 +-
+>   drivers/target/target_core_pscsi.c |  7 +--
+>   fs/block_dev.c                     | 73 +-----------------------------
+>   fs/f2fs/super.c                    |  2 +-
 
 For f2fs part,
 
@@ -68,7 +81,7 @@ Acked-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
->   fs/xfs/xfs_fsops.c        |  7 ++-----
->   include/linux/blk_types.h |  1 +
->   include/linux/blkdev.h    |  4 ++--
->   9 files changed, 34 insertions(+), 60 deletions(-)
+>   fs/pstore/blk.c                    |  2 +-
+>   include/linux/genhd.h              | 29 +++---------
+>   kernel/trace/blktrace.c            |  2 +-
+>   16 files changed, 60 insertions(+), 199 deletions(-)
