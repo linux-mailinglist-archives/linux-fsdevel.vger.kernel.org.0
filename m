@@ -2,79 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9348D2C37A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 04:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1496B2C38DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 06:54:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgKYD1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 22:27:41 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:8400 "EHLO
-        szxga07-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbgKYD1k (ORCPT
+        id S1725985AbgKYFxX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 00:53:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:44611 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725835AbgKYFxW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 22:27:40 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4CgmXj4Fxsz6vSK;
-        Wed, 25 Nov 2020 11:27:17 +0800 (CST)
-Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 25 Nov
- 2020 11:27:35 +0800
-Subject: Re: [PATCH 09/17] fs/f2fs: Remove f2fs_copy_page()
-To:     <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Steve French <sfrench@samba.org>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "Brian King" <brking@us.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <20201124060755.1405602-1-ira.weiny@intel.com>
- <20201124060755.1405602-10-ira.weiny@intel.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <31cd27dc-71af-2a55-f9d6-ce11ff3dc19b@huawei.com>
-Date:   Wed, 25 Nov 2020 11:27:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 25 Nov 2020 00:53:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606283601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/z9zobmRc9QZolW0FKUVYPp9xq6ljWzO5eKBmWGy+x0=;
+        b=IpYJZ77JBcEZBc2kko1jd4HKEUQ40aAFrYqs5DvkmGY5LKod5sXkQGBDerrnnmjalnCE4g
+        /CVsnVlCE0w5tDL48q60yVOp2XdBJMSbRnE7aowZdnua0sMfNN1leG/3UVmLdk0meuvXZj
+        iqmgrbQ1CY2DwyTKP4T/y+6IFZ+bTzc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-502-Xo--wji0N9-wQGWIFIiXSw-1; Wed, 25 Nov 2020 00:53:17 -0500
+X-MC-Unique: Xo--wji0N9-wQGWIFIiXSw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 481EE9A220;
+        Wed, 25 Nov 2020 05:53:16 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0C0665D71D;
+        Wed, 25 Nov 2020 05:53:16 +0000 (UTC)
+Received: from zmail23.collab.prod.int.phx2.redhat.com (zmail23.collab.prod.int.phx2.redhat.com [10.5.83.28])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id ED6E518095C9;
+        Wed, 25 Nov 2020 05:53:15 +0000 (UTC)
+Date:   Wed, 25 Nov 2020 00:53:15 -0500 (EST)
+From:   Xiaoli Feng <xifeng@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel@vger.kernel.org, david@fromorbit.com,
+        Xiaoli Feng <fengxiaoli0714@gmail.com>
+Message-ID: <136563737.59838105.1606283595257.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20201125024644.GA14534@magnolia>
+References: <20201125020840.1275-1-xifeng@redhat.com> <20201125024644.GA14534@magnolia>
+Subject: Re: [PATCH v2] fs/stat: set attributes_mask for STATX_ATTR_DAX
 MIME-Version: 1.0
-In-Reply-To: <20201124060755.1405602-10-ira.weiny@intel.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.136.114.67]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.72.13.128, 10.4.195.6]
+Thread-Topic: fs/stat: set attributes_mask for STATX_ATTR_DAX
+Thread-Index: vH38uV0iM87GdBISkylk6PnPD1HwvA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/11/24 14:07, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> The new common function memcpy_page() provides this exactly
-> functionality.  Remove the local f2fs_copy_page() and call memcpy_page()
-> instead.
-> 
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Cc: Chao Yu <yuchao0@huawei.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Hi,
 
-Acked-by: Chao Yu <yuchao0@huawei.com>
+----- Original Message -----
+> From: "Darrick J. Wong" <darrick.wong@oracle.com>
+> To: "XiaoLi Feng" <xifeng@redhat.com>
+> Cc: linux-fsdevel@vger.kernel.org, david@fromorbit.com, "Xiaoli Feng" <fengxiaoli0714@gmail.com>
+> Sent: Wednesday, November 25, 2020 10:46:44 AM
+> Subject: Re: [PATCH v2] fs/stat: set attributes_mask for STATX_ATTR_DAX
+> 
+> On Wed, Nov 25, 2020 at 10:08:40AM +0800, XiaoLi Feng wrote:
+> > From: Xiaoli Feng <fengxiaoli0714@gmail.com>
+> > 
+> > keep attributes and attributes_mask are consistent for
+> > STATX_ATTR_DAX.
+> > ---
+> > Hi,
+> > Please help to review this patch. I send this patch because xfstests
+> > generic/532
+> > is failed for dax test.
+> > 
+> >  fs/stat.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index dacecdda2e79..4619b3fc9694 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -80,8 +80,10 @@ int vfs_getattr_nosec(const struct path *path, struct
+> > kstat *stat,
+> >  	if (IS_AUTOMOUNT(inode))
+> >  		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+> >  
+> > -	if (IS_DAX(inode))
+> > +	if (IS_DAX(inode)) {
+> >  		stat->attributes |= STATX_ATTR_DAX;
+> > +		stat->attributes_mask |= STATX_ATTR_DAX;
+> 
+> From the discussion of the V1 patch:
+> 
+> Doesn't it make more sense for /filesystems/ driver to set the attr_mask
+> bit when the filesystem is capable of DAX?  Surely we should be able to
+> tell applications that DAX is a possibility for the fs even if it's not
+> enabled on this specific file.
+> 
+> IOWs the place to make this change is in the ext2/ext4/fuse/xfs code,
+> not in the generic vfs.
 
-Thanks,
+Got it. Thanks for review.
+
+> 
+> --D
+> 
+> > +	}
+> >  
+> >  	if (inode->i_op->getattr)
+> >  		return inode->i_op->getattr(path, stat, request_mask,
+> > --
+> > 2.18.1
+> > 
+> 
+> 
+
