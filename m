@@ -2,24 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C42E2C38F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 07:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 445EE2C38FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 07:12:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbgKYGK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 01:10:26 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:7982 "EHLO
+        id S1727696AbgKYGLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 01:11:40 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:7983 "EHLO
         szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbgKYGKZ (ORCPT
+        with ESMTP id S1725838AbgKYGLk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 01:10:25 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Cgr8c4ZrLzhYVP;
-        Wed, 25 Nov 2020 14:10:08 +0800 (CST)
+        Wed, 25 Nov 2020 01:11:40 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4CgrB346lSzhfQ7;
+        Wed, 25 Nov 2020 14:11:23 +0800 (CST)
 Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 25 Nov
- 2020 14:10:21 +0800
-Subject: Re: [PATCH 30/45] block: remove the nr_sects field in struct
- hd_struct
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 25 Nov
+ 2020 14:11:36 +0800
+Subject: Re: [PATCH 38/45] block: switch partition lookup to use struct
+ block_device
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 CC:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
@@ -33,14 +33,14 @@ CC:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         <linux-mtd@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-mm@kvack.org>
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-31-hch@lst.de>
+ <20201124132751.3747337-39-hch@lst.de>
 From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <fe5b2763-a7c7-98dd-d87e-d3fa6767eebb@huawei.com>
-Date:   Wed, 25 Nov 2020 14:10:20 +0800
+Message-ID: <fec5c478-c7cb-ce29-a35d-3474fae1c96d@huawei.com>
+Date:   Wed, 25 Nov 2020 14:11:35 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20201124132751.3747337-31-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-39-hch@lst.de>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -51,29 +51,31 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 2020/11/24 21:27, Christoph Hellwig wrote:
-> Now that the hd_struct always has a block device attached to it, there is
-> no need for having two size field that just get out of sync.
+> Use struct block_device to lookup partitions on a disk.  This removes
+> all usage of struct hd_struct from the I/O path, and this allows removing
+> the percpu refcount in struct hd_struct.
 > 
-> Additional the field in hd_struct did not use proper serializiation,
-> possibly allowing for torn writes.  By only using the block_device field
-> this problem also gets fixed.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Christoph Hellwig<hch@lst.de>
 > ---
 >   block/bio.c                        |  4 +-
->   block/blk-core.c                   |  2 +-
->   block/blk.h                        | 53 ----------------------
->   block/genhd.c                      | 55 +++++++++++-----------
->   block/partitions/core.c            | 17 ++++---
->   drivers/block/loop.c               |  1 -
->   drivers/block/nbd.c                |  2 +-
->   drivers/block/xen-blkback/common.h |  4 +-
->   drivers/md/bcache/super.c          |  2 +-
->   drivers/s390/block/dasd_ioctl.c    |  4 +-
->   drivers/target/target_core_pscsi.c |  7 +--
->   fs/block_dev.c                     | 73 +-----------------------------
->   fs/f2fs/super.c                    |  2 +-
+>   block/blk-core.c                   | 66 ++++++++++++++----------------
+>   block/blk-flush.c                  |  2 +-
+>   block/blk-mq.c                     |  9 ++--
+>   block/blk-mq.h                     |  7 ++--
+>   block/blk.h                        |  4 +-
+>   block/genhd.c                      | 56 +++++++++++++------------
+>   block/partitions/core.c            |  7 +---
+>   drivers/block/drbd/drbd_receiver.c |  2 +-
+>   drivers/block/drbd/drbd_worker.c   |  2 +-
+>   drivers/block/zram/zram_drv.c      |  2 +-
+>   drivers/md/bcache/request.c        |  4 +-
+>   drivers/md/dm.c                    |  4 +-
+>   drivers/md/md.c                    |  4 +-
+>   drivers/nvme/target/admin-cmd.c    | 20 ++++-----
+>   fs/ext4/super.c                    | 18 +++-----
+>   fs/ext4/sysfs.c                    | 10 +----
+>   fs/f2fs/f2fs.h                     |  2 +-
+>   fs/f2fs/super.c                    |  6 +--
 
 For f2fs part,
 
@@ -81,7 +83,7 @@ Acked-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
 
->   fs/pstore/blk.c                    |  2 +-
->   include/linux/genhd.h              | 29 +++---------
->   kernel/trace/blktrace.c            |  2 +-
->   16 files changed, 60 insertions(+), 199 deletions(-)
+>   include/linux/blkdev.h             |  8 ++--
+>   include/linux/genhd.h              |  4 +-
+>   include/linux/part_stat.h          | 17 ++++----
+>   22 files changed, 120 insertions(+), 138 deletions(-)
