@@ -2,99 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 292262C4772
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 19:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4D72C4774
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 19:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733058AbgKYSRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 13:17:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47186 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733005AbgKYSRK (ORCPT
+        id S1733062AbgKYSRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 13:17:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25528 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733005AbgKYSRN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 13:17:10 -0500
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F82FC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:16:54 -0800 (PST)
-Received: by mail-wr1-x441.google.com with SMTP id e7so2838477wrv.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j5gTn7rnt46vXkbVABsd/nLFo1oDvs2e/sre8ZiKqDQ=;
-        b=2RcIEuqtZY++KbyHHJ/8Al35LHvGEMfjFhX1wg6Sx1lnUQGdB99z0SrLom14WDlOHC
-         JzFjfP0tNkkwXcu6XzC6NAhOhzQoKp7yho7CnvBk07fTG44rTUd8izJ5QltWtboAdbOs
-         aCwthm9Lwh07mqfBhvxEgEy62qR7qdqH+QrYogMcZX0700fvS9sUweRgeTkiom3OxL5l
-         QQq2a/7Luu4pPuoc8nmOoPM+g7UUK1JTIHbOZYOZsTOa1alHfkhxBDNUi3/IBmDcpRRF
-         G0Vssw/bwybi4EgR5nUVohtKi/g9Eh+ZHJX4b7hFPGkxVT5uexQ6SNfhT0tVKhkKie1I
-         gk9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j5gTn7rnt46vXkbVABsd/nLFo1oDvs2e/sre8ZiKqDQ=;
-        b=LlYT/yCPKzAzKoMwKgF2sPaXkTOuza8kRe2YUpaf8fBzDnkWx77VSXVv0QFjQ4na+N
-         XbmIIdFa8+DR5r4LlN6cjvnWp7Szg5l0GgVRSGzLTbs8xLZ6hb6tXgZe9ajiHNmiJUD1
-         X34L4GzmBy91lOGQcR7KiJmVd9S1piqN7HpF9nILmA7trn1SactQU0N9Wz6I+WrnNJFC
-         OAKDQ6+TGkbCqjkJv5Jf5CT6XhpvcxtSTqvcEuINUkjd3PpM9+Q3DFEIcYthyK+NOfGT
-         FMKxFCl3yfdCZTe1kuC+1/mBv8rxKJQb0n4CxxaxY9WkFUSgrqC5Rcd2OwOvJ+4vSQZ0
-         b9+A==
-X-Gm-Message-State: AOAM533RRqEoJVJkTUSWzT7eRYrrKm/vZ0axCPFp+nB4iXoy/StA3dMY
-        BroWYQuPzbUPk8NgXWLoLIyWr0Bxmx122gwwZd9OZA==
-X-Google-Smtp-Source: ABdhPJwQ8WelxJodfMPdFHmQdz1O8TGE9MrvKPhhxxXuE5dHnylhfXIpx/XMn0moXpHiTw1HBA2/nw6OzXt+/ScISSw=
-X-Received: by 2002:adf:e509:: with SMTP id j9mr5578411wrm.354.1606328213209;
- Wed, 25 Nov 2020 10:16:53 -0800 (PST)
+        Wed, 25 Nov 2020 13:17:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606328232;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dEa9zY1JC2vSvxM6QWce76x1bj8BhcfNmh1K1toWIe0=;
+        b=RC51FE5CpFAZ+bbTZFGHoTEungjX49QADhMED7oP6VU+38542s2sbhvI4qzsCon0bil5/U
+        EFSa4j8XRygWQ+4tSj8r6TbiRgN4eQPjPFCQ8swiXfC2l5rQmej2lcN5Dno9j2B2KCVJbP
+        uanaY0+XZrV/56ZJQhz0YqP4YGmEKLo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-zt45hPzPPFKNxhG0joqgBQ-1; Wed, 25 Nov 2020 13:17:08 -0500
+X-MC-Unique: zt45hPzPPFKNxhG0joqgBQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C85887308A;
+        Wed, 25 Nov 2020 18:17:06 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-154.rdu2.redhat.com [10.10.114.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3CB560854;
+        Wed, 25 Nov 2020 18:17:05 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 0E3D122054F; Wed, 25 Nov 2020 13:17:05 -0500 (EST)
+Date:   Wed, 25 Nov 2020 13:17:04 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v1 2/3] overlay: Add the ability to remount volatile
+ directories when safe
+Message-ID: <20201125181704.GD3095@redhat.com>
+References: <20201125104621.18838-1-sargun@sargun.me>
+ <20201125104621.18838-3-sargun@sargun.me>
 MIME-Version: 1.0
-References: <20201125162532.1299794-1-daniel.vetter@ffwll.ch>
- <20201125162532.1299794-5-daniel.vetter@ffwll.ch> <CAKMK7uGXfqaPUtnX=VgA3tFn3S+Gt9GV+kPguakZ6FF_n8LKuA@mail.gmail.com>
- <20201125180606.GQ5487@ziepe.ca>
-In-Reply-To: <20201125180606.GQ5487@ziepe.ca>
-From:   Daniel Stone <daniel@fooishbar.org>
-Date:   Wed, 25 Nov 2020 18:16:42 +0000
-Message-ID: <CAPj87rP-=yXjdPc48WrwiZj8pYVfZsMhzsAqt-1MrrV2LoOPMQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/ttm: don't set page->mapping
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Brian Paul <brianp@vmware.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Huang Rui <ray.huang@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201125104621.18838-3-sargun@sargun.me>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Nov 25, 2020 at 02:46:20AM -0800, Sargun Dhillon wrote:
 
-On Wed, 25 Nov 2020 at 18:06, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Wed, Nov 25, 2020 at 05:28:32PM +0100, Daniel Vetter wrote:
-> > Apologies again, this shouldn't have been included. But at least I
-> > have an idea now why this patch somehow was included in the git
-> > send-email. Lovely interface :-/
->
-> I wrote a bit of a script around this because git send-email just too
-> hard to use
->
-> The key workflow change I made was to have it prepare all the emails
-> to send and open them in an editor for review - exactly as they would
-> be sent to the lists.
->
-> It uses a empty 'cover-letter' commit and automatically transforms it
-> into exactly the right stuff. Keeps track of everything you send in
-> git, and there is a little tool to auto-run git range-diff to help
-> build change logs..
+[..]
+> @@ -1125,16 +1183,19 @@ static int ovl_workdir_cleanup_recurse(struct path *path, int level)
+>  			if (p->len == 2 && p->name[1] == '.')
+>  				continue;
+>  		} else if (incompat) {
+> -			pr_err("overlay with incompat feature '%s' cannot be mounted\n",
+> -				p->name);
+> -			err = -EINVAL;
+> -			break;
+> +			err = ovl_check_incompat(ofs, p, path);
+> +			if (err < 0)
+> +				break;
+> +			/* Skip cleaning this */
+> +			if (err == 1)
+> +				continue;
+>  		}
 
-This sounds a fair bit like patman, which does something similar and
-also lets you annotate commit messages with changelogs.
+Shouldn't we clean volatile/dirty on non-volatile mount. I did a 
+volatile mount followed by a non-volatile remount and I still
+see work/incompat/volatile/dirty and "trusted.overlay.volatile" xattr
+on "volatile" dir. I would expect that this will be all cleaned up
+as soon as that upper/work is used for non-volatile mount.
 
-But of course, suggesting different methods of carving patches into
-stone tablets to someone who's written their own, is even more of a
-windmill tilt than rDMA. ;)
 
-Cheers,
-Daniel
