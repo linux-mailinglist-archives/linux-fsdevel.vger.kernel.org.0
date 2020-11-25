@@ -2,99 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 966EF2C34C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 00:45:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1567A2C3556
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 01:25:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389283AbgKXXpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Nov 2020 18:45:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44816 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389255AbgKXXpJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Nov 2020 18:45:09 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC13CC0613D6;
-        Tue, 24 Nov 2020 15:45:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=Tkitja/Eoegmpeva7rYWnAKrxKN18IlHRbTdli2tIQs=; b=DWNAujBGt91TCkwpe1ZmzKjyFt
-        hxR1cPGJ5Yf4BdO+jSBONh+Y1FbZyAFW1lTq1JDpuQjvYvACCTLl7nTKntYes8DoDOiiwu5zOb7zI
-        7NMOQkskk7DrLKqBfg+jJ5ioW/UUDlXqO2HBXLh1n/bJJqwNJBs1lNCSxhLdIVC572hC3rNQJMnEr
-        2JGukhY0lqbrZBofTU7x/4ONPZmjCHetDS/qNY8tb0M4keiUPVwBfT1U8vYCccxjqFkNhFJDvS6hN
-        ShctBBeQfZylaxCvXjU4P0RoVFisPlkjUCFyjXvraFqB1v7YPzxtvh/xYX6hHlCcWHbwMcGXtMa8W
-        zB54F0Ng==;
-Received: from [2602:306:c5a2:a380:9e7b:efff:fe40:2b26]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1khhzY-0007Ab-F6; Tue, 24 Nov 2020 23:45:01 +0000
-Subject: Re: [PATCH v2 02/24] exec: Simplify unshare_files
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <87r1on1v62.fsf@x220.int.ebiederm.org>
- <20201120231441.29911-2-ebiederm@xmission.com>
- <20201123175052.GA20279@redhat.com>
- <CAHk-=wj2OnjWr696z4yzDO9_mF44ND60qBHPvi1i9DBrjdLvUw@mail.gmail.com>
- <87im9vx08i.fsf@x220.int.ebiederm.org> <87pn42r0n7.fsf@x220.int.ebiederm.org>
- <CAHk-=wi-h8y5MK83DA6Vz2TDSQf4eEadddhWLTT_94bP996=Ug@mail.gmail.com>
- <CAK8P3a3z1tZSSSyK=tZOkUTqXvewJgd6ntHMysY0gGQ7hPWwfw@mail.gmail.com>
-From:   Geoff Levand <geoff@infradead.org>
-Message-ID: <ed83033f-80af-5be0-ecbe-f2bf5c2075e9@infradead.org>
-Date:   Tue, 24 Nov 2020 15:44:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727328AbgKYAYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Nov 2020 19:24:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726709AbgKYAYq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Nov 2020 19:24:46 -0500
+Received: from sol.attlocal.net (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C3D206F7;
+        Wed, 25 Nov 2020 00:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606263885;
+        bh=M+jRhoaXexMV9nGYgDRJMTIlxGlDLMY+dRhqnifs5zA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jfKG5p5lCJrZohfYetsr7smx0o/PxZnPkiYY4BSgdkLRvpXBClZebe+sVZSD55SOM
+         fQtjkrtWMe5YZw93YlGoVDWhHtT1YgODfqRzxL6WxvjCd0h4i557joki7DDVrp/4Uz
+         eK40i3Jw/3iSNyICbU1tkn/IvXLj3y9CNPMG5egg=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/9] Allow deleting files with unsupported encryption policy
+Date:   Tue, 24 Nov 2020 16:23:27 -0800
+Message-Id: <20201125002336.274045-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3z1tZSSSyK=tZOkUTqXvewJgd6ntHMysY0gGQ7hPWwfw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/24/20 12:14 PM, Arnd Bergmann wrote:
-> On Tue, Nov 24, 2020 at 8:58 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> On Tue, Nov 24, 2020 at 11:55 AM Eric W. Biederman
->> <ebiederm@xmission.com> wrote:
->>>
->>> If cell happens to be dead we can remove a fair amount of generic kernel
->>> code that only exists to support cell.
->>
->> Even if some people might still use cell (which sounds unlikely), I
->> think we can remove the spu core dumping code.
-> 
-> The Cell blade hardware (arch/powerpc/platforms/cell/) that I'm listed
-> as a maintainer for is very much dead, but there is apparently still some
-> activity on the Playstation 3 that Geoff Levand maintains.
-> 
-> Eric correctly points out that the PS3 firmware no longer boots
-> Linux (OtherOS), but AFAIK there are both users with old firmware
-> and those that use a firmware exploit to run homebrew code including
-> Linux.
-> 
-> I would assume they still use the SPU and might also use the core
-> dump code in particular. Let's see what Geoff thinks.
+Currently it's impossible to delete files that use an unsupported
+encryption policy, as the kernel will just return an error when
+performing any operation on the top-level encrypted directory, even just
+a path lookup into the directory or opening the directory for readdir.
 
-There are still PS3-Linux users out there.  They use 'Homebrew' firmware
-released through 'Hacker' forums that allow them to run Linux on
-non-supported systems.  They are generally hobbies who don't post to
-Linux kernel mailing lists.  I get direct inquiries regularly asking
-about how to update to a recent kernel.  One of the things that attract
-them to the PS3 is the Cell processor and either using or programming
-the SPUs.
+It's desirable to return errors for most operations on files that use an
+unsupported encryption policy, but the current behavior is too strict.
+We need to allow enough to delete files, so that people can't be stuck
+with undeletable files when downgrading kernel versions.  That includes
+allowing directories to be listed and allowing dentries to be looked up.
 
-It is difficult to judge how much use the SPU core dump support gets,
-but if it is not a cause of major problems I feel we should consider
-keeping it.
+This series fixes this (on ext4, f2fs, and ubifs) by treating an
+unsupported encryption policy in the same way as "key unavailable" in
+the cases that are required for a recursive delete to work.
 
--Geoff
+The actual fix is in patch 9, so see that for more details.
+
+Patches 1-8 are cleanups that prepare for the actual fix by removing
+direct use of fscrypt_get_encryption_info() by filesystems.
+
+This patchset applies to branch "master" (commit 4a4b8721f1a5) of
+https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git.
+
+Eric Biggers (9):
+  ext4: remove ext4_dir_open()
+  f2fs: remove f2fs_dir_open()
+  ubifs: remove ubifs_dir_open()
+  ext4: don't call fscrypt_get_encryption_info() from dx_show_leaf()
+  fscrypt: introduce fscrypt_prepare_readdir()
+  fscrypt: move body of fscrypt_prepare_setattr() out-of-line
+  fscrypt: move fscrypt_require_key() to fscrypt_private.h
+  fscrypt: unexport fscrypt_get_encryption_info()
+  fscrypt: allow deleting files with unsupported encryption policy
+
+ fs/crypto/fname.c           |  8 +++-
+ fs/crypto/fscrypt_private.h | 28 ++++++++++++++
+ fs/crypto/hooks.c           | 16 +++++++-
+ fs/crypto/keysetup.c        | 20 ++++++++--
+ fs/crypto/policy.c          | 22 +++++++----
+ fs/ext4/dir.c               | 16 ++------
+ fs/ext4/namei.c             | 10 +----
+ fs/f2fs/dir.c               | 10 +----
+ fs/ubifs/dir.c              | 11 +-----
+ include/linux/fscrypt.h     | 75 +++++++++++++++++++------------------
+ 10 files changed, 126 insertions(+), 90 deletions(-)
+
+
+base-commit: 4a4b8721f1a5e4b01e45b3153c68d5a1014b25de
+-- 
+2.29.2
 
