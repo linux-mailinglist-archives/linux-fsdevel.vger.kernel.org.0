@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E2942C3931
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 07:42:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D67CC2C3935
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 07:42:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgKYGll (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 01:41:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42836 "EHLO mx2.suse.de"
+        id S1726595AbgKYGmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 01:42:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43130 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726034AbgKYGll (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 01:41:41 -0500
+        id S1726314AbgKYGmP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Nov 2020 01:42:15 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 63062ABCE;
-        Wed, 25 Nov 2020 06:41:39 +0000 (UTC)
-Subject: Re: [PATCH 02/45] filemap: consistently use ->f_mapping over
- ->i_mapping
+        by mx2.suse.de (Postfix) with ESMTP id 6CE03ABDE;
+        Wed, 25 Nov 2020 06:42:13 +0000 (UTC)
+Subject: Re: [PATCH 03/45] fs: remove get_super_thawed and
+ get_super_exclusive_thawed
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
@@ -30,14 +30,14 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 References: <20201124132751.3747337-1-hch@lst.de>
- <20201124132751.3747337-3-hch@lst.de>
+ <20201124132751.3747337-4-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <aca8a60e-d6da-7a17-0a20-3187eed83cc1@suse.de>
-Date:   Wed, 25 Nov 2020 07:41:39 +0100
+Message-ID: <bc32a2ff-8021-a47f-0543-955c9178d0f5@suse.de>
+Date:   Wed, 25 Nov 2020 07:42:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201124132751.3747337-3-hch@lst.de>
+In-Reply-To: <20201124132751.3747337-4-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -46,14 +46,15 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/24/20 2:27 PM, Christoph Hellwig wrote:
-> Use file->f_mapping in all remaining places that have a struct file
-> available to properly handle the case where inode->i_mapping !=
-> file_inode(file)->i_mapping.
+> Just open code the wait in the only caller of both functions.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   mm/filemap.c | 13 ++++++-------
->   1 file changed, 6 insertions(+), 7 deletions(-)
+>   fs/internal.h      |  2 ++
+>   fs/quota/quota.c   | 31 +++++++++++++++++++++-------
+>   fs/super.c         | 51 ++--------------------------------------------
+>   include/linux/fs.h |  4 +---
+>   4 files changed, 29 insertions(+), 59 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
