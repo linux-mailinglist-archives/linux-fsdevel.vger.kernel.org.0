@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D30A2C4533
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 17:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E47C2C4591
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 17:45:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731647AbgKYQ3c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 11:29:32 -0500
-Received: from verein.lst.de ([213.95.11.211]:59650 "EHLO verein.lst.de"
+        id S1732078AbgKYQpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 11:45:22 -0500
+Received: from verein.lst.de ([213.95.11.211]:59718 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730840AbgKYQ3c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 11:29:32 -0500
+        id S1732072AbgKYQpU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Nov 2020 11:45:20 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 948AB68B02; Wed, 25 Nov 2020 17:29:26 +0100 (CET)
-Date:   Wed, 25 Nov 2020 17:29:26 +0100
+        id 05B8968B02; Wed, 25 Nov 2020 17:45:16 +0100 (CET)
+Date:   Wed, 25 Nov 2020 17:45:15 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Tejun Heo <tj@kernel.org>
 Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
@@ -28,56 +28,47 @@ Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
         xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 23/45] block: remove i_bdev
-Message-ID: <20201125162926.GA1024@lst.de>
-References: <20201124132751.3747337-1-hch@lst.de> <20201124132751.3747337-24-hch@lst.de> <X71g4Tm+3RiRg4Gf@mtj.duckdns.org>
+Subject: Re: [PATCH 25/45] block: reference struct block_device from struct
+ hd_struct
+Message-ID: <20201125164515.GB1975@lst.de>
+References: <20201124132751.3747337-1-hch@lst.de> <20201124132751.3747337-26-hch@lst.de> <X714udEyPuGarVYp@mtj.duckdns.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <X71g4Tm+3RiRg4Gf@mtj.duckdns.org>
+In-Reply-To: <X714udEyPuGarVYp@mtj.duckdns.org>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 02:37:05PM -0500, Tejun Heo wrote:
-> On Tue, Nov 24, 2020 at 02:27:29PM +0100, Christoph Hellwig wrote:
-> > Switch the block device lookup interfaces to directly work with a dev_t
-> > so that struct block_device references are only acquired by the
-> > blkdev_get variants (and the blk-cgroup special case).  This means that
-> > we not don't need an extra reference in the inode and can generally
->      ^
->      now
-> > simplify handling of struct block_device to keep the lookups contained
-> > in the core block layer code.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ...
-> > @@ -1689,14 +1599,12 @@ static int blkdev_open(struct inode * inode, struct file * filp)
-> >  	if ((filp->f_flags & O_ACCMODE) == 3)
-> >  		filp->f_mode |= FMODE_WRITE_IOCTL;
-> >  
-> > -	bdev = bd_acquire(inode);
-> > -	if (bdev == NULL)
-> > -		return -ENOMEM;
-> > -
-> > +	bdev = blkdev_get_by_dev(inode->i_rdev, filp->f_mode, filp);
-> > +	if (IS_ERR(bdev))
-> > +		return PTR_ERR(bdev);
-> >  	filp->f_mapping = bdev->bd_inode->i_mapping;
-> >  	filp->f_wb_err = filemap_sample_wb_err(filp->f_mapping);
-> > -
-> > -	return blkdev_get(bdev, filp->f_mode, filp);
-> > +	return 0;
-> >  }
+On Tue, Nov 24, 2020 at 04:18:49PM -0500, Tejun Heo wrote:
+> Hello,
 > 
-> I was wondering whether losing the stale bdev flushing in bd_acquire() would
-> cause user-visible behavior changes but can't see how it would given that
-> userland has no way of holding onto a specific instance of block inode.
-> Maybe it's something worth mentioning in the commit message?
+> Please see lkml.kernel.org/r/X708BTJ5njtbC2z1@mtj.duckdns.org for a few nits
+> on the previous version.
 
-With stale bdev flushing do you mean the call to bd_forget if
-i_bdev exists but is unhashed?  It doesn't actually flush anything but
-just detaches the old bdev from the inode so that the new one can be
-attached.  That problem goes away by definition if we don't attach
-the bdev to the inode.
+Thanks, I've addressed the mapping_set_gfp mask nit and updated the
+commit log.  As Jan pointed also pointed out I think we do need the
+remove_inode_hash.
+
+> I might be confused but am wondering whether RCU is needed. It's currently
+> used to ensure that gendisk is accessible in the blkdev_get path but
+> wouldn't it be possible to simply pin gendisk from block_devices? The
+> gendisk and hd_structs hold the base refs of the block_devices and in turn
+> the block_devices pin the gendisk. When the gendisk gets deleted, it puts
+> the base refs of the block devices but stays around while the block devices
+> are being accessed.
+
+Yes, that sounds sensible.  I'll take a look.
+
+> Also, would it make sense to separate out lookup_sem removal? I *think* it's
+> there to ensure that the same bdev doesn't get associated with old and new
+> gendisks at the same time but can't wrap my head around how it works
+> exactly. I can see that this may not be needed once the lifetimes of gendisk
+> and block_devices are tied together but that may warrant a bit more
+> explanation.
+
+Jan added lookup_sem in commit 56c0908c855afbb to prevent a three way
+race between del_gendisk and blkdev_open due to the weird bdev vs
+gendisk lifetime rules.  None of that can happen with the new lookup
+scheme.
