@@ -2,69 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 004662C4794
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 19:27:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DD612C47AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 19:33:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732805AbgKYS0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 13:26:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48688 "EHLO
+        id S1732790AbgKYScV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 13:32:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgKYS0c (ORCPT
+        with ESMTP id S1730781AbgKYScV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 13:26:32 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE1E7C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:26:31 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id d142so2833992wmd.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:26:31 -0800 (PST)
+        Wed, 25 Nov 2020 13:32:21 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B1FC061A4F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:32:14 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id 7so4439945ejm.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:32:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:from:mime-version:content-transfer-encoding
-         :content-description:subject:to:date:reply-to;
-        bh=MT4M9SX2NqdNuOObXhIV8Gtkw+yoDX+gRyJnh+feBwM=;
-        b=dl0CSSveymyn6NPAPwt6BtLRPZE5pZKfDJdxZjfy3yCVw+Mc0Kap7thHGKhrhM9HEE
-         tW5wJOYxxti9mUrH+l4WuRrzQPk1hbq2EnlkLJD6BeU2IA1hE9AQgebdz3YzmQ/BMsCw
-         SgBg15aArO+KwpGwH29ag9No7p72ZiUQBW8jlAyuqNZta4hXaJJzJMB83v2nj0rWbz1z
-         UFbDZfsEWQHaUvmA4YAxMTjv/AyfnoXy04CPbk8HyRaVint1rJedQ5LfcJGNQmXi6kXv
-         g6C+jQZAbOOc4F98c9ZvTuZbFrllDtFAQxlc90dVh27TYNR5wH5IlrOrBjLtpGZD8EBK
-         a3kA==
+        d=sargun.me; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ecRcBDigyuzJpB4+DEEjbs/8q8jM472OmYKMrTaXLcM=;
+        b=fz+eoZBmT7qC4mcDH7aY9dy2eKBuFqczfeivFyhSj4KSb3aiPp+PV5wLlMEk9+xfDe
+         D/asPbT25lNO9mcusmQZ+k/2hkfHjCiK3Fl7iZkBex6CISwwhVaKVNCmMo5AcDlGrzV1
+         9pmrY9xMY4DwAKIZifUHcsC0UvOeMFvEjZzBc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:from:mime-version
-         :content-transfer-encoding:content-description:subject:to:date
-         :reply-to;
-        bh=MT4M9SX2NqdNuOObXhIV8Gtkw+yoDX+gRyJnh+feBwM=;
-        b=bUOx6YUurQjAYdStb3QLPywAhyBrtDlzbUxSbaHxN3hKLp8ML8/NkcAxB31AAkCzYJ
-         Fe/aQ5NwwKeqZ96YzMJanRTLFLbzzcl323mN4Sc5daZah2ChLdOaT5mcYteoaVAx/ot6
-         1yF4cbpLt8oo2LAu5FdJzJnTwrbt+SyNROfK/faV5J/vtXM4+xv6HYV0Lk/aR/VD5Xyd
-         7oe2a/AGR/sTQ/dkjZo3hvf4xsWjeOieNg/7ZzfhoVNQNZhgLOKYbvoqQEXWqXUl8aLI
-         5jzSJxatiWiqfoPIpkTEp/r0giSr5uLEaiZ19uSdWgDQS1NJL8KokS+QfjhHQipp/aCS
-         XWxg==
-X-Gm-Message-State: AOAM530GVek8qUQHXCh9S7iFIDYS26SnuGQLFv21AcU79cNIsCKznzmF
-        hvGVUxky9sGTmDaefXVX0MI=
-X-Google-Smtp-Source: ABdhPJw7DgGX+QBzdJQj04LfyvGMBTLj+x7jHEB6QWG3s/JQMQ9cEMILik15egtx47EZWsbwi4A/vA==
-X-Received: by 2002:a7b:c19a:: with SMTP id y26mr5446415wmi.88.1606328790552;
-        Wed, 25 Nov 2020 10:26:30 -0800 (PST)
-Received: from [192.168.1.152] ([102.64.149.89])
-        by smtp.gmail.com with ESMTPSA id x13sm5329634wmj.48.2020.11.25.10.26.26
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Wed, 25 Nov 2020 10:26:29 -0800 (PST)
-Message-ID: <5fbea1d5.1c69fb81.8c60.ba40@mx.google.com>
-From:   "Dailborh R." <risonnah.001@gmail.com>
-X-Google-Original-From: Dailborh R.
-Content-Type: text/plain; charset="iso-8859-1"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ecRcBDigyuzJpB4+DEEjbs/8q8jM472OmYKMrTaXLcM=;
+        b=S1M68emWpdlJWSDyvtUVqN8UrPONMB0XFH22XJa25cME+I6CQzRUiNnVyLf3ssCGp9
+         So8Q1inqYhEp30QFhoh71KuJgAa9gXnPlc0TfVZ64fgD6WBJuTDsKmcbo47ZWdMvBcfK
+         YHe2nrxNHuejmURoS3xC7uKNp2o3m6DU7ESLanD/Yvr6uHVK65ztGeodYcwPE9DLZfek
+         JjTwXwPZvVhQj64vYRe9yg6xi6f1MGv71Wm8YZj+Ij/aaXVsGbQLcRv1YmNyR8OkbTjV
+         ayWICGZ8zZ1G5tvPp5pkXCxtOrQW7iSLopuTbKqjpbwgx8GAGje/asXja1GRqQWrNTb7
+         i6UA==
+X-Gm-Message-State: AOAM531yFoEddtw4elvTdKdHqc/2MqfgwXU59Nk21YIr4I1T9l3o6mk7
+        SLwO3t/4b3k7Cw4pRnbkUWOdVSUlH7EgImF1iRWUSg==
+X-Google-Smtp-Source: ABdhPJwlZrbCvfj3PJAGYPrC0QMaE1AMNMzD35MIDdb9brVL8P39XfFyTdj6VUET/3czQ86eRxr0KWaTeO3ROp0C5tc=
+X-Received: by 2002:a17:906:6b86:: with SMTP id l6mr4318905ejr.524.1606329133305;
+ Wed, 25 Nov 2020 10:32:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Please reply to me
-To:     Recipients <Dailborh@vger.kernel.org>
-Date:   Wed, 25 Nov 2020 18:26:14 +0000
-Reply-To: dailrrob.83@gmail.com
+References: <20201125104621.18838-1-sargun@sargun.me> <20201125104621.18838-3-sargun@sargun.me>
+ <20201125181704.GD3095@redhat.com>
+In-Reply-To: <20201125181704.GD3095@redhat.com>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Wed, 25 Nov 2020 10:31:36 -0800
+Message-ID: <CAMp4zn_jR28x4P21QaHJV8AzG90ZZO3=K+pDVwNovP1m3hf7pw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] overlay: Add the ability to remount volatile
+ directories when safe
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I'm Dailborh R. from US. I picked interest in you and I would like to know
-more about you and establish relationship with you. i will wait for
-your response. thank you.
+On Wed, Nov 25, 2020 at 10:17 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Wed, Nov 25, 2020 at 02:46:20AM -0800, Sargun Dhillon wrote:
+>
+> [..]
+> > @@ -1125,16 +1183,19 @@ static int ovl_workdir_cleanup_recurse(struct path *path, int level)
+> >                       if (p->len == 2 && p->name[1] == '.')
+> >                               continue;
+> >               } else if (incompat) {
+> > -                     pr_err("overlay with incompat feature '%s' cannot be mounted\n",
+> > -                             p->name);
+> > -                     err = -EINVAL;
+> > -                     break;
+> > +                     err = ovl_check_incompat(ofs, p, path);
+> > +                     if (err < 0)
+> > +                             break;
+> > +                     /* Skip cleaning this */
+> > +                     if (err == 1)
+> > +                             continue;
+> >               }
+>
+> Shouldn't we clean volatile/dirty on non-volatile mount. I did a
+> volatile mount followed by a non-volatile remount and I still
+> see work/incompat/volatile/dirty and "trusted.overlay.volatile" xattr
+> on "volatile" dir. I would expect that this will be all cleaned up
+> as soon as that upper/work is used for non-volatile mount.
+>
+>
 
+Amir pointed out this is incorrect behaviour earlier.
+You should be able to go:
+non-volatile -> volatile
+volatile -> volatile
+
+But never
+volatile -> non-volatile, since our mechanism is not bulletproof.
+
+I will fix this in the next respin.
