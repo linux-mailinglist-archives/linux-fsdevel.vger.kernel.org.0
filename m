@@ -2,74 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9B12C45EA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 17:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 865E32C4739
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 19:06:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbgKYQuZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 11:50:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:29606 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732068AbgKYQuX (ORCPT
+        id S1731220AbgKYSGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 13:06:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45534 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730420AbgKYSGJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 11:50:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606323022;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=XZc3CPeOm1ZOxeaYmzK65nkw+8TNuZ7nhsmtRqGrSEo=;
-        b=XWf3M3ZHGIWzSymrVwUA2CAOTh/FqhKon3J0/unajrGRjuYMgrgH4zDX+u8QKJ0APoNvKH
-        I1fRiUhJZB0An0JupCQoqk669hX3Dr5o8FVychduv8ooN496RrVvUzl01SLZj7dvGTWw54
-        R+HAODw02C/frTWN1W6tsTPPYA94+7I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-596-bEjfIDKOOqarG3JXigFZCQ-1; Wed, 25 Nov 2020 11:50:20 -0500
-X-MC-Unique: bEjfIDKOOqarG3JXigFZCQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76FDD185E48A;
-        Wed, 25 Nov 2020 16:50:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-111.rdu2.redhat.com [10.10.112.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D604510021B3;
-        Wed, 25 Nov 2020 16:50:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>
-cc:     dhowells@redhat.com, sandeen@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: UAPI value collision: STATX_ATTR_MOUNT_ROOT vs STATX_ATTR_DAX
+        Wed, 25 Nov 2020 13:06:09 -0500
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A0EDC061A51
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:06:09 -0800 (PST)
+Received: by mail-qt1-x843.google.com with SMTP id l7so2225893qtp.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 10:06:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BcVhHVVGnf3WvgX+ezgVKIjE/rfcsmBp0NN8oWI8KeQ=;
+        b=oZokE3b9qW4wR31ltC6sLQ8tlsVQNdzsn6eGih9BX9owbzd4vdqHIicN+yS6UhLmWp
+         3ItMtJDGOFCY1EYvQ97JYoz+bllXwb5hSufqcrUhqWQMB1IbJJWX0CT7Dwn8uE0Nh6z5
+         dw+tG9V44ScSRsHrV7/VT1/OdTnZ/CQ5A6gTusM4CjwRb4DmoUyVsFAnVBK9xVV0b5VH
+         3Mzp15tBB2D/v7WXW1Tzd8cStJSr2M7OHyaJH0C3r+eimOrdeDIRnOZqng+EBsuckQn/
+         IgupkbnQ8lg3DQoP5zkAZWk208dxV0Dzx5MvaGoorv9NAiTZR3LBKtotzc+NJe+1xtrq
+         mPrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BcVhHVVGnf3WvgX+ezgVKIjE/rfcsmBp0NN8oWI8KeQ=;
+        b=MdAgupvqGOPlQjAoF8xQw1D4HokbIczuv3NizMagApGikQ+WvwvD1f9zQDGueJZ2eC
+         L/6b8IYtHCwJbyJkO8xjAC9CRIoXUJ60NfTJ2ngSq5r2MQ9OZxxV9RBCpl+MVKgMI3VA
+         z2oQCNgfxpBp4HXjvb+FaJ2Yd5inWgc4uTRSldVEYB5BwVSLZsZGbskst+Kbm3tiI+aq
+         yppNz00CeanB95XBGyg0OXr6VVvi/F/9BTwPKXK2PjpNVo9I1k7wcxSxnJj3WEU4nfLl
+         2OVLSIPe5Ihwav9brlpgapV/mKW9gjNkFYSXb7J3sD4/nXXwWMqP3m0YMHp/eis9zy+/
+         MZMg==
+X-Gm-Message-State: AOAM531YESfzT4YRmIIjv1LKOod8cw0DIlrnHhPiQEktK7eF+42eTU2L
+        rNKDtu96AUXCV3+/ftx6aN/nSg==
+X-Google-Smtp-Source: ABdhPJyTT0zfGule3EMk3EVFgg0sW/Gc+MYUEwA7cD2UFS4TswJqWZPz+DEHts834E3EnWVts2w0Nw==
+X-Received: by 2002:ac8:7a7b:: with SMTP id w27mr29725qtt.381.1606327568092;
+        Wed, 25 Nov 2020 10:06:08 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id h4sm32176qkh.93.2020.11.25.10.06.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Nov 2020 10:06:07 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1khzB8-001Lnb-ES; Wed, 25 Nov 2020 14:06:06 -0400
+Date:   Wed, 25 Nov 2020 14:06:06 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Brian Paul <brianp@vmware.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Huang Rui <ray.huang@amd.com>
+Subject: Re: [PATCH] drm/ttm: don't set page->mapping
+Message-ID: <20201125180606.GQ5487@ziepe.ca>
+References: <20201125162532.1299794-1-daniel.vetter@ffwll.ch>
+ <20201125162532.1299794-5-daniel.vetter@ffwll.ch>
+ <CAKMK7uGXfqaPUtnX=VgA3tFn3S+Gt9GV+kPguakZ6FF_n8LKuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1927369.1606323014.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 25 Nov 2020 16:50:14 +0000
-Message-ID: <1927370.1606323014@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uGXfqaPUtnX=VgA3tFn3S+Gt9GV+kPguakZ6FF_n8LKuA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus, Miklos, Ira,
+On Wed, Nov 25, 2020 at 05:28:32PM +0100, Daniel Vetter wrote:
+> On Wed, Nov 25, 2020 at 5:25 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> >
+> > Random observation while trying to review Christian's patch series to
+> > stop looking at struct page for dma-buf imports.
+> >
+> > This was originally added in
+> >
+> > commit 58aa6622d32af7d2c08d45085f44c54554a16ed7
+> > Author: Thomas Hellstrom <thellstrom@vmware.com>
+> > Date:   Fri Jan 3 11:47:23 2014 +0100
+> >
+> >     drm/ttm: Correctly set page mapping and -index members
+> >
+> >     Needed for some vm operations; most notably unmap_mapping_range() with
+> >     even_cows = 0.
+> >
+> >     Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> >     Reviewed-by: Brian Paul <brianp@vmware.com>
+> >
+> > but we do not have a single caller of unmap_mapping_range with
+> > even_cows == 0. And all the gem drivers don't do this, so another
+> > small thing we could standardize between drm and ttm drivers.
+> >
+> > Plus I don't really see a need for unamp_mapping_range where we don't
+> > want to indiscriminately shoot down all ptes.
+> >
+> > Cc: Thomas Hellstrom <thellstrom@vmware.com>
+> > Cc: Brian Paul <brianp@vmware.com>
+> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > Cc: Christian Koenig <christian.koenig@amd.com>
+> > Cc: Huang Rui <ray.huang@amd.com>
+> 
+> Apologies again, this shouldn't have been included. But at least I
+> have an idea now why this patch somehow was included in the git
+> send-email. Lovely interface :-/
 
-It seems that two patches that got merged in the 5.8 merge window collided=
- and
-no one noticed until now:
+I wrote a bit of a script around this because git send-email just too
+hard to use
 
-80340fe3605c0 (Miklos Szeredi     2020-05-14 184) #define STATX_ATTR_MOUNT=
-_ROOT		0x00002000 /* Root of a mount */
-...
-712b2698e4c02 (Ira Weiny          2020-04-30 186) #define STATX_ATTR_DAX		=
-	0x00002000 /* [I] File is DAX */
+The key workflow change I made was to have it prepare all the emails
+to send and open them in an editor for review - exactly as they would
+be sent to the lists.
 
-The question is, what do we do about it?  Renumber one or both of the
-constants?
+It uses a empty 'cover-letter' commit and automatically transforms it
+into exactly the right stuff. Keeps track of everything you send in
+git, and there is a little tool to auto-run git range-diff to help
+build change logs..
 
-David
+https://github.com/jgunthorpe/Kernel-Maintainer-Tools/blob/master/gj_tools/cmd_send_patches.py
 
+I've been occasionaly wondering if I should suggest Konstantin add a
+sending side to b4, maybe using some of those ideas..
+
+(careful if you run it, it does autosend without prompting)
+
+Jason
