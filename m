@@ -2,87 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A062C3F32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 12:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0834A2C3F4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 12:49:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgKYLkq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 06:40:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51604 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726039AbgKYLkq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 06:40:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3F6BDAC41;
-        Wed, 25 Nov 2020 11:40:45 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id D8B791E130F; Wed, 25 Nov 2020 12:40:44 +0100 (CET)
-Date:   Wed, 25 Nov 2020 12:40:44 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
-        dm-devel@redhat.com, Richard Weinberger <richard@nod.at>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 11/20] block: reference struct block_device from struct
- hd_struct
-Message-ID: <20201125114044.GC16944@quack2.suse.cz>
-References: <20201118084800.2339180-1-hch@lst.de>
- <20201118084800.2339180-12-hch@lst.de>
- <X708BTJ5njtbC2z1@mtj.duckdns.org>
+        id S1727378AbgKYLsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 06:48:33 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:37851 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbgKYLsd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Nov 2020 06:48:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1606304913; x=1637840913;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MfXSabwWThrsQ2QJVQqO1S+jI4x3V5qHhvhNdLhM9SE=;
+  b=nORazrKTveq2dMQ++eyKUWmiVx0kEdyeEzBkdU77mYsmrhoM8iRiF24n
+   mwXeMtZDirEJsMOFYUsLyUBVxfUQPBx4J9JA30NL0KgyUqIfC0wTO0V9D
+   pu/RNv0oa2hWKFvtKjQhxW1oE2BtE+iqYwqV4cyB27OjAkeV4rSslhPhK
+   HRF1hic6BWigjmflDMs4p/PyWdTssqPEbm5WQkZE6j4f+ydZIXZ5eD/q1
+   TjpmhsxwliE4lhSzv/pNmaOoLiDlkO7kv0Jxtzj2yHK0lXfiKSE3aEwzJ
+   RUafsj3LI4o9hPlTABNwPaafHdJUuSWuEuTnmmXaC7DdIEtP5jUrPbYhY
+   g==;
+IronPort-SDR: oETn5JaPYcakU203DNCoALK/cIKTQvmJuTzzAbRvJtTj1hwfSvVsFc1RjNuIlJf6Hq6j4o5DEH
+ nr/EVno4DqDqU7gTKe0nkWY1YBkvUyJOfsHEeJmQxngs8brmZ1qCfzPxm6cFs2FQ2X7RDZ7x0A
+ 7PGWb1bLnSGvyIgmJml1I2FE6eKGuxquDgM61Y63oKEcVNAlKWREfftXJHpaeiXhO8zZf3LZI/
+ mK99pEcnxJymIv43lAIayaKJj8x8qnEu7RbmtP0LJixnxFvBd7EzLXVctkkZGPcnxm/6/LR0tj
+ xSE=
+X-IronPort-AV: E=Sophos;i="5.78,368,1599494400"; 
+   d="scan'208";a="263523165"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 Nov 2020 19:48:32 +0800
+IronPort-SDR: egyu33eNVAPWqnnRJZh6pnAQ1U90gp/am1GQYOedD3D39q7g1tGgnwNrhdX8sVQ2vXVbNOVBad
+ 5U6kuBKaF8J4kj0GRlozmh8o2Ls5svcPY=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2020 03:34:16 -0800
+IronPort-SDR: VWCth7ybW+8usgPuSjuRt0MKm3ENNY3Tgb8NNAzQJ29AXfHTIyN2czyBAq+Z1gM89BZ7Hz+/V8
+ SPat2eEMwajA==
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip01.wdc.com with SMTP; 25 Nov 2020 03:48:31 -0800
+Received: (nullmailer pid 3139161 invoked by uid 1000);
+        Wed, 25 Nov 2020 11:48:31 -0000
+Date:   Wed, 25 Nov 2020 20:48:31 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Anand Jain <anand.jain@oracle.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v10 12/41] btrfs: implement zoned chunk allocator
+Message-ID: <20201125114831.hsleel7zazwlaf76@naota.dhcp.fujisawa.hgst.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
+ <9cec3af1-4f2c-c94c-1506-07db2c66cc90@oracle.com>
+ <20201125015740.conrettvmrgwebus@naota.dhcp.fujisawa.hgst.com>
+ <c4e78093-0518-49b2-5728-79d68dc87dc5@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <X708BTJ5njtbC2z1@mtj.duckdns.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c4e78093-0518-49b2-5728-79d68dc87dc5@oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Nov 25, 2020 at 03:17:42PM +0800, Anand Jain wrote:
+>
+>
+>On 25/11/20 9:57 am, Naohiro Aota wrote:
+>>On Tue, Nov 24, 2020 at 07:36:18PM +0800, Anand Jain wrote:
+>>>On 10/11/20 7:26 pm, Naohiro Aota wrote:
+>>>>This commit implements a zoned chunk/dev_extent allocator. The zoned
+>>>>allocator aligns the device extents to zone boundaries, so that a zone
+>>>>reset affects only the device extent and does not change the state of
+>>>>blocks in the neighbor device extents.
+>>>>
+>>>>Also, it checks that a region allocation is not overlapping any of the
+>>>>super block zones, and ensures the region is empty.
+>>>>
+>>>>Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+>>>
+>>>Looks good.
+>>>
+>>>Chunks and stripes are aligned to the zone_size. I guess zone_size won't
+>>>change after the block device has been formatted with it? For testing,
+>>>what if the device image is dumped onto another zoned device with a
+>>>different zone_size?
+>>
+>>Zone size is a drive characteristic, so it never change on the same device.
+>>
+>>Dump/restore on another device with a different zone_size should be banned,
+>>because we cannot ensure device extents are aligned to zone boundaries.
+>
+>Fair enough. Do we have any checks to fail such mount? Sorry if I have 
+>missed it somewhere in the patch?
+>Thanks.
 
-Hello!
-
-On Tue 24-11-20 11:59:49, Tejun Heo wrote:
-> > diff --git a/block/partitions/core.c b/block/partitions/core.c
-> > index a02e224115943d..0ba0bf44b88af3 100644
-> > --- a/block/partitions/core.c
-> > +++ b/block/partitions/core.c
-> > @@ -340,12 +340,11 @@ void delete_partition(struct hd_struct *part)
-> >  	device_del(part_to_dev(part));
-> >  
-> >  	/*
-> > -	 * Remove gendisk pointer from idr so that it cannot be looked up
-> > -	 * while RCU period before freeing gendisk is running to prevent
-> > -	 * use-after-free issues. Note that the device number stays
-> > -	 * "in-use" until we really free the gendisk.
-> > +	 * Remove the block device from the inode hash, so that it cannot be
-> > +	 * looked up while waiting for the RCU grace period.
-> >  	 */
-> > -	blk_invalidate_devt(part_devt(part));
-> > +	remove_inode_hash(part->bdev->bd_inode);
-> 
-> I don't think this is necessary now that the bdev and inode lifetimes are
-> one. Before, punching out the association early was necessary because we
-> could be in a situation where we can successfully look up a part from idr
-> and then try to pin the associated disk which may already be freed. With the
-> new code, the lookup is through the inode whose lifetime is one and the same
-> with gendisk, so use-after-free isn't possible and __blkdev_get() will
-> reliably reject such open attempts.
-
-I think the remove_inode_hash() call is actually still needed. Consider a
-situation when the disk is unplugged, gendisk gets destroyed, bdev still
-lives on (e.g. because it is still open). Device gets re-plugged, gendisk
-for the same device number gets created. But we really need new bdev for
-this because from higher level POV this is completely new device. And the
-old bdev needs to live on as long as it is open. So IMO we still need to
-just unhash the inode and leave it lingering in the background.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+We have a check in verify_one_dev_extent() to confirm that a device
+extent's position and size are aligned to zone size (patch 13).
