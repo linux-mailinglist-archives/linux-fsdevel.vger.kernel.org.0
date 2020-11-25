@@ -2,107 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C9E82C3A02
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 08:21:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E8D2C3BDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Nov 2020 10:20:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbgKYHUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 02:20:10 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58180 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbgKYHUK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 02:20:10 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AP78dtC035974;
-        Wed, 25 Nov 2020 07:19:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=P11wfyw6N9I5O2TUURcfkhBRfDzRLjlWVpteChZnBqc=;
- b=lJ5FVu75iAH8IaqJy/9aoubXb/XpzMh8MaskZWTzO+Ou84u4bKDkyDLD1AjufjXJFh1C
- FYIOz5mDlu6QPAlxW75qDoQfRlmOXXsaQUngkXQQvuF9Gv/QM9MfzpggMkVobHallEha
- frSfUAXkLZPaG05gFtytUmIlYhdP4JuAB/VYTSeKDwuJQDjYRjv+ZTWl4cQHv9yhja5r
- YsIKRXKZLxa0AvrMc0HtJFT+g17pYZjvzCYT4J79pqi0iXYhHLuxZ0Bb28yIAe4M/XyT
- ipHjJf88cP55aWBh6XoZt7SzMbakU60xw0+JXybAu3V+dU6XQksRsHM+OyIpChhkVIbM Xw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 3514q8k4rf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Nov 2020 07:19:57 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AP7Fhk5004041;
-        Wed, 25 Nov 2020 07:17:56 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 34yx8ktt43-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Nov 2020 07:17:56 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0AP7HqeN024591;
-        Wed, 25 Nov 2020 07:17:53 GMT
-Received: from [192.168.1.102] (/39.109.186.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 24 Nov 2020 23:17:52 -0800
-Subject: Re: [PATCH v10 12/41] btrfs: implement zoned chunk allocator
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        id S1726810AbgKYJUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 04:20:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43090 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725938AbgKYJUK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Nov 2020 04:20:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7E1A2AE42;
+        Wed, 25 Nov 2020 09:20:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 96F841E130F; Wed, 25 Nov 2020 10:20:07 +0100 (CET)
+Date:   Wed, 25 Nov 2020 10:20:07 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Hugh Dickins <hughd@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+3622cea378100f45d59f@syzkaller.appspotmail.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Theodore Ts'o <tytso@mit.edu>, Linux-MM <linux-mm@kvack.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>, Qian Cai <cai@lca.pw>,
         Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <e7896fe18651e3ad12a96ff3ec3255e3127c8239.1605007036.git.naohiro.aota@wdc.com>
- <9cec3af1-4f2c-c94c-1506-07db2c66cc90@oracle.com>
- <20201125015740.conrettvmrgwebus@naota.dhcp.fujisawa.hgst.com>
-From:   Anand Jain <anand.jain@oracle.com>
-Message-ID: <c4e78093-0518-49b2-5728-79d68dc87dc5@oracle.com>
-Date:   Wed, 25 Nov 2020 15:17:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: kernel BUG at fs/ext4/inode.c:LINE!
+Message-ID: <20201125092007.GA16944@quack2.suse.cz>
+References: <000000000000d3a33205add2f7b2@google.com>
+ <20200828100755.GG7072@quack2.suse.cz>
+ <20200831100340.GA26519@quack2.suse.cz>
+ <CAHk-=wivRS_1uy326sLqKuwerbL0APyKYKwa+vWVGsQg8sxhLw@mail.gmail.com>
+ <alpine.LSU.2.11.2011231928140.4305@eggly.anvils>
+ <20201124121912.GZ4327@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20201125015740.conrettvmrgwebus@naota.dhcp.fujisawa.hgst.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9815 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011250041
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9815 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011250041
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201124121912.GZ4327@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 25/11/20 9:57 am, Naohiro Aota wrote:
-> On Tue, Nov 24, 2020 at 07:36:18PM +0800, Anand Jain wrote:
->> On 10/11/20 7:26 pm, Naohiro Aota wrote:
->>> This commit implements a zoned chunk/dev_extent allocator. The zoned
->>> allocator aligns the device extents to zone boundaries, so that a zone
->>> reset affects only the device extent and does not change the state of
->>> blocks in the neighbor device extents.
->>>
->>> Also, it checks that a region allocation is not overlapping any of the
->>> super block zones, and ensures the region is empty.
->>>
->>> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
->>
->> Looks good.
->>
->> Chunks and stripes are aligned to the zone_size. I guess zone_size won't
->> change after the block device has been formatted with it? For testing,
->> what if the device image is dumped onto another zoned device with a
->> different zone_size?
+On Tue 24-11-20 12:19:12, Matthew Wilcox wrote:
+> On Mon, Nov 23, 2020 at 08:07:24PM -0800, Hugh Dickins wrote:
+> > Twice now, when exercising ext4 looped on shmem huge pages, I have crashed
+> > on the PF_ONLY_HEAD check inside PageWaiters(): ext4_finish_bio() calling
+> > end_page_writeback() calling wake_up_page() on tail of a shmem huge page,
+> > no longer an ext4 page at all.
+> > 
+> > The problem is that PageWriteback is not accompanied by a page reference
+> > (as the NOTE at the end of test_clear_page_writeback() acknowledges): as
+> > soon as TestClearPageWriteback has been done, that page could be removed
+> > from page cache, freed, and reused for something else by the time that
+> > wake_up_page() is reached.
+> > 
+> > https://lore.kernel.org/linux-mm/20200827122019.GC14765@casper.infradead.org/
+> > Matthew Wilcox suggested avoiding or weakening the PageWaiters() tail
+> > check; but I'm paranoid about even looking at an unreferenced struct page,
+> > lest its memory might itself have already been reused or hotremoved (and
+> > wake_up_page_bit() may modify that memory with its ClearPageWaiters()).
+> > 
+> > Then on crashing a second time, realized there's a stronger reason against
+> > that approach.  If my testing just occasionally crashes on that check,
+> > when the page is reused for part of a compound page, wouldn't it be much
+> > more common for the page to get reused as an order-0 page before reaching
+> > wake_up_page()?  And on rare occasions, might that reused page already be
+> > marked PageWriteback by its new user, and already be waited upon?  What
+> > would that look like?
+> > 
+> > It would look like BUG_ON(PageWriteback) after wait_on_page_writeback()
+> > in write_cache_pages() (though I have never seen that crash myself).
 > 
-> Zone size is a drive characteristic, so it never change on the same device.
-> 
-> Dump/restore on another device with a different zone_size should be banned,
-> because we cannot ensure device extents are aligned to zone boundaries.
+> I don't think this is it.  write_cache_pages() holds a reference to the
+> page -- indeed, it holds the page lock!  So this particular race cannot
+> cause the page to get recycled.  I still have no good ideas what this
+> is :-(
 
-Fair enough. Do we have any checks to fail such mount? Sorry if I have 
-missed it somewhere in the patch?
-Thanks.
+But does it really matter what write_cache_pages() does? I mean we start
+page writeback. I mean struct bio holds no reference to the page it writes.
+The only thing that prevents the page from being freed under bio's hands is
+PageWriteback bit. So when the bio is completing we do (e.g. in
+ext4_end_bio()), we usually walk all pages in a bio
+bio_for_each_segment_all() and for each page call end_page_writeback(), now
+once end_page_writeback() calls test_clear_page_writeback() which clears
+PageWriteback(), the page can get freed. And that can happen before the
+wake_up_page() call in end_page_writeback(). So a race will be like:
+
+CPU1					CPU2
+ext4_end_bio()
+  ...
+  end_page_writeback(page)
+    test_clear_page_writeback(page)
+					free page
+					reallocate page for something else
+					we can even dirty & start to
+					  writeback 'page'
+    wake_up_page(page)
+
+and we have a "spurious" wake up on 'page'.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
