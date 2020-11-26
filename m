@@ -2,166 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2BB2C513E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 10:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C92A2C5198
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 10:49:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730060AbgKZJ3g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 04:29:36 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2384 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729002AbgKZJ3g (ORCPT
+        id S1727908AbgKZJs3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 04:48:29 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8125 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgKZJs3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 04:29:36 -0500
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4ChXWh6Q6Pz4xym;
-        Thu, 26 Nov 2020 17:29:04 +0800 (CST)
-Received: from dggemi710-chm.china.huawei.com (10.3.20.109) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.487.0; Thu, 26 Nov 2020 17:29:31 +0800
-Received: from dggemi761-chm.china.huawei.com (10.1.198.147) by
- dggemi710-chm.china.huawei.com (10.3.20.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Thu, 26 Nov 2020 17:29:32 +0800
-Received: from dggemi761-chm.china.huawei.com ([10.9.49.202]) by
- dggemi761-chm.china.huawei.com ([10.9.49.202]) with mapi id 15.01.1913.007;
- Thu, 26 Nov 2020 17:29:32 +0800
-From:   "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
-To:     Miles Chen <miles.chen@mediatek.com>
-CC:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "wsd_upstream@mediatek.com" <wsd_upstream@mediatek.com>
-Subject: RE: [RESEND PATCH v1] proc: use untagged_addr() for pagemap_read
- addresses
-Thread-Topic: [RESEND PATCH v1] proc: use untagged_addr() for pagemap_read
- addresses
-Thread-Index: AQHWwWNz5MRhXZKR2UCNja39TEhHcanaA0sg//+FDQCAAIXFIIAAGMsQ
-Date:   Thu, 26 Nov 2020 09:29:31 +0000
-Message-ID: <94ffb814f1dd4c6dbf6c501985ce0410@hisilicon.com>
-References: <20201123063835.18981-1-miles.chen@mediatek.com>
-         <24d32889abb1412abcd4e868a36783f9@hisilicon.com>
- <1606376946.17565.6.camel@mtkswgap22> 
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.202.201]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 26 Nov 2020 04:48:29 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ChXxd1PWwz15PXS;
+        Thu, 26 Nov 2020 17:48:05 +0800 (CST)
+Received: from [10.65.58.147] (10.65.58.147) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Thu, 26 Nov 2020
+ 17:48:20 +0800
+Subject: Re: [PATCH] fs: export vfs_stat() and vfs_fstatat()
+To:     Christoph Hellwig <hch@lst.de>
+References: <1606374948-38713-1-git-send-email-yangyicong@hisilicon.com>
+ <20201126071848.GA17990@lst.de>
+ <696f0e06-4f4d-0a61-6e13-f5af433594bf@hisilicon.com>
+ <20201126091537.GA21957@lst.de>
+CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <prime.zeng@huawei.com>,
+        <linuxarm@huawei.com>
+From:   Yicong Yang <yangyicong@hisilicon.com>
+Message-ID: <79b19660-f418-f5ac-943c-bc49a88eb949@hisilicon.com>
+Date:   Thu, 26 Nov 2020 17:48:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
+In-Reply-To: <20201126091537.GA21957@lst.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.65.58.147]
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU29uZyBCYW8gSHVhIChC
-YXJyeSBTb25nKQ0KPiBTZW50OiBUaHVyc2RheSwgTm92ZW1iZXIgMjYsIDIwMjAgODo1MyBQTQ0K
-PiBUbzogJ01pbGVzIENoZW4nIDxtaWxlcy5jaGVuQG1lZGlhdGVrLmNvbT4NCj4gQ2M6IEFsZXhl
-eSBEb2JyaXlhbiA8YWRvYnJpeWFuQGdtYWlsLmNvbT47IEFuZHJldyBNb3J0b24NCj4gPGFrcG1A
-bGludXgtZm91bmRhdGlvbi5vcmc+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBs
-aW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtbWVkaWF0ZWtAbGlzdHMuaW5mcmFk
-ZWFkLm9yZzsNCj4gd3NkX3Vwc3RyZWFtQG1lZGlhdGVrLmNvbQ0KPiBTdWJqZWN0OiBSRTogW1JF
-U0VORCBQQVRDSCB2MV0gcHJvYzogdXNlIHVudGFnZ2VkX2FkZHIoKSBmb3IgcGFnZW1hcF9yZWFk
-DQo+IGFkZHJlc3Nlcw0KPiANCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
-DQo+ID4gRnJvbTogTWlsZXMgQ2hlbiBbbWFpbHRvOm1pbGVzLmNoZW5AbWVkaWF0ZWsuY29tXQ0K
-PiA+IFNlbnQ6IFRodXJzZGF5LCBOb3ZlbWJlciAyNiwgMjAyMCA4OjQ5IFBNDQo+ID4gVG86IFNv
-bmcgQmFvIEh1YSAoQmFycnkgU29uZykgPHNvbmcuYmFvLmh1YUBoaXNpbGljb24uY29tPg0KPiA+
-IENjOiBBbGV4ZXkgRG9icml5YW4gPGFkb2JyaXlhbkBnbWFpbC5jb20+OyBBbmRyZXcgTW9ydG9u
-DQo+ID4gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
-ZWwub3JnOw0KPiA+IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1tZWRpYXRl
-a0BsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiA+IHdzZF91cHN0cmVhbUBtZWRpYXRlay5jb20NCj4g
-PiBTdWJqZWN0OiBSRTogW1JFU0VORCBQQVRDSCB2MV0gcHJvYzogdXNlIHVudGFnZ2VkX2FkZHIo
-KSBmb3INCj4gcGFnZW1hcF9yZWFkDQo+ID4gYWRkcmVzc2VzDQo+ID4NCj4gPiBPbiBUaHUsIDIw
-MjAtMTEtMjYgYXQgMDc6MTYgKzAwMDAsIFNvbmcgQmFvIEh1YSAoQmFycnkgU29uZykgd3JvdGU6
-DQo+ID4gPg0KPiA+ID4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gPiBGcm9t
-OiBNaWxlcyBDaGVuIFttYWlsdG86bWlsZXMuY2hlbkBtZWRpYXRlay5jb21dDQo+ID4gPiA+IFNl
-bnQ6IE1vbmRheSwgTm92ZW1iZXIgMjMsIDIwMjAgNzozOSBQTQ0KPiA+ID4gPiBUbzogQWxleGV5
-IERvYnJpeWFuIDxhZG9icml5YW5AZ21haWwuY29tPjsgQW5kcmV3IE1vcnRvbg0KPiA+ID4gPiA8
-YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4NCj4gPiA+ID4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOw0KPiA+ID4gPiBsaW51
-eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnOyB3c2RfdXBzdHJlYW1AbWVkaWF0ZWsuY29t
-OyBNaWxlcw0KPiA+ID4gPiBDaGVuIDxtaWxlcy5jaGVuQG1lZGlhdGVrLmNvbT4NCj4gPiA+ID4g
-U3ViamVjdDogW1JFU0VORCBQQVRDSCB2MV0gcHJvYzogdXNlIHVudGFnZ2VkX2FkZHIoKSBmb3Ig
-cGFnZW1hcF9yZWFkDQo+ID4gPiA+IGFkZHJlc3Nlcw0KPiA+ID4gPg0KPiA+ID4gPiBXaGVuIHdl
-IHRyeSB0byB2aXNpdCB0aGUgcGFnZW1hcCBvZiBhIHRhZ2dlZCB1c2Vyc3BhY2UgcG9pbnRlciwg
-d2UgZmluZA0KPiA+ID4gPiB0aGF0IHRoZSBzdGFydF92YWRkciBpcyBub3QgY29ycmVjdCBiZWNh
-dXNlIG9mIHRoZSB0YWcuDQo+ID4gPiA+IFRvIGZpeCBpdCwgd2Ugc2hvdWxkIHVudGFnIHRoZSB1
-c2VzcGFjZSBwb2ludGVycyBpbiBwYWdlbWFwX3JlYWQoKS4NCj4gPiA+ID4NCj4gPiA+ID4gSSB0
-ZXN0ZWQgd2l0aCA1LjEwLXJjNCBhbmQgdGhlIGlzc3VlIHJlbWFpbnMuDQo+ID4gPiA+DQo+ID4g
-PiA+IE15IHRlc3QgY29kZSBpcyBiYWVkIG9uIFsxXToNCj4gPiA+ID4NCj4gPiA+ID4gQSB1c2Vy
-c3BhY2UgcG9pbnRlciB3aGljaCBoYXMgYmVlbiB0YWdnZWQgYnkgMHhiNDoNCj4gMHhiNDAwMDA3
-NjYyZjU0MWM4DQo+ID4gPiA+DQo+ID4gPiA+ID09PSB1c2Vyc3BhY2UgcHJvZ3JhbSA9PT0NCj4g
-PiA+ID4NCj4gPiA+ID4gdWludDY0IE9zTGF5ZXI6OlZpcnR1YWxUb1BoeXNpY2FsKHZvaWQgKnZh
-ZGRyKSB7DQo+ID4gPiA+IAl1aW50NjQgZnJhbWUsIHBhZGRyLCBwZm5tYXNrLCBwYWdlbWFzazsN
-Cj4gPiA+ID4gCWludCBwYWdlc2l6ZSA9IHN5c2NvbmYoX1NDX1BBR0VTSVpFKTsNCj4gPiA+ID4g
-CW9mZjY0X3Qgb2ZmID0gKCh1aW50cHRyX3QpdmFkZHIpIC8gcGFnZXNpemUgKiA4OyAvLyBvZmYg
-PQ0KPiA+ID4gPiAweGI0MDAwMDc2NjJmNTQxYzggLyBwYWdlc2l6ZSAqIDggPSAweDVhMDAwMDNi
-MzE3YWEwDQo+ID4gPiA+IAlpbnQgZmQgPSBvcGVuKGtQYWdlbWFwUGF0aCwgT19SRE9OTFkpOw0K
-PiA+ID4gPiAJLi4uDQo+ID4gPiA+DQo+ID4gPiA+IAlpZiAobHNlZWs2NChmZCwgb2ZmLCBTRUVL
-X1NFVCkgIT0gb2ZmIHx8IHJlYWQoZmQsICZmcmFtZSwgOCkgIT0gOCkgew0KPiA+ID4gPiAJCWlu
-dCBlcnIgPSBlcnJubzsNCj4gPiA+ID4gCQlzdHJpbmcgZXJydHh0ID0gRXJyb3JTdHJpbmcoZXJy
-KTsNCj4gPiA+ID4gCQlpZiAoZmQgPj0gMCkNCj4gPiA+ID4gCQkJY2xvc2UoZmQpOw0KPiA+ID4g
-PiAJCXJldHVybiAwOw0KPiA+ID4gPiAJfQ0KPiA+ID4gPiAuLi4NCj4gPiA+ID4gfQ0KPiA+ID4g
-Pg0KPiA+ID4gPiA9PT0ga2VybmVsIGZzL3Byb2MvdGFza19tbXUuYyA9PT0NCj4gPiA+ID4NCj4g
-PiA+ID4gc3RhdGljIHNzaXplX3QgcGFnZW1hcF9yZWFkKHN0cnVjdCBmaWxlICpmaWxlLCBjaGFy
-IF9fdXNlciAqYnVmLA0KPiA+ID4gPiAJCXNpemVfdCBjb3VudCwgbG9mZl90ICpwcG9zKQ0KPiA+
-ID4gPiB7DQo+ID4gPiA+IAkuLi4NCj4gPiA+ID4gCXNyYyA9ICpwcG9zOw0KPiA+ID4gPiAJc3Zw
-Zm4gPSBzcmMgLyBQTV9FTlRSWV9CWVRFUzsgLy8gc3ZwZm4gPT0gMHhiNDAwMDA3NjYyZjU0DQo+
-ID4gPiA+IAlzdGFydF92YWRkciA9IHN2cGZuIDw8IFBBR0VfU0hJRlQ7IC8vIHN0YXJ0X3ZhZGRy
-ID09DQo+ID4gPiA+IDB4YjQwMDAwNzY2MmY1NDAwMA0KPiA+ID4gPiAJZW5kX3ZhZGRyID0gbW0t
-PnRhc2tfc2l6ZTsNCj4gPiA+ID4NCj4gPiA+ID4gCS8qIHdhdGNoIG91dCBmb3Igd3JhcGFyb3Vu
-ZCAqLw0KPiA+ID4gPiAJLy8gc3ZwZm4gPT0gMHhiNDAwMDA3NjYyZjU0DQo+ID4gPiA+IAkvLyAo
-bW0tPnRhc2tfc2l6ZSA+PiBQQUdFKSA9PSAweDgwMDAwMDANCj4gPiA+ID4gCWlmIChzdnBmbiA+
-IG1tLT50YXNrX3NpemUgPj4gUEFHRV9TSElGVCkgLy8gdGhlIGNvbmRpdGlvbiBpcyB0cnVlDQo+
-IGJlY2F1c2UNCj4gPiA+ID4gb2YgdGhlIHRhZyAweGI0DQo+ID4gPiA+IAkJc3RhcnRfdmFkZHIg
-PSBlbmRfdmFkZHI7DQo+ID4gPiA+DQo+ID4gPiA+IAlyZXQgPSAwOw0KPiA+ID4gPiAJd2hpbGUg
-KGNvdW50ICYmIChzdGFydF92YWRkciA8IGVuZF92YWRkcikpIHsgLy8gd2UgY2Fubm90IHZpc2l0
-DQo+IGNvcnJlY3QNCj4gPiA+ID4gZW50cnkgYmVjYXVzZSBzdGFydF92YWRkciBpcyBzZXQgdG8g
-ZW5kX3ZhZGRyDQo+ID4gPiA+IAkJaW50IGxlbjsNCj4gPiA+ID4gCQl1bnNpZ25lZCBsb25nIGVu
-ZDsNCj4gPiA+ID4gCQkuLi4NCj4gPiA+ID4gCX0NCj4gPiA+ID4gCS4uLg0KPiA+ID4gPiB9DQo+
-ID4gPiA+DQo+ID4gPiA+IFsxXQ0KPiA+ID4gPg0KPiA+IGh0dHBzOi8vZ2l0aHViLmNvbS9zdHJl
-c3NhcHB0ZXN0L3N0cmVzc2FwcHRlc3QvYmxvYi9tYXN0ZXIvc3JjL29zLmNjI0wxNTgNCj4gPiA+
-ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTWlsZXMgQ2hlbiA8bWlsZXMuY2hlbkBtZWRpYXRl
-ay5jb20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAgZnMvcHJvYy90YXNrX21tdS5jIHwgNCArKy0t
-DQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygt
-KQ0KPiA+ID4gPg0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvcHJvYy90YXNrX21tdS5jIGIvZnMv
-cHJvYy90YXNrX21tdS5jDQo+ID4gPiA+IGluZGV4IDIxN2FhMjcwNWQ1ZC4uZTlhNzBmN2VlNTE1
-IDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9mcy9wcm9jL3Rhc2tfbW11LmMNCj4gPiA+ID4gKysrIGIv
-ZnMvcHJvYy90YXNrX21tdS5jDQo+ID4gPiA+IEBAIC0xNTk5LDExICsxNTk5LDExIEBAIHN0YXRp
-YyBzc2l6ZV90IHBhZ2VtYXBfcmVhZChzdHJ1Y3QgZmlsZSAqZmlsZSwNCj4gPiBjaGFyDQo+ID4g
-PiA+IF9fdXNlciAqYnVmLA0KPiA+ID4gPg0KPiA+ID4gPiAgCXNyYyA9ICpwcG9zOw0KPiA+ID4g
-PiAgCXN2cGZuID0gc3JjIC8gUE1fRU5UUllfQllURVM7DQo+ID4gPiA+IC0Jc3RhcnRfdmFkZHIg
-PSBzdnBmbiA8PCBQQUdFX1NISUZUOw0KPiA+ID4gPiArCXN0YXJ0X3ZhZGRyID0gdW50YWdnZWRf
-YWRkcihzdnBmbiA8PCBQQUdFX1NISUZUKTsNCj4gPiA+ID4gIAllbmRfdmFkZHIgPSBtbS0+dGFz
-a19zaXplOw0KPiA+ID4gPg0KPiA+ID4gPiAgCS8qIHdhdGNoIG91dCBmb3Igd3JhcGFyb3VuZCAq
-Lw0KPiA+ID4gPiAtCWlmIChzdnBmbiA+IG1tLT50YXNrX3NpemUgPj4gUEFHRV9TSElGVCkNCj4g
-PiA+ID4gKwlpZiAoc3RhcnRfdmFkZHIgPiBtbS0+dGFza19zaXplKQ0KPiA+ID4gPiAgCQlzdGFy
-dF92YWRkciA9IGVuZF92YWRkcjsNCj4gPiA+DQo+ID4gPiBXb3VsZG4ndCB0aGUgdW50YWcgYmUg
-ZG9uZSBieSB0aGUgdXNlciByZWFkaW5nIHBhZ2VtYXAgZmlsZT8NCj4gPiA+IFdpdGggdGhpcyBw
-YXRjaCwgZXZlbiB1c2VycyBwYXNzIGFuIGlsbGVnYWwgYWRkcmVzcywgZm9yIGV4YW1wbGUsDQo+
-ID4gPiB1c2VycyBwdXQgYSB0YWcgb24gYSB2aXJ0dWFsIGFkZHJlc3Mgd2hpY2ggaGFzbid0IHJl
-YWxseSBhIHRhZywNCj4gPiA+IHRoZXkgd2lsbCBzdGlsbCBnZXQgdGhlIHJpZ2h0IHBhZ2VtYXAu
-DQo+ID4gPg0KPiA+DQo+ID4NCj4gPiBJIHJ1biBhcm02NCBkZXZpY2VzLg0KPiA+IElmIHRoZSB0
-YWdnZWQgcG9pbnRlciBpcyBlbmFibGVkLCB0aGUgQVJNIHRvcC1ieXRlIElnbm9yZSBpcyBhbHNv
-DQo+ID4gZW5hYmxlZC4gSXQgbWVhbnMgdGhlIHRvcC1ieXRlIGlzIGFsd2F5cyBiZSBpZ25vcmVk
-Lg0KPiA+DQo+ID4gSSB0aGluayB0aGUga2VybmVsIHNob3VsZCBub3QgYnJlYWsgZXhpc3Rpbmcg
-dXNlcnNwYWNlIHByb2dyYW0sIHNvIGl0J3MNCj4gPiBiZXR0ZXIgdG8gaGFuZGxlIHRoZSB0YWdn
-ZWQgdXNlciBwb2ludGVyIGluIGtlcm5lbC4NCj4gPg0KPiA+IGdyZXAgJ3VudGFnJyBtbSAtUm5I
-IHRvIHNlZSBleGlzdGluZyBleGFtcGxlcy4NCj4gDQo+IEkgc2VlIHlvdXIgcG9pbnQuIEJ1dCB0
-aGUgZXhpc3RpbmcgZXhhbXBsZXMgc3VjaCBhcyBndXAgZXRjIGFyZSByZWNlaXZpbmcNCj4gYW4g
-YWRkcmVzcyBmcm9tIHVzZXJzcGFjZS4NCj4gDQo+IHBhZ2VtYXAgaXNuJ3QgZ2V0dGluZyBhbiBh
-ZGRyZXNzLCBpdCBpcyBnZXR0aW5nIGEgZmlsZSBvZmZzZXQgd2hpY2gNCj4gc2hvdWxkIGJlIGZp
-Z3VyZWQgb3V0IGJ5IHVzZXJzcGFjZSBjb3JyZWN0bHkuIFdoaWxlIHdlIHJlYWQgYSBmaWxlLA0K
-PiB3ZSBzaG91bGQgbWFrZSBzdXJlIHRoZSBvZmZzZXQgaXMgaW4gdGhlIHJhbmdlIG9mIHRoZSBm
-aWxlIGxlbmd0aC4NCg0KQlRXLCBwZXJzb25hbGx5IEkgZG9uJ3Qgb2JqZWN0IHRvIHRoaXMgcGF0
-Y2guIEkganVzdCBmZWVsIGEgbGl0dGxlIGJpdCB3ZWlyZA0KYXMgdGhlIHBhcmFtZXRlciBpbiBw
-YWdlbWFwX3JlYWQgaXMgYW4gb2Zmc2V0IGluIG9uZSBmaWxlIHJhdGhlciB0aGFuDQphIHZpcnR1
-YWwgYWRkcmVzcy4NCg0KaWYgdGhlcmUgYXJlIG1hbnkgdXNlciBwcm9ncmFtcyB3aGljaCBhcmUg
-d3JpdHRlbiB3aXRob3V0IHRoZQ0KYXdhcmVuZXNzIG9mIHRhZyB3aGlsZSByZWFkaW5nIHBhZ2Vt
-YXAgb3IgaWYgb3RoZXIgcGVvcGxlIGxpa2UNCnRoaXMgcGF0Y2gsIGl0IG1pZ2h0IG1ha2Ugc2Vu
-c2UgdG8gaGF2ZSBpdCBpbiBrZXJuZWwgOi0pDQoNCj4gDQo+ID4NCj4gPg0KPiA+IHRoYW5rcywN
-Cj4gPiBNaWxlcw0KPiA+DQo+ID4gPiA+DQo+ID4gPiA+ICAJLyoNCj4gPiA+ID4gLS0NCj4gPiA+
-ID4gMi4xOC4wDQo+ID4gPg0KPiANCg0KVGhhbmtzDQpCYXJyeQ0K
+On 2020/11/26 17:15, Christoph Hellwig wrote:
+> On Thu, Nov 26, 2020 at 05:08:26PM +0800, Yicong Yang wrote:
+>>> And why would you want to use them in kernel module?  Please explain
+>>> that in the patch that exports them, and please send that patch in the
+>>> same series as the patches adding the users.
+>> we're using it in the modules for testing our crypto driver on our CI system.
+>> is it mandatory to upstream it if we want to use this function?
+> Yes.  And chances are that you do not actaully need these functions
+> either, but to suggest a better placement I need to actually see the
+> code.
+> .
+
+Sorry for not describing the issues I met correctly in the commit message.
+Actually we're using inline function vfs_stat() for getting the
+attributes, which calls vfs_fstatat():
+
+static inline int vfs_stat(const char __user *filename, struct kstat *stat)
+{
+	return vfs_fstatat(AT_FDCWD, filename, stat, 0);
+}
+
+after the vfs_fstatat is out-of-line it will make the moduler user of vfs_stat()
+broken:
+
+[ 5328.903677] crypto_zip_perf_test: Unknown symbol vfs_fstatat (err -2)
+
+so the simplest way i think is directly export the vfs_fstatat().
+
+Thanks,
+Yicong
+
+
+
+
+>
+
