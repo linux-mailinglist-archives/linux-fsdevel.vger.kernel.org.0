@@ -2,99 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A137A2C5346
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 12:50:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B32002C53CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 13:17:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387502AbgKZLuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 06:50:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41226 "EHLO
+        id S1733212AbgKZMPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 07:15:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732480AbgKZLuT (ORCPT
+        with ESMTP id S1728965AbgKZMPv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 06:50:19 -0500
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1666C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Nov 2020 03:50:19 -0800 (PST)
-Received: by mail-io1-xd41.google.com with SMTP id j23so1500471iog.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Nov 2020 03:50:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KgWVgN9KE1ZQRSgz4cfardTeeI5G9unOOIo8bsBxZ4w=;
-        b=nx41fQaWoWpFu6AReyi2LH2KSYSLgUctlb4SivrZqlaTqz/5kP+YEDu5HhtWGj3kn6
-         sJANTv3ZocxFtvIWScKpnXYBIJWbmHfakj96nQX1xeiXsD0z0jtlfh1ganRbpc80u5sn
-         RvQABRjJPR/5aK6Oduo3XAVKbxf5UyQHQsuiM+o4Z119RLJsFoVeexeSCilHj1qT/T5B
-         C6AgSCJAhMCA7qZb3LEKHCHHpAfksI3allZ7AwoElgN4BCWQoaOQ9WqeqHH11DgMymcP
-         j6Q71ySzcKtumwiFVWMo1fNQblXdrW2SRspd4k1bQuM/5bIGLAYaLyp7rI5p5dZQVbRN
-         0yzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KgWVgN9KE1ZQRSgz4cfardTeeI5G9unOOIo8bsBxZ4w=;
-        b=eNMw3p8FO8qEjGCSVTm8BeTne5wP1srvU/CRljkZGHYlpGv7qfFv6IUYxPeGYSDMu1
-         mApbptIhnzDfuUW6gtOm+KlpnWq0NNxJl+SRoAMyaksu25StySlniIWnV1tWb0FX4qG2
-         x5QRgZrnpf8C9oGD+lZlCtzcLUG6lJ19coN7V6EJ3q70dA8R812By/kagQQRI63hW/6H
-         JfpxYWRicRL3miEH+5yfI85ITXF+JgvfUPUQqLdzQEm0X4sj0vVW7DZ/2U63HNkR6K/b
-         Rt5LAJ7XRvppCs6IE7T/JuCNTUjOfcH+KCgE04MUhHWGMfnEugnCkX/xeTbg+9z28x8g
-         heLQ==
-X-Gm-Message-State: AOAM532+ctpMvlUki+56nK3jOXBHlZqp2G22K2Us23ArFTUGqbkLzpLD
-        N5rPS4JRlHglUx7UwqHbMJFKCBEUGzF6hiBYBMynaLWuq3E=
-X-Google-Smtp-Source: ABdhPJzoGAyydPyYU7aa4sQNt2LWcD7u+8rBCzBY2se47im2CGqZYoG0teDCbKAaMRtnSWDtmrrWxFVs84o9X0wMdWg=
-X-Received: by 2002:a6b:6d10:: with SMTP id a16mr1774594iod.186.1606391418089;
- Thu, 26 Nov 2020 03:50:18 -0800 (PST)
+        Thu, 26 Nov 2020 07:15:51 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCEDC0613D4;
+        Thu, 26 Nov 2020 04:15:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bwE3ntsWwlmjPInYkgT+nMI6emH/bLopsilbB9Xfo0k=; b=EW1GywcfwLEnGDTSbbRk3iX/fu
+        vMLSY16+iniAcBp5/Q9wBUI/garKVHl2j6/XASpTq8Hry7PGTTJjIdm2tuekGe5cG9WBo2nzg8hr2
+        g2VpVUEwUR6NauZ8klKaQOD6Ha1+rjJtL4oN9NNQJeI/Wb2m4CJrabTAkEEKRfjuAk2SJNRYCbVcO
+        45UFPkNWFKhMt81CD4/KFoh3beaDayv+ifK+lhedpUjINOr04s3nl5J/7q1vHul/OvBQAY6kA3jik
+        mEbbpmdNkhoZG6NY84MEDGiWFnvgtLjfFEgE4k8hS8kG/BOxB77tNrYYxMWfmDKNfsC55iCKshKYB
+        V+YH1OhA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kiGBe-0000jE-QC; Thu, 26 Nov 2020 12:15:46 +0000
+Date:   Thu, 26 Nov 2020 12:15:46 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Christoph Hellwig <hch@lst.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>, dchinner@redhat.com,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
+Message-ID: <20201126121546.GN4327@casper.infradead.org>
+References: <20201112212641.27837-1-willy@infradead.org>
+ <alpine.LSU.2.11.2011160128001.1206@eggly.anvils>
+ <20201117153947.GL29991@casper.infradead.org>
+ <alpine.LSU.2.11.2011170820030.1014@eggly.anvils>
+ <20201117191513.GV29991@casper.infradead.org>
+ <20201117234302.GC29991@casper.infradead.org>
+ <20201125023234.GH4327@casper.infradead.org>
+ <20201125150859.25adad8ff64db312681184bd@linux-foundation.org>
+ <CANsGZ6a95WK7+2H4Zyg5FwDxhdJQqR8nKND1Cn6r6e3QxWeW4Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20201109180016.80059-1-amir73il@gmail.com> <20201124134916.GC19336@quack2.suse.cz>
- <CAOQ4uxiJz-j8GA7kMYRTGMmE9SFXCQ-xZxidOU1GzjAN33Txdg@mail.gmail.com>
- <20201125110156.GB16944@quack2.suse.cz> <CAOQ4uxiaaQ9X8EBS-bd2DNMdg7ezNoRXCRvu+4idikx67OFbQQ@mail.gmail.com>
- <20201126111036.GC422@quack2.suse.cz>
-In-Reply-To: <20201126111036.GC422@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 26 Nov 2020 13:50:06 +0200
-Message-ID: <CAOQ4uxgtw14=CsYLYniDzrOjWKj3RKqWREW-9NO55Z6JMr8RJw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANsGZ6a95WK7+2H4Zyg5FwDxhdJQqR8nKND1Cn6r6e3QxWeW4Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 26, 2020 at 1:10 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 25-11-20 14:34:16, Amir Goldstein wrote:
-> > On Wed, Nov 25, 2020 at 1:01 PM Jan Kara <jack@suse.cz> wrote:
-> > > In fact I was considering for a while that we could even make subtree
-> > > watches completely unpriviledged - when we walk the dir tree anyway, we
-> > > could also check permissions along the way. Due to locking this would be
-> > > difficult to do when generating the event but it might be actually doable
-> > > if we perform the permission check when reporting the event to userspace.
-> > > Just a food for thought...
-> >
-> > Maybe... but there are some other advantages to restricting to mount.
-> >
-> > One is that with btrfs subvolumes conn->fsid can actually cache the
-> > subvolume's fsid and we could remove the restriction of -EXDEV
-> > error of FAN_MARK_FILESYSTEM on subvolume.
->
-> I'm not sure I understand this - do you mean we could support
-> FAN_MARK_FILESYSTEM_SUBTREE on btrfs subvolumes? I agree with that. I'm
+On Wed, Nov 25, 2020 at 04:11:57PM -0800, Hugh Dickins wrote:
+> The little fix definitely needed was shown by generic/083: each
+> fsstress waiting for page lock, happens even without forcing huge
+> pages. See below...
 
-Yes, that's what I meant.
+Huh ... I need to look into why my xfstests run is skipping generic/083:
 
-> just not sure how subtree watches are related to general
-> FAN_MARK_FILESYSTEM marks on btrfs...
->
+0006 generic/083 3s ... run fstests generic/083 at 2020-11-26 12:11:52
+0006 [not run] this test requires a valid $SCRATCH_MNT and unique 
+0006 Ran: generic/083
+0006 Not run: generic/083
 
-I thought that it would solve the ambiguity issue with btrfs fsid
-(it differs for objects inside a subvolume), because conn->fsid
-of subtree would cache the subvolume's fsid, but if there are both
-a filesystem mark and subtree mark on a subvolume, that would
-result in ambiguity again, so we are still not out of the woods.
+> >                         if (!unfalloc || !PageUptodate(page)) {
+> >                                 if (page_mapping(page) != mapping) {
+> >                                         /* Page was replaced by swap: retry */
+> >                                         unlock_page(page);
+> > -                                       index--;
+> > +                                       put_page(page);
+> >                                         break;
+> >                                 }
+> >                                 VM_BUG_ON_PAGE(PageWriteback(page), page);
+> > -                               if (shmem_punch_compound(page, start, end))
+> > -                                       truncate_inode_page(mapping, page);
+> > -                               else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
+> > -                                       /* Wipe the page and don't get stuck */
+> > -                                       clear_highpage(page);
+> > -                                       flush_dcache_page(page);
+> > -                                       set_page_dirty(page);
+> > -                                       if (index <
+> > -                                           round_up(start, HPAGE_PMD_NR))
+> > -                                               start = index + 1;
+> > -                               }
+> > +                               index = truncate_inode_partial_page(mapping,
+> > +                                               page, lstart, lend);
+> > +                               if (index > end)
+> > +                                       end = indices[i] - 1;
+> >                         }
+> > -                       unlock_page(page);
+> 
+> The fix needed is here: instead of deleting that unlock_page(page)
+> line, it needs to be } else { unlock_page(page); }
 
-If this hand waving wasn't clear, don't worry about it.
-I will think about it some more and document the issue in my next post.
+It also needs a put_page(page);
 
-Thanks,
-Amir.
+That's now taken care of by truncate_inode_partial_page(), so if we're
+not calling that, we need to put the page as well.  ie this:
+
++++ b/mm/shmem.c
+@@ -954,6 +954,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+                                                page, lstart, lend);
+                                if (index > end)
+                                        end = indices[i] - 1;
++                       } else {
++                               unlock_page(page);
++                               put_page(page);
+                        }
+                }
+                index = indices[i - 1] + 1;
+
+> >                 }
+> > +               index = indices[i - 1] + 1;
+> >                 pagevec_remove_exceptionals(&pvec);
+> > -               pagevec_release(&pvec);
+> > -               index++;
+> > +               pagevec_reinit(&pvec);
