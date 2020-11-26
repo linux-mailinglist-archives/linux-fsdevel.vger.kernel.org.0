@@ -2,82 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EFB82C5AA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 18:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A8892C5AD9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 18:43:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391673AbgKZRfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 12:35:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40188 "EHLO mx2.suse.de"
+        id S2404475AbgKZRmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 12:42:43 -0500
+Received: from verein.lst.de ([213.95.11.211]:35231 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391600AbgKZRfU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:35:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E1737ACBD;
-        Thu, 26 Nov 2020 17:35:18 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 5BFEB1E10D0; Thu, 26 Nov 2020 18:35:18 +0100 (CET)
-Date:   Thu, 26 Nov 2020 18:35:18 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>,
+        id S2404320AbgKZRmn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Nov 2020 12:42:43 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 31C9868B05; Thu, 26 Nov 2020 18:42:39 +0100 (CET)
+Date:   Thu, 26 Nov 2020 18:42:38 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         dm-devel@redhat.com, Jan Kara <jack@suse.com>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 36/44] block: allocate struct hd_struct as part of struct
- bdev_inode
-Message-ID: <20201126173518.GV422@quack2.suse.cz>
-References: <20201126130422.92945-1-hch@lst.de>
- <20201126130422.92945-37-hch@lst.de>
+Subject: Re: [PATCH 24/44] block: simplify bdev/disk lookup in blkdev_get
+Message-ID: <20201126174238.GA24098@lst.de>
+References: <20201126130422.92945-1-hch@lst.de> <20201126130422.92945-25-hch@lst.de> <20201126163341.GL422@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201126130422.92945-37-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201126163341.GL422@quack2.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 26-11-20 14:04:14, Christoph Hellwig wrote:
-> Allocate hd_struct together with struct block_device to pre-load
-> the lifetime rule changes in preparation of merging the two structures.
+On Thu, Nov 26, 2020 at 05:33:41PM +0100, Jan Kara wrote:
+> >  			bdev->bd_contains = whole;
+> > -			bdev->bd_part = disk_get_part(disk, partno);
+> > -			if (!(disk->flags & GENHD_FL_UP) ||
+> > -			    !bdev->bd_part || !bdev->bd_part->nr_sects) {
+> > +			bdev->bd_part = disk_get_part(disk, bdev->bd_partno);
+> > +			if (!bdev->bd_part || !bdev->bd_part->nr_sects) {
 > 
-> Note that part0 was previously embedded into struct gendisk, but is
-> a separate allocation now, and already points to the block_device instead
-> of the hd_struct.  The lifetime of struct gendisk is still controlled by
-> the struct device embedded in the part0 hd_struct.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> AFAICT it is still possible that we see !(disk->flags & GENHD_FL_UP) here,
+> isn't it? Is it safe to remove because the nr_sects check is already
+> equivalent to it? Or something else?
 
-Just one comment below. With that fixed feel free to add:
+At this point we already have the disk abd bdev reference, so we're not
+closing any new race here.  That being said we might as well keep this
+check to not bother going ahead when the disk is already torn down.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> I think bdget() above needs to be already under bdev_lookup_sem. Otherwise
+> disk_to_dev(bdev->bd_disk)->kobj below is a potential use-after-free.
 
-> diff --git a/block/partitions/core.c b/block/partitions/core.c
-> index f397ec9922bd6e..9c7e6730fa6098 100644
-> --- a/block/partitions/core.c
-> +++ b/block/partitions/core.c
-> @@ -265,9 +265,9 @@ static const struct attribute_group *part_attr_groups[] = {
->  static void part_release(struct device *dev)
->  {
->  	struct hd_struct *p = dev_to_part(dev);
-> +
->  	blk_free_devt(dev->devt);
-> -	hd_free_part(p);
-> -	kfree(p);
-> +	bdput(p->bdev);
->  }
-
-I don't think hd_struct holds a reference to block_device, does it?
-bdev_alloc() now just assigns bdev->bd_part->bdev = bdev...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yes.  I've fixed this and the other issues.
