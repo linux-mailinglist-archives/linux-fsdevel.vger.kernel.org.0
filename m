@@ -2,109 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D93B82C5B0A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 18:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F2BC2C5B16
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 18:53:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404555AbgKZRtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 12:49:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55244 "EHLO mx2.suse.de"
+        id S2403877AbgKZRwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 12:52:12 -0500
+Received: from verein.lst.de ([213.95.11.211]:35281 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404191AbgKZRtC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:49:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6D7F9ACA9;
-        Thu, 26 Nov 2020 17:49:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 402A71E10D0; Thu, 26 Nov 2020 18:49:00 +0100 (CET)
-Date:   Thu, 26 Nov 2020 18:49:00 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>,
+        id S2391740AbgKZRwM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Nov 2020 12:52:12 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7355A68B05; Thu, 26 Nov 2020 18:52:08 +0100 (CET)
+Date:   Thu, 26 Nov 2020 18:52:08 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         dm-devel@redhat.com, Jan Kara <jack@suse.com>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 40/44] block: pass a block_device to invalidate_partition
-Message-ID: <20201126174900.GZ422@quack2.suse.cz>
-References: <20201126130422.92945-1-hch@lst.de>
- <20201126130422.92945-41-hch@lst.de>
+        linux-mm@kvack.org, Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 29/44] block: remove the nr_sects field in struct
+ hd_struct
+Message-ID: <20201126175208.GA24843@lst.de>
+References: <20201126130422.92945-1-hch@lst.de> <20201126130422.92945-30-hch@lst.de> <20201126165036.GO422@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201126130422.92945-41-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20201126165036.GO422@quack2.suse.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 26-11-20 14:04:18, Christoph Hellwig wrote:
-> Pass the block_device actually needed instead of looking it up using
-> bdget_disk.
+On Thu, Nov 26, 2020 at 05:50:36PM +0100, Jan Kara wrote:
+> > +	if (size == capacity ||
+> > +	    (disk->flags & (GENHD_FL_UP | GENHD_FL_HIDDEN)) != GENHD_FL_UP)
+> > +		return false;
+> > +	pr_info("%s: detected capacity change from %lld to %lld\n",
+> > +		disk->disk_name, size, capacity);
+> > +	kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> I think we don't want to generate resize event for changes from / to 0...
 
-Looks good. You can add:
+Didn't you ask for that in the last round?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> Also the return value of this function is now different.
 
-								Honza
+It returns true if it did send an uevent, which is what the callers rely
+on.
 
-> ---
->  block/genhd.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
+> > diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
+> > index 4e37fa9b409d52..a70c33c49f0960 100644
+> > --- a/drivers/target/target_core_pscsi.c
+> > +++ b/drivers/target/target_core_pscsi.c
+> > @@ -1027,12 +1027,7 @@ static u32 pscsi_get_device_type(struct se_device *dev)
+> >  
+> >  static sector_t pscsi_get_blocks(struct se_device *dev)
+> >  {
+> > -	struct pscsi_dev_virt *pdv = PSCSI_DEV(dev);
+> > -
+> > -	if (pdv->pdv_bd && pdv->pdv_bd->bd_part)
+> > -		return pdv->pdv_bd->bd_part->nr_sects;
+> > -
+> > -	return 0;
+> > +	return bdev_nr_sectors(PSCSI_DEV(dev)->pdv_bd);
 > 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 89cd0ba8e3b84a..28299b24173be1 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -792,14 +792,8 @@ void device_add_disk_no_queue_reg(struct device *parent, struct gendisk *disk)
->  }
->  EXPORT_SYMBOL(device_add_disk_no_queue_reg);
->  
-> -static void invalidate_partition(struct gendisk *disk, int partno)
-> +static void invalidate_partition(struct block_device *bdev)
->  {
-> -	struct block_device *bdev;
-> -
-> -	bdev = bdget_disk(disk, partno);
-> -	if (!bdev)
-> -		return;
-> -
->  	fsync_bdev(bdev);
->  	__invalidate_device(bdev, true);
->  
-> @@ -808,7 +802,6 @@ static void invalidate_partition(struct gendisk *disk, int partno)
->  	 * up any more even if openers still hold references to it.
->  	 */
->  	remove_inode_hash(bdev->bd_inode);
-> -	bdput(bdev);
->  }
->  
->  /**
-> @@ -853,12 +846,12 @@ void del_gendisk(struct gendisk *disk)
->  	disk_part_iter_init(&piter, disk,
->  			     DISK_PITER_INCL_EMPTY | DISK_PITER_REVERSE);
->  	while ((part = disk_part_iter_next(&piter))) {
-> -		invalidate_partition(disk, part->bdev->bd_partno);
-> +		invalidate_partition(part->bdev);
->  		delete_partition(part);
->  	}
->  	disk_part_iter_exit(&piter);
->  
-> -	invalidate_partition(disk, 0);
-> +	invalidate_partition(disk->part0);
->  	set_capacity(disk, 0);
->  	disk->flags &= ~GENHD_FL_UP;
->  	up_write(&bdev_lookup_sem);
-> -- 
-> 2.29.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> I pdv_bd guaranteed to be non-NULL in pscsi_dev_virt?
+
+Looking at the code - only for disk devices.  And while ->get_blocks
+should only be called for those I'd rather err on the safe side and will
+add the check back.
