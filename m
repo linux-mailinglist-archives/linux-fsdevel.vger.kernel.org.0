@@ -2,94 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17ED42C5870
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 16:46:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 755342C5886
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 16:52:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733008AbgKZPpa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 10:45:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42134 "EHLO mx2.suse.de"
+        id S2390021AbgKZPwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 10:52:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46766 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbgKZPpa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 10:45:30 -0500
+        id S1730181AbgKZPwz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Nov 2020 10:52:55 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 41B9FAD20;
-        Thu, 26 Nov 2020 15:45:28 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 6E644ACD5;
+        Thu, 26 Nov 2020 15:52:53 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C71901E10D0; Thu, 26 Nov 2020 16:45:27 +0100 (CET)
-Date:   Thu, 26 Nov 2020 16:45:27 +0100
+        id 328B21E10D0; Thu, 26 Nov 2020 16:52:53 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 23/44] block: remove i_bdev
-Message-ID: <20201126154527.GJ422@quack2.suse.cz>
-References: <20201126130422.92945-1-hch@lst.de>
- <20201126130422.92945-24-hch@lst.de>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     x86@kernel.org, Brian Gerst <brgerst@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org
+Subject: [PATCH] fanotify: Fix fanotify_mark() on 32-bit x86
+Date:   Thu, 26 Nov 2020 16:52:46 +0100
+Message-Id: <20201126155246.25961-1-jack@suse.cz>
+X-Mailer: git-send-email 2.16.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201126130422.92945-24-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 26-11-20 14:04:01, Christoph Hellwig wrote:
-> Switch the block device lookup interfaces to directly work with a dev_t
-> so that struct block_device references are only acquired by the
-> blkdev_get variants (and the blk-cgroup special case).  This means that
-> we now don't need an extra reference in the inode and can generally
-> simplify handling of struct block_device to keep the lookups contained
-> in the core block layer code.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Tejun Heo <tj@kernel.org>
-> Acked-by: Coly Li <colyli@suse.de>		[bcache]
+Commit converting syscalls taking 64-bit arguments to new scheme of compat
+handlers omitted converting fanotify_mark(2) which then broke the
+syscall for 32-bit x86 builds. Add missed conversion. It is somewhat
+cumbersome since we need to keep the original compat handler for all the
+other 32-bit archs.
 
-Looks good to me. Just two nits about comments below. You can add:
+CC: Brian Gerst <brgerst@gmail.com>
+Suggested-by: Borislav Petkov <bp@suse.de>
+Reported-by: Paweł Jasiak <pawel@jasiak.xyz>
+Reported-and-tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Fixes: 121b32a58a3a ("x86/entry/32: Use IA32-specific wrappers for syscalls taking 64-bit arguments")
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ arch/x86/entry/syscalls/syscall_32.tbl | 2 +-
+ fs/notify/fanotify/fanotify_user.c     | 7 ++++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I plan to queue this fix into my tree next week. I'd be happy if someone with
+x86 ABI knowledge checks whether I've got the patch right (especially various
+config variants) because it was mostly a guesswork of me & Boris ;). Thanks!
 
->  /**
-> - * blkdev_get - open a block device
-> - * @bdev: block_device to open
-> + * blkdev_get_by_dev - open a block device by device number
-> + * @dev: device number of block device to open
->   * @mode: FMODE_* mask
->   * @holder: exclusive holder identifier
->   *
-> - * Open @bdev with @mode.  If @mode includes %FMODE_EXCL, @bdev is
-> - * open with exclusive access.  Specifying %FMODE_EXCL with %NULL
-> - * @holder is invalid.  Exclusive opens may nest for the same @holder.
-> + * Open the block device described by device number @dev.  If @mode includes
-> + * If @mode includes %FMODE_EXCL, the block device is opened with exclusive
-      ^^^ twice "If @mode includes" - here and on previous line...
-
-...
-> @@ -776,19 +770,6 @@ struct super_block *__get_super(struct block_device *bdev, bool excl)
->  	return NULL;
->  }
->  
-> -/**
-> - *	get_super - get the superblock of a device
-> - *	@bdev: device to get the superblock for
-> - *
-> - *	Scans the superblock list and finds the superblock of the file system
-> - *	mounted on the device given. %NULL is returned if no match is found.
-> - */
-
-I think it would be nice to preserve this comment?
-
-								Honza
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 0d0667a9fbd7..b2ec6ff88307 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -350,7 +350,7 @@
+ 336	i386	perf_event_open		sys_perf_event_open
+ 337	i386	recvmmsg		sys_recvmmsg_time32		compat_sys_recvmmsg_time32
+ 338	i386	fanotify_init		sys_fanotify_init
+-339	i386	fanotify_mark		sys_fanotify_mark		compat_sys_fanotify_mark
++339	i386	fanotify_mark		sys_ia32_fanotify_mark
+ 340	i386	prlimit64		sys_prlimit64
+ 341	i386	name_to_handle_at	sys_name_to_handle_at
+ 342	i386	open_by_handle_at	sys_open_by_handle_at		compat_sys_open_by_handle_at
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 3e01d8f2ab90..ba38f0fec4d0 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1292,8 +1292,13 @@ SYSCALL_DEFINE5(fanotify_mark, int, fanotify_fd, unsigned int, flags,
+ 	return do_fanotify_mark(fanotify_fd, flags, mask, dfd, pathname);
+ }
+ 
+-#ifdef CONFIG_COMPAT
++#if defined(CONFIG_COMPAT) || defined(CONFIG_X86_32) || \
++    defined(CONFIG_IA32_EMULATION)
++#if defined(CONFIG_X86_32) || defined(CONFIG_IA32_EMULATION)
++SYSCALL_DEFINE6(ia32_fanotify_mark,
++#elif CONFIG_COMPAT
+ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
++#endif
+ 				int, fanotify_fd, unsigned int, flags,
+ 				__u32, mask0, __u32, mask1, int, dfd,
+ 				const char  __user *, pathname)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.16.4
+
