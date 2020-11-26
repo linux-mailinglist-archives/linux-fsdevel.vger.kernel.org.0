@@ -2,150 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4C72C4D92
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 04:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82F5B2C4DD8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 04:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731381AbgKZDAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Nov 2020 22:00:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44118 "EHLO
+        id S2387504AbgKZDmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Nov 2020 22:42:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729715AbgKZDAK (ORCPT
+        with ESMTP id S2387502AbgKZDmP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Nov 2020 22:00:10 -0500
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C987C0613D4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 19:00:09 -0800 (PST)
-Received: by mail-pg1-x534.google.com with SMTP id k11so493744pgq.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 19:00:09 -0800 (PST)
+        Wed, 25 Nov 2020 22:42:15 -0500
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB56C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 19:42:13 -0800 (PST)
+Received: by mail-il1-x143.google.com with SMTP id f5so574496ilj.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Nov 2020 19:42:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=CLUvaNFj/PurXHTr5z9vmApyltiJfzFSkjwCQHk27Nk=;
-        b=WHW8I2y0MPHzhrMDKHi79uizkexoDaIscCw1GWtxg7GTjVco8QFv3EJtcnKsebd3Vz
-         EKfUZgtAH8UOGHk8/86XYCYQLqpF0+3NcJca/LK9g/1bYfgFbXaamLdpaBNMBL4Rht0j
-         E05riYul8IlXDN3iEuYXFiKfXqr6g/S5PSgsRImYuqcJXnsq/YfYinh+6iZCACjGkPXz
-         ms/gwQDPmF6pmWFboQQob42miT54K+sHWF9lWleReUxQ8rXgv2siOV3G/gPJPOk0QBbB
-         46Yez1jGTTVE3PydB9kZt0z5wqwVtTYHgf+o3QW70X9bJYqLY3n7MFzWo8Ynn8Qd1ZjV
-         keCw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6gr1px6i9cNYYEcg3VeIx81L2j3n8ZP82zVDuSYTPEY=;
+        b=oyjvQJnZxZaTJUOF4KISS4c8UUlxpvUnA0vyA1FHCX3ko8JXCE7yEZQiPsAFB05sRS
+         8IBu2VqGfjVz1feCzDCI+YZ0xz/gcfn0I+Fp1VmbUoTMJSUiILpZ58DhASNPG4wsxxbr
+         wPX1qe3g1oYK39FBkJLmq4GQkzoRy/Qw5FT3tYkiz+hyK7K1UZ6wu0d4N76GAxlvKSaE
+         BGJDQkNwaQ8UU4VDu1XpKh0QXhcgrbALk7tySeOpWkillaDHL4cwaP/76mPnqVA53RL/
+         9NQnFngymJule75LVE/uXW6uj4l78AaYWnbyiWEJBlfj8b8qM7LxqbBjmMuCkREGpgPT
+         sswg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=CLUvaNFj/PurXHTr5z9vmApyltiJfzFSkjwCQHk27Nk=;
-        b=OFAuzu6sC/fT/NUKLDNlwrvGpWiUvlppjMKSnnINPkCH6uAB4W9dgZWFfSFeAdMy8J
-         u3KJc2kG75G9Y6VMncQ5XW1pw8LROG6SxKqXvx27qcTtal5KgNPgNed0T36h3ZXNCHq6
-         Cae6/RuO9iWQ9iH+vEroJwwsAmFzC47oV5PO9lqIMCQ1Z1zl75/KSOMgrnxSc/cns33Q
-         Z+MDMKUipyiVEfRcUJef1tkk4zsVqzPoybAyqWycZ/VVQ2xd1RjCRBvsxyowXElpd581
-         7P0e5yU2EJwlcUMbkDVPELBmhcS0KwXlpb2xKYPiNIL8D6M1goZxTHUP4m6MwJQJb79p
-         FGew==
-X-Gm-Message-State: AOAM531c5/scMJD3pw9ovKj7/ptqQEbpx4owh+iN8AcGdcfezRXkkT5A
-        8j01CTt+DejywEbcaDJqqv/koQ==
-X-Google-Smtp-Source: ABdhPJybuFh0mFrl+Q6q7Hcb+Lq2vTCBVYmwBarsqkSwBM8BiikLz5hnIx8RR8kJy571/RZADrLhoQ==
-X-Received: by 2002:a17:90a:6588:: with SMTP id k8mr1056676pjj.197.1606359608591;
-        Wed, 25 Nov 2020 19:00:08 -0800 (PST)
-Received: from [192.168.10.160] (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id s145sm3105674pfs.187.2020.11.25.19.00.06
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Nov 2020 19:00:07 -0800 (PST)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <13D075AD-D08F-44DA-B01C-9CDF239D4358@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_5232A0BF-221A-45DB-A681-BE4E94ED05F0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: UAPI value collision: STATX_ATTR_MOUNT_ROOT vs STATX_ATTR_DAX
-Date:   Wed, 25 Nov 2020 20:00:02 -0700
-In-Reply-To: <CAJfpegvc5FjU-X1DxNtPjJLgEp_gT228kqk2Va31nk7GjZbPBQ@mail.gmail.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        linux-man <linux-man@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-To:     Miklos Szeredi <miklos@szeredi.hu>
-References: <1927370.1606323014@warthog.procyon.org.uk>
- <CAJfpegvc5FjU-X1DxNtPjJLgEp_gT228kqk2Va31nk7GjZbPBQ@mail.gmail.com>
-X-Mailer: Apple Mail (2.3273)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6gr1px6i9cNYYEcg3VeIx81L2j3n8ZP82zVDuSYTPEY=;
+        b=oD5oIszpHoO0NlPRPWzcmH4PG2Z5RIt2H37tKqof5vNq8acEYlI+oZQ5vSKqsAdn0E
+         t9/z5Cy9yrldudV9y/LZy6dSweG6AzeiOilWjapLZJHiaIRwnYWEbnAgmMgwTT40r/D7
+         UAqxIFWtQaHnheL58xo7dxDoLDIyCAJiKpejUYsRSFqu0QNB3nH8l4ID185nxsWZgsk/
+         N8uRNinn0yEXVI5oOoIdocMGQX4ul2pVnqNMmFEKhhdqD0sjZAGdIhrAbS3HWsWw66gv
+         vJhPFqWgp+6qhRTEfDlwFk7k3cQPqp1Cu7z2DqOqJTV93f4YdxDC1aaCvGEDShOidEXr
+         YDZQ==
+X-Gm-Message-State: AOAM531QCFwe5OmtyNnZdHlHA1sEHQgCN3HBHBlsukVoMOBnhfihSbxM
+        JL+jMYFRxdgG0l/bOoNAd6nwV+U9udZJX/Hbpgk=
+X-Google-Smtp-Source: ABdhPJy6R39HAklBMkfDbFHZf7uqcq4EgOfoZFcSAPozz3QYbhO1WUPoDpcuCCM/VtAGrDXp+Nj5K8DhY7dwT3Dkb48=
+X-Received: by 2002:a92:6403:: with SMTP id y3mr1055753ilb.72.1606362133006;
+ Wed, 25 Nov 2020 19:42:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20201109180016.80059-1-amir73il@gmail.com> <20201124134916.GC19336@quack2.suse.cz>
+ <CAOQ4uxiJz-j8GA7kMYRTGMmE9SFXCQ-xZxidOU1GzjAN33Txdg@mail.gmail.com> <20201125110156.GB16944@quack2.suse.cz>
+In-Reply-To: <20201125110156.GB16944@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 26 Nov 2020 05:42:01 +0200
+Message-ID: <CAOQ4uxgmExbSmcfhp0ir=7QJMVcwu2QNsVUdFTiGONkg3HgjJw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: introduce filesystem view mark
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Nov 25, 2020 at 1:01 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 24-11-20 16:47:41, Amir Goldstein wrote:
+> > On Tue, Nov 24, 2020 at 3:49 PM Jan Kara <jack@suse.cz> wrote:
+> > > On Mon 09-11-20 20:00:16, Amir Goldstein wrote:
+> > > > A filesystem view is a subtree of a filesystem accessible from a specific
+> > > > mount point.  When marking an FS view, user expects to get events on all
+> > > > inodes that are accessible from the marked mount, even if the events
+> > > > were generated from another mount.
+> > > >
+> > > > In particular, the events such as FAN_CREATE, FAN_MOVE, FAN_DELETE that
+> > > > are not delivered to a mount mark can be delivered to an FS view mark.
+> > > >
+> > > > One example of a filesystem view is btrfs subvolume, which cannot be
+> > > > marked with a regular filesystem mark.
+> > > >
+> > > > Another example of a filesystem view is a bind mount, not on the root of
+> > > > the filesystem, such as the bind mounts used for containers.
+> > > >
+> > > > A filesystem view mark is composed of a heads sb mark and an sb_view mark.
+> > > > The filesystem view mark is connected to the head sb mark and the head
+> > > > sb mark is connected to the sb object. The mask of the head sb mask is
+> > > > a cumulative mask of all the associated sb_view mark masks.
+> > > >
+> > > > Filesystem view marks cannot co-exist with a regular filesystem mark on
+> > > > the same filesystem.
+> > > >
+> > > > When an event is generated on the head sb mark, fsnotify iterates the
+> > > > list of associated sb_view marks and filter events that happen outside
+> > > > of the sb_view mount's root.
+> > > >
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > I gave this just a high-level look (no detailed review) and here are my
+> > > thoughts:
+> > >
+> > > 1) I like the functionality. IMO this is what a lot of people really want
+> > > when looking for "filesystem wide fs monitoring".
+> > >
+> > > 2) I don't quite like the API you propose though. IMO it exposes details of
+> > > implementation in the API. I'd rather like to have API the same as for
+> > > mount marks but with a dedicated mark type flag in the API - like
+> > > FAN_MARK_FILESYSTEM_SUBTREE (or we can keep VIEW if you like it but I think
+> > > the less terms the better ;).
+> >
+> > Sure, FAN_MARK_FS_VIEW is a dedicated mark type.
+> > The fact that is it a bitwise OR of MOUNT and FILESYSTEM is just a fun fact.
+> > Sorry if that wasn't clear.
+> > FAN_MARK_FILESYSTEM_SUBTREE sounds better for uapi.
+> >
+> > But I suppose you also meant that we should not limit the subtree root
+> > to bind mount points?
+> >
+> > The reason I used a reference to mnt for a sb_view and not dentry
+> > is because we have fsnotify_clear_marks_by_mount() callback to
+> > handle cleanup of the sb_view marks (which I left as TODO).
+> >
+> > Alternatively, we can play cache pinning games with the subtree root dentry
+> > like the case with inode mark, but I didn't want to get into that nor did I know
+> > if we should - if subtree mark requires CAP_SYS_ADMIN anyway, why not
+> > require a bind mount as its target, which is something much more visible to
+> > admins.
+>
+> Yeah, I don't have problems with bind mounts in particular. Just I was
+> thinking that concievably we could make these marks less priviledged (just
+> with CAP_DAC_SEARCH or so) and then mountpoints may be unnecessarily
+> restricting. I don't think pinning of subtree root dentry would be
+> problematic as such - inode marks pin the inode anyway, this is not
+> substantially different - if we can make it work reliably...
+>
+> In fact I was considering for a while that we could even make subtree
+> watches completely unpriviledged - when we walk the dir tree anyway, we
+> could also check permissions along the way. Due to locking this would be
+> difficult to do when generating the event but it might be actually doable
+> if we perform the permission check when reporting the event to userspace.
+> Just a food for thought...
+>
 
---Apple-Mail=_5232A0BF-221A-45DB-A681-BE4E94ED05F0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+I think unprivileged subtree watches are something nice for the future, but
+for these FS_VIEW (or whatnot) marks, there is a lower hanging opportunity -
+make them require privileges relative to userns.
 
-On Nov 25, 2020, at 12:26 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
->=20
-> On Wed, Nov 25, 2020 at 5:57 PM David Howells <dhowells@redhat.com> =
-wrote:
->>=20
->> Hi Linus, Miklos, Ira,
->>=20
->> It seems that two patches that got merged in the 5.8 merge window =
-collided and
->> no one noticed until now:
->>=20
->> 80340fe3605c0 (Miklos Szeredi     2020-05-14 184) #define =
-STATX_ATTR_MOUNT_ROOT         0x00002000 /* Root of a mount */
->> ...
->> 712b2698e4c02 (Ira Weiny          2020-04-30 186) #define =
-STATX_ATTR_DAX                        0x00002000 /* [I] File is DAX */
->>=20
->> The question is, what do we do about it?  Renumber one or both of the
->> constants?
->=20
-> <uapi/linux/stat.h>:
-> * Note that the flags marked [I] correspond to generic FS_IOC_FLAGS
-> * semantically.  Where possible, the numerical value is picked to =
-correspond
-> * also.
->=20
-> <uapi/linux/fs.h>:
-> #define FS_DAX_FL 0x02000000 /* Inode is DAX */
->=20
-> The DAX one can be the same value as FS_DAX_FL, the placement (after
-> STATX_ATTR_VERITY, instead of before) seems to confirm this intention.
+We don't need to relax that right from the start and it may requires some
+more work, but it could allow  unprivileged container user to set a
+filesystem-like watch on a filesystem where user is privileged relative
+to s_user_ns and that is a big win already.
 
-Yes, this looks like a bug in the STATX_ATTR_DAX value.  It should be =
-the same
-as FS_DAX_FL, like all of the other STATX_ATTR_* [I] values are.
+It may also be possible in the future to allow setting this mark on a
+"unserns contained" mount - I'm not exactly sure of the details of idmapped
+mounts [1], but if mount has a userns associated with it to map fs uids then
+in theory we can check the view-ability of the event either at event read time
+or at event generation time - it requires that all ancestors have uid/gid that
+are *mapped* to the mount userns and nothing else, because we know
+that the listener process has CAP_DAC_SEARCH (or more) in the target
+userns.
 
-Cheers, Andreas
+More food for thought...
 
+Thanks,
+Amir.
 
-
-
-
-
---Apple-Mail=_5232A0BF-221A-45DB-A681-BE4E94ED05F0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl+/GjIACgkQcqXauRfM
-H+A16RAArYXwTjbh6UN5DHPHFjmKbi40h9BMIlxtwkeVKXptVB1oe4FsbhtpnYrm
-5mQuxaCPBs70A8ZcSN7tMv5ldseeoThIGoCq84VqFC17lQHd6KzEZw+b2kc85wtc
-PCOVgT/xabaHVvRr4ZXYN8m+tdka+FSbBjS3S7pwPKM2Xam9Ov6Mv4YZ4E0Knsnd
-DvltX8X3cZ5cK+EXzRKcddbpgh6eUJgBxcIrk3RXD4q35OLNI6PIvP6kD/xBizti
-NUgpAWoJspTP95XurKHERCPMhwwmEDEEa5naBJpQvhKDkqzxAIbYSnGDORYXy+sF
-FW+GP3Z/EFgd994P0ZRaDNuuSBLdMzRCJtOCjE+bIpZLNhci5niGBjUdS+b6gA5N
-q2bNt8UJC+AgTlz0PVMFPlSKG33w65rnrBsGQnmY8l4YufmnD2z7nZglmwZVGVx8
-RqLJYzYMYQwgFN9peQ4YEjo/NVTi1tiiKBq2eJ3cQ92lPrcxnYKNNgjyGGqWd5SX
-RXv8bmRn+iDsvYL0MH7N9Y/TKA5y2Y4MU4q9wKxwQfLzZEaSAWmVcw1A18+zIuPr
-if9rkcxqH5/ZMmgAmzDJXZ89PakYfYW4hc21AcUJV4Hy1eF9ohi3Hv+B1l/d5z1S
-hvHWuu/C5Kyq8/crZgE0ZT6d9f5bdHLaNLvKflXJ/feliySLb74=
-=HE3n
------END PGP SIGNATURE-----
-
---Apple-Mail=_5232A0BF-221A-45DB-A681-BE4E94ED05F0--
+[1] https://lore.kernel.org/linux-fsdevel/20201115103718.298186-1-christian.brauner@ubuntu.com/
