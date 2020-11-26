@@ -2,131 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5FB02C5C9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 20:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 939262C5CB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 20:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732678AbgKZTZP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 14:25:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55424 "EHLO
+        id S2404988AbgKZTqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 14:46:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728153AbgKZTZP (ORCPT
+        with ESMTP id S2404970AbgKZTqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 14:25:15 -0500
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E0FC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Nov 2020 11:25:15 -0800 (PST)
-Received: by mail-oi1-x241.google.com with SMTP id o25so3331842oie.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Nov 2020 11:25:14 -0800 (PST)
+        Thu, 26 Nov 2020 14:46:52 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C14C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Nov 2020 11:46:52 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id z7so3349567wrn.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Nov 2020 11:46:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ViCmWRKE+pPFgMfgXX95fmQBtr/0Bp2EoCIrnvSRlR0=;
-        b=v2xW4TCdDnILHxtMD8+qN7xcXERVQhE9QzfxnnXsewMQpCys3+AtvNtATD4sabxHIY
-         rb5zV3C85W5dyMzlXrJX93jNM1Pkc2VJ9bY/hBs1NHsqSgq0JJj8Pac7n6px8GmMtu+o
-         vTm7KUhR1W9n7dYmchbQNm7yCgArHuBhSlhDL0iQnbfyPRlrfZiIBncU4i0lWsGzz04O
-         MF7DrFjtk1GAydq/oJtLsM3l6BGDzxI0vl7jRVQbi79URE7rRTOfB2e67DZ7PwNyETab
-         MkEqePjG5SSLNyAosQujDaxYibQ4gn46jl+7PSlUKHhqEbJvv4hGjA+Uz5W0Qw2SBxUq
-         QOOQ==
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oA+p6sQRZh6K/+2/r/vzDoG47gc/rMQlygvkOGkhwFw=;
+        b=aB00JKdnobOsgyuS2Ye42WpIYWno/EcfbYt+MymjWdzhfUS1RdpH+3b9ihSLo2rwuR
+         gnoOvR5M8NrDTMeEl7HrAjlh1JfQ0PDx1XWf0PstYelsiiBvPtIyUyG7mTQ42WFyr65O
+         yJ/5dJVPk3FGXSgNF2/mKj2a1V6uvuq5N2EFzuL8X6xHT5tEe1Zwvv8j79cFWAI0IIVX
+         NHe5hPqLvn6bhhNj73yuttk3tL34D6bUzLWdajTy8ia94p+D0oq7IDq4TlDsdJe+bcJn
+         XMSiN8hI8LTy35LNk7pD0TIp8vT0rBfNfhckDDSTKxddrp1Wa7bPm26OZnmU5Sor0Q9p
+         wzGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ViCmWRKE+pPFgMfgXX95fmQBtr/0Bp2EoCIrnvSRlR0=;
-        b=gD3wCBfJFMvfZiYjGRDrJIvGVASsSTOHCiaywzDwKe30MFqhfbda+20DilgnmSOVVY
-         M+RvfG8Btn4ESEXdQSZtQIRk38QyKYGG3PeConBt4bXgByhfMAcPsLLNoIXF6/HQ6oaW
-         ztdhlMhGi9OhHYwavjNkOSmB782VHPUFxw3Kw/B7heJfq9qYmGb+OsZFEZ+b2R1iV6Oh
-         jvsi5wz7D2E/ljg0RpC3FddxPR/3fZuQV/+oBnaYNGT5pW50GfYCD/KVFa1/ITCz18AS
-         W9GlUmoY8504VxJp3zKd9dTnODDYwZ78PKZ/byaCRFL1E2hqHu7fzm0KAgmM/1yOnxwt
-         Jy6A==
-X-Gm-Message-State: AOAM533FM0gcOlx7XlQwc9qtYVfaNPnqkMA/7pH/mWkIm2ZqK9SPl7F3
-        gHts5bXKYXnJjhKibW59tuHWDA==
-X-Google-Smtp-Source: ABdhPJxpk/51vMB7k6EYiP62U6kuxEfxalIXOkmJd5upcs8ktF8zKQG4sLw7Xk5SHNncDBQ5meESXg==
-X-Received: by 2002:aca:d586:: with SMTP id m128mr2928947oig.73.1606418714084;
-        Thu, 26 Nov 2020 11:25:14 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id z12sm3348947oti.45.2020.11.26.11.25.12
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Thu, 26 Nov 2020 11:25:13 -0800 (PST)
-Date:   Thu, 26 Nov 2020 11:24:59 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oA+p6sQRZh6K/+2/r/vzDoG47gc/rMQlygvkOGkhwFw=;
+        b=FhZjMt/tVLVxWUPU5+iBhWK/upCasuBdsx2iZfwi5kEwBdKeP1MRtC/IXw1fwwNd+z
+         KykAiWkrmlrTeHaUT84lPKl4NVf54A7SQtt0NCm+iF1oNOeqY/fl2l0ySTcpnb4+ffnv
+         xxD6l8GtpbTrmbkJKI8E3nWj9JrDBiVlpoDbub28Gxo4TknK4rzq+OIUCfMinlG2q9jS
+         z8lUzsJf94+xbLQ9KwVmsYnutZwd6aVDu/omfgjtfZEFDt2ySaVc/cL7K9H6Viw9VVL1
+         zSpvw5OlkHAK8GSNPL9F/z07mC0QCwzH9WGItZD1nS0Lb92VvUQLs1VicEtKb0h2TuMw
+         6/2g==
+X-Gm-Message-State: AOAM531UGGpDMmpo5x5Ty6EHSyEdEqhuyoeaEA0DKvq3iOA16nQViMed
+        iRPum3UVGgIid9jhb63SJDX+5g==
+X-Google-Smtp-Source: ABdhPJx1bIwWl+pH8X8yYvQ3W1QeOmH7r+FL4p2P5x38EbIHYQgRF9EC5Aem35LNOdoK0T4pQFCkaA==
+X-Received: by 2002:adf:fe82:: with SMTP id l2mr4250868wrr.232.1606420011286;
+        Thu, 26 Nov 2020 11:46:51 -0800 (PST)
+Received: from ?IPv6:2a02:8084:e84:2480:228:f8ff:fe6f:83a8? ([2a02:8084:e84:2480:228:f8ff:fe6f:83a8])
+        by smtp.gmail.com with ESMTPSA id n10sm10316007wrv.77.2020.11.26.11.46.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Nov 2020 11:46:50 -0800 (PST)
+Subject: Re: [PATCH v2 06/19] elf/vdso: Reuse arch_setup_additional_pages()
+ parameters
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Christoph Hellwig <hch@lst.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>, dchinner@redhat.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
-In-Reply-To: <20201126121546.GN4327@casper.infradead.org>
-Message-ID: <alpine.LSU.2.11.2011261101230.2851@eggly.anvils>
-References: <20201112212641.27837-1-willy@infradead.org> <alpine.LSU.2.11.2011160128001.1206@eggly.anvils> <20201117153947.GL29991@casper.infradead.org> <alpine.LSU.2.11.2011170820030.1014@eggly.anvils> <20201117191513.GV29991@casper.infradead.org>
- <20201117234302.GC29991@casper.infradead.org> <20201125023234.GH4327@casper.infradead.org> <20201125150859.25adad8ff64db312681184bd@linux-foundation.org> <CANsGZ6a95WK7+2H4Zyg5FwDxhdJQqR8nKND1Cn6r6e3QxWeW4Q@mail.gmail.com>
- <20201126121546.GN4327@casper.infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Guo Ren <guoren@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will@kernel.org>, x86@kernel.org,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20201124002932.1220517-1-dima@arista.com>
+ <20201124002932.1220517-7-dima@arista.com>
+ <aefd633f-6dec-313f-f658-6e0b556171a4@csgroup.eu>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <0e665fc7-0e00-d193-ef78-c29059d6d4aa@arista.com>
+Date:   Thu, 26 Nov 2020 19:46:49 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <aefd633f-6dec-313f-f658-6e0b556171a4@csgroup.eu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 26 Nov 2020, Matthew Wilcox wrote:
-> On Wed, Nov 25, 2020 at 04:11:57PM -0800, Hugh Dickins wrote:
-> > > +                               index = truncate_inode_partial_page(mapping,
-> > > +                                               page, lstart, lend);
-> > > +                               if (index > end)
-> > > +                                       end = indices[i] - 1;
-> > >                         }
-> > > -                       unlock_page(page);
-> > 
-> > The fix needed is here: instead of deleting that unlock_page(page)
-> > line, it needs to be } else { unlock_page(page); }
+On 11/24/20 6:18 AM, Christophe Leroy wrote:
+> "Reuse arch_setup_additional_pages() parameters"
 > 
-> It also needs a put_page(page);
-
-Oh yes indeed, sorry for getting that wrong.  I'd misread the
-pagevec_reinit() at the end as the old pagevec_release().  Do you
-really need to do pagevec_remove_exceptionals() there if you're not
-using pagevec_release()?
-
+> Did you mean "remove" ? Or "Revise" ?
 > 
-> That's now taken care of by truncate_inode_partial_page(), so if we're
-> not calling that, we need to put the page as well.  ie this:
-
-Right, but I do find it confusing that truncate_inode_partial_page()
-does the unlock_page(),put_page() whereas truncate_inode_page() does
-not: I think you would do better to leave them out of _partial_page(),
-even if including them there saves a couple of lines somewhere else.
-
-But right now it's the right fix that's important: ack to yours below.
-
-I've not yet worked out the other issues I saw: will report when I have.
-Rebooted this laptop, pretty sure it missed freeing a shmem swap entry,
-not yet reproduced, will study the change there later, but the non-swap 
-hang in generic/476 (later seen also in generic/112) more important.
-
-Hugh
-
+> Maybe could be:
 > 
-> +++ b/mm/shmem.c
-> @@ -954,6 +954,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->                                                 page, lstart, lend);
->                                 if (index > end)
->                                         end = indices[i] - 1;
-> +                       } else {
-> +                               unlock_page(page);
-> +                               put_page(page);
->                         }
->                 }
->                 index = indices[i - 1] + 1;
-> 
-> > >                 }
-> > > +               index = indices[i - 1] + 1;
-> > >                 pagevec_remove_exceptionals(&pvec);
-> > > -               pagevec_release(&pvec);
-> > > -               index++;
-> > > +               pagevec_reinit(&pvec);
+> "Modify arch_setup_additional_pages() parameters"
+
+Sure.
+
+Thanks,
+          Dmitry
