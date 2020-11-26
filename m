@@ -2,122 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B32002C53CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 13:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE622C5481
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Nov 2020 14:08:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733212AbgKZMPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Nov 2020 07:15:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45154 "EHLO
+        id S2389860AbgKZNGv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Nov 2020 08:06:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728965AbgKZMPv (ORCPT
+        with ESMTP id S2388291AbgKZNGv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Nov 2020 07:15:51 -0500
+        Thu, 26 Nov 2020 08:06:51 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCEDC0613D4;
-        Thu, 26 Nov 2020 04:15:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C4DC0613D4;
+        Thu, 26 Nov 2020 05:06:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bwE3ntsWwlmjPInYkgT+nMI6emH/bLopsilbB9Xfo0k=; b=EW1GywcfwLEnGDTSbbRk3iX/fu
-        vMLSY16+iniAcBp5/Q9wBUI/garKVHl2j6/XASpTq8Hry7PGTTJjIdm2tuekGe5cG9WBo2nzg8hr2
-        g2VpVUEwUR6NauZ8klKaQOD6Ha1+rjJtL4oN9NNQJeI/Wb2m4CJrabTAkEEKRfjuAk2SJNRYCbVcO
-        45UFPkNWFKhMt81CD4/KFoh3beaDayv+ifK+lhedpUjINOr04s3nl5J/7q1vHul/OvBQAY6kA3jik
-        mEbbpmdNkhoZG6NY84MEDGiWFnvgtLjfFEgE4k8hS8kG/BOxB77tNrYYxMWfmDKNfsC55iCKshKYB
-        V+YH1OhA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kiGBe-0000jE-QC; Thu, 26 Nov 2020 12:15:46 +0000
-Date:   Thu, 26 Nov 2020 12:15:46 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Linux-FSDevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Christoph Hellwig <hch@lst.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>, dchinner@redhat.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 00/16] Overhaul multi-page lookups for THP
-Message-ID: <20201126121546.GN4327@casper.infradead.org>
-References: <20201112212641.27837-1-willy@infradead.org>
- <alpine.LSU.2.11.2011160128001.1206@eggly.anvils>
- <20201117153947.GL29991@casper.infradead.org>
- <alpine.LSU.2.11.2011170820030.1014@eggly.anvils>
- <20201117191513.GV29991@casper.infradead.org>
- <20201117234302.GC29991@casper.infradead.org>
- <20201125023234.GH4327@casper.infradead.org>
- <20201125150859.25adad8ff64db312681184bd@linux-foundation.org>
- <CANsGZ6a95WK7+2H4Zyg5FwDxhdJQqR8nKND1Cn6r6e3QxWeW4Q@mail.gmail.com>
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=0Gv0fe8by51pBpJ9y/s+Bsc/pkGppT00OZEyWHEsCkc=; b=jDdN7hAOVm64LI4GLxtV8Xg4mQ
+        Jhk3sYSO6NihDo6ErowuZ0lfW/FXxua0lGjFFXZ7hTshuIG02Qgh+ZtMvse28KRgXFa6YwznZ+zRM
+        3SxJO9yOYalt/DOk9qnsxGmaq7Mm9pzMjycc3T8ZVi1jmSl4nMDZlkZJE3sN2+dyKPgpDMwt3zqvb
+        SLuGPt5RBvuzIbdy43KrQgJ8FQup0kday2ag+tEAKT+U9PvPIbgh9dCIaX43s80gP5kUo5vBfWj55
+        /k2Iy70DlOmB3z37Z9eoOo/XoZR8yNFXm3CeZynj7ahBX+ghuAT/JfcmZJ2vsfJVhk0COVF7tTO+/
+        LxGu4YBQ==;
+Received: from 089144198196.atnat0007.highway.a1.net ([89.144.198.196] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kiGyo-0003va-9E; Thu, 26 Nov 2020 13:06:35 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: merge struct block_device and struct hd_struct v3
+Date:   Thu, 26 Nov 2020 14:03:38 +0100
+Message-Id: <20201126130422.92945-1-hch@lst.de>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANsGZ6a95WK7+2H4Zyg5FwDxhdJQqR8nKND1Cn6r6e3QxWeW4Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 25, 2020 at 04:11:57PM -0800, Hugh Dickins wrote:
-> The little fix definitely needed was shown by generic/083: each
-> fsstress waiting for page lock, happens even without forcing huge
-> pages. See below...
+Hi Jens,
 
-Huh ... I need to look into why my xfstests run is skipping generic/083:
+this series cleans up our main per-device node data structure by merging
+the block_device and hd_struct data structures that have the same scope,
+but different life times.  The main effect (besides removing lots of
+code) is that instead of having two device sizes that need complex
+synchronization there is just one now.
 
-0006 generic/083 3s ... run fstests generic/083 at 2020-11-26 12:11:52
-0006 [not run] this test requires a valid $SCRATCH_MNT and unique 
-0006 Ran: generic/083
-0006 Not run: generic/083
+Note that this now includes the previous "misc cleanups" series as I had
+to fix up a thing in there with the changed patch ordering.
 
-> >                         if (!unfalloc || !PageUptodate(page)) {
-> >                                 if (page_mapping(page) != mapping) {
-> >                                         /* Page was replaced by swap: retry */
-> >                                         unlock_page(page);
-> > -                                       index--;
-> > +                                       put_page(page);
-> >                                         break;
-> >                                 }
-> >                                 VM_BUG_ON_PAGE(PageWriteback(page), page);
-> > -                               if (shmem_punch_compound(page, start, end))
-> > -                                       truncate_inode_page(mapping, page);
-> > -                               else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
-> > -                                       /* Wipe the page and don't get stuck */
-> > -                                       clear_highpage(page);
-> > -                                       flush_dcache_page(page);
-> > -                                       set_page_dirty(page);
-> > -                                       if (index <
-> > -                                           round_up(start, HPAGE_PMD_NR))
-> > -                                               start = index + 1;
-> > -                               }
-> > +                               index = truncate_inode_partial_page(mapping,
-> > +                                               page, lstart, lend);
-> > +                               if (index > end)
-> > +                                       end = indices[i] - 1;
-> >                         }
-> > -                       unlock_page(page);
-> 
-> The fix needed is here: instead of deleting that unlock_page(page)
-> line, it needs to be } else { unlock_page(page); }
+The first patch already is in 5.10-rc, but not in for-5.11/block
 
-It also needs a put_page(page);
+A git tree is available here:
 
-That's now taken care of by truncate_inode_partial_page(), so if we're
-not calling that, we need to put the page as well.  ie this:
+    git://git.infradead.org/users/hch/block.git bdev-lookup
 
-+++ b/mm/shmem.c
-@@ -954,6 +954,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
-                                                page, lstart, lend);
-                                if (index > end)
-                                        end = indices[i] - 1;
-+                       } else {
-+                               unlock_page(page);
-+                               put_page(page);
-                        }
-                }
-                index = indices[i - 1] + 1;
+Gitweb:
 
-> >                 }
-> > +               index = indices[i - 1] + 1;
-> >                 pagevec_remove_exceptionals(&pvec);
-> > -               pagevec_release(&pvec);
-> > -               index++;
-> > +               pagevec_reinit(&pvec);
+    http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/bdev-lookup
+
+Changes since v2:
+ - keep a reference to the whole device bdev from each partition bdev
+   to simplify blkdev_get
+ - drop a stale commen in freeze_bdev
+ - fix an incorrect hunk that ignored error in thaw_bdev
+ - add back a missing call to mapping_set_gfp_mask
+ - misc typo fixes, comment and commit log improvements
+ - keep using a global lock to synchronize gendisk lookup
+ - do not call ->open for blk-cgroup configuration updates
+ - drop a zram cleanup patch
+
+Changes since v1:
+ - spelling fixes
+ - fix error unwinding in __alloc_disk_node
+ - use bdev_is_partition in a few more places
+ - don't send the RESIZE=1 uevent for hidden gendisks
+ - rename __bdget_disk to disk_find_part
+ - drop a bcache patch
+ - some patch reordering
+ - add more refactoring
+ - use rcu protection to prevent racing with a disk going away
+   in blkdev_get
+ - split up some of the big patches into many small ones
+ - clean up the freeze_bdev interface
