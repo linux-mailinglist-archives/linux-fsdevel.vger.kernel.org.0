@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA9CB2C618A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 10:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFF532C618C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 10:22:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbgK0JVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 04:21:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42042 "EHLO
+        id S1728077AbgK0JVN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 04:21:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgK0JVK (ORCPT
+        with ESMTP id S1728056AbgK0JVM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 04:21:10 -0500
+        Fri, 27 Nov 2020 04:21:12 -0500
 Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DAFC0613D1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:10 -0800 (PST)
-Received: by mail-pf1-x443.google.com with SMTP id y7so3991442pfq.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:10 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F824C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:12 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id n137so4023635pfd.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sargun.me; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=N3znUkPKtqbryPODPnE7qItfA1c9fsYLlSw8ARlE2iU=;
-        b=XCbkKPcW90nk8ZdKWXtOH5i9ZE+g53qlXZ8cLPT4L1dCcgEvMy8gG5O6KOjkCiRTS6
-         T1sT0tOswqbzJT3gDHM0Pr4X0oa1KJkNX6xjd2KuxpINgXtXWLgF9ffxKbDKP1rjpMFz
-         nxxOy0yG5pnW+FbC2hlo0yE1i2S7eA9V7xfbA=
+        bh=CtvcgZK9iYPDW2XGOFNWnwy2h9J2gIbXQeuOPZlJjW0=;
+        b=yK1PbGT9kHNND4Ld+pGseZLGkvfFlYz7M8+NVdsqpuwYBbFPyWdacCsXIOzISCodi7
+         Y1pAYcEMZPPvCSoVqVGsp8hxa1VCy9wN3DXnxMPm6NLS9n3IZao3O3JcfAEuRlFpEr3c
+         JgokqPECKGmBi7gPeK4i2w7b4qGBvo389gDBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=N3znUkPKtqbryPODPnE7qItfA1c9fsYLlSw8ARlE2iU=;
-        b=Jm4P3++k1+037349M/tFc2MWDHZH6svXZ9qUD3b/ZrRDnSZytB0tt78j1EnqzMeG58
-         A0yPyPOWVl6Lo9TmKYHW9QFef10bS8ojTQU6hxMN8KJ19dvohJVxrBH6VZ8uIiX3ofNF
-         hQYU5Qd0LXL9j62exRUba2AGocu5Rcz5rH38kIoC0wituPxXISc9UC+UdmAd7vIo7sYp
-         DIliVBAvBKlXxwrwTPYKT8Ert5aPX04FuOL/BuUrBgo8zbUJVNgjdneyD91wLmYaZCQP
-         EmLk0OlwB88QwBERi7yl7szR3ZyTHbo/f82ahv5Pk71OQrBlZHtYp4PrdlXegHt8f87X
-         ksuA==
-X-Gm-Message-State: AOAM5329LwOURXjZjCX4K9gwYgyx5MgpddrDpGqLWmkqHLM9RPx5ou3c
-        M/IxnUaNllQMF7do/XFmxDWFMw==
-X-Google-Smtp-Source: ABdhPJy+Nm0BqxYRvhxozEhyB0RB1iAA9/rcKtYRc0oHpzl11BL3ij3EUW9jZDE3KklG4mSjjnCSJA==
-X-Received: by 2002:a17:90a:2a83:: with SMTP id j3mr9035135pjd.84.1606468869856;
-        Fri, 27 Nov 2020 01:21:09 -0800 (PST)
+        bh=CtvcgZK9iYPDW2XGOFNWnwy2h9J2gIbXQeuOPZlJjW0=;
+        b=PRHRvuXqiperLD76+m7eRVVija0QiJxhl2q1VFSBg2vZErIy24vQwyebjJt4qiSbLe
+         6KwsZS43T3yt4codWeNjrtHT387Qf5iVmDNAQk/ncv5ViAwggE9S61dkLX2nlvAkdO24
+         mgr3gqNv/m9U86eKY8T7utup4ITXOn+lEs50/7BndOirUXTVjlXbcHEH+W3AEGokWkdD
+         VhLyqIYY0MjLATSZpC0IP0ScLUsBnQMy6nEyUnEO/8ImWRgE8gEA1lUo1pKbRrHiSM8I
+         7fRM/kTuTq9UMeAGu0b/37FLWx2gaYABQ1c6YclPtOLkXbpIKv8JO7fbeO6i6YcwTBUB
+         VVrA==
+X-Gm-Message-State: AOAM531OORMvjWYkMNOuyGapsCRzAXQjfGpIlNLCD2zzaeUUrw3f0mZ6
+        2ubwz8ig3uGxMZ2G9da2syZxcQ==
+X-Google-Smtp-Source: ABdhPJxPrOjTKbpDK5Tsejg5kFvDpC1doqjiJ3Nm3sMmUS0iPNPo6h4eO7X/g9KRl3j0ddnWF8G8jg==
+X-Received: by 2002:a17:90a:8402:: with SMTP id j2mr8837033pjn.120.1606468871882;
+        Fri, 27 Nov 2020 01:21:11 -0800 (PST)
 Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
-        by smtp.gmail.com with ESMTPSA id t9sm9938944pjq.46.2020.11.27.01.21.08
+        by smtp.gmail.com with ESMTPSA id t9sm9938944pjq.46.2020.11.27.01.21.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 01:21:09 -0800 (PST)
+        Fri, 27 Nov 2020 01:21:11 -0800 (PST)
 From:   Sargun Dhillon <sargun@sargun.me>
 To:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -54,9 +54,9 @@ Cc:     Sargun Dhillon <sargun@sargun.me>,
         Vivek Goyal <vgoyal@redhat.com>,
         Daniel J Walsh <dwalsh@redhat.com>,
         linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH v2 2/4] overlay: Document current outstanding shortcoming of volatile
-Date:   Fri, 27 Nov 2020 01:20:56 -0800
-Message-Id: <20201127092058.15117-3-sargun@sargun.me>
+Subject: [PATCH v2 3/4] overlay: Add the ability to remount volatile directories when safe
+Date:   Fri, 27 Nov 2020 01:20:57 -0800
+Message-Id: <20201127092058.15117-4-sargun@sargun.me>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201127092058.15117-1-sargun@sargun.me>
 References: <20201127092058.15117-1-sargun@sargun.me>
@@ -66,18 +66,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This documents behaviour that was discussed in a thread about the volatile
-feature. Specifically, how failures can go hidden from asynchronous writes
-(such as from mmap, or writes that are not immediately flushed to the
-filesystem). Although we pass through calls like msync, fallocate, and
-write, and will still return errors on those, it doesn't guarantee all
-kinds of errors will happen at those times, and thus may hide errors.
+Overlayfs added the ability to setup mounts where all syncs could be
+short-circuted in (2a99ddacee43: ovl: provide a mount option "volatile").
 
-In the future, we can add error checking to all interactions with the
-upperdir, and pass through errseq_t from the upperdir on mappings,
-and other interactions with the filesystem[1].
+A user might want to remount this fs, but we do not let the user because
+of the "incompat" detection feature. In the case of volatile, it is safe
+to do something like[1]:
 
-[1]: https://lore.kernel.org/linux-unionfs/20201116045758.21774-1-sargun@sargun.me/T/#m7d501f375e031056efad626e471a1392dd3aad33
+$ sync -f /root/upperdir
+$ rm -rf /root/workdir/incompat/volatile
+
+There are two ways to go about this. You can call sync on the underlying
+filesystem, check the error code, and delete the dirty file if everything
+is clean. If you're running lots of containers on the same filesystem, or
+you want to avoid all unnecessary I/O, this may be suboptimal.
+
+Alternatively, you can blindly delete the dirty file, and "hope for the
+best".
+
+This patch introduces transparent functionality to check if it is
+(relatively) safe to reuse the upperdir. It ensures that the filesystem
+hasn't been remounted, the system hasn't been rebooted, nor has the
+overlayfs code changed. Since the structure is explicitly not meant to be
+used between different versions of the code, its stability does not matter
+so much.
+
+[1]: https://lore.kernel.org/linux-unionfs/CAOQ4uxhKr+j5jFyEC2gJX8E8M19mQ3CqdTYaPZOvDQ9c0qLEzw@mail.gmail.com/T/#m6abe713e4318202ad57f301bf28a414e1d824f9c
 
 Signed-off-by: Sargun Dhillon <sargun@sargun.me>
 Cc: linux-fsdevel@vger.kernel.org
@@ -86,26 +100,407 @@ Cc: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: Vivek Goyal <vgoyal@redhat.com>
 ---
- Documentation/filesystems/overlayfs.rst | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/filesystems/overlayfs.rst | 18 +++--
+ fs/overlayfs/overlayfs.h                | 37 +++++++++-
+ fs/overlayfs/readdir.c                  | 98 ++++++++++++++++++++++---
+ fs/overlayfs/super.c                    | 73 +++++++++++++-----
+ fs/overlayfs/util.c                     |  2 +
+ 5 files changed, 190 insertions(+), 38 deletions(-)
 
 diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-index 580ab9a0fe31..c6e30c1bc2f2 100644
+index c6e30c1bc2f2..b485fdb65b85 100644
 --- a/Documentation/filesystems/overlayfs.rst
 +++ b/Documentation/filesystems/overlayfs.rst
-@@ -570,7 +570,11 @@ Volatile mount
- This is enabled with the "volatile" mount option.  Volatile mounts are not
- guaranteed to survive a crash.  It is strongly recommended that volatile
- mounts are only used if data written to the overlay can be recreated
--without significant effort.
-+without significant effort.  In addition to this, the sync family of syscalls
-+are not sufficient to determine whether a write failed as sync calls are
-+omitted.  For this reason, it is important that the filesystem used by the
-+upperdir handles failure in a fashion that's suitable for the user.  For
-+example, upon detecting a fault, ext4 can be configured to panic.
- 
+@@ -579,13 +579,17 @@ example, upon detecting a fault, ext4 can be configured to panic.
  The advantage of mounting with the "volatile" option is that all forms of
  sync calls to the upper filesystem are omitted.
+ 
+-When overlay is mounted with "volatile" option, the directory
+-"$workdir/work/incompat/volatile" is created.  During next mount, overlay
+-checks for this directory and refuses to mount if present. This is a strong
+-indicator that user should throw away upper and work directories and create
+-fresh one. In very limited cases where the user knows that the system has
+-not crashed and contents of upperdir are intact, The "volatile" directory
+-can be removed.
++When overlay is mounted with the "volatile" option, the directory
++"$workdir/work/incompat/volatile" is created.  This acts as a indicator
++that the user should throw away upper and work directories and create fresh
++ones.  In some cases, the overlayfs can detect if the upperdir can be
++reused safely in a subsequent volatile mounts, and mounting will proceed as
++normal.  If the filesystem is unable to determine if this is safe (due to a
++reboot, upgraded kernel code, or loss of checkpoint, etc...), the user may
++bypass these safety checks and remove the "volatile" directory if they know
++the system did not encounter a fault and the contents of the upperdir are
++intact. Then, the user can remount the filesystem as normal.
++
+ 
+ Testsuite
+ ---------
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index f8880aa2ba0e..de694ee99d7c 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -32,8 +32,13 @@ enum ovl_xattr {
+ 	OVL_XATTR_NLINK,
+ 	OVL_XATTR_UPPER,
+ 	OVL_XATTR_METACOPY,
++	OVL_XATTR_VOLATILE,
+ };
+ 
++#define OVL_INCOMPATDIR_NAME "incompat"
++#define OVL_VOLATILEDIR_NAME "volatile"
++#define OVL_VOLATILE_DIRTY_NAME "dirty"
++
+ enum ovl_inode_flag {
+ 	/* Pure upper dir that may contain non pure upper entries */
+ 	OVL_IMPURE,
+@@ -57,6 +62,31 @@ enum {
+ 	OVL_XINO_ON,
+ };
+ 
++/*
++ * This is copied into the volatile xattr, and the user does not interact with
++ * it. There is no stability requirement, as a reboot explicitly invalidates
++ * a volatile workdir. It is explicitly meant not to be a stable api.
++ *
++ * Although this structure isn't meant to be stable it is exposed to potentially
++ * unprivileged users. We don't do any kind of cryptographic operations with
++ * the structure, so it could be tampered with, or inspected. Don't put
++ * kernel memory pointers in it, or anything else that could cause problems,
++ * or information disclosure.
++ */
++struct ovl_volatile_info {
++	/*
++	 * This uniquely identifies a boot, and is reset if overlayfs itself
++	 * is reloaded. Therefore we check our current / known boot_id
++	 * against this before looking at any other fields to validate:
++	 * 1. Is this datastructure laid out in the way we expect? (Overlayfs
++	 *    module, reboot, etc...)
++	 * 2. Could something have changed (like the s_instance_id counter
++	 *    resetting)
++	 */
++	uuid_t		ovl_boot_id;	/* Must stay first member */
++	u64		s_instance_id;
++} __packed;
++
+ /*
+  * The tuple (fh,uuid) is a universal unique identifier for a copy up origin,
+  * where:
+@@ -422,8 +452,8 @@ void ovl_cleanup_whiteouts(struct dentry *upper, struct list_head *list);
+ void ovl_cache_free(struct list_head *list);
+ void ovl_dir_cache_free(struct inode *inode);
+ int ovl_check_d_type_supported(struct path *realpath);
+-int ovl_workdir_cleanup(struct inode *dir, struct vfsmount *mnt,
+-			struct dentry *dentry, int level);
++int ovl_workdir_cleanup(struct ovl_fs *ofs, struct inode *dir,
++			struct vfsmount *mnt, struct dentry *dentry, int level);
+ int ovl_indexdir_cleanup(struct ovl_fs *ofs);
+ 
+ /* inode.c */
+@@ -520,3 +550,6 @@ int ovl_set_origin(struct dentry *dentry, struct dentry *lower,
+ 
+ /* export.c */
+ extern const struct export_operations ovl_export_operations;
++
++/* super.c */
++extern uuid_t ovl_boot_id;
+diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+index 01620ebae1bd..7b66fbb20261 100644
+--- a/fs/overlayfs/readdir.c
++++ b/fs/overlayfs/readdir.c
+@@ -1080,10 +1080,78 @@ int ovl_check_d_type_supported(struct path *realpath)
+ 
+ 	return rdd.d_type_supported;
+ }
++static int ovl_verify_volatile_info(struct ovl_fs *ofs,
++				    struct dentry *volatiledir)
++{
++	int err;
++	struct ovl_volatile_info info;
++
++	if (!volatiledir->d_inode)
++		return 0;
++
++	if (!ofs->config.ovl_volatile) {
++		pr_debug("Mount is not volatile; upperdir is marked volatile\n");
++		return -EINVAL;
++	}
++
++	err = ovl_do_getxattr(ofs, volatiledir, OVL_XATTR_VOLATILE, &info,
++			      sizeof(info));
++	if (err < 0) {
++		pr_debug("Unable to read volatile xattr: %d\n", err);
++		return -EINVAL;
++	}
++
++	if (err != sizeof(info)) {
++		pr_debug("%s xattr on-disk size is %d expected to read %zd\n",
++			 ovl_xattr(ofs, OVL_XATTR_VOLATILE), err, sizeof(info));
++		return -EINVAL;
++	}
++
++	if (!uuid_equal(&ovl_boot_id, &info.ovl_boot_id)) {
++		pr_debug("boot id has changed (reboot or module reloaded)\n");
++		return -EINVAL;
++	}
++
++	if (volatiledir->d_sb->s_instance_id != info.s_instance_id) {
++		pr_debug("workdir has been unmounted and remounted\n");
++		return -EINVAL;
++	}
++
++	return 1;
++}
+ 
+-#define OVL_INCOMPATDIR_NAME "incompat"
++/*
++ * ovl_check_incompat checks this specific incompat entry for incompatibility.
++ * If it is found to be incompatible -EINVAL will be returned.
++ *
++ * If the directory should be preserved, then this function returns 1.
++ */
++static int ovl_check_incompat(struct ovl_fs *ofs, struct ovl_cache_entry *p,
++			      struct path *path)
++{
++	int err = -EINVAL;
++	struct dentry *d;
++
++	if (!strcmp(p->name, OVL_VOLATILEDIR_NAME)) {
++		d = lookup_one_len(p->name, path->dentry, p->len);
++		if (IS_ERR(d))
++			return PTR_ERR(d);
++
++		err = ovl_verify_volatile_info(ofs, d);
++		dput(d);
++	}
++
++	if (err == -EINVAL)
++		pr_err("incompat feature '%s' cannot be mounted\n", p->name);
++	else
++		pr_debug("incompat '%s' handled: %d\n", p->name, err);
++
++	dput(d);
++	return err;
++}
+ 
+-static int ovl_workdir_cleanup_recurse(struct path *path, int level)
++static int ovl_workdir_cleanup_recurse(struct ovl_fs *ofs, struct path *path,
++				       int level)
+ {
+ 	int err;
+ 	struct inode *dir = path->dentry->d_inode;
+@@ -1125,16 +1193,19 @@ static int ovl_workdir_cleanup_recurse(struct path *path, int level)
+ 			if (p->len == 2 && p->name[1] == '.')
+ 				continue;
+ 		} else if (incompat) {
+-			pr_err("overlay with incompat feature '%s' cannot be mounted\n",
+-				p->name);
+-			err = -EINVAL;
+-			break;
++			err = ovl_check_incompat(ofs, p, path);
++			if (err < 0)
++				break;
++			/* Skip cleaning this */
++			if (err == 1)
++				continue;
+ 		}
+ 		dentry = lookup_one_len(p->name, path->dentry, p->len);
+ 		if (IS_ERR(dentry))
+ 			continue;
+ 		if (dentry->d_inode)
+-			err = ovl_workdir_cleanup(dir, path->mnt, dentry, level);
++			err = ovl_workdir_cleanup(ofs, dir, path->mnt, dentry,
++						  level);
+ 		dput(dentry);
+ 		if (err)
+ 			break;
+@@ -1142,11 +1213,13 @@ static int ovl_workdir_cleanup_recurse(struct path *path, int level)
+ 	inode_unlock(dir);
+ out:
+ 	ovl_cache_free(&list);
++	if (incompat && err >= 0)
++		return 1;
+ 	return err;
+ }
+ 
+-int ovl_workdir_cleanup(struct inode *dir, struct vfsmount *mnt,
+-			 struct dentry *dentry, int level)
++int ovl_workdir_cleanup(struct ovl_fs *ofs, struct inode *dir,
++			struct vfsmount *mnt, struct dentry *dentry, int level)
+ {
+ 	int err;
+ 
+@@ -1159,7 +1232,7 @@ int ovl_workdir_cleanup(struct inode *dir, struct vfsmount *mnt,
+ 		struct path path = { .mnt = mnt, .dentry = dentry };
+ 
+ 		inode_unlock(dir);
+-		err = ovl_workdir_cleanup_recurse(&path, level + 1);
++		err = ovl_workdir_cleanup_recurse(ofs, &path, level + 1);
+ 		inode_lock_nested(dir, I_MUTEX_PARENT);
+ 		if (!err)
+ 			err = ovl_cleanup(dir, dentry);
+@@ -1206,9 +1279,10 @@ int ovl_indexdir_cleanup(struct ovl_fs *ofs)
+ 		}
+ 		/* Cleanup leftover from index create/cleanup attempt */
+ 		if (index->d_name.name[0] == '#') {
+-			err = ovl_workdir_cleanup(dir, path.mnt, index, 1);
+-			if (err)
++			err = ovl_workdir_cleanup(ofs, dir, path.mnt, index, 1);
++			if (err < 0)
+ 				break;
++			err = 0;
+ 			goto next;
+ 		}
+ 		err = ovl_verify_index(ofs, index);
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 290983bcfbb3..a8ee3ba4ebbd 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -15,6 +15,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/exportfs.h>
++#include <linux/uuid.h>
+ #include "overlayfs.h"
+ 
+ MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
+@@ -23,6 +24,7 @@ MODULE_LICENSE("GPL");
+ 
+ 
+ struct ovl_dir_cache;
++uuid_t ovl_boot_id;
+ 
+ #define OVL_MAX_STACK 500
+ 
+@@ -722,20 +724,24 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
+ 				goto out_unlock;
+ 
+ 			retried = true;
+-			err = ovl_workdir_cleanup(dir, mnt, work, 0);
+-			dput(work);
+-			if (err == -EINVAL) {
+-				work = ERR_PTR(err);
+-				goto out_unlock;
++			err = ovl_workdir_cleanup(ofs, dir, mnt, work, 0);
++			/* check if we should reuse the workdir */
++			if (err != 1) {
++				dput(work);
++				if (err == -EINVAL) {
++					work = ERR_PTR(err);
++					goto out_unlock;
++				}
++				goto retry;
+ 			}
+-			goto retry;
++		} else {
++			work = ovl_create_real(dir, work,
++					       OVL_CATTR(attr.ia_mode));
++			err = PTR_ERR(work);
++			if (IS_ERR(work))
++				goto out_err;
+ 		}
+ 
+-		work = ovl_create_real(dir, work, OVL_CATTR(attr.ia_mode));
+-		err = PTR_ERR(work);
+-		if (IS_ERR(work))
+-			goto out_err;
+-
+ 		/*
+ 		 * Try to remove POSIX ACL xattrs from workdir.  We are good if:
+ 		 *
+@@ -1237,26 +1243,58 @@ static struct dentry *ovl_lookup_or_create(struct dentry *parent,
+ 	return child;
+ }
+ 
++static int ovl_set_volatile_info(struct ovl_fs *ofs, struct dentry *volatiledir)
++{
++	int err;
++	struct ovl_volatile_info info = {
++		.s_instance_id = volatiledir->d_sb->s_instance_id,
++	};
++
++	uuid_copy(&info.ovl_boot_id, &ovl_boot_id);
++	err = ovl_do_setxattr(ofs, volatiledir, OVL_XATTR_VOLATILE, &info,
++			      sizeof(info));
++
++	if (err == -EOPNOTSUPP)
++		return 0;
++
++	return err;
++}
++
+ /*
+  * Creates $workdir/work/incompat/volatile/dirty file if it is not already
+  * present.
+  */
+ static int ovl_create_volatile_dirty(struct ovl_fs *ofs)
+ {
++	int err;
+ 	unsigned int ctr;
+-	struct dentry *d = dget(ofs->workbasedir);
++	struct dentry *volatiledir, *d = dget(ofs->workbasedir);
+ 	static const char *const volatile_path[] = {
+-		OVL_WORKDIR_NAME, "incompat", "volatile", "dirty"
++		OVL_WORKDIR_NAME,
++		OVL_INCOMPATDIR_NAME,
++		OVL_VOLATILEDIR_NAME,
+ 	};
+ 	const char *const *name = volatile_path;
+ 
+-	for (ctr = ARRAY_SIZE(volatile_path); ctr; ctr--, name++) {
+-		d = ovl_lookup_or_create(d, *name, ctr > 1 ? S_IFDIR : S_IFREG);
++	/* Create the volatile subdirectory that we put the xattr on */
++	for (ctr = 0; ctr < ARRAY_SIZE(volatile_path); ctr++, name++) {
++		d = ovl_lookup_or_create(d, *name, S_IFDIR);
+ 		if (IS_ERR(d))
+ 			return PTR_ERR(d);
+ 	}
+-	dput(d);
+-	return 0;
++	volatiledir = dget(d);
++
++	/* Create the dirty file exists before we set the xattr */
++	d = ovl_lookup_or_create(d, OVL_VOLATILE_DIRTY_NAME, S_IFREG);
++	if (!IS_ERR(d)) {
++		dput(d);
++		err = ovl_set_volatile_info(ofs, volatiledir);
++	} else {
++		err = PTR_ERR(d);
++	}
++
++	dput(volatiledir);
++	return err;
+ }
+ 
+ static int ovl_make_workdir(struct super_block *sb, struct ovl_fs *ofs,
+@@ -2044,6 +2082,7 @@ static int __init ovl_init(void)
+ {
+ 	int err;
+ 
++	uuid_gen(&ovl_boot_id);
+ 	ovl_inode_cachep = kmem_cache_create("ovl_inode",
+ 					     sizeof(struct ovl_inode), 0,
+ 					     (SLAB_RECLAIM_ACCOUNT|
+diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+index 23f475627d07..87c9f5a063ed 100644
+--- a/fs/overlayfs/util.c
++++ b/fs/overlayfs/util.c
+@@ -580,6 +580,7 @@ bool ovl_check_dir_xattr(struct super_block *sb, struct dentry *dentry,
+ #define OVL_XATTR_NLINK_POSTFIX		"nlink"
+ #define OVL_XATTR_UPPER_POSTFIX		"upper"
+ #define OVL_XATTR_METACOPY_POSTFIX	"metacopy"
++#define OVL_XATTR_VOLATILE_POSTFIX	"volatile"
+ 
+ #define OVL_XATTR_TAB_ENTRY(x) \
+ 	[x] = OVL_XATTR_PREFIX x ## _POSTFIX
+@@ -592,6 +593,7 @@ const char *ovl_xattr_table[] = {
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_NLINK),
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_UPPER),
+ 	OVL_XATTR_TAB_ENTRY(OVL_XATTR_METACOPY),
++	OVL_XATTR_TAB_ENTRY(OVL_XATTR_VOLATILE),
+ };
+ 
+ int ovl_check_setxattr(struct dentry *dentry, struct dentry *upperdentry,
 -- 
 2.25.1
 
