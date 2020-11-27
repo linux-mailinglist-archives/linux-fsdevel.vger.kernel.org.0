@@ -2,49 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED8642C6186
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 10:22:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF922C6188
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 10:22:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgK0JVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 04:21:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42024 "EHLO
+        id S1728023AbgK0JVJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 04:21:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbgK0JVH (ORCPT
+        with ESMTP id S1726014AbgK0JVI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 04:21:07 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2BD6C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:06 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id b6so4010102pfp.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:06 -0800 (PST)
+        Fri, 27 Nov 2020 04:21:08 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98577C0613D1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:08 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id k11so3893262pgq.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 01:21:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sargun.me; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vlPx3D5OXHB3+bHYIYOC/2iLJYt2laDE8eD7s5RHs1A=;
-        b=AF/93sZng2Jpchw688suTMaOITMbGX2shVh+vKA4ZUXwvo98Mv3TqqtO0ZP5fxrPdz
-         dodDdIsrnZ6jlZTj31N4emPWoFqjIYW0/47hCrQkeO4R65ChCzucA5bs6nekcpyzhrkh
-         LkzPmr7FIyHy1NknUTUVp0WcMxPk0Y0m1o5ro=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=363/J7FI+YxpDHZBVwKbULZE4SMrK80CjI/t3VX+JKo=;
+        b=HDolisLKeNAEQQTAJLzgVwk1K3d89nsQAXqrAwBs/8B5KxgdeZmaDrkUzA4aXOruDe
+         LsnoAJfJxmngvDz/I0XpUrYkmLeVNpBa5iOU+UyoeG3Ex+MSlZsroy/T4Lca+9Z+eFaG
+         MGT+lFob3K4ZK1fsisjG4sk2mVzNgNJSy/s90=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vlPx3D5OXHB3+bHYIYOC/2iLJYt2laDE8eD7s5RHs1A=;
-        b=WuWtc1aYFVryFky3xO6yL9cuTb/uB4QlAoGASuZezk6kEPv8WHYY4imnAc58cFF5pM
-         JrC4HmSqkIZKeffuimmzRwglbCCG+U10vHvs20ciKolm/O/AYaZAtmCZ/vhqwZ5oDNAn
-         mOQH8yxesSujb+ySP4ULl5pKVKwEki/29l1zCUv3n8yTb7ALIFQZZw6b7Fm5HQV1Nn86
-         VFzGl+iR21ryt+Nhqi5CsD0DkV8uX+v6LDvJfA1Y+ARNAn9QwJNUENwuW5jhN01idtiX
-         G+IznzXn+7zUq6TChjNR25ixXNnbcy0INEb3v1jZplDj3f54NetC0oHqlfWGVZai/OqJ
-         4ckg==
-X-Gm-Message-State: AOAM531+RZKVzoB1sqE98woVfWL/b+izWIXenbjiOP+iCu7iGhAVblYT
-        9zXOB7vMKQKbbAAHXIz6r5eh6w==
-X-Google-Smtp-Source: ABdhPJzb6MrII5EGaD2Ma7r6y4r5a7mmT/w1ly/jearBVl7o4Do185z1fw1HjYPQlowr/CvPvJmvsg==
-X-Received: by 2002:aa7:8c16:0:b029:196:33d2:721f with SMTP id c22-20020aa78c160000b029019633d2721fmr6227235pfd.70.1606468866312;
-        Fri, 27 Nov 2020 01:21:06 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=363/J7FI+YxpDHZBVwKbULZE4SMrK80CjI/t3VX+JKo=;
+        b=fwPfrQKh5E0XzDT36SZW9slgE8lSuT0f2NwZtFEOiVizqb/2A8eO+B6HiEKQsyjKeS
+         agfYuFrEgiaZHiHX6Y8MTBXD3v+PkXmkEJLqLm5pPCsfcflW5KB1l/IOwBDs/zrHaywg
+         yPF5DoPD0eqwn3uCrv0uw088cR+aIl9C9/o35EdFDY2C/ITDRqfnM74Ar5CVMgH9QZQR
+         faUSS/udIGvwy8SFczf9k68XTGKQDwIHvwlksoLc0AZmdyWNlQ0PAoOZk3k6j/TwuZa7
+         dwX1bSr7rPsSfmNRXppHvGg68MA3qUMV5fkYtPnhRRo7Nkaov7iEFWGr3VoDnGcIHwnv
+         CWXw==
+X-Gm-Message-State: AOAM530PI9difY453LCY8tTm7CLMZcjeRcDUWfgd1VbOXe2jpoGr/vUw
+        ZY6NW2PD9m4n0apHLmh7sm/kpQ==
+X-Google-Smtp-Source: ABdhPJw0CK18w9KERQ13VRm/od39VBC87CyOcbdF7TfrPfunyw6nFTO727BRKDp9c7TgTCStElzIjQ==
+X-Received: by 2002:a17:90a:4283:: with SMTP id p3mr8846906pjg.174.1606468868120;
+        Fri, 27 Nov 2020 01:21:08 -0800 (PST)
 Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
-        by smtp.gmail.com with ESMTPSA id t9sm9938944pjq.46.2020.11.27.01.21.04
+        by smtp.gmail.com with ESMTPSA id t9sm9938944pjq.46.2020.11.27.01.21.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 01:21:05 -0800 (PST)
+        Fri, 27 Nov 2020 01:21:07 -0800 (PST)
 From:   Sargun Dhillon <sargun@sargun.me>
 To:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -54,120 +54,98 @@ Cc:     Sargun Dhillon <sargun@sargun.me>,
         Vivek Goyal <vgoyal@redhat.com>,
         Daniel J Walsh <dwalsh@redhat.com>,
         linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH v2 0/4] Make overlayfs volatile mounts reusable
-Date:   Fri, 27 Nov 2020 01:20:54 -0800
-Message-Id: <20201127092058.15117-1-sargun@sargun.me>
+Subject: [PATCH v2 1/4] fs: Add s_instance_id field to superblock for unique identification
+Date:   Fri, 27 Nov 2020 01:20:55 -0800
+Message-Id: <20201127092058.15117-2-sargun@sargun.me>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201127092058.15117-1-sargun@sargun.me>
+References: <20201127092058.15117-1-sargun@sargun.me>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds some documentation on how the current behaviour of overlayfs
-works, and adds some non-obvious caveats to the documentation. We may want
-to pick those up independently.
+This assigns a per-boot unique number to each superblock. This allows
+other components to know whether a filesystem has been remounted
+since they last interacted with it.
 
-The volatile option is great for "ephemeral" containers. Unfortunately,
-it doesn't capture all uses. There are two ways to use it safely right now:
+At every boot it is reset to 0. There is no specific reason it is set to 0,
+other than repeatability versus using some random starting number. Because
+of this, you must store it along some other piece of data which is
+initialized at boot time.
 
-1. Throw away the entire upperdir between mounts
-2. Manually syncfs between mounts
+This doesn't have any of the overhead of idr, and a u64 wont wrap any time
+soon. There is no forward lookup requirement, so an idr is not needed.
 
-For certain use-cases like serverless, or short-lived containers, it is
-advantageous to be able to stop the container (runtime) and start it up on
-demand / invocation of the function. Usually, there is some bootstrap
-process which involves downloading some artifacts, or putting secrets on
-disk, and then upon invocation of the function, you want to (re)start the
-container.
+In the future, we may want to expose this to userspace. Userspace programs
+can benefit from this if they have large chunks of dirty or mmaped memory
+that they're interacting with, and they want to see if that volume has been
+unmounted, and remounted. Along with this, and a mechanism to inspect the
+superblock's errseq a user can determine whether they need to throw away
+their cache or similar. This is another benefit in comparison to just
+using a pointer to the superblock to uniquely identify it.
 
-If you have to syncfs every time you do this, it can lead to excess
-filesystem overhead for all of the other containers on the machine, and
-stall out every container who's upperdir is on the same underlying
-filesystem, unless your filesystem offers something like subvolumes,
-and if sync can be restricted to a subvolume.
+Although this doesn't expose an ioctl or similar yet, in the future we
+could add an ioctl that allows for fetching the s_instance_id for a given
+cache, and inspection of the errseq associated with that.
 
-The kernel has information that it can use to determine whether or not this
-is safe -- primarily if the underlying FS has had writeback errors or not.
-Overlayfs doesn't delay writes, so the consistency of the upperdir is not
-contingent on the mount of overlayfs, but rather the mount of the
-underlying filesystem. It can also make sure the underlying filesystem
-wasn't remounted. Although, it was suggested that we use derive this
-information from the upperdir's inode[1], we can checkpoint this data on
-disk in an xattr.
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org
+---
+ fs/super.c         | 3 +++
+ include/linux/fs.h | 7 +++++++
+ 2 files changed, 10 insertions(+)
 
-Specifically we checkpoint:
-  * Superblock "id": This is a new concept introduced in one of the patches
-    which keeps track of (re)mounts of filesystems, by having a per boot
-    monotonically increasing integer identifying the superblock. This is
-    safer than trying to obfuscate the pointer and putting it into an
-    xattr (due to leak risk, and address reuse), and during the course
-    of a boot, the u64 should not wrap.
-  * Overlay "boot id": This is a new UUID that is overlayfs specific,
-    as overlayfs is a module that's independent from the rest of the
-    system and can be (re)loaded independently -- thus it generates
-    a UUID at load time which can be used to uniquely identify it.
-  * upperdir / workdir errseq: A sample of the errseq_t on the workdir /
-    upperdir's superblock. Since the errseq_t is implemented as a u32
-    with errno + error counter, we can safely store it in a checkpoint.
-
-This has to be done in kernelspace because userspace does not have access
-to information such as superblock (re)mounts, the writeback errseq value,
-and whether the module has been (re)loaded. Although this mechanism only
-determines a subset of the error scenarios, it lays out the groundwork
-for adding more.
-
-In the future, we may want to make it so overlayfs shuts down on errors,
-or have some kind of other behaviour when errors are detected. If we want
-a per-file (on the upperdir) piece of metadata can be added indicating
-errseq_t for just that file, and we can check it on each close / open,
-and then allow the user to make an intelligent decision of how they want
-overlayfs to handle the error. This would allow for errors to be captured
-during normal operation as opposed to just between remounts.
-
-This also allows for:
-volatile -> volatile
-non-volatile -> volatile
-non-volatile -> non-volatile
-
-But, for now, prevents volatile -> non-volatile. Perhaps with the future
-patches around selective inode sync, and tracking errors on every
-interaction will make this possible.
-
-
-Changes since:
-V1 [2]:
- * Add documentation commit about current short-comings of the current volatile
-   implementation.
- * Do not allow volatile mounts to be mounted as non-volatile
-RFC [3]:
- * Changed datastructure names
- * No longer delete the volatile dir / dirty file
- * Moved xattr to volatile directory
- * Split errseq check
-
-[1]: https://lore.kernel.org/linux-unionfs/CAOQ4uxhadzC3-kh-igfxv3pAmC3ocDtAQTxByu4hrn8KtZuieQ@mail.gmail.com/
-[2]: https://lore.kernel.org/linux-unionfs/20201125104621.18838-1-sargun@sargun.me/T/#t
-[3]: https://lore.kernel.org/linux-unionfs/20201116045758.21774-1-sargun@sargun.me/T/#t
-
-Sargun Dhillon (4):
-  fs: Add s_instance_id field to superblock for unique identification
-  overlay: Document current outstanding shortcoming of volatile
-  overlay: Add the ability to remount volatile directories when safe
-  overlay: Add rudimentary checking of writeback errseq on volatile
-    remount
-
- Documentation/filesystems/overlayfs.rst |  24 ++++--
- fs/overlayfs/overlayfs.h                |  38 ++++++++-
- fs/overlayfs/readdir.c                  | 104 +++++++++++++++++++++---
- fs/overlayfs/super.c                    |  74 +++++++++++++----
- fs/overlayfs/util.c                     |   2 +
- fs/super.c                              |   3 +
- include/linux/fs.h                      |   7 ++
- 7 files changed, 213 insertions(+), 39 deletions(-)
-
-
-base-commit: be4df0cea08a8b59eb38d73de988b7ba8022df41
+diff --git a/fs/super.c b/fs/super.c
+index 904459b35119..e47ace7f8c3d 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -42,6 +42,7 @@
+ 
+ static int thaw_super_locked(struct super_block *sb);
+ 
++static u64 s_instance_id_counter;
+ static LIST_HEAD(super_blocks);
+ static DEFINE_SPINLOCK(sb_lock);
+ 
+@@ -546,6 +547,7 @@ struct super_block *sget_fc(struct fs_context *fc,
+ 	s->s_iflags |= fc->s_iflags;
+ 	strlcpy(s->s_id, s->s_type->name, sizeof(s->s_id));
+ 	list_add_tail(&s->s_list, &super_blocks);
++	s->s_instance_id = s_instance_id_counter++;
+ 	hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
+ 	spin_unlock(&sb_lock);
+ 	get_filesystem(s->s_type);
+@@ -625,6 +627,7 @@ struct super_block *sget(struct file_system_type *type,
+ 	s->s_type = type;
+ 	strlcpy(s->s_id, type->name, sizeof(s->s_id));
+ 	list_add_tail(&s->s_list, &super_blocks);
++	s->s_instance_id = s_instance_id_counter++;
+ 	hlist_add_head(&s->s_instances, &type->fs_supers);
+ 	spin_unlock(&sb_lock);
+ 	get_filesystem(type);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7519ae003a08..09bf54382a54 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1472,6 +1472,13 @@ struct super_block {
+ 	char			s_id[32];	/* Informational name */
+ 	uuid_t			s_uuid;		/* UUID */
+ 
++	/*
++	 * ID identifying this particular instance of the superblock. It can
++	 * be used to determine if a particular filesystem has been remounted.
++	 * It may be exposed to userspace.
++	 */
++	u64			s_instance_id;
++
+ 	unsigned int		s_max_links;
+ 	fmode_t			s_mode;
+ 
 -- 
 2.25.1
 
