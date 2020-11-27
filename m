@@ -2,82 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB132C6438
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 13:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD712C65E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 13:48:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbgK0MEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 07:04:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46724 "EHLO mx2.suse.de"
+        id S1729273AbgK0Mpk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 07:45:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54230 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726162AbgK0MEl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 07:04:41 -0500
+        id S1726477AbgK0Mpj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Nov 2020 07:45:39 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2D8BFADCA;
-        Fri, 27 Nov 2020 12:04:40 +0000 (UTC)
-Subject: Re: [PATCH 13/44] block: use disk_part_iter_exit in
- disk_part_iter_next
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        by mx2.suse.de (Postfix) with ESMTP id 280CAABD7;
+        Fri, 27 Nov 2020 12:45:38 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4AC6D1E1318; Fri, 27 Nov 2020 13:45:37 +0100 (CET)
+Date:   Fri, 27 Nov 2020 13:45:37 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         dm-devel@redhat.com, Jan Kara <jack@suse.com>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
+        linux-mm@kvack.org, Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 37/44] block: switch partition lookup to use struct
+ block_device
+Message-ID: <20201127124537.GC27162@quack2.suse.cz>
 References: <20201126130422.92945-1-hch@lst.de>
- <20201126130422.92945-14-hch@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <1624f174-4182-744c-56ad-b50a391a6bb7@suse.de>
-Date:   Fri, 27 Nov 2020 13:04:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+ <20201126130422.92945-38-hch@lst.de>
+ <20201126182219.GC422@quack2.suse.cz>
+ <20201127094842.GA15984@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20201126130422.92945-14-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201127094842.GA15984@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/26/20 2:03 PM, Christoph Hellwig wrote:
-> Call disk_part_iter_exit in disk_part_iter_next instead of duplicating
-> the functionality.
+On Fri 27-11-20 10:48:42, Christoph Hellwig wrote:
+> On Thu, Nov 26, 2020 at 07:22:19PM +0100, Jan Kara wrote:
+> > On Thu 26-11-20 14:04:15, Christoph Hellwig wrote:
+> > >  struct hd_struct *disk_get_part(struct gendisk *disk, int partno)
+> > >  {
+> > > -	struct hd_struct *part;
+> > > +	struct block_device *part;
+> > >  
+> > >  	rcu_read_lock();
+> > >  	part = __disk_get_part(disk, partno);
+> > > -	if (part)
+> > > -		get_device(part_to_dev(part));
+> > > -	rcu_read_unlock();
+> > > +	if (!part) {
+> > > +		rcu_read_unlock();
+> > > +		return NULL;
+> > > +	}
+> > >  
+> > > -	return part;
+> > > +	get_device(part_to_dev(part->bd_part));
+> > > +	rcu_read_unlock();
+> > > +	return part->bd_part;
+> > >  }
+> > 
+> > This is not directly related to this particular patch but I'm wondering:
+> > What prevents say del_gendisk() from racing with disk_get_part(), so that
+> > delete_partition() is called just after we fetched 'part' pointer and the
+> > last 'part' kobject ref is dropped before disk_get_part() calls
+> > get_device()? I don't see anything preventing that and so we'd hand out
+> > 'part' that is soon to be freed (after RCU grace period expires).
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> Acked-by: Tejun Heo <tj@kernel.org>
-> ---
->   block/genhd.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/block/genhd.c b/block/genhd.c
-> index 4e039524f92b8f..0bd9c41dd4cb69 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -227,8 +227,7 @@ struct hd_struct *disk_part_iter_next(struct disk_part_iter *piter)
->   	int inc, end;
->   
->   	/* put the last partition */
-> -	disk_put_part(piter->part);
-> -	piter->part = NULL;
-> +	disk_part_iter_exit(piter);
->   
->   	/* get part_tbl */
->   	rcu_read_lock();
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> At this point the hd_struct is already allocated together with the
+> block_device, and thus only freed after the last block_device reference
+> goes away plus the inode freeing RCU grace period.  So the device model
+> ref to part is indeed gone, but that simply does not matter any more.
 
-Cheers,
+Well, but once device model ref to part is gone, we're going to free the
+bdev inode ref as well. Thus there's nothing which pins the bdev containing
+hd_struct?
 
-Hannes
+But now as I'm thinking about it you later switch the device model reference
+to just pure inode reference and use igrab() which will reliably return
+NULL if the inode is on it's way to be destroyed so probably we are safe in
+the final state.
+
+								Honza
 -- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
