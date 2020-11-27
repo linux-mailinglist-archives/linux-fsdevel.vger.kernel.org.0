@@ -2,130 +2,294 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1E442C66AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 14:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D8542C66BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 14:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbgK0NVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 08:21:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50908 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729402AbgK0NVK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 08:21:10 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B257C0613D1;
-        Fri, 27 Nov 2020 05:21:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=da54PXozPjm/EiAuixh+YkNgFXGB4rDLTyepbBzA2dg=; b=KWyx1YxC2nmhmtUDOgtptiYfoB
-        DBlXqBO8lAYi82F1oTeGeg2nSXKnjj08jQo5fYlD1qSAIuqD8371atETcszq4NDVrqkDcuY2sFnmd
-        s7134C6ZpaZot5dOYPXIzMrVFwqJ1CcMMjrThl35Wf9Uzbo4hCGLaE7xJgD5rmR3haPT9TFVUdDEn
-        UELctJd41vXMh9FS+KC6/8N7FeSZlQ4AapfDD3xCC2QL362xPvm+ou2TWbfrNdLYVp2Kn3O2/b8A4
-        mhXS4paxUp385fxxNnd0RY8/OGS2HSiWf61TRyZJVpmHm0NFSOJLHABVXZ+XuD1+sS8tqFEFH/Yhs
-        SUGuneFQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kidfT-0007Mn-0i; Fri, 27 Nov 2020 13:20:07 +0000
-Date:   Fri, 27 Nov 2020 13:20:06 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, ira.weiny@intel.com,
-        Dave Hansen <dave.hansen@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Steve French <sfrench@samba.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Brian King <brking@us.ibm.com>,
+        id S1730498AbgK0NWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 08:22:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53708 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728963AbgK0NWX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Nov 2020 08:22:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8DA62ABD7;
+        Fri, 27 Nov 2020 13:22:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 54A1F1E1318; Fri, 27 Nov 2020 14:22:21 +0100 (CET)
+Date:   Fri, 27 Nov 2020 14:22:21 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/17] mm/highmem: Lift memcpy_[to|from]_page and
- memset_page to core
-Message-ID: <20201127132006.GY4327@casper.infradead.org>
-References: <20201124060755.1405602-1-ira.weiny@intel.com>
- <20201124060755.1405602-2-ira.weiny@intel.com>
- <160648238432.10416.12405581766428273347@jlahtine-mobl.ger.corp.intel.com>
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 44/44] block: stop using bdget_disk for partition 0
+Message-ID: <20201127132221.GF27162@quack2.suse.cz>
+References: <20201126130422.92945-1-hch@lst.de>
+ <20201126130422.92945-45-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <160648238432.10416.12405581766428273347@jlahtine-mobl.ger.corp.intel.com>
+In-Reply-To: <20201126130422.92945-45-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 27, 2020 at 03:06:24PM +0200, Joonas Lahtinen wrote:
-> Quoting ira.weiny@intel.com (2020-11-24 08:07:39)
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > Working through a conversion to a call such as kmap_thread() revealed
-> > many places where the pattern kmap/memcpy/kunmap occurred.
-> > 
-> > Eric Biggers, Matthew Wilcox, Christoph Hellwig, Dan Williams, and Al
-> > Viro all suggested putting this code into helper functions.  Al Viro
-> > further pointed out that these functions already existed in the iov_iter
-> > code.[1]
-> > 
-> > Placing these functions in 'highmem.h' is suboptimal especially with the
-> > changes being proposed in the functionality of kmap.  From a caller
-> > perspective including/using 'highmem.h' implies that the functions
-> > defined in that header are only required when highmem is in use which is
-> > increasingly not the case with modern processors.  Some headers like
-> > mm.h or string.h seem ok but don't really portray the functionality
-> > well.  'pagemap.h', on the other hand, makes sense and is already
-> > included in many of the places we want to convert.
-> > 
-> > Another alternative would be to create a new header for the promoted
-> > memcpy functions, but it masks the fact that these are designed to copy
-> > to/from pages using the kernel direct mappings and complicates matters
-> > with a new header.
-> > 
-> > Lift memcpy_to_page(), memcpy_from_page(), and memzero_page() to
-> > pagemap.h.
-> > 
-> > Also, add a memcpy_page(), memmove_page, and memset_page() to cover more
-> > kmap/mem*/kunmap. patterns.
-> > 
-> > [1] https://lore.kernel.org/lkml/20201013200149.GI3576660@ZenIV.linux.org.uk/
-> >     https://lore.kernel.org/lkml/20201013112544.GA5249@infradead.org/
-> > 
-> > Cc: Dave Hansen <dave.hansen@intel.com>
-> > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+On Thu 26-11-20 14:04:22, Christoph Hellwig wrote:
+> We can just dereference the point in struct gendisk instead.  Also
+> remove the now unused export.
 > 
-> <SNIP>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Looks good to me. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  block/genhd.c                   |  1 -
+>  drivers/block/nbd.c             |  4 +---
+>  drivers/block/xen-blkfront.c    | 20 +++++---------------
+>  drivers/block/zram/zram_drv.c   | 14 ++------------
+>  drivers/md/dm.c                 | 16 ++--------------
+>  drivers/s390/block/dasd_ioctl.c |  5 ++---
+>  fs/block_dev.c                  |  2 +-
+>  7 files changed, 13 insertions(+), 49 deletions(-)
 > 
-> > +static inline void memset_page(struct page *page, int val, size_t offset, size_t len)
-> > +{
-> > +       char *addr = kmap_atomic(page);
-> > +       memset(addr + offset, val, len);
-> > +       kunmap_atomic(addr);
-> > +}
+> diff --git a/block/genhd.c b/block/genhd.c
+> index af76c2fff40d31..01876a162f5813 100644
+> --- a/block/genhd.c
+> +++ b/block/genhd.c
+> @@ -920,7 +920,6 @@ struct block_device *bdget_disk(struct gendisk *disk, int partno)
+>  
+>  	return bdev;
+>  }
+> -EXPORT_SYMBOL(bdget_disk);
+>  
+>  /*
+>   * print a full list of all partitions - intended for places where the root
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index 014683968ce174..92f84ed0ba9eb6 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -1488,12 +1488,10 @@ static int nbd_open(struct block_device *bdev, fmode_t mode)
+>  static void nbd_release(struct gendisk *disk, fmode_t mode)
+>  {
+>  	struct nbd_device *nbd = disk->private_data;
+> -	struct block_device *bdev = bdget_disk(disk, 0);
+>  
+>  	if (test_bit(NBD_RT_DISCONNECT_ON_CLOSE, &nbd->config->runtime_flags) &&
+> -			bdev->bd_openers == 0)
+> +			disk->part0->bd_openers == 0)
+>  		nbd_disconnect_and_put(nbd);
+> -	bdput(bdev);
+>  
+>  	nbd_config_put(nbd);
+>  	nbd_put(nbd);
+> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+> index 79521e33d30ed5..188e0b47534bcf 100644
+> --- a/drivers/block/xen-blkfront.c
+> +++ b/drivers/block/xen-blkfront.c
+> @@ -2153,7 +2153,7 @@ static void blkfront_closing(struct blkfront_info *info)
+>  	}
+>  
+>  	if (info->gd)
+> -		bdev = bdget_disk(info->gd, 0);
+> +		bdev = bdgrab(info->gd->part0);
+>  
+>  	mutex_unlock(&info->mutex);
+>  
+> @@ -2518,7 +2518,7 @@ static int blkfront_remove(struct xenbus_device *xbdev)
+>  
+>  	disk = info->gd;
+>  	if (disk)
+> -		bdev = bdget_disk(disk, 0);
+> +		bdev = bdgrab(disk->part0);
+>  
+>  	info->xbdev = NULL;
+>  	mutex_unlock(&info->mutex);
+> @@ -2595,19 +2595,11 @@ static int blkif_open(struct block_device *bdev, fmode_t mode)
+>  static void blkif_release(struct gendisk *disk, fmode_t mode)
+>  {
+>  	struct blkfront_info *info = disk->private_data;
+> -	struct block_device *bdev;
+>  	struct xenbus_device *xbdev;
+>  
+>  	mutex_lock(&blkfront_mutex);
+> -
+> -	bdev = bdget_disk(disk, 0);
+> -
+> -	if (!bdev) {
+> -		WARN(1, "Block device %s yanked out from us!\n", disk->disk_name);
+> +	if (disk->part0->bd_openers)
+>  		goto out_mutex;
+> -	}
+> -	if (bdev->bd_openers)
+> -		goto out;
+>  
+>  	/*
+>  	 * Check if we have been instructed to close. We will have
+> @@ -2619,7 +2611,7 @@ static void blkif_release(struct gendisk *disk, fmode_t mode)
+>  
+>  	if (xbdev && xbdev->state == XenbusStateClosing) {
+>  		/* pending switch to state closed */
+> -		dev_info(disk_to_dev(bdev->bd_disk), "releasing disk\n");
+> +		dev_info(disk_to_dev(disk), "releasing disk\n");
+>  		xlvbd_release_gendisk(info);
+>  		xenbus_frontend_closed(info->xbdev);
+>   	}
+> @@ -2628,14 +2620,12 @@ static void blkif_release(struct gendisk *disk, fmode_t mode)
+>  
+>  	if (!xbdev) {
+>  		/* sudden device removal */
+> -		dev_info(disk_to_dev(bdev->bd_disk), "releasing disk\n");
+> +		dev_info(disk_to_dev(disk), "releasing disk\n");
+>  		xlvbd_release_gendisk(info);
+>  		disk->private_data = NULL;
+>  		free_info(info);
+>  	}
+>  
+> -out:
+> -	bdput(bdev);
+>  out_mutex:
+>  	mutex_unlock(&blkfront_mutex);
+>  }
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index dc8957d173d37c..b0701bae6e9800 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -1760,15 +1760,12 @@ static ssize_t reset_store(struct device *dev,
+>  		return -EINVAL;
+>  
+>  	zram = dev_to_zram(dev);
+> -	bdev = bdget_disk(zram->disk, 0);
+> -	if (!bdev)
+> -		return -ENOMEM;
+> +	bdev = zram->disk->part0;
+>  
+>  	mutex_lock(&bdev->bd_mutex);
+>  	/* Do not reset an active device or claimed device */
+>  	if (bdev->bd_openers || zram->claim) {
+>  		mutex_unlock(&bdev->bd_mutex);
+> -		bdput(bdev);
+>  		return -EBUSY;
+>  	}
+>  
+> @@ -1779,7 +1776,6 @@ static ssize_t reset_store(struct device *dev,
+>  	/* Make sure all the pending I/O are finished */
+>  	fsync_bdev(bdev);
+>  	zram_reset_device(zram);
+> -	bdput(bdev);
+>  
+>  	mutex_lock(&bdev->bd_mutex);
+>  	zram->claim = false;
+> @@ -1965,16 +1961,11 @@ static int zram_add(void)
+>  
+>  static int zram_remove(struct zram *zram)
+>  {
+> -	struct block_device *bdev;
+> -
+> -	bdev = bdget_disk(zram->disk, 0);
+> -	if (!bdev)
+> -		return -ENOMEM;
+> +	struct block_device *bdev = zram->disk->part0;
+>  
+>  	mutex_lock(&bdev->bd_mutex);
+>  	if (bdev->bd_openers || zram->claim) {
+>  		mutex_unlock(&bdev->bd_mutex);
+> -		bdput(bdev);
+>  		return -EBUSY;
+>  	}
+>  
+> @@ -1986,7 +1977,6 @@ static int zram_remove(struct zram *zram)
+>  	/* Make sure all the pending I/O are finished */
+>  	fsync_bdev(bdev);
+>  	zram_reset_device(zram);
+> -	bdput(bdev);
+>  
+>  	pr_info("Removed device: %s\n", zram->disk->disk_name);
+>  
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 176adcff56b380..ed7e836efbcdbc 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -2375,16 +2375,11 @@ struct dm_table *dm_swap_table(struct mapped_device *md, struct dm_table *table)
+>   */
+>  static int lock_fs(struct mapped_device *md)
+>  {
+> -	struct block_device *bdev;
+>  	int r;
+>  
+>  	WARN_ON(test_bit(DMF_FROZEN, &md->flags));
+>  
+> -	bdev = bdget_disk(md->disk, 0);
+> -	if (!bdev)
+> -		return -ENOMEM;
+> -	r = freeze_bdev(bdev);
+> -	bdput(bdev);
+> +	r = freeze_bdev(md->disk->part0);
+>  	if (!r)
+>  		set_bit(DMF_FROZEN, &md->flags);
+>  	return r;
+> @@ -2392,16 +2387,9 @@ static int lock_fs(struct mapped_device *md)
+>  
+>  static void unlock_fs(struct mapped_device *md)
+>  {
+> -	struct block_device *bdev;
+> -
+>  	if (!test_bit(DMF_FROZEN, &md->flags))
+>  		return;
+> -
+> -	bdev = bdget_disk(md->disk, 0);
+> -	if (!bdev)
+> -		return;
+> -	thaw_bdev(bdev);
+> -	bdput(bdev);
+> +	thaw_bdev(md->disk->part0);
+>  	clear_bit(DMF_FROZEN, &md->flags);
+>  }
+>  
+> diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+> index 304eba1acf163c..9f642440894655 100644
+> --- a/drivers/s390/block/dasd_ioctl.c
+> +++ b/drivers/s390/block/dasd_ioctl.c
+> @@ -220,9 +220,8 @@ dasd_format(struct dasd_block *block, struct format_data_t *fdata)
+>  	 * enabling the device later.
+>  	 */
+>  	if (fdata->start_unit == 0) {
+> -		struct block_device *bdev = bdget_disk(block->gdp, 0);
+> -		bdev->bd_inode->i_blkbits = blksize_bits(fdata->blksize);
+> -		bdput(bdev);
+> +		block->gdp->part0->bd_inode->i_blkbits =
+> +			blksize_bits(fdata->blksize);
+>  	}
+>  
+>  	rc = base->discipline->format_device(base, fdata, 1);
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 58fd6625966511..4edb9f23092285 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -1295,7 +1295,7 @@ static int __blkdev_get(struct block_device *bdev, fmode_t mode)
+>  			if (ret)
+>  				return ret;
+>  		} else {
+> -			struct block_device *whole = bdget_disk(disk, 0);
+> +			struct block_device *whole = bdgrab(disk->part0);
+>  
+>  			mutex_lock_nested(&whole->bd_mutex, 1);
+>  			ret = __blkdev_get(whole, mode);
+> -- 
+> 2.29.2
 > 
-> Other functions have (page, offset) pair. Insertion of 'val' in the middle here required
-> to take a double look during review.
-
-Let's be explicit here.  Your suggested order is:
-
-	(page, offset, val, len)
-
-right?  I think I would prefer that to (page, val, offset, len).
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
