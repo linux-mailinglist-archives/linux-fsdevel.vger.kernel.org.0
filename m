@@ -2,51 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A12712C75C3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9362C75C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387887AbgK1VtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2387875AbgK1VtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sat, 28 Nov 2020 16:49:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34508 "EHLO mail.kernel.org"
+Received: from mx2.suse.de ([195.135.220.15]:49788 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730544AbgK0TwA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 14:52:00 -0500
-Subject: Re: [GIT PULL] Writeback fis for 5.10-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606504799;
-        bh=/uD1gySi0UFn/KgocnP8aW+vAOKdbZ6Fgi8WeJdQqbQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=rIvsYB5dLdye5wdpUFDs9KlozgaNOxQj2lcH9rqE/1PjhbafqBRUiWDAvolXetdkr
-         swc9Q7FyEfToRZDCuIuac4zio5gOgOnSdoU2T1WuMotvtlRk4yReknnaXs0NKidDm+
-         NQV7hF6gQvNd5zeieXdYPKVxX2clnrBbYSp1HkSA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20201127113709.GA27162@quack2.suse.cz>
-References: <20201127113709.GA27162@quack2.suse.cz>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20201127113709.GA27162@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git writeback_for_v5.10-rc6
-X-PR-Tracked-Commit-Id: fdeb17c70c9ecae655378761accf5a26a55a33cf
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5b4049d8fc8353c20493f3767a1270a61bcc3822
-Message-Id: <160650479944.7570.13607857623675511274.pr-tracker-bot@kernel.org>
-Date:   Fri, 27 Nov 2020 19:19:59 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        id S1729696AbgK0Tps (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Nov 2020 14:45:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id CE4C7AC55;
+        Fri, 27 Nov 2020 19:29:38 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 89B00DA7D9; Fri, 27 Nov 2020 20:28:08 +0100 (CET)
+Date:   Fri, 27 Nov 2020 20:28:08 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: Re: [PATCH v10 00/41] btrfs: zoned block device support
+Message-ID: <20201127192808.GD6430@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
+        linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1605007036.git.naohiro.aota@wdc.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 27 Nov 2020 12:37:09 +0100:
+On Tue, Nov 10, 2020 at 08:26:03PM +0900, Naohiro Aota wrote:
+> Johannes Thumshirn (1):
+>   block: add bio_add_zone_append_page
+> 
+> Naohiro Aota (40):
+>   iomap: support REQ_OP_ZONE_APPEND
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git writeback_for_v5.10-rc6
+From that one
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5b4049d8fc8353c20493f3767a1270a61bcc3822
+>   btrfs: introduce ZONED feature flag
+>   btrfs: get zone information of zoned block devices
+>   btrfs: check and enable ZONED mode
+>   btrfs: introduce max_zone_append_size
+>   btrfs: disallow space_cache in ZONED mode
+>   btrfs: disallow NODATACOW in ZONED mode
+>   btrfs: disable fallocate in ZONED mode
+>   btrfs: disallow mixed-bg in ZONED mode
+>   btrfs: implement log-structured superblock for ZONED mode
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+up to this patch added to misc-next. There's still open question
+regarding the superblock copies, we had a chat about that with Johanness
+so he'll tell you more.
