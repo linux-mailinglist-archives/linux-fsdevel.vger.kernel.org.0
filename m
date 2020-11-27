@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD982C632E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 11:38:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C9D32C6332
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 11:38:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbgK0Kgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 05:36:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40522 "EHLO mx2.suse.de"
+        id S1727833AbgK0KhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 05:37:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42494 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbgK0Kgr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 05:36:47 -0500
+        id S1727350AbgK0KhQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Nov 2020 05:37:16 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id E1240AC75;
-        Fri, 27 Nov 2020 10:36:45 +0000 (UTC)
-Subject: Re: [PATCH 10/44] block: remove a duplicate __disk_get_part prototype
+        by mx2.suse.de (Postfix) with ESMTP id 7E166AF38;
+        Fri, 27 Nov 2020 10:37:14 +0000 (UTC)
+Subject: Re: [PATCH 11/44] block: remove a superflous check in blkpg_do_ioctl
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -27,14 +27,14 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 References: <20201126130422.92945-1-hch@lst.de>
- <20201126130422.92945-11-hch@lst.de>
+ <20201126130422.92945-12-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <2ef8235e-2f2a-6f0d-4143-f6c069da737c@suse.de>
-Date:   Fri, 27 Nov 2020 11:36:45 +0100
+Message-ID: <af25c440-de15-3ba0-9f29-df708106c7d3@suse.de>
+Date:   Fri, 27 Nov 2020 11:37:10 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201126130422.92945-11-hch@lst.de>
+In-Reply-To: <20201126130422.92945-12-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -43,27 +43,35 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/26/20 2:03 PM, Christoph Hellwig wrote:
+> sector_t is now always a u64, so this check is not needed.
+> 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Acked-by: Tejun Heo <tj@kernel.org>
 > Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->   include/linux/genhd.h | 1 -
->   1 file changed, 1 deletion(-)
+>   block/ioctl.c | 9 ---------
+>   1 file changed, 9 deletions(-)
 > 
-> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-> index 46553d6d602563..22f5b9fd96f8bf 100644
-> --- a/include/linux/genhd.h
-> +++ b/include/linux/genhd.h
-> @@ -250,7 +250,6 @@ static inline dev_t part_devt(struct hd_struct *part)
->   	return part_to_dev(part)->devt;
->   }
+> diff --git a/block/ioctl.c b/block/ioctl.c
+> index 6b785181344fe1..0c09bb7a6ff35f 100644
+> --- a/block/ioctl.c
+> +++ b/block/ioctl.c
+> @@ -35,15 +35,6 @@ static int blkpg_do_ioctl(struct block_device *bdev,
+>   	start = p.start >> SECTOR_SHIFT;
+>   	length = p.length >> SECTOR_SHIFT;
 >   
-> -extern struct hd_struct *__disk_get_part(struct gendisk *disk, int partno);
->   extern struct hd_struct *disk_get_part(struct gendisk *disk, int partno);
->   
->   static inline void disk_put_part(struct hd_struct *part)
+> -	/* check for fit in a hd_struct */
+> -	if (sizeof(sector_t) < sizeof(long long)) {
+> -		long pstart = start, plength = length;
+> -
+> -		if (pstart != start || plength != length || pstart < 0 ||
+> -		    plength < 0 || p.pno > 65535)
+> -			return -EINVAL;
+> -	}
+> -
+>   	switch (op) {
+>   	case BLKPG_ADD_PARTITION:
+>   		/* check if partition is aligned to blocksize */
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
