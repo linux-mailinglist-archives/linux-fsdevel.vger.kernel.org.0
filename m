@@ -2,124 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D402C69A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 17:45:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADF612C6A77
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Nov 2020 18:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbgK0Qlz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 11:41:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728406AbgK0Qlz (ORCPT
+        id S1732050AbgK0ROU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 12:14:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59450 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731905AbgK0ROR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 11:41:55 -0500
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33216C0613D1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 08:41:55 -0800 (PST)
-Received: by mail-oi1-x229.google.com with SMTP id t143so6439339oif.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 08:41:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BvWvhtMw4/htNL9ufrpeeiTrNh5C8K1xoJuv3kml8OU=;
-        b=mWijLgZ5NSU7tK5Er9vqbGC4jbfS0Bqq/aYyMsemdaGkzC26693YU2vfClXz6l5bFX
-         8V9Tmh1URUsBmfAtzpfJBSsWjrAMMRM9/VMPWONetAV5szTP8VaMKJt+DpMU0x3qRxB/
-         4YoNhkXtcge1clOF9lx0p8oXJqD3ybi1HvdmslWxLE5axdlugRoidPml/hLfeIITAWtl
-         yTKrJi82eFqDSzCwL+Yzgm5kKBDeaBT1VyKWR1CG4OsbzW+rx4h73WYKIcI9FPIy9+GM
-         iu3pcLOuzKUDAHJ3BQiAIDZYWXTxv9STtLSAcRtxi6amYyeKf3Y7xbbxGpa2Uz/KoAYg
-         /0Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BvWvhtMw4/htNL9ufrpeeiTrNh5C8K1xoJuv3kml8OU=;
-        b=H+6HYDMhDi88IKXwiP79ZQf4wlyNk6av7Gqe6svAO6mwHEY/2pxPHS99OQgBCDur01
-         4fPaCiHcbOviYqJDCnajvg79P1AH9LneHkHHImrq+4j1GBsjBtV+tIwV9bGmMEN/CO9f
-         /UlHUsLymZQ8q1qWQ/ws8T5cQckp3a0FT6DjCrxTI2ZIQeK1nqAnFgmKl7sNDWZxmiHo
-         QmCQMWDXdJFXR5vo6BDbjWEraDCgpB4/uaaASdz4iKPKeGs/SK/OEI3oqZVj12c4k8vD
-         BEi2xSKwFnl9UURhdcDUsi4rdHBWvdJHkrKfgPekxTrueRsrXRNwRsy146VoDwmN8tc2
-         hNiQ==
-X-Gm-Message-State: AOAM533uoZs3WsRY1zrSqXS5fo89d7ykvaM2OS7WO8CybHT/zbzz20v2
-        CvYOAYP9F1tBm+qMV0tQaFzWeWkazhOLHgllNh0=
-X-Google-Smtp-Source: ABdhPJwRKRxB7y76hqIzaFmgJaVpdK47Nv9ZPEeXr/XzuKloFjYjcqgPameihf+YTWPob14ioae9JMvesl5/ldmcCDA=
-X-Received: by 2002:a05:6808:3b1:: with SMTP id n17mr6121939oie.139.1606495314568;
- Fri, 27 Nov 2020 08:41:54 -0800 (PST)
+        Fri, 27 Nov 2020 12:14:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606497256;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KIgiB7XwiEetdKIISGv2CypamLeOfEv8HOdOckyqc9M=;
+        b=CKTtCeMrqMcOv173J4MhCpD3MvSN5xFSYVbEhvM6MeHSz4H1IRN8SLLvoueA116dy88xfP
+        3pZlSiJfE8dwAWTe5LFUuQRbrkeDGN3LvLcCWZCX8CR4D5+ADydBk7FTeXWX1lmFWcGVoz
+        67FAsXzINMwOiXumWc/NrZd8ooCx27I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-289-o9IBtE9xOm26M_tKsJPzVQ-1; Fri, 27 Nov 2020 12:14:13 -0500
+X-MC-Unique: o9IBtE9xOm26M_tKsJPzVQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 171018042CC;
+        Fri, 27 Nov 2020 17:14:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E916B6085D;
+        Fri, 27 Nov 2020 17:14:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <5b8ce555-7451-d977-22e7-e5d080ef2e1a@kernel.dk>
+References: <5b8ce555-7451-d977-22e7-e5d080ef2e1a@kernel.dk> <74f6fb34-c4c2-6a7e-3614-78c34246c6bd@gmail.com> <20201123080506.GA30578@infradead.org> <160596800145.154728.7192318545120181269.stgit@warthog.procyon.org.uk> <160596801020.154728.15935034745159191564.stgit@warthog.procyon.org.uk> <516984.1606127474@warthog.procyon.org.uk> <1155891.1606222222@warthog.procyon.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     dhowells@redhat.com, Pavel Begunkov <asml.silence@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/29] iov_iter: Switch to using a table of operations
 MIME-Version: 1.0
-References: <CAE1WUT6O6uP12YMU1NaU-4CR-AaxRUhhWHY=zUtNXpHUfxrF=A@mail.gmail.com>
- <20201109013322.GA9685@magnolia> <20201109015001.GX17076@casper.infradead.org>
- <CAE1WUT7LBAKYoZ=-UxEdt1OdoirwcKMU_A=6TAKPo7HxwnS+zw@mail.gmail.com> <20201109033559.GY17076@casper.infradead.org>
-In-Reply-To: <20201109033559.GY17076@casper.infradead.org>
-From:   Amy Parker <enbyamy@gmail.com>
-Date:   Fri, 27 Nov 2020 08:41:43 -0800
-Message-ID: <CAE1WUT4-jc-R-Hi2X8QpnNBCNMv3Bb4jWivnVzB1Lu=VCxupcA@mail.gmail.com>
-Subject: Re: Best solution for shifting DAX_ZERO_PAGE to XA_ZERO_ENTRY
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        dan.j.williams@intel.com, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2791167.1606497249.1@warthog.procyon.org.uk>
+Date:   Fri, 27 Nov 2020 17:14:09 +0000
+Message-ID: <2791168.1606497249@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry for the long reply time - personal issues came up.
+Jens Axboe <axboe@kernel.dk> wrote:
 
-On Sun, Nov 8, 2020 at 7:36 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Sun, Nov 08, 2020 at 05:54:14PM -0800, Amy Parker wrote:
-> > On Sun, Nov 8, 2020 at 5:50 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Sun, Nov 08, 2020 at 05:33:22PM -0800, Darrick J. Wong wrote:
-> > > > On Sun, Nov 08, 2020 at 05:15:55PM -0800, Amy Parker wrote:
-> > > > > XA_ZERO_ENTRY
-> > > > > is defined in include/linux/xarray.h, where it's defined using
-> > > > > xa_mk_internal(257). This function returns a void pointer, which
-> > > > > is incompatible with the bitwise arithmetic it is performed on with.
-> > >
-> > > We don't really perform bitwise arithmetic on it, outside of:
-> > >
-> > > static int dax_is_zero_entry(void *entry)
-> > > {
-> > >         return xa_to_value(entry) & DAX_ZERO_PAGE;
-> > > }
-> >
-> > We also have:
-> >
-> > if (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE)) {
-> >        unsigned long index = xas->xa_index;
-> >        /* we are replacing a zero page with block mapping */
-> >        if (dax_is_pmd_entry(entry))
-> >               unmap_mapping_pages(mapping, index & ~PG_PMD_COLOUR,
-> >                             PG_PMD_NR, false);
-> >        else /* pte entry */
-> >               unmap_mapping_pages(mapping, index, 1, false);
-> > }
-> >
-> > and:
-> >
-> > *entry = dax_insert_entry(xas, mapping, vmf, *entry, pfn,
-> >               DAX_PMD | DAX_ZERO_PAGE, false);
->
-> Right.  We need to be able to distinguish whether an entry represents
-> a PMD size.  So maybe we need XA_ZERO_PMD_ENTRY ... ?  Or we could use
-> the recently-added xa_get_order().
+> which looks to be around a 6% drop.
 
-I could add an additional dependent patch for this. Where would we
-want XA_ZERO_PMD_ENTRY declared? Considering we're dependent
-on DAX_PMD, I'd say in fs/dax.c, but if there's a better solution I'm missing...
+That's quite a lot.
 
-> >
-> > That'd probably be a better idea - so what should we do about the type
-> > issue? Not typecasting it causes it not to compile.
->
-> I don't think you'll need to do any casting once the bit operations go
-> away ...
+> which looks to be around 2-3%, but we're also running at a much
+> slower rate (830K vs ~2.3M).
 
-True, but what're we going to do about dax_is_zero_entry? We haven't
-figured out what to do about that yet... a typecast back to void* of
-xa_to_value locally could work, as it itself is just shifting an entry right
-by 1 bit and then typecasting it to unsigned long. Thoughts?
+That's still a lot.
 
-Best regards,
-Amy Parker
-(she/her)
+Thanks for having a look!
+
+David
+
