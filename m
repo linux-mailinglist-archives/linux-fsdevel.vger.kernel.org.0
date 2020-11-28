@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4137E2C7590
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:24:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43BF22C751B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:23:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387978AbgK1VtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Nov 2020 16:49:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41224 "EHLO
+        id S1733261AbgK1Vt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Nov 2020 16:49:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730869AbgK1Spj (ORCPT
+        with ESMTP id S1731305AbgK1SuJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 13:45:39 -0500
+        Sat, 28 Nov 2020 13:50:09 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF424C025492;
-        Sat, 28 Nov 2020 08:16:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B305C025493;
+        Sat, 28 Nov 2020 08:18:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=UgVkmALFIWqry4eWbGmtJ4BhyI76zNGGn8dFufuva+w=; b=moX275hEfmihvK/a0gTQdhR7z4
-        gJzZ+ci4w16CBgiGtMT63fBnbgOW11p29112pT3MPhnLylSmzfD4jIdMPMMM/30t8stpKk3mp9OeU
-        vcWPwPLlOW2z4VkZAMkJfTaZsEE+QkNcHy4xJfWNROasa4ELKV88z5lG0D9Ss0hLxKv+w4UmhzffG
-        +wtv0OLHxOA9nVaonaPNNXhm1b04McORQ1WvR3A5W0rPy1J52qUAk9TYCSTkbalcFxNKgqPk3m64F
-        6V+HxIERI5U5m/VrkjkF0splOFLMG94gLVSra7IfU3sEsMHdfMiLto3pLZ1M1g6oIPVg/TuK1OGXH
-        jW8w56rw==;
-Received: from [2001:4bb8:18c:1dd6:48f3:741a:602e:7fdd] (helo=localhost)
+        bh=l2OUXXZyRNebs+SSxWBE5t0zKHICM2g7PbDPWNpAFtE=; b=Kwe5UbohXPkCahCIjKmAAenrf6
+        RG2ZopE74cobOKoOyzEsV6/PrTnMoQjclx2bq4XwZOIUGbBRdIY5N5thT6r6VA5VHy232bqvbGNk4
+        hyN/cn1eW9YZnIXFGPBTPzflf8AyqyjIXbMVGTZ4skmftKlnzxuDX6Fn+ALukylFAqDTkzgPzFCio
+        5mIu3vqcVABpPBBjYwrfAU/tRHzkz45sxkQo3er23PhpWgdNkXhqxlos34LNK1d/m6+4KDCavhfDK
+        gtzU55Qi7t/CtryyMsaJXOJqtRYN9xqFAL1mE30TyTmuUxAgDVWCXSdh40EqZKu05luxeTdLclJzw
+        NSn9YCqQ==;
+Received: from 089144198196.atnat0007.highway.a1.net ([89.144.198.196] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kj2tN-0000Ok-Vg; Sat, 28 Nov 2020 16:16:10 +0000
+        id 1kj2vW-0000YZ-0l; Sat, 28 Nov 2020 16:18:23 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
@@ -39,9 +39,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 33/45] block: move the partition_meta_info to struct block_device
-Date:   Sat, 28 Nov 2020 17:14:58 +0100
-Message-Id: <20201128161510.347752-34-hch@lst.de>
+Subject: [PATCH 34/45] block: move holder_dir to struct block_device
+Date:   Sat, 28 Nov 2020 17:14:59 +0100
+Message-Id: <20201128161510.347752-35-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128161510.347752-1-hch@lst.de>
 References: <20201128161510.347752-1-hch@lst.de>
@@ -52,160 +52,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the partition_meta_info to struct block_device in preparation for
-killing struct hd_struct.
+Move the holder_dir field to struct block_device in preparation for
+kill struct hd_struct.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- block/blk.h               |  1 -
- block/genhd.c             |  3 ++-
- block/partitions/core.c   | 18 +++++++-----------
- fs/block_dev.c            |  1 +
- include/linux/blk_types.h |  2 ++
+ block/genhd.c             |  5 +++--
+ block/partitions/core.c   |  8 ++++----
+ fs/block_dev.c            | 11 +++++------
+ include/linux/blk_types.h |  1 +
  include/linux/genhd.h     |  1 -
- init/do_mounts.c          |  7 ++++---
- 7 files changed, 16 insertions(+), 17 deletions(-)
+ 5 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/block/blk.h b/block/blk.h
-index 3f801f6e86f8a1..0bd4b58bcbaf77 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -381,7 +381,6 @@ static inline void hd_struct_put(struct hd_struct *part)
- 
- static inline void hd_free_part(struct hd_struct *part)
- {
--	kfree(part->info);
- 	bdput(part->bdev);
- 	percpu_ref_exit(&part->ref);
- }
 diff --git a/block/genhd.c b/block/genhd.c
-index 7bb45382658385..fe202a12eec096 100644
+index fe202a12eec096..a964e7532fedd5 100644
 --- a/block/genhd.c
 +++ b/block/genhd.c
-@@ -1002,7 +1002,8 @@ void __init printk_all_partitions(void)
- 			       bdevt_str(part_devt(part), devt_buf),
- 			       bdev_nr_sectors(part->bdev) >> 1,
- 			       disk_name(disk, part->partno, name_buf),
--			       part->info ? part->info->uuid : "");
-+			       part->bdev->bd_meta_info ?
-+					part->bdev->bd_meta_info->uuid : "");
- 			if (is_part0) {
- 				if (dev->parent && dev->parent->driver)
- 					printk(" driver: %s\n",
+@@ -673,7 +673,8 @@ static void register_disk(struct device *parent, struct gendisk *disk,
+ 	 */
+ 	pm_runtime_set_memalloc_noio(ddev, true);
+ 
+-	disk->part0.holder_dir = kobject_create_and_add("holders", &ddev->kobj);
++	disk->part0.bdev->bd_holder_dir =
++			kobject_create_and_add("holders", &ddev->kobj);
+ 	disk->slave_dir = kobject_create_and_add("slaves", &ddev->kobj);
+ 
+ 	if (disk->flags & GENHD_FL_HIDDEN) {
+@@ -879,7 +880,7 @@ void del_gendisk(struct gendisk *disk)
+ 
+ 	blk_unregister_queue(disk);
+ 
+-	kobject_put(disk->part0.holder_dir);
++	kobject_put(disk->part0.bdev->bd_holder_dir);
+ 	kobject_put(disk->slave_dir);
+ 
+ 	part_stat_set_all(&disk->part0, 0);
 diff --git a/block/partitions/core.c b/block/partitions/core.c
-index 460a745812c6d4..07df9ff554627f 100644
+index 07df9ff554627f..c068471fa654f5 100644
 --- a/block/partitions/core.c
 +++ b/block/partitions/core.c
-@@ -275,8 +275,9 @@ static int part_uevent(struct device *dev, struct kobj_uevent_env *env)
- 	struct hd_struct *part = dev_to_part(dev);
+@@ -344,7 +344,7 @@ void delete_partition(struct hd_struct *part)
+ 	 */
+ 	get_device(disk_to_dev(disk));
+ 	rcu_assign_pointer(ptbl->part[part->partno], NULL);
+-	kobject_put(part->holder_dir);
++	kobject_put(part->bdev->bd_holder_dir);
+ 	device_del(part_to_dev(part));
  
- 	add_uevent_var(env, "PARTN=%u", part->partno);
--	if (part->info && part->info->volname[0])
--		add_uevent_var(env, "PARTNAME=%s", part->info->volname);
-+	if (part->bdev->bd_meta_info && part->bdev->bd_meta_info->volname[0])
-+		add_uevent_var(env, "PARTNAME=%s",
-+			       part->bdev->bd_meta_info->volname);
- 	return 0;
- }
+ 	/*
+@@ -452,8 +452,8 @@ static struct hd_struct *add_partition(struct gendisk *disk, int partno,
+ 		goto out_put;
  
-@@ -422,13 +423,10 @@ static struct hd_struct *add_partition(struct gendisk *disk, int partno,
- 	p->policy = get_disk_ro(disk);
+ 	err = -ENOMEM;
+-	p->holder_dir = kobject_create_and_add("holders", &pdev->kobj);
+-	if (!p->holder_dir)
++	bdev->bd_holder_dir = kobject_create_and_add("holders", &pdev->kobj);
++	if (!bdev->bd_holder_dir)
+ 		goto out_del;
  
- 	if (info) {
--		struct partition_meta_info *pinfo;
--
--		pinfo = kzalloc_node(sizeof(*pinfo), GFP_KERNEL, disk->node_id);
--		if (!pinfo)
-+		err = -ENOMEM;
-+		bdev->bd_meta_info = kmemdup(info, sizeof(*info), GFP_KERNEL);
-+		if (!bdev->bd_meta_info)
- 			goto out_bdput;
--		memcpy(pinfo, info, sizeof(*info));
--		p->info = pinfo;
- 	}
- 
- 	dname = dev_name(ddev);
-@@ -444,7 +442,7 @@ static struct hd_struct *add_partition(struct gendisk *disk, int partno,
- 
- 	err = blk_alloc_devt(p, &devt);
- 	if (err)
--		goto out_free_info;
-+		goto out_bdput;
- 	pdev->devt = devt;
- 
- 	/* delay uevent until 'holders' subdir is created */
-@@ -481,8 +479,6 @@ static struct hd_struct *add_partition(struct gendisk *disk, int partno,
- 		kobject_uevent(&pdev->kobj, KOBJ_ADD);
- 	return p;
- 
--out_free_info:
--	kfree(p->info);
- out_bdput:
- 	bdput(bdev);
- out_free:
+ 	dev_set_uevent_suppress(pdev, 0);
+@@ -487,7 +487,7 @@ static struct hd_struct *add_partition(struct gendisk *disk, int partno,
+ out_remove_file:
+ 	device_remove_file(pdev, &dev_attr_whole_disk);
+ out_del:
+-	kobject_put(p->holder_dir);
++	kobject_put(bdev->bd_holder_dir);
+ 	device_del(pdev);
+ out_put:
+ 	put_device(pdev);
 diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 0832c7830f3a10..0770f654b09cdf 100644
+index 0770f654b09cdf..381c22426f435b 100644
 --- a/fs/block_dev.c
 +++ b/fs/block_dev.c
-@@ -785,6 +785,7 @@ static void bdev_free_inode(struct inode *inode)
- 	struct block_device *bdev = I_BDEV(inode);
+@@ -1142,7 +1142,7 @@ int bd_link_disk_holder(struct block_device *bdev, struct gendisk *disk)
+ 	WARN_ON_ONCE(!bdev->bd_holder);
  
- 	free_percpu(bdev->bd_stats);
-+	kfree(bdev->bd_meta_info);
+ 	/* FIXME: remove the following once add_disk() handles errors */
+-	if (WARN_ON(!disk->slave_dir || !bdev->bd_part->holder_dir))
++	if (WARN_ON(!disk->slave_dir || !bdev->bd_holder_dir))
+ 		goto out_unlock;
  
- 	kmem_cache_free(bdev_cachep, BDEV_I(inode));
- }
+ 	holder = bd_find_holder_disk(bdev, disk);
+@@ -1165,14 +1165,14 @@ int bd_link_disk_holder(struct block_device *bdev, struct gendisk *disk)
+ 	if (ret)
+ 		goto out_free;
+ 
+-	ret = add_symlink(bdev->bd_part->holder_dir, &disk_to_dev(disk)->kobj);
++	ret = add_symlink(bdev->bd_holder_dir, &disk_to_dev(disk)->kobj);
+ 	if (ret)
+ 		goto out_del;
+ 	/*
+ 	 * bdev could be deleted beneath us which would implicitly destroy
+ 	 * the holder directory.  Hold on to it.
+ 	 */
+-	kobject_get(bdev->bd_part->holder_dir);
++	kobject_get(bdev->bd_holder_dir);
+ 
+ 	list_add(&holder->list, &bdev->bd_holder_disks);
+ 	goto out_unlock;
+@@ -1207,9 +1207,8 @@ void bd_unlink_disk_holder(struct block_device *bdev, struct gendisk *disk)
+ 
+ 	if (!WARN_ON_ONCE(holder == NULL) && !--holder->refcnt) {
+ 		del_symlink(disk->slave_dir, bdev_kobj(bdev));
+-		del_symlink(bdev->bd_part->holder_dir,
+-			    &disk_to_dev(disk)->kobj);
+-		kobject_put(bdev->bd_part->holder_dir);
++		del_symlink(bdev->bd_holder_dir, &disk_to_dev(disk)->kobj);
++		kobject_put(bdev->bd_holder_dir);
+ 		list_del_init(&holder->list);
+ 		kfree(holder);
+ 	}
 diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index a690008f60cd92..2f8ede04e5a94c 100644
+index 2f8ede04e5a94c..c0591e52d7d7ce 100644
 --- a/include/linux/blk_types.h
 +++ b/include/linux/blk_types.h
-@@ -49,6 +49,8 @@ struct block_device {
- 	/* Mutex for freeze */
- 	struct mutex		bd_fsfreeze_mutex;
- 	struct super_block	*bd_fsfreeze_sb;
-+
-+	struct partition_meta_info *bd_meta_info;
- } __randomize_layout;
- 
- #define bdev_whole(_bdev) \
+@@ -35,6 +35,7 @@ struct block_device {
+ #ifdef CONFIG_SYSFS
+ 	struct list_head	bd_holder_disks;
+ #endif
++	struct kobject		*bd_holder_dir;
+ 	u8			bd_partno;
+ 	struct hd_struct *	bd_part;
+ 	/* number of times partitions within this device have been opened. */
 diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index 50d27f5d38e2af..30d7076155b4d2 100644
+index 30d7076155b4d2..b4a5c05593b99c 100644
 --- a/include/linux/genhd.h
 +++ b/include/linux/genhd.h
-@@ -57,7 +57,6 @@ struct hd_struct {
+@@ -55,7 +55,6 @@ struct hd_struct {
+ 
+ 	struct block_device *bdev;
  	struct device __dev;
- 	struct kobject *holder_dir;
+-	struct kobject *holder_dir;
  	int policy, partno;
--	struct partition_meta_info *info;
  #ifdef CONFIG_FAIL_MAKE_REQUEST
  	int make_it_fail;
- #endif
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 5879edf083b318..368ccb71850126 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -79,8 +79,8 @@ static int match_dev_by_uuid(struct device *dev, const void *data)
- 	const struct uuidcmp *cmp = data;
- 	struct hd_struct *part = dev_to_part(dev);
- 
--	if (!part->info ||
--	    strncasecmp(cmp->uuid, part->info->uuid, cmp->len))
-+	if (!part->bdev->bd_meta_info ||
-+	    strncasecmp(cmp->uuid, part->bdev->bd_meta_info->uuid, cmp->len))
- 		return 0;
- 	return 1;
- }
-@@ -169,7 +169,8 @@ static int match_dev_by_label(struct device *dev, const void *data)
- 	const char *label = data;
- 	struct hd_struct *part = dev_to_part(dev);
- 
--	if (!part->info || strcmp(label, part->info->volname))
-+	if (!part->bdev->bd_meta_info ||
-+	    strcmp(label, part->bdev->bd_meta_info->volname))
- 		return 0;
- 	return 1;
- }
 -- 
 2.29.2
 
