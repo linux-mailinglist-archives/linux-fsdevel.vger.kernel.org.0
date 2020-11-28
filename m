@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16C2A2C73D3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:15:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B75AA2C72CF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:10:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389215AbgK1WOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Nov 2020 17:14:39 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55612 "EHLO
+        id S1731247AbgK1WHe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Nov 2020 17:07:34 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55205 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390586AbgK1WOe (ORCPT
+        with ESMTP id S1730847AbgK1WHc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 17:14:34 -0500
+        Sat, 28 Nov 2020 17:07:32 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kj83D-0002aM-N8; Sat, 28 Nov 2020 21:46:39 +0000
+        id 1kj83F-0002aM-Ku; Sat, 28 Nov 2020 21:46:41 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 24/38] notify: handle idmapped mounts
-Date:   Sat, 28 Nov 2020 22:35:13 +0100
-Message-Id: <20201128213527.2669807-25-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 25/38] init: handle idmapped mounts
+Date:   Sat, 28 Nov 2020 22:35:14 +0100
+Message-Id: <20201128213527.2669807-26-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
@@ -65,9 +65,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable notify implementations to handle idmapped mounts by passing down the
-mount's user namespace. If the initial user namespace is passed nothing changes
-so non-idmapped mounts will see identical behavior as before.
+Enable the init helpers to handle idmapped mounts by passing down the mount's
+user namespace. If the initial user namespace is passed nothing changes so
+non-idmapped mounts will see identical behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -81,44 +81,80 @@ patch introduced
 /* v3 */
 unchanged
 ---
- fs/notify/fanotify/fanotify_user.c | 2 +-
- fs/notify/inotify/inotify_user.c   | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ fs/init.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index de4d01bb1d8d..e3b2cb6a9d81 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -702,7 +702,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
- 	}
- 
- 	/* you can only watch an inode if you have read permissions on it */
--	ret = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
-+	ret = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
- 	if (ret) {
- 		path_put(path);
- 		goto out;
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index e995fd4e4e53..f39f5b81f2b3 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -31,6 +31,7 @@
- #include <linux/wait.h>
- #include <linux/memcontrol.h>
- #include <linux/security.h>
-+#include <linux/mount.h>
- 
- #include "inotify.h"
- #include "../fdinfo.h"
-@@ -343,7 +344,7 @@ static int inotify_find_inode(const char __user *dirname, struct path *path,
+diff --git a/fs/init.c b/fs/init.c
+index 76f493600030..41adfee75763 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -49,7 +49,7 @@ int __init init_chdir(const char *filename)
+ 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
  	if (error)
  		return error;
- 	/* you can only watch an inode if you have read permissions on it */
--	error = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
-+	error = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
- 	if (error) {
- 		path_put(path);
+-	error = inode_permission(&init_user_ns, path.dentry->d_inode,
++	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
+ 				 MAY_EXEC | MAY_CHDIR);
+ 	if (!error)
+ 		set_fs_pwd(current->fs, &path);
+@@ -65,7 +65,7 @@ int __init init_chroot(const char *filename)
+ 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
+ 	if (error)
  		return error;
+-	error = inode_permission(&init_user_ns, path.dentry->d_inode,
++	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
+ 				 MAY_EXEC | MAY_CHDIR);
+ 	if (error)
+ 		goto dput_and_out;
+@@ -120,7 +120,7 @@ int __init init_eaccess(const char *filename)
+ 	error = kern_path(filename, LOOKUP_FOLLOW, &path);
+ 	if (error)
+ 		return error;
+-	error = inode_permission(&init_user_ns, d_inode(path.dentry),
++	error = inode_permission(mnt_user_ns(path.mnt), d_inode(path.dentry),
+ 				 MAY_ACCESS);
+ 	path_put(&path);
+ 	return error;
+@@ -160,8 +160,8 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
+ 		mode &= ~current_umask();
+ 	error = security_path_mknod(&path, dentry, mode, dev);
+ 	if (!error)
+-		error = vfs_mknod(&init_user_ns, path.dentry->d_inode, dentry,
+-				  mode, new_decode_dev(dev));
++		error = vfs_mknod(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				  dentry, mode, new_decode_dev(dev));
+ 	done_path_create(&path, dentry);
+ 	return error;
+ }
+@@ -190,7 +190,7 @@ int __init init_link(const char *oldname, const char *newname)
+ 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
+ 	if (error)
+ 		goto out_dput;
+-	error = vfs_link(old_path.dentry, &init_user_ns, 
++	error = vfs_link(old_path.dentry, mnt_user_ns(new_path.mnt),
+ 			 new_path.dentry->d_inode, new_dentry, NULL);
+ out_dput:
+ 	done_path_create(&new_path, new_dentry);
+@@ -210,7 +210,8 @@ int __init init_symlink(const char *oldname, const char *newname)
+ 		return PTR_ERR(dentry);
+ 	error = security_path_symlink(&path, dentry, oldname);
+ 	if (!error)
+-		error = vfs_symlink(&init_user_ns, path.dentry->d_inode, dentry, oldname);
++		error = vfs_symlink(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				    dentry, oldname);
+ 	done_path_create(&path, dentry);
+ 	return error;
+ }
+@@ -233,7 +234,8 @@ int __init init_mkdir(const char *pathname, umode_t mode)
+ 		mode &= ~current_umask();
+ 	error = security_path_mkdir(&path, dentry, mode);
+ 	if (!error)
+-		error = vfs_mkdir(&init_user_ns, path.dentry->d_inode, dentry, mode);
++		error = vfs_mkdir(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				  dentry, mode);
+ 	done_path_create(&path, dentry);
+ 	return error;
+ }
 -- 
 2.29.2
 
