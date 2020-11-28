@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 105092C7521
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9552C7478
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:22:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733167AbgK1Vt1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Nov 2020 16:49:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41218 "EHLO
+        id S2388186AbgK1Vta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Nov 2020 16:49:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731306AbgK1SuJ (ORCPT
+        with ESMTP id S1732653AbgK1TC3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 13:50:09 -0500
+        Sat, 28 Nov 2020 14:02:29 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF163C025494;
-        Sat, 28 Nov 2020 08:20:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ED22C025497;
+        Sat, 28 Nov 2020 08:22:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=coxIlFm7FcSMnYoHU+VRJv+WNmt8/1D9LTOeQ77ktrM=; b=Pzr1nja0AE7hr3st3239LMciL+
-        t4cyDfRDhOoe4r2y8ZHb353ytAggEVHWwAwi/ZlnPjwj4FL+gDM++fXMGZbMJNrErgC7xreA8ubIe
-        ceCoaJD5BcQz7KRYF1fwdUolUqwKhaTZAO8tB3TvKD3Yp1N3xfqnVjlPD6uwDIYM2QOB44Rj8gn+n
-        EHMQLrTzqM15pCHqLBb00ZtS2/NcYv2/JFTbpYE6g+tsqYbNRtSLkHbi5geaHiRxp6qLHtPYPBxWC
-        r1TuNrOW/6dxw2cgc4pat3wfudMxZQP/Ycjz7oXXMs7Gy3Dsf627oC3lTm9xA9kIw1k1vXGUsvUad
-        Env84xzQ==;
+        bh=BBaHxk978MlWH1CCYOyHADwe4AyKWILnIzR+cKOSYog=; b=DAxlSn96EZCCIupgZ0dspi/RId
+        RCY1mHqnuAInMyBxHg5nBBOB8OxCM9cyapc3rHhXbAofkzdjWnTAyO2VRwbYOy+6mN8moIojG4HBh
+        NuPOIN5t4hxjUV7p0CgmiWQtmePE63HIXHnDc0mi1jzTltVu+NgQVNrUmK2m4WdDqHnvZDvpF+/TH
+        35wu856p/MqgA+jdfVAEM+9XBfwbRB0ZR5Cn9aUhRq7vKx93DbXy0nEwkS+RFKuaa2BuDOb1ZwIRk
+        yKVdpa9oimDD255eq6aV8KMqSK35UMiJphIKOoGnqX4AP+eBnqVHVGAJ8mLjBAkHj6OhHdC8c/nrV
+        tIh0rM8w==;
 Received: from 089144198196.atnat0007.highway.a1.net ([89.144.198.196] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kj2xe-0000jX-Sg; Sat, 28 Nov 2020 16:20:35 +0000
+        id 1kj2zl-0000sI-W1; Sat, 28 Nov 2020 16:22:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
@@ -39,9 +39,9 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 35/45] block: move make_it_fail to struct block_device
-Date:   Sat, 28 Nov 2020 17:15:00 +0100
-Message-Id: <20201128161510.347752-36-hch@lst.de>
+Subject: [PATCH 36/45] block: move the policy field to struct block_device
+Date:   Sat, 28 Nov 2020 17:15:01 +0100
+Message-Id: <20201128161510.347752-37-hch@lst.de>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128161510.347752-1-hch@lst.de>
 References: <20201128161510.347752-1-hch@lst.de>
@@ -52,82 +52,134 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the make_it_fail flag to struct block_device an turn it into a bool
-in preparation of killing struct hd_struct.
+Move the policy field to struct block_device and rename it to the
+more descriptive bd_read_only.  Also turn the field into a bool as it
+is used as such.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- block/blk-core.c          | 3 ++-
- block/genhd.c             | 4 ++--
- include/linux/blk_types.h | 3 +++
- include/linux/genhd.h     | 3 ---
- 4 files changed, 7 insertions(+), 6 deletions(-)
+ block/blk-core.c          | 2 +-
+ block/genhd.c             | 8 ++++----
+ block/ioctl.c             | 2 +-
+ block/partitions/core.c   | 4 ++--
+ include/linux/blk_types.h | 1 +
+ include/linux/genhd.h     | 4 ++--
+ 6 files changed, 11 insertions(+), 10 deletions(-)
 
 diff --git a/block/blk-core.c b/block/blk-core.c
-index 9a3793d5ce38d4..9121390be97a76 100644
+index 9121390be97a76..d64ffcb6f9ae5d 100644
 --- a/block/blk-core.c
 +++ b/block/blk-core.c
-@@ -668,7 +668,8 @@ __setup("fail_make_request=", setup_fail_make_request);
- 
- static bool should_fail_request(struct hd_struct *part, unsigned int bytes)
+@@ -696,7 +696,7 @@ static inline bool bio_check_ro(struct bio *bio, struct hd_struct *part)
  {
--	return part->make_it_fail && should_fail(&fail_make_request, bytes);
-+	return part->bdev->bd_make_it_fail &&
-+		should_fail(&fail_make_request, bytes);
- }
+ 	const int op = bio_op(bio);
  
- static int __init fail_make_request_debugfs(void)
+-	if (part->policy && op_is_write(op)) {
++	if (part->bdev->bd_read_only && op_is_write(op)) {
+ 		char b[BDEVNAME_SIZE];
+ 
+ 		if (op_is_flush(bio->bi_opf) && !bio_sectors(bio))
 diff --git a/block/genhd.c b/block/genhd.c
-index a964e7532fedd5..0371558ccde14c 100644
+index 0371558ccde14c..ae312ccc6dd7c0 100644
 --- a/block/genhd.c
 +++ b/block/genhd.c
-@@ -1284,7 +1284,7 @@ ssize_t part_fail_show(struct device *dev,
+@@ -1679,14 +1679,14 @@ void set_disk_ro(struct gendisk *disk, int flag)
+ 	struct disk_part_iter piter;
+ 	struct hd_struct *part;
+ 
+-	if (disk->part0.policy != flag) {
++	if (disk->part0.bdev->bd_read_only != flag) {
+ 		set_disk_ro_uevent(disk, flag);
+-		disk->part0.policy = flag;
++		disk->part0.bdev->bd_read_only = flag;
+ 	}
+ 
+ 	disk_part_iter_init(&piter, disk, DISK_PITER_INCL_EMPTY);
+ 	while ((part = disk_part_iter_next(&piter)))
+-		part->policy = flag;
++		part->bdev->bd_read_only = flag;
+ 	disk_part_iter_exit(&piter);
+ }
+ 
+@@ -1696,7 +1696,7 @@ int bdev_read_only(struct block_device *bdev)
+ {
+ 	if (!bdev)
+ 		return 0;
+-	return bdev->bd_part->policy;
++	return bdev->bd_read_only;
+ }
+ 
+ EXPORT_SYMBOL(bdev_read_only);
+diff --git a/block/ioctl.c b/block/ioctl.c
+index a6d8171221c7dc..d61d652078f41c 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -345,7 +345,7 @@ static int blkdev_roset(struct block_device *bdev, fmode_t mode,
+ 		if (ret)
+ 			return ret;
+ 	}
+-	bdev->bd_part->policy = n;
++	bdev->bd_read_only = n;
+ 	return 0;
+ }
+ 
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index c068471fa654f5..060c1be13cd8da 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -199,7 +199,7 @@ static ssize_t part_ro_show(struct device *dev,
+ 			    struct device_attribute *attr, char *buf)
  {
  	struct hd_struct *p = dev_to_part(dev);
- 
--	return sprintf(buf, "%d\n", p->make_it_fail);
-+	return sprintf(buf, "%d\n", p->bdev->bd_make_it_fail);
+-	return sprintf(buf, "%d\n", p->policy ? 1 : 0);
++	return sprintf(buf, "%d\n", p->bdev->bd_read_only);
  }
  
- ssize_t part_fail_store(struct device *dev,
-@@ -1295,7 +1295,7 @@ ssize_t part_fail_store(struct device *dev,
- 	int i;
+ static ssize_t part_alignment_offset_show(struct device *dev,
+@@ -420,7 +420,7 @@ static struct hd_struct *add_partition(struct gendisk *disk, int partno,
+ 	bdev->bd_start_sect = start;
+ 	bdev_set_nr_sectors(bdev, len);
+ 	p->partno = partno;
+-	p->policy = get_disk_ro(disk);
++	bdev->bd_read_only = get_disk_ro(disk);
  
- 	if (count > 0 && sscanf(buf, "%d", &i) > 0)
--		p->make_it_fail = (i == 0) ? 0 : 1;
-+		p->pdev->bd_make_it_fail = (i == 0) ? 0 : 1;
- 
- 	return count;
- }
+ 	if (info) {
+ 		err = -ENOMEM;
 diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index c0591e52d7d7ce..b237f1e4081405 100644
+index b237f1e4081405..758cf71c9aa2a6 100644
 --- a/include/linux/blk_types.h
 +++ b/include/linux/blk_types.h
-@@ -52,6 +52,9 @@ struct block_device {
- 	struct super_block	*bd_fsfreeze_sb;
- 
- 	struct partition_meta_info *bd_meta_info;
-+#ifdef CONFIG_FAIL_MAKE_REQUEST
-+	bool			bd_make_it_fail;
-+#endif
- } __randomize_layout;
- 
- #define bdev_whole(_bdev) \
+@@ -23,6 +23,7 @@ struct block_device {
+ 	sector_t		bd_start_sect;
+ 	struct disk_stats __percpu *bd_stats;
+ 	unsigned long		bd_stamp;
++	bool			bd_read_only;	/* read-only policy */
+ 	dev_t			bd_dev;
+ 	int			bd_openers;
+ 	struct inode *		bd_inode;	/* will die */
 diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index b4a5c05593b99c..349cf6403ccddc 100644
+index 349cf6403ccddc..dcbf9ef7610ea6 100644
 --- a/include/linux/genhd.h
 +++ b/include/linux/genhd.h
-@@ -56,9 +56,6 @@ struct hd_struct {
+@@ -55,7 +55,7 @@ struct hd_struct {
+ 
  	struct block_device *bdev;
  	struct device __dev;
- 	int policy, partno;
--#ifdef CONFIG_FAIL_MAKE_REQUEST
--	int make_it_fail;
--#endif
+-	int policy, partno;
++	int partno;
  	struct rcu_work rcu_work;
  };
  
+@@ -278,7 +278,7 @@ extern void set_disk_ro(struct gendisk *disk, int flag);
+ 
+ static inline int get_disk_ro(struct gendisk *disk)
+ {
+-	return disk->part0.policy;
++	return disk->part0.bdev->bd_read_only;
+ }
+ 
+ extern void disk_block_events(struct gendisk *disk);
 -- 
 2.29.2
 
