@@ -2,119 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A4D2C7484
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:22:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E502C747C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:22:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbgK1Vta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2388173AbgK1Vta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sat, 28 Nov 2020 16:49:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43160 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732080AbgK1S57 (ORCPT
+        with ESMTP id S1732431AbgK1TAU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 13:57:59 -0500
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D107C02B8F0;
-        Sat, 28 Nov 2020 01:04:49 -0800 (PST)
-Received: by mail-io1-xd32.google.com with SMTP id d8so5717552ioc.13;
-        Sat, 28 Nov 2020 01:04:49 -0800 (PST)
+        Sat, 28 Nov 2020 14:00:20 -0500
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38340C02B8F1;
+        Sat, 28 Nov 2020 01:06:38 -0800 (PST)
+Received: by mail-io1-xd41.google.com with SMTP id i9so6921276ioo.2;
+        Sat, 28 Nov 2020 01:06:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8AGnrWYiumdXafgcLifADEbB8pfQT5OzqYJQsv7KOwc=;
-        b=FPnRfdiLLw5wVk7CiuBbqzz+/6V7lzE0yO93m1B1TvQv+87eNEOKe/6uLyG2jVq3Vw
-         dOyr+feVK1LVbRL57sp1M2iS935WuT8X2BxrMMw8kPHJCqd2atbIeLTCxkBhatzLlvWb
-         WgSyNcMeMKT4Z6gzHFxlN+Hk49WquySj+VaFsraciwXqAvFNZ8GLrNyeobOZb6SMrzbz
-         aHtltylOiXxdPh5UBibVHJUI8cIZTTUdgsurww2MlQ40zU2NVlaFDsqFBfUPCiJDdOax
-         bUqRUpiflFpTW11h0a3xk5D/Mg1QwCGrM3POS458wq0+2WOZhP1eR/7S0rjCTpdyF7G8
-         dvnQ==
+        bh=MIIZAXDzKwop2fyL+ugRMktDfmpGkDPbQUZJlWUas5k=;
+        b=px9OARAcD/eF7z6PpWzwqPpkkPggWWfPEfc72C7hyzAFdeQw4CeKWDVVmrtKvqEJai
+         5ZbNKSNgNutfj3oh5/ACoqmW/Gfoi7hnUTDennY1TCOWVlDHplv/fP56s/duH9SzJ5k1
+         hnFmYEUGw805ay4cdwO77s0yTMXgmYQzsdMHA/IXMLHI5sz2K2SsaNClsKRNXWXHhmtz
+         q/m4X+1dBfXFyPgtrfqQe+/fSs2UrrPTMXposgGaW5MRSgBl9zjq+sDfCIr2Jkahy9Ba
+         Qs4rfnpDMGZ1FOgqqTARI59GihW73OosE+45EfmbzcdQYzxRhDQD3ZQagMyaF8LxXhSN
+         lu7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8AGnrWYiumdXafgcLifADEbB8pfQT5OzqYJQsv7KOwc=;
-        b=ltkUZGr2W1nzqWGlIJJGA1Jg0Wl0Kln3nac4WKJQZ5EacgsbzzbfGPXmv7xHOePKjc
-         80MHc10kTki8xkBrkTsyRyi+PBUonbpouh6dNnpT/iMvT5dIpBIKK4Ks4mmUgT1y0P2A
-         wfscCkX0alCjESBhARFmV/dQywxnNrTJDBzv6oujKZzTXlTdbrhh/UeRGR/lhweAg8/L
-         xcAR2Q4vWLOItGXEvTOM/wpt1D9sh7BLBKsWyT1bZ5nIihb4FFo0Iqjbgw5WU1OuMuxy
-         LbAWALeJymrGVP7jKRwLNGfAEw1A/rRAIJll38o6tzMoPc6BkCi9EHkM5DyshVGDIzKU
-         f3tw==
-X-Gm-Message-State: AOAM530rNtS+XIBFwWy25igNSi5mu+aPVc2WGWlqCJHRXLCpYfZNw4Bt
-        t01k75aHg7QfGyaaoQfTEXbGtx9AaKICYmge0Qk=
-X-Google-Smtp-Source: ABdhPJxEaU7n183i+2OtQoiTo9EP+n6e7u2ckH6pjcpA/PVT0nESydya52Qc10oxkXChJabkUbXMGwmXvJSPZsJjTQw=
-X-Received: by 2002:a02:a60a:: with SMTP id c10mr11057629jam.123.1606554288643;
- Sat, 28 Nov 2020 01:04:48 -0800 (PST)
+        bh=MIIZAXDzKwop2fyL+ugRMktDfmpGkDPbQUZJlWUas5k=;
+        b=I1vOzydsny50wnBlWs89bP/mVA3icGRQWFZtG3Ai+P9MGYei0iay/sJRTFW7iWsEhP
+         Pl07F0qbzXJYISyfeUZtlkBR/xybK6xr2KqtXPFKeCBqgpGnvLEeZs7qaZ5VStc1hEgZ
+         t90aI3y9L2AYJ6eo3zqEctxSIlCPzDk/ezvkEjfPuiDnGyEs/Ln82GvL5ox3qJTouJLf
+         te61DKWMSif4G0swWo1/dR4DnNr8naGh7xqdinwk/oaQZvw/r/3zG8ZiuTTjhzpnc8KK
+         Zp1qxWaQ0d+8T4z/9OgPvnbJ4yvgpOPDLtAWXyGeeKE4CE85i623XdMV2EEn5T5kfDUb
+         Or/g==
+X-Gm-Message-State: AOAM533xE9m23+lWJEwai5BFTv/X5Tja5UFG+/Mc7PnrwE5FbVDsZhmR
+        aN2jci4sCc80oR2P43Imp+lbbMlujiJ0jD30570=
+X-Google-Smtp-Source: ABdhPJwzR7VXTRrZRR5BOdY7EvDKmkHZ5b/9fOg5BD5byoj8XxyWRZnQeAnjuuso57zt/vXIZPKgHBmMaylTyhaVFNQ=
+X-Received: by 2002:a02:cc89:: with SMTP id s9mr4242657jap.81.1606554397527;
+ Sat, 28 Nov 2020 01:06:37 -0800 (PST)
 MIME-Version: 1.0
 References: <20201127092058.15117-1-sargun@sargun.me> <20201127092058.15117-3-sargun@sargun.me>
  <CAOQ4uxgaLuLb+f6WCMvmKHNTELvcvN8C5_u=t5hhoGT8Op7QuQ@mail.gmail.com>
- <20201127221154.GA23383@ircssh-2.c.rugged-nimbus-611.internal>
- <1338a059d03db0e85cf3f3234fd33434a45606c6.camel@redhat.com>
- <20201128044530.GA28230@ircssh-2.c.rugged-nimbus-611.internal>
- <CAOQ4uxjT6FF03Sq3qXuqDcqJQnzQq2dD_XVbuj_Fb9A2Ag585w@mail.gmail.com> <20201128085227.GB28230@ircssh-2.c.rugged-nimbus-611.internal>
-In-Reply-To: <20201128085227.GB28230@ircssh-2.c.rugged-nimbus-611.internal>
+ <20201127221154.GA23383@ircssh-2.c.rugged-nimbus-611.internal> <CAOQ4uxiLRy9ioqaqtOp7P6hLy8Gx5vRO86mie7FAdTu2OfnGrw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiLRy9ioqaqtOp7P6hLy8Gx5vRO86mie7FAdTu2OfnGrw@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 28 Nov 2020 11:04:37 +0200
-Message-ID: <CAOQ4uxjKRL0Pime7BO9gr_sVfmdhV2XrPhSzOPdDoaCAcRYHBQ@mail.gmail.com>
+Date:   Sat, 28 Nov 2020 11:06:26 +0200
+Message-ID: <CAOQ4uxhra_RB98gJ7ovGhbUV1atCR1rMPnf63tT37WtrNC0asg@mail.gmail.com>
 Subject: Re: [PATCH v2 2/4] overlay: Document current outstanding shortcoming
  of volatile
 To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Jeff Layton <jlayton@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
+Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Giuseppe Scrivano <gscrivan@redhat.com>,
         Vivek Goyal <vgoyal@redhat.com>,
         Daniel J Walsh <dwalsh@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
+        David Howells <dhowells@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > What I suggested was a solution only for the volatile overlay issue
-> > where data can vaporise without applications noticing:
-> > "...the very minimum is to check for errseq since mount on the fsync
-> >  and syncfs calls."
-> >
-> Yeah, I was confusing the checking that VFS does on our behalf and the checking
-> that we can do ourselves in the sync callback. If we return an error prior to
-> the vfs checking it short-circuits that entirely.
+On Sat, Nov 28, 2020 at 10:56 AM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> > Do you get it? there is no pre-file state in the game, not for fsync and not
-> > for syncfs.
+> > I notice you maintain overlay tests outside of the kernel. Unfortunately, I
+> > think for this kind of test, it requires in kernel code to artificially bump the
+> > writeback error count on the upperdir, or it requires the failure injection
+> > infrastructure.
 > >
-> > Any single error, no matter how temporary it is and what damage it may
-> > or may not have caused to upper layer consistency, permanently
-> > invalidates the reliability of the volatile overlay, resulting in:
-> > Effective immediately: every fsync/syncfs returns EIO.
-> > Going forward: maybe implement overlay shutdown, so every access
-> > returns EIO.
+> > Simulating this behaviour is non-trivial without in-kernel support:
 > >
-> > So now that I hopefully explained myself better, I'll ask again:
-> > Am I wrong saying that it is very very simple to fix?
-> > Would you mind making that fix at the bottom of the patch series, so it can
-> > be easily applied to stable kernels?
+> > P1: Open(f) -> p1.fd
+> > P2: Open(f) -> p2.fd
+> > P1: syncfs(p1.fd) -> errrno
+> > P2: syncfs(p1.fd) -> 0 # This should return an error
 > >
-> > Thanks,
-> > Amir.
 >
-> I think that this should be easy enough if the semantic is such that volatile
-> overlayfs mounts will return EIO on syncfs on every syncfs call if the upperdir's
-> super block has experienced errors since the initial mount. I imagine we do not
-> want to make it such that if the upperdir has ever experienced errors, return
-> EIO on syncfs.
+> failure injection is an option. xfstest generic/019 is an example.
+> generic/108 uses a different method and generic/361 uses a plain
+> loop image over commit without any fault injection to trigger writeback
+> errors.
 >
-> The one caveat that I see is that if the errseq wraps, we can silently begin
-> swallowing errors again. Thus, on the first failed syncfs we should just
-> store a flag indicating that the volatile fs is bad, and to continue to return
-> EIO rather than go through the process of checking errseq_t, but that's easy
-> enough to write.
+> With current xfstests, check -overlay run (runs all generic tests with
+> overlayfs over the configured base fs) all the 3 tests mentioned above
+> will be skipped because of _require_block_device, but the requirement
+> is there for a different reason for each of them.
+>
+> At first look, the loop device approach is the most generic one and could
+> easily work also with overlayfs, so you could create an overlay specific
+> test (non generic) based on generic/361, but it is not easy to use the
+> helper _scratch_mkfs_sized, because check -overlay runs do not mkfs
+> the base scratch fs.
+>
+> My recommendation would be to fix generic/019 in a similar manner
+> to the way that tests that _require_scratch_shutdown were fixed to run
+> with check -overlay:
+>
+> * Instead of _require_block_device, add a specific helper
+>    _require_scratch_fail_make_request, which like _require_scratch_shutdown
+>    knows how to deal with overlay FSTYP correctly
+>
+> * Instead of `_sysfs_dev $SCRATCH_DEV` use a helper _scratch_sysfs_dev
+>    that knows how to deal with overlay FSTYP correctly
+>
 
-I agree. I sent another reply to your question about testing.
-The test I suggested generic/019, only tests that the first fsync
-after writeback
-error fails and that umount succeeds, so logic is good for volatile overlay.
+I missed:
 
-Thanks,
-Amir.
+* Instead of `blockdev --getsz $SCRATCH_DEV` use helper _scratch_blockdev_getsz
+
+> This will add test coverage to overlayfs fsync/syncfs and then you can
+> do one or both of:
+> 1. Run 'check -overlay generic/019' with  OVERLAY_MOUNT_OPTIONS="volatile"
+> 2. Fork an overlay specific test from the generic test that will test the
+>     volatile error handling on every 'check -overlay -g quick' run
+>
+> #2 will provide better coverage against regressions in volatile writeback error
+> handling and will be a good start for a test to reuse a volatile mount after
+> writeback errors.
+>
+> Thanks,
+> Amir.
