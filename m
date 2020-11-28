@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4352C737A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:14:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 500CF2C73C6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389736AbgK1WMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Nov 2020 17:12:48 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55500 "EHLO
+        id S1729474AbgK1WOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Nov 2020 17:14:23 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55602 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbgK1WMr (ORCPT
+        with ESMTP id S1731427AbgK1WOV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 17:12:47 -0500
+        Sat, 28 Nov 2020 17:14:21 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kj83H-0002aM-QC; Sat, 28 Nov 2020 21:46:43 +0000
+        id 1kj83K-0002aM-8p; Sat, 28 Nov 2020 21:46:46 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 26/38] ioctl: handle idmapped mounts
-Date:   Sat, 28 Nov 2020 22:35:15 +0100
-Message-Id: <20201128213527.2669807-27-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 27/38] would_dump: handle idmapped mounts
+Date:   Sat, 28 Nov 2020 22:35:16 +0100
+Message-Id: <20201128213527.2669807-28-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
@@ -65,9 +65,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable generic ioctls to handle idmapped mounts by passing down the mount's user
-namespace. If the initial user namespace is passed nothing changes so
-non-idmapped mounts will see identical behavior as before.
+When determining whether or not to create a coredump the vfs will verify that
+the caller is privileged over the inode. Make the would_dump() helper handle
+idmapped mounts by passing down the mount's user namespace of the exec file. If
+the initial user namespace is passed nothing changes so non-idmapped mounts will
+see identical behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -76,51 +78,36 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch introduced
+unchanged
 
 /* v3 */
 unchanged
 ---
- fs/remap_range.c   | 7 +++++--
- fs/verity/enable.c | 2 +-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ fs/exec.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 9e5b27641756..fe7f07228462 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -432,13 +432,16 @@ EXPORT_SYMBOL(vfs_clone_file_range);
- /* Check whether we are allowed to dedupe the destination file */
- static bool allow_file_dedupe(struct file *file)
+diff --git a/fs/exec.c b/fs/exec.c
+index b499a1a03934..10c06fdf78a7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1391,14 +1391,15 @@ EXPORT_SYMBOL(begin_new_exec);
+ void would_dump(struct linux_binprm *bprm, struct file *file)
  {
-+	struct user_namespace *user_ns = mnt_user_ns(file->f_path.mnt);
-+	struct inode *inode = file_inode(file);
-+
- 	if (capable(CAP_SYS_ADMIN))
- 		return true;
- 	if (file->f_mode & FMODE_WRITE)
- 		return true;
--	if (uid_eq(current_fsuid(), file_inode(file)->i_uid))
-+	if (uid_eq(current_fsuid(), i_uid_into_mnt(user_ns, inode)))
- 		return true;
--	if (!inode_permission(&init_user_ns, file_inode(file), MAY_WRITE))
-+	if (!inode_permission(user_ns, inode, MAY_WRITE))
- 		return true;
- 	return false;
- }
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 7449ef0050f4..8b9ea0f0850f 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
- 	 * has verity enabled, and to stabilize the data being hashed.
- 	 */
+ 	struct inode *inode = file_inode(file);
+-	if (inode_permission(&init_user_ns, inode, MAY_READ) < 0) {
++	struct user_namespace *ns = mnt_user_ns(file->f_path.mnt);
++	if (inode_permission(ns, inode, MAY_READ) < 0) {
+ 		struct user_namespace *old, *user_ns;
+ 		bprm->interp_flags |= BINPRM_FLAGS_ENFORCE_NONDUMP;
  
--	err = inode_permission(&init_user_ns, inode, MAY_WRITE);
-+	err = inode_permission(mnt_user_ns(filp->f_path.mnt), inode, MAY_WRITE);
- 	if (err)
- 		return err;
+ 		/* Ensure mm->user_ns contains the executable */
+ 		user_ns = old = bprm->mm->user_ns;
+ 		while ((user_ns != &init_user_ns) &&
+-		       !privileged_wrt_inode_uidgid(user_ns, &init_user_ns, inode))
++		       !privileged_wrt_inode_uidgid(user_ns, ns, inode))
+ 			user_ns = user_ns->parent;
  
+ 		if (old != user_ns) {
 -- 
 2.29.2
 
