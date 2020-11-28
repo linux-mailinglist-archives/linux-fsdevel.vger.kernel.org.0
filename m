@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A09762C7369
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:14:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 758792C72D7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:10:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390322AbgK1WLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Nov 2020 17:11:17 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55487 "EHLO
+        id S2389939AbgK1WIa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Nov 2020 17:08:30 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55213 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731114AbgK1WLQ (ORCPT
+        with ESMTP id S2387631AbgK1WI0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 17:11:16 -0500
+        Sat, 28 Nov 2020 17:08:26 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kj83g-0002aM-Vt; Sat, 28 Nov 2020 21:47:09 +0000
+        id 1kj83j-0002aM-7d; Sat, 28 Nov 2020 21:47:11 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -52,383 +52,547 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?q?Mauricio=20V=C3=A1squez=20Bernal?= <mauricio@kinvolk.io>
-Subject: [PATCH v3 36/38] fs: introduce MOUNT_ATTR_IDMAP
-Date:   Sat, 28 Nov 2020 22:35:25 +0100
-Message-Id: <20201128213527.2669807-37-christian.brauner@ubuntu.com>
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v3 37/38] tests: extend mount_setattr tests
+Date:   Sat, 28 Nov 2020 22:35:26 +0100
+Message-Id: <20201128213527.2669807-38-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a new mount bind mount property to allow idmapping mounts. The
-MOUNT_ATTR_IDMAP flag can be set via the new mount_setattr() syscall
-together with a file descriptor referring to a user namespace.
-
-The user namespace referenced by the namespace file descriptor will be
-attached to the bind mount. All interactions with the filesystem going
-through that mount will be idmapped according to the mapping specified in
-the user namespace attached to it.
-
-Using user namespaces to mark mounts means we can reuse all the existing
-infrastructure in the kernel that already exists to handle idmappings and can
-also use this for permission checking to allow unprivileged user to create
-idmapped mounts in the future.
-
-Idmapping a mount is decoupled from the caller's user and mount namespace.
-This means idmapped mounts can be created in the initial user namespace
-which is an important use-case for systemd-homed, portable usb-sticks
-between systems, sharing data between the initial user namespace and
-unprivileged containers, and other use-cases that have been brought up. For
-example, assume a home directory where all files are owned by uid and gid
-1000 and the home directory is brought to a new laptop where the user has
-id 12345. The system administrator can simply create a mount of this home
-directory with a mapping of 1000:12345:1 and other mappings to indicate the ids
-should be kept. (With this it is e.g. also possible to create idmapped mounts on
-the host with an identity mapping 1:1:100000 where the root user is not mapped.
-A user with root access that e.g. has been pivot rooted into such a mount on the
-host will be not be able to execute, read, write, or create files as root.)
-
-Given that idmapping a mount is decoupled from the caller's user namespace
-a sufficiently privileged process such as a container manager can set up a
-shifted mount for the container and the container can simply pivot root to
-it. There's no need for the container to do anything. The mount will appear
-correctly mapped independent of the user namespace the container uses. This
-means we don't need to mark a mount as idmappable.
-
-In order to create an idmapped mount the caller must currently be privileged in
-the user namespace of the superblock the mount belongs to. Currently, once a
-mount has been idmapped we don't allow it to change its mapping. This can be
-changed in the future if the use-cases arise.
+Extend the mount_setattr test-suite to include tests for idmapped mounts. Note,
+the main test-suite ist part of xfstests and is pretty huge. These tests here
+just make sure that the syscalls bits work correctly.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Mauricio Vásquez Bernal <mauricio@kinvolk.io>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-- Christoph Hellwig <hch@lst.de>:
-  - Drop kconfig option to make vfs idmappings unconditional.
-  - Move introduction of MOUNT_ATTR_IDMAP to the end of the series after all
-    internal changes have been done.
-  - Move MOUNT_ATTR_IDMAP handling from build_mount_kattr() to separate
-    build_mount_idmapped() helper.
-  - Move MNT_IDMAPPED handling from do_mount_setattr() into separate
-    do_mount_idmap() helper.
-  - Use more helpers instead of one big function for mount attribute changes.
-- Mauricio Vásquez Bernal <mauricio@kinvolk.io>:
-  - Recalculate flags before checking can_change_locked_flags().
+patch introduced
 
 /* v3 */
-- David Howells <dhowells@redhat.com>:
-  - Use smp_load_acquire() and smp_store_release() in mnt_user_ns() and do_idmap_mount().
-- Remove all references to MNT_IDMAPPED now that the flag has been removed.
+- Christoph Hellwig <hch@lst.de>, Darrick J. Wong <darrick.wong@oracle.com>:
+  - Port main test-suite to xfstests.
 ---
- fs/internal.h              |   1 +
- fs/namespace.c             | 126 +++++++++++++++++++++++++++++++++++--
- fs/proc_namespace.c        |   3 +
- include/linux/fs.h         |   2 +-
- include/linux/mount.h      |   3 +-
- include/uapi/linux/mount.h |   5 +-
- 6 files changed, 133 insertions(+), 7 deletions(-)
+ .../mount_setattr/mount_setattr_test.c        | 483 ++++++++++++++++++
+ 1 file changed, 483 insertions(+)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index a5a6c470dc07..b0978274155f 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -88,6 +88,7 @@ struct mount_kattr {
- 	unsigned int propagation;
- 	unsigned int lookup_flags;
- 	bool recurse;
-+	struct user_namespace *mnt_user_ns;
- };
- 
- extern struct vfsmount *lookup_mnt(const struct path *);
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a1fda548c3af..a74559c8093c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -25,6 +25,7 @@
- #include <linux/proc_ns.h>
- #include <linux/magic.h>
- #include <linux/memblock.h>
-+#include <linux/proc_fs.h>
- #include <linux/task_work.h>
- #include <linux/sched/task.h>
- #include <uapi/linux/mount.h>
-@@ -3468,7 +3469,8 @@ static int build_attr_flags(unsigned int attr_flags, unsigned int *flags)
- 			   MOUNT_ATTR_NODEV |
- 			   MOUNT_ATTR_NOEXEC |
- 			   MOUNT_ATTR__ATIME |
--			   MOUNT_ATTR_NODIRATIME))
-+			   MOUNT_ATTR_NODIRATIME |
-+			   MOUNT_ATTR_IDMAP))
- 		return -EINVAL;
- 
- 	if (attr_flags & MOUNT_ATTR_RDONLY)
-@@ -3508,6 +3510,14 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
- 	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
- 		return -EINVAL;
- 
-+	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
-+			   MOUNT_ATTR_NOSUID |
-+			   MOUNT_ATTR_NODEV |
-+			   MOUNT_ATTR_NOEXEC |
-+			   MOUNT_ATTR__ATIME |
-+			   MOUNT_ATTR_NODIRATIME))
-+		return -EINVAL;
-+
- 	ret = build_attr_flags(attr_flags, &mnt_flags);
- 	if (ret)
- 		return ret;
-@@ -3830,6 +3840,32 @@ static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
- 	return flags;
- }
- 
-+static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
-+{
-+	struct vfsmount *m = &mnt->mnt;
-+
-+	if (!kattr->mnt_user_ns)
-+		return 0;
-+
-+	/*
-+	 * Once a mount has been idmapped we don't allow it to change its
-+	 * mapping. It makes things simpler and callers can just create
-+	 * another bind-mount they can idmap if they want to.
-+	 */
-+	if (mnt_user_ns(m) != &init_user_ns)
-+		return -EPERM;
-+
-+	/* The underlying filesystem doesn't support idmapped mounts yet. */
-+	if (!(m->mnt_sb->s_type->fs_flags & FS_ALLOW_IDMAP))
-+		return -EINVAL;
-+
-+	/* We're controlling the superblock. */
-+	if (!ns_capable(m->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
- static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
- 					   struct mount *mnt, int *err)
- {
-@@ -3854,6 +3890,10 @@ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
- 			goto out;
- 		}
- 
-+		*err = can_idmap_mount(kattr, m);
-+		if (*err)
-+			goto out;
-+
- 		last = m;
- 
- 		if ((kattr->attr_set & MNT_READONLY) &&
-@@ -3868,6 +3908,18 @@ static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
- 	return last;
- }
- 
-+static void do_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
-+{
-+	struct user_namespace *user_ns;
-+
-+	if (!kattr->mnt_user_ns)
-+		return;
-+
-+	user_ns = get_user_ns(kattr->mnt_user_ns);
-+	/* Pairs with smp_load_acquire() in mnt_user_ns(). */
-+	smp_store_release(&mnt->mnt.mnt_user_ns, user_ns);
-+}
-+
- static void mount_setattr_commit(struct mount_kattr *kattr, struct mount *mnt,
- 				 struct mount *last, int err)
- {
-@@ -3877,6 +3929,7 @@ static void mount_setattr_commit(struct mount_kattr *kattr, struct mount *mnt,
- 		if (!err) {
- 			unsigned int flags;
- 
-+			do_idmap_mount(kattr, m);
- 			flags = recalc_flags(kattr, m);
- 			WRITE_ONCE(m->mnt.mnt_flags, flags);
- 		}
-@@ -3949,7 +4002,65 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
- 	return err;
- }
- 
--static int build_mount_kattr(const struct mount_attr *attr,
-+static int build_mount_idmapped(const struct mount_attr *attr, size_t usize,
-+				struct mount_kattr *kattr, unsigned int flags)
-+{
-+	int err = 0;
-+	struct ns_common *ns;
-+	struct user_namespace *user_ns;
-+	struct file *file;
-+
-+	if (!((attr->attr_set | attr->attr_clr) & MOUNT_ATTR_IDMAP))
-+		return 0;
-+
-+	/*
-+	 * We currently do not support clearing an idmapped mount. If this ever
-+	 * is a use-case we can revisit this but for now let's keep it simple
-+	 * and not allow it.
-+	 */
-+	if (attr->attr_clr & MOUNT_ATTR_IDMAP)
-+		return -EINVAL;
-+
-+	if (usize < MOUNT_ATTR_SIZE_VER1)
-+		return -EINVAL;
-+
-+	if (attr->userns_fd > INT_MAX)
-+		return -EINVAL;
-+
-+	file = fget(attr->userns_fd);
-+	if (!file)
-+		return -EBADF;
-+
-+	if (!proc_ns_file(file)) {
-+		err = -EINVAL;
-+		goto out_fput;
-+	}
-+
-+	ns = get_proc_ns(file_inode(file));
-+	if (ns->ops->type != CLONE_NEWUSER) {
-+		err = -EINVAL;
-+		goto out_fput;
-+	}
-+
-+	/*
-+	 * The init_user_ns is used to indicate that a vfsmount is not idmapped.
-+	 * This is simpler than just having to treat NULL as unmapped. Users
-+	 * wanting to idmap a mount to init_user_ns can just use a namespace
-+	 * with an identity mapping.
-+	 */
-+	user_ns = container_of(ns, struct user_namespace, ns);
-+	if (user_ns == &init_user_ns) {
-+		err = -EPERM;
-+		goto out_fput;
-+	}
-+	kattr->mnt_user_ns = get_user_ns(user_ns);
-+
-+out_fput:
-+	fput(file);
-+	return err;
-+}
-+
-+static int build_mount_kattr(const struct mount_attr *attr, size_t usize,
- 			     struct mount_kattr *kattr, unsigned int flags)
- {
- 	unsigned int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-@@ -4028,7 +4139,13 @@ static int build_mount_kattr(const struct mount_attr *attr,
- 		}
- 	}
- 
--	return 0;
-+	return build_mount_idmapped(attr, usize, kattr, flags);
-+}
-+
-+static void finish_mount_kattr(struct mount_kattr *kattr)
-+{
-+	put_user_ns(kattr->mnt_user_ns);
-+	kattr->mnt_user_ns = NULL;
- }
- 
- SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path, unsigned int, flags,
-@@ -4060,7 +4177,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path, unsigned int
- 	if (attr.attr_set == 0 && attr.attr_clr == 0 && attr.propagation == 0)
- 		return 0;
- 
--	err = build_mount_kattr(&attr, &kattr, flags);
-+	err = build_mount_kattr(&attr, usize, &kattr, flags);
- 	if (err)
- 		return err;
- 
-@@ -4069,6 +4186,7 @@ SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path, unsigned int
- 		return err;
- 
- 	err = do_mount_setattr(&target, &kattr);
-+	finish_mount_kattr(&kattr);
- 	path_put(&target);
- 	return err;
- }
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index e59d4bb3a89e..71ab9497feb3 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -79,6 +79,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
- 		if (mnt->mnt_flags & fs_infop->flag)
- 			seq_puts(m, fs_infop->str);
- 	}
-+
-+	if (mnt_user_ns(mnt) != &init_user_ns)
-+		seq_puts(m, ",idmapped");
- }
- 
- static inline void mangle(struct seq_file *m, const char *s)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c7f9ba689145..b88ce1b2c87a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2293,7 +2293,7 @@ struct file_system_type {
- #define FS_HAS_SUBTYPE		4
- #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
- #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
--#define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
-+#define FS_ALLOW_IDMAP		32	/* FS has been updated to handle vfs idmappings. */
- #define FS_THP_SUPPORT		8192	/* Remove once all fs converted */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
- 	int (*init_fs_context)(struct fs_context *);
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index d0d4a270acea..f87811045aec 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -77,7 +77,8 @@ struct vfsmount {
- 
- static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
- {
--	return READ_ONCE(mnt->mnt_user_ns);
-+	/* Pairs with smp_store_release() in do_idmap_mount(). */
-+	return smp_load_acquire(&mnt->mnt_user_ns);
- }
- 
- struct file; /* forward dec */
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index fba42b4bfc1c..66422a58f061 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -119,6 +119,7 @@ enum fsconfig_command {
- #define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
- #define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
- #define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
-+#define MOUNT_ATTR_IDMAP	0x00100000 /* Idmap this mount to @userns in mount_attr. */
- 
- /*
-  * mount_setattr()
-@@ -127,6 +128,7 @@ struct mount_attr {
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+index d940356ab277..9ac898b2eb33 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -108,15 +108,57 @@ struct mount_attr {
  	__u64 attr_set;
  	__u64 attr_clr;
  	__u64 propagation;
 +	__u64 userns_fd;
  };
+ #endif
  
- /* Change propagation through mount_setattr(). */
-@@ -140,6 +142,7 @@ enum propagation_type {
++#ifndef __NR_open_tree
++	#if defined __alpha__
++		#define __NR_open_tree 538
++	#elif defined _MIPS_SIM
++		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
++			#define __NR_open_tree 4428
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
++			#define __NR_open_tree 6428
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
++			#define __NR_open_tree 5428
++		#endif
++	#elif defined __ia64__
++		#define __NR_open_tree (428 + 1024)
++	#else
++		#define __NR_open_tree 428
++	#endif
++#endif
++
++#ifndef MOUNT_ATTR_IDMAP
++#define MOUNT_ATTR_IDMAP 0x00100000
++#endif
++
+ static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flags,
+ 				    struct mount_attr *attr, size_t size)
+ {
+ 	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
+ }
  
- /* List of all mount_attr versions. */
- #define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
--#define MOUNT_ATTR_SIZE_LATEST	MOUNT_ATTR_SIZE_VER0
-+#define MOUNT_ATTR_SIZE_VER1	32 /* sizeof second published struct */
-+#define MOUNT_ATTR_SIZE_LATEST	MOUNT_ATTR_SIZE_VER1
++#ifndef OPEN_TREE_CLONE
++#define OPEN_TREE_CLONE 1
++#endif
++
++#ifndef OPEN_TREE_CLOEXEC
++#define OPEN_TREE_CLOEXEC O_CLOEXEC
++#endif
++
++#ifndef AT_RECURSIVE
++#define AT_RECURSIVE 0x8000 /* Apply to the entire subtree */
++#endif
++
++static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
++{
++	return syscall(__NR_open_tree, dfd, filename, flags);
++}
++
+ static ssize_t write_nointr(int fd, const void *buf, size_t count)
+ {
+ 	ssize_t ret;
+@@ -938,4 +980,445 @@ TEST_F(mount_setattr, wrong_mount_namespace)
+ 	ASSERT_EQ(errno, EINVAL);
+ }
  
- #endif /* _UAPI_LINUX_MOUNT_H */
++FIXTURE(mount_setattr_idmapped) {
++};
++
++FIXTURE_SETUP(mount_setattr_idmapped)
++{
++	int img_fd = -EBADF;
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	ASSERT_EQ(mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0), 0);
++
++	(void)umount2("/mnt", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++
++	ASSERT_EQ(mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B", 0777), 0);
++	ASSERT_EQ(mknodat(-EBADF, "/tmp/B/b", S_IFREG | 0644, 0), 0);
++	ASSERT_EQ(chown("/tmp/B/b", 0, 0), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B/BB", 0777), 0);
++	ASSERT_EQ(mknodat(-EBADF, "/tmp/B/BB/b", S_IFREG | 0644, 0), 0);
++	ASSERT_EQ(chown("/tmp/B/BB/b", 0, 0), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/A", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A/AA", 0777), 0);
++
++	ASSERT_EQ(mount("/tmp", "/mnt/A/AA", NULL, MS_BIND | MS_REC, NULL), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/B", "ramfs",
++			MS_NOATIME | MS_NODEV | MS_NOSUID, 0), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B/BB", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "devpts",
++			MS_RELATIME | MS_NOEXEC | MS_RDONLY, 0), 0);
++
++	ASSERT_EQ(mkdir("/mnt/C", 0777), 0);
++	ASSERT_EQ(mkdir("/mnt/D", 0777), 0);
++	img_fd = openat(-EBADF, "/mnt/C/ext4.img", O_CREAT | O_WRONLY, 0600);
++	ASSERT_GE(img_fd, 0);
++	ASSERT_EQ(ftruncate(img_fd, 1024 * 2048), 0);
++	ASSERT_EQ(system("mkfs.ext4 -q /mnt/C/ext4.img"), 0);
++	ASSERT_EQ(system("mount -o loop -t ext4 /mnt/C/ext4.img /mnt/D/"), 0);
++	ASSERT_EQ(close(img_fd), 0);
++}
++
++FIXTURE_TEARDOWN(mount_setattr_idmapped)
++{
++	(void)umount2("/mnt/A", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++}
++
++/**
++ * Validate that negative fd values are rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_negative)
++{
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_IDMAP,
++		.userns_fd	= -EBADF,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/", 0, &attr, sizeof(attr)), 0) {
++		TH_LOG("failure: created idmapped mount with negative fd");
++	}
++}
++
++/**
++ * Validate that excessively large fd values are rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_large)
++{
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_IDMAP,
++		.userns_fd	= INT64_MAX,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/", 0, &attr, sizeof(attr)), 0) {
++		TH_LOG("failure: created idmapped mount with too large fd value");
++	}
++}
++
++/**
++ * Validate that closed fd values are rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_closed)
++{
++	int fd;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
++	ASSERT_GE(fd, 0);
++	ASSERT_GE(close(fd), 0);
++
++	attr.userns_fd = fd;
++	ASSERT_NE(sys_mount_setattr(-1, "/", 0, &attr, sizeof(attr)), 0) {
++		TH_LOG("failure: created idmapped mount with closed fd");
++	}
++}
++
++/**
++ * Validate that the initial user namespace is rejected.
++ */
++TEST_F(mount_setattr_idmapped, invalid_fd_initial_userns)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd = open("/proc/1/ns/user", O_RDONLY | O_CLOEXEC);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(errno, EPERM);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++static int map_ids(pid_t pid, unsigned long nsid, unsigned long hostid,
++		   unsigned long range)
++{
++	char map[100], procfile[256];
++
++	snprintf(procfile, sizeof(procfile), "/proc/%d/uid_map", pid);
++	snprintf(map, sizeof(map), "%lu %lu %lu", nsid, hostid, range);
++	if (write_file(procfile, map, strlen(map)))
++		return -1;
++
++
++	snprintf(procfile, sizeof(procfile), "/proc/%d/gid_map", pid);
++	snprintf(map, sizeof(map), "%lu %lu %lu", nsid, hostid, range);
++	if (write_file(procfile, map, strlen(map)))
++		return -1;
++
++	return 0;
++}
++
++#define __STACK_SIZE (8 * 1024 * 1024)
++static pid_t do_clone(int (*fn)(void *), void *arg, int flags)
++{
++	void *stack;
++
++	stack = malloc(__STACK_SIZE);
++	if (!stack)
++		return -ENOMEM;
++
++#ifdef __ia64__
++	return __clone2(fn, stack, __STACK_SIZE, flags | SIGCHLD, arg, NULL);
++#else
++	return clone(fn, stack + __STACK_SIZE, flags | SIGCHLD, arg, NULL);
++#endif
++}
++
++static int get_userns_fd_cb(void *data)
++{
++	return kill(getpid(), SIGSTOP);
++}
++
++static int wait_for_pid(pid_t pid)
++{
++	int status, ret;
++
++again:
++	ret = waitpid(pid, &status, 0);
++	if (ret == -1) {
++		if (errno == EINTR)
++			goto again;
++
++		return -1;
++	}
++
++	if (!WIFEXITED(status))
++		return -1;
++
++	return WEXITSTATUS(status);
++}
++
++static int get_userns_fd(unsigned long nsid, unsigned long hostid, unsigned long range)
++{
++	int ret;
++	pid_t pid;
++	char path[256];
++
++	pid = do_clone(get_userns_fd_cb, NULL, CLONE_NEWUSER);
++	if (pid < 0)
++		return -errno;
++
++	ret = map_ids(pid, nsid, hostid, range);
++	if (ret < 0)
++		return ret;
++
++	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
++	ret = open(path, O_RDONLY | O_CLOEXEC);
++	kill(pid, SIGKILL);
++	wait_for_pid(pid);
++	return ret;
++}
++
++/**
++ * Validate that an attached mount in our mount namespace can be idmapped.
++ * (The kernel enforces that the mount's mount namespace and the caller's mount
++ *  namespace match.)
++ */
++TEST_F(mount_setattr_idmapped, attached_mount_inside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that idmapping a mount is rejected if the mount's mount namespace
++ * and our mount namespace don't match.
++ * (The kernel enforces that the mount's mount namespace and the caller's mount
++ *  namespace match.)
++ */
++TEST_F(mount_setattr_idmapped, attached_mount_outside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC);
++	ASSERT_GE(open_tree_fd, 0);
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,
++				    sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that an attached mount in our mount namespace can be idmapped.
++ */
++TEST_F(mount_setattr_idmapped, detached_mount_inside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	/* Changing mount properties on a detached mount. */
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "",
++				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that a detached mount not in our mount namespace can be idmapped.
++ */
++TEST_F(mount_setattr_idmapped, detached_mount_outside_current_mount_namespace)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	/* Changing mount properties on a detached mount. */
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "",
++				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++/**
++ * Validate that currently changing the idmapping of an idmapped mount fails.
++ */
++TEST_F(mount_setattr_idmapped, change_idmapping)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/D",
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_EQ(sys_mount_setattr(open_tree_fd, "",
++				    AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++
++	/* Change idmapping on a detached mount that is already idmapped. */
++	attr.userns_fd	= get_userns_fd(0, 20000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++}
++
++static bool expected_uid_gid(int dfd, const char *path, int flags,
++			     uid_t expected_uid, gid_t expected_gid)
++{
++	int ret;
++	struct stat st;
++
++	ret = fstatat(dfd, path, &st, flags);
++	if (ret < 0)
++		return false;
++
++	return st.st_uid == expected_uid && st.st_gid == expected_gid;
++}
++
++TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
++{
++	int open_tree_fd = -EBADF;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_IDMAP,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
++
++	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
++				     AT_RECURSIVE |
++				     AT_EMPTY_PATH |
++				     AT_NO_AUTOMOUNT |
++				     AT_SYMLINK_NOFOLLOW |
++				     OPEN_TREE_CLOEXEC |
++				     OPEN_TREE_CLONE);
++	ASSERT_GE(open_tree_fd, 0);
++
++	attr.userns_fd	= get_userns_fd(0, 10000, 10000);
++	ASSERT_GE(attr.userns_fd, 0);
++	ASSERT_NE(sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)), 0);
++	ASSERT_EQ(close(attr.userns_fd), 0);
++	ASSERT_EQ(close(open_tree_fd), 0);
++
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(open_tree_fd, "B/b", 0, 0, 0), 0);
++	ASSERT_EQ(expected_uid_gid(open_tree_fd, "B/BB/b", 0, 0, 0), 0);
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.29.2
 
