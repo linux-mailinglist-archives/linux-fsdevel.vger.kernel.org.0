@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C372E2C72F0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:10:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16C2A2C73D3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 23:15:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390090AbgK1WJy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Nov 2020 17:09:54 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55226 "EHLO
+        id S2389215AbgK1WOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Nov 2020 17:14:39 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55612 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730916AbgK1WJx (ORCPT
+        with ESMTP id S2390586AbgK1WOe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Nov 2020 17:09:53 -0500
+        Sat, 28 Nov 2020 17:14:34 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kj83B-0002aM-L3; Sat, 28 Nov 2020 21:46:37 +0000
+        id 1kj83D-0002aM-N8; Sat, 28 Nov 2020 21:46:39 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 23/38] fcntl: handle idmapped mounts
-Date:   Sat, 28 Nov 2020 22:35:12 +0100
-Message-Id: <20201128213527.2669807-24-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 24/38] notify: handle idmapped mounts
+Date:   Sat, 28 Nov 2020 22:35:13 +0100
+Message-Id: <20201128213527.2669807-25-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
@@ -65,7 +65,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable the setfl() helper to handle idmapped mounts by passing down the
+Enable notify implementations to handle idmapped mounts by passing down the
 mount's user namespace. If the initial user namespace is passed nothing changes
 so non-idmapped mounts will see identical behavior as before.
 
@@ -81,30 +81,44 @@ patch introduced
 /* v3 */
 unchanged
 ---
- fs/fcntl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/notify/fanotify/fanotify_user.c | 2 +-
+ fs/notify/inotify/inotify_user.c   | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index df091d435603..ed330fa91438 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -25,6 +25,7 @@
- #include <linux/user_namespace.h>
- #include <linux/memfd.h>
- #include <linux/compat.h>
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index de4d01bb1d8d..e3b2cb6a9d81 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -702,7 +702,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+ 	}
+ 
+ 	/* you can only watch an inode if you have read permissions on it */
+-	ret = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
++	ret = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
+ 	if (ret) {
+ 		path_put(path);
+ 		goto out;
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index e995fd4e4e53..f39f5b81f2b3 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -31,6 +31,7 @@
+ #include <linux/wait.h>
+ #include <linux/memcontrol.h>
+ #include <linux/security.h>
 +#include <linux/mount.h>
  
- #include <linux/poll.h>
- #include <asm/siginfo.h>
-@@ -46,7 +47,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
- 
- 	/* O_NOATIME can only be set by the owner or superuser */
- 	if ((arg & O_NOATIME) && !(filp->f_flags & O_NOATIME))
--		if (!inode_owner_or_capable(&init_user_ns, inode))
-+		if (!inode_owner_or_capable(mnt_user_ns(filp->f_path.mnt), inode))
- 			return -EPERM;
- 
- 	/* required for strict SunOS emulation */
+ #include "inotify.h"
+ #include "../fdinfo.h"
+@@ -343,7 +344,7 @@ static int inotify_find_inode(const char __user *dirname, struct path *path,
+ 	if (error)
+ 		return error;
+ 	/* you can only watch an inode if you have read permissions on it */
+-	error = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
++	error = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
+ 	if (error) {
+ 		path_put(path);
+ 		return error;
 -- 
 2.29.2
 
