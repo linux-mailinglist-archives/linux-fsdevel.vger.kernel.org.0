@@ -2,227 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC9D92C6E5D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 03:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4B02C6E62
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Nov 2020 03:17:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbgK1CJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Nov 2020 21:09:45 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:56620 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731497AbgK1CB1 (ORCPT
+        id S1732128AbgK1CMh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Nov 2020 21:12:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57164 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728558AbgK1CKt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Nov 2020 21:01:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606528873;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R4Zi8l3ZKIxJeXLSAM0McyGUGdr5i/PPqj1bQcvcbGk=;
-        b=CvZMZ6T8i1RhgiQP0eYAQeJo/RgC+nVOYV1Warh+wIdMiqT37nWaC9ooXrFpGo13bIDOpS
-        K4aQfqWznOkB6058/0/RuRmWx7Ja7eqCZ4RPu8UJjzOJmhddb4mT53ZhOujL8K3nnHsNzZ
-        HY7R0X9SU0IyN0EJn0gH5YMSPXfD3iY=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-216-5LG2_m6hPqGUQMNLz4GckA-1; Fri, 27 Nov 2020 21:01:10 -0500
-X-MC-Unique: 5LG2_m6hPqGUQMNLz4GckA-1
-Received: by mail-qv1-f71.google.com with SMTP id bn4so4014887qvb.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Nov 2020 18:01:09 -0800 (PST)
+        Fri, 27 Nov 2020 21:10:49 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3EC7C0613D1;
+        Fri, 27 Nov 2020 18:10:48 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id e8so5986659pfh.2;
+        Fri, 27 Nov 2020 18:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7FacVR3V/WCEQ1CgCqyN6BOceGSQR7vhqJHiXGCEHWI=;
+        b=PViRMpuuI4eSXEfb51qD0D+pcYok8I/rhmStXFBTFj3IPF6V/SEoRXQv/TBup1azDC
+         hjHyNx2mApNmhLCf9Zyz95b6hiJYJGPjTJxKWjHBV0FrkhCSRKfUOLqV1605foMyGhaL
+         3kqCzZrB4I05I5JRfvEh3ci+GEIC/gM6KW/VhCi+cpn0oTFhGM4+C58/w06d4tBKFQnv
+         TAWroBz+1qLFoLIuj4DqzEmKTFdDLOe2sad/9hav4SQDjKZXqsmDrxu9/lxhK9oSMtDr
+         8M8m7zu1dYHTGZFlo8e/FXG+aWvfmtIojHDJv/r7e5z+Rh3RwjBjiLJMWei0FoJ4CPut
+         OytA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=R4Zi8l3ZKIxJeXLSAM0McyGUGdr5i/PPqj1bQcvcbGk=;
-        b=Uc2FtfpRiIoKnwMQRdnmrOnEqAx/mYORdLAMct2J3CxWbOS3KxI4OGAMF0wrCZqQFG
-         uX2+PvN+Xx4+/cRkl5Spv0es2GhZi/vucL0jfOsyk7X1pP+p4Tb1eDWfvKA/Vg+yJc4H
-         qLdhY+pmtsVfhoeHX3eZFh53ccB43HBmLLrJKqv6b8UvuTYfyU6NcOP2cdSOSOrmZqe+
-         sbLTeM10iKfiYblI95m0MRibZwjj7z6wbYDriPiewuawCBAzqdOipTZZGX+RNZx5eLnu
-         CfVfzrMPlnuxDG8G1U/O7Ahet/oa49PHSzQZ5M4sCAduBhi3P7pJ0Mp+QQ+LlcPikZ8w
-         zXFw==
-X-Gm-Message-State: AOAM532fX8lxyenDP6hpOOiK/FAAK/x71xuDMAIICFMSnfrnAw5jZi5C
-        8CXBsX1aq6URjQpefeddidd2UT+qmexg0qF1qeYdCtmsUMFoEMnCpSQ1dFld43iPUcXh2K9jVm+
-        pWYQX4j5MGtUSoawwiXCa4Wfydw==
-X-Received: by 2002:a0c:eb91:: with SMTP id x17mr11308172qvo.36.1606528869485;
-        Fri, 27 Nov 2020 18:01:09 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzKIQmG/r5SsENO5IxIz0Lu6BYtU25slmJWSehKcRJTMAzc06HGrwLCuYsD1mZENcrHTCLs3Q==
-X-Received: by 2002:a0c:eb91:: with SMTP id x17mr11308150qvo.36.1606528869253;
-        Fri, 27 Nov 2020 18:01:09 -0800 (PST)
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id n4sm7747503qkf.42.2020.11.27.18.01.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2020 18:01:08 -0800 (PST)
-Message-ID: <1338a059d03db0e85cf3f3234fd33434a45606c6.camel@redhat.com>
-Subject: Re: [PATCH v2 2/4] overlay: Document current outstanding
- shortcoming of volatile
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Sargun Dhillon <sargun@sargun.me>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Date:   Fri, 27 Nov 2020 21:01:07 -0500
-In-Reply-To: <20201127221154.GA23383@ircssh-2.c.rugged-nimbus-611.internal>
-References: <20201127092058.15117-1-sargun@sargun.me>
-         <20201127092058.15117-3-sargun@sargun.me>
-         <CAOQ4uxgaLuLb+f6WCMvmKHNTELvcvN8C5_u=t5hhoGT8Op7QuQ@mail.gmail.com>
-         <20201127221154.GA23383@ircssh-2.c.rugged-nimbus-611.internal>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.1 (3.38.1-1.fc33) 
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7FacVR3V/WCEQ1CgCqyN6BOceGSQR7vhqJHiXGCEHWI=;
+        b=FdU1Ua1u97h1DtGHoZZd+NPEE4rD12xbrej3czAtEE0UlHTEBp/TJtqP6mG/de4W8Q
+         qvQSjKTuBgFgzBsHP6GmAspgtsySABN0dg5K80DkZngA2SmsQ/ZSlTIR0E70Lcse//IE
+         71MVrRN/mRe/DIWasiwqMW1XHlFgaDQlYRcxDi6lUBTche+DYy86QPIRmij5z+VYMjdV
+         0GflECnzkFYmiA5GZIy4LIZPpPiF05+9uh6q78S5Cbe4rz/LLNYhYZhh493KaRghVuNE
+         UQ87iDnWpSZfsVrGxFVfDEO1f5mTioPB3B2xvefpW9eJEVpPFiMb37vrHBIsZBq0TCSr
+         bd5g==
+X-Gm-Message-State: AOAM531x0gS/My+fwhZ7MwmMG76eneok3Wup+Ji3tXK0mGmPLlMffokW
+        tDAYRgJKsZC1i3Fh9ZRSO2KFgUv1trxSx33gd7M=
+X-Google-Smtp-Source: ABdhPJwJzWeiq3C0co0/Pz4JEuuWQjID47IeRj592IOrxEVg6lIroPDYvpR9G1i2693CxUvn4SeCeqwdNUJi9gJ1RlE=
+X-Received: by 2002:a17:90a:5d8c:: with SMTP id t12mr13721302pji.156.1606529448409;
+ Fri, 27 Nov 2020 18:10:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201026125016.1905945-1-balsini@android.com>
+In-Reply-To: <20201026125016.1905945-1-balsini@android.com>
+From:   Peng Tao <bergwolf@gmail.com>
+Date:   Sat, 28 Nov 2020 10:10:37 +0800
+Message-ID: <CA+a=Yy76W4Xob6UVXsPLA_FKF_8+QFQSEF98yALjRmuOhnVOdw@mail.gmail.com>
+Subject: Re: [PATCH V10 0/5] fuse: Add support for passthrough read/write
+To:     Alessio Balsini <balsini@android.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Akilesh Kailash <akailash@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Antonio SJ Musumeci <trapexit@spawn.link>,
+        David Anderson <dvander@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <duostefano93@gmail.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>,
+        fuse-devel@lists.sourceforge.net, kernel-team@android.com,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-11-27 at 22:11 +0000, Sargun Dhillon wrote:
-> On Fri, Nov 27, 2020 at 02:52:52PM +0200, Amir Goldstein wrote:
-> > On Fri, Nov 27, 2020 at 11:21 AM Sargun Dhillon <sargun@sargun.me> wrote:
-> > > 
-> > > This documents behaviour that was discussed in a thread about the volatile
-> > > feature. Specifically, how failures can go hidden from asynchronous writes
-> > > (such as from mmap, or writes that are not immediately flushed to the
-> > > filesystem). Although we pass through calls like msync, fallocate, and
-> > > write, and will still return errors on those, it doesn't guarantee all
-> > > kinds of errors will happen at those times, and thus may hide errors.
-> > > 
-> > > In the future, we can add error checking to all interactions with the
-> > > upperdir, and pass through errseq_t from the upperdir on mappings,
-> > > and other interactions with the filesystem[1].
-> > > 
-> > > [1]: https://lore.kernel.org/linux-unionfs/20201116045758.21774-1-sargun@sargun.me/T/#m7d501f375e031056efad626e471a1392dd3aad33
-> > > 
-> > > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > > Cc: linux-fsdevel@vger.kernel.org
-> > > Cc: linux-unionfs@vger.kernel.org
-> > > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > > Cc: Amir Goldstein <amir73il@gmail.com>
-> > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > ---
-> > >  Documentation/filesystems/overlayfs.rst | 6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
-> > > index 580ab9a0fe31..c6e30c1bc2f2 100644
-> > > --- a/Documentation/filesystems/overlayfs.rst
-> > > +++ b/Documentation/filesystems/overlayfs.rst
-> > > @@ -570,7 +570,11 @@ Volatile mount
-> > >  This is enabled with the "volatile" mount option.  Volatile mounts are not
-> > >  guaranteed to survive a crash.  It is strongly recommended that volatile
-> > >  mounts are only used if data written to the overlay can be recreated
-> > > -without significant effort.
-> > > +without significant effort.  In addition to this, the sync family of syscalls
-> > > +are not sufficient to determine whether a write failed as sync calls are
-> > > +omitted.  For this reason, it is important that the filesystem used by the
-> > > +upperdir handles failure in a fashion that's suitable for the user.  For
-> > > +example, upon detecting a fault, ext4 can be configured to panic.
-> > > 
-> > 
-> > Reading this now, I think I may have wrongly analysed the issue.
-> > Specifically, when I wrote that the very minimum is to document the
-> > issue, it was under the assumption that a proper fix is hard.
-> > I think I was wrong and that the very minimum is to check for errseq
-> > since mount on the fsync and syncfs calls.
-> > 
-> > Why? first of all because it is very very simple and goes a long way to
-> > fix the broken contract with applications, not the contract about durability
-> > obviously, but the contract about write+fsync+read expects to find the written
-> > data (during the same mount era).
-> > 
-> > Second, because the sentence you added above is hard for users to understand
-> > and out of context. If we properly handle the writeback error in fsync/syncfs,
-> > then this sentence becomes irrelevant.
-> > The fact that ext4 can lose data if application did not fsync after
-> > write is true
-> > for volatile as well as non-volatile and it is therefore not relevant
-> > in the context
-> > of overlayfs documentation at all.
-> > 
-> > Am I wrong saying that it is very very simple to fix?
-> > Would you mind making that fix at the bottom of the patch series, so it can
-> > be easily applied to stable kernels?
-> > 
-> > Thanks,
-> > Amir.
-> 
-> I'm not sure it's so easy. In VFS, there are places where the superblock's 
-> errseq is checked[1]. AFAIK, that's going to check "our" errseq, and not the 
-> errseq of the real corresponding real file's superblock. One solution might be 
-> as part of all these callbacks we set our errseq to the errseq of the filesystem 
-> that the upperdir, and then rely on VFS's checking.
-> 
-> I'm having a hard time figuring out how to deal with the per-mapping based
-> error tracking. It seems like this infrastructure was only partially completed
-> by Jeff Layton[2]. I don't now how it's actually supposed to work right now,
-> as not all of his patches landed.
-> 
+On Tue, Oct 27, 2020 at 1:00 AM Alessio Balsini <balsini@android.com> wrote:
+>
+> This is the 10th version of the series. Please find the changelog at the
+> bottom of this cover letter.
+>
+> Add support for file system passthrough read/write of files when enabled in
+> userspace through the option FUSE_PASSTHROUGH.
+>
+> There are file systems based on FUSE that are intended to enforce special
+> policies or trigger complicated decision makings at the file operations
+> level. Android, for example, uses FUSE to enforce fine-grained access
+> policies that also depend on the file contents.
+> Sometimes it happens that at open or create time a file is identified as
+> not requiring additional checks for consequent reads/writes, thus FUSE
+> would simply act as a passive bridge between the process accessing the FUSE
+> file system and the lower file system. Splicing and caching help reduce the
+> FUSE overhead, but there are still read/write operations forwarded to the
+> userspace FUSE daemon that could be avoided.
+>
+> This series has been inspired by the original patches from Nikhilesh Reddy,
+> the idea and code of which has been elaborated and improved thanks to the
+> community support.
+>
+> When the FUSE_PASSTHROUGH capability is enabled, the FUSE daemon may decide
+> while handling the open/create operations, if the given file can be
+> accessed in passthrough mode. This means that all the further read and
+> write operations would be forwarded by the kernel directly to the lower
+> file system using the VFS layer rather than to the FUSE daemon.
+> All the requests other than reads or writes are still handled by the
+> userspace FUSE daemon.
+> This allows for improved performance on reads and writes, especially in the
+> case of reads at random offsets, for which no (readahead) caching mechanism
+> would help.
+> Benchmarks show improved performance that is close to native file system
+> access when doing massive manipulations on a single opened file, especially
+> in the case of random reads, for which the bandwidth increased by almost 2X
+> or sequential writes for which the improvement is close to 3X.
+>
+> The creation of this direct connection (passthrough) between FUSE file
+> objects and file objects in the lower file system happens in a way that
+> reminds of passing file descriptors via sockets:
+> - a process requests the opening of a file handled by FUSE, so the kernel
+>   forwards the request to the FUSE daemon;
+> - the FUSE daemon opens the target file in the lower file system, getting
+>   its file descriptor;
+> - the FUSE daemon also decides according to its internal policies if
+>   passthrough can be enabled for that file, and, if so, can perform a
+>   FUSE_DEV_IOC_PASSTHROUGH_OPEN ioctl() on /dev/fuse, passing the file
+>   descriptor obtained at the previous step and the fuse_req unique
+>   identifier;
+> - the kernel translates the file descriptor to the file pointer navigating
+>   through the opened files of the "current" process and temporarily stores
+>   it in the associated open/create fuse_req's passthrough_filp;
+> - when the FUSE daemon has done with the request and it's time for the
+>   kernel to close it, it checks if the passthrough_filp is available and in
+>   case updates the additional field in the fuse_file owned by the process
+>   accessing the FUSE file system.
+> From now on, all the read/write operations performed by that process will
+> be redirected to the corresponding lower file system file by creating new
+> VFS requests.
+> Since the read/write operation to the lower file system is executed with
+> the current process's credentials, it might happen that it does not have
+> enough privileges to succeed. For this reason, the process temporarily
+> receives the same credentials as the FUSE daemon, that are reverted as soon
+> as the read/write operation completes, emulating the behavior of the
+> request to be performed by the FUSE daemon itself. This solution has been
+> inspired by the way overlayfs handles read/write operations.
+> Asynchronous IO is supported as well, handled by creating separate AIO
+> requests for the lower file system that will be internally tracked by FUSE,
+> that intercepts and propagates their completion through an internal
+> ki_completed callback similar to the current implementation of overlayfs.
+> The ioctl() has been designed taking as a reference and trying to converge
+> to the fuse2 implementation. For example, the fuse_passthrough_out data
+> structure has extra fields that will allow for further extensions of the
+> feature.
+>
+>
+>     Performance on SSD
+>
+> What follows has been performed with this change [V6] rebased on top of
+> vanilla v5.8 Linux kernel, using a custom passthrough_hp FUSE daemon that
+> enables pass-through for each file that is opened during both "open" and
+> "create". Tests were run on an Intel Xeon E5-2678V3, 32GiB of RAM, with an
+> ext4-formatted SSD as the lower file system, with no special tuning, e.g.,
+> all the involved processes are SCHED_OTHER, ondemand is the frequency
+> governor with no frequency restrictions, and turbo-boost, as well as
+> p-state, are active. This is because I noticed that, for such high-level
+> benchmarks, results consistency was minimally affected by these features.
+> The source code of the updated libfuse library and passthrough_hp is shared
+> at the following repository:
+>
+>     https://github.com/balsini/libfuse/tree/fuse-passthrough-stable-v.3.9.4
+The libfuse changes are not updated with the latest ioctl UAPI change yet.
 
-The patches in the series were all merged, but we ended up going with a
-simpler solution [1] than the first series I posted. Instead of plumbing
-the errseq_t handling down into sync_fs, we did it in the syscall
-wrapper.
+> * UAPI updated: ioctl() now returns an ID that will be used at
+>   open/create response time to reference the passthrough file
 
-I think the tricky part here is that there is no struct file plumbed
-into ->sync_fs, so you don't have an errseq_t cursor to work with by the
-time that gets called.
-
-What may be easiest is to just propagate the s_wb_err value from the
-upper_sb to the overlayfs superblock in ovl_sync_fs(). That should get
-called before the errseq_check_and_advance in the syncfs syscall wrapper
-and should ensure that syncfs() calls against the overlayfs sb see any
-errors that occurred on the upper_sb.
-
-Something like this maybe? Totally untested of course. May also need to
-think about how to ensure ordering between racing syncfs calls too
-(don't really want the s_wb_err going "backward"):
-
-----------------------------8<---------------------------------
-$ git diff
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 290983bcfbb3..d725705abdac 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -283,6 +283,9 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
-        ret = sync_filesystem(upper_sb);
-        up_read(&upper_sb->s_umount);
- 
-+       /* Propagate s_wb_err from upper_sb to overlayfs sb */
-+       WRITE_ONCE(sb->s_wb_err, READ_ONCE(upper_sb->s_wb_err));
-+
-        return ret;
- }
-----------------------------8<---------------------------------
-
-[1]: https://www.spinics.net/lists/linux-api/msg41276.html
-
-How about I split this into two patchsets? One, where I add the logic to copy
-the errseq on callbacks to fsync from the upperdir to the ovl fs superblock,
-and thus allowing VFS to bubble up errors, and the documentation. We can CC
-stable on those because I think it has an effect that's universal across
-all filesystems.
-
-P.S. 
-I notice you maintain overlay tests outside of the kernel. Unfortunately, I 
-think for this kind of test, it requires in kernel code to artificially bump the 
-writeback error count on the upperdir, or it requires the failure injection 
-infrastructure. 
-
-Simulating this behaviour is non-trivial without in-kernel support:
-
-P1: Open(f) -> p1.fd
-P2: Open(f) -> p2.fd
-P1: syncfs(p1.fd) -> errrno
-P2: syncfs(p1.fd) -> 0 # This should return an error
-
-
-[1]: https://elixir.bootlin.com/linux/latest/source/fs/sync.c#L175
-[2]: https://lwn.net/Articles/722250/
-
-
+Cheers,
+Tao
 -- 
-Jeff Layton <jlayton@redhat.com>
-
+Into Sth. Rich & Strange
