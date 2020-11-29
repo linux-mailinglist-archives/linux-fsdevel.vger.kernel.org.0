@@ -2,71 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 555AC2C7BBC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Nov 2020 23:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BDE32C7BC0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Nov 2020 23:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbgK2Wcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Nov 2020 17:32:36 -0500
-Received: from smtprelay0038.hostedemail.com ([216.40.44.38]:54750 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726293AbgK2Wcf (ORCPT
+        id S1727433AbgK2WsK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Nov 2020 17:48:10 -0500
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:43185 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726512AbgK2WsK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Nov 2020 17:32:35 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id BCA761802926E;
-        Sun, 29 Nov 2020 22:31:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2892:2898:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3872:3874:4321:5007:10004:10400:10848:11026:11232:11658:11914:12048:12050:12297:12438:12740:12760:12895:13069:13161:13229:13311:13357:13439:14096:14097:14659:21080:21627:21740:30012:30029:30054:30070:30075:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: truck72_1107d5f2739c
-X-Filterd-Recvd-Size: 2134
-Received: from XPS-9350.home (unknown [47.151.128.180])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 29 Nov 2020 22:31:53 +0000 (UTC)
-Message-ID: <9dfe4206580f2c0d59ca0a9e510054ce378cb2d8.camel@perches.com>
-Subject: Re: [PATCH] locks: remove trailing semicolon in macro definition
-From:   Joe Perches <joe@perches.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Tom Rix <trix@redhat.com>, Matthew Wilcox <willy@infradead.org>
-Cc:     jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Sun, 29 Nov 2020 14:31:51 -0800
-In-Reply-To: <ec43cf0faa4bfeaa4495b4e1f1c61e617d468591.camel@HansenPartnership.com>
-References: <20201127190707.2844580-1-trix@redhat.com>
-         <20201127195323.GZ4327@casper.infradead.org>
-         <8e7c0d56-64f3-d0b6-c1cf-9f285c59f169@redhat.com>
-         <d65cd737-61a5-4b31-7f25-e72f0a7f4ec2@infradead.org>
-         <ec43cf0faa4bfeaa4495b4e1f1c61e617d468591.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.38.1-1 
+        Sun, 29 Nov 2020 17:48:10 -0500
+Received: from dread.disaster.area (pa49-179-6-140.pa.nsw.optusnet.com.au [49.179.6.140])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8DFEA58DF4D;
+        Mon, 30 Nov 2020 09:47:24 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kjVTX-00GPKX-HI; Mon, 30 Nov 2020 09:47:23 +1100
+Date:   Mon, 30 Nov 2020 09:47:23 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        darrick.wong@oracle.com, dan.j.williams@intel.com, hch@lst.de,
+        song@kernel.org, rgoldwyn@suse.de, qi.fuli@fujitsu.com,
+        y-goto@fujitsu.com
+Subject: Re: [RFC PATCH v2 0/6] fsdax: introduce fs query to support reflink
+Message-ID: <20201129224723.GG2842436@dread.disaster.area>
+References: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Ubgvt5aN c=1 sm=1 tr=0 cx=a_idp_d
+        a=uDU3YIYVKEaHT0eX+MXYOQ==:117 a=uDU3YIYVKEaHT0eX+MXYOQ==:17
+        a=kj9zAlcOel0A:10 a=nNwsprhYR40A:10 a=7-415B0cAAAA:8
+        a=fQ8chXSYUWhFZ-3vMtIA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2020-11-29 at 10:15 -0800, James Bottomley wrote:
-> I think nowadays we should always use static inlines for argument
-> checking unless we're capturing debug information like __FILE__ or
-> __LINE__ or something that a static inline can't.
+On Mon, Nov 23, 2020 at 08:41:10AM +0800, Shiyang Ruan wrote:
+> This patchset is a try to resolve the problem of tracking shared page
+> for fsdax.
+> 
+> Change from v1:
+>   - Intorduce ->block_lost() for block device
+>   - Support mapped device
+>   - Add 'not available' warning for realtime device in XFS
+>   - Rebased to v5.10-rc1
+> 
+> This patchset moves owner tracking from dax_assocaite_entry() to pmem
+> device, by introducing an interface ->memory_failure() of struct
+> pagemap.  The interface is called by memory_failure() in mm, and
+> implemented by pmem device.  Then pmem device calls its ->block_lost()
+> to find the filesystem which the damaged page located in, and call
+> ->storage_lost() to track files or metadata assocaited with this page.
+> Finally we are able to try to fix the damaged data in filesystem and do
+> other necessary processing, such as killing processes who are using the
+> files affected.
+> 
+> The call trace is like this:
+>  memory_failure()
+>    pgmap->ops->memory_failure()   => pmem_pgmap_memory_failure()
+>     gendisk->fops->block_lost()   => pmem_block_lost() or
+>                                          md_blk_block_lost()
+>      sb->s_ops->storage_lost()    => xfs_fs_storage_lost()
+>       xfs_rmap_query_range()
+>        xfs_storage_lost_helper()
+>         mf_recover_controller->recover_fn => \ 
+>                             memory_failure_dev_pagemap_kill_procs()
+> 
+> The collect_procs() and kill_procs() are moved into a callback which
+> is passed from memory_failure() to xfs_storage_lost_helper().  So we
+> can call it when a file assocaited is found, instead of creating a
+> file list and iterate it.
+> 
+> The fsdax & reflink support for XFS is not contained in this patchset.
 
-IMO: __LINE__ should never be used.
+This looks promising - the overall architecture is a lot more
+generic and less dependent on knowing about memory, dax or memory
+failures. A few comments that I think would further improve
+understanding the patchset and the implementation:
 
-__func__ is the only thing that can't be captured correctly as
-the inline gets its own name.
+- the order of the patches is inverted. It should start with a
+  single patch introducing the mf_recover_controller structure for
+  callbacks, then introduce pgmap->ops->memory_failure, then
+  ->block_lost, then the pmem and md implementations of ->block
+  list, then ->storage_lost and the XFS implementations of
+  ->storage_lost.
 
-__builtin_return_address(1) would generally work well enough
-for the inlines.
+- I think the names "block_lost" and "storage_lost" are misleading.
+  It's more like a "media failure" or a general "data corruption"
+  event at a specific physical location. The data may not be "lost"
+  but only damaged, so we might be able to recover from it without
+  "losing" anything. Hence I think they could be better named,
+  perhaps just "->corrupt_range"
 
-> There was a time when we had problems with compiler expansion of static
-> inlines, so we shouldn't go back and churn the code base to change it
-> because there's thousands of these and possibly some old compiler used
-> for an obscure architecture that still needs the define.
+- need to pass a {offset,len} pair through the chain, not just a
+  single offset. This will allow other types of devices to report
+  different ranges of failures, from a single sector to an entire
+  device.
 
-That's not a very compelling argument to me.
+- I'm not sure that passing the mf_recover_controller structure
+  through the corruption event chain is the right thing to do here.
+  A block device could generate this storage failure callback if it
+  detects an unrecoverable error (e.g. during a MD media scrub or
+  rebuild/resilver failure) and in that case we don't have PFNs or
+  memory device failure functions to perform.
 
-Those old compilers and obscure architectures should continue
-to use the old versions of the code.
+  IOWs, I think the action that is taken needs to be independent of
+  the source that generated the error. Even for a pmem device, we
+  can be using the page cache, so it may be possible to recover the
+  pmem error by writing the cached page (if it exists) back over the
+  pmem.
 
+  Hence I think that the recover function probably needs to be moved
+  to the address space ops, because what we do to recover from the
+  error is going to be dependent on type of mapping the filesystem
+  is using. If it's a DAX mapping, we call back into a generic DAX
+  function that does the vma walk and process kill functions. If it
+  is a page cache mapping, then if the page is cached then we can
+  try to re-write it to disk to fix the bad data, otherwise we treat
+  it like a writeback error and report it on the next
+  write/fsync/close operation done on that file.
 
+  This gets rid of the mf_recover_controller altogether and allows
+  the interface to be used by any sort of block device for any sort
+  of bottom-up reporting of media/device failures.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
