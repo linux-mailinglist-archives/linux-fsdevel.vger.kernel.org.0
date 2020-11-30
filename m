@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49EAC2C7ECF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E4D2C7ED6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:39:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbgK3HiY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 02:38:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51610 "EHLO mx2.suse.de"
+        id S1727084AbgK3Hi5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 02:38:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51862 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbgK3HiY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 02:38:24 -0500
+        id S1726299AbgK3Hi5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 02:38:57 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 0AAA6AD09;
-        Mon, 30 Nov 2020 07:37:43 +0000 (UTC)
-Subject: Re: [PATCH 27/45] block: simplify the block device claiming interface
+        by mx2.suse.de (Postfix) with ESMTP id 22488AD2B;
+        Mon, 30 Nov 2020 07:38:15 +0000 (UTC)
+Subject: Re: [PATCH 28/45] block: simplify part_to_disk
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -27,14 +27,14 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-28-hch@lst.de>
+ <20201128161510.347752-29-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <1bd1571f-69be-03ab-6d67-3a6cb3a71e1e@suse.de>
-Date:   Mon, 30 Nov 2020 08:37:42 +0100
+Message-ID: <e5139146-f464-d5cc-cdef-ff67ca7c1f05@suse.de>
+Date:   Mon, 30 Nov 2020 08:38:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201128161510.347752-28-hch@lst.de>
+In-Reply-To: <20201128161510.347752-29-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -43,18 +43,15 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/28/20 5:14 PM, Christoph Hellwig wrote:
-> Stop passing the whole device as a separate argument given that it
-> can be trivially deducted and cleanup the !holder debug check.
+> Now that struct hd_struct has a block_device pointer use that to
+> find the disk.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > Reviewed-by: Jan Kara <jack@suse.cz>
 > Acked-by: Tejun Heo <tj@kernel.org>
 > ---
->   drivers/block/loop.c   | 12 +++++-----
->   fs/block_dev.c         | 51 +++++++++++++++---------------------------
->   include/linux/blkdev.h |  6 ++---
->   3 files changed, 25 insertions(+), 44 deletions(-)
+>   include/linux/genhd.h | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
