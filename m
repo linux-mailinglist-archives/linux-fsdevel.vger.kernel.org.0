@@ -2,244 +2,275 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B00E2C8EE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 21:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4AEB2C8F65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 21:47:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbgK3URg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 15:17:36 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:35124 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727328AbgK3URg (ORCPT
+        id S1730078AbgK3Urj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 15:47:39 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:46036 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbgK3Uri (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 15:17:36 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 0AUK3FZg016588;
-        Mon, 30 Nov 2020 12:15:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=RdtE83tmijXt7lplw7hDnEBho3pDThFvGVCdYYGG35I=;
- b=nSqAW4vwU6oVyrGEJH2/4ywRu9W63IFUP0nqh5g6HwKyLyFVUDGw0xQ5u6K1VHMkQ/34
- xomjxmLC+k8Viyb1Hvbu6ImFWSagcQDABnLygi05a5oiCZr2UtASfFmqT1mDypjY9UFV
- le8GBXiswToepDgUNoOXLYb7BtuwHp2ns1k= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net with ESMTP id 354g9udq5e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 30 Nov 2020 12:15:51 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 30 Nov 2020 12:15:49 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GkIYp2xxBnak4MYL+YwfQdCKuXQHncjttEeBD+SaEHcuokoHtqewZWfcvdwRjkO0ioBLfP63SqAt9JO7tEoJW+7k1IL7IbMU3RGNe0aNmnQPMR7gfwfDv2yHjQUBfSWcQf31Fv4b3yj1OdmqbKhARgISgDNoDM2pcBKtmMN3UzI6ssuWK4R9m8NDNhhm2xd57igcHl5ks1ODPexBa3G9Q6Bfi5n7BSZMLpF5GQhKedg0FsB/+xJPQySqf7nLV0FQeaDpBVhk6yKtNKPHFT0tnbpXJ9ukRdf4krq4W9bZaiQjKpStK6V4qEc0zxJY534Vtil237quYqJ2zoAq0SHDsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RdtE83tmijXt7lplw7hDnEBho3pDThFvGVCdYYGG35I=;
- b=bq6YyXjrkrClMnjVts8q5/EuEyvRQh02BV4MdsfDLMhFqVKBSeGamu6wIKUIcL/MTcaiYsY5rBXkRN0dOjmLJG5oe5aYcam3uxq+8ZWxuKoS1pFD4KAJrz6v+BJMUwt9JOGPpfsDIllZaAYyUv8H7tjp8F7xYqlkg427QIBuNkfh+cyspriRUmLLS7pH0p55FrVA/2tkdMsSFiLp/5F5YYkPvxrtAzkfsnORs0dn98k+TCTHQtftfCvqyYu7bKt3gkWjCl+Gmltv5uTrGYWHzdGFeroaOyY6zVJXUW0ZrQbqgDuh621XqvVYD6kdwXZPIB3171Ch9tOH0Z6e/+VYVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RdtE83tmijXt7lplw7hDnEBho3pDThFvGVCdYYGG35I=;
- b=eBU3S5NgHMbF10FsFYbZHo5zkCpDWEtLJwDYUG/uc3VtQYTy5dNVteyIeW9A4ZnJ8ksRtrawvFxuzlucGAVs3+8+mzKhyaDj4F+opoZuLf2fW6CIOXfhP2qVqjafv9nhEtbLXcfU8EarIBBbj8RPZjRV8WPr6W2+6TpkszjlOto=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BYAPR15MB2933.namprd15.prod.outlook.com (2603:10b6:a03:f6::26) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.24; Mon, 30 Nov
- 2020 20:15:47 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::3925:e1f9:4c6a:9396]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::3925:e1f9:4c6a:9396%6]) with mapi id 15.20.3611.025; Mon, 30 Nov 2020
- 20:15:47 +0000
-Date:   Mon, 30 Nov 2020 12:15:40 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Mike Rapoport <rppt@kernel.org>
-CC:     Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Mon, 30 Nov 2020 15:47:38 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kjq4N-0052tf-VB; Mon, 30 Nov 2020 13:46:48 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kjq4N-0004JZ-0W; Mon, 30 Nov 2020 13:46:47 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
-        <linux-riscv@lists.infradead.org>, <x86@kernel.org>
-Subject: Re: [PATCH v12 07/10] secretmem: add memcg accounting
-Message-ID: <20201130201540.GB1354703@carbon.DHCP.thefacebook.com>
-References: <20201125092208.12544-1-rppt@kernel.org>
- <20201125092208.12544-8-rppt@kernel.org>
- <CALvZod4MoXod_YkbO+4k2=PS=xdMVbZa2HWWuUnMZ1G9hSr+Jw@mail.gmail.com>
- <20201129172625.GD557259@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201129172625.GD557259@kernel.org>
-X-Originating-IP: [2620:10d:c090:400::5:6c8f]
-X-ClientProxiedBy: MWHPR11CA0009.namprd11.prod.outlook.com
- (2603:10b6:301:1::19) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+References: <20201130200619.84819-1-stephen.s.brennan@oracle.com>
+Date:   Mon, 30 Nov 2020 14:46:17 -0600
+In-Reply-To: <20201130200619.84819-1-stephen.s.brennan@oracle.com> (Stephen
+        Brennan's message of "Mon, 30 Nov 2020 12:06:19 -0800")
+Message-ID: <87zh2yh8ti.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:6c8f) by MWHPR11CA0009.namprd11.prod.outlook.com (2603:10b6:301:1::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.22 via Frontend Transport; Mon, 30 Nov 2020 20:15:43 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e7f1d3a8-1199-45e7-b2c4-08d8956cb943
-X-MS-TrafficTypeDiagnostic: BYAPR15MB2933:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB2933A5392BBDDBD44467A1E9BEF50@BYAPR15MB2933.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: iFw2mu0Q/5xaFtwWblPc7d2PWZFOYxBg0jDr/XqenwXz3u99bM9acqJomsgPR5WxBM5aCZXp8f1E9jMhHEnhBkyFvcNU/8l38hInIaiyJSc6wcMBiv0o/2dXOdIXaLWlHCWwJIktO9YAR+gGaXQEKzxYFbj9odOUxVOeW9qQAEW70eeDAvQuknrpzThyRLOrBF9uaqPL7yV2Of7mHP5UNa6jyHddWh95WE53cveQQ9r+xeRDZlpNg7erOyZnpt0EMxokJWAlPigOhTjPR7gGV2zdG4hBDdaIOz7S5UM3W7wnVLnJl6/pfj8dJVgCvRjdnsWBeqhueN6TEbbwas92Rw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(136003)(396003)(346002)(376002)(39860400002)(6506007)(16526019)(186003)(7416002)(15650500001)(83380400001)(53546011)(1076003)(66946007)(54906003)(66556008)(316002)(7406005)(8936002)(55016002)(4326008)(7696005)(8676002)(33656002)(5660300002)(478600001)(52116002)(6916009)(86362001)(2906002)(9686003)(66476007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?iqlKOIi4ERXHU7Zr75N4bB44+GuU4q4I8FYiclh5fY/GvAbfOuoM/f8YUfpg?=
- =?us-ascii?Q?6/cFcANL1nVfp4xGxT3aMqGaCbTRhvLcfotICeBRZ9peZlsOgWIl5+Ij2b/n?=
- =?us-ascii?Q?bHxxlJgpwojdK1Mxp4AZhHQvXA+QzIwlpOf6Yd9Grr4ESPjw+SqWEt5J659S?=
- =?us-ascii?Q?jtdL6e6qXjOJs5hKC2QjY2XDEEa6JOB36rTpBhwbHwtmuM7MmuNsou7vNkNC?=
- =?us-ascii?Q?3T63IhemfFLIw9vQ7ITZjHUc186mbqeuaDHEyFdIberhEloiV0vnJi5G6s68?=
- =?us-ascii?Q?uJ1tzp2KSRGr4I6WUAgQy1lUdAUgYbdMEaL3cjp8cuiseIdC7YyFhJINN72W?=
- =?us-ascii?Q?PDMgg7QSGn8+0uyDHjfj7sMI2tpvQHMosLa4/YIRoyQria8orEBi3Yy+1wvL?=
- =?us-ascii?Q?LilFlt4scpTRYeCarn4ZvuQ4go71G0AbPHcX3/pXEQ/sTU0qhLxd9gIrlfyZ?=
- =?us-ascii?Q?rmv804Vx18OS5gP1RTVKDOk+mUUxLAZS8diqejZSchcy2HDrt1BIyAqS86DG?=
- =?us-ascii?Q?PZbyQUsOsh/37xR2QwgvX6ayDusqhF6tBlOhqTu/sjBhODYf3wVWJJpdzzWr?=
- =?us-ascii?Q?98kmD03cHklbtsievGHl5CoCbgbpuagCaIqiQ4e1jEBwQm7YQc+mqjRMA8xI?=
- =?us-ascii?Q?xHBTsHFj0a6uhc1gvurE6C24zqxbyLoU49G3tMAs74vQ94csy2z2r7BYOETj?=
- =?us-ascii?Q?SPlpITSFaY3CeV7kCiWJhL7+ZGjTnpOyfBG5v3CHqpLyuNq9isQvD6rk57vj?=
- =?us-ascii?Q?ljFwk982AoWdOF+VEOIWCk+7Qpzbsn8w5ZLBzWBcbqY6ofnv8ZW8XYSA/8lS?=
- =?us-ascii?Q?KyZVbDUXwvwbvYSQ5OZ41wVds49x/F9q5e/XOvKPoNUNXGUH7e6MgTFJ3G12?=
- =?us-ascii?Q?k7/Rt6bOSXgiVQ7ZQMd4bVPwIvHYIg/873+tjdhlLTyqHprEdU9yWBhEM5V0?=
- =?us-ascii?Q?O6ebtIys0H+9AKoMnERpQX2zFbiiphRLaZ5VA5FZI3saa50oufwArQWERwnT?=
- =?us-ascii?Q?3zla4tmiBEZnteoNG/MxW32oXA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7f1d3a8-1199-45e7-b2c4-08d8956cb943
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2020 20:15:47.2482
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /HRyLj7WzWrk8wEPiGyiQ7NpXUvMt3C5xgAH0q9VadSFMowQvih6G/Ng+JbVE7Lx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2933
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-30_08:2020-11-30,2020-11-30 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=1 clxscore=1015 impostorscore=0
- mlxlogscore=999 bulkscore=0 phishscore=0 spamscore=0 adultscore=0
- mlxscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2009150000 definitions=main-2011300129
-X-FB-Internal: deliver
+Content-Type: text/plain
+X-XM-SPF: eid=1kjq4N-0004JZ-0W;;;mid=<87zh2yh8ti.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+sqwsfU7CTM4UeGEPdxQccntK8E2+ga5U=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,LotsOfNums_01,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02 autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Stephen Brennan <stephen.s.brennan@oracle.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 529 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 3.8 (0.7%), b_tie_ro: 2.7 (0.5%), parse: 0.80
+        (0.2%), extract_message_metadata: 4.0 (0.8%), get_uri_detail_list: 2.6
+        (0.5%), tests_pri_-1000: 2.9 (0.5%), tests_pri_-950: 0.94 (0.2%),
+        tests_pri_-900: 0.77 (0.1%), tests_pri_-90: 87 (16.5%), check_bayes:
+        86 (16.2%), b_tokenize: 10 (1.9%), b_tok_get_all: 10 (1.9%),
+        b_comp_prob: 2.2 (0.4%), b_tok_touch_all: 61 (11.5%), b_finish: 0.78
+        (0.1%), tests_pri_0: 415 (78.6%), check_dkim_signature: 0.44 (0.1%),
+        check_dkim_adsp: 2.0 (0.4%), poll_dns_idle: 0.68 (0.1%), tests_pri_10:
+        1.65 (0.3%), tests_pri_500: 5 (1.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] proc: Allow pid_revalidate() during LOOKUP_RCU
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 29, 2020 at 07:26:25PM +0200, Mike Rapoport wrote:
-> On Sun, Nov 29, 2020 at 07:53:45AM -0800, Shakeel Butt wrote:
-> > On Wed, Nov 25, 2020 at 1:51 AM Mike Rapoport <rppt@kernel.org> wrote:
-> > >
-> > > From: Mike Rapoport <rppt@linux.ibm.com>
-> > >
-> > > Account memory consumed by secretmem to memcg. The accounting is updated
-> > > when the memory is actually allocated and freed.
-> > >
-> > > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> > > Acked-by: Roman Gushchin <guro@fb.com>
-> > > ---
-> > >  mm/filemap.c   |  3 ++-
-> > >  mm/secretmem.c | 36 +++++++++++++++++++++++++++++++++++-
-> > >  2 files changed, 37 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > index 249cf489f5df..cf7f1dc9f4b8 100644
-> > > --- a/mm/filemap.c
-> > > +++ b/mm/filemap.c
-> > > @@ -42,6 +42,7 @@
-> > >  #include <linux/psi.h>
-> > >  #include <linux/ramfs.h>
-> > >  #include <linux/page_idle.h>
-> > > +#include <linux/secretmem.h>
-> > >  #include "internal.h"
-> > >
-> > >  #define CREATE_TRACE_POINTS
-> > > @@ -844,7 +845,7 @@ static noinline int __add_to_page_cache_locked(struct page *page,
-> > >         page->mapping = mapping;
-> > >         page->index = offset;
-> > >
-> > > -       if (!huge) {
-> > > +       if (!huge && !page_is_secretmem(page)) {
-> > >                 error = mem_cgroup_charge(page, current->mm, gfp);
-> > >                 if (error)
-> > >                         goto error;
-> > > diff --git a/mm/secretmem.c b/mm/secretmem.c
-> > > index 52a900a135a5..eb6628390444 100644
-> > > --- a/mm/secretmem.c
-> > > +++ b/mm/secretmem.c
-> > > @@ -18,6 +18,7 @@
-> > >  #include <linux/memblock.h>
-> > >  #include <linux/pseudo_fs.h>
-> > >  #include <linux/secretmem.h>
-> > > +#include <linux/memcontrol.h>
-> > >  #include <linux/set_memory.h>
-> > >  #include <linux/sched/signal.h>
-> > >
-> > > @@ -44,6 +45,32 @@ struct secretmem_ctx {
-> > >
-> > >  static struct cma *secretmem_cma;
-> > >
-> > > +static int secretmem_account_pages(struct page *page, gfp_t gfp, int order)
-> > > +{
-> > > +       int err;
-> > > +
-> > > +       err = memcg_kmem_charge_page(page, gfp, order);
-> > > +       if (err)
-> > > +               return err;
-> > > +
-> > > +       /*
-> > > +        * seceremem caches are unreclaimable kernel allocations, so treat
-> > > +        * them as unreclaimable slab memory for VM statistics purposes
-> > > +        */
-> > > +       mod_node_page_state(page_pgdat(page), NR_SLAB_UNRECLAIMABLE_B,
-> > > +                           PAGE_SIZE << order);
-> > 
-> > Please use mod_lruvec_page_state() instead, so we get the memcg stats too.
-> 
-> Ok
-> 
-> > BTW I think secretmem deserves a vmstat entry instead of overloading
-> > NR_SLAB_UNRECLAIMABLE_B.
-> 
-> I'd prefer to wait with a dedicated vmstat for now. We can always add it
-> later, once we have better picture of secremem usage.
+Stephen Brennan <stephen.s.brennan@oracle.com> writes:
 
-+1 here.
+> The pid_revalidate() function requires dropping from RCU into REF lookup
+> mode. When many threads are resolving paths within /proc in parallel,
+> this can result in heavy spinlock contention as each thread tries to
+> grab a reference to the /proc dentry (and drop it shortly thereafter).
+>
+> Allow the pid_revalidate() function to execute under LOOKUP_RCU. When
+> updates must be made to the inode due to the owning task performing
+> setuid(), drop out of RCU and into REF mode.
 
-From what I understand it's not clear now how big typical secret areas will be.
-If there will be few 2Mb areas per container (like for storing some keys),
-IMO it doesn't justify adding a separate counter. If they will be measured
-in GBs, then we'll add it later.
+So rather than get_task_rcu_user.  I think what we want is a function
+that verifies task->rcu_users > 0.
 
-Thanks!
+Which frankly is just "pid_task(proc_pid(inode), PIDTYPE_PID)".
+
+Which is something that we can do unconditionally in pid_revalidate.
+
+Skipping the update of the inode is probably the only thing that needs
+to be skipped.
+
+It looks like the code can safely rely on the the security_task_to_inode
+in proc_pid_make_inode and remove the security_task_to_inode in
+pid_update_inode.
+
+
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+> ---
+>
+> I'd like to use this patch as an RFC on this approach for reducing spinlock
+> contention during many parallel path lookups in the /proc filesystem. The
+> contention can be triggered by, for example, running ~100 parallel instances of
+> "TZ=/etc/localtime ps -fe >/dev/null" on a 100CPU machine. The %sys utilization
+> in such a case reaches around 90%, and profiles show two code paths with high
+> utilization:
+
+Do you have a real world work-load that is behaves something like this
+micro benchmark?  I am just curious how severe the problem you are
+trying to solve is.
+
+>
+>     walk_component
+>       lookup_fast
+>         unlazy_child
+>           legitimize_root
+>             __legitimize_path
+>               lockref_get_not_dead
+>
+>     terminate_walk
+>       dput
+>         dput
+>
+> By applying this patch, %sys utilization falls to around 60% under the same
+> workload.
+>
+> One item I'd like to highlight about this patch is that the
+> security_task_to_inode() hook is called less frequently as a result. I don't
+> know whether this is a major concern, which is why I've included security
+> reviewers as well.
+>
+>  fs/proc/base.c      | 50 ++++++++++++++++++++++++++++++++-------------
+>  fs/proc/internal.h  |  5 +++++
+>  include/linux/pid.h |  2 ++
+>  kernel/pid.c        | 12 +++++++++++
+>  4 files changed, 55 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index ebea9501afb8..038056f94ed0 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1813,12 +1813,29 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+>  /*
+>   * Set <pid>/... inode ownership (can change due to setuid(), etc.)
+>   */
+> -void pid_update_inode(struct task_struct *task, struct inode *inode)
+> +static int do_pid_update_inode(struct task_struct *task, struct inode *inode,
+> +							   unsigned int flags)
+>  {
+> -	task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
+> +	kuid_t uid;
+> +	kgid_t gid;
+> +
+> +	task_dump_owner(task, inode->i_mode, &uid, &gid);
+> +	if (uid_eq(uid, inode->i_uid) && gid_eq(gid, inode->i_gid) &&
+> +			!(inode->i_mode & (S_ISUID | S_ISGID)))
+> +		return 1;
+> +	if (flags & LOOKUP_RCU)
+> +		return -ECHILD;
+>  
+> +	inode->i_uid = uid;
+> +	inode->i_gid = gid;
+>  	inode->i_mode &= ~(S_ISUID | S_ISGID);
+>  	security_task_to_inode(task, inode);
+> +	return 1;
+> +}
+> +
+> +void pid_update_inode(struct task_struct *task, struct inode *inode)
+> +{
+> +	do_pid_update_inode(task, inode, 0);
+>  }
+>  
+>  /*
+> @@ -1830,19 +1847,24 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+>  {
+>  	struct inode *inode;
+>  	struct task_struct *task;
+> -
+> -	if (flags & LOOKUP_RCU)
+> -		return -ECHILD;
+> -
+> -	inode = d_inode(dentry);
+> -	task = get_proc_task(inode);
+> -
+> -	if (task) {
+> -		pid_update_inode(task, inode);
+> -		put_task_struct(task);
+> -		return 1;
+> +	int rv = 0;
+> +
+> +	if (flags & LOOKUP_RCU) {
+> +		inode = d_inode_rcu(dentry);
+> +		task = get_proc_task_rcu(inode);
+> +		if (task) {
+> +			rv = do_pid_update_inode(task, inode, flags);
+> +			put_task_struct_rcu_user(task);
+> +		}
+> +	} else {
+> +		inode = d_inode(dentry);
+> +		task = get_proc_task(inode);
+> +		if (task) {
+> +			rv = do_pid_update_inode(task, inode, flags);
+> +			put_task_struct(task);
+> +		}
+>  	}
+> -	return 0;
+> +	return rv;
+>  }
+>  
+>  static inline bool proc_inode_is_dead(struct inode *inode)
+> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+> index cd0c8d5ce9a1..aa6df65ad3eb 100644
+> --- a/fs/proc/internal.h
+> +++ b/fs/proc/internal.h
+> @@ -121,6 +121,11 @@ static inline struct task_struct *get_proc_task(const struct inode *inode)
+>  	return get_pid_task(proc_pid(inode), PIDTYPE_PID);
+>  }
+>  
+> +static inline struct task_struct *get_proc_task_rcu(const struct inode *inode)
+> +{
+> +	return get_pid_task_rcu_user(proc_pid(inode), PIDTYPE_PID);
+> +}
+> +
+>  void task_dump_owner(struct task_struct *task, umode_t mode,
+>  		     kuid_t *ruid, kgid_t *rgid);
+>  
+> diff --git a/include/linux/pid.h b/include/linux/pid.h
+> index 9645b1194c98..0b2c54f85e6d 100644
+> --- a/include/linux/pid.h
+> +++ b/include/linux/pid.h
+> @@ -86,6 +86,8 @@ static inline struct pid *get_pid(struct pid *pid)
+>  extern void put_pid(struct pid *pid);
+>  extern struct task_struct *pid_task(struct pid *pid, enum pid_type);
+>  extern struct task_struct *get_pid_task(struct pid *pid, enum pid_type);
+> +extern struct task_struct *get_pid_task_rcu_user(struct pid *pid,
+> +						 enum pid_type type);
+>  
+>  extern struct pid *get_task_pid(struct task_struct *task, enum pid_type type);
+>  
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 0a9f2e437217..05acbd15cfa6 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -390,6 +390,18 @@ struct task_struct *get_pid_task(struct pid *pid, enum pid_type type)
+>  }
+>  EXPORT_SYMBOL_GPL(get_pid_task);
+>  
+> +struct task_struct *get_pid_task_rcu_user(struct pid *pid, enum pid_type type)
+> +{
+> +	struct task_struct *task;
+> +
+> +	task = pid_task(pid, type);
+> +	if (task && refcount_inc_not_zero(&task->rcu_users))
+> +		return task;
+> +
+> +	return NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(get_pid_task_rcu_user);
+> +
+>  struct pid *find_get_pid(pid_t nr)
+>  {
+>  	struct pid *pid;
