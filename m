@@ -2,132 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4BF42C8E0B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:27:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0100A2C8E23
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbgK3T11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 14:27:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37748 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728527AbgK3T1Z (ORCPT
+        id S1729520AbgK3TfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 14:35:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40109 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728901AbgK3TfQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 14:27:25 -0500
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AEC9C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:26:45 -0800 (PST)
-Received: by mail-pl1-x643.google.com with SMTP id t18so7055561plo.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:26:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5UnMpQBYHotCDTkXRugfxn86+0MbQOFfnDSvdnd4GfQ=;
-        b=jwRI+RZHUvwb1CP4nQm75YJO0k3drE7J0VsbbONg4HJ0P6fp4hjRDhCyve6Jg5oots
-         ImF51/TaBnSfChuyclD/Kha+r+KSni+VtCv5vaImPAx4+ePME3uk4htaE0c5W1C4Kmow
-         uh3PdxmKRCJoZe2q8AOHPR4SWU2wMvpXnULBI97Py0rjc8ncRbHlmGXJ8JrOpyPBYr+m
-         RVAIsQ7BNTkcwhSNQadBtLurDnw4+0Er9XVV42lVO59FrOSnAvXIJ59VitG4iq0OpqKw
-         IPF+Vg6k65jmFjur7dgmDiX2ei5pRnhqipHa2B0KV4KyWvq8Joy7gcbSlHmJgrZfUElM
-         mVAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5UnMpQBYHotCDTkXRugfxn86+0MbQOFfnDSvdnd4GfQ=;
-        b=NWwDDBpwAnEDArr+NX9NxenYkwGA5a3BL3iQ5EyheSkR0X+IyuTKQMTDY1B5nH3aEY
-         XS1OS7UjPSoi31zhDStYSNoUruv//c3w/l75AsJrLRWt6L28LZZIFgO+AZGorolp9Gjk
-         FJlABG6GAziRauPvSbDoyKXsbyKOI24cGZdVy8GLVHHfaIT19w5z1EtG3CcMTewEm+uj
-         QgtG7GaiGDbwNVUSXEZjtTFvIjL5wvOTLXtt5A0vqlwAmPHI6pJ3whbLhZGKGRbg2sVh
-         JN3zBQDOUBblFj3WpjnHuVpUDr7Z8ujQ14W5n0dT5UM2E2k21/hDdDKgImPpAjag0jNJ
-         YfXg==
-X-Gm-Message-State: AOAM531+qsa/7Lw2GZiusAoezEaEnXbqqBZhgFInAhOLG6qppYdSs6Iy
-        qsH6dlnbXVCRAY2b7aLbsGH3RHiTND7HKQ==
-X-Google-Smtp-Source: ABdhPJxKgJMMz70YGWt+n1sthe/QFDOW1SrKkWKaEAAkTnFqKlM3zLJ5S/5KPnA5AUMHV1Cb71id5A==
-X-Received: by 2002:a17:90a:14e5:: with SMTP id k92mr346329pja.169.1606764404409;
-        Mon, 30 Nov 2020 11:26:44 -0800 (PST)
-Received: from relinquished.localdomain ([2601:602:8b80:8e0::b2be])
-        by smtp.gmail.com with ESMTPSA id 21sm17640701pfw.105.2020.11.30.11.26.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 11:26:42 -0800 (PST)
-Date:   Mon, 30 Nov 2020 11:26:41 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Btrfs <linux-btrfs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH v6 02/11] fs: add O_ALLOW_ENCODED open flag
-Message-ID: <X8VHcZs6paUvQGkk@relinquished.localdomain>
-References: <cover.1605723568.git.osandov@fb.com>
- <977fd16687d8b0474fd9c442f79c23f53783e403.1605723568.git.osandov@fb.com>
- <CAOQ4uxiaWAT6kOkxgMgeYEcOBMsc=HtmSwssMXg0Nn=rbkZRGA@mail.gmail.com>
- <CAG48ez3rLFOWpaQcJxEE7BNXvxHvUQnvhhY-xyR2bZfhnmwQrg@mail.gmail.com>
+        Mon, 30 Nov 2020 14:35:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606764829;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hZA0rkeTs6RdwOmnFqZ5dPAN2kNIQ0c32hZuL9Bwf40=;
+        b=ekk9T4ekTVPUPIJDJyW3z0n62X64NwgaB9Dukz7ztPEBY9d2ySJ7DlEMWgm1dvMy2j3Cuf
+        v6PaNRm+QNE8sfgELgbZZwG14Kacb4YUkruxVtvNN1fXkmMZQRnz/dwBUZOWyyXFCfrU0X
+        FKCLuGv6Yho67IHnVBOI6UIWo4xyVVw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-446-jh-ZOA9vMl-C2R8bKmsnXg-1; Mon, 30 Nov 2020 14:33:45 -0500
+X-MC-Unique: jh-ZOA9vMl-C2R8bKmsnXg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10992101AFC9;
+        Mon, 30 Nov 2020 19:33:43 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-55.rdu2.redhat.com [10.10.116.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E716960C67;
+        Mon, 30 Nov 2020 19:33:42 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 75C9C22054F; Mon, 30 Nov 2020 14:33:42 -0500 (EST)
+Date:   Mon, 30 Nov 2020 14:33:42 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v2 4/4] overlay: Add rudimentary checking of writeback
+ errseq on volatile remount
+Message-ID: <20201130193342.GD14328@redhat.com>
+References: <20201127092058.15117-1-sargun@sargun.me>
+ <20201127092058.15117-5-sargun@sargun.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez3rLFOWpaQcJxEE7BNXvxHvUQnvhhY-xyR2bZfhnmwQrg@mail.gmail.com>
+In-Reply-To: <20201127092058.15117-5-sargun@sargun.me>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 21, 2020 at 12:41:23AM +0100, Jann Horn wrote:
-> On Thu, Nov 19, 2020 at 8:03 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > On Wed, Nov 18, 2020 at 9:18 PM Omar Sandoval <osandov@osandov.com> wrote:
-> > > The upcoming RWF_ENCODED operation introduces some security concerns:
-> > >
-> > > 1. Compressed writes will pass arbitrary data to decompression
-> > >    algorithms in the kernel.
-> > > 2. Compressed reads can leak truncated/hole punched data.
-> > >
-> > > Therefore, we need to require privilege for RWF_ENCODED. It's not
-> > > possible to do the permissions checks at the time of the read or write
-> > > because, e.g., io_uring submits IO from a worker thread. So, add an open
-> > > flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
-> > > fcntl(). The flag is not cleared in any way on fork or exec. It must be
-> > > combined with O_CLOEXEC when opening to avoid accidental leaks (if
-> > > needed, it may be set without O_CLOEXEC by using fnctl()).
-> > >
-> > > Note that the usual issue that unknown open flags are ignored doesn't
-> > > really matter for O_ALLOW_ENCODED; if the kernel doesn't support
-> > > O_ALLOW_ENCODED, then it doesn't support RWF_ENCODED, either.
-> [...]
-> > > diff --git a/fs/open.c b/fs/open.c
-> > > index 9af548fb841b..f2863aaf78e7 100644
-> > > --- a/fs/open.c
-> > > +++ b/fs/open.c
-> > > @@ -1040,6 +1040,13 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
-> > >                 acc_mode = 0;
-> > >         }
-> > >
-> > > +       /*
-> > > +        * O_ALLOW_ENCODED must be combined with O_CLOEXEC to avoid accidentally
-> > > +        * leaking encoded I/O privileges.
-> > > +        */
-> > > +       if ((how->flags & (O_ALLOW_ENCODED | O_CLOEXEC)) == O_ALLOW_ENCODED)
-> > > +               return -EINVAL;
-> > > +
-> >
-> >
-> > dup() can also result in accidental leak.
-> > We could fail dup() of fd without O_CLOEXEC. Should we?
-> >
-> > If we should than what error code should it be? We could return EPERM,
-> > but since we do allow to clear O_CLOEXEC or set O_ALLOW_ENCODED
-> > after open, EPERM seems a tad harsh.
-> > EINVAL seems inappropriate because the error has nothing to do with
-> > input args of dup() and EBADF would also be confusing.
+On Fri, Nov 27, 2020 at 01:20:58AM -0800, Sargun Dhillon wrote:
+> Volatile remounts validate the following at the moment:
+>  * Has the module been reloaded / the system rebooted
+>  * Has the workdir been remounted
 > 
-> This seems very arbitrary to me. Sure, leaking these file descriptors
-> wouldn't be great, but there are plenty of other types of file
-> descriptors that are probably more sensitive. (Writable file
-> descriptors to databases, to important configuration files, to
-> io_uring instances, and so on.) So I don't see why this specific
-> feature should impose such special rules on it.
+> This adds a new check for errors detected via the superblock's
+> errseq_t. At mount time, the errseq_t is snapshotted to disk,
+> and upon remount it's re-verified. This allows for kernel-level
+> detection of errors without forcing userspace to perform a
+> sync and allows for the hidden detection of writeback errors.
+> 
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/overlayfs/overlayfs.h | 1 +
+>  fs/overlayfs/readdir.c   | 6 ++++++
+>  fs/overlayfs/super.c     | 1 +
+>  3 files changed, 8 insertions(+)
+> 
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index de694ee99d7c..e8a711953b64 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -85,6 +85,7 @@ struct ovl_volatile_info {
+>  	 */
+>  	uuid_t		ovl_boot_id;	/* Must stay first member */
+>  	u64		s_instance_id;
+> +	errseq_t	errseq;	/* Implemented as a u32 */
+>  } __packed;
+>  
+>  /*
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index 7b66fbb20261..5795b28bb4cf 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -1117,6 +1117,12 @@ static int ovl_verify_volatile_info(struct ovl_fs *ofs,
+>  		return -EINVAL;
+>  	}
+>  
+> +	err = errseq_check(&volatiledir->d_sb->s_wb_err, info.errseq);
 
-I agree with Jann. I'm okay with the O_CLOEXEC-on-open requirement if it
-makes people more comfortable, but I don't think we should be bending
-over backwards to block it anywhere else.
+Might be a stupid question. Will ask anyway.
+
+But what protects against wrapping of counter. IOW, Say we stored info.errseq
+value as A. It is possible that bunch of errors occurred and at remount
+time ->s_wb_err is back to A and we pass the check. (Despite the fact lots
+of errors have occurred since we sampled).
+
+Thanks
+Vivek
+
