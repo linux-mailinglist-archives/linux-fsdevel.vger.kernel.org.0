@@ -2,143 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E9602C8DD2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B28EF2C8DDC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:20:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388303AbgK3TQo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 14:16:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:25664 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388020AbgK3TQk (ORCPT
+        id S1729859AbgK3TT1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 14:19:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36470 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729850AbgK3TTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 14:16:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606763713;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yG/N1QYbCe2Gv2DEXk2bQ+9lwnJX4uGO5t7uHFM1aMk=;
-        b=TtnZpck/Cnx6mycbkYSdi6PbOmjNI4GgPeGRZS/5E0fWpisAhB5O6GoHAtQvklCYKt0+0s
-        wiqdIzjzIm0+F2hWE9WXL1vWEltR0gLRlQBXBfsGFmDftw3Wzi1gENNuhqtdd9QwjytOzV
-        2+YIZZmpKBPKPqloHjAo6hS6oW47UtQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-584-jGTEpHE7OViaf8TStxy5kg-1; Mon, 30 Nov 2020 14:15:11 -0500
-X-MC-Unique: jGTEpHE7OViaf8TStxy5kg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D7B8E1842146;
-        Mon, 30 Nov 2020 19:15:09 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-55.rdu2.redhat.com [10.10.116.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA4606086F;
-        Mon, 30 Nov 2020 19:15:09 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2CFDB22054F; Mon, 30 Nov 2020 14:15:09 -0500 (EST)
-Date:   Mon, 30 Nov 2020 14:15:09 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mon, 30 Nov 2020 14:19:19 -0500
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89C5C0613D4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:18:33 -0800 (PST)
+Received: by mail-pj1-x1041.google.com with SMTP id v1so187761pjr.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:18:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=J0uaPww9Zo/kwiIz62BRZcQJ75KrUIs2Bl30icME+Dc=;
+        b=TXpn7lbrUrUILSPcmkpNm9ho9lyxtnMhvLUZTDTKTkfhqgufluqLhBWTfWZi9ML+Ul
+         6MLS5fKcBK/W/JorbbRmkIHIrz+5iM7uRTQ1D+FBUX8mSAnu9bXf98kkV7m/+upab/3s
+         NYrJKb9Pv2tRvzoYgskwZ4aDTv2GjtsRz8nBiA7nDZiPK03YMTiOr5QJM4gjdfSEtf/J
+         ZWkAJLvVcd2Afx8D9O9ZFdi4mX76DLvXW6ozrmLdQira//F3CF4O0H+FoyKVe4TbyRab
+         ES0SBeNjt3Gij6gblWH3wFKIPd21mg3ymfFHZ7c6WVSh7AG1vLCVNGvb58ljmDgBTK5J
+         fLTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J0uaPww9Zo/kwiIz62BRZcQJ75KrUIs2Bl30icME+Dc=;
+        b=GjYcH9R6XyOYAlimPHB/ji8hq/Z9h3IZ8Lhp1qcO/vIxjT9QH9rHz8EiMZfcfFeGgh
+         KkQQb6U5ZQbPjlRkB5Fwv6399lXBcFPHoLFtj5ogs4YH9mF4j9K0jSO/11yKcLULfLJe
+         QqpXxkmbzaSV7J8lZ5VUroGRo85zuViDjgQ2UK2imKDUwUKrmfiJBRq/TGn21o12QzBY
+         bseaFwp09sgaQ2om+tvtg85ZZfh9/xf4mwgKNa4jCLQxBeK6UbqlW2NAhgcIsvqUaLU3
+         Azdg6j8AwrPkUuakmInFpCbz3pD366oFdKEPE6vORixDSzltvQ6nhIw3dySKn2wjFx2d
+         Vg1A==
+X-Gm-Message-State: AOAM531d4aQj36WjDfp+rOQdpQsYyCe9vwThhtBfXExGj1ZsZUaYoWrT
+        Iu0D83R5qHeN/EG+jhHNYKVGFw==
+X-Google-Smtp-Source: ABdhPJxV8so8Tk7xlVbSlSNLCUfIRq2duNU3cGTYClzBLepW/PJI1vbrV4KpO4SQjmioJT/24Su3cg==
+X-Received: by 2002:a17:902:b209:b029:d8:e821:efc6 with SMTP id t9-20020a170902b209b02900d8e821efc6mr19864273plr.5.1606763913184;
+        Mon, 30 Nov 2020 11:18:33 -0800 (PST)
+Received: from relinquished.localdomain ([2601:602:8b80:8e0::b2be])
+        by smtp.gmail.com with ESMTPSA id v23sm17759258pfn.141.2020.11.30.11.18.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Nov 2020 11:18:31 -0800 (PST)
+Date:   Mon, 30 Nov 2020 11:18:30 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     dsterba@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2 4/4] overlay: Add rudimentary checking of writeback
- errseq on volatile remount
-Message-ID: <20201130191509.GC14328@redhat.com>
-References: <20201127092058.15117-1-sargun@sargun.me>
- <20201127092058.15117-5-sargun@sargun.me>
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v6 04/11] btrfs: fix btrfs_write_check()
+Message-ID: <X8VFhiqOVZKh+i6e@relinquished.localdomain>
+References: <cover.1605723568.git.osandov@fb.com>
+ <b096cecce8277b30e1c7e26efd0450c0bc12ff31.1605723568.git.osandov@fb.com>
+ <20201123170831.GH8669@twin.jikos.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201127092058.15117-5-sargun@sargun.me>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20201123170831.GH8669@twin.jikos.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 27, 2020 at 01:20:58AM -0800, Sargun Dhillon wrote:
-> Volatile remounts validate the following at the moment:
->  * Has the module been reloaded / the system rebooted
->  * Has the workdir been remounted
+On Mon, Nov 23, 2020 at 06:08:31PM +0100, David Sterba wrote:
+> On Wed, Nov 18, 2020 at 11:18:11AM -0800, Omar Sandoval wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > btrfs_write_check() has two related bugs:
+> > 
+> > 1. It gets the iov_iter count before calling generic_write_checks(), but
+> >    generic_write_checks() may truncate the iov_iter.
+> > 2. It returns the count or negative errno as a size_t, which the callers
+> >    cast to an int. If the count is greater than INT_MAX, this overflows.
+> > 
+> > To fix both of these, pull the call to generic_write_checks() out of
+> > btrfs_write_check(), use the new iov_iter count returned from
+> > generic_write_checks(), and have btrfs_write_check() return 0 or a
+> > negative errno as an int instead of the count. This rearrangement also
+> > paves the way for RWF_ENCODED write support.
+> > 
+> > Fixes: f945968ff64c ("btrfs: introduce btrfs_write_check()")
 > 
-> This adds a new check for errors detected via the superblock's
-> errseq_t. At mount time, the errseq_t is snapshotted to disk,
-> and upon remount it's re-verified. This allows for kernel-level
-> detection of errors without forcing userspace to perform a
-> sync and allows for the hidden detection of writeback errors.
-> 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/overlayfs/overlayfs.h | 1 +
->  fs/overlayfs/readdir.c   | 6 ++++++
->  fs/overlayfs/super.c     | 1 +
->  3 files changed, 8 insertions(+)
-> 
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index de694ee99d7c..e8a711953b64 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -85,6 +85,7 @@ struct ovl_volatile_info {
->  	 */
->  	uuid_t		ovl_boot_id;	/* Must stay first member */
->  	u64		s_instance_id;
-> +	errseq_t	errseq;	/* Implemented as a u32 */
->  } __packed;
->  
->  /*
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 7b66fbb20261..5795b28bb4cf 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -1117,6 +1117,12 @@ static int ovl_verify_volatile_info(struct ovl_fs *ofs,
->  		return -EINVAL;
->  	}
->  
-> +	err = errseq_check(&volatiledir->d_sb->s_wb_err, info.errseq);
-> +	if (err) {
-> +		pr_debug("Workdir filesystem reports errors: %d\n", err);
-> +		return -EINVAL;
-> +	}
-> +
->  	return 1;
->  }
->  
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index a8ee3ba4ebbd..2e473f8c75dd 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1248,6 +1248,7 @@ static int ovl_set_volatile_info(struct ovl_fs *ofs, struct dentry *volatiledir)
->  	int err;
->  	struct ovl_volatile_info info = {
->  		.s_instance_id = volatiledir->d_sb->s_instance_id,
-> +		.errseq = errseq_sample(&volatiledir->d_sb->s_wb_err),
+> This patch is still in misc-next and the commit id is unstable, so this
+> would rather be folded to the patch.
 
-errse_sample() seems to return 0 if nobody has seen the error yet. That
-means on remount we will fail. It is a false failure from our perspective
-and we are not interested in knowing if somebody else has seen the
-failure or not. 
-
-Maybe we need a flag in errseq_sample() to get us current value
-irrespective of the fact whether anybody has seen the error or not?
-
-If we end up making this change, then we probably will have to somehow
-mask ERRSEQ_SEEN bit in errseq_check() comparison. Because if we
-sampled ->s_wb_err when nobody saw it and later by the remount time
-say ERRSEQ_SEEN is set, we don't want remount to fail.
-
-Thanks
-Vivek
->  	};
->  
->  	uuid_copy(&info.ovl_boot_id, &ovl_boot_id);
-> -- 
-> 2.25.1
-> 
-
+Looks like you folded this in on misc-next, thanks!
