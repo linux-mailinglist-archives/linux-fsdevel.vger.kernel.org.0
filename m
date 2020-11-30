@@ -2,175 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6812C8E02
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BF42C8E0B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:27:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388336AbgK3TYL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 14:24:11 -0500
-Received: from mail-bn8nam12on2088.outbound.protection.outlook.com ([40.107.237.88]:64609
-        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388323AbgK3TYE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 14:24:04 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ptvz8o41XDPGUGLBkt05lC2FAf3/MIZr0jI1WQgOWZXDNWIwETjo8SBWhhubm/kSBQQnZB5bEKP065tX7bg7TGWzUMZ0FKlbi6PH2+JNfwR/l0Gh2d28yviRVPMhmLbHEe8iI2W9VzwrFYPSO17aG6jVZQPWaiOxDsXMJHJUFURx+pJVqSpzkUL156dSr6G2ePm0bt76037OeMnD27geSuXy8caTh4t2oHRPNg5OK67wF10OoEA2Xr7kJtfycbP1YJENdCFcRi3gMSnm+iTaazTsL1bMrKwPh9BMcNpVuMqfqdCl1U0Rcr7LTlbb8wrFAsrpE9uYASRM4L+QQh+VHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ip6xsBvrbVD3lidOCeGff53tUNmM/bcLvaSMYZmPzZk=;
- b=EF2vEfHO8AHcY78C5uEbtHbk1sO5ysa/7XWsuhYKX6j+eRLGLrsRL34aHb5n0ybt9lU8PlVDxjvdMY4LzFjursY1m2J4TK8Bg8WA6oVD465BQ/y33KqjYxY0Tcupx/ry715EzNvHZ8d/ytXi2PA4hLlhcP8RoxxPgVRBrf3M7W4w1boT2fE4pvIpg7ASdbsuRa92kcuzR2ys5eBUEvOktRbL8feFlv3jl88o4ZKaisRZG0tuFG6HrMbuV8HIRdtvjSQnE90soexG3HKDliQ7gDCTtlWaIbd25Gq14yFDW9dG/u5bBhJYsVF+cCXmmJ5Jl+2PUVBmtDV0geAYQw1UvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ip6xsBvrbVD3lidOCeGff53tUNmM/bcLvaSMYZmPzZk=;
- b=N5VWmdBjQTcLAIQ5LwNPXd8gvdJbc3HblBddefVmNnvu9n4+aTmPjNr0NiXQkSWPLpAPtxB+Ufu27c5acP4VPuCVubPOEEVFX990oDcOLrnZM0pdOwNMk9HVWWaAxSZ2Li5IAzSfhk9N/GSXukDOcbMBgF4ONwvfDuloKciTqEA=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (2603:10b6:a03:4a::18)
- by BY5PR05MB6996.namprd05.prod.outlook.com (2603:10b6:a03:1bf::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.9; Mon, 30 Nov
- 2020 19:23:08 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::d421:f99:8921:1ee7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::d421:f99:8921:1ee7%6]) with mapi id 15.20.3632.006; Mon, 30 Nov 2020
- 19:23:08 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Jens Axboe <axboe@kernel.dk>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [RFC PATCH 07/13] fs/userfaultfd: support read_iter to use
- io_uring
-Thread-Topic: [RFC PATCH 07/13] fs/userfaultfd: support read_iter to use
- io_uring
-Thread-Index: AQHWx0V+iaqy58g/+UWI/jFzvM4pnanhDeuA
-Date:   Mon, 30 Nov 2020 19:23:07 +0000
-Message-ID: <3634A0BA-888F-445B-84A2-D7F7C957FFA8@vmware.com>
-References: <20201129004548.1619714-1-namit@vmware.com>
- <20201129004548.1619714-8-namit@vmware.com>
- <dcf0ca71-c3e3-a813-b04f-d3e86bcddd48@kernel.dk>
-In-Reply-To: <dcf0ca71-c3e3-a813-b04f-d3e86bcddd48@kernel.dk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.dk; dkim=none (message not signed)
- header.d=none;kernel.dk; dmarc=none action=none header.from=vmware.com;
-x-originating-ip: [2601:647:4700:9b2:b484:b377:b015:2fad]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 89af1875-c15e-44d3-cba5-08d895655e68
-x-ms-traffictypediagnostic: BY5PR05MB6996:
-x-microsoft-antispam-prvs: <BY5PR05MB6996EB414BC29FB6B5DAC669D0F50@BY5PR05MB6996.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8P3PpfDwaYHDwou+iNGLG7BXY5G4OFTlUroFWmbiaHlzdbPtTvv0GU1Gio8x20fgoPHRsMJPO58HgLwBFpRo/azsthUbRGHxaaKUOCLADROYu/ev8LJoEKpBdQy0JviqSVwdCd9aIeEci9lFPoHkJ+hwpJYiQUZOWZfQqeIciWyKVD6F6avW471dz7XCsREdWEgfrLj/KM5cJLUGZ448SKe5IXYJmV0llfG6KtlfB4OKhqjIe6j3sJoJy++gzyxvNpztB4LEhBF2Nb/8G3jSY905I1LxZFvP0RRe/8/KTICATDnduWlK0HoTkggYAZWe
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB4776.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(136003)(376002)(346002)(39860400002)(6916009)(6506007)(8676002)(6486002)(54906003)(316002)(2906002)(4326008)(33656002)(53546011)(8936002)(6512007)(186003)(36756003)(66446008)(5660300002)(86362001)(478600001)(2616005)(66556008)(64756008)(71200400001)(83380400001)(66946007)(76116006)(66476007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?5REbMPAn+zK01kf4YTjdyL4Q+zCVSYU+r8ahn9/mUNQt7a/vft3QLMRjdiwc?=
- =?us-ascii?Q?fku2D2wgTMEZlmB+z9a/UJ1Hn08qyrOen1fn0gUpNniwBiVKdatYXuvtkkig?=
- =?us-ascii?Q?nTEfkXwfUelEEkL+aecZC6bWsBYYK6I+PaGbdajy26YkrmIuJAibYQ6kuKc/?=
- =?us-ascii?Q?vF/xW2cw/V/ULW66wtVGreghA+cbsjsag2XN8elq1WdkvyggqfxzcaEYGWc3?=
- =?us-ascii?Q?C3M18L4R8lGSQ5cntPpthjgr6V8CgN+I9TKKONwl6mcuFhQypm1oKkCshRpE?=
- =?us-ascii?Q?CLVA89J29krnm9bRvXEP40KRxBCqMjidJCjodBDIkkYO4ZXVNDVzLmgUHNHH?=
- =?us-ascii?Q?thIfHk8yUeJgqF6DNXUDfHqs6t1cxevZjmsYz521gqpiC26TIFr1V3qMRSyi?=
- =?us-ascii?Q?eB5ZUoqrANlFSQxjVFstPMqBhXHvQh7sGtAE0SS0CoUSaGI7Kf0I+P8wtGLb?=
- =?us-ascii?Q?sEQhPUS/q6Gc91A4UtwLOFDjYXAATPMlnnbksnI+9D9h7L3eD6yxA6En/70r?=
- =?us-ascii?Q?PmpJwwMUfb4HIg+FPOtpiaexP6qvwAHI/gX9m7JSNXcR2GpUiqiPzATTcVv2?=
- =?us-ascii?Q?9uapiGvml+KWfzCDrkwbzQJ+RfIPwIKihPS0U74z/PWSSrVGU0JuDsOlwYg7?=
- =?us-ascii?Q?RhcwlHuBUxRMVPy+agwNwFJTasMX9E0BM3OJV9mFHWIGLEUGgKIdqy6zgqBo?=
- =?us-ascii?Q?ORvQ4T614sY+2eWqfZrIq1IIXEe6DHQjeZEvfRLpZcX2d6cqW4iI9SCKgk69?=
- =?us-ascii?Q?9gcvsXuzumN0rg0HJ35qlgxcNUdg1HmAUfwXBkzsZfu058jHxFssJT/DLdll?=
- =?us-ascii?Q?MOLemWl/iChCmQTRKZpTv8CBKAKbstVLWFtgPiYYrZi/pOZs8WrA9vNNJMbv?=
- =?us-ascii?Q?L8R0QcANN61agLK5YNPMTYLpRZYdYwF/a6uHh+1RIXbFQRp0L6e7Weckuxlv?=
- =?us-ascii?Q?jxRdOmOaCf9CpuDa4kFB3H07VnDu1U449NsvSKljZXKlfS7UCyf5w12gHPGv?=
- =?us-ascii?Q?LKt2GrQVEN7IzQ2B0XYBYw2eMAeeEdQr2CFf60XL7QfCj2keHFHlfOI65N2h?=
- =?us-ascii?Q?/N3wEIqa?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <32C21D8337B41F498DAD794931CE541A@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1728829AbgK3T11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 14:27:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37748 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728527AbgK3T1Z (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 14:27:25 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AEC9C0613D3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:26:45 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id t18so7055561plo.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:26:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=5UnMpQBYHotCDTkXRugfxn86+0MbQOFfnDSvdnd4GfQ=;
+        b=jwRI+RZHUvwb1CP4nQm75YJO0k3drE7J0VsbbONg4HJ0P6fp4hjRDhCyve6Jg5oots
+         ImF51/TaBnSfChuyclD/Kha+r+KSni+VtCv5vaImPAx4+ePME3uk4htaE0c5W1C4Kmow
+         uh3PdxmKRCJoZe2q8AOHPR4SWU2wMvpXnULBI97Py0rjc8ncRbHlmGXJ8JrOpyPBYr+m
+         RVAIsQ7BNTkcwhSNQadBtLurDnw4+0Er9XVV42lVO59FrOSnAvXIJ59VitG4iq0OpqKw
+         IPF+Vg6k65jmFjur7dgmDiX2ei5pRnhqipHa2B0KV4KyWvq8Joy7gcbSlHmJgrZfUElM
+         mVAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5UnMpQBYHotCDTkXRugfxn86+0MbQOFfnDSvdnd4GfQ=;
+        b=NWwDDBpwAnEDArr+NX9NxenYkwGA5a3BL3iQ5EyheSkR0X+IyuTKQMTDY1B5nH3aEY
+         XS1OS7UjPSoi31zhDStYSNoUruv//c3w/l75AsJrLRWt6L28LZZIFgO+AZGorolp9Gjk
+         FJlABG6GAziRauPvSbDoyKXsbyKOI24cGZdVy8GLVHHfaIT19w5z1EtG3CcMTewEm+uj
+         QgtG7GaiGDbwNVUSXEZjtTFvIjL5wvOTLXtt5A0vqlwAmPHI6pJ3whbLhZGKGRbg2sVh
+         JN3zBQDOUBblFj3WpjnHuVpUDr7Z8ujQ14W5n0dT5UM2E2k21/hDdDKgImPpAjag0jNJ
+         YfXg==
+X-Gm-Message-State: AOAM531+qsa/7Lw2GZiusAoezEaEnXbqqBZhgFInAhOLG6qppYdSs6Iy
+        qsH6dlnbXVCRAY2b7aLbsGH3RHiTND7HKQ==
+X-Google-Smtp-Source: ABdhPJxKgJMMz70YGWt+n1sthe/QFDOW1SrKkWKaEAAkTnFqKlM3zLJ5S/5KPnA5AUMHV1Cb71id5A==
+X-Received: by 2002:a17:90a:14e5:: with SMTP id k92mr346329pja.169.1606764404409;
+        Mon, 30 Nov 2020 11:26:44 -0800 (PST)
+Received: from relinquished.localdomain ([2601:602:8b80:8e0::b2be])
+        by smtp.gmail.com with ESMTPSA id 21sm17640701pfw.105.2020.11.30.11.26.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Nov 2020 11:26:42 -0800 (PST)
+Date:   Mon, 30 Nov 2020 11:26:41 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: [PATCH v6 02/11] fs: add O_ALLOW_ENCODED open flag
+Message-ID: <X8VHcZs6paUvQGkk@relinquished.localdomain>
+References: <cover.1605723568.git.osandov@fb.com>
+ <977fd16687d8b0474fd9c442f79c23f53783e403.1605723568.git.osandov@fb.com>
+ <CAOQ4uxiaWAT6kOkxgMgeYEcOBMsc=HtmSwssMXg0Nn=rbkZRGA@mail.gmail.com>
+ <CAG48ez3rLFOWpaQcJxEE7BNXvxHvUQnvhhY-xyR2bZfhnmwQrg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB4776.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89af1875-c15e-44d3-cba5-08d895655e68
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2020 19:23:07.9627
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2LxzhfolBxpxjQYB/mB5uSLbwf/FxWHoQNWjTbqzPO5plJYS9gj5YmabTsnd0g55Rn2CcaG4Wbsochv3rXERKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR05MB6996
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3rLFOWpaQcJxEE7BNXvxHvUQnvhhY-xyR2bZfhnmwQrg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Nov 30, 2020, at 10:20 AM, Jens Axboe <axboe@kernel.dk> wrote:
->=20
-> On 11/28/20 5:45 PM, Nadav Amit wrote:
->> From: Nadav Amit <namit@vmware.com>
->>=20
->> iouring with userfaultfd cannot currently be used fixed buffers since
->> userfaultfd does not provide read_iter(). This is required to allow
->> asynchronous (queued) reads from userfaultfd.
->>=20
->> To support async-reads of userfaultfd provide read_iter() instead of
->> read().
->>=20
->> Cc: Jens Axboe <axboe@kernel.dk>
->> Cc: Andrea Arcangeli <aarcange@redhat.com>
->> Cc: Peter Xu <peterx@redhat.com>
->> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->> Cc: io-uring@vger.kernel.org
->> Cc: linux-fsdevel@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Signed-off-by: Nadav Amit <namit@vmware.com>
->> ---
->> fs/userfaultfd.c | 18 ++++++++++--------
->> 1 file changed, 10 insertions(+), 8 deletions(-)
->>=20
->> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
->> index b6a04e526025..6333b4632742 100644
->> --- a/fs/userfaultfd.c
->> +++ b/fs/userfaultfd.c
->> @@ -1195,9 +1195,9 @@ static ssize_t userfaultfd_ctx_read(struct userfau=
-ltfd_ctx *ctx, int no_wait,
->> 	return ret;
->> }
->>=20
->> -static ssize_t userfaultfd_read(struct file *file, char __user *buf,
->> -				size_t count, loff_t *ppos)
->> +static ssize_t userfaultfd_read_iter(struct kiocb *iocb, struct iov_ite=
-r *to)
->> {
->> +	struct file *file =3D iocb->ki_filp;
->> 	struct userfaultfd_ctx *ctx =3D file->private_data;
->> 	ssize_t _ret, ret =3D 0;
->> 	struct uffd_msg msg;
->> @@ -1207,16 +1207,18 @@ static ssize_t userfaultfd_read(struct file *fil=
-e, char __user *buf,
->> 		return -EINVAL;
->>=20
->> 	for (;;) {
->> -		if (count < sizeof(msg))
->> +		if (iov_iter_count(to) < sizeof(msg))
->> 			return ret ? ret : -EINVAL;
->> 		_ret =3D userfaultfd_ctx_read(ctx, no_wait, &msg);
->=20
-> 'no_wait' should be changed to factor in iocb->ki_flags & IOCB_NOWAIT as =
-well,
-> not just f_flags & O_NONBLOCK.
->=20
-> I didn't check your write_iter, but if appropriate, that should do that
-> too.
+On Sat, Nov 21, 2020 at 12:41:23AM +0100, Jann Horn wrote:
+> On Thu, Nov 19, 2020 at 8:03 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Wed, Nov 18, 2020 at 9:18 PM Omar Sandoval <osandov@osandov.com> wrote:
+> > > The upcoming RWF_ENCODED operation introduces some security concerns:
+> > >
+> > > 1. Compressed writes will pass arbitrary data to decompression
+> > >    algorithms in the kernel.
+> > > 2. Compressed reads can leak truncated/hole punched data.
+> > >
+> > > Therefore, we need to require privilege for RWF_ENCODED. It's not
+> > > possible to do the permissions checks at the time of the read or write
+> > > because, e.g., io_uring submits IO from a worker thread. So, add an open
+> > > flag which requires CAP_SYS_ADMIN. It can also be set and cleared with
+> > > fcntl(). The flag is not cleared in any way on fork or exec. It must be
+> > > combined with O_CLOEXEC when opening to avoid accidental leaks (if
+> > > needed, it may be set without O_CLOEXEC by using fnctl()).
+> > >
+> > > Note that the usual issue that unknown open flags are ignored doesn't
+> > > really matter for O_ALLOW_ENCODED; if the kernel doesn't support
+> > > O_ALLOW_ENCODED, then it doesn't support RWF_ENCODED, either.
+> [...]
+> > > diff --git a/fs/open.c b/fs/open.c
+> > > index 9af548fb841b..f2863aaf78e7 100644
+> > > --- a/fs/open.c
+> > > +++ b/fs/open.c
+> > > @@ -1040,6 +1040,13 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+> > >                 acc_mode = 0;
+> > >         }
+> > >
+> > > +       /*
+> > > +        * O_ALLOW_ENCODED must be combined with O_CLOEXEC to avoid accidentally
+> > > +        * leaking encoded I/O privileges.
+> > > +        */
+> > > +       if ((how->flags & (O_ALLOW_ENCODED | O_CLOEXEC)) == O_ALLOW_ENCODED)
+> > > +               return -EINVAL;
+> > > +
+> >
+> >
+> > dup() can also result in accidental leak.
+> > We could fail dup() of fd without O_CLOEXEC. Should we?
+> >
+> > If we should than what error code should it be? We could return EPERM,
+> > but since we do allow to clear O_CLOEXEC or set O_ALLOW_ENCODED
+> > after open, EPERM seems a tad harsh.
+> > EINVAL seems inappropriate because the error has nothing to do with
+> > input args of dup() and EBADF would also be confusing.
+> 
+> This seems very arbitrary to me. Sure, leaking these file descriptors
+> wouldn't be great, but there are plenty of other types of file
+> descriptors that are probably more sensitive. (Writable file
+> descriptors to databases, to important configuration files, to
+> io_uring instances, and so on.) So I don't see why this specific
+> feature should impose such special rules on it.
 
-Thanks, I completely missed this point and will fix it in v1 (if I get
-a positive feedback on the rest from the userfaultfd people).
-
+I agree with Jann. I'm okay with the O_CLOEXEC-on-open requirement if it
+makes people more comfortable, but I don't think we should be bending
+over backwards to block it anywhere else.
