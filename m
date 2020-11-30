@@ -2,114 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0100A2C8E23
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15CB82C8E27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729520AbgK3TfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 14:35:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40109 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728901AbgK3TfQ (ORCPT
+        id S1729872AbgK3Tfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 14:35:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39084 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728901AbgK3Tfy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 14:35:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606764829;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hZA0rkeTs6RdwOmnFqZ5dPAN2kNIQ0c32hZuL9Bwf40=;
-        b=ekk9T4ekTVPUPIJDJyW3z0n62X64NwgaB9Dukz7ztPEBY9d2ySJ7DlEMWgm1dvMy2j3Cuf
-        v6PaNRm+QNE8sfgELgbZZwG14Kacb4YUkruxVtvNN1fXkmMZQRnz/dwBUZOWyyXFCfrU0X
-        FKCLuGv6Yho67IHnVBOI6UIWo4xyVVw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-446-jh-ZOA9vMl-C2R8bKmsnXg-1; Mon, 30 Nov 2020 14:33:45 -0500
-X-MC-Unique: jh-ZOA9vMl-C2R8bKmsnXg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 10992101AFC9;
-        Mon, 30 Nov 2020 19:33:43 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-55.rdu2.redhat.com [10.10.116.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E716960C67;
-        Mon, 30 Nov 2020 19:33:42 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 75C9C22054F; Mon, 30 Nov 2020 14:33:42 -0500 (EST)
-Date:   Mon, 30 Nov 2020 14:33:42 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mon, 30 Nov 2020 14:35:54 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78192C061A48
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:35:14 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id w6so11105958pfu.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:35:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zoIMtVE4+1+o9p0pbm0cQZHtnOHf9cojfw2g8Pzl99w=;
+        b=nFwXZN+9x1uRKlRpb2fisB/ELkMzUI7nBOTDK+3QkUAWIm3IfPiJqiGjivf6F3sSwv
+         RoZyHi7CgxvW3SSOZQ2cU1/KY0Iy+CUvtAsqwt6VbmFNVW6B+eL6V31xyW900NDwZht5
+         N2oHTj6Gh8XEDl0zpxkojlT54hjr847iaIKNqFW9i3ucnsLmDSouyItCamuTeqB2jgEm
+         0AXOJ61q3ZHbh7mqIh6vCm6/n53SmiKHvl5J6WQtgx6lhqPLoAlk4NAHMXWCsP8Sta+x
+         RZJhxhos8lefJMBl3CLwk3ul9mLSpsmV5sZfheVZtdZuZ8VK8F4zN5m0ix/m3QpJBjKp
+         OnMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zoIMtVE4+1+o9p0pbm0cQZHtnOHf9cojfw2g8Pzl99w=;
+        b=ONYVb4vs1zGYzSq5qGASRYCRLcD/QTwsqiC21XQE9XA9tI8Ufj5svkmpRg68rrkgw+
+         Qrp4eZoJQZOcneqq6vt1WuCaTTKkRQalX8YWJ1Qh5+18gSJNabSMSKUgz0hAgeNpSlkM
+         Tqrxp0xOehkMScx5OPgIN2vM51nIcTBcoK00dfwDUJz8RSByny2dR9lt4O7FYPLGi0gO
+         W+/pUvVZorYzliq7CFR65vRqgg9OEOgkRjf/Ta5C0uE7MIPZpm6zgUsze1DrEgrZ/Czb
+         FBqB+yv8a+F6gC3jY78v5vTGFbVP9w1LuvJhx+3baNlXJ1frbrviI9KaXq4Ma9XpSk85
+         5t4g==
+X-Gm-Message-State: AOAM533mO3bT4qSj2UBZZByVZOBrWcBiJrM2HgjHtonpLm9peL4myB3E
+        Kdw8vv9XIk5a5QLX5uuIAadOYg==
+X-Google-Smtp-Source: ABdhPJyg/H6c/EHEcuAnEkbxBKhJCsZbEssRrqxYEujREgZsvL9Edhwh0+EkZiCX44t3hNqjg9XPLg==
+X-Received: by 2002:a63:f857:: with SMTP id v23mr19059138pgj.174.1606764913878;
+        Mon, 30 Nov 2020 11:35:13 -0800 (PST)
+Received: from relinquished.localdomain ([2601:602:8b80:8e0::b2be])
+        by smtp.gmail.com with ESMTPSA id s10sm10916857pgg.76.2020.11.30.11.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Nov 2020 11:35:12 -0800 (PST)
+Date:   Mon, 30 Nov 2020 11:35:10 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2 4/4] overlay: Add rudimentary checking of writeback
- errseq on volatile remount
-Message-ID: <20201130193342.GD14328@redhat.com>
-References: <20201127092058.15117-1-sargun@sargun.me>
- <20201127092058.15117-5-sargun@sargun.me>
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com, linux-man <linux-man@vger.kernel.org>
+Subject: Re: [PATCH man-pages v6] Document encoded I/O
+Message-ID: <X8VJbqz+XtA5Vmth@relinquished.localdomain>
+References: <cover.1605723568.git.osandov@fb.com>
+ <ec1588a618bd313e5a7c05a7f4954cc2b76ddac3.1605724767.git.osandov@osandov.com>
+ <4d1430aa-a374-7565-4009-7ec5139bf311@gmail.com>
+ <fb4a4270-eb7a-06d5-e703-9ee470b61f8b@gmail.com>
+ <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201127092058.15117-5-sargun@sargun.me>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 27, 2020 at 01:20:58AM -0800, Sargun Dhillon wrote:
-> Volatile remounts validate the following at the moment:
->  * Has the module been reloaded / the system rebooted
->  * Has the workdir been remounted
+On Fri, Nov 20, 2020 at 04:03:44PM +0100, Alejandro Colomar (man-pages) wrote:
+> Hi Omar,
 > 
-> This adds a new check for errors detected via the superblock's
-> errseq_t. At mount time, the errseq_t is snapshotted to disk,
-> and upon remount it's re-verified. This allows for kernel-level
-> detection of errors without forcing userspace to perform a
-> sync and allows for the hidden detection of writeback errors.
+> I found a wording of mine to be a bit confusing.
+> Please see below.
 > 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/overlayfs/overlayfs.h | 1 +
->  fs/overlayfs/readdir.c   | 6 ++++++
->  fs/overlayfs/super.c     | 1 +
->  3 files changed, 8 insertions(+)
+> Thanks,
 > 
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index de694ee99d7c..e8a711953b64 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -85,6 +85,7 @@ struct ovl_volatile_info {
->  	 */
->  	uuid_t		ovl_boot_id;	/* Must stay first member */
->  	u64		s_instance_id;
-> +	errseq_t	errseq;	/* Implemented as a u32 */
->  } __packed;
->  
->  /*
-> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> index 7b66fbb20261..5795b28bb4cf 100644
-> --- a/fs/overlayfs/readdir.c
-> +++ b/fs/overlayfs/readdir.c
-> @@ -1117,6 +1117,12 @@ static int ovl_verify_volatile_info(struct ovl_fs *ofs,
->  		return -EINVAL;
->  	}
->  
-> +	err = errseq_check(&volatiledir->d_sb->s_wb_err, info.errseq);
+> Alex
+> 
+> On 11/20/20 3:06 PM, Alejandro Colomar (man-pages) wrote:
+> > Hi Omar and Michael,
+> > 
+> > please, see below.
+> > 
+> > Thanks,
+> > 
+> > Alex
+> > 
+> > On 11/20/20 12:29 AM, Alejandro Colomar (mailing lists; readonly) wrote:
+> >> Hi Omar,
+> >>
+> >> Please, see some fixes below:
+> >>
+> >> Michael, I've also some questions for you below
+> >> (you can grep for mtk to find those).
+> >>
+> >> Thanks,
+> >>
+> >> Alex
 
-Might be a stupid question. Will ask anyway.
-
-But what protects against wrapping of counter. IOW, Say we stored info.errseq
-value as A. It is possible that bunch of errors occurred and at remount
-time ->s_wb_err is back to A and we pass the check. (Despite the fact lots
-of errors have occurred since we sampled).
-
-Thanks
-Vivek
-
+Thanks for the suggestions, I'll incorporate those into the next
+submission.
