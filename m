@@ -2,21 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B4C2C7F41
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C0352C7F48
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:52:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbgK3HwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 02:52:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33580 "EHLO mx2.suse.de"
+        id S1727741AbgK3Hwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 02:52:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34190 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbgK3HwG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 02:52:06 -0500
+        id S1726762AbgK3Hwl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 02:52:41 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 06B55AC55;
-        Mon, 30 Nov 2020 07:51:25 +0000 (UTC)
-Subject: Re: [PATCH 44/45] block: merge struct block_device and struct
- hd_struct
+        by mx2.suse.de (Postfix) with ESMTP id 2190FAC8F;
+        Mon, 30 Nov 2020 07:52:00 +0000 (UTC)
+Subject: Re: [PATCH 45/45] block: stop using bdget_disk for partition 0
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -28,14 +27,14 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-45-hch@lst.de>
+ <20201128161510.347752-46-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <75432706-8726-2c86-a080-40c45e6144c3@suse.de>
-Date:   Mon, 30 Nov 2020 08:51:23 +0100
+Message-ID: <6ee4669e-69c1-eb41-c37e-3794d3207e3a@suse.de>
+Date:   Mon, 30 Nov 2020 08:51:59 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201128161510.347752-45-hch@lst.de>
+In-Reply-To: <20201128161510.347752-46-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -44,26 +43,20 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/28/20 5:15 PM, Christoph Hellwig wrote:
-> Instead of having two structures that represent each block device with
-> different life time rules, merge them into a single one.  This also
-> greatly simplifies the reference counting rules, as we can use the inode
-> reference count as the main reference count for the new struct
-> block_device, with the device model reference front ending it for device
-> model interaction.
+> We can just dereference the point in struct gendisk instead.  Also
+> remove the now unused export.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > ---
->   block/blk-cgroup.c        |   9 ++-
->   block/blk.h               |   2 +-
->   block/genhd.c             |  89 +++++++++--------------------
->   block/partitions/core.c   | 116 +++++++++++++++-----------------------
->   fs/block_dev.c            |   9 ---
->   include/linux/blk_types.h |   8 ++-
->   include/linux/blkdev.h    |   1 -
->   include/linux/genhd.h     |  40 +++----------
->   init/do_mounts.c          |  21 ++++---
->   kernel/trace/blktrace.c   |  43 +++-----------
->   10 files changed, 108 insertions(+), 230 deletions(-)
+>   block/genhd.c                   |  1 -
+>   drivers/block/nbd.c             |  4 +---
+>   drivers/block/xen-blkfront.c    | 20 +++++---------------
+>   drivers/block/zram/zram_drv.c   | 14 ++------------
+>   drivers/md/dm.c                 | 16 ++--------------
+>   drivers/s390/block/dasd_ioctl.c |  5 ++---
+>   fs/block_dev.c                  |  2 +-
+>   7 files changed, 13 insertions(+), 49 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
