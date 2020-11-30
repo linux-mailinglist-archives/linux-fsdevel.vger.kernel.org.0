@@ -2,219 +2,343 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F952C8BD6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 18:57:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 159E12C8BDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 18:57:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387455AbgK3R4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 12:56:10 -0500
-Received: from mail-eopbgr770135.outbound.protection.outlook.com ([40.107.77.135]:55521
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727722AbgK3R4J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 12:56:09 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V6rMHX8m08uyDIx7jT1dmhRxqQB+MCjoDDdU3pDqCzxaGSrGt30PkoB2/TdJrXhVeU9xS7+aDp5Y066PnM8EvRk5hs+D+C5MBVCEPUdp3mM2xDUR7zSTBLia3N+L377F7n0e1HKSG8P6WFLttf5rCMUB6xy8TfFfpWEXCRMoeVSxdDA64Gd0sXB0JDWtNOxO7I5iKwgd9KiMUqUcUyovrHIWsloDOaJYrxZlirvijEyW9FMQIAbHYNRx3UxPG8MgR559XggP/DPkHf/5YU3ryJTpSHfujerBGOcuYUzVtQMmcUNpYtCbegJu4CvYeqWJY9VcdKxImurNdTLIMBeWWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KmbndxrgOjwasNVtsc6NoHEw3oJ9cVCH7NzcSK19DqQ=;
- b=GSaFCBIQGSFMsB3nuS9RGZkzT/VgkhAmL5qlg43GsbbvwuTSeTAew99ZdzMA/FeHUoDe890z+dzTr8j2CcRPk8yPuC0FJ+vYXdBVnKyZFpNYgo1Gk1aHZUjjwwHZGReERfhcMMKRAhjRhsMiHaBGpAgsKJ3o9A5SwGauaj7m9kahvMc0XTC8JlaEwV78cQCiYs8CzZLlaZ1tSNqeSqUgDf2eNjCjfgHooPlnTGZFlTRROGQ7gS7G4iCJo4Q1zKRhQWE4XkqxXkqJxgQPBvdq9fu4KPqSLLyCKoX4PwNWn8c14Rz6Z5hv3cKETBldU2sv2Fey6t9shS0/r7kK51ZxLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=purdue.edu; dmarc=pass action=none header.from=purdue.edu;
- dkim=pass header.d=purdue.edu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=purdue0.onmicrosoft.com; s=selector2-purdue0-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KmbndxrgOjwasNVtsc6NoHEw3oJ9cVCH7NzcSK19DqQ=;
- b=P7sE04yeMzptHP/j+5hh42KqAPgpOmSDk6HUZV7EN1iTH+Krm4E5pLyPDpmwqSh7Gkm3iV7Hb/eEx4irtKy27MFZnzjihXWSEUQgaZqyRrMqtKe/FJtXwWD0hYX2/3AcdUWwUfVHRQtnXf7x7CF9gzQ/oOXp8JuDiYLn9eslxIA=
-Received: from CH2PR22MB2056.namprd22.prod.outlook.com (2603:10b6:610:5d::11)
- by CH2PR22MB1879.namprd22.prod.outlook.com (2603:10b6:610:85::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3611.20; Mon, 30 Nov
- 2020 17:55:20 +0000
-Received: from CH2PR22MB2056.namprd22.prod.outlook.com
- ([fe80::1922:c660:f2f4:50fa]) by CH2PR22MB2056.namprd22.prod.outlook.com
- ([fe80::1922:c660:f2f4:50fa%7]) with mapi id 15.20.3611.031; Mon, 30 Nov 2020
- 17:55:20 +0000
-From:   "Gong, Sishuai" <sishuai@purdue.edu>
-To:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Race: data race between ext4_setattr() and acl_permission_check()
-Thread-Topic: Race: data race between ext4_setattr() and
- acl_permission_check()
-Thread-Index: AQHWx0H46IJbaeOx6kqE1WhPUQrBkg==
-Date:   Mon, 30 Nov 2020 17:55:20 +0000
-Message-ID: <051AF232-4255-42B3-95AE-F8F64D66A6ED@purdue.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: zeniv.linux.org.uk; dkim=none (message not signed)
- header.d=none;zeniv.linux.org.uk; dmarc=none action=none
- header.from=purdue.edu;
-x-originating-ip: [66.253.158.157]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 94e622e0-54b3-405e-f5bb-08d895591a8a
-x-ms-traffictypediagnostic: CH2PR22MB1879:
-x-microsoft-antispam-prvs: <CH2PR22MB18794C00BFA18ABE916E81C5DFF50@CH2PR22MB1879.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: BXjzX3vrhuxcbdNii1ZmivvHuTzHGL9E8pSmI8ZOIQxMV3nvoRnOXgHKJdjwmIOg4/trO1x/1z4pthBZ4hjOHD9hqObrb3mMUsQwI3MIfhEVCX+fHR//ktlWp0/mZU+1DlOiLzXuuEkq4tiBcnppaiSYOBpzW4q8Fz+lzOOxs5iXG371jPZzD5q8qPMzk5eeM+D0jrGldGEtFXUWEL6VxA3rjDLgzlLipycYtk2u2tocRvW2n2/m16Gb9pS/QQitlD4+lCFL2+x9EZDbwNMSJRruzf+7t6L5c1IoP6+RcfhV2EUu+DFsG35qmEFjVDMY
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR22MB2056.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(366004)(376002)(39860400002)(396003)(346002)(186003)(33656002)(76116006)(86362001)(26005)(4326008)(2616005)(2906002)(6506007)(71200400001)(83380400001)(6512007)(36756003)(6486002)(75432002)(5660300002)(478600001)(6916009)(8936002)(66446008)(66556008)(66476007)(66946007)(8676002)(64756008)(786003)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?us-ascii?Q?meOVs0jAImDoUZQG72p/vXChlx1CipoXRsCHpBYvLcF2QjFfL1Oy8ivOAzzv?=
- =?us-ascii?Q?Ufhsk+6ksVfay5mqyEWVG5nOPDOPG4mJ+JQbXiCWPhBCoKaAJDXDGP2PFBQc?=
- =?us-ascii?Q?YZCvifxAGlx0HqmXWpuoVDBNn/x4+VudPe0RB8dhRezcxZE7myPAfqJ0kzip?=
- =?us-ascii?Q?aAmy9u7NH/QqxZ2VhGEO96PsVea+dgTb695HKsAJ9g/o62Ied1YBClIiXOoH?=
- =?us-ascii?Q?L9ckCSqb7Aiwk9xKUKtyJ4X+G/AK1OspXoyuyVMOinNKvbTGiRJyzJi1sGSQ?=
- =?us-ascii?Q?s0QqR2V+y8N0x0s8qj1t6kgTe1YT1QonQaZkvl7r955NtwFFxbfeUOwPqjUF?=
- =?us-ascii?Q?uwxysSE0YqrUU1yC5j6nfUN7076TZicP+nVaORhmC9/38okTbn5ERaKOMtT4?=
- =?us-ascii?Q?gIMp8owe8uu/+jAY5/F6U2SghZEc84I0K6hkjNAGC19rXddJf3LyeznaHG1w?=
- =?us-ascii?Q?LipPKj/kbkpOquxOXQXoiJBLYXCtPyTdZss3cyj6HKj16z1+z/2IAz2uqycn?=
- =?us-ascii?Q?9wJNUMvyOjwy3vW2f/qNTSzmRgpw1yvN6gTO2Y/BaXjkMFPzv5TpW86Tj6xj?=
- =?us-ascii?Q?yOxT/0kTt1jgnKQ7u+pOoMM3hP0C0xpe2RvNyEWl/2K0/D6LdPRFFG8YBl3V?=
- =?us-ascii?Q?hyNeSsxl4y/TEBh2ZiGy5GWhd8wAsz2iBysw/nKM5u/8eAGK1oFvvVppnGr2?=
- =?us-ascii?Q?b2eFLWo5puQ6USj7ToccPgviPvsW4V1vW3MSR0bcH4fhiCZajSndx7/boRmF?=
- =?us-ascii?Q?XWcNHN6kqhOaNvfgxmzfV0Ge7sjN2eq7XyNyaJdWmQTP7V7Y0KetvuARu1v5?=
- =?us-ascii?Q?t/uthKxHdDd5y0pK6qXqbGuAZTQQ4V+H26gEQJ31XElArKKfXh4jPBywOeEA?=
- =?us-ascii?Q?ZiCiciZmSktD4zufUNimOAuYPIRCR5KDbum5lP2ImG46JQXQmD34kEm+NrWI?=
- =?us-ascii?Q?jeP+sQcAzczeviotRqcPzzHN0+jbfyyOTh1SFIkb0jEhcSUfoGvyzHYd/xGE?=
- =?us-ascii?Q?o1kS?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8412FAB5B5DE8F4B910A8E47934E7195@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S2387731AbgK3R4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 12:56:44 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:32774 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387518AbgK3R4o (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 12:56:44 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHt6sJ032368;
+        Mon, 30 Nov 2020 17:55:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=yU/s1Wkvr4/ioNoOs3LBBcInryfxg69nAE5giYmsDtI=;
+ b=BrK4tMKOyzxrwpzYTlNpbblVdyLj99rOklmu5b7G3fLXIWb2oNqMQu74n9tgiYZwSkBI
+ q8IW2lAJ5A6imO7tAcmjiauSeYKxYgvojWgmqUb+glplMcsSBpQB/nymMvV9krD+mvOx
+ DJ6IExm9EXZp2F4lOGfprRJVEjVxzJHYcSqaNjkbyM3Wnz0FCyTZBf6e1ZkXGRMOrel5
+ iTClNF3xexyfxuNMgiBvvTscsy1ludxN/bcAKiqWKZHalWlxEqVF8X/LXFrIQD7ENvWF
+ 7khVBK6sKTyMNkKp2BlgN/EPcZ+SSXaDxEH2cewbxY+orjH/5z/Hz13U2jTrI6mOMPxb Ow== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 353c2apjs8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Nov 2020 17:55:34 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHk2nh011017;
+        Mon, 30 Nov 2020 17:55:34 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 3540ewv77j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Nov 2020 17:55:34 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AUHtSUK012345;
+        Mon, 30 Nov 2020 17:55:28 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Nov 2020 09:55:28 -0800
+Date:   Mon, 30 Nov 2020 09:55:26 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH 04/45] fs: simplify freeze_bdev/thaw_bdev
+Message-ID: <20201130175526.GA143012@magnolia>
+References: <20201128161510.347752-1-hch@lst.de>
+ <20201128161510.347752-5-hch@lst.de>
 MIME-Version: 1.0
-X-OriginatorOrg: purdue.edu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR22MB2056.namprd22.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94e622e0-54b3-405e-f5bb-08d895591a8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Nov 2020 17:55:20.2021
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4130bd39-7c53-419c-b1e5-8758d6d63f21
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MQ3NnP6GAjKxOi9oWE6bs12oiJXtcSumIGfYJSUHpWDATrmDNmmaebQ+7EEUvJOJVka0YDphfnW5vxXZIQVD9g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR22MB1879
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201128161510.347752-5-hch@lst.de>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
+ suspectscore=1 bulkscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011300116
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011300117
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Sat, Nov 28, 2020 at 05:14:29PM +0100, Christoph Hellwig wrote:
+> Store the frozen superblock in struct block_device to avoid the awkward
+> interface that can return a sb only used a cookie, an ERR_PTR or NULL.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Acked-by: Chao Yu <yuchao0@huawei.com>		[f2fs]
+> ---
+>  drivers/md/dm-core.h      |  5 -----
+>  drivers/md/dm.c           | 20 ++++++--------------
+>  fs/block_dev.c            | 37 +++++++++++++++----------------------
+>  fs/buffer.c               |  2 +-
+>  fs/ext4/ioctl.c           |  2 +-
+>  fs/f2fs/file.c            | 14 +++++---------
+>  fs/xfs/xfs_fsops.c        |  7 ++-----
 
-We found a data race in linux kernel 5.3.11 that we are able to reproduce i=
-n x86 under specific interleavings. Currently, we are not sure about the co=
-nsequence of this race so we would like to confirm with the community if th=
-is can be a harmful bug.
+For the xfs part:
+Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-------------------------------------------
-Writer site
+(I did glance at the other 44 patches and didn't see anything that
+screamed 'wrong' but I wouldn't call that a strong review...)
 
- /tmp/tmp.B7zb7od2zE-5.3.11/extract/linux-5.3.11/fs/ext4/inode.c:5599
-       5579              error =3D PTR_ERR(handle);
-       5580              goto err_out;
-       5581          }
-       5582
-       5583          /* dquot_transfer() calls back ext4_get_inode_usage() =
-which
-       5584           * counts xattr inode references.
-       5585           */
-       5586          down_read(&EXT4_I(inode)->xattr_sem);
-       5587          error =3D dquot_transfer(inode, attr);
-       5588          up_read(&EXT4_I(inode)->xattr_sem);
-       5589
-       5590          if (error) {
-       5591              ext4_journal_stop(handle);
-       5592              return error;
-       5593          }
-       5594          /* Update corresponding info in inode so that everythi=
-ng is in
-       5595           * one transaction */
-       5596          if (attr->ia_valid & ATTR_UID)
-       5597              inode->i_uid =3D attr->ia_uid;
-       5598          if (attr->ia_valid & ATTR_GID)
- =3D=3D>   5599              inode->i_gid =3D attr->ia_gid;
-       5600          error =3D ext4_mark_inode_dirty(handle, inode);
-       5601          ext4_journal_stop(handle);
-       5602      }
-       5603
-       5604      if (attr->ia_valid & ATTR_SIZE) {
-       5605          handle_t *handle;
-       5606          loff_t oldsize =3D inode->i_size;
-       5607          int shrink =3D (attr->ia_size < inode->i_size);
-       5608
-       5609          if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))=
-) {
-       5610              struct ext4_sb_info *sbi =3D EXT4_SB(inode->i_sb);
-       5611
-       5612              if (attr->ia_size > sbi->s_bitmap_maxbytes)
-       5613                  return -EFBIG;
-       5614          }
-       5615          if (!S_ISREG(inode->i_mode))
-       5616              return -EINVAL;
-       5617
-       5618          if (IS_I_VERSION(inode) && attr->ia_size !=3D inode->i=
-_size)
-       5619              inode_inc_iversion(inode);
+--D
 
-------------------------------------------
-Reader site
-
-/tmp/tmp.B7zb7od2zE-5.3.11/extract/linux-5.3.11/fs/namei.c:306
-        286
-        287      return -EAGAIN;
-        288  }
-        289
-        290  /*
-        291   * This does the basic permission checking
-        292   */
-        293  static int acl_permission_check(struct inode *inode, int mask)
-        294  {
-        295      unsigned int mode =3D inode->i_mode;
-        296
-        297      if (likely(uid_eq(current_fsuid(), inode->i_uid)))
-        298          mode >>=3D 6;
-        299      else {
-        300          if (IS_POSIXACL(inode) && (mode & S_IRWXG)) {
-        301              int error =3D check_acl(inode, mask);
-        302              if (error !=3D -EAGAIN)
-        303                  return error;
-        304          }
-        305
- =3D=3D>    306          if (in_group_p(inode->i_gid))
-        307              mode >>=3D 3;
-        308      }
-        309
-        310      /*
-        311       * If the DACs are ok we don't need any capability check.
-        312       */
-        313      if ((mask & ~mode & (MAY_READ | MAY_WRITE | MAY_EXEC)) =3D=
-=3D 0)
-        314          return 0;
-        315      return -EACCES;
-        316  }
-        317
-------------------------------------------
-Writer calling trace
-
-- do_fchownat
--- chown_common
---- notify_change
-
-------------------------------------------
-Reader calling trace
-
-- do_execve
--- __do_execve_file
---- do_open_execat
----- do_filp_open
------ path_openat
------- link_path_walk
-------- inode_permission
--------- generic_permission
-
-
-
-Thanks,
-Sishuai
-
+>  include/linux/blk_types.h |  1 +
+>  include/linux/blkdev.h    |  4 ++--
+>  9 files changed, 33 insertions(+), 59 deletions(-)
+> 
+> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
+> index d522093cb39dda..aace147effcacb 100644
+> --- a/drivers/md/dm-core.h
+> +++ b/drivers/md/dm-core.h
+> @@ -96,11 +96,6 @@ struct mapped_device {
+>  	 */
+>  	struct workqueue_struct *wq;
+>  
+> -	/*
+> -	 * freeze/thaw support require holding onto a super block
+> -	 */
+> -	struct super_block *frozen_sb;
+> -
+>  	/* forced geometry settings */
+>  	struct hd_geometry geometry;
+>  
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 54739f1b579bc8..50541d336c719b 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -2392,27 +2392,19 @@ static int lock_fs(struct mapped_device *md)
+>  {
+>  	int r;
+>  
+> -	WARN_ON(md->frozen_sb);
+> +	WARN_ON(test_bit(DMF_FROZEN, &md->flags));
+>  
+> -	md->frozen_sb = freeze_bdev(md->bdev);
+> -	if (IS_ERR(md->frozen_sb)) {
+> -		r = PTR_ERR(md->frozen_sb);
+> -		md->frozen_sb = NULL;
+> -		return r;
+> -	}
+> -
+> -	set_bit(DMF_FROZEN, &md->flags);
+> -
+> -	return 0;
+> +	r = freeze_bdev(md->bdev);
+> +	if (!r)
+> +		set_bit(DMF_FROZEN, &md->flags);
+> +	return r;
+>  }
+>  
+>  static void unlock_fs(struct mapped_device *md)
+>  {
+>  	if (!test_bit(DMF_FROZEN, &md->flags))
+>  		return;
+> -
+> -	thaw_bdev(md->bdev, md->frozen_sb);
+> -	md->frozen_sb = NULL;
+> +	thaw_bdev(md->bdev);
+>  	clear_bit(DMF_FROZEN, &md->flags);
+>  }
+>  
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index d8664f5c1ff669..33c29106c98907 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -548,55 +548,47 @@ EXPORT_SYMBOL(fsync_bdev);
+>   * count down in thaw_bdev(). When it becomes 0, thaw_bdev() will unfreeze
+>   * actually.
+>   */
+> -struct super_block *freeze_bdev(struct block_device *bdev)
+> +int freeze_bdev(struct block_device *bdev)
+>  {
+>  	struct super_block *sb;
+>  	int error = 0;
+>  
+>  	mutex_lock(&bdev->bd_fsfreeze_mutex);
+> -	if (++bdev->bd_fsfreeze_count > 1) {
+> -		/*
+> -		 * We don't even need to grab a reference - the first call
+> -		 * to freeze_bdev grab an active reference and only the last
+> -		 * thaw_bdev drops it.
+> -		 */
+> -		sb = get_super(bdev);
+> -		if (sb)
+> -			drop_super(sb);
+> -		mutex_unlock(&bdev->bd_fsfreeze_mutex);
+> -		return sb;
+> -	}
+> +	if (++bdev->bd_fsfreeze_count > 1)
+> +		goto done;
+>  
+>  	sb = get_active_super(bdev);
+>  	if (!sb)
+> -		goto out;
+> +		goto sync;
+>  	if (sb->s_op->freeze_super)
+>  		error = sb->s_op->freeze_super(sb);
+>  	else
+>  		error = freeze_super(sb);
+> +	deactivate_super(sb);
+> +
+>  	if (error) {
+> -		deactivate_super(sb);
+>  		bdev->bd_fsfreeze_count--;
+> -		mutex_unlock(&bdev->bd_fsfreeze_mutex);
+> -		return ERR_PTR(error);
+> +		goto done;
+>  	}
+> -	deactivate_super(sb);
+> - out:
+> +	bdev->bd_fsfreeze_sb = sb;
+> +
+> +sync:
+>  	sync_blockdev(bdev);
+> +done:
+>  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
+> -	return sb;	/* thaw_bdev releases s->s_umount */
+> +	return error;
+>  }
+>  EXPORT_SYMBOL(freeze_bdev);
+>  
+>  /**
+>   * thaw_bdev  -- unlock filesystem
+>   * @bdev:	blockdevice to unlock
+> - * @sb:		associated superblock
+>   *
+>   * Unlocks the filesystem and marks it writeable again after freeze_bdev().
+>   */
+> -int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+> +int thaw_bdev(struct block_device *bdev)
+>  {
+> +	struct super_block *sb;
+>  	int error = -EINVAL;
+>  
+>  	mutex_lock(&bdev->bd_fsfreeze_mutex);
+> @@ -607,6 +599,7 @@ int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+>  	if (--bdev->bd_fsfreeze_count > 0)
+>  		goto out;
+>  
+> +	sb = bdev->bd_fsfreeze_sb;
+>  	if (!sb)
+>  		goto out;
+>  
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 23f645657488ba..a7595ada9400ff 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -523,7 +523,7 @@ static int osync_buffers_list(spinlock_t *lock, struct list_head *list)
+>  
+>  void emergency_thaw_bdev(struct super_block *sb)
+>  {
+> -	while (sb->s_bdev && !thaw_bdev(sb->s_bdev, sb))
+> +	while (sb->s_bdev && !thaw_bdev(sb->s_bdev))
+>  		printk(KERN_WARNING "Emergency Thaw on %pg\n", sb->s_bdev);
+>  }
+>  
+> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+> index f0381876a7e5b0..524e134324475e 100644
+> --- a/fs/ext4/ioctl.c
+> +++ b/fs/ext4/ioctl.c
+> @@ -624,7 +624,7 @@ static int ext4_shutdown(struct super_block *sb, unsigned long arg)
+>  	case EXT4_GOING_FLAGS_DEFAULT:
+>  		freeze_bdev(sb->s_bdev);
+>  		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
+> -		thaw_bdev(sb->s_bdev, sb);
+> +		thaw_bdev(sb->s_bdev);
+>  		break;
+>  	case EXT4_GOING_FLAGS_LOGFLUSH:
+>  		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index ee861c6d9ff026..a9fc482a0e60a5 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -2230,16 +2230,12 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+>  
+>  	switch (in) {
+>  	case F2FS_GOING_DOWN_FULLSYNC:
+> -		sb = freeze_bdev(sb->s_bdev);
+> -		if (IS_ERR(sb)) {
+> -			ret = PTR_ERR(sb);
+> +		ret = freeze_bdev(sb->s_bdev);
+> +		if (ret)
+>  			goto out;
+> -		}
+> -		if (sb) {
+> -			f2fs_stop_checkpoint(sbi, false);
+> -			set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
+> -			thaw_bdev(sb->s_bdev, sb);
+> -		}
+> +		f2fs_stop_checkpoint(sbi, false);
+> +		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
+> +		thaw_bdev(sb->s_bdev);
+>  		break;
+>  	case F2FS_GOING_DOWN_METASYNC:
+>  		/* do checkpoint only */
+> diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
+> index ef1d5bb88b93ab..b7c5783a031c69 100644
+> --- a/fs/xfs/xfs_fsops.c
+> +++ b/fs/xfs/xfs_fsops.c
+> @@ -433,13 +433,10 @@ xfs_fs_goingdown(
+>  {
+>  	switch (inflags) {
+>  	case XFS_FSOP_GOING_FLAGS_DEFAULT: {
+> -		struct super_block *sb = freeze_bdev(mp->m_super->s_bdev);
+> -
+> -		if (sb && !IS_ERR(sb)) {
+> +		if (!freeze_bdev(mp->m_super->s_bdev)) {
+>  			xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
+> -			thaw_bdev(sb->s_bdev, sb);
+> +			thaw_bdev(mp->m_super->s_bdev);
+>  		}
+> -
+>  		break;
+>  	}
+>  	case XFS_FSOP_GOING_FLAGS_LOGFLUSH:
+> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> index d9b69bbde5cc54..ebfb4e7c1fd125 100644
+> --- a/include/linux/blk_types.h
+> +++ b/include/linux/blk_types.h
+> @@ -46,6 +46,7 @@ struct block_device {
+>  	int			bd_fsfreeze_count;
+>  	/* Mutex for freeze */
+>  	struct mutex		bd_fsfreeze_mutex;
+> +	struct super_block	*bd_fsfreeze_sb;
+>  } __randomize_layout;
+>  
+>  /*
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 05b346a68c2eee..12810a19edebc4 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -2020,7 +2020,7 @@ static inline int sync_blockdev(struct block_device *bdev)
+>  #endif
+>  int fsync_bdev(struct block_device *bdev);
+>  
+> -struct super_block *freeze_bdev(struct block_device *bdev);
+> -int thaw_bdev(struct block_device *bdev, struct super_block *sb);
+> +int freeze_bdev(struct block_device *bdev);
+> +int thaw_bdev(struct block_device *bdev);
+>  
+>  #endif /* _LINUX_BLKDEV_H */
+> -- 
+> 2.29.2
+> 
