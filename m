@@ -2,343 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 159E12C8BDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 18:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B41E2C8C5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 19:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387731AbgK3R4o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 12:56:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:32774 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387518AbgK3R4o (ORCPT
+        id S1729617AbgK3SOB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 13:14:01 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:35818 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbgK3SOA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 12:56:44 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHt6sJ032368;
-        Mon, 30 Nov 2020 17:55:35 GMT
+        Mon, 30 Nov 2020 13:14:00 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUI4qXi098424;
+        Mon, 30 Nov 2020 18:13:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : references : mime-version : content-type :
  in-reply-to; s=corp-2020-01-29;
- bh=yU/s1Wkvr4/ioNoOs3LBBcInryfxg69nAE5giYmsDtI=;
- b=BrK4tMKOyzxrwpzYTlNpbblVdyLj99rOklmu5b7G3fLXIWb2oNqMQu74n9tgiYZwSkBI
- q8IW2lAJ5A6imO7tAcmjiauSeYKxYgvojWgmqUb+glplMcsSBpQB/nymMvV9krD+mvOx
- DJ6IExm9EXZp2F4lOGfprRJVEjVxzJHYcSqaNjkbyM3Wnz0FCyTZBf6e1ZkXGRMOrel5
- iTClNF3xexyfxuNMgiBvvTscsy1ludxN/bcAKiqWKZHalWlxEqVF8X/LXFrIQD7ENvWF
- 7khVBK6sKTyMNkKp2BlgN/EPcZ+SSXaDxEH2cewbxY+orjH/5z/Hz13U2jTrI6mOMPxb Ow== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 353c2apjs8-1
+ bh=/OJ02YCjmtLXoz74sYzWBWs5+4jEBYC+5Xs+LwXYED8=;
+ b=mGo8baEUXAWci5GqXvWKrU1WPoMXVNb5SLM9INfOmFUbxvCPCu+vJgIpAMgJdB9VAn2d
+ Qo5w2zt17zlAvVnFVZOt1Ti3YDSNGcj67FsIyYLSkDXuOCu6WHrRfsOYh5CI3uc5T25R
+ WMwmlpg0nNSUDApXR6zZwLSEUeHSMFABvTVBX9XlDg3xahaNsJR3LlDm07GEbSJvNmXL
+ XCbrO12J/n+Hgx+Pf6OxqyF15sgYJfgXhixldT2p3C/aWZ/JntgVUUTsioY24LZlV9VW
+ T3QnEEZovKF6ZRsvGO6v3fZ1P3EABGC8XPpLBKUPPyTVWwgHoTGzmJs4X4MI2K7IgDII LQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 353egkegg3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Nov 2020 17:55:34 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHk2nh011017;
-        Mon, 30 Nov 2020 17:55:34 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 3540ewv77j-1
+        Mon, 30 Nov 2020 18:13:10 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUIAD2D112776;
+        Mon, 30 Nov 2020 18:11:10 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 3540aqy4cn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Nov 2020 17:55:34 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AUHtSUK012345;
-        Mon, 30 Nov 2020 17:55:28 GMT
+        Mon, 30 Nov 2020 18:11:09 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AUIB5qB016810;
+        Mon, 30 Nov 2020 18:11:05 GMT
 Received: from localhost (/67.169.218.210)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Nov 2020 09:55:28 -0800
-Date:   Mon, 30 Nov 2020 09:55:26 -0800
+        with ESMTP ; Mon, 30 Nov 2020 10:11:05 -0800
+Date:   Mon, 30 Nov 2020 10:11:04 -0800
 From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH 04/45] fs: simplify freeze_bdev/thaw_bdev
-Message-ID: <20201130175526.GA143012@magnolia>
-References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-5-hch@lst.de>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, dsterba@suse.com, hare@suse.com,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v10 02/41] iomap: support REQ_OP_ZONE_APPEND
+Message-ID: <20201130181104.GA143005@magnolia>
+References: <cover.1605007036.git.naohiro.aota@wdc.com>
+ <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201128161510.347752-5-hch@lst.de>
+In-Reply-To: <72734501cc1d9e08117c215ed60f7b38e3665f14.1605007036.git.naohiro.aota@wdc.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
- suspectscore=1 bulkscore=0 spamscore=0 adultscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011300116
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 mlxscore=0 adultscore=0 malwarescore=0 suspectscore=1
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011300119
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 lowpriorityscore=0
- clxscore=1011 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=1
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011300117
+ definitions=main-2011300118
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 28, 2020 at 05:14:29PM +0100, Christoph Hellwig wrote:
-> Store the frozen superblock in struct block_device to avoid the awkward
-> interface that can return a sb only used a cookie, an ERR_PTR or NULL.
+On Tue, Nov 10, 2020 at 08:26:05PM +0900, Naohiro Aota wrote:
+> A ZONE_APPEND bio must follow hardware restrictions (e.g. not exceeding
+> max_zone_append_sectors) not to be split. bio_iov_iter_get_pages builds
+> such restricted bio using __bio_iov_append_get_pages if bio_op(bio) ==
+> REQ_OP_ZONE_APPEND.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Acked-by: Chao Yu <yuchao0@huawei.com>		[f2fs]
-> ---
->  drivers/md/dm-core.h      |  5 -----
->  drivers/md/dm.c           | 20 ++++++--------------
->  fs/block_dev.c            | 37 +++++++++++++++----------------------
->  fs/buffer.c               |  2 +-
->  fs/ext4/ioctl.c           |  2 +-
->  fs/f2fs/file.c            | 14 +++++---------
->  fs/xfs/xfs_fsops.c        |  7 ++-----
+> To utilize it, we need to set the bio_op before calling
+> bio_iov_iter_get_pages(). This commit introduces IOMAP_F_ZONE_APPEND, so
+> that iomap user can set the flag to indicate they want REQ_OP_ZONE_APPEND
+> and restricted bio.
+> 
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 
-For the xfs part:
-Acked-by: Darrick J. Wong <darrick.wong@oracle.com>
+Christoph's answers seem reasonable to me, so
 
-(I did glance at the other 44 patches and didn't see anything that
-screamed 'wrong' but I wouldn't call that a strong review...)
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+Er... do you want me to take this one via the iomap tree?
 
 --D
 
->  include/linux/blk_types.h |  1 +
->  include/linux/blkdev.h    |  4 ++--
->  9 files changed, 33 insertions(+), 59 deletions(-)
+> ---
+>  fs/iomap/direct-io.c  | 41 +++++++++++++++++++++++++++++++++++------
+>  include/linux/iomap.h |  1 +
+>  2 files changed, 36 insertions(+), 6 deletions(-)
 > 
-> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
-> index d522093cb39dda..aace147effcacb 100644
-> --- a/drivers/md/dm-core.h
-> +++ b/drivers/md/dm-core.h
-> @@ -96,11 +96,6 @@ struct mapped_device {
->  	 */
->  	struct workqueue_struct *wq;
->  
-> -	/*
-> -	 * freeze/thaw support require holding onto a super block
-> -	 */
-> -	struct super_block *frozen_sb;
-> -
->  	/* forced geometry settings */
->  	struct hd_geometry geometry;
->  
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 54739f1b579bc8..50541d336c719b 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -2392,27 +2392,19 @@ static int lock_fs(struct mapped_device *md)
->  {
->  	int r;
->  
-> -	WARN_ON(md->frozen_sb);
-> +	WARN_ON(test_bit(DMF_FROZEN, &md->flags));
->  
-> -	md->frozen_sb = freeze_bdev(md->bdev);
-> -	if (IS_ERR(md->frozen_sb)) {
-> -		r = PTR_ERR(md->frozen_sb);
-> -		md->frozen_sb = NULL;
-> -		return r;
-> -	}
-> -
-> -	set_bit(DMF_FROZEN, &md->flags);
-> -
-> -	return 0;
-> +	r = freeze_bdev(md->bdev);
-> +	if (!r)
-> +		set_bit(DMF_FROZEN, &md->flags);
-> +	return r;
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index c1aafb2ab990..f04572a55a09 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -200,6 +200,34 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+>  	iomap_dio_submit_bio(dio, iomap, bio, pos);
 >  }
 >  
->  static void unlock_fs(struct mapped_device *md)
->  {
->  	if (!test_bit(DMF_FROZEN, &md->flags))
->  		return;
-> -
-> -	thaw_bdev(md->bdev, md->frozen_sb);
-> -	md->frozen_sb = NULL;
-> +	thaw_bdev(md->bdev);
->  	clear_bit(DMF_FROZEN, &md->flags);
->  }
->  
-> diff --git a/fs/block_dev.c b/fs/block_dev.c
-> index d8664f5c1ff669..33c29106c98907 100644
-> --- a/fs/block_dev.c
-> +++ b/fs/block_dev.c
-> @@ -548,55 +548,47 @@ EXPORT_SYMBOL(fsync_bdev);
->   * count down in thaw_bdev(). When it becomes 0, thaw_bdev() will unfreeze
->   * actually.
->   */
-> -struct super_block *freeze_bdev(struct block_device *bdev)
-> +int freeze_bdev(struct block_device *bdev)
->  {
->  	struct super_block *sb;
->  	int error = 0;
->  
->  	mutex_lock(&bdev->bd_fsfreeze_mutex);
-> -	if (++bdev->bd_fsfreeze_count > 1) {
-> -		/*
-> -		 * We don't even need to grab a reference - the first call
-> -		 * to freeze_bdev grab an active reference and only the last
-> -		 * thaw_bdev drops it.
-> -		 */
-> -		sb = get_super(bdev);
-> -		if (sb)
-> -			drop_super(sb);
-> -		mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -		return sb;
-> -	}
-> +	if (++bdev->bd_fsfreeze_count > 1)
-> +		goto done;
->  
->  	sb = get_active_super(bdev);
->  	if (!sb)
-> -		goto out;
-> +		goto sync;
->  	if (sb->s_op->freeze_super)
->  		error = sb->s_op->freeze_super(sb);
->  	else
->  		error = freeze_super(sb);
-> +	deactivate_super(sb);
+> +/*
+> + * Figure out the bio's operation flags from the dio request, the
+> + * mapping, and whether or not we want FUA.  Note that we can end up
+> + * clearing the WRITE_FUA flag in the dio request.
+> + */
+> +static inline unsigned int
+> +iomap_dio_bio_opflags(struct iomap_dio *dio, struct iomap *iomap, bool use_fua)
+> +{
+> +	unsigned int opflags = REQ_SYNC | REQ_IDLE;
 > +
->  	if (error) {
-> -		deactivate_super(sb);
->  		bdev->bd_fsfreeze_count--;
-> -		mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -		return ERR_PTR(error);
-> +		goto done;
->  	}
-> -	deactivate_super(sb);
-> - out:
-> +	bdev->bd_fsfreeze_sb = sb;
+> +	if (!(dio->flags & IOMAP_DIO_WRITE)) {
+> +		WARN_ON_ONCE(iomap->flags & IOMAP_F_ZONE_APPEND);
+> +		return REQ_OP_READ;
+> +	}
 > +
-> +sync:
->  	sync_blockdev(bdev);
-> +done:
->  	mutex_unlock(&bdev->bd_fsfreeze_mutex);
-> -	return sb;	/* thaw_bdev releases s->s_umount */
-> +	return error;
->  }
->  EXPORT_SYMBOL(freeze_bdev);
+> +	if (iomap->flags & IOMAP_F_ZONE_APPEND)
+> +		opflags |= REQ_OP_ZONE_APPEND;
+> +	else
+> +		opflags |= REQ_OP_WRITE;
+> +
+> +	if (use_fua)
+> +		opflags |= REQ_FUA;
+> +	else
+> +		dio->flags &= ~IOMAP_DIO_WRITE_FUA;
+> +
+> +	return opflags;
+> +}
+> +
+>  static loff_t
+>  iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		struct iomap_dio *dio, struct iomap *iomap)
+> @@ -278,6 +306,13 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  		bio->bi_private = dio;
+>  		bio->bi_end_io = iomap_dio_bio_end_io;
 >  
->  /**
->   * thaw_bdev  -- unlock filesystem
->   * @bdev:	blockdevice to unlock
-> - * @sb:		associated superblock
->   *
->   * Unlocks the filesystem and marks it writeable again after freeze_bdev().
->   */
-> -int thaw_bdev(struct block_device *bdev, struct super_block *sb)
-> +int thaw_bdev(struct block_device *bdev)
->  {
-> +	struct super_block *sb;
->  	int error = -EINVAL;
+> +		/*
+> +		 * Set the operation flags early so that bio_iov_iter_get_pages
+> +		 * can set up the page vector appropriately for a ZONE_APPEND
+> +		 * operation.
+> +		 */
+> +		bio->bi_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
+> +
+>  		ret = bio_iov_iter_get_pages(bio, dio->submit.iter);
+>  		if (unlikely(ret)) {
+>  			/*
+> @@ -292,14 +327,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
 >  
->  	mutex_lock(&bdev->bd_fsfreeze_mutex);
-> @@ -607,6 +599,7 @@ int thaw_bdev(struct block_device *bdev, struct super_block *sb)
->  	if (--bdev->bd_fsfreeze_count > 0)
->  		goto out;
->  
-> +	sb = bdev->bd_fsfreeze_sb;
->  	if (!sb)
->  		goto out;
->  
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 23f645657488ba..a7595ada9400ff 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -523,7 +523,7 @@ static int osync_buffers_list(spinlock_t *lock, struct list_head *list)
->  
->  void emergency_thaw_bdev(struct super_block *sb)
->  {
-> -	while (sb->s_bdev && !thaw_bdev(sb->s_bdev, sb))
-> +	while (sb->s_bdev && !thaw_bdev(sb->s_bdev))
->  		printk(KERN_WARNING "Emergency Thaw on %pg\n", sb->s_bdev);
->  }
->  
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index f0381876a7e5b0..524e134324475e 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -624,7 +624,7 @@ static int ext4_shutdown(struct super_block *sb, unsigned long arg)
->  	case EXT4_GOING_FLAGS_DEFAULT:
->  		freeze_bdev(sb->s_bdev);
->  		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
-> -		thaw_bdev(sb->s_bdev, sb);
-> +		thaw_bdev(sb->s_bdev);
->  		break;
->  	case EXT4_GOING_FLAGS_LOGFLUSH:
->  		set_bit(EXT4_FLAGS_SHUTDOWN, &sbi->s_ext4_flags);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index ee861c6d9ff026..a9fc482a0e60a5 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2230,16 +2230,12 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
->  
->  	switch (in) {
->  	case F2FS_GOING_DOWN_FULLSYNC:
-> -		sb = freeze_bdev(sb->s_bdev);
-> -		if (IS_ERR(sb)) {
-> -			ret = PTR_ERR(sb);
-> +		ret = freeze_bdev(sb->s_bdev);
-> +		if (ret)
->  			goto out;
-> -		}
-> -		if (sb) {
-> -			f2fs_stop_checkpoint(sbi, false);
-> -			set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
-> -			thaw_bdev(sb->s_bdev, sb);
-> -		}
-> +		f2fs_stop_checkpoint(sbi, false);
-> +		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
-> +		thaw_bdev(sb->s_bdev);
->  		break;
->  	case F2FS_GOING_DOWN_METASYNC:
->  		/* do checkpoint only */
-> diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
-> index ef1d5bb88b93ab..b7c5783a031c69 100644
-> --- a/fs/xfs/xfs_fsops.c
-> +++ b/fs/xfs/xfs_fsops.c
-> @@ -433,13 +433,10 @@ xfs_fs_goingdown(
->  {
->  	switch (inflags) {
->  	case XFS_FSOP_GOING_FLAGS_DEFAULT: {
-> -		struct super_block *sb = freeze_bdev(mp->m_super->s_bdev);
-> -
-> -		if (sb && !IS_ERR(sb)) {
-> +		if (!freeze_bdev(mp->m_super->s_bdev)) {
->  			xfs_force_shutdown(mp, SHUTDOWN_FORCE_UMOUNT);
-> -			thaw_bdev(sb->s_bdev, sb);
-> +			thaw_bdev(mp->m_super->s_bdev);
+>  		n = bio->bi_iter.bi_size;
+>  		if (dio->flags & IOMAP_DIO_WRITE) {
+> -			bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
+> -			if (use_fua)
+> -				bio->bi_opf |= REQ_FUA;
+> -			else
+> -				dio->flags &= ~IOMAP_DIO_WRITE_FUA;
+>  			task_io_account_write(n);
+>  		} else {
+> -			bio->bi_opf = REQ_OP_READ;
+>  			if (dio->flags & IOMAP_DIO_DIRTY)
+>  				bio_set_pages_dirty(bio);
 >  		}
-> -
->  		break;
->  	}
->  	case XFS_FSOP_GOING_FLAGS_LOGFLUSH:
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index d9b69bbde5cc54..ebfb4e7c1fd125 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -46,6 +46,7 @@ struct block_device {
->  	int			bd_fsfreeze_count;
->  	/* Mutex for freeze */
->  	struct mutex		bd_fsfreeze_mutex;
-> +	struct super_block	*bd_fsfreeze_sb;
->  } __randomize_layout;
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 4d1d3c3469e9..1bccd1880d0d 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -54,6 +54,7 @@ struct vm_fault;
+>  #define IOMAP_F_SHARED		0x04
+>  #define IOMAP_F_MERGED		0x08
+>  #define IOMAP_F_BUFFER_HEAD	0x10
+> +#define IOMAP_F_ZONE_APPEND	0x20
 >  
 >  /*
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 05b346a68c2eee..12810a19edebc4 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -2020,7 +2020,7 @@ static inline int sync_blockdev(struct block_device *bdev)
->  #endif
->  int fsync_bdev(struct block_device *bdev);
->  
-> -struct super_block *freeze_bdev(struct block_device *bdev);
-> -int thaw_bdev(struct block_device *bdev, struct super_block *sb);
-> +int freeze_bdev(struct block_device *bdev);
-> +int thaw_bdev(struct block_device *bdev);
->  
->  #endif /* _LINUX_BLKDEV_H */
+>   * Flags set by the core iomap code during operations:
 > -- 
-> 2.29.2
+> 2.27.0
 > 
