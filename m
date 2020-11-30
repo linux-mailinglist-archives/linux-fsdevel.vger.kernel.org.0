@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F20C92C7EB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF1A2C7EC0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:33:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbgK3Ham (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 02:30:42 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44930 "EHLO mx2.suse.de"
+        id S1727007AbgK3Hcj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 02:32:39 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45650 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbgK3Ham (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 02:30:42 -0500
+        id S1726298AbgK3Hci (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 02:32:38 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 1CB80AC55;
-        Mon, 30 Nov 2020 07:30:01 +0000 (UTC)
-Subject: Re: [PATCH 23/45] block: opencode devcgroup_inode_permission
+        by mx2.suse.de (Postfix) with ESMTP id D91FAAC8F;
+        Mon, 30 Nov 2020 07:31:56 +0000 (UTC)
+Subject: Re: [PATCH 24/45] block: remove i_bdev
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -27,14 +27,14 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
 References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-24-hch@lst.de>
+ <20201128161510.347752-25-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <c9320191-af01-5162-6f21-75c6eae083e7@suse.de>
-Date:   Mon, 30 Nov 2020 08:30:01 +0100
+Message-ID: <7ad63383-5f07-3fd2-d39b-b0db7905d094@suse.de>
+Date:   Mon, 30 Nov 2020 08:31:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201128161510.347752-24-hch@lst.de>
+In-Reply-To: <20201128161510.347752-25-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -43,15 +43,37 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/28/20 5:14 PM, Christoph Hellwig wrote:
-> Just call devcgroup_check_permission to avoid various superflous checks
-> and a double conversion of the access flags.
+> Switch the block device lookup interfaces to directly work with a dev_t
+> so that struct block_device references are only acquired by the
+> blkdev_get variants (and the blk-cgroup special case).  This means that
+> we now don't need an extra reference in the inode and can generally
+> simplify handling of struct block_device to keep the lookups contained
+> in the core block layer code.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Tejun Heo <tj@kernel.org>
 > Reviewed-by: Jan Kara <jack@suse.cz>
+> Acked-by: Tejun Heo <tj@kernel.org>
+> Acked-by: Coly Li <colyli@suse.de>		[bcache]
 > ---
->   fs/block_dev.c | 10 ++++------
->   1 file changed, 4 insertions(+), 6 deletions(-)
+>   block/ioctl.c                                |   3 +-
+>   drivers/block/loop.c                         |   8 +-
+>   drivers/md/bcache/super.c                    |  20 +-
+>   drivers/md/dm-table.c                        |   9 +-
+>   drivers/mtd/mtdsuper.c                       |  17 +-
+>   drivers/target/target_core_file.c            |   6 +-
+>   drivers/usb/gadget/function/storage_common.c |   8 +-
+>   fs/block_dev.c                               | 196 +++++--------------
+>   fs/btrfs/volumes.c                           |  13 +-
+>   fs/inode.c                                   |   3 -
+>   fs/internal.h                                |   7 +-
+>   fs/io_uring.c                                |  10 +-
+>   fs/pipe.c                                    |   5 +-
+>   fs/quota/quota.c                             |  19 +-
+>   fs/statfs.c                                  |   2 +-
+>   fs/super.c                                   |  44 ++---
+>   include/linux/blkdev.h                       |   2 +-
+>   include/linux/fs.h                           |   1 -
+>   18 files changed, 121 insertions(+), 252 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
