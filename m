@@ -2,204 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 494682C7CAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 03:10:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BDE02C7D13
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 04:03:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbgK3CIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Nov 2020 21:08:47 -0500
-Received: from ozlabs.ru ([107.174.27.60]:33628 "EHLO ozlabs.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbgK3CIr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Nov 2020 21:08:47 -0500
-X-Greylist: delayed 443 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Nov 2020 21:08:46 EST
-Received: from fstn1-p1.ozlabs.ibm.com (localhost [IPv6:::1])
-        by ozlabs.ru (Postfix) with ESMTP id 8324FAE80047;
-        Sun, 29 Nov 2020 21:00:34 -0500 (EST)
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-To:     io-uring@vger.kernel.org
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        lexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH kernel] fs/io_ring: Fix lockdep warnings
-Date:   Mon, 30 Nov 2020 13:00:28 +1100
-Message-Id: <20201130020028.106198-1-aik@ozlabs.ru>
-X-Mailer: git-send-email 2.17.1
+        id S1726299AbgK3DBd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Nov 2020 22:01:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54362 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbgK3DBd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 29 Nov 2020 22:01:33 -0500
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D86EC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Sun, 29 Nov 2020 19:00:47 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id x4so3946128pln.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 29 Nov 2020 19:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OgfC1dHk0OMu7PasvRzn5zPxdots61Yzs3kDI+H1neE=;
+        b=RGz1qIxSqf9AckWZOlg8m6CNJtYtvsm2kqdn4r/NXG0e2ukzoW7ApRob/LNKVAWYE7
+         fknw+sZcchNwytKhZTIHnNaQ0g37o6ExsB+qNQT+yLsZW3qTPiD6YSsavKOhc3rhU7XZ
+         TS4llcZWnfqP4nNnWkPdDDi0JsUc77XYy/e8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OgfC1dHk0OMu7PasvRzn5zPxdots61Yzs3kDI+H1neE=;
+        b=cmcExzhKtt5NIZJ7zX4LhbPrQNmyUX3fQeXsR2gYkL9+1vH4fgS54AeMaxA2198dHU
+         R4Sw9W0D+V/91QwSYvhH+PtjwdpdjtHysL+gHiUohywusNXV6O2zCxBUAa99GJtJG11s
+         Nhy7lpqqyl2sYxN4hCN1WdZG6ApF/44VKkLSUGvBjoFi+FV7/qX8OcEJjHw+QsjOEZc8
+         Qw19LWPVz17AnWtRXqipm42j0pxi8jz0c8KeyqHRVsXsqlPWHV+32MxtG0br2elCTMsq
+         cGoNLV6gyQZXmRs2C0ON3yUBuuOr+KLQH3Rz7V+1HdW1s+dIB6EQoAVpTfpdAH7B8iGN
+         bjNg==
+X-Gm-Message-State: AOAM531ot70q2s4ysmoPmT6VMWeSKWW+qjFcLtOs9D013SHVs4TC5VSq
+        LBETrrkbDYxhaKtRKcRCEGT7wpKZmMr9yg==
+X-Google-Smtp-Source: ABdhPJwStcytkvfmvSbg8gDNmJ/bTZcADr6Z1PeBWmpvWR5tpX4bwrfs42fnetwyY6onbticfV3Ukw==
+X-Received: by 2002:a17:902:ba8b:b029:d7:e6da:cd21 with SMTP id k11-20020a170902ba8bb02900d7e6dacd21mr16621058pls.38.1606705246731;
+        Sun, 29 Nov 2020 19:00:46 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id z17sm19651803pjn.46.2020.11.29.19.00.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Nov 2020 19:00:46 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+Cc:     Sargun Dhillon <sargun@sargun.me>, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH] overlay: Plumb through flush method
+Date:   Sun, 29 Nov 2020 19:00:39 -0800
+Message-Id: <20201130030039.596801-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are a few potential deadlocks reported by lockdep and triggered by
-syzkaller (a syscall fuzzer). These are reported as timer interrupts can
-execute softirq handlers and if we were executing certain bits of io_ring,
-a deadlock can occur. This fixes those bits by disabling soft interrupts.
+Filesystems can implement their own flush method that release
+resources, or manipulate caches. Currently if one of these
+filesystems is used with overlayfs, the flush method is not called.
 
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>
 ---
+ fs/overlayfs/file.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-There are 2 reports.
-
-Warning#1:
-
-================================
-WARNING: inconsistent lock state
-5.10.0-rc5_irqs_a+fstn1 #5 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-swapper/14/0 [HC0[0]:SC1[1]:HE0:SE0] takes:
-c00000000b76f4a8 (&file_data->lock){+.?.}-{2:2}, at: io_file_data_ref_zero+0x58/0x300
-{SOFTIRQ-ON-W} state was registered at:
-  lock_acquire+0x2c4/0x5c0
-  _raw_spin_lock+0x54/0x80
-  sys_io_uring_register+0x1de0/0x2100
-  system_call_exception+0x160/0x240
-  system_call_common+0xf0/0x27c
-irq event stamp: 4011767
-hardirqs last  enabled at (4011766): [<c00000000167a7d4>] _raw_spin_unlock_irqrestore+0x54/0x90
-hardirqs last disabled at (4011767): [<c00000000167a358>] _raw_spin_lock_irqsave+0x48/0xb0
-softirqs last  enabled at (4011754): [<c00000000020b69c>] irq_enter_rcu+0xbc/0xc0
-softirqs last disabled at (4011755): [<c00000000020ba84>] irq_exit+0x1d4/0x1e0
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&file_data->lock);
-  <Interrupt>
-    lock(&file_data->lock);
-
- *** DEADLOCK ***
-
-2 locks held by swapper/14/0:
- #0: c0000000021cc3e8 (rcu_callback){....}-{0:0}, at: rcu_core+0x2b0/0xfe0
- #1: c0000000021cc358 (rcu_read_lock){....}-{1:2}, at: percpu_ref_switch_to_atomic_rcu+0x148/0x400
-
-stack backtrace:
-CPU: 14 PID: 0 Comm: swapper/14 Not tainted 5.10.0-rc5_irqs_a+fstn1 #5
-Call Trace:
-[c0000000097672c0] [c0000000002b0268] print_usage_bug+0x3e8/0x3f0
-[c000000009767360] [c0000000002b0e88] mark_lock.part.48+0xc18/0xee0
-[c000000009767480] [c0000000002b1fb8] __lock_acquire+0xac8/0x21e0
-[c0000000097675d0] [c0000000002b4454] lock_acquire+0x2c4/0x5c0
-[c0000000097676c0] [c00000000167a38c] _raw_spin_lock_irqsave+0x7c/0xb0
-[c000000009767700] [c0000000007321b8] io_file_data_ref_zero+0x58/0x300
-[c000000009767770] [c000000000be93e4] percpu_ref_switch_to_atomic_rcu+0x3f4/0x400
-[c000000009767800] [c0000000002fe0d4] rcu_core+0x314/0xfe0
-[c0000000097678b0] [c00000000167b5b8] __do_softirq+0x198/0x6c0
-[c0000000097679d0] [c00000000020ba84] irq_exit+0x1d4/0x1e0
-[c000000009767a00] [c0000000000301c8] timer_interrupt+0x1e8/0x600
-[c000000009767a70] [c000000000009d84] decrementer_common_virt+0x1e4/0x1f0
---- interrupt: 900 at snooze_loop+0xf4/0x300
-    LR = snooze_loop+0xe4/0x300
-[c000000009767dc0] [c00000000111b010] cpuidle_enter_state+0x520/0x910
-[c000000009767e30] [c00000000111b4c8] cpuidle_enter+0x58/0x80
-[c000000009767e70] [c00000000026da0c] call_cpuidle+0x4c/0x90
-[c000000009767e90] [c00000000026de80] do_idle+0x320/0x3d0
-[c000000009767f10] [c00000000026e308] cpu_startup_entry+0x38/0x50
-[c000000009767f40] [c00000000006f624] start_secondary+0x304/0x320
-[c000000009767f90] [c00000000000cc54] start_secondary_prolog+0x10/0x14
-systemd[1]: systemd-udevd.service: Got notification message from PID 195 (WATCHDOG=1)
-systemd-journald[175]: Sent WATCHDOG=1 notification.
-
-
-
-Warning#2:
-================================
-WARNING: inconsistent lock state
-5.10.0-rc5_irqs_a+fstn1 #7 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-swapper/7/0 [HC0[0]:SC1[1]:HE1:SE0] takes:
-c00000000c64b7a8 (&file_data->lock){+.?.}-{2:2}, at: io_file_data_ref_zero+0x54/0x2d0
-{SOFTIRQ-ON-W} state was registered at:
-  lock_acquire+0x2c4/0x5c0
-  _raw_spin_lock+0x54/0x80
-  io_sqe_files_unregister+0x5c/0x200
-  io_ring_exit_work+0x230/0x640
-  process_one_work+0x428/0xab0
-  worker_thread+0x94/0x770
-  kthread+0x204/0x210
-  ret_from_kernel_thread+0x5c/0x6c
-irq event stamp: 3250736
-hardirqs last  enabled at (3250736): [<c00000000167a794>] _raw_spin_unlock_irqrestore+0x54/0x90
-hardirqs last disabled at (3250735): [<c00000000167a318>] _raw_spin_lock_irqsave+0x48/0xb0
-softirqs last  enabled at (3250722): [<c00000000020b69c>] irq_enter_rcu+0xbc/0xc0
-softirqs last disabled at (3250723): [<c00000000020ba84>] irq_exit+0x1d4/0x1e0
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&file_data->lock);
-  <Interrupt>
-    lock(&file_data->lock);
-
- *** DEADLOCK ***
-
-2 locks held by swapper/7/0:
- #0: c0000000021cc3e8 (rcu_callback){....}-{0:0}, at: rcu_core+0x2b0/0xfe0
- #1: c0000000021cc358 (rcu_read_lock){....}-{1:2}, at: percpu_ref_switch_to_atomic_rcu+0x148/0x400
-
-stack backtrace:
-CPU: 7 PID: 0 Comm: swapper/7 Not tainted 5.10.0-rc5_irqs_a+fstn1 #7
-Call Trace:
-[c00000000974b280] [c0000000002b0268] print_usage_bug+0x3e8/0x3f0
-[c00000000974b320] [c0000000002b0e88] mark_lock.part.48+0xc18/0xee0
-[c00000000974b440] [c0000000002b1fb8] __lock_acquire+0xac8/0x21e0
-[c00000000974b590] [c0000000002b4454] lock_acquire+0x2c4/0x5c0
-[c00000000974b680] [c00000000167a074] _raw_spin_lock+0x54/0x80
-[c00000000974b6b0] [c0000000007321b4] io_file_data_ref_zero+0x54/0x2d0
-[c00000000974b720] [c000000000be93a4] percpu_ref_switch_to_atomic_rcu+0x3f4/0x400
-[c00000000974b7b0] [c0000000002fe0d4] rcu_core+0x314/0xfe0
-[c00000000974b860] [c00000000167b578] __do_softirq+0x198/0x6c0
-[c00000000974b980] [c00000000020ba84] irq_exit+0x1d4/0x1e0
-[c00000000974b9b0] [c0000000000301c8] timer_interrupt+0x1e8/0x600
-[c00000000974ba20] [c000000000009d84] decrementer_common_virt+0x1e4/0x1f0
---- interrupt: 900 at plpar_hcall_norets+0x1c/0x28
-    LR = check_and_cede_processor.part.2+0x2c/0x90
-[c00000000974bd80] [c00000000111f75c] shared_cede_loop+0x18c/0x230
-[c00000000974bdc0] [c00000000111afd0] cpuidle_enter_state+0x520/0x910
-[c00000000974be30] [c00000000111b488] cpuidle_enter+0x58/0x80
-[c00000000974be70] [c00000000026da0c] call_cpuidle+0x4c/0x90
-[c00000000974be90] [c00000000026de80] do_idle+0x320/0x3d0
-[c00000000974bf10] [c00000000026e30c] cpu_startup_entry+0x3c/0x50
-[c00000000974bf40] [c00000000006f624] start_secondary+0x304/0x320
-[c00000000974bf90] [c00000000000cc54] start_secondary_prolog+0x10/0x14
-
----
- fs/io_uring.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index a8c136a1cf4e..b922ac95dfc4 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -6973,9 +6973,9 @@ static int io_sqe_files_unregister(struct io_ring_ctx *ctx)
- 	if (!data)
- 		return -ENXIO;
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index efccb7c1f9bc..802259f33c28 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -787,6 +787,16 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
+ 			    remap_flags, op);
+ }
  
--	spin_lock(&data->lock);
-+	spin_lock_bh(&data->lock);
- 	ref_node = data->node;
--	spin_unlock(&data->lock);
-+	spin_unlock_bh(&data->lock);
- 	if (ref_node)
- 		percpu_ref_kill(&ref_node->refs);
- 
-@@ -7493,9 +7493,9 @@ static int io_sqe_files_register(struct io_ring_ctx *ctx, void __user *arg,
- 	}
- 
- 	file_data->node = ref_node;
--	spin_lock(&file_data->lock);
-+	spin_lock_bh(&file_data->lock);
- 	list_add_tail(&ref_node->node, &file_data->ref_list);
--	spin_unlock(&file_data->lock);
-+	spin_unlock_bh(&file_data->lock);
- 	percpu_ref_get(&file_data->refs);
- 	return ret;
- out_fput:
++static int ovl_flush(struct file *file, fl_owner_t id)
++{
++	struct file *realfile = file->private_data;
++
++	if (realfile->f_op->flush)
++		return realfile->f_op->flush(realfile, id);
++
++	return 0;
++}
++
+ const struct file_operations ovl_file_operations = {
+ 	.open		= ovl_open,
+ 	.release	= ovl_release,
+@@ -798,6 +808,7 @@ const struct file_operations ovl_file_operations = {
+ 	.fallocate	= ovl_fallocate,
+ 	.fadvise	= ovl_fadvise,
+ 	.unlocked_ioctl	= ovl_ioctl,
++	.flush		= ovl_flush,
+ #ifdef CONFIG_COMPAT
+ 	.compat_ioctl	= ovl_compat_ioctl,
+ #endif
 -- 
-2.17.1
+2.25.1
 
