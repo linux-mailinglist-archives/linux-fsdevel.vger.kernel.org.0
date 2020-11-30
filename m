@@ -2,109 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15CB82C8E27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 710962C8E4B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 20:43:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729872AbgK3Tfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 14:35:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39084 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728901AbgK3Tfy (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 14:35:54 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78192C061A48
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:35:14 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id w6so11105958pfu.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 11:35:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zoIMtVE4+1+o9p0pbm0cQZHtnOHf9cojfw2g8Pzl99w=;
-        b=nFwXZN+9x1uRKlRpb2fisB/ELkMzUI7nBOTDK+3QkUAWIm3IfPiJqiGjivf6F3sSwv
-         RoZyHi7CgxvW3SSOZQ2cU1/KY0Iy+CUvtAsqwt6VbmFNVW6B+eL6V31xyW900NDwZht5
-         N2oHTj6Gh8XEDl0zpxkojlT54hjr847iaIKNqFW9i3ucnsLmDSouyItCamuTeqB2jgEm
-         0AXOJ61q3ZHbh7mqIh6vCm6/n53SmiKHvl5J6WQtgx6lhqPLoAlk4NAHMXWCsP8Sta+x
-         RZJhxhos8lefJMBl3CLwk3ul9mLSpsmV5sZfheVZtdZuZ8VK8F4zN5m0ix/m3QpJBjKp
-         OnMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zoIMtVE4+1+o9p0pbm0cQZHtnOHf9cojfw2g8Pzl99w=;
-        b=ONYVb4vs1zGYzSq5qGASRYCRLcD/QTwsqiC21XQE9XA9tI8Ufj5svkmpRg68rrkgw+
-         Qrp4eZoJQZOcneqq6vt1WuCaTTKkRQalX8YWJ1Qh5+18gSJNabSMSKUgz0hAgeNpSlkM
-         Tqrxp0xOehkMScx5OPgIN2vM51nIcTBcoK00dfwDUJz8RSByny2dR9lt4O7FYPLGi0gO
-         W+/pUvVZorYzliq7CFR65vRqgg9OEOgkRjf/Ta5C0uE7MIPZpm6zgUsze1DrEgrZ/Czb
-         FBqB+yv8a+F6gC3jY78v5vTGFbVP9w1LuvJhx+3baNlXJ1frbrviI9KaXq4Ma9XpSk85
-         5t4g==
-X-Gm-Message-State: AOAM533mO3bT4qSj2UBZZByVZOBrWcBiJrM2HgjHtonpLm9peL4myB3E
-        Kdw8vv9XIk5a5QLX5uuIAadOYg==
-X-Google-Smtp-Source: ABdhPJyg/H6c/EHEcuAnEkbxBKhJCsZbEssRrqxYEujREgZsvL9Edhwh0+EkZiCX44t3hNqjg9XPLg==
-X-Received: by 2002:a63:f857:: with SMTP id v23mr19059138pgj.174.1606764913878;
-        Mon, 30 Nov 2020 11:35:13 -0800 (PST)
-Received: from relinquished.localdomain ([2601:602:8b80:8e0::b2be])
-        by smtp.gmail.com with ESMTPSA id s10sm10916857pgg.76.2020.11.30.11.35.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Nov 2020 11:35:12 -0800 (PST)
-Date:   Mon, 30 Nov 2020 11:35:10 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com, linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH man-pages v6] Document encoded I/O
-Message-ID: <X8VJbqz+XtA5Vmth@relinquished.localdomain>
-References: <cover.1605723568.git.osandov@fb.com>
- <ec1588a618bd313e5a7c05a7f4954cc2b76ddac3.1605724767.git.osandov@osandov.com>
- <4d1430aa-a374-7565-4009-7ec5139bf311@gmail.com>
- <fb4a4270-eb7a-06d5-e703-9ee470b61f8b@gmail.com>
- <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
+        id S1729483AbgK3TnL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 14:43:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727942AbgK3TnL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 14:43:11 -0500
+Received: from gmail.com (unknown [104.132.1.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83C7820709;
+        Mon, 30 Nov 2020 19:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606765350;
+        bh=0NMZI3KwqVrJhjvhdKXBVCYUQQFFXi3QbS59sB9SJz8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JOzo5GT8CfJGGdJ9E94TIKlDdqVO0mqkysWP9am6QBz3tLla3cKlSUCOyZ44yEonf
+         xNjNX8jyj5Her2thZe8lARYwbex8IW+dPe6nd5wU65l2OAj2NP8KGb97XNG2OA9KwK
+         5cB9H/imoEEn5Z7Rx91da40EON5gzH4ub9Jjl+fs=
+Date:   Mon, 30 Nov 2020 11:42:28 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Theodore Ts'o <tytso@mit.edu>, linux-fscrypt@vger.kernel.org,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Sebastien Buisson <sbuisson@ddn.com>
+Subject: Re: backup/restore of fscrypt files
+Message-ID: <20201130194228.GA1248532@gmail.com>
+References: <D1AD7D55-94D6-4C19-96B4-BAD0FD33CF49@dilger.ca>
+ <X8U8TG2ie77YiCF5@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
+In-Reply-To: <X8U8TG2ie77YiCF5@sol.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 04:03:44PM +0100, Alejandro Colomar (man-pages) wrote:
-> Hi Omar,
-> 
-> I found a wording of mine to be a bit confusing.
-> Please see below.
-> 
-> Thanks,
-> 
-> Alex
-> 
-> On 11/20/20 3:06 PM, Alejandro Colomar (man-pages) wrote:
-> > Hi Omar and Michael,
-> > 
-> > please, see below.
-> > 
-> > Thanks,
-> > 
-> > Alex
-> > 
-> > On 11/20/20 12:29 AM, Alejandro Colomar (mailing lists; readonly) wrote:
-> >> Hi Omar,
-> >>
-> >> Please, see some fixes below:
-> >>
-> >> Michael, I've also some questions for you below
-> >> (you can grep for mtk to find those).
-> >>
-> >> Thanks,
-> >>
-> >> Alex
+On Mon, Nov 30, 2020 at 10:39:10AM -0800, Eric Biggers wrote:
+> (Allowing only direct I/O on files that don't have encryption key unavailable
+> may help...)
 
-Thanks for the suggestions, I'll incorporate those into the next
-submission.
+It may sense to only provide the ciphertext when reads are done using
+RWF_ENCODED
+(https://lkml.kernel.org/linux-fsdevel/cover.1605723568.git.osandov@fb.com),
+rather than making normal reads return ciphertext when the key is unavailable.
+
+Ciphertext reads would always be uncached, which would avoid two conflicting
+uses of the same address_space.
+
+- Eric
