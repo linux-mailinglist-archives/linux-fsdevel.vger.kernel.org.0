@@ -2,20 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6082C7F3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:52:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0B4C2C7F41
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 08:52:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbgK3Hv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 02:51:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33112 "EHLO mx2.suse.de"
+        id S1727466AbgK3HwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 02:52:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33580 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbgK3Hv0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 02:51:26 -0500
+        id S1726299AbgK3HwG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Nov 2020 02:52:06 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D9BF1AD45;
-        Mon, 30 Nov 2020 07:50:44 +0000 (UTC)
-Subject: Re: [PATCH 43/45] f2fs: remove a few bd_part checks
+        by mx2.suse.de (Postfix) with ESMTP id 06B55AC55;
+        Mon, 30 Nov 2020 07:51:25 +0000 (UTC)
+Subject: Re: [PATCH 44/45] block: merge struct block_device and struct
+ hd_struct
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -25,16 +26,16 @@ Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
         dm-devel@redhat.com, Jan Kara <jack@suse.com>,
         linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Chao Yu <yuchao0@huawei.com>
+        linux-mm@kvack.org
 References: <20201128161510.347752-1-hch@lst.de>
- <20201128161510.347752-44-hch@lst.de>
+ <20201128161510.347752-45-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <7ff7de61-9bfd-7df9-d3ec-3642c0c922ab@suse.de>
-Date:   Mon, 30 Nov 2020 08:50:44 +0100
+Message-ID: <75432706-8726-2c86-a080-40c45e6144c3@suse.de>
+Date:   Mon, 30 Nov 2020 08:51:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201128161510.347752-44-hch@lst.de>
+In-Reply-To: <20201128161510.347752-45-hch@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -43,15 +44,26 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 11/28/20 5:15 PM, Christoph Hellwig wrote:
-> bd_part is never NULL for a block device in use by a file system, so
-> remove the checks.
+> Instead of having two structures that represent each block device with
+> different life time rules, merge them into a single one.  This also
+> greatly simplifies the reference counting rules, as we can use the inode
+> reference count as the main reference count for the new struct
+> block_device, with the device model reference front ending it for device
+> model interaction.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 > ---
->   fs/f2fs/checkpoint.c | 5 +----
->   fs/f2fs/sysfs.c      | 9 ---------
->   2 files changed, 1 insertion(+), 13 deletions(-)
+>   block/blk-cgroup.c        |   9 ++-
+>   block/blk.h               |   2 +-
+>   block/genhd.c             |  89 +++++++++--------------------
+>   block/partitions/core.c   | 116 +++++++++++++++-----------------------
+>   fs/block_dev.c            |   9 ---
+>   include/linux/blk_types.h |   8 ++-
+>   include/linux/blkdev.h    |   1 -
+>   include/linux/genhd.h     |  40 +++----------
+>   init/do_mounts.c          |  21 ++++---
+>   kernel/trace/blktrace.c   |  43 +++-----------
+>   10 files changed, 108 insertions(+), 230 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
