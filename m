@@ -2,148 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C75F2C8D1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 19:45:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A7C2C8D31
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 19:45:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388107AbgK3Smp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 13:42:45 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:53894 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727626AbgK3Smp (ORCPT
+        id S2388157AbgK3So6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 13:44:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48512 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388250AbgK3So6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 13:42:45 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kjo7g-004lQG-08; Mon, 30 Nov 2020 11:42:04 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kjo7e-0001dC-QW; Mon, 30 Nov 2020 11:42:03 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Wen Yang <wenyang@linux.alibaba.com>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20201128175850.19484-1-wenyang@linux.alibaba.com>
-Date:   Mon, 30 Nov 2020 12:41:33 -0600
-In-Reply-To: <20201128175850.19484-1-wenyang@linux.alibaba.com> (Wen Yang's
-        message of "Sun, 29 Nov 2020 01:58:50 +0800")
-Message-ID: <87zh2yit5u.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 30 Nov 2020 13:44:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606761812;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hkewaRffaH3MK/iLUl4Tk9n8lOvfBWoJswBpVn3Ldx0=;
+        b=ibQlIrEfnjdwq2roOCCtQvIA56SMOxt56hvarpJ87AWti0mBxIhAeAux2U/hI3Iu4lr3vQ
+        ohDWIya+iv6UN6VkCTk0XQQyd8cp/GSTMGxSe0IdT+BaXFhabcSYk/1uw8O0UQ+abuKxDk
+        /0k/m0g/tTBregyKaKAjWM6eUiB57CA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-310-OYBirpIKMo-Yuz5dOED4_A-1; Mon, 30 Nov 2020 13:43:30 -0500
+X-MC-Unique: OYBirpIKMo-Yuz5dOED4_A-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 70DEE1007466;
+        Mon, 30 Nov 2020 18:43:28 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-55.rdu2.redhat.com [10.10.116.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EAA75C1A3;
+        Mon, 30 Nov 2020 18:43:27 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id DA7FA22054F; Mon, 30 Nov 2020 13:43:26 -0500 (EST)
+Date:   Mon, 30 Nov 2020 13:43:26 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v2 4/4] overlay: Add rudimentary checking of writeback
+ errseq on volatile remount
+Message-ID: <20201130184326.GB14328@redhat.com>
+References: <20201127092058.15117-1-sargun@sargun.me>
+ <20201127092058.15117-5-sargun@sargun.me>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kjo7e-0001dC-QW;;;mid=<87zh2yit5u.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+D1VhZMNzyY+vufufIEE54onRJFTivgMQ=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMGappySubj_01
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Wen Yang <wenyang@linux.alibaba.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 644 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 8 (1.3%), b_tie_ro: 7 (1.1%), parse: 1.33 (0.2%),
-        extract_message_metadata: 23 (3.5%), get_uri_detail_list: 3.7 (0.6%),
-        tests_pri_-1000: 19 (3.0%), tests_pri_-950: 1.20 (0.2%),
-        tests_pri_-900: 0.97 (0.2%), tests_pri_-90: 205 (31.9%), check_bayes:
-        184 (28.6%), b_tokenize: 7 (1.1%), b_tok_get_all: 72 (11.2%),
-        b_comp_prob: 4.1 (0.6%), b_tok_touch_all: 97 (15.1%), b_finish: 0.97
-        (0.2%), tests_pri_0: 366 (56.8%), check_dkim_signature: 0.89 (0.1%),
-        check_dkim_adsp: 2.8 (0.4%), poll_dns_idle: 0.47 (0.1%), tests_pri_10:
-        2.2 (0.3%), tests_pri_500: 13 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] proc: add locking checks in proc_inode_is_dead
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201127092058.15117-5-sargun@sargun.me>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Wen Yang <wenyang@linux.alibaba.com> writes:
-
-> The proc_inode_is_dead function might race with __unhash_process.
-> This will result in a whole bunch of stale proc entries being cached.
-> To prevent that, add the required locking.
-
-I assume you are talking about during proc_task_readdir?
-
-It is completely possible for the proc_inode_is_dead to report
-the inode is still alive and then for unhash_process to
-happen when afterwards.
-
-Have you been able to trigger this race in practice?
-
-
-Ouch!!!!  Oleg I just looked the introduction of proc_inode_is_dead in
-d855a4b79f49 ("proc: don't (ab)use ->group_leader in proc_task_readdir()
-paths") introduced a ``regression''.
-
-Breaking the logic introduced in 7d8952440f40 ("[PATCH] procfs: Fix
-listing of /proc/NOT_A_TGID/task") to keep those directory listings not
-showing up.
-
-Given that it has been 6 years and no one has cared it doesn't look like
-an actual regression but it does suggest the proc_inode_is_dead can be
-removed entirely as it does not achieve anything in proc_task_readdir.
-
-
-
-As for removing the race.  I expect the thing to do is to modify
-proc_pid_is_alive to verify the that the pid is still alive.
-Oh but look get_task_pid verifies that thread_pid is not NULL
-and unhash_process sets thread_pid to NULL.
-
-
-My brain is too fuzzy right now to tell if it is possible for
-get_task_pid to return a pid and then for that pid to pass through
-unhash_process, while the code is still in proc_pid_make_inode.
-
-proc_inode_is_dead is definitely not the place to look to close races.
-
-Eric
-
-
-> Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: Christian Brauner <christian@brauner.io>
-> Cc: linux-kernel@vger.kernel.org
+On Fri, Nov 27, 2020 at 01:20:58AM -0800, Sargun Dhillon wrote:
+> Volatile remounts validate the following at the moment:
+>  * Has the module been reloaded / the system rebooted
+>  * Has the workdir been remounted
+> 
+> This adds a new check for errors detected via the superblock's
+> errseq_t. At mount time, the errseq_t is snapshotted to disk,
+> and upon remount it's re-verified. This allows for kernel-level
+> detection of errors without forcing userspace to perform a
+> sync and allows for the hidden detection of writeback errors.
+> 
+> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
 > Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
 > ---
->  fs/proc/base.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 1bc9bcd..59720bc 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1994,7 +1994,13 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+>  fs/overlayfs/overlayfs.h | 1 +
+>  fs/overlayfs/readdir.c   | 6 ++++++
+>  fs/overlayfs/super.c     | 1 +
+>  3 files changed, 8 insertions(+)
+> 
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index de694ee99d7c..e8a711953b64 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -85,6 +85,7 @@ struct ovl_volatile_info {
+>  	 */
+>  	uuid_t		ovl_boot_id;	/* Must stay first member */
+>  	u64		s_instance_id;
+> +	errseq_t	errseq;	/* Implemented as a u32 */
+>  } __packed;
 >  
->  static inline bool proc_inode_is_dead(struct inode *inode)
->  {
-> -	return !proc_pid(inode)->tasks[PIDTYPE_PID].first;
-> +	bool has_task;
-> +
-> +	read_lock(&tasklist_lock);
-> +	has_task = pid_has_task(proc_pid(inode), PIDTYPE_PID);
-> +	read_unlock(&tasklist_lock);
-> +
-> +	return !has_task;
->  }
+>  /*
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index 7b66fbb20261..5795b28bb4cf 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -1117,6 +1117,12 @@ static int ovl_verify_volatile_info(struct ovl_fs *ofs,
+>  		return -EINVAL;
+>  	}
 >  
->  int pid_delete_dentry(const struct dentry *dentry)
+> +	err = errseq_check(&volatiledir->d_sb->s_wb_err, info.errseq);
+> +	if (err) {
+> +		pr_debug("Workdir filesystem reports errors: %d\n", err);
+
+It probably will make sense to make it pr_err() instead? Will be good
+to know if kernel logic detected errors.
+
+
+Thanks
+Vivek
+
