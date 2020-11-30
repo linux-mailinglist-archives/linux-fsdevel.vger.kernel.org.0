@@ -2,105 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59EA52C8AE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 18:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FAEA2C8BBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 18:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387520AbgK3R0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 12:26:23 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:52422 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387399AbgK3R0X (ORCPT
+        id S2387649AbgK3Rwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 12:52:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51018 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbgK3Rwm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 12:26:23 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHIvjJ007232;
-        Mon, 30 Nov 2020 17:24:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=zxEYQxWkeioI23EP3tXuuM/cn+rrt2LlzfWd+JCPeBg=;
- b=kP4J/iQFAYitxa5dhwf3SLOQJEF7nOWtdj3FzxScLSXPU6GB8ZnauunklmiyaeBmq0Im
- 1091zsECJDm/iUPe0BCUf5iPtGa4tf/r5y1XMbUF+pidYHlb2dMPPNI9vWTLJTrvyhE2
- PADrx4r5aquDUWiG8YS4zb2gzdpZPfGiY+w4kWD+i0Kh3OSL9qnwr4D3BvxQcjadDTrr
- 3OVS5FJfBxID3BxsrHG77sp2nzZlxJU1Aj0DYtR5JqnUbXHvqT68b/KfLOqM3v4j8R7H
- hn3ye6tMPJpBe1OguKgxmAAykc1E8icWceixbSs5J0SRSt601bwRgtGxL9YjVUo3F1yr Ew== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 353egke8kg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Nov 2020 17:24:26 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0AUHFGeO001413;
-        Mon, 30 Nov 2020 17:22:25 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 3540fvdryn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Nov 2020 17:22:25 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0AUHMKjf019059;
-        Mon, 30 Nov 2020 17:22:20 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Nov 2020 09:22:19 -0800
-Date:   Mon, 30 Nov 2020 09:22:18 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     chenlei0x@gmail.com
-Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lei Chen <lennychen@tencent.com>
-Subject: Re: [PATCH] fs: iomap: Replace bio_add_page with __bio_add_page in
- iomap_add_to_ioend
-Message-ID: <20201130172218.GA143045@magnolia>
-References: <1606721331-4211-1-git-send-email-lennychen@tencent.com>
+        Mon, 30 Nov 2020 12:52:42 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0B38C0613D2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 09:51:56 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id k11so10537483pgq.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Nov 2020 09:51:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zGnnwAdYWjtdhwju8NcFhzJcpMrWjZbZM1FQN8kVDHg=;
+        b=uHFgX+4AVkQgx7faklPk/rXQ2t3jemQG+USPU79z1ylyowIu+ubayCfcNDVRC61F46
+         uOUat2OPBdrNV3C5cxDEKe++AihqW2dfiUMqAR9SSzg0pWNoXwmF7ToC19r922VtbWfr
+         GnZWjiz7MwL36CuNP5a8PBDGbSSHjoQJPhU96VUc/2DTZ+eLKM46XkcINUXSEgzoNRVJ
+         B4aqmPEpPNtUoWXOmsYcqMofGY6tX4m12lDRyTKN8UmgHif1BP6ersB+G7h3Dqe1BMla
+         /i9GORlNNRTQ9/OCndNw/5vShhAGl68QelubQRXFJANa6CdOvdZreY4YnK+uQ2CRP4+S
+         bZWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zGnnwAdYWjtdhwju8NcFhzJcpMrWjZbZM1FQN8kVDHg=;
+        b=PNRbRqV8bJM1H+HMXEOWrwXN23cuwZJADveGpqvvoYZTZe/+zN1APpiJ+wqJc/kGmd
+         YuU3qT0Q9zMp2gT19Lxoj6GSMKTtzdRX6n/n3XXQ2Klg1rw7qLXyi5/AM7k059vBALVw
+         QoU9OPWVEieFLYEwJ4MFYhxePEC0cPmdgmUNZR0Amhfx0TdUb5k++0O/kQ08lNeeYfAk
+         JFYEJ0XXL6wC25IYxyvyujMTQzXy2AyctO/NUhO2iJQXLnnq/+NxIh582NwYAEL/jElV
+         bsJ60d96U9O1gVW/jockqabGMV0N7lz4WZV1Eo598mmIgbTzAxJwvULaSo9bAg3Hsvdf
+         rhYg==
+X-Gm-Message-State: AOAM53216vpVakxsowoC0J9ecXKAlcDyKv5fUdLqRpN7G6W5YMy8ANh5
+        /7Pkx63QVdx/XXp5Fu3aBisOEg==
+X-Google-Smtp-Source: ABdhPJwMTZsLj5SnQFza8cXET/WnIEE6pVW7Y7fE9/cYA5ZaExgItRAY6sgUO5JUjmSVf3YBKD1+nQ==
+X-Received: by 2002:a62:ed01:0:b029:19a:a667:9925 with SMTP id u1-20020a62ed010000b029019aa6679925mr17651943pfh.35.1606758716075;
+        Mon, 30 Nov 2020 09:51:56 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id w18sm17681748pfi.216.2020.11.30.09.51.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Nov 2020 09:51:55 -0800 (PST)
+Subject: Re: merge struct block_device and struct hd_struct v4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        dm-devel@redhat.com, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20201128161510.347752-1-hch@lst.de>
+ <20201130171915.GA1499@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e67ffb20-ce91-a3a7-e1f7-6fd32334abc4@kernel.dk>
+Date:   Mon, 30 Nov 2020 10:51:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1606721331-4211-1-git-send-email-lennychen@tencent.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=3
- phishscore=0 mlxlogscore=743 adultscore=0 mlxscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011300112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=3
- phishscore=0 mlxlogscore=726 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011300112
+In-Reply-To: <20201130171915.GA1499@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 03:28:51PM +0800, chenlei0x@gmail.com wrote:
-> From: Lei Chen <lennychen@tencent.com>
+On 11/30/20 10:19 AM, Christoph Hellwig wrote:
+> On Sat, Nov 28, 2020 at 05:14:25PM +0100, Christoph Hellwig wrote:
+>> A git tree is available here:
+>>
+>>     git://git.infradead.org/users/hch/block.git bdev-lookup
+>>
+>> Gitweb:
+>>
+>>     http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/bdev-lookup
 > 
-> iomap_add_to_ioend append page on wpc->ioend->io_bio. If io_bio is full,
-> iomap_chain_bio will allocate a new bio. So when bio_add_page is called,
-> pages is guaranteed to be appended into wpc->ioend->io_bio. So we do not
-> need to check if page can be merged. Thus it's a faster way to directly
-> call __bio_add_page.
-
-How much faster?
-
---D
-
-> Signed-off-by: Lei Chen <lennychen@tencent.com>
-> ---
->  fs/iomap/buffered-io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I've updated the git tree with the set_capacity_and_notify change
+> suggested by Jan, a commit log typo fix and the Reviewed-by tags.
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 10cc797..7a0631a 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1310,7 +1310,7 @@ static void iomap_writepage_end_bio(struct bio *bio)
->  			wpc->ioend->io_bio =
->  				iomap_chain_bio(wpc->ioend->io_bio);
->  		}
-> -		bio_add_page(wpc->ioend->io_bio, page, len, poff);
-> +		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
->  	}
->  
->  	wpc->ioend->io_size += len;
-> -- 
-> 1.8.3.1
-> 
+> Jens, can you take a look and potentially merge the branch?  That would
+> really help with some of the pending work.
+
+Done, queued up for 5.11.
+
+-- 
+Jens Axboe
+
