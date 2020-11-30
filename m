@@ -2,161 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF2692C901F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 22:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55BF12C90E5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Nov 2020 23:23:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbgK3VjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Nov 2020 16:39:00 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:50834 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgK3Vi7 (ORCPT
+        id S1730598AbgK3WWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Nov 2020 17:22:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728649AbgK3WWA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Nov 2020 16:38:59 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kjqsC-001UG6-3z; Mon, 30 Nov 2020 14:38:16 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kjqsB-002aGy-5i; Mon, 30 Nov 2020 14:38:15 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Geoff Levand <geoff@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <87r1on1v62.fsf@x220.int.ebiederm.org>
-        <20201120231441.29911-2-ebiederm@xmission.com>
-        <20201123175052.GA20279@redhat.com>
-        <CAHk-=wj2OnjWr696z4yzDO9_mF44ND60qBHPvi1i9DBrjdLvUw@mail.gmail.com>
-        <87im9vx08i.fsf@x220.int.ebiederm.org>
-        <87pn42r0n7.fsf@x220.int.ebiederm.org>
-        <CAHk-=wi-h8y5MK83DA6Vz2TDSQf4eEadddhWLTT_94bP996=Ug@mail.gmail.com>
-        <CAK8P3a3z1tZSSSyK=tZOkUTqXvewJgd6ntHMysY0gGQ7hPWwfw@mail.gmail.com>
-        <ed83033f-80af-5be0-ecbe-f2bf5c2075e9@infradead.org>
-        <877dqap76p.fsf@x220.int.ebiederm.org>
-        <CAK8P3a0hPG1cTxksTBCJHkAV_=TLZLCi2pZYMk2Dc2-kLzD3rg@mail.gmail.com>
-Date:   Mon, 30 Nov 2020 15:37:45 -0600
-In-Reply-To: <CAK8P3a0hPG1cTxksTBCJHkAV_=TLZLCi2pZYMk2Dc2-kLzD3rg@mail.gmail.com>
-        (Arnd Bergmann's message of "Fri, 27 Nov 2020 21:29:33 +0100")
-Message-ID: <87o8jeh6fq.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 30 Nov 2020 17:22:00 -0500
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C44C0613CF;
+        Mon, 30 Nov 2020 14:21:20 -0800 (PST)
+Received: by mail-il1-x144.google.com with SMTP id x15so12963128ilq.1;
+        Mon, 30 Nov 2020 14:21:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D1Ha7vRV9nbOHPM4HMdUKEIihDTBwTSbMBbTV7hrVUI=;
+        b=j+CWilT1FBY6fMM8ajfbaA+07dZlElLPFHU1/04IJ7sn788bbTuQAzgcca2pxx21Rb
+         SOwcGuhgzpr+fIpnt3+ScpdottCpVtVJS/l0fJDcY75qhGr9yHZztwDCXJrWaubPKuoU
+         +rbOwZFQxdEIe0UkB+VlRZnE7S7PSYHfCXJVMDtLluJ+uWkfSqQAXCAPo9MAu8VsCxQc
+         EK3kkCP27xhQX9D7jMuV/WPb6Fx7ZbytA6L9D+Dn/Trm1NlbhT9U25hpHR1+d9eXi0aP
+         gTd19weVNs7ffk+nPo19gH1QwrRzj9h0QRDVSPCPy1BW7fkY/WCzP3w+X0JvZpfwWa7w
+         DE+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D1Ha7vRV9nbOHPM4HMdUKEIihDTBwTSbMBbTV7hrVUI=;
+        b=Qb73CK9+8bm9h8UG2SBa2Qk7hk37HmedwU4PBunkKuCt+f6qjBnwsOjN5apXoUAxSx
+         iW4hwfz/YUkNpkGZ9ivS5eW7VqeHhl24K8yT+8JELS0+l7CFU+DnBg0EW/XjcjuaLg5l
+         zj3L6lHax1LPmDZC7pnDCge0nAO+25mFFDaw7AzWXeT2fDCkXhsYObK32YHI9vEmBx/U
+         GYwktO+sVp9q2HSX3ccj15ihnHvppOP1wMmtk2yzi++dTlaD/4PFMWlQi5LbaXM1qvCg
+         iLxwnXSgb0dx73jRb6YKZ/kfXgw0yyqgUom0WCeRsKALK979Fmg0Wssxb1UHnzHBCLIw
+         2KWw==
+X-Gm-Message-State: AOAM532JYXm/az02HaCdFNo28iLu1+yiDnPm8gjJWj1IpAoXlMMXSPMS
+        0mv0d2smFHIci0q2iGqlrW6v3JD3GRHs0UXSCw==
+X-Google-Smtp-Source: ABdhPJzQyDinxFmY7Qof9roEYRhRR7LsD+Vvl/77JXQu3t8Itz1DUfq/AeLqCIizcLtgMuYQhS5IdB8P89i1Ib8YOu4=
+X-Received: by 2002:a05:6e02:603:: with SMTP id t3mr20342033ils.11.1606774879479;
+ Mon, 30 Nov 2020 14:21:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kjqsB-002aGy-5i;;;mid=<87o8jeh6fq.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/cLPgLNNg/8c6pqCnXbBCnlUkV3ILlp1o=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        XM_B_SpammyWords autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Arnd Bergmann <arnd@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 412 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.8 (0.9%), b_tie_ro: 2.6 (0.6%), parse: 0.71
-        (0.2%), extract_message_metadata: 9 (2.1%), get_uri_detail_list: 1.82
-        (0.4%), tests_pri_-1000: 10 (2.5%), tests_pri_-950: 1.00 (0.2%),
-        tests_pri_-900: 0.82 (0.2%), tests_pri_-90: 65 (15.7%), check_bayes:
-        64 (15.4%), b_tokenize: 7 (1.6%), b_tok_get_all: 9 (2.1%),
-        b_comp_prob: 2.3 (0.5%), b_tok_touch_all: 43 (10.5%), b_finish: 0.66
-        (0.2%), tests_pri_0: 310 (75.1%), check_dkim_signature: 0.39 (0.1%),
-        check_dkim_adsp: 2.2 (0.5%), poll_dns_idle: 0.84 (0.2%), tests_pri_10:
-        2.7 (0.6%), tests_pri_500: 8 (1.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 02/24] exec: Simplify unshare_files
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20201126155246.25961-1-jack@suse.cz> <CALCETrVaj6rnvqX2cxj3u++hg_XZD-Zo4iYUPTFDiwaO49xDrg@mail.gmail.com>
+ <CAMzpN2gADAWBoTgKEgepCHVKoqOw3T_D_W30Q2-vJtQpfn0jwg@mail.gmail.com> <CALCETrXS8e9BRcpmSYqE5_Cvrt96wUOWK_P2bFWUkD2BozPNbg@mail.gmail.com>
+In-Reply-To: <CALCETrXS8e9BRcpmSYqE5_Cvrt96wUOWK_P2bFWUkD2BozPNbg@mail.gmail.com>
+From:   Brian Gerst <brgerst@gmail.com>
+Date:   Mon, 30 Nov 2020 17:21:08 -0500
+Message-ID: <CAMzpN2gkNnqnT3hS4jaHTphO+KdZmC=9Hi4tXk3RV9C-EcwtLQ@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: Fix fanotify_mark() on 32-bit x86
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-arch <linux-arch@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Arnd Bergmann <arnd@kernel.org> writes:
-
-> On Wed, Nov 25, 2020 at 2:16 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->> > On 11/24/20 12:14 PM, Arnd Bergmann wrote:
->> >
->> > There are still PS3-Linux users out there.  They use 'Homebrew' firmware
->> > released through 'Hacker' forums that allow them to run Linux on
->> > non-supported systems.  They are generally hobbies who don't post to
->> > Linux kernel mailing lists.  I get direct inquiries regularly asking
->> > about how to update to a recent kernel.  One of the things that attract
->> > them to the PS3 is the Cell processor and either using or programming
->> > the SPUs.
->> >
->> > It is difficult to judge how much use the SPU core dump support gets,
->> > but if it is not a cause of major problems I feel we should consider
->> > keeping it.
->>
->> I just took a quick look to get a sense how much tool support there is.
->>
->> In the gdb tree I found this 2019 commit abf516c6931a ("Remove Cell
->> Broadband Engine debugging support").  Which basically removes the code
->> in gdb that made sense of the spu coredumps.
+On Fri, Nov 27, 2020 at 7:36 PM Andy Lutomirski <luto@kernel.org> wrote:
 >
-> Ah, I had not realized this was gone already. The code in gdb for
-> seamlessly debugging programs across CPU and SPU was clearly
-> more complex than the kernel portion for the coredump, so it makes
-> sense this was removed eventually.
+> On Fri, Nov 27, 2020 at 2:30 PM Brian Gerst <brgerst@gmail.com> wrote:
+> >
+> > On Fri, Nov 27, 2020 at 1:13 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > >
+> > > On Thu, Nov 26, 2020 at 7:52 AM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > Commit converting syscalls taking 64-bit arguments to new scheme of compat
+> > > > handlers omitted converting fanotify_mark(2) which then broke the
+> > > > syscall for 32-bit x86 builds. Add missed conversion. It is somewhat
+> > > > cumbersome since we need to keep the original compat handler for all the
+> > > > other 32-bit archs.
+> > > >
+> > >
+> > > This is stupendously ugly.  I'm not really sure how this is supposed
+> > > to work on any 32-bit arch.  I'm also not sure whether we should
+> > > expect the SYSCALL_DEFINE macros to figure this out by themselves.
+> >
+> > It works on 32-bit arches because the compiler implicitly uses
+> > consecutive input registers or stack slots for 64-bit arguments, and
+> > some arches have alignment requirements that result in hidden padding.
+> > x86-32 is different now because parameters are passed in via pt_regs,
+> > and the 64-bit value has to explicitly be reassembled from the high
+> > and low 32-bit values, just like in the compat case.
+> >
 >
->> I would not say the coredump support is a source major problems, but it
->> is a challenge to understand.  One of the pieces of code in there that
->> is necessary to make the coredump support work reliable, a call to
->> unshare_files, Oleg whole essentially maintains the ptrace and coredump
->> support did not know why it was there, and it was not at all obvious
->> when I looked at the code.
->>
->> So we are certainly in maintainers loosing hours of time figuring out
->> what is going on and spending time fixing fuzzer bugs related to the
->> code.
+> That was my guess.
 >
-> I also spent some amount of time on this code earlier this year Christoph
-> did some refactoring, and we could both have used that time better.
+> > I think the simplest way to handle this is add a wrapper in
+> > arch/x86/kernel/sys_ia32.c with the other fs syscalls that need 64-bit
+> > args.  That keeps this mess out of general code.
 >
->> At the minimum I will add a few more comments so people reading the code
->> can realize why it is there.   Perhaps putting the relevant code behind
->> a Kconfig so it is only built into the kernel when spufs is present.
->>
->> I think we are at a point we we can start planning on removing the
->> coredump support.  The tools to read it are going away.  None of what is
->> there is bad, but it is definitely a special case, and it definitely has
->> a maintenance cost.
 >
-> How about adding a comment in the coredump code so it can get
-> removed the next time someone comes across it during refactoring,
-> or when they find a bug that can't easily be worked around?
+> Want to send a patch?
 
-Did my proposed patch look ok?
+I settled on doing something along the same line as Jan, but in a more
+generic way that lays the groundwork for converting more of these
+arch-specific compat wrappers to a generic wrapper.
 
-> That way there is still a chance of using it where needed, but
-> hopefully it won't waste anyone's time when it gets in the way.
+Patch coming soon.
 
-Sounds good to me.
-
-> If there are no objections, I can also send a patch to remove
-> CONFIG_PPC_CELL_NATIVE, PPC_IBM_CELL_BLADE and
-> everything that depends on those symbols, leaving only the
-> bits needed by ps3 in the arch/powerpc/platforms/cell directory.
-
-That also seems reasonable.  My read of the history suggests that
-code has been out of commission for a decade or so, and not having it to
-trip over (just present in the history) seems very reasonable.
-
-Eric
+--
+Brian Gerst
