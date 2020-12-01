@@ -2,115 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 687912CA3C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 14:28:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0212CA3E9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 14:34:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391016AbgLAN05 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 08:26:57 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:43731 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725977AbgLAN04 (ORCPT
+        id S2387659AbgLANdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 08:33:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37238 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387578AbgLANdK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 08:26:56 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 0FAC65804FE;
-        Tue,  1 Dec 2020 08:26:10 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 01 Dec 2020 08:26:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=1ZjibMafBhi5wreHWpqyE5n4OJZ
-        RTh26ucXByqksgjc=; b=YGvdN742MswMjFFMm/nVhATPfG25MN3g8NDEhq46bSv
-        7LXrAhU6GGnySSKTS+nutqhRkW96v0W05mNjCzdA1iunVOLgtCO7ajC6Mz8LB3u2
-        5lnL64w4bFnzTvhjZEdQ4cbHNiB1RBznGNAlnAnNqk3UyQlEM6ETUJWnfZLt5Qg+
-        T/eqHabfIeLU2JN+i3IjB4v4i6qzmkRLIZJbVTesFO9VwftF9+xJogYimU2W93rY
-        /mndsKNjwtvuxWa4etSPsEAJd7vhdUaPBcy0Xh25FF7lbp/ZE9fA/h1S+KTmYHYb
-        AwgwS4zJ5xYzQnVHOZdCVJPhST7hEIk4wyUW9UR4oEw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=1ZjibM
-        afBhi5wreHWpqyE5n4OJZRTh26ucXByqksgjc=; b=ralXkkm/Ttr5dNKX1KdXyE
-        NyUpN8X1tWhN5hv6cKVaH3Fh1yAQkTWbxIXHlmQimcia77Ck3NJxEywB4C6llwlq
-        KYr79SBCuyD3+CGe/lOFvqLppWQ/qJLY5+X1C4uM1eGZq4pMt1/y5ELRl+sg6z7q
-        1SB0jehI669qSfkTJaF2PMR6wQ2TKyRTJaaPp1sgXdRFPFsIqXvSkFXhWs2p8GNK
-        IT5R/AjjNb3Ul8X1o8PA97XTaEOyjBBdnYY5ZY02uHCVFCRHlSsoULBB2U/fD90Y
-        xHH17x2yc0diRyv8G/4f3qfU6HvrFm51qA3YXcZRMIo1abiGeBraPBZEs2GUOSdQ
-        ==
-X-ME-Sender: <xms:b0TGX1QtZp99ufXf40j1YmqeWuwPzFStbU854K9q9zsAwrIVZa4AAA>
-    <xme:b0TGX-zgoJRocphuNxw6tUPjgEV3pJeQrXPD6ApV6X_omYXz6uCwX8BKkyK8N-SJv
-    _qzX9W7ns057PEY9uo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudeivddgheegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigthhho
-    ucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtffrrg
-    htthgvrhhnpeegkeefjeegkedtjefgfeduleekueetjeeghffhuefgffefleehgeeifedv
-    gfethfenucfkphepuddvkedruddtjedrvdeguddrudektdenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:b0TGX60khMu7LzGd7Yn3aL7UjilWQHaWM61HxQVYHDyS-_xY28R6Zg>
-    <xmx:b0TGX9B3lnqfdWmGNRFc_HxXwZfb28_nQ1Vf02IqXYseMVIQ6jvF8w>
-    <xmx:b0TGX-inuXGa4Vvr-SNyGJpIv-GfZKcep4apN-VsGGzfbu_D1MfZQg>
-    <xmx:ckTGX3AJxVIy7LI81lMLNHF1N1bnSjcw78XxLmR0kT7zBUg_ll9Ypg>
-Received: from cisco (unknown [128.107.241.180])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4F6533280065;
-        Tue,  1 Dec 2020 08:25:59 -0500 (EST)
-Date:   Tue, 1 Dec 2020 08:25:56 -0500
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        containers@lists.linux-foundation.org,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Alban Crequy <alban@kinvolk.io>, linux-ext4@vger.kernel.org,
-        Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, selinux@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        fstests@vger.kernel.org, linux-security-module@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 07/38] mount: attach mappings to mounts
-Message-ID: <20201201132556.GD103125@cisco>
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
- <20201128213527.2669807-8-christian.brauner@ubuntu.com>
- <20201201105025.GF27730@lst.de>
+        Tue, 1 Dec 2020 08:33:10 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAFDDC0613CF;
+        Tue,  1 Dec 2020 05:32:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=WA6TfbbvUNqISwb7mJNnzkxcYfFvk82PnVZUq8rvLNg=; b=sLO9WQNR9aNvAwV3blNs0aAJUm
+        kqf8laWJmRyiHAD6P6lXn4TeU610XOrdR7DqG6qx23czsVAv7lyxLX7hLOexNIOzQFfvxPQHTLLhX
+        C4l15ZS4r4mPQtpRztFw7kAQdZ391dT89RY/RkATJZP64oAf/JGFz9CqtU76wz8tf/7v1ABDmiqVp
+        DbgnBMs9PiFaB0xnrbuka2BmqRHKST6x169zl/IVUE92w+jZ+VdxLeIKyk/s2jc1vR7VGomZIWCFF
+        MPDtJnHHu8fCNvSKeHN0kl8New9n9bxImcT6yki2WR0LyYY18ksqPAZ9+DrmnOeT41X47BLLoyt9D
+        MG+4s2Zg==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kk5la-0000BI-8w; Tue, 01 Dec 2020 13:32:26 +0000
+Date:   Tue, 1 Dec 2020 13:32:26 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
+Message-ID: <20201201133226.GA26472@infradead.org>
+References: <20201201120652.487077-1-ming.lei@redhat.com>
+ <20201201125251.GA11935@casper.infradead.org>
+ <20201201125936.GA25111@infradead.org>
+ <fdbfe981-0251-9641-6ed8-db034c0f0148@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201201105025.GF27730@lst.de>
+In-Reply-To: <fdbfe981-0251-9641-6ed8-db034c0f0148@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 11:50:25AM +0100, Christoph Hellwig wrote:
-> The READ_ONCE still looks suspect as it generally needs to be paired
-> with a WRITE_ONCE.  The rest looks sane to me.
+On Tue, Dec 01, 2020 at 01:17:49PM +0000, Pavel Begunkov wrote:
+> I was thinking about memcpy bvec instead of iterating as a first step,
+> and then try to reuse passed in bvec.
+> 
+> A thing that doesn't play nice with that is setting BIO_WORKINGSET in
+> __bio_add_page(), which requires to iterate all pages anyway. I have no
+> clue what it is, so rather to ask if we can optimise it out somehow?
+> Apart from pre-computing for specific cases...
+> 
+> E.g. can pages of a single bvec segment be both in and out of a working
+> set? (i.e. PageWorkingset(page)).
 
-Yeah, the comment from the other location is,
+Adding Johannes for the PageWorkingset logic, which keeps confusing me
+everytime I look at it.  I think it is intended to deal with pages
+being swapped out and in, and doesn't make much sense to look at in
+any form for direct I/O, but as said I'm rather confused by this code.
 
-/* Pairs with smp_load_acquire() in mnt_user_ns(). */
+If PageWorkingset is a non-issue we should be able to just point the
+bio at the biovec array.  I think that be done by allocating the bio
+with nr_iovecs == 0, and then just updating >bi_io_vec and ->bi_vcnt
+using a little helper like this:
 
-So I think it's just a typo that needs to be fixed.
-
-Tycho
+static inline void bio_assign_bvec(struct bio *bio, struct bio_vec *bvecs,
+		unsigned short nr_bvecs)
+{
+	WARN_ON_ONCE(BVEC_POOL_IDX(bio) != 0);
+	bio->bi_io_vec = bvecs;
+	bio->bi_vcnt = nr_bvecs;
+}
