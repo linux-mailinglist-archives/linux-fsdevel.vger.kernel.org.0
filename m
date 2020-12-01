@@ -2,131 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6502CAE51
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 22:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 573B32CAE80
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 22:35:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbgLAVXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 16:23:25 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34664 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727908AbgLAVXY (ORCPT
+        id S2387427AbgLAVfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 16:35:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbgLAVfE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 16:23:24 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1L8vne083804;
-        Tue, 1 Dec 2020 21:22:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=TIFf7NKiuU3OZjiAan48G8yrjlMulOwktkWk+2AccTQ=;
- b=Rny8YjzFKeVSAn70XhcdP2BTbf1+QZZaSwX8Z9kgwIcuhXwzMixxnq2eGfuDipRGW8le
- cs/e2VabfipoYEZrYLjXedgJMrY5WmzG7ZekKsavwn+zlV47SKcqFW2khq7VbeJiwJcK
- NtyFsCujzu89ANMa53PI7lwTqyIfyuGOMRi7JrburKEh46NFQ93LvmWSxNx/HwtAhWry
- /f4vJWNAT8T6xNsRCbK0V1Pcd93yJJnwsBA/pBPvwWtTyvn+JaXjD6BGb8I9AdYjARUN
- FGs8vVYsi+N8ikyjNnwDhanFGdTgoUYgPXxhEz/kvILl9+PKIkCvj74RLJom+GJhrLXg eg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 353c2aw1qp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 01 Dec 2020 21:22:37 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1LBKsq163826;
-        Tue, 1 Dec 2020 21:22:36 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 3540fxknej-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Dec 2020 21:22:36 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B1LMYVl018071;
-        Tue, 1 Dec 2020 21:22:35 GMT
-Received: from [192.168.2.112] (/50.38.35.18)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Dec 2020 13:22:34 -0800
-Subject: Re: [RFC PATCH 01/13] fs/userfaultfd: fix wrong error code on WP &
- !VM_MAYWRITE
-To:     Nadav Amit <nadav.amit@gmail.com>, linux-fsdevel@vger.kernel.org
-Cc:     Nadav Amit <namit@vmware.com>, Jens Axboe <axboe@kernel.dk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20201129004548.1619714-1-namit@vmware.com>
- <20201129004548.1619714-2-namit@vmware.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <3af643ec-b392-617c-cd4e-77db0cba24bd@oracle.com>
-Date:   Tue, 1 Dec 2020 13:22:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Tue, 1 Dec 2020 16:35:04 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2893CC0613CF;
+        Tue,  1 Dec 2020 13:34:24 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id k10so7557731wmi.3;
+        Tue, 01 Dec 2020 13:34:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FnnA7YCm5kIjNwSDbnjuaUqX+0RY801uOYLHEzntnsQ=;
+        b=UryDIZ0jgaMwfFh62tzh9Vv5zjzTHRFGLHAqLfEDeNnUkIOLtIS7PjDwquNcVjrVmk
+         C0jydjO3/K/xj7JZpEd3EdrcV2OYHqBuuzkNqNH8llEdibUDhMX5b+EYlHzlhdWq92yq
+         OnGkRyJLhQqyDIGm87hDhc1DYIzU/GbPEDTSxcnBNcB7BX/pWvFMtB/ZqsneoLhHqxrL
+         54vKOpKLoehXJDNVa5mllSBFbxt+IEdV+d6VT1GXP2+FgadxiwUJDVfkqKX6n/dRSxi+
+         p6Nh21UwQHycPLR0cjjc91LhcH5sIjNmVHGt9SMdu22rwa4GBuY6f0RixxVuFgt4rFwM
+         KEhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FnnA7YCm5kIjNwSDbnjuaUqX+0RY801uOYLHEzntnsQ=;
+        b=JyPKmM6x90QyBLqYJohgCm1XKHDxVE66+frmRU7aJ2x1JjmTPJCpQh8rAf7BdVTJBp
+         rDdetc/n2w6RtJ+CfOioj5JFHBHlNCzO3VaGKIL81cyQKRQWxPdaXj3e2hI08KLIxWVs
+         fa7RC+2tjG+yrTuQIk2TWQ43Teuitn5Y+okdj23Km0L6nGbiyo6UvN/hjOLkndWFcfK8
+         /TY9HGRXL3mrfHIZc89OvH2GffM1wjy+7pBCj2Lr6ayr15EhQz4Vik6UrabZEZ8Z9G48
+         jtEAxy2ffh/eIWTQu+xJoZrIYnn84x/jLg9UlKib8oYTO7hz4JGiUViyOpM5fHi1rHKd
+         9/pw==
+X-Gm-Message-State: AOAM532e3RuVWeJSYgwocGKROtrDsdkYMP6oevMxP0f3BR8XruFZXX7w
+        LMlG/6i5ebzNP1FxsOpxRthc+HgAe9lPAg==
+X-Google-Smtp-Source: ABdhPJzJB0fT/0w670/t7g/4JErTNT1EQbI+5BEPtjshIdwuY5K5PLQjmZAw7pDG59iwQ88pM/jVow==
+X-Received: by 2002:a1c:e907:: with SMTP id q7mr4708239wmc.161.1606858462650;
+        Tue, 01 Dec 2020 13:34:22 -0800 (PST)
+Received: from [192.168.1.143] ([170.253.51.130])
+        by smtp.gmail.com with ESMTPSA id q16sm1346279wrn.13.2020.12.01.13.34.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Dec 2020 13:34:22 -0800 (PST)
+Subject: Re: [PATCH man-pages v6] Document encoded I/O
+To:     "G. Branden Robinson" <g.branden.robinson@gmail.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com, linux-man <linux-man@vger.kernel.org>
+References: <cover.1605723568.git.osandov@fb.com>
+ <ec1588a618bd313e5a7c05a7f4954cc2b76ddac3.1605724767.git.osandov@osandov.com>
+ <4d1430aa-a374-7565-4009-7ec5139bf311@gmail.com>
+ <fb4a4270-eb7a-06d5-e703-9ee470b61f8b@gmail.com>
+ <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
+ <dcb0679d-3ac5-dd95-5473-3c66ae4132b6@gmail.com>
+ <20201201202144.ulbfnawi2ljmm6mn@localhost.localdomain>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Message-ID: <66e17b5b-a63e-9551-02a1-ff8bcfa45b93@gmail.com>
+Date:   Tue, 1 Dec 2020 22:34:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <20201129004548.1619714-2-namit@vmware.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20201201202144.ulbfnawi2ljmm6mn@localhost.localdomain>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012010129
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 lowpriorityscore=0
- clxscore=1011 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012010129
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/28/20 4:45 PM, Nadav Amit wrote:
-> From: Nadav Amit <namit@vmware.com>
-> 
-> It is possible to get an EINVAL error instead of EPERM if the following
-> test vm_flags have VM_UFFD_WP but do not have VM_MAYWRITE, as "ret" is
-> overwritten since commit cab350afcbc9 ("userfaultfd: hugetlbfs: allow
-> registration of ranges containing huge pages").
-> 
-> Fix it.
-> 
-> Cc: Mike Kravetz <mike.kravetz@oracle.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: io-uring@vger.kernel.org
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Fixes: cab350afcbc9 ("userfaultfd: hugetlbfs: allow registration of ranges containing huge pages")
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  fs/userfaultfd.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 000b457ad087..c8ed4320370e 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1364,6 +1364,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->  			if (end & (vma_hpagesize - 1))
->  				goto out_unlock;
->  		}
-> +		ret = -EPERM;
->  		if ((vm_flags & VM_UFFD_WP) && !(cur->vm_flags & VM_MAYWRITE))
->  			goto out_unlock;
->  
+Hi Branden,
 
-Thanks!  We should return EPERM in that case.
+A good read, as always!
 
-However, the check for VM_UFFD_WP && !VM_MAYWRITE went in after commit
-cab350afcbc9.  I think it is more accurate to say that the issue was
-introduced with commit 63b2d4174c4a ("Introduce the new uffd-wp APIs
-for userspace.").  The convention in userfaultfd_register() is that the
-return code is set before testing condition which could cause return.
-Therefore, when 63b2d4174c4a added the VM_UFFD_WP && !VM_MAYWRITE check,
-it should have also added the 'ret = -EPERM;' statement.
+Thanks,
 
-With changes to commit message and Fixes tag,
+Alex
 
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
--- 
-Mike Kravetz
+On 12/1/20 9:21 PM, G. Branden Robinson wrote:
+> At 2020-12-01T21:12:47+0100, Michael Kerrisk (man-pages) wrote:
+>>>>>> +vs.
+>>>>>
+>>>>> Please, s/vs./vs/
+>>>>> See the reasons below:
+>>>>>
+>>>>> Michael (mtk),
+>>>>>
+>>>>> Here the renderer outputs a double space
+>>>>> (as for separating two sentences).
+>>>>>
+>>>>> Are you okay with that?
+>>
+>> Yes, that should probably be avoided. I'm not sure what the
+>> correct way is to prevent that in groff though. I mean, one
+>> could write
+>>
+>> .RI "vs.\ " unencoded_len
+>>
+>> but I think that simply creates a nonbreaking space,
+>> which is not exactly what is desired.
+> 
+> Use the non-printing input break escape sequence, "\&", to suppress
+> end-of-sentence detection.  This is not a groffism, it goes back to
+> 1970s nroff and troff.
+> 
+> I'm attaching a couple of pages from some introductory material I wrote
+> for the groff Texinfo manual in the forthcoming 1.23.0.
+> 
+> Regards,
+> Branden
+> 
