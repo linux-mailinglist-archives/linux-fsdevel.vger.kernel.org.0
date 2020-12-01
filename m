@@ -2,58 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEE812CAC4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 20:27:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7BD32CACD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 20:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbgLAT0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 14:26:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35730 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728704AbgLAT0A (ORCPT
+        id S2392307AbgLAT4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 14:56:31 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:39955 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388704AbgLAT42 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 14:26:00 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F78C0613CF;
-        Tue,  1 Dec 2020 11:25:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ctr5EXXYW4g8lMkVbVgbcb+rbE/UuR8LXlO9Lx8gDs4=; b=Jh7/ko0PEnqEzZBmawFj4/rhOp
-        XSdYhRKXPwvJfh1JZxISV0rFsgnqsclg9Sl2BdeTZrGbBncTXSGj8YAdGNw9zw84WoJajSejWUghz
-        1Vahso77Of3gfu1IEJr9zHumHC3SeFBjmsDFRRvsRFZIO4ZvKbwv1YaoPUmgDv3YKZoRKsmzMHbLm
-        o8Lo7DtbOpJBuE2PN7gMLHjWWMUmQHL+VuNZ1itm7kfXtRb28UDLx+32MW5f6bCMfkRCMvGy3X/bL
-        PPz6FakeDtzwQjWuEmI1GyGcFU4lXAIR8+1/BcIDDNPPuIdgw/m8+5YPY6c9Ts4COYsduKUfx3FPj
-        BUfJmb5Q==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kkBHT-0006Cu-Qm; Tue, 01 Dec 2020 19:25:43 +0000
-Date:   Tue, 1 Dec 2020 19:25:43 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        Toke H??iland-J??rgensen <toke@redhat.com>
-Subject: Re: [PATCH] fs: 9p: add generic splice_write file operation
-Message-ID: <20201201192543.GA23073@infradead.org>
-References: <20201201151658.GA13180@nautica>
- <1606837496-21717-1-git-send-email-asmadeus@codewreck.org>
+        Tue, 1 Dec 2020 14:56:28 -0500
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.94)
+          with esmtps (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1kkBkR-003edd-JW; Tue, 01 Dec 2020 20:55:39 +0100
+Received: from p57bd9091.dip0.t-ipconnect.de ([87.189.144.145] helo=[192.168.178.139])
+          by inpost2.zedat.fu-berlin.de (Exim 4.94)
+          with esmtpsa (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1kkBkQ-001scM-TR; Tue, 01 Dec 2020 20:55:39 +0100
+Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org,
+        Jens Axboe <axboe@kernel.dk>
+References: <20201101170454.9567-1-rppt@kernel.org>
+ <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
+ <20201117062316.GB370813@kernel.org>
+ <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
+ <20201201102901.GF557259@kernel.org>
+ <e3d5d791-8e4f-afcc-944c-24f66f329bd7@physik.fu-berlin.de>
+ <20201201121033.GG557259@kernel.org>
+ <49a2022c-f106-55ec-9390-41307a056517@physik.fu-berlin.de>
+ <20201201135623.GA751215@kernel.org>
+ <4c752ff0-27a6-b9d7-ab81-8aac1a3b7b65@physik.fu-berlin.de>
+Message-ID: <ea5bae0e-9f27-355f-d841-cf8b362b0b70@physik.fu-berlin.de>
+Date:   Tue, 1 Dec 2020 20:55:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1606837496-21717-1-git-send-email-asmadeus@codewreck.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <4c752ff0-27a6-b9d7-ab81-8aac1a3b7b65@physik.fu-berlin.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-Originating-IP: 87.189.144.145
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 04:44:56PM +0100, Dominique Martinet wrote:
-> The default splice operations got removed recently, add it back to 9p
-> with iter_file_splice_write like many other filesystems do.
+Hi Mike!
+
+On 12/1/20 4:07 PM, John Paul Adrian Glaubitz wrote:
+> This fixes the issue for me.
 > 
-> Fixes: 36e2c7421f02 ("fs: don't allow splice read/write without explicit ops")
-> Cc: Toke H??iland-J??rgensen <toke@redhat.com>
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-Looks good,
+I just booted the kernel from the linux-mm branch and I can't get the hpsa driver
+to work anymore. Even if I compile it into the kernel, the driver is no longer
+loaded and hence I can't access the disks.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Any idea what could be wrong?
+
+Adrian
+
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+
