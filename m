@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E6A2C9F1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A457A2C9F2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbgLAKZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 05:25:34 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51073 "EHLO
+        id S1729840AbgLAK3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 05:29:31 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51212 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbgLAKZd (ORCPT
+        with ESMTP id S1729832AbgLAK3a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:25:33 -0500
+        Tue, 1 Dec 2020 05:29:30 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kk2q0-0007Wx-58; Tue, 01 Dec 2020 10:24:48 +0000
-Date:   Tue, 1 Dec 2020 11:24:46 +0100
+        id 1kk2to-0007qT-Na; Tue, 01 Dec 2020 10:28:44 +0000
+Date:   Tue, 1 Dec 2020 11:28:42 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Mauricio =?utf-8?Q?V=C3=A1squez?= Bernal <mauricio@kinvolk.io>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -51,26 +51,39 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Alban Crequy <alban@kinvolk.io>,
         linux-integrity@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 32/38] fat: handle idmapped mounts
-Message-ID: <20201201102446.qjmzdhu7bktxtnby@wittgenstein>
+Subject: Re: [PATCH v3 33/38] ext4: support idmapped mounts
+Message-ID: <20201201102842.ycodrxuxjwt4jyoa@wittgenstein>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
- <20201128213527.2669807-33-christian.brauner@ubuntu.com>
- <CAHap4zu3wjCqjbxaXbsPqz2Q_oNRm0Q=xQMudPStwN8h92Stcw@mail.gmail.com>
+ <20201128213527.2669807-34-christian.brauner@ubuntu.com>
+ <CAHap4zvDuSpZzeyZPc61mQURu_0oGKjkiROohYXkAFYyD85Vvw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHap4zu3wjCqjbxaXbsPqz2Q_oNRm0Q=xQMudPStwN8h92Stcw@mail.gmail.com>
+In-Reply-To: <CAHap4zvDuSpZzeyZPc61mQURu_0oGKjkiROohYXkAFYyD85Vvw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 05:50:08PM -0500, Mauricio Vásquez Bernal wrote:
+On Mon, Nov 30, 2020 at 05:52:04PM -0500, Mauricio Vásquez Bernal wrote:
+> > diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+> > index 619dd35ddd48..5918c05cfe5b 100644
+> > --- a/fs/ext4/Kconfig
+> > +++ b/fs/ext4/Kconfig
+> > @@ -118,3 +118,12 @@ config EXT4_KUNIT_TESTS
+> >           to the KUnit documentation in Documentation/dev-tools/kunit/.
 > >
-> > mount2 --idmap both:1000:1001:1
-> >
+> >           If unsure, say N.
+> > +
+> > +config EXT4_IDMAP_MOUNTS
+> > +       bool "Support vfs idmapped mounts in ext4"
+> > +       depends on EXT4_FS
+> > +       default n
+> > +       help
+> > +         The vfs allows to expose a filesystem at different mountpoints with
+> > +         differnet idmappings. Allow ext4 to be exposed through idmapped
 > 
-> Nit: missing arguments to mount2.
+> s/differnet/different/g
 
-Thanks, fixed!
+Fixed, thanks!
 Christian
