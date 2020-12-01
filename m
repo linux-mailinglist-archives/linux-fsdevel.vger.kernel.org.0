@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D88E2C9F4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:33:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 074C02C9F54
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:33:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729912AbgLAKcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 05:32:48 -0500
-Received: from verein.lst.de ([213.95.11.211]:48801 "EHLO verein.lst.de"
+        id S1729921AbgLAKdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 05:33:09 -0500
+Received: from verein.lst.de ([213.95.11.211]:48834 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbgLAKcr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:32:47 -0500
+        id S1726134AbgLAKdI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 05:33:08 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 63DC868B05; Tue,  1 Dec 2020 11:32:04 +0100 (CET)
-Date:   Tue, 1 Dec 2020 11:32:03 +0100
+        id BB94667373; Tue,  1 Dec 2020 11:32:24 +0100 (CET)
+Date:   Tue, 1 Dec 2020 11:32:24 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -49,27 +49,19 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 02/38] mount: make {lock,unlock}_mount_hash() static
-Message-ID: <20201201103203.GB27730@lst.de>
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-3-christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v3 03/38] namespace: only take read lock in
+ do_reconfigure_mnt()
+Message-ID: <20201201103224.GC27730@lst.de>
+References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-4-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201128213527.2669807-3-christian.brauner@ubuntu.com>
+In-Reply-To: <20201128213527.2669807-4-christian.brauner@ubuntu.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 28, 2020 at 10:34:51PM +0100, Christian Brauner wrote:
-> The lock_mount_hash() and unlock_mount_hash() helpers are never called outside a
-> single file. Remove them from the header and make them static to reflect this
-> fact. There's no need to have them callable from other places right now, as
-> Christoph observed.
-
-You are spilling over the usual 73 chars for commit logs, so please check
-this and the other patches.
-
-Otherwise looks good:
+Looks good,
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
