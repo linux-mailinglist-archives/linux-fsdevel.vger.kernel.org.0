@@ -2,167 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C862CA1FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 13:02:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17BC22CA21F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 13:10:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389969AbgLAL5O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 06:57:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389039AbgLAL5N (ORCPT
+        id S1728304AbgLAMIg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 07:08:36 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49538 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727888AbgLAMIg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 06:57:13 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27485C0613D3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Dec 2020 03:56:33 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id r9so1288023ioo.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Dec 2020 03:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=z9ULpizLWDQiCJkdcf/66NmmJqFYGorqtuiF70FgIJg=;
-        b=aYyYXHVdvVyVPH6ufds7fBBjA5xxE+RIPU0UHwETETBon5X/AxBP3pfU7D6rgLWDxK
-         MCPFi3QrsNpvmCT6uMHXOLdMnjdYFbsFK9ztzGqhIRHo5nK6I+1wG60VvNxdgQQB+op+
-         wrAG/5RDYf5PphyPYR/ibeHZfeCSXNMaFIKGU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z9ULpizLWDQiCJkdcf/66NmmJqFYGorqtuiF70FgIJg=;
-        b=G7DqGbHViKTLUWViz0vuP3GiLgeTLbruqVQnDB11S1inpeBTrOU6gfdDKxAhD7a1Sx
-         zOcKppxSXPPdiOpcwxB1qapJFDbGiqD22Qmw0nKFIKKHp8Yg3CSOZP3wMm6gDIWE6JjZ
-         hl+tBgA5Bp009tJlSyfSd5Vyq2IX5rliAiZL0aunNvv1RqLSKjrREcVCWTYhE9iGqtsc
-         tduteSM1xpX7Cl7MfMfeQesRI7OVAI25HfJsvx5p4MN2cCo8RXPF/yZ1BCdhCbxd6oGs
-         /0+X9YsykrAD6V3RoYY/GK8/v6/q8aeexB7K5D8SR1JZVRFyewgS256z4brMiUdHXDPP
-         Ri7Q==
-X-Gm-Message-State: AOAM5330iuaSnexCafSBA9mYV+Bddvl9XQrqNZaXv8Q1I5SxRr2E292F
-        Zl8ZMmaGCiRPkXlMCNgFBa9oTQ==
-X-Google-Smtp-Source: ABdhPJz0GL7O0XGhZu0j9b4iHEHojyC5oy0U6R1upsTmsVSxZyQ7aBqTOJ2GyvVcfx+OvymB9iiU2w==
-X-Received: by 2002:a02:2e54:: with SMTP id u20mr2267006jae.142.1606823792462;
-        Tue, 01 Dec 2020 03:56:32 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id x23sm697798ioh.28.2020.12.01.03.56.32
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 01 Dec 2020 03:56:32 -0800 (PST)
-Date:   Tue, 1 Dec 2020 11:56:30 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>
-Subject: Re: [PATCH v2 4/4] overlay: Add rudimentary checking of writeback
- errseq on volatile remount
-Message-ID: <20201201115630.GC24837@ircssh-2.c.rugged-nimbus-611.internal>
+        Tue, 1 Dec 2020 07:08:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606824429;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=QkVg2ocyF2lpwIR6qYQdLIliBFfnMIMoP/JN6wJH1Vs=;
+        b=DSbGLu8gnb7JOb1Gs1VQL0nCmYFX4bApZWnFyi49GOHp0xZ/a404Yc0/1fXidK9QhPOPcH
+        RpBURJu4Wx5IwFqjmivDU3ngwuKlEID8sVgWRxLtQpsWNmjewSrOTe91yj1UgtJ/5JDx+c
+        vDhAhWdeBMEwY8/nl9EEciZqfdrnSd0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-203-Ury-PwEvNf6LQATlDO-uvQ-1; Tue, 01 Dec 2020 07:07:07 -0500
+X-MC-Unique: Ury-PwEvNf6LQATlDO-uvQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C2AF21005E45;
+        Tue,  1 Dec 2020 12:07:05 +0000 (UTC)
+Received: from localhost (ovpn-12-90.pek2.redhat.com [10.72.12.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B0175C1B4;
+        Tue,  1 Dec 2020 12:06:59 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
+Date:   Tue,  1 Dec 2020 20:06:52 +0800
+Message-Id: <20201201120652.487077-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201130193342.GD14328@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 02:33:42PM -0500, Vivek Goyal wrote:
-> On Fri, Nov 27, 2020 at 01:20:58AM -0800, Sargun Dhillon wrote:
-> > Volatile remounts validate the following at the moment:
-> >  * Has the module been reloaded / the system rebooted
-> >  * Has the workdir been remounted
-> > 
-> > This adds a new check for errors detected via the superblock's
-> > errseq_t. At mount time, the errseq_t is snapshotted to disk,
-> > and upon remount it's re-verified. This allows for kernel-level
-> > detection of errors without forcing userspace to perform a
-> > sync and allows for the hidden detection of writeback errors.
-> > 
-> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: linux-unionfs@vger.kernel.org
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  fs/overlayfs/overlayfs.h | 1 +
-> >  fs/overlayfs/readdir.c   | 6 ++++++
-> >  fs/overlayfs/super.c     | 1 +
-> >  3 files changed, 8 insertions(+)
-> > 
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index de694ee99d7c..e8a711953b64 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -85,6 +85,7 @@ struct ovl_volatile_info {
-> >  	 */
-> >  	uuid_t		ovl_boot_id;	/* Must stay first member */
-> >  	u64		s_instance_id;
-> > +	errseq_t	errseq;	/* Implemented as a u32 */
-> >  } __packed;
-> >  
-> >  /*
-> > diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-> > index 7b66fbb20261..5795b28bb4cf 100644
-> > --- a/fs/overlayfs/readdir.c
-> > +++ b/fs/overlayfs/readdir.c
-> > @@ -1117,6 +1117,12 @@ static int ovl_verify_volatile_info(struct ovl_fs *ofs,
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > +	err = errseq_check(&volatiledir->d_sb->s_wb_err, info.errseq);
-> 
-> Might be a stupid question. Will ask anyway.
-> 
-> But what protects against wrapping of counter. IOW, Say we stored info.errseq
-> value as A. It is possible that bunch of errors occurred and at remount
-> time ->s_wb_err is back to A and we pass the check. (Despite the fact lots
-> of errors have occurred since we sampled).
-> 
-> Thanks
-> Vivek
-> 
+Pavel reported that iov_iter_npages is a bit heavy in case of bvec
+iter.
 
-+Jeff Layton <jlayton@redhat.com>
+Turns out it isn't necessary to iterate every page in the bvec iter,
+and we call iov_iter_npages() just for figuring out how many bio
+vecs need to be allocated. And we can simply map each vector in bvec iter
+to bio's vec, so just return iter->nr_segs from bio_iov_iter_nvecs() for
+bvec iter.
 
-Nothing. The current errseq API works like this today where if you have 2^20
-(1048576) errors, and syncfs (or other calls that mark the errseq as seen), and
-the error that occured 1048575 times ago was the same error as you just last
-had, and the error on the upperdir has already been marked as seen, the error
-will be swallowed up silently.
+Also rename local variable 'nr_pages' as 'nr_vecs' which exactly matches its
+real usage.
 
-This exists throughout all of VFS. I think we're potentially making this more
-likely by checkpointing to disk. The one aspect which is a little different about
-the usecase in the patch is that it relies on this mechanism to determine if
-an error has occured after the entire FS was constructed, so it's somewhat
-more consequential than the current issue in VFS which will just bubble up
-errors in a few files.
+This patch is based on Mathew's post:
 
-On my system syncfs takes about 2 milliseconds, so you have a chance to
-experience this every ~30 minutes if the syscalls align in the right way. If
-we expanded the errseq_t to u64, we would potentially get a collision
-every 4503599627370496 calls, or assuming the 2 millisecond invariant
-holds, every 285 years. Now, we probably don't want to make errseq_t into
-a u64 because of performance reasons (not all systems have native u64
-cmpxchg), and the extra memory it'd take up.
+https://lore.kernel.org/linux-block/20201120123931.GN29991@casper.infradead.org/
 
-If we really want to avoid this case, I can think of one "simple" solution,
-which is something like laying out errseq_t as something like a errseq_t_src
-that's 64-bits, and all readers just look at the lower 32-bits. The longer
-errseq_t would exist on super_blocks, but files would still get the shorter one.
-To potentially avoid the performance penalty of atomic longs, we could also
-do something like this:
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ fs/block_dev.c       | 30 +++++++++++++++---------------
+ fs/iomap/direct-io.c | 14 +++++++-------
+ include/linux/bio.h  | 10 ++++++++++
+ 3 files changed, 32 insertions(+), 22 deletions(-)
 
-typedef struct {
-    atomic_t overflow;
-    u32 errseq;
-} errseq_t_big;
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index d8664f5c1ff6..4fd9bb4306db 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -218,7 +218,7 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
+ 
+ static ssize_t
+ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+-		int nr_pages)
++		int nr_vecs)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct block_device *bdev = I_BDEV(bdev_file_inode(file));
+@@ -233,16 +233,16 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+ 	    (bdev_logical_block_size(bdev) - 1))
+ 		return -EINVAL;
+ 
+-	if (nr_pages <= DIO_INLINE_BIO_VECS)
++	if (nr_vecs <= DIO_INLINE_BIO_VECS)
+ 		vecs = inline_vecs;
+ 	else {
+-		vecs = kmalloc_array(nr_pages, sizeof(struct bio_vec),
++		vecs = kmalloc_array(nr_vecs, sizeof(struct bio_vec),
+ 				     GFP_KERNEL);
+ 		if (!vecs)
+ 			return -ENOMEM;
+ 	}
+ 
+-	bio_init(&bio, vecs, nr_pages);
++	bio_init(&bio, vecs, nr_vecs);
+ 	bio_set_dev(&bio, bdev);
+ 	bio.bi_iter.bi_sector = pos >> 9;
+ 	bio.bi_write_hint = iocb->ki_hint;
+@@ -353,7 +353,7 @@ static void blkdev_bio_end_io(struct bio *bio)
+ }
+ 
+ static ssize_t
+-__blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
++__blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_vecs)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct inode *inode = bdev_file_inode(file);
+@@ -371,7 +371,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ 	    (bdev_logical_block_size(bdev) - 1))
+ 		return -EINVAL;
+ 
+-	bio = bio_alloc_bioset(GFP_KERNEL, nr_pages, &blkdev_dio_pool);
++	bio = bio_alloc_bioset(GFP_KERNEL, nr_vecs, &blkdev_dio_pool);
+ 
+ 	dio = container_of(bio, struct blkdev_dio, bio);
+ 	dio->is_sync = is_sync = is_sync_kiocb(iocb);
+@@ -420,8 +420,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ 		dio->size += bio->bi_iter.bi_size;
+ 		pos += bio->bi_iter.bi_size;
+ 
+-		nr_pages = iov_iter_npages(iter, BIO_MAX_PAGES);
+-		if (!nr_pages) {
++		nr_vecs = bio_iov_iter_nvecs(iter, BIO_MAX_PAGES);
++		if (!nr_vecs) {
+ 			bool polled = false;
+ 
+ 			if (iocb->ki_flags & IOCB_HIPRI) {
+@@ -451,7 +451,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ 		}
+ 
+ 		submit_bio(bio);
+-		bio = bio_alloc(GFP_KERNEL, nr_pages);
++		bio = bio_alloc(GFP_KERNEL, nr_vecs);
+ 	}
+ 
+ 	if (!is_poll)
+@@ -483,15 +483,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+ static ssize_t
+ blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	int nr_pages;
++	int nr_vecs;
+ 
+-	nr_pages = iov_iter_npages(iter, BIO_MAX_PAGES + 1);
+-	if (!nr_pages)
++	nr_vecs = bio_iov_iter_nvecs(iter, BIO_MAX_PAGES + 1);
++	if (!nr_vecs)
+ 		return 0;
+-	if (is_sync_kiocb(iocb) && nr_pages <= BIO_MAX_PAGES)
+-		return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
++	if (is_sync_kiocb(iocb) && nr_vecs <= BIO_MAX_PAGES)
++		return __blkdev_direct_IO_simple(iocb, iter, nr_vecs);
+ 
+-	return __blkdev_direct_IO(iocb, iter, min(nr_pages, BIO_MAX_PAGES));
++	return __blkdev_direct_IO(iocb, iter, min(nr_vecs, BIO_MAX_PAGES));
+ }
+ 
+ static __init int blkdev_init(void)
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 933f234d5bec..cc779ecc8144 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -211,7 +211,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	struct bio *bio;
+ 	bool need_zeroout = false;
+ 	bool use_fua = false;
+-	int nr_pages, ret = 0;
++	int nr_vecs, ret = 0;
+ 	size_t copied = 0;
+ 	size_t orig_count;
+ 
+@@ -250,9 +250,9 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	orig_count = iov_iter_count(dio->submit.iter);
+ 	iov_iter_truncate(dio->submit.iter, length);
+ 
+-	nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
+-	if (nr_pages <= 0) {
+-		ret = nr_pages;
++	nr_vecs = bio_iov_iter_nvecs(dio->submit.iter, BIO_MAX_PAGES);
++	if (nr_vecs <= 0) {
++		ret = nr_vecs;
+ 		goto out;
+ 	}
+ 
+@@ -271,7 +271,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 			goto out;
+ 		}
+ 
+-		bio = bio_alloc(GFP_KERNEL, nr_pages);
++		bio = bio_alloc(GFP_KERNEL, nr_vecs);
+ 		bio_set_dev(bio, iomap->bdev);
+ 		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+ 		bio->bi_write_hint = dio->iocb->ki_hint;
+@@ -308,10 +308,10 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		dio->size += n;
+ 		copied += n;
+ 
+-		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
++		nr_vecs = bio_iov_iter_nvecs(dio->submit.iter, BIO_MAX_PAGES);
+ 		iomap_dio_submit_bio(dio, iomap, bio, pos);
+ 		pos += n;
+-	} while (nr_pages);
++	} while (nr_vecs);
+ 
+ 	/*
+ 	 * We need to zeroout the tail of a sub-block write if the extent type
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index ecf67108f091..b985857ce9d1 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -10,6 +10,7 @@
+ #include <linux/ioprio.h>
+ /* struct bio, bio_vec and BIO_* flags are defined in blk_types.h */
+ #include <linux/blk_types.h>
++#include <linux/uio.h>
+ 
+ #define BIO_DEBUG
+ 
+@@ -807,4 +808,13 @@ static inline void bio_set_polled(struct bio *bio, struct kiocb *kiocb)
+ 		bio->bi_opf |= REQ_NOWAIT;
+ }
+ 
++static inline int bio_iov_iter_nvecs(const struct iov_iter *i, int maxvecs)
++{
++	if (!iov_iter_count(i))
++		return 0;
++	if (iov_iter_is_bvec(i))
++               return min_t(int, maxvecs, i->nr_segs);
++	return iov_iter_npages(i, maxvecs);
++}
++
+ #endif /* __LINUX_BIO_H */
+-- 
+2.28.0
 
-And in errseq_set, do:
-/* Wraps */
-if (new < old)
-        atomic_inc(&eseq->overflow);
-
-*shrug*
-I don't think that the above scenario is likely though.
