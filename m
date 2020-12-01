@@ -2,110 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C2492CB0C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 00:23:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B6082CB117
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 00:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbgLAXXP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 18:23:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22059 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726852AbgLAXXP (ORCPT
+        id S1727522AbgLAXu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 18:50:26 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:51762 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgLAXuZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 18:23:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606864908;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=/VrWq4ROZEETaUG6m+Wv8n9gH98JhhhsUtPF4KnUL34=;
-        b=cG6Q6PYaC6038yM32uUs7dDDR9TpnovVQesCrVOmhKe/wVWslogRtjhcsgbisQU/a1dCta
-        P9Eh7rmI+yEbdRUdbeWQqFPVgMRRiIhy3dh1WhTOjXXY0tqzAR1qVkKMjon31OZIe8yMe/
-        fAybrrFN7s/6jHQ+hmxnuirFRdaXyK4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-26-T4dzLGELMqmpzahP1zvfXw-1; Tue, 01 Dec 2020 18:21:46 -0500
-X-MC-Unique: T4dzLGELMqmpzahP1zvfXw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49DF01076027;
-        Tue,  1 Dec 2020 23:21:45 +0000 (UTC)
-Received: from liberator.sandeen.net (ovpn04.gateway.prod.ext.phx2.redhat.com [10.5.9.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4189010013C1;
-        Tue,  1 Dec 2020 23:21:41 +0000 (UTC)
-From:   Eric Sandeen <sandeen@redhat.com>
-Subject: [PATCH V2] uapi: fix statx attribute value overlap for DAX &
- MOUNT_ROOT
-To:     torvalds@linux-foundation.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, Xiaoli Feng <xifeng@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>
-Message-ID: <3e28d2c7-fbe5-298a-13ba-dcd8fd504666@redhat.com>
-Date:   Tue, 1 Dec 2020 17:21:40 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.0
+        Tue, 1 Dec 2020 18:50:25 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1NkfoS159095;
+        Tue, 1 Dec 2020 23:49:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=zYc/7KhhD/QqsLlcBZlfwXaD6nCsAYdTZXO0MGw6Xek=;
+ b=JYej3CBPea6auedNJn7kva61gHkZj8qJwRzQcP3szCl3lBbOMB6QgPLPYqU/kJ55S6kt
+ xfwG1+uU4+OSRD9KPqp6U8XkHLXqpkXr26SPVURu+Xc6IjAhxuGfhBm0jO1aIWbxt8HW
+ gxefyKPsglbM7oA0A+5m10Wfkf1xS6MmZN88kvvMbJHZvIuxXWYV8wUyNwdV4sz/ne5R
+ nry+DmQX+PxBGHCKv0/YRfs7XPigzV00zx6Pfw8tn/bFIzhJVra5yw44Nykowf9d+SXH
+ XXlLloah7HsrCdN2Yx4/MWtChAxr5svnMKhSU5AIq7kjj2Lj73u2asacPdPtnafLbveQ ig== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 353egkncgp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 01 Dec 2020 23:49:19 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1NkPx8072471;
+        Tue, 1 Dec 2020 23:49:18 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 35404nhr7m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Dec 2020 23:49:18 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0B1Nn9XC006999;
+        Tue, 1 Dec 2020 23:49:10 GMT
+Received: from localhost (/10.159.227.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Dec 2020 15:49:09 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] proc: Allow pid_revalidate() during LOOKUP_RCU
+In-Reply-To: <87zh2yh8ti.fsf@x220.int.ebiederm.org>
+References: <20201130200619.84819-1-stephen.s.brennan@oracle.com>
+ <87zh2yh8ti.fsf@x220.int.ebiederm.org>
+Date:   Tue, 01 Dec 2020 15:49:07 -0800
+Message-ID: <87zh2xjde4.fsf@stepbren-lnx.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 bulkscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=800 phishscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012010140
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=1
+ phishscore=0 mlxlogscore=810 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012010140
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[*] Note: This needs to be merged as soon as possible as it's introducing an incompatible UAPI change...
+ebiederm@xmission.com (Eric W. Biederman) writes:
+> Stephen Brennan <stephen.s.brennan@oracle.com> writes:
+>
+>> The pid_revalidate() function requires dropping from RCU into REF lookup
+>> mode. When many threads are resolving paths within /proc in parallel,
+>> this can result in heavy spinlock contention as each thread tries to
+>> grab a reference to the /proc dentry (and drop it shortly thereafter).
+>>
+>> Allow the pid_revalidate() function to execute under LOOKUP_RCU. When
+>> updates must be made to the inode due to the owning task performing
+>> setuid(), drop out of RCU and into REF mode.
+>
+> So rather than get_task_rcu_user.  I think what we want is a function
+> that verifies task->rcu_users > 0.
+>
+> Which frankly is just "pid_task(proc_pid(inode), PIDTYPE_PID)".
+>
+> Which is something that we can do unconditionally in pid_revalidate.
+>
+> Skipping the update of the inode is probably the only thing that needs
+> to be skipped.
+>
+> It looks like the code can safely rely on the the security_task_to_inode
+> in proc_pid_make_inode and remove the security_task_to_inode in
+> pid_update_inode.
+>
 
-STATX_ATTR_MOUNT_ROOT and STATX_ATTR_DAX got merged with the same value,
-so one of them needs fixing. Move STATX_ATTR_DAX.
+This makes sense, I'll get rid of the get_task_rcu_user() stuff in a v2.
 
-While we're in here, clarify the value-matching scheme for some of the
-attributes, and explain why the value for DAX does not match.
+>
+>> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+>> ---
+>>
+>> I'd like to use this patch as an RFC on this approach for reducing spinlock
+>> contention during many parallel path lookups in the /proc filesystem. The
+>> contention can be triggered by, for example, running ~100 parallel instances of
+>> "TZ=/etc/localtime ps -fe >/dev/null" on a 100CPU machine. The %sys utilization
+>> in such a case reaches around 90%, and profiles show two code paths with high
+>> utilization:
+>
+> Do you have a real world work-load that is behaves something like this
+> micro benchmark?  I am just curious how severe the problem you are
+> trying to solve is.
+>
 
-Fixes: 80340fe3605c ("statx: add mount_root")
-Fixes: 712b2698e4c0 ("fs/stat: Define DAX statx attribute")
-Reported-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Reviewed-by: David Howells <dhowells@redhat.com>
----
-V2: Change flag value per Darrick Wong
-    Tweak comment per Darrick Wong
-    Add Fixes: tags & reported-by & RVB per dhowells
+We have seen this issue occur internally with monitoring scripts
+(perhaps a bit misconfigured, I'll admit). However I don't have an exact
+sample workload that I can give you.
 
- include/uapi/linux/stat.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 82cc58fe9368..1500a0f58041 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -171,9 +171,12 @@ struct statx {
-  * be of use to ordinary userspace programs such as GUIs or ls rather than
-  * specialised tools.
-  *
-- * Note that the flags marked [I] correspond to generic FS_IOC_FLAGS
-+ * Note that the flags marked [I] correspond to the FS_IOC_SETFLAGS flags
-  * semantically.  Where possible, the numerical value is picked to correspond
-- * also.
-+ * also.  Note that the DAX attribute indicates that the file is in the CPU
-+ * direct access state.  It does not correspond to the per-inode flag that
-+ * some filesystems support.
-+ *
-  */
- #define STATX_ATTR_COMPRESSED		0x00000004 /* [I] File is compressed by the fs */
- #define STATX_ATTR_IMMUTABLE		0x00000010 /* [I] File is marked immutable */
-@@ -183,7 +186,7 @@ struct statx {
- #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
- #define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
- #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
--#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
-+#define STATX_ATTR_DAX			0x00200000 /* File is currently in DAX state */
- 
- 
- #endif /* _UAPI_LINUX_STAT_H */
--- 
-2.17.0
-
+Thanks,
+Stephen
