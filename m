@@ -2,152 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D482B2CA03A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB79B2CA050
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:50:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbgLAKqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 05:46:09 -0500
-Received: from zaphod.cobb.me.uk ([213.138.97.131]:44258 "EHLO
-        zaphod.cobb.me.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726024AbgLAKqJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:46:09 -0500
-Received: by zaphod.cobb.me.uk (Postfix, from userid 107)
-        id 338EE9BB36; Tue,  1 Dec 2020 10:45:25 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
-        s=201703; t=1606819525;
-        bh=kaDwRYHjc0SA0LDJtUz7w3xj6SIdXPXJxz9iUbvl8Xo=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=BPN2KiQWRW2lWrNoM+TtS+ceOkcEM3YuyT98l5HrhqZD61Tx9PucTkuuM2obxt9GN
-         NB+eOm1jGma8c47cys9QG6V8m3DrMyekJNd2E+Hl9XsWBZ+sZEsaCJCEGwz3kxLvUN
-         KvQHUAaATByTvfM87Z19YdQEkz82liLgvIpAIAjDMyZ6Y1B17b3eo6t0D3rLq7tW7h
-         klE5IwQTy7rnscT8g6Kshefun5B70tjHebNXCUSSu4AM4OEN5W2L+0flP7SDdDITCm
-         dUXrWAIPQDk4dDvHMERdpzJfJwFcjo6D4No7+hJIiTTKIOhTyv726E3ugU9r10UoYZ
-         rCwe+stH9RZnQ==
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on zaphod.cobb.me.uk
-X-Spam-Status: No, score=-3.0 required=12.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,NICE_REPLY_A,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.2
-X-Spam-Level: 
-X-Spam-Bar: 
-Received: from black.home.cobb.me.uk (unknown [192.168.0.205])
-        by zaphod.cobb.me.uk (Postfix) with ESMTP id 36FEB9B84E;
-        Tue,  1 Dec 2020 10:45:13 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cobb.uk.net;
-        s=201703; t=1606819513;
-        bh=kaDwRYHjc0SA0LDJtUz7w3xj6SIdXPXJxz9iUbvl8Xo=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=AeS8rc+h/X5CGqkIT5FuQarzzLuwphEavajKnne3h2QnQFDG+Y0u9Ws21o3GY14UX
-         GdozS45eLioaBkDf4fHS2Sk5tdCddHOiAwaODFCAeweUEx0cqz8HgA8YWlZ1tl8YB6
-         TIHN+8OH+uUq/Pl4wS1dE/AtLsaXajn2NfnmMJYPu3fqJu2whb7W7HeumtSt4EhgcP
-         dVaUgzB91C/w+NJ5qS3kmFUb81trFb+JnEqVfTKXnWIMITZvlSPFsK2vxshq5zIbgc
-         dBUoVPoPZOyekOHZp0oePdLiL5aGjVEXzzfssyrB0ixAPpcJ9kbdlu7+XFidvDQMNZ
-         iR+7mKazbVJOQ==
-Received: from [192.168.0.211] (novatech.home.cobb.me.uk [192.168.0.211])
-        by black.home.cobb.me.uk (Postfix) with ESMTPS id 558BC1AA6BC;
-        Tue,  1 Dec 2020 10:45:11 +0000 (GMT)
-Subject: Re: [PATCH v10 05/41] btrfs: check and enable ZONED mode
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Anand Jain <anand.jain@oracle.com>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "hare@suse.com" <hare@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Josef Bacik <josef@toxicpanda.com>
-References: <cover.1605007036.git.naohiro.aota@wdc.com>
- <104218b8d66fec2e4121203b90e7673ddac19d6a.1605007036.git.naohiro.aota@wdc.com>
- <51c91510-6014-0dee-a456-b50648f48156@oracle.com>
- <20201127184439.GB6430@twin.jikos.cz>
- <e3d212c1-057e-a761-6dc2-767f1e82c748@oracle.com>
- <CH2PR04MB6522A370F9D092A42E22527BE7F50@CH2PR04MB6522.namprd04.prod.outlook.com>
- <4a784d16-b325-bf32-5ce5-0718c6bce252@oracle.com>
- <CH2PR04MB65221794BF271B9A0E76388EE7F40@CH2PR04MB6522.namprd04.prod.outlook.com>
-From:   Graham Cobb <g.btrfs@cobb.uk.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=g.btrfs@cobb.uk.net; prefer-encrypt=mutual; keydata=
- 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 myxb
-Message-ID: <1dc43899-82de-564f-6e52-bd5b990f3887@cobb.uk.net>
-Date:   Tue, 1 Dec 2020 10:45:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728490AbgLAKty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 05:49:54 -0500
+Received: from verein.lst.de ([213.95.11.211]:48950 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726810AbgLAKty (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 05:49:54 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 71BEF6736F; Tue,  1 Dec 2020 11:49:07 +0100 (CET)
+Date:   Tue, 1 Dec 2020 11:49:07 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org, fstests@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3 04/38] fs: add mount_setattr()
+Message-ID: <20201201104907.GD27730@lst.de>
+References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-5-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-In-Reply-To: <CH2PR04MB65221794BF271B9A0E76388EE7F40@CH2PR04MB6522.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201128213527.2669807-5-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/12/2020 02:29, Damien Le Moal wrote:
-> Yes. These drives are fully backward compatible and accept random writes
-> anywhere. Performance however is potentially a different story as the drive will
-> eventually need to do internal garbage collection of some sort, exactly like an
-> SSD, but definitely not at SSD speeds :)
-> 
->>   Are we ok to replace an HM device with a HA device? Or add a HA device 
->> to a btrfs on an HM device.
-> 
-> We have a choice here: we can treat HA drives as regular devices or treat them
-> as HM devices. Anything in between does not make sense. I am fine either way,
-> the main reason being that there are no HA drive on the market today that I know
-> of (this model did not have a lot of success due to the potentially very
-> unpredictable performance depending on the use case).
+Lots of crazy long lines in the patch.  Remember that you should only
+go past 80 lines if it clearly improves readability, and I don't
+think it does anywhere in here.
 
-So there will be no testing against HA drives? And no btrfs developers
-will have one? And they have very different timing and possibly failure
-modes from "normal" disks when they do GC?
+> index a7cd0f64faa4..a5a6c470dc07 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -82,6 +82,14 @@ int may_linkat(struct path *link);
+>  /*
+>   * namespace.c
+>   */
+> +struct mount_kattr {
+> +	unsigned int attr_set;
+> +	unsigned int attr_clr;
+> +	unsigned int propagation;
+> +	unsigned int lookup_flags;
+> +	bool recurse;
+> +};
 
-I think there is no option but to disallow them. If HA drives start to
-appear in significant numbers then that would be easy enough to change,
-after suitable testing.
+Even with the whole series applied this structure is only used in
+namespace.c, so it might be worth moving there.
 
-> Of note is that a host-aware drive will be reported by the block layer as
-> BLK_ZONED_HA only as long as the drive does not have any partition. If it does,
-> then the block layer will treat the drive as a regular disk.
+> +static inline int mnt_hold_writers(struct mount *mnt)
+>  {
+> -	int ret = 0;
+> -
+>  	mnt->mnt.mnt_flags |= MNT_WRITE_HOLD;
+>  	/*
+>  	 * After storing MNT_WRITE_HOLD, we'll read the counters. This store
+> @@ -497,15 +495,29 @@ static int mnt_make_readonly(struct mount *mnt)
+>  	 * we're counting up here.
+>  	 */
+>  	if (mnt_get_writers(mnt) > 0)
+> -		ret = -EBUSY;
+> -	else
+> -		mnt->mnt.mnt_flags |= MNT_READONLY;
+> +		return -EBUSY;
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void mnt_unhold_writers(struct mount *mnt)
+> +{
+>  	/*
+>  	 * MNT_READONLY must become visible before ~MNT_WRITE_HOLD, so writers
+>  	 * that become unheld will see MNT_READONLY.
+>  	 */
+>  	smp_wmb();
+>  	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
+> +}
+> +
+> +static int mnt_make_readonly(struct mount *mnt)
+> +{
+> +	int ret;
+> +
+> +	ret = mnt_hold_writers(mnt);
+> +	if (!ret)
+> +		mnt->mnt.mnt_flags |= MNT_READONLY;
+> +	mnt_unhold_writers(mnt);
+>  	return ret;
+>  }
+>  
+> @@ -3438,6 +3450,33 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+>  	return ret;
+>  }
 
-That is a bit of a shame. With that unfortunate decision in the block
-layer, system managers need to realise that partitioning an HA disk
-means they may be entering territory untested by their filesystem.
+This refactoring seems worth a little prep patch.
+
+>  
+> +static int build_attr_flags(unsigned int attr_flags, unsigned int *flags)
+> +{
+> +	unsigned int aflags = 0;
+> +
+> +	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
+> +			   MOUNT_ATTR_NOSUID |
+> +			   MOUNT_ATTR_NODEV |
+> +			   MOUNT_ATTR_NOEXEC |
+> +			   MOUNT_ATTR__ATIME |
+> +			   MOUNT_ATTR_NODIRATIME))
+> +		return -EINVAL;
+> +
+> +	if (attr_flags & MOUNT_ATTR_RDONLY)
+> +		aflags |= MNT_READONLY;
+> +	if (attr_flags & MOUNT_ATTR_NOSUID)
+> +		aflags |= MNT_NOSUID;
+> +	if (attr_flags & MOUNT_ATTR_NODEV)
+> +		aflags |= MNT_NODEV;
+> +	if (attr_flags & MOUNT_ATTR_NOEXEC)
+> +		aflags |= MNT_NOEXEC;
+> +	if (attr_flags & MOUNT_ATTR_NODIRATIME)
+> +		aflags |= MNT_NODIRATIME;
+> +
+> +	*flags = aflags;
+> +	return 0;
+> +}
+
+Same for adding this helper.
+
+> +	*kattr = (struct mount_kattr){
+
+Missing whitespace before the {.
+
+> +	switch (attr->propagation) {
+> +	case MAKE_PROPAGATION_UNCHANGED:
+> +		kattr->propagation = 0;
+> +		break;
+> +	case MAKE_PROPAGATION_UNBINDABLE:
+> +		kattr->propagation = MS_UNBINDABLE;
+> +		break;
+> +	case MAKE_PROPAGATION_PRIVATE:
+> +		kattr->propagation = MS_PRIVATE;
+> +		break;
+> +	case MAKE_PROPAGATION_DEPENDENT:
+> +		kattr->propagation = MS_SLAVE;
+> +		break;
+> +	case MAKE_PROPAGATION_SHARED:
+> +		kattr->propagation = MS_SHARED;
+> +		break;
+> +	default:
+
+Any reason to not just reuse the MS_* flags in the new API?  Yes, your
+new names are more descriptive, but having different names for the same
+thing is also rather confusing.
+
+> +	if (upper_32_bits(attr->attr_set))
+> +		return -EINVAL;
+> +	if (build_attr_flags(lower_32_bits(attr->attr_set), &kattr->attr_set))
+> +		return -EINVAL;
+> +
+> +	if (upper_32_bits(attr->attr_clr))
+> +		return -EINVAL;
+> +	if (build_attr_flags(lower_32_bits(attr->attr_clr), &kattr->attr_clr))
+> +		return -EINVAL;
+
+What is so magic about the upper and lower 32 bits?
+
+> +		return -EINVAL;
+> +	else if ((attr->attr_clr & MOUNT_ATTR__ATIME) &&
+> +		 ((attr->attr_clr & MOUNT_ATTR__ATIME) != MOUNT_ATTR__ATIME))
+> +		return -EINVAL;
+
+No need for the else here.
+
+That being said I'd reword the thing to be a little more obvious:
+
+	if (attr->attr_clr & MOUNT_ATTR__ATIME) {
+		if ((attr->attr_clr & MOUNT_ATTR__ATIME) != MOUNT_ATTR__ATIME)
+			return -EINVAL;
+
+		... code doing the update of the atime flags here
+	} else {
+		if (attr->attr_set & MOUNT_ATTR__ATIME)
+			return -EINVAL;
+	}
+
+
+> +/* Change propagation through mount_setattr(). */
+> +enum propagation_type {
+> +	MAKE_PROPAGATION_UNCHANGED	= 0, /* Don't change mount propagation (default). */
+> +	MAKE_PROPAGATION_UNBINDABLE	= 1, /* Make unbindable. */
+> +	MAKE_PROPAGATION_PRIVATE	= 2, /* Do not receive or send mount events. */
+> +	MAKE_PROPAGATION_DEPENDENT	= 3, /* Only receive mount events. */
+> +	MAKE_PROPAGATION_SHARED		= 4, /* Send and receive mount events. */
+> +};
+
+FYI, in uapis using defines instead of enums is usually the better
+choice, as that allows userspace to probe for later added defines.
+
+But if we use MS_* here that would be void anyway.
+
+> +/* List of all mount_attr versions. */
+> +#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
+> +#define MOUNT_ATTR_SIZE_LATEST	MOUNT_ATTR_SIZE_VER0
+
+The _LATEST things is pretty dangerous as there basically is no safe
+and correct way for userspace to use it.
