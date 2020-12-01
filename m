@@ -2,111 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68D5D2CA688
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 16:08:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B19B2CA6AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 16:11:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388658AbgLAPHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 10:07:16 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:40234 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387462AbgLAPHQ (ORCPT
+        id S2391764AbgLAPIY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 10:08:24 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:34079 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390103AbgLAPIY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 10:07:16 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kk7Eg-006Kl5-SO; Tue, 01 Dec 2020 08:06:34 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kk7Eg-004AdG-2J; Tue, 01 Dec 2020 08:06:34 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Wen Yang <wenyang@linux.alibaba.com>,
+        Tue, 1 Dec 2020 10:08:24 -0500
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.94)
+          with esmtps (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1kk7Ff-0021Gh-6r; Tue, 01 Dec 2020 16:07:35 +0100
+Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
+          by inpost2.zedat.fu-berlin.de (Exim 4.94)
+          with esmtpsa (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1kk7Fe-0015L5-My; Tue, 01 Dec 2020 16:07:34 +0100
+Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20201128175850.19484-1-wenyang@linux.alibaba.com>
-        <87zh2yit5u.fsf@x220.int.ebiederm.org>
-        <20201201123556.GB2700@redhat.com>
-Date:   Tue, 01 Dec 2020 09:06:04 -0600
-In-Reply-To: <20201201123556.GB2700@redhat.com> (Oleg Nesterov's message of
-        "Tue, 1 Dec 2020 13:35:56 +0100")
-Message-ID: <87lfehftwj.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org,
+        Jens Axboe <axboe@kernel.dk>
+References: <20201101170454.9567-1-rppt@kernel.org>
+ <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
+ <20201117062316.GB370813@kernel.org>
+ <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
+ <20201201102901.GF557259@kernel.org>
+ <e3d5d791-8e4f-afcc-944c-24f66f329bd7@physik.fu-berlin.de>
+ <20201201121033.GG557259@kernel.org>
+ <49a2022c-f106-55ec-9390-41307a056517@physik.fu-berlin.de>
+ <20201201135623.GA751215@kernel.org>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <4c752ff0-27a6-b9d7-ab81-8aac1a3b7b65@physik.fu-berlin.de>
+Date:   Tue, 1 Dec 2020 16:07:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kk7Eg-004AdG-2J;;;mid=<87lfehftwj.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/oeFjxe0NXtD6hi2b0dZgnvFQeZkd65EY=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMGappySubj_01
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4994]
-        *  0.5 XMGappySubj_01 Very gappy subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 286 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.3 (1.2%), b_tie_ro: 2.3 (0.8%), parse: 1.02
-        (0.4%), extract_message_metadata: 3.1 (1.1%), get_uri_detail_list:
-        1.11 (0.4%), tests_pri_-1000: 4.2 (1.5%), tests_pri_-950: 1.43 (0.5%),
-        tests_pri_-900: 1.13 (0.4%), tests_pri_-90: 109 (38.2%), check_bayes:
-        108 (37.7%), b_tokenize: 7 (2.3%), b_tok_get_all: 4.3 (1.5%),
-        b_comp_prob: 1.99 (0.7%), b_tok_touch_all: 92 (32.2%), b_finish: 0.76
-        (0.3%), tests_pri_0: 144 (50.3%), check_dkim_signature: 0.36 (0.1%),
-        check_dkim_adsp: 2.3 (0.8%), poll_dns_idle: 0.94 (0.3%), tests_pri_10:
-        2.7 (0.9%), tests_pri_500: 7 (2.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] proc: add locking checks in proc_inode_is_dead
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20201201135623.GA751215@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-Originating-IP: 160.45.32.140
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
-
-> On 11/30, Eric W. Biederman wrote:
+On 12/1/20 2:56 PM, Mike Rapoport wrote:
+> (added Jens)
+> 
+> On Tue, Dec 01, 2020 at 01:16:05PM +0100, John Paul Adrian Glaubitz wrote:
+>> Hi Mike!
 >>
->> Ouch!!!!  Oleg I just looked the introduction of proc_inode_is_dead in
->> d855a4b79f49 ("proc: don't (ab)use ->group_leader in proc_task_readdir()
->> paths") introduced a ``regression''.
+>> On 12/1/20 1:10 PM, Mike Rapoport wrote:
+>>> On Tue, Dec 01, 2020 at 12:35:09PM +0100, John Paul Adrian Glaubitz wrote:
+>>>> Hi Mike!
+>>>>
+>>>> On 12/1/20 11:29 AM, Mike Rapoport wrote: 
+>>>>> These changes are in linux-mm tree (https://www.ozlabs.org/~akpm/mmotm/
+>>>>> with a mirror at https://github.com/hnaz/linux-mm)
+>>>>>
+>>>>> I beleive they will be coming in 5.11.
+>>>>
+>>>> Just pulled from that tree and gave it a try, it actually fails to build:
+>>>>
+>>>>   LDS     arch/ia64/kernel/vmlinux.lds
+>>>>   AS      arch/ia64/kernel/entry.o
+>>>> arch/ia64/kernel/entry.S: Assembler messages:
+>>>> arch/ia64/kernel/entry.S:710: Error: Operand 2 of `and' should be a general register
+>>>> arch/ia64/kernel/entry.S:710: Error: qualifying predicate not followed by instruction
+>>>> arch/ia64/kernel/entry.S:848: Error: Operand 2 of `and' should be a general register
+>>>> arch/ia64/kernel/entry.S:848: Error: qualifying predicate not followed by instruction
+>>>>   GEN     usr/initramfs_data.cpio
+>>>> make[1]: *** [scripts/Makefile.build:364: arch/ia64/kernel/entry.o] Error 1
+>>>> make: *** [Makefile:1797: arch/ia64/kernel] Error 2
+>>>> make: *** Waiting for unfinished jobs....
+>>>>   CC      init/do_mounts_initrd.o
+>>>>   SHIPPED usr/initramfs_inc_data
+>>>>   AS      usr/initramfs_data.o
+>>>
+>>> Hmm, it was buidling fine with v5.10-rc2-mmotm-2020-11-07-21-40.
+>>> I'll try to see what could cause this.
+>>>
+>>> Do you build with defconfig or do you use a custom config?
 >>
->> Breaking the logic introduced in 7d8952440f40 ("[PATCH] procfs: Fix
->> listing of /proc/NOT_A_TGID/task") to keep those directory listings not
->> showing up.
->
-> Sorry, I don't understand...
->
-> Do you mean that "ls /proc/pid/task" can see an empty dir? Afaics this
-> was possible before d855a4b79f49 too.
->
-> Or what?
+>> That's with "localmodconfig", see attached configuration file.
+> 
+> Thanks.
+> It seems that the recent addition of TIF_NOTIFY_SIGNAL to ia64 in
+> linux-next caused the issue. Can you please try the below patch?
+> 
+> From c4d06cf1c2938e6b2302e7ed0be95c3401181ebb Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> Date: Tue, 1 Dec 2020 15:40:28 +0200
+> Subject: [PATCH] ia64: fix TIF_NOTIFY_SIGNAL implementation
+> 
+> * Replace wrong spelling of TIF_SIGNAL_NOTIFY with the correct
+>   TIF_NOTIFY_SIGNAL
+> * Remove mistyped plural in test_thread_flag() call in
+>   process::do_notify_resume_user()
+> * Use number 5 for TIF_NOTIFY_SIGNAL as 7 is too big and assembler is not
+>   happy:
+> 
+>   AS      arch/ia64/kernel/entry.o
+> arch/ia64/kernel/entry.S: Assembler messages:
+> arch/ia64/kernel/entry.S:710: Error: Operand 2 of `and' should be an 8-bit integer (-128-127)
+> arch/ia64/kernel/entry.S:710: Error: qualifying predicate not followed by instruction
+> 
+> Reported-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Fixes: bbb026da151c ("ia64: add support for TIF_NOTIFY_SIGNAL")
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+> 
+> The Fixes tag is based on the commit in next-20201201, I'm not 100% sure
+> it is stable
+> 
+>  arch/ia64/include/asm/thread_info.h | 4 ++--
+>  arch/ia64/kernel/process.c          | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/ia64/include/asm/thread_info.h b/arch/ia64/include/asm/thread_info.h
+> index 759d7d68a5f2..51d20cb37706 100644
+> --- a/arch/ia64/include/asm/thread_info.h
+> +++ b/arch/ia64/include/asm/thread_info.h
+> @@ -103,8 +103,8 @@ struct thread_info {
+>  #define TIF_SYSCALL_TRACE	2	/* syscall trace active */
+>  #define TIF_SYSCALL_AUDIT	3	/* syscall auditing active */
+>  #define TIF_SINGLESTEP		4	/* restore singlestep on return to user mode */
+> +#define TIF_NOTIFY_SIGNAL	5	/* signal notification exist */
+>  #define TIF_NOTIFY_RESUME	6	/* resumption notification requested */
+> -#define TIF_NOTIFY_SIGNAL	7	/* signal notification exist */
+>  #define TIF_MEMDIE		17	/* is terminating due to OOM killer */
+>  #define TIF_MCA_INIT		18	/* this task is processing MCA or INIT */
+>  #define TIF_DB_DISABLED		19	/* debug trap disabled for fsyscall */
+> @@ -116,7 +116,7 @@ struct thread_info {
+>  #define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
+>  #define _TIF_SYSCALL_TRACEAUDIT	(_TIF_SYSCALL_TRACE|_TIF_SYSCALL_AUDIT|_TIF_SINGLESTEP)
+>  #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+> -#define _TIF_SIGNAL_NOTIFY	(1 << TIF_SIGNAL_NOTIFY)
+> +#define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+>  #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+>  #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+>  #define _TIF_MCA_INIT		(1 << TIF_MCA_INIT)
+> diff --git a/arch/ia64/kernel/process.c b/arch/ia64/kernel/process.c
+> index 468525fc64e0..ee394abcc03e 100644
+> --- a/arch/ia64/kernel/process.c
+> +++ b/arch/ia64/kernel/process.c
+> @@ -172,7 +172,7 @@ do_notify_resume_user(sigset_t *unused, struct sigscratch *scr, long in_syscall)
+>  
+>  	/* deal with pending signal delivery */
+>  	if (test_thread_flag(TIF_SIGPENDING) ||
+> -	    test_thread_flags(TIF_NOTIFY_SIGNAL)) {
+> +	    test_thread_flag(TIF_NOTIFY_SIGNAL)) {
+>  		local_irq_enable();	/* force interrupt enable */
+>  		ia64_do_signal(scr, in_syscall);
+>  	}
+> 
 
-Bah. Brain fart on my part.
+This fixes the issue for me.
 
-I read 7d8952440f40 too fast.  I thought it was attempting to make
-it so that "ls /proc/tid/task/" would see an empty dir while "ls
-/proc/tgid/task/" would see the complete set of threads.
+Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-Where tgid is the pid of the thread group leader and tid
-is the pid of some thread in the thread group.
+Adrian
 
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
-But 7d8952440f40 was just attempting to ensure that no thread was
-listed more than once in "/proc/xxx/task".
-
-My apologies for the confusion.
-
-Eric
