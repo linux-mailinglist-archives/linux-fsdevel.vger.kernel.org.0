@@ -2,92 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A7BD32CACD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 20:57:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA5D2CACFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 21:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392307AbgLAT4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 14:56:31 -0500
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:39955 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388704AbgLAT42 (ORCPT
+        id S1730573AbgLAUF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 15:05:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730553AbgLAUF5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 14:56:28 -0500
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.94)
-          with esmtps (TLS1.2)
-          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1kkBkR-003edd-JW; Tue, 01 Dec 2020 20:55:39 +0100
-Received: from p57bd9091.dip0.t-ipconnect.de ([87.189.144.145] helo=[192.168.178.139])
-          by inpost2.zedat.fu-berlin.de (Exim 4.94)
-          with esmtpsa (TLS1.2)
-          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1kkBkQ-001scM-TR; Tue, 01 Dec 2020 20:55:39 +0100
-Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org,
-        Jens Axboe <axboe@kernel.dk>
-References: <20201101170454.9567-1-rppt@kernel.org>
- <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
- <20201117062316.GB370813@kernel.org>
- <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
- <20201201102901.GF557259@kernel.org>
- <e3d5d791-8e4f-afcc-944c-24f66f329bd7@physik.fu-berlin.de>
- <20201201121033.GG557259@kernel.org>
- <49a2022c-f106-55ec-9390-41307a056517@physik.fu-berlin.de>
- <20201201135623.GA751215@kernel.org>
- <4c752ff0-27a6-b9d7-ab81-8aac1a3b7b65@physik.fu-berlin.de>
-Message-ID: <ea5bae0e-9f27-355f-d841-cf8b362b0b70@physik.fu-berlin.de>
-Date:   Tue, 1 Dec 2020 20:55:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Tue, 1 Dec 2020 15:05:57 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86CAC0613D6
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Dec 2020 12:05:16 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id v14so6961424lfo.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Dec 2020 12:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HEphcGQwY2jeNYDME47hDdQV9bR2WcuThTyY8CTMagA=;
+        b=f+XordXx1HtHQauAu4wnySGZ7GOsfsrQOPdsZpcQHvfL87zHN51ik0PwYfToHQidR0
+         PlZ/E4mqzBriHmbzSkQser0B1m99iGnRC3rEB7nXytmUcWTvmQp/DGH5GienWzwN/RKd
+         ej/bdilwW2TBGDr+jCbzKtRZ0888o0ynwCvig=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HEphcGQwY2jeNYDME47hDdQV9bR2WcuThTyY8CTMagA=;
+        b=VGRtLB0S6/e2CoJ0D3F86FwLBwGygtg8dfJ4PhuAb7xX6ZhQj4Q36N6RCWbNVKy9ET
+         KPNu7BRLabqNeLJTNTv/T3a54UGEhJ/fn0a6lt/FY8pH76H0SArvtbAWi/IZkEwMQu74
+         HRKQnW8sX2LbZIvF63KqsPH9BeDKqKkFxJl0zQ+/Yl9rMbBet0uyVYQ1HXhTKJtWq/IW
+         TWY8jVA+5Wpr6X1k+3gpvTp0/tvgRCP0Wy2kuGnA0wRB2VCKbBo32HmQmFXdh9ntzoy2
+         K/5X+KRiNSzz1v/NTjrPe7IIL2IuANHAwdvIGtm/P59YPOezn3hMdag4SOdyX4z2vG4f
+         9wKQ==
+X-Gm-Message-State: AOAM533oS8Kr19jm8+NZHQ0QfPLmahFBSJzOjyDy8CYo99/18HBOuZGJ
+        6ezs918A6D8VO0y9NvHM+AljbRTdbOcAcw==
+X-Google-Smtp-Source: ABdhPJxLZG4feQQtBAYAIp/ku7wQwO4KlrhEatYialHWvo/prWavbxSBg3jfkhAZ085f2WlvLrGUsQ==
+X-Received: by 2002:a19:8883:: with SMTP id k125mr1927962lfd.10.1606853114434;
+        Tue, 01 Dec 2020 12:05:14 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id o26sm71932ljj.93.2020.12.01.12.05.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Dec 2020 12:05:14 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id u19so6919331lfr.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Dec 2020 12:05:13 -0800 (PST)
+X-Received: by 2002:a19:5003:: with SMTP id e3mr1997442lfb.148.1606853112635;
+ Tue, 01 Dec 2020 12:05:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <4c752ff0-27a6-b9d7-ab81-8aac1a3b7b65@physik.fu-berlin.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-Originating-IP: 87.189.144.145
+References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com> <05a0f4fd-7f62-8fbc-378d-886ccd5b3f11@redhat.com>
+In-Reply-To: <05a0f4fd-7f62-8fbc-378d-886ccd5b3f11@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 1 Dec 2020 12:04:56 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgOu9vgUfOSsjO3hHHxGDn4BKhitC_8XCfgmGKiiSm_ag@mail.gmail.com>
+Message-ID: <CAHk-=wgOu9vgUfOSsjO3hHHxGDn4BKhitC_8XCfgmGKiiSm_ag@mail.gmail.com>
+Subject: Re: [PATCH 2/2] statx: move STATX_ATTR_DAX attribute handling to filesystems
+To:     Eric Sandeen <sandeen@redhat.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Xiaoli Feng <xifeng@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Mike!
+On Tue, Dec 1, 2020 at 8:59 AM Eric Sandeen <sandeen@redhat.com> wrote:
+>
+> It's a bit odd to set STATX_ATTR_DAX into the statx attributes in the VFS;
+> while the VFS can detect the current DAX state, it is the filesystem which
+> actually sets S_DAX on the inode, and the filesystem is the place that
+> knows whether DAX is something that the "filesystem actually supports" [1]
+> so that the statx attributes_mask can be properly set.
+>
+> So, move STATX_ATTR_DAX attribute setting to the individual dax-capable
+> filesystems, and update the attributes_mask there as well.
 
-On 12/1/20 4:07 PM, John Paul Adrian Glaubitz wrote:
-> This fixes the issue for me.
-> 
-> Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+I'm not really understanding the logic behind this.
 
-I just booted the kernel from the linux-mm branch and I can't get the hpsa driver
-to work anymore. Even if I compile it into the kernel, the driver is no longer
-loaded and hence I can't access the disks.
+The whole IS_DAX(inode) thing exists in various places outside the
+low-level filesystem, why shouldn't stat() do this?
 
-Any idea what could be wrong?
+If IS_DAX() is incorrect, then we have much bigger problems than some
+stat results. We have core functions like generic_file_read_iter() etc
+all making actual behavioral judgements on IS_DAX().
 
-Adrian
+And if IS_DAX() is correct, then why shouldn't this just be done in
+generic code? Why move it to every individual filesystem?
 
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
-
+               Linus
