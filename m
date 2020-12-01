@@ -2,142 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC9F52CADD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 21:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0BE02CAE04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 22:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbgLAUxj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 15:53:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729183AbgLAUxi (ORCPT
+        id S1728493AbgLAVFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 16:05:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:26876 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725899AbgLAVFj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 15:53:38 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B1KXBwA055455;
-        Tue, 1 Dec 2020 15:52:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=APMTXe6+p68TNGCweQqMwpTcWSnBIulipluxdg/4dMI=;
- b=ro3anzC85I+sf6+LeJKjYBW0cIvmTnbV5cVAipOfkFZiwezT1/r3eHOI2A7/mkT9zQZ1
- z2KKZ4/8sbdVwa1tuaiEffwbmrqiOoLY3Xy3VlI00kdslZN7qYv6rNjoh8VblCDsPkK0
- xdO9mlLsr8c05t2de1cqjxLYaGJnnF1zuF1FbS9za6PSuHazrmBauQzce95hL/chtAFM
- qx7DqtyPGFHnpnm33NNTUdzWqVR6Ie4ey+gLCzpiZ/3hBlPvFZEqxcG8neigMQ01W7Op
- CP/P5pYWz63ztSMhlv1FzZQYmsvGGdvhf4kq2XtFXjLmD9tDu8SNVdw6JoylvcuKqVvy YQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 355jjnxnxt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Dec 2020 15:52:53 -0500
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B1KYHkE062548;
-        Tue, 1 Dec 2020 15:52:52 -0500
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 355jjnxnx3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Dec 2020 15:52:52 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B1KmZMI007327;
-        Tue, 1 Dec 2020 20:52:50 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 354fpda8y6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Dec 2020 20:52:50 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B1Kqm2E63832448
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Dec 2020 20:52:48 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 133454C040;
-        Tue,  1 Dec 2020 20:52:48 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 434514C044;
-        Tue,  1 Dec 2020 20:52:46 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.54.13])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Dec 2020 20:52:46 +0000 (GMT)
-Message-ID: <feb537b46b78054239397396ea1fdabc1a3c44e2.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 00/11] evm: Improve usability of portable signatures
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Date:   Tue, 01 Dec 2020 15:52:45 -0500
-In-Reply-To: <20201111092302.1589-1-roberto.sassu@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-01_09:2020-11-30,2020-12-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 spamscore=0 bulkscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=910
- clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012010124
+        Tue, 1 Dec 2020 16:05:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606856652;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wVPezxXGFXUfwhFYqa6Djcjyd6cYjq8Fl9klsgPVelA=;
+        b=eAHRf1t1LZ4PFEf/NXFyB13qjTgY0cxD82v4+0MFtVCCK9lAS2RS6mY1F3KRaLsY1Kt/rE
+        QrAk/F6me22745WrZv+ALdnoYcSpFLeSdbazw9sD6fnxlHSUOMsVqWeq/4acfRXc6whW5D
+        ngoId2bgjlaeWbKm8B6KMGyG29IA2ks=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-330-0-5De3DzO4G1pueqNulWww-1; Tue, 01 Dec 2020 16:04:10 -0500
+X-MC-Unique: 0-5De3DzO4G1pueqNulWww-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76353185E485;
+        Tue,  1 Dec 2020 21:04:09 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EFF6D60854;
+        Tue,  1 Dec 2020 21:04:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wgOu9vgUfOSsjO3hHHxGDn4BKhitC_8XCfgmGKiiSm_ag@mail.gmail.com>
+References: <CAHk-=wgOu9vgUfOSsjO3hHHxGDn4BKhitC_8XCfgmGKiiSm_ag@mail.gmail.com> <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com> <05a0f4fd-7f62-8fbc-378d-886ccd5b3f11@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Eric Sandeen <sandeen@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Xiaoli Feng <xifeng@redhat.com>
+Subject: Re: [PATCH 2/2] statx: move STATX_ATTR_DAX attribute handling to filesystems
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <300455.1606856642.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Dec 2020 21:04:02 +0000
+Message-ID: <300456.1606856642@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roberto,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> EVM portable signatures are particularly suitable for the protection of
-> metadata of immutable files where metadata is signed by a software vendor.
-> They can be used for example in conjunction with an IMA policy that
-> appraises only executed and memory mapped files.
+> And if IS_DAX() is correct, then why shouldn't this just be done in
+> generic code? Why move it to every individual filesystem?
 
-The existing "appraise_tcb" builtin policy verify all root owned files.
-Defining a new builtin policy to verify only executed and memory
-mmapped files would make a nice addition and would probably simplify
-testing.
+One way of looking at it is that the check is then done for every filesystem -
+most of which don't support it.  Not sure whether that's a big enough problem
+to worry about.  The same is true of the automount test too, I suppose...
 
-> 
-> However, some usability issues are still unsolved, especially when EVM is
-> used without loading an HMAC key. This patch set attempts to fix the open
-> issues.
-
-We need regression tests for each of these changes.
-
-To prevent affecting the running system, the appraise policy rules
-could be limited to a loopback mounted filesystem. 
-
-> 
-> Patch 1 allows EVM to be used without loading an HMAC key. Patch 2 avoids
-> appraisal verification of public keys (they are already verified by the key
-> subsystem).
-
-Loading the EVM key(s) occurs early, either the builtin x509 EVM key or
-during the initramfs, makes testing difficult.  Based on
-security/evm/evm, different tests could be defined for when only x509
-keys, only HMAC key, or both EVM key types are loaded.
-
-> 
-> Patches 3-5 allow metadata verification to be turned off when no HMAC key
-> is loaded and to use this mode in a safe way (by ensuring that IMA
-> revalidates metadata when there is a change).
-> 
-> Patches 6-8 make portable signatures more usable if metadata verification
-> is not turned off, by ignoring the INTEGRITY_NOLABEL error when no HMAC key
-> is loaded, by accepting any metadata modification until signature
-> verification succeeds (useful when xattrs/attrs are copied sequentially
-> from a source) and by allowing operations that don't change metadata.
-> 
-> Patch 9 makes it possible to use portable signatures when the IMA policy
-> requires file signatures and patch 10 shows portable signatures in the
-> measurement list when the ima-sig template is selected.
-
-ima-evm-utils needs to be updated to support EVM portable & immutable
-signatures.
-
-> 
-> Lastly, patch 11 avoids undesired removal of security.ima when a file is
-> not selected by the IMA policy.
-
-thanks,
-
-Mimi
+David
 
