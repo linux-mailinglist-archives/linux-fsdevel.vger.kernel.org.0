@@ -2,73 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57BE22CA74C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 16:43:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 406622CA75E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 16:46:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390597AbgLAPk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 10:40:26 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39024 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2391784AbgLAPk0 (ORCPT
+        id S2390760AbgLAPpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 10:45:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388237AbgLAPpv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 10:40:26 -0500
-Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 0B1FdSYh012373
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 1 Dec 2020 10:39:28 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id D771D420136; Tue,  1 Dec 2020 10:39:27 -0500 (EST)
-Date:   Tue, 1 Dec 2020 10:39:27 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: Clarification of statx->attributes_mask meaning?
-Message-ID: <20201201153927.GL5364@mit.edu>
-References: <20201125212523.GB14534@magnolia>
- <33d38621-b65c-b825-b053-eda8870281d1@sandeen.net>
- <1942931.1606341048@warthog.procyon.org.uk>
- <eb47ab08-67fc-6151-5669-d4fb514c2b50@sandeen.net>
- <20201201032051.GK5364@mit.edu>
- <f259c5ee-7465-890a-3749-44eb8be0f8cf@sandeen.net>
+        Tue, 1 Dec 2020 10:45:51 -0500
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9EF7C0613CF;
+        Tue,  1 Dec 2020 07:45:10 -0800 (PST)
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 8C6B4C009; Tue,  1 Dec 2020 16:45:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1606837509; bh=4ZXOky5X68edX+ZKji8/7+h5ZsUJEEYYFZe9izZo8+w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V1K25wq1u1fSElfnlqOpXx/DR0/vSYT89xuRf2OGvW+Baxb7n394nVp0d6LCf8fiS
+         ARMuITlvTDKM3wI24I76ntsZLoS6tYVHxJ4+PGhefksxvNmKLPdHN4TgNA+J1YIT9g
+         1E6vRacn3RaVgUCdSsMKp917hjdn6IygiZIaKUEtA4Fr/gAZd1MUqxqg2oYOkXR7FY
+         qCu0PtB/9qTZAVS/dpn1d/A1MYw3ymiB0YFsDbwjYBuro86F/11m4dqylGG8fQz2al
+         ptoo0xPnWDz4E4BApccvuQ4B7PgQa8EweUpkzC1Hz4lGf1Ui9I9Sn36DysRVPUuBLt
+         LU+yKLTrrW7lw==
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     asmadeus@codewreck.org
+Cc:     linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+Subject: [PATCH] fs: 9p: add generic splice_write file operation
+Date:   Tue,  1 Dec 2020 16:44:56 +0100
+Message-Id: <1606837496-21717-1-git-send-email-asmadeus@codewreck.org>
+X-Mailer: git-send-email 1.7.10.4
+In-Reply-To: <20201201151658.GA13180@nautica>
+References: <20201201151658.GA13180@nautica>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f259c5ee-7465-890a-3749-44eb8be0f8cf@sandeen.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 09:37:29PM -0600, Eric Sandeen wrote:
-> > We should be really clear how applications are supposed to use the
-> > attributes_mask.  Does it mean that they will always be able to set a
-> > flag which is set in the attribute mask?  That can't be right, since
-> > there will be a number of flags that may have some more complex checks
-> > (you must be root, or the file must be zero length, etc.)  I'm a bit
-> > unclear about what are the useful ways in which an attribute_mask can
-> > be used by a userspace application --- and under what circumstances
-> > might an application be depending on the semantics of attribute_mask,
-> > so we don't accidentally give them an opportunity to complain and
-> > whine, thus opening ourselves to another O_PONIES controversy.
-> 
-> Hah, indeed.
-> 
-> Sorry if I've over-complicated this, I'm honestly just confused now.
+The default splice operations got removed recently, add it back to 9p
+with iter_file_splice_write like many other filesystems do.
 
-Yeah, I'm honestly confused too how applications can use the
-attributes mask, too.
+Fixes: 36e2c7421f02 ("fs: don't allow splice read/write without explicit ops")
+Cc: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+---
+ fs/9p/vfs_file.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Presumably there is some case where the flag not being set *and* the
-file system can support that attribute, that the application could
-infer something interesting.  I just can't figure out what that case
-would be.
-
-Yes, I see your pointer to Cristoph's question on this very issue back
-in April 2017.  Pity it was never answered, at least that was archived
-on lore.
-
-					- Ted
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 145f6f83aa9a..5f9c0c796a37 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -668,6 +668,7 @@ const struct file_operations v9fs_cached_file_operations = {
+ 	.lock = v9fs_file_lock,
+ 	.mmap = v9fs_file_mmap,
+ 	.splice_read = generic_file_splice_read,
++	.splice_write = iter_file_splice_write,
+ 	.fsync = v9fs_file_fsync,
+ };
+ 
+@@ -681,6 +682,7 @@ const struct file_operations v9fs_cached_file_operations_dotl = {
+ 	.flock = v9fs_file_flock_dotl,
+ 	.mmap = v9fs_file_mmap,
+ 	.splice_read = generic_file_splice_read,
++	.splice_write = iter_file_splice_write,
+ 	.fsync = v9fs_file_fsync_dotl,
+ };
+ 
+@@ -693,6 +695,7 @@ const struct file_operations v9fs_file_operations = {
+ 	.lock = v9fs_file_lock,
+ 	.mmap = generic_file_readonly_mmap,
+ 	.splice_read = generic_file_splice_read,
++	.splice_write = iter_file_splice_write,
+ 	.fsync = v9fs_file_fsync,
+ };
+ 
+@@ -706,6 +709,7 @@ const struct file_operations v9fs_file_operations_dotl = {
+ 	.flock = v9fs_file_flock_dotl,
+ 	.mmap = generic_file_readonly_mmap,
+ 	.splice_read = generic_file_splice_read,
++	.splice_write = iter_file_splice_write,
+ 	.fsync = v9fs_file_fsync_dotl,
+ };
+ 
+@@ -718,6 +722,7 @@ const struct file_operations v9fs_mmap_file_operations = {
+ 	.lock = v9fs_file_lock,
+ 	.mmap = v9fs_mmap_file_mmap,
+ 	.splice_read = generic_file_splice_read,
++	.splice_write = iter_file_splice_write,
+ 	.fsync = v9fs_file_fsync,
+ };
+ 
+@@ -731,5 +736,6 @@ const struct file_operations v9fs_mmap_file_operations_dotl = {
+ 	.flock = v9fs_file_flock_dotl,
+ 	.mmap = v9fs_mmap_file_mmap,
+ 	.splice_read = generic_file_splice_read,
++	.splice_write = iter_file_splice_write,
+ 	.fsync = v9fs_file_fsync_dotl,
+ };
+-- 
+2.28.0
 
