@@ -2,92 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 188D52C9BC1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 10:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D40E92C9C07
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 10:17:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389864AbgLAJLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 04:11:49 -0500
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:42849 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389562AbgLAJLs (ORCPT
+        id S2390218AbgLAJO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 04:14:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49144 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390240AbgLAJOS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 04:11:48 -0500
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.94)
-          with esmtps (TLS1.2)
-          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1kk1gY-003MrK-Et; Tue, 01 Dec 2020 10:10:58 +0100
-Received: from p57bd9091.dip0.t-ipconnect.de ([87.189.144.145] helo=[192.168.178.139])
-          by inpost2.zedat.fu-berlin.de (Exim 4.94)
-          with esmtpsa (TLS1.2)
-          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1kk1gX-000Ce2-UF; Tue, 01 Dec 2020 10:10:58 +0100
-Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
-References: <20201101170454.9567-1-rppt@kernel.org>
- <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
- <20201117062316.GB370813@kernel.org>
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
-Date:   Tue, 1 Dec 2020 10:10:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Tue, 1 Dec 2020 04:14:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606813971;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eVUUIWic4nOa387L60cGysm2Laqcqcvtu32GbAKq69E=;
+        b=QiftyFVao3/Rf+gD+JZIpzqYmnWCWmAb18hor6yoy/UfwCdazUdIdI7eEiBlbfWRO6Xo6R
+        8OX9wcFRbzWBj12Pv31eXAHQGSrMUWBBkdBsOA+4rpeWEAHoKnQXpmFYoKT7bTeeyXVOCc
+        my2fyBxU4MBlGeaIuux2bwjoYDqQu30=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-566-Mk-s11hRO_68q1f7Vo2ONA-1; Tue, 01 Dec 2020 04:12:47 -0500
+X-MC-Unique: Mk-s11hRO_68q1f7Vo2ONA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04BD110151E3;
+        Tue,  1 Dec 2020 09:12:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C7B718996;
+        Tue,  1 Dec 2020 09:12:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201201084638.GA27937@gondor.apana.org.au>
+References: <20201201084638.GA27937@gondor.apana.org.au> <20201127050701.GA22001@gondor.apana.org.au> <20201126063303.GA18366@gondor.apana.org.au> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <1976719.1606378781@warthog.procyon.org.uk> <4035245.1606812273@warthog.procyon.org.uk>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     dhowells@redhat.com, bfields@fieldses.org,
+        trond.myklebust@hammerspace.com, linux-crypto@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
 MIME-Version: 1.0
-In-Reply-To: <20201117062316.GB370813@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-Originating-IP: 87.189.144.145
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4036796.1606813958.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Dec 2020 09:12:38 +0000
+Message-ID: <4036797.1606813958@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Mike!
+Herbert Xu <herbert@gondor.apana.org.au> wrote:
 
-On 11/17/20 7:23 AM, Mike Rapoport wrote:
->> Apologies for the late reply. Is this still relevant for testing?
->>
->> I have already successfully tested v1 of the patch set, shall I test v2?
-> 
-> There were minor differences only for m68k between the versions. I've
-> verified them on ARAnyM but if you have a real machine a run there would
-> be nice.
+> Couldn't you just change the output sg to include the offset?
 
-I have just built a fresh kernel from the tip of Linus' tree and it boots
-fine on my RX-2600:
+That depends on whether the caller has passed it elsewhere for some other
+parallel purpose, but I think I'm going to have to go down that road and
+restore it afterwards.
 
-root@glendronach:~# uname -a
-Linux glendronach 5.10.0-rc6 #6 SMP Tue Dec 1 04:52:49 CET 2020 ia64 GNU/Linux
-root@glendronach:~#
-
-No issues observed so far. Looking at the git log, it seems these changes haven't
-been merged for 5.10 yet. I assume they will be coming with 5.11?
-
-Adrian
-
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+David
 
