@@ -2,77 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4DF2CA9B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 18:32:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC812CA9C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 18:35:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404124AbgLARaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 12:30:18 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27563 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404112AbgLARaS (ORCPT
+        id S2391941AbgLARdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 12:33:02 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:59282 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387716AbgLARdC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 12:30:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606843731;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=C5Fh+Y6emSlpgthUwTm3aw8jw437MaCs2J9N9xWqfdY=;
-        b=OKlO8jwVZloKaHD1zr4upSdqCV0k3+0fmxkDIitDEWSa6aAdrGhy67PS/nCHgCiuZTwwrT
-        lChOLTy+r/YxLYY+JvR4zTQz4AArtgYDO7Zn2j31EL3zH59WtvZlvUG3PL7V72GT+7UIdM
-        k0DjNLma5Tjwpe+0IoLMtRJZMpzbFXE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-103-yFLVe0qUPSWYZ48nuri9ow-1; Tue, 01 Dec 2020 12:28:48 -0500
-X-MC-Unique: yFLVe0qUPSWYZ48nuri9ow-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9526480EDAA;
-        Tue,  1 Dec 2020 17:28:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 73A6B5D9C2;
-        Tue,  1 Dec 2020 17:28:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <286508.1606843256@warthog.procyon.org.uk>
-References: <286508.1606843256@warthog.procyon.org.uk> <05a0f4fd-7f62-8fbc-378d-886ccd5b3f11@redhat.com> <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
+        Tue, 1 Dec 2020 12:33:02 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1HStdS174056;
+        Tue, 1 Dec 2020 17:32:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=OrLZ2TcxMTzpayNZHbMFnpbSSUbuHHfyBH7rVwjavA8=;
+ b=J+y8I92pWhV92YXtBuMCCHALqBR6koiFyuB/M/ui+E9bAweH0vn1phIlbT/Ffyv4REge
+ +Gh0Hy/L1Jla9Jn3DxGQImGACLVOCA2aA7ZPpbD4xYfBOViC7XFzT+osNc0lm801FNim
+ yq+I0QWENLrApN+SgCbFgzpBkkcT3lNRA6KrKKeuDwG3oOTYBpw/i5uoJyCtopvJ3kHP
+ 3QV5a2pk1G06oAenVELhPimGqHSm5iXdFNyy/ntT7/5AKWNkHH2H/gKo+SsbMafw3FVf
+ C46uLWlopqN1smpxui9Kv+1PXPwYUrbmDfOBv+RKVvwNPUoAl7IPUY+JEZWUqARxzm4U 3A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 353egkktqm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 01 Dec 2020 17:32:16 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1HQOVq175124;
+        Tue, 1 Dec 2020 17:32:16 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 35404n5n2e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Dec 2020 17:32:16 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B1HWF4n007040;
+        Tue, 1 Dec 2020 17:32:15 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 01 Dec 2020 09:32:14 -0800
+Date:   Tue, 1 Dec 2020 09:32:13 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
 To:     Eric Sandeen <sandeen@redhat.com>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+Cc:     torvalds@linux-foundation.org,
         Miklos Szeredi <mszeredi@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xfs <linux-xfs@vger.kernel.org>, linux-ext4@vger.kernel.org,
-        Xiaoli Feng <xifeng@redhat.com>
-Subject: Re: [PATCH 2/2] statx: move STATX_ATTR_DAX attribute handling to filesystems
+        Ira Weiny <ira.weiny@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, Xiaoli Feng <xifeng@redhat.com>
+Subject: Re: [PATCH 1/2] uapi: fix statx attribute value overlap for DAX &
+ MOUNT_ROOT
+Message-ID: <20201201173213.GH143045@magnolia>
+References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
+ <7027520f-7c79-087e-1d00-743bdefa1a1e@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <286928.1606843717.1@warthog.procyon.org.uk>
-Date:   Tue, 01 Dec 2020 17:28:37 +0000
-Message-ID: <286929.1606843717@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7027520f-7c79-087e-1d00-743bdefa1a1e@redhat.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 bulkscore=0
+ malwarescore=0 mlxscore=0 mlxlogscore=999 phishscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012010107
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9822 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=1
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1011 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012010107
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
-
-> > -	if (IS_DAX(inode))
-> > -		stat->attributes |= STATX_ATTR_DAX;
-> > -
+On Tue, Dec 01, 2020 at 10:57:11AM -0600, Eric Sandeen wrote:
+> STATX_ATTR_MOUNT_ROOT and STATX_ATTR_DAX got merged with the same value,
+> so one of them needs fixing. Move STATX_ATTR_DAX.
 > 
-> This could probably be left in and not distributed amongst the filesytems
-> provided that any filesystem that might turn it on sets the bit in the
-> attributes_mask.
+> While we're in here, clarify the value-matching scheme for some of the
+> attributes, and explain why the value for DAX does not match.
+> 
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+>  include/uapi/linux/stat.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 82cc58fe9368..9ad19eb9bbbf 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -171,9 +171,10 @@ struct statx {
+>   * be of use to ordinary userspace programs such as GUIs or ls rather than
+>   * specialised tools.
+>   *
+> - * Note that the flags marked [I] correspond to generic FS_IOC_FLAGS
+> + * Note that the flags marked [I] correspond to the FS_IOC_SETFLAGS flags
+>   * semantically.  Where possible, the numerical value is picked to correspond
+> - * also.
+> + * also. Note that the DAX attribute indicates that the inode is currently
+> + * DAX-enabled, not simply that the per-inode flag has been set.
 
-On further consideration, it's probably better to split it as you've done it.
+I don't really like using "DAX-enabled" to define "DAX attribute".  How
+about cribbing from the statx manpage?
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+"Note that the DAX attribute indicates that the file is in the CPU
+direct access state.  It does not correspond to the per-inode flag that
+some filesystems support."
 
-You do need one or more Fixes: lines, though.
+>   */
+>  #define STATX_ATTR_COMPRESSED		0x00000004 /* [I] File is compressed by the fs */
+>  #define STATX_ATTR_IMMUTABLE		0x00000010 /* [I] File is marked immutable */
+> @@ -183,7 +184,7 @@ struct statx {
+>  #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+>  #define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
+>  #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
+> -#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
+> +#define STATX_ATTR_DAX			0x00400000 /* File is currently DAX-enabled */
 
-David
+Why not use the next bit in the series (0x200000)?  Did someone already
+claim it in for-next?
 
+--D
+
+>  
+>  
+>  #endif /* _UAPI_LINUX_STAT_H */
+> -- 
+> 2.17.0
+> 
