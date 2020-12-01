@@ -2,131 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BD12CAF3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 23:02:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5DA2CAFB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 23:09:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbgLAV7D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 16:59:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbgLAV7D (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 16:59:03 -0500
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7747C0613CF;
-        Tue,  1 Dec 2020 13:58:22 -0800 (PST)
-Received: by mail-ed1-x541.google.com with SMTP id v22so5750363edt.9;
-        Tue, 01 Dec 2020 13:58:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EposTtMUZs+gVLdh7FbWQARWbgt/pepc/iVKswV5VXg=;
-        b=czectvghT+DvD0u82I0a5rIOUEyNZn+zUX5SGMK/SVj0uEjfNvsozxOtRUz3Pwh0sL
-         /J6F88vEI/JK7I/B46sW+b3WADEyvQKh6mwdJGvHf0uU9ZOT+bXFxFDX1cfoQfTvDGLH
-         qPn7e/3eXr1N6Pcz6O3L7oilzdYLGl66kp7IVfOXFAfeI13tdH820iy6iFce7lxrJeCn
-         ZbCFYJp6Bcx0PF/PmNQqHEx0tzFFmGYmKetUxseRx3XasyjXjuewVsEaqVk9lR0kk37s
-         vRlc4ajxaeVeTj1EJmxfcYC9PmSDtaojaxrweqlLfX++R2RpJ3XLSvwBeZFApqBIIV0N
-         U/Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EposTtMUZs+gVLdh7FbWQARWbgt/pepc/iVKswV5VXg=;
-        b=t6B6B5bWd6lsmkw4n4tGUOzyczZTLY0gMQnxRixQjcl0zD101mxdu7tOV+aWTcMqXE
-         nnsmS7hDl7Y2mxnzwo7FG4+AUHr+RewXTt7258RNZVNAH1fl8SYfOFp+ipHptsWbRA5M
-         2Q0Li31O4Jo6tES0o6vu30WIVXJ4OI7mmtqdFoZNHhRftdymNNQZaoENyUDw6Fu/Fe3I
-         dV5qxcyyfOrEkS8BNJ+8ZJjHkQwT+UbOEpygZ5egd/t+hNYAmcZKGvKGx1c3j23Vy7qh
-         4VabHGUaKzG/NKMi6F6VpYkBdg6dDPfab+ZwWTPYQoRk7eNtHuqLNwjpl5mIDIlihPki
-         TgPw==
-X-Gm-Message-State: AOAM530wzsbAeI1TuMqPd39Y1LVRLsAZlLV/xCMqLXVyv7MlJo6Bd8Ks
-        oUlEHKppGGgVUtqoHCkMT+hYSUWlPcWlLA==
-X-Google-Smtp-Source: ABdhPJxZ9JjKMOhsfMIpiZ7jpLcp8xPPe2HB7YbPwl1v2A7vVpgZjc7rXyWypI7ES0Sh76Zlj7necQ==
-X-Received: by 2002:aa7:cd84:: with SMTP id x4mr5167286edv.192.1606859901120;
-        Tue, 01 Dec 2020 13:58:21 -0800 (PST)
-Received: from ?IPv6:2001:a61:3aad:c501:15d9:d9fb:bc21:cb92? ([2001:a61:3aad:c501:15d9:d9fb:bc21:cb92])
-        by smtp.gmail.com with ESMTPSA id f7sm455575ejd.13.2020.12.01.13.58.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Dec 2020 13:58:20 -0800 (PST)
-Cc:     mtk.manpages@gmail.com,
-        "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
-        kernel-team@fb.com, linux-man <linux-man@vger.kernel.org>
-Subject: Re: [PATCH man-pages v6] Document encoded I/O
-To:     "G. Branden Robinson" <g.branden.robinson@gmail.com>
-References: <cover.1605723568.git.osandov@fb.com>
- <ec1588a618bd313e5a7c05a7f4954cc2b76ddac3.1605724767.git.osandov@osandov.com>
- <4d1430aa-a374-7565-4009-7ec5139bf311@gmail.com>
- <fb4a4270-eb7a-06d5-e703-9ee470b61f8b@gmail.com>
- <05e1f13c-5776-961b-edc4-0d09d02b7829@gmail.com>
- <dcb0679d-3ac5-dd95-5473-3c66ae4132b6@gmail.com>
- <20201201202144.ulbfnawi2ljmm6mn@localhost.localdomain>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <437a22f6-8724-6dfc-ac40-0c947817d7a3@gmail.com>
-Date:   Tue, 1 Dec 2020 22:58:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        id S2389351AbgLAWEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 17:04:21 -0500
+Received: from sandeen.net ([63.231.237.45]:57960 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387426AbgLAWEU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 17:04:20 -0500
+Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by sandeen.net (Postfix) with ESMTPSA id 45BC811662;
+        Tue,  1 Dec 2020 16:03:22 -0600 (CST)
+To:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Eric Sandeen <sandeen@redhat.com>, torvalds@linux-foundation.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, Xiaoli Feng <xifeng@redhat.com>
+References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
+ <05a0f4fd-7f62-8fbc-378d-886ccd5b3f11@redhat.com>
+ <20201201173905.GI143045@magnolia>
+ <20201201205243.GK2842436@dread.disaster.area>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: [PATCH 2/2] statx: move STATX_ATTR_DAX attribute handling to
+ filesystems
+Message-ID: <9ab51770-1917-fc05-ff57-7677f17b6e44@sandeen.net>
+Date:   Tue, 1 Dec 2020 16:03:37 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.5.0
 MIME-Version: 1.0
-In-Reply-To: <20201201202144.ulbfnawi2ljmm6mn@localhost.localdomain>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20201201205243.GK2842436@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Branden,
 
-On 12/1/20 9:21 PM, G. Branden Robinson wrote:
-> At 2020-12-01T21:12:47+0100, Michael Kerrisk (man-pages) wrote:
->>>>>> +vs.
->>>>>
->>>>> Please, s/vs./vs/
->>>>> See the reasons below:
->>>>>
->>>>> Michael (mtk),
->>>>>
->>>>> Here the renderer outputs a double space
->>>>> (as for separating two sentences).
->>>>>
->>>>> Are you okay with that?
+
+On 12/1/20 2:52 PM, Dave Chinner wrote:
+> On Tue, Dec 01, 2020 at 09:39:05AM -0800, Darrick J. Wong wrote:
+>> On Tue, Dec 01, 2020 at 10:59:36AM -0600, Eric Sandeen wrote:
+>>> It's a bit odd to set STATX_ATTR_DAX into the statx attributes in the VFS;
+>>> while the VFS can detect the current DAX state, it is the filesystem which
+>>> actually sets S_DAX on the inode, and the filesystem is the place that
+>>> knows whether DAX is something that the "filesystem actually supports" [1]
+>>> so that the statx attributes_mask can be properly set.
+>>>
+>>> So, move STATX_ATTR_DAX attribute setting to the individual dax-capable
+>>> filesystems, and update the attributes_mask there as well.
+>>>
+>>> [1] 3209f68b3ca4 statx: Include a mask for stx_attributes in struct statx
+>>>
+>>> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+>>> ---
+>>>  fs/ext2/inode.c   | 6 +++++-
+>>>  fs/ext4/inode.c   | 5 ++++-
+>>>  fs/stat.c         | 3 ---
+>>>  fs/xfs/xfs_iops.c | 5 ++++-
+>>>  4 files changed, 13 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+>>> index 11c5c6fe75bb..3550783a6ea0 100644
+>>> --- a/fs/ext2/inode.c
+>>> +++ b/fs/ext2/inode.c
+>>> @@ -1653,11 +1653,15 @@ int ext2_getattr(const struct path *path, struct kstat *stat,
+>>>  		stat->attributes |= STATX_ATTR_IMMUTABLE;
+>>>  	if (flags & EXT2_NODUMP_FL)
+>>>  		stat->attributes |= STATX_ATTR_NODUMP;
+>>> +	if (IS_DAX(inode))
+>>> +		stat->attributes |= STATX_ATTR_DAX;
+>>> +
+>>>  	stat->attributes_mask |= (STATX_ATTR_APPEND |
+>>>  			STATX_ATTR_COMPRESSED |
+>>>  			STATX_ATTR_ENCRYPTED |
+>>>  			STATX_ATTR_IMMUTABLE |
+>>> -			STATX_ATTR_NODUMP);
+>>> +			STATX_ATTR_NODUMP |
+>>> +			STATX_ATTR_DAX);
+>>>  
+>>>  	generic_fillattr(inode, stat);
+>>>  	return 0;
+>>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>>> index 0d8385aea898..848a0f2b154e 100644
+>>> --- a/fs/ext4/inode.c
+>>> +++ b/fs/ext4/inode.c
+>>> @@ -5550,13 +5550,16 @@ int ext4_getattr(const struct path *path, struct kstat *stat,
+>>>  		stat->attributes |= STATX_ATTR_NODUMP;
+>>>  	if (flags & EXT4_VERITY_FL)
+>>>  		stat->attributes |= STATX_ATTR_VERITY;
+>>> +	if (IS_DAX(inode))
+>>> +		stat->attributes |= STATX_ATTR_DAX;
+>>>  
+>>>  	stat->attributes_mask |= (STATX_ATTR_APPEND |
+>>>  				  STATX_ATTR_COMPRESSED |
+>>>  				  STATX_ATTR_ENCRYPTED |
+>>>  				  STATX_ATTR_IMMUTABLE |
+>>>  				  STATX_ATTR_NODUMP |
+>>> -				  STATX_ATTR_VERITY);
+>>> +				  STATX_ATTR_VERITY |
+>>> +				  STATX_ATTR_DAX);
+>>>  
+>>>  	generic_fillattr(inode, stat);
+>>>  	return 0;
+>>> diff --git a/fs/stat.c b/fs/stat.c
+>>> index dacecdda2e79..5bd90949c69b 100644
+>>> --- a/fs/stat.c
+>>> +++ b/fs/stat.c
+>>> @@ -80,9 +80,6 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+>>>  	if (IS_AUTOMOUNT(inode))
+>>>  		stat->attributes |= STATX_ATTR_AUTOMOUNT;
+>>>  
+>>> -	if (IS_DAX(inode))
+>>> -		stat->attributes |= STATX_ATTR_DAX;
+>>> -
+>>>  	if (inode->i_op->getattr)
+>>>  		return inode->i_op->getattr(path, stat, request_mask,
+>>>  					    query_flags);
+>>> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+>>> index 1414ab79eacf..56deda7042fd 100644
+>>> --- a/fs/xfs/xfs_iops.c
+>>> +++ b/fs/xfs/xfs_iops.c
+>>> @@ -575,10 +575,13 @@ xfs_vn_getattr(
+>>>  		stat->attributes |= STATX_ATTR_APPEND;
+>>>  	if (ip->i_d.di_flags & XFS_DIFLAG_NODUMP)
+>>>  		stat->attributes |= STATX_ATTR_NODUMP;
+>>> +	if (IS_DAX(inode))
+>>> +		stat->attributes |= STATX_ATTR_DAX;
+>>>  
+>>>  	stat->attributes_mask |= (STATX_ATTR_IMMUTABLE |
+>>>  				  STATX_ATTR_APPEND |
+>>> -				  STATX_ATTR_NODUMP);
+>>> +				  STATX_ATTR_NODUMP |
+>>> +				  STATX_ATTR_DAX);
 >>
->> Yes, that should probably be avoided. I'm not sure what the
->> correct way is to prevent that in groff though. I mean, one
->> could write
->>
->> .RI "vs.\ " unencoded_len
->>
->> but I think that simply creates a nonbreaking space,
->> which is not exactly what is desired.
+>> TBH I preferred your previous iteration on this, which only set the DAX
+>> bit in the attributes_mask if the underlying storage was pmem and the
+>> blocksize was correct, etc. since it made it easier to distinguish
+>> between a filesystem where you /could/ have DAX (but it wasn't currently
+>> enabled) and a filesystem where it just isn't possible.
 > 
-> Use the non-printing input break escape sequence, "\&", to suppress
-> end-of-sentence detection.  This is not a groffism, it goes back to
-> 1970s nroff and troff.
+> I think that's the only thing that makes sense from a userspace
+> perspective. THe man page explicitly says that:
+> 
+>   stx_attributes_mask
+> 	A mask indicating which bits in stx_attributes are supported
+> 	by the VFS and the filesystem.
+> 
+> So if DAX can never be turned on for that filesystem instance then,
+> by definition, it does not support DAX and the bit should never be
+> set.
+> 
+> e.g. We don't talk about kernels that support reflink - what matters
+> to userspace is whether the filesystem instance supports reflink.
+> Think of the useless mess that xfs_info would be if it reported
+> kernel capabilities instead of filesystem instance capabilities.
+> i.e. we don't report that a filesystem supports reflink just because
+> the kernel supports it - it reports whether the filesystem instance
+> being queried supports reflink. And that also implies the kernel
+> supports it, because the kernel has to support it to mount the
+> filesystem...
+> 
+> So, yeah, I think it really does need to be conditional on the
+> filesystem instance being queried to be actually useful to users....
 
-Yes, I spotted it about two minutes before your mail. And before that, I 
-was thinking, "should we really bother Branden with a question like 
-this?" :-)
+So now we're back to "attributes_mask, how does it work?"
 
-> I'm attaching a couple of pages from some introductory material I wrote
-> for the groff Texinfo manual in the forthcoming 1.23.0.
+The original implementation, as written by the statx interface author, added:
 
-As ever, thanks for jumping in, Branden.
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5d02b922afa3..b9ffa9f4191f 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5413,6 +5413,12 @@ int ext4_getattr(const struct path *path, struct kstat *stat,
+        if (flags & EXT4_NODUMP_FL)
+                stat->attributes |= STATX_ATTR_NODUMP;
+ 
++       stat->attributes_mask |= (STATX_ATTR_APPEND |
++                                 STATX_ATTR_COMPRESSED |
++                                 STATX_ATTR_ENCRYPTED |
++                                 STATX_ATTR_IMMUTABLE |
++                                 STATX_ATTR_NODUMP);
++
+        generic_fillattr(inode, stat);
+        return 0;
+ }
 
-Cheers,
+setting all those flags /unconditionally/ i.e. STATX_ATTR_ENCRYPTED is always
+set in the mask, even if CONFIG_FS_ENCRYPTION=n
 
-Michael
+And as for compression, that's even better ...
 
+so, um... 
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+That's why I was keen to just add DAX unconditionally at this point, and if we want
+to invent/refine meanings for the mask, we can still try to do that?
+
+-Eric
