@@ -2,66 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 074C02C9F54
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:33:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BD22CA005
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729921AbgLAKdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 05:33:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:48834 "EHLO verein.lst.de"
+        id S1729961AbgLAKhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 05:37:51 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:48506 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbgLAKdI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:33:08 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id BB94667373; Tue,  1 Dec 2020 11:32:24 +0100 (CET)
-Date:   Tue, 1 Dec 2020 11:32:24 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org, fstests@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 03/38] namespace: only take read lock in
- do_reconfigure_mnt()
-Message-ID: <20201201103224.GC27730@lst.de>
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-4-christian.brauner@ubuntu.com>
+        id S1726026AbgLAKhu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 05:37:50 -0500
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1kk31n-0002i0-QF; Tue, 01 Dec 2020 21:37:00 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Tue, 01 Dec 2020 21:36:59 +1100
+Date:   Tue, 1 Dec 2020 21:36:59 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     David Howells <dhowells@redhat.com>
+Cc:     bfields@fieldses.org, trond.myklebust@hammerspace.com,
+        linux-crypto@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
+Message-ID: <20201201103659.GA28271@gondor.apana.org.au>
+References: <20201201084638.GA27937@gondor.apana.org.au>
+ <20201127050701.GA22001@gondor.apana.org.au>
+ <20201126063303.GA18366@gondor.apana.org.au>
+ <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
+ <1976719.1606378781@warthog.procyon.org.uk>
+ <4035245.1606812273@warthog.procyon.org.uk>
+ <4036797.1606813958@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201128213527.2669807-4-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <4036797.1606813958@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+On Tue, Dec 01, 2020 at 09:12:38AM +0000, David Howells wrote:
+> 
+> That depends on whether the caller has passed it elsewhere for some other
+> parallel purpose, but I think I'm going to have to go down that road and
+> restore it afterwards.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Sure but even if you added it to the API the underlying
+implementataions would just have to do the same thing.
+
+Since this is particular to your use-case it's better to leave
+the complexity where it's needed rather than propagting it to
+all the crypto drivers.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
