@@ -2,88 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A457A2C9F2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5D1A2C9F3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:33:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbgLAK3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 05:29:31 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:51212 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729832AbgLAK3a (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:29:30 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kk2to-0007qT-Na; Tue, 01 Dec 2020 10:28:44 +0000
-Date:   Tue, 1 Dec 2020 11:28:42 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Mauricio =?utf-8?Q?V=C3=A1squez?= Bernal <mauricio@kinvolk.io>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        containers@lists.linux-foundation.org,
-        Christoph Hellwig <hch@lst.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, selinux@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        fstests@vger.kernel.org, linux-security-module@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 33/38] ext4: support idmapped mounts
-Message-ID: <20201201102842.ycodrxuxjwt4jyoa@wittgenstein>
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
- <20201128213527.2669807-34-christian.brauner@ubuntu.com>
- <CAHap4zvDuSpZzeyZPc61mQURu_0oGKjkiROohYXkAFYyD85Vvw@mail.gmail.com>
+        id S1729843AbgLAK34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 05:29:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37090 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbgLAK3z (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 05:29:55 -0500
+Received: from kernel.org (unknown [87.71.85.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 194602080A;
+        Tue,  1 Dec 2020 10:29:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606818554;
+        bh=Ws6dR/OG3AOU58f5wZaP5SOr5YFu6occCl/egAoMHKA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SUadOkONZm3yl4vUgx4ptuiDtfj+cJiQNuA5oHKmXZxvGWy0g8QkVsFClkrV67HlY
+         vRhIZcBu2BlL3N3eBSHPLP47jfJ1d1NpKcGqF/7pM3biCdU1ahEBnZj+ZAulT6sx2x
+         QaOaVP9R5iZI2YknaXdnDtAwtqchPwXSObLcS3RA=
+Date:   Tue, 1 Dec 2020 12:29:01 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org
+Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
+Message-ID: <20201201102901.GF557259@kernel.org>
+References: <20201101170454.9567-1-rppt@kernel.org>
+ <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
+ <20201117062316.GB370813@kernel.org>
+ <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHap4zvDuSpZzeyZPc61mQURu_0oGKjkiROohYXkAFYyD85Vvw@mail.gmail.com>
+In-Reply-To: <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 05:52:04PM -0500, Mauricio Vásquez Bernal wrote:
-> > diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> > index 619dd35ddd48..5918c05cfe5b 100644
-> > --- a/fs/ext4/Kconfig
-> > +++ b/fs/ext4/Kconfig
-> > @@ -118,3 +118,12 @@ config EXT4_KUNIT_TESTS
-> >           to the KUnit documentation in Documentation/dev-tools/kunit/.
-> >
-> >           If unsure, say N.
-> > +
-> > +config EXT4_IDMAP_MOUNTS
-> > +       bool "Support vfs idmapped mounts in ext4"
-> > +       depends on EXT4_FS
-> > +       default n
-> > +       help
-> > +         The vfs allows to expose a filesystem at different mountpoints with
-> > +         differnet idmappings. Allow ext4 to be exposed through idmapped
-> 
-> s/differnet/different/g
+Hi Adrian,
 
-Fixed, thanks!
-Christian
+On Tue, Dec 01, 2020 at 10:10:56AM +0100, John Paul Adrian Glaubitz wrote:
+> Hi Mike!
+> 
+> On 11/17/20 7:23 AM, Mike Rapoport wrote:
+> >> Apologies for the late reply. Is this still relevant for testing?
+> >>
+> >> I have already successfully tested v1 of the patch set, shall I test v2?
+> > 
+> > There were minor differences only for m68k between the versions. I've
+> > verified them on ARAnyM but if you have a real machine a run there would
+> > be nice.
+> 
+> I have just built a fresh kernel from the tip of Linus' tree and it boots
+> fine on my RX-2600:
+> 
+> root@glendronach:~# uname -a
+> Linux glendronach 5.10.0-rc6 #6 SMP Tue Dec 1 04:52:49 CET 2020 ia64 GNU/Linux
+> root@glendronach:~#
+> 
+> No issues observed so far. Looking at the git log, it seems these changes haven't
+> been merged for 5.10 yet. I assume they will be coming with 5.11?
+
+These changes are in linux-mm tree (https://www.ozlabs.org/~akpm/mmotm/
+with a mirror at https://github.com/hnaz/linux-mm)
+
+I beleive they will be coming in 5.11.
+
+> Adrian
+> 
+> -- 
+>  .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer - glaubitz@debian.org
+> `. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+>   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
