@@ -2,98 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D93172C9980
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 09:31:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC2112C99D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 09:46:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbgLAIay (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 03:30:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34848 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbgLAIay (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 03:30:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9BC77AF45;
-        Tue,  1 Dec 2020 08:30:11 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 55D931E131B; Tue,  1 Dec 2020 09:30:07 +0100 (CET)
-Date:   Tue, 1 Dec 2020 09:30:07 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Brian Gerst <brgerst@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH] fanotify: Fix fanotify_mark() on 32-bit x86
-Message-ID: <20201201083007.GA24488@quack2.suse.cz>
-References: <20201126155246.25961-1-jack@suse.cz>
- <CALCETrVaj6rnvqX2cxj3u++hg_XZD-Zo4iYUPTFDiwaO49xDrg@mail.gmail.com>
- <CAMzpN2gADAWBoTgKEgepCHVKoqOw3T_D_W30Q2-vJtQpfn0jwg@mail.gmail.com>
- <CALCETrXS8e9BRcpmSYqE5_Cvrt96wUOWK_P2bFWUkD2BozPNbg@mail.gmail.com>
- <CAMzpN2gkNnqnT3hS4jaHTphO+KdZmC=9Hi4tXk3RV9C-EcwtLQ@mail.gmail.com>
+        id S1728608AbgLAIqf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 03:46:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55204 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726041AbgLAIqf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 03:46:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606812309;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QSaVTW8Re5mr4mmiZruNg5eKqQXZkeeVuPsKPpTrCsM=;
+        b=AXyLl04IYl6xDHwM4IaqTrZkU/drereYCRfrgeiywtH19u2ZgM4NhHTt8+rinifPsAwLH3
+        lRA8tsBW/Lj6+jac9Qpwv7hUaycgpsMgVM0nGHR54NBROKagMGmV0XxxrhvSGZBnaIEwkY
+        gTgPAqADkRU6TT9NKk1fBuSI7np8npE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-94-LxOjIfJ_Nbe2RzyVYSkHDA-1; Tue, 01 Dec 2020 03:45:05 -0500
+X-MC-Unique: LxOjIfJ_Nbe2RzyVYSkHDA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A7B9D1012774;
+        Tue,  1 Dec 2020 08:44:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 124FF19D9B;
+        Tue,  1 Dec 2020 08:44:33 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201127050701.GA22001@gondor.apana.org.au>
+References: <20201127050701.GA22001@gondor.apana.org.au> <20201126063303.GA18366@gondor.apana.org.au> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <1976719.1606378781@warthog.procyon.org.uk>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     dhowells@redhat.com, bfields@fieldses.org,
+        trond.myklebust@hammerspace.com, linux-crypto@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH 00/18] crypto: Add generic Kerberos library
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMzpN2gkNnqnT3hS4jaHTphO+KdZmC=9Hi4tXk3RV9C-EcwtLQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4035244.1606812273.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Dec 2020 08:44:33 +0000
+Message-ID: <4035245.1606812273@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 30-11-20 17:21:08, Brian Gerst wrote:
-> On Fri, Nov 27, 2020 at 7:36 PM Andy Lutomirski <luto@kernel.org> wrote:
-> >
-> > On Fri, Nov 27, 2020 at 2:30 PM Brian Gerst <brgerst@gmail.com> wrote:
-> > >
-> > > On Fri, Nov 27, 2020 at 1:13 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > > >
-> > > > On Thu, Nov 26, 2020 at 7:52 AM Jan Kara <jack@suse.cz> wrote:
-> > > > >
-> > > > > Commit converting syscalls taking 64-bit arguments to new scheme of compat
-> > > > > handlers omitted converting fanotify_mark(2) which then broke the
-> > > > > syscall for 32-bit x86 builds. Add missed conversion. It is somewhat
-> > > > > cumbersome since we need to keep the original compat handler for all the
-> > > > > other 32-bit archs.
-> > > > >
-> > > >
-> > > > This is stupendously ugly.  I'm not really sure how this is supposed
-> > > > to work on any 32-bit arch.  I'm also not sure whether we should
-> > > > expect the SYSCALL_DEFINE macros to figure this out by themselves.
-> > >
-> > > It works on 32-bit arches because the compiler implicitly uses
-> > > consecutive input registers or stack slots for 64-bit arguments, and
-> > > some arches have alignment requirements that result in hidden padding.
-> > > x86-32 is different now because parameters are passed in via pt_regs,
-> > > and the 64-bit value has to explicitly be reassembled from the high
-> > > and low 32-bit values, just like in the compat case.
-> > >
-> >
-> > That was my guess.
-> >
-> > > I think the simplest way to handle this is add a wrapper in
-> > > arch/x86/kernel/sys_ia32.c with the other fs syscalls that need 64-bit
-> > > args.  That keeps this mess out of general code.
-> >
-> >
-> > Want to send a patch?
-> 
-> I settled on doing something along the same line as Jan, but in a more
-> generic way that lays the groundwork for converting more of these
-> arch-specific compat wrappers to a generic wrapper.
+Btw, would it be feasible to make it so that an extra parameter can be added
+to the cipher buffer-supplying functions, e.g.:
 
-Cool, thanks for looking into this!
+	skcipher_request_set_crypt(req, input, ciphertext_sg, esize, iv);
 
-> Patch coming soon.
+such that we can pass in an offset into the output sg as well?
 
-Looking forward to it :)
+David
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
