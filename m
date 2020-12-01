@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE922CA062
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C682CA066
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Dec 2020 11:53:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbgLAKuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 05:50:12 -0500
-Received: from verein.lst.de ([213.95.11.211]:48979 "EHLO verein.lst.de"
+        id S1729737AbgLAKvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 05:51:09 -0500
+Received: from verein.lst.de ([213.95.11.211]:49009 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726026AbgLAKuL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 05:50:11 -0500
+        id S1726158AbgLAKvJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 05:51:09 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 56C3367373; Tue,  1 Dec 2020 11:49:27 +0100 (CET)
-Date:   Tue, 1 Dec 2020 11:49:27 +0100
+        id A4A1A67373; Tue,  1 Dec 2020 11:50:25 +0100 (CET)
+Date:   Tue, 1 Dec 2020 11:50:25 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -49,18 +49,17 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 06/38] fs: add id translation helpers
-Message-ID: <20201201104927.GE27730@lst.de>
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-7-christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v3 07/38] mount: attach mappings to mounts
+Message-ID: <20201201105025.GF27730@lst.de>
+References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-8-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201128213527.2669807-7-christian.brauner@ubuntu.com>
+In-Reply-To: <20201128213527.2669807-8-christian.brauner@ubuntu.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+The READ_ONCE still looks suspect as it generally needs to be paired
+with a WRITE_ONCE.  The rest looks sane to me.
