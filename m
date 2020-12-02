@@ -2,119 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC1B2CC8CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 22:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 346B32CC8F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 22:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729448AbgLBVUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 16:20:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbgLBVUS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 16:20:18 -0500
-Date:   Wed, 2 Dec 2020 13:19:35 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1606943977;
-        bh=JtT7doOINp9+ZMFIZ+dlt/slcFNWsBOJ/UyCWvCAeNU=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LiWCFJICn/o03uyWj62CQRc0wyNqI1pqdTsnGpqpp4BpW58/0UyaisuDN/InuBDtW
-         PtCkRHfbSALTq7Z1K4xAqxeAw/Z38JgYTFtETsQeX8WIJWeV55OXOZCp6NUJk10OeB
-         hSgETUCfGmBNOZM7yHDeUAk3Xf2ba44rPR3VGvMtQOteREkOckl4/ayFKhOS1nL0Zz
-         bJR7arzg/DywZ1xEaZ4Ei36vHrY6GQiRQXPaVZdeuPjXVIQ6yu/sZw0CAz5twyIH7d
-         gIrCwE75hOC+fEhyjA7aI2+xLaRkV910UT+wcg4mn0PBH4sReIsL9sxGhhGHlcKD61
-         DxIQ/WULyS8LA==
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] fs/namespace.c: WARN if mnt_count has become negative
-Message-ID: <X8gE55iaLsNDuae2@gmail.com>
-References: <20201101044021.1604670-1-ebiggers@kernel.org>
- <X7gQN3T+4rPSXg0B@sol.localdomain>
+        id S2387645AbgLBVcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 16:32:04 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:36189 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729326AbgLBVcE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Dec 2020 16:32:04 -0500
+Received: by mail-io1-f72.google.com with SMTP id q126so2559936iof.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 13:31:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Ff9eT4IKjr/d9+CBTJN/vpEU1i32CgUXCqFZBYyDY8s=;
+        b=PRdH2SnAj/wM6K4NQGj+4rIUKuieOeC3eTEzR1hX4vfhwZI8RgeuNb+sbq6pBTdEcL
+         tnVfb3PEY4GTzn4aWTNQr9iJVTdyZ9BExIOfksIAEC1OcqFVHQUk5IlRVcl5l/nxVKvk
+         jX+LsS4mfyD2qvpXbiuHdwUKXg5/SUMrzh2oLhThdUYgLa1jKFciRtrShaCt+YRwJK4u
+         wwd7AV2NprFVRrjL0pEHAm5ZNOJ2dhEI93w65gBTBK/pb8Js1uXYgyWGyvlpxPZBTfFQ
+         i4g9C0MVSXHfcgaNwjHEHE8+wGHQZCFysj/qDlm07SJNVSowPnFZKzMIvQoMygf3jflR
+         98SQ==
+X-Gm-Message-State: AOAM530gNlFmSmxzLH9IC3VUcuWCOz0dV/VhTGzM8r25H57C8alEv7/p
+        j87ViQjAV4dGZMk+H4BUbPWMpFRpq8IYkTgp/XFihC8vpYs5
+X-Google-Smtp-Source: ABdhPJzLPKCTXPDvGdMkc1xtq05W2K1aWKZ9XhR7Fl/yf6dEmfPi+8unQRDokx5O/cfB2niOhhm2ZsC2f43gkNfS/TE+DPEjFzeM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <X7gQN3T+4rPSXg0B@sol.localdomain>
+X-Received: by 2002:a02:b681:: with SMTP id i1mr153616jam.10.1606944683171;
+ Wed, 02 Dec 2020 13:31:23 -0800 (PST)
+Date:   Wed, 02 Dec 2020 13:31:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000003a2e105b581f7b9@google.com>
+Subject: WARNING in create_io_worker
+From:   syzbot <syzbot+fa13b30255540662f825@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 20, 2020 at 10:51:35AM -0800, Eric Biggers wrote:
-> On Sat, Oct 31, 2020 at 09:40:21PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Missing calls to mntget() (or equivalently, too many calls to mntput())
-> > are hard to detect because mntput() delays freeing mounts using
-> > task_work_add(), then again using call_rcu().  As a result, mnt_count
-> > can often be decremented to -1 without getting a KASAN use-after-free
-> > report.  Such cases are still bugs though, and they point to real
-> > use-after-frees being possible.
-> > 
-> > For an example of this, see the bug fixed by commit 1b0b9cc8d379
-> > ("vfs: fsmount: add missing mntget()"), discussed at
-> > https://lkml.kernel.org/linux-fsdevel/20190605135401.GB30925@lakrids.cambridge.arm.com/T/#u.
-> > This bug *should* have been trivial to find.  But actually, it wasn't
-> > found until syzkaller happened to use fchdir() to manipulate the
-> > reference count just right for the bug to be noticeable.
-> > 
-> > Address this by making mntput_no_expire() issue a WARN if mnt_count has
-> > become negative.
-> > 
-> > Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > ---
-> >  fs/namespace.c | 9 ++++++---
-> >  fs/pnode.h     | 2 +-
-> >  2 files changed, 7 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index cebaa3e817940..93006abe7946a 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -156,10 +156,10 @@ static inline void mnt_add_count(struct mount *mnt, int n)
-> >  /*
-> >   * vfsmount lock must be held for write
-> >   */
-> > -unsigned int mnt_get_count(struct mount *mnt)
-> > +int mnt_get_count(struct mount *mnt)
-> >  {
-> >  #ifdef CONFIG_SMP
-> > -	unsigned int count = 0;
-> > +	int count = 0;
-> >  	int cpu;
-> >  
-> >  	for_each_possible_cpu(cpu) {
-> > @@ -1139,6 +1139,7 @@ static DECLARE_DELAYED_WORK(delayed_mntput_work, delayed_mntput);
-> >  static void mntput_no_expire(struct mount *mnt)
-> >  {
-> >  	LIST_HEAD(list);
-> > +	int count;
-> >  
-> >  	rcu_read_lock();
-> >  	if (likely(READ_ONCE(mnt->mnt_ns))) {
-> > @@ -1162,7 +1163,9 @@ static void mntput_no_expire(struct mount *mnt)
-> >  	 */
-> >  	smp_mb();
-> >  	mnt_add_count(mnt, -1);
-> > -	if (mnt_get_count(mnt)) {
-> > +	count = mnt_get_count(mnt);
-> > +	if (count != 0) {
-> > +		WARN_ON(count < 0);
-> >  		rcu_read_unlock();
-> >  		unlock_mount_hash();
-> >  		return;
-> > diff --git a/fs/pnode.h b/fs/pnode.h
-> > index 49a058c73e4c7..26f74e092bd98 100644
-> > --- a/fs/pnode.h
-> > +++ b/fs/pnode.h
-> > @@ -44,7 +44,7 @@ int propagate_mount_busy(struct mount *, int);
-> >  void propagate_mount_unlock(struct mount *);
-> >  void mnt_release_group_id(struct mount *);
-> >  int get_dominating_id(struct mount *mnt, const struct path *root);
-> > -unsigned int mnt_get_count(struct mount *mnt);
-> > +int mnt_get_count(struct mount *mnt);
-> >  void mnt_set_mountpoint(struct mount *, struct mountpoint *,
-> >  			struct mount *);
-> >  void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
-> > 
+Hello,
 
-Ping.
+syzbot found the following issue on:
+
+HEAD commit:    c84e1efa Merge tag 'asm-generic-fixes-5.10-2' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a43395500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d1e98d0b97781e4
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa13b30255540662f825
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fa13b30255540662f825@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 3 PID: 10595 at include/linux/cpumask.h:137 rcu_read_unlock include/linux/rcupdate.h:696 [inline]
+WARNING: CPU: 3 PID: 10595 at include/linux/cpumask.h:137 ttwu_stat kernel/sched/core.c:2441 [inline]
+WARNING: CPU: 3 PID: 10595 at include/linux/cpumask.h:137 try_to_wake_up+0xef6/0x1330 kernel/sched/core.c:2984
+Modules linked in:
+CPU: 3 PID: 10595 Comm: io_wq_manager Not tainted 5.10.0-rc5-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+RIP: 0010:tryqemu-system-x86_64: warning: guest updated active QH
+Code: 80 3d 93 2a 8c 0b 00 0f 84 f1 00 00 00 e8 82 80 10 00 48 c7 c6 d9 6d 4c 81 48 c7 c7 e0 77 33 8b e8 0f b7 09 00 e9 15 f9 ff ff <0f> 0b e9 65 f4 ff ff 4c 89 ff 48 89 4c 24 08 e8 b6 51 ff ff 48 8b
+RSP: 0018:ffffc90004b4fd50 EFLAGS: 00010002
+RAX: dffffc0000000000 RBX: 1ffff92000969faf RCX: ffff88806dc24778
+RDX: 1ffff1100db848ee RSI: ffffffff83b63fcb RDI: 0000000000000006
+RBP: ffff88806dc24400 R08: ffff88806dc24410 R09: ffffffff8cecc98f
+R10: 0000000000000040 R11: 0000000000000000 R12: 0000000000000202
+R13: ffff88806dc24c38 R14: 0000000000000008 R15: ffff88806dc24770
+FS:  0000000000000000(0000) GS:ffff88802cd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000339da98 CR3: 0000000020a7e000 CR4: 0000000000350ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ create_io_worker+0x590/0x8d0 fs/io-wq.c:720
+ io_wq_manager+0x16b/0xb80 fs/io-wq.c:785
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
