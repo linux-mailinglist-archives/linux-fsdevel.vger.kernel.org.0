@@ -2,77 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 755232CB2A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 03:12:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE2B2CB2BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 03:18:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbgLBCMF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 21:12:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48578 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726412AbgLBCMF (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 21:12:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606875039;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sY7/IufYoJYEkg/XQ54kbpFtGBvNVqqBTbMlk//HqTc=;
-        b=hxwkPPnWAkAhAyUslONFREEU1uZbVsek2qJ0YaOwxRe2ZNkYwpL5/r+GlWTrhZ8caELBi+
-        FKVVqddjD6imzhRENMZpUVO/PEjs1U6e6jOqjx3B4ttOqH8g3KLAnDps8PjY0pjU04//Ig
-        HlExHz7WpmG21yes/vgZhTjA/pNzOkE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-585-5AdSIn6OOcq0_Yj9jfMfjw-1; Tue, 01 Dec 2020 21:10:37 -0500
-X-MC-Unique: 5AdSIn6OOcq0_Yj9jfMfjw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A7D431005E44;
-        Wed,  2 Dec 2020 02:10:35 +0000 (UTC)
-Received: from T590 (ovpn-13-72.pek2.redhat.com [10.72.13.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 213655C1D5;
-        Wed,  2 Dec 2020 02:10:25 +0000 (UTC)
-Date:   Wed, 2 Dec 2020 10:10:21 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
-Message-ID: <20201202021021.GB494805@T590>
-References: <20201201120652.487077-1-ming.lei@redhat.com>
- <20201201125251.GA11935@casper.infradead.org>
- <20201201125936.GA25111@infradead.org>
- <fdbfe981-0251-9641-6ed8-db034c0f0148@gmail.com>
- <20201201133226.GA26472@infradead.org>
- <6cbce034-b8c9-35d5-e805-f5ed0c169e2a@gmail.com>
- <20201201134542.GA2888@infradead.org>
+        id S1727776AbgLBCRZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 21:17:25 -0500
+Received: from mga18.intel.com ([134.134.136.126]:13586 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727099AbgLBCRZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 21:17:25 -0500
+IronPort-SDR: 9qsx34WJlyxzeiH2TkkB7Uab823FxYJy/eYG/xQz9RzxASyUfcT1+WuSMwx8GTUqXt6zn46EOr
+ FEEjfVkGbuMg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9822"; a="160711255"
+X-IronPort-AV: E=Sophos;i="5.78,385,1599548400"; 
+   d="scan'208";a="160711255"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2020 18:16:34 -0800
+IronPort-SDR: syQiLccva6stDbNmtbS0hsL7Vj0C7CtYMTf4cj0Th6eoO+u5tYBaPAPmHSe1SMNZL+lK7ODY84
+ X3FCfyjIHroQ==
+X-IronPort-AV: E=Sophos;i="5.78,385,1599548400"; 
+   d="scan'208";a="481350812"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2020 18:16:34 -0800
+Date:   Tue, 1 Dec 2020 18:16:33 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Eric Sandeen <sandeen@redhat.com>
+Cc:     torvalds@linux-foundation.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, Xiaoli Feng <xifeng@redhat.com>
+Subject: Re: [PATCH 1/2] uapi: fix statx attribute value overlap for DAX &
+ MOUNT_ROOT
+Message-ID: <20201202021633.GA1455219@iweiny-DESK2.sc.intel.com>
+References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
+ <7027520f-7c79-087e-1d00-743bdefa1a1e@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201201134542.GA2888@infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <7027520f-7c79-087e-1d00-743bdefa1a1e@redhat.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 01:45:42PM +0000, Christoph Hellwig wrote:
-> On Tue, Dec 01, 2020 at 01:36:22PM +0000, Pavel Begunkov wrote:
-> > Yeah, that's the idea, but also wanted to verify that callers don't
-> > free it while in use, or if that's not the case to make it conditional
-> > by adding a flag in iov_iter.
-> > 
-> > Can anybody vow right off the bat that all callers behave well?
+On Tue, Dec 01, 2020 at 10:57:11AM -0600, Eric Sandeen wrote:
+> STATX_ATTR_MOUNT_ROOT and STATX_ATTR_DAX got merged with the same value,
+> so one of them needs fixing. Move STATX_ATTR_DAX.
 > 
-> Yes, this will need a careful audit, I'm not too sure offhand.  For the
-> io_uring case which is sortof the fast path the caller won't free them
-> unless we allow the buffer unregistration to race with I/O.
+> While we're in here, clarify the value-matching scheme for some of the
+> attributes, and explain why the value for DAX does not match.
+> 
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+>  include/uapi/linux/stat.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 82cc58fe9368..9ad19eb9bbbf 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -171,9 +171,10 @@ struct statx {
+>   * be of use to ordinary userspace programs such as GUIs or ls rather than
+>   * specialised tools.
+>   *
+> - * Note that the flags marked [I] correspond to generic FS_IOC_FLAGS
+> + * Note that the flags marked [I] correspond to the FS_IOC_SETFLAGS flags
+>   * semantically.  Where possible, the numerical value is picked to correspond
+> - * also.
+> + * also. Note that the DAX attribute indicates that the inode is currently
+> + * DAX-enabled, not simply that the per-inode flag has been set.
+>   */
+>  #define STATX_ATTR_COMPRESSED		0x00000004 /* [I] File is compressed by the fs */
+>  #define STATX_ATTR_IMMUTABLE		0x00000010 /* [I] File is marked immutable */
+> @@ -183,7 +184,7 @@ struct statx {
+>  #define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
+>  #define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
+>  #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
+> -#define STATX_ATTR_DAX			0x00002000 /* [I] File is DAX */
+> +#define STATX_ATTR_DAX			0x00400000 /* File is currently DAX-enabled */
 
-Loop's aio usage is fine, just found fd_execute_rw_aio() isn't good.
+This will force a change to xfstests at a minimum.  And I do know of users who
+have been using this value.  But I have gotten inquires about using the feature
+so there are users out there.
 
+Darrick, do we have someone doing the patches for xfstest?
 
-Thanks,
-Ming
+Ira
 
+>  
+>  
+>  #endif /* _UAPI_LINUX_STAT_H */
+> -- 
+> 2.17.0
+> 
