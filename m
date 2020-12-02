@@ -2,203 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 346072CB596
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 08:16:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 364A62CB58F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 08:14:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbgLBHO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 02:14:57 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:13741 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728105AbgLBHO5 (ORCPT
+        id S1728712AbgLBHN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 02:13:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbgLBHN0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 02:14:57 -0500
-X-IronPort-AV: E=Sophos;i="5.78,385,1599494400"; 
-   d="scan'208";a="101976775"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 02 Dec 2020 15:14:10 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 11B374CE5CF5;
-        Wed,  2 Dec 2020 15:14:06 +0800 (CST)
-Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
- (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 2 Dec
- 2020 15:14:05 +0800
-Subject: Re: [RFC PATCH v2 0/6] fsdax: introduce fs query to support reflink
-To:     Dave Chinner <david@fromorbit.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-raid@vger.kernel.org>,
-        <darrick.wong@oracle.com>, <dan.j.williams@intel.com>,
-        <hch@lst.de>, <song@kernel.org>, <rgoldwyn@suse.de>,
-        <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
-References: <20201123004116.2453-1-ruansy.fnst@cn.fujitsu.com>
- <20201129224723.GG2842436@dread.disaster.area>
-From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <e0aa187f-e124-1ddc-0f5a-6a8c41a3dc66@cn.fujitsu.com>
-Date:   Wed, 2 Dec 2020 15:12:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
-MIME-Version: 1.0
-In-Reply-To: <20201129224723.GG2842436@dread.disaster.area>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
-X-yoursite-MailScanner-ID: 11B374CE5CF5.A2628
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+        Wed, 2 Dec 2020 02:13:26 -0500
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A03C0613CF;
+        Tue,  1 Dec 2020 23:12:46 -0800 (PST)
+Received: by mail-pl1-x641.google.com with SMTP id u2so613397pls.10;
+        Tue, 01 Dec 2020 23:12:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=ya+0u8oPqKce5WddvEwrQ5QUESHFPHjBSXzdciQAiSg=;
+        b=oJkuYre15ItUH3uiytzTvI1fFm1DG6GG6D2TqWyjB5ddSDMva5f5RJetckeiTDvHQ+
+         OGVdu33ohScQl5hmzhlEaqsmw+IjRPUbGNnhHqIuc11lwx9bSyNYYLSGaHWFPksbLPcJ
+         Bubib2ummhxJonw4bFv2brG/dQKxgS9tXCpPg921MPqb+gYJtBD9yo1roMNEIAGZ+QTg
+         2oYaDntyyrKnTTcKujwpHdZ5io/lf+Xy/wokhnHLRKZhhB+66rd23+j5wRKVZTclfdwF
+         iv8qpO59tj5pM0kOWpFCYBOXcEUn2FdOHoHmb98Fd1Tu87oVMN9p96OLBUAkoa3B8fSK
+         EVzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=ya+0u8oPqKce5WddvEwrQ5QUESHFPHjBSXzdciQAiSg=;
+        b=da3OgdnH5R2L0Di+tEj8IlmdKkMzOwvF/Ba9HYjEl1QO1WQEwBq+7zCbaco1Vw4jwR
+         bC0vlkOk+ExjngJB+gBuA7O2BGG2a8DogIdAd85U5H6MyDGx7LLhv2OdVdKzHorL7Xe8
+         sqc+pjzstUzBhQrkjMBT2IPDIR16M1gcBupjtNNHR+uZpiaq0GtUa2eYDGknWx4VIcER
+         EaDkWjd1Suxb7brQOTRWwy7mJG4yQE/3gnJUg9YJePgEGO5SEAnWoqL7rhq73+3EmHki
+         bfAx6FbI9irzTizM3W9ZqQaTNBZ5jYVUQW7xh9yeTwWIbOMJLpQ8U3ihP390hze65Vmq
+         1Ygw==
+X-Gm-Message-State: AOAM531h0U90k/Vg782scGVBc7XCtinyQh1HpkfDG2c9k+dxR4YtYxbq
+        rThMnMejSU+cej0IKeInv4l+Ws6QruTSQg==
+X-Google-Smtp-Source: ABdhPJxFlSWiJUnyMAbdS77a6OqK9xSZe2X2wwa/cT4W47hkn0BlkITY9J3HdtHjl/w7hvyxb6UFUw==
+X-Received: by 2002:a17:90a:bb91:: with SMTP id v17mr1111477pjr.231.1606893165171;
+        Tue, 01 Dec 2020 23:12:45 -0800 (PST)
+Received: from ?IPv6:2601:647:4700:9b2:2c16:d412:96a3:80fc? ([2601:647:4700:9b2:2c16:d412:96a3:80fc])
+        by smtp.gmail.com with ESMTPSA id e23sm1111590pfd.64.2020.12.01.23.12.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Dec 2020 23:12:43 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [RFC PATCH 11/13] fs/userfaultfd: complete write asynchronously
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20201129004548.1619714-12-namit@vmware.com>
+Date:   Tue, 1 Dec 2020 23:12:42 -0800
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <8405A413-239A-47E8-9D46-B6060EF86A68@gmail.com>
+References: <20201129004548.1619714-1-namit@vmware.com>
+ <20201129004548.1619714-12-namit@vmware.com>
+To:     linux-fsdevel@vger.kernel.org
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Dave,
-
-On 2020/11/30 上午6:47, Dave Chinner wrote:
-> On Mon, Nov 23, 2020 at 08:41:10AM +0800, Shiyang Ruan wrote:
->> 
->> The call trace is like this:
->>   memory_failure()
->>     pgmap->ops->memory_failure()   => pmem_pgmap_memory_failure()
->>      gendisk->fops->block_lost()   => pmem_block_lost() or
->>                                           md_blk_block_lost()
->>       sb->s_ops->storage_lost()    => xfs_fs_storage_lost()
->>        xfs_rmap_query_range()
->>         xfs_storage_lost_helper()
->>          mf_recover_controller->recover_fn => \
->>                              memory_failure_dev_pagemap_kill_procs()
->>
->> The collect_procs() and kill_procs() are moved into a callback which
->> is passed from memory_failure() to xfs_storage_lost_helper().  So we
->> can call it when a file assocaited is found, instead of creating a
->> file list and iterate it.
->>
->> The fsdax & reflink support for XFS is not contained in this patchset.
+> On Nov 28, 2020, at 4:45 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
 > 
-> This looks promising - the overall architecture is a lot more
-> generic and less dependent on knowing about memory, dax or memory
-> failures. A few comments that I think would further improve
-> understanding the patchset and the implementation:
-
-Thanks for your kindly comment.  It gives me confidence.
-
+> From: Nadav Amit <namit@vmware.com>
 > 
-> - the order of the patches is inverted. It should start with a
->    single patch introducing the mf_recover_controller structure for
->    callbacks, then introduce pgmap->ops->memory_failure, then
->    ->block_lost, then the pmem and md implementations of ->block
->    list, then ->storage_lost and the XFS implementations of
->    ->storage_lost.
-
-Yes, it will be easier to understand the patchset in this order.
-
-But I have something unsure: for example, I introduce ->memory_failure() 
-firstly, but the implementation of ->memory_failure() needs to call 
-->block_lost() which is supposed to be introduced in the next patch. So, 
-I am not sure the code is supposed to be what in the implementation of 
-->memory_failure() in pmem?  To avoid this situation, I committed the 
-patches in the inverted order: lowest level first, then its caller, and 
-then caller's caller.
-
-I am trying to sort out the order.  How about this:
-  Patch i.
-    Introduce ->memory_failure()
-       - just introduce interface, without implementation
-  Patch i++.
-    Introduce ->block_lost()
-       - introduce interface and implement ->memory_failure()
-          in pmem, so that it can call ->block_lost()
-  Patch i++.
-    (similar with above, skip...)
-
+> Userfaultfd writes can now be used for copy/zeroing. When using iouring
+> with userfaultfd, performing the copying/zeroing on the faulting thread
+> instead of the handler/iouring thread has several advantages:
 > 
-> - I think the names "block_lost" and "storage_lost" are misleading.
->    It's more like a "media failure" or a general "data corruption"
->    event at a specific physical location. The data may not be "lost"
->    but only damaged, so we might be able to recover from it without
->    "losing" anything. Hence I think they could be better named,
->    perhaps just "->corrupt_range"
-
-'corrupt' sounds better.  (I'm not good at naming functions...)
-
+> (1) The data of the faulting thread will be available on the local
+> caches, which would make subsequent memory accesses faster.
 > 
-> - need to pass a {offset,len} pair through the chain, not just a
->    single offset. This will allow other types of devices to report
->    different ranges of failures, from a single sector to an entire
->    device.
-
-Yes, it's better to add the length.  I restrictively thought that 
-memory-failure on pmem should affect one single page at one time.
-
+> (2) find_vma() would be able to use the vma-cache, which cannot be done
+> from a different process or io-uring kernel thread.
 > 
-> - I'm not sure that passing the mf_recover_controller structure
->    through the corruption event chain is the right thing to do here.
->    A block device could generate this storage failure callback if it
->    detects an unrecoverable error (e.g. during a MD media scrub or
->    rebuild/resilver failure) and in that case we don't have PFNs or
->    memory device failure functions to perform.
+> (3) The page is more likely to be allocated on the correct NUMA node.
 > 
->    IOWs, I think the action that is taken needs to be independent of
->    the source that generated the error. Even for a pmem device, we
->    can be using the page cache, so it may be possible to recover the
->    pmem error by writing the cached page (if it exists) back over the
->    pmem.
-> 
->    Hence I think that the recover function probably needs to be moved
->    to the address space ops, because what we do to recover from the
->    error is going to be dependent on type of mapping the filesystem
->    is using. If it's a DAX mapping, we call back into a generic DAX
->    function that does the vma walk and process kill functions. If it
->    is a page cache mapping, then if the page is cached then we can
->    try to re-write it to disk to fix the bad data, otherwise we treat
->    it like a writeback error and report it on the next
->    write/fsync/close operation done on that file.
-> 
->    This gets rid of the mf_recover_controller altogether and allows
->    the interface to be used by any sort of block device for any sort
->    of bottom-up reporting of media/device failures.
+> To do so, userfaultfd work queue structs are extended to hold the
+> information that is required for the faulting thread to copy/zero. The
+> handler wakes one of the faulting threads to perform the copy/zero and
+> that thread wakes the other threads after the zero/copy is done.
 
-Moving the recover function to the address_space ops looks a better 
-idea. But I think that the error handler for page cache mapping is 
-finished well in memory-failure.  The memory-failure is also reused to 
-handles anonymous page.  If we move the recover function to 
-address_space ops, I think we also need to refactor the existing handler 
-for page cache mapping, which may affect anonymous page handling.  This 
-makes me confused...
+I noticed some bugs of mine in this patch, but more importantly I realized
+that the there may be a more performant solution to do the copying on the
+faulting thread - without async-writes.
 
+Please do not review this patch and the next one (12/13).
 
-I rewrote the call trace:
-memory_failure()
-  * dax mapping case
-  pgmap->ops->memory_failure()          =>
-                                    pmem_pgmap_memory_failure()
-   gendisk->fops->block_corrupt_range() =>
-                                    - pmem_block_corrupt_range()
-                                    - md_blk_block_corrupt_range()
-    sb->s_ops->storage_currupt_range()  =>
-                                    xfs_fs_storage_corrupt_range()
-     xfs_rmap_query_range()
-      xfs_storage_lost_helper()
-       mapping->a_ops->corrupt_range()  =>
-                                    xfs_dax_aops.xfs_dax_corrupt_range
-        memory_failure_dev_pagemap_kill_procs()
+Feedback for the rest of the series is of course welcomed.
 
-  * page cache mapping case
-  mapping->a_ops->corrupt_range()       =>
-                                    xfs_address_space_operations.xfs_xxx
-   memory_failure_generic_kill_procs()
-
-It's rough and not completed yet.  Hope for your comment.
-
--- 
-Thanks,
-Ruan Shiyang.
-
-> 
-> Cheers,
-> 
-> Dave.
-> 
-
-
+Regards,
+Nadav
