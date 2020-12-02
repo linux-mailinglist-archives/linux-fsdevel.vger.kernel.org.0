@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB67E2CC518
+	by mail.lfdr.de (Postfix) with ESMTP id 6F54C2CC517
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 19:31:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389421AbgLBS2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S2389426AbgLBS2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 2 Dec 2020 13:28:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51702 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389384AbgLBS2e (ORCPT
+        with ESMTP id S2389417AbgLBS2e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 2 Dec 2020 13:28:34 -0500
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A46C061A04;
-        Wed,  2 Dec 2020 10:27:51 -0800 (PST)
-Received: by mail-pj1-x1041.google.com with SMTP id o7so1438062pjj.2;
-        Wed, 02 Dec 2020 10:27:51 -0800 (PST)
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3350C061A47;
+        Wed,  2 Dec 2020 10:27:53 -0800 (PST)
+Received: by mail-pl1-x643.google.com with SMTP id 4so1598608plk.5;
+        Wed, 02 Dec 2020 10:27:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L0EYVG9/JHZSwQKcdm/uLO/GzIIIcVeao0a1qNmlzMo=;
-        b=GXcmtb/78TmgRjL90+9AKiKDg4mnBqNkTFZGUjNrkQyhPFWnxWHSVxs0DTYbJk6Phx
-         TazQkZ9fOF7szRFViPIaI0ROE8eFgpvx9II8n3p38lZSVEjQ3dRqbbIMY3MVykotTJsl
-         BNShLtVE/G84sNhuNL1LeF627T1FpxJ6SOdiwmWLT3yS5yTqHbSnYuid/xR5f77I54nR
-         W0iyAUkHH4fT4u/nrsyR9xbgpZQiPCdF2WmENoSClFzMTLy0fdn0/lSSBI23C2/JJrw7
-         XLS1iN+WD0VnI0t67kf8JimWA2DEpqR+PKa9DNv1EyRWPwGphhTjcTHMHeI/cBf2652r
-         xDnQ==
+        bh=mkEYq1AbhtqAqcYcbg4MnCPD7vjrV9yb9ptbuyDsX7s=;
+        b=e9dwHcNdu7EFBl/w9TTMJ9je2f+u7YOLF0oqHhpkacwkv0z6eoHdHbR5bBVysiUy7S
+         k/eyxfXWwsW8tq1Rw7LSGswb7sz3iEbgs4Dzuc64wQHTZsT5dB7+wYk5p245+y054Pbx
+         s1Uz0/gZ2OnYVxsYq95GVM5/9ZonmhfVYVWtvTU8zc6L3SL4ARxblDsZ79r1pneesFaJ
+         ARnO7Jep0MtbYcsov1Aen2ynYSROnCY6OJZc5n91JATpvPaQ+xxFGwsJh1LARsxG27GM
+         JMNYmZ5fMAkOQ8hNjZj0QT0gJTCH+CctT9rZ446s538NXr1uKWBwZ8QONdKGJxqjrGVq
+         siYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L0EYVG9/JHZSwQKcdm/uLO/GzIIIcVeao0a1qNmlzMo=;
-        b=rKIxaSHjqtFuwupGCGSi4Ffkk8/P4D5hnEcLSIbgHMMDd+PFTq4xK/Iln6YhAzMC3o
-         h18hs2u0k969PDwD+9sPAFGb1qcw2fruBNHiXBQOYxz5Km8B8gwFEhodb9HjuWBwtbdJ
-         Z3Cdi8exw0vZmm+oKVqhAEKxuolHRS44mBtjTloRhDYaPwsqOoCda+yDGRXol68eMOlc
-         U0Gzldy5xmjqet1UV4SBEAWbzPhbt4ZbQdISMFMhS2+9bEA29UtPJTw0bmTgw/Ck40qb
-         P1fL02HU+gD1BAt36L5bdFYBZf4PGemi+/1qKajauVK0hvJFv0O+ocrcqYa3jtidt/eR
-         t2gA==
-X-Gm-Message-State: AOAM530l1ylRVyGVbhnU7UtLSFEsuYh08gTjw9A65nCHrtUBGBBwt4nn
-        Mxg6VQF8IcW3x/lPVgmMf9Y=
-X-Google-Smtp-Source: ABdhPJz6Mh4mDqhuFxz84ELSR6dVfwNcpfWdx8Zo/0l4bcZNoiNkq6y2HGDqfzHOf/F2Rv9sAuVCLQ==
-X-Received: by 2002:a17:90a:4817:: with SMTP id a23mr1102425pjh.16.1606933670937;
-        Wed, 02 Dec 2020 10:27:50 -0800 (PST)
+        bh=mkEYq1AbhtqAqcYcbg4MnCPD7vjrV9yb9ptbuyDsX7s=;
+        b=Ek5MNFK6VbPwtAXtQusVO0mFBoeEKwO8VxwmcuwGjZvBscNe2wFVaefzNN4in2hBOO
+         So1Y3BU4ElpSYngtIEwn6GyCga+5MaLwxmWclVaT4hrigokNqjPQ5B6NXwQhgHp99wjg
+         6bCi7jKO1i/ufRGVhNkGUdCl+HHyVYj0093JTCoNH2Ck2kNxMmdLt0oP7zlQ7RYcHDQS
+         2l1yi3Id/IlapdCvdxYTZp54CDBsDBKPXlvh4IIwUCa09GzOC8JgttRSydUJkII4sOjH
+         cz5VMtl2QUty8YfLhPMvwWc9SvRJwTURhU0XkzVqCctkE8/8DUSWjyucgDvxeUa3FGuE
+         pHHw==
+X-Gm-Message-State: AOAM530ps1jcUmgqqYiD2HvYnG6xsP8Z/j9rhhg+ItdB3tq041BYQOh5
+        YXsPQh3OghuyVYjSlfbatUM=
+X-Google-Smtp-Source: ABdhPJzPNtHrC4FduKm4RHeTLfsFp82wDr46oGUu8j76eW7YY+ermZiSR0NsIBwV4iSHp3D3Ek/b0Q==
+X-Received: by 2002:a17:902:7297:b029:da:861e:eae1 with SMTP id d23-20020a1709027297b02900da861eeae1mr3726068pll.8.1606933673363;
+        Wed, 02 Dec 2020 10:27:53 -0800 (PST)
 Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id c6sm396906pgl.38.2020.12.02.10.27.48
+        by smtp.gmail.com with ESMTPSA id c6sm396906pgl.38.2020.12.02.10.27.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 10:27:49 -0800 (PST)
+        Wed, 02 Dec 2020 10:27:52 -0800 (PST)
 From:   Yang Shi <shy828301@gmail.com>
 To:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
         david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
         akpm@linux-foundation.org
 Cc:     shy828301@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] mm: memcontrol: rename memcg_shrinker_map_mutex to memcg_shrinker_mutex
-Date:   Wed,  2 Dec 2020 10:27:19 -0800
-Message-Id: <20201202182725.265020-4-shy828301@gmail.com>
+Subject: [PATCH 4/9] mm: vmscan: use a new flag to indicate shrinker is registered
+Date:   Wed,  2 Dec 2020 10:27:20 -0800
+Message-Id: <20201202182725.265020-5-shy828301@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20201202182725.265020-1-shy828301@gmail.com>
 References: <20201202182725.265020-1-shy828301@gmail.com>
@@ -66,72 +66,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following patch will add memcg_shrinker_deferred which could be protected by
-the same mutex, rename it to a more common name.
+Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
+This approach is fine with nr_deferred atthe shrinker level, but the following
+patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
+shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
+from unregistering correctly.
+
+Introduce a new "state" field to indicate if shrinker is registered or not.
+We could use the highest bit of flags, but it may be a little bit complicated to
+extract that bit and the flags is accessed frequently by vmscan (every time shrinker
+is called).  So add a new field in "struct shrinker", we may waster a little bit
+memory, but it should be very few since there should be not too many registered
+shrinkers on a normal system.
 
 Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- mm/memcontrol.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ include/linux/shrinker.h |  4 ++++
+ mm/vmscan.c              | 13 +++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 29459a6ce1c7..19e41684c96b 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -395,7 +395,7 @@ EXPORT_SYMBOL(memcg_kmem_enabled_key);
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 0f80123650e2..0bb5be88e41d 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -35,6 +35,9 @@ struct shrink_control {
+ 
+ #define SHRINK_STOP (~0UL)
+ #define SHRINK_EMPTY (~0UL - 1)
++
++#define SHRINKER_REGISTERED	0x1
++
+ /*
+  * A callback you can register to apply pressure to ageable caches.
+  *
+@@ -66,6 +69,7 @@ struct shrinker {
+ 	long batch;	/* reclaim batch size, 0 = default */
+ 	int seeks;	/* seeks to recreate an obj */
+ 	unsigned flags;
++	unsigned state;
+ 
+ 	/* These are for internal use */
+ 	struct list_head list;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 457ce04eebf2..0d628299e55c 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -378,6 +378,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
+ 	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+ 		idr_replace(&shrinker_idr, shrinker, shrinker->id);
  #endif
++	shrinker->state |= SHRINKER_REGISTERED;
+ 	up_write(&shrinker_rwsem);
+ }
  
- static int memcg_shrinker_map_size;
--static DEFINE_MUTEX(memcg_shrinker_map_mutex);
-+static DEFINE_MUTEX(memcg_shrinker_mutex);
- 
- static void memcg_free_shrinker_map_rcu(struct rcu_head *head)
+@@ -397,13 +398,17 @@ EXPORT_SYMBOL(register_shrinker);
+  */
+ void unregister_shrinker(struct shrinker *shrinker)
  {
-@@ -408,7 +408,7 @@ static int memcg_expand_one_shrinker_map(struct mem_cgroup *memcg,
- 	struct memcg_shrinker_map *new, *old;
- 	int nid;
- 
--	lockdep_assert_held(&memcg_shrinker_map_mutex);
-+	lockdep_assert_held(&memcg_shrinker_mutex);
- 
- 	for_each_node(nid) {
- 		old = rcu_dereference_protected(
-@@ -458,7 +458,7 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
- 	if (mem_cgroup_is_root(memcg))
- 		return 0;
- 
--	mutex_lock(&memcg_shrinker_map_mutex);
-+	mutex_lock(&memcg_shrinker_mutex);
- 	size = memcg_shrinker_map_size;
- 	for_each_node(nid) {
- 		map = kvzalloc_node(sizeof(*map) + size, GFP_KERNEL, nid);
-@@ -469,7 +469,7 @@ static int memcg_alloc_shrinker_maps(struct mem_cgroup *memcg)
- 		}
- 		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_map, map);
- 	}
--	mutex_unlock(&memcg_shrinker_map_mutex);
-+	mutex_unlock(&memcg_shrinker_mutex);
- 
- 	return ret;
+-	if (!shrinker->nr_deferred)
+-		return;
+-	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+-		unregister_memcg_shrinker(shrinker);
+ 	down_write(&shrinker_rwsem);
++	if (!shrinker->state) {
++		up_write(&shrinker_rwsem);
++		return;
++	}
+ 	list_del(&shrinker->list);
++	shrinker->state &= ~SHRINKER_REGISTERED;
+ 	up_write(&shrinker_rwsem);
++
++	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
++		unregister_memcg_shrinker(shrinker);
+ 	kfree(shrinker->nr_deferred);
+ 	shrinker->nr_deferred = NULL;
  }
-@@ -484,7 +484,7 @@ int memcg_expand_shrinker_maps(int new_id)
- 	if (size <= old_size)
- 		return 0;
- 
--	mutex_lock(&memcg_shrinker_map_mutex);
-+	mutex_lock(&memcg_shrinker_mutex);
- 	if (!root_mem_cgroup)
- 		goto unlock;
- 
-@@ -500,7 +500,7 @@ int memcg_expand_shrinker_maps(int new_id)
- unlock:
- 	if (!ret)
- 		memcg_shrinker_map_size = size;
--	mutex_unlock(&memcg_shrinker_map_mutex);
-+	mutex_unlock(&memcg_shrinker_mutex);
- 	return ret;
- }
- 
 -- 
 2.26.2
 
