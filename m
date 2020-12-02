@@ -2,185 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05B5A2CC3DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 18:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25E312CC40C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 18:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbgLBRah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 12:30:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55475 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728414AbgLBRah (ORCPT
+        id S1730802AbgLBRmp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 12:42:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44558 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbgLBRmo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 12:30:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606930150;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d/jS4DIk2eFo5oEaYGUTxcJX+tztVkMUbhd9Mb6koUs=;
-        b=BiGbBg+r6iDr1Zrk7tYXZlYT/jw2oDDyio4Tq9a/+TX4u4mEkcWJnbLBJu65k+wK8/uR0e
-        4mmwe0a9oFa+qvFHUUV5NF4JRMmpMyAy1m7BGpEWBLCiRUzP/DSfRgM2Njoe9NC2AIg4s0
-        6Bt99CVMUZDkjiRrAV+YgEVwQEiRDIY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-282-8FSyrVC-OKGbLzpy9VbMKQ-1; Wed, 02 Dec 2020 12:29:08 -0500
-X-MC-Unique: 8FSyrVC-OKGbLzpy9VbMKQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAAFE1009456;
-        Wed,  2 Dec 2020 17:29:07 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-117-99.rdu2.redhat.com [10.10.117.99])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 681555C1B4;
-        Wed,  2 Dec 2020 17:29:07 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id EFBDE22054F; Wed,  2 Dec 2020 12:29:06 -0500 (EST)
-Date:   Wed, 2 Dec 2020 12:29:06 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH] overlay: Implement volatile-specific fsync error
- behaviour
-Message-ID: <20201202172906.GE147783@redhat.com>
-References: <20201202092720.41522-1-sargun@sargun.me>
- <20201202150747.GB147783@redhat.com>
- <f2fc7d688417a1da3d94e819afed6bab404da51f.camel@redhat.com>
+        Wed, 2 Dec 2020 12:42:44 -0500
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96E4C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 09:42:04 -0800 (PST)
+Received: by mail-vk1-xa41.google.com with SMTP id i62so587159vkb.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 09:42:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1x85fibtNgk8eCqEQNDAdM4H9CAeQh2Tw033sLE9au0=;
+        b=k17fYGcwuvMZ1Z8sW8ED5NcNXVNtT2pFk45+2PoxoQU8LXfOr6AYnwMnP48duoDTOX
+         KkETXo8kz86TN9x3hgA72/j3TAPJcyMySF/dKg3fqDLhxHHqn0b6mMjJvCX9YFgXcZSE
+         meXC9GzKinsBSDUgRWYmV1DBRcJbE7gisVkLs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1x85fibtNgk8eCqEQNDAdM4H9CAeQh2Tw033sLE9au0=;
+        b=JE25rWxMXrElLuMwBFb9/6NlpOyII4lB7M6aCra4veU+dmjBpWx543vqIgDhO0aqT/
+         lpIB7yjmlyjpygqGM0kxwtrdGaPyuES/v9jNf1fiohW+0e7uTZPoWtXPGYYBk1m3QI/B
+         eqvyNvoSRrN/WRdLG/klIqAPHckunTYQlT+mOMylSJ6GGRqz3+MyOFoN+LvtzIlSZvpS
+         tuZkLdmqZywN7maDtrs8WEtrbwIJnJEeljCCauvm4X5yPgmVApBK33H1kfSTvrnTac+f
+         X4y0xS4i331FvF8sPwEdGHAJ6phdGB+NQgnGc7DBB6VKZrhhPMZgu/wrCabYB65vRGpN
+         lUIg==
+X-Gm-Message-State: AOAM531zkTBYuyp25QRvlnRyr78SKzUTriqxZDB+KjQGkNId+5wzvCs1
+        QODMT0D0e9GHW6+sYTHBjwX58c3+8ofFf4PbVwsArw==
+X-Google-Smtp-Source: ABdhPJwTheLKPeYlIrrssTfR1rpgEOPwTCjeb+0/mDlt+DYvNW/fgwgzHLBBS7di/GI9wgwe9tiBOAwzgf9hYJ07zfU=
+X-Received: by 2002:a1f:b245:: with SMTP id b66mr2625951vkf.3.1606930923918;
+ Wed, 02 Dec 2020 09:42:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f2fc7d688417a1da3d94e819afed6bab404da51f.camel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <3e28d2c7-fbe5-298a-13ba-dcd8fd504666@redhat.com>
+ <20201202160049.GD1447340@iweiny-DESK2.sc.intel.com> <CAJfpegt6w4h28VLctpaH46r2pkbcUNJ4pUhwUqZ-zbrOrXPEEQ@mail.gmail.com>
+ <641397.1606926232@warthog.procyon.org.uk>
+In-Reply-To: <641397.1606926232@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 2 Dec 2020 18:41:43 +0100
+Message-ID: <CAJfpegsQxi+_ttNshHu5MP+uLn3px9+nZRoTLTxh9-xwU8s1yg@mail.gmail.com>
+Subject: Re: [PATCH V2] uapi: fix statx attribute value overlap for DAX & MOUNT_ROOT
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Eric Sandeen <sandeen@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-man <linux-man@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, Xiaoli Feng <xifeng@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 12:02:43PM -0500, Jeff Layton wrote:
+On Wed, Dec 2, 2020 at 5:24 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > Stable cc also?
+> >
+> > Cc: <stable@vger.kernel.org> # 5.8
+>
+> That seems to be unnecessary, provided there's a Fixes: tag.
 
-[..]
-> > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > > index 290983bcfbb3..82a096a05bce 100644
-> > > --- a/fs/overlayfs/super.c
-> > > +++ b/fs/overlayfs/super.c
-> > > @@ -261,11 +261,18 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
-> > >  	struct super_block *upper_sb;
-> > >  	int ret;
-> > >  
-> > > 
-> > > 
-> > > 
-> > > -	if (!ovl_upper_mnt(ofs))
-> > > -		return 0;
-> > > +	ret = ovl_check_sync(ofs);
-> > > +	/*
-> > > +	 * We have to always set the err, because the return value isn't
-> > > +	 * checked, and instead VFS looks at the writeback errseq after
-> > > +	 * this call.
-> > > +	 */
-> > > +	if (ret < 0)
-> > > +		errseq_set(&sb->s_wb_err, ret);
-> > 
-> > I was wondering that why errseq_set() will result in returning error
-> > all the time. Then realized that last syncfs() call must have set
-> > ERRSEQ_SEEN flag and that will mean errseq_set() will increment
-> > counter and that means this syncfs() will will return error too. Cool.
-> > 
-> > > +
-> > > +	if (!ret)
-> > > +		return ret;
-> > >  
-> > > 
-> > > 
-> > > 
-> > > -	if (!ovl_should_sync(ofs))
-> > > -		return 0;
-> > >  	/*
-> > >  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
-> > >  	 * All the super blocks will be iterated, including upper_sb.
-> > > @@ -1927,6 +1934,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
-> > >  	sb->s_op = &ovl_super_operations;
-> > >  
-> > > 
-> > > 
-> > > 
-> > >  	if (ofs->config.upperdir) {
-> > > +		struct super_block *upper_mnt_sb;
-> > > +
-> > >  		if (!ofs->config.workdir) {
-> > >  			pr_err("missing 'workdir'\n");
-> > >  			goto out_err;
-> > > @@ -1943,9 +1952,10 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
-> > >  		if (!ofs->workdir)
-> > >  			sb->s_flags |= SB_RDONLY;
-> > >  
-> > > 
-> > > 
-> > > 
-> > > -		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
-> > > -		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
-> > > -
-> > > +		upper_mnt_sb = ovl_upper_mnt(ofs)->mnt_sb;
-> > > +		sb->s_stack_depth = upper_mnt_sb->s_stack_depth;
-> > > +		sb->s_time_gran = upper_mnt_sb->s_time_gran;
-> > > +		ofs->upper_errseq = errseq_sample(&upper_mnt_sb->s_wb_err);
-> > 
-> > I asked this question in last email as well. errseq_sample() will return
-> > 0 if current error has not been seen yet. That means next time a sync
-> > call comes for volatile mount, it will return an error. But that's
-> > not what we want. When we mounted a volatile overlay, if there is an
-> > existing error (seen/unseen), we don't care. We only care if there
-> > is a new error after the volatile mount, right?
-> > 
-> > I guess we will need another helper similar to errseq_smaple() which
-> > just returns existing value of errseq. And then we will have to
-> > do something about errseq_check() to not return an error if "since"
-> > and "eseq" differ only by "seen" bit.
-> > 
-> > Otherwise in current form, volatile mount will always return error
-> > if upperdir has error and it has not been seen by anybody.
-> > 
-> > How did you finally end up testing the error case. Want to simualate
-> > error aritificially and test it.
-> > 
-> 
-> If you don't want to see errors that occurred before you did the mount,
-> then you probably can just resurrect and rename the original version of
-> errseq_sample. Something like this, but with a different name:
-> 
-> +errseq_t errseq_sample(errseq_t *eseq)
-> +{
-> +       errseq_t old = READ_ONCE(*eseq);
-> +       errseq_t new = old;
-> +
-> +       /*
-> +        * For the common case of no errors ever having been set, we can skip
-> +        * marking the SEEN bit. Once an error has been set, the value will
-> +        * never go back to zero.
-> +        */
-> +       if (old != 0) {
-> +               new |= ERRSEQ_SEEN;
-> +               if (old != new)
-> +                       cmpxchg(eseq, old, new);
-> +       }
-> +       return new;
-> +}
+Is it?
 
-Yes, a helper like this should solve the issue at hand. We are not
-interested in previous errors. This also sets the ERRSEQ_SEEN on 
-sample and it will also solve the other issue when after sampling
-if error gets seen, we don't want errseq_check() to return error.
+Fixes: means it fixes a patch, Cc: stable means it needs to be
+included in stable kernels.  The two are not necessarily the same.
 
-Thinking of some possible names for new function.
+Greg?
 
-errseq_sample_seen()
-errseq_sample_set_seen()
-errseq_sample_consume_unseen()
-errseq_sample_current()
-
-Thanks
-Vivek
-
+Thanks,
+Miklos
