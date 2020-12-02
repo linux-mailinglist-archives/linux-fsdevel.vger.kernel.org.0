@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D93022CC50F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 19:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3713D2CC512
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 19:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728040AbgLBS21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 13:28:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51678 "EHLO
+        id S2387736AbgLBS23 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 13:28:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbgLBS20 (ORCPT
+        with ESMTP id S1730976AbgLBS23 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 13:28:26 -0500
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52BD0C0617A6;
-        Wed,  2 Dec 2020 10:27:46 -0800 (PST)
-Received: by mail-pj1-x1043.google.com with SMTP id z12so69650pjn.1;
-        Wed, 02 Dec 2020 10:27:46 -0800 (PST)
+        Wed, 2 Dec 2020 13:28:29 -0500
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01A03C0617A7;
+        Wed,  2 Dec 2020 10:27:49 -0800 (PST)
+Received: by mail-pl1-x642.google.com with SMTP id x4so1587783pln.8;
+        Wed, 02 Dec 2020 10:27:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3zNax7Y+1Ikzzmhg7iyW9MLSCw7jdgQnq4TmPmAJA28=;
-        b=lqgtJVieKYGe00RIy86iIPDzKFYzexsfSaJr1YoR0txN85LXyOfkwRqTWB4Yi4HbdH
-         nW1fn6UWKm75o2mYOsdPMdaVFWvTVzYmb3IHzsTFljeNu2jYbGsayg5p/0JjFIKUy7fi
-         EcVJnKMcNIxe8nbRgx7UFLKUrp5JpvY6Ut1jHyBgbJv0ywwGLMkwB3LRH1YWUgazYloO
-         FyEMdudReYKkvu8AvWCzlu/nf0Y6nkMhXK3doSrKwApihvi4aJpDpKf9Y8GzIlX70gTU
-         HrWUPyuhdv2b7Xk0Cq6TUZ/dng83s4OMzmHCh3za7c3rpSqI13eT9uaq9BIQzuKJTWHf
-         Bs7w==
+        bh=zvp2Z7uKK5PPjiIE9UzxqFK/LcqQo3ZGRbQdLWMTrqs=;
+        b=vQtKypllp/ZZ0qsyFl+L1bdVT8aToTf0+8odd+XSapcKWxc5LUWAr4l3jkmZ4vhQOW
+         KN7rORAMQob3HKpAq9Bo/WslPYsUTtUae9QaKYOJffWRQqfbndIMK3TpSU35pwR5iTD4
+         TsnDUEvpS8m5tQkWYi2rdtAsknL5ro5v4cAqgmX72mN/HT819mvMJnK8e0mh6JNV6Maj
+         2NsjjVMtDssxfgCYKk3P2Eqp9uvihVqFSXIBowtndIoItqCBuTdOMlxlD1s57LlUvnCI
+         qRKvscIQ16bRuTecy7wqTbfkB45/nvW14IB3Y5Iv2MzVJdc7BX/EYEctNRmDkqjzVpMx
+         +8tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3zNax7Y+1Ikzzmhg7iyW9MLSCw7jdgQnq4TmPmAJA28=;
-        b=XppbEzX3EFYdTjpJmp27wo4u9p6fQNW7Rie+X2vU3T0DgTJb+aQw2ugIpOn2TcFs9s
-         udxHD2udfCt2EeTZ3eCAh1ctf8KXakBOMYsMiRiFGqx3eksyc1sJkq3DwmVPiUxqVtzy
-         D78sS2Blu9p3HGguI6sdyd1VFOsyjUWJx7Yli7Gv+61bUW9cVRH6mzBGWNRpE++SOwWd
-         qf1oxoKLmz077Mz6n/7kk4HBjmBbldrCvca9aMANhFYUgX9xO+LrslQ3Q+0Af6nmMjqk
-         CD/C36AVKdTv9jr6yRlWPz7T+VZveLNeY4p9z4nLyc4HExAcrVkCsmF6EOhkjp5cBq7I
-         3RZg==
-X-Gm-Message-State: AOAM532D9PY3/215zjVRkLXvSL+vowWuFc3b5A9aXDdlvVHh76Gjzkv8
-        dJMQlelpQn1vgy95LL4hsqI=
-X-Google-Smtp-Source: ABdhPJz1U890O+WgeLnLZND4JEg1gfgDFo2nW9DjhiZUqUmGdG+/Pm+qglOPbdvkQ2Toj/Szkz158w==
-X-Received: by 2002:a17:902:b691:b029:d8:ebc8:385e with SMTP id c17-20020a170902b691b02900d8ebc8385emr3855010pls.48.1606933665893;
-        Wed, 02 Dec 2020 10:27:45 -0800 (PST)
+        bh=zvp2Z7uKK5PPjiIE9UzxqFK/LcqQo3ZGRbQdLWMTrqs=;
+        b=YghJIf3mmjVUWMxHyOIAClbMA6j3kkdAqgXkoUCu+3smnke1hOutoYV/+Q7qVff70I
+         hHyYqaBaW1O3ZBAYjdTAhacOYHNIaHp4pNblbRL4LWpD/UiZJeG74HIuueLOsDIDhk7W
+         ezoVESVf3gkKY0YSmc+0voryzJL7kDfmqEZObzgupuV2FFuI8NC7o84c91CPBATp602K
+         lc9JaHQy/qBVY/qbQHAr5fqMsdTd4Dmx3jmQpF+7HjevjC4BPCzUT3AdThRBWhAt4XFe
+         Ht93ACP0ypMrbX3LMngfujxh/0XA2Q7nOj2+3O+RNVqnIVm6zSdYaO0WGO0h0mG+IwK6
+         IkUg==
+X-Gm-Message-State: AOAM5336W+4oXnzopxL/Pm+dZg1mJnmaMPDgjI0eHhHrLi2A+ZOLNUuz
+        QFviuvc6AIsR44jMBWJsSXU=
+X-Google-Smtp-Source: ABdhPJwbRBqa8Oz+BOZml8FzyUoa1O4bjuenGRS20w3xqULuzoR4981HLWGbv0U06BXH5Qa8LXKx0g==
+X-Received: by 2002:a17:90a:19d5:: with SMTP id 21mr1047317pjj.187.1606933668614;
+        Wed, 02 Dec 2020 10:27:48 -0800 (PST)
 Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id c6sm396906pgl.38.2020.12.02.10.27.43
+        by smtp.gmail.com with ESMTPSA id c6sm396906pgl.38.2020.12.02.10.27.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 10:27:44 -0800 (PST)
+        Wed, 02 Dec 2020 10:27:47 -0800 (PST)
 From:   Yang Shi <shy828301@gmail.com>
 To:     guro@fb.com, ktkhai@virtuozzo.com, shakeelb@google.com,
         david@fromorbit.com, hannes@cmpxchg.org, mhocko@suse.com,
         akpm@linux-foundation.org
 Cc:     shy828301@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] mm: vmscan: simplify nr_deferred update code
-Date:   Wed,  2 Dec 2020 10:27:17 -0800
-Message-Id: <20201202182725.265020-2-shy828301@gmail.com>
+Subject: [PATCH 2/9] mm: vmscan: use nid from shrink_control for tracepoint
+Date:   Wed,  2 Dec 2020 10:27:18 -0800
+Message-Id: <20201202182725.265020-3-shy828301@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20201202182725.265020-1-shy828301@gmail.com>
 References: <20201202182725.265020-1-shy828301@gmail.com>
@@ -66,39 +66,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently if (next_deferred - scanned) = 0, the code would just read the current
-nr_deferred otherwise add the delta back.  Both needs atomic operation anyway, it
-seems there is not too much gain by distinguishing the two cases, so just add the
-delta back even though the delta is 0.  This would simply the code for the following
-patches too.
+The tracepoint's nid should show what node the shrink happens on, the start tracepoint
+uses nid from shrinkctl, but the nid might be set to 0 before end tracepoint if the
+shrinker is not NUMA aware, so the traceing log may show the shrink happens on one
+node but end up on the other node.  It seems confusing.  And the following patch
+will remove using nid directly in do_shrink_slab(), this patch also helps cleanup
+the code.
 
 Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- mm/vmscan.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 7b4e31eac2cf..7d6186a07daf 100644
+index 7d6186a07daf..457ce04eebf2 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -528,14 +528,10 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 		next_deferred = 0;
- 	/*
- 	 * move the unused scan count back into the shrinker in a
--	 * manner that handles concurrent updates. If we exhausted the
--	 * scan, there is no need to do an update.
-+	 * manner that handles concurrent updates.
- 	 */
--	if (next_deferred > 0)
--		new_nr = atomic_long_add_return(next_deferred,
--						&shrinker->nr_deferred[nid]);
--	else
--		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
-+	new_nr = atomic_long_add_return(next_deferred,
-+					&shrinker->nr_deferred[nid]);
+@@ -533,7 +533,7 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	new_nr = atomic_long_add_return(next_deferred,
+ 					&shrinker->nr_deferred[nid]);
  
- 	trace_mm_shrink_slab_end(shrinker, nid, freed, nr, new_nr, total_scan);
+-	trace_mm_shrink_slab_end(shrinker, nid, freed, nr, new_nr, total_scan);
++	trace_mm_shrink_slab_end(shrinker, shrinkctl->nid, freed, nr, new_nr, total_scan);
  	return freed;
+ }
+ 
 -- 
 2.26.2
 
