@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C372CB833
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 10:10:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C0E2CB843
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 10:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387995AbgLBJKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 04:10:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:33705 "EHLO
+        id S2388073AbgLBJMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 04:12:24 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:34023 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387961AbgLBJKo (ORCPT
+        with ESMTP id S2387901AbgLBJMY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 04:10:44 -0500
+        Wed, 2 Dec 2020 04:12:24 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkO92-0000oc-SX; Wed, 02 Dec 2020 09:09:53 +0000
-Date:   Wed, 2 Dec 2020 10:09:48 +0100
+        id 1kkOAl-00019g-FX; Wed, 02 Dec 2020 09:11:39 +0000
+Date:   Wed, 2 Dec 2020 10:11:36 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -53,22 +53,33 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org
-Subject: Re: [PATCH v3 01/38] namespace: take lock_mount_hash() directly when
- changing flags
-Message-ID: <20201202090948.lezq2p33gnq56vc2@wittgenstein>
+Subject: Re: [PATCH v3 02/38] mount: make {lock,unlock}_mount_hash() static
+Message-ID: <20201202091136.skx4v2ltkoiibl25@wittgenstein>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
- <20201128213527.2669807-2-christian.brauner@ubuntu.com>
- <20201201103119.GA27730@lst.de>
+ <20201128213527.2669807-3-christian.brauner@ubuntu.com>
+ <20201201103203.GB27730@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201201103119.GA27730@lst.de>
+In-Reply-To: <20201201103203.GB27730@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 11:31:19AM +0100, Christoph Hellwig wrote:
-> Looks good,
+On Tue, Dec 01, 2020 at 11:32:03AM +0100, Christoph Hellwig wrote:
+> On Sat, Nov 28, 2020 at 10:34:51PM +0100, Christian Brauner wrote:
+> > The lock_mount_hash() and unlock_mount_hash() helpers are never called outside a
+> > single file. Remove them from the header and make them static to reflect this
+> > fact. There's no need to have them callable from other places right now, as
+> > Christoph observed.
+> 
+> You are spilling over the usual 73 chars for commit logs, so please check
+> this and the other patches.
+
+I've changed all commit messages to adhere to a 73 character limit.
+
+> 
+> Otherwise looks good:
 > 
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
 
