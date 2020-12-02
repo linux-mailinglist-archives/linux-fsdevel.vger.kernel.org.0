@@ -2,92 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB292CC8A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 22:08:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EE72CC8C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 22:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbgLBVIi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 16:08:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43092 "EHLO mail.kernel.org"
+        id S1729361AbgLBVT6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 16:19:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726669AbgLBVIh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 16:08:37 -0500
-Date:   Wed, 2 Dec 2020 13:07:53 -0800
+        id S1726671AbgLBVT6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Dec 2020 16:19:58 -0500
+Date:   Wed, 2 Dec 2020 13:19:15 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1606943277;
-        bh=z7aM84uoaVRXDrRTKXVTwdXKK69LzrzJ1yjZQqo3344=;
+        s=k20201202; t=1606943957;
+        bh=T1jS0TLREKTdAknWoqwA00WbPpnYlmjR/Fhr6qk4nL8=;
         h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EZNH/dFHxK112U8asIp9Tyi1NmmUiP3WZ8jKeTdDrVskZASdlAR/S1wDBS3JHVR6j
-         3z+pV6U+lXcVEMTt2lE9kKMNWS54qhtKYSyZJ1y/OwNcNYH+2zcwZXXoqTyEQWwNpS
-         ZkQymrXas2DHQb0qKTLFm0/3JkDC9FC7r39gbgLcj5+c/ZI+idYLTm/7F/T7NVWXvO
-         q4jhvHNzRrrww4sIAKh0IFFHKFWbaAxr6ln+yidV6vyDxnLQUewpajhRHkcPDimBi2
-         +7L2ec88F9TKg8MI6yFF0aM//oPxYTD/cl8b1g/XUOyYDXPhM0kBavcUQeTmQOIU7o
-         p9GqnFEnkOM7g==
+        b=lVTqJI3TwZQu+2D02F/tgDg/D2rYG3cspRDn/xTEEwHlj/Xw3SbnOnwWREbpbn85e
+         R5cRda7BPATO5f14LC909XOf2yLX18mBJiQ1RTw8w2Itpgm04fKOqI0nvTaA2suyVd
+         BLow2XCnqAE99FAYa4uyfZzceR+hEmfQnWJsyL3vAPR3ZXTYiZvF7JAroOmkb6HTJB
+         Yt/FFdWlrKIIxNiRCe5+8V1cXCcd0peh1gAEe7s72BufUKHtO2hVOGMxCzef2LdvYe
+         nDJ4DPTUEO27YtTD1Q0XlM9gZl/kkyUV0CMWy5xTzIz/N6/cN1IqQt3+ofiAfNwJD+
+         d8F0AB9UMOrUA==
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/9] Allow deleting files with unsupported encryption
- policy
-Message-ID: <X8gCKTx96rXUMh0i@gmail.com>
-References: <20201125002336.274045-1-ebiggers@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] fs/inode.c: make inode_init_always() initialize i_ino to
+ 0
+Message-ID: <X8gE01JQANXhenMC@gmail.com>
+References: <20201031004420.87678-1-ebiggers@kernel.org>
+ <20201106175205.GE845@sol.localdomain>
+ <X7gP9iuTuRp9MHpP@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201125002336.274045-1-ebiggers@kernel.org>
+In-Reply-To: <X7gP9iuTuRp9MHpP@sol.localdomain>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 24, 2020 at 04:23:27PM -0800, Eric Biggers wrote:
-> Currently it's impossible to delete files that use an unsupported
-> encryption policy, as the kernel will just return an error when
-> performing any operation on the top-level encrypted directory, even just
-> a path lookup into the directory or opening the directory for readdir.
-> 
-> It's desirable to return errors for most operations on files that use an
-> unsupported encryption policy, but the current behavior is too strict.
-> We need to allow enough to delete files, so that people can't be stuck
-> with undeletable files when downgrading kernel versions.  That includes
-> allowing directories to be listed and allowing dentries to be looked up.
-> 
-> This series fixes this (on ext4, f2fs, and ubifs) by treating an
-> unsupported encryption policy in the same way as "key unavailable" in
-> the cases that are required for a recursive delete to work.
-> 
-> The actual fix is in patch 9, so see that for more details.
-> 
-> Patches 1-8 are cleanups that prepare for the actual fix by removing
-> direct use of fscrypt_get_encryption_info() by filesystems.
-> 
-> This patchset applies to branch "master" (commit 4a4b8721f1a5) of
-> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git.
-> 
-> Eric Biggers (9):
->   ext4: remove ext4_dir_open()
->   f2fs: remove f2fs_dir_open()
->   ubifs: remove ubifs_dir_open()
->   ext4: don't call fscrypt_get_encryption_info() from dx_show_leaf()
->   fscrypt: introduce fscrypt_prepare_readdir()
->   fscrypt: move body of fscrypt_prepare_setattr() out-of-line
->   fscrypt: move fscrypt_require_key() to fscrypt_private.h
->   fscrypt: unexport fscrypt_get_encryption_info()
->   fscrypt: allow deleting files with unsupported encryption policy
-> 
->  fs/crypto/fname.c           |  8 +++-
->  fs/crypto/fscrypt_private.h | 28 ++++++++++++++
->  fs/crypto/hooks.c           | 16 +++++++-
->  fs/crypto/keysetup.c        | 20 ++++++++--
->  fs/crypto/policy.c          | 22 +++++++----
->  fs/ext4/dir.c               | 16 ++------
->  fs/ext4/namei.c             | 10 +----
->  fs/f2fs/dir.c               | 10 +----
->  fs/ubifs/dir.c              | 11 +-----
->  include/linux/fscrypt.h     | 75 +++++++++++++++++++------------------
->  10 files changed, 126 insertions(+), 90 deletions(-)
-> 
-> 
-> base-commit: 4a4b8721f1a5e4b01e45b3153c68d5a1014b25de
+On Fri, Nov 20, 2020 at 10:50:30AM -0800, Eric Biggers wrote:
+> On Fri, Nov 06, 2020 at 09:52:05AM -0800, Eric Biggers wrote:
+> > On Fri, Oct 30, 2020 at 05:44:20PM -0700, Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+> > > 
+> > > Currently inode_init_always() doesn't initialize i_ino to 0.  This is
+> > > unexpected because unlike the other inode fields that aren't initialized
+> > > by inode_init_always(), i_ino isn't guaranteed to end up back at its
+> > > initial value after the inode is freed.  Only one filesystem (XFS)
+> > > actually sets set i_ino back to 0 when freeing its inodes.
+> > > 
+> > > So, callers of new_inode() see some random previous i_ino.  Normally
+> > > that's fine, since normally i_ino isn't accessed before being set.
+> > > There can be edge cases where that isn't necessarily true, though.
+> > > 
+> > > The one I've run into is that on ext4, when creating an encrypted file,
+> > > the new file's encryption key has to be set up prior to the jbd2
+> > > transaction, and thus prior to i_ino being set.  If something goes
+> > > wrong, fs/crypto/ may log warning or error messages, which normally
+> > > include i_ino.  So it needs to know whether it is valid to include i_ino
+> > > yet or not.  Also, on some files i_ino needs to be hashed for use in the
+> > > crypto, so fs/crypto/ needs to know whether that can be done yet or not.
+> > > 
+> > > There are ways this could be worked around, either in fs/crypto/ or in
+> > > fs/ext4/.  But, it seems there's no reason not to just fix
+> > > inode_init_always() to do the expected thing and initialize i_ino to 0.
+> > > 
+> > > So, do that, and also remove the initialization in jfs_fill_super() that
+> > > becomes redundant.
+> > > 
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > > ---
+> > >  fs/inode.c     | 1 +
+> > >  fs/jfs/super.c | 1 -
+> > >  2 files changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index 9d78c37b00b81..eb001129f157c 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -142,6 +142,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+> > >  	atomic_set(&inode->i_count, 1);
+> > >  	inode->i_op = &empty_iops;
+> > >  	inode->i_fop = &no_open_fops;
+> > > +	inode->i_ino = 0;
+> > >  	inode->__i_nlink = 1;
+> > >  	inode->i_opflags = 0;
+> > >  	if (sb->s_xattr)
+> > > diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+> > > index b2dc4d1f9dcc5..1f0ffabbde566 100644
+> > > --- a/fs/jfs/super.c
+> > > +++ b/fs/jfs/super.c
+> > > @@ -551,7 +551,6 @@ static int jfs_fill_super(struct super_block *sb, void *data, int silent)
+> > >  		ret = -ENOMEM;
+> > >  		goto out_unload;
+> > >  	}
+> > > -	inode->i_ino = 0;
+> > >  	inode->i_size = i_size_read(sb->s_bdev->bd_inode);
+> > >  	inode->i_mapping->a_ops = &jfs_metapage_aops;
+> > >  	inode_fake_hash(inode);
+> > > 
+> > 
+> > Al, any thoughts on this?
 
-Any more comments on this patch series?
-
-- Eric
+Ping.
