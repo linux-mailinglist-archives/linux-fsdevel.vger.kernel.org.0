@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9FA2CBC77
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 13:10:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F8432CBC81
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 13:10:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387520AbgLBMIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 07:08:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
+        id S2388635AbgLBMJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 07:09:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729713AbgLBMIk (ORCPT
+        with ESMTP id S2388630AbgLBMJT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 07:08:40 -0500
+        Wed, 2 Dec 2020 07:09:19 -0500
 Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6C3C061A4E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 04:07:23 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id f23so3815465ejt.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 04:07:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A9CCC061A51
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 04:07:25 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id qw4so3765719ejb.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 04:07:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lKX6zQetXJJsGxnh7QuN6U7Lzwh5cZLmRJU5pvdk5sw=;
-        b=H7Gdcw7W+9XSFD/M3qw6HvvvyITY8Eqk9/j64+s+kxWkYDsrN5WNddeeIDXZl211B/
-         OgKmnc0ZWbhYq7nCTf+UMHfvuZKt26bkdqMoSt1pIQIo/jKOQJITORalM9RSSIWR9fo8
-         vyygk/qDSFoa668+XXSdi3Lszuj1ICfpevTGjE+i8FkJuXx2Jc2incX39umSk+4Im6Zi
-         5XHNVnDNey6u+8YNs42z3zf8K94T64ymVWLua8TrKVSA04YVl0PnyGnqnUHoE2GbK5n4
-         MDx82wEnCyiV09sEIPDxx0HDwOvWv0Vk7K3z5fO4mkhhLoL8t9rziR8aV5lk9EE8IZBt
-         oXMw==
+        bh=CBfwF7f1z3lWQIK1kOHunMt4z+tzVG6uRhe6POr10HI=;
+        b=IxChIr6CnTVNZrcMdCT4Swp0nqyI/+TlHeYkLnfuh6OFOsdAkvd/epN3RjEA8j6M03
+         hE14t1L+c2fbEcLWn/fhYD7IRb43j/VywEc5GXghaIogZFbCNlrv6frnV4hAgCiADzYO
+         0KWL7epuib/5pm5niWaYLT1KGizWIX6MB8rzm3qV8SwMHNEnomBhgvPK4Rsumj3UHca6
+         e8f3n1X4s7vCTQfOr0dXI8luqNIUgpM0gujErdjAgjtoBXJMKnRu92KJsjiCTw4pOCyO
+         q7ONAMIFsTQGbIwd4929b16Hx+r6SG7Brh3jPIOa2Qs55d24HympyVinOk3UOLYxl8Dx
+         29Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lKX6zQetXJJsGxnh7QuN6U7Lzwh5cZLmRJU5pvdk5sw=;
-        b=n5syL0i8aJihLDIDS7fUguDV5zAi9ufmwaXw7VT19sLBGGnjxo3/z28hYPYAFHqH5/
-         WBy+R+dbMRPDrkxskLpSJnn+FiwcrDtby/f7fXVqBCI27doYJoBSgpXfjxI30dssa1RC
-         TbRdgm75a6eSGkSy4ep3hi45egkmRJbuswSpzxUQ1HIaJznwkKV6rwsFHX560fu4VG8v
-         H46clN/Sgxt+lcEykHung6xTMkXepDhuv06Beu7d5dGXdaDkJ706Q5MJtLcHSWBInHua
-         c/TJkzek4yOV8D+mPmdQ6GpXxkqFQ1YF5uKg17BoFextEM3UQ4JGk7RkQ8SYiuR+nwwd
-         E6wA==
-X-Gm-Message-State: AOAM531g+IcId2BFcv0yBHu1Qmrpg/N7W+6wplqTBlpSG8ygM+eDqjcV
-        36XeNQkrK8Mu/pG/+E18IY3FlSZTNnM=
-X-Google-Smtp-Source: ABdhPJzURIecKIwgylI3ov4nPTqpyuyvpNc/reNdeYKFOCZuDdqmucdE4CEgMUMAtLNW7FpggFT+yw==
-X-Received: by 2002:a17:906:d9cf:: with SMTP id qk15mr2026678ejb.453.1606910842614;
-        Wed, 02 Dec 2020 04:07:22 -0800 (PST)
+        bh=CBfwF7f1z3lWQIK1kOHunMt4z+tzVG6uRhe6POr10HI=;
+        b=eqPMY8Lglq2rYcaXYe5LFSIbCkZJBWfqCJBIiv0SImTvGfkBAB7U/bexft4xhMXs5j
+         w6exMnax9xIrxmvamfnRHJXwTW+WJefQmxXFoBtPRTP6kCITlWFoDNCQiV1liCRgT7v5
+         6vzZmW+d8pWfNqdwCHGQW46vI/lJ1fmWlScWVJ6YHJ/5UywWFii7hMylhzi+ivYUeuUb
+         x18Tyi2wRKiBQ3qHBk9Haw1iZVQ2Kxw/zaL80uzZv0nzJxiIvFsVGuXnOOdNbUUTquYR
+         zLTS05i+73NpOvuayVdFXoU9kU3BXjZDpzHjokq2Et9qEXGx/U2rCEgzLWSTJ75/yO1v
+         jEzw==
+X-Gm-Message-State: AOAM531IlSllSexjRq9qi0HxcpNgvm8IZ19Ls3j5+eubWYteC+aTvjrK
+        YCuOaegP6SdWFNJYr8w4mNA=
+X-Google-Smtp-Source: ABdhPJyUNw1e6BzyAVzVRCd9UB+8xBe5Rzq8ypjY+72OL0TwNqtBZVnDIMvOQ8vBcEfnhLSk/oPFnw==
+X-Received: by 2002:a17:906:b857:: with SMTP id ga23mr2059381ejb.122.1606910843884;
+        Wed, 02 Dec 2020 04:07:23 -0800 (PST)
 Received: from localhost.localdomain ([31.210.181.203])
-        by smtp.gmail.com with ESMTPSA id b7sm1058227ejj.85.2020.12.02.04.07.21
+        by smtp.gmail.com with ESMTPSA id b7sm1058227ejj.85.2020.12.02.04.07.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 04:07:22 -0800 (PST)
+        Wed, 02 Dec 2020 04:07:23 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/7] fsnotify: clarify object type argument
-Date:   Wed,  2 Dec 2020 14:07:10 +0200
-Message-Id: <20201202120713.702387-5-amir73il@gmail.com>
+Subject: [PATCH 5/7] fsnotify: separate mark iterator type from object type enum
+Date:   Wed,  2 Dec 2020 14:07:11 +0200
+Message-Id: <20201202120713.702387-6-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201202120713.702387-1-amir73il@gmail.com>
 References: <20201202120713.702387-1-amir73il@gmail.com>
@@ -63,259 +63,245 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In preparation for separating object type from iterator type, rename
-some 'type' arguments in functions to 'obj_type' and remove the unused
-interface to clear marks by object type mask.
+They are two different types that use the same enum, so this confusing.
+
+Use the object type to indicate the type of object mark is attached to
+and the iter type to indicate the type of watch.
+
+A group can have two different watches of the same object type (parent
+and child watches) that match the same event.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify_user.c |  8 ++++----
- fs/notify/group.c                  |  2 +-
- fs/notify/mark.c                   | 24 ++++++++++++------------
- include/linux/fsnotify_backend.h   | 25 ++++++++++---------------
- 4 files changed, 27 insertions(+), 32 deletions(-)
+ fs/notify/fanotify/fanotify.c    |  6 ++---
+ fs/notify/fsnotify.c             | 26 +++++++++++++-------
+ fs/notify/mark.c                 |  4 ++--
+ include/linux/fsnotify_backend.h | 41 ++++++++++++++++++++++----------
+ 4 files changed, 50 insertions(+), 27 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 3e01d8f2ab90..f9c74fa82038 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -819,7 +819,7 @@ static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 1192c9953620..8655a1e7c6a6 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -252,7 +252,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 			return 0;
+ 	}
  
- static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
- 						   fsnotify_connp_t *connp,
--						   unsigned int type,
-+						   unsigned int obj_type,
- 						   __kernel_fsid_t *fsid)
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		if (!fsnotify_iter_should_report_type(iter_info, type))
+ 			continue;
+ 		mark = iter_info->marks[type];
+@@ -271,7 +271,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 		 * If the event is on a child and this mark is on a parent not
+ 		 * watching children, don't send it!
+ 		 */
+-		if (type == FSNOTIFY_OBJ_TYPE_PARENT &&
++		if (type == FSNOTIFY_ITER_TYPE_PARENT &&
+ 		    !(mark->mask & FS_EVENT_ON_CHILD))
+ 			continue;
+ 
+@@ -622,7 +622,7 @@ static __kernel_fsid_t fanotify_get_fsid(struct fsnotify_iter_info *iter_info)
+ 	int type;
+ 	__kernel_fsid_t fsid = {};
+ 
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		struct fsnotify_mark_connector *conn;
+ 
+ 		if (!fsnotify_iter_should_report_type(iter_info, type))
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 0676ce4d3352..bae3f306ed79 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -321,7 +321,7 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+ 
+ 	/* clear ignored on inode modification */
+ 	if (mask & FS_MODIFY) {
+-		fsnotify_foreach_obj_type(type) {
++		fsnotify_foreach_iter_type(type) {
+ 			if (!fsnotify_iter_should_report_type(iter_info, type))
+ 				continue;
+ 			mark = iter_info->marks[type];
+@@ -331,7 +331,7 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+ 		}
+ 	}
+ 
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		if (!fsnotify_iter_should_report_type(iter_info, type))
+ 			continue;
+ 		mark = iter_info->marks[type];
+@@ -396,7 +396,7 @@ static unsigned int fsnotify_iter_select_report_types(
+ 	int type;
+ 
+ 	/* Choose max prio group among groups of all queue heads */
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		mark = iter_info->marks[type];
+ 		if (mark &&
+ 		    fsnotify_compare_groups(max_prio_group, mark->group) > 0)
+@@ -408,7 +408,7 @@ static unsigned int fsnotify_iter_select_report_types(
+ 
+ 	/* Set the report mask for marks from same group as max prio group */
+ 	iter_info->report_mask = 0;
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		mark = iter_info->marks[type];
+ 		if (mark &&
+ 		    fsnotify_compare_groups(max_prio_group, mark->group) == 0)
+@@ -426,7 +426,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
  {
- 	struct fsnotify_mark *mark;
-@@ -833,7 +833,7 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
- 		return ERR_PTR(-ENOMEM);
+ 	int type;
  
- 	fsnotify_init_mark(mark, group);
--	ret = fsnotify_add_mark_locked(mark, connp, type, 0, fsid);
-+	ret = fsnotify_add_mark_locked(mark, connp, obj_type, 0, fsid);
- 	if (ret) {
- 		fsnotify_put_mark(mark);
- 		return ERR_PTR(ret);
-@@ -844,7 +844,7 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		if (fsnotify_iter_should_report_type(iter_info, type))
+ 			iter_info->marks[type] =
+ 				fsnotify_next_mark(iter_info->marks[type]);
+@@ -511,18 +511,26 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
  
+ 	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
  
- static int fanotify_add_mark(struct fsnotify_group *group,
--			     fsnotify_connp_t *connp, unsigned int type,
-+			     fsnotify_connp_t *connp, unsigned int obj_type,
- 			     __u32 mask, unsigned int flags,
- 			     __kernel_fsid_t *fsid)
- {
-@@ -854,7 +854,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 	mutex_lock(&group->mark_mutex);
- 	fsn_mark = fsnotify_find_mark(connp, group);
- 	if (!fsn_mark) {
--		fsn_mark = fanotify_add_new_mark(group, connp, type, fsid);
-+		fsn_mark = fanotify_add_new_mark(group, connp, obj_type, fsid);
- 		if (IS_ERR(fsn_mark)) {
- 			mutex_unlock(&group->mark_mutex);
- 			return PTR_ERR(fsn_mark);
-diff --git a/fs/notify/group.c b/fs/notify/group.c
-index a4a4b1c64d32..8255b4c45802 100644
---- a/fs/notify/group.c
-+++ b/fs/notify/group.c
-@@ -58,7 +58,7 @@ void fsnotify_destroy_group(struct fsnotify_group *group)
- 	fsnotify_group_stop_queueing(group);
+-	iter_info.marks[FSNOTIFY_OBJ_TYPE_SB] =
++	/*
++	 * Just in case some backend still assumes that iterator type means
++	 * object type. We can relax this in the future.
++	 */
++	BUILD_BUG_ON(FSNOTIFY_OBJ_TYPE_INODE != (int)FSNOTIFY_ITER_TYPE_INODE);
++	BUILD_BUG_ON(FSNOTIFY_OBJ_TYPE_VFSMOUNT != (int)FSNOTIFY_ITER_TYPE_VFSMOUNT);
++	BUILD_BUG_ON(FSNOTIFY_OBJ_TYPE_SB != (int)FSNOTIFY_ITER_TYPE_SB);
++
++	iter_info.marks[FSNOTIFY_ITER_TYPE_SB] =
+ 		fsnotify_first_mark(&sb->s_fsnotify_marks);
+ 	if (mnt) {
+-		iter_info.marks[FSNOTIFY_OBJ_TYPE_VFSMOUNT] =
++		iter_info.marks[FSNOTIFY_ITER_TYPE_VFSMOUNT] =
+ 			fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
+ 	}
+ 	if (inode) {
+-		iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
++		iter_info.marks[FSNOTIFY_ITER_TYPE_INODE] =
+ 			fsnotify_first_mark(&inode->i_fsnotify_marks);
+ 	}
+ 	if (parent) {
+-		iter_info.marks[FSNOTIFY_OBJ_TYPE_PARENT] =
++		iter_info.marks[FSNOTIFY_ITER_TYPE_PARENT] =
+ 			fsnotify_first_mark(&parent->i_fsnotify_marks);
+ 	}
  
- 	/* Clear all marks for this group and queue them for destruction */
--	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_ALL_TYPES_MASK);
-+	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_ANY);
- 
- 	/*
- 	 * Some marks can still be pinned when waiting for response from
 diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 8387937b9d01..7792f5486d61 100644
+index 7792f5486d61..ffa682cb747b 100644
 --- a/fs/notify/mark.c
 +++ b/fs/notify/mark.c
-@@ -474,7 +474,7 @@ int fsnotify_compare_groups(struct fsnotify_group *a, struct fsnotify_group *b)
+@@ -329,7 +329,7 @@ bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info)
+ {
+ 	int type;
+ 
+-	fsnotify_foreach_obj_type(type) {
++	fsnotify_foreach_iter_type(type) {
+ 		/* This can fail if mark is being removed */
+ 		if (!fsnotify_get_mark_safe(iter_info->marks[type])) {
+ 			__release(&fsnotify_mark_srcu);
+@@ -358,7 +358,7 @@ void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info)
+ 	int type;
+ 
+ 	iter_info->srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
+-	fsnotify_foreach_obj_type(type)
++	fsnotify_foreach_iter_type(type)
+ 		fsnotify_put_mark_wake(iter_info->marks[type]);
  }
  
- static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
--					       unsigned int type,
-+					       unsigned int obj_type,
- 					       __kernel_fsid_t *fsid)
- {
- 	struct inode *inode = NULL;
-@@ -485,7 +485,7 @@ static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
- 		return -ENOMEM;
- 	spin_lock_init(&conn->lock);
- 	INIT_HLIST_HEAD(&conn->list);
--	conn->type = type;
-+	conn->type = obj_type;
- 	conn->obj = connp;
- 	/* Cache fsid of filesystem containing the object */
- 	if (fsid) {
-@@ -545,7 +545,7 @@ static struct fsnotify_mark_connector *fsnotify_grab_connector(
-  * priority, highest number first, and then by the group's location in memory.
-  */
- static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
--				  fsnotify_connp_t *connp, unsigned int type,
-+				  fsnotify_connp_t *connp, unsigned int obj_type,
- 				  int allow_dups, __kernel_fsid_t *fsid)
- {
- 	struct fsnotify_mark *lmark, *last = NULL;
-@@ -553,7 +553,7 @@ static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
- 	int cmp;
- 	int err = 0;
- 
--	if (WARN_ON(!fsnotify_valid_obj_type(type)))
-+	if (WARN_ON(!fsnotify_valid_obj_type(obj_type)))
- 		return -EINVAL;
- 
- 	/* Backend is expected to check for zero fsid (e.g. tmpfs) */
-@@ -565,7 +565,7 @@ static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
- 	conn = fsnotify_grab_connector(connp);
- 	if (!conn) {
- 		spin_unlock(&mark->lock);
--		err = fsnotify_attach_connector_to_object(connp, type, fsid);
-+		err = fsnotify_attach_connector_to_object(connp, obj_type, fsid);
- 		if (err)
- 			return err;
- 		goto restart;
-@@ -638,7 +638,7 @@ static int fsnotify_add_mark_list(struct fsnotify_mark *mark,
-  * event types should be delivered to which group.
-  */
- int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
--			     fsnotify_connp_t *connp, unsigned int type,
-+			     fsnotify_connp_t *connp, unsigned int obj_type,
- 			     int allow_dups, __kernel_fsid_t *fsid)
- {
- 	struct fsnotify_group *group = mark->group;
-@@ -660,7 +660,7 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
- 	fsnotify_get_mark(mark); /* for g_list */
- 	spin_unlock(&mark->lock);
- 
--	ret = fsnotify_add_mark_list(mark, connp, type, allow_dups, fsid);
-+	ret = fsnotify_add_mark_list(mark, connp, obj_type, allow_dups, fsid);
- 	if (ret)
- 		goto err;
- 
-@@ -681,13 +681,13 @@ int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
- }
- 
- int fsnotify_add_mark(struct fsnotify_mark *mark, fsnotify_connp_t *connp,
--		      unsigned int type, int allow_dups, __kernel_fsid_t *fsid)
-+		      unsigned int obj_type, int allow_dups, __kernel_fsid_t *fsid)
- {
- 	int ret;
- 	struct fsnotify_group *group = mark->group;
- 
- 	mutex_lock(&group->mark_mutex);
--	ret = fsnotify_add_mark_locked(mark, connp, type, allow_dups, fsid);
-+	ret = fsnotify_add_mark_locked(mark, connp, obj_type, allow_dups, fsid);
- 	mutex_unlock(&group->mark_mutex);
- 	return ret;
- }
-@@ -722,14 +722,14 @@ EXPORT_SYMBOL_GPL(fsnotify_find_mark);
- 
- /* Clear any marks in a group with given type mask */
- void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
--				   unsigned int type_mask)
-+				   unsigned int obj_type)
- {
- 	struct fsnotify_mark *lmark, *mark;
- 	LIST_HEAD(to_free);
- 	struct list_head *head = &to_free;
- 
- 	/* Skip selection step if we want to clear all marks. */
--	if (type_mask == FSNOTIFY_OBJ_ALL_TYPES_MASK) {
-+	if (obj_type == FSNOTIFY_OBJ_TYPE_ANY) {
- 		head = &group->marks_list;
- 		goto clear;
- 	}
-@@ -744,7 +744,7 @@ void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
- 	 */
- 	mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
- 	list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
--		if ((1U << mark->connector->type) & type_mask)
-+		if (mark->connector->type == obj_type)
- 			list_move(&mark->g_list, &to_free);
- 	}
- 	mutex_unlock(&group->mark_mutex);
 diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index a2e42d3cd87c..72bc120a65bc 100644
+index 72bc120a65bc..9d03f031a41b 100644
 --- a/include/linux/fsnotify_backend.h
 +++ b/include/linux/fsnotify_backend.h
-@@ -277,6 +277,7 @@ static inline const struct path *fsnotify_data_path(const void *data,
+@@ -276,10 +276,25 @@ static inline const struct path *fsnotify_data_path(const void *data,
+ 	}
  }
  
++/*
++ * Index to merged marks iterator array that correlates to a type of watch.
++ * The type of watched object can be deduced from the iterator type, but not
++ * the other way around, because an event can match different watched objects
++ * of the same object type.
++ * For example, both parent and child are watching an object of type inode.
++ */
++enum fsnotify_iter_type {
++	FSNOTIFY_ITER_TYPE_INODE,
++	FSNOTIFY_ITER_TYPE_VFSMOUNT,
++	FSNOTIFY_ITER_TYPE_SB,
++	FSNOTIFY_ITER_TYPE_PARENT,
++	FSNOTIFY_ITER_TYPE_COUNT
++};
++
++/* The type of object that a mark is attached to */
  enum fsnotify_obj_type {
-+	FSNOTIFY_OBJ_TYPE_ANY = -1,
+ 	FSNOTIFY_OBJ_TYPE_ANY = -1,
  	FSNOTIFY_OBJ_TYPE_INODE,
- 	FSNOTIFY_OBJ_TYPE_PARENT,
+-	FSNOTIFY_OBJ_TYPE_PARENT,
  	FSNOTIFY_OBJ_TYPE_VFSMOUNT,
-@@ -285,15 +286,9 @@ enum fsnotify_obj_type {
- 	FSNOTIFY_OBJ_TYPE_DETACHED = FSNOTIFY_OBJ_TYPE_COUNT
- };
- 
--#define FSNOTIFY_OBJ_TYPE_INODE_FL	(1U << FSNOTIFY_OBJ_TYPE_INODE)
--#define FSNOTIFY_OBJ_TYPE_PARENT_FL	(1U << FSNOTIFY_OBJ_TYPE_PARENT)
--#define FSNOTIFY_OBJ_TYPE_VFSMOUNT_FL	(1U << FSNOTIFY_OBJ_TYPE_VFSMOUNT)
--#define FSNOTIFY_OBJ_TYPE_SB_FL		(1U << FSNOTIFY_OBJ_TYPE_SB)
--#define FSNOTIFY_OBJ_ALL_TYPES_MASK	((1U << FSNOTIFY_OBJ_TYPE_COUNT) - 1)
--
--static inline bool fsnotify_valid_obj_type(unsigned int type)
-+static inline bool fsnotify_valid_obj_type(unsigned int obj_type)
- {
--	return (type < FSNOTIFY_OBJ_TYPE_COUNT);
-+	return (obj_type < FSNOTIFY_OBJ_TYPE_COUNT);
+ 	FSNOTIFY_OBJ_TYPE_SB,
+ 	FSNOTIFY_OBJ_TYPE_COUNT,
+@@ -292,37 +307,37 @@ static inline bool fsnotify_valid_obj_type(unsigned int obj_type)
  }
  
  struct fsnotify_iter_info {
-@@ -326,7 +321,7 @@ static inline void fsnotify_iter_set_report_type_mark(
+-	struct fsnotify_mark *marks[FSNOTIFY_OBJ_TYPE_COUNT];
++	struct fsnotify_mark *marks[FSNOTIFY_ITER_TYPE_COUNT];
+ 	unsigned int report_mask;
+ 	int srcu_idx;
+ };
+ 
+ static inline bool fsnotify_iter_should_report_type(
+-		struct fsnotify_iter_info *iter_info, int type)
++		struct fsnotify_iter_info *iter_info, int iter_type)
+ {
+-	return (iter_info->report_mask & (1U << type));
++	return (iter_info->report_mask & (1U << iter_type));
+ }
+ 
+ static inline void fsnotify_iter_set_report_type(
+-		struct fsnotify_iter_info *iter_info, int type)
++		struct fsnotify_iter_info *iter_info, int iter_type)
+ {
+-	iter_info->report_mask |= (1U << type);
++	iter_info->report_mask |= (1U << iter_type);
+ }
+ 
+ static inline void fsnotify_iter_set_report_type_mark(
+-		struct fsnotify_iter_info *iter_info, int type,
++		struct fsnotify_iter_info *iter_info, int iter_type,
+ 		struct fsnotify_mark *mark)
+ {
+-	iter_info->marks[type] = mark;
+-	iter_info->report_mask |= (1U << type);
++	iter_info->marks[iter_type] = mark;
++	iter_info->report_mask |= (1U << iter_type);
+ }
+ 
+ #define FSNOTIFY_ITER_FUNCS(name, NAME) \
  static inline struct fsnotify_mark *fsnotify_iter_##name##_mark( \
  		struct fsnotify_iter_info *iter_info) \
  { \
--	return (iter_info->report_mask & FSNOTIFY_OBJ_TYPE_##NAME##_FL) ? \
-+	return (iter_info->report_mask & (1U << FSNOTIFY_OBJ_TYPE_##NAME)) ? \
- 		iter_info->marks[FSNOTIFY_OBJ_TYPE_##NAME] : NULL; \
+-	return (iter_info->report_mask & (1U << FSNOTIFY_OBJ_TYPE_##NAME)) ? \
+-		iter_info->marks[FSNOTIFY_OBJ_TYPE_##NAME] : NULL; \
++	return (iter_info->report_mask & (1U << FSNOTIFY_ITER_TYPE_##NAME)) ? \
++		iter_info->marks[FSNOTIFY_ITER_TYPE_##NAME] : NULL; \
  }
  
-@@ -520,11 +515,11 @@ extern int fsnotify_get_conn_fsid(const struct fsnotify_mark_connector *conn,
- 				  __kernel_fsid_t *fsid);
- /* attach the mark to the object */
- extern int fsnotify_add_mark(struct fsnotify_mark *mark,
--			     fsnotify_connp_t *connp, unsigned int type,
-+			     fsnotify_connp_t *connp, unsigned int obj_type,
- 			     int allow_dups, __kernel_fsid_t *fsid);
- extern int fsnotify_add_mark_locked(struct fsnotify_mark *mark,
- 				    fsnotify_connp_t *connp,
--				    unsigned int type, int allow_dups,
-+				    unsigned int obj_type, int allow_dups,
- 				    __kernel_fsid_t *fsid);
+ FSNOTIFY_ITER_FUNCS(inode, INODE)
+@@ -330,8 +345,8 @@ FSNOTIFY_ITER_FUNCS(parent, PARENT)
+ FSNOTIFY_ITER_FUNCS(vfsmount, VFSMOUNT)
+ FSNOTIFY_ITER_FUNCS(sb, SB)
  
- /* attach the mark to the inode */
-@@ -554,21 +549,21 @@ extern void fsnotify_free_mark(struct fsnotify_mark *mark);
- /* Wait until all marks queued for destruction are destroyed */
- extern void fsnotify_wait_marks_destroyed(void);
- /* run all the marks in a group, and clear all of the marks attached to given object type */
--extern void fsnotify_clear_marks_by_group(struct fsnotify_group *group, unsigned int type);
-+extern void fsnotify_clear_marks_by_group(struct fsnotify_group *group, unsigned int obj_type);
- /* run all the marks in a group, and clear all of the vfsmount marks */
- static inline void fsnotify_clear_vfsmount_marks_by_group(struct fsnotify_group *group)
- {
--	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_VFSMOUNT_FL);
-+	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_VFSMOUNT);
- }
- /* run all the marks in a group, and clear all of the inode marks */
- static inline void fsnotify_clear_inode_marks_by_group(struct fsnotify_group *group)
- {
--	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_INODE_FL);
-+	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_INODE);
- }
- /* run all the marks in a group, and clear all of the sn marks */
- static inline void fsnotify_clear_sb_marks_by_group(struct fsnotify_group *group)
- {
--	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_SB_FL);
-+	fsnotify_clear_marks_by_group(group, FSNOTIFY_OBJ_TYPE_SB);
- }
- extern void fsnotify_get_mark(struct fsnotify_mark *mark);
- extern void fsnotify_put_mark(struct fsnotify_mark *mark);
+-#define fsnotify_foreach_obj_type(type) \
+-	for (type = 0; type < FSNOTIFY_OBJ_TYPE_COUNT; type++)
++#define fsnotify_foreach_iter_type(type) \
++	for (type = 0; type < FSNOTIFY_ITER_TYPE_COUNT; type++)
+ 
+ /*
+  * fsnotify_connp_t is what we embed in objects which connector can be attached
 -- 
 2.25.1
 
