@@ -2,81 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A47A72CB156
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 01:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8222CB244
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 02:25:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbgLBAMH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Dec 2020 19:12:07 -0500
-Received: from sandeen.net ([63.231.237.45]:35898 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbgLBAMG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Dec 2020 19:12:06 -0500
-Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 2799D146284;
-        Tue,  1 Dec 2020 18:11:09 -0600 (CST)
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Eric Sandeen <sandeen@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Xiaoli Feng <xifeng@redhat.com>
-References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
- <05a0f4fd-7f62-8fbc-378d-886ccd5b3f11@redhat.com>
- <CAHk-=wgOu9vgUfOSsjO3hHHxGDn4BKhitC_8XCfgmGKiiSm_ag@mail.gmail.com>
- <300456.1606856642@warthog.procyon.org.uk>
- <CAHk-=wgB_e1anR0b4B5p3qxR9nq1-xrRponA6Q6WbGTOSFNmPw@mail.gmail.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: [PATCH 2/2] statx: move STATX_ATTR_DAX attribute handling to
- filesystems
-Message-ID: <421cb25d-ca52-0a08-e535-5f650dda8d93@sandeen.net>
-Date:   Tue, 1 Dec 2020 18:11:24 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.0
+        id S1727514AbgLBBY6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Dec 2020 20:24:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbgLBBY6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Dec 2020 20:24:58 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FAD8C0613D4;
+        Tue,  1 Dec 2020 17:24:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=mD85UbhtyukYDJcTCzGhzPvfI1JWKEBbqyiuxqWmjGw=; b=wW1COTIsA6c+axy822mi9QdlfF
+        cWWPMIoSvtDDsLl0eBX5PttewLNjFppp2iBh3JdKRDRgHGVEHJh1TPwTkIMUM6VH5151CNiG+L45Q
+        7n0tqnJVwg2brfZr5hOo985THNkEaR+nR9ccJ19NviWnZB+MZ6T61wCTXOUnvMo/Dnr+wRQvcdsNO
+        HbJmcDJUJqGPNgFkjHQ8SN6Hn8utkt4EK7YduxsH0sDaZKc1WgvcEAgE48NtkqtZRCTN6PAfnC7ug
+        3sMVoYYMqnh7wvHrKqKc8ZzZMH0xxa+4D9xu+nAU1oKOaaiOkUNRu7zoNOswfh7zHYcl/chp/dFQX
+        HgozkMLg==;
+Received: from [2601:1c0:6280:3f0::1494] (helo=smtpauth.infradead.org)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kkGsP-00015m-FB; Wed, 02 Dec 2020 01:24:15 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Subject: [PATCH] Documentation: mount_api: change kernel log wording
+Date:   Tue,  1 Dec 2020 17:24:09 -0800
+Message-Id: <20201202012409.19194-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgB_e1anR0b4B5p3qxR9nq1-xrRponA6Q6WbGTOSFNmPw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/1/20 4:09 PM, Linus Torvalds wrote:
-> So basically, the thing that argues against this patch is that it
-> seems to just duplicate things inside filesystems, when the VFS layter
-> already has the information.
-> 
-> Now, if the VFS information was possibly stale or wrong, that woudl be
-> one thing. But then we'd have other and bigger  problems elsewhere as
-> far as I can tell.
-> 
-> IOW - make generic what can be made generic, and try to avoid having
-> filesystems do their own thing.
-> 
-> [ Replace "filesystems" by "architectures" or whatever else, this is
-> obviously not a filesystem-specific rule in general. ]
-> 
-> And don't get me wrong - I don't _hate_ the patch, and I don't care
-> _that_ deeply, but it just doesn't seem to make any sense to me. My
-> initial query was really about "what am I missing - can you please
-> flesh out the commit message because I don't understand what's wrong".
+Change wording to say that messages are logged to the kernel log
+buffer instead of to dmesg. dmesg is just one program that can
+print the kernel log buffer.
 
-Backing way up, my motivation was: Only the filesystem can appropriately
-set the statx->attributes_mask, so it has to be done there. Since that
-has to be done in the filesystem, set the actual attribute flag adjacent
-to it, as is done for ~every other flag.
+Fixes: 7d6ab823d646 ("vfs: Update mount API docs")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/filesystems/mount_api.rst |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-*shrug*
-
-In any case I resent the flag value clash fix on a separate thread as
-V2, hopefully that one is straightforward enough to go in.
-
-Thanks,
--Eric
+--- linux-next-20201201.orig/Documentation/filesystems/mount_api.rst
++++ linux-next-20201201/Documentation/filesystems/mount_api.rst
+@@ -774,7 +774,7 @@ process the parameters it is given.
+      should just be set to lie inside the low-to-high range.
+ 
+      If all is good, true is returned.  If the table is invalid, errors are
+-     logged to dmesg and false is returned.
++     logged to the kernel log buffer and false is returned.
+ 
+    * ::
+ 
+@@ -782,7 +782,7 @@ process the parameters it is given.
+ 
+      This performs some validation checks on a parameter description.  It
+      returns true if the description is good and false if it is not.  It will
+-     log errors to dmesg if validation fails.
++     log errors to the kernel log buffer if validation fails.
+ 
+    * ::
+ 
