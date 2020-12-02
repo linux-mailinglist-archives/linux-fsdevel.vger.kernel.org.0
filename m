@@ -2,117 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CDF2CBA85
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 11:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CEA2CBC2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 12:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729367AbgLBK0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 05:26:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729393AbgLBK0K (ORCPT
+        id S1729329AbgLBL5i convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 2 Dec 2020 06:57:38 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2192 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbgLBL5i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 05:26:10 -0500
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01021C0617A6;
-        Wed,  2 Dec 2020 02:25:24 -0800 (PST)
-Received: by mail-il1-x141.google.com with SMTP id w8so1036644ilg.12;
-        Wed, 02 Dec 2020 02:25:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DFjLmlLgs9QHk2nxUfRF9OLmenUFrrX2jd4v12/6Dbk=;
-        b=PkPCRUbNggyiNac/Cq1FST7xcvqEEUPnyv1UIhS5U1/3B+j9y5niucPi2g6tkrHyMs
-         1XVkmG+gYihpLNVq3Gc6gPtDttjOy5XWg9L4DoznreUy6sRsrAbkmIABybbIiYnebFsD
-         4OONlO/tZl7ZzZK6+Xl5vQw83h4KLD2c5Psn8Pi93zxz9/P94SzPRYihNV/oQ86e/j+u
-         02xD5E9dM74nkcE2H2N6IfNKiqDEMHlwR5ccJF2Ds38HL+wr0s2th9YrEYtN8Ay8IyqG
-         Bc8+WWH+qmOJtId62HdCDA8UAedImCmPqr982JRS9GcGODw+29X8CSub9FcX5DyyUHMB
-         JaLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DFjLmlLgs9QHk2nxUfRF9OLmenUFrrX2jd4v12/6Dbk=;
-        b=tKhX80z0P5uEp7oVg40TnMpt2u785RlbMaz6ArxhOvHwWubxnbQ+j7nvMu6NVa+Gsn
-         9xNKLCXoctS40m386hUUC3u/+RDaKuhaM6B9kn9qoV29XMBN0Mm6ftwUqTis0Wld52iG
-         FSTiloOu9NuhHJNYwmfHIXx7DbC1vDW2Q3DLIPCR6SgmaJ8V/tAIN2BLnDlvmoLRjvPf
-         uxmdPbSFdMnXA+pvkcZ34C2jhebOUbjBTDQ4HIDv6+oUEAUSUInJ3Q7qLtcEccy4aM8S
-         fdtEELpJvCK7ss/YW4AIqFeiF+W5wRMTCwKSxNI7nfhTZgd9cgrRafqmrT2cHKbAJvvN
-         D2Pw==
-X-Gm-Message-State: AOAM532hrQxenkhh4O6AqTpCYS9bEqEVMEHs1kF1C+rQw9TaLnaqNJk9
-        Un4TpJyWvlWDzzH1Cu9ukCubfWPETehBx5zhd2HNAmqWbLY=
-X-Google-Smtp-Source: ABdhPJxPRVyErgOwPDJBbab36zTv2PjFi1DJGIx13Cjbeh7DDxc9ITeSc4VgHyDBbZmGHVZrJIwrbS2Prsg5t+Ot5tg=
-X-Received: by 2002:a92:6403:: with SMTP id y3mr1732278ilb.72.1606904723393;
- Wed, 02 Dec 2020 02:25:23 -0800 (PST)
+        Wed, 2 Dec 2020 06:57:38 -0500
+Received: from fraeml703-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CmHTJ0gSgz67GZG;
+        Wed,  2 Dec 2020 19:55:00 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2106.2; Wed, 2 Dec 2020 12:56:55 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.002;
+ Wed, 2 Dec 2020 12:56:55 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Topic: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Index: AQHWuAxk5SBMtTsknkm2+R4w/QyBPKnj0s2g
+Date:   Wed, 2 Dec 2020 11:56:55 +0000
+Message-ID: <a401e63a91114daba2037e2b0083101f@huawei.com>
+References: <20201111092302.1589-1-roberto.sassu@huawei.com>
+ <20201111092302.1589-5-roberto.sassu@huawei.com>
+In-Reply-To: <20201111092302.1589-5-roberto.sassu@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20201202092720.41522-1-sargun@sargun.me>
-In-Reply-To: <20201202092720.41522-1-sargun@sargun.me>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 2 Dec 2020 12:25:12 +0200
-Message-ID: <CAOQ4uxiUTsXEdQsE275qxTh61tZOB+-wqCp6gaNLkOw5ueUJgw@mail.gmail.com>
-Subject: Re: [PATCH] overlay: Implement volatile-specific fsync error behaviour
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 2, 2020 at 11:27 AM Sargun Dhillon <sargun@sargun.me> wrote:
->
-> Overlayfs's volatile option allows the user to bypass all forced sync calls
-> to the upperdir filesystem. This comes at the cost of safety. We can never
-> ensure that the user's data is intact, but we can make a best effort to
-> expose whether or not the data is likely to be in a bad state.
->
-> We decided[1] that the best way to handle this in the time being is that if
-> an overlayfs's upperdir experiences an error after a volatile mount occurs,
-> that error will be returned on fsync, fdatasync, sync, and syncfs. This is
-> contradictory to the traditional behaviour of VFS which fails the call
-> once, and only raises an error if a subsequent fsync error has occured,
-> and been raised by the filesystem.
->
-> One awkward aspect of the patch is that we have to manually set the
-> superblock's errseq_t after the sync_fs callback as opposed to just
-> returning an error from syncfs. This is because the call chain looks
-> something like this:
->
-> sys_syncfs ->
->         sync_filesystem ->
->                 __sync_filesystem ->
->                         /* The return value is ignored here
->                         sb->s_op->sync_fs(sb)
->                         _sync_blockdev
->                 /* Where the VFS fetches the error to raise to userspace */
->                 errseq_check_and_advance
->
-> Because of this we call errseq_set every time the sync_fs callback occurs.
->
-> [1]: https://lore.kernel.org/linux-fsdevel/36d820394c3e7cd1faa1b28a8135136d5001dadd.camel@redhat.com/T/#u
->
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-unionfs@vger.kernel.org
-> Cc: Jeff Layton <jlayton@redhat.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
+> From: Roberto Sassu
+> Sent: Wednesday, November 11, 2020 10:23 AM
+> ima_inode_setxattr() and ima_inode_removexattr() hooks are called
+> before an
+> operation is performed. Thus, ima_reset_appraise_flags() should not be
+> called there, as flags might be unnecessarily reset if the operation is
+> denied.
+> 
+> This patch introduces the post hooks ima_inode_post_setxattr() and
+> ima_inode_post_removexattr(), removes ima_inode_removexattr() and
+> adds the
+> call to ima_reset_appraise_flags() in the new functions.
+
+Removing ima_inode_removexattr() is not correct. We should still prevent
+that security.ima is removed when CAP_SYS_ADMIN is not set. I will fix
+this in the next version.
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
+>  fs/xattr.c                            |  2 ++
+>  include/linux/ima.h                   | 19 +++++++++++++++----
+>  security/integrity/ima/ima_appraise.c | 22 +++++++++++++++-------
+>  security/security.c                   |  4 +---
+>  4 files changed, 33 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index cd7a563e8bcd..149b8cf5f99f 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/security.h>
+>  #include <linux/evm.h>
+> +#include <linux/ima.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/export.h>
+>  #include <linux/fsnotify.h>
+> @@ -474,6 +475,7 @@ __vfs_removexattr_locked(struct dentry *dentry,
+> const char *name,
+> 
+>  	if (!error) {
+>  		fsnotify_xattr(dentry);
+> +		ima_inode_post_removexattr(dentry, name);
+>  		evm_inode_post_removexattr(dentry, name);
+>  	}
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index ac3d82f962f2..19a775fa2ba5 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -150,7 +150,12 @@ extern bool is_ima_appraise_enabled(void);
+>  extern void ima_inode_post_setattr(struct dentry *dentry);
+>  extern int ima_inode_setxattr(struct dentry *dentry, const char
+> *xattr_name,
+>  		       const void *xattr_value, size_t xattr_value_len);
+> -extern int ima_inode_removexattr(struct dentry *dentry, const char
+> *xattr_name);
+> +extern void ima_inode_post_setxattr(struct dentry *dentry,
+> +				    const char *xattr_name,
+> +				    const void *xattr_value,
+> +				    size_t xattr_value_len);
+> +extern void ima_inode_post_removexattr(struct dentry *dentry,
+> +				       const char *xattr_name);
+>  #else
+>  static inline bool is_ima_appraise_enabled(void)
+>  {
+> @@ -170,10 +175,16 @@ static inline int ima_inode_setxattr(struct dentry
+> *dentry,
+>  	return 0;
+>  }
+> 
+> -static inline int ima_inode_removexattr(struct dentry *dentry,
+> -					const char *xattr_name)
+> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
+> +					   const char *xattr_name,
+> +					   const void *xattr_value,
+> +					   size_t xattr_value_len)
+> +{
+> +}
+> +
+> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
+> +					      const char *xattr_name)
+>  {
+> -	return 0;
+>  }
+>  #endif /* CONFIG_IMA_APPRAISE */
+> 
+> diff --git a/security/integrity/ima/ima_appraise.c
+> b/security/integrity/ima/ima_appraise.c
+> index 8361941ee0a1..77c01f50425e 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -574,21 +574,29 @@ int ima_inode_setxattr(struct dentry *dentry,
+> const char *xattr_name,
+>  	if (result == 1) {
+>  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+>  			return -EINVAL;
+> -		ima_reset_appraise_flags(d_backing_inode(dentry),
+> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+>  		result = 0;
+>  	}
+>  	return result;
+>  }
+> 
+> -int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+> +void ima_inode_post_setxattr(struct dentry *dentry, const char
+> *xattr_name,
+> +			     const void *xattr_value, size_t xattr_value_len)
+> +{
+> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
+> +	int result;
+> +
+> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
+> +				   xattr_value_len);
+> +	if (result == 1)
+> +		ima_reset_appraise_flags(d_backing_inode(dentry),
+> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+> +}
+> +
+> +void ima_inode_post_removexattr(struct dentry *dentry, const char
+> *xattr_name)
+>  {
+>  	int result;
+> 
+>  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+> -	if (result == 1) {
+> +	if (result == 1)
+>  		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> -		result = 0;
+> -	}
+> -	return result;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index a28045dc9e7f..fc43f45938b4 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1309,6 +1309,7 @@ void security_inode_post_setxattr(struct dentry
+> *dentry, const char *name,
+>  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>  		return;
+>  	call_void_hook(inode_post_setxattr, dentry, name, value, size,
+> flags);
+> +	ima_inode_post_setxattr(dentry, name, value, size);
+>  	evm_inode_post_setxattr(dentry, name, value, size);
+>  }
+> 
+> @@ -1339,9 +1340,6 @@ int security_inode_removexattr(struct dentry
+> *dentry, const char *name)
+>  	ret = call_int_hook(inode_removexattr, 1, dentry, name);
+>  	if (ret == 1)
+>  		ret = cap_inode_removexattr(dentry, name);
+> -	if (ret)
+> -		return ret;
+> -	ret = ima_inode_removexattr(dentry, name);
+>  	if (ret)
+>  		return ret;
+>  	return evm_inode_removexattr(dentry, name);
+> --
+> 2.27.GIT
 
-Looks safe :-)
-
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-
-We should consider sending this to stable, but maybe let's merge first
-and let it
-run in master for a while before because it is not a clear and immediate danger
-and if anyone is using volatile already I hope they read all the
-warnings on the box.
-
-Thanks,
-Amir.
