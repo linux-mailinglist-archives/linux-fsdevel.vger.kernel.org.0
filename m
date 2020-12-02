@@ -2,81 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53C1F2CBD7B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 13:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D5722CBDA8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 14:03:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbgLBMx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 07:53:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388780AbgLBMxZ (ORCPT
+        id S1727844AbgLBNCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 08:02:02 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:43231 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727221AbgLBNCC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 07:53:25 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24624C0613CF;
-        Wed,  2 Dec 2020 04:52:45 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id w187so1189173pfd.5;
-        Wed, 02 Dec 2020 04:52:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6oyGlRAiLZTFqH07C7Gme2MIKkmp+8Uf0D4I/ntEuUI=;
-        b=h6UcLnYrFrrRltzmp1KRvQGmW4KOoqQ4MGbYFqokAfV2FrguqMQnPXnCFReyI5ZAdh
-         Apx+qmlUrIl8VlSu+xCsByf98w+wcAyhJFoCdRJOHUk3t1+lZgkKzJ5EO9+h8DDuVzn8
-         ENVnAPdQirD8JIJPMTfGYz68VDEXaxiv5DNQNvBxNkswf6klPoJR6cRlIR/Mn1cfVypp
-         EUAG9QnFydJWnVjMuvjNFRMyJCfddSM6t3ygDbRWuydCFHV4h+JeV9NdBjljpQPPw0eG
-         ulYeGat08CyXL5aHlSDSJwVVAaXya2EVyhAtbyirz/cxwwQzOl2TEeoYWaQHNWdyX1gW
-         E3cg==
+        Wed, 2 Dec 2020 08:02:02 -0500
+Received: by mail-il1-f198.google.com with SMTP id l8so1331229ilf.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 05:01:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6oyGlRAiLZTFqH07C7Gme2MIKkmp+8Uf0D4I/ntEuUI=;
-        b=VWnlydVyq5B2KSH1IHG6bM7q7efwTrQ1XmhkR0tSBrL53DWgSivNwBntBucUaE1a3K
-         JM9S2hud2UMu1nwY1o2sKb5byyvAWeiA+/uKsGD4Uw84oHzPPvHbjdXj4DffOS8H+UFo
-         KCBqAN7GFzsKT/CHT4SP4XwMPwpQCaiGmDAA3Rr4jm6Ok3sZfsoqAnfV370za6dvcnbo
-         Oum9iHQSyz5wBVFWHAHv9ZjOv6vKs3P37B5aVDkIrJG6WggzW9AJkS+h6YvY3T9LfnAM
-         uoispc5TmZBFxf5j47i7lZxy3V3mWBlXsOnJHCo9Xm7+ovaqw+YFuDvogXylCCaZXSy6
-         sNQA==
-X-Gm-Message-State: AOAM532WfwIl2iY4vxusM3mlz4yS/ck5k/d7xHWTTeJhmgkXf8Ksw8E1
-        Gza/TUaPASBkkIdc3bn/4HcEYu158n30ZQ==
-X-Google-Smtp-Source: ABdhPJzJi+gXNUd2AVpF3L6pDjLE0H3yB6BrBc+1rqJgUVjQK0tRNdxxq4dlEdsuI9QO3UkP40ymCA==
-X-Received: by 2002:a63:1959:: with SMTP id 25mr2504933pgz.201.1606913564566;
-        Wed, 02 Dec 2020 04:52:44 -0800 (PST)
-Received: from localhost.localdomain ([211.108.35.36])
-        by smtp.gmail.com with ESMTPSA id w2sm1840256pjb.22.2020.12.02.04.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 04:52:44 -0800 (PST)
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: [PATCH] vfs: remove comment for deleted argument 'cred'
-Date:   Wed,  2 Dec 2020 21:52:32 +0900
-Message-Id: <20201202125232.19278-1-minwoo.im.dev@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ElcWQuIrcmA3Abjodq5xzivPGCQQTN5XpyyZFbuKQ0U=;
+        b=iGrDwiHeor2xVAIayYWTktC1BCTNpIkgpiozHnnVqBcmG+Mr6uQaEDmqlWPGLNZ9nT
+         BkjSFsJ7xDjtefgxqoEHXqcPa8SzRoutC88N1fvQmeU/Q4xBNz4/1QmaYTsVSdPmVO2p
+         WA+VZcck3G2pMUW0/UuZKzBnAsYe7yljEaK46kD1m1hJMmg4I0iP5DkdF9ly5mUl54mE
+         4zdtqezx7ts9v7gzxmM2CLTmbXHnk1p4sptAufV5NuvGg9SMKm9EwQEYPMhBaoPP8vNi
+         +4TpyJ4qClwsEjTkiDXI3mD+fVC6xFIGN/YE8wAk4MEvn883VLWR4LrkINrSoCzuM5e0
+         f10g==
+X-Gm-Message-State: AOAM5333Jzj3FeccyRjhLLvEatZxXzpS/sKF+vLhWZ1fD/R+YpgERZxB
+        6qdQA+vbK7Btp8bi5fhhC7DmkX+0KlpDsAwkhm9cbTBXvQiG
+X-Google-Smtp-Source: ABdhPJwl3zAvvpienn8AA7gmpZeLUtM2m0bSUN0SZYFV0fypXqwKjNFP7oMwbC0hx7e9GLB5pgNBMmfE9/9VEIf0s6hXAaQ2CduE
+MIME-Version: 1.0
+X-Received: by 2002:a6b:7f0b:: with SMTP id l11mr1842721ioq.34.1606914080894;
+ Wed, 02 Dec 2020 05:01:20 -0800 (PST)
+Date:   Wed, 02 Dec 2020 05:01:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f9f31005b57ad69d@google.com>
+Subject: WARNING in __percpu_ref_exit
+From:   syzbot <syzbot+482debb49aa7d7fa0b09@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Removed credential argument comment with no functional changes.
+Hello,
 
-Signed-off-by: Minwoo Im <minwoo.im.dev@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    0eedceaf Add linux-next specific files for 20201201
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1649b753500000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=55aec7153b7827ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=482debb49aa7d7fa0b09
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+482debb49aa7d7fa0b09@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 28 at lib/percpu-refcount.c:112 __percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:112
+Modules linked in:
+CPU: 0 PID: 28 Comm: kworker/u4:2 Not tainted 5.10.0-rc6-next-20201201-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events_unbound io_ring_exit_work
+RIP: 0010:__percpu_ref_exit+0x98/0x100 lib/percpu-refcount.c:112
+Code: fd 49 8d 7c 24 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 61 49 83 7c 24 10 00 74 07 e8 d8 63 b7 fd <0f> 0b e8 d1 63 b7 fd 48 89 ef e8 a9 a0 e5 fd 48 89 da 48 b8 00 00
+RSP: 0018:ffffc90000e2fc88 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88807373f000 RCX: 0000000000000000
+RDX: ffff888010f51ac0 RSI: ffffffff83b95d78 RDI: ffff88801b826810
+RBP: 0000607f45e7fde8 R08: 0000000000000000 R09: ffffffff8ebd389f
+R10: ffffffff83b95d18 R11: 0000000000000000 R12: ffff88801b826800
+R13: 0000000000000000 R14: ffff88801b826800 R15: ffff88805c6135a8
+FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c9d3e62ebc CR3: 00000000728e6000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ percpu_ref_exit+0x3b/0x140 lib/percpu-refcount.c:133
+ io_ring_ctx_free fs/io_uring.c:8517 [inline]
+ io_ring_exit_work+0x4fa/0x7a0 fs/io_uring.c:8581
+ process_one_work+0x98d/0x15f0 kernel/workqueue.c:2272
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2418
+ kthread+0x3b1/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
+
+
 ---
- fs/open.c | 1 -
- 1 file changed, 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/open.c b/fs/open.c
-index 9af548fb841b..85a532af0946 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -923,7 +923,6 @@ EXPORT_SYMBOL(file_path);
-  * vfs_open - open the file at the given path
-  * @path: path to open
-  * @file: newly allocated file with f_flag initialized
-- * @cred: credentials to use
-  */
- int vfs_open(const struct path *path, struct file *file)
- {
--- 
-2.17.1
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
