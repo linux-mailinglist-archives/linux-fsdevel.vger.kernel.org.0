@@ -2,112 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9E172CC3DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 18:31:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05B5A2CC3DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 18:31:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389095AbgLBRa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 12:30:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50412 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387594AbgLBRa6 (ORCPT
+        id S1728873AbgLBRah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 12:30:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:55475 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728414AbgLBRah (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 12:30:58 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B2GWT3S000638;
-        Wed, 2 Dec 2020 12:30:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=kXWZTM+5Rdhk2yAKdGsncWEQ/xu/UQKUEALcFsB9wXY=;
- b=HnC0sOQfTUFNIV0AVir4iU3d8COtHbYS/r4Lt5ux4NyH40NIF8LeGvFmg3igUOMWffFg
- 08ZjGI8hPB450KhrQRnfqqCJM68udsvkvXA7h9MH1cI1d6qJygywDvezOdjjddaDOzF9
- KHwqaQmQCJPPEONoGlAfaI36YQCQ+VNFdVaWBvTKGiIWk30D+FGl+IQ7axKYqr4pgcyQ
- oNvAYhlw8Atp7DF2LdwNeOZFjZn7buHBFsb6SM9tgzYRB4hfWTQo+isPlxccpOYY/D8v
- TIy4DqQIREHP37ultboUhzsMQKx0GiL7IkuPjuvRC0scGxZw7Fuk8tLfd95axaOYYTk0 BA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3568cwffcw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 12:30:11 -0500
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B2HJSpv001429;
-        Wed, 2 Dec 2020 12:30:11 -0500
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3568cwffbu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 12:30:11 -0500
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B2HN98h008516;
-        Wed, 2 Dec 2020 17:30:09 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03fra.de.ibm.com with ESMTP id 353e686j9a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 17:30:09 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B2HRbkw61997566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Dec 2020 17:27:37 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12800A4064;
-        Wed,  2 Dec 2020 17:27:37 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86441A4054;
-        Wed,  2 Dec 2020 17:27:35 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.92.233])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Dec 2020 17:27:35 +0000 (GMT)
-Message-ID: <74ccede608479a55df4a7c9b446f840aedf8bd68.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 02/11] evm: Load EVM key in ima_load_x509() to avoid
- appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Date:   Wed, 02 Dec 2020 12:27:34 -0500
-In-Reply-To: <20201111092302.1589-3-roberto.sassu@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-3-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-02_08:2020-11-30,2020-12-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- suspectscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012020096
+        Wed, 2 Dec 2020 12:30:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606930150;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=d/jS4DIk2eFo5oEaYGUTxcJX+tztVkMUbhd9Mb6koUs=;
+        b=BiGbBg+r6iDr1Zrk7tYXZlYT/jw2oDDyio4Tq9a/+TX4u4mEkcWJnbLBJu65k+wK8/uR0e
+        4mmwe0a9oFa+qvFHUUV5NF4JRMmpMyAy1m7BGpEWBLCiRUzP/DSfRgM2Njoe9NC2AIg4s0
+        6Bt99CVMUZDkjiRrAV+YgEVwQEiRDIY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-8FSyrVC-OKGbLzpy9VbMKQ-1; Wed, 02 Dec 2020 12:29:08 -0500
+X-MC-Unique: 8FSyrVC-OKGbLzpy9VbMKQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAAFE1009456;
+        Wed,  2 Dec 2020 17:29:07 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-117-99.rdu2.redhat.com [10.10.117.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 681555C1B4;
+        Wed,  2 Dec 2020 17:29:07 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id EFBDE22054F; Wed,  2 Dec 2020 12:29:06 -0500 (EST)
+Date:   Wed, 2 Dec 2020 12:29:06 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH] overlay: Implement volatile-specific fsync error
+ behaviour
+Message-ID: <20201202172906.GE147783@redhat.com>
+References: <20201202092720.41522-1-sargun@sargun.me>
+ <20201202150747.GB147783@redhat.com>
+ <f2fc7d688417a1da3d94e819afed6bab404da51f.camel@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f2fc7d688417a1da3d94e819afed6bab404da51f.camel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> Public keys do not need to be appraised by IMA as the restriction on the
-> IMA/EVM keyrings ensures that a key can be loaded only if it is signed with
-> a key in the primary or secondary keyring.
+On Wed, Dec 02, 2020 at 12:02:43PM -0500, Jeff Layton wrote:
 
-Let's clean this up a bit.
-- The public builtin keys ...
-- IMA/EVM trusted keyrings ...
-- on the builtin or secondary keyrings
-
-> However, when evm_load_x509() is called, appraisal is already enabled and
-> a valid IMA signature must be added to the EVM key to pass verification.
+[..]
+> > > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > > index 290983bcfbb3..82a096a05bce 100644
+> > > --- a/fs/overlayfs/super.c
+> > > +++ b/fs/overlayfs/super.c
+> > > @@ -261,11 +261,18 @@ static int ovl_sync_fs(struct super_block *sb, int wait)
+> > >  	struct super_block *upper_sb;
+> > >  	int ret;
+> > >  
+> > > 
+> > > 
+> > > 
+> > > -	if (!ovl_upper_mnt(ofs))
+> > > -		return 0;
+> > > +	ret = ovl_check_sync(ofs);
+> > > +	/*
+> > > +	 * We have to always set the err, because the return value isn't
+> > > +	 * checked, and instead VFS looks at the writeback errseq after
+> > > +	 * this call.
+> > > +	 */
+> > > +	if (ret < 0)
+> > > +		errseq_set(&sb->s_wb_err, ret);
+> > 
+> > I was wondering that why errseq_set() will result in returning error
+> > all the time. Then realized that last syncfs() call must have set
+> > ERRSEQ_SEEN flag and that will mean errseq_set() will increment
+> > counter and that means this syncfs() will will return error too. Cool.
+> > 
+> > > +
+> > > +	if (!ret)
+> > > +		return ret;
+> > >  
+> > > 
+> > > 
+> > > 
+> > > -	if (!ovl_should_sync(ofs))
+> > > -		return 0;
+> > >  	/*
+> > >  	 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
+> > >  	 * All the super blocks will be iterated, including upper_sb.
+> > > @@ -1927,6 +1934,8 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+> > >  	sb->s_op = &ovl_super_operations;
+> > >  
+> > > 
+> > > 
+> > > 
+> > >  	if (ofs->config.upperdir) {
+> > > +		struct super_block *upper_mnt_sb;
+> > > +
+> > >  		if (!ofs->config.workdir) {
+> > >  			pr_err("missing 'workdir'\n");
+> > >  			goto out_err;
+> > > @@ -1943,9 +1952,10 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+> > >  		if (!ofs->workdir)
+> > >  			sb->s_flags |= SB_RDONLY;
+> > >  
+> > > 
+> > > 
+> > > 
+> > > -		sb->s_stack_depth = ovl_upper_mnt(ofs)->mnt_sb->s_stack_depth;
+> > > -		sb->s_time_gran = ovl_upper_mnt(ofs)->mnt_sb->s_time_gran;
+> > > -
+> > > +		upper_mnt_sb = ovl_upper_mnt(ofs)->mnt_sb;
+> > > +		sb->s_stack_depth = upper_mnt_sb->s_stack_depth;
+> > > +		sb->s_time_gran = upper_mnt_sb->s_time_gran;
+> > > +		ofs->upper_errseq = errseq_sample(&upper_mnt_sb->s_wb_err);
+> > 
+> > I asked this question in last email as well. errseq_sample() will return
+> > 0 if current error has not been seen yet. That means next time a sync
+> > call comes for volatile mount, it will return an error. But that's
+> > not what we want. When we mounted a volatile overlay, if there is an
+> > existing error (seen/unseen), we don't care. We only care if there
+> > is a new error after the volatile mount, right?
+> > 
+> > I guess we will need another helper similar to errseq_smaple() which
+> > just returns existing value of errseq. And then we will have to
+> > do something about errseq_check() to not return an error if "since"
+> > and "eseq" differ only by "seen" bit.
+> > 
+> > Otherwise in current form, volatile mount will always return error
+> > if upperdir has error and it has not been seen by anybody.
+> > 
+> > How did you finally end up testing the error case. Want to simualate
+> > error aritificially and test it.
+> > 
 > 
-> Since the restriction is applied on both IMA and EVM keyrings, it is safe
+> If you don't want to see errors that occurred before you did the mount,
+> then you probably can just resurrect and rename the original version of
+> errseq_sample. Something like this, but with a different name:
+> 
+> +errseq_t errseq_sample(errseq_t *eseq)
+> +{
+> +       errseq_t old = READ_ONCE(*eseq);
+> +       errseq_t new = old;
+> +
+> +       /*
+> +        * For the common case of no errors ever having been set, we can skip
+> +        * marking the SEEN bit. Once an error has been set, the value will
+> +        * never go back to zero.
+> +        */
+> +       if (old != 0) {
+> +               new |= ERRSEQ_SEEN;
+> +               if (old != new)
+> +                       cmpxchg(eseq, old, new);
+> +       }
+> +       return new;
+> +}
 
-and update:
-- IMA and EVM trusted keyrings 
+Yes, a helper like this should solve the issue at hand. We are not
+interested in previous errors. This also sets the ERRSEQ_SEEN on 
+sample and it will also solve the other issue when after sampling
+if error gets seen, we don't want errseq_check() to return error.
 
-> to disable appraisal also when the EVM key is loaded. This patch calls
-> evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
+Thinking of some possible names for new function.
 
-, which crosses the normal IMA and EVM boundary,
+errseq_sample_seen()
+errseq_sample_set_seen()
+errseq_sample_consume_unseen()
+errseq_sample_current()
 
-thanks,
-
-Mimi
+Thanks
+Vivek
 
