@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8432CBC81
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 13:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A982CBC7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 13:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388635AbgLBMJU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 07:09:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
+        id S2388591AbgLBMI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 07:08:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388630AbgLBMJT (ORCPT
+        with ESMTP id S2388420AbgLBMIy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 07:09:19 -0500
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A9CCC061A51
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 04:07:25 -0800 (PST)
-Received: by mail-ej1-x643.google.com with SMTP id qw4so3765719ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 04:07:25 -0800 (PST)
+        Wed, 2 Dec 2020 07:08:54 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E1AAC08C5F2
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 04:07:26 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id x16so3806558ejj.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 04:07:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CBfwF7f1z3lWQIK1kOHunMt4z+tzVG6uRhe6POr10HI=;
-        b=IxChIr6CnTVNZrcMdCT4Swp0nqyI/+TlHeYkLnfuh6OFOsdAkvd/epN3RjEA8j6M03
-         hE14t1L+c2fbEcLWn/fhYD7IRb43j/VywEc5GXghaIogZFbCNlrv6frnV4hAgCiADzYO
-         0KWL7epuib/5pm5niWaYLT1KGizWIX6MB8rzm3qV8SwMHNEnomBhgvPK4Rsumj3UHca6
-         e8f3n1X4s7vCTQfOr0dXI8luqNIUgpM0gujErdjAgjtoBXJMKnRu92KJsjiCTw4pOCyO
-         q7ONAMIFsTQGbIwd4929b16Hx+r6SG7Brh3jPIOa2Qs55d24HympyVinOk3UOLYxl8Dx
-         29Fg==
+        bh=YQPwA+EPK2TqK1y02Hl1Va4w5gZayvzdWcX47Nivrn4=;
+        b=WyPLaZlmv+qDCc4YDtjlbAfFw1K3azM2KWqwmRF476nFY5mjM7RycZprXicIUW6oEF
+         AGbmC7OlOXz/Y5J7Q0HZ5nA/0hJBFmbo5Gxj5f6mE5uWC25+WFYRcrQ0QYm51jQ+u6kJ
+         plxE093R9bcEOTpBeppFoNXGrAo9GBkcCyjtMyK+vvW9GwdV/1UQ2Y/lwFGuubtGXmTL
+         q4p3shVUyP1tjIxFxFQFsgVYe3GVdlEILC+wgdnpSA3l65/67udW2fTYlG9nB3gYNzpx
+         5IrVWT3wg4A3D9QERqu0ZvAwsfDvC01ey5zrO1CuuHyyqAszoMIVfLQ+4wXsmmM02LxQ
+         8nPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CBfwF7f1z3lWQIK1kOHunMt4z+tzVG6uRhe6POr10HI=;
-        b=eqPMY8Lglq2rYcaXYe5LFSIbCkZJBWfqCJBIiv0SImTvGfkBAB7U/bexft4xhMXs5j
-         w6exMnax9xIrxmvamfnRHJXwTW+WJefQmxXFoBtPRTP6kCITlWFoDNCQiV1liCRgT7v5
-         6vzZmW+d8pWfNqdwCHGQW46vI/lJ1fmWlScWVJ6YHJ/5UywWFii7hMylhzi+ivYUeuUb
-         x18Tyi2wRKiBQ3qHBk9Haw1iZVQ2Kxw/zaL80uzZv0nzJxiIvFsVGuXnOOdNbUUTquYR
-         zLTS05i+73NpOvuayVdFXoU9kU3BXjZDpzHjokq2Et9qEXGx/U2rCEgzLWSTJ75/yO1v
-         jEzw==
-X-Gm-Message-State: AOAM531IlSllSexjRq9qi0HxcpNgvm8IZ19Ls3j5+eubWYteC+aTvjrK
-        YCuOaegP6SdWFNJYr8w4mNA=
-X-Google-Smtp-Source: ABdhPJyUNw1e6BzyAVzVRCd9UB+8xBe5Rzq8ypjY+72OL0TwNqtBZVnDIMvOQ8vBcEfnhLSk/oPFnw==
-X-Received: by 2002:a17:906:b857:: with SMTP id ga23mr2059381ejb.122.1606910843884;
-        Wed, 02 Dec 2020 04:07:23 -0800 (PST)
+        bh=YQPwA+EPK2TqK1y02Hl1Va4w5gZayvzdWcX47Nivrn4=;
+        b=op1AaJi1V7hmIPgSecTVOomzxZHEdQRjY+W4t2aFebj9Zmygg/bEGzzilLVsEP0HXr
+         b2JwmfYgDWtjqaWibCZqiYQhew83F4yMfGLKNJMce+eowl8Azj71NSZ9LMkUlRmudejd
+         XezUwFedBd1eEc56KDKI/QMx6b7Q+b48hUu1DByk0iYLMRcgkowIqLHJO+RFfkjzxRGM
+         7qsDDVbUnIkvgy0+lPMTLvv1yiCygqGvnEzfEH2iZkWv3bOaYcOtnA2X5gyMDpP1rEcH
+         Jy6JULs0/kWUqdat0pX+EhzwUnmUbN9KAAsYAN29VvzUDBM81q1jyV18/OzpLfiV2cKH
+         s7Gw==
+X-Gm-Message-State: AOAM531fYmfHsQ6c78zXQoWCTc7eO9jngf3Ilw/wwIZW1oQyG+m+I8Jw
+        nLqV2oZdvowLt3YwUziH4GHhDKvkeQY=
+X-Google-Smtp-Source: ABdhPJxesR7ONnR6PIdenhcr9wd4E958z6zgIiox9qNPac+nHm18w2MMzTe67IF7fRzPAIgUyX+QVw==
+X-Received: by 2002:a17:906:b1c8:: with SMTP id bv8mr2000208ejb.208.1606910845088;
+        Wed, 02 Dec 2020 04:07:25 -0800 (PST)
 Received: from localhost.localdomain ([31.210.181.203])
-        by smtp.gmail.com with ESMTPSA id b7sm1058227ejj.85.2020.12.02.04.07.22
+        by smtp.gmail.com with ESMTPSA id b7sm1058227ejj.85.2020.12.02.04.07.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Dec 2020 04:07:23 -0800 (PST)
+        Wed, 02 Dec 2020 04:07:24 -0800 (PST)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/7] fsnotify: separate mark iterator type from object type enum
-Date:   Wed,  2 Dec 2020 14:07:11 +0200
-Message-Id: <20201202120713.702387-6-amir73il@gmail.com>
+Subject: [PATCH 6/7] fsnotify: optimize FS_MODIFY events with no ignored masks
+Date:   Wed,  2 Dec 2020 14:07:12 +0200
+Message-Id: <20201202120713.702387-7-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201202120713.702387-1-amir73il@gmail.com>
 References: <20201202120713.702387-1-amir73il@gmail.com>
@@ -63,245 +63,190 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-They are two different types that use the same enum, so this confusing.
+fsnotify() treats FS_MODIFY events specially - it does not skip them
+even if the FS_MODIFY event does not apear in the object's fsnotify
+mask.  This is because send_to_group() checks if FS_MODIFY needs to
+clear ignored mask of marks.
 
-Use the object type to indicate the type of object mark is attached to
-and the iter type to indicate the type of watch.
+The common case is that an object does not have any mark with ignored
+mask and in particular, that it does not have a mark with ignored mask
+and without the FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY flag.
 
-A group can have two different watches of the same object type (parent
-and child watches) that match the same event.
+Set FS_MODIFY in object's fsnotify mask during fsnotify_recalc_mask()
+if object has a mark with an ignored mask and without the
+FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY flag and remove the special
+treatment of FS_MODIFY in fsnotify(), so that FS_MODIFY events could
+be optimized in the common case.
 
+Call fsnotify_recalc_mask() from fanotify after adding or removing an
+ignored mask from a mark without FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY
+or when adding the FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY flag to a mark
+with ignored mask (the flag cannot be removed by fanotify uapi).
+
+Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c    |  6 ++---
- fs/notify/fsnotify.c             | 26 +++++++++++++-------
- fs/notify/mark.c                 |  4 ++--
- include/linux/fsnotify_backend.h | 41 ++++++++++++++++++++++----------
- 4 files changed, 50 insertions(+), 27 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++----------
+ fs/notify/fsnotify.c               |  8 ++++---
+ fs/notify/mark.c                   |  2 +-
+ include/linux/fsnotify_backend.h   | 15 +++++++++++++
+ 4 files changed, 45 insertions(+), 16 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 1192c9953620..8655a1e7c6a6 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -252,7 +252,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 			return 0;
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index f9c74fa82038..80c36da037bb 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -720,17 +720,18 @@ static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
+ 					    __u32 mask, unsigned int flags,
+ 					    __u32 umask, int *destroy)
+ {
+-	__u32 oldmask = 0;
++	__u32 oldmask, newmask;
+ 
+ 	/* umask bits cannot be removed by user */
+ 	mask &= ~umask;
+ 	spin_lock(&fsn_mark->lock);
++	oldmask = fsnotify_calc_mask(fsn_mark);
+ 	if (!(flags & FAN_MARK_IGNORED_MASK)) {
+-		oldmask = fsn_mark->mask;
+ 		fsn_mark->mask &= ~mask;
+ 	} else {
+ 		fsn_mark->ignored_mask &= ~mask;
  	}
++	newmask = fsnotify_calc_mask(fsn_mark);
+ 	/*
+ 	 * We need to keep the mark around even if remaining mask cannot
+ 	 * result in any events (e.g. mask == FAN_ONDIR) to support incremenal
+@@ -740,7 +741,7 @@ static __u32 fanotify_mark_remove_from_mask(struct fsnotify_mark *fsn_mark,
+ 	*destroy = !((fsn_mark->mask | fsn_mark->ignored_mask) & ~umask);
+ 	spin_unlock(&fsn_mark->lock);
  
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		if (!fsnotify_iter_should_report_type(iter_info, type))
- 			continue;
- 		mark = iter_info->marks[type];
-@@ -271,7 +271,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 		 * If the event is on a child and this mark is on a parent not
- 		 * watching children, don't send it!
- 		 */
--		if (type == FSNOTIFY_OBJ_TYPE_PARENT &&
-+		if (type == FSNOTIFY_ITER_TYPE_PARENT &&
- 		    !(mark->mask & FS_EVENT_ON_CHILD))
- 			continue;
+-	return mask & oldmask;
++	return oldmask & ~newmask;
+ }
  
-@@ -622,7 +622,7 @@ static __kernel_fsid_t fanotify_get_fsid(struct fsnotify_iter_info *iter_info)
- 	int type;
- 	__kernel_fsid_t fsid = {};
+ static int fanotify_remove_mark(struct fsnotify_group *group,
+@@ -798,23 +799,34 @@ static int fanotify_remove_inode_mark(struct fsnotify_group *group,
+ }
  
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		struct fsnotify_mark_connector *conn;
+ static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
+-				       __u32 mask,
+-				       unsigned int flags)
++				       __u32 mask, unsigned int flags,
++				       __u32 *removed)
+ {
+-	__u32 oldmask = -1;
++	__u32 oldmask, newmask;
  
- 		if (!fsnotify_iter_should_report_type(iter_info, type))
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 0676ce4d3352..bae3f306ed79 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -321,7 +321,7 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+ 	spin_lock(&fsn_mark->lock);
++	oldmask = fsnotify_calc_mask(fsn_mark);
+ 	if (!(flags & FAN_MARK_IGNORED_MASK)) {
+-		oldmask = fsn_mark->mask;
+ 		fsn_mark->mask |= mask;
+ 	} else {
+ 		fsn_mark->ignored_mask |= mask;
+-		if (flags & FAN_MARK_IGNORED_SURV_MODIFY)
++		/*
++		 * Setting FAN_MARK_IGNORED_SURV_MODIFY for the first time
++		 * can lead to the removal of the FS_MODIFY bit in calculated
++		 * mask if it was set because of an ignored mask that from now
++		 * on is going to survive FS_MODIFY.
++		 */
++		if ((flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
++		    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)) {
+ 			fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY;
++			if (!(fsn_mark->mask & FS_MODIFY))
++				*removed = FS_MODIFY;
++		}
+ 	}
++	newmask = fsnotify_calc_mask(fsn_mark);
+ 	spin_unlock(&fsn_mark->lock);
  
- 	/* clear ignored on inode modification */
- 	if (mask & FS_MODIFY) {
--		fsnotify_foreach_obj_type(type) {
-+		fsnotify_foreach_iter_type(type) {
- 			if (!fsnotify_iter_should_report_type(iter_info, type))
- 				continue;
- 			mark = iter_info->marks[type];
-@@ -331,7 +331,7 @@ static int send_to_group(__u32 mask, const void *data, int data_type,
+-	return mask & ~oldmask;
++	return newmask & ~oldmask;
+ }
+ 
+ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
+@@ -849,7 +861,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
+ 			     __kernel_fsid_t *fsid)
+ {
+ 	struct fsnotify_mark *fsn_mark;
+-	__u32 added;
++	__u32 added, removed = 0;
+ 
+ 	mutex_lock(&group->mark_mutex);
+ 	fsn_mark = fsnotify_find_mark(connp, group);
+@@ -860,8 +872,8 @@ static int fanotify_add_mark(struct fsnotify_group *group,
+ 			return PTR_ERR(fsn_mark);
  		}
  	}
+-	added = fanotify_mark_add_to_mask(fsn_mark, mask, flags);
+-	if (added & ~fsnotify_conn_mask(fsn_mark->connector))
++	added = fanotify_mark_add_to_mask(fsn_mark, mask, flags, &removed);
++	if (removed || (added & ~fsnotify_conn_mask(fsn_mark->connector)))
+ 		fsnotify_recalc_mask(fsn_mark->connector);
+ 	mutex_unlock(&group->mark_mutex);
  
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		if (!fsnotify_iter_should_report_type(iter_info, type))
- 			continue;
- 		mark = iter_info->marks[type];
-@@ -396,7 +396,7 @@ static unsigned int fsnotify_iter_select_report_types(
- 	int type;
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index bae3f306ed79..9a26207d1b5d 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -502,11 +502,13 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
  
- 	/* Choose max prio group among groups of all queue heads */
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		mark = iter_info->marks[type];
- 		if (mark &&
- 		    fsnotify_compare_groups(max_prio_group, mark->group) > 0)
-@@ -408,7 +408,7 @@ static unsigned int fsnotify_iter_select_report_types(
  
- 	/* Set the report mask for marks from same group as max prio group */
- 	iter_info->report_mask = 0;
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		mark = iter_info->marks[type];
- 		if (mark &&
- 		    fsnotify_compare_groups(max_prio_group, mark->group) == 0)
-@@ -426,7 +426,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
- {
- 	int type;
- 
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		if (fsnotify_iter_should_report_type(iter_info, type))
- 			iter_info->marks[type] =
- 				fsnotify_next_mark(iter_info->marks[type]);
-@@ -511,18 +511,26 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+ 	/*
+-	 * if this is a modify event we may need to clear the ignored masks
+-	 * otherwise return if none of the marks care about this type of event.
++	 * If this is a modify event we may need to clear some ignored masks.
++	 * In that case, the object with ignored masks will have the FS_MODIFY
++	 * event in its mask.
++	 * Otherwise, return if none of the marks care about this type of event.
+ 	 */
+ 	test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+-	if (!(mask & FS_MODIFY) && !(test_mask & marks_mask))
++	if (!(test_mask & marks_mask))
+ 		return 0;
  
  	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
- 
--	iter_info.marks[FSNOTIFY_OBJ_TYPE_SB] =
-+	/*
-+	 * Just in case some backend still assumes that iterator type means
-+	 * object type. We can relax this in the future.
-+	 */
-+	BUILD_BUG_ON(FSNOTIFY_OBJ_TYPE_INODE != (int)FSNOTIFY_ITER_TYPE_INODE);
-+	BUILD_BUG_ON(FSNOTIFY_OBJ_TYPE_VFSMOUNT != (int)FSNOTIFY_ITER_TYPE_VFSMOUNT);
-+	BUILD_BUG_ON(FSNOTIFY_OBJ_TYPE_SB != (int)FSNOTIFY_ITER_TYPE_SB);
-+
-+	iter_info.marks[FSNOTIFY_ITER_TYPE_SB] =
- 		fsnotify_first_mark(&sb->s_fsnotify_marks);
- 	if (mnt) {
--		iter_info.marks[FSNOTIFY_OBJ_TYPE_VFSMOUNT] =
-+		iter_info.marks[FSNOTIFY_ITER_TYPE_VFSMOUNT] =
- 			fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
- 	}
- 	if (inode) {
--		iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
-+		iter_info.marks[FSNOTIFY_ITER_TYPE_INODE] =
- 			fsnotify_first_mark(&inode->i_fsnotify_marks);
- 	}
- 	if (parent) {
--		iter_info.marks[FSNOTIFY_OBJ_TYPE_PARENT] =
-+		iter_info.marks[FSNOTIFY_ITER_TYPE_PARENT] =
- 			fsnotify_first_mark(&parent->i_fsnotify_marks);
- 	}
- 
 diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index 7792f5486d61..ffa682cb747b 100644
+index ffa682cb747b..662963fb510f 100644
 --- a/fs/notify/mark.c
 +++ b/fs/notify/mark.c
-@@ -329,7 +329,7 @@ bool fsnotify_prepare_user_wait(struct fsnotify_iter_info *iter_info)
- {
- 	int type;
- 
--	fsnotify_foreach_obj_type(type) {
-+	fsnotify_foreach_iter_type(type) {
- 		/* This can fail if mark is being removed */
- 		if (!fsnotify_get_mark_safe(iter_info->marks[type])) {
- 			__release(&fsnotify_mark_srcu);
-@@ -358,7 +358,7 @@ void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info)
- 	int type;
- 
- 	iter_info->srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
--	fsnotify_foreach_obj_type(type)
-+	fsnotify_foreach_iter_type(type)
- 		fsnotify_put_mark_wake(iter_info->marks[type]);
+@@ -127,7 +127,7 @@ static void __fsnotify_recalc_mask(struct fsnotify_mark_connector *conn)
+ 		return;
+ 	hlist_for_each_entry(mark, &conn->list, obj_list) {
+ 		if (mark->flags & FSNOTIFY_MARK_FLAG_ATTACHED)
+-			new_mask |= mark->mask;
++			new_mask |= fsnotify_calc_mask(mark);
+ 	}
+ 	*fsnotify_conn_mask_p(conn) = new_mask;
  }
- 
 diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 72bc120a65bc..9d03f031a41b 100644
+index 9d03f031a41b..046fcfb88492 100644
 --- a/include/linux/fsnotify_backend.h
 +++ b/include/linux/fsnotify_backend.h
-@@ -276,10 +276,25 @@ static inline const struct path *fsnotify_data_path(const void *data,
- 	}
- }
+@@ -516,6 +516,21 @@ extern void fsnotify_remove_queued_event(struct fsnotify_group *group,
  
-+/*
-+ * Index to merged marks iterator array that correlates to a type of watch.
-+ * The type of watched object can be deduced from the iterator type, but not
-+ * the other way around, because an event can match different watched objects
-+ * of the same object type.
-+ * For example, both parent and child are watching an object of type inode.
-+ */
-+enum fsnotify_iter_type {
-+	FSNOTIFY_ITER_TYPE_INODE,
-+	FSNOTIFY_ITER_TYPE_VFSMOUNT,
-+	FSNOTIFY_ITER_TYPE_SB,
-+	FSNOTIFY_ITER_TYPE_PARENT,
-+	FSNOTIFY_ITER_TYPE_COUNT
-+};
+ /* functions used to manipulate the marks attached to inodes */
+ 
++/* Get mask for calculating object interest taking ignored mask into account */
++static inline __u32 fsnotify_calc_mask(struct fsnotify_mark *mark)
++{
++	__u32 mask = mark->mask;
 +
-+/* The type of object that a mark is attached to */
- enum fsnotify_obj_type {
- 	FSNOTIFY_OBJ_TYPE_ANY = -1,
- 	FSNOTIFY_OBJ_TYPE_INODE,
--	FSNOTIFY_OBJ_TYPE_PARENT,
- 	FSNOTIFY_OBJ_TYPE_VFSMOUNT,
- 	FSNOTIFY_OBJ_TYPE_SB,
- 	FSNOTIFY_OBJ_TYPE_COUNT,
-@@ -292,37 +307,37 @@ static inline bool fsnotify_valid_obj_type(unsigned int obj_type)
- }
- 
- struct fsnotify_iter_info {
--	struct fsnotify_mark *marks[FSNOTIFY_OBJ_TYPE_COUNT];
-+	struct fsnotify_mark *marks[FSNOTIFY_ITER_TYPE_COUNT];
- 	unsigned int report_mask;
- 	int srcu_idx;
- };
- 
- static inline bool fsnotify_iter_should_report_type(
--		struct fsnotify_iter_info *iter_info, int type)
-+		struct fsnotify_iter_info *iter_info, int iter_type)
- {
--	return (iter_info->report_mask & (1U << type));
-+	return (iter_info->report_mask & (1U << iter_type));
- }
- 
- static inline void fsnotify_iter_set_report_type(
--		struct fsnotify_iter_info *iter_info, int type)
-+		struct fsnotify_iter_info *iter_info, int iter_type)
- {
--	iter_info->report_mask |= (1U << type);
-+	iter_info->report_mask |= (1U << iter_type);
- }
- 
- static inline void fsnotify_iter_set_report_type_mark(
--		struct fsnotify_iter_info *iter_info, int type,
-+		struct fsnotify_iter_info *iter_info, int iter_type,
- 		struct fsnotify_mark *mark)
- {
--	iter_info->marks[type] = mark;
--	iter_info->report_mask |= (1U << type);
-+	iter_info->marks[iter_type] = mark;
-+	iter_info->report_mask |= (1U << iter_type);
- }
- 
- #define FSNOTIFY_ITER_FUNCS(name, NAME) \
- static inline struct fsnotify_mark *fsnotify_iter_##name##_mark( \
- 		struct fsnotify_iter_info *iter_info) \
- { \
--	return (iter_info->report_mask & (1U << FSNOTIFY_OBJ_TYPE_##NAME)) ? \
--		iter_info->marks[FSNOTIFY_OBJ_TYPE_##NAME] : NULL; \
-+	return (iter_info->report_mask & (1U << FSNOTIFY_ITER_TYPE_##NAME)) ? \
-+		iter_info->marks[FSNOTIFY_ITER_TYPE_##NAME] : NULL; \
- }
- 
- FSNOTIFY_ITER_FUNCS(inode, INODE)
-@@ -330,8 +345,8 @@ FSNOTIFY_ITER_FUNCS(parent, PARENT)
- FSNOTIFY_ITER_FUNCS(vfsmount, VFSMOUNT)
- FSNOTIFY_ITER_FUNCS(sb, SB)
- 
--#define fsnotify_foreach_obj_type(type) \
--	for (type = 0; type < FSNOTIFY_OBJ_TYPE_COUNT; type++)
-+#define fsnotify_foreach_iter_type(type) \
-+	for (type = 0; type < FSNOTIFY_ITER_TYPE_COUNT; type++)
- 
- /*
-  * fsnotify_connp_t is what we embed in objects which connector can be attached
++	if (!mark->ignored_mask)
++		return mask;
++
++	/* Interest in FS_MODIFY may be needed for clearing ignored mask */
++	if (!(mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY))
++		mask |= FS_MODIFY;
++
++	return mask;
++}
++
+ /* Get mask of events for a list of marks */
+ extern __u32 fsnotify_conn_mask(struct fsnotify_mark_connector *conn);
+ /* Calculate mask of events for a list of marks */
 -- 
 2.25.1
 
