@@ -2,71 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31DDE2CC22F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 17:27:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E7EC2CC2DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 17:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbgLBQZ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 11:25:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30231 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728177AbgLBQZ2 (ORCPT
+        id S1730576AbgLBQ5l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 11:57:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37348 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730542AbgLBQ5k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 11:25:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606926242;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/KvFOz7MMzTDoHF0bJjNyv+MeqNtUt9D2w2PnLZk360=;
-        b=Z/SymytwvLnd0KnCMoQAezx/ITzFjKo6QenBB8pu4DPgW+MohbEBhg6LgkQqeC1Tm6zU5c
-        6UAgiXdwAbt2SvB4CLncw1jNEMsPZSsgLIPxeGZfmGYLroYXcpelqCsTkDF/nAo8iNtaEN
-        iZlyK0TMEx+fcnWRmoRK9S4k+tOKQ2o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-9wNKgQKzOJy9g31KKd79iw-1; Wed, 02 Dec 2020 11:24:00 -0500
-X-MC-Unique: 9wNKgQKzOJy9g31KKd79iw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EAA4F100E421;
-        Wed,  2 Dec 2020 16:23:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 94C285D9C6;
-        Wed,  2 Dec 2020 16:23:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegt6w4h28VLctpaH46r2pkbcUNJ4pUhwUqZ-zbrOrXPEEQ@mail.gmail.com>
-References: <CAJfpegt6w4h28VLctpaH46r2pkbcUNJ4pUhwUqZ-zbrOrXPEEQ@mail.gmail.com> <3e28d2c7-fbe5-298a-13ba-dcd8fd504666@redhat.com> <20201202160049.GD1447340@iweiny-DESK2.sc.intel.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, Ira Weiny <ira.weiny@intel.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        linux-man <linux-man@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, xfs <linux-xfs@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, Xiaoli Feng <xifeng@redhat.com>
-Subject: Re: [PATCH V2] uapi: fix statx attribute value overlap for DAX & MOUNT_ROOT
+        Wed, 2 Dec 2020 11:57:40 -0500
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 863C3C061A4F
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 08:56:53 -0800 (PST)
+Received: by mail-il1-x141.google.com with SMTP id p5so2156782iln.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 08:56:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QPknBxtQoCpT/zvKKXpkK/ZoNkojGaFc65IMqcOjeCo=;
+        b=znT+GrC5ntQsghSmwd5WkHL3YyU0u2hS19p2l25n+qsOlECRun1wQOJ1DtAoqGdodf
+         PF5JAPnJCuBUwxdNrk6p4h+FIJg2BqSsMNaewCVgWso+ViL/rtZ+rgVDHcOkgS2BE9eW
+         APSE5ahzEyaYTydVbHwbo3esRnf7gdOYytcFoHbX+1dcSZKmx4rz9RhEpJsFDBFSUX7E
+         8AEWLMykbOFYAAya4uUWrV+jPXSOvrwlNTfJ0lEIWsYXpx8Anmxoyb9/AYHbj30JFTdW
+         AYqgFXSJhi5gMOIPnQVXDTYpROxYpOv5zke96hODa5KIF9AqgvUKDqw65sOKwbrzH1bS
+         +6mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QPknBxtQoCpT/zvKKXpkK/ZoNkojGaFc65IMqcOjeCo=;
+        b=hVHsNTOGWfZcPFPUFOvQYdxjHborlbPS8gTHfFdwbTe9pPYwVFFt6WcHDagmHGzKxS
+         rXxJuqoA4r7Lkbg1Dk3UNkS1w3ctW57BQByUFUgbHMIT1v0ilvi2JcBOXsF/sHrhc3r+
+         Ukco9S2ra4LruvEcF+kbIiAhDqCWm/IHr9zlPPA05VQYZ4qIgxByez7IiYg491LLTpQl
+         1KVkl9OXIRuM1U/Rk4ugHrHdj7Nu4zcKxqeDLALEos1iplopQ85ROy/0U6V+DpWrYj8a
+         xIw8k7xzJhRjTzyGk6T4KU1SihLkznrur8hTKgtu5EiBKcMfOdAJ1DatWmxPbGAZl2EP
+         xbng==
+X-Gm-Message-State: AOAM53140RBkRtj4QeVlSVrcXnkIkNIlR3KNeHJ0hNx6DlOvEXG/gnbw
+        cPbwd9d7qFg0jdyb6ymOC1u7mIZqMHCS/A==
+X-Google-Smtp-Source: ABdhPJyxz4IgRtE5sxlFOWEwmI1ekbF5NyPTv+/LiPUVGAiUYzljzebwvQt0VpHBPvn/n7GDuyx3RA==
+X-Received: by 2002:a92:c88d:: with SMTP id w13mr3003916ilo.37.1606928212666;
+        Wed, 02 Dec 2020 08:56:52 -0800 (PST)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id p18sm1376199ile.27.2020.12.02.08.56.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Dec 2020 08:56:52 -0800 (PST)
+Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+References: <20201201120652.487077-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <335f3f7a-8b24-8ef2-8481-0139687d0dbb@kernel.dk>
+Date:   Wed, 2 Dec 2020 09:56:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <641396.1606926232.1@warthog.procyon.org.uk>
-Date:   Wed, 02 Dec 2020 16:23:52 +0000
-Message-ID: <641397.1606926232@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20201201120652.487077-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
-
-> Stable cc also?
+On 12/1/20 5:06 AM, Ming Lei wrote:
+> Pavel reported that iov_iter_npages is a bit heavy in case of bvec
+> iter.
 > 
-> Cc: <stable@vger.kernel.org> # 5.8
+> Turns out it isn't necessary to iterate every page in the bvec iter,
+> and we call iov_iter_npages() just for figuring out how many bio
+> vecs need to be allocated. And we can simply map each vector in bvec iter
+> to bio's vec, so just return iter->nr_segs from bio_iov_iter_nvecs() for
+> bvec iter.
+> 
+> Also rename local variable 'nr_pages' as 'nr_vecs' which exactly matches its
+> real usage.
 
-That seems to be unnecessary, provided there's a Fixes: tag.
+I'd really prefer to keep the renaming separate from the actual change.
 
-David
+-- 
+Jens Axboe
 
