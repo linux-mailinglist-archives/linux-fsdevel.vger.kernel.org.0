@@ -2,143 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F012CC8AF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 22:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB292CC8A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 22:08:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387512AbgLBVKu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 16:10:50 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58194 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726634AbgLBVKu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 16:10:50 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B2L3jgq052776;
-        Wed, 2 Dec 2020 16:10:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=LGkIrjtqa4joGxWb7uI/qvkO4B4va5rfsqLIzouACJ0=;
- b=Tqcx84/+3LacU4+UY8colQcRxLLIUvRYwlaRCZOy5d/ZgWZ7DUiUkiF+X/vSTUxVmjzr
- NdGGnWU1Zkj3v7ma7aCyMEuZNpvCum5Ku0S15p1gf3FSM+t3ev0lesJPRxd8rJfZVyLV
- 5w+WqOsyAfGLIIJZPHJvkEZpuWxPAQXRhoK8V6bnrS6n5sxhTWgxrDkv5eD41UuRbKsI
- cXoSjVph+XLBK+Rhn5q8ctNAKkwK3W3NpLieqS1h2zfgImhWFj+uYQvYVvStqLfV6s2q
- tgnbHeVzDl7tKxwfHqDGwoYgJ+mnKqJks6EikLr94Xkiuh7C/b5FawP1X/Nf4cpDJJQB Ew== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 356jekga8p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 16:10:04 -0500
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B2L4grh064376;
-        Wed, 2 Dec 2020 16:10:03 -0500
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 356jekga7u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 16:10:03 -0500
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B2L7TJj017114;
-        Wed, 2 Dec 2020 21:10:02 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03fra.de.ibm.com with ESMTP id 353e686s1k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Dec 2020 21:10:02 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B2L7UE85309106
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Dec 2020 21:07:30 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1674D4C046;
-        Wed,  2 Dec 2020 21:07:30 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B80B4C04E;
-        Wed,  2 Dec 2020 21:07:28 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.92.233])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Dec 2020 21:07:27 +0000 (GMT)
-Message-ID: <a84520e3c7de9c767cbbc17e8ad894525043e211.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if
- an HMAC key is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        silviu.vlasceanu@huawei.com, stable@vger.kernel.org
-Date:   Wed, 02 Dec 2020 16:07:27 -0500
-In-Reply-To: <20201111092302.1589-4-roberto.sassu@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-4-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-02_12:2020-11-30,2020-12-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012020123
+        id S1728047AbgLBVIi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 16:08:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43092 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726669AbgLBVIh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Dec 2020 16:08:37 -0500
+Date:   Wed, 2 Dec 2020 13:07:53 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1606943277;
+        bh=z7aM84uoaVRXDrRTKXVTwdXKK69LzrzJ1yjZQqo3344=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EZNH/dFHxK112U8asIp9Tyi1NmmUiP3WZ8jKeTdDrVskZASdlAR/S1wDBS3JHVR6j
+         3z+pV6U+lXcVEMTt2lE9kKMNWS54qhtKYSyZJ1y/OwNcNYH+2zcwZXXoqTyEQWwNpS
+         ZkQymrXas2DHQb0qKTLFm0/3JkDC9FC7r39gbgLcj5+c/ZI+idYLTm/7F/T7NVWXvO
+         q4jhvHNzRrrww4sIAKh0IFFHKFWbaAxr6ln+yidV6vyDxnLQUewpajhRHkcPDimBi2
+         +7L2ec88F9TKg8MI6yFF0aM//oPxYTD/cl8b1g/XUOyYDXPhM0kBavcUQeTmQOIU7o
+         p9GqnFEnkOM7g==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/9] Allow deleting files with unsupported encryption
+ policy
+Message-ID: <X8gCKTx96rXUMh0i@gmail.com>
+References: <20201125002336.274045-1-ebiggers@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201125002336.274045-1-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be set to
-> temporarily disable metadata verification until all xattrs/attrs necessary
-> to verify an EVM portable signature are copied to the file. This flag is
-> cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
-> calculated on unverified xattrs/attrs.
+On Tue, Nov 24, 2020 at 04:23:27PM -0800, Eric Biggers wrote:
+> Currently it's impossible to delete files that use an unsupported
+> encryption policy, as the kernel will just return an error when
+> performing any operation on the top-level encrypted directory, even just
+> a path lookup into the directory or opening the directory for readdir.
 > 
-> Currently EVM unnecessarily denies setting this flag if EVM is initialized
-> with a public key, which is not a concern as it cannot be used to trust
-> xattrs/attrs updates. This patch removes this limitation.
+> It's desirable to return errors for most operations on files that use an
+> unsupported encryption policy, but the current behavior is too strict.
+> We need to allow enough to delete files, so that people can't be stuck
+> with undeletable files when downgrading kernel versions.  That includes
+> allowing directories to be listed and allowing dentries to be looked up.
 > 
-> Cc: stable@vger.kernel.org # 4.16.x
-> Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  Documentation/ABI/testing/evm      | 5 +++--
->  security/integrity/evm/evm_secfs.c | 2 +-
->  2 files changed, 4 insertions(+), 3 deletions(-)
+> This series fixes this (on ext4, f2fs, and ubifs) by treating an
+> unsupported encryption policy in the same way as "key unavailable" in
+> the cases that are required for a recursive delete to work.
 > 
-> diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
-> index 3c477ba48a31..eb6d70fd6fa2 100644
-> --- a/Documentation/ABI/testing/evm
-> +++ b/Documentation/ABI/testing/evm
-> @@ -49,8 +49,9 @@ Description:
->  		modification of EVM-protected metadata and
->  		disable all further modification of policy
->  
-> -		Note that once a key has been loaded, it will no longer be
-> -		possible to enable metadata modification.
-> +		Note that once an HMAC key has been loaded, it will no longer
-> +		be possible to enable metadata modification and, if it is
-> +		already enabled, it will be disabled.
->  
->  		Until key loading has been signaled EVM can not create
->  		or validate the 'security.evm' xattr, but returns
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-> index cfc3075769bb..92fe26ace797 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -84,7 +84,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
->  	 * keys are loaded.
->  	 */
->  	if ((i & EVM_ALLOW_METADATA_WRITES) &&
-> -	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
-> +	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
->  	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
->  		return -EPERM;
->  
+> The actual fix is in patch 9, so see that for more details.
+> 
+> Patches 1-8 are cleanups that prepare for the actual fix by removing
+> direct use of fscrypt_get_encryption_info() by filesystems.
+> 
+> This patchset applies to branch "master" (commit 4a4b8721f1a5) of
+> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git.
+> 
+> Eric Biggers (9):
+>   ext4: remove ext4_dir_open()
+>   f2fs: remove f2fs_dir_open()
+>   ubifs: remove ubifs_dir_open()
+>   ext4: don't call fscrypt_get_encryption_info() from dx_show_leaf()
+>   fscrypt: introduce fscrypt_prepare_readdir()
+>   fscrypt: move body of fscrypt_prepare_setattr() out-of-line
+>   fscrypt: move fscrypt_require_key() to fscrypt_private.h
+>   fscrypt: unexport fscrypt_get_encryption_info()
+>   fscrypt: allow deleting files with unsupported encryption policy
+> 
+>  fs/crypto/fname.c           |  8 +++-
+>  fs/crypto/fscrypt_private.h | 28 ++++++++++++++
+>  fs/crypto/hooks.c           | 16 +++++++-
+>  fs/crypto/keysetup.c        | 20 ++++++++--
+>  fs/crypto/policy.c          | 22 +++++++----
+>  fs/ext4/dir.c               | 16 ++------
+>  fs/ext4/namei.c             | 10 +----
+>  fs/f2fs/dir.c               | 10 +----
+>  fs/ubifs/dir.c              | 11 +-----
+>  include/linux/fscrypt.h     | 75 +++++++++++++++++++------------------
+>  10 files changed, 126 insertions(+), 90 deletions(-)
+> 
+> 
+> base-commit: 4a4b8721f1a5e4b01e45b3153c68d5a1014b25de
 
-If an HMAC key is loaded EVM_ALLOW_METADATA_WRITES should already be
-disabled.  Testing EVM_ALLOW_METADATA_WRITES shouldn't be needed. 
-Please update the comment: "Don't allow a request to freshly enable
-metadata writes if keys are loaded."
+Any more comments on this patch series?
 
-thanks,
-
-Mimi
-
+- Eric
