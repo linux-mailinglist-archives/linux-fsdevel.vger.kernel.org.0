@@ -2,99 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0732CC414
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 18:44:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C22172CC47A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 19:02:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbgLBRnZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 12:43:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730914AbgLBRnZ (ORCPT
+        id S2387479AbgLBSCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 13:02:02 -0500
+Received: from ale.deltatee.com ([204.191.154.188]:53828 "EHLO
+        ale.deltatee.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbgLBSCB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 12:43:25 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6AC2C061A04;
-        Wed,  2 Dec 2020 09:42:10 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id 81so1079930ioc.13;
-        Wed, 02 Dec 2020 09:42:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SU2667MQNtAIEDDUA9sQyXfNq/LH/Dr/dctHqxLpERE=;
-        b=sgpyQzMIgWTsyfxgCY2mLTF757SetyFuKlcBRuQ/iwmBQP0Eu+a5mMkx+ekzkUxyTl
-         bJFVWJ73+EIEcopDc1n61uRUC2vWcIrNyLkFr7sJCqa8+iGP0hewVw6AEBxrT7jUJYtH
-         m7T/mJGeQnONBUxD4baolU62DMmvT4/pzdYnRuGos7FXiMmdGgsrAqxt27U75Zr2zvzN
-         Jl9ZUMr3bWMUGldk1jbu8GjKjbCH6e9Km60hntvfuioSZsIzN5Hs0VvfxYI6X+HVpHKI
-         2jRu6i2YSKjaBxg/cO7wvP5c6DBW5neoRZ8VsFTrE5Faq5ENdrciBk55YZCmalbzL303
-         7zQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SU2667MQNtAIEDDUA9sQyXfNq/LH/Dr/dctHqxLpERE=;
-        b=ory+hh2dHEwR6LSgd0KLYDhF9Xyb770NEImLswpxkqwEnTdeE0SwGfADH9cqsN3Ci3
-         g+BPEz9r4+BptcAjL7AaNoeYYmqEiMqKKDJNUKYnG8YbotLoGi3taqD3H/qeWquVh2ML
-         pgEtFHJqfG5ryQfqCDNboFALIri+tzLpDShnLm5ywRJXGig4GdW8bURWyrE/7eYjWmlc
-         wAyRFN7xIoIAKk/bCQLvtz3U05/N2jABb0rkltEmHONdzcAZb1AQ9iJCYCQGzluTheoU
-         9ojSKEJEMvldfYgnqY8gXNy1YObDhbp5yaV2U9/ofeqvnbZGqFHNTSiyH6D3yj4PQixF
-         kxVg==
-X-Gm-Message-State: AOAM530SlpYUPPd8+TpO6omdE9TiVR/+/YVVxzVVLN3E719pdsIynqkZ
-        kdcCGW3YzcyNE6C7+eNzBz4i2hwpvvkqbvZfBKg=
-X-Google-Smtp-Source: ABdhPJzgVccBZ3lm0HQ6lozVeGujXueHHWGocCl1fhlxOmyBX611+HaOw+S0c+MsTD93Rrj1P2FQnG04P6iZ/HZIRlI=
-X-Received: by 2002:a5d:964a:: with SMTP id d10mr2904208ios.5.1606930930065;
- Wed, 02 Dec 2020 09:42:10 -0800 (PST)
+        Wed, 2 Dec 2020 13:02:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=deltatee.com; s=20200525; h=Subject:In-Reply-To:MIME-Version:Date:
+        Message-ID:From:References:Cc:To:content-disposition;
+        bh=PNgBCQ8XfFmn9D3DM+iYXdqG+oFaCFQKqsKGuaozXnM=; b=I/z1+NEbS5rhAEcJyNoJdYZjKX
+        GF2BGYAtWOziMnVigqzE1eUHMglwIZi+OmM1AakjZs+Hsd+bzWcf+PlXB/NIrTjj2GlCUoWYRDZcR
+        zPrHxLOH3/uzMbPUwi8F4aVw+xFx1S2W8X9T3V8IPnUoy56PN4haxXE8+yqphc/TCQmKcb8g8ZBDB
+        dFrTJvFFcAG2SkWwRdgs6sezejN5wBuhZoRuXG/ncxXX65UP6Ef8E3zQkSlkTF4IEVKC8dcAdHVlK
+        +xQADBoG7nV0lmFg7pnNxU24eHo65/Fy8AJIsfGoESJY8P6Q+68xlKurQ45l25yeVq2/CtZ28awXH
+        iDej8pIw==;
+Received: from s01060023bee90a7d.cg.shawcable.net ([24.64.145.4] helo=[192.168.0.10])
+        by ale.deltatee.com with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <logang@deltatee.com>)
+        id 1kkWRD-0003mr-EY; Wed, 02 Dec 2020 11:01:12 -0700
+To:     Christoph Hellwig <hch@lst.de>,
+        Ralph Campbell <rcampbell@nvidia.com>
+Cc:     linux-mm@kvack.org, nouveau@lists.freedesktop.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jerome Glisse <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Alistair Popple <apopple@nvidia.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Bharata B Rao <bharata@linux.ibm.com>,
+        Zi Yan <ziy@nvidia.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ben Skeggs <bskeggs@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org
+References: <20201106005147.20113-1-rcampbell@nvidia.com>
+ <20201106005147.20113-4-rcampbell@nvidia.com> <20201106080322.GE31341@lst.de>
+ <a7b8b90c-09b7-2009-0784-908b61f61ef2@nvidia.com>
+ <20201109091415.GC28918@lst.de>
+ <bbf1f0df-85f3-5887-050e-beb2aad750f2@nvidia.com>
+ <20201202101426.GC7597@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <7229bb21-7bf7-4989-e7cf-210834190693@deltatee.com>
+Date:   Wed, 2 Dec 2020 11:01:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-References: <20201202092720.41522-1-sargun@sargun.me> <20201202150747.GB147783@redhat.com>
-In-Reply-To: <20201202150747.GB147783@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 2 Dec 2020 19:41:59 +0200
-Message-ID: <CAOQ4uxh0CuGGYYjV+H2MpqN+nmbmogGuYt70sOnE2rX+iw36kQ@mail.gmail.com>
-Subject: Re: [PATCH] overlay: Implement volatile-specific fsync error behaviour
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20201202101426.GC7597@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 24.64.145.4
+X-SA-Exim-Rcpt-To: linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org, dan.j.williams@intel.com, akpm@linux-foundation.org, shuah@kernel.org, bskeggs@redhat.com, yang.shi@linux.alibaba.com, kirill.shutemov@linux.intel.com, ziy@nvidia.com, bharata@linux.ibm.com, jgg@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com, jglisse@redhat.com, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, nouveau@lists.freedesktop.org, linux-mm@kvack.org, rcampbell@nvidia.com, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        MYRULES_FREE,NICE_REPLY_A autolearn=no autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v3 3/6] mm: support THP migration to device private memory
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I asked this question in last email as well. errseq_sample() will return
-> 0 if current error has not been seen yet. That means next time a sync
-> call comes for volatile mount, it will return an error. But that's
-> not what we want. When we mounted a volatile overlay, if there is an
-> existing error (seen/unseen), we don't care. We only care if there
-> is a new error after the volatile mount, right?
->
-> I guess we will need another helper similar to errseq_smaple() which
-> just returns existing value of errseq. And then we will have to
-> do something about errseq_check() to not return an error if "since"
-> and "eseq" differ only by "seen" bit.
->
-> Otherwise in current form, volatile mount will always return error
-> if upperdir has error and it has not been seen by anybody.
->
-> How did you finally end up testing the error case. Want to simualate
-> error aritificially and test it.
->
 
-Good spotting!
 
-Besides the specialized test for sync error,
-I wonder if anybody ever tested "volatile" setup with xfstests or unionmount?
+On 2020-12-02 3:14 a.m., Christoph Hellwig wrote:>>
+MEMORY_DEVICE_PCI_P2PDMA:
+>> Struct pages are created in pci_p2pdma_add_resource() and represent device
+>> memory accessible by PCIe bar address space. Memory is allocated with
+>> pci_alloc_p2pmem() based on a byte length but the gen_pool_alloc_owner()
+>> call will allocate memory in a minimum of PAGE_SIZE units.
+>> Reference counting is +1 per *allocation* on the pgmap->ref reference count.
+>> Note that this is not +1 per page which is what put_page() expects. So
+>> currently, a get_page()/put_page() works OK because the page reference count
+>> only goes 1->2 and 2->1. If it went to zero, the pgmap->ref reference count
+>> would be incorrect if the allocation size was greater than one page.
+>>
+>> I see pci_alloc_p2pmem() is called by nvme_alloc_sq_cmds() and
+>> pci_p2pmem_alloc_sgl() to create a command queue and a struct scatterlist *.
+>> Looks like sg_page(sg) returns the ZONE_DEVICE struct page of the scatterlist.
+>> There are a huge number of places sg_page() is called so it is hard to tell
+>> whether or not get_page()/put_page() is ever called on MEMORY_DEVICE_PCI_P2PDMA
+>> pages.
+> 
+> Nothing should call get_page/put_page on them, as they are not treated
+> as refcountable memory.  More importantly nothing is allowed to keep
+> a reference longer than the time of the I/O.
 
-In xfsftest can set envvar OVERLAY_MOUNT_OPTIONS="-o volatile"
+Yes, right now this is safe, as Christoph notes there are no places
+where these should be got/put.
 
-In unionmount I have a branch [1] with support for envvar
-UNIONMOUNT_MNTOPTIONS.
+But eventually we'll need to change how pci_alloc_p2pmem() works to take
+references on the actual pages and allow freeing individual pages,
+similar to what you suggest. This is one of the issues Jason pointed out
+in my last RFC to try to pass these pages through GUP.
 
-I did not merge this change to master because nobody (but me) tested
-it, so that would be a good opportunity (hint hint)
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/unionmount-testsuite/commits/envvars
+Logan
