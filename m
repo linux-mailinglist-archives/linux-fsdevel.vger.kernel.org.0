@@ -2,103 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 364A62CB58F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 08:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DBE82CB59B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 08:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbgLBHN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 02:13:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59924 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgLBHN0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 02:13:26 -0500
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51A03C0613CF;
-        Tue,  1 Dec 2020 23:12:46 -0800 (PST)
-Received: by mail-pl1-x641.google.com with SMTP id u2so613397pls.10;
-        Tue, 01 Dec 2020 23:12:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ya+0u8oPqKce5WddvEwrQ5QUESHFPHjBSXzdciQAiSg=;
-        b=oJkuYre15ItUH3uiytzTvI1fFm1DG6GG6D2TqWyjB5ddSDMva5f5RJetckeiTDvHQ+
-         OGVdu33ohScQl5hmzhlEaqsmw+IjRPUbGNnhHqIuc11lwx9bSyNYYLSGaHWFPksbLPcJ
-         Bubib2ummhxJonw4bFv2brG/dQKxgS9tXCpPg921MPqb+gYJtBD9yo1roMNEIAGZ+QTg
-         2oYaDntyyrKnTTcKujwpHdZ5io/lf+Xy/wokhnHLRKZhhB+66rd23+j5wRKVZTclfdwF
-         iv8qpO59tj5pM0kOWpFCYBOXcEUn2FdOHoHmb98Fd1Tu87oVMN9p96OLBUAkoa3B8fSK
-         EVzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ya+0u8oPqKce5WddvEwrQ5QUESHFPHjBSXzdciQAiSg=;
-        b=da3OgdnH5R2L0Di+tEj8IlmdKkMzOwvF/Ba9HYjEl1QO1WQEwBq+7zCbaco1Vw4jwR
-         bC0vlkOk+ExjngJB+gBuA7O2BGG2a8DogIdAd85U5H6MyDGx7LLhv2OdVdKzHorL7Xe8
-         sqc+pjzstUzBhQrkjMBT2IPDIR16M1gcBupjtNNHR+uZpiaq0GtUa2eYDGknWx4VIcER
-         EaDkWjd1Suxb7brQOTRWwy7mJG4yQE/3gnJUg9YJePgEGO5SEAnWoqL7rhq73+3EmHki
-         bfAx6FbI9irzTizM3W9ZqQaTNBZ5jYVUQW7xh9yeTwWIbOMJLpQ8U3ihP390hze65Vmq
-         1Ygw==
-X-Gm-Message-State: AOAM531h0U90k/Vg782scGVBc7XCtinyQh1HpkfDG2c9k+dxR4YtYxbq
-        rThMnMejSU+cej0IKeInv4l+Ws6QruTSQg==
-X-Google-Smtp-Source: ABdhPJxFlSWiJUnyMAbdS77a6OqK9xSZe2X2wwa/cT4W47hkn0BlkITY9J3HdtHjl/w7hvyxb6UFUw==
-X-Received: by 2002:a17:90a:bb91:: with SMTP id v17mr1111477pjr.231.1606893165171;
-        Tue, 01 Dec 2020 23:12:45 -0800 (PST)
-Received: from ?IPv6:2601:647:4700:9b2:2c16:d412:96a3:80fc? ([2601:647:4700:9b2:2c16:d412:96a3:80fc])
-        by smtp.gmail.com with ESMTPSA id e23sm1111590pfd.64.2020.12.01.23.12.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Dec 2020 23:12:43 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
-Subject: Re: [RFC PATCH 11/13] fs/userfaultfd: complete write asynchronously
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20201129004548.1619714-12-namit@vmware.com>
-Date:   Tue, 1 Dec 2020 23:12:42 -0800
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <8405A413-239A-47E8-9D46-B6060EF86A68@gmail.com>
-References: <20201129004548.1619714-1-namit@vmware.com>
- <20201129004548.1619714-12-namit@vmware.com>
-To:     linux-fsdevel@vger.kernel.org
-X-Mailer: Apple Mail (2.3608.120.23.2.4)
+        id S2387569AbgLBHPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 02:15:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728105AbgLBHPU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Dec 2020 02:15:20 -0500
+Date:   Wed, 2 Dec 2020 09:14:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606893279;
+        bh=r9lBvNLf060yzQHPZcKoDIPwOZLCXF+OC0jER6EqYE8=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wT49VF25j17+qMQAVEXVRjsH4L8jOTzl07zqrb3R6/MykEtip20Xt9J18zFMOaZ2v
+         UIE8Gqusz6j75TITTsJbOfI3E3FfrTzJ6BOWagH5bzy9BLdh+yt2jnejJgPuPHA9os
+         2VTy7RW8ddzE/3xCPSiM0eGtnB7iUkiaQi7so7e4=
+From:   Mike Rapoport <rppt@kernel.org>
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matt Turner <mattst88@gmail.com>, Meelis Roos <mroos@linux.ee>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Will Deacon <will@kernel.org>, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mm@kvack.org, linux-snps-arc@lists.infradead.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH v2 00/13] arch, mm: deprecate DISCONTIGMEM
+Message-ID: <20201202071427.GD751215@kernel.org>
+References: <43c53597-6267-bdc2-a975-0aab5daa0d37@physik.fu-berlin.de>
+ <20201117062316.GB370813@kernel.org>
+ <a7d01146-77f9-d363-af99-af3aee3789b4@physik.fu-berlin.de>
+ <20201201102901.GF557259@kernel.org>
+ <e3d5d791-8e4f-afcc-944c-24f66f329bd7@physik.fu-berlin.de>
+ <20201201121033.GG557259@kernel.org>
+ <49a2022c-f106-55ec-9390-41307a056517@physik.fu-berlin.de>
+ <20201201135623.GA751215@kernel.org>
+ <4c752ff0-27a6-b9d7-ab81-8aac1a3b7b65@physik.fu-berlin.de>
+ <ea5bae0e-9f27-355f-d841-cf8b362b0b70@physik.fu-berlin.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea5bae0e-9f27-355f-d841-cf8b362b0b70@physik.fu-berlin.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Nov 28, 2020, at 4:45 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
-> 
-> From: Nadav Amit <namit@vmware.com>
-> 
-> Userfaultfd writes can now be used for copy/zeroing. When using iouring
-> with userfaultfd, performing the copying/zeroing on the faulting thread
-> instead of the handler/iouring thread has several advantages:
-> 
-> (1) The data of the faulting thread will be available on the local
-> caches, which would make subsequent memory accesses faster.
-> 
-> (2) find_vma() would be able to use the vma-cache, which cannot be done
-> from a different process or io-uring kernel thread.
-> 
-> (3) The page is more likely to be allocated on the correct NUMA node.
-> 
-> To do so, userfaultfd work queue structs are extended to hold the
-> information that is required for the faulting thread to copy/zero. The
-> handler wakes one of the faulting threads to perform the copy/zero and
-> that thread wakes the other threads after the zero/copy is done.
+Hi Adrian,
 
-I noticed some bugs of mine in this patch, but more importantly I realized
-that the there may be a more performant solution to do the copying on the
-faulting thread - without async-writes.
+On Tue, Dec 01, 2020 at 08:55:37PM +0100, John Paul Adrian Glaubitz wrote:
+> Hi Mike!
+> 
+> On 12/1/20 4:07 PM, John Paul Adrian Glaubitz wrote:
+> > This fixes the issue for me.
+> > 
+> > Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> 
+> I just booted the kernel from the linux-mm branch and I can't get the hpsa driver
+> to work anymore. Even if I compile it into the kernel, the driver is no longer
+> loaded and hence I can't access the disks.
+> 
+> Any idea what could be wrong?
 
-Please do not review this patch and the next one (12/13).
+I know nearly nothing about SCSI, I can only suggest to enable all the
+debug options available and see if anything shows up :)
 
-Feedback for the rest of the series is of course welcomed.
+> Adrian
+> 
+> -- 
+>  .''`.  John Paul Adrian Glaubitz
+> : :' :  Debian Developer - glaubitz@debian.org
+> `. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+>   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> 
+> 
 
-Regards,
-Nadav
+-- 
+Sincerely yours,
+Mike.
