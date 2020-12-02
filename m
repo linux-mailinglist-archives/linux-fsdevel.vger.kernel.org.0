@@ -2,220 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CEA2CBC2C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 12:59:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 295712CBC6B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Dec 2020 13:08:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbgLBL5i convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 2 Dec 2020 06:57:38 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2192 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgLBL5i (ORCPT
+        id S1729508AbgLBMH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 07:07:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727349AbgLBMH7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 06:57:38 -0500
-Received: from fraeml703-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CmHTJ0gSgz67GZG;
-        Wed,  2 Dec 2020 19:55:00 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Wed, 2 Dec 2020 12:56:55 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.002;
- Wed, 2 Dec 2020 12:56:55 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-Thread-Topic: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-Thread-Index: AQHWuAxk5SBMtTsknkm2+R4w/QyBPKnj0s2g
-Date:   Wed, 2 Dec 2020 11:56:55 +0000
-Message-ID: <a401e63a91114daba2037e2b0083101f@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
- <20201111092302.1589-5-roberto.sassu@huawei.com>
-In-Reply-To: <20201111092302.1589-5-roberto.sassu@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 2 Dec 2020 07:07:59 -0500
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E15C0613D6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Dec 2020 04:07:18 -0800 (PST)
+Received: by mail-ed1-x543.google.com with SMTP id u19so3589977edx.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Dec 2020 04:07:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6ejMN+8nc9uRqXepJKfsN6bAVPzr7TBjjq21cetSRdE=;
+        b=VXIVgSABEIwiSOlLrE7otJYcec5s0K/eWg7qq1S1nMioZZ+pTnhMxta2YZs0zonEIj
+         nbFE69U/0kB2XSFuDZialpCmiSokhKXfGJ+9xS/SZFY24gbX6sjQirpqGrxDQ6PN6qGx
+         T3fJWWvth7RealnXXSXxHkA4Np7AraeSgn4JNLqpV+37w/Ch2Q12q9TBkOeSl2Az12i+
+         btKX35IpgXHVX52dnV54lFGfoa2L7/FGr9pcDsPlta6+v85Virs4vO5TObyZ8DCBPyqz
+         uCLuz9GzKMttUU1xeBJcCNdGHYOMx5xHaL6/0Pm0JDkTCIxJpinw9uAeiK6jBsmaQYMv
+         Ovzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6ejMN+8nc9uRqXepJKfsN6bAVPzr7TBjjq21cetSRdE=;
+        b=dTG7h6tNrIuLKBKyj02kFTmQVVbzpNi4z7Qm2T90AmpMwOjGxMDvmMusyaGUzIUh1v
+         cvXlskLB0hVmBgmoXVA+/YKqEO8Ael/lBAloqP9xzajF+4fk9kuJ2obnDApN1gYcRImr
+         KwGMQXrjtpfI/5yDHfLREB3TZgtdCpwuu+Hj+ZNY5Td+qeVHOQUcz5i/zR3OhOA+7kPK
+         Cr9ODlxxjikIswTjnSO7ZDzjCFYZrlcLCeib9eHoQti6h/q76gVb5KKwMhSclbHHORtR
+         LicDwOWIRQjRQOOOP4BKni0knOCyjYoE4xWIyDEGijUYVrzobQ3hK9AZuV8K3zXFstqJ
+         FwTw==
+X-Gm-Message-State: AOAM530CIHC7dUq7vvxnTHx66PWO4FsUl1+I+IeOmFY+dleXOCHXDs2C
+        ZmMMUc12P5PP0uD3KUA15ZrXX8b3WE8=
+X-Google-Smtp-Source: ABdhPJyPf3biQkLwm4YhO5KNHyhMBKgWEXRm6Rc4TnfQW0xmlYQ47a7gbcJR8cfQpJ0PsGys1ydExA==
+X-Received: by 2002:a05:6402:36a:: with SMTP id s10mr2195105edw.216.1606910837340;
+        Wed, 02 Dec 2020 04:07:17 -0800 (PST)
+Received: from localhost.localdomain ([31.210.181.203])
+        by smtp.gmail.com with ESMTPSA id b7sm1058227ejj.85.2020.12.02.04.07.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Dec 2020 04:07:16 -0800 (PST)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/7] fsnotify fixes and cleanups
+Date:   Wed,  2 Dec 2020 14:07:06 +0200
+Message-Id: <20201202120713.702387-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Roberto Sassu
-> Sent: Wednesday, November 11, 2020 10:23 AM
-> ima_inode_setxattr() and ima_inode_removexattr() hooks are called
-> before an
-> operation is performed. Thus, ima_reset_appraise_flags() should not be
-> called there, as flags might be unnecessarily reset if the operation is
-> denied.
-> 
-> This patch introduces the post hooks ima_inode_post_setxattr() and
-> ima_inode_post_removexattr(), removes ima_inode_removexattr() and
-> adds the
-> call to ima_reset_appraise_flags() in the new functions.
+Jan,
 
-Removing ima_inode_removexattr() is not correct. We should still prevent
-that security.ima is removed when CAP_SYS_ADMIN is not set. I will fix
-this in the next version.
+I was working on some non urgent cleanups and stumbled on a bug,
+so flushing my patch queue as is.
 
-Roberto
+Patches 1-2 are cleanups needed for the bug fix in patch 3.
+This [1] LTP test demonstrates the bug.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+Patches 4-5 are pretty simple cleanups that you may or may not like
+to apply without the work that they build up to (I started this as
+prep work for subtree marks iterator).
 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  fs/xattr.c                            |  2 ++
->  include/linux/ima.h                   | 19 +++++++++++++++----
->  security/integrity/ima/ima_appraise.c | 22 +++++++++++++++-------
->  security/security.c                   |  4 +---
->  4 files changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index cd7a563e8bcd..149b8cf5f99f 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -16,6 +16,7 @@
->  #include <linux/namei.h>
->  #include <linux/security.h>
->  #include <linux/evm.h>
-> +#include <linux/ima.h>
->  #include <linux/syscalls.h>
->  #include <linux/export.h>
->  #include <linux/fsnotify.h>
-> @@ -474,6 +475,7 @@ __vfs_removexattr_locked(struct dentry *dentry,
-> const char *name,
-> 
->  	if (!error) {
->  		fsnotify_xattr(dentry);
-> +		ima_inode_post_removexattr(dentry, name);
->  		evm_inode_post_removexattr(dentry, name);
->  	}
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index ac3d82f962f2..19a775fa2ba5 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -150,7 +150,12 @@ extern bool is_ima_appraise_enabled(void);
->  extern void ima_inode_post_setattr(struct dentry *dentry);
->  extern int ima_inode_setxattr(struct dentry *dentry, const char
-> *xattr_name,
->  		       const void *xattr_value, size_t xattr_value_len);
-> -extern int ima_inode_removexattr(struct dentry *dentry, const char
-> *xattr_name);
-> +extern void ima_inode_post_setxattr(struct dentry *dentry,
-> +				    const char *xattr_name,
-> +				    const void *xattr_value,
-> +				    size_t xattr_value_len);
-> +extern void ima_inode_post_removexattr(struct dentry *dentry,
-> +				       const char *xattr_name);
->  #else
->  static inline bool is_ima_appraise_enabled(void)
->  {
-> @@ -170,10 +175,16 @@ static inline int ima_inode_setxattr(struct dentry
-> *dentry,
->  	return 0;
->  }
-> 
-> -static inline int ima_inode_removexattr(struct dentry *dentry,
-> -					const char *xattr_name)
-> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
-> +					   const char *xattr_name,
-> +					   const void *xattr_value,
-> +					   size_t xattr_value_len)
-> +{
-> +}
-> +
-> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
-> +					      const char *xattr_name)
->  {
-> -	return 0;
->  }
->  #endif /* CONFIG_IMA_APPRAISE */
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c
-> b/security/integrity/ima/ima_appraise.c
-> index 8361941ee0a1..77c01f50425e 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -574,21 +574,29 @@ int ima_inode_setxattr(struct dentry *dentry,
-> const char *xattr_name,
->  	if (result == 1) {
->  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
->  			return -EINVAL;
-> -		ima_reset_appraise_flags(d_backing_inode(dentry),
-> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
->  		result = 0;
->  	}
->  	return result;
->  }
-> 
-> -int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
-> +void ima_inode_post_setxattr(struct dentry *dentry, const char
-> *xattr_name,
-> +			     const void *xattr_value, size_t xattr_value_len)
-> +{
-> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
-> +	int result;
-> +
-> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
-> +				   xattr_value_len);
-> +	if (result == 1)
-> +		ima_reset_appraise_flags(d_backing_inode(dentry),
-> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
-> +}
-> +
-> +void ima_inode_post_removexattr(struct dentry *dentry, const char
-> *xattr_name)
->  {
->  	int result;
-> 
->  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
-> -	if (result == 1) {
-> +	if (result == 1)
->  		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> -		result = 0;
-> -	}
-> -	return result;
->  }
-> diff --git a/security/security.c b/security/security.c
-> index a28045dc9e7f..fc43f45938b4 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1309,6 +1309,7 @@ void security_inode_post_setxattr(struct dentry
-> *dentry, const char *name,
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return;
->  	call_void_hook(inode_post_setxattr, dentry, name, value, size,
-> flags);
-> +	ima_inode_post_setxattr(dentry, name, value, size);
->  	evm_inode_post_setxattr(dentry, name, value, size);
->  }
-> 
-> @@ -1339,9 +1340,6 @@ int security_inode_removexattr(struct dentry
-> *dentry, const char *name)
->  	ret = call_int_hook(inode_removexattr, 1, dentry, name);
->  	if (ret == 1)
->  		ret = cap_inode_removexattr(dentry, name);
-> -	if (ret)
-> -		return ret;
-> -	ret = ima_inode_removexattr(dentry, name);
->  	if (ret)
->  		return ret;
->  	return evm_inode_removexattr(dentry, name);
-> --
-> 2.27.GIT
+Patches 6-7 are optimizations related to ignored mask which we
+discussed in the past.  I have written them a while back and had put
+them aside because I have no means to run performance tests that will
+demonstrate the benefit, which is probably not huge.
+
+Since you suggested those optimizations (at least the first one),
+I decided to post and let you choose what to do with them.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/ltp/commits/fsnotify-fixes
+
+Amir Goldstein (7):
+  fsnotify: generalize handle_inode_event()
+  inotify: convert to handle_inode_event() interface
+  fsnotify: fix events reported to watching parent and child
+  fsnotify: clarify object type argument
+  fsnotify: separate mark iterator type from object type enum
+  fsnotify: optimize FS_MODIFY events with no ignored masks
+  fsnotify: optimize merging of marks with no ignored masks
+
+ fs/nfsd/filecache.c                  |   2 +-
+ fs/notify/dnotify/dnotify.c          |   2 +-
+ fs/notify/fanotify/fanotify.c        |  16 +--
+ fs/notify/fanotify/fanotify_user.c   |  44 +++++---
+ fs/notify/fsnotify.c                 | 147 +++++++++++++++++----------
+ fs/notify/group.c                    |   2 +-
+ fs/notify/inotify/inotify.h          |   9 +-
+ fs/notify/inotify/inotify_fsnotify.c |  47 ++-------
+ fs/notify/inotify/inotify_user.c     |   7 +-
+ fs/notify/mark.c                     |  30 +++---
+ include/linux/fsnotify_backend.h     |  92 +++++++++++------
+ kernel/audit_fsnotify.c              |   2 +-
+ kernel/audit_tree.c                  |   2 +-
+ kernel/audit_watch.c                 |   2 +-
+ 14 files changed, 233 insertions(+), 171 deletions(-)
+
+-- 
+2.25.1
 
