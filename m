@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E84962CE3DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:07:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5A22CE3C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:04:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501995AbgLDAHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 19:07:07 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42504 "EHLO
+        id S2389462AbgLDADu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 19:03:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42387 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2501936AbgLDAHG (ORCPT
+        with ESMTP id S2387545AbgLDADu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:07:06 -0500
+        Thu, 3 Dec 2020 19:03:50 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkyXs-0007ka-HE; Fri, 04 Dec 2020 00:01:56 +0000
+        id 1kkyXu-0007ka-J6; Fri, 04 Dec 2020 00:01:58 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 23/40] af_unix: handle idmapped mounts
-Date:   Fri,  4 Dec 2020 00:57:19 +0100
-Message-Id: <20201203235736.3528991-24-christian.brauner@ubuntu.com>
+Subject: [PATCH v4 24/40] utimes: handle idmapped mounts
+Date:   Fri,  4 Dec 2020 00:57:20 +0100
+Message-Id: <20201203235736.3528991-25-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
 References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
@@ -65,11 +65,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When binding a non-abstract AF_UNIX socket it will gain a representation
-in the filesystem. Enable the socket infrastructure to handle idmapped
-mounts by passing down the user namespace of the mount the socket will
-be created from. If the initial user namespace is passed nothing changes
-so non-idmapped mounts will see identical behavior as before.
+Enable the vfs_utimes() helper to handle idmapped mounts by passing down
+the mount's user namespace. If the initial user namespace is passed
+nothing changes so non-idmapped mounts will see identical behavior as
+before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -84,24 +83,36 @@ unchanged
 unchanged
 
 /* v4 */
-unchanged
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 ---
- net/unix/af_unix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/utimes.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index b4987805e5e5..4be33240e9cc 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -996,7 +996,7 @@ static int unix_mknod(const char *sun_path, umode_t mode, struct path *res)
- 	 */
- 	err = security_path_mknod(&path, dentry, mode, 0);
- 	if (!err) {
--		err = vfs_mknod(&init_user_ns, d_inode(path.dentry), dentry, mode, 0);
-+		err = vfs_mknod(mnt_user_ns(path.mnt), d_inode(path.dentry), dentry, mode, 0);
- 		if (!err) {
- 			res->mnt = mntget(path.mnt);
- 			res->dentry = dget(dentry);
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 1a4130bee157..33fa753bab3a 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -22,6 +22,7 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
+ 	struct iattr newattrs;
+ 	struct inode *inode = path->dentry->d_inode;
+ 	struct inode *delegated_inode = NULL;
++	struct user_namespace *mnt_userns;
+ 
+ 	if (times) {
+ 		if (!nsec_valid(times[0].tv_nsec) ||
+@@ -61,8 +62,9 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
+ 		newattrs.ia_valid |= ATTR_TOUCH;
+ 	}
+ retry_deleg:
++	mnt_userns = mnt_user_ns(path->mnt);
+ 	inode_lock(inode);
+-	error = notify_change(&init_user_ns, path->dentry, &newattrs, &delegated_inode);
++	error = notify_change(mnt_userns, path->dentry, &newattrs, &delegated_inode);
+ 	inode_unlock(inode);
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
 -- 
 2.29.2
 
