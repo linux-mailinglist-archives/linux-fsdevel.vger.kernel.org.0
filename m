@@ -2,117 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 199072CE1F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 23:39:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D3C92CE213
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 23:51:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731883AbgLCWi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 17:38:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59718 "EHLO
+        id S1727774AbgLCWty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 17:49:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731848AbgLCWi4 (ORCPT
+        with ESMTP id S1727664AbgLCWty (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 17:38:56 -0500
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435CDC061A4F
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Dec 2020 14:38:10 -0800 (PST)
-Received: by mail-qt1-x841.google.com with SMTP id o1so2653408qtp.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Dec 2020 14:38:10 -0800 (PST)
+        Thu, 3 Dec 2020 17:49:54 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD824C061A4F;
+        Thu,  3 Dec 2020 14:49:13 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id y10so4390149ljc.7;
+        Thu, 03 Dec 2020 14:49:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=8hMIirRw/G+8UZ/DmDQ+scNJvEG3e8n2Kq9pVWHYcz0=;
-        b=d3o/p/wHA4C3IKiVIV9XegX6HBqZpjyqX1On5/l0/fnIs9rgNVmZ4A2sFIb27WXgZB
-         4xfS7im5ICW1192YWX0pnFIazKkD6OuPN1xebbP8+vXxPvw1OEP0iX7c99NJxf+x5ZB+
-         GTJxA3Dy7SFC6u6WuV5+QWUnY2Tb3HJyYEqUVcYutU0sWX8KXxEhLh0oB1g423xxkOAa
-         JC4VGelctpfQNGrdRsAqTIH3JCgvXpjZuIKFKzttkmAq5c78Wr/3BdP4xmDFxhxFt/L3
-         eXcJx5geCkCoYn7WVFzD5g6ov09q7byYpYyxmHyB83AbYePOkp1WEAa1I3WIj34gyLnh
-         eh3g==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m2KIRqm5C9Jb+1GBg3YOa+h+M1YJN2474HFTwVQNFbI=;
+        b=tRQA/Fy3xfTQmn8yjHzihBY8BM3bi9J4b8ExnFFNIUCjK0jo4vduz120DgtyDvRTWu
+         U319VlqY0W8vFGs8Tu7jXs99u6HH9jhV7p72h8abmQdmM0Wid4z3cw35o1rh6XIVBS2n
+         C3LjVBcX8HrxYnHhpck60m58l5RRrzq4nZ/5hRYYytBeHvSMPBPB8f1Tv7OAn/uQI6G5
+         hT6GkGmxvUmmjBO6qF7Sy96ZJa077uIyMLy5jLKleEpX1EXA8H3j/pzhuAoCUV2VDqBx
+         oJ2TrCr0Ab3LFOYf2w03XGr4e2JMMrhpVPUjAbSO4uI5I3gcBvpjfbWcRa8gx79Uh7I6
+         ARJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8hMIirRw/G+8UZ/DmDQ+scNJvEG3e8n2Kq9pVWHYcz0=;
-        b=dNAFRKnFowUu2ox9R/qJ0QXty0hD3K8VQqvKKRbTqfgIXL08Xq/UU3R9L3SDzlpEZU
-         Lna84dARfNGrkbiBN9h1RZsNnd5wbOT1e+BEu/n1fL1LzhKt5F9z++nUA7iSO+SFqsUl
-         wLmpQ64PCHwiY1Lqrg4PjeWvJ0mn3nXls4ifJ4MleQp9643Y782VMokTJnjkkg4aVgij
-         0MOne8I9FGRb2cBbTBs4w+/TDdz85SEqSVdJqV6B92DJlB3fIDuNduTsTXFdMEnFvPLC
-         /UNiTlLY3q9FgZ1oWwQwK1jlynJJckk0/Ltb1gPsR1MMD2uL4YDXX34r2gZn1bAXZfGp
-         sp1w==
-X-Gm-Message-State: AOAM531yUSset8Yczbkdyx1XvlbmoWXAVcv2Qraf+zF/nNKJZ+aZN9of
-        D8xL0lDvbly8VDFKnRyLqEKWPw==
-X-Google-Smtp-Source: ABdhPJyTLV9IvmkXT4zvjTtrq/pqFKuAYSoXuHGVYLl75r9BRMJTWgPp3nmcQDYlosUbA32lA8Y2eA==
-X-Received: by 2002:ac8:3645:: with SMTP id n5mr5667712qtb.225.1607035089530;
-        Thu, 03 Dec 2020 14:38:09 -0800 (PST)
-Received: from localhost ([2620:10d:c091:480::1:deb1])
-        by smtp.gmail.com with ESMTPSA id q123sm2862339qke.28.2020.12.03.14.38.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Dec 2020 14:38:08 -0800 (PST)
-Date:   Thu, 3 Dec 2020 17:36:07 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
-Message-ID: <20201203223607.GB53708@cmpxchg.org>
-References: <20201201120652.487077-1-ming.lei@redhat.com>
- <20201201125251.GA11935@casper.infradead.org>
- <20201201125936.GA25111@infradead.org>
- <fdbfe981-0251-9641-6ed8-db034c0f0148@gmail.com>
- <20201201133226.GA26472@infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m2KIRqm5C9Jb+1GBg3YOa+h+M1YJN2474HFTwVQNFbI=;
+        b=a27A94YSlIg34s5m/pWiHpIJR8IP3XwofOFira2p+/DMuvX/oLA1NRgWLStMwGKomr
+         kXGERG2B6aAmOoYW9UMrHuAFGKW5SMZlgfGSSi1DSsae5OVU44YUjc6pr1+KB9RwdwL5
+         HCo3BvO30HgHSZBhLuU4zm+oKWxk3tcnymx99w4jE6NAecgiwktMwZSZ64s5OoOTq0tC
+         j42p+wzLPce6Y1U6uKvviu6Lw9kNSZ4SHDgUJOYwm+KnNmh6Oo3qOpPyhvZaOFmmUagv
+         PA4HHlQxOTOj79H7tMaDevoYzet+1Eh6mtWUrN/+ySeU9L8pfn+y9t+IIBFiNSqzTQAS
+         1nfQ==
+X-Gm-Message-State: AOAM5318yXt0v1DCYdGWJZTtn3i7G6fBCRn4L0//BM4b29DrfkxHguKJ
+        lk1l2AjHMdJIpD8ogvsn312yMkArfmqVCX2eiyM=
+X-Google-Smtp-Source: ABdhPJyBVpsbhvAeQ29b6jvJxTu/41UCWsu3CU4yMcRdBA07o5FPXVhJIeHUEW56dVlDpfwkN1XDYXC88jdUTsDie/g=
+X-Received: by 2002:a2e:9b90:: with SMTP id z16mr2198827lji.433.1607035752296;
+ Thu, 03 Dec 2020 14:49:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201201133226.GA26472@infradead.org>
+References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
+ <20201203030632.GG1375014@carbon.DHCP.thefacebook.com> <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
+ <CAHbLzkpAsoOWeRuFeTM2+YbjfqxY2U3vK7EYX2Nui=YVOBXFpw@mail.gmail.com> <20201203200715.GB1571588@carbon.DHCP.thefacebook.com>
+In-Reply-To: <20201203200715.GB1571588@carbon.DHCP.thefacebook.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 3 Dec 2020 14:49:00 -0800
+Message-ID: <CAHbLzkoUaLehmngW7geCDj+Fzd5+tkk3tBsbcdHuSXUXKLBuyw@mail.gmail.com>
+Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 01, 2020 at 01:32:26PM +0000, Christoph Hellwig wrote:
-> On Tue, Dec 01, 2020 at 01:17:49PM +0000, Pavel Begunkov wrote:
-> > I was thinking about memcpy bvec instead of iterating as a first step,
-> > and then try to reuse passed in bvec.
-> > 
-> > A thing that doesn't play nice with that is setting BIO_WORKINGSET in
-> > __bio_add_page(), which requires to iterate all pages anyway. I have no
-> > clue what it is, so rather to ask if we can optimise it out somehow?
-> > Apart from pre-computing for specific cases...
-> > 
-> > E.g. can pages of a single bvec segment be both in and out of a working
-> > set? (i.e. PageWorkingset(page)).
-> 
-> Adding Johannes for the PageWorkingset logic, which keeps confusing me
-> everytime I look at it.  I think it is intended to deal with pages
-> being swapped out and in, and doesn't make much sense to look at in
-> any form for direct I/O, but as said I'm rather confused by this code.
+On Thu, Dec 3, 2020 at 12:07 PM Roman Gushchin <guro@fb.com> wrote:
+>
+> On Thu, Dec 03, 2020 at 10:03:44AM -0800, Yang Shi wrote:
+> > On Wed, Dec 2, 2020 at 8:54 PM Yang Shi <shy828301@gmail.com> wrote:
+> > >
+> > > On Wed, Dec 2, 2020 at 7:06 PM Roman Gushchin <guro@fb.com> wrote:
+> > > >
+> > > > On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
+> > > > > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > > > > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> > > > >
+> > > > > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > > > > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > > > > may suffer from over shrink, excessive reclaim latency, etc.
+> > > > >
+> > > > > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > > > > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > > > > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> > > > >
+> > > > > We observed this hit in our production environment which was running vfs heavy workload
+> > > > > shown as the below tracing log:
+> > > > >
+> > > > > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > > > > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > > > > cache items 246404277 delta 31345 total_scan 123202138
+> > > > > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > > > > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > > > > last shrinker return val 123186855
+> > > > >
+> > > > > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > > > > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> > > > >
+> > > > > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > > > > better isolation.
+> > > > >
+> > > > > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > > > > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> > > > >
+> > > > > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > > > > ---
+> > > > >  include/linux/memcontrol.h |   9 +++
+> > > > >  mm/memcontrol.c            | 112 ++++++++++++++++++++++++++++++++++++-
+> > > > >  mm/vmscan.c                |   4 ++
+> > > > >  3 files changed, 123 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > > > > index 922a7f600465..1b343b268359 100644
+> > > > > --- a/include/linux/memcontrol.h
+> > > > > +++ b/include/linux/memcontrol.h
+> > > > > @@ -92,6 +92,13 @@ struct lruvec_stat {
+> > > > >       long count[NR_VM_NODE_STAT_ITEMS];
+> > > > >  };
+> > > > >
+> > > > > +
+> > > > > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
+> > > > > +struct memcg_shrinker_deferred {
+> > > > > +     struct rcu_head rcu;
+> > > > > +     atomic_long_t nr_deferred[];
+> > > > > +};
+> > > >
+> > > > The idea makes total sense to me. But I wonder if we can add nr_deferred to
+> > > > struct list_lru_one, instead of adding another per-memcg per-shrinker entity?
+> > > > I guess it can simplify the code quite a lot. What do you think?
+> > >
+> > > Aha, actually this exactly was what I did at the first place. But Dave
+> > > NAK'ed this approach. You can find the discussion at:
+> > > https://lore.kernel.org/linux-mm/20200930073152.GH12096@dread.disaster.area/.
+>
+> Yes, this makes sense for me. Thank you for the link!
+>
+> >
+> > I did prototypes for both approaches (move nr_deferred to list_lru or
+> > to memcg). I preferred the list_lru approach at the first place. But
+> > Dave's opinion does make perfect sense to me. So I dropped that
+> > list_lru one. That email elaborated why moving nr_deferred to list_lru
+> > is not appropriate.
+>
+> Hm, shouldn't we move list_lru to memcg then? It's not directly related
+> to your patchset, but maybe it's something we should consider in the future.
 
-Correct, it's only interesting for pages under LRU management - page
-cache and swap pages. It should not matter for direct IO.
+I haven't thought about this yet. I agree we could look into it
+further later on.
 
-The VM uses the page flag to tell the difference between cold faults
-(empty cache startup e.g.), and thrashing pages which are being read
-back not long after they have been reclaimed. This influences reclaim
-behavior, but can also indicate a general lack of memory.
+>
+> What worries me is that with your patchset we'll have 3 separate
+> per-memcg (per-node) per-shrinker entity, each with slightly different
+> approach to allocate/extend/reparent/release. So it begs for some
+> unification. I don't think it's a showstopper for your work though, it
+> can be done later.
 
-The BIO_WORKINGSET flag is for the latter. To calculate the time
-wasted by a lack of memory (memory pressure), we measure the total
-time processes wait for thrashing pages. Usually that time is
-dominated by waiting for in-flight io to complete and pages to become
-uptodate. These waits are annotated on the page cache side.
+Off the top of my head, we may be able to have shrinker_info struct,
+it should look like:
 
-However, in some cases, the IO submission path itself can block for
-extended periods - if the device is congested or submissions are
-throttled due to cgroup policy. To capture those waits, the bio is
-flagged when it's for thrashing pages, and then submit_bio() will
-report submission time of that bio as a thrashing-related delay.
+struct shrinker_info {
+    atomic_long_t nr_deferred;
+    /* Just one bit is used now */
+    u8 map:1;
+}
 
-[ Obviously, in theory bios could have a mix of thrashing and
-  non-thrashing pages, and the submission stall could have occurred
-  even without the thrashing pages. But in practice we have locality,
-  where groups of pages tend to be accessed/reclaimed/refaulted
-  together. The assumption that the whole bio is due to thrashing when
-  we see the first thrashing page is a workable simplification. ]
+struct memcg_shrinker_info {
+    struct rcu_head rcu;
+    /* Indexed by shrinker ID */
+    struct shrinker_info info[];
+}
 
-HTH
+Then in struct mem_cgroup_per_node, we could have:
+
+struct mem_cgroup_per_node {
+    ....
+    struct memcg_shrinker_info __rcu *shrinker_info;
+    ....
+}
+
+In this way shrinker_info should be allocated to all memcgs, including
+root. But shrinker could ignore root's map bit. We may waste a little
+bit memory, but we get unification.
+
+Would that work?
