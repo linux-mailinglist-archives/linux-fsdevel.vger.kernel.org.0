@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EC322CE34B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:03:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B460D2CE360
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731457AbgLDACI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 19:02:08 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41693 "EHLO
+        id S2388206AbgLDACN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 19:02:13 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41698 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731338AbgLDACI (ORCPT
+        with ESMTP id S1728138AbgLDACL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:02:08 -0500
+        Thu, 3 Dec 2020 19:02:11 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkyXJ-0007ka-ED; Fri, 04 Dec 2020 00:01:21 +0000
+        id 1kkyXL-0007ka-79; Fri, 04 Dec 2020 00:01:23 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 04/40] fs: split out functions to hold writers
-Date:   Fri,  4 Dec 2020 00:57:00 +0100
-Message-Id: <20201203235736.3528991-5-christian.brauner@ubuntu.com>
+Subject: [PATCH v4 05/40] fs: add attr_flags_to_mnt_flags helper
+Date:   Fri,  4 Dec 2020 00:57:01 +0100
+Message-Id: <20201203235736.3528991-6-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
 References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
@@ -65,9 +65,8 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When a mount is marked read-only we set MNT_WRITE_HOLD on it if there
-aren't currently any active writers. Split this logic out into simple
-helpers that we can use in follow-up patches.
+Add a simple helper to translate uapi MOUNT_ATTR_* flags to MNT_* flags
+which we will use in follow-up patches too.
 
 Suggested-by: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -84,58 +83,69 @@ patch not present
 /* v4 */
 patch introduced
 ---
- fs/namespace.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ fs/namespace.c | 40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 8497d149ecaa..1a756d33c91a 100644
+index 1a756d33c91a..b2a9eb7b43d3 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -469,10 +469,8 @@ void mnt_drop_write_file(struct file *file)
- }
- EXPORT_SYMBOL(mnt_drop_write_file);
- 
--static int mnt_make_readonly(struct mount *mnt)
-+static inline int mnt_hold_writers(struct mount *mnt)
- {
--	int ret = 0;
--
- 	mnt->mnt.mnt_flags |= MNT_WRITE_HOLD;
- 	/*
- 	 * After storing MNT_WRITE_HOLD, we'll read the counters. This store
-@@ -497,15 +495,29 @@ static int mnt_make_readonly(struct mount *mnt)
- 	 * we're counting up here.
- 	 */
- 	if (mnt_get_writers(mnt) > 0)
--		ret = -EBUSY;
--	else
--		mnt->mnt.mnt_flags |= MNT_READONLY;
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
-+static inline void mnt_unhold_writers(struct mount *mnt)
-+{
- 	/*
- 	 * MNT_READONLY must become visible before ~MNT_WRITE_HOLD, so writers
- 	 * that become unheld will see MNT_READONLY.
- 	 */
- 	smp_wmb();
- 	mnt->mnt.mnt_flags &= ~MNT_WRITE_HOLD;
-+}
-+
-+static int mnt_make_readonly(struct mount *mnt)
-+{
-+	int ret;
-+
-+	ret = mnt_hold_writers(mnt);
-+	if (!ret)
-+		mnt->mnt.mnt_flags |= MNT_READONLY;
-+	mnt_unhold_writers(mnt);
+@@ -3450,6 +3450,28 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
  	return ret;
  }
  
++#define FSMOUNT_VALID_FLAGS                                                    \
++	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |            \
++	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
++
++static unsigned int attr_flags_to_mnt_flags(u64 attr_flags)
++{
++	unsigned int mnt_flags = 0;
++
++	if (attr_flags & MOUNT_ATTR_RDONLY)
++		mnt_flags |= MNT_READONLY;
++	if (attr_flags & MOUNT_ATTR_NOSUID)
++		mnt_flags |= MNT_NOSUID;
++	if (attr_flags & MOUNT_ATTR_NODEV)
++		mnt_flags |= MNT_NODEV;
++	if (attr_flags & MOUNT_ATTR_NOEXEC)
++		mnt_flags |= MNT_NOEXEC;
++	if (attr_flags & MOUNT_ATTR_NODIRATIME)
++		mnt_flags |= MNT_NODIRATIME;
++
++	return mnt_flags;
++}
++
+ /*
+  * Create a kernel mount representation for a new, prepared superblock
+  * (specified by fs_fd) and attach to an open_tree-like file descriptor.
+@@ -3472,24 +3494,10 @@ SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
+ 	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
+ 		return -EINVAL;
+ 
+-	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
+-			   MOUNT_ATTR_NOSUID |
+-			   MOUNT_ATTR_NODEV |
+-			   MOUNT_ATTR_NOEXEC |
+-			   MOUNT_ATTR__ATIME |
+-			   MOUNT_ATTR_NODIRATIME))
++	if (attr_flags & ~FSMOUNT_VALID_FLAGS)
+ 		return -EINVAL;
+ 
+-	if (attr_flags & MOUNT_ATTR_RDONLY)
+-		mnt_flags |= MNT_READONLY;
+-	if (attr_flags & MOUNT_ATTR_NOSUID)
+-		mnt_flags |= MNT_NOSUID;
+-	if (attr_flags & MOUNT_ATTR_NODEV)
+-		mnt_flags |= MNT_NODEV;
+-	if (attr_flags & MOUNT_ATTR_NOEXEC)
+-		mnt_flags |= MNT_NOEXEC;
+-	if (attr_flags & MOUNT_ATTR_NODIRATIME)
+-		mnt_flags |= MNT_NODIRATIME;
++	mnt_flags = attr_flags_to_mnt_flags(attr_flags);
+ 
+ 	switch (attr_flags & MOUNT_ATTR__ATIME) {
+ 	case MOUNT_ATTR_STRICTATIME:
 -- 
 2.29.2
 
