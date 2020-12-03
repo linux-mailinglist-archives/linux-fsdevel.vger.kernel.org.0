@@ -2,205 +2,325 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5112CDF64
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 21:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E43012CDFBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 21:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgLCUJs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 15:09:48 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:23520 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725885AbgLCUJs (ORCPT
+        id S1727476AbgLCUdX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 15:33:23 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49242 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726755AbgLCUdW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 15:09:48 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B3K06qs012089;
-        Thu, 3 Dec 2020 12:08:56 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=Is2+NdJa0eWS61RYEeqewGSQDeD1ig8nvfe+k/dbVQ4=;
- b=IOCSKxTUvL85RAY4Fvsh3Gdi0KAPYG2VkQFHCVjhh90VBFoQ9f27lts8M4HIZddrVjDa
- GFSt4Z4PXBOJVhnW8adDYyrCaS1+LuL5Ghk7rbQnQ9/JWSdZVYdLLUaO7ZosJoZtqF6r
- 0gQ7yWncnN2fJJqtlDli9edwB+681hCvapM= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 355vfkgavj-5
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 03 Dec 2020 12:08:56 -0800
-Received: from NAM02-CY1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Thu, 3 Dec 2020 12:08:45 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DzZR5wwEZC/nhsNVR/0W/LNArfYQa5KFJZwMJ3+QY8nJARbMRP/iWt8kuvdI1mO3QdIukv+qUL10XxLM9jAcgffTGBGra3Gv2edrpYGjg8D+ljahxt/GHaNS4Qrl7L7vzFqDGcpDVVyZ0hXP1noSKa6Ro34cTFPfmtkunVGkTy9aj0XDxiH95bTqskiD5NCW9nDwuQIJfRBRCmeTBqtnMRXIkClDt/cdrK0/WZ4yy+FA+ToRm9pbS90DZdE/DPexIa/v1TdwT2Rk/M2twnPEhG5X95zKt2RkJ4RQkkhs8YjmmXRi5M/Vu1cdP4JSh0lBJTRSzNCIRSfOvWxp51xSMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Is2+NdJa0eWS61RYEeqewGSQDeD1ig8nvfe+k/dbVQ4=;
- b=is2qELXsnt5xAX9j0apjU1JXGdfoPj8T6RXJQaqBTa7a5IDj9WUjFxuG3UDLXI/gNny1amFdGfnaBBjs2unNSUH5YpcoEmQcwmhCvl1hKYfa/Fe7GM6N2ygHbo4+fqRLQb735qQthJ8ZoLQSG66bGj/MyHAW4XJ7sh0F4/6jZJoeuS9uEyGEl9eQvq0wMjiulMFE65ZVmrLJaQnp56MUmvKbQg4VE/zitGK+NdU2IDo40l4bGYUDUSd9vWWG7CxNBW42URvhO29lKZlU2d/MDWPfoLPTT8uEJQktdLaJ0Cu5L76i5qX1AvV0PgiajeevOBqwK7Ku6iKa1me1bJHcvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Is2+NdJa0eWS61RYEeqewGSQDeD1ig8nvfe+k/dbVQ4=;
- b=Bun5BsztXYUrVG/kfkEt37lbY64YaSzjdlp/i+bMZEJcJGEiWtFrYI/QCBwOaNbN/xLiwoTV1jD1zviv71oO1YlvKzPRD16m4PkDENPWIKdKra7fbJDdwifzEQ5HnsHMhLLZ0iN5kK4bvGRgAj0tqq9FGvPFGJTaN3TsBvpbdEU=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BYAPR15MB2630.namprd15.prod.outlook.com (2603:10b6:a03:14c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.21; Thu, 3 Dec
- 2020 20:08:30 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::3925:e1f9:4c6a:9396]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::3925:e1f9:4c6a:9396%6]) with mapi id 15.20.3632.019; Thu, 3 Dec 2020
- 20:08:30 +0000
-Date:   Thu, 3 Dec 2020 12:08:20 -0800
-From:   Roman Gushchin <guro@fb.com>
-To:     Yang Shi <shy828301@gmail.com>
-CC:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/9] mm: vmscan: use a new flag to indicate shrinker is
- registered
-Message-ID: <20201203200820.GC1571588@carbon.DHCP.thefacebook.com>
-References: <20201202182725.265020-1-shy828301@gmail.com>
- <20201202182725.265020-5-shy828301@gmail.com>
- <20201203030104.GF1375014@carbon.DHCP.thefacebook.com>
- <CAHbLzkoUNuKHT_4w8QaWCQA3xs2vTW4Xii26a5vpVqxrDVSX_Q@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHbLzkoUNuKHT_4w8QaWCQA3xs2vTW4Xii26a5vpVqxrDVSX_Q@mail.gmail.com>
-X-Originating-IP: [2620:10d:c090:400::5:506c]
-X-ClientProxiedBy: MWHPR22CA0072.namprd22.prod.outlook.com
- (2603:10b6:300:12a::34) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
+        Thu, 3 Dec 2020 15:33:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607027515;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OXO6hTztM1qHzciGykeQUGZ/pgHokoZwt8rb7v4cO24=;
+        b=E6bkNOW0U5aI8SF71I7wtvyfWCxv9ZKlhUC68wbUKWEn70/HhgE3GuyROy8Nh1hwtaObJ0
+        070VmJD8F8Tj7ZoURtEgslMwzPoJKpX3Xgsg6dFolnN3Q3RYceCvxhFPmFnRkMAFhSHNHQ
+        61iOTNwCt+fyq1AXEJ2cfSr7Aja80p4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-428-7JdB2GIkPHmg9YZL_BUUnw-1; Thu, 03 Dec 2020 15:31:52 -0500
+X-MC-Unique: 7JdB2GIkPHmg9YZL_BUUnw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 976DE800D62;
+        Thu,  3 Dec 2020 20:31:51 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-21.rdu2.redhat.com [10.10.116.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4128010023AC;
+        Thu,  3 Dec 2020 20:31:51 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id BD5BF220BCF; Thu,  3 Dec 2020 15:31:50 -0500 (EST)
+Date:   Thu, 3 Dec 2020 15:31:50 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] overlay: Implement volatile-specific fsync error
+ behaviour
+Message-ID: <20201203203150.GE3266@redhat.com>
+References: <f2fc7d688417a1da3d94e819afed6bab404da51f.camel@redhat.com>
+ <20201202172906.GE147783@redhat.com>
+ <59de2220a85e858a4c397969e2a0d03f1d653a6a.camel@redhat.com>
+ <20201202185601.GF147783@redhat.com>
+ <0a3979479ffbf080fa1cd492923a7fa8984078b9.camel@redhat.com>
+ <20201202213434.GA4070@redhat.com>
+ <2e08895bf0650513d7d12e66965eec611f361be3.camel@redhat.com>
+ <20201203104225.GA30173@ircssh-2.c.rugged-nimbus-611.internal>
+ <20201203142712.GA3266@redhat.com>
+ <93894cddefff0118d8b1f5f69816da519cb0a735.camel@redhat.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:506c) by MWHPR22CA0072.namprd22.prod.outlook.com (2603:10b6:300:12a::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17 via Frontend Transport; Thu, 3 Dec 2020 20:08:29 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 87d903b2-603e-4bf2-a491-08d897c73456
-X-MS-TrafficTypeDiagnostic: BYAPR15MB2630:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB2630A72EA3AE28F932E42E56BEF20@BYAPR15MB2630.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XI5gbKOCrXhpVHUzlW4X2/+U0AwPER3TUsMGbuBc6I/Jm8e3X12KgDrftsLX7heyGN+ArDAwdp89aGBnTz+JQ0ZdYgZ9cXP6gw5jhi6hU6ekLA2NI24Y13oYzURliSQn8MnD7nh4Xk523/dr55WGmRzitbLAFSUiaScmcrOHDaeMgyEDeHcahgerzinAwnPW25cWKXr28VI3kF7DJ4Fgd5qAyArAD5TnJVSVryWK7Z7XtG103BZJtntFrON95rmIWxt8UimCiS+SB5kWFDJ1g3Y58OLe0b5qqI2CgPhguBkL2fJ63vQLp9ty+Lm+IWWrDo8xgoySouZgZp/Pnk1jlw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(376002)(396003)(39860400002)(346002)(366004)(6506007)(53546011)(7696005)(52116002)(54906003)(16526019)(6916009)(1076003)(2906002)(4326008)(478600001)(5660300002)(6666004)(9686003)(55016002)(316002)(86362001)(66556008)(66476007)(66946007)(7416002)(83380400001)(186003)(8936002)(33656002)(8676002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?JVNcVVVJKIkVlVS2OfxMj2y9kBhazmvYlwCUG5C6ghEBg7gNzMocmlV9nU7A?=
- =?us-ascii?Q?S8nFNAnXIvf4b7jkK1Of3O12gHQ1HRZuKfAiIR0pHenuV3iKn4TzXpn/fjCK?=
- =?us-ascii?Q?miXP9lXci7+qUrTYEEe8luAsZlYdyXMjTvHv5cTPnpXyUcHgrJcgGfdrXlqk?=
- =?us-ascii?Q?pwCwdbPQdXO8W74LzkFmBsVaBzCde5E0x870WMyd+GiojFJhSBPUeUNmeV9k?=
- =?us-ascii?Q?Chlj8Un8OuT1wvWmNqE8I7hf+EBJBxO2LKPkDupDcxr95FnsLY9nDHjLm0ny?=
- =?us-ascii?Q?uQNOHUh5BH0jPptC5cm1Vj47jUQN3G50NVDJjutdXLO2juzRHmAOaUDZilV2?=
- =?us-ascii?Q?RFcsXGPQONXLotJYP/upUM5rLYRlGbmV0ct+lDYvKetNZO5qa+TRO6ZlZH/x?=
- =?us-ascii?Q?B5VLQplN+KIfs5LOGQOiZgLSOzj1MbpYEEUn+oqwDIp2ITJXFOvrFCKjl2dO?=
- =?us-ascii?Q?Tf6OZIQOYmbLzyx8QZq3oLz9ZhvbO1zNH3MlKWz0tx5Y4RFteojA+lI7FtRP?=
- =?us-ascii?Q?qhUU2GvFAHtcC5vI47yuQmsClcW09PG2oBKq85L4JtbydMXoty9SHtdlRcJ4?=
- =?us-ascii?Q?Eknh98OedrJRmoyPmbHrQBLuls85H+0tZSch4w02aTn1Hs4dc2Q7g2ZmVHmM?=
- =?us-ascii?Q?8c9khG7fg6ETaY9Rd87+FzKwXZf0MJIcDDf4+aHD/2S84V5taJqYOt+qp/zS?=
- =?us-ascii?Q?Lzcfj78ENmtL/8e6mQYiQJX4YPGBacjIzdR1TBGQ62MaNHNtt3P/GASLuivy?=
- =?us-ascii?Q?SVNPtAT1ag438Rqfh7Of3WobMYpq+Fa+bIBHxFUGBzZZ5R2p4DRmEj17DiI8?=
- =?us-ascii?Q?/UigE598iecLTBwdjpEHZZ2FcbLlwRT4paybEBLPxltuHvoxjnDzrtnj1lh/?=
- =?us-ascii?Q?N68sZElwbtn9YL6Unt7AN0h7dIH1WFewTepVyB49u34OtmkO/w2MFypYH+fY?=
- =?us-ascii?Q?TsZJxiiX75z7Hft0pfQER/3M93lT4cfY0gGodq1y5I2sJgyv6bDYoBZvgMpd?=
- =?us-ascii?Q?2khWNqQcN13n30zlQs5G904aGw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87d903b2-603e-4bf2-a491-08d897c73456
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2020 20:08:30.7613
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /gslv5eZkY/0ZFLzQbjGrBtLRXOY97IUecs/ZE7YVlLb228IbSrWSIc/S2TcSuRP
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2630
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-03_11:2020-12-03,2020-12-03 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 mlxscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 suspectscore=5 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012030116
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <93894cddefff0118d8b1f5f69816da519cb0a735.camel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 08:59:40PM -0800, Yang Shi wrote:
-> On Wed, Dec 2, 2020 at 7:01 PM Roman Gushchin <guro@fb.com> wrote:
-> >
-> > On Wed, Dec 02, 2020 at 10:27:20AM -0800, Yang Shi wrote:
-> > > Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
-> > > This approach is fine with nr_deferred atthe shrinker level, but the following
-> > > patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
-> > > shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
-> > > from unregistering correctly.
-> > >
-> > > Introduce a new "state" field to indicate if shrinker is registered or not.
-> > > We could use the highest bit of flags, but it may be a little bit complicated to
-> > > extract that bit and the flags is accessed frequently by vmscan (every time shrinker
-> > > is called).  So add a new field in "struct shrinker", we may waster a little bit
-> > > memory, but it should be very few since there should be not too many registered
-> > > shrinkers on a normal system.
-> > >
-> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > ---
-> > >  include/linux/shrinker.h |  4 ++++
-> > >  mm/vmscan.c              | 13 +++++++++----
-> > >  2 files changed, 13 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> > > index 0f80123650e2..0bb5be88e41d 100644
-> > > --- a/include/linux/shrinker.h
-> > > +++ b/include/linux/shrinker.h
-> > > @@ -35,6 +35,9 @@ struct shrink_control {
-> > >
-> > >  #define SHRINK_STOP (~0UL)
-> > >  #define SHRINK_EMPTY (~0UL - 1)
+On Thu, Dec 03, 2020 at 10:20:23AM -0500, Jeff Layton wrote:
+> On Thu, 2020-12-03 at 09:27 -0500, Vivek Goyal wrote:
+> > On Thu, Dec 03, 2020 at 10:42:26AM +0000, Sargun Dhillon wrote:
+> > > On Wed, Dec 02, 2020 at 04:52:33PM -0500, Jeff Layton wrote:
+> > > > On Wed, 2020-12-02 at 16:34 -0500, Vivek Goyal wrote:
+> > > > > On Wed, Dec 02, 2020 at 02:26:23PM -0500, Jeff Layton wrote:
+> > > > > [..]
+> > > > > > > > > > > > +		upper_mnt_sb = ovl_upper_mnt(ofs)->mnt_sb;
+> > > > > > > > > > > > +		sb->s_stack_depth = upper_mnt_sb->s_stack_depth;
+> > > > > > > > > > > > +		sb->s_time_gran = upper_mnt_sb->s_time_gran;
+> > > > > > > > > > > > +		ofs->upper_errseq = errseq_sample(&upper_mnt_sb->s_wb_err);
+> > > > > > > > > > > 
+> > > > > > > > > > > I asked this question in last email as well. errseq_sample() will return
+> > > > > > > > > > > 0 if current error has not been seen yet. That means next time a sync
+> > > > > > > > > > > call comes for volatile mount, it will return an error. But that's
+> > > > > > > > > > > not what we want. When we mounted a volatile overlay, if there is an
+> > > > > > > > > > > existing error (seen/unseen), we don't care. We only care if there
+> > > > > > > > > > > is a new error after the volatile mount, right?
+> > > > > > > > > > > 
+> > > > > > > > > > > I guess we will need another helper similar to errseq_smaple() which
+> > > > > > > > > > > just returns existing value of errseq. And then we will have to
+> > > > > > > > > > > do something about errseq_check() to not return an error if "since"
+> > > > > > > > > > > and "eseq" differ only by "seen" bit.
+> > > > > > > > > > > 
+> > > > > > > > > > > Otherwise in current form, volatile mount will always return error
+> > > > > > > > > > > if upperdir has error and it has not been seen by anybody.
+> > > > > > > > > > > 
+> > > > > > > > > > > How did you finally end up testing the error case. Want to simualate
+> > > > > > > > > > > error aritificially and test it.
+> > > > > > > > > > > 
+> > > > > > > > > > 
+> > > > > > > > > > If you don't want to see errors that occurred before you did the mount,
+> > > > > > > > > > then you probably can just resurrect and rename the original version of
+> > > > > > > > > > errseq_sample. Something like this, but with a different name:
+> > > > > > > > > > 
+> > > > > > > > > > +errseq_t errseq_sample(errseq_t *eseq)
+> > > > > > > > > > +{
+> > > > > > > > > > +       errseq_t old = READ_ONCE(*eseq);
+> > > > > > > > > > +       errseq_t new = old;
+> > > > > > > > > > +
+> > > > > > > > > > +       /*
+> > > > > > > > > > +        * For the common case of no errors ever having been set, we can skip
+> > > > > > > > > > +        * marking the SEEN bit. Once an error has been set, the value will
+> > > > > > > > > > +        * never go back to zero.
+> > > > > > > > > > +        */
+> > > > > > > > > > +       if (old != 0) {
+> > > > > > > > > > +               new |= ERRSEQ_SEEN;
+> > > > > > > > > > +               if (old != new)
+> > > > > > > > > > +                       cmpxchg(eseq, old, new);
+> > > > > > > > > > +       }
+> > > > > > > > > > +       return new;
+> > > > > > > > > > +}
+> > > > > > > > > 
+> > > > > > > > > Yes, a helper like this should solve the issue at hand. We are not
+> > > > > > > > > interested in previous errors. This also sets the ERRSEQ_SEEN on 
+> > > > > > > > > sample and it will also solve the other issue when after sampling
+> > > > > > > > > if error gets seen, we don't want errseq_check() to return error.
+> > > > > > > > > 
+> > > > > > > > > Thinking of some possible names for new function.
+> > > > > > > > > 
+> > > > > > > > > errseq_sample_seen()
+> > > > > > > > > errseq_sample_set_seen()
+> > > > > > > > > errseq_sample_consume_unseen()
+> > > > > > > > > errseq_sample_current()
+> > > > > > > > > 
+> > > > > > > > 
+> > > > > > > > errseq_sample_consume_unseen() sounds good, though maybe it should be
+> > > > > > > > "ignore_unseen"? IDK, naming this stuff is the hardest part.
+> > > > > > > > 
+> > > > > > > > If you don't want to add a new helper, I think you'd probably also be
+> > > > > > > > able to do something like this in fill_super:
+> > > > > > > > 
+> > > > > > > > Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â errseq_sample()
+> > > > > > > > Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â Ãƒâ€šÃ‚Â errseq_check_and_advance()
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > ...and just ignore the error returned by the check and advance. At that
+> > > > > > > > point, the cursor should be caught up and any subsequent syncfs call
+> > > > > > > > should return 0 until you record another error. It's a little less
+> > > > > > > > efficient, but only slightly so.
+> > > > > > > 
+> > > > > > > This seems even better.
+> > > > > > > 
+> > > > > > > Thinking little bit more. I am now concerned about setting ERRSEQ_SEEN on
+> > > > > > > sample. In our case, that would mean that we consumed an unseen error but
+> > > > > > > never reported it back to user space. And then somebody might complain.
+> > > > > > > 
+> > > > > > > This kind of reminds me posgresql's fsync issues where they did
+> > > > > > > writes using one fd and another thread opened another fd and
+> > > > > > > did sync and they expected any errors to be reported.
+> > > > > > > 
+> > > > > > 
+> > > > > > > Similary what if an unseen error is present on superblock on upper
+> > > > > > > and if we mount volatile overlay and mark the error SEEN, then
+> > > > > > > if another process opens a file on upper and did syncfs(), it will
+> > > > > > > complain that exisiting error was not reported to it.
+> > > > > > > 
+> > > > > > > Overlay use case seems to be that we just want to check if an error
+> > > > > > > has happened on upper superblock since we sampled it and don't
+> > > > > > > want to consume that error as such. Will it make sense to introduce
+> > > > > > > two helpers for error sampling and error checking which mask the
+> > > > > > > SEEN bit and don't do anything with it. For example, following compile
+> > > > > > > tested only patch.
+> > > > > > > 
+> > > > > > > Now we will not touch SEEN bit at all. And even if SEEN gets set
+> > > > > > > since we sampled, errseq_check_mask_seen() will not flag it as
+> > > > > > > error.
+> > > > > > > 
+> > > > > > > Thanks
+> > > > > > > Vivek
+> > > > > > > 
+> > > > > > 
+> > > > > > Again, you're not really hiding this from anyone doing something _sane_.
+> > > > > > You're only hiding an error from someone who opens the file after an
+> > > > > > error occurs and expects to see an error.
+> > > > > > 
+> > > > > > That was the behavior for fsync before we switched to errseq_t, and we
+> > > > > > had to change errseq_sample for applications that relied on that. syncfs
+> > > > > > reporting these errors is pretty new however. I don't think we
+> > > > > > necessarily need to make the same guarantees there.
+> > > > > > 
+> > > > > > The solution to all of these problems is to ensure that you open the
+> > > > > > files early you're issuing syncfs on and keep them open. Then you'll
+> > > > > > always see any subsequent errors.
+> > > > > 
+> > > > > Ok. I guess we will have to set SEEN bit during error_sample otherwise,
+> > > > > we miss errors. I had missed this point.
+> > > > > 
+> > > > > So mounting a volatile overlay instance will become somewhat
+> > > > > equivalent of as if somebody did a syncfs on upper, consumed
+> > > > > error and did not do anything about it.
+> > > > > 
+> > > > > If a user cares about not losing such errors, they need to keep an
+> > > > > fd open on upper. 
+> > > > > 
+> > > > > /me hopes that this does not become an issue for somebody. Even
+> > > > > if it does, one workaround can be don't do volatile overlay or
+> > > > > don't share overlay upper with other conflicting workload.
+> > > > > 
+> > > > 
+> > > > Yeah, there are limits to what we can do with 32 bits.
+> > > > 
+> > > > It's not pretty, but I guess you could pr_warn at mount time if you find
+> > > > an unseen error. That would at least not completely drop it on the
+> > > > floor.
+> > > > 
+> > > > -- 
+> > > > Jeff Layton <jlayton@redhat.com>
+> > > > 
+> > > 
+> > > If I may enumerate our choices to help my own understanding, and
+> > > come up with a decent decision on how to proceed:
+> > > 
+> > > 1. If the filesystem has an unseen error, pr_warn.
+> > > 2. If the filesystem has an unseen error, refuse to mount it until
+> > >    the user clears the error (via syncfs?).
+> > > 3. Ignore the beginning state of the upperdir
+> > > 4. Increment the errseq_t.
+> > > 5. A combination of #1, and #2 and require the user to mount
+> > >    -o reallyvolatile or smoe such.
+> > > 
+> > > Now the downsides of each of these options:
+> > > 
+> > > 1. The user probably won't look at these errors. Especially,
+> > >    if the application is a container runtime, and these are
+> > >    happening on behalf of the application in an automated fashion.
+> > > 2. Forcing a syncfs on most filesystems is a massively costly
+> > >    operation that we want to avoid with the volatile operation.
+> > >    Also, go back to #1. Until we implement the new FS API, we
+> > >    can't easily give meaningful warnings to users that they
+> > >    can programatically act on (unless we use some special errno).
+> > > 3. This is a noop.
+> > > 4. We can hide errors from other users of the upperdir if they
+> > >    rely on syncfs semantics rather than per-fd fsync semantics
+> > >    to check if the filesystem is "clean".
+> > > 5. See the issues with #1 and #2.
+> > > 
+> > > I'm also curious as to how the patchset that allows for partial
+> > > sync is going to deal with this problem [1].
+> > > 
+> > > There is one other proposal I have, which is we define errseq_t
+> > > as two structures:
+> > > -errseq_t errseq_set(errseq_t *eseq, int err);
+> > > +/* For use on the publishing-side of errseq */
+> > > +struct errseq_publisher {
+> > > +        atomic_t        errors;
+> > > +        errseq_t        errseq_t
+> > > +};
 > > > +
-> > > +#define SHRINKER_REGISTERED  0x1
-> > > +
-> > >  /*
-> > >   * A callback you can register to apply pressure to ageable caches.
-> > >   *
-> > > @@ -66,6 +69,7 @@ struct shrinker {
-> > >       long batch;     /* reclaim batch size, 0 = default */
-> > >       int seeks;      /* seeks to recreate an obj */
-> > >       unsigned flags;
-> > > +     unsigned state;
-> >
-> > Hm, can't it be another flag? It seems like we have a plenty of free bits.
+> > > +errseq_t errseq_set(struct errseq_publisher *eseq, int err);
+> > > 
+> > > And errseq_publisher is on the superblock, and errors is always incremented no 
+> > > matter what. We risk wrapping, but I think this falls into Jeff's "sane" test -- 
+> > > if there are 2**32+ errors without someone doing an fsync, or noticing, you 
+> > > might have other problems.
+> > > 
+> > > This has two (and a half) downsides:
+> > > 1. It is a potential performance concern to introduce an atomic here.
+> > 
+> > Is updation of errseq_t performance sensitive path. Updation happens in
+> > error path and I would think that does not happen often. If that's the
+> > case, it should not be very performance sensitive path.
+> > 
+> > I agree that warning on unseen error is probably not enough. Applications
+> > can't do much with that. To me it boils down to two options.
+> > 
+> > A. Live with the idea of swallowing the unseen error on syncfs (if caller
+> >    did not keep an fd open).
+> > 
+> > B. Extend errseq infrastcture in such a way so that we can detect new
+> >    error without marking error SEEN.
+> > 
+> > It feels as if B is a safter choice but will be more work. With A, problem
+> > is that behavior will be different in difference scenarios and it will then
+> > become difficult to justify.
+> > 
+> > - fsync and syncfs behavior will be different w.r.t UNSEEN error.
+> > - syncfs behavior will be different depending on if volatile overlay
+> >   mounts are being used on this filesystem or not.
+> > 
 > 
-> I thought about this too. But I was not convinced by myself that
-> messing flags with state is a good practice. We may add more flags in
-> the future, so we may end up having something like:
+> (cc'ing Willy since he helped a lot with this work)
 > 
-> flag
-> flag
-> flag
-> state
-> flag
-> flag
-> ...
+> The design for fsync is a bit odd, in that we had to preserve historical
+> behavior. Note that we didn't get it right at first. Our original
+> assumption was that applications wouldn't expect to see any writeback
+> errors that occurred before they opened the file. That turned out to be
+> wrong, and Willy fixed that by ensuring that unseen errors would be
+> reported once to the next task to do an fsync [1].
 > 
-> Maybe we could use the highest bit for state?
+> I'm not sure how you could change the behavior to accomodate the desire
+> for B. One idea: you could do away with the optimization that doesn't
+> bump the counter and record a new error when no one has seen the
+> previous one yet, and it's the same error. That would increase the
+> chances of the counter wrapping around however.
 
-Or just
-state
-flag
-flag
-flag
-flag
-flag
-...
+Bumping up the counter if new error is same as previous one (seen flag
+is not set) will solve the issue at hand without changing syncfs
+behavior.
 
-?
+But as you said it increases chances of counter wrapping.
+And to solve that we probably will have to look at 64 bit errseq_t.
+
+Thanks
+Vivek
+
+> 
+> It may also be possible to "steal" another bit or two from the counter
+> if you see a way to use it.
+> 
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b4678df184b314a2bd47d2329feca2c2534aa12b
+> 
+> 
+> -- 
+> Jeff Layton <jlayton@redhat.com>
+> 
+
