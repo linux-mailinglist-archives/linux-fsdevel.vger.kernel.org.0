@@ -2,164 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0A42CCF0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 07:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E96482CCF49
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 07:31:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbgLCGTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 01:19:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48686 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728318AbgLCGTP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 01:19:15 -0500
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4528DC061A4D;
-        Wed,  2 Dec 2020 22:18:35 -0800 (PST)
-Received: by mail-il1-x143.google.com with SMTP id y9so914280ilb.0;
-        Wed, 02 Dec 2020 22:18:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WWc60qRkgAP4/AhDOQSUVOyIFCAFSIZPZYbAmsVDLvA=;
-        b=EqpQt8WKlMC8JpSDIKOhSMtpE8OLP1oVgZoGnQCqrKr5aya3IfoFAIVVV7pxqHhBNC
-         vH8CZ69gqkbB/jsZcwclPIJpseIVlVfnBw5ef+COmtquSWN8IH+fFdTneGPeyDN7I11F
-         llHyti6dL8jqm+rZxrPMEhbLNGHgL2eNFOEHSD+qzFKO6bkF337ruSgWlIvBxljO78zQ
-         pbxUr0pR5FGT4C2OSJSx5NgMgSG5uyL2d0rCI1oXuHac1xlbrFAr9oSmyUCxfi0cW5Al
-         UYo62/Kvvdj1QNdaBCbNxOcjje6IVKc/7GoacsW9wP018ySMJhSQkl2LZR8gdUhZ/i0k
-         1C+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WWc60qRkgAP4/AhDOQSUVOyIFCAFSIZPZYbAmsVDLvA=;
-        b=Cx9Z67zY+YSWqiergWd5Oy9+XOzN+Hh5PqG0P8SjpfRbDp+cS7rzGHKZzZNwqoZlhA
-         9fp4W9mvPN9qzoHMGTRypjiZR0jhXzTtRucbRcD4ZL+1I3hYKotpfYN5lKXwQN1/2rpp
-         bLqERdAyW7UgkaY/FqleBVrleeJqsjkvr375XQ2+W0X8taEhsJ6+r47/TqiTvwFR8SEa
-         8N6SRim5bgN93k3MyXpIRNbaZfoEYy1ottOMvnFOBu6wo5xDncaURvkbh70hLMXbySSt
-         clnBtoI//9+6qCgiuAvrmitWGX+UBWWtDCqRj95FlUsqQh6R4Iges9EJ64ukROKN2iL0
-         5ahg==
-X-Gm-Message-State: AOAM5302uJOUbPdLCtM2MhWrsl83D71naepYL4ne6BvUO7fEdCqfLvc/
-        DkWoZl49734oMWzvlgWEt2Cr6q6pxyXstKhRMKI=
-X-Google-Smtp-Source: ABdhPJz36LCXTX0/SCIOBeXZg650dbCCwPENwVekcYOEKfG4AR3MNh3N57CJyu1yS3dMiCG4Jr+vOaeTZ+tl7lnJmvM=
-X-Received: by 2002:a92:da82:: with SMTP id u2mr1725751iln.137.1606976314613;
- Wed, 02 Dec 2020 22:18:34 -0800 (PST)
+        id S1729258AbgLCGat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 01:30:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47436 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726405AbgLCGat (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Dec 2020 01:30:49 -0500
+From:   Mike Rapoport <rppt@kernel.org>
+Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: [PATCH v14 00/10] mm: introduce memfd_secret system call to create "secret" memory areas
+Date:   Thu,  3 Dec 2020 08:29:39 +0200
+Message-Id: <20201203062949.5484-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <3e28d2c7-fbe5-298a-13ba-dcd8fd504666@redhat.com>
- <20201202160049.GD1447340@iweiny-DESK2.sc.intel.com> <CAJfpegt6w4h28VLctpaH46r2pkbcUNJ4pUhwUqZ-zbrOrXPEEQ@mail.gmail.com>
- <641397.1606926232@warthog.procyon.org.uk> <CAJfpegsQxi+_ttNshHu5MP+uLn3px9+nZRoTLTxh9-xwU8s1yg@mail.gmail.com>
- <X8flmVAwl0158872@kroah.com> <20201202204045.GM2842436@dread.disaster.area> <X8gBUc0fkdh6KK01@kroah.com>
-In-Reply-To: <X8gBUc0fkdh6KK01@kroah.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 3 Dec 2020 08:18:23 +0200
-Message-ID: <CAOQ4uxhNvTxEo_-wkHy-KO8Jhz0Amh-g2Nz+PzN_8OODWJPz7w@mail.gmail.com>
-Subject: Re: [PATCH V2] uapi: fix statx attribute value overlap for DAX & MOUNT_ROOT
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        Xiaoli Feng <xifeng@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > It seems like this can all be avoided simply by scheduling the
-> > automated fixes scans once the upstream kernel is released, not
-> > while it is still being stabilised by -rc releases. That way stable
-> > kernels get better tested fixes, they still get the same quantity of
-> > fixes, and upstream developers have some margin to detect and
-> > correct regressions in fixes before they get propagated to users.
->
-> So the "magic" -final release from Linus would cause this to happen?
-> That means that the world would go for 3 months without some known fixes
-> being applied to the tree?  That's not acceptable to me, as I started
-> doing this because it was needed to be done, not just because I wanted
-> to do more work...
->
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-Nobody was trying to undermine the need for expediting important fixes
-into stable kernels. Quite the contrary.
+Hi,
 
-> > It also creates a clear demarcation between fixes and cc: stable for
-> > maintainers and developers: only patches with a cc: stable will be
-> > backported immediately to stable. Developers know what patches need
-> > urgent backports and, unlike developers, the automated fixes scan
-> > does not have the subject matter expertise or background to make
-> > that judgement....
->
-> Some subsystems do not have such clear demarcation at all.  Heck, some
-> subsystems don't even add a cc: stable to known major fixes.  And that's
-> ok, the goal of the stable kernel work is to NOT impose additional work
-> on developers or maintainers if they don't want to do that work.
->
+@Andrew, this is based on v5.10-rc2-mmotm-2020-11-07-21-40, I can rebase on
+current mmotm if you prefer.
 
-Greg,
+This is an implementation of "secret" mappings backed by a file descriptor.
 
-Please acknowledge that there is something to improve.
-Saying that some subsystems maintainers don't care is not a great
-argument for subsystem maintainers that do care and try to improve the process.
+The file descriptor backing secret memory mappings is created using a
+dedicated memfd_secret system call The desired protection mode for the
+memory is configured using flags parameter of the system call. The mmap()
+of the file descriptor created with memfd_secret() will create a "secret"
+memory mapping. The pages in that mapping will be marked as not present in
+the direct map and will be present only in the page table of the owning mm.
 
-I am speaking here both as a maintainer of a downstream stable kernel,
-who cares specifically about xfs fixes and as an upstream developer who
-"contributes" patches to stable kernels. And I am not a passive contributor
-to stable kernels. I try to take good care of overlayfs and fsnotify patches
-being properly routed to stable kernels, as well as prepping the patches
-for backport-ability during review and occasional backporting.
-I also try to help with auditing the AUTOSEL patch selection of xfs.
+Although normally Linux userspace mappings are protected from other users,
+such secret mappings are useful for environments where a hostile tenant is
+trying to trick the kernel into giving them access to other tenants
+mappings.
 
-The process can improve. This is an indisputable fact, because as contributors
-we want to improve the quality of the stable kernels but missing the
-tools to do so.
+Additionally, in the future the secret mappings may be used as a mean to
+protect guest memory in a virtual machine host.
 
-As a downstream user of stable kernels I learned to wait out a few .y releases
-after xfs fixes have flowed in. This is possible because xfs stable
-fixes are not
-flowing that often.
-Do you see what happened? You did not make the problem go away, but pushed
-it down to your downstream users.
-I would not have complained unless I thought that we could do better.
+For demonstration of secret memory usage we've created a userspace library
 
-Here is a recent example, where during patch review, I requested NOT to include
-any stable backport triggers [1]:
-"...We should consider sending this to stable, but maybe let's merge
-first and let it
- run in master for a while before because it is not a clear and
-immediate danger..."
+https://git.kernel.org/pub/scm/linux/kernel/git/jejb/secret-memory-preloader.git
 
-This is just one patch and I put a mental trigger to myself to stop it
-during stable
-patch review if it gets selected, but you can see how this solution
-does not scale.
+that does two things: the first is act as a preloader for openssl to
+redirect all the OPENSSL_malloc calls to secret memory meaning any secret
+keys get automatically protected this way and the other thing it does is
+expose the API to the user who needs it. We anticipate that a lot of the
+use cases would be like the openssl one: many toolkits that deal with
+secret keys already have special handling for the memory to try to give
+them greater protection, so this would simply be pluggable into the
+toolkits without any need for user application modification.
 
-As a developer and as a reviewer, I wish (as Dave implied) that I had a way to
-communicate to AUTOSEL that auto backport of this patch has more risk than
-the risk of not backporting. I could also use a way to communicate
-that this patch
-(although may fix a bug) should be "treated as a feature", meaning that it needs
-a full release cycle to stabilize should not see the light of day
-before the upstream
-.0 release. Some fixes are just like that.
+Hiding secret memory mappings behind an anonymous file allows (ab)use of
+the page cache for tracking pages allocated for the "secret" mappings as
+well as using address_space_operations for e.g. page migration callbacks.
 
-The question is how to annotate these changes.
-Thinking out loud:
-    Cc: stable@vger.kernel.org#v5.9<<v5.10
-    Cc: stable@vger.kernel.org#v5.9<<v5.10-rc5
+The anonymous file may be also used implicitly, like hugetlb files, to
+implement mmap(MAP_SECRET) and use the secret memory areas with "native" mm
+ABIs in the future.
 
-For patches that need to soak a few cycles in master or need to linger in
-master until the .0 release.
+To limit fragmentation of the direct map to splitting only PUD-size pages,
+I've added an amortizing cache of PMD-size pages to each file descriptor
+that is used as an allocation pool for the secret memory areas.
 
-Thanks,
-Amir.
+As the memory allocated by secretmem becomes unmovable, we use CMA to back
+large page caches so that page allocator won't be surprised by failing attempt
+to migrate these pages.
 
-[1] https://lore.kernel.org/linux-unionfs/CAOQ4uxiUTsXEdQsE275qxTh61tZOB+-wqCp6gaNLkOw5ueUJgw@mail.gmail.com/
+v14:
+* Finally s/mod_node_page_state/mod_lruvec_page_state/
+
+v13: https://lore.kernel.org/lkml/20201201074559.27742-1-rppt@kernel.org
+* Added Reviewed-by, thanks Catalin and David
+* s/mod_node_page_state/mod_lruvec_page_state/ as Shakeel suggested
+
+v12: https://lore.kernel.org/lkml/20201125092208.12544-1-rppt@kernel.org
+* Add detection of whether set_direct_map has actual effect on arm64 and bail
+  out of CMA allocation for secretmem and the memfd_secret() syscall if pages
+  would not be removed from the direct map
+
+v11: https://lore.kernel.org/lkml/20201124092556.12009-1-rppt@kernel.org
+* Drop support for uncached mappings
+
+v10: https://lore.kernel.org/lkml/20201123095432.5860-1-rppt@kernel.org
+* Drop changes to arm64 compatibility layer
+* Add Roman's Ack for memcg accounting
+
+Older history:
+v9: https://lore.kernel.org/lkml/20201117162932.13649-1-rppt@kernel.org
+v8: https://lore.kernel.org/lkml/20201110151444.20662-1-rppt@kernel.org
+v7: https://lore.kernel.org/lkml/20201026083752.13267-1-rppt@kernel.org
+v6: https://lore.kernel.org/lkml/20200924132904.1391-1-rppt@kernel.org
+v5: https://lore.kernel.org/lkml/20200916073539.3552-1-rppt@kernel.org
+v4: https://lore.kernel.org/lkml/20200818141554.13945-1-rppt@kernel.org
+v3: https://lore.kernel.org/lkml/20200804095035.18778-1-rppt@kernel.org
+v2: https://lore.kernel.org/lkml/20200727162935.31714-1-rppt@kernel.org
+v1: https://lore.kernel.org/lkml/20200720092435.17469-1-rppt@kernel.org
+
+Mike Rapoport (10):
+  mm: add definition of PMD_PAGE_ORDER
+  mmap: make mlock_future_check() global
+  set_memory: allow set_direct_map_*_noflush() for multiple pages
+  set_memory: allow querying whether set_direct_map_*() is actually enabled
+  mm: introduce memfd_secret system call to create "secret" memory areas
+  secretmem: use PMD-size pages to amortize direct map fragmentation
+  secretmem: add memcg accounting
+  PM: hibernate: disable when there are active secretmem users
+  arch, mm: wire up memfd_secret system call were relevant
+  secretmem: test: add basic selftest for memfd_secret(2)
+
+ arch/arm64/include/asm/Kbuild             |   1 -
+ arch/arm64/include/asm/cacheflush.h       |   6 -
+ arch/arm64/include/asm/set_memory.h       |  17 +
+ arch/arm64/include/uapi/asm/unistd.h      |   1 +
+ arch/arm64/kernel/machine_kexec.c         |   1 +
+ arch/arm64/mm/mmu.c                       |   6 +-
+ arch/arm64/mm/pageattr.c                  |  23 +-
+ arch/riscv/include/asm/set_memory.h       |   4 +-
+ arch/riscv/include/asm/unistd.h           |   1 +
+ arch/riscv/mm/pageattr.c                  |   8 +-
+ arch/x86/Kconfig                          |   2 +-
+ arch/x86/entry/syscalls/syscall_32.tbl    |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl    |   1 +
+ arch/x86/include/asm/set_memory.h         |   4 +-
+ arch/x86/mm/pat/set_memory.c              |   8 +-
+ fs/dax.c                                  |  11 +-
+ include/linux/pgtable.h                   |   3 +
+ include/linux/secretmem.h                 |  30 ++
+ include/linux/set_memory.h                |  16 +-
+ include/linux/syscalls.h                  |   1 +
+ include/uapi/asm-generic/unistd.h         |   6 +-
+ include/uapi/linux/magic.h                |   1 +
+ kernel/power/hibernate.c                  |   5 +-
+ kernel/power/snapshot.c                   |   4 +-
+ kernel/sys_ni.c                           |   2 +
+ mm/Kconfig                                |   5 +
+ mm/Makefile                               |   1 +
+ mm/filemap.c                              |   3 +-
+ mm/gup.c                                  |  10 +
+ mm/internal.h                             |   3 +
+ mm/mmap.c                                 |   5 +-
+ mm/secretmem.c                            | 439 ++++++++++++++++++++++
+ mm/vmalloc.c                              |   5 +-
+ scripts/checksyscalls.sh                  |   4 +
+ tools/testing/selftests/vm/.gitignore     |   1 +
+ tools/testing/selftests/vm/Makefile       |   3 +-
+ tools/testing/selftests/vm/memfd_secret.c | 298 +++++++++++++++
+ tools/testing/selftests/vm/run_vmtests    |  17 +
+ 38 files changed, 906 insertions(+), 51 deletions(-)
+ create mode 100644 arch/arm64/include/asm/set_memory.h
+ create mode 100644 include/linux/secretmem.h
+ create mode 100644 mm/secretmem.c
+ create mode 100644 tools/testing/selftests/vm/memfd_secret.c
+
+
+base-commit: 9f8ce377d420db12b19d6a4f636fecbd88a725a5
+-- 
+2.28.0
+
