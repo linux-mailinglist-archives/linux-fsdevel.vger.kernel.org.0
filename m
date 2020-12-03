@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2F82CCE1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 05:56:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 481B72CCE28
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 06:01:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbgLCEzo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 23:55:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
+        id S1726057AbgLCFAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 00:00:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbgLCEzo (ORCPT
+        with ESMTP id S1725793AbgLCFAd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 23:55:44 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 814B1C061A4D;
-        Wed,  2 Dec 2020 20:55:03 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id g20so1560953ejb.1;
-        Wed, 02 Dec 2020 20:55:03 -0800 (PST)
+        Thu, 3 Dec 2020 00:00:33 -0500
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634ACC061A4D;
+        Wed,  2 Dec 2020 20:59:53 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id jx16so1490888ejb.10;
+        Wed, 02 Dec 2020 20:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hMZ/CoXr7rG2rPWo+uH3O4w1xYXh8+l7UsyrUayDNgc=;
-        b=MyeceJ/MnvUoQZlEkdJUF/PNAjmS9cb+O9H0M999APAmXuB1ykgu2WYO3kNjeT/dIT
-         x73rT0rD+oso8pvKkN7c4Rtib3zJRnnlsdI7rSXMbDmb1uQSxTmWYeMDfLJBZn9L5pV7
-         J7r+Q91L27e5jyXZuQj1zYzzH9TEZiA66oh1YZBO6xzEffHNXuehk7IkeKmyUe3T35ja
-         YEPkgIE4/a1kgS63sbTyApSrfGB1xGVcmxfJTcB0B8xjO0Hc8M5BUafrFENbPOPn/mDz
-         Uh0uOjH38vyf50ycfrws9lwYwFLHFbFVpBr0BqU9EbQMdiQbXTdf7lV6uYqNH83tYwa4
-         xfiQ==
+        bh=bKGVg3cjoOrKRnpZuJPclcM34b/MdOnvCpoVioB4GiE=;
+        b=aA3dQ5LwD94gHv9tuPNuUTnydYahQYDyWyTmwK7CdUxoIyAgiHV3lFQIu9GU7MkGGm
+         +MEB1P9NgZdsBkS+/oy4qafMnAmQS67ktM2RFqAPox/x+zvdGzJz/uqei3aNltfJkjKh
+         M2j3O7a62J5kp0St7LaBLBaGqn1GQQEwjhL8NxHNq29hSZt9y6ubPgCLoulUvnSDDrKI
+         GInIO9fBexHoAGvIeMBSGPlok8o6C/LxRWEDAZhiXKmxUmYkKzksnKK/VT/YOsku3Voc
+         6inFezZ0jt4dz95SILjpO12BsoExFtRfUI5TenhIQTR00z+mAVEsVh/PUQZkIbXKno4o
+         uwuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hMZ/CoXr7rG2rPWo+uH3O4w1xYXh8+l7UsyrUayDNgc=;
-        b=HWNN0ayhePCu2yzZ/vLY+PIc311M8FNNpjPw+1STiFI0NJcwLjboKDtHRmjy48c3Af
-         DKmhmWujEg9FIvsoCmpb0F7jAFFccVtddpnPT8ZqJOFTU+PHKBCf/Zow3RyJcGKSGZ9j
-         p6CjAWZwNpdIXhZ3Q9h3DfcFavs3lX6ngt8QtAhkWdvF243WUM7t6eFflEEBzJoqYw5i
-         a9LD1exjAS+nlt6jaBIO1psMrzwjgArFALivfRXCtWzQT9egG72P9rf3KAuUGQaqf+dR
-         5AqG8XAwjh/Jyw4gfxzqxhKwzpB2lU8uF3XljHnRSA/fjEQAsVba4p8f1boasiFqLlXC
-         P/Uw==
-X-Gm-Message-State: AOAM532XUMHZ+Tp/sbactqVcLNZfSw5gs47Ga+TQSB2UL+zsf410HLgz
-        1CdW7jUcqGmRlkQbnjWcpZ4ga2DnKHwlnxvN39o=
-X-Google-Smtp-Source: ABdhPJxjSVe1Wfr/oFwfvDkweZqNU2z+vvr9rMkC/SrFrwv5wL7TTPsdwmC61tKYQZqtrZ6bKzlDVbBEy7bU8eyVdNg=
-X-Received: by 2002:a17:906:cd06:: with SMTP id oz6mr989147ejb.25.1606971302241;
- Wed, 02 Dec 2020 20:55:02 -0800 (PST)
+        bh=bKGVg3cjoOrKRnpZuJPclcM34b/MdOnvCpoVioB4GiE=;
+        b=HrP3PbMD94GG39j0ILtlQypEBd5wK+2LDgins9p0cyWGHh7KflawAv1Cf4T0bwEuVS
+         DXL/dMEOofRUNjbkoGqNVTzeaCIpLnFBCH6ZwrBObdggByVKnOJe4HIXZqpZ6nC1WBjv
+         huvj+k50uFr2bEbDIIXFZz7NTuESH35e47wM/mjLEa4qwDtKDJWBUmByiY+iAcfpQ+zQ
+         AWt1JOmbhMwSP6Wctdd1uHTILVdWbC7zX3vWp4iw83XrcnxNW/OUYAqKFEQswAzddRsB
+         vkCL9vICLZ6Z2pmdDteEhdgfmQUshWjvt6FC/W/EiLyks27AUQFsfXPRY6fnDlfovFk5
+         E6ZQ==
+X-Gm-Message-State: AOAM533eicim+elmsySMOKMwtb9nI5GATpLMAopLHEAVc0UQ4Yyukqca
+        Wbt0f8GQ5ky+WnQMUvZBoyFXPyNVGjT53m52V58=
+X-Google-Smtp-Source: ABdhPJzy0wACDe5vcyUC6PWOelt+YwF9TErWrS5iOQVmq9w+OL/9iO2OP92bKuLVWAfv3guXpwKa7CwZ5v8vxT9DNh8=
+X-Received: by 2002:a17:906:cd06:: with SMTP id oz6mr997936ejb.25.1606971592123;
+ Wed, 02 Dec 2020 20:59:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
- <20201203030632.GG1375014@carbon.DHCP.thefacebook.com>
-In-Reply-To: <20201203030632.GG1375014@carbon.DHCP.thefacebook.com>
+References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-5-shy828301@gmail.com>
+ <20201203030104.GF1375014@carbon.DHCP.thefacebook.com>
+In-Reply-To: <20201203030104.GF1375014@carbon.DHCP.thefacebook.com>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 2 Dec 2020 20:54:50 -0800
-Message-ID: <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
+Date:   Wed, 2 Dec 2020 20:59:40 -0800
+Message-ID: <CAHbLzkoUNuKHT_4w8QaWCQA3xs2vTW4Xii26a5vpVqxrDVSX_Q@mail.gmail.com>
+Subject: Re: [PATCH 4/9] mm: vmscan: use a new flag to indicate shrinker is registered
 To:     Roman Gushchin <guro@fb.com>
 Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
         Shakeel Butt <shakeelb@google.com>,
@@ -67,65 +67,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 2, 2020 at 7:06 PM Roman Gushchin <guro@fb.com> wrote:
+On Wed, Dec 2, 2020 at 7:01 PM Roman Gushchin <guro@fb.com> wrote:
 >
-> On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
-> > Currently the number of deferred objects are per shrinker, but some slabs, for example,
-> > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> On Wed, Dec 02, 2020 at 10:27:20AM -0800, Yang Shi wrote:
+> > Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
+> > This approach is fine with nr_deferred atthe shrinker level, but the following
+> > patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
+> > shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
+> > from unregistering correctly.
 > >
-> > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-> > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-> > may suffer from over shrink, excessive reclaim latency, etc.
-> >
-> > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-> > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-> > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-> >
-> > We observed this hit in our production environment which was running vfs heavy workload
-> > shown as the below tracing log:
-> >
-> > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-> > cache items 246404277 delta 31345 total_scan 123202138
-> > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-> > last shrinker return val 123186855
-> >
-> > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-> > This also resulted in significant amount of page caches were dropped due to inodes eviction.
-> >
-> > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-> > better isolation.
-> >
-> > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-> > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> > Introduce a new "state" field to indicate if shrinker is registered or not.
+> > We could use the highest bit of flags, but it may be a little bit complicated to
+> > extract that bit and the flags is accessed frequently by vmscan (every time shrinker
+> > is called).  So add a new field in "struct shrinker", we may waster a little bit
+> > memory, but it should be very few since there should be not too many registered
+> > shrinkers on a normal system.
 > >
 > > Signed-off-by: Yang Shi <shy828301@gmail.com>
 > > ---
-> >  include/linux/memcontrol.h |   9 +++
-> >  mm/memcontrol.c            | 112 ++++++++++++++++++++++++++++++++++++-
-> >  mm/vmscan.c                |   4 ++
-> >  3 files changed, 123 insertions(+), 2 deletions(-)
+> >  include/linux/shrinker.h |  4 ++++
+> >  mm/vmscan.c              | 13 +++++++++----
+> >  2 files changed, 13 insertions(+), 4 deletions(-)
 > >
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index 922a7f600465..1b343b268359 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -92,6 +92,13 @@ struct lruvec_stat {
-> >       long count[NR_VM_NODE_STAT_ITEMS];
-> >  };
+> > diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+> > index 0f80123650e2..0bb5be88e41d 100644
+> > --- a/include/linux/shrinker.h
+> > +++ b/include/linux/shrinker.h
+> > @@ -35,6 +35,9 @@ struct shrink_control {
 > >
+> >  #define SHRINK_STOP (~0UL)
+> >  #define SHRINK_EMPTY (~0UL - 1)
 > > +
-> > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
-> > +struct memcg_shrinker_deferred {
-> > +     struct rcu_head rcu;
-> > +     atomic_long_t nr_deferred[];
-> > +};
+> > +#define SHRINKER_REGISTERED  0x1
+> > +
+> >  /*
+> >   * A callback you can register to apply pressure to ageable caches.
+> >   *
+> > @@ -66,6 +69,7 @@ struct shrinker {
+> >       long batch;     /* reclaim batch size, 0 = default */
+> >       int seeks;      /* seeks to recreate an obj */
+> >       unsigned flags;
+> > +     unsigned state;
 >
-> The idea makes total sense to me. But I wonder if we can add nr_deferred to
-> struct list_lru_one, instead of adding another per-memcg per-shrinker entity?
-> I guess it can simplify the code quite a lot. What do you think?
+> Hm, can't it be another flag? It seems like we have a plenty of free bits.
 
-Aha, actually this exactly was what I did at the first place. But Dave
-NAK'ed this approach. You can find the discussion at:
-https://lore.kernel.org/linux-mm/20200930073152.GH12096@dread.disaster.area/.
+I thought about this too. But I was not convinced by myself that
+messing flags with state is a good practice. We may add more flags in
+the future, so we may end up having something like:
+
+flag
+flag
+flag
+state
+flag
+flag
+...
+
+Maybe we could use the highest bit for state?
+
+>
+> >
+> >       /* These are for internal use */
+> >       struct list_head list;
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 457ce04eebf2..0d628299e55c 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -378,6 +378,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
+> >       if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> >               idr_replace(&shrinker_idr, shrinker, shrinker->id);
+> >  #endif
+> > +     shrinker->state |= SHRINKER_REGISTERED;
+> >       up_write(&shrinker_rwsem);
+> >  }
+> >
+> > @@ -397,13 +398,17 @@ EXPORT_SYMBOL(register_shrinker);
+> >   */
+> >  void unregister_shrinker(struct shrinker *shrinker)
+> >  {
+> > -     if (!shrinker->nr_deferred)
+> > -             return;
+> > -     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > -             unregister_memcg_shrinker(shrinker);
+> >       down_write(&shrinker_rwsem);
+> > +     if (!shrinker->state) {
+> > +             up_write(&shrinker_rwsem);
+> > +             return;
+> > +     }
+> >       list_del(&shrinker->list);
+> > +     shrinker->state &= ~SHRINKER_REGISTERED;
+> >       up_write(&shrinker_rwsem);
+> > +
+> > +     if (shrinker->flags & SHRINKER_MEMCG_AWARE)
+> > +             unregister_memcg_shrinker(shrinker);
+> >       kfree(shrinker->nr_deferred);
+> >       shrinker->nr_deferred = NULL;
+> >  }
+> > --
+> > 2.26.2
+> >
