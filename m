@@ -2,187 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3C92CE213
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 23:51:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE842CE227
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 23:55:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgLCWty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 17:49:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33194 "EHLO
+        id S1731874AbgLCWx0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 17:53:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727664AbgLCWty (ORCPT
+        with ESMTP id S1731866AbgLCWxZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 17:49:54 -0500
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD824C061A4F;
-        Thu,  3 Dec 2020 14:49:13 -0800 (PST)
-Received: by mail-lj1-x243.google.com with SMTP id y10so4390149ljc.7;
-        Thu, 03 Dec 2020 14:49:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m2KIRqm5C9Jb+1GBg3YOa+h+M1YJN2474HFTwVQNFbI=;
-        b=tRQA/Fy3xfTQmn8yjHzihBY8BM3bi9J4b8ExnFFNIUCjK0jo4vduz120DgtyDvRTWu
-         U319VlqY0W8vFGs8Tu7jXs99u6HH9jhV7p72h8abmQdmM0Wid4z3cw35o1rh6XIVBS2n
-         C3LjVBcX8HrxYnHhpck60m58l5RRrzq4nZ/5hRYYytBeHvSMPBPB8f1Tv7OAn/uQI6G5
-         hT6GkGmxvUmmjBO6qF7Sy96ZJa077uIyMLy5jLKleEpX1EXA8H3j/pzhuAoCUV2VDqBx
-         oJ2TrCr0Ab3LFOYf2w03XGr4e2JMMrhpVPUjAbSO4uI5I3gcBvpjfbWcRa8gx79Uh7I6
-         ARJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m2KIRqm5C9Jb+1GBg3YOa+h+M1YJN2474HFTwVQNFbI=;
-        b=a27A94YSlIg34s5m/pWiHpIJR8IP3XwofOFira2p+/DMuvX/oLA1NRgWLStMwGKomr
-         kXGERG2B6aAmOoYW9UMrHuAFGKW5SMZlgfGSSi1DSsae5OVU44YUjc6pr1+KB9RwdwL5
-         HCo3BvO30HgHSZBhLuU4zm+oKWxk3tcnymx99w4jE6NAecgiwktMwZSZ64s5OoOTq0tC
-         j42p+wzLPce6Y1U6uKvviu6Lw9kNSZ4SHDgUJOYwm+KnNmh6Oo3qOpPyhvZaOFmmUagv
-         PA4HHlQxOTOj79H7tMaDevoYzet+1Eh6mtWUrN/+ySeU9L8pfn+y9t+IIBFiNSqzTQAS
-         1nfQ==
-X-Gm-Message-State: AOAM5318yXt0v1DCYdGWJZTtn3i7G6fBCRn4L0//BM4b29DrfkxHguKJ
-        lk1l2AjHMdJIpD8ogvsn312yMkArfmqVCX2eiyM=
-X-Google-Smtp-Source: ABdhPJyBVpsbhvAeQ29b6jvJxTu/41UCWsu3CU4yMcRdBA07o5FPXVhJIeHUEW56dVlDpfwkN1XDYXC88jdUTsDie/g=
-X-Received: by 2002:a2e:9b90:: with SMTP id z16mr2198827lji.433.1607035752296;
- Thu, 03 Dec 2020 14:49:12 -0800 (PST)
+        Thu, 3 Dec 2020 17:53:25 -0500
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B91C061A4F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Dec 2020 14:52:45 -0800 (PST)
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id E8F6D24D3;
+        Thu,  3 Dec 2020 22:52:04 +0000 (UTC)
+Date:   Thu, 3 Dec 2020 15:52:03 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     info@democraticnet.de
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joris Gutjahr <joris.gutjahr@protonmail.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] Updating the documentation of struct file_system_type
+Message-ID: <20201203155203.4dd2736c@lwn.net>
+In-Reply-To: <20201201210551.8306-1-info@democraticnet.de>
+References: <20201201210551.8306-1-info@democraticnet.de>
+Organization: LWN.net
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
- <20201203030632.GG1375014@carbon.DHCP.thefacebook.com> <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
- <CAHbLzkpAsoOWeRuFeTM2+YbjfqxY2U3vK7EYX2Nui=YVOBXFpw@mail.gmail.com> <20201203200715.GB1571588@carbon.DHCP.thefacebook.com>
-In-Reply-To: <20201203200715.GB1571588@carbon.DHCP.thefacebook.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 3 Dec 2020 14:49:00 -0800
-Message-ID: <CAHbLzkoUaLehmngW7geCDj+Fzd5+tkk3tBsbcdHuSXUXKLBuyw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 3, 2020 at 12:07 PM Roman Gushchin <guro@fb.com> wrote:
->
-> On Thu, Dec 03, 2020 at 10:03:44AM -0800, Yang Shi wrote:
-> > On Wed, Dec 2, 2020 at 8:54 PM Yang Shi <shy828301@gmail.com> wrote:
-> > >
-> > > On Wed, Dec 2, 2020 at 7:06 PM Roman Gushchin <guro@fb.com> wrote:
-> > > >
-> > > > On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
-> > > > > Currently the number of deferred objects are per shrinker, but some slabs, for example,
-> > > > > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
-> > > > >
-> > > > > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-> > > > > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-> > > > > may suffer from over shrink, excessive reclaim latency, etc.
-> > > > >
-> > > > > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-> > > > > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-> > > > > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-> > > > >
-> > > > > We observed this hit in our production environment which was running vfs heavy workload
-> > > > > shown as the below tracing log:
-> > > > >
-> > > > > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > > > > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-> > > > > cache items 246404277 delta 31345 total_scan 123202138
-> > > > > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > > > > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-> > > > > last shrinker return val 123186855
-> > > > >
-> > > > > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-> > > > > This also resulted in significant amount of page caches were dropped due to inodes eviction.
-> > > > >
-> > > > > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-> > > > > better isolation.
-> > > > >
-> > > > > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-> > > > > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
-> > > > >
-> > > > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > > > ---
-> > > > >  include/linux/memcontrol.h |   9 +++
-> > > > >  mm/memcontrol.c            | 112 ++++++++++++++++++++++++++++++++++++-
-> > > > >  mm/vmscan.c                |   4 ++
-> > > > >  3 files changed, 123 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > > > > index 922a7f600465..1b343b268359 100644
-> > > > > --- a/include/linux/memcontrol.h
-> > > > > +++ b/include/linux/memcontrol.h
-> > > > > @@ -92,6 +92,13 @@ struct lruvec_stat {
-> > > > >       long count[NR_VM_NODE_STAT_ITEMS];
-> > > > >  };
-> > > > >
-> > > > > +
-> > > > > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
-> > > > > +struct memcg_shrinker_deferred {
-> > > > > +     struct rcu_head rcu;
-> > > > > +     atomic_long_t nr_deferred[];
-> > > > > +};
-> > > >
-> > > > The idea makes total sense to me. But I wonder if we can add nr_deferred to
-> > > > struct list_lru_one, instead of adding another per-memcg per-shrinker entity?
-> > > > I guess it can simplify the code quite a lot. What do you think?
-> > >
-> > > Aha, actually this exactly was what I did at the first place. But Dave
-> > > NAK'ed this approach. You can find the discussion at:
-> > > https://lore.kernel.org/linux-mm/20200930073152.GH12096@dread.disaster.area/.
->
-> Yes, this makes sense for me. Thank you for the link!
->
-> >
-> > I did prototypes for both approaches (move nr_deferred to list_lru or
-> > to memcg). I preferred the list_lru approach at the first place. But
-> > Dave's opinion does make perfect sense to me. So I dropped that
-> > list_lru one. That email elaborated why moving nr_deferred to list_lru
-> > is not appropriate.
->
-> Hm, shouldn't we move list_lru to memcg then? It's not directly related
-> to your patchset, but maybe it's something we should consider in the future.
+On Tue,  1 Dec 2020 22:05:51 +0100
+info@democraticnet.de wrote:
 
-I haven't thought about this yet. I agree we could look into it
-further later on.
+> From: Joris Gutjahr <joris.gutjahr@protonmail.com>
+> 
+> In the documentation of struct file_system_type,
+> using the definition of the struct of the kernel v5.10-rc6.
+> 
+> Signed-off-by: Joris Gutjahr <joris.gutjahr@protonmail.com>
 
->
-> What worries me is that with your patchset we'll have 3 separate
-> per-memcg (per-node) per-shrinker entity, each with slightly different
-> approach to allocate/extend/reparent/release. So it begs for some
-> unification. I don't think it's a showstopper for your work though, it
-> can be done later.
+So I applaud any effort to update this file, but I have a couple of
+requests.  First is that any patch like this needs to be run past the
+filesystem folks; I've added Al and the fsdevel list to CC as a starting
+point.
 
-Off the top of my head, we may be able to have shrinker_info struct,
-it should look like:
+>  Documentation/filesystems/vfs.rst | 28 +++++++++++++++++++++++-----
+>  1 file changed, 23 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+> index ca52c82e5bb5..364ef3dcb649 100644
+> --- a/Documentation/filesystems/vfs.rst
+> +++ b/Documentation/filesystems/vfs.rst
+> @@ -107,22 +107,30 @@ file /proc/filesystems.
+>  struct file_system_type
+>  -----------------------
+>  
+> -This describes the filesystem.  As of kernel 2.6.39, the following
+> -members are defined:
+> +This describes the filesystem.  As of kernel v5.10, the following
+> +members are defined: (compare: include/linux/fs.h)
+>  
+>  .. code-block:: c
+>  
+> -	struct file_system_operations {
+> +	struct file_system_type {
+>  		const char *name;
+>  		int fs_flags;
+> +        int (*init_fs_context)(struct fs_context*);
+> +        const struct fs_parameter_spec *parameters;
+>  		struct dentry *(*mount) (struct file_system_type *, int,
+>  					 const char *, void *);
+>  		void (*kill_sb) (struct super_block *);
+>  		struct module *owner;
+>  		struct file_system_type * next;
+> -		struct list_head fs_supers;
+> +		struct hlist_head fs_supers;
+>  		struct lock_class_key s_lock_key;
+>  		struct lock_class_key s_umount_key;
+> +        struct lock_class_key s_vfs_rename_key;
+> +        struct lock_class_key s_writers_key[SB_FREEZE_LEVELS];
+> +
+> +        struct lock_class_key i_lock_key;
+> +        struct lock_class_key i_mutex_key;
+> +        struct lock_class_key i_mutex_dir_key;
+>  	};
+>  
+>  ``name``
+> @@ -132,6 +140,12 @@ members are defined:
+>  ``fs_flags``
+>  	various flags (i.e. FS_REQUIRES_DEV, FS_NO_DCACHE, etc.)
+>  
+> +``init_fs_context``
+> +    TODO
+> +
+> +``fs_parameter_spec``
+> +    TODO
 
-struct shrinker_info {
-    atomic_long_t nr_deferred;
-    /* Just one bit is used now */
-    u8 map:1;
-}
+These are ... not particularly helpful.  If we're going to update the
+documentation for this structure, we should actually update the
+documentation, methinks.
 
-struct memcg_shrinker_info {
-    struct rcu_head rcu;
-    /* Indexed by shrinker ID */
-    struct shrinker_info info[];
-}
+>  ``mount``
+>  	the method to call when a new instance of this filesystem should
+>  	be mounted
+> @@ -148,7 +162,11 @@ members are defined:
+>  ``next``
+>  	for internal VFS use: you should initialize this to NULL
+>  
+> -  s_lock_key, s_umount_key: lockdep-specific
+> +``fs_supers``
+> +    TODO
+> +
+> +
+> +  s_lock_key, s_umount_key, s_vfs_rename_key, s_writers_key, i_lock_key, i_mutex_key, i_mutex_dir_key: lockdep-specific
 
-Then in struct mem_cgroup_per_node, we could have:
+You should maintain the RST description-list formatting here.
 
-struct mem_cgroup_per_node {
-    ....
-    struct memcg_shrinker_info __rcu *shrinker_info;
-    ....
-}
+>  The mount() method has the following arguments:
 
-In this way shrinker_info should be allocated to all memcgs, including
-root. But shrinker could ignore root's map bit. We may waste a little
-bit memory, but we get unification.
+Thanks,
 
-Would that work?
+jon
