@@ -2,138 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 196952CDD0C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 19:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 047712CDD11
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 19:06:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731592AbgLCSEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 13:04:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45334 "EHLO
+        id S1731449AbgLCSF1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 13:05:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729046AbgLCSEh (ORCPT
+        with ESMTP id S1729423AbgLCSF1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 13:04:37 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23814C061A4E;
-        Thu,  3 Dec 2020 10:03:57 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id r5so3034741eda.12;
-        Thu, 03 Dec 2020 10:03:57 -0800 (PST)
+        Thu, 3 Dec 2020 13:05:27 -0500
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8917DC061A51
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Dec 2020 10:04:46 -0800 (PST)
+Received: by mail-lj1-x241.google.com with SMTP id r18so3580130ljc.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Dec 2020 10:04:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5TkHFxBitbPqG/QPKtc0c7XAOZRKTBnEK+0NsLlTHo8=;
-        b=iKHfauLpK20iBxA/fCKnyxsVh6ElHn+0g78quOWcU32YVRaDQP6fvodfAwDWYHAuQY
-         fhKK9S7BQ5MhoofXFQRoTwWAy/ID/9E9bQqJ0nd+vZjPMSYV+09eN89JiN5A16NEXxLQ
-         eiLQD7e1zvXbGURGHCm9v+SSH0aDGc3jdM5HJkPdYEG/VZAbqhkWRFhN1XfrJaC5/fH5
-         h2YyxN23kBEi5Y9b8oJLLmmH+6U/zqHPQFlPz98z4BYL9FFiirtPryaqQTVzX4zBc1jN
-         kZguTPFtDBhRzWXxko0qITUdtPswPmN2G/O9x+BRK3/71rQG0XiTn52UDF5Ot9qfMZaV
-         MKgg==
+        bh=hyvfbSevo8Se/4y3iGk+lQg5JO2pXQRwoWZK6AVmSCc=;
+        b=Gjv1aL6P6xJwooMOiOVXI2rySRClbrUY3HGVe50LjDG6cXh38kZ+sHSB/0xeLOSW+9
+         KzfnPdBnHXwJGIJd7YUlF/R7CYA7zxSe6UAPykXdN+th0PqF3iMNmSPkggw3h7OtjYFq
+         jXrwfcED6y2TT4DMjNHYAYn4nz6N4tLwE3MVw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5TkHFxBitbPqG/QPKtc0c7XAOZRKTBnEK+0NsLlTHo8=;
-        b=SgDF7GDvUyX3jHzj0c2NzxY1YLX+RKn1dPK7nSJUDzVa398NffZSx69K9BQoqBqnkp
-         qirjG6PVgyRSBoVEIR9zDybLBT5+K6aQHFgwRo4Jk0PbA/4soE1by42I2omMkxQdM4mj
-         xY/ZfPEM6wdCdk1Jz2OSE3ZFmHkF7SVgFlrwBMiwVU38M4W/9DmzTCoZVpIDgx5kAJ6G
-         UCrgy5G784WDYY/hJ6IlNiU59gPD1SRYQ+xMwFewCK25taDPYnNGemke5B6AjNA4mNGW
-         QZOpHzF4lZzZ2Ma/CMD3u7ztOU3NrUizxcSiztinWKARXcWz862pe3oO9HolPzaoEODH
-         RT0g==
-X-Gm-Message-State: AOAM5315nT4LfGm+O0uNEUaOWdnBedmG3FiRMY5qN9MawaSW58WLGruo
-        HU2ss6XMRcFekLDu/Uw5rAFtal50QB56dF+Wt8k=
-X-Google-Smtp-Source: ABdhPJy93eEJr+YxMlf0iuRBbpcsMRkpFvByZ+87VqV0V0uUuyhXahrZmbiS4ufZEE2k5uYbjxrxUvuSzJSe8uCqUh8=
-X-Received: by 2002:a05:6402:1c8a:: with SMTP id cy10mr3960098edb.151.1607018635794;
- Thu, 03 Dec 2020 10:03:55 -0800 (PST)
+        bh=hyvfbSevo8Se/4y3iGk+lQg5JO2pXQRwoWZK6AVmSCc=;
+        b=tkuQoYI85ZEVIKiKA2LwYJeMasIJIDrpHA8QGRVwJyoCBjNz16YrkY5Yk1zC+XaB5/
+         culPSi1laAjzCzvf6w36RSUdp00+5RJIR5DwhDjW53tMnRn5KX0Clua4QMSIU6Av6+Dv
+         Bhmfs0y4SdHaw9BMLqRKhtH9NtVG+8sQ6NOjV55a8OZPyoSC0QbF/ela/VmY1fsp8wPQ
+         KybUyXfMm+rumVSTtLEIoH2eKOYcRlRXB0fIUSHyrQuCQhjJkeEzb7PLavRQRj0CtKNH
+         fhCpCu15NMQ3D0x7qaLsb0drVdSfWggbKGtal1Ow7eZ65mH+lLzRiY/V3P/VR6B3P+6r
+         SHEA==
+X-Gm-Message-State: AOAM533gEQmWeICyHjzAFeyX/b1wO15DMPkwhhGrYuza9+7TiRRqSUTN
+        2XaqPFC3x51IhrE+gU4gDLpE2/FXpwKAcg==
+X-Google-Smtp-Source: ABdhPJyqLo7GxO1hE+y6cD1rY/anRTIzye4VnpzZR7wrYC2GmnaLEejbAE2X0TvQ3zArJJbLTP8xxg==
+X-Received: by 2002:a05:651c:285:: with SMTP id b5mr1799359ljo.82.1607018684425;
+        Thu, 03 Dec 2020 10:04:44 -0800 (PST)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id a6sm763432lfi.107.2020.12.03.10.04.42
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Dec 2020 10:04:43 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id r18so3579993ljc.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Dec 2020 10:04:42 -0800 (PST)
+X-Received: by 2002:a2e:9d83:: with SMTP id c3mr1626934ljj.314.1607018682473;
+ Thu, 03 Dec 2020 10:04:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
- <20201203030632.GG1375014@carbon.DHCP.thefacebook.com> <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
-In-Reply-To: <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 3 Dec 2020 10:03:44 -0800
-Message-ID: <CAHbLzkpAsoOWeRuFeTM2+YbjfqxY2U3vK7EYX2Nui=YVOBXFpw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
+ <7027520f-7c79-087e-1d00-743bdefa1a1e@redhat.com> <20201202021633.GA1455219@iweiny-DESK2.sc.intel.com>
+ <CAHk-=wjiU5Fq7aG0-H6QN1ZsK-U3Hw1K310N2z_eCPPDTKeysA@mail.gmail.com> <20201203024504.GA1563847@iweiny-DESK2.sc.intel.com>
+In-Reply-To: <20201203024504.GA1563847@iweiny-DESK2.sc.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 3 Dec 2020 10:04:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whWC==8VNeVG=_DwT+RT9x1uiseUDH0X9sYKMetrh6c3w@mail.gmail.com>
+Message-ID: <CAHk-=whWC==8VNeVG=_DwT+RT9x1uiseUDH0X9sYKMetrh6c3w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] uapi: fix statx attribute value overlap for DAX & MOUNT_ROOT
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Eric Sandeen <sandeen@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Xiaoli Feng <xifeng@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 2, 2020 at 8:54 PM Yang Shi <shy828301@gmail.com> wrote:
->
-> On Wed, Dec 2, 2020 at 7:06 PM Roman Gushchin <guro@fb.com> wrote:
+On Wed, Dec 2, 2020 at 6:45 PM Ira Weiny <ira.weiny@intel.com> wrote:
 > >
-> > On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
-> > > Currently the number of deferred objects are per shrinker, but some slabs, for example,
-> > > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
-> > >
-> > > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
-> > > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
-> > > may suffer from over shrink, excessive reclaim latency, etc.
-> > >
-> > > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
-> > > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
-> > > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
-> > >
-> > > We observed this hit in our production environment which was running vfs heavy workload
-> > > shown as the below tracing log:
-> > >
-> > > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
-> > > cache items 246404277 delta 31345 total_scan 123202138
-> > > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
-> > > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
-> > > last shrinker return val 123186855
-> > >
-> > > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
-> > > This also resulted in significant amount of page caches were dropped due to inodes eviction.
-> > >
-> > > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
-> > > better isolation.
-> > >
-> > > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
-> > > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
-> > >
-> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > ---
-> > >  include/linux/memcontrol.h |   9 +++
-> > >  mm/memcontrol.c            | 112 ++++++++++++++++++++++++++++++++++++-
-> > >  mm/vmscan.c                |   4 ++
-> > >  3 files changed, 123 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > > index 922a7f600465..1b343b268359 100644
-> > > --- a/include/linux/memcontrol.h
-> > > +++ b/include/linux/memcontrol.h
-> > > @@ -92,6 +92,13 @@ struct lruvec_stat {
-> > >       long count[NR_VM_NODE_STAT_ITEMS];
-> > >  };
-> > >
-> > > +
-> > > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
-> > > +struct memcg_shrinker_deferred {
-> > > +     struct rcu_head rcu;
-> > > +     atomic_long_t nr_deferred[];
-> > > +};
-> >
-> > The idea makes total sense to me. But I wonder if we can add nr_deferred to
-> > struct list_lru_one, instead of adding another per-memcg per-shrinker entity?
-> > I guess it can simplify the code quite a lot. What do you think?
+> > What would the typical failure cases be in practice?
 >
-> Aha, actually this exactly was what I did at the first place. But Dave
-> NAK'ed this approach. You can find the discussion at:
-> https://lore.kernel.org/linux-mm/20200930073152.GH12096@dread.disaster.area/.
+> The failure will be a user not seeing their file operating in DAX mode when
+> they expect it to.
+>
+> I discussed this with Dan Williams today.  He and I agreed the flag is new
+> enough that we don't think users have any released code to the API just yet.
+> So I think we will be ok.
 
-I did prototypes for both approaches (move nr_deferred to list_lru or
-to memcg). I preferred the list_lru approach at the first place. But
-Dave's opinion does make perfect sense to me. So I dropped that
-list_lru one. That email elaborated why moving nr_deferred to list_lru
-is not appropriate.
+Ok, thanks for verification. I've applied it locally in my tree, it
+will be pushed out later today with other work..
+
+           Linus
