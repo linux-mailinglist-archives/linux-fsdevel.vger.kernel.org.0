@@ -2,214 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA832CCCAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 03:33:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9736D2CCCCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 03:46:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbgLCCbf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 21:31:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:20347 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727102AbgLCCbf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 21:31:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606962608;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=diMj16ahBGwEq8pYSOBxqO/Ej1QXLVqYLZQqL2xljj8=;
-        b=ZVL7Juk0QeUgWds6z83GHCXM1teNiLnrs/zh2GEHqIoKXQx38G6g1XfEn+2E8LUXLAhHKH
-        amZWjyKdOlrzjS/9cITMZfo0XESLFtMHdJfm2WLqbSgt4UsbL3BmoWta6fnz3d28wkflKP
-        OF1BzYlw2A9+dK+NFRMZ1WZ8bl//vFE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-596-Ug3Mt5beOIKmILLh1VTHYw-1; Wed, 02 Dec 2020 21:30:04 -0500
-X-MC-Unique: Ug3Mt5beOIKmILLh1VTHYw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 64B8C185E493;
-        Thu,  3 Dec 2020 02:30:03 +0000 (UTC)
-Received: from localhost (ovpn-12-87.pek2.redhat.com [10.72.12.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AD36C5D6AC;
-        Thu,  3 Dec 2020 02:30:02 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH V2 2/2] block: rename the local variable for holding return value of bio_iov_iter_nvecs
-Date:   Thu,  3 Dec 2020 10:29:40 +0800
-Message-Id: <20201203022940.616610-3-ming.lei@redhat.com>
-In-Reply-To: <20201203022940.616610-1-ming.lei@redhat.com>
-References: <20201203022940.616610-1-ming.lei@redhat.com>
+        id S1728558AbgLCCpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 21:45:46 -0500
+Received: from mga09.intel.com ([134.134.136.24]:42056 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbgLCCpq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 2 Dec 2020 21:45:46 -0500
+IronPort-SDR: vwVPEfuTvxupxXteHk9FI48+5tcRTM9Ay+DJexvkkUT+XpSLw/IpAGiKfdrGJOma6nGTpgXtey
+ r7VlkYUnKJHA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9823"; a="173284224"
+X-IronPort-AV: E=Sophos;i="5.78,388,1599548400"; 
+   d="scan'208";a="173284224"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2020 18:45:05 -0800
+IronPort-SDR: PGAN7asU6CT7MhvSoks4tzPepYKMkHCPYKjWpAlnBlN7Eguo/8nq5n485HI2O0v69vXLklCK4g
+ iXXaILwCUJ3g==
+X-IronPort-AV: E=Sophos;i="5.78,388,1599548400"; 
+   d="scan'208";a="481796846"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2020 18:45:04 -0800
+Date:   Wed, 2 Dec 2020 18:45:04 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Eric Sandeen <sandeen@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Xiaoli Feng <xifeng@redhat.com>
+Subject: Re: [PATCH 1/2] uapi: fix statx attribute value overlap for DAX &
+ MOUNT_ROOT
+Message-ID: <20201203024504.GA1563847@iweiny-DESK2.sc.intel.com>
+References: <e388f379-cd11-a5d2-db82-aa1aa518a582@redhat.com>
+ <7027520f-7c79-087e-1d00-743bdefa1a1e@redhat.com>
+ <20201202021633.GA1455219@iweiny-DESK2.sc.intel.com>
+ <CAHk-=wjiU5Fq7aG0-H6QN1ZsK-U3Hw1K310N2z_eCPPDTKeysA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjiU5Fq7aG0-H6QN1ZsK-U3Hw1K310N2z_eCPPDTKeysA@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now the local variable for holding return value of bio_iov_iter_nvecs is
-'nr_pages', which is a bit misleading, and the actual meaning is number
-of bio vectors, and it is also used for this way.
+On Wed, Dec 02, 2020 at 12:42:08PM -0800, Linus Torvalds wrote:
+> On Tue, Dec 1, 2020 at 6:16 PM Ira Weiny <ira.weiny@intel.com> wrote:
+> >
+> > This will force a change to xfstests at a minimum.  And I do know of users who
+> > have been using this value.  But I have gotten inquires about using the feature
+> > so there are users out there.
+> 
+> If it's only a few tests that fail, I wouldn't worry about it, and the
+> tests should just be updated.
 
-So rename the local variable, and no function change.
+Done[1]
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@infradead.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- fs/block_dev.c       | 30 +++++++++++++++---------------
- fs/iomap/direct-io.c | 14 +++++++-------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+> 
+> But if there are real user concerns, we may need to have some kind of
+> compat code. Because of the whole "no regressions" thing.
+> 
+> What would the typical failure cases be in practice?
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index fbcc900229af..d699f3af1a09 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -215,7 +215,7 @@ static void blkdev_bio_end_io_simple(struct bio *bio)
- 
- static ssize_t
- __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
--		int nr_pages)
-+		int nr_vecs)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct block_device *bdev = I_BDEV(bdev_file_inode(file));
-@@ -230,16 +230,16 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
- 	    (bdev_logical_block_size(bdev) - 1))
- 		return -EINVAL;
- 
--	if (nr_pages <= DIO_INLINE_BIO_VECS)
-+	if (nr_vecs <= DIO_INLINE_BIO_VECS)
- 		vecs = inline_vecs;
- 	else {
--		vecs = kmalloc_array(nr_pages, sizeof(struct bio_vec),
-+		vecs = kmalloc_array(nr_vecs, sizeof(struct bio_vec),
- 				     GFP_KERNEL);
- 		if (!vecs)
- 			return -ENOMEM;
- 	}
- 
--	bio_init(&bio, vecs, nr_pages);
-+	bio_init(&bio, vecs, nr_vecs);
- 	bio_set_dev(&bio, bdev);
- 	bio.bi_iter.bi_sector = pos >> 9;
- 	bio.bi_write_hint = iocb->ki_hint;
-@@ -350,7 +350,7 @@ static void blkdev_bio_end_io(struct bio *bio)
- }
- 
- static ssize_t
--__blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
-+__blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_vecs)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = bdev_file_inode(file);
-@@ -368,7 +368,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 	    (bdev_logical_block_size(bdev) - 1))
- 		return -EINVAL;
- 
--	bio = bio_alloc_bioset(GFP_KERNEL, nr_pages, &blkdev_dio_pool);
-+	bio = bio_alloc_bioset(GFP_KERNEL, nr_vecs, &blkdev_dio_pool);
- 
- 	dio = container_of(bio, struct blkdev_dio, bio);
- 	dio->is_sync = is_sync = is_sync_kiocb(iocb);
-@@ -417,8 +417,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 		dio->size += bio->bi_iter.bi_size;
- 		pos += bio->bi_iter.bi_size;
- 
--		nr_pages = bio_iov_iter_nvecs(iter, BIO_MAX_PAGES);
--		if (!nr_pages) {
-+		nr_vecs = bio_iov_iter_nvecs(iter, BIO_MAX_PAGES);
-+		if (!nr_vecs) {
- 			bool polled = false;
- 
- 			if (iocb->ki_flags & IOCB_HIPRI) {
-@@ -448,7 +448,7 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- 		}
- 
- 		submit_bio(bio);
--		bio = bio_alloc(GFP_KERNEL, nr_pages);
-+		bio = bio_alloc(GFP_KERNEL, nr_vecs);
- 	}
- 
- 	if (!is_poll)
-@@ -480,15 +480,15 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
- static ssize_t
- blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- {
--	int nr_pages;
-+	int nr_vecs;
- 
--	nr_pages = bio_iov_iter_nvecs(iter, BIO_MAX_PAGES + 1);
--	if (!nr_pages)
-+	nr_vecs = bio_iov_iter_nvecs(iter, BIO_MAX_PAGES + 1);
-+	if (!nr_vecs)
- 		return 0;
--	if (is_sync_kiocb(iocb) && nr_pages <= BIO_MAX_PAGES)
--		return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
-+	if (is_sync_kiocb(iocb) && nr_vecs <= BIO_MAX_PAGES)
-+		return __blkdev_direct_IO_simple(iocb, iter, nr_vecs);
- 
--	return __blkdev_direct_IO(iocb, iter, min(nr_pages, BIO_MAX_PAGES));
-+	return __blkdev_direct_IO(iocb, iter, min(nr_vecs, BIO_MAX_PAGES));
- }
- 
- static __init int blkdev_init(void)
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 0635469e811a..cc779ecc8144 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -211,7 +211,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	struct bio *bio;
- 	bool need_zeroout = false;
- 	bool use_fua = false;
--	int nr_pages, ret = 0;
-+	int nr_vecs, ret = 0;
- 	size_t copied = 0;
- 	size_t orig_count;
- 
-@@ -250,9 +250,9 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 	orig_count = iov_iter_count(dio->submit.iter);
- 	iov_iter_truncate(dio->submit.iter, length);
- 
--	nr_pages = bio_iov_iter_nvecs(dio->submit.iter, BIO_MAX_PAGES);
--	if (nr_pages <= 0) {
--		ret = nr_pages;
-+	nr_vecs = bio_iov_iter_nvecs(dio->submit.iter, BIO_MAX_PAGES);
-+	if (nr_vecs <= 0) {
-+		ret = nr_vecs;
- 		goto out;
- 	}
- 
-@@ -271,7 +271,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 			goto out;
- 		}
- 
--		bio = bio_alloc(GFP_KERNEL, nr_pages);
-+		bio = bio_alloc(GFP_KERNEL, nr_vecs);
- 		bio_set_dev(bio, iomap->bdev);
- 		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
- 		bio->bi_write_hint = dio->iocb->ki_hint;
-@@ -308,10 +308,10 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		dio->size += n;
- 		copied += n;
- 
--		nr_pages = bio_iov_iter_nvecs(dio->submit.iter, BIO_MAX_PAGES);
-+		nr_vecs = bio_iov_iter_nvecs(dio->submit.iter, BIO_MAX_PAGES);
- 		iomap_dio_submit_bio(dio, iomap, bio, pos);
- 		pos += n;
--	} while (nr_pages);
-+	} while (nr_vecs);
- 
- 	/*
- 	 * We need to zeroout the tail of a sub-block write if the extent type
--- 
-2.28.0
+The failure will be a user not seeing their file operating in DAX mode when
+they expect it to.
 
+I discussed this with Dan Williams today.  He and I agreed the flag is new
+enough that we don't think users have any released code to the API just yet.
+So I think we will be ok.
+
+Also, after learning what the other flag was for I agree with Christoph that
+the impact is going to be minimal since users are not typically operating on
+the root inode.
+
+So I think we are ok with just making the change and getting it into stable
+quickly.
+
+Thanks,
+Ira
+
+[1] https://lore.kernel.org/lkml/20201202214629.1563760-1-ira.weiny@intel.com/
