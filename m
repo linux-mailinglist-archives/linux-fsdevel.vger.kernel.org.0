@@ -2,145 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 087C92CDD96
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 19:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A332CDDB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 19:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502112AbgLCSZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 13:25:48 -0500
-Received: from mga06.intel.com ([134.134.136.31]:48382 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502109AbgLCSZs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 13:25:48 -0500
-IronPort-SDR: Wz80Pepfadsapr9z5+7kR8TorwCrcXys6lSG3FzxCWjm5kXDPWu6h89TYySb7rPgLNurQt+R1I
- xd9Ci4o53h6g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9824"; a="234854261"
-X-IronPort-AV: E=Sophos;i="5.78,390,1599548400"; 
-   d="scan'208";a="234854261"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2020 10:25:06 -0800
-IronPort-SDR: 1yZ6ymN8T1Ru5eWK//GwNd0draYxhFs3e3pHjha5XL21vzCJ0JYjmIZPD/XgmhI3I+/Mc4Ybv7
- bQ4yqVHtbb5Q==
-X-IronPort-AV: E=Sophos;i="5.78,390,1599548400"; 
-   d="scan'208";a="482069934"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Dec 2020 10:25:05 -0800
-Date:   Thu, 3 Dec 2020 10:25:05 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Steve French <sfrench@samba.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Brian King <brking@us.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/17] mm/highmem: Lift memcpy_[to|from]_page and
- memset_page to core
-Message-ID: <20201203182505.GD1563847@iweiny-DESK2.sc.intel.com>
-References: <20201124060755.1405602-1-ira.weiny@intel.com>
- <20201124060755.1405602-2-ira.weiny@intel.com>
- <160648238432.10416.12405581766428273347@jlahtine-mobl.ger.corp.intel.com>
- <20201127132006.GY4327@casper.infradead.org>
- <160672815223.3453.2374529656870007787@jlahtine-mobl.ger.corp.intel.com>
+        id S1731643AbgLCSdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 13:33:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731619AbgLCSdV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Dec 2020 13:33:21 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C9DC061A51
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Dec 2020 10:32:40 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id v22so3148522edt.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Dec 2020 10:32:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ohoEzfcF7t7OuVR/6T6jBWizgGSQNZlxu+KN4Eb7Bo4=;
+        b=iFpZ1iQ84HtGiUOem9kP7Hkp8tvZ+NIb1R/De69mFF3u3F2/wRcF2awN64Jtp5txNW
+         3HkWqef8oNH0iaUazjgdovP84zXNjbfmnvsTpH19PeaFbwq6UU4h4G0CHEDoZBTERV28
+         igkvAYnsOBQeF9n6H+aDMD8NGUi65n8BuqnLo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ohoEzfcF7t7OuVR/6T6jBWizgGSQNZlxu+KN4Eb7Bo4=;
+        b=LqdvA1MeqwD7N66PC0Vi537BJEa0gdTPkujRtuAP8UqKrzJbAZm/ZUNXCxkjrZCIhj
+         xMX89n23LoK7Fmo2bHuOipYNG6nHJV//KEApGAQmz0G1h9JJJbTCacb7h5XzxMU8AHgE
+         1fsXCM2PvClSzXkJ/dn4aaYUbCUw0PFdP4U9fsZ63wDxyUAIH8CPVf4+C/06WKL3VCvZ
+         KZFyx/lc/eu1lY68VTm1f+b26UU7RSF+9hJlRY4xez09fBj4t8NZzh816gcpYb2nAAlc
+         pV+HRl3Lj/gXbT8sD+L+Ck2u4skuJwNOu/Ljem72YGmqEERTf3jaJU/rhiE+gHP9KO6j
+         YH+w==
+X-Gm-Message-State: AOAM5307WR3l37ZBMKVbBrGSRL8PH0OymrCO9J2tuD/HqoQI35B97JnR
+        rretPl8a2v5QHzM7nHIVxI9T9pGMN4ysaTLbgWE3WBPo4aQ=
+X-Google-Smtp-Source: ABdhPJymIYbriT8qbNZ+9TIRlb/6epKDWS7W+tD7pMSLnGgNAhdP3Bgt/nreV8WnwqqUcfNhUVP6nH7NDXM0eJJgGYw=
+X-Received: by 2002:aa7:d906:: with SMTP id a6mr4149283edr.121.1607020359515;
+ Thu, 03 Dec 2020 10:32:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <160672815223.3453.2374529656870007787@jlahtine-mobl.ger.corp.intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20201130030039.596801-1-sargun@sargun.me> <CAMp4zn-c6gOPTPBqqkPoQi3NVeZ0yW-WfVPFzpDiazj8PeUgBw@mail.gmail.com>
+ <CAOQ4uxhU=eWAfTn8DJ7x4NZ2PO9Q9V7Ohpj9aTasXg3KcfFpMA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhU=eWAfTn8DJ7x4NZ2PO9Q9V7Ohpj9aTasXg3KcfFpMA@mail.gmail.com>
+From:   Sargun Dhillon <sargun@sargun.me>
+Date:   Thu, 3 Dec 2020 10:32:03 -0800
+Message-ID: <CAMp4zn9sdpk1A1hYpDjS_774UscYZ1sztCsLdfshs=pXEYf0NQ@mail.gmail.com>
+Subject: Re: [PATCH] overlay: Plumb through flush method
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 30, 2020 at 11:22:32AM +0200, Joonas Lahtinen wrote:
-> Quoting Matthew Wilcox (2020-11-27 15:20:06)
-> > On Fri, Nov 27, 2020 at 03:06:24PM +0200, Joonas Lahtinen wrote:
-> > > Quoting ira.weiny@intel.com (2020-11-24 08:07:39)
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > Working through a conversion to a call such as kmap_thread() revealed
-> > > > many places where the pattern kmap/memcpy/kunmap occurred.
-> > > > 
-> > > > Eric Biggers, Matthew Wilcox, Christoph Hellwig, Dan Williams, and Al
-> > > > Viro all suggested putting this code into helper functions.  Al Viro
-> > > > further pointed out that these functions already existed in the iov_iter
-> > > > code.[1]
-> > > > 
-> > > > Placing these functions in 'highmem.h' is suboptimal especially with the
-> > > > changes being proposed in the functionality of kmap.  From a caller
-> > > > perspective including/using 'highmem.h' implies that the functions
-> > > > defined in that header are only required when highmem is in use which is
-> > > > increasingly not the case with modern processors.  Some headers like
-> > > > mm.h or string.h seem ok but don't really portray the functionality
-> > > > well.  'pagemap.h', on the other hand, makes sense and is already
-> > > > included in many of the places we want to convert.
-> > > > 
-> > > > Another alternative would be to create a new header for the promoted
-> > > > memcpy functions, but it masks the fact that these are designed to copy
-> > > > to/from pages using the kernel direct mappings and complicates matters
-> > > > with a new header.
-> > > > 
-> > > > Lift memcpy_to_page(), memcpy_from_page(), and memzero_page() to
-> > > > pagemap.h.
-> > > > 
-> > > > Also, add a memcpy_page(), memmove_page, and memset_page() to cover more
-> > > > kmap/mem*/kunmap. patterns.
-> > > > 
-> > > > [1] https://lore.kernel.org/lkml/20201013200149.GI3576660@ZenIV.linux.org.uk/
-> > > >     https://lore.kernel.org/lkml/20201013112544.GA5249@infradead.org/
-> > > > 
-> > > > Cc: Dave Hansen <dave.hansen@intel.com>
-> > > > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > > > Suggested-by: Christoph Hellwig <hch@infradead.org>
-> > > > Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> > > > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> > > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > > > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > > 
-> > > <SNIP>
-> > > 
-> > > > +static inline void memset_page(struct page *page, int val, size_t offset, size_t len)
-> > > > +{
-> > > > +       char *addr = kmap_atomic(page);
-> > > > +       memset(addr + offset, val, len);
-> > > > +       kunmap_atomic(addr);
-> > > > +}
-> > > 
-> > > Other functions have (page, offset) pair. Insertion of 'val' in the middle here required
-> > > to take a double look during review.
-> > 
-> > Let's be explicit here.  Your suggested order is:
-> > 
-> >         (page, offset, val, len)
-> > 
-> > right?  I think I would prefer that to (page, val, offset, len).
-> 
-> Yeah, I think that would be most consistent order.
+On Thu, Dec 3, 2020 at 2:32 AM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Thu, Dec 3, 2020 at 12:16 PM Sargun Dhillon <sargun@sargun.me> wrote:
+> >
+> > On Sun, Nov 29, 2020 at 7:00 PM Sargun Dhillon <sargun@sargun.me> wrote:
+> > >
+> > > Filesystems can implement their own flush method that release
+> > > resources, or manipulate caches. Currently if one of these
+> > > filesystems is used with overlayfs, the flush method is not called.
+> > >
+> > > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+> > > Cc: linux-fsdevel@vger.kernel.org
+> > > Cc: linux-unionfs@vger.kernel.org
+> > > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > ---
+> > >  fs/overlayfs/file.c | 11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > >
+> > > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> > > index efccb7c1f9bc..802259f33c28 100644
+> > > --- a/fs/overlayfs/file.c
+> > > +++ b/fs/overlayfs/file.c
+> > > @@ -787,6 +787,16 @@ static loff_t ovl_remap_file_range(struct file *file_in, loff_t pos_in,
+> > >                             remap_flags, op);
+> > >  }
+> > >
+> > > +static int ovl_flush(struct file *file, fl_owner_t id)
+> > > +{
+> > > +       struct file *realfile = file->private_data;
+> > > +
+> > > +       if (realfile->f_op->flush)
+> > > +               return realfile->f_op->flush(realfile, id);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > >  const struct file_operations ovl_file_operations = {
+> > >         .open           = ovl_open,
+> > >         .release        = ovl_release,
+> > > @@ -798,6 +808,7 @@ const struct file_operations ovl_file_operations = {
+> > >         .fallocate      = ovl_fallocate,
+> > >         .fadvise        = ovl_fadvise,
+> > >         .unlocked_ioctl = ovl_ioctl,
+> > > +       .flush          = ovl_flush,
+> > >  #ifdef CONFIG_COMPAT
+> > >         .compat_ioctl   = ovl_compat_ioctl,
+> > >  #endif
+> > > --
+> > > 2.25.1
+> > >
+> >
+> > Amir, Miklos,
+> > Is this acceptable? I discovered this being a problem when we had the discussion
+> > of whether the volatile fs should return an error on close on dirty files.
+>
+> Yes, looks ok.
+> Maybe we want to check if the realfile is upper although
+> maybe flush can release resources also on read only fs?
+>
+> >
+> > It seems like it would be useful if anyone uses NFS, or CIFS as an upperdir.
+>
+> They are not supported as upperdir. only FUSE is.
+>
+> Thanks,
+> Amir.
 
-Yes as I have been reworking these I have found it odd as well.  I'm going to
-swap it around.  Been learning Coccinelle which has helped find other
-instances...  So V2 is taking a bit of time.
-
-Thanks,
-Ira
-
+VFS does it on read-only files / mounts, so we should probably do the
+same thing.
