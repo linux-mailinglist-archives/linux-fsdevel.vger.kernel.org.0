@@ -2,75 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C432CDCDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 18:57:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 196952CDD0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 19:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbgLCR4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 12:56:32 -0500
-Received: from sandeen.net ([63.231.237.45]:44968 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbgLCR4c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 12:56:32 -0500
-Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 306A17906;
-        Thu,  3 Dec 2020 11:55:32 -0600 (CST)
-To:     Christoph Hellwig <hch@lst.de>, ira.weiny@intel.com
-Cc:     fstests@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Jeff Moyer <jmoyer@redhat.com>, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>
-References: <20201202214145.1563433-1-ira.weiny@intel.com>
- <20201203081556.GA15306@lst.de>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: [PATCH] common/rc: Fix _check_s_dax()
-Message-ID: <b757842d-b020-49c9-498c-df5de89f10af@sandeen.net>
-Date:   Thu, 3 Dec 2020 11:55:50 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.5.0
+        id S1731592AbgLCSEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 13:04:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729046AbgLCSEh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Dec 2020 13:04:37 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23814C061A4E;
+        Thu,  3 Dec 2020 10:03:57 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id r5so3034741eda.12;
+        Thu, 03 Dec 2020 10:03:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5TkHFxBitbPqG/QPKtc0c7XAOZRKTBnEK+0NsLlTHo8=;
+        b=iKHfauLpK20iBxA/fCKnyxsVh6ElHn+0g78quOWcU32YVRaDQP6fvodfAwDWYHAuQY
+         fhKK9S7BQ5MhoofXFQRoTwWAy/ID/9E9bQqJ0nd+vZjPMSYV+09eN89JiN5A16NEXxLQ
+         eiLQD7e1zvXbGURGHCm9v+SSH0aDGc3jdM5HJkPdYEG/VZAbqhkWRFhN1XfrJaC5/fH5
+         h2YyxN23kBEi5Y9b8oJLLmmH+6U/zqHPQFlPz98z4BYL9FFiirtPryaqQTVzX4zBc1jN
+         kZguTPFtDBhRzWXxko0qITUdtPswPmN2G/O9x+BRK3/71rQG0XiTn52UDF5Ot9qfMZaV
+         MKgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5TkHFxBitbPqG/QPKtc0c7XAOZRKTBnEK+0NsLlTHo8=;
+        b=SgDF7GDvUyX3jHzj0c2NzxY1YLX+RKn1dPK7nSJUDzVa398NffZSx69K9BQoqBqnkp
+         qirjG6PVgyRSBoVEIR9zDybLBT5+K6aQHFgwRo4Jk0PbA/4soE1by42I2omMkxQdM4mj
+         xY/ZfPEM6wdCdk1Jz2OSE3ZFmHkF7SVgFlrwBMiwVU38M4W/9DmzTCoZVpIDgx5kAJ6G
+         UCrgy5G784WDYY/hJ6IlNiU59gPD1SRYQ+xMwFewCK25taDPYnNGemke5B6AjNA4mNGW
+         QZOpHzF4lZzZ2Ma/CMD3u7ztOU3NrUizxcSiztinWKARXcWz862pe3oO9HolPzaoEODH
+         RT0g==
+X-Gm-Message-State: AOAM5315nT4LfGm+O0uNEUaOWdnBedmG3FiRMY5qN9MawaSW58WLGruo
+        HU2ss6XMRcFekLDu/Uw5rAFtal50QB56dF+Wt8k=
+X-Google-Smtp-Source: ABdhPJy93eEJr+YxMlf0iuRBbpcsMRkpFvByZ+87VqV0V0uUuyhXahrZmbiS4ufZEE2k5uYbjxrxUvuSzJSe8uCqUh8=
+X-Received: by 2002:a05:6402:1c8a:: with SMTP id cy10mr3960098edb.151.1607018635794;
+ Thu, 03 Dec 2020 10:03:55 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201203081556.GA15306@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20201202182725.265020-1-shy828301@gmail.com> <20201202182725.265020-6-shy828301@gmail.com>
+ <20201203030632.GG1375014@carbon.DHCP.thefacebook.com> <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
+In-Reply-To: <CAHbLzkrU0X2LRRiG_rXdOf8tP7BR=46ccJR=3AM6CkWbscBWRw@mail.gmail.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 3 Dec 2020 10:03:44 -0800
+Message-ID: <CAHbLzkpAsoOWeRuFeTM2+YbjfqxY2U3vK7EYX2Nui=YVOBXFpw@mail.gmail.com>
+Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Dec 2, 2020 at 8:54 PM Yang Shi <shy828301@gmail.com> wrote:
+>
+> On Wed, Dec 2, 2020 at 7:06 PM Roman Gushchin <guro@fb.com> wrote:
+> >
+> > On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
+> > > Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> > > vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
+> > >
+> > > The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> > > excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> > > may suffer from over shrink, excessive reclaim latency, etc.
+> > >
+> > > For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> > > heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> > > might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> > >
+> > > We observed this hit in our production environment which was running vfs heavy workload
+> > > shown as the below tracing log:
+> > >
+> > > <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > > nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> > > cache items 246404277 delta 31345 total_scan 123202138
+> > > <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> > > nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> > > last shrinker return val 123186855
+> > >
+> > > The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> > > This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> > >
+> > > Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> > > better isolation.
+> > >
+> > > When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> > > would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
+> > >
+> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > > ---
+> > >  include/linux/memcontrol.h |   9 +++
+> > >  mm/memcontrol.c            | 112 ++++++++++++++++++++++++++++++++++++-
+> > >  mm/vmscan.c                |   4 ++
+> > >  3 files changed, 123 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > > index 922a7f600465..1b343b268359 100644
+> > > --- a/include/linux/memcontrol.h
+> > > +++ b/include/linux/memcontrol.h
+> > > @@ -92,6 +92,13 @@ struct lruvec_stat {
+> > >       long count[NR_VM_NODE_STAT_ITEMS];
+> > >  };
+> > >
+> > > +
+> > > +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
+> > > +struct memcg_shrinker_deferred {
+> > > +     struct rcu_head rcu;
+> > > +     atomic_long_t nr_deferred[];
+> > > +};
+> >
+> > The idea makes total sense to me. But I wonder if we can add nr_deferred to
+> > struct list_lru_one, instead of adding another per-memcg per-shrinker entity?
+> > I guess it can simplify the code quite a lot. What do you think?
+>
+> Aha, actually this exactly was what I did at the first place. But Dave
+> NAK'ed this approach. You can find the discussion at:
+> https://lore.kernel.org/linux-mm/20200930073152.GH12096@dread.disaster.area/.
 
-
-On 12/3/20 2:15 AM, Christoph Hellwig wrote:
-> On Wed, Dec 02, 2020 at 01:41:45PM -0800, ira.weiny@intel.com wrote:
->> From: Ira Weiny <ira.weiny@intel.com>
->>
->> There is a conflict with the user visible statx bits 'mount root' and
->> 'dax'.  The kernel is changing the dax bit to correct this conflict.[1]
->>
->> Adjust _check_s_dax() to use the new bit.  Because DAX tests do not run
->> on root mounts, STATX_ATTR_MOUNT_ROOT should always be 0, therefore we
->> can allow either bit to indicate DAX and cover any kernel which may be
->> running.
->>
->> [1] https://lore.kernel.org/lkml/3e28d2c7-fbe5-298a-13ba-dcd8fd504666@redhat.com/
->>
->> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
->> ---
->>
->> I went ahead and used Christoph's suggestion regarding using both bits.
-> 
-> That wasn't my suggestion.  I think we should always error out when
-> the bit value shared with STATX_ATTR_MOUNT_ROOT is seen.  Because that
-> means the kernel is not using or fixed ABI we agreed to use going
-> forward.
-
-*nod* and my suggestion was to explicitly test for the old/wrong value and
-offer the test-runner a hint about why it may have been set (missing the
-fix commit), but we should still ultimately fail the test when it is seen.
-
--Eric
+I did prototypes for both approaches (move nr_deferred to list_lru or
+to memcg). I preferred the list_lru approach at the first place. But
+Dave's opinion does make perfect sense to me. So I dropped that
+list_lru one. That email elaborated why moving nr_deferred to list_lru
+is not appropriate.
