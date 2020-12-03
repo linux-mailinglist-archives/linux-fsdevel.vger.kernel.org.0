@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F5A22CE3C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:04:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76FA22CE431
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:13:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389462AbgLDADu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 19:03:50 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42387 "EHLO
+        id S2502119AbgLDAL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 19:11:28 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43168 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387545AbgLDADu (ORCPT
+        with ESMTP id S2502102AbgLDAL2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:03:50 -0500
+        Thu, 3 Dec 2020 19:11:28 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkyXu-0007ka-J6; Fri, 04 Dec 2020 00:01:58 +0000
+        id 1kkyXw-0007ka-BC; Fri, 04 Dec 2020 00:02:00 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 24/40] utimes: handle idmapped mounts
-Date:   Fri,  4 Dec 2020 00:57:20 +0100
-Message-Id: <20201203235736.3528991-25-christian.brauner@ubuntu.com>
+Subject: [PATCH v4 25/40] fcntl: handle idmapped mounts
+Date:   Fri,  4 Dec 2020 00:57:21 +0100
+Message-Id: <20201203235736.3528991-26-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
 References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
@@ -65,10 +65,9 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Enable the vfs_utimes() helper to handle idmapped mounts by passing down
-the mount's user namespace. If the initial user namespace is passed
-nothing changes so non-idmapped mounts will see identical behavior as
-before.
+Enable the setfl() helper to handle idmapped mounts by passing down the
+mount's user namespace. If the initial user namespace is passed nothing
+changes so non-idmapped mounts will see identical behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -77,42 +76,38 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+patch introduced
 
 /* v3 */
 unchanged
 
 /* v4 */
-- Serge Hallyn <serge@hallyn.com>:
-  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-    terminology consistent.
+unchanged
 ---
- fs/utimes.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/fcntl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/utimes.c b/fs/utimes.c
-index 1a4130bee157..33fa753bab3a 100644
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -22,6 +22,7 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
- 	struct iattr newattrs;
- 	struct inode *inode = path->dentry->d_inode;
- 	struct inode *delegated_inode = NULL;
-+	struct user_namespace *mnt_userns;
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index df091d435603..ed330fa91438 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -25,6 +25,7 @@
+ #include <linux/user_namespace.h>
+ #include <linux/memfd.h>
+ #include <linux/compat.h>
++#include <linux/mount.h>
  
- 	if (times) {
- 		if (!nsec_valid(times[0].tv_nsec) ||
-@@ -61,8 +62,9 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
- 		newattrs.ia_valid |= ATTR_TOUCH;
- 	}
- retry_deleg:
-+	mnt_userns = mnt_user_ns(path->mnt);
- 	inode_lock(inode);
--	error = notify_change(&init_user_ns, path->dentry, &newattrs, &delegated_inode);
-+	error = notify_change(mnt_userns, path->dentry, &newattrs, &delegated_inode);
- 	inode_unlock(inode);
- 	if (delegated_inode) {
- 		error = break_deleg_wait(&delegated_inode);
+ #include <linux/poll.h>
+ #include <asm/siginfo.h>
+@@ -46,7 +47,7 @@ static int setfl(int fd, struct file * filp, unsigned long arg)
+ 
+ 	/* O_NOATIME can only be set by the owner or superuser */
+ 	if ((arg & O_NOATIME) && !(filp->f_flags & O_NOATIME))
+-		if (!inode_owner_or_capable(&init_user_ns, inode))
++		if (!inode_owner_or_capable(mnt_user_ns(filp->f_path.mnt), inode))
+ 			return -EPERM;
+ 
+ 	/* required for strict SunOS emulation */
 -- 
 2.29.2
 
