@@ -2,101 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B16E2CE1D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 23:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 199072CE1F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 23:39:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729712AbgLCWfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 17:35:34 -0500
-Received: from ozlabs.org ([203.11.71.1]:35825 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbgLCWfe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 17:35:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Cn9d45gkYz9sVJ;
-        Fri,  4 Dec 2020 09:34:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1607034891;
-        bh=VrxoLFii3XtXFphKy9zwC0afo2U9H3/0MV4x2B1n/9c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=N0ga7O3vq/pN8Q7oMT8hzsMk/UCM9Yptjv6HMq6cJb6b4CZunLiykXwdSwXU/YIFZ
-         7AddrX1PNqTqmInXAprdY40tczVszfLg8rHd1hwFDYJkEvNq0xSoGMm6J203v7eUQT
-         h2Ps2EiiwV5PghTAlEWe30GnQFXE3TMWcXcvD6XfcNCl/yzZBwGggtY/D/ZhQr7oCD
-         n5OfDJKPBKo/imMEg3UrVd+Bq+nQ/wPxk1gma1ucXcuuh7UWI29LdjG/GGPBmeDfuO
-         q6J/kdqsKrn5gyOLNaYmnlyWU4L8PiAdyMjx0mx+4PJs62zevigZ/ikXNV5a80d7EN
-         4iTss967j5aLA==
-Date:   Fri, 4 Dec 2020 09:34:47 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        m.szyprowski@samsung.com, qcai@redhat.com, dchinner@redhat.com,
-        hannes@cmpxchg.org, hch@lst.de, jack@suse.cz,
-        kirill.shutemov@linux.intel.com, mm-commits@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, william.kucharski@oracle.com,
-        willy@infradead.org, yang.shi@linux.alibaba.com
-Subject: Re: +
- mm-truncateshmem-handle-truncates-that-split-thps-fix-fix.patch added to
- -mm tree
-Message-ID: <20201204093447.2cf9d164@canb.auug.org.au>
-In-Reply-To: <alpine.LSU.2.11.2012031348120.12944@eggly.anvils>
-References: <20201126054713.GmEiU5MZ_%akpm@linux-foundation.org>
-        <alpine.LSU.2.11.2012031348120.12944@eggly.anvils>
+        id S1731883AbgLCWi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 17:38:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731848AbgLCWi4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Dec 2020 17:38:56 -0500
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435CDC061A4F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Dec 2020 14:38:10 -0800 (PST)
+Received: by mail-qt1-x841.google.com with SMTP id o1so2653408qtp.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Dec 2020 14:38:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8hMIirRw/G+8UZ/DmDQ+scNJvEG3e8n2Kq9pVWHYcz0=;
+        b=d3o/p/wHA4C3IKiVIV9XegX6HBqZpjyqX1On5/l0/fnIs9rgNVmZ4A2sFIb27WXgZB
+         4xfS7im5ICW1192YWX0pnFIazKkD6OuPN1xebbP8+vXxPvw1OEP0iX7c99NJxf+x5ZB+
+         GTJxA3Dy7SFC6u6WuV5+QWUnY2Tb3HJyYEqUVcYutU0sWX8KXxEhLh0oB1g423xxkOAa
+         JC4VGelctpfQNGrdRsAqTIH3JCgvXpjZuIKFKzttkmAq5c78Wr/3BdP4xmDFxhxFt/L3
+         eXcJx5geCkCoYn7WVFzD5g6ov09q7byYpYyxmHyB83AbYePOkp1WEAa1I3WIj34gyLnh
+         eh3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8hMIirRw/G+8UZ/DmDQ+scNJvEG3e8n2Kq9pVWHYcz0=;
+        b=dNAFRKnFowUu2ox9R/qJ0QXty0hD3K8VQqvKKRbTqfgIXL08Xq/UU3R9L3SDzlpEZU
+         Lna84dARfNGrkbiBN9h1RZsNnd5wbOT1e+BEu/n1fL1LzhKt5F9z++nUA7iSO+SFqsUl
+         wLmpQ64PCHwiY1Lqrg4PjeWvJ0mn3nXls4ifJ4MleQp9643Y782VMokTJnjkkg4aVgij
+         0MOne8I9FGRb2cBbTBs4w+/TDdz85SEqSVdJqV6B92DJlB3fIDuNduTsTXFdMEnFvPLC
+         /UNiTlLY3q9FgZ1oWwQwK1jlynJJckk0/Ltb1gPsR1MMD2uL4YDXX34r2gZn1bAXZfGp
+         sp1w==
+X-Gm-Message-State: AOAM531yUSset8Yczbkdyx1XvlbmoWXAVcv2Qraf+zF/nNKJZ+aZN9of
+        D8xL0lDvbly8VDFKnRyLqEKWPw==
+X-Google-Smtp-Source: ABdhPJyTLV9IvmkXT4zvjTtrq/pqFKuAYSoXuHGVYLl75r9BRMJTWgPp3nmcQDYlosUbA32lA8Y2eA==
+X-Received: by 2002:ac8:3645:: with SMTP id n5mr5667712qtb.225.1607035089530;
+        Thu, 03 Dec 2020 14:38:09 -0800 (PST)
+Received: from localhost ([2620:10d:c091:480::1:deb1])
+        by smtp.gmail.com with ESMTPSA id q123sm2862339qke.28.2020.12.03.14.38.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Dec 2020 14:38:08 -0800 (PST)
+Date:   Thu, 3 Dec 2020 17:36:07 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] block: add bio_iov_iter_nvecs for figuring out nr_vecs
+Message-ID: <20201203223607.GB53708@cmpxchg.org>
+References: <20201201120652.487077-1-ming.lei@redhat.com>
+ <20201201125251.GA11935@casper.infradead.org>
+ <20201201125936.GA25111@infradead.org>
+ <fdbfe981-0251-9641-6ed8-db034c0f0148@gmail.com>
+ <20201201133226.GA26472@infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UibknY4IjlQ9I0lgzOL6.ag";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201201133226.GA26472@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/UibknY4IjlQ9I0lgzOL6.ag
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 01, 2020 at 01:32:26PM +0000, Christoph Hellwig wrote:
+> On Tue, Dec 01, 2020 at 01:17:49PM +0000, Pavel Begunkov wrote:
+> > I was thinking about memcpy bvec instead of iterating as a first step,
+> > and then try to reuse passed in bvec.
+> > 
+> > A thing that doesn't play nice with that is setting BIO_WORKINGSET in
+> > __bio_add_page(), which requires to iterate all pages anyway. I have no
+> > clue what it is, so rather to ask if we can optimise it out somehow?
+> > Apart from pre-computing for specific cases...
+> > 
+> > E.g. can pages of a single bvec segment be both in and out of a working
+> > set? (i.e. PageWorkingset(page)).
+> 
+> Adding Johannes for the PageWorkingset logic, which keeps confusing me
+> everytime I look at it.  I think it is intended to deal with pages
+> being swapped out and in, and doesn't make much sense to look at in
+> any form for direct I/O, but as said I'm rather confused by this code.
 
-Hi Hugh,
+Correct, it's only interesting for pages under LRU management - page
+cache and swap pages. It should not matter for direct IO.
 
-On Thu, 3 Dec 2020 14:04:18 -0800 (PST) Hugh Dickins <hughd@google.com> wro=
-te:
->
-> On Wed, 25 Nov 2020, akpm@linux-foundation.org wrote:
-> >=20
-> > The patch titled
-> >      Subject: mm-truncateshmem-handle-truncates-that-split-thps-fix-fix
-> > has been added to the -mm tree.  Its filename is
-> >      mm-truncateshmem-handle-truncates-that-split-thps-fix-fix.patch =20
->=20
-> This lot is proving to be a work in progress,
-> the current state breaks booting on 32-bit, livelocks trinity,
-> and breaks shmem in more ways than I can quickly explain.
-> Please revert (in reverse order):
->=20
-> mm-truncateshmem-handle-truncates-that-split-thps.patch
-> mm-truncateshmem-handle-truncates-that-split-thps-fix.patch
-> mm-truncateshmem-handle-truncates-that-split-thps-fix-fix.patch
-> mm-filemap-return-only-head-pages-from-find_get_entries.patch
+The VM uses the page flag to tell the difference between cold faults
+(empty cache startup e.g.), and thrashing pages which are being read
+back not long after they have been reclaimed. This influences reclaim
+behavior, but can also indicate a general lack of memory.
 
-I have removed all 4 patches from linux-next for today.
+The BIO_WORKINGSET flag is for the latter. To calculate the time
+wasted by a lack of memory (memory pressure), we measure the total
+time processes wait for thrashing pages. Usually that time is
+dominated by waiting for in-flight io to complete and pages to become
+uptodate. These waits are annotated on the page cache side.
 
---=20
-Cheers,
-Stephen Rothwell
+However, in some cases, the IO submission path itself can block for
+extended periods - if the device is congested or submissions are
+throttled due to cgroup policy. To capture those waits, the bio is
+flagged when it's for thrashing pages, and then submit_bio() will
+report submission time of that bio as a thrashing-related delay.
 
---Sig_/UibknY4IjlQ9I0lgzOL6.ag
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+[ Obviously, in theory bios could have a mix of thrashing and
+  non-thrashing pages, and the submission stall could have occurred
+  even without the thrashing pages. But in practice we have locality,
+  where groups of pages tend to be accessed/reclaimed/refaulted
+  together. The assumption that the whole bio is due to thrashing when
+  we see the first thrashing page is a workable simplification. ]
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/JaAcACgkQAVBC80lX
-0GwEQAgAgheUQdaeeJkyOAWwDDVh74tnjSTadn8z2CerfltVQxpU0EQDLNPlJU2R
-h5HijEmgz+ZOcujo1O2Toh/U7DJ47jBhuvmueRCDt/PQM7K+bXOPx6RtrL/M68KV
-lMQYVkFAnEXwEmNeINL8D2gBrI3gLg1DvcL4bbCUQjbcvyUUSnEaBWWicJtp3ig/
-2ecetXicKF41Q2YgrCZZoprC7sLck/pQcEfGmgyrqai6a8U1k6Zr5F76uvhFihnk
-azn5q37X1zFRsvkIpzihyucA+rDCPiN3JgZ1s4DxVUEPGn1DvJeHGRFSKv03T1na
-wCIVvi0zbM7jUNUU3bUrHOjPsCXakA==
-=Zfx1
------END PGP SIGNATURE-----
-
---Sig_/UibknY4IjlQ9I0lgzOL6.ag--
+HTH
