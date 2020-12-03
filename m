@@ -2,25 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95AB52CDC79
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 18:34:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 982972CDC71
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 18:32:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436731AbgLCRdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 12:33:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728508AbgLCRdC (ORCPT
+        id S2436657AbgLCRcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 12:32:25 -0500
+Received: from smtp-bc0e.mail.infomaniak.ch ([45.157.188.14]:33041 "EHLO
+        smtp-bc0e.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387597AbgLCRcX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 12:33:02 -0500
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED441C08C5F2;
-        Thu,  3 Dec 2020 09:31:34 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Cn2v95T3JzlhCS8;
-        Thu,  3 Dec 2020 18:31:33 +0100 (CET)
+        Thu, 3 Dec 2020 12:32:23 -0500
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Cn2vC11SfzlhLsT;
+        Thu,  3 Dec 2020 18:31:35 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Cn2v83QqKzlh8TB;
-        Thu,  3 Dec 2020 18:31:32 +0100 (CET)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Cn2vB4s7Gzlh8Td;
+        Thu,  3 Dec 2020 18:31:34 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -62,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Subject: [PATCH v12 2/3] arch: Wire up trusted_for(2)
-Date:   Thu,  3 Dec 2020 18:31:17 +0100
-Message-Id: <20201203173118.379271-3-mic@digikod.net>
+Subject: [PATCH v12 3/3] selftest/interpreter: Add tests for trusted_for(2) policies
+Date:   Thu,  3 Dec 2020 18:31:18 +0100
+Message-Id: <20201203173118.379271-4-mic@digikod.net>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203173118.379271-1-mic@digikod.net>
 References: <20201203173118.379271-1-mic@digikod.net>
@@ -77,242 +74,508 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Wire up trusted_for(2) for all architectures.
+Test that checks performed by trusted_for(2) on file descriptors are
+consistent with noexec mount points and file execute permissions,
+according to the policy configured with the fs.trust_policy sysctl.
 
 Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Kees Cook <keescook@chromium.org>
+Cc: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
 
-Changes since v11:
-* Add Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-* Rebase and leave space for watch_mount(2) and epoll_pwait2(2) from
-  -next.
+Changes since v10:
+* Update selftest Makefile.
 
 Changes since v9:
-* Rename introspect_access(2) to trusted_for(2).
-* Increase syscall number to leave space for memfd_secret(2) in -next.
+* Rename the syscall and the sysctl.
+* Update tests for enum trusted_for_usage
+
+Changes since v8:
+* Update with the dedicated syscall introspect_access(2) and the renamed
+  fs.introspection_policy sysctl.
+* Remove check symlink which can't be use as is anymore.
+* Use socketpair(2) to test UNIX socket.
 
 Changes since v7:
-* New patch for the new syscall.
-* Increase syscall numbers by 2 to leave space for new ones (in
-  linux-next): watch_mount(2) and process_madvise(2).
----
- arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
- arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
- arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
- arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
- arch/s390/kernel/syscalls/syscall.tbl       | 1 +
- arch/sh/kernel/syscalls/syscall.tbl         | 1 +
- arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
- include/uapi/asm-generic/unistd.h           | 4 +++-
- 19 files changed, 22 insertions(+), 2 deletions(-)
+* Update tests with faccessat2/AT_INTERPRETED, including new ones to
+  check that setting R_OK or W_OK returns EINVAL.
+* Add tests for memfd, pipefs and nsfs.
+* Rename and move back tests to a standalone directory.
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index ee7b01bb7346..05e2232ba002 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -480,3 +480,4 @@
- 548	common	pidfd_getfd			sys_pidfd_getfd
- 549	common	faccessat2			sys_faccessat2
- 550	common	process_madvise			sys_process_madvise
-+553	common	trusted_for			sys_trusted_for
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index d056a548358e..2e54bae0b907 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -454,3 +454,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index b3b2019f8d16..d1f7d35f986e 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		441
-+#define __NR_compat_syscalls		444
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 107f08e03b9f..7f0e0fcd820c 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -889,6 +889,8 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
- #define __NR_process_madvise 440
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
-+#define __NR_trusted_for 443
-+__SYSCALL(__NR_trusted_for, sys_trusted_for)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index b96ed8b8a508..777b23091b48 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -361,3 +361,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 625fb6d32842..6705cd4ecdfb 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -440,3 +440,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index aae729c95cf9..02b7d13fc9ef 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -446,3 +446,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 32817c954435..d8e1bf91a1ab 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -379,3 +379,4 @@
- 438	n32	pidfd_getfd			sys_pidfd_getfd
- 439	n32	faccessat2			sys_faccessat2
- 440	n32	process_madvise			sys_process_madvise
-+443	n32	trusted_for			sys_trusted_for
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 9e4ea3c31b1c..35ac6d4d3286 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -355,3 +355,4 @@
- 438	n64	pidfd_getfd			sys_pidfd_getfd
- 439	n64	faccessat2			sys_faccessat2
- 440	n64	process_madvise			sys_process_madvise
-+443	n64	trusted_for			sys_trusted_for
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 29f5f28cf5ce..0bd1a85e2e4f 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -428,3 +428,4 @@
- 438	o32	pidfd_getfd			sys_pidfd_getfd
- 439	o32	faccessat2			sys_faccessat2
- 440	o32	process_madvise			sys_process_madvise
-+443	o32	trusted_for			sys_trusted_for
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index f375ea528e59..8790d3c06afd 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 1275daec7fec..29f2e70c26d1 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -530,3 +530,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 28c168000483..e4c0b060995f 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -443,3 +443,4 @@
- 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
- 439  common	faccessat2		sys_faccessat2			sys_faccessat2
- 440  common	process_madvise		sys_process_madvise		sys_process_madvise
-+443  common	trusted_for		sys_trusted_for			sys_trusted_for
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 783738448ff5..d06b2f4e4ee4 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -443,3 +443,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 78160260991b..e5360082fa97 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -486,3 +486,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 0d0667a9fbd7..d535ac0d9e04 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -445,3 +445,4 @@
- 438	i386	pidfd_getfd		sys_pidfd_getfd
- 439	i386	faccessat2		sys_faccessat2
- 440	i386	process_madvise		sys_process_madvise
-+443	i386	trusted_for		sys_trusted_for
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 379819244b91..c61b22ff15fc 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -362,6 +362,7 @@
- 438	common	pidfd_getfd		sys_pidfd_getfd
- 439	common	faccessat2		sys_faccessat2
- 440	common	process_madvise		sys_process_madvise
-+443	common	trusted_for		sys_trusted_for
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index b070f272995d..6ce67ce5eb7f 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -411,3 +411,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+443	common	trusted_for			sys_trusted_for
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 2056318988f7..f920999d5ddc 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -859,9 +859,11 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
- #define __NR_process_madvise 440
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
-+#define __NR_trusted_for 443
-+__SYSCALL(__NR_trusted_for, sys_trusted_for)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 441
-+#define __NR_syscalls 444
- 
- /*
-  * 32 bit systems traditionally used different
+Changes since v6:
+* Add full combination tests for all file types, including block
+  devices, character devices, fifos, sockets and symlinks.
+* Properly save and restore initial sysctl value for all tests.
+
+Changes since v5:
+* Refactor with FIXTURE_VARIANT, which make the tests much more easy to
+  read and maintain.
+* Save and restore initial sysctl value (suggested by Kees Cook).
+* Test with a sysctl value of 0.
+* Check errno in sysctl_access_write test.
+* Update tests for the CAP_SYS_ADMIN switch.
+* Update tests to check -EISDIR (replacing -EACCES).
+* Replace FIXTURE_DATA() with FIXTURE() (spotted by Kees Cook).
+* Use global const strings.
+
+Changes since v3:
+* Replace RESOLVE_MAYEXEC with O_MAYEXEC.
+* Add tests to check that O_MAYEXEC is ignored by open(2) and openat(2).
+
+Changes since v2:
+* Move tests from exec/ to openat2/ .
+* Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).
+* Cleanup tests.
+
+Changes since v1:
+* Move tests from yama/ to exec/ .
+* Fix _GNU_SOURCE in kselftest_harness.h .
+* Add a new test sysctl_access_write to check if CAP_MAC_ADMIN is taken
+  into account.
+* Test directory execution which is always forbidden since commit
+  73601ea5b7b1 ("fs/open.c: allow opening only regular files during
+  execve()"), and also check that even the root user can not bypass file
+  execution checks.
+* Make sure delete_workspace() always as enough right to succeed.
+* Cosmetic cleanup.
+---
+ tools/testing/selftests/Makefile              |   1 +
+ .../testing/selftests/interpreter/.gitignore  |   2 +
+ tools/testing/selftests/interpreter/Makefile  |  21 +
+ tools/testing/selftests/interpreter/config    |   1 +
+ .../selftests/interpreter/trust_policy_test.c | 362 ++++++++++++++++++
+ 5 files changed, 387 insertions(+)
+ create mode 100644 tools/testing/selftests/interpreter/.gitignore
+ create mode 100644 tools/testing/selftests/interpreter/Makefile
+ create mode 100644 tools/testing/selftests/interpreter/config
+ create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index d9c283503159..9e18244abc5d 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -21,6 +21,7 @@ TARGETS += ftrace
+ TARGETS += futex
+ TARGETS += gpio
+ TARGETS += intel_pstate
++TARGETS += interpreter
+ TARGETS += ipc
+ TARGETS += ir
+ TARGETS += kcmp
+diff --git a/tools/testing/selftests/interpreter/.gitignore b/tools/testing/selftests/interpreter/.gitignore
+new file mode 100644
+index 000000000000..82a4846cbc4b
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++/*_test
+diff --git a/tools/testing/selftests/interpreter/Makefile b/tools/testing/selftests/interpreter/Makefile
+new file mode 100644
+index 000000000000..dbca8ebda67e
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/Makefile
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++
++CFLAGS += -Wall -O2
++LDLIBS += -lcap
++
++src_test := $(wildcard *_test.c)
++TEST_GEN_PROGS := $(src_test:.c=)
++
++KSFT_KHDR_INSTALL := 1
++include ../lib.mk
++
++khdr_dir = $(top_srcdir)/usr/include
++
++$(khdr_dir)/asm-generic/unistd.h: khdr
++	@:
++
++$(khdr_dir)/linux/trusted-for.h: khdr
++	@:
++
++$(OUTPUT)/%_test: %_test.c $(khdr_dir)/asm-generic/unistd.h $(khdr_dir)/linux/trusted-for.h ../kselftest_harness.h
++	$(LINK.c) $< $(LDLIBS) -o $@ -I$(khdr_dir)
+diff --git a/tools/testing/selftests/interpreter/config b/tools/testing/selftests/interpreter/config
+new file mode 100644
+index 000000000000..dd53c266bf52
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/config
+@@ -0,0 +1 @@
++CONFIG_SYSCTL=y
+diff --git a/tools/testing/selftests/interpreter/trust_policy_test.c b/tools/testing/selftests/interpreter/trust_policy_test.c
+new file mode 100644
+index 000000000000..4818c5524ec0
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/trust_policy_test.c
+@@ -0,0 +1,362 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Test trusted_for(2) with fs.trust_policy sysctl
++ *
++ * Copyright © 2018-2020 ANSSI
++ *
++ * Author: Mickaël Salaün <mic@digikod.net>
++ */
++
++#define _GNU_SOURCE
++#include <asm-generic/unistd.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/trusted-for.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/capability.h>
++#include <sys/mman.h>
++#include <sys/mount.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/sysmacros.h>
++#include <sys/types.h>
++#include <unistd.h>
++
++#include "../kselftest_harness.h"
++
++#ifndef trusted_for
++static int trusted_for(const int fd, const enum trusted_for_usage usage,
++		const __u32 flags)
++{
++	errno = 0;
++	return syscall(__NR_trusted_for, fd, usage, flags);
++}
++#endif
++
++static const char sysctl_path[] = "/proc/sys/fs/trust_policy";
++
++static const char workdir_path[] = "./test-mount";
++static const char reg_file_path[] = "./test-mount/regular_file";
++static const char dir_path[] = "./test-mount/directory";
++static const char block_dev_path[] = "./test-mount/block_device";
++static const char char_dev_path[] = "./test-mount/character_device";
++static const char fifo_path[] = "./test-mount/fifo";
++
++static void ignore_dac(struct __test_metadata *_metadata, int override)
++{
++	cap_t caps;
++	const cap_value_t cap_val[2] = {
++		CAP_DAC_OVERRIDE,
++		CAP_DAC_READ_SEARCH,
++	};
++
++	caps = cap_get_proc();
++	ASSERT_NE(NULL, caps);
++	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_val,
++				override ? CAP_SET : CAP_CLEAR));
++	ASSERT_EQ(0, cap_set_proc(caps));
++	EXPECT_EQ(0, cap_free(caps));
++}
++
++static void ignore_sys_admin(struct __test_metadata *_metadata, int override)
++{
++	cap_t caps;
++	const cap_value_t cap_val[1] = {
++		CAP_SYS_ADMIN,
++	};
++
++	caps = cap_get_proc();
++	ASSERT_NE(NULL, caps);
++	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 1, cap_val,
++				override ? CAP_SET : CAP_CLEAR));
++	ASSERT_EQ(0, cap_set_proc(caps));
++	EXPECT_EQ(0, cap_free(caps));
++}
++
++static void test_omx(struct __test_metadata *_metadata,
++		const char *const path, const int err_access)
++{
++	int flags = O_RDONLY | O_CLOEXEC;
++	int fd, access_ret, access_errno;
++
++	/* Do not block on pipes. */
++	if (path == fifo_path)
++		flags |= O_NONBLOCK;
++
++	fd = open(path, flags);
++	ASSERT_LE(0, fd) {
++		TH_LOG("Failed to open %s: %s", path, strerror(errno));
++	}
++	access_ret = trusted_for(fd, TRUSTED_FOR_EXECUTION, 0);
++	access_errno = errno;
++	if (err_access) {
++		ASSERT_EQ(err_access, access_errno) {
++			TH_LOG("Wrong error for trusted_for(2) with %s: %s",
++					path, strerror(access_errno));
++		}
++		ASSERT_EQ(-1, access_ret);
++	} else {
++		ASSERT_EQ(0, access_ret) {
++			TH_LOG("Access denied for %s: %s", path, strerror(access_errno));
++		}
++	}
++
++	/* Tests unsupported trusted usage. */
++	access_ret = trusted_for(fd, 0, 0);
++	ASSERT_EQ(-1, access_ret);
++	ASSERT_EQ(EINVAL, errno);
++
++	access_ret = trusted_for(fd, 2, 0);
++	ASSERT_EQ(-1, access_ret);
++	ASSERT_EQ(EINVAL, errno);
++
++	EXPECT_EQ(0, close(fd));
++}
++
++static void test_policy_fd(struct __test_metadata *_metadata, const int fd,
++		const bool has_policy)
++{
++	const int ret = trusted_for(fd, TRUSTED_FOR_EXECUTION, 0);
++
++	if (has_policy) {
++		ASSERT_EQ(-1, ret);
++		ASSERT_EQ(EACCES, errno) {
++			TH_LOG("Wrong error for trusted_for(2) with FD: %s", strerror(errno));
++		}
++	} else {
++		ASSERT_EQ(0, ret) {
++			TH_LOG("Access denied for FD: %s", strerror(errno));
++		}
++	}
++}
++
++FIXTURE(access) {
++	char initial_sysctl_value;
++	int memfd, pipefd;
++	int pipe_fds[2], socket_fds[2];
++};
++
++static void test_file_types(struct __test_metadata *_metadata, FIXTURE_DATA(access) *self,
++		const int err_code, const bool has_policy)
++{
++	/* Tests are performed on a tmpfs mount point. */
++	test_omx(_metadata, reg_file_path, err_code);
++	test_omx(_metadata, dir_path, has_policy ? EACCES : 0);
++	test_omx(_metadata, block_dev_path, has_policy ? EACCES : 0);
++	test_omx(_metadata, char_dev_path, has_policy ? EACCES : 0);
++	test_omx(_metadata, fifo_path, has_policy ? EACCES : 0);
++
++	/* Checks that exec is denied for any socket FD. */
++	test_policy_fd(_metadata, self->socket_fds[0], has_policy);
++
++	/* Checks that exec is denied for any memfd. */
++	test_policy_fd(_metadata, self->memfd, has_policy);
++
++	/* Checks that exec is denied for any pipefs FD. */
++	test_policy_fd(_metadata, self->pipefd, has_policy);
++}
++
++static void test_files(struct __test_metadata *_metadata, FIXTURE_DATA(access) *self,
++		const int err_code, const bool has_policy)
++{
++	/* Tests as root. */
++	ignore_dac(_metadata, 1);
++	test_file_types(_metadata, self, err_code, has_policy);
++
++	/* Tests without bypass. */
++	ignore_dac(_metadata, 0);
++	test_file_types(_metadata, self, err_code, has_policy);
++}
++
++static void sysctl_write_char(struct __test_metadata *_metadata, const char value)
++{
++	int fd;
++
++	fd = open(sysctl_path, O_WRONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ASSERT_EQ(1, write(fd, &value, 1));
++	EXPECT_EQ(0, close(fd));
++}
++
++static char sysctl_read_char(struct __test_metadata *_metadata)
++{
++	int fd;
++	char sysctl_value;
++
++	fd = open(sysctl_path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ASSERT_EQ(1, read(fd, &sysctl_value, 1));
++	EXPECT_EQ(0, close(fd));
++	return sysctl_value;
++}
++
++FIXTURE_VARIANT(access) {
++	const bool mount_exec;
++	const bool file_exec;
++	const int sysctl_err_code[3];
++};
++
++FIXTURE_VARIANT_ADD(access, mount_exec_file_exec) {
++	.mount_exec = true,
++	.file_exec = true,
++	.sysctl_err_code = {0, 0, 0},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_exec_file_noexec)
++{
++	.mount_exec = true,
++	.file_exec = false,
++	.sysctl_err_code = {0, EACCES, EACCES},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_noexec_file_exec)
++{
++	.mount_exec = false,
++	.file_exec = true,
++	.sysctl_err_code = {EACCES, 0, EACCES},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_noexec_file_noexec)
++{
++	.mount_exec = false,
++	.file_exec = false,
++	.sysctl_err_code = {EACCES, EACCES, EACCES},
++};
++
++FIXTURE_SETUP(access)
++{
++	int procfd_path_size;
++	static const char path_template[] = "/proc/self/fd/%d";
++	char procfd_path[sizeof(path_template) + 10];
++
++	/*
++	 * Cleans previous workspace if any error previously happened (don't
++	 * check errors).
++	 */
++	umount(workdir_path);
++	rmdir(workdir_path);
++
++	/* Creates a clean mount point. */
++	ASSERT_EQ(0, mkdir(workdir_path, 00700));
++	ASSERT_EQ(0, mount("test", workdir_path, "tmpfs", MS_MGC_VAL |
++				(variant->mount_exec ? 0 : MS_NOEXEC),
++				"mode=0700,size=4k"));
++
++	/* Creates a regular file. */
++	ASSERT_EQ(0, mknod(reg_file_path, S_IFREG | (variant->file_exec ? 0500 : 0400), 0));
++	/* Creates a directory. */
++	ASSERT_EQ(0, mkdir(dir_path, variant->file_exec ? 0500 : 0400));
++	/* Creates a character device: /dev/null. */
++	ASSERT_EQ(0, mknod(char_dev_path, S_IFCHR | 0400, makedev(1, 3)));
++	/* Creates a block device: /dev/loop0 */
++	ASSERT_EQ(0, mknod(block_dev_path, S_IFBLK | 0400, makedev(7, 0)));
++	/* Creates a fifo. */
++	ASSERT_EQ(0, mknod(fifo_path, S_IFIFO | 0400, 0));
++
++	/* Creates a regular file without user mount point. */
++	self->memfd = memfd_create("test-interpreted", MFD_CLOEXEC);
++	ASSERT_LE(0, self->memfd);
++	/* Sets mode, which must be ignored by the exec check. */
++	ASSERT_EQ(0, fchmod(self->memfd, variant->file_exec ? 0500 : 0400));
++
++	/* Creates a pipefs file descriptor. */
++	ASSERT_EQ(0, pipe(self->pipe_fds));
++	procfd_path_size = snprintf(procfd_path, sizeof(procfd_path),
++			path_template, self->pipe_fds[0]);
++	ASSERT_LT(procfd_path_size, sizeof(procfd_path));
++	self->pipefd = open(procfd_path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, self->pipefd);
++	ASSERT_EQ(0, fchmod(self->pipefd, variant->file_exec ? 0500 : 0400));
++
++	/* Creates a socket file descriptor. */
++	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0, self->socket_fds));
++
++	/* Saves initial sysctl value. */
++	self->initial_sysctl_value = sysctl_read_char(_metadata);
++
++	/* Prepares for sysctl writes. */
++	ignore_sys_admin(_metadata, 1);
++}
++
++FIXTURE_TEARDOWN(access)
++{
++	EXPECT_EQ(0, close(self->memfd));
++	EXPECT_EQ(0, close(self->pipefd));
++	EXPECT_EQ(0, close(self->pipe_fds[0]));
++	EXPECT_EQ(0, close(self->pipe_fds[1]));
++	EXPECT_EQ(0, close(self->socket_fds[0]));
++	EXPECT_EQ(0, close(self->socket_fds[1]));
++
++	/* Restores initial sysctl value. */
++	sysctl_write_char(_metadata, self->initial_sysctl_value);
++
++	/* There is no need to unlink the test files. */
++	ASSERT_EQ(0, umount(workdir_path));
++	ASSERT_EQ(0, rmdir(workdir_path));
++}
++
++TEST_F(access, sysctl_0)
++{
++	/* Do not enforce anything. */
++	sysctl_write_char(_metadata, '0');
++	test_files(_metadata, self, 0, false);
++}
++
++TEST_F(access, sysctl_1)
++{
++	/* Enforces mount exec check. */
++	sysctl_write_char(_metadata, '1');
++	test_files(_metadata, self, variant->sysctl_err_code[0], true);
++}
++
++TEST_F(access, sysctl_2)
++{
++	/* Enforces file exec check. */
++	sysctl_write_char(_metadata, '2');
++	test_files(_metadata, self, variant->sysctl_err_code[1], true);
++}
++
++TEST_F(access, sysctl_3)
++{
++	/* Enforces mount and file exec check. */
++	sysctl_write_char(_metadata, '3');
++	test_files(_metadata, self, variant->sysctl_err_code[2], true);
++}
++
++FIXTURE(cleanup) {
++	char initial_sysctl_value;
++};
++
++FIXTURE_SETUP(cleanup)
++{
++	/* Saves initial sysctl value. */
++	self->initial_sysctl_value = sysctl_read_char(_metadata);
++}
++
++FIXTURE_TEARDOWN(cleanup)
++{
++	/* Restores initial sysctl value. */
++	ignore_sys_admin(_metadata, 1);
++	sysctl_write_char(_metadata, self->initial_sysctl_value);
++}
++
++TEST_F(cleanup, sysctl_access_write)
++{
++	int fd;
++	ssize_t ret;
++
++	ignore_sys_admin(_metadata, 1);
++	sysctl_write_char(_metadata, '0');
++
++	ignore_sys_admin(_metadata, 0);
++	fd = open(sysctl_path, O_WRONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ret = write(fd, "0", 1);
++	ASSERT_EQ(-1, ret);
++	ASSERT_EQ(EPERM, errno);
++	EXPECT_EQ(0, close(fd));
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.29.2
 
