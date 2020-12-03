@@ -2,211 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CECCF2CCCF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 04:02:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2CA42CCD05
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Dec 2020 04:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgLCDCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Dec 2020 22:02:02 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55576 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725965AbgLCDCB (ORCPT
+        id S1729476AbgLCDHm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Dec 2020 22:07:42 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:46426 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726289AbgLCDHl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Dec 2020 22:02:01 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B330CQh022783;
-        Wed, 2 Dec 2020 19:01:13 -0800
+        Wed, 2 Dec 2020 22:07:41 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B336nDV031409;
+        Wed, 2 Dec 2020 19:06:50 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
  subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=KeepL3Jg8adxcpRkOPN/NUKQHEXslogVJDa9TE6qEgQ=;
- b=f3YKcY5QjzElBPawnph61D1HBjcHz7ZHBd2SJjjGWQGC08pN//h6MEbyGlrINw/6Q38F
- WXITC47CMRLywY6L0Tc1gkVQAjqBcZ/stKWivMBrUezmFeqwHYuQdYkq12oVIRIhmauG
- dFUSfjitQ4M7UsxTTJsZPDFDOSGpe1wW6zc= 
+ mime-version; s=facebook; bh=KSNbZueJ6unVxbUmpexAxejS8io6WON5PBxAzSWkhmg=;
+ b=eKB+p/HfuE9Ekld9ElVUyJWgowM/hrzuv1qVJO5ILYJopY3MK+3eDNQlzN3pAs2w3yqC
+ KthybIsPEVjeA0qz4+ZTQgK5IjqDDopsPcuwf+CRYRSlRpI+azBGWJ4BAPlbuDo/CmZ2
+ IFUKneY8rkZJ4QrGbav9Zpj+l17snXBi1p8= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 355vfkaasx-2
+        by mx0a-00082601.pphosted.com with ESMTP id 3560xg0d2y-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 02 Dec 2020 19:01:13 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (100.104.98.9) by
+        Wed, 02 Dec 2020 19:06:50 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.98.9) by
  o365-in.thefacebook.com (100.104.94.229) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 2 Dec 2020 19:01:11 -0800
+ 15.1.1979.3; Wed, 2 Dec 2020 19:06:39 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U6BIwntwwGrTkLDQ7XVSFoPx5m332L45PPSk/LwjvzwdZWUn2k2qmxB6zk+EMRdzNFR21KYgWJ6UV9GPwxMwK6yfBh7QV9uKGNmuUjxgfohTYIzBOEWrRK9S0lL33oB9THu1gvSJVJwyRJ20NNDMDBJsH+1aC5ueppubuvbiLymyB1PxnwaZ9zsIxMMYg4aNu+u3NhFWpgG094IWeBUeiKRkEvLytlc77GGgn084Qyd8rFEECWjuw/8I1SevB1tblnXdoELeQeB4LwWOXrdJ3UCBpzlRCDht/0VyBVtKSnw/QDE89OIT8d0Xo0bSOPj4qHUh9wBITw8w4PH40Li70A==
+ b=MFJRGhCMD7rDFU7bf9dsXMhqE19Bqphj5iR6qU/4d814Tm9Fq0Tjs4TYVxPgD/uYgcLSOxl6FdR0UoMQO2U23CG3qMhMiG/bVO6RdNul90rIRqdZ7R9xgLi/XAqnESx249OnFzed05lHAkWzR6aFsQpliVkWop/KWmUqp1zEw2xu2JzSBC3wlAPsCufxksl5k7zcJV7wW1nwqE1vZzrpEfll/9uQzoHhtA6YX95XtWG+Uzc76pPyb5F1RN5ZwjtrTtfjPuFxR24Zep2IBjMDV7K2I0HzzDUOlNOqNpkvoHHoYiJHnn/v1l8JvDxqTHDjzXj5v8goRyQ8IQPDajo9+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KeepL3Jg8adxcpRkOPN/NUKQHEXslogVJDa9TE6qEgQ=;
- b=VC2a1GYDb+AMtsMPFS5AROEVlIcbjKHoawm8RCr1aPkxEpp+PnJnFs1U9qjg58W9YkXRyvY6wFnV17rCUy4FK/PVPlZ70Q/qO2wAjs1wqF9tT2DFOCVzRfWIQUxSDg3dR1QKAz8UQcViacINiXq7Fw3dO3RQMYAQ64JRro14mUsQbM3Yom3JxWvmi5hzDnsfG/MS5ttr306bctI0IHSL9zwihO47UNGu/by6S6h+6ibbftxaK0oDRy01A7OmOLUZUQ2uQrP9fGHWacFnO0FOCz4ce7AK5yTNYi3wcetUqlB+uLZhf8zGp5C/o+xjbcY8pfbOVED4VXJHhACEh+I21g==
+ bh=KSNbZueJ6unVxbUmpexAxejS8io6WON5PBxAzSWkhmg=;
+ b=QlzGbNXTp4Tj4hfddMU2LWASiLvQyZczrXeDxszPYI9sfl13+lfJeuEOoKugDV+VrbwE16eTPnZXuXmDuicwOYft4UP/vhlJy8qACvj+FkBiX2mXFfvLUxDMvt8MD/Kz+QKFcGhPFkmJjJAMPcDI0rjNeRiNXgK+Aa3rpurZ66KjowwZdLBGf/6tw6KMTQ5hlyY4IkSlqD5Y+7N3TtDePAzBEwQjUft1EuxfXsLeNJbGssBEFbrhYR6ugJL1MFHBjMLXfLwy7Pb8j+fLdQtIa8XfWzY1rkIJLbRI6mMv+ukRUV9lfsI5UYJQBkNyO28cp+UK28Bi8vyBKBJVN2CukQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
  header.d=fb.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
  s=selector2-fb-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KeepL3Jg8adxcpRkOPN/NUKQHEXslogVJDa9TE6qEgQ=;
- b=fsvrRLcqPp2BB3TtxattfQWWZJ4NvcwZEQC2S4kNvsy3+od6V1l+n3XjU0SScpvS+VZ8XSuTiqWuVrMcW8g4GFH7rhiJOm9YYZ0stFu/UVHZa488wBDcTrYj5q+RB8CMGZKtK1iNMkjsBQBC73qZmsmyQ+C6wLC4RxG0SrNAbE0=
+ bh=KSNbZueJ6unVxbUmpexAxejS8io6WON5PBxAzSWkhmg=;
+ b=A/D6NkyElphwEoR0MW9hvzyctFFXtOsYOcOUU1H0/jMWCudoXpAydgwoFGnOkNEOUDRcByJY8wSQ8vSXSvOViTUgLcdaL3KUHQ+8ky4p98PmZ903caI3/GUGzCdLwdjpigPB17FcUgs5fbtwV0HXIAsUJA0WZqEZNcx+tNKs8CA=
 Authentication-Results: gmail.com; dkim=none (message not signed)
  header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
 Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
  by BYAPR15MB3080.namprd15.prod.outlook.com (2603:10b6:a03:ff::32) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17; Thu, 3 Dec
- 2020 03:01:08 +0000
+ 2020 03:06:37 +0000
 Received: from BYAPR15MB4136.namprd15.prod.outlook.com
  ([fe80::3925:e1f9:4c6a:9396]) by BYAPR15MB4136.namprd15.prod.outlook.com
  ([fe80::3925:e1f9:4c6a:9396%6]) with mapi id 15.20.3632.019; Thu, 3 Dec 2020
- 03:01:08 +0000
-Date:   Wed, 2 Dec 2020 19:01:04 -0800
+ 03:06:37 +0000
+Date:   Wed, 2 Dec 2020 19:06:32 -0800
 From:   Roman Gushchin <guro@fb.com>
 To:     Yang Shi <shy828301@gmail.com>
 CC:     <ktkhai@virtuozzo.com>, <shakeelb@google.com>,
         <david@fromorbit.com>, <hannes@cmpxchg.org>, <mhocko@suse.com>,
         <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/9] mm: vmscan: use a new flag to indicate shrinker is
- registered
-Message-ID: <20201203030104.GF1375014@carbon.DHCP.thefacebook.com>
+Subject: Re: [PATCH 5/9] mm: memcontrol: add per memcg shrinker nr_deferred
+Message-ID: <20201203030632.GG1375014@carbon.DHCP.thefacebook.com>
 References: <20201202182725.265020-1-shy828301@gmail.com>
- <20201202182725.265020-5-shy828301@gmail.com>
+ <20201202182725.265020-6-shy828301@gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201202182725.265020-5-shy828301@gmail.com>
-X-Originating-IP: [2620:10d:c090:400::5:4a99]
-X-ClientProxiedBy: MWHPR15CA0058.namprd15.prod.outlook.com
- (2603:10b6:301:4c::20) To BYAPR15MB4136.namprd15.prod.outlook.com
+In-Reply-To: <20201202182725.265020-6-shy828301@gmail.com>
+X-Originating-IP: [2620:10d:c090:400::5:ee30]
+X-ClientProxiedBy: MWHPR22CA0010.namprd22.prod.outlook.com
+ (2603:10b6:300:ef::20) To BYAPR15MB4136.namprd15.prod.outlook.com
  (2603:10b6:a03:96::24)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:4a99) by MWHPR15CA0058.namprd15.prod.outlook.com (2603:10b6:301:4c::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17 via Frontend Transport; Thu, 3 Dec 2020 03:01:07 +0000
+Received: from carbon.DHCP.thefacebook.com (2620:10d:c090:400::5:ee30) by MWHPR22CA0010.namprd22.prod.outlook.com (2603:10b6:300:ef::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3632.17 via Frontend Transport; Thu, 3 Dec 2020 03:06:36 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: dd270963-df12-454f-1cac-08d89737aeec
+X-MS-Office365-Filtering-Correlation-Id: 413f9783-ac55-4a40-adac-08d8973872cd
 X-MS-TrafficTypeDiagnostic: BYAPR15MB3080:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB308043DC9591986AD5411250BEF20@BYAPR15MB3080.namprd15.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <BYAPR15MB30800EF69BA76F7C9DE62503BEF20@BYAPR15MB3080.namprd15.prod.outlook.com>
 X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: miv4FXzDy+ezVOzfnVXYjSxfcmqoxEEhh1JrnWmE5baMcUinzPHyTAwBDebbdq3uyVMvKR9ws1D/dEJFdTwgrUGp+2YfRqu0CXpFz0lZCJ8j/V5/jp2tqUFBnfYI21wcGGSGdqqjW+m2doEMKk54RUimCWMKNlPFFy7RWG3KHJaytYjV0DaNgdm+9CpCeLmzg2/sCX3Pi8KrrF2HwfEeGbRJbpKPK/bP/xvL2mpT1kK9WbZvC7EPjBYqAUoySnmnIrMzQYLX4hA0PX3U3KIhPinQpeeZUhExEgsjbmSb81zcfGtQkdXSOSlxVDxqbSlpLFKhEbWF0ysy/pA48ngOfQ==
+X-Microsoft-Antispam-Message-Info: lnSpUPPQ86hYRU5LnGfRhjlXC/eFeuD3AsZPn3ipewufrOe8QrilwNHBqQGNULUY4ua+xl6Asqyo79tUllf7+rei7OXzwBi01Bds4WUNVD+g7zQnoHk2o6dDpNKYohWpqzTKSl3lrgddI7ORjnuHJQ9FuVcZnqZLZOKPJ1WPknPX9ohkH13sJN+gxJzCBo6MpZ8KntLtwJ721g7ViEcjyIqIZbNAWFwwq8RO9zi38VvuntTrhZyaEEPODkV+GFkidQQ/FyW6wbopQ/AFApizB1Rzq9JbBnF74ndKkwHL0uZxQyUuI9fvYi16HSQPhWkAfRinnCs2NJpod5O6aszEuw==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(39860400002)(366004)(396003)(376002)(136003)(1076003)(7416002)(6506007)(2906002)(86362001)(55016002)(8936002)(33656002)(9686003)(83380400001)(5660300002)(6666004)(8676002)(186003)(6916009)(66946007)(66476007)(16526019)(66556008)(478600001)(52116002)(7696005)(316002)(4326008);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?x7YyvQpNAe7YuBVEzzeZ0sdsJduvPfywKggzhz+OYI5FeX4OqTM1Kz3AkzbY?=
- =?us-ascii?Q?ZvmMBEyZIRwJYKnWHD4gyCi/J+HHCjjvSJ6GRuIK9tHjr9cuuJ2KosKFXedq?=
- =?us-ascii?Q?pWEvRB2eA0CooMb0dFolL5KWu9DjPyHZg39mK2i+9UXz5RS5QETF1WCaoch4?=
- =?us-ascii?Q?aosVuYuAlMGxfpd15b5pI4h2a22cMnXUUtFjY4ZGC+3WhTfmbCHFzT+BXO74?=
- =?us-ascii?Q?3XRmh7Gs7dpLmG727kNmE5k3ostgfgWnsv3wFYAC0MCjlbWn1jA3ShFM1GBe?=
- =?us-ascii?Q?cHosJIeZ4b+A7FJ9XJRVmjiXzHjitsd+Q4fv+mfCUFFlmfAYovST3E/Vt39h?=
- =?us-ascii?Q?HQtQFgYG6NazvS+Jd+xTCmvx2n4IfQnZgYXGgb6Q3BXA2cfAQlZpyD6MiWUH?=
- =?us-ascii?Q?iJMzZMoMAX/9O+hBJzjQaThGW0VdIwRcURSTfRFN1H0KL0aXTrU+8fsm69GX?=
- =?us-ascii?Q?V11wC/iqSx3Gzi9XrZp+W4s3riSCBtiwg6kCd2frMODnSMqerXL4p4X8i3F1?=
- =?us-ascii?Q?UcekxZwe6Ng/yu7LzpvPYUTP09x0GGhCRnLhS9X4+AtnzMGOZPX3/484auyZ?=
- =?us-ascii?Q?8KdTWw4wU0D7kHy9NE/i4/Zt2S55gKq7aqdz3asZvRtP0oCDPS5qpRzXT3DF?=
- =?us-ascii?Q?4/+9uD6DZiDAdw6mQvxO+LxQ/H4CO8KxafFXmMrnlXuSmO++li5YGCWGnMEC?=
- =?us-ascii?Q?wRGpkHIXUDKXJM/A2XtKj3iTIXe0fnLPXdF0m59xKh5hgxUSQPXZuMTaJ+3S?=
- =?us-ascii?Q?P6ezP6B8XWOQx+9+qmvuOPgL3bMOYGyxoEttcTCAdGibfugw1udkv8wyA7BO?=
- =?us-ascii?Q?zFloSnTSk+LSx10kA+oKbNlscuqLbP5CXdWbYN2lcSmprdp1Bimj8owp4CJx?=
- =?us-ascii?Q?B8+gOQbYDVd1zYLVsesfNKhz60/IHD0ciLBBEBbS2iK3UaIYNoyPEgpNQaHZ?=
- =?us-ascii?Q?caNbCFNhLeWcE/rzc50lQiqZEG76g/ZMIl7lYJUcOy1opYulpFrB5mfKau4X?=
- =?us-ascii?Q?0picLk3LmnZJEOoLYnjgm2zxvw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd270963-df12-454f-1cac-08d89737aeec
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?7YGSayxOFLv0D1yXBM/7sdvAEbZCVsGsBVQ7AL2WFBFJ4AoeckqaoB6wKL0S?=
+ =?us-ascii?Q?snS6lcwGQ8G8EYOkM41rkfZWMt8F1eKnuIJY090OV/VtmfzMXciBhwVMRj14?=
+ =?us-ascii?Q?7JU8n0UduWubSMb60ye6CTT8AC1w9kbllNBHxlRIjPLg1jcNO6kFxB1ZL52y?=
+ =?us-ascii?Q?yk9Ivdr3wiqKPeZs9w838pkoQuYk03z0boU4p8SYBuDRZXCKjNJFUuamkwPv?=
+ =?us-ascii?Q?ZzuNLwQ/HNIN2wl7U1LQuHdMkUuKsVeAuaZJflkQU9H0c8nZlTOdzuyO46V0?=
+ =?us-ascii?Q?Lp//67+GVrWOjCNFt7iif7A/p4B4U7Vfv+rt+h413KkQsbDialxdGPRSUdYG?=
+ =?us-ascii?Q?J8b46Mm7TKiC+JfPEwLL1RBdY71qQtSQ3trK91rUHHtwqKhyhOxJB5HwG9TS?=
+ =?us-ascii?Q?9MfDLsO15uRdD0ERWQ8kHBgnLmbYhFHzYWy3aZwyqrQyhwehKAqkloAG5opO?=
+ =?us-ascii?Q?0BAgeU2zULwzRFX4mL4jwDaCVIcRCg/2gp4RH6R1aaXvHxYaCx0LA8J66ugW?=
+ =?us-ascii?Q?aVq1B1BMKGJDyQ+Yf+EBsakEY4QQFwqvcclX/0ifbabg21v9uk2ZIeD4HFM+?=
+ =?us-ascii?Q?Tl0hK6ocBG4ybeh8Dzuzeu/jQADzZbiSpQ233nnZ81PWmo7GKwVq6XbOc57k?=
+ =?us-ascii?Q?o32UiauqKI6A5UMuWaqel7YaVPjHIRUMqkuSVi02CC/DZpi/LXG1lehNF+3c?=
+ =?us-ascii?Q?AgA9YACOVW2vy3x2yVBG6F3MkI/yurAHKAJ+g0pnSRpTzS8xYN03rsqy4s/K?=
+ =?us-ascii?Q?UgTSJ1/QBEQP/CWY8v7+l772+KabhmJBr6bq3FfJb9M16oYOE3q6+gcWwnNx?=
+ =?us-ascii?Q?CXtApKPYog7De2CjMO/hkSO/UYnZV9YatR+qQSN7Pg98OuWajySLhX6qOCJG?=
+ =?us-ascii?Q?HVzD5+Lbsr+NBpS6j+AQY07WFKPPH5O5eXK7wKisSfTGs8K+x1vNspzqCA8M?=
+ =?us-ascii?Q?BIv+zxYACcTsFNYCumKkpN7pa3VZHcFaRZnVqgT5Tyt/f4kwmLOHad9LtC1K?=
+ =?us-ascii?Q?zrjuJU7NvDAPS9fk2l8og0oBLw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 413f9783-ac55-4a40-adac-08d8973872cd
 X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2020 03:01:08.8508
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2020 03:06:37.7627
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qk6V4obzCuZxmPugrh5SmFfjk25Z/GBZOTWHjKb4ghPx5wGwvAgJzQ8OnBbEzS/F
+X-MS-Exchange-CrossTenant-UserPrincipalName: VMlag2vXTFnC3Wq4f9gbY8J4hjeV3rzqiIt7KleX+Sxwup5phPu01B++bHLJ1faU
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3080
 X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
  definitions=2020-12-03_01:2020-11-30,2020-12-03 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 phishscore=0 adultscore=0
- clxscore=1015 priorityscore=1501 mlxscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 malwarescore=0 spamscore=0 suspectscore=5 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012030017
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0
+ phishscore=0 malwarescore=0 suspectscore=1 adultscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012030018
 X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 02, 2020 at 10:27:20AM -0800, Yang Shi wrote:
-> Currently registered shrinker is indicated by non-NULL shrinker->nr_deferred.
-> This approach is fine with nr_deferred atthe shrinker level, but the following
-> patches will move MEMCG_AWARE shrinkers' nr_deferred to memcg level, so their
-> shrinker->nr_deferred would always be NULL.  This would prevent the shrinkers
-> from unregistering correctly.
+On Wed, Dec 02, 2020 at 10:27:21AM -0800, Yang Shi wrote:
+> Currently the number of deferred objects are per shrinker, but some slabs, for example,
+> vfs inode/dentry cache are per memcg, this would result in poor isolation among memcgs.
 > 
-> Introduce a new "state" field to indicate if shrinker is registered or not.
-> We could use the highest bit of flags, but it may be a little bit complicated to
-> extract that bit and the flags is accessed frequently by vmscan (every time shrinker
-> is called).  So add a new field in "struct shrinker", we may waster a little bit
-> memory, but it should be very few since there should be not too many registered
-> shrinkers on a normal system.
+> The deferred objects typically are generated by __GFP_NOFS allocations, one memcg with
+> excessive __GFP_NOFS allocations may blow up deferred objects, then other innocent memcgs
+> may suffer from over shrink, excessive reclaim latency, etc.
+> 
+> For example, two workloads run in memcgA and memcgB respectively, workload in B is vfs
+> heavy workload.  Workload in A generates excessive deferred objects, then B's vfs cache
+> might be hit heavily (drop half of caches) by B's limit reclaim or global reclaim.
+> 
+> We observed this hit in our production environment which was running vfs heavy workload
+> shown as the below tracing log:
+> 
+> <...>-409454 [016] .... 28286961.747146: mm_shrink_slab_start: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 objects to shrink 3641681686040 gfp_flags GFP_HIGHUSER_MOVABLE|__GFP_ZERO pgs_scanned 1 lru_pgs 15721
+> cache items 246404277 delta 31345 total_scan 123202138
+> <...>-409454 [022] .... 28287105.928018: mm_shrink_slab_end: super_cache_scan+0x0/0x1a0 ffff9a83046f3458:
+> nid: 1 unused scan count 3641681686040 new scan count 3641798379189 total_scan 602
+> last shrinker return val 123186855
+> 
+> The vfs cache and page cache ration was 10:1 on this machine, and half of caches were dropped.
+> This also resulted in significant amount of page caches were dropped due to inodes eviction.
+> 
+> Make nr_deferred per memcg for memcg aware shrinkers would solve the unfairness and bring
+> better isolation.
+> 
+> When memcg is not enabled (!CONFIG_MEMCG or memcg disabled), the shrinker's nr_deferred
+> would be used.  And non memcg aware shrinkers use shrinker's nr_deferred all the time.
 > 
 > Signed-off-by: Yang Shi <shy828301@gmail.com>
 > ---
->  include/linux/shrinker.h |  4 ++++
->  mm/vmscan.c              | 13 +++++++++----
->  2 files changed, 13 insertions(+), 4 deletions(-)
+>  include/linux/memcontrol.h |   9 +++
+>  mm/memcontrol.c            | 112 ++++++++++++++++++++++++++++++++++++-
+>  mm/vmscan.c                |   4 ++
+>  3 files changed, 123 insertions(+), 2 deletions(-)
 > 
-> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> index 0f80123650e2..0bb5be88e41d 100644
-> --- a/include/linux/shrinker.h
-> +++ b/include/linux/shrinker.h
-> @@ -35,6 +35,9 @@ struct shrink_control {
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 922a7f600465..1b343b268359 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -92,6 +92,13 @@ struct lruvec_stat {
+>  	long count[NR_VM_NODE_STAT_ITEMS];
+>  };
 >  
->  #define SHRINK_STOP (~0UL)
->  #define SHRINK_EMPTY (~0UL - 1)
 > +
-> +#define SHRINKER_REGISTERED	0x1
-> +
->  /*
->   * A callback you can register to apply pressure to ageable caches.
->   *
-> @@ -66,6 +69,7 @@ struct shrinker {
->  	long batch;	/* reclaim batch size, 0 = default */
->  	int seeks;	/* seeks to recreate an obj */
->  	unsigned flags;
-> +	unsigned state;
+> +/* Shrinker::id indexed nr_deferred of memcg-aware shrinkers. */
+> +struct memcg_shrinker_deferred {
+> +	struct rcu_head rcu;
+> +	atomic_long_t nr_deferred[];
+> +};
 
-Hm, can't it be another flag? It seems like we have a plenty of free bits.
-
->  
->  	/* These are for internal use */
->  	struct list_head list;
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 457ce04eebf2..0d628299e55c 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -378,6 +378,7 @@ void register_shrinker_prepared(struct shrinker *shrinker)
->  	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
->  		idr_replace(&shrinker_idr, shrinker, shrinker->id);
->  #endif
-> +	shrinker->state |= SHRINKER_REGISTERED;
->  	up_write(&shrinker_rwsem);
->  }
->  
-> @@ -397,13 +398,17 @@ EXPORT_SYMBOL(register_shrinker);
->   */
->  void unregister_shrinker(struct shrinker *shrinker)
->  {
-> -	if (!shrinker->nr_deferred)
-> -		return;
-> -	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> -		unregister_memcg_shrinker(shrinker);
->  	down_write(&shrinker_rwsem);
-> +	if (!shrinker->state) {
-> +		up_write(&shrinker_rwsem);
-> +		return;
-> +	}
->  	list_del(&shrinker->list);
-> +	shrinker->state &= ~SHRINKER_REGISTERED;
->  	up_write(&shrinker_rwsem);
-> +
-> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> +		unregister_memcg_shrinker(shrinker);
->  	kfree(shrinker->nr_deferred);
->  	shrinker->nr_deferred = NULL;
->  }
-> -- 
-> 2.26.2
-> 
+The idea makes total sense to me. But I wonder if we can add nr_deferred to
+struct list_lru_one, instead of adding another per-memcg per-shrinker entity?
+I guess it can simplify the code quite a lot. What do you think?
