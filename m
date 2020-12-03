@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA9E2CE364
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:04:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2DE52CE37D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388280AbgLDACP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 19:02:15 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41702 "EHLO
+        id S2388467AbgLDACW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 19:02:22 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41707 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387439AbgLDACO (ORCPT
+        with ESMTP id S2388087AbgLDACU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:02:14 -0500
+        Thu, 3 Dec 2020 19:02:20 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkyXM-0007ka-VU; Fri, 04 Dec 2020 00:01:25 +0000
+        id 1kkyXO-0007ka-Py; Fri, 04 Dec 2020 00:01:26 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -53,9 +53,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 06/40] fs: add mount_setattr()
-Date:   Fri,  4 Dec 2020 00:57:02 +0100
-Message-Id: <20201203235736.3528991-7-christian.brauner@ubuntu.com>
+Subject: [PATCH v4 07/40] tests: add mount_setattr() selftests
+Date:   Fri,  4 Dec 2020 00:57:03 +0100
+Message-Id: <20201203235736.3528991-8-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
 References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
@@ -65,668 +65,1056 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This implements the missing mount_setattr() syscall. While the new mount
-api allows to change the properties of a superblock there is currently
-no way to change the properties of a mount or a mount tree using file
-descriptors which the new mount api is based on. In addition the old
-mount api has the restriction that mount options cannot be applied
-recursively. This hasn't changed since changing mount options on a
-per-mount basis was implemented in [1] and has been a frequent request
-not just for convenience but also for security reasons. The legacy
-mount syscall is unable to accommodate this behavior without introducing
-a whole new set of flags because MS_REC | MS_REMOUNT | MS_BIND |
-MS_RDONLY | MS_NOEXEC | [...] only apply the mount option to the topmost
-mount. Changing MS_REC to apply to the whole mount tree would mean
-introducing a significant uapi change and would likely cause significant
-regressions.
+Add a range of selftests for the new mount_setattr() syscall to verify
+that it works as expected. This tests that:
+- no invalid flags can be specified
+- changing properties of a single mount works and leaves other mounts in
+  the mount tree unchanged
+- changing a mount tre to read-only when one of the mounts has writers
+  fails and leaves the whole mount tree unchanged
+- changing mount properties from multiple threads works
+- changing atime settings works
+- changing mount propagation works
+- changing the mount options of a mount tree where the individual mounts
+  in the tree have different mount options only changes the flags that
+  were requested to change
+- changing mount options from another mount namespace fails
+- changing mount options from another user namespace fails
 
-The new mount_setattr() syscall allows to recursively clear and set
-mount options in one shot. Multiple calls to change mount options
-requesting the same changes are idempotent:
+[==========] Running 9 tests from 2 test cases.
+[ RUN      ] mount_setattr.invalid_attributes
+[       OK ] mount_setattr.invalid_attributes
+[ RUN      ] mount_setattr.basic
+[       OK ] mount_setattr.basic
+[ RUN      ] mount_setattr.basic_recursive
+[       OK ] mount_setattr.basic_recursive
+[ RUN      ] mount_setattr.mount_has_writers
+[       OK ] mount_setattr.mount_has_writers
+[ RUN      ] mount_setattr.mixed_mount_options
+[       OK ] mount_setattr.mixed_mount_options
+[ RUN      ] mount_setattr.time_changes
+[       OK ] mount_setattr.time_changes
+[ RUN      ] mount_setattr.multi_threaded
+[       OK ] mount_setattr.multi_threaded
+[ RUN      ] mount_setattr.wrong_user_namespace
+[       OK ] mount_setattr.wrong_user_namespace
+[ RUN      ] mount_setattr.wrong_mount_namespace
+[       OK ] mount_setattr.wrong_mount_namespace
+[==========] 9 / 9 tests passed.
+[  PASSED  ]
 
-int mount_setattr(int dfd, const char *path, unsigned flags,
-                  struct mount_attr *uattr, size_t usize);
-
-Flags to modify path resolution behavior are specified in the @flags
-argument. Currently, AT_EMPTY_PATH, AT_RECURSIVE, AT_SYMLINK_NOFOLLOW,
-and AT_NO_AUTOMOUNT are supported. If useful, additional lookup flags to
-restrict path resolution as introduced with openat2() might be supported
-in the future.
-
-The mount_setattr() syscall can be expected to grow over time and is
-designed with extensibility in mind. It follows the extensible syscall
-pattern we have used with other syscalls such as openat2(), clone3(),
-sched_{set,get}attr(), and others.
-The set of mount options is passed in the uapi struct mount_attr which
-currently has the following layout:
-
-struct mount_attr {
-	__u64 attr_set;
-	__u64 attr_clr;
-	__u32 propagation;
-};
-
-The @attr_set and @attr_clr members are used to clear and set mount
-options. This way a user can e.g. request that a set of flags is to be
-raised such as turning mounts readonly by raising MOUNT_ATTR_RDONLY in
-@attr_set while at the same time requesting that another set of flags is
-to be lowered such as removing noexec from a mount tree by specifying
-MOUNT_ATTR_NOEXEC in @attr_clr.
-
-Note, since the MOUNT_ATTR_<atime> values are an enum starting from 0,
-not a bitmap, users wanting to transition to a different atime setting
-cannot simply specify the atime setting in @attr_set, but must also
-specify MOUNT_ATTR__ATIME in the @attr_clr field. So we ensure that
-MOUNT_ATTR__ATIME can't be partially set in @attr_clr and that @attr_set
-can't have any atime bits set if MOUNT_ATTR__ATIME isn't set in
-@attr_clr.
-
-The @propagation field lets callers specify the propagation type of a
-mount tree. Propagation is a single property that has four different
-settings and as such is not really a flag argument but an enum.
-Specifically, it would be unclear what setting and clearing propagation
-settings in combination would amount to. The legacy mount() syscall thus
-forbids the combination of multiple propagation settings too. The goal
-is to keep the semantics of mount propagation somewhat simple as they
-are overly complex as it is.
-
-[1]: commit 2e4b7fcd9260 ("[PATCH] r/o bind mounts: honor mount writer counts at remount")
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-- Christoph Hellwig <hch@lst.de>:
-  - Split into multiple helpers.
+unchanged
 
 /* v3 */
-- kernel test robot <lkp@intel.com>:
-  - Fix unknown __u64 type by including linux/types.h in linux/mount.h.
+unchanged
 
 /* v4 */
-- Christoph Hellwig <hch@lst.de>:
-  - Make sure lines wrap at 80 chars.
-  - Move struct mount_kattr out of the internal.h header and completely
-    into fs/namespace.c as it's not used outside of that file.
-  - Add missing space between ( and { when initializing mount_kattr.
-  - Split flag validation and calculation into separate preparatory
-    patch.
-  - Simplify flag validation in build_mount_kattr() to avoid
-    upper_32_bits() and lower_32_bits() calls. This will also lead to
-    better code generation.
-  - Remove new propagation enums and simply use the old flags.
-  - Strictly adhere to 80 char limit.
-  - Restructure the time setting code in build_mount_kattr().
+unchanged
 ---
- arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
- arch/arm/tools/syscall.tbl                  |   1 +
- arch/arm64/include/asm/unistd32.h           |   2 +
- arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
- arch/s390/kernel/syscalls/syscall.tbl       |   1 +
- arch/sh/kernel/syscalls/syscall.tbl         |   1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
- fs/namespace.c                              | 271 ++++++++++++++++++++
- include/linux/syscalls.h                    |   3 +
- include/uapi/asm-generic/unistd.h           |   4 +-
- include/uapi/linux/mount.h                  |  14 +
- tools/include/uapi/asm-generic/unistd.h     |   4 +-
- 22 files changed, 312 insertions(+), 2 deletions(-)
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/mount_setattr/.gitignore        |   1 +
+ .../testing/selftests/mount_setattr/Makefile  |   7 +
+ tools/testing/selftests/mount_setattr/config  |   1 +
+ .../mount_setattr/mount_setattr_test.c        | 941 ++++++++++++++++++
+ 5 files changed, 951 insertions(+)
+ create mode 100644 tools/testing/selftests/mount_setattr/.gitignore
+ create mode 100644 tools/testing/selftests/mount_setattr/Makefile
+ create mode 100644 tools/testing/selftests/mount_setattr/config
+ create mode 100644 tools/testing/selftests/mount_setattr/mount_setattr_test.c
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index ee7b01bb7346..24d8709624b8 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -480,3 +480,4 @@
- 548	common	pidfd_getfd			sys_pidfd_getfd
- 549	common	faccessat2			sys_faccessat2
- 550	common	process_madvise			sys_process_madvise
-+551	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index d056a548358e..e3785513d445 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -454,3 +454,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 107f08e03b9f..78af754e070a 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -889,6 +889,8 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
- #define __NR_process_madvise 440
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
-+#define __NR_mount_setattr 441
-+__SYSCALL(__NR_mount_setattr, sys_mount_setattr)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index b96ed8b8a508..f7d4b1f55be0 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -361,3 +361,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 625fb6d32842..e96e9c6a6ffa 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -440,3 +440,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index aae729c95cf9..6538f075a18e 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -446,3 +446,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 32817c954435..64d129db1aa7 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -379,3 +379,4 @@
- 438	n32	pidfd_getfd			sys_pidfd_getfd
- 439	n32	faccessat2			sys_faccessat2
- 440	n32	process_madvise			sys_process_madvise
-+441	n32	mount_setattr			sys_mount_setattr
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 9e4ea3c31b1c..94b24e6b2608 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -355,3 +355,4 @@
- 438	n64	pidfd_getfd			sys_pidfd_getfd
- 439	n64	faccessat2			sys_faccessat2
- 440	n64	process_madvise			sys_process_madvise
-+441	n64	mount_setattr			sys_mount_setattr
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 29f5f28cf5ce..eae522306767 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -428,3 +428,4 @@
- 438	o32	pidfd_getfd			sys_pidfd_getfd
- 439	o32	faccessat2			sys_faccessat2
- 440	o32	process_madvise			sys_process_madvise
-+441	o32	mount_setattr			sys_mount_setattr
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index f375ea528e59..c7e25f1d219f 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -438,3 +438,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 1275daec7fec..0b309ef64e91 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -530,3 +530,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 28c168000483..0b30398fee42 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -443,3 +443,4 @@
- 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
- 439  common	faccessat2		sys_faccessat2			sys_faccessat2
- 440  common	process_madvise		sys_process_madvise		sys_process_madvise
-+441  common	mount_setattr		sys_mount_setattr		sys_mount_setattr
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 783738448ff5..8e4949c5b740 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -443,3 +443,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 78160260991b..409f21a650b8 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -486,3 +486,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 0d0667a9fbd7..2a694420f6cd 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -445,3 +445,4 @@
- 438	i386	pidfd_getfd		sys_pidfd_getfd
- 439	i386	faccessat2		sys_faccessat2
- 440	i386	process_madvise		sys_process_madvise
-+441	i386	mount_setattr		sys_mount_setattr
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 379819244b91..4d594d0246c1 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -362,6 +362,7 @@
- 438	common	pidfd_getfd		sys_pidfd_getfd
- 439	common	faccessat2		sys_faccessat2
- 440	common	process_madvise		sys_process_madvise
-+441	common	mount_setattr		sys_mount_setattr
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index b070f272995d..a650dc05593d 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -411,3 +411,4 @@
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
- 440	common	process_madvise			sys_process_madvise
-+441	common	mount_setattr			sys_mount_setattr
-diff --git a/fs/namespace.c b/fs/namespace.c
-index b2a9eb7b43d3..51cfacfb3f82 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -73,6 +73,14 @@ static DECLARE_RWSEM(namespace_sem);
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
- 
-+struct mount_kattr {
-+	unsigned int attr_set;
-+	unsigned int attr_clr;
-+	unsigned int propagation;
-+	unsigned int lookup_flags;
-+	bool recurse;
-+};
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index d9c283503159..87b7107dd9a6 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -34,6 +34,7 @@ TARGETS += memfd
+ TARGETS += memory-hotplug
+ TARGETS += mincore
+ TARGETS += mount
++TARGETS += mount_setattr
+ TARGETS += mqueue
+ TARGETS += net
+ TARGETS += net/forwarding
+diff --git a/tools/testing/selftests/mount_setattr/.gitignore b/tools/testing/selftests/mount_setattr/.gitignore
+new file mode 100644
+index 000000000000..5f74d8488472
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/.gitignore
+@@ -0,0 +1 @@
++mount_setattr_test
+diff --git a/tools/testing/selftests/mount_setattr/Makefile b/tools/testing/selftests/mount_setattr/Makefile
+new file mode 100644
+index 000000000000..2250f7dcb81e
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for mount selftests.
++CFLAGS = -g -I../../../../usr/include/ -Wall -O2 -pthread
 +
- /* /sys/fs */
- struct kobject *fs_kobj;
- EXPORT_SYMBOL_GPL(fs_kobj);
-@@ -3454,6 +3462,8 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
- 	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |            \
- 	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
- 
-+#define MOUNT_SETATTR_VALID_FLAGS FSMOUNT_VALID_FLAGS
++TEST_GEN_FILES += mount_setattr_test
 +
- static unsigned int attr_flags_to_mnt_flags(u64 attr_flags)
- {
- 	unsigned int mnt_flags = 0;
-@@ -3805,6 +3815,267 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	return error;
- }
- 
-+static unsigned int recalc_flags(struct mount_kattr *kattr, struct mount *mnt)
-+{
-+	unsigned int flags = mnt->mnt.mnt_flags;
++include ../lib.mk
+diff --git a/tools/testing/selftests/mount_setattr/config b/tools/testing/selftests/mount_setattr/config
+new file mode 100644
+index 000000000000..416bd53ce982
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/config
+@@ -0,0 +1 @@
++CONFIG_USER_NS=y
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+new file mode 100644
+index 000000000000..32fdb192629c
+--- /dev/null
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -0,0 +1,941 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <sched.h>
++#include <stdio.h>
++#include <errno.h>
++#include <pthread.h>
++#include <string.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <sys/mount.h>
++#include <sys/wait.h>
++#include <sys/vfs.h>
++#include <sys/statvfs.h>
++#include <sys/sysinfo.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <grp.h>
++#include <stdbool.h>
++#include <stdarg.h>
 +
-+	/*  flags to clear */
-+	flags &= ~kattr->attr_clr;
-+	/* flags to raise */
-+	flags |= kattr->attr_set;
++#include "../kselftest_harness.h"
 +
-+	return flags;
-+}
++#ifndef CLONE_NEWNS
++#define CLONE_NEWNS 0x00020000
++#endif
 +
-+static struct mount *mount_setattr_prepare(struct mount_kattr *kattr,
-+					   struct mount *mnt, int *err)
-+{
-+	struct mount *m = mnt, *last = NULL;
++#ifndef CLONE_NEWUSER
++#define CLONE_NEWUSER 0x10000000
++#endif
 +
-+	if (!is_mounted(&m->mnt)) {
-+		*err = -EINVAL;
-+		goto out;
-+	}
++#ifndef MS_REC
++#define MS_REC 16384
++#endif
 +
-+	if (!(mnt_has_parent(m) ? check_mnt(m) : is_anon_ns(m->mnt_ns))) {
-+		*err = -EINVAL;
-+		goto out;
-+	}
++#ifndef MS_RELATIME
++#define MS_RELATIME (1 << 21)
++#endif
 +
-+	do {
-+		unsigned int flags;
++#ifndef MS_STRICTATIME
++#define MS_STRICTATIME (1 << 24)
++#endif
 +
-+		flags = recalc_flags(kattr, m);
-+		if (!can_change_locked_flags(m, flags)) {
-+			*err = -EPERM;
-+			goto out;
-+		}
++#ifndef MOUNT_ATTR_RDONLY
++#define MOUNT_ATTR_RDONLY 0x00000001
++#endif
 +
-+		last = m;
++#ifndef MOUNT_ATTR_NOSUID
++#define MOUNT_ATTR_NOSUID 0x00000002
++#endif
 +
-+		if ((kattr->attr_set & MNT_READONLY) &&
-+		    !(m->mnt.mnt_flags & MNT_READONLY)) {
-+			*err = mnt_hold_writers(m);
-+			if (*err)
-+				goto out;
-+		}
-+	} while (kattr->recurse && (m = next_mnt(m, mnt)));
++#ifndef MOUNT_ATTR_NOEXEC
++#define MOUNT_ATTR_NOEXEC 0x00000008
++#endif
 +
-+out:
-+	return last;
-+}
++#ifndef MOUNT_ATTR_NODIRATIME
++#define MOUNT_ATTR_NODIRATIME 0x00000080
++#endif
 +
-+static void mount_setattr_commit(struct mount_kattr *kattr,
-+				 struct mount *mnt, struct mount *last,
-+				 int err)
-+{
-+	struct mount *m = mnt;
++#ifndef MOUNT_ATTR__ATIME
++#define MOUNT_ATTR__ATIME 0x00000070
++#endif
 +
-+	do {
-+		if (!err) {
-+			unsigned int flags;
++#ifndef MOUNT_ATTR_RELATIME
++#define MOUNT_ATTR_RELATIME 0x00000000
++#endif
 +
-+			flags = recalc_flags(kattr, m);
-+			WRITE_ONCE(m->mnt.mnt_flags, flags);
-+		}
++#ifndef MOUNT_ATTR_NOATIME
++#define MOUNT_ATTR_NOATIME 0x00000010
++#endif
 +
-+		/*
-+		 * We either set MNT_READONLY above so make it visible
-+		 * before ~MNT_WRITE_HOLD or we failed to recursively
-+		 * apply mount options.
-+		 */
-+		if ((kattr->attr_set & MNT_READONLY) &&
-+		    (m->mnt.mnt_flags & MNT_WRITE_HOLD))
-+			mnt_unhold_writers(m);
++#ifndef MOUNT_ATTR_STRICTATIME
++#define MOUNT_ATTR_STRICTATIME 0x00000020
++#endif
 +
-+		if (!err && kattr->propagation)
-+			change_mnt_propagation(m, kattr->propagation);
++#ifndef AT_RECURSIVE
++#define AT_RECURSIVE 0x8000
++#endif
 +
-+		/*
-+		 * On failure, only cleanup until we found the first mount
-+		 * we failed to handle.
-+		 */
-+		if (err && m == last)
-+			break;
-+	} while (kattr->recurse && (m = next_mnt(m, mnt)));
++#ifndef MS_SHARED
++#define MS_SHARED (1 << 20)
++#endif
 +
-+	if (!err)
-+		touch_mnt_namespace(mnt->mnt_ns);
-+}
++#define DEFAULT_THREADS 4
++#define ptr_to_int(p) ((int)((intptr_t)(p)))
++#define int_to_ptr(u) ((void *)((intptr_t)(u)))
 +
-+static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
-+{
-+	struct mount *mnt = real_mount(path->mnt), *last = NULL;
-+	int err = 0;
++#ifndef __NR_mount_setattr
++	#if defined __alpha__
++		#define __NR_mount_setattr 551
++	#elif defined _MIPS_SIM
++		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
++			#define __NR_mount_setattr 4441
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
++			#define __NR_mount_setattr 6441
++		#endif
++		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
++			#define __NR_mount_setattr 5441
++		#endif
++	#elif defined __ia64__
++		#define __NR_mount_setattr (441 + 1024)
++	#else
++		#define __NR_mount_setattr 441
++	#endif
 +
-+	if (path->dentry != mnt->mnt.mnt_root)
-+		return -EINVAL;
-+
-+	if (kattr->propagation) {
-+		/*
-+		 * Only take namespace_lock() if we're actually changing
-+		 * propagation.
-+		 */
-+		namespace_lock();
-+		if (kattr->propagation == MS_SHARED) {
-+			err = invent_group_ids(mnt, kattr->recurse);
-+			if (err) {
-+				namespace_unlock();
-+				return err;
-+			}
-+		}
-+	}
-+
-+	lock_mount_hash();
-+
-+	/*
-+	 * Get the mount tree in a shape where we can change mount
-+	 * properties without failure.
-+	 */
-+	last = mount_setattr_prepare(kattr, mnt, &err);
-+	if (last) /* Commit all changes or revert to the old state. */
-+		mount_setattr_commit(kattr, mnt, last, err);
-+
-+	unlock_mount_hash();
-+
-+	if (kattr->propagation) {
-+		namespace_unlock();
-+		if (err)
-+			cleanup_group_ids(mnt, NULL);
-+	}
-+
-+	return err;
-+}
-+
-+static int build_mount_kattr(const struct mount_attr *attr,
-+			     struct mount_kattr *kattr, unsigned int flags)
-+{
-+	unsigned int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
-+
-+	if (flags & AT_NO_AUTOMOUNT)
-+		lookup_flags &= ~LOOKUP_AUTOMOUNT;
-+	if (flags & AT_SYMLINK_NOFOLLOW)
-+		lookup_flags &= ~LOOKUP_FOLLOW;
-+	if (flags & AT_EMPTY_PATH)
-+		lookup_flags |= LOOKUP_EMPTY;
-+
-+	*kattr = (struct mount_kattr) {
-+		.lookup_flags	= lookup_flags,
-+		.recurse	= !!(flags & AT_RECURSIVE),
-+	};
-+
-+	switch (attr->propagation) {
-+	case 0:
-+		kattr->propagation = 0;
-+		break;
-+	case MS_UNBINDABLE:
-+		kattr->propagation = MS_UNBINDABLE;
-+		break;
-+	case MS_PRIVATE:
-+		kattr->propagation = MS_PRIVATE;
-+		break;
-+	case MS_SLAVE:
-+		kattr->propagation = MS_SLAVE;
-+		break;
-+	case MS_SHARED:
-+		kattr->propagation = MS_SHARED;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if ((attr->attr_set | attr->attr_clr) & ~MOUNT_SETATTR_VALID_FLAGS)
-+		return -EINVAL;
-+
-+	kattr->attr_set = attr_flags_to_mnt_flags(attr->attr_set);
-+	kattr->attr_clr = attr_flags_to_mnt_flags(attr->attr_clr);
-+
-+	/*
-+	 * Since the MOUNT_ATTR_<atime> values are an enum, not a bitmap,
-+	 * users wanting to transition to a different atime setting cannot
-+	 * simply specify the atime setting in @attr_set, but must also
-+	 * specify MOUNT_ATTR__ATIME in the @attr_clr field.
-+	 * So ensure that MOUNT_ATTR__ATIME can't be partially set in
-+	 * @attr_clr and that @attr_set can't have any atime bits set if
-+	 * MOUNT_ATTR__ATIME isn't set in @attr_clr.
-+	 */
-+	if (attr->attr_clr & MOUNT_ATTR__ATIME) {
-+		if ((attr->attr_clr & MOUNT_ATTR__ATIME) != MOUNT_ATTR__ATIME)
-+			return -EINVAL;
-+
-+		/*
-+		 * Clear all previous time settings as they are mutually
-+		 * exclusive.
-+		 */
-+		kattr->attr_clr |= MNT_RELATIME | MNT_NOATIME;
-+		switch (attr->attr_set & MOUNT_ATTR__ATIME) {
-+		case MOUNT_ATTR_RELATIME:
-+			kattr->attr_set |= MNT_RELATIME;
-+			break;
-+		case MOUNT_ATTR_NOATIME:
-+			kattr->attr_set |= MNT_NOATIME;
-+			break;
-+		case MOUNT_ATTR_STRICTATIME:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	} else {
-+		if (attr->attr_set & MOUNT_ATTR__ATIME)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+SYSCALL_DEFINE5(mount_setattr, int, dfd, const char __user *, path,
-+		unsigned int, flags, struct mount_attr __user *, uattr,
-+		size_t, usize)
-+{
-+	int err;
-+	struct path target;
-+	struct mount_attr attr;
-+	struct mount_kattr kattr;
-+
-+	BUILD_BUG_ON(sizeof(struct mount_attr) != MOUNT_ATTR_SIZE_VER0);
-+
-+	if (flags & ~(AT_EMPTY_PATH |
-+		      AT_RECURSIVE |
-+		      AT_SYMLINK_NOFOLLOW |
-+		      AT_NO_AUTOMOUNT))
-+		return -EINVAL;
-+
-+	if (unlikely(usize > PAGE_SIZE))
-+		return -E2BIG;
-+	if (unlikely(usize < MOUNT_ATTR_SIZE_VER0))
-+		return -EINVAL;
-+
-+	if (!may_mount())
-+		return -EPERM;
-+
-+	err = copy_struct_from_user(&attr, sizeof(attr), uattr, usize);
-+	if (err)
-+		return err;
-+
-+	/* Don't bother walking through the mounts if this is a nop. */
-+	if (attr.attr_set == 0 &&
-+	    attr.attr_clr == 0 &&
-+	    attr.propagation == 0)
-+		return 0;
-+
-+	err = build_mount_kattr(&attr, &kattr, flags);
-+	if (err)
-+		return err;
-+
-+	err = user_path_at(dfd, path, kattr.lookup_flags, &target);
-+	if (err)
-+		return err;
-+
-+	err = do_mount_setattr(&target, &kattr);
-+	path_put(&target);
-+	return err;
-+}
-+
- static void __init init_mount_tree(void)
- {
- 	struct vfsmount *mnt;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 37bea07c12f2..a62d5904fb6a 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -68,6 +68,7 @@ union bpf_attr;
- struct io_uring_params;
- struct clone_args;
- struct open_how;
-+struct mount_attr;
- 
- #include <linux/types.h>
- #include <linux/aio_abi.h>
-@@ -999,6 +1000,8 @@ asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
- asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
- 			       int to_dfd, const char __user *to_path,
- 			       unsigned int ms_flags);
-+asmlinkage long sys_mount_setattr(int dfd, const char __user *path, unsigned int flags,
-+				  struct mount_attr __user *uattr, size_t usize);
- asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
- asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
- 			     const void __user *value, int aux);
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 2056318988f7..0517f36fe783 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -859,9 +859,11 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
- #define __NR_process_madvise 440
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
-+#define __NR_mount_setattr 441
-+__SYSCALL(__NR_mount_setattr, sys_mount_setattr)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 441
-+#define __NR_syscalls 442
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index dd8306ea336c..2255624e91c8 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -1,6 +1,8 @@
- #ifndef _UAPI_LINUX_MOUNT_H
- #define _UAPI_LINUX_MOUNT_H
- 
-+#include <linux/types.h>
-+
- /*
-  * These are the fs-independent mount-flags: up to 32 flags are supported
-  *
-@@ -118,4 +120,16 @@ enum fsconfig_command {
- #define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
- #define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
- 
-+/*
-+ * mount_setattr()
-+ */
 +struct mount_attr {
 +	__u64 attr_set;
 +	__u64 attr_clr;
 +	__u64 propagation;
 +};
++#endif
 +
-+/* List of all mount_attr versions. */
-+#define MOUNT_ATTR_SIZE_VER0	24 /* sizeof first published struct */
++static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flags,
++				    struct mount_attr *attr, size_t size)
++{
++	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
++}
 +
- #endif /* _UAPI_LINUX_MOUNT_H */
-diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
-index 2056318988f7..0517f36fe783 100644
---- a/tools/include/uapi/asm-generic/unistd.h
-+++ b/tools/include/uapi/asm-generic/unistd.h
-@@ -859,9 +859,11 @@ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
- #define __NR_process_madvise 440
- __SYSCALL(__NR_process_madvise, sys_process_madvise)
-+#define __NR_mount_setattr 441
-+__SYSCALL(__NR_mount_setattr, sys_mount_setattr)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 441
-+#define __NR_syscalls 442
- 
- /*
-  * 32 bit systems traditionally used different
++static ssize_t write_nointr(int fd, const void *buf, size_t count)
++{
++	ssize_t ret;
++
++	do {
++		ret = write(fd, buf, count);
++	} while (ret < 0 && errno == EINTR);
++
++	return ret;
++}
++
++static int write_file(const char *path, const void *buf, size_t count)
++{
++	int fd;
++	ssize_t ret;
++
++	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY | O_NOFOLLOW);
++	if (fd < 0)
++		return -1;
++
++	ret = write_nointr(fd, buf, count);
++	close(fd);
++	if (ret < 0 || (size_t)ret != count)
++		return -1;
++
++	return 0;
++}
++
++static int create_and_enter_userns(void)
++{
++	uid_t uid;
++	gid_t gid;
++	char map[100];
++
++	uid = getuid();
++	gid = getgid();
++
++	if (unshare(CLONE_NEWUSER))
++		return -1;
++
++	if (write_file("/proc/self/setgroups", "deny", sizeof("deny") - 1) &&
++	    errno != ENOENT)
++		return -1;
++
++	snprintf(map, sizeof(map), "0 %d 1", uid);
++	if (write_file("/proc/self/uid_map", map, strlen(map)))
++		return -1;
++
++
++	snprintf(map, sizeof(map), "0 %d 1", gid);
++	if (write_file("/proc/self/gid_map", map, strlen(map)))
++		return -1;
++
++	if (setgid(0))
++		return -1;
++
++	if (setuid(0))
++		return -1;
++
++	return 0;
++}
++
++static int prepare_unpriv_mountns(void)
++{
++	if (create_and_enter_userns())
++		return -1;
++
++	if (unshare(CLONE_NEWNS))
++		return -1;
++
++	if (mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0))
++		return -1;
++
++	return 0;
++}
++
++static int read_mnt_flags(const char *path)
++{
++	int ret;
++	struct statvfs stat;
++	unsigned int mnt_flags;
++
++	ret = statvfs(path, &stat);
++	if (ret != 0)
++		return -EINVAL;
++
++	if (stat.f_flag &
++	    ~(ST_RDONLY | ST_NOSUID | ST_NODEV | ST_NOEXEC | ST_NOATIME |
++	      ST_NODIRATIME | ST_RELATIME | ST_SYNCHRONOUS | ST_MANDLOCK))
++		return -EINVAL;
++
++	mnt_flags = 0;
++	if (stat.f_flag & ST_RDONLY)
++		mnt_flags |= MS_RDONLY;
++	if (stat.f_flag & ST_NOSUID)
++		mnt_flags |= MS_NOSUID;
++	if (stat.f_flag & ST_NODEV)
++		mnt_flags |= MS_NODEV;
++	if (stat.f_flag & ST_NOEXEC)
++		mnt_flags |= MS_NOEXEC;
++	if (stat.f_flag & ST_NOATIME)
++		mnt_flags |= MS_NOATIME;
++	if (stat.f_flag & ST_NODIRATIME)
++		mnt_flags |= MS_NODIRATIME;
++	if (stat.f_flag & ST_RELATIME)
++		mnt_flags |= MS_RELATIME;
++	if (stat.f_flag & ST_SYNCHRONOUS)
++		mnt_flags |= MS_SYNCHRONOUS;
++	if (stat.f_flag & ST_MANDLOCK)
++		mnt_flags |= ST_MANDLOCK;
++
++	return mnt_flags;
++}
++
++static char *get_field(char *src, int nfields)
++{
++	int i;
++	char *p = src;
++
++	for (i = 0; i < nfields; i++) {
++		while (*p && *p != ' ' && *p != '\t')
++			p++;
++
++		if (!*p)
++			break;
++
++		p++;
++	}
++
++	return p;
++}
++
++static void null_endofword(char *word)
++{
++	while (*word && *word != ' ' && *word != '\t')
++		word++;
++	*word = '\0';
++}
++
++static bool is_shared_mount(const char *path)
++{
++	size_t len = 0;
++	char *line = NULL;
++	FILE *f = NULL;
++
++	f = fopen("/proc/self/mountinfo", "re");
++	if (!f)
++		return false;
++
++	while (getline(&line, &len, f) != -1) {
++		char *opts, *target;
++
++		target = get_field(line, 4);
++		if (!target)
++			continue;
++
++		opts = get_field(target, 2);
++		if (!opts)
++			continue;
++
++		null_endofword(target);
++
++		if (strcmp(target, path) != 0)
++			continue;
++
++		null_endofword(opts);
++		if (strstr(opts, "shared:"))
++			return true;
++	}
++
++	free(line);
++	fclose(f);
++
++	return false;
++}
++
++static void *mount_setattr_thread(void *data)
++{
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID,
++		.attr_clr	= 0,
++		.propagation	= MS_SHARED,
++	};
++
++	if (sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)))
++		pthread_exit(int_to_ptr(-1));
++
++	pthread_exit(int_to_ptr(0));
++}
++
++/* Attempt to de-conflict with the selftests tree. */
++#ifndef SKIP
++#define SKIP(s, ...)	XFAIL(s, ##__VA_ARGS__)
++#endif
++
++static bool mount_setattr_supported(void)
++{
++	int ret;
++
++	ret = sys_mount_setattr(-EBADF, "", AT_EMPTY_PATH, NULL, 0);
++	if (ret < 0 && errno == ENOSYS)
++		return false;
++
++	return true;
++}
++
++FIXTURE(mount_setattr) {
++};
++
++FIXTURE_SETUP(mount_setattr)
++{
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_EQ(prepare_unpriv_mountns(), 0);
++
++	(void)umount2("/mnt", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++
++	ASSERT_EQ(mount("testing", "/tmp", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/tmp/B/BB", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/A", "tmpfs", MS_NOATIME | MS_NODEV,
++			"size=100000,mode=700"), 0);
++
++	ASSERT_EQ(mkdir("/mnt/A/AA", 0777), 0);
++
++	ASSERT_EQ(mount("/tmp", "/mnt/A/AA", NULL, MS_BIND | MS_REC, NULL), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/mnt/B", "ramfs",
++			MS_NOATIME | MS_NODEV | MS_NOSUID, 0), 0);
++
++	ASSERT_EQ(mkdir("/mnt/B/BB", 0777), 0);
++
++	ASSERT_EQ(mount("testing", "/tmp/B/BB", "devpts",
++			MS_RELATIME | MS_NOEXEC | MS_RDONLY, 0), 0);
++}
++
++FIXTURE_TEARDOWN(mount_setattr)
++{
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	(void)umount2("/mnt/A", MNT_DETACH);
++	(void)umount2("/tmp", MNT_DETACH);
++}
++
++TEST_F(mount_setattr, invalid_attributes)
++{
++	struct mount_attr invalid_attr = {
++		.attr_set = (1U << 31),
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	invalid_attr.attr_set	= 0;
++	invalid_attr.attr_clr	= (1U << 31);
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	invalid_attr.attr_clr		= 0;
++	invalid_attr.propagation	= (1U << 31);
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	invalid_attr.attr_set		= (1U << 31);
++	invalid_attr.attr_clr		= (1U << 31);
++	invalid_attr.propagation	= (1U << 31);
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++
++	ASSERT_NE(sys_mount_setattr(-1, "mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr)), 0);
++}
++
++TEST_F(mount_setattr, extensibility)
++{
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	char *s = "dummy";
++	struct mount_attr invalid_attr = {};
++	struct mount_attr_large {
++		struct mount_attr attr1;
++		struct mount_attr attr2;
++		struct mount_attr attr3;
++	} large_attr = {};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, NULL,
++				    sizeof(invalid_attr)), 0);
++	ASSERT_EQ(errno, EFAULT);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, (void *)s,
++				    sizeof(invalid_attr)), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr, 0), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr) / 2), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &invalid_attr,
++				    sizeof(invalid_attr) / 2), 0);
++	ASSERT_EQ(errno, EINVAL);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE,
++				    (void *)&large_attr, sizeof(large_attr)), 0);
++
++	large_attr.attr3.attr_set = MOUNT_ATTR_RDONLY;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE,
++				    (void *)&large_attr, sizeof(large_attr)), 0);
++
++	large_attr.attr3.attr_set = 0;
++	large_attr.attr1.attr_set = MOUNT_ATTR_RDONLY;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE,
++				    (void *)&large_attr, sizeof(large_attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++}
++
++TEST_F(mount_setattr, basic)
++{
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
++		.attr_clr	= MOUNT_ATTR__ATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", 0, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++	expected_flags |= MS_NOEXEC;
++	expected_flags &= ~MS_NOATIME;
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, old_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, old_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, old_flags);
++}
++
++TEST_F(mount_setattr, basic_recursive)
++{
++	int fd;
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
++		.attr_clr	= MOUNT_ATTR__ATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++	expected_flags |= MS_NOEXEC;
++	expected_flags &= ~MS_NOATIME;
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_clr = MOUNT_ATTR_RDONLY;
++	attr.propagation = MS_SHARED;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_RDONLY;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), true);
++
++	fd = open("/mnt/A/AA/B/b", O_RDWR | O_CLOEXEC | O_CREAT | O_EXCL, 0777);
++	ASSERT_GE(fd, 0);
++
++	/*
++	 * We're holding a fd open for writing so this needs to fail somewhere
++	 * in the middle and the mount options need to be unchanged.
++	 */
++	attr.attr_set = MOUNT_ATTR_RDONLY;
++	ASSERT_LT(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), true);
++
++	EXPECT_EQ(close(fd), 0);
++}
++
++TEST_F(mount_setattr, mount_has_writers)
++{
++	int fd, dfd;
++	unsigned int old_flags = 0, new_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOEXEC | MOUNT_ATTR_RELATIME,
++		.attr_clr	= MOUNT_ATTR__ATIME,
++		.propagation	= MS_SHARED,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	fd = open("/mnt/A/AA/B/b", O_RDWR | O_CLOEXEC | O_CREAT | O_EXCL, 0777);
++	ASSERT_GE(fd, 0);
++
++	/*
++	 * We're holding a fd open to a mount somwhere in the middle so this
++	 * needs to fail somewhere in the middle. After this the mount options
++	 * need to be unchanged.
++	 */
++	ASSERT_LT(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), false);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), false);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), false);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, old_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), false);
++
++	dfd = open("/mnt/A/AA/B", O_DIRECTORY | O_CLOEXEC);
++	ASSERT_GE(dfd, 0);
++	EXPECT_EQ(fsync(dfd), 0);
++	EXPECT_EQ(close(dfd), 0);
++
++	EXPECT_EQ(fsync(fd), 0);
++	EXPECT_EQ(close(fd), 0);
++
++	/* All writers are gone so this should succeed. */
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++}
++
++TEST_F(mount_setattr, mixed_mount_options)
++{
++	unsigned int old_flags1 = 0, old_flags2 = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_clr = MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME,
++		.attr_set = MOUNT_ATTR_RELATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags1 = read_mnt_flags("/mnt/B");
++	ASSERT_GT(old_flags1, 0);
++
++	old_flags2 = read_mnt_flags("/mnt/B/BB");
++	ASSERT_GT(old_flags2, 0);
++
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/B", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags2;
++	expected_flags &= ~(MS_RDONLY | MS_NOEXEC | MS_NOATIME | MS_NOSUID);
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	expected_flags = old_flags2;
++	expected_flags &= ~(MS_RDONLY | MS_NOEXEC | MS_NOATIME | MS_NOSUID);
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++}
++
++TEST_F(mount_setattr, time_changes)
++{
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	struct mount_attr attr = {
++		.attr_set	= MOUNT_ATTR_NODIRATIME | MOUNT_ATTR_NOATIME,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = MOUNT_ATTR_STRICTATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = MOUNT_ATTR_STRICTATIME | MOUNT_ATTR_NOATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = MOUNT_ATTR_STRICTATIME | MOUNT_ATTR_NOATIME;
++	attr.attr_clr = MOUNT_ATTR__ATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_set = 0;
++	attr.attr_clr = MOUNT_ATTR_STRICTATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	attr.attr_clr = MOUNT_ATTR_NOATIME;
++	ASSERT_NE(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	attr.attr_set = MOUNT_ATTR_NODIRATIME | MOUNT_ATTR_NOATIME;
++	attr.attr_clr = MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_NOATIME;
++	expected_flags |= MS_NODIRATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_set &= ~MOUNT_ATTR_NOATIME;
++	attr.attr_set |= MOUNT_ATTR_RELATIME;
++	attr.attr_clr |= MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_NOATIME;
++	expected_flags |= MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_set &= ~MOUNT_ATTR_RELATIME;
++	attr.attr_set |= MOUNT_ATTR_STRICTATIME;
++	attr.attr_clr |= MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_RELATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_set &= ~MOUNT_ATTR_STRICTATIME;
++	attr.attr_set |= MOUNT_ATTR_NOATIME;
++	attr.attr_clr |= MOUNT_ATTR__ATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags |= MS_NOATIME;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	memset(&attr, 0, sizeof(attr));
++	attr.attr_clr = MOUNT_ATTR_NODIRATIME;
++	ASSERT_EQ(sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr)), 0);
++
++	expected_flags &= ~MS_NODIRATIME;
++
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++}
++
++TEST_F(mount_setattr, multi_threaded)
++{
++	int i, j, nthreads, ret = 0;
++	unsigned int old_flags = 0, new_flags = 0, expected_flags = 0;
++	pthread_attr_t pattr;
++	pthread_t threads[DEFAULT_THREADS];
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	old_flags = read_mnt_flags("/mnt/A");
++	ASSERT_GT(old_flags, 0);
++
++	/* Try to change mount options from multiple threads. */
++	nthreads = get_nprocs_conf();
++	if (nthreads > DEFAULT_THREADS)
++		nthreads = DEFAULT_THREADS;
++
++	pthread_attr_init(&pattr);
++	for (i = 0; i < nthreads; i++)
++		ASSERT_EQ(pthread_create(&threads[i], &pattr, mount_setattr_thread, NULL), 0);
++
++	for (j = 0; j < i; j++) {
++		void *retptr = NULL;
++
++		EXPECT_EQ(pthread_join(threads[j], &retptr), 0);
++
++		ret += ptr_to_int(retptr);
++		EXPECT_EQ(ret, 0);
++	}
++	pthread_attr_destroy(&pattr);
++
++	ASSERT_EQ(ret, 0);
++
++	expected_flags = old_flags;
++	expected_flags |= MS_RDONLY;
++	expected_flags |= MS_NOSUID;
++	new_flags = read_mnt_flags("/mnt/A");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B"), true);
++
++	new_flags = read_mnt_flags("/mnt/A/AA/B/BB");
++	ASSERT_EQ(new_flags, expected_flags);
++
++	ASSERT_EQ(is_shared_mount("/mnt/A/AA/B/BB"), true);
++}
++
++TEST_F(mount_setattr, wrong_user_namespace)
++{
++	int ret;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_RDONLY,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	EXPECT_EQ(create_and_enter_userns(), 0);
++	ret = sys_mount_setattr(-1, "/mnt/A", AT_RECURSIVE, &attr, sizeof(attr));
++	ASSERT_LT(ret, 0);
++	ASSERT_EQ(errno, EPERM);
++}
++
++TEST_F(mount_setattr, wrong_mount_namespace)
++{
++	int fd, ret;
++	struct mount_attr attr = {
++		.attr_set = MOUNT_ATTR_RDONLY,
++	};
++
++	if (!mount_setattr_supported())
++		SKIP(return, "mount_setattr syscall not supported");
++
++	fd = open("/mnt/A", O_DIRECTORY | O_CLOEXEC);
++	ASSERT_GE(fd, 0);
++
++	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
++
++	ret = sys_mount_setattr(fd, "", AT_EMPTY_PATH | AT_RECURSIVE, &attr, sizeof(attr));
++	ASSERT_LT(ret, 0);
++	ASSERT_EQ(errno, EINVAL);
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.29.2
 
