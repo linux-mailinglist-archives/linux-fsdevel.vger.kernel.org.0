@@ -2,87 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC15B2CEC0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 11:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFA272CEC9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 11:58:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbgLDKUh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 05:20:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41893 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729332AbgLDKUh (ORCPT
+        id S2388067AbgLDK6S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 05:58:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387968AbgLDK6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 05:20:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607077150;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J/xMabCKVeRG3fhN41ugFYQt2K5Dr9uJeRNrV0Pcj/I=;
-        b=LKYte/m40DZu4xCUWNHUN0/p350BhibJI5+UHI/9DbSV2oLlRyj7FF4fzfHxpZg1TsSsgd
-        qwc0ZJa9svscwjzlZPNh0YKTFI+d0uKSMZJJSSaFr38wDTqyCyrpYxdDNdOiuZUchyd5pp
-        vodmQ+pkeCrlttnJOhWCM78yUkoNQkI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-235-1L9gUQnzOouOHb9JVyTMTA-1; Fri, 04 Dec 2020 05:19:06 -0500
-X-MC-Unique: 1L9gUQnzOouOHb9JVyTMTA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1DD889CDA3;
-        Fri,  4 Dec 2020 10:19:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B2615D9CA;
-        Fri,  4 Dec 2020 10:18:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201124060755.1405602-5-ira.weiny@intel.com>
-References: <20201124060755.1405602-5-ira.weiny@intel.com> <20201124060755.1405602-1-ira.weiny@intel.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Steve French <sfrench@samba.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Brian King <brking@us.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/17] fs/afs: Convert to memzero_page()
+        Fri, 4 Dec 2020 05:58:18 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0F1C061A55;
+        Fri,  4 Dec 2020 02:57:26 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id r18so6131375ljc.2;
+        Fri, 04 Dec 2020 02:57:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zBTOHmaCBscT7mrJGFAgJvf0v3izkjFUmu5nF/K81/w=;
+        b=cmgVdetadJqwumpGP80Kpyqqo4l3Yla1L5ejU82mENwtxN6jVs82QI4A24GwinHw4g
+         Syl2v4nnV6M4ztXfB1Ymezkis7AcO9l1zRhEzvXzadg6MiolYOFjKoxvmSy12W3pzF8j
+         eND0lATuJzrrFMwyE7QQ9P3K/TYKWJljhvbnvML6UuTOlJ3AGJ10sdF8Igp0oDUVSH9n
+         Ls4Rm7uREhKrzdOipdH+i4+5pT8s/Q3VXJthUmARWoaOMpKogAfVoaMTDwCSqbqeGWRs
+         kP931DHCIOtpmXKgvbN9tq/wYWfs1iXyIr7q3ryg9jnFNbYt4AN92nv2fy4g4YisWpYY
+         5gYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zBTOHmaCBscT7mrJGFAgJvf0v3izkjFUmu5nF/K81/w=;
+        b=rOQwlusdvTgwsGDLrDYR3F/7AOdMnyGOPusQjQ7oxNNNZ1LSc/ftpEB0nyZN8uCFj6
+         gyg7vP1+WEHeoCUBYtb79fMx9LKsAgGioyhwt8cXzb54g9IIWJwJS/4g6JzFDTklEOkS
+         C/QiZwOgUUH8AF7SrMibRU70Fq908r97EEKJeyciTM4uQsRsiPr0VU3tbK90K7vy+zs4
+         wOnqiRxC+nG3s/6/WLPP226IrZ57C91Svc2ISSeKVb9NJ5JAOYQZl60wQGGqUj1scbip
+         D9NsI6/z8X2I+drA8+Yr1j1nFSQ4oVygLfw7iHJniXI1hoTeXy6EogLWE9kFifCtdx43
+         IYXA==
+X-Gm-Message-State: AOAM532mWyNLKt9k5etEyoPXLekDH71yuucDuod0KozQLJhPcu/ozWkw
+        kncnE96YvlEAZu7ba4PlVKP4Ra0JjxIZNw==
+X-Google-Smtp-Source: ABdhPJwHksCf9h1Un6+FjHAqLRY1rPwzyzVDSZbz4NO+qkblF9SAQbRvWcCK1IGFIPVVSFRWzitMEQ==
+X-Received: by 2002:a2e:b013:: with SMTP id y19mr3199222ljk.50.1607079445116;
+        Fri, 04 Dec 2020 02:57:25 -0800 (PST)
+Received: from carbon.v ([94.143.149.146])
+        by smtp.gmail.com with ESMTPSA id l6sm1531818lfk.150.2020.12.04.02.57.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 02:57:24 -0800 (PST)
+Date:   Fri, 4 Dec 2020 17:57:22 +0700
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] io_uring: add mkdirat support
+Message-ID: <X8oWEkb1Cb9ssxnx@carbon.v>
+References: <20201116044529.1028783-1-dkadashev@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Date:   Fri, 04 Dec 2020 10:18:52 +0000
-Message-ID: <94137.1607077132@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201116044529.1028783-1-dkadashev@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ira.weiny@intel.com wrote:
-
-> Convert the kmap()/memcpy()/kunmap() pattern to memzero_page().
+On Mon, Nov 16, 2020 at 11:45:27AM +0700, Dmitry Kadashev wrote:
+> This adds mkdirat support to io_uring and is heavily based on recently
+> added renameat() / unlinkat() support.
 > 
-> Cc: David Howells <dhowells@redhat.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> The first patch is preparation with no functional changes, makes
+> do_mkdirat accept struct filename pointer rather than the user string.
+> 
+> The second one leverages that to implement mkdirat in io_uring.
+> 
+> Based on for-5.11/io_uring.
+> 
+> Dmitry Kadashev (2):
+>   fs: make do_mkdirat() take struct filename
+>   io_uring: add support for IORING_OP_MKDIRAT
+> 
+>  fs/internal.h                 |  1 +
+>  fs/io_uring.c                 | 58 +++++++++++++++++++++++++++++++++++
+>  fs/namei.c                    | 20 ++++++++----
+>  include/uapi/linux/io_uring.h |  1 +
+>  4 files changed, 74 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.28.0
+> 
 
-Acked-by: David Howells <dhowells@redhat.com>
+Hi Al Viro,
 
+Ping. Jens mentioned before that this looks fine by him, but you or
+someone from fsdevel should approve the namei.c part first.
+
+Thanks,
+Dmitry
