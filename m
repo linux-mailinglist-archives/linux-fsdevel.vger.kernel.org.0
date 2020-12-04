@@ -2,40 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3C62CF37C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 18:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E59B2CF3BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 19:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387988AbgLDR6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 12:58:12 -0500
-Received: from smtp205.alice.it ([82.57.200.101]:25465 "EHLO smtp205.alice.it"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728833AbgLDR6L (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 12:58:11 -0500
-Received: from alice.it (204.195.51.215) by smtp205.alice.it (8.6.150.01) (authenticated as daniela.jappelli@alice.it)
-        id 5FBFC2F90108169B; Fri, 4 Dec 2020 18:57:11 +0100
-Message-ID: <5FBFC2F90108169B@smtp205.alice.it> (added by postmaster@alice.it)
-Reply-To: <cahilfrank-investment@cheapnet.it>
-From:   "Cahil Frank" <daniela.jappelli@alice.it>
-To:     alexd.79@alice.it
-Subject: Re: Business Expansion *Capital
-Date:   Sat, 5 Dec 2020 02:57:06 +0900
+        id S1729218AbgLDSO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 13:14:28 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47966 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726775AbgLDSO1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Dec 2020 13:14:27 -0500
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 0B4IDIuo007813
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 4 Dec 2020 13:13:18 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id DA510420136; Fri,  4 Dec 2020 13:13:17 -0500 (EST)
+Date:   Fri, 4 Dec 2020 13:13:17 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
+Message-ID: <20201204181317.GD577125@mit.edu>
+References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
+ <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
+ <118876.1607093975@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="euc-jp"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <118876.1607093975@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My name is Cahil Frank an advertising agent with Eurocredit & loan services, the company pays me commission as per each client introduced to them. The Company specializes in providing equity funding for projects and corporate also Personal loan funding at 3% Interest Rate for duration of 10 to 15 Years. They also have financial capability to provide early stage funding including fresh cut BG's, MTN and MT760.
+On Fri, Dec 04, 2020 at 02:59:35PM +0000, David Howells wrote:
+> Hi Chuck, Bruce,
+> 
+> Why is gss_krb5_crypto.c using an auxiliary cipher?  For reference, the
+> gss_krb5_aes_encrypt() code looks like the attached.
+> 
+> From what I can tell, in AES mode, the difference between the main cipher and
+> the auxiliary cipher is that the latter is "cbc(aes)" whereas the former is
+> "cts(cbc(aes))" - but they have the same key.
+> 
+> Reading up on CTS, I'm guessing the reason it's like this is that CTS is the
+> same as the non-CTS, except for the last two blocks, but the non-CTS one is
+> more efficient.
 
-They are a private equity firm made up and funded by indigenous i n v e s t o r s and Lenders as its shareholders across the Asia Region, with support from the Hong Kong government at our disposal.
+The reason to use CTS is if you don't want to expand the size of the
+cipher text to the cipher block size.  e.g., if you have a 53 byte
+plaintext, and you can't afford to let the ciphertext be 56 bytes, the
+cryptographic engineer will reach for CTS instead of CBC.
 
-NB: * Starting up a Franchise * Business Acquisition * Business Expansion *Capital / Infrastructural Project* Commercial Agriculture * Commercial Real Estate purchase * Contract Execution * Trade Financing etc. funding is from USD$1 million up to USD $2 billion depending on the nature and viability of the business, investment or project. We are open to having a good business relationship with our clients. If you have a profitable project. Investment or business, kindly contact me so I can forward the contact information of this Loan company so you can contact them to share your loan executive summary and any project/business you need funding. They will give you the best and most reliable services.
+So that probably explains the explanation to use CTS (and it's
+required by the spec in any case).  As far as why CBC is being used
+instead of CTS, the only reason I can think of is the one you posted.
+Perhaps there was some hardware or software configureation where
+cbc(aes) was hardware accelerated, and cts(cbc(aes)) would not be?
 
-Kind regards,
-Cahil Frank
+In any case, using cbc(aes) for all but the last two blocks, and using
+cts(cbc(aes)) for the last two blocks, is identical to using
+cts(cbc(aes)) for the whole encryption.  So the only reason to do this
+in the more complex way would be because for performance reasons.
+
+       	    	    	      	 	 - Ted
