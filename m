@@ -2,82 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7992CF174
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 17:03:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54DA72CF172
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 17:03:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbgLDQD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 11:03:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:33268 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729337AbgLDQD2 (ORCPT
+        id S1730626AbgLDQDb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 11:03:31 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:52354 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729625AbgLDQDa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 11:03:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607097722;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DHcEujkTJrLzN53Yx5osScEnvJO5N+oiL4RoDLy3I/A=;
-        b=cMQNonFda5n5WhRKk0dXDLOpj3VIeezAUZOyl9IkUsjm+HoGHTD/VX7bGVSMyBTyrIDRDG
-        /xY2ezI7sFSNV0sJ4utMGpRn+urNfc1MjanmJ8GIoLXm17AQyXokTtLOlFERxDo58bw2wB
-        9HMIzo9g/anz8fAPYa35Rl0gbsZMyfk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-TjTgdB_vORSjqc8GGRy9VA-1; Fri, 04 Dec 2020 11:01:58 -0500
-X-MC-Unique: TjTgdB_vORSjqc8GGRy9VA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B163B87950C;
-        Fri,  4 Dec 2020 16:01:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9075A189B8;
-        Fri,  4 Dec 2020 16:01:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201204154626.GA26255@fieldses.org>
-References: <20201204154626.GA26255@fieldses.org> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk>
-To:     Bruce Fields <bfields@fieldses.org>
-Cc:     dhowells@redhat.com, Chuck Lever <chuck.lever@oracle.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
+        Fri, 4 Dec 2020 11:03:30 -0500
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 0B4G2R8k023074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 4 Dec 2020 11:02:27 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 19219420136; Fri,  4 Dec 2020 11:02:27 -0500 (EST)
+Date:   Fri, 4 Dec 2020 11:02:27 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Xiaoli Feng <xifeng@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH V2] uapi: fix statx attribute value overlap for DAX &
+ MOUNT_ROOT
+Message-ID: <20201204160227.GA577125@mit.edu>
+References: <3e28d2c7-fbe5-298a-13ba-dcd8fd504666@redhat.com>
+ <20201202160049.GD1447340@iweiny-DESK2.sc.intel.com>
+ <CAJfpegt6w4h28VLctpaH46r2pkbcUNJ4pUhwUqZ-zbrOrXPEEQ@mail.gmail.com>
+ <641397.1606926232@warthog.procyon.org.uk>
+ <CAJfpegsQxi+_ttNshHu5MP+uLn3px9+nZRoTLTxh9-xwU8s1yg@mail.gmail.com>
+ <X8flmVAwl0158872@kroah.com>
+ <20201202204045.GM2842436@dread.disaster.area>
+ <X8gBUc0fkdh6KK01@kroah.com>
+ <CAOQ4uxhNvTxEo_-wkHy-KO8Jhz0Amh-g2Nz+PzN_8OODWJPz7w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <122996.1607097713.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 04 Dec 2020 16:01:53 +0000
-Message-ID: <122997.1607097713@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhNvTxEo_-wkHy-KO8Jhz0Amh-g2Nz+PzN_8OODWJPz7w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Bruce Fields <bfields@fieldses.org> wrote:
+On Thu, Dec 03, 2020 at 08:18:23AM +0200, Amir Goldstein wrote:
+> Here is a recent example, where during patch review, I requested NOT to include
+> any stable backport triggers [1]:
+> "...We should consider sending this to stable, but maybe let's merge
+> first and let it
+>  run in master for a while before because it is not a clear and
+> immediate danger..."
+>
+> As a developer and as a reviewer, I wish (as Dave implied) that I had a way to
+> communicate to AUTOSEL that auto backport of this patch has more risk than
+> the risk of not backporting.
 
-> > Reading up on CTS, I'm guessing the reason it's like this is that CTS =
-is the
-> > same as the non-CTS, except for the last two blocks, but the non-CTS o=
-ne is
-> > more efficient.
-> =
+My suggestion is that we could put something in the MAINTAINERS file
+which indicates what the preferred delay time should be for (a)
+patches explicitly cc'ed to stable, and (b) preferred time should be
+for patches which are AUTOSEL'ed for stable for that subsystem.  That
+time might be either in days/weeks, or "after N -rc releases", "after
+the next full release", or, "never" (which would be a way for a
+subsystem to opt out of the AUTOSEL process).
 
-> CTS is cipher-text stealing, isn't it?  I think it was Kevin Coffman
-> that did that, and I don't remember the history.  I thought it was
-> required by some spec or peer implementation (maybe Windows?) but I
-> really don't remember.  It may predate git.  I'll dig around and see
-> what I can find.
+It should also be possible specify the delay in the trailer, e.g.:
 
-rfc3961 and rfc3962 specify CTS-CBC with AES.
+Stable-Defer: <delayspec>
+Auto-Stable-Defer: <delayspec>
 
-David
+The advantage of specifying the delay relative to when they show up in
+Linus's tree helps deal with the case where the submaintainer might
+not be sure when their patches will get pushed to Linus by the
+maintainer.
 
+Cheers,
+
+						- Ted
