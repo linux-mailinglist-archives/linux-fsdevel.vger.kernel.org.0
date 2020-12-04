@@ -2,254 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3CF2CF188
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 17:07:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 612FE2CF18B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 17:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbgLDQFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 11:05:47 -0500
-Received: from mga03.intel.com ([134.134.136.65]:2448 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730775AbgLDQFr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 11:05:47 -0500
-IronPort-SDR: qgHODMNu+1xnnUOE4u1EiVansFqSJb5EeufXyrX4nLWxi+ED2V1krxxl02kjdK+CPbbLU4pTBu
- Tr9ZJlQrNGHA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9825"; a="173492579"
-X-IronPort-AV: E=Sophos;i="5.78,393,1599548400"; 
-   d="scan'208";a="173492579"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2020 08:05:06 -0800
-IronPort-SDR: X+NoKo1QugeVrBMgw7pJWvCsfg1PJrSs+ULxdNu73Ly5U6/0rzxW0uRVlkZ83gEX1fjYMmRAhd
- pvIZzvQDizRw==
-X-IronPort-AV: E=Sophos;i="5.78,393,1599548400"; 
-   d="scan'208";a="540754477"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Dec 2020 08:05:05 -0800
-Date:   Fri, 4 Dec 2020 08:05:04 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Steve French <sfrench@samba.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Brian King <brking@us.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH 03/17] drivers/gpu: Convert to mem*_page()
-Message-ID: <20201204160504.GH1563847@iweiny-DESK2.sc.intel.com>
-References: <20201124060755.1405602-1-ira.weiny@intel.com>
- <20201124060755.1405602-4-ira.weiny@intel.com>
- <160648211578.10416.3269409785516897908@jlahtine-mobl.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <160648211578.10416.3269409785516897908@jlahtine-mobl.ger.corp.intel.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        id S1729905AbgLDQGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 11:06:32 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:53342 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbgLDQGc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Dec 2020 11:06:32 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B4G5CN8112042;
+        Fri, 4 Dec 2020 16:05:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=CRX1tP16qfHm063q0BwyiJW0vFhRxuLVcLDuPnepxIg=;
+ b=vA8k+PM3ti0G331WaZNnP3waAlbxuyQzZVJruhhoqy7gD0BRO+5v2YbQtTimrYXYiNra
+ zs5dcxeuuz4poY4Yg4RkHF4fuf3gz0yJJB5RCW5JpdrDVwGkUlqVetyXvuEzvVIWCdEj
+ upJk2eGoLwXu4DTffzMAenbByoXgMaogpOP61PkjSBFkuB9EW+a2idJ1jHorZp2piqyH
+ 1f8Gp+qLTZVc1HyRu1BeoRUbopQGs5QBimWq/H24Ji9nMKZBlxbCiRzGeaBRn5PWs6A9
+ ImarIVMfKEivvyD27wrtQYnWTkDcZN9mPYpXjrl6kGgCBbhsv1PyrFH5l8ZIfSeoJ0Jv Cg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 353c2bbxmu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 04 Dec 2020 16:05:35 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B4G5WYb085385;
+        Fri, 4 Dec 2020 16:05:34 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 3540g3utxh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Dec 2020 16:05:34 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B4G5Pf6031359;
+        Fri, 4 Dec 2020 16:05:25 GMT
+Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 04 Dec 2020 08:05:25 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20201204154626.GA26255@fieldses.org>
+Date:   Fri, 4 Dec 2020 11:05:24 -0500
+Cc:     David Howells <dhowells@redhat.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <76331A46-235E-4A35-BA07-F4811FA29EB5@oracle.com>
+References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
+ <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
+ <118876.1607093975@warthog.procyon.org.uk>
+ <20201204154626.GA26255@fieldses.org>
+To:     Bruce Fields <bfields@fieldses.org>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9824 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012040092
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9824 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012040092
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 27, 2020 at 03:01:56PM +0200, Joonas Lahtinen wrote:
-> + intel-gfx mailing list
-> 
-> Quoting ira.weiny@intel.com (2020-11-24 08:07:41)
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > The pattern of kmap/mem*/kunmap is repeated.  Use the new mem*_page()
-> > calls instead.
-> > 
-> > Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-> > Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> > Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> > Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  drivers/gpu/drm/gma500/gma_display.c      | 7 +++----
-> >  drivers/gpu/drm/gma500/mmu.c              | 4 ++--
-> >  drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 6 ++----
-> >  drivers/gpu/drm/i915/gt/intel_gtt.c       | 9 ++-------
-> >  drivers/gpu/drm/i915/gt/shmem_utils.c     | 8 +++-----
-> 
-> Are you looking to merge all these from the same tree, or first merge
-> the first patch and then trickle the rest through their own trees?
 
-I was thinking that they would go through Andrew's tree in bulk.  But as I go
-through all the 'variants' including adding any kmap_atomic() variants it is
-getting to be a pretty big change.  I'm trying to use Coccinelle but I'm not
-100% confident in it working, more precisely in my skill to make it work.
 
-So I think I'm going to submit the base patch to Andrew today (with some
-cleanups per the comments in this thread).
+> On Dec 4, 2020, at 10:46 AM, Bruce Fields <bfields@fieldses.org> =
+wrote:
+>=20
+> On Fri, Dec 04, 2020 at 02:59:35PM +0000, David Howells wrote:
+>> Hi Chuck, Bruce,
+>>=20
+>> Why is gss_krb5_crypto.c using an auxiliary cipher?  For reference, =
+the
+>> gss_krb5_aes_encrypt() code looks like the attached.
+>>=20
+>>> =46rom what I can tell, in AES mode, the difference between the main =
+cipher and
+>> the auxiliary cipher is that the latter is "cbc(aes)" whereas the =
+former is
+>> "cts(cbc(aes))" - but they have the same key.
+>>=20
+>> Reading up on CTS, I'm guessing the reason it's like this is that CTS =
+is the
+>> same as the non-CTS, except for the last two blocks, but the non-CTS =
+one is
+>> more efficient.
+>=20
+> CTS is cipher-text stealing, isn't it?  I think it was Kevin Coffman
+> that did that, and I don't remember the history.  I thought it was
+> required by some spec or peer implementation (maybe Windows?) but I
+> really don't remember.  It may predate git.  I'll dig around and see
+> what I can find.
 
-If Andrew could land that then I will can submit separate patches to each
-subsystem which would get full testing...  :-(
+I can't add more here, this design comes from well before I started
+working on this body of code (though, I worked near Kevin when he
+implemented it).
 
-That is best.
 
-Thanks for making me think on this,
-Ira
+--
+Chuck Lever
 
-> Our last -next PR was already sent for i915, so I would queue this
-> only for 5.12.
-> 
-> In any case, if you could split the i915 changes to a separate patch
-> (we have multiple sub-trees in drm), those are:
-> 
-> Reviewed-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> 
-> The gma500 changes also appear correct, so feel free to apply the
-> R-b for those, too.
-> 
-> Regards, Joonas
-> 
-> >  5 files changed, 12 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
-> > index 3df6d6e850f5..f81114594211 100644
-> > --- a/drivers/gpu/drm/gma500/gma_display.c
-> > +++ b/drivers/gpu/drm/gma500/gma_display.c
-> > @@ -9,6 +9,7 @@
-> >  
-> >  #include <linux/delay.h>
-> >  #include <linux/highmem.h>
-> > +#include <linux/pagemap.h>
-> >  
-> >  #include <drm/drm_crtc.h>
-> >  #include <drm/drm_fourcc.h>
-> > @@ -334,7 +335,7 @@ int gma_crtc_cursor_set(struct drm_crtc *crtc,
-> >         struct gtt_range *gt;
-> >         struct gtt_range *cursor_gt = gma_crtc->cursor_gt;
-> >         struct drm_gem_object *obj;
-> > -       void *tmp_dst, *tmp_src;
-> > +       void *tmp_dst;
-> >         int ret = 0, i, cursor_pages;
-> >  
-> >         /* If we didn't get a handle then turn the cursor off */
-> > @@ -400,9 +401,7 @@ int gma_crtc_cursor_set(struct drm_crtc *crtc,
-> >                 /* Copy the cursor to cursor mem */
-> >                 tmp_dst = dev_priv->vram_addr + cursor_gt->offset;
-> >                 for (i = 0; i < cursor_pages; i++) {
-> > -                       tmp_src = kmap(gt->pages[i]);
-> > -                       memcpy(tmp_dst, tmp_src, PAGE_SIZE);
-> > -                       kunmap(gt->pages[i]);
-> > +                       memcpy_from_page(tmp_dst, gt->pages[i], 0, PAGE_SIZE);
-> >                         tmp_dst += PAGE_SIZE;
-> >                 }
-> >  
-> > diff --git a/drivers/gpu/drm/gma500/mmu.c b/drivers/gpu/drm/gma500/mmu.c
-> > index 505044c9a673..8a0856c7f439 100644
-> > --- a/drivers/gpu/drm/gma500/mmu.c
-> > +++ b/drivers/gpu/drm/gma500/mmu.c
-> > @@ -5,6 +5,7 @@
-> >   **************************************************************************/
-> >  
-> >  #include <linux/highmem.h>
-> > +#include <linux/pagemap.h>
-> >  
-> >  #include "mmu.h"
-> >  #include "psb_drv.h"
-> > @@ -204,8 +205,7 @@ struct psb_mmu_pd *psb_mmu_alloc_pd(struct psb_mmu_driver *driver,
-> >  
-> >         kunmap(pd->p);
-> >  
-> > -       clear_page(kmap(pd->dummy_page));
-> > -       kunmap(pd->dummy_page);
-> > +       memzero_page(pd->dummy_page, 0, PAGE_SIZE);
-> >  
-> >         pd->tables = vmalloc_user(sizeof(struct psb_mmu_pt *) * 1024);
-> >         if (!pd->tables)
-> > diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-> > index 75e8b71c18b9..8a25e08edd18 100644
-> > --- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-> > +++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-> > @@ -558,7 +558,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *dev_priv,
-> >         do {
-> >                 unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
-> >                 struct page *page;
-> > -               void *pgdata, *vaddr;
-> > +               void *pgdata;
-> >  
-> >                 err = pagecache_write_begin(file, file->f_mapping,
-> >                                             offset, len, 0,
-> > @@ -566,9 +566,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *dev_priv,
-> >                 if (err < 0)
-> >                         goto fail;
-> >  
-> > -               vaddr = kmap(page);
-> > -               memcpy(vaddr, data, len);
-> > -               kunmap(page);
-> > +               memcpy_to_page(page, 0, data, len);
-> >  
-> >                 err = pagecache_write_end(file, file->f_mapping,
-> >                                           offset, len, len,
-> > diff --git a/drivers/gpu/drm/i915/gt/intel_gtt.c b/drivers/gpu/drm/i915/gt/intel_gtt.c
-> > index 3f1114b58b01..f3d7c601d362 100644
-> > --- a/drivers/gpu/drm/i915/gt/intel_gtt.c
-> > +++ b/drivers/gpu/drm/i915/gt/intel_gtt.c
-> > @@ -153,13 +153,8 @@ static void poison_scratch_page(struct drm_i915_gem_object *scratch)
-> >         if (IS_ENABLED(CONFIG_DRM_I915_DEBUG_GEM))
-> >                 val = POISON_FREE;
-> >  
-> > -       for_each_sgt_page(page, sgt, scratch->mm.pages) {
-> > -               void *vaddr;
-> > -
-> > -               vaddr = kmap(page);
-> > -               memset(vaddr, val, PAGE_SIZE);
-> > -               kunmap(page);
-> > -       }
-> > +       for_each_sgt_page(page, sgt, scratch->mm.pages)
-> > +               memset_page(page, val, 0, PAGE_SIZE);
-> >  }
-> >  
-> >  int setup_scratch_page(struct i915_address_space *vm)
-> > diff --git a/drivers/gpu/drm/i915/gt/shmem_utils.c b/drivers/gpu/drm/i915/gt/shmem_utils.c
-> > index f011ea42487e..2d5f1f2e803d 100644
-> > --- a/drivers/gpu/drm/i915/gt/shmem_utils.c
-> > +++ b/drivers/gpu/drm/i915/gt/shmem_utils.c
-> > @@ -95,19 +95,17 @@ static int __shmem_rw(struct file *file, loff_t off,
-> >                 unsigned int this =
-> >                         min_t(size_t, PAGE_SIZE - offset_in_page(off), len);
-> >                 struct page *page;
-> > -               void *vaddr;
-> >  
-> >                 page = shmem_read_mapping_page_gfp(file->f_mapping, pfn,
-> >                                                    GFP_KERNEL);
-> >                 if (IS_ERR(page))
-> >                         return PTR_ERR(page);
-> >  
-> > -               vaddr = kmap(page);
-> >                 if (write)
-> > -                       memcpy(vaddr + offset_in_page(off), ptr, this);
-> > +                       memcpy_to_page(page, offset_in_page(off), ptr, this);
-> >                 else
-> > -                       memcpy(ptr, vaddr + offset_in_page(off), this);
-> > -               kunmap(page);
-> > +                       memcpy_from_page(ptr, page, offset_in_page(off), this);
-> > +
-> >                 put_page(page);
-> >  
-> >                 len -= this;
-> > -- 
-> > 2.28.0.rc0.12.gb6a658bd00c9
-> > 
+
+
