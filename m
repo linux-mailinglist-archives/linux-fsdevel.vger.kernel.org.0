@@ -2,182 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E8C2CE5E7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 03:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D25062CE6A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 04:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbgLDCof (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Dec 2020 21:44:35 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41575 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726112AbgLDCof (ORCPT
+        id S1727821AbgLDDky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 22:40:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbgLDDky (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 21:44:35 -0500
-X-UUID: 47ccc151455948f492b256b182df520b-20201204
-X-UUID: 47ccc151455948f492b256b182df520b-20201204
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1007854576; Fri, 04 Dec 2020 10:43:50 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 4 Dec 2020 10:43:48 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 4 Dec 2020 10:43:50 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Marco Elver <elver@google.com>, Will Deacon <will@kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Song Bao Hua <song.bao.hua@hisilicon.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v3] proc: use untagged_addr() for pagemap_read addresses
-Date:   Fri, 4 Dec 2020 10:43:47 +0800
-Message-ID: <20201204024347.8295-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 3 Dec 2020 22:40:54 -0500
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 792B6C061A4F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Dec 2020 19:40:08 -0800 (PST)
+Received: by mail-pf1-x442.google.com with SMTP id o9so2757305pfd.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Dec 2020 19:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kP0kqVxYlLhlxakYbEWvE8pzB4Mj7yplj9IQfIP/Nqo=;
+        b=RXeno4fHs2hClfvDpmt84Kb0l0ffZ+tfCf4eGR4N2xKr5d+GEweCV3ikwwgvmK8Jz8
+         7yRlfUm9ZgJHUw0G7xO4JpRTa6nHUnxHGOP3ecvxLWNCVn2qfP0+4sEXxg+TQ6dzvNdB
+         8fFJclIAPEb3EGx/lzzZi/6MYFK1BUfwM3r0BthCHtK3IOfFmB7QRDuVsNQ+2GSAaMLj
+         Fx7lToXjBVngkeA49IgqF5XW44cP2AB3Llrt2EDOfpZX1pB/6wcSb6Q/s5a06s8rxYkP
+         f6HLsRbClLzTOVfJPPeTaEpznXSGk9wCHNM+A1LjcwaYFE4EheH05Ug+dHysIlihP4qm
+         fqUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kP0kqVxYlLhlxakYbEWvE8pzB4Mj7yplj9IQfIP/Nqo=;
+        b=tSizZTGCZJ+c9fw3pgX2WlPE1em68lqg0nPiwCDrXoGd1XmdvWguTMWQw0nvWwERuq
+         gUjpL4rc+wwbj/H0R0/bF3YGGRLhBWiI5soA0AmWPIOuQnDxe3HVcJg07KCpso870qXP
+         QaLlnLA5fU1cIark9KxFQiTUM/DkGRvhiaebfzJyOJJnvu2DiM18yxXwlynGqhu2shLR
+         ++fvdJeCLiMbm9MC6heuzaTI7woVZhEMvf92DtaQprHBAh5UzvOlSl6etx5PU6bYiIAq
+         e717AExz7kZr2+IHJwYtvc4vi5c/f+y5ySfboEw+edoWqbvUUhpKGBh2tezWL3nvs546
+         W2gw==
+X-Gm-Message-State: AOAM532tMnlldWYa3VHw1i3uxK9LAyn6zQfKI5DghhEDVTbBwQAGMTMh
+        CaAfex5WpRqug9o+O34Uae5abt9/TKGvvepaSL5lvQ==
+X-Google-Smtp-Source: ABdhPJynCEO+aYzaCWwl98Gj7aTZquZAjP6gvBEF+xIuWOhnCtjsbj71ZJ7LyQ2PQpmasXLQiRg6kelKrNEq9MwhbLk=
+X-Received: by 2002:a63:1203:: with SMTP id h3mr2402111pgl.273.1607053207913;
+ Thu, 03 Dec 2020 19:40:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20201130151838.11208-1-songmuchun@bytedance.com>
+ <CAMZfGtWvLEytN5gBN+OqntrNXNd3eNRWrfnkeCozvARmpTNAXw@mail.gmail.com> <600fd7e2-70b4-810f-8d12-62cba80af80d@oracle.com>
+In-Reply-To: <600fd7e2-70b4-810f-8d12-62cba80af80d@oracle.com>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Fri, 4 Dec 2020 11:39:31 +0800
+Message-ID: <CAMZfGtX2mu1tyE_898mQeEpmP4Pd+rEKOHpYF=KN=5v4WExpig@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v7 00/15] Free some vmemmap pages of
+ hugetlb page
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, dave.hansen@linux.intel.com,
+        hpa@zytor.com, x86@kernel.org, bp@alien8.de, mingo@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        pawan.kumar.gupta@linux.intel.com, mchehab+huawei@kernel.org,
+        paulmck@kernel.org, viro@zeniv.linux.org.uk,
+        Peter Zijlstra <peterz@infradead.org>, luto@kernel.org,
+        oneukum@suse.com, jroedel@suse.de,
+        Matthew Wilcox <willy@infradead.org>,
+        David Rientjes <rientjes@google.com>,
+        Mina Almasry <almasrymina@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        anshuman.khandual@arm.com, Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>,
+        Xiongchun duan <duanxiongchun@bytedance.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When we try to visit the pagemap of a tagged userspace pointer, we find
-that the start_vaddr is not correct because of the tag.
-To fix it, we should untag the userspace pointers in pagemap_read().
+On Fri, Dec 4, 2020 at 7:49 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
+>
+> On 12/3/20 12:35 AM, Muchun Song wrote:
+> > On Mon, Nov 30, 2020 at 11:19 PM Muchun Song <songmuchun@bytedance.com> wrote:
+> >>
+> >> Hi all,
+> >>
+> >> This patch series will free some vmemmap pages(struct page structures)
+> >> associated with each hugetlbpage when preallocated to save memory.
+> >
+> > Hi Mike,
+> >
+> > What's your opinion on this version?  Any comments or suggestions?
+> > And hoping you or more people review the series. Thank you very
+> > much.
+>
+> Sorry Muchun, I have been busy with other things and have not looked at
+> this new version.  Should have some time soon.
 
-I tested with 5.10-rc4 and the issue remains.
+Thanks very much.
 
-Explanation from Catalin in [1]:
+>
+> As previously mentioned, I feel qualified to review the hugetlb changes
+> and some other closely related changes.  However, this patch set is
+> touching quite a few areas and I do not feel qualified to make authoritative
+> statements about them all.  I too hope others will take a look.
 
-:Arguably, that's a user-space bug since tagged file offsets were never
-:supported. In this case it's not even a tag at bit 56 as per the arm64
-:tagged address ABI but rather down to bit 47. You could say that the
-:problem is caused by the C library (malloc()) or whoever created the
-:tagged vaddr and passed it to this function. It's not a kernel
-:regression as we've never supported it.
-:
-:Now, pagemap is a special case where the offset is usually not generated
-:as a classic file offset but rather derived by shifting a user virtual
-:address. I guess we can make a concession for pagemap (only) and allow
-:such offset with the tag at bit (56 - PAGE_SHIFT + 3).
+Agree. I also hope others can take a look at other modules(e.g.
+sparse-vmemmap, memory-hotplug). Thanks for everyone's efforts
+on this.
 
-My test code is based on [2]:
+> --
+> Mike Kravetz
 
-A userspace pointer which has been tagged by 0xb4: 0xb400007662f541c8
 
-=== userspace program ===
 
-uint64 OsLayer::VirtualToPhysical(void *vaddr) {
-	uint64 frame, paddr, pfnmask, pagemask;
-	int pagesize = sysconf(_SC_PAGESIZE);
-	off64_t off = ((uintptr_t)vaddr) / pagesize * 8; // off = 0xb400007662f541c8 / pagesize * 8 = 0x5a00003b317aa0
-	int fd = open(kPagemapPath, O_RDONLY);
-	...
-
-	if (lseek64(fd, off, SEEK_SET) != off || read(fd, &frame, 8) != 8) {
-		int err = errno;
-		string errtxt = ErrorString(err);
-		if (fd >= 0)
-			close(fd);
-		return 0;
-	}
-...
-}
-
-=== kernel fs/proc/task_mmu.c ===
-
-static ssize_t pagemap_read(struct file *file, char __user *buf,
-		size_t count, loff_t *ppos)
-{
-	...
-	src = *ppos;
-	svpfn = src / PM_ENTRY_BYTES; // svpfn == 0xb400007662f54
-	start_vaddr = svpfn << PAGE_SHIFT; // start_vaddr == 0xb400007662f54000
-	end_vaddr = mm->task_size;
-
-	/* watch out for wraparound */
-	// svpfn == 0xb400007662f54
-	// (mm->task_size >> PAGE) == 0x8000000
-	if (svpfn > mm->task_size >> PAGE_SHIFT) // the condition is true because of the tag 0xb4
-		start_vaddr = end_vaddr;
-
-	ret = 0;
-	while (count && (start_vaddr < end_vaddr)) { // we cannot visit correct entry because start_vaddr is set to end_vaddr
-		int len;
-		unsigned long end;
-		...
-	}
-	...
-}
-
-[1] https://lore.kernel.org/patchwork/patch/1343258/
-[2] https://github.com/stressapptest/stressapptest/blob/master/src/os.cc#L158
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Marco Elver <elver@google.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Song Bao Hua (Barry Song) <song.bao.hua@hisilicon.com>
-Cc: stable@vger.kernel.org # v5.4-
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-
----
-
-Change since v1:
-
-1. Follow Eirc's and Catalin's suggestion to avoid overflow
-2. Cc to stable v5.4-
-3. add explaination from Catalin to the commit message
-
-Change since v2:
-1. replace less-than with less-than or equal
-2. Fix bad spelling in commit message
-3. Fix will's email address
----
- fs/proc/task_mmu.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 217aa2705d5d..ee5a235b3056 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1599,11 +1599,15 @@ static ssize_t pagemap_read(struct file *file, char __user *buf,
- 
- 	src = *ppos;
- 	svpfn = src / PM_ENTRY_BYTES;
--	start_vaddr = svpfn << PAGE_SHIFT;
- 	end_vaddr = mm->task_size;
- 
- 	/* watch out for wraparound */
--	if (svpfn > mm->task_size >> PAGE_SHIFT)
-+	start_vaddr = end_vaddr;
-+	if (svpfn <= (ULONG_MAX >> PAGE_SHIFT))
-+		start_vaddr = untagged_addr(svpfn << PAGE_SHIFT);
-+
-+	/* Ensure the address is inside the task */
-+	if (start_vaddr > mm->task_size)
- 		start_vaddr = end_vaddr;
- 
- 	/*
 -- 
-2.18.0
-
+Yours,
+Muchun
