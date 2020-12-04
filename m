@@ -2,107 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0BBF2CEECE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 14:35:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E61092CEED5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 14:37:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbgLDNey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 08:34:54 -0500
-Received: from simcoe209srvr.owm.bell.net ([184.150.200.209]:40029 "EHLO
-        torfep08.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728781AbgLDNey (ORCPT
+        id S1729200AbgLDNfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 08:35:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57208 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbgLDNfz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 08:34:54 -0500
-X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Dec 2020 08:34:53 EST
-Received: from bell.net torfep01 184.150.200.158 by torfep01.bell.net
-          with ESMTP
-          id <20201204132847.RSVT6892.torfep01.bell.net@torspm01.bell.net>;
-          Fri, 4 Dec 2020 08:28:47 -0500
-Received: from [192.168.2.49] (really [67.70.16.145]) by torspm01.bell.net
-          with ESMTP
-          id <20201204132847.HJEQ29322.torspm01.bell.net@[192.168.2.49]>;
-          Fri, 4 Dec 2020 08:28:47 -0500
-Subject: Re: PATCH] fs/dax: fix compile problem on parisc and mips
-To:     Matthew Wilcox <willy@infradead.org>, Helge Deller <deller@gmx.de>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linux-nvdimm@lists.01.org
-References: <fb91b40d258414b0fdce2c380752e48daa6a70d6.camel@HansenPartnership.com>
- <20201204034843.GM11935@casper.infradead.org>
- <0f0ac7be-0108-0648-a4db-2f37db1c8114@gmx.de>
- <20201204124402.GN11935@casper.infradead.org>
-From:   John David Anglin <dave.anglin@bell.net>
-Message-ID: <3648e8d5-be75-ea2e-ddbc-5117fcd50a2b@bell.net>
-Date:   Fri, 4 Dec 2020 08:28:47 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Fri, 4 Dec 2020 08:35:55 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8A4C061A4F;
+        Fri,  4 Dec 2020 05:35:08 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id l11so7692314lfg.0;
+        Fri, 04 Dec 2020 05:35:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=grbMzTsJqcDR4Cd4hiQ/1qOHj8Oznc7epGwz752bRVo=;
+        b=Son2LjQB49gbEZK5xarS9GWUCArTZ2juhOq7BAj4Luw8JIVr0y0vV5bY9x5djKrFA6
+         NB7AlKvOTO0HHUXeGRe9j+bq6EVJAge4Fk1ns7yZ7H20bNM84nQ78I4g5xujwIvOcuC5
+         y6xVNAro4O7AQbMJxDR2pGegf2s1fWFQ/hV3DIrDQisf9mHjJ+zFDUXB4bR0uRb8q86v
+         IIOnyU2LAqgtSMkAnMJuctzCJusmKwHi7D7nrBjrCGKmmfEcm7FTsqlH/blJ5wSfkSkC
+         f94sRyUgJM0LoOpxfKrr0CvmgJVeb8FcNpFWwUwKtADQlKhP15hU+ENH//pYKUlMz/NE
+         0KtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=grbMzTsJqcDR4Cd4hiQ/1qOHj8Oznc7epGwz752bRVo=;
+        b=osn1QHx4oBk5X4oNty2ejeHGUNjnwowuxYoflven34up638fnApgh9BdGBZK/jhuPs
+         WehZt4IFe1MKG32bjS3ot2nuVRiVXr/RiBiQ3roOT29ayMGyJJHuFxj39N2PprFja+pG
+         iEr0HudtQzUZU6RjMWZXgedt4aJpLRtPWnbZlXW/k4ri3inVMLXLSbou4Vqdb/a8f01F
+         Omv50RZQYvltOqCK5MUq1VT8pIXBOVMiWu7I+L+nIPoeFWtFfgjkLQkUOPXin1Wj62v4
+         /NKJIP82iVras4PGUzK6xw9qE99xfzqZjY3/xTQOrMuZS/HbXgqHxkSnYuL1G/FRV/L6
+         GtXQ==
+X-Gm-Message-State: AOAM533dEqQU9uExrwK9eWcJmzumv3TFftVAUANe2+fjNIKOc8NhcmDl
+        +BG2ss6w4/XEX4YaULpyjNw=
+X-Google-Smtp-Source: ABdhPJxCRHJZ/uYvkJwOq2N/K+wEY3Ou0eI6N3ulQn+0iNOiJFDoj6EZkf/Ks1W4dnZuBZvMAK52ig==
+X-Received: by 2002:a19:4293:: with SMTP id p141mr3190551lfa.591.1607088907233;
+        Fri, 04 Dec 2020 05:35:07 -0800 (PST)
+Received: from localhost.localdomain ([37.78.35.64])
+        by smtp.gmail.com with ESMTPSA id u17sm1695146lfq.144.2020.12.04.05.35.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 05:35:06 -0800 (PST)
+From:   Artem Labazov <123321artyom@gmail.com>
+Cc:     123321artyom@gmail.com, stable@vger.kernel.org,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] exfat: Avoid allocating upcase table using kcalloc()
+Date:   Fri,  4 Dec 2020 16:33:48 +0300
+Message-Id: <20201204133348.555024-1-123321artyom@gmail.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <001101d6c867$ca8c5730$5fa50590$@samsung.com>
+References: <001101d6c867$ca8c5730$5fa50590$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20201204124402.GN11935@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-Analysis: v=2.3 cv=ZryT1OzG c=1 sm=1 tr=0 a=ch4VMz8uGZlcRCFa+4Q1bQ==:117 a=ch4VMz8uGZlcRCFa+4Q1bQ==:17 a=IkcTkHD0fZMA:10 a=zTNgK-yGK50A:10 a=FBHGMhGWAAAA:8 a=ybeIS4x6i_o_-C6kCnkA:9 a=QEXdDO2ut3YA:10 a=9gvnlMMaQFpL9xblJ6ne:22
-X-CM-Envelope: MS4wfKtNUfRu/DXyTZPn7Pfd4YNoPaiTiBDkNP5Ayf+Vk7AF/O6TOTxeU/Kkq3dDtqHlLw5SfwdBEGtzfi1ydnG/NlGna3I0WQGkBu/HR1Z1quyVYE9sP7uO HQSDprhtoujUIHlBE3sVHIYiDcd8Vh5sQq8RAzLu9Tv1lOC53OeT5jXvEjSQL5s5CY01vITkQu/jsf1uc8aIIuPDbHAAg+kZla+Egk9JWOtBgkh2vuAkz7Vu
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-12-04 7:44 a.m., Matthew Wilcox wrote:
-> You'll
-> still need to allocate them separately if various debugging options
-> are enabled (see the ALLOC_SPLIT_PTLOCKS for details), but usually
-> this will save you a lot of memory.
-We need all we can get:
-(.mlocate): page allocation failure: order:5, mode:0x40cc0(GFP_KERNEL|__GFP_COMP), nodemask=(null),cpuset=/,mems_allowed=0
-CPU: 2 PID: 28271 Comm: (.mlocate) Not tainted 5.9.11+ #1
-Hardware name: 9000/800/rp3440
-Backtrace:
- [<000000004018d050>] show_stack+0x50/0x70
- [<0000000040826354>] dump_stack+0xbc/0x130
- [<000000004033dc14>] warn_alloc+0x144/0x1e0
- [<000000004033e930>] __alloc_pages_slowpath.constprop.0+0xc80/0xcf8
- [<000000004033ec48>] __alloc_pages_nodemask+0x2a0/0x2f0
- [<0000000040351a2c>] cache_alloc_refill+0x6b4/0xe50
- [<000000004035416c>] __kmalloc+0x5e4/0x740
- [<00000000040ddbe8>] nfsd_reply_cache_init+0x1d0/0x360 [nfsd]
- [<00000000040d1118>] nfsd_init_net+0xb0/0x1c0 [nfsd]
- [<00000000406a5860>] ops_init+0x68/0x178
- [<00000000406a5b24>] setup_net+0x1b4/0x348
- [<00000000406a6e20>] copy_net_ns+0x1f0/0x450
- [<00000000401e6578>] create_new_namespaces+0x1b0/0x418
- [<00000000401e72ac>] unshare_nsproxy_namespaces+0x8c/0xf0
- [<00000000401b6acc>] ksys_unshare+0x1bc/0x440
- [<00000000401b6d70>] sys_unshare+0x20/0x38
- [<0000000040188018>] syscall_exit+0x0/0x14
+The table for Unicode upcase conversion requires an order-5 allocation,
+which may fail on a highly-fragmented system:
 
-Mem-Info:
-active_anon:1209957 inactive_anon:438171 isolated_anon:0
- active_file:38971 inactive_file:21741 isolated_file:0
- unevictable:4662 dirty:144 writeback:0
- slab_reclaimable:45748 slab_unreclaimable:51548
- mapped:34940 shmem:1471859 pagetables:5429 bounce:0
- free:213676 free_pcp:317 free_cma:0
-Node 0 active_anon:4839828kB inactive_anon:1753200kB active_file:155884kB inactive_file:86964kB unevictable:18648kB isolated(anon):0kB
-isolated(file):0kB mapped:139760kB dirty:576kB writeback:0kB shmem:5887436kB writeback_tmp:0kB kernel_stack:6032kB all_unreclaimable? no
-Normal free:853948kB min:11448kB low:19636kB high:27824kB reserved_highatomic:0KB active_anon:4839828kB inactive_anon:1753544kB
-active_file:155884kB inactive_file:86964kB unevictable:18648kB writepending:576kB present:8386560kB managed:8211756kB mlocked:18648kB
-pagetables:21716kB bounce:0kB free_pcp:1168kB local_pcp:352kB free_cma:0kB
-lowmem_reserve[]: 0 0
-Normal: 58860*4kB (UME) 48155*8kB (UME) 11414*16kB (UME) 1291*32kB (UME) 134*64kB (UME) 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB =
-853192kB
-1607717 total pagecache pages
-73822 pages in swap cache
-Swap cache stats: add 21252454, delete 21178083, find 5702723/6815498
-Free swap  = 33742652kB
-Total swap = 49758652kB
-2096640 pages RAM
-0 pages HighMem/MovableOnly
-43701 pages reserved
+ pool-udisksd: page allocation failure: order:5, mode:0x40dc0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null),cpuset=/,mems_allowed=0
+ CPU: 4 PID: 3756880 Comm: pool-udisksd Tainted: G     U            5.8.10-200.fc32.x86_64 #1
+ Hardware name: Dell Inc. XPS 13 9360/0PVG6D, BIOS 2.13.0 11/14/2019
+ Call Trace:
+  dump_stack+0x6b/0x88
+  warn_alloc.cold+0x75/0xd9
+  ? _cond_resched+0x16/0x40
+  ? __alloc_pages_direct_compact+0x144/0x150
+  __alloc_pages_slowpath.constprop.0+0xcfa/0xd30
+  ? __schedule+0x28a/0x840
+  ? __wait_on_bit_lock+0x92/0xa0
+  __alloc_pages_nodemask+0x2df/0x320
+  kmalloc_order+0x1b/0x80
+  kmalloc_order_trace+0x1d/0xa0
+  exfat_create_upcase_table+0x115/0x390 [exfat]
+  exfat_fill_super+0x3ef/0x7f0 [exfat]
+  ? sget_fc+0x1d0/0x240
+  ? exfat_init_fs_context+0x120/0x120 [exfat]
+  get_tree_bdev+0x15c/0x250
+  vfs_get_tree+0x25/0xb0
+  do_mount+0x7c3/0xaf0
+  ? copy_mount_options+0xab/0x180
+  __x64_sys_mount+0x8e/0xd0
+  do_syscall_64+0x4d/0x90
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Cheers,
-Dave
+Make the driver use vzalloc() to eliminate the issue.
 
+Cc: stable@vger.kernel.org # v5.7+
+Signed-off-by: Artem Labazov <123321artyom@gmail.com>
+---
+v2: replace vmalloc with vzalloc to avoid uninitialized memory access
+
+ fs/exfat/nls.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index 675d0e7058c5..4cb2e2bc8cad 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -6,6 +6,7 @@
+ #include <linux/string.h>
+ #include <linux/slab.h>
+ #include <linux/buffer_head.h>
++#include <linux/vmalloc.h>
+ #include <asm/unaligned.h>
+ 
+ #include "exfat_raw.h"
+@@ -659,7 +660,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
+ 	unsigned char skip = false;
+ 	unsigned short *upcase_table;
+ 
+-	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
++	upcase_table = vzalloc(UTBL_COUNT * sizeof(unsigned short));
+ 	if (!upcase_table)
+ 		return -ENOMEM;
+ 
+@@ -715,7 +716,7 @@ static int exfat_load_default_upcase_table(struct super_block *sb)
+ 	unsigned short uni = 0, *upcase_table;
+ 	unsigned int index = 0;
+ 
+-	upcase_table = kcalloc(UTBL_COUNT, sizeof(unsigned short), GFP_KERNEL);
++	upcase_table = vzalloc(UTBL_COUNT * sizeof(unsigned short));
+ 	if (!upcase_table)
+ 		return -ENOMEM;
+ 
+@@ -803,5 +804,5 @@ int exfat_create_upcase_table(struct super_block *sb)
+ 
+ void exfat_free_upcase_table(struct exfat_sb_info *sbi)
+ {
+-	kfree(sbi->vol_utbl);
++	vfree(sbi->vol_utbl);
+ }
 -- 
-John David Anglin  dave.anglin@bell.net
+2.26.2
 
