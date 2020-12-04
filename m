@@ -2,77 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E59B2CF3BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 19:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4CDA2CF43A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 19:39:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729218AbgLDSO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 13:14:28 -0500
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47966 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726775AbgLDSO1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 13:14:27 -0500
-Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 0B4IDIuo007813
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 4 Dec 2020 13:13:18 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id DA510420136; Fri,  4 Dec 2020 13:13:17 -0500 (EST)
-Date:   Fri, 4 Dec 2020 13:13:17 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
-Message-ID: <20201204181317.GD577125@mit.edu>
-References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
- <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
- <118876.1607093975@warthog.procyon.org.uk>
+        id S1730299AbgLDSjV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 13:39:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730232AbgLDSjV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Dec 2020 13:39:21 -0500
+Date:   Fri, 4 Dec 2020 10:38:37 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607107120;
+        bh=D0VwnsQjiZd2p/qMGY9WV/AY29U7e8/pE7AugozrGvQ=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FmeSO1dCGWCpOlO8wpniiJ1ANCDVVBGa97IucG4eL4WhlMp8CmgYdlvh/B0h3RbWN
+         zY/Q0e8MER7rAwEqxjQ84cuX/3eSB9iGpHVL1LP7Uj9U0uFpsWSfk0nFa4M6Ku1o7g
+         g7ExD/x89MWdXT7bfWxkVkM3Hp4O2oosMuTHNIDGwbRiwgRg9tOGUu4BFK8hyoOybZ
+         NVkuV3iWU2z6BfbmyrtOxS/4MlNe3VKZXwlv52ELqNPHOI0T5tXpoUeW/00IkZwIMi
+         NjnYti7V++dHVfyRC5HMP2Z8B+2BciuONki7MZeY9Xk22l9Khj/OyJx92ZR5i0ETuN
+         /Nqc1aMyvuw2A==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
+        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
+        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
+        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
+        dan.carpenter@oracle.com, hch@lst.de
+Subject: Re: [PATCH v14 06/10] fs/ntfs3: Add compression
+Message-ID: <X8qCLXJOit0M+4X7@sol.localdomain>
+References: <20201204154600.1546096-1-almaz.alexandrovich@paragon-software.com>
+ <20201204154600.1546096-7-almaz.alexandrovich@paragon-software.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <118876.1607093975@warthog.procyon.org.uk>
+In-Reply-To: <20201204154600.1546096-7-almaz.alexandrovich@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 04, 2020 at 02:59:35PM +0000, David Howells wrote:
-> Hi Chuck, Bruce,
+On Fri, Dec 04, 2020 at 06:45:56PM +0300, Konstantin Komarov wrote:
+> This adds compression
 > 
-> Why is gss_krb5_crypto.c using an auxiliary cipher?  For reference, the
-> gss_krb5_aes_encrypt() code looks like the attached.
-> 
-> From what I can tell, in AES mode, the difference between the main cipher and
-> the auxiliary cipher is that the latter is "cbc(aes)" whereas the former is
-> "cts(cbc(aes))" - but they have the same key.
-> 
-> Reading up on CTS, I'm guessing the reason it's like this is that CTS is the
-> same as the non-CTS, except for the last two blocks, but the non-CTS one is
-> more efficient.
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> ---
+>  fs/ntfs3/lib/common_defs.h       | 196 +++++++++++
+>  fs/ntfs3/lib/decompress_common.c | 314 +++++++++++++++++
+>  fs/ntfs3/lib/decompress_common.h | 558 +++++++++++++++++++++++++++++++
+>  fs/ntfs3/lib/lzx_common.c        | 204 +++++++++++
+>  fs/ntfs3/lib/lzx_common.h        |  31 ++
+>  fs/ntfs3/lib/lzx_constants.h     | 113 +++++++
+>  fs/ntfs3/lib/lzx_decompress.c    | 553 ++++++++++++++++++++++++++++++
+>  fs/ntfs3/lib/xpress_constants.h  |  23 ++
+>  fs/ntfs3/lib/xpress_decompress.c | 165 +++++++++
+>  fs/ntfs3/lznt.c                  | 452 +++++++++++++++++++++++++
+>  10 files changed, 2609 insertions(+)
+>  create mode 100644 fs/ntfs3/lib/common_defs.h
+>  create mode 100644 fs/ntfs3/lib/decompress_common.c
+>  create mode 100644 fs/ntfs3/lib/decompress_common.h
+>  create mode 100644 fs/ntfs3/lib/lzx_common.c
+>  create mode 100644 fs/ntfs3/lib/lzx_common.h
+>  create mode 100644 fs/ntfs3/lib/lzx_constants.h
+>  create mode 100644 fs/ntfs3/lib/lzx_decompress.c
+>  create mode 100644 fs/ntfs3/lib/xpress_constants.h
+>  create mode 100644 fs/ntfs3/lib/xpress_decompress.c
+>  create mode 100644 fs/ntfs3/lznt.c
 
-The reason to use CTS is if you don't want to expand the size of the
-cipher text to the cipher block size.  e.g., if you have a 53 byte
-plaintext, and you can't afford to let the ciphertext be 56 bytes, the
-cryptographic engineer will reach for CTS instead of CBC.
+This really could use a much better commit message.  Including mentioning where
+the LZX and XPRESS decompression code came from
+(https://github.com/ebiggers/ntfs-3g-system-compression).
 
-So that probably explains the explanation to use CTS (and it's
-required by the spec in any case).  As far as why CBC is being used
-instead of CTS, the only reason I can think of is the one you posted.
-Perhaps there was some hardware or software configureation where
-cbc(aes) was hardware accelerated, and cts(cbc(aes)) would not be?
+Also note you've marked the files as "SPDX-License-Identifier: GPL-2.0",
+but they really are "SPDX-License-Identifier: GPL-2.0-or-later".
 
-In any case, using cbc(aes) for all but the last two blocks, and using
-cts(cbc(aes)) for the last two blocks, is identical to using
-cts(cbc(aes)) for the whole encryption.  So the only reason to do this
-in the more complex way would be because for performance reasons.
+Also I still think you should consider using the simpler version from
+ntfs-3g-system-compression commit 3ddd227ee8e3, which I had originally intended
+to be included in NTFS-3G itself.  That version was fewer lines of code and
+fewer files, as it was simplified for decompression-only.  The latest version
+(the one you're using) is shared with a project that also implements compression
+(so that I can more easily maintain both projects), so it's more complex than
+needed for decompression-only support.  But in the kernel context it may make
+sense to go with a simpler version.  There are a few performance optimizations
+you'd miss by going with the older version, but they weren't too significant,
+and probably you don't need to squeeze out every bit of performance possible
+when reading XPRESS and LZX-compressed files in this context?
 
-       	    	    	      	 	 - Ted
+- Eric
