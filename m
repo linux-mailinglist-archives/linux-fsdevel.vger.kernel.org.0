@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 517352CF120
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 16:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B29E32CF118
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 16:51:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbgLDPtK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 10:49:10 -0500
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:37126 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730723AbgLDPtE (ORCPT
+        id S1730785AbgLDPsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 10:48:54 -0500
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:55260 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730725AbgLDPsx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 10:49:04 -0500
+        Fri, 4 Dec 2020 10:48:53 -0500
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id C833282246;
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id F23BC1D46;
         Fri,  4 Dec 2020 18:48:07 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1607096887;
-        bh=Mb60JkeMavnyjfk/pXYtNu2SmXwwz9TqXJFhSIz0n0Y=;
+        d=paragon-software.com; s=mail; t=1607096888;
+        bh=olF7t09va2dJgyB7TKJjOcTMfHeDodUuFOGcQaLt2Jk=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=E0iRQ0qxFWDosE7qiO+Auaq12bFiWsu3dL65e4qcfHqxu4Z0PrulvN7CQhhMT8+V9
-         MjgDrOBU3UR3p7nBQ1jZ2hJ+eIdhI2PA5OgPahYWw1GrAL74FJP1LE0088U61mAikB
-         nzodw5epZltQfRgZnT/1B+eg1s4qgGG+YNfoXGrQ=
+        b=ey3LfTWtqAWEe/vrWDwuRmgmgsULDDF+eulYphpjiTPId+vOHQVnHHNBZl2GZVoBT
+         7qfcU73H84w/ErrZvT27bzKw5S/YNxeSt9eW89XGLe9aZeAFWNFB7INxYHrGuO3RdA
+         Phsw0jwoNJ3RDa1xFWBGDjJGpuOkpvma/sx9VhCQ=
 Received: from fsd-lkpg.ufsd.paragon-software.com (172.30.114.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -35,9 +35,9 @@ CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
         <linux-ntfs-dev@lists.sourceforge.net>, <anton@tuxera.com>,
         <dan.carpenter@oracle.com>, <hch@lst.de>, <ebiggers@kernel.org>,
         Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v14 05/10] fs/ntfs3: Add attrib operations
-Date:   Fri, 4 Dec 2020 18:45:55 +0300
-Message-ID: <20201204154600.1546096-6-almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v14 06/10] fs/ntfs3: Add compression
+Date:   Fri, 4 Dec 2020 18:45:56 +0300
+Message-ID: <20201204154600.1546096-7-almaz.alexandrovich@paragon-software.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20201204154600.1546096-1-almaz.alexandrovich@paragon-software.com>
 References: <20201204154600.1546096-1-almaz.alexandrovich@paragon-software.com>
@@ -51,3254 +51,2701 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds attrib operations
+This adds compression
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/attrib.c   | 1682 +++++++++++++++++++++++++++++++++++++++++++
- fs/ntfs3/attrlist.c |  463 ++++++++++++
- fs/ntfs3/xattr.c    | 1073 +++++++++++++++++++++++++++
- 3 files changed, 3218 insertions(+)
- create mode 100644 fs/ntfs3/attrib.c
- create mode 100644 fs/ntfs3/attrlist.c
- create mode 100644 fs/ntfs3/xattr.c
+ fs/ntfs3/lib/common_defs.h       | 196 +++++++++++
+ fs/ntfs3/lib/decompress_common.c | 314 +++++++++++++++++
+ fs/ntfs3/lib/decompress_common.h | 558 +++++++++++++++++++++++++++++++
+ fs/ntfs3/lib/lzx_common.c        | 204 +++++++++++
+ fs/ntfs3/lib/lzx_common.h        |  31 ++
+ fs/ntfs3/lib/lzx_constants.h     | 113 +++++++
+ fs/ntfs3/lib/lzx_decompress.c    | 553 ++++++++++++++++++++++++++++++
+ fs/ntfs3/lib/xpress_constants.h  |  23 ++
+ fs/ntfs3/lib/xpress_decompress.c | 165 +++++++++
+ fs/ntfs3/lznt.c                  | 452 +++++++++++++++++++++++++
+ 10 files changed, 2609 insertions(+)
+ create mode 100644 fs/ntfs3/lib/common_defs.h
+ create mode 100644 fs/ntfs3/lib/decompress_common.c
+ create mode 100644 fs/ntfs3/lib/decompress_common.h
+ create mode 100644 fs/ntfs3/lib/lzx_common.c
+ create mode 100644 fs/ntfs3/lib/lzx_common.h
+ create mode 100644 fs/ntfs3/lib/lzx_constants.h
+ create mode 100644 fs/ntfs3/lib/lzx_decompress.c
+ create mode 100644 fs/ntfs3/lib/xpress_constants.h
+ create mode 100644 fs/ntfs3/lib/xpress_decompress.c
+ create mode 100644 fs/ntfs3/lznt.c
 
-diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+diff --git a/fs/ntfs3/lib/common_defs.h b/fs/ntfs3/lib/common_defs.h
 new file mode 100644
-index 000000000000..b6340181d68b
+index 000000000000..2114e37872fb
 --- /dev/null
-+++ b/fs/ntfs3/attrib.c
-@@ -0,0 +1,1682 @@
++++ b/fs/ntfs3/lib/common_defs.h
+@@ -0,0 +1,196 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2012-2016 Eric Biggers
++ *
++ * Adapted for linux kernel by Alexander Mamaev:
++ * - remove implementations of get_unaligned_
++ * - remove SSE and AVX instructions
++ * - assume GCC is always defined
++ * - inlined aligned_malloc/aligned_free
++ * - ISO C90
++ * - linux kernel code style
++ */
++
++#ifndef _COMMON_DEFS_H
++#define _COMMON_DEFS_H
++
++#include <linux/string.h>
++#include <linux/compiler.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <asm/unaligned.h>
++
++
++/* ========================================================================== */
++/*				Type definitions			      */
++/* ========================================================================== */
++
++/*
++ * Type of a machine word.  'u32 long' would be logical, but that is only
++ * 32 bits on x86_64 Windows.  The same applies to 'uint_fast32_t'.  So the best
++ * we can do without a bunch of #ifdefs appears to be 'size_t'.
++ */
++
++#define WORDBYTES	sizeof(size_t)
++#define WORDBITS	(8 * WORDBYTES)
++
++/* ========================================================================== */
++/*			   Compiler-specific definitions		      */
++/* ========================================================================== */
++
++#  define forceinline		__always_inline
++#  define _aligned_attribute(n) __aligned(n)
++#  define bsr32(n)		(31 - __builtin_clz(n))
++#  define bsr64(n)		(63 - __builtin_clzll(n))
++#  define bsf32(n)		__builtin_ctz(n)
++#  define bsf64(n)		__builtin_ctzll(n)
++
++/* STATIC_ASSERT() - verify the truth of an expression at compilation time */
++#define STATIC_ASSERT(expr)	((void)sizeof(char[1 - 2 * !(expr)]))
++
++/* STATIC_ASSERT_ZERO() - verify the truth of an expression at compilation time
++ * and also produce a result of value '0' to be used in constant expressions
++ */
++#define STATIC_ASSERT_ZERO(expr) ((int)sizeof(char[-!(expr)]))
++
++/* UNALIGNED_ACCESS_IS_FAST should be defined to 1 if unaligned memory accesses
++ * can be performed efficiently on the target platform.
++ */
++#if defined(__x86_64__) || defined(__i386__) || defined(__ARM_FEATURE_UNALIGNED)
++#  define UNALIGNED_ACCESS_IS_FAST 1
++#else
++#  define UNALIGNED_ACCESS_IS_FAST 0
++#endif
++
++/* ========================================================================== */
++/*			    Unaligned memory accesses			      */
++/* ========================================================================== */
++
++#define load_word_unaligned(p) get_unaligned((const size_t *)(p))
++#define store_word_unaligned(v, p) put_unaligned((v), (size_t *)(p))
++
++
++/* ========================================================================== */
++/*			       Bit scan functions			      */
++/* ========================================================================== */
++
++/*
++ * Bit Scan Reverse (BSR) - find the 0-based index (relative to the least
++ * significant end) of the *most* significant 1 bit in the input value.  The
++ * input value must be nonzero!
++ */
++
++#ifndef bsr32
++static forceinline u32
++bsr32(u32 v)
++{
++	u32 bit = 0;
++
++	while ((v >>= 1) != 0)
++		bit++;
++	return bit;
++}
++#endif
++
++#ifndef bsr64
++static forceinline u32
++bsr64(u64 v)
++{
++	u32 bit = 0;
++
++	while ((v >>= 1) != 0)
++		bit++;
++	return bit;
++}
++#endif
++
++static forceinline u32
++bsrw(size_t v)
++{
++	STATIC_ASSERT(WORDBITS == 32 || WORDBITS == 64);
++	if (WORDBITS == 32)
++		return bsr32(v);
++	else
++		return bsr64(v);
++}
++
++/*
++ * Bit Scan Forward (BSF) - find the 0-based index (relative to the least
++ * significant end) of the *least* significant 1 bit in the input value.  The
++ * input value must be nonzero!
++ */
++
++#ifndef bsf32
++static forceinline u32
++bsf32(u32 v)
++{
++	u32 bit;
++
++	for (bit = 0; !(v & 1); bit++, v >>= 1)
++		;
++	return bit;
++}
++#endif
++
++#ifndef bsf64
++static forceinline u32
++bsf64(u64 v)
++{
++	u32 bit;
++
++	for (bit = 0; !(v & 1); bit++, v >>= 1)
++		;
++	return bit;
++}
++#endif
++
++static forceinline u32
++bsfw(size_t v)
++{
++	STATIC_ASSERT(WORDBITS == 32 || WORDBITS == 64);
++	if (WORDBITS == 32)
++		return bsf32(v);
++	else
++		return bsf64(v);
++}
++
++/* Return the log base 2 of 'n', rounded up to the nearest integer. */
++static forceinline u32
++ilog2_ceil(size_t n)
++{
++	if (n <= 1)
++		return 0;
++	return 1 + bsrw(n - 1);
++}
++
++/* ========================================================================== */
++/*			    Aligned memory allocation			      */
++/* ========================================================================== */
++
++static forceinline void *
++aligned_malloc(size_t size, size_t alignment)
++{
++	const uintptr_t mask = alignment - 1;
++	char *ptr = NULL;
++	char *raw_ptr;
++
++	raw_ptr = kmalloc(mask + sizeof(size_t) + size, GFP_NOFS);
++	if (raw_ptr) {
++		ptr = (char *)raw_ptr + sizeof(size_t);
++		ptr = (void *)(((uintptr_t)ptr + mask) & ~mask);
++		*((size_t *)ptr - 1) = ptr - raw_ptr;
++	}
++	return ptr;
++}
++
++static forceinline void
++aligned_free(void *ptr)
++{
++	if (ptr)
++		kfree((char *)ptr - *((size_t *)ptr - 1));
++}
++
++extern void *aligned_malloc(size_t size, size_t alignment);
++extern void aligned_free(void *ptr);
++
++#endif /* _COMMON_DEFS_H */
+diff --git a/fs/ntfs3/lib/decompress_common.c b/fs/ntfs3/lib/decompress_common.c
+new file mode 100644
+index 000000000000..f6381d214f48
+--- /dev/null
++++ b/fs/ntfs3/lib/decompress_common.c
+@@ -0,0 +1,314 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
++ * decompress_common.c
 + *
-+ * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
++ * Code for decompression shared among multiple compression formats.
 + *
-+ * TODO: merge attr_set_size/attr_data_get_block/attr_allocate_frame?
++ * The following copying information applies to this specific source code file:
++ *
++ * Written in 2012-2016 by Eric Biggers <ebiggers3@gmail.com>
++ *
++ * To the extent possible under law, the author(s) have dedicated all copyright
++ * and related and neighboring rights to this software to the public domain
++ * worldwide via the Creative Commons Zero 1.0 Universal Public Domain
++ * Dedication (the "CC0").
++ *
++ * This software is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE. See the CC0 for more details.
++ *
++ * You should have received a copy of the CC0 along with this software; if not
++ * see <http://creativecommons.org/publicdomain/zero/1.0/>.
 + */
 +
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fs.h>
-+#include <linux/hash.h>
-+#include <linux/nls.h>
-+#include <linux/ratelimit.h>
-+#include <linux/slab.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
++#include "decompress_common.h"
 +
 +/*
-+ * You can set external NTFS_MIN_LOG2_OF_CLUMP/NTFS_MAX_LOG2_OF_CLUMP to manage
-+ * preallocate algorithm
-+ */
-+#ifndef NTFS_MIN_LOG2_OF_CLUMP
-+#define NTFS_MIN_LOG2_OF_CLUMP 16
-+#endif
-+
-+#ifndef NTFS_MAX_LOG2_OF_CLUMP
-+#define NTFS_MAX_LOG2_OF_CLUMP 26
-+#endif
-+
-+// 16M
-+#define NTFS_CLUMP_MIN (1 << (NTFS_MIN_LOG2_OF_CLUMP + 8))
-+// 16G
-+#define NTFS_CLUMP_MAX (1ull << (NTFS_MAX_LOG2_OF_CLUMP + 8))
-+
-+/*
-+ * get_pre_allocated
++ * make_huffman_decode_table() -
 + *
++ * Given an alphabet of symbols and the length of each symbol's codeword in a
++ * canonical prefix code, build a table for quickly decoding symbols that were
++ * encoded with that code.
++ *
++ * A _prefix code_ is an assignment of bitstrings called _codewords_ to symbols
++ * such that no whole codeword is a prefix of any other.  A prefix code might be
++ * a _Huffman code_, which means that it is an optimum prefix code for a given
++ * list of symbol frequencies and was generated by the Huffman algorithm.
++ * Although the prefix codes processed here will ordinarily be "Huffman codes",
++ * strictly speaking the decoder cannot know whether a given code was actually
++ * generated by the Huffman algorithm or not.
++ *
++ * A prefix code is _canonical_ if and only if a longer codeword never
++ * lexicographically precedes a shorter codeword, and the lexicographic ordering
++ * of codewords of equal length is the same as the lexicographic ordering of the
++ * corresponding symbols.  The advantage of using a canonical prefix code is
++ * that the codewords can be reconstructed from only the symbol => codeword
++ * length mapping.  This eliminates the need to transmit the codewords
++ * explicitly.  Instead, they can be enumerated in lexicographic order after
++ * sorting the symbols primarily by increasing codeword length and secondarily
++ * by increasing symbol value.
++ *
++ * However, the decoder's real goal is to decode symbols with the code, not just
++ * generate the list of codewords.  Consequently, this function directly builds
++ * a table for efficiently decoding symbols using the code.  The basic idea is
++ * that given the next 'max_codeword_len' bits of input, the decoder can look up
++ * the next decoded symbol by indexing a table containing '2^max_codeword_len'
++ * entries.  A codeword with length 'max_codeword_len' will have exactly one
++ * entry in this table, whereas a codeword shorter than 'max_codeword_len' will
++ * have multiple entries in this table.  Precisely, a codeword of length 'n'
++ * will have '2^(max_codeword_len - n)' entries.  The index of each such entry,
++ * considered as a bitstring of length 'max_codeword_len', will contain the
++ * corresponding codeword as a prefix.
++ *
++ * That's the basic idea, but we extend it in two ways:
++ *
++ * - Often the maximum codeword length is too long for it to be efficient to
++ *   build the full decode table whenever a new code is used.  Instead, we build
++ *   a "root" table using only '2^table_bits' entries, where 'table_bits <=
++ *   max_codeword_len'.  Then, a lookup of 'table_bits' bits produces either a
++ *   symbol directly (for codewords not longer than 'table_bits'), or the index
++ *   of a subtable which must be indexed with additional bits of input to fully
++ *   decode the symbol (for codewords longer than 'table_bits').
++ *
++ * - Whenever the decoder decodes a symbol, it needs to know the codeword length
++ *   so that it can remove the appropriate number of input bits.  The obvious
++ *   solution would be to simply retain the codeword lengths array and use the
++ *   decoded symbol as an index into it.  However, that would require two array
++ *   accesses when decoding each symbol.  Our strategy is to instead store the
++ *   codeword length directly in the decode table entry along with the symbol.
++ *
++ * See MAKE_DECODE_TABLE_ENTRY() for full details on the format of decode table
++ * entries, and see read_huffsym() for full details on how symbols are decoded.
++ *
++ * @decode_table:
++ *	The array in which to build the decode table.  This must have been
++ *	declared by the DECODE_TABLE() macro.  This may alias @lens, since all
++ *	@lens are consumed before the decode table is written to.
++ *
++ * @num_syms:
++ *	The number of symbols in the alphabet.
++ *
++ * @table_bits:
++ *	The log base 2 of the number of entries in the root table.
++ *
++ * @lens:
++ *	An array of length @num_syms, indexed by symbol, that gives the length
++ *	of the codeword, in bits, for each symbol.  The length can be 0, which
++ *	means that the symbol does not have a codeword assigned.  In addition,
++ *	@lens may alias @decode_table, as noted above.
++ *
++ * @max_codeword_len:
++ *	The maximum codeword length permitted for this code.  All entries in
++ *	'lens' must be less than or equal to this value.
++ *
++ * @working_space
++ *	A temporary array that was declared with DECODE_TABLE_WORKING_SPACE().
++ *
++ * Returns 0 on success, or -1 if the lengths do not form a valid prefix code.
 + */
-+static inline u64 get_pre_allocated(u64 size)
++int
++make_huffman_decode_table(u16 decode_table[], u32 num_syms,
++			  u32 table_bits, const u8 lens[],
++			  u32 max_codeword_len, u16 working_space[])
 +{
-+	u32 clump;
-+	u8 align_shift;
-+	u64 ret;
++	u16 * const len_counts = &working_space[0];
++	u16 * const offsets = &working_space[1 * (max_codeword_len + 1)];
++	u16 * const sorted_syms = &working_space[2 * (max_codeword_len + 1)];
++	s32 remainder = 1;
++	void *entry_ptr = decode_table;
++	u32 codeword_len = 1;
++	u32 sym_idx;
++	u32 codeword;
++	u32 subtable_pos;
++	u32 subtable_bits;
++	u32 subtable_prefix;
++	u32 len;
++	u32 sym;
++	u32 stores_per_loop;
 +
-+	if (size <= NTFS_CLUMP_MIN) {
-+		clump = 1 << NTFS_MIN_LOG2_OF_CLUMP;
-+		align_shift = NTFS_MIN_LOG2_OF_CLUMP;
-+	} else if (size >= NTFS_CLUMP_MAX) {
-+		clump = 1 << NTFS_MAX_LOG2_OF_CLUMP;
-+		align_shift = NTFS_MAX_LOG2_OF_CLUMP;
-+	} else {
-+		align_shift = NTFS_MIN_LOG2_OF_CLUMP - 1 +
-+			      __ffs(size >> (8 + NTFS_MIN_LOG2_OF_CLUMP));
-+		clump = 1u << align_shift;
++	/* Count how many codewords have each length, including 0.  */
++	for (len = 0; len <= max_codeword_len; len++)
++		len_counts[len] = 0;
++	for (sym = 0; sym < num_syms; sym++)
++		len_counts[lens[sym]]++;
++
++	/* It is already guaranteed that all lengths are <= max_codeword_len,
++	 * but it cannot be assumed they form a complete prefix code.  A
++	 * codeword of length n should require a proportion of the codespace
++	 * equaling (1/2)^n.  The code is complete if and only if, by this
++	 * measure, the codespace is exactly filled by the lengths.
++	 */
++	for (len = 1; len <= max_codeword_len; len++) {
++		remainder = (remainder << 1) - len_counts[len];
++		/* Do the lengths overflow the codespace? */
++		if (unlikely(remainder < 0))
++			return -1;
 +	}
 +
-+	ret = (((size + clump - 1) >> align_shift)) << align_shift;
++	if (remainder != 0) {
++		/* The lengths do not fill the codespace; that is, they form an
++		 * incomplete code.  This is permitted only if the code is empty
++		 * (contains no symbols).
++		 */
 +
-+	return ret;
-+}
++		if (unlikely(remainder != 1U << max_codeword_len))
++			return -1;
 +
-+/*
-+ * attr_must_be_resident
-+ *
-+ * returns true if attribute must be resident
-+ */
-+static inline bool attr_must_be_resident(struct ntfs_sb_info *sbi,
-+					 enum ATTR_TYPE type)
-+{
-+	const struct ATTR_DEF_ENTRY *de;
-+
-+	switch (type) {
-+	case ATTR_STD:
-+	case ATTR_NAME:
-+	case ATTR_ID:
-+	case ATTR_LABEL:
-+	case ATTR_VOL_INFO:
-+	case ATTR_ROOT:
-+	case ATTR_EA_INFO:
-+		return true;
-+	default:
-+		de = ntfs_query_def(sbi, type);
-+		if (de && (de->flags & NTFS_ATTR_MUST_BE_RESIDENT))
-+			return true;
-+		return false;
-+	}
-+}
-+
-+/*
-+ * attr_load_runs
-+ *
-+ * load all runs stored in 'attr'
-+ */
-+int attr_load_runs(struct ATTRIB *attr, struct ntfs_inode *ni,
-+		   struct runs_tree *run, const CLST *vcn)
-+{
-+	int err;
-+	CLST svcn = le64_to_cpu(attr->nres.svcn);
-+	CLST evcn = le64_to_cpu(attr->nres.evcn);
-+	u32 asize;
-+	u16 run_off;
-+
-+	if (svcn >= evcn + 1 || run_is_mapped_full(run, svcn, evcn))
-+		return 0;
-+
-+	if (vcn && (evcn < *vcn || *vcn < svcn))
-+		return -EINVAL;
-+
-+	asize = le32_to_cpu(attr->size);
-+	run_off = le16_to_cpu(attr->nres.run_off);
-+	err = run_unpack_ex(run, ni->mi.sbi, ni->mi.rno, svcn, evcn,
-+			    vcn ? *vcn : svcn, Add2Ptr(attr, run_off),
-+			    asize - run_off);
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-+
-+/*
-+ * int run_deallocate_ex
-+ *
-+ * Deallocate clusters
-+ */
-+static int run_deallocate_ex(struct ntfs_sb_info *sbi, struct runs_tree *run,
-+			     CLST vcn, CLST len, CLST *done, bool trim)
-+{
-+	int err = 0;
-+	CLST vcn0 = vcn, lcn, clen, dn = 0;
-+	size_t idx;
-+
-+	if (!len)
-+		goto out;
-+
-+	if (!run_lookup_entry(run, vcn, &lcn, &clen, &idx)) {
-+failed:
-+		run_truncate(run, vcn0);
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	for (;;) {
-+		if (clen > len)
-+			clen = len;
-+
-+		if (!clen) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (lcn != SPARSE_LCN) {
-+			mark_as_free_ex(sbi, lcn, clen, trim);
-+			dn += clen;
-+		}
-+
-+		len -= clen;
-+		if (!len)
-+			break;
-+
-+		if (!run_get_entry(run, ++idx, &vcn, &lcn, &clen)) {
-+			// save memory - don't load entire run
-+			goto failed;
-+		}
-+	}
-+
-+out:
-+	if (done)
-+		*done = dn;
-+
-+	return err;
-+}
-+
-+/*
-+ * attr_allocate_clusters
-+ *
-+ * find free space, mark it as used and store in 'run'
-+ */
-+int attr_allocate_clusters(struct ntfs_sb_info *sbi, struct runs_tree *run,
-+			   CLST vcn, CLST lcn, CLST len, CLST *pre_alloc,
-+			   enum ALLOCATE_OPT opt, CLST *alen, const size_t fr,
-+			   CLST *new_lcn)
-+{
-+	int err;
-+	CLST flen, vcn0 = vcn, pre = pre_alloc ? *pre_alloc : 0;
-+	struct wnd_bitmap *wnd = &sbi->used.bitmap;
-+	size_t cnt = run->count;
-+
-+	for (;;) {
-+		err = ntfs_look_for_free_space(sbi, lcn, len + pre, &lcn, &flen,
-+					       opt);
-+
-+		if (err == -ENOSPC && pre) {
-+			pre = 0;
-+			if (*pre_alloc)
-+				*pre_alloc = 0;
-+			continue;
-+		}
-+
-+		if (err)
-+			goto out;
-+
-+		if (new_lcn && vcn == vcn0)
-+			*new_lcn = lcn;
-+
-+		/* Add new fragment into run storage */
-+		if (!run_add_entry(run, vcn, lcn, flen, opt == ALLOCATE_MFT)) {
-+			down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
-+			wnd_set_free(wnd, lcn, flen);
-+			up_write(&wnd->rw_lock);
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+
-+		vcn += flen;
-+
-+		if (flen >= len || opt == ALLOCATE_MFT ||
-+		    (fr && run->count - cnt >= fr)) {
-+			*alen = vcn - vcn0;
-+			return 0;
-+		}
-+
-+		len -= flen;
-+	}
-+
-+out:
-+	/* undo */
-+	run_deallocate_ex(sbi, run, vcn0, vcn - vcn0, NULL, false);
-+	run_truncate(run, vcn0);
-+
-+	return err;
-+}
-+
-+/*
-+ * if page is not NULL - it is already contains resident data
-+ * and locked (called from ni_write_frame)
-+ */
-+int attr_make_nonresident(struct ntfs_inode *ni, struct ATTRIB *attr,
-+			  struct ATTR_LIST_ENTRY *le, struct mft_inode *mi,
-+			  u64 new_size, struct runs_tree *run,
-+			  struct ATTRIB **ins_attr, struct page *page)
-+{
-+	struct ntfs_sb_info *sbi;
-+	struct ATTRIB *attr_s;
-+	struct MFT_REC *rec;
-+	u32 used, asize, rsize, aoff, align;
-+	bool is_data;
-+	CLST len, alen;
-+	char *next;
-+	int err;
-+
-+	if (attr->non_res) {
-+		*ins_attr = attr;
++		/* The code is empty.  When processing a well-formed stream, the
++		 * decode table need not be initialized in this case.  However,
++		 * we cannot assume the stream is well-formed, so we must
++		 * initialize the decode table anyway.  Setting all entries to 0
++		 * makes the decode table always produce symbol '0' without
++		 * consuming any bits, which is good enough.
++		 */
++		memset(decode_table, 0, sizeof(decode_table[0]) << table_bits);
 +		return 0;
 +	}
 +
-+	sbi = mi->sbi;
-+	rec = mi->mrec;
-+	attr_s = NULL;
-+	used = le32_to_cpu(rec->used);
-+	asize = le32_to_cpu(attr->size);
-+	next = Add2Ptr(attr, asize);
-+	aoff = PtrOffset(rec, attr);
-+	rsize = le32_to_cpu(attr->res.data_size);
-+	is_data = attr->type == ATTR_DATA && !attr->name_len;
++	/* Sort the symbols primarily by increasing codeword length and
++	 * secondarily by increasing symbol value.
++	 */
 +
-+	align = sbi->cluster_size;
-+	if (is_attr_compressed(attr))
-+		align <<= COMPRESSION_UNIT;
-+	len = (rsize + align - 1) >> sbi->cluster_bits;
++	/* Initialize 'offsets' so that 'offsets[len]' is the number of
++	 * codewords shorter than 'len' bits, including length 0.
++	 */
++	offsets[0] = 0;
++	for (len = 0; len < max_codeword_len; len++)
++		offsets[len + 1] = offsets[len] + len_counts[len];
 +
-+	run_init(run);
++	/* Use the 'offsets' array to sort the symbols. */
++	for (sym = 0; sym < num_syms; sym++)
++		sorted_syms[offsets[lens[sym]]++] = sym;
 +
-+	/* make a copy of original attribute */
-+	attr_s = ntfs_memdup(attr, asize);
-+	if (!attr_s) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
++	/*
++	 * Fill the root table entries for codewords no longer than table_bits.
++	 *
++	 * The table will start with entries for the shortest codeword(s), which
++	 * will have the most entries.  From there, the number of entries per
++	 * codeword will decrease.  As an optimization, we may begin filling
++	 * entries with SSE2 vector accesses (8 entries/store), then change to
++	 * word accesses (2 or 4 entries/store), then change to 16-bit accesses
++	 * (1 entry/store).
++	 */
++	sym_idx = offsets[0];
 +
-+	if (!len) {
-+		/* empty resident -> empty nonresident */
-+		alen = 0;
-+	} else {
-+		const char *data = resident_data(attr);
++	/* Fill entries one word (2 or 4 entries) at a time. */
++	for (stores_per_loop = (1U << (table_bits - codeword_len)) /
++					(WORDBYTES / sizeof(decode_table[0]));
++	     stores_per_loop != 0; codeword_len++, stores_per_loop >>= 1){
++		u32 end_sym_idx = sym_idx + len_counts[codeword_len];
 +
-+		err = attr_allocate_clusters(sbi, run, 0, 0, len, NULL,
-+					     ALLOCATE_DEF, &alen, 0, NULL);
-+		if (err)
-+			goto out1;
++		for (; sym_idx < end_sym_idx; sym_idx++) {
++			/* Accessing the array of u16 as u32 or u64 would
++			 * violate strict aliasing and would require compiling
++			 * the code with -fno-strict-aliasing to guarantee
++			 * correctness.  To work around this problem, use the
++			 * gcc 'may_alias' extension.
++			 */
++			size_t v = repeat_u16(
++				MAKE_DECODE_TABLE_ENTRY(sorted_syms[sym_idx],
++							codeword_len));
++			u32 n = stores_per_loop;
 +
-+		if (!rsize) {
-+			/* empty resident -> non empty nonresident */
-+		} else if (!is_data) {
-+			err = ntfs_sb_write_run(sbi, run, 0, data, rsize);
-+			if (err)
-+				goto out2;
-+		} else if (!page) {
-+			char *kaddr;
-+
-+			page = grab_cache_page(ni->vfs_inode.i_mapping, 0);
-+			if (!page) {
-+				err = -ENOMEM;
-+				goto out2;
-+			}
-+			kaddr = kmap_atomic(page);
-+			memcpy(kaddr, data, rsize);
-+			memset(kaddr + rsize, 0, PAGE_SIZE - rsize);
-+			kunmap_atomic(kaddr);
-+			flush_dcache_page(page);
-+			SetPageUptodate(page);
-+			set_page_dirty(page);
-+			unlock_page(page);
-+			put_page(page);
++			do {
++				*(size_t __attribute__((may_alias)) *)entry_ptr = v;
++				entry_ptr += sizeof(v);
++			} while (--n);
 +		}
 +	}
 +
-+	/* remove original attribute */
-+	used -= asize;
-+	memmove(attr, Add2Ptr(attr, asize), used - aoff);
-+	rec->used = cpu_to_le32(used);
-+	mi->dirty = true;
-+	if (le)
-+		al_remove_le(ni, le);
++	/* Fill entries one at a time. */
++	for (stores_per_loop = (1U << (table_bits - codeword_len));
++	     stores_per_loop != 0; codeword_len++, stores_per_loop >>= 1){
++		u32 end_sym_idx = sym_idx + len_counts[codeword_len];
 +
-+	err = ni_insert_nonresident(ni, attr_s->type, attr_name(attr_s),
-+				    attr_s->name_len, run, 0, alen,
-+				    attr_s->flags, &attr, NULL);
-+	if (err)
-+		goto out3;
++		for (; sym_idx < end_sym_idx; sym_idx++) {
++			u16 v = MAKE_DECODE_TABLE_ENTRY(sorted_syms[sym_idx],
++							codeword_len);
++			u32 n = stores_per_loop;
 +
-+	ntfs_free(attr_s);
-+	attr->nres.data_size = cpu_to_le64(rsize);
-+	attr->nres.valid_size = attr->nres.data_size;
-+
-+	*ins_attr = attr;
-+
-+	if (is_data)
-+		ni->ni_flags &= ~NI_FLAG_RESIDENT;
-+
-+	/* Resident attribute becomes non resident */
-+	return 0;
-+
-+out3:
-+	attr = Add2Ptr(rec, aoff);
-+	memmove(next, attr, used - aoff);
-+	memcpy(attr, attr_s, asize);
-+	rec->used = cpu_to_le32(used + asize);
-+	mi->dirty = true;
-+out2:
-+	/* undo: do not trim new allocated clusters */
-+	run_deallocate(sbi, run, false);
-+	run_close(run);
-+out1:
-+	ntfs_free(attr_s);
-+	/*reinsert le*/
-+out:
-+	return err;
-+}
-+
-+/*
-+ * attr_set_size_res
-+ *
-+ * helper for attr_set_size
-+ */
-+static int attr_set_size_res(struct ntfs_inode *ni, struct ATTRIB *attr,
-+			     struct ATTR_LIST_ENTRY *le, struct mft_inode *mi,
-+			     u64 new_size, struct runs_tree *run,
-+			     struct ATTRIB **ins_attr)
-+{
-+	struct ntfs_sb_info *sbi = mi->sbi;
-+	struct MFT_REC *rec = mi->mrec;
-+	u32 used = le32_to_cpu(rec->used);
-+	u32 asize = le32_to_cpu(attr->size);
-+	u32 aoff = PtrOffset(rec, attr);
-+	u32 rsize = le32_to_cpu(attr->res.data_size);
-+	u32 tail = used - aoff - asize;
-+	char *next = Add2Ptr(attr, asize);
-+	s64 dsize = QuadAlign(new_size) - QuadAlign(rsize);
-+
-+	if (dsize < 0) {
-+		memmove(next + dsize, next, tail);
-+	} else if (dsize > 0) {
-+		if (used + dsize > sbi->max_bytes_per_attr)
-+			return attr_make_nonresident(ni, attr, le, mi, new_size,
-+						     run, ins_attr, NULL);
-+
-+		memmove(next + dsize, next, tail);
-+		memset(next, 0, dsize);
++			do {
++				*(u16 *)entry_ptr = v;
++				entry_ptr += sizeof(v);
++			} while (--n);
++		}
 +	}
 +
-+	if (new_size > rsize)
-+		memset(Add2Ptr(resident_data(attr), rsize), 0,
-+		       new_size - rsize);
++	/* If all symbols were processed, then no subtables are required. */
++	if (sym_idx == num_syms)
++		return 0;
 +
-+	rec->used = cpu_to_le32(used + dsize);
-+	attr->size = cpu_to_le32(asize + dsize);
-+	attr->res.data_size = cpu_to_le32(new_size);
-+	mi->dirty = true;
-+	*ins_attr = attr;
++	/* At least one subtable is required.  Process the remaining symbols. */
++	codeword = ((u16 *)entry_ptr - decode_table) << 1;
++	subtable_pos = 1U << table_bits;
++	subtable_bits = table_bits;
++	subtable_prefix = -1;
++	do {
++		u32 prefix;
++		u16 entry;
++		u32 n;
 +
-+	return 0;
-+}
-+
-+/*
-+ * attr_set_size
-+ *
-+ * change the size of attribute
-+ * Extend:
-+ *   - sparse/compressed: no allocated clusters
-+ *   - normal: append allocated and preallocated new clusters
-+ * Shrink:
-+ *   - no deallocate if keep_prealloc is set
-+ */
-+int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+		  const __le16 *name, u8 name_len, struct runs_tree *run,
-+		  u64 new_size, const u64 *new_valid, bool keep_prealloc,
-+		  struct ATTRIB **ret)
-+{
-+	int err = 0;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	u8 cluster_bits = sbi->cluster_bits;
-+	bool is_mft =
-+		ni->mi.rno == MFT_REC_MFT && type == ATTR_DATA && !name_len;
-+	u64 old_valid, old_size, old_alloc, new_alloc, new_alloc_tmp;
-+	struct ATTRIB *attr, *attr_b;
-+	struct ATTR_LIST_ENTRY *le, *le_b;
-+	struct mft_inode *mi, *mi_b;
-+	CLST alen, vcn, lcn, new_alen, old_alen, svcn, evcn;
-+	CLST next_svcn, pre_alloc = -1, done = 0;
-+	bool is_ext;
-+	u32 align;
-+	struct MFT_REC *rec;
-+
-+again:
-+	le_b = NULL;
-+	attr_b = ni_find_attr(ni, NULL, &le_b, type, name, name_len, NULL,
-+			      &mi_b);
-+	if (!attr_b) {
-+		err = -ENOENT;
-+		goto out;
-+	}
-+
-+	if (!attr_b->non_res) {
-+		err = attr_set_size_res(ni, attr_b, le_b, mi_b, new_size, run,
-+					&attr_b);
-+		if (err || !attr_b->non_res)
-+			goto out;
-+
-+		/* layout of records may be changed, so do a full search */
-+		goto again;
-+	}
-+
-+	is_ext = is_attr_ext(attr_b);
-+
-+again_1:
-+	if (is_ext) {
-+		align = 1u << (attr_b->nres.c_unit + cluster_bits);
-+		if (is_attr_sparsed(attr_b))
-+			keep_prealloc = false;
-+	} else {
-+		align = sbi->cluster_size;
-+	}
-+
-+	old_valid = le64_to_cpu(attr_b->nres.valid_size);
-+	old_size = le64_to_cpu(attr_b->nres.data_size);
-+	old_alloc = le64_to_cpu(attr_b->nres.alloc_size);
-+	old_alen = old_alloc >> cluster_bits;
-+
-+	new_alloc = (new_size + align - 1) & ~(u64)(align - 1);
-+	new_alen = new_alloc >> cluster_bits;
-+
-+	if (keep_prealloc && is_ext)
-+		keep_prealloc = false;
-+
-+	if (keep_prealloc && new_size < old_size) {
-+		attr_b->nres.data_size = cpu_to_le64(new_size);
-+		mi_b->dirty = true;
-+		goto ok;
-+	}
-+
-+	vcn = old_alen - 1;
-+
-+	svcn = le64_to_cpu(attr_b->nres.svcn);
-+	evcn = le64_to_cpu(attr_b->nres.evcn);
-+
-+	if (svcn <= vcn && vcn <= evcn) {
-+		attr = attr_b;
-+		le = le_b;
-+		mi = mi_b;
-+	} else if (!le_b) {
-+		err = -EINVAL;
-+		goto out;
-+	} else {
-+		le = le_b;
-+		attr = ni_find_attr(ni, attr_b, &le, type, name, name_len, &vcn,
-+				    &mi);
-+		if (!attr) {
-+			err = -EINVAL;
-+			goto out;
++		while (len_counts[codeword_len] == 0) {
++			codeword_len++;
++			codeword <<= 1;
 +		}
 +
-+next_le_1:
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn = le64_to_cpu(attr->nres.evcn);
-+	}
++		prefix = codeword >> (codeword_len - table_bits);
 +
-+next_le:
-+	rec = mi->mrec;
++		/* Start a new subtable if the first 'table_bits' bits of the
++		 * codeword don't match the prefix for the previous subtable, or
++		 * if this will be the first subtable.
++		 */
++		if (prefix != subtable_prefix) {
 +
-+	err = attr_load_runs(attr, ni, run, NULL);
-+	if (err)
-+		goto out;
-+
-+	if (new_size > old_size) {
-+		CLST to_allocate;
-+		size_t free;
-+
-+		if (new_alloc <= old_alloc) {
-+			attr_b->nres.data_size = cpu_to_le64(new_size);
-+			mi_b->dirty = true;
-+			goto ok;
-+		}
-+
-+		to_allocate = new_alen - old_alen;
-+add_alloc_in_same_attr_seg:
-+		lcn = 0;
-+		if (is_mft) {
-+			/* mft allocates clusters from mftzone */
-+			pre_alloc = 0;
-+		} else if (is_ext) {
-+			/* no preallocate for sparse/compress */
-+			pre_alloc = 0;
-+		} else if (pre_alloc == -1) {
-+			pre_alloc = 0;
-+			if (type == ATTR_DATA && !name_len &&
-+			    sbi->options.prealloc) {
-+				CLST new_alen2 = bytes_to_cluster(
-+					sbi, get_pre_allocated(new_size));
-+				pre_alloc = new_alen2 - new_alen;
-+			}
-+
-+			/* Get the last lcn to allocate from */
-+			if (old_alen &&
-+			    !run_lookup_entry(run, vcn, &lcn, NULL, NULL)) {
-+				lcn = SPARSE_LCN;
-+			}
-+
-+			if (lcn == SPARSE_LCN)
-+				lcn = 0;
-+			else if (lcn)
-+				lcn += 1;
-+
-+			free = wnd_zeroes(&sbi->used.bitmap);
-+			if (to_allocate > free) {
-+				err = -ENOSPC;
-+				goto out;
-+			}
-+
-+			if (pre_alloc && to_allocate + pre_alloc > free)
-+				pre_alloc = 0;
-+		}
-+
-+		vcn = old_alen;
-+
-+		if (is_ext) {
-+			if (!run_add_entry(run, vcn, SPARSE_LCN, to_allocate,
-+					   false)) {
-+				err = -ENOMEM;
-+				goto out;
-+			}
-+			alen = to_allocate;
-+		} else {
-+			/* ~3 bytes per fragment */
-+			err = attr_allocate_clusters(
-+				sbi, run, vcn, lcn, to_allocate, &pre_alloc,
-+				is_mft ? ALLOCATE_MFT : 0, &alen,
-+				is_mft ? 0 :
-+					 (sbi->record_size -
-+					  le32_to_cpu(rec->used) + 8) /
-+							 3 +
-+						 1,
-+				NULL);
-+			if (err)
-+				goto out;
-+		}
-+
-+		done += alen;
-+		vcn += alen;
-+		if (to_allocate > alen)
-+			to_allocate -= alen;
-+		else
-+			to_allocate = 0;
-+
-+pack_runs:
-+		err = mi_pack_runs(mi, attr, run, vcn - svcn);
-+		if (err)
-+			goto out;
-+
-+		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-+		new_alloc_tmp = (u64)next_svcn << cluster_bits;
-+		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
-+		mi_b->dirty = true;
-+
-+		if (next_svcn >= vcn && !to_allocate) {
-+			/* Normal way. update attribute and exit */
-+			attr_b->nres.data_size = cpu_to_le64(new_size);
-+			goto ok;
-+		}
-+
-+		/* at least two mft to avoid recursive loop*/
-+		if (is_mft && next_svcn == vcn &&
-+		    ((u64)done << sbi->cluster_bits) >= 2 * sbi->record_size) {
-+			new_size = new_alloc_tmp;
-+			attr_b->nres.data_size = attr_b->nres.alloc_size;
-+			goto ok;
-+		}
-+
-+		if (le32_to_cpu(rec->used) < sbi->record_size) {
-+			old_alen = next_svcn;
-+			evcn = old_alen - 1;
-+			goto add_alloc_in_same_attr_seg;
-+		}
-+
-+		attr_b->nres.data_size = attr_b->nres.alloc_size;
-+		if (new_alloc_tmp < old_valid)
-+			attr_b->nres.valid_size = attr_b->nres.data_size;
-+
-+		if (type == ATTR_LIST) {
-+			err = ni_expand_list(ni);
-+			if (err)
-+				goto out;
-+			if (next_svcn < vcn)
-+				goto pack_runs;
-+
-+			/* layout of records is changed */
-+			goto again;
-+		}
-+
-+		if (!ni->attr_list.size) {
-+			err = ni_create_attr_list(ni);
-+			if (err)
-+				goto out;
-+			/* layout of records is changed */
-+		}
-+
-+		if (next_svcn >= vcn) {
-+			/* this is mft data, repeat */
-+			goto again;
-+		}
-+
-+		/* insert new attribute segment */
-+		err = ni_insert_nonresident(ni, type, name, name_len, run,
-+					    next_svcn, vcn - next_svcn,
-+					    attr_b->flags, &attr, &mi);
-+		if (err)
-+			goto out;
-+
-+		if (!is_mft)
-+			run_truncate_head(run, evcn + 1);
-+
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn = le64_to_cpu(attr->nres.evcn);
-+
-+		le_b = NULL;
-+		/* layout of records maybe changed */
-+		/* find base attribute to update*/
-+		attr_b = ni_find_attr(ni, NULL, &le_b, type, name, name_len,
-+				      NULL, &mi_b);
-+		if (!attr_b) {
-+			err = -ENOENT;
-+			goto out;
-+		}
-+
-+		attr_b->nres.alloc_size = cpu_to_le64((u64)vcn << cluster_bits);
-+		attr_b->nres.data_size = attr_b->nres.alloc_size;
-+		attr_b->nres.valid_size = attr_b->nres.alloc_size;
-+		mi_b->dirty = true;
-+		goto again_1;
-+	}
-+
-+	if (new_size != old_size ||
-+	    (new_alloc != old_alloc && !keep_prealloc)) {
-+		vcn = max(svcn, new_alen);
-+		new_alloc_tmp = (u64)vcn << cluster_bits;
-+
-+		err = run_deallocate_ex(sbi, run, vcn, evcn - vcn + 1, &alen,
-+					true);
-+		if (err)
-+			goto out;
-+
-+		run_truncate(run, vcn);
-+
-+		if (vcn > svcn) {
-+			err = mi_pack_runs(mi, attr, run, vcn - svcn);
-+			if (err)
-+				goto out;
-+		} else if (le && le->vcn) {
-+			u16 le_sz = le16_to_cpu(le->size);
++			subtable_prefix = prefix;
 +
 +			/*
-+			 * NOTE: list entries for one attribute are always
-+			 * the same size. We deal with last entry (vcn==0)
-+			 * and it is not first in entries array
-+			 * (list entry for std attribute always first)
-+			 * So it is safe to step back
++			 * Calculate the subtable length.  If the codeword
++			 * length exceeds 'table_bits' by n, then the subtable
++			 * needs at least 2^n entries.  But it may need more; if
++			 * there are fewer than 2^n codewords of length
++			 * 'table_bits + n' remaining, then n will need to be
++			 * incremented to bring in longer codewords until the
++			 * subtable can be filled completely.  Note that it
++			 * always will, eventually, be possible to fill the
++			 * subtable, since it was previously verified that the
++			 * code is complete.
 +			 */
-+			mi_remove_attr(mi, attr);
-+
-+			if (!al_remove_le(ni, le)) {
-+				err = -EINVAL;
-+				goto out;
++			subtable_bits = codeword_len - table_bits;
++			remainder = (s32)1 << subtable_bits;
++			for (;;) {
++				remainder -= len_counts[table_bits +
++							subtable_bits];
++				if (remainder <= 0)
++					break;
++				subtable_bits++;
++				remainder <<= 1;
 +			}
 +
-+			le = (struct ATTR_LIST_ENTRY *)((u8 *)le - le_sz);
-+		} else {
-+			attr->nres.evcn = cpu_to_le64((u64)vcn - 1);
-+			mi->dirty = true;
++			/* Create the entry that points from the root table to
++			 * the subtable.  This entry contains the index of the
++			 * start of the subtable and the number of bits with
++			 * which the subtable is indexed (the log base 2 of the
++			 * number of entries it contains).
++			 */
++			decode_table[subtable_prefix] =
++				MAKE_DECODE_TABLE_ENTRY(subtable_pos,
++							subtable_bits);
 +		}
 +
-+		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
++		/* Fill the subtable entries for this symbol. */
++		entry = MAKE_DECODE_TABLE_ENTRY(sorted_syms[sym_idx],
++						    codeword_len - table_bits);
++		n = 1U << (subtable_bits - (codeword_len -
++						     table_bits));
++		do {
++			decode_table[subtable_pos++] = entry;
++		} while (--n);
 +
-+		if (vcn == new_alen) {
-+			attr_b->nres.data_size = cpu_to_le64(new_size);
-+			if (new_size < old_valid)
-+				attr_b->nres.valid_size =
-+					attr_b->nres.data_size;
-+		} else {
-+			if (new_alloc_tmp <=
-+			    le64_to_cpu(attr_b->nres.data_size))
-+				attr_b->nres.data_size =
-+					attr_b->nres.alloc_size;
-+			if (new_alloc_tmp <
-+			    le64_to_cpu(attr_b->nres.valid_size))
-+				attr_b->nres.valid_size =
-+					attr_b->nres.alloc_size;
-+		}
++		len_counts[codeword_len]--;
++		codeword++;
++	} while (++sym_idx < num_syms);
 +
-+		if (is_ext)
-+			le64_sub_cpu(&attr_b->nres.total_size,
-+				     ((u64)alen << cluster_bits));
++	return 0;
++}
+diff --git a/fs/ntfs3/lib/decompress_common.h b/fs/ntfs3/lib/decompress_common.h
+new file mode 100644
+index 000000000000..11f644687395
+--- /dev/null
++++ b/fs/ntfs3/lib/decompress_common.h
+@@ -0,0 +1,558 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
-+		mi_b->dirty = true;
++/*
++ * decompress_common.h
++ *
++ * Header for decompression code shared by multiple compression formats.
++ *
++ * The following copying information applies to this specific source code file:
++ *
++ * Written in 2012-2016 by Eric Biggers <ebiggers3@gmail.com>
++ *
++ * To the extent possible under law, the author(s) have dedicated all copyright
++ * and related and neighboring rights to this software to the public domain
++ * worldwide via the Creative Commons Zero 1.0 Universal Public Domain
++ * Dedication (the "CC0").
++ *
++ * This software is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE. See the CC0 for more details.
++ *
++ * You should have received a copy of the CC0 along with this software; if not
++ * see <http://creativecommons.org/publicdomain/zero/1.0/>.
++ */
 +
-+		if (new_alloc_tmp <= new_alloc)
-+			goto ok;
++#ifndef _DECOMPRESS_COMMON_H
++#define _DECOMPRESS_COMMON_H
 +
-+		old_size = new_alloc_tmp;
-+		vcn = svcn - 1;
++#include "common_defs.h"
 +
-+		if (le == le_b) {
-+			attr = attr_b;
-+			mi = mi_b;
-+			evcn = svcn - 1;
-+			svcn = 0;
-+			goto next_le;
-+		}
++/******************************************************************************/
++/*                   Input bitstream for XPRESS and LZX                       */
++/*----------------------------------------------------------------------------*/
 +
-+		if (le->type != type || le->name_len != name_len ||
-+		    memcmp(le_name(le), name, name_len * sizeof(short))) {
-+			err = -EINVAL;
-+			goto out;
-+		}
++/* Structure that encapsulates a block of in-memory data being interpreted as a
++ * stream of bits, optionally with interwoven literal bytes.  Bits are assumed
++ * to be stored in little endian 16-bit coding units, with the bits ordered high
++ * to low.
++ */
++struct input_bitstream {
 +
-+		err = ni_load_mi(ni, le, &mi);
-+		if (err)
-+			goto out;
++	/* Bits that have been read from the input buffer.  The bits are
++	 * left-justified; the next bit is always bit 31.
++	 */
++	u32 bitbuf;
 +
-+		attr = mi_find_attr(mi, NULL, type, name, name_len, &le->id);
-+		if (!attr) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		goto next_le_1;
-+	}
++	/* Number of bits currently held in @bitbuf.  */
++	u32 bitsleft;
 +
-+ok:
-+	if (new_valid) {
-+		__le64 valid = cpu_to_le64(min(*new_valid, new_size));
++	/* Pointer to the next byte to be retrieved from the input buffer.  */
++	const u8 *next;
 +
-+		if (attr_b->nres.valid_size != valid) {
-+			attr_b->nres.valid_size = valid;
-+			mi_b->dirty = true;
-+		}
-+	}
++	/* Pointer past the end of the input buffer.  */
++	const u8 *end;
++};
 +
-+out:
-+	if (!err && attr_b && ret)
-+		*ret = attr_b;
-+
-+	/* update inode_set_bytes*/
-+	if (!err && ((type == ATTR_DATA && !name_len) ||
-+		     (type == ATTR_ALLOC && name == I30_NAME))) {
-+		bool dirty = false;
-+
-+		if (ni->vfs_inode.i_size != new_size) {
-+			ni->vfs_inode.i_size = new_size;
-+			dirty = true;
-+		}
-+
-+		if (attr_b && attr_b->non_res) {
-+			new_alloc = le64_to_cpu(attr_b->nres.alloc_size);
-+			if (inode_get_bytes(&ni->vfs_inode) != new_alloc) {
-+				inode_set_bytes(&ni->vfs_inode, new_alloc);
-+				dirty = true;
-+			}
-+		}
-+
-+		if (dirty) {
-+			ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-+			mark_inode_dirty(&ni->vfs_inode);
-+		}
-+	}
-+
-+	return err;
++/* Initialize a bitstream to read from the specified input buffer.  */
++static forceinline void
++init_input_bitstream(struct input_bitstream *is, const void *buffer, u32 size)
++{
++	is->bitbuf = 0;
++	is->bitsleft = 0;
++	is->next = buffer;
++	is->end = is->next + size;
 +}
 +
-+int attr_data_get_block(struct ntfs_inode *ni, CLST vcn, CLST clen, CLST *lcn,
-+			CLST *len, bool *new)
++/* Note: for performance reasons, the following methods don't return error codes
++ * to the caller if the input buffer is overrun.  Instead, they just assume that
++ * all overrun data is zeroes.  This has no effect on well-formed compressed
++ * data.  The only disadvantage is that bad compressed data may go undetected,
++ * but even this is irrelevant if higher level code checksums the uncompressed
++ * data anyway.
++ */
++
++/* Ensure the bit buffer variable for the bitstream contains at least @num_bits
++ * bits.  Following this, bitstream_peek_bits() and/or bitstream_remove_bits()
++ * may be called on the bitstream to peek or remove up to @num_bits bits.
++ */
++static forceinline void
++bitstream_ensure_bits(struct input_bitstream *is, const u32 num_bits)
 +{
-+	int err = 0;
-+	struct runs_tree *run = &ni->file.run;
-+	struct ntfs_sb_info *sbi;
-+	u8 cluster_bits;
-+	struct ATTRIB *attr, *attr_b;
-+	struct ATTR_LIST_ENTRY *le, *le_b;
-+	struct mft_inode *mi, *mi_b;
-+	CLST hint, svcn, to_alloc, evcn1, next_svcn, asize, end;
-+	u64 new_size, total_size;
-+	u32 clst_per_frame;
-+	bool ok;
++	/* This currently works for at most 17 bits.  */
 +
-+	if (new)
-+		*new = false;
++	if (is->bitsleft >= num_bits)
++		return;
 +
-+	down_read(&ni->file.run_lock);
-+	ok = run_lookup_entry(run, vcn, lcn, len, NULL);
-+	up_read(&ni->file.run_lock);
++	if (unlikely(is->end - is->next < 2))
++		goto overflow;
 +
-+	if (ok && (*lcn != SPARSE_LCN || !new)) {
-+		/* normal way */
++	is->bitbuf |= (u32)get_unaligned_le16(is->next) << (16 - is->bitsleft);
++	is->next += 2;
++	is->bitsleft += 16;
++
++	if (unlikely(num_bits == 17 && is->bitsleft == 16)) {
++		if (unlikely(is->end - is->next < 2))
++			goto overflow;
++
++		is->bitbuf |= (u32)get_unaligned_le16(is->next);
++		is->next += 2;
++		is->bitsleft = 32;
++	}
++
++	return;
++
++overflow:
++	is->bitsleft = 32;
++}
++
++/* Return the next @num_bits bits from the bitstream, without removing them.
++ * There must be at least @num_bits remaining in the buffer variable, from a
++ * previous call to bitstream_ensure_bits().
++ */
++static forceinline u32
++bitstream_peek_bits(const struct input_bitstream *is, const u32 num_bits)
++{
++	return (is->bitbuf >> 1) >> (sizeof(is->bitbuf) * 8 - num_bits - 1);
++}
++
++/* Remove @num_bits from the bitstream.  There must be at least @num_bits
++ * remaining in the buffer variable, from a previous call to
++ * bitstream_ensure_bits().
++ */
++static forceinline void
++bitstream_remove_bits(struct input_bitstream *is, u32 num_bits)
++{
++	is->bitbuf <<= num_bits;
++	is->bitsleft -= num_bits;
++}
++
++/* Remove and return @num_bits bits from the bitstream.  There must be at least
++ * @num_bits remaining in the buffer variable, from a previous call to
++ * bitstream_ensure_bits().
++ */
++static forceinline u32
++bitstream_pop_bits(struct input_bitstream *is, u32 num_bits)
++{
++	u32 bits = bitstream_peek_bits(is, num_bits);
++
++	bitstream_remove_bits(is, num_bits);
++	return bits;
++}
++
++/* Read and return the next @num_bits bits from the bitstream.  */
++static forceinline u32
++bitstream_read_bits(struct input_bitstream *is, u32 num_bits)
++{
++	bitstream_ensure_bits(is, num_bits);
++	return bitstream_pop_bits(is, num_bits);
++}
++
++/* Read and return the next literal byte embedded in the bitstream.  */
++static forceinline u8
++bitstream_read_byte(struct input_bitstream *is)
++{
++	if (unlikely(is->end == is->next))
 +		return 0;
-+	}
-+
-+	if (!clen)
-+		clen = 1;
-+
-+	if (ok && clen > *len)
-+		clen = *len;
-+
-+	sbi = ni->mi.sbi;
-+	cluster_bits = sbi->cluster_bits;
-+	new_size = ((u64)vcn + clen) << cluster_bits;
-+
-+	ni_lock(ni);
-+	down_write(&ni->file.run_lock);
-+
-+	le_b = NULL;
-+	attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL, &mi_b);
-+	if (!attr_b) {
-+		err = -ENOENT;
-+		goto out;
-+	}
-+
-+	if (!attr_b->non_res) {
-+		*lcn = RESIDENT_LCN;
-+		*len = 1;
-+		goto out;
-+	}
-+
-+	asize = le64_to_cpu(attr_b->nres.alloc_size) >> sbi->cluster_bits;
-+	if (vcn >= asize) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	clst_per_frame = 1u << attr_b->nres.c_unit;
-+	to_alloc = (clen + clst_per_frame - 1) & ~(clst_per_frame - 1);
-+
-+	if (vcn + to_alloc > asize)
-+		to_alloc = asize - vcn;
-+
-+	svcn = le64_to_cpu(attr_b->nres.svcn);
-+	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
-+
-+	attr = attr_b;
-+	le = le_b;
-+	mi = mi_b;
-+
-+	if (le_b && (vcn < svcn || evcn1 <= vcn)) {
-+		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
-+				    &mi);
-+		if (!attr) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
-+	}
-+
-+	err = attr_load_runs(attr, ni, run, NULL);
-+	if (err)
-+		goto out;
-+
-+	if (!ok) {
-+		ok = run_lookup_entry(run, vcn, lcn, len, NULL);
-+		if (ok && (*lcn != SPARSE_LCN || !new)) {
-+			/* normal way */
-+			err = 0;
-+			goto ok;
-+		}
-+
-+		if (!ok && !new) {
-+			*len = 0;
-+			err = 0;
-+			goto ok;
-+		}
-+
-+		if (ok && clen > *len) {
-+			clen = *len;
-+			new_size = ((u64)vcn + clen) << cluster_bits;
-+			to_alloc = (clen + clst_per_frame - 1) &
-+				   ~(clst_per_frame - 1);
-+		}
-+	}
-+
-+	if (!is_attr_ext(attr_b)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	/* Get the last lcn to allocate from */
-+	hint = 0;
-+
-+	if (vcn > evcn1) {
-+		if (!run_add_entry(run, evcn1, SPARSE_LCN, vcn - evcn1,
-+				   false)) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+	} else if (vcn && !run_lookup_entry(run, vcn - 1, &hint, NULL, NULL)) {
-+		hint = -1;
-+	}
-+
-+	err = attr_allocate_clusters(
-+		sbi, run, vcn, hint + 1, to_alloc, NULL, 0, len,
-+		(sbi->record_size - le32_to_cpu(mi->mrec->used) + 8) / 3 + 1,
-+		lcn);
-+	if (err)
-+		goto out;
-+	*new = true;
-+
-+	end = vcn + *len;
-+
-+	total_size = le64_to_cpu(attr_b->nres.total_size) +
-+		     ((u64)*len << cluster_bits);
-+
-+repack:
-+	err = mi_pack_runs(mi, attr, run, max(end, evcn1) - svcn);
-+	if (err)
-+		goto out;
-+
-+	attr_b->nres.total_size = cpu_to_le64(total_size);
-+	inode_set_bytes(&ni->vfs_inode, total_size);
-+	ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-+
-+	mi_b->dirty = true;
-+	mark_inode_dirty(&ni->vfs_inode);
-+
-+	/* stored [vcn : next_svcn) from [vcn : end) */
-+	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-+
-+	if (end <= evcn1) {
-+		if (next_svcn == evcn1) {
-+			/* Normal way. update attribute and exit */
-+			goto ok;
-+		}
-+		/* add new segment [next_svcn : evcn1 - next_svcn )*/
-+		if (!ni->attr_list.size) {
-+			err = ni_create_attr_list(ni);
-+			if (err)
-+				goto out;
-+			/* layout of records is changed */
-+			le_b = NULL;
-+			attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL,
-+					      0, NULL, &mi_b);
-+			if (!attr_b) {
-+				err = -ENOENT;
-+				goto out;
-+			}
-+
-+			attr = attr_b;
-+			le = le_b;
-+			mi = mi_b;
-+			goto repack;
-+		}
-+	}
-+
-+	svcn = evcn1;
-+
-+	/* Estimate next attribute */
-+	attr = ni_find_attr(ni, attr, &le, ATTR_DATA, NULL, 0, &svcn, &mi);
-+
-+	if (attr) {
-+		CLST alloc = bytes_to_cluster(
-+			sbi, le64_to_cpu(attr_b->nres.alloc_size));
-+		CLST evcn = le64_to_cpu(attr->nres.evcn);
-+
-+		if (end < next_svcn)
-+			end = next_svcn;
-+		while (end > evcn) {
-+			/* remove segment [svcn : evcn)*/
-+			mi_remove_attr(mi, attr);
-+
-+			if (!al_remove_le(ni, le)) {
-+				err = -EINVAL;
-+				goto out;
-+			}
-+
-+			if (evcn + 1 >= alloc) {
-+				/* last attribute segment */
-+				evcn1 = evcn + 1;
-+				goto ins_ext;
-+			}
-+
-+			if (ni_load_mi(ni, le, &mi)) {
-+				attr = NULL;
-+				goto out;
-+			}
-+
-+			attr = mi_find_attr(mi, NULL, ATTR_DATA, NULL, 0,
-+					    &le->id);
-+			if (!attr) {
-+				err = -EINVAL;
-+				goto out;
-+			}
-+			svcn = le64_to_cpu(attr->nres.svcn);
-+			evcn = le64_to_cpu(attr->nres.evcn);
-+		}
-+
-+		if (end < svcn)
-+			end = svcn;
-+
-+		err = attr_load_runs(attr, ni, run, &end);
-+		if (err)
-+			goto out;
-+
-+		evcn1 = evcn + 1;
-+		attr->nres.svcn = cpu_to_le64(next_svcn);
-+		err = mi_pack_runs(mi, attr, run, evcn1 - next_svcn);
-+		if (err)
-+			goto out;
-+
-+		le->vcn = cpu_to_le64(next_svcn);
-+		ni->attr_list.dirty = true;
-+		mi->dirty = true;
-+
-+		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-+	}
-+ins_ext:
-+	if (evcn1 > next_svcn) {
-+		err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run,
-+					    next_svcn, evcn1 - next_svcn,
-+					    attr_b->flags, &attr, &mi);
-+		if (err)
-+			goto out;
-+	}
-+ok:
-+	run_truncate_around(run, vcn);
-+out:
-+	up_write(&ni->file.run_lock);
-+	ni_unlock(ni);
-+
-+	return err;
++	return *is->next++;
 +}
 +
-+int attr_data_read_resident(struct ntfs_inode *ni, struct page *page)
++/* Read and return the next 16-bit integer embedded in the bitstream.  */
++static forceinline u16
++bitstream_read_u16(struct input_bitstream *is)
 +{
-+	u64 vbo;
-+	struct ATTRIB *attr;
-+	u32 data_size;
++	u16 v;
 +
-+	attr = ni_find_attr(ni, NULL, NULL, ATTR_DATA, NULL, 0, NULL, NULL);
-+	if (!attr)
-+		return -EINVAL;
++	if (unlikely(is->end - is->next < 2))
++		return 0;
++	v = get_unaligned_le16(is->next);
++	is->next += 2;
++	return v;
++}
 +
-+	if (attr->non_res)
-+		return E_NTFS_NONRESIDENT;
++/* Read and return the next 32-bit integer embedded in the bitstream.  */
++static forceinline u32
++bitstream_read_u32(struct input_bitstream *is)
++{
++	u32 v;
 +
-+	vbo = page->index << PAGE_SHIFT;
-+	data_size = le32_to_cpu(attr->res.data_size);
-+	if (vbo < data_size) {
-+		const char *data = resident_data(attr);
-+		char *kaddr = kmap_atomic(page);
-+		u32 use = data_size - vbo;
++	if (unlikely(is->end - is->next < 4))
++		return 0;
++	v = get_unaligned_le32(is->next);
++	is->next += 4;
++	return v;
++}
 +
-+		if (use > PAGE_SIZE)
-+			use = PAGE_SIZE;
-+
-+		memcpy(kaddr, data + vbo, use);
-+		memset(kaddr + use, 0, PAGE_SIZE - use);
-+		kunmap_atomic(kaddr);
-+		flush_dcache_page(page);
-+		SetPageUptodate(page);
-+	} else if (!PageUptodate(page)) {
-+		zero_user_segment(page, 0, PAGE_SIZE);
-+		SetPageUptodate(page);
-+	}
-+
++/* Read into @dst_buffer an array of literal bytes embedded in the bitstream.
++ * Return 0 if there were enough bytes remaining in the input, otherwise -1.
++ */
++static forceinline int
++bitstream_read_bytes(struct input_bitstream *is, void *dst_buffer, size_t count)
++{
++	if (unlikely(is->end - is->next < count))
++		return -1;
++	memcpy(dst_buffer, is->next, count);
++	is->next += count;
 +	return 0;
 +}
 +
-+int attr_data_write_resident(struct ntfs_inode *ni, struct page *page)
++/* Align the input bitstream on a coding-unit boundary.  */
++static forceinline void
++bitstream_align(struct input_bitstream *is)
 +{
-+	u64 vbo;
-+	struct mft_inode *mi;
-+	struct ATTRIB *attr;
-+	u32 data_size;
-+
-+	attr = ni_find_attr(ni, NULL, NULL, ATTR_DATA, NULL, 0, NULL, &mi);
-+	if (!attr)
-+		return -EINVAL;
-+
-+	if (attr->non_res) {
-+		/*return special error code to check this case*/
-+		return E_NTFS_NONRESIDENT;
-+	}
-+
-+	vbo = page->index << PAGE_SHIFT;
-+	data_size = le32_to_cpu(attr->res.data_size);
-+	if (vbo < data_size) {
-+		char *data = resident_data(attr);
-+		char *kaddr = kmap_atomic(page);
-+		u32 use = data_size - vbo;
-+
-+		if (use > PAGE_SIZE)
-+			use = PAGE_SIZE;
-+		memcpy(data + vbo, kaddr, use);
-+		kunmap_atomic(kaddr);
-+		mi->dirty = true;
-+	}
-+	ni->i_valid = data_size;
-+
-+	return 0;
++	is->bitsleft = 0;
++	is->bitbuf = 0;
 +}
++
++/******************************************************************************/
++/*                             Huffman decoding                               */
++/*----------------------------------------------------------------------------*/
 +
 +/*
-+ * attr_load_runs_vcn
++ * Required alignment for the Huffman decode tables.  We require this alignment
++ * so that we can fill the entries with vector or word instructions and not have
++ * to deal with misaligned buffers.
++ */
++#define DECODE_TABLE_ALIGNMENT 16
++
++/*
++ * Each decode table entry is 16 bits divided into two fields: 'symbol' (high 12
++ * bits) and 'length' (low 4 bits).  The precise meaning of these fields depends
++ * on the type of entry:
 + *
-+ * load runs with vcn
-+ */
-+int attr_load_runs_vcn(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+		       const __le16 *name, u8 name_len, struct runs_tree *run,
-+		       CLST vcn)
-+{
-+	struct ATTRIB *attr;
-+	int err;
-+	CLST svcn, evcn;
-+	u16 ro;
-+
-+	attr = ni_find_attr(ni, NULL, NULL, type, name, name_len, &vcn, NULL);
-+	if (!attr)
-+		return -ENOENT;
-+
-+	svcn = le64_to_cpu(attr->nres.svcn);
-+	evcn = le64_to_cpu(attr->nres.evcn);
-+
-+	if (evcn < vcn || vcn < svcn)
-+		return -EINVAL;
-+
-+	ro = le16_to_cpu(attr->nres.run_off);
-+	err = run_unpack_ex(run, ni->mi.sbi, ni->mi.rno, svcn, evcn, svcn,
-+			    Add2Ptr(attr, ro), le32_to_cpu(attr->size) - ro);
-+	if (err < 0)
-+		return err;
-+	return 0;
-+}
-+
-+#ifdef CONFIG_NTFS3_LZX_XPRESS
-+/*
-+ * load runs for given range [from to)
-+ */
-+int attr_wof_load_runs_range(struct ntfs_inode *ni, struct runs_tree *run,
-+			     u64 from, u64 to)
-+{
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	u8 cluster_bits = sbi->cluster_bits;
-+	CLST vcn = from >> cluster_bits;
-+	CLST vcn_last = (to - 1) >> cluster_bits;
-+	CLST lcn, clen;
-+	int err;
-+
-+	for (vcn = from >> cluster_bits; vcn <= vcn_last; vcn += clen) {
-+		if (!run_lookup_entry(run, vcn, &lcn, &clen, NULL)) {
-+			err = attr_load_runs_vcn(ni, ATTR_DATA, WOF_NAME,
-+						 ARRAY_SIZE(WOF_NAME), run,
-+						 vcn);
-+			if (err)
-+				return err;
-+			clen = 0; /*next run_lookup_entry(vcn) must be success*/
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * attr_wof_frame_info
++ * Root table entries which are *not* subtable pointers:
++ *	symbol: symbol to decode
++ *	length: codeword length in bits
 + *
-+ * read header of xpress/lzx file to get info about frame
++ * Root table entries which are subtable pointers:
++ *	symbol: index of start of subtable
++ *	length: number of bits with which the subtable is indexed
++ *
++ * Subtable entries:
++ *	symbol: symbol to decode
++ *	length: codeword length in bits, minus the number of bits with which the
++ *		root table is indexed
 + */
-+int attr_wof_frame_info(struct ntfs_inode *ni, struct ATTRIB *attr,
-+			struct runs_tree *run, u64 frame, u64 frames,
-+			u8 frame_bits, u32 *ondisk_size, u64 *vbo_data)
-+{
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	u64 vbo[2], off[2], wof_size;
-+	u32 voff;
-+	u8 bytes_per_off;
-+	char *addr;
-+	struct page *page;
-+	int i, err;
-+	__le32 *off32;
-+	__le64 *off64;
++#define DECODE_TABLE_SYMBOL_SHIFT  4
++#define DECODE_TABLE_MAX_SYMBOL	   ((1 << (16 - DECODE_TABLE_SYMBOL_SHIFT)) - 1)
++#define DECODE_TABLE_MAX_LENGTH    ((1 << DECODE_TABLE_SYMBOL_SHIFT) - 1)
++#define DECODE_TABLE_LENGTH_MASK   DECODE_TABLE_MAX_LENGTH
++#define MAKE_DECODE_TABLE_ENTRY(symbol, length) \
++	(((symbol) << DECODE_TABLE_SYMBOL_SHIFT) | (length))
 +
-+	if (ni->vfs_inode.i_size < 0x100000000ull) {
-+		/* file starts with array of 32 bit offsets */
-+		bytes_per_off = sizeof(__le32);
-+		vbo[1] = frame << 2;
-+		*vbo_data = frames << 2;
-+	} else {
-+		/* file starts with array of 64 bit offsets */
-+		bytes_per_off = sizeof(__le64);
-+		vbo[1] = frame << 3;
-+		*vbo_data = frames << 3;
++/*
++ * Read and return the next Huffman-encoded symbol from the given bitstream
++ * using the given decode table.
++ *
++ * If the input data is exhausted, then the Huffman symbol will be decoded as if
++ * the missing bits were all zeroes.
++ *
++ * XXX: This is mostly duplicated in lzms_decode_huffman_symbol() in
++ * lzms_decompress.c; keep them in sync!
++ */
++static forceinline u32
++read_huffsym(struct input_bitstream *is, const u16 decode_table[],
++	     u32 table_bits, u32 max_codeword_len)
++{
++	u32 entry;
++	u32 symbol;
++	u32 length;
++
++	/* Preload the bitbuffer with 'max_codeword_len' bits so that we're
++	 * guaranteed to be able to fully decode a codeword.
++	 */
++	bitstream_ensure_bits(is, max_codeword_len);
++
++	/* Index the root table by the next 'table_bits' bits of input. */
++	entry = decode_table[bitstream_peek_bits(is, table_bits)];
++
++	/* Extract the "symbol" and "length" from the entry. */
++	symbol = entry >> DECODE_TABLE_SYMBOL_SHIFT;
++	length = entry & DECODE_TABLE_LENGTH_MASK;
++
++	/* If the root table is indexed by the full 'max_codeword_len' bits,
++	 * then there cannot be any subtables, and this will be known at compile
++	 * time.  Otherwise, we must check whether the decoded symbol is really
++	 * a subtable pointer.  If so, we must discard the bits with which the
++	 * root table was indexed, then index the subtable by the next 'length'
++	 * bits of input to get the real entry.
++	 */
++	if (max_codeword_len > table_bits &&
++	    entry >= (1U << (table_bits + DECODE_TABLE_SYMBOL_SHIFT))) {
++		/* Subtable required */
++		bitstream_remove_bits(is, table_bits);
++		entry = decode_table[symbol + bitstream_peek_bits(is, length)];
++		symbol = entry >> DECODE_TABLE_SYMBOL_SHIFT;
++		length = entry & DECODE_TABLE_LENGTH_MASK;
 +	}
++
++	/* Discard the bits (or the remaining bits, if a subtable was required)
++	 * of the codeword.
++	 */
++	bitstream_remove_bits(is, length);
++
++	/* Return the decoded symbol. */
++	return symbol;
++}
++
++/*
++ * The DECODE_TABLE_ENOUGH() macro evaluates to the maximum number of decode
++ * table entries, including all subtable entries, that may be required for
++ * decoding a given Huffman code.  This depends on three parameters:
++ *
++ *	num_syms: the maximum number of symbols in the code
++ *	table_bits: the number of bits with which the root table will be indexed
++ *	max_codeword_len: the maximum allowed codeword length in the code
++ *
++ * Given these parameters, the utility program 'enough' from zlib, when passed
++ * the three arguments 'num_syms', 'table_bits', and 'max_codeword_len', will
++ * compute the maximum number of entries required.  This has already been done
++ * for the combinations we need and incorporated into the macro below so that
++ * the mapping can be done at compilation time.  If an unknown combination is
++ * used, then a compilation error will result.  To fix this, use 'enough' to
++ * find the missing value and add it below.  If that still doesn't fix the
++ * compilation error, then most likely a constraint would be violated by the
++ * requested parameters, so they cannot be used, at least without other changes
++ * to the decode table --- see DECODE_TABLE_SIZE().
++ */
++#define DECODE_TABLE_ENOUGH(num_syms, table_bits, max_codeword_len) ( \
++	((num_syms) == 8 && (table_bits) == 7 && (max_codeword_len) == 15) ? 128 : \
++	((num_syms) == 8 && (table_bits) == 5 && (max_codeword_len) == 7) ? 36 : \
++	((num_syms) == 8 && (table_bits) == 6 && (max_codeword_len) == 7) ? 66 : \
++	((num_syms) == 8 && (table_bits) == 7 && (max_codeword_len) == 7) ? 128 : \
++	((num_syms) == 20 && (table_bits) == 5 && (max_codeword_len) == 15) ? 1062 : \
++	((num_syms) == 20 && (table_bits) == 6 && (max_codeword_len) == 15) ? 582 : \
++	((num_syms) == 20 && (table_bits) == 7 && (max_codeword_len) == 15) ? 390 : \
++	((num_syms) == 54 && (table_bits) == 9 && (max_codeword_len) == 15) ? 618 : \
++	((num_syms) == 54 && (table_bits) == 10 && (max_codeword_len) == 15) ? 1098 : \
++	((num_syms) == 249 && (table_bits) == 9 && (max_codeword_len) == 16) ? 878 : \
++	((num_syms) == 249 && (table_bits) == 10 && (max_codeword_len) == 16) ? 1326 : \
++	((num_syms) == 249 && (table_bits) == 11 && (max_codeword_len) == 16) ? 2318 : \
++	((num_syms) == 256 && (table_bits) == 9 && (max_codeword_len) == 15) ? 822 : \
++	((num_syms) == 256 && (table_bits) == 10 && (max_codeword_len) == 15) ? 1302 : \
++	((num_syms) == 256 && (table_bits) == 11 && (max_codeword_len) == 15) ? 2310 : \
++	((num_syms) == 512 && (table_bits) == 10 && (max_codeword_len) == 15) ? 1558 : \
++	((num_syms) == 512 && (table_bits) == 11 && (max_codeword_len) == 15) ? 2566 : \
++	((num_syms) == 512 && (table_bits) == 12 && (max_codeword_len) == 15) ? 4606 : \
++	((num_syms) == 656 && (table_bits) == 10 && (max_codeword_len) == 16) ? 1734 : \
++	((num_syms) == 656 && (table_bits) == 11 && (max_codeword_len) == 16) ? 2726 : \
++	((num_syms) == 656 && (table_bits) == 12 && (max_codeword_len) == 16) ? 4758 : \
++	((num_syms) == 799 && (table_bits) == 9 && (max_codeword_len) == 15) ? 1366 : \
++	((num_syms) == 799 && (table_bits) == 10 && (max_codeword_len) == 15) ? 1846 : \
++	((num_syms) == 799 && (table_bits) == 11 && (max_codeword_len) == 15) ? 2854 : \
++	-1)
++
++/* Wrapper around DECODE_TABLE_ENOUGH() that does additional compile-time
++ * validation.
++ */
++#define DECODE_TABLE_SIZE(num_syms, table_bits, max_codeword_len) (	\
++									\
++	/* All values must be positive. */				\
++	STATIC_ASSERT_ZERO((num_syms) > 0) +				\
++	STATIC_ASSERT_ZERO((table_bits) > 0) +				\
++	STATIC_ASSERT_ZERO((max_codeword_len) > 0) +			\
++									\
++	/* There cannot be more symbols than possible codewords. */	\
++	STATIC_ASSERT_ZERO((num_syms) <= 1U << (max_codeword_len)) +	\
++									\
++	/* There is no reason for the root table to be indexed with */	\
++	/* more bits than the maximum codeword length. */		\
++	STATIC_ASSERT_ZERO((table_bits) <= (max_codeword_len)) +	\
++									\
++	/* The maximum symbol value must fit in the 'symbol' field. */	\
++	STATIC_ASSERT_ZERO((num_syms) - 1 <= DECODE_TABLE_MAX_SYMBOL) +	\
++									\
++	/* The maximum codeword length in the root table must fit in */ \
++	/* the 'length' field. */					\
++	STATIC_ASSERT_ZERO((table_bits) <= DECODE_TABLE_MAX_LENGTH) +	\
++									\
++	/* The maximum codeword length in a subtable must fit in the */	\
++	/* 'length' field. */						\
++	STATIC_ASSERT_ZERO((max_codeword_len) - (table_bits) <=		\
++				DECODE_TABLE_MAX_LENGTH) +		\
++									\
++	/* The minimum subtable index must be greater than the maximum */\
++	/* symbol value.  If this were not the case, then there would */\
++	/* be no way to tell whether a given root table entry is a */	\
++	/* "subtable pointer" or not.  (An alternate solution would */	\
++	/* be to reserve a flag bit specifically for this purpose.) */	\
++	STATIC_ASSERT_ZERO((1U << (table_bits)) > (num_syms) - 1) +	\
++									\
++	/* The needed 'enough' value must have been defined. */		\
++	STATIC_ASSERT_ZERO(DECODE_TABLE_ENOUGH(				\
++				(num_syms), (table_bits),		\
++				(max_codeword_len)) > 0) +		\
++									\
++	/* The maximum subtable index must fit in the 'symbol' field. */\
++	STATIC_ASSERT_ZERO(DECODE_TABLE_ENOUGH(				\
++				(num_syms), (table_bits),		\
++				(max_codeword_len)) - 1 <=		\
++					DECODE_TABLE_MAX_SYMBOL) +	\
++									\
++	/* Finally, make the macro evaluate to the needed maximum */	\
++	/* number of decode table entries. */				\
++	DECODE_TABLE_ENOUGH((num_syms), (table_bits),			\
++			    (max_codeword_len))				\
++)
++
++
++/*
++ * Declare the decode table for a Huffman code, given several compile-time
++ * constants that describe the code.  See DECODE_TABLE_ENOUGH() for details.
++ *
++ * Decode tables must be aligned to a DECODE_TABLE_ALIGNMENT-byte boundary.
++ * This implies that if a decode table is nested inside a dynamically allocated
++ * structure, then the outer structure must be allocated on a
++ * DECODE_TABLE_ALIGNMENT-byte aligned boundary as well.
++ */
++#define DECODE_TABLE(name, num_syms, table_bits, max_codeword_len) \
++	u16 name[DECODE_TABLE_SIZE((num_syms), (table_bits), \
++				   (max_codeword_len))]	\
++		_aligned_attribute(DECODE_TABLE_ALIGNMENT)
++
++/*
++ * Declare the temporary "working_space" array needed for building the decode
++ * table for a Huffman code.
++ */
++#define DECODE_TABLE_WORKING_SPACE(name, num_syms, max_codeword_len)	\
++	u16 name[2 * ((max_codeword_len) + 1)  + (num_syms)]
++
++extern int
++make_huffman_decode_table(u16 decode_table[], u32 num_syms,
++			  u32 table_bits, const u8 lens[],
++			  u32 max_codeword_len, u16 working_space[]);
++
++/******************************************************************************/
++/*                             LZ match copying                               */
++/*----------------------------------------------------------------------------*/
++
++static forceinline void
++copy_word_unaligned(const void *src, void *dst)
++{
++	store_word_unaligned(load_word_unaligned(src), dst);
++}
++
++static forceinline size_t
++repeat_u16(u16 b)
++{
++	size_t v = b;
++
++	STATIC_ASSERT(WORDBITS == 32 || WORDBITS == 64);
++	v |= v << 16;
++	v |= v << ((WORDBITS == 64) ? 32 : 0);
++	return v;
++}
++
++static forceinline size_t
++repeat_byte(u8 b)
++{
++	return repeat_u16(((u16)b << 8) | b);
++}
++
++/*
++ * Copy an LZ77 match of 'length' bytes from the match source at 'out_next -
++ * offset' to the match destination at 'out_next'.  The source and destination
++ * may overlap.
++ *
++ * This handles validating the length and offset.  It is validated that the
++ * beginning of the match source is '>= out_begin' and that end of the match
++ * destination is '<= out_end'.  The return value is 0 if the match was valid
++ * (and was copied), otherwise -1.
++ *
++ * 'min_length' is a hint which specifies the minimum possible match length.
++ * This should be a compile-time constant.
++ */
++static forceinline int
++lz_copy(u32 length, u32 offset, u8 *out_begin, u8 *out_next, u8 *out_end,
++	u32 min_length)
++{
++	const u8 *src;
++	u8 *end;
++
++	/* Validate the offset. */
++	if (unlikely(offset > out_next - out_begin))
++		return -1;
 +
 +	/*
-+	 * read 4/8 bytes at [vbo - 4(8)] == offset where compressed frame starts
-+	 * read 4/8 bytes at [vbo] == offset where compressed frame ends
++	 * Fast path: copy a match which is no longer than a few words, is not
++	 * overlapped such that copying a word at a time would produce incorrect
++	 * results, and is not too close to the end of the buffer.  Note that
++	 * this might copy more than the length of the match, but that's okay in
++	 * this scenario.
 +	 */
-+	if (!attr->non_res) {
-+		if (vbo[1] + bytes_per_off > le32_to_cpu(attr->res.data_size)) {
-+			ntfs_inode_err(&ni->vfs_inode, "is corrupted");
-+			return -EINVAL;
-+		}
-+		addr = resident_data(attr);
-+
-+		if (bytes_per_off == sizeof(__le32)) {
-+			off32 = Add2Ptr(addr, vbo[1]);
-+			off[0] = vbo[1] ? le32_to_cpu(off32[-1]) : 0;
-+			off[1] = le32_to_cpu(off32[0]);
-+		} else {
-+			off64 = Add2Ptr(addr, vbo[1]);
-+			off[0] = vbo[1] ? le64_to_cpu(off64[-1]) : 0;
-+			off[1] = le64_to_cpu(off64[0]);
-+		}
-+
-+		*vbo_data += off[0];
-+		*ondisk_size = off[1] - off[0];
++	src = out_next - offset;
++	if (UNALIGNED_ACCESS_IS_FAST && length <= 3 * WORDBYTES &&
++	    offset >= WORDBYTES && out_end - out_next >= 3 * WORDBYTES) {
++		copy_word_unaligned(src + WORDBYTES*0, out_next + WORDBYTES*0);
++		copy_word_unaligned(src + WORDBYTES*1, out_next + WORDBYTES*1);
++		copy_word_unaligned(src + WORDBYTES*2, out_next + WORDBYTES*2);
 +		return 0;
 +	}
 +
-+	wof_size = le64_to_cpu(attr->nres.data_size);
-+	down_write(&ni->file.run_lock);
-+	page = ni->file.offs_page;
-+	if (!page) {
-+		page = alloc_page(GFP_KERNEL);
-+		if (!page) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		page->index = -1;
-+		ni->file.offs_page = page;
-+	}
-+	lock_page(page);
-+	addr = page_address(page);
++	/* Validate the length.  This isn't needed in the fast path above, due
++	 * to the additional conditions tested, but we do need it here.
++	 */
++	if (unlikely(length > out_end - out_next))
++		return -1;
++	end = out_next + length;
 +
-+	if (vbo[1]) {
-+		voff = vbo[1] & (PAGE_SIZE - 1);
-+		vbo[0] = vbo[1] - bytes_per_off;
-+		i = 0;
-+	} else {
-+		voff = 0;
-+		vbo[0] = 0;
-+		off[0] = 0;
-+		i = 1;
++	/*
++	 * Try to copy one word at a time.  On i386 and x86_64 this is faster
++	 * than copying one byte at a time, unless the data is near-random and
++	 * all the matches have very short lengths.  Note that since this
++	 * requires unaligned memory accesses, it won't necessarily be faster on
++	 * every architecture.
++	 *
++	 * Also note that we might copy more than the length of the match.  For
++	 * example, if a word is 8 bytes and the match is of length 5, then
++	 * we'll simply copy 8 bytes.  This is okay as long as we don't write
++	 * beyond the end of the output buffer, hence the check for (out_end -
++	 * end >= WORDBYTES - 1).
++	 */
++	if (UNALIGNED_ACCESS_IS_FAST && likely(out_end - end >= WORDBYTES - 1)) {
++		if (offset >= WORDBYTES) {
++			/* The source and destination words don't overlap. */
++			do {
++				copy_word_unaligned(src, out_next);
++				src += WORDBYTES;
++				out_next += WORDBYTES;
++			} while (out_next < end);
++			return 0;
++		} else if (offset == 1) {
++			/* Offset 1 matches are equivalent to run-length
++			 * encoding of the previous byte.  This case is common
++			 * if the data contains many repeated bytes.
++			 */
++			size_t v = repeat_byte(*(out_next - 1));
++
++			do {
++				store_word_unaligned(v, out_next);
++				src += WORDBYTES;
++				out_next += WORDBYTES;
++			} while (out_next < end);
++			return 0;
++		}
++		/*
++		 * We don't bother with special cases for other 'offset <
++		 * WORDBYTES', which are usually rarer than 'offset == 1'.
++		 * Extra checks will just slow things down.  Actually, it's
++		 * possible to handle all the 'offset < WORDBYTES' cases using
++		 * the same code, but it still becomes more complicated doesn't
++		 * seem any faster overall; it definitely slows down the more
++		 * common 'offset == 1' case.
++		 */
 +	}
++
++	/* Fall back to a bytewise copy.  */
++	if (min_length >= 2)
++		*out_next++ = *src++;
++	if (min_length >= 3)
++		*out_next++ = *src++;
++	if (min_length >= 4)
++		*out_next++ = *src++;
++	do {
++		*out_next++ = *src++;
++	} while (out_next != end);
++	return 0;
++}
++
++#endif /* _DECOMPRESS_COMMON_H */
+diff --git a/fs/ntfs3/lib/lzx_common.c b/fs/ntfs3/lib/lzx_common.c
+new file mode 100644
+index 000000000000..d89d0fac333c
+--- /dev/null
++++ b/fs/ntfs3/lib/lzx_common.c
+@@ -0,0 +1,204 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * lzx_common.c - Common code for LZX compression and decompression.
++ */
++
++/*
++ * Copyright (C) 2012-2016 Eric Biggers
++ *
++ * This program is free software: you can redistribute it and/or modify it under
++ * the terms of the GNU General Public License as published by the Free Software
++ * Foundation, either version 2 of the License, or (at your option) any later
++ * version.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include "lzx_common.h"
++
++/* Mapping: offset slot => first match offset that uses that offset slot.
++ * The offset slots for repeat offsets map to "fake" offsets < 1.
++ */
++const s32 lzx_offset_slot_base[LZX_MAX_OFFSET_SLOTS + 1] = {
++	-2,	 -1,	  0,	   1,	    2,		/* 0  --- 4  */
++	4,	 6,	  10,	   14,	    22,		/* 5  --- 9  */
++	30,	 46,	  62,	   94,	    126,	/* 10 --- 14 */
++	190,	 254,	  382,	   510,	    766,	/* 15 --- 19 */
++	1022,	 1534,	  2046,	   3070,    4094,	/* 20 --- 24 */
++	6142,	 8190,	  12286,   16382,   24574,	/* 25 --- 29 */
++	32766,	 49150,	  65534,   98302,   131070,	/* 30 --- 34 */
++	196606,	 262142,  393214,  524286,  655358,	/* 35 --- 39 */
++	786430,	 917502,  1048574, 1179646, 1310718,	/* 40 --- 44 */
++	1441790, 1572862, 1703934, 1835006, 1966078,	/* 45 --- 49 */
++	2097150						/* extra     */
++};
++
++/* Mapping: offset slot => how many extra bits must be read and added to the
++ * corresponding offset slot base to decode the match offset.
++ */
++const u8 lzx_extra_offset_bits[LZX_MAX_OFFSET_SLOTS] = {
++	0,	0,	0,	0,	1,
++	1,	2,	2,	3,	3,
++	4,	4,	5,	5,	6,
++	6,	7,	7,	8,	8,
++	9,	9,	10,	10,	11,
++	11,	12,	12,	13,	13,
++	14,	14,	15,	15,	16,
++	16,	17,	17,	17,	17,
++	17,	17,	17,	17,	17,
++	17,	17,	17,	17,	17,
++};
++
++
++/* Round the specified buffer size up to the next valid LZX window size, and
++ * return its order (log2).  Or, if the buffer size is 0 or greater than the
++ * largest valid LZX window size, return 0.
++ */
++u32
++lzx_get_window_order(size_t max_bufsize)
++{
++	if (max_bufsize == 0 || max_bufsize > LZX_MAX_WINDOW_SIZE)
++		return 0;
++
++	return max(ilog2_ceil(max_bufsize), LZX_MIN_WINDOW_ORDER);
++}
++
++/* Given a valid LZX window order, return the number of symbols that will exist
++ * in the main Huffman code.
++ */
++u32
++lzx_get_num_main_syms(u32 window_order)
++{
++	/* Note: one would expect that the maximum match offset would be
++	 * 'window_size - LZX_MIN_MATCH_LEN', which would occur if the first two
++	 * bytes were to match the last two bytes.  However, the format
++	 * disallows this case.  This reduces the number of needed offset slots
++	 * by 1.
++	 */
++	u32 window_size = (u32)1 << window_order;
++	u32 max_offset = window_size - LZX_MIN_MATCH_LEN - 1;
++	u32 num_offset_slots = 30;
++
++	while (max_offset >= lzx_offset_slot_base[num_offset_slots])
++		num_offset_slots++;
++
++	return LZX_NUM_CHARS + (num_offset_slots * LZX_NUM_LEN_HEADERS);
++}
++
++static void
++do_translate_target(void *target, s32 input_pos)
++{
++	s32 abs_offset, rel_offset;
++
++	rel_offset = get_unaligned_le32(target);
++	if (rel_offset >= -input_pos && rel_offset < LZX_WIM_MAGIC_FILESIZE) {
++		if (rel_offset < LZX_WIM_MAGIC_FILESIZE - input_pos) {
++			/* "good translation" */
++			abs_offset = rel_offset + input_pos;
++		} else {
++			/* "compensating translation" */
++			abs_offset = rel_offset - LZX_WIM_MAGIC_FILESIZE;
++		}
++		put_unaligned_le32(abs_offset, target);
++	}
++}
++
++static void
++undo_translate_target(void *target, s32 input_pos)
++{
++	s32 abs_offset, rel_offset;
++
++	abs_offset = get_unaligned_le32(target);
++	if (abs_offset >= 0) {
++		if (abs_offset < LZX_WIM_MAGIC_FILESIZE) {
++			/* "good translation" */
++			rel_offset = abs_offset - input_pos;
++			put_unaligned_le32(rel_offset, target);
++		}
++	} else {
++		if (abs_offset >= -input_pos) {
++			/* "compensating translation" */
++			rel_offset = abs_offset + LZX_WIM_MAGIC_FILESIZE;
++			put_unaligned_le32(rel_offset, target);
++		}
++	}
++}
++
++/*
++ * Do or undo the 'E8' preprocessing used in LZX.  Before compression, the
++ * uncompressed data is preprocessed by changing the targets of x86 CALL
++ * instructions from relative offsets to absolute offsets.  After decompression,
++ * the translation is undone by changing the targets of x86 CALL instructions
++ * from absolute offsets to relative offsets.
++ *
++ * Note that despite its intent, E8 preprocessing can be done on any data even
++ * if it is not actually x86 machine code.  In fact, E8 preprocessing appears to
++ * always be used in LZX-compressed resources in WIM files; there is no bit to
++ * indicate whether it is used or not, unlike in the LZX compressed format as
++ * used in cabinet files, where a bit is reserved for that purpose.
++ *
++ * E8 preprocessing is disabled in the last 6 bytes of the uncompressed data,
++ * which really means the 5-byte call instruction cannot start in the last 10
++ * bytes of the uncompressed data.  This is one of the errors in the LZX
++ * documentation.
++ *
++ * E8 preprocessing does not appear to be disabled after the 32768th chunk of a
++ * WIM resource, which apparently is another difference from the LZX compression
++ * used in cabinet files.
++ *
++ * E8 processing is supposed to take the file size as a parameter, as it is used
++ * in calculating the translated jump targets.	But in WIM files, this file size
++ * is always the same (LZX_WIM_MAGIC_FILESIZE == 12000000).
++ */
++static void
++lzx_e8_filter(u8 *data, u32 size, void (*process_target)(void *, s32))
++{
++	/*
++	 * A worthwhile optimization is to push the end-of-buffer check into the
++	 * relatively rare E8 case.  This is possible if we replace the last six
++	 * bytes of data with E8 bytes; then we are guaranteed to hit an E8 byte
++	 * before reaching end-of-buffer.  In addition, this scheme guarantees
++	 * that no translation can begin following an E8 byte in the last 10
++	 * bytes because a 4-byte offset containing E8 as its high byte is a
++	 * large negative number that is not valid for translation.  That is
++	 * exactly what we need.
++	 */
++	u8 *tail;
++	u8 saved_bytes[6];
++	u8 *p;
++
++	if (size <= 10)
++		return;
++
++	tail = &data[size - 6];
++	memcpy(saved_bytes, tail, 6);
++	memset(tail, 0xE8, 6);
++	p = data;
++	for (;;) {
++		while (*p != 0xE8)
++			p++;
++		if (p >= tail)
++			break;
++		(*process_target)(p + 1, p - data);
++		p += 5;
++	}
++	memcpy(tail, saved_bytes, 6);
++}
++
++void
++lzx_preprocess(u8 *data, u32 size)
++{
++	lzx_e8_filter(data, size, do_translate_target);
++}
++
++void
++lzx_postprocess(u8 *data, u32 size)
++{
++	lzx_e8_filter(data, size, undo_translate_target);
++}
+diff --git a/fs/ntfs3/lib/lzx_common.h b/fs/ntfs3/lib/lzx_common.h
+new file mode 100644
+index 000000000000..2c87a0c9b5b3
+--- /dev/null
++++ b/fs/ntfs3/lib/lzx_common.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++/*
++ * lzx_common.h
++ *
++ * Declarations shared between LZX compression and decompression.
++ */
++
++#ifndef _LZX_COMMON_H
++#define _LZX_COMMON_H
++
++#include "lzx_constants.h"
++#include "common_defs.h"
++
++extern const s32 lzx_offset_slot_base[LZX_MAX_OFFSET_SLOTS + 1];
++
++extern const u8 lzx_extra_offset_bits[LZX_MAX_OFFSET_SLOTS];
++
++extern u32
++lzx_get_window_order(size_t max_bufsize);
++
++extern u32
++lzx_get_num_main_syms(u32 window_order);
++
++extern void
++lzx_preprocess(u8 *data, u32 size);
++
++extern void
++lzx_postprocess(u8 *data, u32 size);
++
++#endif /* _LZX_COMMON_H */
+diff --git a/fs/ntfs3/lib/lzx_constants.h b/fs/ntfs3/lib/lzx_constants.h
+new file mode 100644
+index 000000000000..1115ce8ce5b1
+--- /dev/null
++++ b/fs/ntfs3/lib/lzx_constants.h
+@@ -0,0 +1,113 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * lzx_constants.h
++ *
++ * Constants for the LZX compression format.
++ */
++
++#ifndef _LZX_CONSTANTS_H
++#define _LZX_CONSTANTS_H
++
++/* Number of literal byte values.  */
++#define LZX_NUM_CHARS	256
++
++/* The smallest and largest allowed match lengths.  */
++#define LZX_MIN_MATCH_LEN	2
++#define LZX_MAX_MATCH_LEN	257
++
++/* Number of distinct match lengths that can be represented.  */
++#define LZX_NUM_LENS		(LZX_MAX_MATCH_LEN - LZX_MIN_MATCH_LEN + 1)
++
++/* Number of match lengths for which no length symbol is required.  */
++#define LZX_NUM_PRIMARY_LENS	7
++#define LZX_NUM_LEN_HEADERS	(LZX_NUM_PRIMARY_LENS + 1)
++
++/* Valid values of the 3-bit block type field.  */
++#define LZX_BLOCKTYPE_VERBATIM       1
++#define LZX_BLOCKTYPE_ALIGNED        2
++#define LZX_BLOCKTYPE_UNCOMPRESSED   3
++
++/* 'LZX_MIN_WINDOW_SIZE' and 'LZX_MAX_WINDOW_SIZE' are the minimum and maximum
++ * sizes of the sliding window.
++ */
++#define LZX_MIN_WINDOW_ORDER	15u
++#define LZX_MAX_WINDOW_ORDER	21
++#define LZX_MIN_WINDOW_SIZE	(1UL << LZX_MIN_WINDOW_ORDER)  /* 32768   */
++#define LZX_MAX_WINDOW_SIZE	(1UL << LZX_MAX_WINDOW_ORDER)  /* 2097152 */
++
++/* Maximum number of offset slots.  (The actual number of offset slots depends
++ * on the window size.)
++ */
++#define LZX_MAX_OFFSET_SLOTS	50
++
++/* Maximum number of symbols in the main code.  (The actual number of symbols in
++ * the main code depends on the window size.)
++ */
++#define LZX_MAINCODE_MAX_NUM_SYMBOLS	\
++	(LZX_NUM_CHARS + (LZX_MAX_OFFSET_SLOTS * LZX_NUM_LEN_HEADERS))
++
++/* Number of symbols in the length code.  */
++#define LZX_LENCODE_NUM_SYMBOLS		(LZX_NUM_LENS - LZX_NUM_PRIMARY_LENS)
++
++/* Number of symbols in the pre-code.  */
++#define LZX_PRECODE_NUM_SYMBOLS		20
++
++/* Number of bits in which each pre-code codeword length is represented.  */
++#define LZX_PRECODE_ELEMENT_SIZE	4
++
++/* Number of low-order bits of each match offset that are entropy-encoded in
++ * aligned offset blocks.
++ */
++#define LZX_NUM_ALIGNED_OFFSET_BITS	3
++
++/* Number of symbols in the aligned offset code.  */
++#define LZX_ALIGNEDCODE_NUM_SYMBOLS	(1 << LZX_NUM_ALIGNED_OFFSET_BITS)
++
++/* Mask for the match offset bits that are entropy-encoded in aligned offset
++ * blocks.
++ */
++#define LZX_ALIGNED_OFFSET_BITMASK	((1 << LZX_NUM_ALIGNED_OFFSET_BITS) - 1)
++
++/* Number of bits in which each aligned offset codeword length is represented.  */
++#define LZX_ALIGNEDCODE_ELEMENT_SIZE	3
++
++/* The first offset slot which requires an aligned offset symbol in aligned
++ * offset blocks.
++ */
++#define LZX_MIN_ALIGNED_OFFSET_SLOT	8
++
++/* The offset slot base for LZX_MIN_ALIGNED_OFFSET_SLOT.  */
++#define LZX_MIN_ALIGNED_OFFSET		14
++
++/* The maximum number of extra offset bits in verbatim blocks.  (One would need
++ * to subtract LZX_NUM_ALIGNED_OFFSET_BITS to get the number of extra offset
++ * bits in *aligned* blocks.)
++ */
++#define LZX_MAX_NUM_EXTRA_BITS		17
++
++/* Maximum lengths (in bits) for length-limited Huffman code construction.  */
++#define LZX_MAX_MAIN_CODEWORD_LEN	16
++#define LZX_MAX_LEN_CODEWORD_LEN	16
++#define LZX_MAX_PRE_CODEWORD_LEN	((1 << LZX_PRECODE_ELEMENT_SIZE) - 1)
++#define LZX_MAX_ALIGNED_CODEWORD_LEN	((1 << LZX_ALIGNEDCODE_ELEMENT_SIZE) - 1)
++
++/* For LZX-compressed blocks in WIM resources, this value is always used as the
++ * filesize parameter for the call instruction (0xe8 byte) preprocessing, even
++ * though the blocks themselves are not this size, and the size of the actual
++ * file resource in the WIM file is very likely to be something entirely
++ * different as well.
++ */
++#define LZX_WIM_MAGIC_FILESIZE	12000000
++
++/* Assumed LZX block size when the encoded block size begins with a 0 bit.
++ * This is probably WIM-specific.
++ */
++#define LZX_DEFAULT_BLOCK_SIZE	32768
++
++/* Number of offsets in the recent (or "repeat") offsets queue.  */
++#define LZX_NUM_RECENT_OFFSETS	3
++
++/* An offset of n bytes is actually encoded as (n + LZX_OFFSET_ADJUSTMENT).  */
++#define LZX_OFFSET_ADJUSTMENT	(LZX_NUM_RECENT_OFFSETS - 1)
++
++#endif /* _LZX_CONSTANTS_H */
+diff --git a/fs/ntfs3/lib/lzx_decompress.c b/fs/ntfs3/lib/lzx_decompress.c
+new file mode 100644
+index 000000000000..d6897a394abe
+--- /dev/null
++++ b/fs/ntfs3/lib/lzx_decompress.c
+@@ -0,0 +1,553 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * lzx_decompress.c
++ *
++ * A decompressor for the LZX compression format, as used in WIM files.
++ */
++
++/*
++ * Copyright (C) 2012-2016 Eric Biggers
++ *
++ * This program is free software: you can redistribute it and/or modify it under
++ * the terms of the GNU General Public License as published by the Free Software
++ * Foundation, either version 2 of the License, or (at your option) any later
++ * version.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++/*
++ * LZX is an LZ77 and Huffman-code based compression format that has many
++ * similarities to DEFLATE (the format used by zlib/gzip).  The compression
++ * ratio is as good or better than DEFLATE.  See lzx_compress.c for a format
++ * overview, and see https://en.wikipedia.org/wiki/LZX_(algorithm) for a
++ * historical overview.  Here I make some pragmatic notes.
++ *
++ * The old specification for LZX is the document "Microsoft LZX Data Compression
++ * Format" (1997).  It defines the LZX format as used in cabinet files.  Allowed
++ * window sizes are 2^n where 15 <= n <= 21.  However, this document contains
++ * several errors, so don't read too much into it...
++ *
++ * The new specification for LZX is the document "[MS-PATCH]: LZX DELTA
++ * Compression and Decompression" (2014).  It defines the LZX format as used by
++ * Microsoft's binary patcher.	It corrects several errors in the 1997 document
++ * and extends the format in several ways --- namely, optional reference data,
++ * up to 2^25 byte windows, and longer match lengths.
++ *
++ * WIM files use a more restricted form of LZX.  No LZX DELTA extensions are
++ * present, the window is not "sliding", E8 preprocessing is done
++ * unconditionally with a fixed file size, and the maximum window size is always
++ * 2^15 bytes (equal to the size of each "chunk" in a compressed WIM resource).
++ * This code is primarily intended to implement this form of LZX.  But although
++ * not compatible with WIMGAPI, this code also supports maximum window sizes up
++ * to 2^21 bytes.
++ *
++ * TODO: Add support for window sizes up to 2^25 bytes.
++ */
++
++#include "decompress_common.h"
++#include "lzx_common.h"
++
++/* These values are chosen for fast decompression.  */
++#define LZX_MAINCODE_TABLEBITS		11
++#define LZX_LENCODE_TABLEBITS		9
++#define LZX_PRECODE_TABLEBITS		6
++#define LZX_ALIGNEDCODE_TABLEBITS	7
++
++#define LZX_READ_LENS_MAX_OVERRUN 50
++
++struct lzx_decompressor {
++
++	DECODE_TABLE(maincode_decode_table, LZX_MAINCODE_MAX_NUM_SYMBOLS,
++		     LZX_MAINCODE_TABLEBITS, LZX_MAX_MAIN_CODEWORD_LEN);
++	u8 maincode_lens[LZX_MAINCODE_MAX_NUM_SYMBOLS + LZX_READ_LENS_MAX_OVERRUN];
++
++	DECODE_TABLE(lencode_decode_table, LZX_LENCODE_NUM_SYMBOLS,
++		     LZX_LENCODE_TABLEBITS, LZX_MAX_LEN_CODEWORD_LEN);
++	u8 lencode_lens[LZX_LENCODE_NUM_SYMBOLS + LZX_READ_LENS_MAX_OVERRUN];
++
++	union {
++		DECODE_TABLE(alignedcode_decode_table, LZX_ALIGNEDCODE_NUM_SYMBOLS,
++			     LZX_ALIGNEDCODE_TABLEBITS, LZX_MAX_ALIGNED_CODEWORD_LEN);
++		u8 alignedcode_lens[LZX_ALIGNEDCODE_NUM_SYMBOLS];
++	};
++
++	union {
++		DECODE_TABLE(precode_decode_table, LZX_PRECODE_NUM_SYMBOLS,
++			     LZX_PRECODE_TABLEBITS, LZX_MAX_PRE_CODEWORD_LEN);
++		u8 precode_lens[LZX_PRECODE_NUM_SYMBOLS];
++		u8 extra_offset_bits[LZX_MAX_OFFSET_SLOTS];
++	};
++
++	union {
++		DECODE_TABLE_WORKING_SPACE(maincode_working_space,
++					   LZX_MAINCODE_MAX_NUM_SYMBOLS,
++					   LZX_MAX_MAIN_CODEWORD_LEN);
++		DECODE_TABLE_WORKING_SPACE(lencode_working_space,
++					   LZX_LENCODE_NUM_SYMBOLS,
++					   LZX_MAX_LEN_CODEWORD_LEN);
++		DECODE_TABLE_WORKING_SPACE(alignedcode_working_space,
++					   LZX_ALIGNEDCODE_NUM_SYMBOLS,
++					   LZX_MAX_ALIGNED_CODEWORD_LEN);
++		DECODE_TABLE_WORKING_SPACE(precode_working_space,
++					   LZX_PRECODE_NUM_SYMBOLS,
++					   LZX_MAX_PRE_CODEWORD_LEN);
++	};
++
++	u32 window_order;
++	u32 num_main_syms;
++
++	/* Like lzx_extra_offset_bits[], but does not include the entropy-coded
++	 * bits of aligned offset blocks
++	 */
++	u8 extra_offset_bits_minus_aligned[LZX_MAX_OFFSET_SLOTS];
++
++} _aligned_attribute(DECODE_TABLE_ALIGNMENT);
++
++/* Read a Huffman-encoded symbol using the precode. */
++static forceinline u32
++read_presym(const struct lzx_decompressor *d, struct input_bitstream *is)
++{
++	return read_huffsym(is, d->precode_decode_table,
++			    LZX_PRECODE_TABLEBITS, LZX_MAX_PRE_CODEWORD_LEN);
++}
++
++/* Read a Huffman-encoded symbol using the main code. */
++static forceinline u32
++read_mainsym(const struct lzx_decompressor *d, struct input_bitstream *is)
++{
++	return read_huffsym(is, d->maincode_decode_table,
++			    LZX_MAINCODE_TABLEBITS, LZX_MAX_MAIN_CODEWORD_LEN);
++}
++
++/* Read a Huffman-encoded symbol using the length code. */
++static forceinline u32
++read_lensym(const struct lzx_decompressor *d, struct input_bitstream *is)
++{
++	return read_huffsym(is, d->lencode_decode_table,
++			    LZX_LENCODE_TABLEBITS, LZX_MAX_LEN_CODEWORD_LEN);
++}
++
++/* Read a Huffman-encoded symbol using the aligned offset code. */
++static forceinline u32
++read_alignedsym(const struct lzx_decompressor *d, struct input_bitstream *is)
++{
++	return read_huffsym(is, d->alignedcode_decode_table,
++			    LZX_ALIGNEDCODE_TABLEBITS, LZX_MAX_ALIGNED_CODEWORD_LEN);
++}
++
++/*
++ * Read a precode from the compressed input bitstream, then use it to decode
++ * @num_lens codeword length values and write them to @lens.
++ */
++static int
++lzx_read_codeword_lens(struct lzx_decompressor *d, struct input_bitstream *is,
++		       u8 *lens, u32 num_lens)
++{
++	u8 *len_ptr = lens;
++	u8 *lens_end = lens + num_lens;
++	int i;
++
++	/* Read the lengths of the precode codewords.  These are stored
++	 * explicitly.
++	 */
++	for (i = 0; i < LZX_PRECODE_NUM_SYMBOLS; i++) {
++		d->precode_lens[i] =
++			bitstream_read_bits(is, LZX_PRECODE_ELEMENT_SIZE);
++	}
++
++	/* Build the decoding table for the precode. */
++	if (make_huffman_decode_table(d->precode_decode_table,
++				      LZX_PRECODE_NUM_SYMBOLS,
++				      LZX_PRECODE_TABLEBITS,
++				      d->precode_lens,
++				      LZX_MAX_PRE_CODEWORD_LEN,
++				      d->precode_working_space))
++		return -1;
++
++	/* Decode the codeword lengths.  */
++	do {
++		u32 presym;
++		u8 len;
++
++		/* Read the next precode symbol.  */
++		presym = read_presym(d, is);
++		if (presym < 17) {
++			/* Difference from old length  */
++			len = *len_ptr - presym;
++			if ((s8)len < 0)
++				len += 17;
++			*len_ptr++ = len;
++		} else {
++			/* Special RLE values  */
++
++			u32 run_len;
++
++			if (presym == 17) {
++				/* Run of 0's  */
++				run_len = 4 + bitstream_read_bits(is, 4);
++				len = 0;
++			} else if (presym == 18) {
++				/* Longer run of 0's  */
++				run_len = 20 + bitstream_read_bits(is, 5);
++				len = 0;
++			} else {
++				/* Run of identical lengths  */
++				run_len = 4 + bitstream_read_bits(is, 1);
++				presym = read_presym(d, is);
++				if (unlikely(presym > 17))
++					return -1;
++				len = *len_ptr - presym;
++				if ((s8)len < 0)
++					len += 17;
++			}
++
++			do {
++				*len_ptr++ = len;
++			} while (--run_len);
++			/*
++			 * The worst case overrun is when presym == 18,
++			 * run_len == 20 + 31, and only 1 length was remaining.
++			 * So LZX_READ_LENS_MAX_OVERRUN == 50.
++			 *
++			 * Overrun while reading the first half of maincode_lens
++			 * can corrupt the previous values in the second half.
++			 * This doesn't really matter because the resulting
++			 * lengths will still be in range, and data that
++			 * generates overruns is invalid anyway.
++			 */
++		}
++	} while (len_ptr < lens_end);
++
++	return 0;
++}
++
++/*
++ * Read the header of an LZX block.  For all block types, the block type and
++ * size is saved in *block_type_ret and *block_size_ret, respectively.	For
++ * compressed blocks, the codeword lengths are also saved.  For uncompressed
++ * blocks, the recent offsets queue is also updated.
++ */
++static int
++lzx_read_block_header(struct lzx_decompressor *d, struct input_bitstream *is,
++		      u32 recent_offsets[], int *block_type_ret,
++		      u32 *block_size_ret)
++{
++	int block_type;
++	u32 block_size;
++	int i;
++
++	bitstream_ensure_bits(is, 4);
++
++	/* Read the block type. */
++	block_type = bitstream_pop_bits(is, 3);
++
++	/* Read the block size. */
++	if (bitstream_pop_bits(is, 1)) {
++		block_size = LZX_DEFAULT_BLOCK_SIZE;
++	} else {
++		block_size = bitstream_read_bits(is, 16);
++		if (d->window_order >= 16) {
++			block_size <<= 8;
++			block_size |= bitstream_read_bits(is, 8);
++		}
++	}
++
++	switch (block_type) {
++
++	case LZX_BLOCKTYPE_ALIGNED:
++
++		/* Read the aligned offset codeword lengths. */
++
++		for (i = 0; i < LZX_ALIGNEDCODE_NUM_SYMBOLS; i++) {
++			d->alignedcode_lens[i] =
++				bitstream_read_bits(is,
++						    LZX_ALIGNEDCODE_ELEMENT_SIZE);
++		}
++
++		/* Fall though, since the rest of the header for aligned offset
++		 * blocks is the same as that for verbatim blocks.
++		 */
++		fallthrough;
++
++	case LZX_BLOCKTYPE_VERBATIM:
++
++		/* Read the main codeword lengths, which are divided into two
++		 * parts: literal symbols and match headers.
++		 */
++		if (lzx_read_codeword_lens(d, is, d->maincode_lens,
++					   LZX_NUM_CHARS))
++			return -1;
++
++		if (lzx_read_codeword_lens(d, is, d->maincode_lens + LZX_NUM_CHARS,
++					   d->num_main_syms - LZX_NUM_CHARS))
++			return -1;
++
++
++		/* Read the length codeword lengths. */
++
++		if (lzx_read_codeword_lens(d, is, d->lencode_lens,
++					   LZX_LENCODE_NUM_SYMBOLS))
++			return -1;
++
++		break;
++
++	case LZX_BLOCKTYPE_UNCOMPRESSED:
++		/*
++		 * The header of an uncompressed block contains new values for
++		 * the recent offsets queue, starting on the next 16-bit
++		 * boundary in the bitstream.  Careful: if the stream is
++		 * *already* aligned, the correct thing to do is to throw away
++		 * the next 16 bits (this is probably a mistake in the format).
++		 */
++		bitstream_ensure_bits(is, 1);
++		bitstream_align(is);
++		recent_offsets[0] = bitstream_read_u32(is);
++		recent_offsets[1] = bitstream_read_u32(is);
++		recent_offsets[2] = bitstream_read_u32(is);
++
++		/* Offsets of 0 are invalid.  */
++		if (recent_offsets[0] == 0 || recent_offsets[1] == 0 ||
++		    recent_offsets[2] == 0)
++			return -1;
++		break;
++
++	default:
++		/* Unrecognized block type.  */
++		return -1;
++	}
++
++	*block_type_ret = block_type;
++	*block_size_ret = block_size;
++	return 0;
++}
++
++/* Decompress a block of LZX-compressed data. */
++static int
++lzx_decompress_block(struct lzx_decompressor *d, struct input_bitstream *is,
++		     int block_type, u32 block_size,
++		     u8 * const out_begin, u8 *out_next, u32 recent_offsets[])
++{
++	u8 * const block_end = out_next + block_size;
++	u32 min_aligned_offset_slot;
++
++	/*
++	 * Build the Huffman decode tables.  We always need to build the main
++	 * and length decode tables.  For aligned blocks we additionally need to
++	 * build the aligned offset decode table.
++	 */
++
++	if (make_huffman_decode_table(d->maincode_decode_table,
++				      d->num_main_syms,
++				      LZX_MAINCODE_TABLEBITS,
++				      d->maincode_lens,
++				      LZX_MAX_MAIN_CODEWORD_LEN,
++				      d->maincode_working_space))
++		return -1;
++
++	if (make_huffman_decode_table(d->lencode_decode_table,
++				      LZX_LENCODE_NUM_SYMBOLS,
++				      LZX_LENCODE_TABLEBITS,
++				      d->lencode_lens,
++				      LZX_MAX_LEN_CODEWORD_LEN,
++				      d->lencode_working_space))
++		return -1;
++
++	if (block_type == LZX_BLOCKTYPE_ALIGNED) {
++		if (make_huffman_decode_table(d->alignedcode_decode_table,
++					      LZX_ALIGNEDCODE_NUM_SYMBOLS,
++					      LZX_ALIGNEDCODE_TABLEBITS,
++					      d->alignedcode_lens,
++					      LZX_MAX_ALIGNED_CODEWORD_LEN,
++					      d->alignedcode_working_space))
++			return -1;
++		min_aligned_offset_slot = LZX_MIN_ALIGNED_OFFSET_SLOT;
++		memcpy(d->extra_offset_bits, d->extra_offset_bits_minus_aligned,
++		       sizeof(lzx_extra_offset_bits));
++	} else {
++		min_aligned_offset_slot = LZX_MAX_OFFSET_SLOTS;
++		memcpy(d->extra_offset_bits, lzx_extra_offset_bits,
++		       sizeof(lzx_extra_offset_bits));
++	}
++
++	/* Decode the literals and matches. */
 +
 +	do {
-+		pgoff_t index = vbo[i] >> PAGE_SHIFT;
++		u32 mainsym;
++		u32 length;
++		u32 offset;
++		u32 offset_slot;
 +
-+		if (index != page->index) {
-+			u64 from = vbo[i] & ~(u64)(PAGE_SIZE - 1);
-+			u64 to = min(from + PAGE_SIZE, wof_size);
-+
-+			err = attr_wof_load_runs_range(ni, run, from, to);
-+			if (err)
-+				goto out1;
-+
-+			err = ntfs_bio_pages(sbi, run, &page, 1, from,
-+					     to - from, REQ_OP_READ);
-+			if (err) {
-+				page->index = -1;
-+				goto out1;
-+			}
-+			page->index = index;
++		mainsym = read_mainsym(d, is);
++		if (mainsym < LZX_NUM_CHARS) {
++			/* Literal */
++			*out_next++ = mainsym;
++			continue;
 +		}
 +
-+		if (i) {
-+			if (bytes_per_off == sizeof(__le32)) {
-+				off32 = Add2Ptr(addr, voff);
-+				off[1] = le32_to_cpu(*off32);
-+			} else {
-+				off64 = Add2Ptr(addr, voff);
-+				off[1] = le64_to_cpu(*off64);
-+			}
-+		} else if (!voff) {
-+			if (bytes_per_off == sizeof(__le32)) {
-+				off32 = Add2Ptr(addr, PAGE_SIZE - sizeof(u32));
-+				off[0] = le32_to_cpu(*off32);
-+			} else {
-+				off64 = Add2Ptr(addr, PAGE_SIZE - sizeof(u64));
-+				off[0] = le64_to_cpu(*off64);
-+			}
++		/* Match */
++
++		/* Decode the length header and offset slot.  */
++		STATIC_ASSERT(LZX_NUM_CHARS % LZX_NUM_LEN_HEADERS == 0);
++		length = mainsym % LZX_NUM_LEN_HEADERS;
++		offset_slot = (mainsym - LZX_NUM_CHARS) / LZX_NUM_LEN_HEADERS;
++
++		/* If needed, read a length symbol to decode the full length. */
++		if (length == LZX_NUM_PRIMARY_LENS)
++			length += read_lensym(d, is);
++		length += LZX_MIN_MATCH_LEN;
++
++		if (offset_slot < LZX_NUM_RECENT_OFFSETS) {
++			/* Repeat offset  */
++
++			/* Note: This isn't a real LRU queue, since using the R2
++			 * offset doesn't bump the R1 offset down to R2.
++			 */
++			offset = recent_offsets[offset_slot];
++			recent_offsets[offset_slot] = recent_offsets[0];
 +		} else {
-+			/* two values in one page*/
-+			if (bytes_per_off == sizeof(__le32)) {
-+				off32 = Add2Ptr(addr, voff);
-+				off[0] = le32_to_cpu(off32[-1]);
-+				off[1] = le32_to_cpu(off32[0]);
-+			} else {
-+				off64 = Add2Ptr(addr, voff);
-+				off[0] = le64_to_cpu(off64[-1]);
-+				off[1] = le64_to_cpu(off64[0]);
++			/* Explicit offset  */
++			offset = bitstream_read_bits(is, d->extra_offset_bits[offset_slot]);
++			if (offset_slot >= min_aligned_offset_slot) {
++				offset = (offset << LZX_NUM_ALIGNED_OFFSET_BITS) |
++					 read_alignedsym(d, is);
 +			}
-+			break;
++			offset += lzx_offset_slot_base[offset_slot];
++
++			/* Update the match offset LRU queue.  */
++			STATIC_ASSERT(LZX_NUM_RECENT_OFFSETS == 3);
++			recent_offsets[2] = recent_offsets[1];
++			recent_offsets[1] = recent_offsets[0];
 +		}
-+	} while (++i < 2);
++		recent_offsets[0] = offset;
 +
-+	*vbo_data += off[0];
-+	*ondisk_size = off[1] - off[0];
-+
-+out1:
-+	unlock_page(page);
-+out:
-+	up_write(&ni->file.run_lock);
-+	return err;
-+}
-+#endif
-+
-+/*
-+ * attr_is_frame_compressed
-+ *
-+ * This function is used to detect compressed frame
-+ */
-+int attr_is_frame_compressed(struct ntfs_inode *ni, struct ATTRIB *attr,
-+			     CLST frame, CLST *clst_data)
-+{
-+	int err;
-+	u32 clst_frame;
-+	CLST len, lcn, vcn, alen, slen, vcn1;
-+	size_t idx;
-+	struct runs_tree *run;
-+
-+	*clst_data = 0;
-+
-+	if (!is_attr_compressed(attr))
-+		return 0;
-+
-+	if (!attr->non_res)
-+		return 0;
-+
-+	clst_frame = 1u << attr->nres.c_unit;
-+	vcn = frame * clst_frame;
-+	run = &ni->file.run;
-+
-+	if (!run_lookup_entry(run, vcn, &lcn, &len, &idx)) {
-+		err = attr_load_runs_vcn(ni, attr->type, attr_name(attr),
-+					 attr->name_len, run, vcn);
-+		if (err)
-+			return err;
-+
-+		if (!run_lookup_entry(run, vcn, &lcn, &len, &idx))
-+			return -ENOENT;
-+	}
-+
-+	if (lcn == SPARSE_LCN) {
-+		/* sparsed frame */
-+		return 0;
-+	}
-+
-+	if (len >= clst_frame) {
-+		/*
-+		 * The frame is not compressed 'cause
-+		 * it does not contain any sparse clusters
-+		 */
-+		*clst_data = clst_frame;
-+		return 0;
-+	}
-+
-+	alen = bytes_to_cluster(ni->mi.sbi, le64_to_cpu(attr->nres.alloc_size));
-+	slen = 0;
-+	*clst_data = len;
-+
-+	/*
-+	 * The frame is compressed if *clst_data + slen >= clst_frame
-+	 * Check next fragments
-+	 */
-+	while ((vcn += len) < alen) {
-+		vcn1 = vcn;
-+
-+		if (!run_get_entry(run, ++idx, &vcn, &lcn, &len) ||
-+		    vcn1 != vcn) {
-+			err = attr_load_runs_vcn(ni, attr->type,
-+						 attr_name(attr),
-+						 attr->name_len, run, vcn1);
-+			if (err)
-+				return err;
-+			vcn = vcn1;
-+
-+			if (!run_lookup_entry(run, vcn, &lcn, &len, &idx))
-+				return -ENOENT;
-+		}
-+
-+		if (lcn == SPARSE_LCN) {
-+			slen += len;
-+		} else {
-+			if (slen) {
-+				/*
-+				 * data_clusters + sparse_clusters =
-+				 * not enough for frame
-+				 */
-+				return -EINVAL;
-+			}
-+			*clst_data += len;
-+		}
-+
-+		if (*clst_data + slen >= clst_frame) {
-+			if (!slen) {
-+				/*
-+				 * There is no sparsed clusters in this frame
-+				 * So it is not compressed
-+				 */
-+				*clst_data = clst_frame;
-+			} else {
-+				/*frame is compressed*/
-+			}
-+			break;
-+		}
-+	}
++		/* Validate the match and copy it to the current position.  */
++		if (unlikely(lz_copy(length, offset, out_begin,
++				     out_next, block_end, LZX_MIN_MATCH_LEN)))
++			return -1;
++		out_next += length;
++	} while (out_next != block_end);
 +
 +	return 0;
 +}
 +
-+/*
-+ * attr_allocate_frame
-+ *
-+ * allocate/free clusters for 'frame'
-+ * assumed: down_write(&ni->file.run_lock);
-+ */
-+int attr_allocate_frame(struct ntfs_inode *ni, CLST frame, size_t compr_size,
-+			u64 new_valid)
++int
++lzx_decompress(struct lzx_decompressor *__restrict d,
++	       const void *__restrict compressed_data, size_t compressed_size,
++	       void *__restrict uncompressed_data, size_t uncompressed_size)
 +{
-+	int err = 0;
-+	struct runs_tree *run = &ni->file.run;
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	struct ATTRIB *attr, *attr_b;
-+	struct ATTR_LIST_ENTRY *le, *le_b;
-+	struct mft_inode *mi, *mi_b;
-+	CLST svcn, evcn1, next_svcn, lcn, len;
-+	CLST vcn, end, clst_data;
-+	u64 total_size, valid_size, data_size;
++	u8 * const out_begin = uncompressed_data;
++	u8 *out_next = out_begin;
++	u8 * const out_end = out_begin + uncompressed_size;
++	struct input_bitstream is;
++	u32 recent_offsets[LZX_NUM_RECENT_OFFSETS] = {1, 1, 1};
++	u32 may_have_e8_byte = 0;
 +
-+	le_b = NULL;
-+	attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL, &mi_b);
-+	if (!attr_b)
-+		return -ENOENT;
++	STATIC_ASSERT(LZX_NUM_RECENT_OFFSETS == 3);
 +
-+	if (!is_attr_ext(attr_b))
-+		return -EINVAL;
++	init_input_bitstream(&is, compressed_data, compressed_size);
 +
-+	vcn = frame << NTFS_LZNT_CUNIT;
-+	total_size = le64_to_cpu(attr_b->nres.total_size);
++	/* Codeword lengths begin as all 0's for delta encoding purposes. */
++	memset(d->maincode_lens, 0, d->num_main_syms);
++	memset(d->lencode_lens, 0, LZX_LENCODE_NUM_SYMBOLS);
 +
-+	svcn = le64_to_cpu(attr_b->nres.svcn);
-+	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
-+	data_size = le64_to_cpu(attr_b->nres.data_size);
++	/* Decompress blocks until we have all the uncompressed data. */
 +
-+	if (svcn <= vcn && vcn < evcn1) {
-+		attr = attr_b;
-+		le = le_b;
-+		mi = mi_b;
-+	} else if (!le_b) {
-+		err = -EINVAL;
-+		goto out;
-+	} else {
-+		le = le_b;
-+		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
-+				    &mi);
-+		if (!attr) {
-+			err = -EINVAL;
-+			goto out;
++	while (out_next != out_end) {
++		int block_type;
++		u32 block_size;
++
++		if (lzx_read_block_header(d, &is, recent_offsets,
++					  &block_type, &block_size))
++			return -1;
++
++		if (block_size < 1 || block_size > out_end - out_next)
++			return -1;
++
++		if (likely(block_type != LZX_BLOCKTYPE_UNCOMPRESSED)) {
++
++			/* Compressed block */
++			if (lzx_decompress_block(d, &is, block_type, block_size,
++						 out_begin, out_next,
++						 recent_offsets))
++				return -1;
++
++			/* If the first E8 byte was in this block, then it must
++			 * have been encoded as a literal using mainsym E8.
++			 */
++			may_have_e8_byte |= d->maincode_lens[0xE8];
++		} else {
++
++			/* Uncompressed block */
++			if (bitstream_read_bytes(&is, out_next, block_size))
++				return -1;
++
++			/* Re-align the bitstream if needed. */
++			if (block_size & 1)
++				bitstream_read_byte(&is);
++
++			/* There may have been an E8 byte in the block. */
++			may_have_e8_byte = 1;
 +		}
-+		svcn = le64_to_cpu(attr->nres.svcn);
-+		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
++		out_next += block_size;
 +	}
 +
-+	err = attr_load_runs(attr, ni, run, NULL);
-+	if (err)
-+		goto out;
++	/* Postprocess the data unless it cannot possibly contain E8 bytes. */
++	if (may_have_e8_byte)
++		lzx_postprocess(uncompressed_data, uncompressed_size);
 +
-+	err = attr_is_frame_compressed(ni, attr_b, frame, &clst_data);
-+	if (err)
-+		goto out;
-+
-+	total_size -= (u64)clst_data << sbi->cluster_bits;
-+
-+	len = bytes_to_cluster(sbi, compr_size);
-+
-+	if (len == clst_data)
-+		goto out;
-+
-+	if (len < clst_data) {
-+		err = run_deallocate_ex(sbi, run, vcn + len, clst_data - len,
-+					NULL, true);
-+		if (err)
-+			goto out;
-+
-+		if (!run_add_entry(run, vcn + len, SPARSE_LCN, clst_data - len,
-+				   false)) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		end = vcn + clst_data;
-+		/* run contains updated range [vcn + len : end) */
-+	} else {
-+		CLST alen, hint;
-+		/* Get the last lcn to allocate from */
-+		if (vcn + clst_data &&
-+		    !run_lookup_entry(run, vcn + clst_data - 1, &hint, NULL,
-+				      NULL)) {
-+			hint = -1;
-+		}
-+
-+		err = attr_allocate_clusters(sbi, run, vcn + clst_data,
-+					     hint + 1, len - clst_data, NULL, 0,
-+					     &alen, 0, &lcn);
-+		if (err)
-+			goto out;
-+
-+		end = vcn + len;
-+		/* run contains updated range [vcn + clst_data : end) */
-+	}
-+
-+	total_size += (u64)len << sbi->cluster_bits;
-+
-+repack:
-+	err = mi_pack_runs(mi, attr, run, max(end, evcn1) - svcn);
-+	if (err)
-+		goto out;
-+
-+	attr_b->nres.total_size = cpu_to_le64(total_size);
-+	inode_set_bytes(&ni->vfs_inode, total_size);
-+
-+	mi_b->dirty = true;
-+	mark_inode_dirty(&ni->vfs_inode);
-+
-+	/* stored [vcn : next_svcn) from [vcn : end) */
-+	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-+
-+	if (end <= evcn1) {
-+		if (next_svcn == evcn1) {
-+			/* Normal way. update attribute and exit */
-+			goto ok;
-+		}
-+		/* add new segment [next_svcn : evcn1 - next_svcn )*/
-+		if (!ni->attr_list.size) {
-+			err = ni_create_attr_list(ni);
-+			if (err)
-+				goto out;
-+			/* layout of records is changed */
-+			le_b = NULL;
-+			attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL,
-+					      0, NULL, &mi_b);
-+			if (!attr_b) {
-+				err = -ENOENT;
-+				goto out;
-+			}
-+
-+			attr = attr_b;
-+			le = le_b;
-+			mi = mi_b;
-+			goto repack;
-+		}
-+	}
-+
-+	svcn = evcn1;
-+
-+	/* Estimate next attribute */
-+	attr = ni_find_attr(ni, attr, &le, ATTR_DATA, NULL, 0, &svcn, &mi);
-+
-+	if (attr) {
-+		CLST alloc = bytes_to_cluster(
-+			sbi, le64_to_cpu(attr_b->nres.alloc_size));
-+		CLST evcn = le64_to_cpu(attr->nres.evcn);
-+
-+		if (end < next_svcn)
-+			end = next_svcn;
-+		while (end > evcn) {
-+			/* remove segment [svcn : evcn)*/
-+			mi_remove_attr(mi, attr);
-+
-+			if (!al_remove_le(ni, le)) {
-+				err = -EINVAL;
-+				goto out;
-+			}
-+
-+			if (evcn + 1 >= alloc) {
-+				/* last attribute segment */
-+				evcn1 = evcn + 1;
-+				goto ins_ext;
-+			}
-+
-+			if (ni_load_mi(ni, le, &mi)) {
-+				attr = NULL;
-+				goto out;
-+			}
-+
-+			attr = mi_find_attr(mi, NULL, ATTR_DATA, NULL, 0,
-+					    &le->id);
-+			if (!attr) {
-+				err = -EINVAL;
-+				goto out;
-+			}
-+			svcn = le64_to_cpu(attr->nres.svcn);
-+			evcn = le64_to_cpu(attr->nres.evcn);
-+		}
-+
-+		if (end < svcn)
-+			end = svcn;
-+
-+		err = attr_load_runs(attr, ni, run, &end);
-+		if (err)
-+			goto out;
-+
-+		evcn1 = evcn + 1;
-+		attr->nres.svcn = cpu_to_le64(next_svcn);
-+		err = mi_pack_runs(mi, attr, run, evcn1 - next_svcn);
-+		if (err)
-+			goto out;
-+
-+		le->vcn = cpu_to_le64(next_svcn);
-+		ni->attr_list.dirty = true;
-+		mi->dirty = true;
-+
-+		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
-+	}
-+ins_ext:
-+	if (evcn1 > next_svcn) {
-+		err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run,
-+					    next_svcn, evcn1 - next_svcn,
-+					    attr_b->flags, &attr, &mi);
-+		if (err)
-+			goto out;
-+	}
-+ok:
-+	run_truncate_around(run, vcn);
-+out:
-+	if (new_valid > data_size)
-+		new_valid = data_size;
-+
-+	valid_size = le64_to_cpu(attr_b->nres.valid_size);
-+	if (new_valid != valid_size) {
-+		attr_b->nres.valid_size = cpu_to_le64(valid_size);
-+		mi_b->dirty = true;
-+	}
-+
-+	return err;
++	return 0;
 +}
-diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
++
++struct lzx_decompressor *
++lzx_allocate_decompressor(size_t max_block_size)
++{
++	u32 window_order;
++	struct lzx_decompressor *d;
++	u32 offset_slot;
++
++	/*
++	 * ntfs uses lzx only as max_block_size == 0x8000
++	 * this value certainly will not fail
++	 * we can remove lzx_get_window_order + ilog2_ceil + bsrw
++	 */
++	WARN_ON(max_block_size != 0x8000);
++
++	window_order = lzx_get_window_order(max_block_size);
++	if (window_order == 0)
++		return ERR_PTR(-EINVAL);
++
++	d = aligned_malloc(sizeof(*d), DECODE_TABLE_ALIGNMENT);
++	if (!d)
++		return NULL;
++
++	d->window_order = window_order;
++	d->num_main_syms = lzx_get_num_main_syms(window_order);
++
++	/* Initialize 'd->extra_offset_bits_minus_aligned'. */
++	STATIC_ASSERT(sizeof(d->extra_offset_bits_minus_aligned) ==
++		      sizeof(lzx_extra_offset_bits));
++	STATIC_ASSERT(sizeof(d->extra_offset_bits) ==
++		      sizeof(lzx_extra_offset_bits));
++	memcpy(d->extra_offset_bits_minus_aligned, lzx_extra_offset_bits,
++	       sizeof(lzx_extra_offset_bits));
++	for (offset_slot = LZX_MIN_ALIGNED_OFFSET_SLOT;
++	     offset_slot < LZX_MAX_OFFSET_SLOTS; offset_slot++) {
++		d->extra_offset_bits_minus_aligned[offset_slot] -=
++				LZX_NUM_ALIGNED_OFFSET_BITS;
++	}
++
++	return d;
++}
++
++void
++lzx_free_decompressor(struct lzx_decompressor *d)
++{
++	aligned_free(d);
++}
+diff --git a/fs/ntfs3/lib/xpress_constants.h b/fs/ntfs3/lib/xpress_constants.h
 new file mode 100644
-index 000000000000..e94512259354
+index 000000000000..c96a03bf4554
 --- /dev/null
-+++ b/fs/ntfs3/attrlist.c
-@@ -0,0 +1,463 @@
++++ b/fs/ntfs3/lib/xpress_constants.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * xpress_constants.h
++ *
++ * Constants for the XPRESS compression format.
++ */
++
++#ifndef _XPRESS_CONSTANTS_H
++#define _XPRESS_CONSTANTS_H
++
++#define XPRESS_NUM_CHARS	256
++#define XPRESS_NUM_SYMBOLS	512
++#define XPRESS_MAX_CODEWORD_LEN	15
++
++#define XPRESS_END_OF_DATA	256
++
++#define XPRESS_MIN_OFFSET	1
++#define XPRESS_MAX_OFFSET	65535
++
++#define XPRESS_MIN_MATCH_LEN	3
++#define XPRESS_MAX_MATCH_LEN	65538
++
++#endif /* _XPRESS_CONSTANTS_H */
+diff --git a/fs/ntfs3/lib/xpress_decompress.c b/fs/ntfs3/lib/xpress_decompress.c
+new file mode 100644
+index 000000000000..af87a4a91852
+--- /dev/null
++++ b/fs/ntfs3/lib/xpress_decompress.c
+@@ -0,0 +1,165 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * xpress_decompress.c
++ *
++ * A decompressor for the XPRESS compression format (Huffman variant).
++ */
++
++/*
++ *
++ * Copyright (C) 2012-2016 Eric Biggers
++ *
++ * This program is free software: you can redistribute it and/or modify it under
++ * the terms of the GNU General Public License as published by the Free Software
++ * Foundation, either version 2 of the License, or (at your option) any later
++ * version.
++ *
++ * This program is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License along with
++ * this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++
++/*
++ * The XPRESS compression format is an LZ77 and Huffman-code based algorithm.
++ * That means it is fairly similar to LZX compression, but XPRESS is simpler, so
++ * it is a little faster to compress and decompress.
++ *
++ * The XPRESS compression format is mostly documented in a file called "[MS-XCA]
++ * Xpress Compression Algorithm".  In the MSDN library, it can currently be
++ * found under Open Specifications => Protocols => Windows Protocols => Windows
++ * Server Protocols => [MS-XCA] Xpress Compression Algorithm".  The format in
++ * WIMs is specifically the algorithm labeled as the "LZ77+Huffman Algorithm"
++ * (there apparently are some other versions of XPRESS as well).
++ *
++ * If you are already familiar with the LZ77 algorithm and Huffman coding, the
++ * XPRESS format is fairly simple.  The compressed data begins with 256 bytes
++ * that contain 512 4-bit integers that are the lengths of the symbols in the
++ * Huffman code used for match/literal headers.  In contrast with more
++ * complicated formats such as DEFLATE and LZX, this is the only Huffman code
++ * that is used for the entirety of the XPRESS compressed data, and the codeword
++ * lengths are not encoded with a pretree.
++ *
++ * The rest of the compressed data is Huffman-encoded symbols.	Values 0 through
++ * 255 represent the corresponding literal bytes.  Values 256 through 511
++ * represent matches and may require extra bits or bytes to be read to get the
++ * match offset and match length.
++ *
++ * The trickiest part is probably the way in which literal bytes for match
++ * lengths are interleaved in the bitstream.
++ *
++ * Also, a caveat--- according to Microsoft's documentation for XPRESS,
++ *
++ *	"Some implementation of the decompression algorithm expect an extra
++ *	symbol to mark the end of the data.  Specifically, some implementations
++ *	fail during decompression if the Huffman symbol 256 is not found after
++ *	the actual data."
++ *
++ * This is the case with Microsoft's implementation in WIMGAPI, for example.  So
++ * although our implementation doesn't currently check for this extra symbol,
++ * compressors would be wise to add it.
++ */
++
++#include "decompress_common.h"
++#include "xpress_constants.h"
++
++/* This value is chosen for fast decompression.  */
++#define XPRESS_TABLEBITS 11
++
++struct xpress_decompressor {
++	union {
++		DECODE_TABLE(decode_table, XPRESS_NUM_SYMBOLS,
++			     XPRESS_TABLEBITS, XPRESS_MAX_CODEWORD_LEN);
++		u8 lens[XPRESS_NUM_SYMBOLS];
++	};
++	DECODE_TABLE_WORKING_SPACE(working_space, XPRESS_NUM_SYMBOLS,
++				   XPRESS_MAX_CODEWORD_LEN);
++} _aligned_attribute(DECODE_TABLE_ALIGNMENT);
++
++int
++xpress_decompress(struct xpress_decompressor *__restrict d,
++		  const void *__restrict compressed_data, size_t compressed_size,
++		  void *__restrict uncompressed_data, size_t uncompressed_size)
++{
++	const u8 * const in_begin = compressed_data;
++	u8 * const out_begin = uncompressed_data;
++	u8 *out_next = out_begin;
++	u8 * const out_end = out_begin + uncompressed_size;
++	struct input_bitstream is;
++	int i;
++
++	/* Read the Huffman codeword lengths.  */
++	if (compressed_size < XPRESS_NUM_SYMBOLS / 2)
++		return -1;
++	for (i = 0; i < XPRESS_NUM_SYMBOLS / 2; i++) {
++		d->lens[2 * i + 0] = in_begin[i] & 0xf;
++		d->lens[2 * i + 1] = in_begin[i] >> 4;
++	}
++
++	/* Build a decoding table for the Huffman code.  */
++	if (make_huffman_decode_table(d->decode_table, XPRESS_NUM_SYMBOLS,
++				      XPRESS_TABLEBITS, d->lens,
++				      XPRESS_MAX_CODEWORD_LEN,
++				      d->working_space))
++		return -1;
++
++	/* Decode the matches and literals.  */
++
++	init_input_bitstream(&is, in_begin + XPRESS_NUM_SYMBOLS / 2,
++			     compressed_size - XPRESS_NUM_SYMBOLS / 2);
++
++	while (out_next != out_end) {
++		u32 sym;
++		u32 log2_offset;
++		u32 length;
++		u32 offset;
++
++		sym = read_huffsym(&is, d->decode_table,
++				   XPRESS_TABLEBITS, XPRESS_MAX_CODEWORD_LEN);
++		if (sym < XPRESS_NUM_CHARS) {
++			/* Literal  */
++			*out_next++ = sym;
++		} else {
++			/* Match  */
++			length = sym & 0xf;
++			log2_offset = (sym >> 4) & 0xf;
++
++			bitstream_ensure_bits(&is, 16);
++
++			offset = ((u32)1 << log2_offset) |
++				 bitstream_pop_bits(&is, log2_offset);
++
++			if (length == 0xf) {
++				length += bitstream_read_byte(&is);
++				if (length == 0xf + 0xff)
++					length = bitstream_read_u16(&is);
++			}
++			length += XPRESS_MIN_MATCH_LEN;
++
++			if (unlikely(lz_copy(length, offset,
++					     out_begin, out_next, out_end,
++					     XPRESS_MIN_MATCH_LEN)))
++				return -1;
++
++			out_next += length;
++		}
++	}
++	return 0;
++}
++
++struct xpress_decompressor *
++xpress_allocate_decompressor(void)
++{
++	return aligned_malloc(sizeof(struct xpress_decompressor),
++			      DECODE_TABLE_ALIGNMENT);
++}
++
++void
++xpress_free_decompressor(struct xpress_decompressor *d)
++{
++	aligned_free(d);
++}
+diff --git a/fs/ntfs3/lznt.c b/fs/ntfs3/lznt.c
+new file mode 100644
+index 000000000000..edba953b754a
+--- /dev/null
++++ b/fs/ntfs3/lznt.c
+@@ -0,0 +1,452 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + *
 + * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
 + *
 + */
-+
 +#include <linux/blkdev.h>
 +#include <linux/buffer_head.h>
 +#include <linux/fs.h>
 +#include <linux/nls.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+
-+/* Returns true if le is valid */
-+static inline bool al_is_valid_le(const struct ntfs_inode *ni,
-+				  struct ATTR_LIST_ENTRY *le)
-+{
-+	if (!le || !ni->attr_list.le || !ni->attr_list.size)
-+		return false;
-+
-+	return PtrOffset(ni->attr_list.le, le) + le16_to_cpu(le->size) <=
-+	       ni->attr_list.size;
-+}
-+
-+void al_destroy(struct ntfs_inode *ni)
-+{
-+	run_close(&ni->attr_list.run);
-+	ntfs_free(ni->attr_list.le);
-+	ni->attr_list.le = NULL;
-+	ni->attr_list.size = 0;
-+	ni->attr_list.dirty = false;
-+}
-+
-+/*
-+ * ntfs_load_attr_list
-+ *
-+ * This method makes sure that the ATTRIB list, if present,
-+ * has been properly set up.
-+ */
-+int ntfs_load_attr_list(struct ntfs_inode *ni, struct ATTRIB *attr)
-+{
-+	int err;
-+	size_t lsize;
-+	void *le = NULL;
-+
-+	if (ni->attr_list.size)
-+		return 0;
-+
-+	if (!attr->non_res) {
-+		lsize = le32_to_cpu(attr->res.data_size);
-+		le = ntfs_alloc(al_aligned(lsize), 0);
-+		if (!le) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+		memcpy(le, resident_data(attr), lsize);
-+	} else if (attr->nres.svcn) {
-+		err = -EINVAL;
-+		goto out;
-+	} else {
-+		u16 run_off = le16_to_cpu(attr->nres.run_off);
-+
-+		lsize = le64_to_cpu(attr->nres.data_size);
-+
-+		run_init(&ni->attr_list.run);
-+
-+		err = run_unpack_ex(&ni->attr_list.run, ni->mi.sbi, ni->mi.rno,
-+				    0, le64_to_cpu(attr->nres.evcn), 0,
-+				    Add2Ptr(attr, run_off),
-+				    le32_to_cpu(attr->size) - run_off);
-+		if (err < 0)
-+			goto out;
-+
-+		le = ntfs_alloc(al_aligned(lsize), 0);
-+		if (!le) {
-+			err = -ENOMEM;
-+			goto out;
-+		}
-+
-+		err = ntfs_read_run_nb(ni->mi.sbi, &ni->attr_list.run, 0, le,
-+				       lsize, NULL);
-+		if (err)
-+			goto out;
-+	}
-+
-+	ni->attr_list.size = lsize;
-+	ni->attr_list.le = le;
-+
-+	return 0;
-+
-+out:
-+	ni->attr_list.le = le;
-+	al_destroy(ni);
-+
-+	return err;
-+}
-+
-+/*
-+ * al_enumerate
-+ *
-+ * Returns the next list le
-+ * if le is NULL then returns the first le
-+ */
-+struct ATTR_LIST_ENTRY *al_enumerate(struct ntfs_inode *ni,
-+				     struct ATTR_LIST_ENTRY *le)
-+{
-+	size_t off;
-+	u16 sz;
-+
-+	if (!le) {
-+		le = ni->attr_list.le;
-+	} else {
-+		sz = le16_to_cpu(le->size);
-+		if (sz < sizeof(struct ATTR_LIST_ENTRY)) {
-+			/* Impossible 'cause we should not return such le */
-+			return NULL;
-+		}
-+		le = Add2Ptr(le, sz);
-+	}
-+
-+	/* Check boundary */
-+	off = PtrOffset(ni->attr_list.le, le);
-+	if (off + sizeof(struct ATTR_LIST_ENTRY) > ni->attr_list.size) {
-+		// The regular end of list
-+		return NULL;
-+	}
-+
-+	sz = le16_to_cpu(le->size);
-+
-+	/* Check le for errors */
-+	if (sz < sizeof(struct ATTR_LIST_ENTRY) ||
-+	    off + sz > ni->attr_list.size ||
-+	    sz < le->name_off + le->name_len * sizeof(short)) {
-+		return NULL;
-+	}
-+
-+	return le;
-+}
-+
-+/*
-+ * al_find_le
-+ *
-+ * finds the first le in the list which matches type, name and vcn
-+ * Returns NULL if not found
-+ */
-+struct ATTR_LIST_ENTRY *al_find_le(struct ntfs_inode *ni,
-+				   struct ATTR_LIST_ENTRY *le,
-+				   const struct ATTRIB *attr)
-+{
-+	CLST svcn = attr_svcn(attr);
-+
-+	return al_find_ex(ni, le, attr->type, attr_name(attr), attr->name_len,
-+			  &svcn);
-+}
-+
-+/*
-+ * al_find_ex
-+ *
-+ * finds the first le in the list which matches type, name and vcn
-+ * Returns NULL if not found
-+ */
-+struct ATTR_LIST_ENTRY *al_find_ex(struct ntfs_inode *ni,
-+				   struct ATTR_LIST_ENTRY *le,
-+				   enum ATTR_TYPE type, const __le16 *name,
-+				   u8 name_len, const CLST *vcn)
-+{
-+	struct ATTR_LIST_ENTRY *ret = NULL;
-+	u32 type_in = le32_to_cpu(type);
-+
-+	while ((le = al_enumerate(ni, le))) {
-+		u64 le_vcn;
-+		int diff;
-+
-+		/* List entries are sorted by type, name and vcn */
-+		diff = le32_to_cpu(le->type) - type_in;
-+		if (diff < 0)
-+			continue;
-+
-+		if (diff > 0)
-+			return ret;
-+
-+		if (le->name_len != name_len)
-+			continue;
-+
-+		if (name_len &&
-+		    memcmp(le_name(le), name, name_len * sizeof(short)))
-+			continue;
-+
-+		if (!vcn)
-+			return le;
-+
-+		le_vcn = le64_to_cpu(le->vcn);
-+		if (*vcn == le_vcn)
-+			return le;
-+
-+		if (*vcn < le_vcn)
-+			return ret;
-+
-+		ret = le;
-+	}
-+
-+	return ret;
-+}
-+
-+/*
-+ * al_find_le_to_insert
-+ *
-+ * finds the first list entry which matches type, name and vcn
-+ * Returns NULL if not found
-+ */
-+static struct ATTR_LIST_ENTRY *
-+al_find_le_to_insert(struct ntfs_inode *ni, enum ATTR_TYPE type,
-+		     const __le16 *name, u8 name_len, const CLST *vcn)
-+{
-+	struct ATTR_LIST_ENTRY *le = NULL, *prev;
-+	u32 type_in = le32_to_cpu(type);
-+	int diff;
-+
-+	/* List entries are sorted by type, name, vcn */
-+next:
-+	le = al_enumerate(ni, prev = le);
-+	if (!le)
-+		goto out;
-+	diff = le32_to_cpu(le->type) - type_in;
-+	if (diff < 0)
-+		goto next;
-+	if (diff > 0)
-+		goto out;
-+
-+	if (ntfs_cmp_names(name, name_len, le_name(le), le->name_len, NULL) > 0)
-+		goto next;
-+
-+	if (!vcn || *vcn > le64_to_cpu(le->vcn))
-+		goto next;
-+
-+out:
-+	if (!le)
-+		le = prev ? Add2Ptr(prev, le16_to_cpu(prev->size)) :
-+			    ni->attr_list.le;
-+
-+	return le;
-+}
-+
-+/*
-+ * al_add_le
-+ *
-+ * adds an "attribute list entry" to the list.
-+ */
-+int al_add_le(struct ntfs_inode *ni, enum ATTR_TYPE type, const __le16 *name,
-+	      u8 name_len, CLST svcn, __le16 id, const struct MFT_REF *ref,
-+	      struct ATTR_LIST_ENTRY **new_le)
-+{
-+	int err;
-+	struct ATTRIB *attr;
-+	struct ATTR_LIST_ENTRY *le;
-+	size_t off;
-+	u16 sz;
-+	size_t asize, new_asize;
-+	u64 new_size;
-+	typeof(ni->attr_list) *al = &ni->attr_list;
-+
-+	/*
-+	 * Compute the size of the new le and the new length of the
-+	 * list with al le added.
-+	 */
-+	sz = le_size(name_len);
-+	new_size = al->size + sz;
-+	asize = al_aligned(al->size);
-+	new_asize = al_aligned(new_size);
-+
-+	/* Scan forward to the point at which the new le should be inserted. */
-+	le = al_find_le_to_insert(ni, type, name, name_len, &svcn);
-+	off = PtrOffset(al->le, le);
-+
-+	if (new_size > asize) {
-+		void *ptr = ntfs_alloc(new_asize, 0);
-+
-+		if (!ptr)
-+			return -ENOMEM;
-+
-+		memcpy(ptr, al->le, off);
-+		memcpy(Add2Ptr(ptr, off + sz), le, al->size - off);
-+		le = Add2Ptr(ptr, off);
-+		ntfs_free(al->le);
-+		al->le = ptr;
-+	} else {
-+		memmove(Add2Ptr(le, sz), le, al->size - off);
-+	}
-+
-+	al->size = new_size;
-+
-+	le->type = type;
-+	le->size = cpu_to_le16(sz);
-+	le->name_len = name_len;
-+	le->name_off = offsetof(struct ATTR_LIST_ENTRY, name);
-+	le->vcn = cpu_to_le64(svcn);
-+	le->ref = *ref;
-+	le->id = id;
-+	memcpy(le->name, name, sizeof(short) * name_len);
-+
-+	al->dirty = true;
-+
-+	err = attr_set_size(ni, ATTR_LIST, NULL, 0, &al->run, new_size,
-+			    &new_size, true, &attr);
-+	if (err)
-+		return err;
-+
-+	if (attr && attr->non_res) {
-+		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
-+					al->size);
-+		if (err)
-+			return err;
-+	}
-+
-+	al->dirty = false;
-+	*new_le = le;
-+
-+	return 0;
-+}
-+
-+/*
-+ * al_remove_le
-+ *
-+ * removes 'le' from attribute list
-+ */
-+bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le)
-+{
-+	u16 size;
-+	size_t off;
-+	typeof(ni->attr_list) *al = &ni->attr_list;
-+
-+	if (!al_is_valid_le(ni, le))
-+		return false;
-+
-+	/* Save on stack the size of le */
-+	size = le16_to_cpu(le->size);
-+	off = PtrOffset(al->le, le);
-+
-+	memmove(le, Add2Ptr(le, size), al->size - (off + size));
-+
-+	al->size -= size;
-+	al->dirty = true;
-+
-+	return true;
-+}
-+
-+/*
-+ * al_delete_le
-+ *
-+ * deletes from the list the first le which matches its parameters.
-+ */
-+bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
-+		  const __le16 *name, size_t name_len,
-+		  const struct MFT_REF *ref)
-+{
-+	u16 size;
-+	struct ATTR_LIST_ENTRY *le;
-+	size_t off;
-+	typeof(ni->attr_list) *al = &ni->attr_list;
-+
-+	/* Scan forward to the first le that matches the input */
-+	le = al_find_ex(ni, NULL, type, name, name_len, &vcn);
-+	if (!le)
-+		return false;
-+
-+	off = PtrOffset(al->le, le);
-+
-+	if (!ref)
-+		goto del;
-+
-+	/*
-+	 * The caller specified a segment reference, so we have to
-+	 * scan through the matching entries until we find that segment
-+	 * reference or we run of matching entries.
-+	 */
-+next:
-+	if (off + sizeof(struct ATTR_LIST_ENTRY) > al->size)
-+		goto del;
-+	if (le->type != type)
-+		goto del;
-+	if (le->name_len != name_len)
-+		goto del;
-+	if (name_len &&
-+	    memcmp(name, Add2Ptr(le, le->name_off), name_len * sizeof(short)))
-+		goto del;
-+	if (le64_to_cpu(le->vcn) != vcn)
-+		goto del;
-+	if (!memcmp(ref, &le->ref, sizeof(*ref)))
-+		goto del;
-+
-+	off += le16_to_cpu(le->size);
-+	le = Add2Ptr(al->le, off);
-+	goto next;
-+
-+del:
-+	/*
-+	 * If we've gone off the end of the list, or if the type, name,
-+	 * and vcn don't match, then we don't have any matching records.
-+	 */
-+	if (off >= al->size)
-+		return false;
-+	if (le->type != type)
-+		return false;
-+	if (le->name_len != name_len)
-+		return false;
-+	if (name_len &&
-+	    memcmp(name, Add2Ptr(le, le->name_off), name_len * sizeof(short)))
-+		return false;
-+	if (le64_to_cpu(le->vcn) != vcn)
-+		return false;
-+
-+	/* Save on stack the size of le */
-+	size = le16_to_cpu(le->size);
-+	/* Delete the le. */
-+	memmove(le, Add2Ptr(le, size), al->size - (off + size));
-+
-+	al->size -= size;
-+	al->dirty = true;
-+
-+	return true;
-+}
-+
-+/*
-+ * al_update
-+ */
-+int al_update(struct ntfs_inode *ni)
-+{
-+	int err;
-+	struct ATTRIB *attr;
-+	typeof(ni->attr_list) *al = &ni->attr_list;
-+
-+	if (!al->dirty || !al->size)
-+		return 0;
-+
-+	/*
-+	 * attribute list increased on demand in al_add_le
-+	 * attribute list decreased here
-+	 */
-+	err = attr_set_size(ni, ATTR_LIST, NULL, 0, &al->run, al->size, NULL,
-+			    false, &attr);
-+	if (err)
-+		goto out;
-+
-+	if (!attr->non_res) {
-+		memcpy(resident_data(attr), al->le, al->size);
-+	} else {
-+		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
-+					al->size);
-+		if (err)
-+			goto out;
-+
-+		attr->nres.valid_size = attr->nres.data_size;
-+	}
-+
-+	ni->mi.dirty = true;
-+	al->dirty = false;
-+
-+out:
-+	return err;
-+}
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-new file mode 100644
-index 000000000000..06eafeb0436f
---- /dev/null
-+++ b/fs/ntfs3/xattr.c
-@@ -0,0 +1,1073 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
-+ *
-+ */
-+
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fs.h>
-+#include <linux/nls.h>
-+#include <linux/posix_acl.h>
-+#include <linux/posix_acl_xattr.h>
-+#include <linux/xattr.h>
 +
 +#include "debug.h"
 +#include "ntfs.h"
 +#include "ntfs_fs.h"
 +
 +// clang-format off
-+#define SYSTEM_DOS_ATTRIB    "system.dos_attrib"
-+#define SYSTEM_NTFS_ATTRIB   "system.ntfs_attrib"
-+#define SYSTEM_NTFS_SECURITY "system.ntfs_security"
-+#define USER_DOSATTRIB       "user.DOSATTRIB"
++/* src buffer is zero */
++#define LZNT_ERROR_ALL_ZEROS	1
++#define LZNT_CHUNK_SIZE		0x1000
 +// clang-format on
 +
-+static inline size_t unpacked_ea_size(const struct EA_FULL *ea)
++struct lznt_hash {
++	const u8 *p1;
++	const u8 *p2;
++};
++
++struct lznt {
++	const u8 *unc;
++	const u8 *unc_end;
++	const u8 *best_match;
++	size_t max_len;
++	bool std;
++
++	struct lznt_hash hash[LZNT_CHUNK_SIZE];
++};
++
++static inline size_t get_match_len(const u8 *ptr, const u8 *end, const u8 *prev,
++				   size_t max_len)
 +{
-+	return !ea->size ? DwordAlign(offsetof(struct EA_FULL, name) + 1 +
-+				      ea->name_len + le16_to_cpu(ea->elength)) :
-+			   le32_to_cpu(ea->size);
++	size_t len = 0;
++
++	while (ptr + len < end && ptr[len] == prev[len] && ++len < max_len)
++		;
++	return len;
 +}
 +
-+static inline size_t packed_ea_size(const struct EA_FULL *ea)
++static size_t longest_match_std(const u8 *src, struct lznt *ctx)
 +{
-+	return offsetof(struct EA_FULL, name) + 1 -
-+	       offsetof(struct EA_FULL, flags) + ea->name_len +
-+	       le16_to_cpu(ea->elength);
-+}
++	size_t hash_index;
++	size_t len1 = 0, len2 = 0;
++	const u8 **hash;
 +
-+/*
-+ * find_ea
-+ *
-+ * assume there is at least one xattr in the list
-+ */
-+static inline bool find_ea(const struct EA_FULL *ea_all, u32 bytes,
-+			   const char *name, u8 name_len, u32 *off)
-+{
-+	*off = 0;
++	hash_index =
++		((40543U * ((((src[0] << 4) ^ src[1]) << 4) ^ src[2])) >> 4) &
++		(LZNT_CHUNK_SIZE - 1);
 +
-+	if (!ea_all || !bytes)
-+		return false;
++	hash = &(ctx->hash[hash_index].p1);
 +
-+	for (;;) {
-+		const struct EA_FULL *ea = Add2Ptr(ea_all, *off);
-+		u32 next_off = *off + unpacked_ea_size(ea);
-+
-+		if (next_off > bytes)
-+			return false;
-+
-+		if (ea->name_len == name_len &&
-+		    !memcmp(ea->name, name, name_len))
-+			return true;
-+
-+		*off = next_off;
-+		if (next_off >= bytes)
-+			return false;
++	if (hash[0] >= ctx->unc && hash[0] < src && hash[0][0] == src[0] &&
++	    hash[0][1] == src[1] && hash[0][2] == src[2]) {
++		len1 = 3;
++		if (ctx->max_len > 3)
++			len1 += get_match_len(src + 3, ctx->unc_end,
++					      hash[0] + 3, ctx->max_len - 3);
 +	}
++
++	if (hash[1] >= ctx->unc && hash[1] < src && hash[1][0] == src[0] &&
++	    hash[1][1] == src[1] && hash[1][2] == src[2]) {
++		len2 = 3;
++		if (ctx->max_len > 3)
++			len2 += get_match_len(src + 3, ctx->unc_end,
++					      hash[1] + 3, ctx->max_len - 3);
++	}
++
++	/* Compare two matches and select the best one */
++	if (len1 < len2) {
++		ctx->best_match = hash[1];
++		len1 = len2;
++	} else {
++		ctx->best_match = hash[0];
++	}
++
++	hash[1] = hash[0];
++	hash[0] = src;
++	return len1;
 +}
 +
-+/*
-+ * ntfs_read_ea
-+ *
-+ * reads all extended attributes
-+ * ea - new allocated memory
-+ * info - pointer into resident data
-+ */
-+static int ntfs_read_ea(struct ntfs_inode *ni, struct EA_FULL **ea,
-+			size_t add_bytes, const struct EA_INFO **info)
++static size_t longest_match_best(const u8 *src, struct lznt *ctx)
 +{
-+	int err;
-+	struct ATTR_LIST_ENTRY *le = NULL;
-+	struct ATTRIB *attr_info, *attr_ea;
-+	void *ea_p;
-+	u32 size;
++	size_t max_len;
++	const u8 *ptr;
 +
-+	static_assert(le32_to_cpu(ATTR_EA_INFO) < le32_to_cpu(ATTR_EA));
-+
-+	*ea = NULL;
-+	*info = NULL;
-+
-+	attr_info =
-+		ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, NULL);
-+	attr_ea =
-+		ni_find_attr(ni, attr_info, &le, ATTR_EA, NULL, 0, NULL, NULL);
-+
-+	if (!attr_ea || !attr_info)
++	if (ctx->unc >= src || !ctx->max_len)
 +		return 0;
 +
-+	*info = resident_data_ex(attr_info, sizeof(struct EA_INFO));
-+	if (!*info)
-+		return -EINVAL;
-+
-+	/* Check Ea limit */
-+	size = le32_to_cpu((*info)->size);
-+	if (size > MAX_EA_DATA_SIZE || size + add_bytes > MAX_EA_DATA_SIZE)
-+		return -EINVAL;
-+
-+	/* Allocate memory for packed Ea */
-+	ea_p = ntfs_alloc(size + add_bytes, 0);
-+	if (!ea_p)
-+		return -ENOMEM;
-+
-+	if (attr_ea->non_res) {
-+		struct runs_tree run;
-+
-+		run_init(&run);
-+
-+		err = attr_load_runs(attr_ea, ni, &run, NULL);
-+		if (!err)
-+			err = ntfs_read_run_nb(ni->mi.sbi, &run, 0, ea_p, size,
-+					       NULL);
-+		run_close(&run);
-+
-+		if (err)
-+			goto out;
-+	} else {
-+		void *p = resident_data_ex(attr_ea, size);
-+
-+		if (!p) {
-+			err = -EINVAL;
-+			goto out;
++	max_len = 0;
++	for (ptr = ctx->unc; ptr < src; ++ptr) {
++		size_t len =
++			get_match_len(src, ctx->unc_end, ptr, ctx->max_len);
++		if (len >= max_len) {
++			max_len = len;
++			ctx->best_match = ptr;
 +		}
-+		memcpy(ea_p, p, size);
 +	}
 +
-+	memset(Add2Ptr(ea_p, size), 0, add_bytes);
-+	*ea = ea_p;
-+	return 0;
++	return max_len >= 3 ? max_len : 0;
++}
 +
-+out:
-+	ntfs_free(ea_p);
-+	*ea = NULL;
-+	return err;
++static const size_t s_max_len[] = {
++	0x1002, 0x802, 0x402, 0x202, 0x102, 0x82, 0x42, 0x22, 0x12,
++};
++
++static const size_t s_max_off[] = {
++	0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000,
++};
++
++static inline u16 make_pair(size_t offset, size_t len, size_t index)
++{
++	return ((offset - 1) << (12 - index)) |
++	       ((len - 3) & (((1 << (12 - index)) - 1)));
++}
++
++static inline size_t parse_pair(u16 pair, size_t *offset, size_t index)
++{
++	*offset = 1 + (pair >> (12 - index));
++	return 3 + (pair & ((1 << (12 - index)) - 1));
 +}
 +
 +/*
-+ * ntfs_listxattr_hlp
++ * compress_chunk
 + *
-+ * copy a list of xattrs names into the buffer
-+ * provided, or compute the buffer size required
++ * returns one of the three values:
++ * 0 - ok, 'cmpr' contains 'cmpr_chunk_size' bytes of compressed data
++ * 1 - input buffer is full zero
++ * -2 - the compressed buffer is too small to hold the compressed data
 + */
-+static int ntfs_listxattr_hlp(struct ntfs_inode *ni, char *buffer,
-+			      size_t bytes_per_buffer, size_t *bytes)
++static inline int compress_chunk(size_t (*match)(const u8 *, struct lznt *),
++				 const u8 *unc, const u8 *unc_end, u8 *cmpr,
++				 u8 *cmpr_end, size_t *cmpr_chunk_size,
++				 struct lznt *ctx)
 +{
-+	const struct EA_INFO *info;
-+	struct EA_FULL *ea_all = NULL;
-+	const struct EA_FULL *ea;
-+	u32 off, size;
-+	int err;
-+
-+	*bytes = 0;
-+
-+	err = ntfs_read_ea(ni, &ea_all, 0, &info);
-+	if (err)
-+		return err;
-+
-+	if (!info || !ea_all)
-+		return 0;
-+
-+	size = le32_to_cpu(info->size);
-+
-+	/* Enumerate all xattrs */
-+	for (off = 0; off < size; off += unpacked_ea_size(ea)) {
-+		ea = Add2Ptr(ea_all, off);
-+
-+		if (buffer) {
-+			if (*bytes + ea->name_len + 1 > bytes_per_buffer) {
-+				err = -ERANGE;
-+				goto out;
-+			}
-+
-+			memcpy(buffer + *bytes, ea->name, ea->name_len);
-+			buffer[*bytes + ea->name_len] = 0;
-+		}
-+
-+		*bytes += ea->name_len + 1;
-+	}
-+
-+out:
-+	ntfs_free(ea_all);
-+	return err;
-+}
-+
-+/*
-+ * ntfs_get_ea
-+ *
-+ * reads xattr
-+ */
-+static int ntfs_get_ea(struct ntfs_inode *ni, const char *name, size_t name_len,
-+		       void *buffer, size_t bytes_per_buffer, u32 *len)
-+{
-+	const struct EA_INFO *info;
-+	struct EA_FULL *ea_all = NULL;
-+	const struct EA_FULL *ea;
-+	u32 off;
-+	int err;
-+
-+	*len = 0;
-+
-+	if (name_len > 255) {
-+		err = -ENAMETOOLONG;
-+		goto out;
-+	}
-+
-+	err = ntfs_read_ea(ni, &ea_all, 0, &info);
-+	if (err)
-+		goto out;
-+
-+	if (!info)
-+		goto out;
-+
-+	/* Enumerate all xattrs */
-+	if (!find_ea(ea_all, le32_to_cpu(info->size), name, name_len, &off)) {
-+		err = -ENODATA;
-+		goto out;
-+	}
-+	ea = Add2Ptr(ea_all, off);
-+
-+	*len = le16_to_cpu(ea->elength);
-+	if (!buffer) {
-+		err = 0;
-+		goto out;
-+	}
-+
-+	if (*len > bytes_per_buffer) {
-+		err = -ERANGE;
-+		goto out;
-+	}
-+	memcpy(buffer, ea->name + ea->name_len + 1, *len);
-+	err = 0;
-+
-+out:
-+	ntfs_free(ea_all);
-+
-+	return err;
-+}
-+
-+static noinline int ntfs_getxattr_hlp(struct inode *inode, const char *name,
-+				      void *value, size_t size,
-+				      size_t *required)
-+{
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	int err;
-+	u32 len;
-+
-+	if (!(ni->ni_flags & NI_FLAG_EA))
-+		return -ENODATA;
-+
-+	if (!required)
-+		ni_lock(ni);
-+
-+	err = ntfs_get_ea(ni, name, strlen(name), value, size, &len);
-+	if (!err)
-+		err = len;
-+	else if (-ERANGE == err && required)
-+		*required = len;
-+
-+	if (!required)
-+		ni_unlock(ni);
-+
-+	return err;
-+}
-+
-+static noinline int ntfs_set_ea(struct inode *inode, const char *name,
-+				const void *value, size_t val_size, int flags,
-+				int locked)
-+{
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	struct ntfs_sb_info *sbi = ni->mi.sbi;
-+	int err;
-+	struct EA_INFO ea_info;
-+	const struct EA_INFO *info;
-+	struct EA_FULL *new_ea;
-+	struct EA_FULL *ea_all = NULL;
-+	size_t name_len, add;
-+	u32 off, size;
-+	__le16 size_pack;
-+	struct ATTRIB *attr;
-+	struct ATTR_LIST_ENTRY *le;
-+	struct mft_inode *mi;
-+	struct runs_tree ea_run;
-+	u64 new_sz;
-+	void *p;
-+
-+	if (!locked)
-+		ni_lock(ni);
-+
-+	run_init(&ea_run);
-+	name_len = strlen(name);
-+
-+	if (name_len > 255) {
-+		err = -ENAMETOOLONG;
-+		goto out;
-+	}
-+
-+	add = DwordAlign(offsetof(struct EA_FULL, name) + 1 + name_len +
-+			 val_size);
-+
-+	err = ntfs_read_ea(ni, &ea_all, add, &info);
-+	if (err)
-+		goto out;
-+
-+	if (!info) {
-+		memset(&ea_info, 0, sizeof(ea_info));
-+		size = 0;
-+		size_pack = 0;
-+	} else {
-+		memcpy(&ea_info, info, sizeof(ea_info));
-+		size = le32_to_cpu(ea_info.size);
-+		size_pack = ea_info.size_pack;
-+	}
-+
-+	if (info && find_ea(ea_all, size, name, name_len, &off)) {
-+		struct EA_FULL *ea;
-+		size_t ea_sz;
-+
-+		if (flags & XATTR_CREATE) {
-+			err = -EEXIST;
-+			goto out;
-+		}
-+
-+		/* Remove current xattr */
-+		ea = Add2Ptr(ea_all, off);
-+		if (ea->flags & FILE_NEED_EA)
-+			le16_add_cpu(&ea_info.count, -1);
-+
-+		ea_sz = unpacked_ea_size(ea);
-+
-+		le16_add_cpu(&ea_info.size_pack, 0 - packed_ea_size(ea));
-+
-+		memmove(ea, Add2Ptr(ea, ea_sz), size - off - ea_sz);
-+
-+		size -= ea_sz;
-+		memset(Add2Ptr(ea_all, size), 0, ea_sz);
-+
-+		ea_info.size = cpu_to_le32(size);
-+
-+		if ((flags & XATTR_REPLACE) && !val_size)
-+			goto update_ea;
-+	} else {
-+		if (flags & XATTR_REPLACE) {
-+			err = -ENODATA;
-+			goto out;
-+		}
-+
-+		if (!ea_all) {
-+			ea_all = ntfs_alloc(add, 1);
-+			if (!ea_all) {
-+				err = -ENOMEM;
-+				goto out;
-+			}
-+		}
-+	}
-+
-+	/* append new xattr */
-+	new_ea = Add2Ptr(ea_all, size);
-+	new_ea->size = cpu_to_le32(add);
-+	new_ea->flags = 0;
-+	new_ea->name_len = name_len;
-+	new_ea->elength = cpu_to_le16(val_size);
-+	memcpy(new_ea->name, name, name_len);
-+	new_ea->name[name_len] = 0;
-+	memcpy(new_ea->name + name_len + 1, value, val_size);
-+
-+	le16_add_cpu(&ea_info.size_pack, packed_ea_size(new_ea));
-+	size += add;
-+	ea_info.size = cpu_to_le32(size);
-+
-+update_ea:
-+
-+	if (!info) {
-+		/* Create xattr */
-+		if (!size) {
-+			err = 0;
-+			goto out;
-+		}
-+
-+		err = ni_insert_resident(ni, sizeof(struct EA_INFO),
-+					 ATTR_EA_INFO, NULL, 0, NULL, NULL);
-+		if (err)
-+			goto out;
-+
-+		err = ni_insert_resident(ni, 0, ATTR_EA, NULL, 0, NULL, NULL);
-+		if (err)
-+			goto out;
-+	}
-+
-+	new_sz = size;
-+	err = attr_set_size(ni, ATTR_EA, NULL, 0, &ea_run, new_sz, &new_sz,
-+			    false, NULL);
-+	if (err)
-+		goto out;
-+
-+	le = NULL;
-+	attr = ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, &mi);
-+	if (!attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!size) {
-+		/* delete xattr, ATTR_EA_INFO */
-+		err = ni_remove_attr_le(ni, attr, le);
-+		if (err)
-+			goto out;
-+	} else {
-+		p = resident_data_ex(attr, sizeof(struct EA_INFO));
-+		if (!p) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		memcpy(p, &ea_info, sizeof(struct EA_INFO));
-+		mi->dirty = true;
-+	}
-+
-+	le = NULL;
-+	attr = ni_find_attr(ni, NULL, &le, ATTR_EA, NULL, 0, NULL, &mi);
-+	if (!attr) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+
-+	if (!size) {
-+		/* delete xattr, ATTR_EA */
-+		err = ni_remove_attr_le(ni, attr, le);
-+		if (err)
-+			goto out;
-+	} else if (attr->non_res) {
-+		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size);
-+		if (err)
-+			goto out;
-+	} else {
-+		p = resident_data_ex(attr, size);
-+		if (!p) {
-+			err = -EINVAL;
-+			goto out;
-+		}
-+		memcpy(p, ea_all, size);
-+		mi->dirty = true;
-+	}
-+
-+	if (ea_info.size_pack != size_pack)
-+		ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
-+	mark_inode_dirty(&ni->vfs_inode);
-+
-+	/* Check if we delete the last xattr */
-+	if (val_size || flags != XATTR_REPLACE ||
-+	    ntfs_listxattr_hlp(ni, NULL, 0, &val_size) || val_size) {
-+		ni->ni_flags |= NI_FLAG_EA;
-+	} else {
-+		ni->ni_flags &= ~NI_FLAG_EA;
-+	}
-+
-+out:
-+	if (!locked)
-+		ni_unlock(ni);
-+
-+	run_close(&ea_run);
-+	ntfs_free(ea_all);
-+
-+	return err;
-+}
-+
-+static inline void ntfs_posix_acl_release(struct posix_acl *acl)
-+{
-+	if (acl && refcount_dec_and_test(&acl->a_refcount))
-+		kfree(acl);
-+}
-+
-+static struct posix_acl *ntfs_get_acl_ex(struct inode *inode, int type,
-+					 int locked)
-+{
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	const char *name;
-+	struct posix_acl *acl;
-+	size_t req;
-+	int err;
-+	void *buf;
-+
-+	/* allocate PATH_MAX bytes */
-+	buf = __getname();
-+	if (!buf)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Possible values of 'type' was already checked above */
-+	name = type == ACL_TYPE_ACCESS ? XATTR_NAME_POSIX_ACL_ACCESS :
-+					 XATTR_NAME_POSIX_ACL_DEFAULT;
-+
-+	if (!locked)
-+		ni_lock(ni);
-+
-+	err = ntfs_getxattr_hlp(inode, name, buf, PATH_MAX, &req);
-+
-+	if (!locked)
-+		ni_unlock(ni);
-+
-+	/* Translate extended attribute to acl */
-+	if (err > 0) {
-+		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
-+		if (!IS_ERR(acl))
-+			set_cached_acl(inode, type, acl);
-+	} else {
-+		acl = err == -ENODATA ? NULL : ERR_PTR(err);
-+	}
-+
-+	__putname(buf);
-+
-+	return acl;
-+}
-+
-+/*
-+ * ntfs_get_acl
-+ *
-+ * inode_operations::get_acl
-+ */
-+struct posix_acl *ntfs_get_acl(struct inode *inode, int type)
-+{
-+	return ntfs_get_acl_ex(inode, type, 0);
-+}
-+
-+static noinline int ntfs_set_acl_ex(struct inode *inode, struct posix_acl *acl,
-+				    int type, int locked)
-+{
-+	const char *name;
-+	size_t size;
-+	void *value = NULL;
-+	int err = 0;
-+
-+	if (S_ISLNK(inode->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		if (acl) {
-+			umode_t mode = inode->i_mode;
-+
-+			err = posix_acl_equiv_mode(acl, &mode);
-+			if (err < 0)
-+				return err;
-+
-+			if (inode->i_mode != mode) {
-+				inode->i_mode = mode;
-+				mark_inode_dirty(inode);
-+			}
-+
-+			if (!err) {
-+				/*
-+				 * acl can be exactly represented in the
-+				 * traditional file mode permission bits
-+				 */
-+				acl = NULL;
-+				goto out;
-+			}
-+		}
-+		name = XATTR_NAME_POSIX_ACL_ACCESS;
-+		break;
-+
-+	case ACL_TYPE_DEFAULT:
-+		if (!S_ISDIR(inode->i_mode))
-+			return acl ? -EACCES : 0;
-+		name = XATTR_NAME_POSIX_ACL_DEFAULT;
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (!acl)
-+		goto out;
-+
-+	size = posix_acl_xattr_size(acl->a_count);
-+	value = ntfs_alloc(size, 0);
-+	if (!value)
-+		return -ENOMEM;
-+
-+	err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
-+	if (err)
-+		goto out;
-+
-+	err = ntfs_set_ea(inode, name, value, size, 0, locked);
-+	if (err)
-+		goto out;
-+
-+	inode->i_flags &= ~S_NOSEC;
-+
-+out:
-+	if (!err)
-+		set_cached_acl(inode, type, acl);
-+
-+	kfree(value);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_set_acl
-+ *
-+ * inode_operations::set_acl
-+ */
-+int ntfs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
-+{
-+	return ntfs_set_acl_ex(inode, acl, type, 0);
-+}
-+
-+static int ntfs_xattr_get_acl(struct inode *inode, int type, void *buffer,
-+			      size_t size)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct posix_acl *acl;
-+	int err;
-+
-+	if (!(sb->s_flags & SB_POSIXACL))
-+		return -EOPNOTSUPP;
-+
-+	acl = ntfs_get_acl(inode, type);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+
-+	if (!acl)
-+		return -ENODATA;
-+
-+	err = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
-+	ntfs_posix_acl_release(acl);
-+
-+	return err;
-+}
-+
-+static int ntfs_xattr_set_acl(struct inode *inode, int type, const void *value,
-+			      size_t size)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct posix_acl *acl;
-+	int err;
-+
-+	if (!(sb->s_flags & SB_POSIXACL))
-+		return -EOPNOTSUPP;
-+
-+	if (!inode_owner_or_capable(inode))
-+		return -EPERM;
-+
-+	if (!value)
-+		return 0;
-+
-+	acl = posix_acl_from_xattr(&init_user_ns, value, size);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+
-+	if (acl) {
-+		err = posix_acl_valid(sb->s_user_ns, acl);
-+		if (err)
-+			goto release_and_out;
-+	}
-+
-+	err = ntfs_set_acl(inode, acl, type);
-+
-+release_and_out:
-+	ntfs_posix_acl_release(acl);
-+	return err;
-+}
-+
-+/*
-+ * ntfs_acl_chmod
-+ *
-+ * helper for 'ntfs_setattr'
-+ */
-+int ntfs_acl_chmod(struct inode *inode)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	int err;
-+
-+	if (!(sb->s_flags & SB_POSIXACL))
-+		return 0;
-+
-+	if (S_ISLNK(inode->i_mode))
-+		return -EOPNOTSUPP;
-+
-+	err = posix_acl_chmod(inode, inode->i_mode);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_permission
-+ *
-+ * inode_operations::permission
-+ */
-+int ntfs_permission(struct inode *inode, int mask)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	int err;
-+
-+	if (sbi->options.no_acs_rules) {
-+		/* "no access rules" mode - allow all changes */
-+		return 0;
-+	}
-+
-+	err = generic_permission(inode, mask);
-+
-+	return err;
-+}
-+
-+/*
-+ * ntfs_listxattr
-+ *
-+ * inode_operations::listxattr
-+ */
-+ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size)
-+{
-+	struct inode *inode = d_inode(dentry);
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	ssize_t ret = -1;
-+	int err;
-+
-+	if (!(ni->ni_flags & NI_FLAG_EA)) {
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	ni_lock(ni);
-+
-+	err = ntfs_listxattr_hlp(ni, buffer, size, (size_t *)&ret);
-+
-+	ni_unlock(ni);
-+
-+	if (err)
-+		ret = err;
-+out:
-+
-+	return ret;
-+}
-+
-+static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
-+			 struct inode *inode, const char *name, void *buffer,
-+			 size_t size)
-+{
-+	int err;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	size_t name_len = strlen(name);
-+
-+	/* Dispatch request */
-+	if (name_len == sizeof(SYSTEM_DOS_ATTRIB) - 1 &&
-+	    !memcmp(name, SYSTEM_DOS_ATTRIB, sizeof(SYSTEM_DOS_ATTRIB))) {
-+		/* system.dos_attrib */
-+		if (!buffer) {
-+			err = sizeof(u8);
-+		} else if (size < sizeof(u8)) {
-+			err = -ENODATA;
++	size_t cnt = 0;
++	size_t idx = 0;
++	const u8 *up = unc;
++	u8 *cp = cmpr + 3;
++	u8 *cp2 = cmpr + 2;
++	u8 not_zero = 0;
++	/* Control byte of 8-bit values: ( 0 - means byte as is, 1 - short pair ) */
++	u8 ohdr = 0;
++	u8 *last;
++	u16 t16;
++
++	if (unc + LZNT_CHUNK_SIZE < unc_end)
++		unc_end = unc + LZNT_CHUNK_SIZE;
++
++	last = min(cmpr + LZNT_CHUNK_SIZE + sizeof(short), cmpr_end);
++
++	ctx->unc = unc;
++	ctx->unc_end = unc_end;
++	ctx->max_len = s_max_len[0];
++
++	while (up < unc_end) {
++		size_t max_len;
++
++		while (unc + s_max_off[idx] < up)
++			ctx->max_len = s_max_len[++idx];
++
++		// Find match
++		max_len = up + 3 <= unc_end ? (*match)(up, ctx) : 0;
++
++		if (!max_len) {
++			if (cp >= last)
++				goto NotCompressed;
++			not_zero |= *cp++ = *up++;
++		} else if (cp + 1 >= last) {
++			goto NotCompressed;
 +		} else {
-+			err = sizeof(u8);
-+			*(u8 *)buffer = le32_to_cpu(ni->std_fa);
++			t16 = make_pair(up - ctx->best_match, max_len, idx);
++			*cp++ = t16;
++			*cp++ = t16 >> 8;
++
++			ohdr |= 1 << cnt;
++			up += max_len;
 +		}
-+		goto out;
++
++		cnt = (cnt + 1) & 7;
++		if (!cnt) {
++			*cp2 = ohdr;
++			ohdr = 0;
++			cp2 = cp;
++			cp += 1;
++		}
 +	}
 +
-+	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB) - 1 &&
-+	    !memcmp(name, SYSTEM_NTFS_ATTRIB, sizeof(SYSTEM_NTFS_ATTRIB))) {
-+		/* system.ntfs_attrib */
-+		if (!buffer) {
-+			err = sizeof(u32);
-+		} else if (size < sizeof(u32)) {
-+			err = -ENODATA;
-+		} else {
-+			err = sizeof(u32);
-+			*(u32 *)buffer = le32_to_cpu(ni->std_fa);
-+		}
-+		goto out;
-+	}
++	if (cp2 < last)
++		*cp2 = ohdr;
++	else
++		cp -= 1;
 +
-+	if (name_len == sizeof(USER_DOSATTRIB) - 1 &&
-+	    !memcmp(name, USER_DOSATTRIB, sizeof(USER_DOSATTRIB))) {
-+		/* user.DOSATTRIB */
-+		if (!buffer) {
-+			err = 5;
-+		} else if (size < 5) {
-+			err = -ENODATA;
-+		} else {
-+			err = sprintf((char *)buffer, "0x%x",
-+				      le32_to_cpu(ni->std_fa) & 0xff) +
-+			      1;
-+		}
-+		goto out;
-+	}
++	*cmpr_chunk_size = cp - cmpr;
 +
-+	if (name_len == sizeof(SYSTEM_NTFS_SECURITY) - 1 &&
-+	    !memcmp(name, SYSTEM_NTFS_SECURITY, sizeof(SYSTEM_NTFS_SECURITY))) {
-+		/* system.ntfs_security*/
-+		struct SECURITY_DESCRIPTOR_RELATIVE *sd = NULL;
-+		size_t sd_size = 0;
++	t16 = (*cmpr_chunk_size - 3) | 0xB000;
++	cmpr[0] = t16;
++	cmpr[1] = t16 >> 8;
 +
-+		if (!is_ntfs3(ni->mi.sbi)) {
-+			/* we should get nt4 security */
-+			err = -EINVAL;
-+			goto out;
-+		} else if (le32_to_cpu(ni->std_security_id) <
-+			   SECURITY_ID_FIRST) {
-+			err = -ENOENT;
-+			goto out;
-+		}
++	return not_zero ? 0 : LZNT_ERROR_ALL_ZEROS;
 +
-+		err = ntfs_get_security_by_id(ni->mi.sbi, ni->std_security_id,
-+					      &sd, &sd_size);
-+		if (err)
-+			goto out;
++NotCompressed:
 +
-+		if (!is_sd_valid(sd, sd_size)) {
-+			ntfs_inode_warn(
-+				inode,
-+				"looks like you get incorrect security descriptor id=%u",
-+				ni->std_security_id);
-+		}
-+
-+		if (!buffer) {
-+			err = sd_size;
-+		} else if (size < sd_size) {
-+			err = -ENODATA;
-+		} else {
-+			err = sd_size;
-+			memcpy(buffer, sd, sd_size);
-+		}
-+		ntfs_free(sd);
-+		goto out;
-+	}
-+
-+	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
-+	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
-+		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
-+	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
-+	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
-+		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
-+		err = ntfs_xattr_get_acl(
-+			inode,
-+			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 ?
-+				ACL_TYPE_ACCESS :
-+				ACL_TYPE_DEFAULT,
-+			buffer, size);
-+	} else {
-+		err = ntfs_getxattr_hlp(inode, name, buffer, size, NULL);
-+	}
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * ntfs_setxattr
-+ *
-+ * inode_operations::setxattr
-+ */
-+static noinline int ntfs_setxattr(const struct xattr_handler *handler,
-+				  struct dentry *de, struct inode *inode,
-+				  const char *name, const void *value,
-+				  size_t size, int flags)
-+{
-+	int err = -EINVAL;
-+	struct ntfs_inode *ni = ntfs_i(inode);
-+	size_t name_len = strlen(name);
-+	enum FILE_ATTRIBUTE new_fa;
-+
-+	/* Dispatch request */
-+	if (name_len == sizeof(SYSTEM_DOS_ATTRIB) - 1 &&
-+	    !memcmp(name, SYSTEM_DOS_ATTRIB, sizeof(SYSTEM_DOS_ATTRIB))) {
-+		if (sizeof(u8) != size)
-+			goto out;
-+		new_fa = cpu_to_le32(*(u8 *)value);
-+		goto set_new_fa;
-+	}
-+
-+	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB) - 1 &&
-+	    !memcmp(name, SYSTEM_NTFS_ATTRIB, sizeof(SYSTEM_NTFS_ATTRIB))) {
-+		if (size != sizeof(u32))
-+			goto out;
-+		new_fa = cpu_to_le32(*(u32 *)value);
-+
-+		if (S_ISREG(inode->i_mode)) {
-+			/* Process compressed/sparsed in special way*/
-+			ni_lock(ni);
-+			err = ni_new_attr_flags(ni, new_fa);
-+			ni_unlock(ni);
-+			if (err)
-+				goto out;
-+		}
-+		goto set_new_fa;
-+	}
-+
-+	if (name_len == sizeof(USER_DOSATTRIB) - 1 &&
-+	    !memcmp(name, USER_DOSATTRIB, sizeof(USER_DOSATTRIB))) {
-+		u32 attrib;
-+
-+		if (size < 4 || ((char *)value)[size - 1])
-+			goto out;
-+
-+		/*
-+		 * The input value must be string in form 0x%x with last zero
-+		 * This means that the 'size' must be 4, 5, ...
-+		 *  E.g: 0x1 - 4 bytes, 0x20 - 5 bytes
-+		 */
-+		if (sscanf((char *)value, "0x%x", &attrib) != 1)
-+			goto out;
-+
-+		new_fa = cpu_to_le32(attrib);
-+set_new_fa:
-+		/*
-+		 * Thanks Mark Harmstone:
-+		 * keep directory bit consistency
-+		 */
-+		if (S_ISDIR(inode->i_mode))
-+			new_fa |= FILE_ATTRIBUTE_DIRECTORY;
-+		else
-+			new_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
-+
-+		if (ni->std_fa != new_fa) {
-+			ni->std_fa = new_fa;
-+			if (new_fa & FILE_ATTRIBUTE_READONLY)
-+				inode->i_mode &= ~0222;
-+			else
-+				inode->i_mode |= 0222;
-+			/* std attribute always in primary record */
-+			ni->mi.dirty = true;
-+			mark_inode_dirty(inode);
-+		}
-+		err = 0;
-+
-+		goto out;
-+	}
-+
-+	if (name_len == sizeof(SYSTEM_NTFS_SECURITY) - 1 &&
-+	    !memcmp(name, SYSTEM_NTFS_SECURITY, sizeof(SYSTEM_NTFS_SECURITY))) {
-+		/* system.ntfs_security*/
-+		__le32 security_id;
-+		bool inserted;
-+		struct ATTR_STD_INFO5 *std;
-+
-+		if (!is_ntfs3(ni->mi.sbi)) {
-+			/*
-+			 * we should replace ATTR_SECURE
-+			 * Skip this way cause it is nt4 feature
-+			 */
-+			err = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (!is_sd_valid(value, size)) {
-+			err = -EINVAL;
-+			ntfs_inode_warn(
-+				inode,
-+				"you try to set invalid security descriptor");
-+			goto out;
-+		}
-+
-+		err = ntfs_insert_security(ni->mi.sbi, value, size,
-+					   &security_id, &inserted);
-+		if (err)
-+			goto out;
-+
-+		ni_lock(ni);
-+		std = ni_std5(ni);
-+		if (!std) {
-+			err = -EINVAL;
-+		} else if (std->security_id != security_id) {
-+			std->security_id = ni->std_security_id = security_id;
-+			/* std attribute always in primary record */
-+			ni->mi.dirty = true;
-+			mark_inode_dirty(&ni->vfs_inode);
-+		}
-+		ni_unlock(ni);
-+		goto out;
-+	}
-+
-+	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
-+	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
-+		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
-+	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
-+	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
-+		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
-+		err = ntfs_xattr_set_acl(
-+			inode,
-+			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 ?
-+				ACL_TYPE_ACCESS :
-+				ACL_TYPE_DEFAULT,
-+			value, size);
-+	} else {
-+		err = ntfs_set_ea(inode, name, value, size, flags, 0);
-+	}
-+
-+out:
-+	return err;
-+}
-+
-+/*
-+ * Initialize the ACLs of a new inode. Called from ntfs_create_inode.
-+ */
-+int ntfs_init_acl(struct inode *inode, struct inode *dir)
-+{
-+	struct posix_acl *default_acl, *acl;
-+	int err;
++	if ((cmpr + LZNT_CHUNK_SIZE + sizeof(short)) > last)
++		return -2;
 +
 +	/*
-+	 * TODO refactoring lock
-+	 * ni_lock(dir) ... -> posix_acl_create(dir,...) -> ntfs_get_acl -> ni_lock(dir)
++	 * Copy non cmpr data
++	 * 0x3FFF == ((LZNT_CHUNK_SIZE + 2 - 3) | 0x3000)
 +	 */
-+	inode->i_default_acl = NULL;
++	cmpr[0] = 0xff;
++	cmpr[1] = 0x3f;
 +
-+	default_acl = ntfs_get_acl_ex(dir, ACL_TYPE_DEFAULT, 1);
++	memcpy(cmpr + sizeof(short), unc, LZNT_CHUNK_SIZE);
++	*cmpr_chunk_size = LZNT_CHUNK_SIZE + sizeof(short);
 +
-+	if (!default_acl || default_acl == ERR_PTR(-EOPNOTSUPP)) {
-+		inode->i_mode &= ~current_umask();
-+		err = 0;
-+		goto out;
-+	}
-+
-+	if (IS_ERR(default_acl)) {
-+		err = PTR_ERR(default_acl);
-+		goto out;
-+	}
-+
-+	acl = default_acl;
-+	err = __posix_acl_create(&acl, GFP_NOFS, &inode->i_mode);
-+	if (err < 0)
-+		goto out1;
-+	if (!err) {
-+		posix_acl_release(acl);
-+		acl = NULL;
-+	}
-+
-+	if (!S_ISDIR(inode->i_mode)) {
-+		posix_acl_release(default_acl);
-+		default_acl = NULL;
-+	}
-+
-+	if (default_acl)
-+		err = ntfs_set_acl_ex(inode, default_acl, ACL_TYPE_DEFAULT, 1);
-+
-+	if (!acl)
-+		inode->i_acl = NULL;
-+	else if (!err)
-+		err = ntfs_set_acl_ex(inode, acl, ACL_TYPE_ACCESS, 1);
-+
-+	posix_acl_release(acl);
-+out1:
-+	posix_acl_release(default_acl);
-+
-+out:
-+	return err;
++	return 0;
 +}
 +
-+static bool ntfs_xattr_user_list(struct dentry *dentry)
++static inline ssize_t decompress_chunk(u8 *unc, u8 *unc_end, const u8 *cmpr,
++				       const u8 *cmpr_end)
 +{
-+	return 1;
++	u8 *up = unc;
++	u8 ch = *cmpr++;
++	size_t bit = 0;
++	size_t index = 0;
++	u16 pair;
++	size_t offset, length;
++
++	/* Do decompression until pointers are inside range */
++	while (up < unc_end && cmpr < cmpr_end) {
++		/* Correct index */
++		while (unc + s_max_off[index] < up)
++			index += 1;
++
++		/* Check the current flag for zero */
++		if (!(ch & (1 << bit))) {
++			/* Just copy byte */
++			*up++ = *cmpr++;
++			goto next;
++		}
++
++		/* Check for boundary */
++		if (cmpr + 1 >= cmpr_end)
++			return -EINVAL;
++
++		/* Read a short from little endian stream */
++		pair = cmpr[1];
++		pair <<= 8;
++		pair |= cmpr[0];
++
++		cmpr += 2;
++
++		/* Translate packed information into offset and length */
++		length = parse_pair(pair, &offset, index);
++
++		/* Check offset for boundary */
++		if (unc + offset > up)
++			return -EINVAL;
++
++		/* Truncate the length if necessary */
++		if (up + length >= unc_end)
++			length = unc_end - up;
++
++		/* Now we copy bytes. This is the heart of LZ algorithm. */
++		for (; length > 0; length--, up++)
++			*up = *(up - offset);
++
++next:
++		/* Advance flag bit value */
++		bit = (bit + 1) & 7;
++
++		if (!bit) {
++			if (cmpr >= cmpr_end)
++				break;
++
++			ch = *cmpr++;
++		}
++	}
++
++	/* return the size of uncompressed data */
++	return up - unc;
 +}
 +
-+static const struct xattr_handler ntfs_xattr_handler = {
-+	.prefix = "",
-+	.get = ntfs_getxattr,
-+	.set = ntfs_setxattr,
-+	.list = ntfs_xattr_user_list,
-+};
++/*
++ * 0 - standard compression
++ * !0 - best compression, requires a lot of cpu
++ */
++struct lznt *get_lznt_ctx(int level)
++{
++	struct lznt *r = ntfs_alloc(
++		level ? offsetof(struct lznt, hash) : sizeof(struct lznt), 1);
 +
-+const struct xattr_handler *ntfs_xattr_handlers[] = {
-+	&ntfs_xattr_handler,
-+	NULL,
-+};
++	if (r)
++		r->std = !level;
++	return r;
++}
++
++/*
++ * compress_lznt
++ *
++ * Compresses "unc" into "cmpr"
++ * +x - ok, 'cmpr' contains 'final_compressed_size' bytes of compressed data
++ * 0 - input buffer is full zero
++ */
++size_t compress_lznt(const void *unc, size_t unc_size, void *cmpr,
++		     size_t cmpr_size, struct lznt *ctx)
++{
++	int err;
++	size_t (*match)(const u8 *src, struct lznt *ctx);
++	u8 *p = cmpr;
++	u8 *end = p + cmpr_size;
++	const u8 *unc_chunk = unc;
++	const u8 *unc_end = unc_chunk + unc_size;
++	bool is_zero = true;
++
++	if (ctx->std) {
++		match = &longest_match_std;
++		memset(ctx->hash, 0, sizeof(ctx->hash));
++	} else {
++		match = &longest_match_best;
++	}
++
++	/* compression cycle */
++	for (; unc_chunk < unc_end; unc_chunk += LZNT_CHUNK_SIZE) {
++		cmpr_size = 0;
++		err = compress_chunk(match, unc_chunk, unc_end, p, end,
++				     &cmpr_size, ctx);
++		if (err < 0)
++			return unc_size;
++
++		if (is_zero && err != LZNT_ERROR_ALL_ZEROS)
++			is_zero = false;
++
++		p += cmpr_size;
++	}
++
++	if (p <= end - 2)
++		p[0] = p[1] = 0;
++
++	return is_zero ? 0 : PtrOffset(cmpr, p);
++}
++
++/*
++ * decompress_lznt
++ *
++ * decompresses "cmpr" into "unc"
++ */
++ssize_t decompress_lznt(const void *cmpr, size_t cmpr_size, void *unc,
++			size_t unc_size)
++{
++	const u8 *cmpr_chunk = cmpr;
++	const u8 *cmpr_end = cmpr_chunk + cmpr_size;
++	u8 *unc_chunk = unc;
++	u8 *unc_end = unc_chunk + unc_size;
++	u16 chunk_hdr;
++
++	if (cmpr_size < sizeof(short))
++		return -EINVAL;
++
++	/* read chunk header */
++	chunk_hdr = cmpr_chunk[1];
++	chunk_hdr <<= 8;
++	chunk_hdr |= cmpr_chunk[0];
++
++	/* loop through decompressing chunks */
++	for (;;) {
++		size_t chunk_size_saved;
++		size_t unc_use;
++		size_t cmpr_use = 3 + (chunk_hdr & (LZNT_CHUNK_SIZE - 1));
++
++		/* Check that the chunk actually fits the supplied buffer */
++		if (cmpr_chunk + cmpr_use > cmpr_end)
++			return -EINVAL;
++
++		/* First make sure the chunk contains compressed data */
++		if (chunk_hdr & 0x8000) {
++			/* Decompress a chunk and return if we get an error */
++			ssize_t err =
++				decompress_chunk(unc_chunk, unc_end,
++						 cmpr_chunk + sizeof(chunk_hdr),
++						 cmpr_chunk + cmpr_use);
++			if (err < 0)
++				return err;
++			unc_use = err;
++		} else {
++			/* This chunk does not contain compressed data */
++			unc_use = unc_chunk + LZNT_CHUNK_SIZE > unc_end ?
++					  unc_end - unc_chunk :
++					  LZNT_CHUNK_SIZE;
++
++			if (cmpr_chunk + sizeof(chunk_hdr) + unc_use >
++			    cmpr_end) {
++				return -EINVAL;
++			}
++
++			memcpy(unc_chunk, cmpr_chunk + sizeof(chunk_hdr),
++			       unc_use);
++		}
++
++		/* Advance pointers */
++		cmpr_chunk += cmpr_use;
++		unc_chunk += unc_use;
++
++		/* Check for the end of unc buffer */
++		if (unc_chunk >= unc_end)
++			break;
++
++		/* Proceed the next chunk */
++		if (cmpr_chunk > cmpr_end - 2)
++			break;
++
++		chunk_size_saved = LZNT_CHUNK_SIZE;
++
++		/* read chunk header */
++		chunk_hdr = cmpr_chunk[1];
++		chunk_hdr <<= 8;
++		chunk_hdr |= cmpr_chunk[0];
++
++		if (!chunk_hdr)
++			break;
++
++		/* Check the size of unc buffer */
++		if (unc_use < chunk_size_saved) {
++			size_t t1 = chunk_size_saved - unc_use;
++			u8 *t2 = unc_chunk + t1;
++
++			/* 'Zero' memory */
++			if (t2 >= unc_end)
++				break;
++
++			memset(unc_chunk, 0, t1);
++			unc_chunk = t2;
++		}
++	}
++
++	/* Check compression boundary */
++	if (cmpr_chunk > cmpr_end)
++		return -EINVAL;
++
++	/*
++	 * The unc size is just a difference between current
++	 * pointer and original one
++	 */
++	return PtrOffset(unc, unc_chunk);
++}
 -- 
 2.25.4
 
