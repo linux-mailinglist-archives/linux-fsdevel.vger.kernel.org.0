@@ -2,86 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CF92CF1B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 17:16:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15F922CF20C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 17:41:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbgLDQPZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 11:15:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbgLDQPY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 11:15:24 -0500
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55443C061A51;
-        Fri,  4 Dec 2020 08:14:44 -0800 (PST)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id BE1AE6F72; Fri,  4 Dec 2020 11:14:43 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org BE1AE6F72
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1607098483;
-        bh=J0xj9ewVrYZE9fzgXp3Qux8/NwVxEiikQkU7TSID3ZU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pr74IznZ9NqMO6FgOWvlw4NZexyjnQNSe0DO8NZbAxGiKEWAa4WnQ2jA99uimZe2v
-         vyegI7s6jysq7eOgv9o/3OnAi42+ccnduvuk4YP19X2Ot7/bF+VFQVIB9Ply9VAeOp
-         36YgsbRyzUoVrxWsGiuYhIx7yRLpfsg5exJJnN/w=
-Date:   Fri, 4 Dec 2020 11:14:43 -0500
-From:   Bruce Fields <bfields@fieldses.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-crypto@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
-Message-ID: <20201204161443.GB26933@fieldses.org>
-References: <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com>
- <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk>
- <118876.1607093975@warthog.procyon.org.uk>
- <20201204154626.GA26255@fieldses.org>
+        id S1727153AbgLDQkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 11:40:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52412 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726309AbgLDQkw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Dec 2020 11:40:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C281EACC1;
+        Fri,  4 Dec 2020 16:40:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 406A91E1327; Fri,  4 Dec 2020 17:40:09 +0100 (CET)
+Date:   Fri, 4 Dec 2020 17:40:09 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     miklos <miklos@szeredi.hu>, jack <jack@suse.cz>,
+        amir73il <amir73il@gmail.com>,
+        linux-unionfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: =?utf-8?B?5Zue5aSNOltSRg==?= =?utf-8?Q?C?= PATCH v4 0/9]
+ implement containerized syncfs for overlayfs
+Message-ID: <20201204164009.GA1389@quack2.suse.cz>
+References: <20201113065555.147276-1-cgxu519@mykernel.net>
+ <1762e3a7bce.e28cb82145070.9060345012556073676@mykernel.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201204154626.GA26255@fieldses.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1762e3a7bce.e28cb82145070.9060345012556073676@mykernel.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 04, 2020 at 10:46:26AM -0500, Bruce Fields wrote:
-> On Fri, Dec 04, 2020 at 02:59:35PM +0000, David Howells wrote:
-> > Hi Chuck, Bruce,
-> > 
-> > Why is gss_krb5_crypto.c using an auxiliary cipher?  For reference, the
-> > gss_krb5_aes_encrypt() code looks like the attached.
-> > 
-> > >From what I can tell, in AES mode, the difference between the main cipher and
-> > the auxiliary cipher is that the latter is "cbc(aes)" whereas the former is
-> > "cts(cbc(aes))" - but they have the same key.
-> > 
-> > Reading up on CTS, I'm guessing the reason it's like this is that CTS is the
-> > same as the non-CTS, except for the last two blocks, but the non-CTS one is
-> > more efficient.
+On Fri 04-12-20 22:49:13, Chengguang Xu wrote:
+>  ---- 在 星期五, 2020-11-13 14:55:46 Chengguang Xu <cgxu519@mykernel.net> 撰写 ----
+>  > Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
+>  > on upper_sb to synchronize whole dirty inodes in upper filesystem
+>  > regardless of the overlay ownership of the inode. In the use case of
+>  > container, when multiple containers using the same underlying upper
+>  > filesystem, it has some shortcomings as below.
+>  > 
+>  > (1) Performance
+>  > Synchronization is probably heavy because it actually syncs unnecessary
+>  > inodes for target overlayfs.
+>  > 
+>  > (2) Interference
+>  > Unplanned synchronization will probably impact IO performance of
+>  > unrelated container processes on the other overlayfs.
+>  > 
+>  > This series try to implement containerized syncfs for overlayfs so that
+>  > only sync target dirty upper inodes which are belong to specific overlayfs
+>  > instance. By doing this, it is able to reduce cost of synchronization and
+>  > will not seriously impact IO performance of unrelated processes.
+>  
+> Hi Miklos,
 > 
-> CTS is cipher-text stealing, isn't it?  I think it was Kevin Coffman
-> that did that, and I don't remember the history.  I thought it was
-> required by some spec or peer implementation (maybe Windows?) but I
-> really don't remember.  It may predate git.  I'll dig around and see
-> what I can find.
+> I think this version has addressed all previous issues and comments from Jack
+> and Amir.  Have you got time to review this patch series?
 
-Like I say, I've got no insight here, I'm just grepping through
-mailboxes and stuff, but maybe some of this history's useful;
+Yes, the patches now look good to me. Feel free to add:
 
-Addition of CTS mode:
+Acked-by: Jan Kara <jack@suse.cz>
 
-	https://lore.kernel.org/linux-crypto/20080220202543.3209.47410.stgit@jazz.citi.umich.edu/
-
-This rpc/krb5 code went in with 934a95aa1c9c "gss_krb5: add remaining
-pieces to enable AES encryption support"; may be worth looking at that
-and the series leading up to it, I see the changelogs have some RFC
-references that might explain why it's using the crypto it is.
-
---b.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
