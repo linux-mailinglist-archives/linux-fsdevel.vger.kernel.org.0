@@ -2,215 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E51F62CE849
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 07:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A64F12CE91F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 09:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbgLDGqP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 01:46:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50418 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbgLDGqP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 01:46:15 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F327AC061A51;
-        Thu,  3 Dec 2020 22:45:28 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id n14so4699753iom.10;
-        Thu, 03 Dec 2020 22:45:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ji7lnODD86OvcD1GRe4ZTKTW6GNjOwZtQgzj2MJUj5Y=;
-        b=Xywy5lY0sw6zLewJ8SPDNBMYMRLQlehPbQhyCgwvXevAeo6l8yz0F4w4kNeocgEVfN
-         NiFgslqN2xxX4bcGQIH/Bl161QFnq8T9Bx6HCmBq5snZCMXY2TrBL9EzGdmeb+6Csy1v
-         KK487zppO+/WMn4yI9ncldbCzNURZEqMbMviU6TB7p8H1vH0pPYkJaYRz4AOZxHsquzP
-         n3InRm/k74U5weGUlFpMfMeOmknVJplk/rUrbDngzAqZN1H6oy/DpNexQ5j861dc94Pf
-         chbMxbOCyRf54wDcvlCm2CyafF6pIS1aHWfC2LOgk6c+YLNodLI3W0BxEgXeL82TmkFg
-         yH6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ji7lnODD86OvcD1GRe4ZTKTW6GNjOwZtQgzj2MJUj5Y=;
-        b=tXNdVTdL1YqFgl+cT6ZrKr6SKZALH1aHqCVvKh/gQ34Tx128yD3WFfWddN1otK8q22
-         VM2xaof0d6uFjxikfofBcqX8T3sAw3D7t6HMODIFILlOvckgz0px2orhXKMvWUu5ACCd
-         coneHB3YhvV78VoeuX0DKU5m7RUeIauA//91TMWp4IJNsh5sttWNeKUuiYEHu/aXUsN7
-         hbS3r1XrkmVowYWKoOcV6TdGWLX/bF8eVJogZD7stJ0dkcrEE2KE2fAUlRT3awRGRymb
-         dGZmt3X5E/RnkvCkYCJBMb/miWmRWCU60KYiyxjDcXnMBeCGQjJc31gnjIQzrMlqrbYg
-         TZ/A==
-X-Gm-Message-State: AOAM532ZGqjwXgcNS51CrWwGpXAWeLZ7aYzdNMi8GjrX1jx7OoSxrLX2
-        KRpEFN2g17aTGiPVC219zfBMncIAgSpIzJK7ohQ5Z4vd
-X-Google-Smtp-Source: ABdhPJz0TmpZazTiLodDcK5J3SQTBxG5R/x9rowDVhVbo18nFcgok/i+8nQlLzanpBl2Tedb3yrm17jzTNiAYGWwtTs=
-X-Received: by 2002:a05:6602:1608:: with SMTP id x8mr4362983iow.72.1607064328278;
- Thu, 03 Dec 2020 22:45:28 -0800 (PST)
-MIME-Version: 1.0
-References: <0a3979479ffbf080fa1cd492923a7fa8984078b9.camel@redhat.com>
- <20201202213434.GA4070@redhat.com> <2e08895bf0650513d7d12e66965eec611f361be3.camel@redhat.com>
- <20201203104225.GA30173@ircssh-2.c.rugged-nimbus-611.internal>
- <20201203142712.GA3266@redhat.com> <93894cddefff0118d8b1f5f69816da519cb0a735.camel@redhat.com>
- <CAMp4zn_Mn8khp43XvNbAPg5qzriRY6ozdB2enMOTYRLwcBf_Cw@mail.gmail.com>
- <e5534c44661a503102cd23965a85291f0dec907a.camel@redhat.com>
- <20201203204356.GF3266@redhat.com> <b38de55c91ecd7b1102c62cb36e81bb156748d1c.camel@redhat.com>
- <20201203222457.GB12683@redhat.com> <742b7c180d4fe18ddbf28fea6505b08475c4aace.camel@redhat.com>
-In-Reply-To: <742b7c180d4fe18ddbf28fea6505b08475c4aace.camel@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 4 Dec 2020 08:45:16 +0200
-Message-ID: <CAOQ4uxgjrL3aCK+aO1Wrs7qaKWNmKnAWBQaDXO-hzCR4eBmdMg@mail.gmail.com>
-Subject: Re: [PATCH] overlay: Implement volatile-specific fsync error behaviour
-To:     Jeff Layton <jlayton@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Sargun Dhillon <sargun@sargun.me>
+        id S1728911AbgLDH7f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 02:59:35 -0500
+Received: from mout.gmx.net ([212.227.15.15]:35453 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728659AbgLDH7e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Dec 2020 02:59:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1607068659;
+        bh=oemqXrMm5ZA9WV2JKRp24uD1gUqLC5EAInCCwRnwXJ8=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=L2WucgpAoT79v6BnPT1xAsozyWDqdSYb/uLq+zBBpgkPUFZENClMZI/jelizHjyUu
+         g8hi2P8YNlkPGprWZfce7LV+w8UW/WgOVEjfSkfQahvohu3ALaRHzsZQERTlkfr1+j
+         y3WZOjtI9FyxZiZiM5WMklDCdO/c8EjDjQLBKZnw=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.20.60] ([92.116.139.88]) by mail.gmx.com (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MacSe-1kA6C907II-00c8Fi; Fri, 04
+ Dec 2020 08:57:39 +0100
+Subject: Re: PATCH] fs/dax: fix compile problem on parisc and mips
+To:     Matthew Wilcox <willy@infradead.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
 Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Parisc List <linux-parisc@vger.kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-nvdimm@lists.01.org
+References: <fb91b40d258414b0fdce2c380752e48daa6a70d6.camel@HansenPartnership.com>
+ <20201204034843.GM11935@casper.infradead.org>
+From:   Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+ c2TFWAS8k6RLkk41ZUU8ENX8+qZx/Q==
+Message-ID: <0f0ac7be-0108-0648-a4db-2f37db1c8114@gmx.de>
+Date:   Fri, 4 Dec 2020 08:57:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20201204034843.GM11935@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/hxfIae2B21GojlBi9A18tnKp9h6lJC9yIvJMLSQUogtkGiVwGj
+ u9I3sXY6GRWR0gyyfFGMNpHbOVlPkHzz3KbKhM2T+LBQmW/sLDAqs3lTkzABiHuS49Ri2my
+ gUl3+Lry74+8zT6gjsogYI5qt5HwaRMZbN69itEZYSC2fL4tIqOj3/HaikSUq0z3tzWZt+c
+ 5Cgzl9msZaeHCUAN9PnfA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:t8z+aoWvId4=:rJw790E0HUf1kGcVeJJKJW
+ 7vcwAOaSQt9V9LOgOWPOsuCFHiuX8Fv9Nv1q60H8A+TDgApEQYKeHtl3DaTW/o86qT7bKqs9h
+ 6J+3Wilz7cjaTW9gDafKlRMitgJOmprz4LN5a5AXC+XkDwoldPY3DY7RQ5CpXrLk0wSU4NTtl
+ 5JBtajx8xZ+ojiAS9dHE9xXmDg/IUDd0TARaxUW3qEoHpCGu3VVH2N2VCcEmykya1yUjwCNnk
+ kwA1Wrla25YknoCS/9REIcEiDUJoT+bTBvdchHpQZgOQcwaz9LDJDI6+O4eGAAFiF4QRpAI2c
+ ELOpuM139QrtlYypb313cxlNigRDhbl4EuJeDQuyOeEeNq+K7kB71CMdIKOq/ggt3O16vsKlE
+ CaMAIEBh/r9Fwg3KqlOXSSQqdFMqOCIgfzgbQChAgga6TFOKX1KTQd0h8cm1iULxamFsi4l7M
+ CPVyd5cmLepf43BpOW04rGOiUzNbmSW/pO0ytYK2VFpGsRsluiyA6SAoOSv9gzLe+c+z/99xc
+ Mq0BwyC9F8sZGbIw44aQuer5tqO6fllGrdvUw+W6RCwq29wEE1G6mucnoK1P+Lizx+RY0yElL
+ SrUQYXGBU8FO/MlG/3SYYBSWWA+HKYyZ6Zx7Bwv+lvawE8fq/GY+e5AcgC+RuZq+WtziM4yJ8
+ gnVtFUXlBUMg/cTbLftWVRApz9tXG8lmhzOp4YtyHMXOkxDCP6s8TThfwH+/uFJZOwWEWoAN3
+ jsAQwgBSvdQL6fZVyT2/tu+AoMW72vTjp9HNlZCm3dbInmJGA6wBnUtIiHMDJ1nRHmoV4iQgU
+ JohbHa4rIqrP1LEgMyyBHNvH4JDmv8T3g91UjIXPWcfPsKgiv/IBqgf181if5hWUlUhs2BRVR
+ w2nbT8SM8spO8hQ168iQ==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > Here is the background.
-> >
-> > We introduced a new option "-o volatile" for overlayfs. What this option
-> > does is that it disables all calls to sync/syncfs/fsync and returns
-> > success.
-> >
-> > https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html?highlight=overlayfs#volatile-mount
-> >
-> > Now one problem with this we realized is that what happens if there is
-> > a writeback error on upper filesystem. Previously fsync will catch
-> > that error and return to user space. Now we are not doing any actual
-> > sync for volatile mount, so we don't have a way to detect if any
-> > writeback error happened on upper filesystem.
-> >
-> > So it is possible that an application writes something to overlay
-> > volatile mount and gets back corrupted/old data.
-> >
-> > - App writes something.
-> > - Writeback of that page fails
-> > - app does fsync, which succeds without doing any sync.
-> > - app reads back page and can get old data if page has been evicted out
-> >   of cache.
-> >
-> > So we lost capability to return writeback errors to user space with
-> > volatile mounts. So Amir/Sargun proposed that lets take snapshot
-> > of upper ->s_wb_err when volatile overlay is being mounted. And
-> > on every sync/fsync call check if any error has happened on upper
-> > since volatile overlay has been mounted. If yes, return error to
-> > user space.
-> >
-> > In fact, Idea is that once an error has been detected, volatile
-> > overlay should effectively return -EIO for all the operations. IOW,
-> > one should now unmount it, throw away upper and restart again.
-> >
-> >
-> > > If it turns out that you just want to see if it ever had an error, you
-> > > can always use errseq_check with 0 as the "since" value and that will
-> > > tell you without marking or advancing anything. It's not clear to me
-> > > what the value of that is here though.
-> >
-> > I think "since == 0" will not work. Say upper already has an error
-> > (seen/unseen), then errseq_check() will always return error. We
-> > don't want that. We don't care if upper has an seen/unseen error
-> > at the time when we sample it. What we care about is that if
-> > there is an error after we sampled, we can detect that and make
-> > whole volatile mount bad.
-> >
-> > >
-> > > > So key requirement here seems to be being able to detect error
-> > > > on underlying superblock without consuming the unseen error.
-> > > >
-> > >
-> > > I think for overlayfs what you really want to do is basically "proxy"
-> > > fsync and syncfs calls to the upper layer. Then you should just be able
-> > > to use the upper layer's "realfile" when doing fsync/syncfs. You won't
-> > > need to sample anything at mount time that way as it should just happen
-> > > naturally when you open files on overlayfs.
-> >
-> > Which we already do, right? ovl_fsync()/ovl_sync() result in a
-> > call on upper. This probably can be improve futher.
-> >
-> > >
-> > > That does mean you may need to rework how the syncfs syscall dispatches
-> > > to the filesystem, but that's not too difficult in principle.
-> >
-> > I think we are looking at two overlay cases here. One is regular
-> > overlayfs where syncfs() needs to be reworked to propagate errors
-> > from upper/ to all the way to application. Right now VFS ignores
-> > error returned from ->sync_fs.
-> >
-> > The other case we are trying to solve right now is volatile mount.
-> > Where we will not actually call fsync/sync_filesystem() on upper
-> > but still want to detect if any error happened since we mounted
-> > this volatile mount.
-> >
-> > And that's why all this discussion of being able to detect an
-> > error on super block without actually consuming the error. Once
-> > we detect that some error has happened on upper since we mounted,
-> > we can start returning errors for all I/O operations to user and
-> > user is supposed to unmount and throw away upper dir and restart.
-> >
+On 12/4/20 4:48 AM, Matthew Wilcox wrote:
+> On Thu, Dec 03, 2020 at 04:33:10PM -0800, James Bottomley wrote:
+>> These platforms define PMD_ORDER in asm/pgtable.h
 >
+> I think that's the real problem, though.
 >
-> The problem here is that you want to be able to sample the thing in two
-> different ways such that you potentially get two different results
-> afterward:
+> #define PGD_ORDER       1 /* Number of pages per pgd */
+> #define PMD_ORDER       1 /* Number of pages per pmd */
+> #define PGD_ALLOC_ORDER (2 + 1) /* first pgd contains pmd */
+> #else
+> #define PGD_ORDER       1 /* Number of pages per pgd */
+> #define PGD_ALLOC_ORDER (PGD_ORDER + 1)
 >
-> 1) the current syncfs/fsync case where we don't expect later openers to
-> be able to see the error after you take it.
->
-> 2) the situation you want where you want to sample the errseq_t but
-> don't want to cloak an fsync on a subsequent open from seeing it
->
-> That's fundamentally not going to work with the single SEEN flag we're
-> using now. I wonder if you could get you the semantics you want with 2
-> flags instead of 1. Basically, split the SEEN bit into two:
->
-> 1) a bit to indicate that the counter doesn't need to be incremented the
-> next time an error is recorded (SKIP_INC)
->
-> 2) a bit to indicate that the error has been reported in a way that was
-> returned to userland, such that later openers won't see it (SEEN)
->
-> Then you could just add two different sorts of sampling functions. One
-> would set both bits when sampling (or advancing) and the other would
-> just set one of them.
->
-> It's a bit more complicated than what we're doing now though and you'd
-> need to work through the logic of how the API would interact with both
-> flags.
->
+> That should clearly be PMD_ALLOC_ORDER, not PMD_ORDER.  Or even
+> PAGES_PER_PMD like the comment calls it, because I really think
+> that doing an order-3 (8 pages) allocation for the PGD is wrong.
 
-This discussion is a very good exercise for my brain ;-)
-but I think we are really over complicating the requirements of volatile.
+We need a spinlock to protect parallel accesses to the PGD,
+search for pgd_spinlock().
+This spinlock is stored behind the memory used for the PGD, which
+is why we allocate more memory (and waste 3 pages).
 
-My suggestion to sample sb error on mount was over-interpreted that
-we MUST disregard writeback errors that happened before the mount.
-I don't think this is a requirement. If anything, this is a non-requirement.
-Why? because what happens if someone unpacks the layers onto
-underlying fs (as docker most surely does) and then mounts the volatile
-overlay. The files data could have been lost in the time that passed between
-unpack of layer and overlay mount.
-
-Of course overlayfs can not be held responsible for the integrity of the
-layers it was handed, but why work so hard to deprive users of something
-that can benefit the integrity of their system?
-
-So I think we may be prudent and say that if there is an unseen error we
-should fail the volatile mount (say ESTALE).
-
-This way userland has the fast path of mounting without syncfs in the
-common case and the fallback to slow path:
-- syncfs (consume the error)
-- unpack layers
-- volatile mount
-
-Doesn't this make sense *and* make life simpler?
-
-1. On volatile mount sample sb_err and make sure no unseen error
-2. On fsync/syncfs verify no sb_err since mount
-
-Am I missing something?
-
-Thanks,
-Amir.
+Helge
