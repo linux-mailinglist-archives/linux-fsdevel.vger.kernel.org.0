@@ -2,266 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42DA42CE387
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:04:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A0D52CE3E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 01:07:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388790AbgLDAC1 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 3 Dec 2020 19:02:27 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:2391 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388523AbgLDAC0 (ORCPT
+        id S2501891AbgLDAHE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Dec 2020 19:07:04 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:53776 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbgLDAHD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:02:26 -0500
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4CnCXf671Nz50N9;
-        Fri,  4 Dec 2020 08:01:06 +0800 (CST)
-Received: from dggemi761-chm.china.huawei.com (10.1.198.147) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.487.0; Fri, 4 Dec 2020 08:01:41 +0800
-Received: from dggemi761-chm.china.huawei.com (10.1.198.147) by
- dggemi761-chm.china.huawei.com (10.1.198.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Fri, 4 Dec 2020 08:01:41 +0800
-Received: from dggemi761-chm.china.huawei.com ([10.9.49.202]) by
- dggemi761-chm.china.huawei.com ([10.9.49.202]) with mapi id 15.01.1913.007;
- Fri, 4 Dec 2020 08:01:41 +0800
-From:   "Song Bao Hua (Barry Song)" <song.bao.hua@hisilicon.com>
-To:     Muchun Song <songmuchun@bytedance.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
-        "pawan.kumar.gupta@linux.intel.com" 
-        <pawan.kumar.gupta@linux.intel.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "oneukum@suse.com" <oneukum@suse.com>,
-        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
-        "jroedel@suse.de" <jroedel@suse.de>,
-        "almasrymina@google.com" <almasrymina@google.com>,
-        "rientjes@google.com" <rientjes@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "mhocko@suse.com" <mhocko@suse.com>
-CC:     "duanxiongchun@bytedance.com" <duanxiongchun@bytedance.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH v7 13/15] mm/hugetlb: Add a kernel parameter
- hugetlb_free_vmemmap
-Thread-Topic: [PATCH v7 13/15] mm/hugetlb: Add a kernel parameter
- hugetlb_free_vmemmap
-Thread-Index: AQHWxyyEW8/tZjAAjUGQxE1fk3rBGKnmEXCA
-Date:   Fri, 4 Dec 2020 00:01:41 +0000
-Message-ID: <a6cd4183b9bf4e72b649a271b4843f89@hisilicon.com>
-References: <20201130151838.11208-1-songmuchun@bytedance.com>
- <20201130151838.11208-14-songmuchun@bytedance.com>
-In-Reply-To: <20201130151838.11208-14-songmuchun@bytedance.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.201.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 3 Dec 2020 19:07:03 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B4061lG123363;
+        Fri, 4 Dec 2020 00:06:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=M6YpxecNsswGuGNsYFeS11pXzHFa54HvZeVouPfIfQY=;
+ b=HBfnQBxC4mFr98tz4VwTBw9johloCCEbAGPaZ+Og9sM5zXwJLhT5FsLkPFOR9cInuYeB
+ rp/pYDrztZpKe0dr0P5Ozkj8gJ0GsVvPV8VFEtp+ESDmTIy6aEqIFxEMCO69XemKxnJM
+ RPuH4iB6Yaur/X9N8Qt50zL1KrhTdtZaQcNIRrr0aXet0CVu2dmv1MRm1KxJ5Ug6fYdp
+ AdaqCrHacx8CxSc2Ah8jbjzuSfnG3gfJNTeV/PAZTTZhqKERWqAVVSSPSNBF9mmNl43t
+ JH3XLfZgNqIzTsHeGu+X8O3DD81VgY5pB+SZtzUWLT9+qKHUCU+HmbULl8qcmOHeKeGR rg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 353dyr0vc7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 04 Dec 2020 00:06:00 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B3NuDhY118763;
+        Fri, 4 Dec 2020 00:04:00 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 3540f2k2ka-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 04 Dec 2020 00:03:59 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B403sjG017376;
+        Fri, 4 Dec 2020 00:03:55 GMT
+Received: from localhost (/10.159.156.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 03 Dec 2020 16:03:54 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v2] proc: Allow pid_revalidate() during LOOKUP_RCU
+Date:   Thu,  3 Dec 2020 16:02:12 -0800
+Message-Id: <20201204000212.773032-1-stephen.s.brennan@oracle.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9824 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 bulkscore=0 spamscore=0 adultscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012030132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9824 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 mlxscore=0 spamscore=0 priorityscore=1501 mlxlogscore=999
+ suspectscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012030133
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The pid_revalidate() function requires dropping from RCU into REF lookup
+mode. When many threads are resolving paths within /proc in parallel,
+this can result in heavy spinlock contention as each thread tries to
+grab a reference to the /proc dentry lock (and drop it shortly
+thereafter).
 
+Allow the pid_revalidate() function to execute under LOOKUP_RCU. When
+updates must be made to the inode due to the owning task performing
+setuid(), drop out of RCU and into REF mode. Remove the call to
+security_task_to_inode(), since we can rely on the call from
+proc_pid_make_inode().
 
-> -----Original Message-----
-> From: Muchun Song [mailto:songmuchun@bytedance.com]
-> Sent: Tuesday, December 1, 2020 4:19 AM
-> To: corbet@lwn.net; mike.kravetz@oracle.com; tglx@linutronix.de;
-> mingo@redhat.com; bp@alien8.de; x86@kernel.org; hpa@zytor.com;
-> dave.hansen@linux.intel.com; luto@kernel.org; peterz@infradead.org;
-> viro@zeniv.linux.org.uk; akpm@linux-foundation.org; paulmck@kernel.org;
-> mchehab+huawei@kernel.org; pawan.kumar.gupta@linux.intel.com;
-> rdunlap@infradead.org; oneukum@suse.com; anshuman.khandual@arm.com;
-> jroedel@suse.de; almasrymina@google.com; rientjes@google.com;
-> willy@infradead.org; osalvador@suse.de; mhocko@suse.com; Song Bao Hua (Barry
-> Song) <song.bao.hua@hisilicon.com>
-> Cc: duanxiongchun@bytedance.com; linux-doc@vger.kernel.org;
-> linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> linux-fsdevel@vger.kernel.org; Muchun Song <songmuchun@bytedance.com>
-> Subject: [PATCH v7 13/15] mm/hugetlb: Add a kernel parameter
-> hugetlb_free_vmemmap
-> 
-> Add a kernel parameter hugetlb_free_vmemmap to disable the feature of
-> freeing unused vmemmap pages associated with each hugetlb page on boot.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+---
+I'd like to use this patch as an RFC on this approach for reducing spinlock
+contention during many parallel path lookups in the /proc filesystem. The
+contention can be triggered by, for example, running ~100 parallel instances of
+"TZ=/etc/localtime ps -fe >/dev/null" on a 100CPU machine. The %sys utilization
+in such a case reaches around 90%, and profiles show two code paths with high
+utilization:
 
+    walk_component
+      lookup_fast
+        unlazy_child
+          legitimize_root
+            __legitimize_path
+              lockref_get_not_dead
 
-Reviewed-by: Barry Song <song.bao.hua@hisilicon.com>
+    terminate_walk
+      dput
+        dput
 
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  9 +++++++++
->  Documentation/admin-guide/mm/hugetlbpage.rst    |  3 +++
->  arch/x86/mm/init_64.c                           |  5 +++--
->  include/linux/hugetlb.h                         | 19 +++++++++++++++++++
->  mm/hugetlb_vmemmap.c                            | 18 +++++++++++++++++-
->  5 files changed, 51 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt
-> b/Documentation/admin-guide/kernel-parameters.txt
-> index 3ae25630a223..9e6854f21d55 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1551,6 +1551,15 @@
->  			Documentation/admin-guide/mm/hugetlbpage.rst.
->  			Format: size[KMG]
-> 
-> +	hugetlb_free_vmemmap=
-> +			[KNL] When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set,
-> +			this controls freeing unused vmemmap pages associated
-> +			with each HugeTLB page.
-> +			Format: { on | off (default) }
-> +
-> +			on:  enable the feature
-> +			off: disable the feature
-> +
->  	hung_task_panic=
->  			[KNL] Should the hung task detector generate panics.
->  			Format: 0 | 1
-> diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst
-> b/Documentation/admin-guide/mm/hugetlbpage.rst
-> index f7b1c7462991..6a8b57f6d3b7 100644
-> --- a/Documentation/admin-guide/mm/hugetlbpage.rst
-> +++ b/Documentation/admin-guide/mm/hugetlbpage.rst
-> @@ -145,6 +145,9 @@ default_hugepagesz
-> 
->  	will all result in 256 2M huge pages being allocated.  Valid default
->  	huge page size is architecture dependent.
-> +hugetlb_free_vmemmap
-> +	When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this enables freeing
-> +	unused vmemmap pages associated each HugeTLB page.
-> 
->  When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
->  indicates the current number of pre-allocated huge pages of the default size.
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 155cb06a6961..fcdc020904a8 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -34,6 +34,7 @@
->  #include <linux/gfp.h>
->  #include <linux/kcore.h>
->  #include <linux/bootmem_info.h>
-> +#include <linux/hugetlb.h>
-> 
->  #include <asm/processor.h>
->  #include <asm/bios_ebda.h>
-> @@ -1557,7 +1558,7 @@ int __meminit vmemmap_populate(unsigned long start,
-> unsigned long end, int node,
->  {
->  	int err;
-> 
-> -	if (IS_ENABLED(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP))
-> +	if (is_hugetlb_free_vmemmap_enabled())
->  		err = vmemmap_populate_basepages(start, end, node, NULL);
->  	else if (end - start < PAGES_PER_SECTION * sizeof(struct page))
->  		err = vmemmap_populate_basepages(start, end, node, NULL);
-> @@ -1613,7 +1614,7 @@ void register_page_bootmem_memmap(unsigned long
-> section_nr,
->  		get_page_bootmem(section_nr, pud_page(*pud), MIX_SECTION_INFO);
-> 
->  		if (!boot_cpu_has(X86_FEATURE_PSE) ||
-> -		    IS_ENABLED(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)) {
-> +		    is_hugetlb_free_vmemmap_enabled()) {
->  			next = (addr + PAGE_SIZE) & PAGE_MASK;
->  			pmd = pmd_offset(pud, addr);
->  			if (pmd_none(*pmd))
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 4efeccb7192c..66d82ae7b712 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -773,6 +773,20 @@ static inline void huge_ptep_modify_prot_commit(struct
-> vm_area_struct *vma,
->  }
->  #endif
-> 
-> +#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-> +extern bool hugetlb_free_vmemmap_enabled;
-> +
-> +static inline bool is_hugetlb_free_vmemmap_enabled(void)
-> +{
-> +	return hugetlb_free_vmemmap_enabled;
-> +}
-> +#else
-> +static inline bool is_hugetlb_free_vmemmap_enabled(void)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  #else	/* CONFIG_HUGETLB_PAGE */
->  struct hstate {};
-> 
-> @@ -926,6 +940,11 @@ static inline void set_huge_swap_pte_at(struct mm_struct
-> *mm, unsigned long addr
->  					pte_t *ptep, pte_t pte, unsigned long sz)
->  {
->  }
-> +
-> +static inline bool is_hugetlb_free_vmemmap_enabled(void)
-> +{
-> +	return false;
-> +}
->  #endif	/* CONFIG_HUGETLB_PAGE */
-> 
->  static inline spinlock_t *huge_pte_lock(struct hstate *h,
-> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
-> index a3714db7f400..ebc710d148e4 100644
-> --- a/mm/hugetlb_vmemmap.c
-> +++ b/mm/hugetlb_vmemmap.c
-> @@ -131,6 +131,21 @@ typedef void (*vmemmap_remap_pte_func_t)(struct page
-> *reuse, pte_t *pte,
->  					 unsigned long start, unsigned long end,
->  					 void *priv);
-> 
-> +bool hugetlb_free_vmemmap_enabled;
-> +
-> +static int __init early_hugetlb_free_vmemmap_param(char *buf)
-> +{
-> +	if (!buf)
-> +		return -EINVAL;
-> +
-> +	if (!strcmp(buf, "on"))
-> +		hugetlb_free_vmemmap_enabled = true;
-> +	else if (strcmp(buf, "off"))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
-> 
->  static inline unsigned int vmemmap_pages_per_hpage(struct hstate *h)
->  {
-> @@ -325,7 +340,8 @@ void __init hugetlb_vmemmap_init(struct hstate *h)
->  	unsigned int nr_pages = pages_per_huge_page(h);
->  	unsigned int vmemmap_pages;
-> 
-> -	if (!is_power_of_2(sizeof(struct page))) {
-> +	if (!is_power_of_2(sizeof(struct page)) ||
-> +	    !hugetlb_free_vmemmap_enabled) {
->  		pr_info("disable freeing vmemmap pages for %s\n", h->name);
->  		return;
->  	}
-> --
-> 2.11.0
+By applying this patch, %sys utilization falls to around 60% under the same
+workload. Although this particular workload is a bit contrived, we have seen
+some monitoring scripts which produced high %sys time due to this contention.
 
-Thanks
-Barry
+Changes from v2:
+- Remove get_pid_task_rcu_user() and get_proc_task_rcu(), since they were
+  unnecessary.
+- Remove the call to security_task_to_inode().
+
+ fs/proc/base.c | 47 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 14 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..833d55a59e20 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1813,12 +1813,28 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ /*
+  * Set <pid>/... inode ownership (can change due to setuid(), etc.)
+  */
+-void pid_update_inode(struct task_struct *task, struct inode *inode)
++static int do_pid_update_inode(struct task_struct *task, struct inode *inode,
++			       unsigned int flags)
+ {
+-	task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
++	kuid_t uid;
++	kgid_t gid;
++
++	task_dump_owner(task, inode->i_mode, &uid, &gid);
++	if (uid_eq(uid, inode->i_uid) && gid_eq(gid, inode->i_gid) &&
++			!(inode->i_mode & (S_ISUID | S_ISGID)))
++		return 1;
++	if (flags & LOOKUP_RCU)
++		return -ECHILD;
+ 
++	inode->i_uid = uid;
++	inode->i_gid = gid;
+ 	inode->i_mode &= ~(S_ISUID | S_ISGID);
+-	security_task_to_inode(task, inode);
++	return 1;
++}
++
++void pid_update_inode(struct task_struct *task, struct inode *inode)
++{
++	do_pid_update_inode(task, inode, 0);
+ }
+ 
+ /*
+@@ -1830,19 +1846,22 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	struct inode *inode;
+ 	struct task_struct *task;
++	int rv = 0;
+ 
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-
+-	inode = d_inode(dentry);
+-	task = get_proc_task(inode);
+-
+-	if (task) {
+-		pid_update_inode(task, inode);
+-		put_task_struct(task);
+-		return 1;
++	if (flags & LOOKUP_RCU) {
++		inode = d_inode_rcu(dentry);
++		task = pid_task(proc_pid(inode), PIDTYPE_PID);
++		if (task)
++			rv = do_pid_update_inode(task, inode, flags);
++	} else {
++		inode = d_inode(dentry);
++		task = get_proc_task(inode);
++		if (task) {
++			rv = do_pid_update_inode(task, inode, flags);
++			put_task_struct(task);
++		}
+ 	}
+-	return 0;
++	return rv;
+ }
+ 
+ static inline bool proc_inode_is_dead(struct inode *inode)
+-- 
+2.25.1
 
