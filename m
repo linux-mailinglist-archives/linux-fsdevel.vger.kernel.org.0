@@ -2,82 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD90A2CED82
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 12:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D29F22CEE4F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 13:45:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729474AbgLDLxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 06:53:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30582 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728582AbgLDLxY (ORCPT
+        id S2388182AbgLDMor (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 07:44:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49314 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388146AbgLDMor (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 06:53:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607082718;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d6DMcyImwNW8/yN8tZ5x35hfAGMlLSWgGVlroAI+zwE=;
-        b=g6fp3hP4ZtzlYeImnBfqgIC3JLu0ihB3+n9l8GRpubyx4pvqs9fbMim0GzUM925ssp5NED
-        us6bPcpMXNfi0qp6W5xhaynSkWmlDkGqugFCnB/AzoDsi6QuetF/4sVZrEXK2S4JNMGylT
-        04/igAK+S7lozz8GxlkamJQBfP/S5lI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-274-leC3jpfvOhWjVCqCD3DNVA-1; Fri, 04 Dec 2020 06:51:54 -0500
-X-MC-Unique: leC3jpfvOhWjVCqCD3DNVA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2558618C8C00;
-        Fri,  4 Dec 2020 11:51:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A484210016F5;
-        Fri,  4 Dec 2020 11:51:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201203064536.GE27350@xsang-OptiPlex-9020>
-References: <20201203064536.GE27350@xsang-OptiPlex-9020>
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     dhowells@redhat.com, lkp@lists.01.org, lkp@intel.com,
-        ying.huang@intel.com, feng.tang@intel.com, zhengjun.xing@intel.com,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [iov_iter] 9bd0e337c6: will-it-scale.per_process_ops -4.8% regression
+        Fri, 4 Dec 2020 07:44:47 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0536CC0613D1;
+        Fri,  4 Dec 2020 04:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AjuAPGM7G2kMm64bUja2RitkEu1uv3g7PuJ6UiGCjec=; b=OS2MyK0IhBUnWYTsQkbN6XDe+a
+        0RzYNlc12iI9h+rXilNNpWO0YuA0DMEXsNw5zXxeuMb5hODEavmO3BLe/dC0zNpt9L7IMIfHz0Tyl
+        rWmUHxvmiShEPwvMnxZ3XMKlNBSJ+kCEQsmkPNb7+lisRzXeBaOR2fHJXykN5paMkmKKc9AxMSC6W
+        /9lZVSSqDxcq6ArODbGnmHKB7KdbJmX7KDQjdxig0V4JuXy4U1z7RuD24XhjgVGFfi/7IY4W1CwXy
+        HGdY8vXvgnKkeI4XlZ+DMGG9+Vv71fRwMJJFuQs3IOSQI33bDaMpChMBRl3RPRkDXoKE3ROVoi7pg
+        uYuZGdIA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1klARO-000262-Tg; Fri, 04 Dec 2020 12:44:02 +0000
+Date:   Fri, 4 Dec 2020 12:44:02 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Helge Deller <deller@gmx.de>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-nvdimm@lists.01.org
+Subject: Re: PATCH] fs/dax: fix compile problem on parisc and mips
+Message-ID: <20201204124402.GN11935@casper.infradead.org>
+References: <fb91b40d258414b0fdce2c380752e48daa6a70d6.camel@HansenPartnership.com>
+ <20201204034843.GM11935@casper.infradead.org>
+ <0f0ac7be-0108-0648-a4db-2f37db1c8114@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <98293.1607082708.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 04 Dec 2020 11:51:48 +0000
-Message-ID: <98294.1607082708@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f0ac7be-0108-0648-a4db-2f37db1c8114@gmx.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kernel test robot <oliver.sang@intel.com> wrote:
+On Fri, Dec 04, 2020 at 08:57:37AM +0100, Helge Deller wrote:
+> On 12/4/20 4:48 AM, Matthew Wilcox wrote:
+> > On Thu, Dec 03, 2020 at 04:33:10PM -0800, James Bottomley wrote:
+> >> These platforms define PMD_ORDER in asm/pgtable.h
+> >
+> > I think that's the real problem, though.
+> >
+> > #define PGD_ORDER       1 /* Number of pages per pgd */
+> > #define PMD_ORDER       1 /* Number of pages per pmd */
+> > #define PGD_ALLOC_ORDER (2 + 1) /* first pgd contains pmd */
+> > #else
+> > #define PGD_ORDER       1 /* Number of pages per pgd */
+> > #define PGD_ALLOC_ORDER (PGD_ORDER + 1)
+> >
+> > That should clearly be PMD_ALLOC_ORDER, not PMD_ORDER.  Or even
+> > PAGES_PER_PMD like the comment calls it, because I really think
+> > that doing an order-3 (8 pages) allocation for the PGD is wrong.
+> 
+> We need a spinlock to protect parallel accesses to the PGD,
+> search for pgd_spinlock().
+> This spinlock is stored behind the memory used for the PGD, which
+> is why we allocate more memory (and waste 3 pages).
 
-> FYI, we noticed a -4.8% regression of will-it-scale.per_process_ops due =
-to commit:
-> =
+There are better places to store it than that!  For example, storing it
+in the struct page, like many architectures do for split ptlocks.
+You'll have to skip the _pt_pad_1 so it doesn't get confused with
+being a compound_head, but soemthing like this:
 
-> =
+		struct {	/* PA-RISC PGD */
+			unsigned long _pa_pad_1;	/* compound_head */
+#if ALLOC_SPLIT_PA_PTLOCKS
+			spinlock_t *pa_ptl;
+#else
+			spinlock_t pa_ptl;
+#endif
+		};
 
-> commit: 9bd0e337c633aed3e8ec3c7397b7ae0b8436f163 ("[PATCH 01/29] iov_ite=
-r: Switch to using a table of operations")
+inside struct page (linux/mm_types.h) should do the trick.  You'll
+still need to allocate them separately if various debugging options
+are enabled (see the ALLOC_SPLIT_PTLOCKS for details), but usually
+this will save you a lot of memory.
 
-Out of interest, would it be possible for you to run this on the tail of t=
-he
-series on the same hardware?
+You could also fill in pt_mm like x86 does for its pgds, and then use
+mm->page_table_lock to protect whatever the PGD lock currently protects.
+Maybe page_table_lock is sometimes held when calling ptep_set_wrprotect()
+and sometimes isn't; then this wouldn't work.
 
-Thanks,
-David
+Also, could you fix the comments?  They don't match the code:
+
+ #define PGD_ORDER      1 /* Number of pages per pgd */
+
+should be
+
+ #define PGD_ALLOC_ORDER      1 /* 2 pages (8KiB) per pgd */
 
