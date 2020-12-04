@@ -2,136 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 271322CEE98
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 14:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BBF2CEECE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Dec 2020 14:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbgLDNF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 08:05:57 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726432AbgLDNF4 (ORCPT
+        id S1728879AbgLDNey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 08:34:54 -0500
+Received: from simcoe209srvr.owm.bell.net ([184.150.200.209]:40029 "EHLO
+        torfep08.bell.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728781AbgLDNey (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 08:05:56 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B4D3EZx056402;
-        Fri, 4 Dec 2020 08:05:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=jctQgMWgSlsHPOjsDmaUeXfSF+9Z30/WArFoiAk/M3o=;
- b=GrZPzRTenWKY3N4pDjkeB3jRv/wXCs4bTLDjRFU9/A0SD0vPZNyo2GJKCHkiF1oUTMen
- mMZsHF8jM7yqoh0RymQRoA41x5zkS/K4foDqbCk9HEuME9ClGd/hcoMYcF30ICEfm3ej
- hM7YKz0ek1ZGoZqMZdQWjyOgl82bXTsXlCSIvea538e6kdjuIWg9VtO8C5oRAtzdHh32
- Us391JD8M9SNhmOVsBKMnWRaHJ5mKiE4/nHbqUCfGwEWFxSlnD3ANU5kDG65R2PReUxy
- Rz0P+FCH0S66XgfCGJW6MOg3oWgxs+IdA0j9YCm15JPCrJ5E1nyx+QRzgebodFUufASZ 3g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 357m7hjj7b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Dec 2020 08:05:05 -0500
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B4D3d2Q058711;
-        Fri, 4 Dec 2020 08:05:05 -0500
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 357m7hjj4n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Dec 2020 08:05:05 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B4CmvoA000390;
-        Fri, 4 Dec 2020 13:05:02 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 354fpdd1m3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Dec 2020 13:05:02 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B4D50Av52298134
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 4 Dec 2020 13:05:00 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6547DA4054;
-        Fri,  4 Dec 2020 13:05:00 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55E3BA4064;
-        Fri,  4 Dec 2020 13:04:58 +0000 (GMT)
-Received: from sig-9-65-202-27.ibm.com (unknown [9.65.202.27])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  4 Dec 2020 13:04:57 +0000 (GMT)
-Message-ID: <0eec775cf5c44f646defe33aec5f241a06844d3a.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 06/11] evm: Ignore INTEGRITY_NOLABEL if no HMAC key
- is loaded
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "mjg59@google.com" <mjg59@google.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Fri, 04 Dec 2020 08:04:57 -0500
-In-Reply-To: <3c628dc54804469597a72d03c33e8315@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-7-roberto.sassu@huawei.com>
-         <b9f1a31e9b2dfb7a7167574a39652932263488e8.camel@linux.ibm.com>
-         <3c628dc54804469597a72d03c33e8315@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-04_04:2020-12-04,2020-12-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=3 malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- phishscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012040075
+        Fri, 4 Dec 2020 08:34:54 -0500
+X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Dec 2020 08:34:53 EST
+Received: from bell.net torfep01 184.150.200.158 by torfep01.bell.net
+          with ESMTP
+          id <20201204132847.RSVT6892.torfep01.bell.net@torspm01.bell.net>;
+          Fri, 4 Dec 2020 08:28:47 -0500
+Received: from [192.168.2.49] (really [67.70.16.145]) by torspm01.bell.net
+          with ESMTP
+          id <20201204132847.HJEQ29322.torspm01.bell.net@[192.168.2.49]>;
+          Fri, 4 Dec 2020 08:28:47 -0500
+Subject: Re: PATCH] fs/dax: fix compile problem on parisc and mips
+To:     Matthew Wilcox <willy@infradead.org>, Helge Deller <deller@gmx.de>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        linux-nvdimm@lists.01.org
+References: <fb91b40d258414b0fdce2c380752e48daa6a70d6.camel@HansenPartnership.com>
+ <20201204034843.GM11935@casper.infradead.org>
+ <0f0ac7be-0108-0648-a4db-2f37db1c8114@gmx.de>
+ <20201204124402.GN11935@casper.infradead.org>
+From:   John David Anglin <dave.anglin@bell.net>
+Message-ID: <3648e8d5-be75-ea2e-ddbc-5117fcd50a2b@bell.net>
+Date:   Fri, 4 Dec 2020 08:28:47 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
+MIME-Version: 1.0
+In-Reply-To: <20201204124402.GN11935@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-Analysis: v=2.3 cv=ZryT1OzG c=1 sm=1 tr=0 a=ch4VMz8uGZlcRCFa+4Q1bQ==:117 a=ch4VMz8uGZlcRCFa+4Q1bQ==:17 a=IkcTkHD0fZMA:10 a=zTNgK-yGK50A:10 a=FBHGMhGWAAAA:8 a=ybeIS4x6i_o_-C6kCnkA:9 a=QEXdDO2ut3YA:10 a=9gvnlMMaQFpL9xblJ6ne:22
+X-CM-Envelope: MS4wfKtNUfRu/DXyTZPn7Pfd4YNoPaiTiBDkNP5Ayf+Vk7AF/O6TOTxeU/Kkq3dDtqHlLw5SfwdBEGtzfi1ydnG/NlGna3I0WQGkBu/HR1Z1quyVYE9sP7uO HQSDprhtoujUIHlBE3sVHIYiDcd8Vh5sQq8RAzLu9Tv1lOC53OeT5jXvEjSQL5s5CY01vITkQu/jsf1uc8aIIuPDbHAAg+kZla+Egk9JWOtBgkh2vuAkz7Vu
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-12-04 at 08:05 +0000, Roberto Sassu wrote:
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Thursday, December 3, 2020 9:43 PM
-> > Hi Roberto,
-> > 
-> > On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> > > When a file is being created, LSMs can set the initial label with the
-> > > inode_init_security hook. If no HMAC key is loaded, the new file will have
-> > > LSM xattrs but not the HMAC.
-> > >
-> > > Unfortunately, EVM will deny any further metadata operation on new
-> > files,
-> > > as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error.
-> > This
-> > > would limit the usability of EVM when only a public key is loaded, as
-> > > commands such as cp or tar with the option to preserve xattrs won't work.
-> > >
-> > > Ignoring this error won't be an issue if no HMAC key is loaded, as the
-> > > inode is locked until the post hook, and EVM won't calculate the HMAC on
-> > > metadata that wasn't previously verified. Thus this patch checks if an
-> > > HMAC key is loaded and if not, ignores INTEGRITY_NOLABEL.
-> > 
-> > I'm not sure what problem this patch is trying to solve.
-> > evm_protect_xattr() is only called by evm_inode_setxattr() and
-> > evm_inode_removexattr(), which first checks whether
-> > EVM_ALLOW_METADATA_WRITES is enabled.
-> 
-> The idea is to also support EVM verification when only a public key
-> is loaded. An advantage to do that is that for example we can prevent
-> accidental metadata changes when the signature is portable.
+On 2020-12-04 7:44 a.m., Matthew Wilcox wrote:
+> You'll
+> still need to allocate them separately if various debugging options
+> are enabled (see the ALLOC_SPLIT_PTLOCKS for details), but usually
+> this will save you a lot of memory.
+We need all we can get:
+(.mlocate): page allocation failure: order:5, mode:0x40cc0(GFP_KERNEL|__GFP_COMP), nodemask=(null),cpuset=/,mems_allowed=0
+CPU: 2 PID: 28271 Comm: (.mlocate) Not tainted 5.9.11+ #1
+Hardware name: 9000/800/rp3440
+Backtrace:
+ [<000000004018d050>] show_stack+0x50/0x70
+ [<0000000040826354>] dump_stack+0xbc/0x130
+ [<000000004033dc14>] warn_alloc+0x144/0x1e0
+ [<000000004033e930>] __alloc_pages_slowpath.constprop.0+0xc80/0xcf8
+ [<000000004033ec48>] __alloc_pages_nodemask+0x2a0/0x2f0
+ [<0000000040351a2c>] cache_alloc_refill+0x6b4/0xe50
+ [<000000004035416c>] __kmalloc+0x5e4/0x740
+ [<00000000040ddbe8>] nfsd_reply_cache_init+0x1d0/0x360 [nfsd]
+ [<00000000040d1118>] nfsd_init_net+0xb0/0x1c0 [nfsd]
+ [<00000000406a5860>] ops_init+0x68/0x178
+ [<00000000406a5b24>] setup_net+0x1b4/0x348
+ [<00000000406a6e20>] copy_net_ns+0x1f0/0x450
+ [<00000000401e6578>] create_new_namespaces+0x1b0/0x418
+ [<00000000401e72ac>] unshare_nsproxy_namespaces+0x8c/0xf0
+ [<00000000401b6acc>] ksys_unshare+0x1bc/0x440
+ [<00000000401b6d70>] sys_unshare+0x20/0x38
+ [<0000000040188018>] syscall_exit+0x0/0x14
 
-Right, there are a couple of  scenarios.  Let's be more specific as to
-which scenario this patch is addressing.
+Mem-Info:
+active_anon:1209957 inactive_anon:438171 isolated_anon:0
+ active_file:38971 inactive_file:21741 isolated_file:0
+ unevictable:4662 dirty:144 writeback:0
+ slab_reclaimable:45748 slab_unreclaimable:51548
+ mapped:34940 shmem:1471859 pagetables:5429 bounce:0
+ free:213676 free_pcp:317 free_cma:0
+Node 0 active_anon:4839828kB inactive_anon:1753200kB active_file:155884kB inactive_file:86964kB unevictable:18648kB isolated(anon):0kB
+isolated(file):0kB mapped:139760kB dirty:576kB writeback:0kB shmem:5887436kB writeback_tmp:0kB kernel_stack:6032kB all_unreclaimable? no
+Normal free:853948kB min:11448kB low:19636kB high:27824kB reserved_highatomic:0KB active_anon:4839828kB inactive_anon:1753544kB
+active_file:155884kB inactive_file:86964kB unevictable:18648kB writepending:576kB present:8386560kB managed:8211756kB mlocked:18648kB
+pagetables:21716kB bounce:0kB free_pcp:1168kB local_pcp:352kB free_cma:0kB
+lowmem_reserve[]: 0 0
+Normal: 58860*4kB (UME) 48155*8kB (UME) 11414*16kB (UME) 1291*32kB (UME) 134*64kB (UME) 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB =
+853192kB
+1607717 total pagecache pages
+73822 pages in swap cache
+Swap cache stats: add 21252454, delete 21178083, find 5702723/6815498
+Free swap  = 33742652kB
+Total swap = 49758652kB
+2096640 pages RAM
+0 pages HighMem/MovableOnly
+43701 pages reserved
 
-- a public key is loaded and EVM_ALLOW_METADATA_WRITES is enabled,
-- a public key is loaded and EVM_ALLOW_METADATA_WRITES is disabled,
-- an HMAC key is loaded
+Cheers,
+Dave
 
-For the first and last case, this patch shouldn't be necessary.  Only
-the second case, with EVM_ALLOW_METADATA_WRITES disabled, probably does
-not work.  I would claim that is working as designed.
-
-thanks,
-
-Mimi
+-- 
+John David Anglin  dave.anglin@bell.net
 
