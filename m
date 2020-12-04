@@ -2,107 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DCBB2CF7A2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Dec 2020 00:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA2F2CF82E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Dec 2020 01:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgLDXk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Dec 2020 18:40:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbgLDXk5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Dec 2020 18:40:57 -0500
-From:   Eric Biggers <ebiggers@kernel.org>
-Authentication-Results: mail.kernel.org; dkim=permerror (bad message/signature format)
-To:     linux-f2fs-devel@lists.sourceforge.net,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Daniel Rosenberg <drosen@google.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH] libfs: unexport generic_ci_d_compare() and generic_ci_d_hash()
-Date:   Fri,  4 Dec 2020 15:39:40 -0800
-Message-Id: <20201204233940.52144-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        id S1731008AbgLEAq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Dec 2020 19:46:59 -0500
+Received: from vsm-gw.hyogo-dai.ac.jp ([202.244.76.12]:49526 "EHLO
+        vsm-gw.hyogo-dai.ac.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbgLEAq5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Dec 2020 19:46:57 -0500
+X-Greylist: delayed 14573 seconds by postgrey-1.27 at vger.kernel.org; Fri, 04 Dec 2020 19:46:41 EST
+Received: from humans-kc.hyogo-dai.ac.jp (humans-kc.hyogo-dai.ac.jp [202.244.77.11])
+        by vsm-gw.hyogo-dai.ac.jp (Postfix) with ESMTP id 274A31A5589;
+        Sat,  5 Dec 2020 04:44:55 +0900 (JST)
+Received: from humans-kc.hyogo-dai.ac.jp (humans-kc.hyogo-dai.ac.jp [127.0.0.1])
+        by postfix.imss71 (Postfix) with ESMTP id E5C39838858;
+        Sat,  5 Dec 2020 04:44:54 +0900 (JST)
+Received: from hyogo-dai.ac.jp (unknown [202.244.77.11])
+        by humans-kc.hyogo-dai.ac.jp (Postfix) with SMTP id B84F6838260;
+        Sat,  5 Dec 2020 04:44:54 +0900 (JST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <20201204194454.00002B21.0147@hyogo-dai.ac.jp>
+Date:   Sat, 05 Dec 2020 04:44:54 +0900
+From:   "Dr.Raymond" <tabata@hyogo-dai.ac.jp>
+To:     <infocarferr1@aim.com>
+Reply-To: <infocarfer@aim.com>
+Subject: I am Vice Chairman of Hang Seng Bank, Dr. Raymond Chien
+         Kuo Fung I have Important Matter to Discuss with you concerning
+         my late client. Died without a NEXT OF KIN. Send me your private
+         email for full details information. 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MAILER: Active! mail
+X-TM-AS-MML: disable
+X-TM-AS-Product-Ver: IMSS-7.1.0.1808-8.2.0.1013-25446.007
+X-TM-AS-Result: No--4.326-5.0-31-10
+X-imss-scan-details: No--4.326-5.0-31-10
+X-TM-AS-User-Approved-Sender: No
+X-TMASE-MatchedRID: +T4Z3mpR0x5ITndh1lLRASsOycAMAhSTkCM77ifYafsBLhz6t76Ce/bj
+        Enpjm61/Gf23dqZJjE4Erxo5p8V1/E1+zyfzlN7y/sToY2qzpx7w5nZ/qYg41XEWw1TkKAjcYff
+        qdBtG2ocgOkCKsW/kbuunGEBqPil++coAzulIP8gMTyJMXCOBhj9BWL7GG0LsKrauXd3MZDUZaR
+        NzIP3XI5u3uLPgwbAMH5RdHnhWfwyq9gpuf+A6coDeeVSgzszVDx5n520Z3eZyT7DDRtYlKaWBy
+        ZE9nSaC/rhfyjvqkZu/pNa4BidtZEMMprcbiest
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+infocarfer@aim.com
 
-Now that generic_set_encrypted_ci_d_ops() has been added and ext4 and
-f2fs are using it, it's no longer necessary to export
-generic_ci_d_compare() and generic_ci_d_hash() to filesystems.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-This patch applies to f2fs/dev, as it depends on "libfs: Add generic
-function for setting dentry_ops" and "fscrypt: Have filesystems handle
-their d_ops" which are queued in f2fs/dev.
-
- fs/libfs.c         | 8 +++-----
- include/linux/fs.h | 5 -----
- 2 files changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index bac9186990220..a33bc3451d096 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1386,8 +1386,8 @@ static bool needs_casefold(const struct inode *dir)
-  *
-  * Return: 0 if names match, 1 if mismatch, or -ERRNO
-  */
--int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
--			  const char *str, const struct qstr *name)
-+static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-+				const char *str, const struct qstr *name)
- {
- 	const struct dentry *parent = READ_ONCE(dentry->d_parent);
- 	const struct inode *dir = READ_ONCE(parent->d_inode);
-@@ -1424,7 +1424,6 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 		return 1;
- 	return !!memcmp(str, name->name, len);
- }
--EXPORT_SYMBOL(generic_ci_d_compare);
- 
- /**
-  * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
-@@ -1433,7 +1432,7 @@ EXPORT_SYMBOL(generic_ci_d_compare);
-  *
-  * Return: 0 if hash was successful or unchanged, and -EINVAL on error
-  */
--int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
-+static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
- {
- 	const struct inode *dir = READ_ONCE(dentry->d_inode);
- 	struct super_block *sb = dentry->d_sb;
-@@ -1448,7 +1447,6 @@ int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
- 		return -EINVAL;
- 	return 0;
- }
--EXPORT_SYMBOL(generic_ci_d_hash);
- 
- static const struct dentry_operations generic_ci_dentry_ops = {
- 	.d_hash = generic_ci_d_hash,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 4a25ab4dbd3e9..f000cccaa6ac7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3181,11 +3181,6 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
--#ifdef CONFIG_UNICODE
--extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
--extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
--				const char *str, const struct qstr *name);
--#endif
- extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
- 
- #ifdef CONFIG_MIGRATION
-
-base-commit: a7f72973ac2342644fce026e01943ed0f41fcc4a
--- 
-2.29.2
 
