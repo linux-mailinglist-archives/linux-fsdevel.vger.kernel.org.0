@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF7E2CFC2E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Dec 2020 17:56:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 704AB2CFC2A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Dec 2020 17:51:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbgLEQvm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Dec 2020 11:51:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49496 "EHLO mail.kernel.org"
+        id S1726977AbgLEQu7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Dec 2020 11:50:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbgLEQqF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Dec 2020 11:46:05 -0500
-Date:   Sat, 5 Dec 2020 15:10:07 +0100
+        id S1726218AbgLEQoo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 5 Dec 2020 11:44:44 -0500
+Date:   Sat, 5 Dec 2020 15:10:48 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1607177337;
-        bh=P1OAQzjzb92ixjbZ+fh5aSjtOuIA5uuYe7ki0Xt9Smc=;
+        s=korg; t=1607177374;
+        bh=GqJgKgKfkXV2E/cKEl+IwBiAIYSLVSK21HRqHXfoboQ=;
         h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N32DbcbQir7H1bIDpZtsweicTNtvRFyu0xcpE4CND5b8lXSqKUhEvaNF4ZGqzzn9E
-         8U88Dm42AX2RSfg5bp+eWBC1e6s6IW/1KOhl4n9lgaEYLc4De1aMO2iXjx5Xqi18ao
-         aqGqvJLRTEG2+wW4pXPOUdmYdH6CNzxbEA1Vki0Q=
+        b=kj2Mfzyav+eSVN9O1zun+6FovXVMb3nkQa66UcHmEHZsRD4wmt8EgH/EDlSXCrzp/
+         Fj9n6sPBBIrJrn19nFPxqPLdnApCiqc2doGN4AKNkx8IJCF5DDvTWV9v51cAhZ0FTu
+         NhNQ1QGmnXAuazcozS0AFv+54SwfFhg2xS7wR/Q8=
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     rafael@kernel.org, adobriyan@gmail.com, akpm@linux-foundation.org,
@@ -29,50 +29,42 @@ Cc:     rafael@kernel.org, adobriyan@gmail.com, akpm@linux-foundation.org,
         elver@google.com, rdunlap@infradead.org, iamjoonsoo.kim@lge.com,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH 3/9] mm: memcontrol: convert kernel stack account to
- byte-sized
-Message-ID: <X8uUv2TJ7CQ/mijD@kroah.com>
+Subject: Re: [PATCH 5/9] mm: memcontrol: convert NR_FILE_THPS account to pages
+Message-ID: <X8uU6ODzteuBY9pf@kroah.com>
 References: <20201205130224.81607-1-songmuchun@bytedance.com>
- <20201205130224.81607-4-songmuchun@bytedance.com>
+ <20201205130224.81607-6-songmuchun@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201205130224.81607-4-songmuchun@bytedance.com>
+In-Reply-To: <20201205130224.81607-6-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 05, 2020 at 09:02:18PM +0800, Muchun Song wrote:
-> The kernel stack account is the only one that counts in KiB.
-> This patch convert it from KiB to byte.
+On Sat, Dec 05, 2020 at 09:02:20PM +0800, Muchun Song wrote:
+> Converrt NR_FILE_THPS account to pages.
 > 
 > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 > ---
->  drivers/base/node.c    | 2 +-
->  fs/proc/meminfo.c      | 2 +-
->  include/linux/mmzone.h | 2 +-
->  kernel/fork.c          | 8 ++++----
->  mm/memcontrol.c        | 2 +-
->  mm/page_alloc.c        | 2 +-
->  mm/vmstat.c            | 4 ++--
->  7 files changed, 11 insertions(+), 11 deletions(-)
+>  drivers/base/node.c | 3 +--
+>  fs/proc/meminfo.c   | 2 +-
+>  mm/filemap.c        | 2 +-
+>  mm/huge_memory.c    | 3 ++-
+>  mm/khugepaged.c     | 2 +-
+>  mm/memcontrol.c     | 5 ++---
+>  6 files changed, 8 insertions(+), 9 deletions(-)
 > 
 > diff --git a/drivers/base/node.c b/drivers/base/node.c
-> index 6ffa470e2984..855886a6ba0e 100644
+> index 05c369e93e16..f6a9521bbcf8 100644
 > --- a/drivers/base/node.c
 > +++ b/drivers/base/node.c
-> @@ -446,7 +446,7 @@ static ssize_t node_read_meminfo(struct device *dev,
->  			     nid, K(node_page_state(pgdat, NR_FILE_MAPPED)),
->  			     nid, K(node_page_state(pgdat, NR_ANON_MAPPED)),
->  			     nid, K(i.sharedram),
-> -			     nid, node_page_state(pgdat, NR_KERNEL_STACK_KB),
-> +			     nid, node_page_state(pgdat, NR_KERNEL_STACK_B) / 1024,
+> @@ -466,8 +466,7 @@ static ssize_t node_read_meminfo(struct device *dev,
+>  				    HPAGE_PMD_NR),
+>  			     nid, K(node_page_state(pgdat, NR_SHMEM_PMDMAPPED) *
+>  				    HPAGE_PMD_NR),
+> -			     nid, K(node_page_state(pgdat, NR_FILE_THPS) *
+> -				    HPAGE_PMD_NR),
+> +			     nid, K(node_page_state(pgdat, NR_FILE_THPS)),
 
-Did you just change the units of a userspace-visable file without
-updating the documentation?
+Again, is this changing a user-visable value?
 
-If not, how is this working?
-
-thanks,
-
-greg k-h
