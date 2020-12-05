@@ -2,217 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2562CFDF4
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Dec 2020 19:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D8A2CFF3B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Dec 2020 22:32:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbgLESvC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Dec 2020 13:51:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbgLESuv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Dec 2020 13:50:51 -0500
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFDA0C0613D1;
-        Sat,  5 Dec 2020 10:50:05 -0800 (PST)
-Received: by mail-wm1-x342.google.com with SMTP id g185so9934222wmf.3;
-        Sat, 05 Dec 2020 10:50:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fIdqtYGUc/O3zuqryXPvn60vNDtb1cQ64k7t/DJ+pB8=;
-        b=OCj3Q5zhoTjO7tetKhcRMZbFb8sN/UuI3fQjMfDC1Gvu9FF3UT+mwBjdTwglEX0X9E
-         me2qYIb7QMuoqgkRaggPkvoTEcacJg2aZvWH6tLOIileF2XYvxLyjuG2p6Fw4vZ/LOB+
-         bM4RFruOVpbAxz3XXkYovAoYdPLX2uXX3WURBXk4LCXAMLEaQ2M77+Uhie1cYWpbeaLT
-         Z0GCIPhWB5k8sXNWglm7nj6AynHbpgNvJtEzZWxqjYcJxi47OJ2zmlxGqe4napy1ZhC1
-         M4HDqPKwiiZZF/3A7ZfBHkrs+T2ZsCddzXQdpMvTv2F0SLuwIzOjwI+qKosLWzNuLu9U
-         E6Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fIdqtYGUc/O3zuqryXPvn60vNDtb1cQ64k7t/DJ+pB8=;
-        b=nHp0RyHFTI+hpNXnlouMjsHvlIiIUR8BBlWamNWNU78RfPec62l6KRyYr3JsBWFXYb
-         0uYdzESFwMOoKhIDzSFL5i3et0t3t6iozNmpZuggj/qEeEXrEYrDtNWPQy2hKqKq3nhN
-         TFX9+SnSxFYLQbd6eDF20Pjqk+XRpo5LZgwVvi+uOs/CBecmD3kCiww2l2aPgenYnqfs
-         W6uwDtG6S8j9w6/4Plirov3xyTaHGZnisldALvVbUICvhcakuPMVYhGGV1HFBCgx+f3q
-         5Xi2YPXOGsQLDuGY50V/z5bJsCvSvbsnhrGRbk2vD55QNUfu7+9JtDDRWr9kmpoBS9Sf
-         avTg==
-X-Gm-Message-State: AOAM533P+UWw+YXksVqdCcuXqwhOTui2QYT+YeYVxPafD5um40XlebW4
-        x/v3BV/domj29dfVIm0MNA==
-X-Google-Smtp-Source: ABdhPJxRIhvDCOEf0yIFF0WOUK+hbqP9MLvakJlkQflJcl62q06Np/xkzfAr38VD7aGRBMSxOe3fIg==
-X-Received: by 2002:a1c:5459:: with SMTP id p25mr9956084wmi.19.1607194204688;
-        Sat, 05 Dec 2020 10:50:04 -0800 (PST)
-Received: from localhost.localdomain ([46.53.253.193])
-        by smtp.gmail.com with ESMTPSA id k2sm3608447wru.43.2020.12.05.10.50.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Dec 2020 10:50:03 -0800 (PST)
-Date:   Sat, 5 Dec 2020 21:50:01 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tommi.t.rantala@nokia.com
-Subject: [PATCH] proc: fix lookup in /proc/net subdirectories after setns(2)
-Message-ID: <20201205185001.GA113021@localhost.localdomain>
-References: <6de04554b27e9573e0a65170916d6acf11285dba.camel@nokia.com>
- <20201205160916.GA109739@localhost.localdomain>
+        id S1726152AbgLEV3c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Dec 2020 16:29:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbgLEV3c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 5 Dec 2020 16:29:32 -0500
+Date:   Sun, 6 Dec 2020 05:28:38 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607203731;
+        bh=4z48dUqSouK4GSOzBXOaPmeem+ji2gnvk6THESip6uY=;
+        h=From:To:Cc:Subject:From;
+        b=fJFYR/fKFfy0YWlb2GqgxhVtW+m8tzWcp6Odaewz4daoSs2eKcKQ0rBz1RFj4DClq
+         ucVLXGfam/imDDRLmj7KcqGD25dwJr52bOe6wlUAitnc4/qUo0u7yBvVy916APDU2L
+         0n5JLSBR7XQej2VdzJsaG+es6B8tcFCB08DLAZnugNvQfvnemrJJ2K5YM/6ENqYlIJ
+         rtvB+qcQ/6sRCiXaGtwyG9dD2bKbsUtpL3FO0uwSiwNdxWBdIVeKYJ8KhCralMmVvb
+         LbQGss2e+tt1ieU3AoBB85F+jFaupknPZP8iKIlOBqxcUb7VyppyKRDGN34b8TF+PV
+         mUBGTdyzZYqQg==
+From:   Gao Xiang <xiang@kernel.org>
+To:     linux-erofs@lists.ozlabs.org
+Cc:     linux-fsdevel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Huang Jianan <huangjianan@oppo.com>
+Subject: [ANNOUNCE] erofs-utils: release 1.2
+Message-ID: <20201205212511.GA15184@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201205160916.GA109739@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	commit 1fde6f21d90f8ba5da3cb9c54ca991ed72696c43
-	proc: fix /proc/net/* after setns(2)
+Hi folks,
 
-only forced revalidation of regular files under /proc/net/
+A new version erofs-utils 1.2 is available at:
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git tags/v1.2
 
-However, /proc/net/ is unusual in the sense of /proc/net/foo handlers
-take netns pointer from parent directory which is old netns.
+It mainly includes the following changes:
+    - (mkfs.erofs) support selinux file contexts;
+    - (mkfs.erofs) support $SOURCE_DATE_EPOCH;
+    - (mkfs.erofs) support a pre-defined UUID;
+    - (mkfs.erofs) fix random padding for reproducable builds;
+    - (mkfs.erofs) several fixes around hard links;
+    - (mkfs.erofs) minor code cleanups;
+    - (mkfs.erofs, AOSP) support Android fs_config;
+    - (experimental, disabled by default) add erofsfuse approach;
 
-Steps to reproduce:
+The big part is erofsfuse, which is intended to support erofs for
+various platforms (mainly older linux kernels for building servers
+to patch images) and for new on-disk features iteration. It focus
+on simplicity and portability thus no optimal optimization such as
+in-place I/O or in-place decompression (Therefore, NEVER use it if
+performance is the top concern.) It can also be used as an unpacking
+tool for unprivileged users. Thanks Jianan for originally picking
+it up, erofsfuse finally got in shape. However mainly due to some
+lz4 1.9.2 issue, it has to be disabled by default until the recent
+lz4 1.9.3 is widely distributed. Please kindly carefully read README
+before trying it out.
 
-	(void)open("/proc/net/sctp/snmp", O_RDONLY);
-	unshare(CLONE_NEWNET);
+erofs-utils has been included into many distributions, buildroot,
+and Android AOSP for a while, therefore it's quite easy to have a
+try and here is the latest benchmark on my PC for reference:
+https://github.com/erofs/erofs-openbenchmark/wiki/linux_5.10_rc4-compression-FSes-benchmark
 
-	int fd = open("/proc/net/sctp/snmp", O_RDONLY);
-	read(fd, &c, 1);
+Plus, it's known that EROFS is commercially using by several Android
+vendors for their system partitions as an acceptable compression
+solution with good performance.
 
-Read will read wrong data from original netns.
+EROFS fixed-sized output LZMA support is still slowly ongoing since
+I need to seek some full time to fully calm down and focus on the
+algorithm details itself, I will update on the mailing list when
+I get a significant progress.
 
-Patch forces lookup on every directory under /proc/net .
+Thanks,
+Gao Xiang
 
-Fixes: 1da4d377f943 ("proc: revalidate misc dentries")
-Reported-by: "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- fs/proc/generic.c       |   24 ++++++++++++++++++++++--
- fs/proc/internal.h      |    7 +++++++
- fs/proc/proc_net.c      |   16 ----------------
- include/linux/proc_fs.h |    8 +++++++-
- 4 files changed, 36 insertions(+), 19 deletions(-)
-
---- a/fs/proc/generic.c
-+++ b/fs/proc/generic.c
-@@ -349,6 +349,16 @@ static const struct file_operations proc_dir_operations = {
- 	.iterate_shared		= proc_readdir,
- };
- 
-+static int proc_net_d_revalidate(struct dentry *dentry, unsigned int flags)
-+{
-+	return 0;
-+}
-+
-+const struct dentry_operations proc_net_dentry_ops = {
-+	.d_revalidate	= proc_net_d_revalidate,
-+	.d_delete	= always_delete_dentry,
-+};
-+
- /*
-  * proc directories can do almost nothing..
-  */
-@@ -471,8 +481,8 @@ struct proc_dir_entry *proc_symlink(const char *name,
- }
- EXPORT_SYMBOL(proc_symlink);
- 
--struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
--		struct proc_dir_entry *parent, void *data)
-+struct proc_dir_entry *_proc_mkdir(const char *name, umode_t mode,
-+		struct proc_dir_entry *parent, void *data, bool force_lookup)
- {
- 	struct proc_dir_entry *ent;
- 
-@@ -484,10 +494,20 @@ struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
- 		ent->data = data;
- 		ent->proc_dir_ops = &proc_dir_operations;
- 		ent->proc_iops = &proc_dir_inode_operations;
-+		if (force_lookup) {
-+			pde_force_lookup(ent);
-+		}
- 		ent = proc_register(parent, ent);
- 	}
- 	return ent;
- }
-+EXPORT_SYMBOL_GPL(_proc_mkdir);
-+
-+struct proc_dir_entry *proc_mkdir_data(const char *name, umode_t mode,
-+		struct proc_dir_entry *parent, void *data)
-+{
-+	return _proc_mkdir(name, mode, parent, data, false);
-+}
- EXPORT_SYMBOL_GPL(proc_mkdir_data);
- 
- struct proc_dir_entry *proc_mkdir_mode(const char *name, umode_t mode,
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -310,3 +310,10 @@ extern unsigned long task_statm(struct mm_struct *,
- 				unsigned long *, unsigned long *,
- 				unsigned long *, unsigned long *);
- extern void task_mem(struct seq_file *, struct mm_struct *);
-+
-+extern const struct dentry_operations proc_net_dentry_ops;
-+static inline void pde_force_lookup(struct proc_dir_entry *pde)
-+{
-+	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
-+	pde->proc_dops = &proc_net_dentry_ops;
-+}
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -39,22 +39,6 @@ static struct net *get_proc_net(const struct inode *inode)
- 	return maybe_get_net(PDE_NET(PDE(inode)));
- }
- 
--static int proc_net_d_revalidate(struct dentry *dentry, unsigned int flags)
--{
--	return 0;
--}
--
--static const struct dentry_operations proc_net_dentry_ops = {
--	.d_revalidate	= proc_net_d_revalidate,
--	.d_delete	= always_delete_dentry,
--};
--
--static void pde_force_lookup(struct proc_dir_entry *pde)
--{
--	/* /proc/net/ entries can be changed under us by setns(CLONE_NEWNET) */
--	pde->proc_dops = &proc_net_dentry_ops;
--}
--
- static int seq_open_net(struct inode *inode, struct file *file)
- {
- 	unsigned int state_size = PDE(inode)->state_size;
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -80,6 +80,7 @@ extern void proc_flush_pid(struct pid *);
- 
- extern struct proc_dir_entry *proc_symlink(const char *,
- 		struct proc_dir_entry *, const char *);
-+struct proc_dir_entry *_proc_mkdir(const char *, umode_t, struct proc_dir_entry *, void *, bool);
- extern struct proc_dir_entry *proc_mkdir(const char *, struct proc_dir_entry *);
- extern struct proc_dir_entry *proc_mkdir_data(const char *, umode_t,
- 					      struct proc_dir_entry *, void *);
-@@ -162,6 +163,11 @@ static inline struct proc_dir_entry *proc_symlink(const char *name,
- static inline struct proc_dir_entry *proc_mkdir(const char *name,
- 	struct proc_dir_entry *parent) {return NULL;}
- static inline struct proc_dir_entry *proc_create_mount_point(const char *name) { return NULL; }
-+static inline struct proc_dir_entry *_proc_mkdir(const char *name, umode_t mode,
-+		struct proc_dir_entry *parent, void *data, bool force_lookup)
-+{
-+	return NULL;
-+}
- static inline struct proc_dir_entry *proc_mkdir_data(const char *name,
- 	umode_t mode, struct proc_dir_entry *parent, void *data) { return NULL; }
- static inline struct proc_dir_entry *proc_mkdir_mode(const char *name,
-@@ -199,7 +205,7 @@ struct net;
- static inline struct proc_dir_entry *proc_net_mkdir(
- 	struct net *net, const char *name, struct proc_dir_entry *parent)
- {
--	return proc_mkdir_data(name, 0, parent, net);
-+	return _proc_mkdir(name, 0, parent, net, true);
- }
- 
- struct ns_common;
