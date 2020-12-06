@@ -2,334 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 568C42D02A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Dec 2020 11:19:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1562D0363
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Dec 2020 12:31:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbgLFKTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Dec 2020 05:19:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbgLFKTB (ORCPT
+        id S1727387AbgLFLbI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Dec 2020 06:31:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30824 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725804AbgLFLbH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Dec 2020 05:19:01 -0500
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D94EC0613D4
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Dec 2020 02:18:40 -0800 (PST)
-Received: by mail-pf1-x444.google.com with SMTP id p4so1132692pfg.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Dec 2020 02:18:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lP6NOXY9P1Y1tdnLUE8WJ9oCZQOprYuVn3yHjkNbfog=;
-        b=ZcB+MrFfITKTQD6yHNcSXXGhcuAfJVfq9Vc0JYQrQO8x+y4QfNb3GbTp1Bw/q0Xh1C
-         SRPp2uOrMxEWh2MTi3HsJw/K2uDSI7BPt7W9VaUyVAlrworEQCgS3w0i4ICgyZ0NW2Zx
-         rpIPH2IBLP/NecuXoWwQwHU8HJfMMqjmeilA0qISzpe3Ua5VcpfB1uHFE8rwuzE/+BBu
-         dU61wVmkRUSnIPY6q3zmuFpZhfYSc1xyARC+ZWy/++zR4K0ULoqC3Ec/hYdfb+kc7cKa
-         6FL91dJW9nMFXkchdG699Ol55L2kOxnfCBh+PsPo6Ib+GHG2WmGfHHoPHmJdZUhbgFZi
-         R05g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lP6NOXY9P1Y1tdnLUE8WJ9oCZQOprYuVn3yHjkNbfog=;
-        b=UYjS03Idbnu6RLPMjqnGq9I+gzkGCr7MtCB4v6h4M3VK8df9HWDMe50zErNRMHKrbA
-         tAgJR++Wi4FJ6DuTfI0XhmdN04jLbfIu0v2hcThwRmyds+MvH3lKVQIFyC4MGdLNgZ4e
-         zAMxa4dhMOCXoDCF0dw9hZjuPuWjiplxy8Cs4/UDP7gpCPOPY3nYEIKkRqA3JGScpYxv
-         Sn3hXy9zyemDDa9/yvF+VPr7z7fCX0oRJqKsCqfDpRlC7Tnzs0u2Dst4F8G1wyEFncOf
-         2wok1HuUsMMJUbhKgP3B8v/RfEcj9kjxONDKkyXV8ZNkzGHQu+eo3Dr39t+z4qwJd7qW
-         LsNA==
-X-Gm-Message-State: AOAM533U6oxIwhgKXjwTrKU/Hlj5ggVmCYloJWOl7wr68c3a5iUoaTL6
-        PORMi1ISIve/dhtsiaV5Rqnedw==
-X-Google-Smtp-Source: ABdhPJyTR5IEC8wjJwZanqPdp0TYqYuwBV1k98LMJDgi/aO+lbtgHvOt9jKwuJZe7B/Wxcytd89bHw==
-X-Received: by 2002:aa7:991c:0:b029:19d:b276:1ecb with SMTP id z28-20020aa7991c0000b029019db2761ecbmr11518358pff.73.1607249919971;
-        Sun, 06 Dec 2020 02:18:39 -0800 (PST)
-Received: from localhost.localdomain ([103.136.221.70])
-        by smtp.gmail.com with ESMTPSA id g16sm10337657pfb.201.2020.12.06.02.18.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Dec 2020 02:18:39 -0800 (PST)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org, adobriyan@gmail.com,
-        akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, hughd@google.com, will@kernel.org,
-        guro@fb.com, rppt@kernel.org, tglx@linutronix.de, esyr@redhat.com,
-        peterx@redhat.com, krisman@collabora.com, surenb@google.com,
-        avagin@openvz.org, elver@google.com, rdunlap@infradead.org,
-        iamjoonsoo.kim@lge.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [RESEND PATCH v2 12/12] mm: memcontrol: remove {global_}node_page_state_pages
-Date:   Sun,  6 Dec 2020 18:14:51 +0800
-Message-Id: <20201206101451.14706-13-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20201206101451.14706-1-songmuchun@bytedance.com>
-References: <20201206101451.14706-1-songmuchun@bytedance.com>
+        Sun, 6 Dec 2020 06:31:07 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B6B2ZE7100701;
+        Sun, 6 Dec 2020 06:29:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=sTdeJYkg7s4jW58KjlXSO7YK0Uj/BAuS89bh+WjYExs=;
+ b=Rp75CbhEeYCx5VHn/zmMQm/6S+m39d3Usre2min80jBkGcuIUAFLlD1U/x+1W8OWJjzt
+ fIMqDyMisdQYl1mM9UyniGF2F3wozFBhPxC8o45xaq4jdyxerJ/476m3OKpNWyqX75Ot
+ ZzHIhjFleohS0jG/BTw5yXvXzCYd99hKPpieya0mzuihgbkU/MAWYg+oHQUWV/VR679y
+ Kd89sxaBExZT7E3BQljYIuSDAN6L4oWyttmbEubp0O3I6HjC9jWAiHlf70CcFuUqDoNe
+ FV1XlQNsQrd7V/hGnlvfLCY1r7+QZ+WUan1OAetcBZbmpiv0Bnk27tfchh/UmmiiMr/D dw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 358rby5k22-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 06 Dec 2020 06:29:52 -0500
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B6BP7Pa153868;
+        Sun, 6 Dec 2020 06:29:52 -0500
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 358rby5k1m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 06 Dec 2020 06:29:51 -0500
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B6BRVQk019021;
+        Sun, 6 Dec 2020 11:29:50 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03fra.de.ibm.com with ESMTP id 3581u8hkbt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 06 Dec 2020 11:29:49 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B6BSWTZ56295740
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 6 Dec 2020 11:28:32 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9A4D9A404D;
+        Sun,  6 Dec 2020 11:28:32 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C1635A4040;
+        Sun,  6 Dec 2020 11:28:28 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.145.50.18])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun,  6 Dec 2020 11:28:28 +0000 (GMT)
+Date:   Sun, 6 Dec 2020 13:28:26 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mike Rapoport <rppt@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v14 04/10] set_memory: allow querying whether
+ set_direct_map_*() is actually enabled
+Message-ID: <20201206112826.GB123287@linux.ibm.com>
+References: <20201203062949.5484-1-rppt@kernel.org>
+ <20201203062949.5484-5-rppt@kernel.org>
+ <20201203153610.724f40f26ca1620247bc6b09@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201203153610.724f40f26ca1620247bc6b09@linux-foundation.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-12-06_06:2020-12-04,2020-12-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1
+ impostorscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0
+ mlxscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999 clxscore=1015
+ phishscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012060066
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now the unit of the vmstat counters are either pages or bytes. So we can
-adjust the node_page_state to always returns values in pages and remove
-the node_page_state_pages.
+On Thu, Dec 03, 2020 at 03:36:10PM -0800, Andrew Morton wrote:
+> On Thu,  3 Dec 2020 08:29:43 +0200 Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > On arm64, set_direct_map_*() functions may return 0 without actually
+> > changing the linear map. This behaviour can be controlled using kernel
+> > parameters, so we need a way to determine at runtime whether calls to
+> > set_direct_map_invalid_noflush() and set_direct_map_default_noflush() have
+> > any effect.
+> > 
+> > Extend set_memory API with can_set_direct_map() function that allows
+> > checking if calling set_direct_map_*() will actually change the page table,
+> > replace several occurrences of open coded checks in arm64 with the new
+> > function and provide a generic stub for architectures that always modify
+> > page tables upon calls to set_direct_map APIs.
+> > 
+> > ...
+> >
+> > --- a/arch/arm64/mm/mmu.c
+> > +++ b/arch/arm64/mm/mmu.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/io.h>
+> >  #include <linux/mm.h>
+> >  #include <linux/vmalloc.h>
+> > +#include <linux/set_memory.h>
+> >  
+> >  #include <asm/barrier.h>
+> >  #include <asm/cputype.h>
+> > @@ -477,7 +478,7 @@ static void __init map_mem(pgd_t *pgdp)
+> >  	int flags = 0;
+> >  	u64 i;
+> >  
+> > -	if (rodata_full || debug_pagealloc_enabled())
+> > +	if (can_set_direct_map())
+> >  		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+> 
+> Changes in -next turned this into
+> 
+> 	if (can_set_direct_map() || crash_mem_map)
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- drivers/base/node.c     | 10 +++++-----
- fs/proc/meminfo.c       | 12 ++++++------
- include/linux/vmstat.h  | 17 +----------------
- kernel/power/snapshot.c |  2 +-
- mm/oom_kill.c           |  2 +-
- mm/page_alloc.c         | 10 +++++-----
- mm/vmscan.c             |  2 +-
- mm/vmstat.c             | 23 ++++++-----------------
- 8 files changed, 26 insertions(+), 52 deletions(-)
+Thanks for updating!
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index bc01ce0b2fcd..42298e3552e5 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -374,8 +374,8 @@ static ssize_t node_read_meminfo(struct device *dev,
- 	unsigned long sreclaimable, sunreclaimable;
- 
- 	si_meminfo_node(&i, nid);
--	sreclaimable = node_page_state_pages(pgdat, NR_SLAB_RECLAIMABLE_B);
--	sunreclaimable = node_page_state_pages(pgdat, NR_SLAB_UNRECLAIMABLE_B);
-+	sreclaimable = node_page_state(pgdat, NR_SLAB_RECLAIMABLE_B);
-+	sunreclaimable = node_page_state(pgdat, NR_SLAB_UNRECLAIMABLE_B);
- 	len = sysfs_emit_at(buf, len,
- 			    "Node %d MemTotal:       %8lu kB\n"
- 			    "Node %d MemFree:        %8lu kB\n"
-@@ -446,9 +446,9 @@ static ssize_t node_read_meminfo(struct device *dev,
- 			     nid, K(node_page_state(pgdat, NR_FILE_MAPPED)),
- 			     nid, K(node_page_state(pgdat, NR_ANON_MAPPED)),
- 			     nid, K(i.sharedram),
--			     nid, node_page_state(pgdat, NR_KERNEL_STACK_B) / SZ_1K,
-+			     nid, K(node_page_state(pgdat, NR_KERNEL_STACK_B)),
- #ifdef CONFIG_SHADOW_CALL_STACK
--			     nid, node_page_state(pgdat, NR_KERNEL_SCS_B) / SZ_1K,
-+			     nid, K(node_page_state(pgdat, NR_KERNEL_SCS_B)),
- #endif
- 			     nid, K(sum_zone_node_page_state(nid, NR_PAGETABLE)),
- 			     nid, 0UL,
-@@ -517,7 +517,7 @@ static ssize_t node_read_vmstat(struct device *dev,
- 	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
- 		len += sysfs_emit_at(buf, len, "%s %lu\n",
- 				     node_stat_name(i),
--				     node_page_state_pages(pgdat, i));
-+				     node_page_state(pgdat, i));
- 
- 	return len;
- }
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 69895e83d4fc..95ea5f062161 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -52,8 +52,8 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
- 
- 	available = si_mem_available();
--	sreclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
--	sunreclaim = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B);
-+	sreclaimable = global_node_page_state(NR_SLAB_RECLAIMABLE_B);
-+	sunreclaim = global_node_page_state(NR_SLAB_UNRECLAIMABLE_B);
- 
- 	show_val_kb(m, "MemTotal:       ", i.totalram);
- 	show_val_kb(m, "MemFree:        ", i.freeram);
-@@ -100,11 +100,11 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 	show_val_kb(m, "Slab:           ", sreclaimable + sunreclaim);
- 	show_val_kb(m, "SReclaimable:   ", sreclaimable);
- 	show_val_kb(m, "SUnreclaim:     ", sunreclaim);
--	seq_printf(m, "KernelStack:    %8lu kB\n",
--		   global_node_page_state(NR_KERNEL_STACK_B) / SZ_1K);
-+	show_val_kb(m, "KernelStack:    ",
-+		    global_node_page_state(NR_KERNEL_STACK_B));
- #ifdef CONFIG_SHADOW_CALL_STACK
--	seq_printf(m, "ShadowCallStack:%8lu kB\n",
--		   global_node_page_state(NR_KERNEL_SCS_B) / SZ_1K);
-+	show_val_kb(m, "ShadowCallStack:",
-+		    global_node_page_state(NR_KERNEL_SCS_B));
- #endif
- 	show_val_kb(m, "PageTables:     ",
- 		    global_zone_page_state(NR_PAGETABLE));
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index afd84dc2398c..ae821e016fdd 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -193,8 +193,7 @@ static inline unsigned long global_zone_page_state(enum zone_stat_item item)
- 	return x;
- }
- 
--static inline
--unsigned long global_node_page_state_pages(enum node_stat_item item)
-+static inline unsigned long global_node_page_state(enum node_stat_item item)
- {
- 	long x = atomic_long_read(&vm_node_stat[item]);
- 
-@@ -207,17 +206,6 @@ unsigned long global_node_page_state_pages(enum node_stat_item item)
- 	return x;
- }
- 
--static inline unsigned long global_node_page_state(enum node_stat_item item)
--{
--	long x = atomic_long_read(&vm_node_stat[item]);
--
--#ifdef CONFIG_SMP
--	if (x < 0)
--		x = 0;
--#endif
--	return x;
--}
--
- static inline unsigned long zone_page_state(struct zone *zone,
- 					enum zone_stat_item item)
- {
-@@ -258,12 +246,9 @@ extern unsigned long sum_zone_node_page_state(int node,
- extern unsigned long sum_zone_numa_state(int node, enum numa_stat_item item);
- extern unsigned long node_page_state(struct pglist_data *pgdat,
- 						enum node_stat_item item);
--extern unsigned long node_page_state_pages(struct pglist_data *pgdat,
--					   enum node_stat_item item);
- #else
- #define sum_zone_node_page_state(node, item) global_zone_page_state(item)
- #define node_page_state(node, item) global_node_page_state(item)
--#define node_page_state_pages(node, item) global_node_page_state_pages(item)
- #endif /* CONFIG_NUMA */
- 
- #ifdef CONFIG_SMP
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index d63560e1cf87..664520bdaa20 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -1705,7 +1705,7 @@ static unsigned long minimum_image_size(unsigned long saveable)
- {
- 	unsigned long size;
- 
--	size = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B)
-+	size = global_node_page_state(NR_SLAB_RECLAIMABLE_B)
- 		+ global_node_page_state(NR_ACTIVE_ANON)
- 		+ global_node_page_state(NR_INACTIVE_ANON)
- 		+ global_node_page_state(NR_ACTIVE_FILE)
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 04b19b7b5435..73861473c7d4 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -188,7 +188,7 @@ static bool should_dump_unreclaim_slab(void)
- 		 global_node_page_state(NR_ISOLATED_FILE) +
- 		 global_node_page_state(NR_UNEVICTABLE);
- 
--	return (global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B) > nr_lru);
-+	return (global_node_page_state(NR_SLAB_UNRECLAIMABLE_B) > nr_lru);
- }
- 
- /**
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 58916b3afdab..d16c9388c0b8 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5372,7 +5372,7 @@ long si_mem_available(void)
- 	 * items that are in use, and cannot be freed. Cap this estimate at the
- 	 * low watermark.
- 	 */
--	reclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B) +
-+	reclaimable = global_node_page_state(NR_SLAB_RECLAIMABLE_B) +
- 		global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
- 	available += reclaimable - min(reclaimable / 2, wmark_low);
- 
-@@ -5516,8 +5516,8 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		global_node_page_state(NR_UNEVICTABLE),
- 		global_node_page_state(NR_FILE_DIRTY),
- 		global_node_page_state(NR_WRITEBACK),
--		global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B),
--		global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B),
-+		global_node_page_state(NR_SLAB_RECLAIMABLE_B),
-+		global_node_page_state(NR_SLAB_UNRECLAIMABLE_B),
- 		global_node_page_state(NR_FILE_MAPPED),
- 		global_node_page_state(NR_SHMEM),
- 		global_zone_page_state(NR_PAGETABLE),
-@@ -5572,9 +5572,9 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 			K(node_page_state(pgdat, NR_ANON_THPS)),
- #endif
- 			K(node_page_state(pgdat, NR_WRITEBACK_TEMP)),
--			node_page_state(pgdat, NR_KERNEL_STACK_B) / SZ_1K,
-+			K(node_page_state(pgdat, NR_KERNEL_STACK_B)),
- #ifdef CONFIG_SHADOW_CALL_STACK
--			node_page_state(pgdat, NR_KERNEL_SCS_B) / SZ_1K,
-+			K(node_page_state(pgdat, NR_KERNEL_SCS_B)),
- #endif
- 			pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ?
- 				"yes" : "no");
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 469016222cdb..5d3c8fa68979 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4220,7 +4220,7 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
- 	 * unmapped file backed pages.
- 	 */
- 	if (node_pagecache_reclaimable(pgdat) <= pgdat->min_unmapped_pages &&
--	    node_page_state_pages(pgdat, NR_SLAB_RECLAIMABLE_B) <=
-+	    node_page_state(pgdat, NR_SLAB_RECLAIMABLE_B) <=
- 	    pgdat->min_slab_pages)
- 		return NODE_RECLAIM_FULL;
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 25751b1d8e2e..b7cdef585efd 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1000,22 +1000,9 @@ unsigned long sum_zone_numa_state(int node,
- }
- 
- /*
-- * Determine the per node value of a stat item.
-+ * Determine the per node value of a stat item. This always returns
-+ * values in pages.
-  */
--unsigned long node_page_state_pages(struct pglist_data *pgdat,
--				    enum node_stat_item item)
--{
--	long x = atomic_long_read(&pgdat->vm_stat[item]);
--
--#ifdef CONFIG_SMP
--	if (x < 0)
--		x = 0;
--#endif
--	if (vmstat_item_in_bytes(item))
--		x >>= PAGE_SHIFT;
--	return x;
--}
--
- unsigned long node_page_state(struct pglist_data *pgdat,
- 			      enum node_stat_item item)
- {
-@@ -1025,6 +1012,8 @@ unsigned long node_page_state(struct pglist_data *pgdat,
- 	if (x < 0)
- 		x = 0;
- #endif
-+	if (vmstat_item_in_bytes(item))
-+		x >>= PAGE_SHIFT;
- 	return x;
- }
- #endif
-@@ -1626,7 +1615,7 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
- 		seq_printf(m, "\n  per-node stats");
- 		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++) {
- 			seq_printf(m, "\n      %-12s %lu", node_stat_name(i),
--				   node_page_state_pages(pgdat, i));
-+				   node_page_state(pgdat, i));
- 		}
- 	}
- 	seq_printf(m,
-@@ -1747,7 +1736,7 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
- #endif
- 
- 	for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
--		v[i] = global_node_page_state_pages(i);
-+		v[i] = global_node_page_state(i);
- 	v += NR_VM_NODE_STAT_ITEMS;
- 
- 	global_dirty_limits(v + NR_DIRTY_BG_THRESHOLD,
 -- 
-2.11.0
-
+Sincerely yours,
+Mike.
