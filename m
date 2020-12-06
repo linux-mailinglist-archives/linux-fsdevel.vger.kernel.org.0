@@ -2,135 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0B452D05B6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Dec 2020 16:40:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0078D2D05D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Dec 2020 17:06:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbgLFPic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Dec 2020 10:38:32 -0500
-Received: from mga18.intel.com ([134.134.136.126]:32314 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgLFPia (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Dec 2020 10:38:30 -0500
-IronPort-SDR: 1cha+c2UZPWwKk1e67PVvcgtIpoye65jbjfoO8DvFQGrI5hFHKTBpiVNZ+HXbhcVCn48iZc7k1
- Gs7u9+9RX90w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9827"; a="161365202"
-X-IronPort-AV: E=Sophos;i="5.78,397,1599548400"; 
-   d="scan'208";a="161365202"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2020 07:37:49 -0800
-IronPort-SDR: PkNdBtSbwzRbZRuXXHI66EbuJ07Jflk68elAonSY1Lu4LoBWRYAHNify6CddPGCxWcGHQE00XN
- J9oVgdLKZt2Q==
-X-IronPort-AV: E=Sophos;i="5.78,397,1599548400"; 
-   d="scan'208";a="331804089"
-Received: from mshinde-mobl.amr.corp.intel.com (HELO [10.209.165.71]) ([10.209.165.71])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2020 07:37:48 -0800
-Subject: Re: [NEEDS-REVIEW] [PATCH] do_exit(): panic() when double fault
- detected
-To:     Vladimir Kondratiev <vladimir.kondratiev@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kars Mulder <kerneldev@karsmulder.nl>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Joe Perches <joe@perches.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu <chenqiwu@xiaomi.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20201206131036.3780898-1-vladimir.kondratiev@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <16d6fdae-74ac-774c-9193-130dcfc5bc6c@intel.com>
-Date:   Sun, 6 Dec 2020 07:37:47 -0800
+        id S1727162AbgLFQFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Dec 2020 11:05:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgLFQFR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 6 Dec 2020 11:05:17 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A402C0613D0;
+        Sun,  6 Dec 2020 08:04:31 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id p8so10326630wrx.5;
+        Sun, 06 Dec 2020 08:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IBXg1US7km+pm4VNhYfA62jAGF7YeEfx9ZaGb/6t6U0=;
+        b=WzWteGEivpn/0WZmjktuP9pz9n+e2egi4MBJRL845j45E6IQgn9QOLwzI6CpqJxhu9
+         1wmHulmhcXViXo8sBB1JdZMALp5PxfgHPahiPTMyUYmHCAEPNk1Bsopu5kcKM7p5A3nU
+         BRnEWrUgtzQ//Ama/qN8WLOIzaRKhlqP3DNb7+eIM2QdgQc4bTyHKAjJ0S9OqV7Sa1KS
+         qKSOSlGBfNaSVEYz8s41Tu2gqUJ71zA09G57OgrY/AJbT3Zn9l5G+BfYrXsa+8FEiad3
+         1VLnwCqGFfqVYEgkCISL0GlBVVOHBLNZQ1yOHwCsyOFTmCRGQ710qV+RU0m9aSicom6A
+         8SFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IBXg1US7km+pm4VNhYfA62jAGF7YeEfx9ZaGb/6t6U0=;
+        b=TXDtljEF0NA7HQvIQnAhjNnpu06eR53tkOA60aDWPY97rMC1PpdNciABAr+JCX85n6
+         Tx/bz0UFOHOXp16iUMLR9ugKD3BuBip1UExwnUtDXgZy/kfk0dA30F9FkVMh3NmJO5UO
+         Kbrv3zw2jQ9FHvYLb8+UBUPvvd4J4sm9yMNXWNdrF+2MJ0d7nluBu5pSmRkWjcgyXWfL
+         U9N2627zMuZyhmgBWFzY2mN0b9hMuJUb/wgBNH2WHRfeNqiYdmMT7RO2K8q2hyYOCCiU
+         Wb/QnguVjcy1lN+eQZfiO6IyNYFqR1fOCAJVQmDjfS9rpBBlXZaLnhNj8AkWwY4k3Th5
+         4a4w==
+X-Gm-Message-State: AOAM531oR1jG6PUQqo5cX3HLAX4l8YV4BcgrQkzavWLXVZlZgVDuXywh
+        /V734HY4AVi/FfgsfDNXdgUnM2ZeuakRgA==
+X-Google-Smtp-Source: ABdhPJxm93FySARedMcqy+SPq8L0SURscsdiMTicglQxiJL/85BssFlRzja+gVvBPiAPqc8fokZ/lQ==
+X-Received: by 2002:adf:c986:: with SMTP id f6mr8544968wrh.361.1607270669742;
+        Sun, 06 Dec 2020 08:04:29 -0800 (PST)
+Received: from [192.168.8.100] ([185.69.145.92])
+        by smtp.gmail.com with ESMTPSA id l3sm11609876wrr.89.2020.12.06.08.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 06 Dec 2020 08:04:29 -0800 (PST)
+Subject: Re: [PATCH] iov_iter: optimise iter type checking
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
+References: <a8cdb781384791c30e30036aced4c027c5dfea86.1605969341.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <6e795064-fdbd-d354-4b01-a4f7409debf5@gmail.com>
+Date:   Sun, 6 Dec 2020 16:01:14 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20201206131036.3780898-1-vladimir.kondratiev@intel.com>
+In-Reply-To: <a8cdb781384791c30e30036aced4c027c5dfea86.1605969341.git.asml.silence@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/6/20 5:10 AM, Vladimir Kondratiev wrote:
-> Double fault detected in do_exit() is symptom of integrity
-> compromised. For safety critical systems, it may be better to
-> panic() in this case to minimize risk.
+On 21/11/2020 14:37, Pavel Begunkov wrote:
+> The problem here is that iov_iter_is_*() helpers check types for
+> equality, but all iterate_* helpers do bitwise ands. This confuses
+> compilers, so even if some cases were handled separately with
+> iov_iter_is_*(), corresponding ifs in iterate*() right after are not
+> eliminated.
+> 
+> E.g. iov_iter_npages() first handles discards, but iterate_all_kinds()
+> still checks for discard iter type and generates unreachable code down
+> the line.
 
-Does this fix a real problem that you have observed in practice?
+Ping. This one should be pretty simple
 
-Or, is this a general "hardening" which you think is a good practice?
+> 
+>            text    data     bss     dec     hex filename
+> before:   24409     805       0   25214    627e lib/iov_iter.o
+> after:    23977     805       0   24782    60ce lib/iov_iter.o
+> 
+> Reviewed-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  include/linux/uio.h | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 72d88566694e..c5970b2d3307 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -57,27 +57,27 @@ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+>  
+>  static inline bool iter_is_iovec(const struct iov_iter *i)
+>  {
+> -	return iov_iter_type(i) == ITER_IOVEC;
+> +	return iov_iter_type(i) & ITER_IOVEC;
+>  }
+>  
+>  static inline bool iov_iter_is_kvec(const struct iov_iter *i)
+>  {
+> -	return iov_iter_type(i) == ITER_KVEC;
+> +	return iov_iter_type(i) & ITER_KVEC;
+>  }
+>  
+>  static inline bool iov_iter_is_bvec(const struct iov_iter *i)
+>  {
+> -	return iov_iter_type(i) == ITER_BVEC;
+> +	return iov_iter_type(i) & ITER_BVEC;
+>  }
+>  
+>  static inline bool iov_iter_is_pipe(const struct iov_iter *i)
+>  {
+> -	return iov_iter_type(i) == ITER_PIPE;
+> +	return iov_iter_type(i) & ITER_PIPE;
+>  }
+>  
+>  static inline bool iov_iter_is_discard(const struct iov_iter *i)
+>  {
+> -	return iov_iter_type(i) == ITER_DISCARD;
+> +	return iov_iter_type(i) & ITER_DISCARD;
+>  }
+>  
+>  static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+> 
 
-What does this have to do specifically with safety critical systems?
-
-The kernel generally tries to fix things up and keep running whenever
-possible, if for no other reason than it helps debug problems.  If that
-is an undesirable property for your systems, then I think you have a
-much bigger problem than faults during exit().
-
-This option, "panic_on_double_fault", doesn't actually panic on all
-double-faults, which means to me that it's dangerously named.  There's
-even an unprivileged selftest (tools/testing/selftests/x86/sigreturn.c)
-which can cause double faults all day long.
+-- 
+Pavel Begunkov
