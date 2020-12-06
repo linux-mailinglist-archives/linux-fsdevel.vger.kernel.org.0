@@ -2,162 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E014E2D0081
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Dec 2020 05:29:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDA7E2D0138
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Dec 2020 07:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbgLFE2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Dec 2020 23:28:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37708 "EHLO
+        id S1725902AbgLFGmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Dec 2020 01:42:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbgLFE2X (ORCPT
+        with ESMTP id S1725379AbgLFGmA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Dec 2020 23:28:23 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 925C0C0613D0;
-        Sat,  5 Dec 2020 20:27:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=D5ZHvjUvMBDemr7cpbY6iKne/87nTrj0lp8KQjcma0E=; b=yzSU+OEsW/NQxelTeDu7RZVtaV
-        JNBhbuxIXeotQMfZO+CNLaavmrOcopGwSQMecylokD/39YI6ylQHPMS3ISYEvVQreemhIcsi2JkOp
-        HEp/9j8Y6KDl8Bqure8S6yQl3YXOqFJMOzQSlxv8GbxjfW7uX4Yap91YD8ToxcAIiixKZ0o7Iw0JT
-        9bN1FoLkDcjbtEnchpz3OCCJulbUI0E78fy9eXo7sIIUKZB2BTu4GkWn5+DG9wv96Nm5sPp5VI3Vy
-        qzzvbe39s7DAv2aHKSHathau2XBTHqRdMZVwgbCt+eW//r9g+un5GtUgjNM+iooXfSdC0YV/+1cRu
-        DFxInAEQ==;
-Received: from [2601:1c0:6280:3f0::1494]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1klk3c-0002rw-QN; Sun, 06 Dec 2020 02:45:53 +0000
-Subject: Re: memory leak in generic_parse_monolithic [+PATCH]
-To:     syzbot <syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        David Howells <dhowells@redhat.com>
-References: <0000000000002a530d05b400349b@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6db2af99-e6e3-7f28-231e-2bdba05ca5fa@infradead.org>
-Date:   Sat, 5 Dec 2020 18:45:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Sun, 6 Dec 2020 01:42:00 -0500
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2A7C0613D0;
+        Sat,  5 Dec 2020 22:41:20 -0800 (PST)
+Received: by mail-ot1-x343.google.com with SMTP id x13so1985202oto.8;
+        Sat, 05 Dec 2020 22:41:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4uryp7VoMw6vTHsDBKmQdtkum5EctehoaGW3WLCaGdw=;
+        b=QQDB33x0zV36M+SWfI5ES4b3YenolO4NNKo0ewT+qiFknDVGfmuh4X+HF/+k9nIsBB
+         Qw6+Dm79b05DvtkibIyD+JGWwo5ztQ7buULpNdgoxujU3DDr3/dLFe51W/PW7BwySzoL
+         iggGCjkNV3HAED90FHUpPM1b3MPQST+lxxez5ch9IwUbc0Hhlkd6Qy4fYmmMLJIBlj3/
+         OaSdeHNG0T1Ngzr8T1R4aiS8n02roo3L14A20aMiBnvqeUpo9h6pomw/RWVSFA6ZYFkn
+         F7I008yXRB9nzCFO96iv/RuX3swPZ8LZe8Vpca0AxoPPQPQ9DBAvqss6boDY9uAb2tDZ
+         /BRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4uryp7VoMw6vTHsDBKmQdtkum5EctehoaGW3WLCaGdw=;
+        b=JIYBtO3wUEm3NPIG6TS5eA47kvKuglYWHFQVLNwbfKd/WpAu0+yS2ZPeHbpg/7O2Xd
+         SUEdOn9XckcT1cCsY3bdDwmpq0XbXjLXJuC8bcpmjU7Bh7JOTTcB2JsXBUvKZKixZed4
+         NP6Z6AZ/v9iriamvlDnGCHMRv+8P+vhXhPl4sglFw1WS57AZl5aoBop5oHpME1NoE+Y6
+         0otWir2ZBHccQMNLZ8JXf0IKgVP4yEsXKemFUx+NlVIwafGMLmS8LJMXE7x+cW86ZazJ
+         2tlnHwcgqko0nX+uLPFq/nLuBWZtFn0mBzGw/DL46ZWdfp5SxroGBnFtlUXLuv07G41r
+         qKvg==
+X-Gm-Message-State: AOAM533rqweI3ZZtXmohU79JKMDTGkSa1fvN8geHnfh6f9SVKDKvr3kJ
+        oY5z3gf5mqYKktYnwtn+LmE=
+X-Google-Smtp-Source: ABdhPJz0zuQ/HHcKj74pAmZf49zndavOqXdbZx9Dmc3IsyKF1npPcXqG51F8231ukrl21NZjZd7usw==
+X-Received: by 2002:a9d:708e:: with SMTP id l14mr9199595otj.87.1607236879898;
+        Sat, 05 Dec 2020 22:41:19 -0800 (PST)
+Received: from localhost.localdomain ([122.225.203.131])
+        by smtp.gmail.com with ESMTPSA id y18sm1817553ooj.20.2020.12.05.22.41.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 05 Dec 2020 22:41:19 -0800 (PST)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     darrick.wong@oracle.com, willy@infradead.org, hch@infradead.org,
+        david@fromorbit.com, mhocko@kernel.org,
+        000akpm@linux-foundation.org, dhowells@redhat.com,
+        jlayton@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
+        linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v9 0/2] avoid xfs transaction reservation recursion 
+Date:   Sun,  6 Dec 2020 14:40:44 +0800
+Message-Id: <20201206064046.2921-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 MIME-Version: 1.0
-In-Reply-To: <0000000000002a530d05b400349b@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/13/20 9:17 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    af5043c8 Merge tag 'acpi-5.10-rc4' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13e8c906500000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a3f13716fa0212fd
-> dashboard link: https://syzkaller.appspot.com/bug?extid=86dc6632faaca40133ab
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102a57dc500000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129ca3d6500000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com
-> 
-> Warning: Permanently added '10.128.0.84' (ECDSA) to the list of known hosts.
-> executing program
-> executing program
-> BUG: memory leak
-> unreferenced object 0xffff888111f15a80 (size 32):
->   comm "syz-executor841", pid 8507, jiffies 4294942125 (age 14.070s)
->   hex dump (first 32 bytes):
->     25 5e 5d 24 5b 2b 25 5d 28 24 7b 3a 0f 6b 5b 29  %^]$[+%](${:.k[)
->     2d 3a 00 00 00 00 00 00 00 00 00 00 00 00 00 00  -:..............
->   backtrace:
->     [<000000005c6f565d>] kmemdup_nul+0x2d/0x70 mm/util.c:151
->     [<0000000054985c27>] vfs_parse_fs_string+0x6e/0xd0 fs/fs_context.c:155
->     [<0000000077ef66e4>] generic_parse_monolithic+0xe0/0x130 fs/fs_context.c:201
->     [<00000000d4d4a652>] do_new_mount fs/namespace.c:2871 [inline]
->     [<00000000d4d4a652>] path_mount+0xbbb/0x1170 fs/namespace.c:3205
->     [<00000000f43f0071>] do_mount fs/namespace.c:3218 [inline]
->     [<00000000f43f0071>] __do_sys_mount fs/namespace.c:3426 [inline]
->     [<00000000f43f0071>] __se_sys_mount fs/namespace.c:3403 [inline]
->     [<00000000f43f0071>] __x64_sys_mount+0x18e/0x1d0 fs/namespace.c:3403
->     [<00000000dc5fffd5>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->     [<000000004e665669>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> 
+This patchset avoids transaction reservation recursion by reintroducing
+the discarded PF_FSTRANS in a new way, suggested by Dave. In this new 
+implementation, some new helpers are introduced, which are 
+xfs_trans_context_{set, clear, active},
+suggested by Dave. And re-using the task->journal_info to indicates
+whehter the task is in fstrans or not, suggested by Willy
 
-Hi David,
-Is this a false positive, maybe having to do with this comment from
-fs/fsopen.c: ?
+Darrick helped fix the error occurred in xfs/141.[2]
 
-/*
- * Check the state and apply the configuration.  Note that this function is
- * allowed to 'steal' the value by setting param->xxx to NULL before returning.
- */
-static int vfs_fsconfig_locked(struct fs_context *fc, int cmd,
-			       struct fs_parameter *param)
-{
+I rerun the xfstests again in my server, and no obvious error occurred.
+
+Patch #1 is picked from Willy's patchset "Overhaul memalloc_no*"[1]
+
+[1].
+https://lore.kernel.org/linux-mm/20200625113122.7540-1-willy@infradead.org/
+[2]. https://lore.kernel.org/linux-xfs/20201104001649.GN7123@magnolia/#t
 
 
-Otherwise please look at the patch below.
-Thanks.
+v9:
+- rebase it on xfs tree.
+- Darrick fixed an error occurred in xfs/141
+- run xfstests, and no obvious error occurred.
 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this issue, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+v8:
+- check xfs_trans_context_active() in xfs_vm_writepage(s), per Dave.
 
+v7:
+- check fstrans recursion for XFS only, by introducing a new member in
+  struct writeback_control.
 
----
-From: Randy Dunlap <rdunlap@infradead.org>
+v6:
+- add Michal's ack and comment in patch #1. 
 
-Callers to vfs_parse_fs_param() should be responsible for freeing
-param.string.
+v5:
+- pick one of Willy's patch
+- introduce four new helpers, per Dave
 
-Fixes: ecdab150fddb ("vfs: syscall: Add fsconfig() for configuring and managing a context")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: syzbot+86dc6632faaca40133ab@syzkaller.appspotmail.com
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
----
-This looks promising to me but I haven't fully tested it yet
-because my build/test machine just started acting flaky,
-like it is having memory or disk errors.
-OTOH, it could have ramifications in other places.
+v4:
+- retitle from "xfs: introduce task->in_fstrans for transaction reservation
+  recursion protection"
+- reuse current->journal_info, per Willy
 
- fs/fs_context.c |    1 -
- fs/fsopen.c     |    4 +++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Matthew Wilcox (Oracle) (1):
+  mm: Add become_kswapd and restore_kswapd
 
---- linux-next-20201204.orig/fs/fs_context.c
-+++ linux-next-20201204/fs/fs_context.c
-@@ -128,7 +128,6 @@ int vfs_parse_fs_param(struct fs_context
- 		if (fc->source)
- 			return invalf(fc, "VFS: Multiple sources");
- 		fc->source = param->string;
--		param->string = NULL;
- 		return 0;
- 	}
- 
---- linux-next-20201204.orig/fs/fsopen.c
-+++ linux-next-20201204/fs/fsopen.c
-@@ -262,7 +262,9 @@ static int vfs_fsconfig_locked(struct fs
- 		    fc->phase != FS_CONTEXT_RECONF_PARAMS)
- 			return -EBUSY;
- 
--		return vfs_parse_fs_param(fc, param);
-+		ret = vfs_parse_fs_param(fc, param);
-+		kfree(param->string);
-+		return ret;
- 	}
- 	fc->phase = FS_CONTEXT_FAILED;
- 	return ret;
+Yafang Shao (1):
+  xfs: avoid transaction reservation recursion
+
+ fs/iomap/buffered-io.c    |  7 -------
+ fs/xfs/libxfs/xfs_btree.c | 14 ++++++++------
+ fs/xfs/xfs_aops.c         | 23 +++++++++++++++++++++--
+ fs/xfs/xfs_linux.h        |  4 ----
+ fs/xfs/xfs_trans.c        | 25 +++++++++++++------------
+ fs/xfs/xfs_trans.h        | 23 +++++++++++++++++++++++
+ include/linux/sched/mm.h  | 23 +++++++++++++++++++++++
+ mm/vmscan.c               | 16 +---------------
+ 8 files changed, 89 insertions(+), 46 deletions(-)
+
+-- 
+2.18.4
 
