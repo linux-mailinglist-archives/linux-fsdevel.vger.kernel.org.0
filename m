@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5547D2D0F8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:39:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF2822D0F7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727260AbgLGLhz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 06:37:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
+        id S1727364AbgLGLh3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 06:37:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbgLGLfQ (ORCPT
+        with ESMTP id S1727339AbgLGLf0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 06:35:16 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5D81C08E860;
-        Mon,  7 Dec 2020 03:34:58 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id c12so2530182pfo.10;
-        Mon, 07 Dec 2020 03:34:58 -0800 (PST)
+        Mon, 7 Dec 2020 06:35:26 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6553AC08ED7E;
+        Mon,  7 Dec 2020 03:35:02 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id o5so8647403pgm.10;
+        Mon, 07 Dec 2020 03:35:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3Q5MS2UXjUQqUjTpuPXnY5Lc/xhe4Tibwul6rnRwWL4=;
-        b=nW7tHnXavpC5taczb2SrIKzWwWUMvoY4U2MTkN3vDPPis+BUGXKaGqPDCsIxEfquXK
-         6tmf6cEkdZTLCJdDXSh6MnNQCPBTV6kFB9HnhWkc91ozY0AAtLOOKkEMOqDBzYi4fqmn
-         vakqjy46p1cUwbWXP/xi7QIAw9YzTSRnmgmnJrHoKXeAFo3V1L5iM3PHOBMX46KN5v3Z
-         34HgCx9eDmAlKhggnpFYM8ACTmm6p267BNhSJCIFO9+Der0ooC1Q9+xIQNrzo5WPJwHE
-         9owlGXBvga1yQ91B0OHtPxgNUCzR6oEuiJ6+Tvv4ZAklNhM3orxx6h4kzT/nmxGA3nGL
-         lpuQ==
+        bh=d/DMcQ5p9kWqt/8+2V3dACGpqFuk8uMzI8jd59zbvK8=;
+        b=uDgPrdaW7QyZet4jLziwzIsT2FNC+muT99czm8HXIiXGHPutl3zp4sPeraiv07ll3r
+         BQwlcD3KzLyJ9zAdfZ/NPlv4v98ZJhyXKeYwxNluZgjB08IT0zg+7sgClpKtweMJHL2i
+         L6gt6Sx8ux6fk/NHOVacX/B4cu+FfYGthe2oAKzj2STci8jOmsss5yDhreWOWvLf3u2L
+         c14M826QMvoUlMzulslcHONuIx1sPeUjQUjZ8rtHti7e48GSHl4Yi/RFWw5lNMrL8MSM
+         k7CHx/oPR5izM2UgYMUgqFLnQKcs7gnrSlWrGV5pRWN31vfQBOKvYyB71NjPuk9WUbRK
+         SBDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3Q5MS2UXjUQqUjTpuPXnY5Lc/xhe4Tibwul6rnRwWL4=;
-        b=AOlZ6/m/ax7skDD1F4UBxGDn8M4zj7sPPxO4GHdt7OdxRIld8VqbMZI60BFphocRwx
-         oud65dcah1PW0xGUZZ133E3KUE9QVeMfai4XBoUqT93rsO3L85Ts2Cqc4HiDUlOfBRq2
-         gev7L+E8U8COcszGBE5y+fXUgMwfhbQe9UnZ2s5GCTOzPWuKLjQ7EtvNKtathNJ4ZACl
-         JuYQefP7JYy2LtvlxC1Dy0YfZ6MlwqeMbxcg4MPoSXdvYbYjW+tZCGxcUw4e3Xxuk66K
-         VjvRjbBezdyTlpeH20zeQx6vvOhlp1etxXW96aN6DDS9O/3fkjYKNE6J550l+kDdcH4R
-         aaEw==
-X-Gm-Message-State: AOAM530U14SZL7oezcpOjXqTJGf/SDCdPRvaonzlo45rE72nlx/nbxzZ
-        8XYFWWqMR4eRjNOFSitazWk=
-X-Google-Smtp-Source: ABdhPJzvNvnKPK0JB4i5KGpQCvE8rYhnqcuhj31K/F7yMqFfiJ9DwwOo6y8xk/RvjaqCiew/ogf9Kg==
-X-Received: by 2002:a62:9205:0:b029:19d:bab0:ba17 with SMTP id o5-20020a6292050000b029019dbab0ba17mr15435970pfd.37.1607340898388;
-        Mon, 07 Dec 2020 03:34:58 -0800 (PST)
+        bh=d/DMcQ5p9kWqt/8+2V3dACGpqFuk8uMzI8jd59zbvK8=;
+        b=SNvGrhdKrLQ3z6bs+8Ienw+nvfVhgc4H1k9VZtT19J3BdnHritG5wKEB6al5g41LNx
+         PkprroLsQc+9er20D0uR0clOiI92ScOqyV1pFdlsLZnA7rtHTjduwvGHavlZNQQiKZxg
+         n7aRY4LK6WK/B5LxLdeCyeTdvivoOxz1HkpXrYIzaQlWzQBbDTb3B9knnPkww+Vp0WCb
+         ITrR0FggSY368rNHGtnd8PeVyAIRDPn8vAWzGDFYnU9PmB51LVyfbT6A3QiGDGOndaWq
+         +83mCrGmlWNnbq5nttwDXvkr5r4CA/onzl9HpIcHVPgp1rIsj009X9hnulpI+QCpAd8M
+         2esA==
+X-Gm-Message-State: AOAM530iD18M95CuLzD3dZR64S/UPhDoR+/tXDlPLQijj0S9Epdqw8cR
+        dnSANbbpEsJMnS44iGXH+9o=
+X-Google-Smtp-Source: ABdhPJzsTfFyeDeSqCA2nVBB3th4mGCgQXxAf/7SC6+PJE0lBNEtPZT6GhKeWck8kJzv61kWa4w/EA==
+X-Received: by 2002:aa7:8b15:0:b029:196:59ad:ab93 with SMTP id f21-20020aa78b150000b029019659adab93mr15268290pfd.16.1607340901970;
+        Mon, 07 Dec 2020 03:35:01 -0800 (PST)
 Received: from localhost.localdomain ([203.205.141.39])
-        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.34.54
+        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.34.58
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 03:34:57 -0800 (PST)
+        Mon, 07 Dec 2020 03:35:01 -0800 (PST)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     linux-mm@kvack.org, akpm@linux-foundation.org,
@@ -59,9 +59,9 @@ Cc:     joao.m.martins@oracle.com, rdunlap@infradead.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Chen Zhuo <sagazchen@tencent.com>
-Subject: [RFC V2 23/37] kvm, x86: introduce VM_DMEM for syscall support usage
-Date:   Mon,  7 Dec 2020 19:31:16 +0800
-Message-Id: <aff53d725dd12615b3bb9412a7612cbb5fe15f2d.1607332046.git.yuleixzhang@tencent.com>
+Subject: [RFC V2 24/37] dmemfs: support hugepage for dmemfs
+Date:   Mon,  7 Dec 2020 19:31:17 +0800
+Message-Id: <ed7bd51468d10fcbd4c0110ad1b81a2b07ebd880.1607332046.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1607332046.git.yuleixzhang@tencent.com>
 References: <cover.1607332046.git.yuleixzhang@tencent.com>
@@ -73,136 +73,170 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Currently dmemfs do not support memory readonly, so change_protection()
-will be disabled for dmemfs vma. Since vma->vm_flags could be changed to
-new flag in mprotect_fixup(), so we introduce a new vma flag VM_DMEM and
-check this flag in mprotect_fixup() to avoid changing vma->vm_flags.
-
-We also check it in vma_to_resize() to disable mremap() for dmemfs vma.
+It add hugepage support for dmemfs. We use PFN_DMEM to notify
+vmf_insert_pfn_pmd, and dmem huge pmd will be marked with
+_PAGE_SPECIAL and _PAGE_DMEM. So that GUP-fast can separate
+dmemfs page from other page type and handle it correctly.
 
 Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- fs/dmemfs/inode.c  | 2 +-
- include/linux/mm.h | 7 +++++++
- mm/gup.c           | 7 +++++--
- mm/mincore.c       | 8 ++++++--
- mm/mprotect.c      | 5 ++++-
- mm/mremap.c        | 3 +++
- 6 files changed, 26 insertions(+), 6 deletions(-)
+ fs/dmemfs/inode.c | 113 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 111 insertions(+), 2 deletions(-)
 
 diff --git a/fs/dmemfs/inode.c b/fs/dmemfs/inode.c
-index ab6a492..b165bd3 100644
+index b165bd3..17a518c 100644
 --- a/fs/dmemfs/inode.c
 +++ b/fs/dmemfs/inode.c
-@@ -507,7 +507,7 @@ int dmemfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -457,7 +457,7 @@ static int dmemfs_split(struct vm_area_struct *vma, unsigned long addr)
+ 	return 0;
+ }
+ 
+-static vm_fault_t dmemfs_fault(struct vm_fault *vmf)
++static vm_fault_t __dmemfs_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct inode *inode = file_inode(vma->vm_file);
+@@ -485,6 +485,63 @@ static vm_fault_t dmemfs_fault(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
++static vm_fault_t  __dmemfs_pmd_fault(struct vm_fault *vmf)
++{
++	struct vm_area_struct *vma = vmf->vma;
++	unsigned long pmd_addr = vmf->address & PMD_MASK;
++	unsigned long page_addr;
++	struct inode *inode = file_inode(vma->vm_file);
++	void *entry;
++	phys_addr_t phys;
++	pfn_t pfn;
++	int ret;
++
++	if (dmem_page_size(inode) < PMD_SIZE)
++		return VM_FAULT_FALLBACK;
++
++	WARN_ON(pmd_addr < vma->vm_start ||
++		vma->vm_end < pmd_addr + PMD_SIZE);
++
++	page_addr = vmf->address & ~(dmem_page_size(inode) - 1);
++	entry = radix_get_create_entry(vma, page_addr, inode,
++				       linear_page_index(vma, page_addr));
++	if (IS_ERR(entry))
++		return (PTR_ERR(entry) == -ENOMEM) ?
++			VM_FAULT_OOM : VM_FAULT_SIGBUS;
++
++	phys = dmem_addr_to_pfn(inode, dmem_entry_to_addr(inode, entry),
++				linear_page_index(vma, pmd_addr), PMD_SHIFT);
++	phys <<= PAGE_SHIFT;
++	pfn = phys_to_pfn_t(phys, PFN_DMEM);
++	ret = vmf_insert_pfn_pmd(vmf, pfn, !!(vma->vm_flags & VM_WRITE));
++
++	radix_put_entry();
++	return ret;
++}
++
++static vm_fault_t dmemfs_huge_fault(struct vm_fault *vmf, enum page_entry_size pe_size)
++{
++	int ret;
++
++	switch (pe_size) {
++	case PE_SIZE_PTE:
++		ret = __dmemfs_fault(vmf);
++		break;
++	case PE_SIZE_PMD:
++		ret = __dmemfs_pmd_fault(vmf);
++		break;
++	default:
++		ret = VM_FAULT_SIGBUS;
++	}
++
++	return ret;
++}
++
++static vm_fault_t dmemfs_fault(struct vm_fault *vmf)
++{
++	return dmemfs_huge_fault(vmf, PE_SIZE_PTE);
++}
++
+ static unsigned long dmemfs_pagesize(struct vm_area_struct *vma)
+ {
+ 	return dmem_page_size(file_inode(vma->vm_file));
+@@ -495,6 +552,7 @@ static unsigned long dmemfs_pagesize(struct vm_area_struct *vma)
+ 	.fault = dmemfs_fault,
+ 	.pagesize = dmemfs_pagesize,
+ 	.access = dmemfs_access_dmem,
++	.huge_fault = dmemfs_huge_fault,
+ };
+ 
+ int dmemfs_file_mmap(struct file *file, struct vm_area_struct *vma)
+@@ -507,15 +565,66 @@ int dmemfs_file_mmap(struct file *file, struct vm_area_struct *vma)
  	if (!(vma->vm_flags & VM_SHARED))
  		return -EINVAL;
  
--	vma->vm_flags |= VM_PFNMAP;
-+	vma->vm_flags |= VM_PFNMAP | VM_DMEM | VM_IO;
+-	vma->vm_flags |= VM_PFNMAP | VM_DMEM | VM_IO;
++	vma->vm_flags |= VM_PFNMAP | VM_DONTCOPY | VM_DMEM | VM_IO;
++
++	if (dmem_page_size(inode) != PAGE_SIZE)
++		vma->vm_flags |= VM_HUGEPAGE;
  
  	file_accessed(file);
  	vma->vm_ops = &dmemfs_vm_ops;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index db6ae4d..2f3135fe 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -311,6 +311,8 @@ int overcommit_policy_handler(struct ctl_table *, int, void *, size_t *,
- #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
- #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
- 
-+#define VM_DMEM		BIT(38)		/* Dmem page VM */
-+
- #ifdef CONFIG_ARCH_HAS_PKEYS
- # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
- # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
-@@ -666,6 +668,11 @@ static inline bool vma_is_accessible(struct vm_area_struct *vma)
- 	return vma->vm_flags & VM_ACCESS_FLAGS;
+ 	return 0;
  }
  
-+static inline bool vma_is_dmem(struct vm_area_struct *vma)
++/*
++ * If the size of area returned by mm->get_unmapped_area() is one
++ * dmem pagesize larger than 'len', the returned addr by
++ * mm->get_unmapped_area() could be aligned to dmem pagesize to
++ * meet alignment demand.
++ */
++static unsigned long
++dmemfs_get_unmapped_area(struct file *file, unsigned long addr,
++			 unsigned long len, unsigned long pgoff,
++			 unsigned long flags)
 +{
-+	return !!(vma->vm_flags & VM_DMEM);
-+}
++	unsigned long len_pad;
++	unsigned long off = pgoff << PAGE_SHIFT;
++	unsigned long align;
 +
- #ifdef CONFIG_SHMEM
- /*
-  * The vma_is_shmem is not inline because it is used only by slow
-diff --git a/mm/gup.c b/mm/gup.c
-index 47c8197..0ea9071 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -492,8 +492,11 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 			goto no_page;
- 	} else if (unlikely(!page)) {
- 		if (flags & FOLL_DUMP) {
--			/* Avoid special (like zero) pages in core dumps */
--			page = ERR_PTR(-EFAULT);
-+			if (vma_is_dmem(vma))
-+				page = ERR_PTR(-EEXIST);
-+			else
-+				/* Avoid special (like zero) pages in core dumps */
-+				page = ERR_PTR(-EFAULT);
- 			goto out;
- 		}
- 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index 02db1a8..f8d10e4 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -78,8 +78,12 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
- 		pgoff_t pgoff;
- 
- 		pgoff = linear_page_index(vma, addr);
--		for (i = 0; i < nr; i++, pgoff++)
--			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
-+		for (i = 0; i < nr; i++, pgoff++) {
-+			if (vma_is_dmem(vma))
-+				vec[i] = 1;
-+			else
-+				vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
-+		}
- 	} else {
- 		for (i = 0; i < nr; i++)
- 			vec[i] = 0;
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 56c02be..b1650b5 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -236,7 +236,7 @@ static inline unsigned long change_pmd_range(struct vm_area_struct *vma,
- 		 * for all the checks.
- 		 */
- 		if (!is_swap_pmd(*pmd) && !pmd_devmap(*pmd) &&
--		     pmd_none_or_clear_bad_unless_trans_huge(pmd))
-+		     pmd_none_or_clear_bad_unless_trans_huge(pmd) && !pmd_special(*pmd))
- 			goto next;
- 
- 		/* invoke the mmu notifier if the pmd is populated */
-@@ -412,6 +412,9 @@ static int prot_none_test(unsigned long addr, unsigned long next,
- 		return 0;
- 	}
- 
-+	if (vma_is_dmem(vma))
++	align = dmem_page_size(file_inode(file));
++
++	/* For pud or pmd pagesize, could not support fault fallback. */
++	if (len & (align - 1))
++		return -EINVAL;
++	if (len > TASK_SIZE)
++		return -ENOMEM;
++
++	if (flags & MAP_FIXED) {
++		if (addr & (align - 1))
++			return -EINVAL;
++		return addr;
++	}
++
++	/*
++	 * Pad a extra align space for 'len', as we want to find a unmapped
++	 * area which is larger enough to align with dmemfs pagesize, if
++	 * pagesize of dmem is larger than 4K.
++	 */
++	len_pad = (align == PAGE_SIZE) ? len : len + align;
++
++	/* 'len' or 'off' is too large for pad. */
++	if (len_pad < len || (off + len_pad) < off)
 +		return -EINVAL;
 +
- 	/*
- 	 * Do PROT_NONE PFN permission checks here when we can still
- 	 * bail out without undoing a lot of state. This is a rather
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 138abba..598e681 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -482,6 +482,9 @@ static struct vm_area_struct *vma_to_resize(unsigned long addr,
- 	if (!vma || vma->vm_start > addr)
- 		return ERR_PTR(-EFAULT);
- 
-+	if (vma_is_dmem(vma))
-+		return ERR_PTR(-EINVAL);
++	addr = current->mm->get_unmapped_area(file, addr, len_pad,
++					      pgoff, flags);
 +
- 	/*
- 	 * !old_len is a special case where an attempt is made to 'duplicate'
- 	 * a mapping.  This makes no sense for private mappings as it will
++	/* Now 'addr' could be aligned to upper boundary. */
++	return IS_ERR_VALUE(addr) ? addr : round_up(addr, align);
++}
++
+ static const struct file_operations dmemfs_file_operations = {
+ 	.mmap = dmemfs_file_mmap,
++	.get_unmapped_area = dmemfs_get_unmapped_area,
+ };
+ 
+ static int dmemfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
 -- 
 1.8.3.1
 
