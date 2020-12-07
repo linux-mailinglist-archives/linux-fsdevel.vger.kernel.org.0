@@ -2,93 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 269812D0E26
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 11:39:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 060672D0E2D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 11:40:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbgLGKio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 05:38:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60398 "EHLO
+        id S1726267AbgLGKkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 05:40:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbgLGKin (ORCPT
+        with ESMTP id S1725842AbgLGKkG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 05:38:43 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91307C0613D2
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 02:37:57 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id ce23so14986428ejb.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 02:37:57 -0800 (PST)
+        Mon, 7 Dec 2020 05:40:06 -0500
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B88EC0613D0;
+        Mon,  7 Dec 2020 02:39:26 -0800 (PST)
+Received: by mail-pj1-x1043.google.com with SMTP id l23so7202637pjg.1;
+        Mon, 07 Dec 2020 02:39:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=VXIL/mPGOivAPpqwxpyRTpp5LeodAai3f6shhhCJSvc=;
-        b=epBZnYHYL+3atS7whj+dOGTaots4l4EmX2hejtWFeS/V33LeDhxYyPAz/HJjznLv7Q
-         8tsFzOXpbq98t0RuB0fEK6P0GIQc1hP/GlQctUsRkYtM6qaPtfx4HUIIQz5F6C5IYSri
-         +HjDh2eHZvBqxDEaeYBIO51faVdgqbYBTm0oNR+7hDI0lja7XI5qbGFOYZhXZzqorLB0
-         GzKoNHZgFXO4G6TxJtxKHqo/bfJz+8ucTLBMqksXtdfb6Coy33JUz5Lodn7px8eNyS5B
-         Ggi2HVNL/QrCC/omoO4tbOaf+8v+uRRGjAZ9r91a1Z4hePh7An+vGZ34zsuE8zOcijjs
-         iJdQ==
+        bh=fDci9LEkbZBuld4sW/fQVQolVRaWQo6HEweIao+YO5I=;
+        b=ZcYZM8qLWwwsLC8hP8jseED2i9g/3K17WRfv36ZEDTVlHxnP2B19wHuIxrT7AXAQYP
+         NUoWGZkNsIR8bFc/bhVkIsmR57dMMChFY8NImwRQTWM4ztHy/gAXNYbRIJikc9+ZlQ5O
+         mPvcMDmiesW9uloNu4nbOTCZg9F/Mc8Zr45Ha3zGkKC3DBP7gO8YUiHEXorbuIWdo4mS
+         ZBeDoYkaEp31tMi5bbosCpp1Y5VN5sqFpb40mjSXdYuMeXq3XeFhb/z3JDm7EaAhwA21
+         Fe1jP9KXpI4EOBjJCFu68QUn2CdNAn3LupiE3giSVt0bYYiSIMCGiYKxr1HWEAjs6sYE
+         FwPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VXIL/mPGOivAPpqwxpyRTpp5LeodAai3f6shhhCJSvc=;
-        b=VcLoExdWT3BHvDunROcj60nXfkYMgEPWszdw6/0HDEDhDyXau8ejdAiWZ2BJwbKeeN
-         o++kO1IIMMdw8kr677fEoLnAxlMRxKgt8t9FBj4nJpeaxONybbsrMPr5RZQeXAXEzGXQ
-         R5zWtIl0naXBg+CfKyGp41n6omTnBSfIOYjMCjWdYiVcnQBc0svR/TSfyVAuXOMZHr7j
-         G6uun6EYIykuhE6g9WmYohc1wo5qw2rf3cuQzG9EV0mJqaKkVzTsms+uKqX0v8NbSin3
-         GYWmRssRIm2FBs2IKB+alsZf1WPCThJR33B347JE5j0Xa7QuDFOzmtOCLXfOLEJDHafh
-         sD7A==
-X-Gm-Message-State: AOAM530qyywosRntKEZOBKnVT2SRsit0VoOXVKNP4TaNAcVLEZb1BVGG
-        ZpOuxJLXVWQUlx7GDRw+P0RhPaYZnaJf3oM4NPAoBw==
-X-Google-Smtp-Source: ABdhPJyS8NPxP/N8yUAkByj94DqmhT5XJMlOeyUF6KVf2Vx2H9TvyJW2H/KEgzqT4En6ecuhA0MrYltatpFPfGUXBLo=
-X-Received: by 2002:a17:906:4c85:: with SMTP id q5mr18025326eju.375.1607337475996;
- Mon, 07 Dec 2020 02:37:55 -0800 (PST)
+        bh=fDci9LEkbZBuld4sW/fQVQolVRaWQo6HEweIao+YO5I=;
+        b=EVLb19UkKLKMEUFUlhEfDBCjCwfv0K3+xmoajw8zsTT2xfeqbYqGd2RTGeNbLOZOqH
+         QQb2B8z2uks+bYbkVxKTq61ngarzMj2RVBrRSz1cnZDq4NKIsCdn+q1IR54MFwmDcVv5
+         mhfHNirncsnse8jyDFyNroP/cOSUWDRa3oZeclw6InYLbqajBddn5kPualSh7jsQsc63
+         7w3Ao693tKNfYlqIh3hoKYQqLzGE+yXs4A08vRCBpg5rc5XvU1FFe/DMDm0R1rv9LqZq
+         +kPKZ3FeJxWWo0JJtj/G3+PlJOV+I2I7fzwLxEC4z6usQZEZ0QbOvaV012T2GSZ3Q5mb
+         hm/Q==
+X-Gm-Message-State: AOAM532IycZnOolOop9zA0bizhBBrbayXcTU3w6iZEuLLqVXKbsQ+wOs
+        sVLy72PT/y1h6d0g3427hL2j31sVdP0+M3dQabo=
+X-Google-Smtp-Source: ABdhPJw4iT57I8S8JLy3wVMNjx+Vglg02f7unXFwxHibyGY1fqiWXm5Eh4YsMrH5xubVzFTdNjqZfJeIuycCKGx6Jik=
+X-Received: by 2002:a17:90a:34cb:: with SMTP id m11mr16140877pjf.181.1607337565811;
+ Mon, 07 Dec 2020 02:39:25 -0800 (PST)
 MIME-Version: 1.0
-References: <CA+G9fYs=nR-d0n8kV4=OWD+v=GR2ufOEWU9S4oG1_fZRxhGouQ@mail.gmail.com>
- <20201207060746.GT11935@casper.infradead.org>
-In-Reply-To: <20201207060746.GT11935@casper.infradead.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 7 Dec 2020 16:07:44 +0530
-Message-ID: <CA+G9fYvQaBVRjxwQ0=+09RCVi-sExv4LAAXpH3-TSGNL29EY7g@mail.gmail.com>
-Subject: Re: WARNING: bad unlock balance detected! - mkfs.ext4/426 is trying
- to release lock (rcu_read_lock)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-stable <stable@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org,
-        lkft-triage@lists.linaro.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+References: <20201206131036.3780898-1-vladimir.kondratiev@intel.com>
+In-Reply-To: <20201206131036.3780898-1-vladimir.kondratiev@intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 7 Dec 2020 12:40:14 +0200
+Message-ID: <CAHp75Vef910QkY6114a_3+AAM8-WXjwYdncgcCJDP9z6+UMirA@mail.gmail.com>
+Subject: Re: [PATCH] do_exit(): panic() when double fault detected
+To:     Vladimir Kondratiev <vladimir.kondratiev@intel.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
         "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Kars Mulder <kerneldev@karsmulder.nl>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        Joe Perches <joe@perches.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Michel Lespinasse <walken@google.com>,
+        Jann Horn <jannh@google.com>, chenqiwu <chenqiwu@xiaomi.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Linux Documentation List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 7 Dec 2020 at 11:37, Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Mon, Dec 07, 2020 at 11:17:29AM +0530, Naresh Kamboju wrote:
-> > While running "mkfs -t ext4" on arm64 juno-r2 device connected with SSD drive
-> > the following kernel warning reported on stable rc 5.9.13-rc1 kernel.
-> >
-> > Steps to reproduce:
-> > ------------------
-> > # boot arm64 Juno-r2 device with stable-rc 5.9.13-rc1.
-> > # Connect SSD drive
-> > # Format the file system ext4 type
-> >  mkfs -t ext4 <SSD-drive>
-> > # you will notice this warning
->
-> Does it happen easily?  Can you bisect?
+On Sun, Dec 6, 2020 at 3:16 PM Vladimir Kondratiev
+<vladimir.kondratiev@intel.com> wrote:
 
-I have been running multi test loops to reproduce this problem but no
-luck yet :(
-Since it is hard to reproduce we can not bisect.
+> ---------------------------------------------------------------------
+> Intel Israel (74) Limited
+>
+> This e-mail and any attachments may contain confidential material for
+> the sole use of the intended recipient(s). Any review or distribution
+> by others is strictly prohibited. If you are not the intended
+> recipient, please contact the sender and delete all copies.
 
-- Naresh
+You have a problematic footer. No one will apply or touch this material anyway.
+
+-- 
+With Best Regards,
+Andy Shevchenko
