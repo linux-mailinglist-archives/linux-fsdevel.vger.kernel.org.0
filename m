@@ -2,116 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04BBB2D1E8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 00:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEEE32D1EAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Dec 2020 00:57:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbgLGXuj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 18:50:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43056 "EHLO
+        id S1728363AbgLGX5S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 18:57:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgLGXuj (ORCPT
+        with ESMTP id S1728355AbgLGX5R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 18:50:39 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE207C06179C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 15:49:58 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id d17so22030285ejy.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 15:49:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dSGlDbhidPZDKDk+p1AfcvxJW+DI8YFPrPNCgK1gB9g=;
-        b=jQPNXyyXDtq6FwskA2qiUp0rH3o00tsydXaWBYwhxrZzXwg6ROdBBhLAzLLbCOcEKn
-         ks/K+L16TbmyD5D1MULfLAEpQ8l3ZHBFiXGQClAhKOKRpOkiXk88WPHTBuTQpDRNVGjh
-         vaP7U+dJgj3qF+k5Gce4G3KQ2g3VyV0ttsOgok5JTlKhpS6QooayH9i/4rYhb/YdIxCB
-         UE6jCjF0KiykMojJqV3SeOmaY1SC/pShZm3+bxyWl7p518IGZ11PcoDRP68hjib4xONH
-         2M8Ii9WyCgcB8iT0jcarECaRrxt0jTam80xcl2NeSbYu4pBrgQ47xkuJfTjedmo0mQZ7
-         3WDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dSGlDbhidPZDKDk+p1AfcvxJW+DI8YFPrPNCgK1gB9g=;
-        b=WgLJ8FHoktnoNkVGluEwp+eTX5iTIXhACgPKat0PCMAd+sxKCg4gV3nTlOBJ09GnaM
-         mUvKtYBRqjVFpTeSBtHJK94q+aphaEk+P79wj8ZffvXeh1l+iSt7E+VLedTEJm1O4DaU
-         LBaXp0gIxbkT6Zx3RTqGyU88p8a2WYPZcpRpGf8ryFPhGpVeBgP5QxUAlVUCMb61DzYK
-         s4fum/1TThLHs8HSEdcvraarys+NAgDEKIS/7abJePIG5FiASBUpUa2tQOPop771yi8b
-         ldAOHZjNuW7jT+s9J6yhJ4BiF3xxiLoH0evg2cFa1nASN+v58lstutfY+E6TP3gpRa3q
-         ZSeA==
-X-Gm-Message-State: AOAM531DXb1HW1S5OW6TbV4FNkuzGTcg5VB7ZXyZ64IGHzdzMfD5/BtA
-        TvIwagxuA0aOb6AoUMtaIhXOXTxwHV7l5CD3HsN/fA==
-X-Google-Smtp-Source: ABdhPJxwpm5K/zyXehTQMTg+eHtWfnno+Tx0iVa9ejlNQ9Q5/asDw3VufhH8JZFSKU2SYGwYJJWlwAAq1y62brv+cIU=
-X-Received: by 2002:a17:906:c20f:: with SMTP id d15mr20931926ejz.341.1607384997566;
- Mon, 07 Dec 2020 15:49:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20201207225703.2033611-1-ira.weiny@intel.com> <20201207225703.2033611-3-ira.weiny@intel.com>
- <20201207232649.GD7338@casper.infradead.org> <CAPcyv4hkY-9V5Rq5s=BRku2AeWYtgs9DuVXnhdEkara2NiN9Tg@mail.gmail.com>
- <20201207234008.GE7338@casper.infradead.org>
-In-Reply-To: <20201207234008.GE7338@casper.infradead.org>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 7 Dec 2020 15:49:55 -0800
-Message-ID: <CAPcyv4g+NvdFO-Coe36mGqmp5v3ZtRCGziEoxsxLKmj5vPx7kA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] mm/highmem: Lift memcpy_[to|from]_page to core
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Weiny, Ira" <ira.weiny@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Mon, 7 Dec 2020 18:57:17 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50316C061749;
+        Mon,  7 Dec 2020 15:56:37 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kmQMg-00HHyo-Fx; Mon, 07 Dec 2020 23:56:22 +0000
+Date:   Mon, 7 Dec 2020 23:56:22 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, criu@openvz.org,
+        bpf <bpf@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        Daniel =?iso-8859-1?Q?P=2E_Berrang=E9?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Subject: Re: [PATCH v2 00/24] exec: Move unshare_files and guarantee
+ files_struct.count is correct
+Message-ID: <20201207235622.GA4119976@ZenIV.linux.org.uk>
+References: <87r1on1v62.fsf@x220.int.ebiederm.org>
+ <CAHk-=wge0oJ3fbmNfVek101CO7hg1UfUHnBgxLB3Jmq6-hWLug@mail.gmail.com>
+ <20201128051226.GA3577182@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201128051226.GA3577182@ZenIV.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 7, 2020 at 3:40 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Mon, Dec 07, 2020 at 03:34:44PM -0800, Dan Williams wrote:
-> > On Mon, Dec 7, 2020 at 3:27 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Sat, Nov 28, 2020 at 05:12:26AM +0000, Al Viro wrote:
+> On Fri, Nov 20, 2020 at 04:05:47PM -0800, Linus Torvalds wrote:
+> > On Fri, Nov 20, 2020 at 3:11 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
 > > >
-> > > On Mon, Dec 07, 2020 at 02:57:03PM -0800, ira.weiny@intel.com wrote:
-> > > > +static inline void memcpy_page(struct page *dst_page, size_t dst_off,
-> > > > +                            struct page *src_page, size_t src_off,
-> > > > +                            size_t len)
-> > > > +{
-> > > > +     char *dst = kmap_local_page(dst_page);
-> > > > +     char *src = kmap_local_page(src_page);
-> > >
-> > > I appreciate you've only moved these, but please add:
-> > >
-> > >         BUG_ON(dst_off + len > PAGE_SIZE || src_off + len > PAGE_SIZE);
-> >
-> > I imagine it's not outside the realm of possibility that some driver
-> > on CONFIG_HIGHMEM=n is violating this assumption and getting away with
-> > it because kmap_atomic() of contiguous pages "just works (TM)".
-> > Shouldn't this WARN rather than BUG so that the user can report the
-> > buggy driver and not have a dead system?
->
-> As opposed to (on a HIGHMEM=y system) silently corrupting data that
-> is on the next page of memory?
+> > > This set of changes cleanups of the code in exec so hopefully this code
+> > > will not regress again.  Then it adds helpers and fixes the users of
+> > > files_struct so the reference count is only incremented if COPY_FILES is
+> > > passed to clone (or if io_uring takes a reference).  Then it removes
+> > > helpers (get_files_struct, __install_fd, __alloc_fd, __close_fd) that
+> > > are no longer needed and if used would encourage code that increments
+> > > the count of files_struct somewhere besides in clone when COPY_FILES is
+> > > passed.
+> > 
+> > I'm not seeing anything that triggered me going "that looks dodgy". It
+> > all looks like nice cleanups.
+> > 
+> > But that's just from reading the patches (and in some cases going and
+> > looking at the context), so I didn't actually _test_ any of it. It all
+> > looks sane to me, though, and the fact that it removes a fair number
+> > of lines of code is always a good sign.
+> > 
+> > It would be good for people to review and test (Al? Oleg? others?),
+> > but my gut feel is "this is good".
+> 
+> Will check (sorry, the last couple of weeks had been bloody awful -
+> off-net and very short on sleep); I'm digging through the piles of
+> email right now.
 
-Wouldn't it fault in HIGHMEM=y case? I guess not necessarily...
+	TBH, the thing that makes me uneasy about that series is handling
+the task_lock().  Holding it for longer periods in general, plus boinking
+it a _lot_ at least on /proc/*/fd getdents(2).  There might be other
+places like that I'd missed - I'm rereading the series now that I've
+noticed that one.
 
-> I suppose ideally ...
->
->         if (WARN_ON(dst_off + len > PAGE_SIZE))
->                 len = PAGE_SIZE - dst_off;
->         if (WARN_ON(src_off + len > PAGE_SIZE))
->                 len = PAGE_SIZE - src_off;
->
-> and then we just truncate the data of the offending caller instead of
-> corrupting innocent data that happens to be adjacent.  Although that's
-> not ideal either ... I dunno, what's the least bad poison to drink here?
+	Other than that I mostly like it.  I would rather reduce the
+access to other processes descriptor tables (in particular, slapped
+a very clear "don't use those helpers unless you really need it; we
+will be watching for new call sites and you *will* have to explain
+yourself if you add such" on them), but that's not a new problem -
+fcheck_files() et.al. had to be watched anyway.
 
-Right, if the driver was relying on "corruption" for correct operation.
-
-If corruption actual were happening in practice wouldn't there have
-been screams by now? Again, not necessarily...
-
-At least with just plain WARN the kernel will start screaming on the
-user's behalf, and if it worked before it will keep working.
+	One thing I would like to achieve is fewer places grabbing
+struct file references from descriptor tables other than current->files,
+but that's mostly orthogonal to this series.  I'll need to resurrect
+a local branch trying to do that; there are conflicts (unsurprisingly),
+but due to the amount of bitrot it has accumulated it'll have to be
+redone anyway.
