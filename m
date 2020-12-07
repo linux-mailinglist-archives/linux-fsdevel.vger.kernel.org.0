@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 53E9F2D0F15
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:35:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD752D0F18
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:35:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgLGLeJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 06:34:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40758 "EHLO
+        id S1726874AbgLGLeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 06:34:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbgLGLeI (ORCPT
+        with ESMTP id S1726771AbgLGLeO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 06:34:08 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A406AC0613D0;
-        Mon,  7 Dec 2020 03:33:28 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id 131so9596648pfb.9;
-        Mon, 07 Dec 2020 03:33:28 -0800 (PST)
+        Mon, 7 Dec 2020 06:34:14 -0500
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB16C0613D1;
+        Mon,  7 Dec 2020 03:33:33 -0800 (PST)
+Received: by mail-pf1-x441.google.com with SMTP id 11so3388936pfu.4;
+        Mon, 07 Dec 2020 03:33:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=aHAaJZi4VQAK0yBssImPSXAXLPsQCU0DdRybKh82TfM=;
-        b=FrpcGDmXQu7AxQyiNFxzQHlkKAmF8U/kxPQ8ibnwy+4FIWEA2w4Tp+hinEQx/f2s8C
-         uBSBW9ubA9c1qzZCth4xGF/xVVOG/Wrk2F3W2/gNzLGYQu5k5zu8Zh/YHL36I+/Ri1Ry
-         o47M9yB8l4QxB3btGHSMgZfdajF5cwyV8iAWGojkCSkPOwlRq23xXkzLI59awhcZwpGU
-         03eLKJREMJLwsLCO7Oj8N2s0rFDuxYVff2buZlOEF0ptz43qd52CasDbGpNINSHlkTUX
-         kDvBei16cnJCFMAy3LloT9iF/QFNsCSPspaK9P3wqHq/Lgmass178kFe05z0W09loOFT
-         SK7g==
+        bh=wbJCpaqM/KGCLPuuObH8xrDvyt3YizKo4k6KtxXLqa8=;
+        b=tYZhqaZKJCQqusFMQa99A+bjMfUXsJOlj+grQyGfmYBspUpcJnrDcHnEmK/ckzFusp
+         z0G11NGmU7j3RpvEZRin2QCl3i0tZ48QP5UeonJvYMm6opUVpcRJW1Itn8vLgnl9Kjh7
+         pHd4U/R2oljBsV+xs1IeJvaEKFiNuh7u/GdZPTfx9XpwYniKuoCGAeI9WPLQD/9NKOOU
+         pxfK2FgGWbMm0aitewEUUCRPb5keEAn4WTVKHuDYBo7MlODbnFZKIuaLGV7YERMhcyNG
+         yO5kd7x9M6b7hQp0OFTSG56tjGhoV++kON4Am2ynECZV58+94FfsYxPTUrdqLk2S6iyf
+         htUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=aHAaJZi4VQAK0yBssImPSXAXLPsQCU0DdRybKh82TfM=;
-        b=Nyj92W+ScX6JJJQ+Xgn2ZvlefkHJjP/k1AaiM/R8nSjMNDKAT5NzpfAtSAMwvgeW1K
-         5JqXTE248qXdXG+3pT4pj4fNpHukHn9gx8TKCYH0SwYLwiHdbwpfEuhvLii0wAb+RVdl
-         XNKqH9wdZHv/eXbWsv/nKaZSisNca0TWDANEWy6y+I5XTaKeP0K3izmFpy4U0eLoTpyl
-         YW0Ve40rRs+tTBbN4IcpoCzSHdvMErI97Qgje9tTJR57d9CKbHZRIoWeCtxf9lO4REZL
-         uLXNM4CBXb/pvj6TUR502L46eeN5EdzW8nEZ8s65Fuo5CM8H6GfdkBM814NgwPD+elEZ
-         rTHw==
-X-Gm-Message-State: AOAM532FlMbwliBtLVcZyG4RWiiiSIMqvXXoSVbQRoi/enOy1HyFxOr+
-        COJiE5fVEbk9vHL/iDnjPr/UjZoLGGs=
-X-Google-Smtp-Source: ABdhPJxcIYSZ+aoxUJo39tPUtbCw9RyCJxtFEXKfpOIRIp5yehcE9scRL2sUinFiN1S8sA7OsPpSOg==
-X-Received: by 2002:a63:4703:: with SMTP id u3mr18044209pga.199.1607340808062;
-        Mon, 07 Dec 2020 03:33:28 -0800 (PST)
+        bh=wbJCpaqM/KGCLPuuObH8xrDvyt3YizKo4k6KtxXLqa8=;
+        b=UK7pkAfuhOMPi8IbxD1wk/6QgBOsloyufVonw65MX5V3+sKW+IQs7cNngzPSfH5OyL
+         sRP99GrXAaeAxhvf0rc0jJgl/Sqt2H+DugVqddBsRMr5zEBFJKKrB7ys8zz1L9RgvsxK
+         GE8jIDaVUsbEUOrqeMhUc52mdAIbzJ6IX+4CaHD/dcDt9X88z+qx3/fUezBnWhutWXcd
+         tlULMje3lTvoTuAuZf/+dwflHfGTvD9ab31LVzsF56FgUKYitpp2yFmNFYh9y1c2YFVI
+         Q/mLJds446BDfEetgQ9wGDlgBj8j3lsaNiXdgMoOdTmSHYtKUc2zTACRKfUQzuQJGfeR
+         2dnQ==
+X-Gm-Message-State: AOAM530shO3wryOPJV+msJig0ZoooMxswJTN64KFaXxw1QBylqbmrE0D
+        J1+IUtDlmT4gauddlMomst4=
+X-Google-Smtp-Source: ABdhPJxECpmJH1pT5gWDW0HE1gPF5QZ0ODYFe7yvOkAEZTxOK5iFhSOocfBWRw/rsl1GSq62gRYoww==
+X-Received: by 2002:a17:902:6803:b029:d6:cf9d:2cfb with SMTP id h3-20020a1709026803b02900d6cf9d2cfbmr15556617plk.55.1607340812726;
+        Mon, 07 Dec 2020 03:33:32 -0800 (PST)
 Received: from localhost.localdomain ([203.205.141.39])
-        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.33.25
+        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.33.29
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 03:33:27 -0800 (PST)
+        Mon, 07 Dec 2020 03:33:32 -0800 (PST)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     linux-mm@kvack.org, akpm@linux-foundation.org,
@@ -59,9 +59,9 @@ Cc:     joao.m.martins@oracle.com, rdunlap@infradead.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Xiao Guangrong <gloryxiao@tencent.com>
-Subject: [RFC V2 02/37] mm: support direct memory reservation
-Date:   Mon,  7 Dec 2020 19:30:55 +0800
-Message-Id: <ee54bf9b02bd2cf8279039ebd08d822ca238bca3.1607332046.git.yuleixzhang@tencent.com>
+Subject: [RFC V2 03/37] dmem: implement dmem memory management
+Date:   Mon,  7 Dec 2020 19:30:56 +0800
+Message-Id: <bf3b28f2be14d42f2c47cb15160e97d78c3b7580.1607332046.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1607332046.git.yuleixzhang@tencent.com>
 References: <cover.1607332046.git.yuleixzhang@tencent.com>
@@ -73,598 +73,750 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Introduce 'dmem=' to reserve system memory for DMEM (direct memory),
-comparing with 'mem=' and 'memmap', it reserves memory based on the
-topology of NUMA, for the detailed info, please refer to
-kernel-parameters.txt
+The belowing figure shows the topology of dmem memory
+management, it reserves a few memory regions from the
+numa nodes, and in each region it leverages the bitmap to
+track the actual memory usage.
+
+         +------+-+-------+---------+
+         | Node0| | ...   | NodeN   |
+         +--/-\-+-+-------+---------+
+           /   \
+      +---v----+v-----+----------+
+      |region 0| ...  | region n |
+      +--/---\-+------+----------+
+        /     \
+    +-+v+------v-------+-+-+-+
+    | | |   bitmap     | | | |
+    +-+-+--------------+-+-+-+
+
+It introduces the interfaces to manage dmem pages that include:
+  - dmem_region_register(), it registers the reserved memory to the
+    dmem management system
+
+ - dmem_alloc_init(), initiate dmem allocator, note the page size the
+   allocator used isn't the same thing with the alignment used to
+   reserve dmem memory
+
+ - dmem_alloc_pages_vma() and dmem_free_pages() are the interfaces
+   allocating and freeing dmem memory, multiple pages can be allocated
+   at one time, but it should be power of two
 
 Signed-off-by: Xiao Guangrong <gloryxiao@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  38 +++
- arch/x86/kernel/setup.c                         |   3 +
- include/linux/dmem.h                            |  16 ++
- mm/Kconfig                                      |   8 +
- mm/Makefile                                     |   1 +
- mm/dmem.c                                       | 137 +++++++++++
- mm/dmem_reserve.c                               | 303 ++++++++++++++++++++++++
- 7 files changed, 506 insertions(+)
- create mode 100644 include/linux/dmem.h
- create mode 100644 mm/dmem.c
- create mode 100644 mm/dmem_reserve.c
+ include/linux/dmem.h |   3 +
+ mm/dmem.c            | 674 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 677 insertions(+)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 526d65d..78caf11 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -991,6 +991,44 @@
- 			The filter can be disabled or changed to another
- 			driver later using sysfs.
- 
-+	dmem=[!]size[KMG]
-+			[KNL, NUMA] When CONFIG_DMEM is set, this means
-+			the size of memory reserved for dmemfs on each NUMA
-+			memory node and 'size' must be aligned to the default
-+			alignment that is the size of memory section which is
-+			128M by default on x86_64. If set '!', such amount of
-+			memory on each node will be owned by kernel and dmemfs
-+			owns the rest of memory on each node.
-+			Example: Reserve 4G memory on each node for dmemfs
-+				dmem = 4G
-+
-+	dmem=[!]size[KMG]:align[KMG]
-+			[KNL, NUMA] Ditto. 'align' should be power of two and
-+			not smaller than the default alignment. Also 'size'
-+			must be aligned to 'align'.
-+			Example: Bad dmem parameter because 'size' misaligned
-+				dmem=0x40200000:1G
-+
-+	dmem=size[KMG]@addr[KMG]
-+			[KNL] When CONFIG_DMEM is set, this marks specific
-+			memory as reserved for dmemfs. Region of memory will be
-+			used by dmemfs, from addr to addr + size. Reserving a
-+			certain memory region for kernel is illegal so '!' is
-+			forbidden. Should not assign 'addr' to 0 because kernel
-+			will occupy fixed memory region beginning at 0 address.
-+			Ditto, 'size' and 'addr' must be aligned to default
-+			alignment.
-+			Example: Exclude memory from 5G-6G for dmemfs.
-+				dmem=1G@5G
-+
-+	dmem=size[KMG]@addr[KMG]:align[KMG]
-+			[KNL] Ditto. 'align' should be power of two and
-+			not smaller than the default alignment. Also 'size'
-+			and 'addr' must be aligned to 'align'. Specially,
-+			'@addr' and ':align' could occur in any order.
-+			Example: Exclude memory from 5G-6G for dmemfs.
-+				dmem=1G:1G@5G
-+
- 	driver_async_probe=  [KNL]
- 			List of driver names to be probed asynchronously.
- 			Format: <driver_name1>,<driver_name2>...
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 84f581c..9d05e1b 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -48,6 +48,7 @@
- #include <asm/unwind.h>
- #include <asm/vsyscall.h>
- #include <linux/vmalloc.h>
-+#include <linux/dmem.h>
- 
- /*
-  * max_low_pfn_mapped: highest directly mapped pfn < 4 GB
-@@ -1149,6 +1150,8 @@ void __init setup_arch(char **cmdline_p)
- 	if (boot_cpu_has(X86_FEATURE_GBPAGES))
- 		hugetlb_cma_reserve(PUD_SHIFT - PAGE_SHIFT);
- 
-+	dmem_reserve_init();
-+
- 	/*
- 	 * Reserve memory for crash kernel after SRAT is parsed so that it
- 	 * won't consume hotpluggable memory.
 diff --git a/include/linux/dmem.h b/include/linux/dmem.h
-new file mode 100644
-index 00000000..5049322
---- /dev/null
+index 5049322..476a82e 100644
+--- a/include/linux/dmem.h
 +++ b/include/linux/dmem.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _LINUX_DMEM_H
-+#define _LINUX_DMEM_H
-+
-+#ifdef CONFIG_DMEM
-+int dmem_reserve_init(void);
-+void dmem_init(void);
-+int dmem_region_register(int node, phys_addr_t start, phys_addr_t end);
-+
-+#else
-+static inline int dmem_reserve_init(void)
-+{
-+	return 0;
-+}
-+#endif
-+#endif	/* _LINUX_DMEM_H */
-diff --git a/mm/Kconfig b/mm/Kconfig
-index d42423f..3a6d408 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -226,6 +226,14 @@ config BALLOON_COMPACTION
- 	  scenario aforementioned and helps improving memory defragmentation.
+@@ -7,6 +7,9 @@
+ void dmem_init(void);
+ int dmem_region_register(int node, phys_addr_t start, phys_addr_t end);
  
- #
-+# support for direct memory basics
-+config DMEM
-+	bool "Direct Memory Reservation"
-+	depends on SPARSEMEM
-+	help
-+	  Allow reservation of memory which could be for the dedicated use of dmem.
-+	  It's the basis of dmemfs.
++int dmem_alloc_init(unsigned long dpage_shift);
++void dmem_alloc_uinit(void);
 +
- # support for memory compaction
- config COMPACTION
- 	bool "Allow for memory compaction"
-diff --git a/mm/Makefile b/mm/Makefile
-index d73aed0..775c8518 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -120,3 +120,4 @@ obj-$(CONFIG_MEMFD_CREATE) += memfd.o
- obj-$(CONFIG_MAPPING_DIRTY_HELPERS) += mapping_dirty_helpers.o
- obj-$(CONFIG_PTDUMP_CORE) += ptdump.o
- obj-$(CONFIG_PAGE_REPORTING) += page_reporting.o
-+obj-$(CONFIG_DMEM) += dmem.o dmem_reserve.o
+ #else
+ static inline int dmem_reserve_init(void)
+ {
 diff --git a/mm/dmem.c b/mm/dmem.c
-new file mode 100644
-index 00000000..b5fb4f1
---- /dev/null
+index b5fb4f1..a77a064 100644
+--- a/mm/dmem.c
 +++ b/mm/dmem.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * memory management for dmemfs
-+ *
-+ * Authors:
-+ *   Xiao Guangrong  <gloryxiao@tencent.com>
-+ *   Chen Zhuo	     <sagazchen@tencent.com>
-+ *   Haiwei Li	     <gerryhwli@tencent.com>
-+ *   Yulei Zhang     <yuleixzhang@tencent.com>
-+ */
-+#include <linux/mempolicy.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/cpuset.h>
-+#include <linux/nodemask.h>
-+#include <linux/topology.h>
-+#include <linux/dmem.h>
-+#include <linux/debugfs.h>
-+#include <linux/notifier.h>
+@@ -91,11 +91,38 @@ struct dmem_pool {
+ 	.lock = __MUTEX_INITIALIZER(dmem_pool.lock),
+ };
+ 
++#define DMEM_PAGE_SIZE		(1UL << dmem_pool.dpage_shift)
++#define DMEM_PAGE_UP(x)		phys_to_dpage(((x) + DMEM_PAGE_SIZE - 1))
++#define DMEM_PAGE_DOWN(x)	phys_to_dpage(x)
 +
-+/*
-+ * There are two kinds of page in dmem management:
-+ * - nature page, it's the CPU's page size, i.e, 4K on x86
-+ *
-+ * - dmem page, it's the unit size used by dmem itself to manage all
-+ *     registered memory. It's set by dmem_alloc_init()
-+ */
-+struct dmem_region {
-+	/* original registered memory region */
-+	phys_addr_t reserved_start_addr;
-+	phys_addr_t reserved_end_addr;
++#define dpage_to_phys(_dpage)						\
++	((_dpage) << dmem_pool.dpage_shift)
++#define phys_to_dpage(_addr)						\
++	((_addr) >> dmem_pool.dpage_shift)
 +
-+	/* memory region aligned to dmem page */
-+	phys_addr_t dpage_start_pfn;
-+	phys_addr_t dpage_end_pfn;
++#define dpage_to_pfn(_dpage)						\
++	(__phys_to_pfn(dpage_to_phys(_dpage)))
++#define pfn_to_dpage(_pfn)						\
++	(phys_to_dpage(__pfn_to_phys(_pfn)))
 +
-+	/*
-+	 * avoid memory allocation if the dmem region is small enough
-+	 */
-+	unsigned long static_bitmap;
-+	unsigned long *bitmap;
-+	u64 next_free_pos;
-+	struct list_head node;
++#define dnode_to_nid(_dnode)						\
++	((_dnode) - dmem_pool.nodes)
++#define nid_to_dnode(nid)						\
++	(&dmem_pool.nodes[nid])
 +
-+	unsigned long static_error_bitmap;
-+	unsigned long *error_bitmap;
-+};
+ #define for_each_dmem_node(_dnode)					\
+ 	for (_dnode = dmem_pool.nodes;					\
+ 		_dnode < dmem_pool.nodes + ARRAY_SIZE(dmem_pool.nodes);	\
+ 		_dnode++)
+ 
++#define for_each_dmem_region(_dnode, _dregion)				\
++	list_for_each_entry(_dregion, &(_dnode)->regions, node)
 +
-+/*
-+ * statically define number of regions to avoid allocating memory
-+ * dynamically from memblock as slab is not available at that time
-+ */
-+#define DMEM_REGION_PAGES	2
-+#define INIT_REGION_NUM							\
-+	((DMEM_REGION_PAGES << PAGE_SHIFT) / sizeof(struct dmem_region))
++static inline int *dmem_nodelist(int nid)
++{
++	return nid_to_dnode(nid)->nodelist;
++}
 +
-+static struct dmem_region static_regions[INIT_REGION_NUM];
+ void __init dmem_init(void)
+ {
+ 	struct dmem_node *dnode;
+@@ -135,3 +162,650 @@ int dmem_region_register(int node, phys_addr_t start, phys_addr_t end)
+ 	return 0;
+ }
+ 
++#define PENALTY_FOR_DMEM_SHARED_NODE		(1)
 +
-+struct dmem_node {
-+	unsigned long total_dpages;
-+	unsigned long free_dpages;
++static int dmem_nodeload[MAX_NUMNODES] __initdata;
 +
-+	/* fallback list for allocation */
-+	int nodelist[MAX_NUMNODES];
-+	struct list_head regions;
-+};
++/* Evaluate penalty for each dmem node */
++static int __init dmem_evaluate_node(int local, int node)
++{
++	int penalty;
 +
-+struct dmem_pool {
-+	struct mutex lock;
++	/* Use the distance array to find the distance */
++	penalty = node_distance(local, node);
 +
-+	unsigned long region_num;
-+	unsigned long registered_pages;
-+	unsigned long unaligned_pages;
++	/* Penalize nodes under us ("prefer the next node") */
++	penalty += (node < local);
 +
-+	/* shift bits of dmem page */
-+	unsigned long dpage_shift;
++	/* Give preference to headless and unused nodes */
++	if (!cpumask_empty(cpumask_of_node(node)))
++		penalty += PENALTY_FOR_NODE_WITH_CPUS;
 +
-+	unsigned long total_dpages;
-+	unsigned long free_dpages;
++	/* Penalize dmem-node shared with kernel */
++	if (node_state(node, N_MEMORY))
++		penalty += PENALTY_FOR_DMEM_SHARED_NODE;
 +
-+	/*
-+	 * increased when allocator is initialized,
-+	 * stop it being destroyed when someone is
-+	 * still using it
-+	 */
-+	u64 user_count;
-+	struct dmem_node nodes[MAX_NUMNODES];
-+};
++	/* Slight preference for less loaded node */
++	penalty *= (nr_online_nodes * MAX_NUMNODES);
 +
-+static struct dmem_pool dmem_pool = {
-+	.lock = __MUTEX_INITIALIZER(dmem_pool.lock),
-+};
++	penalty += dmem_nodeload[node];
 +
-+#define for_each_dmem_node(_dnode)					\
-+	for (_dnode = dmem_pool.nodes;					\
-+		_dnode < dmem_pool.nodes + ARRAY_SIZE(dmem_pool.nodes);	\
-+		_dnode++)
++	return penalty;
++}
 +
-+void __init dmem_init(void)
++static int __init find_next_dmem_node(int local, nodemask_t *used_nodes)
 +{
 +	struct dmem_node *dnode;
++	int node, best_node = NUMA_NO_NODE;
++	int penalty, min_penalty = INT_MAX;
 +
-+	pr_info("dmem: pre-defined region: %ld\n", INIT_REGION_NUM);
++	/* Invalid node is not suitable to call node_distance */
++	if (!node_state(local, N_POSSIBLE))
++		return NUMA_NO_NODE;
 +
-+	for_each_dmem_node(dnode)
-+		INIT_LIST_HEAD(&dnode->regions);
++	/* Use the local node if we haven't already */
++	if (!node_isset(local, *used_nodes)) {
++		node_set(local, *used_nodes);
++		return local;
++	}
++
++	for_each_dmem_node(dnode) {
++		if (list_empty(&dnode->regions))
++			continue;
++
++		node = dnode_to_nid(dnode);
++
++		/* Don't want a node to appear more than once */
++		if (node_isset(node, *used_nodes))
++			continue;
++
++		penalty = dmem_evaluate_node(local, node);
++
++		if (penalty < min_penalty) {
++			min_penalty = penalty;
++			best_node = node;
++		}
++	}
++
++	if (best_node >= 0)
++		node_set(best_node, *used_nodes);
++
++	return best_node;
++}
++
++static int __init dmem_node_init(struct dmem_node *dnode)
++{
++	int *nodelist;
++	nodemask_t used_nodes;
++	int local, node, prev;
++	int load;
++	int i = 0;
++
++	nodelist = dnode->nodelist;
++	nodes_clear(used_nodes);
++	local = dnode_to_nid(dnode);
++	prev = local;
++	load = nr_online_nodes;
++
++	while ((node = find_next_dmem_node(local, &used_nodes)) >= 0) {
++		/*
++		 * We don't want to pressure a particular node.
++		 * So adding penalty to the first node in same
++		 * distance group to make it round-robin.
++		 */
++		if (node_distance(local, node) != node_distance(local, prev))
++			dmem_nodeload[node] = load;
++
++		nodelist[i++] = prev = node;
++		load--;
++	}
++
++	return 0;
++}
++
++static void __init dmem_region_uinit(struct dmem_region *dregion)
++{
++	unsigned long nr_pages, size, *bitmap = dregion->error_bitmap;
++
++	if (!bitmap)
++		return;
++
++	nr_pages = __phys_to_pfn(dregion->reserved_end_addr)
++		- __phys_to_pfn(dregion->reserved_start_addr);
++
++	WARN_ON(!nr_pages);
++
++	size = BITS_TO_LONGS(nr_pages) * sizeof(long);
++	if (size > sizeof(dregion->static_bitmap))
++		kfree(bitmap);
++	dregion->error_bitmap = NULL;
 +}
 +
 +/*
-+ * register the memory region to dmem pool as freed memory, the region
-+ * should be properly aligned to PAGE_SIZE at least
-+ *
-+ * it's safe to be out of dmem_pool's lock as it's used at the very
-+ * beginning of system boot
++ * we only stop allocator to use the reserved page and do not
++ * reture pages back if anything goes wrong
 + */
-+int dmem_region_register(int node, phys_addr_t start, phys_addr_t end)
++static void __init dmem_uinit(void)
++{
++	struct dmem_region *dregion, *dr;
++	struct dmem_node *dnode;
++
++	for_each_dmem_node(dnode) {
++		dnode->nodelist[0] = NUMA_NO_NODE;
++		list_for_each_entry_safe(dregion, dr, &dnode->regions, node) {
++			dmem_region_uinit(dregion);
++			dregion->reserved_start_addr =
++				dregion->reserved_end_addr = 0;
++			list_del(&dregion->node);
++		}
++	}
++
++	dmem_pool.region_num = 0;
++	dmem_pool.registered_pages = 0;
++}
++
++static int __init dmem_region_init(struct dmem_region *dregion)
++{
++	unsigned long *bitmap, size, nr_pages;
++
++	nr_pages = __phys_to_pfn(dregion->reserved_end_addr)
++		- __phys_to_pfn(dregion->reserved_start_addr);
++
++	size = BITS_TO_LONGS(nr_pages) * sizeof(long);
++	if (size <= sizeof(dregion->static_error_bitmap)) {
++		bitmap = &dregion->static_error_bitmap;
++	} else {
++		bitmap = kzalloc(size, GFP_KERNEL);
++		if (!bitmap)
++			return -ENOMEM;
++	}
++	dregion->error_bitmap = bitmap;
++	return 0;
++}
++
++/*
++ * dmem memory is not 'struct page' backend, i.e, the kernel threats
++ * it as invalid pfn
++ */
++static int __init dmem_check_region(struct dmem_region *dregion)
++{
++	unsigned long pfn;
++
++	for (pfn = __phys_to_pfn(dregion->reserved_start_addr);
++	      pfn < __phys_to_pfn(dregion->reserved_end_addr); pfn++) {
++		if (!WARN_ON(pfn_valid(pfn)))
++			continue;
++
++		pr_err("dmem: check pfn %#lx failed, its memory was not properly reserved\n",
++			pfn);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int __init dmem_late_init(void)
 +{
 +	struct dmem_region *dregion;
++	struct dmem_node *dnode;
++	int ret;
 +
-+	pr_info("dmem: register region [%#llx - %#llx] on node %d.\n",
-+		(unsigned long long)start, (unsigned long long)end, node);
++	for_each_dmem_node(dnode) {
++		dmem_node_init(dnode);
 +
-+	if (unlikely(dmem_pool.region_num >= INIT_REGION_NUM)) {
-+		pr_err("dmem: region is not sufficient.\n");
-+		return -ENOMEM;
-+	}
-+
-+	dregion = &static_regions[dmem_pool.region_num++];
-+	dregion->reserved_start_addr = start;
-+	dregion->reserved_end_addr = end;
-+
-+	list_add_tail(&dregion->node, &dmem_pool.nodes[node].regions);
-+	dmem_pool.registered_pages += __phys_to_pfn(end) -
-+					__phys_to_pfn(start);
-+	return 0;
-+}
-+
-diff --git a/mm/dmem_reserve.c b/mm/dmem_reserve.c
-new file mode 100644
-index 00000000..567ee9f
---- /dev/null
-+++ b/mm/dmem_reserve.c
-@@ -0,0 +1,303 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Support reserved memory for dmem.
-+ * As dmem_reserve_init will adjust memblock to reserve memory
-+ * for dmem, we could save a vast amount of memory for 'struct page'.
-+ *
-+ * Authors:
-+ *   Xiao Guangrong  <gloryxiao@tencent.com>
-+ */
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/memblock.h>
-+#include <linux/log2.h>
-+#include <linux/dmem.h>
-+
-+struct dmem_param {
-+	phys_addr_t base;
-+	phys_addr_t size;
-+	phys_addr_t align;
-+	/*
-+	 * If set to 1, dmem_param specified requested memory for kernel,
-+	 * otherwise for dmem.
-+	 */
-+	bool resv_kernel;
-+};
-+
-+static struct dmem_param dmem_param __initdata;
-+
-+/* Check dmem param defined by user to match dmem align */
-+static int __init check_dmem_param(bool resv_kernel, phys_addr_t base,
-+				   phys_addr_t size, phys_addr_t align)
-+{
-+	phys_addr_t min_align = 1UL << SECTION_SIZE_BITS;
-+
-+	if (!align)
-+		align = min_align;
-+
-+	/*
-+	 * the reserved region should be aligned to memory section
-+	 * at least
-+	 */
-+	if (align < min_align) {
-+		pr_warn("dmem: 'align' should be %#llx at least to be aligned to memory section.\n",
-+			min_align);
-+		return -EINVAL;
-+	}
-+
-+	if (!is_power_of_2(align)) {
-+		pr_warn("dmem: 'align' should be power of 2.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (base & (align - 1)) {
-+		pr_warn("dmem: 'addr' is unaligned to 'align' in dmem=\n");
-+		return -EINVAL;
-+	}
-+
-+	if (size & (align - 1)) {
-+		pr_warn("dmem: 'size' is unaligned to 'align' in dmem=\n");
-+		return -EINVAL;
-+	}
-+
-+	if (base >= base + size) {
-+		pr_warn("dmem: 'addr + size' overflow in dmem=\n");
-+		return -EINVAL;
-+	}
-+
-+	if (resv_kernel && base) {
-+		pr_warn("dmem: take a certain base address for kernel is illegal\n");
-+		return -EINVAL;
-+	}
-+
-+	dmem_param.base = base;
-+	dmem_param.size = size;
-+	dmem_param.align = align;
-+	dmem_param.resv_kernel = resv_kernel;
-+
-+	pr_info("dmem: parameter: base address %#llx size %#llx align %#llx resv_kernel %d\n",
-+		(unsigned long long)base, (unsigned long long)size,
-+		(unsigned long long)align, resv_kernel);
-+	return 0;
-+}
-+
-+static int __init parse_dmem(char *p)
-+{
-+	phys_addr_t base, size, align;
-+	char *oldp;
-+	bool resv_kernel = false;
-+
-+	if (!p)
-+		return -EINVAL;
-+
-+	base = align = 0;
-+
-+	if (*p == '!') {
-+		resv_kernel = true;
-+		p++;
-+	}
-+
-+	oldp = p;
-+	size = memparse(p, &p);
-+	if (oldp == p)
-+		return -EINVAL;
-+
-+	if (!size) {
-+		pr_warn("dmem: 'size' of 0 defined in dmem=, or {invalid} param\n");
-+		return -EINVAL;
-+	}
-+
-+	while (*p) {
-+		phys_addr_t *pvalue;
-+
-+		switch (*p) {
-+		case '@':
-+			pvalue = &base;
-+			break;
-+		case ':':
-+			pvalue = &align;
-+			break;
-+		default:
-+			pr_warn("dmem: unknown indicator: %c in dmem=\n", *p);
-+			return -EINVAL;
-+		}
-+
-+		/*
-+		 * Some attribute had been specified multiple times.
-+		 * This is not allowed.
-+		 */
-+		if (*pvalue)
-+			return -EINVAL;
-+
-+		oldp = ++p;
-+		*pvalue = memparse(p, &p);
-+		if (oldp == p)
-+			return -EINVAL;
-+
-+		if (*pvalue == 0) {
-+			pr_warn("dmem: 'addr' or 'align' should not be set to 0\n");
-+			return -EINVAL;
++		for_each_dmem_region(dnode, dregion) {
++			ret = dmem_region_init(dregion);
++			if (ret)
++				goto exit;
++			ret = dmem_check_region(dregion);
++			if (ret)
++				goto exit;
 +		}
 +	}
-+
-+	return check_dmem_param(resv_kernel, base, size, align);
++	return ret;
++exit:
++	dmem_uinit();
++	return ret;
 +}
++late_initcall(dmem_late_init);
 +
-+early_param("dmem", parse_dmem);
-+
-+/*
-+ * We wanna remove a memory range from memblock.memory thoroughly.
-+ * As isolating memblock.memory in memblock_remove needs to double
-+ * the array of memblock_region, allocated memory for new array maybe
-+ * locate in the memory range which we wanna to remove.
-+ *	So, conflict.
-+ * To resolve this conflict, here reserve this memory range firstly.
-+ * While reserving this memory range, isolating memory.reserved will allocate
-+ * memory excluded from memory range which to be removed. So following
-+ * double array in memblock_remove can't observe this reserved range.
-+ */
-+static void __init dmem_remove_memblock(phys_addr_t base, phys_addr_t size)
++static int dmem_alloc_region_init(struct dmem_region *dregion,
++				  unsigned long *dpages)
 +{
-+	memblock_reserve(base, size);
-+	memblock_remove(base, size);
-+	memblock_free(base, size);
-+}
++	unsigned long start, end, *bitmap, size;
 +
-+static u64 node_req_mem[MAX_NUMNODES] __initdata;
++	start = DMEM_PAGE_UP(dregion->reserved_start_addr);
++	end = DMEM_PAGE_DOWN(dregion->reserved_end_addr);
 +
-+/* Reserve certain size of memory for dmem in each numa node */
-+static void __init dmem_reserve_size(phys_addr_t size, phys_addr_t align,
-+		bool resv_kernel)
-+{
-+	phys_addr_t start, end;
-+	u64 i;
-+	int nid;
-+
-+	/* Calculate available free memory on each node */
-+	for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE, &start,
-+				&end, &nid)
-+		node_req_mem[nid] += end - start;
-+
-+	/* Calculate memory size needed to reserve on each node for dmem */
-+	for (i = 0; i < MAX_NUMNODES; i++) {
-+		node_req_mem[i] = ALIGN(node_req_mem[i], align);
-+
-+		if (!resv_kernel) {
-+			node_req_mem[i] = min(size, node_req_mem[i]);
-+			continue;
-+		}
-+
-+		/* leave dmem_param.size memory for kernel */
-+		if (node_req_mem[i] > size)
-+			node_req_mem[i] = node_req_mem[i] - size;
-+		else
-+			node_req_mem[i] = 0;
-+	}
-+
-+retry:
-+	for_each_free_mem_range_reverse(i, NUMA_NO_NODE, MEMBLOCK_NONE,
-+					&start, &end, &nid) {
-+		/* Well, we have got enough memory for this node. */
-+		if (!node_req_mem[nid])
-+			continue;
-+
-+		start = round_up(start, align);
-+		end = round_down(end, align);
-+		/* Skip memblock_region which is too small */
-+		if (start >= end)
-+			continue;
-+
-+		/* Towards memory block at higher address */
-+		start = end - min((end - start), node_req_mem[nid]);
-+
-+		/*
-+		 * do not have enough resource to save the region, skip it
-+		 * from now on
-+		 */
-+		if (dmem_region_register(nid, start, end) < 0)
-+			break;
-+
-+		dmem_remove_memblock(start, end - start);
-+
-+		node_req_mem[nid] -= end - start;
-+
-+		/* We have dropped a memblock, so re-walk it. */
-+		goto retry;
-+	}
-+
-+	for (i = 0; i < MAX_NUMNODES; i++) {
-+		if (!node_req_mem[i])
-+			continue;
-+
-+		pr_info("dmem: %#llx size of memory is not reserved on node %lld due to misaligned regions.\n",
-+			(unsigned long long)size, i);
-+	}
-+
-+}
-+
-+/* Reserve [base, base + size) for dmem. */
-+static void __init
-+dmem_reserve_region(phys_addr_t base, phys_addr_t size, phys_addr_t align)
-+{
-+	phys_addr_t start, end;
-+	phys_addr_t p_start, p_end;
-+	u64 i;
-+	int nid;
-+
-+	p_start = base;
-+	p_end = base + size;
-+
-+retry:
-+	for_each_free_mem_range_reverse(i, NUMA_NO_NODE, MEMBLOCK_NONE,
-+					&start, &end, &nid) {
-+		/* Find region located in user defined range. */
-+		if (start >= p_end || end <= p_start)
-+			continue;
-+
-+		start = round_up(max(start, p_start), align);
-+		end = round_down(min(end, p_end), align);
-+		if (start >= end)
-+			continue;
-+
-+		if (dmem_region_register(nid, start, end) < 0)
-+			break;
-+
-+		dmem_remove_memblock(start, end - start);
-+
-+		size -= end - start;
-+		if (!size)
-+			return;
-+
-+		/* We have dropped a memblock, so re-walk it. */
-+		goto retry;
-+	}
-+
-+	pr_info("dmem: %#llx size of memory is not reserved for dmem due to holes and misaligned regions in [%#llx, %#llx].\n",
-+		(unsigned long long)size, (unsigned long long)base,
-+		(unsigned long long)(base + size));
-+}
-+
-+/* Reserve memory for dmem */
-+int __init dmem_reserve_init(void)
-+{
-+	phys_addr_t base, size, align;
-+	bool resv_kernel;
-+
-+	dmem_init();
-+
-+	base = dmem_param.base;
-+	size = dmem_param.size;
-+	align = dmem_param.align;
-+	resv_kernel = dmem_param.resv_kernel;
-+
-+	/* Dmem param had not been enabled. */
-+	if (size == 0)
++	*dpages = end - start;
++	if (!*dpages)
 +		return 0;
 +
-+	if (base)
-+		dmem_reserve_region(base, size, align);
-+	else
-+		dmem_reserve_size(size, align, resv_kernel);
++	size = BITS_TO_LONGS(*dpages) * sizeof(long);
++	if (size <= sizeof(dregion->static_bitmap))
++		bitmap = &dregion->static_bitmap;
++	else {
++		bitmap = kzalloc(size, GFP_KERNEL);
++		if (!bitmap)
++			return -ENOMEM;
++	}
 +
++	dregion->bitmap = bitmap;
++	dregion->next_free_pos = 0;
++	dregion->dpage_start_pfn = start;
++	dregion->dpage_end_pfn = end;
++
++	dmem_pool.unaligned_pages += __phys_to_pfn((dpage_to_phys(start)
++		- dregion->reserved_start_addr));
++	dmem_pool.unaligned_pages += __phys_to_pfn(dregion->reserved_end_addr
++		- dpage_to_phys(end));
 +	return 0;
 +}
++
++static bool dmem_dpage_is_error(struct dmem_region *dregion, phys_addr_t dpage)
++{
++	unsigned long valid_pages;
++	unsigned long pos_pfn, pos_offset;
++	unsigned long pages_per_dpage = DMEM_PAGE_SIZE >> PAGE_SHIFT;
++	phys_addr_t reserved_start_pfn;
++
++	reserved_start_pfn = __phys_to_pfn(dregion->reserved_start_addr);
++	valid_pages = dpage_to_pfn(dregion->dpage_end_pfn) - reserved_start_pfn;
++
++	pos_offset = dpage_to_pfn(dpage) - reserved_start_pfn;
++	pos_pfn = find_next_bit(dregion->error_bitmap, valid_pages, pos_offset);
++	if (pos_pfn < pos_offset + pages_per_dpage)
++		return true;
++	return false;
++}
++
++static unsigned long
++dmem_alloc_bitmap_clear(struct dmem_region *dregion, phys_addr_t dpage,
++			unsigned int dpages_nr)
++{
++	u64 pos = dpage - dregion->dpage_start_pfn;
++	unsigned int i;
++	unsigned long err_num = 0;
++
++	for (i = 0; i < dpages_nr; i++) {
++		if (dmem_dpage_is_error(dregion, dpage + i)) {
++			WARN_ON(!test_bit(pos + i, dregion->bitmap));
++			err_num++;
++		} else {
++			WARN_ON(!__test_and_clear_bit(pos + i,
++						      dregion->bitmap));
++		}
++	}
++	return err_num;
++}
++
++/* set or clear corresponding bit on allocation bitmap based on error bitmap */
++static unsigned long dregion_alloc_bitmap_set_clear(struct dmem_region *dregion,
++						    bool set)
++{
++	unsigned long pos_pfn, pos_offset;
++	unsigned long valid_pages, mce_dpages = 0;
++	phys_addr_t dpage, reserved_start_pfn;
++
++	reserved_start_pfn = __phys_to_pfn(dregion->reserved_start_addr);
++
++	valid_pages = dpage_to_pfn(dregion->dpage_end_pfn) - reserved_start_pfn;
++	pos_offset = dpage_to_pfn(dregion->dpage_start_pfn)
++		- reserved_start_pfn;
++try_set:
++	pos_pfn = find_next_bit(dregion->error_bitmap, valid_pages, pos_offset);
++
++	if (pos_pfn >= valid_pages)
++		return mce_dpages;
++	mce_dpages++;
++	dpage = pfn_to_dpage(pos_pfn + reserved_start_pfn);
++	if (set)
++		WARN_ON(__test_and_set_bit(dpage - dregion->dpage_start_pfn,
++					   dregion->bitmap));
++	else
++		WARN_ON(!__test_and_clear_bit(dpage - dregion->dpage_start_pfn,
++					      dregion->bitmap));
++	pos_offset = dpage_to_pfn(dpage + 1) - reserved_start_pfn;
++	goto try_set;
++}
++
++static void dmem_uinit_check_alloc_bitmap(struct dmem_region *dregion)
++{
++	unsigned long dpages, size;
++
++	dregion_alloc_bitmap_set_clear(dregion, false);
++
++	dpages = dregion->dpage_end_pfn - dregion->dpage_start_pfn;
++	size = BITS_TO_LONGS(dpages) * sizeof(long);
++	WARN_ON(!bitmap_empty(dregion->bitmap, size * BITS_PER_BYTE));
++}
++
++static void dmem_alloc_region_uinit(struct dmem_region *dregion)
++{
++	unsigned long dpages, size, *bitmap = dregion->bitmap;
++
++	if (!bitmap)
++		return;
++
++	dpages = dregion->dpage_end_pfn - dregion->dpage_start_pfn;
++	WARN_ON(!dpages);
++
++	dmem_uinit_check_alloc_bitmap(dregion);
++
++	size = BITS_TO_LONGS(dpages) * sizeof(long);
++	if (size > sizeof(dregion->static_bitmap))
++		kfree(bitmap);
++	dregion->bitmap = NULL;
++}
++
++static void __dmem_alloc_uinit(void)
++{
++	struct dmem_node *dnode;
++	struct dmem_region *dregion;
++
++	if (!dmem_pool.dpage_shift)
++		return;
++
++	dmem_pool.unaligned_pages = 0;
++
++	for_each_dmem_node(dnode) {
++		for_each_dmem_region(dnode, dregion)
++			dmem_alloc_region_uinit(dregion);
++
++		dnode->total_dpages = dnode->free_dpages = 0;
++	}
++
++	dmem_pool.dpage_shift = 0;
++	dmem_pool.total_dpages = dmem_pool.free_dpages = 0;
++}
++
++static void dnode_count_free_dpages(struct dmem_node *dnode, long dpages)
++{
++	dnode->free_dpages += dpages;
++	dmem_pool.free_dpages += dpages;
++}
++
++/*
++ * uninitialize dmem allocator
++ *
++ * all dpages should be freed before calling it
++ */
++void dmem_alloc_uinit(void)
++{
++	mutex_lock(&dmem_pool.lock);
++	if (!--dmem_pool.user_count)
++		__dmem_alloc_uinit();
++	mutex_unlock(&dmem_pool.lock);
++}
++EXPORT_SYMBOL(dmem_alloc_uinit);
++
++/*
++ * initialize dmem allocator
++ *   @dpage_shift: the shift bits of dmem page size used to manange
++ *      dmem memory, it should be CPU's nature page size at least
++ *
++ * Note: the page size the allocator used isn't the same thing with
++ *       the alignment used to reserve dmem memory
++ */
++int dmem_alloc_init(unsigned long dpage_shift)
++{
++	struct dmem_node *dnode;
++	struct dmem_region *dregion;
++	unsigned long dpages;
++	int ret = 0;
++
++	if (dpage_shift < PAGE_SHIFT)
++		return -EINVAL;
++
++	mutex_lock(&dmem_pool.lock);
++
++	if (dmem_pool.dpage_shift) {
++		/*
++		 * double init on the same page size is okay
++		 * to make the unit tests happy
++		 */
++		if (dmem_pool.dpage_shift != dpage_shift)
++			ret = -EBUSY;
++
++		goto exit;
++	}
++
++	dmem_pool.dpage_shift = dpage_shift;
++
++	for_each_dmem_node(dnode) {
++		for_each_dmem_region(dnode, dregion) {
++			ret = dmem_alloc_region_init(dregion, &dpages);
++			if (ret < 0) {
++				__dmem_alloc_uinit();
++				goto exit;
++			}
++
++			dnode_count_free_dpages(dnode, dpages);
++		}
++		dnode->total_dpages = dnode->free_dpages;
++	}
++
++	dmem_pool.total_dpages = dmem_pool.free_dpages;
++
++	if (dmem_pool.unaligned_pages && !ret)
++		pr_warn("dmem: %llu pages are wasted due to alignment\n",
++			(unsigned long long)dmem_pool.unaligned_pages);
++exit:
++	if (!ret)
++		dmem_pool.user_count++;
++
++	mutex_unlock(&dmem_pool.lock);
++	return ret;
++}
++EXPORT_SYMBOL(dmem_alloc_init);
++
++static phys_addr_t
++dmem_alloc_region_page(struct dmem_region *dregion, unsigned int try_max,
++		       unsigned int *result_nr)
++{
++	unsigned long pos, dpages;
++	unsigned int i;
++
++	/* no dpage is available in this region */
++	if (!dregion->bitmap)
++		return 0;
++
++	dpages = dregion->dpage_end_pfn - dregion->dpage_start_pfn;
++
++	/* no free page in this region */
++	if (dregion->next_free_pos >= dpages)
++		return 0;
++
++	pos = find_next_zero_bit(dregion->bitmap, dpages,
++				 dregion->next_free_pos);
++	if (pos >= dpages) {
++		dregion->next_free_pos = pos;
++		return 0;
++	}
++
++	__set_bit(pos, dregion->bitmap);
++
++	/* do not go beyond the region */
++	try_max = min(try_max, (unsigned int)(dpages - pos - 1));
++	for (i = 1; i < try_max; i++)
++		if (__test_and_set_bit(pos + i, dregion->bitmap))
++			break;
++
++	*result_nr = i;
++	dregion->next_free_pos = pos + *result_nr;
++	return dpage_to_phys(dregion->dpage_start_pfn + pos);
++}
++
++/*
++ * allocate dmem pages from the nodelist
++ *
++ *   @nodelist: dmem_node's nodelist
++ *   @nodemask: nodemask for filtering the dmem nodelist
++ *   @try_max: try to allocate @try_max dpages if possible
++ *   @result_nr: allocated dpage number returned to the caller
++ *
++ * return the physical address of the first dpage allocated from dmem
++ * pool, or 0 on failure. The allocated dpage number is filled into
++ * @result_nr
++ */
++static phys_addr_t
++dmem_alloc_pages_from_nodelist(int *nodelist, nodemask_t *nodemask,
++			       unsigned int try_max, unsigned int *result_nr)
++{
++	struct dmem_node *dnode;
++	struct dmem_region *dregion;
++	phys_addr_t addr = 0;
++	int node, i;
++	unsigned int local_result_nr;
++
++	WARN_ON(try_max > 1 && !result_nr);
++
++	if (!result_nr)
++		result_nr = &local_result_nr;
++
++	*result_nr = 0;
++
++	for (i = 0; !addr && i < ARRAY_SIZE(dnode->nodelist); i++) {
++		node = nodelist[i];
++
++		if (nodemask && !node_isset(node, *nodemask))
++			continue;
++
++		mutex_lock(&dmem_pool.lock);
++
++		WARN_ON(!dmem_pool.dpage_shift);
++
++		dnode = &dmem_pool.nodes[node];
++		for_each_dmem_region(dnode, dregion) {
++			addr = dmem_alloc_region_page(dregion, try_max,
++						      result_nr);
++			if (addr) {
++				dnode_count_free_dpages(dnode,
++							-(long)(*result_nr));
++				break;
++			}
++		}
++
++		mutex_unlock(&dmem_pool.lock);
++	}
++	return addr;
++}
++
++/*
++ * allocate a dmem page from the dmem pool and try to allocate more
++ * continuous dpages if @try_max is not less than 1
++ *
++ *   @nid: the NUMA node the dmem page got from
++ *   @nodemask: nodemask for filtering the dmem nodelist
++ *   @try_max: try to allocate @try_max dpages if possible
++ *   @result_nr: allocated dpage number returned to the caller
++ *
++ * return the physical address of the first dpage allocated from dmem
++ * pool, or 0 on failure. The allocated dpage number is filled into
++ * @result_nr
++ */
++phys_addr_t
++dmem_alloc_pages_nodemask(int nid, nodemask_t *nodemask, unsigned int try_max,
++			  unsigned int *result_nr)
++{
++	int *nodelist;
++
++	if (nid >= sizeof(ARRAY_SIZE(dmem_pool.nodes)))
++		return 0;
++
++	nodelist = dmem_nodelist(nid);
++	return dmem_alloc_pages_from_nodelist(nodelist, nodemask,
++					      try_max, result_nr);
++}
++EXPORT_SYMBOL(dmem_alloc_pages_nodemask);
++
++/*
++ * dmem_alloc_pages_vma - Allocate pages for a VMA.
++ *
++ *   @vma:  Pointer to VMA or NULL if not available.
++ *   @addr: Virtual Address of the allocation. Must be inside the VMA.
++ *   @try_max: try to allocate @try_max dpages if possible
++ *   @result_nr: allocated dpage number returned to the caller
++ *
++ * Return the physical address of the first dpage allocated from dmem
++ * pool, or 0 on failure. The allocated dpage number is filled into
++ * @result_nr
++ */
++phys_addr_t
++dmem_alloc_pages_vma(struct vm_area_struct *vma, unsigned long addr,
++		     unsigned int try_max, unsigned int *result_nr)
++{
++	phys_addr_t phys_addr;
++	int *nl;
++	unsigned int cpuset_mems_cookie;
++
++retry_cpuset:
++	nl = dmem_nodelist(numa_node_id());
++
++	phys_addr = dmem_alloc_pages_from_nodelist(nl, NULL, try_max,
++						   result_nr);
++	if (unlikely(!phys_addr && read_mems_allowed_retry(cpuset_mems_cookie)))
++		goto retry_cpuset;
++
++	return phys_addr;
++}
++EXPORT_SYMBOL(dmem_alloc_pages_vma);
++
++/*
++ * Don't need to call it in a lock.
++ * This function uses the reserved addresses those are initially registered
++ * and will not be modified at run time.
++ */
++static struct dmem_region *find_dmem_region(phys_addr_t phys_addr,
++					    struct dmem_node **pdnode)
++{
++	struct dmem_node *dnode;
++	struct dmem_region *dregion;
++
++	for_each_dmem_node(dnode)
++		for_each_dmem_region(dnode, dregion) {
++			if (dregion->reserved_start_addr > phys_addr)
++				continue;
++			if (dregion->reserved_end_addr <= phys_addr)
++				continue;
++
++			*pdnode = dnode;
++			return dregion;
++		}
++
++	return NULL;
++}
++
++/*
++ * free dmem page to the dmem pool
++ *   @addr: the physical addree will be freed
++ *   @dpage_nr: the number of dpage to be freed
++ */
++void dmem_free_pages(phys_addr_t addr, unsigned int dpages_nr)
++{
++	struct dmem_region *dregion;
++	struct dmem_node *pdnode = NULL;
++	phys_addr_t dpage = phys_to_dpage(addr);
++	u64 pos;
++	unsigned long err_dpages;
++
++	mutex_lock(&dmem_pool.lock);
++
++	WARN_ON(!dmem_pool.dpage_shift);
++
++	dregion = find_dmem_region(addr, &pdnode);
++	WARN_ON(!dregion || !dregion->bitmap || !pdnode);
++
++	pos = dpage - dregion->dpage_start_pfn;
++	dregion->next_free_pos = min(dregion->next_free_pos, pos);
++
++	/* it is not possible to span multiple regions */
++	WARN_ON(dpage + dpages_nr - 1 >= dregion->dpage_end_pfn);
++
++	err_dpages = dmem_alloc_bitmap_clear(dregion, dpage, dpages_nr);
++
++	dnode_count_free_dpages(pdnode, dpages_nr - err_dpages);
++	mutex_unlock(&dmem_pool.lock);
++}
++EXPORT_SYMBOL(dmem_free_pages);
++
 -- 
 1.8.3.1
 
