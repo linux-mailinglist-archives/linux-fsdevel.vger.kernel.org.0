@@ -2,18 +2,18 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 303372D172B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 18:10:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FCB42D1739
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 18:14:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbgLGRJl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 12:09:41 -0500
-Received: from verein.lst.de ([213.95.11.211]:42778 "EHLO verein.lst.de"
+        id S1727454AbgLGRLG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 12:11:06 -0500
+Received: from verein.lst.de ([213.95.11.211]:42822 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbgLGRJl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 12:09:41 -0500
+        id S1726247AbgLGRLF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 12:11:05 -0500
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 94B8F67373; Mon,  7 Dec 2020 18:08:53 +0100 (CET)
-Date:   Mon, 7 Dec 2020 18:08:53 +0100
+        id DF62E68AFE; Mon,  7 Dec 2020 18:10:21 +0100 (CET)
+Date:   Mon, 7 Dec 2020 18:10:21 +0100
 From:   Christoph Hellwig <hch@lst.de>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -49,18 +49,28 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v4 04/40] fs: split out functions to hold writers
-Message-ID: <20201207170853.GA13614@lst.de>
-References: <20201203235736.3528991-1-christian.brauner@ubuntu.com> <20201203235736.3528991-5-christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v4 05/40] fs: add attr_flags_to_mnt_flags helper
+Message-ID: <20201207171021.GB13614@lst.de>
+References: <20201203235736.3528991-1-christian.brauner@ubuntu.com> <20201203235736.3528991-6-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201203235736.3528991-5-christian.brauner@ubuntu.com>
+In-Reply-To: <20201203235736.3528991-6-christian.brauner@ubuntu.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Looks good,
+> @@ -3450,6 +3450,28 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+>  	return ret;
+>  }
+>  
+> +#define FSMOUNT_VALID_FLAGS                                                    \
+> +	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |            \
+> +	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
+
+Any good reason for aligning the \ using spaces all the way out?
+
+Otherwise looks good:
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
