@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABFF2D0F29
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCF622D0F8C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 12:39:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbgLGLej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 06:34:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40798 "EHLO
+        id S1727195AbgLGLfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 06:35:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbgLGLei (ORCPT
+        with ESMTP id S1727149AbgLGLfM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 06:34:38 -0500
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A422C0613D3;
-        Mon,  7 Dec 2020 03:34:23 -0800 (PST)
-Received: by mail-pf1-x435.google.com with SMTP id w6so9617930pfu.1;
-        Mon, 07 Dec 2020 03:34:23 -0800 (PST)
+        Mon, 7 Dec 2020 06:35:12 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C93DFC0613D4;
+        Mon,  7 Dec 2020 03:34:26 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id s21so9600828pfu.13;
+        Mon, 07 Dec 2020 03:34:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JTgCCtK3neklBBZP7ALPG1Lf4m1ypdSzhK8xGX8aX9M=;
-        b=SMiGuwjR9VTZexC3BrV+8B6agmZASS9JEaHnUZ2E1SWgJbsxMfQOcftyniDMaI4UtS
-         HqH6yx1ijBUM+P9SqB+YEbgYrBhqCjmLdV5Rg7vXsyZ5jaSaXRaZJmc3Yjxq+eEZG4oV
-         nX66/M0q5EhEDZF9/LBmyncihaCPD6I2LGmGewQmo7Ga9FfsB0ouuSEkUUjD6lxI+caB
-         D6bY535ziVmj3fxBixW3OY+kJ46tqvHPAMERQCF66rPJh2efyUOOl5tjzf+zzNRblBCI
-         Xb2Fj9L2Eaf0AdeetZGtjqVgVV4QkTfvH80QfKPg+23LmZ8AusMLBfv6lkdZ/XnKYpIr
-         aHeg==
+        bh=R3/DmgnhBXN4Hz69/t1CkODYALK4F+PnSmV8LC6JbSA=;
+        b=i533nrfJosg5xurLfijup+2bdmgF+Al9N2r8hxZlMbkp+JC7XK4unPQu0mjh1PsG8f
+         iRrrzCItR+iYj35Lj6OLsH2XeXSKTc9vtDLt82Om+/Qri/9Jof/xUBTWrvLM7VIfc1ja
+         9q9N/D8Fo/wp68q/S/DtBI1xr7NXgoezjHV7qYiHhpssHLqTvReszbbS2wmGP+GVzxdM
+         ChEPA2iflLd0spt7SslHX2zIfs/7DCmxkXr3kDcBaa01uerLz6FraqlK+JHb8L1qFieK
+         ZeAa+v+hd0ftuYQfi4Lo/TJdTWxi9w7I6yqaeACSWEArGkEl6yRcCrp4s1/tCgml3G3i
+         Pwmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JTgCCtK3neklBBZP7ALPG1Lf4m1ypdSzhK8xGX8aX9M=;
-        b=lQMXEqI8Az+Vd4vTC4KROMF4iGJIBVQRJTu7cT9MT0YYypNifIfwU4LP609D+R/sOy
-         fGZrZgXi8tPepprVItAhxnLOeeopak52JUkIOls8Ue29hH2vHbmbjhn/8RF3fRHTIi2X
-         7hYKZ967Q1v0aRkVd8/Gp/n0DUxQ9oeD0kmi0uhHVplAmaOfMm14D29lhoqi2OreA14g
-         1hyfGSUCERWGjxRFM1lLWLUyUJNdBdNOdQJZNv4O5Fv9U5L2Rbsr+MskxfFR/kVwHaHL
-         L/YcqwJoYCllOb+GYVtZinQNUo/OvAerkW2p71Pl88Vsmbtn+NyI5PmVSAw9Pii6JIV6
-         VC2A==
-X-Gm-Message-State: AOAM530j2SaSL8r9Kb9DfFwvzw7MDJ5NcncJYvZHcChb5yWvAskcMEYZ
-        /ggmBAv56tP5FPFvhFIdQyI=
-X-Google-Smtp-Source: ABdhPJzkG6zV67FqF8oje1zqM80ZaXke6YmOfj+FEi4/qDBrNc9iaM3WstHda8DEvRc0vm268vDR+g==
-X-Received: by 2002:a63:445c:: with SMTP id t28mr17760750pgk.373.1607340862967;
-        Mon, 07 Dec 2020 03:34:22 -0800 (PST)
+        bh=R3/DmgnhBXN4Hz69/t1CkODYALK4F+PnSmV8LC6JbSA=;
+        b=BV4safdpkUYo8IqyHDxx1vgvUCvjngEwTTzC4yskjqPFxmjPlZxfzaBYkG1X20vhIb
+         OtB+cW8KUPLl2WRzWk3YEzv7xZkCejx4Egy6OzGrsm95Z35Y4PTHM+mMGKJB3u09cQ+h
+         EwFtckzWbIYRD4J/PYa9Mwkisu3w61gy9bweOsfPsfFias4nOwOl0mEvNiLTlUI5Bu5G
+         dl6ulWyDVlRlYcxOkoA6NZC8LZ6Qcb1bjNoJWdYabiTx5u7h0K6wHyMwXJbtriHV6oGK
+         4t0LItYjf2EJVDGZK9YS7ei99J1I+32MJtFfQiqHU3+1JqQHJM47nZZG595dO4KIjKTh
+         7bfg==
+X-Gm-Message-State: AOAM532BhyjAWTIh4Ortvn3xrepZUOCzGj7S5Ci4wttr+hwQgN3gkBUk
+        KP3zjI4uO5LvBDQVxMh8JKk=
+X-Google-Smtp-Source: ABdhPJz88HczwHM2v2Saqr/8f+J+9LkiKsk1pqJ18lze4vI837EannlLkxaMIwLu/EjTW1jpYWYrvg==
+X-Received: by 2002:a63:4905:: with SMTP id w5mr17941895pga.124.1607340866415;
+        Mon, 07 Dec 2020 03:34:26 -0800 (PST)
 Received: from localhost.localdomain ([203.205.141.39])
-        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.34.19
+        by smtp.gmail.com with ESMTPSA id d4sm14219822pfo.127.2020.12.07.03.34.23
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Dec 2020 03:34:22 -0800 (PST)
+        Mon, 07 Dec 2020 03:34:25 -0800 (PST)
 From:   yulei.kernel@gmail.com
 X-Google-Original-From: yuleixzhang@tencent.com
 To:     linux-mm@kvack.org, akpm@linux-foundation.org,
@@ -59,9 +59,9 @@ Cc:     joao.m.martins@oracle.com, rdunlap@infradead.org,
         kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
         Yulei Zhang <yuleixzhang@tencent.com>,
         Chen Zhuo <sagazchen@tencent.com>
-Subject: [RFC V2 13/37] mm, dmem: introduce PFN_DMEM and pfn_t_dmem
-Date:   Mon,  7 Dec 2020 19:31:06 +0800
-Message-Id: <e0da248a3c9eab661f9302ea153be286874634da.1607332046.git.yuleixzhang@tencent.com>
+Subject: [RFC V2 14/37] mm, dmem: differentiate dmem-pmd and thp-pmd
+Date:   Mon,  7 Dec 2020 19:31:07 +0800
+Message-Id: <9e1413b30d1cd4777af732e0995a7e7a03baeea6.1607332046.git.yuleixzhang@tencent.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1607332046.git.yuleixzhang@tencent.com>
 References: <cover.1607332046.git.yuleixzhang@tencent.com>
@@ -73,63 +73,66 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yulei Zhang <yuleixzhang@tencent.com>
 
-Introduce PFN_DMEM as a new pfn flag for dmem pfn, define it
-by setting (BITS_PER_LONG_LONG - 6) bit.
+A dmem huge page is ultimately not a transparent huge page. As we
+decided to use pmd_special() to distinguish dmem-pmd from thp-pmd,
+we should make some slightly different semantics between pmd_special()
+and pmd_trans_huge(), just as pmd_devmap() in upstream. This distinction
+is especially important in some mm-core paths such as zap_pmd_range().
 
-Introduce pfn_t_dmem() helper to recognize dmem pfn.
+Explicitly mark the pmd_trans_huge() helpers that dmem needs by adding
+pmd_special() checks. This method could be reused in many mm-core paths.
 
 Signed-off-by: Chen Zhuo <sagazchen@tencent.com>
 Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
 ---
- include/linux/pfn_t.h | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable.h | 10 +++++++++-
+ include/linux/pgtable.h        |  5 +++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/pfn_t.h b/include/linux/pfn_t.h
-index 2d91482..c6c0f1f 100644
---- a/include/linux/pfn_t.h
-+++ b/include/linux/pfn_t.h
-@@ -11,6 +11,7 @@
-  * PFN_MAP - pfn has a dynamic page mapping established by a device driver
-  * PFN_SPECIAL - for CONFIG_FS_DAX_LIMITED builds to allow XIP, but not
-  *		 get_user_pages
-+ * PFN_DMEM - pfn references a dmem page
-  */
- #define PFN_FLAGS_MASK (((u64) (~PAGE_MASK)) << (BITS_PER_LONG_LONG - PAGE_SHIFT))
- #define PFN_SG_CHAIN (1ULL << (BITS_PER_LONG_LONG - 1))
-@@ -18,13 +19,15 @@
- #define PFN_DEV (1ULL << (BITS_PER_LONG_LONG - 3))
- #define PFN_MAP (1ULL << (BITS_PER_LONG_LONG - 4))
- #define PFN_SPECIAL (1ULL << (BITS_PER_LONG_LONG - 5))
-+#define PFN_DMEM (1ULL << (BITS_PER_LONG_LONG - 6))
- 
- #define PFN_FLAGS_TRACE \
- 	{ PFN_SPECIAL,	"SPECIAL" }, \
- 	{ PFN_SG_CHAIN,	"SG_CHAIN" }, \
- 	{ PFN_SG_LAST,	"SG_LAST" }, \
- 	{ PFN_DEV,	"DEV" }, \
--	{ PFN_MAP,	"MAP" }
-+	{ PFN_MAP,	"MAP" }, \
-+	{ PFN_DMEM,	"DMEM" }
- 
- static inline pfn_t __pfn_to_pfn_t(unsigned long pfn, u64 flags)
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index dd4aff6..6ce85d4 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -259,7 +259,7 @@ static inline int pmd_large(pmd_t pte)
+ /* NOTE: when predicate huge page, consider also pmd_devmap, or use pmd_large */
+ static inline int pmd_trans_huge(pmd_t pmd)
  {
-@@ -128,4 +131,16 @@ static inline bool pfn_t_special(pfn_t pfn)
- 	return false;
+-	return (pmd_val(pmd) & (_PAGE_PSE|_PAGE_DEVMAP)) == _PAGE_PSE;
++	return (pmd_val(pmd) & (_PAGE_PSE|_PAGE_DEVMAP|_PAGE_DMEM)) == _PAGE_PSE;
  }
- #endif /* CONFIG_ARCH_HAS_PTE_SPECIAL */
-+
+ 
+ #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+@@ -275,6 +275,14 @@ static inline int has_transparent_hugepage(void)
+ 	return boot_cpu_has(X86_FEATURE_PSE);
+ }
+ 
 +#ifdef CONFIG_ARCH_HAS_PTE_DMEM
-+static inline bool pfn_t_dmem(pfn_t pfn)
++static inline int pmd_special(pmd_t pmd)
 +{
-+	return (pfn.val & PFN_DMEM) == PFN_DMEM;
++	return (pmd_val(pmd) & (_PAGE_SPECIAL | _PAGE_DMEM)) ==
++		(_PAGE_SPECIAL | _PAGE_DMEM);
 +}
-+#else
-+static inline bool pfn_t_dmem(pfn_t pfn)
++#endif
++
+ #ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
+ static inline int pmd_devmap(pmd_t pmd)
+ {
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 9e65694..30342b8 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -1162,6 +1162,11 @@ static inline pmd_t pmd_mkdmem(pmd_t pmd)
+ {
+ 	return pmd;
+ }
++
++static inline int pmd_special(pmd_t pmd)
 +{
-+	return false;
++	return 0;
 +}
-+#endif /* CONFIG_ARCH_HAS_PTE_DMEM */
- #endif /* _LINUX_PFN_T_H_ */
+ #endif
+ 
+ #ifndef pmd_read_atomic
 -- 
 1.8.3.1
 
