@@ -2,104 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2743F2D1A97
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 21:35:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 976142D1D43
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 23:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbgLGUeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 15:34:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40688 "EHLO
+        id S1727847AbgLGWXX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 17:23:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbgLGUeR (ORCPT
+        with ESMTP id S1727550AbgLGWXX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 15:34:17 -0500
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61228C06179C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Dec 2020 12:33:37 -0800 (PST)
-Received: by mail-ot1-x341.google.com with SMTP id w3so13152187otp.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Dec 2020 12:33:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=VF+dRBuajSL16Efm+Qk9iftapw2E7SOSirPhcnw+PnQ=;
-        b=ZRA2+e52xlSYiJHPZTaBAxFXuVgSCguGt+17cXdyunFJAuKyaHC0N9M0+4wVV+JNu/
-         aS6Ru6m3Y+wnCnDvTaR0B9YOhtU4H+7LE/3LGO0G8PmR1IrdqhucfywKGLBMNQLyMXu/
-         XJSr+UlHYySaZWgshmFkJXhyvI//6ZYqsYHP2wgrjLmT1qlB1JlPb9O13tbr6L0bBWLe
-         GRMCt7godtRnbrHZWJKC5DL6rW4nmuRO1x9OHwbZyq7CAqDi7cjSnTBdGjEjq1IFVhKo
-         fbeRgmd7/Vs61w3QEF43+SBNzMP6YdnFO+5G59r4xPy9OUThCHiccAY3BNCrGBsllVky
-         hvJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=VF+dRBuajSL16Efm+Qk9iftapw2E7SOSirPhcnw+PnQ=;
-        b=ik9XDfyixl2HtyPYJmsHMlIaY77FUDCpKdjtJpOfTGUauisKe7RFAL7odbSOVtdH6p
-         uHlNeQMF1kwULfK80eOcqkXi6z5o+6bY0ZbsjDJziKXkSY4w1dRsIeHOIPsPkMhoe0On
-         +C5I06CyRnZ6LmASGEEId1fLERueTdqkgwKI4Yk1jvkZH58TP1z9bwtYahULejEcL0/U
-         uvcpOS9kAzD4N9EtBtvFaCK2GMElauZUiGEMdJA8BQt0qB4SYT0dSESc6f99oM1CSH+h
-         K1BRoXeJ/e/bkS5S/BZEsJ/15BPtOSaxHIk15FWDHnItyNk8Rgm4TN4+VJeJOT214lAp
-         4sFQ==
-X-Gm-Message-State: AOAM533wkXluKFSMEltvTMKAtilI2HWUyV1+dWV5Keui9T+KxlQVkjbi
-        PwPHYygdIFALPr8IL4cWqvyS8A==
-X-Google-Smtp-Source: ABdhPJz9sBLcEczItc+x7GzdpccmdUkQq4OA2vpq4vUs629hT03tlx7plX6XLEideED+DfI8x+oGZg==
-X-Received: by 2002:a9d:4588:: with SMTP id x8mr14555151ote.169.1607373216384;
-        Mon, 07 Dec 2020 12:33:36 -0800 (PST)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id n6sm2874818ota.73.2020.12.07.12.33.34
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Mon, 07 Dec 2020 12:33:35 -0800 (PST)
-Date:   Mon, 7 Dec 2020 12:33:18 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Roman Gushchin <guro@fb.com>
-cc:     Michal Hocko <mhocko@suse.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Hugh Dickins <hughd@google.com>, Will Deacon <will@kernel.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        peterx@redhat.com, krisman@collabora.com,
-        Suren Baghdasaryan <surenb@google.com>, avagin@openvz.org,
-        Marco Elver <elver@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Cgroups <cgroups@vger.kernel.org>
-Subject: Re: [External] Re: [RESEND PATCH v2 00/12] Convert all vmstat counters
- to pages or bytes
-In-Reply-To: <20201207195141.GB2238414@carbon.dhcp.thefacebook.com>
-Message-ID: <alpine.LSU.2.11.2012071218540.9574@eggly.anvils>
-References: <20201206101451.14706-1-songmuchun@bytedance.com> <20201207130018.GJ25569@dhcp22.suse.cz> <CAMZfGtWSEKWqR4f+23xt+jVF-NLSTVQ0L0V3xfZsQzV7aeebhw@mail.gmail.com> <20201207150254.GL25569@dhcp22.suse.cz>
- <20201207195141.GB2238414@carbon.dhcp.thefacebook.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Mon, 7 Dec 2020 17:23:23 -0500
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EADA4C061749;
+        Mon,  7 Dec 2020 14:22:42 -0800 (PST)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kmOta-00HGtb-Lj; Mon, 07 Dec 2020 22:22:14 +0000
+Date:   Mon, 7 Dec 2020 22:22:14 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Subject: Re: [PATCH v2 01/24] exec: Move unshare_files to fix posix file
+ locking during exec
+Message-ID: <20201207222214.GA4115853@ZenIV.linux.org.uk>
+References: <87r1on1v62.fsf@x220.int.ebiederm.org>
+ <20201120231441.29911-1-ebiederm@xmission.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201120231441.29911-1-ebiederm@xmission.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 7 Dec 2020, Roman Gushchin wrote:
-> On Mon, Dec 07, 2020 at 04:02:54PM +0100, Michal Hocko wrote:
-> > 
-> > As I've said the THP accounting change makes more sense to me because it
-> > allows future changes which are already undergoing so there is more
-> > merit in those.
-> 
-> +1
-> And this part is absolutely trivial.
+On Fri, Nov 20, 2020 at 05:14:18PM -0600, Eric W. Biederman wrote:
+> @@ -1805,8 +1808,12 @@ static int bprm_execve(struct linux_binprm *bprm,
+>  	bprm->file = file;
+>  	/*
+>  	 * Record that a name derived from an O_CLOEXEC fd will be
+> -	 * inaccessible after exec. Relies on having exclusive access to
+> -	 * current->files (due to unshare_files above).
+> +	 * inaccessible after exec.  This allows the code in exec to
+> +	 * choose to fail when the executable is not mmaped into the
+> +	 * interpreter and an open file descriptor is not passed to
+> +	 * the interpreter.  This makes for a better user experience
+> +	 * than having the interpreter start and then immediately fail
+> +	 * when it finds the executable is inaccessible.
+>  	 */
+>  	if (bprm->fdpath &&
+>  	    close_on_exec(fd, rcu_dereference_raw(current->files->fdt)))
 
-It does need to be recognized that, with these changes, every THP stats
-update overflows the per-cpu counter, resorting to atomic global updates.
-And I'd like to see that mentioned in the commit message.
+We do not have rcu_read_lock() here.  What would happen if
+	* we get fdt
+	* another thread does e.g. dup2() with target descriptor greater than
+the current size
+	* old fdt gets copied and (RCU-delayed) freed
+	* nobody is holding rcu_read_lock(), so it gets really freed
+	* we read a bitmap from the already freed sucker
 
-But this change is consistent with 4.7's 8f182270dfec ("mm/swap.c: flush
-lru pvecs on compound page arrival"): we accepted greater overhead for
-greater accuracy back then, so I think it's okay to do so for THP stats.
-
-Hugh
+It's a narrow window, but on SMP KVM it's not impossible to hit; if you
+have preemption enabled, the race window is not so narrow even when
+running on bare metal.  In the mainline it is safe, but only because
+the damn thing is guaranteed to be _not_ shared with any other thread
+(which is what the comment had been about).  Why not simply say
+	if (bprm->fdpath && get_close_on_exec(fd))
+anyway?
