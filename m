@@ -2,124 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4DE2D0FFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 13:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F10032D1007
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 13:05:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbgLGMD1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 07:03:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49347 "EHLO
+        id S1727330AbgLGMEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 07:04:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20773 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726748AbgLGMD0 (ORCPT
+        by vger.kernel.org with ESMTP id S1727320AbgLGMEY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 07:03:26 -0500
+        Mon, 7 Dec 2020 07:04:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607342519;
+        s=mimecast20190719; t=1607342577;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SWjLfwTOONQTPdH1Ex4bzcrn6zadIhm2DfjdXxC5840=;
-        b=isYeUA+ETYiSUz8rNj9RDDhfA+PT1GDRGEdmYYksqfGHTBBA9xwcY6OOW/qTAZxEk8efTH
-        eF34//Qr4d8Xmr/MswhKcZxNdzxRz7dPwfoK+AgUcR0B7vC0pRDRkWaOYdpjqDHJwV37qZ
-        5NRPZJlNvos23z1IQTiiKnHgYWxpL6s=
+        bh=VV+E+pdDesJK1ua/OBZSFe/m+EuDUY9iFBTNIzHgamg=;
+        b=QgeRJL1L5axjqAY6q7oo6tSmjr1/VW1ayJiZcxxhDjfcwBWJctug9cVrDvJHm01j2mgApl
+        COYsG8/kfx+drQdpKkw2LndxkG2ANQIr0EviOoWotwQy6O6j/K7T9LKWf2Gcoqf1YJFESj
+        S4lTnKMYz856vCCB6fGco1+HrOc4kAM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-160-_SXenQ4DNjKzlIC-NcF6nw-1; Mon, 07 Dec 2020 07:01:57 -0500
-X-MC-Unique: _SXenQ4DNjKzlIC-NcF6nw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-219-tlIb3Xe8OLCWM9fm3MzovQ-1; Mon, 07 Dec 2020 07:02:53 -0500
+X-MC-Unique: tlIb3Xe8OLCWM9fm3MzovQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D11C742391;
-        Mon,  7 Dec 2020 12:01:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B8FA60BE2;
-        Mon,  7 Dec 2020 12:01:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAMj1kXFe50HvZLxG6Kh-oYBCf5uu51hhuh7mW5UQ62ZSqmu_xA@mail.gmail.com>
-References: <CAMj1kXFe50HvZLxG6Kh-oYBCf5uu51hhuh7mW5UQ62ZSqmu_xA@mail.gmail.com> <20201204154626.GA26255@fieldses.org> <2F96670A-58DC-43A6-A20E-696803F0BFBA@oracle.com> <160518586534.2277919.14475638653680231924.stgit@warthog.procyon.org.uk> <118876.1607093975@warthog.procyon.org.uk> <122997.1607097713@warthog.procyon.org.uk> <20201204160347.GA26933@fieldses.org> <125709.1607100601@warthog.procyon.org.uk> <CAMj1kXEOm_yh478i+dqPiz0eoBxp4eag3j2qHm5eBLe+2kihoQ@mail.gmail.com> <127458.1607102368@warthog.procyon.org.uk>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     dhowells@redhat.com, Bruce Fields <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:BPF JIT for MIPS (32-BIT AND 64-BIT)" 
-        <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-Subject: Re: Why the auxiliary cipher in gss_krb5_crypto.c?
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ED8511015C88;
+        Mon,  7 Dec 2020 12:02:50 +0000 (UTC)
+Received: from [10.36.114.33] (ovpn-114-33.ams2.redhat.com [10.36.114.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 879A860BD8;
+        Mon,  7 Dec 2020 12:02:47 +0000 (UTC)
+Subject: Re: [RFC V2 00/37] Enhance memory utilization with DMEMFS
+To:     yulei.kernel@gmail.com, linux-mm@kvack.org,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        naoya.horiguchi@nec.com, viro@zeniv.linux.org.uk,
+        pbonzini@redhat.com, Dan Williams <dan.j.williams@intel.com>
+Cc:     joao.m.martins@oracle.com, rdunlap@infradead.org,
+        sean.j.christopherson@intel.com, xiaoguangrong.eric@gmail.com,
+        kernellwp@gmail.com, lihaiwei.kernel@gmail.com,
+        Yulei Zhang <yuleixzhang@tencent.com>
+References: <cover.1607332046.git.yuleixzhang@tencent.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <33a1c4ca-9f78-96ca-a774-3adea64aaed3@redhat.com>
+Date:   Mon, 7 Dec 2020 13:02:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <468624.1607342512.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 07 Dec 2020 12:01:52 +0000
-Message-ID: <468625.1607342512@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <cover.1607332046.git.yuleixzhang@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ard Biesheuvel <ardb@kernel.org> wrote:
+On 07.12.20 12:30, yulei.kernel@gmail.com wrote:
+> From: Yulei Zhang <yuleixzhang@tencent.com>
+> 
+> In current system each physical memory page is assocaited with
+> a page structure which is used to track the usage of this page.
+> But due to the memory usage rapidly growing in cloud environment,
+> we find the resource consuming for page structure storage becomes
+> more and more remarkable. So is it possible that we could reclaim
+> such memory and make it reusable?
+> 
+> This patchset introduces an idea about how to save the extra
+> memory through a new virtual filesystem -- dmemfs.
+> 
+> Dmemfs (Direct Memory filesystem) is device memory or reserved
+> memory based filesystem. This kind of memory is special as it
+> is not managed by kernel and most important it is without 'struct page'.
+> Therefore we can leverage the extra memory from the host system
+> to support more tenants in our cloud service.
 
-> > Yeah - the problem with that is that for sunrpc, we might be dealing w=
-ith 1MB
-> > plus bits of non-contiguous pages, requiring >8K of scatterlist elemen=
-ts
-> > (admittedly, we can chain them, but we may have to do one or more larg=
-e
-> > allocations).
-> >
-> > > However, I would recommend against it:
-> >
-> > Sorry, recommend against what?
-> >
-> =
+"is not managed by kernel" well, it's obviously is managed by the
+kernel. It's not managed by the buddy ;)
 
-> Recommend against the current approach of manipulating the input like
-> this and feeding it into the skcipher piecemeal.
+How is this different to using "mem=X" and mapping the relevant memory
+directly into applications? Is this "simply" a control instance on top
+that makes sure unprivileged process can access it and not step onto
+each others feet? Is that the reason why it's called  a "file system"?
+(an example would have helped here, showing how it's used)
 
-Right.  I understand the problem, but as I mentioned above, the scatterlis=
-t
-itself becomes a performance issue as it may exceed two pages in size.  Do=
-uble
-that as there may need to be separate input and output scatterlists.
+It's worth noting that memory hotunplug, memory poisoning and probably
+more is currently fundamentally incompatible with this approach - which
+should better be pointed out in the cover letter.
 
-> Herbert recently made some changes for MSG_MORE support in the AF_ALG
-> code, which permits a skcipher encryption to be split into several
-> invocations of the skcipher layer without the need for this complexity
-> on the side of the caller. Maybe there is a way to reuse that here.
-> Herbert?
+Also, I think something similar can be obtained by using dax/hmat
+infrastructure with "memmap=", at least I remember a talk where this was
+discussed (but not sure if they modified the firmware to expose selected
+memory as soft-reserved - we would only need a cmdline parameter to
+achieve the same - Dan might know more).
 
-I wonder if it would help if the input buffer and output buffer didn't hav=
-e to
-correspond exactly in usage - ie. the output buffer could be used at a slo=
-wer
-rate than the input to allow for buffering inside the crypto algorithm.
+> 
+> As the belowing figure shows, we uses a kernel boot parameter 'dmem='
+> to reserve the system memory when the host system boots up, the
+> remaining system memory is still managed by system memory management
+> which is associated with "struct page", the reserved memory
+> will be managed by dmem and assigned to guest system, the details
+> can be checked in /Documentation/admin-guide/kernel-parameters.txt.
+> 
+>    +------------------+--------------------------------------+
+>    |  system memory   |     memory for guest system          | 
+>    +------------------+--------------------------------------+
+>     |                                   |
+>     v                                   |
+> struct page                             |
+>     |                                   |
+>     v                                   v
+>     system mem management             dmem  
+> 
+> And during the usage, the dmemfs will handle the memory request to
+> allocate and free the reserved memory on each NUMA node, the user 
+> space application could leverage the mmap interface to access the 
+> memory, and kernel module such as kvm and vfio would be able to pin
+> the memory thongh follow_pfn() and get_user_page() in different given
+> page size granularities.
 
-> > Can you also do SHA at the same time in the same loop?
-> =
+I cannot say that I really like this approach. I really prefer the
+proposal to free-up most vmemmap pages for huge/gigantic pages instead
+if all this is about is reducing the memmap size.
 
-> SHA-1 or HMAC-SHA1? The latter could probably be modeled as an AEAD.
-> The former doesn't really fit the current API so we'd have to invent
-> something for it.
 
-The hashes corresponding to the kerberos enctypes I'm supporting are:
+-- 
+Thanks,
 
-HMAC-SHA1 for aes128-cts-hmac-sha1-96 and aes256-cts-hmac-sha1-96.
-
-HMAC-SHA256 for aes128-cts-hmac-sha256-128
-
-HMAC-SHA384 for aes256-cts-hmac-sha384-192
-
-CMAC-CAMELLIA for camellia128-cts-cmac and camellia256-cts-cmac
-
-I'm not sure you can support all of those with the instructions available.
-
-David
+David / dhildenb
 
