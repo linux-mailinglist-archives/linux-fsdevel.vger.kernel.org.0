@@ -2,129 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58BB62D13A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 15:28:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E9402D13FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Dec 2020 15:48:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbgLGO1r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Dec 2020 09:27:47 -0500
-Received: from mga11.intel.com ([192.55.52.93]:20779 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727020AbgLGO1p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Dec 2020 09:27:45 -0500
-IronPort-SDR: lYOEijeGHiU/oWsYpT30vhGWnJm1NwTF/Y9cPzWm0dghL+hzVXjmbztOIVk7ajyq6u4sydcJoQ
- JkSLcN0qoFzQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9827"; a="170199928"
-X-IronPort-AV: E=Sophos;i="5.78,399,1599548400"; 
-   d="scan'208";a="170199928"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 06:27:04 -0800
-IronPort-SDR: 3u0qspbNL9RYOf+BUJACiaWzE7ayCppzCwNwALlmCV5ax3+/nR0LKLoxhzxEQ07XWXM9OnkLYf
- hguk2tqydGwg==
-X-IronPort-AV: E=Sophos;i="5.78,399,1599548400"; 
-   d="scan'208";a="363162186"
-Received: from hrong-mobl2.amr.corp.intel.com (HELO [10.212.14.53]) ([10.212.14.53])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2020 06:27:02 -0800
-Subject: Re: [NEEDS-REVIEW] [RFC PATCH] do_exit(): panic() recursion detected
-To:     Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        id S1726485AbgLGOru (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Dec 2020 09:47:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27725 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726102AbgLGOrs (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 7 Dec 2020 09:47:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607352381;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jWg1t6sTeUgW79K7ShAQcqT7Q1eiw+skkSRDGT0t/ys=;
+        b=ccBIpFLGkdJQ/yD7AphOVf6aQNhAXJTp/ZqGLRtIO9gFqBmm5sAKCb77A0LjjMmLVaJPxQ
+        9Hre6tMGVythCDCR0WignQOyOiyx+tm+/5/8Sm4OMekcfkRbLDlJT6u4NK9HSsNl6XZqHf
+        bC/M2oqdhDvgyTJ1LNZTpKbFAVOwK+o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-370-0dVUfL9vOh2HHBPLYoOQ1w-1; Mon, 07 Dec 2020 09:46:13 -0500
+X-MC-Unique: 0dVUfL9vOh2HHBPLYoOQ1w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77E8F1005504;
+        Mon,  7 Dec 2020 14:46:08 +0000 (UTC)
+Received: from ovpn-66-220.rdu2.redhat.com (ovpn-66-220.rdu2.redhat.com [10.10.66.220])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0FE5F60BE2;
+        Mon,  7 Dec 2020 14:45:59 +0000 (UTC)
+Message-ID: <81631d3391abca3f41f2e19092b97a61d49f4e44.camel@redhat.com>
+Subject: Re: [PATCH v14 09/10] arch, mm: wire up memfd_secret system call
+ were relevant
+From:   Qian Cai <qcai@redhat.com>
+To:     Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kars Mulder <kerneldev@karsmulder.nl>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Joe Perches <joe@perches.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Michel Lespinasse <walken@google.com>,
-        Jann Horn <jannh@google.com>, chenqiwu <chenqiwu@xiaomi.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Vladimir Kondratiev <vladimir.kondratiev@intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20201207124050.4016994-1-vladimir.kondratiev@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <9d601a43-302a-7e26-15e7-53222b832faa@intel.com>
-Date:   Mon, 7 Dec 2020 06:27:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201207124050.4016994-1-vladimir.kondratiev@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org, Palmer Dabbelt <palmerdabbelt@google.com>
+Date:   Mon, 07 Dec 2020 09:45:59 -0500
+In-Reply-To: <20201203062949.5484-10-rppt@kernel.org>
+References: <20201203062949.5484-1-rppt@kernel.org>
+         <20201203062949.5484-10-rppt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/7/20 4:40 AM, Vladimir Kondratiev wrote:
-> Recursive do_exit() is symptom of compromised kernel integrity.
-> For safety critical systems, it may be better to
-> panic() in this case to minimize risk.
+On Thu, 2020-12-03 at 08:29 +0200, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> 
+> Wire up memfd_secret system call on architectures that define
+> ARCH_HAS_SET_DIRECT_MAP, namely arm64, risc-v and x86.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm64/include/uapi/asm/unistd.h   | 1 +
+>  arch/riscv/include/asm/unistd.h        | 1 +
+>  arch/x86/entry/syscalls/syscall_32.tbl | 1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl | 1 +
+>  include/linux/syscalls.h               | 1 +
+>  include/uapi/asm-generic/unistd.h      | 6 +++++-
+>  mm/secretmem.c                         | 3 +++
+>  scripts/checksyscalls.sh               | 4 ++++
+>  8 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/uapi/asm/unistd.h b/arch/arm64/include/uapi/asm/unistd.h
+> index f83a70e07df8..ce2ee8f1e361 100644
+> --- a/arch/arm64/include/uapi/asm/unistd.h
+> +++ b/arch/arm64/include/uapi/asm/unistd.h
+> @@ -20,5 +20,6 @@
+>  #define __ARCH_WANT_SET_GET_RLIMIT
+>  #define __ARCH_WANT_TIME32_SYSCALLS
+>  #define __ARCH_WANT_SYS_CLONE3
+> +#define __ARCH_WANT_MEMFD_SECRET
+>  
+>  #include <asm-generic/unistd.h>
+> diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
+> index 977ee6181dab..6c316093a1e5 100644
+> --- a/arch/riscv/include/asm/unistd.h
+> +++ b/arch/riscv/include/asm/unistd.h
+> @@ -9,6 +9,7 @@
+>   */
+>  
+>  #define __ARCH_WANT_SYS_CLONE
+> +#define __ARCH_WANT_MEMFD_SECRET
+>  
+>  #include <uapi/asm/unistd.h>
+>  
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index c52ab1c4a755..109e6681b8fa 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -446,3 +446,4 @@
+>  439	i386	faccessat2		sys_faccessat2
+>  440	i386	process_madvise		sys_process_madvise
+>  441	i386	watch_mount		sys_watch_mount
+> +442	i386	memfd_secret		sys_memfd_secret
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index f3270a9ef467..742cf17d7725 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -363,6 +363,7 @@
+>  439	common	faccessat2		sys_faccessat2
+>  440	common	process_madvise		sys_process_madvise
+>  441	common	watch_mount		sys_watch_mount
+> +442	common	memfd_secret		sys_memfd_secret
+>  
+>  #
+>  # Due to a historical design error, certain syscalls are numbered differently
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 6d55324363ab..f9d93fbf9b69 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -1010,6 +1010,7 @@ asmlinkage long sys_pidfd_send_signal(int pidfd, int sig,
+>  asmlinkage long sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
+>  asmlinkage long sys_watch_mount(int dfd, const char __user *path,
+>  				unsigned int at_flags, int watch_fd, int watch_id);
+> +asmlinkage long sys_memfd_secret(unsigned long flags);
+>  
+>  /*
+>   * Architecture-specific system calls
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> index 5df46517260e..51151888f330 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -861,9 +861,13 @@ __SYSCALL(__NR_faccessat2, sys_faccessat2)
+>  __SYSCALL(__NR_process_madvise, sys_process_madvise)
+>  #define __NR_watch_mount 441
+>  __SYSCALL(__NR_watch_mount, sys_watch_mount)
+> +#ifdef __ARCH_WANT_MEMFD_SECRET
+> +#define __NR_memfd_secret 442
+> +__SYSCALL(__NR_memfd_secret, sys_memfd_secret)
+> +#endif
 
-This changelog is still woefully inadequate.  It doesn't really describe
-the problem which is being fixed.  Patches are generally not accepted by
-batting around things like "safety-critical".
+I can't see where was it defined for arm64 after it looks like Andrew has
+deleted the  above chunk. Thus, we have a warning using this .config:
 
-> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@intel.com>
-> Change-Id: I42f45900a08c4282c511b05e9e6061360d07db60
+https://cailca.coding.net/public/linux/mm/git/files/master/arm64.config
 
-What's this Change-Id?  Is this for some system outside of Linux?  If
-so, we don't need that in kernel changelogs.
+<stdin>:1539:2: warning: #warning syscall memfd_secret not implemented [-Wcpp]
+
+>  
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 442
+> +#define __NR_syscalls 443
+>  
+>  /*
+>   * 32 bit systems traditionally used different
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 7236f4d9458a..b8a32954ac68 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -415,6 +415,9 @@ static int __init secretmem_setup(char *str)
+>  	unsigned long reserved_size;
+>  	int err;
+>  
+> +	if (!can_set_direct_map())
+> +		return 0;
+> +
+>  	reserved_size = memparse(str, NULL);
+>  	if (!reserved_size)
+>  		return 0;
+> diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
+> index a18b47695f55..b7609958ee36 100755
+> --- a/scripts/checksyscalls.sh
+> +++ b/scripts/checksyscalls.sh
+> @@ -40,6 +40,10 @@ cat << EOF
+>  #define __IGNORE_setrlimit	/* setrlimit */
+>  #endif
+>  
+> +#ifndef __ARCH_WANT_MEMFD_SECRET
+> +#define __IGNORE_memfd_secret
+> +#endif
+> +
+>  /* Missing flags argument */
+>  #define __IGNORE_renameat	/* renameat2 */
+>  
+
